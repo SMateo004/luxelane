@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Luxelane Web (dev)",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "chrome",
+      "args": [
+        "--dart-define-from-file=dart_defines.json"
+      ]
+    },
+    {
+      "name": "Luxelane Android (dev)",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "android",
+      "args": [
+        "--dart-define-from-file=dart_defines.json"
+      ]
+    },
+    {
+      "name": "Luxelane iOS (dev)",
+      "request": "launch",
+      "type": "dart",
+      "deviceId": "ios",
+      "args": [
+        "--dart-define-from-file=dart_defines.json"
+      ]
+    }
+  ]
+}

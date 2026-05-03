@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Luxelane — Premium ride-hailing">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Luxelane">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <title>Luxelane</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Google Maps JS is injected dynamically by main.dart using the
+       GOOGLE_MAPS_KEY dart-define. No static key needed here. -->
+
+  <!-- Stripe.js -->
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <style>
+    body {
+      background-color: #0A0A0A;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <!-- Firebase SDK (only needed if NOT using FlutterFire auto-init) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    // Firebase is initialized by FlutterFire — no manual init needed here
+  </script>
+
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
