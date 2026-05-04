@@ -14,6 +14,8 @@ import '../../../../core/widgets/map_picker_dialog.dart';
 import '../../../../core/widgets/place_autocomplete_field.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../notifications/presentation/widgets/notification_bell.dart';
+import 'home_design.dart';
+import 'home_web_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -148,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // ---------------------------------------------------------------------------
 
   Widget _mobileLayout() => Scaffold(
-        backgroundColor: LuxColors.black,
+        backgroundColor: const Color(0xFF0D1B2E),
         body: Stack(
           children: [
             Positioned.fill(
@@ -192,49 +194,26 @@ class _HomeScreenState extends State<HomeScreen> {
       );
 
   // ---------------------------------------------------------------------------
-  // Web — Landing Page (Blacklane-style)
+  // Web — New editorial landing page
   // ---------------------------------------------------------------------------
 
-  Widget _webLayout() => Scaffold(
-        backgroundColor: LuxColors.black,
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // ── Hero ───────────────────────────────────────────────────
-              _WebHero(
-                serviceType: _serviceType,
-                origin: _origin,
-                destination: _destination,
-                date: _date,
-                hours: _hours,
-                locating: _locating,
-                routeInfo: _routeInfo,
-                onServiceTypeChanged: (t) => setState(() => _serviceType = t),
-                onOriginSelected: _onOriginSelected,
-                onDestinationSelected: _onDestinationSelected,
-                onDateChanged: (d) => setState(() => _date = d),
-                onHoursChanged: (h) => setState(() => _hours = h),
-                onLocate: _detectLocation,
-                onSearch: _search,
-                onOriginMapPick: _pickOriginFromMap,
-                onDestinationMapPick: _pickDestinationFromMap,
-              ),
-              // ── Stats strip ────────────────────────────────────────────
-              const _WebStatsStrip(),
-              // ── How it works ───────────────────────────────────────────
-              const _WebHowItWorks(),
-              // ── Fleet ──────────────────────────────────────────────────
-              const _WebFleetSection(),
-              // ── Chauffeur ──────────────────────────────────────────────
-              const _WebChauffeurSection(),
-              // ── CTA ────────────────────────────────────────────────────
-              const _WebCTASection(),
-              // ── Footer ─────────────────────────────────────────────────
-              const _WebFooter(),
-            ],
-          ),
-        ),
+  Widget _webLayout() => WebHomePage(
+        serviceType: _serviceType,
+        origin: _origin,
+        destination: _destination,
+        date: _date,
+        hours: _hours,
+        locating: _locating,
+        routeInfo: _routeInfo,
+        onServiceTypeChanged: (t) => setState(() => _serviceType = t),
+        onOriginSelected: _onOriginSelected,
+        onDestinationSelected: _onDestinationSelected,
+        onDateChanged: (d) => setState(() => _date = d),
+        onHoursChanged: (h) => setState(() => _hours = h),
+        onLocate: _detectLocation,
+        onSearch: _search,
+        onOriginMapPick: _pickOriginFromMap,
+        onDestinationMapPick: _pickDestinationFromMap,
       );
 }
 
