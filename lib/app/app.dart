@@ -9,6 +9,7 @@ import '../features/booking/presentation/bloc/vehicle_bloc.dart';
 import '../features/driver/presentation/bloc/driver_bloc.dart';
 import '../features/payments/presentation/bloc/payment_bloc.dart';
 import '../features/profile/presentation/bloc/profile_bloc.dart';
+import '../features/notifications/presentation/bloc/notification_bloc.dart';
 import '../features/ride/presentation/bloc/ride_bloc.dart';
 import 'router/router.dart';
 import 'theme/app_theme.dart';
@@ -28,7 +29,8 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
   late final RideBloc    _rideBloc;
   late final PaymentBloc _paymentBloc;
   late final ProfileBloc _profileBloc;
-  late final DriverBloc  _driverBloc;
+  late final DriverBloc           _driverBloc;
+  late final NotificationBloc     _notificationBloc;
 
   // ── Routers — created once ─────────────────────────────────────────────
   late final dynamic _router;
@@ -37,17 +39,18 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
   void initState() {
     super.initState();
 
-    _authBloc    = sl<AuthBloc>()..add(const AuthStarted());
-    _bookingBloc = sl<BookingBloc>();
-    _vehicleBloc = sl<VehicleBloc>();
-    _rideBloc    = sl<RideBloc>();
-    _paymentBloc = sl<PaymentBloc>();
-    _profileBloc = sl<ProfileBloc>();
-    _driverBloc  = sl<DriverBloc>();
+    _authBloc         = sl<AuthBloc>()..add(const AuthStarted());
+    _bookingBloc      = sl<BookingBloc>();
+    _vehicleBloc      = sl<VehicleBloc>();
+    _rideBloc         = sl<RideBloc>();
+    _paymentBloc      = sl<PaymentBloc>();
+    _profileBloc      = sl<ProfileBloc>();
+    _driverBloc       = sl<DriverBloc>();
+    _notificationBloc = sl<NotificationBloc>();
 
     _router = buildRouter(_authBloc);
 
-    // Start DriverBloc only when a driver authenticates
+    // Start DriverBloc + NotificationBloc only when authenticated
     _authBloc.stream.listen((state) {
       if (state is AuthAuthenticated) {
         CrashService.setUser(state.user.id);
@@ -55,6 +58,9 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
             _driverBloc.state is DriverInitial) {
           _driverBloc.add(DriverStarted(userId: state.user.id));
         }
+        _notificationBloc.add(
+          NotificationWatchStarted(userId: state.user.id),
+        );
       }
     });
   }
@@ -68,6 +74,7 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
     _paymentBloc.close();
     _profileBloc.close();
     _driverBloc.close();
+    _notificationBloc.close();
     super.dispose();
   }
 
@@ -83,6 +90,7 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         BlocProvider<PaymentBloc>.value(value: _paymentBloc),
         BlocProvider<ProfileBloc>.value(value: _profileBloc),
         BlocProvider<DriverBloc>.value(value: _driverBloc),
+        BlocProvider<NotificationBloc>.value(value: _notificationBloc),
       ],
       child: MaterialApp.router(
         title: 'Luxelane',

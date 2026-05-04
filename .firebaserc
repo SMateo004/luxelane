@@ -2,6 +2,17 @@
   "projects": {
     "luxelane": "luxelane-4e7ae"
   },
-  "targets": {},
+  "targets": {
+    "luxelane-4e7ae": {
+      "hosting": {
+        "rider": [
+          "luxelane-4e7ae"
+        ],
+        "driver": [
+          "luxelane-driver"
+        ]
+      }
+    }
+  },
   "etags": {}
 }

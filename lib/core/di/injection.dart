@@ -15,6 +15,7 @@ import '../../features/booking/domain/usecases/booking_usecases.dart';
 import '../../features/booking/presentation/bloc/booking_bloc.dart';
 import '../../features/booking/presentation/bloc/vehicle_bloc.dart';
 import '../../features/driver/presentation/bloc/driver_bloc.dart';
+import '../../features/notifications/presentation/bloc/notification_bloc.dart';
 import '../../features/payments/data/repositories/payment_repository_impl.dart';
 import '../../features/payments/domain/usecases/payment_usecases.dart';
 import '../../features/payments/presentation/bloc/payment_bloc.dart';
@@ -24,6 +25,7 @@ import '../../features/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/ride/data/repositories/ride_repository_impl.dart';
 import '../../features/ride/domain/usecases/ride_usecases.dart';
 import '../../features/ride/presentation/bloc/ride_bloc.dart';
+import '../data/notification_repository_impl.dart';
 import '../repositories/repositories.dart';
 import '../services/maps_service.dart';
 import '../services/notification_service.dart';
@@ -84,6 +86,10 @@ void _registerRepositories() {
   sl.registerLazySingleton<AdminRepository>(
     () => AdminRepositoryImpl(sl()),
   );
+
+  sl.registerLazySingleton<NotificationRepository>(
+    () => NotificationRepositoryImpl(firestore: sl()),
+  );
 }
 
 void _registerUseCases() {
@@ -127,8 +133,9 @@ void _registerBlocs() {
   sl.registerFactory(() => VehicleBloc(vehicleRepository: sl()));
   sl.registerFactory(() => RideBloc(rideRepository: sl()));
   sl.registerFactory(() => PaymentBloc(paymentRepository: sl()));
-  sl.registerFactory(() => ProfileBloc(userRepository: sl()));
+  sl.registerFactory(() => ProfileBloc(userRepository: sl(), bookingRepository: sl()));
   sl.registerFactory(() => AdminBloc(adminRepository: sl()));
+  sl.registerFactory(() => NotificationBloc(notificationRepository: sl()));
   sl.registerFactory(() => DriverBloc(
         bookingRepository: sl(),
         userRepository: sl(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../app/theme/app_theme.dart';
 import '../enums/enums.dart';
@@ -114,6 +115,7 @@ class LuxTextField extends StatelessWidget {
     this.validator,
     this.maxLines = 1,
     this.autofocus = false,
+    this.inputFormatters,
   });
 
   final String label;
@@ -129,6 +131,7 @@ class LuxTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final int maxLines;
   final bool autofocus;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   Widget build(BuildContext context) => TextFormField(
@@ -141,6 +144,7 @@ class LuxTextField extends StatelessWidget {
         validator: validator,
         maxLines: maxLines,
         autofocus: autofocus,
+        inputFormatters: inputFormatters,
         style: LuxTypography.bodyLarge,
         decoration: InputDecoration(
           labelText: label,

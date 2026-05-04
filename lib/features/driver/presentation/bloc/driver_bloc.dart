@@ -208,6 +208,10 @@ class DriverLoaded extends DriverState {
       );
 }
 
+class DriverOnboardingRequired extends DriverState {
+  const DriverOnboardingRequired();
+}
+
 class DriverError extends DriverState {
   const DriverError(this.message);
   final String message;
@@ -267,19 +271,10 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       final profileResult = await _userRepo.getDriverProfile(event.userId);
       DriverProfile? profile = profileResult.fold((_) => null, (p) => p);
 
-      // Auto-create profile if missing for a driver
-      if (profile == null) {
-        profile = DriverProfile(
-          userId: user.id,
-          licenseNumber: '',
-          licenseExpiry: DateTime.now().add(const Duration(days: 365)),
-          vehicleId: 'VEH-${user.id.substring(0, 5)}', // Default vehicle ID
-          documentsVerified: false,
-          rating: 5.0,
-          totalRides: 0,
-          isAvailable: false,
-        );
-        await _userRepo.updateDriverProfile(profile);
+      // If no real profile, driver must complete onboarding first
+      if (profile == null || profile.licenseNumber.isEmpty) {
+        emit(const DriverOnboardingRequired());
+        return;
       }
 
       emit(DriverLoaded(

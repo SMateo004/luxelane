@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/widgets/components.dart';
+import '../../features/notifications/presentation/widgets/notification_bell.dart';
 import '../theme/app_theme.dart';
 
 class DriverShell extends StatelessWidget {
@@ -31,6 +33,14 @@ class DriverShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const LuxelaneWordmark(),
+          actions: const [
+            NotificationBell(),
+            SizedBox(width: 8),
+          ],
+        ),
         body: navigationShell,
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: navigationShell.currentIndex,

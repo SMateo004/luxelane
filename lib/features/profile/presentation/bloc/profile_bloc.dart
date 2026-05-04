@@ -87,11 +87,18 @@ class ProfileLoading extends ProfileState {
 }
 
 class ProfileLoaded extends ProfileState {
-  const ProfileLoaded({required this.user, this.driverProfile});
+  const ProfileLoaded({
+    required this.user,
+    this.driverProfile,
+    this.totalRides = 0,
+    this.rating,
+  });
   final User user;
   final DriverProfile? driverProfile;
+  final int totalRides;
+  final double? rating;
   @override
-  List<Object?> get props => [user.id, driverProfile?.userId];
+  List<Object?> get props => [user.id, driverProfile?.userId, totalRides, rating];
 }
 
 class ProfileUpdated extends ProfileState {
@@ -113,8 +120,11 @@ class ProfileError extends ProfileState {
 // ---------------------------------------------------------------------------
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  ProfileBloc({required UserRepository userRepository})
-      : _repo = userRepository,
+  ProfileBloc({
+    required UserRepository userRepository,
+    required BookingRepository bookingRepository,
+  })  : _repo = userRepository,
+        _bookingRepo = bookingRepository,
         super(const ProfileInitial()) {
     on<ProfileLoadRequested>(_onLoad);
     on<ProfileUpdateRequested>(_onUpdate);
@@ -125,6 +135,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   final UserRepository _repo;
+  final BookingRepository _bookingRepo;
 
   Future<void> _onLoad(
     ProfileLoadRequested event,
@@ -139,10 +150,27 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           final dpResult = await _repo.getDriverProfile(event.userId);
           dpResult.fold(
             (f) => emit(ProfileLoaded(user: user)),
-            (dp) => emit(ProfileLoaded(user: user, driverProfile: dp)),
+            (dp) => emit(ProfileLoaded(
+              user: user,
+              driverProfile: dp,
+              totalRides: dp.totalRides,
+              rating: dp.rating > 0 ? dp.rating : null,
+            )),
           );
         } else {
-          emit(ProfileLoaded(user: user));
+          // For riders, count completed bookings
+          int completedCount = 0;
+          final bookingsResult =
+              await _bookingRepo.getBookingsByRider(event.userId);
+          bookingsResult.fold(
+            (_) {},
+            (bookings) {
+              completedCount = bookings
+                  .where((b) => b.status == BookingStatus.completed)
+                  .length;
+            },
+          );
+          emit(ProfileLoaded(user: user, totalRides: completedCount));
         }
       },
     );

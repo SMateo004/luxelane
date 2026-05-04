@@ -13,6 +13,8 @@ import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../booking/presentation/bloc/booking_bloc.dart';
+import '../../../notifications/presentation/bloc/notification_bloc.dart';
+import '../bloc/ride_bloc.dart';
 
 class RideScreen extends StatefulWidget {
   const RideScreen({super.key, required this.rideId});
@@ -25,12 +27,12 @@ class RideScreen extends StatefulWidget {
 
 class _RideScreenState extends State<RideScreen> {
   Booking? _booking;
+  String?  _actualRideId; // real ride doc ID fetched after completion
   bool _ratingSubmitted = false;
 
   @override
   void initState() {
     super.initState();
-    // Watch booking document for real-time status updates
     if (widget.rideId.isNotEmpty) {
       context
           .read<BookingBloc>()
@@ -44,6 +46,16 @@ class _RideScreenState extends State<RideScreen> {
     if (authState is AuthAuthenticated) {
       sl<NotificationService>().init(userId: authState.user.id);
     }
+  }
+
+  // Fetch the actual ride document for this booking so we can submit rating
+  Future<void> _fetchRideId() async {
+    if (_actualRideId != null) return;
+    final result = await sl<RideRepository>()
+        .getRideByBooking(widget.rideId);
+    result.fold((_) {}, (ride) {
+      if (mounted) setState(() => _actualRideId = ride.id);
+    });
   }
 
   BookingStatus get _status =>
@@ -97,15 +109,78 @@ class _RideScreenState extends State<RideScreen> {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => _RatingDialog(
-        driverName: _booking != null ? 'Your driver' : 'James Whitmore',
-        onSubmit: (rating) {
-          setState(() => _ratingSubmitted = true);
-          Navigator.of(context).pop();
-          context.go('/');
-        },
+      builder: (ctx) => BlocProvider.value(
+        value: context.read<RideBloc>(),
+        child: _RatingDialog(
+          driverName: 'Your driver',
+          rideId: _actualRideId,
+          onSubmit: (rating) {
+            // Submit rating to Firestore if ride doc exists
+            if (_actualRideId != null) {
+              context.read<RideBloc>().add(RideRatingSubmitted(
+                    rideId: _actualRideId!,
+                    rating: rating,
+                    isRiderRating: true,
+                  ));
+            }
+            setState(() => _ratingSubmitted = true);
+            Navigator.of(context).pop();
+            context.go('/');
+          },
+        ),
       ),
     );
+  }
+
+  void _createStatusNotification(
+    BuildContext context,
+    BookingStatus status, {
+    required String riderId,
+  }) {
+    String title, body, type;
+    switch (status) {
+      case BookingStatus.confirmed:
+        title = 'Driver assigned';
+        body = 'Your driver is on the way to pick you up.';
+        type = 'booking_confirmed';
+        break;
+      case BookingStatus.driverArriving:
+        title = 'Driver is on the way';
+        body = 'Your driver is heading to your pickup location.';
+        type = 'driver_arriving';
+        break;
+      case BookingStatus.driverArrived:
+        title = 'Driver has arrived';
+        body = 'Your driver is waiting at your pickup location.';
+        type = 'driver_arrived';
+        break;
+      case BookingStatus.inProgress:
+        title = 'Ride started';
+        body = 'You are now on your way to your destination.';
+        type = 'ride_started';
+        break;
+      case BookingStatus.completed:
+        title = 'Ride completed';
+        body = 'You have arrived. Thank you for riding with Luxelane!';
+        type = 'ride_completed';
+        break;
+      default:
+        return;
+    }
+    context.read<NotificationBloc>().add(
+          NotificationCreated(
+            notification: AppNotification(
+              id: '',
+              userId: riderId,
+              title: title,
+              body: body,
+              type: type,
+              isRead: false,
+              createdAt: DateTime.now(),
+              bookingId: widget.rideId,
+            ),
+          ),
+        );
   }
 
   @override
@@ -114,10 +189,17 @@ class _RideScreenState extends State<RideScreen> {
       listener: (context, state) {
         if (state is BookingStatusUpdated) {
           setState(() => _booking = state.booking);
+          _createStatusNotification(context, state.booking.status,
+              riderId: state.booking.riderId);
           if (state.booking.status == BookingStatus.completed &&
               !_ratingSubmitted) {
-            WidgetsBinding.instance
-                .addPostFrameCallback((_) => _showRatingDialog());
+            // Fetch the actual ride document, then show rating
+            _fetchRideId().then((_) {
+              if (mounted) {
+                WidgetsBinding.instance
+                    .addPostFrameCallback((_) => _showRatingDialog());
+              }
+            });
           }
         }
       },
@@ -373,8 +455,13 @@ class _WebRideHeader extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class _RatingDialog extends StatefulWidget {
-  const _RatingDialog({required this.driverName, required this.onSubmit});
+  const _RatingDialog({
+    required this.driverName,
+    required this.onSubmit,
+    this.rideId,
+  });
   final String driverName;
+  final String? rideId;
   final void Function(double rating) onSubmit;
 
   @override

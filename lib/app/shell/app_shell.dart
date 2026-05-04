@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme/app_theme.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../features/notifications/presentation/widgets/notification_bell.dart';
 
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.navigationShell});
@@ -132,7 +133,9 @@ class _WebNav extends StatelessWidget {
               _TextNavBtn('My Trips', () => shell.goBranch(1)),
               const SizedBox(width: 40),
               _FilledNavBtn(label: 'Book a Ride', onTap: () => context.go('/')),
-              const SizedBox(width: 20),
+              const SizedBox(width: 12),
+              NotificationBell(color: const Color(0xFF111111)),
+              const SizedBox(width: 8),
               _AvatarBtn(auth: auth),
             ],
           ],

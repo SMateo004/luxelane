@@ -619,3 +619,64 @@ abstract class DefaultPricing {
     return (r['base']! + km * r['perKm']!).clamp(r['min']!, double.infinity);
   }
 }
+
+// ---------------------------------------------------------------------------
+// AppNotification
+// ---------------------------------------------------------------------------
+
+class AppNotification {
+  const AppNotification({
+    required this.id,
+    required this.userId,
+    required this.title,
+    required this.body,
+    required this.type,
+    required this.isRead,
+    required this.createdAt,
+    this.bookingId,
+  });
+
+  final String id;
+  final String userId;
+  final String title;
+  final String body;
+  final String type; // booking_confirmed, driver_arriving, driver_arrived, ride_started, ride_completed, etc.
+  final bool isRead;
+  final DateTime createdAt;
+  final String? bookingId;
+
+  factory AppNotification.fromJson(Map<String, dynamic> j) => AppNotification(
+        id: j['id'] as String,
+        userId: j['userId'] as String,
+        title: j['title'] as String,
+        body: j['body'] as String,
+        type: j['type'] as String? ?? 'general',
+        isRead: j['isRead'] as bool? ?? false,
+        createdAt: j['createdAt'] != null
+            ? (j['createdAt'] as Timestamp).toDate()
+            : DateTime.now(),
+        bookingId: j['bookingId'] as String?,
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'userId': userId,
+        'title': title,
+        'body': body,
+        'type': type,
+        'isRead': isRead,
+        'createdAt': Timestamp.fromDate(createdAt),
+        'bookingId': bookingId,
+      };
+
+  AppNotification copyWith({bool? isRead}) => AppNotification(
+        id: id,
+        userId: userId,
+        title: title,
+        body: body,
+        type: type,
+        isRead: isRead ?? this.isRead,
+        createdAt: createdAt,
+        bookingId: bookingId,
+      );
+}

@@ -13,6 +13,7 @@ import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/map_picker_dialog.dart';
 import '../../../../core/widgets/place_autocomplete_field.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../notifications/presentation/widgets/notification_bell.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -255,6 +256,8 @@ class _MobileTopBar extends StatelessWidget {
             const LuxelaneWordmark(),
             const Spacer(),
             _LocateButton(onTap: onLocate, loading: locating),
+            const SizedBox(width: LuxSpacing.xs),
+            const NotificationBell(),
             const SizedBox(width: LuxSpacing.sm),
             BlocBuilder<AuthBloc, AuthState>(
               builder: (context, state) {

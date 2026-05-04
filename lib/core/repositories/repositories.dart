@@ -157,3 +157,11 @@ abstract class PaymentRepository {
     required String paymentMethodId,
   });
 }
+
+abstract class NotificationRepository {
+  Stream<List<AppNotification>> watchNotifications(String userId);
+  Future<int> getUnreadCount(String userId);
+  Future<void> createNotification(AppNotification notification);
+  Future<void> markAsRead(String userId, String notificationId);
+  Future<void> markAllRead(String userId);
+}

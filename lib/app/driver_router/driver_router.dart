@@ -3,9 +3,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/driver/presentation/bloc/driver_bloc.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
 import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
 import '../../features/driver/presentation/pages/driver_home_screen.dart';
+import '../../features/driver/presentation/pages/driver_onboarding_screen.dart';
 import '../../features/driver/presentation/pages/driver_queue_screen.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../driver_shell/driver_shell.dart';
@@ -13,6 +15,7 @@ import '../driver_shell/driver_shell.dart';
 abstract class DriverRoutes {
   static const login        = '/driver/login';
   static const home         = '/driver';
+  static const onboarding   = '/driver/onboarding';
   static const queue        = '/driver/queue';
   static const earnings     = '/driver/earnings';
   static const profile      = '/driver/profile';
@@ -21,7 +24,7 @@ abstract class DriverRoutes {
 
 final _rootKey = GlobalKey<NavigatorState>();
 
-GoRouter buildDriverRouter(AuthBloc authBloc) => GoRouter(
+GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter(
       navigatorKey: _rootKey,
       initialLocation: DriverRoutes.home,
       redirect: (context, state) {
@@ -29,27 +32,44 @@ GoRouter buildDriverRouter(AuthBloc authBloc) => GoRouter(
         final isAuth = authState is AuthAuthenticated;
         final going = state.matchedLocation;
 
-        // While checking initial auth (splash), hold on
-        if (authState is AuthInitial) return null;
+        // While checking initial auth, hold on
+        if (authState is AuthInitial || authState is AuthLoading) return null;
 
-        // If not authenticated, force them to the driver login page
-        // (unless they are already going there)
+        // If not authenticated, go to login
         if (!isAuth && going != DriverRoutes.login) {
           return DriverRoutes.login;
         }
 
-        // If authenticated and hitting login, go to driver home
+        // If authenticated and on login page, go to home
         if (isAuth && going == DriverRoutes.login) {
+          return DriverRoutes.home;
+        }
+
+        // If driver hasn't completed onboarding, redirect there
+        if (isAuth &&
+            driverBloc.state is DriverOnboardingRequired &&
+            going != DriverRoutes.onboarding) {
+          return DriverRoutes.onboarding;
+        }
+
+        // Once onboarding is done, don't let them revisit it
+        if (isAuth &&
+            driverBloc.state is! DriverOnboardingRequired &&
+            going == DriverRoutes.onboarding) {
           return DriverRoutes.home;
         }
 
         return null;
       },
-      refreshListenable: _DriverBlocListenable(authBloc),
+      refreshListenable: _DriverBlocListenable(authBloc, driverBloc),
       routes: [
         GoRoute(
           path: DriverRoutes.login,
           pageBuilder: (c, s) => _fade(const LoginPage(), s),
+        ),
+        GoRoute(
+          path: DriverRoutes.onboarding,
+          pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),
         ),
         GoRoute(
           path: '/driver/active-ride/:bookingId',
@@ -110,10 +130,12 @@ GoRouter buildDriverRouter(AuthBloc authBloc) => GoRouter(
     );
 
 class _DriverBlocListenable extends ChangeNotifier {
-  _DriverBlocListenable(this._bloc) {
-    _bloc.stream.listen((_) => notifyListeners());
+  _DriverBlocListenable(this._authBloc, this._driverBloc) {
+    _authBloc.stream.listen((_) => notifyListeners());
+    _driverBloc.stream.listen((_) => notifyListeners());
   }
-  final AuthBloc _bloc;
+  final AuthBloc _authBloc;
+  final DriverBloc _driverBloc;
 }
 
 CustomTransitionPage<void> _fade(Widget child, GoRouterState state) =>
