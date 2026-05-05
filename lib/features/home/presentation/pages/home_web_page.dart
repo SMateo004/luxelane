@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -111,6 +110,8 @@ class _WebHomePageState extends State<WebHomePage> {
                 const _MarqueeBar(),
                 // Stats
                 const _StatsSection(),
+                // Promise — dark split
+                const _PromiseSection(),
                 // How it works
                 const _HowItWorksSection(),
                 // Fleet
@@ -119,6 +120,8 @@ class _WebHomePageState extends State<WebHomePage> {
                 const _ExperienceSection(),
                 // Testimonials
                 const _TestimonialsSection(),
+                // Business
+                const _BusinessSection(),
                 // CTA
                 const _CtaSection(),
                 // Footer
@@ -1190,7 +1193,7 @@ class _LightField extends StatelessWidget {
 }
 
 // ============================================================
-// Marquee Bar
+// Marquee Bar — dark ticker
 // ============================================================
 
 class _MarqueeBar extends StatefulWidget {
@@ -1209,7 +1212,7 @@ class _MarqueeBarState extends State<_MarqueeBar>
     super.initState();
     _ctrl = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 28),
+      duration: const Duration(seconds: 36),
     )..repeat();
   }
 
@@ -1234,51 +1237,49 @@ class _MarqueeBarState extends State<_MarqueeBar>
 
   @override
   Widget build(BuildContext context) => Container(
-        height: 44,
-        color: LD.border,
+        height: 40,
+        color: LD.dark,
         child: ClipRect(
           child: AnimatedBuilder(
             animation: _ctrl,
-            builder: (_, __) {
-              return FractionalTranslation(
-                translation: Offset(-_ctrl.value, 0),
-                child: Row(
-                  children: [
-                    for (int r = 0; r < 3; r++)
-                      for (int i = 0; i < _items.length; i++) ...[
-                        Text(
-                          _items[i].toUpperCase(),
-                          style: const TextStyle(
-                            fontFamily: kSans,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 2.8,
-                            color: LD.ink3,
-                            decoration: TextDecoration.none,
-                          ),
+            builder: (_, __) => FractionalTranslation(
+              translation: Offset(-_ctrl.value, 0),
+              child: Row(
+                children: [
+                  for (int r = 0; r < 3; r++)
+                    for (int i = 0; i < _items.length; i++) ...[
+                      Text(
+                        _items[i].toUpperCase(),
+                        style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w300,
+                          letterSpacing: 3.0,
+                          color: Colors.white.withAlpha(70),
+                          decoration: TextDecoration.none,
                         ),
-                        const SizedBox(width: 16),
-                        Container(
-                          width: 4,
-                          height: 4,
-                          decoration: const BoxDecoration(
-                            color: LD.sph,
-                            shape: BoxShape.circle,
-                          ),
+                      ),
+                      const SizedBox(width: 24),
+                      Container(
+                        width: 3,
+                        height: 3,
+                        decoration: const BoxDecoration(
+                          color: LD.sph,
+                          shape: BoxShape.circle,
                         ),
-                        const SizedBox(width: 16),
-                      ],
-                  ],
-                ),
-              );
-            },
+                      ),
+                      const SizedBox(width: 24),
+                    ],
+                ],
+              ),
+            ),
           ),
         ),
       );
 }
 
 // ============================================================
-// Stats Section (dark)
+// Stats — editorial white numbers
 // ============================================================
 
 class _StatsSection extends StatelessWidget {
@@ -1287,75 +1288,79 @@ class _StatsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: LD.sphDim,
-      padding: const EdgeInsets.symmetric(vertical: 60),
-      child: Row(
+      color: Colors.white,
+      child: Column(
         children: [
-          _StatCell(
-            target: 150000,
-            format: (v) => v >= 150000 ? '150K+' : '${(v / 1000).round()}K',
-            label: 'Rides Completed',
+          Container(height: 1, color: LD.border),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 80),
+            child: Row(
+              children: [
+                _StatItem(
+                  value: 150000,
+                  format: (v) => v >= 150000 ? '150K+' : '${(v / 1000).round()}K',
+                  label: 'Rides completed',
+                ),
+                _StatDivider(),
+                _StatItem(
+                  value: 50,
+                  format: (v) => '$v+',
+                  label: 'Cities served',
+                ),
+                _StatDivider(),
+                _StatItem(
+                  value: 49,
+                  format: (v) => '${(v / 10).toStringAsFixed(1)}',
+                  label: 'Average rating',
+                  suffix: '/5',
+                ),
+                _StatDivider(),
+                _StatItem(
+                  value: 24,
+                  format: (v) => v >= 24 ? '24 / 7' : '$v',
+                  label: 'Customer support',
+                ),
+              ],
+            ),
           ),
-          _StatCell(
-            target: 50,
-            format: (v) => '$v+',
-            label: 'Countries',
-          ),
-          _StatCell(
-            target: 49,
-            format: (v) => '${(v / 10).toStringAsFixed(1)}/5',
-            label: 'Average Rating',
-          ),
-          _StatCell(
-            target: 24,
-            format: (v) => v >= 24 ? '24/7' : '$v/7',
-            label: 'Customer Support',
-            last: true,
-          ),
+          Container(height: 1, color: LD.border),
         ],
       ),
     );
   }
 }
 
-class _StatCell extends StatelessWidget {
-  const _StatCell({
-    required this.target,
+class _StatItem extends StatelessWidget {
+  const _StatItem({
+    required this.value,
     required this.format,
     required this.label,
-    this.last = false,
+    this.suffix,
   });
-  final int target;
+  final int value;
   final String Function(int) format;
   final String label;
-  final bool last;
+  final String? suffix;
 
   @override
   Widget build(BuildContext context) => Expanded(
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          decoration: BoxDecoration(
-            border: last
-                ? null
-                : const Border(
-                    right: BorderSide(color: Color(0x1FFFFFFF))),
-          ),
+        child: RevealOnScroll(
           child: Column(
             children: [
               AnimatedCounter(
-                target: target,
+                target: value,
                 format: format,
-                style: displayText(size: 72, color: Colors.white),
+                style: displayText(size: 64, color: LD.ink),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               Text(
                 label.toUpperCase(),
                 style: const TextStyle(
                   fontFamily: kSans,
-                  fontSize: 10,
+                  fontSize: 9,
                   fontWeight: FontWeight.w400,
-                  letterSpacing: 2.2,
-                  color: Color(0x59FFFFFF),
+                  letterSpacing: 2.4,
+                  color: LD.ink3,
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -1365,8 +1370,163 @@ class _StatCell extends StatelessWidget {
       );
 }
 
+class _StatDivider extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 1, height: 64, color: LD.border,
+      );
+}
+
 // ============================================================
-// How It Works
+// Promise — dark split section
+// ============================================================
+
+class _PromiseSection extends StatelessWidget {
+  const _PromiseSection();
+
+  static const _points = [
+    (
+      'Vetted chauffeurs',
+      'Every driver passes a rigorous background check, vehicle inspection, and service training programme.',
+    ),
+    (
+      'Fixed price, always',
+      'Your price is confirmed at booking. No surge, no hidden fees — ever.',
+    ),
+    (
+      'Global coverage',
+      'Available in 50+ cities across Europe, the Americas, the Middle East, and Asia.',
+    ),
+    (
+      'Around the clock',
+      'Our operations team monitors every ride 24 hours a day, 365 days a year.',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: LD.dark,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Left — atmospheric car panel
+          const Expanded(child: _PromisePhotoPanel()),
+          // Right — editorial list
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(72, 100, 64, 100),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RevealOnScroll(
+                    child: const LuxEyebrow('The Luxelane Standard', dark: true),
+                  ),
+                  const SizedBox(height: 28),
+                  RevealOnScroll(
+                    delay: const Duration(milliseconds: 80),
+                    child: Text(
+                      'The standard\nothers follow.',
+                      style: displayText(size: 52, color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(height: 56),
+                  ..._points.asMap().entries.map((e) => RevealOnScroll(
+                        delay: Duration(milliseconds: 140 + e.key * 80),
+                        dy: 20,
+                        child: _PromisePoint(
+                          title: e.value.$1,
+                          body: e.value.$2,
+                        ),
+                      )),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PromisePhotoPanel extends StatelessWidget {
+  const _PromisePhotoPanel();
+
+  @override
+  Widget build(BuildContext context) => Stack(
+        fit: StackFit.expand,
+        children: [
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [Color(0xFF0D2040), Color(0xFF060C16)],
+              ),
+            ),
+          ),
+          CustomPaint(painter: _DotGridPainter(), child: const SizedBox.expand()),
+          Positioned(
+            bottom: 0,
+            left: -40,
+            right: 0,
+            child: Image.asset(
+              'assets/images/vehicles/business/car.png',
+              fit: BoxFit.contain,
+              alignment: Alignment.bottomCenter,
+              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+            ),
+          ),
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [Colors.transparent, LD.dark.withAlpha(140)],
+                ),
+              ),
+            ),
+          ),
+          Positioned(top: 0, left: 0, right: 0,
+              child: Container(height: 2, color: LD.sph)),
+        ],
+      );
+}
+
+class _PromisePoint extends StatelessWidget {
+  const _PromisePoint({required this.title, required this.body});
+  final String title;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 1,
+            color: Colors.white.withAlpha(18),
+            margin: const EdgeInsets.only(bottom: 20),
+          ),
+          Text(
+            title,
+            style: const TextStyle(
+              fontFamily: kSerif,
+              fontSize: 20,
+              fontWeight: FontWeight.w400,
+              color: Colors.white,
+              decoration: TextDecoration.none,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(body, style: bodyText(size: 13, color: Color(0x78FFFFFF))),
+          const SizedBox(height: 24),
+        ],
+      );
+}
+
+// ============================================================
+// How It Works — editorial numbered steps
 // ============================================================
 
 class _HowItWorksSection extends StatelessWidget {
@@ -1380,48 +1540,56 @@ class _HowItWorksSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          RevealOnScroll(
-            child: const LuxEyebrow('How It Works'),
-          ),
-          const SizedBox(height: 20),
-          RevealOnScroll(
-            delay: const Duration(milliseconds: 100),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Simple.', style: displayText(size: 56, color: LD.ink)),
-                Text('Transparent.',
-                    style: displayText(size: 56, color: LD.ink)),
-                Text('Reliable.',
-                    style: displayText(size: 56, color: LD.ink)),
-              ],
-            ),
-          ),
-          const SizedBox(height: 64),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              _StepCard(
-                number: '01',
-                title: 'Enter your journey',
-                desc:
-                    'Set your pickup and destination. Instantly see a fixed price — no surprises, no surge.',
-                delay: const Duration(milliseconds: 0),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RevealOnScroll(child: const LuxEyebrow('How It Works')),
+                    const SizedBox(height: 20),
+                    RevealOnScroll(
+                      delay: const Duration(milliseconds: 80),
+                      child: Text(
+                        'Three steps\nto your door.',
+                        style: displayText(size: 56, color: LD.ink),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(width: 2),
-              _StepCard(
+              RevealOnScroll(
+                delay: const Duration(milliseconds: 160),
+                child: Text(
+                  'Book in under two minutes.\nFixed price, no surprises.',
+                  textAlign: TextAlign.right,
+                  style: bodyText(size: 14, color: LD.ink3),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 80),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _HowStep(
+                number: '01',
+                title: 'Enter your\njourney',
+                desc: 'Set pickup, destination and date. We instantly show your fixed price — no guessing.',
+                delay: Duration.zero,
+              ),
+              _HowStep(
                 number: '02',
-                title: 'Choose your vehicle',
-                desc:
-                    'Select the class that suits your needs. Business, First Class, Van, or Electric.',
+                title: 'Choose your\nvehicle',
+                desc: 'Business, First Class, Van, or Electric. Every class, every time — same standard.',
                 delay: const Duration(milliseconds: 100),
               ),
-              const SizedBox(width: 2),
-              _StepCard(
+              _HowStep(
                 number: '03',
-                title: 'Relax and arrive',
-                desc:
-                    'Your professional chauffeur meets you on time. Sit back and enjoy the journey.',
-                delay: const Duration(milliseconds: 220),
+                title: 'Relax and\narrive',
+                desc: 'Your chauffeur meets you on time, every time. Sit back, disconnect, arrive.',
+                delay: const Duration(milliseconds: 200),
               ),
             ],
           ),
@@ -1431,8 +1599,8 @@ class _HowItWorksSection extends StatelessWidget {
   }
 }
 
-class _StepCard extends StatefulWidget {
-  const _StepCard({
+class _HowStep extends StatelessWidget {
+  const _HowStep({
     required this.number,
     required this.title,
     required this.desc,
@@ -1444,65 +1612,41 @@ class _StepCard extends StatefulWidget {
   final Duration delay;
 
   @override
-  State<_StepCard> createState() => _StepCardState();
-}
-
-class _StepCardState extends State<_StepCard> {
-  bool _hover = false;
-
-  @override
   Widget build(BuildContext context) => Expanded(
         child: RevealOnScroll(
-          delay: widget.delay,
-          dy: 24,
-          child: MouseRegion(
-            onEnter: (_) => setState(() => _hover = true),
-            onExit: (_) => setState(() => _hover = false),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
-              padding: const EdgeInsets.fromLTRB(28, 28, 28, 0),
-              color: LD.bg2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.number,
-                    style: const TextStyle(
-                      fontFamily: kSerif,
-                      fontSize: 100,
-                      fontWeight: FontWeight.w300,
-                      color: Color(0x0A0D1B2E),
-                      height: 1,
-                      decoration: TextDecoration.none,
-                    ),
+          delay: delay,
+          dy: 28,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 56),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  number,
+                  style: TextStyle(
+                    fontFamily: kSerif,
+                    fontSize: 130,
+                    fontWeight: FontWeight.w300,
+                    color: LD.ink.withAlpha(10),
+                    height: 1,
+                    decoration: TextDecoration.none,
                   ),
-                  const SizedBox(height: 16),
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                      fontFamily: kSerif,
-                      fontSize: 26,
-                      fontWeight: FontWeight.w400,
-                      color: LD.ink,
-                      decoration: TextDecoration.none,
-                    ),
+                ),
+                Container(height: 1, color: LD.border, margin: const EdgeInsets.only(bottom: 24)),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontFamily: kSerif,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w300,
+                    color: LD.ink,
+                    height: 1.15,
+                    decoration: TextDecoration.none,
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    widget.desc,
-                    style: bodyText(size: 14, color: LD.ink3),
-                  ),
-                  const SizedBox(height: 28),
-                  // Bottom accent bar
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 350),
-                    height: 2,
-                    width: _hover ? double.infinity : 0,
-                    color: LD.sph,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 16),
+                Text(desc, style: bodyText(size: 14, color: LD.ink3)),
+              ],
             ),
           ),
         ),
@@ -1510,77 +1654,98 @@ class _StepCardState extends State<_StepCard> {
 }
 
 // ============================================================
-// Fleet Section
+// Fleet — dark editorial with car assets
 // ============================================================
 
 class _FleetSection extends StatelessWidget {
   const _FleetSection();
 
   static const _vehicles = [
-    _VehicleData(
+    _FleetItem(
       cls: 'Business Class',
-      model: 'Mercedes E-Class or similar',
-      tags: ['3 passengers', 'WiFi', 'Fixed price'],
+      model: 'Mercedes E-Class\nor similar',
+      asset: 'assets/images/vehicles/business/car.png',
+      tags: ['Up to 3 passengers', 'Fixed price', 'WiFi'],
+      accent: Color(0xFF1B4F8A),
     ),
-    _VehicleData(
+    _FleetItem(
       cls: 'First Class',
-      model: 'Mercedes S-Class or similar',
-      tags: ['3 passengers', 'Premium audio', 'Champagne'],
+      model: 'Mercedes S-Class\nor similar',
+      asset: 'assets/images/vehicles/first_class/car.png',
+      tags: ['Up to 3 passengers', 'Premium audio', 'Champagne'],
+      accent: Color(0xFF3D2080),
     ),
-    _VehicleData(
+    _FleetItem(
       cls: 'Business Van',
-      model: 'Mercedes V-Class or similar',
-      tags: ['7 passengers', 'Extra luggage', 'WiFi'],
+      model: 'Mercedes V-Class\nor similar',
+      asset: 'assets/images/vehicles/van/car.png',
+      tags: ['Up to 7 passengers', 'Extra luggage', 'WiFi'],
+      accent: Color(0xFF0D3066),
     ),
-    _VehicleData(
+    _FleetItem(
       cls: 'Electric',
-      model: 'Tesla Model S or similar',
-      tags: ['3 passengers', 'Zero emissions', 'WiFi'],
+      model: 'Tesla Model S\nor similar',
+      asset: 'assets/images/vehicles/electric/car.png',
+      tags: ['Up to 3 passengers', 'Zero emissions', 'Tech interior'],
+      accent: Color(0xFF1A5C3A),
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: LD.bg2,
-      padding: const EdgeInsets.fromLTRB(64, 100, 0, 100),
+      color: LD.dark,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(right: 64),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            padding: const EdgeInsets.fromLTRB(64, 100, 64, 56),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                RevealOnScroll(child: const LuxEyebrow('Our Fleet')),
-                const SizedBox(height: 20),
-                RevealOnScroll(
-                  delay: const Duration(milliseconds: 100),
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Premium vehicles,',
-                          style: displayText(size: 52, color: LD.ink)),
-                      Text('no exceptions.',
-                          style: displayText(size: 52, color: LD.ink)),
+                      RevealOnScroll(child: const LuxEyebrow('Our Fleet', dark: true)),
+                      const SizedBox(height: 20),
+                      RevealOnScroll(
+                        delay: const Duration(milliseconds: 80),
+                        child: Text(
+                          'Premium vehicles,\nno exceptions.',
+                          style: displayText(size: 52, color: Colors.white),
+                        ),
+                      ),
                     ],
+                  ),
+                ),
+                RevealOnScroll(
+                  delay: const Duration(milliseconds: 160),
+                  child: Text(
+                    'Swipe to explore →'.toUpperCase(),
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 9,
+                      letterSpacing: 2.4,
+                      color: Colors.white.withAlpha(60),
+                      decoration: TextDecoration.none,
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 48),
-          // Horizontal scroll cards
           SizedBox(
-            height: 360,
+            height: 460,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(right: 64),
+              padding: const EdgeInsets.fromLTRB(64, 0, 64, 0),
               itemCount: _vehicles.length,
               separatorBuilder: (_, __) => const SizedBox(width: 2),
-              itemBuilder: (_, i) => _FleetCard(data: _vehicles[i]),
+              itemBuilder: (_, i) => _FleetCard(item: _vehicles[i]),
             ),
           ),
+          const SizedBox(height: 72),
         ],
       ),
     );
@@ -1588,159 +1753,176 @@ class _FleetSection extends StatelessWidget {
 }
 
 @immutable
-class _VehicleData {
-  const _VehicleData(
-      {required this.cls, required this.model, required this.tags});
+class _FleetItem {
+  const _FleetItem({
+    required this.cls,
+    required this.model,
+    required this.asset,
+    required this.tags,
+    required this.accent,
+  });
   final String cls;
   final String model;
+  final String asset;
   final List<String> tags;
+  final Color accent;
 }
 
 class _FleetCard extends StatefulWidget {
-  const _FleetCard({required this.data});
-  final _VehicleData data;
+  const _FleetCard({required this.item});
+  final _FleetItem item;
 
   @override
   State<_FleetCard> createState() => _FleetCardState();
 }
 
 class _FleetCardState extends State<_FleetCard> {
-  double _rotX = 0, _rotY = 0;
   bool _hover = false;
 
-  void _onHover(PointerEvent e) {
-    final box = context.findRenderObject() as RenderBox?;
-    if (box == null) return;
-    final local = box.globalToLocal(e.position);
-    final w = box.size.width;
-    final h = box.size.height;
-    setState(() {
-      _rotX = -(local.dy / h - 0.5) * 12;
-      _rotY = (local.dx / w - 0.5) * 12;
-    });
-  }
-
   @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hover = true),
-      onExit: (_) {
-        setState(() {
-          _hover = false;
-          _rotX = 0;
-          _rotY = 0;
-        });
-      },
-      onHover: _onHover,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 400,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: _hover
-              ? [
-                  BoxShadow(
-                    color: LD.ink.withAlpha(15),
-                    blurRadius: 32,
-                    offset: const Offset(0, 8),
-                  )
-                ]
-              : [],
-        ),
-        transformAlignment: Alignment.center,
-        transform: Matrix4.identity()
-          ..setEntry(3, 2, 0.001)
-          ..rotateX(_rotX * math.pi / 180)
-          ..rotateY(_rotY * math.pi / 180),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Image placeholder
-            Container(
-              height: 220,
-              color: LD.bg3,
-              child: Stack(
-                children: [
-                  Center(
-                    child: Icon(Icons.directions_car_rounded,
-                        size: 80, color: LD.border),
-                  ),
-                  // Desaturation overlay
-                  Container(
-                    color:
-                        LD.bg2.withAlpha(_hover ? 0 : 30),
-                  ),
-                ],
-              ),
+  Widget build(BuildContext context) => MouseRegion(
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        cursor: SystemMouseCursors.click,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 280),
+          width: 340,
+          decoration: BoxDecoration(
+            color: const Color(0xFF0D1B2E),
+            border: Border.all(
+              color: _hover ? widget.item.accent.withAlpha(180) : Colors.white.withAlpha(12),
             ),
-            // Info
-            Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    widget.data.cls.toUpperCase(),
-                    style: const TextStyle(
-                      fontFamily: kSans,
-                      fontSize: 9,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: 2.8,
-                      color: LD.sph,
-                      decoration: TextDecoration.none,
+          ),
+          child: Stack(
+            children: [
+              // Accent gradient wash
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        widget.item.accent.withAlpha(_hover ? 45 : 20),
+                        Colors.transparent,
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 6),
-                  Text(
-                    widget.data.model,
-                    style: const TextStyle(
-                      fontFamily: kSerif,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400,
-                      color: LD.ink,
-                      decoration: TextDecoration.none,
+                ),
+              ),
+              // Car image
+              Positioned(
+                bottom: 110,
+                left: 0,
+                right: 0,
+                height: 220,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Image.asset(
+                    widget.item.asset,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => Icon(
+                      Icons.directions_car_rounded,
+                      size: 80,
+                      color: Colors.white.withAlpha(16),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: widget.data.tags
-                        .map((t) => Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: LD.border),
-                              ),
-                              child: Text(
-                                t,
-                                style: const TextStyle(
-                                  fontFamily: kSans,
-                                  fontSize: 9,
-                                  letterSpacing: 1.0,
-                                  color: LD.ink3,
-                                  decoration: TextDecoration.none,
-                                ),
-                              ),
-                            ))
-                        .toList(),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+              // Bottom info bar
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      top: BorderSide(
+                        color: _hover
+                            ? widget.item.accent.withAlpha(120)
+                            : Colors.white.withAlpha(14),
+                      ),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.item.cls.toUpperCase(),
+                        style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 2.8,
+                          color: _hover
+                              ? widget.item.accent == const Color(0xFF1B4F8A)
+                                  ? LD.sphLt
+                                  : Colors.white.withAlpha(200)
+                              : Colors.white.withAlpha(110),
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        widget.item.model,
+                        style: const TextStyle(
+                          fontFamily: kSerif,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w300,
+                          color: Colors.white,
+                          height: 1.2,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: widget.item.tags
+                            .map((t) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.white.withAlpha(18)),
+                                  ),
+                                  child: Text(
+                                    t,
+                                    style: TextStyle(
+                                      fontFamily: kSans,
+                                      fontSize: 9,
+                                      letterSpacing: 0.8,
+                                      color: Colors.white.withAlpha(90),
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                ))
+                            .toList(),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
 
 // ============================================================
-// Experience Section
+// Experience — 4-column feature strip
 // ============================================================
 
 class _ExperienceSection extends StatelessWidget {
   const _ExperienceSection();
+
+  static const _features = [
+    (Icons.schedule_rounded,       'Always on time',   'Flight tracking and proactive planning ensure your driver is ready when you are.'),
+    (Icons.receipt_long_outlined,  'Fixed pricing',    'One clear price from the start. Agreed before you step in — no exceptions.'),
+    (Icons.shield_outlined,        'Fully insured',    'Every ride is backed by comprehensive commercial insurance across all territories.'),
+    (Icons.language_rounded,       'Multilingual',     'Comfortable conversation, guaranteed discretion. We speak your language.'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -1750,47 +1932,69 @@ class _ExperienceSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          RevealOnScroll(child: const LuxEyebrow('The Luxelane Experience')),
-          const SizedBox(height: 20),
-          RevealOnScroll(
-            delay: const Duration(milliseconds: 100),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Every detail,',
-                    style: displayText(size: 52, color: LD.ink)),
-                Text('considered.',
-                    style: displayText(size: 52, color: LD.ink)),
-              ],
-            ),
-          ),
-          const SizedBox(height: 64),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              _ExpCard(
-                icon: Icons.schedule_rounded,
-                title: 'Always On Time',
-                desc:
-                    'Flight tracking, real-time traffic, and proactive planning ensure your driver is always ready.',
-                delay: Duration.zero,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RevealOnScroll(child: const LuxEyebrow('The Experience')),
+                    const SizedBox(height: 20),
+                    RevealOnScroll(
+                      delay: const Duration(milliseconds: 80),
+                      child: Text(
+                        'Every detail,\nconsidered.',
+                        style: displayText(size: 52, color: LD.ink),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(width: 2),
-              _ExpCard(
-                icon: Icons.receipt_long_outlined,
-                title: 'Fixed Pricing',
-                desc:
-                    'One clear price from the start. No surge, no hidden fees. Agreed before you step in.',
-                delay: const Duration(milliseconds: 100),
-              ),
-              const SizedBox(width: 2),
-              _ExpCard(
-                icon: Icons.star_border_rounded,
-                title: '5-Star Standard',
-                desc:
-                    'Vetted, trained, uniformed chauffeurs in premium vehicles — every single ride.',
-                delay: const Duration(milliseconds: 220),
-              ),
+              const Expanded(child: SizedBox()),
             ],
+          ),
+          const SizedBox(height: 72),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: _features.asMap().entries.map((e) {
+              final i = e.key;
+              final f = e.value;
+              return Expanded(
+                child: RevealOnScroll(
+                  delay: Duration(milliseconds: i * 80),
+                  dy: 24,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        right: i < _features.length - 1 ? 48 : 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          height: 1,
+                          color: LD.sph,
+                          margin: const EdgeInsets.only(bottom: 24),
+                        ),
+                        Icon(f.$1, size: 22, color: LD.sph),
+                        const SizedBox(height: 20),
+                        Text(
+                          f.$2,
+                          style: const TextStyle(
+                            fontFamily: kSerif,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w400,
+                            color: LD.ink,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(f.$3, style: bodyText(size: 13, color: LD.ink3)),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }).toList(),
           ),
         ],
       ),
@@ -1798,143 +2002,128 @@ class _ExperienceSection extends StatelessWidget {
   }
 }
 
-class _ExpCard extends StatefulWidget {
-  const _ExpCard({
-    required this.icon,
-    required this.title,
-    required this.desc,
-    required this.delay,
-  });
-  final IconData icon;
-  final String title;
-  final String desc;
-  final Duration delay;
-
-  @override
-  State<_ExpCard> createState() => _ExpCardState();
-}
-
-class _ExpCardState extends State<_ExpCard> {
-  bool _hover = false;
-
-  @override
-  Widget build(BuildContext context) => Expanded(
-        child: RevealOnScroll(
-          delay: widget.delay,
-          dy: 20,
-          child: MouseRegion(
-            onEnter: (_) => setState(() => _hover = true),
-            onExit: (_) => setState(() => _hover = false),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              transform: Matrix4.translationValues(0, _hover ? -4 : 0, 0),
-              padding: const EdgeInsets.all(32),
-              color: LD.bg2,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Top accent bar
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 350),
-                    height: 2,
-                    width: _hover ? double.infinity : 0,
-                    color: LD.sph,
-                    margin: const EdgeInsets.only(bottom: 24),
-                  ),
-                  Icon(widget.icon, size: 28, color: LD.sph),
-                  const SizedBox(height: 20),
-                  Text(
-                    widget.title,
-                    style: const TextStyle(
-                      fontFamily: kSerif,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w400,
-                      color: LD.ink,
-                      decoration: TextDecoration.none,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(widget.desc,
-                      style: bodyText(size: 14, color: LD.ink3)),
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-}
-
 // ============================================================
-// Testimonials
+// Testimonials — large editorial rotating quote
 // ============================================================
 
-class _TestimonialsSection extends StatelessWidget {
+class _TestimonialsSection extends StatefulWidget {
   const _TestimonialsSection();
+
+  @override
+  State<_TestimonialsSection> createState() => _TestimonialsSectionState();
+}
+
+class _TestimonialsSectionState extends State<_TestimonialsSection> {
+  int _current = 0;
 
   static const _reviews = [
     (
-      quote: 'Absolutely impeccable service from start to finish. The driver was professional, punctual, and the car was immaculate.',
+      quote: 'Absolutely impeccable from start to finish. The driver was early, the car immaculate. I won\'t use anyone else.',
       name: 'Alexandra M.',
-      location: 'London, UK'
+      location: 'London, UK',
     ),
     (
-      quote: 'I use Luxelane for all my business travel. Fixed pricing and reliable drivers make it the only chauffeur service I trust.',
+      quote: 'Fixed pricing and reliable drivers make Luxelane the only chauffeur service I trust for all my business travel.',
       name: 'Marcus T.',
-      location: 'New York, USA'
+      location: 'New York, USA',
     ),
     (
-      quote: 'From airport pickup to hotel, every detail was handled perfectly. This is what luxury travel should feel like.',
+      quote: 'From airport to hotel, every detail was handled perfectly. This is what luxury travel should feel like.',
       name: 'Isabelle R.',
-      location: 'Paris, France'
-    ),
-    (
-      quote: 'The booking process is seamless and the pricing is transparent. No surprises — just exceptional service.',
-      name: 'David K.',
-      location: 'Dubai, UAE'
+      location: 'Paris, France',
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final r = _reviews[_current];
     return Container(
-      color: LD.sphTint,
-      padding:
-          const EdgeInsets.fromLTRB(64, 100, 0, 100),
+      color: const Color(0xFFF7F5F0),
+      padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 140),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(right: 64),
+          // Decorative quote mark
+          RevealOnScroll(
+            child: Text(
+              '“',
+              style: TextStyle(
+                fontFamily: kSerif,
+                fontSize: 180,
+                fontWeight: FontWeight.w300,
+                color: LD.sph.withAlpha(35),
+                height: 0.6,
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Rotating quote
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            child: Text(
+              r.quote,
+              key: ValueKey(_current),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: kSerif,
+                fontSize: 34,
+                fontWeight: FontWeight.w300,
+                fontStyle: FontStyle.italic,
+                color: LD.ink,
+                height: 1.6,
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ),
+          const SizedBox(height: 44),
+          // Attribution
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 400),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              key: ValueKey('attr_$_current'),
               children: [
-                RevealOnScroll(
-                    child: const LuxEyebrow('What Our Clients Say')),
-                const SizedBox(height: 20),
-                RevealOnScroll(
-                  delay: const Duration(milliseconds: 100),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Trust, built',
-                          style: displayText(size: 52, color: LD.ink)),
-                      Text('one ride at a time.',
-                          style: displayText(size: 52, color: LD.ink)),
-                    ],
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    5,
+                    (_) => const Icon(Icons.star_rounded,
+                        size: 12, color: LD.sph),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  '${r.name} · ${r.location}'.toUpperCase(),
+                  style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 2.0,
+                    color: LD.ink3,
+                    decoration: TextDecoration.none,
                   ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 48),
-          SizedBox(
-            height: 260,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(right: 64),
-              itemCount: _reviews.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 2),
-              itemBuilder: (_, i) => _ReviewCard(r: _reviews[i]),
+          // Dot navigation
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(
+              _reviews.length,
+              (i) => GestureDetector(
+                onTap: () => setState(() => _current = i),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  width: i == _current ? 28 : 6,
+                  height: 6,
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  decoration: BoxDecoration(
+                    color: i == _current ? LD.sph : LD.border,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -1943,170 +2132,188 @@ class _TestimonialsSection extends StatelessWidget {
   }
 }
 
-class _ReviewCard extends StatelessWidget {
-  const _ReviewCard({required this.r});
-  final ({String quote, String name, String location}) r;
+// ============================================================
+// Business — dark split section
+// ============================================================
+
+class _BusinessSection extends StatelessWidget {
+  const _BusinessSection();
+
+  static const _perks = [
+    'Centralised billing & invoicing',
+    'Dedicated account manager',
+    'Travel policy compliance tools',
+    'Priority booking for executives',
+    'Real-time ride monitoring',
+    'Multi-city global coverage',
+  ];
 
   @override
-  Widget build(BuildContext context) => Container(
-        width: 400,
-        color: Colors.white,
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: List.generate(
-                5,
-                (_) => const Icon(Icons.star_rounded,
-                    size: 14, color: LD.sph),
+  Widget build(BuildContext context) {
+    return Container(
+      color: LD.dark,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Left — headline block
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(64, 100, 64, 100),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RevealOnScroll(
+                    child: const LuxEyebrow('For Business', dark: true),
+                  ),
+                  const SizedBox(height: 28),
+                  RevealOnScroll(
+                    delay: const Duration(milliseconds: 80),
+                    child: Text(
+                      'Corporate travel,\nredefined.',
+                      style: displayText(size: 52, color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  RevealOnScroll(
+                    delay: const Duration(milliseconds: 160),
+                    child: Text(
+                      'Luxelane for Business gives your team access to premium chauffeur service with the controls and reporting your finance team demands.',
+                      style: bodyText(
+                          size: 14, color: const Color(0x78FFFFFF)),
+                    ),
+                  ),
+                  const SizedBox(height: 44),
+                  RevealOnScroll(
+                    delay: const Duration(milliseconds: 220),
+                    child: _GhostBtn(
+                        label: 'Learn More', light: true, onTap: () {}),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: Text(
-                '"${r.quote}"',
-                style: const TextStyle(
-                  fontFamily: kSerif,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w300,
-                  fontStyle: FontStyle.italic,
-                  color: LD.ink,
-                  height: 1.55,
-                  decoration: TextDecoration.none,
-                ),
+          ),
+          // Right — numbered perks list
+          Expanded(
+            child: Container(
+              color: const Color(0xFF0D1B2E),
+              padding: const EdgeInsets.fromLTRB(64, 100, 64, 100),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: _perks.asMap().entries.map((e) {
+                  final i = e.key;
+                  return RevealOnScroll(
+                    delay: Duration(milliseconds: i * 70),
+                    dy: 16,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 22),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                              color: Colors.white.withAlpha(14)),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Text(
+                            '0${i + 1}',
+                            style: TextStyle(
+                              fontFamily: kSerif,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w300,
+                              color: LD.sphLt.withAlpha(140),
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Text(
+                            e.value,
+                            style: const TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white,
+                              letterSpacing: 0.2,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                          const Spacer(),
+                          Icon(Icons.arrow_forward,
+                              size: 13,
+                              color: Colors.white.withAlpha(35)),
+                        ],
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
-            const SizedBox(height: 16),
-            Container(height: 1, color: LD.border),
-            const SizedBox(height: 16),
-            Text(
-              '${r.name} · ${r.location}'.toUpperCase(),
-              style: const TextStyle(
-                fontFamily: kSans,
-                fontSize: 10,
-                fontWeight: FontWeight.w400,
-                letterSpacing: 1.6,
-                color: LD.ink2,
-                decoration: TextDecoration.none,
-              ),
-            ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 // ============================================================
-// CTA Section
+// CTA — full-bleed editorial
 // ============================================================
 
-class _CtaSection extends StatefulWidget {
+class _CtaSection extends StatelessWidget {
   const _CtaSection();
-
-  @override
-  State<_CtaSection> createState() => _CtaSectionState();
-}
-
-class _CtaSectionState extends State<_CtaSection>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _orb;
-
-  @override
-  void initState() {
-    super.initState();
-    _orb = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 8),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _orb.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: LD.ink,
-      padding: const EdgeInsets.symmetric(vertical: 160, horizontal: 64),
-      child: Stack(
-        alignment: Alignment.center,
+      padding: const EdgeInsets.fromLTRB(64, 140, 64, 140),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Animated orb
-          AnimatedBuilder(
-            animation: _orb,
-            builder: (_, __) {
-              final pulse =
-                  0.7 + 0.3 * math.sin(_orb.value * math.pi * 2);
-              return Container(
-                width: 800 * pulse,
-                height: 800 * pulse,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      LD.sph.withAlpha((50 * pulse).round()),
-                      Colors.transparent,
-                    ],
+          RevealOnScroll(
+            child: Text('Your next ride,',
+                style: displayText(size: 96, color: Colors.white)),
+          ),
+          RevealOnScroll(
+            delay: const Duration(milliseconds: 80),
+            child: Text(
+              'on your terms.',
+              style: displayText(
+                  size: 96, color: Colors.white, style: FontStyle.italic),
+            ),
+          ),
+          const SizedBox(height: 48),
+          RevealOnScroll(
+            delay: const Duration(milliseconds: 160),
+            child: Text(
+              'Fixed price  ·  Professional chauffeurs  ·  Worldwide',
+              style: TextStyle(
+                fontFamily: kSans,
+                fontSize: 11,
+                fontWeight: FontWeight.w300,
+                letterSpacing: 2.8,
+                color: Colors.white.withAlpha(90),
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ),
+          const SizedBox(height: 52),
+          RevealOnScroll(
+            delay: const Duration(milliseconds: 220),
+            child: Row(
+              children: [
+                BlocBuilder<AuthBloc, AuthState>(
+                  builder: (ctx, auth) => _SolidBtn(
+                    label: auth is AuthAuthenticated
+                        ? 'Book a Ride'
+                        : 'Get Started',
+                    white: true,
+                    onTap: () => ctx.go('/'),
                   ),
                 ),
-              );
-            },
-          ),
-          Column(
-            children: [
-              RevealOnScroll(
-                child: Column(
-                  children: [
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        style: displayText(size: 88, color: Colors.white),
-                        children: const [
-                          TextSpan(text: 'Your next journey\nstarts '),
-                          TextSpan(
-                            text: 'here.',
-                            style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              color: LD.sphLt,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    Text(
-                      'Book in under 2 minutes. Fixed price guaranteed.',
-                      style: bodyText(size: 15,
-                          color: Colors.white.withAlpha(160)),
-                    ),
-                    const SizedBox(height: 40),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        BlocBuilder<AuthBloc, AuthState>(
-                          builder: (ctx, auth) => _SolidBtn(
-                            label: auth is AuthAuthenticated
-                                ? 'Book a Ride'
-                                : 'Get Started',
-                            white: true,
-                            onTap: () => ctx.go('/'),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        _GhostBtn(
-                          label: 'View Fleet',
-                          light: true,
-                          onTap: () {},
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
+                const SizedBox(width: 20),
+                _GhostBtn(label: 'View Fleet', light: true, onTap: () {}),
+              ],
+            ),
           ),
         ],
       ),
