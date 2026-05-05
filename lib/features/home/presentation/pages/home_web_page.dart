@@ -1407,7 +1407,8 @@ class _PromiseSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: LD.dark,
-      child: Row(
+      child: IntrinsicHeight(
+        child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Left — atmospheric car panel
@@ -1444,6 +1445,7 @@ class _PromiseSection extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }
@@ -2152,7 +2154,8 @@ class _BusinessSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: LD.dark,
-      child: Row(
+      child: IntrinsicHeight(
+        child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Left — headline block
@@ -2249,6 +2252,7 @@ class _BusinessSection extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }
