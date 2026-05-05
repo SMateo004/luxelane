@@ -74,9 +74,12 @@ class _WebShell extends StatelessWidget {
                   child: _WebRail(shell: shell, tabs: tabs),
                 )
               : null,
+          // Home page (index 0) has its own full-bleed nav overlay —
+          // don't add a second header above it.
           body: Column(
             children: [
-              _WebNav(isAuth: isAuth, auth: auth, shell: shell),
+              if (shell.currentIndex != 0)
+                _WebNav(isAuth: isAuth, auth: auth, shell: shell),
               Expanded(child: shell),
             ],
           ),

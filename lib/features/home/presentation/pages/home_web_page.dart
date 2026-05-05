@@ -1,14 +1,10 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart' show Ticker;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/place_model.dart';
-import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/place_autocomplete_field.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../notifications/presentation/widgets/notification_bell.dart';
@@ -153,8 +149,10 @@ class _LuxNav extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       height: 72,
       decoration: BoxDecoration(
+        // Solid semi-opaque bg when scrolled — no BackdropFilter
+        // (BackdropFilter blurs ALL content below in Flutter Web)
         color: scrolled
-            ? const Color(0xF0FAFBFE)
+            ? const Color(0xF2FAFBFE)
             : Colors.transparent,
         border: Border(
           bottom: BorderSide(
@@ -163,47 +161,37 @@ class _LuxNav extends StatelessWidget {
           ),
         ),
       ),
-      child: BackdropFilter(
-        filter: scrolled
-            ? ImageFilter.blur(sigmaX: 24, sigmaY: 24)
-            : ImageFilter.blur(sigmaX: 0, sigmaY: 0),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 56),
-          child: Row(
-            children: [
-              // Logo
-              _LuxLogo(light: !scrolled),
-              const Spacer(),
-              // Nav links
-              _NavLink('Services', light: !scrolled, onTap: () {}),
-              const SizedBox(width: 32),
-              _NavLink('Fleet', light: !scrolled, onTap: () {}),
-              const SizedBox(width: 32),
-              _NavLink('For Business', light: !scrolled, onTap: () {}),
-              const SizedBox(width: 40),
-              // Auth-sensitive items
-              BlocBuilder<AuthBloc, AuthState>(
-                builder: (ctx, auth) {
-                  if (auth is AuthAuthenticated) {
-                    return Row(children: [
-                      NotificationBell(
-                        color: scrolled ? LD.ink : Colors.white,
-                      ),
-                      const SizedBox(width: 8),
-                      _AvatarDot(name: auth.user.displayName,
-                          onTap: () => ctx.go('/profile')),
-                    ]);
-                  }
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 56),
+        child: Row(
+          children: [
+            _LuxLogo(light: !scrolled),
+            const Spacer(),
+            _NavLink('Services', light: !scrolled, onTap: () {}),
+            const SizedBox(width: 32),
+            _NavLink('Fleet', light: !scrolled, onTap: () {}),
+            const SizedBox(width: 32),
+            _NavLink('For Business', light: !scrolled, onTap: () {}),
+            const SizedBox(width: 40),
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (ctx, auth) {
+                if (auth is AuthAuthenticated) {
                   return Row(children: [
-                    _NavLink('Sign In', light: !scrolled,
-                        onTap: () => ctx.go('/login')),
-                    const SizedBox(width: 20),
-                    _NavCta(onTap: () => ctx.go('/')),
+                    NotificationBell(color: scrolled ? LD.ink : Colors.white),
+                    const SizedBox(width: 8),
+                    _AvatarDot(name: auth.user.displayName,
+                        onTap: () => ctx.go('/profile')),
                   ]);
-                },
-              ),
-            ],
-          ),
+                }
+                return Row(children: [
+                  _NavLink('Sign In', light: !scrolled,
+                      onTap: () => ctx.go('/login')),
+                  const SizedBox(width: 20),
+                  _NavCta(onTap: () => ctx.go('/')),
+                ]);
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -409,7 +397,6 @@ class _HeroSection extends StatefulWidget {
 class _HeroSectionState extends State<_HeroSection>
     with SingleTickerProviderStateMixin {
   late AnimationController _intro;
-  Offset _mouseNorm = const Offset(0.5, 0.5);
 
   @override
   void initState() {
@@ -435,150 +422,176 @@ class _HeroSectionState extends State<_HeroSection>
   @override
   Widget build(BuildContext context) {
     final h = MediaQuery.sizeOf(context).height - 72;
-    return MouseRegion(
-      onHover: (e) {
-        final s = MediaQuery.sizeOf(context);
-        setState(() => _mouseNorm =
-            Offset(e.position.dx / s.width, e.position.dy / s.height));
-      },
-      child: SizedBox(
-        height: h,
-        child: Stack(
-          children: [
-            // Canvas background
-            Positioned.fill(
-              child: _HeroCanvas(
-                mouseNorm: _mouseNorm,
-                scrollY: widget.scrollY,
-              ),
-            ),
-            // White gradient overlay (left side)
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      LD.bg.withAlpha(245),
-                      LD.bg.withAlpha(200),
-                      LD.bg.withAlpha(100),
-                      Colors.transparent,
-                    ],
-                    stops: const [0, 0.35, 0.55, 0.75],
-                  ),
+    return SizedBox(
+      height: h,
+      child: Stack(
+        children: [
+          // ── Full-bleed luxury photo ──────────────────────────────────
+          const Positioned.fill(child: _HeroBg()),
+
+          // ── Top vignette — nav legibility ────────────────────────────
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    const Color(0xFF060C16).withAlpha(210),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.38],
                 ),
               ),
             ),
-            // Left content
-            Positioned(
-              left: 64,
-              top: 0,
-              bottom: 0,
-              width: 560,
+          ),
+
+          // ── Bottom gradient — booking bar legibility ─────────────────
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    const Color(0xFF060C16).withAlpha(240),
+                    const Color(0xFF060C16).withAlpha(160),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.28, 0.55],
+                ),
+              ),
+            ),
+          ),
+
+          // ── Centred headline ─────────────────────────────────────────
+          Positioned(
+            left: 0, right: 0,
+            top: 0,
+            bottom: 200,
+            child: Center(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Eyebrow
                   FadeTransition(
-                    opacity: _fade(0.0, 0.4),
-                    child: const LuxEyebrow(
-                        'Professional Chauffeur Service — Worldwide'),
-                  ),
-                  const SizedBox(height: 28),
-                  // Hero title — 3 lines
-                  _ClipReveal(
-                    delay: const Duration(milliseconds: 500),
-                    child: Text('Your journey,',
-                        style: displayText(size: 72, color: LD.ink)),
-                  ),
-                  _ClipReveal(
-                    delay: const Duration(milliseconds: 650),
-                    child: Text('perfectly',
-                        style: displayText(
-                          size: 72,
-                          color: LD.sph,
-                          style: FontStyle.italic,
-                        )),
-                  ),
-                  _ClipReveal(
-                    delay: const Duration(milliseconds: 800),
-                    child: Text('driven.',
-                        style: displayText(size: 72, color: LD.ink)),
-                  ),
-                  const SizedBox(height: 28),
-                  // Sub-text
-                  FadeTransition(
-                    opacity: _fade(0.55, 0.85),
+                    opacity: _fade(0.0, 0.45),
                     child: Text(
-                      'Fixed prices · Professional drivers\nAvailable in 50+ countries worldwide.',
-                      style: bodyText(size: 15, color: LD.ink2),
+                      'PROFESSIONAL CHAUFFEUR SERVICE',
+                      style: TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 4.0,
+                        color: Colors.white.withAlpha(140),
+                        decoration: TextDecoration.none,
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 36),
-                  // CTAs
-                  FadeTransition(
-                    opacity: _fade(0.65, 0.95),
-                    child: Row(
-                      children: [
-                        _SolidBtn(
-                          label: 'Book a Ride',
-                          onTap: widget.onSearch,
-                        ),
-                        const SizedBox(width: 16),
-                        _GhostBtn(
-                          label: 'View Fleet',
-                          onTap: () {},
-                        ),
-                      ],
+                  const SizedBox(height: 22),
+                  _ClipReveal(
+                    delay: const Duration(milliseconds: 300),
+                    child: Text(
+                      'Your chauffeur awaits.',
+                      textAlign: TextAlign.center,
+                      style: displayText(size: 78, color: Colors.white),
                     ),
                   ),
                 ],
               ),
             ),
-            // Booking card (right side)
-            Positioned(
-              right: 64,
-              top: 0,
-              bottom: 0,
-              child: Center(
-                child: FadeTransition(
-                  opacity: _fade(0.6, 1.0),
-                  child: _BookingCard(
-                    serviceType: widget.serviceType,
-                    origin: widget.origin,
-                    destination: widget.destination,
-                    date: widget.date,
-                    hours: widget.hours,
-                    locating: widget.locating,
-                    onServiceTypeChanged: widget.onServiceTypeChanged,
-                    onOriginSelected: widget.onOriginSelected,
-                    onDestinationSelected: widget.onDestinationSelected,
-                    onDateChanged: widget.onDateChanged,
-                    onHoursChanged: widget.onHoursChanged,
-                    onLocate: widget.onLocate,
-                    onSearch: widget.onSearch,
-                    onOriginMapPick: widget.onOriginMapPick,
-                    onDestinationMapPick: widget.onDestinationMapPick,
-                  ),
-                ),
+          ),
+
+          // ── Bottom booking bar ────────────────────────────────────────
+          Positioned(
+            bottom: 0, left: 0, right: 0,
+            child: FadeTransition(
+              opacity: _fade(0.45, 1.0),
+              child: _BottomBookingBar(
+                serviceType: widget.serviceType,
+                origin: widget.origin,
+                destination: widget.destination,
+                date: widget.date,
+                hours: widget.hours,
+                locating: widget.locating,
+                onServiceTypeChanged: widget.onServiceTypeChanged,
+                onOriginSelected: widget.onOriginSelected,
+                onDestinationSelected: widget.onDestinationSelected,
+                onDateChanged: widget.onDateChanged,
+                onHoursChanged: widget.onHoursChanged,
+                onLocate: widget.onLocate,
+                onSearch: widget.onSearch,
+                onOriginMapPick: widget.onOriginMapPick,
+                onDestinationMapPick: widget.onDestinationMapPick,
               ),
             ),
-            // Stats row (bottom left)
-            Positioned(
-              left: 64,
-              bottom: 40,
-              child: FadeTransition(
-                opacity: _fade(0.75, 1.0),
-                child: const _HeroStats(),
-              ),
-            ),
-          ],
-        ),
+          ),
+
+        ],
       ),
     );
   }
+}
+
+// ============================================================
+// Luxury photo background
+// ============================================================
+
+class _HeroBg extends StatelessWidget {
+  const _HeroBg();
+
+  // Place your hero photo at:  assets/images/home/hero_bg.jpg
+  // Any JPG/PNG with a luxury interior or exterior works great.
+  static const _assetPath = 'assets/images/home/hero_bg.png';
+
+  @override
+  Widget build(BuildContext context) => Stack(
+        fit: StackFit.expand,
+        children: [
+          // Deep luxury gradient — always visible, image layers on top
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF060C16),
+                  Color(0xFF0D1B2E),
+                  Color(0xFF091525),
+                ],
+              ),
+            ),
+          ),
+          // Subtle texture dots (pure Flutter, no image needed)
+          CustomPaint(painter: _DotGridPainter(), child: const SizedBox.expand()),
+          // Hero photo — load from local assets
+          Image.asset(
+            _assetPath,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+            // If the file doesn't exist yet, SizedBox keeps the gradient showing
+            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+          ),
+        ],
+      );
+}
+
+/// Subtle dot grid painted over the dark gradient (visible when no photo yet)
+class _DotGridPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()..color = const Color(0x0FFFFFFF);
+    const spacing = 40.0;
+    const radius = 1.2;
+    for (double x = spacing; x < size.width; x += spacing) {
+      for (double y = spacing; y < size.height; y += spacing) {
+        canvas.drawCircle(Offset(x, y), radius, paint);
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DotGridPainter old) => false;
 }
 
 // Clip-reveal animation for headline lines
@@ -625,7 +638,315 @@ class _ClipRevealState extends State<_ClipReveal>
       );
 }
 
+// ============================================================
+// Bottom Booking Bar  (Blacklane-style)
+// ============================================================
+
+class _BottomBookingBar extends StatelessWidget {
+  const _BottomBookingBar({
+    required this.serviceType,
+    required this.origin,
+    required this.destination,
+    required this.date,
+    required this.hours,
+    required this.locating,
+    required this.onServiceTypeChanged,
+    required this.onOriginSelected,
+    required this.onDestinationSelected,
+    required this.onDateChanged,
+    required this.onHoursChanged,
+    required this.onLocate,
+    required this.onSearch,
+    required this.onOriginMapPick,
+    required this.onDestinationMapPick,
+  });
+
+  final ServiceType serviceType;
+  final Place? origin;
+  final Place? destination;
+  final DateTime date;
+  final int hours;
+  final bool locating;
+  final ValueChanged<ServiceType> onServiceTypeChanged;
+  final ValueChanged<Place> onOriginSelected;
+  final ValueChanged<Place> onDestinationSelected;
+  final ValueChanged<DateTime> onDateChanged;
+  final ValueChanged<int> onHoursChanged;
+  final VoidCallback onLocate;
+  final VoidCallback onSearch;
+  final VoidCallback onOriginMapPick;
+  final VoidCallback onDestinationMapPick;
+
+  @override
+  Widget build(BuildContext context) {
+    final isOneWay = serviceType == ServiceType.oneWay;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(56, 0, 56, 48),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── Service type pill toggle ──────────────────────────────────
+          _ServicePillToggle(
+            isOneWay: isOneWay,
+            onChanged: onServiceTypeChanged,
+          ),
+          const SizedBox(height: 12),
+
+          // ── Horizontal booking bar ────────────────────────────────────
+          Container(
+            height: 72,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF060C16).withAlpha(80),
+                  blurRadius: 40,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                // Pickup
+                Expanded(
+                  flex: 3,
+                  child: _BarField(
+                    label: 'PICKUP',
+                    icon: Icons.trip_origin,
+                    child: _LightField(
+                      child: PlaceAutocompleteField(
+                        label: 'Where are you?',
+                        hint: 'Street, airport, hotel…',
+                        initialValue: origin,
+                        onPlaceSelected: onOriginSelected,
+                        onMapPick: onOriginMapPick,
+                      ),
+                    ),
+                  ),
+                ),
+
+                const _BarSeparator(),
+
+                // Destination or hours
+                Expanded(
+                  flex: 3,
+                  child: isOneWay
+                      ? _BarField(
+                          label: 'DESTINATION',
+                          icon: Icons.location_on_outlined,
+                          child: _LightField(
+                            child: PlaceAutocompleteField(
+                              label: 'Where to?',
+                              initialValue: destination,
+                              onPlaceSelected: onDestinationSelected,
+                              onMapPick: onDestinationMapPick,
+                            ),
+                          ),
+                        )
+                      : _BarField(
+                          label: 'DURATION',
+                          icon: Icons.schedule_outlined,
+                          child: _HoursPicker(
+                            hours: hours,
+                            onChanged: onHoursChanged,
+                          ),
+                        ),
+                ),
+
+                const _BarSeparator(),
+
+                // Date & time
+                Expanded(
+                  flex: 2,
+                  child: _BarField(
+                    label: 'DATE & TIME',
+                    icon: Icons.calendar_today_outlined,
+                    child: _DatePicker(
+                      date: date,
+                      onChanged: onDateChanged,
+                    ),
+                  ),
+                ),
+
+                // CTA button — flush right, fills full height
+                _BarCta(onTap: onSearch),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Pill toggle above the bar
+class _ServicePillToggle extends StatelessWidget {
+  const _ServicePillToggle({
+    required this.isOneWay,
+    required this.onChanged,
+  });
+
+  final bool isOneWay;
+  final ValueChanged<ServiceType> onChanged;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withAlpha(20),
+          borderRadius: BorderRadius.circular(32),
+          border: Border.all(color: Colors.white.withAlpha(40)),
+        ),
+        padding: const EdgeInsets.all(3),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _Pill(
+              label: 'One way',
+              selected: isOneWay,
+              onTap: () => onChanged(ServiceType.oneWay),
+            ),
+            _Pill(
+              label: 'By the hour',
+              selected: !isOneWay,
+              onTap: () => onChanged(ServiceType.byTheHour),
+            ),
+          ],
+        ),
+      );
+}
+
+class _Pill extends StatelessWidget {
+  const _Pill({required this.label, required this.selected, required this.onTap});
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
+          decoration: BoxDecoration(
+            color: selected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(28),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontFamily: kSans,
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.3,
+              color: selected ? LD.ink : Colors.white.withAlpha(170),
+              decoration: TextDecoration.none,
+            ),
+          ),
+        ),
+      );
+}
+
+// A single labeled column inside the booking bar
+class _BarField extends StatelessWidget {
+  const _BarField({
+    required this.label,
+    required this.icon,
+    required this.child,
+  });
+  final String label;
+  final IconData icon;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Label row
+            Row(
+              children: [
+                Icon(icon, size: 10, color: LD.ink3),
+                const SizedBox(width: 5),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.6,
+                    color: LD.ink3,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            child,
+          ],
+        ),
+      );
+}
+
+// Thin vertical divider between bar fields
+class _BarSeparator extends StatelessWidget {
+  const _BarSeparator();
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 1,
+        height: 36,
+        color: const Color(0xFFE8E5DF),
+      );
+}
+
+// CTA button — full-height, flush right edge
+class _BarCta extends StatefulWidget {
+  const _BarCta({required this.onTap});
+  final VoidCallback onTap;
+
+  @override
+  State<_BarCta> createState() => _BarCtaState();
+}
+
+class _BarCtaState extends State<_BarCta> {
+  bool _hover = false;
+
+  @override
+  Widget build(BuildContext context) => MouseRegion(
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 168,
+            color: _hover ? LD.sphLt : LD.sph,
+            alignment: Alignment.center,
+            child: const Text(
+              'VIEW OPTIONS',
+              style: TextStyle(
+                fontFamily: kSans,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 2.0,
+                color: Colors.white,
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ),
+        ),
+      );
+}
+
+// ============================================================
 // Solid button
+// ============================================================
+
 class _SolidBtn extends StatefulWidget {
   const _SolidBtn({required this.label, required this.onTap, this.white = false});
   final String label;
@@ -722,680 +1043,6 @@ class _GhostBtnState extends State<_GhostBtn> {
       );
 }
 
-// ============================================================
-// Hero Canvas — 3D Driving Scene (CustomPainter)
-// ============================================================
-
-class _HeroCanvas extends StatefulWidget {
-  const _HeroCanvas({required this.mouseNorm, required this.scrollY});
-  final Offset mouseNorm;
-  final double scrollY;
-
-  @override
-  State<_HeroCanvas> createState() => _HeroCanvasState();
-}
-
-class _HeroCanvasState extends State<_HeroCanvas>
-    with SingleTickerProviderStateMixin {
-  late Ticker _ticker;
-  double _t = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _ticker = createTicker((elapsed) {
-      setState(() => _t = elapsed.inMilliseconds / 1000.0);
-    })
-      ..start();
-  }
-
-  @override
-  void dispose() {
-    _ticker.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => CustomPaint(
-        painter: _DrivingScenePainter(
-          t: _t,
-          mouseNorm: widget.mouseNorm,
-          scrollSpeed: (widget.scrollY * 0.002).clamp(0, 2),
-        ),
-        child: const SizedBox.expand(),
-      );
-}
-
-class _DrivingScenePainter extends CustomPainter {
-  _DrivingScenePainter({
-    required this.t,
-    required this.mouseNorm,
-    required this.scrollSpeed,
-  });
-
-  final double t;
-  final Offset mouseNorm;
-  final double scrollSpeed;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-
-    // Vanishing point drifts with mouse
-    final vpX = w * (0.62 + (mouseNorm.dx - 0.5) * 0.04);
-    final vpY = h * (0.42 + (mouseNorm.dy - 0.5) * 0.02);
-
-    // --- Sky ---
-    final skyPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: const [Color(0xFFEEF2FA), Color(0xFFDDE6F5)],
-      ).createShader(Rect.fromLTWH(0, 0, w, h * 0.55));
-    canvas.drawRect(Rect.fromLTWH(0, 0, w, h * 0.55), skyPaint);
-
-    // Sky radial glow at horizon
-    final glowPaint = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          const Color(0xFF1B4F8A).withAlpha(25),
-          Colors.transparent,
-        ],
-        radius: 0.6,
-      ).createShader(
-          Rect.fromCenter(center: Offset(vpX, vpY), width: w * 1.2, height: h * 0.8));
-    canvas.drawOval(
-        Rect.fromCenter(center: Offset(vpX, vpY), width: w * 1.2, height: h * 0.5),
-        glowPaint);
-
-    // --- Ground ---
-    final groundPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: const [Color(0xFFCDD5E8), Color(0xFFB8C5DC)],
-      ).createShader(Rect.fromLTWH(0, vpY, w, h - vpY));
-    canvas.drawRect(Rect.fromLTWH(0, vpY, w, h - vpY), groundPaint);
-
-    // --- City silhouette ---
-    _drawCitySilhouette(canvas, w, vpX, vpY);
-
-    // --- Road ---
-    _drawRoad(canvas, w, h, vpX, vpY);
-
-    // --- Road markings ---
-    _drawRoadMarkings(canvas, w, h, vpX, vpY);
-
-    // --- Streetlights ---
-    _drawStreetlights(canvas, w, h, vpX, vpY);
-
-    // --- Luxury car ---
-    _drawLuxuryCar(canvas, w, h, vpX, vpY);
-  }
-
-  void _drawCitySilhouette(Canvas canvas, double w, double vpX, double vpY) {
-    final paint = Paint()..color = const Color(0xFFC4CEDF).withAlpha(180);
-    final buildingData = [
-      [0.35, 0.22, 0.04, 0.13],
-      [0.39, 0.30, 0.05, 0.09],
-      [0.44, 0.18, 0.03, 0.15],
-      [0.47, 0.25, 0.06, 0.12],
-      [0.53, 0.20, 0.04, 0.14],
-      [0.57, 0.28, 0.05, 0.10],
-      [0.62, 0.16, 0.03, 0.17],
-      [0.65, 0.24, 0.06, 0.13],
-      [0.71, 0.19, 0.04, 0.15],
-      [0.75, 0.27, 0.05, 0.11],
-    ];
-    for (final b in buildingData) {
-      final rect = Rect.fromLTWH(
-        w * b[0],
-        vpY - vpY * b[2] - vpY * b[3],
-        w * b[1],
-        vpY * b[3],
-      );
-      canvas.drawRect(rect, paint);
-    }
-  }
-
-  void _drawRoad(Canvas canvas, double w, double h, double vpX, double vpY) {
-    // Road surface
-    final roadPaint = Paint()..color = const Color(0xFF9EAABC);
-    final roadPath = Path()
-      ..moveTo(vpX, vpY)
-      ..lineTo(vpX - w * 0.12, h)
-      ..lineTo(vpX + w * 0.25, h)
-      ..close();
-    canvas.drawPath(roadPath, roadPaint);
-
-    // Shoulder lines
-    final shoulderPaint = Paint()
-      ..color = const Color(0xFFB5C2D6)
-      ..strokeWidth = 1.5
-      ..style = PaintingStyle.stroke;
-
-    for (final side in [-1.0, 1.0]) {
-      final lPath = Path()
-        ..moveTo(vpX, vpY)
-        ..lineTo(vpX + side * w * 0.18, h);
-      canvas.drawPath(lPath, shoulderPaint);
-    }
-  }
-
-  void _drawRoadMarkings(
-      Canvas canvas, double w, double h, double vpX, double vpY) {
-    final dashPaint = Paint()
-      ..color = const Color(0xFFD4DCE9)
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
-    // Center dashes — animated offset
-    final dashOffset = (t * (1 + scrollSpeed) * 0.15) % 1.0;
-    const dashCount = 12;
-    for (int i = 0; i < dashCount; i++) {
-      final progress = ((i / dashCount) + dashOffset) % 1.0;
-      if (progress > 0.9) continue; // skip partial dash
-      // Perspective lerp
-      final y1 = vpY + (h - vpY) * progress;
-      final y2 = vpY + (h - vpY) * math.min(progress + 0.04, 1.0);
-      final x1 = vpX + (vpX * 0 + (vpX - w * 0.05 - vpX) * progress);
-      final x2 = vpX + (vpX * 0 + (vpX - w * 0.05 - vpX) * (progress + 0.04).clamp(0, 1));
-      canvas.drawLine(Offset(x1, y1), Offset(x2, y2), dashPaint);
-    }
-  }
-
-  void _drawStreetlights(
-      Canvas canvas, double w, double h, double vpX, double vpY) {
-    final polePaint = Paint()
-      ..color = const Color(0xFF8A96AA)
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
-    const lightCount = 5;
-    for (int i = 0; i < lightCount; i++) {
-      final progress = (i / lightCount + 0.05).clamp(0.0, 1.0);
-      final x = vpX - (vpX - w * 0.1) * progress;
-      final yBase = vpY + (h - vpY) * progress;
-      final poleH = 60.0 * progress;
-
-      // Pole
-      canvas.drawLine(
-          Offset(x, yBase), Offset(x, yBase - poleH), polePaint);
-
-      // Arm
-      canvas.drawLine(
-          Offset(x, yBase - poleH),
-          Offset(x + 10 * progress, yBase - poleH - 8 * progress),
-          polePaint);
-
-      // Glow
-      final glowPaint = Paint()
-        ..shader = RadialGradient(
-          colors: [
-            Colors.amber.withAlpha(80),
-            Colors.transparent,
-          ],
-        ).createShader(
-          Rect.fromCenter(
-            center: Offset(x + 10 * progress, yBase - poleH - 10 * progress),
-            width: 30 * progress,
-            height: 30 * progress,
-          ),
-        );
-      canvas.drawOval(
-        Rect.fromCenter(
-          center: Offset(x + 10 * progress, yBase - poleH - 10 * progress),
-          width: 30 * progress,
-          height: 20 * progress,
-        ),
-        glowPaint,
-      );
-    }
-  }
-
-  void _drawLuxuryCar(
-      Canvas canvas, double w, double h, double vpX, double vpY) {
-    // Position car at left-center of screen
-    final carX = w * 0.18;
-    final carY = h * 0.72;
-    final carW = w * 0.28;
-    final carH = carW * 0.28;
-
-    // Ground shadow
-    final shadowPaint = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          const Color(0x50000000),
-          Colors.transparent,
-        ],
-      ).createShader(
-        Rect.fromCenter(
-          center: Offset(carX + carW * 0.5, carY + carH * 0.85),
-          width: carW * 1.1,
-          height: carH * 0.4,
-        ),
-      );
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(carX + carW * 0.5, carY + carH * 0.85),
-        width: carW * 1.1,
-        height: carH * 0.3,
-      ),
-      shadowPaint,
-    );
-
-    // Car body — sapphire gradient
-    final bodyPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: const [Color(0xFF2E5FA0), Color(0xFF0D2848)],
-      ).createShader(Rect.fromLTWH(carX, carY, carW, carH));
-
-    // Fastback silhouette
-    final bodyPath = Path()
-      ..moveTo(carX + carW * 0.08, carY + carH * 0.55) // front bumper base
-      ..lineTo(carX + carW * 0.12, carY + carH * 0.28) // hood rise
-      ..lineTo(carX + carW * 0.32, carY + carH * 0.10) // windscreen base
-      ..lineTo(carX + carW * 0.50, carY + carH * 0.01) // roof peak
-      ..lineTo(carX + carW * 0.78, carY + carH * 0.08) // rear roof
-      ..lineTo(carX + carW * 0.92, carY + carH * 0.30) // trunk
-      ..lineTo(carX + carW * 0.96, carY + carH * 0.55) // rear base
-      ..lineTo(carX + carW * 0.08, carY + carH * 0.55)
-      ..close();
-    canvas.drawPath(bodyPath, bodyPaint);
-
-    // Glass — semi-transparent blue
-    final glassPaint = Paint()..color = const Color(0x441E4B82);
-    final glassPath = Path()
-      ..moveTo(carX + carW * 0.34, carY + carH * 0.12)
-      ..lineTo(carX + carW * 0.50, carY + carH * 0.04)
-      ..lineTo(carX + carW * 0.74, carY + carH * 0.11)
-      ..lineTo(carX + carW * 0.68, carY + carH * 0.25)
-      ..lineTo(carX + carW * 0.38, carY + carH * 0.25)
-      ..close();
-    canvas.drawPath(glassPath, glassPaint);
-
-    // Chrome trim line
-    final trimPaint = Paint()
-      ..color = const Color(0xFFB0C0D8).withAlpha(180)
-      ..strokeWidth = 1.2
-      ..style = PaintingStyle.stroke;
-    canvas.drawLine(
-      Offset(carX + carW * 0.08, carY + carH * 0.38),
-      Offset(carX + carW * 0.94, carY + carH * 0.38),
-      trimPaint,
-    );
-
-    // B-pillar
-    final bpillarPaint = Paint()..color = const Color(0xFF0D2848);
-    canvas.drawRect(
-      Rect.fromLTWH(
-        carX + carW * 0.52,
-        carY + carH * 0.10,
-        carW * 0.03,
-        carH * 0.15,
-      ),
-      bpillarPaint,
-    );
-
-    // Wheels
-    _drawWheel(canvas, carX + carW * 0.22, carY + carH * 0.68, carH * 0.20);
-    _drawWheel(canvas, carX + carW * 0.76, carY + carH * 0.68, carH * 0.20);
-
-    // Headlights
-    final headlightPaint = Paint()..color = const Color(0xFFF0F4FF);
-    canvas.drawRect(
-      Rect.fromLTWH(
-          carX + carW * 0.08, carY + carH * 0.32, carW * 0.06, carH * 0.06),
-      headlightPaint,
-    );
-    // Headlight glow
-    final hlGlowPaint = Paint()
-      ..shader = RadialGradient(
-        colors: [Colors.white.withAlpha(160), Colors.transparent],
-      ).createShader(
-        Rect.fromCenter(
-          center: Offset(carX + carW * 0.11, carY + carH * 0.35),
-          width: carW * 0.14,
-          height: carH * 0.12,
-        ),
-      );
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(carX + carW * 0.07, carY + carH * 0.35),
-        width: carW * 0.14,
-        height: carH * 0.10,
-      ),
-      hlGlowPaint,
-    );
-
-    // Taillights
-    final taillightPaint = Paint()..color = const Color(0xFFCC2222);
-    canvas.drawRect(
-      Rect.fromLTWH(
-          carX + carW * 0.88, carY + carH * 0.32, carW * 0.06, carH * 0.06),
-      taillightPaint,
-    );
-  }
-
-  void _drawWheel(Canvas canvas, double cx, double cy, double r) {
-    // Tire
-    final tirePaint = Paint()..color = const Color(0xFF1A1E28);
-    canvas.drawCircle(Offset(cx, cy), r, tirePaint);
-    // Rim
-    final rimPaint = Paint()
-      ..color = const Color(0xFFB8C6D8)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = r * 0.22;
-    canvas.drawCircle(Offset(cx, cy), r * 0.68, rimPaint);
-    // Spokes (5-spoke, rotates with time)
-    final spokePaint = Paint()
-      ..color = const Color(0xFFB8C6D8)
-      ..strokeWidth = r * 0.1;
-    for (int i = 0; i < 5; i++) {
-      final angle = (i / 5) * math.pi * 2 + t * 3;
-      canvas.drawLine(
-        Offset(cx, cy),
-        Offset(cx + math.cos(angle) * r * 0.65,
-            cy + math.sin(angle) * r * 0.65),
-        spokePaint,
-      );
-    }
-    // Hub
-    canvas.drawCircle(Offset(cx, cy), r * 0.15,
-        Paint()..color = const Color(0xFF9AAABB));
-  }
-
-  @override
-  bool shouldRepaint(_DrivingScenePainter old) =>
-      old.t != t || old.mouseNorm != mouseNorm;
-}
-
-// ============================================================
-// Hero stats row
-// ============================================================
-
-class _HeroStats extends StatelessWidget {
-  const _HeroStats();
-
-  @override
-  Widget build(BuildContext context) {
-    const stats = [
-      ('150K+', 'Rides'),
-      ('50+', 'Countries'),
-      ('4.9/5', 'Rating'),
-      ('24/7', 'Support'),
-    ];
-
-    return Row(
-      children: [
-        for (int i = 0; i < stats.length; i++) ...[
-          if (i > 0)
-            Container(width: 1, height: 32, color: LD.border,
-                margin: const EdgeInsets.symmetric(horizontal: 24)),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                stats[i].$1,
-                style: const TextStyle(
-                  fontFamily: kSerif,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w300,
-                  color: LD.ink,
-                  height: 1,
-                  decoration: TextDecoration.none,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                stats[i].$2.toUpperCase(),
-                style: const TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 9,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 1.8,
-                  color: LD.ink3,
-                  decoration: TextDecoration.none,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-// ============================================================
-// Booking Card
-// ============================================================
-
-class _BookingCard extends StatefulWidget {
-  const _BookingCard({
-    required this.serviceType,
-    required this.origin,
-    required this.destination,
-    required this.date,
-    required this.hours,
-    required this.locating,
-    required this.onServiceTypeChanged,
-    required this.onOriginSelected,
-    required this.onDestinationSelected,
-    required this.onDateChanged,
-    required this.onHoursChanged,
-    required this.onLocate,
-    required this.onSearch,
-    required this.onOriginMapPick,
-    required this.onDestinationMapPick,
-  });
-
-  final ServiceType serviceType;
-  final Place? origin;
-  final Place? destination;
-  final DateTime date;
-  final int hours;
-  final bool locating;
-  final ValueChanged<ServiceType> onServiceTypeChanged;
-  final ValueChanged<Place> onOriginSelected;
-  final ValueChanged<Place> onDestinationSelected;
-  final ValueChanged<DateTime> onDateChanged;
-  final ValueChanged<int> onHoursChanged;
-  final VoidCallback onLocate;
-  final VoidCallback onSearch;
-  final VoidCallback onOriginMapPick;
-  final VoidCallback onDestinationMapPick;
-
-  @override
-  State<_BookingCard> createState() => _BookingCardState();
-}
-
-class _BookingCardState extends State<_BookingCard> {
-  @override
-  Widget build(BuildContext context) {
-    final isOneWay = widget.serviceType == ServiceType.oneWay;
-
-    return Container(
-      width: 356,
-      decoration: BoxDecoration(
-        color: Colors.white.withAlpha(242),
-        border: const Border(
-          top: BorderSide(color: LD.sph, width: 3),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: LD.ink.withAlpha(20),
-            blurRadius: 40,
-            offset: const Offset(0, 16),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Header
-          Padding(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Plan your journey',
-                  style: TextStyle(
-                    fontFamily: kSerif,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w400,
-                    color: LD.ink,
-                    decoration: TextDecoration.none,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Fixed price · No surge pricing',
-                  style: TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 11,
-                    color: LD.ink3,
-                    decoration: TextDecoration.none,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // Tabs
-                Row(
-                  children: [
-                    _Tab(
-                      label: 'One Way',
-                      selected: isOneWay,
-                      onTap: () => widget
-                          .onServiceTypeChanged(ServiceType.oneWay),
-                    ),
-                    const SizedBox(width: 4),
-                    _Tab(
-                      label: 'By the Hour',
-                      selected: !isOneWay,
-                      onTap: () => widget
-                          .onServiceTypeChanged(ServiceType.byTheHour),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-          // Divider
-          Container(height: 1, color: LD.border),
-          // Inputs
-          Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                // Origin
-                _CardField(
-                  icon: Icons.trip_origin,
-                  child: PlaceAutocompleteField(
-                    label: 'Pickup',
-                    hint: 'Street, airport…',
-                    initialValue: widget.origin,
-                    onPlaceSelected: widget.onOriginSelected,
-                    onMapPick: widget.onOriginMapPick,
-                  ),
-                ),
-                Container(height: 1, color: LD.border),
-                // Destination
-                if (isOneWay) ...[
-                  _CardField(
-                    icon: Icons.location_on_outlined,
-                    child: PlaceAutocompleteField(
-                      label: 'Destination',
-                      initialValue: widget.destination,
-                      onPlaceSelected: widget.onDestinationSelected,
-                      onMapPick: widget.onDestinationMapPick,
-                    ),
-                  ),
-                  Container(height: 1, color: LD.border),
-                ],
-                // Date / Hours
-                if (!isOneWay) ...[
-                  _CardField(
-                    icon: Icons.schedule,
-                    child: _HoursPicker(
-                      hours: widget.hours,
-                      onChanged: widget.onHoursChanged,
-                    ),
-                  ),
-                  Container(height: 1, color: LD.border),
-                ],
-                _CardField(
-                  icon: Icons.calendar_today_outlined,
-                  child: _DatePicker(
-                    date: widget.date,
-                    onChanged: widget.onDateChanged,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                // CTA
-                _SolidBtn(
-                  label: 'Get Prices →',
-                  onTap: widget.onSearch,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _Tab extends StatelessWidget {
-  const _Tab(
-      {required this.label, required this.selected, required this.onTap});
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-          color: selected ? LD.sph : LD.bg2,
-          child: Text(
-            label,
-            style: TextStyle(
-              fontFamily: kSans,
-              fontSize: 11,
-              fontWeight: FontWeight.w400,
-              color: selected ? Colors.white : LD.ink3,
-              decoration: TextDecoration.none,
-            ),
-          ),
-        ),
-      );
-}
-
-class _CardField extends StatelessWidget {
-  const _CardField({required this.icon, required this.child});
-  final IconData icon;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Row(
-          children: [
-            Icon(icon, size: 16, color: LD.ink3),
-            const SizedBox(width: 10),
-            Expanded(child: child),
-          ],
-        ),
-      );
-}
-
 class _DatePicker extends StatelessWidget {
   const _DatePicker({required this.date, required this.onChanged});
   final DateTime date;
@@ -1411,25 +1058,68 @@ class _DatePicker extends StatelessWidget {
     return '${months[d.month - 1]} ${d.day}, $h:$m';
   }
 
+  static ThemeData _pickerTheme() => ThemeData(
+        useMaterial3: true,
+        fontFamily: kSans,
+        colorScheme: const ColorScheme.light(
+          primary: LD.sph,
+          onPrimary: Colors.white,
+          surface: Colors.white,
+          onSurface: LD.ink,
+          secondary: LD.sphLt,
+        ),
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(fontFamily: kSans),
+          bodyMedium: TextStyle(fontFamily: kSans),
+          labelLarge: TextStyle(fontFamily: kSans, letterSpacing: 1.2),
+        ),
+        dialogTheme: const DialogThemeData(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.transparent,
+        ),
+      );
+
   @override
   Widget build(BuildContext context) => GestureDetector(
         onTap: () async {
+          // Date
           final picked = await showDatePicker(
             context: context,
             initialDate: date,
             firstDate: DateTime.now(),
             lastDate: DateTime.now().add(const Duration(days: 365)),
+            builder: (ctx, child) => Theme(data: _pickerTheme(), child: child!),
           );
-          if (picked != null) onChanged(picked);
+          if (!context.mounted || picked == null) return;
+          // Time
+          final time = await showTimePicker(
+            context: context,
+            initialTime: TimeOfDay.fromDateTime(date),
+            builder: (ctx, child) => Theme(data: _pickerTheme(), child: child!),
+          );
+          if (time != null) {
+            onChanged(DateTime(
+              picked.year, picked.month, picked.day,
+              time.hour, time.minute,
+            ));
+          } else {
+            onChanged(picked);
+          }
         },
-        child: Text(
-          _fmt(date),
-          style: const TextStyle(
-            fontFamily: kSans,
-            fontSize: 13,
-            color: LD.ink,
-            decoration: TextDecoration.none,
-          ),
+        child: Row(
+          children: [
+            Text(
+              _fmt(date),
+              style: const TextStyle(
+                fontFamily: kSans,
+                fontSize: 13,
+                color: LD.ink,
+                decoration: TextDecoration.none,
+              ),
+            ),
+            const Spacer(),
+            const Icon(Icons.expand_more, size: 16, color: LD.ink3),
+          ],
         ),
       );
 }
@@ -1468,6 +1158,34 @@ class _HoursPicker extends StatelessWidget {
             constraints: const BoxConstraints(),
           ),
         ],
+      );
+}
+
+/// Forces light theme on any child that reads Theme.of(context).brightness.
+/// Used to keep PlaceAutocompleteField white inside the booking card even
+/// when the app-level theme is dark.
+class _LightField extends StatelessWidget {
+  const _LightField({required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Theme(
+        data: Theme.of(context).copyWith(
+          brightness: Brightness.light,
+          inputDecorationTheme: const InputDecorationTheme(
+            filled: true,
+            fillColor: Color(0xFFF5F7FC),
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+          ),
+          textTheme: Theme.of(context).textTheme.apply(
+                fontFamily: kSans,
+                bodyColor: LD.ink,
+                displayColor: LD.ink,
+              ),
+        ),
+        child: child,
       );
 }
 

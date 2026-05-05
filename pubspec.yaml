@@ -64,6 +64,17 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/
+    - assets/images/auth/
+    - assets/images/booking/
+    - assets/images/brand/
+    - assets/images/home/
+    - assets/images/vehicles/
+    - assets/images/vehicles/business/
+    - assets/images/vehicles/first_class/
+    - assets/images/vehicles/van/
+    - assets/images/vehicles/electric/
+    - assets/images/booking/luggage/
+    - assets/images/booking/seating/
     - assets/icons/
     - assets/fonts/
   # fonts are loaded via Google Fonts fallback on web
