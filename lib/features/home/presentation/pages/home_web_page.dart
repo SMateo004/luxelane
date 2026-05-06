@@ -57,19 +57,23 @@ class WebHomePage extends StatefulWidget {
 
 class _WebHomePageState extends State<WebHomePage> {
   final _scroll = ScrollController();
+  final _luxScroll = LuxScrollNotifier();
   double _scrollY = 0;
 
   @override
   void initState() {
     super.initState();
     _scroll.addListener(() {
-      setState(() => _scrollY = _scroll.offset);
+      final y = _scroll.offset;
+      setState(() => _scrollY = y);
+      _luxScroll.update(y);
     });
   }
 
   @override
   void dispose() {
     _scroll.dispose();
+    _luxScroll.dispose();
     super.dispose();
   }
 
@@ -77,7 +81,9 @@ class _WebHomePageState extends State<WebHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: LD.bg,
-      body: Stack(
+      body: LuxScrollProvider(
+        notifier: _luxScroll,
+        child: Stack(
         children: [
           // Main scrollable content
           SingleChildScrollView(
@@ -134,7 +140,8 @@ class _WebHomePageState extends State<WebHomePage> {
           // Fixed nav overlay
           _LuxNav(scrollY: _scrollY),
         ],
-      ),
+        ), // Stack
+      ), // LuxScrollProvider
     );
   }
 }
@@ -1423,11 +1430,13 @@ class _PromiseSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   RevealOnScroll(
+                    dx: 160,
                     child: const LuxEyebrow('The Luxelane Standard', dark: true),
                   ),
                   const SizedBox(height: 28),
                   RevealOnScroll(
                     delay: const Duration(milliseconds: 80),
+                    dx: 160,
                     child: Text(
                       'The standard\nothers follow.',
                       style: displayText(size: 52, color: Colors.white),
@@ -1436,6 +1445,7 @@ class _PromiseSection extends StatelessWidget {
                   const SizedBox(height: 56),
                   ..._points.asMap().entries.map((e) => RevealOnScroll(
                         delay: Duration(milliseconds: 140 + e.key * 80),
+                        dx: 120,
                         dy: 20,
                         child: _PromisePoint(
                           title: e.value.$1,
@@ -1591,11 +1601,13 @@ class _ImmersiveStrip extends StatelessWidget {
           ),
           // Centered caption
           Center(
-            child: RevealOnScroll(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                RevealOnScroll(
+                  dy: 48,
+                  threshold: 0.9,
+                  child: Text(
                     'ARRIVE IN STYLE',
                     style: TextStyle(
                       fontFamily: kSans,
@@ -1606,8 +1618,13 @@ class _ImmersiveStrip extends StatelessWidget {
                       decoration: TextDecoration.none,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Text(
+                ),
+                const SizedBox(height: 16),
+                RevealOnScroll(
+                  delay: const Duration(milliseconds: 100),
+                  dy: 64,
+                  threshold: 0.9,
+                  child: Text(
                     'Every journey, a statement.',
                     style: TextStyle(
                       fontFamily: kSerif,
@@ -1619,8 +1636,8 @@ class _ImmersiveStrip extends StatelessWidget {
                       decoration: TextDecoration.none,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
@@ -2268,11 +2285,13 @@ class _BusinessSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   RevealOnScroll(
+                    dx: -160,
                     child: const LuxEyebrow('For Business', dark: true),
                   ),
                   const SizedBox(height: 28),
                   RevealOnScroll(
                     delay: const Duration(milliseconds: 80),
+                    dx: -160,
                     child: Text(
                       'Corporate travel,\nredefined.',
                       style: displayText(size: 52, color: Colors.white),
@@ -2281,6 +2300,7 @@ class _BusinessSection extends StatelessWidget {
                   const SizedBox(height: 28),
                   RevealOnScroll(
                     delay: const Duration(milliseconds: 160),
+                    dx: -120,
                     child: Text(
                       'Luxelane for Business gives your team access to premium chauffeur service with the controls and reporting your finance team demands.',
                       style: bodyText(
@@ -2290,6 +2310,7 @@ class _BusinessSection extends StatelessWidget {
                   const SizedBox(height: 44),
                   RevealOnScroll(
                     delay: const Duration(milliseconds: 220),
+                    dx: -120,
                     child: _GhostBtn(
                         label: 'Learn More', light: true, onTap: () {}),
                   ),
@@ -2418,11 +2439,15 @@ class _CtaSection extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           RevealOnScroll(
+            dx: -100,
+            threshold: 0.9,
             child: Text('Your next ride,',
                 style: displayText(size: 96, color: Colors.white)),
           ),
           RevealOnScroll(
             delay: const Duration(milliseconds: 80),
+            dx: -100,
+            threshold: 0.9,
             child: Text(
               'on your terms.',
               style: displayText(
@@ -2432,6 +2457,8 @@ class _CtaSection extends StatelessWidget {
           const SizedBox(height: 48),
           RevealOnScroll(
             delay: const Duration(milliseconds: 160),
+            dx: -80,
+            threshold: 0.9,
             child: Text(
               'Fixed price  ·  Professional chauffeurs  ·  Worldwide',
               style: TextStyle(
@@ -2447,6 +2474,8 @@ class _CtaSection extends StatelessWidget {
           const SizedBox(height: 52),
           RevealOnScroll(
             delay: const Duration(milliseconds: 220),
+            dx: -80,
+            threshold: 0.9,
             child: Row(
               children: [
                 BlocBuilder<AuthBloc, AuthState>(
