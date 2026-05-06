@@ -1458,68 +1458,52 @@ class _PromisePhotoPanel extends StatelessWidget {
 
   // Upload: assets/images/home/promise_photo.jpg
   // Ideal: chauffeur opening car door, or car arriving at hotel entrance
-  // Size: 900x1200px minimum, portrait orientation
+  // Size: 900×1200px minimum, portrait orientation
   static const _photo = 'assets/images/home/promise_photo.jpg';
 
   @override
-  Widget build(BuildContext context) => Stack(
-        fit: StackFit.expand,
-        children: [
-          // Always-visible dark gradient base
-          const DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [Color(0xFF0D2040), Color(0xFF060C16)],
-              ),
-            ),
+  Widget build(BuildContext context) => Container(
+        // Gradient base — always visible
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            colors: [Color(0xFF0D2040), Color(0xFF060C16)],
           ),
-          // Service photo — fills panel if uploaded
-          Image.asset(
-            _photo,
+          // Service photo layers on top when present
+          image: DecorationImage(
+            image: const AssetImage(_photo),
             fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
-            errorBuilder: (_, __, ___) {
-              // Fallback: dot grid + car PNG until photo is uploaded
-              return Stack(fit: StackFit.expand, children: [
-                CustomPaint(
-                    painter: _DotGridPainter(),
-                    child: const SizedBox.expand()),
-                Positioned(
-                  bottom: 0, left: -40, right: 0,
-                  child: Image.asset(
-                    'assets/images/vehicles/business/car.png',
-                    fit: BoxFit.contain,
-                    alignment: Alignment.bottomCenter,
-                    errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-                  ),
-                ),
-              ]);
-            },
+            onError: (_, __) {},
           ),
-          // Dark overlay so the right-side text stays readable
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  colors: [
-                    Colors.black.withAlpha(40),
-                    LD.dark.withAlpha(180),
-                  ],
-                ),
+        ),
+        // Right-edge gradient so the panel blends into the text column
+        foregroundDecoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [Colors.transparent, LD.dark.withAlpha(200)],
+          ),
+        ),
+        child: Stack(
+          children: [
+            // Fallback car PNG shown when no photo is uploaded
+            Positioned(
+              bottom: 0, left: -40, right: 0,
+              child: Image.asset(
+                'assets/images/vehicles/business/car.png',
+                fit: BoxFit.contain,
+                alignment: Alignment.bottomCenter,
+                errorBuilder: (_, __, ___) => const SizedBox.shrink(),
               ),
             ),
-          ),
-          // Sapphire accent top line
-          Positioned(
-            top: 0, left: 0, right: 0,
-            child: Container(height: 2, color: LD.sph),
-          ),
-        ],
+            // Sapphire top accent line
+            Positioned(
+              top: 0, left: 0, right: 0,
+              child: Container(height: 2, color: LD.sph),
+            ),
+          ],
+        ),
       );
 }
 
@@ -2314,41 +2298,32 @@ class _BusinessSection extends StatelessWidget {
             ),
           ),
           // Right — numbered perks list
+          // Upload: assets/images/home/business_photo.jpg
+          // Ideal: executive entering car / airport VIP lounge
           Expanded(
-            child: Stack(
-              children: [
-                // Business photo background
-                // Upload: assets/images/home/business_photo.jpg
-                // Ideal: executive in suit entering car / airport departure lounge
-                // Size: 900x1200px minimum
-                Positioned.fill(
-                  child: Image.asset(
-                    'assets/images/home/business_photo.jpg',
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => const ColoredBox(
-                        color: Color(0xFF0D1B2E)),
-                  ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFF0D1B2E),
+                image: DecorationImage(
+                  image: const AssetImage('assets/images/home/business_photo.jpg'),
+                  fit: BoxFit.cover,
+                  onError: (_, __) {},
                 ),
-                // Dark overlay so text stays readable
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.centerRight,
-                        end: Alignment.centerLeft,
-                        colors: [
-                          const Color(0xFF060C16).withAlpha(200),
-                          const Color(0xFF0D1B2E).withAlpha(240),
-                        ],
-                      ),
-                    ),
-                  ),
+              ),
+              foregroundDecoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerRight,
+                  end: Alignment.centerLeft,
+                  colors: [
+                    const Color(0xFF060C16).withAlpha(180),
+                    const Color(0xFF0D1B2E).withAlpha(230),
+                  ],
                 ),
-              Container(
-              color: Colors.transparent,
+              ),
               padding: const EdgeInsets.fromLTRB(64, 100, 64, 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: _perks.asMap().entries.map((e) {
                   final i = e.key;
                   return RevealOnScroll(
@@ -2397,8 +2372,6 @@ class _BusinessSection extends StatelessWidget {
                 }).toList(),
               ),
             ),
-              ],
-            ),
           ),
         ],
       ),
@@ -2416,42 +2389,33 @@ class _CtaSection extends StatelessWidget {
 
   // Upload: assets/images/home/cta_bg.jpg
   // Ideal: aerial city shot at night, or car driving on empty highway at dusk
-  // Size: 2400x1000px minimum, very wide landscape
+  // Size: 2400×1000px minimum, very wide landscape
   static const _ctaBg = 'assets/images/home/cta_bg.jpg';
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Background photo
-        Positioned.fill(
-          child: Image.asset(
-            _ctaBg,
-            fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) =>
-                const ColoredBox(color: Color(0xFF0D1B2E)),
-          ),
+    return Container(
+      // Photo loads as decoration — silently falls back to colour if missing
+      decoration: BoxDecoration(
+        color: LD.ink,
+        image: DecorationImage(
+          image: const AssetImage(_ctaBg),
+          fit: BoxFit.cover,
+          onError: (_, __) {},
         ),
-        // Heavy dark overlay to keep text legible
-        Positioned.fill(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.centerRight,
-                end: Alignment.centerLeft,
-                colors: [
-                  LD.ink.withAlpha(180),
-                  LD.ink.withAlpha(230),
-                ],
-              ),
-            ),
-          ),
+      ),
+      // Gradient overlay on top of photo
+      foregroundDecoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.centerRight,
+          end: Alignment.centerLeft,
+          colors: [LD.ink.withAlpha(160), LD.ink.withAlpha(220)],
         ),
-      Container(
-      color: Colors.transparent,
+      ),
       padding: const EdgeInsets.fromLTRB(64, 140, 64, 140),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           RevealOnScroll(
             child: Text('Your next ride,',
@@ -2501,8 +2465,6 @@ class _CtaSection extends StatelessWidget {
           ),
         ],
       ),
-      ),
-      ],
     );
   }
 }
