@@ -110,6 +110,8 @@ class _WebHomePageState extends State<WebHomePage> {
                 const _MarqueeBar(),
                 // Stats
                 const _StatsSection(),
+                // Immersive photo strip
+                const _ImmersiveStrip(),
                 // Promise — dark split
                 const _PromiseSection(),
                 // How it works
@@ -1454,10 +1456,16 @@ class _PromiseSection extends StatelessWidget {
 class _PromisePhotoPanel extends StatelessWidget {
   const _PromisePhotoPanel();
 
+  // Upload: assets/images/home/promise_photo.jpg
+  // Ideal: chauffeur opening car door, or car arriving at hotel entrance
+  // Size: 900x1200px minimum, portrait orientation
+  static const _photo = 'assets/images/home/promise_photo.jpg';
+
   @override
   Widget build(BuildContext context) => Stack(
         fit: StackFit.expand,
         children: [
+          // Always-visible dark gradient base
           const DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -1467,31 +1475,50 @@ class _PromisePhotoPanel extends StatelessWidget {
               ),
             ),
           ),
-          CustomPaint(painter: _DotGridPainter(), child: const SizedBox.expand()),
-          Positioned(
-            bottom: 0,
-            left: -40,
-            right: 0,
-            child: Image.asset(
-              'assets/images/vehicles/business/car.png',
-              fit: BoxFit.contain,
-              alignment: Alignment.bottomCenter,
-              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-            ),
+          // Service photo — fills panel if uploaded
+          Image.asset(
+            _photo,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+            errorBuilder: (_, __, ___) {
+              // Fallback: dot grid + car PNG until photo is uploaded
+              return Stack(fit: StackFit.expand, children: [
+                CustomPaint(
+                    painter: _DotGridPainter(),
+                    child: const SizedBox.expand()),
+                Positioned(
+                  bottom: 0, left: -40, right: 0,
+                  child: Image.asset(
+                    'assets/images/vehicles/business/car.png',
+                    fit: BoxFit.contain,
+                    alignment: Alignment.bottomCenter,
+                    errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                  ),
+                ),
+              ]);
+            },
           ),
+          // Dark overlay so the right-side text stays readable
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
-                  colors: [Colors.transparent, LD.dark.withAlpha(140)],
+                  colors: [
+                    Colors.black.withAlpha(40),
+                    LD.dark.withAlpha(180),
+                  ],
                 ),
               ),
             ),
           ),
-          Positioned(top: 0, left: 0, right: 0,
-              child: Container(height: 2, color: LD.sph)),
+          // Sapphire accent top line
+          Positioned(
+            top: 0, left: 0, right: 0,
+            child: Container(height: 2, color: LD.sph),
+          ),
         ],
       );
 }
@@ -1525,6 +1552,97 @@ class _PromisePoint extends StatelessWidget {
           const SizedBox(height: 24),
         ],
       );
+}
+
+// ============================================================
+// Immersive photo strip — full-bleed between stats and promise
+// ============================================================
+
+class _ImmersiveStrip extends StatelessWidget {
+  const _ImmersiveStrip();
+
+  // Upload: assets/images/home/immersive_bg.jpg
+  // Ideal: wide interior shot of luxury car, or city night with car
+  // Size: 2400x900px minimum, landscape, ultra-wide crop
+  static const _photo = 'assets/images/home/immersive_bg.jpg';
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 480,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          // Photo
+          Image.asset(
+            _photo,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+            errorBuilder: (_, __, ___) => DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [LD.ink, const Color(0xFF0D2040)],
+                ),
+              ),
+            ),
+          ),
+          // Subtle dark overlay
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Colors.black.withAlpha(100),
+                    Colors.black.withAlpha(20),
+                    Colors.black.withAlpha(100),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Centered caption
+          Center(
+            child: RevealOnScroll(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'ARRIVE IN STYLE',
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 5.0,
+                      color: Colors.white.withAlpha(160),
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Every journey, a statement.',
+                    style: TextStyle(
+                      fontFamily: kSerif,
+                      fontSize: 52,
+                      fontWeight: FontWeight.w300,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.white,
+                      height: 1.1,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 // ============================================================
@@ -2197,8 +2315,37 @@ class _BusinessSection extends StatelessWidget {
           ),
           // Right — numbered perks list
           Expanded(
-            child: Container(
-              color: const Color(0xFF0D1B2E),
+            child: Stack(
+              children: [
+                // Business photo background
+                // Upload: assets/images/home/business_photo.jpg
+                // Ideal: executive in suit entering car / airport departure lounge
+                // Size: 900x1200px minimum
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/images/home/business_photo.jpg',
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => const ColoredBox(
+                        color: Color(0xFF0D1B2E)),
+                  ),
+                ),
+                // Dark overlay so text stays readable
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerRight,
+                        end: Alignment.centerLeft,
+                        colors: [
+                          const Color(0xFF060C16).withAlpha(200),
+                          const Color(0xFF0D1B2E).withAlpha(240),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              Container(
+              color: Colors.transparent,
               padding: const EdgeInsets.fromLTRB(64, 100, 64, 100),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -2250,6 +2397,8 @@ class _BusinessSection extends StatelessWidget {
                 }).toList(),
               ),
             ),
+              ],
+            ),
           ),
         ],
       ),
@@ -2265,10 +2414,41 @@ class _BusinessSection extends StatelessWidget {
 class _CtaSection extends StatelessWidget {
   const _CtaSection();
 
+  // Upload: assets/images/home/cta_bg.jpg
+  // Ideal: aerial city shot at night, or car driving on empty highway at dusk
+  // Size: 2400x1000px minimum, very wide landscape
+  static const _ctaBg = 'assets/images/home/cta_bg.jpg';
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: LD.ink,
+    return Stack(
+      children: [
+        // Background photo
+        Positioned.fill(
+          child: Image.asset(
+            _ctaBg,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) =>
+                const ColoredBox(color: Color(0xFF0D1B2E)),
+          ),
+        ),
+        // Heavy dark overlay to keep text legible
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerRight,
+                end: Alignment.centerLeft,
+                colors: [
+                  LD.ink.withAlpha(180),
+                  LD.ink.withAlpha(230),
+                ],
+              ),
+            ),
+          ),
+        ),
+      Container(
+      color: Colors.transparent,
       padding: const EdgeInsets.fromLTRB(64, 140, 64, 140),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -2321,6 +2501,8 @@ class _CtaSection extends StatelessWidget {
           ),
         ],
       ),
+      ),
+      ],
     );
   }
 }
