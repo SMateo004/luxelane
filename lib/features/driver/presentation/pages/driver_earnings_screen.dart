@@ -12,7 +12,7 @@ class DriverEarningsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Earnings')),
+      appBar: AppBar(title: const Text('Ganancias')),
       body: BlocBuilder<DriverBloc, DriverState>(
         builder: (context, state) {
           if (state is! DriverLoaded) {
@@ -27,7 +27,7 @@ class DriverEarningsScreen extends StatelessWidget {
             children: [
               _EarningsSummary(total: total, rides: completed.length),
               const SizedBox(height: LuxSpacing.lg),
-              const SectionHeader(title: 'Completed Rides'),
+              const SectionHeader(title: 'Viajes completados'),
               const SizedBox(height: LuxSpacing.md),
               if (completed.isEmpty)
                 const _EmptyEarnings()
@@ -67,12 +67,12 @@ class _EarningsSummary extends StatelessWidget {
         ),
         child: Column(
           children: [
-            const Text('Total Earnings', style: LuxTypography.caption),
+            const Text('Ganancias totales', style: LuxTypography.caption),
             const SizedBox(height: LuxSpacing.sm),
             Text(
               'Bs${total.toStringAsFixed(2)}',
               style: const TextStyle(
-                fontFamily: 'Cormorant',
+                fontFamily: 'Cormorant Garamond',
                 fontSize: 48,
                 fontWeight: FontWeight.w600,
                 color: LuxColors.sapphire,
@@ -86,7 +86,7 @@ class _EarningsSummary extends StatelessWidget {
                     color: LuxColors.whiteTertiary, size: 14),
                 const SizedBox(width: LuxSpacing.xs),
                 Text(
-                  '$rides ride${rides == 1 ? '' : 's'} completed',
+                  '$rides viaje${rides == 1 ? '' : 's'} completado${rides == 1 ? '' : 's'}',
                   style: LuxTypography.caption,
                 ),
               ],
@@ -147,7 +147,7 @@ class _EarningsCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(LuxRadius.sm),
                   ),
                   child: Text(
-                    'PAID',
+                    'PAGADO',
                     style: LuxTypography.caption
                         .copyWith(color: LuxColors.success, fontSize: 9),
                   ),
@@ -172,7 +172,7 @@ class _EmptyEarnings extends StatelessWidget {
               Icon(Icons.attach_money,
                   size: 48, color: LuxColors.whiteTertiary),
               SizedBox(height: LuxSpacing.md),
-              Text('No completed rides yet',
+              Text('Aún no hay viajes completados',
                   style: TextStyle(color: LuxColors.white)),
             ],
           ),

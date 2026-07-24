@@ -3,6 +3,7 @@
 // ============================================================
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 abstract class LD {
   // Backgrounds
@@ -25,21 +26,20 @@ abstract class LD {
 }
 
 // Semantic font family names
-const kSerif = 'Cormorant Garamond';   // loaded via Google Fonts in index.html
-const kSans  = 'Helvetica Neue';       // system Helvetica / fallback Arial
+const kSerif = 'Cormorant Garamond';
+const kSans  = 'Montserrat';
 
-TextStyle eyebrow({Color color = LD.sph}) => TextStyle(
-  fontFamily: kSans,
-  fontSize: 10,
-  fontWeight: FontWeight.w400,
-  letterSpacing: 3.2,
-  color: color,
-  decoration: TextDecoration.none,
-);
+TextStyle eyebrow({Color color = LD.sph}) =>
+    GoogleFonts.montserrat(
+      fontSize: 10,
+      fontWeight: FontWeight.w400,
+      letterSpacing: 3.2,
+      color: color,
+      decoration: TextDecoration.none,
+    );
 
 TextStyle uiLabel({double size = 10, Color color = LD.ink3, double spacing = 2.4}) =>
-    TextStyle(
-      fontFamily: kSans,
+    GoogleFonts.montserrat(
       fontSize: size,
       fontWeight: FontWeight.w400,
       letterSpacing: spacing,
@@ -53,8 +53,7 @@ TextStyle displayText({
   FontStyle style = FontStyle.normal,
   FontWeight weight = FontWeight.w300,
 }) =>
-    TextStyle(
-      fontFamily: kSerif,
+    GoogleFonts.cormorantGaramond(
       fontSize: size,
       fontWeight: weight,
       fontStyle: style,
@@ -64,14 +63,14 @@ TextStyle displayText({
       decoration: TextDecoration.none,
     );
 
-TextStyle bodyText({double size = 15, Color color = LD.ink2}) => TextStyle(
-  fontFamily: kSans,
-  fontSize: size,
-  fontWeight: FontWeight.w300,
-  color: color,
-  height: 1.78,
-  decoration: TextDecoration.none,
-);
+TextStyle bodyText({double size = 15, Color color = LD.ink2}) =>
+    GoogleFonts.montserrat(
+      fontSize: size,
+      fontWeight: FontWeight.w300,
+      color: color,
+      height: 1.78,
+      decoration: TextDecoration.none,
+    );
 
 // ============================================================
 // Shared helper widgets

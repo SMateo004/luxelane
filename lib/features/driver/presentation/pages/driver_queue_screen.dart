@@ -14,7 +14,7 @@ class DriverQueueScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Job Queue')),
+      appBar: AppBar(title: const Text('Cola de trabajos')),
       body: BlocBuilder<DriverBloc, DriverState>(
         builder: (context, state) {
           if (state is! DriverLoaded) {
@@ -41,7 +41,7 @@ class DriverQueueScreen extends StatelessWidget {
             padding: const EdgeInsets.all(LuxSpacing.md),
             children: [
               if (pending.isNotEmpty) ...[
-                const _SectionTitle(title: 'AVAILABLE REQUESTS', isGold: true),
+                const _SectionTitle(title: 'SOLICITUDES DISPONIBLES', isGold: true),
                 const SizedBox(height: LuxSpacing.sm),
                 ...pending.map((b) => Padding(
                       padding: const EdgeInsets.only(bottom: LuxSpacing.md),
@@ -50,7 +50,7 @@ class DriverQueueScreen extends StatelessWidget {
                 const SizedBox(height: LuxSpacing.lg),
               ],
               if (upcoming.isNotEmpty) ...[
-                const _SectionTitle(title: 'MY ACTIVE JOBS', isGold: false),
+                const _SectionTitle(title: 'MIS TRABAJOS ACTIVOS', isGold: false),
                 const SizedBox(height: LuxSpacing.sm),
                 ...upcoming.map((b) => Padding(
                       padding: const EdgeInsets.only(bottom: LuxSpacing.md),
@@ -101,14 +101,14 @@ class _EmptyQueue extends StatelessWidget {
             ),
             const SizedBox(height: LuxSpacing.md),
             Text(
-              isAvailable ? 'No jobs yet' : 'Go online to receive jobs',
+              isAvailable ? 'Sin trabajos aún' : 'Conéctate para recibir trabajos',
               style: LuxTypography.titleMedium,
             ),
             const SizedBox(height: LuxSpacing.sm),
             Text(
               isAvailable
-                  ? 'New bookings will appear here'
-                  : 'Toggle availability on the Home tab',
+                  ? 'Las nuevas reservas aparecerán aquí'
+                  : 'Activa tu disponibilidad en la pestaña Inicio',
               style: LuxTypography.bodyMedium,
               textAlign: TextAlign.center,
             ),
@@ -213,7 +213,7 @@ class _JobActions extends StatelessWidget {
 
     if (isPending) {
       return LuxButton(
-        label: 'Accept Ride',
+        label: 'Aceptar viaje',
         icon: Icons.check_circle_outline_rounded,
         onPressed: () => bloc.add(DriverRequestAccepted(
           bookingId: booking.id,
@@ -225,21 +225,21 @@ class _JobActions extends StatelessWidget {
     switch (booking.status) {
       case BookingStatus.confirmed:
         return LuxButton(
-          label: 'Head to Pickup',
+          label: 'Ir a la recogida',
           icon: Icons.navigation_rounded,
           onPressed: () =>
               bloc.add(DriverBookingAccepted(bookingId: booking.id)),
         );
       case BookingStatus.driverArriving:
         return LuxButton(
-          label: 'I Have Arrived',
+          label: 'He llegado',
           icon: Icons.where_to_vote_rounded,
           onPressed: () =>
               bloc.add(DriverArrivedAtPickup(bookingId: booking.id)),
         );
       case BookingStatus.driverArrived:
         return LuxButton(
-          label: 'Start Ride',
+          label: 'Iniciar viaje',
           icon: Icons.play_arrow_rounded,
           onPressed: () =>
               bloc.add(DriverTripStarted(bookingId: booking.id)),

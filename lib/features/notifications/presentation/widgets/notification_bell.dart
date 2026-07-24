@@ -56,7 +56,7 @@ class NotificationBell extends StatelessWidget {
             ],
           ),
           onPressed: () => _showNotificationSheet(context),
-          tooltip: 'Notifications',
+          tooltip: 'Notificaciones',
         );
       },
     );
@@ -124,7 +124,7 @@ class _NotificationSheet extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Text('Notifications',
+                  const Text('Notificaciones',
                       style: LuxTypography.titleLarge),
                   const Spacer(),
                   BlocBuilder<NotificationBloc, NotificationState>(
@@ -143,7 +143,7 @@ class _NotificationSheet extends StatelessWidget {
                                 )
                             : null,
                         child: Text(
-                          'Mark all read',
+                          'Marcar todo como leído',
                           style: LuxTypography.caption
                               .copyWith(color: LuxColors.sapphire),
                         ),
@@ -173,7 +173,7 @@ class _NotificationSheet extends StatelessWidget {
                           Icon(Icons.notifications_none_rounded,
                               color: LuxColors.whiteTertiary, size: 48),
                           const SizedBox(height: LuxSpacing.md),
-                          const Text('No notifications yet',
+                          const Text('Aún no hay notificaciones',
                               style: LuxTypography.bodyMedium),
                         ],
                       ),
@@ -232,9 +232,9 @@ class _NotificationTile extends StatelessWidget {
 
   String _timeAgo(DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
-    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inMinutes < 1) return 'Ahora';
+    if (diff.inMinutes < 60) return 'Hace ${diff.inMinutes}m';
+    if (diff.inHours < 24) return 'Hace ${diff.inHours}h';
     return DateFormat('MMM d').format(dt);
   }
 

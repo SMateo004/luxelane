@@ -26,16 +26,16 @@ extension VehicleClassX on VehicleClass {
       case VehicleClass.business:      return 'Business Class';
       case VehicleClass.firstClass:    return 'First Class';
       case VehicleClass.businessVan:   return 'Business Van';
-      case VehicleClass.electric:      return 'Electric';
+      case VehicleClass.electric:      return 'Eléctrico';
     }
   }
 
   String get description {
     switch (this) {
-      case VehicleClass.business:    return 'Mercedes E-Class or similar';
-      case VehicleClass.firstClass:  return 'Mercedes S-Class or similar';
-      case VehicleClass.businessVan: return 'Mercedes V-Class · Up to 7';
-      case VehicleClass.electric:    return 'Tesla Model S or similar';
+      case VehicleClass.business:    return 'Mercedes E-Class o similar';
+      case VehicleClass.firstClass:  return 'Mercedes S-Class o similar';
+      case VehicleClass.businessVan: return 'Mercedes V-Class · Hasta 7';
+      case VehicleClass.electric:    return 'Tesla Model S o similar';
     }
   }
 
@@ -50,15 +50,15 @@ extension VehicleClassX on VehicleClass {
 extension ServiceTypeX on ServiceType {
   String get label {
     switch (this) {
-      case ServiceType.oneWay:     return 'One Way';
-      case ServiceType.byTheHour: return 'By the Hour';
+      case ServiceType.oneWay:     return 'Solo ida';
+      case ServiceType.byTheHour: return 'Por horas';
     }
   }
 
   String get description {
     switch (this) {
-      case ServiceType.oneWay:     return 'Fixed-price transfer to your destination';
-      case ServiceType.byTheHour: return 'Chauffeur at your disposal for a set time';
+      case ServiceType.oneWay:     return 'Traslado a precio fijo a tu destino';
+      case ServiceType.byTheHour: return 'Chófer a tu disposición por un tiempo determinado';
     }
   }
 }
@@ -78,13 +78,13 @@ extension BookingStatusX on BookingStatus {
 
   String get displayLabel {
     switch (this) {
-      case BookingStatus.pending:        return 'Pending';
-      case BookingStatus.confirmed:      return 'Confirmed';
-      case BookingStatus.driverArriving: return 'En Route';
-      case BookingStatus.driverArrived:  return 'Driver Arrived';
-      case BookingStatus.inProgress:     return 'In Progress';
-      case BookingStatus.completed:      return 'Completed';
-      case BookingStatus.cancelled:      return 'Cancelled';
+      case BookingStatus.pending:        return 'Pendiente';
+      case BookingStatus.confirmed:      return 'Confirmado';
+      case BookingStatus.driverArriving: return 'En camino';
+      case BookingStatus.driverArrived:  return 'Chófer llegó';
+      case BookingStatus.inProgress:     return 'En progreso';
+      case BookingStatus.completed:      return 'Completado';
+      case BookingStatus.cancelled:      return 'Cancelado';
     }
   }
 

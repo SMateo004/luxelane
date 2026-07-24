@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final picked = await showMapPickerDialog(
       context,
       initial: initial,
-      title: 'Select pickup location',
+      title: 'Seleccionar lugar de recogida',
     );
     if (!mounted || picked == null) return;
     setState(() => _origin = picked);
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
       initial: _origin != null
           ? LatLng(_origin!.lat, _origin!.lng)
           : const LatLng(-17.7833, -63.1821),
-      title: 'Select pickup location',
+      title: 'Seleccionar lugar de recogida',
     );
     if (!mounted || picked == null) return;
     setState(() => _origin = picked);
@@ -83,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
       initial: _destination != null
           ? LatLng(_destination!.lat, _destination!.lng)
           : const LatLng(-17.7833, -63.1821),
-      title: 'Select destination',
+      title: 'Seleccionar destino',
     );
     if (!mounted || picked == null) return;
     setState(() => _destination = picked);
@@ -115,11 +115,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _search() {
     if (_origin == null) {
-      showLuxSnackbar(context, 'Enter a pickup location', isError: true);
+      showLuxSnackbar(context, 'Ingresa un lugar de recogida', isError: true);
       return;
     }
     if (_serviceType == ServiceType.oneWay && _destination == null) {
-      showLuxSnackbar(context, 'Enter a destination', isError: true);
+      showLuxSnackbar(context, 'Ingresa un destino', isError: true);
       return;
     }
     context.go(
@@ -380,7 +380,7 @@ class _MobileBottomPanel extends StatelessWidget {
               _RouteInfoBadge(route: routeInfo!),
             ],
             const SizedBox(height: LuxSpacing.md),
-            LuxButton(label: 'Search Vehicles', onPressed: onSearch),
+            LuxButton(label: 'Buscar vehículos', onPressed: onSearch),
           ],
         ),
       );
@@ -432,7 +432,7 @@ class _BookingForm extends StatelessWidget {
             children: [
               Expanded(
                 child: PlaceAutocompleteField(
-                  label: 'Pickup Location',
+                  label: 'Lugar de recogida',
                   hint: 'Calle, barrio, aeropuerto…',
                   prefixIcon: Icons.radio_button_checked_outlined,
                   initialValue: origin,
@@ -474,7 +474,7 @@ class _BookingForm extends StatelessWidget {
           if (serviceType == ServiceType.oneWay) ...[
             const SizedBox(height: LuxSpacing.sm),
             PlaceAutocompleteField(
-              label: 'Destination',
+              label: 'Destino',
               hint: '¿A dónde vas?',
               prefixIcon: Icons.location_on_outlined,
               initialValue: destination,
@@ -615,7 +615,7 @@ class _HourSelector extends StatelessWidget {
         children: [
           Icon(Icons.schedule_outlined, size: 20, color: iconColor),
           const SizedBox(width: LuxSpacing.md),
-          Text('Duration',
+          Text('Duración',
               style: TextStyle(
                 color: textColor,
                 fontSize: 13,
@@ -703,7 +703,7 @@ abstract class _TS {
   static const h1 = TextStyle(
     color: _LP.text,
     fontSize: 54,
-    fontFamily: 'Cormorant',
+    fontFamily: 'Cormorant Garamond',
     fontWeight: FontWeight.w300,
     height: 1.06,
     letterSpacing: -0.5,
@@ -711,14 +711,14 @@ abstract class _TS {
   static const h2 = TextStyle(
     color: _LP.text,
     fontSize: 40,
-    fontFamily: 'Cormorant',
+    fontFamily: 'Cormorant Garamond',
     fontWeight: FontWeight.w300,
     height: 1.1,
   );
   static const h3 = TextStyle(
     color: _LP.text,
     fontSize: 18,
-    fontFamily: 'Cormorant',
+    fontFamily: 'Cormorant Garamond',
     fontWeight: FontWeight.w500,
     letterSpacing: 0.2,
   );
@@ -741,7 +741,7 @@ abstract class _TS {
   static const h1Inv = TextStyle(
     color: _LP.textInverse,
     fontSize: 54,
-    fontFamily: 'Cormorant',
+    fontFamily: 'Cormorant Garamond',
     fontWeight: FontWeight.w300,
     height: 1.06,
     letterSpacing: -0.5,
@@ -828,7 +828,7 @@ class _WebHero extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('PROFESSIONAL CHAUFFEUR SERVICE',
+                        const Text('SERVICIO DE CHÓFER PROFESIONAL',
                             style: TextStyle(
                               color: Color(0xFFAAAAAA),
                               fontSize: 10,
@@ -838,11 +838,11 @@ class _WebHero extends StatelessWidget {
                             )),
                         const SizedBox(height: 24),
                         const Text(
-                          'Your journey,\nperfectly\ndriven.',
+                          'Tu viaje,\nperfectamente\nconducido.',
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 68,
-                            fontFamily: 'Cormorant',
+                            fontFamily: 'Cormorant Garamond',
                             fontWeight: FontWeight.w300,
                             height: 1.02,
                             letterSpacing: -1,
@@ -850,7 +850,7 @@ class _WebHero extends StatelessWidget {
                         ),
                         const SizedBox(height: 24),
                         const Text(
-                          'Fixed prices · Professional drivers\nAvailable in 50+ countries worldwide.',
+                          'Precios fijos · Conductores profesionales\nDisponible en más de 50 países.',
                           style: TextStyle(
                             color: Color(0xFF999999),
                             fontSize: 14,
@@ -861,11 +861,11 @@ class _WebHero extends StatelessWidget {
                         ),
                         const SizedBox(height: 48),
                         Row(children: [
-                          const _HStat('50+', 'COUNTRIES'),
+                          const _HStat('50+', 'PAÍSES'),
                           _HDivider(),
-                          const _HStat('4.9 / 5', 'RATING'),
+                          const _HStat('4.9 / 5', 'CALIFICACIÓN'),
                           _HDivider(),
-                          const _HStat('24 / 7', 'SUPPORT'),
+                          const _HStat('24 / 7', 'SOPORTE'),
                         ]),
                       ],
                     ),
@@ -913,7 +913,7 @@ class _HStat extends StatelessWidget {
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 24,
-                fontFamily: 'Cormorant',
+                fontFamily: 'Cormorant Garamond',
                 fontWeight: FontWeight.w400,
               )),
           const SizedBox(height: 2),
@@ -1044,16 +1044,16 @@ class _BookingCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Plan your journey',
+            const Text('Planifica tu viaje',
                 style: TextStyle(
                   color: Color(0xFF111111),
                   fontSize: 22,
-                  fontFamily: 'Cormorant',
+                  fontFamily: 'Cormorant Garamond',
                   fontWeight: FontWeight.w500,
                   letterSpacing: 0.2,
                 )),
             const SizedBox(height: 4),
-            const Text('Fixed price · No surge pricing',
+            const Text('Precio fijo · Sin precios dinámicos',
                 style: TextStyle(
                   color: Color(0xFF999999),
                   fontSize: 11,
@@ -1104,7 +1104,7 @@ class _BookingCard extends StatelessWidget {
                     letterSpacing: 2.5,
                   ),
                 ),
-                child: const Text('GET PRICES'),
+                child: const Text('VER PRECIOS'),
               ),
             ),
           ],
@@ -1166,13 +1166,13 @@ class _WebStatsStrip extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const _StatItem('150,000+', 'RIDES COMPLETED'),
+            const _StatItem('150,000+', 'VIAJES COMPLETADOS'),
             _SDivider(),
-            const _StatItem('50+', 'COUNTRIES'),
+            const _StatItem('50+', 'PAÍSES'),
             _SDivider(),
-            const _StatItem('4.9 / 5', 'AVERAGE RATING'),
+            const _StatItem('4.9 / 5', 'CALIFICACIÓN PROMEDIO'),
             _SDivider(),
-            const _StatItem('24 / 7', 'SUPPORT'),
+            const _StatItem('24 / 7', 'SOPORTE'),
           ],
         ),
       );
@@ -1190,7 +1190,7 @@ class _StatItem extends StatelessWidget {
               style: const TextStyle(
                 color: Color(0xFF111111),
                 fontSize: 30,
-                fontFamily: 'Cormorant',
+                fontFamily: 'Cormorant Garamond',
                 fontWeight: FontWeight.w400,
               )),
           const SizedBox(height: 4),
@@ -1213,12 +1213,12 @@ class _WebHowItWorks extends StatelessWidget {
   const _WebHowItWorks();
 
   static const _steps = [
-    ('01', 'Enter your journey',
-     'Specify pickup, destination and date.\nYour fixed price is calculated instantly.'),
-    ('02', 'Choose your vehicle',
-     'Select from Business, First Class or Van.\nEvery model is premium and recent.'),
-    ('03', 'Relax and arrive',
-     'Your chauffeur is punctual, uniformed\nand meets you door to door.'),
+    ('01', 'Ingresa tu viaje',
+     'Indica la recogida, el destino y la fecha.\nTu precio fijo se calcula al instante.'),
+    ('02', 'Elige tu vehículo',
+     'Selecciona entre Business, First Class o Van.\nTodos los modelos son premium y recientes.'),
+    ('03', 'Relájate y llega',
+     'Tu chófer es puntual, uniformado\ny te atiende de puerta a puerta.'),
   ];
 
   @override
@@ -1228,9 +1228,9 @@ class _WebHowItWorks extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('HOW IT WORKS', style: _TS.eyebrow),
+            const Text('CÓMO FUNCIONA', style: _TS.eyebrow),
             const SizedBox(height: 16),
-            const Text('Simple.\nTransparent.\nReliable.', style: _TS.h1),
+            const Text('Simple.\nTransparente.\nConfiable.', style: _TS.h1),
             const SizedBox(height: 72),
             // thin divider
             Container(height: 1, color: _LP.border),
@@ -1271,7 +1271,7 @@ class _HowStep extends StatelessWidget {
               style: const TextStyle(
                 color: Color(0xFFE8E5DF),
                 fontSize: 80,
-                fontFamily: 'Cormorant',
+                fontFamily: 'Cormorant Garamond',
                 fontWeight: FontWeight.w700,
                 height: 1,
               )),
@@ -1294,13 +1294,13 @@ class _WebFleetSection extends StatelessWidget {
 
   static const _vehicles = [
     ('BUSINESS CLASS',
-     'Mercedes E-Class or equivalent. The standard of elegance for every transfer.',
+     'Mercedes E-Class o equivalente. El estándar de elegancia para cada traslado.',
      _Img.business),
     ('FIRST CLASS',
-     'Mercedes S-Class or equivalent. Our highest tier of comfort and refinement.',
+     'Mercedes S-Class o equivalente. Nuestro nivel más alto de confort y refinamiento.',
      _Img.firstClass),
     ('BUSINESS VAN',
-     'Mercedes V-Class or equivalent. Space and privacy for groups up to 7.',
+     'Mercedes V-Class o equivalente. Espacio y privacidad para grupos de hasta 7 personas.',
      _Img.van),
   ];
 
@@ -1317,17 +1317,17 @@ class _WebFleetSection extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('OUR FLEET', style: _TS.eyebrow),
+                    Text('NUESTRA FLOTA', style: _TS.eyebrow),
                     SizedBox(height: 16),
-                    Text('Premium vehicles,\nno exceptions.', style: _TS.h1),
+                    Text('Vehículos premium,\nsin excepciones.', style: _TS.h1),
                   ],
                 ),
                 Spacer(),
                 SizedBox(
                   width: 340,
                   child: Text(
-                    'Every vehicle is less than five years old, '
-                    'fully licensed and impeccably maintained.',
+                    'Todos los vehículos tienen menos de cinco años, '
+                    'están completamente habilitados y en perfectas condiciones.',
                     style: _TS.body,
                     textAlign: TextAlign.right,
                   ),
@@ -1414,15 +1414,15 @@ class _WebChauffeurSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('PROFESSIONAL CHAUFFEURS', style: _TS.eyebrow),
+                  const Text('CHÓFERES PROFESIONALES', style: _TS.eyebrow),
                   const SizedBox(height: 20),
-                  const Text('Vetted, trained\nand always on time.', style: _TS.h2),
+                  const Text('Verificados, capacitados\ny siempre puntuales.', style: _TS.h2),
                   const SizedBox(height: 32),
                   ...[
-                    'Minimum 5 years of professional experience',
-                    'Full background screening and continuous review',
-                    'Multilingual and culturally aware',
-                    'Uniformed, discreet and punctual',
+                    'Mínimo 5 años de experiencia profesional',
+                    'Verificación de antecedentes y revisión continua',
+                    'Multilingüe y con conciencia cultural',
+                    'Uniformado, discreto y puntual',
                   ].map((s) => Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: Row(
@@ -1463,16 +1463,16 @@ class _WebCTASection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Your next journey\nstarts here.',
+                Text('Tu próximo viaje\nempieza aquí.',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 52,
-                      fontFamily: 'Cormorant',
+                      fontFamily: 'Cormorant Garamond',
                       fontWeight: FontWeight.w300,
                       height: 1.1,
                     )),
                 SizedBox(height: 16),
-                Text('Book in under 2 minutes. Fixed price guaranteed.',
+                Text('Reserva en menos de 2 minutos. Precio fijo garantizado.',
                     style: TextStyle(
                       color: Color(0xFF666666),
                       fontSize: 13,
@@ -1503,7 +1503,7 @@ class _WebCTASection extends StatelessWidget {
                   letterSpacing: 2.5,
                 ),
               ),
-              child: const Text('BOOK NOW'),
+              child: const Text('RESERVAR AHORA'),
             ),
           ),
         ]),
@@ -1540,7 +1540,7 @@ class _WebFooter extends StatelessWidget {
                         letterSpacing: 4,
                       )),
                   SizedBox(height: 12),
-                  Text('Professional chauffeur\nservice worldwide.',
+                  Text('Servicio de chófer profesional\nen todo el mundo.',
                       style: TextStyle(
                         color: Color(0xFF444444),
                         fontSize: 12,
@@ -1551,13 +1551,13 @@ class _WebFooter extends StatelessWidget {
                 ],
               ),
             ),
-            _FCol('SERVICES', ['One Way Transfer', 'By The Hour', 'Airport Transfer', 'Corporate']),
-            _FCol('COMPANY',  ['About Us', 'For Business', 'Become a Driver', 'Press']),
-            _FCol('SUPPORT',  ['Help Center', 'Terms', 'Privacy Policy', 'Contact']),
+            _FCol('SERVICIOS', ['Traslado solo ida', 'Por horas', 'Traslado al aeropuerto', 'Corporativo']),
+            _FCol('EMPRESA',   ['Sobre nosotros', 'Para empresas', 'Conviértete en conductor', 'Prensa']),
+            _FCol('SOPORTE',   ['Centro de ayuda', 'Términos', 'Política de privacidad', 'Contacto']),
           ]),
           const SizedBox(height: 48),
           Row(children: [
-            Text('© ${DateTime.now().year} Luxelane. All rights reserved.',
+            Text('© ${DateTime.now().year} Luxelane. Todos los derechos reservados.',
                 style: const TextStyle(
                   color: Color(0xFF333333),
                   fontSize: 11,
@@ -1565,7 +1565,7 @@ class _WebFooter extends StatelessWidget {
                   fontWeight: FontWeight.w300,
                 )),
             const Spacer(),
-            const Text('Worldwide luxury transportation',
+            const Text('Transporte de lujo en todo el mundo',
                 style: TextStyle(
                   color: Color(0xFF2A2A2A),
                   fontSize: 11,

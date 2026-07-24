@@ -34,7 +34,7 @@ class _TripsScreenState extends State<TripsScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('My Trips'),
+          title: const Text('Mis viajes'),
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh_rounded),
@@ -55,7 +55,7 @@ class _TripsScreenState extends State<TripsScreen> {
                     Text(state.message, style: LuxTypography.bodyMedium),
                     const SizedBox(height: LuxSpacing.md),
                     LuxOutlinedButton(
-                        label: 'Retry', onPressed: _loadTrips),
+                        label: 'Reintentar', onPressed: _loadTrips),
                   ],
                 ),
               );
@@ -64,8 +64,8 @@ class _TripsScreenState extends State<TripsScreen> {
               final trips = state.bookings;
               if (trips.isEmpty) {
                 return EmptyState(
-                  message: 'No rides yet.\nBook your first experience.',
-                  actionLabel: 'Book Now',
+                  message: 'Aún no hay viajes.\nReserva tu primera experiencia.',
+                  actionLabel: 'Reservar ahora',
                   onAction: () => context.go('/booking'),
                   icon: Icons.directions_car_outlined,
                 );
@@ -107,8 +107,8 @@ class _TripCard extends StatelessWidget {
   String get _date {
     final dt = booking.scheduledAt;
     const months = [
-      '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      '', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
     ];
     return '${dt.day} ${months[dt.month]} ${dt.year}';
   }

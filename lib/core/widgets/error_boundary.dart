@@ -41,7 +41,7 @@ class LuxErrorScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 const Text(
-                  'Something went wrong',
+                  'Algo salió mal',
                   style: TextStyle(
                     color: LuxColors.white,
                     fontSize: 18,
@@ -51,7 +51,7 @@ class LuxErrorScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: LuxSpacing.sm),
                 const Text(
-                  'We\'ve been notified and are working on a fix.',
+                  'Hemos sido notificados y estamos trabajando en una solución.',
                   style: TextStyle(color: LuxColors.whiteTertiary),
                   textAlign: TextAlign.center,
                 ),
@@ -60,7 +60,7 @@ class LuxErrorScreen extends StatelessWidget {
                   TextButton(
                     onPressed: onRetry,
                     child: const Text(
-                      'Try Again',
+                      'Intentar de nuevo',
                       style: TextStyle(color: LuxColors.sapphire),
                     ),
                   ),

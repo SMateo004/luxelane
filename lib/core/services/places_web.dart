@@ -47,12 +47,107 @@ Future<List<PlaceSuggestion>> webAutocomplete(
 }) async {
   try {
     final google = js.context['google'];
-    if (google == null) return [];
-    final maps = google['maps'];
-    if (maps == null) return [];
-    final places = maps['places'];
-    if (places == null) return [];
+    if (google == null) { _dbg('google not loaded'); return []; }
+    final maps = _prop(google, 'maps');
+    if (maps == null) { _dbg('maps not loaded'); return []; }
+    final places = _prop(maps, 'places');
+    if (places == null) { _dbg('places not loaded'); return []; }
 
+    // ── New Places API (AutocompleteSuggestion) — required for post-Mar-2025 keys ──
+    final newApiClass = _prop(places, 'AutocompleteSuggestion');
+    if (newApiClass != null) {
+      _dbg('Using new AutocompleteSuggestion API');
+      return await _newAutocomplete(input, lat, lng, maps, newApiClass);
+    }
+
+    // ── Legacy fallback (AutocompleteService) — only for older API keys ──
+    _dbg('Falling back to legacy AutocompleteService');
+    return await _legacyAutocomplete(input, lat, lng, maps, places);
+  } catch (e) {
+    _dbg('webAutocomplete top error: $e');
+    return [];
+  }
+}
+
+Future<List<PlaceSuggestion>> _newAutocomplete(
+  String input,
+  double lat,
+  double lng,
+  dynamic maps,
+  dynamic autocompleteSuggestionClass,
+) async {
+  try {
+    // Build request as a plain JS object via jsify, then set LatLng bias separately
+    final request = js_util.jsify({
+      'input': input,
+      'language': 'es',
+      'region': 'bo',
+    });
+    // locationBias must be a real LatLng object, not a plain map
+    final latLng = js.JsObject(
+      (maps as js.JsObject)['LatLng'] as js.JsFunction,
+      [lat, lng],
+    );
+    js_util.setProperty(request as Object, 'locationBias', latLng);
+
+    final promise = js_util.callMethod(
+      autocompleteSuggestionClass as Object,
+      'fetchAutocompleteSuggestions',
+      [request],
+    );
+
+    final raw = await js_util
+        .promiseToFuture<dynamic>(promise as Object)
+        .timeout(const Duration(seconds: 5), onTimeout: () => null);
+
+    if (raw == null) return [];
+
+    final suggestionsRaw = _prop(raw, 'suggestions');
+    if (suggestionsRaw == null) return [];
+
+    final list = suggestionsRaw as List;
+    final results = <PlaceSuggestion>[];
+
+    for (int i = 0; i < list.length; i++) {
+      final sugg = list[i];
+      final pred = _prop(sugg, 'placePrediction');
+      if (pred == null) continue;
+
+      final placeId       = _prop(pred, 'placeId') as String? ?? '';
+      final textObj       = _prop(pred, 'text');
+      final mainTextObj   = _prop(pred, 'mainText');
+      final secTextObj    = _prop(pred, 'secondaryText');
+
+      final description  = _str(textObj);
+      final mainText     = _str(mainTextObj);
+      final secondaryText = _str(secTextObj);
+
+      if (placeId.isEmpty && description.isEmpty) continue;
+
+      results.add(PlaceSuggestion(
+        placeId:       placeId,
+        description:   description,
+        mainText:      mainText.isNotEmpty ? mainText : description,
+        secondaryText: secondaryText,
+      ));
+    }
+
+    _dbg('New API returned ${results.length} suggestions');
+    return results;
+  } catch (e) {
+    _dbg('_newAutocomplete error: $e');
+    return [];
+  }
+}
+
+Future<List<PlaceSuggestion>> _legacyAutocomplete(
+  String input,
+  double lat,
+  double lng,
+  dynamic maps,
+  dynamic places,
+) async {
+  try {
     final service = js.JsObject(places['AutocompleteService'] as js.JsFunction);
     final completer = Completer<List<PlaceSuggestion>>();
 
@@ -73,11 +168,11 @@ Future<List<PlaceSuggestion>> webAutocomplete(
             final results = <PlaceSuggestion>[];
             for (int i = 0; i < list.length; i++) {
               final jsP = js.JsObject.fromBrowserObject(list[i] as Object);
-              final sf = js.JsObject.fromBrowserObject(jsP['structured_formatting'] as Object);
+              final sf  = js.JsObject.fromBrowserObject(jsP['structured_formatting'] as Object);
               results.add(PlaceSuggestion(
-                placeId: jsP['place_id'] as String? ?? '',
-                description: jsP['description'] as String? ?? '',
-                mainText: sf['main_text'] as String? ?? '',
+                placeId:       jsP['place_id'] as String? ?? '',
+                description:   jsP['description'] as String? ?? '',
+                mainText:      sf['main_text'] as String? ?? '',
                 secondaryText: sf['secondary_text'] as String? ?? '',
               ));
             }
@@ -86,6 +181,7 @@ Future<List<PlaceSuggestion>> webAutocomplete(
             completer.complete([]);
           }
         } else {
+          _dbg('Legacy autocomplete status: $status');
           completer.complete([]);
         }
       }),
@@ -94,6 +190,7 @@ Future<List<PlaceSuggestion>> webAutocomplete(
     return completer.future
         .timeout(const Duration(seconds: 5), onTimeout: () => []);
   } catch (e) {
+    _dbg('_legacyAutocomplete error: $e');
     return [];
   }
 }

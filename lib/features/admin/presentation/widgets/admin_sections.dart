@@ -44,12 +44,12 @@ class DashboardTab extends StatelessWidget {
                         const SizedBox(width: LuxSpacing.md),
                         const Expanded(
                           child: Text(
-                            'Maintenance Mode ACTIVE — Riders cannot book new trips.',
+                            'MODO MANTENIMIENTO ACTIVO — Los pasajeros no pueden reservar nuevos viajes.',
                             style: TextStyle(color: LuxColors.error, fontWeight: FontWeight.w600),
                           ),
                         ),
                         LuxOutlinedButton(
-                          label: 'Disable',
+                          label: 'Deshabilitar',
                           onPressed: () => context
                               .read<AdminBloc>()
                               .add(const AdminToggleMaintenanceModeRequested(false)),
@@ -62,38 +62,38 @@ class DashboardTab extends StatelessWidget {
                 ),
 
               // ── KPI row ──────────────────────────────────────────────────
-              const SectionHeader(title: 'Overview'),
+              const SectionHeader(title: 'Resumen'),
               const SizedBox(height: LuxSpacing.md),
               Wrap(
                 spacing: LuxSpacing.md,
                 runSpacing: LuxSpacing.md,
                 children: [
                   _KpiTile(
-                    label: 'Total Revenue',
+                    label: 'Ingresos totales',
                     value: 'Bs${state.totalRevenue.toStringAsFixed(0)}',
                     icon: Icons.payments_outlined,
-                    sub: 'Today: Bs${state.todayRevenue.toStringAsFixed(0)}',
+                    sub: 'Hoy: Bs${state.todayRevenue.toStringAsFixed(0)}',
                     color: LuxColors.sapphire,
                   ),
                   _KpiTile(
-                    label: 'Completed Rides',
+                    label: 'Viajes completados',
                     value: '${state.completedRidesCount}',
                     icon: Icons.check_circle_outline_rounded,
-                    sub: '${state.activeRidesCount} in progress',
+                    sub: '${state.activeRidesCount} en progreso',
                     color: LuxColors.success,
                   ),
                   _KpiTile(
-                    label: 'Pending Bookings',
+                    label: 'Reservas pendientes',
                     value: '${state.pendingRidesCount}',
                     icon: Icons.hourglass_top_rounded,
-                    sub: 'Waiting for driver',
+                    sub: 'Esperando chófer',
                     color: LuxColors.error,
                   ),
                   _KpiTile(
-                    label: 'Registered Users',
+                    label: 'Usuarios registrados',
                     value: '${state.users.length}',
                     icon: Icons.people_outline,
-                    sub: '${state.drivers.length} drivers',
+                    sub: '${state.drivers.length} chóferes',
                     color: LuxColors.white,
                   ),
                 ],
@@ -101,14 +101,14 @@ class DashboardTab extends StatelessWidget {
 
               // ── Revenue chart ─────────────────────────────────────────────
               const SizedBox(height: LuxSpacing.xl),
-              const SectionHeader(title: 'Business Performance'),
+              const SectionHeader(title: 'Rendimiento del negocio'),
               const SizedBox(height: LuxSpacing.md),
               LuxCard(
                 padding: const EdgeInsets.all(LuxSpacing.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('7-Day Revenue Trend (Bs)', style: LuxTypography.titleLarge),
+                    const Text('Tendencia de ingresos 7 días (Bs)', style: LuxTypography.titleLarge),
                     const SizedBox(height: LuxSpacing.xxl),
                     SizedBox(
                       height: 200,
@@ -120,7 +120,7 @@ class DashboardTab extends StatelessWidget {
 
               // ── Recent bookings ───────────────────────────────────────────
               const SizedBox(height: LuxSpacing.xl),
-              const SectionHeader(title: 'Recent Activity'),
+              const SectionHeader(title: 'Actividad reciente'),
               const SizedBox(height: LuxSpacing.md),
               BookingsTab(compact: true, state: state),
             ],
@@ -162,7 +162,7 @@ class _KpiTile extends StatelessWidget {
               const SizedBox(height: LuxSpacing.sm),
               Text(value,
                   style: LuxTypography.headlineLarge.copyWith(
-                      color: color, fontFamily: 'Cormorant', fontSize: 36)),
+                      color: color, fontFamily: 'Cormorant Garamond', fontSize: 36)),
               const SizedBox(height: 2),
               Text(sub, style: LuxTypography.caption),
             ],
@@ -283,7 +283,7 @@ class _BookingsTabState extends State<BookingsTab> {
           return const Center(child: CircularProgressIndicator());
         }
         if (rows.isEmpty) {
-          return const Center(child: Text('No bookings found'));
+          return const Center(child: Text('No se encontraron reservas'));
         }
 
         return Column(
@@ -297,7 +297,7 @@ class _BookingsTabState extends State<BookingsTab> {
                 child: Row(
                   children: [
                     _FilterChip(
-                      label: 'All',
+                      label: 'Todos',
                       selected: _filter == null,
                       onTap: () => setState(() => _filter = null),
                     ),
@@ -402,9 +402,9 @@ class _AdminBookingTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Rider: $riderName', style: LuxTypography.titleMedium),
+                  Text('Pasajero: $riderName', style: LuxTypography.titleMedium),
                   if (driverName != null)
-                    Text('Driver: $driverName',
+                    Text('Chófer: $driverName',
                         style: LuxTypography.caption
                             .copyWith(color: LuxColors.whiteTertiary)),
                   Text(
@@ -436,7 +436,7 @@ class _AdminBookingTile extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.delete_outline_rounded,
                   color: LuxColors.error, size: 18),
-              tooltip: 'Delete booking',
+              tooltip: 'Eliminar reserva',
               onPressed: () => _confirmDelete(context),
             ),
           ],
@@ -448,15 +448,15 @@ class _AdminBookingTile extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: LuxColors.blackElevated,
-        title: const Text('Delete booking?', style: LuxTypography.titleLarge),
+        title: const Text('¿Eliminar reserva?', style: LuxTypography.titleLarge),
         content: Text(
-          'This will permanently delete booking #${booking.id.substring(0, 8)}. This action cannot be undone.',
+          'Se eliminará permanentemente la reserva #${booking.id.substring(0, 8)}. Esta acción no se puede deshacer.',
           style: LuxTypography.bodyMedium,
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel')),
+              child: const Text('Cancelar')),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
@@ -465,7 +465,7 @@ class _AdminBookingTile extends StatelessWidget {
                   .add(AdminDeleteBookingRequested(booking.id));
             },
             child:
-                const Text('Delete', style: TextStyle(color: LuxColors.error)),
+                const Text('Eliminar', style: TextStyle(color: LuxColors.error)),
           ),
         ],
       ),
@@ -487,7 +487,7 @@ class DriversTab extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (state.drivers.isEmpty) {
-          return const Center(child: Text('No drivers found'));
+          return const Center(child: Text('No se encontraron chóferes'));
         }
         return ListView.separated(
           padding: const EdgeInsets.all(LuxSpacing.lg),
@@ -531,7 +531,7 @@ class _DriverTile extends StatelessWidget {
                   Text(user?.displayName ?? driver.userId.substring(0, 8),
                       style: LuxTypography.titleMedium),
                   Text(user?.email ?? '', style: LuxTypography.caption),
-                  Text('License: ${driver.licenseNumber}',
+                  Text('Licencia: ${driver.licenseNumber}',
                       style: LuxTypography.caption
                           .copyWith(color: LuxColors.whiteTertiary)),
                 ],
@@ -549,14 +549,14 @@ class _DriverTile extends StatelessWidget {
                         style: LuxTypography.bodyMedium),
                   ],
                 ),
-                Text('${driver.totalRides} rides',
+                Text('${driver.totalRides} viajes',
                     style: LuxTypography.caption),
               ],
             ),
             const SizedBox(width: LuxSpacing.md),
             if (!driver.documentsVerified)
               LuxOutlinedButton(
-                label: 'Verify',
+                label: 'Verificar',
                 onPressed: () => context
                     .read<AdminBloc>()
                     .add(AdminVerifyDriverRequested(driver.userId)),
@@ -565,13 +565,13 @@ class _DriverTile extends StatelessWidget {
               )
             else
               const Tooltip(
-                message: 'Documents verified',
+                message: 'Documentos verificados',
                 child: Icon(Icons.verified_rounded,
                     color: LuxColors.success, size: 20),
               ),
             const SizedBox(width: LuxSpacing.md),
             Tooltip(
-              message: driver.isAvailable ? 'Online' : 'Offline',
+              message: driver.isAvailable ? 'En línea' : 'Fuera de línea',
               child: Container(
                 width: 8,
                 height: 8,
@@ -609,10 +609,10 @@ class VehiclesTab extends StatelessWidget {
                 Icon(Icons.directions_car_outlined,
                     size: 48, color: LuxColors.whiteTertiary),
                 SizedBox(height: LuxSpacing.md),
-                Text('No vehicles registered yet',
+                Text('Aún no hay vehículos registrados',
                     style: LuxTypography.titleMedium),
                 SizedBox(height: LuxSpacing.sm),
-                Text('Vehicles linked to drivers appear here',
+                Text('Los vehículos vinculados a chóferes aparecen aquí',
                     style: LuxTypography.caption),
               ],
             ),
@@ -654,7 +654,7 @@ class _VehicleTile extends StatelessWidget {
                   Text('${vehicle.make} ${vehicle.model} (${vehicle.year})',
                       style: LuxTypography.titleMedium),
                   Text(
-                    'Plate: ${vehicle.plate} · Class: ${vehicle.vehicleClass.name.toUpperCase()}',
+                    'Placa: ${vehicle.plate} · Clase: ${vehicle.vehicleClass.name.toUpperCase()}',
                     style: LuxTypography.caption,
                   ),
                 ],
@@ -670,7 +670,7 @@ class _VehicleTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
               ),
               child: Text(
-                vehicle.isActive ? 'ACTIVE' : 'INACTIVE',
+                vehicle.isActive ? 'ACTIVO' : 'INACTIVO',
                 style: LuxTypography.caption.copyWith(
                     color: vehicle.isActive
                         ? LuxColors.success
@@ -728,7 +728,7 @@ class _UsersTabState extends State<UsersTab> {
                 onChanged: (v) => setState(() => _search = v),
                 style: LuxTypography.bodyMedium,
                 decoration: InputDecoration(
-                  hintText: 'Search users…',
+                  hintText: 'Buscar usuarios…',
                   hintStyle: LuxTypography.caption,
                   prefixIcon: const Icon(Icons.search_rounded,
                       color: LuxColors.whiteTertiary, size: 20),
@@ -755,7 +755,7 @@ class _UsersTabState extends State<UsersTab> {
             ),
             Expanded(
               child: filtered.isEmpty
-                  ? const Center(child: Text('No users match the search'))
+                  ? const Center(child: Text('Ningún usuario coincide con la búsqueda'))
                   : ListView.separated(
                       padding: const EdgeInsets.all(LuxSpacing.lg),
                       itemCount: filtered.length,
@@ -795,7 +795,7 @@ class _UserTile extends StatelessWidget {
                   Text(user.displayName, style: LuxTypography.titleMedium),
                   Text(user.email, style: LuxTypography.caption),
                   Text(
-                    'Member since ${DateFormat('MMM yyyy').format(user.createdAt)}',
+                    'Miembro desde ${DateFormat('MMM yyyy').format(user.createdAt)}',
                     style: LuxTypography.caption
                         .copyWith(color: LuxColors.whiteTertiary),
                   ),
@@ -859,7 +859,7 @@ class _UserTile extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: LuxColors.blackElevated,
-        title: Text('Change role for ${user.displayName}',
+        title: Text('Cambiar rol de ${user.displayName}',
             style: LuxTypography.titleLarge),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -884,7 +884,7 @@ class _UserTile extends StatelessWidget {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel')),
+              child: const Text('Cancelar')),
         ],
       ),
     );
@@ -906,10 +906,10 @@ class PricingTab extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(title: 'Pricing Rules (Bs)'),
+              const SectionHeader(title: 'Reglas de precios (Bs)'),
               const SizedBox(height: LuxSpacing.sm),
               const Text(
-                'Prices reflect the DefaultPricing model. If pricingRules collection is empty, prices are calculated locally.',
+                'Los precios reflejan el modelo DefaultPricing. Si la colección pricingRules está vacía, los precios se calculan localmente.',
                 style: LuxTypography.caption,
               ),
               const SizedBox(height: LuxSpacing.lg),
@@ -930,7 +930,7 @@ class PricingTab extends StatelessWidget {
                   })),
               if (state.pricingRules.isNotEmpty) ...[
                 const SizedBox(height: LuxSpacing.xl),
-                const SectionHeader(title: 'Firestore Pricing Rules'),
+                const SectionHeader(title: 'Reglas de precios de Firestore'),
                 const SizedBox(height: LuxSpacing.md),
                 ...state.pricingRules.map((rule) =>
                     Padding(
@@ -1050,7 +1050,7 @@ class _PricingCardState extends State<_PricingCard> {
                 ),
                 const SizedBox(width: LuxSpacing.sm),
                 Text(
-                  isHourly ? 'By the Hour' : 'One Way',
+                  isHourly ? 'Por horas' : 'Solo ida',
                   style: LuxTypography.titleMedium,
                 ),
                 const Spacer(),
@@ -1085,19 +1085,19 @@ class _PricingCardState extends State<_PricingCard> {
                   const SizedBox(width: LuxSpacing.sm),
                   Expanded(
                     child: _PriceField(
-                        label: 'Per km (Bs)',
+                        label: 'Por km (Bs)',
                         controller: _perKmCtrl),
                   ),
                 ] else
                   Expanded(
                     child: _PriceField(
-                        label: 'Per Hour (Bs)',
+                        label: 'Por hora (Bs)',
                         controller: _perHourCtrl),
                   ),
                 const SizedBox(width: LuxSpacing.sm),
                 Expanded(
                   child: _PriceField(
-                      label: 'Minimum (Bs)', controller: _minCtrl),
+                      label: 'Mínimo (Bs)', controller: _minCtrl),
                 ),
               ],
             ),
@@ -1106,7 +1106,7 @@ class _PricingCardState extends State<_PricingCard> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 LuxButton(
-                  label: 'Save Changes',
+                  label: 'Guardar cambios',
                   icon: Icons.save_outlined,
                   height: 38,
                   onPressed: () {
@@ -1204,9 +1204,9 @@ class AuditTab extends StatelessWidget {
                 Icon(Icons.history_rounded,
                     size: 48, color: LuxColors.whiteTertiary),
                 SizedBox(height: LuxSpacing.md),
-                Text('No audit logs yet', style: LuxTypography.titleMedium),
+                Text('Aún no hay registros de auditoría', style: LuxTypography.titleMedium),
                 SizedBox(height: LuxSpacing.sm),
-                Text('Admin actions will appear here in real time',
+                Text('Las acciones administrativas aparecerán aquí en tiempo real',
                     style: LuxTypography.caption),
               ],
             ),
@@ -1326,16 +1326,16 @@ class SettingsTab extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(title: 'Global App Settings'),
+              const SectionHeader(title: 'Configuración global de la app'),
               const SizedBox(height: LuxSpacing.lg),
               LuxCard(
                 child: Column(
                   children: [
                     _SettingTile(
                       icon: Icons.construction_rounded,
-                      title: 'Maintenance Mode',
+                      title: 'Modo mantenimiento',
                       subtitle:
-                          'Disable all bookings and show maintenance screen to users.',
+                          'Deshabilita todas las reservas y muestra la pantalla de mantenimiento a los usuarios.',
                       value: state.isMaintenanceMode,
                       onChanged: (val) => context
                           .read<AdminBloc>()
@@ -1344,9 +1344,9 @@ class SettingsTab extends StatelessWidget {
                     const LuxDivider(),
                     _SettingTile(
                       icon: Icons.notifications_active_outlined,
-                      title: 'Push Notifications',
+                      title: 'Notificaciones push',
                       subtitle:
-                          'Enable system-wide notifications for new bookings.',
+                          'Habilita notificaciones a nivel del sistema para nuevas reservas.',
                       value: state.pushNotificationsEnabled,
                       onChanged: (val) => context.read<AdminBloc>().add(
                             AdminUpdateGlobalSettingsRequested(
@@ -1356,9 +1356,9 @@ class SettingsTab extends StatelessWidget {
                     const LuxDivider(),
                     _SettingTile(
                       icon: Icons.security_rounded,
-                      title: 'Two-Factor Admin Auth',
+                      title: 'Autenticación admin de dos factores',
                       subtitle:
-                          'Require 2FA for all administrative actions.',
+                          'Requiere 2FA para todas las acciones administrativas.',
                       value: state.twoFactorEnabled,
                       onChanged: (val) => context.read<AdminBloc>().add(
                             AdminUpdateGlobalSettingsRequested(
@@ -1369,56 +1369,56 @@ class SettingsTab extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: LuxSpacing.xl),
-              const SectionHeader(title: 'Live Statistics'),
+              const SectionHeader(title: 'Estadísticas en vivo'),
               const SizedBox(height: LuxSpacing.md),
               LuxCard(
                 child: Column(
                   children: [
                     _InfoRow(
-                        label: 'Total Bookings',
+                        label: 'Total de reservas',
                         value: '${state.bookings.length}'),
                     const LuxDivider(),
                     _InfoRow(
-                        label: 'Registered Users',
+                        label: 'Usuarios registrados',
                         value: '${state.users.length}'),
                     const LuxDivider(),
                     _InfoRow(
-                        label: 'Registered Drivers',
+                        label: 'Chóferes registrados',
                         value: '${state.drivers.length}'),
                     const LuxDivider(),
                     _InfoRow(
-                        label: 'Verified Drivers',
+                        label: 'Chóferes verificados',
                         value:
                             '${state.drivers.where((d) => d.documentsVerified).length}'),
                     const LuxDivider(),
                     _InfoRow(
-                        label: 'Vehicles Registered',
+                        label: 'Vehículos registrados',
                         value: '${state.vehicles.length}'),
                     const LuxDivider(),
                     _InfoRow(
-                        label: 'Total Revenue',
+                        label: 'Ingresos totales',
                         value:
                             'Bs${state.totalRevenue.toStringAsFixed(2)}'),
                   ],
                 ),
               ),
               const SizedBox(height: LuxSpacing.xl),
-              const SectionHeader(title: 'System Information'),
+              const SectionHeader(title: 'Información del sistema'),
               const SizedBox(height: LuxSpacing.md),
               const LuxCard(
                 child: Column(
                   children: [
-                    _InfoRow(label: 'App Version', value: '1.0.4+22'),
+                    _InfoRow(label: 'Versión de la app', value: '1.0.4+22'),
                     LuxDivider(),
                     _InfoRow(
-                        label: 'Currency',
+                        label: 'Moneda',
                         value: 'Bolivianos (Bs)'),
                     LuxDivider(),
                     _InfoRow(
                         label: 'Backend', value: 'Firebase / Firestore'),
                     LuxDivider(),
                     _InfoRow(
-                        label: 'Platform', value: 'Flutter Web + Mobile'),
+                        label: 'Plataforma', value: 'Flutter Web + Mobile'),
                   ],
                 ),
               ),

@@ -74,6 +74,7 @@ class MapsService {
 
   // ---------------------------------------------------------------------------
   // Places Autocomplete
+  // Uses Places API (New) REST — works on web + mobile, no JS interop needed.
   // ---------------------------------------------------------------------------
 
   Future<List<PlaceSuggestion>> autocomplete(
@@ -81,44 +82,115 @@ class MapsService {
     String? sessionToken,
   }) async {
     if (input.length < 2) return [];
+    if (_key.isEmpty) return [];
 
-    // Web: use Maps JS AutocompleteService (no CORS issue)
-    if (kIsWeb) {
-      return webAutocomplete(input);
+    try {
+      // ── Places API (New) ─────────────────────────────────────────────────────
+      final uri = Uri.parse('https://places.googleapis.com/v1/places:autocomplete');
+      final res = await http.post(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': _key,
+          'X-Goog-FieldMask':
+              'suggestions.placePrediction.placeId,'
+              'suggestions.placePrediction.structuredFormat,'
+              'suggestions.placePrediction.text',
+        },
+        body: json.encode({
+          'input': input,
+          'languageCode': 'es',
+          'regionCode': 'BO',
+          'locationBias': {
+            'circle': {
+              'center': {'latitude': _sczLat, 'longitude': _sczLng},
+              'radius': 50000.0,
+            },
+          },
+        }),
+      );
+
+      debugPrint('[Maps] Places v1 status=${res.statusCode} body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
+
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body) as Map<String, dynamic>;
+        final suggestions = data['suggestions'] as List? ?? [];
+        final results = <PlaceSuggestion>[];
+        for (final s in suggestions) {
+          final pred = (s as Map<String, dynamic>)['placePrediction']
+              as Map<String, dynamic>? ?? {};
+          final placeId = pred['placeId'] as String? ?? '';
+          if (placeId.isEmpty) continue;
+          final structured = pred['structuredFormat']
+              as Map<String, dynamic>? ?? {};
+          final mainText = ((structured['mainText']
+              as Map<String, dynamic>?)?['text'] as String?) ?? '';
+          final secText = ((structured['secondaryText']
+              as Map<String, dynamic>?)?['text'] as String?) ?? '';
+          final fullText = ((pred['text']
+              as Map<String, dynamic>?)?['text'] as String?) ?? '';
+          results.add(PlaceSuggestion(
+            placeId: placeId,
+            description: fullText,
+            mainText: mainText.isNotEmpty ? mainText : fullText,
+            secondaryText: secText,
+          ));
+        }
+        if (results.isNotEmpty) return results;
+      }
+    } catch (e) {
+      debugPrint('[Maps] Places v1 exception: $e');
     }
 
-    // Mobile: HTTP REST API
-    if (_key.isEmpty) return [];
+    // ── Classic Places API fallback ──────────────────────────────────────────
     try {
       final params = <String, String>{
         'input': input,
         'key': _key,
-        'types': 'geocode|establishment',
         'location': '$_sczLat,$_sczLng',
         'radius': '50000',
         'components': 'country:bo',
         'language': 'es',
       };
       if (sessionToken != null) params['sessiontoken'] = sessionToken;
-
-      final uri = Uri.https(
-        _base,
-        '/maps/api/place/autocomplete/json',
-        params,
-      );
+      final uri = Uri.https(_base, '/maps/api/place/autocomplete/json', params);
       final res = await http.get(uri);
-      final data = json.decode(res.body) as Map<String, dynamic>;
-      final predictions = data['predictions'] as List? ?? [];
-      return predictions
-          .map((p) => PlaceSuggestion.fromJson(p as Map<String, dynamic>))
-          .toList();
-    } catch (_) {
-      return [];
+      debugPrint('[Maps] Classic status=${res.statusCode}');
+      if (res.statusCode != 200) {
+        debugPrint('[Maps] Classic body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
+      } else {
+        final data = json.decode(res.body) as Map<String, dynamic>;
+        final predictions = data['predictions'] as List? ?? [];
+        debugPrint('[Maps] Classic predictions=${predictions.length}');
+        if (predictions.isNotEmpty) {
+          return predictions
+              .map((p) => PlaceSuggestion.fromJson(p as Map<String, dynamic>))
+              .toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('[Maps] Classic exception: $e');
     }
+
+    // ── Web JS API final fallback ─────────────────────────────────────────────
+    // If both REST calls failed (CORS, key restrictions, etc.), try the Maps JS
+    // API which is already loaded in the browser and bypasses all that.
+    if (kIsWeb) {
+      try {
+        final jsResults = await webAutocomplete(input);
+        debugPrint('[Maps] JS API results=${jsResults.length}');
+        return jsResults;
+      } catch (e) {
+        debugPrint('[Maps] JS API exception: $e');
+      }
+    }
+
+    return [];
   }
 
   // ---------------------------------------------------------------------------
   // Place Details (placeId → Place)
+  // Uses Places API (New) REST — works on web + mobile.
   // ---------------------------------------------------------------------------
 
   Future<Place?> getPlaceDetails(
@@ -126,11 +198,38 @@ class MapsService {
     String? sessionToken,
     String? address,
   }) async {
-    // Web: use Maps JS PlacesService (no CORS issue)
-    if (kIsWeb) return webPlaceDetails(placeId, address: address);
+    if (_key.isEmpty) {
+      // No key on web: fall back to JS geocoder
+      if (kIsWeb) return webPlaceDetails(placeId, address: address);
+      return null;
+    }
 
-    // Mobile: HTTP REST API
-    if (_key.isEmpty) return null;
+    try {
+      // ── Places API (New) ───────────────────────────────────────────────────
+      final uri = Uri.parse(
+          'https://places.googleapis.com/v1/places/$placeId');
+      final res = await http.get(uri, headers: {
+        'X-Goog-Api-Key': _key,
+        'X-Goog-FieldMask': 'id,location,displayName,formattedAddress',
+      });
+
+      if (res.statusCode == 200) {
+        final data = json.decode(res.body) as Map<String, dynamic>;
+        final loc = data['location'] as Map<String, dynamic>?;
+        if (loc != null) {
+          final displayName = (data['displayName']
+              as Map<String, dynamic>?)?['text'] as String?;
+          return Place(
+            name: displayName ?? address?.split(',').first ?? '',
+            address: data['formattedAddress'] as String? ?? address ?? '',
+            lat: (loc['latitude'] as num).toDouble(),
+            lng: (loc['longitude'] as num).toDouble(),
+          );
+        }
+      }
+    } catch (_) {}
+
+    // ── Classic Places API fallback ──────────────────────────────────────────
     try {
       final params = <String, String>{
         'place_id': placeId,
@@ -138,14 +237,12 @@ class MapsService {
         'key': _key,
       };
       if (sessionToken != null) params['sessiontoken'] = sessionToken;
-
-      final uri =
-          Uri.https(_base, '/maps/api/place/details/json', params);
+      final uri = Uri.https(_base, '/maps/api/place/details/json', params);
       final res = await http.get(uri);
+      if (res.statusCode != 200) return null;
       final data = json.decode(res.body) as Map<String, dynamic>;
       final result = data['result'] as Map<String, dynamic>?;
       if (result == null) return null;
-
       final loc = (result['geometry'] as Map)['location'] as Map;
       return Place(
         name: result['name'] as String? ?? '',
@@ -154,6 +251,8 @@ class MapsService {
         lng: (loc['lng'] as num).toDouble(),
       );
     } catch (_) {
+      // Last resort: JS geocoder on web
+      if (kIsWeb) return webPlaceDetails(placeId, address: address);
       return null;
     }
   }

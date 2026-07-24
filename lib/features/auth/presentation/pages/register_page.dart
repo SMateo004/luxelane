@@ -71,9 +71,9 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: LuxSpacing.xl),
               const LuxelaneWordmark(size: 16),
               const SizedBox(height: LuxSpacing.xl),
-              const Text('Create account.', style: LuxTypography.displayMedium),
+              const Text('Crear cuenta.', style: LuxTypography.displayMedium),
               const SizedBox(height: LuxSpacing.sm),
-              const Text('Join Luxelane today', style: LuxTypography.bodyMedium),
+              const Text('Únete a Luxelane hoy', style: LuxTypography.bodyMedium),
               const SizedBox(height: LuxSpacing.xl),
               _formContent(),
             ],
@@ -92,7 +92,7 @@ class _RegisterPageState extends State<RegisterPage> {
               children: [
                 const LuxelaneWordmark(),
                 const SizedBox(height: LuxSpacing.xl),
-                const Text('Create Account', style: LuxTypography.displayMedium),
+                const Text('Crear cuenta', style: LuxTypography.displayMedium),
                 const SizedBox(height: LuxSpacing.xl),
                 _formContent(),
               ],
@@ -109,40 +109,40 @@ class _RegisterPageState extends State<RegisterPage> {
             child: Column(
               children: [
                 LuxTextField(
-                  label: 'Full Name',
+                  label: 'Nombre completo',
                   controller: _name,
                   prefixIcon: Icons.person_outline,
-                  validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                  validator: (v) => v == null || v.isEmpty ? 'Requerido' : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
-                  label: 'Email',
+                  label: 'Correo electrónico',
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
                   validator: (v) =>
-                      v == null || !v.contains('@') ? 'Invalid email' : null,
+                      v == null || !v.contains('@') ? 'Correo inválido' : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
-                  label: 'Phone',
+                  label: 'Teléfono',
                   controller: _phone,
                   keyboardType: TextInputType.phone,
                   prefixIcon: Icons.phone_outlined,
-                  validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                  validator: (v) => v == null || v.isEmpty ? 'Requerido' : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
-                  label: 'Password',
+                  label: 'Contraseña',
                   controller: _pass,
                   obscureText: true,
                   prefixIcon: Icons.lock_outline,
                   validator: (v) =>
-                      v == null || v.length < 6 ? 'Min 6 characters' : null,
+                      v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
                 ),
                 const SizedBox(height: LuxSpacing.xl),
                 LuxButton(
-                  label: 'Create Account',
+                  label: 'Crear cuenta',
                   onPressed: loading ? null : _submit,
                   loading: loading,
                 ),
@@ -150,11 +150,11 @@ class _RegisterPageState extends State<RegisterPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Already have an account? ',
+                    const Text('¿Ya tienes cuenta? ',
                         style: LuxTypography.bodyMedium),
                     TextButton(
                       onPressed: () => context.go('/login'),
-                      child: const Text('Sign in'),
+                      child: const Text('Inicia sesión'),
                     ),
                   ],
                 ),

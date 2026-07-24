@@ -42,6 +42,9 @@ dependencies:
   # HTTP
   http: ^1.2.2
 
+  # Video
+  video_player: ^2.9.2
+
   # Utilities
   dartz: ^0.10.1
   rxdart: ^0.27.7
@@ -52,6 +55,7 @@ dependencies:
 
   # Storage
   shared_preferences: ^2.3.2
+  google_fonts: ^6.3.2
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +79,10 @@ flutter:
     - assets/images/vehicles/electric/
     - assets/images/booking/luggage/
     - assets/images/booking/seating/
+    - assets/images/services/recogida/
+    - assets/images/services/aeropuerto/
+    - assets/images/services/por-horas/
     - assets/icons/
     - assets/fonts/
+    - assets/videos/
   # fonts are loaded via Google Fonts fallback on web

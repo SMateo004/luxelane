@@ -16,6 +16,7 @@ class PlaceAutocompleteField extends StatefulWidget {
     this.initialValue,
     this.onPlaceSelected,
     this.onMapPick,
+    this.glass = false,   // true → transparent/glass look for hero bar
   });
 
   final String label;
@@ -24,6 +25,7 @@ class PlaceAutocompleteField extends StatefulWidget {
   final Place? initialValue;
   final ValueChanged<Place>? onPlaceSelected;
   final VoidCallback? onMapPick;
+  final bool glass;
 
   @override
   State<PlaceAutocompleteField> createState() =>
@@ -46,12 +48,19 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
 
   // ── theme helpers ──────────────────────────────────────────────────────────
   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
-  Color get _fieldBg     => _isDark ? LuxColors.blackElevated   : const Color(0xFFF5F4F1);
-  Color get _borderColor => _isDark ? LuxColors.blackBorder     : const Color(0xFFE4E1DA);
-  Color get _focusBorder => _isDark ? LuxColors.sapphire.withOpacity(0.6) : const Color(0xFF111111);
-  Color get _iconColor   => _isDark ? LuxColors.whiteTertiary   : const Color(0xFFAAAAAA);
-  Color get _textColor   => _isDark ? LuxColors.white           : const Color(0xFF111111);
-  Color get _hintColor   => _isDark ? LuxColors.whiteTertiary   : const Color(0xFFBBBBBB);
+  // glass=true → fully transparent field that sits inside the hero liquid-glass bar
+  Color get _fieldBg     => widget.glass ? Colors.transparent
+      : (_isDark ? LuxColors.blackElevated : const Color(0xFFF5F4F1));
+  Color get _borderColor => widget.glass ? Colors.transparent
+      : (_isDark ? LuxColors.blackBorder   : const Color(0xFFE4E1DA));
+  Color get _focusBorder => widget.glass ? Colors.transparent
+      : (_isDark ? LuxColors.sapphire.withOpacity(0.6) : const Color(0xFF111111));
+  Color get _iconColor   => widget.glass ? const Color(0x99FFFFFF)
+      : (_isDark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA));
+  Color get _textColor   => widget.glass ? Colors.white
+      : (_isDark ? LuxColors.white         : const Color(0xFF111111));
+  Color get _hintColor   => widget.glass ? const Color(0x66FFFFFF)
+      : (_isDark ? LuxColors.whiteTertiary : const Color(0xFFBBBBBB));
   Color get _dropBg      => _isDark ? LuxColors.blackSurface    : Colors.white;
   Color get _dropDivider => _isDark ? LuxColors.blackBorder     : const Color(0xFFEEECE8);
   Color get _suggPrimary   => _isDark ? LuxColors.white         : const Color(0xFF111111);
@@ -109,6 +118,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   Future<void> _search(String q) async {
     setState(() => _loading = true);
     final res = await _maps.autocomplete(q, sessionToken: _token);
+    _dbg('autocomplete("$q") → ${res.length} results');
     if (!mounted) return;
     setState(() {
       _suggestions = res;
@@ -183,6 +193,15 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
     final size   = renderBox.size;
     final offset = renderBox.localToGlobal(Offset.zero);
 
+    // Flip the dropdown above the field when there isn't enough space below.
+    final screenH    = MediaQuery.sizeOf(ctx).height;
+    final dropHeight = (_suggestions.length * 50.0).clamp(0.0, 260.0);
+    final spaceBelow = screenH - (offset.dy + size.height + 2);
+    final showAbove  = spaceBelow < dropHeight + 8;
+    final topPos     = showAbove
+        ? offset.dy - dropHeight - 4
+        : offset.dy + size.height + 2;
+
     final bg      = _dropBg;
     final divider = _dropDivider;
     final primary   = _suggPrimary;
@@ -192,7 +211,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
 
     return Positioned(
       left:  offset.dx,
-      top:   offset.dy + size.height + 2,
+      top:   topPos,
       width: size.width,
       child: Material(
         color: bg,
@@ -278,7 +297,8 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
         key: _fieldKey,
         decoration: BoxDecoration(
           color: _fieldBg,
-          borderRadius: BorderRadius.circular(2),
+          // glass mode: larger radius so it looks rounded inside the glass bar
+          borderRadius: BorderRadius.circular(widget.glass ? 10 : 2),
           border: Border.all(
             color: _focus.hasFocus ? _focusBorder : _borderColor,
           ),
@@ -309,6 +329,9 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w300,
                   ),
+                  // glass mode: explicitly clear any theme-injected fill
+                  filled: widget.glass ? true : null,
+                  fillColor: widget.glass ? Colors.transparent : null,
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,

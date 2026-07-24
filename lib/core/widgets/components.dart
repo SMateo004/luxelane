@@ -244,7 +244,7 @@ class VehicleCard extends StatelessWidget {
                       const Icon(Icons.person_outline, size: 14, color: LuxColors.whiteTertiary),
                       const SizedBox(width: 4),
                       Text(
-                        'Up to ${vehicleClass.capacity}',
+                        'Hasta ${vehicleClass.capacity}',
                         style: LuxTypography.caption,
                       ),
                     ],
@@ -263,8 +263,8 @@ class VehicleCard extends StatelessWidget {
                 ),
                 Text(
                   serviceType == ServiceType.byTheHour
-                      ? '${hours ?? 2}h total'
-                      : 'fixed price',
+                      ? '${hours ?? 2}h en total'
+                      : 'precio fijo',
                   style: LuxTypography.caption,
                 ),
               ],
@@ -568,7 +568,7 @@ class PriceEstimateBar extends StatelessWidget {
     required this.price,
     required this.onConfirm,
     this.loading = false,
-    this.label = 'Confirm Booking',
+    this.label = 'Confirmar reserva',
   });
 
   final double price;
@@ -594,7 +594,7 @@ class PriceEstimateBar extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('FIXED PRICE', style: LuxTypography.caption),
+                const Text('PRECIO FIJO', style: LuxTypography.caption),
                 Text(
                   'Bs${price.toStringAsFixed(0)}',
                   style: LuxTypography.displayMedium.copyWith(color: LuxColors.sapphire),

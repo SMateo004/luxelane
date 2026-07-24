@@ -12,22 +12,22 @@ class DriverShell extends StatelessWidget {
     BottomNavigationBarItem(
       icon: Icon(Icons.home_outlined),
       activeIcon: Icon(Icons.home_rounded),
-      label: 'Home',
+      label: 'Inicio',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.list_alt_outlined),
       activeIcon: Icon(Icons.list_alt_rounded),
-      label: 'Jobs',
+      label: 'Trabajos',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.attach_money_outlined),
       activeIcon: Icon(Icons.attach_money_rounded),
-      label: 'Earnings',
+      label: 'Ganancias',
     ),
     BottomNavigationBarItem(
       icon: Icon(Icons.person_outline_rounded),
       activeIcon: Icon(Icons.person_rounded),
-      label: 'Profile',
+      label: 'Perfil',
     ),
   ];
 

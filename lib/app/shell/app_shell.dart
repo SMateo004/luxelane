@@ -10,9 +10,9 @@ class AppShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   static const _tabs = [
-    _Tab(icon: Icons.home_outlined,    activeIcon: Icons.home_rounded,    label: 'Home',    path: '/'),
-    _Tab(icon: Icons.history_outlined, activeIcon: Icons.history_rounded,  label: 'Trips',   path: '/trips'),
-    _Tab(icon: Icons.person_outline,   activeIcon: Icons.person_rounded,   label: 'Profile', path: '/profile'),
+    _Tab(icon: Icons.home_outlined,    activeIcon: Icons.home_rounded,    label: 'Inicio',  path: '/'),
+    _Tab(icon: Icons.history_outlined, activeIcon: Icons.history_rounded,  label: 'Viajes',  path: '/trips'),
+    _Tab(icon: Icons.person_outline,   activeIcon: Icons.person_rounded,   label: 'Perfil',  path: '/profile'),
   ];
 
   @override
@@ -120,22 +120,22 @@ class _WebNav extends StatelessWidget {
             ),
             if (!isAuth) ...[
               const Spacer(),
-              _TextNavBtn('Services', () {}),
+              _TextNavBtn('Servicios', () {}),
               const SizedBox(width: 32),
-              _TextNavBtn('For Business', () {}),
+              _TextNavBtn('Para empresas', () {}),
               const SizedBox(width: 40),
               Container(width: 1, height: 18, color: const Color(0xFFDDDAD4)),
               const SizedBox(width: 40),
-              _TextNavBtn('Sign In', () => context.go('/login')),
+              _TextNavBtn('Iniciar sesión', () => context.go('/login')),
               const SizedBox(width: 20),
-              _FilledNavBtn(label: 'Book a Ride', onTap: () => context.go('/')),
+              _FilledNavBtn(label: 'Reservar un viaje', onTap: () => context.go('/')),
             ] else ...[
               const Spacer(),
-              _TextNavBtn('Home', () => shell.goBranch(0)),
+              _TextNavBtn('Inicio', () => shell.goBranch(0)),
               const SizedBox(width: 32),
-              _TextNavBtn('My Trips', () => shell.goBranch(1)),
+              _TextNavBtn('Mis viajes', () => shell.goBranch(1)),
               const SizedBox(width: 40),
-              _FilledNavBtn(label: 'Book a Ride', onTap: () => context.go('/')),
+              _FilledNavBtn(label: 'Reservar un viaje', onTap: () => context.go('/')),
               const SizedBox(width: 12),
               NotificationBell(color: const Color(0xFF111111)),
               const SizedBox(width: 8),
@@ -165,7 +165,7 @@ class _WordmarkLogo extends StatelessWidget {
                 style: TextStyle(
                   color: Color(0xFF111111),
                   fontSize: 15,
-                  fontFamily: 'Cormorant',
+                  fontFamily: 'Cormorant Garamond',
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -316,7 +316,7 @@ class _WebRail extends StatelessWidget {
                       .read<AuthBloc>()
                       .add(const LogoutRequested()),
                   icon: const Icon(Icons.logout_rounded, size: 16),
-                  label: const Text('Sign Out'),
+                  label: const Text('Cerrar sesión'),
                   style: TextButton.styleFrom(
                     foregroundColor: LuxColors.whiteTertiary,
                     minimumSize: Size.zero,

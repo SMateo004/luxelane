@@ -20,14 +20,14 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   int _section = 0;
 
   static const _sections = [
-    'Dashboard',
-    'Bookings',
-    'Drivers',
-    'Vehicles',
-    'Users',
-    'Pricing',
-    'Audit',
-    'Settings'
+    'Panel',
+    'Reservas',
+    'Chóferes',
+    'Vehículos',
+    'Usuarios',
+    'Precios',
+    'Auditoría',
+    'Configuración'
   ];
   static const _icons = [
     Icons.dashboard_outlined,
@@ -57,15 +57,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: LuxColors.blackElevated,
-        title: const Text('Sign Out', style: LuxTypography.titleLarge),
+        title: const Text('Cerrar sesión', style: LuxTypography.titleLarge),
         content: const Text(
-          'Are you sure you want to sign out of the admin panel?',
+          '¿Seguro que quieres cerrar sesión del panel de administración?',
           style: LuxTypography.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () {
@@ -73,7 +73,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               context.read<AuthBloc>().add(const LogoutRequested());
             },
             child: const Text(
-              'Sign Out',
+              'Cerrar sesión',
               style: TextStyle(color: LuxColors.error, fontWeight: FontWeight.w600),
             ),
           ),
@@ -88,7 +88,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
             onPressed: () => context.go('/'),
           ),
-          title: const Text('Admin'),
+          title: const Text('Administrador'),
           actions: [
             Container(
               margin: const EdgeInsets.only(right: LuxSpacing.md),
@@ -154,7 +154,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                             borderRadius: BorderRadius.circular(LuxRadius.sm),
                           ),
                           child: Text(
-                            'ADMIN PANEL',
+                            'PANEL ADMIN',
                             style: LuxTypography.caption.copyWith(
                                 color: LuxColors.sapphire,
                                 fontWeight: FontWeight.w700),
@@ -178,7 +178,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                   const LuxDivider(),
                   AdminNavItem(
                     icon: Icons.logout_rounded,
-                    label: 'Sign Out',
+                    label: 'Cerrar sesión',
                     selected: false,
                     onTap: () => _confirmSignOut(context),
                   ),

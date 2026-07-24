@@ -58,7 +58,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Payment Methods'),
+            title: const Text('Métodos de pago'),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
               onPressed: () => context.pop(),
@@ -68,7 +68,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 onPressed: () => context.push('/payment/add'),
                 icon: const Icon(Icons.add, size: 18, color: LuxColors.sapphire),
                 label: Text(
-                  'ADD',
+                  'AGREGAR',
                   style: LuxTypography.labelLarge
                       .copyWith(color: LuxColors.sapphire, fontSize: 11),
                 ),
@@ -93,7 +93,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       return ListView(
         padding: const EdgeInsets.all(LuxSpacing.md),
         children: [
-          const SectionHeader(title: 'Saved Cards'),
+          const SectionHeader(title: 'Tarjetas guardadas'),
           const SizedBox(height: LuxSpacing.md),
           ...state.cards.map(
             (card) => _CardTile(
@@ -106,7 +106,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ),
           const SizedBox(height: LuxSpacing.lg),
           LuxOutlinedButton(
-            label: 'Add New Card',
+            label: 'Agregar nueva tarjeta',
             onPressed: () => context.push('/payment/add'),
             icon: Icons.add,
           ),
@@ -117,7 +117,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               Icon(Icons.lock_outline,
                   size: 14, color: LuxColors.whiteTertiary),
               SizedBox(width: LuxSpacing.xs),
-              Text('Secured by Stripe',
+              Text('Protegido por Stripe',
                   style: LuxTypography.caption),
             ],
           ),
@@ -142,13 +142,13 @@ class _EmptyCards extends StatelessWidget {
             const Icon(Icons.credit_card_outlined,
                 size: 48, color: LuxColors.whiteTertiary),
             const SizedBox(height: LuxSpacing.md),
-            const Text('No payment methods',
+            const Text('Sin métodos de pago',
                 style: LuxTypography.titleMedium),
             const SizedBox(height: LuxSpacing.sm),
-            const Text('Add a card to book rides',
+            const Text('Agrega una tarjeta para reservar viajes',
                 style: LuxTypography.bodyMedium),
             const SizedBox(height: LuxSpacing.xl),
-            LuxButton(label: 'Add Card', onPressed: onAdd),
+            LuxButton(label: 'Agregar tarjeta', onPressed: onAdd),
           ],
         ),
       );
@@ -188,11 +188,11 @@ class _CardTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${_capitalize(card['brand'] as String? ?? 'Card')} •••• ${card['last4'] ?? '****'}',
+                    '${_capitalize(card['brand'] as String? ?? 'Tarjeta')} •••• ${card['last4'] ?? '****'}',
                     style: LuxTypography.bodyLarge,
                   ),
                   Text(
-                    'Expires ${card['expMonth']}/${card['expYear']}',
+                    'Vence ${card['expMonth']}/${card['expYear']}',
                     style: LuxTypography.caption,
                   ),
                 ],
@@ -206,14 +206,14 @@ class _CardTile extends StatelessWidget {
                   color: LuxColors.success.withOpacity(0.12),
                   borderRadius: BorderRadius.circular(LuxRadius.sm),
                 ),
-                child: Text('DEFAULT',
+                child: Text('PREDETERMINADA',
                     style: LuxTypography.caption
                         .copyWith(color: LuxColors.success)),
               )
             else
               TextButton(
                 onPressed: onSetDefault,
-                child: const Text('SET DEFAULT'),
+                child: const Text('PREDETERMINAR'),
               ),
             IconButton(
               icon: const Icon(Icons.delete_outline,

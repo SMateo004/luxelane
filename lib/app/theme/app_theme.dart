@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // ---------------------------------------------------------------------------
 // Tokens
 // ---------------------------------------------------------------------------
 
 abstract class LuxColors {
-  // Dark palette (app-wide)
-  static const black         = Color(0xFF080808);
-  static const blackSurface  = Color(0xFF111111);
-  static const blackElevated = Color(0xFF1A1A1A);
-  static const blackBorder   = Color(0xFF242424);
-  // Accent — used very sparingly
+  // Dark palette (app-wide) — navy design system
+  static const black         = Color(0xFF070E18);
+  static const blackSurface  = Color(0xFF0A1220);
+  static const blackElevated = Color(0xFF0D1928);
+  static const blackBorder   = Color(0xFF1A2B40);
+  // Accent
   static const gold          = Color(0xFFC9A84C);
-  static const sapphire      = Color(0xFFC9A84C);
-  static const sapphireLight     = Color(0xFFE2C97E);
-  static const sapphireDark      = Color(0xFF9C7A2A);
-  static const sapphireSubtle    = Color(0x14C9A84C);
+  static const sapphire      = Color(0xFF1B4F8A);
+  static const sapphireLight     = Color(0xFF2563B0);
+  static const sapphireDark      = Color(0xFF153D6B);
+  static const sapphireSubtle    = Color(0x141B4F8A);
   // On-dark text
   static const white         = Color(0xFFF5F5F5);
   static const whiteSecondary = Color(0xFF9A9A9A);
@@ -49,7 +50,7 @@ abstract class LuxRadius {
 }
 
 abstract class LuxTypography {
-  static const _serif = 'Cormorant';
+  static const _serif = 'Cormorant Garamond';
   static const _sans  = 'Montserrat';
 
   static const displayLarge = TextStyle(
@@ -98,7 +99,25 @@ abstract class LuxTypography {
 // ThemeData
 // ---------------------------------------------------------------------------
 
-ThemeData get luxTheme => ThemeData(
+ThemeData get luxTheme {
+  // Build base text theme using GoogleFonts — guarantees fonts load on all platforms
+  final serif = GoogleFonts.cormorantGaramond;
+  final sans  = GoogleFonts.montserrat;
+
+  final textTheme = TextTheme(
+    displayLarge:   serif(fontSize: 48, fontWeight: FontWeight.w600, color: LuxColors.white, letterSpacing: 0.5, height: 1.1),
+    displayMedium:  serif(fontSize: 36, fontWeight: FontWeight.w600, color: LuxColors.white, letterSpacing: 0.3, height: 1.15),
+    headlineLarge:  serif(fontSize: 28, fontWeight: FontWeight.w600, color: LuxColors.white, letterSpacing: 0.2),
+    headlineMedium: sans(fontSize: 20,  fontWeight: FontWeight.w600, color: LuxColors.white, letterSpacing: 0.5),
+    titleLarge:     sans(fontSize: 16,  fontWeight: FontWeight.w600, color: LuxColors.white, letterSpacing: 0.8),
+    titleMedium:    sans(fontSize: 14,  fontWeight: FontWeight.w600, color: LuxColors.white, letterSpacing: 0.4),
+    bodyLarge:      sans(fontSize: 16,  fontWeight: FontWeight.w400, color: LuxColors.white, letterSpacing: 0.2),
+    bodyMedium:     sans(fontSize: 14,  fontWeight: FontWeight.w400, color: LuxColors.whiteSecondary, letterSpacing: 0.2),
+    labelLarge:     sans(fontSize: 13,  fontWeight: FontWeight.w500, color: LuxColors.sapphire, letterSpacing: 1.2),
+    bodySmall:      sans(fontSize: 11,  fontWeight: FontWeight.w400, color: LuxColors.whiteTertiary, letterSpacing: 0.4),
+  );
+
+  return ThemeData(
   useMaterial3: true,
   brightness: Brightness.dark,
   scaffoldBackgroundColor: LuxColors.black,
@@ -112,18 +131,7 @@ ThemeData get luxTheme => ThemeData(
     error: LuxColors.error,
     onError: LuxColors.white,
   ),
-  textTheme: const TextTheme(
-    displayLarge:   LuxTypography.displayLarge,
-    displayMedium:  LuxTypography.displayMedium,
-    headlineLarge:  LuxTypography.headlineLarge,
-    headlineMedium: LuxTypography.headlineMedium,
-    titleLarge:     LuxTypography.titleLarge,
-    titleMedium:    LuxTypography.titleMedium,
-    bodyLarge:      LuxTypography.bodyLarge,
-    bodyMedium:     LuxTypography.bodyMedium,
-    labelLarge:     LuxTypography.labelLarge,
-    bodySmall:      LuxTypography.caption,
-  ),
+  textTheme: textTheme,
   appBarTheme: const AppBarTheme(
     backgroundColor: LuxColors.black,
     foregroundColor: LuxColors.white,
@@ -248,7 +256,8 @@ ThemeData get luxTheme => ThemeData(
     ),
     textStyle: LuxTypography.caption,
   ),
-);
+); // ThemeData
+} // luxTheme
 
 // ---------------------------------------------------------------------------
 // Responsive breakpoints

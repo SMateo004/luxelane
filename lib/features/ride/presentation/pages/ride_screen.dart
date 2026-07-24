@@ -64,17 +64,17 @@ class _RideScreenState extends State<RideScreen> {
   String get _statusMessage {
     switch (_status) {
       case BookingStatus.confirmed:
-        return 'Driver assigned · en route to you';
+        return 'Chófer asignado · en camino hacia ti';
       case BookingStatus.driverArriving:
-        return 'Driver is on the way';
+        return 'El chófer está en camino';
       case BookingStatus.driverArrived:
-        return 'Your driver has arrived';
+        return 'Tu chófer ha llegado';
       case BookingStatus.inProgress:
-        return 'En route to destination';
+        return 'En camino al destino';
       case BookingStatus.completed:
-        return 'You have arrived. Thank you!';
+        return '¡Has llegado. Gracias!';
       default:
-        return 'Processing…';
+        return 'Procesando…';
     }
   }
 
@@ -112,7 +112,7 @@ class _RideScreenState extends State<RideScreen> {
       builder: (ctx) => BlocProvider.value(
         value: context.read<RideBloc>(),
         child: _RatingDialog(
-          driverName: 'Your driver',
+          driverName: 'Tu conductor',
           rideId: _actualRideId,
           onSubmit: (rating) {
             // Submit rating to Firestore if ride doc exists
@@ -140,28 +140,28 @@ class _RideScreenState extends State<RideScreen> {
     String title, body, type;
     switch (status) {
       case BookingStatus.confirmed:
-        title = 'Driver assigned';
-        body = 'Your driver is on the way to pick you up.';
+        title = 'Chófer asignado';
+        body = 'Tu chófer está en camino para recogerte.';
         type = 'booking_confirmed';
         break;
       case BookingStatus.driverArriving:
-        title = 'Driver is on the way';
-        body = 'Your driver is heading to your pickup location.';
+        title = 'El chófer está en camino';
+        body = 'Tu chófer se dirige a tu punto de recogida.';
         type = 'driver_arriving';
         break;
       case BookingStatus.driverArrived:
-        title = 'Driver has arrived';
-        body = 'Your driver is waiting at your pickup location.';
+        title = 'El chófer ha llegado';
+        body = 'Tu chófer te espera en el punto de recogida.';
         type = 'driver_arrived';
         break;
       case BookingStatus.inProgress:
-        title = 'Ride started';
-        body = 'You are now on your way to your destination.';
+        title = 'Viaje iniciado';
+        body = 'Ya estás en camino hacia tu destino.';
         type = 'ride_started';
         break;
       case BookingStatus.completed:
-        title = 'Ride completed';
-        body = 'You have arrived. Thank you for riding with Luxelane!';
+        title = 'Viaje completado';
+        body = '¡Has llegado. Gracias por viajar con Luxelane!';
         type = 'ride_completed';
         break;
       default:
@@ -276,7 +276,7 @@ class _RideScreenState extends State<RideScreen> {
                           const DriverCard(
                             name: 'James Whitmore',
                             rating: 4.9,
-                            vehicle: 'Mercedes-Benz S-Class · Black',
+                            vehicle: 'Mercedes-Benz S-Class · Negro',
                             plate: 'LUX · 2891',
                           ),
                           const Spacer(),
@@ -284,7 +284,7 @@ class _RideScreenState extends State<RideScreen> {
                             children: [
                               Expanded(
                                 child: LuxOutlinedButton(
-                                  label: 'Contact',
+                                  label: 'Contactar',
                                   onPressed: () {},
                                   icon: Icons.call_outlined,
                                 ),
@@ -294,8 +294,8 @@ class _RideScreenState extends State<RideScreen> {
                                 child: LuxButton(
                                   label: _status ==
                                           BookingStatus.completed
-                                      ? 'Rate & Done'
-                                      : 'Next (dev)',
+                                      ? 'Calificar y finalizar'
+                                      : 'Siguiente (dev)',
                                   onPressed: _advance,
                                 ),
                               ),
@@ -404,7 +404,7 @@ class _BottomPanel extends StatelessWidget {
             const DriverCard(
               name: 'James Whitmore',
               rating: 4.9,
-              vehicle: 'Mercedes-Benz S-Class · Black',
+              vehicle: 'Mercedes-Benz S-Class · Negro',
               plate: 'LUX · 2891',
             ),
             const SizedBox(height: LuxSpacing.md),
@@ -412,7 +412,7 @@ class _BottomPanel extends StatelessWidget {
               children: [
                 Expanded(
                   child: LuxOutlinedButton(
-                    label: 'Contact',
+                    label: 'Contactar',
                     onPressed: () {},
                     icon: Icons.call_outlined,
                   ),
@@ -421,8 +421,8 @@ class _BottomPanel extends StatelessWidget {
                 Expanded(
                   child: LuxButton(
                     label: status == BookingStatus.completed
-                        ? 'Rate & Done'
-                        : 'Next (dev)',
+                        ? 'Calificar y finalizar'
+                        : 'Siguiente (dev)',
                     onPressed: onAdvance,
                   ),
                 ),
@@ -478,7 +478,7 @@ class _RatingDialogState extends State<_RatingDialog> {
           borderRadius: BorderRadius.circular(LuxRadius.lg),
           side: const BorderSide(color: LuxColors.blackBorder),
         ),
-        title: const Text('Rate your ride',
+        title: const Text('Califica tu viaje',
             style: LuxTypography.titleMedium, textAlign: TextAlign.center),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -514,7 +514,7 @@ class _RatingDialogState extends State<_RatingDialog> {
         ),
         actions: [
           LuxButton(
-            label: 'Submit',
+            label: 'Enviar',
             onPressed: () => widget.onSubmit(_rating),
           ),
         ],
@@ -524,10 +524,10 @@ class _RatingDialogState extends State<_RatingDialog> {
       );
 
   String _ratingLabel(double r) {
-    if (r >= 5) return 'Excellent';
-    if (r >= 4) return 'Good';
-    if (r >= 3) return 'Average';
-    if (r >= 2) return 'Poor';
-    return 'Very Poor';
+    if (r >= 5) return 'Excelente';
+    if (r >= 4) return 'Bueno';
+    if (r >= 3) return 'Regular';
+    if (r >= 2) return 'Malo';
+    return 'Muy malo';
   }
 }

@@ -32,7 +32,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   String _language      = 'English';
   String _currency      = 'USD';
-  String _notifications = 'All';
+  String _notifications = 'Todas';
 
   @override
   void initState() {
@@ -56,7 +56,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _language      = prefs.getString(_PrefKeys.language)      ?? 'English';
       _currency      = prefs.getString(_PrefKeys.currency)      ?? 'USD';
-      _notifications = prefs.getString(_PrefKeys.notifications) ?? 'All';
+      _notifications = prefs.getString(_PrefKeys.notifications) ?? 'Todas';
     });
   }
 
@@ -83,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Profile'),
+          title: const Text('Perfil'),
           actions: [
             BlocBuilder<ProfileBloc, ProfileState>(
               builder: (context, state) {
@@ -94,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         : null;
                 return TextButton(
                   onPressed: user != null ? () => _showEditSheet(user) : null,
-                  child: Text('EDIT',
+                  child: Text('EDITAR',
                       style: LuxTypography.labelLarge.copyWith(fontSize: 11)),
                 );
               },
@@ -180,68 +180,68 @@ class _ProfileBody extends StatelessWidget {
         children: [
           _ProfileHeader(user: user),
           const SizedBox(height: LuxSpacing.xl),
-          const SectionHeader(title: 'Account'),
+          const SectionHeader(title: 'Cuenta'),
           const SizedBox(height: LuxSpacing.md),
           _InfoTile(
               icon: Icons.email_outlined,
-              label: 'Email',
+              label: 'Correo electrónico',
               value: user.email),
           _InfoTile(
               icon: Icons.phone_outlined,
-              label: 'Phone',
+              label: 'Teléfono',
               value: user.phone.isNotEmpty ? user.phone : '—'),
           const SizedBox(height: LuxSpacing.xl),
-          const SectionHeader(title: 'Statistics'),
+          const SectionHeader(title: 'Estadísticas'),
           const SizedBox(height: LuxSpacing.md),
           Row(
             children: [
               Expanded(
                   child: _StatCard(
-                      label: 'Rides',
+                      label: 'Viajes',
                       value: totalRides.toString())),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                   child: _StatCard(
-                      label: 'Rating',
+                      label: 'Calificación',
                       value: rating != null
                           ? rating!.toStringAsFixed(1)
                           : '—')),
               const SizedBox(width: LuxSpacing.sm),
-              const Expanded(child: _StatCard(label: 'Miles', value: '—')),
+              const Expanded(child: _StatCard(label: 'Millas', value: '—')),
             ],
           ),
           const SizedBox(height: LuxSpacing.xl),
-          const SectionHeader(title: 'Payment'),
+          const SectionHeader(title: 'Pago'),
           const SizedBox(height: LuxSpacing.md),
           LuxOutlinedButton(
-            label: 'Manage Payment Methods',
+            label: 'Gestionar métodos de pago',
             onPressed: () => context.push('/payment'),
             icon: Icons.credit_card_outlined,
           ),
           const SizedBox(height: LuxSpacing.xl),
-          const SectionHeader(title: 'Preferences'),
+          const SectionHeader(title: 'Preferencias'),
           const SizedBox(height: LuxSpacing.md),
           _PrefTile(
-            label: 'Language',
+            label: 'Idioma',
             value: language,
             options: const ['English', 'Español', 'Français', 'Deutsch'],
             onChanged: onLanguageChanged,
           ),
           _PrefTile(
-            label: 'Currency',
+            label: 'Moneda',
             value: currency,
             options: const ['USD', 'EUR', 'GBP', 'BOB'],
             onChanged: onCurrencyChanged,
           ),
           _PrefTile(
-            label: 'Notifications',
+            label: 'Notificaciones',
             value: notifications,
-            options: const ['All', 'Important only', 'None'],
+            options: const ['Todas', 'Solo importantes', 'Ninguna'],
             onChanged: onNotificationsChanged,
           ),
           const SizedBox(height: LuxSpacing.xl),
           LuxOutlinedButton(
-            label: 'Sign Out',
+            label: 'Cerrar sesión',
             onPressed: () =>
                 context.read<AuthBloc>().add(const LogoutRequested()),
           ),
@@ -294,7 +294,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
     context.read<ProfileBloc>().add(ProfileUpdateRequested(user: updated));
     Navigator.of(context).pop();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Profile updated')),
+      const SnackBar(content: Text('Perfil actualizado')),
     );
   }
 
@@ -312,7 +312,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
           children: [
             Row(
               children: [
-                const Text('Edit Profile', style: LuxTypography.titleLarge),
+                const Text('Editar perfil', style: LuxTypography.titleLarge),
                 const Spacer(),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -323,21 +323,21 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
             ),
             const SizedBox(height: LuxSpacing.lg),
             LuxTextField(
-              label: 'Name',
+              label: 'Nombre',
               controller: _name,
               prefixIcon: Icons.person_outline_rounded,
               validator: (v) =>
-                  v == null || v.trim().isEmpty ? 'Required' : null,
+                  v == null || v.trim().isEmpty ? 'Requerido' : null,
             ),
             const SizedBox(height: LuxSpacing.md),
             LuxTextField(
-              label: 'Phone',
+              label: 'Teléfono',
               controller: _phone,
               keyboardType: TextInputType.phone,
               prefixIcon: Icons.phone_outlined,
             ),
             const SizedBox(height: LuxSpacing.lg),
-            LuxButton(label: 'Save changes', onPressed: _save),
+            LuxButton(label: 'Guardar cambios', onPressed: _save),
           ],
         ),
       ),
@@ -371,7 +371,7 @@ class _ProfileHeader extends StatelessWidget {
             child: user.photoUrl == null
                 ? Text(_initials,
                     style: const TextStyle(
-                      fontFamily: 'Cormorant',
+                      fontFamily: 'Cormorant Garamond',
                       fontSize: 36,
                       fontWeight: FontWeight.w600,
                       color: LuxColors.sapphire,
@@ -394,8 +394,8 @@ class _ProfileHeader extends StatelessWidget {
               user.role == UserRole.admin
                   ? 'ADMIN'
                   : user.role == UserRole.driver
-                      ? 'DRIVER'
-                      : 'RIDER',
+                      ? 'CHÓFER'
+                      : 'PASAJERO',
               style: LuxTypography.caption.copyWith(
                 color: LuxColors.sapphire,
                 fontWeight: FontWeight.w600,

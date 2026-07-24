@@ -22,7 +22,7 @@ class RideTypePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: LuxSpacing.md),
-              const SectionHeader(title: 'Choose Service'),
+              const SectionHeader(title: 'Elegir servicio'),
               const SizedBox(height: LuxSpacing.xl),
               _ServiceCard(
                 serviceType: ServiceType.oneWay,

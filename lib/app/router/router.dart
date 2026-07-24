@@ -12,7 +12,11 @@ import '../../features/booking/presentation/pages/ride_type_page.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
 import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
 import '../../features/driver/presentation/pages/driver_home_screen.dart';
+import '../../features/driver/presentation/pages/driver_onboarding_screen.dart';
 import '../../features/driver/presentation/pages/driver_queue_screen.dart';
+import '../../features/services/presentation/pages/airport_transfer_page.dart';
+import '../../features/services/presentation/pages/hourly_charter_page.dart';
+import '../../features/services/presentation/pages/immediate_pickup_page.dart';
 import '../../features/home/presentation/pages/home_screen.dart';
 import '../../features/payments/presentation/pages/add_card_screen.dart';
 import '../../features/payments/presentation/pages/payment_screen.dart';
@@ -107,7 +111,8 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
             const webGuestOk = {LuxRoutes.login, LuxRoutes.register, LuxRoutes.home, LuxRoutes.driverLogin};
             final guestOk = webGuestOk.contains(going) ||
                 going.startsWith('/ride-type') ||
-                going.startsWith('/booking');
+                going.startsWith('/booking') ||
+                going.startsWith('/servicios');
             
             // If explicitly trying to enter via driver path, go to driver login.
             // But if on general pages, stay on general login.
@@ -149,6 +154,22 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: LuxRoutes.driverLogin,
           pageBuilder: (c, s) => _fade(const LoginPage(), s),
+        ),
+        GoRoute(
+          path: '/driver/onboarding',
+          pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),
+        ),
+        GoRoute(
+          path: '/servicios/recogida-inmediata',
+          pageBuilder: (c, s) => _fade(const ImmediatePickupPage(), s),
+        ),
+        GoRoute(
+          path: '/servicios/traslado-aeropuerto',
+          pageBuilder: (c, s) => _fade(const AirportTransferPage(), s),
+        ),
+        GoRoute(
+          path: '/servicios/contratacion-por-horas',
+          pageBuilder: (c, s) => _fade(const HourlyCharterPage(), s),
         ),
         GoRoute(
           path: LuxRoutes.register,

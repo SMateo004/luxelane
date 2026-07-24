@@ -55,7 +55,7 @@ class _BookingScreenState extends State<BookingScreen> {
   int    _capacityTab    = 0; // 0 = Luggage, 1 = Seating
   int    _luggageOption  = 0; // 0, 1, 2
   int    _seatingOption  = 0; // 0, 1, 2, 3
-  String _guestTitle     = 'Mr.';
+  String _guestTitle     = 'Sr.';
   String _guestFirstName = '';
   String _guestLastName  = '';
   String _guestEmail     = '';
@@ -177,7 +177,7 @@ class _BookingScreenState extends State<BookingScreen> {
     } on StripeException catch (e) {
       if (mounted) {
         setState(() => _loading = false);
-        showLuxSnackbar(context, e.error.message ?? 'Payment failed',
+        showLuxSnackbar(context, e.error.message ?? 'El pago falló',
             isError: true);
       }
     } catch (e) {
@@ -203,7 +203,7 @@ class _BookingScreenState extends State<BookingScreen> {
     if (result != null && mounted) {
       setState(() {
         _bookForSelf   = false;
-        _guestTitle     = result['title']     ?? 'Mr.';
+        _guestTitle     = result['title']     ?? 'Sr.';
         _guestFirstName = result['firstName'] ?? '';
         _guestLastName  = result['lastName']  ?? '';
         _guestEmail     = result['email']     ?? '';
@@ -215,14 +215,14 @@ class _BookingScreenState extends State<BookingScreen> {
   void _createBooking() {
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) return;
-    final origin = _formData?.origin ?? const Place(address: 'Pickup', lat: 0, lng: 0);
-    final destination = _formData?.destination ?? const Place(address: 'Destination', lat: 0, lng: 0);
+    final origin = _formData?.origin ?? const Place(address: 'Recogida', lat: 0, lng: 0);
+    final destination = _formData?.destination ?? const Place(address: 'Destino', lat: 0, lng: 0);
     final scheduledAt = _formData?.scheduledAt ?? DateTime.now().add(const Duration(hours: 1));
 
     String? combinedNotes;
     if (!_bookForSelf && _guestFirstName.isNotEmpty) {
       final guestInfo =
-          'Passenger: $_guestTitle $_guestFirstName $_guestLastName'
+          'Pasajero: $_guestTitle $_guestFirstName $_guestLastName'
           '${_guestEmail.isNotEmpty ? ' · $_guestEmail' : ''}'
           '${_guestPhone.isNotEmpty ? ' · $_guestPhone' : ''}';
       combinedNotes = _notes.isNotEmpty ? '$guestInfo\n$_notes' : guestInfo;
@@ -381,7 +381,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   const SizedBox(height: 12),
                   // Heading
                   const Text(
-                    'Choose your\nexperience',
+                    'Elige tu\nexperiencia',
                     style: TextStyle(
                       fontFamily: kSerif,
                       fontSize: 60,
@@ -394,7 +394,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Fixed price · No surprises · Available worldwide',
+                    'Precio fijo · Sin sorpresas · Disponible en todo el mundo',
                     style: TextStyle(
                       fontFamily: kSans,
                       fontSize: 11,
@@ -483,13 +483,13 @@ class _BookingScreenState extends State<BookingScreen> {
   static List<String> _luggageOptionsFor(VehicleClass vc) {
     switch (vc) {
       case VehicleClass.business:
-        return ['2 x Carry-on', '2 x Standard check-in', '1 x Extra large check-in'];
+        return ['2 x De mano', '2 x Facturada estándar', '1 x Extra grande'];
       case VehicleClass.firstClass:
-        return ['3 x Carry-on', '2 x Standard check-in', '1 x Extra large check-in'];
+        return ['3 x De mano', '2 x Facturada estándar', '1 x Extra grande'];
       case VehicleClass.businessVan:
-        return ['8 x Carry-on', '6 x Standard check-in', '4 x Extra large check-in'];
+        return ['8 x De mano', '6 x Facturada estándar', '4 x Extra grande'];
       case VehicleClass.electric:
-        return ['2 x Carry-on', '2 x Standard check-in', '1 x Extra large check-in'];
+        return ['2 x De mano', '2 x Facturada estándar', '1 x Extra grande'];
     }
   }
 
@@ -498,9 +498,9 @@ class _BookingScreenState extends State<BookingScreen> {
       case VehicleClass.business:
       case VehicleClass.firstClass:
       case VehicleClass.electric:
-        return ['Three passengers', 'Two passengers', 'Baby seat'];
+        return ['Tres pasajeros', 'Dos pasajeros', 'Asiento de bebé'];
       case VehicleClass.businessVan:
-        return ['Five passengers', 'Two passengers'];
+        return ['Cinco pasajeros', 'Dos pasajeros'];
     }
   }
 
@@ -511,65 +511,65 @@ class _BookingScreenState extends State<BookingScreen> {
   static const _kVehicleSlides = <VehicleClass, List<List<String>>>{
     VehicleClass.business: [
       [
-        'Executive comfort for every journey',
+        'Confort ejecutivo en cada trayecto',
         'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=900&q=90&auto=format&fit=crop',
       ],
       [
-        'Punctual, professional, and perfectly refined',
+        'Puntual, profesional y perfectamente refinado',
         'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=900&q=90&auto=format&fit=crop',
       ],
       [
-        'Arrive with confidence, every single time',
+        'Llega con confianza, en cada ocasión',
         'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=900&q=90&auto=format&fit=crop',
       ],
       [
-        'Premium made practical for the modern executive',
+        'Premium hecho práctico para el ejecutivo moderno',
         'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=900&q=90&auto=format&fit=crop',
       ],
     ],
     VehicleClass.firstClass: [
       [
-        'An extraordinary level of luxury awaits',
+        'Un nivel extraordinario de lujo te espera',
         'https://images.unsplash.com/photo-1563720223523-e75db7d32e5c?w=900&q=90&auto=format&fit=crop',
       ],
       [
-        'Crafted for those who demand the finest',
+        'Diseñado para quienes exigen lo mejor',
         'https://images.unsplash.com/photo-1485291571150-772bcfc10da5?w=900&q=90&auto=format&fit=crop',
       ],
       [
-        'Privacy and elegance in every transfer',
+        'Privacidad y elegancia en cada traslado',
         'https://images.unsplash.com/photo-1493238792000-8113da705763?w=900&q=90&auto=format&fit=crop',
       ],
       [
-        'First class, from door to door',
+        'Primera clase, de puerta a puerta',
         'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=900&q=90&auto=format&fit=crop',
       ],
     ],
     VehicleClass.businessVan: [
       [
-        'Space and comfort for your entire team',
+        'Espacio y confort para todo tu equipo',
         'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=900&q=90&auto=format&fit=crop',
       ],
       [
-        'Seamless group transfers, stress-free arrivals',
+        'Traslados grupales sin estrés y con puntualidad',
         'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=900&q=90&auto=format&fit=crop',
       ],
       [
-        'The perfect ride for families and groups',
+        'El viaje perfecto para familias y grupos',
         'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=900&q=90&auto=format&fit=crop',
       ],
       [
-        'Premium capacity, zero compromise on comfort',
+        'Capacidad premium, sin compromiso en el confort',
         'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=900&q=90&auto=format&fit=crop',
       ],
     ],
     VehicleClass.electric: [
       [
-        'All-electric, quiet and executive-level comfort',
+        'Totalmente eléctrico, silencioso y de nivel ejecutivo',
         'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=900&q=90&auto=format&fit=crop',
       ],
       [
-        'Zero emissions, maximum luxury experience',
+        'Cero emisiones, máxima experiencia de lujo',
         'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=900&q=90&auto=format&fit=crop',
       ],
     ],
@@ -723,8 +723,8 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _webDescriptiveText() => const Padding(
         padding: EdgeInsets.only(right: 40),
         child: Text(
-          'Premium made practical. Spacious seating, a smooth journey, '
-          'and punctual pickups that keep your day in rhythm.',
+          'Premium hecho práctico. Asientos espaciosos, un viaje suave '
+          'y recogidas puntuales que mantienen tu día en ritmo.',
           style: TextStyle(
             fontFamily: kSans,
             fontSize: 26,
@@ -765,7 +765,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
         // Title (serif, editorial)
         const Text(
-          "What's included",
+          'Qué incluye',
           style: TextStyle(
             fontFamily: kSerif,
             fontSize: 38,
@@ -781,13 +781,13 @@ class _BookingScreenState extends State<BookingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(child: item(Icons.badge_outlined,
-                'Personal meet & greet')),
+                'Recibimiento personalizado')),
             const SizedBox(width: 48),
             Expanded(child: item(Icons.timer_outlined,
-                'Includes up to 60 minutes of free wait time')),
+                'Hasta 60 minutos de espera gratuita')),
             const SizedBox(width: 48),
             Expanded(child: item(Icons.event_available_outlined,
-                'Free to cancel up to 1 hour before pickup')),
+                'Cancelación gratuita hasta 1 hora antes de la recogida')),
           ],
         ),
         const SizedBox(height: 50),
@@ -797,13 +797,13 @@ class _BookingScreenState extends State<BookingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(child: item(Icons.cable_outlined,
-                'iOS and Android chargers onboard')),
+                'Cargadores para iOS y Android a bordo')),
             const SizedBox(width: 48),
             Expanded(child: item(Icons.clean_hands_outlined,
-                'Complimentary tissues & sanitizing wipes')),
+                'Pañuelos y toallitas desinfectantes de cortesía')),
             const SizedBox(width: 48),
             Expanded(child: item(Icons.water_drop_outlined,
-                'Complimentary chilled water included')),
+                'Agua fría de cortesía incluida')),
           ],
         ),
       ],
@@ -894,7 +894,7 @@ class _BookingScreenState extends State<BookingScreen> {
       children: [
         // Title
         const Text(
-          'Capacity',
+          'Capacidad',
           style: TextStyle(
             fontFamily: kSerif,
             fontSize: 38,
@@ -911,10 +911,10 @@ class _BookingScreenState extends State<BookingScreen> {
           children: [
             Row(
               children: [
-                tab('Luggage', _capacityTab == 0,
+                tab('Equipaje', _capacityTab == 0,
                     () => setState(() => _capacityTab = 0)),
                 const SizedBox(width: 36),
-                tab('Seating', _capacityTab == 1,
+                tab('Asientos', _capacityTab == 1,
                     () => setState(() => _capacityTab = 1)),
               ],
             ),
@@ -927,9 +927,9 @@ class _BookingScreenState extends State<BookingScreen> {
         if (_capacityTab == 0) ...[
           // Description
           const Text(
-            'Based on standard luggage sizes, which may differ from yours. '
-            'You can specify the details of your luggage in the '
-            '"Pickup notes" on the next step.',
+            'Basado en tamaños estándar de equipaje, que pueden diferir de los tuyos. '
+            'Puedes especificar los detalles de tu equipaje en las '
+            '"Notas de recogida" en el siguiente paso.',
             style: TextStyle(
               fontFamily: kSans,
               fontSize: 14,
@@ -1007,9 +1007,9 @@ class _BookingScreenState extends State<BookingScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Choose the seating configuration that fits your needs. '
-                  'Special seats (child / baby) must be requested in advance '
-                  'and are subject to availability.',
+                  'Elige la configuración de asientos que mejor se adapte a tus necesidades. '
+                  'Los asientos especiales (infantil / bebé) deben solicitarse con anticipación '
+                  'y están sujetos a disponibilidad.',
                   style: TextStyle(
                     fontFamily: kSans,
                     fontSize: 14,
@@ -1173,7 +1173,7 @@ class _BookingScreenState extends State<BookingScreen> {
         children: [
           // Title
           const Text(
-            'Price breakdown',
+            'Desglose de precio',
             style: TextStyle(
               fontFamily: kSerif,
               fontSize: 36,
@@ -1185,17 +1185,17 @@ class _BookingScreenState extends State<BookingScreen> {
           const SizedBox(height: 20),
 
           // Base fare
-          priceLine('Base fare', base),
+          priceLine('Tarifa base', base),
           const Divider(color: _kDivider, height: 1),
 
           // Tax
-          priceLine('Estimated tax', tax),
+          priceLine('Impuesto estimado', tax),
           const Divider(color: _kBorder, height: 1, thickness: 1.2),
           const SizedBox(height: 22),
 
           // Please note section
           const Text(
-            'Please note:',
+            'Nota importante:',
             style: TextStyle(
               fontFamily: kSans,
               fontSize: 13,
@@ -1206,17 +1206,17 @@ class _BookingScreenState extends State<BookingScreen> {
           const SizedBox(height: 14),
 
           note(
-            'Passenger and luggage capacity limits must be respected for '
-            'safety reasons. If exceeded, the driver may refuse the service.',
+            'Los límites de capacidad de pasajeros y equipaje deben respetarse por '
+            'razones de seguridad. Si se exceden, el chófer podrá rechazar el servicio.',
           ),
           note(
-            'Vehicle images are for reference only. The actual vehicle may '
-            'vary while maintaining equivalent or superior quality.',
+            'Las imágenes del vehículo son solo de referencia. El vehículo real puede '
+            'variar manteniendo una calidad equivalente o superior.',
           ),
           note(
-            'Additional needs (wheelchair, child seat, extra items) can be '
-            'added in "Pickup notes". Choose Business Van for larger groups '
-            'or extra luggage.',
+            'Las necesidades adicionales (silla de ruedas, asiento infantil, artículos extra) pueden '
+            'añadirse en "Notas de recogida". Elige Business Van para grupos más grandes '
+            'o equipaje adicional.',
           ),
         ],
       ),
@@ -1250,7 +1250,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           Icon(Icons.map_outlined,
                               size: 40, color: Colors.grey.shade700),
                           const SizedBox(height: 8),
-                          Text('Route preview',
+                          Text('Vista previa de ruta',
                               style: TextStyle(
                                 fontFamily: kSans,
                                 fontSize: 12,
@@ -1339,13 +1339,13 @@ class _BookingScreenState extends State<BookingScreen> {
         const SizedBox(height: 20),
         _SummaryAddressRow(
           icon: Icons.location_on_outlined,
-          label: 'Pickup',
+          label: 'Recogida',
           value: _formData?.origin.displayName ?? '—',
         ),
         const SizedBox(height: 12),
         _SummaryAddressRow(
           icon: Icons.flag_outlined,
-          label: 'Destination',
+          label: 'Destino',
           value: _formData?.destination?.displayName ?? '—',
         ),
 
@@ -1358,8 +1358,8 @@ class _BookingScreenState extends State<BookingScreen> {
           icon: Icons.person_outlined,
           iconBg: const Color(0xFFDDE6F8),
           iconColor: _kPanelAccent,
-          title: 'Book for myself',
-          subtitle: 'Book with your account information',
+          title: 'Reservar para mí',
+          subtitle: 'Reserva con la información de tu cuenta',
           selected: _bookForSelf,
           onTap: () => setState(() => _bookForSelf = true),
         ),
@@ -1373,10 +1373,10 @@ class _BookingScreenState extends State<BookingScreen> {
               ? const Color(0xFFDDE6F8)
               : const Color(0xFFF0EDE8),
           iconColor: !_bookForSelf ? _kPanelAccent : _kTextSub,
-          title: 'Book for a guest',
+          title: 'Reservar para un invitado',
           subtitle: (!_bookForSelf && _guestFirstName.isNotEmpty)
               ? '$_guestTitle $_guestFirstName $_guestLastName'
-              : 'Select or add a guest',
+              : 'Seleccionar o añadir un invitado',
           selected: !_bookForSelf,
           onTap: _showAddGuestDialog,
           trailing: Icon(
@@ -1408,7 +1408,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         size: 15, color: _kTextPrimary),
                     SizedBox(width: 7),
                     Text(
-                      'Apply offer',
+                      'Aplicar oferta',
                       style: TextStyle(
                         fontFamily: kSans,
                         fontSize: 13,
@@ -1422,7 +1422,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             const Spacer(),
             const Text(
-              'All fees included',
+              'Todos los cargos incluidos',
               style: TextStyle(
                 fontFamily: kSans,
                 fontSize: 12,
@@ -1463,13 +1463,13 @@ class _BookingScreenState extends State<BookingScreen> {
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
               onPressed: () => _step > 0 ? setState(() => _step--) : context.pop(),
             ),
-            title: Text('STEP ${_step + 1} OF 3'),
+            title: Text('PASO ${_step + 1} DE 3'),
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(48),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
                 child: _LightStepIndicator(
-                  steps: const ['Vehicle', 'Details', 'Confirm'],
+                  steps: const ['Vehículo', 'Detalles', 'Confirmar'],
                   currentStep: _step,
                 ),
               ),
@@ -1485,7 +1485,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
               _LightPriceBar(
                 price: _price,
-                label: _step < 2 ? 'Continue' : 'Confirm Booking',
+                label: _step < 2 ? 'Continuar' : 'Confirmar reserva',
                 loading: _loading,
                 onConfirm: _step < 2 ? () => setState(() => _step++) : _confirm,
               ),
@@ -1506,7 +1506,7 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _mobileVehicleStep() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Choose your experience',
+          const Text('Elige tu experiencia',
               style: TextStyle(
                 fontFamily: kSerif, fontSize: 28,
                 fontWeight: FontWeight.w600, color: _kTextPrimary,
@@ -1557,25 +1557,25 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _detailsStep() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('TRIP DETAILS',
+          const Text('DETALLES DEL VIAJE',
               style: TextStyle(
                 fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w700,
                 color: _kTextTertiary, letterSpacing: 2.0,
               )),
           const SizedBox(height: 20),
-          _LightCounterRow(label: 'Passengers', icon: Icons.person_outline,
+          _LightCounterRow(label: 'Pasajeros', icon: Icons.person_outline,
               value: _passengers, min: 1, max: _selected.capacity,
               onChanged: (v) => setState(() => _passengers = v)),
           const SizedBox(height: 10),
-          _LightCounterRow(label: 'Luggage', icon: Icons.luggage_outlined,
+          _LightCounterRow(label: 'Equipaje', icon: Icons.luggage_outlined,
               value: _luggage, min: 0, max: 6,
               onChanged: (v) => setState(() => _luggage = v)),
           const SizedBox(height: 20),
-          _LightTextField(label: 'Flight Number', hint: 'e.g. LA 8810 (optional)',
+          _LightTextField(label: 'Número de vuelo', hint: 'ej. LA 8810 (opcional)',
               icon: Icons.flight_outlined, onChanged: (v) => _flight = v),
           const SizedBox(height: 12),
-          _LightTextField(label: 'Special Requests',
-              hint: 'Child seat, meeting sign…',
+          _LightTextField(label: 'Solicitudes especiales',
+              hint: 'Asiento infantil, letrero de bienvenida…',
               icon: Icons.chat_bubble_outline_rounded, maxLines: 3,
               onChanged: (v) => _notes = v),
         ],
@@ -1596,7 +1596,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           const SizedBox(height: 20),
         ],
-        const Text('BOOKING SUMMARY',
+        const Text('RESUMEN DE RESERVA',
             style: TextStyle(fontFamily: kSans, fontSize: 10,
                 fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 2.0)),
         const SizedBox(height: 14),
@@ -1607,23 +1607,23 @@ class _BookingScreenState extends State<BookingScreen> {
             border: Border.all(color: _kBorder),
           ),
           child: Column(children: [
-            _SummaryRow('Service',    _service.label,       isFirst: true),
-            _SummaryRow('Vehicle',    _selected.label),
+            _SummaryRow('Servicio',    _service.label,       isFirst: true),
+            _SummaryRow('Vehículo',    _selected.label),
             if (_formData?.origin != null)
-              _SummaryRow('From',     _formData!.origin.displayName),
+              _SummaryRow('Desde',     _formData!.origin.displayName),
             if (_formData?.destination != null)
-              _SummaryRow('To',       _formData!.destination!.displayName),
+              _SummaryRow('Hasta',       _formData!.destination!.displayName),
             _SummaryRow(
-              _service == ServiceType.byTheHour ? 'Duration' : 'Distance',
-              _service == ServiceType.byTheHour ? '$_hours hours'
+              _service == ServiceType.byTheHour ? 'Duración' : 'Distancia',
+              _service == ServiceType.byTheHour ? '$_hours horas'
                   : _km > 0 ? '${_km.toStringAsFixed(1)} km' : '—',
             ),
             if (_formData?.routeDurationMin != null && _formData!.routeDurationMin > 0)
-              _SummaryRow('Est. Duration', '${_formData!.routeDurationMin} min'),
-            _SummaryRow('Passengers', '$_passengers'),
-            _SummaryRow('Luggage',    '$_luggage bags'),
-            if (_flight.isNotEmpty) _SummaryRow('Flight', _flight),
-            if (_notes.isNotEmpty)  _SummaryRow('Notes',  _notes),
+              _SummaryRow('Duración est.', '${_formData!.routeDurationMin} min'),
+            _SummaryRow('Pasajeros', '$_passengers'),
+            _SummaryRow('Equipaje',    '$_luggage bultos'),
+            if (_flight.isNotEmpty) _SummaryRow('Vuelo', _flight),
+            if (_notes.isNotEmpty)  _SummaryRow('Notas',  _notes),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: const BoxDecoration(
@@ -1631,7 +1631,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
               ),
               child: Row(children: [
-                const Text('TOTAL · FIXED PRICE',
+                const Text('TOTAL · PRECIO FIJO',
                     style: TextStyle(fontFamily: kSans, fontSize: 10,
                         fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 1.8)),
                 const Spacer(),
@@ -1644,10 +1644,10 @@ class _BookingScreenState extends State<BookingScreen> {
         ),
         const SizedBox(height: 20),
         if (_savedCards.isEmpty)
-          _OutlinedBtn(label: 'Add Payment Method', icon: Icons.add_card_outlined,
+          _OutlinedBtn(label: 'Agregar método de pago', icon: Icons.add_card_outlined,
               onPressed: () => context.push('/payment/add'))
         else ...[
-          const Text('PAYMENT METHOD',
+          const Text('MÉTODO DE PAGO',
               style: TextStyle(fontFamily: kSans, fontSize: 10,
                   fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 2.0)),
           const SizedBox(height: 12),
@@ -1692,7 +1692,7 @@ class _BookingScreenState extends State<BookingScreen> {
         ],
         const SizedBox(height: 16),
         _GuaranteeRow(Icons.event_available_outlined,
-            'Free cancellation up to 1 hour before pickup'),
+            'Cancelación gratuita hasta 1 hora antes de la recogida'),
         const SizedBox(height: 8),
       ],
     );
@@ -1766,7 +1766,7 @@ class _WebTopBar extends StatelessWidget {
                 child: Row(mainAxisSize: MainAxisSize.min, children: const [
                   Icon(Icons.arrow_back_ios_new_rounded, size: 12, color: _kTextSub),
                   SizedBox(width: 5),
-                  Text('Back',
+                  Text('Volver',
                       style: TextStyle(fontFamily: kSans, fontSize: 11,
                           fontWeight: FontWeight.w400, letterSpacing: 0.8,
                           color: _kTextSub)),
@@ -2240,7 +2240,7 @@ class _VehicleCardState extends State<_VehicleCard>
                                       color: accent.withAlpha(60), width: 1),
                                 ),
                                 child: Text(
-                                  'SELECTED',
+                                  'SELECCIONADO',
                                   style: TextStyle(
                                     fontFamily: kSans,
                                     fontSize: 7,
@@ -2566,7 +2566,7 @@ class _MobileVehicleDetail extends StatelessWidget {
                 color: const Color(0xFFEEEBE4),
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: Text('Up to ${vehicleClass.capacity} pax',
+              child: Text('Hasta ${vehicleClass.capacity} pax',
                   style: const TextStyle(fontFamily: kSans,
                       fontSize: 10, fontWeight: FontWeight.w600, color: _kTextSub)),
             ),
@@ -2574,9 +2574,9 @@ class _MobileVehicleDetail extends StatelessWidget {
           const SizedBox(height: 10),
           const Divider(color: _kDivider, height: 1),
           const SizedBox(height: 10),
-          _GuaranteeRow(Icons.price_check_outlined, 'All fees included'),
+          _GuaranteeRow(Icons.price_check_outlined, 'Todos los cargos incluidos'),
           const SizedBox(height: 6),
-          _GuaranteeRow(Icons.event_available_outlined, 'Free cancellation up to 1h before'),
+          _GuaranteeRow(Icons.event_available_outlined, 'Cancelación gratuita hasta 1h antes'),
         ]),
       );
 }
@@ -2701,7 +2701,7 @@ class _LightHourRow extends StatelessWidget {
           border: Border.all(color: _kBorder),
         ),
         child: Row(children: [
-          const Text('Duration',
+          const Text('Duración',
               style: TextStyle(fontFamily: kSans, fontSize: 13,
                   fontWeight: FontWeight.w500, color: _kTextPrimary)),
           const Spacer(),
@@ -2817,7 +2817,7 @@ class _OutlinedBtn extends StatelessWidget {
 class _LightPriceBar extends StatelessWidget {
   const _LightPriceBar({
     required this.price, required this.onConfirm,
-    this.loading = false, this.label = 'Confirm Booking',
+    this.loading = false, this.label = 'Confirmar reserva',
   });
   final double price;
   final VoidCallback onConfirm;
@@ -2834,7 +2834,7 @@ class _LightPriceBar extends StatelessWidget {
         child: Row(children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('FIXED PRICE',
+                const Text('PRECIO FIJO',
                     style: TextStyle(fontFamily: kSans, fontSize: 9,
                         fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 1.5)),
                 Text('Bs ${price.toStringAsFixed(0)}',
@@ -2974,7 +2974,7 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
                   children: [
                     Row(children: [
                       Expanded(child: Text(
-                        _showRegister ? 'Create an account' : 'Sign in to continue',
+                        _showRegister ? 'Crear una cuenta' : 'Inicia sesión para continuar',
                         style: LuxTypography.headlineLarge.copyWith(fontSize: 24))),
                       IconButton(
                           onPressed: () => Navigator.of(context).pop(false),
@@ -2984,21 +2984,21 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
                     const SizedBox(height: LuxSpacing.sm),
                     Text(
                       _showRegister
-                          ? 'Create your Luxelane account to complete the booking.'
-                          : 'Sign in to confirm your booking.',
+                          ? 'Crea tu cuenta de Luxelane para completar la reserva.'
+                          : 'Inicia sesión para confirmar tu reserva.',
                       style: LuxTypography.bodyMedium),
                     const SizedBox(height: LuxSpacing.xl),
                     if (_showRegister) ...[
-                      LuxTextField(label: 'Full Name', hint: 'Your name',
+                      LuxTextField(label: 'Nombre completo', hint: 'Tu nombre',
                           prefixIcon: Icons.person_outline,
                           controller: _nameCtrl, onChanged: (_) {}),
                       const SizedBox(height: LuxSpacing.md),
                     ],
-                    LuxTextField(label: 'Email', hint: 'you@example.com',
+                    LuxTextField(label: 'Correo electrónico', hint: 'tu@ejemplo.com',
                         prefixIcon: Icons.email_outlined, controller: _emailCtrl,
                         keyboardType: TextInputType.emailAddress, onChanged: (_) {}),
                     const SizedBox(height: LuxSpacing.md),
-                    LuxTextField(label: 'Password', hint: '••••••••',
+                    LuxTextField(label: 'Contraseña', hint: '••••••••',
                         prefixIcon: Icons.lock_outline, controller: _passCtrl,
                         obscureText: _obscure, onChanged: (_) {},
                         suffixIcon: IconButton(
@@ -3009,15 +3009,15 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
                           onPressed: () => setState(() => _obscure = !_obscure),
                         )),
                     const SizedBox(height: LuxSpacing.xl),
-                    LuxButton(label: _showRegister ? 'Create Account' : 'Sign In',
+                    LuxButton(label: _showRegister ? 'Crear cuenta' : 'Iniciar sesión',
                         loading: _loading, onPressed: _loading ? null : _submit),
                     const SizedBox(height: LuxSpacing.md),
                     TextButton(
                       onPressed: () => setState(() => _showRegister = !_showRegister),
                       child: Text(
                         _showRegister
-                            ? 'Already have an account? Sign in'
-                            : "Don't have an account? Create one",
+                            ? '¿Ya tienes cuenta? Inicia sesión'
+                            : '¿No tienes cuenta? Crear una',
                         style: LuxTypography.bodyMedium.copyWith(color: LuxColors.sapphire)),
                     ),
                   ]),
@@ -3070,7 +3070,7 @@ Widget _guestFieldLabel(String text) => Padding(
 
 class _AddGuestDialog extends StatefulWidget {
   const _AddGuestDialog({
-    this.initialTitle     = 'Mr.',
+    this.initialTitle     = 'Sr.',
     this.initialFirstName = '',
     this.initialLastName  = '',
     this.initialEmail     = '',
@@ -3088,7 +3088,7 @@ class _AddGuestDialog extends StatefulWidget {
 }
 
 class _AddGuestDialogState extends State<_AddGuestDialog> {
-  static const _kTitles = ['Mr.', 'Mrs.', 'Ms.', 'Dr.', 'Prof.'];
+  static const _kTitles = ['Sr.', 'Sra.', 'Srta.', 'Dr.', 'Prof.'];
 
   late String _title;
   late final TextEditingController _firstCtrl;
@@ -3146,7 +3146,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                 children: [
                   const Expanded(
                     child: Text(
-                      'Add new guest',
+                      'Añadir nuevo invitado',
                       style: TextStyle(
                         fontFamily: kSans,
                         fontSize: 32,
@@ -3177,9 +3177,9 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
 
               // ── Description ─────────────────────────────────────────────
               const Text(
-                "Enter your guests' information and treat them to a premium service. "
-                'We will keep them informed of their journey throughout the process. '
-                "Don't worry, we will not share any payment or invoice information with them.",
+                'Ingresa la información de tu invitado y bríndales un servicio premium. '
+                'Los mantendremos informados sobre su trayecto durante todo el proceso. '
+                'No te preocupes, no compartiremos ninguna información de pago o facturación con ellos.',
                 style: TextStyle(
                   fontFamily: kSans,
                   fontSize: 13,
@@ -3192,7 +3192,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
               const SizedBox(height: 30),
 
               // ── Title dropdown ──────────────────────────────────────────
-              _guestFieldLabel('Title'),
+              _guestFieldLabel('Tratamiento'),
               DropdownButtonFormField<String>(
                 value: _title,
                 style: _kGuestValueStyle,
@@ -3227,11 +3227,11 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _guestFieldLabel('First name'),
+                        _guestFieldLabel('Nombre'),
                         TextField(
                           controller: _firstCtrl,
                           style: _kGuestValueStyle,
-                          decoration: _guestFieldDecor("Guest's first name"),
+                          decoration: _guestFieldDecor('Nombre del invitado'),
                         ),
                       ],
                     ),
@@ -3241,11 +3241,11 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _guestFieldLabel('Last name'),
+                        _guestFieldLabel('Apellido'),
                         TextField(
                           controller: _lastCtrl,
                           style: _kGuestValueStyle,
-                          decoration: _guestFieldDecor("Guest's last name"),
+                          decoration: _guestFieldDecor('Apellido del invitado'),
                         ),
                       ],
                     ),
@@ -3256,23 +3256,23 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
               const SizedBox(height: 26),
 
               // ── Email ───────────────────────────────────────────────────
-              _guestFieldLabel('Email address'),
+              _guestFieldLabel('Correo electrónico'),
               TextField(
                 controller: _emailCtrl,
                 keyboardType: TextInputType.emailAddress,
                 style: _kGuestValueStyle,
-                decoration: _guestFieldDecor("Guest's email address"),
+                decoration: _guestFieldDecor('Correo del invitado'),
               ),
 
               const SizedBox(height: 26),
 
               // ── Mobile number ───────────────────────────────────────────
-              _guestFieldLabel("Guest's mobile number"),
+              _guestFieldLabel('Número de móvil del invitado'),
               TextField(
                 controller: _phoneCtrl,
                 keyboardType: TextInputType.phone,
                 style: _kGuestValueStyle,
-                decoration: _guestFieldDecor("Guest's mobile number").copyWith(
+                decoration: _guestFieldDecor('Número de móvil del invitado').copyWith(
                   prefixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 2, right: 6),
                     child: Row(
@@ -3296,7 +3296,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
               const SizedBox(height: 8),
 
               const Text(
-                'Your guest will receive their journey notifications on this number',
+                'Tu invitado recibirá las notificaciones del trayecto en este número',
                 style: TextStyle(
                   fontFamily: kSans,
                   fontSize: 11,
@@ -3326,7 +3326,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  child: const Text('Confirm'),
+                  child: const Text('Confirmar'),
                 ),
               ),
             ],

@@ -29,7 +29,7 @@ class DriverActiveRideScreen extends StatelessWidget {
         if (booking == null) {
           return Scaffold(
             appBar: AppBar(),
-            body: const Center(child: Text('Ride not found')),
+            body: const Center(child: Text('Viaje no encontrado')),
           );
         }
 
@@ -171,13 +171,13 @@ class _DriverSidePanel extends StatelessWidget {
   String get _message {
     switch (booking.status) {
       case BookingStatus.confirmed:
-        return 'Proceed to pickup location';
+        return 'Dirígete al punto de recogida';
       case BookingStatus.driverArriving:
-        return 'Heading to pickup · arriving soon';
+        return 'En camino a la recogida · llegando pronto';
       case BookingStatus.driverArrived:
-        return 'Waiting for passenger';
+        return 'Esperando al pasajero';
       case BookingStatus.inProgress:
-        return 'Ride in progress · head to destination';
+        return 'Viaje en curso · ve al destino';
       default:
         return '';
     }
@@ -186,13 +186,13 @@ class _DriverSidePanel extends StatelessWidget {
   String get _actionLabel {
     switch (booking.status) {
       case BookingStatus.confirmed:
-        return 'Head to Pickup';
+        return 'Ir a la recogida';
       case BookingStatus.driverArriving:
-        return 'I Have Arrived';
+        return 'He llegado';
       case BookingStatus.driverArrived:
-        return 'Start Ride';
+        return 'Iniciar viaje';
       case BookingStatus.inProgress:
-        return 'Complete Ride';
+        return 'Completar viaje';
       default:
         return '';
     }
@@ -295,7 +295,7 @@ class _RideInfoRow extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Estimated fare', style: LuxTypography.caption),
+                const Text('Tarifa estimada', style: LuxTypography.caption),
                 Text(
                   'Bs${booking.estimatedPrice.toStringAsFixed(2)}',
                   style: LuxTypography.bodyLarge
