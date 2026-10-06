@@ -27,6 +27,12 @@ class BookingCreateRequested extends BookingEvent {
     required this.riderId,
     required this.estimatedPrice,
     this.notes,
+    this.passengerCount = 1,
+    this.luggageCount = 0,
+    this.flightNumber,
+    this.hours,
+    this.currency = 'bob',
+    this.stripePaymentIntentId,
   });
   final Place origin;
   final Place destination;
@@ -36,8 +42,24 @@ class BookingCreateRequested extends BookingEvent {
   final String riderId;
   final double estimatedPrice;
   final String? notes;
+  final int passengerCount;
+  final int luggageCount;
+  final String? flightNumber;
+  final int? hours;
+  final String currency;
+  final String? stripePaymentIntentId;
   @override
-  List<Object?> get props => [riderId, vehicleClass, scheduledAt, estimatedPrice];
+  List<Object?> get props => [
+        riderId,
+        vehicleClass,
+        scheduledAt,
+        estimatedPrice,
+        passengerCount,
+        luggageCount,
+        flightNumber,
+        hours,
+        stripePaymentIntentId,
+      ];
 }
 
 class BookingStatusWatched extends BookingEvent {
@@ -178,6 +200,12 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       createdAt: now,
       updatedAt: now,
       notes: event.notes,
+      passengerCount: event.passengerCount,
+      luggageCount: event.luggageCount,
+      flightNumber: event.flightNumber,
+      hours: event.hours,
+      currency: event.currency,
+      stripePaymentIntentId: event.stripePaymentIntentId,
     );
     final result = await _repo.createBooking(booking);
     result.fold(

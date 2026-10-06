@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/config/env.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
@@ -154,7 +155,7 @@ class _BookingScreenState extends State<BookingScreen> {
       setState(() => _awaitingPaymentIntent = true);
       context.read<PaymentBloc>().add(PaymentIntentRequested(
             amount: _price,
-            currency: 'bob',
+            currency: AppConfig.currency,
             stripeCustomerId: user.stripeCustomerId!,
           ));
       return;
@@ -173,7 +174,9 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
       );
-      _createBooking();
+      // The authorisation is linked to the booking; the backend captures it
+      // when the ride completes and releases it on cancellation.
+      _createBooking(paymentIntentId: clientSecret.split('_secret_').first);
     } on StripeException catch (e) {
       if (mounted) {
         setState(() => _loading = false);
@@ -212,11 +215,19 @@ class _BookingScreenState extends State<BookingScreen> {
     }
   }
 
-  void _createBooking() {
+  void _createBooking({String? paymentIntentId}) {
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) return;
-    final origin = _formData?.origin ?? const Place(address: 'Recogida', lat: 0, lng: 0);
-    final destination = _formData?.destination ?? const Place(address: 'Destino', lat: 0, lng: 0);
+    final origin = _formData?.origin;
+    // Hourly charters may not have a destination: the chauffeur stays with you.
+    final destination = _formData?.destination ??
+        (_service == ServiceType.byTheHour ? origin : null);
+    if (origin == null || destination == null) {
+      setState(() => _loading = false);
+      showLuxSnackbar(context, 'Selecciona el punto de recogida y el destino',
+          isError: true);
+      return;
+    }
     final scheduledAt = _formData?.scheduledAt ?? DateTime.now().add(const Duration(hours: 1));
 
     String? combinedNotes;
@@ -239,6 +250,12 @@ class _BookingScreenState extends State<BookingScreen> {
           riderId: authState.user.id,
           estimatedPrice: _price,
           notes: combinedNotes,
+          passengerCount: _passengers,
+          luggageCount: _luggage,
+          flightNumber: _flight.trim().isEmpty ? null : _flight.trim().toUpperCase(),
+          hours: _service == ServiceType.byTheHour ? _hours : null,
+          currency: AppConfig.currency,
+          stripePaymentIntentId: paymentIntentId,
         ));
   }
 

@@ -47,15 +47,8 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
       );
       final doc = await _db.collection('users').doc(cred.user!.uid).get();
-      var user = User.fromJson({'id': doc.id, ...doc.data()!});
-      
-      // Auto-promote this specific email if it wasn't admin already
-      if (email.toLowerCase() == 'admin@luxelane.com' && user.role != UserRole.admin) {
-        user = user.copyWith(role: UserRole.admin);
-        await _db.collection('users').doc(user.id).update({'role': 'admin'});
-      }
-      
-      return Right(user);
+      // Admin role is granted server-side only (scripts/promote_admin.mjs).
+      return Right(User.fromJson({'id': doc.id, ...doc.data()!}));
     } on fb.FirebaseAuthException catch (e) {
       return Left(AuthFailure(e.message ?? 'Login failed'));
     } catch (e) {
@@ -81,9 +74,11 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         phone: phone,
         displayName: displayName,
-        role: email.toLowerCase() == 'admin@luxelane.com' ? UserRole.admin : role,
+        // Self-registration can only create riders or drivers; Firestore
+        // rules reject any other role.
+        role: role == UserRole.driver ? UserRole.driver : UserRole.rider,
         createdAt: DateTime.now(),
-        isVerified: true, // Auto-verify admin
+        isVerified: false,
         isActive: true,
         fcmTokens: const [],
       );

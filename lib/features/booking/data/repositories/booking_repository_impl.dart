@@ -78,11 +78,13 @@ class BookingRepositoryImpl implements BookingRepository {
 
   @override
   Stream<List<Booking>> streamPendingBookings() => _col
+      // The status filter is required: security rules only let drivers read
+      // pending bookings, so an unfiltered query is rejected.
+      .where('status', isEqualTo: BookingStatus.pending.label)
       .snapshots()
       .map((snap) {
         final list = snap.docs
           .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-          .where((b) => b.status == BookingStatus.pending)
           .toList();
         // Manual sort to avoid needing a composite index
         list.sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));

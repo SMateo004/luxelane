@@ -64,6 +64,7 @@ void main() {
         serviceType: ServiceType.oneWay,
         scheduledAt: _now,
         riderId: 'rider-1',
+        estimatedPrice: 75,
       )),
       expect: () => [
         const BookingLoading(),
@@ -85,6 +86,7 @@ void main() {
         serviceType: ServiceType.oneWay,
         scheduledAt: _now,
         riderId: 'rider-1',
+        estimatedPrice: 75,
       )),
       expect: () => [
         const BookingLoading(),

@@ -83,6 +83,5 @@ flutter:
     - assets/images/services/aeropuerto/
     - assets/images/services/por-horas/
     - assets/icons/
-    - assets/fonts/
     - assets/videos/
   # fonts are loaded via Google Fonts fallback on web

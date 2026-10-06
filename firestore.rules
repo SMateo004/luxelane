@@ -4,7 +4,9 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     // -------------------------------------------------------------------------
-    // Helpers — role is stored in /users/{uid}.role in Firestore
+    // Helpers — role is stored in /users/{uid}.role in Firestore.
+    // The role field can only be written by admins (or the Admin SDK), never
+    // by the user themselves — see /users rules below.
     // -------------------------------------------------------------------------
 
     function getUserRole() {
@@ -19,8 +21,9 @@ service cloud.firestore {
       return request.auth != null && getUserRole() == 'driver';
     }
 
-    function isRider() {
-      return request.auth != null && getUserRole() == 'rider';
+    function isVerifiedDriver() {
+      return isDriver() &&
+        get(/databases/$(database)/documents/driverProfiles/$(request.auth.uid)).data.documentsVerified == true;
     }
 
     function isAuthenticated() {
@@ -35,15 +38,50 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys().hasOnly(fields);
     }
 
+    function notChanging(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    // Allowed booking status transitions for the assigned driver.
+    // Same-status writes are allowed so `updatedAt` refreshes don't fail.
+    function isValidDriverTransition(from, to) {
+      return from == to
+        || (from == 'confirmed'       && to in ['driver_arriving', 'cancelled'])
+        || (from == 'driver_arriving' && to == 'driver_arrived')
+        || (from == 'driver_arrived'  && to == 'in_progress')
+        || (from == 'in_progress'     && to == 'completed');
+    }
+
     // -------------------------------------------------------------------------
     // /users/{uid}
     // -------------------------------------------------------------------------
 
     match /users/{uid} {
       allow read:   if isOwner(uid) || isAdmin();
-      allow create: if isOwner(uid);
-      allow update: if isOwner(uid) || isAdmin();
+
+      // Self-registration may only pick rider or driver. Admin is granted
+      // exclusively via scripts/promote_admin.mjs (Admin SDK) or another admin.
+      allow create: if isOwner(uid) &&
+        request.resource.data.role in ['rider', 'driver'] &&
+        request.resource.data.get('isVerified', false) == false &&
+        request.resource.data.get('stripeCustomerId', null) == null;
+
+      // Users can edit their own profile, but never their role, verification
+      // or Stripe linkage.
+      allow update: if isAdmin() || (
+        isOwner(uid) &&
+        notChanging(['role', 'isVerified', 'isActive', 'stripeCustomerId', 'email'])
+      );
       allow delete: if false;
+
+      // In-app notifications (bell). The owner may write to their own inbox
+      // (ride status updates are generated client-side today) and flip `isRead`.
+      match /notifications/{notificationId} {
+        allow read:   if isOwner(uid) || isAdmin();
+        allow create: if (isOwner(uid) && request.resource.data.userId == uid) || isAdmin();
+        allow update: if isOwner(uid) && onlyUpdating(['isRead']);
+        allow delete: if isOwner(uid) || isAdmin();
+      }
     }
 
     // -------------------------------------------------------------------------
@@ -51,9 +89,23 @@ service cloud.firestore {
     // -------------------------------------------------------------------------
 
     match /driverProfiles/{uid} {
+      // Live location is needed by riders to track their chauffeur.
+      // TODO: move currentLocation to a per-booking doc so only the assigned
+      // rider can read it.
       allow read:   if isAuthenticated();
-      allow create: if isOwner(uid) && isDriver();
-      allow update: if (isOwner(uid) && isDriver()) || isAdmin();
+
+      // Onboarding: a driver creates an unverified profile with no history.
+      allow create: if isOwner(uid) && isDriver() &&
+        request.resource.data.documentsVerified == false &&
+        request.resource.data.totalRides == 0 &&
+        request.resource.data.rating == 0;
+
+      // Drivers may update their own operational fields only. Verification,
+      // rating and ride count are owned by admins / Cloud Functions.
+      allow update: if isAdmin() || (
+        isOwner(uid) && isDriver() &&
+        notChanging(['documentsVerified', 'rating', 'totalRides', 'userId'])
+      );
       allow delete: if false;
     }
 
@@ -69,28 +121,38 @@ service cloud.firestore {
         isAdmin()
       );
 
-      // Any authenticated user can create a booking for themselves
+      // A rider creates a pending, unassigned, unpaid booking for themselves.
+      // TODO: replace client price with a server-issued quote (quoteId).
       allow create: if isAuthenticated() &&
-        request.resource.data.riderId == request.auth.uid;
+        request.resource.data.riderId == request.auth.uid &&
+        request.resource.data.status == 'pending' &&
+        request.resource.data.get('driverId', null) == null &&
+        request.resource.data.get('finalPrice', null) == null &&
+        request.resource.data.get('paymentId', null) == null &&
+        request.resource.data.estimatedPrice is number &&
+        request.resource.data.estimatedPrice > 0 &&
+        request.resource.data.estimatedPrice < 100000;
 
       allow update: if isAdmin() ||
-        // Driver accepts a pending booking (self-assign)
-        (isAuthenticated() &&
+        // Verified driver accepts a pending booking (self-assign)
+        (isVerifiedDriver() &&
           resource.data.status == 'pending' &&
           request.resource.data.driverId == request.auth.uid &&
           request.resource.data.status == 'confirmed' &&
           onlyUpdating(['driverId', 'status', 'updatedAt'])) ||
-        // Driver progresses their assigned booking through statuses
-        (isAuthenticated() &&
+        // Assigned driver progresses the booking along the state machine
+        (isDriver() &&
           resource.data.driverId == request.auth.uid &&
-          onlyUpdating(['status', 'updatedAt'])) ||
-        // Rider cancels their own booking
+          onlyUpdating(['status', 'updatedAt']) &&
+          isValidDriverTransition(resource.data.status, request.resource.data.status)) ||
+        // Rider cancels their own booking before the ride starts
         (isAuthenticated() &&
           resource.data.riderId == request.auth.uid &&
+          resource.data.status in ['pending', 'confirmed', 'driver_arriving', 'driver_arrived'] &&
           onlyUpdating(['status', 'updatedAt']) &&
           request.resource.data.status == 'cancelled');
 
-      allow delete: if false;
+      allow delete: if isAdmin();
     }
 
     // -------------------------------------------------------------------------
@@ -106,25 +168,26 @@ service cloud.firestore {
 
       allow create: if isAdmin();
 
-      allow update: if isAdmin() || (
-        isAuthenticated() &&
-        isDriver() &&
-        resource.data.driverId == request.auth.uid &&
-        onlyUpdating([
-          'driverRoute',
-          'completedAt',
-          'distanceKm',
-          'durationMin',
-          'riderRating',
-          'driverRating'
-        ])
-      );
+      allow update: if isAdmin() ||
+        // Driver records route/metrics and rates the rider
+        (isDriver() &&
+          resource.data.driverId == request.auth.uid &&
+          onlyUpdating(['driverRoute', 'completedAt', 'distanceKm', 'durationMin', 'riderRating'])) ||
+        // Rider rates the driver once, after completion
+        (isAuthenticated() &&
+          resource.data.riderId == request.auth.uid &&
+          resource.data.get('completedAt', null) != null &&
+          resource.data.get('driverRating', null) == null &&
+          onlyUpdating(['driverRating']) &&
+          request.resource.data.driverRating is number &&
+          request.resource.data.driverRating >= 1 &&
+          request.resource.data.driverRating <= 5);
 
       allow delete: if false;
     }
 
     // -------------------------------------------------------------------------
-    // /payments/{paymentId}
+    // /payments/{paymentId} — written only by Cloud Functions / admins
     // -------------------------------------------------------------------------
 
     match /payments/{paymentId} {
@@ -149,7 +212,7 @@ service cloud.firestore {
         resource.data.driverId == request.auth.uid &&
         onlyUpdating(['isActive', 'color', 'photoUrl'])
       );
-      allow delete: if false;
+      allow delete: if isAdmin();
     }
 
     // -------------------------------------------------------------------------
@@ -159,6 +222,20 @@ service cloud.firestore {
     match /pricingRules/{ruleId} {
       allow read:   if isAuthenticated();
       allow write:  if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // Admin-only collections
+    // -------------------------------------------------------------------------
+
+    match /admin_logs/{logId} {
+      allow read, create: if isAdmin();
+      allow update, delete: if false;
+    }
+
+    match /config/{docId} {
+      allow read:  if isAuthenticated();
+      allow write: if isAdmin();
     }
   }
 }

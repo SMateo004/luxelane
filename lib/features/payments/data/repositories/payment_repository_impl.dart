@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
-import 'package:uuid/uuid.dart';
-import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
@@ -16,7 +14,6 @@ class PaymentRepositoryImpl implements PaymentRepository {
 
   final FirebaseFirestore _db;
   final FirebaseFunctions _fn;
-  final _uuid = const Uuid();
 
   CollectionReference<Map<String, dynamic>> get _col =>
       _db.collection('payments');
@@ -47,20 +44,19 @@ class PaymentRepositoryImpl implements PaymentRepository {
     required double amount,
     required String currency,
   }) async {
+    // Capture runs server-side: the function reads the amount from the
+    // booking and verifies the intent belongs to the rider. Payments are
+    // normally captured automatically when the booking is completed.
     try {
-      final id = _uuid.v4();
-      final payment = Payment(
-        id: id,
-        bookingId: bookingId,
-        riderId: riderId,
-        stripePaymentIntentId: stripePaymentIntentId,
-        amount: amount,
-        currency: currency,
-        status: PaymentStatus.captured,
-        createdAt: DateTime.now(),
-      );
-      await _col.doc(id).set(payment.toJson());
-      return Right(payment);
+      final result = await _fn
+          .httpsCallable('capturePayment')
+          .call({'bookingId': bookingId});
+      final paymentId = result.data['paymentId'] as String?;
+      if (paymentId == null) {
+        return const Left(PaymentFailure('No se pudo registrar el pago'));
+      }
+      final doc = await _col.doc(paymentId).get();
+      return Right(Payment.fromJson({'id': doc.id, ...doc.data()!}));
     } catch (e) {
       return Left(PaymentFailure(e.toString()));
     }
@@ -103,8 +99,8 @@ class PaymentRepositoryImpl implements PaymentRepository {
   @override
   Future<Either<Failure, void>> refundPayment(String paymentId) async {
     try {
+      // The function updates the payment doc (clients can't write payments).
       await _fn.httpsCallable('refundPayment').call({'paymentId': paymentId});
-      await _col.doc(paymentId).update({'status': PaymentStatus.refunded.label});
       return const Right(null);
     } catch (e) {
       return Left(PaymentFailure(e.toString()));

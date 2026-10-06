@@ -61,3 +61,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firestore rules tests
+rules-tests/node_modules/
+firebase-debug.log
+firestore-debug.log

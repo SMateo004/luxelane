@@ -21,6 +21,10 @@ abstract class AppConfig {
 
   static bool get enableLogs => isDev;
 
+  /// ISO 4217 code used for quotes and card authorisations.
+  static const String currency =
+      String.fromEnvironment('CURRENCY', defaultValue: 'bob');
+
   static const String fcmVapidKey =
       String.fromEnvironment('FCM_VAPID_KEY');
 }

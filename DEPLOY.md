@@ -19,13 +19,15 @@
    flutterfire configure --project=luxelane-prod
    ```
 
-3. Set Stripe secret in Functions config:
+3. Set the Stripe secret (Cloud Functions v2 uses Secret Manager, not `functions:config`):
    ```
-   firebase functions:config:set stripe.secret="sk_live_XXX" --project=luxelane-prod
-   firebase functions:config:set stripe.secret="sk_test_XXX" --project=luxelane-dev
+   firebase functions:secrets:set STRIPE_SECRET_KEY --project=luxelane-4e7ae
    ```
 
-4. Set Firebase Auth custom claims via Admin SDK after first user creation
+4. Grant the first admin with the Admin SDK (the app never self-promotes):
+   ```
+   node scripts/promote_admin.mjs
+   ```
 
 5. Enable in Firebase Console (both projects):
    - Authentication → Email/Password + Phone
@@ -73,6 +75,16 @@ flutter run --dart-define=ENV=dev --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
 FIREBASE_TOKEN          → firebase login:ci
 GOOGLE_MAPS_API_KEY     → Google Cloud Console
 STRIPE_SECRET_KEY       → Stripe Dashboard
+```
+
+---
+
+## Tests
+
+```
+flutter test                      # Dart unit/widget tests
+(cd functions && npm test)        # Cloud Functions business rules
+(cd rules-tests && npm test)      # Firestore security rules (needs Java)
 ```
 
 ---

@@ -20,7 +20,7 @@ abstract class LuxColors {
   // On-dark text
   static const white         = Color(0xFFF5F5F5);
   static const whiteSecondary = Color(0xFF9A9A9A);
-  static const whiteTertiary = Color(0xFF525252);
+  static const whiteTertiary = Color(0xFF7A8699); // ≥ 4.5:1 on navy (WCAG AA)
   // Light sections (web landing)
   static const cream         = Color(0xFFF3F1ED);
   static const creamBorder   = Color(0xFFE0DDD6);
@@ -123,9 +123,9 @@ ThemeData get luxTheme {
   scaffoldBackgroundColor: LuxColors.black,
   colorScheme: const ColorScheme.dark(
     primary: LuxColors.sapphire,
-    onPrimary: LuxColors.black,
+    onPrimary: LuxColors.white,
     secondary: LuxColors.sapphireLight,
-    onSecondary: LuxColors.black,
+    onSecondary: LuxColors.white,
     surface: LuxColors.blackSurface,
     onSurface: LuxColors.white,
     error: LuxColors.error,
@@ -142,11 +142,12 @@ ThemeData get luxTheme {
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
+      // White on sapphire ≈ 8:1 contrast (black on sapphire was ≈ 2.5:1).
       backgroundColor: LuxColors.sapphire,
-      foregroundColor: LuxColors.black,
+      foregroundColor: LuxColors.white,
       minimumSize: const Size(double.infinity, 52),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(LuxRadius.sm)),
-      textStyle: LuxTypography.labelLarge.copyWith(color: LuxColors.black),
+      textStyle: LuxTypography.labelLarge.copyWith(color: LuxColors.white),
       elevation: 0,
     ),
   ),
@@ -192,7 +193,7 @@ ThemeData get luxTheme {
     ),
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
   ),
-  cardTheme: CardTheme(
+  cardTheme: CardThemeData(
     color: LuxColors.blackSurface,
     elevation: 0,
     margin: EdgeInsets.zero,

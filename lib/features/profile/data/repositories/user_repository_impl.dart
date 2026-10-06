@@ -26,7 +26,15 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, void>> updateUser(User user) async {
     try {
-      await _users.doc(user.id).update(user.toJson());
+      // Privileged fields are managed by admins / Cloud Functions and are
+      // rejected by security rules if they differ, so never write them here.
+      final data = user.toJson()
+        ..remove('role')
+        ..remove('isVerified')
+        ..remove('isActive')
+        ..remove('stripeCustomerId')
+        ..remove('email');
+      await _users.doc(user.id).update(data);
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));

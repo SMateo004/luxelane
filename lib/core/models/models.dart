@@ -263,6 +263,8 @@ class Booking {
     this.hours,
     this.passengerCount = 1,
     this.luggageCount = 0,
+    this.currency = 'bob',
+    this.stripePaymentIntentId,
   });
 
   final String id;
@@ -284,6 +286,11 @@ class Booking {
   final int? hours;
   final int passengerCount;
   final int luggageCount;
+  final String currency;
+
+  /// Card authorisation created before booking; captured server-side when the
+  /// ride is completed and released if it is cancelled.
+  final String? stripePaymentIntentId;
 
   factory Booking.fromJson(Map<String, dynamic> j) => Booking(
         id: j['id'] as String? ?? '',
@@ -317,6 +324,8 @@ class Booking {
         hours: j['hours'] as int?,
         passengerCount: j['passengerCount'] as int? ?? 1,
         luggageCount: j['luggageCount'] as int? ?? 0,
+        currency: j['currency'] as String? ?? 'bob',
+        stripePaymentIntentId: j['stripePaymentIntentId'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -339,6 +348,8 @@ class Booking {
         'hours': hours,
         'passengerCount': passengerCount,
         'luggageCount': luggageCount,
+        'currency': currency,
+        'stripePaymentIntentId': stripePaymentIntentId,
       };
 
   Booking copyWith({
@@ -368,6 +379,8 @@ class Booking {
         hours: hours,
         passengerCount: passengerCount,
         luggageCount: luggageCount,
+        currency: currency,
+        stripePaymentIntentId: stripePaymentIntentId,
       );
 }
 

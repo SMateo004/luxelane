@@ -3,24 +3,29 @@ import { onCall, CallableRequest } from 'firebase-functions/v2/https';
 import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import * as stripe from './stripe_service';
+import { STRIPE_SECRET_KEY } from './stripe_service';
 import { logger } from './logger';
 import * as err from './errors';
+import {
+  BookingStatus,
+  UserRole,
+  canCapture,
+  chunk,
+  formatMoney,
+  isStalePending,
+  isValidAmount,
+  toMinorUnits,
+} from './policy';
 
 admin.initializeApp();
 const db = admin.firestore();
 
+const DEFAULT_CURRENCY = 'bob';
+const stripeOpts = { secrets: [STRIPE_SECRET_KEY] };
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
-
-type BookingStatus =
-  | 'pending'
-  | 'confirmed'
-  | 'driver_arriving'
-  | 'driver_arrived'
-  | 'in_progress'
-  | 'completed'
-  | 'cancelled';
 
 type PaymentStatus = 'pending' | 'captured' | 'refunded' | 'failed';
 
@@ -28,10 +33,16 @@ interface BookingDoc {
   riderId: string;
   driverId?: string;
   status: BookingStatus;
-  vehicleClass: string;
+  // Dart writes `class`; `vehicleClass` kept for older documents.
+  class?: string;
+  vehicleClass?: string;
   estimatedPrice: number;
   finalPrice?: number;
+  currency?: string;
   paymentId?: string;
+  stripePaymentIntentId?: string;
+  scheduledAt?: admin.firestore.Timestamp;
+  createdAt?: admin.firestore.Timestamp;
 }
 
 interface RideDoc {
@@ -54,6 +65,12 @@ interface PaymentDoc {
   receiptUrl?: string;
 }
 
+interface UserDoc {
+  role?: UserRole;
+  stripeCustomerId?: string;
+  fcmTokens?: string[];
+}
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -63,37 +80,118 @@ function requireAuth(req: CallableRequest): string {
   return req.auth.uid;
 }
 
+async function getUser(uid: string): Promise<UserDoc> {
+  const doc = await db.collection('users').doc(uid).get();
+  return (doc.data() as UserDoc | undefined) ?? {};
+}
+
+async function requireAdmin(req: CallableRequest): Promise<string> {
+  const uid = requireAuth(req);
+  const user = await getUser(uid);
+  if (user.role !== 'admin') throw err.permissionDenied('Admin only');
+  return uid;
+}
+
+/**
+ * Resolves the caller's own Stripe customer. If the client passed a
+ * customerId it must match — callers can never act on someone else's customer.
+ */
+async function requireOwnCustomer(uid: string, claimed?: string): Promise<string> {
+  const user = await getUser(uid);
+  const customerId = user.stripeCustomerId;
+  if (!customerId) throw err.failedPrecondition('No payment profile for this user');
+  if (claimed && claimed !== customerId) throw err.permissionDenied();
+  return customerId;
+}
+
+function bookingClass(b: BookingDoc): string {
+  return b.class ?? b.vehicleClass ?? 'business';
+}
+
 async function sendPush(tokens: string[], title: string, body: string): Promise<void> {
   if (!tokens.length) return;
   await admin.messaging().sendEachForMulticast({ tokens, notification: { title, body } });
 }
 
 async function getUserTokens(userId: string): Promise<string[]> {
-  const doc = await db.collection('users').doc(userId).get();
-  return (doc.data()?.fcmTokens as string[]) ?? [];
+  return (await getUser(userId)).fcmTokens ?? [];
+}
+
+async function writeAudit(action: string, data: Record<string, unknown>): Promise<void> {
+  await db.collection('admin_logs').add({
+    action,
+    ...data,
+    actor: 'system',
+    timestamp: admin.firestore.Timestamp.now(),
+  });
+}
+
+/**
+ * Captures the authorised amount for a completed booking. The amount always
+ * comes from the booking document, never from the client.
+ */
+async function captureBookingPayment(bookingId: string, booking: BookingDoc): Promise<string | null> {
+  if (booking.paymentId || !booking.stripePaymentIntentId) return null;
+
+  const rider = await getUser(booking.riderId);
+  const intent = await stripe.retrieveIntent(booking.stripePaymentIntentId);
+  if (intent.customer !== rider.stripeCustomerId || intent.metadata?.uid !== booking.riderId) {
+    logger.error('captureBookingPayment', 'intent does not belong to rider', { bookingId });
+    throw err.permissionDenied('Payment does not belong to this booking');
+  }
+
+  const price = booking.finalPrice ?? booking.estimatedPrice;
+  const amount = Math.min(toMinorUnits(price), intent.amount_capturable || intent.amount);
+  const captured =
+    intent.status === 'requires_capture'
+      ? await stripe.captureIntent(intent.id, amount)
+      : intent;
+
+  const paymentRef = db.collection('payments').doc();
+  const payment: PaymentDoc = {
+    bookingId,
+    riderId: booking.riderId,
+    stripePaymentIntentId: intent.id,
+    amount,
+    currency: captured.currency,
+    status: captured.status === 'succeeded' ? 'captured' : 'failed',
+    createdAt: admin.firestore.Timestamp.now(),
+  };
+  await paymentRef.set(payment);
+  await db.collection('bookings').doc(bookingId).update({
+    paymentId: paymentRef.id,
+    finalPrice: amount / 100,
+  });
+  return paymentRef.id;
 }
 
 // ---------------------------------------------------------------------------
-// createPaymentIntent
+// createPaymentIntent — authorises (does not charge) the rider's card
 // ---------------------------------------------------------------------------
 
-export const createPaymentIntent = onCall(async (req) => {
+export const createPaymentIntent = onCall(stripeOpts, async (req) => {
   const uid = requireAuth(req);
-  const { amount, currency, customerId } = req.data as {
+  const { amount, currency, customerId: claimed } = req.data as {
     amount: number;
-    currency: string;
-    customerId: string;
+    currency?: string;
+    customerId?: string;
   };
 
-  if (!amount || !currency || !customerId) throw err.invalidArgument('amount, currency, customerId required');
-  if (amount <= 0) throw err.invalidArgument('amount must be positive');
+  if (!isValidAmount(amount)) throw err.invalidArgument('amount must be a positive integer in minor units');
+  const customerId = await requireOwnCustomer(uid, claimed);
 
   logger.info('createPaymentIntent', 'start', { uid, amount, currency });
 
   try {
-    const clientSecret = await stripe.createIntent({ amount, currency, customerId });
-    logger.info('createPaymentIntent', 'success', { uid });
-    return { clientSecret };
+    const clientSecret = await stripe.createIntent({
+      amount,
+      currency: (currency ?? DEFAULT_CURRENCY).toLowerCase(),
+      customerId,
+      metadata: { uid },
+    });
+    const paymentIntentId = clientSecret.split('_secret_')[0];
+    logger.info('createPaymentIntent', 'success', { uid, paymentIntentId });
+    return { clientSecret, paymentIntentId };
   } catch (e) {
     logger.error('createPaymentIntent', 'stripe error', { error: String(e) });
     throw err.paymentFailed(String(e));
@@ -101,51 +199,29 @@ export const createPaymentIntent = onCall(async (req) => {
 });
 
 // ---------------------------------------------------------------------------
-// capturePayment
+// capturePayment — manual capture by admin or the assigned driver.
+// Normally capture happens automatically in onBookingStatusChanged.
 // ---------------------------------------------------------------------------
 
-export const capturePayment = onCall(async (req) => {
-  requireAuth(req);
-  const { bookingId, riderId, stripePaymentIntentId, amount, currency } = req.data as {
-    bookingId: string;
-    riderId: string;
-    stripePaymentIntentId: string;
-    amount: number;
-    currency: string;
-  };
-
-  if (!bookingId || !stripePaymentIntentId) throw err.invalidArgument('bookingId and stripePaymentIntentId required');
+export const capturePayment = onCall(stripeOpts, async (req) => {
+  const uid = requireAuth(req);
+  const { bookingId } = req.data as { bookingId: string };
+  if (!bookingId) throw err.invalidArgument('bookingId required');
 
   const bookingSnap = await db.collection('bookings').doc(bookingId).get();
   if (!bookingSnap.exists) throw err.notFound('Booking not found');
-
   const booking = bookingSnap.data() as BookingDoc;
-  if (booking.status !== 'completed') throw err.failedPrecondition('Ride must be completed before capture');
 
-  logger.info('capturePayment', 'start', { bookingId, amount });
+  const caller = await getUser(uid);
+  if (!canCapture({ uid, role: caller.role }, booking)) throw err.permissionDenied();
+  if (booking.status !== 'completed') throw err.failedPrecondition('Ride must be completed before capture');
+  if (booking.paymentId) return { paymentId: booking.paymentId, status: 'captured' };
+  if (!booking.stripePaymentIntentId) throw err.failedPrecondition('Booking has no payment authorisation');
 
   try {
-    const intent = await stripe.captureIntent(stripePaymentIntentId);
-
-    const paymentRef = db.collection('payments').doc();
-    const payment: PaymentDoc = {
-      bookingId,
-      riderId,
-      stripePaymentIntentId,
-      amount,
-      currency,
-      status: intent.status === 'succeeded' ? 'captured' : 'failed',
-      createdAt: admin.firestore.Timestamp.now(),
-    };
-
-    await paymentRef.set(payment);
-    await db.collection('bookings').doc(bookingId).update({
-      paymentId: paymentRef.id,
-      finalPrice: amount / 100,
-    });
-
-    logger.info('capturePayment', 'success', { paymentId: paymentRef.id });
-    return { paymentId: paymentRef.id, status: payment.status };
+    const paymentId = await captureBookingPayment(bookingId, booking);
+    logger.info('capturePayment', 'success', { bookingId, paymentId });
+    return { paymentId, status: 'captured' };
   } catch (e) {
     logger.error('capturePayment', 'stripe error', { error: String(e) });
     throw err.paymentFailed(String(e));
@@ -153,13 +229,12 @@ export const capturePayment = onCall(async (req) => {
 });
 
 // ---------------------------------------------------------------------------
-// refundPayment
+// refundPayment — admin only
 // ---------------------------------------------------------------------------
 
-export const refundPayment = onCall(async (req) => {
-  requireAuth(req);
+export const refundPayment = onCall(stripeOpts, async (req) => {
+  const uid = await requireAdmin(req);
   const { paymentId } = req.data as { paymentId: string };
-
   if (!paymentId) throw err.invalidArgument('paymentId required');
 
   const snap = await db.collection('payments').doc(paymentId).get();
@@ -168,11 +243,12 @@ export const refundPayment = onCall(async (req) => {
   const payment = snap.data() as PaymentDoc;
   if (payment.status !== 'captured') throw err.failedPrecondition('Only captured payments can be refunded');
 
-  logger.info('refundPayment', 'start', { paymentId });
+  logger.info('refundPayment', 'start', { paymentId, by: uid });
 
   try {
     await stripe.refundIntent(payment.stripePaymentIntentId);
     await db.collection('payments').doc(paymentId).update({ status: 'refunded' as PaymentStatus });
+    await writeAudit('payment_refunded', { paymentId, bookingId: payment.bookingId, by: uid });
     logger.info('refundPayment', 'success', { paymentId });
     return { status: 'refunded' };
   } catch (e) {
@@ -182,13 +258,13 @@ export const refundPayment = onCall(async (req) => {
 });
 
 // ---------------------------------------------------------------------------
-// listPaymentMethods
+// Saved cards — always scoped to the caller's own Stripe customer
 // ---------------------------------------------------------------------------
 
-export const listPaymentMethods = onCall(async (req) => {
-  requireAuth(req);
-  const { customerId } = req.data as { customerId: string };
-  if (!customerId) throw err.invalidArgument('customerId required');
+export const listPaymentMethods = onCall(stripeOpts, async (req) => {
+  const uid = requireAuth(req);
+  const { customerId: claimed } = (req.data ?? {}) as { customerId?: string };
+  const customerId = await requireOwnCustomer(uid, claimed);
 
   const methods = await stripe.listPaymentMethods(customerId);
   return {
@@ -202,30 +278,27 @@ export const listPaymentMethods = onCall(async (req) => {
   };
 });
 
-// ---------------------------------------------------------------------------
-// attachPaymentMethod
-// ---------------------------------------------------------------------------
-
-export const attachPaymentMethod = onCall(async (req) => {
-  requireAuth(req);
-  const { customerId, paymentMethodId } = req.data as {
-    customerId: string;
+export const attachPaymentMethod = onCall(stripeOpts, async (req) => {
+  const uid = requireAuth(req);
+  const { customerId: claimed, paymentMethodId } = req.data as {
+    customerId?: string;
     paymentMethodId: string;
   };
-  if (!customerId || !paymentMethodId) throw err.invalidArgument('customerId and paymentMethodId required');
+  if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+  const customerId = await requireOwnCustomer(uid, claimed);
 
   await stripe.attachPaymentMethod(customerId, paymentMethodId);
   return { success: true };
 });
 
-// ---------------------------------------------------------------------------
-// detachPaymentMethod
-// ---------------------------------------------------------------------------
-
-export const detachPaymentMethod = onCall(async (req) => {
-  requireAuth(req);
+export const detachPaymentMethod = onCall(stripeOpts, async (req) => {
+  const uid = requireAuth(req);
   const { paymentMethodId } = req.data as { paymentMethodId: string };
   if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+  const customerId = await requireOwnCustomer(uid);
+
+  const method = await stripe.retrievePaymentMethod(paymentMethodId);
+  if (method.customer !== customerId) throw err.permissionDenied();
 
   await stripe.detachPaymentMethod(paymentMethodId);
   return { success: true };
@@ -235,20 +308,23 @@ export const detachPaymentMethod = onCall(async (req) => {
 // createStripeCustomer  (onCreate /users/{uid})
 // ---------------------------------------------------------------------------
 
-export const createStripeCustomer = onDocumentCreated('users/{uid}', async (event) => {
-  const data = event.data?.data();
-  if (!data || data.role !== 'rider') return;
+export const createStripeCustomer = onDocumentCreated(
+  { document: 'users/{uid}', ...stripeOpts },
+  async (event) => {
+    const data = event.data?.data();
+    if (!data || data.role !== 'rider') return;
 
-  logger.info('createStripeCustomer', 'start', { uid: event.params.uid });
+    logger.info('createStripeCustomer', 'start', { uid: event.params.uid });
 
-  try {
-    const customerId = await stripe.createCustomer(data.email, data.displayName);
-    await db.collection('users').doc(event.params.uid).update({ stripeCustomerId: customerId });
-    logger.info('createStripeCustomer', 'success', { uid: event.params.uid, customerId });
-  } catch (e) {
-    logger.error('createStripeCustomer', 'failed', { error: String(e) });
-  }
-});
+    try {
+      const customerId = await stripe.createCustomer(data.email, data.displayName);
+      await db.collection('users').doc(event.params.uid).update({ stripeCustomerId: customerId });
+      logger.info('createStripeCustomer', 'success', { uid: event.params.uid, customerId });
+    } catch (e) {
+      logger.error('createStripeCustomer', 'failed', { error: String(e) });
+    }
+  },
+);
 
 // ---------------------------------------------------------------------------
 // onBookingCreated  (onCreate /bookings/{bookingId})
@@ -258,9 +334,10 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
   const booking = event.data?.data() as BookingDoc | undefined;
   if (!booking) return;
 
+  const vehicleClass = bookingClass(booking);
   logger.info('onBookingCreated', 'notifying drivers', {
     bookingId: event.params.bookingId,
-    vehicleClass: booking.vehicleClass,
+    vehicleClass,
   });
 
   const driversSnap = await db
@@ -270,46 +347,70 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
     .limit(20)
     .get();
 
-  const tokens: string[] = [];
-  for (const doc of driversSnap.docs) {
-    const driverTokens = await getUserTokens(doc.id);
-    tokens.push(...driverTokens);
-  }
+  const tokenLists = await Promise.all(driversSnap.docs.map((d) => getUserTokens(d.id)));
+  const tokens = tokenLists.flat();
 
-  await sendPush(tokens, 'New Ride Available', `${booking.vehicleClass} · $${booking.estimatedPrice}`);
+  await sendPush(
+    tokens,
+    'Nueva reserva disponible',
+    `${vehicleClass} · ${formatMoney(booking.estimatedPrice, booking.currency ?? DEFAULT_CURRENCY)}`,
+  );
 });
 
 // ---------------------------------------------------------------------------
 // onBookingStatusChanged  (onUpdate /bookings/{bookingId})
+// Notifies the rider, and settles the payment authorisation:
+//   completed → capture,  cancelled → release the hold.
 // ---------------------------------------------------------------------------
 
-export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', async (event) => {
-  const before = event.data?.before.data() as BookingDoc | undefined;
-  const after = event.data?.after.data() as BookingDoc | undefined;
+export const onBookingStatusChanged = onDocumentUpdated(
+  { document: 'bookings/{bookingId}', ...stripeOpts },
+  async (event) => {
+    const before = event.data?.before.data() as BookingDoc | undefined;
+    const after = event.data?.after.data() as BookingDoc | undefined;
+    const bookingId = event.params.bookingId;
 
-  if (!before || !after || before.status === after.status) return;
+    if (!before || !after || before.status === after.status) return;
 
-  logger.info('onBookingStatusChanged', 'status changed', {
-    bookingId: event.params.bookingId,
-    from: before.status,
-    to: after.status,
-  });
+    logger.info('onBookingStatusChanged', 'status changed', {
+      bookingId,
+      from: before.status,
+      to: after.status,
+    });
 
-  const statusMessages: Partial<Record<BookingStatus, string>> = {
-    confirmed: 'Your driver has been assigned',
-    driver_arriving: 'Your driver is on the way',
-    driver_arrived: 'Your driver has arrived',
-    in_progress: 'Your ride has started',
-    completed: 'You have arrived. Have a great day!',
-    cancelled: 'Your booking has been cancelled',
-  };
+    if (after.status === 'completed') {
+      try {
+        await captureBookingPayment(bookingId, after);
+      } catch (e) {
+        logger.error('onBookingStatusChanged', 'capture failed', { bookingId, error: String(e) });
+        await writeAudit('payment_capture_failed', { bookingId, error: String(e) });
+      }
+    }
 
-  const message = statusMessages[after.status];
-  if (!message) return;
+    if (after.status === 'cancelled' && after.stripePaymentIntentId && !after.paymentId) {
+      try {
+        await stripe.cancelIntent(after.stripePaymentIntentId);
+      } catch (e) {
+        logger.error('onBookingStatusChanged', 'release failed', { bookingId, error: String(e) });
+      }
+    }
 
-  const tokens = await getUserTokens(after.riderId);
-  await sendPush(tokens, 'Luxelane', message);
-});
+    const statusMessages: Partial<Record<BookingStatus, string>> = {
+      confirmed: 'Tu chófer ha sido asignado',
+      driver_arriving: 'Tu chófer está en camino',
+      driver_arrived: 'Tu chófer ha llegado',
+      in_progress: 'Tu viaje ha comenzado',
+      completed: 'Has llegado. ¡Gracias por viajar con Luxelane!',
+      cancelled: 'Tu reserva ha sido cancelada',
+    };
+
+    const message = statusMessages[after.status];
+    if (!message) return;
+
+    const tokens = await getUserTokens(after.riderId);
+    await sendPush(tokens, 'Luxelane', message);
+  },
+);
 
 // ---------------------------------------------------------------------------
 // onRideCompleted  (onUpdate /rides/{rideId})
@@ -324,7 +425,10 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
 
   logger.info('onRideCompleted', 'ride completed', { rideId: event.params.rideId });
 
-  await db.collection('bookings').doc(after.bookingId).update({ status: 'completed' as BookingStatus, updatedAt: admin.firestore.Timestamp.now() });
+  await db
+    .collection('bookings')
+    .doc(after.bookingId)
+    .update({ status: 'completed' as BookingStatus, updatedAt: admin.firestore.Timestamp.now() });
 
   const driverRef = db.collection('driverProfiles').doc(after.driverId);
   await db.runTransaction(async (tx) => {
@@ -338,11 +442,11 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
 });
 
 // ---------------------------------------------------------------------------
-// assignNearestDriver  (HTTPS Callable)
+// assignNearestDriver  (HTTPS Callable) — admin/dispatcher only
 // ---------------------------------------------------------------------------
 
 export const assignNearestDriver = onCall(async (req) => {
-  requireAuth(req);
+  await requireAdmin(req);
   const { bookingId, vehicleClass } = req.data as {
     bookingId: string;
     vehicleClass: string;
@@ -350,7 +454,8 @@ export const assignNearestDriver = onCall(async (req) => {
 
   if (!bookingId || !vehicleClass) throw err.invalidArgument('bookingId and vehicleClass required');
 
-  const bookingSnap = await db.collection('bookings').doc(bookingId).get();
+  const bookingRef = db.collection('bookings').doc(bookingId);
+  const bookingSnap = await bookingRef.get();
   if (!bookingSnap.exists) throw err.notFound('Booking not found');
 
   const booking = bookingSnap.data() as BookingDoc;
@@ -358,43 +463,44 @@ export const assignNearestDriver = onCall(async (req) => {
 
   logger.info('assignNearestDriver', 'searching', { bookingId, vehicleClass });
 
+  // TODO: rank by distance (geohash) instead of first match.
   const vehicleSnap = await db
     .collection('vehicles')
-    .where('vehicleClass', '==', vehicleClass)
+    .where('class', '==', vehicleClass)
     .where('isActive', '==', true)
     .limit(10)
     .get();
 
-  if (vehicleSnap.empty) {
-    logger.warn('assignNearestDriver', 'no vehicles found', { vehicleClass });
-    return { assigned: false, reason: 'no_drivers_available' };
+  for (const vehicleDoc of vehicleSnap.docs) {
+    const driverId = vehicleDoc.data().driverId as string;
+    const driverRef = db.collection('driverProfiles').doc(driverId);
+
+    const assigned = await db.runTransaction(async (tx) => {
+      const [b, d] = await Promise.all([tx.get(bookingRef), tx.get(driverRef)]);
+      if ((b.data() as BookingDoc | undefined)?.status !== 'pending') return false;
+      if (!d.exists || !d.data()?.isAvailable || !d.data()?.documentsVerified) return false;
+      tx.update(bookingRef, {
+        driverId,
+        status: 'confirmed' as BookingStatus,
+        updatedAt: admin.firestore.Timestamp.now(),
+      });
+      tx.update(driverRef, { isAvailable: false });
+      return true;
+    });
+
+    if (assigned) {
+      await sendPush(await getUserTokens(driverId), 'Nueva reserva', 'Se te ha asignado un nuevo viaje');
+      logger.info('assignNearestDriver', 'assigned', { bookingId, driverId });
+      return { assigned: true, driverId };
+    }
   }
 
-  const vehicleDoc = vehicleSnap.docs[0];
-  const driverId = vehicleDoc.data().driverId as string;
-
-  const driverSnap = await db.collection('driverProfiles').doc(driverId).get();
-  if (!driverSnap.exists || !driverSnap.data()?.isAvailable) {
-    return { assigned: false, reason: 'no_drivers_available' };
-  }
-
-  await db.collection('bookings').doc(bookingId).update({
-    driverId,
-    status: 'confirmed' as BookingStatus,
-    updatedAt: admin.firestore.Timestamp.now(),
-  });
-
-  await db.collection('driverProfiles').doc(driverId).update({ isAvailable: false });
-
-  const driverTokens = await getUserTokens(driverId);
-  await sendPush(driverTokens, 'New Booking', 'You have been assigned a new ride');
-
-  logger.info('assignNearestDriver', 'assigned', { bookingId, driverId });
-  return { assigned: true, driverId };
+  logger.warn('assignNearestDriver', 'no drivers available', { vehicleClass });
+  return { assigned: false, reason: 'no_drivers_available' };
 });
 
 // ---------------------------------------------------------------------------
-// acceptBooking  (HTTPS Callable) — atomic driver self-assignment
+// acceptBooking  (HTTPS Callable) — atomic self-assignment by a verified driver.
 // Prevents two drivers from accepting the same booking simultaneously.
 // ---------------------------------------------------------------------------
 
@@ -403,23 +509,24 @@ export const acceptBooking = onCall(async (req) => {
   const { bookingId } = req.data as { bookingId: string };
   if (!bookingId) throw err.invalidArgument('bookingId required');
 
+  const caller = await getUser(driverId);
+  if (caller.role !== 'driver') throw err.permissionDenied('Drivers only');
+
   const bookingRef = db.collection('bookings').doc(bookingId);
-  const driverRef  = db.collection('driverProfiles').doc(driverId);
+  const driverRef = db.collection('driverProfiles').doc(driverId);
 
   let riderId = '';
 
   try {
     await db.runTransaction(async (tx) => {
-      const [bookingSnap, driverSnap] = await Promise.all([
-        tx.get(bookingRef),
-        tx.get(driverRef),
-      ]);
+      const [bookingSnap, driverSnap] = await Promise.all([tx.get(bookingRef), tx.get(driverRef)]);
 
       if (!bookingSnap.exists) throw err.notFound('Booking not found');
       const booking = bookingSnap.data() as BookingDoc;
       if (booking.status !== 'pending') throw new Error('ALREADY_TAKEN');
 
       if (!driverSnap.exists) throw err.notFound('Driver profile not found');
+      if (!driverSnap.data()?.documentsVerified) throw new Error('NOT_VERIFIED');
       if (!driverSnap.data()?.isAvailable) throw new Error('DRIVER_BUSY');
 
       riderId = booking.riderId;
@@ -432,69 +539,68 @@ export const acceptBooking = onCall(async (req) => {
       tx.update(driverRef, { isAvailable: false });
     });
 
-    // Notify rider their driver is confirmed
     if (riderId) {
-      const tokens = await getUserTokens(riderId);
-      await sendPush(tokens, 'Driver Assigned', 'Your driver is on the way!');
+      await sendPush(await getUserTokens(riderId), 'Chófer asignado', 'Tu chófer ha confirmado la reserva');
     }
 
     logger.info('acceptBooking', 'success', { bookingId, driverId });
     return { accepted: true };
-  } catch (e: any) {
-    if (e.message === 'ALREADY_TAKEN') {
-      return { accepted: false, reason: 'already_taken' };
-    }
-    if (e.message === 'DRIVER_BUSY') {
-      return { accepted: false, reason: 'driver_busy' };
-    }
+  } catch (e: unknown) {
+    const message = e instanceof Error ? e.message : '';
+    if (message === 'ALREADY_TAKEN') return { accepted: false, reason: 'already_taken' };
+    if (message === 'DRIVER_BUSY') return { accepted: false, reason: 'driver_busy' };
+    if (message === 'NOT_VERIFIED') return { accepted: false, reason: 'not_verified' };
     logger.error('acceptBooking', 'error', { error: String(e) });
     throw e;
   }
 });
 
 // ---------------------------------------------------------------------------
-// scheduledCleanup  (daily)
+// scheduledCleanup — cancels pending bookings whose pickup time has passed
 // ---------------------------------------------------------------------------
 
-export const scheduledCleanup = onSchedule('every 24 hours', async () => {
+export const scheduledCleanup = onSchedule('every 1 hours', async () => {
   logger.info('scheduledCleanup', 'start');
 
-  const cutoff = new Date(Date.now() - 30 * 60 * 1000);
-  const staleSnap = await db
-    .collection('bookings')
-    .where('status', '==', 'pending')
-    .where('createdAt', '<', admin.firestore.Timestamp.fromDate(cutoff))
-    .get();
+  const now = new Date();
+  const pendingSnap = await db.collection('bookings').where('status', '==', 'pending').get();
 
-  const batch = db.batch();
-  staleSnap.docs.forEach((doc) => {
-    batch.update(doc.ref, {
-      status: 'cancelled' as BookingStatus,
-      updatedAt: admin.firestore.Timestamp.now(),
-    });
+  const stale = pendingSnap.docs.filter((doc) => {
+    const b = doc.data() as BookingDoc;
+    return isStalePending(
+      { status: b.status, scheduledAt: b.scheduledAt?.toDate(), createdAt: b.createdAt?.toDate() },
+      now,
+    );
   });
 
-  await batch.commit();
-  logger.info('scheduledCleanup', 'done', { cancelled: staleSnap.size });
+  for (const group of chunk(stale, 450)) {
+    const batch = db.batch();
+    group.forEach((doc) =>
+      batch.update(doc.ref, {
+        status: 'cancelled' as BookingStatus,
+        cancelReason: 'no_driver_assigned',
+        updatedAt: admin.firestore.Timestamp.now(),
+      }),
+    );
+    await batch.commit();
+  }
+
+  logger.info('scheduledCleanup', 'done', { cancelled: stale.length });
 });
 
 // ---------------------------------------------------------------------------
-// sendRideReceipt  (onUpdate /payments/{paymentId})
+// sendRideReceipt  (onWrite-ish: fires when a payment becomes captured)
 // ---------------------------------------------------------------------------
 
-export const sendRideReceipt = onDocumentUpdated('payments/{paymentId}', async (event) => {
-  const before = event.data?.before.data() as PaymentDoc | undefined;
-  const after = event.data?.after.data() as PaymentDoc | undefined;
-
-  if (!before || !after) return;
-  if (before.status === after.status || after.status !== 'captured') return;
+export const sendRideReceipt = onDocumentCreated('payments/{paymentId}', async (event) => {
+  const payment = event.data?.data() as PaymentDoc | undefined;
+  if (!payment || payment.status !== 'captured') return;
 
   logger.info('sendRideReceipt', 'sending receipt', { paymentId: event.params.paymentId });
 
-  const tokens = await getUserTokens(after.riderId);
   await sendPush(
-    tokens,
-    'Payment Confirmed',
-    `Your ride has been charged $${(after.amount / 100).toFixed(2)}`,
+    await getUserTokens(payment.riderId),
+    'Pago confirmado',
+    `Se cobró ${formatMoney(payment.amount / 100, payment.currency)} por tu viaje`,
   );
 });
