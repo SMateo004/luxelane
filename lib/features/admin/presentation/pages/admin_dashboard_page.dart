@@ -95,13 +95,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               padding: const EdgeInsets.symmetric(
                   horizontal: LuxSpacing.sm, vertical: 2),
               decoration: BoxDecoration(
-                color: LuxColors.sapphireSubtle,
+                color: LuxColors.accentSubtle,
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
-                border: Border.all(color: LuxColors.sapphire.withOpacity(0.4)),
+                border: Border.all(color: LuxColors.accent.withOpacity(0.4)),
               ),
               child: Text('ADMIN',
                   style: LuxTypography.caption.copyWith(
-                      color: LuxColors.sapphire, fontWeight: FontWeight.w700)),
+                      color: LuxColors.accent, fontWeight: FontWeight.w700)),
             ),
           ],
         ),
@@ -150,13 +150,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: LuxSpacing.sm, vertical: 2),
                           decoration: BoxDecoration(
-                            color: LuxColors.sapphireSubtle,
+                            color: LuxColors.accentSubtle,
                             borderRadius: BorderRadius.circular(LuxRadius.sm),
                           ),
                           child: Text(
                             'PANEL ADMIN',
                             style: LuxTypography.caption.copyWith(
-                                color: LuxColors.sapphire,
+                                color: LuxColors.accent,
                                 fontWeight: FontWeight.w700),
                           ),
                         ),

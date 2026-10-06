@@ -1,28 +1,84 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
-import 'package:uuid/uuid.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
 class BookingRepositoryImpl implements BookingRepository {
-  BookingRepositoryImpl({required FirebaseFirestore firestore})
-      : _db = firestore;
+  BookingRepositoryImpl({
+    required FirebaseFirestore firestore,
+    required FirebaseFunctions functions,
+  })  : _db = firestore,
+        _fn = functions;
 
   final FirebaseFirestore _db;
-  final _uuid = const Uuid();
+  final FirebaseFunctions _fn;
 
   CollectionReference<Map<String, dynamic>> get _col =>
       _db.collection('bookings');
 
   @override
-  Future<Either<Failure, Booking>> createBooking(Booking booking) async {
+  Future<Either<Failure, Quote>> requestQuote({
+    required VehicleClass vehicleClass,
+    required ServiceType serviceType,
+    required Place origin,
+    Place? destination,
+    double? routeDistanceKm,
+    int? hours,
+  }) async {
     try {
-      final id = _uuid.v4();
-      final data = booking.toJson()..['id'] = id;
-      await _col.doc(id).set(data);
-      return Right(Booking.fromJson(data));
+      final result = await _fn.httpsCallable('quoteBooking').call({
+        'vehicleClass': vehicleClass.name,
+        'serviceType': serviceType.name,
+        'origin': _placeArg(origin),
+        if (destination != null) 'destination': _placeArg(destination),
+        if (routeDistanceKm != null && routeDistanceKm > 0)
+          'routeDistanceKm': routeDistanceKm,
+        if (hours != null) 'hours': hours,
+      });
+      return Right(
+          Quote.fromJson(Map<String, dynamic>.from(result.data as Map)));
+    } on FirebaseFunctionsException catch (e) {
+      return Left(ServerFailure(e.message ?? 'No se pudo cotizar el viaje'));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  // Callable payloads must be plain JSON (no GeoPoint).
+  static Map<String, dynamic> _placeArg(Place p) => {
+        'name': p.name,
+        'address': p.address,
+        'lat': p.lat,
+        'lng': p.lng,
+      };
+
+  @override
+  Future<Either<Failure, Booking>> createBooking(Booking booking) async {
+    if (booking.quoteId == null) {
+      return const Left(ServerFailure('Falta la cotización del viaje'));
+    }
+    try {
+      final result = await _fn.httpsCallable('createBooking').call({
+        'quoteId': booking.quoteId,
+        'scheduledAt': booking.scheduledAt.millisecondsSinceEpoch,
+        if (booking.stripePaymentIntentId != null)
+          'paymentIntentId': booking.stripePaymentIntentId,
+        if (booking.notes != null) 'notes': booking.notes,
+        if (booking.flightNumber != null) 'flightNumber': booking.flightNumber,
+        'passengerCount': booking.passengerCount,
+        'luggageCount': booking.luggageCount,
+      });
+      final id = (result.data as Map)['bookingId'] as String;
+      final doc = await _col.doc(id).get();
+      return Right(Booking.fromJson({'id': doc.id, ...doc.data()!}));
+    } on FirebaseFunctionsException catch (e) {
+      final expired = e.message?.contains('quote/expired') ?? false;
+      return Left(ServerFailure(expired
+          ? 'La cotización venció. Vuelve a confirmar para ver el precio actualizado.'
+          : e.message ?? 'No se pudo crear la reserva'));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

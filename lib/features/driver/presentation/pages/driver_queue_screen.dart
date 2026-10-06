@@ -77,7 +77,7 @@ class _SectionTitle extends StatelessWidget {
           fontFamily: 'Montserrat',
           fontSize: 11,
           fontWeight: FontWeight.w700,
-          color: isGold ? LuxColors.sapphire : LuxColors.whiteTertiary,
+          color: isGold ? LuxColors.accent : LuxColors.whiteTertiary,
           letterSpacing: 2,
         ),
       );
@@ -134,7 +134,7 @@ class _JobCard extends StatelessWidget {
                 Text(
                   'Bs${booking.estimatedPrice.toStringAsFixed(0)}',
                   style: LuxTypography.titleMedium
-                      .copyWith(color: LuxColors.sapphire),
+                      .copyWith(color: LuxColors.accent),
                 ),
               ],
             ),
@@ -165,7 +165,7 @@ class _RouteRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Icon(Icons.radio_button_checked,
-                  color: LuxColors.sapphire, size: 16),
+                  color: LuxColors.accent, size: 16),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                 child: Text(origin.address,

@@ -257,7 +257,7 @@ class _RideInfoRow extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.radio_button_checked,
-                  color: LuxColors.sapphire, size: 16),
+                  color: LuxColors.accent, size: 16),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                 child: Text(
@@ -299,7 +299,7 @@ class _RideInfoRow extends StatelessWidget {
                 Text(
                   'Bs${booking.estimatedPrice.toStringAsFixed(2)}',
                   style: LuxTypography.bodyLarge
-                      .copyWith(color: LuxColors.sapphire),
+                      .copyWith(color: LuxColors.accent),
                 ),
               ],
             ),

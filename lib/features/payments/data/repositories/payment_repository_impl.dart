@@ -20,14 +20,13 @@ class PaymentRepositoryImpl implements PaymentRepository {
 
   @override
   Future<Either<Failure, String>> createPaymentIntent({
-    required double amount,
-    required String currency,
+    required String quoteId,
     required String stripeCustomerId,
   }) async {
     try {
+      // The amount is taken from the server-side quote, never from the app.
       final result = await _fn.httpsCallable('createPaymentIntent').call({
-        'amount': (amount * 100).toInt(),
-        'currency': currency,
+        'quoteId': quoteId,
         'customerId': stripeCustomerId,
       });
       return Right(result.data['clientSecret'] as String);

@@ -32,7 +32,7 @@ const _kDarkMapStyle = '''
 ]
 ''';
 
-const _kDefaultCenter = LatLng(48.8566, 2.3522); // Paris
+const _kDefaultCenter = LatLng(-17.7833, -63.1821); // Santa Cruz de la Sierra
 
 class LuxMap extends StatefulWidget {
   const LuxMap({

@@ -21,10 +21,10 @@ class SectionChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
               horizontal: LuxSpacing.lg, vertical: LuxSpacing.sm),
           decoration: BoxDecoration(
-            color: selected ? LuxColors.sapphire : LuxColors.blackElevated,
+            color: selected ? LuxColors.accent : LuxColors.blackElevated,
             borderRadius: BorderRadius.circular(100),
             border: Border.all(
-              color: selected ? LuxColors.sapphire : LuxColors.white.withOpacity(0.1),
+              color: selected ? LuxColors.accent : LuxColors.white.withOpacity(0.1),
             ),
           ),
           child: Text(
@@ -56,10 +56,10 @@ class AdminNavItem extends StatelessWidget {
   Widget build(BuildContext context) => ListTile(
         selected: selected,
         onTap: onTap,
-        leading: Icon(icon, color: selected ? LuxColors.sapphire : LuxColors.whiteTertiary),
+        leading: Icon(icon, color: selected ? LuxColors.accent : LuxColors.whiteTertiary),
         title: Text(label,
             style: LuxTypography.bodyLarge.copyWith(
-              color: selected ? LuxColors.sapphire : LuxColors.white,
+              color: selected ? LuxColors.accent : LuxColors.white,
               fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             )),
         dense: true,
@@ -87,7 +87,7 @@ class KpiCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, color: LuxColors.sapphire, size: 20),
+                Icon(icon, color: LuxColors.accent, size: 20),
                 const Spacer(),
                 if (trend != null && trend!.isNotEmpty)
                   Container(

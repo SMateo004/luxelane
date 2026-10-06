@@ -265,6 +265,7 @@ class Booking {
     this.luggageCount = 0,
     this.currency = 'bob',
     this.stripePaymentIntentId,
+    this.quoteId,
   });
 
   final String id;
@@ -291,6 +292,9 @@ class Booking {
   /// Card authorisation created before booking; captured server-side when the
   /// ride is completed and released if it is cancelled.
   final String? stripePaymentIntentId;
+
+  /// Server-issued quote the booking was priced from.
+  final String? quoteId;
 
   factory Booking.fromJson(Map<String, dynamic> j) => Booking(
         id: j['id'] as String? ?? '',
@@ -326,6 +330,7 @@ class Booking {
         luggageCount: j['luggageCount'] as int? ?? 0,
         currency: j['currency'] as String? ?? 'bob',
         stripePaymentIntentId: j['stripePaymentIntentId'] as String?,
+        quoteId: j['quoteId'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -350,6 +355,7 @@ class Booking {
         'luggageCount': luggageCount,
         'currency': currency,
         'stripePaymentIntentId': stripePaymentIntentId,
+        'quoteId': quoteId,
       };
 
   Booking copyWith({
@@ -381,6 +387,43 @@ class Booking {
         luggageCount: luggageCount,
         currency: currency,
         stripePaymentIntentId: stripePaymentIntentId,
+        quoteId: quoteId,
+      );
+}
+
+// ---------------------------------------------------------------------------
+// Quote — fixed price issued by the `quoteBooking` Cloud Function
+// ---------------------------------------------------------------------------
+
+class Quote {
+  const Quote({
+    required this.id,
+    required this.amount,
+    required this.currency,
+    required this.expiresAt,
+    this.distanceKm,
+    this.hours,
+  });
+
+  final String id;
+
+  /// Price in Bolivianos.
+  final double amount;
+  final String currency;
+  final DateTime expiresAt;
+  final double? distanceKm;
+  final int? hours;
+
+  bool get isExpired => DateTime.now().isAfter(expiresAt);
+
+  factory Quote.fromJson(Map<String, dynamic> j) => Quote(
+        id: j['quoteId'] as String,
+        amount: (j['amount'] as num).toDouble(),
+        currency: j['currency'] as String? ?? 'bob',
+        expiresAt: DateTime.fromMillisecondsSinceEpoch(
+            (j['expiresAt'] as num).toInt()),
+        distanceKm: (j['distanceKm'] as num?)?.toDouble(),
+        hours: (j['hours'] as num?)?.toInt(),
       );
 }
 

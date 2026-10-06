@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
 import '../core/enums/enums.dart';
 import '../core/services/crash_service.dart';
+import '../core/services/notification_service.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/booking/presentation/bloc/booking_bloc.dart';
 import '../features/booking/presentation/bloc/vehicle_bloc.dart';
@@ -61,6 +62,7 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         _notificationBloc.add(
           NotificationWatchStarted(userId: state.user.id),
         );
+        sl<NotificationService>().init(userId: state.user.id);
       }
     });
   }

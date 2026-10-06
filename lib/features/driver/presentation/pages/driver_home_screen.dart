@@ -182,7 +182,7 @@ class _AvailabilityToggle extends StatelessWidget {
           ),
         Switch(
           value: isAvailable,
-          activeColor: LuxColors.sapphire,
+          activeColor: LuxColors.accent,
           onChanged: (val) => context.read<DriverBloc>().add(
                 DriverAvailabilityToggled(userId: userId, isAvailable: val),
               ),
@@ -376,7 +376,7 @@ class _ActiveRidePanel extends StatelessWidget {
                       return ListTile(
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: const Icon(Icons.map_outlined, color: LuxColors.sapphire, size: 24),
+                          child: const Icon(Icons.map_outlined, color: LuxColors.accent, size: 24),
                         ),
                         title: Text(map.mapName, style: LuxTypography.bodyLarge),
                         onTap: () {
@@ -424,16 +424,16 @@ class _ActiveRidePanel extends StatelessWidget {
                     BookingStatusChip(status: booking.status),
                     const Spacer(),
                     Text(
-                      '\$${booking.estimatedPrice.toStringAsFixed(0)}',
+                      LuxMoney.format(booking.estimatedPrice),
                       style: LuxTypography.headlineLarge
-                          .copyWith(color: LuxColors.sapphire),
+                          .copyWith(color: LuxColors.accent),
                     ),
                   ],
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 _AddressRow(
                   icon: Icons.radio_button_checked,
-                  color: LuxColors.sapphire,
+                  color: LuxColors.accent,
                   label: 'Recogida',
                   address: booking.origin.address,
                   isCurrent: goingToPickup,
@@ -554,11 +554,11 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) => LuxCard(
         child: Column(
           children: [
-            Icon(icon, color: LuxColors.sapphire, size: 24),
+            Icon(icon, color: LuxColors.accent, size: 24),
             const SizedBox(height: LuxSpacing.sm),
             Text(value,
                 style:
-                    LuxTypography.headlineLarge.copyWith(color: LuxColors.sapphire)),
+                    LuxTypography.headlineLarge.copyWith(color: LuxColors.accent)),
             const SizedBox(height: 4),
             Text(label.toUpperCase(), style: LuxTypography.caption),
           ],
@@ -644,7 +644,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                           fontFamily: 'Montserrat',
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          color: LuxColors.sapphire,
+                          color: LuxColors.accent,
                           letterSpacing: 2.5,
                         ),
                       ),
@@ -657,7 +657,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                   ),
                 ),
                 const Icon(Icons.notifications_active_rounded, 
-                    color: LuxColors.sapphire, size: 40),
+                    color: LuxColors.accent, size: 40),
               ],
             ),
             const SizedBox(height: 20),
@@ -666,14 +666,14 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: LuxColors.sapphire.withValues(alpha: 0.08),
+                color: LuxColors.accent.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: LuxColors.sapphire.withValues(alpha: 0.25)),
+                border: Border.all(color: LuxColors.accent.withValues(alpha: 0.25)),
               ),
               child: Row(
                 children: [
                   const Icon(Icons.attach_money_rounded,
-                      color: LuxColors.sapphire, size: 20),
+                      color: LuxColors.accent, size: 20),
                   const SizedBox(width: 8),
                   const Text('Tarifa estimada', style: LuxTypography.caption),
                   const Spacer(),
@@ -683,7 +683,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                       fontFamily: 'Cormorant Garamond',
                       fontSize: 30,
                       fontWeight: FontWeight.w600,
-                      color: LuxColors.sapphire,
+                      color: LuxColors.accent,
                     ),
                   ),
                 ],
@@ -717,7 +717,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                 children: [
                    _RouteItem(
                     icon: Icons.radio_button_checked,
-                    color: LuxColors.sapphire,
+                    color: LuxColors.accent,
                     label: 'RECOGIDA',
                     address: widget.booking.origin.address,
                   ),
@@ -795,7 +795,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     icon: const Icon(Icons.check_rounded, size: 18),
                     label: const Text('Aceptar viaje'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: LuxColors.sapphire,
+                      backgroundColor: LuxColors.accent,
                       foregroundColor: Colors.black,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(

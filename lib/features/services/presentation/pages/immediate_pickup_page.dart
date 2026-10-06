@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../app/theme/lux_tokens.dart';
+
 const String _kSans = 'Montserrat';
 const String _kSerif = 'Cormorant Garamond';
-const Color _kBg = Color(0xFF070E18);
-const Color _kSurface = Color(0xFF0A1220);
-const Color _kElevated = Color(0xFF0D1928);
-const Color _kBorder = Color(0xFF1A2B40);
-const Color _kSapphire = Color(0xFF1B4F8A);
-const Color _kSapphireLight = Color(0xFF2E6FBF);
+const Color _kBg = LuxPalette.ink;
+const Color _kSurface = LuxPalette.surface;
+const Color _kElevated = LuxPalette.elevated;
+const Color _kBorder = LuxPalette.line;
+// Brand accent (champagne). Text placed on top of it uses _kInk.
+const Color _kSapphire = LuxPalette.champagne;
+const Color _kSapphireLight = LuxPalette.champagneLight;
+const Color _kInk = LuxPalette.ink;
 
 class ImmediatePickupPage extends StatefulWidget {
   const ImmediatePickupPage({super.key});
@@ -234,7 +238,7 @@ class _ReserveButtonState extends State<_ReserveButton> {
               fontFamily: _kSans,
               fontSize: 11,
               letterSpacing: 1.0,
-              color: Colors.white,
+              color: _kInk,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -695,7 +699,7 @@ class _CtaButtonState extends State<_CtaButton> {
               fontSize: 11,
               letterSpacing: 1.5,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: _kInk,
             ),
           ),
         ),

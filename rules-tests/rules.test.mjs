@@ -101,15 +101,9 @@ describe('driverProfiles', () => {
 });
 
 describe('bookings', () => {
-  it('rider creates a valid pending booking', async () => {
-    await assertSucceeds(setDoc(doc(db('rider'), 'bookings/b1'), booking()));
-  });
-
-  it('rejects pre-assigned, pre-paid or free bookings', async () => {
-    await assertFails(setDoc(doc(db('rider'), 'bookings/b1'), booking({ driverId: 'driver' })));
-    await assertFails(setDoc(doc(db('rider'), 'bookings/b1'), booking({ status: 'completed' })));
-    await assertFails(setDoc(doc(db('rider'), 'bookings/b1'), booking({ estimatedPrice: 0 })));
-    await assertFails(setDoc(doc(db('rider'), 'bookings/b1'), booking({ riderId: 'someone' })));
+  it('clients cannot create bookings directly (server-only, quoted price)', async () => {
+    await assertFails(setDoc(doc(db('rider'), 'bookings/b1'), booking()));
+    await assertFails(setDoc(doc(db('admin'), 'bookings/b1'), booking()));
   });
 
   it('only verified drivers can self-assign', async () => {
@@ -153,6 +147,16 @@ describe('payments & admin collections', () => {
     await assertFails(setDoc(doc(db('rider'), 'admin_logs/l1'), { action: 'x' }));
     await assertSucceeds(setDoc(doc(db('admin'), 'admin_logs/l1'), { action: 'x' }));
     await assertFails(updateDoc(doc(db('admin'), 'admin_logs/l1'), { action: 'y' }));
+  });
+});
+
+describe('quotes', () => {
+  it('rider reads own quotes only and nobody writes them', async () => {
+    await seed('quotes/q1', { riderId: 'rider', amount: 120 });
+    await assertSucceeds(getDoc(doc(db('rider'), 'quotes/q1')));
+    await assertFails(getDoc(doc(db('driver'), 'quotes/q1')));
+    await assertFails(updateDoc(doc(db('rider'), 'quotes/q1'), { amount: 1 }));
+    await assertFails(setDoc(doc(db('rider'), 'quotes/q2'), { riderId: 'rider', amount: 1 }));
   });
 });
 

@@ -251,7 +251,7 @@ class _MobileTopBar extends StatelessWidget {
                     child: Text(
                       initial,
                       style: const TextStyle(
-                        color: LuxColors.sapphire,
+                        color: LuxColors.accent,
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
                       ),
@@ -289,7 +289,7 @@ class _LocateButton extends StatelessWidget {
                     child: CircularProgressIndicator(
                         strokeWidth: 1.5,
                         valueColor:
-                            AlwaysStoppedAnimation(LuxColors.sapphire)),
+                            AlwaysStoppedAnimation(LuxColors.accent)),
                   ),
                 )
               : const Icon(Icons.my_location_rounded,
@@ -502,20 +502,20 @@ class _RouteInfoBadge extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
             horizontal: LuxSpacing.md, vertical: LuxSpacing.sm),
         decoration: BoxDecoration(
-          color: LuxColors.sapphireSubtle,
+          color: LuxColors.accentSubtle,
           borderRadius: BorderRadius.circular(LuxRadius.sm),
-          border: Border.all(color: LuxColors.sapphire.withOpacity(0.3)),
+          border: Border.all(color: LuxColors.accent.withOpacity(0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.route_outlined,
-                size: 16, color: LuxColors.sapphire),
+                size: 16, color: LuxColors.accent),
             const SizedBox(width: LuxSpacing.xs),
             Text(
               '${route.distanceKm.toStringAsFixed(1)} km · ${route.durationMin} min',
               style: LuxTypography.caption
-                  .copyWith(color: LuxColors.sapphire),
+                  .copyWith(color: LuxColors.accent),
             ),
           ],
         ),
@@ -541,7 +541,7 @@ class _DateTimeTile extends StatelessWidget {
             builder: (ctx, child) => Theme(
               data: Theme.of(ctx).copyWith(
                 colorScheme: const ColorScheme.dark(
-                  primary: LuxColors.sapphire,
+                  primary: LuxColors.accent,
                   onPrimary: LuxColors.black,
                   surface: LuxColors.blackSurface,
                 ),
@@ -601,7 +601,7 @@ class _HourSelector extends StatelessWidget {
     final iconColor =
         dark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
     final textColor = dark ? LuxColors.white : const Color(0xFF111111);
-    final accentColor = dark ? LuxColors.sapphire : const Color(0xFF111111);
+    final accentColor = dark ? LuxColors.accent : const Color(0xFF111111);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(

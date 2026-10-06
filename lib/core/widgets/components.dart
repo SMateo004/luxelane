@@ -185,7 +185,7 @@ class LuxCard extends StatelessWidget {
           color: LuxColors.blackSurface,
           borderRadius: BorderRadius.circular(LuxRadius.md),
           border: Border.all(
-            color: selected ? LuxColors.sapphire : LuxColors.blackBorder,
+            color: selected ? LuxColors.accent : LuxColors.blackBorder,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -258,7 +258,7 @@ class VehicleCard extends StatelessWidget {
                 Text(
                   'Bs${price.toStringAsFixed(0)}',
                   style: LuxTypography.headlineMedium.copyWith(
-                    color: selected ? LuxColors.sapphire : LuxColors.white,
+                    color: selected ? LuxColors.accent : LuxColors.white,
                   ),
                 ),
                 Text(
@@ -295,7 +295,7 @@ class _VehicleIcon extends StatelessWidget {
           color: LuxColors.blackElevated,
           borderRadius: BorderRadius.circular(LuxRadius.sm),
         ),
-        child: Icon(_icon, color: LuxColors.sapphire, size: 26),
+        child: Icon(_icon, color: LuxColors.accent, size: 26),
       );
 }
 
@@ -330,7 +330,7 @@ class ServiceTypeTab extends StatelessWidget {
                       height: 44,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: selected == t ? LuxColors.sapphire : Colors.transparent,
+                        color: selected == t ? LuxColors.accent : Colors.transparent,
                         borderRadius: BorderRadius.circular(LuxRadius.sm),
                       ),
                       child: Text(
@@ -361,9 +361,9 @@ class BookingStatusChip extends StatelessWidget {
   Color get _color {
     switch (status) {
       case BookingStatus.pending:        return LuxColors.whiteTertiary;
-      case BookingStatus.confirmed:      return LuxColors.sapphire;
-      case BookingStatus.driverArriving: return LuxColors.sapphireLight;
-      case BookingStatus.driverArrived:  return LuxColors.sapphireLight;
+      case BookingStatus.confirmed:      return LuxColors.accent;
+      case BookingStatus.driverArriving: return LuxColors.accentLight;
+      case BookingStatus.driverArrived:  return LuxColors.accentLight;
       case BookingStatus.inProgress:     return LuxColors.success;
       case BookingStatus.completed:      return LuxColors.success;
       case BookingStatus.cancelled:      return LuxColors.error;
@@ -409,7 +409,7 @@ class LoadingOverlay extends StatelessWidget {
                 height: 36,
                 child: CircularProgressIndicator(
                   strokeWidth: 1.5,
-                  color: LuxColors.sapphire,
+                  color: LuxColors.accent,
                 ),
               ),
               if (message != null) ...[
@@ -490,7 +490,7 @@ class SectionHeader extends StatelessWidget {
               children: [
                 Text(title, style: LuxTypography.headlineLarge),
                 const SizedBox(height: LuxSpacing.xs),
-                Container(width: LuxSpacing.lg, height: 1, color: LuxColors.sapphire),
+                Container(width: LuxSpacing.lg, height: 1, color: LuxColors.accent),
               ],
             ),
           ),
@@ -548,7 +548,7 @@ class DriverCard extends StatelessWidget {
             ),
             Column(
               children: [
-                const Icon(Icons.star_rounded, color: LuxColors.sapphire, size: 18),
+                const Icon(Icons.star_rounded, color: LuxColors.accent, size: 18),
                 const SizedBox(height: 2),
                 Text(rating.toStringAsFixed(1), style: LuxTypography.titleLarge),
               ],
@@ -597,7 +597,7 @@ class PriceEstimateBar extends StatelessWidget {
                 const Text('PRECIO FIJO', style: LuxTypography.caption),
                 Text(
                   'Bs${price.toStringAsFixed(0)}',
-                  style: LuxTypography.displayMedium.copyWith(color: LuxColors.sapphire),
+                  style: LuxTypography.displayMedium.copyWith(color: LuxColors.accent),
                 ),
               ],
             ),
@@ -639,7 +639,7 @@ void showLuxSnackbar(BuildContext context, String message, {bool isError = false
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(LuxRadius.sm),
         side: BorderSide(
-          color: isError ? LuxColors.error.withOpacity(0.4) : LuxColors.sapphire.withOpacity(0.4),
+          color: isError ? LuxColors.error.withOpacity(0.4) : LuxColors.accent.withOpacity(0.4),
         ),
       ),
       margin: const EdgeInsets.all(LuxSpacing.md),
@@ -682,7 +682,7 @@ class StepIndicator extends StatelessWidget {
             return Expanded(
               child: Container(
                 height: 1,
-                color: i ~/ 2 < currentStep ? LuxColors.sapphire : LuxColors.blackBorder,
+                color: i ~/ 2 < currentStep ? LuxColors.accent : LuxColors.blackBorder,
               ),
             );
           }
@@ -696,13 +696,13 @@ class StepIndicator extends StatelessWidget {
                 height: 28,
                 decoration: BoxDecoration(
                   color: done
-                      ? LuxColors.sapphire
+                      ? LuxColors.accent
                       : active
-                          ? LuxColors.sapphireSubtle
+                          ? LuxColors.accentSubtle
                           : LuxColors.blackElevated,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: active || done ? LuxColors.sapphire : LuxColors.blackBorder,
+                    color: active || done ? LuxColors.accent : LuxColors.blackBorder,
                   ),
                 ),
                 child: Center(
@@ -711,7 +711,7 @@ class StepIndicator extends StatelessWidget {
                       : Text(
                           '${idx + 1}',
                           style: LuxTypography.caption.copyWith(
-                            color: active ? LuxColors.sapphire : LuxColors.whiteTertiary,
+                            color: active ? LuxColors.accent : LuxColors.whiteTertiary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -721,7 +721,7 @@ class StepIndicator extends StatelessWidget {
               Text(
                 steps[idx],
                 style: LuxTypography.caption.copyWith(
-                  color: active ? LuxColors.sapphire : LuxColors.whiteTertiary,
+                  color: active ? LuxColors.accent : LuxColors.whiteTertiary,
                 ),
               ),
             ],
@@ -746,7 +746,7 @@ class LuxelaneWordmark extends StatelessWidget {
             width: size * 0.4,
             height: size * 0.4,
             decoration: const BoxDecoration(
-              color: LuxColors.sapphire,
+              color: LuxColors.accent,
               shape: BoxShape.circle,
             ),
           ),

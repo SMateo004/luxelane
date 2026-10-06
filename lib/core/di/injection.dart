@@ -68,7 +68,7 @@ void _registerRepositories() {
   );
 
   sl.registerLazySingleton<BookingRepository>(
-    () => BookingRepositoryImpl(firestore: sl()),
+    () => BookingRepositoryImpl(firestore: sl(), functions: sl()),
   );
 
   sl.registerLazySingleton<VehicleRepository>(

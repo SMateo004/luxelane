@@ -9,11 +9,12 @@ import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
 
 // ── Design tokens (aligned with home_web_page / LD) ─────────────────────────
-const _dark    = Color(0xFF070E18);
-const _panel   = Color(0xFF0A1220);
-const _border  = Color(0xFF1A2B40);
-const _sph     = Color(0xFF1B4F8A);
-const _sphLt   = Color(0xFF2563B0);
+const _dark    = LuxPalette.ink;
+const _panel   = LuxPalette.surface;
+const _border  = LuxPalette.line;
+const _sph     = LuxPalette.champagne;      // brand accent
+const _sphLt   = LuxPalette.champagneLight;
+const _ink     = LuxPalette.ink;            // text on accent
 const _white   = Colors.white;
 const _kSans   = 'Montserrat';
 const _kSerif  = 'Cormorant Garamond';
@@ -417,7 +418,7 @@ class _AuthButtonState extends State<_AuthButton> {
                 ? const SizedBox(
                     width: 20, height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: _white),
+                        strokeWidth: 2, color: _ink),
                   )
                 : Text(
                     widget.label.toUpperCase(),
@@ -426,7 +427,7 @@ class _AuthButtonState extends State<_AuthButton> {
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 2.0,
-                      color: _white,
+                      color: _ink,
                     ),
                   ),
           ),

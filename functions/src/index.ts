@@ -16,11 +16,28 @@ import {
   isValidAmount,
   toMinorUnits,
 } from './policy';
+import {
+  CAPACITY,
+  CURRENCY,
+  DEFAULT_RULES,
+  LatLng,
+  QUOTE_TTL_MS,
+  ServiceType,
+  VehicleClass,
+  clampHours,
+  computePrice,
+  isLatLng,
+  isServiceType,
+  isVehicleClass,
+  resolveDistanceKm,
+  ruleFromDoc,
+} from './pricing';
 
 admin.initializeApp();
 const db = admin.firestore();
 
-const DEFAULT_CURRENCY = 'bob';
+const DEFAULT_CURRENCY = CURRENCY;
+const MAX_ADVANCE_MS = 365 * 24 * 60 * 60 * 1000;
 const stripeOpts = { secrets: [STRIPE_SECRET_KEY] };
 
 // ---------------------------------------------------------------------------
@@ -63,6 +80,34 @@ interface PaymentDoc {
   status: PaymentStatus;
   createdAt: admin.firestore.Timestamp;
   receiptUrl?: string;
+}
+
+interface PlaceInput extends LatLng {
+  address?: string;
+  name?: string;
+  placeId?: string;
+}
+
+/** Stored shape matches Dart `Place.toJson` (coordinates as a GeoPoint). */
+interface StoredPlace {
+  name: string;
+  address: string;
+  coordinates: admin.firestore.GeoPoint;
+}
+
+interface QuoteDoc {
+  riderId: string;
+  vehicleClass: VehicleClass;
+  serviceType: ServiceType;
+  origin: StoredPlace;
+  destination: StoredPlace;
+  distanceKm: number | null;
+  hours: number | null;
+  amount: number;
+  currency: string;
+  expiresAt: admin.firestore.Timestamp;
+  createdAt: admin.firestore.Timestamp;
+  bookingId?: string;
 }
 
 interface UserDoc {
@@ -165,29 +210,113 @@ async function captureBookingPayment(bookingId: string, booking: BookingDoc): Pr
   return paymentRef.id;
 }
 
+function toPlace(p: PlaceInput): StoredPlace {
+  return {
+    name: String(p.name ?? '').slice(0, 200),
+    address: String(p.address ?? '').slice(0, 300),
+    coordinates: new admin.firestore.GeoPoint(p.lat, p.lng),
+  };
+}
+
+/**
+ * Loads a quote and checks it belongs to the caller, is unused and fresh.
+ * [graceMs] extends validity, e.g. when the card was already authorised for
+ * this quote and the rider spent a while on 3-D Secure.
+ */
+async function loadValidQuote(uid: string, quoteId: unknown, graceMs = 0): Promise<QuoteDoc> {
+  if (typeof quoteId !== 'string' || !quoteId) throw err.invalidArgument('quoteId required');
+  const snap = await db.collection('quotes').doc(quoteId).get();
+  if (!snap.exists) throw err.notFound('Quote not found');
+  const quote = snap.data() as QuoteDoc;
+  if (quote.riderId !== uid) throw err.permissionDenied();
+  if (quote.bookingId) throw err.failedPrecondition('Quote already used');
+  if (quote.expiresAt.toMillis() + graceMs < Date.now()) throw err.failedPrecondition('quote/expired');
+  return quote;
+}
+
 // ---------------------------------------------------------------------------
-// createPaymentIntent — authorises (does not charge) the rider's card
+// quoteBooking — fixed, server-computed price in Bs, valid for 15 minutes
+// ---------------------------------------------------------------------------
+
+export const quoteBooking = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const { vehicleClass, serviceType, origin, destination, routeDistanceKm, hours } = (req.data ?? {}) as {
+    vehicleClass: unknown;
+    serviceType: unknown;
+    origin: unknown;
+    destination?: unknown;
+    routeDistanceKm?: unknown;
+    hours?: unknown;
+  };
+
+  if (!isVehicleClass(vehicleClass)) throw err.invalidArgument('invalid vehicleClass');
+  if (!isServiceType(serviceType)) throw err.invalidArgument('invalid serviceType');
+  if (!isLatLng(origin)) throw err.invalidArgument('origin required');
+
+  const hourly = serviceType === 'byTheHour';
+  // Hourly charters may omit the destination (the chauffeur stays with you).
+  const dest = isLatLng(destination) ? destination : hourly ? origin : null;
+  if (!dest) throw err.invalidArgument('destination required');
+
+  const ruleSnap = await db.collection('pricingRules').doc(`${vehicleClass}_${serviceType}`).get();
+  const rule = ruleFromDoc(ruleSnap.data(), DEFAULT_RULES[vehicleClass][serviceType]);
+
+  const distanceKm = hourly ? null : resolveDistanceKm(origin, dest, routeDistanceKm);
+  const quoteHours = hourly ? clampHours(hours) : null;
+  const amount = computePrice(rule, serviceType, { km: distanceKm ?? 0, hours: quoteHours ?? 0 });
+
+  const now = admin.firestore.Timestamp.now();
+  const expiresAt = admin.firestore.Timestamp.fromMillis(now.toMillis() + QUOTE_TTL_MS);
+  const quote: QuoteDoc = {
+    riderId: uid,
+    vehicleClass,
+    serviceType,
+    origin: toPlace(origin as PlaceInput),
+    destination: toPlace(dest as PlaceInput),
+    distanceKm,
+    hours: quoteHours,
+    amount,
+    currency: CURRENCY,
+    expiresAt,
+    createdAt: now,
+  };
+  const ref = await db.collection('quotes').add(quote);
+
+  logger.info('quoteBooking', 'quoted', { uid, quoteId: ref.id, vehicleClass, serviceType, amount });
+  return {
+    quoteId: ref.id,
+    amount,
+    currency: CURRENCY,
+    distanceKm,
+    hours: quoteHours,
+    expiresAt: expiresAt.toMillis(),
+  };
+});
+
+// ---------------------------------------------------------------------------
+// createPaymentIntent — authorises (does not charge) the quoted amount
 // ---------------------------------------------------------------------------
 
 export const createPaymentIntent = onCall(stripeOpts, async (req) => {
   const uid = requireAuth(req);
-  const { amount, currency, customerId: claimed } = req.data as {
-    amount: number;
-    currency?: string;
+  const { quoteId, customerId: claimed } = req.data as {
+    quoteId: string;
     customerId?: string;
   };
 
-  if (!isValidAmount(amount)) throw err.invalidArgument('amount must be a positive integer in minor units');
+  const quote = await loadValidQuote(uid, quoteId);
+  const amount = toMinorUnits(quote.amount);
+  if (!isValidAmount(amount)) throw err.invalidArgument('invalid quote amount');
   const customerId = await requireOwnCustomer(uid, claimed);
 
-  logger.info('createPaymentIntent', 'start', { uid, amount, currency });
+  logger.info('createPaymentIntent', 'start', { uid, quoteId, amount });
 
   try {
     const clientSecret = await stripe.createIntent({
       amount,
-      currency: (currency ?? DEFAULT_CURRENCY).toLowerCase(),
+      currency: quote.currency,
       customerId,
-      metadata: { uid },
+      metadata: { uid, quoteId },
     });
     const paymentIntentId = clientSecret.split('_secret_')[0];
     logger.info('createPaymentIntent', 'success', { uid, paymentIntentId });
@@ -196,6 +325,95 @@ export const createPaymentIntent = onCall(stripeOpts, async (req) => {
     logger.error('createPaymentIntent', 'stripe error', { error: String(e) });
     throw err.paymentFailed(String(e));
   }
+});
+
+// ---------------------------------------------------------------------------
+// createBooking — the only way to create a booking. Price, route and vehicle
+// come from the quote; the client only adds trip details.
+// ---------------------------------------------------------------------------
+
+export const createBooking = onCall(stripeOpts, async (req) => {
+  const uid = requireAuth(req);
+  const d = (req.data ?? {}) as {
+    quoteId: string;
+    scheduledAt: number;
+    paymentIntentId?: string;
+    notes?: string;
+    flightNumber?: string;
+    passengerCount?: number;
+    luggageCount?: number;
+  };
+
+  // An authorisation for this exact quote already locks the price.
+  const quote = await loadValidQuote(uid, d.quoteId, d.paymentIntentId ? 30 * 60 * 1000 : 0);
+
+  const scheduledMs = Number(d.scheduledAt);
+  const now = Date.now();
+  if (!Number.isFinite(scheduledMs) || scheduledMs < now - 5 * 60 * 1000 || scheduledMs > now + MAX_ADVANCE_MS) {
+    throw err.invalidArgument('invalid scheduledAt');
+  }
+
+  const capacity = CAPACITY[quote.vehicleClass];
+  const passengers = Math.round(Number(d.passengerCount ?? 1));
+  if (!(passengers >= 1 && passengers <= capacity)) throw err.invalidArgument('invalid passengerCount');
+  const luggage = Math.round(Number(d.luggageCount ?? 0));
+  if (!(luggage >= 0 && luggage <= 10)) throw err.invalidArgument('invalid luggageCount');
+
+  const flight = d.flightNumber ? String(d.flightNumber).trim().toUpperCase().slice(0, 10) : null;
+  if (flight && !/^[A-Z0-9]{2,3}\s?\d{1,4}[A-Z]?$/.test(flight)) throw err.invalidArgument('invalid flightNumber');
+
+  // Card payment: the authorisation must be for this quote, this rider and
+  // exactly the quoted amount.
+  let paymentIntentId: string | null = null;
+  if (d.paymentIntentId) {
+    const intent = await stripe.retrieveIntent(String(d.paymentIntentId));
+    const valid =
+      intent.metadata?.uid === uid &&
+      intent.metadata?.quoteId === d.quoteId &&
+      intent.amount === toMinorUnits(quote.amount) &&
+      intent.status === 'requires_capture';
+    if (!valid) throw err.failedPrecondition('payment/not-authorised');
+    paymentIntentId = intent.id;
+  }
+
+  const quoteRef = db.collection('quotes').doc(d.quoteId);
+  const bookingRef = db.collection('bookings').doc();
+  const ts = admin.firestore.Timestamp.now();
+
+  await db.runTransaction(async (tx) => {
+    const fresh = await tx.get(quoteRef);
+    if ((fresh.data() as QuoteDoc | undefined)?.bookingId) throw err.failedPrecondition('Quote already used');
+    tx.set(bookingRef, {
+      id: bookingRef.id,
+      riderId: uid,
+      driverId: null,
+      origin: quote.origin,
+      destination: quote.destination,
+      scheduledAt: admin.firestore.Timestamp.fromMillis(scheduledMs),
+      class: quote.vehicleClass,
+      serviceType: quote.serviceType,
+      status: 'pending' as BookingStatus,
+      estimatedPrice: quote.amount,
+      finalPrice: null,
+      paymentId: null,
+      currency: quote.currency,
+      quoteId: d.quoteId,
+      distanceKm: quote.distanceKm,
+      hours: quote.hours,
+      paymentMethod: paymentIntentId ? 'card' : 'pay_later',
+      stripePaymentIntentId: paymentIntentId,
+      notes: d.notes ? String(d.notes).slice(0, 1000) : null,
+      flightNumber: flight,
+      passengerCount: passengers,
+      luggageCount: luggage,
+      createdAt: ts,
+      updatedAt: ts,
+    });
+    tx.update(quoteRef, { bookingId: bookingRef.id });
+  });
+
+  logger.info('createBooking', 'created', { uid, bookingId: bookingRef.id, amount: quote.amount });
+  return { bookingId: bookingRef.id };
 });
 
 // ---------------------------------------------------------------------------

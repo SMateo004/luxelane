@@ -190,21 +190,21 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
                 Container(
                   padding: const EdgeInsets.all(LuxSpacing.md),
                   decoration: BoxDecoration(
-                    color: LuxColors.sapphire.withOpacity(0.08),
+                    color: LuxColors.accent.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(LuxRadius.md),
                     border: Border.all(
-                        color: LuxColors.sapphire.withOpacity(0.3)),
+                        color: LuxColors.accent.withOpacity(0.3)),
                   ),
                   child: Row(
                     children: [
                       const Icon(Icons.info_outline_rounded,
-                          color: LuxColors.sapphire, size: 18),
+                          color: LuxColors.accent, size: 18),
                       const SizedBox(width: LuxSpacing.sm),
                       Expanded(
                         child: Text(
                           'Un administrador verificará tus documentos antes de que puedas conectarte.',
                           style: LuxTypography.caption
-                              .copyWith(color: LuxColors.sapphire),
+                              .copyWith(color: LuxColors.accent),
                         ),
                       ),
                     ],
@@ -259,7 +259,7 @@ class _StepIndicator extends StatelessWidget {
               height: 3,
               decoration: BoxDecoration(
                 color: done || active
-                    ? LuxColors.sapphire
+                    ? LuxColors.accent
                     : LuxColors.blackBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
@@ -317,19 +317,19 @@ class _VehicleForm extends StatelessWidget {
                         horizontal: LuxSpacing.md, vertical: LuxSpacing.sm),
                     decoration: BoxDecoration(
                       color: sel
-                          ? LuxColors.sapphire.withOpacity(0.15)
+                          ? LuxColors.accent.withOpacity(0.15)
                           : LuxColors.blackElevated,
                       borderRadius: BorderRadius.circular(LuxRadius.md),
                       border: Border.all(
                         color: sel
-                            ? LuxColors.sapphire
+                            ? LuxColors.accent
                             : LuxColors.blackBorder,
                       ),
                     ),
                     child: Text(vc.label,
                         style: LuxTypography.bodyMedium.copyWith(
                           color: sel
-                              ? LuxColors.sapphire
+                              ? LuxColors.accent
                               : LuxColors.white,
                         )),
                   ),

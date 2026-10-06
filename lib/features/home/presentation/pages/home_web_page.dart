@@ -219,7 +219,7 @@ class _LuxNav extends StatelessWidget {
       duration: const Duration(milliseconds: 400),
       height: 72,
       decoration: BoxDecoration(
-        color: scrolled ? const Color(0xF5070E18) : Colors.transparent,
+        color: scrolled ? const Color(0xF50B1220) : Colors.transparent,
         border: Border(
           bottom: BorderSide(
             color: scrolled ? Colors.white.withAlpha(25) : Colors.transparent,
@@ -404,8 +404,8 @@ class _ServicesDropdownLinkState extends State<_ServicesDropdownLink> {
               child: Container(
                 width: 240,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF0A1220),
-                  border: Border.all(color: const Color(0xFF1A2B40)),
+                  color: const Color(0xFF111A2B),
+                  border: Border.all(color: const Color(0xFF24314A)),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -471,14 +471,14 @@ class _DropItemState extends State<_DropItem> {
           onTap: widget.onTap,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
-            color: _hover ? const Color(0xFF1B4F8A).withAlpha(30) : Colors.transparent,
+            color: _hover ? LD.accent.withAlpha(30) : Colors.transparent,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             child: Row(
               children: [
                 Container(
                   width: 3, height: 3,
                   decoration: const BoxDecoration(
-                    color: Color(0xFF1B4F8A), shape: BoxShape.circle,
+                    color: LD.accent, shape: BoxShape.circle,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -521,7 +521,7 @@ class _NavCtaState extends State<_NavCta> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-            color: _hover ? LD.sphLt : LD.sph,
+            color: _hover ? LD.accentHover : LD.accent,
             child: const Text(
               'RESERVAR UN VIAJE',
               style: TextStyle(
@@ -545,13 +545,13 @@ class _AvatarDot extends StatelessWidget {
         onTap: onTap,
         child: Container(
           width: 34, height: 34,
-          decoration: const BoxDecoration(shape: BoxShape.circle, color: LD.sphTint),
+          decoration: const BoxDecoration(shape: BoxShape.circle, color: LD.accentTint),
           child: Center(
             child: Text(
               name.isNotEmpty ? name[0].toUpperCase() : 'U',
               style: const TextStyle(
                 fontFamily: kSans, fontSize: 13, fontWeight: FontWeight.w500,
-                color: LD.sph, decoration: TextDecoration.none,
+                color: LD.accent, decoration: TextDecoration.none,
               ),
             ),
           ),
@@ -680,7 +680,7 @@ class _HeroSectionState extends State<_HeroSection>
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    const Color(0xFF060C16).withAlpha(210),
+                    const Color(0xFF0A101C).withAlpha(210),
                     Colors.transparent,
                   ],
                   stops: const [0.0, 0.38],
@@ -697,8 +697,8 @@ class _HeroSectionState extends State<_HeroSection>
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    const Color(0xFF060C16).withAlpha(240),
-                    const Color(0xFF060C16).withAlpha(160),
+                    const Color(0xFF0A101C).withAlpha(240),
+                    const Color(0xFF0A101C).withAlpha(160),
                     Colors.transparent,
                   ],
                   stops: const [0.0, 0.35, 0.65],
@@ -985,7 +985,7 @@ class _HeroBg extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFF060C16), Color(0xFF0D1B2E), Color(0xFF091525)],
+                colors: [Color(0xFF0A101C), Color(0xFF0B1220), Color(0xFF091525)],
               ),
             ),
           ),
@@ -1324,7 +1324,7 @@ class _BarCtaState extends State<_BarCta> {
             width: 180,
             height: double.infinity,
             decoration: BoxDecoration(
-              color: _hover ? LD.sphLt : LD.sph,
+              color: _hover ? LD.accentHover : LD.accent,
               border: Border(
                 left: BorderSide(color: Colors.white.withAlpha(40)),
               ),
@@ -1370,8 +1370,8 @@ class _SolidBtnState extends State<_SolidBtn> {
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
             color: widget.white
-                ? (_h ? const Color(0xFFE8EDF7) : Colors.white)
-                : (_h ? LD.sphLt : LD.sph),
+                ? (_h ? const Color(0xFFE8E2D6) : Colors.white)
+                : (_h ? LD.accentHover : LD.accent),
             child: Text(
               widget.label.toUpperCase(),
               style: TextStyle(
@@ -1615,7 +1615,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 180),
                         decoration: BoxDecoration(
-                          color: isSel ? LD.sph : Colors.transparent,
+                          color: isSel ? LD.accent : Colors.transparent,
                         ),
                         alignment: Alignment.center,
                         child: Text('$d',
@@ -1682,7 +1682,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
               cursor: SystemMouseCursors.click,
               child: Container(
                 width: double.infinity,
-                color: LD.sph,
+                color: LD.accent,
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 alignment: Alignment.center,
                 child: const Text('CONFIRMAR',
@@ -1882,7 +1882,7 @@ class _MarqueeBarState extends State<_MarqueeBar>
                       const SizedBox(width: 24),
                       Container(
                         width: 3, height: 3,
-                        decoration: const BoxDecoration(color: LD.sph, shape: BoxShape.circle),
+                        decoration: const BoxDecoration(color: LD.accent, shape: BoxShape.circle),
                       ),
                       const SizedBox(width: 24),
                     ],
@@ -1990,7 +1990,7 @@ class _ImmersiveStrip extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft, end: Alignment.bottomRight,
-                    colors: [LD.ink, const Color(0xFF0D2040)],
+                    colors: [LD.ink, const Color(0xFF18233A)],
                   ),
                 ),
               )),
@@ -2048,10 +2048,10 @@ class _FleetSection extends StatelessWidget {
   final VoidCallback onBook;
 
   static final _vehicles = [
-    _FleetItem(cls: 'Business Class',  model: 'Mercedes E-Class / o similar',  asset: 'assets/images/vehicles/business/car.png',    tags: ['4 Asientos','Interior de cuero','Wi-Fi'], accent: const Color(0xFF1B4F8A)),
-    _FleetItem(cls: 'First Class',     model: 'Mercedes S-Class / o similar',  asset: 'assets/images/vehicles/first_class/car.png', tags: ['4 Asientos','Audio premium','Champán'], accent: const Color(0xFFC9A96E)),
-    _FleetItem(cls: 'Business Van',    model: 'Mercedes V-Class / o similar',  asset: 'assets/images/vehicles/van/car.png',          tags: ['7 Asientos','Equipaje extra','Wi-Fi'], accent: const Color(0xFF2E6FBF)),
-    _FleetItem(cls: 'Electric Class',  model: 'Tesla Model S / o similar',     asset: 'assets/images/vehicles/electric/car.png',    tags: ['4 Asientos','Cero emisiones','Premium'], accent: const Color(0xFF3DA05E)),
+    _FleetItem(cls: 'Business Class',  model: 'Mercedes E-Class / o similar',  asset: 'assets/images/vehicles/business/car.png',    tags: ['4 Asientos','Interior de cuero','Wi-Fi'], accent: LuxPalette.champagne),
+    _FleetItem(cls: 'First Class',     model: 'Mercedes S-Class / o similar',  asset: 'assets/images/vehicles/first_class/car.png', tags: ['4 Asientos','Audio premium','Champán'], accent: LuxPalette.champagneLight),
+    _FleetItem(cls: 'Business Van',    model: 'Mercedes V-Class / o similar',  asset: 'assets/images/vehicles/van/car.png',          tags: ['7 Asientos','Equipaje extra','Wi-Fi'], accent: LuxPalette.champagneDeep),
+    _FleetItem(cls: 'Electric Class',  model: 'Tesla Model S / o similar',     asset: 'assets/images/vehicles/electric/car.png',    tags: ['4 Asientos','Cero emisiones','Premium'], accent: LuxPalette.success),
   ];
 
   @override
@@ -2145,7 +2145,7 @@ class _FleetCardState extends State<_FleetCard> {
             duration: const Duration(milliseconds: 280),
             width: 340,
             decoration: BoxDecoration(
-              color: const Color(0xFF0D1B2E),
+              color: const Color(0xFF0B1220),
               border: Border.all(
                 color: _hover ? widget.item.accent.withAlpha(180) : Colors.white.withAlpha(18),
               ),
@@ -2182,7 +2182,7 @@ class _FleetCardState extends State<_FleetCard> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter, end: Alignment.topCenter,
-                      colors: [const Color(0xFF070E18).withAlpha(242), Colors.transparent],
+                      colors: [const Color(0xFF0B1220).withAlpha(242), Colors.transparent],
                     ),
                   ),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -2286,7 +2286,7 @@ class _PromisePhotoPanel extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             begin: Alignment.topRight, end: Alignment.bottomLeft,
-            colors: [Color(0xFF0D2040), Color(0xFF060C16)],
+            colors: [Color(0xFF18233A), Color(0xFF0A101C)],
           ),
           image: DecorationImage(
             image: const AssetImage(_photo),
@@ -2306,7 +2306,7 @@ class _PromisePhotoPanel extends StatelessWidget {
                 errorBuilder: (_, __, ___) => const SizedBox.shrink())),
           // Sapphire top accent
           Positioned(top: 0, left: 0, right: 0,
-            child: Container(height: 2, color: LD.sph)),
+            child: Container(height: 2, color: LD.accent)),
         ]),
       );
 }
@@ -2386,9 +2386,9 @@ class _ExperienceSection extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.only(right: i < _features.length - 1 ? 48 : 0),
                     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Container(height: 1, color: LD.sph, margin: const EdgeInsets.only(bottom: 24)),
+                      Container(height: 1, color: LD.accent, margin: const EdgeInsets.only(bottom: 24)),
                       Text(f.$1, style: const TextStyle(
-                        fontSize: 18, color: LD.sph, decoration: TextDecoration.none,
+                        fontSize: 18, color: LD.accent, decoration: TextDecoration.none,
                       )),
                       const SizedBox(height: 20),
                       Text(f.$2, style: const TextStyle(
@@ -2434,14 +2434,14 @@ class _TestimonialsSectionState extends State<_TestimonialsSection> {
   Widget build(BuildContext context) {
     final r = _reviews[_current];
     return Container(
-      color: const Color(0xFFF7F5F0),
+      color: const Color(0xFFFAF8F4),
       padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 140),
       child: Column(children: [
         // Decorative large quote mark
         RevealOnScroll(
           child: Text('"', style: TextStyle(
             fontFamily: kSerif, fontSize: 180, fontWeight: FontWeight.w300,
-            color: LD.sph.withAlpha(23), height: 0.6,
+            color: LD.accent.withAlpha(23), height: 0.6,
             decoration: TextDecoration.none,
           )),
         ),
@@ -2465,7 +2465,7 @@ class _TestimonialsSectionState extends State<_TestimonialsSection> {
           child: Column(key: ValueKey('a$_current'), children: [
             Row(
               mainAxisSize: MainAxisSize.min,
-              children: List.generate(5, (_) => const Icon(Icons.star_rounded, size: 12, color: LD.sph)),
+              children: List.generate(5, (_) => const Icon(Icons.star_rounded, size: 12, color: LD.accent)),
             ),
             const SizedBox(height: 12),
             Text('${r.name} · ${r.location}'.toUpperCase(), style: const TextStyle(
@@ -2485,7 +2485,7 @@ class _TestimonialsSectionState extends State<_TestimonialsSection> {
               width: i == _current ? 28 : 6, height: 6,
               margin: const EdgeInsets.symmetric(horizontal: 3),
               decoration: BoxDecoration(
-                color: i == _current ? LD.sph : LD.border,
+                color: i == _current ? LD.accent : LD.border,
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
@@ -2526,7 +2526,7 @@ class _BusinessSection extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: const [Color(0xCC070E18), Color(0xE8070E18)],
+                  colors: const [Color(0xCC0B1220), Color(0xE8070E18)],
                 ),
               ),
             ),
@@ -2551,7 +2551,7 @@ class _BusinessSection extends StatelessWidget {
                         child: Text('0${i + 1}', style: TextStyle(
                           fontFamily: kSerif, fontSize: 28,
                           fontWeight: FontWeight.w300,
-                          color: LD.sph.withAlpha(180),
+                          color: LD.accent.withAlpha(180),
                           decoration: TextDecoration.none,
                         )),
                       ),
@@ -2768,7 +2768,7 @@ class _VideoBackgroundState extends State<_VideoBackground> {
   Widget build(BuildContext context) {
     if (!_ready || _ctrl == null) {
       // Fallback: dark colour while video loads / file not placed yet
-      return const ColoredBox(color: Color(0xFF070E18));
+      return const ColoredBox(color: Color(0xFF0B1220));
     }
     return FittedBox(
       fit: BoxFit.cover,
@@ -2811,7 +2811,7 @@ class _FooterSection extends StatelessWidget {
       child: Stack(children: [
         // Sapphire top line (40% opacity)
         Positioned(top: 0, left: 0, right: 0,
-          child: Container(height: 1, color: LD.sph.withAlpha(102))),
+          child: Container(height: 1, color: LD.accent.withAlpha(102))),
         Padding(
           padding: EdgeInsets.fromLTRB(narrow ? 24 : 48, 60, narrow ? 24 : 48, 40),
           child: Center(
@@ -3013,13 +3013,13 @@ class _BookSectionState extends State<_BookSection> {
             child: Container(
               color: LD.dark,
               child: Stack(children: [
-                // Radial sapphire glow
+                // Radial champagne glow
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: RadialGradient(
                         center: const Alignment(0, 0.3), radius: 0.85,
-                        colors: [LD.sph.withAlpha(70), Colors.transparent],
+                        colors: [LD.accent.withAlpha(70), Colors.transparent],
                       ),
                     ),
                   ),
@@ -3029,7 +3029,7 @@ class _BookSectionState extends State<_BookSection> {
                 Positioned(top: 44, left: 0, right: 0,
                   child: Center(child: Text('OUR SIGNATURE EXPERIENCE',
                     style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w500,
-                      letterSpacing: 4.0, color: LD.sph.withAlpha(200),
+                      letterSpacing: 4.0, color: LD.accent.withAlpha(200),
                       decoration: TextDecoration.none)))),
 
                 // Book
@@ -3052,7 +3052,7 @@ class _BookSectionState extends State<_BookSection> {
                         margin: const EdgeInsets.symmetric(horizontal: 6),
                         width: active ? 7.5 : 5, height: active ? 7.5 : 5,
                         decoration: BoxDecoration(
-                          color: active ? LD.sph : LD.sph.withAlpha(70),
+                          color: active ? LD.accent : LD.accent.withAlpha(70),
                           shape: BoxShape.circle,
                         ),
                       );
@@ -3071,7 +3071,7 @@ class _BookSectionState extends State<_BookSection> {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                              colors: [LD.sph, Colors.transparent],
+                              colors: [LD.accent, Colors.transparent],
                             ),
                           ),
                         ),
@@ -3079,7 +3079,7 @@ class _BookSectionState extends State<_BookSection> {
                         RotatedBox(quarterTurns: 1,
                           child: Text('SCROLL',
                             style: GoogleFonts.montserrat(fontSize: 7.5, fontWeight: FontWeight.w500,
-                              letterSpacing: 3.5, color: LD.sph,
+                              letterSpacing: 3.5, color: LD.accent,
                               decoration: TextDecoration.none))),
                       ]),
                     ),
@@ -3147,7 +3147,7 @@ class _BookWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, LD.sph.withAlpha(180), Colors.transparent],
+                      colors: [Colors.transparent, LD.accent.withAlpha(180), Colors.transparent],
                     ),
                   ),
                 ),
@@ -3216,11 +3216,11 @@ class _BookLeftPanel extends StatelessWidget {
               child: Center(child: Container(
                 width: 40, height: 40,
                 decoration: BoxDecoration(
-                  border: Border.all(color: LD.sph.withAlpha(60), width: 1),
+                  border: Border.all(color: LD.accent.withAlpha(60), width: 1),
                 ),
                 child: Center(child: Text('L', style: GoogleFonts.cormorantGaramond(
                   fontSize: 22, fontWeight: FontWeight.w400,
-                  color: LD.sph.withAlpha(80), decoration: TextDecoration.none,
+                  color: LD.accent.withAlpha(80), decoration: TextDecoration.none,
                 ))),
               ))),
           ]),
@@ -3233,7 +3233,7 @@ class _BookLeftPanel extends StatelessWidget {
           gradient: data.photoPath == null
               ? const LinearGradient(
                   begin: Alignment.topLeft, end: Alignment.bottomRight,
-                  colors: [Color(0xFF060E1A), Color(0xFF0D2040), Color(0xFF060E1A)],
+                  colors: [Color(0xFF060E1A), Color(0xFF18233A), Color(0xFF060E1A)],
                   stops: [0, 0.55, 1])
               : null,
           image: data.photoPath != null
@@ -3244,7 +3244,7 @@ class _BookLeftPanel extends StatelessWidget {
           // Photo dark overlay
           if (data.photoPath != null)
             Positioned.fill(child: DecoratedBox(
-              decoration: BoxDecoration(color: const Color(0xFF070E18).withAlpha(122)),
+              decoration: BoxDecoration(color: const Color(0xFF0B1220).withAlpha(122)),
             )),
 
           // Ghost page number
@@ -3264,11 +3264,11 @@ class _BookLeftPanel extends StatelessWidget {
           // Deco label top-left
           Positioned(top: pad, left: pad,
             child: Row(mainAxisSize: MainAxisSize.min, children: [
-              Container(width: 24, height: 1, color: LD.sph.withAlpha(180)),
+              Container(width: 24, height: 1, color: LD.accent.withAlpha(180)),
               const SizedBox(width: 10),
               Text(data.label.toUpperCase(),
                 style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w500,
-                  letterSpacing: 3.0, color: LD.sph.withAlpha(200),
+                  letterSpacing: 3.0, color: LD.accent.withAlpha(200),
                   decoration: TextDecoration.none)),
             ])),
 
@@ -3285,7 +3285,7 @@ class _BookLeftPanel extends StatelessWidget {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                 Text('— ${data.num}',
                   style: GoogleFonts.cormorantGaramond(fontSize: 10, fontWeight: FontWeight.w400,
-                    letterSpacing: 3.0, color: LD.sph, decoration: TextDecoration.none)),
+                    letterSpacing: 3.0, color: LD.accent, decoration: TextDecoration.none)),
                 const SizedBox(height: 5),
                 Text(data.sub,
                   style: GoogleFonts.cormorantGaramond(
@@ -3312,7 +3312,7 @@ class _BookRightPanel extends StatelessWidget {
     // Front cover: clean white page with centered logo
     if (data.headline.isEmpty) {
       return Container(
-        color: const Color(0xFFF7F5F0),
+        color: const Color(0xFFFAF8F4),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -3345,14 +3345,14 @@ class _BookRightPanel extends StatelessWidget {
       );
     }
     return Container(
-      color: const Color(0xFFF7F5F0),
+      color: const Color(0xFFFAF8F4),
       child: Stack(children: [
         // Ghost number
         Positioned(bottom: -12, right: -8,
           child: Text(data.num,
             style: GoogleFonts.cormorantGaramond(
               fontSize: isMobile ? 100 : 180, fontWeight: FontWeight.w600,
-              color: LD.sph.withAlpha(10), height: 1,
+              color: LD.accent.withAlpha(10), height: 1,
               decoration: TextDecoration.none))),
 
         // Content
@@ -3361,7 +3361,7 @@ class _BookRightPanel extends StatelessWidget {
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
             Text(data.tag,
               style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w500,
-                letterSpacing: 3.5, color: LD.sph, decoration: TextDecoration.none)),
+                letterSpacing: 3.5, color: LD.accent, decoration: TextDecoration.none)),
             const SizedBox(height: 22),
             Text(data.headline,
               style: GoogleFonts.cormorantGaramond(
@@ -3377,7 +3377,7 @@ class _BookRightPanel extends StatelessWidget {
             ...data.bullets.map((b) => Padding(
               padding: const EdgeInsets.only(bottom: 9),
               child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Container(width: 18, height: 1, color: LD.sph, margin: const EdgeInsets.only(right: 14)),
+                Container(width: 18, height: 1, color: LD.accent, margin: const EdgeInsets.only(right: 14)),
                 Expanded(child: Text(b,
                   style: GoogleFonts.montserrat(
                     fontSize: isMobile ? 11 : 11.5, fontWeight: FontWeight.w400,

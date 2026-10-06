@@ -1,35 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'lux_tokens.dart';
+
+export 'lux_tokens.dart';
+
 // ---------------------------------------------------------------------------
 // Tokens
 // ---------------------------------------------------------------------------
 
 abstract class LuxColors {
-  // Dark palette (app-wide) — navy design system
-  static const black         = Color(0xFF070E18);
-  static const blackSurface  = Color(0xFF0A1220);
-  static const blackElevated = Color(0xFF0D1928);
-  static const blackBorder   = Color(0xFF1A2B40);
-  // Accent
-  static const gold          = Color(0xFFC9A84C);
-  static const sapphire      = Color(0xFF1B4F8A);
-  static const sapphireLight     = Color(0xFF2563B0);
-  static const sapphireDark      = Color(0xFF153D6B);
-  static const sapphireSubtle    = Color(0x141B4F8A);
+  // Dark surfaces — marino
+  static const black         = LuxPalette.ink;
+  static const blackSurface  = LuxPalette.surface;
+  static const blackElevated = LuxPalette.elevated;
+  static const blackBorder   = LuxPalette.line;
+  // Brand accent — champagne (use ink text on top of it)
+  static const accent        = LuxPalette.champagne;
+  static const accentLight   = LuxPalette.champagneLight;
+  static const accentSubtle  = Color(0x1FC6A15B); // champagne @ 12%
+  static const onAccent      = LuxPalette.ink;
+  // Information (links, info badges)
+  static const info          = LuxPalette.sapphire;
   // On-dark text
-  static const white         = Color(0xFFF5F5F5);
-  static const whiteSecondary = Color(0xFF9A9A9A);
-  static const whiteTertiary = Color(0xFF7A8699); // ≥ 4.5:1 on navy (WCAG AA)
-  // Light sections (web landing)
-  static const cream         = Color(0xFFF3F1ED);
-  static const creamBorder   = Color(0xFFE0DDD6);
-  static const darkText      = Color(0xFF0D0D0D);
-  static const midGray       = Color(0xFF6B6B6B);
+  static const white          = LuxPalette.snow;
+  static const whiteSecondary = LuxPalette.mist;
+  static const whiteTertiary  = LuxPalette.fog;
+  // Light sections
+  static const cream         = LuxPalette.paper2;
+  static const creamBorder   = LuxPalette.hairline;
+  static const darkText      = LuxPalette.ink;
+  static const midGray       = LuxPalette.slate;
   // Semantic
-  static const error         = Color(0xFFCF4B4B);
-  static const success       = Color(0xFF4B9B6F);
-  static const warning       = Color(0xFFC9984C);
+  static const error         = LuxPalette.error;
+  static const success       = LuxPalette.success;
+  static const warning       = LuxPalette.warning;
 }
 
 abstract class LuxSpacing {
@@ -87,7 +92,7 @@ abstract class LuxTypography {
   );
   static const labelLarge = TextStyle(
     fontFamily: _sans, fontSize: 13, fontWeight: FontWeight.w500,
-    color: LuxColors.sapphire, letterSpacing: 1.2,
+    color: LuxColors.accent, letterSpacing: 1.2,
   );
   static const caption = TextStyle(
     fontFamily: _sans, fontSize: 11, fontWeight: FontWeight.w400,
@@ -113,7 +118,7 @@ ThemeData get luxTheme {
     titleMedium:    sans(fontSize: 14,  fontWeight: FontWeight.w600, color: LuxColors.white, letterSpacing: 0.4),
     bodyLarge:      sans(fontSize: 16,  fontWeight: FontWeight.w400, color: LuxColors.white, letterSpacing: 0.2),
     bodyMedium:     sans(fontSize: 14,  fontWeight: FontWeight.w400, color: LuxColors.whiteSecondary, letterSpacing: 0.2),
-    labelLarge:     sans(fontSize: 13,  fontWeight: FontWeight.w500, color: LuxColors.sapphire, letterSpacing: 1.2),
+    labelLarge:     sans(fontSize: 13,  fontWeight: FontWeight.w500, color: LuxColors.accent, letterSpacing: 1.2),
     bodySmall:      sans(fontSize: 11,  fontWeight: FontWeight.w400, color: LuxColors.whiteTertiary, letterSpacing: 0.4),
   );
 
@@ -122,10 +127,10 @@ ThemeData get luxTheme {
   brightness: Brightness.dark,
   scaffoldBackgroundColor: LuxColors.black,
   colorScheme: const ColorScheme.dark(
-    primary: LuxColors.sapphire,
-    onPrimary: LuxColors.white,
-    secondary: LuxColors.sapphireLight,
-    onSecondary: LuxColors.white,
+    primary: LuxColors.accent,
+    onPrimary: LuxColors.onAccent,
+    secondary: LuxColors.accentLight,
+    onSecondary: LuxColors.onAccent,
     surface: LuxColors.blackSurface,
     onSurface: LuxColors.white,
     error: LuxColors.error,
@@ -142,27 +147,27 @@ ThemeData get luxTheme {
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      // White on sapphire ≈ 8:1 contrast (black on sapphire was ≈ 2.5:1).
-      backgroundColor: LuxColors.sapphire,
-      foregroundColor: LuxColors.white,
+      // Ink on champagne ≈ 8.6:1 contrast.
+      backgroundColor: LuxColors.accent,
+      foregroundColor: LuxColors.onAccent,
       minimumSize: const Size(double.infinity, 52),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(LuxRadius.sm)),
-      textStyle: LuxTypography.labelLarge.copyWith(color: LuxColors.white),
+      textStyle: LuxTypography.labelLarge.copyWith(color: LuxColors.onAccent),
       elevation: 0,
     ),
   ),
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      foregroundColor: LuxColors.sapphire,
+      foregroundColor: LuxColors.accent,
       minimumSize: const Size(double.infinity, 52),
-      side: const BorderSide(color: LuxColors.sapphire),
+      side: const BorderSide(color: LuxColors.accent),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(LuxRadius.sm)),
       textStyle: LuxTypography.labelLarge,
     ),
   ),
   textButtonTheme: TextButtonThemeData(
     style: TextButton.styleFrom(
-      foregroundColor: LuxColors.sapphire,
+      foregroundColor: LuxColors.accent,
       textStyle: LuxTypography.labelLarge,
     ),
   ),
@@ -181,7 +186,7 @@ ThemeData get luxTheme {
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(LuxRadius.sm),
-      borderSide: const BorderSide(color: LuxColors.sapphire, width: 1.5),
+      borderSide: const BorderSide(color: LuxColors.accent, width: 1.5),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(LuxRadius.sm),
@@ -209,14 +214,14 @@ ThemeData get luxTheme {
   ),
   bottomNavigationBarTheme: const BottomNavigationBarThemeData(
     backgroundColor: LuxColors.blackSurface,
-    selectedItemColor: LuxColors.sapphire,
+    selectedItemColor: LuxColors.accent,
     unselectedItemColor: LuxColors.whiteTertiary,
     type: BottomNavigationBarType.fixed,
     elevation: 0,
   ),
   navigationRailTheme: const NavigationRailThemeData(
     backgroundColor: LuxColors.blackSurface,
-    selectedIconTheme: IconThemeData(color: LuxColors.sapphire),
+    selectedIconTheme: IconThemeData(color: LuxColors.accent),
     unselectedIconTheme: IconThemeData(color: LuxColors.whiteTertiary),
     selectedLabelTextStyle: LuxTypography.labelLarge,
     unselectedLabelTextStyle: TextStyle(
@@ -224,11 +229,11 @@ ThemeData get luxTheme {
       fontSize: 11,
       color: LuxColors.whiteTertiary,
     ),
-    indicatorColor: LuxColors.sapphireSubtle,
+    indicatorColor: LuxColors.accentSubtle,
   ),
   checkboxTheme: CheckboxThemeData(
     fillColor: WidgetStateProperty.resolveWith(
-      (s) => s.contains(WidgetState.selected) ? LuxColors.sapphire : LuxColors.blackElevated,
+      (s) => s.contains(WidgetState.selected) ? LuxColors.accent : LuxColors.blackElevated,
     ),
     checkColor: WidgetStateProperty.all(LuxColors.black),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
@@ -236,10 +241,10 @@ ThemeData get luxTheme {
   ),
   switchTheme: SwitchThemeData(
     thumbColor: WidgetStateProperty.resolveWith(
-      (s) => s.contains(WidgetState.selected) ? LuxColors.sapphire : LuxColors.whiteTertiary,
+      (s) => s.contains(WidgetState.selected) ? LuxColors.accent : LuxColors.whiteTertiary,
     ),
     trackColor: WidgetStateProperty.resolveWith(
-      (s) => s.contains(WidgetState.selected) ? LuxColors.sapphireSubtle : LuxColors.blackElevated,
+      (s) => s.contains(WidgetState.selected) ? LuxColors.accentSubtle : LuxColors.blackElevated,
     ),
   ),
   popupMenuTheme: PopupMenuThemeData(

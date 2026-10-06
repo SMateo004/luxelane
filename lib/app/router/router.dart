@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/enums/enums.dart';
+import '../../core/models/models.dart';
 import '../../features/admin/presentation/pages/admin_dashboard_page.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
+import '../../features/booking/presentation/pages/booking_confirmed_page.dart';
 import '../../features/booking/presentation/pages/booking_screen.dart';
 import '../../features/booking/presentation/pages/ride_type_page.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
@@ -170,6 +172,16 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: '/servicios/contratacion-por-horas',
           pageBuilder: (c, s) => _fade(const HourlyCharterPage(), s),
+        ),
+        GoRoute(
+          path: '/reserva/:bookingId/confirmada',
+          pageBuilder: (c, s) => _fade(
+            BookingConfirmedPage(
+              bookingId: s.pathParameters['bookingId'] ?? '',
+              booking: s.extra is Booking ? s.extra as Booking : null,
+            ),
+            s,
+          ),
         ),
         GoRoute(
           path: LuxRoutes.register,
@@ -339,7 +351,7 @@ class _SplashPage extends StatelessWidget {
               Text(
                 'LUXELANE',
                 style: TextStyle(
-                  color: LuxColors.sapphire,
+                  color: LuxColors.accent,
                   fontSize: 32,
                   fontWeight: FontWeight.w300,
                   letterSpacing: 8,
@@ -351,7 +363,7 @@ class _SplashPage extends StatelessWidget {
                 height: 24,
                 child: CircularProgressIndicator(
                   strokeWidth: 1.5,
-                  color: LuxColors.sapphire,
+                  color: LuxColors.accent,
                 ),
               ),
             ],

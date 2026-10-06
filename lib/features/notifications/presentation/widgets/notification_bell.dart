@@ -37,14 +37,14 @@ class NotificationBell extends StatelessWidget {
                     width: 16,
                     height: 16,
                     decoration: const BoxDecoration(
-                      color: LuxColors.sapphire,
+                      color: LuxColors.accent,
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: Text(
                         unread > 9 ? '9+' : '$unread',
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: LuxColors.onAccent,
                           fontSize: 9,
                           fontWeight: FontWeight.w700,
                           fontFamily: 'Montserrat',
@@ -145,7 +145,7 @@ class _NotificationSheet extends StatelessWidget {
                         child: Text(
                           'Marcar todo como leído',
                           style: LuxTypography.caption
-                              .copyWith(color: LuxColors.sapphire),
+                              .copyWith(color: LuxColors.accent),
                         ),
                       );
                     },
@@ -243,7 +243,7 @@ class _NotificationTile extends StatelessWidget {
     return Container(
       color: notification.isRead
           ? Colors.transparent
-          : LuxColors.sapphire.withAlpha(13),
+          : LuxColors.accent.withAlpha(13),
       padding: const EdgeInsets.symmetric(
         horizontal: LuxSpacing.lg,
         vertical: LuxSpacing.md,
@@ -255,10 +255,10 @@ class _NotificationTile extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: LuxColors.sapphire.withAlpha(26),
+              color: LuxColors.accent.withAlpha(26),
               borderRadius: BorderRadius.circular(LuxRadius.sm),
             ),
-            child: Icon(_icon, color: LuxColors.sapphire, size: 18),
+            child: Icon(_icon, color: LuxColors.accent, size: 18),
           ),
           const SizedBox(width: LuxSpacing.md),
           Expanded(
@@ -300,7 +300,7 @@ class _NotificationTile extends StatelessWidget {
                 width: 6,
                 height: 6,
                 decoration: const BoxDecoration(
-                  color: LuxColors.sapphire,
+                  color: LuxColors.accent,
                   shape: BoxShape.circle,
                 ),
               ),

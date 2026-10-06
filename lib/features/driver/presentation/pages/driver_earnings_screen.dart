@@ -56,14 +56,14 @@ class _EarningsSummary extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              LuxColors.sapphire.withOpacity(0.12),
+              LuxColors.accent.withOpacity(0.12),
               LuxColors.blackElevated,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(LuxRadius.lg),
-          border: Border.all(color: LuxColors.sapphire.withOpacity(0.2)),
+          border: Border.all(color: LuxColors.accent.withOpacity(0.2)),
         ),
         child: Column(
           children: [
@@ -75,7 +75,7 @@ class _EarningsSummary extends StatelessWidget {
                 fontFamily: 'Cormorant Garamond',
                 fontSize: 48,
                 fontWeight: FontWeight.w600,
-                color: LuxColors.sapphire,
+                color: LuxColors.accent,
               ),
             ),
             const SizedBox(height: LuxSpacing.md),
@@ -136,7 +136,7 @@ class _EarningsCard extends StatelessWidget {
                 Text(
                   'Bs${(booking.finalPrice ?? booking.estimatedPrice).toStringAsFixed(2)}',
                   style: LuxTypography.titleMedium
-                      .copyWith(color: LuxColors.sapphire),
+                      .copyWith(color: LuxColors.accent),
                 ),
                 const SizedBox(height: 4),
                 Container(

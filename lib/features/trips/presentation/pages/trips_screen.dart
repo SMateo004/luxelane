@@ -102,7 +102,7 @@ class _TripCard extends StatelessWidget {
   String get _vehicle => booking.vehicleClass.label;
 
   String get _price =>
-      '\$${booking.estimatedPrice.toStringAsFixed(0)}';
+      LuxMoney.format(booking.finalPrice ?? booking.estimatedPrice);
 
   String get _date {
     final dt = booking.scheduledAt;
@@ -125,7 +125,7 @@ class _TripCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
               ),
               child: const Icon(Icons.directions_car_outlined,
-                  color: LuxColors.sapphire, size: 24),
+                  color: LuxColors.accent, size: 24),
             ),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
@@ -148,7 +148,7 @@ class _TripCard extends StatelessWidget {
               children: [
                 Text(_price,
                     style: LuxTypography.titleLarge
-                        .copyWith(color: LuxColors.sapphire)),
+                        .copyWith(color: LuxColors.accent)),
                 const SizedBox(height: 4),
                 BookingStatusChip(status: booking.status),
               ],

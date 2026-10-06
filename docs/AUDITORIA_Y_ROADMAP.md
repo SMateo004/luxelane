@@ -94,13 +94,26 @@ El navy transmite seguridad corporativa y el champagne transmite hospitalidad de
 
 ## 4. Hoja de ruta hacia una super app tipo Blacklane
 
-### Fase 1: Confianza y núcleo de negocio (2–3 semanas)
-1. **Cotización en servidor**: función `quoteBooking` con tarifas por mercado desde `pricingRules`. La reserva se crea con un `quoteId` firmado y caducable, y las reglas o funciones validan el precio.
-2. **Stripe completo**: SetupIntent para guardar tarjetas (SCA/3DS), webhook de Stripe, política de cancelación con cargo parcial y re-autorización de reservas con más de 6 días de anticipación (las autorizaciones caducan a los 7).
-3. **Creación de reservas vía Cloud Function** (no escritura directa del cliente), con estado de pago, recibo PDF y correo de confirmación.
-4. **Notificaciones fiables**: registro FCM al iniciar sesión (pasajero y chófer, web con VAPID) y correo/SMS transaccional.
-5. **Design system unificado**: `lux_tokens.dart`, `LuxButton`, `LuxField`, `PriceBreakdown`, `BookingSummaryCard`, skeletons y estados vacío/error. Partir los archivos de más de 3.000 líneas.
-6. **Pantalla "Reserva confirmada"** con check animado, resumen, chófer asignado y cuenta regresiva.
+### Fase 1: Confianza y núcleo de negocio — en curso
+Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
+
+| # | Entregable | Estado |
+|---|---|---|
+| 1 | **Cotización en servidor** (`quoteBooking`): precio fijo en Bs desde `pricingRules` (o valores por defecto), distancia validada en el servidor y cotización válida 15 min | ✅ Hecho |
+| 2 | **Reserva solo vía Cloud Function** (`createBooking`): precio, ruta y vehículo salen de la cotización; la autorización de tarjeta debe coincidir con el monto cotizado; las reglas bloquean la escritura directa | ✅ Hecho |
+| 3 | **Notificaciones**: registro del token FCM al iniciar sesión (pasajeros y chóferes; web con `FCM_VAPID_KEY`) | ✅ Hecho |
+| 4 | **Identidad visual**: tokens en `lib/app/theme/lux_tokens.dart`, acento champagne con texto tinta (8,6:1), papel cálido en superficies claras y formato `LuxMoney` (`Bs 1.250`) | ✅ Hecho (base) |
+| 5 | **Pantalla "Reserva confirmada"**: check animado, precio fijo, resumen, cuenta regresiva y garantías | ✅ Hecho |
+| 6 | **Stripe completo**: SetupIntent (3DS), webhook, cargo por cancelación tardía y re-autorización de reservas con más de 6 días | ⏳ Pendiente |
+| 7 | **Recibo PDF y correo/SMS** de confirmación | ⏳ Pendiente |
+| 8 | **Componentes**: `PriceBreakdown`, skeletons, estados vacío/error, y partir `booking_screen.dart` / `home_web_page.dart` | ⏳ Pendiente |
+
+**Cómo funciona el precio ahora:**
+1. La app muestra un **estimado**.
+2. Al confirmar, pide la **cotización al servidor**. Si difiere en Bs 1 o más, muestra el precio fijo y pide confirmación.
+3. Se autoriza la tarjeta por **exactamente** ese monto.
+4. La reserva se crea en el servidor con ese precio.
+5. Se **cobra al completar** el viaje y la retención **se libera si se cancela**.
 
 ### Fase 2: Experiencia premium diferencial (3–4 semanas)
 1. **Seguimiento de vuelos** (AeroDataBox / FlightAware): la recogida se ajusta sola al retraso, con 60 min de espera gratis en aeropuerto y 15 min en ciudad.
@@ -126,13 +139,15 @@ El navy transmite seguridad corporativa y el champagne transmite hospitalidad de
 ## 5. Cómo probar
 
 ```
-flutter test                      # 36 tests Dart
-(cd functions && npm test)        # 11 tests de reglas de negocio
+flutter test                      # 38 tests Dart
+(cd functions && npm test)        # 21 tests de reglas de negocio y precios
 (cd rules-tests && npm test)      # 18 tests de reglas de seguridad (requiere Java)
 ```
 
-**Deploy de este cambio:**
+**Deploy:**
 1. `firebase functions:secrets:set STRIPE_SECRET_KEY`
 2. `firebase deploy --only functions,firestore`
+
+> ⚠️ **Despliega Functions y reglas juntos, y antes que la app.** La app nueva crea reservas con `quoteBooking`/`createBooking`. Las reglas nuevas impiden crear reservas desde versiones viejas de la app.
 
 > ⚠️ Si ya hay usuarios con `role: admin` creados indebidamente en producción, hay que revisarlos a mano en Firestore.

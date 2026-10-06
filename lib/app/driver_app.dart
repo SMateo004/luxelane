@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
+import '../core/services/notification_service.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/booking/presentation/bloc/booking_bloc.dart';
 import '../features/driver/presentation/bloc/driver_bloc.dart';
@@ -38,6 +39,8 @@ class _DriverAppState extends State<DriverApp> {
         _notificationBloc.add(
           NotificationWatchStarted(userId: state.user.id),
         );
+        // Drivers must receive "new booking" pushes.
+        sl<NotificationService>().init(userId: state.user.id);
       }
     });
   }

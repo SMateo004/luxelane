@@ -498,7 +498,7 @@ class _RatingDialogState extends State<_RatingDialog> {
                         horizontal: LuxSpacing.xs),
                     child: Icon(
                       star <= _rating ? Icons.star_rounded : Icons.star_outline_rounded,
-                      color: LuxColors.sapphire,
+                      color: LuxColors.accent,
                       size: 36,
                     ),
                   ),
@@ -508,7 +508,7 @@ class _RatingDialogState extends State<_RatingDialog> {
             const SizedBox(height: LuxSpacing.md),
             Text(
               _ratingLabel(_rating),
-              style: LuxTypography.caption.copyWith(color: LuxColors.sapphire),
+              style: LuxTypography.caption.copyWith(color: LuxColors.accent),
             ),
           ],
         ),

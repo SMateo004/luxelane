@@ -81,6 +81,17 @@ abstract class VehicleRepository {
 // ---------------------------------------------------------------------------
 
 abstract class BookingRepository {
+  /// Asks the backend for a fixed price (valid ~15 min).
+  Future<Either<Failure, Quote>> requestQuote({
+    required VehicleClass vehicleClass,
+    required ServiceType serviceType,
+    required Place origin,
+    Place? destination,
+    double? routeDistanceKm,
+    int? hours,
+  });
+
+  /// Creates the booking server-side from [Booking.quoteId].
   Future<Either<Failure, Booking>> createBooking(Booking booking);
   Future<Either<Failure, Booking>> getBookingById(String bookingId);
   Future<Either<Failure, List<Booking>>> getBookingsByRider(String riderId);
@@ -132,9 +143,9 @@ abstract class RideRepository {
 // ---------------------------------------------------------------------------
 
 abstract class PaymentRepository {
+  /// Authorises the card for the quoted amount; returns the client secret.
   Future<Either<Failure, String>> createPaymentIntent({
-    required double amount,
-    required String currency,
+    required String quoteId,
     required String stripeCustomerId,
   });
   Future<Either<Failure, Payment>> capturePayment({

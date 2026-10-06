@@ -12,20 +12,17 @@ class CreatePaymentIntentUseCase
   @override
   Future<Either<Failure, String>> call(CreateIntentParams params) =>
       _repo.createPaymentIntent(
-        amount: params.amount,
-        currency: params.currency,
+        quoteId: params.quoteId,
         stripeCustomerId: params.stripeCustomerId,
       );
 }
 
 class CreateIntentParams {
   const CreateIntentParams({
-    required this.amount,
-    required this.currency,
+    required this.quoteId,
     required this.stripeCustomerId,
   });
-  final double amount;
-  final String currency;
+  final String quoteId;
   final String stripeCustomerId;
 }
 

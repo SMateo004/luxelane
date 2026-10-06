@@ -103,7 +103,7 @@ class _WebNav extends StatelessWidget {
         height: 68,
         decoration: const BoxDecoration(
           color: Colors.white,
-          border: Border(bottom: BorderSide(color: Color(0xFFE8E5DF))),
+          border: Border(bottom: BorderSide(color: Color(0xFFE8E2D6))),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 56),
         child: Row(
@@ -124,7 +124,7 @@ class _WebNav extends StatelessWidget {
               const SizedBox(width: 32),
               _TextNavBtn('Para empresas', () {}),
               const SizedBox(width: 40),
-              Container(width: 1, height: 18, color: const Color(0xFFDDDAD4)),
+              Container(width: 1, height: 18, color: const Color(0xFFE4DED2)),
               const SizedBox(width: 40),
               _TextNavBtn('Iniciar sesión', () => context.go('/login')),
               const SizedBox(width: 20),
@@ -137,7 +137,7 @@ class _WebNav extends StatelessWidget {
               const SizedBox(width: 40),
               _FilledNavBtn(label: 'Reservar un viaje', onTap: () => context.go('/')),
               const SizedBox(width: 12),
-              NotificationBell(color: const Color(0xFF111111)),
+              NotificationBell(color: const Color(0xFF0B1220)),
               const SizedBox(width: 8),
               _AvatarBtn(auth: auth),
             ],
@@ -157,13 +157,13 @@ class _WordmarkLogo extends StatelessWidget {
             width: 26,
             height: 26,
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFF111111)),
+              border: Border.all(color: const Color(0xFF0B1220)),
             ),
             child: const Center(
               child: Text(
                 'L',
                 style: TextStyle(
-                  color: Color(0xFF111111),
+                  color: Color(0xFF0B1220),
                   fontSize: 15,
                   fontFamily: 'Cormorant Garamond',
                   fontWeight: FontWeight.w500,
@@ -175,7 +175,7 @@ class _WordmarkLogo extends StatelessWidget {
           const Text(
             'LUXELANE',
             style: TextStyle(
-              color: Color(0xFF111111),
+              color: Color(0xFF0B1220),
               fontSize: 12,
               fontFamily: 'Montserrat',
               fontWeight: FontWeight.w600,
@@ -195,7 +195,7 @@ class _TextNavBtn extends StatelessWidget {
   Widget build(BuildContext context) => TextButton(
         onPressed: onTap,
         style: TextButton.styleFrom(
-          foregroundColor: const Color(0xFF666666),
+          foregroundColor: const Color(0xFF5E6676),
           minimumSize: Size.zero,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           padding: EdgeInsets.zero,
@@ -221,7 +221,7 @@ class _FilledNavBtn extends StatelessWidget {
         child: ElevatedButton(
           onPressed: onTap,
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF111111),
+            backgroundColor: const Color(0xFF0B1220),
             foregroundColor: Colors.white,
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -260,14 +260,14 @@ class _AvatarBtn extends StatelessWidget {
         height: 36,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xFFDDDAD4)),
-          color: const Color(0xFFF5F4F0),
+          border: Border.all(color: const Color(0xFFE4DED2)),
+          color: const Color(0xFFFAF8F4),
         ),
         child: Center(
           child: Text(
             initial,
             style: const TextStyle(
-              color: Color(0xFF111111),
+              color: Color(0xFF0B1220),
               fontWeight: FontWeight.w500,
               fontSize: 13,
               fontFamily: 'Montserrat',

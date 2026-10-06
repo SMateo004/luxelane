@@ -228,12 +228,6 @@ class _ProfileBody extends StatelessWidget {
             onChanged: onLanguageChanged,
           ),
           _PrefTile(
-            label: 'Moneda',
-            value: currency,
-            options: const ['USD', 'EUR', 'GBP', 'BOB'],
-            onChanged: onCurrencyChanged,
-          ),
-          _PrefTile(
             label: 'Notificaciones',
             value: notifications,
             options: const ['Todas', 'Solo importantes', 'Ninguna'],
@@ -374,7 +368,7 @@ class _ProfileHeader extends StatelessWidget {
                       fontFamily: 'Cormorant Garamond',
                       fontSize: 36,
                       fontWeight: FontWeight.w600,
-                      color: LuxColors.sapphire,
+                      color: LuxColors.accent,
                     ))
                 : null,
           ),
@@ -385,10 +379,10 @@ class _ProfileHeader extends StatelessWidget {
             padding: const EdgeInsets.symmetric(
                 horizontal: LuxSpacing.sm, vertical: LuxSpacing.xs),
             decoration: BoxDecoration(
-              color: LuxColors.sapphireSubtle,
+              color: LuxColors.accentSubtle,
               borderRadius: BorderRadius.circular(LuxRadius.sm),
               border:
-                  Border.all(color: LuxColors.sapphire.withOpacity(0.4)),
+                  Border.all(color: LuxColors.accent.withOpacity(0.4)),
             ),
             child: Text(
               user.role == UserRole.admin
@@ -397,7 +391,7 @@ class _ProfileHeader extends StatelessWidget {
                       ? 'CHÓFER'
                       : 'PASAJERO',
               style: LuxTypography.caption.copyWith(
-                color: LuxColors.sapphire,
+                color: LuxColors.accent,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.2,
               ),
@@ -450,7 +444,7 @@ class _StatCard extends StatelessWidget {
           children: [
             Text(value,
                 style: LuxTypography.headlineLarge
-                    .copyWith(color: LuxColors.sapphire)),
+                    .copyWith(color: LuxColors.accent)),
             const SizedBox(height: 4),
             Text(label.toUpperCase(), style: LuxTypography.caption),
           ],
@@ -489,7 +483,7 @@ class _PrefTile extends StatelessWidget {
                             child: Text(o, style: LuxTypography.bodyLarge)),
                         if (o == value)
                           const Icon(Icons.check_rounded,
-                              color: LuxColors.sapphire, size: 18),
+                              color: LuxColors.accent, size: 18),
                       ],
                     ),
                   ),

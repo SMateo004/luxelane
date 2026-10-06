@@ -16,15 +16,13 @@ abstract class PaymentEvent extends Equatable {
 
 class PaymentIntentRequested extends PaymentEvent {
   const PaymentIntentRequested({
-    required this.amount,
-    required this.currency,
+    required this.quoteId,
     required this.stripeCustomerId,
   });
-  final double amount;
-  final String currency;
+  final String quoteId;
   final String stripeCustomerId;
   @override
-  List<Object?> get props => [amount, currency, stripeCustomerId];
+  List<Object?> get props => [quoteId, stripeCustomerId];
 }
 
 class PaymentCaptureRequested extends PaymentEvent {
@@ -166,8 +164,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   ) async {
     emit(const PaymentLoading());
     final result = await _repo.createPaymentIntent(
-      amount: event.amount,
-      currency: event.currency,
+      quoteId: event.quoteId,
       stripeCustomerId: event.stripeCustomerId,
     );
     result.fold(

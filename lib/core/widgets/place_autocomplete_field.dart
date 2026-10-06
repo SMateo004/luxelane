@@ -54,7 +54,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   Color get _borderColor => widget.glass ? Colors.transparent
       : (_isDark ? LuxColors.blackBorder   : const Color(0xFFE4E1DA));
   Color get _focusBorder => widget.glass ? Colors.transparent
-      : (_isDark ? LuxColors.sapphire.withOpacity(0.6) : const Color(0xFF111111));
+      : (_isDark ? LuxColors.accent.withOpacity(0.6) : const Color(0xFF111111));
   Color get _iconColor   => widget.glass ? const Color(0x99FFFFFF)
       : (_isDark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA));
   Color get _textColor   => widget.glass ? Colors.white

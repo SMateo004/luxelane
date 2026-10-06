@@ -6,6 +6,8 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/config/env.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/repositories/repositories.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
@@ -31,7 +33,7 @@ const _kTextPrimary  = LD.ink;           // #0D1B2E
 const _kTextSub      = LD.ink2;          // #2C3D55
 const _kTextTertiary = LD.ink3;          // #637490
 const _kDivider      = LD.border;        // #DDE4F0
-const _kPanelAccent  = LD.sph;           // #1B4F8A sapphire
+const _kPanelAccent  = LD.accent;        // deep champagne (text, lines)
 
 class BookingScreen extends StatefulWidget {
   const BookingScreen({super.key});
@@ -65,6 +67,7 @@ class _BookingScreenState extends State<BookingScreen> {
   List<Map<String, dynamic>> _savedCards = [];
   String? _selectedCardId;
   bool _awaitingPaymentIntent = false;
+  Quote? _quote;
 
   // Scroll-based sticky selector
   final ScrollController _leftScrollCtrl = ScrollController();
@@ -147,21 +150,86 @@ class _BookingScreenState extends State<BookingScreen> {
     final freshState = context.read<AuthBloc>().state;
     if (freshState is! AuthAuthenticated) return;
     final user = freshState.user;
+
+    final origin = _formData?.origin;
+    final destination = _formData?.destination ??
+        (_service == ServiceType.byTheHour ? origin : null);
+    if (origin == null || destination == null) {
+      showLuxSnackbar(context, 'Selecciona el punto de recogida y el destino',
+          isError: true);
+      return;
+    }
     setState(() => _loading = true);
 
+    // 1. Fixed price from the server (the on-screen price is an estimate).
+    final quoteResult = await sl<BookingRepository>().requestQuote(
+      vehicleClass: _selected,
+      serviceType: _service,
+      origin: origin,
+      destination: _formData?.destination,
+      routeDistanceKm: _formData?.routeDistanceKm,
+      hours: _service == ServiceType.byTheHour ? _hours : null,
+    );
+    if (!mounted) return;
+    final quote = quoteResult.fold<Quote?>((f) {
+      setState(() => _loading = false);
+      showLuxSnackbar(context, f.message, isError: true);
+      return null;
+    }, (q) => q);
+    if (quote == null) return;
+
+    if ((quote.amount - _price).abs() >= 1) {
+      final accepted = await _confirmUpdatedPrice(quote.amount);
+      if (!mounted) return;
+      if (accepted != true) {
+        setState(() => _loading = false);
+        return;
+      }
+    }
+    _quote = quote;
+
+    // 2. Authorise the card for exactly the quoted amount.
     if (user.stripeCustomerId != null &&
         user.stripeCustomerId!.isNotEmpty &&
         _selectedCardId != null) {
       setState(() => _awaitingPaymentIntent = true);
       context.read<PaymentBloc>().add(PaymentIntentRequested(
-            amount: _price,
-            currency: AppConfig.currency,
+            quoteId: quote.id,
             stripeCustomerId: user.stripeCustomerId!,
           ));
       return;
     }
     _createBooking();
   }
+
+  Future<bool?> _confirmUpdatedPrice(double amount) => showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: _kCardBg,
+          title: const Text('Precio confirmado',
+              style: TextStyle(fontFamily: kSerif, fontSize: 24, color: _kTextPrimary)),
+          content: Text(
+            'El precio fijo de tu viaje es ${LuxMoney.format(amount)}. '
+            'No cambiará aunque haya tráfico.',
+            style: const TextStyle(fontFamily: kSans, fontSize: 14, height: 1.5, color: _kTextSub),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancelar', style: TextStyle(color: _kTextTertiary)),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: LD.cta,
+                foregroundColor: LD.onCta,
+                elevation: 0,
+              ),
+              child: const Text('Continuar'),
+            ),
+          ],
+        ),
+      );
 
   Future<void> _handleStripeConfirm(String clientSecret) async {
     if (_selectedCardId == null) return;
@@ -228,6 +296,11 @@ class _BookingScreenState extends State<BookingScreen> {
           isError: true);
       return;
     }
+    final quote = _quote;
+    if (quote == null) {
+      setState(() => _loading = false);
+      return;
+    }
     final scheduledAt = _formData?.scheduledAt ?? DateTime.now().add(const Duration(hours: 1));
 
     String? combinedNotes;
@@ -248,7 +321,7 @@ class _BookingScreenState extends State<BookingScreen> {
           serviceType: _service,
           scheduledAt: scheduledAt,
           riderId: authState.user.id,
-          estimatedPrice: _price,
+          estimatedPrice: quote.amount,
           notes: combinedNotes,
           passengerCount: _passengers,
           luggageCount: _luggage,
@@ -256,6 +329,7 @@ class _BookingScreenState extends State<BookingScreen> {
           hours: _service == ServiceType.byTheHour ? _hours : null,
           currency: AppConfig.currency,
           stripePaymentIntentId: paymentIntentId,
+          quoteId: quote.id,
         ));
   }
 
@@ -271,7 +345,7 @@ class _BookingScreenState extends State<BookingScreen> {
         BlocListener<BookingBloc, BookingState>(listener: (ctx, state) {
           if (state is BookingCreated) {
             setState(() => _loading = false);
-            ctx.go('/ride/${state.booking.id}');
+            ctx.go('/reserva/${state.booking.id}/confirmada', extra: state.booking);
           }
           if (state is BookingError) {
             setState(() => _loading = false);
@@ -1684,12 +1758,12 @@ class _BookingScreenState extends State<BookingScreen> {
                     color: _kCardBg,
                     borderRadius: BorderRadius.zero,
                     border: Border.all(
-                        color: isSel ? LuxColors.sapphire : _kBorder,
+                        color: isSel ? LD.accent : _kBorder,
                         width: isSel ? 1.5 : 1),
                   ),
                   child: Row(children: [
                     Icon(Icons.credit_card_outlined, size: 20,
-                        color: isSel ? LuxColors.sapphire : _kTextSub),
+                        color: isSel ? LD.accent : _kTextSub),
                     const SizedBox(width: 12),
                     Expanded(child: Text('$brand •••• $last4',
                         style: const TextStyle(fontFamily: kSans,
@@ -1698,8 +1772,8 @@ class _BookingScreenState extends State<BookingScreen> {
                       Container(
                         width: 18, height: 18,
                         decoration: const BoxDecoration(
-                            color: LuxColors.sapphire, shape: BoxShape.circle),
-                        child: const Icon(Icons.check, size: 11, color: Colors.white),
+                            color: LD.cta, shape: BoxShape.circle),
+                        child: const Icon(Icons.check, size: 11, color: LD.onCta),
                       ),
                   ]),
                 ),
@@ -2501,21 +2575,21 @@ class _ReserveBar extends StatelessWidget {
             duration: const Duration(milliseconds: 180),
             width: double.infinity,
             height: 52,
-            color: loading ? _kPanelAccent.withValues(alpha: 0.6) : _kPanelAccent,
+            color: loading ? LD.cta.withValues(alpha: 0.6) : LD.cta,
             child: Center(
               child: loading
                   ? const SizedBox(
                       width: 18, height: 18,
                       child: CircularProgressIndicator(
-                          strokeWidth: 1.5, color: Colors.white))
+                          strokeWidth: 1.5, color: LD.onCta))
                   : Text(
-                      'RESERVE ${selected.label.toUpperCase()}',
+                      'RESERVAR ${selected.label.toUpperCase()}',
                       style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 11,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         letterSpacing: 2.0,
-                        color: Colors.white,
+                        color: LD.onCta,
                         decoration: TextDecoration.none,
                       ),
                     ),
@@ -3035,7 +3109,7 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
                         _showRegister
                             ? '¿Ya tienes cuenta? Inicia sesión'
                             : '¿No tienes cuenta? Crear una',
-                        style: LuxTypography.bodyMedium.copyWith(color: LuxColors.sapphire)),
+                        style: LuxTypography.bodyMedium.copyWith(color: LD.accent)),
                     ),
                   ]),
             ),
@@ -3330,8 +3404,8 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                 child: ElevatedButton(
                   onPressed: _confirm,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: _kPanelAccent,
-                    foregroundColor: Colors.white,
+                    backgroundColor: LD.cta,
+                    foregroundColor: LD.onCta,
                     elevation: 0,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 44, vertical: 16),

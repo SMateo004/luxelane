@@ -50,12 +50,12 @@ class DriverShell extends StatelessWidget {
           ),
           type: BottomNavigationBarType.fixed,
           backgroundColor: LuxColors.blackSurface,
-          selectedItemColor: LuxColors.sapphire,
+          selectedItemColor: LuxColors.accent,
           unselectedItemColor: LuxColors.whiteTertiary,
           showSelectedLabels: true,
           showUnselectedLabels: true,
           selectedLabelStyle: LuxTypography.caption
-              .copyWith(color: LuxColors.sapphire, fontSize: 10),
+              .copyWith(color: LuxColors.accent, fontSize: 10),
           unselectedLabelStyle:
               LuxTypography.caption.copyWith(fontSize: 10),
           items: _items,

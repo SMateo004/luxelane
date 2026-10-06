@@ -66,11 +66,11 @@ class _PaymentScreenState extends State<PaymentScreen> {
             actions: [
               TextButton.icon(
                 onPressed: () => context.push('/payment/add'),
-                icon: const Icon(Icons.add, size: 18, color: LuxColors.sapphire),
+                icon: const Icon(Icons.add, size: 18, color: LuxColors.accent),
                 label: Text(
                   'AGREGAR',
                   style: LuxTypography.labelLarge
-                      .copyWith(color: LuxColors.sapphire, fontSize: 11),
+                      .copyWith(color: LuxColors.accent, fontSize: 11),
                 ),
               ),
             ],
@@ -180,7 +180,7 @@ class _CardTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
               ),
               child: const Icon(Icons.credit_card_outlined,
-                  color: LuxColors.sapphire, size: 20),
+                  color: LuxColors.accent, size: 20),
             ),
             const SizedBox(width: LuxSpacing.md),
             Expanded(

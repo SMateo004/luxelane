@@ -36,7 +36,7 @@ class LuxErrorScreen extends StatelessWidget {
               children: [
                 const Icon(
                   Icons.warning_amber_rounded,
-                  color: LuxColors.sapphire,
+                  color: LuxColors.accent,
                   size: 56,
                 ),
                 const SizedBox(height: LuxSpacing.md),
@@ -61,7 +61,7 @@ class LuxErrorScreen extends StatelessWidget {
                     onPressed: onRetry,
                     child: const Text(
                       'Intentar de nuevo',
-                      style: TextStyle(color: LuxColors.sapphire),
+                      style: TextStyle(color: LuxColors.accent),
                     ),
                   ),
                 ],
