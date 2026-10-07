@@ -212,13 +212,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get servicesAirportFaq2Q => '¿Merece la pena reservar un traslado desde el aeropuerto?';
 
   @override
-  String get servicesAirportFaq3A => 'Un traslado al aeropuerto de pago es un servicio de transporte con un conductor profesional reservado con antelación. El precio incluye propinas, peajes y cualquier otro gasto adicional.';
+  String get servicesAirportFaq3A => 'Un traslado al aeropuerto de pago es un servicio de transporte con un conductor profesional reservado con antelación, con un precio fijo en bolivianos que se confirma antes de reservar.';
 
   @override
   String get servicesAirportFaq3Q => '¿Qué es un traslado al aeropuerto de pago?';
 
   @override
-  String get servicesAirportFeatureFlexBody => 'Manténgase flexible. Es rápido y fácil cancelar o hacer cambios en cualquier viaje.';
+  String get servicesAirportFeatureFlexBody => 'Manténgase flexible: cancele sin costo hasta 1 hora antes de la recogida, desde la app.';
 
   @override
   String get servicesAirportFeatureFlexTitle => 'Flexibilidad de viaje';
@@ -282,16 +282,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get servicesHourlyBullet3 => 'Disfruta con tranquilidad: Viaja en un vehículo premium';
 
   @override
-  String get servicesHourlyBullet4 => 'Tarifas competitivas: Incluye 40 km de recorrido por hora';
+  String get servicesHourlyBullet4 => 'Tarifa fija por hora: conoces el precio antes de reservar';
 
   @override
   String get servicesHourlyBullet5 => 'Fiabilidad: Chóferes formados en los más altos estándares';
 
   @override
-  String get servicesHourlyBullet6 => 'Sostenibilidad: Cada viaje se compensa con emisiones de carbono';
+  String get servicesHourlyBullet6 => 'Chóferes verificados por nuestro equipo';
 
   @override
-  String get servicesHourlyBullet7 => 'Wifi disponible en la mayoría de los vehículos';
+  String get servicesHourlyBullet7 => 'Seguimiento en vivo de tu chófer desde la app';
 
   @override
   String get servicesHourlyBullet8 => 'Diseñado para la ciudad: Comienza y termina en la misma ciudad';
@@ -314,7 +314,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get servicesHourlyFaq2Q => '¿Puedo modificar mi itinerario durante el viaje?';
 
   @override
-  String get servicesHourlyFaq3A => 'Una hora antes de la recogida se te enviarán un SMS y un correo electrónico con el nombre y número del conductor.';
+  String get servicesHourlyFaq3A => 'Cuando se asigna tu chófer recibirás una notificación y verás en la app su nombre, vehículo, placa y teléfono.';
 
   @override
   String get servicesHourlyFaq3Q => '¿Cuándo recibiré los datos del chófer?';
@@ -346,28 +346,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get servicesHourlyPanelTitle => 'Chófer por horas';
 
   @override
-  String get servicesHourlyReachBanner => 'Disponible en más de 60 países · Cientos de ciudades';
-
-  @override
-  String get servicesHourlyReview1 => 'El chófer fue increíble, me ayudó con mis maletas y se detuvo en todos los lugares que quería ver.';
-
-  @override
-  String get servicesHourlyReview1Origin => 'Estados Unidos';
-
-  @override
-  String get servicesHourlyReview2 => 'Los chóferes no son simples conductores sino profesionales altamente capacitados.';
-
-  @override
-  String get servicesHourlyReview2Origin => 'Portugal';
-
-  @override
-  String get servicesHourlyReview3 => 'La aplicación que todos los viajeros necesitan conocer. No he encontrado un lugar donde no funcione.';
-
-  @override
-  String get servicesHourlyReview3Origin => 'Canadá';
-
-  @override
-  String get servicesHourlyReviewsTitle => 'Lo que dicen nuestros clientes';
+  String get servicesHourlyReachBanner => 'Disponible en Santa Cruz de la Sierra · Reserva desde la app o la web';
 
   @override
   String get servicesHourlyServiceBody => 'Olvídate de cambiar de medio de transporte cuando tengas que hacer viajes con múltiples paradas. Con Luxelane, defines tu itinerario: tú decides dónde y cuándo ir.';
@@ -517,7 +496,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get servicesVehicleGroups => 'Ideal para grupos y familias';
 
   @override
-  String get servicesVehicleMostCities => 'Disponible en la mayoría de ciudades';
+  String get servicesVehicleMostCities => 'Disponible en Santa Cruz de la Sierra';
 
   @override
   String get servicesVehiclePremiumLuxury => 'Servicio de lujo premium';

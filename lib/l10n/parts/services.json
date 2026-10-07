@@ -1,177 +1,546 @@
 {
-  "servicesNavHome": {"es": "INICIO", "en": "HOME", "pt": "INÍCIO", "description": "Service landing pages: top navigation link"},
-  "servicesNavServices": {"es": "SERVICIOS", "en": "SERVICES", "pt": "SERVIÇOS", "description": "Service landing pages: top navigation item"},
-  "servicesNavFleet": {"es": "FLOTA", "en": "FLEET", "pt": "FROTA", "description": "Service landing pages: top navigation item"},
-  "servicesNavBusiness": {"es": "PARA EMPRESAS", "en": "FOR BUSINESS", "pt": "PARA EMPRESAS", "description": "Service landing pages: top navigation item"},
-  "servicesBookRide": {"es": "RESERVAR UN VIAJE", "en": "BOOK A RIDE", "pt": "RESERVAR VIAGEM", "description": "Service landing pages: navigation bar CTA"},
-  "servicesBookNow": {"es": "RESERVAR AHORA", "en": "BOOK NOW", "pt": "RESERVAR AGORA", "description": "Service landing pages: CTA button"},
-  "servicesSelect": {"es": "SELECCIONAR", "en": "SELECT", "pt": "SELECIONAR", "description": "Service landing pages: booking panel CTA"},
-  "servicesBackHome": {"es": "← Volver al inicio", "en": "← Back to home", "pt": "← Voltar ao início", "description": "Service landing pages: link back to the home page"},
-  "servicesToggleOneWay": {"es": "Ida", "en": "One way", "pt": "Só ida", "description": "Booking panel toggle: one-way transfer (the other option is serviceByTheHour)"},
-  "servicesFromHint": {"es": "De - Dirección, aeropuerto, hotel...", "en": "From – address, airport, hotel…", "pt": "De – endereço, aeroporto, hotel…", "description": "Booking panel: pickup field hint"},
-  "servicesToHint": {"es": "A - Dirección, aeropuerto, hotel...", "en": "To – address, airport, hotel…", "pt": "Para – endereço, aeroporto, hotel…", "description": "Booking panel: destination field hint"},
-  "servicesFaqTitle": {"es": "Preguntas frecuentes", "en": "Frequently asked questions", "pt": "Perguntas frequentes"},
+  "servicesNavHome": {
+    "es": "INICIO",
+    "en": "HOME",
+    "pt": "INÍCIO",
+    "description": "Service landing pages: top navigation link"
+  },
+  "servicesNavServices": {
+    "es": "SERVICIOS",
+    "en": "SERVICES",
+    "pt": "SERVIÇOS",
+    "description": "Service landing pages: top navigation item"
+  },
+  "servicesNavFleet": {
+    "es": "FLOTA",
+    "en": "FLEET",
+    "pt": "FROTA",
+    "description": "Service landing pages: top navigation item"
+  },
+  "servicesNavBusiness": {
+    "es": "PARA EMPRESAS",
+    "en": "FOR BUSINESS",
+    "pt": "PARA EMPRESAS",
+    "description": "Service landing pages: top navigation item"
+  },
+  "servicesBookRide": {
+    "es": "RESERVAR UN VIAJE",
+    "en": "BOOK A RIDE",
+    "pt": "RESERVAR VIAGEM",
+    "description": "Service landing pages: navigation bar CTA"
+  },
+  "servicesBookNow": {
+    "es": "RESERVAR AHORA",
+    "en": "BOOK NOW",
+    "pt": "RESERVAR AGORA",
+    "description": "Service landing pages: CTA button"
+  },
+  "servicesSelect": {
+    "es": "SELECCIONAR",
+    "en": "SELECT",
+    "pt": "SELECIONAR",
+    "description": "Service landing pages: booking panel CTA"
+  },
+  "servicesBackHome": {
+    "es": "← Volver al inicio",
+    "en": "← Back to home",
+    "pt": "← Voltar ao início",
+    "description": "Service landing pages: link back to the home page"
+  },
+  "servicesToggleOneWay": {
+    "es": "Ida",
+    "en": "One way",
+    "pt": "Só ida",
+    "description": "Booking panel toggle: one-way transfer (the other option is serviceByTheHour)"
+  },
+  "servicesFromHint": {
+    "es": "De - Dirección, aeropuerto, hotel...",
+    "en": "From – address, airport, hotel…",
+    "pt": "De – endereço, aeroporto, hotel…",
+    "description": "Booking panel: pickup field hint"
+  },
+  "servicesToHint": {
+    "es": "A - Dirección, aeropuerto, hotel...",
+    "en": "To – address, airport, hotel…",
+    "pt": "Para – endereço, aeroporto, hotel…",
+    "description": "Booking panel: destination field hint"
+  },
+  "servicesFaqTitle": {
+    "es": "Preguntas frecuentes",
+    "en": "Frequently asked questions",
+    "pt": "Perguntas frequentes"
+  },
   "servicesFooterRights": {
     "es": "© {year} Luxelane · Todos los derechos reservados",
     "en": "© {year} Luxelane · All rights reserved",
     "pt": "© {year} Luxelane · Todos os direitos reservados",
     "description": "Footer of the service landing pages",
-    "placeholders": {"year": {"type": "String", "example": "2026"}}
+    "placeholders": {
+      "year": {
+        "type": "String",
+        "example": "2026"
+      }
+    }
   },
   "servicesQuote": {
     "es": "“{quote}”",
     "en": "“{quote}”",
     "pt": "“{quote}”",
     "description": "Wraps a customer review in quotation marks",
-    "placeholders": {"quote": {"type": "String"}}
+    "placeholders": {
+      "quote": {
+        "type": "String"
+      }
+    }
   },
-  "servicesFeaturePriceTitle": {"es": "Precios competitivos", "en": "Competitive pricing", "pt": "Preços competitivos"},
-
+  "servicesFeaturePriceTitle": {
+    "es": "Precios competitivos",
+    "en": "Competitive pricing",
+    "pt": "Preços competitivos"
+  },
   "servicesUpToPeople": {
     "es": "{count, plural, =1{Hasta 1 persona} other{Hasta {count} personas}}",
     "en": "{count, plural, =1{Up to 1 passenger} other{Up to {count} passengers}}",
     "pt": "{count, plural, =1{Até 1 passageiro} other{Até {count} passageiros}}",
     "description": "Vehicle class capacity",
-    "placeholders": {"count": {"type": "int"}}
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "servicesUpToLargeBags": {
     "es": "{count, plural, =1{Hasta 1 maleta grande} other{Hasta {count} maletas grandes}}",
     "en": "{count, plural, =1{Up to 1 large suitcase} other{Up to {count} large suitcases}}",
     "pt": "{count, plural, =1{Até 1 mala grande} other{Até {count} malas grandes}}",
     "description": "Vehicle class luggage capacity",
-    "placeholders": {"count": {"type": "int"}}
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
-  "servicesVehicleBusinessModels": {"es": "Mercedes Clase E, BMW Serie 5 o similar", "en": "Mercedes E-Class, BMW 5 Series or similar", "pt": "Mercedes Classe E, BMW Série 5 ou similar"},
-  "servicesVehicleFirstModels": {"es": "Mercedes Clase S, BMW Serie 7 o similar", "en": "Mercedes S-Class, BMW 7 Series or similar", "pt": "Mercedes Classe S, BMW Série 7 ou similar"},
-  "servicesVehicleVanModels": {"es": "Mercedes Clase V, Toyota Alphard o similar", "en": "Mercedes V-Class, Toyota Alphard or similar", "pt": "Mercedes Classe V, Toyota Alphard ou similar"},
-  "servicesVehicleMostCities": {"es": "Disponible en la mayoría de ciudades", "en": "Available in most cities", "pt": "Disponível na maioria das cidades"},
-  "servicesVehiclePremiumLuxury": {"es": "Servicio de lujo premium", "en": "Our most refined experience", "pt": "Nossa experiência mais sofisticada"},
-  "servicesVehicleGroups": {"es": "Ideal para grupos y familias", "en": "Ideal for groups and families", "pt": "Ideal para grupos e famílias"},
-
-  "servicesAirportPanelTitle": {"es": "Traslados al aeropuerto", "en": "Airport transfers", "pt": "Traslados para o aeroporto"},
-  "servicesAirportPanelSubtitle": {"es": "Ida o Por horas · Sin esperas", "en": "One way or by the hour · No waiting", "pt": "Só ida ou por hora · Sem espera"},
+  "servicesVehicleBusinessModels": {
+    "es": "Mercedes Clase E, BMW Serie 5 o similar",
+    "en": "Mercedes E-Class, BMW 5 Series or similar",
+    "pt": "Mercedes Classe E, BMW Série 5 ou similar"
+  },
+  "servicesVehicleFirstModels": {
+    "es": "Mercedes Clase S, BMW Serie 7 o similar",
+    "en": "Mercedes S-Class, BMW 7 Series or similar",
+    "pt": "Mercedes Classe S, BMW Série 7 ou similar"
+  },
+  "servicesVehicleVanModels": {
+    "es": "Mercedes Clase V, Toyota Alphard o similar",
+    "en": "Mercedes V-Class, Toyota Alphard or similar",
+    "pt": "Mercedes Classe V, Toyota Alphard ou similar"
+  },
+  "servicesVehicleMostCities": {
+    "es": "Disponible en Santa Cruz de la Sierra",
+    "en": "Available in Santa Cruz de la Sierra",
+    "pt": "Disponível em Santa Cruz de la Sierra"
+  },
+  "servicesVehiclePremiumLuxury": {
+    "es": "Servicio de lujo premium",
+    "en": "Our most refined experience",
+    "pt": "Nossa experiência mais sofisticada"
+  },
+  "servicesVehicleGroups": {
+    "es": "Ideal para grupos y familias",
+    "en": "Ideal for groups and families",
+    "pt": "Ideal para grupos e famílias"
+  },
+  "servicesAirportPanelTitle": {
+    "es": "Traslados al aeropuerto",
+    "en": "Airport transfers",
+    "pt": "Traslados para o aeroporto"
+  },
+  "servicesAirportPanelSubtitle": {
+    "es": "Ida o Por horas · Sin esperas",
+    "en": "One way or by the hour · No waiting",
+    "pt": "Só ida ou por hora · Sem espera"
+  },
   "servicesAirportFreeWait": {
     "es": "El chófer esperará {minutes} minutos sin coste adicional.",
     "en": "Your chauffeur will wait up to {minutes} minutes at no extra cost.",
     "pt": "Seu motorista aguarda até {minutes} minutos sem custo adicional.",
     "description": "Airport booking panel: complimentary waiting time (WaitingPolicy.airportFreeMinutes)",
-    "placeholders": {"minutes": {"type": "int"}}
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
   },
-  "servicesAirportHeroEyebrow": {"es": "SERVICIO DE TRASLADOS", "en": "TRANSFER SERVICE", "pt": "SERVIÇO DE TRASLADOS"},
-  "servicesAirportHeroTitle": {"es": "Al aeropuerto sin\nestrés ni esperas", "en": "To the airport,\nwithout the stress", "pt": "Ao aeroporto sem\nestresse nem espera"},
-  "servicesAirportFeaturePriceBody": {"es": "Acceda a un servicio de primera calidad a precios basados en la distancia.", "en": "First-class service, fairly priced by distance.", "pt": "Serviço de primeira linha, com preço justo calculado pela distância."},
-  "servicesAirportFeatureFlightTitle": {"es": "Viaje al aeropuerto sin problemas", "en": "Effortless airport travel", "pt": "Ida ao aeroporto sem complicações"},
-  "servicesAirportFeatureFlightBody": {"es": "Relájese con la hora gratuita de espera y el seguimiento de vuelos.", "en": "Relax with a complimentary hour of waiting time and flight tracking.", "pt": "Relaxe com uma hora de espera gratuita e o acompanhamento do seu voo."},
-  "servicesAirportFeatureFlexTitle": {"es": "Flexibilidad de viaje", "en": "Flexible travel", "pt": "Flexibilidade na viagem"},
-  "servicesAirportFeatureFlexBody": {"es": "Manténgase flexible. Es rápido y fácil cancelar o hacer cambios en cualquier viaje.", "en": "Plans change. Cancelling or adjusting any ride is quick and easy.", "pt": "Planos mudam. Cancelar ou alterar qualquer viagem é rápido e fácil."},
-  "servicesAirportClassesTitle": {"es": "Descubre nuestras clases de servicio", "en": "Discover our service classes", "pt": "Conheça nossas categorias de serviço"},
-  "servicesAirportArriveTitle": {"es": "Llegue o salga del aeropuerto", "en": "Arrivals and departures, handled", "pt": "Chegadas e partidas, sem preocupação"},
+  "servicesAirportHeroEyebrow": {
+    "es": "SERVICIO DE TRASLADOS",
+    "en": "TRANSFER SERVICE",
+    "pt": "SERVIÇO DE TRASLADOS"
+  },
+  "servicesAirportHeroTitle": {
+    "es": "Al aeropuerto sin\nestrés ni esperas",
+    "en": "To the airport,\nwithout the stress",
+    "pt": "Ao aeroporto sem\nestresse nem espera"
+  },
+  "servicesAirportFeaturePriceBody": {
+    "es": "Acceda a un servicio de primera calidad a precios basados en la distancia.",
+    "en": "First-class service, fairly priced by distance.",
+    "pt": "Serviço de primeira linha, com preço justo calculado pela distância."
+  },
+  "servicesAirportFeatureFlightTitle": {
+    "es": "Viaje al aeropuerto sin problemas",
+    "en": "Effortless airport travel",
+    "pt": "Ida ao aeroporto sem complicações"
+  },
+  "servicesAirportFeatureFlightBody": {
+    "es": "Relájese con la hora gratuita de espera y el seguimiento de vuelos.",
+    "en": "Relax with a complimentary hour of waiting time and flight tracking.",
+    "pt": "Relaxe com uma hora de espera gratuita e o acompanhamento do seu voo."
+  },
+  "servicesAirportFeatureFlexTitle": {
+    "es": "Flexibilidad de viaje",
+    "en": "Flexible travel",
+    "pt": "Flexibilidade na viagem"
+  },
+  "servicesAirportFeatureFlexBody": {
+    "es": "Manténgase flexible: cancele sin costo hasta 1 hora antes de la recogida, desde la app.",
+    "en": "Stay flexible: cancel free of charge up to 1 hour before pickup, right from the app.",
+    "pt": "Fique tranquilo: cancele sem custo até 1 hora antes do embarque, direto no app."
+  },
+  "servicesAirportClassesTitle": {
+    "es": "Descubre nuestras clases de servicio",
+    "en": "Discover our service classes",
+    "pt": "Conheça nossas categorias de serviço"
+  },
+  "servicesAirportArriveTitle": {
+    "es": "Llegue o salga del aeropuerto",
+    "en": "Arrivals and departures, handled",
+    "pt": "Chegadas e partidas, sem preocupação"
+  },
   "servicesAirportArriveBody": {
     "es": "Un servicio de chófer de Luxelane busca alcanzar los estándares más altos posibles para todos sus pasajeros. Nuestros conductores profesionales pueden hacer un seguimiento de su vuelo y ajustar la hora de recogida si hay retrasos fuera de su control.",
     "en": "Every Luxelane chauffeur service is held to the highest standards, for every passenger. Our professional chauffeurs can track your flight and adjust your pickup time if delays beyond your control arise.",
     "pt": "Cada serviço de motorista Luxelane busca os mais altos padrões para todos os passageiros. Nossos motoristas profissionais podem acompanhar o seu voo e ajustar o horário do embarque se houver atrasos fora do seu controle."
   },
-  "servicesAirportConnectionsTitle": {"es": "Reservas de conexiones entre aeropuertos", "en": "Airport-to-airport connections", "pt": "Conexões entre aeroportos"},
+  "servicesAirportConnectionsTitle": {
+    "es": "Reservas de conexiones entre aeropuertos",
+    "en": "Airport-to-airport connections",
+    "pt": "Conexões entre aeroportos"
+  },
   "servicesAirportConnectionsBody": {
     "es": "Reservar un servicio de Luxelane es fácil. Simplemente proporcione los datos de recogida y destino y seleccione la clase del vehículo. El precio que ve es el precio que paga, sin cargos ocultos.",
     "en": "Booking Luxelane is effortless. Simply enter your pickup and destination and choose your vehicle class. The price you see is the price you pay, with no hidden fees.",
     "pt": "Reservar com a Luxelane é simples. Basta informar o local de embarque e o destino e escolher a categoria do veículo. O preço que você vê é o preço que você paga, sem taxas ocultas."
   },
-  "servicesAirportFaq1Q": {"es": "¿Qué hace un traslado al aeropuerto?", "en": "What is an airport transfer?", "pt": "O que é um traslado para o aeroporto?"},
+  "servicesAirportFaq1Q": {
+    "es": "¿Qué hace un traslado al aeropuerto?",
+    "en": "What is an airport transfer?",
+    "pt": "O que é um traslado para o aeroporto?"
+  },
   "servicesAirportFaq1A": {
     "es": "Un traslado al aeropuerto es un servicio de coche privado que lleva a los pasajeros de avión hacia y desde el aeropuerto. Los conductores profesionales pueden recoger a los pasajeros en la terminal después de recoger su equipaje.",
     "en": "An airport transfer is a private car service that takes air travelers to and from the airport. Professional chauffeurs can meet passengers at the terminal once they have collected their luggage.",
     "pt": "Um traslado para o aeroporto é um serviço de carro particular que leva passageiros de avião de e para o aeroporto. Motoristas profissionais podem receber os passageiros no terminal depois que eles retirarem a bagagem."
   },
-  "servicesAirportFaq2Q": {"es": "¿Merece la pena reservar un traslado desde el aeropuerto?", "en": "Is it worth booking an airport transfer?", "pt": "Vale a pena reservar um traslado do aeroporto?"},
+  "servicesAirportFaq2Q": {
+    "es": "¿Merece la pena reservar un traslado desde el aeropuerto?",
+    "en": "Is it worth booking an airport transfer?",
+    "pt": "Vale a pena reservar um traslado do aeroporto?"
+  },
   "servicesAirportFaq2A": {
     "es": "Los traslados al aeropuerto son una forma estupenda de evitar el estrés tanto al inicio como al final de un vuelo. Luxelane ofrece una amplia gama de opciones de traslado que se adaptan a tus necesidades.",
     "en": "An airport transfer is a wonderful way to take the stress out of both ends of your flight. Luxelane offers a wide range of transfer options tailored to your needs.",
     "pt": "Um traslado é uma ótima forma de evitar o estresse no início e no fim de qualquer voo. A Luxelane oferece uma ampla gama de opções de traslado que se adaptam às suas necessidades."
   },
-  "servicesAirportFaq3Q": {"es": "¿Qué es un traslado al aeropuerto de pago?", "en": "What is a prebooked airport transfer?", "pt": "O que é um traslado pago para o aeroporto?"},
-  "servicesAirportFaq3A": {
-    "es": "Un traslado al aeropuerto de pago es un servicio de transporte con un conductor profesional reservado con antelación. El precio incluye propinas, peajes y cualquier otro gasto adicional.",
-    "en": "A prebooked airport transfer is a ride with a professional chauffeur, reserved in advance. The price includes tips, tolls and any other additional costs.",
-    "pt": "Um traslado pago é um serviço de transporte com motorista profissional reservado com antecedência. O preço inclui gorjetas, pedágios e quaisquer outros custos adicionais."
+  "servicesAirportFaq3Q": {
+    "es": "¿Qué es un traslado al aeropuerto de pago?",
+    "en": "What is a prebooked airport transfer?",
+    "pt": "O que é um traslado pago para o aeroporto?"
   },
-
-  "servicesHourlyPanelTitle": {"es": "Chófer por horas", "en": "Chauffeur by the hour", "pt": "Motorista por hora"},
-  "servicesHourlyPanelSubtitle": {"es": "Tu itinerario · Tu ritmo", "en": "Your itinerary · Your pace", "pt": "Seu roteiro · Seu ritmo"},
+  "servicesAirportFaq3A": {
+    "es": "Un traslado al aeropuerto de pago es un servicio de transporte con un conductor profesional reservado con antelación, con un precio fijo en bolivianos que se confirma antes de reservar.",
+    "en": "A paid airport transfer is a transport service with a professional chauffeur booked in advance, at a fixed price in bolivianos confirmed before you book.",
+    "pt": "Um traslado pago ao aeroporto é um serviço de transporte com motorista profissional reservado com antecedência, com preço fixo em bolivianos confirmado antes da reserva."
+  },
+  "servicesHourlyPanelTitle": {
+    "es": "Chófer por horas",
+    "en": "Chauffeur by the hour",
+    "pt": "Motorista por hora"
+  },
+  "servicesHourlyPanelSubtitle": {
+    "es": "Tu itinerario · Tu ritmo",
+    "en": "Your itinerary · Your pace",
+    "pt": "Seu roteiro · Seu ritmo"
+  },
   "servicesHourlyDurationField": {
     "es": "Duración - {duration}",
     "en": "Duration – {duration}",
     "pt": "Duração – {duration}",
     "description": "Hourly booking panel: duration selector; duration is unitHours(n)",
-    "placeholders": {"duration": {"type": "String", "example": "2 horas"}}
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "2 horas"
+      }
+    }
   },
-  "servicesHourlyHeroEyebrow": {"es": "CONTRATACIÓN POR HORAS", "en": "HOURLY HIRE", "pt": "CONTRATAÇÃO POR HORA"},
-  "servicesHourlyHeroTitle": {"es": "Alquiler de chófer\npor horas y días", "en": "Chauffeur hire\nby the hour or day", "pt": "Motorista particular\npor hora ou por dia"},
-  "servicesHourlyServiceTitle": {"es": "Servicio de chófer por horas", "en": "Hourly chauffeur service", "pt": "Serviço de motorista por hora"},
+  "servicesHourlyHeroEyebrow": {
+    "es": "CONTRATACIÓN POR HORAS",
+    "en": "HOURLY HIRE",
+    "pt": "CONTRATAÇÃO POR HORA"
+  },
+  "servicesHourlyHeroTitle": {
+    "es": "Alquiler de chófer\npor horas y días",
+    "en": "Chauffeur hire\nby the hour or day",
+    "pt": "Motorista particular\npor hora ou por dia"
+  },
+  "servicesHourlyServiceTitle": {
+    "es": "Servicio de chófer por horas",
+    "en": "Hourly chauffeur service",
+    "pt": "Serviço de motorista por hora"
+  },
   "servicesHourlyServiceBody": {
     "es": "Olvídate de cambiar de medio de transporte cuando tengas que hacer viajes con múltiples paradas. Con Luxelane, defines tu itinerario: tú decides dónde y cuándo ir.",
     "en": "No more switching between rides on a day full of stops. With Luxelane, you set the itinerary: you decide where to go, and when.",
     "pt": "Chega de trocar de transporte em um dia cheio de paradas. Com a Luxelane, você define o roteiro: você decide aonde ir e quando."
   },
-  "servicesHourlyBullet1": {"es": "Define tu itinerario: Tú decides dónde y cuándo ir", "en": "Your itinerary: you decide where to go, and when", "pt": "Seu roteiro: você decide aonde ir e quando"},
-  "servicesHourlyBullet2": {"es": "Ahorra tiempo: Te dejaremos y recogeremos en la puerta de cada parada", "en": "Save time: door-to-door drop-off and pickup at every stop", "pt": "Economize tempo: embarque e desembarque na porta de cada parada"},
-  "servicesHourlyBullet3": {"es": "Disfruta con tranquilidad: Viaja en un vehículo premium", "en": "Total peace of mind: travel in a premium vehicle", "pt": "Tranquilidade total: viaje em um veículo premium"},
-  "servicesHourlyBullet4": {"es": "Tarifas competitivas: Incluye 40 km de recorrido por hora", "en": "Competitive rates: 40 km of driving included per hour", "pt": "Tarifas competitivas: 40 km de percurso incluídos por hora"},
-  "servicesHourlyBullet5": {"es": "Fiabilidad: Chóferes formados en los más altos estándares", "en": "Reliability: chauffeurs trained to the highest standards", "pt": "Confiabilidade: motoristas treinados nos mais altos padrões"},
-  "servicesHourlyBullet6": {"es": "Sostenibilidad: Cada viaje se compensa con emisiones de carbono", "en": "Sustainability: the carbon emissions of every ride are offset", "pt": "Sustentabilidade: as emissões de carbono de cada viagem são compensadas"},
-  "servicesHourlyBullet7": {"es": "Wifi disponible en la mayoría de los vehículos", "en": "Wi-Fi available in most vehicles", "pt": "Wi-Fi disponível na maioria dos veículos"},
-  "servicesHourlyBullet8": {"es": "Diseñado para la ciudad: Comienza y termina en la misma ciudad", "en": "Made for the city: starts and ends in the same city", "pt": "Feito para a cidade: começa e termina na mesma cidade"},
-  "servicesHourlyUseCasesTitle": {"es": "Diseñado para cada ocasión", "en": "Designed for every occasion", "pt": "Pensado para cada ocasião"},
-  "servicesHourlyUseBusinessTitle": {"es": "Viajes de negocios", "en": "Business travel", "pt": "Viagens de negócios"},
-  "servicesHourlyUseBusinessBody": {"es": "Concéntrate en lo importante. Desplázate fácilmente entre reuniones sin preocuparte por la logística.", "en": "Focus on what matters. Move seamlessly between meetings and leave the logistics to us.", "pt": "Concentre-se no que importa. Desloque-se entre reuniões com facilidade, sem se preocupar com a logística."},
-  "servicesHourlyUseEventsTitle": {"es": "Conciertos y eventos", "en": "Concerts and events", "pt": "Shows e eventos"},
-  "servicesHourlyUseEventsBody": {"es": "Disfruta de una llegada triunfal y una salida sin contratiempos de cualquier evento.", "en": "Make a grand entrance, and an effortless exit, at any event.", "pt": "Garanta uma chegada triunfal e uma saída tranquila de qualquer evento."},
-  "servicesHourlyUseSightseeingTitle": {"es": "Visitas turísticas", "en": "Sightseeing", "pt": "Passeios turísticos"},
-  "servicesHourlyUseSightseeingBody": {"es": "Descubre la ciudad a tu manera, a tu ritmo, con un chófer local siempre a tu disposición.", "en": "Explore the city your way, at your own pace, with a local chauffeur always at your disposal.", "pt": "Descubra a cidade do seu jeito, no seu ritmo, com um motorista local sempre à disposição."},
-  "servicesHourlyUseLeisureTitle": {"es": "Actividades de ocio", "en": "Leisure", "pt": "Lazer"},
-  "servicesHourlyUseLeisureBody": {"es": "Ya sea un almuerzo, compras o tu lista de tareas, tu chófer estará listo cuando lo necesites.", "en": "Lunch, shopping or a list of errands: your chauffeur is ready whenever you are.", "pt": "Almoço, compras ou uma lista de afazeres: seu motorista estará pronto quando você precisar."},
-  "servicesHourlyReachBanner": {"es": "Disponible en más de 60 países · Cientos de ciudades", "en": "Available in 60+ countries · Hundreds of cities", "pt": "Disponível em mais de 60 países · Centenas de cidades"},
-  "servicesHourlyReviewsTitle": {"es": "Lo que dicen nuestros clientes", "en": "What our clients say", "pt": "O que dizem nossos clientes"},
-  "servicesHourlyReview1": {"es": "El chófer fue increíble, me ayudó con mis maletas y se detuvo en todos los lugares que quería ver.", "en": "The chauffeur was amazing. He helped with my bags and stopped at every place I wanted to see.", "pt": "O motorista foi incrível: me ajudou com as malas e parou em todos os lugares que eu queria ver."},
-  "servicesHourlyReview1Origin": {"es": "Estados Unidos", "en": "United States", "pt": "Estados Unidos"},
-  "servicesHourlyReview2": {"es": "Los chóferes no son simples conductores sino profesionales altamente capacitados.", "en": "These chauffeurs aren't just drivers, they're highly trained professionals.", "pt": "Os motoristas não são simples condutores, e sim profissionais altamente qualificados."},
-  "servicesHourlyReview2Origin": {"es": "Portugal", "en": "Portugal", "pt": "Portugal"},
-  "servicesHourlyReview3": {"es": "La aplicación que todos los viajeros necesitan conocer. No he encontrado un lugar donde no funcione.", "en": "The app every traveler needs to know about. I haven't found a place where it doesn't work.", "pt": "O app que todo viajante precisa conhecer. Ainda não encontrei um lugar onde ele não funcione."},
-  "servicesHourlyReview3Origin": {"es": "Canadá", "en": "Canada", "pt": "Canadá"},
-  "servicesHourlyFaq1Q": {"es": "¿Cómo reservo un chófer por horas?", "en": "How do I book a chauffeur by the hour?", "pt": "Como reservo um motorista por hora?"},
-  "servicesHourlyFaq1A": {"es": "Selecciona el lugar de recogida, elige la duración, el día y la hora, elige una clase de vehículo y completa tu reserva.", "en": "Choose your pickup location, select the duration, date and time, pick a vehicle class and complete your booking.", "pt": "Selecione o local de embarque, escolha a duração, o dia e o horário, escolha a categoria do veículo e conclua sua reserva."},
-  "servicesHourlyFaq2Q": {"es": "¿Puedo modificar mi itinerario durante el viaje?", "en": "Can I change my itinerary during the ride?", "pt": "Posso alterar meu roteiro durante a viagem?"},
-  "servicesHourlyFaq2A": {"es": "Sí. El conductor y el vehículo están a tu disposición en todo momento durante las horas de la reserva.", "en": "Yes. Your chauffeur and vehicle are at your disposal for the entire duration of your booking.", "pt": "Sim. O motorista e o veículo ficam à sua disposição durante todo o período da reserva."},
-  "servicesHourlyFaq3Q": {"es": "¿Cuándo recibiré los datos del chófer?", "en": "When will I receive my chauffeur's details?", "pt": "Quando vou receber os dados do motorista?"},
-  "servicesHourlyFaq3A": {"es": "Una hora antes de la recogida se te enviarán un SMS y un correo electrónico con el nombre y número del conductor.", "en": "One hour before pickup, we'll send you a text message and an email with your chauffeur's name and phone number.", "pt": "Uma hora antes do embarque, você receberá um SMS e um e-mail com o nome e o telefone do motorista."},
-  "servicesHourlyFaq4Q": {"es": "¿La reserva puede empezar en un aeropuerto?", "en": "Can my booking start at an airport?", "pt": "A reserva pode começar em um aeroporto?"},
-  "servicesHourlyFaq4A": {"es": "Sí, la reserva puede empezar o terminar en un aeropuerto. El lugar de inicio y finalización deben estar en la misma ciudad.", "en": "Yes, your booking can start or end at an airport. The start and end points must be in the same city.", "pt": "Sim, a reserva pode começar ou terminar em um aeroporto. Os locais de início e término devem estar na mesma cidade."},
-  "servicesHourlyFaq5Q": {"es": "¿Puedo aumentar el número de horas?", "en": "Can I add more hours?", "pt": "Posso aumentar o número de horas?"},
+  "servicesHourlyBullet1": {
+    "es": "Define tu itinerario: Tú decides dónde y cuándo ir",
+    "en": "Your itinerary: you decide where to go, and when",
+    "pt": "Seu roteiro: você decide aonde ir e quando"
+  },
+  "servicesHourlyBullet2": {
+    "es": "Ahorra tiempo: Te dejaremos y recogeremos en la puerta de cada parada",
+    "en": "Save time: door-to-door drop-off and pickup at every stop",
+    "pt": "Economize tempo: embarque e desembarque na porta de cada parada"
+  },
+  "servicesHourlyBullet3": {
+    "es": "Disfruta con tranquilidad: Viaja en un vehículo premium",
+    "en": "Total peace of mind: travel in a premium vehicle",
+    "pt": "Tranquilidade total: viaje em um veículo premium"
+  },
+  "servicesHourlyBullet4": {
+    "es": "Tarifa fija por hora: conoces el precio antes de reservar",
+    "en": "Fixed hourly rate: you know the price before you book",
+    "pt": "Tarifa fixa por hora: você sabe o preço antes de reservar"
+  },
+  "servicesHourlyBullet5": {
+    "es": "Fiabilidad: Chóferes formados en los más altos estándares",
+    "en": "Reliability: chauffeurs trained to the highest standards",
+    "pt": "Confiabilidade: motoristas treinados nos mais altos padrões"
+  },
+  "servicesHourlyBullet6": {
+    "es": "Chóferes verificados por nuestro equipo",
+    "en": "Chauffeurs vetted by our team",
+    "pt": "Motoristas verificados pela nossa equipe"
+  },
+  "servicesHourlyBullet7": {
+    "es": "Seguimiento en vivo de tu chófer desde la app",
+    "en": "Live tracking of your chauffeur in the app",
+    "pt": "Acompanhe seu motorista ao vivo pelo app"
+  },
+  "servicesHourlyBullet8": {
+    "es": "Diseñado para la ciudad: Comienza y termina en la misma ciudad",
+    "en": "Made for the city: starts and ends in the same city",
+    "pt": "Feito para a cidade: começa e termina na mesma cidade"
+  },
+  "servicesHourlyUseCasesTitle": {
+    "es": "Diseñado para cada ocasión",
+    "en": "Designed for every occasion",
+    "pt": "Pensado para cada ocasião"
+  },
+  "servicesHourlyUseBusinessTitle": {
+    "es": "Viajes de negocios",
+    "en": "Business travel",
+    "pt": "Viagens de negócios"
+  },
+  "servicesHourlyUseBusinessBody": {
+    "es": "Concéntrate en lo importante. Desplázate fácilmente entre reuniones sin preocuparte por la logística.",
+    "en": "Focus on what matters. Move seamlessly between meetings and leave the logistics to us.",
+    "pt": "Concentre-se no que importa. Desloque-se entre reuniões com facilidade, sem se preocupar com a logística."
+  },
+  "servicesHourlyUseEventsTitle": {
+    "es": "Conciertos y eventos",
+    "en": "Concerts and events",
+    "pt": "Shows e eventos"
+  },
+  "servicesHourlyUseEventsBody": {
+    "es": "Disfruta de una llegada triunfal y una salida sin contratiempos de cualquier evento.",
+    "en": "Make a grand entrance, and an effortless exit, at any event.",
+    "pt": "Garanta uma chegada triunfal e uma saída tranquila de qualquer evento."
+  },
+  "servicesHourlyUseSightseeingTitle": {
+    "es": "Visitas turísticas",
+    "en": "Sightseeing",
+    "pt": "Passeios turísticos"
+  },
+  "servicesHourlyUseSightseeingBody": {
+    "es": "Descubre la ciudad a tu manera, a tu ritmo, con un chófer local siempre a tu disposición.",
+    "en": "Explore the city your way, at your own pace, with a local chauffeur always at your disposal.",
+    "pt": "Descubra a cidade do seu jeito, no seu ritmo, com um motorista local sempre à disposição."
+  },
+  "servicesHourlyUseLeisureTitle": {
+    "es": "Actividades de ocio",
+    "en": "Leisure",
+    "pt": "Lazer"
+  },
+  "servicesHourlyUseLeisureBody": {
+    "es": "Ya sea un almuerzo, compras o tu lista de tareas, tu chófer estará listo cuando lo necesites.",
+    "en": "Lunch, shopping or a list of errands: your chauffeur is ready whenever you are.",
+    "pt": "Almoço, compras ou uma lista de afazeres: seu motorista estará pronto quando você precisar."
+  },
+  "servicesHourlyReachBanner": {
+    "es": "Disponible en Santa Cruz de la Sierra · Reserva desde la app o la web",
+    "en": "Available in Santa Cruz de la Sierra · Book in the app or online",
+    "pt": "Disponível em Santa Cruz de la Sierra · Reserve pelo app ou pela web"
+  },
+  "servicesHourlyFaq1Q": {
+    "es": "¿Cómo reservo un chófer por horas?",
+    "en": "How do I book a chauffeur by the hour?",
+    "pt": "Como reservo um motorista por hora?"
+  },
+  "servicesHourlyFaq1A": {
+    "es": "Selecciona el lugar de recogida, elige la duración, el día y la hora, elige una clase de vehículo y completa tu reserva.",
+    "en": "Choose your pickup location, select the duration, date and time, pick a vehicle class and complete your booking.",
+    "pt": "Selecione o local de embarque, escolha a duração, o dia e o horário, escolha a categoria do veículo e conclua sua reserva."
+  },
+  "servicesHourlyFaq2Q": {
+    "es": "¿Puedo modificar mi itinerario durante el viaje?",
+    "en": "Can I change my itinerary during the ride?",
+    "pt": "Posso alterar meu roteiro durante a viagem?"
+  },
+  "servicesHourlyFaq2A": {
+    "es": "Sí. El conductor y el vehículo están a tu disposición en todo momento durante las horas de la reserva.",
+    "en": "Yes. Your chauffeur and vehicle are at your disposal for the entire duration of your booking.",
+    "pt": "Sim. O motorista e o veículo ficam à sua disposição durante todo o período da reserva."
+  },
+  "servicesHourlyFaq3Q": {
+    "es": "¿Cuándo recibiré los datos del chófer?",
+    "en": "When will I receive my chauffeur's details?",
+    "pt": "Quando vou receber os dados do motorista?"
+  },
+  "servicesHourlyFaq3A": {
+    "es": "Cuando se asigna tu chófer recibirás una notificación y verás en la app su nombre, vehículo, placa y teléfono.",
+    "en": "Once your chauffeur is assigned you’ll get a notification and see their name, vehicle, plate and phone number in the app.",
+    "pt": "Assim que seu motorista for designado, você receberá uma notificação e verá no app o nome, o veículo, a placa e o telefone dele."
+  },
+  "servicesHourlyFaq4Q": {
+    "es": "¿La reserva puede empezar en un aeropuerto?",
+    "en": "Can my booking start at an airport?",
+    "pt": "A reserva pode começar em um aeroporto?"
+  },
+  "servicesHourlyFaq4A": {
+    "es": "Sí, la reserva puede empezar o terminar en un aeropuerto. El lugar de inicio y finalización deben estar en la misma ciudad.",
+    "en": "Yes, your booking can start or end at an airport. The start and end points must be in the same city.",
+    "pt": "Sim, a reserva pode começar ou terminar em um aeroporto. Os locais de início e término devem estar na mesma cidade."
+  },
+  "servicesHourlyFaq5Q": {
+    "es": "¿Puedo aumentar el número de horas?",
+    "en": "Can I add more hours?",
+    "pt": "Posso aumentar o número de horas?"
+  },
   "servicesHourlyFaq5A": {
     "es": "Sí, puedes editar la reserva antes de la hora de inicio. La duración mínima es {min} horas, máximo {max} horas.",
     "en": "Yes, you can edit your booking before the start time. The minimum duration is {min} hours and the maximum is {max} hours.",
     "pt": "Sim, você pode editar a reserva antes do horário de início. A duração mínima é de {min} horas e a máxima, de {max} horas.",
-    "placeholders": {"min": {"type": "int"}, "max": {"type": "int"}}
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
   },
-
-  "servicesPickupHeroTitle": {"es": "¡Servicio de\nRecogida Inmediata!", "en": "Instant\nPickup Service", "pt": "Motorista\nna hora!"},
-  "servicesPickupHeroSubtitle": {"es": "Chóferes profesionales a su alcance", "en": "Professional chauffeurs at your fingertips", "pt": "Motoristas profissionais ao seu alcance"},
-  "servicesPickupIntroEyebrow": {"es": "RECOGIDA INMEDIATA", "en": "INSTANT PICKUP", "pt": "MOTORISTA NA HORA"},
-  "servicesPickupIntroTitle": {"es": "Descubre el servicio de recogida inmediata", "en": "Discover Instant Pickup", "pt": "Conheça o serviço Motorista na hora"},
-  "servicesPickupIntroBody": {"es": "Consigue un viaje con chófer de puerta a puerta justo cuando lo necesitas con solo unos toques en la aplicación Luxelane.", "en": "Get a door-to-door chauffeured ride the moment you need it, with just a few taps in the Luxelane app.", "pt": "Tenha uma viagem com motorista de porta a porta no momento em que precisar, com apenas alguns toques no app Luxelane."},
-  "servicesPickupConvenienceTitle": {"es": "Conveniencia", "en": "Convenience", "pt": "Praticidade"},
-  "servicesPickupConvenienceBody": {"es": "Consigue un viaje con chófer de puerta a puerta justo cuando lo necesitas con solo unos toques.", "en": "A door-to-door chauffeured ride the moment you need it, in just a few taps.", "pt": "Uma viagem com motorista de porta a porta no momento em que você precisar, com poucos toques."},
-  "servicesPickupComfortTitle": {"es": "Comodidad", "en": "Comfort", "pt": "Conforto"},
-  "servicesPickupComfortBody": {"es": "Un viaje privado en un vehículo de alta gama hace que cada viaje sea un placer.", "en": "A private ride in a high-end vehicle turns every journey into a pleasure.", "pt": "Uma viagem particular em um veículo de alto padrão transforma cada trajeto em um prazer."},
-  "servicesPickupQualityTitle": {"es": "Calidad", "en": "Quality", "pt": "Qualidade"},
-  "servicesPickupQualityBody": {"es": "Hacer que su experiencia sea excelente es nuestra máxima prioridad en todos sus viajes.", "en": "Making every ride exceptional is our highest priority.", "pt": "Tornar sua experiência excelente é nossa maior prioridade em todas as viagens."},
-  "servicesPickupChauffeursTitle": {"es": "Chóferes profesionales", "en": "Professional chauffeurs", "pt": "Motoristas profissionais"},
-  "servicesPickupChauffeursBody": {"es": "Viaje con confianza gracias a los chóferes expertos que le ofrecen la mejor calidad y discreción.", "en": "Travel with confidence, accompanied by expert chauffeurs who offer the finest service and complete discretion.", "pt": "Viaje com confiança, acompanhado por motoristas experientes que oferecem a melhor qualidade e total discrição."},
-  "servicesPickupReliabilityTitle": {"es": "Fiabilidad", "en": "Reliability", "pt": "Confiabilidade"},
-  "servicesPickupReliabilityBody": {"es": "Reserve con seguridad y manténgase informado con actualizaciones del estado del viaje en tiempo real.", "en": "Book with confidence and stay informed with real-time ride updates.", "pt": "Reserve com segurança e fique por dentro de tudo com atualizações da viagem em tempo real."},
-  "servicesPickupPriceBody": {"es": "Acceda a un servicio de primera calidad a precios basados en la distancia, justos para todos.", "en": "First-class service at distance-based prices that are fair for everyone.", "pt": "Serviço de primeira linha com preços baseados na distância, justos para todos."},
-  "servicesPickupSplitEyebrow": {"es": "CÓMODO · SEGURO · INMEDIATO", "en": "COMFORTABLE · SAFE · IMMEDIATE", "pt": "CONFORTÁVEL · SEGURO · IMEDIATO"},
-  "servicesPickupSplitTitle": {"es": "Cómodos viajes a la carta en cuestión de minutos", "en": "Comfortable rides on demand, in minutes", "pt": "Viagens confortáveis sob demanda, em minutos"},
+  "servicesPickupHeroTitle": {
+    "es": "¡Servicio de\nRecogida Inmediata!",
+    "en": "Instant\nPickup Service",
+    "pt": "Motorista\nna hora!"
+  },
+  "servicesPickupHeroSubtitle": {
+    "es": "Chóferes profesionales a su alcance",
+    "en": "Professional chauffeurs at your fingertips",
+    "pt": "Motoristas profissionais ao seu alcance"
+  },
+  "servicesPickupIntroEyebrow": {
+    "es": "RECOGIDA INMEDIATA",
+    "en": "INSTANT PICKUP",
+    "pt": "MOTORISTA NA HORA"
+  },
+  "servicesPickupIntroTitle": {
+    "es": "Descubre el servicio de recogida inmediata",
+    "en": "Discover Instant Pickup",
+    "pt": "Conheça o serviço Motorista na hora"
+  },
+  "servicesPickupIntroBody": {
+    "es": "Consigue un viaje con chófer de puerta a puerta justo cuando lo necesitas con solo unos toques en la aplicación Luxelane.",
+    "en": "Get a door-to-door chauffeured ride the moment you need it, with just a few taps in the Luxelane app.",
+    "pt": "Tenha uma viagem com motorista de porta a porta no momento em que precisar, com apenas alguns toques no app Luxelane."
+  },
+  "servicesPickupConvenienceTitle": {
+    "es": "Conveniencia",
+    "en": "Convenience",
+    "pt": "Praticidade"
+  },
+  "servicesPickupConvenienceBody": {
+    "es": "Consigue un viaje con chófer de puerta a puerta justo cuando lo necesitas con solo unos toques.",
+    "en": "A door-to-door chauffeured ride the moment you need it, in just a few taps.",
+    "pt": "Uma viagem com motorista de porta a porta no momento em que você precisar, com poucos toques."
+  },
+  "servicesPickupComfortTitle": {
+    "es": "Comodidad",
+    "en": "Comfort",
+    "pt": "Conforto"
+  },
+  "servicesPickupComfortBody": {
+    "es": "Un viaje privado en un vehículo de alta gama hace que cada viaje sea un placer.",
+    "en": "A private ride in a high-end vehicle turns every journey into a pleasure.",
+    "pt": "Uma viagem particular em um veículo de alto padrão transforma cada trajeto em um prazer."
+  },
+  "servicesPickupQualityTitle": {
+    "es": "Calidad",
+    "en": "Quality",
+    "pt": "Qualidade"
+  },
+  "servicesPickupQualityBody": {
+    "es": "Hacer que su experiencia sea excelente es nuestra máxima prioridad en todos sus viajes.",
+    "en": "Making every ride exceptional is our highest priority.",
+    "pt": "Tornar sua experiência excelente é nossa maior prioridade em todas as viagens."
+  },
+  "servicesPickupChauffeursTitle": {
+    "es": "Chóferes profesionales",
+    "en": "Professional chauffeurs",
+    "pt": "Motoristas profissionais"
+  },
+  "servicesPickupChauffeursBody": {
+    "es": "Viaje con confianza gracias a los chóferes expertos que le ofrecen la mejor calidad y discreción.",
+    "en": "Travel with confidence, accompanied by expert chauffeurs who offer the finest service and complete discretion.",
+    "pt": "Viaje com confiança, acompanhado por motoristas experientes que oferecem a melhor qualidade e total discrição."
+  },
+  "servicesPickupReliabilityTitle": {
+    "es": "Fiabilidad",
+    "en": "Reliability",
+    "pt": "Confiabilidade"
+  },
+  "servicesPickupReliabilityBody": {
+    "es": "Reserve con seguridad y manténgase informado con actualizaciones del estado del viaje en tiempo real.",
+    "en": "Book with confidence and stay informed with real-time ride updates.",
+    "pt": "Reserve com segurança e fique por dentro de tudo com atualizações da viagem em tempo real."
+  },
+  "servicesPickupPriceBody": {
+    "es": "Acceda a un servicio de primera calidad a precios basados en la distancia, justos para todos.",
+    "en": "First-class service at distance-based prices that are fair for everyone.",
+    "pt": "Serviço de primeira linha com preços baseados na distância, justos para todos."
+  },
+  "servicesPickupSplitEyebrow": {
+    "es": "CÓMODO · SEGURO · INMEDIATO",
+    "en": "COMFORTABLE · SAFE · IMMEDIATE",
+    "pt": "CONFORTÁVEL · SEGURO · IMEDIATO"
+  },
+  "servicesPickupSplitTitle": {
+    "es": "Cómodos viajes a la carta en cuestión de minutos",
+    "en": "Comfortable rides on demand, in minutes",
+    "pt": "Viagens confortáveis sob demanda, em minutos"
+  },
   "servicesPickupSplitBody": {
     "es": "Cuando necesite una forma segura de desplazarse por la ciudad, piense en el servicio de recogida inmediata de Luxelane. La combinación perfecta entre el servicio tradicional de traslados y el transporte privado.",
     "en": "Whenever you need a safe way to get around the city, think Luxelane Instant Pickup: the perfect blend of a classic chauffeur service and private transportation.",

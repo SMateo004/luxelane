@@ -212,13 +212,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get servicesAirportFaq2Q => 'Vale a pena reservar um traslado do aeroporto?';
 
   @override
-  String get servicesAirportFaq3A => 'Um traslado pago é um serviço de transporte com motorista profissional reservado com antecedência. O preço inclui gorjetas, pedágios e quaisquer outros custos adicionais.';
+  String get servicesAirportFaq3A => 'Um traslado pago ao aeroporto é um serviço de transporte com motorista profissional reservado com antecedência, com preço fixo em bolivianos confirmado antes da reserva.';
 
   @override
   String get servicesAirportFaq3Q => 'O que é um traslado pago para o aeroporto?';
 
   @override
-  String get servicesAirportFeatureFlexBody => 'Planos mudam. Cancelar ou alterar qualquer viagem é rápido e fácil.';
+  String get servicesAirportFeatureFlexBody => 'Fique tranquilo: cancele sem custo até 1 hora antes do embarque, direto no app.';
 
   @override
   String get servicesAirportFeatureFlexTitle => 'Flexibilidade na viagem';
@@ -282,16 +282,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get servicesHourlyBullet3 => 'Tranquilidade total: viaje em um veículo premium';
 
   @override
-  String get servicesHourlyBullet4 => 'Tarifas competitivas: 40 km de percurso incluídos por hora';
+  String get servicesHourlyBullet4 => 'Tarifa fixa por hora: você sabe o preço antes de reservar';
 
   @override
   String get servicesHourlyBullet5 => 'Confiabilidade: motoristas treinados nos mais altos padrões';
 
   @override
-  String get servicesHourlyBullet6 => 'Sustentabilidade: as emissões de carbono de cada viagem são compensadas';
+  String get servicesHourlyBullet6 => 'Motoristas verificados pela nossa equipe';
 
   @override
-  String get servicesHourlyBullet7 => 'Wi-Fi disponível na maioria dos veículos';
+  String get servicesHourlyBullet7 => 'Acompanhe seu motorista ao vivo pelo app';
 
   @override
   String get servicesHourlyBullet8 => 'Feito para a cidade: começa e termina na mesma cidade';
@@ -314,7 +314,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get servicesHourlyFaq2Q => 'Posso alterar meu roteiro durante a viagem?';
 
   @override
-  String get servicesHourlyFaq3A => 'Uma hora antes do embarque, você receberá um SMS e um e-mail com o nome e o telefone do motorista.';
+  String get servicesHourlyFaq3A => 'Assim que seu motorista for designado, você receberá uma notificação e verá no app o nome, o veículo, a placa e o telefone dele.';
 
   @override
   String get servicesHourlyFaq3Q => 'Quando vou receber os dados do motorista?';
@@ -346,28 +346,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get servicesHourlyPanelTitle => 'Motorista por hora';
 
   @override
-  String get servicesHourlyReachBanner => 'Disponível em mais de 60 países · Centenas de cidades';
-
-  @override
-  String get servicesHourlyReview1 => 'O motorista foi incrível: me ajudou com as malas e parou em todos os lugares que eu queria ver.';
-
-  @override
-  String get servicesHourlyReview1Origin => 'Estados Unidos';
-
-  @override
-  String get servicesHourlyReview2 => 'Os motoristas não são simples condutores, e sim profissionais altamente qualificados.';
-
-  @override
-  String get servicesHourlyReview2Origin => 'Portugal';
-
-  @override
-  String get servicesHourlyReview3 => 'O app que todo viajante precisa conhecer. Ainda não encontrei um lugar onde ele não funcione.';
-
-  @override
-  String get servicesHourlyReview3Origin => 'Canadá';
-
-  @override
-  String get servicesHourlyReviewsTitle => 'O que dizem nossos clientes';
+  String get servicesHourlyReachBanner => 'Disponível em Santa Cruz de la Sierra · Reserve pelo app ou pela web';
 
   @override
   String get servicesHourlyServiceBody => 'Chega de trocar de transporte em um dia cheio de paradas. Com a Luxelane, você define o roteiro: você decide aonde ir e quando.';
@@ -517,7 +496,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get servicesVehicleGroups => 'Ideal para grupos e famílias';
 
   @override
-  String get servicesVehicleMostCities => 'Disponível na maioria das cidades';
+  String get servicesVehicleMostCities => 'Disponível em Santa Cruz de la Sierra';
 
   @override
   String get servicesVehiclePremiumLuxury => 'Nossa experiência mais sofisticada';

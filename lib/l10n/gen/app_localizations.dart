@@ -484,7 +484,7 @@ abstract class AppLocalizations {
   /// No description provided for @servicesAirportFaq3A.
   ///
   /// In es, this message translates to:
-  /// **'Un traslado al aeropuerto de pago es un servicio de transporte con un conductor profesional reservado con antelación. El precio incluye propinas, peajes y cualquier otro gasto adicional.'**
+  /// **'Un traslado al aeropuerto de pago es un servicio de transporte con un conductor profesional reservado con antelación, con un precio fijo en bolivianos que se confirma antes de reservar.'**
   String get servicesAirportFaq3A;
 
   /// No description provided for @servicesAirportFaq3Q.
@@ -496,7 +496,7 @@ abstract class AppLocalizations {
   /// No description provided for @servicesAirportFeatureFlexBody.
   ///
   /// In es, this message translates to:
-  /// **'Manténgase flexible. Es rápido y fácil cancelar o hacer cambios en cualquier viaje.'**
+  /// **'Manténgase flexible: cancele sin costo hasta 1 hora antes de la recogida, desde la app.'**
   String get servicesAirportFeatureFlexBody;
 
   /// No description provided for @servicesAirportFeatureFlexTitle.
@@ -616,7 +616,7 @@ abstract class AppLocalizations {
   /// No description provided for @servicesHourlyBullet4.
   ///
   /// In es, this message translates to:
-  /// **'Tarifas competitivas: Incluye 40 km de recorrido por hora'**
+  /// **'Tarifa fija por hora: conoces el precio antes de reservar'**
   String get servicesHourlyBullet4;
 
   /// No description provided for @servicesHourlyBullet5.
@@ -628,13 +628,13 @@ abstract class AppLocalizations {
   /// No description provided for @servicesHourlyBullet6.
   ///
   /// In es, this message translates to:
-  /// **'Sostenibilidad: Cada viaje se compensa con emisiones de carbono'**
+  /// **'Chóferes verificados por nuestro equipo'**
   String get servicesHourlyBullet6;
 
   /// No description provided for @servicesHourlyBullet7.
   ///
   /// In es, this message translates to:
-  /// **'Wifi disponible en la mayoría de los vehículos'**
+  /// **'Seguimiento en vivo de tu chófer desde la app'**
   String get servicesHourlyBullet7;
 
   /// No description provided for @servicesHourlyBullet8.
@@ -676,7 +676,7 @@ abstract class AppLocalizations {
   /// No description provided for @servicesHourlyFaq3A.
   ///
   /// In es, this message translates to:
-  /// **'Una hora antes de la recogida se te enviarán un SMS y un correo electrónico con el nombre y número del conductor.'**
+  /// **'Cuando se asigna tu chófer recibirás una notificación y verás en la app su nombre, vehículo, placa y teléfono.'**
   String get servicesHourlyFaq3A;
 
   /// No description provided for @servicesHourlyFaq3Q.
@@ -736,50 +736,8 @@ abstract class AppLocalizations {
   /// No description provided for @servicesHourlyReachBanner.
   ///
   /// In es, this message translates to:
-  /// **'Disponible en más de 60 países · Cientos de ciudades'**
+  /// **'Disponible en Santa Cruz de la Sierra · Reserva desde la app o la web'**
   String get servicesHourlyReachBanner;
-
-  /// No description provided for @servicesHourlyReview1.
-  ///
-  /// In es, this message translates to:
-  /// **'El chófer fue increíble, me ayudó con mis maletas y se detuvo en todos los lugares que quería ver.'**
-  String get servicesHourlyReview1;
-
-  /// No description provided for @servicesHourlyReview1Origin.
-  ///
-  /// In es, this message translates to:
-  /// **'Estados Unidos'**
-  String get servicesHourlyReview1Origin;
-
-  /// No description provided for @servicesHourlyReview2.
-  ///
-  /// In es, this message translates to:
-  /// **'Los chóferes no son simples conductores sino profesionales altamente capacitados.'**
-  String get servicesHourlyReview2;
-
-  /// No description provided for @servicesHourlyReview2Origin.
-  ///
-  /// In es, this message translates to:
-  /// **'Portugal'**
-  String get servicesHourlyReview2Origin;
-
-  /// No description provided for @servicesHourlyReview3.
-  ///
-  /// In es, this message translates to:
-  /// **'La aplicación que todos los viajeros necesitan conocer. No he encontrado un lugar donde no funcione.'**
-  String get servicesHourlyReview3;
-
-  /// No description provided for @servicesHourlyReview3Origin.
-  ///
-  /// In es, this message translates to:
-  /// **'Canadá'**
-  String get servicesHourlyReview3Origin;
-
-  /// No description provided for @servicesHourlyReviewsTitle.
-  ///
-  /// In es, this message translates to:
-  /// **'Lo que dicen nuestros clientes'**
-  String get servicesHourlyReviewsTitle;
 
   /// No description provided for @servicesHourlyServiceBody.
   ///
@@ -1042,7 +1000,7 @@ abstract class AppLocalizations {
   /// No description provided for @servicesVehicleMostCities.
   ///
   /// In es, this message translates to:
-  /// **'Disponible en la mayoría de ciudades'**
+  /// **'Disponible en Santa Cruz de la Sierra'**
   String get servicesVehicleMostCities;
 
   /// No description provided for @servicesVehiclePremiumLuxury.

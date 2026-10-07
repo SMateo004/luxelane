@@ -109,7 +109,6 @@ class _DesktopLayout extends StatelessWidget {
                 _ServiceDescriptionSection(isMobile: false),
                 _UseCasesSection(isMobile: false),
                 _WorldReachSection(),
-                _ReviewsSection(isMobile: false),
                 _FaqSection(isMobile: false),
                 _FooterSection(),
               ],
@@ -145,7 +144,6 @@ class _MobileLayout extends StatelessWidget {
           _ServiceDescriptionSection(isMobile: true),
           _UseCasesSection(isMobile: true),
           _WorldReachSection(),
-          _ReviewsSection(isMobile: true),
           _FaqSection(isMobile: true),
           _FooterSection(),
         ],
@@ -1058,135 +1056,6 @@ class _WorldReachSection extends StatelessWidget {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ReviewsSection extends StatelessWidget {
-  final bool isMobile;
-  const _ReviewsSection({required this.isMobile});
-
-  static List<_ReviewData> _reviewsFor(AppLocalizations l) => [
-        _ReviewData(quote: l.servicesHourlyReview1, location: l.servicesHourlyReview1Origin),
-        _ReviewData(quote: l.servicesHourlyReview2, location: l.servicesHourlyReview2Origin),
-        _ReviewData(quote: l.servicesHourlyReview3, location: l.servicesHourlyReview3Origin),
-      ];
-
-  @override
-  Widget build(BuildContext context) {
-    final pad = isMobile ? 20.0 : 48.0;
-    final titleSize = isMobile ? 26.0 : 36.0;
-    final l = context.l10n;
-    final reviews = _reviewsFor(l);
-
-    if (isMobile) {
-      return Container(
-        color: _kSurface,
-        padding: EdgeInsets.all(pad),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l.servicesHourlyReviewsTitle,
-              style: TextStyle(
-                fontFamily: _kSerif,
-                fontSize: titleSize,
-                color: Colors.white,
-                height: 1.15,
-              ),
-            ),
-            const SizedBox(height: 32),
-            for (int i = 0; i < reviews.length; i++) ...[
-              if (i > 0) const SizedBox(height: 16),
-              _ReviewCard(review: reviews[i]),
-            ],
-          ],
-        ),
-      );
-    }
-
-    return Container(
-      color: _kSurface,
-      padding: EdgeInsets.all(pad),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            l.servicesHourlyReviewsTitle,
-            style: TextStyle(
-              fontFamily: _kSerif,
-              fontSize: titleSize,
-              color: Colors.white,
-              height: 1.15,
-            ),
-          ),
-          const SizedBox(height: 32),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              for (int i = 0; i < reviews.length; i++) ...[
-                if (i > 0) const SizedBox(width: 20),
-                Expanded(child: _ReviewCard(review: reviews[i])),
-              ],
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ReviewData {
-  final String quote;
-  final String location;
-  const _ReviewData({required this.quote, required this.location});
-}
-
-class _ReviewCard extends StatelessWidget {
-  final _ReviewData review;
-  const _ReviewCard({required this.review});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(28),
-      decoration: BoxDecoration(
-        color: _kElevated,
-        border: Border.all(color: _kBorder),
-        borderRadius: BorderRadius.circular(2),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: List.generate(
-              5,
-              (_) => const Icon(Icons.star, color: _kSapphire, size: 16),
-            ),
-          ),
-          const SizedBox(height: 14),
-          Text(
-            context.l10n.servicesQuote(review.quote),
-            style: TextStyle(
-              fontFamily: _kSans,
-              fontSize: 12,
-              color: Colors.white.withAlpha(160),
-              height: 1.65,
-              fontStyle: FontStyle.italic,
-            ),
-          ),
-          const SizedBox(height: 14),
-          Text(
-            review.location,
-            style: TextStyle(
-              fontFamily: _kSans,
-              fontSize: 11,
-              color: Colors.white.withAlpha(80),
-              letterSpacing: 0.5,
             ),
           ),
         ],

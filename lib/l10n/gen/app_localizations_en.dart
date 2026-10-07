@@ -212,13 +212,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get servicesAirportFaq2Q => 'Is it worth booking an airport transfer?';
 
   @override
-  String get servicesAirportFaq3A => 'A prebooked airport transfer is a ride with a professional chauffeur, reserved in advance. The price includes tips, tolls and any other additional costs.';
+  String get servicesAirportFaq3A => 'A paid airport transfer is a transport service with a professional chauffeur booked in advance, at a fixed price in bolivianos confirmed before you book.';
 
   @override
   String get servicesAirportFaq3Q => 'What is a prebooked airport transfer?';
 
   @override
-  String get servicesAirportFeatureFlexBody => 'Plans change. Cancelling or adjusting any ride is quick and easy.';
+  String get servicesAirportFeatureFlexBody => 'Stay flexible: cancel free of charge up to 1 hour before pickup, right from the app.';
 
   @override
   String get servicesAirportFeatureFlexTitle => 'Flexible travel';
@@ -282,16 +282,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get servicesHourlyBullet3 => 'Total peace of mind: travel in a premium vehicle';
 
   @override
-  String get servicesHourlyBullet4 => 'Competitive rates: 40 km of driving included per hour';
+  String get servicesHourlyBullet4 => 'Fixed hourly rate: you know the price before you book';
 
   @override
   String get servicesHourlyBullet5 => 'Reliability: chauffeurs trained to the highest standards';
 
   @override
-  String get servicesHourlyBullet6 => 'Sustainability: the carbon emissions of every ride are offset';
+  String get servicesHourlyBullet6 => 'Chauffeurs vetted by our team';
 
   @override
-  String get servicesHourlyBullet7 => 'Wi-Fi available in most vehicles';
+  String get servicesHourlyBullet7 => 'Live tracking of your chauffeur in the app';
 
   @override
   String get servicesHourlyBullet8 => 'Made for the city: starts and ends in the same city';
@@ -314,7 +314,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get servicesHourlyFaq2Q => 'Can I change my itinerary during the ride?';
 
   @override
-  String get servicesHourlyFaq3A => 'One hour before pickup, we\'ll send you a text message and an email with your chauffeur\'s name and phone number.';
+  String get servicesHourlyFaq3A => 'Once your chauffeur is assigned you’ll get a notification and see their name, vehicle, plate and phone number in the app.';
 
   @override
   String get servicesHourlyFaq3Q => 'When will I receive my chauffeur\'s details?';
@@ -346,28 +346,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get servicesHourlyPanelTitle => 'Chauffeur by the hour';
 
   @override
-  String get servicesHourlyReachBanner => 'Available in 60+ countries · Hundreds of cities';
-
-  @override
-  String get servicesHourlyReview1 => 'The chauffeur was amazing. He helped with my bags and stopped at every place I wanted to see.';
-
-  @override
-  String get servicesHourlyReview1Origin => 'United States';
-
-  @override
-  String get servicesHourlyReview2 => 'These chauffeurs aren\'t just drivers, they\'re highly trained professionals.';
-
-  @override
-  String get servicesHourlyReview2Origin => 'Portugal';
-
-  @override
-  String get servicesHourlyReview3 => 'The app every traveler needs to know about. I haven\'t found a place where it doesn\'t work.';
-
-  @override
-  String get servicesHourlyReview3Origin => 'Canada';
-
-  @override
-  String get servicesHourlyReviewsTitle => 'What our clients say';
+  String get servicesHourlyReachBanner => 'Available in Santa Cruz de la Sierra · Book in the app or online';
 
   @override
   String get servicesHourlyServiceBody => 'No more switching between rides on a day full of stops. With Luxelane, you set the itinerary: you decide where to go, and when.';
@@ -517,7 +496,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get servicesVehicleGroups => 'Ideal for groups and families';
 
   @override
-  String get servicesVehicleMostCities => 'Available in most cities';
+  String get servicesVehicleMostCities => 'Available in Santa Cruz de la Sierra';
 
   @override
   String get servicesVehiclePremiumLuxury => 'Our most refined experience';
