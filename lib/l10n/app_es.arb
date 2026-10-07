@@ -33,6 +33,76 @@
   },
   "flightLanded": "Aterrizó",
   "flightOnTime": "A tiempo",
+  "legalCompanyDetails": "NIT {nit} · {address}",
+  "@legalCompanyDetails": {
+    "description": "Company tax ID and address under the contact details",
+    "placeholders": {
+      "nit": {
+        "type": "String"
+      },
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "legalContactComingSoon": "Los canales de contacto se publicarán pronto.",
+  "legalContactEmail": "Correo",
+  "@legalContactEmail": {
+    "description": "Label of the support email contact tile"
+  },
+  "legalContactHeadline": "Estamos para ayudarte",
+  "legalContactIntro": "Escríbenos por cualquier consulta sobre una reserva, tu cuenta o tus datos. Si tienes un viaje en curso, usa los botones de contacto con tu chófer en la pantalla del viaje.",
+  "legalContactTitle": "Contacto",
+  "@legalContactTitle": {
+    "description": "App bar title of the contact page"
+  },
+  "legalDeleteActiveTrip": "Tienes un viaje en curso. Podrás eliminar tu cuenta cuando termine.",
+  "legalDeleteButton": "Eliminar mi cuenta",
+  "legalDeleteConfirmPrompt": "Escribe {keyword} para confirmar.",
+  "@legalDeleteConfirmPrompt": {
+    "placeholders": {
+      "keyword": {
+        "type": "String"
+      }
+    }
+  },
+  "legalDeleteConnectionError": "No pudimos eliminar tu cuenta. Revisa tu conexión.",
+  "legalDeleteEffectBookings": "Cancelamos tus reservas pendientes.",
+  "legalDeleteEffectDriver": "Si eres chófer, también borramos tu perfil de chófer y desactivamos tu vehículo.",
+  "legalDeleteEffectPermanent": "Esta acción no se puede deshacer.",
+  "legalDeleteEffectProfile": "Borramos tu perfil, tus notificaciones y tu acceso.",
+  "legalDeleteEffectTrips": "Quitamos tu nombre, teléfono y notas de tus viajes anteriores. Los registros de esos viajes se conservan sin datos de contacto por obligaciones contables.",
+  "legalDeleteFailed": "No pudimos eliminar tu cuenta. Inténtalo de nuevo o contáctanos.",
+  "legalDeleteHeadline": "Eliminar tu cuenta",
+  "legalDeleteIntro": "Al eliminar tu cuenta:",
+  "legalDeleteKeyword": "ELIMINAR",
+  "@legalDeleteKeyword": {
+    "description": "Word the user must type to confirm account deletion. Uppercase, no spaces."
+  },
+  "legalDeleteSignIn": "Iniciar sesión",
+  "@legalDeleteSignIn": {
+    "description": "Button that opens the login page from the account deletion page"
+  },
+  "legalDeleteSignInPrompt": "Inicia sesión con la cuenta que quieres eliminar.",
+  "legalDeleteSuccess": "Tu cuenta fue eliminada.",
+  "legalDeleteTitle": "Eliminar cuenta",
+  "@legalDeleteTitle": {
+    "description": "App bar title of the account deletion page"
+  },
+  "legalDraftBanner": "Borrador: este documento contiene datos pendientes entre corchetes y debe ser revisado por un abogado antes de publicarse.",
+  "@legalDraftBanner": {
+    "description": "Warning banner on legal pages while company details are still placeholders"
+  },
+  "legalLastUpdated": "Última actualización: {date}",
+  "@legalLastUpdated": {
+    "description": "Date the legal document was last revised",
+    "placeholders": {
+      "date": {
+        "type": "DateTime",
+        "format": "yMMMMd"
+      }
+    }
+  },
   "serviceByTheHour": "Por horas",
   "serviceByTheHourDesc": "Chófer a tu disposición por un tiempo determinado",
   "serviceOneWay": "Solo ida",

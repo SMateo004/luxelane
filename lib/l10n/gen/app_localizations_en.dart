@@ -89,6 +89,90 @@ class AppLocalizationsEn extends AppLocalizations {
   String get flightOnTime => 'On time';
 
   @override
+  String legalCompanyDetails(String nit, String address) {
+    return 'NIT (Tax ID) $nit · $address';
+  }
+
+  @override
+  String get legalContactComingSoon => 'Contact channels will be published soon.';
+
+  @override
+  String get legalContactEmail => 'Email';
+
+  @override
+  String get legalContactHeadline => 'We\'re here to help';
+
+  @override
+  String get legalContactIntro => 'Write to us with any question about a booking, your account or your data. If you have a trip in progress, use the buttons to contact your chauffeur on the trip screen.';
+
+  @override
+  String get legalContactTitle => 'Contact';
+
+  @override
+  String get legalDeleteActiveTrip => 'You have a trip in progress. You can delete your account once it ends.';
+
+  @override
+  String get legalDeleteButton => 'Delete my account';
+
+  @override
+  String legalDeleteConfirmPrompt(String keyword) {
+    return 'Type $keyword to confirm.';
+  }
+
+  @override
+  String get legalDeleteConnectionError => 'We couldn\'t delete your account. Check your connection.';
+
+  @override
+  String get legalDeleteEffectBookings => 'We cancel your pending bookings.';
+
+  @override
+  String get legalDeleteEffectDriver => 'If you are a chauffeur, we also delete your chauffeur profile and deactivate your vehicle.';
+
+  @override
+  String get legalDeleteEffectPermanent => 'This action cannot be undone.';
+
+  @override
+  String get legalDeleteEffectProfile => 'We delete your profile, your notifications and your access.';
+
+  @override
+  String get legalDeleteEffectTrips => 'We remove your name, phone number and notes from your past trips. The records of those trips are kept without contact details for accounting obligations.';
+
+  @override
+  String get legalDeleteFailed => 'We couldn\'t delete your account. Try again or contact us.';
+
+  @override
+  String get legalDeleteHeadline => 'Delete your account';
+
+  @override
+  String get legalDeleteIntro => 'When you delete your account:';
+
+  @override
+  String get legalDeleteKeyword => 'DELETE';
+
+  @override
+  String get legalDeleteSignIn => 'Sign in';
+
+  @override
+  String get legalDeleteSignInPrompt => 'Sign in with the account you want to delete.';
+
+  @override
+  String get legalDeleteSuccess => 'Your account was deleted.';
+
+  @override
+  String get legalDeleteTitle => 'Delete account';
+
+  @override
+  String get legalDraftBanner => 'Draft: this document contains pending details in square brackets and must be reviewed by a lawyer before it is published.';
+
+  @override
+  String legalLastUpdated(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMMMMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return 'Last updated: $dateString';
+  }
+
+  @override
   String get serviceByTheHour => 'By the hour';
 
   @override

@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/legal.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import 'legal_content.dart';
@@ -30,7 +31,7 @@ class _PageFrame extends StatelessWidget {
           title: Text(title,
               style: const TextStyle(fontFamily: kSans, fontSize: 15, fontWeight: FontWeight.w500, color: LD.ink)),
           leading: IconButton(
-            tooltip: 'Volver',
+            tooltip: context.l10n.commonBack,
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
             onPressed: () => context.canPop() ? context.pop() : context.go('/'),
           ),
@@ -61,52 +62,57 @@ class _DraftBanner extends StatelessWidget {
         border: Border.all(color: LuxPalette.warning),
       ),
       child: Text(
-        'Borrador: este documento contiene datos pendientes entre corchetes y debe ser revisado por un abogado antes de publicarse.',
+        context.l10n.legalDraftBanner,
         style: bodyText(size: 13, color: LD.ink),
       ),
     );
   }
 }
 
-/// Renders a [LegalDocument].
+/// Renders a [LegalDocument] in the active language.
 class LegalPage extends StatelessWidget {
-  const LegalPage({super.key, required this.document});
-  final LegalDocument document;
+  const LegalPage({super.key, required this.documentFor});
 
-  factory LegalPage.privacy() => LegalPage(document: privacyPolicy);
-  factory LegalPage.terms() => LegalPage(document: termsOfService);
+  /// Builds the document for the current locale.
+  final LegalDocument Function(Locale locale) documentFor;
+
+  factory LegalPage.privacy() => const LegalPage(documentFor: privacyPolicyFor);
+  factory LegalPage.terms() => const LegalPage(documentFor: termsOfServiceFor);
 
   @override
-  Widget build(BuildContext context) => _PageFrame(
-        title: document.title,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const _DraftBanner(),
+  Widget build(BuildContext context) {
+    final document = documentFor(Localizations.localeOf(context));
+    return _PageFrame(
+      title: document.title,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _DraftBanner(),
+          Semantics(
+            header: true,
+            child: Text(document.title, style: displayText(size: 40, weight: FontWeight.w400)),
+          ),
+          const SizedBox(height: 8),
+          Text(context.l10n.legalLastUpdated(legalLastUpdated), style: uiLabel(spacing: 0.6)),
+          const SizedBox(height: 24),
+          Text(document.intro, style: bodyText(color: LD.ink)),
+          for (final section in document.sections) ...[
+            const SizedBox(height: 28),
             Semantics(
               header: true,
-              child: Text(document.title, style: displayText(size: 40, weight: FontWeight.w400)),
+              child: Text(section.title, style: displayText(size: 24, weight: FontWeight.w500)),
             ),
             const SizedBox(height: 8),
-            Text('Última actualización: ${LegalInfo.lastUpdated}', style: uiLabel(spacing: 0.6)),
-            const SizedBox(height: 24),
-            Text(document.intro, style: bodyText(color: LD.ink)),
-            for (final section in document.sections) ...[
-              const SizedBox(height: 28),
-              Semantics(
-                header: true,
-                child: Text(section.title, style: displayText(size: 24, weight: FontWeight.w500)),
+            for (final p in section.paragraphs)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Text(p, style: bodyText(size: 14)),
               ),
-              const SizedBox(height: 8),
-              for (final p in section.paragraphs)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Text(p, style: bodyText(size: 14)),
-                ),
-            ],
           ],
-        ),
-      );
+        ],
+      ),
+    );
+  }
 }
 
 class ContactPage extends StatelessWidget {
@@ -114,47 +120,44 @@ class ContactPage extends StatelessWidget {
 
   Future<void> _open(BuildContext context, Uri uri) async {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication) && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('No se pudo abrir la aplicación')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(context.l10n.commonCouldNotOpenApp)));
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final digits = LegalInfo.supportWhatsApp.replaceAll(RegExp(r'[^0-9]'), '');
     return _PageFrame(
-      title: 'Contacto',
+      title: l.legalContactTitle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _DraftBanner(),
-          Text('Estamos para ayudarte', style: displayText(size: 40, weight: FontWeight.w400)),
+          Text(l.legalContactHeadline, style: displayText(size: 40, weight: FontWeight.w400)),
           const SizedBox(height: 12),
-          Text(
-            'Escríbenos por cualquier consulta sobre una reserva, tu cuenta o tus datos. '
-            'Si tienes un viaje en curso, usa los botones de contacto con tu chófer en la pantalla del viaje.',
-            style: bodyText(),
-          ),
+          Text(l.legalContactIntro, style: bodyText()),
           const SizedBox(height: 28),
           if (LegalInfo.hasWhatsApp)
             _ContactTile(
               icon: Icons.chat_outlined,
-              label: 'WhatsApp',
+              label: l.commonWhatsApp,
               value: LegalInfo.supportWhatsApp,
               onTap: () => _open(context, Uri.parse('https://wa.me/$digits')),
             ),
           if (LegalInfo.hasEmail)
             _ContactTile(
               icon: Icons.mail_outline,
-              label: 'Correo',
+              label: l.legalContactEmail,
               value: LegalInfo.supportEmail,
               onTap: () => _open(context, Uri(scheme: 'mailto', path: LegalInfo.supportEmail)),
             ),
           if (!LegalInfo.hasEmail && !LegalInfo.hasWhatsApp)
-            Text('Los canales de contacto se publicarán pronto.', style: bodyText(color: LD.ink3)),
+            Text(l.legalContactComingSoon, style: bodyText(color: LD.ink3)),
           const SizedBox(height: 28),
           Text(LegalInfo.companyName, style: uiLabel(size: 12, spacing: 0.4, color: LD.ink)),
           const SizedBox(height: 4),
-          Text('NIT ${LegalInfo.nit} · ${LegalInfo.address}', style: bodyText(size: 13, color: LD.ink3)),
+          Text(l.legalCompanyDetails(LegalInfo.nit, LegalInfo.address), style: bodyText(size: 13, color: LD.ink3)),
         ],
       ),
     );
@@ -215,8 +218,6 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
   bool _deleting = false;
   String? _error;
 
-  static const _keyword = 'ELIMINAR';
-
   @override
   void dispose() {
     _confirm.dispose();
@@ -233,15 +234,17 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
       if (!mounted) return;
       context.read<AuthBloc>().add(const LogoutRequested());
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Tu cuenta fue eliminada.')),
+        SnackBar(content: Text(context.l10n.legalDeleteSuccess)),
       );
       context.go('/');
     } on FirebaseFunctionsException catch (e) {
-      setState(() => _error = (e.message ?? '').contains('active-trip')
-          ? 'Tienes un viaje en curso. Podrás eliminar tu cuenta cuando termine.'
-          : 'No pudimos eliminar tu cuenta. Inténtalo de nuevo o contáctanos.');
+      if (!mounted) return;
+      final l = context.l10n;
+      setState(
+          () => _error = (e.message ?? '').contains('active-trip') ? l.legalDeleteActiveTrip : l.legalDeleteFailed);
     } catch (_) {
-      setState(() => _error = 'No pudimos eliminar tu cuenta. Revisa tu conexión.');
+      if (!mounted) return;
+      setState(() => _error = context.l10n.legalDeleteConnectionError);
     } finally {
       if (mounted) setState(() => _deleting = false);
     }
@@ -249,22 +252,24 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
+    final keyword = l.legalDeleteKeyword;
     final authed = context.watch<AuthBloc>().state is AuthAuthenticated;
     return _PageFrame(
-      title: 'Eliminar cuenta',
+      title: l.legalDeleteTitle,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Eliminar tu cuenta', style: displayText(size: 40, weight: FontWeight.w400)),
+          Text(l.legalDeleteHeadline, style: displayText(size: 40, weight: FontWeight.w400)),
           const SizedBox(height: 16),
-          Text('Al eliminar tu cuenta:', style: bodyText(color: LD.ink)),
+          Text(l.legalDeleteIntro, style: bodyText(color: LD.ink)),
           const SizedBox(height: 8),
-          for (final line in const [
-            'Borramos tu perfil, tus notificaciones y tu acceso.',
-            'Cancelamos tus reservas pendientes.',
-            'Quitamos tu nombre, teléfono y notas de tus viajes anteriores. Los registros de esos viajes se conservan sin datos de contacto por obligaciones contables.',
-            'Si eres chófer, también borramos tu perfil de chófer y desactivamos tu vehículo.',
-            'Esta acción no se puede deshacer.',
+          for (final line in [
+            l.legalDeleteEffectProfile,
+            l.legalDeleteEffectBookings,
+            l.legalDeleteEffectTrips,
+            l.legalDeleteEffectDriver,
+            l.legalDeleteEffectPermanent,
           ])
             Padding(
               padding: const EdgeInsets.only(bottom: 6),
@@ -281,11 +286,11 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
             ),
           const SizedBox(height: 24),
           if (!authed) ...[
-            Text('Inicia sesión con la cuenta que quieres eliminar.', style: bodyText(color: LD.ink)),
+            Text(l.legalDeleteSignInPrompt, style: bodyText(color: LD.ink)),
             const SizedBox(height: 16),
-            _PrimaryButton(label: 'Iniciar sesión', onTap: () => context.push('/login')),
+            _PrimaryButton(label: l.legalDeleteSignIn, onTap: () => context.push('/login')),
           ] else ...[
-            Text('Escribe $_keyword para confirmar.', style: bodyText(color: LD.ink)),
+            Text(l.legalDeleteConfirmPrompt(keyword), style: bodyText(color: LD.ink)),
             const SizedBox(height: 8),
             TextField(
               controller: _confirm,
@@ -295,7 +300,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white,
-                hintText: _keyword,
+                hintText: keyword,
                 hintStyle: bodyText(color: LD.ink3),
                 border: const OutlineInputBorder(borderSide: BorderSide(color: LD.border)),
                 enabledBorder: const OutlineInputBorder(borderSide: BorderSide(color: LD.border)),
@@ -307,10 +312,10 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
             ],
             const SizedBox(height: 16),
             _PrimaryButton(
-              label: 'Eliminar mi cuenta',
+              label: l.legalDeleteButton,
               danger: true,
               loading: _deleting,
-              onTap: _confirm.text.trim().toUpperCase() == _keyword && !_deleting ? _delete : null,
+              onTap: _confirm.text.trim().toUpperCase() == keyword && !_deleting ? _delete : null,
             ),
           ],
         ],
@@ -341,9 +346,11 @@ class _PrimaryButton extends StatelessWidget {
             shape: const RoundedRectangleBorder(),
           ),
           child: loading
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+              ? const SizedBox(
+                  width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
               : Text(label.toUpperCase(),
-                  style: const TextStyle(fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 2)),
+                  style:
+                      const TextStyle(fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 2)),
         ),
       );
 }

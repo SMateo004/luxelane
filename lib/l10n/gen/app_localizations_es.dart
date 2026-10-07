@@ -89,6 +89,90 @@ class AppLocalizationsEs extends AppLocalizations {
   String get flightOnTime => 'A tiempo';
 
   @override
+  String legalCompanyDetails(String nit, String address) {
+    return 'NIT $nit · $address';
+  }
+
+  @override
+  String get legalContactComingSoon => 'Los canales de contacto se publicarán pronto.';
+
+  @override
+  String get legalContactEmail => 'Correo';
+
+  @override
+  String get legalContactHeadline => 'Estamos para ayudarte';
+
+  @override
+  String get legalContactIntro => 'Escríbenos por cualquier consulta sobre una reserva, tu cuenta o tus datos. Si tienes un viaje en curso, usa los botones de contacto con tu chófer en la pantalla del viaje.';
+
+  @override
+  String get legalContactTitle => 'Contacto';
+
+  @override
+  String get legalDeleteActiveTrip => 'Tienes un viaje en curso. Podrás eliminar tu cuenta cuando termine.';
+
+  @override
+  String get legalDeleteButton => 'Eliminar mi cuenta';
+
+  @override
+  String legalDeleteConfirmPrompt(String keyword) {
+    return 'Escribe $keyword para confirmar.';
+  }
+
+  @override
+  String get legalDeleteConnectionError => 'No pudimos eliminar tu cuenta. Revisa tu conexión.';
+
+  @override
+  String get legalDeleteEffectBookings => 'Cancelamos tus reservas pendientes.';
+
+  @override
+  String get legalDeleteEffectDriver => 'Si eres chófer, también borramos tu perfil de chófer y desactivamos tu vehículo.';
+
+  @override
+  String get legalDeleteEffectPermanent => 'Esta acción no se puede deshacer.';
+
+  @override
+  String get legalDeleteEffectProfile => 'Borramos tu perfil, tus notificaciones y tu acceso.';
+
+  @override
+  String get legalDeleteEffectTrips => 'Quitamos tu nombre, teléfono y notas de tus viajes anteriores. Los registros de esos viajes se conservan sin datos de contacto por obligaciones contables.';
+
+  @override
+  String get legalDeleteFailed => 'No pudimos eliminar tu cuenta. Inténtalo de nuevo o contáctanos.';
+
+  @override
+  String get legalDeleteHeadline => 'Eliminar tu cuenta';
+
+  @override
+  String get legalDeleteIntro => 'Al eliminar tu cuenta:';
+
+  @override
+  String get legalDeleteKeyword => 'ELIMINAR';
+
+  @override
+  String get legalDeleteSignIn => 'Iniciar sesión';
+
+  @override
+  String get legalDeleteSignInPrompt => 'Inicia sesión con la cuenta que quieres eliminar.';
+
+  @override
+  String get legalDeleteSuccess => 'Tu cuenta fue eliminada.';
+
+  @override
+  String get legalDeleteTitle => 'Eliminar cuenta';
+
+  @override
+  String get legalDraftBanner => 'Borrador: este documento contiene datos pendientes entre corchetes y debe ser revisado por un abogado antes de publicarse.';
+
+  @override
+  String legalLastUpdated(DateTime date) {
+    final intl.DateFormat dateDateFormat = intl.DateFormat.yMMMMd(localeName);
+    final String dateString = dateDateFormat.format(date);
+
+    return 'Última actualización: $dateString';
+  }
+
+  @override
   String get serviceByTheHour => 'Por horas';
 
   @override

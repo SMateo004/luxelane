@@ -253,6 +253,156 @@ abstract class AppLocalizations {
   /// **'A tiempo'**
   String get flightOnTime;
 
+  /// Company tax ID and address under the contact details
+  ///
+  /// In es, this message translates to:
+  /// **'NIT {nit} · {address}'**
+  String legalCompanyDetails(String nit, String address);
+
+  /// No description provided for @legalContactComingSoon.
+  ///
+  /// In es, this message translates to:
+  /// **'Los canales de contacto se publicarán pronto.'**
+  String get legalContactComingSoon;
+
+  /// Label of the support email contact tile
+  ///
+  /// In es, this message translates to:
+  /// **'Correo'**
+  String get legalContactEmail;
+
+  /// No description provided for @legalContactHeadline.
+  ///
+  /// In es, this message translates to:
+  /// **'Estamos para ayudarte'**
+  String get legalContactHeadline;
+
+  /// No description provided for @legalContactIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'Escríbenos por cualquier consulta sobre una reserva, tu cuenta o tus datos. Si tienes un viaje en curso, usa los botones de contacto con tu chófer en la pantalla del viaje.'**
+  String get legalContactIntro;
+
+  /// App bar title of the contact page
+  ///
+  /// In es, this message translates to:
+  /// **'Contacto'**
+  String get legalContactTitle;
+
+  /// No description provided for @legalDeleteActiveTrip.
+  ///
+  /// In es, this message translates to:
+  /// **'Tienes un viaje en curso. Podrás eliminar tu cuenta cuando termine.'**
+  String get legalDeleteActiveTrip;
+
+  /// No description provided for @legalDeleteButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar mi cuenta'**
+  String get legalDeleteButton;
+
+  /// No description provided for @legalDeleteConfirmPrompt.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe {keyword} para confirmar.'**
+  String legalDeleteConfirmPrompt(String keyword);
+
+  /// No description provided for @legalDeleteConnectionError.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos eliminar tu cuenta. Revisa tu conexión.'**
+  String get legalDeleteConnectionError;
+
+  /// No description provided for @legalDeleteEffectBookings.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelamos tus reservas pendientes.'**
+  String get legalDeleteEffectBookings;
+
+  /// No description provided for @legalDeleteEffectDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Si eres chófer, también borramos tu perfil de chófer y desactivamos tu vehículo.'**
+  String get legalDeleteEffectDriver;
+
+  /// No description provided for @legalDeleteEffectPermanent.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta acción no se puede deshacer.'**
+  String get legalDeleteEffectPermanent;
+
+  /// No description provided for @legalDeleteEffectProfile.
+  ///
+  /// In es, this message translates to:
+  /// **'Borramos tu perfil, tus notificaciones y tu acceso.'**
+  String get legalDeleteEffectProfile;
+
+  /// No description provided for @legalDeleteEffectTrips.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitamos tu nombre, teléfono y notas de tus viajes anteriores. Los registros de esos viajes se conservan sin datos de contacto por obligaciones contables.'**
+  String get legalDeleteEffectTrips;
+
+  /// No description provided for @legalDeleteFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos eliminar tu cuenta. Inténtalo de nuevo o contáctanos.'**
+  String get legalDeleteFailed;
+
+  /// No description provided for @legalDeleteHeadline.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar tu cuenta'**
+  String get legalDeleteHeadline;
+
+  /// No description provided for @legalDeleteIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'Al eliminar tu cuenta:'**
+  String get legalDeleteIntro;
+
+  /// Word the user must type to confirm account deletion. Uppercase, no spaces.
+  ///
+  /// In es, this message translates to:
+  /// **'ELIMINAR'**
+  String get legalDeleteKeyword;
+
+  /// Button that opens the login page from the account deletion page
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar sesión'**
+  String get legalDeleteSignIn;
+
+  /// No description provided for @legalDeleteSignInPrompt.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia sesión con la cuenta que quieres eliminar.'**
+  String get legalDeleteSignInPrompt;
+
+  /// No description provided for @legalDeleteSuccess.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu cuenta fue eliminada.'**
+  String get legalDeleteSuccess;
+
+  /// App bar title of the account deletion page
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar cuenta'**
+  String get legalDeleteTitle;
+
+  /// Warning banner on legal pages while company details are still placeholders
+  ///
+  /// In es, this message translates to:
+  /// **'Borrador: este documento contiene datos pendientes entre corchetes y debe ser revisado por un abogado antes de publicarse.'**
+  String get legalDraftBanner;
+
+  /// Date the legal document was last revised
+  ///
+  /// In es, this message translates to:
+  /// **'Última actualización: {date}'**
+  String legalLastUpdated(DateTime date);
+
   /// No description provided for @serviceByTheHour.
   ///
   /// In es, this message translates to:

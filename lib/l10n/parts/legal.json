@@ -1,0 +1,138 @@
+{
+  "legalDraftBanner": {
+    "es": "Borrador: este documento contiene datos pendientes entre corchetes y debe ser revisado por un abogado antes de publicarse.",
+    "en": "Draft: this document contains pending details in square brackets and must be reviewed by a lawyer before it is published.",
+    "pt": "Rascunho: este documento contém dados pendentes entre colchetes e deve ser revisado por um advogado antes de ser publicado.",
+    "description": "Warning banner on legal pages while company details are still placeholders"
+  },
+  "legalLastUpdated": {
+    "es": "Última actualización: {date}",
+    "en": "Last updated: {date}",
+    "pt": "Última atualização: {date}",
+    "description": "Date the legal document was last revised",
+    "placeholders": { "date": { "type": "DateTime", "format": "yMMMMd" } }
+  },
+  "legalContactTitle": {
+    "es": "Contacto",
+    "en": "Contact",
+    "pt": "Contato",
+    "description": "App bar title of the contact page"
+  },
+  "legalContactHeadline": {
+    "es": "Estamos para ayudarte",
+    "en": "We're here to help",
+    "pt": "Estamos aqui para ajudar"
+  },
+  "legalContactIntro": {
+    "es": "Escríbenos por cualquier consulta sobre una reserva, tu cuenta o tus datos. Si tienes un viaje en curso, usa los botones de contacto con tu chófer en la pantalla del viaje.",
+    "en": "Write to us with any question about a booking, your account or your data. If you have a trip in progress, use the buttons to contact your chauffeur on the trip screen.",
+    "pt": "Escreva para nós com qualquer dúvida sobre uma reserva, sua conta ou seus dados. Se você tiver uma viagem em andamento, use os botões de contato com seu motorista na tela da viagem."
+  },
+  "legalContactEmail": {
+    "es": "Correo",
+    "en": "Email",
+    "pt": "E-mail",
+    "description": "Label of the support email contact tile"
+  },
+  "legalContactComingSoon": {
+    "es": "Los canales de contacto se publicarán pronto.",
+    "en": "Contact channels will be published soon.",
+    "pt": "Os canais de contato serão publicados em breve."
+  },
+  "legalCompanyDetails": {
+    "es": "NIT {nit} · {address}",
+    "en": "NIT (Tax ID) {nit} · {address}",
+    "pt": "NIT (identificação fiscal) {nit} · {address}",
+    "description": "Company tax ID and address under the contact details",
+    "placeholders": { "nit": { "type": "String" }, "address": { "type": "String" } }
+  },
+  "legalDeleteTitle": {
+    "es": "Eliminar cuenta",
+    "en": "Delete account",
+    "pt": "Excluir conta",
+    "description": "App bar title of the account deletion page"
+  },
+  "legalDeleteHeadline": {
+    "es": "Eliminar tu cuenta",
+    "en": "Delete your account",
+    "pt": "Excluir sua conta"
+  },
+  "legalDeleteIntro": {
+    "es": "Al eliminar tu cuenta:",
+    "en": "When you delete your account:",
+    "pt": "Ao excluir sua conta:"
+  },
+  "legalDeleteEffectProfile": {
+    "es": "Borramos tu perfil, tus notificaciones y tu acceso.",
+    "en": "We delete your profile, your notifications and your access.",
+    "pt": "Apagamos seu perfil, suas notificações e seu acesso."
+  },
+  "legalDeleteEffectBookings": {
+    "es": "Cancelamos tus reservas pendientes.",
+    "en": "We cancel your pending bookings.",
+    "pt": "Cancelamos suas reservas pendentes."
+  },
+  "legalDeleteEffectTrips": {
+    "es": "Quitamos tu nombre, teléfono y notas de tus viajes anteriores. Los registros de esos viajes se conservan sin datos de contacto por obligaciones contables.",
+    "en": "We remove your name, phone number and notes from your past trips. The records of those trips are kept without contact details for accounting obligations.",
+    "pt": "Removemos seu nome, telefone e observações das suas viagens anteriores. Os registros dessas viagens são mantidos sem dados de contato por obrigações contábeis."
+  },
+  "legalDeleteEffectDriver": {
+    "es": "Si eres chófer, también borramos tu perfil de chófer y desactivamos tu vehículo.",
+    "en": "If you are a chauffeur, we also delete your chauffeur profile and deactivate your vehicle.",
+    "pt": "Se você for motorista, também apagamos seu perfil de motorista e desativamos seu veículo."
+  },
+  "legalDeleteEffectPermanent": {
+    "es": "Esta acción no se puede deshacer.",
+    "en": "This action cannot be undone.",
+    "pt": "Esta ação não pode ser desfeita."
+  },
+  "legalDeleteSignInPrompt": {
+    "es": "Inicia sesión con la cuenta que quieres eliminar.",
+    "en": "Sign in with the account you want to delete.",
+    "pt": "Entre com a conta que você deseja excluir."
+  },
+  "legalDeleteSignIn": {
+    "es": "Iniciar sesión",
+    "en": "Sign in",
+    "pt": "Entrar",
+    "description": "Button that opens the login page from the account deletion page"
+  },
+  "legalDeleteKeyword": {
+    "es": "ELIMINAR",
+    "en": "DELETE",
+    "pt": "EXCLUIR",
+    "description": "Word the user must type to confirm account deletion. Uppercase, no spaces."
+  },
+  "legalDeleteConfirmPrompt": {
+    "es": "Escribe {keyword} para confirmar.",
+    "en": "Type {keyword} to confirm.",
+    "pt": "Digite {keyword} para confirmar.",
+    "placeholders": { "keyword": { "type": "String" } }
+  },
+  "legalDeleteButton": {
+    "es": "Eliminar mi cuenta",
+    "en": "Delete my account",
+    "pt": "Excluir minha conta"
+  },
+  "legalDeleteSuccess": {
+    "es": "Tu cuenta fue eliminada.",
+    "en": "Your account was deleted.",
+    "pt": "Sua conta foi excluída."
+  },
+  "legalDeleteActiveTrip": {
+    "es": "Tienes un viaje en curso. Podrás eliminar tu cuenta cuando termine.",
+    "en": "You have a trip in progress. You can delete your account once it ends.",
+    "pt": "Você tem uma viagem em andamento. Poderá excluir sua conta quando ela terminar."
+  },
+  "legalDeleteFailed": {
+    "es": "No pudimos eliminar tu cuenta. Inténtalo de nuevo o contáctanos.",
+    "en": "We couldn't delete your account. Try again or contact us.",
+    "pt": "Não conseguimos excluir sua conta. Tente novamente ou fale conosco."
+  },
+  "legalDeleteConnectionError": {
+    "es": "No pudimos eliminar tu cuenta. Revisa tu conexión.",
+    "en": "We couldn't delete your account. Check your connection.",
+    "pt": "Não conseguimos excluir sua conta. Verifique sua conexão."
+  }
+}
