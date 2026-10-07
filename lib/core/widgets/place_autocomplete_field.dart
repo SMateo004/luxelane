@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../../app/theme/app_theme.dart';
+import '../../l10n/l10n.dart';
 import '../di/injection.dart';
 import '../models/place_model.dart';
 import '../services/maps_service.dart';
@@ -358,9 +359,13 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                   setState(() => _suggestions = []);
                   _hideDropdown();
                 },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Icon(Icons.close, size: 14, color: _iconColor),
+                child: Semantics(
+                  button: true,
+                  label: context.l10n.coreClearField,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Icon(Icons.close, size: 14, color: _iconColor),
+                  ),
                 ),
               ),
           ],

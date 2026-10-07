@@ -6,6 +6,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../domain/auth_failure.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
@@ -50,8 +51,10 @@ class AuthRepositoryImpl implements AuthRepository {
       final doc = await _db.collection('users').doc(cred.user!.uid).get();
       // Admin role is granted server-side only (scripts/promote_admin.mjs).
       return Right(User.fromJson({'id': doc.id, ...doc.data()!}));
-    } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(e.message ?? 'Login failed'));
+    } on FirebaseException catch (e) {
+      // FirebaseAuthException is a FirebaseException; keep the code so the UI
+      // can translate it (see auth_error_messages.dart).
+      return Left(AuthCodeFailure(e.code, e.message ?? 'Login failed'));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -90,8 +93,10 @@ class AuthRepositoryImpl implements AuthRepository {
         'termsVersion': LegalInfo.lastUpdated,
       });
       return Right(user);
-    } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(e.message ?? 'Registration failed'));
+    } on FirebaseException catch (e) {
+      // FirebaseAuthException is a FirebaseException; keep the code so the UI
+      // can translate it (see auth_error_messages.dart).
+      return Left(AuthCodeFailure(e.code, e.message ?? 'Registration failed'));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -127,8 +132,10 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await _auth.sendPasswordResetEmail(email: email);
       return const Right(null);
-    } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(e.message ?? 'Reset failed'));
+    } on FirebaseException catch (e) {
+      // FirebaseAuthException is a FirebaseException; keep the code so the UI
+      // can translate it (see auth_error_messages.dart).
+      return Left(AuthCodeFailure(e.code, e.message ?? 'Reset failed'));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/payment_bloc.dart';
 
@@ -52,14 +53,15 @@ class _PaymentScreenState extends State<PaymentScreen> {
       listener: (context, state) {
         if (state is CardOperationSuccess) _loadCards();
         if (state is PaymentError) {
-          showLuxSnackbar(context, state.message, isError: true);
+          showLuxSnackbar(context, context.l10n.paymentsError, isError: true);
         }
       },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Métodos de pago'),
+            title: Text(context.l10n.paymentsMethodsTitle),
             leading: IconButton(
+              tooltip: context.l10n.commonBack,
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
               onPressed: () => context.pop(),
             ),
@@ -68,7 +70,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                 onPressed: () => context.push('/payment/add'),
                 icon: const Icon(Icons.add, size: 18, color: LuxColors.accent),
                 label: Text(
-                  'AGREGAR',
+                  context.l10n.paymentsAdd.toUpperCase(),
                   style: LuxTypography.labelLarge
                       .copyWith(color: LuxColors.accent, fontSize: 11),
                 ),
@@ -93,7 +95,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       return ListView(
         padding: const EdgeInsets.all(LuxSpacing.md),
         children: [
-          const SectionHeader(title: 'Tarjetas guardadas'),
+          SectionHeader(title: context.l10n.paymentsSavedCards),
           const SizedBox(height: LuxSpacing.md),
           ...state.cards.map(
             (card) => _CardTile(
@@ -106,19 +108,21 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ),
           const SizedBox(height: LuxSpacing.lg),
           LuxOutlinedButton(
-            label: 'Agregar nueva tarjeta',
+            label: context.l10n.paymentsAddNewCard,
             onPressed: () => context.push('/payment/add'),
             icon: Icons.add,
           ),
           const SizedBox(height: LuxSpacing.md),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.lock_outline,
+              const Icon(Icons.lock_outline,
                   size: 14, color: LuxColors.whiteTertiary),
-              SizedBox(width: LuxSpacing.xs),
-              Text('Protegido por Stripe',
-                  style: LuxTypography.caption),
+              const SizedBox(width: LuxSpacing.xs),
+              Flexible(
+                child: Text(context.l10n.paymentsSecured,
+                    style: LuxTypography.caption),
+              ),
             ],
           ),
         ],
@@ -136,20 +140,23 @@ class _EmptyCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.credit_card_outlined,
-                size: 48, color: LuxColors.whiteTertiary),
-            const SizedBox(height: LuxSpacing.md),
-            const Text('Sin métodos de pago',
-                style: LuxTypography.titleMedium),
-            const SizedBox(height: LuxSpacing.sm),
-            const Text('Agrega una tarjeta para reservar viajes',
-                style: LuxTypography.bodyMedium),
-            const SizedBox(height: LuxSpacing.xl),
-            LuxButton(label: 'Agregar tarjeta', onPressed: onAdd),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(LuxSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.credit_card_outlined,
+                  size: 48, color: LuxColors.whiteTertiary),
+              const SizedBox(height: LuxSpacing.md),
+              Text(context.l10n.paymentsEmptyTitle,
+                  style: LuxTypography.titleMedium, textAlign: TextAlign.center),
+              const SizedBox(height: LuxSpacing.sm),
+              Text(context.l10n.paymentsEmptyBody,
+                  style: LuxTypography.bodyMedium, textAlign: TextAlign.center),
+              const SizedBox(height: LuxSpacing.xl),
+              LuxButton(label: context.l10n.paymentsAddCard, onPressed: onAdd),
+            ],
+          ),
         ),
       );
 }
@@ -168,7 +175,13 @@ class _CardTile extends StatelessWidget {
   final VoidCallback onRemove;
 
   @override
-  Widget build(BuildContext context) => LuxCard(
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final brand = _capitalize(card['brand'] as String? ?? l.paymentsCardFallback);
+    final last4 = card['last4'] ?? '****';
+    final month = '${card['expMonth'] ?? ''}'.padLeft(2, '0');
+    final year = '${card['expYear'] ?? ''}';
+    return LuxCard(
         selected: isDefault,
         child: Row(
           children: [
@@ -188,34 +201,45 @@ class _CardTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${_capitalize(card['brand'] as String? ?? 'Tarjeta')} •••• ${card['last4'] ?? '****'}',
+                    '$brand •••• $last4',
                     style: LuxTypography.bodyLarge,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    'Vence ${card['expMonth']}/${card['expYear']}',
+                    l.paymentsCardExpires(month, year),
                     style: LuxTypography.caption,
                   ),
+                  const SizedBox(height: LuxSpacing.xs),
+                  // Below the card details so long labels (en/pt) never
+                  // squeeze the row on narrow phones.
+                  if (isDefault)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: LuxSpacing.sm, vertical: LuxSpacing.xs),
+                      decoration: BoxDecoration(
+                        color: LuxColors.success.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(LuxRadius.sm),
+                      ),
+                      child: Text(l.paymentsDefault.toUpperCase(),
+                          style: LuxTypography.caption
+                              .copyWith(color: LuxColors.success)),
+                    )
+                  else
+                    TextButton(
+                      onPressed: onSetDefault,
+                      style: TextButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        minimumSize: const Size(0, 36),
+                        alignment: Alignment.centerLeft,
+                      ),
+                      child: Text(l.paymentsSetDefault.toUpperCase()),
+                    ),
                 ],
               ),
             ),
-            if (isDefault)
-              Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: LuxSpacing.sm, vertical: LuxSpacing.xs),
-                decoration: BoxDecoration(
-                  color: LuxColors.success.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(LuxRadius.sm),
-                ),
-                child: Text('PREDETERMINADA',
-                    style: LuxTypography.caption
-                        .copyWith(color: LuxColors.success)),
-              )
-            else
-              TextButton(
-                onPressed: onSetDefault,
-                child: const Text('PREDETERMINAR'),
-              ),
             IconButton(
+              tooltip: l.paymentsRemoveCard,
               icon: const Icon(Icons.delete_outline,
                   size: 18, color: LuxColors.error),
               onPressed: onRemove,
@@ -223,6 +247,7 @@ class _CardTile extends StatelessWidget {
           ],
         ),
       );
+  }
 
   static String _capitalize(String s) =>
       s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';

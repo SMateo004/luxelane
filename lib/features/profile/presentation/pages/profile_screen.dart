@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../app/theme/app_theme.dart';
-import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/profile_bloc.dart';
 
@@ -83,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Perfil'),
+          title: Text(context.l10n.profileTitle),
           actions: [
             BlocBuilder<ProfileBloc, ProfileState>(
               builder: (context, state) {
@@ -94,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         : null;
                 return TextButton(
                   onPressed: user != null ? () => _showEditSheet(user) : null,
-                  child: Text('EDITAR',
+                  child: Text(context.l10n.commonEdit.toUpperCase(),
                       style: LuxTypography.labelLarge.copyWith(fontSize: 11)),
                 );
               },
@@ -108,7 +109,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
             if (state is ProfileError) {
               return Center(
-                  child: Text(state.message, style: LuxTypography.bodyMedium));
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(context.l10n.profileLoadError,
+                        style: LuxTypography.bodyMedium,
+                        textAlign: TextAlign.center),
+                    const SizedBox(height: LuxSpacing.sm),
+                    TextButton(
+                      onPressed: _loadProfile,
+                      child: Text(context.l10n.commonRetry),
+                    ),
+                  ],
+                ),
+              );
             }
             final User user;
             int totalRides    = 0;
@@ -175,49 +189,51 @@ class _ProfileBody extends StatelessWidget {
   final ValueChanged<String> onNotificationsChanged;
 
   @override
-  Widget build(BuildContext context) => ListView(
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return ListView(
         padding: const EdgeInsets.all(LuxSpacing.md),
         children: [
           _ProfileHeader(user: user),
           const SizedBox(height: LuxSpacing.xl),
-          const SectionHeader(title: 'Cuenta'),
+          SectionHeader(title: l.profileSectionAccount),
           const SizedBox(height: LuxSpacing.md),
           _InfoTile(
               icon: Icons.email_outlined,
-              label: 'Correo electrónico',
+              label: l.authEmailLabel,
               value: user.email),
           _InfoTile(
               icon: Icons.phone_outlined,
-              label: 'Teléfono',
+              label: l.authPhoneLabel,
               value: user.phone.isNotEmpty ? user.phone : '—'),
           const SizedBox(height: LuxSpacing.xl),
-          const SectionHeader(title: 'Estadísticas'),
+          SectionHeader(title: l.profileSectionStats),
           const SizedBox(height: LuxSpacing.md),
           Row(
             children: [
               Expanded(
                   child: _StatCard(
-                      label: 'Viajes',
+                      label: l.profileStatTrips,
                       value: totalRides.toString())),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                   child: _StatCard(
-                      label: 'Calificación',
+                      label: l.profileStatRating,
                       value: rating != null
-                          ? rating!.toStringAsFixed(1)
+                          ? NumberFormat('0.0').format(rating)
                           : '—')),
 
             ],
           ),
           const SizedBox(height: LuxSpacing.xl),
-          const SectionHeader(title: 'Ayuda y legal'),
+          SectionHeader(title: l.profileSectionHelp),
           const SizedBox(height: LuxSpacing.sm),
-          _LinkTile(icon: Icons.support_agent_outlined, label: 'Contacto y ayuda', path: '/contacto'),
-          _LinkTile(icon: Icons.description_outlined, label: 'Términos y condiciones', path: '/terminos'),
-          _LinkTile(icon: Icons.privacy_tip_outlined, label: 'Política de privacidad', path: '/privacidad'),
+          _LinkTile(icon: Icons.support_agent_outlined, label: l.profileContactHelp, path: '/contacto'),
+          _LinkTile(icon: Icons.description_outlined, label: l.authConsentTermsLink, path: '/terminos'),
+          _LinkTile(icon: Icons.privacy_tip_outlined, label: l.authConsentPrivacyLink, path: '/privacidad'),
           const SizedBox(height: LuxSpacing.xl),
           LuxOutlinedButton(
-            label: 'Cerrar sesión',
+            label: l.profileSignOut,
             onPressed: () =>
                 context.read<AuthBloc>().add(const LogoutRequested()),
           ),
@@ -229,16 +245,17 @@ class _ProfileBody extends StatelessWidget {
                 foregroundColor: LuxColors.error,
                 minimumSize: const Size(0, 48),
               ),
-              child: const Text('Eliminar cuenta'),
+              child: Text(l.profileDeleteAccount),
             ),
           ),
           const SizedBox(height: LuxSpacing.sm),
-          const Center(
-              child:
-                  Text('Luxelane v1.0.0', style: LuxTypography.caption)),
+          Center(
+              child: Text(l.profileVersion('1.0.0'),
+                  style: LuxTypography.caption)),
           const SizedBox(height: LuxSpacing.md),
         ],
       );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -278,15 +295,16 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
       displayName: _name.text.trim(),
       phone: _phone.text.trim(),
     );
+    final message = context.l10n.profileUpdated;
+    final messenger = ScaffoldMessenger.of(context);
     context.read<ProfileBloc>().add(ProfileUpdateRequested(user: updated));
     Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Perfil actualizado')),
-    );
+    messenger.showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final bottom = MediaQuery.of(context).viewInsets.bottom;
     return Padding(
       padding: EdgeInsets.fromLTRB(
@@ -299,9 +317,11 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
           children: [
             Row(
               children: [
-                const Text('Editar perfil', style: LuxTypography.titleLarge),
-                const Spacer(),
+                Expanded(
+                  child: Text(l.profileEditTitle, style: LuxTypography.titleLarge),
+                ),
                 IconButton(
+                  tooltip: l.commonClose,
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.close_rounded,
                       color: LuxColors.whiteTertiary),
@@ -310,21 +330,21 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
             ),
             const SizedBox(height: LuxSpacing.lg),
             LuxTextField(
-              label: 'Nombre',
+              label: l.profileNameLabel,
               controller: _name,
               prefixIcon: Icons.person_outline_rounded,
               validator: (v) =>
-                  v == null || v.trim().isEmpty ? 'Requerido' : null,
+                  v == null || v.trim().isEmpty ? l.commonRequired : null,
             ),
             const SizedBox(height: LuxSpacing.md),
             LuxTextField(
-              label: 'Teléfono',
+              label: l.authPhoneLabel,
               controller: _phone,
               keyboardType: TextInputType.phone,
               prefixIcon: Icons.phone_outlined,
             ),
             const SizedBox(height: LuxSpacing.lg),
-            LuxButton(label: 'Guardar cambios', onPressed: _save),
+            LuxButton(label: l.profileSaveChanges, onPressed: _save),
           ],
         ),
       ),
@@ -366,7 +386,8 @@ class _ProfileHeader extends StatelessWidget {
                 : null,
           ),
           const SizedBox(height: LuxSpacing.md),
-          Text(user.displayName, style: LuxTypography.headlineLarge),
+          Text(user.displayName,
+              style: LuxTypography.headlineLarge, textAlign: TextAlign.center),
           const SizedBox(height: 4),
           Container(
             padding: const EdgeInsets.symmetric(
@@ -378,11 +399,7 @@ class _ProfileHeader extends StatelessWidget {
                   Border.all(color: LuxColors.accent.withOpacity(0.4)),
             ),
             child: Text(
-              user.role == UserRole.admin
-                  ? 'ADMIN'
-                  : user.role == UserRole.driver
-                      ? 'CHÓFER'
-                      : 'PASAJERO',
+              user.role.localizedLabel(context.l10n).toUpperCase(),
               style: LuxTypography.caption.copyWith(
                 color: LuxColors.accent,
                 fontWeight: FontWeight.w600,

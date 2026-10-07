@@ -5,6 +5,7 @@ import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/error/failures.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/core/repositories/repositories.dart';
+import 'package:luxelane/features/auth/domain/auth_failure.dart';
 import 'package:luxelane/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -64,6 +65,22 @@ void main() {
       expect: () => [
         const AuthLoading(),
         const AuthError('Wrong credentials'),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'keeps the Firebase error code so the UI can translate it',
+      build: () {
+        when(() => repo.login(email: any(named: 'email'), password: any(named: 'password')))
+            .thenAnswer((_) async => const Left(AuthCodeFailure('wrong-password', 'raw text')));
+        return AuthBloc(authRepository: repo);
+      },
+      act: (bloc) => bloc.add(
+        const LoginRequested(email: 'x@x.com', password: 'wrong'),
+      ),
+      expect: () => [
+        const AuthLoading(),
+        const AuthError('raw text', code: 'wrong-password'),
       ],
     );
 

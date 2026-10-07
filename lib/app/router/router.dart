@@ -27,6 +27,7 @@ import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../../features/ride/presentation/pages/ride_screen.dart';
 import '../../features/trips/presentation/pages/receipt_page.dart';
 import '../../features/trips/presentation/pages/trips_screen.dart';
+import '../../l10n/l10n.dart';
 import '../driver_shell/driver_shell.dart';
 import '../shell/app_shell.dart';
 import '../theme/app_theme.dart';
@@ -364,10 +365,12 @@ CustomTransitionPage<void> _slide(Widget child, GoRouterState state) =>
 class _SplashPage extends StatelessWidget {
   const _SplashPage();
   @override
-  Widget build(BuildContext context) => const Scaffold(
-        backgroundColor: Color(0xFF0A0A0A),
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: const Color(0xFF0A0A0A),
         body: Center(
-          child: Column(
+          child: Semantics(
+            label: context.l10n.commonLoading,
+            child: const Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
@@ -390,6 +393,7 @@ class _SplashPage extends StatelessWidget {
               ),
             ],
           ),
+          ),
         ),
       );
 }
@@ -399,17 +403,26 @@ class _NotFoundPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('404',
-                  style: TextStyle(color: Colors.white, fontSize: 64)),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () => context.go('/'),
-                child: const Text('Go Home'),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(LuxSpacing.lg),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('404',
+                    style: TextStyle(color: Colors.white, fontSize: 64)),
+                const SizedBox(height: 8),
+                Text(context.l10n.routerNotFoundTitle,
+                    style: LuxTypography.titleLarge, textAlign: TextAlign.center),
+                const SizedBox(height: 8),
+                Text(context.l10n.routerNotFoundBody,
+                    style: LuxTypography.bodyMedium, textAlign: TextAlign.center),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => context.go('/'),
+                  child: Text(context.l10n.routerGoHome),
+                ),
+              ],
+            ),
           ),
         ),
       );

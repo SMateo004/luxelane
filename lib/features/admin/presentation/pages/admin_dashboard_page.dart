@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/admin_bloc.dart';
 import '../widgets/admin_sections.dart';
@@ -19,16 +20,16 @@ class AdminDashboardPage extends StatefulWidget {
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
   int _section = 0;
 
-  static const _sections = [
-    'Panel',
-    'Reservas',
-    'Chóferes',
-    'Vehículos',
-    'Usuarios',
-    'Precios',
-    'Auditoría',
-    'Configuración'
-  ];
+  List<String> _sections(AppLocalizations l) => [
+        l.adminSectionDashboard,
+        l.adminSectionBookings,
+        l.adminSectionDrivers,
+        l.adminSectionVehicles,
+        l.adminSectionUsers,
+        l.adminSectionPricing,
+        l.adminSectionAudit,
+        l.adminSectionSettings,
+      ];
   static const _icons = [
     Icons.dashboard_outlined,
     Icons.confirmation_number_outlined,
@@ -57,24 +58,24 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: LuxColors.blackElevated,
-        title: const Text('Cerrar sesión', style: LuxTypography.titleLarge),
-        content: const Text(
-          '¿Seguro que quieres cerrar sesión del panel de administración?',
+        title: Text(context.l10n.profileSignOut, style: LuxTypography.titleLarge),
+        content: Text(
+          context.l10n.adminSignOutConfirm,
           style: LuxTypography.bodyMedium,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar'),
+            child: Text(context.l10n.commonCancel),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               context.read<AuthBloc>().add(const LogoutRequested());
             },
-            child: const Text(
-              'Cerrar sesión',
-              style: TextStyle(color: LuxColors.error, fontWeight: FontWeight.w600),
+            child: Text(
+              context.l10n.profileSignOut,
+              style: const TextStyle(color: LuxColors.error, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -86,9 +87,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+            tooltip: context.l10n.commonBack,
             onPressed: () => context.go('/'),
           ),
-          title: const Text('Administrador'),
+          title: Text(context.l10n.adminTitle),
           actions: [
             Container(
               margin: const EdgeInsets.only(right: LuxSpacing.md),
@@ -99,7 +101,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
                 border: Border.all(color: LuxColors.accent.withOpacity(0.4)),
               ),
-              child: Text('ADMIN',
+              child: Text(context.l10n.coreRoleAdmin.toUpperCase(),
                   style: LuxTypography.caption.copyWith(
                       color: LuxColors.accent, fontWeight: FontWeight.w700)),
             ),
@@ -112,11 +114,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               padding: const EdgeInsets.all(LuxSpacing.md),
               child: Row(
                 children: List.generate(
-                  _sections.length,
+                  _sections(context.l10n).length,
                   (i) => Padding(
                     padding: const EdgeInsets.only(right: LuxSpacing.sm),
                     child: SectionChip(
-                      label: _sections[i],
+                      label: _sections(context.l10n)[i],
                       selected: _section == i,
                       onTap: () => setState(() => _section = i),
                     ),
@@ -154,7 +156,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                             borderRadius: BorderRadius.circular(LuxRadius.sm),
                           ),
                           child: Text(
-                            'PANEL ADMIN',
+                            context.l10n.adminPanelBadge.toUpperCase(),
                             style: LuxTypography.caption.copyWith(
                                 color: LuxColors.accent,
                                 fontWeight: FontWeight.w700),
@@ -166,10 +168,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                   const LuxDivider(),
                   const SizedBox(height: LuxSpacing.sm),
                   ...List.generate(
-                    _sections.length,
+                    _sections(context.l10n).length,
                     (i) => AdminNavItem(
                       icon: _icons[i],
-                      label: _sections[i],
+                      label: _sections(context.l10n)[i],
                       selected: _section == i,
                       onTap: () => setState(() => _section = i),
                     ),
@@ -178,7 +180,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                   const LuxDivider(),
                   AdminNavItem(
                     icon: Icons.logout_rounded,
-                    label: 'Cerrar sesión',
+                    label: context.l10n.profileSignOut,
                     selected: false,
                     onTap: () => _confirmSignOut(context),
                   ),

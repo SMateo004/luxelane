@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../l10n/l10n.dart';
 import '../di/injection.dart';
 import '../models/place_model.dart';
 import '../services/maps_service.dart';
@@ -12,7 +13,7 @@ import '../services/maps_service.dart';
 Future<Place?> showMapPickerDialog(
   BuildContext context, {
   LatLng? initial,
-  String title = 'Select location',
+  String? title,
 }) {
   return showDialog<Place>(
     context: context,
@@ -20,7 +21,7 @@ Future<Place?> showMapPickerDialog(
     builder: (_) => _MapPickerDialog(
       initial: initial ??
           const LatLng(-17.7833, -63.1821), // Santa Cruz center
-      title: title,
+      title: title ?? context.l10n.coreMapPickerTitle,
     ),
   );
 }
@@ -41,7 +42,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
   GoogleMapController? _ctrl;
 
   LatLng _center = const LatLng(-17.7833, -63.1821);
-  String _address = 'Move the map to select a location';
+  String? _address; // null until the first reverse geocode finishes
   bool _loading = false;
   bool _dragging = false;
 
@@ -81,8 +82,8 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
   void _confirm() {
     Navigator.of(context).pop(
       Place(
-        name: _address.split(',').first,
-        address: _address,
+        name: (_address ?? '').split(',').first,
+        address: _address ?? '',
         lat: _center.latitude,
         lng: _center.longitude,
       ),
@@ -154,6 +155,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                       IconButton(
                         onPressed: () => Navigator.of(context).pop(),
                         icon: Icon(Icons.close, color: subColor, size: 20),
+                        tooltip: context.l10n.commonClose,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -178,7 +180,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Selected location',
+                              context.l10n.coreMapPickerSelected,
                               style: TextStyle(
                                 color: subColor,
                                 fontSize: 10,
@@ -199,7 +201,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                               )
                             else
                               Text(
-                                _address,
+                                _address ?? context.l10n.coreMapPickerHint,
                                 style: TextStyle(
                                   color: textColor,
                                   fontSize: 13,
@@ -216,7 +218,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                       SizedBox(
                         height: 44,
                         child: ElevatedButton(
-                          onPressed: _loading ? null : _confirm,
+                          onPressed: _loading || _address == null ? null : _confirm,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: const Color(0xFF111111),
                             foregroundColor: Colors.white,
@@ -234,7 +236,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                               letterSpacing: 1.5,
                             ),
                           ),
-                          child: const Text('CONFIRM'),
+                          child: Text(context.l10n.commonConfirm.toUpperCase()),
                         ),
                       ),
                     ],
@@ -303,15 +305,16 @@ class _MapPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         color: const Color(0xFFE8E5DF),
-        child: const Center(
+        child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.map_outlined, size: 48, color: Color(0xFFBBBBBB)),
-              SizedBox(height: 12),
+              const Icon(Icons.map_outlined, size: 48, color: Color(0xFFBBBBBB)),
+              const SizedBox(height: 12),
               Text(
-                'Add GOOGLE_MAPS_KEY to enable map',
-                style: TextStyle(
+                context.l10n.coreMapKeyMissing,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
                   color: Color(0xFF999999),
                   fontSize: 12,
                   fontFamily: 'Montserrat',

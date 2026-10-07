@@ -7,7 +7,18 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/admin_bloc.dart';
+
+String _noticeText(AppLocalizations l, AdminNotice n) => switch (n) {
+      AdminNotice.maintenanceOn => l.adminNoticeMaintenanceOn,
+      AdminNotice.maintenanceOff => l.adminNoticeMaintenanceOff,
+      AdminNotice.pricingUpdated => l.adminNoticePricingUpdated,
+      AdminNotice.driverVerified => l.adminNoticeDriverVerified,
+      AdminNotice.settingsSaved => l.adminNoticeSettingsSaved,
+      AdminNotice.bookingDeleted => l.adminNoticeBookingDeleted,
+      AdminNotice.roleUpdated => l.adminNoticeRoleUpdated,
+    };
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TAB: Dashboard  (Overview real con KPIs, gráfico y actividad reciente)
@@ -20,14 +31,17 @@ class DashboardTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<AdminBloc, AdminState>(
       listener: (context, state) {
-        if (state.successMessage != null) {
-          showLuxSnackbar(context, state.successMessage!);
+        final l = context.l10n;
+        if (state.notice != null) {
+          showLuxSnackbar(context, _noticeText(l, state.notice!));
         }
         if (state.error != null) {
-          showLuxSnackbar(context, state.error!, isError: true);
+          debugPrint('[Admin] ${state.error}');
+          showLuxSnackbar(context, l.adminActionFailed, isError: true);
         }
       },
       builder: (context, state) {
+        final l = context.l10n;
         return SingleChildScrollView(
           padding: const EdgeInsets.all(LuxSpacing.lg),
           child: Column(
@@ -42,19 +56,18 @@ class DashboardTab extends StatelessWidget {
                       children: [
                         const Icon(Icons.warning_amber_rounded, color: LuxColors.error),
                         const SizedBox(width: LuxSpacing.md),
-                        const Expanded(
+                        Expanded(
                           child: Text(
-                            'MODO MANTENIMIENTO ACTIVO — Los pasajeros no pueden reservar nuevos viajes.',
-                            style: TextStyle(color: LuxColors.error, fontWeight: FontWeight.w600),
+                            l.adminMaintenanceBanner,
+                            style: const TextStyle(color: LuxColors.error, fontWeight: FontWeight.w600),
                           ),
                         ),
-                        LuxOutlinedButton(
-                          label: 'Deshabilitar',
+                        const SizedBox(width: LuxSpacing.sm),
+                        TextButton(
                           onPressed: () => context
                               .read<AdminBloc>()
                               .add(const AdminToggleMaintenanceModeRequested(false)),
-                          width: 100,
-                          height: 32,
+                          child: Text(l.adminDisable.toUpperCase()),
                         ),
                       ],
                     ),
@@ -62,38 +75,38 @@ class DashboardTab extends StatelessWidget {
                 ),
 
               // ── KPI row ──────────────────────────────────────────────────
-              const SectionHeader(title: 'Resumen'),
+              SectionHeader(title: l.adminOverview),
               const SizedBox(height: LuxSpacing.md),
               Wrap(
                 spacing: LuxSpacing.md,
                 runSpacing: LuxSpacing.md,
                 children: [
                   _KpiTile(
-                    label: 'Ingresos totales',
-                    value: 'Bs${state.totalRevenue.toStringAsFixed(0)}',
+                    label: l.adminKpiTotalRevenue,
+                    value: LuxMoney.format(state.totalRevenue),
                     icon: Icons.payments_outlined,
-                    sub: 'Hoy: Bs${state.todayRevenue.toStringAsFixed(0)}',
+                    sub: l.adminKpiToday(LuxMoney.format(state.todayRevenue)),
                     color: LuxColors.accent,
                   ),
                   _KpiTile(
-                    label: 'Viajes completados',
-                    value: '${state.completedRidesCount}',
+                    label: l.adminKpiCompleted,
+                    value: NumberFormat.decimalPattern().format(state.completedRidesCount),
                     icon: Icons.check_circle_outline_rounded,
-                    sub: '${state.activeRidesCount} en progreso',
+                    sub: l.adminKpiInProgress(state.activeRidesCount),
                     color: LuxColors.success,
                   ),
                   _KpiTile(
-                    label: 'Reservas pendientes',
-                    value: '${state.pendingRidesCount}',
+                    label: l.adminKpiPending,
+                    value: NumberFormat.decimalPattern().format(state.pendingRidesCount),
                     icon: Icons.hourglass_top_rounded,
-                    sub: 'Esperando chófer',
+                    sub: l.adminKpiAwaitingDriver,
                     color: LuxColors.error,
                   ),
                   _KpiTile(
-                    label: 'Usuarios registrados',
-                    value: '${state.users.length}',
+                    label: l.adminKpiUsers,
+                    value: NumberFormat.decimalPattern().format(state.users.length),
                     icon: Icons.people_outline,
-                    sub: '${state.drivers.length} chóferes',
+                    sub: l.adminKpiDriversCount(state.drivers.length),
                     color: LuxColors.white,
                   ),
                 ],
@@ -101,14 +114,14 @@ class DashboardTab extends StatelessWidget {
 
               // ── Revenue chart ─────────────────────────────────────────────
               const SizedBox(height: LuxSpacing.xl),
-              const SectionHeader(title: 'Rendimiento del negocio'),
+              SectionHeader(title: l.adminBusinessPerformance),
               const SizedBox(height: LuxSpacing.md),
               LuxCard(
                 padding: const EdgeInsets.all(LuxSpacing.lg),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Tendencia de ingresos 7 días (Bs)', style: LuxTypography.titleLarge),
+                    Text(l.adminRevenueTrend, style: LuxTypography.titleLarge),
                     const SizedBox(height: LuxSpacing.xxl),
                     SizedBox(
                       height: 200,
@@ -120,7 +133,7 @@ class DashboardTab extends StatelessWidget {
 
               // ── Recent bookings ───────────────────────────────────────────
               const SizedBox(height: LuxSpacing.xl),
-              const SectionHeader(title: 'Actividad reciente'),
+              SectionHeader(title: l.adminRecentActivity),
               const SizedBox(height: LuxSpacing.md),
               BookingsTab(compact: true, state: state),
             ],
@@ -153,16 +166,25 @@ class _KpiTile extends StatelessWidget {
               Row(
                 children: [
                   Icon(icon, color: color, size: 20),
-                  const Spacer(),
-                  Text(label,
-                      style:
-                          LuxTypography.caption.copyWith(color: LuxColors.whiteTertiary)),
+                  const SizedBox(width: LuxSpacing.sm),
+                  Expanded(
+                    child: Text(label,
+                        textAlign: TextAlign.end,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: LuxTypography.caption
+                            .copyWith(color: LuxColors.whiteTertiary)),
+                  ),
                 ],
               ),
               const SizedBox(height: LuxSpacing.sm),
-              Text(value,
-                  style: LuxTypography.headlineLarge.copyWith(
-                      color: color, fontFamily: 'Cormorant Garamond', fontSize: 36)),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(value,
+                    style: LuxTypography.headlineLarge.copyWith(
+                        color: color, fontFamily: 'Cormorant Garamond', fontSize: 36)),
+              ),
               const SizedBox(height: 2),
               Text(sub, style: LuxTypography.caption),
             ],
@@ -209,7 +231,7 @@ class _RevenueChart extends StatelessWidget {
               showTitles: true,
               reservedSize: 48,
               getTitlesWidget: (value, _) => Text(
-                'Bs${value.toInt()}',
+                LuxMoney.format(value),
                 style: LuxTypography.caption.copyWith(fontSize: 9),
               ),
             ),
@@ -283,10 +305,30 @@ class _BookingsTabState extends State<BookingsTab> {
           return const Center(child: CircularProgressIndicator());
         }
         if (rows.isEmpty) {
-          return const Center(child: Text('No se encontraron reservas'));
+          return Center(child: Text(context.l10n.adminNoBookings));
         }
 
+        final list = ListView.separated(
+          shrinkWrap: widget.compact,
+          physics: widget.compact
+              ? const NeverScrollableScrollPhysics()
+              : null,
+          padding: widget.compact
+              ? EdgeInsets.zero
+              : const EdgeInsets.all(LuxSpacing.lg),
+          itemCount: rows.length,
+          separatorBuilder: (_, __) => const LuxDivider(),
+          itemBuilder: (_, i) => _AdminBookingTile(
+            booking: rows[i],
+            riderName: state.userName(rows[i].riderId),
+            driverName: rows[i].driverId != null
+                ? state.userName(rows[i].driverId!)
+                : null,
+          ),
+        );
+
         return Column(
+          mainAxisSize: widget.compact ? MainAxisSize.min : MainAxisSize.max,
           children: [
             // Filter bar (only when not compact)
             if (!widget.compact)
@@ -297,14 +339,14 @@ class _BookingsTabState extends State<BookingsTab> {
                 child: Row(
                   children: [
                     _FilterChip(
-                      label: 'Todos',
+                      label: context.l10n.adminFilterAll.toUpperCase(),
                       selected: _filter == null,
                       onTap: () => setState(() => _filter = null),
                     ),
                     ...BookingStatus.values.map((s) => Padding(
                           padding: const EdgeInsets.only(left: LuxSpacing.sm),
                           child: _FilterChip(
-                            label: s.label.toUpperCase(),
+                            label: s.localizedLabel(context.l10n).toUpperCase(),
                             selected: _filter == s,
                             onTap: () => setState(
                                 () => _filter = _filter == s ? null : s),
@@ -313,26 +355,9 @@ class _BookingsTabState extends State<BookingsTab> {
                   ],
                 ),
               ),
-            Expanded(
-              child: ListView.separated(
-                shrinkWrap: widget.compact,
-                physics: widget.compact
-                    ? const NeverScrollableScrollPhysics()
-                    : null,
-                padding: widget.compact
-                    ? EdgeInsets.zero
-                    : const EdgeInsets.all(LuxSpacing.lg),
-                itemCount: rows.length,
-                separatorBuilder: (_, __) => const LuxDivider(),
-                itemBuilder: (_, i) => _AdminBookingTile(
-                  booking: rows[i],
-                  riderName: state.userName(rows[i].riderId),
-                  driverName: rows[i].driverId != null
-                      ? state.userName(rows[i].driverId!)
-                      : null,
-                ),
-              ),
-            ),
+            // Compact mode sits inside the dashboard's scroll view, where an
+            // Expanded child would get unbounded height.
+            if (widget.compact) list else Expanded(child: list),
           ],
         );
       },
@@ -379,7 +404,9 @@ class _AdminBookingTile extends StatelessWidget {
   final String? driverName;
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Padding(
         padding: const EdgeInsets.symmetric(vertical: LuxSpacing.sm),
         child: Row(
           children: [
@@ -402,9 +429,14 @@ class _AdminBookingTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Pasajero: $riderName', style: LuxTypography.titleMedium),
+                  Text(l.adminBookingRider(riderName),
+                      style: LuxTypography.titleMedium,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
                   if (driverName != null)
-                    Text('Chófer: $driverName',
+                    Text(l.adminBookingDriver(driverName!),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: LuxTypography.caption
                             .copyWith(color: LuxColors.whiteTertiary)),
                   Text(
@@ -414,7 +446,7 @@ class _AdminBookingTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   Text(
-                    DateFormat('dd/MM/yyyy HH:mm').format(booking.scheduledAt),
+                    DateFormat.yMd().add_Hm().format(booking.scheduledAt),
                     style: LuxTypography.caption
                         .copyWith(color: LuxColors.whiteTertiary),
                   ),
@@ -425,7 +457,7 @@ class _AdminBookingTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('Bs${booking.estimatedPrice.toStringAsFixed(0)}',
+                Text(LuxMoney.format(booking.estimatedPrice),
                     style: LuxTypography.titleMedium
                         .copyWith(color: LuxColors.accent)),
                 BookingStatusChip(status: booking.status),
@@ -436,27 +468,29 @@ class _AdminBookingTile extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.delete_outline_rounded,
                   color: LuxColors.error, size: 18),
-              tooltip: 'Eliminar reserva',
+              tooltip: l.adminDeleteBookingTooltip,
               onPressed: () => _confirmDelete(context),
             ),
           ],
         ),
       );
+  }
 
   void _confirmDelete(BuildContext context) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: LuxColors.blackElevated,
-        title: const Text('¿Eliminar reserva?', style: LuxTypography.titleLarge),
+        title: Text(context.l10n.adminDeleteBookingTitle, style: LuxTypography.titleLarge),
         content: Text(
-          'Se eliminará permanentemente la reserva #${booking.id.substring(0, 8)}. Esta acción no se puede deshacer.',
+          context.l10n.adminDeleteBookingBody(
+              booking.id.length > 8 ? booking.id.substring(0, 8) : booking.id),
           style: LuxTypography.bodyMedium,
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancelar')),
+              child: Text(context.l10n.commonCancel)),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
@@ -464,8 +498,8 @@ class _AdminBookingTile extends StatelessWidget {
                   .read<AdminBloc>()
                   .add(AdminDeleteBookingRequested(booking.id));
             },
-            child:
-                const Text('Eliminar', style: TextStyle(color: LuxColors.error)),
+            child: Text(context.l10n.commonDelete,
+                style: const TextStyle(color: LuxColors.error)),
           ),
         ],
       ),
@@ -487,7 +521,7 @@ class DriversTab extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (state.drivers.isEmpty) {
-          return const Center(child: Text('No se encontraron chóferes'));
+          return Center(child: Text(context.l10n.adminNoDrivers));
         }
         return ListView.separated(
           padding: const EdgeInsets.all(LuxSpacing.lg),
@@ -508,7 +542,9 @@ class _DriverTile extends StatelessWidget {
   final User? user;
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Padding(
         padding: const EdgeInsets.symmetric(vertical: LuxSpacing.sm),
         child: Row(
           children: [
@@ -531,7 +567,7 @@ class _DriverTile extends StatelessWidget {
                   Text(user?.displayName ?? driver.userId.substring(0, 8),
                       style: LuxTypography.titleMedium),
                   Text(user?.email ?? '', style: LuxTypography.caption),
-                  Text('Licencia: ${driver.licenseNumber}',
+                  Text(l.adminLicense(driver.licenseNumber),
                       style: LuxTypography.caption
                           .copyWith(color: LuxColors.whiteTertiary)),
                 ],
@@ -545,33 +581,31 @@ class _DriverTile extends StatelessWidget {
                     const Icon(Icons.star_rounded,
                         size: 14, color: LuxColors.accent),
                     const SizedBox(width: 2),
-                    Text(driver.rating.toStringAsFixed(1),
+                    Text(NumberFormat('0.0').format(driver.rating),
                         style: LuxTypography.bodyMedium),
                   ],
                 ),
-                Text('${driver.totalRides} viajes',
+                Text(l.unitTrips(driver.totalRides),
                     style: LuxTypography.caption),
               ],
             ),
             const SizedBox(width: LuxSpacing.md),
             if (!driver.documentsVerified)
-              LuxOutlinedButton(
-                label: 'Verificar',
+              TextButton(
                 onPressed: () => context
                     .read<AdminBloc>()
                     .add(AdminVerifyDriverRequested(driver.userId)),
-                width: 76,
-                height: 32,
+                child: Text(l.adminVerify.toUpperCase()),
               )
             else
-              const Tooltip(
-                message: 'Documentos verificados',
-                child: Icon(Icons.verified_rounded,
+              Tooltip(
+                message: l.adminDocumentsVerified,
+                child: const Icon(Icons.verified_rounded,
                     color: LuxColors.success, size: 20),
               ),
             const SizedBox(width: LuxSpacing.md),
             Tooltip(
-              message: driver.isAvailable ? 'En línea' : 'Fuera de línea',
+              message: driver.isAvailable ? l.adminOnline : l.adminOffline,
               child: Container(
                 width: 8,
                 height: 8,
@@ -586,6 +620,7 @@ class _DriverTile extends StatelessWidget {
           ],
         ),
       );
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -602,19 +637,22 @@ class VehiclesTab extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (state.vehicles.isEmpty) {
-          return const Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.directions_car_outlined,
-                    size: 48, color: LuxColors.whiteTertiary),
-                SizedBox(height: LuxSpacing.md),
-                Text('Aún no hay vehículos registrados',
-                    style: LuxTypography.titleMedium),
-                SizedBox(height: LuxSpacing.sm),
-                Text('Los vehículos vinculados a chóferes aparecen aquí',
-                    style: LuxTypography.caption),
-              ],
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(LuxSpacing.lg),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.directions_car_outlined,
+                      size: 48, color: LuxColors.whiteTertiary),
+                  const SizedBox(height: LuxSpacing.md),
+                  Text(context.l10n.adminNoVehicles,
+                      style: LuxTypography.titleMedium, textAlign: TextAlign.center),
+                  const SizedBox(height: LuxSpacing.sm),
+                  Text(context.l10n.adminNoVehiclesHint,
+                      style: LuxTypography.caption, textAlign: TextAlign.center),
+                ],
+              ),
             ),
           );
         }
@@ -654,7 +692,8 @@ class _VehicleTile extends StatelessWidget {
                   Text('${vehicle.make} ${vehicle.model} (${vehicle.year})',
                       style: LuxTypography.titleMedium),
                   Text(
-                    'Placa: ${vehicle.plate} · Clase: ${vehicle.vehicleClass.name.toUpperCase()}',
+                    context.l10n.adminVehicleDetails(
+                        vehicle.plate, vehicle.vehicleClass.localizedLabel(context.l10n)),
                     style: LuxTypography.caption,
                   ),
                 ],
@@ -670,7 +709,8 @@ class _VehicleTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
               ),
               child: Text(
-                vehicle.isActive ? 'ACTIVO' : 'INACTIVO',
+                (vehicle.isActive ? context.l10n.adminActive : context.l10n.adminInactive)
+                    .toUpperCase(),
                 style: LuxTypography.caption.copyWith(
                     color: vehicle.isActive
                         ? LuxColors.success
@@ -728,7 +768,7 @@ class _UsersTabState extends State<UsersTab> {
                 onChanged: (v) => setState(() => _search = v),
                 style: LuxTypography.bodyMedium,
                 decoration: InputDecoration(
-                  hintText: 'Buscar usuarios…',
+                  hintText: context.l10n.adminSearchUsers,
                   hintStyle: LuxTypography.caption,
                   prefixIcon: const Icon(Icons.search_rounded,
                       color: LuxColors.whiteTertiary, size: 20),
@@ -755,7 +795,7 @@ class _UsersTabState extends State<UsersTab> {
             ),
             Expanded(
               child: filtered.isEmpty
-                  ? const Center(child: Text('Ningún usuario coincide con la búsqueda'))
+                  ? Center(child: Text(context.l10n.adminNoUsersMatch))
                   : ListView.separated(
                       padding: const EdgeInsets.all(LuxSpacing.lg),
                       itemCount: filtered.length,
@@ -795,7 +835,7 @@ class _UserTile extends StatelessWidget {
                   Text(user.displayName, style: LuxTypography.titleMedium),
                   Text(user.email, style: LuxTypography.caption),
                   Text(
-                    'Miembro desde ${DateFormat('MMM yyyy').format(user.createdAt)}',
+                    context.l10n.adminMemberSince(DateFormat.yMMM().format(user.createdAt)),
                     style: LuxTypography.caption
                         .copyWith(color: LuxColors.whiteTertiary),
                   ),
@@ -825,7 +865,7 @@ class _UserTile extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      user.role.name.toUpperCase(),
+                      user.role.localizedLabel(context.l10n).toUpperCase(),
                       style: LuxTypography.caption.copyWith(
                         color: user.role == UserRole.admin
                             ? LuxColors.accent
@@ -859,7 +899,7 @@ class _UserTile extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: LuxColors.blackElevated,
-        title: Text('Cambiar rol de ${user.displayName}',
+        title: Text(context.l10n.adminChangeRoleTitle(user.displayName),
             style: LuxTypography.titleLarge),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -867,7 +907,7 @@ class _UserTile extends StatelessWidget {
               .map((role) => RadioListTile<UserRole>(
                     value: role,
                     groupValue: user.role,
-                    title: Text(role.name.toUpperCase(),
+                    title: Text(role.localizedLabel(context.l10n).toUpperCase(),
                         style: LuxTypography.bodyMedium),
                     activeColor: LuxColors.accent,
                     onChanged: (r) {
@@ -884,7 +924,7 @@ class _UserTile extends StatelessWidget {
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancelar')),
+              child: Text(context.l10n.commonCancel)),
         ],
       ),
     );
@@ -901,15 +941,16 @@ class PricingTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<AdminBloc, AdminState>(builder: (context, state) {
+        final l = context.l10n;
         return SingleChildScrollView(
           padding: const EdgeInsets.all(LuxSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(title: 'Reglas de precios (Bs)'),
+              SectionHeader(title: l.adminPricingRules),
               const SizedBox(height: LuxSpacing.sm),
-              const Text(
-                'Los precios reflejan el modelo DefaultPricing. Si la colección pricingRules está vacía, los precios se calculan localmente.',
+              Text(
+                l.adminPricingNote,
                 style: LuxTypography.caption,
               ),
               const SizedBox(height: LuxSpacing.lg),
@@ -930,7 +971,7 @@ class PricingTab extends StatelessWidget {
                   })),
               if (state.pricingRules.isNotEmpty) ...[
                 const SizedBox(height: LuxSpacing.xl),
-                const SectionHeader(title: 'Reglas de precios de Firestore'),
+                SectionHeader(title: l.adminFirestoreRules),
                 const SizedBox(height: LuxSpacing.md),
                 ...state.pricingRules.map((rule) =>
                     Padding(
@@ -945,11 +986,12 @@ class PricingTab extends StatelessWidget {
                                     CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                      rule.vehicleClass.name
+                                      rule.vehicleClass
+                                          .localizedLabel(l)
                                           .toUpperCase(),
                                       style:
                                           LuxTypography.titleMedium),
-                                  Text(rule.serviceType.name,
+                                  Text(rule.serviceType.localizedLabel(l),
                                       style: LuxTypography.caption),
                                 ],
                               ),
@@ -961,11 +1003,13 @@ class PricingTab extends StatelessWidget {
                                 Text(
                                   rule.serviceType ==
                                           ServiceType.byTheHour
-                                      ? 'Bs${rule.pricePerHourUsd}/h'
-                                      : 'Bs${rule.basePriceUsd} base + Bs${rule.pricePerKmUsd}/km',
+                                      ? l.adminPricePerHour(LuxMoney.format(rule.pricePerHourUsd))
+                                      : l.adminPriceBaseAndKm(
+                                          LuxMoney.format(rule.basePriceUsd),
+                                          LuxMoney.format(rule.pricePerKmUsd, cents: true)),
                                   style: LuxTypography.bodyMedium,
                                 ),
-                                Text('Min: Bs${rule.minimumPriceUsd}',
+                                Text(l.adminPriceMinimum(LuxMoney.format(rule.minimumPriceUsd)),
                                     style: LuxTypography.caption
                                         .copyWith(
                                             color: LuxColors.accent)),
@@ -1028,6 +1072,9 @@ class _PricingCardState extends State<_PricingCard> {
   @override
   Widget build(BuildContext context) {
     final isHourly = widget.serviceType == ServiceType.byTheHour;
+    final l = context.l10n;
+    String money(TextEditingController c, {bool cents = false}) =>
+        LuxMoney.format(double.tryParse(c.text) ?? 0, cents: cents);
     return LuxCard(
       child: Column(
         children: [
@@ -1043,23 +1090,32 @@ class _PricingCardState extends State<_PricingCard> {
                     borderRadius: BorderRadius.circular(LuxRadius.sm),
                   ),
                   child: Text(
-                    widget.vehicleClass.name.toUpperCase(),
+                    widget.vehicleClass.localizedLabel(l).toUpperCase(),
                     style: LuxTypography.caption
                         .copyWith(color: LuxColors.accent),
                   ),
                 ),
                 const SizedBox(width: LuxSpacing.sm),
-                Text(
-                  isHourly ? 'Por horas' : 'Solo ida',
-                  style: LuxTypography.titleMedium,
+                Expanded(
+                  child: Text(
+                    widget.serviceType.localizedLabel(l),
+                    style: LuxTypography.titleMedium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                const Spacer(),
-                Text(
-                  isHourly
-                      ? 'Bs${_perHourCtrl.text}/h'
-                      : 'Bs${_baseCtrl.text} + Bs${_perKmCtrl.text}/km',
-                  style: LuxTypography.bodyMedium
-                      .copyWith(color: LuxColors.whiteTertiary),
+                const SizedBox(width: LuxSpacing.sm),
+                Flexible(
+                  child: Text(
+                    isHourly
+                        ? l.adminPricePerHour(money(_perHourCtrl))
+                        : l.adminPriceBasePlusKm(
+                            money(_baseCtrl), money(_perKmCtrl, cents: true)),
+                    style: LuxTypography.bodyMedium
+                        .copyWith(color: LuxColors.whiteTertiary),
+                    textAlign: TextAlign.end,
+                    maxLines: 2,
+                  ),
                 ),
                 const SizedBox(width: LuxSpacing.sm),
                 Icon(
@@ -1080,24 +1136,24 @@ class _PricingCardState extends State<_PricingCard> {
                 if (!isHourly) ...[
                   Expanded(
                     child: _PriceField(
-                        label: 'Base (Bs)', controller: _baseCtrl),
+                        label: l.adminFieldBase, controller: _baseCtrl),
                   ),
                   const SizedBox(width: LuxSpacing.sm),
                   Expanded(
                     child: _PriceField(
-                        label: 'Por km (Bs)',
+                        label: l.adminFieldPerKm,
                         controller: _perKmCtrl),
                   ),
                 ] else
                   Expanded(
                     child: _PriceField(
-                        label: 'Por hora (Bs)',
+                        label: l.adminFieldPerHour,
                         controller: _perHourCtrl),
                   ),
                 const SizedBox(width: LuxSpacing.sm),
                 Expanded(
                   child: _PriceField(
-                      label: 'Mínimo (Bs)', controller: _minCtrl),
+                      label: l.adminFieldMinimum, controller: _minCtrl),
                 ),
               ],
             ),
@@ -1106,8 +1162,9 @@ class _PricingCardState extends State<_PricingCard> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 LuxButton(
-                  label: 'Guardar cambios',
+                  label: l.profileSaveChanges,
                   icon: Icons.save_outlined,
+                  width: 220,
                   height: 38,
                   onPressed: () {
                     final rule = PricingRule(
@@ -1156,7 +1213,7 @@ class _PriceField extends StatelessWidget {
                 const TextInputType.numberWithOptions(decimal: true),
             style: LuxTypography.bodyMedium,
             decoration: InputDecoration(
-              prefixText: 'Bs ',
+              prefixText: '${LuxMoney.symbol} ',
               prefixStyle: LuxTypography.caption
                   .copyWith(color: LuxColors.accent),
               filled: true,
@@ -1197,18 +1254,22 @@ class AuditTab extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         if (state.auditLogs.isEmpty) {
-          return const Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.history_rounded,
-                    size: 48, color: LuxColors.whiteTertiary),
-                SizedBox(height: LuxSpacing.md),
-                Text('Aún no hay registros de auditoría', style: LuxTypography.titleMedium),
-                SizedBox(height: LuxSpacing.sm),
-                Text('Las acciones administrativas aparecerán aquí en tiempo real',
-                    style: LuxTypography.caption),
-              ],
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(LuxSpacing.lg),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.history_rounded,
+                      size: 48, color: LuxColors.whiteTertiary),
+                  const SizedBox(height: LuxSpacing.md),
+                  Text(context.l10n.adminNoAuditLogs,
+                      style: LuxTypography.titleMedium, textAlign: TextAlign.center),
+                  const SizedBox(height: LuxSpacing.sm),
+                  Text(context.l10n.adminNoAuditLogsHint,
+                      style: LuxTypography.caption, textAlign: TextAlign.center),
+                ],
+              ),
             ),
           );
         }
@@ -1227,7 +1288,7 @@ class _AuditTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final date = DateFormat('dd/MM HH:mm').format(log.createdAt);
+    final date = DateFormat.Md().add_Hm().format(log.createdAt);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: LuxSpacing.sm),
       child: Row(
@@ -1275,7 +1336,7 @@ class _AuditTile extends StatelessWidget {
                 Text(
                   log.details.isNotEmpty
                       ? log.details
-                      : 'Admin: ${log.adminId}',
+                      : context.l10n.adminAuditBy(log.adminId),
                   style: LuxTypography.caption,
                 ),
               ],
@@ -1321,21 +1382,22 @@ class SettingsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<AdminBloc, AdminState>(builder: (context, state) {
+        final l = context.l10n;
+        final n = NumberFormat.decimalPattern();
         return SingleChildScrollView(
           padding: const EdgeInsets.all(LuxSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(title: 'Configuración global de la app'),
+              SectionHeader(title: l.adminGlobalSettings),
               const SizedBox(height: LuxSpacing.lg),
               LuxCard(
                 child: Column(
                   children: [
                     _SettingTile(
                       icon: Icons.construction_rounded,
-                      title: 'Modo mantenimiento',
-                      subtitle:
-                          'Deshabilita todas las reservas y muestra la pantalla de mantenimiento a los usuarios.',
+                      title: l.adminMaintenanceMode,
+                      subtitle: l.adminMaintenanceModeDesc,
                       value: state.isMaintenanceMode,
                       onChanged: (val) => context
                           .read<AdminBloc>()
@@ -1344,9 +1406,8 @@ class SettingsTab extends StatelessWidget {
                     const LuxDivider(),
                     _SettingTile(
                       icon: Icons.notifications_active_outlined,
-                      title: 'Notificaciones push',
-                      subtitle:
-                          'Habilita notificaciones a nivel del sistema para nuevas reservas.',
+                      title: l.adminPushNotifications,
+                      subtitle: l.adminPushNotificationsDesc,
                       value: state.pushNotificationsEnabled,
                       onChanged: (val) => context.read<AdminBloc>().add(
                             AdminUpdateGlobalSettingsRequested(
@@ -1356,9 +1417,8 @@ class SettingsTab extends StatelessWidget {
                     const LuxDivider(),
                     _SettingTile(
                       icon: Icons.security_rounded,
-                      title: 'Autenticación admin de dos factores',
-                      subtitle:
-                          'Requiere 2FA para todas las acciones administrativas.',
+                      title: l.adminTwoFactor,
+                      subtitle: l.adminTwoFactorDesc,
                       value: state.twoFactorEnabled,
                       onChanged: (val) => context.read<AdminBloc>().add(
                             AdminUpdateGlobalSettingsRequested(
@@ -1369,56 +1429,51 @@ class SettingsTab extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: LuxSpacing.xl),
-              const SectionHeader(title: 'Estadísticas en vivo'),
+              SectionHeader(title: l.adminLiveStats),
               const SizedBox(height: LuxSpacing.md),
               LuxCard(
                 child: Column(
                   children: [
                     _InfoRow(
-                        label: 'Total de reservas',
-                        value: '${state.bookings.length}'),
+                        label: l.adminTotalBookings,
+                        value: n.format(state.bookings.length)),
                     const LuxDivider(),
                     _InfoRow(
-                        label: 'Usuarios registrados',
-                        value: '${state.users.length}'),
+                        label: l.adminKpiUsers,
+                        value: n.format(state.users.length)),
                     const LuxDivider(),
                     _InfoRow(
-                        label: 'Chóferes registrados',
-                        value: '${state.drivers.length}'),
+                        label: l.adminRegisteredDrivers,
+                        value: n.format(state.drivers.length)),
                     const LuxDivider(),
                     _InfoRow(
-                        label: 'Chóferes verificados',
-                        value:
-                            '${state.drivers.where((d) => d.documentsVerified).length}'),
+                        label: l.adminVerifiedDrivers,
+                        value: n.format(
+                            state.drivers.where((d) => d.documentsVerified).length)),
                     const LuxDivider(),
                     _InfoRow(
-                        label: 'Vehículos registrados',
-                        value: '${state.vehicles.length}'),
+                        label: l.adminRegisteredVehicles,
+                        value: n.format(state.vehicles.length)),
                     const LuxDivider(),
                     _InfoRow(
-                        label: 'Ingresos totales',
-                        value:
-                            'Bs${state.totalRevenue.toStringAsFixed(2)}'),
+                        label: l.adminKpiTotalRevenue,
+                        value: LuxMoney.format(state.totalRevenue, cents: true)),
                   ],
                 ),
               ),
               const SizedBox(height: LuxSpacing.xl),
-              const SectionHeader(title: 'Información del sistema'),
+              SectionHeader(title: l.adminSystemInfo),
               const SizedBox(height: LuxSpacing.md),
-              const LuxCard(
+              LuxCard(
                 child: Column(
                   children: [
-                    _InfoRow(label: 'Versión de la app', value: '1.0.4+22'),
-                    LuxDivider(),
-                    _InfoRow(
-                        label: 'Moneda',
-                        value: 'Bolivianos (Bs)'),
-                    LuxDivider(),
-                    _InfoRow(
-                        label: 'Backend', value: 'Firebase / Firestore'),
-                    LuxDivider(),
-                    _InfoRow(
-                        label: 'Plataforma', value: 'Flutter Web + Mobile'),
+                    _InfoRow(label: l.adminAppVersion, value: '1.0.4+22'),
+                    const LuxDivider(),
+                    _InfoRow(label: l.adminCurrency, value: l.adminCurrencyValue),
+                    const LuxDivider(),
+                    _InfoRow(label: l.adminBackend, value: 'Firebase / Firestore'),
+                    const LuxDivider(),
+                    _InfoRow(label: l.adminPlatform, value: l.adminPlatformValue),
                   ],
                 ),
               ),
@@ -1477,12 +1532,18 @@ class _InfoRow extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label,
-                style: LuxTypography.bodyMedium
-                    .copyWith(color: LuxColors.whiteTertiary)),
-            Text(value,
-                style: LuxTypography.bodyMedium.copyWith(
-                    color: LuxColors.accent, fontWeight: FontWeight.w600)),
+            Expanded(
+              child: Text(label,
+                  style: LuxTypography.bodyMedium
+                      .copyWith(color: LuxColors.whiteTertiary)),
+            ),
+            const SizedBox(width: LuxSpacing.sm),
+            Flexible(
+              child: Text(value,
+                  textAlign: TextAlign.end,
+                  style: LuxTypography.bodyMedium.copyWith(
+                      color: LuxColors.accent, fontWeight: FontWeight.w600)),
+            ),
           ],
         ),
       );

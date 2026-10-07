@@ -1,8 +1,11 @@
 import 'dart:convert';
+import 'dart:ui' show Locale;
 import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import '../../l10n/l10n.dart';
 import '../config/env.dart';
 import '../models/place_model.dart';
 // Web uses the Maps JS API (no CORS); mobile/desktop uses the HTTP REST API.
@@ -11,6 +14,12 @@ import 'places_web.dart' if (dart.library.io) 'places_stub.dart';
 class MapsService {
   static const _base = 'maps.googleapis.com';
   String get _key => AppConfig.googleMapsKey;
+
+  /// Results (addresses, place names) in the app language: es, en or pt.
+  static String get _lang {
+    final lang = Intl.shortLocale(Intl.getCurrentLocale());
+    return supportedAppLocales.any((l) => l.languageCode == lang) ? lang : fallbackAppLocale.languageCode;
+  }
 
   // Santa Cruz de la Sierra — bias center for all location queries
   static const _sczLat = -17.7833;
@@ -27,15 +36,16 @@ class MapsService {
   /// "while in use" permission. iOS keeps updating in the background with
   /// the blue location indicator. Not used on web (see DriverBloc).
   Stream<Position> driverPositionStream() {
+    final l = lookupAppLocalizations(Locale(_lang));
     final LocationSettings settings;
     if (defaultTargetPlatform == TargetPlatform.android) {
       settings = AndroidSettings(
         accuracy: LocationAccuracy.high,
         distanceFilter: 25,
         intervalDuration: const Duration(seconds: 10),
-        foregroundNotificationConfig: const ForegroundNotificationConfig(
-          notificationTitle: 'Luxelane Chófer',
-          notificationText: 'Compartiendo tu ubicación mientras estás disponible',
+        foregroundNotificationConfig: ForegroundNotificationConfig(
+          notificationTitle: l.appNameDriver,
+          notificationText: l.coreDriverLocationNotification,
           enableWakeLock: true,
           setOngoing: true,
         ),
@@ -91,6 +101,7 @@ class MapsService {
       final uri = Uri.https(_base, '/maps/api/geocode/json', {
         'latlng': '$lat,$lng',
         'key': _key,
+        'language': _lang,
       });
       final res = await http.get(uri);
       final data = json.decode(res.body) as Map<String, dynamic>;
@@ -134,7 +145,7 @@ class MapsService {
         },
         body: json.encode({
           'input': input,
-          'languageCode': 'es',
+          'languageCode': _lang,
           'regionCode': 'BO',
           'locationBias': {
             'circle': {
@@ -185,7 +196,7 @@ class MapsService {
         'location': '$_sczLat,$_sczLng',
         'radius': '50000',
         'components': 'country:bo',
-        'language': 'es',
+        'language': _lang,
       };
       if (sessionToken != null) params['sessiontoken'] = sessionToken;
       final uri = Uri.https(_base, '/maps/api/place/autocomplete/json', params);

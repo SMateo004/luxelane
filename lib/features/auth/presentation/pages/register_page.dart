@@ -1,9 +1,12 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
+import '../auth_error_messages.dart';
 import '../bloc/auth_bloc.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -49,7 +52,7 @@ class _RegisterPageState extends State<RegisterPage> {
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(authErrorMessage(context.l10n, state.code)),
               backgroundColor: LuxColors.error,
             ),
           );
@@ -71,9 +74,9 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: LuxSpacing.xl),
               const LuxelaneWordmark(size: 16),
               const SizedBox(height: LuxSpacing.xl),
-              const Text('Crear cuenta.', style: LuxTypography.displayMedium),
+              Text(context.l10n.authRegisterHeadline, style: LuxTypography.displayMedium),
               const SizedBox(height: LuxSpacing.sm),
-              const Text('Únete a Luxelane hoy', style: LuxTypography.bodyMedium),
+              Text(context.l10n.authRegisterSubtitle, style: LuxTypography.bodyMedium),
               const SizedBox(height: LuxSpacing.xl),
               _formContent(),
             ],
@@ -82,20 +85,22 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 
   Widget _webLayout() => Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 480),
-          child: Padding(
-            padding: const EdgeInsets.all(LuxSpacing.xxl),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const LuxelaneWordmark(),
-                const SizedBox(height: LuxSpacing.xl),
-                const Text('Crear cuenta', style: LuxTypography.displayMedium),
-                const SizedBox(height: LuxSpacing.xl),
-                _formContent(),
-              ],
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: Padding(
+              padding: const EdgeInsets.all(LuxSpacing.xxl),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const LuxelaneWordmark(),
+                  const SizedBox(height: LuxSpacing.xl),
+                  Text(context.l10n.authRegisterTitle, style: LuxTypography.displayMedium),
+                  const SizedBox(height: LuxSpacing.xl),
+                  _formContent(),
+                ],
+              ),
             ),
           ),
         ),
@@ -104,48 +109,47 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget _formContent() => BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
           final loading = state is AuthLoading;
+          final l = context.l10n;
           return Form(
             key: _form,
             child: Column(
               children: [
                 LuxTextField(
-                  label: 'Nombre completo',
+                  label: l.authFullNameLabel,
                   controller: _name,
                   prefixIcon: Icons.person_outline,
-                  validator: (v) => v == null || v.isEmpty ? 'Requerido' : null,
+                  validator: (v) => v == null || v.trim().isEmpty ? l.commonRequired : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
-                  label: 'Correo electrónico',
+                  label: l.authEmailLabel,
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
                   validator: (v) =>
-                      v == null || !v.contains('@') ? 'Correo inválido' : null,
+                      v == null || !v.contains('@') ? l.authEmailInvalid : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
-                  label: 'Teléfono',
+                  label: l.authPhoneLabel,
                   controller: _phone,
                   keyboardType: TextInputType.phone,
                   prefixIcon: Icons.phone_outlined,
-                  validator: (v) => v == null || v.isEmpty ? 'Requerido' : null,
+                  validator: (v) => v == null || v.trim().isEmpty ? l.commonRequired : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
-                  label: 'Contraseña',
+                  label: l.authPasswordLabel,
                   controller: _pass,
                   obscureText: true,
                   prefixIcon: Icons.lock_outline,
                   validator: (v) =>
-                      v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
+                      v == null || v.length < 6 ? l.authPasswordTooShort(6) : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 FormField<bool>(
                   initialValue: false,
-                  validator: (v) => v == true
-                      ? null
-                      : 'Debes aceptar los términos y la política de privacidad',
+                  validator: (v) => v == true ? null : l.authConsentRequired,
                   builder: (field) => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -157,18 +161,14 @@ class _RegisterPageState extends State<RegisterPage> {
                             onChanged: field.didChange,
                             activeColor: LuxColors.accent,
                             checkColor: LuxColors.onAccent,
+                            semanticLabel: l.authConsentText(
+                                l.authConsentTermsLink, l.authConsentPrivacyLink),
                           ),
                           Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.only(top: 4),
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  const Text('Acepto los ', style: LuxTypography.bodyMedium),
-                                  _InlineLink(label: 'Términos y condiciones', path: '/terminos'),
-                                  const Text(' y la ', style: LuxTypography.bodyMedium),
-                                  _InlineLink(label: 'Política de privacidad', path: '/privacidad'),
-                                ],
+                              padding: const EdgeInsets.only(top: 12),
+                              child: _ConsentText(
+                                onToggle: () => field.didChange(!(field.value ?? false)),
                               ),
                             ),
                           ),
@@ -185,7 +185,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: LuxSpacing.lg),
                 LuxButton(
-                  label: 'Crear cuenta',
+                  label: l.authRegisterTitle,
                   onPressed: loading ? null : _submit,
                   loading: loading,
                 ),
@@ -194,11 +194,10 @@ class _RegisterPageState extends State<RegisterPage> {
                   alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    const Text('¿Ya tienes cuenta? ',
-                        style: LuxTypography.bodyMedium),
+                    Text(l.authAlreadyHaveAccount, style: LuxTypography.bodyMedium),
                     TextButton(
                       onPressed: () => context.go('/login'),
-                      child: const Text('Inicia sesión'),
+                      child: Text(l.authSignInLink),
                     ),
                   ],
                 ),
@@ -209,21 +208,58 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 }
 
-class _InlineLink extends StatelessWidget {
-  const _InlineLink({required this.label, required this.path});
-  final String label;
-  final String path;
+/// "I accept the [Terms and Conditions] and the [Privacy Policy]" with the two
+/// link texts as tappable spans. The sentence is a single translation
+/// (authConsentText) with {terms}/{privacy} placeholders, so every language
+/// controls its own word order and articles; tapping the plain text toggles
+/// the checkbox.
+class _ConsentText extends StatefulWidget {
+  const _ConsentText({required this.onToggle});
+  final VoidCallback onToggle;
 
   @override
-  Widget build(BuildContext context) => InkWell(
-        onTap: () => context.push(path),
-        child: Text(
-          label,
-          style: LuxTypography.bodyMedium.copyWith(
-            color: LuxColors.accent,
-            decoration: TextDecoration.underline,
-            decorationColor: LuxColors.accent,
-          ),
-        ),
-      );
+  State<_ConsentText> createState() => _ConsentTextState();
+}
+
+class _ConsentTextState extends State<_ConsentText> {
+  late final _terms = TapGestureRecognizer()..onTap = () => context.push('/terminos');
+  late final _privacy = TapGestureRecognizer()..onTap = () => context.push('/privacidad');
+
+  @override
+  void dispose() {
+    _terms.dispose();
+    _privacy.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final link = LuxTypography.bodyMedium.copyWith(
+      color: LuxColors.accent,
+      decoration: TextDecoration.underline,
+      decorationColor: LuxColors.accent,
+    );
+    final spans = <InlineSpan>[];
+    l.authConsentText('{terms}', '{privacy}').splitMapJoin(
+      RegExp(r'\{terms\}|\{privacy\}'),
+      onMatch: (m) {
+        final terms = m[0] == '{terms}';
+        spans.add(TextSpan(
+          text: terms ? l.authConsentTermsLink : l.authConsentPrivacyLink,
+          style: link,
+          recognizer: terms ? _terms : _privacy,
+        ));
+        return '';
+      },
+      onNonMatch: (text) {
+        if (text.isNotEmpty) spans.add(TextSpan(text: text));
+        return '';
+      },
+    );
+    return GestureDetector(
+      onTap: widget.onToggle,
+      child: Text.rich(TextSpan(style: LuxTypography.bodyMedium, children: spans)),
+    );
+  }
 }

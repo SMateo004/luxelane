@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../app/theme/app_theme.dart';
+import '../../l10n/l10n.dart';
 
 /// Global error boundary. Wrap the root widget to catch Flutter render errors.
 /// Call [ErrorBoundary.register] once in main() after WidgetsFlutterBinding.
@@ -40,9 +41,9 @@ class LuxErrorScreen extends StatelessWidget {
                   size: 56,
                 ),
                 const SizedBox(height: LuxSpacing.md),
-                const Text(
-                  'Algo salió mal',
-                  style: TextStyle(
+                Text(
+                  context.l10n.coreErrorTitle,
+                  style: const TextStyle(
                     color: LuxColors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -50,18 +51,18 @@ class LuxErrorScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: LuxSpacing.sm),
-                const Text(
-                  'Hemos sido notificados y estamos trabajando en una solución.',
-                  style: TextStyle(color: LuxColors.whiteTertiary),
+                Text(
+                  context.l10n.coreErrorBody,
+                  style: const TextStyle(color: LuxColors.whiteTertiary),
                   textAlign: TextAlign.center,
                 ),
                 if (onRetry != null) ...[
                   const SizedBox(height: LuxSpacing.xl),
                   TextButton(
                     onPressed: onRetry,
-                    child: const Text(
-                      'Intentar de nuevo',
-                      style: TextStyle(color: LuxColors.accent),
+                    child: Text(
+                      context.l10n.commonRetry,
+                      style: const TextStyle(color: LuxColors.accent),
                     ),
                   ),
                 ],

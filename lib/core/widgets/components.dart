@@ -2,7 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../app/theme/app_theme.dart';
+import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
+
+/// Localized user role (Pasajero / Passenger / Passageiro…).
+extension UserRoleL10n on UserRole {
+  String localizedLabel(AppLocalizations l) => switch (this) {
+        UserRole.rider => l.coreRoleRider,
+        UserRole.driver => l.coreRoleDriver,
+        UserRole.admin => l.coreRoleAdmin,
+      };
+}
 
 // ---------------------------------------------------------------------------
 // LuxButton
@@ -48,7 +58,10 @@ class LuxButton extends StatelessWidget {
                       Icon(icon, size: 18),
                       const SizedBox(width: LuxSpacing.sm),
                     ],
-                    Text(label.toUpperCase()),
+                    Flexible(
+                      child: Text(label.toUpperCase(),
+                          maxLines: 1, overflow: TextOverflow.ellipsis),
+                    ),
                   ],
                 ),
         ),
@@ -88,7 +101,10 @@ class LuxOutlinedButton extends StatelessWidget {
                 Icon(icon, size: 18),
                 const SizedBox(width: LuxSpacing.sm),
               ],
-              Text(label.toUpperCase()),
+              Flexible(
+                child: Text(label.toUpperCase(),
+                    maxLines: 1, overflow: TextOverflow.ellipsis),
+              ),
             ],
           ),
         ),
@@ -224,7 +240,9 @@ class VehicleCard extends StatelessWidget {
   final int? hours;
 
   @override
-  Widget build(BuildContext context) => LuxCard(
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return LuxCard(
         selected: selected,
         onTap: onTap,
         child: Row(
@@ -235,17 +253,19 @@ class VehicleCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(vehicleClass.label, style: LuxTypography.titleLarge),
+                  Text(vehicleClass.localizedLabel(l), style: LuxTypography.titleLarge),
                   const SizedBox(height: 2),
-                  Text(vehicleClass.description, style: LuxTypography.caption),
+                  Text(vehicleClass.localizedDescription(l), style: LuxTypography.caption),
                   const SizedBox(height: 4),
                   Row(
                     children: [
                       const Icon(Icons.person_outline, size: 14, color: LuxColors.whiteTertiary),
                       const SizedBox(width: 4),
-                      Text(
-                        'Hasta ${vehicleClass.capacity}',
-                        style: LuxTypography.caption,
+                      Flexible(
+                        child: Text(
+                          l.coreVehicleCapacity(vehicleClass.capacity),
+                          style: LuxTypography.caption,
+                        ),
                       ),
                     ],
                   ),
@@ -256,15 +276,15 @@ class VehicleCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'Bs${price.toStringAsFixed(0)}',
+                  LuxMoney.format(price),
                   style: LuxTypography.headlineMedium.copyWith(
                     color: selected ? LuxColors.accent : LuxColors.white,
                   ),
                 ),
                 Text(
                   serviceType == ServiceType.byTheHour
-                      ? '${hours ?? 2}h en total'
-                      : 'precio fijo',
+                      ? l.coreHoursTotal(hours ?? 2)
+                      : l.coreFixedPrice,
                   style: LuxTypography.caption,
                 ),
               ],
@@ -272,6 +292,7 @@ class VehicleCard extends StatelessWidget {
           ],
         ),
       );
+  }
 }
 
 class _VehicleIcon extends StatelessWidget {
@@ -334,7 +355,7 @@ class ServiceTypeTab extends StatelessWidget {
                         borderRadius: BorderRadius.circular(LuxRadius.sm),
                       ),
                       child: Text(
-                        t.label.toUpperCase(),
+                        t.localizedLabel(context.l10n).toUpperCase(),
                         style: LuxTypography.caption.copyWith(
                           color: selected == t ? LuxColors.black : LuxColors.whiteTertiary,
                           fontWeight: FontWeight.w600,
@@ -379,7 +400,7 @@ class BookingStatusChip extends StatelessWidget {
           border: Border.all(color: _color.withOpacity(0.4)),
         ),
         child: Text(
-          status.displayLabel.toUpperCase(),
+          status.localizedLabel(context.l10n).toUpperCase(),
           style: LuxTypography.caption.copyWith(
             color: _color,
             letterSpacing: 1.0,
@@ -401,7 +422,10 @@ class LoadingOverlay extends StatelessWidget {
   Widget build(BuildContext context) => ColoredBox(
         color: LuxColors.black.withOpacity(0.85),
         child: Center(
-          child: Column(
+          child: Semantics(
+            label: message ?? context.l10n.commonLoading,
+            liveRegion: true,
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const SizedBox(
@@ -414,9 +438,12 @@ class LoadingOverlay extends StatelessWidget {
               ),
               if (message != null) ...[
                 const SizedBox(height: LuxSpacing.md),
-                Text(message!, style: LuxTypography.bodyMedium),
+                Text(message!,
+                    style: LuxTypography.bodyMedium,
+                    textAlign: TextAlign.center),
               ],
             ],
+          ),
           ),
         ),
       );
@@ -568,13 +595,15 @@ class PriceEstimateBar extends StatelessWidget {
     required this.price,
     required this.onConfirm,
     this.loading = false,
-    this.label = 'Confirmar reserva',
+    this.label,
   });
 
   final double price;
   final VoidCallback onConfirm;
   final bool loading;
-  final String label;
+
+  /// Defaults to "Confirm booking" in the current language.
+  final String? label;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -594,9 +623,10 @@ class PriceEstimateBar extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('PRECIO FIJO', style: LuxTypography.caption),
+                Text(context.l10n.coreFixedPrice.toUpperCase(),
+                    style: LuxTypography.caption),
                 Text(
-                  'Bs${price.toStringAsFixed(0)}',
+                  LuxMoney.format(price),
                   style: LuxTypography.displayMedium.copyWith(color: LuxColors.accent),
                 ),
               ],
@@ -604,7 +634,7 @@ class PriceEstimateBar extends StatelessWidget {
             const SizedBox(width: LuxSpacing.lg),
             Expanded(
               child: LuxButton(
-                label: label,
+                label: label ?? context.l10n.coreConfirmBooking,
                 onPressed: onConfirm,
                 loading: loading,
               ),

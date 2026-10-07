@@ -4,10 +4,10 @@ import 'package:luxelane/app/theme/app_theme.dart';
 import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/widgets/components.dart';
 
-Widget _themed(Widget child) => MaterialApp(
-      theme: luxTheme,
-      home: Scaffold(body: child),
-    );
+import 'helpers/l10n.dart';
+
+Widget _themed(Widget child, {Locale locale = const Locale('es')}) =>
+    localizedApp(Scaffold(body: child), locale: locale, theme: luxTheme);
 
 void main() {
   // ---------------------------------------------------------------------------
@@ -66,15 +66,68 @@ void main() {
   // BookingStatusChip
   // ---------------------------------------------------------------------------
   group('BookingStatusChip', () {
+    const spanish = {
+      BookingStatus.pending: 'PENDIENTE',
+      BookingStatus.confirmed: 'CONFIRMADO',
+      BookingStatus.driverArriving: 'EN CAMINO',
+      BookingStatus.driverArrived: 'CHÓFER LLEGÓ',
+      BookingStatus.inProgress: 'EN PROGRESO',
+      BookingStatus.completed: 'COMPLETADO',
+      BookingStatus.cancelled: 'CANCELADO',
+    };
     for (final status in BookingStatus.values) {
       testWidgets('renders for $status', (tester) async {
         await tester.pumpWidget(_themed(BookingStatusChip(status: status)));
-        expect(
-          find.text(status.displayLabel.toUpperCase()),
-          findsOneWidget,
-        );
+        expect(find.text(spanish[status]!), findsOneWidget);
       });
     }
+
+    testWidgets('follows the app language (en, pt)', (tester) async {
+      await tester.pumpWidget(_themed(
+        const BookingStatusChip(status: BookingStatus.completed),
+        locale: const Locale('en'),
+      ));
+      expect(find.text('COMPLETED'), findsOneWidget);
+
+      await tester.pumpWidget(_themed(
+        const BookingStatusChip(status: BookingStatus.completed),
+        locale: const Locale('pt'),
+      ));
+      await tester.pumpAndSettle();
+      expect(find.text('CONCLUÍDO'), findsOneWidget);
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // PriceEstimateBar / VehicleCard
+  // ---------------------------------------------------------------------------
+  group('Booking widgets in English', () {
+    testWidgets('PriceEstimateBar uses translated defaults and Bs', (tester) async {
+      await tester.pumpWidget(_themed(
+        PriceEstimateBar(price: 1250, onConfirm: () {}),
+        locale: const Locale('en'),
+      ));
+      expect(find.text('FIXED PRICE'), findsOneWidget);
+      expect(find.text('CONFIRM BOOKING'), findsOneWidget);
+      expect(find.text('Bs 1,250'), findsOneWidget);
+    });
+
+    testWidgets('VehicleCard shows localized class and capacity', (tester) async {
+      await tester.pumpWidget(_themed(
+        VehicleCard(
+          vehicleClass: VehicleClass.electric,
+          price: 300,
+          selected: false,
+          onTap: () {},
+          serviceType: ServiceType.byTheHour,
+          hours: 3,
+        ),
+        locale: const Locale('en'),
+      ));
+      expect(find.text('Electric'), findsOneWidget);
+      expect(find.text('3 h total'), findsOneWidget);
+      expect(find.textContaining('Up to'), findsOneWidget);
+    });
   });
 
   // ---------------------------------------------------------------------------

@@ -1,7 +1,283 @@
 {
   "@@locale": "es",
+  "adminActionFailed": "No se pudo completar la acción. Inténtalo de nuevo.",
+  "adminActive": "Activo",
+  "adminAppVersion": "Versión de la app",
+  "adminAuditBy": "Admin: {id}",
+  "@adminAuditBy": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "adminBackend": "Backend",
+  "adminBookingDriver": "Chófer: {name}",
+  "@adminBookingDriver": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminBookingRider": "Pasajero: {name}",
+  "@adminBookingRider": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminBusinessPerformance": "Rendimiento del negocio",
+  "adminChangeRoleTitle": "Cambiar rol de {name}",
+  "@adminChangeRoleTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminCurrency": "Moneda",
+  "adminCurrencyValue": "Bolivianos (Bs)",
+  "adminDeleteBookingBody": "Se eliminará permanentemente la reserva #{id}. Esta acción no se puede deshacer.",
+  "@adminDeleteBookingBody": {
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "adminDeleteBookingTitle": "¿Eliminar reserva?",
+  "adminDeleteBookingTooltip": "Eliminar reserva",
+  "adminDisable": "Deshabilitar",
+  "adminDocumentsVerified": "Documentos verificados",
+  "adminFieldBase": "Base (Bs)",
+  "adminFieldMinimum": "Mínimo (Bs)",
+  "adminFieldPerHour": "Por hora (Bs)",
+  "adminFieldPerKm": "Por km (Bs)",
+  "adminFilterAll": "Todos",
+  "adminFirestoreRules": "Reglas de precios de Firestore",
+  "adminGlobalSettings": "Configuración global de la app",
+  "adminInactive": "Inactivo",
+  "adminKpiAwaitingDriver": "Esperando chófer",
+  "adminKpiCompleted": "Viajes completados",
+  "adminKpiDriversCount": "{count, plural, =1{1 chófer} other{{count} chóferes}}",
+  "@adminKpiDriversCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminKpiInProgress": "{count} en progreso",
+  "@adminKpiInProgress": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminKpiPending": "Reservas pendientes",
+  "adminKpiToday": "Hoy: {amount}",
+  "@adminKpiToday": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "adminKpiTotalRevenue": "Ingresos totales",
+  "adminKpiUsers": "Usuarios registrados",
+  "adminLicense": "Licencia: {number}",
+  "@adminLicense": {
+    "description": "Driver's license number",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "adminLiveStats": "Estadísticas en vivo",
+  "adminMaintenanceBanner": "MODO MANTENIMIENTO ACTIVO — Los pasajeros no pueden reservar nuevos viajes.",
+  "adminMaintenanceMode": "Modo mantenimiento",
+  "adminMaintenanceModeDesc": "Deshabilita todas las reservas y muestra la pantalla de mantenimiento a los usuarios.",
+  "adminMemberSince": "Miembro desde {date}",
+  "@adminMemberSince": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "adminNoAuditLogs": "Aún no hay registros de auditoría",
+  "adminNoAuditLogsHint": "Las acciones administrativas aparecerán aquí en tiempo real",
+  "adminNoBookings": "No se encontraron reservas",
+  "adminNoDrivers": "No se encontraron chóferes",
+  "adminNoUsersMatch": "Ningún usuario coincide con la búsqueda",
+  "adminNoVehicles": "Aún no hay vehículos registrados",
+  "adminNoVehiclesHint": "Los vehículos vinculados a chóferes aparecen aquí",
+  "adminNoticeBookingDeleted": "Reserva eliminada",
+  "adminNoticeDriverVerified": "Chófer verificado",
+  "adminNoticeMaintenanceOff": "Modo mantenimiento desactivado",
+  "adminNoticeMaintenanceOn": "Modo mantenimiento activado",
+  "adminNoticePricingUpdated": "Regla de precios actualizada",
+  "adminNoticeRoleUpdated": "Rol actualizado",
+  "adminNoticeSettingsSaved": "Configuración guardada",
+  "adminOffline": "Fuera de línea",
+  "adminOnline": "En línea",
+  "adminOverview": "Resumen",
+  "adminPanelBadge": "Panel admin",
+  "adminPlatform": "Plataforma",
+  "adminPlatformValue": "Flutter Web + móvil",
+  "adminPriceBaseAndKm": "{base} base + {perKm}/km",
+  "@adminPriceBaseAndKm": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "perKm": {
+        "type": "String"
+      }
+    }
+  },
+  "adminPriceBasePlusKm": "{base} + {perKm}/km",
+  "@adminPriceBasePlusKm": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "perKm": {
+        "type": "String"
+      }
+    }
+  },
+  "adminPriceMinimum": "Mín.: {amount}",
+  "@adminPriceMinimum": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "adminPricePerHour": "{amount}/h",
+  "@adminPricePerHour": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "adminPricingNote": "Los precios reflejan el modelo DefaultPricing. Si la colección pricingRules está vacía, los precios se calculan localmente.",
+  "adminPricingRules": "Reglas de precios (Bs)",
+  "adminPushNotifications": "Notificaciones push",
+  "adminPushNotificationsDesc": "Habilita notificaciones a nivel del sistema para nuevas reservas.",
+  "adminRecentActivity": "Actividad reciente",
+  "adminRegisteredDrivers": "Chóferes registrados",
+  "adminRegisteredVehicles": "Vehículos registrados",
+  "adminRevenueTrend": "Tendencia de ingresos 7 días (Bs)",
+  "adminSearchUsers": "Buscar usuarios…",
+  "adminSectionAudit": "Auditoría",
+  "adminSectionBookings": "Reservas",
+  "adminSectionDashboard": "Panel",
+  "adminSectionDrivers": "Chóferes",
+  "adminSectionPricing": "Precios",
+  "adminSectionSettings": "Configuración",
+  "adminSectionUsers": "Usuarios",
+  "adminSectionVehicles": "Vehículos",
+  "adminSignOutConfirm": "¿Seguro que quieres cerrar sesión del panel de administración?",
+  "adminSystemInfo": "Información del sistema",
+  "adminTitle": "Administrador",
+  "adminTotalBookings": "Total de reservas",
+  "adminTwoFactor": "Autenticación admin de dos factores",
+  "adminTwoFactorDesc": "Requiere 2FA para todas las acciones administrativas.",
+  "adminVehicleDetails": "Placa: {plate} · Clase: {vehicleClass}",
+  "@adminVehicleDetails": {
+    "placeholders": {
+      "plate": {
+        "type": "String"
+      },
+      "vehicleClass": {
+        "type": "String"
+      }
+    }
+  },
+  "adminVerifiedDrivers": "Chóferes verificados",
+  "adminVerify": "Verificar",
   "appName": "Luxelane",
   "appNameDriver": "Luxelane Chófer",
+  "authAlreadyHaveAccount": "¿Ya tienes cuenta?",
+  "authBrandHeadline": "Servicio de chófer\npremium.",
+  "@authBrandHeadline": {
+    "description": "Two-line web brand panel headline; keep the line break"
+  },
+  "authBrandTagline": "En cualquier parte del mundo.",
+  "authConsentPrivacyLink": "Política de privacidad",
+  "@authConsentPrivacyLink": {
+    "description": "Link text inside authConsentText"
+  },
+  "authConsentRequired": "Debes aceptar los términos y la política de privacidad",
+  "authConsentTermsLink": "Términos y condiciones",
+  "@authConsentTermsLink": {
+    "description": "Link text inside authConsentText"
+  },
+  "authConsentText": "Acepto los {terms} y la {privacy}",
+  "@authConsentText": {
+    "description": "Register consent sentence. {terms} is replaced by the authConsentTermsLink link text and {privacy} by authConsentPrivacyLink; adjust articles and word order around them as the language needs",
+    "placeholders": {
+      "terms": {
+        "type": "String"
+      },
+      "privacy": {
+        "type": "String"
+      }
+    }
+  },
+  "authCreateOne": "Crear una",
+  "authEmailInvalid": "Ingresa un correo válido",
+  "authEmailLabel": "Correo electrónico",
+  "authErrorEmailInUse": "Ya existe una cuenta con este correo",
+  "authErrorGeneric": "No pudimos completar la solicitud. Inténtalo de nuevo.",
+  "authErrorInvalidEmail": "El correo electrónico no es válido",
+  "authErrorTooManyRequests": "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
+  "authErrorUserDisabled": "Esta cuenta está desactivada. Contáctanos para más información.",
+  "authErrorUserNotFound": "No existe una cuenta con este correo",
+  "authErrorWeakPassword": "La contraseña es demasiado débil. Usa al menos 6 caracteres.",
+  "authErrorWrongCredentials": "Correo o contraseña incorrectos",
+  "authForgotPassword": "¿Olvidaste tu contraseña?",
+  "authFullNameLabel": "Nombre completo",
+  "authLoginHeadline": "Bienvenido\nde nuevo.",
+  "@authLoginHeadline": {
+    "description": "Large two-line mobile login headline; keep the line break"
+  },
+  "authLoginSubtitle": "Inicia sesión en tu cuenta",
+  "authLoginTitle": "Iniciar sesión",
+  "@authLoginTitle": {
+    "description": "Login page title and submit button"
+  },
+  "authLoginWelcomeBack": "Bienvenido de nuevo a Luxelane.",
+  "authNoAccount": "¿No tienes cuenta?",
+  "authPasswordLabel": "Contraseña",
+  "authPasswordTooShort": "Mínimo {count} caracteres",
+  "@authPasswordTooShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "authPhoneLabel": "Teléfono",
+  "authRegisterHeadline": "Crear cuenta.",
+  "@authRegisterHeadline": {
+    "description": "Mobile register headline"
+  },
+  "authRegisterSubtitle": "Únete a Luxelane hoy",
+  "authRegisterTitle": "Crear cuenta",
+  "@authRegisterTitle": {
+    "description": "Register page title (web) and submit button"
+  },
+  "authResetEmailSent": "Correo de restablecimiento enviado",
+  "authResetNeedsEmail": "Ingresa tu correo para restablecer la contraseña",
+  "authSignInLink": "Inicia sesión",
   "bookingAllFeesIncluded": "Todos los cargos incluidos",
   "bookingApplyOffer": "Aplicar oferta",
   "bookingAssuranceFixedPrice": "Precio fijo, sin sorpresas",
@@ -349,6 +625,43 @@
   "commonSave": "Guardar",
   "commonSend": "Enviar",
   "commonWhatsApp": "WhatsApp",
+  "coreClearField": "Borrar",
+  "coreConfirmBooking": "Confirmar reserva",
+  "coreDriverLocationNotification": "Compartiendo tu ubicación mientras estás disponible",
+  "@coreDriverLocationNotification": {
+    "description": "Android foreground-service notification while a chauffeur is on duty"
+  },
+  "coreErrorBody": "Hemos sido notificados y estamos trabajando en una solución.",
+  "coreErrorTitle": "Algo salió mal",
+  "coreFixedPrice": "Precio fijo",
+  "coreHoursTotal": "{hours} h en total",
+  "@coreHoursTotal": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "coreMapKeyMissing": "Agrega GOOGLE_MAPS_KEY para habilitar el mapa",
+  "@coreMapKeyMissing": {
+    "description": "Developer-facing placeholder; keep GOOGLE_MAPS_KEY as is"
+  },
+  "coreMapPickerHint": "Mueve el mapa para seleccionar una ubicación",
+  "coreMapPickerSelected": "Ubicación seleccionada",
+  "coreMapPickerTitle": "Seleccionar ubicación",
+  "coreMapView": "Vista del mapa",
+  "coreRoleAdmin": "Admin",
+  "coreRoleDriver": "Chófer",
+  "coreRoleRider": "Pasajero",
+  "coreVehicleCapacity": "Hasta {count}",
+  "@coreVehicleCapacity": {
+    "description": "Passenger capacity next to a person icon",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "driverAcceptRide": "Aceptar viaje",
   "driverActionArrived": "He llegado",
   "driverActionCompleteTrip": "Completar viaje",
@@ -828,6 +1141,67 @@
     }
   },
   "notifTitle": "Notificaciones",
+  "paymentsAccountNotSetUp": "La cuenta no está configurada para pagos",
+  "paymentsAdd": "Agregar",
+  "paymentsAddCard": "Agregar tarjeta",
+  "paymentsAddMethodTitle": "Agregar método de pago",
+  "paymentsAddNewCard": "Agregar nueva tarjeta",
+  "paymentsCardAdded": "Tarjeta agregada exitosamente",
+  "paymentsCardDetails": "Datos de la tarjeta",
+  "paymentsCardExpires": "Vence {month}/{year}",
+  "@paymentsCardExpires": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentsCardFallback": "Tarjeta",
+  "@paymentsCardFallback": {
+    "description": "Shown when the card brand is unknown"
+  },
+  "paymentsCardIncomplete": "Ingresa los datos completos de la tarjeta",
+  "paymentsDefault": "Predeterminada",
+  "@paymentsDefault": {
+    "description": "Badge on the default card"
+  },
+  "paymentsEmptyBody": "Agrega una tarjeta para reservar viajes",
+  "paymentsEmptyTitle": "Sin métodos de pago",
+  "paymentsError": "No pudimos completar la operación con tu tarjeta. Inténtalo de nuevo.",
+  "paymentsMethodsTitle": "Métodos de pago",
+  "paymentsRemoveCard": "Eliminar tarjeta",
+  "paymentsSavedCards": "Tarjetas guardadas",
+  "paymentsSecured": "Protegido por Stripe",
+  "paymentsSecuredPci": "Protegido por Stripe · Cumplimiento PCI DSS",
+  "paymentsSetDefault": "Predeterminar",
+  "@paymentsSetDefault": {
+    "description": "Short button to make a card the default; keep it short"
+  },
+  "profileContactHelp": "Contacto y ayuda",
+  "profileDeleteAccount": "Eliminar cuenta",
+  "profileEditTitle": "Editar perfil",
+  "profileLoadError": "No pudimos cargar tu perfil",
+  "profileNameLabel": "Nombre",
+  "profileSaveChanges": "Guardar cambios",
+  "profileSectionAccount": "Cuenta",
+  "profileSectionHelp": "Ayuda y legal",
+  "profileSectionStats": "Estadísticas",
+  "profileSignOut": "Cerrar sesión",
+  "profileStatRating": "Calificación",
+  "profileStatTrips": "Viajes",
+  "profileTitle": "Perfil",
+  "profileUpdated": "Perfil actualizado",
+  "profileVersion": "Luxelane v{version}",
+  "@profileVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "rideArrived": "¡Has llegado!",
   "rideArrivesIn": "Llega en {eta}",
   "@rideArrivesIn": {
@@ -948,6 +1322,9 @@
     }
   },
   "rideYourChauffeur": "Tu chófer",
+  "routerGoHome": "Ir al inicio",
+  "routerNotFoundBody": "La página que buscas no existe o se ha movido.",
+  "routerNotFoundTitle": "Página no encontrada",
   "serviceByTheHour": "Por horas",
   "serviceByTheHourDesc": "Chófer a tu disposición por un tiempo determinado",
   "serviceOneWay": "Solo ida",

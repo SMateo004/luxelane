@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_theme.dart';
+import '../../../../l10n/l10n.dart';
+import '../auth_error_messages.dart';
 import '../bloc/auth_bloc.dart';
 
 // ── Design tokens (aligned with home_web_page / LD) ─────────────────────────
@@ -54,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message,
+              content: Text(authErrorMessage(context.l10n, state.code),
                   style: const TextStyle(fontFamily: _kSans)),
               backgroundColor: LuxColors.error,
             ),
@@ -88,9 +90,9 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Iniciar sesión',
-                          style: TextStyle(
+                        Text(
+                          context.l10n.authLoginTitle,
+                          style: const TextStyle(
                             fontFamily: _kSerif,
                             fontSize: 42,
                             fontWeight: FontWeight.w600,
@@ -100,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Bienvenido de nuevo a Luxelane.',
+                          context.l10n.authLoginWelcomeBack,
                           style: TextStyle(
                             fontFamily: _kSans,
                             fontSize: 13,
@@ -130,9 +132,9 @@ class _LoginPageState extends State<LoginPage> {
             children: [
               const _LuxLogo(),
               const SizedBox(height: 48),
-              const Text(
-                'Bienvenido\nde nuevo.',
-                style: TextStyle(
+              Text(
+                context.l10n.authLoginHeadline,
+                style: const TextStyle(
                   fontFamily: _kSerif,
                   fontSize: 40,
                   fontWeight: FontWeight.w600,
@@ -142,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Inicia sesión en tu cuenta',
+                context.l10n.authLoginSubtitle,
                 style: TextStyle(
                   fontFamily: _kSans,
                   fontSize: 13,
@@ -168,40 +170,44 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _AuthField(
-                  label: 'Correo electrónico',
+                  label: context.l10n.authEmailLabel,
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   icon: Icons.email_outlined,
                   validator: (v) =>
                       v == null || !v.contains('@')
-                          ? 'Ingresa un correo válido'
+                          ? context.l10n.authEmailInvalid
                           : null,
                 ),
                 const SizedBox(height: 14),
                 _AuthField(
-                  label: 'Contraseña',
+                  label: context.l10n.authPasswordLabel,
                   controller: _pass,
                   obscureText: true,
                   icon: Icons.lock_outline,
                   validator: (v) =>
                       v == null || v.length < 6
-                          ? 'Mínimo 6 caracteres'
+                          ? context.l10n.authPasswordTooShort(6)
                           : null,
                 ),
                 const SizedBox(height: 6),
                 Align(
                   alignment: Alignment.centerRight,
                   child: _TextLink(
-                    label: '¿Olvidaste tu contraseña?',
+                    label: context.l10n.authForgotPassword,
                     onTap: () {
+                      final l = context.l10n;
                       if (_email.text.contains('@')) {
                         context.read<AuthBloc>().add(
                               PasswordResetRequested(
                                   email: _email.text.trim()),
                             );
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Correo de restablecimiento enviado')),
+                          SnackBar(content: Text(l.authResetEmailSent)),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l.authResetNeedsEmail)),
                         );
                       }
                     },
@@ -209,16 +215,18 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 28),
                 _AuthButton(
-                  label: 'Iniciar sesión',
+                  label: context.l10n.authLoginTitle,
                   loading: loading,
                   onTap: loading ? null : _submit,
                 ),
                 const SizedBox(height: 24),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 4,
                   children: [
                     Text(
-                      '¿No tienes cuenta? ',
+                      context.l10n.authNoAccount,
                       style: TextStyle(
                         fontFamily: _kSans,
                         fontSize: 12,
@@ -226,7 +234,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     _TextLink(
-                      label: 'Crear una',
+                      label: context.l10n.authCreateOne,
                       onTap: () => context.go('/register'),
                     ),
                   ],
@@ -278,9 +286,9 @@ class _BrandPanel extends StatelessWidget {
                 children: [
                   const _LuxLogo(),
                   const SizedBox(height: 40),
-                  const Text(
-                    'Servicio de chófer\npremium.',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.authBrandHeadline,
+                    style: const TextStyle(
                       fontFamily: _kSerif,
                       fontSize: 52,
                       fontWeight: FontWeight.w300,
@@ -290,7 +298,7 @@ class _BrandPanel extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'En cualquier parte del mundo.',
+                    context.l10n.authBrandTagline,
                     style: TextStyle(
                       fontFamily: _kSans,
                       fontSize: 12,

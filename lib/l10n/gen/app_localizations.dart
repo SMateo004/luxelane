@@ -97,6 +97,534 @@ abstract class AppLocalizations {
     Locale('pt')
   ];
 
+  /// No description provided for @adminActionFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo completar la acción. Inténtalo de nuevo.'**
+  String get adminActionFailed;
+
+  /// No description provided for @adminActive.
+  ///
+  /// In es, this message translates to:
+  /// **'Activo'**
+  String get adminActive;
+
+  /// No description provided for @adminAppVersion.
+  ///
+  /// In es, this message translates to:
+  /// **'Versión de la app'**
+  String get adminAppVersion;
+
+  /// No description provided for @adminAuditBy.
+  ///
+  /// In es, this message translates to:
+  /// **'Admin: {id}'**
+  String adminAuditBy(String id);
+
+  /// No description provided for @adminBackend.
+  ///
+  /// In es, this message translates to:
+  /// **'Backend'**
+  String get adminBackend;
+
+  /// No description provided for @adminBookingDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer: {name}'**
+  String adminBookingDriver(String name);
+
+  /// No description provided for @adminBookingRider.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero: {name}'**
+  String adminBookingRider(String name);
+
+  /// No description provided for @adminBusinessPerformance.
+  ///
+  /// In es, this message translates to:
+  /// **'Rendimiento del negocio'**
+  String get adminBusinessPerformance;
+
+  /// No description provided for @adminChangeRoleTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar rol de {name}'**
+  String adminChangeRoleTitle(String name);
+
+  /// No description provided for @adminCurrency.
+  ///
+  /// In es, this message translates to:
+  /// **'Moneda'**
+  String get adminCurrency;
+
+  /// No description provided for @adminCurrencyValue.
+  ///
+  /// In es, this message translates to:
+  /// **'Bolivianos (Bs)'**
+  String get adminCurrencyValue;
+
+  /// No description provided for @adminDeleteBookingBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Se eliminará permanentemente la reserva #{id}. Esta acción no se puede deshacer.'**
+  String adminDeleteBookingBody(String id);
+
+  /// No description provided for @adminDeleteBookingTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Eliminar reserva?'**
+  String get adminDeleteBookingTitle;
+
+  /// No description provided for @adminDeleteBookingTooltip.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar reserva'**
+  String get adminDeleteBookingTooltip;
+
+  /// No description provided for @adminDisable.
+  ///
+  /// In es, this message translates to:
+  /// **'Deshabilitar'**
+  String get adminDisable;
+
+  /// No description provided for @adminDocumentsVerified.
+  ///
+  /// In es, this message translates to:
+  /// **'Documentos verificados'**
+  String get adminDocumentsVerified;
+
+  /// No description provided for @adminFieldBase.
+  ///
+  /// In es, this message translates to:
+  /// **'Base (Bs)'**
+  String get adminFieldBase;
+
+  /// No description provided for @adminFieldMinimum.
+  ///
+  /// In es, this message translates to:
+  /// **'Mínimo (Bs)'**
+  String get adminFieldMinimum;
+
+  /// No description provided for @adminFieldPerHour.
+  ///
+  /// In es, this message translates to:
+  /// **'Por hora (Bs)'**
+  String get adminFieldPerHour;
+
+  /// No description provided for @adminFieldPerKm.
+  ///
+  /// In es, this message translates to:
+  /// **'Por km (Bs)'**
+  String get adminFieldPerKm;
+
+  /// No description provided for @adminFilterAll.
+  ///
+  /// In es, this message translates to:
+  /// **'Todos'**
+  String get adminFilterAll;
+
+  /// No description provided for @adminFirestoreRules.
+  ///
+  /// In es, this message translates to:
+  /// **'Reglas de precios de Firestore'**
+  String get adminFirestoreRules;
+
+  /// No description provided for @adminGlobalSettings.
+  ///
+  /// In es, this message translates to:
+  /// **'Configuración global de la app'**
+  String get adminGlobalSettings;
+
+  /// No description provided for @adminInactive.
+  ///
+  /// In es, this message translates to:
+  /// **'Inactivo'**
+  String get adminInactive;
+
+  /// No description provided for @adminKpiAwaitingDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Esperando chófer'**
+  String get adminKpiAwaitingDriver;
+
+  /// No description provided for @adminKpiCompleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes completados'**
+  String get adminKpiCompleted;
+
+  /// No description provided for @adminKpiDriversCount.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 chófer} other{{count} chóferes}}'**
+  String adminKpiDriversCount(int count);
+
+  /// No description provided for @adminKpiInProgress.
+  ///
+  /// In es, this message translates to:
+  /// **'{count} en progreso'**
+  String adminKpiInProgress(int count);
+
+  /// No description provided for @adminKpiPending.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas pendientes'**
+  String get adminKpiPending;
+
+  /// No description provided for @adminKpiToday.
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy: {amount}'**
+  String adminKpiToday(String amount);
+
+  /// No description provided for @adminKpiTotalRevenue.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresos totales'**
+  String get adminKpiTotalRevenue;
+
+  /// No description provided for @adminKpiUsers.
+  ///
+  /// In es, this message translates to:
+  /// **'Usuarios registrados'**
+  String get adminKpiUsers;
+
+  /// Driver's license number
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia: {number}'**
+  String adminLicense(String number);
+
+  /// No description provided for @adminLiveStats.
+  ///
+  /// In es, this message translates to:
+  /// **'Estadísticas en vivo'**
+  String get adminLiveStats;
+
+  /// No description provided for @adminMaintenanceBanner.
+  ///
+  /// In es, this message translates to:
+  /// **'MODO MANTENIMIENTO ACTIVO — Los pasajeros no pueden reservar nuevos viajes.'**
+  String get adminMaintenanceBanner;
+
+  /// No description provided for @adminMaintenanceMode.
+  ///
+  /// In es, this message translates to:
+  /// **'Modo mantenimiento'**
+  String get adminMaintenanceMode;
+
+  /// No description provided for @adminMaintenanceModeDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Deshabilita todas las reservas y muestra la pantalla de mantenimiento a los usuarios.'**
+  String get adminMaintenanceModeDesc;
+
+  /// No description provided for @adminMemberSince.
+  ///
+  /// In es, this message translates to:
+  /// **'Miembro desde {date}'**
+  String adminMemberSince(String date);
+
+  /// No description provided for @adminNoAuditLogs.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay registros de auditoría'**
+  String get adminNoAuditLogs;
+
+  /// No description provided for @adminNoAuditLogsHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Las acciones administrativas aparecerán aquí en tiempo real'**
+  String get adminNoAuditLogsHint;
+
+  /// No description provided for @adminNoBookings.
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron reservas'**
+  String get adminNoBookings;
+
+  /// No description provided for @adminNoDrivers.
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron chóferes'**
+  String get adminNoDrivers;
+
+  /// No description provided for @adminNoUsersMatch.
+  ///
+  /// In es, this message translates to:
+  /// **'Ningún usuario coincide con la búsqueda'**
+  String get adminNoUsersMatch;
+
+  /// No description provided for @adminNoVehicles.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay vehículos registrados'**
+  String get adminNoVehicles;
+
+  /// No description provided for @adminNoVehiclesHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Los vehículos vinculados a chóferes aparecen aquí'**
+  String get adminNoVehiclesHint;
+
+  /// No description provided for @adminNoticeBookingDeleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva eliminada'**
+  String get adminNoticeBookingDeleted;
+
+  /// No description provided for @adminNoticeDriverVerified.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer verificado'**
+  String get adminNoticeDriverVerified;
+
+  /// No description provided for @adminNoticeMaintenanceOff.
+  ///
+  /// In es, this message translates to:
+  /// **'Modo mantenimiento desactivado'**
+  String get adminNoticeMaintenanceOff;
+
+  /// No description provided for @adminNoticeMaintenanceOn.
+  ///
+  /// In es, this message translates to:
+  /// **'Modo mantenimiento activado'**
+  String get adminNoticeMaintenanceOn;
+
+  /// No description provided for @adminNoticePricingUpdated.
+  ///
+  /// In es, this message translates to:
+  /// **'Regla de precios actualizada'**
+  String get adminNoticePricingUpdated;
+
+  /// No description provided for @adminNoticeRoleUpdated.
+  ///
+  /// In es, this message translates to:
+  /// **'Rol actualizado'**
+  String get adminNoticeRoleUpdated;
+
+  /// No description provided for @adminNoticeSettingsSaved.
+  ///
+  /// In es, this message translates to:
+  /// **'Configuración guardada'**
+  String get adminNoticeSettingsSaved;
+
+  /// No description provided for @adminOffline.
+  ///
+  /// In es, this message translates to:
+  /// **'Fuera de línea'**
+  String get adminOffline;
+
+  /// No description provided for @adminOnline.
+  ///
+  /// In es, this message translates to:
+  /// **'En línea'**
+  String get adminOnline;
+
+  /// No description provided for @adminOverview.
+  ///
+  /// In es, this message translates to:
+  /// **'Resumen'**
+  String get adminOverview;
+
+  /// No description provided for @adminPanelBadge.
+  ///
+  /// In es, this message translates to:
+  /// **'Panel admin'**
+  String get adminPanelBadge;
+
+  /// No description provided for @adminPlatform.
+  ///
+  /// In es, this message translates to:
+  /// **'Plataforma'**
+  String get adminPlatform;
+
+  /// No description provided for @adminPlatformValue.
+  ///
+  /// In es, this message translates to:
+  /// **'Flutter Web + móvil'**
+  String get adminPlatformValue;
+
+  /// No description provided for @adminPriceBaseAndKm.
+  ///
+  /// In es, this message translates to:
+  /// **'{base} base + {perKm}/km'**
+  String adminPriceBaseAndKm(String base, String perKm);
+
+  /// No description provided for @adminPriceBasePlusKm.
+  ///
+  /// In es, this message translates to:
+  /// **'{base} + {perKm}/km'**
+  String adminPriceBasePlusKm(String base, String perKm);
+
+  /// No description provided for @adminPriceMinimum.
+  ///
+  /// In es, this message translates to:
+  /// **'Mín.: {amount}'**
+  String adminPriceMinimum(String amount);
+
+  /// No description provided for @adminPricePerHour.
+  ///
+  /// In es, this message translates to:
+  /// **'{amount}/h'**
+  String adminPricePerHour(String amount);
+
+  /// No description provided for @adminPricingNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Los precios reflejan el modelo DefaultPricing. Si la colección pricingRules está vacía, los precios se calculan localmente.'**
+  String get adminPricingNote;
+
+  /// No description provided for @adminPricingRules.
+  ///
+  /// In es, this message translates to:
+  /// **'Reglas de precios (Bs)'**
+  String get adminPricingRules;
+
+  /// No description provided for @adminPushNotifications.
+  ///
+  /// In es, this message translates to:
+  /// **'Notificaciones push'**
+  String get adminPushNotifications;
+
+  /// No description provided for @adminPushNotificationsDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Habilita notificaciones a nivel del sistema para nuevas reservas.'**
+  String get adminPushNotificationsDesc;
+
+  /// No description provided for @adminRecentActivity.
+  ///
+  /// In es, this message translates to:
+  /// **'Actividad reciente'**
+  String get adminRecentActivity;
+
+  /// No description provided for @adminRegisteredDrivers.
+  ///
+  /// In es, this message translates to:
+  /// **'Chóferes registrados'**
+  String get adminRegisteredDrivers;
+
+  /// No description provided for @adminRegisteredVehicles.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículos registrados'**
+  String get adminRegisteredVehicles;
+
+  /// No description provided for @adminRevenueTrend.
+  ///
+  /// In es, this message translates to:
+  /// **'Tendencia de ingresos 7 días (Bs)'**
+  String get adminRevenueTrend;
+
+  /// No description provided for @adminSearchUsers.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar usuarios…'**
+  String get adminSearchUsers;
+
+  /// No description provided for @adminSectionAudit.
+  ///
+  /// In es, this message translates to:
+  /// **'Auditoría'**
+  String get adminSectionAudit;
+
+  /// No description provided for @adminSectionBookings.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas'**
+  String get adminSectionBookings;
+
+  /// No description provided for @adminSectionDashboard.
+  ///
+  /// In es, this message translates to:
+  /// **'Panel'**
+  String get adminSectionDashboard;
+
+  /// No description provided for @adminSectionDrivers.
+  ///
+  /// In es, this message translates to:
+  /// **'Chóferes'**
+  String get adminSectionDrivers;
+
+  /// No description provided for @adminSectionPricing.
+  ///
+  /// In es, this message translates to:
+  /// **'Precios'**
+  String get adminSectionPricing;
+
+  /// No description provided for @adminSectionSettings.
+  ///
+  /// In es, this message translates to:
+  /// **'Configuración'**
+  String get adminSectionSettings;
+
+  /// No description provided for @adminSectionUsers.
+  ///
+  /// In es, this message translates to:
+  /// **'Usuarios'**
+  String get adminSectionUsers;
+
+  /// No description provided for @adminSectionVehicles.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículos'**
+  String get adminSectionVehicles;
+
+  /// No description provided for @adminSignOutConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Seguro que quieres cerrar sesión del panel de administración?'**
+  String get adminSignOutConfirm;
+
+  /// No description provided for @adminSystemInfo.
+  ///
+  /// In es, this message translates to:
+  /// **'Información del sistema'**
+  String get adminSystemInfo;
+
+  /// No description provided for @adminTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Administrador'**
+  String get adminTitle;
+
+  /// No description provided for @adminTotalBookings.
+  ///
+  /// In es, this message translates to:
+  /// **'Total de reservas'**
+  String get adminTotalBookings;
+
+  /// No description provided for @adminTwoFactor.
+  ///
+  /// In es, this message translates to:
+  /// **'Autenticación admin de dos factores'**
+  String get adminTwoFactor;
+
+  /// No description provided for @adminTwoFactorDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Requiere 2FA para todas las acciones administrativas.'**
+  String get adminTwoFactorDesc;
+
+  /// No description provided for @adminVehicleDetails.
+  ///
+  /// In es, this message translates to:
+  /// **'Placa: {plate} · Clase: {vehicleClass}'**
+  String adminVehicleDetails(String plate, String vehicleClass);
+
+  /// No description provided for @adminVerifiedDrivers.
+  ///
+  /// In es, this message translates to:
+  /// **'Chóferes verificados'**
+  String get adminVerifiedDrivers;
+
+  /// No description provided for @adminVerify.
+  ///
+  /// In es, this message translates to:
+  /// **'Verificar'**
+  String get adminVerify;
+
   /// No description provided for @appName.
   ///
   /// In es, this message translates to:
@@ -108,6 +636,210 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Luxelane Chófer'**
   String get appNameDriver;
+
+  /// No description provided for @authAlreadyHaveAccount.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Ya tienes cuenta?'**
+  String get authAlreadyHaveAccount;
+
+  /// Two-line web brand panel headline; keep the line break
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio de chófer\npremium.'**
+  String get authBrandHeadline;
+
+  /// No description provided for @authBrandTagline.
+  ///
+  /// In es, this message translates to:
+  /// **'En cualquier parte del mundo.'**
+  String get authBrandTagline;
+
+  /// Link text inside authConsentText
+  ///
+  /// In es, this message translates to:
+  /// **'Política de privacidad'**
+  String get authConsentPrivacyLink;
+
+  /// No description provided for @authConsentRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Debes aceptar los términos y la política de privacidad'**
+  String get authConsentRequired;
+
+  /// Link text inside authConsentText
+  ///
+  /// In es, this message translates to:
+  /// **'Términos y condiciones'**
+  String get authConsentTermsLink;
+
+  /// Register consent sentence. {terms} is replaced by the authConsentTermsLink link text and {privacy} by authConsentPrivacyLink; adjust articles and word order around them as the language needs
+  ///
+  /// In es, this message translates to:
+  /// **'Acepto los {terms} y la {privacy}'**
+  String authConsentText(String terms, String privacy);
+
+  /// No description provided for @authCreateOne.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear una'**
+  String get authCreateOne;
+
+  /// No description provided for @authEmailInvalid.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa un correo válido'**
+  String get authEmailInvalid;
+
+  /// No description provided for @authEmailLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo electrónico'**
+  String get authEmailLabel;
+
+  /// No description provided for @authErrorEmailInUse.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya existe una cuenta con este correo'**
+  String get authErrorEmailInUse;
+
+  /// No description provided for @authErrorGeneric.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos completar la solicitud. Inténtalo de nuevo.'**
+  String get authErrorGeneric;
+
+  /// No description provided for @authErrorInvalidEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'El correo electrónico no es válido'**
+  String get authErrorInvalidEmail;
+
+  /// No description provided for @authErrorTooManyRequests.
+  ///
+  /// In es, this message translates to:
+  /// **'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.'**
+  String get authErrorTooManyRequests;
+
+  /// No description provided for @authErrorUserDisabled.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta cuenta está desactivada. Contáctanos para más información.'**
+  String get authErrorUserDisabled;
+
+  /// No description provided for @authErrorUserNotFound.
+  ///
+  /// In es, this message translates to:
+  /// **'No existe una cuenta con este correo'**
+  String get authErrorUserNotFound;
+
+  /// No description provided for @authErrorWeakPassword.
+  ///
+  /// In es, this message translates to:
+  /// **'La contraseña es demasiado débil. Usa al menos 6 caracteres.'**
+  String get authErrorWeakPassword;
+
+  /// No description provided for @authErrorWrongCredentials.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo o contraseña incorrectos'**
+  String get authErrorWrongCredentials;
+
+  /// No description provided for @authForgotPassword.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Olvidaste tu contraseña?'**
+  String get authForgotPassword;
+
+  /// No description provided for @authFullNameLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre completo'**
+  String get authFullNameLabel;
+
+  /// Large two-line mobile login headline; keep the line break
+  ///
+  /// In es, this message translates to:
+  /// **'Bienvenido\nde nuevo.'**
+  String get authLoginHeadline;
+
+  /// No description provided for @authLoginSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia sesión en tu cuenta'**
+  String get authLoginSubtitle;
+
+  /// Login page title and submit button
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar sesión'**
+  String get authLoginTitle;
+
+  /// No description provided for @authLoginWelcomeBack.
+  ///
+  /// In es, this message translates to:
+  /// **'Bienvenido de nuevo a Luxelane.'**
+  String get authLoginWelcomeBack;
+
+  /// No description provided for @authNoAccount.
+  ///
+  /// In es, this message translates to:
+  /// **'¿No tienes cuenta?'**
+  String get authNoAccount;
+
+  /// No description provided for @authPasswordLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Contraseña'**
+  String get authPasswordLabel;
+
+  /// No description provided for @authPasswordTooShort.
+  ///
+  /// In es, this message translates to:
+  /// **'Mínimo {count} caracteres'**
+  String authPasswordTooShort(int count);
+
+  /// No description provided for @authPhoneLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Teléfono'**
+  String get authPhoneLabel;
+
+  /// Mobile register headline
+  ///
+  /// In es, this message translates to:
+  /// **'Crear cuenta.'**
+  String get authRegisterHeadline;
+
+  /// No description provided for @authRegisterSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Únete a Luxelane hoy'**
+  String get authRegisterSubtitle;
+
+  /// Register page title (web) and submit button
+  ///
+  /// In es, this message translates to:
+  /// **'Crear cuenta'**
+  String get authRegisterTitle;
+
+  /// No description provided for @authResetEmailSent.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo de restablecimiento enviado'**
+  String get authResetEmailSent;
+
+  /// No description provided for @authResetNeedsEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa tu correo para restablecer la contraseña'**
+  String get authResetNeedsEmail;
+
+  /// No description provided for @authSignInLink.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia sesión'**
+  String get authSignInLink;
 
   /// No description provided for @bookingAllFeesIncluded.
   ///
@@ -1128,6 +1860,102 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'WhatsApp'**
   String get commonWhatsApp;
+
+  /// No description provided for @coreClearField.
+  ///
+  /// In es, this message translates to:
+  /// **'Borrar'**
+  String get coreClearField;
+
+  /// No description provided for @coreConfirmBooking.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar reserva'**
+  String get coreConfirmBooking;
+
+  /// Android foreground-service notification while a chauffeur is on duty
+  ///
+  /// In es, this message translates to:
+  /// **'Compartiendo tu ubicación mientras estás disponible'**
+  String get coreDriverLocationNotification;
+
+  /// No description provided for @coreErrorBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Hemos sido notificados y estamos trabajando en una solución.'**
+  String get coreErrorBody;
+
+  /// No description provided for @coreErrorTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Algo salió mal'**
+  String get coreErrorTitle;
+
+  /// No description provided for @coreFixedPrice.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo'**
+  String get coreFixedPrice;
+
+  /// No description provided for @coreHoursTotal.
+  ///
+  /// In es, this message translates to:
+  /// **'{hours} h en total'**
+  String coreHoursTotal(int hours);
+
+  /// Developer-facing placeholder; keep GOOGLE_MAPS_KEY as is
+  ///
+  /// In es, this message translates to:
+  /// **'Agrega GOOGLE_MAPS_KEY para habilitar el mapa'**
+  String get coreMapKeyMissing;
+
+  /// No description provided for @coreMapPickerHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Mueve el mapa para seleccionar una ubicación'**
+  String get coreMapPickerHint;
+
+  /// No description provided for @coreMapPickerSelected.
+  ///
+  /// In es, this message translates to:
+  /// **'Ubicación seleccionada'**
+  String get coreMapPickerSelected;
+
+  /// No description provided for @coreMapPickerTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar ubicación'**
+  String get coreMapPickerTitle;
+
+  /// No description provided for @coreMapView.
+  ///
+  /// In es, this message translates to:
+  /// **'Vista del mapa'**
+  String get coreMapView;
+
+  /// No description provided for @coreRoleAdmin.
+  ///
+  /// In es, this message translates to:
+  /// **'Admin'**
+  String get coreRoleAdmin;
+
+  /// No description provided for @coreRoleDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer'**
+  String get coreRoleDriver;
+
+  /// No description provided for @coreRoleRider.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero'**
+  String get coreRoleRider;
+
+  /// Passenger capacity next to a person icon
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta {count}'**
+  String coreVehicleCapacity(int count);
 
   /// No description provided for @driverAcceptRide.
   ///
@@ -2413,6 +3241,216 @@ abstract class AppLocalizations {
   /// **'Notificaciones'**
   String get notifTitle;
 
+  /// No description provided for @paymentsAccountNotSetUp.
+  ///
+  /// In es, this message translates to:
+  /// **'La cuenta no está configurada para pagos'**
+  String get paymentsAccountNotSetUp;
+
+  /// No description provided for @paymentsAdd.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar'**
+  String get paymentsAdd;
+
+  /// No description provided for @paymentsAddCard.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar tarjeta'**
+  String get paymentsAddCard;
+
+  /// No description provided for @paymentsAddMethodTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar método de pago'**
+  String get paymentsAddMethodTitle;
+
+  /// No description provided for @paymentsAddNewCard.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar nueva tarjeta'**
+  String get paymentsAddNewCard;
+
+  /// No description provided for @paymentsCardAdded.
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjeta agregada exitosamente'**
+  String get paymentsCardAdded;
+
+  /// No description provided for @paymentsCardDetails.
+  ///
+  /// In es, this message translates to:
+  /// **'Datos de la tarjeta'**
+  String get paymentsCardDetails;
+
+  /// No description provided for @paymentsCardExpires.
+  ///
+  /// In es, this message translates to:
+  /// **'Vence {month}/{year}'**
+  String paymentsCardExpires(String month, String year);
+
+  /// Shown when the card brand is unknown
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjeta'**
+  String get paymentsCardFallback;
+
+  /// No description provided for @paymentsCardIncomplete.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa los datos completos de la tarjeta'**
+  String get paymentsCardIncomplete;
+
+  /// Badge on the default card
+  ///
+  /// In es, this message translates to:
+  /// **'Predeterminada'**
+  String get paymentsDefault;
+
+  /// No description provided for @paymentsEmptyBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Agrega una tarjeta para reservar viajes'**
+  String get paymentsEmptyBody;
+
+  /// No description provided for @paymentsEmptyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin métodos de pago'**
+  String get paymentsEmptyTitle;
+
+  /// No description provided for @paymentsError.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos completar la operación con tu tarjeta. Inténtalo de nuevo.'**
+  String get paymentsError;
+
+  /// No description provided for @paymentsMethodsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Métodos de pago'**
+  String get paymentsMethodsTitle;
+
+  /// No description provided for @paymentsRemoveCard.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar tarjeta'**
+  String get paymentsRemoveCard;
+
+  /// No description provided for @paymentsSavedCards.
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjetas guardadas'**
+  String get paymentsSavedCards;
+
+  /// No description provided for @paymentsSecured.
+  ///
+  /// In es, this message translates to:
+  /// **'Protegido por Stripe'**
+  String get paymentsSecured;
+
+  /// No description provided for @paymentsSecuredPci.
+  ///
+  /// In es, this message translates to:
+  /// **'Protegido por Stripe · Cumplimiento PCI DSS'**
+  String get paymentsSecuredPci;
+
+  /// Short button to make a card the default; keep it short
+  ///
+  /// In es, this message translates to:
+  /// **'Predeterminar'**
+  String get paymentsSetDefault;
+
+  /// No description provided for @profileContactHelp.
+  ///
+  /// In es, this message translates to:
+  /// **'Contacto y ayuda'**
+  String get profileContactHelp;
+
+  /// No description provided for @profileDeleteAccount.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar cuenta'**
+  String get profileDeleteAccount;
+
+  /// No description provided for @profileEditTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar perfil'**
+  String get profileEditTitle;
+
+  /// No description provided for @profileLoadError.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos cargar tu perfil'**
+  String get profileLoadError;
+
+  /// No description provided for @profileNameLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre'**
+  String get profileNameLabel;
+
+  /// No description provided for @profileSaveChanges.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar cambios'**
+  String get profileSaveChanges;
+
+  /// No description provided for @profileSectionAccount.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta'**
+  String get profileSectionAccount;
+
+  /// No description provided for @profileSectionHelp.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda y legal'**
+  String get profileSectionHelp;
+
+  /// No description provided for @profileSectionStats.
+  ///
+  /// In es, this message translates to:
+  /// **'Estadísticas'**
+  String get profileSectionStats;
+
+  /// No description provided for @profileSignOut.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar sesión'**
+  String get profileSignOut;
+
+  /// No description provided for @profileStatRating.
+  ///
+  /// In es, this message translates to:
+  /// **'Calificación'**
+  String get profileStatRating;
+
+  /// No description provided for @profileStatTrips.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes'**
+  String get profileStatTrips;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil'**
+  String get profileTitle;
+
+  /// No description provided for @profileUpdated.
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil actualizado'**
+  String get profileUpdated;
+
+  /// No description provided for @profileVersion.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane v{version}'**
+  String profileVersion(String version);
+
   /// No description provided for @rideArrived.
   ///
   /// In es, this message translates to:
@@ -2682,6 +3720,24 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Tu chófer'**
   String get rideYourChauffeur;
+
+  /// No description provided for @routerGoHome.
+  ///
+  /// In es, this message translates to:
+  /// **'Ir al inicio'**
+  String get routerGoHome;
+
+  /// No description provided for @routerNotFoundBody.
+  ///
+  /// In es, this message translates to:
+  /// **'La página que buscas no existe o se ha movido.'**
+  String get routerNotFoundBody;
+
+  /// No description provided for @routerNotFoundTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Página no encontrada'**
+  String get routerNotFoundTitle;
 
   /// No description provided for @serviceByTheHour.
   ///

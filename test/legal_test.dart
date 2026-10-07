@@ -140,7 +140,11 @@ void main() {
 
   testWidgets('registration requires accepting the terms', (tester) async {
     await tester.binding.setSurfaceSize(const Size(400, 1400));
-    await tester.pumpWidget(_withAuth(const RegisterPage(), const AuthUnauthenticated()));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final bloc = MockAuthBloc();
+    whenListen(bloc, const Stream<AuthState>.empty(), initialState: const AuthUnauthenticated());
+    await tester.pumpWidget(
+        BlocProvider<AuthBloc>.value(value: bloc, child: localizedApp(const RegisterPage())));
     await tester.enterText(find.byType(TextFormField).at(0), 'Ana Gutiérrez');
     await tester.enterText(find.byType(TextFormField).at(1), 'ana@example.com');
     await tester.enterText(find.byType(TextFormField).at(2), '+59170000000');

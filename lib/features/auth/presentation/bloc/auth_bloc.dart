@@ -4,8 +4,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/enums/enums.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../domain/auth_failure.dart';
 
 // ---------------------------------------------------------------------------
 // Public events
@@ -104,10 +106,20 @@ class AuthUnauthenticated extends AuthState {
 }
 
 class AuthError extends AuthState {
-  const AuthError(this.message);
+  const AuthError(this.message, {this.code});
+
+  /// Developer-facing detail (provider text). Not for display: show
+  /// `authErrorMessage(context.l10n, code)` instead.
   final String message;
+
+  /// Backend error code (e.g. `wrong-password`), when known.
+  final String? code;
+
+  factory AuthError.fromFailure(Failure f) =>
+      AuthError(f.message, code: f is AuthCodeFailure ? f.code : null);
+
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, code];
 }
 
 // ---------------------------------------------------------------------------
@@ -163,7 +175,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result =
         await _repo.login(email: event.email, password: event.password);
     result.fold(
-      (f) => emit(AuthError(f.message)),
+      (f) => emit(AuthError.fromFailure(f)),
       (user) => emit(AuthAuthenticated(user)),
     );
   }
@@ -180,7 +192,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       role: event.role,
     );
     result.fold(
-      (f) => emit(AuthError(f.message)),
+      (f) => emit(AuthError.fromFailure(f)),
       (user) => emit(AuthAuthenticated(user)),
     );
   }
@@ -191,7 +203,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await _signOutSub?.cancel();
     final result = await _repo.logout();
     result.fold(
-      (f) => emit(AuthError(f.message)),
+      (f) => emit(AuthError.fromFailure(f)),
       (_) => emit(const AuthUnauthenticated()),
     );
   }

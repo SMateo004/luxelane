@@ -6,6 +6,7 @@ import 'dart:js' as js;
 import 'dart:js_util' as js_util;
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 
 import '../models/place_model.dart';
 
@@ -80,7 +81,7 @@ Future<List<PlaceSuggestion>> _newAutocomplete(
     // Build request as a plain JS object via jsify, then set LatLng bias separately
     final request = js_util.jsify({
       'input': input,
-      'language': 'es',
+      'language': Intl.shortLocale(Intl.getCurrentLocale()),
       'region': 'bo',
     });
     // locationBias must be a real LatLng object, not a plain map
@@ -156,7 +157,7 @@ Future<List<PlaceSuggestion>> _legacyAutocomplete(
       'location': js.JsObject(maps['LatLng'] as js.JsFunction, [lat, lng]),
       'radius': 50000,
       'componentRestrictions': {'country': 'bo'},
-      'language': 'es',
+      'language': Intl.shortLocale(Intl.getCurrentLocale()),
     });
 
     service.callMethod('getPlacePredictions', [

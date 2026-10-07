@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../app/theme/app_theme.dart';
+import '../../l10n/l10n.dart';
 import '../config/env.dart';
 import '../models/place_model.dart';
 
@@ -213,7 +214,7 @@ class _LuxMapState extends State<LuxMap> {
               Text(
                 widget.origin != null
                     ? widget.origin!.displayName
-                    : 'Map view',
+                    : context.l10n.coreMapView,
                 style: LuxTypography.caption,
                 textAlign: TextAlign.center,
               ),

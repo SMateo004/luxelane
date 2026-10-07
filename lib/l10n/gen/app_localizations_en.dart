@@ -9,10 +9,416 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get adminActionFailed => 'That action couldn\'t be completed. Please try again.';
+
+  @override
+  String get adminActive => 'Active';
+
+  @override
+  String get adminAppVersion => 'App version';
+
+  @override
+  String adminAuditBy(String id) {
+    return 'Admin: $id';
+  }
+
+  @override
+  String get adminBackend => 'Backend';
+
+  @override
+  String adminBookingDriver(String name) {
+    return 'Chauffeur: $name';
+  }
+
+  @override
+  String adminBookingRider(String name) {
+    return 'Passenger: $name';
+  }
+
+  @override
+  String get adminBusinessPerformance => 'Business performance';
+
+  @override
+  String adminChangeRoleTitle(String name) {
+    return 'Change role for $name';
+  }
+
+  @override
+  String get adminCurrency => 'Currency';
+
+  @override
+  String get adminCurrencyValue => 'Bolivianos (Bs)';
+
+  @override
+  String adminDeleteBookingBody(String id) {
+    return 'Booking #$id will be permanently deleted. This can\'t be undone.';
+  }
+
+  @override
+  String get adminDeleteBookingTitle => 'Delete booking?';
+
+  @override
+  String get adminDeleteBookingTooltip => 'Delete booking';
+
+  @override
+  String get adminDisable => 'Disable';
+
+  @override
+  String get adminDocumentsVerified => 'Documents verified';
+
+  @override
+  String get adminFieldBase => 'Base (Bs)';
+
+  @override
+  String get adminFieldMinimum => 'Minimum (Bs)';
+
+  @override
+  String get adminFieldPerHour => 'Per hour (Bs)';
+
+  @override
+  String get adminFieldPerKm => 'Per km (Bs)';
+
+  @override
+  String get adminFilterAll => 'All';
+
+  @override
+  String get adminFirestoreRules => 'Firestore pricing rules';
+
+  @override
+  String get adminGlobalSettings => 'Global app settings';
+
+  @override
+  String get adminInactive => 'Inactive';
+
+  @override
+  String get adminKpiAwaitingDriver => 'Awaiting chauffeur';
+
+  @override
+  String get adminKpiCompleted => 'Completed rides';
+
+  @override
+  String adminKpiDriversCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count chauffeurs',
+      one: '1 chauffeur',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String adminKpiInProgress(int count) {
+    return '$count in progress';
+  }
+
+  @override
+  String get adminKpiPending => 'Pending bookings';
+
+  @override
+  String adminKpiToday(String amount) {
+    return 'Today: $amount';
+  }
+
+  @override
+  String get adminKpiTotalRevenue => 'Total revenue';
+
+  @override
+  String get adminKpiUsers => 'Registered users';
+
+  @override
+  String adminLicense(String number) {
+    return 'License: $number';
+  }
+
+  @override
+  String get adminLiveStats => 'Live stats';
+
+  @override
+  String get adminMaintenanceBanner => 'MAINTENANCE MODE ON — Passengers can\'t book new rides.';
+
+  @override
+  String get adminMaintenanceMode => 'Maintenance mode';
+
+  @override
+  String get adminMaintenanceModeDesc => 'Turns off all bookings and shows users the maintenance screen.';
+
+  @override
+  String adminMemberSince(String date) {
+    return 'Member since $date';
+  }
+
+  @override
+  String get adminNoAuditLogs => 'No audit entries yet';
+
+  @override
+  String get adminNoAuditLogsHint => 'Admin actions will appear here in real time';
+
+  @override
+  String get adminNoBookings => 'No bookings found';
+
+  @override
+  String get adminNoDrivers => 'No chauffeurs found';
+
+  @override
+  String get adminNoUsersMatch => 'No users match your search';
+
+  @override
+  String get adminNoVehicles => 'No vehicles registered yet';
+
+  @override
+  String get adminNoVehiclesHint => 'Vehicles linked to chauffeurs appear here';
+
+  @override
+  String get adminNoticeBookingDeleted => 'Booking deleted';
+
+  @override
+  String get adminNoticeDriverVerified => 'Chauffeur verified';
+
+  @override
+  String get adminNoticeMaintenanceOff => 'Maintenance mode turned off';
+
+  @override
+  String get adminNoticeMaintenanceOn => 'Maintenance mode turned on';
+
+  @override
+  String get adminNoticePricingUpdated => 'Pricing rule updated';
+
+  @override
+  String get adminNoticeRoleUpdated => 'Role updated';
+
+  @override
+  String get adminNoticeSettingsSaved => 'Settings saved';
+
+  @override
+  String get adminOffline => 'Offline';
+
+  @override
+  String get adminOnline => 'Online';
+
+  @override
+  String get adminOverview => 'Overview';
+
+  @override
+  String get adminPanelBadge => 'Admin panel';
+
+  @override
+  String get adminPlatform => 'Platform';
+
+  @override
+  String get adminPlatformValue => 'Flutter Web + mobile';
+
+  @override
+  String adminPriceBaseAndKm(String base, String perKm) {
+    return '$base base + $perKm/km';
+  }
+
+  @override
+  String adminPriceBasePlusKm(String base, String perKm) {
+    return '$base + $perKm/km';
+  }
+
+  @override
+  String adminPriceMinimum(String amount) {
+    return 'Min: $amount';
+  }
+
+  @override
+  String adminPricePerHour(String amount) {
+    return '$amount/h';
+  }
+
+  @override
+  String get adminPricingNote => 'Prices reflect the DefaultPricing model. If the pricingRules collection is empty, prices are calculated locally.';
+
+  @override
+  String get adminPricingRules => 'Pricing rules (Bs)';
+
+  @override
+  String get adminPushNotifications => 'Push notifications';
+
+  @override
+  String get adminPushNotificationsDesc => 'Enables system-wide notifications for new bookings.';
+
+  @override
+  String get adminRecentActivity => 'Recent activity';
+
+  @override
+  String get adminRegisteredDrivers => 'Registered chauffeurs';
+
+  @override
+  String get adminRegisteredVehicles => 'Registered vehicles';
+
+  @override
+  String get adminRevenueTrend => '7-day revenue trend (Bs)';
+
+  @override
+  String get adminSearchUsers => 'Search users…';
+
+  @override
+  String get adminSectionAudit => 'Audit log';
+
+  @override
+  String get adminSectionBookings => 'Bookings';
+
+  @override
+  String get adminSectionDashboard => 'Dashboard';
+
+  @override
+  String get adminSectionDrivers => 'Chauffeurs';
+
+  @override
+  String get adminSectionPricing => 'Pricing';
+
+  @override
+  String get adminSectionSettings => 'Settings';
+
+  @override
+  String get adminSectionUsers => 'Users';
+
+  @override
+  String get adminSectionVehicles => 'Vehicles';
+
+  @override
+  String get adminSignOutConfirm => 'Are you sure you want to sign out of the admin dashboard?';
+
+  @override
+  String get adminSystemInfo => 'System information';
+
+  @override
+  String get adminTitle => 'Admin';
+
+  @override
+  String get adminTotalBookings => 'Total bookings';
+
+  @override
+  String get adminTwoFactor => 'Admin two-factor authentication';
+
+  @override
+  String get adminTwoFactorDesc => 'Requires 2FA for all admin actions.';
+
+  @override
+  String adminVehicleDetails(String plate, String vehicleClass) {
+    return 'Plate: $plate · Class: $vehicleClass';
+  }
+
+  @override
+  String get adminVerifiedDrivers => 'Verified chauffeurs';
+
+  @override
+  String get adminVerify => 'Verify';
+
+  @override
   String get appName => 'Luxelane';
 
   @override
   String get appNameDriver => 'Luxelane Chauffeur';
+
+  @override
+  String get authAlreadyHaveAccount => 'Already have an account?';
+
+  @override
+  String get authBrandHeadline => 'Premium chauffeur\nservice.';
+
+  @override
+  String get authBrandTagline => 'Anywhere in the world.';
+
+  @override
+  String get authConsentPrivacyLink => 'Privacy Policy';
+
+  @override
+  String get authConsentRequired => 'You need to accept the terms and the privacy policy';
+
+  @override
+  String get authConsentTermsLink => 'Terms and Conditions';
+
+  @override
+  String authConsentText(String terms, String privacy) {
+    return 'I accept the $terms and the $privacy';
+  }
+
+  @override
+  String get authCreateOne => 'Create one';
+
+  @override
+  String get authEmailInvalid => 'Enter a valid email address';
+
+  @override
+  String get authEmailLabel => 'Email';
+
+  @override
+  String get authErrorEmailInUse => 'An account with this email already exists';
+
+  @override
+  String get authErrorGeneric => 'We couldn\'t complete your request. Please try again.';
+
+  @override
+  String get authErrorInvalidEmail => 'That email address isn\'t valid';
+
+  @override
+  String get authErrorTooManyRequests => 'Too many attempts. Wait a few minutes and try again.';
+
+  @override
+  String get authErrorUserDisabled => 'This account has been disabled. Contact us for more information.';
+
+  @override
+  String get authErrorUserNotFound => 'There\'s no account with this email';
+
+  @override
+  String get authErrorWeakPassword => 'That password is too weak. Use at least 6 characters.';
+
+  @override
+  String get authErrorWrongCredentials => 'Incorrect email or password';
+
+  @override
+  String get authForgotPassword => 'Forgot your password?';
+
+  @override
+  String get authFullNameLabel => 'Full name';
+
+  @override
+  String get authLoginHeadline => 'Welcome\nback.';
+
+  @override
+  String get authLoginSubtitle => 'Sign in to your account';
+
+  @override
+  String get authLoginTitle => 'Sign in';
+
+  @override
+  String get authLoginWelcomeBack => 'Welcome back to Luxelane.';
+
+  @override
+  String get authNoAccount => 'Don\'t have an account?';
+
+  @override
+  String get authPasswordLabel => 'Password';
+
+  @override
+  String authPasswordTooShort(int count) {
+    return 'At least $count characters';
+  }
+
+  @override
+  String get authPhoneLabel => 'Phone';
+
+  @override
+  String get authRegisterHeadline => 'Create an account.';
+
+  @override
+  String get authRegisterSubtitle => 'Join Luxelane today';
+
+  @override
+  String get authRegisterTitle => 'Create account';
+
+  @override
+  String get authResetEmailSent => 'Password reset email sent';
+
+  @override
+  String get authResetNeedsEmail => 'Enter your email to reset your password';
+
+  @override
+  String get authSignInLink => 'Sign in';
 
   @override
   String get bookingAllFeesIncluded => 'All fees included';
@@ -569,6 +975,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonWhatsApp => 'WhatsApp';
+
+  @override
+  String get coreClearField => 'Clear';
+
+  @override
+  String get coreConfirmBooking => 'Confirm booking';
+
+  @override
+  String get coreDriverLocationNotification => 'Sharing your location while you\'re available';
+
+  @override
+  String get coreErrorBody => 'We\'ve been notified and are working on a fix.';
+
+  @override
+  String get coreErrorTitle => 'Something went wrong';
+
+  @override
+  String get coreFixedPrice => 'Fixed price';
+
+  @override
+  String coreHoursTotal(int hours) {
+    return '$hours h total';
+  }
+
+  @override
+  String get coreMapKeyMissing => 'Add GOOGLE_MAPS_KEY to enable the map';
+
+  @override
+  String get coreMapPickerHint => 'Move the map to select a location';
+
+  @override
+  String get coreMapPickerSelected => 'Selected location';
+
+  @override
+  String get coreMapPickerTitle => 'Select location';
+
+  @override
+  String get coreMapView => 'Map view';
+
+  @override
+  String get coreRoleAdmin => 'Admin';
+
+  @override
+  String get coreRoleDriver => 'Chauffeur';
+
+  @override
+  String get coreRoleRider => 'Passenger';
+
+  @override
+  String coreVehicleCapacity(int count) {
+    return 'Up to $count';
+  }
 
   @override
   String get driverAcceptRide => 'Accept ride';
@@ -1266,6 +1724,115 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifTitle => 'Notifications';
 
   @override
+  String get paymentsAccountNotSetUp => 'Your account isn\'t set up for payments yet';
+
+  @override
+  String get paymentsAdd => 'Add';
+
+  @override
+  String get paymentsAddCard => 'Add card';
+
+  @override
+  String get paymentsAddMethodTitle => 'Add payment method';
+
+  @override
+  String get paymentsAddNewCard => 'Add new card';
+
+  @override
+  String get paymentsCardAdded => 'Card added successfully';
+
+  @override
+  String get paymentsCardDetails => 'Card details';
+
+  @override
+  String paymentsCardExpires(String month, String year) {
+    return 'Expires $month/$year';
+  }
+
+  @override
+  String get paymentsCardFallback => 'Card';
+
+  @override
+  String get paymentsCardIncomplete => 'Enter your full card details';
+
+  @override
+  String get paymentsDefault => 'Default';
+
+  @override
+  String get paymentsEmptyBody => 'Add a card to book rides';
+
+  @override
+  String get paymentsEmptyTitle => 'No payment methods';
+
+  @override
+  String get paymentsError => 'We couldn\'t complete that card operation. Please try again.';
+
+  @override
+  String get paymentsMethodsTitle => 'Payment methods';
+
+  @override
+  String get paymentsRemoveCard => 'Remove card';
+
+  @override
+  String get paymentsSavedCards => 'Saved cards';
+
+  @override
+  String get paymentsSecured => 'Secured by Stripe';
+
+  @override
+  String get paymentsSecuredPci => 'Secured by Stripe · PCI DSS compliant';
+
+  @override
+  String get paymentsSetDefault => 'Set default';
+
+  @override
+  String get profileContactHelp => 'Contact & help';
+
+  @override
+  String get profileDeleteAccount => 'Delete account';
+
+  @override
+  String get profileEditTitle => 'Edit profile';
+
+  @override
+  String get profileLoadError => 'We couldn\'t load your profile';
+
+  @override
+  String get profileNameLabel => 'Name';
+
+  @override
+  String get profileSaveChanges => 'Save changes';
+
+  @override
+  String get profileSectionAccount => 'Account';
+
+  @override
+  String get profileSectionHelp => 'Help & legal';
+
+  @override
+  String get profileSectionStats => 'Stats';
+
+  @override
+  String get profileSignOut => 'Sign out';
+
+  @override
+  String get profileStatRating => 'Rating';
+
+  @override
+  String get profileStatTrips => 'Trips';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get profileUpdated => 'Profile updated';
+
+  @override
+  String profileVersion(String version) {
+    return 'Luxelane v$version';
+  }
+
+  @override
   String get rideArrived => 'You\'ve arrived!';
 
   @override
@@ -1431,6 +1998,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rideYourChauffeur => 'Your chauffeur';
+
+  @override
+  String get routerGoHome => 'Go home';
+
+  @override
+  String get routerNotFoundBody => 'The page you\'re looking for doesn\'t exist or has moved.';
+
+  @override
+  String get routerNotFoundTitle => 'Page not found';
 
   @override
   String get serviceByTheHour => 'By the hour';

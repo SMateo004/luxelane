@@ -11,6 +11,7 @@ import '../../features/driver/presentation/pages/driver_onboarding_screen.dart';
 import '../../features/driver/presentation/pages/driver_queue_screen.dart';
 import '../../features/legal/presentation/pages/legal_pages.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
+import '../../l10n/l10n.dart';
 import '../driver_shell/driver_shell.dart';
 
 abstract class DriverRoutes {
@@ -176,9 +177,22 @@ CustomTransitionPage<void> _slide(Widget child, GoRouterState state) =>
 class _NotFoundPage extends StatelessWidget {
   const _NotFoundPage();
   @override
-  Widget build(BuildContext context) => const Scaffold(
+  Widget build(BuildContext context) => Scaffold(
         body: Center(
-          child: Text('404', style: TextStyle(color: Colors.white, fontSize: 64)),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('404', style: TextStyle(color: Colors.white, fontSize: 64)),
+              const SizedBox(height: 8),
+              Text(context.l10n.routerNotFoundTitle,
+                  style: const TextStyle(color: Colors.white70), textAlign: TextAlign.center),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () => context.go(DriverRoutes.home),
+                child: Text(context.l10n.routerGoHome),
+              ),
+            ],
+          ),
         ),
       );
 }

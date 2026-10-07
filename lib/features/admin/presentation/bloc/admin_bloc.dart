@@ -82,6 +82,17 @@ class AdminUpdateUserRoleRequested extends AdminEvent {
 // State
 // ---------------------------------------------------------------------------
 
+/// Successful admin actions, translated by the UI (see admin_sections.dart).
+enum AdminNotice {
+  maintenanceOn,
+  maintenanceOff,
+  pricingUpdated,
+  driverVerified,
+  settingsSaved,
+  bookingDeleted,
+  roleUpdated,
+}
+
 class AdminState extends Equatable {
   const AdminState({
     this.bookings = const [],
@@ -93,7 +104,7 @@ class AdminState extends Equatable {
     this.globalSettings = const {},
     this.isLoading = false,
     this.error,
-    this.successMessage,
+    this.notice,
   });
 
   final List<Booking> bookings;
@@ -104,8 +115,9 @@ class AdminState extends Equatable {
   final List<AuditLog> auditLogs;
   final Map<String, dynamic> globalSettings;
   final bool isLoading;
+  /// Developer-facing failure detail; the UI shows a translated message.
   final String? error;
-  final String? successMessage;
+  final AdminNotice? notice;
 
   bool get isMaintenanceMode => globalSettings['isMaintenanceMode'] ?? false;
   bool get pushNotificationsEnabled => globalSettings['pushNotificationsEnabled'] ?? true;
@@ -167,7 +179,7 @@ class AdminState extends Equatable {
     Map<String, dynamic>? globalSettings,
     bool? isLoading,
     String? error,
-    String? successMessage,
+    AdminNotice? notice,
   }) {
     return AdminState(
       bookings: bookings ?? this.bookings,
@@ -179,14 +191,14 @@ class AdminState extends Equatable {
       globalSettings: globalSettings ?? this.globalSettings,
       isLoading: isLoading ?? this.isLoading,
       error: error,
-      successMessage: successMessage,
+      notice: notice,
     );
   }
 
   @override
   List<Object?> get props => [
         bookings, users, drivers, pricingRules, vehicles,
-        auditLogs, globalSettings, isLoading, error, successMessage,
+        auditLogs, globalSettings, isLoading, error, notice,
       ];
 }
 
@@ -250,7 +262,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     final result = await _repo.toggleMaintenanceMode(event.active);
     result.fold(
       (f) => emit(state.copyWith(error: f.message)),
-      (_) => emit(state.copyWith(successMessage: event.active ? 'Maintenance ON' : 'Maintenance OFF')),
+      (_) => emit(state.copyWith(notice: event.active ? AdminNotice.maintenanceOn : AdminNotice.maintenanceOff)),
     );
   }
 
@@ -263,7 +275,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     final result = await _repo.updatePricingRule(event.rule);
     result.fold(
       (f) => emit(state.copyWith(error: f.message)),
-      (_) => emit(state.copyWith(successMessage: 'Pricing rule updated')),
+      (_) => emit(state.copyWith(notice: AdminNotice.pricingUpdated)),
     );
   }
 
@@ -271,7 +283,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     final result = await _repo.verifyDriver(event.driverId);
     result.fold(
       (f) => emit(state.copyWith(error: f.message)),
-      (_) => emit(state.copyWith(successMessage: 'Driver verified successfully')),
+      (_) => emit(state.copyWith(notice: AdminNotice.driverVerified)),
     );
   }
 
@@ -284,7 +296,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     final result = await _repo.updateGlobalSettings(event.fields);
     result.fold(
       (f) => emit(state.copyWith(error: f.message)),
-      (_) => emit(state.copyWith(successMessage: 'Settings saved')),
+      (_) => emit(state.copyWith(notice: AdminNotice.settingsSaved)),
     );
   }
 
@@ -292,7 +304,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     final result = await _repo.deleteBooking(event.bookingId);
     result.fold(
       (f) => emit(state.copyWith(error: f.message)),
-      (_) => emit(state.copyWith(successMessage: 'Booking deleted')),
+      (_) => emit(state.copyWith(notice: AdminNotice.bookingDeleted)),
     );
   }
 
@@ -300,7 +312,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     final result = await _repo.updateUserRole(event.userId, event.role);
     result.fold(
       (f) => emit(state.copyWith(error: f.message)),
-      (_) => emit(state.copyWith(successMessage: 'User role updated')),
+      (_) => emit(state.copyWith(notice: AdminNotice.roleUpdated)),
     );
   }
 
