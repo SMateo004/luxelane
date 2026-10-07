@@ -311,6 +311,7 @@
   "adminSearchUsers": "Buscar usuarios…",
   "adminSectionAudit": "Auditoría",
   "adminSectionBookings": "Reservas",
+  "adminSectionCompanies": "Empresas",
   "adminSectionDashboard": "Panel",
   "adminSectionDrivers": "Chóferes",
   "adminSectionPricing": "Precios",
@@ -793,6 +794,161 @@
     "placeholders": {
       "count": {
         "type": "int"
+      }
+    }
+  },
+  "corpAddCostCenter": "Agregar centro de costo",
+  "corpAddMember": "Agregar miembro",
+  "corpAddMemberAction": "Agregar",
+  "corpAddMemberHint": "Podrá facturar sus viajes a la empresa. Si aún no tiene cuenta, se unirá al registrarse con este correo.",
+  "corpAdminEmail": "Correo del administrador",
+  "corpAdminEmailHint": "Si aún no tiene cuenta, se unirá al registrarse con este correo.",
+  "corpAdminEmpty": "Todavía no hay empresas.",
+  "corpAdminIntro": "Las empresas reciben una factura mensual por los viajes de sus miembros. El administrador de cada empresa gestiona miembros y centros de costo desde su portal.",
+  "corpAdminTitle": "Cuentas corporativas",
+  "corpBillCompanyHint": "Factura mensual a la empresa",
+  "corpBillCompanyNotice": "Este viaje se incluye en la factura mensual de {company}. No pagas nada al chófer.",
+  "@corpBillCompanyNotice": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "corpBillPersonal": "Personal",
+  "corpBillPersonalHint": "Lo pagas tú",
+  "corpBillTo": "Facturar a",
+  "corpBilledTo": "Facturado a {company}",
+  "@corpBilledTo": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "corpBillingDetails": "Datos de facturación",
+  "corpBillingEmail": "Correo de facturación",
+  "corpByCostCenter": "Por centro de costo",
+  "corpByTraveler": "Por persona",
+  "corpCancelInvite": "Cancelar invitación",
+  "corpColAmount": "Monto (Bs)",
+  "corpColBookedBy": "Reservado por",
+  "corpColDate": "Fecha",
+  "corpColFrom": "Origen",
+  "corpColPassenger": "Pasajero",
+  "corpColTo": "Destino",
+  "corpColVehicle": "Vehículo",
+  "corpCompanyCreated": "Empresa creada",
+  "corpCompanyName": "Razón social",
+  "corpCostCenter": "Centro de costo",
+  "corpCostCenterNone": "Ninguno",
+  "corpCostCenterOptional": "Centro de costo (opcional)",
+  "corpCostCenterRequired": "Centro de costo (obligatorio)",
+  "corpCostCenters": "Centros de costo",
+  "corpCostCentersHint": "Aparecen al reservar para que cada viaje quede asignado a un área o proyecto.",
+  "corpCreate": "Crear",
+  "corpCreateCompany": "Nueva empresa",
+  "corpDriverNoCollect": "Cuenta corporativa ({company}): no cobres al pasajero.",
+  "@corpDriverNoCollect": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "corpEmail": "Correo electrónico",
+  "corpErrorCompanyInactive": "La cuenta corporativa está suspendida.",
+  "corpErrorCostCenterRequired": "Elige un centro de costo para facturar a la empresa.",
+  "corpErrorCostCentersEmpty": "Agrega al menos un centro de costo antes de exigirlo.",
+  "corpErrorInvalidEmail": "Revisa el correo electrónico.",
+  "corpErrorInvalidName": "Escribe la razón social.",
+  "corpErrorInvalidTaxId": "El NIT debe tener solo números (5 a 15).",
+  "corpErrorLastAdmin": "La empresa necesita al menos un administrador.",
+  "corpErrorNotARider": "Esa cuenta es de chófer o de administración; solo pasajeros pueden ser miembros.",
+  "corpErrorNotAllowed": "No puedes facturar este viaje a la empresa. Elige pago personal.",
+  "corpErrorOtherCompany": "Esa persona ya pertenece a otra empresa.",
+  "corpExportCsv": "Exportar detalle (CSV)",
+  "corpFormerMember": "Exmiembro",
+  "corpInviteCancelled": "Invitación cancelada",
+  "corpKpiCancelled": "{count, plural, =0{Sin cancelaciones} =1{1 cancelación en total} other{{count} cancelaciones en total}}",
+  "@corpKpiCancelled": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "corpKpiCompleted": "Viajes completados",
+  "corpKpiLateCancellations": "Cancelaciones tardías",
+  "corpKpiToInvoice": "A facturar",
+  "corpKpiToInvoiceHint": "Viajes completados del mes",
+  "corpKpiUpcoming": "Próximos o en curso",
+  "corpMakeAdmin": "Hacer administrador",
+  "corpMakeMember": "Quitar permisos de administrador",
+  "corpMemberActions": "Opciones del miembro",
+  "corpMemberAdded": "Listo. Si la persona ya tenía cuenta, se agregó; si no, se unirá al registrarse.",
+  "corpMemberRemoved": "Miembro quitado",
+  "corpMemberUpdated": "Permisos actualizados",
+  "corpMembers": "Miembros",
+  "corpNewCostCenter": "Nuevo centro de costo",
+  "corpNextMonth": "Mes siguiente",
+  "corpNoAccess": "Solo los administradores de la empresa pueden ver este portal.",
+  "corpNoCostCenter": "Sin centro de costo",
+  "corpNoMembers": "Aún no hay miembros.",
+  "corpNoRidesMonth": "No hay viajes facturados a la empresa en este mes.",
+  "corpOpenPortal": "Abrir portal",
+  "corpPendingInvites": "Invitaciones pendientes",
+  "corpPendingInvitesHint": "Se unirán al crear su cuenta con estos correos.",
+  "corpPortalTitle": "Cuenta corporativa",
+  "corpPrevMonth": "Mes anterior",
+  "corpProfileAdminHint": "Administras esta cuenta: estado de cuenta, miembros y ajustes",
+  "corpProfileMemberHint": "Puedes facturar tus viajes a la empresa",
+  "corpProfileSection": "Cuenta corporativa",
+  "corpReactivate": "Reactivar cuenta",
+  "corpReactivated": "Cuenta reactivada",
+  "corpReference": "Referencia",
+  "corpReferenceHint": "Proyecto, orden de compra, cliente…",
+  "corpRemoveCostCenter": "Quitar",
+  "corpRemoveMember": "Quitar de la empresa",
+  "corpRemoveMemberBody": "{name} ya no podrá facturar viajes a la empresa. Sus viajes anteriores siguen en el estado de cuenta.",
+  "@corpRemoveMemberBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "corpRequireCostCenter": "Exigir centro de costo",
+  "corpRequireCostCenterHint": "No se podrá reservar a cuenta de la empresa sin elegir uno.",
+  "corpRidesOfMonth": "Viajes del mes",
+  "corpRoleAdmin": "Administrador",
+  "corpRoleMember": "Miembro",
+  "corpRoute": "{from} → {to}",
+  "@corpRoute": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "corpSave": "Guardar cambios",
+  "corpSettingsSaved": "Cambios guardados",
+  "corpSuspend": "Suspender cuenta",
+  "corpSuspended": "Cuenta suspendida",
+  "corpSuspendedBanner": "La cuenta está suspendida: sus miembros no pueden facturar viajes a la empresa. Escríbenos para reactivarla.",
+  "corpSuspendedShort": "Cuenta suspendida",
+  "corpTabMembers": "Miembros",
+  "corpTabSettings": "Ajustes",
+  "corpTabStatement": "Estado de cuenta",
+  "corpTaxId": "NIT",
+  "corpTaxIdShort": "NIT {taxId}",
+  "@corpTaxIdShort": {
+    "placeholders": {
+      "taxId": {
+        "type": "String"
       }
     }
   },

@@ -14,5 +14,8 @@ String localizedBookingError(AppLocalizations l, String message) => switch (mess
       BookingErrorCodes.rateFailed => l.bookingErrorRateFailed,
       BookingErrorCodes.cancelFailed => l.rideCancelFailed,
       BookingErrorCodes.notCancellable => l.rideCancelNotAllowed,
+      BookingErrorCodes.costCenterRequired => l.corpErrorCostCenterRequired,
+      BookingErrorCodes.companyInactive => l.corpErrorCompanyInactive,
+      BookingErrorCodes.corporateNotAllowed => l.corpErrorNotAllowed,
       _ => message,
     };

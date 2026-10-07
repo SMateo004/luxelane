@@ -23,6 +23,8 @@ class User {
     required this.isActive,
     this.stripeCustomerId,
     required this.fcmTokens,
+    this.companyId,
+    this.companyRole,
   });
 
   final String id;
@@ -37,6 +39,14 @@ class User {
   final bool isActive;
   final String? stripeCustomerId;
   final List<String> fcmTokens;
+
+  /// Corporate account the rider belongs to (written by the backend).
+  final String? companyId;
+
+  /// 'admin' or 'member' within [companyId].
+  final String? companyRole;
+
+  bool get isCompanyAdmin => companyId != null && companyRole == 'admin';
 
   factory User.fromJson(Map<String, dynamic> j) => User(
         id: j['id'] as String,
@@ -59,6 +69,8 @@ class User {
         isActive: j['isActive'] as bool? ?? true,
         stripeCustomerId: j['stripeCustomerId'] as String?,
         fcmTokens: List<String>.from(j['fcmTokens'] ?? []),
+        companyId: j['companyId'] as String?,
+        companyRole: j['companyRole'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -100,6 +112,8 @@ class User {
         isActive: isActive ?? this.isActive,
         stripeCustomerId: stripeCustomerId ?? this.stripeCustomerId,
         fcmTokens: fcmTokens ?? this.fcmTokens,
+        companyId: companyId,
+        companyRole: companyRole,
       );
 }
 
@@ -277,6 +291,11 @@ class Booking {
     this.cancelledBy,
     this.lateCancellation = false,
     this.cancelReason,
+    this.paymentMethod,
+    this.companyId,
+    this.companyName,
+    this.costCenter,
+    this.billingReference,
   });
 
   final String id;
@@ -338,6 +357,19 @@ class Booking {
 
   /// Machine reason, e.g. 'no_driver_assigned' from scheduledCleanup.
   final String? cancelReason;
+
+  /// 'card', 'pay_later' (cash/QR to the chauffeur) or 'corporate'.
+  final String? paymentMethod;
+
+  /// Corporate billing: the company is invoiced monthly and the chauffeur
+  /// collects nothing. On a booking being created, a non-null [companyId]
+  /// asks the backend to bill the rider's company.
+  final String? companyId;
+  final String? companyName;
+  final String? costCenter;
+  final String? billingReference;
+
+  bool get isCorporate => companyId != null;
 
   /// Whether [driverId] should see this pending booking as a request.
   bool isOfferedTo(String driverId) {
@@ -401,6 +433,11 @@ class Booking {
         cancelledBy: j['cancelledBy'] as String?,
         lateCancellation: j['lateCancellation'] as bool? ?? false,
         cancelReason: j['cancelReason'] as String?,
+        paymentMethod: j['paymentMethod'] as String?,
+        companyId: j['companyId'] as String?,
+        companyName: j['companyName'] as String?,
+        costCenter: j['costCenter'] as String?,
+        billingReference: j['billingReference'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -469,6 +506,11 @@ class Booking {
         cancelledBy: cancelledBy,
         lateCancellation: lateCancellation,
         cancelReason: cancelReason,
+        paymentMethod: paymentMethod,
+        companyId: companyId,
+        companyName: companyName,
+        costCenter: costCenter,
+        billingReference: billingReference,
       );
 }
 

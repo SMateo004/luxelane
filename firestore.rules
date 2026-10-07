@@ -26,6 +26,20 @@ service cloud.firestore {
         get(/databases/$(database)/documents/driverProfiles/$(request.auth.uid)).data.documentsVerified == true;
     }
 
+    // Corporate accounts: users/{uid}.companyId / companyRole are written only
+    // by Cloud Functions (see the /users rules).
+    function myUser() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isCompanyMember(companyId) {
+      return request.auth != null && myUser().get('companyId', null) == companyId;
+    }
+
+    function isCompanyAdminOf(companyId) {
+      return isCompanyMember(companyId) && myUser().get('companyRole', null) == 'admin';
+    }
+
     function isAuthenticated() {
       return request.auth != null;
     }
@@ -64,13 +78,15 @@ service cloud.firestore {
       allow create: if isOwner(uid) &&
         request.resource.data.role in ['rider', 'driver'] &&
         request.resource.data.get('isVerified', false) == false &&
-        request.resource.data.get('stripeCustomerId', null) == null;
+        request.resource.data.get('stripeCustomerId', null) == null &&
+        request.resource.data.get('companyId', null) == null &&
+        request.resource.data.get('companyRole', null) == null;
 
       // Users can edit their own profile, but never their role, verification
       // or Stripe linkage.
       allow update: if isAdmin() || (
         isOwner(uid) &&
-        notChanging(['role', 'isVerified', 'isActive', 'stripeCustomerId', 'email'])
+        notChanging(['role', 'isVerified', 'isActive', 'stripeCustomerId', 'email', 'companyId', 'companyRole'])
       );
       allow delete: if false;
 
@@ -117,6 +133,8 @@ service cloud.firestore {
         resource.data.riderId == request.auth.uid ||
         resource.data.driverId == request.auth.uid ||
         (resource.data.status == 'pending' && isDriver()) ||
+        // Company admins see every ride billed to their company.
+        (resource.data.get('companyId', null) != null && isCompanyAdminOf(resource.data.companyId)) ||
         isAdmin()
       );
 
@@ -210,6 +228,27 @@ service cloud.firestore {
           request.resource.data.driverRating <= 5);
 
       allow delete: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // /companies/{companyId} — corporate accounts. All writes go through the
+    // createCompany / updateCompany / *CompanyMember Cloud Functions.
+    // -------------------------------------------------------------------------
+
+    match /companies/{companyId} {
+      allow read:  if isAdmin() || isCompanyMember(companyId);
+      allow write: if false;
+
+      match /members/{memberId} {
+        allow read:  if isAdmin() || isOwner(memberId) || isCompanyAdminOf(companyId);
+        allow write: if false;
+      }
+    }
+
+    // Pending invites, keyed by e-mail, claimed when that person signs up.
+    match /companyInvites/{email} {
+      allow read:  if isAdmin() || (isAuthenticated() && isCompanyAdminOf(resource.data.companyId));
+      allow write: if false;
     }
 
     // -------------------------------------------------------------------------

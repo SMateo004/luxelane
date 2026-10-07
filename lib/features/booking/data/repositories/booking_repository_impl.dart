@@ -72,6 +72,12 @@ class BookingRepositoryImpl implements BookingRepository {
         'luggageCount': booking.luggageCount,
         if (booking.passengerName != null) 'passengerName': booking.passengerName,
         if (booking.passengerPhone != null) 'passengerPhone': booking.passengerPhone,
+        if (booking.companyId != null)
+          'billing': {
+            'type': 'corporate',
+            if (booking.costCenter != null) 'costCenter': booking.costCenter,
+            if (booking.billingReference != null) 'reference': booking.billingReference,
+          },
       });
       final id = (result.data as Map)['bookingId'] as String;
       final doc = await _col.doc(id).get();
@@ -89,6 +95,9 @@ class BookingRepositoryImpl implements BookingRepository {
     if (message.contains('payment/not-authorised')) return BookingErrorCodes.paymentNotAuthorised;
     if (message.contains('invalid flightNumber')) return BookingErrorCodes.invalidFlight;
     if (message.contains('invalid passengerCount')) return BookingErrorCodes.tooManyPassengers;
+    if (message.contains('billing/cost-center-required')) return BookingErrorCodes.costCenterRequired;
+    if (message.contains('billing/company-inactive')) return BookingErrorCodes.companyInactive;
+    if (message.contains('billing/')) return BookingErrorCodes.corporateNotAllowed;
     return BookingErrorCodes.createFailed;
   }
 

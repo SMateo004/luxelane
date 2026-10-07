@@ -232,7 +232,9 @@ class _SummaryCard extends StatelessWidget {
                       child: Text(LuxMoney.format(booking.estimatedPrice),
                           style: displayText(size: 30, weight: FontWeight.w500)),
                     ),
-                    Text(paidByCard ? l.bookingFixedPricePaidByCard : l.bookingFixedPricePayDriver,
+                    Text(booking.isCorporate
+                            ? l.corpBilledTo(booking.companyName ?? '')
+                            : paidByCard ? l.bookingFixedPricePaidByCard : l.bookingFixedPricePayDriver,
                         textAlign: TextAlign.end,
                         style: uiLabel(spacing: 0.4)),
                   ],

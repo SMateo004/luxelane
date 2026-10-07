@@ -478,6 +478,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get adminSectionBookings => 'Reservas';
 
   @override
+  String get adminSectionCompanies => 'Empresas';
+
+  @override
   String get adminSectionDashboard => 'Painel';
 
   @override
@@ -1245,6 +1248,336 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String coreVehicleCapacity(int count) {
     return 'Até $count';
+  }
+
+  @override
+  String get corpAddCostCenter => 'Adicionar centro de custo';
+
+  @override
+  String get corpAddMember => 'Adicionar membro';
+
+  @override
+  String get corpAddMemberAction => 'Adicionar';
+
+  @override
+  String get corpAddMemberHint => 'Poderá faturar suas viagens para a empresa. Se ainda não tiver conta, entrará ao se cadastrar com este e-mail.';
+
+  @override
+  String get corpAdminEmail => 'E-mail do administrador';
+
+  @override
+  String get corpAdminEmailHint => 'Se ainda não tiver conta, entrará ao se cadastrar com este e-mail.';
+
+  @override
+  String get corpAdminEmpty => 'Ainda não há empresas.';
+
+  @override
+  String get corpAdminIntro => 'As empresas recebem uma fatura mensal pelas viagens dos seus membros. O administrador de cada empresa gerencia membros e centros de custo no seu portal.';
+
+  @override
+  String get corpAdminTitle => 'Contas corporativas';
+
+  @override
+  String get corpBillCompanyHint => 'Fatura mensal para a empresa';
+
+  @override
+  String corpBillCompanyNotice(String company) {
+    return 'Esta viagem entra na fatura mensal de $company. Você não paga nada ao motorista.';
+  }
+
+  @override
+  String get corpBillPersonal => 'Pessoal';
+
+  @override
+  String get corpBillPersonalHint => 'Você paga';
+
+  @override
+  String get corpBillTo => 'Faturar para';
+
+  @override
+  String corpBilledTo(String company) {
+    return 'Faturado para $company';
+  }
+
+  @override
+  String get corpBillingDetails => 'Dados de faturamento';
+
+  @override
+  String get corpBillingEmail => 'E-mail de faturamento';
+
+  @override
+  String get corpByCostCenter => 'Por centro de custo';
+
+  @override
+  String get corpByTraveler => 'Por pessoa';
+
+  @override
+  String get corpCancelInvite => 'Cancelar convite';
+
+  @override
+  String get corpColAmount => 'Valor (Bs)';
+
+  @override
+  String get corpColBookedBy => 'Reservado por';
+
+  @override
+  String get corpColDate => 'Data';
+
+  @override
+  String get corpColFrom => 'Origem';
+
+  @override
+  String get corpColPassenger => 'Passageiro';
+
+  @override
+  String get corpColTo => 'Destino';
+
+  @override
+  String get corpColVehicle => 'Veículo';
+
+  @override
+  String get corpCompanyCreated => 'Empresa criada';
+
+  @override
+  String get corpCompanyName => 'Razão social';
+
+  @override
+  String get corpCostCenter => 'Centro de custo';
+
+  @override
+  String get corpCostCenterNone => 'Nenhum';
+
+  @override
+  String get corpCostCenterOptional => 'Centro de custo (opcional)';
+
+  @override
+  String get corpCostCenterRequired => 'Centro de custo (obrigatório)';
+
+  @override
+  String get corpCostCenters => 'Centros de custo';
+
+  @override
+  String get corpCostCentersHint => 'Aparecem ao reservar para que cada viagem fique atribuída a uma área ou projeto.';
+
+  @override
+  String get corpCreate => 'Criar';
+
+  @override
+  String get corpCreateCompany => 'Nova empresa';
+
+  @override
+  String corpDriverNoCollect(String company) {
+    return 'Conta corporativa ($company): não cobre do passageiro.';
+  }
+
+  @override
+  String get corpEmail => 'E-mail';
+
+  @override
+  String get corpErrorCompanyInactive => 'A conta corporativa está suspensa.';
+
+  @override
+  String get corpErrorCostCenterRequired => 'Escolha um centro de custo para faturar para a empresa.';
+
+  @override
+  String get corpErrorCostCentersEmpty => 'Adicione pelo menos um centro de custo antes de exigi-lo.';
+
+  @override
+  String get corpErrorInvalidEmail => 'Verifique o e-mail.';
+
+  @override
+  String get corpErrorInvalidName => 'Digite a razão social.';
+
+  @override
+  String get corpErrorInvalidTaxId => 'O NIT deve ter apenas números (5 a 15).';
+
+  @override
+  String get corpErrorLastAdmin => 'A empresa precisa de pelo menos um administrador.';
+
+  @override
+  String get corpErrorNotARider => 'Essa conta é de motorista ou de administração; apenas passageiros podem ser membros.';
+
+  @override
+  String get corpErrorNotAllowed => 'Você não pode faturar esta viagem para a empresa. Escolha pagamento pessoal.';
+
+  @override
+  String get corpErrorOtherCompany => 'Essa pessoa já pertence a outra empresa.';
+
+  @override
+  String get corpExportCsv => 'Exportar detalhe (CSV)';
+
+  @override
+  String get corpFormerMember => 'Ex-membro';
+
+  @override
+  String get corpInviteCancelled => 'Convite cancelado';
+
+  @override
+  String corpKpiCancelled(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count cancelamentos no total',
+      one: '1 cancelamento no total',
+      zero: 'Sem cancelamentos',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get corpKpiCompleted => 'Viagens concluídas';
+
+  @override
+  String get corpKpiLateCancellations => 'Cancelamentos tardios';
+
+  @override
+  String get corpKpiToInvoice => 'A faturar';
+
+  @override
+  String get corpKpiToInvoiceHint => 'Viagens concluídas no mês';
+
+  @override
+  String get corpKpiUpcoming => 'Próximas ou em andamento';
+
+  @override
+  String get corpMakeAdmin => 'Tornar administrador';
+
+  @override
+  String get corpMakeMember => 'Remover permissões de administrador';
+
+  @override
+  String get corpMemberActions => 'Opções do membro';
+
+  @override
+  String get corpMemberAdded => 'Pronto. Se a pessoa já tinha conta, foi adicionada; se não, entrará ao se cadastrar.';
+
+  @override
+  String get corpMemberRemoved => 'Membro removido';
+
+  @override
+  String get corpMemberUpdated => 'Permissões atualizadas';
+
+  @override
+  String get corpMembers => 'Membros';
+
+  @override
+  String get corpNewCostCenter => 'Novo centro de custo';
+
+  @override
+  String get corpNextMonth => 'Próximo mês';
+
+  @override
+  String get corpNoAccess => 'Apenas os administradores da empresa podem ver este portal.';
+
+  @override
+  String get corpNoCostCenter => 'Sem centro de custo';
+
+  @override
+  String get corpNoMembers => 'Ainda não há membros.';
+
+  @override
+  String get corpNoRidesMonth => 'Nenhuma viagem faturada para a empresa neste mês.';
+
+  @override
+  String get corpOpenPortal => 'Abrir portal';
+
+  @override
+  String get corpPendingInvites => 'Convites pendentes';
+
+  @override
+  String get corpPendingInvitesHint => 'Entrarão ao criar a conta com estes e-mails.';
+
+  @override
+  String get corpPortalTitle => 'Conta corporativa';
+
+  @override
+  String get corpPrevMonth => 'Mês anterior';
+
+  @override
+  String get corpProfileAdminHint => 'Você administra esta conta: extrato, membros e ajustes';
+
+  @override
+  String get corpProfileMemberHint => 'Você pode faturar suas viagens para a empresa';
+
+  @override
+  String get corpProfileSection => 'Conta corporativa';
+
+  @override
+  String get corpReactivate => 'Reativar conta';
+
+  @override
+  String get corpReactivated => 'Conta reativada';
+
+  @override
+  String get corpReference => 'Referência';
+
+  @override
+  String get corpReferenceHint => 'Projeto, ordem de compra, cliente…';
+
+  @override
+  String get corpRemoveCostCenter => 'Remover';
+
+  @override
+  String get corpRemoveMember => 'Remover da empresa';
+
+  @override
+  String corpRemoveMemberBody(String name) {
+    return '$name não poderá mais faturar viagens para a empresa. As viagens anteriores continuam no extrato.';
+  }
+
+  @override
+  String get corpRequireCostCenter => 'Exigir centro de custo';
+
+  @override
+  String get corpRequireCostCenterHint => 'Não será possível reservar pela empresa sem escolher um.';
+
+  @override
+  String get corpRidesOfMonth => 'Viagens do mês';
+
+  @override
+  String get corpRoleAdmin => 'Administrador';
+
+  @override
+  String get corpRoleMember => 'Membro';
+
+  @override
+  String corpRoute(String from, String to) {
+    return '$from → $to';
+  }
+
+  @override
+  String get corpSave => 'Salvar alterações';
+
+  @override
+  String get corpSettingsSaved => 'Alterações salvas';
+
+  @override
+  String get corpSuspend => 'Suspender conta';
+
+  @override
+  String get corpSuspended => 'Conta suspensa';
+
+  @override
+  String get corpSuspendedBanner => 'A conta está suspensa: os membros não podem faturar viagens para a empresa. Fale conosco para reativá-la.';
+
+  @override
+  String get corpSuspendedShort => 'Conta suspensa';
+
+  @override
+  String get corpTabMembers => 'Membros';
+
+  @override
+  String get corpTabSettings => 'Ajustes';
+
+  @override
+  String get corpTabStatement => 'Extrato';
+
+  @override
+  String get corpTaxId => 'NIT';
+
+  @override
+  String corpTaxIdShort(String taxId) {
+    return 'NIT $taxId';
   }
 
   @override

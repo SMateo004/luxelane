@@ -19,6 +19,8 @@ import '../../../../core/widgets/lux_map.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/auth_error_messages.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../company/data/company_repository.dart';
+import '../../../company/domain/company.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../../payments/presentation/bloc/payment_bloc.dart';
 import '../bloc/booking_bloc.dart';
@@ -78,6 +80,12 @@ class _BookingScreenState extends State<BookingScreen> {
   bool _awaitingPaymentIntent = false;
   Quote? _quote;
 
+  // Corporate billing (riders who belong to a company account).
+  Company? _company;
+  bool _billCompany = false;
+  String? _costCenter;
+  String _billingRef = '';
+
   // Scroll-based sticky selector
   final ScrollController _leftScrollCtrl = ScrollController();
   bool _showStickySelector = false;
@@ -122,8 +130,39 @@ class _BookingScreenState extends State<BookingScreen> {
         _hours    = extra.hours;
       }
       _loadSavedCards();
+      _loadCompany();
     }
   }
+
+  Future<void> _loadCompany() async {
+    final auth = context.read<AuthBloc>().state;
+    if (auth is! AuthAuthenticated || !sl.isRegistered<CompanyRepository>()) return;
+    try {
+      final repo = sl<CompanyRepository>();
+      final membership = await repo.watchMembership(auth.user.id).first;
+      if (membership == null) return;
+      final company = await repo.watchCompany(membership.companyId).first;
+      if (!mounted || company == null || !company.active) return;
+      setState(() {
+        _company = company;
+        // Company members book for work by default.
+        _billCompany = true;
+      });
+    } catch (_) {
+      // Not readable (e.g. removed from the company): personal billing only.
+    }
+  }
+
+  bool get _corporate => _billCompany && _company != null;
+
+  Widget _corporatePanel() => _CorporateBillingPanel(
+        company: _company!,
+        billCompany: _billCompany,
+        costCenter: _costCenter,
+        onBillCompany: (v) => setState(() => _billCompany = v),
+        onCostCenter: (v) => setState(() => _costCenter = v),
+        onReference: (v) => _billingRef = v.trim(),
+      );
 
   void _loadSavedCards() {
     final authState = context.read<AuthBloc>().state;
@@ -168,6 +207,10 @@ class _BookingScreenState extends State<BookingScreen> {
           isError: true);
       return;
     }
+    if (_corporate && _company!.requireCostCenter && _costCenter == null) {
+      showLuxSnackbar(context, context.l10n.corpErrorCostCenterRequired, isError: true);
+      return;
+    }
     setState(() => _loading = true);
 
     // 1. Fixed price from the server (the on-screen price is an estimate).
@@ -199,7 +242,9 @@ class _BookingScreenState extends State<BookingScreen> {
     _quote = quote;
 
     // 2. Authorise the card for exactly the quoted amount.
-    if (user.stripeCustomerId != null &&
+    // Corporate rides are invoiced to the company: no card authorisation.
+    if (!_corporate &&
+        user.stripeCustomerId != null &&
         user.stripeCustomerId!.isNotEmpty &&
         _selectedCardId != null) {
       setState(() => _awaitingPaymentIntent = true);
@@ -349,6 +394,9 @@ class _BookingScreenState extends State<BookingScreen> {
           currency: AppConfig.currency,
           stripePaymentIntentId: paymentIntentId,
           quoteId: quote.id,
+          companyId: _corporate ? _company!.id : null,
+          costCenter: _corporate ? _costCenter : null,
+          billingReference: _corporate && _billingRef.isNotEmpty ? _billingRef : null,
         ));
   }
 
@@ -1505,7 +1553,11 @@ class _BookingScreenState extends State<BookingScreen> {
           km: _km,
           hours: _hours,
         ),
-        if (_savedCards.isEmpty) ...[
+        if (_company != null) ...[
+          const SizedBox(height: 20),
+          _corporatePanel(),
+        ],
+        if (!_corporate && _savedCards.isEmpty) ...[
           const SizedBox(height: 16),
           const _PayOnTripNotice(),
         ],
@@ -1747,7 +1799,13 @@ class _BookingScreenState extends State<BookingScreen> {
           hours: _hours,
         ),
         const SizedBox(height: 20),
-        if (_savedCards.isEmpty)
+        if (_company != null) ...[
+          _corporatePanel(),
+          const SizedBox(height: 20),
+        ],
+        if (_corporate)
+          const SizedBox.shrink()
+        else if (_savedCards.isEmpty)
           const _PayOnTripNotice()
         else ...[
           Text(l.bookingPaymentMethodHeading,

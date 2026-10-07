@@ -8,6 +8,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../company/presentation/widgets/company_profile_entry.dart';
 import '../bloc/profile_bloc.dart';
 
 // ---------------------------------------------------------------------------
@@ -225,6 +226,7 @@ class _ProfileBody extends StatelessWidget {
 
             ],
           ),
+          CompanyProfileEntry(uid: user.id),
           const SizedBox(height: LuxSpacing.xl),
           SectionHeader(title: l.profileSectionHelp),
           const SizedBox(height: LuxSpacing.sm),

@@ -1231,3 +1231,144 @@ class _PayOnTripNotice extends StatelessWidget {
         ),
       );
 }
+
+// ── CORPORATE BILLING ─────────────────────────────────────────────────────────
+
+/// Lets a member of a corporate account bill the ride to the company
+/// (monthly invoice, the chauffeur collects nothing) or pay personally.
+class _CorporateBillingPanel extends StatelessWidget {
+  const _CorporateBillingPanel({
+    required this.company,
+    required this.billCompany,
+    required this.costCenter,
+    required this.onBillCompany,
+    required this.onCostCenter,
+    required this.onReference,
+  });
+
+  final Company company;
+  final bool billCompany;
+  final String? costCenter;
+  final ValueChanged<bool> onBillCompany;
+  final ValueChanged<String?> onCostCenter;
+  final ValueChanged<String> onReference;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    Widget option(bool corporate, IconData icon, String title, String body) {
+      final sel = billCompany == corporate;
+      return Expanded(
+        child: Semantics(
+          button: true,
+          selected: sel,
+          child: GestureDetector(
+            onTap: () => onBillCompany(corporate),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 160),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: sel ? LD.accentTint : _kCardBg,
+                border: Border.all(color: sel ? LD.accent : _kBorder, width: sel ? 1.5 : 1),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(icon, size: 18, color: sel ? _kPanelAccent : _kTextSub),
+                  const SizedBox(height: 8),
+                  Text(title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontFamily: kSans, fontSize: 13,
+                          fontWeight: FontWeight.w600, color: _kTextPrimary)),
+                  const SizedBox(height: 2),
+                  Text(body,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontFamily: kSans, fontSize: 11,
+                          height: 1.4, color: _kTextTertiary)),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l.corpBillTo.toUpperCase(),
+            style: const TextStyle(fontFamily: kSans, fontSize: 10,
+                fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 2.0)),
+        const SizedBox(height: 12),
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              option(true, Icons.business_outlined, company.name, l.corpBillCompanyHint),
+              const SizedBox(width: 8),
+              option(false, Icons.person_outline, l.corpBillPersonal, l.corpBillPersonalHint),
+            ],
+          ),
+        ),
+        if (billCompany) ...[
+          if (company.costCenters.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(
+              value: costCenter,
+              isExpanded: true,
+              dropdownColor: _kCardBg,
+              style: const TextStyle(fontFamily: kSans, fontSize: 13, color: _kTextPrimary),
+              decoration: InputDecoration(
+                labelText: company.requireCostCenter
+                    ? l.corpCostCenterRequired
+                    : l.corpCostCenterOptional,
+                labelStyle: const TextStyle(fontFamily: kSans, fontSize: 12,
+                    color: _kTextSub, fontWeight: FontWeight.w500),
+                prefixIcon: const Icon(Icons.account_tree_outlined, size: 18, color: _kTextSub),
+                filled: true,
+                fillColor: _kCardBg,
+                border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero, borderSide: BorderSide(color: _kBorder)),
+                enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero, borderSide: BorderSide(color: _kBorder)),
+              ),
+              items: [
+                if (!company.requireCostCenter)
+                  DropdownMenuItem<String>(value: null, child: Text(l.corpCostCenterNone)),
+                for (final c in company.costCenters)
+                  DropdownMenuItem<String>(value: c, child: Text(c)),
+              ],
+              onChanged: onCostCenter,
+            ),
+          ],
+          const SizedBox(height: 12),
+          _LightTextField(
+            label: l.corpReference,
+            hint: l.corpReferenceHint,
+            icon: Icons.tag_rounded,
+            onChanged: onReference,
+          ),
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(color: LD.accentTint, border: Border.all(color: _kBorder)),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(Icons.receipt_long_outlined, size: 18, color: _kPanelAccent),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(l.corpBillCompanyNotice(company.name),
+                      style: const TextStyle(fontFamily: kSans, fontSize: 12,
+                          height: 1.5, color: _kTextSub)),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+}

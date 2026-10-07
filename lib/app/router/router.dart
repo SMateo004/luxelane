@@ -11,6 +11,7 @@ import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/booking/presentation/pages/booking_confirmed_page.dart';
 import '../../features/booking/presentation/pages/booking_screen.dart';
 import '../../features/booking/presentation/pages/ride_type_page.dart';
+import '../../features/company/presentation/pages/company_portal_page.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
 import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
 import '../../features/driver/presentation/pages/driver_home_screen.dart';
@@ -213,6 +214,11 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: LuxRoutes.admin,
           pageBuilder: (c, s) => _fade(const AdminDashboardPage(), s),
+        ),
+        // Corporate portal (company admins; access checked on the page).
+        GoRoute(
+          path: '/empresa',
+          pageBuilder: (c, s) => _slide(const CompanyPortalPage(), s),
         ),
         GoRoute(
           path: LuxRoutes.driverActiveRide,

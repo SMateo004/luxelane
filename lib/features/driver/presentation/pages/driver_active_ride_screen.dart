@@ -326,6 +326,22 @@ class _RideInfoRow extends StatelessWidget {
               ],
             ),
           ),
+          // Corporate rides are invoiced to the company: nothing to collect.
+          if (booking.isCorporate) ...[
+            const SizedBox(height: LuxSpacing.sm),
+            Row(
+              children: [
+                const Icon(Icons.business_outlined, size: 16, color: LuxColors.accent),
+                const SizedBox(width: LuxSpacing.sm),
+                Expanded(
+                  child: Text(
+                    context.l10n.corpDriverNoCollect(booking.companyName ?? ''),
+                    style: LuxTypography.caption.copyWith(color: LuxColors.white),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       );
 }

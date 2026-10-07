@@ -877,6 +877,12 @@ abstract class AppLocalizations {
   /// **'Reservas'**
   String get adminSectionBookings;
 
+  /// No description provided for @adminSectionCompanies.
+  ///
+  /// In es, this message translates to:
+  /// **'Empresas'**
+  String get adminSectionCompanies;
+
   /// No description provided for @adminSectionDashboard.
   ///
   /// In es, this message translates to:
@@ -2304,6 +2310,624 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Hasta {count}'**
   String coreVehicleCapacity(int count);
+
+  /// No description provided for @corpAddCostCenter.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar centro de costo'**
+  String get corpAddCostCenter;
+
+  /// No description provided for @corpAddMember.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar miembro'**
+  String get corpAddMember;
+
+  /// No description provided for @corpAddMemberAction.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar'**
+  String get corpAddMemberAction;
+
+  /// No description provided for @corpAddMemberHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Podrá facturar sus viajes a la empresa. Si aún no tiene cuenta, se unirá al registrarse con este correo.'**
+  String get corpAddMemberHint;
+
+  /// No description provided for @corpAdminEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo del administrador'**
+  String get corpAdminEmail;
+
+  /// No description provided for @corpAdminEmailHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Si aún no tiene cuenta, se unirá al registrarse con este correo.'**
+  String get corpAdminEmailHint;
+
+  /// No description provided for @corpAdminEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'Todavía no hay empresas.'**
+  String get corpAdminEmpty;
+
+  /// No description provided for @corpAdminIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'Las empresas reciben una factura mensual por los viajes de sus miembros. El administrador de cada empresa gestiona miembros y centros de costo desde su portal.'**
+  String get corpAdminIntro;
+
+  /// No description provided for @corpAdminTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuentas corporativas'**
+  String get corpAdminTitle;
+
+  /// No description provided for @corpBillCompanyHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Factura mensual a la empresa'**
+  String get corpBillCompanyHint;
+
+  /// No description provided for @corpBillCompanyNotice.
+  ///
+  /// In es, this message translates to:
+  /// **'Este viaje se incluye en la factura mensual de {company}. No pagas nada al chófer.'**
+  String corpBillCompanyNotice(String company);
+
+  /// No description provided for @corpBillPersonal.
+  ///
+  /// In es, this message translates to:
+  /// **'Personal'**
+  String get corpBillPersonal;
+
+  /// No description provided for @corpBillPersonalHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo pagas tú'**
+  String get corpBillPersonalHint;
+
+  /// No description provided for @corpBillTo.
+  ///
+  /// In es, this message translates to:
+  /// **'Facturar a'**
+  String get corpBillTo;
+
+  /// No description provided for @corpBilledTo.
+  ///
+  /// In es, this message translates to:
+  /// **'Facturado a {company}'**
+  String corpBilledTo(String company);
+
+  /// No description provided for @corpBillingDetails.
+  ///
+  /// In es, this message translates to:
+  /// **'Datos de facturación'**
+  String get corpBillingDetails;
+
+  /// No description provided for @corpBillingEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo de facturación'**
+  String get corpBillingEmail;
+
+  /// No description provided for @corpByCostCenter.
+  ///
+  /// In es, this message translates to:
+  /// **'Por centro de costo'**
+  String get corpByCostCenter;
+
+  /// No description provided for @corpByTraveler.
+  ///
+  /// In es, this message translates to:
+  /// **'Por persona'**
+  String get corpByTraveler;
+
+  /// No description provided for @corpCancelInvite.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar invitación'**
+  String get corpCancelInvite;
+
+  /// No description provided for @corpColAmount.
+  ///
+  /// In es, this message translates to:
+  /// **'Monto (Bs)'**
+  String get corpColAmount;
+
+  /// No description provided for @corpColBookedBy.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservado por'**
+  String get corpColBookedBy;
+
+  /// No description provided for @corpColDate.
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha'**
+  String get corpColDate;
+
+  /// No description provided for @corpColFrom.
+  ///
+  /// In es, this message translates to:
+  /// **'Origen'**
+  String get corpColFrom;
+
+  /// No description provided for @corpColPassenger.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero'**
+  String get corpColPassenger;
+
+  /// No description provided for @corpColTo.
+  ///
+  /// In es, this message translates to:
+  /// **'Destino'**
+  String get corpColTo;
+
+  /// No description provided for @corpColVehicle.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo'**
+  String get corpColVehicle;
+
+  /// No description provided for @corpCompanyCreated.
+  ///
+  /// In es, this message translates to:
+  /// **'Empresa creada'**
+  String get corpCompanyCreated;
+
+  /// No description provided for @corpCompanyName.
+  ///
+  /// In es, this message translates to:
+  /// **'Razón social'**
+  String get corpCompanyName;
+
+  /// No description provided for @corpCostCenter.
+  ///
+  /// In es, this message translates to:
+  /// **'Centro de costo'**
+  String get corpCostCenter;
+
+  /// No description provided for @corpCostCenterNone.
+  ///
+  /// In es, this message translates to:
+  /// **'Ninguno'**
+  String get corpCostCenterNone;
+
+  /// No description provided for @corpCostCenterOptional.
+  ///
+  /// In es, this message translates to:
+  /// **'Centro de costo (opcional)'**
+  String get corpCostCenterOptional;
+
+  /// No description provided for @corpCostCenterRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Centro de costo (obligatorio)'**
+  String get corpCostCenterRequired;
+
+  /// No description provided for @corpCostCenters.
+  ///
+  /// In es, this message translates to:
+  /// **'Centros de costo'**
+  String get corpCostCenters;
+
+  /// No description provided for @corpCostCentersHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Aparecen al reservar para que cada viaje quede asignado a un área o proyecto.'**
+  String get corpCostCentersHint;
+
+  /// No description provided for @corpCreate.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear'**
+  String get corpCreate;
+
+  /// No description provided for @corpCreateCompany.
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva empresa'**
+  String get corpCreateCompany;
+
+  /// No description provided for @corpDriverNoCollect.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta corporativa ({company}): no cobres al pasajero.'**
+  String corpDriverNoCollect(String company);
+
+  /// No description provided for @corpEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo electrónico'**
+  String get corpEmail;
+
+  /// No description provided for @corpErrorCompanyInactive.
+  ///
+  /// In es, this message translates to:
+  /// **'La cuenta corporativa está suspendida.'**
+  String get corpErrorCompanyInactive;
+
+  /// No description provided for @corpErrorCostCenterRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige un centro de costo para facturar a la empresa.'**
+  String get corpErrorCostCenterRequired;
+
+  /// No description provided for @corpErrorCostCentersEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'Agrega al menos un centro de costo antes de exigirlo.'**
+  String get corpErrorCostCentersEmpty;
+
+  /// No description provided for @corpErrorInvalidEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa el correo electrónico.'**
+  String get corpErrorInvalidEmail;
+
+  /// No description provided for @corpErrorInvalidName.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe la razón social.'**
+  String get corpErrorInvalidName;
+
+  /// No description provided for @corpErrorInvalidTaxId.
+  ///
+  /// In es, this message translates to:
+  /// **'El NIT debe tener solo números (5 a 15).'**
+  String get corpErrorInvalidTaxId;
+
+  /// No description provided for @corpErrorLastAdmin.
+  ///
+  /// In es, this message translates to:
+  /// **'La empresa necesita al menos un administrador.'**
+  String get corpErrorLastAdmin;
+
+  /// No description provided for @corpErrorNotARider.
+  ///
+  /// In es, this message translates to:
+  /// **'Esa cuenta es de chófer o de administración; solo pasajeros pueden ser miembros.'**
+  String get corpErrorNotARider;
+
+  /// No description provided for @corpErrorNotAllowed.
+  ///
+  /// In es, this message translates to:
+  /// **'No puedes facturar este viaje a la empresa. Elige pago personal.'**
+  String get corpErrorNotAllowed;
+
+  /// No description provided for @corpErrorOtherCompany.
+  ///
+  /// In es, this message translates to:
+  /// **'Esa persona ya pertenece a otra empresa.'**
+  String get corpErrorOtherCompany;
+
+  /// No description provided for @corpExportCsv.
+  ///
+  /// In es, this message translates to:
+  /// **'Exportar detalle (CSV)'**
+  String get corpExportCsv;
+
+  /// No description provided for @corpFormerMember.
+  ///
+  /// In es, this message translates to:
+  /// **'Exmiembro'**
+  String get corpFormerMember;
+
+  /// No description provided for @corpInviteCancelled.
+  ///
+  /// In es, this message translates to:
+  /// **'Invitación cancelada'**
+  String get corpInviteCancelled;
+
+  /// No description provided for @corpKpiCancelled.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =0{Sin cancelaciones} =1{1 cancelación en total} other{{count} cancelaciones en total}}'**
+  String corpKpiCancelled(int count);
+
+  /// No description provided for @corpKpiCompleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes completados'**
+  String get corpKpiCompleted;
+
+  /// No description provided for @corpKpiLateCancellations.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelaciones tardías'**
+  String get corpKpiLateCancellations;
+
+  /// No description provided for @corpKpiToInvoice.
+  ///
+  /// In es, this message translates to:
+  /// **'A facturar'**
+  String get corpKpiToInvoice;
+
+  /// No description provided for @corpKpiToInvoiceHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes completados del mes'**
+  String get corpKpiToInvoiceHint;
+
+  /// No description provided for @corpKpiUpcoming.
+  ///
+  /// In es, this message translates to:
+  /// **'Próximos o en curso'**
+  String get corpKpiUpcoming;
+
+  /// No description provided for @corpMakeAdmin.
+  ///
+  /// In es, this message translates to:
+  /// **'Hacer administrador'**
+  String get corpMakeAdmin;
+
+  /// No description provided for @corpMakeMember.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar permisos de administrador'**
+  String get corpMakeMember;
+
+  /// No description provided for @corpMemberActions.
+  ///
+  /// In es, this message translates to:
+  /// **'Opciones del miembro'**
+  String get corpMemberActions;
+
+  /// No description provided for @corpMemberAdded.
+  ///
+  /// In es, this message translates to:
+  /// **'Listo. Si la persona ya tenía cuenta, se agregó; si no, se unirá al registrarse.'**
+  String get corpMemberAdded;
+
+  /// No description provided for @corpMemberRemoved.
+  ///
+  /// In es, this message translates to:
+  /// **'Miembro quitado'**
+  String get corpMemberRemoved;
+
+  /// No description provided for @corpMemberUpdated.
+  ///
+  /// In es, this message translates to:
+  /// **'Permisos actualizados'**
+  String get corpMemberUpdated;
+
+  /// No description provided for @corpMembers.
+  ///
+  /// In es, this message translates to:
+  /// **'Miembros'**
+  String get corpMembers;
+
+  /// No description provided for @corpNewCostCenter.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuevo centro de costo'**
+  String get corpNewCostCenter;
+
+  /// No description provided for @corpNextMonth.
+  ///
+  /// In es, this message translates to:
+  /// **'Mes siguiente'**
+  String get corpNextMonth;
+
+  /// No description provided for @corpNoAccess.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo los administradores de la empresa pueden ver este portal.'**
+  String get corpNoAccess;
+
+  /// No description provided for @corpNoCostCenter.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin centro de costo'**
+  String get corpNoCostCenter;
+
+  /// No description provided for @corpNoMembers.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay miembros.'**
+  String get corpNoMembers;
+
+  /// No description provided for @corpNoRidesMonth.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay viajes facturados a la empresa en este mes.'**
+  String get corpNoRidesMonth;
+
+  /// No description provided for @corpOpenPortal.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir portal'**
+  String get corpOpenPortal;
+
+  /// No description provided for @corpPendingInvites.
+  ///
+  /// In es, this message translates to:
+  /// **'Invitaciones pendientes'**
+  String get corpPendingInvites;
+
+  /// No description provided for @corpPendingInvitesHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Se unirán al crear su cuenta con estos correos.'**
+  String get corpPendingInvitesHint;
+
+  /// No description provided for @corpPortalTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta corporativa'**
+  String get corpPortalTitle;
+
+  /// No description provided for @corpPrevMonth.
+  ///
+  /// In es, this message translates to:
+  /// **'Mes anterior'**
+  String get corpPrevMonth;
+
+  /// No description provided for @corpProfileAdminHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Administras esta cuenta: estado de cuenta, miembros y ajustes'**
+  String get corpProfileAdminHint;
+
+  /// No description provided for @corpProfileMemberHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Puedes facturar tus viajes a la empresa'**
+  String get corpProfileMemberHint;
+
+  /// No description provided for @corpProfileSection.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta corporativa'**
+  String get corpProfileSection;
+
+  /// No description provided for @corpReactivate.
+  ///
+  /// In es, this message translates to:
+  /// **'Reactivar cuenta'**
+  String get corpReactivate;
+
+  /// No description provided for @corpReactivated.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta reactivada'**
+  String get corpReactivated;
+
+  /// No description provided for @corpReference.
+  ///
+  /// In es, this message translates to:
+  /// **'Referencia'**
+  String get corpReference;
+
+  /// No description provided for @corpReferenceHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Proyecto, orden de compra, cliente…'**
+  String get corpReferenceHint;
+
+  /// No description provided for @corpRemoveCostCenter.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar'**
+  String get corpRemoveCostCenter;
+
+  /// No description provided for @corpRemoveMember.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar de la empresa'**
+  String get corpRemoveMember;
+
+  /// No description provided for @corpRemoveMemberBody.
+  ///
+  /// In es, this message translates to:
+  /// **'{name} ya no podrá facturar viajes a la empresa. Sus viajes anteriores siguen en el estado de cuenta.'**
+  String corpRemoveMemberBody(String name);
+
+  /// No description provided for @corpRequireCostCenter.
+  ///
+  /// In es, this message translates to:
+  /// **'Exigir centro de costo'**
+  String get corpRequireCostCenter;
+
+  /// No description provided for @corpRequireCostCenterHint.
+  ///
+  /// In es, this message translates to:
+  /// **'No se podrá reservar a cuenta de la empresa sin elegir uno.'**
+  String get corpRequireCostCenterHint;
+
+  /// No description provided for @corpRidesOfMonth.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes del mes'**
+  String get corpRidesOfMonth;
+
+  /// No description provided for @corpRoleAdmin.
+  ///
+  /// In es, this message translates to:
+  /// **'Administrador'**
+  String get corpRoleAdmin;
+
+  /// No description provided for @corpRoleMember.
+  ///
+  /// In es, this message translates to:
+  /// **'Miembro'**
+  String get corpRoleMember;
+
+  /// No description provided for @corpRoute.
+  ///
+  /// In es, this message translates to:
+  /// **'{from} → {to}'**
+  String corpRoute(String from, String to);
+
+  /// No description provided for @corpSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar cambios'**
+  String get corpSave;
+
+  /// No description provided for @corpSettingsSaved.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambios guardados'**
+  String get corpSettingsSaved;
+
+  /// No description provided for @corpSuspend.
+  ///
+  /// In es, this message translates to:
+  /// **'Suspender cuenta'**
+  String get corpSuspend;
+
+  /// No description provided for @corpSuspended.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta suspendida'**
+  String get corpSuspended;
+
+  /// No description provided for @corpSuspendedBanner.
+  ///
+  /// In es, this message translates to:
+  /// **'La cuenta está suspendida: sus miembros no pueden facturar viajes a la empresa. Escríbenos para reactivarla.'**
+  String get corpSuspendedBanner;
+
+  /// No description provided for @corpSuspendedShort.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta suspendida'**
+  String get corpSuspendedShort;
+
+  /// No description provided for @corpTabMembers.
+  ///
+  /// In es, this message translates to:
+  /// **'Miembros'**
+  String get corpTabMembers;
+
+  /// No description provided for @corpTabSettings.
+  ///
+  /// In es, this message translates to:
+  /// **'Ajustes'**
+  String get corpTabSettings;
+
+  /// No description provided for @corpTabStatement.
+  ///
+  /// In es, this message translates to:
+  /// **'Estado de cuenta'**
+  String get corpTabStatement;
+
+  /// No description provided for @corpTaxId.
+  ///
+  /// In es, this message translates to:
+  /// **'NIT'**
+  String get corpTaxId;
+
+  /// No description provided for @corpTaxIdShort.
+  ///
+  /// In es, this message translates to:
+  /// **'NIT {taxId}'**
+  String corpTaxIdShort(String taxId);
 
   /// No description provided for @driverAcceptRide.
   ///

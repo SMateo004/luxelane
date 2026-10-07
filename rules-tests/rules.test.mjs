@@ -199,3 +199,45 @@ describe('notifications', () => {
     await assertFails(getDoc(doc(db('driver'), 'users/rider/notifications/n1')));
   });
 });
+
+describe('companies', () => {
+  beforeEach(async () => {
+    await seed('companies/acme', { name: 'Acme', active: true, costCenters: [] });
+    await seed('companies/acme/members/boss', { role: 'admin' });
+    await seed('companies/acme/members/emp', { role: 'member' });
+    await seed('users/boss', { role: 'rider', companyId: 'acme', companyRole: 'admin' });
+    await seed('users/emp', { role: 'rider', companyId: 'acme', companyRole: 'member' });
+    await seed('companyInvites/new@acme.bo', { companyId: 'acme', role: 'member' });
+  });
+
+  it('members read their company; outsiders and writes are refused', async () => {
+    await assertSucceeds(getDoc(doc(db('emp'), 'companies/acme')));
+    await assertFails(getDoc(doc(db('rider'), 'companies/acme')));
+    await assertFails(updateDoc(doc(db('boss'), 'companies/acme'), { active: false }));
+    await assertSucceeds(getDoc(doc(db('admin'), 'companies/acme')));
+  });
+
+  it('only company admins list members and invites', async () => {
+    await assertSucceeds(getDoc(doc(db('boss'), 'companies/acme/members/emp')));
+    await assertSucceeds(getDoc(doc(db('emp'), 'companies/acme/members/emp')));
+    await assertFails(getDoc(doc(db('emp'), 'companies/acme/members/boss')));
+    await assertSucceeds(getDoc(doc(db('boss'), 'companyInvites/new@acme.bo')));
+    await assertFails(getDoc(doc(db('emp'), 'companyInvites/new@acme.bo')));
+    await assertFails(setDoc(doc(db('boss'), 'companies/acme/members/rider'), { role: 'admin' }));
+  });
+
+  it('users cannot join or promote themselves', async () => {
+    await assertFails(updateDoc(doc(db('rider'), 'users/rider'), { companyId: 'acme' }));
+    await assertFails(updateDoc(doc(db('emp'), 'users/emp'), { companyRole: 'admin' }));
+    await assertFails(setDoc(doc(db('eve'), 'users/eve'), { role: 'rider', companyId: 'acme', companyRole: 'admin' }));
+  });
+
+  it('company admins read bookings billed to their company only', async () => {
+    await seed('bookings/c1', booking({ riderId: 'emp', companyId: 'acme' }));
+    await seed('bookings/p1', booking({ riderId: 'emp' }));
+    await assertSucceeds(getDoc(doc(db('boss'), 'bookings/c1')));
+    await assertFails(getDoc(doc(db('boss'), 'bookings/p1')));
+    await seed('bookings/c2', booking({ riderId: 'boss', companyId: 'acme' }));
+    await assertFails(getDoc(doc(db('emp'), 'bookings/c2')));
+  });
+});

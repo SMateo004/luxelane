@@ -49,6 +49,12 @@ const M = {
     en: 'You have arrived. Thank you for riding with Luxelane!',
     pt: 'Você chegou. Obrigado por viajar com a Luxelane!',
   },
+  companyAddedTitle: { es: 'Cuenta corporativa', en: 'Corporate account', pt: 'Conta corporativa' },
+  companyAddedBody: {
+    es: 'Ahora puedes facturar tus viajes a {company}.',
+    en: 'You can now bill your rides to {company}.',
+    pt: 'Agora você pode faturar suas viagens para {company}.',
+  },
   statusCancelled: { es: 'Tu reserva ha sido cancelada', en: 'Your booking has been cancelled', pt: 'Sua reserva foi cancelada' },
   assignedTitle: { es: 'Nueva reserva', en: 'New booking', pt: 'Nova reserva' },
   assignedBody: { es: 'Se te ha asignado un nuevo viaje', en: 'A new ride has been assigned to you', pt: 'Uma nova viagem foi atribuída a você' },

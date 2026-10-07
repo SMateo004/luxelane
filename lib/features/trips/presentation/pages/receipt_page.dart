@@ -95,6 +95,7 @@ class _ReceiptCard extends StatelessWidget {
       l.tripReceiptPlainFrom(booking.origin.displayName),
       if (booking.serviceType == ServiceType.oneWay) l.tripReceiptPlainTo(booking.destination.displayName),
       l.tripReceiptPlainTotal(LuxMoney.format(total, cents: true)),
+      if (booking.isCorporate) l.corpBilledTo(booking.companyName ?? ''),
     ].join('\n');
   }
 
@@ -159,7 +160,13 @@ class _ReceiptCard extends StatelessWidget {
             if (booking.finalPrice != null && booking.finalPrice != booking.estimatedPrice)
               _Line(l.tripReceiptAdjustment, LuxMoney.format(booking.finalPrice! - booking.estimatedPrice, cents: true)),
             _Line(l.tripReceiptTotal, LuxMoney.format(total, cents: true), strong: true),
-            _Line(l.tripReceiptPaymentMethod, paidByCard ? l.tripReceiptCard : l.tripReceiptPayChauffeur),
+            _Line(
+                l.tripReceiptPaymentMethod,
+                booking.isCorporate
+                    ? l.corpBilledTo(booking.companyName ?? '')
+                    : paidByCard ? l.tripReceiptCard : l.tripReceiptPayChauffeur),
+            if (booking.costCenter != null) _Line(l.corpCostCenter, booking.costCenter!),
+            if (booking.billingReference != null) _Line(l.corpReference, booking.billingReference!),
           ],
           const SizedBox(height: 24),
           SizedBox(

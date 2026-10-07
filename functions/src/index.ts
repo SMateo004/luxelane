@@ -26,6 +26,17 @@ import {
 } from './flights';
 import * as err from './errors';
 import {
+  CompanyDoc,
+  CompanyRole,
+  BillingInput,
+  CorporateBilling,
+  isCompanyRole,
+  leavesAdmin,
+  normalizeEmail,
+  resolveBilling,
+  validateCompany,
+} from './corporate';
+import {
   BookingStatus,
   UserRole,
   canCapture,
@@ -177,6 +188,10 @@ interface QuoteDoc {
 interface UserDoc {
   locale?: string;
   role?: UserRole;
+  email?: string;
+  displayName?: string;
+  companyId?: string | null;
+  companyRole?: CompanyRole | null;
   stripeCustomerId?: string;
   fcmTokens?: string[];
 }
@@ -424,6 +439,7 @@ export const createBooking = onCall(stripeOpts, async (req) => {
     luggageCount?: number;
     passengerName?: string;
     passengerPhone?: string;
+    billing?: BillingInput;
   };
 
   // An authorisation for this exact quote already locks the price.
@@ -458,6 +474,29 @@ export const createBooking = onCall(stripeOpts, async (req) => {
     paymentIntentId = intent.id;
   }
 
+  // Corporate billing: the company is invoiced monthly, nothing is charged
+  // to the rider and the chauffeur collects nothing.
+  let corporate: CorporateBilling | null = null;
+  if (d.billing && d.billing.type === 'corporate') {
+    if (paymentIntentId) throw err.invalidArgument('billing/card-with-corporate');
+    const rider = await getUser(uid);
+    const cid = rider.companyId ?? null;
+    const [companySnap, memberSnap] = cid
+      ? await Promise.all([
+          db.collection('companies').doc(cid).get(),
+          db.collection('companies').doc(cid).collection('members').doc(uid).get(),
+        ])
+      : [null, null];
+    const billing = resolveBilling(
+      d.billing,
+      cid,
+      (companySnap?.data() as CompanyDoc | undefined) ?? null,
+      memberSnap?.exists ?? false,
+    );
+    if (!billing.ok) throw err.failedPrecondition(billing.error);
+    corporate = billing.value;
+  }
+
   const quoteRef = db.collection('quotes').doc(d.quoteId);
   const bookingRef = db.collection('bookings').doc();
   const ts = admin.firestore.Timestamp.now();
@@ -482,7 +521,11 @@ export const createBooking = onCall(stripeOpts, async (req) => {
       quoteId: d.quoteId,
       distanceKm: quote.distanceKm,
       hours: quote.hours,
-      paymentMethod: paymentIntentId ? 'card' : 'pay_later',
+      paymentMethod: corporate ? 'corporate' : paymentIntentId ? 'card' : 'pay_later',
+      companyId: corporate?.companyId ?? null,
+      companyName: corporate?.companyName ?? null,
+      costCenter: corporate?.costCenter ?? null,
+      billingReference: corporate?.billingReference ?? null,
       stripePaymentIntentId: paymentIntentId,
       notes: d.notes ? String(d.notes).slice(0, 1000) : null,
       flightNumber: flight,
@@ -498,7 +541,12 @@ export const createBooking = onCall(stripeOpts, async (req) => {
     tx.update(quoteRef, { bookingId: bookingRef.id });
   });
 
-  logger.info('createBooking', 'created', { uid, bookingId: bookingRef.id, amount: quote.amount });
+  logger.info('createBooking', 'created', {
+    uid,
+    bookingId: bookingRef.id,
+    amount: quote.amount,
+    companyId: corporate?.companyId ?? null,
+  });
   return { bookingId: bookingRef.id };
 });
 
@@ -1246,12 +1294,234 @@ export const deleteAccount = onCall(async (req) => {
     await Promise.all(vehicles.docs.map((v) => v.ref.update({ isActive: false })));
   }
 
+  if (user.companyId) {
+    await db.collection('companies').doc(user.companyId).collection('members').doc(uid).delete().catch(() => undefined);
+  }
+
   await db.collection('users').doc(uid).delete();
   await writeAudit('account_deleted', { uid, role: user.role ?? 'unknown' });
   await admin.auth().deleteUser(uid);
 
   logger.info('deleteAccount', 'deleted', { uid });
   return { ok: true };
+});
+
+// ---------------------------------------------------------------------------
+// Corporate accounts — companies are invoiced monthly for their members'
+// rides. Membership lives in companies/{id}/members/{uid} and is mirrored on
+// users/{uid}.companyId / companyRole (read by the rules and the app).
+// Invites for people without an account wait in companyInvites/{email}.
+// ---------------------------------------------------------------------------
+
+const companies = () => db.collection('companies');
+
+async function loadCompany(companyId: unknown): Promise<{ id: string; data: CompanyDoc }> {
+  if (typeof companyId !== 'string' || !companyId) throw err.invalidArgument('companyId required');
+  const snap = await companies().doc(companyId).get();
+  if (!snap.exists) throw err.notFound('Company not found');
+  return { id: snap.id, data: snap.data() as CompanyDoc };
+}
+
+/** Platform admins manage every company; company admins only their own. */
+async function requireCompanyManager(uid: string, companyId: string): Promise<{ platformAdmin: boolean }> {
+  const user = await getUser(uid);
+  if (user.role === 'admin') return { platformAdmin: true };
+  const member = await companies().doc(companyId).collection('members').doc(uid).get();
+  if (member.data()?.role !== 'admin') throw err.permissionDenied('Company admin only');
+  return { platformAdmin: false };
+}
+
+async function companyAdminUids(companyId: string): Promise<string[]> {
+  const snap = await companies().doc(companyId).collection('members').where('role', '==', 'admin').get();
+  return snap.docs.map((d) => d.id);
+}
+
+/** Links an existing rider account to a company (one company per rider). */
+async function linkMember(
+  companyId: string,
+  company: CompanyDoc,
+  uid: string,
+  role: CompanyRole,
+  by: string,
+): Promise<void> {
+  const userRef = db.collection('users').doc(uid);
+  await db.runTransaction(async (tx) => {
+    const userSnap = await tx.get(userRef);
+    const user = (userSnap.data() as UserDoc | undefined) ?? {};
+    if (!userSnap.exists) throw err.notFound('User not found');
+    if (user.role !== 'rider') throw err.failedPrecondition('company/not-a-rider');
+    if (user.companyId && user.companyId !== companyId) throw err.failedPrecondition('company/user-in-other-company');
+    tx.set(companies().doc(companyId).collection('members').doc(uid), {
+      uid,
+      email: user.email ?? '',
+      displayName: user.displayName ?? '',
+      role,
+      addedBy: by,
+      addedAt: admin.firestore.Timestamp.now(),
+    });
+    tx.update(userRef, { companyId, companyRole: role });
+  });
+  await pushUser(uid, 'companyAddedTitle', 'companyAddedBody', { company: company.name });
+}
+
+/** Adds by e-mail: links the account if it exists, otherwise leaves an invite. */
+async function addMemberByEmail(
+  companyId: string,
+  company: CompanyDoc,
+  email: string,
+  role: CompanyRole,
+  by: string,
+): Promise<'linked' | 'invited'> {
+  let authUid: string | null = null;
+  try {
+    authUid = (await admin.auth().getUserByEmail(email)).uid;
+  } catch {
+    authUid = null;
+  }
+  const userDoc = authUid ? await db.collection('users').doc(authUid).get() : null;
+  if (authUid && userDoc?.exists) {
+    await linkMember(companyId, company, authUid, role, by);
+    return 'linked';
+  }
+  await db.collection('companyInvites').doc(email).set({
+    email,
+    companyId,
+    companyName: company.name,
+    role,
+    invitedBy: by,
+    createdAt: admin.firestore.Timestamp.now(),
+  });
+  return 'invited';
+}
+
+export const createCompany = onCall(async (req) => {
+  const uid = await requireAdmin(req);
+  const d = (req.data ?? {}) as Record<string, unknown>;
+  const v = validateCompany(d, false);
+  if (!v.ok) throw err.invalidArgument(v.error);
+  const adminEmail = normalizeEmail(d.adminEmail);
+  if (!adminEmail) throw err.invalidArgument('company/invalid-admin-email');
+
+  const now = admin.firestore.Timestamp.now();
+  const company = { ...(v.value as CompanyDoc), active: true };
+  const ref = await companies().add({ ...company, createdAt: now, updatedAt: now, createdBy: uid });
+  const result = await addMemberByEmail(ref.id, company, adminEmail, 'admin', uid);
+
+  await writeAudit('company_created', { companyId: ref.id, by: uid, name: company.name });
+  logger.info('createCompany', 'created', { companyId: ref.id, admin: result });
+  return { companyId: ref.id, admin: result };
+});
+
+export const updateCompany = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const d = (req.data ?? {}) as Record<string, unknown>;
+  const { id, data } = await loadCompany(d.companyId);
+  const { platformAdmin } = await requireCompanyManager(uid, id);
+
+  const v = validateCompany(d, true);
+  if (!v.ok) throw err.invalidArgument(v.error);
+  const update: Record<string, unknown> = { ...v.value };
+  // Only Luxelane can suspend or reactivate a company account.
+  if (d.active !== undefined) {
+    if (!platformAdmin) throw err.permissionDenied('Admin only');
+    update.active = d.active === true;
+  }
+  const merged = { ...data, ...update } as CompanyDoc;
+  if (merged.requireCostCenter && merged.costCenters.length === 0) {
+    throw err.invalidArgument('company/cost-center-required-without-list');
+  }
+  if (merged.name !== data.name) {
+    // Keep pending invites readable with the new name.
+    const invites = await db.collection('companyInvites').where('companyId', '==', id).get();
+    await Promise.all(invites.docs.map((i) => i.ref.update({ companyName: merged.name })));
+  }
+  await companies().doc(id).update({ ...update, updatedAt: admin.firestore.Timestamp.now() });
+  await writeAudit('company_updated', { companyId: id, by: uid, fields: Object.keys(update) });
+  return { ok: true };
+});
+
+export const addCompanyMember = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const d = (req.data ?? {}) as Record<string, unknown>;
+  const { id, data } = await loadCompany(d.companyId);
+  await requireCompanyManager(uid, id);
+  const email = normalizeEmail(d.email);
+  if (!email) throw err.invalidArgument('company/invalid-email');
+  const role: CompanyRole = isCompanyRole(d.role) ? d.role : 'member';
+  if (!data.active) throw err.failedPrecondition('billing/company-inactive');
+
+  const result = await addMemberByEmail(id, data, email, role, uid);
+  await writeAudit('company_member_added', { companyId: id, by: uid, email, role, result });
+  return { result };
+});
+
+export const updateCompanyMember = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const d = (req.data ?? {}) as Record<string, unknown>;
+  const { id } = await loadCompany(d.companyId);
+  await requireCompanyManager(uid, id);
+  const memberUid = typeof d.uid === 'string' ? d.uid : '';
+  if (!memberUid) throw err.invalidArgument('uid required');
+  const role = isCompanyRole(d.role) ? d.role : null;
+  const remove = d.remove === true;
+  if (!remove && !role) throw err.invalidArgument('company/invalid-role');
+
+  const memberRef = companies().doc(id).collection('members').doc(memberUid);
+  if (!(await memberRef.get()).exists) throw err.notFound('Member not found');
+  if (!leavesAdmin(await companyAdminUids(id), memberUid, remove ? null : role)) {
+    throw err.failedPrecondition('company/last-admin');
+  }
+
+  const userRef = db.collection('users').doc(memberUid);
+  const batch = db.batch();
+  if (remove) {
+    batch.delete(memberRef);
+    batch.set(userRef, { companyId: null, companyRole: null }, { merge: true });
+  } else {
+    batch.update(memberRef, { role });
+    batch.set(userRef, { companyRole: role }, { merge: true });
+  }
+  await batch.commit();
+  await writeAudit(remove ? 'company_member_removed' : 'company_member_role', {
+    companyId: id,
+    by: uid,
+    member: memberUid,
+    role: remove ? null : role,
+  });
+  return { ok: true };
+});
+
+export const cancelCompanyInvite = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const d = (req.data ?? {}) as Record<string, unknown>;
+  const email = normalizeEmail(d.email);
+  if (!email) throw err.invalidArgument('company/invalid-email');
+  const ref = db.collection('companyInvites').doc(email);
+  const invite = await ref.get();
+  if (!invite.exists) return { ok: true };
+  await requireCompanyManager(uid, invite.data()!.companyId as string);
+  await ref.delete();
+  return { ok: true };
+});
+
+/** A new rider whose e-mail was invited joins the company on sign-up. */
+export const claimCompanyInvite = onDocumentCreated('users/{uid}', async (event) => {
+  const data = event.data?.data() as UserDoc | undefined;
+  const email = normalizeEmail(data?.email);
+  if (!data || data.role !== 'rider' || !email) return;
+  const ref = db.collection('companyInvites').doc(email);
+  const invite = await ref.get();
+  if (!invite.exists) return;
+  const inv = invite.data() as { companyId: string; role: CompanyRole; invitedBy: string };
+  try {
+    const { id, data: company } = await loadCompany(inv.companyId);
+    if (!company.active) return;
+    await linkMember(id, company, event.params.uid, inv.role, inv.invitedBy);
+    await ref.delete();
+    logger.info('claimCompanyInvite', 'joined', { uid: event.params.uid, companyId: id });
+  } catch (e) {
+    logger.error('claimCompanyInvite', 'failed', { uid: event.params.uid, error: String(e) });
+  }
 });
 
 // ---------------------------------------------------------------------------

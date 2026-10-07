@@ -14,4 +14,7 @@ abstract final class BookingErrorCodes {
   static const rateFailed = 'booking/rate-failed';
   static const cancelFailed = 'booking/cancel-failed';
   static const notCancellable = 'booking/not-cancellable';
+  static const costCenterRequired = 'booking/cost-center-required';
+  static const companyInactive = 'booking/company-inactive';
+  static const corporateNotAllowed = 'booking/corporate-not-allowed';
 }

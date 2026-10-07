@@ -14,6 +14,7 @@ import '../../features/booking/data/repositories/vehicle_repository_impl.dart';
 import '../../features/booking/domain/usecases/booking_usecases.dart';
 import '../../features/booking/presentation/bloc/booking_bloc.dart';
 import '../../features/booking/presentation/bloc/vehicle_bloc.dart';
+import '../../features/company/data/company_repository.dart';
 import '../../features/driver/presentation/bloc/driver_bloc.dart';
 import '../../features/notifications/presentation/bloc/notification_bloc.dart';
 import '../../features/payments/data/repositories/payment_repository_impl.dart';
@@ -89,6 +90,10 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<NotificationRepository>(
     () => NotificationRepositoryImpl(firestore: sl()),
+  );
+
+  sl.registerLazySingleton<CompanyRepository>(
+    () => CompanyRepositoryImpl(sl(), sl()),
   );
 }
 
