@@ -8,6 +8,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/lux_states.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../home/presentation/pages/home_design.dart';
 
 /// In-app receipt for a completed (or cancelled) trip.
@@ -23,7 +24,7 @@ class ReceiptPage extends StatefulWidget {
 
 class _ReceiptPageState extends State<ReceiptPage> {
   Booking? _booking;
-  String? _error;
+  bool _failed = false;
 
   @override
   void initState() {
@@ -33,11 +34,14 @@ class _ReceiptPageState extends State<ReceiptPage> {
   }
 
   Future<void> _load() async {
-    setState(() => _error = null);
+    setState(() => _failed = false);
     final result = await sl<BookingRepository>().getBookingById(widget.bookingId);
     if (!mounted) return;
     result.fold(
-      (f) => setState(() => _error = f.message),
+      (f) {
+        debugPrint('Receipt load failed: ${f.message}');
+        setState(() => _failed = true);
+      },
       (b) => setState(() => _booking = b),
     );
   }
@@ -50,16 +54,16 @@ class _ReceiptPageState extends State<ReceiptPage> {
       appBar: AppBar(
         backgroundColor: LD.bg2,
         foregroundColor: LD.ink,
-        title: const Text('Recibo'),
+        title: Text(context.l10n.tripReceiptTitle),
         leading: IconButton(
-          tooltip: 'Volver',
+          tooltip: context.l10n.commonBack,
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
           onPressed: () => context.canPop() ? context.pop() : context.go('/trips'),
         ),
       ),
       body: booking == null
-          ? (_error != null
-              ? LuxErrorState(light: true, message: _error!, onRetry: _load)
+          ? (_failed
+              ? LuxErrorState(light: true, message: context.l10n.commonConnectionError, onRetry: _load)
               : const Center(child: CircularProgressIndicator(color: LuxPalette.champagne)))
           : Center(
               child: SingleChildScrollView(
@@ -80,16 +84,17 @@ class _ReceiptCard extends StatelessWidget {
 
   String get _code => booking.id.substring(0, booking.id.length.clamp(0, 8)).toUpperCase();
 
-  String get _plainText {
-    final f = DateFormat("d 'de' MMMM yyyy, HH:mm", 'es');
+  /// Copyable receipt, in the current app language.
+  String _plainText(AppLocalizations l) {
+    final f = DateFormat.yMMMMd().add_jm();
     final total = booking.finalPrice ?? booking.estimatedPrice;
     return [
-      'Luxelane — Recibo $_code',
+      l.tripReceiptPlainHeader(_code),
       f.format(booking.scheduledAt),
-      '${booking.vehicleClass.label} · ${booking.serviceType.label}',
-      'Desde: ${booking.origin.displayName}',
-      if (booking.serviceType == ServiceType.oneWay) 'Hasta: ${booking.destination.displayName}',
-      'Total: ${LuxMoney.format(total, cents: true)}',
+      '${booking.vehicleClass.localizedLabel(l)} · ${booking.serviceType.localizedLabel(l)}',
+      l.tripReceiptPlainFrom(booking.origin.displayName),
+      if (booking.serviceType == ServiceType.oneWay) l.tripReceiptPlainTo(booking.destination.displayName),
+      l.tripReceiptPlainTotal(LuxMoney.format(total, cents: true)),
     ].join('\n');
   }
 
@@ -97,7 +102,9 @@ class _ReceiptCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cancelled = booking.status == BookingStatus.cancelled;
     final total = booking.finalPrice ?? booking.estimatedPrice;
-    final date = DateFormat("EEEE d 'de' MMMM yyyy · HH:mm", 'es').format(booking.scheduledAt);
+    final l = context.l10n;
+    final date = '${DateFormat.yMMMMEEEEd().format(booking.scheduledAt)} · '
+        '${DateFormat.jm().format(booking.scheduledAt)}';
     final paidByCard = booking.stripePaymentIntentId != null;
 
     return Container(
@@ -113,17 +120,18 @@ class _ReceiptCard extends StatelessWidget {
             children: [
               Text('LUXELANE', style: uiLabel(size: 12, spacing: 3, color: LD.ink)),
               const Spacer(),
-              Text('Nº $_code', style: uiLabel(spacing: 1.2)),
+              const SizedBox(width: 8),
+              Text(l.tripReceiptNumber(_code), style: uiLabel(spacing: 1.2)),
             ],
           ),
           const SizedBox(height: 28),
-          Text(cancelled ? 'RESERVA CANCELADA' : 'VIAJE COMPLETADO',
+          Text(cancelled ? l.tripReceiptCancelled : l.tripReceiptCompleted,
               style: eyebrow(color: cancelled ? LuxPalette.error : LD.accent)),
           const SizedBox(height: 8),
           Semantics(
             header: true,
             child: Text(
-              cancelled ? 'Sin cargo' : LuxMoney.format(total, cents: true),
+              cancelled ? l.tripReceiptNoCharge : LuxMoney.format(total, cents: true),
               style: displayText(size: 44, weight: FontWeight.w500),
             ),
           ),
@@ -133,40 +141,40 @@ class _ReceiptCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 24),
             child: Divider(height: 1, color: LD.border),
           ),
-          _Line('Servicio', booking.serviceType.label),
-          _Line('Vehículo', booking.vehicleClass.label),
-          _Line('Recogida', booking.origin.displayName),
+          _Line(l.tripReceiptService, booking.serviceType.localizedLabel(l)),
+          _Line(l.tripReceiptVehicle, booking.vehicleClass.localizedLabel(l)),
+          _Line(l.tripPickup, booking.origin.displayName),
           if (booking.serviceType == ServiceType.oneWay)
-            _Line('Destino', booking.destination.displayName)
+            _Line(l.tripDestination, booking.destination.displayName)
           else
-            _Line('Duración', '${booking.hours ?? 2} horas'),
-          if (booking.flightNumber != null) _Line('Vuelo', booking.flightNumber!),
-          _Line('Pasajeros', '${booking.passengerCount}'),
+            _Line(l.tripReceiptDuration, l.unitHours(booking.hours ?? 2)),
+          if (booking.flightNumber != null) _Line(l.tripReceiptFlight, booking.flightNumber!),
+          _Line(l.tripReceiptPassengers, '${booking.passengerCount}'),
           if (!cancelled) ...[
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
               child: Divider(height: 1, color: LD.border),
             ),
-            _Line('Precio fijo', LuxMoney.format(booking.estimatedPrice, cents: true)),
+            _Line(l.tripReceiptFixedPrice, LuxMoney.format(booking.estimatedPrice, cents: true)),
             if (booking.finalPrice != null && booking.finalPrice != booking.estimatedPrice)
-              _Line('Ajuste', LuxMoney.format(booking.finalPrice! - booking.estimatedPrice, cents: true)),
-            _Line('Total', LuxMoney.format(total, cents: true), strong: true),
-            _Line('Forma de pago', paidByCard ? 'Tarjeta' : 'Pago al chófer'),
+              _Line(l.tripReceiptAdjustment, LuxMoney.format(booking.finalPrice! - booking.estimatedPrice, cents: true)),
+            _Line(l.tripReceiptTotal, LuxMoney.format(total, cents: true), strong: true),
+            _Line(l.tripReceiptPaymentMethod, paidByCard ? l.tripReceiptCard : l.tripReceiptPayChauffeur),
           ],
           const SizedBox(height: 24),
           SizedBox(
             height: 48,
             child: OutlinedButton.icon(
               onPressed: () async {
-                await Clipboard.setData(ClipboardData(text: _plainText));
+                await Clipboard.setData(ClipboardData(text: _plainText(l)));
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Recibo copiado al portapapeles')),
+                    SnackBar(content: Text(l.tripReceiptCopied)),
                   );
                 }
               },
               icon: const Icon(Icons.copy_rounded, size: 18),
-              label: const Text('Copiar recibo'),
+              label: Text(l.tripReceiptCopy),
               style: OutlinedButton.styleFrom(
                 foregroundColor: LD.accent,
                 side: const BorderSide(color: LD.accent),
@@ -175,7 +183,7 @@ class _ReceiptCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          Text('Montos en bolivianos (BOB).',
+          Text(l.tripReceiptCurrencyNote,
               textAlign: TextAlign.center, style: uiLabel(spacing: 0.3)),
         ],
       ),
@@ -196,7 +204,7 @@ class _Line extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              width: 120,
+              width: 128,
               child: Text(label, style: bodyText(size: 13, color: LD.ink3).copyWith(height: 1.4)),
             ),
             Expanded(

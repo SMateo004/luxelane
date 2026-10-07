@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/models/models.dart';
 import '../../../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/notification_bloc.dart';
 
 // ---------------------------------------------------------------------------
@@ -56,7 +57,7 @@ class NotificationBell extends StatelessWidget {
             ],
           ),
           onPressed: () => _showNotificationSheet(context),
-          tooltip: 'Notificaciones',
+          tooltip: unread > 0 ? context.l10n.notifBellUnread(unread) : context.l10n.notifTitle,
         );
       },
     );
@@ -124,9 +125,11 @@ class _NotificationSheet extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Text('Notificaciones',
-                      style: LuxTypography.titleLarge),
-                  const Spacer(),
+                  Expanded(
+                    child: Text(context.l10n.notifTitle,
+                        style: LuxTypography.titleLarge,
+                        overflow: TextOverflow.ellipsis),
+                  ),
                   BlocBuilder<NotificationBloc, NotificationState>(
                     builder: (context, state) {
                       final hasUnread = state is NotificationLoaded &&
@@ -143,7 +146,7 @@ class _NotificationSheet extends StatelessWidget {
                                 )
                             : null,
                         child: Text(
-                          'Marcar todo como leído',
+                          context.l10n.notifMarkAllRead,
                           style: LuxTypography.caption
                               .copyWith(color: LuxColors.accent),
                         ),
@@ -173,7 +176,8 @@ class _NotificationSheet extends StatelessWidget {
                           Icon(Icons.notifications_none_rounded,
                               color: LuxColors.whiteTertiary, size: 48),
                           const SizedBox(height: LuxSpacing.md),
-                          const Text('Aún no hay notificaciones',
+                          Text(context.l10n.notifEmpty,
+                              textAlign: TextAlign.center,
                               style: LuxTypography.bodyMedium),
                         ],
                       ),
@@ -230,12 +234,12 @@ class _NotificationTile extends StatelessWidget {
     }
   }
 
-  String _timeAgo(DateTime dt) {
+  String _timeAgo(AppLocalizations l, DateTime dt) {
     final diff = DateTime.now().difference(dt);
-    if (diff.inMinutes < 1) return 'Ahora';
-    if (diff.inMinutes < 60) return 'Hace ${diff.inMinutes}m';
-    if (diff.inHours < 24) return 'Hace ${diff.inHours}h';
-    return DateFormat('MMM d').format(dt);
+    if (diff.inMinutes < 1) return l.notifJustNow;
+    if (diff.inMinutes < 60) return l.notifMinutesAgo(diff.inMinutes);
+    if (diff.inHours < 24) return l.notifHoursAgo(diff.inHours);
+    return DateFormat.MMMd().format(dt);
   }
 
   @override
@@ -279,7 +283,7 @@ class _NotificationTile extends StatelessWidget {
                     ),
                     const SizedBox(width: LuxSpacing.sm),
                     Text(
-                      _timeAgo(notification.createdAt),
+                      _timeAgo(context.l10n, notification.createdAt),
                       style: LuxTypography.caption,
                     ),
                   ],

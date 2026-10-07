@@ -7,6 +7,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/trip_widgets.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/driver_bloc.dart';
 
 class DriverActiveRideScreen extends StatelessWidget {
@@ -30,7 +31,7 @@ class DriverActiveRideScreen extends StatelessWidget {
         if (booking == null) {
           return Scaffold(
             appBar: AppBar(),
-            body: const Center(child: Text('Viaje no encontrado')),
+            body: Center(child: Text(context.l10n.driverTripNotFound)),
           );
         }
 
@@ -105,7 +106,10 @@ class _DriverTopBar extends StatelessWidget {
         padding: const EdgeInsets.all(LuxSpacing.md),
         child: Row(
           children: [
-            GestureDetector(
+            Semantics(
+              button: true,
+              label: context.l10n.commonBack,
+              child: GestureDetector(
               onTap: () => context.pop(),
               child: Container(
                 width: 40,
@@ -118,6 +122,7 @@ class _DriverTopBar extends StatelessWidget {
                 child: const Icon(Icons.keyboard_arrow_down_rounded,
                     color: LuxColors.white),
               ),
+            ),
             ),
             const SizedBox(width: LuxSpacing.md),
             const LuxelaneWordmark(),
@@ -137,6 +142,7 @@ class _DriverWebHeader extends StatelessWidget {
           children: [
             IconButton(
               onPressed: () => context.pop(),
+              tooltip: context.l10n.commonBack,
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
             ),
             const LuxelaneWordmark(),
@@ -169,31 +175,31 @@ class _DriverSidePanel extends StatelessWidget {
   const _DriverSidePanel({required this.booking});
   final Booking booking;
 
-  String get _message {
+  String _message(AppLocalizations l) {
     switch (booking.status) {
       case BookingStatus.confirmed:
-        return 'Dirígete al punto de recogida';
+        return l.driverMsgHeadToPickup;
       case BookingStatus.driverArriving:
-        return 'En camino a la recogida · llegando pronto';
+        return l.driverMsgOnTheWay;
       case BookingStatus.driverArrived:
-        return 'Esperando al pasajero';
+        return l.driverMsgWaitingPassenger;
       case BookingStatus.inProgress:
-        return 'Viaje en curso · ve al destino';
+        return l.driverMsgInProgress;
       default:
         return '';
     }
   }
 
-  String get _actionLabel {
+  String _actionLabel(AppLocalizations l) {
     switch (booking.status) {
       case BookingStatus.confirmed:
-        return 'Ir a la recogida';
+        return l.driverActionGoToPickupShort;
       case BookingStatus.driverArriving:
-        return 'He llegado';
+        return l.driverActionArrived;
       case BookingStatus.driverArrived:
-        return 'Iniciar viaje';
+        return l.driverActionStartTrip;
       case BookingStatus.inProgress:
-        return 'Completar viaje';
+        return l.driverActionCompleteTrip;
       default:
         return '';
     }
@@ -221,7 +227,10 @@ class _DriverSidePanel extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final actionLabel = _actionLabel(l);
+    return Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -230,7 +239,7 @@ class _DriverSidePanel extends StatelessWidget {
               BookingStatusChip(status: booking.status),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
-                child: Text(_message, style: LuxTypography.bodyMedium),
+                child: Text(_message(l), style: LuxTypography.bodyMedium),
               ),
             ],
           ),
@@ -245,13 +254,14 @@ class _DriverSidePanel extends StatelessWidget {
           const SizedBox(height: LuxSpacing.md),
           PassengerCard(booking: booking),
           const SizedBox(height: LuxSpacing.md),
-          if (_actionLabel.isNotEmpty)
+          if (actionLabel.isNotEmpty)
             LuxButton(
-              label: _actionLabel,
+              label: actionLabel,
               onPressed: () => _advance(context),
             ),
         ],
       );
+  }
 }
 
 class _RideInfoRow extends StatelessWidget {
@@ -302,7 +312,12 @@ class _RideInfoRow extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Tarifa estimada', style: LuxTypography.caption),
+                Flexible(
+                  child: Text(context.l10n.driverEstimatedFare,
+                      style: LuxTypography.caption,
+                      overflow: TextOverflow.ellipsis),
+                ),
+                const SizedBox(width: LuxSpacing.sm),
                 Text(
                   LuxMoney.format(booking.estimatedPrice, cents: true),
                   style: LuxTypography.bodyLarge

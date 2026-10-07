@@ -75,6 +75,225 @@ class AppLocalizationsEs extends AppLocalizations {
   String get commonWhatsApp => 'WhatsApp';
 
   @override
+  String get driverAcceptRide => 'Aceptar viaje';
+
+  @override
+  String get driverActionArrived => 'He llegado';
+
+  @override
+  String get driverActionCompleteTrip => 'Completar viaje';
+
+  @override
+  String get driverActionGoToPickup => 'Ir al punto de recogida';
+
+  @override
+  String get driverActionGoToPickupShort => 'Ir a la recogida';
+
+  @override
+  String get driverActionStartTrip => 'Iniciar viaje';
+
+  @override
+  String get driverActiveRide => 'Viaje activo';
+
+  @override
+  String driverCompletedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count viajes completados',
+      one: '1 viaje completado',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get driverCompletedTrips => 'Viajes completados';
+
+  @override
+  String get driverConnectionErrorTitle => 'Error de conexión';
+
+  @override
+  String get driverDecline => 'Rechazar';
+
+  @override
+  String get driverErrorUnauthorized => 'Esta cuenta no tiene acceso de chófer.';
+
+  @override
+  String get driverEstimatedFare => 'Tarifa estimada';
+
+  @override
+  String get driverGoOnline => 'Conectarse';
+
+  @override
+  String get driverMapsOpenError => 'No se pudieron abrir los mapas';
+
+  @override
+  String get driverMsgHeadToPickup => 'Dirígete al punto de recogida';
+
+  @override
+  String get driverMsgInProgress => 'Viaje en curso · ve al destino';
+
+  @override
+  String get driverMsgOnTheWay => 'En camino a la recogida · llegando pronto';
+
+  @override
+  String get driverMsgWaitingPassenger => 'Esperando al pasajero';
+
+  @override
+  String driverNavigateTo(String address) {
+    return 'Navegar hacia $address';
+  }
+
+  @override
+  String get driverNavigateToDestination => 'Navegar hacia el destino';
+
+  @override
+  String get driverNavigateToPickup => 'Navegar hacia la recogida';
+
+  @override
+  String get driverNoCompletedTrips => 'Aún no hay viajes completados';
+
+  @override
+  String get driverNoMapsApps => 'No hay aplicaciones de mapas disponibles';
+
+  @override
+  String get driverOfferExpiring => 'Oferta por expirar';
+
+  @override
+  String get driverOfflineSubtitle => 'Activa el interruptor para conectarte';
+
+  @override
+  String get driverOfflineTitle => 'Estás desconectado';
+
+  @override
+  String get driverOnbBack => 'Atrás';
+
+  @override
+  String get driverOnbColor => 'Color';
+
+  @override
+  String get driverOnbDefaultColor => 'Negro';
+
+  @override
+  String get driverOnbExpiryFormat => 'Usa MM/AAAA';
+
+  @override
+  String get driverOnbInvalid => 'Inválido';
+
+  @override
+  String get driverOnbInvalidMonth => 'Mes inválido';
+
+  @override
+  String get driverOnbLicenseExpired => 'Licencia vencida';
+
+  @override
+  String get driverOnbLicenseExpiry => 'Fecha de vencimiento (MM/AAAA)';
+
+  @override
+  String get driverOnbLicenseNumber => 'Número de licencia';
+
+  @override
+  String get driverOnbLicenseSubtitle => 'Tus documentos serán revisados antes de que puedas aceptar viajes.';
+
+  @override
+  String get driverOnbLicenseTitle => 'Licencia de conducir';
+
+  @override
+  String get driverOnbLogout => 'Cerrar sesión';
+
+  @override
+  String get driverOnbMake => 'Marca';
+
+  @override
+  String get driverOnbModel => 'Modelo';
+
+  @override
+  String get driverOnbPlate => 'Placa';
+
+  @override
+  String get driverOnbReviewNotice => 'Un administrador verificará tus documentos antes de que puedas conectarte.';
+
+  @override
+  String get driverOnbSaveError => 'No pudimos guardar tus datos. Inténtalo de nuevo.';
+
+  @override
+  String get driverOnbVehicleClass => 'Categoría del vehículo';
+
+  @override
+  String get driverOnbVehicleSubtitle => 'Registra el vehículo que vas a conducir.';
+
+  @override
+  String get driverOnbVehicleTitle => 'Tu vehículo';
+
+  @override
+  String get driverOnbYear => 'Año';
+
+  @override
+  String get driverOnlineSubtitle => 'Esperando nuevas solicitudes de viaje';
+
+  @override
+  String get driverOnlineTitle => 'Estás conectado';
+
+  @override
+  String get driverPaid => 'PAGADO';
+
+  @override
+  String get driverQueueAvailable => 'SOLICITUDES DISPONIBLES';
+
+  @override
+  String get driverQueueEmptyBody => 'Las nuevas reservas aparecerán aquí';
+
+  @override
+  String get driverQueueEmptyTitle => 'Sin trabajos aún';
+
+  @override
+  String get driverQueueMyActive => 'MIS TRABAJOS ACTIVOS';
+
+  @override
+  String get driverQueueOfflineBody => 'Activa tu disponibilidad en la pestaña Inicio';
+
+  @override
+  String get driverQueueOfflineTitle => 'Conéctate para recibir trabajos';
+
+  @override
+  String get driverQueueTitle => 'Cola de trabajos';
+
+  @override
+  String get driverRequestExclusive => 'SOLICITUD EXCLUSIVA PARA TI';
+
+  @override
+  String get driverRequestNew => 'NUEVA SOLICITUD DE VIAJE';
+
+  @override
+  String driverRespondIn(int seconds) {
+    return 'Responde en ${seconds}s';
+  }
+
+  @override
+  String get driverStatCompleted => 'Completados';
+
+  @override
+  String get driverStatEarnings => 'Ganancias';
+
+  @override
+  String get driverTabHome => 'Inicio';
+
+  @override
+  String get driverTabJobs => 'Trabajos';
+
+  @override
+  String get driverTabProfile => 'Perfil';
+
+  @override
+  String get driverTodaySummary => 'Resumen de hoy';
+
+  @override
+  String get driverTotalEarnings => 'Ganancias totales';
+
+  @override
+  String get driverTripNotFound => 'Viaje no encontrado';
+
+  @override
   String get flightCancelled => 'Cancelado';
 
   @override
@@ -171,6 +390,206 @@ class AppLocalizationsEs extends AppLocalizations {
 
     return 'Última actualización: $dateString';
   }
+
+  @override
+  String notifBellUnread(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count notificaciones sin leer',
+      one: '1 notificación sin leer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get notifEmpty => 'Aún no hay notificaciones';
+
+  @override
+  String notifHoursAgo(int hours) {
+    return 'Hace $hours h';
+  }
+
+  @override
+  String get notifJustNow => 'Ahora';
+
+  @override
+  String get notifMarkAllRead => 'Marcar todo como leído';
+
+  @override
+  String notifMinutesAgo(int minutes) {
+    return 'Hace $minutes min';
+  }
+
+  @override
+  String get notifTitle => 'Notificaciones';
+
+  @override
+  String get rideArrived => '¡Has llegado!';
+
+  @override
+  String rideArrivesIn(String eta) {
+    return 'Llega en $eta';
+  }
+
+  @override
+  String get rideAssigning => 'Asignando a tu chófer';
+
+  @override
+  String get rideAssigningBody => 'Estamos confirmando a tu chófer. Te avisaremos apenas esté asignado.';
+
+  @override
+  String get rideBackHome => 'Volver al inicio';
+
+  @override
+  String get rideCancelled => 'Reserva cancelada';
+
+  @override
+  String rideChauffeurArrivesIn(String eta) {
+    return 'Tu chófer llega en $eta';
+  }
+
+  @override
+  String get rideChauffeurConfirmed => 'Chófer confirmado';
+
+  @override
+  String get rideChauffeurOnTheWay => 'Tu chófer está en camino';
+
+  @override
+  String get rideChauffeurWaiting => 'Tu chófer te espera';
+
+  @override
+  String rideFlightArrivesAt(String time) {
+    return 'Llega $time';
+  }
+
+  @override
+  String rideFlightLandedAt(String time) {
+    return 'Aterrizó $time';
+  }
+
+  @override
+  String rideFlightTitle(String number) {
+    return 'Vuelo $number';
+  }
+
+  @override
+  String rideFlightTitleTerminal(String number, String terminal) {
+    return 'Vuelo $number · Terminal $terminal';
+  }
+
+  @override
+  String get rideHeadingToDestination => 'En camino a tu destino';
+
+  @override
+  String get rideLive => 'EN VIVO';
+
+  @override
+  String get rideLoading => 'Cargando tu reserva…';
+
+  @override
+  String get rideNotifArrivedBody => 'Tu chófer te espera en el punto de recogida.';
+
+  @override
+  String get rideNotifArrivedTitle => 'El chófer ha llegado';
+
+  @override
+  String get rideNotifArrivingBody => 'Tu chófer se dirige a tu punto de recogida.';
+
+  @override
+  String get rideNotifArrivingTitle => 'El chófer está en camino';
+
+  @override
+  String get rideNotifAssignedBody => 'Tu chófer confirmó la reserva.';
+
+  @override
+  String get rideNotifAssignedTitle => 'Chófer asignado';
+
+  @override
+  String get rideNotifCompletedBody => '¡Has llegado! Gracias por viajar con Luxelane.';
+
+  @override
+  String get rideNotifCompletedTitle => 'Viaje completado';
+
+  @override
+  String get rideNotifStartedBody => 'Ya estás en camino hacia tu destino.';
+
+  @override
+  String get rideNotifStartedTitle => 'Viaje iniciado';
+
+  @override
+  String ridePickupAt(String time) {
+    return 'Recogida $time';
+  }
+
+  @override
+  String get rideRateTrip => 'Calificar viaje';
+
+  @override
+  String get rideRatingCommentHint => 'Comentario (opcional)';
+
+  @override
+  String get rideRatingExcellent => 'Excelente';
+
+  @override
+  String get rideRatingFair => 'Regular';
+
+  @override
+  String get rideRatingGood => 'Bueno';
+
+  @override
+  String get rideRatingPoor => 'Malo';
+
+  @override
+  String rideRatingStars(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count estrellas',
+      one: '1 estrella',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rideRatingThanks => '¡Gracias por tu calificación!';
+
+  @override
+  String get rideRatingTitle => 'Califica tu viaje';
+
+  @override
+  String get rideRatingVeryPoor => 'Muy malo';
+
+  @override
+  String get rideThanks => 'Gracias por viajar con Luxelane';
+
+  @override
+  String get rideThanksForRating => 'Gracias por calificar';
+
+  @override
+  String get rideVerifiedChauffeur => 'Chófer verificado';
+
+  @override
+  String rideVerifiedTrips(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Verificado · $count viajes',
+      one: 'Verificado · 1 viaje',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get rideViewReceipt => 'Ver recibo';
+
+  @override
+  String rideYouArriveIn(String eta) {
+    return 'Llegas en $eta';
+  }
+
+  @override
+  String get rideYourChauffeur => 'Tu chófer';
 
   @override
   String get serviceByTheHour => 'Por horas';
@@ -524,6 +943,195 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get statusPending => 'Pendiente';
+
+  @override
+  String get tripDestination => 'Destino';
+
+  @override
+  String tripFlightNumber(String number) {
+    return 'Vuelo $number';
+  }
+
+  @override
+  String tripFreeWaitLeft(int minutes) {
+    return 'Espera gratuita: $minutes min';
+  }
+
+  @override
+  String tripFreeWaitOver(String time) {
+    return 'Espera gratuita terminada a las $time';
+  }
+
+  @override
+  String get tripFreeWaitOverDriver => 'Contacta al pasajero antes de retirarte.';
+
+  @override
+  String get tripFreeWaitOverRider => 'Tu chófer sigue esperándote. Avísale si necesitas más tiempo.';
+
+  @override
+  String tripFreeWaitUntil(String time, String summary) {
+    return 'Hasta las $time · $summary';
+  }
+
+  @override
+  String get tripMeetGreetBody => 'Tu chófer te esperará en la salida de llegadas con un cartel con tu nombre.';
+
+  @override
+  String tripMeetGreetBodyNamed(String name) {
+    return 'Tu chófer te esperará en la salida de llegadas con un cartel con el nombre «$name».';
+  }
+
+  @override
+  String get tripMeetGreetTitle => 'Meet & greet en llegadas';
+
+  @override
+  String tripMeetGreetWait(int minutes) {
+    return '$minutes min de espera gratuita desde que aterriza tu vuelo.';
+  }
+
+  @override
+  String tripNameSignSemantics(String name) {
+    return 'Cartel con el nombre $name. Toca para cerrar.';
+  }
+
+  @override
+  String get tripNameSignTapToClose => 'Toca la pantalla para cerrar';
+
+  @override
+  String get tripPassenger => 'Pasajero';
+
+  @override
+  String get tripPickup => 'Recogida';
+
+  @override
+  String get tripPriceBaseFare => 'Tarifa base';
+
+  @override
+  String get tripPriceBreakdown => 'Desglose del precio';
+
+  @override
+  String tripPriceDistanceLine(String km, String rate) {
+    return '$km km × $rate';
+  }
+
+  @override
+  String get tripPriceEstimatedTotal => 'Total estimado';
+
+  @override
+  String get tripPriceFinalNote => 'El precio fijo final se confirma antes de reservar.';
+
+  @override
+  String tripPriceHoursLine(int hours, String rate) {
+    return '$hours h × $rate';
+  }
+
+  @override
+  String get tripPriceMinimumAdjustment => 'Ajuste a tarifa mínima';
+
+  @override
+  String get tripReceiptAdjustment => 'Ajuste';
+
+  @override
+  String get tripReceiptCancelled => 'RESERVA CANCELADA';
+
+  @override
+  String get tripReceiptCard => 'Tarjeta';
+
+  @override
+  String get tripReceiptCompleted => 'VIAJE COMPLETADO';
+
+  @override
+  String get tripReceiptCopied => 'Recibo copiado al portapapeles';
+
+  @override
+  String get tripReceiptCopy => 'Copiar recibo';
+
+  @override
+  String get tripReceiptCurrencyNote => 'Montos en bolivianos (BOB).';
+
+  @override
+  String get tripReceiptDuration => 'Duración';
+
+  @override
+  String get tripReceiptFixedPrice => 'Precio fijo';
+
+  @override
+  String get tripReceiptFlight => 'Vuelo';
+
+  @override
+  String get tripReceiptNoCharge => 'Sin cargo';
+
+  @override
+  String tripReceiptNumber(String code) {
+    return 'Nº $code';
+  }
+
+  @override
+  String get tripReceiptPassengers => 'Pasajeros';
+
+  @override
+  String get tripReceiptPayChauffeur => 'Pago al chófer';
+
+  @override
+  String get tripReceiptPaymentMethod => 'Forma de pago';
+
+  @override
+  String tripReceiptPlainFrom(String place) {
+    return 'Desde: $place';
+  }
+
+  @override
+  String tripReceiptPlainHeader(String code) {
+    return 'Luxelane — Recibo $code';
+  }
+
+  @override
+  String tripReceiptPlainTo(String place) {
+    return 'Hasta: $place';
+  }
+
+  @override
+  String tripReceiptPlainTotal(String amount) {
+    return 'Total: $amount';
+  }
+
+  @override
+  String get tripReceiptService => 'Servicio';
+
+  @override
+  String get tripReceiptTitle => 'Recibo';
+
+  @override
+  String get tripReceiptTotal => 'Total';
+
+  @override
+  String get tripReceiptVehicle => 'Vehículo';
+
+  @override
+  String get tripShowSign => 'Mostrar cartel';
+
+  @override
+  String get tripsBookNow => 'Reservar ahora';
+
+  @override
+  String get tripsEmpty => 'Aún no tienes viajes.\nReserva tu primera experiencia.';
+
+  @override
+  String get tripsLoadError => 'No pudimos cargar tus viajes. Revisa tu conexión.';
+
+  @override
+  String get tripsPast => 'ANTERIORES';
+
+  @override
+  String tripsRouteByHour(String origin, int hours) {
+    return '$origin · $hours h';
+  }
+
+  @override
+  String get tripsTitle => 'Mis viajes';
+
+  @override
+  String get tripsUpcoming => 'PRÓXIMOS';
 
   @override
   String unitBags(int count) {

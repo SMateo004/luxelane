@@ -5,6 +5,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
 
@@ -14,7 +15,7 @@ class DriverQueueScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Cola de trabajos')),
+      appBar: AppBar(title: Text(context.l10n.driverQueueTitle)),
       body: BlocBuilder<DriverBloc, DriverState>(
         builder: (context, state) {
           if (state is! DriverLoaded) {
@@ -41,7 +42,7 @@ class DriverQueueScreen extends StatelessWidget {
             padding: const EdgeInsets.all(LuxSpacing.md),
             children: [
               if (pending.isNotEmpty) ...[
-                const _SectionTitle(title: 'SOLICITUDES DISPONIBLES', isGold: true),
+                _SectionTitle(title: context.l10n.driverQueueAvailable, isGold: true),
                 const SizedBox(height: LuxSpacing.sm),
                 ...pending.map((b) => Padding(
                       padding: const EdgeInsets.only(bottom: LuxSpacing.md),
@@ -50,7 +51,7 @@ class DriverQueueScreen extends StatelessWidget {
                 const SizedBox(height: LuxSpacing.lg),
               ],
               if (upcoming.isNotEmpty) ...[
-                const _SectionTitle(title: 'MIS TRABAJOS ACTIVOS', isGold: false),
+                _SectionTitle(title: context.l10n.driverQueueMyActive, isGold: false),
                 const SizedBox(height: LuxSpacing.sm),
                 ...upcoming.map((b) => Padding(
                       padding: const EdgeInsets.only(bottom: LuxSpacing.md),
@@ -89,7 +90,9 @@ class _EmptyQueue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-        child: Column(
+        child: Padding(
+          padding: const EdgeInsets.all(LuxSpacing.lg),
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
@@ -101,18 +104,20 @@ class _EmptyQueue extends StatelessWidget {
             ),
             const SizedBox(height: LuxSpacing.md),
             Text(
-              isAvailable ? 'Sin trabajos aún' : 'Conéctate para recibir trabajos',
+              isAvailable ? context.l10n.driverQueueEmptyTitle : context.l10n.driverQueueOfflineTitle,
               style: LuxTypography.titleMedium,
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: LuxSpacing.sm),
             Text(
               isAvailable
-                  ? 'Las nuevas reservas aparecerán aquí'
-                  : 'Activa tu disponibilidad en la pestaña Inicio',
+                  ? context.l10n.driverQueueEmptyBody
+                  : context.l10n.driverQueueOfflineBody,
               style: LuxTypography.bodyMedium,
               textAlign: TextAlign.center,
             ),
           ],
+        ),
         ),
       );
 }
@@ -132,7 +137,7 @@ class _JobCard extends StatelessWidget {
                 BookingStatusChip(status: booking.status),
                 const Spacer(),
                 Text(
-                  'Bs${booking.estimatedPrice.toStringAsFixed(0)}',
+                  LuxMoney.format(booking.estimatedPrice),
                   style: LuxTypography.titleMedium
                       .copyWith(color: LuxColors.accent),
                 ),
@@ -140,8 +145,8 @@ class _JobCard extends StatelessWidget {
             ),
             const SizedBox(height: LuxSpacing.sm),
             Text(
-              DateFormat('EEE, MMM d · h:mm a')
-                  .format(booking.effectivePickup),
+              '${DateFormat.MMMEd().format(booking.effectivePickup)} · '
+              '${DateFormat.jm().format(booking.effectivePickup)}',
               style: LuxTypography.caption,
             ),
             const SizedBox(height: LuxSpacing.md),
@@ -213,7 +218,7 @@ class _JobActions extends StatelessWidget {
 
     if (isPending) {
       return LuxButton(
-        label: 'Aceptar viaje',
+        label: context.l10n.driverAcceptRide,
         icon: Icons.check_circle_outline_rounded,
         onPressed: () => bloc.add(DriverRequestAccepted(
           bookingId: booking.id,
@@ -225,21 +230,21 @@ class _JobActions extends StatelessWidget {
     switch (booking.status) {
       case BookingStatus.confirmed:
         return LuxButton(
-          label: 'Ir a la recogida',
+          label: context.l10n.driverActionGoToPickupShort,
           icon: Icons.navigation_rounded,
           onPressed: () =>
               bloc.add(DriverBookingAccepted(bookingId: booking.id)),
         );
       case BookingStatus.driverArriving:
         return LuxButton(
-          label: 'He llegado',
+          label: context.l10n.driverActionArrived,
           icon: Icons.where_to_vote_rounded,
           onPressed: () =>
               bloc.add(DriverArrivedAtPickup(bookingId: booking.id)),
         );
       case BookingStatus.driverArrived:
         return LuxButton(
-          label: 'Iniciar viaje',
+          label: context.l10n.driverActionStartTrip,
           icon: Icons.play_arrow_rounded,
           onPressed: () =>
               bloc.add(DriverTripStarted(bookingId: booking.id)),

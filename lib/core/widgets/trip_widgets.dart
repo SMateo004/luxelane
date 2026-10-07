@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/theme/app_theme.dart';
+import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
 import '../models/models.dart';
 import '../utils/waiting_policy.dart';
@@ -47,18 +48,15 @@ class _FreeWaitBannerState extends State<FreeWaitBanner> {
     final b = widget.booking;
     final until = WaitingPolicy.freeUntil(b);
     final left = WaitingPolicy.remaining(b);
-    final time = DateFormat('HH:mm', 'es').format(until);
+    final l = context.l10n;
+    final time = DateFormat.jm().format(until);
     final over = left == null;
     final color = over ? LuxColors.warning : LuxColors.success;
 
-    final title = over
-        ? 'Espera gratuita terminada a las $time'
-        : 'Espera gratuita: ${left.inMinutes + 1} min';
+    final title = over ? l.tripFreeWaitOver(time) : l.tripFreeWaitLeft(left.inMinutes + 1);
     final subtitle = over
-        ? (widget.forDriver
-            ? 'Contacta al pasajero antes de retirarte.'
-            : 'Tu chófer sigue esperándote. Avísale si necesitas más tiempo.')
-        : 'Hasta las $time · ${WaitingPolicy.summary(b)}';
+        ? (widget.forDriver ? l.tripFreeWaitOverDriver : l.tripFreeWaitOverRider)
+        : l.tripFreeWaitUntil(time, WaitingPolicy.localizedSummary(l, b));
 
     return Semantics(
       liveRegion: true,
@@ -98,6 +96,7 @@ class MeetAndGreetCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final name = booking.passengerName;
+    final l = context.l10n;
     return LuxCard(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,17 +107,17 @@ class MeetAndGreetCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Meet & greet en llegadas', style: LuxTypography.titleMedium),
+                Text(l.tripMeetGreetTitle, style: LuxTypography.titleMedium),
                 const SizedBox(height: 4),
                 Text(
                   name != null && name.isNotEmpty
-                      ? 'Tu chófer te esperará en la salida de llegadas con un cartel con el nombre «$name».'
-                      : 'Tu chófer te esperará en la salida de llegadas con un cartel con tu nombre.',
+                      ? l.tripMeetGreetBodyNamed(name)
+                      : l.tripMeetGreetBody,
                   style: LuxTypography.bodyMedium,
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  '${WaitingPolicy.airportFreeMinutes} min de espera gratuita desde que aterriza tu vuelo.',
+                Text(
+                  l.tripMeetGreetWait(WaitingPolicy.airportFreeMinutes),
                   style: LuxTypography.caption,
                 ),
               ],
@@ -139,7 +138,7 @@ class PassengerCard extends StatelessWidget {
 
   Future<void> _launch(BuildContext context, Uri uri) async {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication) && context.mounted) {
-      showLuxSnackbar(context, 'No se pudo abrir la aplicación', isError: true);
+      showLuxSnackbar(context, context.l10n.commonCouldNotOpenApp, isError: true);
     }
   }
 
@@ -148,10 +147,11 @@ class PassengerCard extends StatelessWidget {
     final name = (booking.passengerName ?? '').trim();
     final phone = (booking.passengerPhone ?? '').trim();
     final airport = WaitingPolicy.isAirport(booking);
+    final l = context.l10n;
     final details = [
-      '${booking.passengerCount} ${booking.passengerCount == 1 ? 'pasajero' : 'pasajeros'}',
-      if (booking.luggageCount > 0) '${booking.luggageCount} maletas',
-      if (airport) 'Vuelo ${booking.flightNumber}',
+      l.unitPassengers(booking.passengerCount),
+      if (booking.luggageCount > 0) l.unitBags(booking.luggageCount),
+      if (airport) l.tripFlightNumber(booking.flightNumber!.trim()),
     ].join(' · ');
 
     return LuxCard(
@@ -166,7 +166,7 @@ class PassengerCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(name.isEmpty ? 'Pasajero' : name, style: LuxTypography.titleLarge),
+                    Text(name.isEmpty ? l.tripPassenger : name, style: LuxTypography.titleLarge),
                     const SizedBox(height: 2),
                     Text(details, style: LuxTypography.bodyMedium),
                   ],
@@ -186,19 +186,19 @@ class PassengerCard extends StatelessWidget {
               if (phone.isNotEmpty) ...[
                 _ActionChip(
                   icon: Icons.call_outlined,
-                  label: 'Llamar',
+                  label: l.commonCall,
                   onTap: () => _launch(context, Uri(scheme: 'tel', path: _digits(phone))),
                 ),
                 _ActionChip(
                   icon: Icons.chat_outlined,
-                  label: 'WhatsApp',
+                  label: l.commonWhatsApp,
                   onTap: () => _launch(context, Uri.parse('https://wa.me/${_digits(phone).replaceAll('+', '')}')),
                 ),
               ],
               if (name.isNotEmpty)
                 _ActionChip(
                   icon: Icons.badge_outlined,
-                  label: 'Mostrar cartel',
+                  label: l.tripShowSign,
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       fullscreenDialog: true,
@@ -268,7 +268,7 @@ class _NameSignPageState extends State<NameSignPage> {
   Widget build(BuildContext context) => Scaffold(
         backgroundColor: Colors.white,
         body: Semantics(
-          label: 'Cartel con el nombre ${widget.name}. Toca para cerrar.',
+          label: context.l10n.tripNameSignSemantics(widget.name),
           button: true,
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
@@ -306,9 +306,10 @@ class _NameSignPageState extends State<NameSignPage> {
                         ),
                       ),
                     ),
-                    const Text(
-                      'Toca la pantalla para cerrar',
-                      style: TextStyle(fontFamily: 'Montserrat', fontSize: 12, color: LuxPalette.slate),
+                    Text(
+                      context.l10n.tripNameSignTapToClose,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontFamily: 'Montserrat', fontSize: 12, color: LuxPalette.slate),
                     ),
                   ],
                 ),

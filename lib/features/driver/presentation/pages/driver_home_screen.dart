@@ -13,6 +13,7 @@ import '../../../../core/services/maps_service.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/trip_widgets.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
 
@@ -101,12 +102,22 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 children: [
                   const Icon(Icons.error_outline, color: LuxColors.error, size: 48),
                   const SizedBox(height: 16),
-                  const Text('Error de conexión', style: LuxTypography.headlineMedium),
+                  Text(context.l10n.driverConnectionErrorTitle,
+                      style: LuxTypography.headlineMedium, textAlign: TextAlign.center),
                   const SizedBox(height: 8),
-                  Text(state.message, style: LuxTypography.caption, textAlign: TextAlign.center),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: LuxSpacing.lg),
+                    child: Text(
+                      state.kind == DriverErrorKind.unauthorized
+                          ? context.l10n.driverErrorUnauthorized
+                          : context.l10n.commonConnectionError,
+                      style: LuxTypography.caption,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                   const SizedBox(height: 24),
                   LuxButton(
-                    label: 'Reintentar',
+                    label: context.l10n.commonRetry,
                     onPressed: () {
                       final auth = context.read<AuthBloc>().state;
                       if (auth is AuthAuthenticated) {
@@ -181,12 +192,18 @@ class _AvailabilityToggle extends StatelessWidget {
               shape: BoxShape.circle,
             ),
           ),
-        Switch(
-          value: isAvailable,
-          activeColor: LuxColors.accent,
-          onChanged: (val) => context.read<DriverBloc>().add(
-                DriverAvailabilityToggled(userId: userId, isAvailable: val),
-              ),
+        Semantics(
+          // Announced by screen readers; the visual state is the switch itself.
+          label: isAvailable
+              ? context.l10n.driverOnlineTitle
+              : context.l10n.driverOfflineTitle,
+          child: Switch(
+            value: isAvailable,
+            activeColor: LuxColors.accent,
+            onChanged: (val) => context.read<DriverBloc>().add(
+                  DriverAvailabilityToggled(userId: userId, isAvailable: val),
+                ),
+          ),
         ),
       ],
     );
@@ -200,18 +217,20 @@ class _IdlePanel extends StatelessWidget {
   final DriverLoaded state;
 
   @override
-  Widget build(BuildContext context) => ListView(
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return ListView(
         padding: const EdgeInsets.all(LuxSpacing.md),
         children: [
           _StatusBanner(isAvailable: state.isAvailable),
           const SizedBox(height: LuxSpacing.lg),
-          const SectionHeader(title: 'Resumen de hoy'),
+          SectionHeader(title: l.driverTodaySummary),
           const SizedBox(height: LuxSpacing.md),
           Row(
             children: [
               Expanded(
                 child: _StatCard(
-                  label: 'Completados',
+                  label: l.driverStatCompleted,
                   value: '${state.completedBookings.length}',
                   icon: Icons.check_circle_outline,
                 ),
@@ -219,8 +238,8 @@ class _IdlePanel extends StatelessWidget {
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                 child: _StatCard(
-                  label: 'Ganancias',
-                  value: 'Bs${state.totalEarnings.toStringAsFixed(0)}',
+                  label: l.driverStatEarnings,
+                  value: LuxMoney.format(state.totalEarnings),
                   icon: Icons.attach_money,
                 ),
               ),
@@ -228,10 +247,10 @@ class _IdlePanel extends StatelessWidget {
           ),
           const SizedBox(height: LuxSpacing.lg),
           if (!state.isAvailable) ...[
-            const SectionHeader(title: 'Conectarse'),
+            SectionHeader(title: l.driverGoOnline),
             const SizedBox(height: LuxSpacing.md),
             LuxButton(
-              label: 'Conectarse',
+              label: l.driverGoOnline,
               icon: Icons.power_settings_new_rounded,
               onPressed: () {
                 final s = context.read<AuthBloc>().state;
@@ -246,6 +265,7 @@ class _IdlePanel extends StatelessWidget {
           ],
         ],
       );
+  }
 }
 
 // ── Status banner ──────────────────────────────────────────────────────────
@@ -283,7 +303,7 @@ class _StatusBanner extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    isAvailable ? 'Estás conectado' : 'Estás desconectado',
+                    isAvailable ? context.l10n.driverOnlineTitle : context.l10n.driverOfflineTitle,
                     style: LuxTypography.titleMedium.copyWith(
                       color:
                           isAvailable ? LuxColors.success : LuxColors.white,
@@ -291,8 +311,8 @@ class _StatusBanner extends StatelessWidget {
                   ),
                   Text(
                     isAvailable
-                        ? 'Esperando nuevas solicitudes de viaje'
-                        : 'Activa el interruptor para conectarte',
+                        ? context.l10n.driverOnlineSubtitle
+                        : context.l10n.driverOfflineSubtitle,
                     style: LuxTypography.caption,
                   ),
                 ],
@@ -309,12 +329,12 @@ class _ActiveRidePanel extends StatelessWidget {
   const _ActiveRidePanel({required this.booking});
   final Booking booking;
 
-  String get _actionLabel {
+  String _actionLabel(AppLocalizations l) {
     switch (booking.status) {
-      case BookingStatus.confirmed:      return 'Ir al punto de recogida';
-      case BookingStatus.driverArriving: return 'He llegado';
-      case BookingStatus.driverArrived:  return 'Iniciar viaje';
-      case BookingStatus.inProgress:     return 'Completar viaje';
+      case BookingStatus.confirmed:      return l.driverActionGoToPickup;
+      case BookingStatus.driverArriving: return l.driverActionArrived;
+      case BookingStatus.driverArrived:  return l.driverActionStartTrip;
+      case BookingStatus.inProgress:     return l.driverActionCompleteTrip;
       default:                           return '';
     }
   }
@@ -351,7 +371,7 @@ class _ActiveRidePanel extends StatelessWidget {
       if (!context.mounted) return;
 
       if (availableMaps.isEmpty) {
-        showLuxSnackbar(context, 'No hay aplicaciones de mapas disponibles', isError: true);
+        showLuxSnackbar(context, context.l10n.driverNoMapsApps, isError: true);
         return;
       }
 
@@ -364,7 +384,7 @@ class _ActiveRidePanel extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(LuxSpacing.md),
-                  child: Text('Navegar hacia ${target.address}',
+                  child: Text(context.l10n.driverNavigateTo(target.address),
                       style: LuxTypography.titleMedium,
                       maxLines: 1, overflow: TextOverflow.ellipsis),
                 ),
@@ -398,7 +418,7 @@ class _ActiveRidePanel extends StatelessWidget {
       );
     } catch (e) {
       if (context.mounted) {
-        showLuxSnackbar(context, 'No se pudieron abrir los mapas', isError: true);
+        showLuxSnackbar(context, context.l10n.driverMapsOpenError, isError: true);
       }
     }
   }
@@ -408,13 +428,14 @@ class _ActiveRidePanel extends StatelessWidget {
     final bool goingToPickup = booking.status == BookingStatus.confirmed || 
                                booking.status == BookingStatus.driverArriving;
     final targetPlace = goingToPickup ? booking.origin : booking.destination;
+    final l = context.l10n;
 
     return Padding(
       padding: const EdgeInsets.all(LuxSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionHeader(title: 'Viaje activo'),
+          SectionHeader(title: l.driverActiveRide),
           const SizedBox(height: LuxSpacing.md),
           LuxCard(
             child: Column(
@@ -435,7 +456,7 @@ class _ActiveRidePanel extends StatelessWidget {
                 _AddressRow(
                   icon: Icons.radio_button_checked,
                   color: LuxColors.accent,
-                  label: 'Recogida',
+                  label: l.tripPickup,
                   address: booking.origin.address,
                   isCurrent: goingToPickup,
                 ),
@@ -443,7 +464,7 @@ class _ActiveRidePanel extends StatelessWidget {
                 _AddressRow(
                   icon: Icons.location_on_rounded,
                   color: LuxColors.error,
-                  label: 'Destino',
+                  label: l.tripDestination,
                   address: booking.destination.address,
                   isCurrent: !goingToPickup,
                 ),
@@ -457,10 +478,10 @@ class _ActiveRidePanel extends StatelessWidget {
           const SizedBox(height: LuxSpacing.md),
           PassengerCard(booking: booking),
           const SizedBox(height: LuxSpacing.md),
-          LuxButton(label: _actionLabel, onPressed: () => _advance(context)),
+          LuxButton(label: _actionLabel(l), onPressed: () => _advance(context)),
           const SizedBox(height: LuxSpacing.sm),
           LuxOutlinedButton(
-            label: 'Navegar hacia ${goingToPickup ? 'RECOGIDA' : 'DESTINO'}',
+            label: goingToPickup ? l.driverNavigateToPickup : l.driverNavigateToDestination,
             icon: Icons.navigation_outlined,
             onPressed: () => _openMaps(context, targetPlace),
           ),
@@ -567,7 +588,11 @@ class _StatCard extends StatelessWidget {
                 style:
                     LuxTypography.headlineLarge.copyWith(color: LuxColors.accent)),
             const SizedBox(height: 4),
-            Text(label.toUpperCase(), style: LuxTypography.caption),
+            Text(label.toUpperCase(),
+                style: LuxTypography.caption,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis),
           ],
         ),
       );
@@ -613,6 +638,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return SafeArea(
       child: Container(
         decoration: const BoxDecoration(
@@ -647,8 +673,8 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     children: [
                       Text(
                         widget.booking.dispatch?.targeted == true
-                            ? 'SOLICITUD EXCLUSIVA PARA TI'
-                            : 'NUEVA SOLICITUD DE VIAJE',
+                            ? l.driverRequestExclusive
+                            : l.driverRequestNew,
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 10,
@@ -659,7 +685,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        widget.booking.vehicleClass.label,
+                        widget.booking.vehicleClass.localizedLabel(l),
                         style: LuxTypography.headlineLarge,
                       ),
                       if (widget.booking.dispatch?.targeted == true &&
@@ -687,10 +713,15 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                   const Icon(Icons.attach_money_rounded,
                       color: LuxColors.accent, size: 20),
                   const SizedBox(width: 8),
-                  const Text('Tarifa estimada', style: LuxTypography.caption),
-                  const Spacer(),
+                  Expanded(
+                    child: Text(l.driverEstimatedFare,
+                        style: LuxTypography.caption,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis),
+                  ),
+                  const SizedBox(width: 8),
                   Text(
-                    'Bs${widget.booking.estimatedPrice.toStringAsFixed(2)}',
+                    LuxMoney.format(widget.booking.estimatedPrice, cents: true),
                     style: const TextStyle(
                       fontFamily: 'Cormorant Garamond',
                       fontSize: 30,
@@ -730,7 +761,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                    _RouteItem(
                     icon: Icons.radio_button_checked,
                     color: LuxColors.accent,
-                    label: 'RECOGIDA',
+                    label: l.tripPickup.toUpperCase(),
                     address: widget.booking.origin.address,
                   ),
                   Padding(
@@ -744,7 +775,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                   _RouteItem(
                     icon: Icons.location_on_rounded,
                     color: LuxColors.error,
-                    label: 'DESTINO',
+                    label: l.tripDestination.toUpperCase(),
                     address: widget.booking.destination.address,
                   ),
                 ],
@@ -783,7 +814,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                   child: OutlinedButton.icon(
                     onPressed: widget.onDecline,
                     icon: const Icon(Icons.close_rounded, size: 18),
-                    label: const Text('Rechazar'),
+                    label: Text(l.driverDecline, maxLines: 1, overflow: TextOverflow.ellipsis),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: LuxColors.error,
                       side: const BorderSide(color: LuxColors.error),
@@ -805,7 +836,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                   child: ElevatedButton.icon(
                     onPressed: widget.onAccept,
                     icon: const Icon(Icons.check_rounded, size: 18),
-                    label: const Text('Aceptar viaje'),
+                    label: Text(l.driverAcceptRide, maxLines: 1, overflow: TextOverflow.ellipsis),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: LuxColors.accent,
                       foregroundColor: Colors.black,
@@ -908,7 +939,7 @@ class _OfferCountdownState extends State<_OfferCountdown> {
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Text(
-        left > 0 ? 'Responde en ${left}s' : 'Oferta por expirar',
+        left > 0 ? context.l10n.driverRespondIn(left) : context.l10n.driverOfferExpiring,
         style: LuxTypography.caption.copyWith(
           color: left > 15 ? LuxColors.whiteSecondary : LuxColors.warning,
         ),

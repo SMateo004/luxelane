@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../app/theme/app_theme.dart';
+import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
 import '../models/models.dart';
 
@@ -84,7 +86,7 @@ class LuxSkeletonList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'Cargando',
+        label: context.l10n.commonLoading,
         child: ListView.separated(
           padding: const EdgeInsets.all(LuxSpacing.md),
           physics: const NeverScrollableScrollPhysics(),
@@ -126,13 +128,14 @@ class LuxSkeletonList extends StatelessWidget {
 class LuxErrorState extends StatelessWidget {
   const LuxErrorState({
     super.key,
-    this.title = 'Algo no salió bien',
+    this.title,
     required this.message,
     this.onRetry,
     this.light = false,
   });
 
-  final String title;
+  /// Defaults to the generic "something went wrong" text.
+  final String? title;
   final String message;
   final VoidCallback? onRetry;
   final bool light;
@@ -150,7 +153,7 @@ class LuxErrorState extends StatelessWidget {
             Icon(Icons.wifi_tethering_error_rounded, size: 40,
                 color: light ? LuxPalette.champagneDeep : LuxColors.accent),
             const SizedBox(height: LuxSpacing.md),
-            Text(title,
+            Text(title ?? context.l10n.commonGenericError,
                 textAlign: TextAlign.center,
                 style: LuxTypography.headlineLarge.copyWith(color: primary)),
             const SizedBox(height: LuxSpacing.sm),
@@ -164,7 +167,7 @@ class LuxErrorState extends StatelessWidget {
                 child: OutlinedButton.icon(
                   onPressed: onRetry,
                   icon: const Icon(Icons.refresh_rounded, size: 18),
-                  label: const Text('Reintentar'),
+                  label: Text(context.l10n.commonRetry),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(180, 48),
                     foregroundColor: light ? LuxPalette.champagneDeep : LuxColors.accent,
@@ -200,14 +203,20 @@ class PriceBreakdown extends StatelessWidget {
   final int hours;
   final bool light;
 
-  List<(String, double)> get lines {
+  List<(String, double)> lines(AppLocalizations l) {
     final r = DefaultPricing.rules[vehicleClass]![serviceType]!;
     if (serviceType == ServiceType.byTheHour) {
-      return [('$hours h × ${LuxMoney.format(r['perHour']!)}', r['perHour']! * hours)];
+      return [(l.tripPriceHoursLine(hours, LuxMoney.format(r['perHour']!)), r['perHour']! * hours)];
     }
     return [
-      ('Tarifa base', r['base']!),
-      ('${km.toStringAsFixed(1)} km × ${LuxMoney.format(r['perKm']!, cents: true)}', km * r['perKm']!),
+      (l.tripPriceBaseFare, r['base']!),
+      (
+        l.tripPriceDistanceLine(
+          NumberFormat('0.0').format(km),
+          LuxMoney.format(r['perKm']!, cents: true),
+        ),
+        km * r['perKm']!
+      ),
     ];
   }
 
@@ -218,7 +227,9 @@ class PriceBreakdown extends StatelessWidget {
     final ink = light ? LuxPalette.ink : LuxColors.white;
     final muted = light ? LuxPalette.slate : LuxColors.whiteSecondary;
     final line = light ? LuxPalette.hairline : LuxColors.blackBorder;
-    final subtotal = lines.fold<double>(0, (a, l) => a + l.$2);
+    final l10n = context.l10n;
+    final items = lines(l10n);
+    final subtotal = items.fold<double>(0, (a, l) => a + l.$2);
     final minimumApplied = total > subtotal + 0.01;
 
     TextStyle style(Color c, {double size = 13, FontWeight w = FontWeight.w400}) =>
@@ -229,6 +240,7 @@ class PriceBreakdown extends StatelessWidget {
           child: Row(
             children: [
               Expanded(child: Text(label, style: style(strong ? ink : muted, w: strong ? FontWeight.w600 : FontWeight.w400))),
+              const SizedBox(width: 8),
               Text(value, style: style(ink, size: strong ? 16 : 13, w: strong ? FontWeight.w600 : FontWeight.w500)),
             ],
           ),
@@ -236,17 +248,17 @@ class PriceBreakdown extends StatelessWidget {
 
     return Semantics(
       container: true,
-      label: 'Desglose del precio',
+      label: l10n.tripPriceBreakdown,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          for (final l in lines) row(l.$1, LuxMoney.format(l.$2, cents: true)),
-          if (minimumApplied) row('Ajuste a tarifa mínima', LuxMoney.format(total - subtotal, cents: true)),
+          for (final l in items) row(l.$1, LuxMoney.format(l.$2, cents: true)),
+          if (minimumApplied) row(l10n.tripPriceMinimumAdjustment, LuxMoney.format(total - subtotal, cents: true)),
           Divider(height: 20, color: line),
-          row('Total estimado', LuxMoney.format(total.ceil()), strong: true),
+          row(l10n.tripPriceEstimatedTotal, LuxMoney.format(total.ceil()), strong: true),
           const SizedBox(height: 4),
           Text(
-            'El precio fijo final se confirma antes de reservar.',
+            l10n.tripPriceFinalNote,
             style: style(muted, size: 11),
           ),
         ],

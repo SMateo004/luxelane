@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/driver_bloc.dart';
 
 class DriverEarningsScreen extends StatelessWidget {
@@ -12,7 +13,7 @@ class DriverEarningsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ganancias')),
+      appBar: AppBar(title: Text(context.l10n.driverStatEarnings)),
       body: BlocBuilder<DriverBloc, DriverState>(
         builder: (context, state) {
           if (state is! DriverLoaded) {
@@ -27,7 +28,7 @@ class DriverEarningsScreen extends StatelessWidget {
             children: [
               _EarningsSummary(total: total, rides: completed.length),
               const SizedBox(height: LuxSpacing.lg),
-              const SectionHeader(title: 'Viajes completados'),
+              SectionHeader(title: context.l10n.driverCompletedTrips),
               const SizedBox(height: LuxSpacing.md),
               if (completed.isEmpty)
                 const _EmptyEarnings()
@@ -67,15 +68,18 @@ class _EarningsSummary extends StatelessWidget {
         ),
         child: Column(
           children: [
-            const Text('Ganancias totales', style: LuxTypography.caption),
+            Text(context.l10n.driverTotalEarnings, style: LuxTypography.caption),
             const SizedBox(height: LuxSpacing.sm),
-            Text(
-              'Bs${total.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontFamily: 'Cormorant Garamond',
-                fontSize: 48,
-                fontWeight: FontWeight.w600,
-                color: LuxColors.accent,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                LuxMoney.format(total, cents: true),
+                style: const TextStyle(
+                  fontFamily: 'Cormorant Garamond',
+                  fontSize: 48,
+                  fontWeight: FontWeight.w600,
+                  color: LuxColors.accent,
+                ),
               ),
             ),
             const SizedBox(height: LuxSpacing.md),
@@ -85,9 +89,11 @@ class _EarningsSummary extends StatelessWidget {
                 const Icon(Icons.check_circle_outline,
                     color: LuxColors.whiteTertiary, size: 14),
                 const SizedBox(width: LuxSpacing.xs),
-                Text(
-                  '$rides viaje${rides == 1 ? '' : 's'} completado${rides == 1 ? '' : 's'}',
-                  style: LuxTypography.caption,
+                Flexible(
+                  child: Text(
+                    context.l10n.driverCompletedCount(rides),
+                    style: LuxTypography.caption,
+                  ),
                 ),
               ],
             ),
@@ -109,8 +115,8 @@ class _EarningsCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    DateFormat('MMM d, yyyy · h:mm a')
-                        .format(booking.scheduledAt),
+                    '${DateFormat.yMMMd().format(booking.scheduledAt)} · '
+                    '${DateFormat.jm().format(booking.scheduledAt)}',
                     style: LuxTypography.caption,
                   ),
                   const SizedBox(height: 4),
@@ -134,7 +140,7 @@ class _EarningsCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'Bs${(booking.finalPrice ?? booking.estimatedPrice).toStringAsFixed(2)}',
+                  LuxMoney.format(booking.finalPrice ?? booking.estimatedPrice, cents: true),
                   style: LuxTypography.titleMedium
                       .copyWith(color: LuxColors.accent),
                 ),
@@ -147,7 +153,7 @@ class _EarningsCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(LuxRadius.sm),
                   ),
                   child: Text(
-                    'PAGADO',
+                    context.l10n.driverPaid,
                     style: LuxTypography.caption
                         .copyWith(color: LuxColors.success, fontSize: 9),
                   ),
@@ -163,17 +169,18 @@ class _EmptyEarnings extends StatelessWidget {
   const _EmptyEarnings();
 
   @override
-  Widget build(BuildContext context) => const Padding(
-        padding: EdgeInsets.symmetric(vertical: LuxSpacing.xl),
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: LuxSpacing.xl),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.attach_money,
+              const Icon(Icons.attach_money,
                   size: 48, color: LuxColors.whiteTertiary),
-              SizedBox(height: LuxSpacing.md),
-              Text('Aún no hay viajes completados',
-                  style: TextStyle(color: LuxColors.white)),
+              const SizedBox(height: LuxSpacing.md),
+              Text(context.l10n.driverNoCompletedTrips,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: LuxColors.white)),
             ],
           ),
         ),

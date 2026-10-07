@@ -15,6 +15,7 @@ import '../../../../core/utils/waiting_policy.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/trip_widgets.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../booking/presentation/bloc/booking_bloc.dart';
 import '../../../notifications/presentation/bloc/notification_bloc.dart';
@@ -82,7 +83,7 @@ class _RideScreenState extends State<RideScreen> {
     showDialog<void>(
       context: context,
       builder: (ctx) => _RatingDialog(
-        driverName: booking.chauffeur?.name ?? 'Tu chófer',
+        driverName: booking.chauffeur?.name ?? context.l10n.rideYourChauffeur,
         onSubmit: (rating, comment) async {
           final result = await sl<BookingRepository>().rateBooking(
             bookingId: booking.id,
@@ -93,21 +94,26 @@ class _RideScreenState extends State<RideScreen> {
           Navigator.of(ctx).pop();
           if (!mounted) return;
           result.fold(
-            (f) => showLuxSnackbar(context, f.message, isError: true),
-            (_) => showLuxSnackbar(context, '¡Gracias por tu calificación!'),
+            (f) {
+              debugPrint('Rating failed: ${f.message}');
+              showLuxSnackbar(context, context.l10n.commonGenericError, isError: true);
+            },
+            (_) => showLuxSnackbar(context, context.l10n.rideRatingThanks),
           );
         },
       ),
     );
   }
 
+  /// Stored in Firestore with the rider's current app language.
   void _createStatusNotification(BookingStatus status, {required String riderId}) {
+    final l = context.l10n;
     final (String title, String body, String type) = switch (status) {
-      BookingStatus.confirmed => ('Chófer asignado', 'Tu chófer confirmó la reserva.', 'booking_confirmed'),
-      BookingStatus.driverArriving => ('El chófer está en camino', 'Tu chófer se dirige a tu punto de recogida.', 'driver_arriving'),
-      BookingStatus.driverArrived => ('El chófer ha llegado', 'Tu chófer te espera en el punto de recogida.', 'driver_arrived'),
-      BookingStatus.inProgress => ('Viaje iniciado', 'Ya estás en camino hacia tu destino.', 'ride_started'),
-      BookingStatus.completed => ('Viaje completado', '¡Has llegado! Gracias por viajar con Luxelane.', 'ride_completed'),
+      BookingStatus.confirmed => (l.rideNotifAssignedTitle, l.rideNotifAssignedBody, 'booking_confirmed'),
+      BookingStatus.driverArriving => (l.rideNotifArrivingTitle, l.rideNotifArrivingBody, 'driver_arriving'),
+      BookingStatus.driverArrived => (l.rideNotifArrivedTitle, l.rideNotifArrivedBody, 'driver_arrived'),
+      BookingStatus.inProgress => (l.rideNotifStartedTitle, l.rideNotifStartedBody, 'ride_started'),
+      BookingStatus.completed => (l.rideNotifCompletedTitle, l.rideNotifCompletedBody, 'ride_completed'),
       _ => ('', '', ''),
     };
     if (type.isEmpty) return;
@@ -224,22 +230,25 @@ class _TripPanel extends StatelessWidget {
   final VoidCallback onRate;
 
   /// Headline + supporting line, ETA-aware.
-  (String, String?) _headline() {
+  (String, String?) _headline(AppLocalizations l) {
     final b = booking;
-    if (b == null) return ('Cargando tu reserva…', null);
-    final pickup = DateFormat('EEE d MMM · HH:mm', 'es').format(b.effectivePickup);
+    if (b == null) return (l.rideLoading, null);
+    final pickup = l.ridePickupAt(
+      '${DateFormat.MMMEd().format(b.effectivePickup)} · ${DateFormat.jm().format(b.effectivePickup)}',
+    );
     final eta = _eta();
+    final etaText = eta != null ? localizedDuration(l, eta) : null;
     return switch (status) {
-      BookingStatus.pending => ('Asignando a tu chófer', 'Recogida $pickup'),
+      BookingStatus.pending => (l.rideAssigning, pickup),
       BookingStatus.confirmed =>
-        eta != null ? ('Tu chófer llega en ${Eta.format(eta)}', 'Recogida $pickup') : ('Chófer confirmado', 'Recogida $pickup'),
+        etaText != null ? (l.rideChauffeurArrivesIn(etaText), pickup) : (l.rideChauffeurConfirmed, pickup),
       BookingStatus.driverArriving =>
-        eta != null ? ('Llega en ${Eta.format(eta)}', 'Tu chófer está en camino') : ('Tu chófer está en camino', null),
-      BookingStatus.driverArrived => ('Tu chófer te espera', b.chauffeur != null ? '${b.chauffeur!.vehicleLine} · ${b.chauffeur!.plate}' : null),
+        etaText != null ? (l.rideArrivesIn(etaText), l.rideChauffeurOnTheWay) : (l.rideChauffeurOnTheWay, null),
+      BookingStatus.driverArrived => (l.rideChauffeurWaiting, b.chauffeur != null ? '${b.chauffeur!.vehicleLine} · ${b.chauffeur!.plate}' : null),
       BookingStatus.inProgress =>
-        eta != null ? ('Llegas en ${Eta.format(eta)}', b.destination.displayName) : ('En camino a tu destino', b.destination.displayName),
-      BookingStatus.completed => ('¡Has llegado!', 'Gracias por viajar con Luxelane'),
-      BookingStatus.cancelled => ('Reserva cancelada', null),
+        etaText != null ? (l.rideYouArriveIn(etaText), b.destination.displayName) : (l.rideHeadingToDestination, b.destination.displayName),
+      BookingStatus.completed => (l.rideArrived, l.rideThanks),
+      BookingStatus.cancelled => (l.rideCancelled, null),
     };
   }
 
@@ -253,7 +262,8 @@ class _TripPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (title, subtitle) = _headline();
+    final l10n = context.l10n;
+    final (title, subtitle) = _headline(l10n);
     final b = booking;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -300,7 +310,7 @@ class _TripPanel extends StatelessWidget {
         if (status == BookingStatus.completed && b != null) ...[
           const SizedBox(height: LuxSpacing.md),
           if (b.riderRating == null)
-            LuxButton(label: 'Calificar viaje', onPressed: onRate)
+            LuxButton(label: l10n.rideRateTrip, onPressed: onRate)
           else
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -314,12 +324,12 @@ class _TripPanel extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Text('Gracias por calificar', style: LuxTypography.bodyMedium),
+                Flexible(child: Text(l10n.rideThanksForRating, style: LuxTypography.bodyMedium)),
               ],
             ),
           const SizedBox(height: LuxSpacing.sm),
           LuxOutlinedButton(
-            label: 'Ver recibo',
+            label: l10n.rideViewReceipt,
             icon: Icons.receipt_long_outlined,
             onPressed: () => context.push('/viajes/${b.id}/recibo', extra: b),
           ),
@@ -348,7 +358,7 @@ class _LiveDot extends StatelessWidget {
             decoration: const BoxDecoration(color: LuxColors.success, shape: BoxShape.circle),
           ),
           const SizedBox(width: 6),
-          Text('EN VIVO', style: LuxTypography.caption.copyWith(letterSpacing: 1.6, color: LuxColors.success)),
+          Text(context.l10n.rideLive, style: LuxTypography.caption.copyWith(letterSpacing: 1.6, color: LuxColors.success)),
         ],
       );
 }
@@ -357,18 +367,18 @@ class _AssigningCard extends StatelessWidget {
   const _AssigningCard();
 
   @override
-  Widget build(BuildContext context) => const LuxCard(
+  Widget build(BuildContext context) => LuxCard(
         child: Row(
           children: [
-            SizedBox(
+            const SizedBox(
               width: 22,
               height: 22,
               child: CircularProgressIndicator(strokeWidth: 2, color: LuxColors.accent),
             ),
-            SizedBox(width: LuxSpacing.md),
+            const SizedBox(width: LuxSpacing.md),
             Expanded(
               child: Text(
-                'Estamos confirmando a tu chófer. Te avisaremos apenas esté asignado.',
+                context.l10n.rideAssigningBody,
                 style: LuxTypography.bodyMedium,
               ),
             ),
@@ -386,12 +396,13 @@ class _ChauffeurCard extends StatelessWidget {
 
   Future<void> _launch(BuildContext context, Uri uri) async {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication) && context.mounted) {
-      showLuxSnackbar(context, 'No se pudo abrir la aplicación', isError: true);
+      showLuxSnackbar(context, context.l10n.commonCouldNotOpenApp, isError: true);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final phone = chauffeur.phone;
     final canContact = showContact && phone != null && phone.isNotEmpty;
     return LuxCard(
@@ -422,11 +433,13 @@ class _ChauffeurCard extends StatelessWidget {
                       children: [
                         const Icon(Icons.verified_user_outlined, size: 13, color: LuxColors.accent),
                         const SizedBox(width: 4),
-                        Text(
-                          chauffeur.totalRides > 0
-                              ? 'Verificado · ${chauffeur.totalRides} viajes'
-                              : 'Chófer verificado',
-                          style: LuxTypography.caption,
+                        Flexible(
+                          child: Text(
+                            chauffeur.totalRides > 0
+                                ? l.rideVerifiedTrips(chauffeur.totalRides)
+                                : l.rideVerifiedChauffeur,
+                            style: LuxTypography.caption,
+                          ),
                         ),
                       ],
                     ),
@@ -467,7 +480,7 @@ class _ChauffeurCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: LuxOutlinedButton(
-                    label: 'Llamar',
+                    label: l.commonCall,
                     icon: Icons.call_outlined,
                     onPressed: () => _launch(context, Uri(scheme: 'tel', path: _digits(phone))),
                   ),
@@ -475,7 +488,7 @@ class _ChauffeurCard extends StatelessWidget {
                 const SizedBox(width: LuxSpacing.sm),
                 Expanded(
                   child: LuxOutlinedButton(
-                    label: 'WhatsApp',
+                    label: l.commonWhatsApp,
                     icon: Icons.chat_outlined,
                     onPressed: () => _launch(
                       context,
@@ -499,7 +512,8 @@ class _FlightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final time = DateFormat('HH:mm', 'es');
+    final l = context.l10n;
+    final time = DateFormat.jm();
     final color = flight.cancelled
         ? LuxColors.error
         : flight.delayed
@@ -522,27 +536,33 @@ class _FlightCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Vuelo ${flight.number}${flight.terminal != null ? ' · Terminal ${flight.terminal}' : ''}',
+                  flight.terminal != null
+                      ? l.rideFlightTitleTerminal(flight.number, flight.terminal!)
+                      : l.rideFlightTitle(flight.number),
                   style: LuxTypography.titleMedium,
                 ),
                 const SizedBox(height: 2),
                 Text(
                   [
-                    if (arrival != null) '${flight.arrived ? 'Aterrizó' : 'Llega'} ${time.format(arrival)}',
-                    'Recogida ${time.format(pickup)}',
+                    if (arrival != null)
+                      flight.arrived
+                          ? l.rideFlightLandedAt(time.format(arrival))
+                          : l.rideFlightArrivesAt(time.format(arrival)),
+                    l.ridePickupAt(time.format(pickup)),
                   ].join(' · '),
                   style: LuxTypography.bodyMedium,
                 ),
               ],
             ),
           ),
+          const SizedBox(width: LuxSpacing.sm),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(LuxRadius.sm),
             ),
-            child: Text(flight.label, style: LuxTypography.caption.copyWith(color: color)),
+            child: Text(flight.localizedLabel(l), style: LuxTypography.caption.copyWith(color: color)),
           ),
         ],
       ),
@@ -577,7 +597,7 @@ class _TopBar extends StatelessWidget {
           children: [
             Semantics(
               button: true,
-              label: 'Volver al inicio',
+              label: context.l10n.rideBackHome,
               child: Material(
                 color: LuxColors.blackSurface,
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
@@ -651,7 +671,7 @@ class _RatingDialogState extends State<_RatingDialog> {
           borderRadius: BorderRadius.circular(LuxRadius.lg),
           side: const BorderSide(color: LuxColors.blackBorder),
         ),
-        title: const Text('Califica tu viaje',
+        title: Text(context.l10n.rideRatingTitle,
             style: LuxTypography.titleMedium, textAlign: TextAlign.center),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -664,7 +684,7 @@ class _RatingDialogState extends State<_RatingDialog> {
               children: List.generate(5, (i) {
                 final star = i + 1;
                 return IconButton(
-                  tooltip: '$star ${star == 1 ? 'estrella' : 'estrellas'}',
+                  tooltip: context.l10n.rideRatingStars(star),
                   onPressed: () => setState(() => _rating = star),
                   icon: Icon(
                     star <= _rating ? Icons.star_rounded : Icons.star_outline_rounded,
@@ -675,7 +695,7 @@ class _RatingDialogState extends State<_RatingDialog> {
               }),
             ),
             Text(
-              _ratingLabel(_rating),
+              _ratingLabel(context.l10n, _rating),
               style: LuxTypography.caption.copyWith(color: LuxColors.accent),
             ),
             const SizedBox(height: LuxSpacing.md),
@@ -684,13 +704,13 @@ class _RatingDialogState extends State<_RatingDialog> {
               maxLines: 2,
               maxLength: 500,
               style: LuxTypography.bodyLarge,
-              decoration: const InputDecoration(hintText: 'Comentario (opcional)'),
+              decoration: InputDecoration(hintText: context.l10n.rideRatingCommentHint),
             ),
           ],
         ),
         actions: [
           LuxButton(
-            label: 'Enviar',
+            label: context.l10n.commonSend,
             loading: _sending,
             onPressed: _sending
                 ? null
@@ -705,11 +725,11 @@ class _RatingDialogState extends State<_RatingDialog> {
         actionsPadding: const EdgeInsets.fromLTRB(LuxSpacing.md, 0, LuxSpacing.md, LuxSpacing.md),
       );
 
-  String _ratingLabel(int r) => switch (r) {
-        5 => 'Excelente',
-        4 => 'Bueno',
-        3 => 'Regular',
-        2 => 'Malo',
-        _ => 'Muy malo',
+  String _ratingLabel(AppLocalizations l, int r) => switch (r) {
+        5 => l.rideRatingExcellent,
+        4 => l.rideRatingGood,
+        3 => l.rideRatingFair,
+        2 => l.rideRatingPoor,
+        _ => l.rideRatingVeryPoor,
       };
 }

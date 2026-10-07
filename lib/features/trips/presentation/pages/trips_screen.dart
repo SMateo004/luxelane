@@ -7,6 +7,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_states.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../booking/presentation/bloc/booking_bloc.dart';
 
@@ -48,10 +49,10 @@ class _TripsScreenState extends State<TripsScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Mis viajes'),
+          title: Text(context.l10n.tripsTitle),
           actions: [
             IconButton(
-              tooltip: 'Actualizar',
+              tooltip: context.l10n.commonRefresh,
               icon: const Icon(Icons.refresh_rounded),
               onPressed: _loadTrips,
             ),
@@ -66,7 +67,7 @@ class _TripsScreenState extends State<TripsScreen> {
             if (trips == null) {
               if (state is BookingError) {
                 return LuxErrorState(
-                  message: 'No pudimos cargar tus viajes. Revisa tu conexión.',
+                  message: context.l10n.tripsLoadError,
                   onRetry: _loadTrips,
                 );
               }
@@ -74,8 +75,8 @@ class _TripsScreenState extends State<TripsScreen> {
             }
             if (trips.isEmpty) {
               return EmptyState(
-                message: 'Aún no tienes viajes.\nReserva tu primera experiencia.',
-                actionLabel: 'Reservar ahora',
+                message: context.l10n.tripsEmpty,
+                actionLabel: context.l10n.tripsBookNow,
                 onAction: () => context.go('/'),
                 icon: Icons.directions_car_outlined,
               );
@@ -93,12 +94,12 @@ class _TripsScreenState extends State<TripsScreen> {
                 padding: const EdgeInsets.all(LuxSpacing.md),
                 children: [
                   if (upcoming.isNotEmpty) ...[
-                    const _SectionLabel('PRÓXIMOS'),
+                    _SectionLabel(context.l10n.tripsUpcoming),
                     for (final b in upcoming) _TripCard(booking: b),
                     const SizedBox(height: LuxSpacing.lg),
                   ],
                   if (past.isNotEmpty) ...[
-                    const _SectionLabel('ANTERIORES'),
+                    _SectionLabel(context.l10n.tripsPast),
                     for (final b in past) _TripCard(booking: b),
                   ],
                 ],
@@ -129,17 +130,18 @@ class _TripCard extends StatelessWidget {
   const _TripCard({required this.booking});
   final Booking booking;
 
-  String get _route {
+  String _route(AppLocalizations l) {
     final o = booking.origin.displayName;
     if (booking.serviceType == ServiceType.byTheHour) {
-      return '$o · ${booking.hours ?? 2} h';
+      return l.tripsRouteByHour(o, booking.hours ?? 2);
     }
     return '$o → ${booking.destination.displayName}';
   }
 
   String get _price => LuxMoney.format(booking.finalPrice ?? booking.estimatedPrice);
 
-  String get _date => DateFormat('d MMM yyyy · HH:mm', 'es').format(booking.effectivePickup);
+  String get _date => '${DateFormat.yMMMd().format(booking.effectivePickup)} · '
+      '${DateFormat.jm().format(booking.effectivePickup)}';
 
   void _open(BuildContext context) {
     switch (booking.status) {
@@ -182,12 +184,13 @@ class _TripCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(_route,
+                        Text(_route(context.l10n),
                             style: LuxTypography.titleMedium,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis),
                         const SizedBox(height: 2),
-                        Text(booking.vehicleClass.label, style: LuxTypography.bodyMedium),
+                        Text(booking.vehicleClass.localizedLabel(context.l10n),
+                            style: LuxTypography.bodyMedium),
                         const SizedBox(height: 2),
                         Text(_date, style: LuxTypography.caption),
                       ],

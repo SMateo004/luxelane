@@ -220,11 +220,17 @@ class DriverOnboardingRequired extends DriverState {
   const DriverOnboardingRequired();
 }
 
+/// Why the driver screen cannot load. The UI maps it to a localized text.
+enum DriverErrorKind { unauthorized, connection }
+
 class DriverError extends DriverState {
-  const DriverError(this.message);
+  const DriverError(this.message, {this.kind = DriverErrorKind.connection});
+
+  /// Technical detail for logs; never shown to the user.
   final String message;
+  final DriverErrorKind kind;
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, kind];
 }
 
 // ---------------------------------------------------------------------------
@@ -276,7 +282,8 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       final user = userResult.fold((f) => null, (u) => u);
 
       if (user == null || user.role != UserRole.driver) {
-        emit(const DriverError('Unauthorized: Access restricted to drivers.'));
+        emit(const DriverError('Unauthorized: Access restricted to drivers.',
+            kind: DriverErrorKind.unauthorized));
         return;
       }
 

@@ -9,6 +9,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
 
@@ -35,13 +36,24 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
   final _model         = TextEditingController();
   final _year          = TextEditingController(text: '2024');
   final _plate         = TextEditingController();
-  final _color         = TextEditingController(text: 'Negro');
+  final _color         = TextEditingController();
+  bool _colorDefaulted = false;
   VehicleClass _vehicleClass = VehicleClass.business;
 
   // License fields
   final _licenseForm   = GlobalKey<FormState>();
   final _licenseNumber = TextEditingController();
   final _licenseExpiry = TextEditingController();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Pre-fill the most common colour, in the driver's language.
+    if (!_colorDefaulted) {
+      _colorDefaulted = true;
+      _color.text = context.l10n.driverOnbDefaultColor;
+    }
+  }
 
   @override
   void dispose() {
@@ -105,10 +117,11 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
       context.read<DriverBloc>().add(DriverStarted(userId: driverId));
       context.go('/driver');
     } catch (e) {
+      debugPrint('Driver onboarding failed: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text(context.l10n.driverOnbSaveError),
             backgroundColor: LuxColors.error,
           ),
         );
@@ -120,6 +133,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return Scaffold(
       backgroundColor: LuxColors.black,
       appBar: AppBar(
@@ -129,7 +143,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
           TextButton(
             onPressed: () =>
                 context.read<AuthBloc>().add(const LogoutRequested()),
-            child: Text('Cerrar sesión',
+            child: Text(l.driverOnbLogout,
                 style: LuxTypography.caption
                     .copyWith(color: LuxColors.whiteTertiary)),
           ),
@@ -146,10 +160,10 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
               const SizedBox(height: LuxSpacing.xl),
 
               if (_step == 0) ...[
-                const Text('Tu vehículo',
+                Text(l.driverOnbVehicleTitle,
                     style: LuxTypography.displayMedium),
                 const SizedBox(height: LuxSpacing.xs),
-                const Text('Registra el vehículo que vas a conducir.',
+                Text(l.driverOnbVehicleSubtitle,
                     style: LuxTypography.bodyMedium),
                 const SizedBox(height: LuxSpacing.xl),
                 _VehicleForm(
@@ -165,7 +179,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
                 ),
                 const SizedBox(height: LuxSpacing.xl),
                 LuxButton(
-                  label: 'Continuar',
+                  label: l.commonContinue,
                   onPressed: () {
                     if (_vehicleForm.currentState!.validate()) {
                       setState(() => _step = 1);
@@ -173,11 +187,10 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
                   },
                 ),
               ] else ...[
-                const Text('Licencia de conducir',
+                Text(l.driverOnbLicenseTitle,
                     style: LuxTypography.displayMedium),
                 const SizedBox(height: LuxSpacing.xs),
-                const Text(
-                    'Tus documentos serán revisados antes de que puedas aceptar viajes.',
+                Text(l.driverOnbLicenseSubtitle,
                     style: LuxTypography.bodyMedium),
                 const SizedBox(height: LuxSpacing.xl),
                 _LicenseForm(
@@ -202,7 +215,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
                       const SizedBox(width: LuxSpacing.sm),
                       Expanded(
                         child: Text(
-                          'Un administrador verificará tus documentos antes de que puedas conectarte.',
+                          l.driverOnbReviewNotice,
                           style: LuxTypography.caption
                               .copyWith(color: LuxColors.accent),
                         ),
@@ -215,14 +228,14 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
                   children: [
                     Expanded(
                       child: LuxOutlinedButton(
-                        label: 'Atrás',
+                        label: l.driverOnbBack,
                         onPressed: () => setState(() => _step = 0),
                       ),
                     ),
                     const SizedBox(width: LuxSpacing.md),
                     Expanded(
                       child: LuxButton(
-                        label: 'Enviar',
+                        label: l.commonSend,
                         loading: _saving,
                         onPressed: _saving ? null : _submit,
                       ),
@@ -297,13 +310,16 @@ class _VehicleForm extends StatelessWidget {
   static const _classes = VehicleClass.values;
 
   @override
-  Widget build(BuildContext context) => Form(
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    String? required(String? v) => v == null || v.trim().isEmpty ? l.commonRequired : null;
+    return Form(
         key: formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Vehicle class selector
-            const Text('Categoría del vehículo', style: LuxTypography.caption),
+            Text(l.driverOnbVehicleClass, style: LuxTypography.caption),
             const SizedBox(height: LuxSpacing.sm),
             Wrap(
               spacing: LuxSpacing.sm,
@@ -326,7 +342,7 @@ class _VehicleForm extends StatelessWidget {
                             : LuxColors.blackBorder,
                       ),
                     ),
-                    child: Text(vc.label,
+                    child: Text(vc.localizedLabel(l),
                         style: LuxTypography.bodyMedium.copyWith(
                           color: sel
                               ? LuxColors.accent
@@ -341,21 +357,19 @@ class _VehicleForm extends StatelessWidget {
               children: [
                 Expanded(
                   child: LuxTextField(
-                    label: 'Marca',
+                    label: l.driverOnbMake,
                     controller: make,
                     prefixIcon: Icons.directions_car_outlined,
-                    validator: (v) =>
-                        v == null || v.trim().isEmpty ? 'Requerido' : null,
+                    validator: required,
                   ),
                 ),
                 const SizedBox(width: LuxSpacing.md),
                 Expanded(
                   child: LuxTextField(
-                    label: 'Modelo',
+                    label: l.driverOnbModel,
                     controller: model,
                     prefixIcon: Icons.car_repair_outlined,
-                    validator: (v) =>
-                        v == null || v.trim().isEmpty ? 'Requerido' : null,
+                    validator: required,
                   ),
                 ),
               ],
@@ -366,17 +380,16 @@ class _VehicleForm extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: LuxTextField(
-                    label: 'Placa',
+                    label: l.driverOnbPlate,
                     controller: plate,
                     prefixIcon: Icons.credit_card_outlined,
-                    validator: (v) =>
-                        v == null || v.trim().isEmpty ? 'Requerido' : null,
+                    validator: required,
                   ),
                 ),
                 const SizedBox(width: LuxSpacing.md),
                 Expanded(
                   child: LuxTextField(
-                    label: 'Año',
+                    label: l.driverOnbYear,
                     controller: year,
                     keyboardType: TextInputType.number,
                     inputFormatters: [
@@ -386,7 +399,7 @@ class _VehicleForm extends StatelessWidget {
                     validator: (v) {
                       final y = int.tryParse(v ?? '');
                       if (y == null || y < 2000 || y > 2030) {
-                        return 'Inválido';
+                        return l.driverOnbInvalid;
                       }
                       return null;
                     },
@@ -396,15 +409,15 @@ class _VehicleForm extends StatelessWidget {
             ),
             const SizedBox(height: LuxSpacing.md),
             LuxTextField(
-              label: 'Color',
+              label: l.driverOnbColor,
               controller: color,
               prefixIcon: Icons.palette_outlined,
-              validator: (v) =>
-                  v == null || v.trim().isEmpty ? 'Requerido' : null,
+              validator: required,
             ),
           ],
         ),
       );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -423,20 +436,22 @@ class _LicenseForm extends StatelessWidget {
   final TextEditingController licenseExpiry;
 
   @override
-  Widget build(BuildContext context) => Form(
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Form(
         key: formKey,
         child: Column(
           children: [
             LuxTextField(
-              label: 'Número de licencia',
+              label: l.driverOnbLicenseNumber,
               controller: licenseNumber,
               prefixIcon: Icons.badge_outlined,
               validator: (v) =>
-                  v == null || v.trim().isEmpty ? 'Requerido' : null,
+                  v == null || v.trim().isEmpty ? l.commonRequired : null,
             ),
             const SizedBox(height: LuxSpacing.md),
             LuxTextField(
-              label: 'Fecha de vencimiento (MM/AAAA)',
+              label: l.driverOnbLicenseExpiry,
               controller: licenseExpiry,
               keyboardType: TextInputType.number,
               prefixIcon: Icons.calendar_today_outlined,
@@ -445,17 +460,18 @@ class _LicenseForm extends StatelessWidget {
                 LengthLimitingTextInputFormatter(7),
               ],
               validator: (v) {
-                if (v == null || v.trim().isEmpty) return 'Requerido';
+                if (v == null || v.trim().isEmpty) return l.commonRequired;
                 final parts = v.split('/');
-                if (parts.length != 2) return 'Usa MM/AAAA';
+                if (parts.length != 2) return l.driverOnbExpiryFormat;
                 final m = int.tryParse(parts[0]);
                 final y = int.tryParse(parts[1]);
-                if (m == null || m < 1 || m > 12) return 'Mes inválido';
-                if (y == null || y < 2024) return 'Licencia vencida';
+                if (m == null || m < 1 || m > 12) return l.driverOnbInvalidMonth;
+                if (y == null || y < 2024) return l.driverOnbLicenseExpired;
                 return null;
               },
             ),
           ],
         ),
       );
+  }
 }

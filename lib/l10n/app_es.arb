@@ -22,6 +22,118 @@
   "commonSave": "Guardar",
   "commonSend": "Enviar",
   "commonWhatsApp": "WhatsApp",
+  "driverAcceptRide": "Aceptar viaje",
+  "driverActionArrived": "He llegado",
+  "driverActionCompleteTrip": "Completar viaje",
+  "driverActionGoToPickup": "Ir al punto de recogida",
+  "driverActionGoToPickupShort": "Ir a la recogida",
+  "driverActionStartTrip": "Iniciar viaje",
+  "driverActiveRide": "Viaje activo",
+  "driverCompletedCount": "{count, plural, =1{1 viaje completado} other{{count} viajes completados}}",
+  "@driverCompletedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "driverCompletedTrips": "Viajes completados",
+  "driverConnectionErrorTitle": "Error de conexión",
+  "@driverConnectionErrorTitle": {
+    "description": "Driver home: title when the driver data cannot load"
+  },
+  "driverDecline": "Rechazar",
+  "driverErrorUnauthorized": "Esta cuenta no tiene acceso de chófer.",
+  "@driverErrorUnauthorized": {
+    "description": "Driver home: signed-in user is not a chauffeur"
+  },
+  "driverEstimatedFare": "Tarifa estimada",
+  "driverGoOnline": "Conectarse",
+  "driverMapsOpenError": "No se pudieron abrir los mapas",
+  "driverMsgHeadToPickup": "Dirígete al punto de recogida",
+  "driverMsgInProgress": "Viaje en curso · ve al destino",
+  "driverMsgOnTheWay": "En camino a la recogida · llegando pronto",
+  "driverMsgWaitingPassenger": "Esperando al pasajero",
+  "driverNavigateTo": "Navegar hacia {address}",
+  "@driverNavigateTo": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "driverNavigateToDestination": "Navegar hacia el destino",
+  "driverNavigateToPickup": "Navegar hacia la recogida",
+  "driverNoCompletedTrips": "Aún no hay viajes completados",
+  "driverNoMapsApps": "No hay aplicaciones de mapas disponibles",
+  "driverOfferExpiring": "Oferta por expirar",
+  "driverOfflineSubtitle": "Activa el interruptor para conectarte",
+  "driverOfflineTitle": "Estás desconectado",
+  "driverOnbBack": "Atrás",
+  "driverOnbColor": "Color",
+  "driverOnbDefaultColor": "Negro",
+  "@driverOnbDefaultColor": {
+    "description": "Pre-filled vehicle colour"
+  },
+  "driverOnbExpiryFormat": "Usa MM/AAAA",
+  "driverOnbInvalid": "Inválido",
+  "driverOnbInvalidMonth": "Mes inválido",
+  "driverOnbLicenseExpired": "Licencia vencida",
+  "driverOnbLicenseExpiry": "Fecha de vencimiento (MM/AAAA)",
+  "driverOnbLicenseNumber": "Número de licencia",
+  "driverOnbLicenseSubtitle": "Tus documentos serán revisados antes de que puedas aceptar viajes.",
+  "driverOnbLicenseTitle": "Licencia de conducir",
+  "driverOnbLogout": "Cerrar sesión",
+  "driverOnbMake": "Marca",
+  "driverOnbModel": "Modelo",
+  "driverOnbPlate": "Placa",
+  "driverOnbReviewNotice": "Un administrador verificará tus documentos antes de que puedas conectarte.",
+  "driverOnbSaveError": "No pudimos guardar tus datos. Inténtalo de nuevo.",
+  "driverOnbVehicleClass": "Categoría del vehículo",
+  "driverOnbVehicleSubtitle": "Registra el vehículo que vas a conducir.",
+  "driverOnbVehicleTitle": "Tu vehículo",
+  "driverOnbYear": "Año",
+  "driverOnlineSubtitle": "Esperando nuevas solicitudes de viaje",
+  "driverOnlineTitle": "Estás conectado",
+  "driverPaid": "PAGADO",
+  "driverQueueAvailable": "SOLICITUDES DISPONIBLES",
+  "driverQueueEmptyBody": "Las nuevas reservas aparecerán aquí",
+  "driverQueueEmptyTitle": "Sin trabajos aún",
+  "driverQueueMyActive": "MIS TRABAJOS ACTIVOS",
+  "driverQueueOfflineBody": "Activa tu disponibilidad en la pestaña Inicio",
+  "driverQueueOfflineTitle": "Conéctate para recibir trabajos",
+  "driverQueueTitle": "Cola de trabajos",
+  "driverRequestExclusive": "SOLICITUD EXCLUSIVA PARA TI",
+  "@driverRequestExclusive": {
+    "description": "Incoming request sheet eyebrow (uppercase)"
+  },
+  "driverRequestNew": "NUEVA SOLICITUD DE VIAJE",
+  "@driverRequestNew": {
+    "description": "Incoming request sheet eyebrow (uppercase)"
+  },
+  "driverRespondIn": "Responde en {seconds}s",
+  "@driverRespondIn": {
+    "description": "Countdown to accept an exclusive offer",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "driverStatCompleted": "Completados",
+  "@driverStatCompleted": {
+    "description": "Stat card label (completed trips); shown uppercase"
+  },
+  "driverStatEarnings": "Ganancias",
+  "@driverStatEarnings": {
+    "description": "Stat card label, earnings tab and page title"
+  },
+  "driverTabHome": "Inicio",
+  "driverTabJobs": "Trabajos",
+  "driverTabProfile": "Perfil",
+  "driverTodaySummary": "Resumen de hoy",
+  "driverTotalEarnings": "Ganancias totales",
+  "driverTripNotFound": "Viaje no encontrado",
   "flightCancelled": "Cancelado",
   "flightDelayed": "Retrasado {minutes} min",
   "@flightDelayed": {
@@ -103,6 +215,155 @@
       }
     }
   },
+  "notifBellUnread": "{count, plural, =1{1 notificación sin leer} other{{count} notificaciones sin leer}}",
+  "@notifBellUnread": {
+    "description": "Bell tooltip / screen-reader label when there are unread notifications",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notifEmpty": "Aún no hay notificaciones",
+  "notifHoursAgo": "Hace {hours} h",
+  "@notifHoursAgo": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "notifJustNow": "Ahora",
+  "notifMarkAllRead": "Marcar todo como leído",
+  "notifMinutesAgo": "Hace {minutes} min",
+  "@notifMinutesAgo": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "notifTitle": "Notificaciones",
+  "rideArrived": "¡Has llegado!",
+  "rideArrivesIn": "Llega en {eta}",
+  "@rideArrivesIn": {
+    "placeholders": {
+      "eta": {
+        "type": "String"
+      }
+    }
+  },
+  "rideAssigning": "Asignando a tu chófer",
+  "rideAssigningBody": "Estamos confirmando a tu chófer. Te avisaremos apenas esté asignado.",
+  "rideBackHome": "Volver al inicio",
+  "rideCancelled": "Reserva cancelada",
+  "rideChauffeurArrivesIn": "Tu chófer llega en {eta}",
+  "@rideChauffeurArrivesIn": {
+    "description": "eta is a duration like '4 min'",
+    "placeholders": {
+      "eta": {
+        "type": "String"
+      }
+    }
+  },
+  "rideChauffeurConfirmed": "Chófer confirmado",
+  "rideChauffeurOnTheWay": "Tu chófer está en camino",
+  "rideChauffeurWaiting": "Tu chófer te espera",
+  "rideFlightArrivesAt": "Llega {time}",
+  "@rideFlightArrivesAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "rideFlightLandedAt": "Aterrizó {time}",
+  "@rideFlightLandedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "rideFlightTitle": "Vuelo {number}",
+  "@rideFlightTitle": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "rideFlightTitleTerminal": "Vuelo {number} · Terminal {terminal}",
+  "@rideFlightTitleTerminal": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "terminal": {
+        "type": "String"
+      }
+    }
+  },
+  "rideHeadingToDestination": "En camino a tu destino",
+  "rideLive": "EN VIVO",
+  "rideLoading": "Cargando tu reserva…",
+  "rideNotifArrivedBody": "Tu chófer te espera en el punto de recogida.",
+  "rideNotifArrivedTitle": "El chófer ha llegado",
+  "rideNotifArrivingBody": "Tu chófer se dirige a tu punto de recogida.",
+  "rideNotifArrivingTitle": "El chófer está en camino",
+  "rideNotifAssignedBody": "Tu chófer confirmó la reserva.",
+  "rideNotifAssignedTitle": "Chófer asignado",
+  "rideNotifCompletedBody": "¡Has llegado! Gracias por viajar con Luxelane.",
+  "rideNotifCompletedTitle": "Viaje completado",
+  "rideNotifStartedBody": "Ya estás en camino hacia tu destino.",
+  "rideNotifStartedTitle": "Viaje iniciado",
+  "ridePickupAt": "Recogida {time}",
+  "@ridePickupAt": {
+    "description": "Pickup date/time line; time is already formatted",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "rideRateTrip": "Calificar viaje",
+  "rideRatingCommentHint": "Comentario (opcional)",
+  "rideRatingExcellent": "Excelente",
+  "rideRatingFair": "Regular",
+  "rideRatingGood": "Bueno",
+  "rideRatingPoor": "Malo",
+  "rideRatingStars": "{count, plural, =1{1 estrella} other{{count} estrellas}}",
+  "@rideRatingStars": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rideRatingThanks": "¡Gracias por tu calificación!",
+  "rideRatingTitle": "Califica tu viaje",
+  "rideRatingVeryPoor": "Muy malo",
+  "rideThanks": "Gracias por viajar con Luxelane",
+  "rideThanksForRating": "Gracias por calificar",
+  "rideVerifiedChauffeur": "Chófer verificado",
+  "rideVerifiedTrips": "{count, plural, =1{Verificado · 1 viaje} other{Verificado · {count} viajes}}",
+  "@rideVerifiedTrips": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rideViewReceipt": "Ver recibo",
+  "rideYouArriveIn": "Llegas en {eta}",
+  "@rideYouArriveIn": {
+    "placeholders": {
+      "eta": {
+        "type": "String"
+      }
+    }
+  },
+  "rideYourChauffeur": "Tu chófer",
   "serviceByTheHour": "Por horas",
   "serviceByTheHourDesc": "Chófer a tu disposición por un tiempo determinado",
   "serviceOneWay": "Solo ida",
@@ -305,6 +566,179 @@
   "statusDriverArriving": "En camino",
   "statusInProgress": "En progreso",
   "statusPending": "Pendiente",
+  "tripDestination": "Destino",
+  "tripFlightNumber": "Vuelo {number}",
+  "@tripFlightNumber": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "tripFreeWaitLeft": "Espera gratuita: {minutes} min",
+  "@tripFreeWaitLeft": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "tripFreeWaitOver": "Espera gratuita terminada a las {time}",
+  "@tripFreeWaitOver": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "tripFreeWaitOverDriver": "Contacta al pasajero antes de retirarte.",
+  "tripFreeWaitOverRider": "Tu chófer sigue esperándote. Avísale si necesitas más tiempo.",
+  "tripFreeWaitUntil": "Hasta las {time} · {summary}",
+  "@tripFreeWaitUntil": {
+    "description": "summary is waitAirportSummary/waitCitySummary",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "tripMeetGreetBody": "Tu chófer te esperará en la salida de llegadas con un cartel con tu nombre.",
+  "tripMeetGreetBodyNamed": "Tu chófer te esperará en la salida de llegadas con un cartel con el nombre «{name}».",
+  "@tripMeetGreetBodyNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tripMeetGreetTitle": "Meet & greet en llegadas",
+  "tripMeetGreetWait": "{minutes} min de espera gratuita desde que aterriza tu vuelo.",
+  "@tripMeetGreetWait": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "tripNameSignSemantics": "Cartel con el nombre {name}. Toca para cerrar.",
+  "@tripNameSignSemantics": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tripNameSignTapToClose": "Toca la pantalla para cerrar",
+  "tripPassenger": "Pasajero",
+  "tripPickup": "Recogida",
+  "tripPriceBaseFare": "Tarifa base",
+  "tripPriceBreakdown": "Desglose del precio",
+  "tripPriceDistanceLine": "{km} km × {rate}",
+  "@tripPriceDistanceLine": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "tripPriceEstimatedTotal": "Total estimado",
+  "tripPriceFinalNote": "El precio fijo final se confirma antes de reservar.",
+  "tripPriceHoursLine": "{hours} h × {rate}",
+  "@tripPriceHoursLine": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "tripPriceMinimumAdjustment": "Ajuste a tarifa mínima",
+  "tripReceiptAdjustment": "Ajuste",
+  "tripReceiptCancelled": "RESERVA CANCELADA",
+  "tripReceiptCard": "Tarjeta",
+  "tripReceiptCompleted": "VIAJE COMPLETADO",
+  "tripReceiptCopied": "Recibo copiado al portapapeles",
+  "tripReceiptCopy": "Copiar recibo",
+  "tripReceiptCurrencyNote": "Montos en bolivianos (BOB).",
+  "tripReceiptDuration": "Duración",
+  "tripReceiptFixedPrice": "Precio fijo",
+  "tripReceiptFlight": "Vuelo",
+  "tripReceiptNoCharge": "Sin cargo",
+  "tripReceiptNumber": "Nº {code}",
+  "@tripReceiptNumber": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "tripReceiptPassengers": "Pasajeros",
+  "tripReceiptPayChauffeur": "Pago al chófer",
+  "tripReceiptPaymentMethod": "Forma de pago",
+  "tripReceiptPlainFrom": "Desde: {place}",
+  "@tripReceiptPlainFrom": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "tripReceiptPlainHeader": "Luxelane — Recibo {code}",
+  "@tripReceiptPlainHeader": {
+    "description": "First line of the copyable plain-text receipt",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "tripReceiptPlainTo": "Hasta: {place}",
+  "@tripReceiptPlainTo": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "tripReceiptPlainTotal": "Total: {amount}",
+  "@tripReceiptPlainTotal": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "tripReceiptService": "Servicio",
+  "tripReceiptTitle": "Recibo",
+  "tripReceiptTotal": "Total",
+  "tripReceiptVehicle": "Vehículo",
+  "tripShowSign": "Mostrar cartel",
+  "tripsBookNow": "Reservar ahora",
+  "tripsEmpty": "Aún no tienes viajes.\nReserva tu primera experiencia.",
+  "tripsLoadError": "No pudimos cargar tus viajes. Revisa tu conexión.",
+  "tripsPast": "ANTERIORES",
+  "tripsRouteByHour": "{origin} · {hours} h",
+  "@tripsRouteByHour": {
+    "description": "Trip card title for an hourly booking",
+    "placeholders": {
+      "origin": {
+        "type": "String"
+      },
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "tripsTitle": "Mis viajes",
+  "tripsUpcoming": "PRÓXIMOS",
   "unitBags": "{count, plural, =1{1 maleta} other{{count} maletas}}",
   "@unitBags": {
     "placeholders": {
