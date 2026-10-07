@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # State management & DI
   flutter_bloc: ^8.1.6
@@ -66,6 +68,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # Generates lib/l10n/gen/app_localizations*.dart from lib/l10n/app_*.arb
+  generate: true
   assets:
     - assets/images/
     - assets/images/auth/

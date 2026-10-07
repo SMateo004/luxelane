@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:intl/intl.dart';
 import 'app/driver_app.dart';
 import 'core/config/env.dart';
 import 'core/di/injection.dart';
@@ -14,8 +13,9 @@ import 'firebase_options_driver.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Intl.defaultLocale = 'es';
-  await initializeDateFormatting('es');
+  // Date symbols for every supported language; the active one follows the
+  // device language (see IntlLocaleSync in the app widget).
+  await initializeDateFormatting();
 
   try {
     await Firebase.initializeApp(

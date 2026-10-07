@@ -1,0 +1,122 @@
+{
+  "@@locale": "es",
+  "appName": "Luxelane",
+  "appNameDriver": "Luxelane Chófer",
+  "commonBack": "Volver",
+  "commonCall": "Llamar",
+  "commonCancel": "Cancelar",
+  "commonClose": "Cerrar",
+  "commonConfirm": "Confirmar",
+  "commonConnectionError": "Revisa tu conexión e inténtalo de nuevo.",
+  "commonContinue": "Continuar",
+  "commonCopy": "Copiar",
+  "commonCouldNotOpenApp": "No se pudo abrir la aplicación",
+  "commonDelete": "Eliminar",
+  "commonEdit": "Editar",
+  "commonGenericError": "Algo no salió bien",
+  "commonLoading": "Cargando",
+  "commonOptional": "Opcional",
+  "commonRefresh": "Actualizar",
+  "commonRequired": "Requerido",
+  "commonRetry": "Reintentar",
+  "commonSave": "Guardar",
+  "commonSend": "Enviar",
+  "commonWhatsApp": "WhatsApp",
+  "flightCancelled": "Cancelado",
+  "flightDelayed": "Retrasado {minutes} min",
+  "@flightDelayed": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "flightLanded": "Aterrizó",
+  "flightOnTime": "A tiempo",
+  "serviceByTheHour": "Por horas",
+  "serviceByTheHourDesc": "Chófer a tu disposición por un tiempo determinado",
+  "serviceOneWay": "Solo ida",
+  "serviceOneWayDesc": "Traslado a precio fijo a tu destino",
+  "statusCancelled": "Cancelado",
+  "statusCompleted": "Completado",
+  "statusConfirmed": "Confirmado",
+  "statusDriverArrived": "Chófer llegó",
+  "statusDriverArriving": "En camino",
+  "statusInProgress": "En progreso",
+  "statusPending": "Pendiente",
+  "unitBags": "{count, plural, =1{1 maleta} other{{count} maletas}}",
+  "@unitBags": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "unitHours": "{count, plural, =1{1 hora} other{{count} horas}}",
+  "@unitHours": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "unitHoursMinutes": "{hours} h {minutes} min",
+  "@unitHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "unitMinutesShort": "{minutes} min",
+  "@unitMinutesShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "unitPassengers": "{count, plural, =1{1 pasajero} other{{count} pasajeros}}",
+  "@unitPassengers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "unitTrips": "{count, plural, =1{1 viaje} other{{count} viajes}}",
+  "@unitTrips": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "vehicleBusiness": "Business Class",
+  "vehicleBusinessDesc": "Mercedes E-Class o similar",
+  "vehicleBusinessVan": "Business Van",
+  "vehicleBusinessVanDesc": "Mercedes V-Class · Hasta 7",
+  "vehicleElectric": "Eléctrico",
+  "vehicleElectricDesc": "Tesla Model S o similar",
+  "vehicleFirstClass": "First Class",
+  "vehicleFirstClassDesc": "Mercedes S-Class o similar",
+  "waitAirportSummary": "{minutes} min de espera gratuita desde el aterrizaje",
+  "@waitAirportSummary": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "waitCitySummary": "{minutes} min de espera gratuita",
+  "@waitCitySummary": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  }
+}

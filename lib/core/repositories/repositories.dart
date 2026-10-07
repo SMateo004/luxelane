@@ -45,6 +45,9 @@ abstract class AuthRepository {
 abstract class UserRepository {
   Future<Either<Failure, User>> getUserById(String userId);
   Future<Either<Failure, void>> updateUser(User user);
+  /// Device language (es/en/pt) used by the backend for push messages.
+  Future<void> updatePreferredLocale({required String userId, required String locale});
+
   Future<Either<Failure, void>> updateFcmToken({
     required String userId,
     required String token,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
+import '../core/repositories/repositories.dart';
 import '../core/enums/enums.dart';
 import '../core/services/crash_service.dart';
 import '../core/services/notification_service.dart';
@@ -12,6 +13,7 @@ import '../features/payments/presentation/bloc/payment_bloc.dart';
 import '../features/profile/presentation/bloc/profile_bloc.dart';
 import '../features/notifications/presentation/bloc/notification_bloc.dart';
 import '../features/ride/presentation/bloc/ride_bloc.dart';
+import '../l10n/l10n.dart';
 import 'router/router.dart';
 import 'theme/app_theme.dart';
 
@@ -67,6 +69,15 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
     });
   }
 
+  /// Stores the device language on the profile so push notifications sent
+  /// by the backend use the same language.
+  void _rememberLocale(String locale) {
+    final state = _authBloc.state;
+    if (state is AuthAuthenticated) {
+      sl<UserRepository>().updatePreferredLocale(userId: state.user.id, locale: locale);
+    }
+  }
+
   @override
   void dispose() {
     _authBloc.close();
@@ -95,9 +106,18 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         BlocProvider<NotificationBloc>.value(value: _notificationBloc),
       ],
       child: MaterialApp.router(
-        title: 'Luxelane',
+        onGenerateTitle: (context) => context.l10n.appName,
         debugShowCheckedModeBanner: false,
         theme: luxTheme,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: supportedAppLocales,
+        // No fixed `locale`: the app follows the device language and
+        // updates live when it changes in system settings.
+        localeListResolutionCallback: resolveAppLocale,
+        builder: (context, child) => IntlLocaleSync(
+          onLocaleChanged: _rememberLocale,
+          child: child ?? const SizedBox.shrink(),
+        ),
         routerConfig: _router,
       ),
     );

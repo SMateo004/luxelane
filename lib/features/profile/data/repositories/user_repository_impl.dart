@@ -42,6 +42,15 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<void> updatePreferredLocale({required String userId, required String locale}) async {
+    try {
+      await _users.doc(userId).update({'locale': locale});
+    } catch (_) {
+      // Best effort: pushes fall back to Spanish.
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> updateFcmToken({
     required String userId,
     required String token,
