@@ -6,9 +6,11 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/utils/waiting_policy.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../home/presentation/pages/home_design.dart';
 
 /// Shown right after a booking is created: animated confirmation, the
@@ -30,7 +32,7 @@ class _BookingConfirmedPageState extends State<BookingConfirmedPage>
   late final AnimationController _anim =
       AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
   Booking? _booking;
-  String? _error;
+  Failure? _error;
   Timer? _ticker;
 
   @override
@@ -54,10 +56,11 @@ class _BookingConfirmedPageState extends State<BookingConfirmedPage>
   }
 
   Future<void> _load() async {
+    if (_error != null) setState(() => _error = null);
     final result = await sl<BookingRepository>().getBookingById(widget.bookingId);
     if (!mounted) return;
     result.fold(
-      (f) => setState(() => _error = f.message),
+      (f) => setState(() => _error = f),
       (b) => setState(() => _booking = b),
     );
   }
@@ -98,6 +101,7 @@ class _Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final fade = CurvedAnimation(parent: anim, curve: const Interval(0.35, 1, curve: LuxMotion.curve));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -111,19 +115,19 @@ class _Content extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('RESERVA CONFIRMADA', textAlign: TextAlign.center, style: eyebrow()),
+                Text(l.bookingConfirmedEyebrow, textAlign: TextAlign.center, style: eyebrow()),
                 const SizedBox(height: 12),
                 Semantics(
                   header: true,
                   child: Text(
-                    'Tu chófer te esperará.',
+                    l.bookingConfirmedHeadline,
                     textAlign: TextAlign.center,
                     style: displayText(size: 40, weight: FontWeight.w400),
                   ),
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  _countdown(booking.effectivePickup),
+                  _countdown(l, booking.effectivePickup),
                   textAlign: TextAlign.center,
                   style: bodyText(),
                 ),
@@ -148,7 +152,7 @@ class _Content extends StatelessWidget {
                         letterSpacing: 2,
                       ),
                     ),
-                    child: const Text('VER MI RESERVA'),
+                    child: Text(l.bookingViewMyBooking, textAlign: TextAlign.center),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -158,8 +162,8 @@ class _Content extends StatelessWidget {
                     minimumSize: const Size.fromHeight(48),
                     foregroundColor: LD.ink2,
                   ),
-                  child: const Text('Volver al inicio',
-                      style: TextStyle(fontFamily: kSans, fontSize: 13)),
+                  child: Text(l.bookingBackHome,
+                      style: const TextStyle(fontFamily: kSans, fontSize: 13)),
                 ),
               ],
             ),
@@ -169,16 +173,15 @@ class _Content extends StatelessWidget {
     );
   }
 
-  static String _countdown(DateTime at) {
+  static String _countdown(AppLocalizations l, DateTime at) {
     final diff = at.difference(DateTime.now());
-    if (diff.isNegative || diff.inMinutes < 1) return 'Tu chófer está en camino.';
-    if (diff.inMinutes < 60) return 'Recogida en ${diff.inMinutes} min';
+    if (diff.isNegative || diff.inMinutes < 1) return l.bookingCountdownOnTheWay;
+    if (diff.inMinutes < 60) return l.bookingPickupInMinutes(diff.inMinutes);
     if (diff.inHours < 24) {
       final m = diff.inMinutes % 60;
-      return 'Recogida en ${diff.inHours} h${m > 0 ? ' $m min' : ''}';
+      return m > 0 ? l.bookingPickupInHoursMinutes(diff.inHours, m) : l.bookingPickupInHours(diff.inHours);
     }
-    final days = diff.inDays;
-    return 'Recogida en $days ${days == 1 ? 'día' : 'días'}';
+    return l.bookingPickupInDays(diff.inDays);
   }
 }
 
@@ -188,7 +191,12 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final date = DateFormat("EEE d 'de' MMMM · HH:mm", 'es').format(booking.effectivePickup);
+    final l = context.l10n;
+    final at = booking.effectivePickup;
+    final date = l.bookingDateTime(
+      DateFormat.MMMMEEEEd(context.localeTag).format(at),
+      DateFormat.Hm(context.localeTag).format(at),
+    );
     final hourly = booking.serviceType == ServiceType.byTheHour;
     final paidByCard = booking.stripePaymentIntentId != null;
     return Container(
@@ -208,9 +216,9 @@ class _SummaryCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(booking.vehicleClass.label.toUpperCase(), style: uiLabel(color: LD.accent)),
+                    Text(booking.vehicleClass.localizedLabel(l).toUpperCase(), style: uiLabel(color: LD.accent)),
                     const SizedBox(height: 4),
-                    Text(booking.vehicleClass.description, style: bodyText(size: 13, color: LD.ink3)),
+                    Text(booking.vehicleClass.localizedDescription(l), style: bodyText(size: 13, color: LD.ink3)),
                   ],
                 ),
               ),
@@ -224,7 +232,7 @@ class _SummaryCard extends StatelessWidget {
                       child: Text(LuxMoney.format(booking.estimatedPrice),
                           style: displayText(size: 30, weight: FontWeight.w500)),
                     ),
-                    Text('Precio fijo · ${paidByCard ? 'tarjeta autorizada' : 'pago al chófer'}',
+                    Text(paidByCard ? l.bookingFixedPricePaidByCard : l.bookingFixedPricePayDriver,
                         textAlign: TextAlign.end,
                         style: uiLabel(spacing: 0.4)),
                   ],
@@ -239,19 +247,20 @@ class _SummaryCard extends StatelessWidget {
           _Row(icon: Icons.event_outlined, label: date),
           _Row(icon: Icons.trip_origin, label: booking.origin.displayName),
           if (hourly)
-            _Row(icon: Icons.schedule, label: 'Chófer a disposición · ${booking.hours ?? 2} h')
+            _Row(icon: Icons.schedule, label: l.bookingChauffeurAtDisposal(booking.hours ?? 2))
           else
             _Row(icon: Icons.place_outlined, label: booking.destination.displayName),
           if (booking.flightNumber != null)
-            _Row(icon: Icons.flight_land_outlined, label: 'Vuelo ${booking.flightNumber}'),
+            _Row(icon: Icons.flight_land_outlined, label: l.bookingFlight(booking.flightNumber!)),
           _Row(
             icon: Icons.person_outline,
-            label: '${booking.passengerCount} '
-                '${booking.passengerCount == 1 ? 'pasajero' : 'pasajeros'}'
-                '${booking.luggageCount > 0 ? ' · ${booking.luggageCount} maletas' : ''}',
+            label: booking.luggageCount > 0
+                ? l.bookingPassengersAndBags(
+                    l.unitPassengers(booking.passengerCount), l.unitBags(booking.luggageCount))
+                : l.unitPassengers(booking.passengerCount),
           ),
           const SizedBox(height: 8),
-          Text('Código de reserva: ${booking.id.substring(0, booking.id.length.clamp(0, 8)).toUpperCase()}',
+          Text(l.bookingReference(booking.id.substring(0, booking.id.length.clamp(0, 8)).toUpperCase()),
               style: uiLabel(spacing: 1.2)),
         ],
       ),
@@ -282,11 +291,11 @@ class _Assurances extends StatelessWidget {
   const _Assurances({required this.booking});
   final Booking booking;
 
-  List<(IconData, String)> get _items => [
-        (Icons.lock_outline, 'Precio fijo, sin sorpresas'),
-        (Icons.hourglass_top_rounded, WaitingPolicy.summary(booking)),
-        (Icons.event_available_outlined, 'Cancelación gratuita hasta 1 h antes'),
-        (Icons.verified_user_outlined, 'Chóferes verificados'),
+  List<(IconData, String)> _items(AppLocalizations l) => [
+        (Icons.lock_outline, l.bookingAssuranceFixedPrice),
+        (Icons.hourglass_top_rounded, WaitingPolicy.localizedSummary(l, booking)),
+        (Icons.event_available_outlined, l.bookingFreeCancellationShort),
+        (Icons.verified_user_outlined, l.bookingAssuranceVerified),
       ];
 
   @override
@@ -295,7 +304,7 @@ class _Assurances extends StatelessWidget {
         spacing: 16,
         runSpacing: 8,
         children: [
-          for (final (icon, text) in _items)
+          for (final (icon, text) in _items(context.l10n))
             Row(mainAxisSize: MainAxisSize.min, children: [
               Icon(icon, size: 14, color: LD.accent),
               const SizedBox(width: 6),
@@ -311,7 +320,7 @@ class _AnimatedCheck extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'Reserva confirmada',
+        label: context.l10n.bookingConfirmedSemantics,
         child: AnimatedBuilder(
           animation: progress,
           builder: (_, __) => CustomPaint(
@@ -375,7 +384,7 @@ class _CheckPainter extends CustomPainter {
 
 class _Status extends StatelessWidget {
   const _Status({this.error, required this.onRetry});
-  final String? error;
+  final Failure? error;
   final VoidCallback onRetry;
 
   @override
@@ -389,14 +398,18 @@ class _Status extends StatelessWidget {
         ),
       );
     }
+    final l = context.l10n;
+    final notFound = error is NotFoundFailure;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text('No pudimos cargar tu reserva', style: displayText(size: 28, weight: FontWeight.w400)),
+        Text(l.bookingLoadErrorTitle,
+            textAlign: TextAlign.center, style: displayText(size: 28, weight: FontWeight.w400)),
         const SizedBox(height: 8),
-        Text(error!, textAlign: TextAlign.center, style: bodyText(size: 13, color: LD.ink3)),
+        Text(notFound ? l.bookingNotFound : l.commonConnectionError,
+            textAlign: TextAlign.center, style: bodyText(size: 13, color: LD.ink3)),
         const SizedBox(height: 16),
-        TextButton(onPressed: onRetry, child: const Text('Reintentar')),
+        if (!notFound) TextButton(onPressed: onRetry, child: Text(l.commonRetry)),
       ],
     );
   }

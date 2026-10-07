@@ -2,6 +2,333 @@
   "@@locale": "es",
   "appName": "Luxelane",
   "appNameDriver": "Luxelane Chófer",
+  "bookingAllFeesIncluded": "Todos los cargos incluidos",
+  "bookingApplyOffer": "Aplicar oferta",
+  "bookingAssuranceFixedPrice": "Precio fijo, sin sorpresas",
+  "bookingAssuranceVerified": "Chóferes verificados",
+  "bookingAuthCreateAccountCta": "Crear cuenta",
+  "bookingAuthEmail": "Correo electrónico",
+  "bookingAuthEmailHint": "tu@ejemplo.com",
+  "bookingAuthFullName": "Nombre completo",
+  "bookingAuthFullNameHint": "Tu nombre",
+  "bookingAuthHaveAccount": "¿Ya tienes cuenta? Inicia sesión",
+  "bookingAuthHidePassword": "Ocultar contraseña",
+  "bookingAuthNoAccount": "¿No tienes cuenta? Crear una",
+  "bookingAuthPassword": "Contraseña",
+  "bookingAuthShowPassword": "Mostrar contraseña",
+  "bookingAuthSignInCta": "Iniciar sesión",
+  "bookingAuthSubtitleLogin": "Inicia sesión para confirmar tu reserva.",
+  "bookingAuthSubtitleRegister": "Crea tu cuenta de Luxelane para completar la reserva.",
+  "bookingAuthTitleLogin": "Inicia sesión para continuar",
+  "bookingAuthTitleRegister": "Crear una cuenta",
+  "bookingBackHome": "Volver al inicio",
+  "bookingBaseFare": "Tarifa base",
+  "bookingBreakdownHeading": "DESGLOSE",
+  "bookingCapacityLuggageInfo": "Basado en tamaños estándar de equipaje, que pueden diferir de los tuyos. Puedes especificar los detalles de tu equipaje en las \"Notas de recogida\" en el siguiente paso.",
+  "bookingCapacityTitle": "Capacidad",
+  "bookingCardFallback": "Tarjeta",
+  "@bookingCardFallback": {
+    "description": "Shown when a saved card has no brand"
+  },
+  "bookingChauffeurAtDisposal": "Chófer a disposición · {hours} h",
+  "@bookingChauffeurAtDisposal": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingChooseExperience": "Elige tu experiencia",
+  "bookingChooseService": "Elegir servicio",
+  "@bookingChooseService": {
+    "description": "Ride type page header"
+  },
+  "bookingConfirmCta": "Confirmar reserva",
+  "bookingConfirmedEyebrow": "RESERVA CONFIRMADA",
+  "bookingConfirmedHeadline": "Tu chófer te esperará.",
+  "bookingConfirmedSemantics": "Reserva confirmada",
+  "bookingCountdownOnTheWay": "Tu chófer está en camino.",
+  "bookingDateTime": "{date} · {time}",
+  "@bookingDateTime": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingDescriptiveText": "Premium hecho práctico. Asientos espaciosos, un viaje suave y recogidas puntuales que mantienen tu día en ritmo.",
+  "bookingDestinationLabel": "Destino",
+  "bookingDistanceKm": "{distance} km",
+  "@bookingDistanceKm": {
+    "placeholders": {
+      "distance": {
+        "type": "String",
+        "example": "12,5"
+      }
+    }
+  },
+  "bookingErrorCreateFailed": "No se pudo crear la reserva",
+  "bookingErrorInvalidFlight": "Revisa el número de vuelo (ej. LA 8810).",
+  "bookingErrorPaymentNotAuthorised": "No pudimos autorizar tu tarjeta. Inténtalo de nuevo o elige otra.",
+  "bookingErrorQuoteExpired": "La cotización venció. Vuelve a confirmar para ver el precio actualizado.",
+  "bookingErrorQuoteFailed": "No se pudo cotizar el viaje",
+  "bookingErrorQuoteMissing": "Falta la cotización del viaje",
+  "bookingErrorRateFailed": "No se pudo enviar tu calificación",
+  "bookingErrorTooManyPassengers": "El número de pasajeros supera la capacidad del vehículo.",
+  "bookingEstimatedTax": "Impuesto estimado",
+  "bookingEstimatedTotal": "TOTAL ESTIMADO",
+  "bookingFixedPriceLabel": "PRECIO FIJO",
+  "bookingFixedPricePaidByCard": "Precio fijo · tarjeta autorizada",
+  "bookingFixedPricePayDriver": "Precio fijo · pago al chófer",
+  "bookingFlight": "Vuelo {flight}",
+  "@bookingFlight": {
+    "placeholders": {
+      "flight": {
+        "type": "String",
+        "example": "OB 760"
+      }
+    }
+  },
+  "bookingFlightNumber": "Número de vuelo",
+  "bookingFlightNumberHint": "ej. LA 8810 (opcional)",
+  "bookingForGuest": "Reservar para un invitado",
+  "bookingForGuestSubtitle": "Seleccionar o añadir un invitado",
+  "bookingForMyself": "Reservar para mí",
+  "bookingForMyselfSubtitle": "Reserva con la información de tu cuenta",
+  "bookingFreeCancellationShort": "Cancelación gratuita hasta 1 h antes",
+  "bookingGuestDialogBody": "Ingresa la información de tu invitado y bríndale un servicio premium. Lo mantendremos informado sobre su trayecto durante todo el proceso. No te preocupes, no compartiremos ninguna información de pago o facturación con él.",
+  "bookingGuestDialogTitle": "Añadir nuevo invitado",
+  "bookingGuestDisplayName": "{title} {firstName} {lastName}",
+  "@bookingGuestDisplayName": {
+    "description": "Guest shown on the 'Book for a guest' card, e.g. 'Sr. Juan Pérez'",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "firstName": {
+        "type": "String"
+      },
+      "lastName": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingGuestEmailHint": "Correo del invitado",
+  "bookingGuestFirstName": "Nombre",
+  "bookingGuestFirstNameHint": "Nombre del invitado",
+  "bookingGuestLastName": "Apellido",
+  "bookingGuestLastNameHint": "Apellido del invitado",
+  "bookingGuestPhone": "Número de móvil del invitado",
+  "bookingGuestPhoneHelp": "Tu invitado recibirá las notificaciones del trayecto en este número",
+  "bookingGuestTitleDr": "Dr.",
+  "bookingGuestTitleLabel": "Tratamiento",
+  "bookingGuestTitleMr": "Sr.",
+  "bookingGuestTitleMrs": "Sra.",
+  "bookingGuestTitleMs": "Srta.",
+  "bookingGuestTitleProf": "Prof.",
+  "bookingHeroTagline": "Precio fijo · Sin sorpresas · Disponible en todo el mundo",
+  "bookingHeroTitle": "Elige tu\nexperiencia",
+  "@bookingHeroTitle": {
+    "description": "Large two-line heading on the web booking page; keep the line break"
+  },
+  "bookingHoursShort": "{hours} h",
+  "@bookingHoursShort": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingIncludedChargers": "Cargadores para iOS y Android a bordo",
+  "bookingIncludedFreeCancellation": "Cancelación gratuita hasta 1 hora antes de la recogida",
+  "bookingIncludedMeetGreet": "Recibimiento personalizado",
+  "bookingIncludedTissues": "Pañuelos y toallitas desinfectantes de cortesía",
+  "bookingIncludedTitle": "Qué incluye",
+  "bookingIncludedWaiting": "Hasta {minutes} minutos de espera gratuita",
+  "@bookingIncludedWaiting": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingIncludedWater": "Agua fría de cortesía incluida",
+  "bookingLoadErrorTitle": "No pudimos cargar tu reserva",
+  "bookingLuggage": "Equipaje",
+  "bookingLuggageCarryOn": "{count} x De mano",
+  "@bookingLuggageCarryOn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingLuggageChecked": "{count} x Facturada estándar",
+  "@bookingLuggageChecked": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingLuggageExtraLarge": "{count} x Extra grande",
+  "@bookingLuggageExtraLarge": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingNotFound": "Esta reserva ya no está disponible.",
+  "bookingNoteCapacity": "Los límites de capacidad de pasajeros y equipaje deben respetarse por razones de seguridad. Si se exceden, el chófer podrá rechazar el servicio.",
+  "bookingNoteExtras": "Las necesidades adicionales (silla de ruedas, asiento infantil, artículos extra) pueden añadirse en \"Notas de recogida\". Elige Business Van para grupos más grandes o equipaje adicional.",
+  "bookingNoteImages": "Las imágenes del vehículo son solo de referencia. El vehículo real puede variar manteniendo una calidad equivalente o superior.",
+  "bookingPassengers": "Pasajeros",
+  "bookingPassengersAndBags": "{passengers} · {bags}",
+  "@bookingPassengersAndBags": {
+    "description": "Already-formatted unitPassengers and unitBags",
+    "placeholders": {
+      "passengers": {
+        "type": "String"
+      },
+      "bags": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingPayOnTripBody": "Pagas el precio fijo a tu chófer en efectivo o con QR. Nada se cobra al reservar.",
+  "bookingPayOnTripTitle": "Pago al finalizar el viaje",
+  "bookingPaymentFailed": "El pago falló",
+  "bookingPaymentMethodHeading": "MÉTODO DE PAGO",
+  "bookingPickupInDays": "{days, plural, =1{Recogida en 1 día} other{Recogida en {days} días}}",
+  "@bookingPickupInDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingPickupInHours": "Recogida en {hours} h",
+  "@bookingPickupInHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingPickupInHoursMinutes": "Recogida en {hours} h {minutes} min",
+  "@bookingPickupInHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingPickupInMinutes": "Recogida en {minutes} min",
+  "@bookingPickupInMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingPickupLabel": "Recogida",
+  "bookingPleaseNote": "Nota importante:",
+  "bookingPriceBreakdownTitle": "Desglose de precio",
+  "bookingPriceConfirmedBody": "El precio fijo de tu viaje es {price}. No cambiará aunque haya tráfico.",
+  "@bookingPriceConfirmedBody": {
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "Bs 1.250"
+      }
+    }
+  },
+  "bookingPriceConfirmedTitle": "Precio confirmado",
+  "@bookingPriceConfirmedTitle": {
+    "description": "Dialog shown when the server quote differs from the on-screen estimate"
+  },
+  "bookingReference": "Código de reserva: {code}",
+  "@bookingReference": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingReserveCta": "RESERVAR {vehicle}",
+  "@bookingReserveCta": {
+    "description": "Web reserve button; vehicle is the class name in upper case",
+    "placeholders": {
+      "vehicle": {
+        "type": "String",
+        "example": "FIRST CLASS"
+      }
+    }
+  },
+  "bookingRoutePreview": "Vista previa de ruta",
+  "bookingSeating": "Asientos",
+  "bookingSeatingFive": "Cinco pasajeros",
+  "bookingSeatingInfantSeat": "Asiento de bebé",
+  "bookingSeatingInfo": "Elige la configuración de asientos que mejor se adapte a tus necesidades. Los asientos especiales (infantil / bebé) deben solicitarse con anticipación y están sujetos a disponibilidad.",
+  "bookingSeatingThree": "Tres pasajeros",
+  "bookingSeatingTwo": "Dos pasajeros",
+  "bookingSeatsUpTo": "Hasta {count} pax",
+  "@bookingSeatsUpTo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingSelectRouteError": "Selecciona el punto de recogida y el destino",
+  "bookingSelectedBadge": "SELECCIONADO",
+  "bookingSlideBusiness1": "Confort ejecutivo en cada trayecto",
+  "bookingSlideBusiness2": "Puntual, profesional y perfectamente refinado",
+  "bookingSlideBusiness3": "Llega con confianza, en cada ocasión",
+  "bookingSlideBusiness4": "Premium hecho práctico para el ejecutivo moderno",
+  "bookingSlideElectric1": "Totalmente eléctrico, silencioso y de nivel ejecutivo",
+  "bookingSlideElectric2": "Cero emisiones, máxima experiencia de lujo",
+  "bookingSlideFirst1": "Un nivel extraordinario de lujo te espera",
+  "bookingSlideFirst2": "Diseñado para quienes exigen lo mejor",
+  "bookingSlideFirst3": "Privacidad y elegancia en cada traslado",
+  "bookingSlideFirst4": "Primera clase, de puerta a puerta",
+  "bookingSlideVan1": "Espacio y confort para todo tu equipo",
+  "bookingSlideVan2": "Traslados grupales sin estrés y con puntualidad",
+  "bookingSlideVan3": "El viaje perfecto para familias y grupos",
+  "bookingSlideVan4": "Capacidad premium, sin compromiso en el confort",
+  "bookingSpecialRequests": "Solicitudes especiales",
+  "bookingSpecialRequestsHint": "Asiento infantil, letrero de bienvenida…",
+  "bookingStepDetails": "Detalles",
+  "bookingStepOf": "PASO {step} DE {total}",
+  "@bookingStepOf": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingStepVehicle": "Vehículo",
+  "bookingSummaryDistance": "Distancia",
+  "bookingSummaryDuration": "Duración",
+  "bookingSummaryEstDuration": "Duración est.",
+  "bookingSummaryFlight": "Vuelo",
+  "bookingSummaryFrom": "Desde",
+  "bookingSummaryHeading": "RESUMEN DE RESERVA",
+  "bookingSummaryNotes": "Notas",
+  "bookingSummaryService": "Servicio",
+  "bookingSummaryTo": "Hasta",
+  "bookingTripDetailsHeading": "DETALLES DEL VIAJE",
+  "bookingViewMyBooking": "VER MI RESERVA",
   "commonBack": "Volver",
   "commonCall": "Llamar",
   "commonCancel": "Cancelar",

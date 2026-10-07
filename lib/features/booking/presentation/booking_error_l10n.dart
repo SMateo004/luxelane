@@ -1,0 +1,16 @@
+import '../../../l10n/l10n.dart';
+import '../domain/booking_error_codes.dart';
+
+/// Translates a booking failure message for display. Known
+/// [BookingErrorCodes] map to localized text; anything else is returned as is.
+String localizedBookingError(AppLocalizations l, String message) => switch (message) {
+      BookingErrorCodes.quoteFailed => l.bookingErrorQuoteFailed,
+      BookingErrorCodes.quoteMissing => l.bookingErrorQuoteMissing,
+      BookingErrorCodes.quoteExpired => l.bookingErrorQuoteExpired,
+      BookingErrorCodes.createFailed => l.bookingErrorCreateFailed,
+      BookingErrorCodes.paymentNotAuthorised => l.bookingErrorPaymentNotAuthorised,
+      BookingErrorCodes.invalidFlight => l.bookingErrorInvalidFlight,
+      BookingErrorCodes.tooManyPassengers => l.bookingErrorTooManyPassengers,
+      BookingErrorCodes.rateFailed => l.bookingErrorRateFailed,
+      _ => message,
+    };

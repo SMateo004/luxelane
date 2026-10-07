@@ -64,11 +64,11 @@ class _WebTopBar extends StatelessWidget {
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: onBack,
-                child: Row(mainAxisSize: MainAxisSize.min, children: const [
-                  Icon(Icons.arrow_back_ios_new_rounded, size: 12, color: _kTextSub),
-                  SizedBox(width: 5),
-                  Text('Volver',
-                      style: TextStyle(fontFamily: kSans, fontSize: 11,
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  const Icon(Icons.arrow_back_ios_new_rounded, size: 12, color: _kTextSub),
+                  const SizedBox(width: 5),
+                  Text(context.l10n.commonBack,
+                      style: const TextStyle(fontFamily: kSans, fontSize: 11,
                           fontWeight: FontWeight.w400, letterSpacing: 0.8,
                           color: _kTextSub)),
                 ]),
@@ -119,7 +119,7 @@ class _WebTopBar extends StatelessWidget {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           Text(
-                                            vc.label,
+                                            vc.localizedLabel(context.l10n),
                                             style: TextStyle(
                                               fontFamily: kSans,
                                               fontSize: 13,
@@ -142,7 +142,7 @@ class _WebTopBar extends StatelessWidget {
                                           ),
                                           const SizedBox(width: 8),
                                           Text(
-                                            'Bs ${price.toStringAsFixed(0)}',
+                                            LuxMoney.format(price.round()),
                                             style: TextStyle(
                                               fontFamily: kSans,
                                               fontSize: 12,
@@ -516,7 +516,7 @@ class _VehicleCardState extends State<_VehicleCard>
                           children: [
                             Expanded(
                               child: Text(
-                                widget.vehicleClass.label,
+                                widget.vehicleClass.localizedLabel(context.l10n),
                                 style: const TextStyle(
                                   fontFamily: kSerif,
                                   fontSize: 21,
@@ -541,7 +541,7 @@ class _VehicleCardState extends State<_VehicleCard>
                                       color: accent.withAlpha(60), width: 1),
                                 ),
                                 child: Text(
-                                  'SELECCIONADO',
+                                  context.l10n.bookingSelectedBadge,
                                   style: TextStyle(
                                     fontFamily: kSans,
                                     fontSize: 7,
@@ -558,7 +558,7 @@ class _VehicleCardState extends State<_VehicleCard>
                         const SizedBox(height: 2),
                         // Description
                         Text(
-                          widget.vehicleClass.description,
+                          widget.vehicleClass.localizedDescription(context.l10n),
                           style: const TextStyle(
                             fontFamily: kSans,
                             fontSize: 10,
@@ -576,7 +576,7 @@ class _VehicleCardState extends State<_VehicleCard>
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             Text(
-                              'Bs ${widget.price.toStringAsFixed(0)}',
+                              LuxMoney.format(widget.price.round()),
                               style: const TextStyle(
                                 fontFamily: kSerif,
                                 fontSize: 24,
@@ -793,7 +793,11 @@ class _ReserveBar extends StatelessWidget {
                       child: CircularProgressIndicator(
                           strokeWidth: 1.5, color: LD.onCta))
                   : Text(
-                      'RESERVAR ${selected.label.toUpperCase()}',
+                      context.l10n.bookingReserveCta(
+                          selected.localizedLabel(context.l10n).toUpperCase()),
+                      textAlign: TextAlign.center,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 11,
@@ -858,7 +862,7 @@ class _MobileVehicleDetail extends StatelessWidget {
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
-            Expanded(child: Text(vehicleClass.description,
+            Expanded(child: Text(vehicleClass.localizedDescription(context.l10n),
                 style: const TextStyle(fontFamily: kSans,
                     fontSize: 12, color: _kTextSub))),
             Container(
@@ -867,7 +871,7 @@ class _MobileVehicleDetail extends StatelessWidget {
                 color: const Color(0xFFEEEBE4),
                 borderRadius: BorderRadius.circular(4),
               ),
-              child: Text('Hasta ${vehicleClass.capacity} pax',
+              child: Text(context.l10n.bookingSeatsUpTo(vehicleClass.capacity),
                   style: const TextStyle(fontFamily: kSans,
                       fontSize: 10, fontWeight: FontWeight.w600, color: _kTextSub)),
             ),
@@ -875,9 +879,9 @@ class _MobileVehicleDetail extends StatelessWidget {
           const SizedBox(height: 10),
           const Divider(color: _kDivider, height: 1),
           const SizedBox(height: 10),
-          _GuaranteeRow(Icons.price_check_outlined, 'Todos los cargos incluidos'),
+          _GuaranteeRow(Icons.price_check_outlined, context.l10n.bookingAllFeesIncluded),
           const SizedBox(height: 6),
-          _GuaranteeRow(Icons.event_available_outlined, 'Cancelación gratuita hasta 1h antes'),
+          _GuaranteeRow(Icons.event_available_outlined, context.l10n.bookingFreeCancellationShort),
         ]),
       );
 }
@@ -896,8 +900,10 @@ class _SummaryRow extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(children: [
-            Text(label,
-                style: const TextStyle(fontFamily: kSans, fontSize: 12, color: _kTextSub)),
+            Flexible(
+              child: Text(label,
+                  style: const TextStyle(fontFamily: kSans, fontSize: 12, color: _kTextSub)),
+            ),
             const SizedBox(width: 16),
             Flexible(child: Text(value,
                 textAlign: TextAlign.end,
@@ -945,7 +951,7 @@ class _LightServiceTypeTab extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: compact
-                  ? Text(t.label,
+                  ? Text(t.localizedLabel(context.l10n),
                       style: TextStyle(
                         fontFamily: kSans, fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -979,7 +985,7 @@ class _CompactHourPicker extends StatelessWidget {
         child: Row(mainAxisSize: MainAxisSize.min, children: [
           _Btn(icon: Icons.remove, enabled: hours > 2, onTap: () => onChanged(hours - 1)),
           SizedBox(width: 40,
-              child: Text('${hours}h', textAlign: TextAlign.center,
+              child: Text(context.l10n.bookingHoursShort(hours), textAlign: TextAlign.center,
                   style: const TextStyle(fontFamily: kSans, fontSize: 13,
                       fontWeight: FontWeight.w600, color: _kTextPrimary))),
           _Btn(icon: Icons.add, enabled: hours < 12, onTap: () => onChanged(hours + 1)),
@@ -1002,12 +1008,13 @@ class _LightHourRow extends StatelessWidget {
           border: Border.all(color: _kBorder),
         ),
         child: Row(children: [
-          const Text('Duración',
-              style: TextStyle(fontFamily: kSans, fontSize: 13,
-                  fontWeight: FontWeight.w500, color: _kTextPrimary)),
-          const Spacer(),
+          Expanded(
+            child: Text(context.l10n.bookingSummaryDuration,
+                style: const TextStyle(fontFamily: kSans, fontSize: 13,
+                    fontWeight: FontWeight.w500, color: _kTextPrimary)),
+          ),
           _Btn(icon: Icons.remove, enabled: hours > 2, onTap: () => onChanged(hours - 1)),
-          SizedBox(width: 48, child: Text('${hours}h', textAlign: TextAlign.center,
+          SizedBox(width: 48, child: Text(context.l10n.bookingHoursShort(hours), textAlign: TextAlign.center,
               style: const TextStyle(fontFamily: kSans, fontSize: 15,
                   fontWeight: FontWeight.w600, color: _kTextPrimary))),
           _Btn(icon: Icons.add, enabled: hours < 12, onTap: () => onChanged(hours + 1)),
@@ -1091,8 +1098,8 @@ class _LightTextField extends StatelessWidget {
 
 class _LightPriceBar extends StatelessWidget {
   const _LightPriceBar({
-    required this.price, required this.onConfirm,
-    this.loading = false, this.label = 'Confirmar reserva',
+    required this.price, required this.onConfirm, required this.label,
+    this.loading = false,
   });
   final double price;
   final VoidCallback onConfirm;
@@ -1109,10 +1116,10 @@ class _LightPriceBar extends StatelessWidget {
         child: Row(children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('PRECIO FIJO',
-                    style: TextStyle(fontFamily: kSans, fontSize: 9,
+                Text(context.l10n.bookingFixedPriceLabel,
+                    style: const TextStyle(fontFamily: kSans, fontSize: 9,
                         fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 1.5)),
-                Text('Bs ${price.toStringAsFixed(0)}',
+                Text(LuxMoney.format(price.round()),
                     style: const TextStyle(fontFamily: kSans, fontSize: 22,
                         fontWeight: FontWeight.w700, color: _kTextPrimary, letterSpacing: -0.5)),
               ]),
@@ -1132,7 +1139,10 @@ class _LightPriceBar extends StatelessWidget {
                 child: loading
                     ? const SizedBox(width: 18, height: 18,
                         child: CircularProgressIndicator(strokeWidth: 1.5, color: Colors.white))
-                    : Text(label.toUpperCase()),
+                    : Text(label.toUpperCase(),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis),
               ),
             ),
           ),
@@ -1175,7 +1185,8 @@ class _LightStepIndicator extends StatelessWidget {
                           color: active ? _kTextPrimary : _kTextTertiary))),
             ),
             const SizedBox(height: 3),
-            Text(steps[idx], style: TextStyle(fontFamily: kSans, fontSize: 9,
+            Text(steps[idx], maxLines: 1, overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontFamily: kSans, fontSize: 9,
                 fontWeight: active ? FontWeight.w600 : FontWeight.w400,
                 color: active ? _kTextPrimary : _kTextTertiary, letterSpacing: 0.3)),
           ]);
@@ -1197,21 +1208,21 @@ class _PayOnTripNotice extends StatelessWidget {
           color: LD.accentTint,
           border: Border.all(color: _kBorder),
         ),
-        child: const Row(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.payments_outlined, size: 20, color: _kPanelAccent),
-            SizedBox(width: 12),
+            const Icon(Icons.payments_outlined, size: 20, color: _kPanelAccent),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Pago al finalizar el viaje',
-                      style: TextStyle(fontFamily: kSans, fontSize: 13,
+                  Text(context.l10n.bookingPayOnTripTitle,
+                      style: const TextStyle(fontFamily: kSans, fontSize: 13,
                           fontWeight: FontWeight.w600, color: _kTextPrimary)),
-                  SizedBox(height: 4),
-                  Text('Pagas el precio fijo a tu chófer en efectivo o con QR. Nada se cobra al reservar.',
-                      style: TextStyle(fontFamily: kSans, fontSize: 12,
+                  const SizedBox(height: 4),
+                  Text(context.l10n.bookingPayOnTripBody,
+                      style: const TextStyle(fontFamily: kSans, fontSize: 12,
                           height: 1.5, color: _kTextSub)),
                 ],
               ),

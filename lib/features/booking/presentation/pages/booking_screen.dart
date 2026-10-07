@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/di/injection.dart';
@@ -11,13 +12,16 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/waiting_policy.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_states.dart';
 import '../../../../core/widgets/lux_map.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../../payments/presentation/bloc/payment_bloc.dart';
 import '../bloc/booking_bloc.dart';
+import '../booking_error_l10n.dart';
 
 part 'booking/widgets.dart';
 part 'booking/dialogs.dart';
@@ -62,7 +66,7 @@ class _BookingScreenState extends State<BookingScreen> {
   int    _capacityTab    = 0; // 0 = Luggage, 1 = Seating
   int    _luggageOption  = 0; // 0, 1, 2
   int    _seatingOption  = 0; // 0, 1, 2, 3
-  String _guestTitle     = 'Sr.';
+  _GuestTitle _guestTitle = _GuestTitle.mr;
   String _guestFirstName = '';
   String _guestLastName  = '';
   String _guestEmail     = '';
@@ -159,7 +163,7 @@ class _BookingScreenState extends State<BookingScreen> {
     final destination = _formData?.destination ??
         (_service == ServiceType.byTheHour ? origin : null);
     if (origin == null || destination == null) {
-      showLuxSnackbar(context, 'Selecciona el punto de recogida y el destino',
+      showLuxSnackbar(context, context.l10n.bookingSelectRouteError,
           isError: true);
       return;
     }
@@ -177,7 +181,8 @@ class _BookingScreenState extends State<BookingScreen> {
     if (!mounted) return;
     final quote = quoteResult.fold<Quote?>((f) {
       setState(() => _loading = false);
-      showLuxSnackbar(context, f.message, isError: true);
+      showLuxSnackbar(context, localizedBookingError(context.l10n, f.message),
+          isError: true);
       return null;
     }, (q) => q);
     if (quote == null) return;
@@ -210,17 +215,17 @@ class _BookingScreenState extends State<BookingScreen> {
         context: context,
         builder: (ctx) => AlertDialog(
           backgroundColor: _kCardBg,
-          title: const Text('Precio confirmado',
-              style: TextStyle(fontFamily: kSerif, fontSize: 24, color: _kTextPrimary)),
+          title: Text(ctx.l10n.bookingPriceConfirmedTitle,
+              style: const TextStyle(fontFamily: kSerif, fontSize: 24, color: _kTextPrimary)),
           content: Text(
-            'El precio fijo de tu viaje es ${LuxMoney.format(amount)}. '
-            'No cambiará aunque haya tráfico.',
+            ctx.l10n.bookingPriceConfirmedBody(LuxMoney.format(amount)),
             style: const TextStyle(fontFamily: kSans, fontSize: 14, height: 1.5, color: _kTextSub),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Cancelar', style: TextStyle(color: _kTextTertiary)),
+              child: Text(ctx.l10n.commonCancel,
+                  style: const TextStyle(color: _kTextTertiary)),
             ),
             ElevatedButton(
               onPressed: () => Navigator.of(ctx).pop(true),
@@ -229,7 +234,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 foregroundColor: LD.onCta,
                 elevation: 0,
               ),
-              child: const Text('Continuar'),
+              child: Text(ctx.l10n.commonContinue),
             ),
           ],
         ),
@@ -252,19 +257,22 @@ class _BookingScreenState extends State<BookingScreen> {
     } on StripeException catch (e) {
       if (mounted) {
         setState(() => _loading = false);
-        showLuxSnackbar(context, e.error.message ?? 'El pago falló',
+        // Stripe localizes its own decline messages; fall back to ours.
+        showLuxSnackbar(
+            context,
+            e.error.localizedMessage ?? context.l10n.bookingPaymentFailed,
             isError: true);
       }
-    } catch (e) {
+    } catch (_) {
       if (mounted) {
         setState(() => _loading = false);
-        showLuxSnackbar(context, e.toString(), isError: true);
+        showLuxSnackbar(context, context.l10n.bookingPaymentFailed, isError: true);
       }
     }
   }
 
   Future<void> _showAddGuestDialog() async {
-    final result = await showDialog<Map<String, String>>(
+    final result = await showDialog<_GuestInfo>(
       context: context,
       barrierColor: Colors.black38,
       builder: (_) => _AddGuestDialog(
@@ -277,12 +285,12 @@ class _BookingScreenState extends State<BookingScreen> {
     );
     if (result != null && mounted) {
       setState(() {
-        _bookForSelf   = false;
-        _guestTitle     = result['title']     ?? 'Sr.';
-        _guestFirstName = result['firstName'] ?? '';
-        _guestLastName  = result['lastName']  ?? '';
-        _guestEmail     = result['email']     ?? '';
-        _guestPhone     = result['phone']     ?? '';
+        _bookForSelf    = false;
+        _guestTitle     = result.title;
+        _guestFirstName = result.firstName;
+        _guestLastName  = result.lastName;
+        _guestEmail     = result.email;
+        _guestPhone     = result.phone;
       });
     }
   }
@@ -296,7 +304,7 @@ class _BookingScreenState extends State<BookingScreen> {
         (_service == ServiceType.byTheHour ? origin : null);
     if (origin == null || destination == null) {
       setState(() => _loading = false);
-      showLuxSnackbar(context, 'Selecciona el punto de recogida y el destino',
+      showLuxSnackbar(context, context.l10n.bookingSelectRouteError,
           isError: true);
       return;
     }
@@ -314,6 +322,9 @@ class _BookingScreenState extends State<BookingScreen> {
         ? '$_guestFirstName $_guestLastName'.trim()
         : authState.user.displayName.trim();
     final passengerPhone = forGuest ? _guestPhone.trim() : authState.user.phone.trim();
+    // Stored on the booking for the chauffeur and operations (Spanish-speaking
+    // team), not shown to the rider, so it stays in Spanish regardless of the
+    // rider's language.
     final notes = [
       if (forGuest && _guestEmail.isNotEmpty) 'Correo del pasajero: $_guestEmail',
       if (_notes.isNotEmpty) _notes,
@@ -356,7 +367,8 @@ class _BookingScreenState extends State<BookingScreen> {
           }
           if (state is BookingError) {
             setState(() => _loading = false);
-            showLuxSnackbar(ctx, state.message, isError: true);
+            showLuxSnackbar(ctx, localizedBookingError(ctx.l10n, state.message),
+                isError: true);
           }
         }),
         BlocListener<PaymentBloc, PaymentState>(listener: (ctx, state) {
@@ -464,7 +476,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 350),
                     child: Text(
-                      _selected.label.toUpperCase(),
+                      _selected.localizedLabel(context.l10n).toUpperCase(),
                       key: ValueKey(_selected),
                       style: TextStyle(
                         fontFamily: kSans,
@@ -478,9 +490,9 @@ class _BookingScreenState extends State<BookingScreen> {
                   ),
                   const SizedBox(height: 12),
                   // Heading
-                  const Text(
-                    'Elige tu\nexperiencia',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.bookingHeroTitle,
+                    style: const TextStyle(
                       fontFamily: kSerif,
                       fontSize: 60,
                       fontWeight: FontWeight.w300,
@@ -491,9 +503,9 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Precio fijo · Sin sorpresas · Disponible en todo el mundo',
-                    style: TextStyle(
+                  Text(
+                    context.l10n.bookingHeroTagline,
+                    style: const TextStyle(
                       fontFamily: kSans,
                       fontSize: 11,
                       fontWeight: FontWeight.w300,
@@ -578,110 +590,72 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // ── Luggage capacity per vehicle ───────────────────────────────────────────
 
-  static List<String> _luggageOptionsFor(VehicleClass vc) {
-    switch (vc) {
-      case VehicleClass.business:
-        return ['2 x De mano', '2 x Facturada estándar', '1 x Extra grande'];
-      case VehicleClass.firstClass:
-        return ['3 x De mano', '2 x Facturada estándar', '1 x Extra grande'];
-      case VehicleClass.businessVan:
-        return ['8 x De mano', '6 x Facturada estándar', '4 x Extra grande'];
-      case VehicleClass.electric:
-        return ['2 x De mano', '2 x Facturada estándar', '1 x Extra grande'];
-    }
+  static List<String> _luggageOptionsFor(VehicleClass vc, AppLocalizations l) {
+    final (carryOn, checked, extraLarge) = switch (vc) {
+      VehicleClass.business    => (2, 2, 1),
+      VehicleClass.firstClass  => (3, 2, 1),
+      VehicleClass.businessVan => (8, 6, 4),
+      VehicleClass.electric    => (2, 2, 1),
+    };
+    return [
+      l.bookingLuggageCarryOn(carryOn),
+      l.bookingLuggageChecked(checked),
+      l.bookingLuggageExtraLarge(extraLarge),
+    ];
   }
 
-  static List<String> _seatingOptionsFor(VehicleClass vc) {
+  static List<String> _seatingOptionsFor(VehicleClass vc, AppLocalizations l) {
     switch (vc) {
       case VehicleClass.business:
       case VehicleClass.firstClass:
       case VehicleClass.electric:
-        return ['Tres pasajeros', 'Dos pasajeros', 'Asiento de bebé'];
+        return [l.bookingSeatingThree, l.bookingSeatingTwo, l.bookingSeatingInfantSeat];
       case VehicleClass.businessVan:
-        return ['Cinco pasajeros', 'Dos pasajeros'];
+        return [l.bookingSeatingFive, l.bookingSeatingTwo];
     }
   }
 
   // (Seating images are now per-vehicle assets via _seatingAsset() — see below)
 
-  // ── Hero slides per vehicle class ──────────────────────────────────────────
+  // ── Hero slides per vehicle class: (caption, image URL) ────────────────────
 
-  static const _kVehicleSlides = <VehicleClass, List<List<String>>>{
-    VehicleClass.business: [
-      [
-        'Confort ejecutivo en cada trayecto',
-        'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Puntual, profesional y perfectamente refinado',
-        'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Llega con confianza, en cada ocasión',
-        'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Premium hecho práctico para el ejecutivo moderno',
-        'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=900&q=90&auto=format&fit=crop',
-      ],
-    ],
-    VehicleClass.firstClass: [
-      [
-        'Un nivel extraordinario de lujo te espera',
-        'https://images.unsplash.com/photo-1563720223523-e75db7d32e5c?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Diseñado para quienes exigen lo mejor',
-        'https://images.unsplash.com/photo-1485291571150-772bcfc10da5?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Privacidad y elegancia en cada traslado',
-        'https://images.unsplash.com/photo-1493238792000-8113da705763?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Primera clase, de puerta a puerta',
-        'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=900&q=90&auto=format&fit=crop',
-      ],
-    ],
-    VehicleClass.businessVan: [
-      [
-        'Espacio y confort para todo tu equipo',
-        'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Traslados grupales sin estrés y con puntualidad',
-        'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'El viaje perfecto para familias y grupos',
-        'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Capacidad premium, sin compromiso en el confort',
-        'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=900&q=90&auto=format&fit=crop',
-      ],
-    ],
-    VehicleClass.electric: [
-      [
-        'Totalmente eléctrico, silencioso y de nivel ejecutivo',
-        'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Cero emisiones, máxima experiencia de lujo',
-        'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=900&q=90&auto=format&fit=crop',
-      ],
-    ],
-  };
-
-  List<List<String>> get _currentSlides =>
-      _kVehicleSlides[_selected] ?? _kVehicleSlides[VehicleClass.business]!;
+  static List<(String, String)> _slidesFor(VehicleClass vc, AppLocalizations l) {
+    const img = 'https://images.unsplash.com/photo-';
+    const q = '?w=900&q=90&auto=format&fit=crop';
+    switch (vc) {
+      case VehicleClass.business:
+        return [
+          (l.bookingSlideBusiness1, '${img}1555215695-3004980ad54e$q'),
+          (l.bookingSlideBusiness2, '${img}1549317661-bd32c8ce0db2$q'),
+          (l.bookingSlideBusiness3, '${img}1511919884226-fd3cad34687c$q'),
+          (l.bookingSlideBusiness4, '${img}1503736334956-4c8f8e92946d$q'),
+        ];
+      case VehicleClass.firstClass:
+        return [
+          (l.bookingSlideFirst1, '${img}1563720223523-e75db7d32e5c$q'),
+          (l.bookingSlideFirst2, '${img}1485291571150-772bcfc10da5$q'),
+          (l.bookingSlideFirst3, '${img}1493238792000-8113da705763$q'),
+          (l.bookingSlideFirst4, '${img}1617788138017-80ad40651399$q'),
+        ];
+      case VehicleClass.businessVan:
+        return [
+          (l.bookingSlideVan1, '${img}1519641471654-76ce0107ad1b$q'),
+          (l.bookingSlideVan2, '${img}1544620347-c4fd4a3d5957$q'),
+          (l.bookingSlideVan3, '${img}1570125909232-eb263c188f7e$q'),
+          (l.bookingSlideVan4, '${img}1560958089-b8a1929cea89$q'),
+        ];
+      case VehicleClass.electric:
+        return [
+          (l.bookingSlideElectric1, '${img}1617788138017-80ad40651399$q'),
+          (l.bookingSlideElectric2, '${img}1560958089-b8a1929cea89$q'),
+        ];
+    }
+  }
 
   Widget _webHeroSection() {
-    final slides = _currentSlides;
+    final slides = _slidesFor(_selected, context.l10n);
     final page   = _heroPage.clamp(0, slides.length - 1);
-    final slide  = slides[page];
-    final text   = slide[0];
-    final img    = slide[1];
+    final (text, img) = slides[page];
 
     return ClipRRect(
       borderRadius: BorderRadius.zero,
@@ -818,12 +792,11 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // ── Descriptive heading ────────────────────────────────────────────────────
 
-  Widget _webDescriptiveText() => const Padding(
-        padding: EdgeInsets.only(right: 40),
+  Widget _webDescriptiveText() => Padding(
+        padding: const EdgeInsets.only(right: 40),
         child: Text(
-          'Premium hecho práctico. Asientos espaciosos, un viaje suave '
-          'y recogidas puntuales que mantienen tu día en ritmo.',
-          style: TextStyle(
+          context.l10n.bookingDescriptiveText,
+          style: const TextStyle(
             fontFamily: kSans,
             fontSize: 26,
             fontWeight: FontWeight.w400,
@@ -837,6 +810,7 @@ class _BookingScreenState extends State<BookingScreen> {
   // ── What's Included ────────────────────────────────────────────────────────
 
   Widget _webWhatsIncluded() {
+    final l = context.l10n;
     const accent = Color(0xFF4A7FD4);
     const itemText = TextStyle(
       fontFamily: kSans,
@@ -862,9 +836,9 @@ class _BookingScreenState extends State<BookingScreen> {
         const SizedBox(height: 60),
 
         // Title (serif, editorial)
-        const Text(
-          'Qué incluye',
-          style: TextStyle(
+        Text(
+          l.bookingIncludedTitle,
+          style: const TextStyle(
             fontFamily: kSerif,
             fontSize: 38,
             fontWeight: FontWeight.w600,
@@ -879,13 +853,13 @@ class _BookingScreenState extends State<BookingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(child: item(Icons.badge_outlined,
-                'Recibimiento personalizado')),
+                l.bookingIncludedMeetGreet)),
             const SizedBox(width: 48),
             Expanded(child: item(Icons.timer_outlined,
-                'Hasta 60 minutos de espera gratuita')),
+                l.bookingIncludedWaiting(WaitingPolicy.airportFreeMinutes))),
             const SizedBox(width: 48),
             Expanded(child: item(Icons.event_available_outlined,
-                'Cancelación gratuita hasta 1 hora antes de la recogida')),
+                l.bookingIncludedFreeCancellation)),
           ],
         ),
         const SizedBox(height: 50),
@@ -895,13 +869,13 @@ class _BookingScreenState extends State<BookingScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(child: item(Icons.cable_outlined,
-                'Cargadores para iOS y Android a bordo')),
+                l.bookingIncludedChargers)),
             const SizedBox(width: 48),
             Expanded(child: item(Icons.clean_hands_outlined,
-                'Pañuelos y toallitas desinfectantes de cortesía')),
+                l.bookingIncludedTissues)),
             const SizedBox(width: 48),
             Expanded(child: item(Icons.water_drop_outlined,
-                'Agua fría de cortesía incluida')),
+                l.bookingIncludedWater)),
           ],
         ),
       ],
@@ -951,8 +925,9 @@ class _BookingScreenState extends State<BookingScreen> {
   ];
 
   Widget _webCapacity() {
+    final l = context.l10n;
     // Per-vehicle luggage options (dynamic)
-    final luggageOpts = _luggageOptionsFor(_selected);
+    final luggageOpts = _luggageOptionsFor(_selected, l);
 
     // Tab widget
     Widget tab(String label, bool active, VoidCallback onTap) =>
@@ -991,9 +966,9 @@ class _BookingScreenState extends State<BookingScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Title
-        const Text(
-          'Capacidad',
-          style: TextStyle(
+        Text(
+          l.bookingCapacityTitle,
+          style: const TextStyle(
             fontFamily: kSerif,
             fontSize: 38,
             fontWeight: FontWeight.w600,
@@ -1009,10 +984,10 @@ class _BookingScreenState extends State<BookingScreen> {
           children: [
             Row(
               children: [
-                tab('Equipaje', _capacityTab == 0,
+                tab(l.bookingLuggage, _capacityTab == 0,
                     () => setState(() => _capacityTab = 0)),
                 const SizedBox(width: 36),
-                tab('Asientos', _capacityTab == 1,
+                tab(l.bookingSeating, _capacityTab == 1,
                     () => setState(() => _capacityTab = 1)),
               ],
             ),
@@ -1024,11 +999,9 @@ class _BookingScreenState extends State<BookingScreen> {
 
         if (_capacityTab == 0) ...[
           // Description
-          const Text(
-            'Basado en tamaños estándar de equipaje, que pueden diferir de los tuyos. '
-            'Puedes especificar los detalles de tu equipaje en las '
-            '"Notas de recogida" en el siguiente paso.',
-            style: TextStyle(
+          Text(
+            l.bookingCapacityLuggageInfo,
+            style: const TextStyle(
               fontFamily: kSans,
               fontSize: 14,
               color: _kTextSub,
@@ -1044,8 +1017,8 @@ class _BookingScreenState extends State<BookingScreen> {
               color: const Color(0xFFEEEBE4),
               borderRadius: BorderRadius.zero,
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+            // Wrap: longer translations flow onto a second line instead of overflowing.
+            child: Wrap(
               children: List.generate(luggageOpts.length, (i) {
                 final active = _luggageOption == i;
                 return MouseRegion(
@@ -1098,17 +1071,15 @@ class _BookingScreenState extends State<BookingScreen> {
         ] else ...[
           // ── Seating — mirrors Luggage structure ──────────────────────────
           Builder(builder: (_) {
-            final seatingOpts = _seatingOptionsFor(_selected);
+            final seatingOpts = _seatingOptionsFor(_selected, l);
             final safeIdx     = _seatingOption.clamp(0, seatingOpts.length - 1);
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Elige la configuración de asientos que mejor se adapte a tus necesidades. '
-                  'Los asientos especiales (infantil / bebé) deben solicitarse con anticipación '
-                  'y están sujetos a disponibilidad.',
-                  style: TextStyle(
+                Text(
+                  l.bookingSeatingInfo,
+                  style: const TextStyle(
                     fontFamily: kSans,
                     fontSize: 14,
                     color: _kTextSub,
@@ -1124,8 +1095,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     color: Color(0xFFEEEBE4),
                     borderRadius: BorderRadius.zero,
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
+                  child: Wrap(
                     children: List.generate(seatingOpts.length, (i) {
                       final active = safeIdx == i;
                       return MouseRegion(
@@ -1184,6 +1154,7 @@ class _BookingScreenState extends State<BookingScreen> {
   // ── Price breakdown ────────────────────────────────────────────────────────
 
   Widget _webPriceBreakdown() {
+    final l = context.l10n;
     final base = _price * 0.9185;
     final tax  = _price * 0.0815;
 
@@ -1217,7 +1188,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
               const SizedBox(width: 10),
               Text(
-                'Bs ${amount.toStringAsFixed(2)}',
+                LuxMoney.format(amount, cents: true),
                 style: const TextStyle(
                   fontFamily: kSans,
                   fontSize: 15,
@@ -1270,9 +1241,9 @@ class _BookingScreenState extends State<BookingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Title
-          const Text(
-            'Desglose de precio',
-            style: TextStyle(
+          Text(
+            l.bookingPriceBreakdownTitle,
+            style: const TextStyle(
               fontFamily: kSerif,
               fontSize: 36,
               fontWeight: FontWeight.w600,
@@ -1283,18 +1254,18 @@ class _BookingScreenState extends State<BookingScreen> {
           const SizedBox(height: 20),
 
           // Base fare
-          priceLine('Tarifa base', base),
+          priceLine(l.bookingBaseFare, base),
           const Divider(color: _kDivider, height: 1),
 
           // Tax
-          priceLine('Impuesto estimado', tax),
+          priceLine(l.bookingEstimatedTax, tax),
           const Divider(color: _kBorder, height: 1, thickness: 1.2),
           const SizedBox(height: 22),
 
           // Please note section
-          const Text(
-            'Nota importante:',
-            style: TextStyle(
+          Text(
+            l.bookingPleaseNote,
+            style: const TextStyle(
               fontFamily: kSans,
               fontSize: 13,
               fontWeight: FontWeight.w700,
@@ -1303,19 +1274,9 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           const SizedBox(height: 14),
 
-          note(
-            'Los límites de capacidad de pasajeros y equipaje deben respetarse por '
-            'razones de seguridad. Si se exceden, el chófer podrá rechazar el servicio.',
-          ),
-          note(
-            'Las imágenes del vehículo son solo de referencia. El vehículo real puede '
-            'variar manteniendo una calidad equivalente o superior.',
-          ),
-          note(
-            'Las necesidades adicionales (silla de ruedas, asiento infantil, artículos extra) pueden '
-            'añadirse en "Notas de recogida". Elige Business Van para grupos más grandes '
-            'o equipaje adicional.',
-          ),
+          note(l.bookingNoteCapacity),
+          note(l.bookingNoteImages),
+          note(l.bookingNoteExtras),
         ],
       ),
     );
@@ -1348,7 +1309,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           Icon(Icons.map_outlined,
                               size: 40, color: Colors.grey.shade700),
                           const SizedBox(height: 8),
-                          Text('Vista previa de ruta',
+                          Text(context.l10n.bookingRoutePreview,
                               style: TextStyle(
                                 fontFamily: kSans,
                                 fontSize: 12,
@@ -1380,6 +1341,7 @@ class _BookingScreenState extends State<BookingScreen> {
       );
 
   Widget _webSummaryContent() {
+    final l = context.l10n;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1392,7 +1354,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    _selected.label,
+                    _selected.localizedLabel(l),
                     style: const TextStyle(
                       fontFamily: kSerif,
                       fontSize: 28,
@@ -1405,7 +1367,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    _selected.description,
+                    _selected.localizedDescription(l),
                     style: const TextStyle(
                       fontFamily: kSans,
                       fontSize: 11,
@@ -1420,7 +1382,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             const SizedBox(width: 12),
             Text(
-              'Bs ${_price.toStringAsFixed(0)}',
+              LuxMoney.format(_price.round()),
               style: const TextStyle(
                 fontFamily: kSerif,
                 fontSize: 32,
@@ -1437,13 +1399,13 @@ class _BookingScreenState extends State<BookingScreen> {
         const SizedBox(height: 20),
         _SummaryAddressRow(
           icon: Icons.location_on_outlined,
-          label: 'Recogida',
+          label: l.bookingPickupLabel,
           value: _formData?.origin.displayName ?? '—',
         ),
         const SizedBox(height: 12),
         _SummaryAddressRow(
           icon: Icons.flag_outlined,
-          label: 'Destino',
+          label: l.bookingDestinationLabel,
           value: _formData?.destination?.displayName ?? '—',
         ),
 
@@ -1456,8 +1418,8 @@ class _BookingScreenState extends State<BookingScreen> {
           icon: Icons.person_outlined,
           iconBg: const Color(0xFFDDE6F8),
           iconColor: _kPanelAccent,
-          title: 'Reservar para mí',
-          subtitle: 'Reserva con la información de tu cuenta',
+          title: l.bookingForMyself,
+          subtitle: l.bookingForMyselfSubtitle,
           selected: _bookForSelf,
           onTap: () => setState(() => _bookForSelf = true),
         ),
@@ -1471,10 +1433,11 @@ class _BookingScreenState extends State<BookingScreen> {
               ? const Color(0xFFDDE6F8)
               : const Color(0xFFF0EDE8),
           iconColor: !_bookForSelf ? _kPanelAccent : _kTextSub,
-          title: 'Reservar para un invitado',
+          title: l.bookingForGuest,
           subtitle: (!_bookForSelf && _guestFirstName.isNotEmpty)
-              ? '$_guestTitle $_guestFirstName $_guestLastName'
-              : 'Seleccionar o añadir un invitado',
+              ? l.bookingGuestDisplayName(
+                  _guestTitle.label(l), _guestFirstName, _guestLastName).trim()
+              : l.bookingForGuestSubtitle,
           selected: !_bookForSelf,
           onTap: _showAddGuestDialog,
           trailing: Icon(
@@ -1499,15 +1462,15 @@ class _BookingScreenState extends State<BookingScreen> {
                   color: const Color(0xFFF0EDE8),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.local_offer_outlined,
+                    const Icon(Icons.local_offer_outlined,
                         size: 15, color: _kTextPrimary),
-                    SizedBox(width: 7),
+                    const SizedBox(width: 7),
                     Text(
-                      'Aplicar oferta',
-                      style: TextStyle(
+                      l.bookingApplyOffer,
+                      style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
@@ -1518,14 +1481,17 @@ class _BookingScreenState extends State<BookingScreen> {
                 ),
               ),
             ),
-            const Spacer(),
-            const Text(
-              'Todos los cargos incluidos',
-              style: TextStyle(
-                fontFamily: kSans,
-                fontSize: 12,
-                color: _kTextSub,
-                fontWeight: FontWeight.w400,
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                l.bookingAllFeesIncluded,
+                textAlign: TextAlign.end,
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 12,
+                  color: _kTextSub,
+                  fontWeight: FontWeight.w400,
+                ),
               ),
             ),
           ],
@@ -1572,13 +1538,17 @@ class _BookingScreenState extends State<BookingScreen> {
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
               onPressed: () => _step > 0 ? setState(() => _step--) : context.pop(),
             ),
-            title: Text('PASO ${_step + 1} DE 3'),
+            title: Text(context.l10n.bookingStepOf(_step + 1, 3)),
             bottom: PreferredSize(
               preferredSize: const Size.fromHeight(48),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
                 child: _LightStepIndicator(
-                  steps: const ['Vehículo', 'Detalles', 'Confirmar'],
+                  steps: [
+                    context.l10n.bookingStepVehicle,
+                    context.l10n.bookingStepDetails,
+                    context.l10n.commonConfirm,
+                  ],
                   currentStep: _step,
                 ),
               ),
@@ -1594,7 +1564,9 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
               _LightPriceBar(
                 price: _price,
-                label: _step < 2 ? 'Continuar' : 'Confirmar reserva',
+                label: _step < 2
+                    ? context.l10n.commonContinue
+                    : context.l10n.bookingConfirmCta,
                 loading: _loading,
                 onConfirm: _step < 2 ? () => setState(() => _step++) : _confirm,
               ),
@@ -1615,8 +1587,8 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _mobileVehicleStep() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Elige tu experiencia',
-              style: TextStyle(
+          Text(context.l10n.bookingChooseExperience,
+              style: const TextStyle(
                 fontFamily: kSerif, fontSize: 28,
                 fontWeight: FontWeight.w600, color: _kTextPrimary,
               )),
@@ -1663,35 +1635,43 @@ class _BookingScreenState extends State<BookingScreen> {
         ],
       );
 
-  Widget _detailsStep() => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('DETALLES DEL VIAJE',
-              style: TextStyle(
-                fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w700,
-                color: _kTextTertiary, letterSpacing: 2.0,
-              )),
-          const SizedBox(height: 20),
-          _LightCounterRow(label: 'Pasajeros', icon: Icons.person_outline,
-              value: _passengers, min: 1, max: _selected.capacity,
-              onChanged: (v) => setState(() => _passengers = v)),
-          const SizedBox(height: 10),
-          _LightCounterRow(label: 'Equipaje', icon: Icons.luggage_outlined,
-              value: _luggage, min: 0, max: 6,
-              onChanged: (v) => setState(() => _luggage = v)),
-          const SizedBox(height: 20),
-          _LightTextField(label: 'Número de vuelo', hint: 'ej. LA 8810 (opcional)',
-              icon: Icons.flight_outlined, onChanged: (v) => _flight = v),
-          const SizedBox(height: 12),
-          _LightTextField(label: 'Solicitudes especiales',
-              hint: 'Asiento infantil, letrero de bienvenida…',
-              icon: Icons.chat_bubble_outline_rounded, maxLines: 3,
-              onChanged: (v) => _notes = v),
-        ],
-      );
+  Widget _detailsStep() {
+    final l = context.l10n;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l.bookingTripDetailsHeading,
+            style: const TextStyle(
+              fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w700,
+              color: _kTextTertiary, letterSpacing: 2.0,
+            )),
+        const SizedBox(height: 20),
+        _LightCounterRow(label: l.bookingPassengers, icon: Icons.person_outline,
+            value: _passengers, min: 1, max: _selected.capacity,
+            onChanged: (v) => setState(() => _passengers = v)),
+        const SizedBox(height: 10),
+        _LightCounterRow(label: l.bookingLuggage, icon: Icons.luggage_outlined,
+            value: _luggage, min: 0, max: 6,
+            onChanged: (v) => setState(() => _luggage = v)),
+        const SizedBox(height: 20),
+        _LightTextField(label: l.bookingFlightNumber, hint: l.bookingFlightNumberHint,
+            icon: Icons.flight_outlined, onChanged: (v) => _flight = v),
+        const SizedBox(height: 12),
+        _LightTextField(label: l.bookingSpecialRequests,
+            hint: l.bookingSpecialRequestsHint,
+            icon: Icons.chat_bubble_outline_rounded, maxLines: 3,
+            onChanged: (v) => _notes = v),
+      ],
+    );
+  }
 
   Widget _confirmStep() {
+    final l = context.l10n;
     final hasRoute = _formData?.origin != null;
+    final hourly = _service == ServiceType.byTheHour;
+    final distance = NumberFormat.decimalPatternDigits(
+            locale: context.localeTag, decimalDigits: 1)
+        .format(_km);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1705,8 +1685,8 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           const SizedBox(height: 20),
         ],
-        const Text('RESUMEN DE RESERVA',
-            style: TextStyle(fontFamily: kSans, fontSize: 10,
+        Text(l.bookingSummaryHeading,
+            style: const TextStyle(fontFamily: kSans, fontSize: 10,
                 fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 2.0)),
         const SizedBox(height: 14),
         Container(
@@ -1716,23 +1696,24 @@ class _BookingScreenState extends State<BookingScreen> {
             border: Border.all(color: _kBorder),
           ),
           child: Column(children: [
-            _SummaryRow('Servicio',    _service.label,       isFirst: true),
-            _SummaryRow('Vehículo',    _selected.label),
+            _SummaryRow(l.bookingSummaryService, _service.localizedLabel(l), isFirst: true),
+            _SummaryRow(l.bookingStepVehicle, _selected.localizedLabel(l)),
             if (_formData?.origin != null)
-              _SummaryRow('Desde',     _formData!.origin.displayName),
+              _SummaryRow(l.bookingSummaryFrom, _formData!.origin.displayName),
             if (_formData?.destination != null)
-              _SummaryRow('Hasta',       _formData!.destination!.displayName),
+              _SummaryRow(l.bookingSummaryTo, _formData!.destination!.displayName),
             _SummaryRow(
-              _service == ServiceType.byTheHour ? 'Duración' : 'Distancia',
-              _service == ServiceType.byTheHour ? '$_hours horas'
-                  : _km > 0 ? '${_km.toStringAsFixed(1)} km' : '—',
+              hourly ? l.bookingSummaryDuration : l.bookingSummaryDistance,
+              hourly ? l.unitHours(_hours)
+                  : _km > 0 ? l.bookingDistanceKm(distance) : '—',
             ),
             if (_formData?.routeDurationMin != null && _formData!.routeDurationMin > 0)
-              _SummaryRow('Duración est.', '${_formData!.routeDurationMin} min'),
-            _SummaryRow('Pasajeros', '$_passengers'),
-            _SummaryRow('Equipaje',    '$_luggage bultos'),
-            if (_flight.isNotEmpty) _SummaryRow('Vuelo', _flight),
-            if (_notes.isNotEmpty)  _SummaryRow('Notas',  _notes),
+              _SummaryRow(l.bookingSummaryEstDuration,
+                  localizedDuration(l, Duration(minutes: _formData!.routeDurationMin))),
+            _SummaryRow(l.bookingPassengers, l.unitPassengers(_passengers)),
+            _SummaryRow(l.bookingLuggage, l.unitBags(_luggage)),
+            if (_flight.isNotEmpty) _SummaryRow(l.bookingSummaryFlight, _flight),
+            if (_notes.isNotEmpty)  _SummaryRow(l.bookingSummaryNotes, _notes),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: const BoxDecoration(
@@ -1740,10 +1721,12 @@ class _BookingScreenState extends State<BookingScreen> {
                 borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
               ),
               child: Row(children: [
-                const Text('TOTAL ESTIMADO',
-                    style: TextStyle(fontFamily: kSans, fontSize: 10,
-                        fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 1.8)),
-                const Spacer(),
+                Expanded(
+                  child: Text(l.bookingEstimatedTotal,
+                      style: const TextStyle(fontFamily: kSans, fontSize: 10,
+                          fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 1.8)),
+                ),
+                const SizedBox(width: 12),
                 Text(LuxMoney.format(_price.ceil()),
                     style: const TextStyle(fontFamily: kSans, fontSize: 18,
                         fontWeight: FontWeight.w700, color: _kTextPrimary, letterSpacing: -0.3)),
@@ -1752,8 +1735,8 @@ class _BookingScreenState extends State<BookingScreen> {
           ]),
         ),
         const SizedBox(height: 20),
-        const Text('DESGLOSE',
-            style: TextStyle(fontFamily: kSans, fontSize: 10,
+        Text(l.bookingBreakdownHeading,
+            style: const TextStyle(fontFamily: kSans, fontSize: 10,
                 fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 2.0)),
         const SizedBox(height: 8),
         PriceBreakdown(
@@ -1766,13 +1749,16 @@ class _BookingScreenState extends State<BookingScreen> {
         if (_savedCards.isEmpty)
           const _PayOnTripNotice()
         else ...[
-          const Text('MÉTODO DE PAGO',
-              style: TextStyle(fontFamily: kSans, fontSize: 10,
+          Text(l.bookingPaymentMethodHeading,
+              style: const TextStyle(fontFamily: kSans, fontSize: 10,
                   fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 2.0)),
           const SizedBox(height: 12),
           ..._savedCards.map((card) {
             final id    = card['id'] as String;
-            final brand = _cap(card['brand'] as String? ?? 'Card');
+            final rawBrand = card['brand'] as String?;
+            final brand = rawBrand == null || rawBrand.isEmpty
+                ? l.bookingCardFallback
+                : _cap(rawBrand);
             final last4 = card['last4'] as String? ?? '****';
             final isSel = _selectedCardId == id;
             return Padding(
@@ -1811,7 +1797,7 @@ class _BookingScreenState extends State<BookingScreen> {
         ],
         const SizedBox(height: 16),
         _GuaranteeRow(Icons.event_available_outlined,
-            'Cancelación gratuita hasta 1 hora antes de la recogida'),
+            l.bookingIncludedFreeCancellation),
         const SizedBox(height: 8),
       ],
     );

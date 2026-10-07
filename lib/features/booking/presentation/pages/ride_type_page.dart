@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 
 class RideTypePage extends StatelessWidget {
   const RideTypePage({super.key});
@@ -22,7 +23,7 @@ class RideTypePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: LuxSpacing.md),
-              const SectionHeader(title: 'Elegir servicio'),
+              SectionHeader(title: context.l10n.bookingChooseService),
               const SizedBox(height: LuxSpacing.xl),
               _ServiceCard(
                 serviceType: ServiceType.oneWay,
@@ -73,9 +74,9 @@ class _ServiceCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(serviceType.label, style: LuxTypography.titleLarge),
+                  Text(serviceType.localizedLabel(context.l10n), style: LuxTypography.titleLarge),
                   const SizedBox(height: 4),
-                  Text(serviceType.description, style: LuxTypography.bodyMedium),
+                  Text(serviceType.localizedDescription(context.l10n), style: LuxTypography.bodyMedium),
                 ],
               ),
             ),

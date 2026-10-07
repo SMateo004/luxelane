@@ -15,6 +15,502 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appNameDriver => 'Luxelane Chauffeur';
 
   @override
+  String get bookingAllFeesIncluded => 'All fees included';
+
+  @override
+  String get bookingApplyOffer => 'Apply offer';
+
+  @override
+  String get bookingAssuranceFixedPrice => 'Fixed price, no surprises';
+
+  @override
+  String get bookingAssuranceVerified => 'Vetted chauffeurs';
+
+  @override
+  String get bookingAuthCreateAccountCta => 'Create account';
+
+  @override
+  String get bookingAuthEmail => 'Email';
+
+  @override
+  String get bookingAuthEmailHint => 'you@example.com';
+
+  @override
+  String get bookingAuthFullName => 'Full name';
+
+  @override
+  String get bookingAuthFullNameHint => 'Your name';
+
+  @override
+  String get bookingAuthHaveAccount => 'Already have an account? Sign in';
+
+  @override
+  String get bookingAuthHidePassword => 'Hide password';
+
+  @override
+  String get bookingAuthNoAccount => 'Don\'t have an account? Create one';
+
+  @override
+  String get bookingAuthPassword => 'Password';
+
+  @override
+  String get bookingAuthShowPassword => 'Show password';
+
+  @override
+  String get bookingAuthSignInCta => 'Sign in';
+
+  @override
+  String get bookingAuthSubtitleLogin => 'Sign in to confirm your booking.';
+
+  @override
+  String get bookingAuthSubtitleRegister => 'Create your Luxelane account to complete your booking.';
+
+  @override
+  String get bookingAuthTitleLogin => 'Sign in to continue';
+
+  @override
+  String get bookingAuthTitleRegister => 'Create an account';
+
+  @override
+  String get bookingBackHome => 'Back to home';
+
+  @override
+  String get bookingBaseFare => 'Base fare';
+
+  @override
+  String get bookingBreakdownHeading => 'BREAKDOWN';
+
+  @override
+  String get bookingCapacityLuggageInfo => 'Based on standard luggage sizes, which may differ from yours. You can add details about your luggage in \"Pickup notes\" at the next step.';
+
+  @override
+  String get bookingCapacityTitle => 'Capacity';
+
+  @override
+  String get bookingCardFallback => 'Card';
+
+  @override
+  String bookingChauffeurAtDisposal(int hours) {
+    return 'Chauffeur at your disposal · $hours h';
+  }
+
+  @override
+  String get bookingChooseExperience => 'Choose your experience';
+
+  @override
+  String get bookingChooseService => 'Choose a service';
+
+  @override
+  String get bookingConfirmCta => 'Confirm booking';
+
+  @override
+  String get bookingConfirmedEyebrow => 'BOOKING CONFIRMED';
+
+  @override
+  String get bookingConfirmedHeadline => 'Your chauffeur will be waiting.';
+
+  @override
+  String get bookingConfirmedSemantics => 'Booking confirmed';
+
+  @override
+  String get bookingCountdownOnTheWay => 'Your chauffeur is on the way.';
+
+  @override
+  String bookingDateTime(String date, String time) {
+    return '$date · $time';
+  }
+
+  @override
+  String get bookingDescriptiveText => 'Premium, made practical. Spacious seating, a smooth ride and punctual pickups that keep your day on schedule.';
+
+  @override
+  String get bookingDestinationLabel => 'Destination';
+
+  @override
+  String bookingDistanceKm(String distance) {
+    return '$distance km';
+  }
+
+  @override
+  String get bookingErrorCreateFailed => 'We couldn\'t complete your booking';
+
+  @override
+  String get bookingErrorInvalidFlight => 'Please check the flight number (e.g. LA 8810).';
+
+  @override
+  String get bookingErrorPaymentNotAuthorised => 'We couldn\'t authorize your card. Please try again or choose another.';
+
+  @override
+  String get bookingErrorQuoteExpired => 'Your quote has expired. Confirm again to see the updated price.';
+
+  @override
+  String get bookingErrorQuoteFailed => 'We couldn\'t price your journey';
+
+  @override
+  String get bookingErrorQuoteMissing => 'Your journey hasn\'t been priced yet';
+
+  @override
+  String get bookingErrorRateFailed => 'We couldn\'t send your rating';
+
+  @override
+  String get bookingErrorTooManyPassengers => 'The number of passengers exceeds the vehicle\'s capacity.';
+
+  @override
+  String get bookingEstimatedTax => 'Estimated tax';
+
+  @override
+  String get bookingEstimatedTotal => 'ESTIMATED TOTAL';
+
+  @override
+  String get bookingFixedPriceLabel => 'FIXED PRICE';
+
+  @override
+  String get bookingFixedPricePaidByCard => 'Fixed price · card authorized';
+
+  @override
+  String get bookingFixedPricePayDriver => 'Fixed price · pay your chauffeur';
+
+  @override
+  String bookingFlight(String flight) {
+    return 'Flight $flight';
+  }
+
+  @override
+  String get bookingFlightNumber => 'Flight number';
+
+  @override
+  String get bookingFlightNumberHint => 'e.g. LA 8810 (optional)';
+
+  @override
+  String get bookingForGuest => 'Book for a guest';
+
+  @override
+  String get bookingForGuestSubtitle => 'Select or add a guest';
+
+  @override
+  String get bookingForMyself => 'Book for myself';
+
+  @override
+  String get bookingForMyselfSubtitle => 'Book using your account details';
+
+  @override
+  String get bookingFreeCancellationShort => 'Free cancellation up to 1 h before';
+
+  @override
+  String get bookingGuestDialogBody => 'Enter your guest\'s details and treat them to a first-class experience. We\'ll keep them updated on their journey every step of the way. Rest assured, we never share any payment or billing information with them.';
+
+  @override
+  String get bookingGuestDialogTitle => 'Add a new guest';
+
+  @override
+  String bookingGuestDisplayName(String title, String firstName, String lastName) {
+    return '$title $firstName $lastName';
+  }
+
+  @override
+  String get bookingGuestEmailHint => 'Guest\'s email';
+
+  @override
+  String get bookingGuestFirstName => 'First name';
+
+  @override
+  String get bookingGuestFirstNameHint => 'Guest\'s first name';
+
+  @override
+  String get bookingGuestLastName => 'Last name';
+
+  @override
+  String get bookingGuestLastNameHint => 'Guest\'s last name';
+
+  @override
+  String get bookingGuestPhone => 'Guest\'s mobile number';
+
+  @override
+  String get bookingGuestPhoneHelp => 'Your guest will receive trip updates on this number';
+
+  @override
+  String get bookingGuestTitleDr => 'Dr.';
+
+  @override
+  String get bookingGuestTitleLabel => 'Title';
+
+  @override
+  String get bookingGuestTitleMr => 'Mr.';
+
+  @override
+  String get bookingGuestTitleMrs => 'Mrs.';
+
+  @override
+  String get bookingGuestTitleMs => 'Ms.';
+
+  @override
+  String get bookingGuestTitleProf => 'Prof.';
+
+  @override
+  String get bookingHeroTagline => 'Fixed price · No surprises · Available worldwide';
+
+  @override
+  String get bookingHeroTitle => 'Choose your\nexperience';
+
+  @override
+  String bookingHoursShort(int hours) {
+    return '$hours h';
+  }
+
+  @override
+  String get bookingIncludedChargers => 'iOS and Android chargers on board';
+
+  @override
+  String get bookingIncludedFreeCancellation => 'Free cancellation up to 1 hour before pickup';
+
+  @override
+  String get bookingIncludedMeetGreet => 'Personal meet & greet';
+
+  @override
+  String get bookingIncludedTissues => 'Complimentary tissues and sanitizing wipes';
+
+  @override
+  String get bookingIncludedTitle => 'What\'s included';
+
+  @override
+  String bookingIncludedWaiting(int minutes) {
+    return 'Up to $minutes minutes of complimentary waiting time';
+  }
+
+  @override
+  String get bookingIncludedWater => 'Complimentary chilled water';
+
+  @override
+  String get bookingLoadErrorTitle => 'We couldn\'t load your booking';
+
+  @override
+  String get bookingLuggage => 'Luggage';
+
+  @override
+  String bookingLuggageCarryOn(int count) {
+    return '$count × Carry-on';
+  }
+
+  @override
+  String bookingLuggageChecked(int count) {
+    return '$count × Standard checked';
+  }
+
+  @override
+  String bookingLuggageExtraLarge(int count) {
+    return '$count × Extra large';
+  }
+
+  @override
+  String get bookingNotFound => 'This booking is no longer available.';
+
+  @override
+  String get bookingNoteCapacity => 'Passenger and luggage limits must be respected for safety reasons. If they are exceeded, the chauffeur may decline the service.';
+
+  @override
+  String get bookingNoteExtras => 'Additional needs (wheelchair, child seat, extra items) can be added in \"Pickup notes\". Choose Business Van for larger groups or extra luggage.';
+
+  @override
+  String get bookingNoteImages => 'Vehicle images are for reference only. The actual vehicle may vary, always of equal or higher quality.';
+
+  @override
+  String get bookingPassengers => 'Passengers';
+
+  @override
+  String bookingPassengersAndBags(String passengers, String bags) {
+    return '$passengers · $bags';
+  }
+
+  @override
+  String get bookingPayOnTripBody => 'You pay the fixed price to your chauffeur in cash or by QR code. Nothing is charged when you book.';
+
+  @override
+  String get bookingPayOnTripTitle => 'Pay at the end of your journey';
+
+  @override
+  String get bookingPaymentFailed => 'The payment didn\'t go through';
+
+  @override
+  String get bookingPaymentMethodHeading => 'PAYMENT METHOD';
+
+  @override
+  String bookingPickupInDays(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'Pickup in $days days',
+      one: 'Pickup in 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String bookingPickupInHours(int hours) {
+    return 'Pickup in $hours h';
+  }
+
+  @override
+  String bookingPickupInHoursMinutes(int hours, int minutes) {
+    return 'Pickup in $hours h $minutes min';
+  }
+
+  @override
+  String bookingPickupInMinutes(int minutes) {
+    return 'Pickup in $minutes min';
+  }
+
+  @override
+  String get bookingPickupLabel => 'Pickup';
+
+  @override
+  String get bookingPleaseNote => 'Please note:';
+
+  @override
+  String get bookingPriceBreakdownTitle => 'Price breakdown';
+
+  @override
+  String bookingPriceConfirmedBody(String price) {
+    return 'The fixed price for your journey is $price. It won\'t change, whatever the traffic.';
+  }
+
+  @override
+  String get bookingPriceConfirmedTitle => 'Price confirmed';
+
+  @override
+  String bookingReference(String code) {
+    return 'Booking reference: $code';
+  }
+
+  @override
+  String bookingReserveCta(String vehicle) {
+    return 'BOOK $vehicle';
+  }
+
+  @override
+  String get bookingRoutePreview => 'Route preview';
+
+  @override
+  String get bookingSeating => 'Seating';
+
+  @override
+  String get bookingSeatingFive => 'Five passengers';
+
+  @override
+  String get bookingSeatingInfantSeat => 'Infant seat';
+
+  @override
+  String get bookingSeatingInfo => 'Choose the seating layout that best suits your needs. Child and infant seats must be requested in advance and are subject to availability.';
+
+  @override
+  String get bookingSeatingThree => 'Three passengers';
+
+  @override
+  String get bookingSeatingTwo => 'Two passengers';
+
+  @override
+  String bookingSeatsUpTo(int count) {
+    return 'Seats up to $count';
+  }
+
+  @override
+  String get bookingSelectRouteError => 'Please choose a pickup point and a destination';
+
+  @override
+  String get bookingSelectedBadge => 'SELECTED';
+
+  @override
+  String get bookingSlideBusiness1 => 'Executive comfort on every journey';
+
+  @override
+  String get bookingSlideBusiness2 => 'Punctual, professional and perfectly refined';
+
+  @override
+  String get bookingSlideBusiness3 => 'Arrive with confidence, every time';
+
+  @override
+  String get bookingSlideBusiness4 => 'Premium made practical for the modern executive';
+
+  @override
+  String get bookingSlideElectric1 => 'Fully electric, whisper-quiet and executive-class';
+
+  @override
+  String get bookingSlideElectric2 => 'Zero emissions, the ultimate luxury experience';
+
+  @override
+  String get bookingSlideFirst1 => 'An extraordinary level of luxury awaits';
+
+  @override
+  String get bookingSlideFirst2 => 'Designed for those who expect the very best';
+
+  @override
+  String get bookingSlideFirst3 => 'Privacy and elegance on every transfer';
+
+  @override
+  String get bookingSlideFirst4 => 'First class, door to door';
+
+  @override
+  String get bookingSlideVan1 => 'Space and comfort for your whole team';
+
+  @override
+  String get bookingSlideVan2 => 'Stress-free, punctual group transfers';
+
+  @override
+  String get bookingSlideVan3 => 'The perfect ride for families and groups';
+
+  @override
+  String get bookingSlideVan4 => 'Premium capacity, with no compromise on comfort';
+
+  @override
+  String get bookingSpecialRequests => 'Special requests';
+
+  @override
+  String get bookingSpecialRequestsHint => 'Child seat, name sign…';
+
+  @override
+  String get bookingStepDetails => 'Details';
+
+  @override
+  String bookingStepOf(int step, int total) {
+    return 'STEP $step OF $total';
+  }
+
+  @override
+  String get bookingStepVehicle => 'Vehicle';
+
+  @override
+  String get bookingSummaryDistance => 'Distance';
+
+  @override
+  String get bookingSummaryDuration => 'Duration';
+
+  @override
+  String get bookingSummaryEstDuration => 'Est. duration';
+
+  @override
+  String get bookingSummaryFlight => 'Flight';
+
+  @override
+  String get bookingSummaryFrom => 'From';
+
+  @override
+  String get bookingSummaryHeading => 'BOOKING SUMMARY';
+
+  @override
+  String get bookingSummaryNotes => 'Notes';
+
+  @override
+  String get bookingSummaryService => 'Service';
+
+  @override
+  String get bookingSummaryTo => 'To';
+
+  @override
+  String get bookingTripDetailsHeading => 'TRIP DETAILS';
+
+  @override
+  String get bookingViewMyBooking => 'VIEW MY BOOKING';
+
+  @override
   String get commonBack => 'Back';
 
   @override

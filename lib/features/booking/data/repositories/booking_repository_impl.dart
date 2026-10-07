@@ -5,6 +5,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../domain/booking_error_codes.dart';
 
 class BookingRepositoryImpl implements BookingRepository {
   BookingRepositoryImpl({
@@ -40,10 +41,9 @@ class BookingRepositoryImpl implements BookingRepository {
       });
       return Right(
           Quote.fromJson(Map<String, dynamic>.from(result.data as Map)));
-    } on FirebaseFunctionsException catch (e) {
-      return Left(ServerFailure(e.message ?? 'No se pudo cotizar el viaje'));
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } catch (_) {
+      // Server messages are technical English; the UI shows a translated one.
+      return const Left(ServerFailure(BookingErrorCodes.quoteFailed));
     }
   }
 
@@ -58,7 +58,7 @@ class BookingRepositoryImpl implements BookingRepository {
   @override
   Future<Either<Failure, Booking>> createBooking(Booking booking) async {
     if (booking.quoteId == null) {
-      return const Left(ServerFailure('Falta la cotización del viaje'));
+      return const Left(ServerFailure(BookingErrorCodes.quoteMissing));
     }
     try {
       final result = await _fn.httpsCallable('createBooking').call({
@@ -77,13 +77,19 @@ class BookingRepositoryImpl implements BookingRepository {
       final doc = await _col.doc(id).get();
       return Right(Booking.fromJson({'id': doc.id, ...doc.data()!}));
     } on FirebaseFunctionsException catch (e) {
-      final expired = e.message?.contains('quote/expired') ?? false;
-      return Left(ServerFailure(expired
-          ? 'La cotización venció. Vuelve a confirmar para ver el precio actualizado.'
-          : e.message ?? 'No se pudo crear la reserva'));
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(_createErrorCode(e.message ?? '')));
+    } catch (_) {
+      return const Left(ServerFailure(BookingErrorCodes.createFailed));
     }
+  }
+
+  /// Maps createBooking's server errors (functions/src/index.ts) to codes.
+  static String _createErrorCode(String message) {
+    if (message.contains('quote/expired')) return BookingErrorCodes.quoteExpired;
+    if (message.contains('payment/not-authorised')) return BookingErrorCodes.paymentNotAuthorised;
+    if (message.contains('invalid flightNumber')) return BookingErrorCodes.invalidFlight;
+    if (message.contains('invalid passengerCount')) return BookingErrorCodes.tooManyPassengers;
+    return BookingErrorCodes.createFailed;
   }
 
   @override
@@ -272,10 +278,8 @@ class BookingRepositoryImpl implements BookingRepository {
         if (comment != null && comment.trim().isNotEmpty) 'comment': comment.trim(),
       });
       return const Right(null);
-    } on FirebaseFunctionsException catch (e) {
-      return Left(ServerFailure(e.message ?? 'No se pudo enviar tu calificación'));
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } catch (_) {
+      return const Left(ServerFailure(BookingErrorCodes.rateFailed));
     }
   }
 

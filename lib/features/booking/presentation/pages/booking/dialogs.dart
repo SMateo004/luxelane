@@ -11,8 +11,8 @@ class _WebAuthGateDialog extends StatefulWidget {
 class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
   bool _showRegister = false;
   final _emailCtrl = TextEditingController();
-  final _passCtrl  = TextEditingController();
-  final _nameCtrl  = TextEditingController();
+  final _passCtrl = TextEditingController();
+  final _nameCtrl = TextEditingController();
   bool _loading = false;
   bool _obscure = true;
 
@@ -26,119 +26,155 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
 
   void _submit() {
     final email = _emailCtrl.text.trim();
-    final pass  = _passCtrl.text;
+    final pass = _passCtrl.text;
     if (email.isEmpty || pass.isEmpty) return;
     setState(() => _loading = true);
     if (_showRegister) {
       context.read<AuthBloc>().add(RegisterRequested(
-            email: email, password: pass,
-            displayName: _nameCtrl.text.trim().isNotEmpty
-                ? _nameCtrl.text.trim()
-                : email.split('@').first,
-            phone: '', role: UserRole.rider));
+          email: email,
+          password: pass,
+          displayName: _nameCtrl.text.trim().isNotEmpty
+              ? _nameCtrl.text.trim()
+              : email.split('@').first,
+          phone: '',
+          role: UserRole.rider));
     } else {
-      context.read<AuthBloc>().add(LoginRequested(email: email, password: pass));
+      context
+          .read<AuthBloc>()
+          .add(LoginRequested(email: email, password: pass));
     }
   }
 
   @override
-  Widget build(BuildContext context) => BlocListener<AuthBloc, AuthState>(
-        listener: (ctx, state) {
-          if (state is AuthAuthenticated) Navigator.of(ctx).pop(true);
-          if (state is AuthError) {
-            setState(() => _loading = false);
-            ScaffoldMessenger.of(ctx).showSnackBar(
-                SnackBar(content: Text(state.message), backgroundColor: LuxColors.error));
-          }
-        },
-        child: Dialog(
-          backgroundColor: LuxColors.blackSurface,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(LuxRadius.lg),
-            side: const BorderSide(color: LuxColors.blackBorder),
-          ),
-          child: SizedBox(
-            width: 420,
-            child: Padding(
-              padding: const EdgeInsets.all(LuxSpacing.xxl),
-              child: Column(mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(children: [
-                      Expanded(child: Text(
-                        _showRegister ? 'Crear una cuenta' : 'Inicia sesión para continuar',
-                        style: LuxTypography.headlineLarge.copyWith(fontSize: 24))),
-                      IconButton(
-                          onPressed: () => Navigator.of(context).pop(false),
-                          icon: const Icon(Icons.close_rounded,
-                              color: LuxColors.whiteTertiary)),
-                    ]),
-                    const SizedBox(height: LuxSpacing.sm),
-                    Text(
-                      _showRegister
-                          ? 'Crea tu cuenta de Luxelane para completar la reserva.'
-                          : 'Inicia sesión para confirmar tu reserva.',
-                      style: LuxTypography.bodyMedium),
-                    const SizedBox(height: LuxSpacing.xl),
-                    if (_showRegister) ...[
-                      LuxTextField(label: 'Nombre completo', hint: 'Tu nombre',
-                          prefixIcon: Icons.person_outline,
-                          controller: _nameCtrl, onChanged: (_) {}),
-                      const SizedBox(height: LuxSpacing.md),
-                    ],
-                    LuxTextField(label: 'Correo electrónico', hint: 'tu@ejemplo.com',
-                        prefixIcon: Icons.email_outlined, controller: _emailCtrl,
-                        keyboardType: TextInputType.emailAddress, onChanged: (_) {}),
-                    const SizedBox(height: LuxSpacing.md),
-                    LuxTextField(label: 'Contraseña', hint: '••••••••',
-                        prefixIcon: Icons.lock_outline, controller: _passCtrl,
-                        obscureText: _obscure, onChanged: (_) {},
-                        suffixIcon: IconButton(
-                          icon: Icon(_obscure
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
-                              color: LuxColors.whiteTertiary, size: 20),
-                          onPressed: () => setState(() => _obscure = !_obscure),
-                        )),
-                    const SizedBox(height: LuxSpacing.xl),
-                    LuxButton(label: _showRegister ? 'Crear cuenta' : 'Iniciar sesión',
-                        loading: _loading, onPressed: _loading ? null : _submit),
-                    const SizedBox(height: LuxSpacing.md),
-                    TextButton(
-                      onPressed: () => setState(() => _showRegister = !_showRegister),
-                      child: Text(
-                        _showRegister
-                            ? '¿Ya tienes cuenta? Inicia sesión'
-                            : '¿No tienes cuenta? Crear una',
-                        style: LuxTypography.bodyMedium.copyWith(color: LD.accent)),
-                    ),
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (ctx, state) {
+        if (state is AuthAuthenticated) Navigator.of(ctx).pop(true);
+        if (state is AuthError) {
+          setState(() => _loading = false);
+          ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+              content: Text(state.message), backgroundColor: LuxColors.error));
+        }
+      },
+      child: Dialog(
+        backgroundColor: LuxColors.blackSurface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(LuxRadius.lg),
+          side: const BorderSide(color: LuxColors.blackBorder),
+        ),
+        child: SizedBox(
+          width: 420,
+          child: Padding(
+            padding: const EdgeInsets.all(LuxSpacing.xxl),
+            child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(children: [
+                    Expanded(
+                        child: Text(
+                            _showRegister
+                                ? l.bookingAuthTitleRegister
+                                : l.bookingAuthTitleLogin,
+                            style: LuxTypography.headlineLarge
+                                .copyWith(fontSize: 24))),
+                    IconButton(
+                        tooltip: l.commonClose,
+                        onPressed: () => Navigator.of(context).pop(false),
+                        icon: const Icon(Icons.close_rounded,
+                            color: LuxColors.whiteTertiary)),
                   ]),
-            ),
+                  const SizedBox(height: LuxSpacing.sm),
+                  Text(
+                      _showRegister
+                          ? l.bookingAuthSubtitleRegister
+                          : l.bookingAuthSubtitleLogin,
+                      style: LuxTypography.bodyMedium),
+                  const SizedBox(height: LuxSpacing.xl),
+                  if (_showRegister) ...[
+                    LuxTextField(
+                        label: l.bookingAuthFullName,
+                        hint: l.bookingAuthFullNameHint,
+                        prefixIcon: Icons.person_outline,
+                        controller: _nameCtrl,
+                        onChanged: (_) {}),
+                    const SizedBox(height: LuxSpacing.md),
+                  ],
+                  LuxTextField(
+                      label: l.bookingAuthEmail,
+                      hint: l.bookingAuthEmailHint,
+                      prefixIcon: Icons.email_outlined,
+                      controller: _emailCtrl,
+                      keyboardType: TextInputType.emailAddress,
+                      onChanged: (_) {}),
+                  const SizedBox(height: LuxSpacing.md),
+                  LuxTextField(
+                      label: l.bookingAuthPassword,
+                      hint: '••••••••',
+                      prefixIcon: Icons.lock_outline,
+                      controller: _passCtrl,
+                      obscureText: _obscure,
+                      onChanged: (_) {},
+                      suffixIcon: IconButton(
+                        tooltip: _obscure
+                            ? l.bookingAuthShowPassword
+                            : l.bookingAuthHidePassword,
+                        icon: Icon(
+                            _obscure
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                            color: LuxColors.whiteTertiary,
+                            size: 20),
+                        onPressed: () => setState(() => _obscure = !_obscure),
+                      )),
+                  const SizedBox(height: LuxSpacing.xl),
+                  LuxButton(
+                      label: _showRegister
+                          ? l.bookingAuthCreateAccountCta
+                          : l.bookingAuthSignInCta,
+                      loading: _loading,
+                      onPressed: _loading ? null : _submit),
+                  const SizedBox(height: LuxSpacing.md),
+                  TextButton(
+                    onPressed: () =>
+                        setState(() => _showRegister = !_showRegister),
+                    child: Text(
+                        _showRegister
+                            ? l.bookingAuthHaveAccount
+                            : l.bookingAuthNoAccount,
+                        textAlign: TextAlign.center,
+                        style: LuxTypography.bodyMedium
+                            .copyWith(color: LD.accent)),
+                  ),
+                ]),
           ),
         ),
-      );
+      ),
+    );
+  }
 }
 
 // ── ADD GUEST DIALOG ──────────────────────────────────────────────────────────
 
 InputDecoration _guestFieldDecor(String hint) => InputDecoration(
-  hintText: hint,
-  hintStyle: const TextStyle(
-    fontFamily: kSans,
-    fontSize: 15,
-    color: _kTextTertiary,
-    fontWeight: FontWeight.w400,
-  ),
-  border: const UnderlineInputBorder(
-      borderSide: BorderSide(color: _kBorder)),
-  enabledBorder: const UnderlineInputBorder(
-      borderSide: BorderSide(color: _kBorder)),
-  focusedBorder: const UnderlineInputBorder(
-      borderSide: BorderSide(color: _kTextPrimary, width: 1.5)),
-  contentPadding: const EdgeInsets.symmetric(vertical: 10),
-  filled: false,
-  isDense: false,
-);
+      hintText: hint,
+      hintStyle: const TextStyle(
+        fontFamily: kSans,
+        fontSize: 15,
+        color: _kTextTertiary,
+        fontWeight: FontWeight.w400,
+      ),
+      border:
+          const UnderlineInputBorder(borderSide: BorderSide(color: _kBorder)),
+      enabledBorder:
+          const UnderlineInputBorder(borderSide: BorderSide(color: _kBorder)),
+      focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: _kTextPrimary, width: 1.5)),
+      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+      filled: false,
+      isDense: false,
+    );
 
 const _kGuestValueStyle = TextStyle(
   fontFamily: kSans,
@@ -148,28 +184,61 @@ const _kGuestValueStyle = TextStyle(
 );
 
 Widget _guestFieldLabel(String text) => Padding(
-  padding: const EdgeInsets.only(bottom: 4),
-  child: Text(
-    text,
-    style: const TextStyle(
-      fontFamily: kSans,
-      fontSize: 13,
-      fontWeight: FontWeight.w600,
-      color: _kTextPrimary,
-    ),
-  ),
-);
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontFamily: kSans,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: _kTextPrimary,
+        ),
+      ),
+    );
+
+/// Form of address shown before the guest's name; localized at display time.
+enum _GuestTitle {
+  mr,
+  mrs,
+  ms,
+  dr,
+  prof;
+
+  String label(AppLocalizations l) => switch (this) {
+        _GuestTitle.mr => l.bookingGuestTitleMr,
+        _GuestTitle.mrs => l.bookingGuestTitleMrs,
+        _GuestTitle.ms => l.bookingGuestTitleMs,
+        _GuestTitle.dr => l.bookingGuestTitleDr,
+        _GuestTitle.prof => l.bookingGuestTitleProf,
+      };
+}
+
+/// Result of [_AddGuestDialog].
+class _GuestInfo {
+  const _GuestInfo({
+    required this.title,
+    required this.firstName,
+    required this.lastName,
+    required this.email,
+    required this.phone,
+  });
+  final _GuestTitle title;
+  final String firstName;
+  final String lastName;
+  final String email;
+  final String phone;
+}
 
 class _AddGuestDialog extends StatefulWidget {
   const _AddGuestDialog({
-    this.initialTitle     = 'Sr.',
+    this.initialTitle = _GuestTitle.mr,
     this.initialFirstName = '',
-    this.initialLastName  = '',
-    this.initialEmail     = '',
-    this.initialPhone     = '',
+    this.initialLastName = '',
+    this.initialEmail = '',
+    this.initialPhone = '',
   });
 
-  final String initialTitle;
+  final _GuestTitle initialTitle;
   final String initialFirstName;
   final String initialLastName;
   final String initialEmail;
@@ -180,9 +249,7 @@ class _AddGuestDialog extends StatefulWidget {
 }
 
 class _AddGuestDialogState extends State<_AddGuestDialog> {
-  static const _kTitles = ['Sr.', 'Sra.', 'Srta.', 'Dr.', 'Prof.'];
-
-  late String _title;
+  late _GuestTitle _title;
   late final TextEditingController _firstCtrl;
   late final TextEditingController _lastCtrl;
   late final TextEditingController _emailCtrl;
@@ -191,9 +258,9 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
   @override
   void initState() {
     super.initState();
-    _title     = widget.initialTitle;
+    _title = widget.initialTitle;
     _firstCtrl = TextEditingController(text: widget.initialFirstName);
-    _lastCtrl  = TextEditingController(text: widget.initialLastName);
+    _lastCtrl = TextEditingController(text: widget.initialLastName);
     _emailCtrl = TextEditingController(text: widget.initialEmail);
     _phoneCtrl = TextEditingController(text: widget.initialPhone);
   }
@@ -208,17 +275,18 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
   }
 
   void _confirm() {
-    Navigator.of(context).pop(<String, String>{
-      'title':     _title,
-      'firstName': _firstCtrl.text.trim(),
-      'lastName':  _lastCtrl.text.trim(),
-      'email':     _emailCtrl.text.trim(),
-      'phone':     _phoneCtrl.text.trim(),
-    });
+    Navigator.of(context).pop(_GuestInfo(
+      title: _title,
+      firstName: _firstCtrl.text.trim(),
+      lastName: _lastCtrl.text.trim(),
+      email: _emailCtrl.text.trim(),
+      phone: _phoneCtrl.text.trim(),
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return Dialog(
       backgroundColor: _kBg,
       insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
@@ -231,15 +299,14 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-
               // ── Header ─────────────────────────────────────────────────
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Añadir nuevo invitado',
-                      style: TextStyle(
+                      l.bookingGuestDialogTitle,
+                      style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 32,
                         fontWeight: FontWeight.w800,
@@ -250,16 +317,22 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      width: 38, height: 38,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(color: _kBorder, width: 1.5),
-                        color: Colors.white,
+                  Semantics(
+                    button: true,
+                    label: l.commonClose,
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: _kBorder, width: 1.5),
+                          color: Colors.white,
+                        ),
+                        child:
+                            const Icon(Icons.close, size: 18, color: _kTextSub),
                       ),
-                      child: const Icon(Icons.close, size: 18, color: _kTextSub),
                     ),
                   ),
                 ],
@@ -268,11 +341,9 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
               const SizedBox(height: 14),
 
               // ── Description ─────────────────────────────────────────────
-              const Text(
-                'Ingresa la información de tu invitado y bríndales un servicio premium. '
-                'Los mantendremos informados sobre su trayecto durante todo el proceso. '
-                'No te preocupes, no compartiremos ninguna información de pago o facturación con ellos.',
-                style: TextStyle(
+              Text(
+                l.bookingGuestDialogBody,
+                style: const TextStyle(
                   fontFamily: kSans,
                   fontSize: 13,
                   color: _kTextSub,
@@ -284,8 +355,8 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
               const SizedBox(height: 30),
 
               // ── Title dropdown ──────────────────────────────────────────
-              _guestFieldLabel('Tratamiento'),
-              DropdownButtonFormField<String>(
+              _guestFieldLabel(l.bookingGuestTitleLabel),
+              DropdownButtonFormField<_GuestTitle>(
                 value: _title,
                 style: _kGuestValueStyle,
                 dropdownColor: _kBg,
@@ -302,10 +373,12 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                 ),
                 icon: const Icon(Icons.keyboard_arrow_down_rounded,
                     color: _kTextSub, size: 22),
-                items: _kTitles.map((t) => DropdownMenuItem(
-                  value: t,
-                  child: Text(t, style: _kGuestValueStyle),
-                )).toList(),
+                items: _GuestTitle.values
+                    .map((t) => DropdownMenuItem(
+                          value: t,
+                          child: Text(t.label(l), style: _kGuestValueStyle),
+                        ))
+                    .toList(),
                 onChanged: (v) => setState(() => _title = v!),
               ),
 
@@ -319,11 +392,12 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _guestFieldLabel('Nombre'),
+                        _guestFieldLabel(l.bookingGuestFirstName),
                         TextField(
                           controller: _firstCtrl,
                           style: _kGuestValueStyle,
-                          decoration: _guestFieldDecor('Nombre del invitado'),
+                          decoration:
+                              _guestFieldDecor(l.bookingGuestFirstNameHint),
                         ),
                       ],
                     ),
@@ -333,11 +407,12 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _guestFieldLabel('Apellido'),
+                        _guestFieldLabel(l.bookingGuestLastName),
                         TextField(
                           controller: _lastCtrl,
                           style: _kGuestValueStyle,
-                          decoration: _guestFieldDecor('Apellido del invitado'),
+                          decoration:
+                              _guestFieldDecor(l.bookingGuestLastNameHint),
                         ),
                       ],
                     ),
@@ -348,23 +423,23 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
               const SizedBox(height: 26),
 
               // ── Email ───────────────────────────────────────────────────
-              _guestFieldLabel('Correo electrónico'),
+              _guestFieldLabel(l.bookingAuthEmail),
               TextField(
                 controller: _emailCtrl,
                 keyboardType: TextInputType.emailAddress,
                 style: _kGuestValueStyle,
-                decoration: _guestFieldDecor('Correo del invitado'),
+                decoration: _guestFieldDecor(l.bookingGuestEmailHint),
               ),
 
               const SizedBox(height: 26),
 
               // ── Mobile number ───────────────────────────────────────────
-              _guestFieldLabel('Número de móvil del invitado'),
+              _guestFieldLabel(l.bookingGuestPhone),
               TextField(
                 controller: _phoneCtrl,
                 keyboardType: TextInputType.phone,
                 style: _kGuestValueStyle,
-                decoration: _guestFieldDecor('Número de móvil del invitado').copyWith(
+                decoration: _guestFieldDecor(l.bookingGuestPhone).copyWith(
                   prefixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 2, right: 6),
                     child: Row(
@@ -380,16 +455,15 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                       ],
                     ),
                   ),
-                  prefixIconConstraints:
-                      const BoxConstraints(),
+                  prefixIconConstraints: const BoxConstraints(),
                 ),
               ),
 
               const SizedBox(height: 8),
 
-              const Text(
-                'Tu invitado recibirá las notificaciones del trayecto en este número',
-                style: TextStyle(
+              Text(
+                l.bookingGuestPhoneHelp,
+                style: const TextStyle(
                   fontFamily: kSans,
                   fontSize: 11,
                   color: _kTextSub,
@@ -418,7 +492,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  child: const Text('Confirmar'),
+                  child: Text(l.commonConfirm),
                 ),
               ),
             ],

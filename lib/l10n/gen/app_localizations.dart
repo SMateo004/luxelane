@@ -109,6 +109,906 @@ abstract class AppLocalizations {
   /// **'Luxelane Chófer'**
   String get appNameDriver;
 
+  /// No description provided for @bookingAllFeesIncluded.
+  ///
+  /// In es, this message translates to:
+  /// **'Todos los cargos incluidos'**
+  String get bookingAllFeesIncluded;
+
+  /// No description provided for @bookingApplyOffer.
+  ///
+  /// In es, this message translates to:
+  /// **'Aplicar oferta'**
+  String get bookingApplyOffer;
+
+  /// No description provided for @bookingAssuranceFixedPrice.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo, sin sorpresas'**
+  String get bookingAssuranceFixedPrice;
+
+  /// No description provided for @bookingAssuranceVerified.
+  ///
+  /// In es, this message translates to:
+  /// **'Chóferes verificados'**
+  String get bookingAssuranceVerified;
+
+  /// No description provided for @bookingAuthCreateAccountCta.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear cuenta'**
+  String get bookingAuthCreateAccountCta;
+
+  /// No description provided for @bookingAuthEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo electrónico'**
+  String get bookingAuthEmail;
+
+  /// No description provided for @bookingAuthEmailHint.
+  ///
+  /// In es, this message translates to:
+  /// **'tu@ejemplo.com'**
+  String get bookingAuthEmailHint;
+
+  /// No description provided for @bookingAuthFullName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre completo'**
+  String get bookingAuthFullName;
+
+  /// No description provided for @bookingAuthFullNameHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu nombre'**
+  String get bookingAuthFullNameHint;
+
+  /// No description provided for @bookingAuthHaveAccount.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Ya tienes cuenta? Inicia sesión'**
+  String get bookingAuthHaveAccount;
+
+  /// No description provided for @bookingAuthHidePassword.
+  ///
+  /// In es, this message translates to:
+  /// **'Ocultar contraseña'**
+  String get bookingAuthHidePassword;
+
+  /// No description provided for @bookingAuthNoAccount.
+  ///
+  /// In es, this message translates to:
+  /// **'¿No tienes cuenta? Crear una'**
+  String get bookingAuthNoAccount;
+
+  /// No description provided for @bookingAuthPassword.
+  ///
+  /// In es, this message translates to:
+  /// **'Contraseña'**
+  String get bookingAuthPassword;
+
+  /// No description provided for @bookingAuthShowPassword.
+  ///
+  /// In es, this message translates to:
+  /// **'Mostrar contraseña'**
+  String get bookingAuthShowPassword;
+
+  /// No description provided for @bookingAuthSignInCta.
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar sesión'**
+  String get bookingAuthSignInCta;
+
+  /// No description provided for @bookingAuthSubtitleLogin.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia sesión para confirmar tu reserva.'**
+  String get bookingAuthSubtitleLogin;
+
+  /// No description provided for @bookingAuthSubtitleRegister.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea tu cuenta de Luxelane para completar la reserva.'**
+  String get bookingAuthSubtitleRegister;
+
+  /// No description provided for @bookingAuthTitleLogin.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia sesión para continuar'**
+  String get bookingAuthTitleLogin;
+
+  /// No description provided for @bookingAuthTitleRegister.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear una cuenta'**
+  String get bookingAuthTitleRegister;
+
+  /// No description provided for @bookingBackHome.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver al inicio'**
+  String get bookingBackHome;
+
+  /// No description provided for @bookingBaseFare.
+  ///
+  /// In es, this message translates to:
+  /// **'Tarifa base'**
+  String get bookingBaseFare;
+
+  /// No description provided for @bookingBreakdownHeading.
+  ///
+  /// In es, this message translates to:
+  /// **'DESGLOSE'**
+  String get bookingBreakdownHeading;
+
+  /// No description provided for @bookingCapacityLuggageInfo.
+  ///
+  /// In es, this message translates to:
+  /// **'Basado en tamaños estándar de equipaje, que pueden diferir de los tuyos. Puedes especificar los detalles de tu equipaje en las \"Notas de recogida\" en el siguiente paso.'**
+  String get bookingCapacityLuggageInfo;
+
+  /// No description provided for @bookingCapacityTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Capacidad'**
+  String get bookingCapacityTitle;
+
+  /// Shown when a saved card has no brand
+  ///
+  /// In es, this message translates to:
+  /// **'Tarjeta'**
+  String get bookingCardFallback;
+
+  /// No description provided for @bookingChauffeurAtDisposal.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer a disposición · {hours} h'**
+  String bookingChauffeurAtDisposal(int hours);
+
+  /// No description provided for @bookingChooseExperience.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige tu experiencia'**
+  String get bookingChooseExperience;
+
+  /// Ride type page header
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir servicio'**
+  String get bookingChooseService;
+
+  /// No description provided for @bookingConfirmCta.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar reserva'**
+  String get bookingConfirmCta;
+
+  /// No description provided for @bookingConfirmedEyebrow.
+  ///
+  /// In es, this message translates to:
+  /// **'RESERVA CONFIRMADA'**
+  String get bookingConfirmedEyebrow;
+
+  /// No description provided for @bookingConfirmedHeadline.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer te esperará.'**
+  String get bookingConfirmedHeadline;
+
+  /// No description provided for @bookingConfirmedSemantics.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva confirmada'**
+  String get bookingConfirmedSemantics;
+
+  /// No description provided for @bookingCountdownOnTheWay.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer está en camino.'**
+  String get bookingCountdownOnTheWay;
+
+  /// No description provided for @bookingDateTime.
+  ///
+  /// In es, this message translates to:
+  /// **'{date} · {time}'**
+  String bookingDateTime(String date, String time);
+
+  /// No description provided for @bookingDescriptiveText.
+  ///
+  /// In es, this message translates to:
+  /// **'Premium hecho práctico. Asientos espaciosos, un viaje suave y recogidas puntuales que mantienen tu día en ritmo.'**
+  String get bookingDescriptiveText;
+
+  /// No description provided for @bookingDestinationLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Destino'**
+  String get bookingDestinationLabel;
+
+  /// No description provided for @bookingDistanceKm.
+  ///
+  /// In es, this message translates to:
+  /// **'{distance} km'**
+  String bookingDistanceKm(String distance);
+
+  /// No description provided for @bookingErrorCreateFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo crear la reserva'**
+  String get bookingErrorCreateFailed;
+
+  /// No description provided for @bookingErrorInvalidFlight.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa el número de vuelo (ej. LA 8810).'**
+  String get bookingErrorInvalidFlight;
+
+  /// No description provided for @bookingErrorPaymentNotAuthorised.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos autorizar tu tarjeta. Inténtalo de nuevo o elige otra.'**
+  String get bookingErrorPaymentNotAuthorised;
+
+  /// No description provided for @bookingErrorQuoteExpired.
+  ///
+  /// In es, this message translates to:
+  /// **'La cotización venció. Vuelve a confirmar para ver el precio actualizado.'**
+  String get bookingErrorQuoteExpired;
+
+  /// No description provided for @bookingErrorQuoteFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo cotizar el viaje'**
+  String get bookingErrorQuoteFailed;
+
+  /// No description provided for @bookingErrorQuoteMissing.
+  ///
+  /// In es, this message translates to:
+  /// **'Falta la cotización del viaje'**
+  String get bookingErrorQuoteMissing;
+
+  /// No description provided for @bookingErrorRateFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo enviar tu calificación'**
+  String get bookingErrorRateFailed;
+
+  /// No description provided for @bookingErrorTooManyPassengers.
+  ///
+  /// In es, this message translates to:
+  /// **'El número de pasajeros supera la capacidad del vehículo.'**
+  String get bookingErrorTooManyPassengers;
+
+  /// No description provided for @bookingEstimatedTax.
+  ///
+  /// In es, this message translates to:
+  /// **'Impuesto estimado'**
+  String get bookingEstimatedTax;
+
+  /// No description provided for @bookingEstimatedTotal.
+  ///
+  /// In es, this message translates to:
+  /// **'TOTAL ESTIMADO'**
+  String get bookingEstimatedTotal;
+
+  /// No description provided for @bookingFixedPriceLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'PRECIO FIJO'**
+  String get bookingFixedPriceLabel;
+
+  /// No description provided for @bookingFixedPricePaidByCard.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo · tarjeta autorizada'**
+  String get bookingFixedPricePaidByCard;
+
+  /// No description provided for @bookingFixedPricePayDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo · pago al chófer'**
+  String get bookingFixedPricePayDriver;
+
+  /// No description provided for @bookingFlight.
+  ///
+  /// In es, this message translates to:
+  /// **'Vuelo {flight}'**
+  String bookingFlight(String flight);
+
+  /// No description provided for @bookingFlightNumber.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de vuelo'**
+  String get bookingFlightNumber;
+
+  /// No description provided for @bookingFlightNumberHint.
+  ///
+  /// In es, this message translates to:
+  /// **'ej. LA 8810 (opcional)'**
+  String get bookingFlightNumberHint;
+
+  /// No description provided for @bookingForGuest.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservar para un invitado'**
+  String get bookingForGuest;
+
+  /// No description provided for @bookingForGuestSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar o añadir un invitado'**
+  String get bookingForGuestSubtitle;
+
+  /// No description provided for @bookingForMyself.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservar para mí'**
+  String get bookingForMyself;
+
+  /// No description provided for @bookingForMyselfSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva con la información de tu cuenta'**
+  String get bookingForMyselfSubtitle;
+
+  /// No description provided for @bookingFreeCancellationShort.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelación gratuita hasta 1 h antes'**
+  String get bookingFreeCancellationShort;
+
+  /// No description provided for @bookingGuestDialogBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa la información de tu invitado y bríndale un servicio premium. Lo mantendremos informado sobre su trayecto durante todo el proceso. No te preocupes, no compartiremos ninguna información de pago o facturación con él.'**
+  String get bookingGuestDialogBody;
+
+  /// No description provided for @bookingGuestDialogTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir nuevo invitado'**
+  String get bookingGuestDialogTitle;
+
+  /// Guest shown on the 'Book for a guest' card, e.g. 'Sr. Juan Pérez'
+  ///
+  /// In es, this message translates to:
+  /// **'{title} {firstName} {lastName}'**
+  String bookingGuestDisplayName(String title, String firstName, String lastName);
+
+  /// No description provided for @bookingGuestEmailHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo del invitado'**
+  String get bookingGuestEmailHint;
+
+  /// No description provided for @bookingGuestFirstName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre'**
+  String get bookingGuestFirstName;
+
+  /// No description provided for @bookingGuestFirstNameHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre del invitado'**
+  String get bookingGuestFirstNameHint;
+
+  /// No description provided for @bookingGuestLastName.
+  ///
+  /// In es, this message translates to:
+  /// **'Apellido'**
+  String get bookingGuestLastName;
+
+  /// No description provided for @bookingGuestLastNameHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Apellido del invitado'**
+  String get bookingGuestLastNameHint;
+
+  /// No description provided for @bookingGuestPhone.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de móvil del invitado'**
+  String get bookingGuestPhone;
+
+  /// No description provided for @bookingGuestPhoneHelp.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu invitado recibirá las notificaciones del trayecto en este número'**
+  String get bookingGuestPhoneHelp;
+
+  /// No description provided for @bookingGuestTitleDr.
+  ///
+  /// In es, this message translates to:
+  /// **'Dr.'**
+  String get bookingGuestTitleDr;
+
+  /// No description provided for @bookingGuestTitleLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Tratamiento'**
+  String get bookingGuestTitleLabel;
+
+  /// No description provided for @bookingGuestTitleMr.
+  ///
+  /// In es, this message translates to:
+  /// **'Sr.'**
+  String get bookingGuestTitleMr;
+
+  /// No description provided for @bookingGuestTitleMrs.
+  ///
+  /// In es, this message translates to:
+  /// **'Sra.'**
+  String get bookingGuestTitleMrs;
+
+  /// No description provided for @bookingGuestTitleMs.
+  ///
+  /// In es, this message translates to:
+  /// **'Srta.'**
+  String get bookingGuestTitleMs;
+
+  /// No description provided for @bookingGuestTitleProf.
+  ///
+  /// In es, this message translates to:
+  /// **'Prof.'**
+  String get bookingGuestTitleProf;
+
+  /// No description provided for @bookingHeroTagline.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo · Sin sorpresas · Disponible en todo el mundo'**
+  String get bookingHeroTagline;
+
+  /// Large two-line heading on the web booking page; keep the line break
+  ///
+  /// In es, this message translates to:
+  /// **'Elige tu\nexperiencia'**
+  String get bookingHeroTitle;
+
+  /// No description provided for @bookingHoursShort.
+  ///
+  /// In es, this message translates to:
+  /// **'{hours} h'**
+  String bookingHoursShort(int hours);
+
+  /// No description provided for @bookingIncludedChargers.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargadores para iOS y Android a bordo'**
+  String get bookingIncludedChargers;
+
+  /// No description provided for @bookingIncludedFreeCancellation.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelación gratuita hasta 1 hora antes de la recogida'**
+  String get bookingIncludedFreeCancellation;
+
+  /// No description provided for @bookingIncludedMeetGreet.
+  ///
+  /// In es, this message translates to:
+  /// **'Recibimiento personalizado'**
+  String get bookingIncludedMeetGreet;
+
+  /// No description provided for @bookingIncludedTissues.
+  ///
+  /// In es, this message translates to:
+  /// **'Pañuelos y toallitas desinfectantes de cortesía'**
+  String get bookingIncludedTissues;
+
+  /// No description provided for @bookingIncludedTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Qué incluye'**
+  String get bookingIncludedTitle;
+
+  /// No description provided for @bookingIncludedWaiting.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta {minutes} minutos de espera gratuita'**
+  String bookingIncludedWaiting(int minutes);
+
+  /// No description provided for @bookingIncludedWater.
+  ///
+  /// In es, this message translates to:
+  /// **'Agua fría de cortesía incluida'**
+  String get bookingIncludedWater;
+
+  /// No description provided for @bookingLoadErrorTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos cargar tu reserva'**
+  String get bookingLoadErrorTitle;
+
+  /// No description provided for @bookingLuggage.
+  ///
+  /// In es, this message translates to:
+  /// **'Equipaje'**
+  String get bookingLuggage;
+
+  /// No description provided for @bookingLuggageCarryOn.
+  ///
+  /// In es, this message translates to:
+  /// **'{count} x De mano'**
+  String bookingLuggageCarryOn(int count);
+
+  /// No description provided for @bookingLuggageChecked.
+  ///
+  /// In es, this message translates to:
+  /// **'{count} x Facturada estándar'**
+  String bookingLuggageChecked(int count);
+
+  /// No description provided for @bookingLuggageExtraLarge.
+  ///
+  /// In es, this message translates to:
+  /// **'{count} x Extra grande'**
+  String bookingLuggageExtraLarge(int count);
+
+  /// No description provided for @bookingNotFound.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta reserva ya no está disponible.'**
+  String get bookingNotFound;
+
+  /// No description provided for @bookingNoteCapacity.
+  ///
+  /// In es, this message translates to:
+  /// **'Los límites de capacidad de pasajeros y equipaje deben respetarse por razones de seguridad. Si se exceden, el chófer podrá rechazar el servicio.'**
+  String get bookingNoteCapacity;
+
+  /// No description provided for @bookingNoteExtras.
+  ///
+  /// In es, this message translates to:
+  /// **'Las necesidades adicionales (silla de ruedas, asiento infantil, artículos extra) pueden añadirse en \"Notas de recogida\". Elige Business Van para grupos más grandes o equipaje adicional.'**
+  String get bookingNoteExtras;
+
+  /// No description provided for @bookingNoteImages.
+  ///
+  /// In es, this message translates to:
+  /// **'Las imágenes del vehículo son solo de referencia. El vehículo real puede variar manteniendo una calidad equivalente o superior.'**
+  String get bookingNoteImages;
+
+  /// No description provided for @bookingPassengers.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajeros'**
+  String get bookingPassengers;
+
+  /// Already-formatted unitPassengers and unitBags
+  ///
+  /// In es, this message translates to:
+  /// **'{passengers} · {bags}'**
+  String bookingPassengersAndBags(String passengers, String bags);
+
+  /// No description provided for @bookingPayOnTripBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagas el precio fijo a tu chófer en efectivo o con QR. Nada se cobra al reservar.'**
+  String get bookingPayOnTripBody;
+
+  /// No description provided for @bookingPayOnTripTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Pago al finalizar el viaje'**
+  String get bookingPayOnTripTitle;
+
+  /// No description provided for @bookingPaymentFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'El pago falló'**
+  String get bookingPaymentFailed;
+
+  /// No description provided for @bookingPaymentMethodHeading.
+  ///
+  /// In es, this message translates to:
+  /// **'MÉTODO DE PAGO'**
+  String get bookingPaymentMethodHeading;
+
+  /// No description provided for @bookingPickupInDays.
+  ///
+  /// In es, this message translates to:
+  /// **'{days, plural, =1{Recogida en 1 día} other{Recogida en {days} días}}'**
+  String bookingPickupInDays(int days);
+
+  /// No description provided for @bookingPickupInHours.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida en {hours} h'**
+  String bookingPickupInHours(int hours);
+
+  /// No description provided for @bookingPickupInHoursMinutes.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida en {hours} h {minutes} min'**
+  String bookingPickupInHoursMinutes(int hours, int minutes);
+
+  /// No description provided for @bookingPickupInMinutes.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida en {minutes} min'**
+  String bookingPickupInMinutes(int minutes);
+
+  /// No description provided for @bookingPickupLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida'**
+  String get bookingPickupLabel;
+
+  /// No description provided for @bookingPleaseNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Nota importante:'**
+  String get bookingPleaseNote;
+
+  /// No description provided for @bookingPriceBreakdownTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Desglose de precio'**
+  String get bookingPriceBreakdownTitle;
+
+  /// No description provided for @bookingPriceConfirmedBody.
+  ///
+  /// In es, this message translates to:
+  /// **'El precio fijo de tu viaje es {price}. No cambiará aunque haya tráfico.'**
+  String bookingPriceConfirmedBody(String price);
+
+  /// Dialog shown when the server quote differs from the on-screen estimate
+  ///
+  /// In es, this message translates to:
+  /// **'Precio confirmado'**
+  String get bookingPriceConfirmedTitle;
+
+  /// No description provided for @bookingReference.
+  ///
+  /// In es, this message translates to:
+  /// **'Código de reserva: {code}'**
+  String bookingReference(String code);
+
+  /// Web reserve button; vehicle is the class name in upper case
+  ///
+  /// In es, this message translates to:
+  /// **'RESERVAR {vehicle}'**
+  String bookingReserveCta(String vehicle);
+
+  /// No description provided for @bookingRoutePreview.
+  ///
+  /// In es, this message translates to:
+  /// **'Vista previa de ruta'**
+  String get bookingRoutePreview;
+
+  /// No description provided for @bookingSeating.
+  ///
+  /// In es, this message translates to:
+  /// **'Asientos'**
+  String get bookingSeating;
+
+  /// No description provided for @bookingSeatingFive.
+  ///
+  /// In es, this message translates to:
+  /// **'Cinco pasajeros'**
+  String get bookingSeatingFive;
+
+  /// No description provided for @bookingSeatingInfantSeat.
+  ///
+  /// In es, this message translates to:
+  /// **'Asiento de bebé'**
+  String get bookingSeatingInfantSeat;
+
+  /// No description provided for @bookingSeatingInfo.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige la configuración de asientos que mejor se adapte a tus necesidades. Los asientos especiales (infantil / bebé) deben solicitarse con anticipación y están sujetos a disponibilidad.'**
+  String get bookingSeatingInfo;
+
+  /// No description provided for @bookingSeatingThree.
+  ///
+  /// In es, this message translates to:
+  /// **'Tres pasajeros'**
+  String get bookingSeatingThree;
+
+  /// No description provided for @bookingSeatingTwo.
+  ///
+  /// In es, this message translates to:
+  /// **'Dos pasajeros'**
+  String get bookingSeatingTwo;
+
+  /// No description provided for @bookingSeatsUpTo.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta {count} pax'**
+  String bookingSeatsUpTo(int count);
+
+  /// No description provided for @bookingSelectRouteError.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona el punto de recogida y el destino'**
+  String get bookingSelectRouteError;
+
+  /// No description provided for @bookingSelectedBadge.
+  ///
+  /// In es, this message translates to:
+  /// **'SELECCIONADO'**
+  String get bookingSelectedBadge;
+
+  /// No description provided for @bookingSlideBusiness1.
+  ///
+  /// In es, this message translates to:
+  /// **'Confort ejecutivo en cada trayecto'**
+  String get bookingSlideBusiness1;
+
+  /// No description provided for @bookingSlideBusiness2.
+  ///
+  /// In es, this message translates to:
+  /// **'Puntual, profesional y perfectamente refinado'**
+  String get bookingSlideBusiness2;
+
+  /// No description provided for @bookingSlideBusiness3.
+  ///
+  /// In es, this message translates to:
+  /// **'Llega con confianza, en cada ocasión'**
+  String get bookingSlideBusiness3;
+
+  /// No description provided for @bookingSlideBusiness4.
+  ///
+  /// In es, this message translates to:
+  /// **'Premium hecho práctico para el ejecutivo moderno'**
+  String get bookingSlideBusiness4;
+
+  /// No description provided for @bookingSlideElectric1.
+  ///
+  /// In es, this message translates to:
+  /// **'Totalmente eléctrico, silencioso y de nivel ejecutivo'**
+  String get bookingSlideElectric1;
+
+  /// No description provided for @bookingSlideElectric2.
+  ///
+  /// In es, this message translates to:
+  /// **'Cero emisiones, máxima experiencia de lujo'**
+  String get bookingSlideElectric2;
+
+  /// No description provided for @bookingSlideFirst1.
+  ///
+  /// In es, this message translates to:
+  /// **'Un nivel extraordinario de lujo te espera'**
+  String get bookingSlideFirst1;
+
+  /// No description provided for @bookingSlideFirst2.
+  ///
+  /// In es, this message translates to:
+  /// **'Diseñado para quienes exigen lo mejor'**
+  String get bookingSlideFirst2;
+
+  /// No description provided for @bookingSlideFirst3.
+  ///
+  /// In es, this message translates to:
+  /// **'Privacidad y elegancia en cada traslado'**
+  String get bookingSlideFirst3;
+
+  /// No description provided for @bookingSlideFirst4.
+  ///
+  /// In es, this message translates to:
+  /// **'Primera clase, de puerta a puerta'**
+  String get bookingSlideFirst4;
+
+  /// No description provided for @bookingSlideVan1.
+  ///
+  /// In es, this message translates to:
+  /// **'Espacio y confort para todo tu equipo'**
+  String get bookingSlideVan1;
+
+  /// No description provided for @bookingSlideVan2.
+  ///
+  /// In es, this message translates to:
+  /// **'Traslados grupales sin estrés y con puntualidad'**
+  String get bookingSlideVan2;
+
+  /// No description provided for @bookingSlideVan3.
+  ///
+  /// In es, this message translates to:
+  /// **'El viaje perfecto para familias y grupos'**
+  String get bookingSlideVan3;
+
+  /// No description provided for @bookingSlideVan4.
+  ///
+  /// In es, this message translates to:
+  /// **'Capacidad premium, sin compromiso en el confort'**
+  String get bookingSlideVan4;
+
+  /// No description provided for @bookingSpecialRequests.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitudes especiales'**
+  String get bookingSpecialRequests;
+
+  /// No description provided for @bookingSpecialRequestsHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Asiento infantil, letrero de bienvenida…'**
+  String get bookingSpecialRequestsHint;
+
+  /// No description provided for @bookingStepDetails.
+  ///
+  /// In es, this message translates to:
+  /// **'Detalles'**
+  String get bookingStepDetails;
+
+  /// No description provided for @bookingStepOf.
+  ///
+  /// In es, this message translates to:
+  /// **'PASO {step} DE {total}'**
+  String bookingStepOf(int step, int total);
+
+  /// No description provided for @bookingStepVehicle.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo'**
+  String get bookingStepVehicle;
+
+  /// No description provided for @bookingSummaryDistance.
+  ///
+  /// In es, this message translates to:
+  /// **'Distancia'**
+  String get bookingSummaryDistance;
+
+  /// No description provided for @bookingSummaryDuration.
+  ///
+  /// In es, this message translates to:
+  /// **'Duración'**
+  String get bookingSummaryDuration;
+
+  /// No description provided for @bookingSummaryEstDuration.
+  ///
+  /// In es, this message translates to:
+  /// **'Duración est.'**
+  String get bookingSummaryEstDuration;
+
+  /// No description provided for @bookingSummaryFlight.
+  ///
+  /// In es, this message translates to:
+  /// **'Vuelo'**
+  String get bookingSummaryFlight;
+
+  /// No description provided for @bookingSummaryFrom.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde'**
+  String get bookingSummaryFrom;
+
+  /// No description provided for @bookingSummaryHeading.
+  ///
+  /// In es, this message translates to:
+  /// **'RESUMEN DE RESERVA'**
+  String get bookingSummaryHeading;
+
+  /// No description provided for @bookingSummaryNotes.
+  ///
+  /// In es, this message translates to:
+  /// **'Notas'**
+  String get bookingSummaryNotes;
+
+  /// No description provided for @bookingSummaryService.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio'**
+  String get bookingSummaryService;
+
+  /// No description provided for @bookingSummaryTo.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta'**
+  String get bookingSummaryTo;
+
+  /// No description provided for @bookingTripDetailsHeading.
+  ///
+  /// In es, this message translates to:
+  /// **'DETALLES DEL VIAJE'**
+  String get bookingTripDetailsHeading;
+
+  /// No description provided for @bookingViewMyBooking.
+  ///
+  /// In es, this message translates to:
+  /// **'VER MI RESERVA'**
+  String get bookingViewMyBooking;
+
   /// No description provided for @commonBack.
   ///
   /// In es, this message translates to:
