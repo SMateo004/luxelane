@@ -231,7 +231,6 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     required MapsService mapsService,
   })  : _bookingRepo = bookingRepository,
         _userRepo = userRepository,
-        _vehicleRepo = vehicleRepository,
         _mapsService = mapsService,
         super(const DriverInitial()) {
     on<DriverStarted>(_onStart);
@@ -251,7 +250,6 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
 
   final BookingRepository _bookingRepo;
   final UserRepository _userRepo;
-  final VehicleRepository _vehicleRepo;
   final MapsService _mapsService;
   Timer? _locationTimer;
 

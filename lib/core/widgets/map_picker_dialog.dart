@@ -107,10 +107,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
           child: Stack(
             children: [
               // ── Map ────────────────────────────────────────────────────
-              kIsWeb && false
-                  // On web without Maps JS key, show placeholder
-                  ? const _MapPlaceholder()
-                  : GoogleMap(
+              GoogleMap(
                       initialCameraPosition: CameraPosition(
                         target: _center,
                         zoom: 15,
@@ -297,28 +294,3 @@ class _CenterPin extends StatelessWidget {
 // Placeholder when Maps JS key is missing
 // ---------------------------------------------------------------------------
 
-class _MapPlaceholder extends StatelessWidget {
-  const _MapPlaceholder();
-
-  @override
-  Widget build(BuildContext context) => Container(
-        color: const Color(0xFFE8E5DF),
-        child: const Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.map_outlined, size: 48, color: Color(0xFFBBBBBB)),
-              SizedBox(height: 12),
-              Text(
-                'Add GOOGLE_MAPS_KEY to enable map',
-                style: TextStyle(
-                  color: Color(0xFF999999),
-                  fontSize: 12,
-                  fontFamily: 'Montserrat',
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-}

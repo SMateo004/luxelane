@@ -1,8 +1,6 @@
 import 'env.dart';
 
 abstract class FeatureFlags {
-  static const bool _isProd = !bool.fromEnvironment('ENABLE_DEV_FLAGS', defaultValue: true);
-
   // Ride features
   static const bool realTimeTracking = true;
   static const bool scheduledBooking = true;

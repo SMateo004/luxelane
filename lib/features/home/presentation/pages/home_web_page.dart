@@ -1792,37 +1792,6 @@ class _HoursPicker extends StatelessWidget {
 }
 
 /// Forces light theme on PlaceAutocompleteField inside the white booking bar.
-class _LightField extends StatelessWidget {
-  const _LightField({required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => Theme(
-        data: Theme.of(context).copyWith(
-          brightness: Brightness.light,
-          inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: Colors.white,
-            border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            contentPadding: EdgeInsets.zero,
-            isDense: true,
-            hintStyle: TextStyle(
-              fontFamily: kSans,
-              fontSize: 16,
-              fontWeight: FontWeight.w300,
-              color: const Color(0xFFB0BAC8),
-            ),
-          ),
-          textTheme: Theme.of(context).textTheme.apply(
-                fontFamily: kSans, bodyColor: LD.ink, displayColor: LD.ink,
-              ),
-        ),
-        child: child,
-      );
-}
-
 // ============================================================
 // Marquee Bar
 // ============================================================
@@ -1899,144 +1868,9 @@ class _MarqueeBarState extends State<_MarqueeBar>
 // Stats Section
 // ============================================================
 
-class _StatsSection extends StatelessWidget {
-  const _StatsSection();
-
-  @override
-  Widget build(BuildContext context) => Container(
-        color: Colors.white,
-        child: Column(children: [
-          Container(height: 1, color: LD.border),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 80),
-            child: Row(children: [
-              _StatItem(value: 150000, format: (v) => v >= 150000 ? '150K+' : '${(v/1000).round()}K', label: 'Viajes completados'),
-              _StatDivider(),
-              _StatItem(value: 50, format: (v) => '$v+', label: 'Ciudades atendidas'),
-              _StatDivider(),
-              _StatItem(value: 49, format: (v) => '${(v/10).toStringAsFixed(1)}', label: 'Calificación promedio', suffix: '/5'),
-              _StatDivider(),
-              _StatItem(value: 24, format: (v) => v >= 24 ? '24 / 7' : '$v', label: 'Atención al cliente'),
-            ]),
-          ),
-          Container(height: 1, color: LD.border),
-        ]),
-      );
-}
-
-class _StatItem extends StatelessWidget {
-  const _StatItem({
-    required this.value,
-    required this.format,
-    required this.label,
-    this.suffix,
-  });
-  final int value;
-  final String Function(int) format;
-  final String label;
-  final String? suffix;
-
-  @override
-  Widget build(BuildContext context) => Expanded(
-        child: RevealOnScroll(
-          child: Column(children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                AnimatedCounter(
-                  target: value,
-                  format: format,
-                  style: displayText(size: 64, color: LD.ink),
-                ),
-                if (suffix != null)
-                  Text(suffix!, style: const TextStyle(
-                    fontFamily: kSans, fontSize: 35, fontWeight: FontWeight.w300,
-                    color: LD.ink3, decoration: TextDecoration.none,
-                  )),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(label.toUpperCase(), style: const TextStyle(
-              fontFamily: kSans, fontSize: 9, fontWeight: FontWeight.w400,
-              letterSpacing: 2.4, color: LD.ink3, decoration: TextDecoration.none,
-            )),
-          ]),
-        ),
-      );
-}
-
-class _StatDivider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Container(width: 1, height: 64, color: LD.border);
-}
-
 // ============================================================
 // Immersive Strip
 // ============================================================
-
-class _ImmersiveStrip extends StatelessWidget {
-  const _ImmersiveStrip();
-  static const _photo = 'assets/images/home/immersive_bg.jpg';
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-        height: 480,
-        child: Stack(fit: StackFit.expand, children: [
-          Image.asset(_photo, fit: BoxFit.cover,
-              width: double.infinity, height: double.infinity,
-              errorBuilder: (_, __, ___) => DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft, end: Alignment.bottomRight,
-                    colors: [LD.ink, const Color(0xFF0D2040)],
-                  ),
-                ),
-              )),
-          // Lateral darkening overlay (matches .immersive-overlay)
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft, end: Alignment.centerRight,
-                  colors: [
-                    Colors.black.withAlpha(100),
-                    Colors.black.withAlpha(20),
-                    Colors.black.withAlpha(100),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          // Centred caption
-          Center(
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              RevealOnScroll(
-                dy: 48, threshold: 0.9,
-                child: Text('LLEGA CON ESTILO', style: TextStyle(
-                  fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w400,
-                  letterSpacing: 5.0,
-                  color: Colors.white.withAlpha(160),
-                  decoration: TextDecoration.none,
-                )),
-              ),
-              const SizedBox(height: 16),
-              RevealOnScroll(
-                delay: const Duration(milliseconds: 100),
-                dy: 64, threshold: 0.9,
-                child: Text('Cada viaje, una declaración.', style: TextStyle(
-                  fontFamily: kSerif, fontSize: 52, fontWeight: FontWeight.w300,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.white, height: 1.12,
-                  decoration: TextDecoration.none,
-                )),
-              ),
-            ]),
-          ),
-        ]),
-      );
-}
 
 // ============================================================
 // Fleet Section
@@ -2227,185 +2061,9 @@ class _FleetCardState extends State<_FleetCard> {
 // Promise Section
 // ============================================================
 
-class _PromiseSection extends StatelessWidget {
-  const _PromiseSection();
-
-  static const _points = [
-    ('Chóferes verificados',
-     'Cada conductor pasa una rigurosa verificación de antecedentes, inspección vehicular y programa de formación.'),
-    ('Precio fijo, siempre',
-     'Tu precio se confirma al reservar. Sin precios dinámicos, sin cargos ocultos — nunca.'),
-    ('Cobertura global',
-     'Disponible en más de 50 ciudades en Europa, América, Medio Oriente y Asia.'),
-    ('Las 24 horas',
-     'Nuestro equipo de operaciones monitorea cada viaje las 24 horas del día, los 365 días del año.'),
-  ];
-
-  @override
-  Widget build(BuildContext context) => Container(
-        color: LD.dark,
-        child: IntrinsicHeight(
-          child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            // Left — atmospheric photo panel
-            const Expanded(child: _PromisePhotoPanel()),
-            // Right — editorial list
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(72, 100, 64, 100),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  RevealOnScroll(
-                    dx: 160,
-                    child: const LuxEyebrow('El estándar Luxelane'),
-                  ),
-                  const SizedBox(height: 28),
-                  RevealOnScroll(
-                    delay: const Duration(milliseconds: 80), dx: 160,
-                    child: Text('El estándar\nque otros siguen.',
-                        style: displayText(size: 52, color: Colors.white)),
-                  ),
-                  const SizedBox(height: 56),
-                  ..._points.asMap().entries.map((e) => RevealOnScroll(
-                        delay: Duration(milliseconds: 140 + e.key * 80),
-                        dx: 120, dy: 20,
-                        child: _PromisePoint(title: e.value.$1, body: e.value.$2),
-                      )),
-                ]),
-              ),
-            ),
-          ]),
-        ),
-      );
-}
-
-class _PromisePhotoPanel extends StatelessWidget {
-  const _PromisePhotoPanel();
-  static const _photo = 'assets/images/home/promise_photo.jpg';
-
-  @override
-  Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topRight, end: Alignment.bottomLeft,
-            colors: [Color(0xFF0D2040), Color(0xFF060C16)],
-          ),
-          image: DecorationImage(
-            image: const AssetImage(_photo),
-            fit: BoxFit.cover, onError: (_, __) {},
-          ),
-        ),
-        foregroundDecoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft, end: Alignment.centerRight,
-            colors: [Colors.transparent, LD.dark.withAlpha(200)],
-          ),
-        ),
-        child: Stack(children: [
-          Positioned(bottom: 0, left: -40, right: 0,
-            child: Image.asset('assets/images/vehicles/business/car.png',
-                fit: BoxFit.contain, alignment: Alignment.bottomCenter,
-                errorBuilder: (_, __, ___) => const SizedBox.shrink())),
-          // Sapphire top accent
-          Positioned(top: 0, left: 0, right: 0,
-            child: Container(height: 2, color: LD.sph)),
-        ]),
-      );
-}
-
-class _PromisePoint extends StatelessWidget {
-  const _PromisePoint({required this.title, required this.body});
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(height: 1, color: Colors.white.withAlpha(18),
-              margin: const EdgeInsets.only(bottom: 20)),
-          Text(title, style: const TextStyle(
-            fontFamily: kSerif, fontSize: 20, fontWeight: FontWeight.w400,
-            color: Colors.white, decoration: TextDecoration.none,
-          )),
-          const SizedBox(height: 8),
-          Text(body, style: TextStyle(
-            fontFamily: kSans, fontSize: 13, fontWeight: FontWeight.w300,
-            height: 1.8, color: Colors.white.withAlpha(120),
-            decoration: TextDecoration.none,
-          )),
-          const SizedBox(height: 24),
-        ],
-      );
-}
-
 // ============================================================
 // Experience Section
 // ============================================================
-
-class _ExperienceSection extends StatelessWidget {
-  const _ExperienceSection({required this.sectionKey});
-  final GlobalKey sectionKey;
-
-  static const _features = [
-    ('✦', 'Bienvenida personalizada', 'Tu chófer te espera antes de llegar — cartel con tu nombre, refrigerios, atención total.'),
-    ('◈', 'Privacidad y discreción',  'Acuerdos de confidencialidad, formación en privacidad y cultura de discreción absoluta.'),
-    ('◉', 'Precio fijo',              'El precio que ves al reservar es lo que pagas. Sin recargos de tráfico, sin sorpresas.'),
-    ('⬡', 'Soporte 24 / 7',           'Nuestro equipo de operaciones monitorea cada viaje a toda hora, todos los días del año.'),
-  ];
-
-  @override
-  Widget build(BuildContext context) => Container(
-        key: sectionKey,
-        color: LD.bg,
-        padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 64),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          // Header (2-col grid: left = text, right = empty)
-          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                RevealOnScroll(child: const LuxEyebrow('La Experiencia')),
-                const SizedBox(height: 20),
-                RevealOnScroll(
-                  delay: const Duration(milliseconds: 80),
-                  child: Text('Cada detalle,\ncuidado.',
-                      style: displayText(size: 52, color: LD.ink)),
-                ),
-              ]),
-            ),
-            const Expanded(child: SizedBox()),
-          ]),
-          const SizedBox(height: 72),
-          // 4-column feature grid
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: _features.asMap().entries.map((e) {
-              final i = e.key;
-              final f = e.value;
-              return Expanded(
-                child: RevealOnScroll(
-                  delay: Duration(milliseconds: i * 80), dy: 24,
-                  child: Padding(
-                    padding: EdgeInsets.only(right: i < _features.length - 1 ? 48 : 0),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Container(height: 1, color: LD.sph, margin: const EdgeInsets.only(bottom: 24)),
-                      Text(f.$1, style: const TextStyle(
-                        fontSize: 18, color: LD.sph, decoration: TextDecoration.none,
-                      )),
-                      const SizedBox(height: 20),
-                      Text(f.$2, style: const TextStyle(
-                        fontFamily: kSerif, fontSize: 22, fontWeight: FontWeight.w400,
-                        color: LD.ink, decoration: TextDecoration.none,
-                      )),
-                      const SizedBox(height: 12),
-                      Text(f.$3, style: bodyText(size: 13, color: LD.ink3)),
-                    ]),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ]),
-      );
-}
 
 // ============================================================
 // Testimonials
@@ -2890,6 +2548,7 @@ class _BookPageData {
     required this.label,
     required this.sub,
     this.photoPath,
+    // ignore: unused_element_parameter — slot for a future cut-out car image.
     this.carPath,
     required this.tag,
     required this.headline,
@@ -3094,9 +2753,7 @@ class _BookSectionState extends State<_BookSection> {
 }
 
 class _BookWidget extends StatelessWidget {
-  const _BookWidget({
-    super.key,
-    required this.pages,
+  const _BookWidget({required this.pages,
     required this.currentPage,
     required this.flipAngle,
     required this.isMobile,
@@ -3198,7 +2855,7 @@ class _BookWidget extends StatelessWidget {
 }
 
 class _BookLeftPanel extends StatelessWidget {
-  const _BookLeftPanel({super.key, required this.data, required this.height, required this.isMobile});
+  const _BookLeftPanel({required this.data, required this.height, required this.isMobile});
   final _BookPageData data;
   final double height;
   final bool isMobile;
@@ -3301,7 +2958,7 @@ class _BookLeftPanel extends StatelessWidget {
 }
 
 class _BookRightPanel extends StatelessWidget {
-  const _BookRightPanel({super.key, required this.data, required this.isMobile});
+  const _BookRightPanel({required this.data, required this.isMobile});
   final _BookPageData data;
   final bool isMobile;
 

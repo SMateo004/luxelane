@@ -189,7 +189,7 @@ class DrivePainter extends CustomPainter {
     canvas.restore();
 
     canvas.scale(scaleX, scaleX);
-    const bw = 100.0, bh = 28.0;
+    const bw = 100.0;
 
     final body = Path()..moveTo(-bw, 12)..lineTo(-bw, 0)..quadraticBezierTo(-bw * 0.92, -8, -bw * 0.7, -18)
       ..lineTo(-bw * 0.18, -26)..lineTo(bw * 0.28, -24)..quadraticBezierTo(bw * 0.82, -22, bw, -8)
