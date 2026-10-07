@@ -199,6 +199,114 @@
   "adminRecentActivity": "Actividad reciente",
   "adminRegisteredDrivers": "Chóferes registrados",
   "adminRegisteredVehicles": "Vehículos registrados",
+  "adminReportsAvgRating": "Calificación promedio",
+  "adminReportsAvgTicket": "Ticket promedio",
+  "adminReportsByAdmin": "Operaciones",
+  "adminReportsByRider": "Pasajero",
+  "adminReportsBySystem": "Automática",
+  "adminReportsByUnknown": "Sin registro",
+  "adminReportsCancellationRate": "Tasa de cancelación",
+  "adminReportsCancellations": "Cancelaciones por origen",
+  "adminReportsCancelledOf": "{cancelled} de {total} reservas",
+  "@adminReportsCancelledOf": {
+    "placeholders": {
+      "cancelled": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "adminReportsColDate": "Fecha",
+  "adminReportsColDriver": "Chófer",
+  "adminReportsColRating": "Calificación",
+  "adminReportsColRevenue": "Ingresos (Bs)",
+  "adminReportsColTrips": "Viajes",
+  "adminReportsCopied": "CSV copiado al portapapeles",
+  "adminReportsDailyTable": "Ver datos por día",
+  "adminReportsDays": "{days} días",
+  "@adminReportsDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "adminReportsDownloaded": "CSV descargado",
+  "adminReportsDrivers": "Rendimiento de chóferes",
+  "adminReportsEmpty": "No hay reservas con recogida en este período.",
+  "adminReportsExportDaily": "Exportar días (CSV)",
+  "adminReportsExportDrivers": "Exportar chóferes (CSV)",
+  "adminReportsLateCancellations": "Cancelaciones tardías",
+  "adminReportsLateHint": "Del pasajero, dentro de la ventana con cargo",
+  "adminReportsNoCancellations": "Sin cancelaciones en este período.",
+  "adminReportsNoDrivers": "Ningún chófer completó viajes en este período.",
+  "adminReportsNoPrevious": "Sin datos del período anterior",
+  "adminReportsPeakHour": "Hora pico: {hour}",
+  "@adminReportsPeakHour": {
+    "placeholders": {
+      "hour": {
+        "type": "String"
+      }
+    }
+  },
+  "adminReportsPeakHours": "Demanda por hora de recogida",
+  "adminReportsPeakHoursHint": "Todas las reservas del período, incluidas las canceladas.",
+  "adminReportsPerTrip": "Por viaje completado",
+  "adminReportsRange": "Recogidas del {from} al {to} (hora local)",
+  "@adminReportsRange": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "adminReportsRatingCount": "{count, plural, =0{Sin calificaciones} =1{1 calificación} other{{count} calificaciones}}",
+  "@adminReportsRatingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminReportsRevenue": "Ingresos",
+  "adminReportsRevenuePerDay": "Ingresos por día (Bs)",
+  "adminReportsServiceMix": "Viajes por tipo de servicio",
+  "adminReportsTitle": "Reportes de operaciones",
+  "adminReportsTooltipBookings": "{count, plural, =1{1 reserva} other{{count} reservas}}",
+  "@adminReportsTooltipBookings": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminReportsTooltipTrips": "{count, plural, =1{1 viaje} other{{count} viajes}}",
+  "@adminReportsTooltipTrips": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminReportsTrips": "Viajes completados",
+  "adminReportsTripsPerDay": "Viajes completados por día",
+  "adminReportsUnknownDriver": "Chófer sin nombre",
+  "adminReportsUnserved": "Sin chófer asignado",
+  "adminReportsUnservedHint": "Canceladas automáticamente",
+  "adminReportsVehicleMix": "Viajes por categoría",
+  "adminReportsVsPrevious": "{delta} vs. período anterior",
+  "@adminReportsVsPrevious": {
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  },
   "adminRevenueTrend": "Tendencia de ingresos 7 días (Bs)",
   "adminSearchUsers": "Buscar usuarios…",
   "adminSectionAudit": "Auditoría",
@@ -206,6 +314,7 @@
   "adminSectionDashboard": "Panel",
   "adminSectionDrivers": "Chóferes",
   "adminSectionPricing": "Precios",
+  "adminSectionReports": "Reportes",
   "adminSectionSettings": "Configuración",
   "adminSectionUsers": "Usuarios",
   "adminSectionVehicles": "Vehículos",

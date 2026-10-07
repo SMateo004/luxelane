@@ -293,6 +293,179 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminRegisteredVehicles => 'Registered vehicles';
 
   @override
+  String get adminReportsAvgRating => 'Average rating';
+
+  @override
+  String get adminReportsAvgTicket => 'Average fare';
+
+  @override
+  String get adminReportsByAdmin => 'Operations';
+
+  @override
+  String get adminReportsByRider => 'Rider';
+
+  @override
+  String get adminReportsBySystem => 'Automatic';
+
+  @override
+  String get adminReportsByUnknown => 'Not recorded';
+
+  @override
+  String get adminReportsCancellationRate => 'Cancellation rate';
+
+  @override
+  String get adminReportsCancellations => 'Cancellations by source';
+
+  @override
+  String adminReportsCancelledOf(int cancelled, int total) {
+    return '$cancelled of $total bookings';
+  }
+
+  @override
+  String get adminReportsColDate => 'Date';
+
+  @override
+  String get adminReportsColDriver => 'Chauffeur';
+
+  @override
+  String get adminReportsColRating => 'Rating';
+
+  @override
+  String get adminReportsColRevenue => 'Revenue (Bs)';
+
+  @override
+  String get adminReportsColTrips => 'Trips';
+
+  @override
+  String get adminReportsCopied => 'CSV copied to the clipboard';
+
+  @override
+  String get adminReportsDailyTable => 'Show daily data';
+
+  @override
+  String adminReportsDays(int days) {
+    return '$days days';
+  }
+
+  @override
+  String get adminReportsDownloaded => 'CSV downloaded';
+
+  @override
+  String get adminReportsDrivers => 'Chauffeur performance';
+
+  @override
+  String get adminReportsEmpty => 'No bookings with a pickup in this period.';
+
+  @override
+  String get adminReportsExportDaily => 'Export days (CSV)';
+
+  @override
+  String get adminReportsExportDrivers => 'Export chauffeurs (CSV)';
+
+  @override
+  String get adminReportsLateCancellations => 'Late cancellations';
+
+  @override
+  String get adminReportsLateHint => 'By the rider, inside the charged window';
+
+  @override
+  String get adminReportsNoCancellations => 'No cancellations in this period.';
+
+  @override
+  String get adminReportsNoDrivers => 'No chauffeur completed trips in this period.';
+
+  @override
+  String get adminReportsNoPrevious => 'No data for the previous period';
+
+  @override
+  String adminReportsPeakHour(String hour) {
+    return 'Peak hour: $hour';
+  }
+
+  @override
+  String get adminReportsPeakHours => 'Demand by pickup hour';
+
+  @override
+  String get adminReportsPeakHoursHint => 'Every booking in the period, cancelled ones included.';
+
+  @override
+  String get adminReportsPerTrip => 'Per completed trip';
+
+  @override
+  String adminReportsRange(String from, String to) {
+    return 'Pickups from $from to $to (local time)';
+  }
+
+  @override
+  String adminReportsRatingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ratings',
+      one: '1 rating',
+      zero: 'No ratings',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get adminReportsRevenue => 'Revenue';
+
+  @override
+  String get adminReportsRevenuePerDay => 'Revenue per day (Bs)';
+
+  @override
+  String get adminReportsServiceMix => 'Trips by service type';
+
+  @override
+  String get adminReportsTitle => 'Operations reports';
+
+  @override
+  String adminReportsTooltipBookings(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bookings',
+      one: '1 booking',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String adminReportsTooltipTrips(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count trips',
+      one: '1 trip',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get adminReportsTrips => 'Completed trips';
+
+  @override
+  String get adminReportsTripsPerDay => 'Completed trips per day';
+
+  @override
+  String get adminReportsUnknownDriver => 'Unnamed chauffeur';
+
+  @override
+  String get adminReportsUnserved => 'No chauffeur assigned';
+
+  @override
+  String get adminReportsUnservedHint => 'Cancelled automatically';
+
+  @override
+  String get adminReportsVehicleMix => 'Trips by vehicle class';
+
+  @override
+  String adminReportsVsPrevious(String delta) {
+    return '$delta vs. previous period';
+  }
+
+  @override
   String get adminRevenueTrend => '7-day revenue trend (Bs)';
 
   @override
@@ -312,6 +485,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminSectionPricing => 'Pricing';
+
+  @override
+  String get adminSectionReports => 'Reports';
 
   @override
   String get adminSectionSettings => 'Settings';

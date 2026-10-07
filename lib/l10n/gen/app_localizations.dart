@@ -577,6 +577,282 @@ abstract class AppLocalizations {
   /// **'Vehículos registrados'**
   String get adminRegisteredVehicles;
 
+  /// No description provided for @adminReportsAvgRating.
+  ///
+  /// In es, this message translates to:
+  /// **'Calificación promedio'**
+  String get adminReportsAvgRating;
+
+  /// No description provided for @adminReportsAvgTicket.
+  ///
+  /// In es, this message translates to:
+  /// **'Ticket promedio'**
+  String get adminReportsAvgTicket;
+
+  /// No description provided for @adminReportsByAdmin.
+  ///
+  /// In es, this message translates to:
+  /// **'Operaciones'**
+  String get adminReportsByAdmin;
+
+  /// No description provided for @adminReportsByRider.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero'**
+  String get adminReportsByRider;
+
+  /// No description provided for @adminReportsBySystem.
+  ///
+  /// In es, this message translates to:
+  /// **'Automática'**
+  String get adminReportsBySystem;
+
+  /// No description provided for @adminReportsByUnknown.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin registro'**
+  String get adminReportsByUnknown;
+
+  /// No description provided for @adminReportsCancellationRate.
+  ///
+  /// In es, this message translates to:
+  /// **'Tasa de cancelación'**
+  String get adminReportsCancellationRate;
+
+  /// No description provided for @adminReportsCancellations.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelaciones por origen'**
+  String get adminReportsCancellations;
+
+  /// No description provided for @adminReportsCancelledOf.
+  ///
+  /// In es, this message translates to:
+  /// **'{cancelled} de {total} reservas'**
+  String adminReportsCancelledOf(int cancelled, int total);
+
+  /// No description provided for @adminReportsColDate.
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha'**
+  String get adminReportsColDate;
+
+  /// No description provided for @adminReportsColDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer'**
+  String get adminReportsColDriver;
+
+  /// No description provided for @adminReportsColRating.
+  ///
+  /// In es, this message translates to:
+  /// **'Calificación'**
+  String get adminReportsColRating;
+
+  /// No description provided for @adminReportsColRevenue.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresos (Bs)'**
+  String get adminReportsColRevenue;
+
+  /// No description provided for @adminReportsColTrips.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes'**
+  String get adminReportsColTrips;
+
+  /// No description provided for @adminReportsCopied.
+  ///
+  /// In es, this message translates to:
+  /// **'CSV copiado al portapapeles'**
+  String get adminReportsCopied;
+
+  /// No description provided for @adminReportsDailyTable.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver datos por día'**
+  String get adminReportsDailyTable;
+
+  /// No description provided for @adminReportsDays.
+  ///
+  /// In es, this message translates to:
+  /// **'{days} días'**
+  String adminReportsDays(int days);
+
+  /// No description provided for @adminReportsDownloaded.
+  ///
+  /// In es, this message translates to:
+  /// **'CSV descargado'**
+  String get adminReportsDownloaded;
+
+  /// No description provided for @adminReportsDrivers.
+  ///
+  /// In es, this message translates to:
+  /// **'Rendimiento de chóferes'**
+  String get adminReportsDrivers;
+
+  /// No description provided for @adminReportsEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay reservas con recogida en este período.'**
+  String get adminReportsEmpty;
+
+  /// No description provided for @adminReportsExportDaily.
+  ///
+  /// In es, this message translates to:
+  /// **'Exportar días (CSV)'**
+  String get adminReportsExportDaily;
+
+  /// No description provided for @adminReportsExportDrivers.
+  ///
+  /// In es, this message translates to:
+  /// **'Exportar chóferes (CSV)'**
+  String get adminReportsExportDrivers;
+
+  /// No description provided for @adminReportsLateCancellations.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelaciones tardías'**
+  String get adminReportsLateCancellations;
+
+  /// No description provided for @adminReportsLateHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Del pasajero, dentro de la ventana con cargo'**
+  String get adminReportsLateHint;
+
+  /// No description provided for @adminReportsNoCancellations.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin cancelaciones en este período.'**
+  String get adminReportsNoCancellations;
+
+  /// No description provided for @adminReportsNoDrivers.
+  ///
+  /// In es, this message translates to:
+  /// **'Ningún chófer completó viajes en este período.'**
+  String get adminReportsNoDrivers;
+
+  /// No description provided for @adminReportsNoPrevious.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin datos del período anterior'**
+  String get adminReportsNoPrevious;
+
+  /// No description provided for @adminReportsPeakHour.
+  ///
+  /// In es, this message translates to:
+  /// **'Hora pico: {hour}'**
+  String adminReportsPeakHour(String hour);
+
+  /// No description provided for @adminReportsPeakHours.
+  ///
+  /// In es, this message translates to:
+  /// **'Demanda por hora de recogida'**
+  String get adminReportsPeakHours;
+
+  /// No description provided for @adminReportsPeakHoursHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Todas las reservas del período, incluidas las canceladas.'**
+  String get adminReportsPeakHoursHint;
+
+  /// No description provided for @adminReportsPerTrip.
+  ///
+  /// In es, this message translates to:
+  /// **'Por viaje completado'**
+  String get adminReportsPerTrip;
+
+  /// No description provided for @adminReportsRange.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogidas del {from} al {to} (hora local)'**
+  String adminReportsRange(String from, String to);
+
+  /// No description provided for @adminReportsRatingCount.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =0{Sin calificaciones} =1{1 calificación} other{{count} calificaciones}}'**
+  String adminReportsRatingCount(int count);
+
+  /// No description provided for @adminReportsRevenue.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresos'**
+  String get adminReportsRevenue;
+
+  /// No description provided for @adminReportsRevenuePerDay.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresos por día (Bs)'**
+  String get adminReportsRevenuePerDay;
+
+  /// No description provided for @adminReportsServiceMix.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes por tipo de servicio'**
+  String get adminReportsServiceMix;
+
+  /// No description provided for @adminReportsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Reportes de operaciones'**
+  String get adminReportsTitle;
+
+  /// No description provided for @adminReportsTooltipBookings.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 reserva} other{{count} reservas}}'**
+  String adminReportsTooltipBookings(int count);
+
+  /// No description provided for @adminReportsTooltipTrips.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 viaje} other{{count} viajes}}'**
+  String adminReportsTooltipTrips(int count);
+
+  /// No description provided for @adminReportsTrips.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes completados'**
+  String get adminReportsTrips;
+
+  /// No description provided for @adminReportsTripsPerDay.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes completados por día'**
+  String get adminReportsTripsPerDay;
+
+  /// No description provided for @adminReportsUnknownDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer sin nombre'**
+  String get adminReportsUnknownDriver;
+
+  /// No description provided for @adminReportsUnserved.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin chófer asignado'**
+  String get adminReportsUnserved;
+
+  /// No description provided for @adminReportsUnservedHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Canceladas automáticamente'**
+  String get adminReportsUnservedHint;
+
+  /// No description provided for @adminReportsVehicleMix.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes por categoría'**
+  String get adminReportsVehicleMix;
+
+  /// No description provided for @adminReportsVsPrevious.
+  ///
+  /// In es, this message translates to:
+  /// **'{delta} vs. período anterior'**
+  String adminReportsVsPrevious(String delta);
+
   /// No description provided for @adminRevenueTrend.
   ///
   /// In es, this message translates to:
@@ -618,6 +894,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Precios'**
   String get adminSectionPricing;
+
+  /// No description provided for @adminSectionReports.
+  ///
+  /// In es, this message translates to:
+  /// **'Reportes'**
+  String get adminSectionReports;
 
   /// No description provided for @adminSectionSettings.
   ///

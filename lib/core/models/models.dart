@@ -274,6 +274,9 @@ class Booking {
     this.passengerPhone,
     this.driverArrivedAt,
     this.dispatch,
+    this.cancelledBy,
+    this.lateCancellation = false,
+    this.cancelReason,
   });
 
   final String id;
@@ -325,6 +328,16 @@ class Booking {
 
   /// Proximity dispatch state (who the booking is currently offered to).
   final DispatchInfo? dispatch;
+
+  /// Who cancelled ('rider', 'driver', 'admin', 'system'), written by the
+  /// backend together with [lateCancellation] and [cancelReason].
+  final String? cancelledBy;
+
+  /// Rider cancelled inside the late-cancellation window.
+  final bool lateCancellation;
+
+  /// Machine reason, e.g. 'no_driver_assigned' from scheduledCleanup.
+  final String? cancelReason;
 
   /// Whether [driverId] should see this pending booking as a request.
   bool isOfferedTo(String driverId) {
@@ -385,6 +398,9 @@ class Booking {
         dispatch: j['dispatch'] is Map
             ? DispatchInfo.fromJson(Map<String, dynamic>.from(j['dispatch'] as Map))
             : null,
+        cancelledBy: j['cancelledBy'] as String?,
+        lateCancellation: j['lateCancellation'] as bool? ?? false,
+        cancelReason: j['cancelReason'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -450,6 +466,9 @@ class Booking {
         passengerPhone: passengerPhone,
         driverArrivedAt: driverArrivedAt,
         dispatch: dispatch,
+        cancelledBy: cancelledBy,
+        lateCancellation: lateCancellation,
+        cancelReason: cancelReason,
       );
 }
 

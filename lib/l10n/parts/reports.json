@@ -1,0 +1,283 @@
+{
+  "adminSectionReports": {
+    "es": "Reportes",
+    "en": "Reports",
+    "pt": "Relatórios"
+  },
+  "adminReportsTitle": {
+    "es": "Reportes de operaciones",
+    "en": "Operations reports",
+    "pt": "Relatórios de operações"
+  },
+  "adminReportsDays": {
+    "es": "{days} días",
+    "en": "{days} days",
+    "pt": "{days} dias",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "adminReportsRange": {
+    "es": "Recogidas del {from} al {to} (hora local)",
+    "en": "Pickups from {from} to {to} (local time)",
+    "pt": "Embarques de {from} a {to} (hora local)",
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "adminReportsEmpty": {
+    "es": "No hay reservas con recogida en este período.",
+    "en": "No bookings with a pickup in this period.",
+    "pt": "Nenhuma reserva com embarque neste período."
+  },
+  "adminReportsTrips": {
+    "es": "Viajes completados",
+    "en": "Completed trips",
+    "pt": "Viagens concluídas"
+  },
+  "adminReportsRevenue": {
+    "es": "Ingresos",
+    "en": "Revenue",
+    "pt": "Receita"
+  },
+  "adminReportsAvgTicket": {
+    "es": "Ticket promedio",
+    "en": "Average fare",
+    "pt": "Tíquete médio"
+  },
+  "adminReportsPerTrip": {
+    "es": "Por viaje completado",
+    "en": "Per completed trip",
+    "pt": "Por viagem concluída"
+  },
+  "adminReportsCancellationRate": {
+    "es": "Tasa de cancelación",
+    "en": "Cancellation rate",
+    "pt": "Taxa de cancelamento"
+  },
+  "adminReportsCancelledOf": {
+    "es": "{cancelled} de {total} reservas",
+    "en": "{cancelled} of {total} bookings",
+    "pt": "{cancelled} de {total} reservas",
+    "placeholders": {
+      "cancelled": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "adminReportsLateCancellations": {
+    "es": "Cancelaciones tardías",
+    "en": "Late cancellations",
+    "pt": "Cancelamentos tardios"
+  },
+  "adminReportsLateHint": {
+    "es": "Del pasajero, dentro de la ventana con cargo",
+    "en": "By the rider, inside the charged window",
+    "pt": "Do passageiro, dentro da janela com cobrança"
+  },
+  "adminReportsUnserved": {
+    "es": "Sin chófer asignado",
+    "en": "No chauffeur assigned",
+    "pt": "Sem motorista designado"
+  },
+  "adminReportsUnservedHint": {
+    "es": "Canceladas automáticamente",
+    "en": "Cancelled automatically",
+    "pt": "Canceladas automaticamente"
+  },
+  "adminReportsAvgRating": {
+    "es": "Calificación promedio",
+    "en": "Average rating",
+    "pt": "Avaliação média"
+  },
+  "adminReportsRatingCount": {
+    "es": "{count, plural, =0{Sin calificaciones} =1{1 calificación} other{{count} calificaciones}}",
+    "en": "{count, plural, =0{No ratings} =1{1 rating} other{{count} ratings}}",
+    "pt": "{count, plural, =0{Sem avaliações} =1{1 avaliação} other{{count} avaliações}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminReportsVsPrevious": {
+    "es": "{delta} vs. período anterior",
+    "en": "{delta} vs. previous period",
+    "pt": "{delta} vs. período anterior",
+    "placeholders": {
+      "delta": {
+        "type": "String"
+      }
+    }
+  },
+  "adminReportsNoPrevious": {
+    "es": "Sin datos del período anterior",
+    "en": "No data for the previous period",
+    "pt": "Sem dados do período anterior"
+  },
+  "adminReportsTripsPerDay": {
+    "es": "Viajes completados por día",
+    "en": "Completed trips per day",
+    "pt": "Viagens concluídas por dia"
+  },
+  "adminReportsRevenuePerDay": {
+    "es": "Ingresos por día (Bs)",
+    "en": "Revenue per day (Bs)",
+    "pt": "Receita por dia (Bs)"
+  },
+  "adminReportsPeakHours": {
+    "es": "Demanda por hora de recogida",
+    "en": "Demand by pickup hour",
+    "pt": "Demanda por hora de embarque"
+  },
+  "adminReportsPeakHoursHint": {
+    "es": "Todas las reservas del período, incluidas las canceladas.",
+    "en": "Every booking in the period, cancelled ones included.",
+    "pt": "Todas as reservas do período, incluindo as canceladas."
+  },
+  "adminReportsPeakHour": {
+    "es": "Hora pico: {hour}",
+    "en": "Peak hour: {hour}",
+    "pt": "Horário de pico: {hour}",
+    "placeholders": {
+      "hour": {
+        "type": "String"
+      }
+    }
+  },
+  "adminReportsTooltipTrips": {
+    "es": "{count, plural, =1{1 viaje} other{{count} viajes}}",
+    "en": "{count, plural, =1{1 trip} other{{count} trips}}",
+    "pt": "{count, plural, =1{1 viagem} other{{count} viagens}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminReportsTooltipBookings": {
+    "es": "{count, plural, =1{1 reserva} other{{count} reservas}}",
+    "en": "{count, plural, =1{1 booking} other{{count} bookings}}",
+    "pt": "{count, plural, =1{1 reserva} other{{count} reservas}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminReportsVehicleMix": {
+    "es": "Viajes por categoría",
+    "en": "Trips by vehicle class",
+    "pt": "Viagens por categoria"
+  },
+  "adminReportsServiceMix": {
+    "es": "Viajes por tipo de servicio",
+    "en": "Trips by service type",
+    "pt": "Viagens por tipo de serviço"
+  },
+  "adminReportsCancellations": {
+    "es": "Cancelaciones por origen",
+    "en": "Cancellations by source",
+    "pt": "Cancelamentos por origem"
+  },
+  "adminReportsByRider": {
+    "es": "Pasajero",
+    "en": "Rider",
+    "pt": "Passageiro"
+  },
+  "adminReportsByAdmin": {
+    "es": "Operaciones",
+    "en": "Operations",
+    "pt": "Operações"
+  },
+  "adminReportsBySystem": {
+    "es": "Automática",
+    "en": "Automatic",
+    "pt": "Automático"
+  },
+  "adminReportsByUnknown": {
+    "es": "Sin registro",
+    "en": "Not recorded",
+    "pt": "Sem registro"
+  },
+  "adminReportsNoCancellations": {
+    "es": "Sin cancelaciones en este período.",
+    "en": "No cancellations in this period.",
+    "pt": "Nenhum cancelamento neste período."
+  },
+  "adminReportsDrivers": {
+    "es": "Rendimiento de chóferes",
+    "en": "Chauffeur performance",
+    "pt": "Desempenho dos motoristas"
+  },
+  "adminReportsNoDrivers": {
+    "es": "Ningún chófer completó viajes en este período.",
+    "en": "No chauffeur completed trips in this period.",
+    "pt": "Nenhum motorista concluiu viagens neste período."
+  },
+  "adminReportsUnknownDriver": {
+    "es": "Chófer sin nombre",
+    "en": "Unnamed chauffeur",
+    "pt": "Motorista sem nome"
+  },
+  "adminReportsColDate": {
+    "es": "Fecha",
+    "en": "Date",
+    "pt": "Data"
+  },
+  "adminReportsColDriver": {
+    "es": "Chófer",
+    "en": "Chauffeur",
+    "pt": "Motorista"
+  },
+  "adminReportsColTrips": {
+    "es": "Viajes",
+    "en": "Trips",
+    "pt": "Viagens"
+  },
+  "adminReportsColRevenue": {
+    "es": "Ingresos (Bs)",
+    "en": "Revenue (Bs)",
+    "pt": "Receita (Bs)"
+  },
+  "adminReportsColRating": {
+    "es": "Calificación",
+    "en": "Rating",
+    "pt": "Avaliação"
+  },
+  "adminReportsDailyTable": {
+    "es": "Ver datos por día",
+    "en": "Show daily data",
+    "pt": "Ver dados por dia"
+  },
+  "adminReportsExportDaily": {
+    "es": "Exportar días (CSV)",
+    "en": "Export days (CSV)",
+    "pt": "Exportar dias (CSV)"
+  },
+  "adminReportsExportDrivers": {
+    "es": "Exportar chóferes (CSV)",
+    "en": "Export chauffeurs (CSV)",
+    "pt": "Exportar motoristas (CSV)"
+  },
+  "adminReportsDownloaded": {
+    "es": "CSV descargado",
+    "en": "CSV downloaded",
+    "pt": "CSV baixado"
+  },
+  "adminReportsCopied": {
+    "es": "CSV copiado al portapapeles",
+    "en": "CSV copied to the clipboard",
+    "pt": "CSV copiado para a área de transferência"
+  }
+}

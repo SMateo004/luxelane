@@ -9,6 +9,7 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/admin_bloc.dart';
 import '../widgets/admin_sections.dart';
 import '../widgets/admin_shared_widgets.dart';
+import '../widgets/reports_tab.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -23,6 +24,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   List<String> _sections(AppLocalizations l) => [
         l.adminSectionDashboard,
         l.adminSectionBookings,
+        l.adminSectionReports,
         l.adminSectionDrivers,
         l.adminSectionVehicles,
         l.adminSectionUsers,
@@ -33,6 +35,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   static const _icons = [
     Icons.dashboard_outlined,
     Icons.confirmation_number_outlined,
+    Icons.insights_outlined,
     Icons.directions_car_outlined,
     Icons.car_crash_outlined,
     Icons.people_outline,
@@ -199,12 +202,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     switch (_section) {
       case 0: return const DashboardTab();
       case 1: return const BookingsTab();
-      case 2: return const DriversTab();
-      case 3: return const VehiclesTab();
-      case 4: return const UsersTab();
-      case 5: return const PricingTab();
-      case 6: return const AuditTab();
-      case 7: return const SettingsTab();
+      case 2: return const ReportsTab();
+      case 3: return const DriversTab();
+      case 4: return const VehiclesTab();
+      case 5: return const UsersTab();
+      case 6: return const PricingTab();
+      case 7: return const AuditTab();
+      case 8: return const SettingsTab();
       default: return const SizedBox();
     }
   }
