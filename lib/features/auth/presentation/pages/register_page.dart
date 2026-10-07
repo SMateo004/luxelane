@@ -5,6 +5,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
+import 'login_page.dart' show AuthBrandPanel;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -64,42 +65,69 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _mobileLayout() => SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(LuxSpacing.md),
+          padding: const EdgeInsets.fromLTRB(28, 48, 28, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: LuxSpacing.xl),
-              const LuxelaneWordmark(size: 16),
-              const SizedBox(height: LuxSpacing.xl),
-              const Text('Crear cuenta.', style: LuxTypography.displayMedium),
-              const SizedBox(height: LuxSpacing.sm),
-              const Text('Únete a Luxelane hoy',
+              GestureDetector(
+                onTap: () => context.go('/'),
+                child: const LuxelaneWordmark(),
+              ),
+              const SizedBox(height: 48),
+              Text('Bienvenido\na Luxelane.',
+                  style: LuxTypography.displayMedium
+                      .copyWith(fontSize: 40, height: 1.15)),
+              const SizedBox(height: 8),
+              const Text('Crea tu cuenta en menos de un minuto.',
                   style: LuxTypography.bodyMedium),
-              const SizedBox(height: LuxSpacing.xl),
+              const SizedBox(height: 40),
               _formContent(),
             ],
           ),
         ),
       );
 
-  Widget _webLayout() => Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 480),
-          child: Padding(
-            padding: const EdgeInsets.all(LuxSpacing.xxl),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const LuxelaneWordmark(),
-                const SizedBox(height: LuxSpacing.xl),
-                const Text('Crear cuenta', style: LuxTypography.displayMedium),
-                const SizedBox(height: LuxSpacing.xl),
-                _formContent(),
-              ],
+  Widget _webLayout() => Row(
+        children: [
+          const Expanded(
+            child: AuthBrandPanel(
+              title: 'Bienvenido\na Luxelane.',
+              subtitle:
+                  'Una cuenta para reservar, seguir y recordar cada trayecto.',
             ),
           ),
-        ),
+          Expanded(
+            child: Container(
+              color: LuxColors.blackSurface,
+              child: Center(
+                child: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 440),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 48, vertical: 64),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Crear cuenta',
+                              style: LuxTypography.displayMedium
+                                  .copyWith(fontSize: 42)),
+                          const SizedBox(height: 6),
+                          const Text(
+                              'Solo te pediremos lo necesario para tu chófer.',
+                              style: LuxTypography.bodyMedium),
+                          const SizedBox(height: 40),
+                          _formContent(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       );
 
   Widget _formContent() => BlocBuilder<AuthBloc, AuthState>(
@@ -113,7 +141,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   label: 'Nombre completo',
                   controller: _name,
                   prefixIcon: Icons.person_outline,
-                  validator: (v) => v == null || v.isEmpty ? 'Requerido' : null,
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? 'Indica tu nombre para que tu chófer pueda recibirte'
+                      : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
@@ -121,16 +151,19 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
-                  validator: (v) =>
-                      v == null || !v.contains('@') ? 'Correo inválido' : null,
+                  validator: (v) => v == null || !v.contains('@')
+                      ? 'Ingresa un correo válido'
+                      : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
-                  label: 'Teléfono',
+                  label: 'Teléfono (con código de país)',
                   controller: _phone,
                   keyboardType: TextInputType.phone,
                   prefixIcon: Icons.phone_outlined,
-                  validator: (v) => v == null || v.isEmpty ? 'Requerido' : null,
+                  validator: (v) => v == null || v.trim().length < 6
+                      ? 'Tu chófer lo necesita para contactarte'
+                      : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
@@ -148,6 +181,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   loading: loading,
                 ),
                 const SizedBox(height: LuxSpacing.md),
+                Text(
+                  'Tu nombre y teléfono permiten a tu chófer recibirte y contactarte.',
+                  textAlign: TextAlign.center,
+                  style: LuxTypography.caption
+                      .copyWith(color: LuxColors.whiteSecondary),
+                ),
+                const SizedBox(height: LuxSpacing.sm),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -23,6 +23,7 @@ import '../../features/payments/presentation/pages/payment_screen.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../../features/ride/presentation/pages/ride_screen.dart';
 import '../../features/trips/presentation/pages/trips_screen.dart';
+import '../../core/widgets/components.dart';
 import '../driver_shell/driver_shell.dart';
 import '../shell/app_shell.dart';
 import '../theme/app_theme.dart';
@@ -339,31 +340,33 @@ CustomTransitionPage<void> _slide(Widget child, GoRouterState state) =>
 class _SplashPage extends StatelessWidget {
   const _SplashPage();
   @override
-  Widget build(BuildContext context) => const Scaffold(
-        backgroundColor: Color(0xFF0A0A0A),
+  Widget build(BuildContext context) => Scaffold(
+        backgroundColor: LuxColors.black,
         body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'LUXELANE',
-                style: TextStyle(
-                  color: LuxColors.sapphire,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w300,
-                  letterSpacing: 8,
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 900),
+            curve: Curves.easeOutCubic,
+            builder: (_, t, child) => Opacity(
+              opacity: t,
+              child: Transform.translate(
+                  offset: Offset(0, 8 * (1 - t)), child: child),
+            ),
+            child: const Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LuxelaneWordmark(size: 14),
+                SizedBox(height: 36),
+                SizedBox(
+                  width: 72,
+                  child: LinearProgressIndicator(
+                    minHeight: 1,
+                    backgroundColor: LuxColors.blackBorder,
+                    color: LuxColors.sapphireBright,
+                  ),
                 ),
-              ),
-              SizedBox(height: 32),
-              SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 1.5,
-                  color: LuxColors.sapphire,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       );
@@ -373,18 +376,33 @@ class _NotFoundPage extends StatelessWidget {
   const _NotFoundPage();
   @override
   Widget build(BuildContext context) => Scaffold(
+        backgroundColor: LuxColors.black,
         body: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('404',
-                  style: TextStyle(color: Colors.white, fontSize: 64)),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () => context.go('/'),
-                child: const Text('Go Home'),
-              ),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const LuxelaneWordmark(),
+                const SizedBox(height: 48),
+                Text('Este camino no existe.',
+                    textAlign: TextAlign.center,
+                    style: LuxTypography.displayMedium
+                        .copyWith(fontWeight: FontWeight.w400)),
+                const SizedBox(height: 12),
+                const Text('Te llevamos de vuelta al inicio.',
+                    textAlign: TextAlign.center,
+                    style: LuxTypography.bodyMedium),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: 240,
+                  child: ElevatedButton(
+                    onPressed: () => context.go('/'),
+                    child: const Text('VOLVER AL INICIO'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );

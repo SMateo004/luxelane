@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/design/lux_promise.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/place_model.dart';
 import '../../../../core/services/maps_service.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/map_picker_dialog.dart';
@@ -29,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Place? _origin;
   Place? _destination;
   RouteInfo? _routeInfo;
-  DateTime _date = DateTime.now().add(const Duration(hours: 2));
+  DateTime _date = LuxFormat.nextQuarter();
   int _hours = 3;
   bool _locating = false;
 
@@ -229,40 +231,64 @@ class _MobileTopBar extends StatelessWidget {
   final bool locating;
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(
-            horizontal: LuxSpacing.md, vertical: LuxSpacing.sm),
-        child: Row(
-          children: [
-            const LuxelaneWordmark(),
-            const Spacer(),
-            _LocateButton(onTap: onLocate, loading: locating),
-            const SizedBox(width: LuxSpacing.xs),
-            const NotificationBell(),
-            const SizedBox(width: LuxSpacing.sm),
-            BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, state) {
-                final initial = state is AuthAuthenticated
-                    ? state.user.displayName[0].toUpperCase()
-                    : 'U';
-                return GestureDetector(
-                  onTap: () => context.go('/profile'),
-                  child: CircleAvatar(
-                    radius: 18,
-                    backgroundColor: LuxColors.blackSurface,
-                    child: Text(
-                      initial,
-                      style: const TextStyle(
-                        color: LuxColors.sapphire,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
+  Widget build(BuildContext context) => DecoratedBox(
+        // Soft scrim so the brand mark stays legible over any map tile.
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xCC070E18), Color(0x00070E18)],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+              LuxSpacing.md + 4, LuxSpacing.sm, LuxSpacing.md, LuxSpacing.lg),
+          child: Row(
+            children: [
+              const LuxelaneWordmark(size: 11),
+              const Spacer(),
+              _LocateButton(onTap: onLocate, loading: locating),
+              const SizedBox(width: LuxSpacing.xs),
+              const NotificationBell(),
+              const SizedBox(width: LuxSpacing.sm),
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  final name =
+                      state is AuthAuthenticated ? state.user.displayName : '';
+                  return Semantics(
+                    button: true,
+                    label: 'Mi perfil',
+                    child: GestureDetector(
+                      onTap: () => context.go(
+                          state is AuthAuthenticated ? '/profile' : '/login'),
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: LuxColors.blackSurface,
+                          border: Border.all(color: LuxColors.blackBorder),
+                        ),
+                        alignment: Alignment.center,
+                        child: name.isNotEmpty
+                            ? Text(
+                                name[0].toUpperCase(),
+                                style: const TextStyle(
+                                  fontFamily: 'Cormorant Garamond',
+                                  color: LuxColors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 17,
+                                ),
+                              )
+                            : const Icon(Icons.person_outline_rounded,
+                                size: 18, color: LuxColors.white),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       );
 }
@@ -290,7 +316,8 @@ class _LocateButton extends StatelessWidget {
                     height: 16,
                     child: CircularProgressIndicator(
                         strokeWidth: 1.5,
-                        valueColor: AlwaysStoppedAnimation(LuxColors.sapphire)),
+                        valueColor:
+                            AlwaysStoppedAnimation(LuxColors.sapphireBright)),
                   ),
                 )
               : const Icon(Icons.my_location_rounded,
@@ -343,7 +370,7 @@ class _MobileBottomPanel extends StatelessWidget {
           border: Border(top: BorderSide(color: LuxColors.blackBorder)),
         ),
         padding: const EdgeInsets.fromLTRB(
-            LuxSpacing.md, LuxSpacing.sm, LuxSpacing.md, LuxSpacing.xxl),
+            LuxSpacing.md + 4, LuxSpacing.sm, LuxSpacing.md + 4, LuxSpacing.lg),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -357,6 +384,8 @@ class _MobileBottomPanel extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: LuxSpacing.md),
+            const _Greeting(),
             const SizedBox(height: LuxSpacing.md),
             ServiceTypeTab(
                 selected: serviceType, onChanged: onServiceTypeChanged),
@@ -381,9 +410,73 @@ class _MobileBottomPanel extends StatelessWidget {
               _RouteInfoBadge(route: routeInfo!),
             ],
             const SizedBox(height: LuxSpacing.md),
-            LuxButton(label: 'Buscar vehículos', onPressed: onSearch),
+            LuxButton(label: 'Ver vehículos y precios', onPressed: onSearch),
+            const SizedBox(height: LuxSpacing.sm + 2),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: LuxSpacing.md,
+              runSpacing: 4,
+              children: [
+                for (final p in const [
+                  LuxPromise.fixedPrice,
+                  LuxPromise.freeCancel
+                ])
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.check_rounded,
+                          size: 12, color: LuxColors.sapphireBright),
+                      const SizedBox(width: 4),
+                      Text(p,
+                          style: LuxTypography.caption
+                              .copyWith(color: LuxColors.whiteSecondary)),
+                    ],
+                  ),
+              ],
+            ),
           ],
         ),
+      );
+}
+
+/// Personal, time-aware opener: the app recognises its guest by name.
+class _Greeting extends StatelessWidget {
+  const _Greeting();
+
+  @override
+  Widget build(BuildContext context) => BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, state) {
+          final full =
+              state is AuthAuthenticated ? state.user.displayName.trim() : '';
+          final first = full.isEmpty ? '' : full.split(' ').first;
+          return Align(
+            alignment: Alignment.centerLeft,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  (first.isEmpty
+                          ? LuxFormat.greeting()
+                          : '${LuxFormat.greeting()}, $first')
+                      .toUpperCase(),
+                  style: LuxTypography.caption.copyWith(
+                    color: LuxColors.sapphireBright,
+                    letterSpacing: 2.2,
+                    fontSize: 10,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  '¿A dónde te llevamos?',
+                  style: LuxTypography.displayMedium.copyWith(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       );
 }
 
@@ -514,11 +607,12 @@ class _RouteInfoBadge extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.route_outlined,
-                size: 16, color: LuxColors.sapphire),
+                size: 16, color: LuxColors.sapphireBright),
             const SizedBox(width: LuxSpacing.xs),
             Text(
               '${route.distanceKm.toStringAsFixed(1)} km · ${route.durationMin} min',
-              style: LuxTypography.caption.copyWith(color: LuxColors.sapphire),
+              style: LuxTypography.caption
+                  .copyWith(color: LuxColors.sapphireBright),
             ),
           ],
         ),
@@ -530,32 +624,36 @@ class _DateTimeTile extends StatelessWidget {
   final DateTime date;
   final ValueChanged<DateTime> onChanged;
 
-  String _fmt(DateTime d) =>
-      '${d.day}/${d.month}/${d.year}  ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+  Future<void> _pick(BuildContext context) async {
+    final now = DateTime.now();
+    final d = await showDatePicker(
+      context: context,
+      initialDate: date.isBefore(now) ? now : date,
+      firstDate: DateTime(now.year, now.month, now.day),
+      lastDate: now.add(const Duration(days: 365)),
+      helpText: 'FECHA DE RECOGIDA',
+      cancelText: 'Cancelar',
+      confirmText: 'Siguiente',
+    );
+    if (d == null || !context.mounted) return;
+    final t = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(date),
+      helpText: 'HORA DE RECOGIDA',
+      cancelText: 'Cancelar',
+      confirmText: 'Listo',
+    );
+    if (t == null || !context.mounted) return;
+    var picked = DateTime(d.year, d.month, d.day, t.hour, t.minute);
+    final earliest = now.add(const Duration(minutes: 30));
+    if (picked.isBefore(earliest)) picked = earliest;
+    onChanged(picked);
+  }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: () async {
-          final picked = await showDatePicker(
-            context: context,
-            initialDate: date,
-            firstDate: DateTime.now(),
-            lastDate: DateTime.now().add(const Duration(days: 365)),
-            builder: (ctx, child) => Theme(
-              data: Theme.of(ctx).copyWith(
-                colorScheme: const ColorScheme.dark(
-                  primary: LuxColors.sapphire,
-                  onPrimary: LuxColors.black,
-                  surface: LuxColors.blackSurface,
-                ),
-              ),
-              child: child!,
-            ),
-          );
-          if (picked == null || !context.mounted) return;
-          onChanged(DateTime(
-              picked.year, picked.month, picked.day, date.hour, date.minute));
-        },
+  Widget build(BuildContext context) => InkWell(
+        onTap: () => _pick(context),
+        borderRadius: BorderRadius.circular(LuxRadius.sm),
         child: Builder(builder: (context) {
           final dark = Theme.of(context).brightness == Brightness.dark;
           return Container(
@@ -569,15 +667,15 @@ class _DateTimeTile extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.calendar_today_outlined,
-                    size: 20,
+                Icon(Icons.event_outlined,
+                    size: 18,
                     color: dark
                         ? LuxColors.whiteTertiary
                         : const Color(0xFFAAAAAA)),
-                const SizedBox(width: LuxSpacing.md),
+                const SizedBox(width: LuxSpacing.md - 4),
                 Expanded(
                   child: Text(
-                    _fmt(date),
+                    LuxFormat.dateTime(date),
                     style: TextStyle(
                       color: dark ? LuxColors.white : const Color(0xFF111111),
                       fontSize: 13,
@@ -586,6 +684,11 @@ class _DateTimeTile extends StatelessWidget {
                     ),
                   ),
                 ),
+                Text('CAMBIAR',
+                    style: LuxTypography.caption.copyWith(
+                        color: LuxColors.sapphireBright,
+                        letterSpacing: 1.4,
+                        fontSize: 9.5)),
               ],
             ),
           );
@@ -603,7 +706,7 @@ class _HourSelector extends StatelessWidget {
     final dark = Theme.of(context).brightness == Brightness.dark;
     final iconColor = dark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
     final textColor = dark ? LuxColors.white : const Color(0xFF111111);
-    final accentColor = dark ? LuxColors.sapphire : const Color(0xFF111111);
+    final accentColor = dark ? LuxColors.white : const Color(0xFF111111);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
@@ -642,7 +745,7 @@ class _HourSelector extends StatelessWidget {
                 textAlign: TextAlign.center),
           ),
           IconButton(
-            onPressed: hours < 12 ? () => onChanged(hours + 1) : null,
+            onPressed: hours < 24 ? () => onChanged(hours + 1) : null,
             icon: Icon(Icons.add_circle_outline, color: accentColor),
             iconSize: 22,
           ),

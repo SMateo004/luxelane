@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
 
 // ── Design tokens (aligned with home_web_page / LD) ─────────────────────────
@@ -71,7 +72,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _webLayout() => Row(
         children: [
           // Left — brand panel
-          Expanded(child: _BrandPanel()),
+          const Expanded(child: AuthBrandPanel()),
           // Right — form panel
           Expanded(
             child: Container(
@@ -126,7 +127,10 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _LuxLogo(),
+              GestureDetector(
+                onTap: () => context.go('/'),
+                child: const LuxelaneWordmark(color: _white),
+              ),
               const SizedBox(height: 48),
               const Text(
                 'Bienvenido\nde nuevo.',
@@ -193,11 +197,12 @@ class _LoginPageState extends State<LoginPage> {
                         context.read<AuthBloc>().add(
                               PasswordResetRequested(email: _email.text.trim()),
                             );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content:
-                                  Text('Correo de restablecimiento enviado')),
-                        );
+                        showLuxSnackbar(context,
+                            'Te enviamos un enlace para restablecer tu contraseña.');
+                      } else {
+                        showLuxSnackbar(context,
+                            'Escribe tu correo arriba y te enviaremos un enlace.',
+                            isError: true);
                       }
                     },
                   ),
@@ -235,26 +240,41 @@ class _LoginPageState extends State<LoginPage> {
 
 // ── Brand panel (left side on web) ────────────────────────────────────────────
 
-class _BrandPanel extends StatelessWidget {
+/// Shared by the login and register pages so both read as one experience.
+class AuthBrandPanel extends StatelessWidget {
+  const AuthBrandPanel({
+    super.key,
+    this.title = 'Tu chófer,\ncomo lo recuerdas.',
+    this.subtitle = 'Tus direcciones, preferencias y viajes, siempre a mano.',
+  });
+  final String title;
+  final String subtitle;
+
   @override
   Widget build(BuildContext context) => Stack(
         fit: StackFit.expand,
         children: [
           // Deep navy base
           const ColoredBox(color: _dark),
-          // Dot grid — same as hero
-          CustomPaint(painter: _DotGridPainter()),
-          // Subtle bottom vignette
+          // Editorial photo — the promise of the experience, not a form.
+          Image.asset(
+            'assets/images/home/promise_photo.jpg',
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) =>
+                CustomPaint(painter: _DotGridPainter()),
+          ),
+          // Scrim for legibility
           DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.transparent,
-                  _dark.withAlpha(200),
+                  _dark.withAlpha(150),
+                  _dark.withAlpha(110),
+                  _dark.withAlpha(235),
                 ],
-                stops: const [0.5, 1.0],
+                stops: const [0.0, 0.45, 1.0],
               ),
             ),
           ),
@@ -273,11 +293,17 @@ class _BrandPanel extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const _LuxLogo(),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () => context.go('/'),
+                      child: const LuxelaneWordmark(color: _white),
+                    ),
+                  ),
                   const SizedBox(height: 40),
-                  const Text(
-                    'Servicio de chófer\npremium.',
-                    style: TextStyle(
+                  Text(
+                    title,
+                    style: const TextStyle(
                       fontFamily: _kSerif,
                       fontSize: 52,
                       fontWeight: FontWeight.w300,
@@ -287,18 +313,37 @@ class _BrandPanel extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'En cualquier parte del mundo.',
+                    subtitle,
                     style: TextStyle(
                       fontFamily: _kSans,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: 1.6,
-                      color: _white.withAlpha(140),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w300,
+                      color: _white.withAlpha(170),
+                      height: 1.6,
                     ),
                   ),
                   const SizedBox(height: 40),
                   // Sapphire divider
                   Container(width: 40, height: 1, color: _sph),
+                  const SizedBox(height: 32),
+                  for (final line in const [
+                    'Reserva en menos de 2 minutos',
+                    'Todos tus viajes en un solo lugar',
+                    'Seguimiento de tu chófer en tiempo real',
+                  ])
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 14),
+                      child: Row(children: [
+                        const Icon(Icons.check_rounded,
+                            size: 14, color: LuxColors.sapphireBright),
+                        const SizedBox(width: 12),
+                        Text(line,
+                            style: TextStyle(
+                                fontFamily: _kSans,
+                                fontSize: 12.5,
+                                color: _white.withAlpha(200))),
+                      ]),
+                    ),
                 ],
               ),
             ),
@@ -464,38 +509,6 @@ class _TextLinkState extends State<_TextLink> {
             ),
           ),
         ),
-      );
-}
-
-// ── Luxelane wordmark ─────────────────────────────────────────────────────────
-
-class _LuxLogo extends StatelessWidget {
-  const _LuxLogo();
-
-  @override
-  Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 6,
-            height: 6,
-            decoration: const BoxDecoration(
-              color: _sph,
-              shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 10),
-          const Text(
-            'LUXELANE',
-            style: TextStyle(
-              fontFamily: _kSans,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 3.5,
-              color: _white,
-            ),
-          ),
-        ],
       );
 }
 

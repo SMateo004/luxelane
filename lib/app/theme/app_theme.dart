@@ -17,10 +17,14 @@ abstract class LuxColors {
   static const sapphireLight = Color(0xFF2563B0);
   static const sapphireDark = Color(0xFF153D6B);
   static const sapphireSubtle = Color(0x141B4F8A);
+
+  /// Sapphire tint for text/icons on dark surfaces. Plain [sapphire] on the
+  /// navy background falls below WCAG contrast; this keeps the accent legible.
+  static const sapphireBright = Color(0xFF8CB2E3);
   // On-dark text
   static const white = Color(0xFFF5F5F5);
   static const whiteSecondary = Color(0xFF9A9A9A);
-  static const whiteTertiary = Color(0xFF525252);
+  static const whiteTertiary = Color(0xFF6E7A8A);
   // Light sections (web landing)
   static const cream = Color(0xFFF3F1ED);
   static const creamBorder = Color(0xFFE0DDD6);
@@ -115,7 +119,7 @@ abstract class LuxTypography {
     fontFamily: _sans,
     fontSize: 13,
     fontWeight: FontWeight.w500,
-    color: LuxColors.sapphire,
+    color: LuxColors.sapphireBright,
     letterSpacing: 1.2,
   );
   static const caption = TextStyle(
@@ -182,7 +186,7 @@ ThemeData get luxTheme {
     labelLarge: sans(
         fontSize: 13,
         fontWeight: FontWeight.w500,
-        color: LuxColors.sapphire,
+        color: LuxColors.sapphireBright,
         letterSpacing: 1.2),
     bodySmall: sans(
         fontSize: 11,
@@ -197,9 +201,9 @@ ThemeData get luxTheme {
     scaffoldBackgroundColor: LuxColors.black,
     colorScheme: const ColorScheme.dark(
       primary: LuxColors.sapphire,
-      onPrimary: LuxColors.black,
+      onPrimary: LuxColors.white,
       secondary: LuxColors.sapphireLight,
-      onSecondary: LuxColors.black,
+      onSecondary: LuxColors.white,
       surface: LuxColors.blackSurface,
       onSurface: LuxColors.white,
       error: LuxColors.error,
@@ -217,19 +221,22 @@ ThemeData get luxTheme {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: LuxColors.sapphire,
-        foregroundColor: LuxColors.black,
+        foregroundColor: LuxColors.white,
+        disabledBackgroundColor: LuxColors.blackBorder,
+        disabledForegroundColor: LuxColors.whiteSecondary,
         minimumSize: const Size(double.infinity, 52),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(LuxRadius.sm)),
-        textStyle: LuxTypography.labelLarge.copyWith(color: LuxColors.black),
+        textStyle: LuxTypography.labelLarge
+            .copyWith(color: LuxColors.white, letterSpacing: 1.6),
         elevation: 0,
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: LuxColors.sapphire,
+        foregroundColor: LuxColors.white,
         minimumSize: const Size(double.infinity, 52),
-        side: const BorderSide(color: LuxColors.sapphire),
+        side: const BorderSide(color: LuxColors.blackBorder),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(LuxRadius.sm)),
         textStyle: LuxTypography.labelLarge,
@@ -237,7 +244,7 @@ ThemeData get luxTheme {
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: LuxColors.sapphire,
+        foregroundColor: LuxColors.sapphireBright,
         textStyle: LuxTypography.labelLarge,
       ),
     ),
@@ -284,14 +291,14 @@ ThemeData get luxTheme {
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: LuxColors.blackSurface,
-      selectedItemColor: LuxColors.sapphire,
+      selectedItemColor: LuxColors.white,
       unselectedItemColor: LuxColors.whiteTertiary,
       type: BottomNavigationBarType.fixed,
       elevation: 0,
     ),
     navigationRailTheme: const NavigationRailThemeData(
       backgroundColor: LuxColors.blackSurface,
-      selectedIconTheme: IconThemeData(color: LuxColors.sapphire),
+      selectedIconTheme: IconThemeData(color: LuxColors.sapphireBright),
       unselectedIconTheme: IconThemeData(color: LuxColors.whiteTertiary),
       selectedLabelTextStyle: LuxTypography.labelLarge,
       unselectedLabelTextStyle: TextStyle(
@@ -307,7 +314,7 @@ ThemeData get luxTheme {
             ? LuxColors.sapphire
             : LuxColors.blackElevated,
       ),
-      checkColor: WidgetStateProperty.all(LuxColors.black),
+      checkColor: WidgetStateProperty.all(LuxColors.white),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
       side: const BorderSide(color: LuxColors.whiteTertiary),
     ),
@@ -330,6 +337,42 @@ ThemeData get luxTheme {
         side: const BorderSide(color: LuxColors.blackBorder),
       ),
       textStyle: LuxTypography.bodyMedium,
+    ),
+    snackBarTheme: const SnackBarThemeData(
+      backgroundColor: LuxColors.blackElevated,
+      contentTextStyle: LuxTypography.bodyMedium,
+      behavior: SnackBarBehavior.floating,
+    ),
+    datePickerTheme: DatePickerThemeData(
+      backgroundColor: LuxColors.blackSurface,
+      headerBackgroundColor: LuxColors.blackElevated,
+      headerForegroundColor: LuxColors.white,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(LuxRadius.md)),
+      dayForegroundColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.disabled)
+            ? LuxColors.whiteTertiary
+            : LuxColors.white,
+      ),
+      todayBorder: const BorderSide(color: LuxColors.sapphireBright),
+    ),
+    timePickerTheme: TimePickerThemeData(
+      backgroundColor: LuxColors.blackSurface,
+      dialBackgroundColor: LuxColors.blackElevated,
+      hourMinuteColor: LuxColors.blackElevated,
+      hourMinuteTextColor: LuxColors.white,
+      dialHandColor: LuxColors.sapphire,
+      dialTextColor: LuxColors.white,
+      entryModeIconColor: LuxColors.whiteSecondary,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(LuxRadius.md)),
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: LuxColors.blackSurface,
+      surfaceTintColor: Colors.transparent,
+      showDragHandle: true,
+      dragHandleColor: LuxColors.blackBorder,
     ),
     tooltipTheme: TooltipThemeData(
       decoration: BoxDecoration(
