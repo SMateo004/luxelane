@@ -114,6 +114,14 @@ describe('bookings', () => {
     await assertSucceeds(updateDoc(doc(db('driver'), 'bookings/b1'), { ...accept, driverId: 'driver' }));
   });
 
+  it('targeted offers can only be taken by the offered driver', async () => {
+    await seed('users/driver2', { role: 'driver' });
+    await seed('driverProfiles/driver2', { userId: 'driver2', documentsVerified: true, rating: 0, totalRides: 0 });
+    await seed('bookings/b1', booking({ dispatch: { mode: 'targeted', offeredTo: 'driver2' } }));
+    await assertFails(updateDoc(doc(db('driver'), 'bookings/b1'), { driverId: 'driver', status: 'confirmed', updatedAt: 1 }));
+    await assertSucceeds(updateDoc(doc(db('driver2'), 'bookings/b1'), { driverId: 'driver2', status: 'confirmed', updatedAt: 1 }));
+  });
+
   it('assigned driver follows the state machine', async () => {
     await seed('bookings/b1', booking({ driverId: 'driver', status: 'confirmed' }));
     const ref = doc(db('driver'), 'bookings/b1');

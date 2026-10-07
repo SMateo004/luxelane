@@ -3,6 +3,7 @@ import {
   canCapture,
   chunk,
   formatMoney,
+  freeWaitEnd,
   isStalePending,
   isValidAmount,
   isValidDriverTransition,
@@ -91,5 +92,26 @@ describe('helpers', () => {
 
   it('formats money with currency code', () => {
     expect(formatMoney(75, 'usd')).toBe('USD 75.00');
+  });
+});
+
+describe('freeWaitEnd', () => {
+  const pickup = new Date('2026-10-07T14:00:00Z');
+
+  it('gives 15 min in the city from pickup time', () => {
+    expect(freeWaitEnd({ pickup, isAirport: false }).toISOString()).toBe('2026-10-07T14:15:00.000Z');
+  });
+
+  it('starts the city clock when a late chauffeur arrives', () => {
+    const arrived = new Date('2026-10-07T14:05:00Z');
+    expect(freeWaitEnd({ pickup, isAirport: false, driverArrivedAt: arrived }).toISOString()).toBe(
+      '2026-10-07T14:20:00.000Z',
+    );
+  });
+
+  it('gives 60 min at the airport from landing', () => {
+    const landing = new Date('2026-10-07T14:40:00Z');
+    expect(freeWaitEnd({ pickup, isAirport: true, landing }).toISOString()).toBe('2026-10-07T15:40:00.000Z');
+    expect(freeWaitEnd({ pickup, isAirport: true }).toISOString()).toBe('2026-10-07T15:00:00.000Z');
   });
 });

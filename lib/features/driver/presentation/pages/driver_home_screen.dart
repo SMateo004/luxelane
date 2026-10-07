@@ -12,6 +12,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/services/maps_service.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
+import '../../../../core/widgets/trip_widgets.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
 
@@ -449,6 +450,12 @@ class _ActiveRidePanel extends StatelessWidget {
               ],
             ),
           ),
+          if (showsFreeWait(booking)) ...[
+            const SizedBox(height: LuxSpacing.md),
+            FreeWaitBanner(booking: booking, forDriver: true),
+          ],
+          const SizedBox(height: LuxSpacing.md),
+          PassengerCard(booking: booking),
           const SizedBox(height: LuxSpacing.md),
           LuxButton(label: _actionLabel, onPressed: () => _advance(context)),
           const SizedBox(height: LuxSpacing.sm),
@@ -638,8 +645,10 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'NUEVA SOLICITUD DE VIAJE',
+                      Text(
+                        widget.booking.dispatch?.targeted == true
+                            ? 'SOLICITUD EXCLUSIVA PARA TI'
+                            : 'NUEVA SOLICITUD DE VIAJE',
                         style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontSize: 10,
@@ -653,6 +662,9 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                         widget.booking.vehicleClass.label,
                         style: LuxTypography.headlineLarge,
                       ),
+                      if (widget.booking.dispatch?.targeted == true &&
+                          widget.booking.dispatch?.offerExpiresAt != null)
+                        _OfferCountdown(expiresAt: widget.booking.dispatch!.offerExpiresAt!),
                     ],
                   ),
                 ),
@@ -862,4 +874,45 @@ class _RouteItem extends StatelessWidget {
           ),
         ],
       );
+}
+
+/// Seconds left to accept an exclusive (targeted) offer.
+class _OfferCountdown extends StatefulWidget {
+  const _OfferCountdown({required this.expiresAt});
+  final DateTime expiresAt;
+
+  @override
+  State<_OfferCountdown> createState() => _OfferCountdownState();
+}
+
+class _OfferCountdownState extends State<_OfferCountdown> {
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final left = widget.expiresAt.difference(DateTime.now()).inSeconds;
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Text(
+        left > 0 ? 'Responde en ${left}s' : 'Oferta por expirar',
+        style: LuxTypography.caption.copyWith(
+          color: left > 15 ? LuxColors.whiteSecondary : LuxColors.warning,
+        ),
+      ),
+    );
+  }
 }

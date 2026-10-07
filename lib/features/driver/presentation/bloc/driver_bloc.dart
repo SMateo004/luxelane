@@ -154,8 +154,11 @@ class DriverLoaded extends DriverState {
   Booking? get currentRequest {
     try {
       final vClass = user.vehicleClass;
-      return pendingRequests.firstWhere((b) => 
-        !declinedIds.contains(b.id) && (vClass == null || b.vehicleClass == vClass)
+      return pendingRequests.firstWhere((b) =>
+        !declinedIds.contains(b.id) &&
+        (vClass == null || b.vehicleClass == vClass) &&
+        // Imminent pickups are offered to one chauffeur at a time.
+        b.isOfferedTo(user.id)
       );
     } catch (_) {
       return null;
@@ -474,6 +477,11 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       final cur = state as DriverLoaded;
       if (!cur.declinedIds.contains(event.bookingId)) {
         emit(cur.copyWith(declinedIds: [...cur.declinedIds, event.bookingId]));
+      }
+      // Pass a targeted offer on to the next nearest chauffeur right away.
+      final declined = cur.pendingRequests.where((b) => b.id == event.bookingId);
+      if (declined.isNotEmpty && declined.first.dispatch?.offeredTo == cur.user.id) {
+        await _bookingRepo.declineOffer(event.bookingId);
       }
     }
   }

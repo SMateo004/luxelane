@@ -76,3 +76,30 @@ export function chunk<T>(items: T[], size: number): T[][] {
 export function formatMoney(amountMajor: number, currency: string): string {
   return `${currency.toUpperCase()} ${amountMajor.toFixed(2)}`;
 }
+
+// ---------------------------------------------------------------------------
+// Free waiting time (mirrors lib/core/utils/waiting_policy.dart)
+// ---------------------------------------------------------------------------
+
+export const AIRPORT_FREE_WAIT_MIN = 60;
+export const CITY_FREE_WAIT_MIN = 15;
+
+/**
+ * Airport pickups (with a flight number): 60 min from landing.
+ * City pickups: 15 min from the later of the pickup time and the moment the
+ * chauffeur arrived.
+ */
+export function freeWaitEnd(params: {
+  pickup: Date;
+  isAirport: boolean;
+  landing?: Date | null;
+  driverArrivedAt?: Date | null;
+}): Date {
+  const { pickup, isAirport, landing, driverArrivedAt } = params;
+  if (isAirport) {
+    const start = landing ?? pickup;
+    return new Date(start.getTime() + AIRPORT_FREE_WAIT_MIN * 60000);
+  }
+  const start = driverArrivedAt && driverArrivedAt > pickup ? driverArrivedAt : pickup;
+  return new Date(start.getTime() + CITY_FREE_WAIT_MIN * 60000);
+}

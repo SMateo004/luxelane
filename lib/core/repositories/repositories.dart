@@ -121,6 +121,9 @@ abstract class BookingRepository {
     double speed = 0,
   });
 
+  /// The offered chauffeur passes on a targeted request.
+  Future<Either<Failure, void>> declineOffer(String bookingId);
+
   /// Rider rates the chauffeur (1–5) after the trip.
   Future<Either<Failure, void>> rateBooking({
     required String bookingId,

@@ -307,16 +307,17 @@ class _BookingScreenState extends State<BookingScreen> {
     }
     final scheduledAt = _formData?.scheduledAt ?? DateTime.now().add(const Duration(hours: 1));
 
-    String? combinedNotes;
-    if (!_bookForSelf && _guestFirstName.isNotEmpty) {
-      final guestInfo =
-          'Pasajero: $_guestTitle $_guestFirstName $_guestLastName'
-          '${_guestEmail.isNotEmpty ? ' · $_guestEmail' : ''}'
-          '${_guestPhone.isNotEmpty ? ' · $_guestPhone' : ''}';
-      combinedNotes = _notes.isNotEmpty ? '$guestInfo\n$_notes' : guestInfo;
-    } else {
-      combinedNotes = _notes.isNotEmpty ? _notes : null;
-    }
+    // The person the chauffeur picks up: the rider, or the guest they booked
+    // for. Name goes on the meet & greet sign; phone lets the chauffeur call.
+    final forGuest = !_bookForSelf && _guestFirstName.isNotEmpty;
+    final passengerName = forGuest
+        ? '$_guestFirstName $_guestLastName'.trim()
+        : authState.user.displayName.trim();
+    final passengerPhone = forGuest ? _guestPhone.trim() : authState.user.phone.trim();
+    final notes = [
+      if (forGuest && _guestEmail.isNotEmpty) 'Correo del pasajero: $_guestEmail',
+      if (_notes.isNotEmpty) _notes,
+    ].join('\n');
 
     context.read<BookingBloc>().add(BookingCreateRequested(
           origin: origin,
@@ -326,7 +327,9 @@ class _BookingScreenState extends State<BookingScreen> {
           scheduledAt: scheduledAt,
           riderId: authState.user.id,
           estimatedPrice: quote.amount,
-          notes: combinedNotes,
+          notes: notes.isEmpty ? null : notes,
+          passengerName: passengerName.isEmpty ? null : passengerName,
+          passengerPhone: passengerPhone.isEmpty ? null : passengerPhone,
           passengerCount: _passengers,
           luggageCount: _luggage,
           flightNumber: _flight.trim().isEmpty ? null : _flight.trim().toUpperCase(),

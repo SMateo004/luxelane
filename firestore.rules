@@ -128,6 +128,10 @@ service cloud.firestore {
         // Verified driver accepts a pending booking (self-assign)
         (isVerifiedDriver() &&
           resource.data.status == 'pending' &&
+          // Targeted (proximity) offers can only be taken by the offered driver.
+          (resource.data.get('dispatch', null) == null ||
+            resource.data.dispatch.mode != 'targeted' ||
+            resource.data.dispatch.offeredTo == request.auth.uid) &&
           request.resource.data.driverId == request.auth.uid &&
           request.resource.data.status == 'confirmed' &&
           onlyUpdating(['driverId', 'status', 'updatedAt'])) ||

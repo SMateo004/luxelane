@@ -16,7 +16,7 @@ class _TrustSection extends StatelessWidget {
       icon: Icons.lock_outline,
       title: 'Precio fijo en Bs',
       body:
-          'Ves el precio final antes de reservar. Sin tarifas dinámicas ni recargos por tráfico.',
+          'Ves el precio final antes de reservar, sin recargos por tráfico. Incluye 60 min de espera en aeropuerto y 15 en ciudad.',
     ),
     (
       icon: Icons.event_available_outlined,

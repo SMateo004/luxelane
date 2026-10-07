@@ -11,8 +11,10 @@ import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/utils/eta.dart';
+import '../../../../core/utils/waiting_policy.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
+import '../../../../core/widgets/trip_widgets.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../booking/presentation/bloc/booking_bloc.dart';
 import '../../../notifications/presentation/bloc/notification_bloc.dart';
@@ -274,9 +276,21 @@ class _TripPanel extends StatelessWidget {
           const SizedBox(height: 4),
           Text(subtitle, style: LuxTypography.bodyMedium),
         ],
+        if (b != null && showsFreeWait(b)) ...[
+          const SizedBox(height: LuxSpacing.md),
+          FreeWaitBanner(booking: b),
+        ],
         if (b?.flight != null) ...[
           const SizedBox(height: LuxSpacing.md),
           _FlightCard(flight: b!.flight!, pickup: b.effectivePickup),
+        ],
+        if (b != null &&
+            WaitingPolicy.isAirport(b) &&
+            (status == BookingStatus.pending ||
+                status == BookingStatus.confirmed ||
+                status == BookingStatus.driverArriving)) ...[
+          const SizedBox(height: LuxSpacing.md),
+          MeetAndGreetCard(booking: b),
         ],
         const SizedBox(height: LuxSpacing.md),
         if (b?.chauffeur != null)

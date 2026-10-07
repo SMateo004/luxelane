@@ -270,6 +270,10 @@ class Booking {
     this.chauffeur,
     this.flight,
     this.riderRating,
+    this.passengerName,
+    this.passengerPhone,
+    this.driverArrivedAt,
+    this.dispatch,
   });
 
   final String id;
@@ -311,6 +315,23 @@ class Booking {
 
   /// The rider's 1–5 rating, once given.
   final int? riderRating;
+
+  /// Person being picked up (the rider or a guest) — shown on the name sign.
+  final String? passengerName;
+  final String? passengerPhone;
+
+  /// Set by the backend when the chauffeur marks "He llegado".
+  final DateTime? driverArrivedAt;
+
+  /// Proximity dispatch state (who the booking is currently offered to).
+  final DispatchInfo? dispatch;
+
+  /// Whether [driverId] should see this pending booking as a request.
+  bool isOfferedTo(String driverId) {
+    final d = dispatch;
+    if (d == null || !d.targeted) return true; // broadcast to everyone
+    return d.offeredTo == driverId;
+  }
 
   /// When the chauffeur will actually be there.
   DateTime get effectivePickup => pickupAt ?? scheduledAt;
@@ -358,6 +379,12 @@ class Booking {
             ? FlightInfo.fromJson(Map<String, dynamic>.from(j['flight'] as Map))
             : null,
         riderRating: (j['riderRating'] as num?)?.toInt(),
+        passengerName: j['passengerName'] as String?,
+        passengerPhone: j['passengerPhone'] as String?,
+        driverArrivedAt: (j['driverArrivedAt'] as Timestamp?)?.toDate(),
+        dispatch: j['dispatch'] is Map
+            ? DispatchInfo.fromJson(Map<String, dynamic>.from(j['dispatch'] as Map))
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -419,6 +446,29 @@ class Booking {
         chauffeur: chauffeur,
         flight: flight,
         riderRating: riderRating,
+        passengerName: passengerName,
+        passengerPhone: passengerPhone,
+        driverArrivedAt: driverArrivedAt,
+        dispatch: dispatch,
+      );
+}
+
+// ---------------------------------------------------------------------------
+// DispatchInfo — written by onBookingCreated / dispatchTick
+// ---------------------------------------------------------------------------
+
+class DispatchInfo {
+  const DispatchInfo({required this.targeted, this.offeredTo, this.offerExpiresAt});
+
+  /// true: offered to one chauffeur at a time; false: open to all.
+  final bool targeted;
+  final String? offeredTo;
+  final DateTime? offerExpiresAt;
+
+  factory DispatchInfo.fromJson(Map<String, dynamic> j) => DispatchInfo(
+        targeted: j['mode'] == 'targeted',
+        offeredTo: j['offeredTo'] as String?,
+        offerExpiresAt: (j['offerExpiresAt'] as Timestamp?)?.toDate(),
       );
 }
 

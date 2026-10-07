@@ -126,8 +126,9 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 | 3 | **ETA en vivo** ("Tu chófer llega en 6 min" / "Llegas en 18 min") con indicador EN VIVO; el pasajero ya no ve el botón de desarrollo "Siguiente (dev)" | ✅ Hecho |
 | 4 | **Seguimiento de vuelos** (`trackFlights`, cada 15 min, AeroDataBox). Si el vuelo se retrasa 10 min o más, la recogida se corre lo mismo que el retraso (nunca se adelanta) y se avisa al pasajero y al chófer. La tarjeta del vuelo en la app muestra estado, terminal y nueva hora | ✅ Hecho (requiere `FLIGHT_API_KEY`) |
 | 5 | **Calificaciones reales** (`rateBooking`): 1–5 estrellas y comentario, una sola vez por viaje; actualiza el promedio del chófer. Antes se enviaban a un documento que nunca existía | ✅ Hecho |
-| 6 | Despacho por cercanía (geohash), ofertas con timeout y reasignación | ⏳ Pendiente |
-| 7 | Meet & greet: cartel con nombre e instrucciones del punto de encuentro | ⏳ Pendiente |
+| 6 | **Despacho por cercanía.** Las recogidas de los próximos 90 min se ofrecen primero al chófer verificado más cercano con la clase correcta, dentro de 25 km y con ubicación de menos de 10 min. Tiene 1 minuto para aceptar (lo ve como "Solicitud exclusiva" con cuenta regresiva). Si la rechaza o no responde, pasa al siguiente (hasta 5) y luego se abre a todos. Las reservas anticipadas se abren a todos desde el inicio. Las reglas impiden que otro chófer tome una oferta exclusiva | ✅ Hecho |
+| 7 | **Meet & greet.** La reserva guarda el nombre y teléfono reales del pasajero (o del invitado). El chófer tiene llamar, WhatsApp y **"Mostrar cartel"**, que pone el nombre a pantalla completa en horizontal. El pasajero ve en el viaje cómo y dónde lo esperan | ✅ Hecho |
+| 7b | **Espera gratuita: 60 min en aeropuerto** desde el aterrizaje y **15 min en ciudad** desde la recogida o la llegada del chófer. Cuenta regresiva para pasajero y chófer, aviso push con la hora límite, y se muestra en la confirmación y en la landing | ✅ Hecho |
 | 8 | i18n (es/en/pt) con ARB | ⏳ Pendiente |
 
 ### Fase 3: Super app y B2B (4–6 semanas)
@@ -146,9 +147,9 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 ## 5. Cómo probar
 
 ```
-flutter test                      # 51 tests Dart
-(cd functions && npm test)        # 33 tests de negocio, precios, vuelos y chófer
-(cd rules-tests && npm test)      # 21 tests de reglas de seguridad (requiere Java)
+flutter test                      # 62 tests Dart
+(cd functions && npm test)        # 41 tests de negocio, precios, vuelos, chófer, espera y despacho
+(cd rules-tests && npm test)      # 22 tests de reglas de seguridad (requiere Java)
 ```
 
 **Deploy:**

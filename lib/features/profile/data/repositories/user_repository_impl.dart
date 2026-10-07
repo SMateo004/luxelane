@@ -93,6 +93,8 @@ class UserRepositoryImpl implements UserRepository {
     try {
       await _db.collection('driverProfiles').doc(userId).update({
         'currentLocation': GeoPoint(latitude, longitude),
+        // Dispatch ignores positions older than 10 minutes.
+        'locationUpdatedAt': FieldValue.serverTimestamp(),
       });
       return const Right(null);
     } catch (e) {

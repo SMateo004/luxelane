@@ -70,6 +70,8 @@ class BookingRepositoryImpl implements BookingRepository {
         if (booking.flightNumber != null) 'flightNumber': booking.flightNumber,
         'passengerCount': booking.passengerCount,
         'luggageCount': booking.luggageCount,
+        if (booking.passengerName != null) 'passengerName': booking.passengerName,
+        if (booking.passengerPhone != null) 'passengerPhone': booking.passengerPhone,
       });
       final id = (result.data as Map)['bookingId'] as String;
       final doc = await _col.doc(id).get();
@@ -241,6 +243,16 @@ class BookingRepositoryImpl implements BookingRepository {
         'speed': speed,
         'updatedAt': FieldValue.serverTimestamp(),
       });
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> declineOffer(String bookingId) async {
+    try {
+      await _fn.httpsCallable('declineOffer').call({'bookingId': bookingId});
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));

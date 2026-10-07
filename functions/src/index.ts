@@ -8,6 +8,14 @@ import { defineSecret } from 'firebase-functions/params';
 import { logger } from './logger';
 import { buildChauffeur, isValidRating, nextAverage } from './chauffeur';
 import {
+  DispatchState,
+  DriverCandidate,
+  advanceOffer,
+  dispatchMode,
+  initialDispatch,
+  rankDrivers,
+} from './dispatch';
+import {
   ADJUST_THRESHOLD_MIN,
   adjustedPickup,
   flightDateUtc,
@@ -22,6 +30,7 @@ import {
   canCapture,
   chunk,
   formatMoney,
+  freeWaitEnd,
   isStalePending,
   isValidAmount,
   toMinorUnits,
@@ -77,6 +86,41 @@ interface BookingDoc {
   flightNumber?: string | null;
   chauffeur?: { driverId?: string; phone?: string | null };
   riderRating?: number;
+  driverArrivedAt?: admin.firestore.Timestamp;
+  origin?: { coordinates?: admin.firestore.GeoPoint };
+  dispatch?: StoredDispatch;
+  flight?: { estimatedArrival?: admin.firestore.Timestamp | null } | null;
+}
+
+interface StoredDispatch {
+  mode: 'targeted' | 'broadcast';
+  candidates: string[];
+  index: number;
+  offeredTo: string | null;
+  offerExpiresAt: admin.firestore.Timestamp | null;
+  declined: string[];
+}
+
+function toStored(d: DispatchState): StoredDispatch {
+  return {
+    mode: d.mode,
+    candidates: d.candidates,
+    index: d.index,
+    offeredTo: d.offeredTo,
+    offerExpiresAt: d.offerExpiresAtMs ? admin.firestore.Timestamp.fromMillis(d.offerExpiresAtMs) : null,
+    declined: d.declined,
+  };
+}
+
+function fromStored(d: StoredDispatch): DispatchState {
+  return {
+    mode: d.mode,
+    candidates: d.candidates ?? [],
+    index: d.index ?? 0,
+    offeredTo: d.offeredTo ?? null,
+    offerExpiresAtMs: d.offerExpiresAt?.toMillis() ?? null,
+    declined: d.declined ?? [],
+  };
 }
 
 interface RideDoc {
@@ -359,6 +403,8 @@ export const createBooking = onCall(stripeOpts, async (req) => {
     flightNumber?: string;
     passengerCount?: number;
     luggageCount?: number;
+    passengerName?: string;
+    passengerPhone?: string;
   };
 
   // An authorisation for this exact quote already locks the price.
@@ -422,6 +468,10 @@ export const createBooking = onCall(stripeOpts, async (req) => {
       notes: d.notes ? String(d.notes).slice(0, 1000) : null,
       flightNumber: flight,
       passengerCount: passengers,
+      // Who the chauffeur picks up (the rider or a guest): used for the
+      // meet & greet name sign and for calling the passenger.
+      passengerName: d.passengerName ? String(d.passengerName).trim().slice(0, 80) : null,
+      passengerPhone: d.passengerPhone ? String(d.passengerPhone).replace(/[^0-9+ ]/g, '').slice(0, 20) : null,
       luggageCount: luggage,
       createdAt: ts,
       updatedAt: ts,
@@ -565,31 +615,141 @@ export const createStripeCustomer = onDocumentCreated(
 // onBookingCreated  (onCreate /bookings/{bookingId})
 // ---------------------------------------------------------------------------
 
-export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async (event) => {
-  const booking = event.data?.data() as BookingDoc | undefined;
-  if (!booking) return;
-
-  const vehicleClass = bookingClass(booking);
-  logger.info('onBookingCreated', 'notifying drivers', {
-    bookingId: event.params.bookingId,
-    vehicleClass,
-  });
-
-  const driversSnap = await db
+/** Available, verified drivers with their vehicle class and last position. */
+async function loadDriverCandidates(): Promise<DriverCandidate[]> {
+  const snap = await db
     .collection('driverProfiles')
     .where('isAvailable', '==', true)
     .where('documentsVerified', '==', true)
-    .limit(20)
+    .limit(100)
     .get();
+  const vehicleRefs = snap.docs
+    .map((d) => d.data().vehicleId as string | undefined)
+    .filter((id): id is string => !!id)
+    .map((id) => db.collection('vehicles').doc(id));
+  const vehicles = vehicleRefs.length ? await db.getAll(...vehicleRefs) : [];
+  const classById = new Map(vehicles.map((v) => [v.id, (v.data()?.class as string) ?? null]));
+  return snap.docs.map((d) => {
+    const p = d.data();
+    const geo = p.currentLocation as admin.firestore.GeoPoint | undefined;
+    return {
+      driverId: d.id,
+      location: geo ? { lat: geo.latitude, lng: geo.longitude } : null,
+      locationUpdatedAt: (p.locationUpdatedAt as admin.firestore.Timestamp | undefined)?.toDate() ?? null,
+      vehicleClass: p.vehicleId ? classById.get(p.vehicleId) ?? null : null,
+      isAvailable: true,
+      documentsVerified: true,
+    };
+  });
+}
 
-  const tokenLists = await Promise.all(driversSnap.docs.map((d) => getUserTokens(d.id)));
-  const tokens = tokenLists.flat();
+async function notifyOffer(driverId: string, booking: BookingDoc, distanceKm?: number): Promise<void> {
+  const price = formatMoney(booking.estimatedPrice, booking.currency ?? DEFAULT_CURRENCY);
+  const near = distanceKm !== undefined ? ` · a ${distanceKm.toFixed(1)} km` : '';
+  await sendPush(await getUserTokens(driverId), 'Nueva solicitud para ti', `${price}${near}. Tienes 1 minuto para aceptarla.`);
+}
 
+async function notifyBroadcast(booking: BookingDoc): Promise<void> {
+  const drivers = await loadDriverCandidates();
+  const tokens = (await Promise.all(drivers.map((d) => getUserTokens(d.driverId)))).flat();
   await sendPush(
     tokens,
     'Nueva reserva disponible',
-    `${vehicleClass} · ${formatMoney(booking.estimatedPrice, booking.currency ?? DEFAULT_CURRENCY)}`,
+    `${bookingClass(booking)} · ${formatMoney(booking.estimatedPrice, booking.currency ?? DEFAULT_CURRENCY)}`,
   );
+}
+
+// ---------------------------------------------------------------------------
+// onBookingCreated — proximity dispatch for imminent pickups, broadcast
+// for advance bookings.
+// ---------------------------------------------------------------------------
+
+export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async (event) => {
+  const booking = event.data?.data() as BookingDoc | undefined;
+  if (!booking || !event.data) return;
+
+  const now = new Date();
+  const pickup = booking.scheduledAt?.toDate() ?? now;
+  const geo = booking.origin?.coordinates;
+  const mode = dispatchMode(pickup, now);
+
+  let ranked: { driverId: string; distanceKm: number }[] = [];
+  if (mode === 'targeted' && geo) {
+    ranked = rankDrivers(
+      await loadDriverCandidates(),
+      { lat: geo.latitude, lng: geo.longitude },
+      bookingClass(booking),
+      now,
+    );
+  }
+  const dispatch = initialDispatch(ranked, mode, now.getTime());
+  await event.data.ref.update({ dispatch: toStored(dispatch) });
+
+  logger.info('onBookingCreated', 'dispatch', {
+    bookingId: event.params.bookingId,
+    mode: dispatch.mode,
+    candidates: dispatch.candidates.length,
+  });
+
+  if (dispatch.offeredTo) {
+    await notifyOffer(dispatch.offeredTo, booking, ranked[0]?.distanceKm);
+  } else {
+    await notifyBroadcast(booking);
+  }
+});
+
+/** Applies [advanceOffer] in a transaction and notifies whoever is next. */
+async function moveOffer(bookingId: string, declinedBy?: string): Promise<void> {
+  const ref = db.collection('bookings').doc(bookingId);
+  const result = await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    const b = snap.data() as BookingDoc | undefined;
+    if (!b || b.status !== 'pending' || b.dispatch?.mode !== 'targeted') return null;
+    const current = fromStored(b.dispatch);
+    if (declinedBy && current.offeredTo !== declinedBy) return null;
+    const next = advanceOffer(current, Date.now(), declinedBy ?? current.offeredTo ?? undefined);
+    tx.update(ref, { dispatch: toStored(next) });
+    return { booking: b, next };
+  });
+  if (!result) return;
+  if (result.next.offeredTo) {
+    await notifyOffer(result.next.offeredTo, result.booking);
+  } else {
+    await notifyBroadcast(result.booking);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// declineOffer — the offered chauffeur passes; offer the next one
+// ---------------------------------------------------------------------------
+
+export const declineOffer = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const { bookingId } = req.data as { bookingId: string };
+  if (!bookingId) throw err.invalidArgument('bookingId required');
+  await moveOffer(bookingId, uid);
+  return { ok: true };
+});
+
+// ---------------------------------------------------------------------------
+// dispatchTick — every minute, expired offers move to the next chauffeur
+// ---------------------------------------------------------------------------
+
+export const dispatchTick = onSchedule('every 1 minutes', async () => {
+  const snap = await db
+    .collection('bookings')
+    .where('status', '==', 'pending')
+    .where('dispatch.mode', '==', 'targeted')
+    .get();
+  const now = Date.now();
+  for (const doc of snap.docs) {
+    const d = (doc.data() as BookingDoc).dispatch;
+    if (d?.offerExpiresAt && d.offerExpiresAt.toMillis() <= now) {
+      await moveOffer(doc.id).catch((e) =>
+        logger.error('dispatchTick', 'advance failed', { bookingId: doc.id, error: String(e) }),
+      );
+    }
+  }
 });
 
 // ---------------------------------------------------------------------------
@@ -665,10 +825,25 @@ export const onBookingStatusChanged = onDocumentUpdated(
       }
     }
 
+    let arrivedMessage = 'Tu chófer ha llegado';
+    if (after.status === 'driver_arrived') {
+      const arrivedAt = new Date();
+      await bookingRef.update({ driverArrivedAt: admin.firestore.Timestamp.fromDate(arrivedAt) });
+      const pickup = (after.pickupAt ?? after.scheduledAt)?.toDate() ?? arrivedAt;
+      const until = freeWaitEnd({
+        pickup,
+        isAirport: !!after.flightNumber,
+        landing: after.flight?.estimatedArrival?.toDate() ?? null,
+        driverArrivedAt: arrivedAt,
+      });
+      const time = until.toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit', timeZone: 'America/La_Paz' });
+      arrivedMessage = `Tu chófer ha llegado. Espera gratuita hasta las ${time}.`;
+    }
+
     const statusMessages: Partial<Record<BookingStatus, string>> = {
       confirmed: 'Tu chófer ha sido asignado',
       driver_arriving: 'Tu chófer está en camino',
-      driver_arrived: 'Tu chófer ha llegado',
+      driver_arrived: arrivedMessage,
       in_progress: 'Tu viaje ha comenzado',
       completed: 'Has llegado. ¡Gracias por viajar con Luxelane!',
       cancelled: 'Tu reserva ha sido cancelada',

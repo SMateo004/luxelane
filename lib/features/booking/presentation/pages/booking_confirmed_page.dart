@@ -8,6 +8,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../core/utils/waiting_policy.dart';
 import '../../../home/presentation/pages/home_design.dart';
 
 /// Shown right after a booking is created: animated confirmation, the
@@ -129,7 +130,7 @@ class _Content extends StatelessWidget {
                 const SizedBox(height: 28),
                 _SummaryCard(booking: booking),
                 const SizedBox(height: 16),
-                const _Assurances(),
+                _Assurances(booking: booking),
                 const SizedBox(height: 28),
                 SizedBox(
                   height: 52,
@@ -278,13 +279,15 @@ class _Row extends StatelessWidget {
 }
 
 class _Assurances extends StatelessWidget {
-  const _Assurances();
+  const _Assurances({required this.booking});
+  final Booking booking;
 
-  static const _items = [
-    (Icons.lock_outline, 'Precio fijo, sin sorpresas'),
-    (Icons.event_available_outlined, 'Cancelación gratuita hasta 1 h antes'),
-    (Icons.verified_user_outlined, 'Chóferes verificados'),
-  ];
+  List<(IconData, String)> get _items => [
+        (Icons.lock_outline, 'Precio fijo, sin sorpresas'),
+        (Icons.hourglass_top_rounded, WaitingPolicy.summary(booking)),
+        (Icons.event_available_outlined, 'Cancelación gratuita hasta 1 h antes'),
+        (Icons.verified_user_outlined, 'Chóferes verificados'),
+      ];
 
   @override
   Widget build(BuildContext context) => Wrap(

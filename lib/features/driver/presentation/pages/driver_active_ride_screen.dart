@@ -6,6 +6,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
+import '../../../../core/widgets/trip_widgets.dart';
 import '../bloc/driver_bloc.dart';
 
 class DriverActiveRideScreen extends StatelessWidget {
@@ -237,6 +238,12 @@ class _DriverSidePanel extends StatelessWidget {
           const LuxDivider(),
           const SizedBox(height: LuxSpacing.md),
           _RideInfoRow(booking: booking),
+          if (showsFreeWait(booking)) ...[
+            const SizedBox(height: LuxSpacing.md),
+            FreeWaitBanner(booking: booking, forDriver: true),
+          ],
+          const SizedBox(height: LuxSpacing.md),
+          PassengerCard(booking: booking),
           const SizedBox(height: LuxSpacing.md),
           if (_actionLabel.isNotEmpty)
             LuxButton(
@@ -297,7 +304,7 @@ class _RideInfoRow extends StatelessWidget {
               children: [
                 const Text('Tarifa estimada', style: LuxTypography.caption),
                 Text(
-                  'Bs${booking.estimatedPrice.toStringAsFixed(2)}',
+                  LuxMoney.format(booking.estimatedPrice, cents: true),
                   style: LuxTypography.bodyLarge
                       .copyWith(color: LuxColors.accent),
                 ),
