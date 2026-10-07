@@ -107,6 +107,204 @@
   "serviceByTheHourDesc": "Chófer a tu disposición por un tiempo determinado",
   "serviceOneWay": "Solo ida",
   "serviceOneWayDesc": "Traslado a precio fijo a tu destino",
+  "servicesAirportArriveBody": "Un servicio de chófer de Luxelane busca alcanzar los estándares más altos posibles para todos sus pasajeros. Nuestros conductores profesionales pueden hacer un seguimiento de su vuelo y ajustar la hora de recogida si hay retrasos fuera de su control.",
+  "servicesAirportArriveTitle": "Llegue o salga del aeropuerto",
+  "servicesAirportClassesTitle": "Descubre nuestras clases de servicio",
+  "servicesAirportConnectionsBody": "Reservar un servicio de Luxelane es fácil. Simplemente proporcione los datos de recogida y destino y seleccione la clase del vehículo. El precio que ve es el precio que paga, sin cargos ocultos.",
+  "servicesAirportConnectionsTitle": "Reservas de conexiones entre aeropuertos",
+  "servicesAirportFaq1A": "Un traslado al aeropuerto es un servicio de coche privado que lleva a los pasajeros de avión hacia y desde el aeropuerto. Los conductores profesionales pueden recoger a los pasajeros en la terminal después de recoger su equipaje.",
+  "servicesAirportFaq1Q": "¿Qué hace un traslado al aeropuerto?",
+  "servicesAirportFaq2A": "Los traslados al aeropuerto son una forma estupenda de evitar el estrés tanto al inicio como al final de un vuelo. Luxelane ofrece una amplia gama de opciones de traslado que se adaptan a tus necesidades.",
+  "servicesAirportFaq2Q": "¿Merece la pena reservar un traslado desde el aeropuerto?",
+  "servicesAirportFaq3A": "Un traslado al aeropuerto de pago es un servicio de transporte con un conductor profesional reservado con antelación. El precio incluye propinas, peajes y cualquier otro gasto adicional.",
+  "servicesAirportFaq3Q": "¿Qué es un traslado al aeropuerto de pago?",
+  "servicesAirportFeatureFlexBody": "Manténgase flexible. Es rápido y fácil cancelar o hacer cambios en cualquier viaje.",
+  "servicesAirportFeatureFlexTitle": "Flexibilidad de viaje",
+  "servicesAirportFeatureFlightBody": "Relájese con la hora gratuita de espera y el seguimiento de vuelos.",
+  "servicesAirportFeatureFlightTitle": "Viaje al aeropuerto sin problemas",
+  "servicesAirportFeaturePriceBody": "Acceda a un servicio de primera calidad a precios basados en la distancia.",
+  "servicesAirportFreeWait": "El chófer esperará {minutes} minutos sin coste adicional.",
+  "@servicesAirportFreeWait": {
+    "description": "Airport booking panel: complimentary waiting time (WaitingPolicy.airportFreeMinutes)",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "servicesAirportHeroEyebrow": "SERVICIO DE TRASLADOS",
+  "servicesAirportHeroTitle": "Al aeropuerto sin\nestrés ni esperas",
+  "servicesAirportPanelSubtitle": "Ida o Por horas · Sin esperas",
+  "servicesAirportPanelTitle": "Traslados al aeropuerto",
+  "servicesBackHome": "← Volver al inicio",
+  "@servicesBackHome": {
+    "description": "Service landing pages: link back to the home page"
+  },
+  "servicesBookNow": "RESERVAR AHORA",
+  "@servicesBookNow": {
+    "description": "Service landing pages: CTA button"
+  },
+  "servicesBookRide": "RESERVAR UN VIAJE",
+  "@servicesBookRide": {
+    "description": "Service landing pages: navigation bar CTA"
+  },
+  "servicesFaqTitle": "Preguntas frecuentes",
+  "servicesFeaturePriceTitle": "Precios competitivos",
+  "servicesFooterRights": "© {year} Luxelane · Todos los derechos reservados",
+  "@servicesFooterRights": {
+    "description": "Footer of the service landing pages",
+    "placeholders": {
+      "year": {
+        "type": "String",
+        "example": "2026"
+      }
+    }
+  },
+  "servicesFromHint": "De - Dirección, aeropuerto, hotel...",
+  "@servicesFromHint": {
+    "description": "Booking panel: pickup field hint"
+  },
+  "servicesHourlyBullet1": "Define tu itinerario: Tú decides dónde y cuándo ir",
+  "servicesHourlyBullet2": "Ahorra tiempo: Te dejaremos y recogeremos en la puerta de cada parada",
+  "servicesHourlyBullet3": "Disfruta con tranquilidad: Viaja en un vehículo premium",
+  "servicesHourlyBullet4": "Tarifas competitivas: Incluye 40 km de recorrido por hora",
+  "servicesHourlyBullet5": "Fiabilidad: Chóferes formados en los más altos estándares",
+  "servicesHourlyBullet6": "Sostenibilidad: Cada viaje se compensa con emisiones de carbono",
+  "servicesHourlyBullet7": "Wifi disponible en la mayoría de los vehículos",
+  "servicesHourlyBullet8": "Diseñado para la ciudad: Comienza y termina en la misma ciudad",
+  "servicesHourlyDurationField": "Duración - {duration}",
+  "@servicesHourlyDurationField": {
+    "description": "Hourly booking panel: duration selector; duration is unitHours(n)",
+    "placeholders": {
+      "duration": {
+        "type": "String",
+        "example": "2 horas"
+      }
+    }
+  },
+  "servicesHourlyFaq1A": "Selecciona el lugar de recogida, elige la duración, el día y la hora, elige una clase de vehículo y completa tu reserva.",
+  "servicesHourlyFaq1Q": "¿Cómo reservo un chófer por horas?",
+  "servicesHourlyFaq2A": "Sí. El conductor y el vehículo están a tu disposición en todo momento durante las horas de la reserva.",
+  "servicesHourlyFaq2Q": "¿Puedo modificar mi itinerario durante el viaje?",
+  "servicesHourlyFaq3A": "Una hora antes de la recogida se te enviarán un SMS y un correo electrónico con el nombre y número del conductor.",
+  "servicesHourlyFaq3Q": "¿Cuándo recibiré los datos del chófer?",
+  "servicesHourlyFaq4A": "Sí, la reserva puede empezar o terminar en un aeropuerto. El lugar de inicio y finalización deben estar en la misma ciudad.",
+  "servicesHourlyFaq4Q": "¿La reserva puede empezar en un aeropuerto?",
+  "servicesHourlyFaq5A": "Sí, puedes editar la reserva antes de la hora de inicio. La duración mínima es {min} horas, máximo {max} horas.",
+  "@servicesHourlyFaq5A": {
+    "placeholders": {
+      "min": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "servicesHourlyFaq5Q": "¿Puedo aumentar el número de horas?",
+  "servicesHourlyHeroEyebrow": "CONTRATACIÓN POR HORAS",
+  "servicesHourlyHeroTitle": "Alquiler de chófer\npor horas y días",
+  "servicesHourlyPanelSubtitle": "Tu itinerario · Tu ritmo",
+  "servicesHourlyPanelTitle": "Chófer por horas",
+  "servicesHourlyReachBanner": "Disponible en más de 60 países · Cientos de ciudades",
+  "servicesHourlyReview1": "El chófer fue increíble, me ayudó con mis maletas y se detuvo en todos los lugares que quería ver.",
+  "servicesHourlyReview1Origin": "Estados Unidos",
+  "servicesHourlyReview2": "Los chóferes no son simples conductores sino profesionales altamente capacitados.",
+  "servicesHourlyReview2Origin": "Portugal",
+  "servicesHourlyReview3": "La aplicación que todos los viajeros necesitan conocer. No he encontrado un lugar donde no funcione.",
+  "servicesHourlyReview3Origin": "Canadá",
+  "servicesHourlyReviewsTitle": "Lo que dicen nuestros clientes",
+  "servicesHourlyServiceBody": "Olvídate de cambiar de medio de transporte cuando tengas que hacer viajes con múltiples paradas. Con Luxelane, defines tu itinerario: tú decides dónde y cuándo ir.",
+  "servicesHourlyServiceTitle": "Servicio de chófer por horas",
+  "servicesHourlyUseBusinessBody": "Concéntrate en lo importante. Desplázate fácilmente entre reuniones sin preocuparte por la logística.",
+  "servicesHourlyUseBusinessTitle": "Viajes de negocios",
+  "servicesHourlyUseCasesTitle": "Diseñado para cada ocasión",
+  "servicesHourlyUseEventsBody": "Disfruta de una llegada triunfal y una salida sin contratiempos de cualquier evento.",
+  "servicesHourlyUseEventsTitle": "Conciertos y eventos",
+  "servicesHourlyUseLeisureBody": "Ya sea un almuerzo, compras o tu lista de tareas, tu chófer estará listo cuando lo necesites.",
+  "servicesHourlyUseLeisureTitle": "Actividades de ocio",
+  "servicesHourlyUseSightseeingBody": "Descubre la ciudad a tu manera, a tu ritmo, con un chófer local siempre a tu disposición.",
+  "servicesHourlyUseSightseeingTitle": "Visitas turísticas",
+  "servicesNavBusiness": "PARA EMPRESAS",
+  "@servicesNavBusiness": {
+    "description": "Service landing pages: top navigation item"
+  },
+  "servicesNavFleet": "FLOTA",
+  "@servicesNavFleet": {
+    "description": "Service landing pages: top navigation item"
+  },
+  "servicesNavHome": "INICIO",
+  "@servicesNavHome": {
+    "description": "Service landing pages: top navigation link"
+  },
+  "servicesNavServices": "SERVICIOS",
+  "@servicesNavServices": {
+    "description": "Service landing pages: top navigation item"
+  },
+  "servicesPickupChauffeursBody": "Viaje con confianza gracias a los chóferes expertos que le ofrecen la mejor calidad y discreción.",
+  "servicesPickupChauffeursTitle": "Chóferes profesionales",
+  "servicesPickupComfortBody": "Un viaje privado en un vehículo de alta gama hace que cada viaje sea un placer.",
+  "servicesPickupComfortTitle": "Comodidad",
+  "servicesPickupConvenienceBody": "Consigue un viaje con chófer de puerta a puerta justo cuando lo necesitas con solo unos toques.",
+  "servicesPickupConvenienceTitle": "Conveniencia",
+  "servicesPickupHeroSubtitle": "Chóferes profesionales a su alcance",
+  "servicesPickupHeroTitle": "¡Servicio de\nRecogida Inmediata!",
+  "servicesPickupIntroBody": "Consigue un viaje con chófer de puerta a puerta justo cuando lo necesitas con solo unos toques en la aplicación Luxelane.",
+  "servicesPickupIntroEyebrow": "RECOGIDA INMEDIATA",
+  "servicesPickupIntroTitle": "Descubre el servicio de recogida inmediata",
+  "servicesPickupPriceBody": "Acceda a un servicio de primera calidad a precios basados en la distancia, justos para todos.",
+  "servicesPickupQualityBody": "Hacer que su experiencia sea excelente es nuestra máxima prioridad en todos sus viajes.",
+  "servicesPickupQualityTitle": "Calidad",
+  "servicesPickupReliabilityBody": "Reserve con seguridad y manténgase informado con actualizaciones del estado del viaje en tiempo real.",
+  "servicesPickupReliabilityTitle": "Fiabilidad",
+  "servicesPickupSplitBody": "Cuando necesite una forma segura de desplazarse por la ciudad, piense en el servicio de recogida inmediata de Luxelane. La combinación perfecta entre el servicio tradicional de traslados y el transporte privado.",
+  "servicesPickupSplitEyebrow": "CÓMODO · SEGURO · INMEDIATO",
+  "servicesPickupSplitTitle": "Cómodos viajes a la carta en cuestión de minutos",
+  "servicesQuote": "“{quote}”",
+  "@servicesQuote": {
+    "description": "Wraps a customer review in quotation marks",
+    "placeholders": {
+      "quote": {
+        "type": "String"
+      }
+    }
+  },
+  "servicesSelect": "SELECCIONAR",
+  "@servicesSelect": {
+    "description": "Service landing pages: booking panel CTA"
+  },
+  "servicesToHint": "A - Dirección, aeropuerto, hotel...",
+  "@servicesToHint": {
+    "description": "Booking panel: destination field hint"
+  },
+  "servicesToggleOneWay": "Ida",
+  "@servicesToggleOneWay": {
+    "description": "Booking panel toggle: one-way transfer (the other option is serviceByTheHour)"
+  },
+  "servicesUpToLargeBags": "{count, plural, =1{Hasta 1 maleta grande} other{Hasta {count} maletas grandes}}",
+  "@servicesUpToLargeBags": {
+    "description": "Vehicle class luggage capacity",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "servicesUpToPeople": "{count, plural, =1{Hasta 1 persona} other{Hasta {count} personas}}",
+  "@servicesUpToPeople": {
+    "description": "Vehicle class capacity",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "servicesVehicleBusinessModels": "Mercedes Clase E, BMW Serie 5 o similar",
+  "servicesVehicleFirstModels": "Mercedes Clase S, BMW Serie 7 o similar",
+  "servicesVehicleGroups": "Ideal para grupos y familias",
+  "servicesVehicleMostCities": "Disponible en la mayoría de ciudades",
+  "servicesVehiclePremiumLuxury": "Servicio de lujo premium",
+  "servicesVehicleVanModels": "Mercedes Clase V, Toyota Alphard o similar",
   "statusCancelled": "Cancelado",
   "statusCompleted": "Completado",
   "statusConfirmed": "Confirmado",

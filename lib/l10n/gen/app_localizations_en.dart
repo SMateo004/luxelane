@@ -185,6 +185,347 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serviceOneWayDesc => 'Fixed-price transfer to your destination';
 
   @override
+  String get servicesAirportArriveBody => 'Every Luxelane chauffeur service is held to the highest standards, for every passenger. Our professional chauffeurs can track your flight and adjust your pickup time if delays beyond your control arise.';
+
+  @override
+  String get servicesAirportArriveTitle => 'Arrivals and departures, handled';
+
+  @override
+  String get servicesAirportClassesTitle => 'Discover our service classes';
+
+  @override
+  String get servicesAirportConnectionsBody => 'Booking Luxelane is effortless. Simply enter your pickup and destination and choose your vehicle class. The price you see is the price you pay, with no hidden fees.';
+
+  @override
+  String get servicesAirportConnectionsTitle => 'Airport-to-airport connections';
+
+  @override
+  String get servicesAirportFaq1A => 'An airport transfer is a private car service that takes air travelers to and from the airport. Professional chauffeurs can meet passengers at the terminal once they have collected their luggage.';
+
+  @override
+  String get servicesAirportFaq1Q => 'What is an airport transfer?';
+
+  @override
+  String get servicesAirportFaq2A => 'An airport transfer is a wonderful way to take the stress out of both ends of your flight. Luxelane offers a wide range of transfer options tailored to your needs.';
+
+  @override
+  String get servicesAirportFaq2Q => 'Is it worth booking an airport transfer?';
+
+  @override
+  String get servicesAirportFaq3A => 'A prebooked airport transfer is a ride with a professional chauffeur, reserved in advance. The price includes tips, tolls and any other additional costs.';
+
+  @override
+  String get servicesAirportFaq3Q => 'What is a prebooked airport transfer?';
+
+  @override
+  String get servicesAirportFeatureFlexBody => 'Plans change. Cancelling or adjusting any ride is quick and easy.';
+
+  @override
+  String get servicesAirportFeatureFlexTitle => 'Flexible travel';
+
+  @override
+  String get servicesAirportFeatureFlightBody => 'Relax with a complimentary hour of waiting time and flight tracking.';
+
+  @override
+  String get servicesAirportFeatureFlightTitle => 'Effortless airport travel';
+
+  @override
+  String get servicesAirportFeaturePriceBody => 'First-class service, fairly priced by distance.';
+
+  @override
+  String servicesAirportFreeWait(int minutes) {
+    return 'Your chauffeur will wait up to $minutes minutes at no extra cost.';
+  }
+
+  @override
+  String get servicesAirportHeroEyebrow => 'TRANSFER SERVICE';
+
+  @override
+  String get servicesAirportHeroTitle => 'To the airport,\nwithout the stress';
+
+  @override
+  String get servicesAirportPanelSubtitle => 'One way or by the hour · No waiting';
+
+  @override
+  String get servicesAirportPanelTitle => 'Airport transfers';
+
+  @override
+  String get servicesBackHome => '← Back to home';
+
+  @override
+  String get servicesBookNow => 'BOOK NOW';
+
+  @override
+  String get servicesBookRide => 'BOOK A RIDE';
+
+  @override
+  String get servicesFaqTitle => 'Frequently asked questions';
+
+  @override
+  String get servicesFeaturePriceTitle => 'Competitive pricing';
+
+  @override
+  String servicesFooterRights(String year) {
+    return '© $year Luxelane · All rights reserved';
+  }
+
+  @override
+  String get servicesFromHint => 'From – address, airport, hotel…';
+
+  @override
+  String get servicesHourlyBullet1 => 'Your itinerary: you decide where to go, and when';
+
+  @override
+  String get servicesHourlyBullet2 => 'Save time: door-to-door drop-off and pickup at every stop';
+
+  @override
+  String get servicesHourlyBullet3 => 'Total peace of mind: travel in a premium vehicle';
+
+  @override
+  String get servicesHourlyBullet4 => 'Competitive rates: 40 km of driving included per hour';
+
+  @override
+  String get servicesHourlyBullet5 => 'Reliability: chauffeurs trained to the highest standards';
+
+  @override
+  String get servicesHourlyBullet6 => 'Sustainability: the carbon emissions of every ride are offset';
+
+  @override
+  String get servicesHourlyBullet7 => 'Wi-Fi available in most vehicles';
+
+  @override
+  String get servicesHourlyBullet8 => 'Made for the city: starts and ends in the same city';
+
+  @override
+  String servicesHourlyDurationField(String duration) {
+    return 'Duration – $duration';
+  }
+
+  @override
+  String get servicesHourlyFaq1A => 'Choose your pickup location, select the duration, date and time, pick a vehicle class and complete your booking.';
+
+  @override
+  String get servicesHourlyFaq1Q => 'How do I book a chauffeur by the hour?';
+
+  @override
+  String get servicesHourlyFaq2A => 'Yes. Your chauffeur and vehicle are at your disposal for the entire duration of your booking.';
+
+  @override
+  String get servicesHourlyFaq2Q => 'Can I change my itinerary during the ride?';
+
+  @override
+  String get servicesHourlyFaq3A => 'One hour before pickup, we\'ll send you a text message and an email with your chauffeur\'s name and phone number.';
+
+  @override
+  String get servicesHourlyFaq3Q => 'When will I receive my chauffeur\'s details?';
+
+  @override
+  String get servicesHourlyFaq4A => 'Yes, your booking can start or end at an airport. The start and end points must be in the same city.';
+
+  @override
+  String get servicesHourlyFaq4Q => 'Can my booking start at an airport?';
+
+  @override
+  String servicesHourlyFaq5A(int min, int max) {
+    return 'Yes, you can edit your booking before the start time. The minimum duration is $min hours and the maximum is $max hours.';
+  }
+
+  @override
+  String get servicesHourlyFaq5Q => 'Can I add more hours?';
+
+  @override
+  String get servicesHourlyHeroEyebrow => 'HOURLY HIRE';
+
+  @override
+  String get servicesHourlyHeroTitle => 'Chauffeur hire\nby the hour or day';
+
+  @override
+  String get servicesHourlyPanelSubtitle => 'Your itinerary · Your pace';
+
+  @override
+  String get servicesHourlyPanelTitle => 'Chauffeur by the hour';
+
+  @override
+  String get servicesHourlyReachBanner => 'Available in 60+ countries · Hundreds of cities';
+
+  @override
+  String get servicesHourlyReview1 => 'The chauffeur was amazing. He helped with my bags and stopped at every place I wanted to see.';
+
+  @override
+  String get servicesHourlyReview1Origin => 'United States';
+
+  @override
+  String get servicesHourlyReview2 => 'These chauffeurs aren\'t just drivers, they\'re highly trained professionals.';
+
+  @override
+  String get servicesHourlyReview2Origin => 'Portugal';
+
+  @override
+  String get servicesHourlyReview3 => 'The app every traveler needs to know about. I haven\'t found a place where it doesn\'t work.';
+
+  @override
+  String get servicesHourlyReview3Origin => 'Canada';
+
+  @override
+  String get servicesHourlyReviewsTitle => 'What our clients say';
+
+  @override
+  String get servicesHourlyServiceBody => 'No more switching between rides on a day full of stops. With Luxelane, you set the itinerary: you decide where to go, and when.';
+
+  @override
+  String get servicesHourlyServiceTitle => 'Hourly chauffeur service';
+
+  @override
+  String get servicesHourlyUseBusinessBody => 'Focus on what matters. Move seamlessly between meetings and leave the logistics to us.';
+
+  @override
+  String get servicesHourlyUseBusinessTitle => 'Business travel';
+
+  @override
+  String get servicesHourlyUseCasesTitle => 'Designed for every occasion';
+
+  @override
+  String get servicesHourlyUseEventsBody => 'Make a grand entrance, and an effortless exit, at any event.';
+
+  @override
+  String get servicesHourlyUseEventsTitle => 'Concerts and events';
+
+  @override
+  String get servicesHourlyUseLeisureBody => 'Lunch, shopping or a list of errands: your chauffeur is ready whenever you are.';
+
+  @override
+  String get servicesHourlyUseLeisureTitle => 'Leisure';
+
+  @override
+  String get servicesHourlyUseSightseeingBody => 'Explore the city your way, at your own pace, with a local chauffeur always at your disposal.';
+
+  @override
+  String get servicesHourlyUseSightseeingTitle => 'Sightseeing';
+
+  @override
+  String get servicesNavBusiness => 'FOR BUSINESS';
+
+  @override
+  String get servicesNavFleet => 'FLEET';
+
+  @override
+  String get servicesNavHome => 'HOME';
+
+  @override
+  String get servicesNavServices => 'SERVICES';
+
+  @override
+  String get servicesPickupChauffeursBody => 'Travel with confidence, accompanied by expert chauffeurs who offer the finest service and complete discretion.';
+
+  @override
+  String get servicesPickupChauffeursTitle => 'Professional chauffeurs';
+
+  @override
+  String get servicesPickupComfortBody => 'A private ride in a high-end vehicle turns every journey into a pleasure.';
+
+  @override
+  String get servicesPickupComfortTitle => 'Comfort';
+
+  @override
+  String get servicesPickupConvenienceBody => 'A door-to-door chauffeured ride the moment you need it, in just a few taps.';
+
+  @override
+  String get servicesPickupConvenienceTitle => 'Convenience';
+
+  @override
+  String get servicesPickupHeroSubtitle => 'Professional chauffeurs at your fingertips';
+
+  @override
+  String get servicesPickupHeroTitle => 'Instant\nPickup Service';
+
+  @override
+  String get servicesPickupIntroBody => 'Get a door-to-door chauffeured ride the moment you need it, with just a few taps in the Luxelane app.';
+
+  @override
+  String get servicesPickupIntroEyebrow => 'INSTANT PICKUP';
+
+  @override
+  String get servicesPickupIntroTitle => 'Discover Instant Pickup';
+
+  @override
+  String get servicesPickupPriceBody => 'First-class service at distance-based prices that are fair for everyone.';
+
+  @override
+  String get servicesPickupQualityBody => 'Making every ride exceptional is our highest priority.';
+
+  @override
+  String get servicesPickupQualityTitle => 'Quality';
+
+  @override
+  String get servicesPickupReliabilityBody => 'Book with confidence and stay informed with real-time ride updates.';
+
+  @override
+  String get servicesPickupReliabilityTitle => 'Reliability';
+
+  @override
+  String get servicesPickupSplitBody => 'Whenever you need a safe way to get around the city, think Luxelane Instant Pickup: the perfect blend of a classic chauffeur service and private transportation.';
+
+  @override
+  String get servicesPickupSplitEyebrow => 'COMFORTABLE · SAFE · IMMEDIATE';
+
+  @override
+  String get servicesPickupSplitTitle => 'Comfortable rides on demand, in minutes';
+
+  @override
+  String servicesQuote(String quote) {
+    return '“$quote”';
+  }
+
+  @override
+  String get servicesSelect => 'SELECT';
+
+  @override
+  String get servicesToHint => 'To – address, airport, hotel…';
+
+  @override
+  String get servicesToggleOneWay => 'One way';
+
+  @override
+  String servicesUpToLargeBags(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Up to $count large suitcases',
+      one: 'Up to 1 large suitcase',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String servicesUpToPeople(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Up to $count passengers',
+      one: 'Up to 1 passenger',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get servicesVehicleBusinessModels => 'Mercedes E-Class, BMW 5 Series or similar';
+
+  @override
+  String get servicesVehicleFirstModels => 'Mercedes S-Class, BMW 7 Series or similar';
+
+  @override
+  String get servicesVehicleGroups => 'Ideal for groups and families';
+
+  @override
+  String get servicesVehicleMostCities => 'Available in most cities';
+
+  @override
+  String get servicesVehiclePremiumLuxury => 'Our most refined experience';
+
+  @override
+  String get servicesVehicleVanModels => 'Mercedes V-Class, Toyota Alphard or similar';
+
+  @override
   String get statusCancelled => 'Cancelled';
 
   @override

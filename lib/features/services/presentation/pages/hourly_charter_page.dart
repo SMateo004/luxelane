@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../app/theme/lux_tokens.dart';
+import '../../../../l10n/l10n.dart';
 
 const String _kSans = 'Montserrat';
 const String _kSerif = 'Cormorant Garamond';
@@ -159,6 +161,7 @@ class _NavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     return Positioned(
       top: 0,
       left: 0,
@@ -171,18 +174,35 @@ class _NavBar extends StatelessWidget {
         child: Row(
           children: [
             _WordMark(),
-            const Spacer(),
-            if (!isMobile) ...[
-              _NavLink(label: 'INICIO', onTap: () => context.go('/')),
-              const SizedBox(width: 32),
-              const _NavText(label: 'SERVICIOS'),
-              const SizedBox(width: 32),
-              const _NavText(label: 'FLOTA'),
-              const SizedBox(width: 32),
-              const _NavText(label: 'PARA EMPRESAS'),
-              const SizedBox(width: 40),
-            ],
-            _ReserveButton(onTap: () => context.go('/')),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (!isMobile) ...[
+                    Flexible(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _NavLink(label: l.servicesNavHome, onTap: () => context.go('/')),
+                            const SizedBox(width: 32),
+                            _NavText(label: l.servicesNavServices),
+                            const SizedBox(width: 32),
+                            _NavText(label: l.servicesNavFleet),
+                            const SizedBox(width: 32),
+                            _NavText(label: l.servicesNavBusiness),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 40),
+                  ],
+                  Flexible(child: _ReserveButton(onTap: () => context.go('/'))),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -307,14 +327,18 @@ class _ReserveButtonState extends State<_ReserveButton> {
             color: _hovered ? _kSapphireLight : _kSapphire,
             borderRadius: BorderRadius.circular(2),
           ),
-          child: const Text(
-            'RESERVAR UN VIAJE',
-            style: TextStyle(
-              fontFamily: _kSans,
-              fontSize: 11,
-              letterSpacing: 1.0,
-              color: _kInk,
-              fontWeight: FontWeight.w600,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              context.l10n.servicesBookRide,
+              maxLines: 1,
+              style: const TextStyle(
+                fontFamily: _kSans,
+                fontSize: 11,
+                letterSpacing: 1.0,
+                color: _kInk,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),
@@ -335,12 +359,10 @@ class _BookingPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
     final now = DateTime.now();
-    final dateStr =
-        '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}';
-    final hour = now.hour.toString().padLeft(2, '0');
-    final minute = now.minute.toString().padLeft(2, '0');
-    final timeStr = '$hour:$minute';
+    final dateStr = DateFormat.yMd(context.localeTag).format(now);
+    final timeStr = DateFormat.jm(context.localeTag).format(now);
 
     final hPad = isMobile ? 20.0 : 48.0;
     final titleSize = isMobile ? 26.0 : 36.0;
@@ -376,7 +398,7 @@ class _BookingPanel extends StatelessWidget {
         ),
         const SizedBox(height: 40),
         Text(
-          'Chófer por horas',
+          l.servicesHourlyPanelTitle,
           style: TextStyle(
             fontFamily: _kSerif,
             fontSize: titleSize,
@@ -386,7 +408,7 @@ class _BookingPanel extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Tu itinerario · Tu ritmo',
+          l.servicesHourlyPanelSubtitle,
           style: TextStyle(
             fontFamily: _kSans,
             fontSize: 13,
@@ -415,7 +437,7 @@ class _BookingPanel extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Ida',
+                      context.l10n.servicesToggleOneWay,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: _kSans,
@@ -443,7 +465,7 @@ class _BookingPanel extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Por horas',
+                      context.l10n.serviceByTheHour,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: _kSans,
@@ -461,7 +483,7 @@ class _BookingPanel extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        _DarkTextField(hint: 'De - Dirección, aeropuerto, hotel...'),
+        _DarkTextField(hint: context.l10n.servicesFromHint),
         const SizedBox(height: 12),
         Container(
           width: double.infinity,
@@ -476,15 +498,16 @@ class _BookingPanel extends StatelessWidget {
               const Icon(Icons.access_time_outlined,
                   color: _kSapphire, size: 16),
               const SizedBox(width: 10),
-              Text(
-                'Duración - 2 horas',
-                style: TextStyle(
-                  fontFamily: _kSans,
-                  fontSize: 13,
-                  color: Colors.white.withAlpha(80),
+              Expanded(
+                child: Text(
+                  l.servicesHourlyDurationField(l.unitHours(2)),
+                  style: TextStyle(
+                    fontFamily: _kSans,
+                    fontSize: 13,
+                    color: Colors.white.withAlpha(80),
+                  ),
                 ),
               ),
-              const Spacer(),
               Icon(Icons.keyboard_arrow_down,
                   color: Colors.white.withAlpha(80), size: 18),
             ],
@@ -507,12 +530,16 @@ class _BookingPanel extends StatelessWidget {
                     const Icon(Icons.calendar_today_outlined,
                         color: _kSapphire, size: 16),
                     const SizedBox(width: 8),
-                    Text(
-                      dateStr,
-                      style: TextStyle(
-                        fontFamily: _kSans,
-                        fontSize: 12,
-                        color: Colors.white.withAlpha(160),
+                    Flexible(
+                      child: Text(
+                        dateStr,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: _kSans,
+                          fontSize: 12,
+                          color: Colors.white.withAlpha(160),
+                        ),
                       ),
                     ),
                   ],
@@ -534,12 +561,16 @@ class _BookingPanel extends StatelessWidget {
                     const Icon(Icons.schedule_outlined,
                         color: _kSapphire, size: 16),
                     const SizedBox(width: 8),
-                    Text(
-                      timeStr,
-                      style: TextStyle(
-                        fontFamily: _kSans,
-                        fontSize: 12,
-                        color: Colors.white.withAlpha(160),
+                    Flexible(
+                      child: Text(
+                        timeStr,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontFamily: _kSans,
+                          fontSize: 12,
+                          color: Colors.white.withAlpha(160),
+                        ),
                       ),
                     ),
                   ],
@@ -550,7 +581,7 @@ class _BookingPanel extends StatelessWidget {
         ),
         const SizedBox(height: 24),
         _FullWidthCtaButton(
-          label: 'SELECCIONAR',
+          label: context.l10n.servicesSelect,
           onTap: () => context.go('/'),
         ),
         const SizedBox(height: 24),
@@ -558,7 +589,7 @@ class _BookingPanel extends StatelessWidget {
           child: GestureDetector(
             onTap: () => context.go('/'),
             child: Text(
-              '← Volver al inicio',
+              context.l10n.servicesBackHome,
               style: TextStyle(
                 fontFamily: _kSans,
                 fontSize: 12,
@@ -690,12 +721,13 @@ class _HeroSection extends StatelessWidget {
     final hPad = isMobile ? 20.0 : 48.0;
     final titleSize = isMobile ? 36.0 : 52.0;
 
-    return SizedBox(
-      height: heroHeight,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          Image.asset(
+    final l = context.l10n;
+    // Min height (not fixed) so longer translations grow the hero instead
+    // of overflowing it.
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Image.asset(
             'assets/images/services/por-horas/hero.jpg',
             fit: BoxFit.cover,
             width: double.infinity,
@@ -706,7 +738,9 @@ class _HeroSection extends StatelessWidget {
               ),
             ),
           ),
-          Container(
+        ),
+        Positioned.fill(
+          child: Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -716,38 +750,44 @@ class _HeroSection extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'CONTRATACIÓN POR HORAS',
-                  style: TextStyle(
-                    fontFamily: _kSans,
-                    fontSize: 10,
-                    letterSpacing: 3.0,
-                    color: _kSapphire,
-                    fontWeight: FontWeight.w600,
+        ),
+        ConstrainedBox(
+          constraints: BoxConstraints(minHeight: heroHeight),
+          child: Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(hPad, 32, hPad, 32),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l.servicesHourlyHeroEyebrow,
+                    style: const TextStyle(
+                      fontFamily: _kSans,
+                      fontSize: 10,
+                      letterSpacing: 3.0,
+                      color: _kSapphire,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'Alquiler de chófer\npor horas y días',
-                  style: TextStyle(
-                    fontFamily: _kSerif,
-                    fontSize: titleSize,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.white,
-                    height: 1.1,
+                  const SizedBox(height: 12),
+                  Text(
+                    l.servicesHourlyHeroTitle,
+                    style: TextStyle(
+                      fontFamily: _kSerif,
+                      fontSize: titleSize,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white,
+                      height: 1.1,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -756,21 +796,22 @@ class _ServiceDescriptionSection extends StatelessWidget {
   final bool isMobile;
   const _ServiceDescriptionSection({required this.isMobile});
 
-  static const List<String> _bullets = [
-    'Define tu itinerario: Tú decides dónde y cuándo ir',
-    'Ahorra tiempo: Te dejaremos y recogeremos en la puerta de cada parada',
-    'Disfruta con tranquilidad: Viaja en un vehículo premium',
-    'Tarifas competitivas: Incluye 40 km de recorrido por hora',
-    'Fiabilidad: Chóferes formados en los más altos estándares',
-    'Sostenibilidad: Cada viaje se compensa con emisiones de carbono',
-    'Wifi disponible en la mayoría de los vehículos',
-    'Diseñado para la ciudad: Comienza y termina en la misma ciudad',
-  ];
+  static List<String> _bulletsFor(AppLocalizations l) => [
+        l.servicesHourlyBullet1,
+        l.servicesHourlyBullet2,
+        l.servicesHourlyBullet3,
+        l.servicesHourlyBullet4,
+        l.servicesHourlyBullet5,
+        l.servicesHourlyBullet6,
+        l.servicesHourlyBullet7,
+        l.servicesHourlyBullet8,
+      ];
 
   @override
   Widget build(BuildContext context) {
     final pad = isMobile ? 20.0 : 48.0;
     final titleSize = isMobile ? 26.0 : 36.0;
+    final l = context.l10n;
 
     return Container(
       color: _kSurface,
@@ -779,7 +820,7 @@ class _ServiceDescriptionSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Servicio de chófer por horas',
+            l.servicesHourlyServiceTitle,
             style: TextStyle(
               fontFamily: _kSerif,
               fontSize: titleSize,
@@ -789,7 +830,7 @@ class _ServiceDescriptionSection extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Olvídate de cambiar de medio de transporte cuando tengas que hacer viajes con múltiples paradas. Con Luxelane, defines tu itinerario: tú decides dónde y cuándo ir.',
+            l.servicesHourlyServiceBody,
             style: TextStyle(
               fontFamily: _kSans,
               fontSize: 14,
@@ -798,7 +839,7 @@ class _ServiceDescriptionSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 28),
-          for (final bullet in _bullets) ...[
+          for (final bullet in _bulletsFor(l)) ...[
             const SizedBox(height: 10),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -833,37 +874,35 @@ class _UseCasesSection extends StatelessWidget {
   final bool isMobile;
   const _UseCasesSection({required this.isMobile});
 
-  static const List<_UseCaseData> _cases = [
-    _UseCaseData(
-      icon: Icons.business_center_outlined,
-      title: 'Viajes de negocios',
-      description:
-          'Concéntrate en lo importante. Desplázate fácilmente entre reuniones sin preocuparte por la logística.',
-    ),
-    _UseCaseData(
-      icon: Icons.music_note_outlined,
-      title: 'Conciertos y eventos',
-      description:
-          'Disfruta de una llegada triunfal y una salida sin contratiempos de cualquier evento.',
-    ),
-    _UseCaseData(
-      icon: Icons.camera_alt_outlined,
-      title: 'Visitas turísticas',
-      description:
-          'Descubre la ciudad a tu manera, a tu ritmo, con un chófer local siempre a tu disposición.',
-    ),
-    _UseCaseData(
-      icon: Icons.restaurant_outlined,
-      title: 'Actividades de ocio',
-      description:
-          'Ya sea un almuerzo, compras o tu lista de tareas, tu chófer estará listo cuando lo necesites.',
-    ),
-  ];
+  static List<_UseCaseData> _casesFor(AppLocalizations l) => [
+        _UseCaseData(
+          icon: Icons.business_center_outlined,
+          title: l.servicesHourlyUseBusinessTitle,
+          description: l.servicesHourlyUseBusinessBody,
+        ),
+        _UseCaseData(
+          icon: Icons.music_note_outlined,
+          title: l.servicesHourlyUseEventsTitle,
+          description: l.servicesHourlyUseEventsBody,
+        ),
+        _UseCaseData(
+          icon: Icons.camera_alt_outlined,
+          title: l.servicesHourlyUseSightseeingTitle,
+          description: l.servicesHourlyUseSightseeingBody,
+        ),
+        _UseCaseData(
+          icon: Icons.restaurant_outlined,
+          title: l.servicesHourlyUseLeisureTitle,
+          description: l.servicesHourlyUseLeisureBody,
+        ),
+      ];
 
   @override
   Widget build(BuildContext context) {
     final pad = isMobile ? 20.0 : 48.0;
     final titleSize = isMobile ? 30.0 : 42.0;
+    final l = context.l10n;
+    final cases = _casesFor(l);
 
     if (isMobile) {
       return Container(
@@ -873,7 +912,7 @@ class _UseCasesSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Diseñado para cada ocasión',
+              l.servicesHourlyUseCasesTitle,
               style: TextStyle(
                 fontFamily: _kSerif,
                 fontSize: titleSize,
@@ -882,9 +921,9 @@ class _UseCasesSection extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            for (int i = 0; i < _cases.length; i++) ...[
+            for (int i = 0; i < cases.length; i++) ...[
               if (i > 0) const SizedBox(height: 16),
-              _UseCaseCard(data: _cases[i]),
+              _UseCaseCard(data: cases[i]),
             ],
           ],
         ),
@@ -898,7 +937,7 @@ class _UseCasesSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Diseñado para cada ocasión',
+            l.servicesHourlyUseCasesTitle,
             style: TextStyle(
               fontFamily: _kSerif,
               fontSize: titleSize,
@@ -909,17 +948,17 @@ class _UseCasesSection extends StatelessWidget {
           const SizedBox(height: 32),
           Row(
             children: [
-              Expanded(child: _UseCaseCard(data: _cases[0])),
+              Expanded(child: _UseCaseCard(data: cases[0])),
               const SizedBox(width: 20),
-              Expanded(child: _UseCaseCard(data: _cases[1])),
+              Expanded(child: _UseCaseCard(data: cases[1])),
             ],
           ),
           const SizedBox(height: 20),
           Row(
             children: [
-              Expanded(child: _UseCaseCard(data: _cases[2])),
+              Expanded(child: _UseCaseCard(data: cases[2])),
               const SizedBox(width: 20),
-              Expanded(child: _UseCaseCard(data: _cases[3])),
+              Expanded(child: _UseCaseCard(data: cases[3])),
             ],
           ),
         ],
@@ -1005,16 +1044,19 @@ class _WorldReachSection extends StatelessWidget {
           Container(
             color: const Color(0x99070E18),
           ),
-          const Center(
-            child: Text(
-              'Disponible en más de 60 países · Cientos de ciudades',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: _kSans,
-                fontSize: 16,
-                letterSpacing: 2.0,
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                context.l10n.servicesHourlyReachBanner,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: _kSans,
+                  fontSize: 16,
+                  letterSpacing: 2.0,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
@@ -1028,28 +1070,18 @@ class _ReviewsSection extends StatelessWidget {
   final bool isMobile;
   const _ReviewsSection({required this.isMobile});
 
-  static const List<_ReviewData> _reviews = [
-    _ReviewData(
-      quote:
-          'El chófer fue increíble, me ayudó con mis maletas y se detuvo en todos los lugares que quería ver.',
-      location: 'Estados Unidos',
-    ),
-    _ReviewData(
-      quote:
-          'Los chóferes no son simples conductores sino profesionales altamente capacitados.',
-      location: 'Portugal',
-    ),
-    _ReviewData(
-      quote:
-          'La aplicación que todos los viajeros necesitan conocer. No he encontrado un lugar donde no funcione.',
-      location: 'Canadá',
-    ),
-  ];
+  static List<_ReviewData> _reviewsFor(AppLocalizations l) => [
+        _ReviewData(quote: l.servicesHourlyReview1, location: l.servicesHourlyReview1Origin),
+        _ReviewData(quote: l.servicesHourlyReview2, location: l.servicesHourlyReview2Origin),
+        _ReviewData(quote: l.servicesHourlyReview3, location: l.servicesHourlyReview3Origin),
+      ];
 
   @override
   Widget build(BuildContext context) {
     final pad = isMobile ? 20.0 : 48.0;
     final titleSize = isMobile ? 26.0 : 36.0;
+    final l = context.l10n;
+    final reviews = _reviewsFor(l);
 
     if (isMobile) {
       return Container(
@@ -1059,7 +1091,7 @@ class _ReviewsSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Lo que dicen nuestros clientes',
+              l.servicesHourlyReviewsTitle,
               style: TextStyle(
                 fontFamily: _kSerif,
                 fontSize: titleSize,
@@ -1068,9 +1100,9 @@ class _ReviewsSection extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            for (int i = 0; i < _reviews.length; i++) ...[
+            for (int i = 0; i < reviews.length; i++) ...[
               if (i > 0) const SizedBox(height: 16),
-              _ReviewCard(review: _reviews[i]),
+              _ReviewCard(review: reviews[i]),
             ],
           ],
         ),
@@ -1084,7 +1116,7 @@ class _ReviewsSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Lo que dicen nuestros clientes',
+            l.servicesHourlyReviewsTitle,
             style: TextStyle(
               fontFamily: _kSerif,
               fontSize: titleSize,
@@ -1096,9 +1128,9 @@ class _ReviewsSection extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (int i = 0; i < _reviews.length; i++) ...[
+              for (int i = 0; i < reviews.length; i++) ...[
                 if (i > 0) const SizedBox(width: 20),
-                Expanded(child: _ReviewCard(review: _reviews[i])),
+                Expanded(child: _ReviewCard(review: reviews[i])),
               ],
             ],
           ),
@@ -1138,7 +1170,7 @@ class _ReviewCard extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           Text(
-            '"${review.quote}"',
+            context.l10n.servicesQuote(review.quote),
             style: TextStyle(
               fontFamily: _kSans,
               fontSize: 12,
@@ -1167,33 +1199,20 @@ class _FaqSection extends StatelessWidget {
   final bool isMobile;
   const _FaqSection({required this.isMobile});
 
-  static const List<_FaqItem> _faqs = [
-    _FaqItem(
-      question: '¿Cómo reservo un chófer por horas?',
-      answer:
-          'Selecciona el lugar de recogida, elige la duración, el día y la hora, elige una clase de vehículo y completa tu reserva.',
-    ),
-    _FaqItem(
-      question: '¿Puedo modificar mi itinerario durante el viaje?',
-      answer:
-          'Sí. El conductor y el vehículo están a tu disposición en todo momento durante las horas de la reserva.',
-    ),
-    _FaqItem(
-      question: '¿Cuándo recibiré los datos del chófer?',
-      answer:
-          'Una hora antes de la recogida se te enviarán un SMS y un correo electrónico con el nombre y número del conductor.',
-    ),
-    _FaqItem(
-      question: '¿La reserva puede empezar en un aeropuerto?',
-      answer:
-          'Sí, la reserva puede empezar o terminar en un aeropuerto. El lugar de inicio y finalización deben estar en la misma ciudad.',
-    ),
-    _FaqItem(
-      question: '¿Puedo aumentar el número de horas?',
-      answer:
-          'Sí, puedes editar la reserva antes de la hora de inicio. La duración mínima es 2 horas, máximo 24 horas.',
-    ),
-  ];
+  // Mirrors MIN_HOURS / MAX_HOURS in functions/src/pricing.ts.
+  static const _minHours = 2;
+  static const _maxHours = 24;
+
+  static List<_FaqItem> _faqsFor(AppLocalizations l) => [
+        _FaqItem(question: l.servicesHourlyFaq1Q, answer: l.servicesHourlyFaq1A),
+        _FaqItem(question: l.servicesHourlyFaq2Q, answer: l.servicesHourlyFaq2A),
+        _FaqItem(question: l.servicesHourlyFaq3Q, answer: l.servicesHourlyFaq3A),
+        _FaqItem(question: l.servicesHourlyFaq4Q, answer: l.servicesHourlyFaq4A),
+        _FaqItem(
+          question: l.servicesHourlyFaq5Q,
+          answer: l.servicesHourlyFaq5A(_minHours, _maxHours),
+        ),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -1207,7 +1226,7 @@ class _FaqSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Preguntas frecuentes',
+            context.l10n.servicesFaqTitle,
             style: TextStyle(
               fontFamily: _kSerif,
               fontSize: titleSize,
@@ -1216,7 +1235,7 @@ class _FaqSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 32),
-          for (final faq in _faqs) _FaqTile(item: faq),
+          for (final faq in _faqsFor(context.l10n)) _FaqTile(item: faq),
         ],
       ),
     );
@@ -1279,10 +1298,12 @@ class _FooterSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: _kSurface,
-      height: 80,
+      constraints: const BoxConstraints(minHeight: 80),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Center(
         child: Text(
-          '© 2025 Luxelane · Todos los derechos reservados',
+          context.l10n.servicesFooterRights(DateTime.now().year.toString()),
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontFamily: _kSans,
             fontSize: 11,
