@@ -299,6 +299,8 @@ class Booking {
     this.promoCode,
     this.discount = 0,
     this.baseAmount,
+    this.days = 1,
+    this.distanceKm,
   });
 
   final String id;
@@ -380,6 +382,12 @@ class Booking {
   final double discount;
   final double? baseAmount;
 
+  /// Hourly charters can span several days ([hours] each day).
+  final int days;
+
+  /// Route distance the price was quoted with (one-way trips).
+  final double? distanceKm;
+
   /// Whether [driverId] should see this pending booking as a request.
   bool isOfferedTo(String driverId) {
     final d = dispatch;
@@ -450,6 +458,8 @@ class Booking {
         promoCode: j['promoCode'] as String?,
         discount: (j['discount'] as num?)?.toDouble() ?? 0,
         baseAmount: (j['baseAmount'] as num?)?.toDouble(),
+        days: (j['days'] as num?)?.toInt() ?? 1,
+        distanceKm: (j['distanceKm'] as num?)?.toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -526,6 +536,8 @@ class Booking {
         promoCode: promoCode,
         discount: discount,
         baseAmount: baseAmount,
+        days: days,
+        distanceKm: distanceKm,
       );
 }
 
@@ -689,6 +701,7 @@ class Quote {
     required this.expiresAt,
     this.distanceKm,
     this.hours,
+    this.days = 1,
     this.baseAmount,
     this.discount = 0,
     this.promoCode,
@@ -714,6 +727,9 @@ class Quote {
   final double? distanceKm;
   final int? hours;
 
+  /// Days of an hourly charter (chauffeur by the day).
+  final int days;
+
   bool get isExpired => DateTime.now().isAfter(expiresAt);
 
   factory Quote.fromJson(Map<String, dynamic> j) => Quote(
@@ -724,6 +740,7 @@ class Quote {
             (j['expiresAt'] as num).toInt()),
         distanceKm: (j['distanceKm'] as num?)?.toDouble(),
         hours: (j['hours'] as num?)?.toInt(),
+        days: (j['days'] as num?)?.toInt() ?? 1,
         baseAmount: (j['baseAmount'] as num?)?.toDouble(),
         discount: (j['discount'] as num?)?.toDouble() ?? 0,
         promoCode: j['promoCode'] as String?,
@@ -971,10 +988,14 @@ abstract class DefaultPricing {
     },
   };
 
-  static double estimate(VehicleClass vc, ServiceType st, {double km = 0, int hours = 2}) {
+  /// Chauffeur by the day: up to [maxDays], the same hours each day.
+  static const maxDays = 7;
+
+  static double estimate(VehicleClass vc, ServiceType st, {double km = 0, int hours = 2, int days = 1}) {
     final r = rules[vc]![st]!;
     if (st == ServiceType.byTheHour) {
-      return (r['perHour']! * hours).clamp(r['min']!, double.infinity);
+      // Each day is priced as an hourly charter, with its own minimum.
+      return days.clamp(1, maxDays) * (r['perHour']! * hours).clamp(r['min']!, double.infinity);
     }
     return (r['base']! + km * r['perKm']!).clamp(r['min']!, double.infinity);
   }

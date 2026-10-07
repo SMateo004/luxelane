@@ -1,0 +1,80 @@
+{
+  "bookingDaysLabel": {
+    "es": "Días",
+    "en": "Days",
+    "pt": "Dias"
+  },
+  "bookingDaysSummary": {
+    "es": "{days} días · {hours} h por día",
+    "en": "{days} days · {hours} h per day",
+    "pt": "{days} dias · {hours} h por dia",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingChauffeurAtDisposalDays": {
+    "es": "Chófer a disposición · {days} días, {hours} h por día",
+    "en": "Chauffeur at your disposal · {days} days, {hours} h per day",
+    "pt": "Motorista à disposição · {days} dias, {hours} h por dia",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "tripsRouteByDays": {
+    "es": "{origin} · {days} días × {hours} h",
+    "en": "{origin} · {days} days × {hours} h",
+    "pt": "{origin} · {days} dias × {hours} h",
+    "placeholders": {
+      "origin": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      },
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "tripPriceDaysLine": {
+    "es": "{days} días × {hours} h × {rate}",
+    "en": "{days} days × {hours} h × {rate}",
+    "pt": "{days} dias × {hours} h × {rate}",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "hours": {
+        "type": "int"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingReturnTrip": {
+    "es": "Reservar el regreso",
+    "en": "Book the return trip",
+    "pt": "Reservar a volta"
+  },
+  "bookingReturnWhen": {
+    "es": "¿Cuándo te recogemos para volver?",
+    "en": "When should we pick you up for the return?",
+    "pt": "Quando buscamos você para voltar?"
+  },
+  "bookingReturnTooEarly": {
+    "es": "El regreso debe ser después de la recogida de ida.",
+    "en": "The return must be after the outbound pickup.",
+    "pt": "A volta deve ser depois do embarque de ida."
+  }
+}

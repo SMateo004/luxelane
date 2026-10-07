@@ -1363,6 +1363,12 @@ abstract class AppLocalizations {
   /// **'Chófer a disposición · {hours} h'**
   String bookingChauffeurAtDisposal(int hours);
 
+  /// No description provided for @bookingChauffeurAtDisposalDays.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer a disposición · {days} días, {hours} h por día'**
+  String bookingChauffeurAtDisposalDays(int days, int hours);
+
   /// No description provided for @bookingChooseExperience.
   ///
   /// In es, this message translates to:
@@ -1410,6 +1416,18 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'{date} · {time}'**
   String bookingDateTime(String date, String time);
+
+  /// No description provided for @bookingDaysLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Días'**
+  String get bookingDaysLabel;
+
+  /// No description provided for @bookingDaysSummary.
+  ///
+  /// In es, this message translates to:
+  /// **'{days} días · {hours} h por día'**
+  String bookingDaysSummary(int days, int hours);
 
   /// No description provided for @bookingDescriptiveText.
   ///
@@ -1866,6 +1884,24 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'RESERVAR {vehicle}'**
   String bookingReserveCta(String vehicle);
+
+  /// No description provided for @bookingReturnTooEarly.
+  ///
+  /// In es, this message translates to:
+  /// **'El regreso debe ser después de la recogida de ida.'**
+  String get bookingReturnTooEarly;
+
+  /// No description provided for @bookingReturnTrip.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservar el regreso'**
+  String get bookingReturnTrip;
+
+  /// No description provided for @bookingReturnWhen.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cuándo te recogemos para volver?'**
+  String get bookingReturnWhen;
 
   /// No description provided for @bookingRoutePreview.
   ///
@@ -6601,6 +6637,12 @@ abstract class AppLocalizations {
   /// **'Desglose del precio'**
   String get tripPriceBreakdown;
 
+  /// No description provided for @tripPriceDaysLine.
+  ///
+  /// In es, this message translates to:
+  /// **'{days} días × {hours} h × {rate}'**
+  String tripPriceDaysLine(int days, int hours, String rate);
+
   /// No description provided for @tripPriceDistanceLine.
   ///
   /// In es, this message translates to:
@@ -6798,6 +6840,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'ANTERIORES'**
   String get tripsPast;
+
+  /// No description provided for @tripsRouteByDays.
+  ///
+  /// In es, this message translates to:
+  /// **'{origin} · {days} días × {hours} h'**
+  String tripsRouteByDays(String origin, int days, int hours);
 
   /// Trip card title for an hourly booking
   ///

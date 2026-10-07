@@ -71,7 +71,9 @@ import {
   QUOTE_TTL_MS,
   ServiceType,
   VehicleClass,
+  clampDays,
   clampHours,
+  computeCharterPrice,
   computePrice,
   isLatLng,
   isServiceType,
@@ -194,6 +196,8 @@ interface QuoteDoc {
   destination: StoredPlace;
   distanceKm: number | null;
   hours: number | null;
+  /** Chauffeur by the day (hourly charters only); 1 otherwise. */
+  days?: number;
   amount: number;
   currency: string;
   expiresAt: admin.firestore.Timestamp;
@@ -439,13 +443,14 @@ export const savePromoCode = onCall(async (req) => {
 
 export const quoteBooking = onCall(async (req) => {
   const uid = requireAuth(req);
-  const { vehicleClass, serviceType, origin, destination, routeDistanceKm, hours, promoCode } = (req.data ?? {}) as {
+  const { vehicleClass, serviceType, origin, destination, routeDistanceKm, hours, days, promoCode } = (req.data ?? {}) as {
     vehicleClass: unknown;
     serviceType: unknown;
     origin: unknown;
     destination?: unknown;
     routeDistanceKm?: unknown;
     hours?: unknown;
+    days?: unknown;
     promoCode?: unknown;
   };
 
@@ -463,7 +468,10 @@ export const quoteBooking = onCall(async (req) => {
 
   const distanceKm = hourly ? null : resolveDistanceKm(origin, dest, routeDistanceKm);
   const quoteHours = hourly ? clampHours(hours) : null;
-  const baseAmount = computePrice(rule, serviceType, { km: distanceKm ?? 0, hours: quoteHours ?? 0 });
+  const quoteDays = hourly ? clampDays(days) : 1;
+  const baseAmount = hourly
+    ? computeCharterPrice(rule, quoteHours ?? 0, quoteDays)
+    : computePrice(rule, serviceType, { km: distanceKm ?? 0 });
 
   // A valid promo lowers the fixed price; an invalid one is reported and the
   // quote keeps the full price.
@@ -492,6 +500,7 @@ export const quoteBooking = onCall(async (req) => {
     destination: toPlace(dest as PlaceInput),
     distanceKm,
     hours: quoteHours,
+    days: quoteDays,
     amount,
     currency: CURRENCY,
     expiresAt,
@@ -502,13 +511,14 @@ export const quoteBooking = onCall(async (req) => {
   };
   const ref = await db.collection('quotes').add(quote);
 
-  logger.info('quoteBooking', 'quoted', { uid, quoteId: ref.id, vehicleClass, serviceType, amount });
+  logger.info('quoteBooking', 'quoted', { uid, quoteId: ref.id, vehicleClass, serviceType, amount, days: quoteDays });
   return {
     quoteId: ref.id,
     amount,
     currency: CURRENCY,
     distanceKm,
     hours: quoteHours,
+    days: quoteDays,
     expiresAt: expiresAt.toMillis(),
     baseAmount,
     discount,
@@ -678,6 +688,7 @@ export const createBooking = onCall(stripeOpts, async (req) => {
       quoteId: d.quoteId,
       distanceKm: quote.distanceKm,
       hours: quote.hours,
+      days: quote.days ?? 1,
       paymentMethod: corporate ? 'corporate' : paymentIntentId ? 'card' : 'pay_later',
       companyId: corporate?.companyId ?? null,
       companyName: corporate?.companyName ?? null,

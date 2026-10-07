@@ -729,6 +729,11 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String bookingChauffeurAtDisposalDays(int days, int hours) {
+    return 'Motorista à disposição · $days dias, $hours h por dia';
+  }
+
+  @override
   String get bookingChooseExperience => 'Escolha sua experiência';
 
   @override
@@ -752,6 +757,14 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String bookingDateTime(String date, String time) {
     return '$date · $time';
+  }
+
+  @override
+  String get bookingDaysLabel => 'Dias';
+
+  @override
+  String bookingDaysSummary(int days, int hours) {
+    return '$days dias · $hours h por dia';
   }
 
   @override
@@ -1019,6 +1032,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String bookingReserveCta(String vehicle) {
     return 'RESERVAR $vehicle';
   }
+
+  @override
+  String get bookingReturnTooEarly => 'A volta deve ser depois do embarque de ida.';
+
+  @override
+  String get bookingReturnTrip => 'Reservar a volta';
+
+  @override
+  String get bookingReturnWhen => 'Quando buscamos você para voltar?';
 
   @override
   String get bookingRoutePreview => 'Prévia da rota';
@@ -3625,6 +3647,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get tripPriceBreakdown => 'Detalhamento do preço';
 
   @override
+  String tripPriceDaysLine(int days, int hours, String rate) {
+    return '$days dias × $hours h × $rate';
+  }
+
+  @override
   String tripPriceDistanceLine(String km, String rate) {
     return '$km km × $rate';
   }
@@ -3736,6 +3763,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get tripsPast => 'ANTERIORES';
+
+  @override
+  String tripsRouteByDays(String origin, int days, int hours) {
+    return '$origin · $days dias × $hours h';
+  }
 
   @override
   String tripsRouteByHour(String origin, int hours) {

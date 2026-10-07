@@ -9,6 +9,7 @@ class BookingFormData {
     required this.serviceType,
     required this.scheduledAt,
     this.hours = 3,
+    this.days = 1,
     this.routeDistanceKm = 0,
     this.routeDurationMin = 0,
     this.polylinePoints = const [],
@@ -19,6 +20,9 @@ class BookingFormData {
   final ServiceType serviceType;
   final DateTime scheduledAt;
   final int hours;
+
+  /// Chauffeur by the day (hourly service only).
+  final int days;
   final double routeDistanceKm;
   final int routeDurationMin;
   final List<LatLng> polylinePoints;

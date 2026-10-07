@@ -148,7 +148,11 @@ class _ReceiptCard extends StatelessWidget {
           if (booking.serviceType == ServiceType.oneWay)
             _Line(l.tripDestination, booking.destination.displayName)
           else
-            _Line(l.tripReceiptDuration, l.unitHours(booking.hours ?? 2)),
+            _Line(
+                l.tripReceiptDuration,
+                booking.days > 1
+                    ? l.bookingDaysSummary(booking.days, booking.hours ?? 2)
+                    : l.unitHours(booking.hours ?? 2)),
           if (booking.flightNumber != null) _Line(l.tripReceiptFlight, booking.flightNumber!),
           _Line(l.tripReceiptPassengers, '${booking.passengerCount}'),
           if (!cancelled) ...[

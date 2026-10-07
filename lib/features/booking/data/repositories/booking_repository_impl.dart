@@ -28,6 +28,7 @@ class BookingRepositoryImpl implements BookingRepository {
     Place? destination,
     double? routeDistanceKm,
     int? hours,
+    int? days,
     String? promoCode,
   }) async {
     try {
@@ -40,6 +41,7 @@ class BookingRepositoryImpl implements BookingRepository {
         if (routeDistanceKm != null && routeDistanceKm > 0)
           'routeDistanceKm': routeDistanceKm,
         if (hours != null) 'hours': hours,
+        if (days != null && days > 1) 'days': days,
       });
       return Right(
           Quote.fromJson(Map<String, dynamic>.from(result.data as Map)));

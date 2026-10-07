@@ -1,6 +1,8 @@
 import { describe, it, expect } from '@jest/globals';
 import {
   DEFAULT_RULES,
+  clampDays,
+  computeCharterPrice,
   clampHours,
   computePrice,
   haversineKm,
@@ -71,5 +73,21 @@ describe('validation helpers', () => {
       DEFAULT_RULES.business.oneWay,
     );
     expect(rule).toEqual({ base: 70, perKm: 3, perHour: 0, min: 70 });
+  });
+});
+
+describe('chauffeur by the day', () => {
+  const rule = DEFAULT_RULES.business.byTheHour;
+  it('multiplies the daily hourly price, each day with its minimum', () => {
+    expect(computeCharterPrice(rule, 8, 1)).toBe(640);
+    expect(computeCharterPrice(rule, 8, 3)).toBe(1920);
+    // 1 h/day is clamped to the 2 h minimum per day.
+    expect(computeCharterPrice(rule, 1, 2)).toBe(2 * 160);
+  });
+  it('clamps days to 1–7', () => {
+    expect(clampDays(0)).toBe(1);
+    expect(clampDays(3.4)).toBe(3);
+    expect(clampDays(30)).toBe(7);
+    expect(clampDays('x')).toBe(1);
   });
 });

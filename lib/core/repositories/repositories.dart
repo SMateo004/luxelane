@@ -92,6 +92,7 @@ abstract class BookingRepository {
     Place? destination,
     double? routeDistanceKm,
     int? hours,
+    int? days,
     String? promoCode,
   });
 

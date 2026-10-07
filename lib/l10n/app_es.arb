@@ -451,6 +451,17 @@
       }
     }
   },
+  "bookingChauffeurAtDisposalDays": "Chófer a disposición · {days} días, {hours} h por día",
+  "@bookingChauffeurAtDisposalDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "bookingChooseExperience": "Elige tu experiencia",
   "bookingChooseService": "Elegir servicio",
   "@bookingChooseService": {
@@ -469,6 +480,18 @@
       },
       "time": {
         "type": "String"
+      }
+    }
+  },
+  "bookingDaysLabel": "Días",
+  "bookingDaysSummary": "{days} días · {hours} h por día",
+  "@bookingDaysSummary": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "hours": {
+        "type": "int"
       }
     }
   },
@@ -685,6 +708,9 @@
       }
     }
   },
+  "bookingReturnTooEarly": "El regreso debe ser después de la recogida de ida.",
+  "bookingReturnTrip": "Reservar el regreso",
+  "bookingReturnWhen": "¿Cuándo te recogemos para volver?",
   "bookingRoutePreview": "Vista previa de ruta",
   "bookingSeating": "Asientos",
   "bookingSeatingFive": "Cinco pasajeros",
@@ -2285,6 +2311,20 @@
   "tripPickup": "Recogida",
   "tripPriceBaseFare": "Tarifa base",
   "tripPriceBreakdown": "Desglose del precio",
+  "tripPriceDaysLine": "{days} días × {hours} h × {rate}",
+  "@tripPriceDaysLine": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "hours": {
+        "type": "int"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
   "tripPriceDistanceLine": "{km} km × {rate}",
   "@tripPriceDistanceLine": {
     "placeholders": {
@@ -2374,6 +2414,20 @@
   "tripsEmpty": "Aún no tienes viajes.\nReserva tu primera experiencia.",
   "tripsLoadError": "No pudimos cargar tus viajes. Revisa tu conexión.",
   "tripsPast": "ANTERIORES",
+  "tripsRouteByDays": "{origin} · {days} días × {hours} h",
+  "@tripsRouteByDays": {
+    "placeholders": {
+      "origin": {
+        "type": "String"
+      },
+      "days": {
+        "type": "int"
+      },
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
   "tripsRouteByHour": "{origin} · {hours} h",
   "@tripsRouteByHour": {
     "description": "Trip card title for an hourly booking",

@@ -57,6 +57,7 @@ class _BookingScreenState extends State<BookingScreen> {
   VehicleClass _selected = VehicleClass.business;
   ServiceType  _service  = ServiceType.oneWay;
   int  _hours   = 3;
+  int  _days    = 1; // chauffeur by the day (hourly only)
   bool _loading = false;
   int  _step    = 0; // mobile only
 
@@ -109,7 +110,7 @@ class _BookingScreenState extends State<BookingScreen> {
           : 25.0;
 
   double get _price =>
-      DefaultPricing.estimate(_selected, _service, km: _km, hours: _hours);
+      DefaultPricing.estimate(_selected, _service, km: _km, hours: _hours, days: _days);
 
   String get _promoKey => '${_selected.name}|${_price.round()}';
 
@@ -158,6 +159,15 @@ class _BookingScreenState extends State<BookingScreen> {
     });
   }
 
+  Widget _daysRow() => _LightCounterRow(
+        label: context.l10n.bookingDaysLabel,
+        icon: Icons.date_range_outlined,
+        value: _days,
+        min: 1,
+        max: DefaultPricing.maxDays,
+        onChanged: (v) => setState(() => _days = v),
+      );
+
   Widget _promoField() => _PromoCodeField(
         controller: _promoCtrl,
         applied: _promo,
@@ -195,6 +205,7 @@ class _BookingScreenState extends State<BookingScreen> {
         _formData = extra;
         _service  = extra.serviceType;
         _hours    = extra.hours;
+        _days     = extra.days;
       }
       _loadSavedCards();
       _loadCompany();
@@ -288,6 +299,7 @@ class _BookingScreenState extends State<BookingScreen> {
       destination: _formData?.destination,
       routeDistanceKm: _formData?.routeDistanceKm,
       hours: _service == ServiceType.byTheHour ? _hours : null,
+      days: _service == ServiceType.byTheHour ? _days : null,
       promoCode: _promo,
     );
     if (!mounted) return;
@@ -662,7 +674,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         return _VehicleCard(
                           vehicleClass: vc,
                           price: DefaultPricing.estimate(vc, _service,
-                              km: _km, hours: _hours),
+                              km: _km, hours: _hours, days: _days),
                           selected: _selected == vc,
                           cardBg: _vehicleCardBg(vc),
                           cardBgSelected: _vehicleCardBgSelected(vc),
@@ -1629,12 +1641,17 @@ class _BookingScreenState extends State<BookingScreen> {
           ],
         ),
 
+        if (_service == ServiceType.byTheHour) ...[
+          const SizedBox(height: 20),
+          _daysRow(),
+        ],
         const SizedBox(height: 20),
         PriceBreakdown(
           vehicleClass: _selected,
           serviceType: _service,
           km: _km,
           hours: _hours,
+          days: _days,
         ),
         const SizedBox(height: 20),
         _promoField(),
@@ -1738,6 +1755,8 @@ class _BookingScreenState extends State<BookingScreen> {
           if (_service == ServiceType.byTheHour) ...[
             const SizedBox(height: 12),
             _LightHourRow(hours: _hours, onChanged: (h) => setState(() => _hours = h)),
+            const SizedBox(height: 10),
+            _daysRow(),
           ],
           const SizedBox(height: 20),
           SizedBox(
@@ -1752,7 +1771,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 final vc = _kVehicleClasses[i];
                 return _VehicleCard(
                   vehicleClass: vc,
-                  price: DefaultPricing.estimate(vc, _service, km: _km, hours: _hours),
+                  price: DefaultPricing.estimate(vc, _service, km: _km, hours: _hours, days: _days),
                   selected: _selected == vc,
                   onTap: () => setState(() => _selected = vc),
                   serviceType: _service,
@@ -1842,7 +1861,7 @@ class _BookingScreenState extends State<BookingScreen> {
               _SummaryRow(l.bookingSummaryTo, _formData!.destination!.displayName),
             _SummaryRow(
               hourly ? l.bookingSummaryDuration : l.bookingSummaryDistance,
-              hourly ? l.unitHours(_hours)
+              hourly ? (_days > 1 ? l.bookingDaysSummary(_days, _hours) : l.unitHours(_hours))
                   : _km > 0 ? l.bookingDistanceKm(distance) : '—',
             ),
             if (_formData?.routeDurationMin != null && _formData!.routeDurationMin > 0)
@@ -1885,6 +1904,7 @@ class _BookingScreenState extends State<BookingScreen> {
           serviceType: _service,
           km: _km,
           hours: _hours,
+          days: _days,
         ),
         const SizedBox(height: 20),
         _promoField(),

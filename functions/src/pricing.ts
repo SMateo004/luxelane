@@ -6,6 +6,8 @@ export const CURRENCY = 'bob';
 export const QUOTE_TTL_MS = 15 * 60 * 1000;
 export const MIN_HOURS = 2;
 export const MAX_HOURS = 24;
+/** Chauffeur by the day: the same hours every day, up to a week. */
+export const MAX_DAYS = 7;
 
 export const VEHICLE_CLASSES = ['business', 'firstClass', 'businessVan', 'electric'] as const;
 export const SERVICE_TYPES = ['oneWay', 'byTheHour'] as const;
@@ -103,6 +105,16 @@ export function resolveDistanceKm(origin: LatLng, destination: LatLng, clientKm?
 export function clampHours(hours: unknown): number {
   const h = typeof hours === 'number' && Number.isFinite(hours) ? Math.round(hours) : MIN_HOURS;
   return Math.min(MAX_HOURS, Math.max(MIN_HOURS, h));
+}
+
+export function clampDays(days: unknown): number {
+  const d = typeof days === 'number' && Number.isFinite(days) ? Math.round(days) : 1;
+  return Math.min(MAX_DAYS, Math.max(1, d));
+}
+
+/** Multi-day charter: each day is priced as an hourly charter (minimum per day). */
+export function computeCharterPrice(rule: PriceRule, hoursPerDay: number, days: number): number {
+  return clampDays(days) * computePrice(rule, 'byTheHour', { hours: hoursPerDay });
 }
 
 /** Price in whole Bolivianos (rounded up). */

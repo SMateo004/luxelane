@@ -133,7 +133,9 @@ class _TripCard extends StatelessWidget {
   String _route(AppLocalizations l) {
     final o = booking.origin.displayName;
     if (booking.serviceType == ServiceType.byTheHour) {
-      return l.tripsRouteByHour(o, booking.hours ?? 2);
+      return booking.days > 1
+          ? l.tripsRouteByDays(o, booking.days, booking.hours ?? 2)
+          : l.tripsRouteByHour(o, booking.hours ?? 2);
     }
     return '$o → ${booking.destination.displayName}';
   }

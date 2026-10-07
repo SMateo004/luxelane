@@ -703,6 +703,22 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     color: LuxColors.accent, size: 40),
               ],
             ),
+            // Hourly charters: how long the chauffeur is booked for.
+            if (widget.booking.serviceType == ServiceType.byTheHour) ...[
+              const SizedBox(height: 12),
+              Row(children: [
+                const Icon(Icons.schedule_rounded, color: LuxColors.accent, size: 18),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    widget.booking.days > 1
+                        ? l.bookingDaysSummary(widget.booking.days, widget.booking.hours ?? 2)
+                        : l.unitHours(widget.booking.hours ?? 2),
+                    style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white),
+                  ),
+                ),
+              ]),
+            ],
             const SizedBox(height: 20),
 
             // ── Price ────────────────────────────────────────────────────

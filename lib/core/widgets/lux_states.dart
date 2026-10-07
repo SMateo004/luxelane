@@ -194,6 +194,7 @@ class PriceBreakdown extends StatelessWidget {
     required this.serviceType,
     this.km = 0,
     this.hours = 2,
+    this.days = 1,
     this.light = true,
   });
 
@@ -201,11 +202,17 @@ class PriceBreakdown extends StatelessWidget {
   final ServiceType serviceType;
   final double km;
   final int hours;
+  final int days;
   final bool light;
 
   List<(String, double)> lines(AppLocalizations l) {
     final r = DefaultPricing.rules[vehicleClass]![serviceType]!;
     if (serviceType == ServiceType.byTheHour) {
+      if (days > 1) {
+        return [
+          (l.tripPriceDaysLine(days, hours, LuxMoney.format(r['perHour']!)), r['perHour']! * hours * days),
+        ];
+      }
       return [(l.tripPriceHoursLine(hours, LuxMoney.format(r['perHour']!)), r['perHour']! * hours)];
     }
     return [
@@ -220,7 +227,7 @@ class PriceBreakdown extends StatelessWidget {
     ];
   }
 
-  double get total => DefaultPricing.estimate(vehicleClass, serviceType, km: km, hours: hours);
+  double get total => DefaultPricing.estimate(vehicleClass, serviceType, km: km, hours: hours, days: days);
 
   @override
   Widget build(BuildContext context) {

@@ -129,7 +129,7 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 | 6 | **Despacho por cercanía.** Las recogidas de los próximos 90 min se ofrecen primero al chófer verificado más cercano con la clase correcta, dentro de 25 km y con ubicación de menos de 10 min. Tiene 1 minuto para aceptar (lo ve como "Solicitud exclusiva" con cuenta regresiva). Si la rechaza o no responde, pasa al siguiente (hasta 5) y luego se abre a todos. Las reservas anticipadas se abren a todos desde el inicio. Las reglas impiden que otro chófer tome una oferta exclusiva | ✅ Hecho |
 | 7 | **Meet & greet.** La reserva guarda el nombre y teléfono reales del pasajero (o del invitado). El chófer tiene llamar, WhatsApp y **"Mostrar cartel"**, que pone el nombre a pantalla completa en horizontal. El pasajero ve en el viaje cómo y dónde lo esperan | ✅ Hecho |
 | 7b | **Espera gratuita: 60 min en aeropuerto** desde el aterrizaje y **15 min en ciudad** desde la recogida o la llegada del chófer. Cuenta regresiva para pasajero y chófer, aviso push con la hora límite, y se muestra en la confirmación y en la landing | ✅ Hecho |
-| 8 | **Idiomas es / en / pt.** La app sigue el idioma del dispositivo o navegador y cambia en vivo, sin reiniciar; si el idioma no está soportado usa inglés. Hay 1136 textos en ARB, con fechas, horas y montos según el idioma. Las push salen en el idioma del usuario, y en Android 13+ se puede elegir el idioma por app. Los tests impiden textos fijos y traducciones incompletas (ver `lib/l10n/README.md`) | ✅ Hecho |
+| 8 | **Idiomas es / en / pt.** La app sigue el idioma del dispositivo o navegador y cambia en vivo, sin reiniciar; si el idioma no está soportado usa inglés. Hay 1144 textos en ARB, con fechas, horas y montos según el idioma. Las push salen en el idioma del usuario, y en Android 13+ se puede elegir el idioma por app. Los tests impiden textos fijos y traducciones incompletas (ver `lib/l10n/README.md`) | ✅ Hecho |
 | 9 | **Reportes de operaciones** (admin → Reportes). Se calculan sobre las reservas reales, por fecha de recogida y en hora local, para los últimos 7, 30 o 90 días. Incluyen viajes completados e ingresos (con variación contra el período anterior), ticket promedio, tasa de cancelación, cancelaciones tardías, reservas que nadie tomó y calificación promedio. Gráficos: viajes por día, ingresos por día, demanda por hora de recogida, mezcla por categoría y servicio, y origen de las cancelaciones. Tabla de rendimiento por chófer. Los datos diarios y los de chóferes se exportan a CSV (descarga en web; en móvil se copian) | ✅ Hecho |
 
 ### Fase 3: Super app y B2B (4–6 semanas) — en curso
@@ -144,9 +144,11 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 
 | 4 | **Soporte y centro de ayuda.** Pasajeros y chóferes tienen "Centro de ayuda" (en Perfil) con preguntas frecuentes, cuyas respuestas reflejan las reglas reales (cancelación, espera 60/15 min, pago, códigos, cuenta corporativa, objetos olvidados, verificación de chóferes). Pueden abrir una solicitud por categoría y conversar con el equipo en tiempo real. Desde el recibo, "Ayuda con este viaje" la vincula al viaje. Los reportes de **seguridad** son urgentes: van primero en la cola, avisan a los admins con prioridad y muestran el número de emergencia (110). Admin → Soporte tiene la cola con filtros (por responder, esperando al cliente, resueltas), mensajes sin leer y la opción de responder, resolver o reabrir. Cada lado recibe un aviso cuando el otro escribe. Las reglas impiden leer solicitudes ajenas, hacerse pasar por el equipo, marcar urgencias falsas o vincular viajes de otra persona. Las conversaciones se borran al eliminar la cuenta | ✅ Hecho (desplegar: `firebase deploy --only functions,firestore`) |
 
+| 5 | **Chófer por días y regreso.** El servicio por horas ahora admite de 1 a 7 días con las mismas horas cada día, lo que sirve para eventos y roadshows. Cada día se cobra como un servicio por horas, con su mínimo. El servidor valida y cotiza los días, y el desglose muestra "3 días × 8 h × Bs 80". Los días aparecen en la confirmación, el recibo, el historial y la solicitud que ve el chófer. En los viajes de ida, la confirmación ofrece **"Reservar el regreso"**: se elige fecha y hora (sugiere 4 h después) y se abre la reserva con la ruta invertida, que el servidor vuelve a cotizar | ✅ Hecho (desplegar: `firebase deploy --only functions`) |
+
 Pendiente de la Fase 3:
 2. **Programa de fidelidad** (niveles y beneficios reales).
-3. **Más verticales**: ciudad a ciudad, eventos o roadshows, traslados de hotel y chófer por días.
+3. **Más verticales**: ciudad a ciudad (rutas populares desde Santa Cruz) y traslados de hotel.
 4. **Pagos a chóferes** (liquidaciones; sin Stripe Connect).
 5. **Protocolo de incidentes** (guía interna para el equipo) y horarios de atención.
 6. **Observabilidad**: Crashlytics, Performance, alertas y entornos dev/staging/prod separados.
@@ -176,8 +178,8 @@ Pendiente de la Fase 3:
 ## 5. Cómo probar
 
 ```
-flutter test                      # 194 tests Dart
-(cd functions && npm test)        # 72 tests de negocio, precios, vuelos, chófer, espera, despacho, cancelación, mensajes, cuentas corporativas, documentos, promociones y soporte
+flutter test                      # 200 tests Dart
+(cd functions && npm test)        # 74 tests de negocio, precios, vuelos, chófer, espera, despacho, cancelación, mensajes, cuentas corporativas, documentos, promociones y soporte
 (cd rules-tests && npm test)      # 34 tests de reglas de Firestore y Storage (requiere Java)
 ```
 

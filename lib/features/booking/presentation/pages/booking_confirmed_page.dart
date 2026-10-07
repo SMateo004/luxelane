@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/utils/waiting_policy.dart';
@@ -155,6 +156,23 @@ class _Content extends StatelessWidget {
                     child: Text(l.bookingViewMyBooking, textAlign: TextAlign.center),
                   ),
                 ),
+                if (booking.serviceType == ServiceType.oneWay &&
+                    booking.status != BookingStatus.cancelled) ...[
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 52,
+                    child: OutlinedButton.icon(
+                      onPressed: () => bookReturnTrip(context, booking),
+                      icon: const Icon(Icons.swap_horiz_rounded, size: 18),
+                      label: Text(l.bookingReturnTrip),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: LD.ink,
+                        side: const BorderSide(color: LD.ink),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                      ),
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 8),
                 TextButton(
                   onPressed: () => context.go('/'),
@@ -253,7 +271,11 @@ class _SummaryCard extends StatelessWidget {
           _Row(icon: Icons.event_outlined, label: date),
           _Row(icon: Icons.trip_origin, label: booking.origin.displayName),
           if (hourly)
-            _Row(icon: Icons.schedule, label: l.bookingChauffeurAtDisposal(booking.hours ?? 2))
+            _Row(
+                icon: Icons.schedule,
+                label: booking.days > 1
+                    ? l.bookingChauffeurAtDisposalDays(booking.days, booking.hours ?? 2)
+                    : l.bookingChauffeurAtDisposal(booking.hours ?? 2))
           else
             _Row(icon: Icons.place_outlined, label: booking.destination.displayName),
           if (booking.flightNumber != null)
@@ -419,4 +441,48 @@ class _Status extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Suggested return pickup: four hours after this pickup, on a quarter hour.
+DateTime suggestedReturnTime(DateTime pickup) {
+  final t = pickup.add(const Duration(hours: 4));
+  final extra = (15 - t.minute % 15) % 15;
+  return DateTime(t.year, t.month, t.day, t.hour, t.minute + extra);
+}
+
+/// Asks when to be picked up and opens the booking for the reverse route
+/// (same vehicle choices, fixed price quoted again by the server).
+Future<void> bookReturnTrip(BuildContext context, Booking booking) async {
+  final l = context.l10n;
+  final suggested = suggestedReturnTime(booking.effectivePickup);
+  final now = DateTime.now();
+  final day = await showDatePicker(
+    context: context,
+    helpText: l.bookingReturnWhen,
+    initialDate: suggested.isAfter(now) ? suggested : now,
+    firstDate: DateTime(now.year, now.month, now.day),
+    lastDate: now.add(const Duration(days: 365)),
+  );
+  if (day == null || !context.mounted) return;
+  final time = await showTimePicker(
+    context: context,
+    helpText: l.bookingReturnWhen,
+    initialTime: TimeOfDay.fromDateTime(suggested),
+  );
+  if (time == null || !context.mounted) return;
+  final at = DateTime(day.year, day.month, day.day, time.hour, time.minute);
+  if (!at.isAfter(booking.effectivePickup)) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.bookingReturnTooEarly)));
+    return;
+  }
+  context.go(
+    '/booking',
+    extra: BookingFormData(
+      origin: booking.destination,
+      destination: booking.origin,
+      serviceType: ServiceType.oneWay,
+      scheduledAt: at,
+      routeDistanceKm: booking.distanceKm ?? 0,
+    ),
+  );
 }
