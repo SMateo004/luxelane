@@ -64,7 +64,8 @@ class _TripsScreenState extends State<TripsScreen> {
               final trips = state.bookings;
               if (trips.isEmpty) {
                 return EmptyState(
-                  message: 'Aún no hay viajes.\nReserva tu primera experiencia.',
+                  message:
+                      'Aún no hay viajes.\nReserva tu primera experiencia.',
                   actionLabel: 'Reservar ahora',
                   onAction: () => context.go('/booking'),
                   icon: Icons.directions_car_outlined,
@@ -101,14 +102,24 @@ class _TripCard extends StatelessWidget {
 
   String get _vehicle => booking.vehicleClass.label;
 
-  String get _price =>
-      '\$${booking.estimatedPrice.toStringAsFixed(0)}';
+  String get _price => '\$${booking.estimatedPrice.toStringAsFixed(0)}';
 
   String get _date {
     final dt = booking.scheduledAt;
     const months = [
-      '', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
+      '',
+      'Ene',
+      'Feb',
+      'Mar',
+      'Abr',
+      'May',
+      'Jun',
+      'Jul',
+      'Ago',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dic'
     ];
     return '${dt.day} ${months[dt.month]} ${dt.year}';
   }

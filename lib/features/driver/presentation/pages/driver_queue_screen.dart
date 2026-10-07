@@ -34,14 +34,16 @@ class DriverQueueScreen extends StatelessWidget {
             ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
 
           if (pending.isEmpty && upcoming.isEmpty) {
-            return const _EmptyQueue(isAvailable: true); // Show 'No jobs yet' instead of 'Go online'
+            return const _EmptyQueue(
+                isAvailable: true); // Show 'No jobs yet' instead of 'Go online'
           }
 
           return ListView(
             padding: const EdgeInsets.all(LuxSpacing.md),
             children: [
               if (pending.isNotEmpty) ...[
-                const _SectionTitle(title: 'SOLICITUDES DISPONIBLES', isGold: true),
+                const _SectionTitle(
+                    title: 'SOLICITUDES DISPONIBLES', isGold: true),
                 const SizedBox(height: LuxSpacing.sm),
                 ...pending.map((b) => Padding(
                       padding: const EdgeInsets.only(bottom: LuxSpacing.md),
@@ -50,7 +52,8 @@ class DriverQueueScreen extends StatelessWidget {
                 const SizedBox(height: LuxSpacing.lg),
               ],
               if (upcoming.isNotEmpty) ...[
-                const _SectionTitle(title: 'MIS TRABAJOS ACTIVOS', isGold: false),
+                const _SectionTitle(
+                    title: 'MIS TRABAJOS ACTIVOS', isGold: false),
                 const SizedBox(height: LuxSpacing.sm),
                 ...upcoming.map((b) => Padding(
                       padding: const EdgeInsets.only(bottom: LuxSpacing.md),
@@ -101,7 +104,9 @@ class _EmptyQueue extends StatelessWidget {
             ),
             const SizedBox(height: LuxSpacing.md),
             Text(
-              isAvailable ? 'Sin trabajos aún' : 'Conéctate para recibir trabajos',
+              isAvailable
+                  ? 'Sin trabajos aún'
+                  : 'Conéctate para recibir trabajos',
               style: LuxTypography.titleMedium,
             ),
             const SizedBox(height: LuxSpacing.sm),
@@ -140,8 +145,7 @@ class _JobCard extends StatelessWidget {
             ),
             const SizedBox(height: LuxSpacing.sm),
             Text(
-              DateFormat('EEE, MMM d · h:mm a')
-                  .format(booking.scheduledAt),
+              DateFormat('EEE, MMM d · h:mm a').format(booking.scheduledAt),
               style: LuxTypography.caption,
             ),
             const SizedBox(height: LuxSpacing.md),
@@ -177,10 +181,8 @@ class _RouteRow extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 7),
-            child: Container(
-                width: 2,
-                height: 16,
-                color: LuxColors.blackBorder),
+            child:
+                Container(width: 2, height: 16, color: LuxColors.blackBorder),
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,8 +243,7 @@ class _JobActions extends StatelessWidget {
         return LuxButton(
           label: 'Iniciar viaje',
           icon: Icons.play_arrow_rounded,
-          onPressed: () =>
-              bloc.add(DriverTripStarted(bookingId: booking.id)),
+          onPressed: () => bloc.add(DriverTripStarted(bookingId: booking.id)),
         );
       default:
         return const SizedBox.shrink();

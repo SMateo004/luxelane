@@ -13,8 +13,8 @@ import '../bloc/profile_bloc.dart';
 // Preference keys
 // ---------------------------------------------------------------------------
 abstract class _PrefKeys {
-  static const language     = 'pref_language';
-  static const currency     = 'pref_currency';
+  static const language = 'pref_language';
+  static const currency = 'pref_currency';
   static const notifications = 'pref_notifications';
 }
 
@@ -30,8 +30,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String _language      = 'English';
-  String _currency      = 'USD';
+  String _language = 'English';
+  String _currency = 'USD';
   String _notifications = 'Todas';
 
   @override
@@ -54,8 +54,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
     setState(() {
-      _language      = prefs.getString(_PrefKeys.language)      ?? 'English';
-      _currency      = prefs.getString(_PrefKeys.currency)      ?? 'USD';
+      _language = prefs.getString(_PrefKeys.language) ?? 'English';
+      _currency = prefs.getString(_PrefKeys.currency) ?? 'USD';
       _notifications = prefs.getString(_PrefKeys.notifications) ?? 'Todas';
     });
   }
@@ -111,12 +111,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Text(state.message, style: LuxTypography.bodyMedium));
             }
             final User user;
-            int totalRides    = 0;
+            int totalRides = 0;
             double? rating;
             if (state is ProfileLoaded) {
-              user       = state.user;
+              user = state.user;
               totalRides = state.totalRides;
-              rating     = state.rating;
+              rating = state.rating;
             } else if (state is ProfileUpdated) {
               user = state.user;
             } else {
@@ -196,16 +196,14 @@ class _ProfileBody extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                  child: _StatCard(
-                      label: 'Viajes',
-                      value: totalRides.toString())),
+                  child:
+                      _StatCard(label: 'Viajes', value: totalRides.toString())),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                   child: _StatCard(
                       label: 'Calificación',
-                      value: rating != null
-                          ? rating!.toStringAsFixed(1)
-                          : '—')),
+                      value:
+                          rating != null ? rating!.toStringAsFixed(1) : '—')),
               const SizedBox(width: LuxSpacing.sm),
               const Expanded(child: _StatCard(label: 'Millas', value: '—')),
             ],
@@ -247,8 +245,7 @@ class _ProfileBody extends StatelessWidget {
           ),
           const SizedBox(height: LuxSpacing.md),
           const Center(
-              child:
-                  Text('Luxelane v1.0.0', style: LuxTypography.caption)),
+              child: Text('Luxelane v1.0.0', style: LuxTypography.caption)),
           const SizedBox(height: LuxSpacing.md),
         ],
       );
@@ -274,7 +271,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
   @override
   void initState() {
     super.initState();
-    _name  = TextEditingController(text: widget.user.displayName);
+    _name = TextEditingController(text: widget.user.displayName);
     _phone = TextEditingController(text: widget.user.phone);
   }
 
@@ -387,8 +384,7 @@ class _ProfileHeader extends StatelessWidget {
             decoration: BoxDecoration(
               color: LuxColors.sapphireSubtle,
               borderRadius: BorderRadius.circular(LuxRadius.sm),
-              border:
-                  Border.all(color: LuxColors.sapphire.withOpacity(0.4)),
+              border: Border.all(color: LuxColors.sapphire.withOpacity(0.4)),
             ),
             child: Text(
               user.role == UserRole.admin
@@ -418,8 +414,7 @@ class _InfoTile extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(vertical: LuxSpacing.sm),
         decoration: const BoxDecoration(
-            border:
-                Border(bottom: BorderSide(color: LuxColors.blackBorder))),
+            border: Border(bottom: BorderSide(color: LuxColors.blackBorder))),
         child: Row(
           children: [
             Icon(icon, color: LuxColors.whiteTertiary, size: 18),
@@ -505,15 +500,12 @@ class _PrefTile extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
         onTap: () => _pick(context),
         child: Container(
-          padding:
-              const EdgeInsets.symmetric(vertical: LuxSpacing.md),
+          padding: const EdgeInsets.symmetric(vertical: LuxSpacing.md),
           decoration: const BoxDecoration(
-              border: Border(
-                  bottom: BorderSide(color: LuxColors.blackBorder))),
+              border: Border(bottom: BorderSide(color: LuxColors.blackBorder))),
           child: Row(
             children: [
-              Expanded(
-                  child: Text(label, style: LuxTypography.bodyLarge)),
+              Expanded(child: Text(label, style: LuxTypography.bodyLarge)),
               Text(value, style: LuxTypography.bodyMedium),
               const SizedBox(width: LuxSpacing.sm),
               const Icon(Icons.chevron_right_rounded,

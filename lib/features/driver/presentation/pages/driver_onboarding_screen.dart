@@ -21,8 +21,7 @@ class DriverOnboardingScreen extends StatefulWidget {
   const DriverOnboardingScreen({super.key});
 
   @override
-  State<DriverOnboardingScreen> createState() =>
-      _DriverOnboardingScreenState();
+  State<DriverOnboardingScreen> createState() => _DriverOnboardingScreenState();
 }
 
 class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
@@ -30,24 +29,28 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
   bool _saving = false;
 
   // Vehicle fields
-  final _vehicleForm   = GlobalKey<FormState>();
-  final _make          = TextEditingController();
-  final _model         = TextEditingController();
-  final _year          = TextEditingController(text: '2024');
-  final _plate         = TextEditingController();
-  final _color         = TextEditingController(text: 'Negro');
+  final _vehicleForm = GlobalKey<FormState>();
+  final _make = TextEditingController();
+  final _model = TextEditingController();
+  final _year = TextEditingController(text: '2024');
+  final _plate = TextEditingController();
+  final _color = TextEditingController(text: 'Negro');
   VehicleClass _vehicleClass = VehicleClass.business;
 
   // License fields
-  final _licenseForm   = GlobalKey<FormState>();
+  final _licenseForm = GlobalKey<FormState>();
   final _licenseNumber = TextEditingController();
   final _licenseExpiry = TextEditingController();
 
   @override
   void dispose() {
-    _make.dispose(); _model.dispose(); _year.dispose();
-    _plate.dispose(); _color.dispose();
-    _licenseNumber.dispose(); _licenseExpiry.dispose();
+    _make.dispose();
+    _model.dispose();
+    _year.dispose();
+    _plate.dispose();
+    _color.dispose();
+    _licenseNumber.dispose();
+    _licenseExpiry.dispose();
     super.dispose();
   }
 
@@ -146,8 +149,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
               const SizedBox(height: LuxSpacing.xl),
 
               if (_step == 0) ...[
-                const Text('Tu vehículo',
-                    style: LuxTypography.displayMedium),
+                const Text('Tu vehículo', style: LuxTypography.displayMedium),
                 const SizedBox(height: LuxSpacing.xs),
                 const Text('Registra el vehículo que vas a conducir.',
                     style: LuxTypography.bodyMedium),
@@ -160,8 +162,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
                   plate: _plate,
                   color: _color,
                   vehicleClass: _vehicleClass,
-                  onClassChanged: (v) =>
-                      setState(() => _vehicleClass = v),
+                  onClassChanged: (v) => setState(() => _vehicleClass = v),
                 ),
                 const SizedBox(height: LuxSpacing.xl),
                 LuxButton(
@@ -192,8 +193,8 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
                   decoration: BoxDecoration(
                     color: LuxColors.sapphire.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(LuxRadius.md),
-                    border: Border.all(
-                        color: LuxColors.sapphire.withOpacity(0.3)),
+                    border:
+                        Border.all(color: LuxColors.sapphire.withOpacity(0.3)),
                   ),
                   child: Row(
                     children: [
@@ -243,8 +244,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
 // ---------------------------------------------------------------------------
 
 class _StepIndicator extends StatelessWidget {
-  const _StepIndicator(
-      {required this.currentStep, required this.totalSteps});
+  const _StepIndicator({required this.currentStep, required this.totalSteps});
   final int currentStep;
   final int totalSteps;
 
@@ -252,15 +252,14 @@ class _StepIndicator extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         children: List.generate(totalSteps, (i) {
           final active = i == currentStep;
-          final done   = i < currentStep;
+          final done = i < currentStep;
           return Expanded(
             child: Container(
               margin: EdgeInsets.only(right: i < totalSteps - 1 ? 6 : 0),
               height: 3,
               decoration: BoxDecoration(
-                color: done || active
-                    ? LuxColors.sapphire
-                    : LuxColors.blackBorder,
+                color:
+                    done || active ? LuxColors.sapphire : LuxColors.blackBorder,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -321,16 +320,12 @@ class _VehicleForm extends StatelessWidget {
                           : LuxColors.blackElevated,
                       borderRadius: BorderRadius.circular(LuxRadius.md),
                       border: Border.all(
-                        color: sel
-                            ? LuxColors.sapphire
-                            : LuxColors.blackBorder,
+                        color: sel ? LuxColors.sapphire : LuxColors.blackBorder,
                       ),
                     ),
                     child: Text(vc.label,
                         style: LuxTypography.bodyMedium.copyWith(
-                          color: sel
-                              ? LuxColors.sapphire
-                              : LuxColors.white,
+                          color: sel ? LuxColors.sapphire : LuxColors.white,
                         )),
                   ),
                 );

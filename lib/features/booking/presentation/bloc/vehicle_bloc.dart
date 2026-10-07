@@ -98,10 +98,10 @@ class VehicleBloc extends Bloc<VehicleEvent, VehicleState> {
   final VehicleRepository _repo;
 
   static const Map<VehicleClass, double> _basePrices = {
-    VehicleClass.business:    75,
-    VehicleClass.firstClass:  140,
+    VehicleClass.business: 75,
+    VehicleClass.firstClass: 140,
     VehicleClass.businessVan: 90,
-    VehicleClass.electric:    60,
+    VehicleClass.electric: 60,
   };
 
   Future<void> _onLoad(

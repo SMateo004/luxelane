@@ -15,10 +15,11 @@ abstract class AdminRepository {
   Future<Either<Failure, void>> updatePricingRule(PricingRule rule);
   Future<Either<Failure, void>> verifyDriver(String driverId);
   Future<Either<Failure, void>> toggleUserStatus(String userId, bool active);
-  Future<Either<Failure, void>> toggleVehicleStatus(String vehicleId, bool active);
+  Future<Either<Failure, void>> toggleVehicleStatus(
+      String vehicleId, bool active);
   Future<Either<Failure, void>> toggleMaintenanceMode(bool active);
-  Future<Either<Failure, void>> updateGlobalSettings(Map<String, dynamic> fields);
+  Future<Either<Failure, void>> updateGlobalSettings(
+      Map<String, dynamic> fields);
   Future<Either<Failure, void>> deleteBooking(String bookingId);
   Future<Either<Failure, void>> updateUserRole(String userId, UserRole role);
 }
-

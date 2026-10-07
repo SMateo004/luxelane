@@ -128,7 +128,8 @@ void main() {
       'emits BookingStatusUpdated on BookingStatusChanged',
       build: () => BookingBloc(bookingRepository: repo),
       act: (bloc) => bloc.add(
-        BookingStatusChanged(booking: _makeBooking(status: BookingStatus.confirmed)),
+        BookingStatusChanged(
+            booking: _makeBooking(status: BookingStatus.confirmed)),
       ),
       expect: () => [
         isA<BookingStatusUpdated>()

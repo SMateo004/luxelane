@@ -75,11 +75,13 @@ class _ServiceCard extends StatelessWidget {
                 children: [
                   Text(serviceType.label, style: LuxTypography.titleLarge),
                   const SizedBox(height: 4),
-                  Text(serviceType.description, style: LuxTypography.bodyMedium),
+                  Text(serviceType.description,
+                      style: LuxTypography.bodyMedium),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: LuxColors.whiteTertiary),
+            const Icon(Icons.chevron_right_rounded,
+                color: LuxColors.whiteTertiary),
           ],
         ),
       );

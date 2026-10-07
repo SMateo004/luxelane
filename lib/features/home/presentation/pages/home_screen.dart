@@ -49,7 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
       initial = const LatLng(-17.7833, -63.1821);
     }
 
-    if (!mounted) { setState(() => _locating = false); return; }
+    if (!mounted) {
+      setState(() => _locating = false);
+      return;
+    }
     setState(() => _locating = false);
 
     // Open map picker centered on detected/default location
@@ -287,8 +290,7 @@ class _LocateButton extends StatelessWidget {
                     height: 16,
                     child: CircularProgressIndicator(
                         strokeWidth: 1.5,
-                        valueColor:
-                            AlwaysStoppedAnimation(LuxColors.sapphire)),
+                        valueColor: AlwaysStoppedAnimation(LuxColors.sapphire)),
                   ),
                 )
               : const Icon(Icons.my_location_rounded,
@@ -424,71 +426,74 @@ class _BookingForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final locBg = isDark ? LuxColors.blackElevated : const Color(0xFFF0EFEb);
-    final locIconColor = isDark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
+    final locIconColor =
+        isDark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
     return Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: PlaceAutocompleteField(
-                  label: 'Lugar de recogida',
-                  hint: 'Calle, barrio, aeropuerto…',
-                  prefixIcon: Icons.radio_button_checked_outlined,
-                  initialValue: origin,
-                  onPlaceSelected: onOriginSelected,
-                  onMapPick: onOriginMapPick,
-                ),
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: PlaceAutocompleteField(
+                label: 'Lugar de recogida',
+                hint: 'Calle, barrio, aeropuerto…',
+                prefixIcon: Icons.radio_button_checked_outlined,
+                initialValue: origin,
+                onPlaceSelected: onOriginSelected,
+                onMapPick: onOriginMapPick,
               ),
-              const SizedBox(width: LuxSpacing.sm),
-              // Locate / map-pick button
-              GestureDetector(
-                onTap: onLocate,
-                child: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: locBg,
-                    borderRadius: BorderRadius.circular(LuxRadius.sm),
-                    border: Border.all(
-                      color: isDark ? LuxColors.blackBorder : const Color(0xFFE4E1DA),
-                    ),
+            ),
+            const SizedBox(width: LuxSpacing.sm),
+            // Locate / map-pick button
+            GestureDetector(
+              onTap: onLocate,
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: locBg,
+                  borderRadius: BorderRadius.circular(LuxRadius.sm),
+                  border: Border.all(
+                    color: isDark
+                        ? LuxColors.blackBorder
+                        : const Color(0xFFE4E1DA),
                   ),
-                  child: locating
-                      ? Center(
-                          child: SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1.5,
-                              valueColor: AlwaysStoppedAnimation(locIconColor),
-                            ),
-                          ),
-                        )
-                      : Icon(Icons.my_location_rounded,
-                          size: 18, color: locIconColor),
                 ),
+                child: locating
+                    ? Center(
+                        child: SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1.5,
+                            valueColor: AlwaysStoppedAnimation(locIconColor),
+                          ),
+                        ),
+                      )
+                    : Icon(Icons.my_location_rounded,
+                        size: 18, color: locIconColor),
               ),
-            ],
-          ),
-          if (serviceType == ServiceType.oneWay) ...[
-            const SizedBox(height: LuxSpacing.sm),
-            PlaceAutocompleteField(
-              label: 'Destino',
-              hint: '¿A dónde vas?',
-              prefixIcon: Icons.location_on_outlined,
-              initialValue: destination,
-              onPlaceSelected: onDestinationSelected,
-              onMapPick: onDestinationMapPick,
             ),
           ],
+        ),
+        if (serviceType == ServiceType.oneWay) ...[
           const SizedBox(height: LuxSpacing.sm),
-          _DateTimeTile(date: date, onChanged: onDateChanged),
-          if (serviceType == ServiceType.byTheHour) ...[
-            const SizedBox(height: LuxSpacing.sm),
-            _HourSelector(hours: hours, onChanged: onHoursChanged),
-          ],
+          PlaceAutocompleteField(
+            label: 'Destino',
+            hint: '¿A dónde vas?',
+            prefixIcon: Icons.location_on_outlined,
+            initialValue: destination,
+            onPlaceSelected: onDestinationSelected,
+            onMapPick: onDestinationMapPick,
+          ),
         ],
-      );
+        const SizedBox(height: LuxSpacing.sm),
+        _DateTimeTile(date: date, onChanged: onDateChanged),
+        if (serviceType == ServiceType.byTheHour) ...[
+          const SizedBox(height: LuxSpacing.sm),
+          _HourSelector(hours: hours, onChanged: onHoursChanged),
+        ],
+      ],
+    );
   }
 }
 
@@ -513,8 +518,7 @@ class _RouteInfoBadge extends StatelessWidget {
             const SizedBox(width: LuxSpacing.xs),
             Text(
               '${route.distanceKm.toStringAsFixed(1)} km · ${route.durationMin} min',
-              style: LuxTypography.caption
-                  .copyWith(color: LuxColors.sapphire),
+              style: LuxTypography.caption.copyWith(color: LuxColors.sapphire),
             ),
           ],
         ),
@@ -597,8 +601,7 @@ class _HourSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final iconColor =
-        dark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
+    final iconColor = dark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
     final textColor = dark ? LuxColors.white : const Color(0xFF111111);
     final accentColor = dark ? LuxColors.sapphire : const Color(0xFF111111);
     return Container(

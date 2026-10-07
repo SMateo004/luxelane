@@ -9,8 +9,11 @@ import 'package:luxelane/features/driver/presentation/bloc/driver_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockBookingRepository extends Mock implements BookingRepository {}
+
 class MockUserRepository extends Mock implements UserRepository {}
+
 class MockMapsService extends Mock implements MapsService {}
+
 class MockVehicleRepository extends Mock implements VehicleRepository {}
 
 final _now = DateTime(2025, 6);
@@ -110,11 +113,11 @@ void main() {
             )).thenAnswer((_) async => const Right(null));
         return bloc()
           ..emit(DriverLoaded(
-              user: _driverUser,
-              profile: _driverProfile,
-              isAvailable: false,
-              bookings: const [],
-            ));
+            user: _driverUser,
+            profile: _driverProfile,
+            isAvailable: false,
+            bookings: const [],
+          ));
       },
       act: (bloc) => bloc.add(const DriverAvailabilityToggled(
         userId: 'driver-1',

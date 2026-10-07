@@ -241,7 +241,8 @@ class VehicleCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.person_outline, size: 14, color: LuxColors.whiteTertiary),
+                      const Icon(Icons.person_outline,
+                          size: 14, color: LuxColors.whiteTertiary),
                       const SizedBox(width: 4),
                       Text(
                         'Hasta ${vehicleClass.capacity}',
@@ -280,10 +281,14 @@ class _VehicleIcon extends StatelessWidget {
 
   IconData get _icon {
     switch (vehicleClass) {
-      case VehicleClass.business:    return Icons.directions_car_outlined;
-      case VehicleClass.firstClass:  return Icons.star_outline_rounded;
-      case VehicleClass.businessVan: return Icons.airport_shuttle_outlined;
-      case VehicleClass.electric:    return Icons.electric_car_outlined;
+      case VehicleClass.business:
+        return Icons.directions_car_outlined;
+      case VehicleClass.firstClass:
+        return Icons.star_outline_rounded;
+      case VehicleClass.businessVan:
+        return Icons.airport_shuttle_outlined;
+      case VehicleClass.electric:
+        return Icons.electric_car_outlined;
     }
   }
 
@@ -330,13 +335,17 @@ class ServiceTypeTab extends StatelessWidget {
                       height: 44,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: selected == t ? LuxColors.sapphire : Colors.transparent,
+                        color: selected == t
+                            ? LuxColors.sapphire
+                            : Colors.transparent,
                         borderRadius: BorderRadius.circular(LuxRadius.sm),
                       ),
                       child: Text(
                         t.label.toUpperCase(),
                         style: LuxTypography.caption.copyWith(
-                          color: selected == t ? LuxColors.black : LuxColors.whiteTertiary,
+                          color: selected == t
+                              ? LuxColors.black
+                              : LuxColors.whiteTertiary,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
                         ),
@@ -360,19 +369,27 @@ class BookingStatusChip extends StatelessWidget {
 
   Color get _color {
     switch (status) {
-      case BookingStatus.pending:        return LuxColors.whiteTertiary;
-      case BookingStatus.confirmed:      return LuxColors.sapphire;
-      case BookingStatus.driverArriving: return LuxColors.sapphireLight;
-      case BookingStatus.driverArrived:  return LuxColors.sapphireLight;
-      case BookingStatus.inProgress:     return LuxColors.success;
-      case BookingStatus.completed:      return LuxColors.success;
-      case BookingStatus.cancelled:      return LuxColors.error;
+      case BookingStatus.pending:
+        return LuxColors.whiteTertiary;
+      case BookingStatus.confirmed:
+        return LuxColors.sapphire;
+      case BookingStatus.driverArriving:
+        return LuxColors.sapphireLight;
+      case BookingStatus.driverArrived:
+        return LuxColors.sapphireLight;
+      case BookingStatus.inProgress:
+        return LuxColors.success;
+      case BookingStatus.completed:
+        return LuxColors.success;
+      case BookingStatus.cancelled:
+        return LuxColors.error;
     }
   }
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: LuxSpacing.sm, vertical: 3),
+        padding:
+            const EdgeInsets.symmetric(horizontal: LuxSpacing.sm, vertical: 3),
         decoration: BoxDecoration(
           color: _color.withOpacity(0.12),
           borderRadius: BorderRadius.circular(LuxRadius.sm),
@@ -490,7 +507,8 @@ class SectionHeader extends StatelessWidget {
               children: [
                 Text(title, style: LuxTypography.headlineLarge),
                 const SizedBox(height: LuxSpacing.xs),
-                Container(width: LuxSpacing.lg, height: 1, color: LuxColors.sapphire),
+                Container(
+                    width: LuxSpacing.lg, height: 1, color: LuxColors.sapphire),
               ],
             ),
           ),
@@ -526,7 +544,8 @@ class DriverCard extends StatelessWidget {
             CircleAvatar(
               radius: 28,
               backgroundColor: LuxColors.blackElevated,
-              backgroundImage: photoUrl != null ? NetworkImage(photoUrl!) : null,
+              backgroundImage:
+                  photoUrl != null ? NetworkImage(photoUrl!) : null,
               child: photoUrl == null
                   ? Text(
                       name.isNotEmpty ? name[0].toUpperCase() : '?',
@@ -548,9 +567,11 @@ class DriverCard extends StatelessWidget {
             ),
             Column(
               children: [
-                const Icon(Icons.star_rounded, color: LuxColors.sapphire, size: 18),
+                const Icon(Icons.star_rounded,
+                    color: LuxColors.sapphire, size: 18),
                 const SizedBox(height: 2),
-                Text(rating.toStringAsFixed(1), style: LuxTypography.titleLarge),
+                Text(rating.toStringAsFixed(1),
+                    style: LuxTypography.titleLarge),
               ],
             ),
           ],
@@ -597,7 +618,8 @@ class PriceEstimateBar extends StatelessWidget {
                 const Text('PRECIO FIJO', style: LuxTypography.caption),
                 Text(
                   'Bs${price.toStringAsFixed(0)}',
-                  style: LuxTypography.displayMedium.copyWith(color: LuxColors.sapphire),
+                  style: LuxTypography.displayMedium
+                      .copyWith(color: LuxColors.sapphire),
                 ),
               ],
             ),
@@ -618,7 +640,8 @@ class PriceEstimateBar extends StatelessWidget {
 // LuxSnackbar
 // ---------------------------------------------------------------------------
 
-void showLuxSnackbar(BuildContext context, String message, {bool isError = false}) {
+void showLuxSnackbar(BuildContext context, String message,
+    {bool isError = false}) {
   ScaffoldMessenger.of(context).hideCurrentSnackBar();
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -639,7 +662,9 @@ void showLuxSnackbar(BuildContext context, String message, {bool isError = false
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(LuxRadius.sm),
         side: BorderSide(
-          color: isError ? LuxColors.error.withOpacity(0.4) : LuxColors.sapphire.withOpacity(0.4),
+          color: isError
+              ? LuxColors.error.withOpacity(0.4)
+              : LuxColors.sapphire.withOpacity(0.4),
         ),
       ),
       margin: const EdgeInsets.all(LuxSpacing.md),
@@ -682,7 +707,9 @@ class StepIndicator extends StatelessWidget {
             return Expanded(
               child: Container(
                 height: 1,
-                color: i ~/ 2 < currentStep ? LuxColors.sapphire : LuxColors.blackBorder,
+                color: i ~/ 2 < currentStep
+                    ? LuxColors.sapphire
+                    : LuxColors.blackBorder,
               ),
             );
           }
@@ -702,16 +729,21 @@ class StepIndicator extends StatelessWidget {
                           : LuxColors.blackElevated,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: active || done ? LuxColors.sapphire : LuxColors.blackBorder,
+                    color: active || done
+                        ? LuxColors.sapphire
+                        : LuxColors.blackBorder,
                   ),
                 ),
                 child: Center(
                   child: done
-                      ? const Icon(Icons.check, size: 14, color: LuxColors.black)
+                      ? const Icon(Icons.check,
+                          size: 14, color: LuxColors.black)
                       : Text(
                           '${idx + 1}',
                           style: LuxTypography.caption.copyWith(
-                            color: active ? LuxColors.sapphire : LuxColors.whiteTertiary,
+                            color: active
+                                ? LuxColors.sapphire
+                                : LuxColors.whiteTertiary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),

@@ -6,14 +6,14 @@ import '../../../../app/theme/app_theme.dart';
 import '../bloc/auth_bloc.dart';
 
 // ── Design tokens (aligned with home_web_page / LD) ─────────────────────────
-const _dark    = Color(0xFF070E18);
-const _panel   = Color(0xFF0A1220);
-const _border  = Color(0xFF1A2B40);
-const _sph     = Color(0xFF1B4F8A);
-const _sphLt   = Color(0xFF2563B0);
-const _white   = Colors.white;
-const _kSans   = 'Montserrat';
-const _kSerif  = 'Cormorant Garamond';
+const _dark = Color(0xFF070E18);
+const _panel = Color(0xFF0A1220);
+const _border = Color(0xFF1A2B40);
+const _sph = Color(0xFF1B4F8A);
+const _sphLt = Color(0xFF2563B0);
+const _white = Colors.white;
+const _kSans = 'Montserrat';
+const _kSerif = 'Cormorant Garamond';
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -24,9 +24,9 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _form  = GlobalKey<FormState>();
+  final _form = GlobalKey<FormState>();
   final _email = TextEditingController();
-  final _pass  = TextEditingController();
+  final _pass = TextEditingController();
 
   @override
   void dispose() {
@@ -170,10 +170,9 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   icon: Icons.email_outlined,
-                  validator: (v) =>
-                      v == null || !v.contains('@')
-                          ? 'Ingresa un correo válido'
-                          : null,
+                  validator: (v) => v == null || !v.contains('@')
+                      ? 'Ingresa un correo válido'
+                      : null,
                 ),
                 const SizedBox(height: 14),
                 _AuthField(
@@ -182,9 +181,7 @@ class _LoginPageState extends State<LoginPage> {
                   obscureText: true,
                   icon: Icons.lock_outline,
                   validator: (v) =>
-                      v == null || v.length < 6
-                          ? 'Mínimo 6 caracteres'
-                          : null,
+                      v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
                 ),
                 const SizedBox(height: 6),
                 Align(
@@ -194,12 +191,12 @@ class _LoginPageState extends State<LoginPage> {
                     onTap: () {
                       if (_email.text.contains('@')) {
                         context.read<AuthBloc>().add(
-                              PasswordResetRequested(
-                                  email: _email.text.trim()),
+                              PasswordResetRequested(email: _email.text.trim()),
                             );
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text('Correo de restablecimiento enviado')),
+                              content:
+                                  Text('Correo de restablecimiento enviado')),
                         );
                       }
                     },
@@ -263,7 +260,9 @@ class _BrandPanel extends StatelessWidget {
           ),
           // Left accent line
           Positioned(
-            left: 0, top: 0, bottom: 0,
+            left: 0,
+            top: 0,
+            bottom: 0,
             child: Container(width: 1, color: _border),
           ),
           // Content
@@ -393,10 +392,9 @@ class _AuthButtonState extends State<_AuthButton> {
   @override
   Widget build(BuildContext context) => MouseRegion(
         onEnter: (_) => setState(() => _hover = true),
-        onExit:  (_) => setState(() => _hover = false),
-        cursor: widget.onTap != null
-            ? SystemMouseCursors.click
-            : MouseCursor.defer,
+        onExit: (_) => setState(() => _hover = false),
+        cursor:
+            widget.onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
         child: GestureDetector(
           onTap: widget.onTap,
           child: AnimatedContainer(
@@ -412,7 +410,8 @@ class _AuthButtonState extends State<_AuthButton> {
             alignment: Alignment.center,
             child: widget.loading
                 ? const SizedBox(
-                    width: 20, height: 20,
+                    width: 20,
+                    height: 20,
                     child: CircularProgressIndicator(
                         strokeWidth: 2, color: _white),
                   )
@@ -448,7 +447,7 @@ class _TextLinkState extends State<_TextLink> {
   @override
   Widget build(BuildContext context) => MouseRegion(
         onEnter: (_) => setState(() => _hover = true),
-        onExit:  (_) => setState(() => _hover = false),
+        onExit: (_) => setState(() => _hover = false),
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: widget.onTap,
@@ -459,7 +458,8 @@ class _TextLinkState extends State<_TextLink> {
               fontSize: 12,
               fontWeight: FontWeight.w500,
               color: _hover ? _sphLt : _sph.withAlpha(220),
-              decoration: _hover ? TextDecoration.underline : TextDecoration.none,
+              decoration:
+                  _hover ? TextDecoration.underline : TextDecoration.none,
               decorationColor: _sphLt,
             ),
           ),
@@ -477,9 +477,11 @@ class _LuxLogo extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 6, height: 6,
+            width: 6,
+            height: 6,
             decoration: const BoxDecoration(
-              color: _sph, shape: BoxShape.circle,
+              color: _sph,
+              shape: BoxShape.circle,
             ),
           ),
           const SizedBox(width: 10),
@@ -504,9 +506,9 @@ class _DotGridPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final p = Paint()..color = const Color(0x0FFFFFFF);
     const s = 40.0;
-    for (double x = s; x < size.width;  x += s)
-    for (double y = s; y < size.height; y += s)
-      canvas.drawCircle(Offset(x, y), 1.2, p);
+    for (double x = s; x < size.width; x += s)
+      for (double y = s; y < size.height; y += s)
+        canvas.drawCircle(Offset(x, y), 1.2, p);
   }
 
   @override

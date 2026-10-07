@@ -44,16 +44,14 @@ class BookingRepositoryImpl implements BookingRepository {
     String riderId,
   ) async {
     try {
-      final snap = await _col
-          .where('riderId', isEqualTo: riderId)
-          .get();
+      final snap = await _col.where('riderId', isEqualTo: riderId).get();
       final list = snap.docs
           .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
           .toList();
 
       // Manual sort to avoid index requirement
       list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      
+
       return Right(list);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -77,26 +75,22 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
-  Stream<List<Booking>> streamPendingBookings() => _col
-      .snapshots()
-      .map((snap) {
+  Stream<List<Booking>> streamPendingBookings() => _col.snapshots().map((snap) {
         final list = snap.docs
-          .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-          .where((b) => b.status == BookingStatus.pending)
-          .toList();
+            .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
+            .where((b) => b.status == BookingStatus.pending)
+            .toList();
         // Manual sort to avoid needing a composite index
         list.sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
         return list;
       });
 
   @override
-  Stream<List<Booking>> watchDriverBookings(String driverId) => _col
-      .where('driverId', isEqualTo: driverId)
-      .snapshots()
-      .map((snap) {
+  Stream<List<Booking>> watchDriverBookings(String driverId) =>
+      _col.where('driverId', isEqualTo: driverId).snapshots().map((snap) {
         final list = snap.docs
-          .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-          .toList();
+            .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
+            .toList();
         // Manual sort by updatedAt descending
         list.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
         return list;
@@ -132,7 +126,8 @@ class BookingRepositoryImpl implements BookingRepository {
         }
         final currentStatus = snapshot.get('status') as String?;
         if (currentStatus != BookingStatus.pending.label) {
-          throw Exception('Booking is no longer pending. It may have been accepted by another driver.');
+          throw Exception(
+              'Booking is no longer pending. It may have been accepted by another driver.');
         }
         transaction.update(docRef, {
           'driverId': driverId,

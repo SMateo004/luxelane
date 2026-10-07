@@ -66,7 +66,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
             actions: [
               TextButton.icon(
                 onPressed: () => context.push('/payment/add'),
-                icon: const Icon(Icons.add, size: 18, color: LuxColors.sapphire),
+                icon:
+                    const Icon(Icons.add, size: 18, color: LuxColors.sapphire),
                 label: Text(
                   'AGREGAR',
                   style: LuxTypography.labelLarge
@@ -117,8 +118,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               Icon(Icons.lock_outline,
                   size: 14, color: LuxColors.whiteTertiary),
               SizedBox(width: LuxSpacing.xs),
-              Text('Protegido por Stripe',
-                  style: LuxTypography.caption),
+              Text('Protegido por Stripe', style: LuxTypography.caption),
             ],
           ),
         ],
@@ -142,8 +142,7 @@ class _EmptyCards extends StatelessWidget {
             const Icon(Icons.credit_card_outlined,
                 size: 48, color: LuxColors.whiteTertiary),
             const SizedBox(height: LuxSpacing.md),
-            const Text('Sin métodos de pago',
-                style: LuxTypography.titleMedium),
+            const Text('Sin métodos de pago', style: LuxTypography.titleMedium),
             const SizedBox(height: LuxSpacing.sm),
             const Text('Agrega una tarjeta para reservar viajes',
                 style: LuxTypography.bodyMedium),

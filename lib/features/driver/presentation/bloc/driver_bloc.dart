@@ -154,9 +154,9 @@ class DriverLoaded extends DriverState {
   Booking? get currentRequest {
     try {
       final vClass = user.vehicleClass;
-      return pendingRequests.firstWhere((b) => 
-        !declinedIds.contains(b.id) && (vClass == null || b.vehicleClass == vClass)
-      );
+      return pendingRequests.firstWhere((b) =>
+          !declinedIds.contains(b.id) &&
+          (vClass == null || b.vehicleClass == vClass));
     } catch (_) {
       return null;
     }
@@ -185,8 +185,15 @@ class DriverLoaded extends DriverState {
       );
 
   @override
-  List<Object?> get props =>
-      [user, profile, isAvailable, bookings, isTracking, pendingRequests, declinedIds];
+  List<Object?> get props => [
+        user,
+        profile,
+        isAvailable,
+        bookings,
+        isTracking,
+        pendingRequests,
+        declinedIds
+      ];
 
   DriverLoaded copyWith({
     User? user,
@@ -278,13 +285,14 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       emit(DriverLoaded(
         user: user,
         profile: profile,
-        isAvailable: profile.isAvailable, 
+        isAvailable: profile.isAvailable,
         bookings: const [],
       ));
 
       add(DriverBookingsWatched(driverId: event.userId));
       add(const DriverPendingBookingsWatched());
-      if (profile.isAvailable) add(DriverLocationTrackingStarted(userId: event.userId));
+      if (profile.isAvailable)
+        add(DriverLocationTrackingStarted(userId: event.userId));
     } catch (e) {
       emit(DriverError('Startup failed: ${e.toString()}'));
     }
@@ -317,9 +325,9 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       onData: (pending) {
         if (state is! DriverLoaded) return state;
         final cur = state as DriverLoaded;
-        
+
         // DEBUG: Allow all for now to verify connection
-        final filtered = pending; 
+        final filtered = pending;
 
         return cur.copyWith(pendingRequests: filtered);
       },
@@ -444,7 +452,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       status: BookingStatus.confirmed,
     );
     // REMOVED: setDriverAvailability(false) - driver stays online
-    
+
     if (state is DriverLoaded) {
       emit((state as DriverLoaded).copyWith(
         pendingRequests: const [],

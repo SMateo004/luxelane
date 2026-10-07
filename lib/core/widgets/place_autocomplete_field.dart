@@ -16,7 +16,7 @@ class PlaceAutocompleteField extends StatefulWidget {
     this.initialValue,
     this.onPlaceSelected,
     this.onMapPick,
-    this.glass = false,   // true → transparent/glass look for hero bar
+    this.glass = false, // true → transparent/glass look for hero bar
   });
 
   final String label;
@@ -28,51 +28,62 @@ class PlaceAutocompleteField extends StatefulWidget {
   final bool glass;
 
   @override
-  State<PlaceAutocompleteField> createState() =>
-      _PlaceAutocompleteFieldState();
+  State<PlaceAutocompleteField> createState() => _PlaceAutocompleteFieldState();
 }
 
 class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
-  final _ctrl     = TextEditingController();
-  final _focus    = FocusNode();
-  final _maps     = sl<MapsService>();
+  final _ctrl = TextEditingController();
+  final _focus = FocusNode();
+  final _maps = sl<MapsService>();
   final _fieldKey = GlobalKey();
   final _portalController = OverlayPortalController();
 
   List<PlaceSuggestion> _suggestions = [];
-  Timer?  _debounce;
-  bool    _loading  = false;
-  bool    _showDrop = false;
-  bool    _ignoreUpdates = false;
+  Timer? _debounce;
+  bool _loading = false;
+  bool _showDrop = false;
+  bool _ignoreUpdates = false;
   String? _token;
 
   // ── theme helpers ──────────────────────────────────────────────────────────
   bool get _isDark => Theme.of(context).brightness == Brightness.dark;
   // glass=true → fully transparent field that sits inside the hero liquid-glass bar
-  Color get _fieldBg     => widget.glass ? Colors.transparent
+  Color get _fieldBg => widget.glass
+      ? Colors.transparent
       : (_isDark ? LuxColors.blackElevated : const Color(0xFFF5F4F1));
-  Color get _borderColor => widget.glass ? Colors.transparent
-      : (_isDark ? LuxColors.blackBorder   : const Color(0xFFE4E1DA));
-  Color get _focusBorder => widget.glass ? Colors.transparent
-      : (_isDark ? LuxColors.sapphire.withOpacity(0.6) : const Color(0xFF111111));
-  Color get _iconColor   => widget.glass ? const Color(0x99FFFFFF)
+  Color get _borderColor => widget.glass
+      ? Colors.transparent
+      : (_isDark ? LuxColors.blackBorder : const Color(0xFFE4E1DA));
+  Color get _focusBorder => widget.glass
+      ? Colors.transparent
+      : (_isDark
+          ? LuxColors.sapphire.withOpacity(0.6)
+          : const Color(0xFF111111));
+  Color get _iconColor => widget.glass
+      ? const Color(0x99FFFFFF)
       : (_isDark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA));
-  Color get _textColor   => widget.glass ? Colors.white
-      : (_isDark ? LuxColors.white         : const Color(0xFF111111));
-  Color get _hintColor   => widget.glass ? const Color(0x66FFFFFF)
+  Color get _textColor => widget.glass
+      ? Colors.white
+      : (_isDark ? LuxColors.white : const Color(0xFF111111));
+  Color get _hintColor => widget.glass
+      ? const Color(0x66FFFFFF)
       : (_isDark ? LuxColors.whiteTertiary : const Color(0xFFBBBBBB));
-  Color get _dropBg      => _isDark ? LuxColors.blackSurface    : Colors.white;
-  Color get _dropDivider => _isDark ? LuxColors.blackBorder     : const Color(0xFFEEECE8);
-  Color get _suggPrimary   => _isDark ? LuxColors.white         : const Color(0xFF111111);
-  Color get _suggSecondary => _isDark ? LuxColors.whiteTertiary : const Color(0xFF999999);
-  Color get _suggIcon      => _isDark ? LuxColors.whiteTertiary : const Color(0xFFCCCCCC);
+  Color get _dropBg => _isDark ? LuxColors.blackSurface : Colors.white;
+  Color get _dropDivider =>
+      _isDark ? LuxColors.blackBorder : const Color(0xFFEEECE8);
+  Color get _suggPrimary => _isDark ? LuxColors.white : const Color(0xFF111111);
+  Color get _suggSecondary =>
+      _isDark ? LuxColors.whiteTertiary : const Color(0xFF999999);
+  Color get _suggIcon =>
+      _isDark ? LuxColors.whiteTertiary : const Color(0xFFCCCCCC);
 
   void _dbg(String msg) => debugPrint('[PAF] $msg');
 
   @override
   void initState() {
     super.initState();
-    if (widget.initialValue != null) _ctrl.text = widget.initialValue!.displayName;
+    if (widget.initialValue != null)
+      _ctrl.text = widget.initialValue!.displayName;
     _token = _newToken();
     _focus.addListener(() {
       if (!_focus.hasFocus) _hideDropdown();
@@ -83,7 +94,8 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   void didUpdateWidget(PlaceAutocompleteField old) {
     super.didUpdateWidget(old);
     if (_ignoreUpdates) return;
-    if (widget.initialValue != old.initialValue && widget.initialValue != null) {
+    if (widget.initialValue != old.initialValue &&
+        widget.initialValue != null) {
       _ctrl.text = widget.initialValue!.displayName;
       _hideDropdown();
     }
@@ -111,7 +123,10 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
 
   void _onChanged(String value) {
     _debounce?.cancel();
-    if (value.length < 2) { _hideDropdown(); return; }
+    if (value.length < 2) {
+      _hideDropdown();
+      return;
+    }
     _debounce = Timer(const Duration(milliseconds: 320), () => _search(value));
   }
 
@@ -134,12 +149,12 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   Future<void> _pick(PlaceSuggestion s) async {
     _ignoreUpdates = true;
     _ctrl.text = s.mainText;
-    
-    setState(() { 
-      _suggestions = []; 
-      _loading = true; 
+
+    setState(() {
+      _suggestions = [];
+      _loading = true;
     });
-    
+
     _hideDropdown();
     _focus.unfocus();
 
@@ -150,7 +165,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
         address: s.description,
       );
       if (!mounted) return;
-      
+
       if (place != null) {
         _ctrl.text = place.displayName;
         _token = _newToken();
@@ -190,28 +205,27 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
     final renderBox =
         _fieldKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null) return const SizedBox.shrink();
-    final size   = renderBox.size;
+    final size = renderBox.size;
     final offset = renderBox.localToGlobal(Offset.zero);
 
     // Flip the dropdown above the field when there isn't enough space below.
-    final screenH    = MediaQuery.sizeOf(ctx).height;
+    final screenH = MediaQuery.sizeOf(ctx).height;
     final dropHeight = (_suggestions.length * 50.0).clamp(0.0, 260.0);
     final spaceBelow = screenH - (offset.dy + size.height + 2);
-    final showAbove  = spaceBelow < dropHeight + 8;
-    final topPos     = showAbove
-        ? offset.dy - dropHeight - 4
-        : offset.dy + size.height + 2;
+    final showAbove = spaceBelow < dropHeight + 8;
+    final topPos =
+        showAbove ? offset.dy - dropHeight - 4 : offset.dy + size.height + 2;
 
-    final bg      = _dropBg;
+    final bg = _dropBg;
     final divider = _dropDivider;
-    final primary   = _suggPrimary;
+    final primary = _suggPrimary;
     final secondary = _suggSecondary;
-    final iconCol   = _suggIcon;
-    final suggs     = List<PlaceSuggestion>.from(_suggestions);
+    final iconCol = _suggIcon;
+    final suggs = List<PlaceSuggestion>.from(_suggestions);
 
     return Positioned(
-      left:  offset.dx,
-      top:   topPos,
+      left: offset.dx,
+      top: topPos,
       width: size.width,
       child: Material(
         color: bg,
@@ -229,8 +243,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (int i = 0; i < suggs.length; i++) ...[
-                  if (i > 0)
-                    Divider(height: 1, thickness: 1, color: divider),
+                  if (i > 0) Divider(height: 1, thickness: 1, color: divider),
                   // Use Listener (lower-level than GestureDetector) for reliable
                   // tap detection inside OverlayPortal on Flutter web.
                   GestureDetector(
@@ -335,8 +348,8 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 14),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                 ),
               ),
             ),
@@ -347,7 +360,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                   width: 14,
                   height: 14,
                   child: CircularProgressIndicator(
-                    strokeWidth: 1.2, color: _iconColor),
+                      strokeWidth: 1.2, color: _iconColor),
                 ),
               )
             else if (_ctrl.text.isNotEmpty)

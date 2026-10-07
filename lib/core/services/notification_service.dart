@@ -10,11 +10,10 @@ class NotificationService {
   final _messaging = FirebaseMessaging.instance;
 
   Future<void> init({required String userId}) async {
-    if (kIsWeb) return; // FCM background + token not supported on web without vapid setup
+    if (kIsWeb)
+      return; // FCM background + token not supported on web without vapid setup
 
-    await _messaging.requestPermission(
-      
-    );
+    await _messaging.requestPermission();
 
     try {
       final token = kIsWeb

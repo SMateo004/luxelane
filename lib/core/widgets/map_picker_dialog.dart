@@ -18,8 +18,7 @@ Future<Place?> showMapPickerDialog(
     context: context,
     barrierColor: Colors.black54,
     builder: (_) => _MapPickerDialog(
-      initial: initial ??
-          const LatLng(-17.7833, -63.1821), // Santa Cruz center
+      initial: initial ?? const LatLng(-17.7833, -63.1821), // Santa Cruz center
       title: title,
     ),
   );
@@ -63,7 +62,8 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
     final place = await _maps.reverseGeocode(pos.latitude, pos.longitude);
     if (!mounted) return;
     setState(() {
-      _address = place?.address ?? '${pos.latitude.toStringAsFixed(5)}, ${pos.longitude.toStringAsFixed(5)}';
+      _address = place?.address ??
+          '${pos.latitude.toStringAsFixed(5)}, ${pos.longitude.toStringAsFixed(5)}';
       _loading = false;
     });
   }
@@ -94,7 +94,8 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
     final isLight = Theme.of(context).brightness == Brightness.light;
     final cardBg = isLight ? Colors.white : const Color(0xFF141414);
     final textColor = isLight ? const Color(0xFF111111) : Colors.white;
-    final subColor = isLight ? const Color(0xFF888888) : const Color(0xFF777777);
+    final subColor =
+        isLight ? const Color(0xFF888888) : const Color(0xFF777777);
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -108,18 +109,18 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
             children: [
               // ── Map ────────────────────────────────────────────────────
               GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: _center,
-                        zoom: 15,
-                      ),
-                      onMapCreated: (c) => _ctrl = c,
-                      onCameraMove: _onCameraMove,
-                      onCameraIdle: _onCameraIdle,
-                      myLocationButtonEnabled: false,
-                      zoomControlsEnabled: false,
-                      mapToolbarEnabled: false,
-                      compassEnabled: false,
-                    ),
+                initialCameraPosition: CameraPosition(
+                  target: _center,
+                  zoom: 15,
+                ),
+                onMapCreated: (c) => _ctrl = c,
+                onCameraMove: _onCameraMove,
+                onCameraIdle: _onCameraIdle,
+                myLocationButtonEnabled: false,
+                zoomControlsEnabled: false,
+                mapToolbarEnabled: false,
+                compassEnabled: false,
+              ),
 
               // ── Center pin (stays fixed, map moves under it) ────────
               const Center(child: _CenterPin()),
@@ -221,9 +222,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             padding: const EdgeInsets.symmetric(horizontal: 28),
                             elevation: 0,
-                            shape: const RoundedRectangleBorder(
-                              
-                            ),
+                            shape: const RoundedRectangleBorder(),
                             textStyle: const TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 11,
@@ -293,4 +292,3 @@ class _CenterPin extends StatelessWidget {
 // ---------------------------------------------------------------------------
 // Placeholder when Maps JS key is missing
 // ---------------------------------------------------------------------------
-

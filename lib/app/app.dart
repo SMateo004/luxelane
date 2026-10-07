@@ -23,14 +23,14 @@ class LuxelaneApp extends StatefulWidget {
 
 class _LuxelaneAppState extends State<LuxelaneApp> {
   // ── BLoCs — created once, never recreated ──────────────────────────────
-  late final AuthBloc    _authBloc;
+  late final AuthBloc _authBloc;
   late final BookingBloc _bookingBloc;
   late final VehicleBloc _vehicleBloc;
-  late final RideBloc    _rideBloc;
+  late final RideBloc _rideBloc;
   late final PaymentBloc _paymentBloc;
   late final ProfileBloc _profileBloc;
-  late final DriverBloc           _driverBloc;
-  late final NotificationBloc     _notificationBloc;
+  late final DriverBloc _driverBloc;
+  late final NotificationBloc _notificationBloc;
 
   // ── Routers — created once ─────────────────────────────────────────────
   late final dynamic _router;
@@ -39,13 +39,13 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
   void initState() {
     super.initState();
 
-    _authBloc         = sl<AuthBloc>()..add(const AuthStarted());
-    _bookingBloc      = sl<BookingBloc>();
-    _vehicleBloc      = sl<VehicleBloc>();
-    _rideBloc         = sl<RideBloc>();
-    _paymentBloc      = sl<PaymentBloc>();
-    _profileBloc      = sl<ProfileBloc>();
-    _driverBloc       = sl<DriverBloc>();
+    _authBloc = sl<AuthBloc>()..add(const AuthStarted());
+    _bookingBloc = sl<BookingBloc>();
+    _vehicleBloc = sl<VehicleBloc>();
+    _rideBloc = sl<RideBloc>();
+    _paymentBloc = sl<PaymentBloc>();
+    _profileBloc = sl<ProfileBloc>();
+    _driverBloc = sl<DriverBloc>();
     _notificationBloc = sl<NotificationBloc>();
 
     _router = buildRouter(_authBloc);
