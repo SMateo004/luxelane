@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/design/lux_promise.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
@@ -394,7 +395,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Precio fijo · Sin sorpresas · Disponible en todo el mundo',
+                    '${LuxPromise.fixedPrice}  ·  ${LuxPromise.freeCancel}  ·  ${LuxPromise.chauffeurs}',
                     style: TextStyle(
                       fontFamily: kSans,
                       fontSize: 11,
@@ -784,7 +785,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 'Recibimiento personalizado')),
             const SizedBox(width: 48),
             Expanded(child: item(Icons.timer_outlined,
-                'Hasta 60 minutos de espera gratuita')),
+                'Espera gratuita: 60 min en aeropuertos, 15 min en otras recogidas')),
             const SizedBox(width: 48),
             Expanded(child: item(Icons.event_available_outlined,
                 'Cancelación gratuita hasta 1 hora antes de la recogida')),
@@ -1390,39 +1391,13 @@ class _BookingScreenState extends State<BookingScreen> {
         const Divider(color: _kDivider, height: 1),
         const SizedBox(height: 16),
 
-        // ── Apply offer + All fees included ─────────────────────────────
+        // ── All fees included ───────────────────────────────────────────
         Row(
           children: [
-            GestureDetector(
-              onTap: () {},
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF0EDE8),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.local_offer_outlined,
-                        size: 15, color: _kTextPrimary),
-                    SizedBox(width: 7),
-                    Text(
-                      'Aplicar oferta',
-                      style: TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: _kTextPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const Spacer(),
+            const Icon(Icons.lock_outline_rounded, size: 14, color: _kTextSub),
+            const SizedBox(width: 8),
             const Text(
-              'Todos los cargos incluidos',
+              LuxPromise.fixedPrice,
               style: TextStyle(
                 fontFamily: kSans,
                 fontSize: 12,
@@ -1691,8 +1666,9 @@ class _BookingScreenState extends State<BookingScreen> {
           }),
         ],
         const SizedBox(height: 16),
-        _GuaranteeRow(Icons.event_available_outlined,
-            'Cancelación gratuita hasta 1 hora antes de la recogida'),
+        _GuaranteeRow(Icons.event_available_outlined, LuxPromise.freeCancelLong),
+        const SizedBox(height: 8),
+        _GuaranteeRow(Icons.lock_outline_rounded, LuxPromise.fixedPriceLong),
         const SizedBox(height: 8),
       ],
     );
@@ -1737,26 +1713,13 @@ class _WebTopBar extends StatelessWidget {
         child: Row(
           children: [
             // ── Luxelane logo mark ───────────────────────────────────────
-            Row(mainAxisSize: MainAxisSize.min, children: [
-              Container(
-                width: 26, height: 26,
-                decoration: BoxDecoration(
-                  border: Border.all(color: _kTextPrimary, width: 1.5),
-                ),
-                child: const Center(
-                  child: Text('L', style: TextStyle(
-                    fontFamily: kSerif, fontSize: 15,
-                    fontWeight: FontWeight.w500, color: _kTextPrimary,
-                  )),
-                ),
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () => context.go('/'),
+                child: const LuxelaneWordmark(color: _kTextPrimary),
               ),
-              const SizedBox(width: 12),
-              const Text('LUXELANE', style: TextStyle(
-                fontFamily: kSans, fontSize: 12,
-                fontWeight: FontWeight.w600, letterSpacing: 3.0,
-                color: _kTextPrimary,
-              )),
-            ]),
+            ),
             const SizedBox(width: 40),
             // ── Back button ──────────────────────────────────────────────
             MouseRegion(
@@ -2574,9 +2537,9 @@ class _MobileVehicleDetail extends StatelessWidget {
           const SizedBox(height: 10),
           const Divider(color: _kDivider, height: 1),
           const SizedBox(height: 10),
-          _GuaranteeRow(Icons.price_check_outlined, 'Todos los cargos incluidos'),
+          _GuaranteeRow(Icons.price_check_outlined, LuxPromise.fixedPrice),
           const SizedBox(height: 6),
-          _GuaranteeRow(Icons.event_available_outlined, 'Cancelación gratuita hasta 1h antes'),
+          _GuaranteeRow(Icons.event_available_outlined, LuxPromise.freeCancel),
         ]),
       );
 }
@@ -2834,7 +2797,7 @@ class _LightPriceBar extends StatelessWidget {
         child: Row(children: [
           Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('PRECIO FIJO',
+                const Text('PRECIO FINAL · TODO INCLUIDO',
                     style: TextStyle(fontFamily: kSans, fontSize: 9,
                         fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 1.5)),
                 Text('Bs ${price.toStringAsFixed(0)}',

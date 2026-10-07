@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../booking/presentation/bloc/booking_bloc.dart';
@@ -62,30 +63,66 @@ class _TripsScreenState extends State<TripsScreen> {
             }
             if (state is BookingTripsLoaded) {
               final trips = state.bookings;
-              if (trips.isEmpty) {
-                return EmptyState(
-                  message: 'Aún no hay viajes.\nReserva tu primera experiencia.',
-                  actionLabel: 'Reservar ahora',
-                  onAction: () => context.go('/booking'),
-                  icon: Icons.directions_car_outlined,
-                );
-              }
-              return ListView.separated(
-                padding: const EdgeInsets.all(LuxSpacing.md),
-                itemCount: trips.length,
-                separatorBuilder: (_, __) =>
-                    const SizedBox(height: LuxSpacing.sm),
-                itemBuilder: (_, i) => _TripCard(booking: trips[i]),
+              if (trips.isEmpty) return _empty(context);
+
+              // Upcoming first (soonest on top), then history (latest on top):
+              // the question a traveller opens this screen with is "what's next?".
+              const done = {BookingStatus.completed, BookingStatus.cancelled};
+              final upcoming = trips.where((b) => !done.contains(b.status)).toList()
+                ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+              final past = trips.where((b) => done.contains(b.status)).toList()
+                ..sort((a, b) => b.scheduledAt.compareTo(a.scheduledAt));
+
+              return RefreshIndicator(
+                color: LuxColors.sapphireBright,
+                backgroundColor: LuxColors.blackSurface,
+                onRefresh: () async => _loadTrips(),
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(
+                      LuxSpacing.md, LuxSpacing.md, LuxSpacing.md, LuxSpacing.xxl),
+                  children: [
+                    if (upcoming.isNotEmpty) ...[
+                      const _SectionLabel('Próximos'),
+                      for (final b in upcoming) ...[
+                        _TripCard(booking: b),
+                        const SizedBox(height: LuxSpacing.sm),
+                      ],
+                      const SizedBox(height: LuxSpacing.lg),
+                    ],
+                    if (past.isNotEmpty) ...[
+                      const _SectionLabel('Anteriores'),
+                      for (final b in past) ...[
+                        _TripCard(booking: b),
+                        const SizedBox(height: LuxSpacing.sm),
+                      ],
+                    ],
+                  ],
+                ),
               );
             }
-            return EmptyState(
-              message: 'No rides yet.\nBook your first experience.',
-              actionLabel: 'Book Now',
-              onAction: () => context.go('/booking'),
-              icon: Icons.directions_car_outlined,
-            );
+            return _empty(context);
           },
         ),
+      );
+
+  Widget _empty(BuildContext context) => EmptyState(
+        message: 'Tu primer trayecto\nte está esperando.',
+        actionLabel: 'Reservar ahora',
+        onAction: () => context.go('/'),
+        icon: Icons.directions_car_outlined,
+      );
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: LuxSpacing.sm + 4, left: 2),
+        child: Text(text.toUpperCase(),
+            style: LuxTypography.caption.copyWith(
+                color: LuxColors.whiteSecondary, letterSpacing: 2.2, fontSize: 10)),
       );
 }
 
@@ -102,19 +139,20 @@ class _TripCard extends StatelessWidget {
   String get _vehicle => booking.vehicleClass.label;
 
   String get _price =>
-      '\$${booking.estimatedPrice.toStringAsFixed(0)}';
+      'Bs ${(booking.finalPrice ?? booking.estimatedPrice).toStringAsFixed(0)}';
 
-  String get _date {
-    final dt = booking.scheduledAt;
-    const months = [
-      '', 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
-      'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'
-    ];
-    return '${dt.day} ${months[dt.month]} ${dt.year}';
-  }
+  bool get _trackable => const {
+        BookingStatus.confirmed,
+        BookingStatus.driverArriving,
+        BookingStatus.driverArrived,
+        BookingStatus.inProgress,
+      }.contains(booking.status);
+
+  String get _date => LuxFormat.dateTime(booking.scheduledAt);
 
   @override
   Widget build(BuildContext context) => LuxCard(
+        onTap: _trackable ? () => context.go('/ride/${booking.id}') : null,
         child: Row(
           children: [
             Container(
@@ -124,8 +162,11 @@ class _TripCard extends StatelessWidget {
                 color: LuxColors.blackElevated,
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
               ),
-              child: const Icon(Icons.directions_car_outlined,
-                  color: LuxColors.sapphire, size: 24),
+              child: Icon(
+                  booking.serviceType == ServiceType.byTheHour
+                      ? Icons.schedule_rounded
+                      : Icons.directions_car_outlined,
+                  color: LuxColors.sapphireBright, size: 22),
             ),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
@@ -140,15 +181,20 @@ class _TripCard extends StatelessWidget {
                   Text(_vehicle, style: LuxTypography.bodyMedium),
                   const SizedBox(height: 2),
                   Text(_date, style: LuxTypography.caption),
+                  if (_trackable) ...[
+                    const SizedBox(height: 6),
+                    Text('SEGUIR EN EL MAPA →',
+                        style: LuxTypography.caption.copyWith(
+                            color: LuxColors.sapphireBright,
+                            letterSpacing: 1.4, fontSize: 9.5)),
+                  ],
                 ],
               ),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(_price,
-                    style: LuxTypography.titleLarge
-                        .copyWith(color: LuxColors.sapphire)),
+                Text(_price, style: LuxTypography.titleLarge),
                 const SizedBox(height: 4),
                 BookingStatusChip(status: booking.status),
               ],

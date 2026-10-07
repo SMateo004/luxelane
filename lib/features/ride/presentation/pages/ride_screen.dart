@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +12,7 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../booking/presentation/bloc/booking_bloc.dart';
 import '../../../notifications/presentation/bloc/notification_bloc.dart';
@@ -27,6 +29,7 @@ class RideScreen extends StatefulWidget {
 
 class _RideScreenState extends State<RideScreen> {
   Booking? _booking;
+  User?    _driver;       // assigned chauffeur's account (name, phone)
   String?  _actualRideId; // real ride doc ID fetched after completion
   bool _ratingSubmitted = false;
 
@@ -58,23 +61,40 @@ class _RideScreenState extends State<RideScreen> {
     });
   }
 
+  Future<void> _ensureDriver() async {
+    final id = _booking?.driverId;
+    if (id == null || id.isEmpty || _driver?.id == id) return;
+    final result = await sl<UserRepository>().getUserById(id);
+    result.fold((_) {}, (u) {
+      if (mounted) setState(() => _driver = u);
+    });
+  }
+
+  Future<void> _callDriver() async {
+    final phone = _driver?.phone ?? '';
+    if (phone.isEmpty) return;
+    await launchUrl(Uri(scheme: 'tel', path: phone));
+  }
+
   BookingStatus get _status =>
       _booking?.status ?? BookingStatus.confirmed;
 
   String get _statusMessage {
     switch (_status) {
+      case BookingStatus.pending:
+        return 'Estamos asignando a tu chófer. Te avisaremos en cuanto esté confirmado.';
       case BookingStatus.confirmed:
-        return 'Chófer asignado · en camino hacia ti';
+        return 'Tu reserva está confirmada. Te avisaremos cuando tu chófer salga hacia ti.';
       case BookingStatus.driverArriving:
-        return 'El chófer está en camino';
+        return 'Tu chófer va de camino al punto de recogida.';
       case BookingStatus.driverArrived:
-        return 'Tu chófer ha llegado';
+        return 'Tu chófer ha llegado y te espera. Tómate tu tiempo.';
       case BookingStatus.inProgress:
-        return 'En camino al destino';
+        return 'Disfruta del trayecto. Llegarás a tu destino en breve.';
       case BookingStatus.completed:
-        return '¡Has llegado. Gracias!';
-      default:
-        return 'Procesando…';
+        return 'Has llegado. Gracias por viajar con Luxelane.';
+      case BookingStatus.cancelled:
+        return 'Esta reserva fue cancelada.';
     }
   }
 
@@ -112,7 +132,7 @@ class _RideScreenState extends State<RideScreen> {
       builder: (ctx) => BlocProvider.value(
         value: context.read<RideBloc>(),
         child: _RatingDialog(
-          driverName: 'Tu conductor',
+          driverName: _driver?.displayName ?? 'tu chófer',
           rideId: _actualRideId,
           onSubmit: (rating) {
             // Submit rating to Firestore if ride doc exists
@@ -189,6 +209,7 @@ class _RideScreenState extends State<RideScreen> {
       listener: (context, state) {
         if (state is BookingStatusUpdated) {
           setState(() => _booking = state.booking);
+          _ensureDriver();
           _createStatusNotification(context, state.booking.status,
               riderId: state.booking.riderId);
           if (state.booking.status == BookingStatus.completed &&
@@ -208,25 +229,67 @@ class _RideScreenState extends State<RideScreen> {
               stream: sl<UserRepository>()
                   .watchDriverProfile(_booking!.driverId!),
               builder: (context, snap) =>
-                  _buildScaffold(snap.data?.currentLocation),
+                  _buildScaffold(snap.data?.currentLocation, snap.data),
             )
-          : _buildScaffold(null),
+          : _buildScaffold(null, null),
     );
   }
 
-  Widget _buildScaffold(GeoPoint? driverGeo) {
+  Widget _buildScaffold(GeoPoint? driverGeo, DriverProfile? profile) {
     final driverLatLng = driverGeo != null
         ? LatLng(driverGeo.latitude, driverGeo.longitude)
         : null;
     final web = isWeb(context);
     return Scaffold(
       body: web
-          ? _webLayout(driverLatLng)
-          : _mobileLayout(driverLatLng),
+          ? _webLayout(driverLatLng, profile)
+          : _mobileLayout(driverLatLng, profile),
     );
   }
 
-  Widget _mobileLayout(LatLng? driverLatLng) => Stack(
+  /// The action row: contact the chauffeur when we have a number; the manual
+  /// status stepper only exists in debug builds, never in front of a client.
+  Widget _actions() {
+    final canCall = (_driver?.phone ?? '').isNotEmpty;
+    final completed = _status == BookingStatus.completed;
+    final showAdvance = completed || kDebugMode;
+    if (!canCall && !showAdvance) return const SizedBox.shrink();
+    return Row(
+      children: [
+        if (canCall)
+          Expanded(
+            child: LuxOutlinedButton(
+              label: 'Llamar al chófer',
+              onPressed: _callDriver,
+              icon: Icons.call_outlined,
+            ),
+          ),
+        if (canCall && showAdvance) const SizedBox(width: LuxSpacing.sm),
+        if (showAdvance)
+          Expanded(
+            child: LuxButton(
+              label: completed ? 'Calificar viaje' : 'Siguiente (dev)',
+              onPressed: _advance,
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _driverSection(DriverProfile? profile) {
+    final d = _driver;
+    if (d == null) return const _AssigningCard();
+    return DriverCard(
+      name: d.displayName,
+      rating: profile?.rating ?? 5.0,
+      vehicle: _booking != null
+          ? '${_booking!.vehicleClass.label} · ${_booking!.vehicleClass.description}'
+          : '',
+      photoUrl: d.photoUrl,
+    );
+  }
+
+  Widget _mobileLayout(LatLng? driverLatLng, DriverProfile? profile) => Stack(
         children: [
           _MapArea(
             booking: _booking,
@@ -240,7 +303,8 @@ class _RideScreenState extends State<RideScreen> {
                 _BottomPanel(
                   status: _status,
                   message: _statusMessage,
-                  onAdvance: _advance,
+                  driver: _driverSection(profile),
+                  actions: _actions(),
                 ),
               ],
             ),
@@ -248,7 +312,7 @@ class _RideScreenState extends State<RideScreen> {
         ],
       );
 
-  Widget _webLayout(LatLng? driverLatLng) => Row(
+  Widget _webLayout(LatLng? driverLatLng, DriverProfile? profile) => Row(
         children: [
           Expanded(
             child: _MapArea(
@@ -273,34 +337,9 @@ class _RideScreenState extends State<RideScreen> {
                           Text(_statusMessage,
                               style: LuxTypography.bodyMedium),
                           const SizedBox(height: LuxSpacing.lg),
-                          const DriverCard(
-                            name: 'James Whitmore',
-                            rating: 4.9,
-                            vehicle: 'Mercedes-Benz S-Class · Negro',
-                            plate: 'LUX · 2891',
-                          ),
+                          _driverSection(profile),
                           const Spacer(),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: LuxOutlinedButton(
-                                  label: 'Contactar',
-                                  onPressed: () {},
-                                  icon: Icons.call_outlined,
-                                ),
-                              ),
-                              const SizedBox(width: LuxSpacing.sm),
-                              Expanded(
-                                child: LuxButton(
-                                  label: _status ==
-                                          BookingStatus.completed
-                                      ? 'Calificar y finalizar'
-                                      : 'Siguiente (dev)',
-                                  onPressed: _advance,
-                                ),
-                              ),
-                            ],
-                          ),
+                          _actions(),
                         ],
                       ),
                     ),
@@ -365,12 +404,14 @@ class _BottomPanel extends StatelessWidget {
   const _BottomPanel({
     required this.status,
     required this.message,
-    required this.onAdvance,
+    required this.driver,
+    required this.actions,
   });
 
   final BookingStatus status;
   final String message;
-  final VoidCallback onAdvance;
+  final Widget driver;
+  final Widget actions;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -381,52 +422,55 @@ class _BottomPanel extends StatelessWidget {
           border: Border(top: BorderSide(color: LuxColors.blackBorder)),
         ),
         padding: const EdgeInsets.fromLTRB(
-          LuxSpacing.md,
-          LuxSpacing.md,
-          LuxSpacing.md,
-          LuxSpacing.xxl,
+          LuxSpacing.md + 4,
+          LuxSpacing.lg,
+          LuxSpacing.md + 4,
+          LuxSpacing.xl,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                BookingStatusChip(status: status),
-                const SizedBox(width: LuxSpacing.sm),
-                Expanded(
-                  child: Text(message, style: LuxTypography.bodyMedium),
-                ),
-              ],
+            BookingStatusChip(status: status),
+            const SizedBox(height: LuxSpacing.sm + 4),
+            Text(message,
+                style: LuxTypography.bodyLarge.copyWith(height: 1.5)),
+            const SizedBox(height: LuxSpacing.lg),
+            driver,
+            const SizedBox(height: LuxSpacing.md),
+            actions,
+          ],
+        ),
+      );
+}
+
+/// Shown until a chauffeur is assigned — honest, calm, no placeholder person.
+class _AssigningCard extends StatelessWidget {
+  const _AssigningCard();
+
+  @override
+  Widget build(BuildContext context) => LuxCard(
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 28,
+              height: 28,
+              child: CircularProgressIndicator(
+                  strokeWidth: 1.2, color: LuxColors.sapphireBright),
             ),
-            const SizedBox(height: LuxSpacing.md),
-            const LuxDivider(),
-            const SizedBox(height: LuxSpacing.md),
-            const DriverCard(
-              name: 'James Whitmore',
-              rating: 4.9,
-              vehicle: 'Mercedes-Benz S-Class · Negro',
-              plate: 'LUX · 2891',
-            ),
-            const SizedBox(height: LuxSpacing.md),
-            Row(
-              children: [
-                Expanded(
-                  child: LuxOutlinedButton(
-                    label: 'Contactar',
-                    onPressed: () {},
-                    icon: Icons.call_outlined,
-                  ),
-                ),
-                const SizedBox(width: LuxSpacing.sm),
-                Expanded(
-                  child: LuxButton(
-                    label: status == BookingStatus.completed
-                        ? 'Calificar y finalizar'
-                        : 'Siguiente (dev)',
-                    onPressed: onAdvance,
-                  ),
-                ),
-              ],
+            const SizedBox(width: LuxSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Asignando a tu chófer',
+                      style: LuxTypography.titleMedium),
+                  const SizedBox(height: 2),
+                  Text('Verás su nombre, vehículo y valoración aquí.',
+                      style: LuxTypography.caption
+                          .copyWith(color: LuxColors.whiteSecondary)),
+                ],
+              ),
             ),
           ],
         ),

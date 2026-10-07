@@ -2,18 +2,17 @@ import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart'
     show GoogleMap, GoogleMapController, CameraPosition, CameraUpdate,
          Marker, MarkerId;
 import 'package:video_player/video_player.dart';
+import '../../../../core/design/lux_promise.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/place_model.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/place_autocomplete_field.dart';
-import '../../../auth/presentation/bloc/auth_bloc.dart';
-import '../../../notifications/presentation/widgets/notification_bell.dart';
+import '../../../../core/widgets/lux_site_chrome.dart';
 import 'home_design.dart';
 
 // ============================================================
@@ -105,6 +104,12 @@ class _WebHomePageState extends State<WebHomePage> {
     });
   }
 
+  void _scrollToTop() => _scroll.animateTo(
+        0,
+        duration: const Duration(milliseconds: 900),
+        curve: const Cubic(0.16, 1, 0.3, 1),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,393 +175,26 @@ class _WebHomePageState extends State<WebHomePage> {
                   ),
 
                   // ── Footer ───────────────────────────────────────────
-                  _FooterSection(
-                    onFleet:      () => _scrollToKey(_fleetKey),
-                    onServices:   () => _scrollToKey(_fleetKey),
-                    onBusiness:   () => _scrollToKey(_businessKey),
+                  LuxSiteFooter(
+                    onFleet:    () => _scrollToKey(_fleetKey),
+                    onBusiness: () => _scrollToKey(_businessKey),
                   ),
                 ],
               ),
             ),
 
             // ── Fixed nav overlay (on top of scroll) ────────────────
-            _LuxNav(
-              scrollY:    _scrollY,
+            LuxSiteNav(
+              solid:      _scrollY > 60,
               onFleet:    () => _scrollToKey(_fleetKey),
-              onServices: () => _scrollToKey(_fleetKey),
               onBusiness: () => _scrollToKey(_businessKey),
+              onBook:     _scrollToTop,
             ),
           ],
         ),
       ),
     );
   }
-}
-
-// ============================================================
-// Fixed Nav
-// ============================================================
-
-class _LuxNav extends StatelessWidget {
-  const _LuxNav({
-    required this.scrollY,
-    required this.onFleet,
-    required this.onServices,
-    required this.onBusiness,
-  });
-
-  final double scrollY;
-  final VoidCallback onFleet;
-  final VoidCallback onServices;
-  final VoidCallback onBusiness;
-
-  @override
-  Widget build(BuildContext context) {
-    final scrolled = scrollY > 60;
-    final w = MediaQuery.sizeOf(context).width;
-    final narrow = w < 900;
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 400),
-      height: 72,
-      decoration: BoxDecoration(
-        color: scrolled ? const Color(0xF5070E18) : Colors.transparent,
-        border: Border(
-          bottom: BorderSide(
-            color: scrolled ? Colors.white.withAlpha(25) : Colors.transparent,
-          ),
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: narrow ? 24 : 56),
-        child: Row(
-          children: [
-            // Logo → always goes home
-            MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: GestureDetector(
-                onTap: () => context.go('/'),
-                child: const _LuxLogo(light: true),
-              ),
-            ),
-            const Spacer(),
-            // Hide nav links on narrow screens — keep only CTA
-            if (!narrow) ...[
-              const _ServicesDropdownLink(),
-              const SizedBox(width: 32),
-              _NavLink('Flota',        light: true, onTap: onFleet),
-              const SizedBox(width: 32),
-              _NavLink('Para empresas',light: true, onTap: onBusiness),
-              const SizedBox(width: 40),
-            ],
-            // Auth-aware right side
-            BlocBuilder<AuthBloc, AuthState>(
-              builder: (ctx, auth) {
-                if (auth is AuthAuthenticated) {
-                  return Row(children: [
-                    if (!narrow) _NavCta(onTap: () => ctx.go('/')),
-                    if (!narrow) const SizedBox(width: 12),
-                    const NotificationBell(color: Colors.white),
-                    const SizedBox(width: 8),
-                    _AvatarDot(
-                      name:  auth.user.displayName,
-                      onTap: () => ctx.go('/profile'),
-                    ),
-                  ]);
-                }
-                return _NavCta(onTap: () => ctx.go('/'));
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _LuxLogo extends StatelessWidget {
-  const _LuxLogo({this.light = false});
-  final bool light;
-
-  @override
-  Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 26, height: 26,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: light ? Colors.white.withAlpha(200) : LD.ink,
-                width: 1.5,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                'L',
-                style: TextStyle(
-                  fontFamily: kSerif, fontSize: 15, fontWeight: FontWeight.w500,
-                  color: light ? Colors.white : LD.ink,
-                  decoration: TextDecoration.none,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Text(
-            'LUXELANE',
-            style: TextStyle(
-              fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w600,
-              letterSpacing: 3.0,
-              color: light ? Colors.white : LD.ink,
-              decoration: TextDecoration.none,
-            ),
-          ),
-        ],
-      );
-}
-
-class _NavLink extends StatefulWidget {
-  const _NavLink(this.label, {required this.onTap, this.light = false});
-  final String label;
-  final VoidCallback onTap;
-  final bool light;
-
-  @override
-  State<_NavLink> createState() => _NavLinkState();
-}
-
-class _NavLinkState extends State<_NavLink> {
-  bool _hover = false;
-
-  @override
-  Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) => setState(() => _hover = true),
-        onExit:  (_) => setState(() => _hover = false),
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: Text(
-            widget.label.toUpperCase(),
-            style: TextStyle(
-              fontFamily: kSans, fontSize: 11, fontWeight: FontWeight.w400,
-              letterSpacing: 1.0,
-              color: _hover
-                  ? (widget.light ? Colors.white : LD.ink)
-                  : (widget.light ? Colors.white.withAlpha(160) : LD.ink3),
-              decoration: TextDecoration.none,
-            ),
-          ),
-        ),
-      );
-}
-
-// ── Services dropdown nav link ────────────────────────────────────────────────
-
-class _ServicesDropdownLink extends StatefulWidget {
-  const _ServicesDropdownLink();
-
-  @override
-  State<_ServicesDropdownLink> createState() => _ServicesDropdownLinkState();
-}
-
-class _ServicesDropdownLinkState extends State<_ServicesDropdownLink> {
-  bool _hover = false;
-  bool _dropHover = false;
-  final _portalController = OverlayPortalController();
-  final _key = GlobalKey();
-
-  void _show() {
-    setState(() => _hover = true);
-    if (!_portalController.isShowing) _portalController.show();
-  }
-
-  void _hide() {
-    setState(() => _hover = false);
-    Future.delayed(const Duration(milliseconds: 120), () {
-      if (!_dropHover && mounted) {
-        _portalController.hide();
-      }
-    });
-  }
-
-  static const _items = [
-    ('Recogida inmediata',       '/servicios/recogida-inmediata'),
-    ('Traslado al aeropuerto',   '/servicios/traslado-aeropuerto'),
-    ('Contratación por horas',   '/servicios/contratacion-por-horas'),
-  ];
-
-  @override
-  Widget build(BuildContext context) => OverlayPortal(
-        controller: _portalController,
-        overlayChildBuilder: (_) {
-          final box = _key.currentContext?.findRenderObject() as RenderBox?;
-          if (box == null) return const SizedBox.shrink();
-          final offset = box.localToGlobal(Offset.zero);
-          final size   = box.size;
-          return Positioned(
-            left: offset.dx - 12,
-            top:  offset.dy + size.height + 4,
-            child: MouseRegion(
-              onEnter: (_) => setState(() => _dropHover = true),
-              onExit:  (_) {
-                setState(() => _dropHover = false);
-                _hide();
-              },
-              child: Container(
-                width: 240,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF0A1220),
-                  border: Border.all(color: const Color(0xFF1A2B40)),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: _items.map((item) => _DropItem(
-                    label: item.$1,
-                    onTap: () {
-                      _portalController.hide();
-                      context.go(item.$2);
-                    },
-                  )).toList(),
-                ),
-              ),
-            ),
-          );
-        },
-        child: MouseRegion(
-          key: _key,
-          onEnter: (_) => _show(),
-          onExit:  (_) => _hide(),
-          cursor: SystemMouseCursors.click,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'SERVICIOS',
-                style: TextStyle(
-                  fontFamily: kSans, fontSize: 11, fontWeight: FontWeight.w400,
-                  letterSpacing: 1.0,
-                  color: _hover ? Colors.white : Colors.white.withAlpha(160),
-                  decoration: TextDecoration.none,
-                ),
-              ),
-              const SizedBox(width: 4),
-              Icon(
-                Icons.keyboard_arrow_down_rounded,
-                size: 14,
-                color: _hover ? Colors.white : Colors.white.withAlpha(160),
-              ),
-            ],
-          ),
-        ),
-      );
-}
-
-class _DropItem extends StatefulWidget {
-  const _DropItem({required this.label, required this.onTap});
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  State<_DropItem> createState() => _DropItemState();
-}
-
-class _DropItemState extends State<_DropItem> {
-  bool _hover = false;
-
-  @override
-  Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) => setState(() => _hover = true),
-        onExit:  (_) => setState(() => _hover = false),
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            color: _hover ? const Color(0xFF1B4F8A).withAlpha(30) : Colors.transparent,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            child: Row(
-              children: [
-                Container(
-                  width: 3, height: 3,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFF1B4F8A), shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  widget.label,
-                  style: TextStyle(
-                    fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w400,
-                    letterSpacing: 0.3,
-                    color: _hover ? Colors.white : Colors.white.withAlpha(180),
-                    decoration: TextDecoration.none,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _NavCta extends StatefulWidget {
-  const _NavCta({required this.onTap});
-  final VoidCallback onTap;
-
-  @override
-  State<_NavCta> createState() => _NavCtaState();
-}
-
-class _NavCtaState extends State<_NavCta> {
-  bool _hover = false;
-
-  @override
-  Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) => setState(() => _hover = true),
-        onExit:  (_) => setState(() => _hover = false),
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-            color: _hover ? LD.sphLt : LD.sph,
-            child: const Text(
-              'RESERVAR UN VIAJE',
-              style: TextStyle(
-                fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w500,
-                letterSpacing: 1.8, color: Colors.white,
-                decoration: TextDecoration.none,
-              ),
-            ),
-          ),
-        ),
-      );
-}
-
-class _AvatarDot extends StatelessWidget {
-  const _AvatarDot({required this.name, required this.onTap});
-  final String name;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: Container(
-          width: 34, height: 34,
-          decoration: const BoxDecoration(shape: BoxShape.circle, color: LD.sphTint),
-          child: Center(
-            child: Text(
-              name.isNotEmpty ? name[0].toUpperCase() : 'U',
-              style: const TextStyle(
-                fontFamily: kSans, fontSize: 13, fontWeight: FontWeight.w500,
-                color: LD.sph, decoration: TextDecoration.none,
-              ),
-            ),
-          ),
-        ),
-      );
 }
 
 // ============================================================
@@ -729,7 +367,7 @@ class _HeroSectionState extends State<_HeroSection>
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: 'Tu chofer ',
+                                text: 'Tu chófer ',
                                 style: displayText(size: narrow ? 52 : 100, color: Colors.white),
                               ),
                               TextSpan(
@@ -961,6 +599,16 @@ class _HeroSectionState extends State<_HeroSection>
                           const SizedBox(width: 180), // matches _BarCta
                         ],
                       ),
+
+                    // ── Reassurance at the moment of commitment ──────────
+                    const SizedBox(height: 18),
+                    Center(
+                      child: Text(
+                        '${LuxPromise.fixedPrice}   ·   ${LuxPromise.freeCancel}   ·   ${LuxPromise.chauffeurs}',
+                        textAlign: TextAlign.center,
+                        style: uiLabel(size: 10.5, color: Colors.white.withAlpha(150), spacing: 0.8),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -1331,7 +979,7 @@ class _BarCtaState extends State<_BarCta> {
             ),
             alignment: Alignment.center,
             child: const Text(
-              'VER OPCIONES',
+              'VER PRECIOS',
               style: TextStyle(
                 fontFamily: kSans, fontSize: 10.5, fontWeight: FontWeight.w600,
                 letterSpacing: 2.2, color: Colors.white,
@@ -1450,13 +1098,7 @@ class _DateDisplayTrigger extends StatelessWidget {
   final bool     isOpen;
   final VoidCallback onTap;
 
-  String _fmt(DateTime d) {
-    const m = ['Ene','Feb','Mar','Abr','May','Jun',
-                'Jul','Ago','Sep','Oct','Nov','Dic'];
-    return '${m[d.month-1]} ${d.day},  '
-           '${d.hour.toString().padLeft(2,'0')}:'
-           '${d.minute.toString().padLeft(2,'0')}';
-  }
+  String _fmt(DateTime d) => LuxFormat.dateTime(d);
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -1841,7 +1483,7 @@ class _MarqueeBarState extends State<_MarqueeBar>
   static const _items = [
     'Precios Fijos','Chóferes Profesionales','Cobertura Mundial',
     'Disponibilidad 24/7','Flota Premium','Puntualidad Garantizada',
-    'Traslados Aeroportuarios','Viajes Corporativos','Privacidad y Discreción','Conductores Multilingüe',
+    'Traslados Aeroportuarios','Viajes Corporativos','Privacidad y Discreción','Chóferes multilingües',
   ];
   static const _oneSetPx = 2200.0;
 
@@ -2232,7 +1874,7 @@ class _PromiseSection extends StatelessWidget {
 
   static const _points = [
     ('Chóferes verificados',
-     'Cada conductor pasa una rigurosa verificación de antecedentes, inspección vehicular y programa de formación.'),
+     'Cada chófer pasa una rigurosa verificación de antecedentes, inspección vehicular y programa de formación.'),
     ('Precio fijo, siempre',
      'Tu precio se confirma al reservar. Sin precios dinámicos, sin cargos ocultos — nunca.'),
     ('Cobertura global',
@@ -2778,103 +2420,6 @@ class _VideoBackgroundState extends State<_VideoBackground> {
         height: _ctrl!.value.size.height,
         child: VideoPlayer(_ctrl!),
       ),
-    );
-  }
-}
-
-// ============================================================
-// Footer
-// ============================================================
-
-class _FooterSection extends StatelessWidget {
-  const _FooterSection({
-    required this.onFleet,
-    required this.onServices,
-    required this.onBusiness,
-  });
-  final VoidCallback onFleet;
-  final VoidCallback onServices;
-  final VoidCallback onBusiness;
-
-  @override
-  Widget build(BuildContext context) {
-    final narrow = MediaQuery.sizeOf(context).width < 900;
-    final links = [
-      ('Servicios', onServices),
-      ('Flota',     onFleet),
-      ('Nosotros',  () {}),
-      ('Contacto',  () {}),
-    ];
-
-    return Container(
-      color: const Color(0xFF03050A),
-      child: Stack(children: [
-        // Sapphire top line (40% opacity)
-        Positioned(top: 0, left: 0, right: 0,
-          child: Container(height: 1, color: LD.sph.withAlpha(102))),
-        Padding(
-          padding: EdgeInsets.fromLTRB(narrow ? 24 : 48, 60, narrow ? 24 : 48, 40),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1100),
-              child: Column(children: [
-                // Logo (35% opacity)
-                Row(mainAxisSize: MainAxisSize.min, children: [
-                  Container(
-                    width: 26, height: 26,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white.withAlpha(90), width: 1.5),
-                    ),
-                    child: Center(
-                      child: Text('L', style: TextStyle(
-                        fontFamily: kSerif, fontSize: 15, fontWeight: FontWeight.w500,
-                        color: Colors.white.withAlpha(90),
-                        decoration: TextDecoration.none,
-                      )),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text('LUXELANE', style: TextStyle(
-                    fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w600,
-                    letterSpacing: 3.0,
-                    color: Colors.white.withAlpha(90),
-                    decoration: TextDecoration.none,
-                  )),
-                ]),
-                const SizedBox(height: 28),
-                // Tappable nav links — wrap on narrow
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 0,
-                  runSpacing: 8,
-                  children: links.map((l) => GestureDetector(
-                    onTap: l.$2,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                      child: MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: Text(l.$1.toUpperCase(), style: TextStyle(
-                          fontFamily: kSans, fontSize: 9.5, fontWeight: FontWeight.w400,
-                          letterSpacing: 2.5,
-                          color: Colors.white.withAlpha(71),
-                          decoration: TextDecoration.none,
-                        )),
-                      ),
-                    ),
-                  )).toList(),
-                ),
-                const SizedBox(height: 28),
-                Text('© 2026 Luxelane. Todos los derechos reservados.', style: TextStyle(
-                  fontFamily: kSans, fontSize: 9.5, fontWeight: FontWeight.w300,
-                  letterSpacing: 1.0,
-                  color: Colors.white.withAlpha(38),
-                  decoration: TextDecoration.none,
-                )),
-              ]),
-            ),
-          ),
-        ),
-      ]),
     );
   }
 }

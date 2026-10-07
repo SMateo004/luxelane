@@ -38,7 +38,7 @@ class LuxButton extends StatelessWidget {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: LuxColors.black,
+                    color: LuxColors.white,
                   ),
                 )
               : Row(
@@ -336,7 +336,7 @@ class ServiceTypeTab extends StatelessWidget {
                       child: Text(
                         t.label.toUpperCase(),
                         style: LuxTypography.caption.copyWith(
-                          color: selected == t ? LuxColors.black : LuxColors.whiteTertiary,
+                          color: selected == t ? LuxColors.white : LuxColors.whiteSecondary,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
                         ),
@@ -509,7 +509,7 @@ class DriverCard extends StatelessWidget {
     required this.name,
     required this.rating,
     required this.vehicle,
-    required this.plate,
+    this.plate = '',
     this.photoUrl,
   });
 
@@ -542,13 +542,13 @@ class DriverCard extends StatelessWidget {
                   Text(name, style: LuxTypography.titleLarge),
                   const SizedBox(height: 2),
                   Text(vehicle, style: LuxTypography.bodyMedium),
-                  Text(plate, style: LuxTypography.caption),
+                  if (plate.isNotEmpty) Text(plate, style: LuxTypography.caption),
                 ],
               ),
             ),
             Column(
               children: [
-                const Icon(Icons.star_rounded, color: LuxColors.sapphire, size: 18),
+                const Icon(Icons.star_rounded, color: LuxColors.sapphireBright, size: 18),
                 const SizedBox(height: 2),
                 Text(rating.toStringAsFixed(1), style: LuxTypography.titleLarge),
               ],
@@ -707,7 +707,7 @@ class StepIndicator extends StatelessWidget {
                 ),
                 child: Center(
                   child: done
-                      ? const Icon(Icons.check, size: 14, color: LuxColors.black)
+                      ? const Icon(Icons.check, size: 14, color: LuxColors.white)
                       : Text(
                           '${idx + 1}',
                           style: LuxTypography.caption.copyWith(
@@ -731,33 +731,64 @@ class StepIndicator extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// LuxelaneWordmark
+// LuxelaneWordmark — the single brand mark used across web and app:
+// a framed serif "L" monogram followed by the spaced LUXELANE logotype.
+// Colour adapts to the surrounding theme unless [color] is given.
 // ---------------------------------------------------------------------------
 
 class LuxelaneWordmark extends StatelessWidget {
-  const LuxelaneWordmark({super.key, this.size = 14});
+  const LuxelaneWordmark({super.key, this.size = 12, this.color, this.showMonogram = true});
+
+  /// Font size of the logotype; the monogram scales with it.
   final double size;
+  final Color? color;
+  final bool showMonogram;
 
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
+  Widget build(BuildContext context) {
+    final c = color ??
+        (Theme.of(context).brightness == Brightness.dark
+            ? LuxColors.white
+            : const Color(0xFF0D1B2E));
+    final box = size * 2.15;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (showMonogram) ...[
           Container(
-            width: size * 0.4,
-            height: size * 0.4,
-            decoration: const BoxDecoration(
-              color: LuxColors.sapphire,
-              shape: BoxShape.circle,
+            width: box,
+            height: box,
+            decoration: BoxDecoration(
+              border: Border.all(color: c.withOpacity(0.85), width: 1.4),
+            ),
+            child: Center(
+              child: Text(
+                'L',
+                style: TextStyle(
+                  fontFamily: 'Cormorant Garamond',
+                  fontSize: size * 1.25,
+                  fontWeight: FontWeight.w500,
+                  color: c,
+                  height: 1,
+                  decoration: TextDecoration.none,
+                ),
+              ),
             ),
           ),
-          SizedBox(width: size * 0.35),
-          Text(
-            'LUXELANE',
-            style: LuxTypography.labelLarge.copyWith(
-              fontSize: size,
-              letterSpacing: size * 0.2,
-            ),
-          ),
+          SizedBox(width: size),
         ],
-      );
+        Text(
+          'LUXELANE',
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: size,
+            fontWeight: FontWeight.w600,
+            letterSpacing: size * 0.25,
+            color: c,
+            decoration: TextDecoration.none,
+          ),
+        ),
+      ],
+    );
+  }
 }
