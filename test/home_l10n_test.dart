@@ -64,7 +64,7 @@ void main() {
         expect(find.text('PICKUP'), findsOneWidget);
         expect(find.text('DATE & TIME'), findsOneWidget);
         expect(find.text('SEE OPTIONS'), findsOneWidget);
-        expect(find.text('Oct 7, 14:30'), findsOneWidget);
+        expect(find.textContaining('Oct 7, 2:30'), findsOneWidget);
         expect(find.text('One way'), findsOneWidget);
         expect(tester.takeException(), isNull);
       });

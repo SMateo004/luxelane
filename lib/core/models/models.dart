@@ -508,7 +508,9 @@ class Chauffeur {
 
   factory Chauffeur.fromJson(Map<String, dynamic> j) => Chauffeur(
         driverId: j['driverId'] as String? ?? '',
-        name: j['name'] as String? ?? 'Tu chófer',
+        // Empty when the chauffeur has no name on file; the UI shows a
+        // localized "Your chauffeur" instead.
+        name: j['name'] as String? ?? '',
         vehicle: j['vehicle'] as String? ?? '',
         vehicleColor: j['vehicleColor'] as String? ?? '',
         plate: j['plate'] as String? ?? '',
@@ -551,13 +553,7 @@ class FlightInfo {
 
   bool get delayed => delayMin >= 10 && !arrived && !cancelled;
 
-  /// Spanish label for the rider.
-  String get label {
-    if (cancelled) return 'Cancelado';
-    if (arrived) return 'Aterrizó';
-    if (delayed) return 'Retrasado $delayMin min';
-    return 'A tiempo';
-  }
+  // Display text: FlightInfoL10n.localizedLabel(context.l10n) in lib/l10n.
 
   factory FlightInfo.fromJson(Map<String, dynamic> j) => FlightInfo(
         number: j['number'] as String? ?? '',

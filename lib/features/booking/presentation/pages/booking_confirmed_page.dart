@@ -195,7 +195,7 @@ class _SummaryCard extends StatelessWidget {
     final at = booking.effectivePickup;
     final date = l.bookingDateTime(
       DateFormat.MMMMEEEEd(context.localeTag).format(at),
-      DateFormat.Hm(context.localeTag).format(at),
+      DateFormat.jm(context.localeTag).format(at),
     );
     final hourly = booking.serviceType == ServiceType.byTheHour;
     final paidByCard = booking.stripePaymentIntentId != null;

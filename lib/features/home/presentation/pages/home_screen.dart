@@ -540,7 +540,7 @@ class _DateTimeTile extends StatelessWidget {
   final ValueChanged<DateTime> onChanged;
 
   String _fmt(AppLocalizations l, DateTime d) =>
-      l.homeDateTimeShort(DateFormat.yMMMEd().format(d), DateFormat.Hm().format(d));
+      l.homeDateTimeShort(DateFormat.yMMMEd().format(d), DateFormat.jm().format(d));
 
   @override
   Widget build(BuildContext context) => GestureDetector(

@@ -83,7 +83,9 @@ class _RideScreenState extends State<RideScreen> {
     showDialog<void>(
       context: context,
       builder: (ctx) => _RatingDialog(
-        driverName: booking.chauffeur?.name ?? context.l10n.rideYourChauffeur,
+        driverName: (booking.chauffeur?.name ?? '').isNotEmpty
+            ? booking.chauffeur!.name
+            : context.l10n.rideYourChauffeur,
         onSubmit: (rating, comment) async {
           final result = await sl<BookingRepository>().rateBooking(
             bookingId: booking.id,
@@ -400,6 +402,10 @@ class _ChauffeurCard extends StatelessWidget {
     }
   }
 
+
+  String _displayName(BuildContext context) =>
+      chauffeur.name.isNotEmpty ? chauffeur.name : context.l10n.rideYourChauffeur;
+
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
@@ -416,7 +422,7 @@ class _ChauffeurCard extends StatelessWidget {
                 backgroundColor: LuxColors.blackElevated,
                 backgroundImage: chauffeur.photoUrl != null ? NetworkImage(chauffeur.photoUrl!) : null,
                 child: chauffeur.photoUrl == null
-                    ? Text(chauffeur.name.characters.first.toUpperCase(),
+                    ? Text(_displayName(context).characters.first.toUpperCase(),
                         style: LuxTypography.headlineMedium.copyWith(color: LuxColors.accent))
                     : null,
               ),
@@ -425,7 +431,7 @@ class _ChauffeurCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(chauffeur.name, style: LuxTypography.titleLarge),
+                    Text(_displayName(context), style: LuxTypography.titleLarge),
                     const SizedBox(height: 2),
                     Text(chauffeur.vehicleLine, style: LuxTypography.bodyMedium),
                     const SizedBox(height: 2),

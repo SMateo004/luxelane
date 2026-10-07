@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:luxelane/core/models/models.dart';
+import 'package:flutter/widgets.dart';
 import 'package:luxelane/core/utils/eta.dart';
+import 'package:luxelane/l10n/l10n.dart';
 
 Map<String, dynamic> _bookingJson(Map<String, dynamic> extra) => {
       'id': 'b1',
@@ -29,8 +31,9 @@ void main() {
     });
 
     test('formats minutes and hours', () {
-      expect(Eta.format(const Duration(minutes: 7)), '7 min');
-      expect(Eta.format(const Duration(minutes: 65)), '1 h 05 min');
+      final l = lookupAppLocalizations(const Locale('es'));
+      expect(localizedDuration(l, const Duration(minutes: 7)), '7 min');
+      expect(localizedDuration(l, const Duration(minutes: 65)), '1 h 05 min');
     });
   });
 
@@ -59,7 +62,8 @@ void main() {
       expect(b.chauffeur!.vehicleLine, 'Mercedes-Benz E 300 · Negro');
       expect(b.chauffeur!.phone, '+59170000000');
       expect(b.flight!.delayed, isTrue);
-      expect(b.flight!.label, 'Retrasado 45 min');
+      expect(b.flight!.localizedLabel(lookupAppLocalizations(const Locale('es'))), 'Retrasado 45 min');
+      expect(b.flight!.localizedLabel(lookupAppLocalizations(const Locale('en'))), 'Delayed 45 min');
     });
 
     test('falls back to the booked time without flight data', () {
@@ -70,9 +74,9 @@ void main() {
     });
 
     test('flight labels', () {
-      expect(const FlightInfo(number: 'X', status: '', arrived: true).label, 'Aterrizó');
-      expect(const FlightInfo(number: 'X', status: '', cancelled: true).label, 'Cancelado');
-      expect(const FlightInfo(number: 'X', status: '', delayMin: 5).label, 'A tiempo');
+      expect(const FlightInfo(number: 'X', status: '', arrived: true).localizedLabel(lookupAppLocalizations(const Locale('es'))), 'Aterrizó');
+      expect(const FlightInfo(number: 'X', status: '', cancelled: true).localizedLabel(lookupAppLocalizations(const Locale('pt'))), 'Cancelado');
+      expect(const FlightInfo(number: 'X', status: '', delayMin: 5).localizedLabel(lookupAppLocalizations(const Locale('en'))), 'On time');
     });
 
     test('live location goes stale after two minutes', () {

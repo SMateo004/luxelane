@@ -20,7 +20,11 @@ enum PaymentStatus { pending, captured, refunded, failed }
 // Extensions
 // ---------------------------------------------------------------------------
 
+// Display names live in lib/l10n (VehicleClassL10n, ServiceTypeL10n,
+// BookingStatusL10n). These Spanish getters remain only for non-UI uses
+// such as logs and admin exports.
 extension VehicleClassX on VehicleClass {
+  @Deprecated('UI text must use localizedLabel(context.l10n)')
   String get label {
     switch (this) {
       case VehicleClass.business:      return 'Business Class';
@@ -30,6 +34,7 @@ extension VehicleClassX on VehicleClass {
     }
   }
 
+  @Deprecated('UI text must use localizedDescription(context.l10n)')
   String get description {
     switch (this) {
       case VehicleClass.business:    return 'Mercedes E-Class o similar';
@@ -48,6 +53,7 @@ extension VehicleClassX on VehicleClass {
 }
 
 extension ServiceTypeX on ServiceType {
+  @Deprecated('UI text must use localizedLabel(context.l10n)')
   String get label {
     switch (this) {
       case ServiceType.oneWay:     return 'Solo ida';
@@ -55,6 +61,7 @@ extension ServiceTypeX on ServiceType {
     }
   }
 
+  @Deprecated('UI text must use localizedDescription(context.l10n)')
   String get description {
     switch (this) {
       case ServiceType.oneWay:     return 'Traslado a precio fijo a tu destino';
@@ -76,6 +83,7 @@ extension BookingStatusX on BookingStatus {
     }
   }
 
+  @Deprecated('UI text must use localizedLabel(context.l10n)')
   String get displayLabel {
     switch (this) {
       case BookingStatus.pending:        return 'Pendiente';

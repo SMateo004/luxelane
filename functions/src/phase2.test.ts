@@ -12,7 +12,7 @@ describe('chauffeur snapshot', () => {
   it('shortens the surname', () => {
     expect(displayName('María Fernanda Rojas')).toBe('María Fernanda R.');
     expect(displayName('Carlos')).toBe('Carlos');
-    expect(displayName('')).toBe('Tu chófer');
+    expect(displayName('')).toBe('');
   });
 
   it('builds the rider-facing card', () => {

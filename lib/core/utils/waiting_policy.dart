@@ -33,8 +33,4 @@ abstract class WaitingPolicy {
       ? l.waitAirportSummary(airportFreeMinutes)
       : l.waitCitySummary(cityFreeMinutes);
 
-  @Deprecated('Use localizedSummary')
-  static String summary(Booking b) => isAirport(b)
-      ? '$airportFreeMinutes min de espera gratuita desde el aterrizaje'
-      : '$cityFreeMinutes min de espera gratuita';
 }

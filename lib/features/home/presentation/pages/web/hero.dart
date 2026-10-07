@@ -903,7 +903,7 @@ class _DateDisplayTrigger extends StatelessWidget {
   final VoidCallback onTap;
 
   String _fmt(AppLocalizations l, DateTime d) =>
-      l.homeDateTimeShort(DateFormat.MMMd().format(d), DateFormat.Hm().format(d));
+      l.homeDateTimeShort(DateFormat.MMMd().format(d), DateFormat.jm().format(d));
 
   @override
   Widget build(BuildContext context) => GestureDetector(

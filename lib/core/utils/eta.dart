@@ -31,10 +31,5 @@ abstract class Eta {
     return Duration(minutes: math.max(1, minutes));
   }
 
-  /// "4 min", "1 h 05 min".
-  static String format(Duration d) {
-    final m = d.inMinutes;
-    if (m < 60) return '$m min';
-    return '${m ~/ 60} h ${(m % 60).toString().padLeft(2, '0')} min';
-  }
+  // Formatting lives in lib/l10n: localizedDuration(context.l10n, d).
 }

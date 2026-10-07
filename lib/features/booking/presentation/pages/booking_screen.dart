@@ -17,6 +17,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_states.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../auth/presentation/auth_error_messages.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../../payments/presentation/bloc/payment_bloc.dart';

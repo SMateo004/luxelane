@@ -129,7 +129,7 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 | 6 | **Despacho por cercanía.** Las recogidas de los próximos 90 min se ofrecen primero al chófer verificado más cercano con la clase correcta, dentro de 25 km y con ubicación de menos de 10 min. Tiene 1 minuto para aceptar (lo ve como "Solicitud exclusiva" con cuenta regresiva). Si la rechaza o no responde, pasa al siguiente (hasta 5) y luego se abre a todos. Las reservas anticipadas se abren a todos desde el inicio. Las reglas impiden que otro chófer tome una oferta exclusiva | ✅ Hecho |
 | 7 | **Meet & greet.** La reserva guarda el nombre y teléfono reales del pasajero (o del invitado). El chófer tiene llamar, WhatsApp y **"Mostrar cartel"**, que pone el nombre a pantalla completa en horizontal. El pasajero ve en el viaje cómo y dónde lo esperan | ✅ Hecho |
 | 7b | **Espera gratuita: 60 min en aeropuerto** desde el aterrizaje y **15 min en ciudad** desde la recogida o la llegada del chófer. Cuenta regresiva para pasajero y chófer, aviso push con la hora límite, y se muestra en la confirmación y en la landing | ✅ Hecho |
-| 8 | i18n (es/en/pt) con ARB | ⏳ Pendiente |
+| 8 | **Idiomas es / en / pt.** La app sigue el idioma del dispositivo o navegador y cambia en vivo, sin reiniciar; si el idioma no está soportado usa inglés. Hay 785 textos en ARB, con fechas, horas y montos según el idioma. Las push salen en el idioma del usuario, y en Android 13+ se puede elegir el idioma por app. Los tests impiden textos fijos y traducciones incompletas (ver `lib/l10n/README.md`) | ✅ Hecho |
 
 ### Fase 3: Super app y B2B (4–6 semanas)
 1. **Cuentas corporativas**: centros de costo, reservar para invitados (campo real, no en `notes`), facturación mensual y panel de empresa.
@@ -161,8 +161,8 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 ## 5. Cómo probar
 
 ```
-flutter test                      # 67 tests Dart
-(cd functions && npm test)        # 41 tests de negocio, precios, vuelos, chófer, espera y despacho
+flutter test                      # 149 tests Dart
+(cd functions && npm test)        # 45 tests de negocio, precios, vuelos, chófer, espera, despacho y mensajes
 (cd rules-tests && npm test)      # 22 tests de reglas de seguridad (requiere Java)
 ```
 

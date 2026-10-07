@@ -17,7 +17,8 @@ export interface ChauffeurSnapshot {
 /** "María Fernanda Rojas" → "María Fernanda R." (privacy-friendly). */
 export function displayName(full: unknown): string {
   const parts = String(full ?? '').trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return 'Tu chófer';
+  // Empty: the app shows a localized "Your chauffeur".
+  if (parts.length === 0) return '';
   if (parts.length === 1) return parts[0];
   const last = parts[parts.length - 1];
   return `${parts.slice(0, -1).join(' ')} ${last[0].toUpperCase()}.`;

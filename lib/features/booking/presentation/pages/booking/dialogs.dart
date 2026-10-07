@@ -54,7 +54,7 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
         if (state is AuthError) {
           setState(() => _loading = false);
           ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-              content: Text(state.message), backgroundColor: LuxColors.error));
+              content: Text(authErrorMessage(l, state.code)), backgroundColor: LuxColors.error));
         }
       },
       child: Dialog(
