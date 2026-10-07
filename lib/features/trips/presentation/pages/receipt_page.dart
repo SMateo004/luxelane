@@ -156,7 +156,12 @@ class _ReceiptCard extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 16),
               child: Divider(height: 1, color: LD.border),
             ),
-            _Line(l.tripReceiptFixedPrice, LuxMoney.format(booking.estimatedPrice, cents: true)),
+            if (booking.discount > 0 && booking.baseAmount != null) ...[
+              _Line(l.tripReceiptFixedPrice, LuxMoney.format(booking.baseAmount!, cents: true)),
+              _Line(l.promoDiscountLine(booking.promoCode ?? ''),
+                  '−${LuxMoney.format(booking.discount, cents: true)}'),
+            ] else
+              _Line(l.tripReceiptFixedPrice, LuxMoney.format(booking.estimatedPrice, cents: true)),
             if (booking.finalPrice != null && booking.finalPrice != booking.estimatedPrice)
               _Line(l.tripReceiptAdjustment, LuxMoney.format(booking.finalPrice! - booking.estimatedPrice, cents: true)),
             _Line(l.tripReceiptTotal, LuxMoney.format(total, cents: true), strong: true),

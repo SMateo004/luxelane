@@ -901,6 +901,12 @@ abstract class AppLocalizations {
   /// **'Precios'**
   String get adminSectionPricing;
 
+  /// No description provided for @adminSectionPromos.
+  ///
+  /// In es, this message translates to:
+  /// **'Promociones'**
+  String get adminSectionPromos;
+
   /// No description provided for @adminSectionReports.
   ///
   /// In es, this message translates to:
@@ -4734,6 +4740,354 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Luxelane v{version}'**
   String profileVersion(String version);
+
+  /// No description provided for @promoAdminActive.
+  ///
+  /// In es, this message translates to:
+  /// **'Activo'**
+  String get promoAdminActive;
+
+  /// No description provided for @promoAdminCap.
+  ///
+  /// In es, this message translates to:
+  /// **'Tope (Bs, opcional)'**
+  String get promoAdminCap;
+
+  /// No description provided for @promoAdminClasses.
+  ///
+  /// In es, this message translates to:
+  /// **'Categorías (ninguna marcada = todas)'**
+  String get promoAdminClasses;
+
+  /// No description provided for @promoAdminCode.
+  ///
+  /// In es, this message translates to:
+  /// **'Código'**
+  String get promoAdminCode;
+
+  /// No description provided for @promoAdminCodeHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej.: BIENVENIDO'**
+  String get promoAdminCodeHint;
+
+  /// No description provided for @promoAdminCreate.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuevo código'**
+  String get promoAdminCreate;
+
+  /// No description provided for @promoAdminDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Descripción interna'**
+  String get promoAdminDescription;
+
+  /// No description provided for @promoAdminDescriptionHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej.: campaña de lanzamiento'**
+  String get promoAdminDescriptionHint;
+
+  /// No description provided for @promoAdminEdit.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get promoAdminEdit;
+
+  /// No description provided for @promoAdminEditTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar {code}'**
+  String promoAdminEditTitle(String code);
+
+  /// No description provided for @promoAdminEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'Todavía no hay códigos.'**
+  String get promoAdminEmpty;
+
+  /// No description provided for @promoAdminErrorCode.
+  ///
+  /// In es, this message translates to:
+  /// **'El código debe tener de 3 a 20 letras, números, guion o guion bajo.'**
+  String get promoAdminErrorCode;
+
+  /// No description provided for @promoAdminErrorDates.
+  ///
+  /// In es, this message translates to:
+  /// **'La fecha de fin debe ser posterior a la de inicio.'**
+  String get promoAdminErrorDates;
+
+  /// No description provided for @promoAdminErrorExists.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya existe un código con ese nombre.'**
+  String get promoAdminErrorExists;
+
+  /// No description provided for @promoAdminErrorValue.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa el descuento: un porcentaje va de 1 a 100 y un monto debe ser mayor a 0.'**
+  String get promoAdminErrorValue;
+
+  /// No description provided for @promoAdminExhausted.
+  ///
+  /// In es, this message translates to:
+  /// **'Agotado'**
+  String get promoAdminExhausted;
+
+  /// No description provided for @promoAdminExpired.
+  ///
+  /// In es, this message translates to:
+  /// **'Vencido'**
+  String get promoAdminExpired;
+
+  /// No description provided for @promoAdminFirstRide.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo primer viaje'**
+  String get promoAdminFirstRide;
+
+  /// No description provided for @promoAdminFirstRideSwitch.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo para el primer viaje del pasajero'**
+  String get promoAdminFirstRideSwitch;
+
+  /// No description provided for @promoAdminFixed.
+  ///
+  /// In es, this message translates to:
+  /// **'Monto fijo'**
+  String get promoAdminFixed;
+
+  /// No description provided for @promoAdminFrom.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde el {date}'**
+  String promoAdminFrom(String date);
+
+  /// No description provided for @promoAdminFromAny.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde: hoy'**
+  String get promoAdminFromAny;
+
+  /// No description provided for @promoAdminIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'El descuento se valida en el servidor y queda fijado en el precio de la reserva. Si la reserva se cancela, el uso se libera.'**
+  String get promoAdminIntro;
+
+  /// No description provided for @promoAdminMaxUses.
+  ///
+  /// In es, this message translates to:
+  /// **'Usos totales (vacío = sin límite)'**
+  String get promoAdminMaxUses;
+
+  /// No description provided for @promoAdminMinFare.
+  ///
+  /// In es, this message translates to:
+  /// **'Mínimo {amount}'**
+  String promoAdminMinFare(String amount);
+
+  /// No description provided for @promoAdminMinFareLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Monto mínimo del viaje (Bs, opcional)'**
+  String get promoAdminMinFareLabel;
+
+  /// No description provided for @promoAdminPause.
+  ///
+  /// In es, this message translates to:
+  /// **'Pausar'**
+  String get promoAdminPause;
+
+  /// No description provided for @promoAdminPaused.
+  ///
+  /// In es, this message translates to:
+  /// **'Pausado'**
+  String get promoAdminPaused;
+
+  /// No description provided for @promoAdminPerUser.
+  ///
+  /// In es, this message translates to:
+  /// **'Usos por pasajero'**
+  String get promoAdminPerUser;
+
+  /// No description provided for @promoAdminPercent.
+  ///
+  /// In es, this message translates to:
+  /// **'Porcentaje'**
+  String get promoAdminPercent;
+
+  /// No description provided for @promoAdminResume.
+  ///
+  /// In es, this message translates to:
+  /// **'Reactivar'**
+  String get promoAdminResume;
+
+  /// No description provided for @promoAdminSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get promoAdminSave;
+
+  /// No description provided for @promoAdminSaved.
+  ///
+  /// In es, this message translates to:
+  /// **'Código guardado'**
+  String get promoAdminSaved;
+
+  /// No description provided for @promoAdminTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Códigos promocionales'**
+  String get promoAdminTitle;
+
+  /// No description provided for @promoAdminUntil.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta el {date}'**
+  String promoAdminUntil(String date);
+
+  /// No description provided for @promoAdminUntilAny.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta: sin fecha'**
+  String get promoAdminUntilAny;
+
+  /// No description provided for @promoAdminUsage.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =0{Sin usos} =1{1 uso} other{{count} usos}}'**
+  String promoAdminUsage(int count);
+
+  /// No description provided for @promoAdminUsageOf.
+  ///
+  /// In es, this message translates to:
+  /// **'{used} de {max} usos'**
+  String promoAdminUsageOf(int used, int max);
+
+  /// No description provided for @promoAdminValueCapped.
+  ///
+  /// In es, this message translates to:
+  /// **'{value} (máx. {cap})'**
+  String promoAdminValueCapped(String value, String cap);
+
+  /// No description provided for @promoAdminValueFixed.
+  ///
+  /// In es, this message translates to:
+  /// **'Descuento (Bs)'**
+  String get promoAdminValueFixed;
+
+  /// No description provided for @promoAdminValuePercent.
+  ///
+  /// In es, this message translates to:
+  /// **'Descuento (%)'**
+  String get promoAdminValuePercent;
+
+  /// No description provided for @promoApplied.
+  ///
+  /// In es, this message translates to:
+  /// **'Código {code} aplicado'**
+  String promoApplied(String code);
+
+  /// No description provided for @promoAppliedWithDiscount.
+  ///
+  /// In es, this message translates to:
+  /// **'{code}: −{amount}'**
+  String promoAppliedWithDiscount(String code, String amount);
+
+  /// No description provided for @promoApply.
+  ///
+  /// In es, this message translates to:
+  /// **'Aplicar'**
+  String get promoApply;
+
+  /// No description provided for @promoDiscountLine.
+  ///
+  /// In es, this message translates to:
+  /// **'Descuento {code}'**
+  String promoDiscountLine(String code);
+
+  /// No description provided for @promoErrorAlreadyUsed.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya usaste este código.'**
+  String get promoErrorAlreadyUsed;
+
+  /// No description provided for @promoErrorExhausted.
+  ///
+  /// In es, this message translates to:
+  /// **'Ese código ya alcanzó su límite de usos.'**
+  String get promoErrorExhausted;
+
+  /// No description provided for @promoErrorExpired.
+  ///
+  /// In es, this message translates to:
+  /// **'Ese código ya venció.'**
+  String get promoErrorExpired;
+
+  /// No description provided for @promoErrorFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos verificar el código. Inténtalo de nuevo.'**
+  String get promoErrorFailed;
+
+  /// No description provided for @promoErrorFirstRideOnly.
+  ///
+  /// In es, this message translates to:
+  /// **'Este código es solo para tu primer viaje.'**
+  String get promoErrorFirstRideOnly;
+
+  /// No description provided for @promoErrorInvalid.
+  ///
+  /// In es, this message translates to:
+  /// **'Ese código no existe o no está activo.'**
+  String get promoErrorInvalid;
+
+  /// No description provided for @promoErrorMinFare.
+  ///
+  /// In es, this message translates to:
+  /// **'El viaje no alcanza el monto mínimo de este código.'**
+  String get promoErrorMinFare;
+
+  /// No description provided for @promoErrorNoLongerValid.
+  ///
+  /// In es, this message translates to:
+  /// **'El código dejó de ser válido. Revisa el precio e inténtalo de nuevo.'**
+  String get promoErrorNoLongerValid;
+
+  /// No description provided for @promoErrorNotStarted.
+  ///
+  /// In es, this message translates to:
+  /// **'Ese código todavía no está vigente.'**
+  String get promoErrorNotStarted;
+
+  /// No description provided for @promoErrorVehicleClass.
+  ///
+  /// In es, this message translates to:
+  /// **'Este código no aplica a esta categoría de vehículo.'**
+  String get promoErrorVehicleClass;
+
+  /// No description provided for @promoFieldLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Código promocional'**
+  String get promoFieldLabel;
+
+  /// No description provided for @promoRemove.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar código'**
+  String get promoRemove;
+
+  /// No description provided for @promoSavedLine.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahorras {amount} con {code}'**
+  String promoSavedLine(String amount, String code);
 
   /// No description provided for @rideArrived.
   ///

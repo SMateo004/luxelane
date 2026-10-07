@@ -1372,3 +1372,113 @@ class _CorporateBillingPanel extends StatelessWidget {
     );
   }
 }
+
+// ── PROMO CODE ────────────────────────────────────────────────────────────────
+
+class _PromoCodeField extends StatelessWidget {
+  const _PromoCodeField({
+    required this.controller,
+    required this.applied,
+    required this.discount,
+    required this.error,
+    required this.checking,
+    required this.onApply,
+    required this.onRemove,
+  });
+
+  final TextEditingController controller;
+  final String? applied;
+
+  /// Previewed discount for the current fare (null while re-checking).
+  final double? discount;
+  final String? error;
+  final bool checking;
+  final VoidCallback onApply;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    if (applied != null) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(color: LD.accentTint, border: Border.all(color: LD.accent)),
+        child: Row(children: [
+          const Icon(Icons.local_offer_outlined, size: 18, color: _kPanelAccent),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              discount == null
+                  ? l.promoApplied(applied!)
+                  : l.promoAppliedWithDiscount(applied!, LuxMoney.format(discount!.round())),
+              style: const TextStyle(fontFamily: kSans, fontSize: 13,
+                  fontWeight: FontWeight.w600, color: _kTextPrimary),
+            ),
+          ),
+          if (checking)
+            const SizedBox(width: 16, height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2, color: _kPanelAccent))
+          else
+            IconButton(
+              tooltip: l.promoRemove,
+              visualDensity: VisualDensity.compact,
+              icon: const Icon(Icons.close_rounded, size: 18, color: _kTextSub),
+              onPressed: onRemove,
+            ),
+        ]),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              textCapitalization: TextCapitalization.characters,
+              onSubmitted: (_) => onApply(),
+              style: const TextStyle(fontFamily: kSans, fontSize: 13, color: _kTextPrimary, letterSpacing: 1),
+              decoration: InputDecoration(
+                labelText: l.promoFieldLabel,
+                labelStyle: const TextStyle(fontFamily: kSans, fontSize: 12,
+                    color: _kTextSub, fontWeight: FontWeight.w500),
+                prefixIcon: const Icon(Icons.local_offer_outlined, size: 18, color: _kTextSub),
+                filled: true,
+                fillColor: _kCardBg,
+                isDense: true,
+                border: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero, borderSide: BorderSide(color: _kBorder)),
+                enabledBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero, borderSide: BorderSide(color: _kBorder)),
+                focusedBorder: const OutlineInputBorder(
+                    borderRadius: BorderRadius.zero, borderSide: BorderSide(color: _kTextPrimary, width: 1.5)),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          SizedBox(
+            height: 48,
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                minimumSize: const Size(0, 48),
+                foregroundColor: _kTextPrimary,
+                side: const BorderSide(color: _kTextPrimary),
+                shape: const RoundedRectangleBorder(),
+              ),
+              onPressed: checking ? null : onApply,
+              child: checking
+                  ? const SizedBox(width: 16, height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: _kTextPrimary))
+                  : Text(l.promoApply),
+            ),
+          ),
+        ]),
+        if (error != null) ...[
+          const SizedBox(height: 6),
+          Text(localizedBookingError(l, error!),
+              style: const TextStyle(fontFamily: kSans, fontSize: 12, color: LuxPalette.error)),
+        ],
+      ],
+    );
+  }
+}

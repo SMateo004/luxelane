@@ -315,6 +315,7 @@
   "adminSectionDashboard": "Panel",
   "adminSectionDrivers": "Chóferes",
   "adminSectionPricing": "Precios",
+  "adminSectionPromos": "Promociones",
   "adminSectionReports": "Reportes",
   "adminSectionSettings": "Configuración",
   "adminSectionUsers": "Usuarios",
@@ -1612,6 +1613,153 @@
   "@profileVersion": {
     "placeholders": {
       "version": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAdminActive": "Activo",
+  "promoAdminCap": "Tope (Bs, opcional)",
+  "promoAdminClasses": "Categorías (ninguna marcada = todas)",
+  "promoAdminCode": "Código",
+  "promoAdminCodeHint": "Ej.: BIENVENIDO",
+  "promoAdminCreate": "Nuevo código",
+  "promoAdminDescription": "Descripción interna",
+  "promoAdminDescriptionHint": "Ej.: campaña de lanzamiento",
+  "promoAdminEdit": "Editar",
+  "promoAdminEditTitle": "Editar {code}",
+  "@promoAdminEditTitle": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAdminEmpty": "Todavía no hay códigos.",
+  "promoAdminErrorCode": "El código debe tener de 3 a 20 letras, números, guion o guion bajo.",
+  "promoAdminErrorDates": "La fecha de fin debe ser posterior a la de inicio.",
+  "promoAdminErrorExists": "Ya existe un código con ese nombre.",
+  "promoAdminErrorValue": "Revisa el descuento: un porcentaje va de 1 a 100 y un monto debe ser mayor a 0.",
+  "promoAdminExhausted": "Agotado",
+  "promoAdminExpired": "Vencido",
+  "promoAdminFirstRide": "Solo primer viaje",
+  "promoAdminFirstRideSwitch": "Solo para el primer viaje del pasajero",
+  "promoAdminFixed": "Monto fijo",
+  "promoAdminFrom": "Desde el {date}",
+  "@promoAdminFrom": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAdminFromAny": "Desde: hoy",
+  "promoAdminIntro": "El descuento se valida en el servidor y queda fijado en el precio de la reserva. Si la reserva se cancela, el uso se libera.",
+  "promoAdminMaxUses": "Usos totales (vacío = sin límite)",
+  "promoAdminMinFare": "Mínimo {amount}",
+  "@promoAdminMinFare": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAdminMinFareLabel": "Monto mínimo del viaje (Bs, opcional)",
+  "promoAdminPause": "Pausar",
+  "promoAdminPaused": "Pausado",
+  "promoAdminPerUser": "Usos por pasajero",
+  "promoAdminPercent": "Porcentaje",
+  "promoAdminResume": "Reactivar",
+  "promoAdminSave": "Guardar",
+  "promoAdminSaved": "Código guardado",
+  "promoAdminTitle": "Códigos promocionales",
+  "promoAdminUntil": "Hasta el {date}",
+  "@promoAdminUntil": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAdminUntilAny": "Hasta: sin fecha",
+  "promoAdminUsage": "{count, plural, =0{Sin usos} =1{1 uso} other{{count} usos}}",
+  "@promoAdminUsage": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "promoAdminUsageOf": "{used} de {max} usos",
+  "@promoAdminUsageOf": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "promoAdminValueCapped": "{value} (máx. {cap})",
+  "@promoAdminValueCapped": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "cap": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAdminValueFixed": "Descuento (Bs)",
+  "promoAdminValuePercent": "Descuento (%)",
+  "promoApplied": "Código {code} aplicado",
+  "@promoApplied": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAppliedWithDiscount": "{code}: −{amount}",
+  "@promoAppliedWithDiscount": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "promoApply": "Aplicar",
+  "promoDiscountLine": "Descuento {code}",
+  "@promoDiscountLine": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "promoErrorAlreadyUsed": "Ya usaste este código.",
+  "promoErrorExhausted": "Ese código ya alcanzó su límite de usos.",
+  "promoErrorExpired": "Ese código ya venció.",
+  "promoErrorFailed": "No pudimos verificar el código. Inténtalo de nuevo.",
+  "promoErrorFirstRideOnly": "Este código es solo para tu primer viaje.",
+  "promoErrorInvalid": "Ese código no existe o no está activo.",
+  "promoErrorMinFare": "El viaje no alcanza el monto mínimo de este código.",
+  "promoErrorNoLongerValid": "El código dejó de ser válido. Revisa el precio e inténtalo de nuevo.",
+  "promoErrorNotStarted": "Ese código todavía no está vigente.",
+  "promoErrorVehicleClass": "Este código no aplica a esta categoría de vehículo.",
+  "promoFieldLabel": "Código promocional",
+  "promoRemove": "Quitar código",
+  "promoSavedLine": "Ahorras {amount} con {code}",
+  "@promoSavedLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "code": {
         "type": "String"
       }
     }

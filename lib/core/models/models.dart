@@ -296,6 +296,9 @@ class Booking {
     this.companyName,
     this.costCenter,
     this.billingReference,
+    this.promoCode,
+    this.discount = 0,
+    this.baseAmount,
   });
 
   final String id;
@@ -371,6 +374,12 @@ class Booking {
 
   bool get isCorporate => companyId != null;
 
+  /// Promo applied when booking: [estimatedPrice] = [baseAmount] - [discount].
+  /// On a booking being created, [promoCode] is the code to quote with.
+  final String? promoCode;
+  final double discount;
+  final double? baseAmount;
+
   /// Whether [driverId] should see this pending booking as a request.
   bool isOfferedTo(String driverId) {
     final d = dispatch;
@@ -438,6 +447,9 @@ class Booking {
         companyName: j['companyName'] as String?,
         costCenter: j['costCenter'] as String?,
         billingReference: j['billingReference'] as String?,
+        promoCode: j['promoCode'] as String?,
+        discount: (j['discount'] as num?)?.toDouble() ?? 0,
+        baseAmount: (j['baseAmount'] as num?)?.toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -511,6 +523,9 @@ class Booking {
         companyName: companyName,
         costCenter: costCenter,
         billingReference: billingReference,
+        promoCode: promoCode,
+        discount: discount,
+        baseAmount: baseAmount,
       );
 }
 
@@ -674,12 +689,26 @@ class Quote {
     required this.expiresAt,
     this.distanceKm,
     this.hours,
+    this.baseAmount,
+    this.discount = 0,
+    this.promoCode,
+    this.promoError,
   });
 
   final String id;
 
-  /// Price in Bolivianos.
+  /// Price in Bolivianos (after any promo discount).
   final double amount;
+
+  /// Price before the promo; equals [amount] without one.
+  final double? baseAmount;
+  final double discount;
+
+  /// Code applied to this quote, if any.
+  final String? promoCode;
+
+  /// Why the requested code was not applied (e.g. 'promo/expired').
+  final String? promoError;
   final String currency;
   final DateTime expiresAt;
   final double? distanceKm;
@@ -695,6 +724,10 @@ class Quote {
             (j['expiresAt'] as num).toInt()),
         distanceKm: (j['distanceKm'] as num?)?.toDouble(),
         hours: (j['hours'] as num?)?.toInt(),
+        baseAmount: (j['baseAmount'] as num?)?.toDouble(),
+        discount: (j['discount'] as num?)?.toDouble() ?? 0,
+        promoCode: j['promoCode'] as String?,
+        promoError: j['promoError'] as String?,
       );
 }
 

@@ -92,6 +92,15 @@ abstract class BookingRepository {
     Place? destination,
     double? routeDistanceKm,
     int? hours,
+    String? promoCode,
+  });
+
+  /// Previews a promo code for [fare]; the binding check is in requestQuote.
+  /// Returns the discount in Bs, or an error code such as 'promo/expired'.
+  Future<({double discount, String? error})> checkPromoCode({
+    required String code,
+    required double fare,
+    required VehicleClass vehicleClass,
   });
 
   /// Creates the booking server-side from [Booking.quoteId].

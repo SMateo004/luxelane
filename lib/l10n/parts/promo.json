@@ -1,0 +1,364 @@
+{
+  "adminSectionPromos": {
+    "es": "Promociones",
+    "en": "Promotions",
+    "pt": "Promoções"
+  },
+  "promoFieldLabel": {
+    "es": "Código promocional",
+    "en": "Promo code",
+    "pt": "Código promocional"
+  },
+  "promoApply": {
+    "es": "Aplicar",
+    "en": "Apply",
+    "pt": "Aplicar"
+  },
+  "promoRemove": {
+    "es": "Quitar código",
+    "en": "Remove code",
+    "pt": "Remover código"
+  },
+  "promoApplied": {
+    "es": "Código {code} aplicado",
+    "en": "Code {code} applied",
+    "pt": "Código {code} aplicado",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAppliedWithDiscount": {
+    "es": "{code}: −{amount}",
+    "en": "{code}: −{amount}",
+    "pt": "{code}: −{amount}",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "promoDiscountLine": {
+    "es": "Descuento {code}",
+    "en": "Discount {code}",
+    "pt": "Desconto {code}",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "promoSavedLine": {
+    "es": "Ahorras {amount} con {code}",
+    "en": "You save {amount} with {code}",
+    "pt": "Você economiza {amount} com {code}",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "promoErrorInvalid": {
+    "es": "Ese código no existe o no está activo.",
+    "en": "That code doesn't exist or isn't active.",
+    "pt": "Esse código não existe ou não está ativo."
+  },
+  "promoErrorNotStarted": {
+    "es": "Ese código todavía no está vigente.",
+    "en": "That code isn't valid yet.",
+    "pt": "Esse código ainda não está vigente."
+  },
+  "promoErrorExpired": {
+    "es": "Ese código ya venció.",
+    "en": "That code has expired.",
+    "pt": "Esse código já venceu."
+  },
+  "promoErrorExhausted": {
+    "es": "Ese código ya alcanzó su límite de usos.",
+    "en": "That code has reached its usage limit.",
+    "pt": "Esse código atingiu o limite de usos."
+  },
+  "promoErrorAlreadyUsed": {
+    "es": "Ya usaste este código.",
+    "en": "You've already used this code.",
+    "pt": "Você já usou este código."
+  },
+  "promoErrorFirstRideOnly": {
+    "es": "Este código es solo para tu primer viaje.",
+    "en": "This code is only for your first ride.",
+    "pt": "Este código é só para sua primeira viagem."
+  },
+  "promoErrorVehicleClass": {
+    "es": "Este código no aplica a esta categoría de vehículo.",
+    "en": "This code doesn't apply to this vehicle class.",
+    "pt": "Este código não se aplica a esta categoria de veículo."
+  },
+  "promoErrorMinFare": {
+    "es": "El viaje no alcanza el monto mínimo de este código.",
+    "en": "This ride doesn't reach the code's minimum fare.",
+    "pt": "A viagem não atinge o valor mínimo deste código."
+  },
+  "promoErrorFailed": {
+    "es": "No pudimos verificar el código. Inténtalo de nuevo.",
+    "en": "We couldn't check the code. Please try again.",
+    "pt": "Não foi possível verificar o código. Tente novamente."
+  },
+  "promoErrorNoLongerValid": {
+    "es": "El código dejó de ser válido. Revisa el precio e inténtalo de nuevo.",
+    "en": "The code is no longer valid. Check the price and try again.",
+    "pt": "O código deixou de ser válido. Confira o preço e tente novamente."
+  },
+  "promoAdminTitle": {
+    "es": "Códigos promocionales",
+    "en": "Promo codes",
+    "pt": "Códigos promocionais"
+  },
+  "promoAdminIntro": {
+    "es": "El descuento se valida en el servidor y queda fijado en el precio de la reserva. Si la reserva se cancela, el uso se libera.",
+    "en": "The discount is validated by the server and fixed in the booking price. If the booking is cancelled, the use is released.",
+    "pt": "O desconto é validado no servidor e fica fixado no preço da reserva. Se a reserva for cancelada, o uso é liberado."
+  },
+  "promoAdminCreate": {
+    "es": "Nuevo código",
+    "en": "New code",
+    "pt": "Novo código"
+  },
+  "promoAdminEmpty": {
+    "es": "Todavía no hay códigos.",
+    "en": "No codes yet.",
+    "pt": "Ainda não há códigos."
+  },
+  "promoAdminActive": {
+    "es": "Activo",
+    "en": "Active",
+    "pt": "Ativo"
+  },
+  "promoAdminPaused": {
+    "es": "Pausado",
+    "en": "Paused",
+    "pt": "Pausado"
+  },
+  "promoAdminExpired": {
+    "es": "Vencido",
+    "en": "Expired",
+    "pt": "Vencido"
+  },
+  "promoAdminExhausted": {
+    "es": "Agotado",
+    "en": "Used up",
+    "pt": "Esgotado"
+  },
+  "promoAdminPause": {
+    "es": "Pausar",
+    "en": "Pause",
+    "pt": "Pausar"
+  },
+  "promoAdminResume": {
+    "es": "Reactivar",
+    "en": "Resume",
+    "pt": "Reativar"
+  },
+  "promoAdminEdit": {
+    "es": "Editar",
+    "en": "Edit",
+    "pt": "Editar"
+  },
+  "promoAdminEditTitle": {
+    "es": "Editar {code}",
+    "en": "Edit {code}",
+    "pt": "Editar {code}",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAdminUsage": {
+    "es": "{count, plural, =0{Sin usos} =1{1 uso} other{{count} usos}}",
+    "en": "{count, plural, =0{Not used} =1{1 use} other{{count} uses}}",
+    "pt": "{count, plural, =0{Sem usos} =1{1 uso} other{{count} usos}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "promoAdminUsageOf": {
+    "es": "{used} de {max} usos",
+    "en": "{used} of {max} uses",
+    "pt": "{used} de {max} usos",
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
+    }
+  },
+  "promoAdminValueCapped": {
+    "es": "{value} (máx. {cap})",
+    "en": "{value} (max {cap})",
+    "pt": "{value} (máx. {cap})",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "cap": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAdminUntil": {
+    "es": "Hasta el {date}",
+    "en": "Until {date}",
+    "pt": "Até {date}",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAdminFrom": {
+    "es": "Desde el {date}",
+    "en": "From {date}",
+    "pt": "Desde {date}",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAdminFromAny": {
+    "es": "Desde: hoy",
+    "en": "From: today",
+    "pt": "Desde: hoje"
+  },
+  "promoAdminUntilAny": {
+    "es": "Hasta: sin fecha",
+    "en": "Until: no end date",
+    "pt": "Até: sem data"
+  },
+  "promoAdminFirstRide": {
+    "es": "Solo primer viaje",
+    "en": "First ride only",
+    "pt": "Só primeira viagem"
+  },
+  "promoAdminFirstRideSwitch": {
+    "es": "Solo para el primer viaje del pasajero",
+    "en": "Only for the passenger's first ride",
+    "pt": "Só para a primeira viagem do passageiro"
+  },
+  "promoAdminMinFare": {
+    "es": "Mínimo {amount}",
+    "en": "Minimum {amount}",
+    "pt": "Mínimo {amount}",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "promoAdminMinFareLabel": {
+    "es": "Monto mínimo del viaje (Bs, opcional)",
+    "en": "Minimum fare (Bs, optional)",
+    "pt": "Valor mínimo da viagem (Bs, opcional)"
+  },
+  "promoAdminCode": {
+    "es": "Código",
+    "en": "Code",
+    "pt": "Código"
+  },
+  "promoAdminCodeHint": {
+    "es": "Ej.: BIENVENIDO",
+    "en": "E.g. WELCOME",
+    "pt": "Ex.: BEMVINDO"
+  },
+  "promoAdminDescription": {
+    "es": "Descripción interna",
+    "en": "Internal description",
+    "pt": "Descrição interna"
+  },
+  "promoAdminDescriptionHint": {
+    "es": "Ej.: campaña de lanzamiento",
+    "en": "E.g. launch campaign",
+    "pt": "Ex.: campanha de lançamento"
+  },
+  "promoAdminPercent": {
+    "es": "Porcentaje",
+    "en": "Percentage",
+    "pt": "Porcentagem"
+  },
+  "promoAdminFixed": {
+    "es": "Monto fijo",
+    "en": "Fixed amount",
+    "pt": "Valor fixo"
+  },
+  "promoAdminValuePercent": {
+    "es": "Descuento (%)",
+    "en": "Discount (%)",
+    "pt": "Desconto (%)"
+  },
+  "promoAdminValueFixed": {
+    "es": "Descuento (Bs)",
+    "en": "Discount (Bs)",
+    "pt": "Desconto (Bs)"
+  },
+  "promoAdminCap": {
+    "es": "Tope (Bs, opcional)",
+    "en": "Cap (Bs, optional)",
+    "pt": "Teto (Bs, opcional)"
+  },
+  "promoAdminMaxUses": {
+    "es": "Usos totales (vacío = sin límite)",
+    "en": "Total uses (empty = unlimited)",
+    "pt": "Usos totais (vazio = ilimitado)"
+  },
+  "promoAdminPerUser": {
+    "es": "Usos por pasajero",
+    "en": "Uses per passenger",
+    "pt": "Usos por passageiro"
+  },
+  "promoAdminClasses": {
+    "es": "Categorías (ninguna marcada = todas)",
+    "en": "Vehicle classes (none selected = all)",
+    "pt": "Categorias (nenhuma marcada = todas)"
+  },
+  "promoAdminSave": {
+    "es": "Guardar",
+    "en": "Save",
+    "pt": "Salvar"
+  },
+  "promoAdminSaved": {
+    "es": "Código guardado",
+    "en": "Code saved",
+    "pt": "Código salvo"
+  },
+  "promoAdminErrorCode": {
+    "es": "El código debe tener de 3 a 20 letras, números, guion o guion bajo.",
+    "en": "The code must be 3–20 letters, digits, hyphens or underscores.",
+    "pt": "O código deve ter de 3 a 20 letras, números, hífen ou sublinhado."
+  },
+  "promoAdminErrorValue": {
+    "es": "Revisa el descuento: un porcentaje va de 1 a 100 y un monto debe ser mayor a 0.",
+    "en": "Check the discount: a percentage is 1–100 and an amount must be above 0.",
+    "pt": "Confira o desconto: porcentagem de 1 a 100 e valor maior que 0."
+  },
+  "promoAdminErrorDates": {
+    "es": "La fecha de fin debe ser posterior a la de inicio.",
+    "en": "The end date must be after the start date.",
+    "pt": "A data final deve ser posterior à inicial."
+  },
+  "promoAdminErrorExists": {
+    "es": "Ya existe un código con ese nombre.",
+    "en": "A code with that name already exists.",
+    "pt": "Já existe um código com esse nome."
+  }
+}

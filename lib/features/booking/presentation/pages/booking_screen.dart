@@ -80,6 +80,15 @@ class _BookingScreenState extends State<BookingScreen> {
   bool _awaitingPaymentIntent = false;
   Quote? _quote;
 
+  // Promo code: previewed against the on-screen estimate, then applied by the
+  // server in the quote.
+  final TextEditingController _promoCtrl = TextEditingController();
+  String? _promo;
+  double _promoDiscount = 0;
+  String? _promoError;
+  bool _promoChecking = false;
+  String? _promoCheckedFor;
+
   // Corporate billing (riders who belong to a company account).
   Company? _company;
   bool _billCompany = false;
@@ -102,6 +111,63 @@ class _BookingScreenState extends State<BookingScreen> {
   double get _price =>
       DefaultPricing.estimate(_selected, _service, km: _km, hours: _hours);
 
+  String get _promoKey => '${_selected.name}|${_price.round()}';
+
+  /// Estimate after the previewed promo (only while it matches the inputs).
+  double get _payable =>
+      _promo != null && _promoCheckedFor == _promoKey ? (_price - _promoDiscount).clamp(0, _price).toDouble() : _price;
+
+  Future<void> _applyPromo([String? raw]) async {
+    final code = (raw ?? _promoCtrl.text).replaceAll(RegExp(r'\s+'), '').toUpperCase();
+    if (code.isEmpty) return;
+    final key = _promoKey;
+    setState(() {
+      _promoChecking = true;
+      _promoError = null;
+    });
+    final r = await sl<BookingRepository>().checkPromoCode(code: code, fare: _price, vehicleClass: _selected);
+    if (!mounted) return;
+    setState(() {
+      _promoChecking = false;
+      if (r.error == null) {
+        _promo = code;
+        _promoDiscount = r.discount;
+        _promoCheckedFor = key;
+      } else {
+        _promo = null;
+        _promoDiscount = 0;
+        _promoCheckedFor = null;
+        _promoError = r.error;
+      }
+    });
+  }
+
+  void _removePromo() => setState(() {
+        _promo = null;
+        _promoDiscount = 0;
+        _promoCheckedFor = null;
+        _promoError = null;
+        _promoCtrl.clear();
+      });
+
+  /// Re-previews the code when the vehicle or the fare changes.
+  void _recheckPromoIfStale() {
+    if (_promo == null || _promoChecking || _promoCheckedFor == _promoKey) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _promo != null && !_promoChecking && _promoCheckedFor != _promoKey) _applyPromo(_promo);
+    });
+  }
+
+  Widget _promoField() => _PromoCodeField(
+        controller: _promoCtrl,
+        applied: _promo,
+        discount: _promoCheckedFor == _promoKey ? _promoDiscount : null,
+        error: _promoError,
+        checking: _promoChecking,
+        onApply: () => _applyPromo(),
+        onRemove: _removePromo,
+      );
+
   @override
   void initState() {
     super.initState();
@@ -115,6 +181,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   @override
   void dispose() {
+    _promoCtrl.dispose();
     _leftScrollCtrl.dispose();
     super.dispose();
   }
@@ -221,6 +288,7 @@ class _BookingScreenState extends State<BookingScreen> {
       destination: _formData?.destination,
       routeDistanceKm: _formData?.routeDistanceKm,
       hours: _service == ServiceType.byTheHour ? _hours : null,
+      promoCode: _promo,
     );
     if (!mounted) return;
     final quote = quoteResult.fold<Quote?>((f) {
@@ -231,7 +299,20 @@ class _BookingScreenState extends State<BookingScreen> {
     }, (q) => q);
     if (quote == null) return;
 
-    if ((quote.amount - _price).abs() >= 1) {
+    // The code stopped applying (expired, used up…): say why; the price
+    // check below then asks to confirm the full price.
+    if (_promo != null && quote.promoCode == null) {
+      showLuxSnackbar(context, localizedBookingError(context.l10n, quote.promoError ?? 'promo/invalid'),
+          isError: true);
+      setState(() {
+        _promoError = quote.promoError;
+        _promo = null;
+        _promoDiscount = 0;
+        _promoCheckedFor = null;
+      });
+    }
+
+    if ((quote.amount - _payable).abs() >= 1) {
       final accepted = await _confirmUpdatedPrice(quote.amount);
       if (!mounted) return;
       if (accepted != true) {
@@ -397,6 +478,7 @@ class _BookingScreenState extends State<BookingScreen> {
           companyId: _corporate ? _company!.id : null,
           costCenter: _corporate ? _costCenter : null,
           billingReference: _corporate && _billingRef.isNotEmpty ? _billingRef : null,
+          promoCode: quote.promoCode,
         ));
   }
 
@@ -407,6 +489,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _recheckPromoIfStale();
     return MultiBlocListener(
       listeners: [
         BlocListener<BookingBloc, BookingState>(listener: (ctx, state) {
@@ -1431,7 +1514,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             const SizedBox(width: 12),
             Text(
-              LuxMoney.format(_price.round()),
+              LuxMoney.format(_payable.round()),
               style: const TextStyle(
                 fontFamily: kSerif,
                 fontSize: 32,
@@ -1553,6 +1636,8 @@ class _BookingScreenState extends State<BookingScreen> {
           km: _km,
           hours: _hours,
         ),
+        const SizedBox(height: 20),
+        _promoField(),
         if (_company != null) ...[
           const SizedBox(height: 20),
           _corporatePanel(),
@@ -1616,7 +1701,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 ),
               ),
               _LightPriceBar(
-                price: _price,
+                price: _payable,
                 label: _step < 2
                     ? context.l10n.commonContinue
                     : context.l10n.bookingConfirmCta,
@@ -1767,6 +1852,9 @@ class _BookingScreenState extends State<BookingScreen> {
             _SummaryRow(l.bookingLuggage, l.unitBags(_luggage)),
             if (_flight.isNotEmpty) _SummaryRow(l.bookingSummaryFlight, _flight),
             if (_notes.isNotEmpty)  _SummaryRow(l.bookingSummaryNotes, _notes),
+            if (_payable < _price)
+              _SummaryRow(l.promoDiscountLine(_promo ?? ''),
+                  '−${LuxMoney.format((_price - _payable).round())}'),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: const BoxDecoration(
@@ -1780,7 +1868,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 1.8)),
                 ),
                 const SizedBox(width: 12),
-                Text(LuxMoney.format(_price.ceil()),
+                Text(LuxMoney.format(_payable.ceil()),
                     style: const TextStyle(fontFamily: kSans, fontSize: 18,
                         fontWeight: FontWeight.w700, color: _kTextPrimary, letterSpacing: -0.3)),
               ]),
@@ -1798,6 +1886,8 @@ class _BookingScreenState extends State<BookingScreen> {
           km: _km,
           hours: _hours,
         ),
+        const SizedBox(height: 20),
+        _promoField(),
         const SizedBox(height: 20),
         if (_company != null) ...[
           _corporatePanel(),

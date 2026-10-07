@@ -21,6 +21,7 @@ import '../../features/notifications/presentation/bloc/notification_bloc.dart';
 import '../../features/payments/data/repositories/payment_repository_impl.dart';
 import '../../features/payments/domain/usecases/payment_usecases.dart';
 import '../../features/payments/presentation/bloc/payment_bloc.dart';
+import '../../features/promo/data/promo_repository.dart';
 import '../../features/profile/data/repositories/user_repository_impl.dart';
 import '../../features/profile/domain/usecases/profile_usecases.dart';
 import '../../features/profile/presentation/bloc/profile_bloc.dart';
@@ -99,6 +100,10 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<DriverDocumentsRepository>(
     () => DriverDocumentsRepositoryImpl(sl(), sl()),
+  );
+
+  sl.registerLazySingleton<PromoRepository>(
+    () => PromoRepositoryImpl(sl(), sl()),
   );
 }
 

@@ -39,6 +39,7 @@ class BookingCreateRequested extends BookingEvent {
     this.companyId,
     this.costCenter,
     this.billingReference,
+    this.promoCode,
   });
   final Place origin;
   final Place destination;
@@ -62,6 +63,10 @@ class BookingCreateRequested extends BookingEvent {
   final String? companyId;
   final String? costCenter;
   final String? billingReference;
+
+  /// Code that was applied to the quote (informational; the server takes the
+  /// discount from the quote itself).
+  final String? promoCode;
   @override
   List<Object?> get props => [
         quoteId,
@@ -227,6 +232,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       companyId: event.companyId,
       costCenter: event.costCenter,
       billingReference: event.billingReference,
+      promoCode: event.promoCode,
     );
     final result = await _repo.createBooking(booking);
     result.fold(

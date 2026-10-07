@@ -28,9 +28,11 @@ class BookingRepositoryImpl implements BookingRepository {
     Place? destination,
     double? routeDistanceKm,
     int? hours,
+    String? promoCode,
   }) async {
     try {
       final result = await _fn.httpsCallable('quoteBooking').call({
+        if (promoCode != null) 'promoCode': promoCode,
         'vehicleClass': vehicleClass.name,
         'serviceType': serviceType.name,
         'origin': _placeArg(origin),
@@ -44,6 +46,26 @@ class BookingRepositoryImpl implements BookingRepository {
     } catch (_) {
       // Server messages are technical English; the UI shows a translated one.
       return const Left(ServerFailure(BookingErrorCodes.quoteFailed));
+    }
+  }
+
+  @override
+  Future<({double discount, String? error})> checkPromoCode({
+    required String code,
+    required double fare,
+    required VehicleClass vehicleClass,
+  }) async {
+    try {
+      final r = Map<String, dynamic>.from((await _fn.httpsCallable('checkPromoCode').call({
+        'code': code,
+        'fare': fare,
+        'vehicleClass': vehicleClass.name,
+      }))
+          .data as Map);
+      if (r['ok'] == true) return (discount: (r['discount'] as num).toDouble(), error: null);
+      return (discount: 0.0, error: r['error'] as String? ?? PromoErrorCodes.invalid);
+    } catch (_) {
+      return (discount: 0.0, error: PromoErrorCodes.failed);
     }
   }
 
@@ -98,6 +120,7 @@ class BookingRepositoryImpl implements BookingRepository {
     if (message.contains('billing/cost-center-required')) return BookingErrorCodes.costCenterRequired;
     if (message.contains('billing/company-inactive')) return BookingErrorCodes.companyInactive;
     if (message.contains('billing/')) return BookingErrorCodes.corporateNotAllowed;
+    if (message.contains('promo/')) return BookingErrorCodes.promoNoLongerValid;
     return BookingErrorCodes.createFailed;
   }
 

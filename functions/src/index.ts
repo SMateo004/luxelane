@@ -25,6 +25,7 @@ import {
   shouldTrack,
 } from './flights';
 import * as err from './errors';
+import { PromoDoc, evaluatePromo, normalizeCode, promoDefinitionError } from './promo';
 import {
   DocStatus,
   DocType,
@@ -115,6 +116,8 @@ interface BookingDoc {
   origin?: { coordinates?: admin.firestore.GeoPoint };
   dispatch?: StoredDispatch;
   cancelledBy?: 'rider' | 'admin' | 'system';
+  promoCode?: string | null;
+  promoReleased?: boolean;
   flight?: { estimatedArrival?: admin.firestore.Timestamp | null } | null;
 }
 
@@ -195,6 +198,10 @@ interface QuoteDoc {
   expiresAt: admin.firestore.Timestamp;
   createdAt: admin.firestore.Timestamp;
   bookingId?: string;
+  /** Promo applied at quote time: amount = baseAmount - discount. */
+  promoCode?: string | null;
+  baseAmount?: number;
+  discount?: number;
 }
 
 interface UserDoc {
@@ -342,18 +349,103 @@ async function loadValidQuote(uid: string, quoteId: unknown, graceMs = 0): Promi
 }
 
 // ---------------------------------------------------------------------------
+// Promo codes — promoCodes/{CODE}, per-rider uses in .../redemptions/{uid}
+// ---------------------------------------------------------------------------
+
+const promoRef = (code: string) => db.collection('promoCodes').doc(code);
+
+function toPromo(data: admin.firestore.DocumentData | undefined): PromoDoc | null {
+  if (!data) return null;
+  return {
+    ...(data as PromoDoc),
+    validFrom: (data.validFrom as admin.firestore.Timestamp | null | undefined)?.toDate() ?? null,
+    validUntil: (data.validUntil as admin.firestore.Timestamp | null | undefined)?.toDate() ?? null,
+  };
+}
+
+/** Checks a code for this rider and fare (outside a transaction). */
+async function checkPromo(uid: string, code: string, fare: number, vehicleClass: string) {
+  const [promoSnap, redemptionSnap, completed] = await Promise.all([
+    promoRef(code).get(),
+    promoRef(code).collection('redemptions').doc(uid).get(),
+    db.collection('bookings').where('riderId', '==', uid).where('status', '==', 'completed').limit(1).get(),
+  ]);
+  return evaluatePromo(toPromo(promoSnap.data()), {
+    now: new Date(),
+    fare,
+    vehicleClass,
+    userRedemptions: (redemptionSnap.data()?.count as number | undefined) ?? 0,
+    hasCompletedRide: !completed.empty,
+  });
+}
+
+/** Preview for the booking screen; the binding check happens in quoteBooking. */
+export const checkPromoCode = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const d = (req.data ?? {}) as { code?: unknown; fare?: unknown; vehicleClass?: unknown };
+  const code = normalizeCode(d.code);
+  if (!code) return { ok: false, error: 'promo/invalid' };
+  const fare = Number(d.fare);
+  if (!Number.isFinite(fare) || fare <= 0) throw err.invalidArgument('invalid fare');
+  return await checkPromo(uid, code, fare, String(d.vehicleClass ?? ''));
+});
+
+/** Admin: create or edit a promo code (the redemption counter is server-owned). */
+export const savePromoCode = onCall(async (req) => {
+  const uid = await requireAdmin(req);
+  const d = (req.data ?? {}) as Record<string, unknown>;
+  const code = normalizeCode(d.code);
+  const ms = (v: unknown) => (Number.isFinite(Number(v)) && Number(v) > 0 ? new Date(Number(v)) : null);
+  const def: Partial<PromoDoc> = {
+    code: code ?? undefined,
+    type: d.type as PromoDoc['type'],
+    value: Number(d.value),
+    maxDiscount: Math.max(0, Number(d.maxDiscount) || 0),
+    minFare: Math.max(0, Number(d.minFare) || 0),
+    validFrom: ms(d.validFrom),
+    validUntil: ms(d.validUntil),
+    maxRedemptions: Math.max(0, Math.floor(Number(d.maxRedemptions) || 0)),
+    perUserLimit: Math.max(1, Math.floor(Number(d.perUserLimit) || 1)),
+    firstRideOnly: d.firstRideOnly === true,
+    vehicleClasses: Array.isArray(d.vehicleClasses) ? d.vehicleClasses.filter(isVehicleClass) : [],
+    active: d.active !== false,
+  };
+  const error = promoDefinitionError(def);
+  if (error || !code) throw err.invalidArgument(error ?? 'promo/bad-code');
+
+  const ref = promoRef(code);
+  const ts = admin.firestore.Timestamp.now();
+  const existing = await ref.get();
+  if (d.create === true && existing.exists) throw err.failedPrecondition('promo/exists');
+  await ref.set(
+    {
+      ...def,
+      validFrom: def.validFrom ? admin.firestore.Timestamp.fromDate(def.validFrom) : null,
+      validUntil: def.validUntil ? admin.firestore.Timestamp.fromDate(def.validUntil) : null,
+      description: typeof d.description === 'string' ? d.description.trim().slice(0, 120) : '',
+      updatedAt: ts,
+      ...(existing.exists ? {} : { createdAt: ts, createdBy: uid, redemptions: 0 }),
+    },
+    { merge: true },
+  );
+  await writeAudit(existing.exists ? 'promo_updated' : 'promo_created', { code, by: uid });
+  return { code };
+});
+
+// ---------------------------------------------------------------------------
 // quoteBooking — fixed, server-computed price in Bs, valid for 15 minutes
 // ---------------------------------------------------------------------------
 
 export const quoteBooking = onCall(async (req) => {
   const uid = requireAuth(req);
-  const { vehicleClass, serviceType, origin, destination, routeDistanceKm, hours } = (req.data ?? {}) as {
+  const { vehicleClass, serviceType, origin, destination, routeDistanceKm, hours, promoCode } = (req.data ?? {}) as {
     vehicleClass: unknown;
     serviceType: unknown;
     origin: unknown;
     destination?: unknown;
     routeDistanceKm?: unknown;
     hours?: unknown;
+    promoCode?: unknown;
   };
 
   if (!isVehicleClass(vehicleClass)) throw err.invalidArgument('invalid vehicleClass');
@@ -370,7 +462,24 @@ export const quoteBooking = onCall(async (req) => {
 
   const distanceKm = hourly ? null : resolveDistanceKm(origin, dest, routeDistanceKm);
   const quoteHours = hourly ? clampHours(hours) : null;
-  const amount = computePrice(rule, serviceType, { km: distanceKm ?? 0, hours: quoteHours ?? 0 });
+  const baseAmount = computePrice(rule, serviceType, { km: distanceKm ?? 0, hours: quoteHours ?? 0 });
+
+  // A valid promo lowers the fixed price; an invalid one is reported and the
+  // quote keeps the full price.
+  let discount = 0;
+  let appliedCode: string | null = null;
+  let promoError: string | null = null;
+  if (promoCode !== undefined && promoCode !== null && promoCode !== '') {
+    const code = normalizeCode(promoCode);
+    const result = code ? await checkPromo(uid, code, baseAmount, vehicleClass) : { ok: false as const, error: 'promo/invalid' };
+    if (result.ok) {
+      discount = result.discount;
+      appliedCode = code;
+    } else {
+      promoError = result.error;
+    }
+  }
+  const amount = baseAmount - discount;
 
   const now = admin.firestore.Timestamp.now();
   const expiresAt = admin.firestore.Timestamp.fromMillis(now.toMillis() + QUOTE_TTL_MS);
@@ -386,6 +495,9 @@ export const quoteBooking = onCall(async (req) => {
     currency: CURRENCY,
     expiresAt,
     createdAt: now,
+    promoCode: appliedCode,
+    baseAmount,
+    discount,
   };
   const ref = await db.collection('quotes').add(quote);
 
@@ -397,6 +509,10 @@ export const quoteBooking = onCall(async (req) => {
     distanceKm,
     hours: quoteHours,
     expiresAt: expiresAt.toMillis(),
+    baseAmount,
+    discount,
+    promoCode: appliedCode,
+    promoError,
   };
 });
 
@@ -516,6 +632,31 @@ export const createBooking = onCall(stripeOpts, async (req) => {
   await db.runTransaction(async (tx) => {
     const fresh = await tx.get(quoteRef);
     if ((fresh.data() as QuoteDoc | undefined)?.bookingId) throw err.failedPrecondition('Quote already used');
+
+    // Redeem the promo atomically: limits are re-checked against live counts.
+    if (quote.promoCode) {
+      const pRef = promoRef(quote.promoCode);
+      const rRef = pRef.collection('redemptions').doc(uid);
+      const [pSnap, rSnap] = await Promise.all([tx.get(pRef), tx.get(rRef)]);
+      const check = evaluatePromo(toPromo(pSnap.data()), {
+        now: new Date(),
+        fare: quote.baseAmount ?? quote.amount,
+        vehicleClass: quote.vehicleClass,
+        userRedemptions: (rSnap.data()?.count as number | undefined) ?? 0,
+        hasCompletedRide: false, // checked when quoted
+      });
+      if (!check.ok) throw err.failedPrecondition(check.error);
+      tx.update(pRef, { redemptions: admin.firestore.FieldValue.increment(1) });
+      tx.set(
+        rRef,
+        {
+          count: admin.firestore.FieldValue.increment(1),
+          bookingIds: admin.firestore.FieldValue.arrayUnion(bookingRef.id),
+          updatedAt: admin.firestore.Timestamp.now(),
+        },
+        { merge: true },
+      );
+    }
     tx.set(bookingRef, {
       id: bookingRef.id,
       riderId: uid,
@@ -527,6 +668,9 @@ export const createBooking = onCall(stripeOpts, async (req) => {
       serviceType: quote.serviceType,
       status: 'pending' as BookingStatus,
       estimatedPrice: quote.amount,
+      baseAmount: quote.baseAmount ?? quote.amount,
+      discount: quote.discount ?? 0,
+      promoCode: quote.promoCode ?? null,
       finalPrice: null,
       paymentId: null,
       currency: quote.currency,
@@ -856,6 +1000,30 @@ export const onBookingStatusChanged = onDocumentUpdated(
     });
 
     const bookingRef = db.collection('bookings').doc(bookingId);
+
+    // Cancelled → give the promo use back to the rider (once).
+    if (after.status === 'cancelled' && after.promoCode && !after.promoReleased) {
+      const code = after.promoCode;
+      try {
+        await db.runTransaction(async (tx) => {
+          const b = await tx.get(bookingRef);
+          if ((b.data() as BookingDoc | undefined)?.promoReleased) return;
+          const pRef = promoRef(code);
+          tx.update(pRef, { redemptions: admin.firestore.FieldValue.increment(-1) });
+          tx.set(
+            pRef.collection('redemptions').doc(after.riderId),
+            {
+              count: admin.firestore.FieldValue.increment(-1),
+              bookingIds: admin.firestore.FieldValue.arrayRemove(bookingId),
+            },
+            { merge: true },
+          );
+          tx.update(bookingRef, { promoReleased: true });
+        });
+      } catch (e) {
+        logger.error('onBookingStatusChanged', 'promo release failed', { bookingId, error: String(e) });
+      }
+    }
 
     // Driver assigned → copy a rider-facing chauffeur card onto the booking.
     if (after.driverId && after.chauffeur?.driverId !== after.driverId) {

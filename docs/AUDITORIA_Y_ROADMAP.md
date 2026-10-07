@@ -129,7 +129,7 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 | 6 | **Despacho por cercanía.** Las recogidas de los próximos 90 min se ofrecen primero al chófer verificado más cercano con la clase correcta, dentro de 25 km y con ubicación de menos de 10 min. Tiene 1 minuto para aceptar (lo ve como "Solicitud exclusiva" con cuenta regresiva). Si la rechaza o no responde, pasa al siguiente (hasta 5) y luego se abre a todos. Las reservas anticipadas se abren a todos desde el inicio. Las reglas impiden que otro chófer tome una oferta exclusiva | ✅ Hecho |
 | 7 | **Meet & greet.** La reserva guarda el nombre y teléfono reales del pasajero (o del invitado). El chófer tiene llamar, WhatsApp y **"Mostrar cartel"**, que pone el nombre a pantalla completa en horizontal. El pasajero ve en el viaje cómo y dónde lo esperan | ✅ Hecho |
 | 7b | **Espera gratuita: 60 min en aeropuerto** desde el aterrizaje y **15 min en ciudad** desde la recogida o la llegada del chófer. Cuenta regresiva para pasajero y chófer, aviso push con la hora límite, y se muestra en la confirmación y en la landing | ✅ Hecho |
-| 8 | **Idiomas es / en / pt.** La app sigue el idioma del dispositivo o navegador y cambia en vivo, sin reiniciar; si el idioma no está soportado usa inglés. Hay 1009 textos en ARB, con fechas, horas y montos según el idioma. Las push salen en el idioma del usuario, y en Android 13+ se puede elegir el idioma por app. Los tests impiden textos fijos y traducciones incompletas (ver `lib/l10n/README.md`) | ✅ Hecho |
+| 8 | **Idiomas es / en / pt.** La app sigue el idioma del dispositivo o navegador y cambia en vivo, sin reiniciar; si el idioma no está soportado usa inglés. Hay 1068 textos en ARB, con fechas, horas y montos según el idioma. Las push salen en el idioma del usuario, y en Android 13+ se puede elegir el idioma por app. Los tests impiden textos fijos y traducciones incompletas (ver `lib/l10n/README.md`) | ✅ Hecho |
 | 9 | **Reportes de operaciones** (admin → Reportes). Se calculan sobre las reservas reales, por fecha de recogida y en hora local, para los últimos 7, 30 o 90 días. Incluyen viajes completados e ingresos (con variación contra el período anterior), ticket promedio, tasa de cancelación, cancelaciones tardías, reservas que nadie tomó y calificación promedio. Gráficos: viajes por día, ingresos por día, demanda por hora de recogida, mezcla por categoría y servicio, y origen de las cancelaciones. Tabla de rendimiento por chófer. Los datos diarios y los de chóferes se exportan a CSV (descarga en web; en móvil se copian) | ✅ Hecho |
 
 ### Fase 3: Super app y B2B (4–6 semanas) — en curso
@@ -140,8 +140,10 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 
 | 2 | **Verificación de chóferes.** El chófer sube 5 documentos (licencia, cédula, antecedentes, SOAT y RUAT) como foto o PDF desde "Documentos", e indica el vencimiento de los que vencen. El admin los revisa desde Chóferes → Revisar documentos: abre el archivo, aprueba confirmando la fecha o rechaza con un motivo, y el chófer recibe un aviso en su idioma. `documentsVerified` ya no se marca a mano: el servidor lo recalcula cada vez que cambia un documento, y un chófer sin verificar queda desconectado y fuera del despacho. Cada día se vencen los documentos caducados y se avisa 30 y 7 días antes. Los archivos están en Storage y solo los ven el chófer y los admins. Se borran al eliminar la cuenta. Los chóferes verificados antes de este cambio siguen verificados hasta que suban o cambien un documento | ✅ Hecho (activar Storage y desplegar: `firebase deploy --only functions,firestore,storage`) |
 
+| 3 | **Códigos promocionales.** El admin crea códigos desde Promociones. Pueden ser de porcentaje con tope o de monto fijo, con monto mínimo del viaje y fechas de vigencia. También se limitan los usos totales y por pasajero, y se pueden reservar al primer viaje o a ciertas categorías. Cada código se pausa con un clic y muestra cuántas veces se usó. El pasajero escribe el código al reservar y ve el descuento al instante. El servidor lo valida al cotizar y deja el precio con descuento fijado en la cotización. El uso se registra al crear la reserva, en una transacción que vuelve a revisar los límites, y se libera si la reserva se cancela. Si el código deja de valer entre la vista previa y la confirmación, se explica el motivo y se pide confirmar el precio completo. La confirmación y el recibo muestran el descuento. Los pasajeros no pueden listar códigos ni tocar contadores | ✅ Hecho (desplegar: `firebase deploy --only functions,firestore`) |
+
 Pendiente de la Fase 3:
-2. **Programa de fidelidad** (niveles, upgrades) y **códigos promocionales**.
+2. **Programa de fidelidad** (niveles y beneficios reales).
 3. **Más verticales**: ciudad a ciudad, eventos o roadshows, traslados de hotel y chófer por días.
 4. **Pagos a chóferes** (liquidaciones; sin Stripe Connect).
 5. **Soporte 24/7** con chat en la app, centro de ayuda y protocolo de incidentes; auditoría completa en `admin_logs`.
@@ -172,9 +174,9 @@ Pendiente de la Fase 3:
 ## 5. Cómo probar
 
 ```
-flutter test                      # 180 tests Dart
-(cd functions && npm test)        # 63 tests de negocio, precios, vuelos, chófer, espera, despacho, cancelación, mensajes, cuentas corporativas y documentos
-(cd rules-tests && npm test)      # 29 tests de reglas de Firestore y Storage (requiere Java)
+flutter test                      # 187 tests Dart
+(cd functions && npm test)        # 69 tests de negocio, precios, vuelos, chófer, espera, despacho, cancelación, mensajes, cuentas corporativas, documentos y promociones
+(cd rules-tests && npm test)      # 30 tests de reglas de Firestore y Storage (requiere Java)
 ```
 
 **Deploy:**

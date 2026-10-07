@@ -232,6 +232,10 @@ class _SummaryCard extends StatelessWidget {
                       child: Text(LuxMoney.format(booking.estimatedPrice),
                           style: displayText(size: 30, weight: FontWeight.w500)),
                     ),
+                    if (booking.discount > 0)
+                      Text(l.promoSavedLine(LuxMoney.format(booking.discount), booking.promoCode ?? ''),
+                          textAlign: TextAlign.end,
+                          style: uiLabel(spacing: 0.4, color: LD.accent)),
                     Text(booking.isCorporate
                             ? l.corpBilledTo(booking.companyName ?? '')
                             : paidByCard ? l.bookingFixedPricePaidByCard : l.bookingFixedPricePayDriver,

@@ -7,6 +7,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../company/presentation/widgets/companies_admin_tab.dart';
+import '../../../promo/presentation/promos_admin_tab.dart';
 import '../bloc/admin_bloc.dart';
 import '../widgets/admin_sections.dart';
 import '../widgets/admin_shared_widgets.dart';
@@ -27,6 +28,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         l.adminSectionBookings,
         l.adminSectionReports,
         l.adminSectionCompanies,
+        l.adminSectionPromos,
         l.adminSectionDrivers,
         l.adminSectionVehicles,
         l.adminSectionUsers,
@@ -39,6 +41,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     Icons.confirmation_number_outlined,
     Icons.insights_outlined,
     Icons.business_outlined,
+    Icons.local_offer_outlined,
     Icons.directions_car_outlined,
     Icons.car_crash_outlined,
     Icons.people_outline,
@@ -207,12 +210,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       case 1: return const BookingsTab();
       case 2: return const ReportsTab();
       case 3: return const CompaniesAdminTab();
-      case 4: return const DriversTab();
-      case 5: return const VehiclesTab();
-      case 6: return const UsersTab();
-      case 7: return const PricingTab();
-      case 8: return const AuditTab();
-      case 9: return const SettingsTab();
+      case 4: return const PromosAdminTab();
+      case 5: return const DriversTab();
+      case 6: return const VehiclesTab();
+      case 7: return const UsersTab();
+      case 8: return const PricingTab();
+      case 9: return const AuditTab();
+      case 10: return const SettingsTab();
       default: return const SizedBox();
     }
   }

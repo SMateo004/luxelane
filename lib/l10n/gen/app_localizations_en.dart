@@ -490,6 +490,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminSectionPricing => 'Pricing';
 
   @override
+  String get adminSectionPromos => 'Promotions';
+
+  @override
   String get adminSectionReports => 'Reports';
 
   @override
@@ -2558,6 +2561,209 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String profileVersion(String version) {
     return 'Luxelane v$version';
+  }
+
+  @override
+  String get promoAdminActive => 'Active';
+
+  @override
+  String get promoAdminCap => 'Cap (Bs, optional)';
+
+  @override
+  String get promoAdminClasses => 'Vehicle classes (none selected = all)';
+
+  @override
+  String get promoAdminCode => 'Code';
+
+  @override
+  String get promoAdminCodeHint => 'E.g. WELCOME';
+
+  @override
+  String get promoAdminCreate => 'New code';
+
+  @override
+  String get promoAdminDescription => 'Internal description';
+
+  @override
+  String get promoAdminDescriptionHint => 'E.g. launch campaign';
+
+  @override
+  String get promoAdminEdit => 'Edit';
+
+  @override
+  String promoAdminEditTitle(String code) {
+    return 'Edit $code';
+  }
+
+  @override
+  String get promoAdminEmpty => 'No codes yet.';
+
+  @override
+  String get promoAdminErrorCode => 'The code must be 3–20 letters, digits, hyphens or underscores.';
+
+  @override
+  String get promoAdminErrorDates => 'The end date must be after the start date.';
+
+  @override
+  String get promoAdminErrorExists => 'A code with that name already exists.';
+
+  @override
+  String get promoAdminErrorValue => 'Check the discount: a percentage is 1–100 and an amount must be above 0.';
+
+  @override
+  String get promoAdminExhausted => 'Used up';
+
+  @override
+  String get promoAdminExpired => 'Expired';
+
+  @override
+  String get promoAdminFirstRide => 'First ride only';
+
+  @override
+  String get promoAdminFirstRideSwitch => 'Only for the passenger\'s first ride';
+
+  @override
+  String get promoAdminFixed => 'Fixed amount';
+
+  @override
+  String promoAdminFrom(String date) {
+    return 'From $date';
+  }
+
+  @override
+  String get promoAdminFromAny => 'From: today';
+
+  @override
+  String get promoAdminIntro => 'The discount is validated by the server and fixed in the booking price. If the booking is cancelled, the use is released.';
+
+  @override
+  String get promoAdminMaxUses => 'Total uses (empty = unlimited)';
+
+  @override
+  String promoAdminMinFare(String amount) {
+    return 'Minimum $amount';
+  }
+
+  @override
+  String get promoAdminMinFareLabel => 'Minimum fare (Bs, optional)';
+
+  @override
+  String get promoAdminPause => 'Pause';
+
+  @override
+  String get promoAdminPaused => 'Paused';
+
+  @override
+  String get promoAdminPerUser => 'Uses per passenger';
+
+  @override
+  String get promoAdminPercent => 'Percentage';
+
+  @override
+  String get promoAdminResume => 'Resume';
+
+  @override
+  String get promoAdminSave => 'Save';
+
+  @override
+  String get promoAdminSaved => 'Code saved';
+
+  @override
+  String get promoAdminTitle => 'Promo codes';
+
+  @override
+  String promoAdminUntil(String date) {
+    return 'Until $date';
+  }
+
+  @override
+  String get promoAdminUntilAny => 'Until: no end date';
+
+  @override
+  String promoAdminUsage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count uses',
+      one: '1 use',
+      zero: 'Not used',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String promoAdminUsageOf(int used, int max) {
+    return '$used of $max uses';
+  }
+
+  @override
+  String promoAdminValueCapped(String value, String cap) {
+    return '$value (max $cap)';
+  }
+
+  @override
+  String get promoAdminValueFixed => 'Discount (Bs)';
+
+  @override
+  String get promoAdminValuePercent => 'Discount (%)';
+
+  @override
+  String promoApplied(String code) {
+    return 'Code $code applied';
+  }
+
+  @override
+  String promoAppliedWithDiscount(String code, String amount) {
+    return '$code: −$amount';
+  }
+
+  @override
+  String get promoApply => 'Apply';
+
+  @override
+  String promoDiscountLine(String code) {
+    return 'Discount $code';
+  }
+
+  @override
+  String get promoErrorAlreadyUsed => 'You\'ve already used this code.';
+
+  @override
+  String get promoErrorExhausted => 'That code has reached its usage limit.';
+
+  @override
+  String get promoErrorExpired => 'That code has expired.';
+
+  @override
+  String get promoErrorFailed => 'We couldn\'t check the code. Please try again.';
+
+  @override
+  String get promoErrorFirstRideOnly => 'This code is only for your first ride.';
+
+  @override
+  String get promoErrorInvalid => 'That code doesn\'t exist or isn\'t active.';
+
+  @override
+  String get promoErrorMinFare => 'This ride doesn\'t reach the code\'s minimum fare.';
+
+  @override
+  String get promoErrorNoLongerValid => 'The code is no longer valid. Check the price and try again.';
+
+  @override
+  String get promoErrorNotStarted => 'That code isn\'t valid yet.';
+
+  @override
+  String get promoErrorVehicleClass => 'This code doesn\'t apply to this vehicle class.';
+
+  @override
+  String get promoFieldLabel => 'Promo code';
+
+  @override
+  String get promoRemove => 'Remove code';
+
+  @override
+  String promoSavedLine(String amount, String code) {
+    return 'You save $amount with $code';
   }
 
   @override

@@ -287,3 +287,15 @@ describe('verification documents', () => {
     await assertFails(getBytes(ref(st('rider'), 'driver_documents/driver/soat.pdf')));
   });
 });
+
+describe('promo codes', () => {
+  it('only admins read codes; nobody writes them or their uses from the client', async () => {
+    await seed('promoCodes/BIENVENIDO', { code: 'BIENVENIDO', type: 'percent', value: 20, active: true, redemptions: 3 });
+    await seed('promoCodes/BIENVENIDO/redemptions/rider', { count: 1 });
+    await assertSucceeds(getDoc(doc(db('admin'), 'promoCodes/BIENVENIDO')));
+    await assertFails(getDoc(doc(db('rider'), 'promoCodes/BIENVENIDO')));
+    await assertFails(updateDoc(doc(db('admin'), 'promoCodes/BIENVENIDO'), { redemptions: 0 }));
+    await assertFails(setDoc(doc(db('rider'), 'promoCodes/GRATIS'), { type: 'percent', value: 100, active: true }));
+    await assertFails(updateDoc(doc(db('rider'), 'promoCodes/BIENVENIDO/redemptions/rider'), { count: 0 }));
+  });
+});

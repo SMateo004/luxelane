@@ -17,4 +17,18 @@ abstract final class BookingErrorCodes {
   static const costCenterRequired = 'booking/cost-center-required';
   static const companyInactive = 'booking/company-inactive';
   static const corporateNotAllowed = 'booking/corporate-not-allowed';
+  static const promoNoLongerValid = 'booking/promo-no-longer-valid';
+}
+
+/// Promo error codes from checkPromoCode / quoteBooking (functions/src/promo.ts).
+abstract final class PromoErrorCodes {
+  static const invalid = 'promo/invalid';
+  static const notStarted = 'promo/not-started';
+  static const expired = 'promo/expired';
+  static const exhausted = 'promo/exhausted';
+  static const alreadyUsed = 'promo/already-used';
+  static const firstRideOnly = 'promo/first-ride-only';
+  static const vehicleClass = 'promo/vehicle-class';
+  static const minFare = 'promo/min-fare';
+  static const failed = 'promo/failed';
 }
