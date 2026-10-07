@@ -6,6 +6,7 @@ import * as stripe from './stripe_service';
 import { STRIPE_SECRET_KEY } from './stripe_service';
 import { defineSecret } from 'firebase-functions/params';
 import { logger } from './logger';
+import { Lang, MessageKey, clock, langOf, money, t, vehicleName } from './messages';
 import { buildChauffeur, isValidRating, nextAverage } from './chauffeur';
 import {
   DispatchState,
@@ -29,7 +30,6 @@ import {
   UserRole,
   canCapture,
   chunk,
-  formatMoney,
   freeWaitEnd,
   isStalePending,
   isValidAmount,
@@ -55,7 +55,6 @@ import {
 admin.initializeApp();
 const db = admin.firestore();
 
-const DEFAULT_CURRENCY = CURRENCY;
 const MAX_ADVANCE_MS = 365 * 24 * 60 * 60 * 1000;
 const stripeOpts = { secrets: [STRIPE_SECRET_KEY] };
 
@@ -172,6 +171,7 @@ interface QuoteDoc {
 }
 
 interface UserDoc {
+  locale?: string;
   role?: UserRole;
   stripeCustomerId?: string;
   fcmTokens?: string[];
@@ -219,9 +219,24 @@ async function sendPush(tokens: string[], title: string, body: string): Promise<
   await admin.messaging().sendEachForMulticast({ tokens, notification: { title, body } });
 }
 
-async function getUserTokens(userId: string): Promise<string[]> {
-  return (await getUser(userId)).fcmTokens ?? [];
+/**
+ * Sends a push in the recipient's language. [params] may be a function of
+ * the language for values that need localised formatting (money, times).
+ */
+async function pushUser(
+  userId: string,
+  titleKey: MessageKey,
+  bodyKey: MessageKey,
+  params: Record<string, string | number> | ((lang: Lang) => Record<string, string | number>) = {},
+): Promise<void> {
+  const user = await getUser(userId);
+  const tokens = user.fcmTokens ?? [];
+  if (!tokens.length) return;
+  const lang = langOf(user.locale);
+  const p = typeof params === 'function' ? params(lang) : params;
+  await sendPush(tokens, t(lang, titleKey, p), t(lang, bodyKey, p));
 }
+
 
 async function writeAudit(action: string, data: Record<string, unknown>): Promise<void> {
   await db.collection('admin_logs').add({
@@ -644,18 +659,21 @@ async function loadDriverCandidates(): Promise<DriverCandidate[]> {
 }
 
 async function notifyOffer(driverId: string, booking: BookingDoc, distanceKm?: number): Promise<void> {
-  const price = formatMoney(booking.estimatedPrice, booking.currency ?? DEFAULT_CURRENCY);
-  const near = distanceKm !== undefined ? ` · a ${distanceKm.toFixed(1)} km` : '';
-  await sendPush(await getUserTokens(driverId), 'Nueva solicitud para ti', `${price}${near}. Tienes 1 minuto para aceptarla.`);
+  await pushUser(driverId, 'offerTitle', 'offerBody', (lang) => ({
+    price: money(booking.estimatedPrice, lang),
+    distance: distanceKm !== undefined ? t(lang, 'offerDistance', { km: distanceKm.toFixed(1) }) : '',
+  }));
 }
 
 async function notifyBroadcast(booking: BookingDoc): Promise<void> {
   const drivers = await loadDriverCandidates();
-  const tokens = (await Promise.all(drivers.map((d) => getUserTokens(d.driverId)))).flat();
-  await sendPush(
-    tokens,
-    'Nueva reserva disponible',
-    `${bookingClass(booking)} · ${formatMoney(booking.estimatedPrice, booking.currency ?? DEFAULT_CURRENCY)}`,
+  await Promise.all(
+    drivers.map((d) =>
+      pushUser(d.driverId, 'broadcastTitle', 'broadcastBody', (lang) => ({
+        vehicle: vehicleName(bookingClass(booking), lang),
+        price: money(booking.estimatedPrice, lang),
+      })),
+    ),
   );
 }
 
@@ -825,35 +843,34 @@ export const onBookingStatusChanged = onDocumentUpdated(
       }
     }
 
-    let arrivedMessage = 'Tu chófer ha llegado';
+    let freeUntil: Date | null = null;
     if (after.status === 'driver_arrived') {
       const arrivedAt = new Date();
       await bookingRef.update({ driverArrivedAt: admin.firestore.Timestamp.fromDate(arrivedAt) });
       const pickup = (after.pickupAt ?? after.scheduledAt)?.toDate() ?? arrivedAt;
-      const until = freeWaitEnd({
+      freeUntil = freeWaitEnd({
         pickup,
         isAirport: !!after.flightNumber,
         landing: after.flight?.estimatedArrival?.toDate() ?? null,
         driverArrivedAt: arrivedAt,
       });
-      const time = until.toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit', timeZone: 'America/La_Paz' });
-      arrivedMessage = `Tu chófer ha llegado. Espera gratuita hasta las ${time}.`;
     }
 
-    const statusMessages: Partial<Record<BookingStatus, string>> = {
-      confirmed: 'Tu chófer ha sido asignado',
-      driver_arriving: 'Tu chófer está en camino',
-      driver_arrived: arrivedMessage,
-      in_progress: 'Tu viaje ha comenzado',
-      completed: 'Has llegado. ¡Gracias por viajar con Luxelane!',
-      cancelled: 'Tu reserva ha sido cancelada',
+    const statusKeys: Partial<Record<BookingStatus, MessageKey>> = {
+      confirmed: 'statusConfirmed',
+      driver_arriving: 'statusArriving',
+      driver_arrived: 'statusArrived',
+      in_progress: 'statusInProgress',
+      completed: 'statusCompleted',
+      cancelled: 'statusCancelled',
     };
 
-    const message = statusMessages[after.status];
-    if (!message) return;
+    const key = statusKeys[after.status];
+    if (!key) return;
 
-    const tokens = await getUserTokens(after.riderId);
-    await sendPush(tokens, 'Luxelane', message);
+    await pushUser(after.riderId, 'statusTitle', key, (lang) => ({
+      time: freeUntil ? clock(freeUntil, lang) : '',
+    }));
   },
 );
 
@@ -934,7 +951,7 @@ export const assignNearestDriver = onCall(async (req) => {
     });
 
     if (assigned) {
-      await sendPush(await getUserTokens(driverId), 'Nueva reserva', 'Se te ha asignado un nuevo viaje');
+      await pushUser(driverId, 'assignedTitle', 'assignedBody');
       logger.info('assignNearestDriver', 'assigned', { bookingId, driverId });
       return { assigned: true, driverId };
     }
@@ -985,7 +1002,7 @@ export const acceptBooking = onCall(async (req) => {
     });
 
     if (riderId) {
-      await sendPush(await getUserTokens(riderId), 'Chófer asignado', 'Tu chófer ha confirmado la reserva');
+      await pushUser(riderId, 'acceptedTitle', 'acceptedBody');
     }
 
     logger.info('acceptBooking', 'success', { bookingId, driverId });
@@ -1108,17 +1125,10 @@ export const trackFlights = onSchedule(
         });
 
         if (moved || status.cancelled) {
-          const time = pickup.toLocaleTimeString('es-BO', {
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZone: 'America/La_Paz',
-          });
-          const body = status.cancelled
-            ? `Tu vuelo ${flight} figura como cancelado. Revisa tu reserva.`
-            : `Tu vuelo ${flight} llega con ${delayMin} min de retraso. Tu chófer te esperará a las ${time}.`;
-          await sendPush(await getUserTokens(b.riderId), 'Actualización de vuelo', body);
-          if (b.driverId) {
-            await sendPush(await getUserTokens(b.driverId), 'Recogida reprogramada', `Vuelo ${flight}: nueva hora de recogida ${time}.`);
+          const params = (lang: Lang) => ({ flight, minutes: delayMin, time: clock(pickup, lang) });
+          await pushUser(b.riderId, 'flightTitle', status.cancelled ? 'flightCancelled' : 'flightDelayed', params);
+          if (b.driverId && !status.cancelled) {
+            await pushUser(b.driverId, 'pickupMovedTitle', 'pickupMovedBody', params);
           }
         }
       } catch (e) {
@@ -1233,9 +1243,7 @@ export const sendRideReceipt = onDocumentCreated('payments/{paymentId}', async (
 
   logger.info('sendRideReceipt', 'sending receipt', { paymentId: event.params.paymentId });
 
-  await sendPush(
-    await getUserTokens(payment.riderId),
-    'Pago confirmado',
-    `Se cobró ${formatMoney(payment.amount / 100, payment.currency)} por tu viaje`,
-  );
+  await pushUser(payment.riderId, 'paymentTitle', 'paymentBody', (lang) => ({
+    price: money(payment.amount / 100, lang),
+  }));
 });
