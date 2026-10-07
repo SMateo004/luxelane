@@ -1,0 +1,9 @@
+<!-- Driver app only: keeps sharing location while on duty with the app
+     minimised, via a foreground service with a visible notification
+     (geolocator). Uses "while in use" permission; no background-location
+     permission is requested. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+</manifest>

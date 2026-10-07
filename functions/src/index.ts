@@ -1129,6 +1129,67 @@ export const trackFlights = onSchedule(
 );
 
 // ---------------------------------------------------------------------------
+// deleteAccount — required by app stores and personal-data rules.
+// Bookings are kept for accounting but stripped of personal contact data.
+// ---------------------------------------------------------------------------
+
+const ACTIVE_STATUSES: BookingStatus[] = ['confirmed', 'driver_arriving', 'driver_arrived', 'in_progress'];
+
+export const deleteAccount = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const user = await getUser(uid);
+  if (user.role === 'admin') throw err.failedPrecondition('Admins must be removed by another admin');
+
+  const asRider = await db.collection('bookings').where('riderId', '==', uid).get();
+  const asDriver = await db.collection('bookings').where('driverId', '==', uid).get();
+  const all = [...asRider.docs, ...asDriver.docs];
+  if (all.some((d) => ACTIVE_STATUSES.includes((d.data() as BookingDoc).status))) {
+    throw err.failedPrecondition('account/active-trip');
+  }
+
+  const now = admin.firestore.Timestamp.now();
+  for (const group of chunk(all, 400)) {
+    const batch = db.batch();
+    for (const doc of group) {
+      const b = doc.data() as BookingDoc;
+      const update: Record<string, unknown> = { updatedAt: now };
+      if (b.riderId === uid) {
+        update.passengerName = null;
+        update.passengerPhone = null;
+        update.notes = null;
+        if (b.status === 'pending') {
+          update.status = 'cancelled' as BookingStatus;
+          update.cancelReason = 'account_deleted';
+        }
+      }
+      if (b.driverId === uid) update['chauffeur.phone'] = admin.firestore.FieldValue.delete();
+      batch.update(doc.ref, update);
+    }
+    await batch.commit();
+  }
+
+  const notifications = await db.collection('users').doc(uid).collection('notifications').get();
+  for (const group of chunk(notifications.docs, 400)) {
+    const batch = db.batch();
+    group.forEach((d) => batch.delete(d.ref));
+    await batch.commit();
+  }
+
+  if (user.role === 'driver') {
+    await db.collection('driverProfiles').doc(uid).delete().catch(() => undefined);
+    const vehicles = await db.collection('vehicles').where('driverId', '==', uid).get();
+    await Promise.all(vehicles.docs.map((v) => v.ref.update({ isActive: false })));
+  }
+
+  await db.collection('users').doc(uid).delete();
+  await writeAudit('account_deleted', { uid, role: user.role ?? 'unknown' });
+  await admin.auth().deleteUser(uid);
+
+  logger.info('deleteAccount', 'deleted', { uid });
+  return { ok: true };
+});
+
+// ---------------------------------------------------------------------------
 // scheduledCleanup — cancels pending bookings whose pickup time has passed
 // ---------------------------------------------------------------------------
 

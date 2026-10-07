@@ -20,6 +20,41 @@ class MapsService {
   // Current device location
   // ---------------------------------------------------------------------------
 
+  /// Continuous position updates for an on-duty chauffeur.
+  ///
+  /// Android runs a foreground service with a persistent notification, so
+  /// tracking survives the app being minimised using the regular
+  /// "while in use" permission. iOS keeps updating in the background with
+  /// the blue location indicator. Not used on web (see DriverBloc).
+  Stream<Position> driverPositionStream() {
+    final LocationSettings settings;
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      settings = AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 25,
+        intervalDuration: const Duration(seconds: 10),
+        foregroundNotificationConfig: const ForegroundNotificationConfig(
+          notificationTitle: 'Luxelane Chófer',
+          notificationText: 'Compartiendo tu ubicación mientras estás disponible',
+          enableWakeLock: true,
+          setOngoing: true,
+        ),
+      );
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      settings = AppleSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 25,
+        activityType: ActivityType.automotiveNavigation,
+        pauseLocationUpdatesAutomatically: false,
+        allowBackgroundLocationUpdates: true,
+        showBackgroundLocationIndicator: true,
+      );
+    } else {
+      settings = const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 25);
+    }
+    return Geolocator.getPositionStream(locationSettings: settings);
+  }
+
   Future<Position?> getCurrentPosition() async {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();

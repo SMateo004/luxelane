@@ -140,15 +140,59 @@ class _RegisterPageState extends State<RegisterPage> {
                   validator: (v) =>
                       v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
                 ),
-                const SizedBox(height: LuxSpacing.xl),
+                const SizedBox(height: LuxSpacing.md),
+                FormField<bool>(
+                  initialValue: false,
+                  validator: (v) => v == true
+                      ? null
+                      : 'Debes aceptar los términos y la política de privacidad',
+                  builder: (field) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Checkbox(
+                            value: field.value ?? false,
+                            onChanged: field.didChange,
+                            activeColor: LuxColors.accent,
+                            checkColor: LuxColors.onAccent,
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 4),
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  const Text('Acepto los ', style: LuxTypography.bodyMedium),
+                                  _InlineLink(label: 'Términos y condiciones', path: '/terminos'),
+                                  const Text(' y la ', style: LuxTypography.bodyMedium),
+                                  _InlineLink(label: 'Política de privacidad', path: '/privacidad'),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (field.hasError)
+                        Padding(
+                          padding: const EdgeInsets.only(left: 12),
+                          child: Text(field.errorText!,
+                              style: LuxTypography.caption.copyWith(color: LuxColors.error)),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: LuxSpacing.lg),
                 LuxButton(
                   label: 'Crear cuenta',
                   onPressed: loading ? null : _submit,
                   loading: loading,
                 ),
                 const SizedBox(height: LuxSpacing.md),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     const Text('¿Ya tienes cuenta? ',
                         style: LuxTypography.bodyMedium),
@@ -162,5 +206,24 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
           );
         },
+      );
+}
+
+class _InlineLink extends StatelessWidget {
+  const _InlineLink({required this.label, required this.path});
+  final String label;
+  final String path;
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+        onTap: () => context.push(path),
+        child: Text(
+          label,
+          style: LuxTypography.bodyMedium.copyWith(
+            color: LuxColors.accent,
+            decoration: TextDecoration.underline,
+            decorationColor: LuxColors.accent,
+          ),
+        ),
       );
 }

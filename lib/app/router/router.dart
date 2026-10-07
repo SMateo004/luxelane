@@ -20,6 +20,7 @@ import '../../features/services/presentation/pages/airport_transfer_page.dart';
 import '../../features/services/presentation/pages/hourly_charter_page.dart';
 import '../../features/services/presentation/pages/immediate_pickup_page.dart';
 import '../../features/home/presentation/pages/home_screen.dart';
+import '../../features/legal/presentation/pages/legal_pages.dart';
 import '../../features/payments/presentation/pages/add_card_screen.dart';
 import '../../features/payments/presentation/pages/payment_screen.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
@@ -55,6 +56,8 @@ abstract class LuxRoutes {
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
+const _publicPaths = {'/terminos', '/privacidad', '/contacto', '/eliminar-cuenta'};
+
 GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
       navigatorKey: _rootNavigatorKey,
       initialLocation: LuxRoutes.home,
@@ -62,6 +65,10 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         final authState = authBloc.state;
         final isAuth = authState is AuthAuthenticated;
         final going = state.matchedLocation;
+
+        // Public legal/contact pages are always reachable (store listings link
+        // to them, and deletion must be possible from the web).
+        if (_publicPaths.contains(going)) return null;
 
         // 1. Initial State: Only show splash if we are NOT already trying to reach a specific driver path.
         if (authState is AuthInitial) {
@@ -174,6 +181,10 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
           path: '/servicios/contratacion-por-horas',
           pageBuilder: (c, s) => _fade(const HourlyCharterPage(), s),
         ),
+        GoRoute(path: '/terminos', pageBuilder: (c, s) => _fade(LegalPage.terms(), s)),
+        GoRoute(path: '/privacidad', pageBuilder: (c, s) => _fade(LegalPage.privacy(), s)),
+        GoRoute(path: '/contacto', pageBuilder: (c, s) => _fade(const ContactPage(), s)),
+        GoRoute(path: '/eliminar-cuenta', pageBuilder: (c, s) => _fade(const DeleteAccountPage(), s)),
         GoRoute(
           path: '/viajes/:bookingId/recibo',
           pageBuilder: (c, s) => _slide(

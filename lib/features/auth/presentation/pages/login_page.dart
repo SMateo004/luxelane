@@ -1,11 +1,9 @@
-import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_theme.dart';
-import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
 
 // ── Design tokens (aligned with home_web_page / LD) ─────────────────────────

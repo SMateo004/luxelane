@@ -20,8 +20,9 @@ class _FooterSection extends StatelessWidget {
     final links = [
       ('Servicios', onServices),
       ('Flota',     onFleet),
-      ('Nosotros',  () {}),
-      ('Contacto',  () {}),
+      ('Contacto',   () => context.push('/contacto')),
+      ('Términos',   () => context.push('/terminos')),
+      ('Privacidad', () => context.push('/privacidad')),
     ];
 
     return Container(

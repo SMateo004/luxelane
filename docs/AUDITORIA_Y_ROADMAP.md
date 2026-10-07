@@ -144,10 +144,24 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 - Una sección "Cómo funciona" en 3 pasos, ciudades disponibles, badges de App Store y Google Play, y logos de medios de pago.
 - Footer con términos, privacidad, contacto real y selector de idioma.
 
+## 4b. Preparación para lanzar
+
+| Bloqueante | Estado |
+|---|---|
+| La **app del chófer no conectaba a Firebase** (configuración con valores de relleno) | ✅ Corregido: usa la configuración real |
+| `deploy_web.sh` compilaba con `GOOGLE_MAPS_KEY=placeholder`, lo que rompía los mapas en producción; además no desplegaba la app del chófer | ✅ Corregido: exige la clave y despliega ambas apps |
+| **Eliminar cuenta** (obligatorio en Google Play y App Store) | ✅ En Perfil y en `/eliminar-cuenta` (sirve como URL para la tienda). No se puede con un viaje en curso; las reservas pendientes se cancelan y los viajes pasados se conservan sin datos de contacto |
+| **Términos, Privacidad y Contacto** | ✅ Páginas públicas en `/terminos`, `/privacidad` y `/contacto`, enlazadas desde el footer, el perfil y el registro. El registro exige aceptar los términos y guarda la fecha y versión aceptadas. ⚠ Son borradores: completa `lib/core/config/legal.dart` y hazlos revisar por un abogado. Se muestra un aviso de "borrador" hasta completarlos |
+| Controles falsos en el perfil ("Millas", idiomas que no cambiaban nada, preferencias de notificaciones sin efecto, métodos de pago de Stripe) | ✅ Reemplazados por Ayuda y legal |
+| **Ubicación del chófer en segundo plano** | ✅ Android: servicio en primer plano con notificación visible, sin pedir el permiso de ubicación "siempre". iOS: actualizaciones en segundo plano. Web: sigue funcionando solo con la pestaña abierta |
+| **Android listo para la tienda**: permisos de Internet, ubicación y notificaciones; dos apps (`com.luxelane.rider` y `com.luxelane.driver`); firma de release con `key.properties`; clave de Maps para Android | ✅ Configurado. ⚠ No se pudo compilar aquí (sin Android SDK); hay que verificarlo con `flutter build appbundle` |
+| **Firebase para Android/iOS**: hoy solo está configurado para web, así que las apps móviles se caen al iniciar | ⏳ Requiere `flutterfire configure` con tu cuenta (pasos en `DEPLOY.md`) |
+| Proyecto iOS | ⏳ No existe la carpeta `ios/` (pasos en `DEPLOY.md`) |
+
 ## 5. Cómo probar
 
 ```
-flutter test                      # 62 tests Dart
+flutter test                      # 67 tests Dart
 (cd functions && npm test)        # 41 tests de negocio, precios, vuelos, chófer, espera y despacho
 (cd rules-tests && npm test)      # 22 tests de reglas de seguridad (requiere Java)
 ```

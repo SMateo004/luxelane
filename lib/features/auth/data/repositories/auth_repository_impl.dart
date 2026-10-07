@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import '../../../../core/config/legal.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
@@ -82,7 +83,12 @@ class AuthRepositoryImpl implements AuthRepository {
         isActive: true,
         fcmTokens: const [],
       );
-      await _db.collection('users').doc(user.id).set(user.toJson());
+      await _db.collection('users').doc(user.id).set({
+        ...user.toJson(),
+        // Registration requires accepting the terms (see RegisterPage).
+        'termsAcceptedAt': Timestamp.now(),
+        'termsVersion': LegalInfo.lastUpdated,
+      });
       return Right(user);
     } on fb.FirebaseAuthException catch (e) {
       return Left(AuthFailure(e.message ?? 'Registration failed'));

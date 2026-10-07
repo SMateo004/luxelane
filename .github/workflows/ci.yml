@@ -152,7 +152,7 @@ jobs:
       - run: flutter pub get
       - name: Build rider AAB
         run: |
-          flutter build appbundle --release \
+          flutter build appbundle --release --flavor rider -t lib/main.dart \
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
@@ -161,7 +161,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: android-rider-release
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: build/app/outputs/bundle/riderRelease/app-rider-release.aab
 
   # ---------------------------------------------------------------------------
   build_android_driver:
@@ -183,7 +183,7 @@ jobs:
       - run: flutter pub get
       - name: Build driver AAB
         run: |
-          flutter build appbundle --release \
+          flutter build appbundle --release --flavor driver \
             -t lib/main_driver.dart \
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
@@ -193,7 +193,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: android-driver-release
-          path: build/app/outputs/bundle/release/app-release.aab
+          path: build/app/outputs/bundle/driverRelease/app-driver-release.aab
 
   # ---------------------------------------------------------------------------
   deploy_functions:

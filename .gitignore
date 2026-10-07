@@ -66,3 +66,4 @@ app.*.map.json
 rules-tests/node_modules/
 firebase-debug.log
 firestore-debug.log
+hosting/

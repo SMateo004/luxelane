@@ -77,6 +77,8 @@ void main() {
         .thenAnswer((_) async => Right(_driverUser));
     when(() => bookingRepo.streamPendingBookings())
         .thenAnswer((_) => Stream.value([]));
+    // No location permission in tests → the bloc falls back to polling.
+    when(() => mapsService.getCurrentPosition()).thenAnswer((_) async => null);
   });
 
   DriverBloc bloc() => DriverBloc(

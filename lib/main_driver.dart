@@ -10,7 +10,7 @@ import 'core/config/env.dart';
 import 'core/di/injection.dart';
 import 'core/services/crash_service.dart';
 import 'core/services/performance_service.dart';
-import 'firebase_config.dart';
+import 'firebase_options_driver.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

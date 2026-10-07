@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
@@ -59,10 +61,13 @@ class DriverLocationTrackingStopped extends DriverEvent {
 }
 
 class _DriverLocationTick extends DriverEvent {
-  const _DriverLocationTick({required this.userId});
+  const _DriverLocationTick({required this.userId, this.position});
   final String userId;
+
+  /// Supplied by the native position stream; null means "fetch now" (web).
+  final Position? position;
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [userId, position];
 }
 
 class DriverBookingAccepted extends DriverEvent {
@@ -257,6 +262,11 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
   final VehicleRepository _vehicleRepo;
   final MapsService _mapsService;
   Timer? _locationTimer;
+  StreamSubscription<Position>? _positionSub;
+  DateTime? _lastWrite;
+
+  /// Minimum spacing between Firestore writes from the position stream.
+  static const _writeInterval = Duration(seconds: 8);
 
   // ── Startup ───────────────────────────────────────────────────────────────
 
@@ -357,10 +367,20 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     Emitter<DriverState> emit,
   ) async {
     _locationTimer?.cancel();
-    _locationTimer = Timer.periodic(
-      const Duration(seconds: 10),
-      (_) => add(_DriverLocationTick(userId: event.userId)),
-    );
+    await _positionSub?.cancel();
+    final granted = await _mapsService.getCurrentPosition() != null;
+    if (kIsWeb || !granted) {
+      // Web can't track in the background: poll while the tab is open.
+      _locationTimer = Timer.periodic(
+        const Duration(seconds: 10),
+        (_) => add(_DriverLocationTick(userId: event.userId)),
+      );
+    } else {
+      _positionSub = _mapsService.driverPositionStream().listen(
+        (pos) => add(_DriverLocationTick(userId: event.userId, position: pos)),
+        onError: (_) {},
+      );
+    }
     if (state is DriverLoaded) {
       emit((state as DriverLoaded).copyWith(isTracking: true));
     }
@@ -372,6 +392,8 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
   ) async {
     _locationTimer?.cancel();
     _locationTimer = null;
+    await _positionSub?.cancel();
+    _positionSub = null;
     if (state is DriverLoaded) {
       emit((state as DriverLoaded).copyWith(isTracking: false));
     }
@@ -381,8 +403,13 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     _DriverLocationTick event,
     Emitter<DriverState> emit,
   ) async {
-    final pos = await _mapsService.getCurrentPosition();
+    if (event.position != null) {
+      final last = _lastWrite;
+      if (last != null && DateTime.now().difference(last) < _writeInterval) return;
+    }
+    final pos = event.position ?? await _mapsService.getCurrentPosition();
     if (pos != null) {
+      _lastWrite = DateTime.now();
       await _userRepo.updateDriverLocation(
         userId: event.userId,
         latitude: pos.latitude,
@@ -489,6 +516,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
   @override
   Future<void> close() {
     _locationTimer?.cancel();
+    _positionSub?.cancel();
     return super.close();
   }
 }

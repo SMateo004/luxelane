@@ -206,40 +206,33 @@ class _ProfileBody extends StatelessWidget {
                       value: rating != null
                           ? rating!.toStringAsFixed(1)
                           : '—')),
-              const SizedBox(width: LuxSpacing.sm),
-              const Expanded(child: _StatCard(label: 'Millas', value: '—')),
+
             ],
           ),
           const SizedBox(height: LuxSpacing.xl),
-          const SectionHeader(title: 'Pago'),
-          const SizedBox(height: LuxSpacing.md),
-          LuxOutlinedButton(
-            label: 'Gestionar métodos de pago',
-            onPressed: () => context.push('/payment'),
-            icon: Icons.credit_card_outlined,
-          ),
-          const SizedBox(height: LuxSpacing.xl),
-          const SectionHeader(title: 'Preferencias'),
-          const SizedBox(height: LuxSpacing.md),
-          _PrefTile(
-            label: 'Idioma',
-            value: language,
-            options: const ['English', 'Español', 'Français', 'Deutsch'],
-            onChanged: onLanguageChanged,
-          ),
-          _PrefTile(
-            label: 'Notificaciones',
-            value: notifications,
-            options: const ['Todas', 'Solo importantes', 'Ninguna'],
-            onChanged: onNotificationsChanged,
-          ),
+          const SectionHeader(title: 'Ayuda y legal'),
+          const SizedBox(height: LuxSpacing.sm),
+          _LinkTile(icon: Icons.support_agent_outlined, label: 'Contacto y ayuda', path: '/contacto'),
+          _LinkTile(icon: Icons.description_outlined, label: 'Términos y condiciones', path: '/terminos'),
+          _LinkTile(icon: Icons.privacy_tip_outlined, label: 'Política de privacidad', path: '/privacidad'),
           const SizedBox(height: LuxSpacing.xl),
           LuxOutlinedButton(
             label: 'Cerrar sesión',
             onPressed: () =>
                 context.read<AuthBloc>().add(const LogoutRequested()),
           ),
-          const SizedBox(height: LuxSpacing.md),
+          const SizedBox(height: LuxSpacing.sm),
+          Center(
+            child: TextButton(
+              onPressed: () => context.push('/eliminar-cuenta'),
+              style: TextButton.styleFrom(
+                foregroundColor: LuxColors.error,
+                minimumSize: const Size(0, 48),
+              ),
+              child: const Text('Eliminar cuenta'),
+            ),
+          ),
+          const SizedBox(height: LuxSpacing.sm),
           const Center(
               child:
                   Text('Luxelane v1.0.0', style: LuxTypography.caption)),
@@ -452,68 +445,19 @@ class _StatCard extends StatelessWidget {
       );
 }
 
-class _PrefTile extends StatelessWidget {
-  const _PrefTile({
-    required this.label,
-    required this.value,
-    required this.options,
-    required this.onChanged,
-  });
+class _LinkTile extends StatelessWidget {
+  const _LinkTile({required this.icon, required this.label, required this.path});
+  final IconData icon;
   final String label;
-  final String value;
-  final List<String> options;
-  final ValueChanged<String> onChanged;
-
-  void _pick(BuildContext context) {
-    showDialog<String>(
-      context: context,
-      builder: (ctx) => SimpleDialog(
-        backgroundColor: LuxColors.blackSurface,
-        title: Text(label,
-            style: LuxTypography.titleMedium.copyWith(fontSize: 15)),
-        children: options
-            .map((o) => SimpleDialogOption(
-                  onPressed: () => Navigator.pop(ctx, o),
-                  child: Padding(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: LuxSpacing.xs),
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: Text(o, style: LuxTypography.bodyLarge)),
-                        if (o == value)
-                          const Icon(Icons.check_rounded,
-                              color: LuxColors.accent, size: 18),
-                      ],
-                    ),
-                  ),
-                ))
-            .toList(),
-      ),
-    ).then((selected) {
-      if (selected != null) onChanged(selected);
-    });
-  }
+  final String path;
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: () => _pick(context),
-        child: Container(
-          padding:
-              const EdgeInsets.symmetric(vertical: LuxSpacing.md),
-          decoration: const BoxDecoration(
-              border: Border(
-                  bottom: BorderSide(color: LuxColors.blackBorder))),
-          child: Row(
-            children: [
-              Expanded(
-                  child: Text(label, style: LuxTypography.bodyLarge)),
-              Text(value, style: LuxTypography.bodyMedium),
-              const SizedBox(width: LuxSpacing.sm),
-              const Icon(Icons.chevron_right_rounded,
-                  color: LuxColors.whiteTertiary, size: 18),
-            ],
-          ),
-        ),
+  Widget build(BuildContext context) => ListTile(
+        contentPadding: EdgeInsets.zero,
+        minTileHeight: 52,
+        leading: Icon(icon, color: LuxColors.accent),
+        title: Text(label, style: LuxTypography.bodyLarge),
+        trailing: const Icon(Icons.chevron_right_rounded, color: LuxColors.whiteTertiary),
+        onTap: () => context.push(path),
       );
 }

@@ -9,6 +9,7 @@ import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
 import '../../features/driver/presentation/pages/driver_home_screen.dart';
 import '../../features/driver/presentation/pages/driver_onboarding_screen.dart';
 import '../../features/driver/presentation/pages/driver_queue_screen.dart';
+import '../../features/legal/presentation/pages/legal_pages.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../driver_shell/driver_shell.dart';
 
@@ -31,6 +32,11 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
         final authState = authBloc.state;
         final isAuth = authState is AuthAuthenticated;
         final going = state.matchedLocation;
+
+        // Legal, contact and account deletion are public.
+        if (const {'/terminos', '/privacidad', '/contacto', '/eliminar-cuenta'}.contains(going)) {
+          return null;
+        }
 
         // While checking initial auth, hold on
         if (authState is AuthInitial || authState is AuthLoading) return null;
@@ -67,6 +73,10 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
           path: DriverRoutes.login,
           pageBuilder: (c, s) => _fade(const LoginPage(), s),
         ),
+        GoRoute(path: '/terminos', pageBuilder: (c, s) => _fade(LegalPage.terms(), s)),
+        GoRoute(path: '/privacidad', pageBuilder: (c, s) => _fade(LegalPage.privacy(), s)),
+        GoRoute(path: '/contacto', pageBuilder: (c, s) => _fade(const ContactPage(), s)),
+        GoRoute(path: '/eliminar-cuenta', pageBuilder: (c, s) => _fade(const DeleteAccountPage(), s)),
         GoRoute(
           path: DriverRoutes.onboarding,
           pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),

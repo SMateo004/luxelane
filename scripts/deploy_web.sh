@@ -1,12 +1,30 @@
 #!/bin/bash
-set -e
-echo "▶ Building Flutter web..."
-flutter build web --release --dart-define=GOOGLE_MAPS_KEY=placeholder
+# Builds and deploys both web apps (rider + driver) to Firebase Hosting.
+#
+#   GOOGLE_MAPS_KEY=... [FCM_VAPID_KEY=...] ./scripts/deploy_web.sh
+#
+# The Maps key must be restricted by HTTP referrer in Google Cloud Console.
+set -euo pipefail
 
-echo "▶ Syncing build/web → hosting/public..."
-cp -r build/web/. hosting/public/
+: "${GOOGLE_MAPS_KEY:?Set GOOGLE_MAPS_KEY (restricted browser key)}"
+DEFINES=(--dart-define=ENV=prod --dart-define=GOOGLE_MAPS_KEY="$GOOGLE_MAPS_KEY")
+if [[ -n "${FCM_VAPID_KEY:-}" ]]; then
+  DEFINES+=(--dart-define=FCM_VAPID_KEY="$FCM_VAPID_KEY")
+else
+  echo "⚠ FCM_VAPID_KEY not set — web push notifications will be disabled."
+fi
 
-echo "▶ Deploying to Firebase Hosting (rider)..."
-firebase deploy --only hosting:rider
+echo "▶ Building rider web..."
+flutter build web --release "${DEFINES[@]}" --output=build/web_rider
+rm -rf hosting/public && mkdir -p hosting/public
+cp -r build/web_rider/. hosting/public/
 
-echo "✓ Deploy complete → https://luxelane-4e7ae.web.app"
+echo "▶ Building driver web..."
+flutter build web --release -t lib/main_driver.dart "${DEFINES[@]}" --output=build/web_driver
+rm -rf hosting/driver && mkdir -p hosting/driver
+cp -r build/web_driver/. hosting/driver/
+
+echo "▶ Deploying hosting (rider + driver)..."
+firebase deploy --only hosting
+
+echo "✓ Deploy complete"
