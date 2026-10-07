@@ -150,6 +150,29 @@ describe('payments & admin collections', () => {
   });
 });
 
+describe('live tracking & driver privacy', () => {
+  it('only the assigned driver writes, only rider/driver read', async () => {
+    await seed('bookings/b1', booking({ driverId: 'driver', status: 'driver_arriving' }));
+    const live = { lat: -17.78, lng: -63.18, heading: 90, speed: 8, updatedAt: 1 };
+    await assertSucceeds(setDoc(doc(db('driver'), 'bookings/b1/tracking/live'), live));
+    await assertFails(setDoc(doc(db('newdriver'), 'bookings/b1/tracking/live'), live));
+    await assertFails(setDoc(doc(db('rider'), 'bookings/b1/tracking/live'), live));
+    await assertFails(setDoc(doc(db('driver'), 'bookings/b1/tracking/live'), { ...live, extra: true }));
+    await assertSucceeds(getDoc(doc(db('rider'), 'bookings/b1/tracking/live')));
+    await assertFails(getDoc(doc(db('newdriver'), 'bookings/b1/tracking/live')));
+  });
+
+  it('no tracking writes once the trip is over', async () => {
+    await seed('bookings/b2', booking({ driverId: 'driver', status: 'completed' }));
+    await assertFails(setDoc(doc(db('driver'), 'bookings/b2/tracking/live'), { lat: 1, lng: 1 }));
+  });
+
+  it("riders can't read driver profiles (location, documents)", async () => {
+    await assertFails(getDoc(doc(db('rider'), 'driverProfiles/driver')));
+    await assertSucceeds(getDoc(doc(db('driver'), 'driverProfiles/driver')));
+  });
+});
+
 describe('quotes', () => {
   it('rider reads own quotes only and nobody writes them', async () => {
     await seed('quotes/q1', { riderId: 'rider', amount: 120 });

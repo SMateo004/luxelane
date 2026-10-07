@@ -24,6 +24,11 @@
    firebase functions:secrets:set STRIPE_SECRET_KEY --project=luxelane-4e7ae
    ```
 
+   Flight tracking (AeroDataBox via RapidAPI). The secret must exist to deploy; set it to `none` to keep tracking off:
+   ```
+   firebase functions:secrets:set FLIGHT_API_KEY --project=luxelane-4e7ae
+   ```
+
 4. Grant the first admin with the Admin SDK (the app never self-promotes):
    ```
    node scripts/promote_admin.mjs

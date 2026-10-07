@@ -24,14 +24,14 @@ class DriverQueueScreen extends StatelessWidget {
           final pending = state.pendingRequests
               .where((b) => !state.declinedIds.contains(b.id))
               .toList()
-            ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+            ..sort((a, b) => a.effectivePickup.compareTo(b.effectivePickup));
 
           final upcoming = state.bookings.where((b) {
             return b.status == BookingStatus.confirmed ||
                 b.status == BookingStatus.driverArriving ||
                 b.status == BookingStatus.driverArrived;
           }).toList()
-            ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+            ..sort((a, b) => a.effectivePickup.compareTo(b.effectivePickup));
 
           if (pending.isEmpty && upcoming.isEmpty) {
             return const _EmptyQueue(isAvailable: true); // Show 'No jobs yet' instead of 'Go online'
@@ -141,7 +141,7 @@ class _JobCard extends StatelessWidget {
             const SizedBox(height: LuxSpacing.sm),
             Text(
               DateFormat('EEE, MMM d · h:mm a')
-                  .format(booking.scheduledAt),
+                  .format(booking.effectivePickup),
               style: LuxTypography.caption,
             ),
             const SizedBox(height: LuxSpacing.md),

@@ -385,6 +385,17 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
         latitude: pos.latitude,
         longitude: pos.longitude,
       );
+      // Share the position with the rider of the active trip only.
+      final active = state is DriverLoaded ? (state as DriverLoaded).activeBooking : null;
+      if (active != null) {
+        await _bookingRepo.updateLiveLocation(
+          bookingId: active.id,
+          lat: pos.latitude,
+          lng: pos.longitude,
+          heading: pos.heading,
+          speed: pos.speed < 0 ? 0 : pos.speed,
+        );
+      }
     }
   }
 

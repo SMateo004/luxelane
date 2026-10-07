@@ -218,6 +218,56 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
+  Stream<LiveLocation?> watchLiveLocation(String bookingId) => _col
+      .doc(bookingId)
+      .collection('tracking')
+      .doc('live')
+      .snapshots()
+      .map((s) => s.exists && s.data() != null ? LiveLocation.fromJson(s.data()!) : null);
+
+  @override
+  Future<Either<Failure, void>> updateLiveLocation({
+    required String bookingId,
+    required double lat,
+    required double lng,
+    double heading = 0,
+    double speed = 0,
+  }) async {
+    try {
+      await _col.doc(bookingId).collection('tracking').doc('live').set({
+        'lat': lat,
+        'lng': lng,
+        'heading': heading,
+        'speed': speed,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> rateBooking({
+    required String bookingId,
+    required int rating,
+    String? comment,
+  }) async {
+    try {
+      await _fn.httpsCallable('rateBooking').call({
+        'bookingId': bookingId,
+        'rating': rating,
+        if (comment != null && comment.trim().isNotEmpty) 'comment': comment.trim(),
+      });
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      return Left(ServerFailure(e.message ?? 'No se pudo enviar tu calificación'));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Stream<Booking> watchBooking(String bookingId) => _col
       .doc(bookingId)
       .snapshots()

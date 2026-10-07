@@ -122,7 +122,7 @@ class _Content extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  _countdown(booking.scheduledAt),
+                  _countdown(booking.effectivePickup),
                   textAlign: TextAlign.center,
                   style: bodyText(),
                 ),
@@ -187,7 +187,7 @@ class _SummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final date = DateFormat("EEE d 'de' MMMM · HH:mm", 'es').format(booking.scheduledAt);
+    final date = DateFormat("EEE d 'de' MMMM · HH:mm", 'es').format(booking.effectivePickup);
     final hourly = booking.serviceType == ServiceType.byTheHour;
     final paidByCard = booking.stripePaymentIntentId != null;
     return Container(

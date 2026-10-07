@@ -4,7 +4,17 @@ import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/fire
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import * as stripe from './stripe_service';
 import { STRIPE_SECRET_KEY } from './stripe_service';
+import { defineSecret } from 'firebase-functions/params';
 import { logger } from './logger';
+import { buildChauffeur, isValidRating, nextAverage } from './chauffeur';
+import {
+  ADJUST_THRESHOLD_MIN,
+  adjustedPickup,
+  flightDateUtc,
+  normalizeFlightNumber,
+  parseAeroDataBox,
+  shouldTrack,
+} from './flights';
 import * as err from './errors';
 import {
   BookingStatus,
@@ -40,6 +50,9 @@ const DEFAULT_CURRENCY = CURRENCY;
 const MAX_ADVANCE_MS = 365 * 24 * 60 * 60 * 1000;
 const stripeOpts = { secrets: [STRIPE_SECRET_KEY] };
 
+// AeroDataBox key (RapidAPI). Set with: firebase functions:secrets:set FLIGHT_API_KEY
+const FLIGHT_API_KEY = defineSecret('FLIGHT_API_KEY');
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -59,7 +72,11 @@ interface BookingDoc {
   paymentId?: string;
   stripePaymentIntentId?: string;
   scheduledAt?: admin.firestore.Timestamp;
+  pickupAt?: admin.firestore.Timestamp;
   createdAt?: admin.firestore.Timestamp;
+  flightNumber?: string | null;
+  chauffeur?: { driverId?: string; phone?: string | null };
+  riderRating?: number;
 }
 
 interface RideDoc {
@@ -596,6 +613,41 @@ export const onBookingStatusChanged = onDocumentUpdated(
       to: after.status,
     });
 
+    const bookingRef = db.collection('bookings').doc(bookingId);
+
+    // Driver assigned → copy a rider-facing chauffeur card onto the booking.
+    if (after.driverId && after.chauffeur?.driverId !== after.driverId) {
+      try {
+        const [userSnap, profileSnap] = await Promise.all([
+          db.collection('users').doc(after.driverId).get(),
+          db.collection('driverProfiles').doc(after.driverId).get(),
+        ]);
+        const vehicleId = profileSnap.data()?.vehicleId as string | undefined;
+        const vehicleSnap = vehicleId ? await db.collection('vehicles').doc(vehicleId).get() : undefined;
+        await bookingRef.update({
+          chauffeur: buildChauffeur(after.driverId, userSnap.data(), profileSnap.data(), vehicleSnap?.data()),
+        });
+      } catch (e) {
+        logger.error('onBookingStatusChanged', 'chauffeur snapshot failed', { bookingId, error: String(e) });
+      }
+    }
+
+    // Trip over → stop sharing the chauffeur's phone and live position.
+    if (after.status === 'completed' || after.status === 'cancelled') {
+      const cleanup: Record<string, unknown> = {};
+      if (after.chauffeur?.phone) cleanup['chauffeur.phone'] = admin.firestore.FieldValue.delete();
+      if (Object.keys(cleanup).length) await bookingRef.update(cleanup);
+      await bookingRef.collection('tracking').doc('live').delete().catch(() => undefined);
+    }
+
+    if (after.status === 'completed' && after.driverId) {
+      await db
+        .collection('driverProfiles')
+        .doc(after.driverId)
+        .update({ totalRides: admin.firestore.FieldValue.increment(1) })
+        .catch((e) => logger.warn('onBookingStatusChanged', 'totalRides update failed', { error: String(e) }));
+    }
+
     if (after.status === 'completed') {
       try {
         await captureBookingPayment(bookingId, after);
@@ -774,6 +826,134 @@ export const acceptBooking = onCall(async (req) => {
 });
 
 // ---------------------------------------------------------------------------
+// rateBooking — the rider rates the chauffeur once, after completion
+// ---------------------------------------------------------------------------
+
+export const rateBooking = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const { bookingId, rating, comment } = (req.data ?? {}) as {
+    bookingId: string;
+    rating: unknown;
+    comment?: string;
+  };
+  if (!bookingId) throw err.invalidArgument('bookingId required');
+  if (!isValidRating(rating)) throw err.invalidArgument('rating must be an integer 1–5');
+
+  const bookingRef = db.collection('bookings').doc(bookingId);
+
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(bookingRef);
+    if (!snap.exists) throw err.notFound('Booking not found');
+    const b = snap.data() as BookingDoc;
+    if (b.riderId !== uid) throw err.permissionDenied();
+    if (b.status !== 'completed') throw err.failedPrecondition('Only completed trips can be rated');
+    if (b.riderRating) throw err.failedPrecondition('Already rated');
+    if (!b.driverId) throw err.failedPrecondition('No chauffeur on this booking');
+
+    const driverRef = db.collection('driverProfiles').doc(b.driverId);
+    const driver = (await tx.get(driverRef)).data() ?? {};
+    const next = nextAverage(Number(driver.rating ?? 0), Number(driver.ratingCount ?? 0), rating);
+
+    tx.update(bookingRef, {
+      riderRating: rating,
+      riderComment: comment ? String(comment).slice(0, 500) : null,
+      ratedAt: admin.firestore.Timestamp.now(),
+    });
+    tx.update(driverRef, { rating: next.rating, ratingCount: next.count });
+  });
+
+  logger.info('rateBooking', 'rated', { bookingId, rating });
+  return { ok: true };
+});
+
+// ---------------------------------------------------------------------------
+// trackFlights — every 15 min, follows inbound flights for airport pickups
+// and moves the pickup when the flight is delayed.
+// ---------------------------------------------------------------------------
+
+async function fetchFlight(flight: string, date: string, key: string): Promise<unknown> {
+  const url = `https://aerodatabox.p.rapidapi.com/flights/number/${encodeURIComponent(flight)}/${date}`;
+  const res = await fetch(url, {
+    headers: { 'X-RapidAPI-Key': key, 'X-RapidAPI-Host': 'aerodatabox.p.rapidapi.com' },
+  });
+  if (res.status === 204 || res.status === 404) return [];
+  if (!res.ok) throw new Error(`flight provider ${res.status}`);
+  return res.json();
+}
+
+export const trackFlights = onSchedule(
+  { schedule: 'every 15 minutes', secrets: [FLIGHT_API_KEY] },
+  async () => {
+    const key = FLIGHT_API_KEY.value().trim();
+    // Secrets must exist to deploy; "none" means flight tracking is off.
+    if (!key || key.toLowerCase() === 'none') {
+      logger.warn('trackFlights', 'FLIGHT_API_KEY not configured — skipping');
+      return;
+    }
+    const now = new Date();
+    const snap = await db
+      .collection('bookings')
+      .where('status', 'in', ['pending', 'confirmed', 'driver_arriving'])
+      .get();
+
+    for (const doc of snap.docs) {
+      const b = doc.data() as BookingDoc;
+      const flight = normalizeFlightNumber(b.flightNumber);
+      const original = b.scheduledAt?.toDate();
+      if (!flight || !original || !shouldTrack(original, now)) continue;
+
+      try {
+        const json = await fetchFlight(flight, flightDateUtc(original), key);
+        // Riders usually book pickup shortly after the scheduled landing.
+        const status = parseAeroDataBox(json, flight, original);
+        if (!status) continue;
+
+        const { pickup, delayMin } = adjustedPickup(original, status.scheduledArrival, status.estimatedArrival);
+        const previous = (b.pickupAt ?? b.scheduledAt)!.toDate();
+        const moved = Math.abs(pickup.getTime() - previous.getTime()) >= ADJUST_THRESHOLD_MIN * 60000;
+
+        await doc.ref.update({
+          flight: {
+            number: flight,
+            status: status.status,
+            scheduledArrival: status.scheduledArrival
+              ? admin.firestore.Timestamp.fromDate(status.scheduledArrival)
+              : null,
+            estimatedArrival: status.estimatedArrival
+              ? admin.firestore.Timestamp.fromDate(status.estimatedArrival)
+              : null,
+            delayMin,
+            arrived: status.arrived,
+            cancelled: status.cancelled,
+            terminal: status.terminal,
+            gate: status.gate,
+            checkedAt: admin.firestore.Timestamp.now(),
+          },
+          pickupAt: admin.firestore.Timestamp.fromDate(pickup),
+        });
+
+        if (moved || status.cancelled) {
+          const time = pickup.toLocaleTimeString('es-BO', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'America/La_Paz',
+          });
+          const body = status.cancelled
+            ? `Tu vuelo ${flight} figura como cancelado. Revisa tu reserva.`
+            : `Tu vuelo ${flight} llega con ${delayMin} min de retraso. Tu chófer te esperará a las ${time}.`;
+          await sendPush(await getUserTokens(b.riderId), 'Actualización de vuelo', body);
+          if (b.driverId) {
+            await sendPush(await getUserTokens(b.driverId), 'Recogida reprogramada', `Vuelo ${flight}: nueva hora de recogida ${time}.`);
+          }
+        }
+      } catch (e) {
+        logger.error('trackFlights', 'lookup failed', { bookingId: doc.id, flight, error: String(e) });
+      }
+    }
+  },
+);
+
+// ---------------------------------------------------------------------------
 // scheduledCleanup — cancels pending bookings whose pickup time has passed
 // ---------------------------------------------------------------------------
 
@@ -786,7 +966,8 @@ export const scheduledCleanup = onSchedule('every 1 hours', async () => {
   const stale = pendingSnap.docs.filter((doc) => {
     const b = doc.data() as BookingDoc;
     return isStalePending(
-      { status: b.status, scheduledAt: b.scheduledAt?.toDate(), createdAt: b.createdAt?.toDate() },
+      // pickupAt reflects flight delays; fall back to the booked time.
+      { status: b.status, scheduledAt: (b.pickupAt ?? b.scheduledAt)?.toDate(), createdAt: b.createdAt?.toDate() },
       now,
     );
   });

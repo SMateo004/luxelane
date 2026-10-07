@@ -117,13 +117,18 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 4. La reserva se crea en el servidor con ese precio.
 5. Se **cobra al completar** el viaje y la retención **se libera si se cancela**.
 
-### Fase 2: Experiencia premium diferencial (3–4 semanas)
-1. **Seguimiento de vuelos** (AeroDataBox / FlightAware): la recogida se ajusta sola al retraso, con 60 min de espera gratis en aeropuerto y 15 min en ciudad.
-2. **Meet & greet**: cartel con el nombre, instrucciones de punto de encuentro y chat o llamada enmascarada con el chófer.
-3. **Despacho real**: geohash con ranking por distancia y clase, ofertas con timeout y reasignación, y SLA de confirmación para reservas programadas.
-4. **Tracking en vivo** en una hoja inferior con ETA animada, ubicación en segundo plano para el chófer y un documento de tracking por reserva (privacidad: solo el pasajero ve al chófer).
-5. **Perfil del chófer**: foto, idiomas, rating real (desde `rides`) y vehículo con matrícula.
-6. **i18n (es/en/pt)** con ARB y selector de idioma; multimoneda.
+### Fase 2: Experiencia premium diferencial — en curso
+
+| # | Entregable | Estado |
+|---|---|---|
+| 1 | **Chófer real en el viaje.** Antes todos los pasajeros veían un chófer inventado ("James Whitmore"). Ahora, al asignarse la reserva, el backend copia en ella una ficha del chófer: nombre corto, foto, rating real, viajes, vehículo, color y placa. El teléfono solo se ve mientras el viaje está activo, con botones Llamar y WhatsApp | ✅ Hecho |
+| 2 | **Seguimiento en vivo privado.** El chófer escribe su posición en `bookings/{id}/tracking/live`, que solo leen ese pasajero y ese chófer, y solo mientras el viaje está activo. Se borra al terminar. `driverProfiles` dejó de ser legible para cualquier usuario: antes exponía la ubicación de todos los chóferes | ✅ Hecho |
+| 3 | **ETA en vivo** ("Tu chófer llega en 6 min" / "Llegas en 18 min") con indicador EN VIVO; el pasajero ya no ve el botón de desarrollo "Siguiente (dev)" | ✅ Hecho |
+| 4 | **Seguimiento de vuelos** (`trackFlights`, cada 15 min, AeroDataBox). Si el vuelo se retrasa 10 min o más, la recogida se corre lo mismo que el retraso (nunca se adelanta) y se avisa al pasajero y al chófer. La tarjeta del vuelo en la app muestra estado, terminal y nueva hora | ✅ Hecho (requiere `FLIGHT_API_KEY`) |
+| 5 | **Calificaciones reales** (`rateBooking`): 1–5 estrellas y comentario, una sola vez por viaje; actualiza el promedio del chófer. Antes se enviaban a un documento que nunca existía | ✅ Hecho |
+| 6 | Despacho por cercanía (geohash), ofertas con timeout y reasignación | ⏳ Pendiente |
+| 7 | Meet & greet: cartel con nombre e instrucciones del punto de encuentro | ⏳ Pendiente |
+| 8 | i18n (es/en/pt) con ARB | ⏳ Pendiente |
 
 ### Fase 3: Super app y B2B (4–6 semanas)
 1. **Cuentas corporativas**: centros de costo, reservar para invitados (campo real, no en `notes`), facturación mensual y panel de empresa.
@@ -141,14 +146,15 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 ## 5. Cómo probar
 
 ```
-flutter test                      # 44 tests Dart
-(cd functions && npm test)        # 21 tests de reglas de negocio y precios
-(cd rules-tests && npm test)      # 18 tests de reglas de seguridad (requiere Java)
+flutter test                      # 51 tests Dart
+(cd functions && npm test)        # 33 tests de negocio, precios, vuelos y chófer
+(cd rules-tests && npm test)      # 21 tests de reglas de seguridad (requiere Java)
 ```
 
 **Deploy:**
-1. `firebase functions:secrets:set STRIPE_SECRET_KEY`
-2. `firebase deploy --only functions,firestore`
+1. `firebase functions:secrets:set STRIPE_SECRET_KEY` (aunque no se use Stripe, el secreto tiene que existir para poder desplegar; sirve cualquier valor de relleno)
+2. `firebase functions:secrets:set FLIGHT_API_KEY` (clave de AeroDataBox en RapidAPI; con el valor `none` el seguimiento de vuelos queda apagado)
+3. `firebase deploy --only functions,firestore`
 
 > ⚠️ **Despliega Functions y reglas juntos, y antes que la app.** La app nueva crea reservas con `quoteBooking`/`createBooking`. Las reglas nuevas impiden crear reservas desde versiones viejas de la app.
 

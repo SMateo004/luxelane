@@ -266,6 +266,10 @@ class Booking {
     this.currency = 'bob',
     this.stripePaymentIntentId,
     this.quoteId,
+    this.pickupAt,
+    this.chauffeur,
+    this.flight,
+    this.riderRating,
   });
 
   final String id;
@@ -295,6 +299,21 @@ class Booking {
 
   /// Server-issued quote the booking was priced from.
   final String? quoteId;
+
+  /// Pickup moved by flight tracking (null when unchanged).
+  final DateTime? pickupAt;
+
+  /// Assigned chauffeur, copied onto the booking by the backend.
+  final Chauffeur? chauffeur;
+
+  /// Live status of the inbound flight, for airport pickups.
+  final FlightInfo? flight;
+
+  /// The rider's 1–5 rating, once given.
+  final int? riderRating;
+
+  /// When the chauffeur will actually be there.
+  DateTime get effectivePickup => pickupAt ?? scheduledAt;
 
   factory Booking.fromJson(Map<String, dynamic> j) => Booking(
         id: j['id'] as String? ?? '',
@@ -331,6 +350,14 @@ class Booking {
         currency: j['currency'] as String? ?? 'bob',
         stripePaymentIntentId: j['stripePaymentIntentId'] as String?,
         quoteId: j['quoteId'] as String?,
+        pickupAt: (j['pickupAt'] as Timestamp?)?.toDate(),
+        chauffeur: j['chauffeur'] is Map
+            ? Chauffeur.fromJson(Map<String, dynamic>.from(j['chauffeur'] as Map))
+            : null,
+        flight: j['flight'] is Map
+            ? FlightInfo.fromJson(Map<String, dynamic>.from(j['flight'] as Map))
+            : null,
+        riderRating: (j['riderRating'] as num?)?.toInt(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -388,6 +415,143 @@ class Booking {
         currency: currency,
         stripePaymentIntentId: stripePaymentIntentId,
         quoteId: quoteId,
+        pickupAt: pickupAt,
+        chauffeur: chauffeur,
+        flight: flight,
+        riderRating: riderRating,
+      );
+}
+
+// ---------------------------------------------------------------------------
+// Chauffeur — rider-facing snapshot written by the backend on assignment
+// ---------------------------------------------------------------------------
+
+class Chauffeur {
+  const Chauffeur({
+    required this.driverId,
+    required this.name,
+    required this.vehicle,
+    required this.plate,
+    this.vehicleColor = '',
+    this.photoUrl,
+    this.rating,
+    this.ratingCount = 0,
+    this.totalRides = 0,
+    this.phone,
+  });
+
+  final String driverId;
+  final String name;
+  final String vehicle;
+  final String vehicleColor;
+  final String plate;
+  final String? photoUrl;
+  final double? rating;
+  final int ratingCount;
+  final int totalRides;
+
+  /// Only present while the trip is active.
+  final String? phone;
+
+  String get vehicleLine =>
+      vehicleColor.isEmpty ? vehicle : '$vehicle · $vehicleColor';
+
+  factory Chauffeur.fromJson(Map<String, dynamic> j) => Chauffeur(
+        driverId: j['driverId'] as String? ?? '',
+        name: j['name'] as String? ?? 'Tu chófer',
+        vehicle: j['vehicle'] as String? ?? '',
+        vehicleColor: j['vehicleColor'] as String? ?? '',
+        plate: j['plate'] as String? ?? '',
+        photoUrl: j['photoUrl'] as String?,
+        rating: (j['rating'] as num?)?.toDouble(),
+        ratingCount: (j['ratingCount'] as num?)?.toInt() ?? 0,
+        totalRides: (j['totalRides'] as num?)?.toInt() ?? 0,
+        phone: j['phone'] as String?,
+      );
+}
+
+// ---------------------------------------------------------------------------
+// FlightInfo — written by the `trackFlights` scheduled function
+// ---------------------------------------------------------------------------
+
+class FlightInfo {
+  const FlightInfo({
+    required this.number,
+    required this.status,
+    this.scheduledArrival,
+    this.estimatedArrival,
+    this.delayMin = 0,
+    this.arrived = false,
+    this.cancelled = false,
+    this.terminal,
+    this.gate,
+    this.checkedAt,
+  });
+
+  final String number;
+  final String status;
+  final DateTime? scheduledArrival;
+  final DateTime? estimatedArrival;
+  final int delayMin;
+  final bool arrived;
+  final bool cancelled;
+  final String? terminal;
+  final String? gate;
+  final DateTime? checkedAt;
+
+  bool get delayed => delayMin >= 10 && !arrived && !cancelled;
+
+  /// Spanish label for the rider.
+  String get label {
+    if (cancelled) return 'Cancelado';
+    if (arrived) return 'Aterrizó';
+    if (delayed) return 'Retrasado $delayMin min';
+    return 'A tiempo';
+  }
+
+  factory FlightInfo.fromJson(Map<String, dynamic> j) => FlightInfo(
+        number: j['number'] as String? ?? '',
+        status: j['status'] as String? ?? '',
+        scheduledArrival: (j['scheduledArrival'] as Timestamp?)?.toDate(),
+        estimatedArrival: (j['estimatedArrival'] as Timestamp?)?.toDate(),
+        delayMin: (j['delayMin'] as num?)?.toInt() ?? 0,
+        arrived: j['arrived'] as bool? ?? false,
+        cancelled: j['cancelled'] as bool? ?? false,
+        terminal: j['terminal'] as String?,
+        gate: j['gate'] as String?,
+        checkedAt: (j['checkedAt'] as Timestamp?)?.toDate(),
+      );
+}
+
+// ---------------------------------------------------------------------------
+// LiveLocation — bookings/{id}/tracking/live
+// ---------------------------------------------------------------------------
+
+class LiveLocation {
+  const LiveLocation({
+    required this.lat,
+    required this.lng,
+    required this.updatedAt,
+    this.heading = 0,
+    this.speed = 0,
+  });
+
+  final double lat;
+  final double lng;
+  final double heading;
+
+  /// Metres per second.
+  final double speed;
+  final DateTime updatedAt;
+
+  bool get isStale => DateTime.now().difference(updatedAt) > const Duration(minutes: 2);
+
+  factory LiveLocation.fromJson(Map<String, dynamic> j) => LiveLocation(
+        lat: (j['lat'] as num).toDouble(),
+        lng: (j['lng'] as num).toDouble(),
+        heading: (j['heading'] as num?)?.toDouble() ?? 0,
+        speed: (j['speed'] as num?)?.toDouble() ?? 0,
+        updatedAt: (j['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       );
 }
 

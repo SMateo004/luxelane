@@ -82,7 +82,7 @@ class _TripsScreenState extends State<TripsScreen> {
             }
 
             final upcoming = trips.where((b) => _upcomingStatuses.contains(b.status)).toList()
-              ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+              ..sort((a, b) => a.effectivePickup.compareTo(b.effectivePickup));
             final past = trips.where((b) => !_upcomingStatuses.contains(b.status)).toList()
               ..sort((a, b) => b.scheduledAt.compareTo(a.scheduledAt));
 
@@ -139,7 +139,7 @@ class _TripCard extends StatelessWidget {
 
   String get _price => LuxMoney.format(booking.finalPrice ?? booking.estimatedPrice);
 
-  String get _date => DateFormat('d MMM yyyy · HH:mm', 'es').format(booking.scheduledAt);
+  String get _date => DateFormat('d MMM yyyy · HH:mm', 'es').format(booking.effectivePickup);
 
   void _open(BuildContext context) {
     switch (booking.status) {

@@ -108,6 +108,25 @@ abstract class BookingRepository {
   });
   Future<Either<Failure, void>> cancelBooking(String bookingId);
   Stream<Booking> watchBooking(String bookingId);
+
+  /// Chauffeur position for an active booking (rider and driver only).
+  Stream<LiveLocation?> watchLiveLocation(String bookingId);
+
+  /// Called by the assigned driver's app every few seconds.
+  Future<Either<Failure, void>> updateLiveLocation({
+    required String bookingId,
+    required double lat,
+    required double lng,
+    double heading = 0,
+    double speed = 0,
+  });
+
+  /// Rider rates the chauffeur (1–5) after the trip.
+  Future<Either<Failure, void>> rateBooking({
+    required String bookingId,
+    required int rating,
+    String? comment,
+  });
 }
 
 // ---------------------------------------------------------------------------

@@ -89,10 +89,9 @@ service cloud.firestore {
     // -------------------------------------------------------------------------
 
     match /driverProfiles/{uid} {
-      // Live location is needed by riders to track their chauffeur.
-      // TODO: move currentLocation to a per-booking doc so only the assigned
-      // rider can read it.
-      allow read:   if isAuthenticated();
+      // Private: riders see their chauffeur through the booking's `chauffeur`
+      // snapshot and the per-booking tracking doc, never through this one.
+      allow read:   if isOwner(uid) || isAdmin();
 
       // Onboarding: a driver creates an unverified profile with no history.
       allow create: if isOwner(uid) && isDriver() &&
@@ -104,7 +103,7 @@ service cloud.firestore {
       // rating and ride count are owned by admins / Cloud Functions.
       allow update: if isAdmin() || (
         isOwner(uid) && isDriver() &&
-        notChanging(['documentsVerified', 'rating', 'totalRides', 'userId'])
+        notChanging(['documentsVerified', 'rating', 'ratingCount', 'totalRides', 'userId'])
       );
       allow delete: if false;
     }
@@ -145,6 +144,27 @@ service cloud.firestore {
           request.resource.data.status == 'cancelled');
 
       allow delete: if isAdmin();
+
+      // Live position of the assigned chauffeur, shared only with this
+      // booking's rider while the trip is active.
+      match /tracking/{docId} {
+        function booking() {
+          return get(/databases/$(database)/documents/bookings/$(bookingId)).data;
+        }
+        allow read: if isAuthenticated() && (
+          booking().riderId == request.auth.uid ||
+          booking().driverId == request.auth.uid ||
+          isAdmin()
+        );
+        allow create, update: if isDriver() &&
+          docId == 'live' &&
+          booking().driverId == request.auth.uid &&
+          booking().status in ['confirmed', 'driver_arriving', 'driver_arrived', 'in_progress'] &&
+          request.resource.data.keys().hasOnly(['lat', 'lng', 'heading', 'speed', 'updatedAt']) &&
+          request.resource.data.lat is number &&
+          request.resource.data.lng is number;
+        allow delete: if isAdmin() || (isDriver() && booking().driverId == request.auth.uid);
+      }
     }
 
     // -------------------------------------------------------------------------
