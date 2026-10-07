@@ -79,6 +79,23 @@ TextStyle bodyText({double size = 15, Color color = LD.ink2}) =>
       decoration: TextDecoration.none,
     );
 
+/// Turns a translated headline such as `Tu chófer <i>te espera.</i>` into
+/// spans, rendering the text inside `<i>…</i>` with [emphasis]. Keeps whole
+/// sentences in the translation files instead of concatenating fragments.
+List<TextSpan> emphasisSpans(String text,
+    {required TextStyle style, required TextStyle emphasis}) {
+  final spans = <TextSpan>[];
+  final pattern = RegExp(r'<i>(.*?)</i>', dotAll: true);
+  var last = 0;
+  for (final m in pattern.allMatches(text)) {
+    if (m.start > last) spans.add(TextSpan(text: text.substring(last, m.start), style: style));
+    spans.add(TextSpan(text: m.group(1), style: emphasis));
+    last = m.end;
+  }
+  if (last < text.length) spans.add(TextSpan(text: text.substring(last), style: style));
+  return spans;
+}
+
 // ============================================================
 // Shared helper widgets
 // ============================================================

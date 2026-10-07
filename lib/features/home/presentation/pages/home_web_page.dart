@@ -8,12 +8,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart'
     show GoogleMap, GoogleMapController, CameraPosition, CameraUpdate,
          Marker, MarkerId;
+import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
 import 'package:video_player/video_player.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/place_model.dart';
+import '../../../../core/utils/waiting_policy.dart';
 import '../../../../core/widgets/place_autocomplete_field.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../notifications/presentation/widgets/notification_bell.dart';
+import '../../../../l10n/l10n.dart';
 import 'home_design.dart';
 
 part 'web/nav.dart';
@@ -24,6 +27,36 @@ part 'web/fleet.dart';
 part 'web/business_cta.dart';
 part 'web/footer.dart';
 part 'web/book.dart';
+
+/// Landing sections that can be pumped on their own (tests, previews):
+/// they need no auth or video plugins (the hero needs a `MapsService`).
+@visibleForTesting
+enum WebHomeSection { hero, marquee, fleet, trust, footer, datePanel, book }
+
+@visibleForTesting
+class WebHomeSectionPreview extends StatelessWidget {
+  const WebHomeSectionPreview(this.section, {super.key, this.date});
+  final WebHomeSection section;
+  final DateTime? date;
+
+  @override
+  Widget build(BuildContext context) => switch (section) {
+        WebHomeSection.hero => _HeroSection(
+            serviceType: ServiceType.oneWay, origin: null, destination: null,
+            date: date ?? DateTime.now(), hours: 3, locating: false,
+            onServiceTypeChanged: (_) {}, onOriginSelected: (_) {},
+            onDestinationSelected: (_) {}, onDateChanged: (_) {},
+            onHoursChanged: (_) {}, onLocate: () {}, onSearch: () {},
+            onOriginMapPick: () {}, onDestinationMapPick: () {}, scrollY: 0),
+        WebHomeSection.marquee => const _MarqueeBar(),
+        WebHomeSection.fleet => _FleetSection(sectionKey: GlobalKey(), onBook: () {}),
+        WebHomeSection.trust => _TrustSection(onBook: () {}),
+        WebHomeSection.footer => _FooterSection(onFleet: () {}, onServices: () {}, onBusiness: () {}),
+        WebHomeSection.datePanel => _InlineDatePanel(
+            date: date ?? DateTime.now(), onChanged: (_) {}, onClose: () {}),
+        WebHomeSection.book => const _BookSection(),
+      };
+}
 
 // ============================================================
 // WebHomePage

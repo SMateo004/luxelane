@@ -28,42 +28,42 @@ class _BookPageData {
   final List<String> bullets;
 }
 
-const List<_BookPageData> _kBookPages = [
-  // Index 0: Cover (portada) — special: left=back cover, right=logo
-  _BookPageData(
-    num: '', label: 'LUXELANE', sub: 'Servicio de Chófer Premium',
-    tag: '', headline: '', body: '', bullets: [],
-  ),
-  // Index 1: El Estándar (content page 01)
-  _BookPageData(
-    num: '01', label: 'El Estándar', sub: 'La Promesa Que Cumplimos',
-    photoPath: 'assets/images/home/promise_photo.jpg',
-    tag: 'El Estándar Luxelane', headline: 'El estándar que\notros siguen.',
-    body: 'Cada chófer supera una rigurosa verificación de antecedentes, inspección del vehículo y programa de capacitación en servicio.',
-    bullets: ['Chóferes verificados','Precio fijo, siempre','Seguimiento en tiempo real','Reserva con anticipación'],
-  ),
-  // Index 2: La Experiencia (content page 02)
-  _BookPageData(
-    num: '02', label: 'La Experiencia', sub: 'Cada Detalle Considerado',
-    photoPath: 'assets/images/home/immersive_bg.jpg',
-    tag: 'La Experiencia', headline: 'Cada detalle,\ncuidado.',
-    body: 'Desde agua fría y listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.',
-    bullets: ['Interiores de cuero premium','Wi-Fi y carga inalámbrica','Servicio de champán disponible','Control de clima ambiental'],
-  ),
-  // Index 3: Para Empresas (content page 03)
-  _BookPageData(
-    num: '03', label: 'Para Empresas', sub: 'Viajes Corporativos Redefinidos',
-    photoPath: 'assets/images/home/business_photo.jpg',
-    tag: 'Para Empresas', headline: 'Viajes corporativos,\nredefinidos.',
-    body: 'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.',
-    bullets: ['Facturación centralizada','Gerente de cuenta dedicado','Cumplimiento de política de viajes','Reservas prioritarias para ejecutivos'],
-  ),
-  // Index 4: Back to cover (cierre del libro)
-  _BookPageData(
-    num: '', label: 'LUXELANE', sub: 'Servicio de Chófer Premium',
-    tag: '', headline: '', body: '', bullets: [],
-  ),
-];
+List<_BookPageData> _bookPages(AppLocalizations l) {
+  final cover = _BookPageData(
+    num: '', label: 'LUXELANE', sub: l.homeBookCoverSubtitle,
+    tag: '', headline: '', body: '', bullets: const [],
+  );
+  return [
+    // Index 0: Cover (portada) — special: left=back cover, right=logo
+    cover,
+    // Index 1: The standard (content page 01)
+    _BookPageData(
+      num: '01', label: l.homeBookStandardLabel, sub: l.homeBookStandardSub,
+      photoPath: 'assets/images/home/promise_photo.jpg',
+      tag: l.homeBookStandardTag, headline: l.homeBookStandardHeadline,
+      body: l.homeBookStandardBody,
+      bullets: [l.homePromiseVerifiedTitle, l.homeBookBulletFixedPrice, l.homeBookBulletTracking, l.homeBookBulletAdvance],
+    ),
+    // Index 2: The experience (content page 02)
+    _BookPageData(
+      num: '02', label: l.homeBookExperienceLabel, sub: l.homeBookExperienceSub,
+      photoPath: 'assets/images/home/immersive_bg.jpg',
+      tag: l.homeBookExperienceLabel, headline: l.homeBookExperienceHeadline,
+      body: l.homeBookExperienceBody,
+      bullets: [l.homeBookBulletLeather, l.homeBookBulletWifiCharging, l.homeBookBulletChampagne, l.homeBookBulletClimate],
+    ),
+    // Index 3: For business (content page 03)
+    _BookPageData(
+      num: '03', label: l.homeBusinessEyebrow, sub: l.homeBookBusinessSub,
+      photoPath: 'assets/images/home/business_photo.jpg',
+      tag: l.homeBusinessEyebrow, headline: l.homeBusinessTitle,
+      body: l.homeBusinessBody,
+      bullets: [l.homeBookBulletCentralBilling, l.homeBusinessPerkAccountManager, l.homeBookBulletPolicy, l.homeBusinessPerkPriority],
+    ),
+    // Index 4: Back to cover (cierre del libro)
+    cover,
+  ];
+}
 
 class _BookSection extends StatefulWidget {
   const _BookSection();
@@ -104,6 +104,7 @@ class _BookSectionState extends State<_BookSection> {
     final screenH  = MediaQuery.sizeOf(context).height;
     final w        = MediaQuery.sizeOf(context).width;
     final isMobile = w < 800;
+    final l        = context.l10n;
 
     // Pure arithmetic from scroll position — no post-frame callback, no jitter
     final double progress;
@@ -148,7 +149,7 @@ class _BookSectionState extends State<_BookSection> {
 
                 // Eyebrow
                 Positioned(top: 44, left: 0, right: 0,
-                  child: Center(child: Text('OUR SIGNATURE EXPERIENCE',
+                  child: Center(child: Text(l.homeBookEyebrow.toUpperCase(),
                     style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w500,
                       letterSpacing: 4.0, color: LD.accent.withAlpha(200),
                       decoration: TextDecoration.none)))),
@@ -156,7 +157,7 @@ class _BookSectionState extends State<_BookSection> {
                 // Book
                 Center(
                   child: _BookWidget(
-                    pages: _kBookPages, currentPage: pageIdx,
+                    pages: _bookPages(l), currentPage: pageIdx,
                     flipAngle: flipAngle, isMobile: isMobile,
                   ),
                 ),
@@ -198,7 +199,7 @@ class _BookSectionState extends State<_BookSection> {
                         ),
                         const SizedBox(height: 10),
                         RotatedBox(quarterTurns: 1,
-                          child: Text('SCROLL',
+                          child: Text(l.homeBookScrollCue.toUpperCase(),
                             style: GoogleFonts.montserrat(fontSize: 7.5, fontWeight: FontWeight.w500,
                               letterSpacing: 3.5, color: LD.accent,
                               decoration: TextDecoration.none))),
@@ -383,14 +384,17 @@ class _BookLeftPanel extends StatelessWidget {
                   errorBuilder: (_, __, ___) => const SizedBox.shrink())),
 
           // Deco label top-left
-          Positioned(top: pad, left: pad,
-            child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Positioned(top: pad, left: pad, right: pad,
+            child: Row(children: [
               Container(width: 24, height: 1, color: LD.accent.withAlpha(180)),
               const SizedBox(width: 10),
-              Text(data.label.toUpperCase(),
-                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w500,
-                  letterSpacing: 3.0, color: LD.accent.withAlpha(200),
-                  decoration: TextDecoration.none)),
+              Flexible(
+                child: Text(data.label.toUpperCase(),
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w500,
+                    letterSpacing: 3.0, color: LD.accent.withAlpha(200),
+                    decoration: TextDecoration.none)),
+              ),
             ])),
 
           // Caption strip
@@ -455,7 +459,7 @@ class _BookRightPanel extends StatelessWidget {
                 decoration: TextDecoration.none,
               )),
               const SizedBox(height: 10),
-              Text('Servicio de Chófer Premium', style: GoogleFonts.cormorantGaramond(
+              Text(data.sub, textAlign: TextAlign.center, style: GoogleFonts.cormorantGaramond(
                 fontSize: 14, fontWeight: FontWeight.w300,
                 fontStyle: FontStyle.italic, color: LD.ink3,
                 decoration: TextDecoration.none,
@@ -476,10 +480,15 @@ class _BookRightPanel extends StatelessWidget {
               color: LD.accent.withAlpha(10), height: 1,
               decoration: TextDecoration.none))),
 
-        // Content
+        // Content — scaled down (never clipped) when a translation runs long
         Padding(
           padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, vPad),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
+          child: LayoutBuilder(builder: (context, box) => FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: SizedBox(
+              width: box.maxWidth,
+              child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(data.tag,
               style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w500,
                 letterSpacing: 3.5, color: LD.accent, decoration: TextDecoration.none)),
@@ -506,7 +515,9 @@ class _BookRightPanel extends StatelessWidget {
                     color: LD.ink2, decoration: TextDecoration.none))),
               ]),
             )),
-          ]),
+              ]),
+            ),
+          )),
         ),
       ]),
     );

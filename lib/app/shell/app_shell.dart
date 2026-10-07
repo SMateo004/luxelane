@@ -4,21 +4,25 @@ import 'package:go_router/go_router.dart';
 import '../../app/theme/app_theme.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/notifications/presentation/widgets/notification_bell.dart';
+import '../../l10n/l10n.dart';
 
 class AppShell extends StatelessWidget {
   const AppShell({super.key, required this.navigationShell});
   final StatefulNavigationShell navigationShell;
 
-  static const _tabs = [
-    _Tab(icon: Icons.home_outlined,    activeIcon: Icons.home_rounded,    label: 'Inicio',  path: '/'),
-    _Tab(icon: Icons.history_outlined, activeIcon: Icons.history_rounded,  label: 'Viajes',  path: '/trips'),
-    _Tab(icon: Icons.person_outline,   activeIcon: Icons.person_rounded,   label: 'Perfil',  path: '/profile'),
+  static List<_Tab> _tabs(AppLocalizations l) => [
+    _Tab(icon: Icons.home_outlined,    activeIcon: Icons.home_rounded,    label: l.homeShellTabHome,    path: '/'),
+    _Tab(icon: Icons.history_outlined, activeIcon: Icons.history_rounded,  label: l.homeShellTabTrips,   path: '/trips'),
+    _Tab(icon: Icons.person_outline,   activeIcon: Icons.person_rounded,   label: l.homeShellTabProfile, path: '/profile'),
   ];
 
   @override
-  Widget build(BuildContext context) => isWeb(context)
-      ? _WebShell(shell: navigationShell, tabs: _tabs)
-      : _MobileShell(shell: navigationShell, tabs: _tabs);
+  Widget build(BuildContext context) {
+    final tabs = _tabs(context.l10n);
+    return isWeb(context)
+        ? _WebShell(shell: navigationShell, tabs: tabs)
+        : _MobileShell(shell: navigationShell, tabs: tabs);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -99,7 +103,9 @@ class _WebNav extends StatelessWidget {
   final StatefulNavigationShell shell;
 
   @override
-  Widget build(BuildContext context) => Container(
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return Container(
         height: 68,
         decoration: const BoxDecoration(
           color: Colors.white,
@@ -120,22 +126,22 @@ class _WebNav extends StatelessWidget {
             ),
             if (!isAuth) ...[
               const Spacer(),
-              _TextNavBtn('Servicios', () {}),
+              _TextNavBtn(l.homeNavServices, () {}),
               const SizedBox(width: 32),
-              _TextNavBtn('Para empresas', () {}),
+              _TextNavBtn(l.homeNavBusiness, () {}),
               const SizedBox(width: 40),
               Container(width: 1, height: 18, color: const Color(0xFFE4DED2)),
               const SizedBox(width: 40),
-              _TextNavBtn('Iniciar sesión', () => context.go('/login')),
+              _TextNavBtn(l.homeShellSignIn, () => context.go('/login')),
               const SizedBox(width: 20),
-              _FilledNavBtn(label: 'Reservar un viaje', onTap: () => context.go('/')),
+              _FilledNavBtn(label: l.homeBookRide, onTap: () => context.go('/')),
             ] else ...[
               const Spacer(),
-              _TextNavBtn('Inicio', () => shell.goBranch(0)),
+              _TextNavBtn(l.homeShellTabHome, () => shell.goBranch(0)),
               const SizedBox(width: 32),
-              _TextNavBtn('Mis viajes', () => shell.goBranch(1)),
+              _TextNavBtn(l.homeShellMyTrips, () => shell.goBranch(1)),
               const SizedBox(width: 40),
-              _FilledNavBtn(label: 'Reservar un viaje', onTap: () => context.go('/')),
+              _FilledNavBtn(label: l.homeBookRide, onTap: () => context.go('/')),
               const SizedBox(width: 12),
               NotificationBell(color: const Color(0xFF0B1220)),
               const SizedBox(width: 8),
@@ -144,6 +150,7 @@ class _WebNav extends StatelessWidget {
           ],
         ),
       );
+  }
 }
 
 class _WordmarkLogo extends StatelessWidget {
@@ -316,7 +323,7 @@ class _WebRail extends StatelessWidget {
                       .read<AuthBloc>()
                       .add(const LogoutRequested()),
                   icon: const Icon(Icons.logout_rounded, size: 16),
-                  label: const Text('Cerrar sesión'),
+                  label: Text(context.l10n.homeShellSignOut),
                   style: TextButton.styleFrom(
                     foregroundColor: LuxColors.whiteTertiary,
                     minimumSize: Size.zero,

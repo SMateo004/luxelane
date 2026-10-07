@@ -9,11 +9,11 @@ class _FleetSection extends StatelessWidget {
   final GlobalKey sectionKey;
   final VoidCallback onBook;
 
-  static final _vehicles = [
-    _FleetItem(cls: 'Business Class',  model: 'Mercedes E-Class / o similar',  asset: 'assets/images/vehicles/business/car.png',    tags: ['4 Asientos','Interior de cuero','Wi-Fi'], accent: LuxPalette.champagne),
-    _FleetItem(cls: 'First Class',     model: 'Mercedes S-Class / o similar',  asset: 'assets/images/vehicles/first_class/car.png', tags: ['4 Asientos','Audio premium','Champán'], accent: LuxPalette.champagneLight),
-    _FleetItem(cls: 'Business Van',    model: 'Mercedes V-Class / o similar',  asset: 'assets/images/vehicles/van/car.png',          tags: ['7 Asientos','Equipaje extra','Wi-Fi'], accent: LuxPalette.champagneDeep),
-    _FleetItem(cls: 'Electric Class',  model: 'Tesla Model S / o similar',     asset: 'assets/images/vehicles/electric/car.png',    tags: ['4 Asientos','Cero emisiones','Premium'], accent: LuxPalette.success),
+  static List<_FleetItem> _vehicles(AppLocalizations l) => [
+    _FleetItem(cls: VehicleClass.business.localizedLabel(l),    model: VehicleClass.business.localizedDescription(l),   asset: 'assets/images/vehicles/business/car.png',    tags: [l.homeFleetSeats(4), l.homeFleetTagLeather, l.homeFleetTagWifi],              accent: LuxPalette.champagne),
+    _FleetItem(cls: VehicleClass.firstClass.localizedLabel(l),  model: VehicleClass.firstClass.localizedDescription(l), asset: 'assets/images/vehicles/first_class/car.png', tags: [l.homeFleetSeats(4), l.homeFleetTagPremiumAudio, l.homeFleetTagChampagne],   accent: LuxPalette.champagneLight),
+    _FleetItem(cls: VehicleClass.businessVan.localizedLabel(l), model: l.homeFleetModelVan,                             asset: 'assets/images/vehicles/van/car.png',          tags: [l.homeFleetSeats(7), l.homeFleetTagExtraLuggage, l.homeFleetTagWifi],         accent: LuxPalette.champagneDeep),
+    _FleetItem(cls: VehicleClass.electric.localizedLabel(l),    model: VehicleClass.electric.localizedDescription(l),   asset: 'assets/images/vehicles/electric/car.png',    tags: [l.homeFleetSeats(4), l.homeFleetTagZeroEmissions, l.homeFleetTagPremium],     accent: LuxPalette.success),
   ];
 
   @override
@@ -22,6 +22,8 @@ class _FleetSection extends StatelessWidget {
     final narrow = w < 900;
     final hPad = narrow ? 24.0 : 64.0;
     final vPad = narrow ? 56.0 : 100.0;
+    final l = context.l10n;
+    final vehicles = _vehicles(l);
     return Container(
         key: sectionKey,
         color: LD.dark,
@@ -32,18 +34,19 @@ class _FleetSection extends StatelessWidget {
             child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  RevealOnScroll(child: const LuxEyebrow('Nuestra Flota')),
+                  RevealOnScroll(child: LuxEyebrow(l.homeFleetEyebrow)),
                   const SizedBox(height: 20),
                   RevealOnScroll(
                     delay: const Duration(milliseconds: 80),
-                    child: Text('Vehículos premium,\nsin excepciones.',
+                    child: Text(l.homeFleetTitle,
                         style: displayText(size: narrow ? 36 : 52, color: Colors.white)),
                   ),
                 ]),
               ),
+              if (!narrow) const SizedBox(width: 24),
               if (!narrow) RevealOnScroll(
                 delay: const Duration(milliseconds: 160),
-                child: Text('DESLIZA PARA EXPLORAR →', style: TextStyle(
+                child: Text(l.homeFleetSwipeHint.toUpperCase(), style: TextStyle(
                   fontFamily: kSans, fontSize: 9, letterSpacing: 2.4,
                   color: Colors.white.withAlpha(60),
                   decoration: TextDecoration.none,
@@ -57,9 +60,9 @@ class _FleetSection extends StatelessWidget {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 0),
-              itemCount: _vehicles.length,
+              itemCount: vehicles.length,
               separatorBuilder: (_, __) => const SizedBox(width: 2),
-              itemBuilder: (_, i) => _FleetCard(item: _vehicles[i], onBook: onBook),
+              itemBuilder: (_, i) => _FleetCard(item: vehicles[i], onBook: onBook),
             ),
           ),
           const SizedBox(height: 72),

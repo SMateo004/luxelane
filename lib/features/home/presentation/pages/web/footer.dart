@@ -17,12 +17,13 @@ class _FooterSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final narrow = MediaQuery.sizeOf(context).width < 900;
+    final l = context.l10n;
     final links = [
-      ('Servicios', onServices),
-      ('Flota',     onFleet),
-      ('Contacto',   () => context.push('/contacto')),
-      ('Términos',   () => context.push('/terminos')),
-      ('Privacidad', () => context.push('/privacidad')),
+      (l.homeNavServices,   onServices),
+      (l.homeNavFleet,      onFleet),
+      (l.homeFooterContact, () => context.push('/contacto')),
+      (l.homeFooterTerms,   () => context.push('/terminos')),
+      (l.homeFooterPrivacy, () => context.push('/privacidad')),
     ];
 
     return Container(
@@ -66,13 +67,13 @@ class _FooterSection extends StatelessWidget {
                   alignment: WrapAlignment.center,
                   spacing: 0,
                   runSpacing: 8,
-                  children: links.map((l) => GestureDetector(
-                    onTap: l.$2,
+                  children: links.map((link) => GestureDetector(
+                    onTap: link.$2,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                       child: MouseRegion(
                         cursor: SystemMouseCursors.click,
-                        child: Text(l.$1.toUpperCase(), style: TextStyle(
+                        child: Text(link.$1.toUpperCase(), style: TextStyle(
                           fontFamily: kSans, fontSize: 9.5, fontWeight: FontWeight.w400,
                           letterSpacing: 2.5,
                           color: Colors.white.withAlpha(71),
@@ -83,7 +84,8 @@ class _FooterSection extends StatelessWidget {
                   )).toList(),
                 ),
                 const SizedBox(height: 28),
-                Text('© 2026 Luxelane. Todos los derechos reservados.', style: TextStyle(
+                Text(l.homeFooterCopyright('${DateTime.now().year}'),
+                    textAlign: TextAlign.center, style: TextStyle(
                   fontFamily: kSans, fontSize: 9.5, fontWeight: FontWeight.w300,
                   letterSpacing: 1.0,
                   color: Colors.white.withAlpha(38),

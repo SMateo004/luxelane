@@ -22,6 +22,7 @@ class _LuxNav extends StatelessWidget {
     final scrolled = scrollY > 60;
     final w = MediaQuery.sizeOf(context).width;
     final narrow = w < 900;
+    final l = context.l10n;
     return AnimatedContainer(
       duration: const Duration(milliseconds: 400),
       height: 72,
@@ -50,9 +51,9 @@ class _LuxNav extends StatelessWidget {
             if (!narrow) ...[
               const _ServicesDropdownLink(),
               const SizedBox(width: 32),
-              _NavLink('Flota',        light: true, onTap: onFleet),
+              _NavLink(l.homeNavFleet,    light: true, onTap: onFleet),
               const SizedBox(width: 32),
-              _NavLink('Para empresas',light: true, onTap: onBusiness),
+              _NavLink(l.homeNavBusiness, light: true, onTap: onBusiness),
               const SizedBox(width: 40),
             ],
             // Auth-aware right side
@@ -185,10 +186,10 @@ class _ServicesDropdownLinkState extends State<_ServicesDropdownLink> {
     });
   }
 
-  static const _items = [
-    ('Recogida inmediata',       '/servicios/recogida-inmediata'),
-    ('Traslado al aeropuerto',   '/servicios/traslado-aeropuerto'),
-    ('Contratación por horas',   '/servicios/contratacion-por-horas'),
+  static List<(String, String)> _items(AppLocalizations l) => [
+    (l.homeServiceImmediatePickup, '/servicios/recogida-inmediata'),
+    (l.homeServiceAirportTransfer, '/servicios/traslado-aeropuerto'),
+    (l.homeServiceHourly,          '/servicios/contratacion-por-horas'),
   ];
 
   @override
@@ -216,7 +217,7 @@ class _ServicesDropdownLinkState extends State<_ServicesDropdownLink> {
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  children: _items.map((item) => _DropItem(
+                  children: _items(context.l10n).map((item) => _DropItem(
                     label: item.$1,
                     onTap: () {
                       _portalController.hide();
@@ -237,7 +238,7 @@ class _ServicesDropdownLinkState extends State<_ServicesDropdownLink> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'SERVICIOS',
+                context.l10n.homeNavServices.toUpperCase(),
                 style: TextStyle(
                   fontFamily: kSans, fontSize: 11, fontWeight: FontWeight.w400,
                   letterSpacing: 1.0,
@@ -289,7 +290,7 @@ class _DropItemState extends State<_DropItem> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Text(
+                Expanded(child: Text(
                   widget.label,
                   style: TextStyle(
                     fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w400,
@@ -297,7 +298,7 @@ class _DropItemState extends State<_DropItem> {
                     color: _hover ? Colors.white : Colors.white.withAlpha(180),
                     decoration: TextDecoration.none,
                   ),
-                ),
+                )),
               ],
             ),
           ),
@@ -329,9 +330,9 @@ class _NavCtaState extends State<_NavCta> {
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
             color: _hover ? LuxPalette.champagneLight : LD.cta,
-            child: const Text(
-              'RESERVAR UN VIAJE',
-              style: TextStyle(
+            child: Text(
+              context.l10n.homeBookRide.toUpperCase(),
+              style: const TextStyle(
                 fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w600,
                 letterSpacing: 1.8, color: LD.onCta,
                 decoration: TextDecoration.none,

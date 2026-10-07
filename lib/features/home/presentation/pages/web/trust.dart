@@ -11,49 +11,34 @@ class _TrustSection extends StatelessWidget {
   const _TrustSection({required this.onBook});
   final VoidCallback onBook;
 
-  static const _promises = [
+  static List<({IconData icon, String title, String body})> _promises(AppLocalizations l) => [
     (
       icon: Icons.lock_outline,
-      title: 'Precio fijo en Bs',
-      body:
-          'Ves el precio final antes de reservar, sin recargos por tráfico. Incluye 60 min de espera en aeropuerto y 15 en ciudad.',
+      title: l.homePromiseFixedPriceTitle,
+      body: l.homePromiseFixedPriceBody(
+          WaitingPolicy.airportFreeMinutes, WaitingPolicy.cityFreeMinutes),
     ),
     (
       icon: Icons.event_available_outlined,
-      title: 'Cancelación gratuita',
-      body:
-          'Cancela sin costo hasta 1 hora antes de la recogida, desde la app.',
+      title: l.homePromiseCancelTitle,
+      body: l.homePromiseCancelBody,
     ),
     (
       icon: Icons.verified_user_outlined,
-      title: 'Chóferes verificados',
-      body:
-          'Licencia y documentos revisados por nuestro equipo antes de su primer viaje.',
+      title: l.homePromiseVerifiedTitle,
+      body: l.homePromiseVerifiedBody,
     ),
     (
       icon: Icons.near_me_outlined,
-      title: 'Seguimiento en vivo',
-      body:
-          'Sigue a tu chófer en el mapa y recibe avisos cuando está en camino y cuando llega.',
+      title: l.homePromiseTrackingTitle,
+      body: l.homePromiseTrackingBody,
     ),
   ];
 
-  static const _steps = [
-    (
-      n: '01',
-      title: 'Reserva en un minuto',
-      body: 'Elige origen, destino, fecha y clase de vehículo.'
-    ),
-    (
-      n: '02',
-      title: 'Confirma tu precio fijo',
-      body: 'Te mostramos el precio final en bolivianos. Ese es el que pagas.'
-    ),
-    (
-      n: '03',
-      title: 'Tu chófer te espera',
-      body: 'Recibe los datos de tu chófer y síguelo en tiempo real.'
-    ),
+  static List<({String title, String body})> _steps(AppLocalizations l) => [
+    (title: l.homeStepBookTitle, body: l.homeStepBookBody),
+    (title: l.homeStepPriceTitle, body: l.homeStepPriceBody),
+    (title: l.homeStepChauffeurTitle, body: l.homeStepChauffeurBody),
   ];
 
   @override
@@ -61,6 +46,9 @@ class _TrustSection extends StatelessWidget {
     final width = MediaQuery.sizeOf(context).width;
     final narrow = width < 900;
     final gutter = narrow ? 20.0 : 48.0;
+    final l = context.l10n;
+    final promises = _promises(l);
+    final steps = _steps(l);
 
     return Container(
       color: LD.bg,
@@ -73,14 +61,14 @@ class _TrustSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               RevealOnScroll(
-                  child: Text('LA PROMESA LUXELANE', style: eyebrow())),
+                  child: Text(l.homeTrustEyebrow.toUpperCase(), style: eyebrow())),
               const SizedBox(height: 16),
               RevealOnScroll(
                 delay: const Duration(milliseconds: 80),
                 child: Semantics(
                   header: true,
                   child: Text(
-                    'Viajar con confianza,\nde principio a fin.',
+                    l.homeTrustTitle,
                     style: displayText(
                         size: narrow ? 40 : 60, weight: FontWeight.w400),
                   ),
@@ -90,30 +78,30 @@ class _TrustSection extends StatelessWidget {
               _Grid(
                 columns: width < 600 ? 1 : (width < 1100 ? 2 : 4),
                 children: [
-                  for (var i = 0; i < _promises.length; i++)
+                  for (var i = 0; i < promises.length; i++)
                     RevealOnScroll(
                       delay: Duration(milliseconds: 60 * i),
                       child: _PromiseCard(
-                        icon: _promises[i].icon,
-                        title: _promises[i].title,
-                        body: _promises[i].body,
+                        icon: promises[i].icon,
+                        title: promises[i].title,
+                        body: promises[i].body,
                       ),
                     ),
                 ],
               ),
               SizedBox(height: narrow ? 72 : 112),
-              RevealOnScroll(child: Text('CÓMO FUNCIONA', style: eyebrow())),
+              RevealOnScroll(child: Text(l.homeHowItWorksEyebrow.toUpperCase(), style: eyebrow())),
               const SizedBox(height: 32),
               _Grid(
                 columns: width < 800 ? 1 : 3,
                 children: [
-                  for (var i = 0; i < _steps.length; i++)
+                  for (var i = 0; i < steps.length; i++)
                     RevealOnScroll(
                       delay: Duration(milliseconds: 80 * i),
                       child: _StepTile(
-                          n: _steps[i].n,
-                          title: _steps[i].title,
-                          body: _steps[i].body),
+                          n: '${i + 1}'.padLeft(2, '0'),
+                          title: steps[i].title,
+                          body: steps[i].body),
                     ),
                 ],
               ),
@@ -239,7 +227,7 @@ class _TrustCtaState extends State<_TrustCta> {
   @override
   Widget build(BuildContext context) => Semantics(
         button: true,
-        label: 'Reservar un viaje',
+        label: context.l10n.homeBookRide,
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           onEnter: (_) => setState(() => _hover = true),
@@ -253,11 +241,11 @@ class _TrustCtaState extends State<_TrustCta> {
               padding: const EdgeInsets.symmetric(horizontal: 32),
               color: _hover ? LuxPalette.champagneLight : LD.cta,
               // widthFactor keeps the button as wide as its label.
-              child: const Center(
+              child: Center(
                 widthFactor: 1,
                 child: Text(
-                  'RESERVAR UN VIAJE',
-                  style: TextStyle(
+                  context.l10n.homeBookRide.toUpperCase(),
+                  style: const TextStyle(
                     fontFamily: kSans,
                     fontSize: 11,
                     fontWeight: FontWeight.w600,

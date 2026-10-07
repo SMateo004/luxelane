@@ -804,6 +804,351 @@ class AppLocalizationsPt extends AppLocalizations {
   String get flightOnTime => 'No horário';
 
   @override
+  String get homeBarDateTime => 'Data e hora';
+
+  @override
+  String get homeBarDestination => 'Destino';
+
+  @override
+  String get homeBarDestinationHint => 'Para onde você vai?';
+
+  @override
+  String get homeBarDuration => 'Duração';
+
+  @override
+  String get homeBarPickup => 'Embarque';
+
+  @override
+  String get homeBarPickupHint => 'Onde você está?';
+
+  @override
+  String get homeBarSeeOptions => 'Ver opções';
+
+  @override
+  String get homeBookBulletAdvance => 'Reserve com antecedência';
+
+  @override
+  String get homeBookBulletCentralBilling => 'Faturamento centralizado';
+
+  @override
+  String get homeBookBulletChampagne => 'Serviço de champanhe disponível';
+
+  @override
+  String get homeBookBulletClimate => 'Controle de climatização';
+
+  @override
+  String get homeBookBulletFixedPrice => 'Preço fixo, sempre';
+
+  @override
+  String get homeBookBulletLeather => 'Interiores em couro premium';
+
+  @override
+  String get homeBookBulletPolicy => 'Conformidade com a política de viagens';
+
+  @override
+  String get homeBookBulletTracking => 'Acompanhamento em tempo real';
+
+  @override
+  String get homeBookBulletWifiCharging => 'Wi-Fi e carregamento sem fio';
+
+  @override
+  String get homeBookBusinessSub => 'Viagens corporativas redefinidas';
+
+  @override
+  String get homeBookCoverSubtitle => 'Serviço de motorista premium';
+
+  @override
+  String get homeBookExperienceBody => 'De água gelada e playlists selecionadas à privacidade com cancelamento de ruído — suas preferências lembradas, sempre.';
+
+  @override
+  String get homeBookExperienceHeadline => 'Cada detalhe,\ncuidado.';
+
+  @override
+  String get homeBookExperienceLabel => 'A experiência';
+
+  @override
+  String get homeBookExperienceSub => 'Cada detalhe pensado';
+
+  @override
+  String get homeBookEyebrow => 'Nossa experiência exclusiva';
+
+  @override
+  String get homeBookRide => 'Reservar uma viagem';
+
+  @override
+  String get homeBookScrollCue => 'Role';
+
+  @override
+  String get homeBookStandardBody => 'Cada motorista passa por uma rigorosa verificação de antecedentes, inspeção do veículo e um programa de treinamento em atendimento.';
+
+  @override
+  String get homeBookStandardHeadline => 'O padrão que\nos outros seguem.';
+
+  @override
+  String get homeBookStandardLabel => 'O padrão';
+
+  @override
+  String get homeBookStandardSub => 'A promessa que cumprimos';
+
+  @override
+  String get homeBookStandardTag => 'O padrão Luxelane';
+
+  @override
+  String get homeBusinessBody => 'O Luxelane para Empresas oferece à sua equipe um serviço de motorista premium, com os controles e relatórios que o seu time financeiro exige.';
+
+  @override
+  String get homeBusinessEyebrow => 'Para empresas';
+
+  @override
+  String get homeBusinessLearnMore => 'Saiba mais';
+
+  @override
+  String get homeBusinessPerkAccountManager => 'Gerente de conta dedicado';
+
+  @override
+  String get homeBusinessPerkBilling => 'Faturamento e cobranças centralizados';
+
+  @override
+  String get homeBusinessPerkGuests => 'Reservas para convidados e equipes';
+
+  @override
+  String get homeBusinessPerkMonitoring => 'Monitoramento de viagens em tempo real';
+
+  @override
+  String get homeBusinessPerkPolicy => 'Ferramentas de conformidade com a política de viagens';
+
+  @override
+  String get homeBusinessPerkPriority => 'Reservas prioritárias para executivos';
+
+  @override
+  String get homeBusinessTitle => 'Viagens corporativas,\nredefinidas.';
+
+  @override
+  String get homeCtaEyebrow => 'Quando quiser. Onde quiser.';
+
+  @override
+  String get homeCtaHighlights => 'Preço fixo  ·  Motoristas verificados  ·  Reserva antecipada';
+
+  @override
+  String get homeCtaTitle => 'Sua próxima viagem,\n<i>do seu jeito.</i>';
+
+  @override
+  String get homeCtaViewFleet => 'Ver a frota';
+
+  @override
+  String homeDateTimeShort(String date, String time) {
+    return '$date, $time';
+  }
+
+  @override
+  String get homeErrorDestinationRequired => 'Informe um destino';
+
+  @override
+  String get homeErrorPickupRequired => 'Informe um local de embarque';
+
+  @override
+  String get homeFleetEyebrow => 'Nossa frota';
+
+  @override
+  String get homeFleetModelVan => 'Mercedes Classe V ou similar';
+
+  @override
+  String homeFleetSeats(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count lugares',
+      one: '1 lugar',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeFleetSwipeHint => 'Deslize para explorar →';
+
+  @override
+  String get homeFleetTagChampagne => 'Champanhe';
+
+  @override
+  String get homeFleetTagExtraLuggage => 'Espaço extra para bagagem';
+
+  @override
+  String get homeFleetTagLeather => 'Interior em couro';
+
+  @override
+  String get homeFleetTagPremium => 'Premium';
+
+  @override
+  String get homeFleetTagPremiumAudio => 'Som premium';
+
+  @override
+  String get homeFleetTagWifi => 'Wi-Fi';
+
+  @override
+  String get homeFleetTagZeroEmissions => 'Emissão zero';
+
+  @override
+  String get homeFleetTitle => 'Veículos premium,\nsem exceções.';
+
+  @override
+  String get homeFooterContact => 'Contato';
+
+  @override
+  String homeFooterCopyright(String year) {
+    return '© $year Luxelane. Todos os direitos reservados.';
+  }
+
+  @override
+  String get homeFooterPrivacy => 'Privacidade';
+
+  @override
+  String get homeFooterTerms => 'Termos';
+
+  @override
+  String get homeFormPickupHint => 'Rua, bairro, aeroporto…';
+
+  @override
+  String get homeFormPickupLabel => 'Local de embarque';
+
+  @override
+  String get homeHeroTitle => 'Seu motorista <i>aguarda você.</i>';
+
+  @override
+  String homeHoursShort(int hours) {
+    return '$hours h';
+  }
+
+  @override
+  String get homeHowItWorksEyebrow => 'Como funciona';
+
+  @override
+  String get homeLocateMe => 'Usar minha localização';
+
+  @override
+  String get homeMapChangeLocation => 'Alterar local';
+
+  @override
+  String get homeMarqueeAirportTransfers => 'Traslados aeroportuários';
+
+  @override
+  String get homeMarqueeBookInMinutes => 'Reserve em minutos';
+
+  @override
+  String get homeMarqueeCorporateTravel => 'Viagens corporativas';
+
+  @override
+  String get homeMarqueeFixedPrices => 'Preços fixos em Bs';
+
+  @override
+  String get homeMarqueeHourly => 'Motorista por hora';
+
+  @override
+  String get homeMarqueePremiumFleet => 'Frota premium';
+
+  @override
+  String get homeMarqueePrivacy => 'Privacidade e discrição';
+
+  @override
+  String get homeNavBusiness => 'Para empresas';
+
+  @override
+  String get homeNavFleet => 'Frota';
+
+  @override
+  String get homeNavServices => 'Serviços';
+
+  @override
+  String get homePickDestinationTitle => 'Escolher destino';
+
+  @override
+  String get homePickPickupTitle => 'Escolher local de embarque';
+
+  @override
+  String get homePromiseCancelBody => 'Cancele sem custo até 1 hora antes do embarque, direto pelo app.';
+
+  @override
+  String get homePromiseCancelTitle => 'Cancelamento grátis';
+
+  @override
+  String homePromiseFixedPriceBody(int airportMinutes, int cityMinutes) {
+    return 'Você vê o preço final antes de reservar, sem acréscimos por trânsito. Inclui $airportMinutes min de espera no aeroporto e $cityMinutes na cidade.';
+  }
+
+  @override
+  String get homePromiseFixedPriceTitle => 'Preço fixo em Bs';
+
+  @override
+  String get homePromiseTrackingBody => 'Acompanhe seu motorista no mapa e receba avisos quando ele estiver a caminho e quando chegar.';
+
+  @override
+  String get homePromiseTrackingTitle => 'Acompanhamento ao vivo';
+
+  @override
+  String get homePromiseVerifiedBody => 'Habilitação e documentos revisados pela nossa equipe antes da primeira viagem.';
+
+  @override
+  String get homePromiseVerifiedTitle => 'Motoristas verificados';
+
+  @override
+  String homeRouteSummary(String distance, String duration) {
+    return '$distance km · $duration';
+  }
+
+  @override
+  String get homeSearchVehicles => 'Buscar veículos';
+
+  @override
+  String get homeServiceAirportTransfer => 'Traslado ao aeroporto';
+
+  @override
+  String get homeServiceHourly => 'Motorista por hora';
+
+  @override
+  String get homeServiceImmediatePickup => 'Embarque imediato';
+
+  @override
+  String get homeShellMyTrips => 'Minhas viagens';
+
+  @override
+  String get homeShellSignIn => 'Entrar';
+
+  @override
+  String get homeShellSignOut => 'Sair';
+
+  @override
+  String get homeShellTabHome => 'Início';
+
+  @override
+  String get homeShellTabProfile => 'Perfil';
+
+  @override
+  String get homeShellTabTrips => 'Viagens';
+
+  @override
+  String get homeStepBookBody => 'Escolha origem, destino, data e categoria do veículo.';
+
+  @override
+  String get homeStepBookTitle => 'Reserve em um minuto';
+
+  @override
+  String get homeStepChauffeurBody => 'Receba os dados do seu motorista e acompanhe-o em tempo real.';
+
+  @override
+  String get homeStepChauffeurTitle => 'Seu motorista aguarda você';
+
+  @override
+  String get homeStepPriceBody => 'Mostramos o preço final em bolivianos. É exatamente o que você paga.';
+
+  @override
+  String get homeStepPriceTitle => 'Confirme seu preço fixo';
+
+  @override
+  String get homeTrustEyebrow => 'A promessa Luxelane';
+
+  @override
+  String get homeTrustTitle => 'Viaje com tranquilidade,\ndo início ao fim.';
+
+  @override
   String legalCompanyDetails(String nit, String address) {
     return 'NIT (identificação fiscal) $nit · $address';
   }

@@ -104,6 +104,8 @@ class _HeroSectionState extends State<_HeroSection>
     final w = MediaQuery.sizeOf(context).width;
     final narrow = w < 900;
     final isOneWay = widget.serviceType == ServiceType.oneWay;
+    final l = context.l10n;
+    final headlineSize = narrow ? 52.0 : 100.0;
 
     return SizedBox(
       height: h,
@@ -165,23 +167,18 @@ class _HeroSectionState extends State<_HeroSection>
                     Center(
                       child: _ClipReveal(
                         delay: const Duration(milliseconds: 300),
-                        child: RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Tu chofer ',
-                                style: displayText(size: narrow ? 52 : 100, color: Colors.white),
+                        child: Text.rich(
+                          TextSpan(
+                            children: emphasisSpans(
+                              l.homeHeroTitle,
+                              style: displayText(size: headlineSize, color: Colors.white),
+                              emphasis: displayText(
+                                size: headlineSize, color: Colors.white,
+                                style: FontStyle.italic,
                               ),
-                              TextSpan(
-                                text: 'te espera.',
-                                style: displayText(
-                                  size: narrow ? 52 : 100, color: Colors.white,
-                                  style: FontStyle.italic,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
@@ -215,11 +212,11 @@ class _HeroSectionState extends State<_HeroSection>
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     _BarField(
-                                      label: 'RECOGIDA',
+                                      label: l.homeBarPickup,
                                       icon: Icons.radio_button_checked,
                                       child: PlaceAutocompleteField(
-                                        label: '¿Dónde estás?',
-                                        hint: '¿Dónde estás?',
+                                        label: l.homeBarPickupHint,
+                                        hint: l.homeBarPickupHint,
                                         initialValue: widget.origin,
                                         onPlaceSelected: widget.onOriginSelected,
                                         onMapPick: widget.onOriginMapPick,
@@ -229,10 +226,10 @@ class _HeroSectionState extends State<_HeroSection>
                                     Container(height: 1, color: Colors.white.withAlpha(30)),
                                     isOneWay
                                         ? _BarField(
-                                            label: 'DESTINO',
+                                            label: l.homeBarDestination,
                                             icon: Icons.south,
                                             child: PlaceAutocompleteField(
-                                              label: '¿A dónde vas?',
+                                              label: l.homeBarDestinationHint,
                                               initialValue: widget.destination,
                                               onPlaceSelected: widget.onDestinationSelected,
                                               onMapPick: widget.onDestinationMapPick,
@@ -240,7 +237,7 @@ class _HeroSectionState extends State<_HeroSection>
                                             ),
                                           )
                                         : _BarField(
-                                            label: 'DURACIÓN',
+                                            label: l.homeBarDuration,
                                             icon: Icons.schedule_outlined,
                                             child: _HoursPicker(
                                               hours: widget.hours,
@@ -249,7 +246,7 @@ class _HeroSectionState extends State<_HeroSection>
                                           ),
                                     Container(height: 1, color: Colors.white.withAlpha(30)),
                                     _BarField(
-                                      label: 'FECHA Y HORA',
+                                      label: l.homeBarDateTime,
                                       icon: Icons.calendar_today_outlined,
                                       child: _DateDisplayTrigger(
                                         date: widget.date,
@@ -263,7 +260,7 @@ class _HeroSectionState extends State<_HeroSection>
                                         bottomLeft: Radius.circular(13),
                                         bottomRight: Radius.circular(13),
                                       ),
-                                      child: _BarCta(onTap: widget.onSearch),
+                                      child: _BarCta(onTap: widget.onSearch, stacked: true),
                                     ),
                                   ],
                                 )
@@ -273,11 +270,11 @@ class _HeroSectionState extends State<_HeroSection>
                                     Expanded(
                                       flex: 3,
                                       child: _BarField(
-                                        label: 'RECOGIDA',
+                                        label: l.homeBarPickup,
                                         icon: Icons.radio_button_checked,
                                         child: PlaceAutocompleteField(
-                                          label: '¿Dónde estás?',
-                                          hint: '¿Dónde estás?',
+                                          label: l.homeBarPickupHint,
+                                          hint: l.homeBarPickupHint,
                                           initialValue: widget.origin,
                                           onPlaceSelected: widget.onOriginSelected,
                                           onMapPick: widget.onOriginMapPick,
@@ -290,10 +287,10 @@ class _HeroSectionState extends State<_HeroSection>
                                       flex: 3,
                                       child: isOneWay
                                           ? _BarField(
-                                              label: 'DESTINO',
+                                              label: l.homeBarDestination,
                                               icon: Icons.south,
                                               child: PlaceAutocompleteField(
-                                                label: '¿A dónde vas?',
+                                                label: l.homeBarDestinationHint,
                                                 initialValue: widget.destination,
                                                 onPlaceSelected: widget.onDestinationSelected,
                                                 onMapPick: widget.onDestinationMapPick,
@@ -301,7 +298,7 @@ class _HeroSectionState extends State<_HeroSection>
                                               ),
                                             )
                                           : _BarField(
-                                              label: 'DURACIÓN',
+                                              label: l.homeBarDuration,
                                               icon: Icons.schedule_outlined,
                                               child: _HoursPicker(
                                                 hours: widget.hours,
@@ -313,7 +310,7 @@ class _HeroSectionState extends State<_HeroSection>
                                     Expanded(
                                       flex: 2,
                                       child: _BarField(
-                                        label: 'FECHA Y HORA',
+                                        label: l.homeBarDateTime,
                                         icon: Icons.calendar_today_outlined,
                                         child: _DateDisplayTrigger(
                                           date: widget.date,
@@ -350,7 +347,7 @@ class _HeroSectionState extends State<_HeroSection>
                                        _originMapPlace!.lng != 0.0)
                                   ? _InlineMapPanel(
                                       place: _originMapPlace!,
-                                      label: 'RECOGIDA',
+                                      label: l.homeBarPickup,
                                       onChangeTap: widget.onOriginMapPick,
                                       onClose: () => setState(
                                           () => _originMapOpen = false),
@@ -371,7 +368,7 @@ class _HeroSectionState extends State<_HeroSection>
                                        _destMapPlace!.lng != 0.0)
                                   ? _InlineMapPanel(
                                       place: _destMapPlace!,
-                                      label: 'DESTINO',
+                                      label: l.homeBarDestination,
                                       onChangeTap: widget.onDestinationMapPick,
                                       onClose: () => setState(
                                           () => _destMapOpen = false),
@@ -531,7 +528,7 @@ class _InlineMapPanel extends StatefulWidget {
   });
 
   final Place        place;
-  final String       label;       // 'RECOGIDA' or 'DESTINO'
+  final String       label;       // pickup or destination field label
   final VoidCallback onChangeTap;
   final VoidCallback onClose;
 
@@ -608,7 +605,7 @@ class _InlineMapPanelState extends State<_InlineMapPanel> {
                           size: 12, color: Colors.white),
                       const SizedBox(width: 6),
                       Text(
-                        'CAMBIAR UBICACIÓN',
+                        context.l10n.homeMapChangeLocation.toUpperCase(),
                         style: TextStyle(
                           fontFamily: kSans,
                           fontSize: 8.5,
@@ -663,8 +660,8 @@ class _ServicePillToggle extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _Pill(label: 'Solo ida',   selected: isOneWay,  onTap: () => onChanged(ServiceType.oneWay)),
-            _Pill(label: 'Por horas',  selected: !isOneWay, onTap: () => onChanged(ServiceType.byTheHour)),
+            _Pill(label: ServiceType.oneWay.localizedLabel(context.l10n),    selected: isOneWay,  onTap: () => onChanged(ServiceType.oneWay)),
+            _Pill(label: ServiceType.byTheHour.localizedLabel(context.l10n), selected: !isOneWay, onTap: () => onChanged(ServiceType.byTheHour)),
           ],
         ),
       );
@@ -715,12 +712,16 @@ class _BarField extends StatelessWidget {
             Row(children: [
               Icon(icon, size: 11, color: Colors.white.withAlpha(160)),
               const SizedBox(width: 6),
-              Text(label, style: TextStyle(
-                fontFamily: kSans, fontSize: 9.5, fontWeight: FontWeight.w600,
-                letterSpacing: 1.8,
-                color: Colors.white.withAlpha(160),
-                decoration: TextDecoration.none,
-              )),
+              Flexible(
+                child: Text(label.toUpperCase(),
+                  maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: kSans, fontSize: 9.5, fontWeight: FontWeight.w600,
+                    letterSpacing: 1.8,
+                    color: Colors.white.withAlpha(160),
+                    decoration: TextDecoration.none,
+                  )),
+              ),
             ]),
             const SizedBox(height: 5),
             child,
@@ -738,8 +739,12 @@ class _BarSeparator extends StatelessWidget {
 }
 
 class _BarCta extends StatefulWidget {
-  const _BarCta({required this.onTap});
+  const _BarCta({required this.onTap, this.stacked = false});
   final VoidCallback onTap;
+
+  /// Full-width button under stacked fields (narrow layout) instead of the
+  /// fixed-width column at the end of the desktop bar.
+  final bool stacked;
 
   @override
   State<_BarCta> createState() => _BarCtaState();
@@ -756,27 +761,33 @@ class _BarCtaState extends State<_BarCta> {
         child: GestureDetector(
           onTap: widget.onTap,
           child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topRight:    Radius.circular(13),
-              bottomRight: Radius.circular(13),
-            ),
+            borderRadius: widget.stacked
+                ? BorderRadius.zero
+                : const BorderRadius.only(
+                    topRight:    Radius.circular(13),
+                    bottomRight: Radius.circular(13),
+                  ),
             child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            width: 180,
-            height: double.infinity,
+            width: widget.stacked ? double.infinity : 180,
+            height: widget.stacked ? 56 : double.infinity,
             decoration: BoxDecoration(
               color: _hover ? LuxPalette.champagneLight : LD.cta,
-              border: Border(
-                left: BorderSide(color: Colors.white.withAlpha(40)),
-              ),
+              border: widget.stacked
+                  ? null
+                  : Border(left: BorderSide(color: Colors.white.withAlpha(40))),
             ),
             alignment: Alignment.center,
-            child: const Text(
-              'VER OPCIONES',
-              style: TextStyle(
-                fontFamily: kSans, fontSize: 10.5, fontWeight: FontWeight.w600,
-                letterSpacing: 2.2, color: LD.onCta,
-                decoration: TextDecoration.none,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                context.l10n.homeBarSeeOptions.toUpperCase(),
+                style: const TextStyle(
+                  fontFamily: kSans, fontSize: 10.5, fontWeight: FontWeight.w600,
+                  letterSpacing: 2.2, color: LD.onCta,
+                  decoration: TextDecoration.none,
+                ),
               ),
             ),
           ),
@@ -891,13 +902,8 @@ class _DateDisplayTrigger extends StatelessWidget {
   final bool     isOpen;
   final VoidCallback onTap;
 
-  String _fmt(DateTime d) {
-    const m = ['Ene','Feb','Mar','Abr','May','Jun',
-                'Jul','Ago','Sep','Oct','Nov','Dic'];
-    return '${m[d.month-1]} ${d.day},  '
-           '${d.hour.toString().padLeft(2,'0')}:'
-           '${d.minute.toString().padLeft(2,'0')}';
-  }
+  String _fmt(AppLocalizations l, DateTime d) =>
+      l.homeDateTimeShort(DateFormat.MMMd().format(d), DateFormat.Hm().format(d));
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -905,11 +911,16 @@ class _DateDisplayTrigger extends StatelessWidget {
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: Row(children: [
-            Text(_fmt(date), style: const TextStyle(
-              fontFamily: kSans, fontSize: 13, color: Colors.white,
-              decoration: TextDecoration.none,
-            )),
-            const Spacer(),
+            Expanded(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(_fmt(context.l10n, date), style: const TextStyle(
+                  fontFamily: kSans, fontSize: 13, color: Colors.white,
+                  decoration: TextDecoration.none,
+                )),
+              ),
+            ),
             AnimatedRotation(
               turns: isOpen ? 0.5 : 0.0,
               duration: const Duration(milliseconds: 250),
@@ -941,11 +952,6 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
   late DateTime _month;    // first-day of the browsed month
   late DateTime _selected; // full date being built
 
-  static const _monthNames = [
-    'Enero','Febrero','Marzo','Abril','Mayo','Junio',
-    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre',
-  ];
-  static const _dayLabels = ['L','M','X','J','V','S','D'];
 
   @override
   void initState() {
@@ -972,8 +978,17 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
     final now         = DateTime.now();
     final today       = DateTime(now.year, now.month, now.day);
     final daysInMonth = DateTime(_month.year, _month.month + 1, 0).day;
-    // weekday: 1=Mon … 7=Sun → offset = weekday - 1
-    final startOffset = DateTime(_month.year, _month.month, 1).weekday - 1;
+    // Weeks start on the locale's first day (Mon in es, Sun in en/pt).
+    final material    = MaterialLocalizations.of(context);
+    final firstDay    = material.firstDayOfWeekIndex; // 0 = Sunday
+    final dayLabels   = [
+      for (var i = 0; i < 7; i++) material.narrowWeekdays[(firstDay + i) % 7],
+    ];
+    // DateTime.weekday: 1=Mon … 7=Sun → Sunday-based index = weekday % 7
+    final startOffset =
+        (DateTime(_month.year, _month.month).weekday % 7 - firstDay + 7) % 7;
+    final monthTitle  = toBeginningOfSentenceCase(
+        DateFormat.yMMMM().format(_month));
 
     const bg      = Color(0xFF090F1A);
     const divider = Color(0xFF1A2538);
@@ -994,7 +1009,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
               _ChevBtn(icon: Icons.chevron_left,  onTap: _prevMonth),
               Expanded(
                 child: Text(
-                  '${_monthNames[_month.month - 1]} ${_month.year}',
+                  monthTitle,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontFamily: kSans, fontSize: 10.5,
@@ -1011,7 +1026,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
-              children: _dayLabels
+              children: dayLabels
                   .map((d) => Expanded(
                         child: Center(
                           child: Text(d,
@@ -1126,8 +1141,8 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                 color: LD.accent,
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 alignment: Alignment.center,
-                child: const Text('CONFIRMAR',
-                  style: TextStyle(
+                child: Text(context.l10n.commonConfirm.toUpperCase(),
+                  style: const TextStyle(
                     fontFamily: kSans, fontSize: 10,
                     fontWeight: FontWeight.w600, letterSpacing: 2.0,
                     color: Colors.white, decoration: TextDecoration.none,
@@ -1211,11 +1226,14 @@ class _HoursPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(children: [
-        Text('$hours hora${hours > 1 ? 's' : ''}', style: const TextStyle(
-          fontFamily: kSans, fontSize: 13, color: Colors.white,
-          decoration: TextDecoration.none,
-        )),
-        const Spacer(),
+        Expanded(
+          child: Text(context.l10n.unitHours(hours),
+            maxLines: 1, overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontFamily: kSans, fontSize: 13, color: Colors.white,
+              decoration: TextDecoration.none,
+            )),
+        ),
         IconButton(
           icon: Icon(Icons.remove, size: 16,
               color: Colors.white.withAlpha(160)),

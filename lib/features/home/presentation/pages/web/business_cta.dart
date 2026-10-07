@@ -12,16 +12,16 @@ class _BusinessSection extends StatelessWidget {
   // 🎬 Place video at: assets/videos/business_bg.mp4
   static const _videoAsset = 'assets/videos/business_bg.mp4';
 
-  static const _perks = [
-    'Facturación y cobros centralizados',
-    'Gerente de cuenta dedicado',
-    'Herramientas de cumplimiento de política de viajes',
-    'Reservas prioritarias para ejecutivos',
-    'Monitoreo de viajes en tiempo real',
-    'Reservas para invitados y equipos',
+  static List<String> _perks(AppLocalizations l) => [
+    l.homeBusinessPerkBilling,
+    l.homeBusinessPerkAccountManager,
+    l.homeBusinessPerkPolicy,
+    l.homeBusinessPerkPriority,
+    l.homeBusinessPerkMonitoring,
+    l.homeBusinessPerkGuests,
   ];
 
-  Widget _perksPanel(double hPad, double vPad) => Stack(
+  Widget _perksPanel(AppLocalizations l, double hPad, double vPad) => Stack(
         children: [
           Positioned.fill(child: _VideoBackground(assetPath: _videoAsset)),
           Positioned.fill(
@@ -40,7 +40,7 @@ class _BusinessSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
-              children: _perks.asMap().entries.map((e) {
+              children: _perks(l).asMap().entries.map((e) {
                 final i = e.key;
                 return RevealOnScroll(
                   delay: Duration(milliseconds: i * 70), dy: 16,
@@ -83,29 +83,30 @@ class _BusinessSection extends StatelessWidget {
     final narrow = MediaQuery.sizeOf(context).width < 900;
     final hPad = narrow ? 24.0 : 64.0;
     final vPad = narrow ? 48.0 : 100.0;
+    final l = context.l10n;
 
     final headlinePanel = Padding(
       padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, vPad),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        RevealOnScroll(dx: -160, child: const LuxEyebrow('Para Empresas')),
+        RevealOnScroll(dx: -160, child: LuxEyebrow(l.homeBusinessEyebrow)),
         const SizedBox(height: 28),
         RevealOnScroll(
           delay: const Duration(milliseconds: 80), dx: -160,
-          child: Text('Viajes corporativos,\nredefinidos.',
+          child: Text(l.homeBusinessTitle,
               style: displayText(size: narrow ? 36 : 52, color: Colors.white)),
         ),
         const SizedBox(height: 28),
         RevealOnScroll(
           delay: const Duration(milliseconds: 160), dx: -120,
           child: Text(
-            'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.',
+            l.homeBusinessBody,
             style: bodyText(size: 14, color: const Color(0xCCFFFFFF)),
           ),
         ),
         const SizedBox(height: 44),
         RevealOnScroll(
           delay: const Duration(milliseconds: 220), dx: -120,
-          child: _GhostBtn(label: 'Más información', light: true, onTap: onLearnMore),
+          child: _GhostBtn(label: l.homeBusinessLearnMore, light: true, onTap: onLearnMore),
         ),
       ]),
     );
@@ -116,12 +117,12 @@ class _BusinessSection extends StatelessWidget {
       child: narrow
           ? Column(children: [
               headlinePanel,
-              SizedBox(height: 320, child: _perksPanel(hPad, 32)),
+              _perksPanel(l, hPad, 32),
             ])
           : IntrinsicHeight(
               child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
                 Expanded(child: headlinePanel),
-                Expanded(child: _perksPanel(hPad, vPad)),
+                Expanded(child: _perksPanel(l, hPad, vPad)),
               ]),
             ),
     );
@@ -141,7 +142,11 @@ class _CtaSection extends StatelessWidget {
   static const _videoAsset = 'assets/videos/cta_bg.mp4';
 
   @override
-  Widget build(BuildContext context) => Stack(
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final narrow = MediaQuery.sizeOf(context).width < 900;
+    final titleSize = narrow ? 56.0 : 96.0;
+    return Stack(
         children: [
           // Video background (looping, muted, full-bleed)
           Positioned.fill(
@@ -153,7 +158,7 @@ class _CtaSection extends StatelessWidget {
           ),
           // Content
           Padding(
-            padding: const EdgeInsets.fromLTRB(64, 80, 64, 80),
+            padding: EdgeInsets.symmetric(horizontal: narrow ? 24 : 64, vertical: 80),
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 900),
@@ -163,8 +168,8 @@ class _CtaSection extends StatelessWidget {
                   children: [
                     RevealOnScroll(
                       dx: -100, threshold: 0.9,
-                      child: const Text('CUANDO QUIERAS. DONDE QUIERAS.',
-                        style: TextStyle(
+                      child: Text(l.homeCtaEyebrow.toUpperCase(),
+                        style: const TextStyle(
                           fontFamily: kSans, fontSize: 9, fontWeight: FontWeight.w600,
                           letterSpacing: 4.0,
                           color: Color(0xE0FFFFFF),
@@ -175,23 +180,22 @@ class _CtaSection extends StatelessWidget {
                     RevealOnScroll(
                       delay: const Duration(milliseconds: 80),
                       dx: -100, threshold: 0.9,
-                      child: Text('Tu próximo viaje,',
-                          style: displayText(size: 96, color: Colors.white)),
-                    ),
-                    RevealOnScroll(
-                      delay: const Duration(milliseconds: 120),
-                      dx: -100, threshold: 0.9,
-                      child: Text('en tus términos.',
-                          style: displayText(size: 96, color: Colors.white,
-                              style: FontStyle.italic)),
+                      child: Text.rich(TextSpan(
+                        children: emphasisSpans(
+                          l.homeCtaTitle,
+                          style: displayText(size: titleSize, color: Colors.white),
+                          emphasis: displayText(size: titleSize, color: Colors.white,
+                              style: FontStyle.italic),
+                        ),
+                      )),
                     ),
                     const SizedBox(height: 48),
                     RevealOnScroll(
                       delay: const Duration(milliseconds: 160),
                       dx: -80, threshold: 0.9,
-                      child: const Text(
-                        'Precio fijo  ·  Chóferes verificados  ·  Reserva anticipada',
-                        style: TextStyle(
+                      child: Text(
+                        l.homeCtaHighlights,
+                        style: const TextStyle(
                           fontFamily: kSans, fontSize: 11, fontWeight: FontWeight.w400,
                           letterSpacing: 2.8,
                           color: Color(0xCCFFFFFF),
@@ -202,14 +206,15 @@ class _CtaSection extends StatelessWidget {
                     RevealOnScroll(
                       delay: const Duration(milliseconds: 220),
                       dx: -80, threshold: 0.9,
-                      child: Row(children: [
-                        _SolidBtn(
-                          label: 'Reservar un viaje', white: true,
-                          onTap: onBook,
-                        ),
-                        const SizedBox(width: 20),
-                        _GhostBtn(label: 'Ver flota', light: true, onTap: onViewFleet),
-                      ]),
+                      child: Wrap(spacing: 20, runSpacing: 16,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          _SolidBtn(
+                            label: l.homeBookRide, white: true,
+                            onTap: onBook,
+                          ),
+                          _GhostBtn(label: l.homeCtaViewFleet, light: true, onTap: onViewFleet),
+                        ]),
                     ),
                   ],
                 ),
@@ -218,6 +223,7 @@ class _CtaSection extends StatelessWidget {
           ),
         ],
       );
+  }
 }
 
 // ============================================================

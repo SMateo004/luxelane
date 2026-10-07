@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
@@ -12,6 +13,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/map_picker_dialog.dart';
 import '../../../../core/widgets/place_autocomplete_field.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../notifications/presentation/widgets/notification_bell.dart';
 import 'home_web_page.dart';
@@ -56,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final picked = await showMapPickerDialog(
       context,
       initial: initial,
-      title: 'Seleccionar lugar de recogida',
+      title: context.l10n.homePickPickupTitle,
     );
     if (!mounted || picked == null) return;
     setState(() => _origin = picked);
@@ -69,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
       initial: _origin != null
           ? LatLng(_origin!.lat, _origin!.lng)
           : const LatLng(-17.7833, -63.1821),
-      title: 'Seleccionar lugar de recogida',
+      title: context.l10n.homePickPickupTitle,
     );
     if (!mounted || picked == null) return;
     setState(() => _origin = picked);
@@ -82,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
       initial: _destination != null
           ? LatLng(_destination!.lat, _destination!.lng)
           : const LatLng(-17.7833, -63.1821),
-      title: 'Seleccionar destino',
+      title: context.l10n.homePickDestinationTitle,
     );
     if (!mounted || picked == null) return;
     setState(() => _destination = picked);
@@ -114,11 +116,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _search() {
     if (_origin == null) {
-      showLuxSnackbar(context, 'Ingresa un lugar de recogida', isError: true);
+      showLuxSnackbar(context, context.l10n.homeErrorPickupRequired, isError: true);
       return;
     }
     if (_serviceType == ServiceType.oneWay && _destination == null) {
-      showLuxSnackbar(context, 'Ingresa un destino', isError: true);
+      showLuxSnackbar(context, context.l10n.homeErrorDestinationRequired, isError: true);
       return;
     }
     context.go(
@@ -379,7 +381,7 @@ class _MobileBottomPanel extends StatelessWidget {
               _RouteInfoBadge(route: routeInfo!),
             ],
             const SizedBox(height: LuxSpacing.md),
-            LuxButton(label: 'Buscar vehículos', onPressed: onSearch),
+            LuxButton(label: context.l10n.homeSearchVehicles, onPressed: onSearch),
           ],
         ),
       );
@@ -425,14 +427,15 @@ class _BookingForm extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final locBg = isDark ? LuxColors.blackElevated : const Color(0xFFF0EFEb);
     final locIconColor = isDark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
+    final l = context.l10n;
     return Column(
         children: [
           Row(
             children: [
               Expanded(
                 child: PlaceAutocompleteField(
-                  label: 'Lugar de recogida',
-                  hint: 'Calle, barrio, aeropuerto…',
+                  label: l.homeFormPickupLabel,
+                  hint: l.homeFormPickupHint,
                   prefixIcon: Icons.radio_button_checked_outlined,
                   initialValue: origin,
                   onPlaceSelected: onOriginSelected,
@@ -441,7 +444,9 @@ class _BookingForm extends StatelessWidget {
               ),
               const SizedBox(width: LuxSpacing.sm),
               // Locate / map-pick button
-              GestureDetector(
+              Tooltip(
+                message: l.homeLocateMe,
+                child: GestureDetector(
                 onTap: onLocate,
                 child: Container(
                   width: 44,
@@ -468,13 +473,14 @@ class _BookingForm extends StatelessWidget {
                           size: 18, color: locIconColor),
                 ),
               ),
+              ),
             ],
           ),
           if (serviceType == ServiceType.oneWay) ...[
             const SizedBox(height: LuxSpacing.sm),
             PlaceAutocompleteField(
-              label: 'Destino',
-              hint: '¿A dónde vas?',
+              label: l.homeBarDestination,
+              hint: l.homeBarDestinationHint,
               prefixIcon: Icons.location_on_outlined,
               initialValue: destination,
               onPlaceSelected: onDestinationSelected,
@@ -511,10 +517,17 @@ class _RouteInfoBadge extends StatelessWidget {
             const Icon(Icons.route_outlined,
                 size: 16, color: LuxColors.accent),
             const SizedBox(width: LuxSpacing.xs),
-            Text(
-              '${route.distanceKm.toStringAsFixed(1)} km · ${route.durationMin} min',
-              style: LuxTypography.caption
-                  .copyWith(color: LuxColors.accent),
+            Flexible(
+              child: Text(
+                context.l10n.homeRouteSummary(
+                  NumberFormat.decimalPatternDigits(decimalDigits: 1)
+                      .format(route.distanceKm),
+                  localizedDuration(
+                      context.l10n, Duration(minutes: route.durationMin)),
+                ),
+                style: LuxTypography.caption
+                    .copyWith(color: LuxColors.accent),
+              ),
             ),
           ],
         ),
@@ -526,8 +539,8 @@ class _DateTimeTile extends StatelessWidget {
   final DateTime date;
   final ValueChanged<DateTime> onChanged;
 
-  String _fmt(DateTime d) =>
-      '${d.day}/${d.month}/${d.year}  ${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+  String _fmt(AppLocalizations l, DateTime d) =>
+      l.homeDateTimeShort(DateFormat.yMMMEd().format(d), DateFormat.Hm().format(d));
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -573,7 +586,7 @@ class _DateTimeTile extends StatelessWidget {
                 const SizedBox(width: LuxSpacing.md),
                 Expanded(
                   child: Text(
-                    _fmt(date),
+                    _fmt(context.l10n, date),
                     style: TextStyle(
                       color: dark ? LuxColors.white : const Color(0xFF111111),
                       fontSize: 13,
@@ -614,14 +627,16 @@ class _HourSelector extends StatelessWidget {
         children: [
           Icon(Icons.schedule_outlined, size: 20, color: iconColor),
           const SizedBox(width: LuxSpacing.md),
-          Text('Duración',
+          Expanded(
+            child: Text(context.l10n.homeBarDuration,
+              maxLines: 1, overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: textColor,
                 fontSize: 13,
                 fontFamily: 'Montserrat',
                 fontWeight: FontWeight.w400,
               )),
-          const Spacer(),
+          ),
           IconButton(
             onPressed: hours > 2 ? () => onChanged(hours - 1) : null,
             icon: Icon(Icons.remove_circle_outline, color: accentColor),
@@ -629,7 +644,7 @@ class _HourSelector extends StatelessWidget {
           ),
           SizedBox(
             width: 40,
-            child: Text('${hours}h',
+            child: Text(context.l10n.homeHoursShort(hours),
                 style: TextStyle(
                   color: textColor,
                   fontSize: 16,

@@ -1567,6 +1567,660 @@ abstract class AppLocalizations {
   /// **'A tiempo'**
   String get flightOnTime;
 
+  /// Booking bar field label (uppercased)
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha y hora'**
+  String get homeBarDateTime;
+
+  /// Booking field label
+  ///
+  /// In es, this message translates to:
+  /// **'Destino'**
+  String get homeBarDestination;
+
+  /// Destination field placeholder
+  ///
+  /// In es, this message translates to:
+  /// **'¿A dónde vas?'**
+  String get homeBarDestinationHint;
+
+  /// Booking field label (by the hour)
+  ///
+  /// In es, this message translates to:
+  /// **'Duración'**
+  String get homeBarDuration;
+
+  /// Booking bar field label (uppercased)
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida'**
+  String get homeBarPickup;
+
+  /// Pickup field placeholder
+  ///
+  /// In es, this message translates to:
+  /// **'¿Dónde estás?'**
+  String get homeBarPickupHint;
+
+  /// Booking bar submit button (uppercased)
+  ///
+  /// In es, this message translates to:
+  /// **'Ver opciones'**
+  String get homeBarSeeOptions;
+
+  /// No description provided for @homeBookBulletAdvance.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva con anticipación'**
+  String get homeBookBulletAdvance;
+
+  /// No description provided for @homeBookBulletCentralBilling.
+  ///
+  /// In es, this message translates to:
+  /// **'Facturación centralizada'**
+  String get homeBookBulletCentralBilling;
+
+  /// No description provided for @homeBookBulletChampagne.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio de champán disponible'**
+  String get homeBookBulletChampagne;
+
+  /// No description provided for @homeBookBulletClimate.
+  ///
+  /// In es, this message translates to:
+  /// **'Control de clima ambiental'**
+  String get homeBookBulletClimate;
+
+  /// No description provided for @homeBookBulletFixedPrice.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo, siempre'**
+  String get homeBookBulletFixedPrice;
+
+  /// No description provided for @homeBookBulletLeather.
+  ///
+  /// In es, this message translates to:
+  /// **'Interiores de cuero premium'**
+  String get homeBookBulletLeather;
+
+  /// No description provided for @homeBookBulletPolicy.
+  ///
+  /// In es, this message translates to:
+  /// **'Cumplimiento de política de viajes'**
+  String get homeBookBulletPolicy;
+
+  /// No description provided for @homeBookBulletTracking.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguimiento en tiempo real'**
+  String get homeBookBulletTracking;
+
+  /// No description provided for @homeBookBulletWifiCharging.
+  ///
+  /// In es, this message translates to:
+  /// **'Wi-Fi y carga inalámbrica'**
+  String get homeBookBulletWifiCharging;
+
+  /// No description provided for @homeBookBusinessSub.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes corporativos redefinidos'**
+  String get homeBookBusinessSub;
+
+  /// No description provided for @homeBookCoverSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio de chófer premium'**
+  String get homeBookCoverSubtitle;
+
+  /// No description provided for @homeBookExperienceBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde agua fría y listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.'**
+  String get homeBookExperienceBody;
+
+  /// No description provided for @homeBookExperienceHeadline.
+  ///
+  /// In es, this message translates to:
+  /// **'Cada detalle,\ncuidado.'**
+  String get homeBookExperienceHeadline;
+
+  /// No description provided for @homeBookExperienceLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'La experiencia'**
+  String get homeBookExperienceLabel;
+
+  /// No description provided for @homeBookExperienceSub.
+  ///
+  /// In es, this message translates to:
+  /// **'Cada detalle considerado'**
+  String get homeBookExperienceSub;
+
+  /// Eyebrow above the page-flip showcase (uppercased)
+  ///
+  /// In es, this message translates to:
+  /// **'Nuestra experiencia distintiva'**
+  String get homeBookEyebrow;
+
+  /// Primary CTA across the landing and the web header (often uppercased)
+  ///
+  /// In es, this message translates to:
+  /// **'Reservar un viaje'**
+  String get homeBookRide;
+
+  /// Vertical scroll cue next to the page-flip showcase (uppercased)
+  ///
+  /// In es, this message translates to:
+  /// **'Desliza'**
+  String get homeBookScrollCue;
+
+  /// No description provided for @homeBookStandardBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Cada chófer supera una rigurosa verificación de antecedentes, inspección del vehículo y programa de capacitación en servicio.'**
+  String get homeBookStandardBody;
+
+  /// No description provided for @homeBookStandardHeadline.
+  ///
+  /// In es, this message translates to:
+  /// **'El estándar que\notros siguen.'**
+  String get homeBookStandardHeadline;
+
+  /// No description provided for @homeBookStandardLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'El estándar'**
+  String get homeBookStandardLabel;
+
+  /// No description provided for @homeBookStandardSub.
+  ///
+  /// In es, this message translates to:
+  /// **'La promesa que cumplimos'**
+  String get homeBookStandardSub;
+
+  /// No description provided for @homeBookStandardTag.
+  ///
+  /// In es, this message translates to:
+  /// **'El estándar Luxelane'**
+  String get homeBookStandardTag;
+
+  /// No description provided for @homeBusinessBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.'**
+  String get homeBusinessBody;
+
+  /// No description provided for @homeBusinessEyebrow.
+  ///
+  /// In es, this message translates to:
+  /// **'Para empresas'**
+  String get homeBusinessEyebrow;
+
+  /// No description provided for @homeBusinessLearnMore.
+  ///
+  /// In es, this message translates to:
+  /// **'Más información'**
+  String get homeBusinessLearnMore;
+
+  /// No description provided for @homeBusinessPerkAccountManager.
+  ///
+  /// In es, this message translates to:
+  /// **'Gerente de cuenta dedicado'**
+  String get homeBusinessPerkAccountManager;
+
+  /// No description provided for @homeBusinessPerkBilling.
+  ///
+  /// In es, this message translates to:
+  /// **'Facturación y cobros centralizados'**
+  String get homeBusinessPerkBilling;
+
+  /// No description provided for @homeBusinessPerkGuests.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas para invitados y equipos'**
+  String get homeBusinessPerkGuests;
+
+  /// No description provided for @homeBusinessPerkMonitoring.
+  ///
+  /// In es, this message translates to:
+  /// **'Monitoreo de viajes en tiempo real'**
+  String get homeBusinessPerkMonitoring;
+
+  /// No description provided for @homeBusinessPerkPolicy.
+  ///
+  /// In es, this message translates to:
+  /// **'Herramientas de cumplimiento de política de viajes'**
+  String get homeBusinessPerkPolicy;
+
+  /// No description provided for @homeBusinessPerkPriority.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas prioritarias para ejecutivos'**
+  String get homeBusinessPerkPriority;
+
+  /// No description provided for @homeBusinessTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes corporativos,\nredefinidos.'**
+  String get homeBusinessTitle;
+
+  /// Eyebrow above the closing CTA (uppercased)
+  ///
+  /// In es, this message translates to:
+  /// **'Cuando quieras. Donde quieras.'**
+  String get homeCtaEyebrow;
+
+  /// No description provided for @homeCtaHighlights.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo  ·  Chóferes verificados  ·  Reserva anticipada'**
+  String get homeCtaHighlights;
+
+  /// Closing CTA headline. Text inside <i>…</i> is set in italics; keep the tags.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu próximo viaje,\n<i>en tus términos.</i>'**
+  String get homeCtaTitle;
+
+  /// No description provided for @homeCtaViewFleet.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver flota'**
+  String get homeCtaViewFleet;
+
+  /// Selected pickup date and time, e.g. 'Oct 7, 14:30'
+  ///
+  /// In es, this message translates to:
+  /// **'{date}, {time}'**
+  String homeDateTimeShort(String date, String time);
+
+  /// No description provided for @homeErrorDestinationRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa un destino'**
+  String get homeErrorDestinationRequired;
+
+  /// No description provided for @homeErrorPickupRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa un lugar de recogida'**
+  String get homeErrorPickupRequired;
+
+  /// No description provided for @homeFleetEyebrow.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuestra flota'**
+  String get homeFleetEyebrow;
+
+  /// No description provided for @homeFleetModelVan.
+  ///
+  /// In es, this message translates to:
+  /// **'Mercedes V-Class o similar'**
+  String get homeFleetModelVan;
+
+  /// Fleet card tag
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 asiento} other{{count} asientos}}'**
+  String homeFleetSeats(int count);
+
+  /// Hint above the horizontal fleet carousel (uppercased)
+  ///
+  /// In es, this message translates to:
+  /// **'Desliza para explorar →'**
+  String get homeFleetSwipeHint;
+
+  /// No description provided for @homeFleetTagChampagne.
+  ///
+  /// In es, this message translates to:
+  /// **'Champán'**
+  String get homeFleetTagChampagne;
+
+  /// No description provided for @homeFleetTagExtraLuggage.
+  ///
+  /// In es, this message translates to:
+  /// **'Equipaje extra'**
+  String get homeFleetTagExtraLuggage;
+
+  /// No description provided for @homeFleetTagLeather.
+  ///
+  /// In es, this message translates to:
+  /// **'Interior de cuero'**
+  String get homeFleetTagLeather;
+
+  /// No description provided for @homeFleetTagPremium.
+  ///
+  /// In es, this message translates to:
+  /// **'Premium'**
+  String get homeFleetTagPremium;
+
+  /// No description provided for @homeFleetTagPremiumAudio.
+  ///
+  /// In es, this message translates to:
+  /// **'Audio premium'**
+  String get homeFleetTagPremiumAudio;
+
+  /// No description provided for @homeFleetTagWifi.
+  ///
+  /// In es, this message translates to:
+  /// **'Wi-Fi'**
+  String get homeFleetTagWifi;
+
+  /// No description provided for @homeFleetTagZeroEmissions.
+  ///
+  /// In es, this message translates to:
+  /// **'Cero emisiones'**
+  String get homeFleetTagZeroEmissions;
+
+  /// No description provided for @homeFleetTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículos premium,\nsin excepciones.'**
+  String get homeFleetTitle;
+
+  /// No description provided for @homeFooterContact.
+  ///
+  /// In es, this message translates to:
+  /// **'Contacto'**
+  String get homeFooterContact;
+
+  /// No description provided for @homeFooterCopyright.
+  ///
+  /// In es, this message translates to:
+  /// **'© {year} Luxelane. Todos los derechos reservados.'**
+  String homeFooterCopyright(String year);
+
+  /// No description provided for @homeFooterPrivacy.
+  ///
+  /// In es, this message translates to:
+  /// **'Privacidad'**
+  String get homeFooterPrivacy;
+
+  /// No description provided for @homeFooterTerms.
+  ///
+  /// In es, this message translates to:
+  /// **'Términos'**
+  String get homeFooterTerms;
+
+  /// No description provided for @homeFormPickupHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Calle, barrio, aeropuerto…'**
+  String get homeFormPickupHint;
+
+  /// No description provided for @homeFormPickupLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Lugar de recogida'**
+  String get homeFormPickupLabel;
+
+  /// Hero headline. Text inside <i>…</i> is set in italics; keep the tags.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer <i>te espera.</i>'**
+  String get homeHeroTitle;
+
+  /// Compact hour count in the duration stepper
+  ///
+  /// In es, this message translates to:
+  /// **'{hours} h'**
+  String homeHoursShort(int hours);
+
+  /// No description provided for @homeHowItWorksEyebrow.
+  ///
+  /// In es, this message translates to:
+  /// **'Cómo funciona'**
+  String get homeHowItWorksEyebrow;
+
+  /// Tooltip for the locate button
+  ///
+  /// In es, this message translates to:
+  /// **'Usar mi ubicación'**
+  String get homeLocateMe;
+
+  /// Button on the inline map preview (uppercased)
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar ubicación'**
+  String get homeMapChangeLocation;
+
+  /// No description provided for @homeMarqueeAirportTransfers.
+  ///
+  /// In es, this message translates to:
+  /// **'Traslados aeroportuarios'**
+  String get homeMarqueeAirportTransfers;
+
+  /// No description provided for @homeMarqueeBookInMinutes.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva en minutos'**
+  String get homeMarqueeBookInMinutes;
+
+  /// No description provided for @homeMarqueeCorporateTravel.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes corporativos'**
+  String get homeMarqueeCorporateTravel;
+
+  /// No description provided for @homeMarqueeFixedPrices.
+  ///
+  /// In es, this message translates to:
+  /// **'Precios fijos en Bs'**
+  String get homeMarqueeFixedPrices;
+
+  /// No description provided for @homeMarqueeHourly.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer por horas'**
+  String get homeMarqueeHourly;
+
+  /// No description provided for @homeMarqueePremiumFleet.
+  ///
+  /// In es, this message translates to:
+  /// **'Flota premium'**
+  String get homeMarqueePremiumFleet;
+
+  /// No description provided for @homeMarqueePrivacy.
+  ///
+  /// In es, this message translates to:
+  /// **'Privacidad y discreción'**
+  String get homeMarqueePrivacy;
+
+  /// Landing nav link (shown uppercased)
+  ///
+  /// In es, this message translates to:
+  /// **'Para empresas'**
+  String get homeNavBusiness;
+
+  /// Landing nav / footer link (shown uppercased)
+  ///
+  /// In es, this message translates to:
+  /// **'Flota'**
+  String get homeNavFleet;
+
+  /// Landing nav / footer link (shown uppercased)
+  ///
+  /// In es, this message translates to:
+  /// **'Servicios'**
+  String get homeNavServices;
+
+  /// Map picker dialog title
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar destino'**
+  String get homePickDestinationTitle;
+
+  /// Map picker dialog title
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar lugar de recogida'**
+  String get homePickPickupTitle;
+
+  /// No description provided for @homePromiseCancelBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancela sin costo hasta 1 hora antes de la recogida, desde la app.'**
+  String get homePromiseCancelBody;
+
+  /// No description provided for @homePromiseCancelTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelación gratuita'**
+  String get homePromiseCancelTitle;
+
+  /// No description provided for @homePromiseFixedPriceBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Ves el precio final antes de reservar, sin recargos por tráfico. Incluye {airportMinutes} min de espera en aeropuerto y {cityMinutes} en ciudad.'**
+  String homePromiseFixedPriceBody(int airportMinutes, int cityMinutes);
+
+  /// No description provided for @homePromiseFixedPriceTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo en Bs'**
+  String get homePromiseFixedPriceTitle;
+
+  /// No description provided for @homePromiseTrackingBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Sigue a tu chófer en el mapa y recibe avisos cuando está en camino y cuando llega.'**
+  String get homePromiseTrackingBody;
+
+  /// No description provided for @homePromiseTrackingTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguimiento en vivo'**
+  String get homePromiseTrackingTitle;
+
+  /// No description provided for @homePromiseVerifiedBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia y documentos revisados por nuestro equipo antes de su primer viaje.'**
+  String get homePromiseVerifiedBody;
+
+  /// No description provided for @homePromiseVerifiedTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Chóferes verificados'**
+  String get homePromiseVerifiedTitle;
+
+  /// Route estimate badge, e.g. '12.4 km · 25 min'
+  ///
+  /// In es, this message translates to:
+  /// **'{distance} km · {duration}'**
+  String homeRouteSummary(String distance, String duration);
+
+  /// Mobile home submit button
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar vehículos'**
+  String get homeSearchVehicles;
+
+  /// Services dropdown item
+  ///
+  /// In es, this message translates to:
+  /// **'Traslado al aeropuerto'**
+  String get homeServiceAirportTransfer;
+
+  /// Services dropdown item
+  ///
+  /// In es, this message translates to:
+  /// **'Contratación por horas'**
+  String get homeServiceHourly;
+
+  /// Services dropdown item
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida inmediata'**
+  String get homeServiceImmediatePickup;
+
+  /// Web header link
+  ///
+  /// In es, this message translates to:
+  /// **'Mis viajes'**
+  String get homeShellMyTrips;
+
+  /// Web header link
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar sesión'**
+  String get homeShellSignIn;
+
+  /// Web side rail button
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar sesión'**
+  String get homeShellSignOut;
+
+  /// Bottom nav / rail tab
+  ///
+  /// In es, this message translates to:
+  /// **'Inicio'**
+  String get homeShellTabHome;
+
+  /// Bottom nav / rail tab
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil'**
+  String get homeShellTabProfile;
+
+  /// Bottom nav / rail tab
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes'**
+  String get homeShellTabTrips;
+
+  /// No description provided for @homeStepBookBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige origen, destino, fecha y clase de vehículo.'**
+  String get homeStepBookBody;
+
+  /// No description provided for @homeStepBookTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva en un minuto'**
+  String get homeStepBookTitle;
+
+  /// No description provided for @homeStepChauffeurBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Recibe los datos de tu chófer y síguelo en tiempo real.'**
+  String get homeStepChauffeurBody;
+
+  /// No description provided for @homeStepChauffeurTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer te espera'**
+  String get homeStepChauffeurTitle;
+
+  /// No description provided for @homeStepPriceBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Te mostramos el precio final en bolivianos. Ese es el que pagas.'**
+  String get homeStepPriceBody;
+
+  /// No description provided for @homeStepPriceTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirma tu precio fijo'**
+  String get homeStepPriceTitle;
+
+  /// No description provided for @homeTrustEyebrow.
+  ///
+  /// In es, this message translates to:
+  /// **'La promesa Luxelane'**
+  String get homeTrustEyebrow;
+
+  /// No description provided for @homeTrustTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajar con confianza,\nde principio a fin.'**
+  String get homeTrustTitle;
+
   /// Company tax ID and address under the contact details
   ///
   /// In es, this message translates to:

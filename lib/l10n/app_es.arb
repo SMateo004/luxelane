@@ -472,6 +472,263 @@
   },
   "flightLanded": "Aterrizó",
   "flightOnTime": "A tiempo",
+  "homeBarDateTime": "Fecha y hora",
+  "@homeBarDateTime": {
+    "description": "Booking bar field label (uppercased)"
+  },
+  "homeBarDestination": "Destino",
+  "@homeBarDestination": {
+    "description": "Booking field label"
+  },
+  "homeBarDestinationHint": "¿A dónde vas?",
+  "@homeBarDestinationHint": {
+    "description": "Destination field placeholder"
+  },
+  "homeBarDuration": "Duración",
+  "@homeBarDuration": {
+    "description": "Booking field label (by the hour)"
+  },
+  "homeBarPickup": "Recogida",
+  "@homeBarPickup": {
+    "description": "Booking bar field label (uppercased)"
+  },
+  "homeBarPickupHint": "¿Dónde estás?",
+  "@homeBarPickupHint": {
+    "description": "Pickup field placeholder"
+  },
+  "homeBarSeeOptions": "Ver opciones",
+  "@homeBarSeeOptions": {
+    "description": "Booking bar submit button (uppercased)"
+  },
+  "homeBookBulletAdvance": "Reserva con anticipación",
+  "homeBookBulletCentralBilling": "Facturación centralizada",
+  "homeBookBulletChampagne": "Servicio de champán disponible",
+  "homeBookBulletClimate": "Control de clima ambiental",
+  "homeBookBulletFixedPrice": "Precio fijo, siempre",
+  "homeBookBulletLeather": "Interiores de cuero premium",
+  "homeBookBulletPolicy": "Cumplimiento de política de viajes",
+  "homeBookBulletTracking": "Seguimiento en tiempo real",
+  "homeBookBulletWifiCharging": "Wi-Fi y carga inalámbrica",
+  "homeBookBusinessSub": "Viajes corporativos redefinidos",
+  "homeBookCoverSubtitle": "Servicio de chófer premium",
+  "homeBookExperienceBody": "Desde agua fría y listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.",
+  "homeBookExperienceHeadline": "Cada detalle,\ncuidado.",
+  "homeBookExperienceLabel": "La experiencia",
+  "homeBookExperienceSub": "Cada detalle considerado",
+  "homeBookEyebrow": "Nuestra experiencia distintiva",
+  "@homeBookEyebrow": {
+    "description": "Eyebrow above the page-flip showcase (uppercased)"
+  },
+  "homeBookRide": "Reservar un viaje",
+  "@homeBookRide": {
+    "description": "Primary CTA across the landing and the web header (often uppercased)"
+  },
+  "homeBookScrollCue": "Desliza",
+  "@homeBookScrollCue": {
+    "description": "Vertical scroll cue next to the page-flip showcase (uppercased)"
+  },
+  "homeBookStandardBody": "Cada chófer supera una rigurosa verificación de antecedentes, inspección del vehículo y programa de capacitación en servicio.",
+  "homeBookStandardHeadline": "El estándar que\notros siguen.",
+  "homeBookStandardLabel": "El estándar",
+  "homeBookStandardSub": "La promesa que cumplimos",
+  "homeBookStandardTag": "El estándar Luxelane",
+  "homeBusinessBody": "Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.",
+  "homeBusinessEyebrow": "Para empresas",
+  "homeBusinessLearnMore": "Más información",
+  "homeBusinessPerkAccountManager": "Gerente de cuenta dedicado",
+  "homeBusinessPerkBilling": "Facturación y cobros centralizados",
+  "homeBusinessPerkGuests": "Reservas para invitados y equipos",
+  "homeBusinessPerkMonitoring": "Monitoreo de viajes en tiempo real",
+  "homeBusinessPerkPolicy": "Herramientas de cumplimiento de política de viajes",
+  "homeBusinessPerkPriority": "Reservas prioritarias para ejecutivos",
+  "homeBusinessTitle": "Viajes corporativos,\nredefinidos.",
+  "homeCtaEyebrow": "Cuando quieras. Donde quieras.",
+  "@homeCtaEyebrow": {
+    "description": "Eyebrow above the closing CTA (uppercased)"
+  },
+  "homeCtaHighlights": "Precio fijo  ·  Chóferes verificados  ·  Reserva anticipada",
+  "homeCtaTitle": "Tu próximo viaje,\n<i>en tus términos.</i>",
+  "@homeCtaTitle": {
+    "description": "Closing CTA headline. Text inside <i>…</i> is set in italics; keep the tags."
+  },
+  "homeCtaViewFleet": "Ver flota",
+  "homeDateTimeShort": "{date}, {time}",
+  "@homeDateTimeShort": {
+    "description": "Selected pickup date and time, e.g. 'Oct 7, 14:30'",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "homeErrorDestinationRequired": "Ingresa un destino",
+  "homeErrorPickupRequired": "Ingresa un lugar de recogida",
+  "homeFleetEyebrow": "Nuestra flota",
+  "homeFleetModelVan": "Mercedes V-Class o similar",
+  "homeFleetSeats": "{count, plural, =1{1 asiento} other{{count} asientos}}",
+  "@homeFleetSeats": {
+    "description": "Fleet card tag",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeFleetSwipeHint": "Desliza para explorar →",
+  "@homeFleetSwipeHint": {
+    "description": "Hint above the horizontal fleet carousel (uppercased)"
+  },
+  "homeFleetTagChampagne": "Champán",
+  "homeFleetTagExtraLuggage": "Equipaje extra",
+  "homeFleetTagLeather": "Interior de cuero",
+  "homeFleetTagPremium": "Premium",
+  "homeFleetTagPremiumAudio": "Audio premium",
+  "homeFleetTagWifi": "Wi-Fi",
+  "homeFleetTagZeroEmissions": "Cero emisiones",
+  "homeFleetTitle": "Vehículos premium,\nsin excepciones.",
+  "homeFooterContact": "Contacto",
+  "homeFooterCopyright": "© {year} Luxelane. Todos los derechos reservados.",
+  "@homeFooterCopyright": {
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "homeFooterPrivacy": "Privacidad",
+  "homeFooterTerms": "Términos",
+  "homeFormPickupHint": "Calle, barrio, aeropuerto…",
+  "homeFormPickupLabel": "Lugar de recogida",
+  "homeHeroTitle": "Tu chófer <i>te espera.</i>",
+  "@homeHeroTitle": {
+    "description": "Hero headline. Text inside <i>…</i> is set in italics; keep the tags."
+  },
+  "homeHoursShort": "{hours} h",
+  "@homeHoursShort": {
+    "description": "Compact hour count in the duration stepper",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "homeHowItWorksEyebrow": "Cómo funciona",
+  "homeLocateMe": "Usar mi ubicación",
+  "@homeLocateMe": {
+    "description": "Tooltip for the locate button"
+  },
+  "homeMapChangeLocation": "Cambiar ubicación",
+  "@homeMapChangeLocation": {
+    "description": "Button on the inline map preview (uppercased)"
+  },
+  "homeMarqueeAirportTransfers": "Traslados aeroportuarios",
+  "homeMarqueeBookInMinutes": "Reserva en minutos",
+  "homeMarqueeCorporateTravel": "Viajes corporativos",
+  "homeMarqueeFixedPrices": "Precios fijos en Bs",
+  "homeMarqueeHourly": "Chófer por horas",
+  "homeMarqueePremiumFleet": "Flota premium",
+  "homeMarqueePrivacy": "Privacidad y discreción",
+  "homeNavBusiness": "Para empresas",
+  "@homeNavBusiness": {
+    "description": "Landing nav link (shown uppercased)"
+  },
+  "homeNavFleet": "Flota",
+  "@homeNavFleet": {
+    "description": "Landing nav / footer link (shown uppercased)"
+  },
+  "homeNavServices": "Servicios",
+  "@homeNavServices": {
+    "description": "Landing nav / footer link (shown uppercased)"
+  },
+  "homePickDestinationTitle": "Seleccionar destino",
+  "@homePickDestinationTitle": {
+    "description": "Map picker dialog title"
+  },
+  "homePickPickupTitle": "Seleccionar lugar de recogida",
+  "@homePickPickupTitle": {
+    "description": "Map picker dialog title"
+  },
+  "homePromiseCancelBody": "Cancela sin costo hasta 1 hora antes de la recogida, desde la app.",
+  "homePromiseCancelTitle": "Cancelación gratuita",
+  "homePromiseFixedPriceBody": "Ves el precio final antes de reservar, sin recargos por tráfico. Incluye {airportMinutes} min de espera en aeropuerto y {cityMinutes} en ciudad.",
+  "@homePromiseFixedPriceBody": {
+    "placeholders": {
+      "airportMinutes": {
+        "type": "int"
+      },
+      "cityMinutes": {
+        "type": "int"
+      }
+    }
+  },
+  "homePromiseFixedPriceTitle": "Precio fijo en Bs",
+  "homePromiseTrackingBody": "Sigue a tu chófer en el mapa y recibe avisos cuando está en camino y cuando llega.",
+  "homePromiseTrackingTitle": "Seguimiento en vivo",
+  "homePromiseVerifiedBody": "Licencia y documentos revisados por nuestro equipo antes de su primer viaje.",
+  "homePromiseVerifiedTitle": "Chóferes verificados",
+  "homeRouteSummary": "{distance} km · {duration}",
+  "@homeRouteSummary": {
+    "description": "Route estimate badge, e.g. '12.4 km · 25 min'",
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  },
+  "homeSearchVehicles": "Buscar vehículos",
+  "@homeSearchVehicles": {
+    "description": "Mobile home submit button"
+  },
+  "homeServiceAirportTransfer": "Traslado al aeropuerto",
+  "@homeServiceAirportTransfer": {
+    "description": "Services dropdown item"
+  },
+  "homeServiceHourly": "Contratación por horas",
+  "@homeServiceHourly": {
+    "description": "Services dropdown item"
+  },
+  "homeServiceImmediatePickup": "Recogida inmediata",
+  "@homeServiceImmediatePickup": {
+    "description": "Services dropdown item"
+  },
+  "homeShellMyTrips": "Mis viajes",
+  "@homeShellMyTrips": {
+    "description": "Web header link"
+  },
+  "homeShellSignIn": "Iniciar sesión",
+  "@homeShellSignIn": {
+    "description": "Web header link"
+  },
+  "homeShellSignOut": "Cerrar sesión",
+  "@homeShellSignOut": {
+    "description": "Web side rail button"
+  },
+  "homeShellTabHome": "Inicio",
+  "@homeShellTabHome": {
+    "description": "Bottom nav / rail tab"
+  },
+  "homeShellTabProfile": "Perfil",
+  "@homeShellTabProfile": {
+    "description": "Bottom nav / rail tab"
+  },
+  "homeShellTabTrips": "Viajes",
+  "@homeShellTabTrips": {
+    "description": "Bottom nav / rail tab"
+  },
+  "homeStepBookBody": "Elige origen, destino, fecha y clase de vehículo.",
+  "homeStepBookTitle": "Reserva en un minuto",
+  "homeStepChauffeurBody": "Recibe los datos de tu chófer y síguelo en tiempo real.",
+  "homeStepChauffeurTitle": "Tu chófer te espera",
+  "homeStepPriceBody": "Te mostramos el precio final en bolivianos. Ese es el que pagas.",
+  "homeStepPriceTitle": "Confirma tu precio fijo",
+  "homeTrustEyebrow": "La promesa Luxelane",
+  "homeTrustTitle": "Viajar con confianza,\nde principio a fin.",
   "legalCompanyDetails": "NIT {nit} · {address}",
   "@legalCompanyDetails": {
     "description": "Company tax ID and address under the contact details",
