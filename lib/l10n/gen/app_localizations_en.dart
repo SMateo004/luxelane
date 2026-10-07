@@ -499,6 +499,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminSectionSettings => 'Settings';
 
   @override
+  String get adminSectionSupport => 'Support';
+
+  @override
   String get adminSectionUsers => 'Users';
 
   @override
@@ -3324,6 +3327,225 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statusPending => 'Pending';
+
+  @override
+  String get supportAdminEmpty => 'No requests in this view.';
+
+  @override
+  String get supportAdminTitle => 'Support requests';
+
+  @override
+  String get supportCatApp => 'The app';
+
+  @override
+  String get supportCatBilling => 'Payments and billing';
+
+  @override
+  String get supportCatChauffeur => 'The chauffeur';
+
+  @override
+  String get supportCatLostItem => 'Lost item';
+
+  @override
+  String get supportCatOther => 'Other';
+
+  @override
+  String get supportCatSafety => 'Safety';
+
+  @override
+  String get supportCatTrip => 'A trip';
+
+  @override
+  String get supportCategoryQuestion => 'What is it about?';
+
+  @override
+  String get supportContactBody => 'Write to us and a person from the Luxelane team will reply. We\'ll let you know when there\'s an answer.';
+
+  @override
+  String get supportContactTitle => 'Need help?';
+
+  @override
+  String get supportEmergencyNote => 'In an emergency, call 110 (Police) first.';
+
+  @override
+  String get supportFaqCancelA => 'Yes, from the trip in the app, until it starts. It\'s free if pickup is more than 1 hour away; later than that it counts as a late cancellation under our terms.';
+
+  @override
+  String get supportFaqCancelQ => 'Can I cancel a booking?';
+
+  @override
+  String get supportFaqChauffeursA => 'Before receiving rides, we review and approve their license, ID card, criminal record certificate, SOAT insurance and vehicle registration. If a document expires, they stop receiving rides until it\'s renewed.';
+
+  @override
+  String get supportFaqChauffeursQ => 'How are chauffeurs verified?';
+
+  @override
+  String get supportFaqCorporateA => 'Your company\'s admin adds you with your e-mail. When booking you choose \"Bill to company\", with a cost center and reference if needed. The company gets a monthly statement.';
+
+  @override
+  String get supportFaqCorporateQ => 'How does the corporate account work?';
+
+  @override
+  String get supportFaqLostA => 'Open the trip\'s receipt, tap \"Help with this trip\" and choose \"Lost item\". We\'ll contact the chauffeur and arrange the return with you.';
+
+  @override
+  String get supportFaqLostQ => 'I left something in the car';
+
+  @override
+  String get supportFaqPayA => 'The price in bolivianos is fixed when you book. You pay the chauffeur at the end of the trip, in cash or by QR. If your company has a corporate account, the ride goes on its monthly invoice and you pay nothing.';
+
+  @override
+  String get supportFaqPayQ => 'How do I pay?';
+
+  @override
+  String get supportFaqPromoA => 'Enter it when booking, before confirming. You\'ll see the discount right away and it\'s fixed in the price. If you cancel, you can use it again.';
+
+  @override
+  String get supportFaqPromoQ => 'How do I use a promo code?';
+
+  @override
+  String get supportFaqTitle => 'Frequently asked questions';
+
+  @override
+  String supportFaqWaitA(int airport, int city) {
+    return 'At the airport, $airport free minutes from your flight\'s landing (we track it live). In the city, $city free minutes from the pickup time or from when the chauffeur arrives.';
+  }
+
+  @override
+  String get supportFaqWaitQ => 'How long will the chauffeur wait?';
+
+  @override
+  String get supportFillFields => 'Fill in the subject and the message.';
+
+  @override
+  String get supportFilterAnswered => 'Waiting on customer';
+
+  @override
+  String supportFilterPending(int count) {
+    return 'To answer ($count)';
+  }
+
+  @override
+  String get supportFilterResolved => 'Resolved';
+
+  @override
+  String supportFromUser(String name, String role) {
+    return '$name ($role)';
+  }
+
+  @override
+  String get supportHelpCenter => 'Help center';
+
+  @override
+  String supportLinkedTrip(String code) {
+    return 'Linked to trip $code';
+  }
+
+  @override
+  String get supportMessage => 'Message';
+
+  @override
+  String get supportMessageHint => 'Tell us what happened';
+
+  @override
+  String get supportMyRequests => 'My requests';
+
+  @override
+  String get supportNewRequest => 'New request';
+
+  @override
+  String get supportPickCategory => 'Choose an option.';
+
+  @override
+  String get supportReopen => 'Reopen';
+
+  @override
+  String get supportReopenedDone => 'Request reopened';
+
+  @override
+  String get supportResolve => 'It\'s solved';
+
+  @override
+  String get supportResolveTeam => 'Mark resolved';
+
+  @override
+  String get supportResolvedDone => 'Request resolved';
+
+  @override
+  String get supportResolvedHint => 'This request is resolved. Writing again reopens it.';
+
+  @override
+  String get supportSafetyNote => 'Safety reports are handled first. If you\'re in danger now, call 110.';
+
+  @override
+  String get supportSend => 'Send';
+
+  @override
+  String get supportSendFailed => 'Couldn\'t send. Check your connection and try again.';
+
+  @override
+  String get supportSent => 'Request sent. We\'ll let you know when we reply.';
+
+  @override
+  String get supportStatusAnswered => 'Answered';
+
+  @override
+  String get supportStatusAnsweredTeam => 'Waiting on customer';
+
+  @override
+  String get supportStatusOpen => 'Sent';
+
+  @override
+  String get supportStatusOpenTeam => 'To answer';
+
+  @override
+  String get supportStatusResolved => 'Resolved';
+
+  @override
+  String get supportSubject => 'Subject';
+
+  @override
+  String get supportSubjectHint => 'In a few words';
+
+  @override
+  String get supportTeamName => 'Luxelane team';
+
+  @override
+  String get supportTitle => 'Help';
+
+  @override
+  String get supportTripHelpBody => 'Your request will be linked to the trip so the team sees all the details.';
+
+  @override
+  String get supportTripHelpCta => 'Help with this trip';
+
+  @override
+  String get supportTripHelpTitle => 'Help with this trip';
+
+  @override
+  String supportTripRef(String code) {
+    return 'Trip $code';
+  }
+
+  @override
+  String get supportUnread => 'Unread';
+
+  @override
+  String get supportUrgent => 'Urgent';
+
+  @override
+  String supportUrgentBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count unanswered safety reports',
+      one: '1 unanswered safety report',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get supportWriteHint => 'Write a message';
 
   @override
   String get tripDestination => 'Destination';

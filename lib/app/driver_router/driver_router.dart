@@ -12,6 +12,7 @@ import '../../features/driver/presentation/pages/driver_onboarding_screen.dart';
 import '../../features/driver/presentation/pages/driver_queue_screen.dart';
 import '../../features/legal/presentation/pages/legal_pages.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
+import '../../features/support/presentation/pages/help_center_page.dart';
 import '../../l10n/l10n.dart';
 import '../driver_shell/driver_shell.dart';
 
@@ -83,6 +84,10 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
         GoRoute(
           path: DriverRoutes.onboarding,
           pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),
+        ),
+        GoRoute(
+          path: '/ayuda',
+          pageBuilder: (c, s) => _slide(HelpCenterPage(bookingId: s.uri.queryParameters['booking']), s),
         ),
         GoRoute(
           path: DriverRoutes.documents,

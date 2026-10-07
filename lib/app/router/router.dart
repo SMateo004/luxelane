@@ -23,6 +23,7 @@ import '../../features/services/presentation/pages/hourly_charter_page.dart';
 import '../../features/services/presentation/pages/immediate_pickup_page.dart';
 import '../../features/home/presentation/pages/home_screen.dart';
 import '../../features/legal/presentation/pages/legal_pages.dart';
+import '../../features/support/presentation/pages/help_center_page.dart';
 import '../../features/payments/presentation/pages/add_card_screen.dart';
 import '../../features/payments/presentation/pages/payment_screen.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
@@ -100,7 +101,7 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
           }
 
           // ── Driver: force to driver pages ────────────────────────────────
-          if (isDriver && !isDriverPath && going != LuxRoutes.profile) {
+          if (isDriver && !isDriverPath && going != LuxRoutes.profile && going != '/ayuda') {
             return LuxRoutes.driverHome;
           }
 
@@ -215,6 +216,11 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: LuxRoutes.admin,
           pageBuilder: (c, s) => _fade(const AdminDashboardPage(), s),
+        ),
+        // Help center (riders and chauffeurs); ?booking= links a trip.
+        GoRoute(
+          path: '/ayuda',
+          pageBuilder: (c, s) => _slide(HelpCenterPage(bookingId: s.uri.queryParameters['booking']), s),
         ),
         // Corporate portal (company admins; access checked on the page).
         GoRoute(

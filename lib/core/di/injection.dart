@@ -28,6 +28,7 @@ import '../../features/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/ride/data/repositories/ride_repository_impl.dart';
 import '../../features/ride/domain/usecases/ride_usecases.dart';
 import '../../features/ride/presentation/bloc/ride_bloc.dart';
+import '../../features/support/data/support_repository.dart';
 import '../data/notification_repository_impl.dart';
 import '../repositories/repositories.dart';
 import '../services/maps_service.dart';
@@ -104,6 +105,10 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<PromoRepository>(
     () => PromoRepositoryImpl(sl(), sl()),
+  );
+
+  sl.registerLazySingleton<SupportRepository>(
+    () => SupportRepositoryImpl(sl()),
   );
 }
 

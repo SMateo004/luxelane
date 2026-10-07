@@ -25,6 +25,7 @@ import {
   shouldTrack,
 } from './flights';
 import * as err from './errors';
+import { AuthorRole, TicketCategory, preview, priorityFor, statusAfterMessage } from './support';
 import { PromoDoc, evaluatePromo, normalizeCode, promoDefinitionError } from './promo';
 import {
   DocStatus,
@@ -1461,6 +1462,18 @@ export const deleteAccount = onCall(async (req) => {
     await batch.commit();
   }
 
+  // Support conversations are personal data too.
+  const tickets = await db.collection('supportTickets').where('userId', '==', uid).get();
+  for (const t of tickets.docs) {
+    const msgs = await t.ref.collection('messages').get();
+    for (const group of chunk(msgs.docs, 400)) {
+      const batch = db.batch();
+      group.forEach((m) => batch.delete(m.ref));
+      await batch.commit();
+    }
+    await t.ref.delete();
+  }
+
   const notifications = await db.collection('users').doc(uid).collection('notifications').get();
   for (const group of chunk(notifications.docs, 400)) {
     const batch = db.batch();
@@ -1848,6 +1861,53 @@ export const checkDocumentExpiry = onSchedule(
       }
     }
     logger.info('checkDocumentExpiry', 'done', { expired, reminded });
+  },
+);
+
+// ---------------------------------------------------------------------------
+// Support — supportTickets/{id} with messages/{messageId}. Clients write
+// tickets and messages under the security rules; this trigger keeps the
+// ticket summary up to date and notifies the other side.
+// ---------------------------------------------------------------------------
+
+export const onSupportMessageCreated = onDocumentCreated(
+  'supportTickets/{ticketId}/messages/{messageId}',
+  async (event) => {
+    const msg = event.data?.data() as { authorRole?: AuthorRole; text?: string; createdAt?: admin.firestore.Timestamp } | undefined;
+    if (!msg?.authorRole || typeof msg.text !== 'string') return;
+    const ticketRef = db.collection('supportTickets').doc(event.params.ticketId);
+    const ticket = (await ticketRef.get()).data() as
+      | { userId: string; userName?: string; category?: TicketCategory }
+      | undefined;
+    if (!ticket) return;
+
+    const text = preview(msg.text);
+    const fromTeam = msg.authorRole === 'admin';
+    await ticketRef.update({
+      status: statusAfterMessage(msg.authorRole),
+      lastMessageAt: msg.createdAt ?? admin.firestore.Timestamp.now(),
+      lastMessagePreview: text,
+      lastAuthorRole: msg.authorRole,
+      unreadForUser: fromTeam,
+      unreadForAdmin: !fromTeam,
+      updatedAt: admin.firestore.Timestamp.now(),
+    });
+
+    if (fromTeam) {
+      await pushUser(ticket.userId, 'supportReplyTitle', 'supportReplyBody', { preview: text });
+      return;
+    }
+    const urgent = ticket.category ? priorityFor(ticket.category) === 'urgent' : false;
+    const admins = await db.collection('users').where('role', '==', 'admin').limit(20).get();
+    await Promise.all(
+      admins.docs.map((a) =>
+        pushUser(a.id, urgent ? 'supportUrgentTitle' : 'supportNewTitle', 'supportNewBody', {
+          name: ticket.userName || '—',
+          preview: text,
+        }),
+      ),
+    );
+    logger.info('onSupportMessageCreated', 'notified', { ticketId: event.params.ticketId, fromTeam, urgent });
   },
 );
 

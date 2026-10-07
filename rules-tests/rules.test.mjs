@@ -6,7 +6,7 @@ import {
   assertSucceeds,
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, serverTimestamp, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
 import { getBytes, ref, uploadBytes } from 'firebase/storage';
 
 let env;
@@ -297,5 +297,74 @@ describe('promo codes', () => {
     await assertFails(updateDoc(doc(db('admin'), 'promoCodes/BIENVENIDO'), { redemptions: 0 }));
     await assertFails(setDoc(doc(db('rider'), 'promoCodes/GRATIS'), { type: 'percent', value: 100, active: true }));
     await assertFails(updateDoc(doc(db('rider'), 'promoCodes/BIENVENIDO/redemptions/rider'), { count: 0 }));
+  });
+});
+
+describe('support tickets', () => {
+  const ticket = (overrides = {}) => ({
+    userId: 'rider',
+    userName: 'Ana',
+    userRole: 'rider',
+    category: 'lostItem',
+    subject: 'Olvidé mi paraguas',
+    bookingId: null,
+    status: 'open',
+    priority: 'normal',
+    createdAt: null,
+    updatedAt: null,
+    lastMessageAt: null,
+    lastMessagePreview: 'Olvidé mi paraguas',
+    lastAuthorRole: 'user',
+    unreadForUser: false,
+    unreadForAdmin: true,
+    ...overrides,
+  });
+  const message = (overrides = {}) => ({
+    authorId: 'rider',
+    authorRole: 'user',
+    authorName: 'Ana',
+    text: 'Hola',
+    createdAt: serverTimestamp(),
+    ...overrides,
+  });
+
+  it('rider opens a ticket with its first message in one batch', async () => {
+    const fs = db('rider');
+    const batch = writeBatch(fs);
+    batch.set(doc(fs, 'supportTickets/t1'), ticket());
+    batch.set(doc(fs, 'supportTickets/t1/messages/m1'), message());
+    await assertSucceeds(batch.commit());
+  });
+
+  it('rejects forged owners, roles, priorities and other people\'s trips', async () => {
+    await assertFails(setDoc(doc(db('rider'), 'supportTickets/t2'), ticket({ userId: 'driver' })));
+    await assertFails(setDoc(doc(db('rider'), 'supportTickets/t2'), ticket({ userRole: 'admin' })));
+    await assertFails(setDoc(doc(db('rider'), 'supportTickets/t2'), ticket({ category: 'safety' })));
+    await assertSucceeds(setDoc(doc(db('rider'), 'supportTickets/t3'), ticket({ category: 'safety', priority: 'urgent' })));
+    await assertFails(setDoc(doc(db('rider'), 'supportTickets/t2'), ticket({ status: 'resolved' })));
+    await seed('bookings/mine', booking());
+    await seed('bookings/theirs', booking({ riderId: 'someone' }));
+    await assertSucceeds(setDoc(doc(db('rider'), 'supportTickets/t4'), ticket({ bookingId: 'mine' })));
+    await assertFails(setDoc(doc(db('rider'), 'supportTickets/t5'), ticket({ bookingId: 'theirs' })));
+  });
+
+  it('only the owner and admins read; only admins answer as the team', async () => {
+    await seed('supportTickets/t1', ticket());
+    await assertSucceeds(getDoc(doc(db('rider'), 'supportTickets/t1')));
+    await assertSucceeds(getDoc(doc(db('admin'), 'supportTickets/t1')));
+    await assertFails(getDoc(doc(db('driver'), 'supportTickets/t1')));
+    await assertSucceeds(setDoc(doc(db('admin'), 'supportTickets/t1/messages/a1'),
+      message({ authorId: 'admin', authorRole: 'admin', authorName: 'Luxelane' })));
+    await assertFails(setDoc(doc(db('rider'), 'supportTickets/t1/messages/m2'), message({ authorRole: 'admin' })));
+    await assertFails(setDoc(doc(db('driver'), 'supportTickets/t1/messages/m3'), message({ authorId: 'driver' })));
+    await assertFails(updateDoc(doc(db('admin'), 'supportTickets/t1/messages/a1'), { text: 'editado' }));
+  });
+
+  it('owner can only mark read or resolve', async () => {
+    await seed('supportTickets/t1', ticket({ unreadForUser: true }));
+    await assertSucceeds(updateDoc(doc(db('rider'), 'supportTickets/t1'), { unreadForUser: false }));
+    await assertSucceeds(updateDoc(doc(db('rider'), 'supportTickets/t1'), { status: 'resolved', updatedAt: null }));
+    await assertFails(updateDoc(doc(db('rider'), 'supportTickets/t1'), { priority: 'urgent' }));
+    await assertSucceeds(updateDoc(doc(db('admin'), 'supportTickets/t1'), { status: 'open' }));
   });
 });

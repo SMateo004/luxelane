@@ -318,6 +318,7 @@
   "adminSectionPromos": "Promociones",
   "adminSectionReports": "Reportes",
   "adminSectionSettings": "Configuración",
+  "adminSectionSupport": "Soporte",
   "adminSectionUsers": "Usuarios",
   "adminSectionVehicles": "Vehículos",
   "adminSignOutConfirm": "¿Seguro que quieres cerrar sesión del panel de administración?",
@@ -2099,6 +2100,121 @@
   "statusDriverArriving": "En camino",
   "statusInProgress": "En progreso",
   "statusPending": "Pendiente",
+  "supportAdminEmpty": "No hay solicitudes en esta vista.",
+  "supportAdminTitle": "Solicitudes de soporte",
+  "supportCatApp": "La app",
+  "supportCatBilling": "Pagos y facturación",
+  "supportCatChauffeur": "El chófer",
+  "supportCatLostItem": "Objeto olvidado",
+  "supportCatOther": "Otro",
+  "supportCatSafety": "Seguridad",
+  "supportCatTrip": "Un viaje",
+  "supportCategoryQuestion": "¿Sobre qué es?",
+  "supportContactBody": "Escríbenos y te responde una persona del equipo de Luxelane. Te avisamos cuando haya respuesta.",
+  "supportContactTitle": "¿Necesitas ayuda?",
+  "supportEmergencyNote": "En una emergencia llama primero al 110 (Policía).",
+  "supportFaqCancelA": "Sí, desde el viaje en la app, hasta que comience. Es gratis si falta más de 1 hora para la recogida; con menos tiempo se considera cancelación tardía según nuestros términos.",
+  "supportFaqCancelQ": "¿Puedo cancelar una reserva?",
+  "supportFaqChauffeursA": "Antes de recibir viajes, revisamos y aprobamos su licencia, cédula, certificado de antecedentes, SOAT y registro del vehículo. Si un documento vence, dejan de recibir viajes hasta renovarlo.",
+  "supportFaqChauffeursQ": "¿Cómo se verifica a los chóferes?",
+  "supportFaqCorporateA": "El administrador de tu empresa te agrega con tu correo. Al reservar eliges \"Facturar a la empresa\", con centro de costo y referencia si hace falta. La empresa recibe un estado de cuenta mensual.",
+  "supportFaqCorporateQ": "¿Cómo funciona la cuenta corporativa?",
+  "supportFaqLostA": "Abre el recibo del viaje, toca \"Ayuda con este viaje\" y elige \"Objeto olvidado\". Contactamos al chófer y coordinamos la devolución contigo.",
+  "supportFaqLostQ": "Olvidé algo en el vehículo",
+  "supportFaqPayA": "El precio en bolivianos queda fijo al reservar. Pagas al chófer al terminar el viaje, en efectivo o QR. Si tu empresa tiene cuenta corporativa, el viaje va a su factura mensual y no pagas nada.",
+  "supportFaqPayQ": "¿Cómo pago?",
+  "supportFaqPromoA": "Escríbelo al reservar, antes de confirmar. Verás el descuento al instante y queda fijado en el precio. Si cancelas, puedes volver a usarlo.",
+  "supportFaqPromoQ": "¿Cómo uso un código promocional?",
+  "supportFaqTitle": "Preguntas frecuentes",
+  "supportFaqWaitA": "En el aeropuerto, {airport} minutos gratis desde el aterrizaje de tu vuelo (lo seguimos en tiempo real). En la ciudad, {city} minutos gratis desde la hora de recogida o desde que el chófer llega.",
+  "@supportFaqWaitA": {
+    "placeholders": {
+      "airport": {
+        "type": "int"
+      },
+      "city": {
+        "type": "int"
+      }
+    }
+  },
+  "supportFaqWaitQ": "¿Cuánto tiempo me espera el chófer?",
+  "supportFillFields": "Completa el asunto y el mensaje.",
+  "supportFilterAnswered": "Esperando al cliente",
+  "supportFilterPending": "Por responder ({count})",
+  "@supportFilterPending": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "supportFilterResolved": "Resueltas",
+  "supportFromUser": "{name} ({role})",
+  "@supportFromUser": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "supportHelpCenter": "Centro de ayuda",
+  "supportLinkedTrip": "Vinculada al viaje {code}",
+  "@supportLinkedTrip": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "supportMessage": "Mensaje",
+  "supportMessageHint": "Cuéntanos qué pasó",
+  "supportMyRequests": "Mis solicitudes",
+  "supportNewRequest": "Nueva solicitud",
+  "supportPickCategory": "Elige una opción.",
+  "supportReopen": "Reabrir",
+  "supportReopenedDone": "Solicitud reabierta",
+  "supportResolve": "Ya está resuelto",
+  "supportResolveTeam": "Marcar resuelta",
+  "supportResolvedDone": "Solicitud resuelta",
+  "supportResolvedHint": "Esta solicitud está resuelta. Si escribes, se vuelve a abrir.",
+  "supportSafetyNote": "Los reportes de seguridad se atienden primero. Si estás en peligro ahora, llama al 110.",
+  "supportSend": "Enviar",
+  "supportSendFailed": "No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.",
+  "supportSent": "Solicitud enviada. Te avisaremos cuando respondamos.",
+  "supportStatusAnswered": "Respondida",
+  "supportStatusAnsweredTeam": "Esperando al cliente",
+  "supportStatusOpen": "Enviada",
+  "supportStatusOpenTeam": "Por responder",
+  "supportStatusResolved": "Resuelta",
+  "supportSubject": "Asunto",
+  "supportSubjectHint": "En pocas palabras",
+  "supportTeamName": "Equipo Luxelane",
+  "supportTitle": "Ayuda",
+  "supportTripHelpBody": "Tu solicitud quedará vinculada al viaje para que el equipo vea todos los detalles.",
+  "supportTripHelpCta": "Ayuda con este viaje",
+  "supportTripHelpTitle": "Ayuda con este viaje",
+  "supportTripRef": "Viaje {code}",
+  "@supportTripRef": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "supportUnread": "No leída",
+  "supportUrgent": "Urgente",
+  "supportUrgentBanner": "{count, plural, =1{1 reporte de seguridad sin responder} other{{count} reportes de seguridad sin responder}}",
+  "@supportUrgentBanner": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "supportWriteHint": "Escribe un mensaje",
   "tripDestination": "Destino",
   "tripFlightNumber": "Vuelo {number}",
   "@tripFlightNumber": {

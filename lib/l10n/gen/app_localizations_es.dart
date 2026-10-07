@@ -499,6 +499,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get adminSectionSettings => 'Configuración';
 
   @override
+  String get adminSectionSupport => 'Soporte';
+
+  @override
   String get adminSectionUsers => 'Usuarios';
 
   @override
@@ -3336,6 +3339,225 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get statusPending => 'Pendiente';
+
+  @override
+  String get supportAdminEmpty => 'No hay solicitudes en esta vista.';
+
+  @override
+  String get supportAdminTitle => 'Solicitudes de soporte';
+
+  @override
+  String get supportCatApp => 'La app';
+
+  @override
+  String get supportCatBilling => 'Pagos y facturación';
+
+  @override
+  String get supportCatChauffeur => 'El chófer';
+
+  @override
+  String get supportCatLostItem => 'Objeto olvidado';
+
+  @override
+  String get supportCatOther => 'Otro';
+
+  @override
+  String get supportCatSafety => 'Seguridad';
+
+  @override
+  String get supportCatTrip => 'Un viaje';
+
+  @override
+  String get supportCategoryQuestion => '¿Sobre qué es?';
+
+  @override
+  String get supportContactBody => 'Escríbenos y te responde una persona del equipo de Luxelane. Te avisamos cuando haya respuesta.';
+
+  @override
+  String get supportContactTitle => '¿Necesitas ayuda?';
+
+  @override
+  String get supportEmergencyNote => 'En una emergencia llama primero al 110 (Policía).';
+
+  @override
+  String get supportFaqCancelA => 'Sí, desde el viaje en la app, hasta que comience. Es gratis si falta más de 1 hora para la recogida; con menos tiempo se considera cancelación tardía según nuestros términos.';
+
+  @override
+  String get supportFaqCancelQ => '¿Puedo cancelar una reserva?';
+
+  @override
+  String get supportFaqChauffeursA => 'Antes de recibir viajes, revisamos y aprobamos su licencia, cédula, certificado de antecedentes, SOAT y registro del vehículo. Si un documento vence, dejan de recibir viajes hasta renovarlo.';
+
+  @override
+  String get supportFaqChauffeursQ => '¿Cómo se verifica a los chóferes?';
+
+  @override
+  String get supportFaqCorporateA => 'El administrador de tu empresa te agrega con tu correo. Al reservar eliges \"Facturar a la empresa\", con centro de costo y referencia si hace falta. La empresa recibe un estado de cuenta mensual.';
+
+  @override
+  String get supportFaqCorporateQ => '¿Cómo funciona la cuenta corporativa?';
+
+  @override
+  String get supportFaqLostA => 'Abre el recibo del viaje, toca \"Ayuda con este viaje\" y elige \"Objeto olvidado\". Contactamos al chófer y coordinamos la devolución contigo.';
+
+  @override
+  String get supportFaqLostQ => 'Olvidé algo en el vehículo';
+
+  @override
+  String get supportFaqPayA => 'El precio en bolivianos queda fijo al reservar. Pagas al chófer al terminar el viaje, en efectivo o QR. Si tu empresa tiene cuenta corporativa, el viaje va a su factura mensual y no pagas nada.';
+
+  @override
+  String get supportFaqPayQ => '¿Cómo pago?';
+
+  @override
+  String get supportFaqPromoA => 'Escríbelo al reservar, antes de confirmar. Verás el descuento al instante y queda fijado en el precio. Si cancelas, puedes volver a usarlo.';
+
+  @override
+  String get supportFaqPromoQ => '¿Cómo uso un código promocional?';
+
+  @override
+  String get supportFaqTitle => 'Preguntas frecuentes';
+
+  @override
+  String supportFaqWaitA(int airport, int city) {
+    return 'En el aeropuerto, $airport minutos gratis desde el aterrizaje de tu vuelo (lo seguimos en tiempo real). En la ciudad, $city minutos gratis desde la hora de recogida o desde que el chófer llega.';
+  }
+
+  @override
+  String get supportFaqWaitQ => '¿Cuánto tiempo me espera el chófer?';
+
+  @override
+  String get supportFillFields => 'Completa el asunto y el mensaje.';
+
+  @override
+  String get supportFilterAnswered => 'Esperando al cliente';
+
+  @override
+  String supportFilterPending(int count) {
+    return 'Por responder ($count)';
+  }
+
+  @override
+  String get supportFilterResolved => 'Resueltas';
+
+  @override
+  String supportFromUser(String name, String role) {
+    return '$name ($role)';
+  }
+
+  @override
+  String get supportHelpCenter => 'Centro de ayuda';
+
+  @override
+  String supportLinkedTrip(String code) {
+    return 'Vinculada al viaje $code';
+  }
+
+  @override
+  String get supportMessage => 'Mensaje';
+
+  @override
+  String get supportMessageHint => 'Cuéntanos qué pasó';
+
+  @override
+  String get supportMyRequests => 'Mis solicitudes';
+
+  @override
+  String get supportNewRequest => 'Nueva solicitud';
+
+  @override
+  String get supportPickCategory => 'Elige una opción.';
+
+  @override
+  String get supportReopen => 'Reabrir';
+
+  @override
+  String get supportReopenedDone => 'Solicitud reabierta';
+
+  @override
+  String get supportResolve => 'Ya está resuelto';
+
+  @override
+  String get supportResolveTeam => 'Marcar resuelta';
+
+  @override
+  String get supportResolvedDone => 'Solicitud resuelta';
+
+  @override
+  String get supportResolvedHint => 'Esta solicitud está resuelta. Si escribes, se vuelve a abrir.';
+
+  @override
+  String get supportSafetyNote => 'Los reportes de seguridad se atienden primero. Si estás en peligro ahora, llama al 110.';
+
+  @override
+  String get supportSend => 'Enviar';
+
+  @override
+  String get supportSendFailed => 'No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.';
+
+  @override
+  String get supportSent => 'Solicitud enviada. Te avisaremos cuando respondamos.';
+
+  @override
+  String get supportStatusAnswered => 'Respondida';
+
+  @override
+  String get supportStatusAnsweredTeam => 'Esperando al cliente';
+
+  @override
+  String get supportStatusOpen => 'Enviada';
+
+  @override
+  String get supportStatusOpenTeam => 'Por responder';
+
+  @override
+  String get supportStatusResolved => 'Resuelta';
+
+  @override
+  String get supportSubject => 'Asunto';
+
+  @override
+  String get supportSubjectHint => 'En pocas palabras';
+
+  @override
+  String get supportTeamName => 'Equipo Luxelane';
+
+  @override
+  String get supportTitle => 'Ayuda';
+
+  @override
+  String get supportTripHelpBody => 'Tu solicitud quedará vinculada al viaje para que el equipo vea todos los detalles.';
+
+  @override
+  String get supportTripHelpCta => 'Ayuda con este viaje';
+
+  @override
+  String get supportTripHelpTitle => 'Ayuda con este viaje';
+
+  @override
+  String supportTripRef(String code) {
+    return 'Viaje $code';
+  }
+
+  @override
+  String get supportUnread => 'No leída';
+
+  @override
+  String get supportUrgent => 'Urgente';
+
+  @override
+  String supportUrgentBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reportes de seguridad sin responder',
+      one: '1 reporte de seguridad sin responder',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get supportWriteHint => 'Escribe un mensaje';
 
   @override
   String get tripDestination => 'Destino';

@@ -1,6 +1,14 @@
 {
   "indexes": [
     {
+      "collectionGroup": "supportTickets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "userId", "order": "ASCENDING" },
+        { "fieldPath": "lastMessageAt", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "verificationDocs",
       "queryScope": "COLLECTION_GROUP",
       "fields": [

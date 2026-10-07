@@ -919,6 +919,12 @@ abstract class AppLocalizations {
   /// **'Configuración'**
   String get adminSectionSettings;
 
+  /// No description provided for @adminSectionSupport.
+  ///
+  /// In es, this message translates to:
+  /// **'Soporte'**
+  String get adminSectionSupport;
+
   /// No description provided for @adminSectionUsers.
   ///
   /// In es, this message translates to:
@@ -6090,6 +6096,408 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Pendiente'**
   String get statusPending;
+
+  /// No description provided for @supportAdminEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay solicitudes en esta vista.'**
+  String get supportAdminEmpty;
+
+  /// No description provided for @supportAdminTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitudes de soporte'**
+  String get supportAdminTitle;
+
+  /// No description provided for @supportCatApp.
+  ///
+  /// In es, this message translates to:
+  /// **'La app'**
+  String get supportCatApp;
+
+  /// No description provided for @supportCatBilling.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagos y facturación'**
+  String get supportCatBilling;
+
+  /// No description provided for @supportCatChauffeur.
+  ///
+  /// In es, this message translates to:
+  /// **'El chófer'**
+  String get supportCatChauffeur;
+
+  /// No description provided for @supportCatLostItem.
+  ///
+  /// In es, this message translates to:
+  /// **'Objeto olvidado'**
+  String get supportCatLostItem;
+
+  /// No description provided for @supportCatOther.
+  ///
+  /// In es, this message translates to:
+  /// **'Otro'**
+  String get supportCatOther;
+
+  /// No description provided for @supportCatSafety.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguridad'**
+  String get supportCatSafety;
+
+  /// No description provided for @supportCatTrip.
+  ///
+  /// In es, this message translates to:
+  /// **'Un viaje'**
+  String get supportCatTrip;
+
+  /// No description provided for @supportCategoryQuestion.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Sobre qué es?'**
+  String get supportCategoryQuestion;
+
+  /// No description provided for @supportContactBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Escríbenos y te responde una persona del equipo de Luxelane. Te avisamos cuando haya respuesta.'**
+  String get supportContactBody;
+
+  /// No description provided for @supportContactTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Necesitas ayuda?'**
+  String get supportContactTitle;
+
+  /// No description provided for @supportEmergencyNote.
+  ///
+  /// In es, this message translates to:
+  /// **'En una emergencia llama primero al 110 (Policía).'**
+  String get supportEmergencyNote;
+
+  /// No description provided for @supportFaqCancelA.
+  ///
+  /// In es, this message translates to:
+  /// **'Sí, desde el viaje en la app, hasta que comience. Es gratis si falta más de 1 hora para la recogida; con menos tiempo se considera cancelación tardía según nuestros términos.'**
+  String get supportFaqCancelA;
+
+  /// No description provided for @supportFaqCancelQ.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Puedo cancelar una reserva?'**
+  String get supportFaqCancelQ;
+
+  /// No description provided for @supportFaqChauffeursA.
+  ///
+  /// In es, this message translates to:
+  /// **'Antes de recibir viajes, revisamos y aprobamos su licencia, cédula, certificado de antecedentes, SOAT y registro del vehículo. Si un documento vence, dejan de recibir viajes hasta renovarlo.'**
+  String get supportFaqChauffeursA;
+
+  /// No description provided for @supportFaqChauffeursQ.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cómo se verifica a los chóferes?'**
+  String get supportFaqChauffeursQ;
+
+  /// No description provided for @supportFaqCorporateA.
+  ///
+  /// In es, this message translates to:
+  /// **'El administrador de tu empresa te agrega con tu correo. Al reservar eliges \"Facturar a la empresa\", con centro de costo y referencia si hace falta. La empresa recibe un estado de cuenta mensual.'**
+  String get supportFaqCorporateA;
+
+  /// No description provided for @supportFaqCorporateQ.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cómo funciona la cuenta corporativa?'**
+  String get supportFaqCorporateQ;
+
+  /// No description provided for @supportFaqLostA.
+  ///
+  /// In es, this message translates to:
+  /// **'Abre el recibo del viaje, toca \"Ayuda con este viaje\" y elige \"Objeto olvidado\". Contactamos al chófer y coordinamos la devolución contigo.'**
+  String get supportFaqLostA;
+
+  /// No description provided for @supportFaqLostQ.
+  ///
+  /// In es, this message translates to:
+  /// **'Olvidé algo en el vehículo'**
+  String get supportFaqLostQ;
+
+  /// No description provided for @supportFaqPayA.
+  ///
+  /// In es, this message translates to:
+  /// **'El precio en bolivianos queda fijo al reservar. Pagas al chófer al terminar el viaje, en efectivo o QR. Si tu empresa tiene cuenta corporativa, el viaje va a su factura mensual y no pagas nada.'**
+  String get supportFaqPayA;
+
+  /// No description provided for @supportFaqPayQ.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cómo pago?'**
+  String get supportFaqPayQ;
+
+  /// No description provided for @supportFaqPromoA.
+  ///
+  /// In es, this message translates to:
+  /// **'Escríbelo al reservar, antes de confirmar. Verás el descuento al instante y queda fijado en el precio. Si cancelas, puedes volver a usarlo.'**
+  String get supportFaqPromoA;
+
+  /// No description provided for @supportFaqPromoQ.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cómo uso un código promocional?'**
+  String get supportFaqPromoQ;
+
+  /// No description provided for @supportFaqTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Preguntas frecuentes'**
+  String get supportFaqTitle;
+
+  /// No description provided for @supportFaqWaitA.
+  ///
+  /// In es, this message translates to:
+  /// **'En el aeropuerto, {airport} minutos gratis desde el aterrizaje de tu vuelo (lo seguimos en tiempo real). En la ciudad, {city} minutos gratis desde la hora de recogida o desde que el chófer llega.'**
+  String supportFaqWaitA(int airport, int city);
+
+  /// No description provided for @supportFaqWaitQ.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cuánto tiempo me espera el chófer?'**
+  String get supportFaqWaitQ;
+
+  /// No description provided for @supportFillFields.
+  ///
+  /// In es, this message translates to:
+  /// **'Completa el asunto y el mensaje.'**
+  String get supportFillFields;
+
+  /// No description provided for @supportFilterAnswered.
+  ///
+  /// In es, this message translates to:
+  /// **'Esperando al cliente'**
+  String get supportFilterAnswered;
+
+  /// No description provided for @supportFilterPending.
+  ///
+  /// In es, this message translates to:
+  /// **'Por responder ({count})'**
+  String supportFilterPending(int count);
+
+  /// No description provided for @supportFilterResolved.
+  ///
+  /// In es, this message translates to:
+  /// **'Resueltas'**
+  String get supportFilterResolved;
+
+  /// No description provided for @supportFromUser.
+  ///
+  /// In es, this message translates to:
+  /// **'{name} ({role})'**
+  String supportFromUser(String name, String role);
+
+  /// No description provided for @supportHelpCenter.
+  ///
+  /// In es, this message translates to:
+  /// **'Centro de ayuda'**
+  String get supportHelpCenter;
+
+  /// No description provided for @supportLinkedTrip.
+  ///
+  /// In es, this message translates to:
+  /// **'Vinculada al viaje {code}'**
+  String supportLinkedTrip(String code);
+
+  /// No description provided for @supportMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Mensaje'**
+  String get supportMessage;
+
+  /// No description provided for @supportMessageHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuéntanos qué pasó'**
+  String get supportMessageHint;
+
+  /// No description provided for @supportMyRequests.
+  ///
+  /// In es, this message translates to:
+  /// **'Mis solicitudes'**
+  String get supportMyRequests;
+
+  /// No description provided for @supportNewRequest.
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva solicitud'**
+  String get supportNewRequest;
+
+  /// No description provided for @supportPickCategory.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige una opción.'**
+  String get supportPickCategory;
+
+  /// No description provided for @supportReopen.
+  ///
+  /// In es, this message translates to:
+  /// **'Reabrir'**
+  String get supportReopen;
+
+  /// No description provided for @supportReopenedDone.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitud reabierta'**
+  String get supportReopenedDone;
+
+  /// No description provided for @supportResolve.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya está resuelto'**
+  String get supportResolve;
+
+  /// No description provided for @supportResolveTeam.
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar resuelta'**
+  String get supportResolveTeam;
+
+  /// No description provided for @supportResolvedDone.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitud resuelta'**
+  String get supportResolvedDone;
+
+  /// No description provided for @supportResolvedHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta solicitud está resuelta. Si escribes, se vuelve a abrir.'**
+  String get supportResolvedHint;
+
+  /// No description provided for @supportSafetyNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Los reportes de seguridad se atienden primero. Si estás en peligro ahora, llama al 110.'**
+  String get supportSafetyNote;
+
+  /// No description provided for @supportSend.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar'**
+  String get supportSend;
+
+  /// No description provided for @supportSendFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.'**
+  String get supportSendFailed;
+
+  /// No description provided for @supportSent.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitud enviada. Te avisaremos cuando respondamos.'**
+  String get supportSent;
+
+  /// No description provided for @supportStatusAnswered.
+  ///
+  /// In es, this message translates to:
+  /// **'Respondida'**
+  String get supportStatusAnswered;
+
+  /// No description provided for @supportStatusAnsweredTeam.
+  ///
+  /// In es, this message translates to:
+  /// **'Esperando al cliente'**
+  String get supportStatusAnsweredTeam;
+
+  /// No description provided for @supportStatusOpen.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviada'**
+  String get supportStatusOpen;
+
+  /// No description provided for @supportStatusOpenTeam.
+  ///
+  /// In es, this message translates to:
+  /// **'Por responder'**
+  String get supportStatusOpenTeam;
+
+  /// No description provided for @supportStatusResolved.
+  ///
+  /// In es, this message translates to:
+  /// **'Resuelta'**
+  String get supportStatusResolved;
+
+  /// No description provided for @supportSubject.
+  ///
+  /// In es, this message translates to:
+  /// **'Asunto'**
+  String get supportSubject;
+
+  /// No description provided for @supportSubjectHint.
+  ///
+  /// In es, this message translates to:
+  /// **'En pocas palabras'**
+  String get supportSubjectHint;
+
+  /// No description provided for @supportTeamName.
+  ///
+  /// In es, this message translates to:
+  /// **'Equipo Luxelane'**
+  String get supportTeamName;
+
+  /// No description provided for @supportTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda'**
+  String get supportTitle;
+
+  /// No description provided for @supportTripHelpBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu solicitud quedará vinculada al viaje para que el equipo vea todos los detalles.'**
+  String get supportTripHelpBody;
+
+  /// No description provided for @supportTripHelpCta.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda con este viaje'**
+  String get supportTripHelpCta;
+
+  /// No description provided for @supportTripHelpTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda con este viaje'**
+  String get supportTripHelpTitle;
+
+  /// No description provided for @supportTripRef.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje {code}'**
+  String supportTripRef(String code);
+
+  /// No description provided for @supportUnread.
+  ///
+  /// In es, this message translates to:
+  /// **'No leída'**
+  String get supportUnread;
+
+  /// No description provided for @supportUrgent.
+  ///
+  /// In es, this message translates to:
+  /// **'Urgente'**
+  String get supportUrgent;
+
+  /// No description provided for @supportUrgentBanner.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 reporte de seguridad sin responder} other{{count} reportes de seguridad sin responder}}'**
+  String supportUrgentBanner(int count);
+
+  /// No description provided for @supportWriteHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe un mensaje'**
+  String get supportWriteHint;
 
   /// No description provided for @tripDestination.
   ///

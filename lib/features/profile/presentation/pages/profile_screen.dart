@@ -237,6 +237,7 @@ class _ProfileBody extends StatelessWidget {
           const SizedBox(height: LuxSpacing.xl),
           SectionHeader(title: l.profileSectionHelp),
           const SizedBox(height: LuxSpacing.sm),
+          _LinkTile(icon: Icons.help_outline_rounded, label: l.supportHelpCenter, path: '/ayuda'),
           _LinkTile(icon: Icons.support_agent_outlined, label: l.profileContactHelp, path: '/contacto'),
           _LinkTile(icon: Icons.description_outlined, label: l.authConsentTermsLink, path: '/terminos'),
           _LinkTile(icon: Icons.privacy_tip_outlined, label: l.authConsentPrivacyLink, path: '/privacidad'),
