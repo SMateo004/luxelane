@@ -24,6 +24,7 @@ import '../../features/payments/presentation/pages/add_card_screen.dart';
 import '../../features/payments/presentation/pages/payment_screen.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../../features/ride/presentation/pages/ride_screen.dart';
+import '../../features/trips/presentation/pages/receipt_page.dart';
 import '../../features/trips/presentation/pages/trips_screen.dart';
 import '../driver_shell/driver_shell.dart';
 import '../shell/app_shell.dart';
@@ -172,6 +173,16 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: '/servicios/contratacion-por-horas',
           pageBuilder: (c, s) => _fade(const HourlyCharterPage(), s),
+        ),
+        GoRoute(
+          path: '/viajes/:bookingId/recibo',
+          pageBuilder: (c, s) => _slide(
+            ReceiptPage(
+              bookingId: s.pathParameters['bookingId'] ?? '',
+              booking: s.extra is Booking ? s.extra as Booking : null,
+            ),
+            s,
+          ),
         ),
         GoRoute(
           path: '/reserva/:bookingId/confirmada',

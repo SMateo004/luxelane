@@ -104,9 +104,11 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 | 3 | **Notificaciones**: registro del token FCM al iniciar sesión (pasajeros y chóferes; web con `FCM_VAPID_KEY`) | ✅ Hecho |
 | 4 | **Identidad visual**: tokens en `lib/app/theme/lux_tokens.dart`, acento champagne con texto tinta (8,6:1), papel cálido en superficies claras y formato `LuxMoney` (`Bs 1.250`) | ✅ Hecho (base) |
 | 5 | **Pantalla "Reserva confirmada"**: check animado, precio fijo, resumen, cuenta regresiva y garantías | ✅ Hecho |
-| 6 | **Stripe completo**: SetupIntent (3DS), webhook, cargo por cancelación tardía y re-autorización de reservas con más de 6 días | ⏳ Pendiente |
-| 7 | **Recibo PDF y correo/SMS** de confirmación | ⏳ Pendiente |
-| 8 | **Componentes**: `PriceBreakdown`, skeletons, estados vacío/error, y partir `booking_screen.dart` / `home_web_page.dart` | ⏳ Pendiente |
+| 6 | **Pagos con tarjeta (Stripe)** | ⏸️ Fuera de alcance por ahora. Las reservas sin tarjeta quedan como *pago al chófer* (efectivo o QR) y la app lo explica al confirmar |
+| 7 | **Recibo** en la app (viajes completados y cancelados, copiable); correo/SMS pendiente | ✅ Recibo · ⏳ correo |
+| 8 | **Componentes** en `lib/core/widgets/lux_states.dart`: `PriceBreakdown`, `LuxSkeleton`, `LuxSkeletonList` y `LuxErrorState`. Se partieron los archivos grandes: `home_web_page.dart` pasó de 3.393 a ~200 líneas (secciones en `web/`) y `booking_screen.dart` de 3.481 a ~1.800 (`booking/`). Se borraron unas 1.300 líneas de código muerto | ✅ Hecho |
+| 9 | **Landing confiable**: los testimonios inventados se reemplazaron por "La promesa Luxelane" (solo compromisos que el producto cumple) y "Cómo funciona". Se corrigieron afirmaciones falsas ("En todo el mundo", "+50 ciudades", "24/7") y se unificaron los CTA en champagne | ✅ Hecho |
+| 10 | **Mis viajes**: secciones Próximos y Anteriores, skeleton de carga, error con reintento, tarjetas tocables (viaje en curso o recibo) | ✅ Hecho |
 
 **Cómo funciona el precio ahora:**
 1. La app muestra un **estimado**.
@@ -139,7 +141,7 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 ## 5. Cómo probar
 
 ```
-flutter test                      # 38 tests Dart
+flutter test                      # 44 tests Dart
 (cd functions && npm test)        # 21 tests de reglas de negocio y precios
 (cd rules-tests && npm test)      # 18 tests de reglas de seguridad (requiere Java)
 ```
