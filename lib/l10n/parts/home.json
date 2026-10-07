@@ -1,121 +1,621 @@
 {
-  "homeNavServices": {"es": "Servicios", "en": "Services", "pt": "Serviços", "description": "Landing nav / footer link (shown uppercased)"},
-  "homeNavFleet": {"es": "Flota", "en": "Fleet", "pt": "Frota", "description": "Landing nav / footer link (shown uppercased)"},
-  "homeNavBusiness": {"es": "Para empresas", "en": "For business", "pt": "Para empresas", "description": "Landing nav link (shown uppercased)"},
-  "homeBookRide": {"es": "Reservar un viaje", "en": "Book a ride", "pt": "Reservar uma viagem", "description": "Primary CTA across the landing and the web header (often uppercased)"},
-  "homeServiceImmediatePickup": {"es": "Recogida inmediata", "en": "On-demand pickup", "pt": "Embarque imediato", "description": "Services dropdown item"},
-  "homeServiceAirportTransfer": {"es": "Traslado al aeropuerto", "en": "Airport transfers", "pt": "Traslado ao aeroporto", "description": "Services dropdown item"},
-  "homeServiceHourly": {"es": "Contratación por horas", "en": "Chauffeur by the hour", "pt": "Motorista por hora", "description": "Services dropdown item"},
-
-  "homeShellTabHome": {"es": "Inicio", "en": "Home", "pt": "Início", "description": "Bottom nav / rail tab"},
-  "homeShellTabTrips": {"es": "Viajes", "en": "Trips", "pt": "Viagens", "description": "Bottom nav / rail tab"},
-  "homeShellTabProfile": {"es": "Perfil", "en": "Profile", "pt": "Perfil", "description": "Bottom nav / rail tab"},
-  "homeShellSignIn": {"es": "Iniciar sesión", "en": "Sign in", "pt": "Entrar", "description": "Web header link"},
-  "homeShellMyTrips": {"es": "Mis viajes", "en": "My trips", "pt": "Minhas viagens", "description": "Web header link"},
-  "homeShellSignOut": {"es": "Cerrar sesión", "en": "Sign out", "pt": "Sair", "description": "Web side rail button"},
-
-  "homeHeroTitle": {"es": "Tu chófer <i>te espera.</i>", "en": "Your chauffeur <i>awaits.</i>", "pt": "Seu motorista <i>aguarda você.</i>", "description": "Hero headline. Text inside <i>…</i> is set in italics; keep the tags."},
-  "homeBarPickup": {"es": "Recogida", "en": "Pickup", "pt": "Embarque", "description": "Booking bar field label (uppercased)"},
-  "homeBarDestination": {"es": "Destino", "en": "Destination", "pt": "Destino", "description": "Booking field label"},
-  "homeBarDuration": {"es": "Duración", "en": "Duration", "pt": "Duração", "description": "Booking field label (by the hour)"},
-  "homeBarDateTime": {"es": "Fecha y hora", "en": "Date & time", "pt": "Data e hora", "description": "Booking bar field label (uppercased)"},
-  "homeBarPickupHint": {"es": "¿Dónde estás?", "en": "Where are you?", "pt": "Onde você está?", "description": "Pickup field placeholder"},
-  "homeBarDestinationHint": {"es": "¿A dónde vas?", "en": "Where to?", "pt": "Para onde você vai?", "description": "Destination field placeholder"},
-  "homeBarSeeOptions": {"es": "Ver opciones", "en": "See options", "pt": "Ver opções", "description": "Booking bar submit button (uppercased)"},
-  "homeMapChangeLocation": {"es": "Cambiar ubicación", "en": "Change location", "pt": "Alterar local", "description": "Button on the inline map preview (uppercased)"},
-  "homeDateTimeShort": {"es": "{date}, {time}", "en": "{date}, {time}", "pt": "{date}, {time}", "description": "Selected pickup date and time, e.g. 'Oct 7, 14:30'", "placeholders": {"date": {"type": "String"}, "time": {"type": "String"}}},
-  "homeHoursShort": {"es": "{hours} h", "en": "{hours} h", "pt": "{hours} h", "description": "Compact hour count in the duration stepper", "placeholders": {"hours": {"type": "int"}}},
-  "homeLocateMe": {"es": "Usar mi ubicación", "en": "Use my location", "pt": "Usar minha localização", "description": "Tooltip for the locate button"},
-
-  "homeMarqueeFixedPrices": {"es": "Precios fijos en Bs", "en": "Fixed prices in Bs", "pt": "Preços fixos em Bs"},
-  "homeMarqueeBookInMinutes": {"es": "Reserva en minutos", "en": "Book in minutes", "pt": "Reserve em minutos"},
-  "homeMarqueePremiumFleet": {"es": "Flota premium", "en": "Premium fleet", "pt": "Frota premium"},
-  "homeMarqueeAirportTransfers": {"es": "Traslados aeroportuarios", "en": "Airport transfers", "pt": "Traslados aeroportuários"},
-  "homeMarqueeCorporateTravel": {"es": "Viajes corporativos", "en": "Corporate travel", "pt": "Viagens corporativas"},
-  "homeMarqueePrivacy": {"es": "Privacidad y discreción", "en": "Privacy and discretion", "pt": "Privacidade e discrição"},
-  "homeMarqueeHourly": {"es": "Chófer por horas", "en": "Chauffeur by the hour", "pt": "Motorista por hora"},
-
-  "homeFleetEyebrow": {"es": "Nuestra flota", "en": "Our fleet", "pt": "Nossa frota"},
-  "homeFleetTitle": {"es": "Vehículos premium,\nsin excepciones.", "en": "Premium vehicles,\nno exceptions.", "pt": "Veículos premium,\nsem exceções."},
-  "homeFleetSwipeHint": {"es": "Desliza para explorar →", "en": "Swipe to explore →", "pt": "Deslize para explorar →", "description": "Hint above the horizontal fleet carousel (uppercased)"},
-  "homeFleetModelVan": {"es": "Mercedes V-Class o similar", "en": "Mercedes V-Class or similar", "pt": "Mercedes Classe V ou similar"},
-  "homeFleetSeats": {"es": "{count, plural, =1{1 asiento} other{{count} asientos}}", "en": "{count, plural, =1{1 seat} other{{count} seats}}", "pt": "{count, plural, =1{1 lugar} other{{count} lugares}}", "description": "Fleet card tag", "placeholders": {"count": {"type": "int"}}},
-  "homeFleetTagLeather": {"es": "Interior de cuero", "en": "Leather interior", "pt": "Interior em couro"},
-  "homeFleetTagWifi": {"es": "Wi-Fi", "en": "Wi-Fi", "pt": "Wi-Fi"},
-  "homeFleetTagPremiumAudio": {"es": "Audio premium", "en": "Premium audio", "pt": "Som premium"},
-  "homeFleetTagChampagne": {"es": "Champán", "en": "Champagne", "pt": "Champanhe"},
-  "homeFleetTagExtraLuggage": {"es": "Equipaje extra", "en": "Extra luggage space", "pt": "Espaço extra para bagagem"},
-  "homeFleetTagZeroEmissions": {"es": "Cero emisiones", "en": "Zero emissions", "pt": "Emissão zero"},
-  "homeFleetTagPremium": {"es": "Premium", "en": "Premium", "pt": "Premium"},
-
-  "homeTrustEyebrow": {"es": "La promesa Luxelane", "en": "The Luxelane promise", "pt": "A promessa Luxelane"},
-  "homeTrustTitle": {"es": "Viajar con confianza,\nde principio a fin.", "en": "Travel with confidence,\nfrom start to finish.", "pt": "Viaje com tranquilidade,\ndo início ao fim."},
-  "homePromiseFixedPriceTitle": {"es": "Precio fijo en Bs", "en": "Fixed price in Bs", "pt": "Preço fixo em Bs"},
-  "homePromiseFixedPriceBody": {"es": "Ves el precio final antes de reservar, sin recargos por tráfico. Incluye {airportMinutes} min de espera en aeropuerto y {cityMinutes} en ciudad.", "en": "See your final price before you book, with no traffic surcharges. Includes {airportMinutes} min of waiting time at the airport and {cityMinutes} in the city.", "pt": "Você vê o preço final antes de reservar, sem acréscimos por trânsito. Inclui {airportMinutes} min de espera no aeroporto e {cityMinutes} na cidade.", "placeholders": {"airportMinutes": {"type": "int"}, "cityMinutes": {"type": "int"}}},
-  "homePromiseCancelTitle": {"es": "Cancelación gratuita", "en": "Free cancellation", "pt": "Cancelamento grátis"},
-  "homePromiseCancelBody": {"es": "Cancela sin costo hasta 1 hora antes de la recogida, desde la app.", "en": "Cancel at no cost up to 1 hour before pickup, right from the app.", "pt": "Cancele sem custo até 1 hora antes do embarque, direto pelo app."},
-  "homePromiseVerifiedTitle": {"es": "Chóferes verificados", "en": "Vetted chauffeurs", "pt": "Motoristas verificados"},
-  "homePromiseVerifiedBody": {"es": "Licencia y documentos revisados por nuestro equipo antes de su primer viaje.", "en": "Every license and document is reviewed by our team before their first ride.", "pt": "Habilitação e documentos revisados pela nossa equipe antes da primeira viagem."},
-  "homePromiseTrackingTitle": {"es": "Seguimiento en vivo", "en": "Live tracking", "pt": "Acompanhamento ao vivo"},
-  "homePromiseTrackingBody": {"es": "Sigue a tu chófer en el mapa y recibe avisos cuando está en camino y cuando llega.", "en": "Follow your chauffeur on the map and get notified when they're on the way and when they arrive.", "pt": "Acompanhe seu motorista no mapa e receba avisos quando ele estiver a caminho e quando chegar."},
-  "homeHowItWorksEyebrow": {"es": "Cómo funciona", "en": "How it works", "pt": "Como funciona"},
-  "homeStepBookTitle": {"es": "Reserva en un minuto", "en": "Book in a minute", "pt": "Reserve em um minuto"},
-  "homeStepBookBody": {"es": "Elige origen, destino, fecha y clase de vehículo.", "en": "Choose your pickup, destination, date and vehicle class.", "pt": "Escolha origem, destino, data e categoria do veículo."},
-  "homeStepPriceTitle": {"es": "Confirma tu precio fijo", "en": "Confirm your fixed price", "pt": "Confirme seu preço fixo"},
-  "homeStepPriceBody": {"es": "Te mostramos el precio final en bolivianos. Ese es el que pagas.", "en": "We show you the final price in bolivianos. That's exactly what you pay.", "pt": "Mostramos o preço final em bolivianos. É exatamente o que você paga."},
-  "homeStepChauffeurTitle": {"es": "Tu chófer te espera", "en": "Your chauffeur awaits", "pt": "Seu motorista aguarda você"},
-  "homeStepChauffeurBody": {"es": "Recibe los datos de tu chófer y síguelo en tiempo real.", "en": "Get your chauffeur's details and follow them in real time.", "pt": "Receba os dados do seu motorista e acompanhe-o em tempo real."},
-
-  "homeBusinessEyebrow": {"es": "Para empresas", "en": "For business", "pt": "Para empresas"},
-  "homeBusinessTitle": {"es": "Viajes corporativos,\nredefinidos.", "en": "Corporate travel,\nredefined.", "pt": "Viagens corporativas,\nredefinidas."},
-  "homeBusinessBody": {"es": "Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.", "en": "Luxelane for Business gives your team premium chauffeur service, with the controls and reporting your finance team expects.", "pt": "O Luxelane para Empresas oferece à sua equipe um serviço de motorista premium, com os controles e relatórios que o seu time financeiro exige."},
-  "homeBusinessLearnMore": {"es": "Más información", "en": "Learn more", "pt": "Saiba mais"},
-  "homeBusinessPerkBilling": {"es": "Facturación y cobros centralizados", "en": "Centralized invoicing and billing", "pt": "Faturamento e cobranças centralizados"},
-  "homeBusinessPerkAccountManager": {"es": "Gerente de cuenta dedicado", "en": "Dedicated account manager", "pt": "Gerente de conta dedicado"},
-  "homeBusinessPerkPolicy": {"es": "Herramientas de cumplimiento de política de viajes", "en": "Travel policy compliance tools", "pt": "Ferramentas de conformidade com a política de viagens"},
-  "homeBusinessPerkPriority": {"es": "Reservas prioritarias para ejecutivos", "en": "Priority booking for executives", "pt": "Reservas prioritárias para executivos"},
-  "homeBusinessPerkMonitoring": {"es": "Monitoreo de viajes en tiempo real", "en": "Real-time trip monitoring", "pt": "Monitoramento de viagens em tempo real"},
-  "homeBusinessPerkGuests": {"es": "Reservas para invitados y equipos", "en": "Bookings for guests and teams", "pt": "Reservas para convidados e equipes"},
-
-  "homeCtaEyebrow": {"es": "Cuando quieras. Donde quieras.", "en": "Whenever you want. Wherever you go.", "pt": "Quando quiser. Onde quiser.", "description": "Eyebrow above the closing CTA (uppercased)"},
-  "homeCtaTitle": {"es": "Tu próximo viaje,\n<i>en tus términos.</i>", "en": "Your next ride,\n<i>on your terms.</i>", "pt": "Sua próxima viagem,\n<i>do seu jeito.</i>", "description": "Closing CTA headline. Text inside <i>…</i> is set in italics; keep the tags."},
-  "homeCtaHighlights": {"es": "Precio fijo  ·  Chóferes verificados  ·  Reserva anticipada", "en": "Fixed price  ·  Vetted chauffeurs  ·  Advance booking", "pt": "Preço fixo  ·  Motoristas verificados  ·  Reserva antecipada"},
-  "homeCtaViewFleet": {"es": "Ver flota", "en": "View the fleet", "pt": "Ver a frota"},
-
-  "homeBookEyebrow": {"es": "Nuestra experiencia distintiva", "en": "Our signature experience", "pt": "Nossa experiência exclusiva", "description": "Eyebrow above the page-flip showcase (uppercased)"},
-  "homeBookScrollCue": {"es": "Desliza", "en": "Scroll", "pt": "Role", "description": "Vertical scroll cue next to the page-flip showcase (uppercased)"},
-  "homeBookCoverSubtitle": {"es": "Servicio de chófer premium", "en": "Premium chauffeur service", "pt": "Serviço de motorista premium"},
-  "homeBookStandardLabel": {"es": "El estándar", "en": "The standard", "pt": "O padrão"},
-  "homeBookStandardSub": {"es": "La promesa que cumplimos", "en": "The promise we keep", "pt": "A promessa que cumprimos"},
-  "homeBookStandardTag": {"es": "El estándar Luxelane", "en": "The Luxelane standard", "pt": "O padrão Luxelane"},
-  "homeBookStandardHeadline": {"es": "El estándar que\notros siguen.", "en": "The standard\nothers follow.", "pt": "O padrão que\nos outros seguem."},
-  "homeBookStandardBody": {"es": "Cada chófer supera una rigurosa verificación de antecedentes, inspección del vehículo y programa de capacitación en servicio.", "en": "Every chauffeur passes a rigorous background check, a vehicle inspection and a service training program.", "pt": "Cada motorista passa por uma rigorosa verificação de antecedentes, inspeção do veículo e um programa de treinamento em atendimento."},
-  "homeBookBulletFixedPrice": {"es": "Precio fijo, siempre", "en": "Fixed price, always", "pt": "Preço fixo, sempre"},
-  "homeBookBulletTracking": {"es": "Seguimiento en tiempo real", "en": "Real-time tracking", "pt": "Acompanhamento em tempo real"},
-  "homeBookBulletAdvance": {"es": "Reserva con anticipación", "en": "Book ahead", "pt": "Reserve com antecedência"},
-  "homeBookExperienceLabel": {"es": "La experiencia", "en": "The experience", "pt": "A experiência"},
-  "homeBookExperienceSub": {"es": "Cada detalle considerado", "en": "Every detail considered", "pt": "Cada detalhe pensado"},
-  "homeBookExperienceHeadline": {"es": "Cada detalle,\ncuidado.", "en": "Every detail,\ntaken care of.", "pt": "Cada detalhe,\ncuidado."},
-  "homeBookExperienceBody": {"es": "Desde agua fría y listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.", "en": "From chilled water and curated playlists to noise-cancelling privacy — your preferences remembered, every time.", "pt": "De água gelada e playlists selecionadas à privacidade com cancelamento de ruído — suas preferências lembradas, sempre."},
-  "homeBookBulletLeather": {"es": "Interiores de cuero premium", "en": "Premium leather interiors", "pt": "Interiores em couro premium"},
-  "homeBookBulletWifiCharging": {"es": "Wi-Fi y carga inalámbrica", "en": "Wi-Fi and wireless charging", "pt": "Wi-Fi e carregamento sem fio"},
-  "homeBookBulletChampagne": {"es": "Servicio de champán disponible", "en": "Champagne service available", "pt": "Serviço de champanhe disponível"},
-  "homeBookBulletClimate": {"es": "Control de clima ambiental", "en": "Individual climate control", "pt": "Controle de climatização"},
-  "homeBookBusinessSub": {"es": "Viajes corporativos redefinidos", "en": "Corporate travel, redefined", "pt": "Viagens corporativas redefinidas"},
-  "homeBookBulletCentralBilling": {"es": "Facturación centralizada", "en": "Centralized invoicing", "pt": "Faturamento centralizado"},
-  "homeBookBulletPolicy": {"es": "Cumplimiento de política de viajes", "en": "Travel policy compliance", "pt": "Conformidade com a política de viagens"},
-
-  "homeFooterContact": {"es": "Contacto", "en": "Contact", "pt": "Contato"},
-  "homeFooterTerms": {"es": "Términos", "en": "Terms", "pt": "Termos"},
-  "homeFooterPrivacy": {"es": "Privacidad", "en": "Privacy", "pt": "Privacidade"},
-  "homeFooterCopyright": {"es": "© {year} Luxelane. Todos los derechos reservados.", "en": "© {year} Luxelane. All rights reserved.", "pt": "© {year} Luxelane. Todos os direitos reservados.", "placeholders": {"year": {"type": "String"}}},
-
-  "homePickPickupTitle": {"es": "Seleccionar lugar de recogida", "en": "Choose pickup location", "pt": "Escolher local de embarque", "description": "Map picker dialog title"},
-  "homePickDestinationTitle": {"es": "Seleccionar destino", "en": "Choose destination", "pt": "Escolher destino", "description": "Map picker dialog title"},
-  "homeErrorPickupRequired": {"es": "Ingresa un lugar de recogida", "en": "Enter a pickup location", "pt": "Informe um local de embarque"},
-  "homeErrorDestinationRequired": {"es": "Ingresa un destino", "en": "Enter a destination", "pt": "Informe um destino"},
-  "homeSearchVehicles": {"es": "Buscar vehículos", "en": "Find vehicles", "pt": "Buscar veículos", "description": "Mobile home submit button"},
-  "homeFormPickupLabel": {"es": "Lugar de recogida", "en": "Pickup location", "pt": "Local de embarque"},
-  "homeFormPickupHint": {"es": "Calle, barrio, aeropuerto…", "en": "Street, neighborhood, airport…", "pt": "Rua, bairro, aeroporto…"},
-  "homeRouteSummary": {"es": "{distance} km · {duration}", "en": "{distance} km · {duration}", "pt": "{distance} km · {duration}", "description": "Route estimate badge, e.g. '12.4 km · 25 min'", "placeholders": {"distance": {"type": "String"}, "duration": {"type": "String"}}}
+  "homeNavServices": {
+    "es": "Servicios",
+    "en": "Services",
+    "pt": "Serviços",
+    "description": "Landing nav / footer link (shown uppercased)"
+  },
+  "homeNavFleet": {
+    "es": "Flota",
+    "en": "Fleet",
+    "pt": "Frota",
+    "description": "Landing nav / footer link (shown uppercased)"
+  },
+  "homeNavBusiness": {
+    "es": "Para empresas",
+    "en": "For business",
+    "pt": "Para empresas",
+    "description": "Landing nav link (shown uppercased)"
+  },
+  "homeBookRide": {
+    "es": "Reservar un viaje",
+    "en": "Book a ride",
+    "pt": "Reservar uma viagem",
+    "description": "Primary CTA across the landing and the web header (often uppercased)"
+  },
+  "homeServiceImmediatePickup": {
+    "es": "Recogida inmediata",
+    "en": "On-demand pickup",
+    "pt": "Embarque imediato",
+    "description": "Services dropdown item"
+  },
+  "homeServiceAirportTransfer": {
+    "es": "Traslado al aeropuerto",
+    "en": "Airport transfers",
+    "pt": "Traslado ao aeroporto",
+    "description": "Services dropdown item"
+  },
+  "homeServiceHourly": {
+    "es": "Contratación por horas",
+    "en": "Chauffeur by the hour",
+    "pt": "Motorista por hora",
+    "description": "Services dropdown item"
+  },
+  "homeShellTabHome": {
+    "es": "Inicio",
+    "en": "Home",
+    "pt": "Início",
+    "description": "Bottom nav / rail tab"
+  },
+  "homeShellTabTrips": {
+    "es": "Viajes",
+    "en": "Trips",
+    "pt": "Viagens",
+    "description": "Bottom nav / rail tab"
+  },
+  "homeShellTabProfile": {
+    "es": "Perfil",
+    "en": "Profile",
+    "pt": "Perfil",
+    "description": "Bottom nav / rail tab"
+  },
+  "homeShellSignIn": {
+    "es": "Iniciar sesión",
+    "en": "Sign in",
+    "pt": "Entrar",
+    "description": "Web header link"
+  },
+  "homeShellMyTrips": {
+    "es": "Mis viajes",
+    "en": "My trips",
+    "pt": "Minhas viagens",
+    "description": "Web header link"
+  },
+  "homeShellSignOut": {
+    "es": "Cerrar sesión",
+    "en": "Sign out",
+    "pt": "Sair",
+    "description": "Web side rail button"
+  },
+  "homeHeroTitle": {
+    "es": "Tu chófer <i>te espera.</i>",
+    "en": "Your chauffeur <i>awaits.</i>",
+    "pt": "Seu motorista <i>aguarda você.</i>",
+    "description": "Hero headline. Text inside <i>…</i> is set in italics; keep the tags."
+  },
+  "homeBarPickup": {
+    "es": "Recogida",
+    "en": "Pickup",
+    "pt": "Embarque",
+    "description": "Booking bar field label (uppercased)"
+  },
+  "homeBarDestination": {
+    "es": "Destino",
+    "en": "Destination",
+    "pt": "Destino",
+    "description": "Booking field label"
+  },
+  "homeBarDuration": {
+    "es": "Duración",
+    "en": "Duration",
+    "pt": "Duração",
+    "description": "Booking field label (by the hour)"
+  },
+  "homeBarDateTime": {
+    "es": "Fecha y hora",
+    "en": "Date & time",
+    "pt": "Data e hora",
+    "description": "Booking bar field label (uppercased)"
+  },
+  "homeBarPickupHint": {
+    "es": "¿Dónde estás?",
+    "en": "Where are you?",
+    "pt": "Onde você está?",
+    "description": "Pickup field placeholder"
+  },
+  "homeBarDestinationHint": {
+    "es": "¿A dónde vas?",
+    "en": "Where to?",
+    "pt": "Para onde você vai?",
+    "description": "Destination field placeholder"
+  },
+  "homeBarSeeOptions": {
+    "es": "Ver opciones",
+    "en": "See options",
+    "pt": "Ver opções",
+    "description": "Booking bar submit button (uppercased)"
+  },
+  "homeMapChangeLocation": {
+    "es": "Cambiar ubicación",
+    "en": "Change location",
+    "pt": "Alterar local",
+    "description": "Button on the inline map preview (uppercased)"
+  },
+  "homeDateTimeShort": {
+    "es": "{date}, {time}",
+    "en": "{date}, {time}",
+    "pt": "{date}, {time}",
+    "description": "Selected pickup date and time, e.g. 'Oct 7, 14:30'",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "homeHoursShort": {
+    "es": "{hours} h",
+    "en": "{hours} h",
+    "pt": "{hours} h",
+    "description": "Compact hour count in the duration stepper",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "homeLocateMe": {
+    "es": "Usar mi ubicación",
+    "en": "Use my location",
+    "pt": "Usar minha localização",
+    "description": "Tooltip for the locate button"
+  },
+  "homeMarqueeFixedPrices": {
+    "es": "Precios fijos en Bs",
+    "en": "Fixed prices in Bs",
+    "pt": "Preços fixos em Bs"
+  },
+  "homeMarqueeBookInMinutes": {
+    "es": "Reserva en minutos",
+    "en": "Book in minutes",
+    "pt": "Reserve em minutos"
+  },
+  "homeMarqueePremiumFleet": {
+    "es": "Flota premium",
+    "en": "Premium fleet",
+    "pt": "Frota premium"
+  },
+  "homeMarqueeAirportTransfers": {
+    "es": "Traslados aeroportuarios",
+    "en": "Airport transfers",
+    "pt": "Traslados aeroportuários"
+  },
+  "homeMarqueeCorporateTravel": {
+    "es": "Viajes corporativos",
+    "en": "Corporate travel",
+    "pt": "Viagens corporativas"
+  },
+  "homeMarqueePrivacy": {
+    "es": "Privacidad y discreción",
+    "en": "Privacy and discretion",
+    "pt": "Privacidade e discrição"
+  },
+  "homeMarqueeHourly": {
+    "es": "Chófer por horas",
+    "en": "Chauffeur by the hour",
+    "pt": "Motorista por hora"
+  },
+  "homeFleetEyebrow": {
+    "es": "Nuestra flota",
+    "en": "Our fleet",
+    "pt": "Nossa frota"
+  },
+  "homeFleetTitle": {
+    "es": "Vehículos premium,\nsin excepciones.",
+    "en": "Premium vehicles,\nno exceptions.",
+    "pt": "Veículos premium,\nsem exceções."
+  },
+  "homeFleetSwipeHint": {
+    "es": "Desliza para explorar →",
+    "en": "Swipe to explore →",
+    "pt": "Deslize para explorar →",
+    "description": "Hint above the horizontal fleet carousel (uppercased)"
+  },
+  "homeFleetModelVan": {
+    "es": "Mercedes V-Class o similar",
+    "en": "Mercedes V-Class or similar",
+    "pt": "Mercedes Classe V ou similar"
+  },
+  "homeFleetSeats": {
+    "es": "{count, plural, =1{1 asiento} other{{count} asientos}}",
+    "en": "{count, plural, =1{1 seat} other{{count} seats}}",
+    "pt": "{count, plural, =1{1 lugar} other{{count} lugares}}",
+    "description": "Fleet card tag",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeFleetTagLeather": {
+    "es": "Interior de cuero",
+    "en": "Leather interior",
+    "pt": "Interior em couro"
+  },
+  "homeFleetTagWifi": {
+    "es": "Wi-Fi",
+    "en": "Wi-Fi",
+    "pt": "Wi-Fi"
+  },
+  "homeFleetTagPremiumAudio": {
+    "es": "Audio premium",
+    "en": "Premium audio",
+    "pt": "Som premium"
+  },
+  "homeFleetTagChampagne": {
+    "es": "Champán",
+    "en": "Champagne",
+    "pt": "Champanhe"
+  },
+  "homeFleetTagExtraLuggage": {
+    "es": "Equipaje extra",
+    "en": "Extra luggage space",
+    "pt": "Espaço extra para bagagem"
+  },
+  "homeFleetTagZeroEmissions": {
+    "es": "Cero emisiones",
+    "en": "Zero emissions",
+    "pt": "Emissão zero"
+  },
+  "homeFleetTagPremium": {
+    "es": "Premium",
+    "en": "Premium",
+    "pt": "Premium"
+  },
+  "homeTrustEyebrow": {
+    "es": "La promesa Luxelane",
+    "en": "The Luxelane promise",
+    "pt": "A promessa Luxelane"
+  },
+  "homeTrustTitle": {
+    "es": "Viajar con confianza,\nde principio a fin.",
+    "en": "Travel with confidence,\nfrom start to finish.",
+    "pt": "Viaje com tranquilidade,\ndo início ao fim."
+  },
+  "homePromiseFixedPriceTitle": {
+    "es": "Precio fijo en Bs",
+    "en": "Fixed price in Bs",
+    "pt": "Preço fixo em Bs"
+  },
+  "homePromiseFixedPriceBody": {
+    "es": "Ves el precio final antes de reservar, sin recargos por tráfico. Incluye {airportMinutes} min de espera en aeropuerto y {cityMinutes} en ciudad.",
+    "en": "See your final price before you book, with no traffic surcharges. Includes {airportMinutes} min of waiting time at the airport and {cityMinutes} in the city.",
+    "pt": "Você vê o preço final antes de reservar, sem acréscimos por trânsito. Inclui {airportMinutes} min de espera no aeroporto e {cityMinutes} na cidade.",
+    "placeholders": {
+      "airportMinutes": {
+        "type": "int"
+      },
+      "cityMinutes": {
+        "type": "int"
+      }
+    }
+  },
+  "homePromiseCancelTitle": {
+    "es": "Cancelación gratuita",
+    "en": "Free cancellation",
+    "pt": "Cancelamento grátis"
+  },
+  "homePromiseCancelBody": {
+    "es": "Cancela sin costo hasta 1 hora antes de la recogida, desde la app.",
+    "en": "Cancel at no cost up to 1 hour before pickup, right from the app.",
+    "pt": "Cancele sem custo até 1 hora antes do embarque, direto pelo app."
+  },
+  "homePromiseVerifiedTitle": {
+    "es": "Chóferes verificados",
+    "en": "Vetted chauffeurs",
+    "pt": "Motoristas verificados"
+  },
+  "homePromiseVerifiedBody": {
+    "es": "Licencia y documentos revisados por nuestro equipo antes de su primer viaje.",
+    "en": "Every license and document is reviewed by our team before their first ride.",
+    "pt": "Habilitação e documentos revisados pela nossa equipe antes da primeira viagem."
+  },
+  "homePromiseTrackingTitle": {
+    "es": "Seguimiento en vivo",
+    "en": "Live tracking",
+    "pt": "Acompanhamento ao vivo"
+  },
+  "homePromiseTrackingBody": {
+    "es": "Sigue a tu chófer en el mapa y recibe avisos cuando está en camino y cuando llega.",
+    "en": "Follow your chauffeur on the map and get notified when they're on the way and when they arrive.",
+    "pt": "Acompanhe seu motorista no mapa e receba avisos quando ele estiver a caminho e quando chegar."
+  },
+  "homeHowItWorksEyebrow": {
+    "es": "Cómo funciona",
+    "en": "How it works",
+    "pt": "Como funciona"
+  },
+  "homeStepBookTitle": {
+    "es": "Reserva en un minuto",
+    "en": "Book in a minute",
+    "pt": "Reserve em um minuto"
+  },
+  "homeStepBookBody": {
+    "es": "Elige origen, destino, fecha y clase de vehículo.",
+    "en": "Choose your pickup, destination, date and vehicle class.",
+    "pt": "Escolha origem, destino, data e categoria do veículo."
+  },
+  "homeStepPriceTitle": {
+    "es": "Confirma tu precio fijo",
+    "en": "Confirm your fixed price",
+    "pt": "Confirme seu preço fixo"
+  },
+  "homeStepPriceBody": {
+    "es": "Te mostramos el precio final en bolivianos. Ese es el que pagas.",
+    "en": "We show you the final price in bolivianos. That's exactly what you pay.",
+    "pt": "Mostramos o preço final em bolivianos. É exatamente o que você paga."
+  },
+  "homeStepChauffeurTitle": {
+    "es": "Tu chófer te espera",
+    "en": "Your chauffeur awaits",
+    "pt": "Seu motorista aguarda você"
+  },
+  "homeStepChauffeurBody": {
+    "es": "Recibe los datos de tu chófer y síguelo en tiempo real.",
+    "en": "Get your chauffeur's details and follow them in real time.",
+    "pt": "Receba os dados do seu motorista e acompanhe-o em tempo real."
+  },
+  "homeBusinessEyebrow": {
+    "es": "Para empresas",
+    "en": "For business",
+    "pt": "Para empresas"
+  },
+  "homeBusinessTitle": {
+    "es": "Viajes corporativos,\nredefinidos.",
+    "en": "Corporate travel,\nredefined.",
+    "pt": "Viagens corporativas,\nredefinidas."
+  },
+  "homeBusinessBody": {
+    "es": "Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.",
+    "en": "Luxelane for Business gives your team premium chauffeur service, with the controls and reporting your finance team expects.",
+    "pt": "O Luxelane para Empresas oferece à sua equipe um serviço de motorista premium, com os controles e relatórios que o seu time financeiro exige."
+  },
+  "homeBusinessLearnMore": {
+    "es": "Más información",
+    "en": "Learn more",
+    "pt": "Saiba mais"
+  },
+  "homeBusinessPerkBilling": {
+    "es": "Facturación y cobros centralizados",
+    "en": "Centralized invoicing and billing",
+    "pt": "Faturamento e cobranças centralizados"
+  },
+  "homeBusinessPerkAccountManager": {
+    "es": "Gerente de cuenta dedicado",
+    "en": "Dedicated account manager",
+    "pt": "Gerente de conta dedicado"
+  },
+  "homeBusinessPerkPolicy": {
+    "es": "Herramientas de cumplimiento de política de viajes",
+    "en": "Travel policy compliance tools",
+    "pt": "Ferramentas de conformidade com a política de viagens"
+  },
+  "homeBusinessPerkPriority": {
+    "es": "Reservas prioritarias para ejecutivos",
+    "en": "Priority booking for executives",
+    "pt": "Reservas prioritárias para executivos"
+  },
+  "homeBusinessPerkMonitoring": {
+    "es": "Monitoreo de viajes en tiempo real",
+    "en": "Real-time trip monitoring",
+    "pt": "Monitoramento de viagens em tempo real"
+  },
+  "homeBusinessPerkGuests": {
+    "es": "Reservas para invitados y equipos",
+    "en": "Bookings for guests and teams",
+    "pt": "Reservas para convidados e equipes"
+  },
+  "homeCtaEyebrow": {
+    "es": "Cuando quieras. Donde quieras.",
+    "en": "Whenever you want. Wherever you go.",
+    "pt": "Quando quiser. Onde quiser.",
+    "description": "Eyebrow above the closing CTA (uppercased)"
+  },
+  "homeCtaTitle": {
+    "es": "Tu próximo viaje,\n<i>en tus términos.</i>",
+    "en": "Your next ride,\n<i>on your terms.</i>",
+    "pt": "Sua próxima viagem,\n<i>do seu jeito.</i>",
+    "description": "Closing CTA headline. Text inside <i>…</i> is set in italics; keep the tags."
+  },
+  "homeCtaHighlights": {
+    "es": "Precio fijo  ·  Chóferes verificados  ·  Reserva anticipada",
+    "en": "Fixed price  ·  Vetted chauffeurs  ·  Advance booking",
+    "pt": "Preço fixo  ·  Motoristas verificados  ·  Reserva antecipada"
+  },
+  "homeCtaViewFleet": {
+    "es": "Ver flota",
+    "en": "View the fleet",
+    "pt": "Ver a frota"
+  },
+  "homeBookEyebrow": {
+    "es": "Nuestra experiencia distintiva",
+    "en": "Our signature experience",
+    "pt": "Nossa experiência exclusiva",
+    "description": "Eyebrow above the page-flip showcase (uppercased)"
+  },
+  "homeBookScrollCue": {
+    "es": "Desliza",
+    "en": "Scroll",
+    "pt": "Role",
+    "description": "Vertical scroll cue next to the page-flip showcase (uppercased)"
+  },
+  "homeBookCoverSubtitle": {
+    "es": "Servicio de chófer premium",
+    "en": "Premium chauffeur service",
+    "pt": "Serviço de motorista premium"
+  },
+  "homeBookStandardLabel": {
+    "es": "El estándar",
+    "en": "The standard",
+    "pt": "O padrão"
+  },
+  "homeBookStandardSub": {
+    "es": "La promesa que cumplimos",
+    "en": "The promise we keep",
+    "pt": "A promessa que cumprimos"
+  },
+  "homeBookStandardTag": {
+    "es": "El estándar Luxelane",
+    "en": "The Luxelane standard",
+    "pt": "O padrão Luxelane"
+  },
+  "homeBookStandardHeadline": {
+    "es": "El estándar que\notros siguen.",
+    "en": "The standard\nothers follow.",
+    "pt": "O padrão que\nos outros seguem."
+  },
+  "homeBookStandardBody": {
+    "es": "Cada chófer es verificado por nuestro equipo: revisamos su licencia, sus documentos y su vehículo antes de su primer viaje.",
+    "en": "Every chauffeur is vetted by our team: we review their license, documents and vehicle before their first ride.",
+    "pt": "Cada motorista é verificado pela nossa equipe: revisamos a habilitação, os documentos e o veículo antes da primeira viagem."
+  },
+  "homeBookBulletFixedPrice": {
+    "es": "Precio fijo, siempre",
+    "en": "Fixed price, always",
+    "pt": "Preço fixo, sempre"
+  },
+  "homeBookBulletTracking": {
+    "es": "Seguimiento en tiempo real",
+    "en": "Real-time tracking",
+    "pt": "Acompanhamento em tempo real"
+  },
+  "homeBookBulletAdvance": {
+    "es": "Reserva con anticipación",
+    "en": "Book ahead",
+    "pt": "Reserve com antecedência"
+  },
+  "homeBookExperienceLabel": {
+    "es": "La experiencia",
+    "en": "The experience",
+    "pt": "A experiência"
+  },
+  "homeBookExperienceSub": {
+    "es": "Cada detalle considerado",
+    "en": "Every detail considered",
+    "pt": "Cada detalhe pensado"
+  },
+  "homeBookExperienceHeadline": {
+    "es": "Cada detalle,\ncuidado.",
+    "en": "Every detail,\ntaken care of.",
+    "pt": "Cada detalhe,\ncuidado."
+  },
+  "homeBookExperienceBody": {
+    "es": "Desde agua fría y listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.",
+    "en": "From chilled water and curated playlists to noise-cancelling privacy — your preferences remembered, every time.",
+    "pt": "De água gelada e playlists selecionadas à privacidade com cancelamento de ruído — suas preferências lembradas, sempre."
+  },
+  "homeBookBulletLeather": {
+    "es": "Interiores de cuero premium",
+    "en": "Premium leather interiors",
+    "pt": "Interiores em couro premium"
+  },
+  "homeBookBulletWifiCharging": {
+    "es": "Wi-Fi y carga inalámbrica",
+    "en": "Wi-Fi and wireless charging",
+    "pt": "Wi-Fi e carregamento sem fio"
+  },
+  "homeBookBulletChampagne": {
+    "es": "Servicio de champán disponible",
+    "en": "Champagne service available",
+    "pt": "Serviço de champanhe disponível"
+  },
+  "homeBookBulletClimate": {
+    "es": "Control de clima ambiental",
+    "en": "Individual climate control",
+    "pt": "Controle de climatização"
+  },
+  "homeBookBusinessSub": {
+    "es": "Viajes corporativos redefinidos",
+    "en": "Corporate travel, redefined",
+    "pt": "Viagens corporativas redefinidas"
+  },
+  "homeBookBulletCentralBilling": {
+    "es": "Facturación centralizada",
+    "en": "Centralized invoicing",
+    "pt": "Faturamento centralizado"
+  },
+  "homeBookBulletPolicy": {
+    "es": "Cumplimiento de política de viajes",
+    "en": "Travel policy compliance",
+    "pt": "Conformidade com a política de viagens"
+  },
+  "homeFooterContact": {
+    "es": "Contacto",
+    "en": "Contact",
+    "pt": "Contato"
+  },
+  "homeFooterTerms": {
+    "es": "Términos",
+    "en": "Terms",
+    "pt": "Termos"
+  },
+  "homeFooterPrivacy": {
+    "es": "Privacidad",
+    "en": "Privacy",
+    "pt": "Privacidade"
+  },
+  "homeFooterCopyright": {
+    "es": "© {year} Luxelane. Todos los derechos reservados.",
+    "en": "© {year} Luxelane. All rights reserved.",
+    "pt": "© {year} Luxelane. Todos os direitos reservados.",
+    "placeholders": {
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "homePickPickupTitle": {
+    "es": "Seleccionar lugar de recogida",
+    "en": "Choose pickup location",
+    "pt": "Escolher local de embarque",
+    "description": "Map picker dialog title"
+  },
+  "homePickDestinationTitle": {
+    "es": "Seleccionar destino",
+    "en": "Choose destination",
+    "pt": "Escolher destino",
+    "description": "Map picker dialog title"
+  },
+  "homeErrorPickupRequired": {
+    "es": "Ingresa un lugar de recogida",
+    "en": "Enter a pickup location",
+    "pt": "Informe um local de embarque"
+  },
+  "homeErrorDestinationRequired": {
+    "es": "Ingresa un destino",
+    "en": "Enter a destination",
+    "pt": "Informe um destino"
+  },
+  "homeSearchVehicles": {
+    "es": "Buscar vehículos",
+    "en": "Find vehicles",
+    "pt": "Buscar veículos",
+    "description": "Mobile home submit button"
+  },
+  "homeFormPickupLabel": {
+    "es": "Lugar de recogida",
+    "en": "Pickup location",
+    "pt": "Local de embarque"
+  },
+  "homeFormPickupHint": {
+    "es": "Calle, barrio, aeropuerto…",
+    "en": "Street, neighborhood, airport…",
+    "pt": "Rua, bairro, aeroporto…"
+  },
+  "homeRouteSummary": {
+    "es": "{distance} km · {duration}",
+    "en": "{distance} km · {duration}",
+    "pt": "{distance} km · {duration}",
+    "description": "Route estimate badge, e.g. '12.4 km · 25 min'",
+    "placeholders": {
+      "distance": {
+        "type": "String"
+      },
+      "duration": {
+        "type": "String"
+      }
+    }
+  }
 }

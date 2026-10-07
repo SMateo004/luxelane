@@ -879,7 +879,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeBookScrollCue => 'Scroll';
 
   @override
-  String get homeBookStandardBody => 'Every chauffeur passes a rigorous background check, a vehicle inspection and a service training program.';
+  String get homeBookStandardBody => 'Every chauffeur is vetted by our team: we review their license, documents and vehicle before their first ride.';
 
   @override
   String get homeBookStandardHeadline => 'The standard\nothers follow.';

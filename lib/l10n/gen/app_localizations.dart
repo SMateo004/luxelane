@@ -1720,7 +1720,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeBookStandardBody.
   ///
   /// In es, this message translates to:
-  /// **'Cada chófer supera una rigurosa verificación de antecedentes, inspección del vehículo y programa de capacitación en servicio.'**
+  /// **'Cada chófer es verificado por nuestro equipo: revisamos su licencia, sus documentos y su vehículo antes de su primer viaje.'**
   String get homeBookStandardBody;
 
   /// No description provided for @homeBookStandardHeadline.

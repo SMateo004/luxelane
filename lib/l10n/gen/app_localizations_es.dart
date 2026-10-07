@@ -879,7 +879,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeBookScrollCue => 'Desliza';
 
   @override
-  String get homeBookStandardBody => 'Cada chófer supera una rigurosa verificación de antecedentes, inspección del vehículo y programa de capacitación en servicio.';
+  String get homeBookStandardBody => 'Cada chófer es verificado por nuestro equipo: revisamos su licencia, sus documentos y su vehículo antes de su primer viaje.';
 
   @override
   String get homeBookStandardHeadline => 'El estándar que\notros siguen.';

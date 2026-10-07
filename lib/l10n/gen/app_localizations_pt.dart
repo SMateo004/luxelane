@@ -879,7 +879,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeBookScrollCue => 'Role';
 
   @override
-  String get homeBookStandardBody => 'Cada motorista passa por uma rigorosa verificação de antecedentes, inspeção do veículo e um programa de treinamento em atendimento.';
+  String get homeBookStandardBody => 'Cada motorista é verificado pela nossa equipe: revisamos a habilitação, os documentos e o veículo antes da primeira viagem.';
 
   @override
   String get homeBookStandardHeadline => 'O padrão que\nos outros seguem.';

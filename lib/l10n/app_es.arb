@@ -527,7 +527,7 @@
   "@homeBookScrollCue": {
     "description": "Vertical scroll cue next to the page-flip showcase (uppercased)"
   },
-  "homeBookStandardBody": "Cada chófer supera una rigurosa verificación de antecedentes, inspección del vehículo y programa de capacitación en servicio.",
+  "homeBookStandardBody": "Cada chófer es verificado por nuestro equipo: revisamos su licencia, sus documentos y su vehículo antes de su primer viaje.",
   "homeBookStandardHeadline": "El estándar que\notros siguen.",
   "homeBookStandardLabel": "El estándar",
   "homeBookStandardSub": "La promesa que cumplimos",
