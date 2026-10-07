@@ -18,7 +18,7 @@ class _MarqueeBarState extends State<_MarqueeBar>
   static List<String> _items(AppLocalizations l) => [
     l.homeMarqueeFixedPrices, l.homePromiseVerifiedTitle, l.homePromiseCancelTitle,
     l.homeMarqueeBookInMinutes, l.homeMarqueePremiumFleet, l.homePromiseTrackingTitle,
-    l.homeMarqueeAirportTransfers, l.homeMarqueeCorporateTravel, l.homeMarqueePrivacy,
+    l.homeMarqueeAirportTransfers, l.homeMarqueeCorporateTravel, l.homeMarqueeFreeWait,
     l.homeMarqueeHourly,
   ];
 

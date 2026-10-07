@@ -652,7 +652,7 @@ abstract class AppLocalizations {
   /// No description provided for @authBrandTagline.
   ///
   /// In es, this message translates to:
-  /// **'En cualquier parte del mundo.'**
+  /// **'Precio fijo. Chóferes verificados.'**
   String get authBrandTagline;
 
   /// Link text inside authConsentText
@@ -1288,7 +1288,7 @@ abstract class AppLocalizations {
   /// No description provided for @bookingHeroTagline.
   ///
   /// In es, this message translates to:
-  /// **'Precio fijo · Sin sorpresas · Disponible en todo el mundo'**
+  /// **'Precio fijo · Sin sorpresas · Chóferes verificados'**
   String get bookingHeroTagline;
 
   /// Large two-line heading on the web booking page; keep the line break
@@ -1342,7 +1342,7 @@ abstract class AppLocalizations {
   /// No description provided for @bookingIncludedWater.
   ///
   /// In es, this message translates to:
-  /// **'Agua fría de cortesía incluida'**
+  /// **'Espera gratuita incluida: 60 min en aeropuerto, 15 en ciudad'**
   String get bookingIncludedWater;
 
   /// No description provided for @bookingLoadErrorTitle.
@@ -2443,23 +2443,11 @@ abstract class AppLocalizations {
   /// **'Reserva con anticipación'**
   String get homeBookBulletAdvance;
 
-  /// No description provided for @homeBookBulletCentralBilling.
+  /// No description provided for @homeBookBulletDirectContact.
   ///
   /// In es, this message translates to:
-  /// **'Facturación centralizada'**
-  String get homeBookBulletCentralBilling;
-
-  /// No description provided for @homeBookBulletChampagne.
-  ///
-  /// In es, this message translates to:
-  /// **'Servicio de champán disponible'**
-  String get homeBookBulletChampagne;
-
-  /// No description provided for @homeBookBulletClimate.
-  ///
-  /// In es, this message translates to:
-  /// **'Control de clima ambiental'**
-  String get homeBookBulletClimate;
+  /// **'Contacto directo con tu chófer'**
+  String get homeBookBulletDirectContact;
 
   /// No description provided for @homeBookBulletFixedPrice.
   ///
@@ -2467,29 +2455,41 @@ abstract class AppLocalizations {
   /// **'Precio fijo, siempre'**
   String get homeBookBulletFixedPrice;
 
-  /// No description provided for @homeBookBulletLeather.
+  /// No description provided for @homeBookBulletFlightTracking.
   ///
   /// In es, this message translates to:
-  /// **'Interiores de cuero premium'**
-  String get homeBookBulletLeather;
+  /// **'Seguimiento de vuelos'**
+  String get homeBookBulletFlightTracking;
 
-  /// No description provided for @homeBookBulletPolicy.
+  /// No description provided for @homeBookBulletFreeWait.
   ///
   /// In es, this message translates to:
-  /// **'Cumplimiento de política de viajes'**
-  String get homeBookBulletPolicy;
+  /// **'Espera gratuita incluida'**
+  String get homeBookBulletFreeWait;
+
+  /// No description provided for @homeBookBulletGuests.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas para invitados'**
+  String get homeBookBulletGuests;
+
+  /// No description provided for @homeBookBulletMeetGreet.
+  ///
+  /// In es, this message translates to:
+  /// **'Meet & greet con cartel'**
+  String get homeBookBulletMeetGreet;
+
+  /// No description provided for @homeBookBulletReceipts.
+  ///
+  /// In es, this message translates to:
+  /// **'Recibo de cada viaje'**
+  String get homeBookBulletReceipts;
 
   /// No description provided for @homeBookBulletTracking.
   ///
   /// In es, this message translates to:
   /// **'Seguimiento en tiempo real'**
   String get homeBookBulletTracking;
-
-  /// No description provided for @homeBookBulletWifiCharging.
-  ///
-  /// In es, this message translates to:
-  /// **'Wi-Fi y carga inalámbrica'**
-  String get homeBookBulletWifiCharging;
 
   /// No description provided for @homeBookBusinessSub.
   ///
@@ -2506,7 +2506,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeBookExperienceBody.
   ///
   /// In es, this message translates to:
-  /// **'Desde agua fría y listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.'**
+  /// **'Del aeropuerto a tu destino: seguimos tu vuelo, tu chófer te espera con un cartel con tu nombre y la espera está incluida — 60 min en aeropuerto, 15 en ciudad.'**
   String get homeBookExperienceBody;
 
   /// No description provided for @homeBookExperienceHeadline.
@@ -2578,7 +2578,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeBusinessBody.
   ///
   /// In es, this message translates to:
-  /// **'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.'**
+  /// **'Reserva para tu equipo y tus invitados con precio fijo en bolivianos, seguimiento en vivo y un recibo de cada viaje.'**
   String get homeBusinessBody;
 
   /// No description provided for @homeBusinessEyebrow.
@@ -2593,17 +2593,17 @@ abstract class AppLocalizations {
   /// **'Más información'**
   String get homeBusinessLearnMore;
 
-  /// No description provided for @homeBusinessPerkAccountManager.
+  /// No description provided for @homeBusinessPerkFixedPrice.
   ///
   /// In es, this message translates to:
-  /// **'Gerente de cuenta dedicado'**
-  String get homeBusinessPerkAccountManager;
+  /// **'Precio fijo confirmado antes de reservar'**
+  String get homeBusinessPerkFixedPrice;
 
-  /// No description provided for @homeBusinessPerkBilling.
+  /// No description provided for @homeBusinessPerkFlights.
   ///
   /// In es, this message translates to:
-  /// **'Facturación y cobros centralizados'**
-  String get homeBusinessPerkBilling;
+  /// **'Seguimiento de vuelos y recogida ajustada'**
+  String get homeBusinessPerkFlights;
 
   /// No description provided for @homeBusinessPerkGuests.
   ///
@@ -2611,23 +2611,23 @@ abstract class AppLocalizations {
   /// **'Reservas para invitados y equipos'**
   String get homeBusinessPerkGuests;
 
+  /// No description provided for @homeBusinessPerkMeetGreet.
+  ///
+  /// In es, this message translates to:
+  /// **'Meet & greet con cartel en el aeropuerto'**
+  String get homeBusinessPerkMeetGreet;
+
   /// No description provided for @homeBusinessPerkMonitoring.
   ///
   /// In es, this message translates to:
-  /// **'Monitoreo de viajes en tiempo real'**
+  /// **'Seguimiento en vivo de cada viaje'**
   String get homeBusinessPerkMonitoring;
 
-  /// No description provided for @homeBusinessPerkPolicy.
+  /// No description provided for @homeBusinessPerkReceipts.
   ///
   /// In es, this message translates to:
-  /// **'Herramientas de cumplimiento de política de viajes'**
-  String get homeBusinessPerkPolicy;
-
-  /// No description provided for @homeBusinessPerkPriority.
-  ///
-  /// In es, this message translates to:
-  /// **'Reservas prioritarias para ejecutivos'**
-  String get homeBusinessPerkPriority;
+  /// **'Recibo de cada viaje en la app'**
+  String get homeBusinessPerkReceipts;
 
   /// No description provided for @homeBusinessTitle.
   ///
@@ -2689,23 +2689,11 @@ abstract class AppLocalizations {
   /// **'Mercedes V-Class o similar'**
   String get homeFleetModelVan;
 
-  /// Fleet card tag
-  ///
-  /// In es, this message translates to:
-  /// **'{count, plural, =1{1 asiento} other{{count} asientos}}'**
-  String homeFleetSeats(int count);
-
   /// Hint above the horizontal fleet carousel (uppercased)
   ///
   /// In es, this message translates to:
   /// **'Desliza para explorar →'**
   String get homeFleetSwipeHint;
-
-  /// No description provided for @homeFleetTagChampagne.
-  ///
-  /// In es, this message translates to:
-  /// **'Champán'**
-  String get homeFleetTagChampagne;
 
   /// No description provided for @homeFleetTagExtraLuggage.
   ///
@@ -2713,35 +2701,29 @@ abstract class AppLocalizations {
   /// **'Equipaje extra'**
   String get homeFleetTagExtraLuggage;
 
-  /// No description provided for @homeFleetTagLeather.
+  /// No description provided for @homeFleetTagFixedPrice.
   ///
   /// In es, this message translates to:
-  /// **'Interior de cuero'**
-  String get homeFleetTagLeather;
+  /// **'Precio fijo'**
+  String get homeFleetTagFixedPrice;
 
-  /// No description provided for @homeFleetTagPremium.
+  /// No description provided for @homeFleetTagGroups.
   ///
   /// In es, this message translates to:
-  /// **'Premium'**
-  String get homeFleetTagPremium;
+  /// **'Ideal para grupos'**
+  String get homeFleetTagGroups;
 
-  /// No description provided for @homeFleetTagPremiumAudio.
+  /// No description provided for @homeFleetTagTracking.
   ///
   /// In es, this message translates to:
-  /// **'Audio premium'**
-  String get homeFleetTagPremiumAudio;
+  /// **'Seguimiento en vivo'**
+  String get homeFleetTagTracking;
 
-  /// No description provided for @homeFleetTagWifi.
+  /// No description provided for @homeFleetTagVerified.
   ///
   /// In es, this message translates to:
-  /// **'Wi-Fi'**
-  String get homeFleetTagWifi;
-
-  /// No description provided for @homeFleetTagZeroEmissions.
-  ///
-  /// In es, this message translates to:
-  /// **'Cero emisiones'**
-  String get homeFleetTagZeroEmissions;
+  /// **'Chófer verificado'**
+  String get homeFleetTagVerified;
 
   /// No description provided for @homeFleetTitle.
   ///
@@ -2839,6 +2821,12 @@ abstract class AppLocalizations {
   /// **'Precios fijos en Bs'**
   String get homeMarqueeFixedPrices;
 
+  /// No description provided for @homeMarqueeFreeWait.
+  ///
+  /// In es, this message translates to:
+  /// **'Espera gratuita'**
+  String get homeMarqueeFreeWait;
+
   /// No description provided for @homeMarqueeHourly.
   ///
   /// In es, this message translates to:
@@ -2850,12 +2838,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Flota premium'**
   String get homeMarqueePremiumFleet;
-
-  /// No description provided for @homeMarqueePrivacy.
-  ///
-  /// In es, this message translates to:
-  /// **'Privacidad y discreción'**
-  String get homeMarqueePrivacy;
 
   /// Landing nav link (shown uppercased)
   ///

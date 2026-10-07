@@ -187,11 +187,6 @@
     "en": "Corporate travel",
     "pt": "Viagens corporativas"
   },
-  "homeMarqueePrivacy": {
-    "es": "Privacidad y discreción",
-    "en": "Privacy and discretion",
-    "pt": "Privacidade e discrição"
-  },
   "homeMarqueeHourly": {
     "es": "Chófer por horas",
     "en": "Chauffeur by the hour",
@@ -218,51 +213,10 @@
     "en": "Mercedes V-Class or similar",
     "pt": "Mercedes Classe V ou similar"
   },
-  "homeFleetSeats": {
-    "es": "{count, plural, =1{1 asiento} other{{count} asientos}}",
-    "en": "{count, plural, =1{1 seat} other{{count} seats}}",
-    "pt": "{count, plural, =1{1 lugar} other{{count} lugares}}",
-    "description": "Fleet card tag",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "homeFleetTagLeather": {
-    "es": "Interior de cuero",
-    "en": "Leather interior",
-    "pt": "Interior em couro"
-  },
-  "homeFleetTagWifi": {
-    "es": "Wi-Fi",
-    "en": "Wi-Fi",
-    "pt": "Wi-Fi"
-  },
-  "homeFleetTagPremiumAudio": {
-    "es": "Audio premium",
-    "en": "Premium audio",
-    "pt": "Som premium"
-  },
-  "homeFleetTagChampagne": {
-    "es": "Champán",
-    "en": "Champagne",
-    "pt": "Champanhe"
-  },
   "homeFleetTagExtraLuggage": {
     "es": "Equipaje extra",
     "en": "Extra luggage space",
     "pt": "Espaço extra para bagagem"
-  },
-  "homeFleetTagZeroEmissions": {
-    "es": "Cero emisiones",
-    "en": "Zero emissions",
-    "pt": "Emissão zero"
-  },
-  "homeFleetTagPremium": {
-    "es": "Premium",
-    "en": "Premium",
-    "pt": "Premium"
   },
   "homeTrustEyebrow": {
     "es": "La promesa Luxelane",
@@ -368,39 +322,19 @@
     "pt": "Viagens corporativas,\nredefinidas."
   },
   "homeBusinessBody": {
-    "es": "Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.",
-    "en": "Luxelane for Business gives your team premium chauffeur service, with the controls and reporting your finance team expects.",
-    "pt": "O Luxelane para Empresas oferece à sua equipe um serviço de motorista premium, com os controles e relatórios que o seu time financeiro exige."
+    "es": "Reserva para tu equipo y tus invitados con precio fijo en bolivianos, seguimiento en vivo y un recibo de cada viaje.",
+    "en": "Book for your team and your guests with fixed prices in bolivianos, live tracking and a receipt for every ride.",
+    "pt": "Reserve para sua equipe e seus convidados com preço fixo em bolivianos, acompanhamento ao vivo e recibo de cada viagem."
   },
   "homeBusinessLearnMore": {
     "es": "Más información",
     "en": "Learn more",
     "pt": "Saiba mais"
   },
-  "homeBusinessPerkBilling": {
-    "es": "Facturación y cobros centralizados",
-    "en": "Centralized invoicing and billing",
-    "pt": "Faturamento e cobranças centralizados"
-  },
-  "homeBusinessPerkAccountManager": {
-    "es": "Gerente de cuenta dedicado",
-    "en": "Dedicated account manager",
-    "pt": "Gerente de conta dedicado"
-  },
-  "homeBusinessPerkPolicy": {
-    "es": "Herramientas de cumplimiento de política de viajes",
-    "en": "Travel policy compliance tools",
-    "pt": "Ferramentas de conformidade com a política de viagens"
-  },
-  "homeBusinessPerkPriority": {
-    "es": "Reservas prioritarias para ejecutivos",
-    "en": "Priority booking for executives",
-    "pt": "Reservas prioritárias para executivos"
-  },
   "homeBusinessPerkMonitoring": {
-    "es": "Monitoreo de viajes en tiempo real",
-    "en": "Real-time trip monitoring",
-    "pt": "Monitoramento de viagens em tempo real"
+    "es": "Seguimiento en vivo de cada viaje",
+    "en": "Live tracking of every ride",
+    "pt": "Acompanhamento ao vivo de cada viagem"
   },
   "homeBusinessPerkGuests": {
     "es": "Reservas para invitados y equipos",
@@ -502,44 +436,14 @@
     "pt": "Cada detalhe,\ncuidado."
   },
   "homeBookExperienceBody": {
-    "es": "Desde agua fría y listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.",
-    "en": "From chilled water and curated playlists to noise-cancelling privacy — your preferences remembered, every time.",
-    "pt": "De água gelada e playlists selecionadas à privacidade com cancelamento de ruído — suas preferências lembradas, sempre."
-  },
-  "homeBookBulletLeather": {
-    "es": "Interiores de cuero premium",
-    "en": "Premium leather interiors",
-    "pt": "Interiores em couro premium"
-  },
-  "homeBookBulletWifiCharging": {
-    "es": "Wi-Fi y carga inalámbrica",
-    "en": "Wi-Fi and wireless charging",
-    "pt": "Wi-Fi e carregamento sem fio"
-  },
-  "homeBookBulletChampagne": {
-    "es": "Servicio de champán disponible",
-    "en": "Champagne service available",
-    "pt": "Serviço de champanhe disponível"
-  },
-  "homeBookBulletClimate": {
-    "es": "Control de clima ambiental",
-    "en": "Individual climate control",
-    "pt": "Controle de climatização"
+    "es": "Del aeropuerto a tu destino: seguimos tu vuelo, tu chófer te espera con un cartel con tu nombre y la espera está incluida — 60 min en aeropuerto, 15 en ciudad.",
+    "en": "From the airport to your door: we track your flight, your chauffeur meets you with a name sign, and waiting time is included — 60 min at the airport, 15 in the city.",
+    "pt": "Do aeroporto ao seu destino: acompanhamos seu voo, seu motorista espera você com uma placa com seu nome e a espera está incluída — 60 min no aeroporto, 15 na cidade."
   },
   "homeBookBusinessSub": {
     "es": "Viajes corporativos redefinidos",
     "en": "Corporate travel, redefined",
     "pt": "Viagens corporativas redefinidas"
-  },
-  "homeBookBulletCentralBilling": {
-    "es": "Facturación centralizada",
-    "en": "Centralized invoicing",
-    "pt": "Faturamento centralizado"
-  },
-  "homeBookBulletPolicy": {
-    "es": "Cumplimiento de política de viajes",
-    "en": "Travel policy compliance",
-    "pt": "Conformidade com a política de viagens"
   },
   "homeFooterContact": {
     "es": "Contacto",
@@ -617,5 +521,80 @@
         "type": "String"
       }
     }
+  },
+  "homeFleetTagFixedPrice": {
+    "es": "Precio fijo",
+    "en": "Fixed price",
+    "pt": "Preço fixo"
+  },
+  "homeFleetTagVerified": {
+    "es": "Chófer verificado",
+    "en": "Vetted chauffeur",
+    "pt": "Motorista verificado"
+  },
+  "homeFleetTagTracking": {
+    "es": "Seguimiento en vivo",
+    "en": "Live tracking",
+    "pt": "Acompanhamento ao vivo"
+  },
+  "homeFleetTagGroups": {
+    "es": "Ideal para grupos",
+    "en": "Ideal for groups",
+    "pt": "Ideal para grupos"
+  },
+  "homeBusinessPerkFixedPrice": {
+    "es": "Precio fijo confirmado antes de reservar",
+    "en": "Fixed price confirmed before booking",
+    "pt": "Preço fixo confirmado antes de reservar"
+  },
+  "homeBusinessPerkReceipts": {
+    "es": "Recibo de cada viaje en la app",
+    "en": "A receipt for every ride in the app",
+    "pt": "Recibo de cada viagem no app"
+  },
+  "homeBusinessPerkFlights": {
+    "es": "Seguimiento de vuelos y recogida ajustada",
+    "en": "Flight tracking with adjusted pickup",
+    "pt": "Monitoramento de voos com embarque ajustado"
+  },
+  "homeBusinessPerkMeetGreet": {
+    "es": "Meet & greet con cartel en el aeropuerto",
+    "en": "Meet & greet with a name sign at the airport",
+    "pt": "Meet & greet com placa no aeroporto"
+  },
+  "homeBookBulletMeetGreet": {
+    "es": "Meet & greet con cartel",
+    "en": "Meet & greet with a name sign",
+    "pt": "Meet & greet com placa"
+  },
+  "homeBookBulletFlightTracking": {
+    "es": "Seguimiento de vuelos",
+    "en": "Flight tracking",
+    "pt": "Monitoramento de voos"
+  },
+  "homeBookBulletFreeWait": {
+    "es": "Espera gratuita incluida",
+    "en": "Free waiting included",
+    "pt": "Espera grátis incluída"
+  },
+  "homeBookBulletDirectContact": {
+    "es": "Contacto directo con tu chófer",
+    "en": "Direct contact with your chauffeur",
+    "pt": "Contato direto com seu motorista"
+  },
+  "homeBookBulletGuests": {
+    "es": "Reservas para invitados",
+    "en": "Bookings for guests",
+    "pt": "Reservas para convidados"
+  },
+  "homeBookBulletReceipts": {
+    "es": "Recibo de cada viaje",
+    "en": "A receipt for every ride",
+    "pt": "Recibo de cada viagem"
+  },
+  "homeMarqueeFreeWait": {
+    "es": "Espera gratuita",
+    "en": "Free waiting",
+    "pt": "Espera grátis"
   }
 }

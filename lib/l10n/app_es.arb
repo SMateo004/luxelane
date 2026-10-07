@@ -210,7 +210,7 @@
   "@authBrandHeadline": {
     "description": "Two-line web brand panel headline; keep the line break"
   },
-  "authBrandTagline": "En cualquier parte del mundo.",
+  "authBrandTagline": "Precio fijo. Chóferes verificados.",
   "authConsentPrivacyLink": "Política de privacidad",
   "@authConsentPrivacyLink": {
     "description": "Link text inside authConsentText"
@@ -405,7 +405,7 @@
   "bookingGuestTitleMrs": "Sra.",
   "bookingGuestTitleMs": "Srta.",
   "bookingGuestTitleProf": "Prof.",
-  "bookingHeroTagline": "Precio fijo · Sin sorpresas · Disponible en todo el mundo",
+  "bookingHeroTagline": "Precio fijo · Sin sorpresas · Chóferes verificados",
   "bookingHeroTitle": "Elige tu\nexperiencia",
   "@bookingHeroTitle": {
     "description": "Large two-line heading on the web booking page; keep the line break"
@@ -431,7 +431,7 @@
       }
     }
   },
-  "bookingIncludedWater": "Agua fría de cortesía incluida",
+  "bookingIncludedWater": "Espera gratuita incluida: 60 min en aeropuerto, 15 en ciudad",
   "bookingLoadErrorTitle": "No pudimos cargar tu reserva",
   "bookingLuggage": "Equipaje",
   "bookingLuggageCarryOn": "{count} x De mano",
@@ -814,17 +814,17 @@
     "description": "Booking bar submit button (uppercased)"
   },
   "homeBookBulletAdvance": "Reserva con anticipación",
-  "homeBookBulletCentralBilling": "Facturación centralizada",
-  "homeBookBulletChampagne": "Servicio de champán disponible",
-  "homeBookBulletClimate": "Control de clima ambiental",
+  "homeBookBulletDirectContact": "Contacto directo con tu chófer",
   "homeBookBulletFixedPrice": "Precio fijo, siempre",
-  "homeBookBulletLeather": "Interiores de cuero premium",
-  "homeBookBulletPolicy": "Cumplimiento de política de viajes",
+  "homeBookBulletFlightTracking": "Seguimiento de vuelos",
+  "homeBookBulletFreeWait": "Espera gratuita incluida",
+  "homeBookBulletGuests": "Reservas para invitados",
+  "homeBookBulletMeetGreet": "Meet & greet con cartel",
+  "homeBookBulletReceipts": "Recibo de cada viaje",
   "homeBookBulletTracking": "Seguimiento en tiempo real",
-  "homeBookBulletWifiCharging": "Wi-Fi y carga inalámbrica",
   "homeBookBusinessSub": "Viajes corporativos redefinidos",
   "homeBookCoverSubtitle": "Servicio de chófer premium",
-  "homeBookExperienceBody": "Desde agua fría y listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.",
+  "homeBookExperienceBody": "Del aeropuerto a tu destino: seguimos tu vuelo, tu chófer te espera con un cartel con tu nombre y la espera está incluida — 60 min en aeropuerto, 15 en ciudad.",
   "homeBookExperienceHeadline": "Cada detalle,\ncuidado.",
   "homeBookExperienceLabel": "La experiencia",
   "homeBookExperienceSub": "Cada detalle considerado",
@@ -845,15 +845,15 @@
   "homeBookStandardLabel": "El estándar",
   "homeBookStandardSub": "La promesa que cumplimos",
   "homeBookStandardTag": "El estándar Luxelane",
-  "homeBusinessBody": "Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.",
+  "homeBusinessBody": "Reserva para tu equipo y tus invitados con precio fijo en bolivianos, seguimiento en vivo y un recibo de cada viaje.",
   "homeBusinessEyebrow": "Para empresas",
   "homeBusinessLearnMore": "Más información",
-  "homeBusinessPerkAccountManager": "Gerente de cuenta dedicado",
-  "homeBusinessPerkBilling": "Facturación y cobros centralizados",
+  "homeBusinessPerkFixedPrice": "Precio fijo confirmado antes de reservar",
+  "homeBusinessPerkFlights": "Seguimiento de vuelos y recogida ajustada",
   "homeBusinessPerkGuests": "Reservas para invitados y equipos",
-  "homeBusinessPerkMonitoring": "Monitoreo de viajes en tiempo real",
-  "homeBusinessPerkPolicy": "Herramientas de cumplimiento de política de viajes",
-  "homeBusinessPerkPriority": "Reservas prioritarias para ejecutivos",
+  "homeBusinessPerkMeetGreet": "Meet & greet con cartel en el aeropuerto",
+  "homeBusinessPerkMonitoring": "Seguimiento en vivo de cada viaje",
+  "homeBusinessPerkReceipts": "Recibo de cada viaje en la app",
   "homeBusinessTitle": "Viajes corporativos,\nredefinidos.",
   "homeCtaEyebrow": "Cuando quieras. Donde quieras.",
   "@homeCtaEyebrow": {
@@ -881,26 +881,15 @@
   "homeErrorPickupRequired": "Ingresa un lugar de recogida",
   "homeFleetEyebrow": "Nuestra flota",
   "homeFleetModelVan": "Mercedes V-Class o similar",
-  "homeFleetSeats": "{count, plural, =1{1 asiento} other{{count} asientos}}",
-  "@homeFleetSeats": {
-    "description": "Fleet card tag",
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
   "homeFleetSwipeHint": "Desliza para explorar →",
   "@homeFleetSwipeHint": {
     "description": "Hint above the horizontal fleet carousel (uppercased)"
   },
-  "homeFleetTagChampagne": "Champán",
   "homeFleetTagExtraLuggage": "Equipaje extra",
-  "homeFleetTagLeather": "Interior de cuero",
-  "homeFleetTagPremium": "Premium",
-  "homeFleetTagPremiumAudio": "Audio premium",
-  "homeFleetTagWifi": "Wi-Fi",
-  "homeFleetTagZeroEmissions": "Cero emisiones",
+  "homeFleetTagFixedPrice": "Precio fijo",
+  "homeFleetTagGroups": "Ideal para grupos",
+  "homeFleetTagTracking": "Seguimiento en vivo",
+  "homeFleetTagVerified": "Chófer verificado",
   "homeFleetTitle": "Vehículos premium,\nsin excepciones.",
   "homeFooterContact": "Contacto",
   "homeFooterCopyright": "© {year} Luxelane. Todos los derechos reservados.",
@@ -941,9 +930,9 @@
   "homeMarqueeBookInMinutes": "Reserva en minutos",
   "homeMarqueeCorporateTravel": "Viajes corporativos",
   "homeMarqueeFixedPrices": "Precios fijos en Bs",
+  "homeMarqueeFreeWait": "Espera gratuita",
   "homeMarqueeHourly": "Chófer por horas",
   "homeMarqueePremiumFleet": "Flota premium",
-  "homeMarqueePrivacy": "Privacidad y discreción",
   "homeNavBusiness": "Para empresas",
   "@homeNavBusiness": {
     "description": "Landing nav link (shown uppercased)"

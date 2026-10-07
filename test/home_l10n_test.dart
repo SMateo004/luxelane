@@ -118,15 +118,17 @@ void main() {
             locale: const Locale('en'), width: width);
         expect(find.text('OUR FLEET'), findsOneWidget);
         expect(find.text('Business Class'), findsOneWidget);
-        expect(find.text('Leather interior'), findsOneWidget);
-        expect(find.text('4 seats'), findsWidgets);
+        expect(find.text('Vetted chauffeur'), findsOneWidget);
+        expect(find.text('3 passengers'), findsWidgets);
+        // Only bookable classes are advertised.
+        expect(find.text('Electric'), findsNothing);
         expect(tester.takeException(), isNull);
 
         await _pumpSection(tester, WebHomeSection.fleet,
             locale: const Locale('pt'), width: width);
         expect(find.text('NOSSA FROTA'), findsOneWidget);
-        expect(find.text('Interior em couro'), findsOneWidget);
-        expect(find.text('4 lugares'), findsWidgets);
+        expect(find.text('Motorista verificado'), findsOneWidget);
+        expect(find.text('3 passageiros'), findsWidgets);
         expect(find.text('Mercedes Classe E ou similar'), findsOneWidget);
         expect(tester.takeException(), isNull);
       });

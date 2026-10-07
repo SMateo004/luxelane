@@ -10,10 +10,9 @@ class _FleetSection extends StatelessWidget {
   final VoidCallback onBook;
 
   static List<_FleetItem> _vehicles(AppLocalizations l) => [
-    _FleetItem(cls: VehicleClass.business.localizedLabel(l),    model: VehicleClass.business.localizedDescription(l),   asset: 'assets/images/vehicles/business/car.png',    tags: [l.homeFleetSeats(4), l.homeFleetTagLeather, l.homeFleetTagWifi],              accent: LuxPalette.champagne),
-    _FleetItem(cls: VehicleClass.firstClass.localizedLabel(l),  model: VehicleClass.firstClass.localizedDescription(l), asset: 'assets/images/vehicles/first_class/car.png', tags: [l.homeFleetSeats(4), l.homeFleetTagPremiumAudio, l.homeFleetTagChampagne],   accent: LuxPalette.champagneLight),
-    _FleetItem(cls: VehicleClass.businessVan.localizedLabel(l), model: l.homeFleetModelVan,                             asset: 'assets/images/vehicles/van/car.png',          tags: [l.homeFleetSeats(7), l.homeFleetTagExtraLuggage, l.homeFleetTagWifi],         accent: LuxPalette.champagneDeep),
-    _FleetItem(cls: VehicleClass.electric.localizedLabel(l),    model: VehicleClass.electric.localizedDescription(l),   asset: 'assets/images/vehicles/electric/car.png',    tags: [l.homeFleetSeats(4), l.homeFleetTagZeroEmissions, l.homeFleetTagPremium],     accent: LuxPalette.success),
+    _FleetItem(cls: VehicleClass.business.localizedLabel(l),    model: VehicleClass.business.localizedDescription(l),   asset: 'assets/images/vehicles/business/car.png',    tags: [l.unitPassengers(VehicleClass.business.capacity), l.homeFleetTagFixedPrice, l.homeFleetTagVerified],              accent: LuxPalette.champagne),
+    _FleetItem(cls: VehicleClass.firstClass.localizedLabel(l),  model: VehicleClass.firstClass.localizedDescription(l), asset: 'assets/images/vehicles/first_class/car.png', tags: [l.unitPassengers(VehicleClass.firstClass.capacity), l.homeFleetTagFixedPrice, l.homeFleetTagTracking],   accent: LuxPalette.champagneLight),
+    _FleetItem(cls: VehicleClass.businessVan.localizedLabel(l), model: l.homeFleetModelVan,                             asset: 'assets/images/vehicles/van/car.png',          tags: [l.unitPassengers(VehicleClass.businessVan.capacity), l.homeFleetTagExtraLuggage, l.homeFleetTagGroups],         accent: LuxPalette.champagneDeep),
   ];
 
   @override

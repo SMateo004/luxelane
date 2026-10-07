@@ -50,7 +50,7 @@ List<_BookPageData> _bookPages(AppLocalizations l) {
       photoPath: 'assets/images/home/immersive_bg.jpg',
       tag: l.homeBookExperienceLabel, headline: l.homeBookExperienceHeadline,
       body: l.homeBookExperienceBody,
-      bullets: [l.homeBookBulletLeather, l.homeBookBulletWifiCharging, l.homeBookBulletChampagne, l.homeBookBulletClimate],
+      bullets: [l.homeBookBulletMeetGreet, l.homeBookBulletFlightTracking, l.homeBookBulletFreeWait, l.homeBookBulletDirectContact],
     ),
     // Index 3: For business (content page 03)
     _BookPageData(
@@ -58,7 +58,7 @@ List<_BookPageData> _bookPages(AppLocalizations l) {
       photoPath: 'assets/images/home/business_photo.jpg',
       tag: l.homeBusinessEyebrow, headline: l.homeBusinessTitle,
       body: l.homeBusinessBody,
-      bullets: [l.homeBookBulletCentralBilling, l.homeBusinessPerkAccountManager, l.homeBookBulletPolicy, l.homeBusinessPerkPriority],
+      bullets: [l.homeBookBulletGuests, l.homeBookBulletReceipts, l.homeBookBulletFixedPrice, l.homeBookBulletTracking],
     ),
     // Index 4: Back to cover (cierre del libro)
     cover,

@@ -321,7 +321,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get authBrandHeadline => 'Serviço de motorista\npremium.';
 
   @override
-  String get authBrandTagline => 'Em qualquer lugar do mundo.';
+  String get authBrandTagline => 'Preço fixo. Motoristas verificados.';
 
   @override
   String get authConsentPrivacyLink => 'Política de Privacidade';
@@ -653,7 +653,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get bookingGuestTitleProf => 'Prof.';
 
   @override
-  String get bookingHeroTagline => 'Preço fixo · Sem surpresas · Disponível no mundo todo';
+  String get bookingHeroTagline => 'Preço fixo · Sem surpresas · Motoristas verificados';
 
   @override
   String get bookingHeroTitle => 'Escolha sua\nexperiência';
@@ -684,7 +684,7 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
-  String get bookingIncludedWater => 'Água gelada de cortesia';
+  String get bookingIncludedWater => 'Espera grátis incluída: 60 min no aeroporto, 15 na cidade';
 
   @override
   String get bookingLoadErrorTitle => 'Não conseguimos carregar sua reserva';
@@ -1286,28 +1286,28 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeBookBulletAdvance => 'Reserve com antecedência';
 
   @override
-  String get homeBookBulletCentralBilling => 'Faturamento centralizado';
-
-  @override
-  String get homeBookBulletChampagne => 'Serviço de champanhe disponível';
-
-  @override
-  String get homeBookBulletClimate => 'Controle de climatização';
+  String get homeBookBulletDirectContact => 'Contato direto com seu motorista';
 
   @override
   String get homeBookBulletFixedPrice => 'Preço fixo, sempre';
 
   @override
-  String get homeBookBulletLeather => 'Interiores em couro premium';
+  String get homeBookBulletFlightTracking => 'Monitoramento de voos';
 
   @override
-  String get homeBookBulletPolicy => 'Conformidade com a política de viagens';
+  String get homeBookBulletFreeWait => 'Espera grátis incluída';
+
+  @override
+  String get homeBookBulletGuests => 'Reservas para convidados';
+
+  @override
+  String get homeBookBulletMeetGreet => 'Meet & greet com placa';
+
+  @override
+  String get homeBookBulletReceipts => 'Recibo de cada viagem';
 
   @override
   String get homeBookBulletTracking => 'Acompanhamento em tempo real';
-
-  @override
-  String get homeBookBulletWifiCharging => 'Wi-Fi e carregamento sem fio';
 
   @override
   String get homeBookBusinessSub => 'Viagens corporativas redefinidas';
@@ -1316,7 +1316,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeBookCoverSubtitle => 'Serviço de motorista premium';
 
   @override
-  String get homeBookExperienceBody => 'De água gelada e playlists selecionadas à privacidade com cancelamento de ruído — suas preferências lembradas, sempre.';
+  String get homeBookExperienceBody => 'Do aeroporto ao seu destino: acompanhamos seu voo, seu motorista espera você com uma placa com seu nome e a espera está incluída — 60 min no aeroporto, 15 na cidade.';
 
   @override
   String get homeBookExperienceHeadline => 'Cada detalhe,\ncuidado.';
@@ -1352,7 +1352,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeBookStandardTag => 'O padrão Luxelane';
 
   @override
-  String get homeBusinessBody => 'O Luxelane para Empresas oferece à sua equipe um serviço de motorista premium, com os controles e relatórios que o seu time financeiro exige.';
+  String get homeBusinessBody => 'Reserve para sua equipe e seus convidados com preço fixo em bolivianos, acompanhamento ao vivo e recibo de cada viagem.';
 
   @override
   String get homeBusinessEyebrow => 'Para empresas';
@@ -1361,22 +1361,22 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeBusinessLearnMore => 'Saiba mais';
 
   @override
-  String get homeBusinessPerkAccountManager => 'Gerente de conta dedicado';
+  String get homeBusinessPerkFixedPrice => 'Preço fixo confirmado antes de reservar';
 
   @override
-  String get homeBusinessPerkBilling => 'Faturamento e cobranças centralizados';
+  String get homeBusinessPerkFlights => 'Monitoramento de voos com embarque ajustado';
 
   @override
   String get homeBusinessPerkGuests => 'Reservas para convidados e equipes';
 
   @override
-  String get homeBusinessPerkMonitoring => 'Monitoramento de viagens em tempo real';
+  String get homeBusinessPerkMeetGreet => 'Meet & greet com placa no aeroporto';
 
   @override
-  String get homeBusinessPerkPolicy => 'Ferramentas de conformidade com a política de viagens';
+  String get homeBusinessPerkMonitoring => 'Acompanhamento ao vivo de cada viagem';
 
   @override
-  String get homeBusinessPerkPriority => 'Reservas prioritárias para executivos';
+  String get homeBusinessPerkReceipts => 'Recibo de cada viagem no app';
 
   @override
   String get homeBusinessTitle => 'Viagens corporativas,\nredefinidas.';
@@ -1411,39 +1411,22 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeFleetModelVan => 'Mercedes Classe V ou similar';
 
   @override
-  String homeFleetSeats(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count lugares',
-      one: '1 lugar',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String get homeFleetSwipeHint => 'Deslize para explorar →';
-
-  @override
-  String get homeFleetTagChampagne => 'Champanhe';
 
   @override
   String get homeFleetTagExtraLuggage => 'Espaço extra para bagagem';
 
   @override
-  String get homeFleetTagLeather => 'Interior em couro';
+  String get homeFleetTagFixedPrice => 'Preço fixo';
 
   @override
-  String get homeFleetTagPremium => 'Premium';
+  String get homeFleetTagGroups => 'Ideal para grupos';
 
   @override
-  String get homeFleetTagPremiumAudio => 'Som premium';
+  String get homeFleetTagTracking => 'Acompanhamento ao vivo';
 
   @override
-  String get homeFleetTagWifi => 'Wi-Fi';
-
-  @override
-  String get homeFleetTagZeroEmissions => 'Emissão zero';
+  String get homeFleetTagVerified => 'Motorista verificado';
 
   @override
   String get homeFleetTitle => 'Veículos premium,\nsem exceções.';
@@ -1498,13 +1481,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeMarqueeFixedPrices => 'Preços fixos em Bs';
 
   @override
+  String get homeMarqueeFreeWait => 'Espera grátis';
+
+  @override
   String get homeMarqueeHourly => 'Motorista por hora';
 
   @override
   String get homeMarqueePremiumFleet => 'Frota premium';
-
-  @override
-  String get homeMarqueePrivacy => 'Privacidade e discrição';
 
   @override
   String get homeNavBusiness => 'Para empresas';

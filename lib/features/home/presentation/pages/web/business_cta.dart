@@ -13,12 +13,12 @@ class _BusinessSection extends StatelessWidget {
   static const _videoAsset = 'assets/videos/business_bg.mp4';
 
   static List<String> _perks(AppLocalizations l) => [
-    l.homeBusinessPerkBilling,
-    l.homeBusinessPerkAccountManager,
-    l.homeBusinessPerkPolicy,
-    l.homeBusinessPerkPriority,
-    l.homeBusinessPerkMonitoring,
     l.homeBusinessPerkGuests,
+    l.homeBusinessPerkFixedPrice,
+    l.homeBusinessPerkMonitoring,
+    l.homeBusinessPerkReceipts,
+    l.homeBusinessPerkFlights,
+    l.homeBusinessPerkMeetGreet,
   ];
 
   Widget _perksPanel(AppLocalizations l, double hPad, double vPad) => Stack(

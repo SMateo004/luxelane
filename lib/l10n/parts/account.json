@@ -1,178 +1,1017 @@
 {
-  "authLoginTitle": {"es": "Iniciar sesión", "en": "Sign in", "pt": "Entrar", "description": "Login page title and submit button"},
-  "authLoginWelcomeBack": {"es": "Bienvenido de nuevo a Luxelane.", "en": "Welcome back to Luxelane.", "pt": "Que bom ter você de volta à Luxelane."},
-  "authLoginHeadline": {"es": "Bienvenido\nde nuevo.", "en": "Welcome\nback.", "pt": "Que bom\nte ver.", "description": "Large two-line mobile login headline; keep the line break"},
-  "authLoginSubtitle": {"es": "Inicia sesión en tu cuenta", "en": "Sign in to your account", "pt": "Entre na sua conta"},
-  "authEmailLabel": {"es": "Correo electrónico", "en": "Email", "pt": "E-mail"},
-  "authEmailInvalid": {"es": "Ingresa un correo válido", "en": "Enter a valid email address", "pt": "Digite um e-mail válido"},
-  "authPasswordLabel": {"es": "Contraseña", "en": "Password", "pt": "Senha"},
-  "authPasswordTooShort": {"es": "Mínimo {count} caracteres", "en": "At least {count} characters", "pt": "Mínimo de {count} caracteres", "placeholders": {"count": {"type": "int"}}},
-  "authForgotPassword": {"es": "¿Olvidaste tu contraseña?", "en": "Forgot your password?", "pt": "Esqueceu sua senha?"},
-  "authResetEmailSent": {"es": "Correo de restablecimiento enviado", "en": "Password reset email sent", "pt": "E-mail de redefinição de senha enviado"},
-  "authResetNeedsEmail": {"es": "Ingresa tu correo para restablecer la contraseña", "en": "Enter your email to reset your password", "pt": "Digite seu e-mail para redefinir a senha"},
-  "authNoAccount": {"es": "¿No tienes cuenta?", "en": "Don't have an account?", "pt": "Não tem uma conta?"},
-  "authCreateOne": {"es": "Crear una", "en": "Create one", "pt": "Criar conta"},
-  "authBrandHeadline": {"es": "Servicio de chófer\npremium.", "en": "Premium chauffeur\nservice.", "pt": "Serviço de motorista\npremium.", "description": "Two-line web brand panel headline; keep the line break"},
-  "authBrandTagline": {"es": "En cualquier parte del mundo.", "en": "Anywhere in the world.", "pt": "Em qualquer lugar do mundo."},
-  "authRegisterTitle": {"es": "Crear cuenta", "en": "Create account", "pt": "Criar conta", "description": "Register page title (web) and submit button"},
-  "authRegisterHeadline": {"es": "Crear cuenta.", "en": "Create an account.", "pt": "Crie sua conta.", "description": "Mobile register headline"},
-  "authRegisterSubtitle": {"es": "Únete a Luxelane hoy", "en": "Join Luxelane today", "pt": "Junte-se à Luxelane hoje"},
-  "authFullNameLabel": {"es": "Nombre completo", "en": "Full name", "pt": "Nome completo"},
-  "authPhoneLabel": {"es": "Teléfono", "en": "Phone", "pt": "Telefone"},
-  "authConsentText": {"es": "Acepto los {terms} y la {privacy}", "en": "I accept the {terms} and the {privacy}", "pt": "Aceito os {terms} e a {privacy}", "description": "Register consent sentence. {terms} is replaced by the authConsentTermsLink link text and {privacy} by authConsentPrivacyLink; adjust articles and word order around them as the language needs", "placeholders": {"terms": {"type": "String"}, "privacy": {"type": "String"}}},
-  "authConsentTermsLink": {"es": "Términos y condiciones", "en": "Terms and Conditions", "pt": "Termos e Condições", "description": "Link text inside authConsentText"},
-  "authConsentPrivacyLink": {"es": "Política de privacidad", "en": "Privacy Policy", "pt": "Política de Privacidade", "description": "Link text inside authConsentText"},
-  "authConsentRequired": {"es": "Debes aceptar los términos y la política de privacidad", "en": "You need to accept the terms and the privacy policy", "pt": "Você precisa aceitar os termos e a política de privacidade"},
-  "authAlreadyHaveAccount": {"es": "¿Ya tienes cuenta?", "en": "Already have an account?", "pt": "Já tem uma conta?"},
-  "authSignInLink": {"es": "Inicia sesión", "en": "Sign in", "pt": "Entrar"},
-  "authErrorWrongCredentials": {"es": "Correo o contraseña incorrectos", "en": "Incorrect email or password", "pt": "E-mail ou senha incorretos"},
-  "authErrorUserNotFound": {"es": "No existe una cuenta con este correo", "en": "There's no account with this email", "pt": "Não existe uma conta com este e-mail"},
-  "authErrorEmailInUse": {"es": "Ya existe una cuenta con este correo", "en": "An account with this email already exists", "pt": "Já existe uma conta com este e-mail"},
-  "authErrorWeakPassword": {"es": "La contraseña es demasiado débil. Usa al menos 6 caracteres.", "en": "That password is too weak. Use at least 6 characters.", "pt": "A senha é muito fraca. Use pelo menos 6 caracteres."},
-  "authErrorInvalidEmail": {"es": "El correo electrónico no es válido", "en": "That email address isn't valid", "pt": "Esse e-mail não é válido"},
-  "authErrorUserDisabled": {"es": "Esta cuenta está desactivada. Contáctanos para más información.", "en": "This account has been disabled. Contact us for more information.", "pt": "Esta conta foi desativada. Entre em contato conosco para mais informações."},
-  "authErrorTooManyRequests": {"es": "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.", "en": "Too many attempts. Wait a few minutes and try again.", "pt": "Muitas tentativas. Aguarde alguns minutos e tente novamente."},
-  "authErrorGeneric": {"es": "No pudimos completar la solicitud. Inténtalo de nuevo.", "en": "We couldn't complete your request. Please try again.", "pt": "Não foi possível concluir a solicitação. Tente novamente."},
-  "profileTitle": {"es": "Perfil", "en": "Profile", "pt": "Perfil"},
-  "profileLoadError": {"es": "No pudimos cargar tu perfil", "en": "We couldn't load your profile", "pt": "Não foi possível carregar seu perfil"},
-  "profileSectionAccount": {"es": "Cuenta", "en": "Account", "pt": "Conta"},
-  "profileSectionStats": {"es": "Estadísticas", "en": "Stats", "pt": "Estatísticas"},
-  "profileStatTrips": {"es": "Viajes", "en": "Trips", "pt": "Viagens"},
-  "profileStatRating": {"es": "Calificación", "en": "Rating", "pt": "Avaliação"},
-  "profileSectionHelp": {"es": "Ayuda y legal", "en": "Help & legal", "pt": "Ajuda e informações legais"},
-  "profileContactHelp": {"es": "Contacto y ayuda", "en": "Contact & help", "pt": "Contato e ajuda"},
-  "profileSignOut": {"es": "Cerrar sesión", "en": "Sign out", "pt": "Sair"},
-  "profileDeleteAccount": {"es": "Eliminar cuenta", "en": "Delete account", "pt": "Excluir conta"},
-  "profileVersion": {"es": "Luxelane v{version}", "en": "Luxelane v{version}", "pt": "Luxelane v{version}", "placeholders": {"version": {"type": "String"}}},
-  "profileUpdated": {"es": "Perfil actualizado", "en": "Profile updated", "pt": "Perfil atualizado"},
-  "profileEditTitle": {"es": "Editar perfil", "en": "Edit profile", "pt": "Editar perfil"},
-  "profileNameLabel": {"es": "Nombre", "en": "Name", "pt": "Nome"},
-  "profileSaveChanges": {"es": "Guardar cambios", "en": "Save changes", "pt": "Salvar alterações"},
-  "paymentsCardIncomplete": {"es": "Ingresa los datos completos de la tarjeta", "en": "Enter your full card details", "pt": "Preencha todos os dados do cartão"},
-  "paymentsAccountNotSetUp": {"es": "La cuenta no está configurada para pagos", "en": "Your account isn't set up for payments yet", "pt": "Sua conta ainda não está configurada para pagamentos"},
-  "paymentsCardAdded": {"es": "Tarjeta agregada exitosamente", "en": "Card added successfully", "pt": "Cartão adicionado com sucesso"},
-  "paymentsError": {"es": "No pudimos completar la operación con tu tarjeta. Inténtalo de nuevo.", "en": "We couldn't complete that card operation. Please try again.", "pt": "Não foi possível concluir a operação com o cartão. Tente novamente."},
-  "paymentsAddMethodTitle": {"es": "Agregar método de pago", "en": "Add payment method", "pt": "Adicionar forma de pagamento"},
-  "paymentsCardDetails": {"es": "Datos de la tarjeta", "en": "Card details", "pt": "Dados do cartão"},
-  "paymentsSecuredPci": {"es": "Protegido por Stripe · Cumplimiento PCI DSS", "en": "Secured by Stripe · PCI DSS compliant", "pt": "Protegido pela Stripe · Em conformidade com o PCI DSS"},
-  "paymentsAddCard": {"es": "Agregar tarjeta", "en": "Add card", "pt": "Adicionar cartão"},
-  "paymentsMethodsTitle": {"es": "Métodos de pago", "en": "Payment methods", "pt": "Formas de pagamento"},
-  "paymentsAdd": {"es": "Agregar", "en": "Add", "pt": "Adicionar"},
-  "paymentsSavedCards": {"es": "Tarjetas guardadas", "en": "Saved cards", "pt": "Cartões salvos"},
-  "paymentsAddNewCard": {"es": "Agregar nueva tarjeta", "en": "Add new card", "pt": "Adicionar novo cartão"},
-  "paymentsSecured": {"es": "Protegido por Stripe", "en": "Secured by Stripe", "pt": "Protegido pela Stripe"},
-  "paymentsEmptyTitle": {"es": "Sin métodos de pago", "en": "No payment methods", "pt": "Nenhuma forma de pagamento"},
-  "paymentsEmptyBody": {"es": "Agrega una tarjeta para reservar viajes", "en": "Add a card to book rides", "pt": "Adicione um cartão para reservar viagens"},
-  "paymentsCardFallback": {"es": "Tarjeta", "en": "Card", "pt": "Cartão", "description": "Shown when the card brand is unknown"},
-  "paymentsCardExpires": {"es": "Vence {month}/{year}", "en": "Expires {month}/{year}", "pt": "Validade {month}/{year}", "placeholders": {"month": {"type": "String"}, "year": {"type": "String"}}},
-  "paymentsDefault": {"es": "Predeterminada", "en": "Default", "pt": "Padrão", "description": "Badge on the default card"},
-  "paymentsSetDefault": {"es": "Predeterminar", "en": "Set default", "pt": "Tornar padrão", "description": "Short button to make a card the default; keep it short"},
-  "paymentsRemoveCard": {"es": "Eliminar tarjeta", "en": "Remove card", "pt": "Remover cartão"},
-  "adminTitle": {"es": "Administrador", "en": "Admin", "pt": "Administrador"},
-  "adminPanelBadge": {"es": "Panel admin", "en": "Admin panel", "pt": "Painel admin"},
-  "adminSectionDashboard": {"es": "Panel", "en": "Dashboard", "pt": "Painel"},
-  "adminSectionBookings": {"es": "Reservas", "en": "Bookings", "pt": "Reservas"},
-  "adminSectionDrivers": {"es": "Chóferes", "en": "Chauffeurs", "pt": "Motoristas"},
-  "adminSectionVehicles": {"es": "Vehículos", "en": "Vehicles", "pt": "Veículos"},
-  "adminSectionUsers": {"es": "Usuarios", "en": "Users", "pt": "Usuários"},
-  "adminSectionPricing": {"es": "Precios", "en": "Pricing", "pt": "Preços"},
-  "adminSectionAudit": {"es": "Auditoría", "en": "Audit log", "pt": "Auditoria"},
-  "adminSectionSettings": {"es": "Configuración", "en": "Settings", "pt": "Configurações"},
-  "adminSignOutConfirm": {"es": "¿Seguro que quieres cerrar sesión del panel de administración?", "en": "Are you sure you want to sign out of the admin dashboard?", "pt": "Tem certeza de que deseja sair do painel de administração?"},
-  "adminMaintenanceBanner": {"es": "MODO MANTENIMIENTO ACTIVO — Los pasajeros no pueden reservar nuevos viajes.", "en": "MAINTENANCE MODE ON — Passengers can't book new rides.", "pt": "MODO DE MANUTENÇÃO ATIVO — Os passageiros não podem reservar novas viagens."},
-  "adminDisable": {"es": "Deshabilitar", "en": "Disable", "pt": "Desativar"},
-  "adminOverview": {"es": "Resumen", "en": "Overview", "pt": "Visão geral"},
-  "adminKpiTotalRevenue": {"es": "Ingresos totales", "en": "Total revenue", "pt": "Receita total"},
-  "adminKpiToday": {"es": "Hoy: {amount}", "en": "Today: {amount}", "pt": "Hoje: {amount}", "placeholders": {"amount": {"type": "String"}}},
-  "adminKpiCompleted": {"es": "Viajes completados", "en": "Completed rides", "pt": "Viagens concluídas"},
-  "adminKpiInProgress": {"es": "{count} en progreso", "en": "{count} in progress", "pt": "{count} em andamento", "placeholders": {"count": {"type": "int"}}},
-  "adminKpiPending": {"es": "Reservas pendientes", "en": "Pending bookings", "pt": "Reservas pendentes"},
-  "adminKpiAwaitingDriver": {"es": "Esperando chófer", "en": "Awaiting chauffeur", "pt": "Aguardando motorista"},
-  "adminKpiUsers": {"es": "Usuarios registrados", "en": "Registered users", "pt": "Usuários cadastrados"},
-  "adminKpiDriversCount": {"es": "{count, plural, =1{1 chófer} other{{count} chóferes}}", "en": "{count, plural, =1{1 chauffeur} other{{count} chauffeurs}}", "pt": "{count, plural, =1{1 motorista} other{{count} motoristas}}", "placeholders": {"count": {"type": "int"}}},
-  "adminBusinessPerformance": {"es": "Rendimiento del negocio", "en": "Business performance", "pt": "Desempenho do negócio"},
-  "adminRevenueTrend": {"es": "Tendencia de ingresos 7 días (Bs)", "en": "7-day revenue trend (Bs)", "pt": "Tendência de receita em 7 dias (Bs)"},
-  "adminRecentActivity": {"es": "Actividad reciente", "en": "Recent activity", "pt": "Atividade recente"},
-  "adminNoBookings": {"es": "No se encontraron reservas", "en": "No bookings found", "pt": "Nenhuma reserva encontrada"},
-  "adminFilterAll": {"es": "Todos", "en": "All", "pt": "Todas"},
-  "adminBookingRider": {"es": "Pasajero: {name}", "en": "Passenger: {name}", "pt": "Passageiro: {name}", "placeholders": {"name": {"type": "String"}}},
-  "adminBookingDriver": {"es": "Chófer: {name}", "en": "Chauffeur: {name}", "pt": "Motorista: {name}", "placeholders": {"name": {"type": "String"}}},
-  "adminDeleteBookingTooltip": {"es": "Eliminar reserva", "en": "Delete booking", "pt": "Excluir reserva"},
-  "adminDeleteBookingTitle": {"es": "¿Eliminar reserva?", "en": "Delete booking?", "pt": "Excluir reserva?"},
-  "adminDeleteBookingBody": {"es": "Se eliminará permanentemente la reserva #{id}. Esta acción no se puede deshacer.", "en": "Booking #{id} will be permanently deleted. This can't be undone.", "pt": "A reserva #{id} será excluída permanentemente. Esta ação não pode ser desfeita.", "placeholders": {"id": {"type": "String"}}},
-  "adminNoDrivers": {"es": "No se encontraron chóferes", "en": "No chauffeurs found", "pt": "Nenhum motorista encontrado"},
-  "adminLicense": {"es": "Licencia: {number}", "en": "License: {number}", "pt": "CNH: {number}", "description": "Driver's license number", "placeholders": {"number": {"type": "String"}}},
-  "adminVerify": {"es": "Verificar", "en": "Verify", "pt": "Verificar"},
-  "adminDocumentsVerified": {"es": "Documentos verificados", "en": "Documents verified", "pt": "Documentos verificados"},
-  "adminOnline": {"es": "En línea", "en": "Online", "pt": "Online"},
-  "adminOffline": {"es": "Fuera de línea", "en": "Offline", "pt": "Offline"},
-  "adminNoVehicles": {"es": "Aún no hay vehículos registrados", "en": "No vehicles registered yet", "pt": "Nenhum veículo cadastrado ainda"},
-  "adminNoVehiclesHint": {"es": "Los vehículos vinculados a chóferes aparecen aquí", "en": "Vehicles linked to chauffeurs appear here", "pt": "Os veículos vinculados a motoristas aparecem aqui"},
-  "adminVehicleDetails": {"es": "Placa: {plate} · Clase: {vehicleClass}", "en": "Plate: {plate} · Class: {vehicleClass}", "pt": "Placa: {plate} · Categoria: {vehicleClass}", "placeholders": {"plate": {"type": "String"}, "vehicleClass": {"type": "String"}}},
-  "adminActive": {"es": "Activo", "en": "Active", "pt": "Ativo"},
-  "adminInactive": {"es": "Inactivo", "en": "Inactive", "pt": "Inativo"},
-  "adminSearchUsers": {"es": "Buscar usuarios…", "en": "Search users…", "pt": "Buscar usuários…"},
-  "adminNoUsersMatch": {"es": "Ningún usuario coincide con la búsqueda", "en": "No users match your search", "pt": "Nenhum usuário corresponde à busca"},
-  "adminMemberSince": {"es": "Miembro desde {date}", "en": "Member since {date}", "pt": "Membro desde {date}", "placeholders": {"date": {"type": "String"}}},
-  "adminChangeRoleTitle": {"es": "Cambiar rol de {name}", "en": "Change role for {name}", "pt": "Alterar função de {name}", "placeholders": {"name": {"type": "String"}}},
-  "adminPricingRules": {"es": "Reglas de precios (Bs)", "en": "Pricing rules (Bs)", "pt": "Regras de preços (Bs)"},
-  "adminPricingNote": {"es": "Los precios reflejan el modelo DefaultPricing. Si la colección pricingRules está vacía, los precios se calculan localmente.", "en": "Prices reflect the DefaultPricing model. If the pricingRules collection is empty, prices are calculated locally.", "pt": "Os preços refletem o modelo DefaultPricing. Se a coleção pricingRules estiver vazia, os preços são calculados localmente."},
-  "adminFirestoreRules": {"es": "Reglas de precios de Firestore", "en": "Firestore pricing rules", "pt": "Regras de preços do Firestore"},
-  "adminPricePerHour": {"es": "{amount}/h", "en": "{amount}/h", "pt": "{amount}/h", "placeholders": {"amount": {"type": "String"}}},
-  "adminPriceBasePlusKm": {"es": "{base} + {perKm}/km", "en": "{base} + {perKm}/km", "pt": "{base} + {perKm}/km", "placeholders": {"base": {"type": "String"}, "perKm": {"type": "String"}}},
-  "adminPriceBaseAndKm": {"es": "{base} base + {perKm}/km", "en": "{base} base + {perKm}/km", "pt": "{base} base + {perKm}/km", "placeholders": {"base": {"type": "String"}, "perKm": {"type": "String"}}},
-  "adminPriceMinimum": {"es": "Mín.: {amount}", "en": "Min: {amount}", "pt": "Mín.: {amount}", "placeholders": {"amount": {"type": "String"}}},
-  "adminFieldBase": {"es": "Base (Bs)", "en": "Base (Bs)", "pt": "Base (Bs)"},
-  "adminFieldPerKm": {"es": "Por km (Bs)", "en": "Per km (Bs)", "pt": "Por km (Bs)"},
-  "adminFieldPerHour": {"es": "Por hora (Bs)", "en": "Per hour (Bs)", "pt": "Por hora (Bs)"},
-  "adminFieldMinimum": {"es": "Mínimo (Bs)", "en": "Minimum (Bs)", "pt": "Mínimo (Bs)"},
-  "adminNoAuditLogs": {"es": "Aún no hay registros de auditoría", "en": "No audit entries yet", "pt": "Nenhum registro de auditoria ainda"},
-  "adminNoAuditLogsHint": {"es": "Las acciones administrativas aparecerán aquí en tiempo real", "en": "Admin actions will appear here in real time", "pt": "As ações administrativas aparecerão aqui em tempo real"},
-  "adminAuditBy": {"es": "Admin: {id}", "en": "Admin: {id}", "pt": "Admin: {id}", "placeholders": {"id": {"type": "String"}}},
-  "adminGlobalSettings": {"es": "Configuración global de la app", "en": "Global app settings", "pt": "Configurações globais do app"},
-  "adminMaintenanceMode": {"es": "Modo mantenimiento", "en": "Maintenance mode", "pt": "Modo de manutenção"},
-  "adminMaintenanceModeDesc": {"es": "Deshabilita todas las reservas y muestra la pantalla de mantenimiento a los usuarios.", "en": "Turns off all bookings and shows users the maintenance screen.", "pt": "Desativa todas as reservas e mostra a tela de manutenção aos usuários."},
-  "adminPushNotifications": {"es": "Notificaciones push", "en": "Push notifications", "pt": "Notificações push"},
-  "adminPushNotificationsDesc": {"es": "Habilita notificaciones a nivel del sistema para nuevas reservas.", "en": "Enables system-wide notifications for new bookings.", "pt": "Ativa notificações em todo o sistema para novas reservas."},
-  "adminTwoFactor": {"es": "Autenticación admin de dos factores", "en": "Admin two-factor authentication", "pt": "Autenticação de dois fatores para admins"},
-  "adminTwoFactorDesc": {"es": "Requiere 2FA para todas las acciones administrativas.", "en": "Requires 2FA for all admin actions.", "pt": "Exige 2FA para todas as ações administrativas."},
-  "adminLiveStats": {"es": "Estadísticas en vivo", "en": "Live stats", "pt": "Estatísticas ao vivo"},
-  "adminTotalBookings": {"es": "Total de reservas", "en": "Total bookings", "pt": "Total de reservas"},
-  "adminRegisteredDrivers": {"es": "Chóferes registrados", "en": "Registered chauffeurs", "pt": "Motoristas cadastrados"},
-  "adminVerifiedDrivers": {"es": "Chóferes verificados", "en": "Verified chauffeurs", "pt": "Motoristas verificados"},
-  "adminRegisteredVehicles": {"es": "Vehículos registrados", "en": "Registered vehicles", "pt": "Veículos cadastrados"},
-  "adminSystemInfo": {"es": "Información del sistema", "en": "System information", "pt": "Informações do sistema"},
-  "adminAppVersion": {"es": "Versión de la app", "en": "App version", "pt": "Versão do app"},
-  "adminCurrency": {"es": "Moneda", "en": "Currency", "pt": "Moeda"},
-  "adminCurrencyValue": {"es": "Bolivianos (Bs)", "en": "Bolivianos (Bs)", "pt": "Bolivianos (Bs)"},
-  "adminBackend": {"es": "Backend", "en": "Backend", "pt": "Back-end"},
-  "adminPlatform": {"es": "Plataforma", "en": "Platform", "pt": "Plataforma"},
-  "adminPlatformValue": {"es": "Flutter Web + móvil", "en": "Flutter Web + mobile", "pt": "Flutter Web + mobile"},
-  "adminNoticeMaintenanceOn": {"es": "Modo mantenimiento activado", "en": "Maintenance mode turned on", "pt": "Modo de manutenção ativado"},
-  "adminNoticeMaintenanceOff": {"es": "Modo mantenimiento desactivado", "en": "Maintenance mode turned off", "pt": "Modo de manutenção desativado"},
-  "adminNoticePricingUpdated": {"es": "Regla de precios actualizada", "en": "Pricing rule updated", "pt": "Regra de preço atualizada"},
-  "adminNoticeDriverVerified": {"es": "Chófer verificado", "en": "Chauffeur verified", "pt": "Motorista verificado"},
-  "adminNoticeSettingsSaved": {"es": "Configuración guardada", "en": "Settings saved", "pt": "Configurações salvas"},
-  "adminNoticeBookingDeleted": {"es": "Reserva eliminada", "en": "Booking deleted", "pt": "Reserva excluída"},
-  "adminNoticeRoleUpdated": {"es": "Rol actualizado", "en": "Role updated", "pt": "Função atualizada"},
-  "adminActionFailed": {"es": "No se pudo completar la acción. Inténtalo de nuevo.", "en": "That action couldn't be completed. Please try again.", "pt": "Não foi possível concluir a ação. Tente novamente."},
-  "routerNotFoundTitle": {"es": "Página no encontrada", "en": "Page not found", "pt": "Página não encontrada"},
-  "routerNotFoundBody": {"es": "La página que buscas no existe o se ha movido.", "en": "The page you're looking for doesn't exist or has moved.", "pt": "A página que você procura não existe ou foi movida."},
-  "routerGoHome": {"es": "Ir al inicio", "en": "Go home", "pt": "Ir para o início"},
-  "coreRoleRider": {"es": "Pasajero", "en": "Passenger", "pt": "Passageiro"},
-  "coreRoleDriver": {"es": "Chófer", "en": "Chauffeur", "pt": "Motorista"},
-  "coreRoleAdmin": {"es": "Admin", "en": "Admin", "pt": "Admin"},
-  "coreErrorTitle": {"es": "Algo salió mal", "en": "Something went wrong", "pt": "Algo deu errado"},
-  "coreErrorBody": {"es": "Hemos sido notificados y estamos trabajando en una solución.", "en": "We've been notified and are working on a fix.", "pt": "Já fomos notificados e estamos trabalhando em uma solução."},
-  "coreMapPickerTitle": {"es": "Seleccionar ubicación", "en": "Select location", "pt": "Selecionar local"},
-  "coreMapPickerHint": {"es": "Mueve el mapa para seleccionar una ubicación", "en": "Move the map to select a location", "pt": "Mova o mapa para selecionar um local"},
-  "coreMapPickerSelected": {"es": "Ubicación seleccionada", "en": "Selected location", "pt": "Local selecionado"},
-  "coreMapKeyMissing": {"es": "Agrega GOOGLE_MAPS_KEY para habilitar el mapa", "en": "Add GOOGLE_MAPS_KEY to enable the map", "pt": "Adicione a GOOGLE_MAPS_KEY para ativar o mapa", "description": "Developer-facing placeholder; keep GOOGLE_MAPS_KEY as is"},
-  "coreMapView": {"es": "Vista del mapa", "en": "Map view", "pt": "Visualização do mapa"},
-  "coreClearField": {"es": "Borrar", "en": "Clear", "pt": "Limpar"},
-  "coreVehicleCapacity": {"es": "Hasta {count}", "en": "Up to {count}", "pt": "Até {count}", "description": "Passenger capacity next to a person icon", "placeholders": {"count": {"type": "int"}}},
-  "coreHoursTotal": {"es": "{hours} h en total", "en": "{hours} h total", "pt": "{hours} h no total", "placeholders": {"hours": {"type": "int"}}},
-  "coreFixedPrice": {"es": "Precio fijo", "en": "Fixed price", "pt": "Preço fixo"},
-  "coreConfirmBooking": {"es": "Confirmar reserva", "en": "Confirm booking", "pt": "Confirmar reserva"},
-  "coreDriverLocationNotification": {"es": "Compartiendo tu ubicación mientras estás disponible", "en": "Sharing your location while you're available", "pt": "Compartilhando sua localização enquanto você está disponível", "description": "Android foreground-service notification while a chauffeur is on duty"}
+  "authLoginTitle": {
+    "es": "Iniciar sesión",
+    "en": "Sign in",
+    "pt": "Entrar",
+    "description": "Login page title and submit button"
+  },
+  "authLoginWelcomeBack": {
+    "es": "Bienvenido de nuevo a Luxelane.",
+    "en": "Welcome back to Luxelane.",
+    "pt": "Que bom ter você de volta à Luxelane."
+  },
+  "authLoginHeadline": {
+    "es": "Bienvenido\nde nuevo.",
+    "en": "Welcome\nback.",
+    "pt": "Que bom\nte ver.",
+    "description": "Large two-line mobile login headline; keep the line break"
+  },
+  "authLoginSubtitle": {
+    "es": "Inicia sesión en tu cuenta",
+    "en": "Sign in to your account",
+    "pt": "Entre na sua conta"
+  },
+  "authEmailLabel": {
+    "es": "Correo electrónico",
+    "en": "Email",
+    "pt": "E-mail"
+  },
+  "authEmailInvalid": {
+    "es": "Ingresa un correo válido",
+    "en": "Enter a valid email address",
+    "pt": "Digite um e-mail válido"
+  },
+  "authPasswordLabel": {
+    "es": "Contraseña",
+    "en": "Password",
+    "pt": "Senha"
+  },
+  "authPasswordTooShort": {
+    "es": "Mínimo {count} caracteres",
+    "en": "At least {count} characters",
+    "pt": "Mínimo de {count} caracteres",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "authForgotPassword": {
+    "es": "¿Olvidaste tu contraseña?",
+    "en": "Forgot your password?",
+    "pt": "Esqueceu sua senha?"
+  },
+  "authResetEmailSent": {
+    "es": "Correo de restablecimiento enviado",
+    "en": "Password reset email sent",
+    "pt": "E-mail de redefinição de senha enviado"
+  },
+  "authResetNeedsEmail": {
+    "es": "Ingresa tu correo para restablecer la contraseña",
+    "en": "Enter your email to reset your password",
+    "pt": "Digite seu e-mail para redefinir a senha"
+  },
+  "authNoAccount": {
+    "es": "¿No tienes cuenta?",
+    "en": "Don't have an account?",
+    "pt": "Não tem uma conta?"
+  },
+  "authCreateOne": {
+    "es": "Crear una",
+    "en": "Create one",
+    "pt": "Criar conta"
+  },
+  "authBrandHeadline": {
+    "es": "Servicio de chófer\npremium.",
+    "en": "Premium chauffeur\nservice.",
+    "pt": "Serviço de motorista\npremium.",
+    "description": "Two-line web brand panel headline; keep the line break"
+  },
+  "authBrandTagline": {
+    "es": "Precio fijo. Chóferes verificados.",
+    "en": "Fixed prices. Vetted chauffeurs.",
+    "pt": "Preço fixo. Motoristas verificados."
+  },
+  "authRegisterTitle": {
+    "es": "Crear cuenta",
+    "en": "Create account",
+    "pt": "Criar conta",
+    "description": "Register page title (web) and submit button"
+  },
+  "authRegisterHeadline": {
+    "es": "Crear cuenta.",
+    "en": "Create an account.",
+    "pt": "Crie sua conta.",
+    "description": "Mobile register headline"
+  },
+  "authRegisterSubtitle": {
+    "es": "Únete a Luxelane hoy",
+    "en": "Join Luxelane today",
+    "pt": "Junte-se à Luxelane hoje"
+  },
+  "authFullNameLabel": {
+    "es": "Nombre completo",
+    "en": "Full name",
+    "pt": "Nome completo"
+  },
+  "authPhoneLabel": {
+    "es": "Teléfono",
+    "en": "Phone",
+    "pt": "Telefone"
+  },
+  "authConsentText": {
+    "es": "Acepto los {terms} y la {privacy}",
+    "en": "I accept the {terms} and the {privacy}",
+    "pt": "Aceito os {terms} e a {privacy}",
+    "description": "Register consent sentence. {terms} is replaced by the authConsentTermsLink link text and {privacy} by authConsentPrivacyLink; adjust articles and word order around them as the language needs",
+    "placeholders": {
+      "terms": {
+        "type": "String"
+      },
+      "privacy": {
+        "type": "String"
+      }
+    }
+  },
+  "authConsentTermsLink": {
+    "es": "Términos y condiciones",
+    "en": "Terms and Conditions",
+    "pt": "Termos e Condições",
+    "description": "Link text inside authConsentText"
+  },
+  "authConsentPrivacyLink": {
+    "es": "Política de privacidad",
+    "en": "Privacy Policy",
+    "pt": "Política de Privacidade",
+    "description": "Link text inside authConsentText"
+  },
+  "authConsentRequired": {
+    "es": "Debes aceptar los términos y la política de privacidad",
+    "en": "You need to accept the terms and the privacy policy",
+    "pt": "Você precisa aceitar os termos e a política de privacidade"
+  },
+  "authAlreadyHaveAccount": {
+    "es": "¿Ya tienes cuenta?",
+    "en": "Already have an account?",
+    "pt": "Já tem uma conta?"
+  },
+  "authSignInLink": {
+    "es": "Inicia sesión",
+    "en": "Sign in",
+    "pt": "Entrar"
+  },
+  "authErrorWrongCredentials": {
+    "es": "Correo o contraseña incorrectos",
+    "en": "Incorrect email or password",
+    "pt": "E-mail ou senha incorretos"
+  },
+  "authErrorUserNotFound": {
+    "es": "No existe una cuenta con este correo",
+    "en": "There's no account with this email",
+    "pt": "Não existe uma conta com este e-mail"
+  },
+  "authErrorEmailInUse": {
+    "es": "Ya existe una cuenta con este correo",
+    "en": "An account with this email already exists",
+    "pt": "Já existe uma conta com este e-mail"
+  },
+  "authErrorWeakPassword": {
+    "es": "La contraseña es demasiado débil. Usa al menos 6 caracteres.",
+    "en": "That password is too weak. Use at least 6 characters.",
+    "pt": "A senha é muito fraca. Use pelo menos 6 caracteres."
+  },
+  "authErrorInvalidEmail": {
+    "es": "El correo electrónico no es válido",
+    "en": "That email address isn't valid",
+    "pt": "Esse e-mail não é válido"
+  },
+  "authErrorUserDisabled": {
+    "es": "Esta cuenta está desactivada. Contáctanos para más información.",
+    "en": "This account has been disabled. Contact us for more information.",
+    "pt": "Esta conta foi desativada. Entre em contato conosco para mais informações."
+  },
+  "authErrorTooManyRequests": {
+    "es": "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
+    "en": "Too many attempts. Wait a few minutes and try again.",
+    "pt": "Muitas tentativas. Aguarde alguns minutos e tente novamente."
+  },
+  "authErrorGeneric": {
+    "es": "No pudimos completar la solicitud. Inténtalo de nuevo.",
+    "en": "We couldn't complete your request. Please try again.",
+    "pt": "Não foi possível concluir a solicitação. Tente novamente."
+  },
+  "profileTitle": {
+    "es": "Perfil",
+    "en": "Profile",
+    "pt": "Perfil"
+  },
+  "profileLoadError": {
+    "es": "No pudimos cargar tu perfil",
+    "en": "We couldn't load your profile",
+    "pt": "Não foi possível carregar seu perfil"
+  },
+  "profileSectionAccount": {
+    "es": "Cuenta",
+    "en": "Account",
+    "pt": "Conta"
+  },
+  "profileSectionStats": {
+    "es": "Estadísticas",
+    "en": "Stats",
+    "pt": "Estatísticas"
+  },
+  "profileStatTrips": {
+    "es": "Viajes",
+    "en": "Trips",
+    "pt": "Viagens"
+  },
+  "profileStatRating": {
+    "es": "Calificación",
+    "en": "Rating",
+    "pt": "Avaliação"
+  },
+  "profileSectionHelp": {
+    "es": "Ayuda y legal",
+    "en": "Help & legal",
+    "pt": "Ajuda e informações legais"
+  },
+  "profileContactHelp": {
+    "es": "Contacto y ayuda",
+    "en": "Contact & help",
+    "pt": "Contato e ajuda"
+  },
+  "profileSignOut": {
+    "es": "Cerrar sesión",
+    "en": "Sign out",
+    "pt": "Sair"
+  },
+  "profileDeleteAccount": {
+    "es": "Eliminar cuenta",
+    "en": "Delete account",
+    "pt": "Excluir conta"
+  },
+  "profileVersion": {
+    "es": "Luxelane v{version}",
+    "en": "Luxelane v{version}",
+    "pt": "Luxelane v{version}",
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "profileUpdated": {
+    "es": "Perfil actualizado",
+    "en": "Profile updated",
+    "pt": "Perfil atualizado"
+  },
+  "profileEditTitle": {
+    "es": "Editar perfil",
+    "en": "Edit profile",
+    "pt": "Editar perfil"
+  },
+  "profileNameLabel": {
+    "es": "Nombre",
+    "en": "Name",
+    "pt": "Nome"
+  },
+  "profileSaveChanges": {
+    "es": "Guardar cambios",
+    "en": "Save changes",
+    "pt": "Salvar alterações"
+  },
+  "paymentsCardIncomplete": {
+    "es": "Ingresa los datos completos de la tarjeta",
+    "en": "Enter your full card details",
+    "pt": "Preencha todos os dados do cartão"
+  },
+  "paymentsAccountNotSetUp": {
+    "es": "La cuenta no está configurada para pagos",
+    "en": "Your account isn't set up for payments yet",
+    "pt": "Sua conta ainda não está configurada para pagamentos"
+  },
+  "paymentsCardAdded": {
+    "es": "Tarjeta agregada exitosamente",
+    "en": "Card added successfully",
+    "pt": "Cartão adicionado com sucesso"
+  },
+  "paymentsError": {
+    "es": "No pudimos completar la operación con tu tarjeta. Inténtalo de nuevo.",
+    "en": "We couldn't complete that card operation. Please try again.",
+    "pt": "Não foi possível concluir a operação com o cartão. Tente novamente."
+  },
+  "paymentsAddMethodTitle": {
+    "es": "Agregar método de pago",
+    "en": "Add payment method",
+    "pt": "Adicionar forma de pagamento"
+  },
+  "paymentsCardDetails": {
+    "es": "Datos de la tarjeta",
+    "en": "Card details",
+    "pt": "Dados do cartão"
+  },
+  "paymentsSecuredPci": {
+    "es": "Protegido por Stripe · Cumplimiento PCI DSS",
+    "en": "Secured by Stripe · PCI DSS compliant",
+    "pt": "Protegido pela Stripe · Em conformidade com o PCI DSS"
+  },
+  "paymentsAddCard": {
+    "es": "Agregar tarjeta",
+    "en": "Add card",
+    "pt": "Adicionar cartão"
+  },
+  "paymentsMethodsTitle": {
+    "es": "Métodos de pago",
+    "en": "Payment methods",
+    "pt": "Formas de pagamento"
+  },
+  "paymentsAdd": {
+    "es": "Agregar",
+    "en": "Add",
+    "pt": "Adicionar"
+  },
+  "paymentsSavedCards": {
+    "es": "Tarjetas guardadas",
+    "en": "Saved cards",
+    "pt": "Cartões salvos"
+  },
+  "paymentsAddNewCard": {
+    "es": "Agregar nueva tarjeta",
+    "en": "Add new card",
+    "pt": "Adicionar novo cartão"
+  },
+  "paymentsSecured": {
+    "es": "Protegido por Stripe",
+    "en": "Secured by Stripe",
+    "pt": "Protegido pela Stripe"
+  },
+  "paymentsEmptyTitle": {
+    "es": "Sin métodos de pago",
+    "en": "No payment methods",
+    "pt": "Nenhuma forma de pagamento"
+  },
+  "paymentsEmptyBody": {
+    "es": "Agrega una tarjeta para reservar viajes",
+    "en": "Add a card to book rides",
+    "pt": "Adicione um cartão para reservar viagens"
+  },
+  "paymentsCardFallback": {
+    "es": "Tarjeta",
+    "en": "Card",
+    "pt": "Cartão",
+    "description": "Shown when the card brand is unknown"
+  },
+  "paymentsCardExpires": {
+    "es": "Vence {month}/{year}",
+    "en": "Expires {month}/{year}",
+    "pt": "Validade {month}/{year}",
+    "placeholders": {
+      "month": {
+        "type": "String"
+      },
+      "year": {
+        "type": "String"
+      }
+    }
+  },
+  "paymentsDefault": {
+    "es": "Predeterminada",
+    "en": "Default",
+    "pt": "Padrão",
+    "description": "Badge on the default card"
+  },
+  "paymentsSetDefault": {
+    "es": "Predeterminar",
+    "en": "Set default",
+    "pt": "Tornar padrão",
+    "description": "Short button to make a card the default; keep it short"
+  },
+  "paymentsRemoveCard": {
+    "es": "Eliminar tarjeta",
+    "en": "Remove card",
+    "pt": "Remover cartão"
+  },
+  "adminTitle": {
+    "es": "Administrador",
+    "en": "Admin",
+    "pt": "Administrador"
+  },
+  "adminPanelBadge": {
+    "es": "Panel admin",
+    "en": "Admin panel",
+    "pt": "Painel admin"
+  },
+  "adminSectionDashboard": {
+    "es": "Panel",
+    "en": "Dashboard",
+    "pt": "Painel"
+  },
+  "adminSectionBookings": {
+    "es": "Reservas",
+    "en": "Bookings",
+    "pt": "Reservas"
+  },
+  "adminSectionDrivers": {
+    "es": "Chóferes",
+    "en": "Chauffeurs",
+    "pt": "Motoristas"
+  },
+  "adminSectionVehicles": {
+    "es": "Vehículos",
+    "en": "Vehicles",
+    "pt": "Veículos"
+  },
+  "adminSectionUsers": {
+    "es": "Usuarios",
+    "en": "Users",
+    "pt": "Usuários"
+  },
+  "adminSectionPricing": {
+    "es": "Precios",
+    "en": "Pricing",
+    "pt": "Preços"
+  },
+  "adminSectionAudit": {
+    "es": "Auditoría",
+    "en": "Audit log",
+    "pt": "Auditoria"
+  },
+  "adminSectionSettings": {
+    "es": "Configuración",
+    "en": "Settings",
+    "pt": "Configurações"
+  },
+  "adminSignOutConfirm": {
+    "es": "¿Seguro que quieres cerrar sesión del panel de administración?",
+    "en": "Are you sure you want to sign out of the admin dashboard?",
+    "pt": "Tem certeza de que deseja sair do painel de administração?"
+  },
+  "adminMaintenanceBanner": {
+    "es": "MODO MANTENIMIENTO ACTIVO — Los pasajeros no pueden reservar nuevos viajes.",
+    "en": "MAINTENANCE MODE ON — Passengers can't book new rides.",
+    "pt": "MODO DE MANUTENÇÃO ATIVO — Os passageiros não podem reservar novas viagens."
+  },
+  "adminDisable": {
+    "es": "Deshabilitar",
+    "en": "Disable",
+    "pt": "Desativar"
+  },
+  "adminOverview": {
+    "es": "Resumen",
+    "en": "Overview",
+    "pt": "Visão geral"
+  },
+  "adminKpiTotalRevenue": {
+    "es": "Ingresos totales",
+    "en": "Total revenue",
+    "pt": "Receita total"
+  },
+  "adminKpiToday": {
+    "es": "Hoy: {amount}",
+    "en": "Today: {amount}",
+    "pt": "Hoje: {amount}",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "adminKpiCompleted": {
+    "es": "Viajes completados",
+    "en": "Completed rides",
+    "pt": "Viagens concluídas"
+  },
+  "adminKpiInProgress": {
+    "es": "{count} en progreso",
+    "en": "{count} in progress",
+    "pt": "{count} em andamento",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminKpiPending": {
+    "es": "Reservas pendientes",
+    "en": "Pending bookings",
+    "pt": "Reservas pendentes"
+  },
+  "adminKpiAwaitingDriver": {
+    "es": "Esperando chófer",
+    "en": "Awaiting chauffeur",
+    "pt": "Aguardando motorista"
+  },
+  "adminKpiUsers": {
+    "es": "Usuarios registrados",
+    "en": "Registered users",
+    "pt": "Usuários cadastrados"
+  },
+  "adminKpiDriversCount": {
+    "es": "{count, plural, =1{1 chófer} other{{count} chóferes}}",
+    "en": "{count, plural, =1{1 chauffeur} other{{count} chauffeurs}}",
+    "pt": "{count, plural, =1{1 motorista} other{{count} motoristas}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminBusinessPerformance": {
+    "es": "Rendimiento del negocio",
+    "en": "Business performance",
+    "pt": "Desempenho do negócio"
+  },
+  "adminRevenueTrend": {
+    "es": "Tendencia de ingresos 7 días (Bs)",
+    "en": "7-day revenue trend (Bs)",
+    "pt": "Tendência de receita em 7 dias (Bs)"
+  },
+  "adminRecentActivity": {
+    "es": "Actividad reciente",
+    "en": "Recent activity",
+    "pt": "Atividade recente"
+  },
+  "adminNoBookings": {
+    "es": "No se encontraron reservas",
+    "en": "No bookings found",
+    "pt": "Nenhuma reserva encontrada"
+  },
+  "adminFilterAll": {
+    "es": "Todos",
+    "en": "All",
+    "pt": "Todas"
+  },
+  "adminBookingRider": {
+    "es": "Pasajero: {name}",
+    "en": "Passenger: {name}",
+    "pt": "Passageiro: {name}",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminBookingDriver": {
+    "es": "Chófer: {name}",
+    "en": "Chauffeur: {name}",
+    "pt": "Motorista: {name}",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminDeleteBookingTooltip": {
+    "es": "Eliminar reserva",
+    "en": "Delete booking",
+    "pt": "Excluir reserva"
+  },
+  "adminDeleteBookingTitle": {
+    "es": "¿Eliminar reserva?",
+    "en": "Delete booking?",
+    "pt": "Excluir reserva?"
+  },
+  "adminDeleteBookingBody": {
+    "es": "Se eliminará permanentemente la reserva #{id}. Esta acción no se puede deshacer.",
+    "en": "Booking #{id} will be permanently deleted. This can't be undone.",
+    "pt": "A reserva #{id} será excluída permanentemente. Esta ação não pode ser desfeita.",
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "adminNoDrivers": {
+    "es": "No se encontraron chóferes",
+    "en": "No chauffeurs found",
+    "pt": "Nenhum motorista encontrado"
+  },
+  "adminLicense": {
+    "es": "Licencia: {number}",
+    "en": "License: {number}",
+    "pt": "CNH: {number}",
+    "description": "Driver's license number",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "adminVerify": {
+    "es": "Verificar",
+    "en": "Verify",
+    "pt": "Verificar"
+  },
+  "adminDocumentsVerified": {
+    "es": "Documentos verificados",
+    "en": "Documents verified",
+    "pt": "Documentos verificados"
+  },
+  "adminOnline": {
+    "es": "En línea",
+    "en": "Online",
+    "pt": "Online"
+  },
+  "adminOffline": {
+    "es": "Fuera de línea",
+    "en": "Offline",
+    "pt": "Offline"
+  },
+  "adminNoVehicles": {
+    "es": "Aún no hay vehículos registrados",
+    "en": "No vehicles registered yet",
+    "pt": "Nenhum veículo cadastrado ainda"
+  },
+  "adminNoVehiclesHint": {
+    "es": "Los vehículos vinculados a chóferes aparecen aquí",
+    "en": "Vehicles linked to chauffeurs appear here",
+    "pt": "Os veículos vinculados a motoristas aparecem aqui"
+  },
+  "adminVehicleDetails": {
+    "es": "Placa: {plate} · Clase: {vehicleClass}",
+    "en": "Plate: {plate} · Class: {vehicleClass}",
+    "pt": "Placa: {plate} · Categoria: {vehicleClass}",
+    "placeholders": {
+      "plate": {
+        "type": "String"
+      },
+      "vehicleClass": {
+        "type": "String"
+      }
+    }
+  },
+  "adminActive": {
+    "es": "Activo",
+    "en": "Active",
+    "pt": "Ativo"
+  },
+  "adminInactive": {
+    "es": "Inactivo",
+    "en": "Inactive",
+    "pt": "Inativo"
+  },
+  "adminSearchUsers": {
+    "es": "Buscar usuarios…",
+    "en": "Search users…",
+    "pt": "Buscar usuários…"
+  },
+  "adminNoUsersMatch": {
+    "es": "Ningún usuario coincide con la búsqueda",
+    "en": "No users match your search",
+    "pt": "Nenhum usuário corresponde à busca"
+  },
+  "adminMemberSince": {
+    "es": "Miembro desde {date}",
+    "en": "Member since {date}",
+    "pt": "Membro desde {date}",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "adminChangeRoleTitle": {
+    "es": "Cambiar rol de {name}",
+    "en": "Change role for {name}",
+    "pt": "Alterar função de {name}",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminPricingRules": {
+    "es": "Reglas de precios (Bs)",
+    "en": "Pricing rules (Bs)",
+    "pt": "Regras de preços (Bs)"
+  },
+  "adminPricingNote": {
+    "es": "Los precios reflejan el modelo DefaultPricing. Si la colección pricingRules está vacía, los precios se calculan localmente.",
+    "en": "Prices reflect the DefaultPricing model. If the pricingRules collection is empty, prices are calculated locally.",
+    "pt": "Os preços refletem o modelo DefaultPricing. Se a coleção pricingRules estiver vazia, os preços são calculados localmente."
+  },
+  "adminFirestoreRules": {
+    "es": "Reglas de precios de Firestore",
+    "en": "Firestore pricing rules",
+    "pt": "Regras de preços do Firestore"
+  },
+  "adminPricePerHour": {
+    "es": "{amount}/h",
+    "en": "{amount}/h",
+    "pt": "{amount}/h",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "adminPriceBasePlusKm": {
+    "es": "{base} + {perKm}/km",
+    "en": "{base} + {perKm}/km",
+    "pt": "{base} + {perKm}/km",
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "perKm": {
+        "type": "String"
+      }
+    }
+  },
+  "adminPriceBaseAndKm": {
+    "es": "{base} base + {perKm}/km",
+    "en": "{base} base + {perKm}/km",
+    "pt": "{base} base + {perKm}/km",
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "perKm": {
+        "type": "String"
+      }
+    }
+  },
+  "adminPriceMinimum": {
+    "es": "Mín.: {amount}",
+    "en": "Min: {amount}",
+    "pt": "Mín.: {amount}",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "adminFieldBase": {
+    "es": "Base (Bs)",
+    "en": "Base (Bs)",
+    "pt": "Base (Bs)"
+  },
+  "adminFieldPerKm": {
+    "es": "Por km (Bs)",
+    "en": "Per km (Bs)",
+    "pt": "Por km (Bs)"
+  },
+  "adminFieldPerHour": {
+    "es": "Por hora (Bs)",
+    "en": "Per hour (Bs)",
+    "pt": "Por hora (Bs)"
+  },
+  "adminFieldMinimum": {
+    "es": "Mínimo (Bs)",
+    "en": "Minimum (Bs)",
+    "pt": "Mínimo (Bs)"
+  },
+  "adminNoAuditLogs": {
+    "es": "Aún no hay registros de auditoría",
+    "en": "No audit entries yet",
+    "pt": "Nenhum registro de auditoria ainda"
+  },
+  "adminNoAuditLogsHint": {
+    "es": "Las acciones administrativas aparecerán aquí en tiempo real",
+    "en": "Admin actions will appear here in real time",
+    "pt": "As ações administrativas aparecerão aqui em tempo real"
+  },
+  "adminAuditBy": {
+    "es": "Admin: {id}",
+    "en": "Admin: {id}",
+    "pt": "Admin: {id}",
+    "placeholders": {
+      "id": {
+        "type": "String"
+      }
+    }
+  },
+  "adminGlobalSettings": {
+    "es": "Configuración global de la app",
+    "en": "Global app settings",
+    "pt": "Configurações globais do app"
+  },
+  "adminMaintenanceMode": {
+    "es": "Modo mantenimiento",
+    "en": "Maintenance mode",
+    "pt": "Modo de manutenção"
+  },
+  "adminMaintenanceModeDesc": {
+    "es": "Deshabilita todas las reservas y muestra la pantalla de mantenimiento a los usuarios.",
+    "en": "Turns off all bookings and shows users the maintenance screen.",
+    "pt": "Desativa todas as reservas e mostra a tela de manutenção aos usuários."
+  },
+  "adminPushNotifications": {
+    "es": "Notificaciones push",
+    "en": "Push notifications",
+    "pt": "Notificações push"
+  },
+  "adminPushNotificationsDesc": {
+    "es": "Habilita notificaciones a nivel del sistema para nuevas reservas.",
+    "en": "Enables system-wide notifications for new bookings.",
+    "pt": "Ativa notificações em todo o sistema para novas reservas."
+  },
+  "adminTwoFactor": {
+    "es": "Autenticación admin de dos factores",
+    "en": "Admin two-factor authentication",
+    "pt": "Autenticação de dois fatores para admins"
+  },
+  "adminTwoFactorDesc": {
+    "es": "Requiere 2FA para todas las acciones administrativas.",
+    "en": "Requires 2FA for all admin actions.",
+    "pt": "Exige 2FA para todas as ações administrativas."
+  },
+  "adminLiveStats": {
+    "es": "Estadísticas en vivo",
+    "en": "Live stats",
+    "pt": "Estatísticas ao vivo"
+  },
+  "adminTotalBookings": {
+    "es": "Total de reservas",
+    "en": "Total bookings",
+    "pt": "Total de reservas"
+  },
+  "adminRegisteredDrivers": {
+    "es": "Chóferes registrados",
+    "en": "Registered chauffeurs",
+    "pt": "Motoristas cadastrados"
+  },
+  "adminVerifiedDrivers": {
+    "es": "Chóferes verificados",
+    "en": "Verified chauffeurs",
+    "pt": "Motoristas verificados"
+  },
+  "adminRegisteredVehicles": {
+    "es": "Vehículos registrados",
+    "en": "Registered vehicles",
+    "pt": "Veículos cadastrados"
+  },
+  "adminSystemInfo": {
+    "es": "Información del sistema",
+    "en": "System information",
+    "pt": "Informações do sistema"
+  },
+  "adminAppVersion": {
+    "es": "Versión de la app",
+    "en": "App version",
+    "pt": "Versão do app"
+  },
+  "adminCurrency": {
+    "es": "Moneda",
+    "en": "Currency",
+    "pt": "Moeda"
+  },
+  "adminCurrencyValue": {
+    "es": "Bolivianos (Bs)",
+    "en": "Bolivianos (Bs)",
+    "pt": "Bolivianos (Bs)"
+  },
+  "adminBackend": {
+    "es": "Backend",
+    "en": "Backend",
+    "pt": "Back-end"
+  },
+  "adminPlatform": {
+    "es": "Plataforma",
+    "en": "Platform",
+    "pt": "Plataforma"
+  },
+  "adminPlatformValue": {
+    "es": "Flutter Web + móvil",
+    "en": "Flutter Web + mobile",
+    "pt": "Flutter Web + mobile"
+  },
+  "adminNoticeMaintenanceOn": {
+    "es": "Modo mantenimiento activado",
+    "en": "Maintenance mode turned on",
+    "pt": "Modo de manutenção ativado"
+  },
+  "adminNoticeMaintenanceOff": {
+    "es": "Modo mantenimiento desactivado",
+    "en": "Maintenance mode turned off",
+    "pt": "Modo de manutenção desativado"
+  },
+  "adminNoticePricingUpdated": {
+    "es": "Regla de precios actualizada",
+    "en": "Pricing rule updated",
+    "pt": "Regra de preço atualizada"
+  },
+  "adminNoticeDriverVerified": {
+    "es": "Chófer verificado",
+    "en": "Chauffeur verified",
+    "pt": "Motorista verificado"
+  },
+  "adminNoticeSettingsSaved": {
+    "es": "Configuración guardada",
+    "en": "Settings saved",
+    "pt": "Configurações salvas"
+  },
+  "adminNoticeBookingDeleted": {
+    "es": "Reserva eliminada",
+    "en": "Booking deleted",
+    "pt": "Reserva excluída"
+  },
+  "adminNoticeRoleUpdated": {
+    "es": "Rol actualizado",
+    "en": "Role updated",
+    "pt": "Função atualizada"
+  },
+  "adminActionFailed": {
+    "es": "No se pudo completar la acción. Inténtalo de nuevo.",
+    "en": "That action couldn't be completed. Please try again.",
+    "pt": "Não foi possível concluir a ação. Tente novamente."
+  },
+  "routerNotFoundTitle": {
+    "es": "Página no encontrada",
+    "en": "Page not found",
+    "pt": "Página não encontrada"
+  },
+  "routerNotFoundBody": {
+    "es": "La página que buscas no existe o se ha movido.",
+    "en": "The page you're looking for doesn't exist or has moved.",
+    "pt": "A página que você procura não existe ou foi movida."
+  },
+  "routerGoHome": {
+    "es": "Ir al inicio",
+    "en": "Go home",
+    "pt": "Ir para o início"
+  },
+  "coreRoleRider": {
+    "es": "Pasajero",
+    "en": "Passenger",
+    "pt": "Passageiro"
+  },
+  "coreRoleDriver": {
+    "es": "Chófer",
+    "en": "Chauffeur",
+    "pt": "Motorista"
+  },
+  "coreRoleAdmin": {
+    "es": "Admin",
+    "en": "Admin",
+    "pt": "Admin"
+  },
+  "coreErrorTitle": {
+    "es": "Algo salió mal",
+    "en": "Something went wrong",
+    "pt": "Algo deu errado"
+  },
+  "coreErrorBody": {
+    "es": "Hemos sido notificados y estamos trabajando en una solución.",
+    "en": "We've been notified and are working on a fix.",
+    "pt": "Já fomos notificados e estamos trabalhando em uma solução."
+  },
+  "coreMapPickerTitle": {
+    "es": "Seleccionar ubicación",
+    "en": "Select location",
+    "pt": "Selecionar local"
+  },
+  "coreMapPickerHint": {
+    "es": "Mueve el mapa para seleccionar una ubicación",
+    "en": "Move the map to select a location",
+    "pt": "Mova o mapa para selecionar um local"
+  },
+  "coreMapPickerSelected": {
+    "es": "Ubicación seleccionada",
+    "en": "Selected location",
+    "pt": "Local selecionado"
+  },
+  "coreMapKeyMissing": {
+    "es": "Agrega GOOGLE_MAPS_KEY para habilitar el mapa",
+    "en": "Add GOOGLE_MAPS_KEY to enable the map",
+    "pt": "Adicione a GOOGLE_MAPS_KEY para ativar o mapa",
+    "description": "Developer-facing placeholder; keep GOOGLE_MAPS_KEY as is"
+  },
+  "coreMapView": {
+    "es": "Vista del mapa",
+    "en": "Map view",
+    "pt": "Visualização do mapa"
+  },
+  "coreClearField": {
+    "es": "Borrar",
+    "en": "Clear",
+    "pt": "Limpar"
+  },
+  "coreVehicleCapacity": {
+    "es": "Hasta {count}",
+    "en": "Up to {count}",
+    "pt": "Até {count}",
+    "description": "Passenger capacity next to a person icon",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "coreHoursTotal": {
+    "es": "{hours} h en total",
+    "en": "{hours} h total",
+    "pt": "{hours} h no total",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "coreFixedPrice": {
+    "es": "Precio fijo",
+    "en": "Fixed price",
+    "pt": "Preço fixo"
+  },
+  "coreConfirmBooking": {
+    "es": "Confirmar reserva",
+    "en": "Confirm booking",
+    "pt": "Confirmar reserva"
+  },
+  "coreDriverLocationNotification": {
+    "es": "Compartiendo tu ubicación mientras estás disponible",
+    "en": "Sharing your location while you're available",
+    "pt": "Compartilhando sua localização enquanto você está disponível",
+    "description": "Android foreground-service notification while a chauffeur is on duty"
+  }
 }

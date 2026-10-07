@@ -1,79 +1,263 @@
 {
-  "bookingChooseService": {"es": "Elegir servicio", "en": "Choose a service", "pt": "Escolha o serviço", "description": "Ride type page header"},
-
-  "bookingSelectRouteError": {"es": "Selecciona el punto de recogida y el destino", "en": "Please choose a pickup point and a destination", "pt": "Selecione o local de embarque e o destino"},
-  "bookingPriceConfirmedTitle": {"es": "Precio confirmado", "en": "Price confirmed", "pt": "Preço confirmado", "description": "Dialog shown when the server quote differs from the on-screen estimate"},
+  "bookingChooseService": {
+    "es": "Elegir servicio",
+    "en": "Choose a service",
+    "pt": "Escolha o serviço",
+    "description": "Ride type page header"
+  },
+  "bookingSelectRouteError": {
+    "es": "Selecciona el punto de recogida y el destino",
+    "en": "Please choose a pickup point and a destination",
+    "pt": "Selecione o local de embarque e o destino"
+  },
+  "bookingPriceConfirmedTitle": {
+    "es": "Precio confirmado",
+    "en": "Price confirmed",
+    "pt": "Preço confirmado",
+    "description": "Dialog shown when the server quote differs from the on-screen estimate"
+  },
   "bookingPriceConfirmedBody": {
     "es": "El precio fijo de tu viaje es {price}. No cambiará aunque haya tráfico.",
     "en": "The fixed price for your journey is {price}. It won't change, whatever the traffic.",
     "pt": "O preço fixo da sua viagem é {price}. Ele não muda, mesmo com trânsito.",
-    "placeholders": {"price": {"type": "String", "example": "Bs 1.250"}}
+    "placeholders": {
+      "price": {
+        "type": "String",
+        "example": "Bs 1.250"
+      }
+    }
   },
-  "bookingPaymentFailed": {"es": "El pago falló", "en": "The payment didn't go through", "pt": "Não foi possível concluir o pagamento"},
-
-  "bookingHeroTitle": {"es": "Elige tu\nexperiencia", "en": "Choose your\nexperience", "pt": "Escolha sua\nexperiência", "description": "Large two-line heading on the web booking page; keep the line break"},
-  "bookingChooseExperience": {"es": "Elige tu experiencia", "en": "Choose your experience", "pt": "Escolha sua experiência"},
-  "bookingHeroTagline": {"es": "Precio fijo · Sin sorpresas · Disponible en todo el mundo", "en": "Fixed price · No surprises · Available worldwide", "pt": "Preço fixo · Sem surpresas · Disponível no mundo todo"},
-
-  "bookingSlideBusiness1": {"es": "Confort ejecutivo en cada trayecto", "en": "Executive comfort on every journey", "pt": "Conforto executivo em cada trajeto"},
-  "bookingSlideBusiness2": {"es": "Puntual, profesional y perfectamente refinado", "en": "Punctual, professional and perfectly refined", "pt": "Pontual, profissional e perfeitamente refinado"},
-  "bookingSlideBusiness3": {"es": "Llega con confianza, en cada ocasión", "en": "Arrive with confidence, every time", "pt": "Chegue com confiança, em todas as ocasiões"},
-  "bookingSlideBusiness4": {"es": "Premium hecho práctico para el ejecutivo moderno", "en": "Premium made practical for the modern executive", "pt": "O premium, de forma prática, para o executivo moderno"},
-  "bookingSlideFirst1": {"es": "Un nivel extraordinario de lujo te espera", "en": "An extraordinary level of luxury awaits", "pt": "Um nível extraordinário de luxo espera por você"},
-  "bookingSlideFirst2": {"es": "Diseñado para quienes exigen lo mejor", "en": "Designed for those who expect the very best", "pt": "Pensado para quem exige o melhor"},
-  "bookingSlideFirst3": {"es": "Privacidad y elegancia en cada traslado", "en": "Privacy and elegance on every transfer", "pt": "Privacidade e elegância em cada traslado"},
-  "bookingSlideFirst4": {"es": "Primera clase, de puerta a puerta", "en": "First class, door to door", "pt": "Primeira classe, de porta a porta"},
-  "bookingSlideVan1": {"es": "Espacio y confort para todo tu equipo", "en": "Space and comfort for your whole team", "pt": "Espaço e conforto para toda a sua equipe"},
-  "bookingSlideVan2": {"es": "Traslados grupales sin estrés y con puntualidad", "en": "Stress-free, punctual group transfers", "pt": "Traslados em grupo pontuais e sem estresse"},
-  "bookingSlideVan3": {"es": "El viaje perfecto para familias y grupos", "en": "The perfect ride for families and groups", "pt": "A viagem perfeita para famílias e grupos"},
-  "bookingSlideVan4": {"es": "Capacidad premium, sin compromiso en el confort", "en": "Premium capacity, with no compromise on comfort", "pt": "Capacidade premium, sem abrir mão do conforto"},
-  "bookingSlideElectric1": {"es": "Totalmente eléctrico, silencioso y de nivel ejecutivo", "en": "Fully electric, whisper-quiet and executive-class", "pt": "Totalmente elétrico, silencioso e de nível executivo"},
-  "bookingSlideElectric2": {"es": "Cero emisiones, máxima experiencia de lujo", "en": "Zero emissions, the ultimate luxury experience", "pt": "Zero emissões, máxima experiência de luxo"},
-
+  "bookingPaymentFailed": {
+    "es": "El pago falló",
+    "en": "The payment didn't go through",
+    "pt": "Não foi possível concluir o pagamento"
+  },
+  "bookingHeroTitle": {
+    "es": "Elige tu\nexperiencia",
+    "en": "Choose your\nexperience",
+    "pt": "Escolha sua\nexperiência",
+    "description": "Large two-line heading on the web booking page; keep the line break"
+  },
+  "bookingChooseExperience": {
+    "es": "Elige tu experiencia",
+    "en": "Choose your experience",
+    "pt": "Escolha sua experiência"
+  },
+  "bookingHeroTagline": {
+    "es": "Precio fijo · Sin sorpresas · Chóferes verificados",
+    "en": "Fixed price · No surprises · Vetted chauffeurs",
+    "pt": "Preço fixo · Sem surpresas · Motoristas verificados"
+  },
+  "bookingSlideBusiness1": {
+    "es": "Confort ejecutivo en cada trayecto",
+    "en": "Executive comfort on every journey",
+    "pt": "Conforto executivo em cada trajeto"
+  },
+  "bookingSlideBusiness2": {
+    "es": "Puntual, profesional y perfectamente refinado",
+    "en": "Punctual, professional and perfectly refined",
+    "pt": "Pontual, profissional e perfeitamente refinado"
+  },
+  "bookingSlideBusiness3": {
+    "es": "Llega con confianza, en cada ocasión",
+    "en": "Arrive with confidence, every time",
+    "pt": "Chegue com confiança, em todas as ocasiões"
+  },
+  "bookingSlideBusiness4": {
+    "es": "Premium hecho práctico para el ejecutivo moderno",
+    "en": "Premium made practical for the modern executive",
+    "pt": "O premium, de forma prática, para o executivo moderno"
+  },
+  "bookingSlideFirst1": {
+    "es": "Un nivel extraordinario de lujo te espera",
+    "en": "An extraordinary level of luxury awaits",
+    "pt": "Um nível extraordinário de luxo espera por você"
+  },
+  "bookingSlideFirst2": {
+    "es": "Diseñado para quienes exigen lo mejor",
+    "en": "Designed for those who expect the very best",
+    "pt": "Pensado para quem exige o melhor"
+  },
+  "bookingSlideFirst3": {
+    "es": "Privacidad y elegancia en cada traslado",
+    "en": "Privacy and elegance on every transfer",
+    "pt": "Privacidade e elegância em cada traslado"
+  },
+  "bookingSlideFirst4": {
+    "es": "Primera clase, de puerta a puerta",
+    "en": "First class, door to door",
+    "pt": "Primeira classe, de porta a porta"
+  },
+  "bookingSlideVan1": {
+    "es": "Espacio y confort para todo tu equipo",
+    "en": "Space and comfort for your whole team",
+    "pt": "Espaço e conforto para toda a sua equipe"
+  },
+  "bookingSlideVan2": {
+    "es": "Traslados grupales sin estrés y con puntualidad",
+    "en": "Stress-free, punctual group transfers",
+    "pt": "Traslados em grupo pontuais e sem estresse"
+  },
+  "bookingSlideVan3": {
+    "es": "El viaje perfecto para familias y grupos",
+    "en": "The perfect ride for families and groups",
+    "pt": "A viagem perfeita para famílias e grupos"
+  },
+  "bookingSlideVan4": {
+    "es": "Capacidad premium, sin compromiso en el confort",
+    "en": "Premium capacity, with no compromise on comfort",
+    "pt": "Capacidade premium, sem abrir mão do conforto"
+  },
+  "bookingSlideElectric1": {
+    "es": "Totalmente eléctrico, silencioso y de nivel ejecutivo",
+    "en": "Fully electric, whisper-quiet and executive-class",
+    "pt": "Totalmente elétrico, silencioso e de nível executivo"
+  },
+  "bookingSlideElectric2": {
+    "es": "Cero emisiones, máxima experiencia de lujo",
+    "en": "Zero emissions, the ultimate luxury experience",
+    "pt": "Zero emissões, máxima experiência de luxo"
+  },
   "bookingDescriptiveText": {
     "es": "Premium hecho práctico. Asientos espaciosos, un viaje suave y recogidas puntuales que mantienen tu día en ritmo.",
     "en": "Premium, made practical. Spacious seating, a smooth ride and punctual pickups that keep your day on schedule.",
     "pt": "O premium, de forma prática. Assentos espaçosos, uma viagem suave e embarques pontuais que mantêm o seu dia no ritmo."
   },
-
-  "bookingIncludedTitle": {"es": "Qué incluye", "en": "What's included", "pt": "O que está incluído"},
-  "bookingIncludedMeetGreet": {"es": "Recibimiento personalizado", "en": "Personal meet & greet", "pt": "Recepção personalizada"},
+  "bookingIncludedTitle": {
+    "es": "Qué incluye",
+    "en": "What's included",
+    "pt": "O que está incluído"
+  },
+  "bookingIncludedMeetGreet": {
+    "es": "Recibimiento personalizado",
+    "en": "Personal meet & greet",
+    "pt": "Recepção personalizada"
+  },
   "bookingIncludedWaiting": {
     "es": "Hasta {minutes} minutos de espera gratuita",
     "en": "Up to {minutes} minutes of complimentary waiting time",
     "pt": "Até {minutes} minutos de espera grátis",
-    "placeholders": {"minutes": {"type": "int"}}
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
   },
-  "bookingIncludedFreeCancellation": {"es": "Cancelación gratuita hasta 1 hora antes de la recogida", "en": "Free cancellation up to 1 hour before pickup", "pt": "Cancelamento grátis até 1 hora antes do embarque"},
-  "bookingIncludedChargers": {"es": "Cargadores para iOS y Android a bordo", "en": "iOS and Android chargers on board", "pt": "Carregadores para iOS e Android a bordo"},
-  "bookingIncludedTissues": {"es": "Pañuelos y toallitas desinfectantes de cortesía", "en": "Complimentary tissues and sanitizing wipes", "pt": "Lenços e lenços umedecidos higienizantes de cortesia"},
-  "bookingIncludedWater": {"es": "Agua fría de cortesía incluida", "en": "Complimentary chilled water", "pt": "Água gelada de cortesia"},
-
-  "bookingCapacityTitle": {"es": "Capacidad", "en": "Capacity", "pt": "Capacidade"},
-  "bookingLuggage": {"es": "Equipaje", "en": "Luggage", "pt": "Bagagem"},
-  "bookingSeating": {"es": "Asientos", "en": "Seating", "pt": "Assentos"},
+  "bookingIncludedFreeCancellation": {
+    "es": "Cancelación gratuita hasta 1 hora antes de la recogida",
+    "en": "Free cancellation up to 1 hour before pickup",
+    "pt": "Cancelamento grátis até 1 hora antes do embarque"
+  },
+  "bookingIncludedChargers": {
+    "es": "Cargadores para iOS y Android a bordo",
+    "en": "iOS and Android chargers on board",
+    "pt": "Carregadores para iOS e Android a bordo"
+  },
+  "bookingIncludedTissues": {
+    "es": "Pañuelos y toallitas desinfectantes de cortesía",
+    "en": "Complimentary tissues and sanitizing wipes",
+    "pt": "Lenços e lenços umedecidos higienizantes de cortesia"
+  },
+  "bookingIncludedWater": {
+    "es": "Espera gratuita incluida: 60 min en aeropuerto, 15 en ciudad",
+    "en": "Free waiting included: 60 min at the airport, 15 in the city",
+    "pt": "Espera grátis incluída: 60 min no aeroporto, 15 na cidade"
+  },
+  "bookingCapacityTitle": {
+    "es": "Capacidad",
+    "en": "Capacity",
+    "pt": "Capacidade"
+  },
+  "bookingLuggage": {
+    "es": "Equipaje",
+    "en": "Luggage",
+    "pt": "Bagagem"
+  },
+  "bookingSeating": {
+    "es": "Asientos",
+    "en": "Seating",
+    "pt": "Assentos"
+  },
   "bookingCapacityLuggageInfo": {
     "es": "Basado en tamaños estándar de equipaje, que pueden diferir de los tuyos. Puedes especificar los detalles de tu equipaje en las \"Notas de recogida\" en el siguiente paso.",
     "en": "Based on standard luggage sizes, which may differ from yours. You can add details about your luggage in \"Pickup notes\" at the next step.",
     "pt": "Com base em tamanhos padrão de bagagem, que podem ser diferentes dos seus. Você pode detalhar sua bagagem nas \"Observações de embarque\" na próxima etapa."
   },
-  "bookingLuggageCarryOn": {"es": "{count} x De mano", "en": "{count} × Carry-on", "pt": "{count} × De mão", "placeholders": {"count": {"type": "int"}}},
-  "bookingLuggageChecked": {"es": "{count} x Facturada estándar", "en": "{count} × Standard checked", "pt": "{count} × Despachada padrão", "placeholders": {"count": {"type": "int"}}},
-  "bookingLuggageExtraLarge": {"es": "{count} x Extra grande", "en": "{count} × Extra large", "pt": "{count} × Extragrande", "placeholders": {"count": {"type": "int"}}},
+  "bookingLuggageCarryOn": {
+    "es": "{count} x De mano",
+    "en": "{count} × Carry-on",
+    "pt": "{count} × De mão",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingLuggageChecked": {
+    "es": "{count} x Facturada estándar",
+    "en": "{count} × Standard checked",
+    "pt": "{count} × Despachada padrão",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingLuggageExtraLarge": {
+    "es": "{count} x Extra grande",
+    "en": "{count} × Extra large",
+    "pt": "{count} × Extragrande",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "bookingSeatingInfo": {
     "es": "Elige la configuración de asientos que mejor se adapte a tus necesidades. Los asientos especiales (infantil / bebé) deben solicitarse con anticipación y están sujetos a disponibilidad.",
     "en": "Choose the seating layout that best suits your needs. Child and infant seats must be requested in advance and are subject to availability.",
     "pt": "Escolha a configuração de assentos que melhor atende às suas necessidades. Assentos especiais (infantil / bebê) devem ser solicitados com antecedência e estão sujeitos à disponibilidade."
   },
-  "bookingSeatingTwo": {"es": "Dos pasajeros", "en": "Two passengers", "pt": "Dois passageiros"},
-  "bookingSeatingThree": {"es": "Tres pasajeros", "en": "Three passengers", "pt": "Três passageiros"},
-  "bookingSeatingFive": {"es": "Cinco pasajeros", "en": "Five passengers", "pt": "Cinco passageiros"},
-  "bookingSeatingInfantSeat": {"es": "Asiento de bebé", "en": "Infant seat", "pt": "Assento de bebê"},
-
-  "bookingPriceBreakdownTitle": {"es": "Desglose de precio", "en": "Price breakdown", "pt": "Detalhamento do preço"},
-  "bookingBaseFare": {"es": "Tarifa base", "en": "Base fare", "pt": "Tarifa base"},
-  "bookingEstimatedTax": {"es": "Impuesto estimado", "en": "Estimated tax", "pt": "Imposto estimado"},
-  "bookingPleaseNote": {"es": "Nota importante:", "en": "Please note:", "pt": "Observação importante:"},
+  "bookingSeatingTwo": {
+    "es": "Dos pasajeros",
+    "en": "Two passengers",
+    "pt": "Dois passageiros"
+  },
+  "bookingSeatingThree": {
+    "es": "Tres pasajeros",
+    "en": "Three passengers",
+    "pt": "Três passageiros"
+  },
+  "bookingSeatingFive": {
+    "es": "Cinco pasajeros",
+    "en": "Five passengers",
+    "pt": "Cinco passageiros"
+  },
+  "bookingSeatingInfantSeat": {
+    "es": "Asiento de bebé",
+    "en": "Infant seat",
+    "pt": "Assento de bebê"
+  },
+  "bookingPriceBreakdownTitle": {
+    "es": "Desglose de precio",
+    "en": "Price breakdown",
+    "pt": "Detalhamento do preço"
+  },
+  "bookingBaseFare": {
+    "es": "Tarifa base",
+    "en": "Base fare",
+    "pt": "Tarifa base"
+  },
+  "bookingEstimatedTax": {
+    "es": "Impuesto estimado",
+    "en": "Estimated tax",
+    "pt": "Imposto estimado"
+  },
+  "bookingPleaseNote": {
+    "es": "Nota importante:",
+    "en": "Please note:",
+    "pt": "Observação importante:"
+  },
   "bookingNoteCapacity": {
     "es": "Los límites de capacidad de pasajeros y equipaje deben respetarse por razones de seguridad. Si se exceden, el chófer podrá rechazar el servicio.",
     "en": "Passenger and luggage limits must be respected for safety reasons. If they are exceeded, the chauffeur may decline the service.",
@@ -89,158 +273,609 @@
     "en": "Additional needs (wheelchair, child seat, extra items) can be added in \"Pickup notes\". Choose Business Van for larger groups or extra luggage.",
     "pt": "Necessidades adicionais (cadeira de rodas, assento infantil, itens extras) podem ser incluídas em \"Observações de embarque\". Escolha a Business Van para grupos maiores ou bagagem extra."
   },
-
-  "bookingRoutePreview": {"es": "Vista previa de ruta", "en": "Route preview", "pt": "Prévia da rota"},
-  "bookingPickupLabel": {"es": "Recogida", "en": "Pickup", "pt": "Embarque"},
-  "bookingDestinationLabel": {"es": "Destino", "en": "Destination", "pt": "Destino"},
-  "bookingForMyself": {"es": "Reservar para mí", "en": "Book for myself", "pt": "Reservar para mim"},
-  "bookingForMyselfSubtitle": {"es": "Reserva con la información de tu cuenta", "en": "Book using your account details", "pt": "Reserve com os dados da sua conta"},
-  "bookingForGuest": {"es": "Reservar para un invitado", "en": "Book for a guest", "pt": "Reservar para um convidado"},
-  "bookingForGuestSubtitle": {"es": "Seleccionar o añadir un invitado", "en": "Select or add a guest", "pt": "Selecionar ou adicionar um convidado"},
+  "bookingRoutePreview": {
+    "es": "Vista previa de ruta",
+    "en": "Route preview",
+    "pt": "Prévia da rota"
+  },
+  "bookingPickupLabel": {
+    "es": "Recogida",
+    "en": "Pickup",
+    "pt": "Embarque"
+  },
+  "bookingDestinationLabel": {
+    "es": "Destino",
+    "en": "Destination",
+    "pt": "Destino"
+  },
+  "bookingForMyself": {
+    "es": "Reservar para mí",
+    "en": "Book for myself",
+    "pt": "Reservar para mim"
+  },
+  "bookingForMyselfSubtitle": {
+    "es": "Reserva con la información de tu cuenta",
+    "en": "Book using your account details",
+    "pt": "Reserve com os dados da sua conta"
+  },
+  "bookingForGuest": {
+    "es": "Reservar para un invitado",
+    "en": "Book for a guest",
+    "pt": "Reservar para um convidado"
+  },
+  "bookingForGuestSubtitle": {
+    "es": "Seleccionar o añadir un invitado",
+    "en": "Select or add a guest",
+    "pt": "Selecionar ou adicionar um convidado"
+  },
   "bookingGuestDisplayName": {
     "es": "{title} {firstName} {lastName}",
     "en": "{title} {firstName} {lastName}",
     "pt": "{title} {firstName} {lastName}",
     "description": "Guest shown on the 'Book for a guest' card, e.g. 'Sr. Juan Pérez'",
-    "placeholders": {"title": {"type": "String"}, "firstName": {"type": "String"}, "lastName": {"type": "String"}}
+    "placeholders": {
+      "title": {
+        "type": "String"
+      },
+      "firstName": {
+        "type": "String"
+      },
+      "lastName": {
+        "type": "String"
+      }
+    }
   },
-  "bookingApplyOffer": {"es": "Aplicar oferta", "en": "Apply offer", "pt": "Aplicar oferta"},
-  "bookingAllFeesIncluded": {"es": "Todos los cargos incluidos", "en": "All fees included", "pt": "Todas as taxas incluídas"},
-
+  "bookingApplyOffer": {
+    "es": "Aplicar oferta",
+    "en": "Apply offer",
+    "pt": "Aplicar oferta"
+  },
+  "bookingAllFeesIncluded": {
+    "es": "Todos los cargos incluidos",
+    "en": "All fees included",
+    "pt": "Todas as taxas incluídas"
+  },
   "bookingStepOf": {
     "es": "PASO {step} DE {total}",
     "en": "STEP {step} OF {total}",
     "pt": "ETAPA {step} DE {total}",
-    "placeholders": {"step": {"type": "int"}, "total": {"type": "int"}}
+    "placeholders": {
+      "step": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
   },
-  "bookingStepVehicle": {"es": "Vehículo", "en": "Vehicle", "pt": "Veículo"},
-  "bookingStepDetails": {"es": "Detalles", "en": "Details", "pt": "Detalhes"},
-  "bookingConfirmCta": {"es": "Confirmar reserva", "en": "Confirm booking", "pt": "Confirmar reserva"},
-  "bookingTripDetailsHeading": {"es": "DETALLES DEL VIAJE", "en": "TRIP DETAILS", "pt": "DETALHES DA VIAGEM"},
-  "bookingPassengers": {"es": "Pasajeros", "en": "Passengers", "pt": "Passageiros"},
-  "bookingFlightNumber": {"es": "Número de vuelo", "en": "Flight number", "pt": "Número do voo"},
-  "bookingFlightNumberHint": {"es": "ej. LA 8810 (opcional)", "en": "e.g. LA 8810 (optional)", "pt": "ex.: LA 8810 (opcional)"},
-  "bookingSpecialRequests": {"es": "Solicitudes especiales", "en": "Special requests", "pt": "Pedidos especiais"},
-  "bookingSpecialRequestsHint": {"es": "Asiento infantil, letrero de bienvenida…", "en": "Child seat, name sign…", "pt": "Assento infantil, placa de recepção…"},
-
-  "bookingSummaryHeading": {"es": "RESUMEN DE RESERVA", "en": "BOOKING SUMMARY", "pt": "RESUMO DA RESERVA"},
-  "bookingSummaryService": {"es": "Servicio", "en": "Service", "pt": "Serviço"},
-  "bookingSummaryFrom": {"es": "Desde", "en": "From", "pt": "De"},
-  "bookingSummaryTo": {"es": "Hasta", "en": "To", "pt": "Para"},
-  "bookingSummaryDuration": {"es": "Duración", "en": "Duration", "pt": "Duração"},
-  "bookingSummaryDistance": {"es": "Distancia", "en": "Distance", "pt": "Distância"},
-  "bookingSummaryEstDuration": {"es": "Duración est.", "en": "Est. duration", "pt": "Duração est."},
-  "bookingSummaryFlight": {"es": "Vuelo", "en": "Flight", "pt": "Voo"},
-  "bookingSummaryNotes": {"es": "Notas", "en": "Notes", "pt": "Observações"},
-  "bookingDistanceKm": {"es": "{distance} km", "en": "{distance} km", "pt": "{distance} km", "placeholders": {"distance": {"type": "String", "example": "12,5"}}},
-  "bookingHoursShort": {"es": "{hours} h", "en": "{hours} h", "pt": "{hours} h", "placeholders": {"hours": {"type": "int"}}},
-  "bookingEstimatedTotal": {"es": "TOTAL ESTIMADO", "en": "ESTIMATED TOTAL", "pt": "TOTAL ESTIMADO"},
-  "bookingBreakdownHeading": {"es": "DESGLOSE", "en": "BREAKDOWN", "pt": "DETALHAMENTO"},
-  "bookingPaymentMethodHeading": {"es": "MÉTODO DE PAGO", "en": "PAYMENT METHOD", "pt": "FORMA DE PAGAMENTO"},
-  "bookingCardFallback": {"es": "Tarjeta", "en": "Card", "pt": "Cartão", "description": "Shown when a saved card has no brand"},
-
-  "bookingSelectedBadge": {"es": "SELECCIONADO", "en": "SELECTED", "pt": "SELECIONADO"},
+  "bookingStepVehicle": {
+    "es": "Vehículo",
+    "en": "Vehicle",
+    "pt": "Veículo"
+  },
+  "bookingStepDetails": {
+    "es": "Detalles",
+    "en": "Details",
+    "pt": "Detalhes"
+  },
+  "bookingConfirmCta": {
+    "es": "Confirmar reserva",
+    "en": "Confirm booking",
+    "pt": "Confirmar reserva"
+  },
+  "bookingTripDetailsHeading": {
+    "es": "DETALLES DEL VIAJE",
+    "en": "TRIP DETAILS",
+    "pt": "DETALHES DA VIAGEM"
+  },
+  "bookingPassengers": {
+    "es": "Pasajeros",
+    "en": "Passengers",
+    "pt": "Passageiros"
+  },
+  "bookingFlightNumber": {
+    "es": "Número de vuelo",
+    "en": "Flight number",
+    "pt": "Número do voo"
+  },
+  "bookingFlightNumberHint": {
+    "es": "ej. LA 8810 (opcional)",
+    "en": "e.g. LA 8810 (optional)",
+    "pt": "ex.: LA 8810 (opcional)"
+  },
+  "bookingSpecialRequests": {
+    "es": "Solicitudes especiales",
+    "en": "Special requests",
+    "pt": "Pedidos especiais"
+  },
+  "bookingSpecialRequestsHint": {
+    "es": "Asiento infantil, letrero de bienvenida…",
+    "en": "Child seat, name sign…",
+    "pt": "Assento infantil, placa de recepção…"
+  },
+  "bookingSummaryHeading": {
+    "es": "RESUMEN DE RESERVA",
+    "en": "BOOKING SUMMARY",
+    "pt": "RESUMO DA RESERVA"
+  },
+  "bookingSummaryService": {
+    "es": "Servicio",
+    "en": "Service",
+    "pt": "Serviço"
+  },
+  "bookingSummaryFrom": {
+    "es": "Desde",
+    "en": "From",
+    "pt": "De"
+  },
+  "bookingSummaryTo": {
+    "es": "Hasta",
+    "en": "To",
+    "pt": "Para"
+  },
+  "bookingSummaryDuration": {
+    "es": "Duración",
+    "en": "Duration",
+    "pt": "Duração"
+  },
+  "bookingSummaryDistance": {
+    "es": "Distancia",
+    "en": "Distance",
+    "pt": "Distância"
+  },
+  "bookingSummaryEstDuration": {
+    "es": "Duración est.",
+    "en": "Est. duration",
+    "pt": "Duração est."
+  },
+  "bookingSummaryFlight": {
+    "es": "Vuelo",
+    "en": "Flight",
+    "pt": "Voo"
+  },
+  "bookingSummaryNotes": {
+    "es": "Notas",
+    "en": "Notes",
+    "pt": "Observações"
+  },
+  "bookingDistanceKm": {
+    "es": "{distance} km",
+    "en": "{distance} km",
+    "pt": "{distance} km",
+    "placeholders": {
+      "distance": {
+        "type": "String",
+        "example": "12,5"
+      }
+    }
+  },
+  "bookingHoursShort": {
+    "es": "{hours} h",
+    "en": "{hours} h",
+    "pt": "{hours} h",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingEstimatedTotal": {
+    "es": "TOTAL ESTIMADO",
+    "en": "ESTIMATED TOTAL",
+    "pt": "TOTAL ESTIMADO"
+  },
+  "bookingBreakdownHeading": {
+    "es": "DESGLOSE",
+    "en": "BREAKDOWN",
+    "pt": "DETALHAMENTO"
+  },
+  "bookingPaymentMethodHeading": {
+    "es": "MÉTODO DE PAGO",
+    "en": "PAYMENT METHOD",
+    "pt": "FORMA DE PAGAMENTO"
+  },
+  "bookingCardFallback": {
+    "es": "Tarjeta",
+    "en": "Card",
+    "pt": "Cartão",
+    "description": "Shown when a saved card has no brand"
+  },
+  "bookingSelectedBadge": {
+    "es": "SELECCIONADO",
+    "en": "SELECTED",
+    "pt": "SELECIONADO"
+  },
   "bookingReserveCta": {
     "es": "RESERVAR {vehicle}",
     "en": "BOOK {vehicle}",
     "pt": "RESERVAR {vehicle}",
     "description": "Web reserve button; vehicle is the class name in upper case",
-    "placeholders": {"vehicle": {"type": "String", "example": "FIRST CLASS"}}
+    "placeholders": {
+      "vehicle": {
+        "type": "String",
+        "example": "FIRST CLASS"
+      }
+    }
   },
-  "bookingSeatsUpTo": {"es": "Hasta {count} pax", "en": "Seats up to {count}", "pt": "Até {count} pax", "placeholders": {"count": {"type": "int"}}},
-  "bookingFreeCancellationShort": {"es": "Cancelación gratuita hasta 1 h antes", "en": "Free cancellation up to 1 h before", "pt": "Cancelamento grátis até 1 h antes"},
-  "bookingFixedPriceLabel": {"es": "PRECIO FIJO", "en": "FIXED PRICE", "pt": "PREÇO FIXO"},
-  "bookingPayOnTripTitle": {"es": "Pago al finalizar el viaje", "en": "Pay at the end of your journey", "pt": "Pagamento ao final da viagem"},
+  "bookingSeatsUpTo": {
+    "es": "Hasta {count} pax",
+    "en": "Seats up to {count}",
+    "pt": "Até {count} pax",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingFreeCancellationShort": {
+    "es": "Cancelación gratuita hasta 1 h antes",
+    "en": "Free cancellation up to 1 h before",
+    "pt": "Cancelamento grátis até 1 h antes"
+  },
+  "bookingFixedPriceLabel": {
+    "es": "PRECIO FIJO",
+    "en": "FIXED PRICE",
+    "pt": "PREÇO FIXO"
+  },
+  "bookingPayOnTripTitle": {
+    "es": "Pago al finalizar el viaje",
+    "en": "Pay at the end of your journey",
+    "pt": "Pagamento ao final da viagem"
+  },
   "bookingPayOnTripBody": {
     "es": "Pagas el precio fijo a tu chófer en efectivo o con QR. Nada se cobra al reservar.",
     "en": "You pay the fixed price to your chauffeur in cash or by QR code. Nothing is charged when you book.",
     "pt": "Você paga o preço fixo ao seu motorista em dinheiro ou via QR. Nada é cobrado na reserva."
   },
-
-  "bookingAuthTitleLogin": {"es": "Inicia sesión para continuar", "en": "Sign in to continue", "pt": "Entre para continuar"},
-  "bookingAuthTitleRegister": {"es": "Crear una cuenta", "en": "Create an account", "pt": "Criar uma conta"},
-  "bookingAuthSubtitleLogin": {"es": "Inicia sesión para confirmar tu reserva.", "en": "Sign in to confirm your booking.", "pt": "Entre para confirmar sua reserva."},
-  "bookingAuthSubtitleRegister": {"es": "Crea tu cuenta de Luxelane para completar la reserva.", "en": "Create your Luxelane account to complete your booking.", "pt": "Crie sua conta Luxelane para concluir a reserva."},
-  "bookingAuthFullName": {"es": "Nombre completo", "en": "Full name", "pt": "Nome completo"},
-  "bookingAuthFullNameHint": {"es": "Tu nombre", "en": "Your name", "pt": "Seu nome"},
-  "bookingAuthEmail": {"es": "Correo electrónico", "en": "Email", "pt": "E-mail"},
-  "bookingAuthEmailHint": {"es": "tu@ejemplo.com", "en": "you@example.com", "pt": "voce@exemplo.com"},
-  "bookingAuthPassword": {"es": "Contraseña", "en": "Password", "pt": "Senha"},
-  "bookingAuthShowPassword": {"es": "Mostrar contraseña", "en": "Show password", "pt": "Mostrar senha"},
-  "bookingAuthHidePassword": {"es": "Ocultar contraseña", "en": "Hide password", "pt": "Ocultar senha"},
-  "bookingAuthSignInCta": {"es": "Iniciar sesión", "en": "Sign in", "pt": "Entrar"},
-  "bookingAuthCreateAccountCta": {"es": "Crear cuenta", "en": "Create account", "pt": "Criar conta"},
-  "bookingAuthHaveAccount": {"es": "¿Ya tienes cuenta? Inicia sesión", "en": "Already have an account? Sign in", "pt": "Já tem uma conta? Entre"},
-  "bookingAuthNoAccount": {"es": "¿No tienes cuenta? Crear una", "en": "Don't have an account? Create one", "pt": "Não tem uma conta? Crie uma"},
-
-  "bookingGuestDialogTitle": {"es": "Añadir nuevo invitado", "en": "Add a new guest", "pt": "Adicionar novo convidado"},
+  "bookingAuthTitleLogin": {
+    "es": "Inicia sesión para continuar",
+    "en": "Sign in to continue",
+    "pt": "Entre para continuar"
+  },
+  "bookingAuthTitleRegister": {
+    "es": "Crear una cuenta",
+    "en": "Create an account",
+    "pt": "Criar uma conta"
+  },
+  "bookingAuthSubtitleLogin": {
+    "es": "Inicia sesión para confirmar tu reserva.",
+    "en": "Sign in to confirm your booking.",
+    "pt": "Entre para confirmar sua reserva."
+  },
+  "bookingAuthSubtitleRegister": {
+    "es": "Crea tu cuenta de Luxelane para completar la reserva.",
+    "en": "Create your Luxelane account to complete your booking.",
+    "pt": "Crie sua conta Luxelane para concluir a reserva."
+  },
+  "bookingAuthFullName": {
+    "es": "Nombre completo",
+    "en": "Full name",
+    "pt": "Nome completo"
+  },
+  "bookingAuthFullNameHint": {
+    "es": "Tu nombre",
+    "en": "Your name",
+    "pt": "Seu nome"
+  },
+  "bookingAuthEmail": {
+    "es": "Correo electrónico",
+    "en": "Email",
+    "pt": "E-mail"
+  },
+  "bookingAuthEmailHint": {
+    "es": "tu@ejemplo.com",
+    "en": "you@example.com",
+    "pt": "voce@exemplo.com"
+  },
+  "bookingAuthPassword": {
+    "es": "Contraseña",
+    "en": "Password",
+    "pt": "Senha"
+  },
+  "bookingAuthShowPassword": {
+    "es": "Mostrar contraseña",
+    "en": "Show password",
+    "pt": "Mostrar senha"
+  },
+  "bookingAuthHidePassword": {
+    "es": "Ocultar contraseña",
+    "en": "Hide password",
+    "pt": "Ocultar senha"
+  },
+  "bookingAuthSignInCta": {
+    "es": "Iniciar sesión",
+    "en": "Sign in",
+    "pt": "Entrar"
+  },
+  "bookingAuthCreateAccountCta": {
+    "es": "Crear cuenta",
+    "en": "Create account",
+    "pt": "Criar conta"
+  },
+  "bookingAuthHaveAccount": {
+    "es": "¿Ya tienes cuenta? Inicia sesión",
+    "en": "Already have an account? Sign in",
+    "pt": "Já tem uma conta? Entre"
+  },
+  "bookingAuthNoAccount": {
+    "es": "¿No tienes cuenta? Crear una",
+    "en": "Don't have an account? Create one",
+    "pt": "Não tem uma conta? Crie uma"
+  },
+  "bookingGuestDialogTitle": {
+    "es": "Añadir nuevo invitado",
+    "en": "Add a new guest",
+    "pt": "Adicionar novo convidado"
+  },
   "bookingGuestDialogBody": {
     "es": "Ingresa la información de tu invitado y bríndale un servicio premium. Lo mantendremos informado sobre su trayecto durante todo el proceso. No te preocupes, no compartiremos ninguna información de pago o facturación con él.",
     "en": "Enter your guest's details and treat them to a first-class experience. We'll keep them updated on their journey every step of the way. Rest assured, we never share any payment or billing information with them.",
     "pt": "Informe os dados do seu convidado e ofereça a ele um serviço premium. Vamos mantê-lo informado sobre a viagem durante todo o trajeto. Fique tranquilo: não compartilharemos nenhuma informação de pagamento ou cobrança com ele."
   },
-  "bookingGuestTitleLabel": {"es": "Tratamiento", "en": "Title", "pt": "Tratamento"},
-  "bookingGuestTitleMr": {"es": "Sr.", "en": "Mr.", "pt": "Sr."},
-  "bookingGuestTitleMrs": {"es": "Sra.", "en": "Mrs.", "pt": "Sra."},
-  "bookingGuestTitleMs": {"es": "Srta.", "en": "Ms.", "pt": "Srta."},
-  "bookingGuestTitleDr": {"es": "Dr.", "en": "Dr.", "pt": "Dr."},
-  "bookingGuestTitleProf": {"es": "Prof.", "en": "Prof.", "pt": "Prof."},
-  "bookingGuestFirstName": {"es": "Nombre", "en": "First name", "pt": "Nome"},
-  "bookingGuestFirstNameHint": {"es": "Nombre del invitado", "en": "Guest's first name", "pt": "Nome do convidado"},
-  "bookingGuestLastName": {"es": "Apellido", "en": "Last name", "pt": "Sobrenome"},
-  "bookingGuestLastNameHint": {"es": "Apellido del invitado", "en": "Guest's last name", "pt": "Sobrenome do convidado"},
-  "bookingGuestEmailHint": {"es": "Correo del invitado", "en": "Guest's email", "pt": "E-mail do convidado"},
-  "bookingGuestPhone": {"es": "Número de móvil del invitado", "en": "Guest's mobile number", "pt": "Celular do convidado"},
-  "bookingGuestPhoneHelp": {"es": "Tu invitado recibirá las notificaciones del trayecto en este número", "en": "Your guest will receive trip updates on this number", "pt": "Seu convidado receberá as notificações da viagem neste número"},
-
-  "bookingConfirmedEyebrow": {"es": "RESERVA CONFIRMADA", "en": "BOOKING CONFIRMED", "pt": "RESERVA CONFIRMADA"},
-  "bookingConfirmedSemantics": {"es": "Reserva confirmada", "en": "Booking confirmed", "pt": "Reserva confirmada"},
-  "bookingConfirmedHeadline": {"es": "Tu chófer te esperará.", "en": "Your chauffeur will be waiting.", "pt": "Seu motorista estará à sua espera."},
-  "bookingCountdownOnTheWay": {"es": "Tu chófer está en camino.", "en": "Your chauffeur is on the way.", "pt": "Seu motorista está a caminho."},
-  "bookingPickupInMinutes": {"es": "Recogida en {minutes} min", "en": "Pickup in {minutes} min", "pt": "Embarque em {minutes} min", "placeholders": {"minutes": {"type": "int"}}},
-  "bookingPickupInHours": {"es": "Recogida en {hours} h", "en": "Pickup in {hours} h", "pt": "Embarque em {hours} h", "placeholders": {"hours": {"type": "int"}}},
-  "bookingPickupInHoursMinutes": {"es": "Recogida en {hours} h {minutes} min", "en": "Pickup in {hours} h {minutes} min", "pt": "Embarque em {hours} h {minutes} min", "placeholders": {"hours": {"type": "int"}, "minutes": {"type": "int"}}},
+  "bookingGuestTitleLabel": {
+    "es": "Tratamiento",
+    "en": "Title",
+    "pt": "Tratamento"
+  },
+  "bookingGuestTitleMr": {
+    "es": "Sr.",
+    "en": "Mr.",
+    "pt": "Sr."
+  },
+  "bookingGuestTitleMrs": {
+    "es": "Sra.",
+    "en": "Mrs.",
+    "pt": "Sra."
+  },
+  "bookingGuestTitleMs": {
+    "es": "Srta.",
+    "en": "Ms.",
+    "pt": "Srta."
+  },
+  "bookingGuestTitleDr": {
+    "es": "Dr.",
+    "en": "Dr.",
+    "pt": "Dr."
+  },
+  "bookingGuestTitleProf": {
+    "es": "Prof.",
+    "en": "Prof.",
+    "pt": "Prof."
+  },
+  "bookingGuestFirstName": {
+    "es": "Nombre",
+    "en": "First name",
+    "pt": "Nome"
+  },
+  "bookingGuestFirstNameHint": {
+    "es": "Nombre del invitado",
+    "en": "Guest's first name",
+    "pt": "Nome do convidado"
+  },
+  "bookingGuestLastName": {
+    "es": "Apellido",
+    "en": "Last name",
+    "pt": "Sobrenome"
+  },
+  "bookingGuestLastNameHint": {
+    "es": "Apellido del invitado",
+    "en": "Guest's last name",
+    "pt": "Sobrenome do convidado"
+  },
+  "bookingGuestEmailHint": {
+    "es": "Correo del invitado",
+    "en": "Guest's email",
+    "pt": "E-mail do convidado"
+  },
+  "bookingGuestPhone": {
+    "es": "Número de móvil del invitado",
+    "en": "Guest's mobile number",
+    "pt": "Celular do convidado"
+  },
+  "bookingGuestPhoneHelp": {
+    "es": "Tu invitado recibirá las notificaciones del trayecto en este número",
+    "en": "Your guest will receive trip updates on this number",
+    "pt": "Seu convidado receberá as notificações da viagem neste número"
+  },
+  "bookingConfirmedEyebrow": {
+    "es": "RESERVA CONFIRMADA",
+    "en": "BOOKING CONFIRMED",
+    "pt": "RESERVA CONFIRMADA"
+  },
+  "bookingConfirmedSemantics": {
+    "es": "Reserva confirmada",
+    "en": "Booking confirmed",
+    "pt": "Reserva confirmada"
+  },
+  "bookingConfirmedHeadline": {
+    "es": "Tu chófer te esperará.",
+    "en": "Your chauffeur will be waiting.",
+    "pt": "Seu motorista estará à sua espera."
+  },
+  "bookingCountdownOnTheWay": {
+    "es": "Tu chófer está en camino.",
+    "en": "Your chauffeur is on the way.",
+    "pt": "Seu motorista está a caminho."
+  },
+  "bookingPickupInMinutes": {
+    "es": "Recogida en {minutes} min",
+    "en": "Pickup in {minutes} min",
+    "pt": "Embarque em {minutes} min",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingPickupInHours": {
+    "es": "Recogida en {hours} h",
+    "en": "Pickup in {hours} h",
+    "pt": "Embarque em {hours} h",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingPickupInHoursMinutes": {
+    "es": "Recogida en {hours} h {minutes} min",
+    "en": "Pickup in {hours} h {minutes} min",
+    "pt": "Embarque em {hours} h {minutes} min",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
   "bookingPickupInDays": {
     "es": "{days, plural, =1{Recogida en 1 día} other{Recogida en {days} días}}",
     "en": "{days, plural, =1{Pickup in 1 day} other{Pickup in {days} days}}",
     "pt": "{days, plural, =1{Embarque em 1 dia} other{Embarque em {days} dias}}",
-    "placeholders": {"days": {"type": "int"}}
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
   },
-  "bookingViewMyBooking": {"es": "VER MI RESERVA", "en": "VIEW MY BOOKING", "pt": "VER MINHA RESERVA"},
-  "bookingBackHome": {"es": "Volver al inicio", "en": "Back to home", "pt": "Voltar ao início"},
+  "bookingViewMyBooking": {
+    "es": "VER MI RESERVA",
+    "en": "VIEW MY BOOKING",
+    "pt": "VER MINHA RESERVA"
+  },
+  "bookingBackHome": {
+    "es": "Volver al inicio",
+    "en": "Back to home",
+    "pt": "Voltar ao início"
+  },
   "bookingDateTime": {
     "es": "{date} · {time}",
     "en": "{date} · {time}",
     "pt": "{date} · {time}",
-    "placeholders": {"date": {"type": "String"}, "time": {"type": "String"}}
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
   },
-  "bookingFixedPricePaidByCard": {"es": "Precio fijo · tarjeta autorizada", "en": "Fixed price · card authorized", "pt": "Preço fixo · cartão autorizado"},
-  "bookingFixedPricePayDriver": {"es": "Precio fijo · pago al chófer", "en": "Fixed price · pay your chauffeur", "pt": "Preço fixo · pagamento ao motorista"},
-  "bookingChauffeurAtDisposal": {"es": "Chófer a disposición · {hours} h", "en": "Chauffeur at your disposal · {hours} h", "pt": "Motorista à disposição · {hours} h", "placeholders": {"hours": {"type": "int"}}},
-  "bookingFlight": {"es": "Vuelo {flight}", "en": "Flight {flight}", "pt": "Voo {flight}", "placeholders": {"flight": {"type": "String", "example": "OB 760"}}},
+  "bookingFixedPricePaidByCard": {
+    "es": "Precio fijo · tarjeta autorizada",
+    "en": "Fixed price · card authorized",
+    "pt": "Preço fixo · cartão autorizado"
+  },
+  "bookingFixedPricePayDriver": {
+    "es": "Precio fijo · pago al chófer",
+    "en": "Fixed price · pay your chauffeur",
+    "pt": "Preço fixo · pagamento ao motorista"
+  },
+  "bookingChauffeurAtDisposal": {
+    "es": "Chófer a disposición · {hours} h",
+    "en": "Chauffeur at your disposal · {hours} h",
+    "pt": "Motorista à disposição · {hours} h",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingFlight": {
+    "es": "Vuelo {flight}",
+    "en": "Flight {flight}",
+    "pt": "Voo {flight}",
+    "placeholders": {
+      "flight": {
+        "type": "String",
+        "example": "OB 760"
+      }
+    }
+  },
   "bookingPassengersAndBags": {
     "es": "{passengers} · {bags}",
     "en": "{passengers} · {bags}",
     "pt": "{passengers} · {bags}",
     "description": "Already-formatted unitPassengers and unitBags",
-    "placeholders": {"passengers": {"type": "String"}, "bags": {"type": "String"}}
+    "placeholders": {
+      "passengers": {
+        "type": "String"
+      },
+      "bags": {
+        "type": "String"
+      }
+    }
   },
-  "bookingReference": {"es": "Código de reserva: {code}", "en": "Booking reference: {code}", "pt": "Código da reserva: {code}", "placeholders": {"code": {"type": "String"}}},
-  "bookingAssuranceFixedPrice": {"es": "Precio fijo, sin sorpresas", "en": "Fixed price, no surprises", "pt": "Preço fixo, sem surpresas"},
-  "bookingAssuranceVerified": {"es": "Chóferes verificados", "en": "Vetted chauffeurs", "pt": "Motoristas verificados"},
-  "bookingLoadErrorTitle": {"es": "No pudimos cargar tu reserva", "en": "We couldn't load your booking", "pt": "Não conseguimos carregar sua reserva"},
-  "bookingNotFound": {"es": "Esta reserva ya no está disponible.", "en": "This booking is no longer available.", "pt": "Esta reserva não está mais disponível."},
-
-  "bookingErrorQuoteFailed": {"es": "No se pudo cotizar el viaje", "en": "We couldn't price your journey", "pt": "Não foi possível calcular o preço da viagem"},
-  "bookingErrorQuoteMissing": {"es": "Falta la cotización del viaje", "en": "Your journey hasn't been priced yet", "pt": "A viagem ainda não foi cotada"},
+  "bookingReference": {
+    "es": "Código de reserva: {code}",
+    "en": "Booking reference: {code}",
+    "pt": "Código da reserva: {code}",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingAssuranceFixedPrice": {
+    "es": "Precio fijo, sin sorpresas",
+    "en": "Fixed price, no surprises",
+    "pt": "Preço fixo, sem surpresas"
+  },
+  "bookingAssuranceVerified": {
+    "es": "Chóferes verificados",
+    "en": "Vetted chauffeurs",
+    "pt": "Motoristas verificados"
+  },
+  "bookingLoadErrorTitle": {
+    "es": "No pudimos cargar tu reserva",
+    "en": "We couldn't load your booking",
+    "pt": "Não conseguimos carregar sua reserva"
+  },
+  "bookingNotFound": {
+    "es": "Esta reserva ya no está disponible.",
+    "en": "This booking is no longer available.",
+    "pt": "Esta reserva não está mais disponível."
+  },
+  "bookingErrorQuoteFailed": {
+    "es": "No se pudo cotizar el viaje",
+    "en": "We couldn't price your journey",
+    "pt": "Não foi possível calcular o preço da viagem"
+  },
+  "bookingErrorQuoteMissing": {
+    "es": "Falta la cotización del viaje",
+    "en": "Your journey hasn't been priced yet",
+    "pt": "A viagem ainda não foi cotada"
+  },
   "bookingErrorQuoteExpired": {
     "es": "La cotización venció. Vuelve a confirmar para ver el precio actualizado.",
     "en": "Your quote has expired. Confirm again to see the updated price.",
     "pt": "A cotação expirou. Confirme novamente para ver o preço atualizado."
   },
-  "bookingErrorCreateFailed": {"es": "No se pudo crear la reserva", "en": "We couldn't complete your booking", "pt": "Não foi possível concluir a reserva"},
-  "bookingErrorPaymentNotAuthorised": {"es": "No pudimos autorizar tu tarjeta. Inténtalo de nuevo o elige otra.", "en": "We couldn't authorize your card. Please try again or choose another.", "pt": "Não conseguimos autorizar seu cartão. Tente novamente ou escolha outro."},
-  "bookingErrorInvalidFlight": {"es": "Revisa el número de vuelo (ej. LA 8810).", "en": "Please check the flight number (e.g. LA 8810).", "pt": "Verifique o número do voo (ex.: LA 8810)."},
-  "bookingErrorTooManyPassengers": {"es": "El número de pasajeros supera la capacidad del vehículo.", "en": "The number of passengers exceeds the vehicle's capacity.", "pt": "O número de passageiros excede a capacidade do veículo."},
-  "bookingErrorRateFailed": {"es": "No se pudo enviar tu calificación", "en": "We couldn't send your rating", "pt": "Não foi possível enviar sua avaliação"}
+  "bookingErrorCreateFailed": {
+    "es": "No se pudo crear la reserva",
+    "en": "We couldn't complete your booking",
+    "pt": "Não foi possível concluir a reserva"
+  },
+  "bookingErrorPaymentNotAuthorised": {
+    "es": "No pudimos autorizar tu tarjeta. Inténtalo de nuevo o elige otra.",
+    "en": "We couldn't authorize your card. Please try again or choose another.",
+    "pt": "Não conseguimos autorizar seu cartão. Tente novamente ou escolha outro."
+  },
+  "bookingErrorInvalidFlight": {
+    "es": "Revisa el número de vuelo (ej. LA 8810).",
+    "en": "Please check the flight number (e.g. LA 8810).",
+    "pt": "Verifique o número do voo (ex.: LA 8810)."
+  },
+  "bookingErrorTooManyPassengers": {
+    "es": "El número de pasajeros supera la capacidad del vehículo.",
+    "en": "The number of passengers exceeds the vehicle's capacity.",
+    "pt": "O número de passageiros excede a capacidade do veículo."
+  },
+  "bookingErrorRateFailed": {
+    "es": "No se pudo enviar tu calificación",
+    "en": "We couldn't send your rating",
+    "pt": "Não foi possível enviar sua avaliação"
+  }
 }
