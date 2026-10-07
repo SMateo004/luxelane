@@ -32,7 +32,8 @@ void main() async {
       GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w300),
       GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w500),
       GoogleFonts.cormorantGaramond(fontStyle: FontStyle.italic),
-      GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w300, fontStyle: FontStyle.italic),
+      GoogleFonts.cormorantGaramond(
+          fontWeight: FontWeight.w300, fontStyle: FontStyle.italic),
     ]),
   ]);
 
@@ -87,7 +88,8 @@ void main() async {
   if (AppConfig.enableLogs) {
     debugPrint('[Luxelane] env=${AppConfig.env.name} web=$kIsWeb');
     if (kIsWeb && AppConfig.googleMapsKey.isEmpty) {
-      debugPrint('[Luxelane] WARNING: GOOGLE_MAPS_KEY is empty. Autocomplete will NOT work. Run with --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY');
+      debugPrint(
+          '[Luxelane] WARNING: GOOGLE_MAPS_KEY is empty. Autocomplete will NOT work. Run with --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY');
     }
   }
 

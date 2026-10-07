@@ -33,7 +33,8 @@ class HourlyCharterPage extends StatelessWidget {
     ],
     storyEyebrow: 'Para cada ocasión',
     storyTitle: 'Un día entero,\nsin pensar en cómo moverte.',
-    storyBody: 'Desde una agenda de reuniones hasta una tarde descubriendo la ciudad, '
+    storyBody:
+        'Desde una agenda de reuniones hasta una tarde descubriendo la ciudad, '
         'el servicio por horas te da la libertad de un vehículo privado sin '
         'ninguna de sus preocupaciones.',
     storyPoints: [
@@ -57,9 +58,11 @@ class HourlyCharterPage extends StatelessWidget {
           'Antes de la recogida tendrás en la app el nombre del chófer, el vehículo y su contacto.'),
     ],
     closingTitle: 'Reserva el tiempo.\nNosotros ponemos el camino.',
-    closingBody: 'Desde 2 horas, con precio fijo y un chófer profesional a tu entera disposición.',
+    closingBody:
+        'Desde 2 horas, con precio fijo y un chófer profesional a tu entera disposición.',
   );
 
   @override
-  Widget build(BuildContext context) => const ServicePageTemplate(content: content);
+  Widget build(BuildContext context) =>
+      const ServicePageTemplate(content: content);
 }

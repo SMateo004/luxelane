@@ -56,9 +56,11 @@ class ImmediatePickupPage extends StatelessWidget {
           'Puedes cancelar desde la app. Las reservas programadas se cancelan sin coste hasta 1 hora antes de la recogida.'),
     ],
     closingTitle: 'Tu chófer,\na un toque.',
-    closingBody: 'Confirma ahora y sigue a tu chófer en tiempo real hasta la puerta.',
+    closingBody:
+        'Confirma ahora y sigue a tu chófer en tiempo real hasta la puerta.',
   );
 
   @override
-  Widget build(BuildContext context) => const ServicePageTemplate(content: content);
+  Widget build(BuildContext context) =>
+      const ServicePageTemplate(content: content);
 }

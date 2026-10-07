@@ -4,8 +4,13 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart'
-    show GoogleMap, GoogleMapController, CameraPosition, CameraUpdate,
-         Marker, MarkerId;
+    show
+        GoogleMap,
+        GoogleMapController,
+        CameraPosition,
+        CameraUpdate,
+        Marker,
+        MarkerId;
 import 'package:video_player/video_player.dart';
 import '../../../../core/design/lux_promise.dart';
 import '../../../../core/enums/enums.dart';
@@ -62,12 +67,12 @@ class WebHomePage extends StatefulWidget {
 }
 
 class _WebHomePageState extends State<WebHomePage> {
-  final _scroll     = ScrollController();
-  final _luxScroll  = LuxScrollNotifier();
-  double _scrollY   = 0;
+  final _scroll = ScrollController();
+  final _luxScroll = LuxScrollNotifier();
+  double _scrollY = 0;
 
   // Section keys — used for scroll-to-section navigation
-  final _fleetKey    = GlobalKey();
+  final _fleetKey = GlobalKey();
   final _businessKey = GlobalKey();
 
   @override
@@ -95,7 +100,8 @@ class _WebHomePageState extends State<WebHomePage> {
       final box = ctx.findRenderObject() as RenderBox?;
       if (box == null) return;
       final dy = box.localToGlobal(Offset.zero).dy;
-      final target = (_scroll.offset + dy - 72).clamp(0.0, _scroll.position.maxScrollExtent);
+      final target = (_scroll.offset + dy - 72)
+          .clamp(0.0, _scroll.position.maxScrollExtent);
       _scroll.animateTo(
         target,
         duration: const Duration(milliseconds: 700),
@@ -129,22 +135,22 @@ class _WebHomePageState extends State<WebHomePage> {
 
                   // ── Hero ─────────────────────────────────────────────
                   _HeroSection(
-                    serviceType:           widget.serviceType,
-                    origin:                widget.origin,
-                    destination:           widget.destination,
-                    date:                  widget.date,
-                    hours:                 widget.hours,
-                    locating:              widget.locating,
-                    onServiceTypeChanged:  widget.onServiceTypeChanged,
-                    onOriginSelected:      widget.onOriginSelected,
+                    serviceType: widget.serviceType,
+                    origin: widget.origin,
+                    destination: widget.destination,
+                    date: widget.date,
+                    hours: widget.hours,
+                    locating: widget.locating,
+                    onServiceTypeChanged: widget.onServiceTypeChanged,
+                    onOriginSelected: widget.onOriginSelected,
                     onDestinationSelected: widget.onDestinationSelected,
-                    onDateChanged:         widget.onDateChanged,
-                    onHoursChanged:        widget.onHoursChanged,
-                    onLocate:              widget.onLocate,
-                    onSearch:              widget.onSearch,
-                    onOriginMapPick:       widget.onOriginMapPick,
-                    onDestinationMapPick:  widget.onDestinationMapPick,
-                    scrollY:               _scrollY,
+                    onDateChanged: widget.onDateChanged,
+                    onHoursChanged: widget.onHoursChanged,
+                    onLocate: widget.onLocate,
+                    onSearch: widget.onSearch,
+                    onOriginMapPick: widget.onOriginMapPick,
+                    onDestinationMapPick: widget.onDestinationMapPick,
+                    scrollY: _scrollY,
                   ),
 
                   // ── Marquee ticker ────────────────────────────────────
@@ -164,19 +170,19 @@ class _WebHomePageState extends State<WebHomePage> {
 
                   // ── Business split ────────────────────────────────────
                   _BusinessSection(
-                    sectionKey:  _businessKey,
+                    sectionKey: _businessKey,
                     onLearnMore: widget.onSearch,
                   ),
 
                   // ── CTA full-bleed ────────────────────────────────────
                   _CtaSection(
-                    onBook:      widget.onSearch,
+                    onBook: widget.onSearch,
                     onViewFleet: () => _scrollToKey(_fleetKey),
                   ),
 
                   // ── Footer ───────────────────────────────────────────
                   LuxSiteFooter(
-                    onFleet:    () => _scrollToKey(_fleetKey),
+                    onFleet: () => _scrollToKey(_fleetKey),
                     onBusiness: () => _scrollToKey(_businessKey),
                   ),
                 ],
@@ -185,10 +191,10 @@ class _WebHomePageState extends State<WebHomePage> {
 
             // ── Fixed nav overlay (on top of scroll) ────────────────
             LuxSiteNav(
-              solid:      _scrollY > 60,
-              onFleet:    () => _scrollToKey(_fleetKey),
+              solid: _scrollY > 60,
+              onFleet: () => _scrollToKey(_fleetKey),
               onBusiness: () => _scrollToKey(_businessKey),
-              onBook:     _scrollToTop,
+              onBook: _scrollToTop,
             ),
           ],
         ),
@@ -247,8 +253,8 @@ class _HeroSectionState extends State<_HeroSection>
   late AnimationController _intro;
 
   // ── Map-drawer state (independent per field) ──────────────────
-  bool   _originMapOpen = false;
-  bool   _destMapOpen   = false;
+  bool _originMapOpen = false;
+  bool _destMapOpen = false;
   Place? _originMapPlace;
   Place? _destMapPlace;
 
@@ -258,7 +264,8 @@ class _HeroSectionState extends State<_HeroSection>
   @override
   void initState() {
     super.initState();
-    _intro = AnimationController(vsync: this, duration: const Duration(milliseconds: 1600))
+    _intro = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1600))
       ..forward();
   }
 
@@ -267,18 +274,24 @@ class _HeroSectionState extends State<_HeroSection>
     super.didUpdateWidget(old);
     // Track new locations
     if (widget.origin != old.origin && widget.origin != null) {
-      setState(() { _originMapPlace = widget.origin; _originMapOpen = true; });
+      setState(() {
+        _originMapPlace = widget.origin;
+        _originMapOpen = true;
+      });
     }
     if (widget.destination != old.destination && widget.destination != null) {
-      setState(() { _destMapPlace = widget.destination; _destMapOpen = true; });
+      setState(() {
+        _destMapPlace = widget.destination;
+        _destMapOpen = true;
+      });
     }
     // Service-type switch: hide dest map for "Por horas", restore for "Solo ida"
     if (widget.serviceType != old.serviceType) {
       if (widget.serviceType == ServiceType.byTheHour) {
         setState(() => _destMapOpen = false);
       } else if (widget.serviceType == ServiceType.oneWay &&
-                 _destMapPlace != null &&
-                 (_destMapPlace!.lat != 0.0 || _destMapPlace!.lng != 0.0)) {
+          _destMapPlace != null &&
+          (_destMapPlace!.lat != 0.0 || _destMapPlace!.lng != 0.0)) {
         setState(() => _destMapOpen = true);
       }
     }
@@ -349,11 +362,14 @@ class _HeroSectionState extends State<_HeroSection>
           // Everything lives here so they all slide up together when
           // the drawer opens (column grows upward since it's pinned bottom).
           Positioned(
-            bottom: 0, left: 0, right: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
             child: FadeTransition(
               opacity: _fade(0.35, 1.0),
               child: Padding(
-                padding: EdgeInsets.fromLTRB(narrow ? 20 : 56, 0, narrow ? 20 : 56, narrow ? 28 : 48),
+                padding: EdgeInsets.fromLTRB(
+                    narrow ? 20 : 56, 0, narrow ? 20 : 56, narrow ? 28 : 48),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -368,12 +384,15 @@ class _HeroSectionState extends State<_HeroSection>
                             children: [
                               TextSpan(
                                 text: 'Tu chófer ',
-                                style: displayText(size: narrow ? 52 : 100, color: Colors.white),
+                                style: displayText(
+                                    size: narrow ? 52 : 100,
+                                    color: Colors.white),
                               ),
                               TextSpan(
                                 text: 'te espera.',
                                 style: displayText(
-                                  size: narrow ? 52 : 100, color: Colors.white,
+                                  size: narrow ? 52 : 100,
+                                  color: Colors.white,
                                   style: FontStyle.italic,
                                 ),
                               ),
@@ -418,12 +437,15 @@ class _HeroSectionState extends State<_HeroSection>
                                         label: '¿Dónde estás?',
                                         hint: '¿Dónde estás?',
                                         initialValue: widget.origin,
-                                        onPlaceSelected: widget.onOriginSelected,
+                                        onPlaceSelected:
+                                            widget.onOriginSelected,
                                         onMapPick: widget.onOriginMapPick,
                                         glass: true,
                                       ),
                                     ),
-                                    Container(height: 1, color: Colors.white.withAlpha(30)),
+                                    Container(
+                                        height: 1,
+                                        color: Colors.white.withAlpha(30)),
                                     isOneWay
                                         ? _BarField(
                                             label: 'DESTINO',
@@ -431,8 +453,10 @@ class _HeroSectionState extends State<_HeroSection>
                                             child: PlaceAutocompleteField(
                                               label: '¿A dónde vas?',
                                               initialValue: widget.destination,
-                                              onPlaceSelected: widget.onDestinationSelected,
-                                              onMapPick: widget.onDestinationMapPick,
+                                              onPlaceSelected:
+                                                  widget.onDestinationSelected,
+                                              onMapPick:
+                                                  widget.onDestinationMapPick,
                                               glass: true,
                                             ),
                                           )
@@ -444,7 +468,9 @@ class _HeroSectionState extends State<_HeroSection>
                                               onChanged: widget.onHoursChanged,
                                             ),
                                           ),
-                                    Container(height: 1, color: Colors.white.withAlpha(30)),
+                                    Container(
+                                        height: 1,
+                                        color: Colors.white.withAlpha(30)),
                                     _BarField(
                                       label: 'FECHA Y HORA',
                                       icon: Icons.calendar_today_outlined,
@@ -476,7 +502,8 @@ class _HeroSectionState extends State<_HeroSection>
                                           label: '¿Dónde estás?',
                                           hint: '¿Dónde estás?',
                                           initialValue: widget.origin,
-                                          onPlaceSelected: widget.onOriginSelected,
+                                          onPlaceSelected:
+                                              widget.onOriginSelected,
                                           onMapPick: widget.onOriginMapPick,
                                           glass: true,
                                         ),
@@ -491,9 +518,12 @@ class _HeroSectionState extends State<_HeroSection>
                                               icon: Icons.south,
                                               child: PlaceAutocompleteField(
                                                 label: '¿A dónde vas?',
-                                                initialValue: widget.destination,
-                                                onPlaceSelected: widget.onDestinationSelected,
-                                                onMapPick: widget.onDestinationMapPick,
+                                                initialValue:
+                                                    widget.destination,
+                                                onPlaceSelected: widget
+                                                    .onDestinationSelected,
+                                                onMapPick:
+                                                    widget.onDestinationMapPick,
                                                 glass: true,
                                               ),
                                             )
@@ -502,7 +532,8 @@ class _HeroSectionState extends State<_HeroSection>
                                               icon: Icons.schedule_outlined,
                                               child: _HoursPicker(
                                                 hours: widget.hours,
-                                                onChanged: widget.onHoursChanged,
+                                                onChanged:
+                                                    widget.onHoursChanged,
                                               ),
                                             ),
                                     ),
@@ -531,7 +562,8 @@ class _HeroSectionState extends State<_HeroSection>
                     // Each panel uses the same flex as its bar column so they
                     // sit perfectly below their respective field.
                     // Hidden on narrow screens (panels don't fit in small widths).
-                    if (!narrow && (_originMapOpen || _destMapOpen || _dateOpen))
+                    if (!narrow &&
+                        (_originMapOpen || _destMapOpen || _dateOpen))
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -544,7 +576,7 @@ class _HeroSectionState extends State<_HeroSection>
                               child: _originMapOpen &&
                                       _originMapPlace != null &&
                                       (_originMapPlace!.lat != 0.0 ||
-                                       _originMapPlace!.lng != 0.0)
+                                          _originMapPlace!.lng != 0.0)
                                   ? _InlineMapPanel(
                                       place: _originMapPlace!,
                                       label: 'RECOGIDA',
@@ -565,13 +597,13 @@ class _HeroSectionState extends State<_HeroSection>
                               child: _destMapOpen &&
                                       _destMapPlace != null &&
                                       (_destMapPlace!.lat != 0.0 ||
-                                       _destMapPlace!.lng != 0.0)
+                                          _destMapPlace!.lng != 0.0)
                                   ? _InlineMapPanel(
                                       place: _destMapPlace!,
                                       label: 'DESTINO',
                                       onChangeTap: widget.onDestinationMapPick,
-                                      onClose: () => setState(
-                                          () => _destMapOpen = false),
+                                      onClose: () =>
+                                          setState(() => _destMapOpen = false),
                                     )
                                   : const SizedBox.shrink(),
                             ),
@@ -606,7 +638,10 @@ class _HeroSectionState extends State<_HeroSection>
                       child: Text(
                         '${LuxPromise.fixedPrice}   ·   ${LuxPromise.freeCancel}   ·   ${LuxPromise.chauffeurs}',
                         textAlign: TextAlign.center,
-                        style: uiLabel(size: 10.5, color: Colors.white.withAlpha(150), spacing: 0.8),
+                        style: uiLabel(
+                            size: 10.5,
+                            color: Colors.white.withAlpha(150),
+                            spacing: 0.8),
                       ),
                     ),
                   ],
@@ -633,14 +668,21 @@ class _HeroBg extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFF060C16), Color(0xFF0D1B2E), Color(0xFF091525)],
+                colors: [
+                  Color(0xFF060C16),
+                  Color(0xFF0D1B2E),
+                  Color(0xFF091525)
+                ],
               ),
             ),
           ),
-          CustomPaint(painter: _DotGridPainter(), child: const SizedBox.expand()),
+          CustomPaint(
+              painter: _DotGridPainter(), child: const SizedBox.expand()),
           Image.asset(
-            _asset, fit: BoxFit.cover,
-            width: double.infinity, height: double.infinity,
+            _asset,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
             errorBuilder: (_, __, ___) => const SizedBox.shrink(),
           ),
         ],
@@ -652,9 +694,9 @@ class _DotGridPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final p = Paint()..color = const Color(0x0FFFFFFF);
     const s = 40.0;
-    for (double x = s; x < size.width;  x += s)
-    for (double y = s; y < size.height; y += s)
-      canvas.drawCircle(Offset(x, y), 1.2, p);
+    for (double x = s; x < size.width; x += s)
+      for (double y = s; y < size.height; y += s)
+        canvas.drawCircle(Offset(x, y), 1.2, p);
   }
 
   @override
@@ -678,14 +720,20 @@ class _ClipRevealState extends State<_ClipReveal>
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 950));
-    _slide = Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero)
-        .animate(CurvedAnimation(parent: _ctrl, curve: const Cubic(0.16, 1, 0.3, 1)));
-    Future.delayed(widget.delay, () { if (mounted) _ctrl.forward(); });
+    _ctrl = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 950));
+    _slide = Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(
+        CurvedAnimation(parent: _ctrl, curve: const Cubic(0.16, 1, 0.3, 1)));
+    Future.delayed(widget.delay, () {
+      if (mounted) _ctrl.forward();
+    });
   }
 
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => ClipRect(
@@ -737,8 +785,8 @@ class _InlineMapPanel extends StatefulWidget {
     required this.onClose,
   });
 
-  final Place        place;
-  final String       label;       // 'RECOGIDA' or 'DESTINO'
+  final Place place;
+  final String label; // 'RECOGIDA' or 'DESTINO'
   final VoidCallback onChangeTap;
   final VoidCallback onClose;
 
@@ -791,22 +839,23 @@ class _InlineMapPanelState extends State<_InlineMapPanel> {
                 position: widget.place.latLng,
               ),
             },
-            zoomControlsEnabled:    false,
-            mapToolbarEnabled:      false,
+            zoomControlsEnabled: false,
+            mapToolbarEnabled: false,
             myLocationButtonEnabled: false,
             liteModeEnabled: !kIsWeb,
           ),
 
           // ── "Cambiar ubicación" button — bottom-left ──────────────
           Positioned(
-            bottom: 10, left: 10,
+            bottom: 10,
+            left: 10,
             child: GestureDetector(
               onTap: widget.onChangeTap,
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 7),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                   color: const Color(0xEE060C16),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -834,7 +883,8 @@ class _InlineMapPanelState extends State<_InlineMapPanel> {
 
           // ── Close button — top-right ──────────────────────────────
           Positioned(
-            top: 8, right: 8,
+            top: 8,
+            right: 8,
             child: GestureDetector(
               onTap: widget.onClose,
               child: MouseRegion(
@@ -842,8 +892,7 @@ class _InlineMapPanelState extends State<_InlineMapPanel> {
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   color: const Color(0xCC060C16),
-                  child: const Icon(Icons.close,
-                      size: 14, color: Colors.white),
+                  child: const Icon(Icons.close, size: 14, color: Colors.white),
                 ),
               ),
             ),
@@ -870,15 +919,22 @@ class _ServicePillToggle extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _Pill(label: 'Solo ida',   selected: isOneWay,  onTap: () => onChanged(ServiceType.oneWay)),
-            _Pill(label: 'Por horas',  selected: !isOneWay, onTap: () => onChanged(ServiceType.byTheHour)),
+            _Pill(
+                label: 'Solo ida',
+                selected: isOneWay,
+                onTap: () => onChanged(ServiceType.oneWay)),
+            _Pill(
+                label: 'Por horas',
+                selected: !isOneWay,
+                onTap: () => onChanged(ServiceType.byTheHour)),
           ],
         ),
       );
 }
 
 class _Pill extends StatelessWidget {
-  const _Pill({required this.label, required this.selected, required this.onTap});
+  const _Pill(
+      {required this.label, required this.selected, required this.onTap});
   final String label;
   final bool selected;
   final VoidCallback onTap;
@@ -896,7 +952,9 @@ class _Pill extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              fontFamily: kSans, fontSize: 11, fontWeight: FontWeight.w500,
+              fontFamily: kSans,
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
               letterSpacing: 0.3,
               color: selected ? LD.ink : Colors.white.withAlpha(170),
               decoration: TextDecoration.none,
@@ -907,7 +965,8 @@ class _Pill extends StatelessWidget {
 }
 
 class _BarField extends StatelessWidget {
-  const _BarField({required this.label, required this.icon, required this.child});
+  const _BarField(
+      {required this.label, required this.icon, required this.child});
   final String label;
   final IconData icon;
   final Widget child;
@@ -922,12 +981,15 @@ class _BarField extends StatelessWidget {
             Row(children: [
               Icon(icon, size: 11, color: Colors.white.withAlpha(160)),
               const SizedBox(width: 6),
-              Text(label, style: TextStyle(
-                fontFamily: kSans, fontSize: 9.5, fontWeight: FontWeight.w600,
-                letterSpacing: 1.8,
-                color: Colors.white.withAlpha(160),
-                decoration: TextDecoration.none,
-              )),
+              Text(label,
+                  style: TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.8,
+                    color: Colors.white.withAlpha(160),
+                    decoration: TextDecoration.none,
+                  )),
             ]),
             const SizedBox(height: 5),
             child,
@@ -958,36 +1020,39 @@ class _BarCtaState extends State<_BarCta> {
   @override
   Widget build(BuildContext context) => MouseRegion(
         onEnter: (_) => setState(() => _hover = true),
-        onExit:  (_) => setState(() => _hover = false),
+        onExit: (_) => setState(() => _hover = false),
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: widget.onTap,
           child: ClipRRect(
             borderRadius: const BorderRadius.only(
-              topRight:    Radius.circular(13),
+              topRight: Radius.circular(13),
               bottomRight: Radius.circular(13),
             ),
             child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            width: 180,
-            height: double.infinity,
-            decoration: BoxDecoration(
-              color: _hover ? LD.sphLt : LD.sph,
-              border: Border(
-                left: BorderSide(color: Colors.white.withAlpha(40)),
+              duration: const Duration(milliseconds: 200),
+              width: 180,
+              height: double.infinity,
+              decoration: BoxDecoration(
+                color: _hover ? LD.sphLt : LD.sph,
+                border: Border(
+                  left: BorderSide(color: Colors.white.withAlpha(40)),
+                ),
+              ),
+              alignment: Alignment.center,
+              child: const Text(
+                'VER PRECIOS',
+                style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 2.2,
+                  color: Colors.white,
+                  decoration: TextDecoration.none,
+                ),
               ),
             ),
-            alignment: Alignment.center,
-            child: const Text(
-              'VER PRECIOS',
-              style: TextStyle(
-                fontFamily: kSans, fontSize: 10.5, fontWeight: FontWeight.w600,
-                letterSpacing: 2.2, color: Colors.white,
-                decoration: TextDecoration.none,
-              ),
-            ),
-          ),
-          ),   // ClipRRect
+          ), // ClipRRect
         ),
       );
 }
@@ -995,7 +1060,8 @@ class _BarCtaState extends State<_BarCta> {
 // ── Shared button widgets ─────────────────────────────────────
 
 class _SolidBtn extends StatefulWidget {
-  const _SolidBtn({required this.label, required this.onTap, this.white = false});
+  const _SolidBtn(
+      {required this.label, required this.onTap, this.white = false});
   final String label;
   final VoidCallback onTap;
   final bool white;
@@ -1010,7 +1076,7 @@ class _SolidBtnState extends State<_SolidBtn> {
   @override
   Widget build(BuildContext context) => MouseRegion(
         onEnter: (_) => setState(() => _h = true),
-        onExit:  (_) => setState(() => _h = false),
+        onExit: (_) => setState(() => _h = false),
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: widget.onTap,
@@ -1023,7 +1089,9 @@ class _SolidBtnState extends State<_SolidBtn> {
             child: Text(
               widget.label.toUpperCase(),
               style: TextStyle(
-                fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w600,
+                fontFamily: kSans,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
                 letterSpacing: 2.0,
                 color: widget.white ? LD.ink : Colors.white,
                 decoration: TextDecoration.none,
@@ -1035,7 +1103,8 @@ class _SolidBtnState extends State<_SolidBtn> {
 }
 
 class _GhostBtn extends StatefulWidget {
-  const _GhostBtn({required this.label, required this.onTap, this.light = false});
+  const _GhostBtn(
+      {required this.label, required this.onTap, this.light = false});
   final String label;
   final VoidCallback onTap;
   final bool light;
@@ -1050,7 +1119,7 @@ class _GhostBtnState extends State<_GhostBtn> {
   @override
   Widget build(BuildContext context) => MouseRegion(
         onEnter: (_) => setState(() => _h = true),
-        onExit:  (_) => setState(() => _h = false),
+        onExit: (_) => setState(() => _h = false),
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: widget.onTap,
@@ -1070,7 +1139,9 @@ class _GhostBtnState extends State<_GhostBtn> {
             child: Text(
               widget.label.toUpperCase(),
               style: TextStyle(
-                fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w500,
+                fontFamily: kSans,
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 1.8,
                 color: widget.light
                     ? (_h ? Colors.white : Colors.white.withAlpha(166))
@@ -1095,7 +1166,7 @@ class _DateDisplayTrigger extends StatelessWidget {
     required this.onTap,
   });
   final DateTime date;
-  final bool     isOpen;
+  final bool isOpen;
   final VoidCallback onTap;
 
   String _fmt(DateTime d) => LuxFormat.dateTime(d);
@@ -1106,16 +1177,19 @@ class _DateDisplayTrigger extends StatelessWidget {
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: Row(children: [
-            Text(_fmt(date), style: const TextStyle(
-              fontFamily: kSans, fontSize: 13, color: Colors.white,
-              decoration: TextDecoration.none,
-            )),
+            Text(_fmt(date),
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 13,
+                  color: Colors.white,
+                  decoration: TextDecoration.none,
+                )),
             const Spacer(),
             AnimatedRotation(
               turns: isOpen ? 0.5 : 0.0,
               duration: const Duration(milliseconds: 250),
-              child: Icon(Icons.expand_more, size: 16,
-                  color: Colors.white.withAlpha(160)),
+              child: Icon(Icons.expand_more,
+                  size: 16, color: Colors.white.withAlpha(160)),
             ),
           ]),
         ),
@@ -1139,14 +1213,24 @@ class _InlineDatePanel extends StatefulWidget {
 }
 
 class _InlineDatePanelState extends State<_InlineDatePanel> {
-  late DateTime _month;    // first-day of the browsed month
+  late DateTime _month; // first-day of the browsed month
   late DateTime _selected; // full date being built
 
   static const _monthNames = [
-    'Enero','Febrero','Marzo','Abril','Mayo','Junio',
-    'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre',
+    'Enero',
+    'Febrero',
+    'Marzo',
+    'Abril',
+    'Mayo',
+    'Junio',
+    'Julio',
+    'Agosto',
+    'Septiembre',
+    'Octubre',
+    'Noviembre',
+    'Diciembre',
   ];
-  static const _dayLabels = ['L','M','X','J','V','S','D'];
+  static const _dayLabels = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
 
   @override
   void initState() {
@@ -1163,20 +1247,20 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
   void _pickDay(int day) => setState(() => _selected = DateTime(
       _month.year, _month.month, day, _selected.hour, _selected.minute));
 
-  void _setHour(int h)   => setState(() => _selected = DateTime(
+  void _setHour(int h) => setState(() => _selected = DateTime(
       _selected.year, _selected.month, _selected.day, h, _selected.minute));
   void _setMinute(int m) => setState(() => _selected = DateTime(
       _selected.year, _selected.month, _selected.day, _selected.hour, m));
 
   @override
   Widget build(BuildContext context) {
-    final now         = DateTime.now();
-    final today       = DateTime(now.year, now.month, now.day);
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final daysInMonth = DateTime(_month.year, _month.month + 1, 0).day;
     // weekday: 1=Mon … 7=Sun → offset = weekday - 1
     final startOffset = DateTime(_month.year, _month.month, 1).weekday - 1;
 
-    const bg      = Color(0xFF090F1A);
+    const bg = Color(0xFF090F1A);
     const divider = Color(0xFF1A2538);
     const white60 = Color(0x99FFFFFF);
     const white30 = Color(0x4DFFFFFF);
@@ -1187,20 +1271,22 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-
           // ── Month nav ──────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.fromLTRB(6, 10, 6, 4),
             child: Row(children: [
-              _ChevBtn(icon: Icons.chevron_left,  onTap: _prevMonth),
+              _ChevBtn(icon: Icons.chevron_left, onTap: _prevMonth),
               Expanded(
                 child: Text(
                   '${_monthNames[_month.month - 1]} ${_month.year}',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontFamily: kSans, fontSize: 10.5,
-                    fontWeight: FontWeight.w600, letterSpacing: 1.4,
-                    color: Colors.white, decoration: TextDecoration.none,
+                    fontFamily: kSans,
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.4,
+                    color: Colors.white,
+                    decoration: TextDecoration.none,
                   ),
                 ),
               ),
@@ -1216,12 +1302,13 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                   .map((d) => Expanded(
                         child: Center(
                           child: Text(d,
-                            style: const TextStyle(
-                              fontFamily: kSans, fontSize: 9,
-                              fontWeight: FontWeight.w600,
-                              color: white30,
-                              decoration: TextDecoration.none,
-                            )),
+                              style: const TextStyle(
+                                fontFamily: kSans,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w600,
+                                color: white30,
+                                decoration: TextDecoration.none,
+                              )),
                         ),
                       ))
                   .toList(),
@@ -1241,17 +1328,15 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
               childAspectRatio: 1.15,
               children: [
                 // Empty leading cells
-                for (int i = 0; i < startOffset; i++)
-                  const SizedBox.shrink(),
+                for (int i = 0; i < startOffset; i++) const SizedBox.shrink(),
                 // Day cells
                 for (int d = 1; d <= daysInMonth; d++) ...[
                   Builder(builder: (_) {
-                    final cellDate =
-                        DateTime(_month.year, _month.month, d);
-                    final isPast  = cellDate.isBefore(today);
-                    final isSel   = _selected.year  == _month.year &&
-                                    _selected.month == _month.month &&
-                                    _selected.day   == d;
+                    final cellDate = DateTime(_month.year, _month.month, d);
+                    final isPast = cellDate.isBefore(today);
+                    final isSel = _selected.year == _month.year &&
+                        _selected.month == _month.month &&
+                        _selected.day == d;
                     return GestureDetector(
                       onTap: isPast ? null : () => _pickDay(d),
                       child: AnimatedContainer(
@@ -1261,17 +1346,18 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                         ),
                         alignment: Alignment.center,
                         child: Text('$d',
-                          style: TextStyle(
-                            fontFamily: kSans, fontSize: 10.5,
-                            fontWeight: isSel
-                                ? FontWeight.w600 : FontWeight.w400,
-                            color: isPast
-                                ? white30
-                                : isSel
-                                    ? Colors.white
-                                    : white60,
-                            decoration: TextDecoration.none,
-                          )),
+                            style: TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 10.5,
+                              fontWeight:
+                                  isSel ? FontWeight.w600 : FontWeight.w400,
+                              color: isPast
+                                  ? white30
+                                  : isSel
+                                      ? Colors.white
+                                      : white60,
+                              decoration: TextDecoration.none,
+                            )),
                       ),
                     );
                   }),
@@ -1297,19 +1383,19 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 6),
                   child: Text(':',
-                    style: TextStyle(
-                      fontFamily: kSans, fontSize: 22,
-                      fontWeight: FontWeight.w200,
-                      color: Colors.white,
-                      decoration: TextDecoration.none,
-                    )),
+                      style: TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w200,
+                        color: Colors.white,
+                        decoration: TextDecoration.none,
+                      )),
                 ),
                 _TimeStep(
                   value: _selected.minute,
                   // Steps of 15 min
                   onInc: () => _setMinute((_selected.minute + 15) % 60),
-                  onDec: () => _setMinute(
-                      (_selected.minute - 15 + 60) % 60),
+                  onDec: () => _setMinute((_selected.minute - 15 + 60) % 60),
                 ),
               ],
             ),
@@ -1328,11 +1414,14 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 alignment: Alignment.center,
                 child: const Text('CONFIRMAR',
-                  style: TextStyle(
-                    fontFamily: kSans, fontSize: 10,
-                    fontWeight: FontWeight.w600, letterSpacing: 2.0,
-                    color: Colors.white, decoration: TextDecoration.none,
-                  )),
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2.0,
+                      color: Colors.white,
+                      decoration: TextDecoration.none,
+                    )),
               ),
             ),
           ),
@@ -1387,7 +1476,8 @@ class _TimeStep extends StatelessWidget {
           Text(
             value.toString().padLeft(2, '0'),
             style: const TextStyle(
-              fontFamily: kSans, fontSize: 26,
+              fontFamily: kSans,
+              fontSize: 26,
               fontWeight: FontWeight.w200,
               color: Colors.white,
               decoration: TextDecoration.none,
@@ -1412,59 +1502,32 @@ class _HoursPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(children: [
-        Text('$hours hora${hours > 1 ? 's' : ''}', style: const TextStyle(
-          fontFamily: kSans, fontSize: 13, color: Colors.white,
-          decoration: TextDecoration.none,
-        )),
+        Text('$hours hora${hours > 1 ? 's' : ''}',
+            style: const TextStyle(
+              fontFamily: kSans,
+              fontSize: 13,
+              color: Colors.white,
+              decoration: TextDecoration.none,
+            )),
         const Spacer(),
         IconButton(
-          icon: Icon(Icons.remove, size: 16,
-              color: Colors.white.withAlpha(160)),
+          icon:
+              Icon(Icons.remove, size: 16, color: Colors.white.withAlpha(160)),
           onPressed: hours > 1 ? () => onChanged(hours - 1) : null,
-          padding: EdgeInsets.zero, constraints: const BoxConstraints(),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
         ),
         const SizedBox(width: 8),
         IconButton(
-          icon: Icon(Icons.add, size: 16,
-              color: Colors.white.withAlpha(160)),
+          icon: Icon(Icons.add, size: 16, color: Colors.white.withAlpha(160)),
           onPressed: hours < 12 ? () => onChanged(hours + 1) : null,
-          padding: EdgeInsets.zero, constraints: const BoxConstraints(),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
         ),
       ]);
 }
 
 /// Forces light theme on PlaceAutocompleteField inside the white booking bar.
-class _LightField extends StatelessWidget {
-  const _LightField({required this.child});
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => Theme(
-        data: Theme.of(context).copyWith(
-          brightness: Brightness.light,
-          inputDecorationTheme: InputDecorationTheme(
-            filled: true,
-            fillColor: Colors.white,
-            border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
-            contentPadding: EdgeInsets.zero,
-            isDense: true,
-            hintStyle: TextStyle(
-              fontFamily: kSans,
-              fontSize: 16,
-              fontWeight: FontWeight.w300,
-              color: const Color(0xFFB0BAC8),
-            ),
-          ),
-          textTheme: Theme.of(context).textTheme.apply(
-                fontFamily: kSans, bodyColor: LD.ink, displayColor: LD.ink,
-              ),
-        ),
-        child: child,
-      );
-}
-
 // ============================================================
 // Marquee Bar
 // ============================================================
@@ -1481,24 +1544,37 @@ class _MarqueeBarState extends State<_MarqueeBar>
   late AnimationController _ctrl;
 
   static const _items = [
-    'Precios Fijos','Chóferes Profesionales','Cobertura Mundial',
-    'Disponibilidad 24/7','Flota Premium','Puntualidad Garantizada',
-    'Traslados Aeroportuarios','Viajes Corporativos','Privacidad y Discreción','Chóferes multilingües',
+    'Precios Fijos',
+    'Chóferes Profesionales',
+    'Cobertura Mundial',
+    'Disponibilidad 24/7',
+    'Flota Premium',
+    'Puntualidad Garantizada',
+    'Traslados Aeroportuarios',
+    'Viajes Corporativos',
+    'Privacidad y Discreción',
+    'Chóferes multilingües',
   ];
   static const _oneSetPx = 2200.0;
 
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(vsync: this, duration: const Duration(seconds: 36))..repeat();
+    _ctrl =
+        AnimationController(vsync: this, duration: const Duration(seconds: 36))
+          ..repeat();
   }
 
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => Container(
-        height: 40, color: LD.dark,
+        height: 40,
+        color: LD.dark,
         child: ClipRect(
           child: AnimatedBuilder(
             animation: _ctrl,
@@ -1511,23 +1587,27 @@ class _MarqueeBarState extends State<_MarqueeBar>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     for (int r = 0; r < 3; r++)
-                    for (int i = 0; i < _items.length; i++) ...[
-                      Text(
-                        _items[i].toUpperCase(),
-                        style: TextStyle(
-                          fontFamily: kSans, fontSize: 9, fontWeight: FontWeight.w300,
-                          letterSpacing: 3.0,
-                          color: Colors.white.withAlpha(70),
-                          decoration: TextDecoration.none,
+                      for (int i = 0; i < _items.length; i++) ...[
+                        Text(
+                          _items[i].toUpperCase(),
+                          style: TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w300,
+                            letterSpacing: 3.0,
+                            color: Colors.white.withAlpha(70),
+                            decoration: TextDecoration.none,
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 24),
-                      Container(
-                        width: 3, height: 3,
-                        decoration: const BoxDecoration(color: LD.sph, shape: BoxShape.circle),
-                      ),
-                      const SizedBox(width: 24),
-                    ],
+                        const SizedBox(width: 24),
+                        Container(
+                          width: 3,
+                          height: 3,
+                          decoration: const BoxDecoration(
+                              color: LD.sph, shape: BoxShape.circle),
+                        ),
+                        const SizedBox(width: 24),
+                      ],
                   ],
                 ),
               ),
@@ -1541,144 +1621,9 @@ class _MarqueeBarState extends State<_MarqueeBar>
 // Stats Section
 // ============================================================
 
-class _StatsSection extends StatelessWidget {
-  const _StatsSection();
-
-  @override
-  Widget build(BuildContext context) => Container(
-        color: Colors.white,
-        child: Column(children: [
-          Container(height: 1, color: LD.border),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 80),
-            child: Row(children: [
-              _StatItem(value: 150000, format: (v) => v >= 150000 ? '150K+' : '${(v/1000).round()}K', label: 'Viajes completados'),
-              _StatDivider(),
-              _StatItem(value: 50, format: (v) => '$v+', label: 'Ciudades atendidas'),
-              _StatDivider(),
-              _StatItem(value: 49, format: (v) => '${(v/10).toStringAsFixed(1)}', label: 'Calificación promedio', suffix: '/5'),
-              _StatDivider(),
-              _StatItem(value: 24, format: (v) => v >= 24 ? '24 / 7' : '$v', label: 'Atención al cliente'),
-            ]),
-          ),
-          Container(height: 1, color: LD.border),
-        ]),
-      );
-}
-
-class _StatItem extends StatelessWidget {
-  const _StatItem({
-    required this.value,
-    required this.format,
-    required this.label,
-    this.suffix,
-  });
-  final int value;
-  final String Function(int) format;
-  final String label;
-  final String? suffix;
-
-  @override
-  Widget build(BuildContext context) => Expanded(
-        child: RevealOnScroll(
-          child: Column(children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                AnimatedCounter(
-                  target: value,
-                  format: format,
-                  style: displayText(size: 64, color: LD.ink),
-                ),
-                if (suffix != null)
-                  Text(suffix!, style: const TextStyle(
-                    fontFamily: kSans, fontSize: 35, fontWeight: FontWeight.w300,
-                    color: LD.ink3, decoration: TextDecoration.none,
-                  )),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Text(label.toUpperCase(), style: const TextStyle(
-              fontFamily: kSans, fontSize: 9, fontWeight: FontWeight.w400,
-              letterSpacing: 2.4, color: LD.ink3, decoration: TextDecoration.none,
-            )),
-          ]),
-        ),
-      );
-}
-
-class _StatDivider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Container(width: 1, height: 64, color: LD.border);
-}
-
 // ============================================================
 // Immersive Strip
 // ============================================================
-
-class _ImmersiveStrip extends StatelessWidget {
-  const _ImmersiveStrip();
-  static const _photo = 'assets/images/home/immersive_bg.jpg';
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-        height: 480,
-        child: Stack(fit: StackFit.expand, children: [
-          Image.asset(_photo, fit: BoxFit.cover,
-              width: double.infinity, height: double.infinity,
-              errorBuilder: (_, __, ___) => DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft, end: Alignment.bottomRight,
-                    colors: [LD.ink, const Color(0xFF0D2040)],
-                  ),
-                ),
-              )),
-          // Lateral darkening overlay (matches .immersive-overlay)
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft, end: Alignment.centerRight,
-                  colors: [
-                    Colors.black.withAlpha(100),
-                    Colors.black.withAlpha(20),
-                    Colors.black.withAlpha(100),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          // Centred caption
-          Center(
-            child: Column(mainAxisSize: MainAxisSize.min, children: [
-              RevealOnScroll(
-                dy: 48, threshold: 0.9,
-                child: Text('LLEGA CON ESTILO', style: TextStyle(
-                  fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w400,
-                  letterSpacing: 5.0,
-                  color: Colors.white.withAlpha(160),
-                  decoration: TextDecoration.none,
-                )),
-              ),
-              const SizedBox(height: 16),
-              RevealOnScroll(
-                delay: const Duration(milliseconds: 100),
-                dy: 64, threshold: 0.9,
-                child: Text('Cada viaje, una declaración.', style: TextStyle(
-                  fontFamily: kSerif, fontSize: 52, fontWeight: FontWeight.w300,
-                  fontStyle: FontStyle.italic,
-                  color: Colors.white, height: 1.12,
-                  decoration: TextDecoration.none,
-                )),
-              ),
-            ]),
-          ),
-        ]),
-      );
-}
 
 // ============================================================
 // Fleet Section
@@ -1690,10 +1635,30 @@ class _FleetSection extends StatelessWidget {
   final VoidCallback onBook;
 
   static final _vehicles = [
-    _FleetItem(cls: 'Business Class',  model: 'Mercedes E-Class / o similar',  asset: 'assets/images/vehicles/business/car.png',    tags: ['4 Asientos','Interior de cuero','Wi-Fi'], accent: const Color(0xFF1B4F8A)),
-    _FleetItem(cls: 'First Class',     model: 'Mercedes S-Class / o similar',  asset: 'assets/images/vehicles/first_class/car.png', tags: ['4 Asientos','Audio premium','Champán'], accent: const Color(0xFFC9A96E)),
-    _FleetItem(cls: 'Business Van',    model: 'Mercedes V-Class / o similar',  asset: 'assets/images/vehicles/van/car.png',          tags: ['7 Asientos','Equipaje extra','Wi-Fi'], accent: const Color(0xFF2E6FBF)),
-    _FleetItem(cls: 'Electric Class',  model: 'Tesla Model S / o similar',     asset: 'assets/images/vehicles/electric/car.png',    tags: ['4 Asientos','Cero emisiones','Premium'], accent: const Color(0xFF3DA05E)),
+    _FleetItem(
+        cls: 'Business Class',
+        model: 'Mercedes E-Class / o similar',
+        asset: 'assets/images/vehicles/business/car.png',
+        tags: ['4 Asientos', 'Interior de cuero', 'Wi-Fi'],
+        accent: const Color(0xFF1B4F8A)),
+    _FleetItem(
+        cls: 'First Class',
+        model: 'Mercedes S-Class / o similar',
+        asset: 'assets/images/vehicles/first_class/car.png',
+        tags: ['4 Asientos', 'Audio premium', 'Champán'],
+        accent: const Color(0xFFC9A96E)),
+    _FleetItem(
+        cls: 'Business Van',
+        model: 'Mercedes V-Class / o similar',
+        asset: 'assets/images/vehicles/van/car.png',
+        tags: ['7 Asientos', 'Equipaje extra', 'Wi-Fi'],
+        accent: const Color(0xFF2E6FBF)),
+    _FleetItem(
+        cls: 'Electric Class',
+        model: 'Tesla Model S / o similar',
+        asset: 'assets/images/vehicles/electric/car.png',
+        tags: ['4 Asientos', 'Cero emisiones', 'Premium'],
+        accent: const Color(0xFF3DA05E)),
   ];
 
   @override
@@ -1703,48 +1668,56 @@ class _FleetSection extends StatelessWidget {
     final hPad = narrow ? 24.0 : 64.0;
     final vPad = narrow ? 56.0 : 100.0;
     return Container(
-        key: sectionKey,
-        color: LD.dark,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          // Header row
-          Padding(
-            padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, narrow ? 28 : 56),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-              Expanded(
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  RevealOnScroll(child: const LuxEyebrow('Nuestra Flota')),
-                  const SizedBox(height: 20),
-                  RevealOnScroll(
-                    delay: const Duration(milliseconds: 80),
-                    child: Text('Vehículos premium,\nsin excepciones.',
-                        style: displayText(size: narrow ? 36 : 52, color: Colors.white)),
-                  ),
-                ]),
-              ),
-              if (!narrow) RevealOnScroll(
-                delay: const Duration(milliseconds: 160),
-                child: Text('DESLIZA PARA EXPLORAR →', style: TextStyle(
-                  fontFamily: kSans, fontSize: 9, letterSpacing: 2.4,
-                  color: Colors.white.withAlpha(60),
-                  decoration: TextDecoration.none,
-                )),
-              ),
-            ]),
-          ),
-          // Horizontal card list
-          SizedBox(
-            height: narrow ? 360 : 460,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 0),
-              itemCount: _vehicles.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 2),
-              itemBuilder: (_, i) => _FleetCard(item: _vehicles[i], onBook: onBook),
+      key: sectionKey,
+      color: LD.dark,
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        // Header row
+        Padding(
+          padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, narrow ? 28 : 56),
+          child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+            Expanded(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    RevealOnScroll(child: const LuxEyebrow('Nuestra Flota')),
+                    const SizedBox(height: 20),
+                    RevealOnScroll(
+                      delay: const Duration(milliseconds: 80),
+                      child: Text('Vehículos premium,\nsin excepciones.',
+                          style: displayText(
+                              size: narrow ? 36 : 52, color: Colors.white)),
+                    ),
+                  ]),
             ),
+            if (!narrow)
+              RevealOnScroll(
+                delay: const Duration(milliseconds: 160),
+                child: Text('DESLIZA PARA EXPLORAR →',
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 9,
+                      letterSpacing: 2.4,
+                      color: Colors.white.withAlpha(60),
+                      decoration: TextDecoration.none,
+                    )),
+              ),
+          ]),
+        ),
+        // Horizontal card list
+        SizedBox(
+          height: narrow ? 360 : 460,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 0),
+            itemCount: _vehicles.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 2),
+            itemBuilder: (_, i) =>
+                _FleetCard(item: _vehicles[i], onBook: onBook),
           ),
-          const SizedBox(height: 72),
-        ]),
-      );
+        ),
+        const SizedBox(height: 72),
+      ]),
+    );
   }
 }
 
@@ -1779,7 +1752,7 @@ class _FleetCardState extends State<_FleetCard> {
   @override
   Widget build(BuildContext context) => MouseRegion(
         onEnter: (_) => setState(() => _hover = true),
-        onExit:  (_) => setState(() => _hover = false),
+        onExit: (_) => setState(() => _hover = false),
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: widget.onBook,
@@ -1789,7 +1762,9 @@ class _FleetCardState extends State<_FleetCard> {
             decoration: BoxDecoration(
               color: const Color(0xFF0D1B2E),
               border: Border.all(
-                color: _hover ? widget.item.accent.withAlpha(180) : Colors.white.withAlpha(18),
+                color: _hover
+                    ? widget.item.accent.withAlpha(180)
+                    : Colors.white.withAlpha(18),
               ),
             ),
             child: Stack(children: [
@@ -1798,65 +1773,99 @@ class _FleetCardState extends State<_FleetCard> {
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.topLeft, end: Alignment.bottomRight,
-                      colors: [widget.item.accent.withAlpha(_hover ? 45 : 20), Colors.transparent],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        widget.item.accent.withAlpha(_hover ? 45 : 20),
+                        Colors.transparent
+                      ],
                     ),
                   ),
                 ),
               ),
               // Car image
               Positioned(
-                bottom: 110, left: 0, right: 0, height: 220,
+                bottom: 110,
+                left: 0,
+                right: 0,
+                height: 220,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Image.asset(widget.item.asset, fit: BoxFit.contain,
+                  child: Image.asset(widget.item.asset,
+                      fit: BoxFit.contain,
                       errorBuilder: (_, __, ___) => Icon(
-                        Icons.directions_car_rounded, size: 80,
-                        color: Colors.white.withAlpha(16),
-                      )),
+                            Icons.directions_car_rounded,
+                            size: 80,
+                            color: Colors.white.withAlpha(16),
+                          )),
                 ),
               ),
               // Bottom info bar
               Positioned(
-                bottom: 0, left: 0, right: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
                 child: Container(
                   padding: const EdgeInsets.fromLTRB(28, 22, 28, 28),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      begin: Alignment.bottomCenter, end: Alignment.topCenter,
-                      colors: [const Color(0xFF070E18).withAlpha(242), Colors.transparent],
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        const Color(0xFF070E18).withAlpha(242),
+                        Colors.transparent
+                      ],
                     ),
                   ),
-                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    // Class name — 22px serif
-                    Text(widget.item.cls, style: const TextStyle(
-                      fontFamily: kSerif, fontSize: 22, fontWeight: FontWeight.w400,
-                      color: Colors.white, height: 1.1,
-                      decoration: TextDecoration.none,
-                    )),
-                    const SizedBox(height: 4),
-                    // Model — 12px dim
-                    Text(widget.item.model, style: TextStyle(
-                      fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w300,
-                      color: Colors.white.withAlpha(115), height: 1.5,
-                      decoration: TextDecoration.none,
-                    )),
-                    const SizedBox(height: 16),
-                    // Tags
-                    Wrap(spacing: 6, runSpacing: 6,
-                      children: widget.item.tags.map((t) => Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white.withAlpha(36)),
-                        ),
-                        child: Text(t, style: TextStyle(
-                          fontFamily: kSans, fontSize: 9, fontWeight: FontWeight.w500,
-                          letterSpacing: 1.5,
-                          color: Colors.white.withAlpha(128),
-                          decoration: TextDecoration.none,
-                        )),
-                      )).toList()),
-                  ]),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Class name — 22px serif
+                        Text(widget.item.cls,
+                            style: const TextStyle(
+                              fontFamily: kSerif,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.white,
+                              height: 1.1,
+                              decoration: TextDecoration.none,
+                            )),
+                        const SizedBox(height: 4),
+                        // Model — 12px dim
+                        Text(widget.item.model,
+                            style: TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.white.withAlpha(115),
+                              height: 1.5,
+                              decoration: TextDecoration.none,
+                            )),
+                        const SizedBox(height: 16),
+                        // Tags
+                        Wrap(
+                            spacing: 6,
+                            runSpacing: 6,
+                            children: widget.item.tags
+                                .map((t) => Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 9, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.white.withAlpha(36)),
+                                      ),
+                                      child: Text(t,
+                                          style: TextStyle(
+                                            fontFamily: kSans,
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.w500,
+                                            letterSpacing: 1.5,
+                                            color: Colors.white.withAlpha(128),
+                                            decoration: TextDecoration.none,
+                                          )),
+                                    ))
+                                .toList()),
+                      ]),
                 ),
               ),
             ]),
@@ -1869,185 +1878,9 @@ class _FleetCardState extends State<_FleetCard> {
 // Promise Section
 // ============================================================
 
-class _PromiseSection extends StatelessWidget {
-  const _PromiseSection();
-
-  static const _points = [
-    ('Chóferes verificados',
-     'Cada chófer pasa una rigurosa verificación de antecedentes, inspección vehicular y programa de formación.'),
-    ('Precio fijo, siempre',
-     'Tu precio se confirma al reservar. Sin precios dinámicos, sin cargos ocultos — nunca.'),
-    ('Cobertura global',
-     'Disponible en más de 50 ciudades en Europa, América, Medio Oriente y Asia.'),
-    ('Las 24 horas',
-     'Nuestro equipo de operaciones monitorea cada viaje las 24 horas del día, los 365 días del año.'),
-  ];
-
-  @override
-  Widget build(BuildContext context) => Container(
-        color: LD.dark,
-        child: IntrinsicHeight(
-          child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            // Left — atmospheric photo panel
-            const Expanded(child: _PromisePhotoPanel()),
-            // Right — editorial list
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(72, 100, 64, 100),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  RevealOnScroll(
-                    dx: 160,
-                    child: const LuxEyebrow('El estándar Luxelane'),
-                  ),
-                  const SizedBox(height: 28),
-                  RevealOnScroll(
-                    delay: const Duration(milliseconds: 80), dx: 160,
-                    child: Text('El estándar\nque otros siguen.',
-                        style: displayText(size: 52, color: Colors.white)),
-                  ),
-                  const SizedBox(height: 56),
-                  ..._points.asMap().entries.map((e) => RevealOnScroll(
-                        delay: Duration(milliseconds: 140 + e.key * 80),
-                        dx: 120, dy: 20,
-                        child: _PromisePoint(title: e.value.$1, body: e.value.$2),
-                      )),
-                ]),
-              ),
-            ),
-          ]),
-        ),
-      );
-}
-
-class _PromisePhotoPanel extends StatelessWidget {
-  const _PromisePhotoPanel();
-  static const _photo = 'assets/images/home/promise_photo.jpg';
-
-  @override
-  Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            begin: Alignment.topRight, end: Alignment.bottomLeft,
-            colors: [Color(0xFF0D2040), Color(0xFF060C16)],
-          ),
-          image: DecorationImage(
-            image: const AssetImage(_photo),
-            fit: BoxFit.cover, onError: (_, __) {},
-          ),
-        ),
-        foregroundDecoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft, end: Alignment.centerRight,
-            colors: [Colors.transparent, LD.dark.withAlpha(200)],
-          ),
-        ),
-        child: Stack(children: [
-          Positioned(bottom: 0, left: -40, right: 0,
-            child: Image.asset('assets/images/vehicles/business/car.png',
-                fit: BoxFit.contain, alignment: Alignment.bottomCenter,
-                errorBuilder: (_, __, ___) => const SizedBox.shrink())),
-          // Sapphire top accent
-          Positioned(top: 0, left: 0, right: 0,
-            child: Container(height: 2, color: LD.sph)),
-        ]),
-      );
-}
-
-class _PromisePoint extends StatelessWidget {
-  const _PromisePoint({required this.title, required this.body});
-  final String title;
-  final String body;
-
-  @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(height: 1, color: Colors.white.withAlpha(18),
-              margin: const EdgeInsets.only(bottom: 20)),
-          Text(title, style: const TextStyle(
-            fontFamily: kSerif, fontSize: 20, fontWeight: FontWeight.w400,
-            color: Colors.white, decoration: TextDecoration.none,
-          )),
-          const SizedBox(height: 8),
-          Text(body, style: TextStyle(
-            fontFamily: kSans, fontSize: 13, fontWeight: FontWeight.w300,
-            height: 1.8, color: Colors.white.withAlpha(120),
-            decoration: TextDecoration.none,
-          )),
-          const SizedBox(height: 24),
-        ],
-      );
-}
-
 // ============================================================
 // Experience Section
 // ============================================================
-
-class _ExperienceSection extends StatelessWidget {
-  const _ExperienceSection({required this.sectionKey});
-  final GlobalKey sectionKey;
-
-  static const _features = [
-    ('✦', 'Bienvenida personalizada', 'Tu chófer te espera antes de llegar — cartel con tu nombre, refrigerios, atención total.'),
-    ('◈', 'Privacidad y discreción',  'Acuerdos de confidencialidad, formación en privacidad y cultura de discreción absoluta.'),
-    ('◉', 'Precio fijo',              'El precio que ves al reservar es lo que pagas. Sin recargos de tráfico, sin sorpresas.'),
-    ('⬡', 'Soporte 24 / 7',           'Nuestro equipo de operaciones monitorea cada viaje a toda hora, todos los días del año.'),
-  ];
-
-  @override
-  Widget build(BuildContext context) => Container(
-        key: sectionKey,
-        color: LD.bg,
-        padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 64),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          // Header (2-col grid: left = text, right = empty)
-          Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Expanded(
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                RevealOnScroll(child: const LuxEyebrow('La Experiencia')),
-                const SizedBox(height: 20),
-                RevealOnScroll(
-                  delay: const Duration(milliseconds: 80),
-                  child: Text('Cada detalle,\ncuidado.',
-                      style: displayText(size: 52, color: LD.ink)),
-                ),
-              ]),
-            ),
-            const Expanded(child: SizedBox()),
-          ]),
-          const SizedBox(height: 72),
-          // 4-column feature grid
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: _features.asMap().entries.map((e) {
-              final i = e.key;
-              final f = e.value;
-              return Expanded(
-                child: RevealOnScroll(
-                  delay: Duration(milliseconds: i * 80), dy: 24,
-                  child: Padding(
-                    padding: EdgeInsets.only(right: i < _features.length - 1 ? 48 : 0),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Container(height: 1, color: LD.sph, margin: const EdgeInsets.only(bottom: 24)),
-                      Text(f.$1, style: const TextStyle(
-                        fontSize: 18, color: LD.sph, decoration: TextDecoration.none,
-                      )),
-                      const SizedBox(height: 20),
-                      Text(f.$2, style: const TextStyle(
-                        fontFamily: kSerif, fontSize: 22, fontWeight: FontWeight.w400,
-                        color: LD.ink, decoration: TextDecoration.none,
-                      )),
-                      const SizedBox(height: 12),
-                      Text(f.$3, style: bodyText(size: 13, color: LD.ink3)),
-                    ]),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ]),
-      );
-}
 
 // ============================================================
 // Testimonials
@@ -2064,12 +1897,24 @@ class _TestimonialsSectionState extends State<_TestimonialsSection> {
   int _current = 0;
 
   static const _reviews = [
-    (quote: 'Absolutamente impecable de principio a fin. El chófer llegó antes de tiempo y el auto estaba inmaculado. No usaré a nadie más.',
-     name: 'Alexandra M.', location: 'Londres, Reino Unido'),
-    (quote: 'Los precios fijos y los chóferes confiables hacen de Luxelane el único servicio en el que confío para todos mis viajes de negocios.',
-     name: 'Marcus T.', location: 'Nueva York, EE. UU.'),
-    (quote: 'Del aeropuerto al hotel, cada detalle fue manejado a la perfección. Así es como debería sentirse el viaje de lujo.',
-     name: 'Isabelle R.', location: 'París, Francia'),
+    (
+      quote:
+          'Absolutamente impecable de principio a fin. El chófer llegó antes de tiempo y el auto estaba inmaculado. No usaré a nadie más.',
+      name: 'Alexandra M.',
+      location: 'Londres, Reino Unido'
+    ),
+    (
+      quote:
+          'Los precios fijos y los chóferes confiables hacen de Luxelane el único servicio en el que confío para todos mis viajes de negocios.',
+      name: 'Marcus T.',
+      location: 'Nueva York, EE. UU.'
+    ),
+    (
+      quote:
+          'Del aeropuerto al hotel, cada detalle fue manejado a la perfección. Así es como debería sentirse el viaje de lujo.',
+      name: 'Isabelle R.',
+      location: 'París, Francia'
+    ),
   ];
 
   @override
@@ -2081,24 +1926,32 @@ class _TestimonialsSectionState extends State<_TestimonialsSection> {
       child: Column(children: [
         // Decorative large quote mark
         RevealOnScroll(
-          child: Text('"', style: TextStyle(
-            fontFamily: kSerif, fontSize: 180, fontWeight: FontWeight.w300,
-            color: LD.sph.withAlpha(23), height: 0.6,
-            decoration: TextDecoration.none,
-          )),
+          child: Text('"',
+              style: TextStyle(
+                fontFamily: kSerif,
+                fontSize: 180,
+                fontWeight: FontWeight.w300,
+                color: LD.sph.withAlpha(23),
+                height: 0.6,
+                decoration: TextDecoration.none,
+              )),
         ),
         const SizedBox(height: 12),
         // Rotating quote
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 500),
           child: Text(r.quote,
-            key: ValueKey(_current),
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontFamily: kSerif, fontSize: 34, fontWeight: FontWeight.w300,
-              fontStyle: FontStyle.italic, color: LD.ink, height: 1.6,
-              decoration: TextDecoration.none,
-            )),
+              key: ValueKey(_current),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: kSerif,
+                fontSize: 34,
+                fontWeight: FontWeight.w300,
+                fontStyle: FontStyle.italic,
+                color: LD.ink,
+                height: 1.6,
+                decoration: TextDecoration.none,
+              )),
         ),
         const SizedBox(height: 44),
         // Author
@@ -2107,31 +1960,42 @@ class _TestimonialsSectionState extends State<_TestimonialsSection> {
           child: Column(key: ValueKey('a$_current'), children: [
             Row(
               mainAxisSize: MainAxisSize.min,
-              children: List.generate(5, (_) => const Icon(Icons.star_rounded, size: 12, color: LD.sph)),
+              children: List.generate(
+                  5,
+                  (_) =>
+                      const Icon(Icons.star_rounded, size: 12, color: LD.sph)),
             ),
             const SizedBox(height: 12),
-            Text('${r.name} · ${r.location}'.toUpperCase(), style: const TextStyle(
-              fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w400,
-              letterSpacing: 2.0, color: LD.ink3, decoration: TextDecoration.none,
-            )),
+            Text('${r.name} · ${r.location}'.toUpperCase(),
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 2.0,
+                  color: LD.ink3,
+                  decoration: TextDecoration.none,
+                )),
           ]),
         ),
         const SizedBox(height: 48),
         // Dot navigation
         Row(
           mainAxisSize: MainAxisSize.min,
-          children: List.generate(_reviews.length, (i) => GestureDetector(
-            onTap: () => setState(() => _current = i),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              width: i == _current ? 28 : 6, height: 6,
-              margin: const EdgeInsets.symmetric(horizontal: 3),
-              decoration: BoxDecoration(
-                color: i == _current ? LD.sph : LD.border,
-                borderRadius: BorderRadius.circular(3),
-              ),
-            ),
-          )),
+          children: List.generate(
+              _reviews.length,
+              (i) => GestureDetector(
+                    onTap: () => setState(() => _current = i),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 250),
+                      width: i == _current ? 28 : 6,
+                      height: 6,
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      decoration: BoxDecoration(
+                        color: i == _current ? LD.sph : LD.border,
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                  )),
         ),
       ]),
     );
@@ -2181,31 +2045,38 @@ class _BusinessSection extends StatelessWidget {
               children: _perks.asMap().entries.map((e) {
                 final i = e.key;
                 return RevealOnScroll(
-                  delay: Duration(milliseconds: i * 70), dy: 16,
+                  delay: Duration(milliseconds: i * 70),
+                  dy: 16,
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 22),
                     decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Colors.white.withAlpha(20))),
+                      border: Border(
+                          bottom:
+                              BorderSide(color: Colors.white.withAlpha(20))),
                     ),
                     child: Row(children: [
                       SizedBox(
                         width: 36,
-                        child: Text('0${i + 1}', style: TextStyle(
-                          fontFamily: kSerif, fontSize: 28,
-                          fontWeight: FontWeight.w300,
-                          color: LD.sph.withAlpha(180),
-                          decoration: TextDecoration.none,
-                        )),
+                        child: Text('0${i + 1}',
+                            style: TextStyle(
+                              fontFamily: kSerif,
+                              fontSize: 28,
+                              fontWeight: FontWeight.w300,
+                              color: LD.sph.withAlpha(180),
+                              decoration: TextDecoration.none,
+                            )),
                       ),
                       const SizedBox(width: 20),
                       Expanded(
-                        child: Text(e.value, style: const TextStyle(
-                          fontFamily: kSans, fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: Color(0xE6FFFFFF),
-                          letterSpacing: 0.2,
-                          decoration: TextDecoration.none,
-                        )),
+                        child: Text(e.value,
+                            style: const TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xE6FFFFFF),
+                              letterSpacing: 0.2,
+                              decoration: TextDecoration.none,
+                            )),
                       ),
                     ]),
                   ),
@@ -2228,13 +2099,15 @@ class _BusinessSection extends StatelessWidget {
         RevealOnScroll(dx: -160, child: const LuxEyebrow('Para Empresas')),
         const SizedBox(height: 28),
         RevealOnScroll(
-          delay: const Duration(milliseconds: 80), dx: -160,
+          delay: const Duration(milliseconds: 80),
+          dx: -160,
           child: Text('Viajes corporativos,\nredefinidos.',
               style: displayText(size: narrow ? 36 : 52, color: Colors.white)),
         ),
         const SizedBox(height: 28),
         RevealOnScroll(
-          delay: const Duration(milliseconds: 160), dx: -120,
+          delay: const Duration(milliseconds: 160),
+          dx: -120,
           child: Text(
             'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.',
             style: bodyText(size: 14, color: const Color(0xCCFFFFFF)),
@@ -2242,8 +2115,10 @@ class _BusinessSection extends StatelessWidget {
         ),
         const SizedBox(height: 44),
         RevealOnScroll(
-          delay: const Duration(milliseconds: 220), dx: -120,
-          child: _GhostBtn(label: 'Más información', light: true, onTap: onLearnMore),
+          delay: const Duration(milliseconds: 220),
+          dx: -120,
+          child: _GhostBtn(
+              label: 'Más información', light: true, onTap: onLearnMore),
         ),
       ]),
     );
@@ -2257,10 +2132,12 @@ class _BusinessSection extends StatelessWidget {
               SizedBox(height: 320, child: _perksPanel(hPad, 32)),
             ])
           : IntrinsicHeight(
-              child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-                Expanded(child: headlinePanel),
-                Expanded(child: _perksPanel(hPad, vPad)),
-              ]),
+              child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(child: headlinePanel),
+                    Expanded(child: _perksPanel(hPad, vPad)),
+                  ]),
             ),
     );
   }
@@ -2300,53 +2177,68 @@ class _CtaSection extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     RevealOnScroll(
-                      dx: -100, threshold: 0.9,
+                      dx: -100,
+                      threshold: 0.9,
                       child: const Text('CUANDO QUIERAS. DONDE QUIERAS.',
-                        style: TextStyle(
-                          fontFamily: kSans, fontSize: 9, fontWeight: FontWeight.w600,
-                          letterSpacing: 4.0,
-                          color: Color(0xE0FFFFFF),
-                          decoration: TextDecoration.none,
-                        )),
+                          style: TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 4.0,
+                            color: Color(0xE0FFFFFF),
+                            decoration: TextDecoration.none,
+                          )),
                     ),
                     const SizedBox(height: 24),
                     RevealOnScroll(
                       delay: const Duration(milliseconds: 80),
-                      dx: -100, threshold: 0.9,
+                      dx: -100,
+                      threshold: 0.9,
                       child: Text('Tu próximo viaje,',
                           style: displayText(size: 96, color: Colors.white)),
                     ),
                     RevealOnScroll(
                       delay: const Duration(milliseconds: 120),
-                      dx: -100, threshold: 0.9,
+                      dx: -100,
+                      threshold: 0.9,
                       child: Text('en tus términos.',
-                          style: displayText(size: 96, color: Colors.white,
+                          style: displayText(
+                              size: 96,
+                              color: Colors.white,
                               style: FontStyle.italic)),
                     ),
                     const SizedBox(height: 48),
                     RevealOnScroll(
                       delay: const Duration(milliseconds: 160),
-                      dx: -80, threshold: 0.9,
+                      dx: -80,
+                      threshold: 0.9,
                       child: const Text(
-                        'Precio fijo  ·  Chóferes profesionales  ·  En todo el mundo',
-                        style: TextStyle(
-                          fontFamily: kSans, fontSize: 11, fontWeight: FontWeight.w400,
-                          letterSpacing: 2.8,
-                          color: Color(0xCCFFFFFF),
-                          decoration: TextDecoration.none,
-                        )),
+                          'Precio fijo  ·  Chóferes profesionales  ·  En todo el mundo',
+                          style: TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w400,
+                            letterSpacing: 2.8,
+                            color: Color(0xCCFFFFFF),
+                            decoration: TextDecoration.none,
+                          )),
                     ),
                     const SizedBox(height: 52),
                     RevealOnScroll(
                       delay: const Duration(milliseconds: 220),
-                      dx: -80, threshold: 0.9,
+                      dx: -80,
+                      threshold: 0.9,
                       child: Row(children: [
                         _SolidBtn(
-                          label: 'Reservar un viaje', white: true,
+                          label: 'Reservar un viaje',
+                          white: true,
                           onTap: onBook,
                         ),
                         const SizedBox(width: 20),
-                        _GhostBtn(label: 'Ver flota', light: true, onTap: onViewFleet),
+                        _GhostBtn(
+                            label: 'Ver flota',
+                            light: true,
+                            onTap: onViewFleet),
                       ]),
                     ),
                   ],
@@ -2390,11 +2282,17 @@ class _VideoBackgroundState extends State<_VideoBackground> {
     try {
       final ctrl = VideoPlayerController.asset(widget.assetPath);
       await ctrl.initialize();
-      if (!mounted) { ctrl.dispose(); return; }
+      if (!mounted) {
+        ctrl.dispose();
+        return;
+      }
       await ctrl.setVolume(0);
       await ctrl.setLooping(true);
       await ctrl.play();
-      setState(() { _ctrl = ctrl; _ready = true; });
+      setState(() {
+        _ctrl = ctrl;
+        _ready = true;
+      });
     } catch (_) {
       // Asset not present yet — section shows solid dark colour as fallback
     }
@@ -2416,7 +2314,7 @@ class _VideoBackgroundState extends State<_VideoBackground> {
       fit: BoxFit.cover,
       clipBehavior: Clip.hardEdge,
       child: SizedBox(
-        width:  _ctrl!.value.size.width,
+        width: _ctrl!.value.size.width,
         height: _ctrl!.value.size.height,
         child: VideoPlayer(_ctrl!),
       ),
@@ -2435,6 +2333,7 @@ class _BookPageData {
     required this.label,
     required this.sub,
     this.photoPath,
+    // ignore: unused_element_parameter — slot for a future cut-out car image.
     this.carPath,
     required this.tag,
     required this.headline,
@@ -2455,37 +2354,74 @@ class _BookPageData {
 const List<_BookPageData> _kBookPages = [
   // Index 0: Cover (portada) — special: left=back cover, right=logo
   _BookPageData(
-    num: '', label: 'LUXELANE', sub: 'Servicio de Chófer Premium',
-    tag: '', headline: '', body: '', bullets: [],
+    num: '',
+    label: 'LUXELANE',
+    sub: 'Servicio de Chófer Premium',
+    tag: '',
+    headline: '',
+    body: '',
+    bullets: [],
   ),
   // Index 1: El Estándar (content page 01)
   _BookPageData(
-    num: '01', label: 'El Estándar', sub: 'La Promesa Que Cumplimos',
+    num: '01',
+    label: 'El Estándar',
+    sub: 'La Promesa Que Cumplimos',
     photoPath: 'assets/images/home/promise_photo.jpg',
-    tag: 'El Estándar Luxelane', headline: 'El estándar que\notros siguen.',
-    body: 'Cada chófer supera una rigurosa verificación de antecedentes, inspección del vehículo y programa de capacitación en servicio.',
-    bullets: ['Chóferes verificados','Precio fijo, siempre','Cobertura global — más de 50 ciudades','A toda hora, 24/7'],
+    tag: 'El Estándar Luxelane',
+    headline: 'El estándar que\notros siguen.',
+    body:
+        'Cada chófer supera una rigurosa verificación de antecedentes, inspección del vehículo y programa de capacitación en servicio.',
+    bullets: [
+      'Chóferes verificados',
+      'Precio fijo, siempre',
+      'Cobertura global — más de 50 ciudades',
+      'A toda hora, 24/7'
+    ],
   ),
   // Index 2: La Experiencia (content page 02)
   _BookPageData(
-    num: '02', label: 'La Experiencia', sub: 'Cada Detalle Considerado',
+    num: '02',
+    label: 'La Experiencia',
+    sub: 'Cada Detalle Considerado',
     photoPath: 'assets/images/home/immersive_bg.jpg',
-    tag: 'La Experiencia', headline: 'Cada detalle,\ncuidado.',
-    body: 'Desde agua fría y listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.',
-    bullets: ['Interiores de cuero premium','Wi-Fi y carga inalámbrica','Servicio de champán disponible','Control de clima ambiental'],
+    tag: 'La Experiencia',
+    headline: 'Cada detalle,\ncuidado.',
+    body:
+        'Desde agua fría y listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.',
+    bullets: [
+      'Interiores de cuero premium',
+      'Wi-Fi y carga inalámbrica',
+      'Servicio de champán disponible',
+      'Control de clima ambiental'
+    ],
   ),
   // Index 3: Para Empresas (content page 03)
   _BookPageData(
-    num: '03', label: 'Para Empresas', sub: 'Viajes Corporativos Redefinidos',
+    num: '03',
+    label: 'Para Empresas',
+    sub: 'Viajes Corporativos Redefinidos',
     photoPath: 'assets/images/home/business_photo.jpg',
-    tag: 'Para Empresas', headline: 'Viajes corporativos,\nredefinidos.',
-    body: 'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.',
-    bullets: ['Facturación centralizada','Gerente de cuenta dedicado','Cumplimiento de política de viajes','Reservas prioritarias para ejecutivos'],
+    tag: 'Para Empresas',
+    headline: 'Viajes corporativos,\nredefinidos.',
+    body:
+        'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.',
+    bullets: [
+      'Facturación centralizada',
+      'Gerente de cuenta dedicado',
+      'Cumplimiento de política de viajes',
+      'Reservas prioritarias para ejecutivos'
+    ],
   ),
   // Index 4: Back to cover (cierre del libro)
   _BookPageData(
-    num: '', label: 'LUXELANE', sub: 'Servicio de Chófer Premium',
-    tag: '', headline: '', body: '', bullets: [],
+    num: '',
+    label: 'LUXELANE',
+    sub: 'Servicio de Chófer Premium',
+    tag: '',
+    headline: '',
+    body: '',
+    bullets: [],
   ),
 ];
 
@@ -2498,13 +2434,15 @@ class _BookSection extends StatefulWidget {
 
 class _BookSectionState extends State<_BookSection> {
   final _sectionKey = GlobalKey();
-  double? _absoluteTop; // measured once, then all math is pure scroll arithmetic
+  double?
+      _absoluteTop; // measured once, then all math is pure scroll arithmetic
   static const _numPages = 4;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    LuxScrollProvider.of(context); // register dependency for scroll-driven rebuilds
+    LuxScrollProvider.of(
+        context); // register dependency for scroll-driven rebuilds
     // Measure absolute top only once (before sticky kicks in)
     if (_absoluteTop == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _measureOnce());
@@ -2516,7 +2454,7 @@ class _BookSectionState extends State<_BookSection> {
     final box = _sectionKey.currentContext?.findRenderObject() as RenderBox?;
     if (box == null || !box.hasSize) return;
     final notifier = LuxScrollProvider.of(context);
-    final scrollY  = notifier?.scrollY ?? 0.0;
+    final scrollY = notifier?.scrollY ?? 0.0;
     // absoluteTop = scroll offset + relative-to-viewport position
     setState(() => _absoluteTop = scrollY + box.localToGlobal(Offset.zero).dy);
   }
@@ -2524,27 +2462,28 @@ class _BookSectionState extends State<_BookSection> {
   @override
   Widget build(BuildContext context) {
     // Re-register dependency so we rebuild on every scroll tick
-    final scrollY  = LuxScrollProvider.of(context)?.scrollY ?? 0.0;
-    final screenH  = MediaQuery.sizeOf(context).height;
-    final w        = MediaQuery.sizeOf(context).width;
+    final scrollY = LuxScrollProvider.of(context)?.scrollY ?? 0.0;
+    final screenH = MediaQuery.sizeOf(context).height;
+    final w = MediaQuery.sizeOf(context).width;
     final isMobile = w < 800;
 
     // Pure arithmetic from scroll position — no post-frame callback, no jitter
     final double progress;
     final double stickyOffset;
     if (_absoluteTop == null) {
-      progress     = 0;
+      progress = 0;
       stickyOffset = 0;
     } else {
       final raw = (scrollY - _absoluteTop!) / screenH;
-      progress     = raw.clamp(0.0, _numPages.toDouble());
-      stickyOffset = (scrollY - _absoluteTop!).clamp(0.0, (_numPages - 1) * screenH);
+      progress = raw.clamp(0.0, _numPages.toDouble());
+      stickyOffset =
+          (scrollY - _absoluteTop!).clamp(0.0, (_numPages - 1) * screenH);
     }
 
-    final pageIdx   = progress.floor().clamp(0, _numPages - 1);
-    final t         = progress % 1.0;
+    final pageIdx = progress.floor().clamp(0, _numPages - 1);
+    final t = progress % 1.0;
     // Smooth cubic-out ease — no jitter at page boundaries
-    final eased     = 1 - math.pow(1 - t, 3).toDouble();
+    final eased = 1 - math.pow(1 - t, 3).toDouble();
     final flipAngle = eased * math.pi;
 
     return SizedBox(
@@ -2563,7 +2502,8 @@ class _BookSectionState extends State<_BookSection> {
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: RadialGradient(
-                        center: const Alignment(0, 0.3), radius: 0.85,
+                        center: const Alignment(0, 0.3),
+                        radius: 0.85,
                         colors: [LD.sph.withAlpha(70), Colors.transparent],
                       ),
                     ),
@@ -2571,64 +2511,88 @@ class _BookSectionState extends State<_BookSection> {
                 ),
 
                 // Eyebrow
-                Positioned(top: 44, left: 0, right: 0,
-                  child: Center(child: Text('OUR SIGNATURE EXPERIENCE',
-                    style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w500,
-                      letterSpacing: 4.0, color: LD.sph.withAlpha(200),
-                      decoration: TextDecoration.none)))),
+                Positioned(
+                    top: 44,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                        child: Text('OUR SIGNATURE EXPERIENCE',
+                            style: GoogleFonts.montserrat(
+                                fontSize: 9,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 4.0,
+                                color: LD.sph.withAlpha(200),
+                                decoration: TextDecoration.none)))),
 
                 // Book
                 Center(
                   child: _BookWidget(
-                    pages: _kBookPages, currentPage: pageIdx,
-                    flipAngle: flipAngle, isMobile: isMobile,
+                    pages: _kBookPages,
+                    currentPage: pageIdx,
+                    flipAngle: flipAngle,
+                    isMobile: isMobile,
                   ),
                 ),
 
                 // Page dots — only show content pages (1, 2, 3)
-                Positioned(bottom: 30, left: 0, right: 0,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(3, (i) {
-                      final contentPageIdx = i + 1; // content pages are at indices 1, 2, 3
-                      final active = pageIdx == contentPageIdx;
-                      return AnimatedContainer(
-                        duration: const Duration(milliseconds: 350),
-                        margin: const EdgeInsets.symmetric(horizontal: 6),
-                        width: active ? 7.5 : 5, height: active ? 7.5 : 5,
-                        decoration: BoxDecoration(
-                          color: active ? LD.sph : LD.sph.withAlpha(70),
-                          shape: BoxShape.circle,
-                        ),
-                      );
-                    }),
-                  )),
+                Positioned(
+                    bottom: 30,
+                    left: 0,
+                    right: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(3, (i) {
+                        final contentPageIdx =
+                            i + 1; // content pages are at indices 1, 2, 3
+                        final active = pageIdx == contentPageIdx;
+                        return AnimatedContainer(
+                          duration: const Duration(milliseconds: 350),
+                          margin: const EdgeInsets.symmetric(horizontal: 6),
+                          width: active ? 7.5 : 5,
+                          height: active ? 7.5 : 5,
+                          decoration: BoxDecoration(
+                            color: active ? LD.sph : LD.sph.withAlpha(70),
+                            shape: BoxShape.circle,
+                          ),
+                        );
+                      }),
+                    )),
 
                 // Scroll cue
-                Positioned(right: 44, top: 0, bottom: 0,
-                  child: Center(
-                    child: AnimatedOpacity(
-                      opacity: progress < 0.2 ? 0.4 : 0.0,
-                      duration: const Duration(milliseconds: 600),
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        Container(
-                          width: 1, height: 56,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                              colors: [LD.sph, Colors.transparent],
+                Positioned(
+                    right: 44,
+                    top: 0,
+                    bottom: 0,
+                    child: Center(
+                      child: AnimatedOpacity(
+                        opacity: progress < 0.2 ? 0.4 : 0.0,
+                        duration: const Duration(milliseconds: 600),
+                        child:
+                            Column(mainAxisSize: MainAxisSize.min, children: [
+                          Container(
+                            width: 1,
+                            height: 56,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [LD.sph, Colors.transparent],
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 10),
-                        RotatedBox(quarterTurns: 1,
-                          child: Text('SCROLL',
-                            style: GoogleFonts.montserrat(fontSize: 7.5, fontWeight: FontWeight.w500,
-                              letterSpacing: 3.5, color: LD.sph,
-                              decoration: TextDecoration.none))),
-                      ]),
-                    ),
-                  )),
+                          const SizedBox(height: 10),
+                          RotatedBox(
+                              quarterTurns: 1,
+                              child: Text('SCROLL',
+                                  style: GoogleFonts.montserrat(
+                                      fontSize: 7.5,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 3.5,
+                                      color: LD.sph,
+                                      decoration: TextDecoration.none))),
+                        ]),
+                      ),
+                    )),
               ]),
             ),
           ),
@@ -2640,7 +2604,6 @@ class _BookSectionState extends State<_BookSection> {
 
 class _BookWidget extends StatelessWidget {
   const _BookWidget({
-    super.key,
     required this.pages,
     required this.currentPage,
     required this.flipAngle,
@@ -2654,96 +2617,136 @@ class _BookWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final w     = MediaQuery.sizeOf(context).width;
+    final w = MediaQuery.sizeOf(context).width;
     final bookW = isMobile ? w - 40 : math.min(w - 160, 1080.0);
     final bookH = isMobile ? bookW * 0.75 : bookW * 0.56;
 
-    final current  = pages[currentPage];
-    final next     = pages[(currentPage + 1) % pages.length];
+    final current = pages[currentPage];
+    final next = pages[(currentPage + 1) % pages.length];
     final leafFront = flipAngle < math.pi / 2;
-    final showLeaf  = flipAngle > 0.005;
+    final showLeaf = flipAngle > 0.005;
 
     return SizedBox(
-      width: bookW, height: bookH,
+      width: bookW,
+      height: bookH,
       child: Stack(children: [
         // Left panel
-        Positioned(left: 0, top: 0, bottom: 0, width: bookW / 2,
-          child: _BookLeftPanel(data: current, height: bookH, isMobile: isMobile)),
+        Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: bookW / 2,
+            child: _BookLeftPanel(
+                data: current, height: bookH, isMobile: isMobile)),
 
         // Right panel
-        Positioned(right: 0, top: 0, bottom: 0, width: bookW / 2,
-          child: _BookRightPanel(data: leafFront ? current : next, isMobile: isMobile)),
+        Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            width: bookW / 2,
+            child: _BookRightPanel(
+                data: leafFront ? current : next, isMobile: isMobile)),
 
         // Spine (10px, matches .book-spine)
-        Positioned(left: bookW / 2 - 5, top: 0, bottom: 0, width: 10,
-          child: Stack(children: [
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [Color(0xFF040A12), Color(0xFF1B3050), Color(0xFF040A12)],
+        Positioned(
+            left: bookW / 2 - 5,
+            top: 0,
+            bottom: 0,
+            width: 10,
+            child: Stack(children: [
+              Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0xFF040A12),
+                      Color(0xFF1B3050),
+                      Color(0xFF040A12)
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Center(
-              child: FractionallySizedBox(
-                heightFactor: 0.64,
-                child: Container(
-                  width: 1,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, LD.sph.withAlpha(180), Colors.transparent],
+              Center(
+                child: FractionallySizedBox(
+                  heightFactor: 0.64,
+                  child: Container(
+                    width: 1,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.transparent,
+                          LD.sph.withAlpha(180),
+                          Colors.transparent
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ])),
+            ])),
 
         // Flipping leaf
         if (showLeaf)
-          Positioned(right: 0, top: 0, bottom: 0, width: bookW / 2,
-            child: Transform(
-              alignment: Alignment.centerLeft,
-              transform: Matrix4.identity()..setEntry(3, 2, 0.001)..rotateY(-flipAngle),
-              child: ClipRect(
-                child: leafFront
-                    ? _BookRightPanel(data: current, isMobile: isMobile)
-                    : Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.rotationY(math.pi),
-                        child: _BookLeftPanel(data: next, height: bookH, isMobile: isMobile),
-                      ),
-              ),
-            )),
+          Positioned(
+              right: 0,
+              top: 0,
+              bottom: 0,
+              width: bookW / 2,
+              child: Transform(
+                alignment: Alignment.centerLeft,
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001)
+                  ..rotateY(-flipAngle),
+                child: ClipRect(
+                  child: leafFront
+                      ? _BookRightPanel(data: current, isMobile: isMobile)
+                      : Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.rotationY(math.pi),
+                          child: _BookLeftPanel(
+                              data: next, height: bookH, isMobile: isMobile),
+                        ),
+                ),
+              )),
 
         // Gloss sheen
         if (showLeaf)
-          Positioned(right: 0, top: 0, bottom: 0, width: bookW / 2,
-            child: IgnorePointer(
-              child: Transform(
-                alignment: Alignment.centerLeft,
-                transform: Matrix4.identity()..setEntry(3, 2, 0.001)..rotateY(-flipAngle),
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft, end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white.withAlpha((math.sin(flipAngle.abs()) * 55).round()),
-                        Colors.transparent,
-                      ],
+          Positioned(
+              right: 0,
+              top: 0,
+              bottom: 0,
+              width: bookW / 2,
+              child: IgnorePointer(
+                child: Transform(
+                  alignment: Alignment.centerLeft,
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateY(-flipAngle),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Colors.white.withAlpha(
+                              (math.sin(flipAngle.abs()) * 55).round()),
+                          Colors.transparent,
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            )),
+              )),
       ]),
     );
   }
 }
 
 class _BookLeftPanel extends StatelessWidget {
-  const _BookLeftPanel({super.key, required this.data, required this.height, required this.isMobile});
+  const _BookLeftPanel(
+      {required this.data, required this.height, required this.isMobile});
   final _BookPageData data;
   final double height;
   final bool isMobile;
@@ -2757,17 +2760,26 @@ class _BookLeftPanel extends StatelessWidget {
         child: Container(
           color: const Color(0xFF04090F),
           child: Stack(children: [
-            Positioned(bottom: 40, left: 0, right: 0,
-              child: Center(child: Container(
-                width: 40, height: 40,
-                decoration: BoxDecoration(
-                  border: Border.all(color: LD.sph.withAlpha(60), width: 1),
-                ),
-                child: Center(child: Text('L', style: GoogleFonts.cormorantGaramond(
-                  fontSize: 22, fontWeight: FontWeight.w400,
-                  color: LD.sph.withAlpha(80), decoration: TextDecoration.none,
+            Positioned(
+                bottom: 40,
+                left: 0,
+                right: 0,
+                child: Center(
+                    child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: LD.sph.withAlpha(60), width: 1),
+                  ),
+                  child: Center(
+                      child: Text('L',
+                          style: GoogleFonts.cormorantGaramond(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w400,
+                            color: LD.sph.withAlpha(80),
+                            decoration: TextDecoration.none,
+                          ))),
                 ))),
-              ))),
           ]),
         ),
       );
@@ -2777,68 +2789,113 @@ class _BookLeftPanel extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: data.photoPath == null
               ? const LinearGradient(
-                  begin: Alignment.topLeft, end: Alignment.bottomRight,
-                  colors: [Color(0xFF060E1A), Color(0xFF0D2040), Color(0xFF060E1A)],
-                  stops: [0, 0.55, 1])
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                      Color(0xFF060E1A),
+                      Color(0xFF0D2040),
+                      Color(0xFF060E1A)
+                    ],
+                  stops: [
+                      0,
+                      0.55,
+                      1
+                    ])
               : null,
           image: data.photoPath != null
-              ? DecorationImage(image: AssetImage(data.photoPath!), fit: BoxFit.cover, onError: (_, __) {})
+              ? DecorationImage(
+                  image: AssetImage(data.photoPath!),
+                  fit: BoxFit.cover,
+                  onError: (_, __) {})
               : null,
         ),
         child: Stack(children: [
           // Photo dark overlay
           if (data.photoPath != null)
-            Positioned.fill(child: DecoratedBox(
-              decoration: BoxDecoration(color: const Color(0xFF070E18).withAlpha(122)),
+            Positioned.fill(
+                child: DecoratedBox(
+              decoration:
+                  BoxDecoration(color: const Color(0xFF070E18).withAlpha(122)),
             )),
 
           // Ghost page number
-          Positioned(bottom: -10, right: -6,
-            child: Text(data.num,
-              style: GoogleFonts.cormorantGaramond(
-                fontSize: isMobile ? 100 : 180, fontWeight: FontWeight.w600,
-                color: Colors.white.withAlpha(6), height: 1,
-                decoration: TextDecoration.none))),
+          Positioned(
+              bottom: -10,
+              right: -6,
+              child: Text(data.num,
+                  style: GoogleFonts.cormorantGaramond(
+                      fontSize: isMobile ? 100 : 180,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white.withAlpha(6),
+                      height: 1,
+                      decoration: TextDecoration.none))),
 
           // Car PNG (page 0)
           if (data.carPath != null)
-            Positioned(bottom: 48, left: 0, right: 0, height: isMobile ? 100 : 180,
-              child: Image.asset(data.carPath!, fit: BoxFit.contain, alignment: Alignment.bottomCenter,
-                  errorBuilder: (_, __, ___) => const SizedBox.shrink())),
+            Positioned(
+                bottom: 48,
+                left: 0,
+                right: 0,
+                height: isMobile ? 100 : 180,
+                child: Image.asset(data.carPath!,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.bottomCenter,
+                    errorBuilder: (_, __, ___) => const SizedBox.shrink())),
 
           // Deco label top-left
-          Positioned(top: pad, left: pad,
-            child: Row(mainAxisSize: MainAxisSize.min, children: [
-              Container(width: 24, height: 1, color: LD.sph.withAlpha(180)),
-              const SizedBox(width: 10),
-              Text(data.label.toUpperCase(),
-                style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w500,
-                  letterSpacing: 3.0, color: LD.sph.withAlpha(200),
-                  decoration: TextDecoration.none)),
-            ])),
+          Positioned(
+              top: pad,
+              left: pad,
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                Container(width: 24, height: 1, color: LD.sph.withAlpha(180)),
+                const SizedBox(width: 10),
+                Text(data.label.toUpperCase(),
+                    style: GoogleFonts.montserrat(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 3.0,
+                        color: LD.sph.withAlpha(200),
+                        decoration: TextDecoration.none)),
+              ])),
 
           // Caption strip
-          Positioned(bottom: 0, left: 0, right: 0,
-            child: Container(
-              padding: EdgeInsets.fromLTRB(pad, 28, pad, 28),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter, end: Alignment.topCenter,
-                  colors: [const Color(0xFF040A12).withAlpha(230), Colors.transparent],
+          Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: EdgeInsets.fromLTRB(pad, 28, pad, 28),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      const Color(0xFF040A12).withAlpha(230),
+                      Colors.transparent
+                    ],
+                  ),
                 ),
-              ),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
-                Text('— ${data.num}',
-                  style: GoogleFonts.cormorantGaramond(fontSize: 10, fontWeight: FontWeight.w400,
-                    letterSpacing: 3.0, color: LD.sph, decoration: TextDecoration.none)),
-                const SizedBox(height: 5),
-                Text(data.sub,
-                  style: GoogleFonts.cormorantGaramond(
-                    fontSize: isMobile ? 11 : 13, fontWeight: FontWeight.w300,
-                    fontStyle: FontStyle.italic, color: Colors.white.withAlpha(140),
-                    decoration: TextDecoration.none)),
-              ]),
-            )),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('— ${data.num}',
+                          style: GoogleFonts.cormorantGaramond(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: 3.0,
+                              color: LD.sph,
+                              decoration: TextDecoration.none)),
+                      const SizedBox(height: 5),
+                      Text(data.sub,
+                          style: GoogleFonts.cormorantGaramond(
+                              fontSize: isMobile ? 11 : 13,
+                              fontWeight: FontWeight.w300,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.white.withAlpha(140),
+                              decoration: TextDecoration.none)),
+                    ]),
+              )),
         ]),
       ),
     );
@@ -2846,7 +2903,7 @@ class _BookLeftPanel extends StatelessWidget {
 }
 
 class _BookRightPanel extends StatelessWidget {
-  const _BookRightPanel({super.key, required this.data, required this.isMobile});
+  const _BookRightPanel({required this.data, required this.isMobile});
   final _BookPageData data;
   final bool isMobile;
 
@@ -2863,27 +2920,38 @@ class _BookRightPanel extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 64, height: 64,
+                width: 64,
+                height: 64,
                 decoration: BoxDecoration(
                   border: Border.all(color: LD.ink, width: 1.5),
                 ),
-                child: Center(child: Text('L', style: GoogleFonts.cormorantGaramond(
-                  fontSize: 36, fontWeight: FontWeight.w400,
-                  color: LD.ink, decoration: TextDecoration.none,
-                ))),
+                child: Center(
+                    child: Text('L',
+                        style: GoogleFonts.cormorantGaramond(
+                          fontSize: 36,
+                          fontWeight: FontWeight.w400,
+                          color: LD.ink,
+                          decoration: TextDecoration.none,
+                        ))),
               ),
               const SizedBox(height: 20),
-              Text('LUXELANE', style: GoogleFonts.montserrat(
-                fontSize: 13, fontWeight: FontWeight.w600,
-                letterSpacing: 5.0, color: LD.ink,
-                decoration: TextDecoration.none,
-              )),
+              Text('LUXELANE',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 5.0,
+                    color: LD.ink,
+                    decoration: TextDecoration.none,
+                  )),
               const SizedBox(height: 10),
-              Text('Servicio de Chófer Premium', style: GoogleFonts.cormorantGaramond(
-                fontSize: 14, fontWeight: FontWeight.w300,
-                fontStyle: FontStyle.italic, color: LD.ink3,
-                decoration: TextDecoration.none,
-              )),
+              Text('Servicio de Chófer Premium',
+                  style: GoogleFonts.cormorantGaramond(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w300,
+                    fontStyle: FontStyle.italic,
+                    color: LD.ink3,
+                    decoration: TextDecoration.none,
+                  )),
             ],
           ),
         ),
@@ -2893,44 +2961,71 @@ class _BookRightPanel extends StatelessWidget {
       color: const Color(0xFFF7F5F0),
       child: Stack(children: [
         // Ghost number
-        Positioned(bottom: -12, right: -8,
-          child: Text(data.num,
-            style: GoogleFonts.cormorantGaramond(
-              fontSize: isMobile ? 100 : 180, fontWeight: FontWeight.w600,
-              color: LD.sph.withAlpha(10), height: 1,
-              decoration: TextDecoration.none))),
+        Positioned(
+            bottom: -12,
+            right: -8,
+            child: Text(data.num,
+                style: GoogleFonts.cormorantGaramond(
+                    fontSize: isMobile ? 100 : 180,
+                    fontWeight: FontWeight.w600,
+                    color: LD.sph.withAlpha(10),
+                    height: 1,
+                    decoration: TextDecoration.none))),
 
         // Content
         Padding(
           padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, vPad),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text(data.tag,
-              style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w500,
-                letterSpacing: 3.5, color: LD.sph, decoration: TextDecoration.none)),
-            const SizedBox(height: 22),
-            Text(data.headline,
-              style: GoogleFonts.cormorantGaramond(
-                fontSize: isMobile ? 26 : 42, fontWeight: FontWeight.w300, height: 1.06,
-                color: LD.ink, letterSpacing: -0.01 * (isMobile ? 26 : 42),
-                decoration: TextDecoration.none)),
-            const SizedBox(height: 20),
-            Text(data.body,
-              style: GoogleFonts.montserrat(
-                fontSize: isMobile ? 12 : 12.5, fontWeight: FontWeight.w300,
-                height: 1.9, color: LD.ink2, decoration: TextDecoration.none)),
-            const SizedBox(height: 24),
-            ...data.bullets.map((b) => Padding(
-              padding: const EdgeInsets.only(bottom: 9),
-              child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Container(width: 18, height: 1, color: LD.sph, margin: const EdgeInsets.only(right: 14)),
-                Expanded(child: Text(b,
-                  style: GoogleFonts.montserrat(
-                    fontSize: isMobile ? 11 : 11.5, fontWeight: FontWeight.w400,
-                    letterSpacing: 0.02 * (isMobile ? 11 : 11.5),
-                    color: LD.ink2, decoration: TextDecoration.none))),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(data.tag,
+                    style: GoogleFonts.montserrat(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 3.5,
+                        color: LD.sph,
+                        decoration: TextDecoration.none)),
+                const SizedBox(height: 22),
+                Text(data.headline,
+                    style: GoogleFonts.cormorantGaramond(
+                        fontSize: isMobile ? 26 : 42,
+                        fontWeight: FontWeight.w300,
+                        height: 1.06,
+                        color: LD.ink,
+                        letterSpacing: -0.01 * (isMobile ? 26 : 42),
+                        decoration: TextDecoration.none)),
+                const SizedBox(height: 20),
+                Text(data.body,
+                    style: GoogleFonts.montserrat(
+                        fontSize: isMobile ? 12 : 12.5,
+                        fontWeight: FontWeight.w300,
+                        height: 1.9,
+                        color: LD.ink2,
+                        decoration: TextDecoration.none)),
+                const SizedBox(height: 24),
+                ...data.bullets.map((b) => Padding(
+                      padding: const EdgeInsets.only(bottom: 9),
+                      child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                                width: 18,
+                                height: 1,
+                                color: LD.sph,
+                                margin: const EdgeInsets.only(right: 14)),
+                            Expanded(
+                                child: Text(b,
+                                    style: GoogleFonts.montserrat(
+                                        fontSize: isMobile ? 11 : 11.5,
+                                        fontWeight: FontWeight.w400,
+                                        letterSpacing:
+                                            0.02 * (isMobile ? 11 : 11.5),
+                                        color: LD.ink2,
+                                        decoration: TextDecoration.none))),
+                          ]),
+                    )),
               ]),
-            )),
-          ]),
         ),
       ]),
     );

@@ -44,9 +44,10 @@ class AirportTransferPage extends StatelessWidget {
     storyImage: 'assets/images/services/aeropuerto/arrival.jpg',
     storyFallback: 'assets/images/home/promise_photo.jpg',
     faqs: [
-      ServiceFaq('¿Qué pasa si mi vuelo se retrasa?',
+      ServiceFaq(
+          '¿Qué pasa si mi vuelo se retrasa?',
           'Nada. Seguimos tu vuelo en tiempo real y ajustamos la hora de recogida automáticamente, sin coste adicional. '
-          'Además, cuentas con 60 minutos de espera gratuita desde el aterrizaje.'),
+              'Además, cuentas con 60 minutos de espera gratuita desde el aterrizaje.'),
       ServiceFaq('¿Dónde me espera el chófer?',
           'En la zona de llegadas, con un cartel con tu nombre. Recibirás sus datos de contacto en la app antes de la recogida.'),
       ServiceFaq('¿El precio incluye peajes y propina?',
@@ -57,9 +58,11 @@ class AirportTransferPage extends StatelessWidget {
           'Depende de la clase de vehículo. Si viajas con mucho equipaje o en grupo, la Business Van ofrece espacio para hasta 7 pasajeros.'),
     ],
     closingTitle: 'Tu próximo vuelo\nya tiene chófer.',
-    closingBody: 'Reserva ahora y olvídate del trayecto. Precio fijo, chófer verificado y seguimiento de vuelo incluidos.',
+    closingBody:
+        'Reserva ahora y olvídate del trayecto. Precio fijo, chófer verificado y seguimiento de vuelo incluidos.',
   );
 
   @override
-  Widget build(BuildContext context) => const ServicePageTemplate(content: content);
+  Widget build(BuildContext context) =>
+      const ServicePageTemplate(content: content);
 }

@@ -1,9 +1,21 @@
 /// Spanish date formatting that does not depend on intl locale data being
 /// initialised (the app never calls `initializeDateFormatting`).
 abstract class LuxFormat {
-  static const _days   = ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'];
-  static const _months = ['ene', 'feb', 'mar', 'abr', 'may', 'jun',
-                          'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  static const _days = ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'];
+  static const _months = [
+    'ene',
+    'feb',
+    'mar',
+    'abr',
+    'may',
+    'jun',
+    'jul',
+    'ago',
+    'sep',
+    'oct',
+    'nov',
+    'dic'
+  ];
 
   static String _two(int v) => v.toString().padLeft(2, '0');
 
@@ -25,7 +37,8 @@ abstract class LuxFormat {
 
   /// Default pickup: at least [ahead] from now, rounded up to the next quarter
   /// hour ("16:30", never "16:22") — small detail, calmer first impression.
-  static DateTime nextQuarter({Duration ahead = const Duration(hours: 2), DateTime? from}) {
+  static DateTime nextQuarter(
+      {Duration ahead = const Duration(hours: 2), DateTime? from}) {
     final t = (from ?? DateTime.now()).add(ahead);
     final m = ((t.minute + 14) ~/ 15) * 15;
     return DateTime(t.year, t.month, t.day, t.hour).add(Duration(minutes: m));

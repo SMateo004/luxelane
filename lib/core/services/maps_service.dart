@@ -86,14 +86,14 @@ class MapsService {
 
     try {
       // ── Places API (New) ─────────────────────────────────────────────────────
-      final uri = Uri.parse('https://places.googleapis.com/v1/places:autocomplete');
+      final uri =
+          Uri.parse('https://places.googleapis.com/v1/places:autocomplete');
       final res = await http.post(
         uri,
         headers: {
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': _key,
-          'X-Goog-FieldMask':
-              'suggestions.placePrediction.placeId,'
+          'X-Goog-FieldMask': 'suggestions.placePrediction.placeId,'
               'suggestions.placePrediction.structuredFormat,'
               'suggestions.placePrediction.text',
         },
@@ -110,7 +110,8 @@ class MapsService {
         }),
       );
 
-      debugPrint('[Maps] Places v1 status=${res.statusCode} body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
+      debugPrint(
+          '[Maps] Places v1 status=${res.statusCode} body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
 
       if (res.statusCode == 200) {
         final data = json.decode(res.body) as Map<String, dynamic>;
@@ -118,17 +119,21 @@ class MapsService {
         final results = <PlaceSuggestion>[];
         for (final s in suggestions) {
           final pred = (s as Map<String, dynamic>)['placePrediction']
-              as Map<String, dynamic>? ?? {};
+                  as Map<String, dynamic>? ??
+              {};
           final placeId = pred['placeId'] as String? ?? '';
           if (placeId.isEmpty) continue;
-          final structured = pred['structuredFormat']
-              as Map<String, dynamic>? ?? {};
+          final structured =
+              pred['structuredFormat'] as Map<String, dynamic>? ?? {};
           final mainText = ((structured['mainText']
-              as Map<String, dynamic>?)?['text'] as String?) ?? '';
+                  as Map<String, dynamic>?)?['text'] as String?) ??
+              '';
           final secText = ((structured['secondaryText']
-              as Map<String, dynamic>?)?['text'] as String?) ?? '';
-          final fullText = ((pred['text']
-              as Map<String, dynamic>?)?['text'] as String?) ?? '';
+                  as Map<String, dynamic>?)?['text'] as String?) ??
+              '';
+          final fullText =
+              ((pred['text'] as Map<String, dynamic>?)?['text'] as String?) ??
+                  '';
           results.add(PlaceSuggestion(
             placeId: placeId,
             description: fullText,
@@ -157,7 +162,8 @@ class MapsService {
       final res = await http.get(uri);
       debugPrint('[Maps] Classic status=${res.statusCode}');
       if (res.statusCode != 200) {
-        debugPrint('[Maps] Classic body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
+        debugPrint(
+            '[Maps] Classic body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
       } else {
         final data = json.decode(res.body) as Map<String, dynamic>;
         final predictions = data['predictions'] as List? ?? [];
@@ -206,8 +212,7 @@ class MapsService {
 
     try {
       // ── Places API (New) ───────────────────────────────────────────────────
-      final uri = Uri.parse(
-          'https://places.googleapis.com/v1/places/$placeId');
+      final uri = Uri.parse('https://places.googleapis.com/v1/places/$placeId');
       final res = await http.get(uri, headers: {
         'X-Goog-Api-Key': _key,
         'X-Goog-FieldMask': 'id,location,displayName,formattedAddress',
@@ -289,16 +294,13 @@ class MapsService {
       final routes = data['routes'] as List?;
       if (routes == null || routes.isEmpty) return null;
 
-      final leg =
-          (routes.first as Map)['legs'][0] as Map<String, dynamic>;
+      final leg = (routes.first as Map)['legs'][0] as Map<String, dynamic>;
       final encodedPolyline =
           (routes.first as Map)['overview_polyline']['points'] as String;
 
       return RouteInfo(
-        distanceKm:
-            ((leg['distance'] as Map)['value'] as int) / 1000.0,
-        durationMin:
-            ((leg['duration'] as Map)['value'] as int) ~/ 60,
+        distanceKm: ((leg['distance'] as Map)['value'] as int) / 1000.0,
+        durationMin: ((leg['duration'] as Map)['value'] as int) ~/ 60,
         polylinePoints: _decodePolyline(encodedPolyline),
       );
     } catch (_) {

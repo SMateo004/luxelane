@@ -124,13 +124,12 @@ class _NotificationSheet extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Text('Notificaciones',
-                      style: LuxTypography.titleLarge),
+                  const Text('Notificaciones', style: LuxTypography.titleLarge),
                   const Spacer(),
                   BlocBuilder<NotificationBloc, NotificationState>(
                     builder: (context, state) {
-                      final hasUnread = state is NotificationLoaded &&
-                          state.unreadCount > 0;
+                      final hasUnread =
+                          state is NotificationLoaded && state.unreadCount > 0;
                       if (!hasUnread) return const SizedBox.shrink();
                       final authState = context.read<AuthBloc>().state;
                       final userId = authState is AuthAuthenticated
@@ -158,8 +157,7 @@ class _NotificationSheet extends StatelessWidget {
               child: BlocBuilder<NotificationBloc, NotificationState>(
                 builder: (context, state) {
                   if (state is NotificationInitial) {
-                    return const Center(
-                        child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
                   final notifications = state is NotificationLoaded
                       ? state.notifications
@@ -182,8 +180,8 @@ class _NotificationSheet extends StatelessWidget {
 
                   return ListView.separated(
                     controller: scrollController,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: LuxSpacing.sm),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: LuxSpacing.sm),
                     itemCount: notifications.length,
                     separatorBuilder: (_, __) => const Divider(
                       color: LuxColors.blackBorder,

@@ -9,8 +9,12 @@ import 'package:luxelane/features/driver/presentation/bloc/driver_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockBookingRepository extends Mock implements BookingRepository {}
+
 class MockUserRepository extends Mock implements UserRepository {}
+
 class MockMapsService extends Mock implements MapsService {}
+
+class MockVehicleRepository extends Mock implements VehicleRepository {}
 
 final _now = DateTime(2025, 6);
 
@@ -23,6 +27,18 @@ final _driverProfile = DriverProfile(
   rating: 4.9,
   totalRides: 42,
   isAvailable: false,
+);
+
+final _driverUser = User(
+  id: 'driver-1',
+  email: 'driver@luxelane.com',
+  phone: '+59170000000',
+  displayName: 'Driver One',
+  role: UserRole.driver,
+  createdAt: _now,
+  isVerified: true,
+  isActive: true,
+  fcmTokens: const [],
 );
 
 Booking _makeBooking(BookingStatus status) => Booking(
@@ -44,6 +60,7 @@ void main() {
   late MockBookingRepository bookingRepo;
   late MockUserRepository userRepo;
   late MockMapsService mapsService;
+  late MockVehicleRepository vehicleRepo;
 
   setUpAll(() {
     registerFallbackValue(_makeBooking(BookingStatus.pending));
@@ -55,9 +72,14 @@ void main() {
     bookingRepo = MockBookingRepository();
     userRepo = MockUserRepository();
     mapsService = MockMapsService();
+    vehicleRepo = MockVehicleRepository();
 
     when(() => bookingRepo.watchDriverBookings(any()))
         .thenAnswer((_) => Stream.value([]));
+    when(() => bookingRepo.streamPendingBookings())
+        .thenAnswer((_) => Stream.value([]));
+    when(() => userRepo.getUserById(any()))
+        .thenAnswer((_) async => Right(_driverUser));
     when(() => userRepo.getDriverProfile(any()))
         .thenAnswer((_) async => Right(_driverProfile));
   });
@@ -65,6 +87,7 @@ void main() {
   DriverBloc bloc() => DriverBloc(
         bookingRepository: bookingRepo,
         userRepository: userRepo,
+        vehicleRepository: vehicleRepo,
         mapsService: mapsService,
       );
 
@@ -89,7 +112,12 @@ void main() {
               isAvailable: any(named: 'isAvailable'),
             )).thenAnswer((_) async => const Right(null));
         return bloc()
-          ..emit(const DriverLoaded(isAvailable: false, bookings: []));
+          ..emit(DriverLoaded(
+            user: _driverUser,
+            profile: _driverProfile,
+            isAvailable: false,
+            bookings: const [],
+          ));
       },
       act: (bloc) => bloc.add(const DriverAvailabilityToggled(
         userId: 'driver-1',
@@ -150,13 +178,23 @@ void main() {
         _makeBooking(BookingStatus.completed),
         _makeBooking(BookingStatus.inProgress),
       ];
-      final state = DriverLoaded(isAvailable: true, bookings: bookings);
+      final state = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: bookings,
+      );
       expect(state.activeBooking?.status, BookingStatus.inProgress);
     });
 
     test('activeBooking returns null when no active ride', () {
       final bookings = [_makeBooking(BookingStatus.completed)];
-      final state = DriverLoaded(isAvailable: true, bookings: bookings);
+      final state = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: bookings,
+      );
       expect(state.activeBooking, isNull);
     });
 
@@ -166,7 +204,12 @@ void main() {
         _makeBooking(BookingStatus.completed),
         _makeBooking(BookingStatus.inProgress),
       ];
-      final state = DriverLoaded(isAvailable: true, bookings: bookings);
+      final state = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: bookings,
+      );
       expect(state.totalEarnings, 150.0); // 75 + 75
     });
   });

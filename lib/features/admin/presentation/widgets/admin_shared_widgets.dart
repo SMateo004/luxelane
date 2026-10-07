@@ -24,7 +24,9 @@ class SectionChip extends StatelessWidget {
             color: selected ? LuxColors.sapphire : LuxColors.blackElevated,
             borderRadius: BorderRadius.circular(100),
             border: Border.all(
-              color: selected ? LuxColors.sapphire : LuxColors.white.withOpacity(0.1),
+              color: selected
+                  ? LuxColors.sapphire
+                  : LuxColors.white.withOpacity(0.1),
             ),
           ),
           child: Text(
@@ -56,7 +58,8 @@ class AdminNavItem extends StatelessWidget {
   Widget build(BuildContext context) => ListTile(
         selected: selected,
         onTap: onTap,
-        leading: Icon(icon, color: selected ? LuxColors.sapphire : LuxColors.whiteTertiary),
+        leading: Icon(icon,
+            color: selected ? LuxColors.sapphire : LuxColors.whiteTertiary),
         title: Text(label,
             style: LuxTypography.bodyLarge.copyWith(
               color: selected ? LuxColors.sapphire : LuxColors.white,

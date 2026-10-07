@@ -71,7 +71,8 @@ abstract class UserRepository {
 abstract class VehicleRepository {
   Future<Either<Failure, Vehicle>> getVehicleById(String vehicleId);
   Future<Either<Failure, Vehicle>> getVehicleByDriver(String driverId);
-  Future<Either<Failure, List<Vehicle>>> getAvailableVehicles(VehicleClass vehicleClass);
+  Future<Either<Failure, List<Vehicle>>> getAvailableVehicles(
+      VehicleClass vehicleClass);
   Future<Either<Failure, void>> createVehicle(Vehicle vehicle);
   Future<Either<Failure, void>> updateVehicle(Vehicle vehicle);
 }
@@ -147,7 +148,8 @@ abstract class PaymentRepository {
   Future<Either<Failure, Payment>> getPaymentByBooking(String bookingId);
   Future<Either<Failure, List<Payment>>> getPaymentsByRider(String riderId);
   Future<Either<Failure, void>> refundPayment(String paymentId);
-  Future<Either<Failure, List<Map<String, dynamic>>>> getSavedCards(String stripeCustomerId);
+  Future<Either<Failure, List<Map<String, dynamic>>>> getSavedCards(
+      String stripeCustomerId);
   Future<Either<Failure, void>> addCard({
     required String stripeCustomerId,
     required String paymentMethodId,

@@ -17,8 +17,10 @@ import 'place_autocomplete_field.dart';
 enum LuxBookingMode {
   /// Airport transfers: one-way or by-the-hour, scheduled.
   airport,
+
   /// Chauffeur by the hour: duration first, destination optional.
   hourly,
+
   /// Immediate pickup: "now" by default, can be scheduled.
   immediate,
 }
@@ -117,7 +119,8 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
       return;
     }
     if (_needsDestination && _destination == null) {
-      setState(() => _error = 'Indica tu destino para calcular el precio fijo.');
+      setState(
+          () => _error = 'Indica tu destino para calcular el precio fijo.');
       return;
     }
     setState(() {
@@ -143,7 +146,8 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
         origin: _origin!,
         destination: _destination,
         serviceType: _service,
-        scheduledAt: _asap ? DateTime.now().add(const Duration(minutes: 15)) : _date,
+        scheduledAt:
+            _asap ? DateTime.now().add(const Duration(minutes: 15)) : _date,
         hours: _hours,
         routeDistanceKm: route?.distanceKm ?? 0,
         routeDurationMin: route?.durationMin ?? 0,
@@ -172,7 +176,10 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
           color: const Color(0xFF0A1220),
           border: Border.all(color: const Color(0xFF1A2B40)),
           boxShadow: const [
-            BoxShadow(color: Color(0x55000000), blurRadius: 40, offset: Offset(0, 24)),
+            BoxShadow(
+                color: Color(0x55000000),
+                blurRadius: 40,
+                offset: Offset(0, 24)),
           ],
         ),
         child: Column(
@@ -180,7 +187,8 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('RESERVA TU CHÓFER',
-                style: uiLabel(size: 10, color: const Color(0xFF8CB2E3), spacing: 3)),
+                style: uiLabel(
+                    size: 10, color: const Color(0xFF8CB2E3), spacing: 3)),
             const SizedBox(height: 18),
 
             if (widget.mode != LuxBookingMode.immediate) ...[
@@ -188,7 +196,8 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
                 options: const ['Solo ida', 'Por horas'],
                 index: _service == ServiceType.oneWay ? 0 : 1,
                 onChanged: (i) => setState(() {
-                  _service = i == 0 ? ServiceType.oneWay : ServiceType.byTheHour;
+                  _service =
+                      i == 0 ? ServiceType.oneWay : ServiceType.byTheHour;
                   _error = null;
                 }),
               ),
@@ -260,11 +269,15 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
                   : Padding(
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Row(children: [
-                        const Icon(Icons.info_outline_rounded, size: 14, color: Color(0xFFE59A9A)),
+                        const Icon(Icons.info_outline_rounded,
+                            size: 14, color: Color(0xFFE59A9A)),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(_error!,
-                              style: uiLabel(size: 12, color: const Color(0xFFE59A9A), spacing: 0.2)),
+                              style: uiLabel(
+                                  size: 12,
+                                  color: const Color(0xFFE59A9A),
+                                  spacing: 0.2)),
                         ),
                       ]),
                     ),
@@ -284,15 +297,20 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
                 ),
                 child: _submitting
                     ? const SizedBox(
-                        width: 18, height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 1.5, color: Colors.white),
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 1.5, color: Colors.white),
                       )
                     : const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text('VER VEHÍCULOS Y PRECIOS',
-                              style: TextStyle(fontFamily: kSans, fontSize: 11,
-                                  fontWeight: FontWeight.w600, letterSpacing: 1.8)),
+                              style: TextStyle(
+                                  fontFamily: kSans,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: 1.8)),
                           SizedBox(width: 10),
                           Icon(Icons.arrow_forward_rounded, size: 16),
                         ],
@@ -304,14 +322,16 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
             Text(
               'Sin compromiso: verás el precio final antes de confirmar.',
               textAlign: TextAlign.center,
-              style: uiLabel(size: 11, color: Colors.white.withAlpha(130), spacing: 0.2),
+              style: uiLabel(
+                  size: 11, color: Colors.white.withAlpha(130), spacing: 0.2),
             ),
             const SizedBox(height: 20),
             Container(height: 1, color: Colors.white.withAlpha(20)),
             const SizedBox(height: 18),
             _Assurance(LuxPromise.fixedPrice),
             _Assurance(LuxPromise.freeCancel),
-            _Assurance(airport ? LuxPromise.waitAirport : LuxPromise.waitStandard),
+            _Assurance(
+                airport ? LuxPromise.waitAirport : LuxPromise.waitStandard),
           ],
         ),
       ),
@@ -324,7 +344,8 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
 // ── Pieces ──────────────────────────────────────────────────────────────────
 
 class _Segmented extends StatelessWidget {
-  const _Segmented({required this.options, required this.index, required this.onChanged});
+  const _Segmented(
+      {required this.options, required this.index, required this.onChanged});
   final List<String> options;
   final int index;
   final ValueChanged<int> onChanged;
@@ -358,7 +379,9 @@ class _Segmented extends StatelessWidget {
                           style: uiLabel(
                             size: 10,
                             spacing: 1.6,
-                            color: i == index ? Colors.white : Colors.white.withAlpha(140),
+                            color: i == index
+                                ? Colors.white
+                                : Colors.white.withAlpha(140),
                           ).copyWith(fontWeight: FontWeight.w500),
                         ),
                       ),
@@ -388,13 +411,20 @@ class _MapLink extends StatelessWidget {
           ),
           icon: const Icon(Icons.map_outlined, size: 13),
           label: Text('Elegir en el mapa',
-              style: uiLabel(size: 10.5, color: Colors.white.withAlpha(140), spacing: 0.3)),
+              style: uiLabel(
+                  size: 10.5,
+                  color: Colors.white.withAlpha(140),
+                  spacing: 0.3)),
         ),
       );
 }
 
 class _FieldTile extends StatelessWidget {
-  const _FieldTile({required this.icon, required this.label, required this.onTap, this.trailing});
+  const _FieldTile(
+      {required this.icon,
+      required this.label,
+      required this.onTap,
+      this.trailing});
   final IconData icon;
   final String label;
   final String? trailing;
@@ -415,11 +445,13 @@ class _FieldTile extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(label,
-                  style: const TextStyle(fontFamily: kSans, fontSize: 13, color: Colors.white)),
+                  style: const TextStyle(
+                      fontFamily: kSans, fontSize: 13, color: Colors.white)),
             ),
             if (trailing != null)
               Text(trailing!.toUpperCase(),
-                  style: uiLabel(size: 9.5, color: const Color(0xFF8CB2E3), spacing: 1.4)),
+                  style: uiLabel(
+                      size: 9.5, color: const Color(0xFF8CB2E3), spacing: 1.4)),
           ]),
         ),
       );
@@ -447,21 +479,28 @@ class _HoursStepper extends StatelessWidget {
         borderRadius: BorderRadius.circular(2),
       ),
       child: Row(children: [
-        Icon(Icons.hourglass_empty_rounded, size: 16, color: Colors.white.withAlpha(150)),
+        Icon(Icons.hourglass_empty_rounded,
+            size: 16, color: Colors.white.withAlpha(150)),
         const SizedBox(width: 12),
         const Expanded(
           child: Text('Duración',
-              style: TextStyle(fontFamily: kSans, fontSize: 13, color: Colors.white)),
+              style: TextStyle(
+                  fontFamily: kSans, fontSize: 13, color: Colors.white)),
         ),
-        btn(Icons.remove_rounded, hours > 2 ? () => onChanged(hours - 1) : null, 'Menos horas'),
+        btn(Icons.remove_rounded, hours > 2 ? () => onChanged(hours - 1) : null,
+            'Menos horas'),
         SizedBox(
           width: 44,
           child: Text('$hours h',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontFamily: kSans, fontSize: 13,
-                  fontWeight: FontWeight.w600, color: Colors.white)),
+              style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white)),
         ),
-        btn(Icons.add_rounded, hours < 24 ? () => onChanged(hours + 1) : null, 'Más horas'),
+        btn(Icons.add_rounded, hours < 24 ? () => onChanged(hours + 1) : null,
+            'Más horas'),
       ]),
     );
   }
@@ -479,7 +518,10 @@ class _Assurance extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(text,
-                style: uiLabel(size: 11.5, color: Colors.white.withAlpha(170), spacing: 0.2)),
+                style: uiLabel(
+                    size: 11.5,
+                    color: Colors.white.withAlpha(170),
+                    spacing: 0.2)),
           ),
         ]),
       );

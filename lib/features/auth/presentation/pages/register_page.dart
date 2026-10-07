@@ -14,11 +14,11 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _form  = GlobalKey<FormState>();
-  final _name  = TextEditingController();
+  final _form = GlobalKey<FormState>();
+  final _name = TextEditingController();
   final _email = TextEditingController();
   final _phone = TextEditingController();
-  final _pass  = TextEditingController();
+  final _pass = TextEditingController();
 
   @override
   void dispose() {
@@ -75,7 +75,8 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 48),
               Text('Bienvenido\na Luxelane.',
-                  style: LuxTypography.displayMedium.copyWith(fontSize: 40, height: 1.15)),
+                  style: LuxTypography.displayMedium
+                      .copyWith(fontSize: 40, height: 1.15)),
               const SizedBox(height: 8),
               const Text('Crea tu cuenta en menos de un minuto.',
                   style: LuxTypography.bodyMedium),
@@ -91,7 +92,8 @@ class _RegisterPageState extends State<RegisterPage> {
           const Expanded(
             child: AuthBrandPanel(
               title: 'Bienvenido\na Luxelane.',
-              subtitle: 'Una cuenta para reservar, seguir y recordar cada trayecto.',
+              subtitle:
+                  'Una cuenta para reservar, seguir y recordar cada trayecto.',
             ),
           ),
           Expanded(
@@ -102,15 +104,18 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 440),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 64),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 48, vertical: 64),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Crear cuenta',
-                              style: LuxTypography.displayMedium.copyWith(fontSize: 42)),
+                              style: LuxTypography.displayMedium
+                                  .copyWith(fontSize: 42)),
                           const SizedBox(height: 6),
-                          const Text('Solo te pediremos lo necesario para tu chófer.',
+                          const Text(
+                              'Solo te pediremos lo necesario para tu chófer.',
                               style: LuxTypography.bodyMedium),
                           const SizedBox(height: 40),
                           _formContent(),
@@ -146,8 +151,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
-                  validator: (v) =>
-                      v == null || !v.contains('@') ? 'Ingresa un correo válido' : null,
+                  validator: (v) => v == null || !v.contains('@')
+                      ? 'Ingresa un correo válido'
+                      : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
@@ -178,7 +184,8 @@ class _RegisterPageState extends State<RegisterPage> {
                 Text(
                   'Tu nombre y teléfono permiten a tu chófer recibirte y contactarte.',
                   textAlign: TextAlign.center,
-                  style: LuxTypography.caption.copyWith(color: LuxColors.whiteSecondary),
+                  style: LuxTypography.caption
+                      .copyWith(color: LuxColors.whiteSecondary),
                 ),
                 const SizedBox(height: LuxSpacing.sm),
                 Row(

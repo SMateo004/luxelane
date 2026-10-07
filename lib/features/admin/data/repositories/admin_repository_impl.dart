@@ -26,38 +26,51 @@ class AdminRepositoryImpl implements AdminRepository {
 
   @override
   Stream<List<User>> watchAllUsers() {
-    return _db.collection('users').snapshots().map((snap) => snap.docs.map((doc) {
-          final data = doc.data();
-          data['id'] = doc.id;
-          return User.fromJson(data);
-        }).toList());
+    return _db
+        .collection('users')
+        .snapshots()
+        .map((snap) => snap.docs.map((doc) {
+              final data = doc.data();
+              data['id'] = doc.id;
+              return User.fromJson(data);
+            }).toList());
   }
 
   @override
   Stream<List<DriverProfile>> watchAllDrivers() {
-    return _db.collection('driverProfiles').snapshots().map((snap) => snap.docs.map((doc) {
-          final data = doc.data();
-          data['userId'] = doc.id; // Corrected field mapping for DriverProfile
-          return DriverProfile.fromJson(data);
-        }).toList());
+    return _db
+        .collection('driverProfiles')
+        .snapshots()
+        .map((snap) => snap.docs.map((doc) {
+              final data = doc.data();
+              data['userId'] =
+                  doc.id; // Corrected field mapping for DriverProfile
+              return DriverProfile.fromJson(data);
+            }).toList());
   }
 
   @override
   Stream<List<PricingRule>> watchPricingRules() {
-    return _db.collection('pricingRules').snapshots().map((snap) => snap.docs.map((doc) {
-          final data = doc.data();
-          data['id'] = doc.id;
-          return PricingRule.fromJson(data);
-        }).toList());
+    return _db
+        .collection('pricingRules')
+        .snapshots()
+        .map((snap) => snap.docs.map((doc) {
+              final data = doc.data();
+              data['id'] = doc.id;
+              return PricingRule.fromJson(data);
+            }).toList());
   }
 
   @override
   Stream<List<Vehicle>> watchAllVehicles() {
-    return _db.collection('vehicles').snapshots().map((snap) => snap.docs.map((doc) {
-          final data = doc.data();
-          data['id'] = doc.id;
-          return Vehicle.fromJson(data);
-        }).toList());
+    return _db
+        .collection('vehicles')
+        .snapshots()
+        .map((snap) => snap.docs.map((doc) {
+              final data = doc.data();
+              data['id'] = doc.id;
+              return Vehicle.fromJson(data);
+            }).toList());
   }
 
   @override
@@ -121,7 +134,8 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<Either<Failure, void>> toggleUserStatus(String userId, bool active) async {
+  Future<Either<Failure, void>> toggleUserStatus(
+      String userId, bool active) async {
     try {
       await _db.collection('users').doc(userId).update({'isActive': active});
       await _logAction(active ? 'unblock_user' : 'block_user', userId, 'user');
@@ -132,10 +146,15 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<Either<Failure, void>> toggleVehicleStatus(String vehicleId, bool active) async {
+  Future<Either<Failure, void>> toggleVehicleStatus(
+      String vehicleId, bool active) async {
     try {
-      await _db.collection('vehicles').doc(vehicleId).update({'isActive': active});
-      await _logAction(active ? 'enable_vehicle' : 'disable_vehicle', vehicleId, 'vehicle');
+      await _db
+          .collection('vehicles')
+          .doc(vehicleId)
+          .update({'isActive': active});
+      await _logAction(
+          active ? 'enable_vehicle' : 'disable_vehicle', vehicleId, 'vehicle');
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -149,7 +168,8 @@ class AdminRepositoryImpl implements AdminRepository {
         'isMaintenanceMode': active,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-      await _logAction(active ? 'enable_maintenance' : 'disable_maintenance', 'app', 'global_config');
+      await _logAction(active ? 'enable_maintenance' : 'disable_maintenance',
+          'app', 'global_config');
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -157,13 +177,15 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateGlobalSettings(Map<String, dynamic> fields) async {
+  Future<Either<Failure, void>> updateGlobalSettings(
+      Map<String, dynamic> fields) async {
     try {
       await _db.collection('config').doc('global').set({
         ...fields,
         'updatedAt': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-      await _logAction('update_settings', 'global', 'global_config', details: fields.keys.join(', '));
+      await _logAction('update_settings', 'global', 'global_config',
+          details: fields.keys.join(', '));
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -182,14 +204,15 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<Either<Failure, void>> updateUserRole(String userId, UserRole role) async {
+  Future<Either<Failure, void>> updateUserRole(
+      String userId, UserRole role) async {
     try {
       await _db.collection('users').doc(userId).update({'role': role.name});
-      await _logAction('update_role', userId, 'user', details: 'role → ${role.name}');
+      await _logAction('update_role', userId, 'user',
+          details: 'role → ${role.name}');
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
   }
 }
-

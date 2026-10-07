@@ -16,7 +16,6 @@ import '../../../../core/widgets/map_picker_dialog.dart';
 import '../../../../core/widgets/place_autocomplete_field.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../notifications/presentation/widgets/notification_bell.dart';
-import 'home_design.dart';
 import 'home_web_page.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -52,7 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
       initial = const LatLng(-17.7833, -63.1821);
     }
 
-    if (!mounted) { setState(() => _locating = false); return; }
+    if (!mounted) {
+      setState(() => _locating = false);
+      return;
+    }
     setState(() => _locating = false);
 
     // Open map picker centered on detected/default location
@@ -415,7 +417,10 @@ class _MobileBottomPanel extends StatelessWidget {
               spacing: LuxSpacing.md,
               runSpacing: 4,
               children: [
-                for (final p in const [LuxPromise.fixedPrice, LuxPromise.freeCancel])
+                for (final p in const [
+                  LuxPromise.fixedPrice,
+                  LuxPromise.freeCancel
+                ])
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -441,7 +446,8 @@ class _Greeting extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
-          final full = state is AuthAuthenticated ? state.user.displayName.trim() : '';
+          final full =
+              state is AuthAuthenticated ? state.user.displayName.trim() : '';
           final first = full.isEmpty ? '' : full.split(' ').first;
           return Align(
             alignment: Alignment.centerLeft,
@@ -513,71 +519,74 @@ class _BookingForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final locBg = isDark ? LuxColors.blackElevated : const Color(0xFFF0EFEb);
-    final locIconColor = isDark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
+    final locIconColor =
+        isDark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
     return Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: PlaceAutocompleteField(
-                  label: 'Lugar de recogida',
-                  hint: 'Calle, barrio, aeropuerto…',
-                  prefixIcon: Icons.radio_button_checked_outlined,
-                  initialValue: origin,
-                  onPlaceSelected: onOriginSelected,
-                  onMapPick: onOriginMapPick,
-                ),
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: PlaceAutocompleteField(
+                label: 'Lugar de recogida',
+                hint: 'Calle, barrio, aeropuerto…',
+                prefixIcon: Icons.radio_button_checked_outlined,
+                initialValue: origin,
+                onPlaceSelected: onOriginSelected,
+                onMapPick: onOriginMapPick,
               ),
-              const SizedBox(width: LuxSpacing.sm),
-              // Locate / map-pick button
-              GestureDetector(
-                onTap: onLocate,
-                child: Container(
-                  width: 44,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: locBg,
-                    borderRadius: BorderRadius.circular(LuxRadius.sm),
-                    border: Border.all(
-                      color: isDark ? LuxColors.blackBorder : const Color(0xFFE4E1DA),
-                    ),
+            ),
+            const SizedBox(width: LuxSpacing.sm),
+            // Locate / map-pick button
+            GestureDetector(
+              onTap: onLocate,
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: locBg,
+                  borderRadius: BorderRadius.circular(LuxRadius.sm),
+                  border: Border.all(
+                    color: isDark
+                        ? LuxColors.blackBorder
+                        : const Color(0xFFE4E1DA),
                   ),
-                  child: locating
-                      ? Center(
-                          child: SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 1.5,
-                              valueColor: AlwaysStoppedAnimation(locIconColor),
-                            ),
-                          ),
-                        )
-                      : Icon(Icons.my_location_rounded,
-                          size: 18, color: locIconColor),
                 ),
+                child: locating
+                    ? Center(
+                        child: SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 1.5,
+                            valueColor: AlwaysStoppedAnimation(locIconColor),
+                          ),
+                        ),
+                      )
+                    : Icon(Icons.my_location_rounded,
+                        size: 18, color: locIconColor),
               ),
-            ],
-          ),
-          if (serviceType == ServiceType.oneWay) ...[
-            const SizedBox(height: LuxSpacing.sm),
-            PlaceAutocompleteField(
-              label: 'Destino',
-              hint: '¿A dónde vas?',
-              prefixIcon: Icons.location_on_outlined,
-              initialValue: destination,
-              onPlaceSelected: onDestinationSelected,
-              onMapPick: onDestinationMapPick,
             ),
           ],
+        ),
+        if (serviceType == ServiceType.oneWay) ...[
           const SizedBox(height: LuxSpacing.sm),
-          _DateTimeTile(date: date, onChanged: onDateChanged),
-          if (serviceType == ServiceType.byTheHour) ...[
-            const SizedBox(height: LuxSpacing.sm),
-            _HourSelector(hours: hours, onChanged: onHoursChanged),
-          ],
+          PlaceAutocompleteField(
+            label: 'Destino',
+            hint: '¿A dónde vas?',
+            prefixIcon: Icons.location_on_outlined,
+            initialValue: destination,
+            onPlaceSelected: onDestinationSelected,
+            onMapPick: onDestinationMapPick,
+          ),
         ],
-      );
+        const SizedBox(height: LuxSpacing.sm),
+        _DateTimeTile(date: date, onChanged: onDateChanged),
+        if (serviceType == ServiceType.byTheHour) ...[
+          const SizedBox(height: LuxSpacing.sm),
+          _HourSelector(hours: hours, onChanged: onHoursChanged),
+        ],
+      ],
+    );
   }
 }
 
@@ -677,7 +686,9 @@ class _DateTimeTile extends StatelessWidget {
                 ),
                 Text('CAMBIAR',
                     style: LuxTypography.caption.copyWith(
-                        color: LuxColors.sapphireBright, letterSpacing: 1.4, fontSize: 9.5)),
+                        color: LuxColors.sapphireBright,
+                        letterSpacing: 1.4,
+                        fontSize: 9.5)),
               ],
             ),
           );
@@ -693,8 +704,7 @@ class _HourSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final iconColor =
-        dark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
+    final iconColor = dark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
     final textColor = dark ? LuxColors.white : const Color(0xFF111111);
     final accentColor = dark ? LuxColors.white : const Color(0xFF111111);
     return Container(

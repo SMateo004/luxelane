@@ -24,14 +24,14 @@ const _kVehicleClasses = [
 ];
 
 // ── Luxelane design tokens (mirrors home_design.dart LD class) ─────────────────
-const _kBg           = LD.bg;            // #FAFBFE
-const _kCardBg       = Colors.white;
-const _kBorder       = LD.border;        // #DDE4F0
-const _kTextPrimary  = LD.ink;           // #0D1B2E
-const _kTextSub      = LD.ink2;          // #2C3D55
-const _kTextTertiary = LD.ink3;          // #637490
-const _kDivider      = LD.border;        // #DDE4F0
-const _kPanelAccent  = LD.sph;           // #1B4F8A sapphire
+const _kBg = LD.bg; // #FAFBFE
+const _kCardBg = Colors.white;
+const _kBorder = LD.border; // #DDE4F0
+const _kTextPrimary = LD.ink; // #0D1B2E
+const _kTextSub = LD.ink2; // #2C3D55
+const _kTextTertiary = LD.ink3; // #637490
+const _kDivider = LD.border; // #DDE4F0
+const _kPanelAccent = LD.sph; // #1B4F8A sapphire
 
 class BookingScreen extends StatefulWidget {
   const BookingScreen({super.key});
@@ -42,25 +42,25 @@ class BookingScreen extends StatefulWidget {
 class _BookingScreenState extends State<BookingScreen> {
   BookingFormData? _formData;
   VehicleClass _selected = VehicleClass.business;
-  ServiceType  _service  = ServiceType.oneWay;
-  int  _hours   = 3;
+  ServiceType _service = ServiceType.oneWay;
+  int _hours = 3;
   bool _loading = false;
-  int  _step    = 0; // mobile only
+  int _step = 0; // mobile only
 
-  int    _passengers = 1;
-  int    _luggage    = 0;
-  String _notes      = '';
-  String _flight     = '';
-  bool   _bookForSelf    = true;
-  int    _heroPage       = 0;
-  int    _capacityTab    = 0; // 0 = Luggage, 1 = Seating
-  int    _luggageOption  = 0; // 0, 1, 2
-  int    _seatingOption  = 0; // 0, 1, 2, 3
-  String _guestTitle     = 'Sr.';
+  int _passengers = 1;
+  int _luggage = 0;
+  String _notes = '';
+  String _flight = '';
+  bool _bookForSelf = true;
+  int _heroPage = 0;
+  int _capacityTab = 0; // 0 = Luggage, 1 = Seating
+  int _luggageOption = 0; // 0, 1, 2
+  int _seatingOption = 0; // 0, 1, 2, 3
+  String _guestTitle = 'Sr.';
   String _guestFirstName = '';
-  String _guestLastName  = '';
-  String _guestEmail     = '';
-  String _guestPhone     = '';
+  String _guestLastName = '';
+  String _guestEmail = '';
+  String _guestPhone = '';
 
   List<Map<String, dynamic>> _savedCards = [];
   String? _selectedCardId;
@@ -106,8 +106,8 @@ class _BookingScreenState extends State<BookingScreen> {
       final extra = GoRouterState.of(context).extra;
       if (extra is BookingFormData) {
         _formData = extra;
-        _service  = extra.serviceType;
-        _hours    = extra.hours;
+        _service = extra.serviceType;
+        _hours = extra.hours;
       }
       _loadSavedCards();
     }
@@ -194,21 +194,21 @@ class _BookingScreenState extends State<BookingScreen> {
       context: context,
       barrierColor: Colors.black38,
       builder: (_) => _AddGuestDialog(
-        initialTitle:     _guestTitle,
+        initialTitle: _guestTitle,
         initialFirstName: _guestFirstName,
-        initialLastName:  _guestLastName,
-        initialEmail:     _guestEmail,
-        initialPhone:     _guestPhone,
+        initialLastName: _guestLastName,
+        initialEmail: _guestEmail,
+        initialPhone: _guestPhone,
       ),
     );
     if (result != null && mounted) {
       setState(() {
-        _bookForSelf   = false;
-        _guestTitle     = result['title']     ?? 'Sr.';
+        _bookForSelf = false;
+        _guestTitle = result['title'] ?? 'Sr.';
         _guestFirstName = result['firstName'] ?? '';
-        _guestLastName  = result['lastName']  ?? '';
-        _guestEmail     = result['email']     ?? '';
-        _guestPhone     = result['phone']     ?? '';
+        _guestLastName = result['lastName'] ?? '';
+        _guestEmail = result['email'] ?? '';
+        _guestPhone = result['phone'] ?? '';
       });
     }
   }
@@ -216,9 +216,12 @@ class _BookingScreenState extends State<BookingScreen> {
   void _createBooking() {
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) return;
-    final origin = _formData?.origin ?? const Place(address: 'Recogida', lat: 0, lng: 0);
-    final destination = _formData?.destination ?? const Place(address: 'Destino', lat: 0, lng: 0);
-    final scheduledAt = _formData?.scheduledAt ?? DateTime.now().add(const Duration(hours: 1));
+    final origin =
+        _formData?.origin ?? const Place(address: 'Recogida', lat: 0, lng: 0);
+    final destination = _formData?.destination ??
+        const Place(address: 'Destino', lat: 0, lng: 0);
+    final scheduledAt =
+        _formData?.scheduledAt ?? DateTime.now().add(const Duration(hours: 1));
 
     String? combinedNotes;
     if (!_bookForSelf && _guestFirstName.isNotEmpty) {
@@ -276,7 +279,10 @@ class _BookingScreenState extends State<BookingScreen> {
             _handleStripeConfirm(state.clientSecret);
           }
           if (state is PaymentError) {
-            setState(() { _loading = false; _awaitingPaymentIntent = false; });
+            setState(() {
+              _loading = false;
+              _awaitingPaymentIntent = false;
+            });
             showLuxSnackbar(ctx, state.message, isError: true);
           }
         }),
@@ -300,7 +306,12 @@ class _BookingScreenState extends State<BookingScreen> {
               onHoursChanged: (h) => setState(() => _hours = h),
               showStickySelector: _showStickySelector,
               selectedVehicle: _selected,
-              onVehicleChanged: (vc) => setState(() { _selected = vc; _luggageOption = 0; _seatingOption = 0; _heroPage = 0; }),
+              onVehicleChanged: (vc) => setState(() {
+                _selected = vc;
+                _luggageOption = 0;
+                _seatingOption = 0;
+                _heroPage = 0;
+              }),
               km: _km,
             ),
             const Divider(color: _kDivider, height: 1),
@@ -321,30 +332,42 @@ class _BookingScreenState extends State<BookingScreen> {
   // Section background — near-white with a whisper of the vehicle's accent
   static Color _vehicleBg(VehicleClass vc) {
     switch (vc) {
-      case VehicleClass.business:    return const Color(0xFFF0F5FB); // icy navy white
-      case VehicleClass.firstClass:  return const Color(0xFFF5F0FB); // icy lavender white
-      case VehicleClass.businessVan: return const Color(0xFFF0F4FB); // icy slate white
-      case VehicleClass.electric:    return const Color(0xFFEFF9F5); // icy mint white
+      case VehicleClass.business:
+        return const Color(0xFFF0F5FB); // icy navy white
+      case VehicleClass.firstClass:
+        return const Color(0xFFF5F0FB); // icy lavender white
+      case VehicleClass.businessVan:
+        return const Color(0xFFF0F4FB); // icy slate white
+      case VehicleClass.electric:
+        return const Color(0xFFEFF9F5); // icy mint white
     }
   }
 
   // Card accent tint (unselected). Pure white (selected) is applied in the card widget itself.
   static Color _vehicleCardBg(VehicleClass vc) {
     switch (vc) {
-      case VehicleClass.business:    return const Color(0xFFF8FBFF); // barely blue-white
-      case VehicleClass.firstClass:  return const Color(0xFFFAF8FF); // barely lavender-white
-      case VehicleClass.businessVan: return const Color(0xFFF8FAFF); // barely slate-white
-      case VehicleClass.electric:    return const Color(0xFFF7FDF9); // barely mint-white
+      case VehicleClass.business:
+        return const Color(0xFFF8FBFF); // barely blue-white
+      case VehicleClass.firstClass:
+        return const Color(0xFFFAF8FF); // barely lavender-white
+      case VehicleClass.businessVan:
+        return const Color(0xFFF8FAFF); // barely slate-white
+      case VehicleClass.electric:
+        return const Color(0xFFF7FDF9); // barely mint-white
     }
   }
 
   // Stronger accent tint shown when a card IS selected
   static Color _vehicleCardBgSelected(VehicleClass vc) {
     switch (vc) {
-      case VehicleClass.business:    return const Color(0xFFEDF4FF); // soft navy tint
-      case VehicleClass.firstClass:  return const Color(0xFFF0EBFF); // soft lavender tint
-      case VehicleClass.businessVan: return const Color(0xFFEBF2FF); // soft slate tint
-      case VehicleClass.electric:    return const Color(0xFFE8FAF2); // soft mint tint
+      case VehicleClass.business:
+        return const Color(0xFFEDF4FF); // soft navy tint
+      case VehicleClass.firstClass:
+        return const Color(0xFFF0EBFF); // soft lavender tint
+      case VehicleClass.businessVan:
+        return const Color(0xFFEBF2FF); // soft slate tint
+      case VehicleClass.electric:
+        return const Color(0xFFE8FAF2); // soft mint tint
     }
   }
 
@@ -353,7 +376,6 @@ class _BookingScreenState extends State<BookingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             // ── Animated light-tinted hero section — changes with selected vehicle ──
             AnimatedContainer(
               duration: const Duration(milliseconds: 600),
@@ -432,9 +454,8 @@ class _BookingScreenState extends State<BookingScreen> {
                             _heroPage = 0;
                           }),
                           serviceType: _service,
-                          hours: _service == ServiceType.byTheHour
-                              ? _hours
-                              : null,
+                          hours:
+                              _service == ServiceType.byTheHour ? _hours : null,
                         );
                       },
                     ),
@@ -581,10 +602,10 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Widget _webHeroSection() {
     final slides = _currentSlides;
-    final page   = _heroPage.clamp(0, slides.length - 1);
-    final slide  = slides[page];
-    final text   = slide[0];
-    final img    = slide[1];
+    final page = _heroPage.clamp(0, slides.length - 1);
+    final slide = slides[page];
+    final text = slide[0];
+    final img = slide[1];
 
     return ClipRRect(
       borderRadius: BorderRadius.zero,
@@ -593,7 +614,6 @@ class _BookingScreenState extends State<BookingScreen> {
         child: Stack(
           fit: StackFit.expand,
           children: [
-
             // ── Gradient background ─────────────────────────────────────
             Container(
               decoration: const BoxDecoration(
@@ -626,7 +646,9 @@ class _BookingScreenState extends State<BookingScreen> {
 
             // ── Glassmorphism bottom overlay ────────────────────────────
             Positioned(
-              bottom: 0, left: 0, right: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
               child: ClipRect(
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
@@ -637,7 +659,6 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                     child: Row(
                       children: [
-
                         // Text + dots
                         Expanded(
                           child: Column(
@@ -666,12 +687,13 @@ class _BookingScreenState extends State<BookingScreen> {
                                   (i) => AnimatedContainer(
                                     duration: const Duration(milliseconds: 250),
                                     margin: const EdgeInsets.only(right: 6),
-                                    width:  i == page ? 20 : 6,
+                                    width: i == page ? 20 : 6,
                                     height: 6,
                                     decoration: BoxDecoration(
                                       color: i == page
                                           ? _kPanelAccent
-                                          : Colors.white.withValues(alpha: 0.40),
+                                          : Colors.white
+                                              .withValues(alpha: 0.40),
                                       borderRadius: BorderRadius.zero,
                                     ),
                                   ),
@@ -688,7 +710,8 @@ class _BookingScreenState extends State<BookingScreen> {
                           onTap: () => setState(
                               () => _heroPage = (page + 1) % slides.length),
                           child: Container(
-                            width: 44, height: 44,
+                            width: 44,
+                            height: 44,
                             decoration: BoxDecoration(
                               color: Colors.white.withValues(alpha: 0.88),
                               shape: BoxShape.circle,
@@ -781,14 +804,17 @@ class _BookingScreenState extends State<BookingScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: item(Icons.badge_outlined,
-                'Recibimiento personalizado')),
+            Expanded(
+                child:
+                    item(Icons.badge_outlined, 'Recibimiento personalizado')),
             const SizedBox(width: 48),
-            Expanded(child: item(Icons.timer_outlined,
-                'Espera gratuita: 60 min en aeropuertos, 15 min en otras recogidas')),
+            Expanded(
+                child: item(Icons.timer_outlined,
+                    'Espera gratuita: 60 min en aeropuertos, 15 min en otras recogidas')),
             const SizedBox(width: 48),
-            Expanded(child: item(Icons.event_available_outlined,
-                'Cancelación gratuita hasta 1 hora antes de la recogida')),
+            Expanded(
+                child: item(Icons.event_available_outlined,
+                    'Cancelación gratuita hasta 1 hora antes de la recogida')),
           ],
         ),
         const SizedBox(height: 50),
@@ -797,14 +823,17 @@ class _BookingScreenState extends State<BookingScreen> {
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: item(Icons.cable_outlined,
-                'Cargadores para iOS y Android a bordo')),
+            Expanded(
+                child: item(Icons.cable_outlined,
+                    'Cargadores para iOS y Android a bordo')),
             const SizedBox(width: 48),
-            Expanded(child: item(Icons.clean_hands_outlined,
-                'Pañuelos y toallitas desinfectantes de cortesía')),
+            Expanded(
+                child: item(Icons.clean_hands_outlined,
+                    'Pañuelos y toallitas desinfectantes de cortesía')),
             const SizedBox(width: 48),
-            Expanded(child: item(Icons.water_drop_outlined,
-                'Agua fría de cortesía incluida')),
+            Expanded(
+                child: item(Icons.water_drop_outlined,
+                    'Agua fría de cortesía incluida')),
           ],
         ),
       ],
@@ -818,10 +847,10 @@ class _BookingScreenState extends State<BookingScreen> {
   // e.g. assets/images/booking/luggage/business_0.png
   static String _luggageAsset(VehicleClass vc, int option) {
     final key = switch (vc) {
-      VehicleClass.business    => 'business',
-      VehicleClass.firstClass  => 'first_class',
+      VehicleClass.business => 'business',
+      VehicleClass.firstClass => 'first_class',
       VehicleClass.businessVan => 'van',
-      VehicleClass.electric    => 'electric',
+      VehicleClass.electric => 'electric',
     };
     return 'assets/images/booking/luggage/${key}_$option.png';
   }
@@ -837,10 +866,10 @@ class _BookingScreenState extends State<BookingScreen> {
   // User places files at: assets/images/booking/seating/<vehicle>_<0|1|2|3>.png
   static String _seatingAsset(VehicleClass vc, int option) {
     final key = switch (vc) {
-      VehicleClass.business    => 'business',
-      VehicleClass.firstClass  => 'first_class',
+      VehicleClass.business => 'business',
+      VehicleClass.firstClass => 'first_class',
       VehicleClass.businessVan => 'van',
-      VehicleClass.electric    => 'electric',
+      VehicleClass.electric => 'electric',
     };
     return 'assets/images/booking/seating/${key}_$option.png';
   }
@@ -871,8 +900,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   style: TextStyle(
                     fontFamily: kSans,
                     fontSize: 15,
-                    fontWeight:
-                        active ? FontWeight.w700 : FontWeight.w400,
+                    fontWeight: active ? FontWeight.w700 : FontWeight.w400,
                     color: active ? _kTextPrimary : _kTextSub,
                   ),
                 ),
@@ -985,13 +1013,12 @@ class _BookingScreenState extends State<BookingScreen> {
             borderRadius: BorderRadius.zero,
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              transitionBuilder: (child, anim) => FadeTransition(
-                opacity: anim, child: child),
+              transitionBuilder: (child, anim) =>
+                  FadeTransition(opacity: anim, child: child),
               child: _CapacityImage(
                 key: ValueKey('lug-$_selected-$_luggageOption'),
                 assetPath: _luggageAsset(
-                    _selected,
-                    _luggageOption.clamp(0, luggageOpts.length - 1)),
+                    _selected, _luggageOption.clamp(0, luggageOpts.length - 1)),
                 fallbackUrl: _kLuggageFallbacks[
                     _luggageOption.clamp(0, _kLuggageFallbacks.length - 1)],
                 fallbackIcon: Icons.luggage_outlined,
@@ -1002,7 +1029,7 @@ class _BookingScreenState extends State<BookingScreen> {
           // ── Seating — mirrors Luggage structure ──────────────────────────
           Builder(builder: (_) {
             final seatingOpts = _seatingOptionsFor(_selected);
-            final safeIdx     = _seatingOption.clamp(0, seatingOpts.length - 1);
+            final safeIdx = _seatingOption.clamp(0, seatingOpts.length - 1);
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1040,7 +1067,8 @@ class _BookingScreenState extends State<BookingScreen> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 11),
                             decoration: BoxDecoration(
-                              color: active ? _kPanelAccent : Colors.transparent,
+                              color:
+                                  active ? _kPanelAccent : Colors.transparent,
                               borderRadius: BorderRadius.zero,
                             ),
                             child: Text(
@@ -1065,8 +1093,8 @@ class _BookingScreenState extends State<BookingScreen> {
                   borderRadius: BorderRadius.zero,
                   child: AnimatedSwitcher(
                     duration: const Duration(milliseconds: 300),
-                    transitionBuilder: (child, anim) => FadeTransition(
-                        opacity: anim, child: child),
+                    transitionBuilder: (child, anim) =>
+                        FadeTransition(opacity: anim, child: child),
                     child: _CapacityImage(
                       key: ValueKey('seat-$_selected-$safeIdx'),
                       assetPath: _seatingAsset(_selected, safeIdx),
@@ -1088,7 +1116,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Widget _webPriceBreakdown() {
     final base = _price * 0.9185;
-    final tax  = _price * 0.0815;
+    final tax = _price * 0.0815;
 
     // Dotted line row
     Widget priceLine(String label, double amount) => Padding(
@@ -1110,11 +1138,14 @@ class _BookingScreenState extends State<BookingScreen> {
                   const dW = 4.0, gap = 5.0;
                   final count = (c.maxWidth / (dW + gap)).floor();
                   return Row(
-                    children: List.generate(count, (_) => Container(
-                      width: dW, height: 1,
-                      margin: const EdgeInsets.only(right: gap),
-                      color: _kBorder,
-                    )),
+                    children: List.generate(
+                        count,
+                        (_) => Container(
+                              width: dW,
+                              height: 1,
+                              margin: const EdgeInsets.only(right: gap),
+                              color: _kBorder,
+                            )),
                   );
                 }),
               ),
@@ -1139,7 +1170,8 @@ class _BookingScreenState extends State<BookingScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 22, height: 22,
+                width: 22,
+                height: 22,
                 decoration: const BoxDecoration(
                   color: Color(0xFFE4ECF9),
                   shape: BoxShape.circle,
@@ -1370,9 +1402,8 @@ class _BookingScreenState extends State<BookingScreen> {
         // ── Book for a guest ────────────────────────────────────────────
         _BookOptionCard(
           icon: Icons.group_outlined,
-          iconBg: !_bookForSelf
-              ? const Color(0xFFDDE6F8)
-              : const Color(0xFFF0EDE8),
+          iconBg:
+              !_bookForSelf ? const Color(0xFFDDE6F8) : const Color(0xFFF0EDE8),
           iconColor: !_bookForSelf ? _kPanelAccent : _kTextSub,
           title: 'Reservar para un invitado',
           subtitle: (!_bookForSelf && _guestFirstName.isNotEmpty)
@@ -1426,8 +1457,11 @@ class _BookingScreenState extends State<BookingScreen> {
             centerTitle: true,
             iconTheme: IconThemeData(color: _kTextPrimary),
             titleTextStyle: TextStyle(
-              fontFamily: kSans, fontSize: 12,
-              fontWeight: FontWeight.w600, color: _kTextSub, letterSpacing: 1.4,
+              fontFamily: kSans,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: _kTextSub,
+              letterSpacing: 1.4,
             ),
           ),
         ),
@@ -1436,7 +1470,8 @@ class _BookingScreenState extends State<BookingScreen> {
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
-              onPressed: () => _step > 0 ? setState(() => _step--) : context.pop(),
+              onPressed: () =>
+                  _step > 0 ? setState(() => _step--) : context.pop(),
             ),
             title: Text('PASO ${_step + 1} DE 3'),
             bottom: PreferredSize(
@@ -1471,10 +1506,14 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Widget _mobileStepContent() {
     switch (_step) {
-      case 0: return _mobileVehicleStep();
-      case 1: return _detailsStep();
-      case 2: return _confirmStep();
-      default: return const SizedBox();
+      case 0:
+        return _mobileVehicleStep();
+      case 1:
+        return _detailsStep();
+      case 2:
+        return _confirmStep();
+      default:
+        return const SizedBox();
     }
   }
 
@@ -1483,8 +1522,10 @@ class _BookingScreenState extends State<BookingScreen> {
         children: [
           const Text('Elige tu experiencia',
               style: TextStyle(
-                fontFamily: kSerif, fontSize: 28,
-                fontWeight: FontWeight.w600, color: _kTextPrimary,
+                fontFamily: kSerif,
+                fontSize: 28,
+                fontWeight: FontWeight.w600,
+                color: _kTextPrimary,
               )),
           const SizedBox(height: 16),
           _LightServiceTypeTab(
@@ -1493,7 +1534,8 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           if (_service == ServiceType.byTheHour) ...[
             const SizedBox(height: 12),
-            _LightHourRow(hours: _hours, onChanged: (h) => setState(() => _hours = h)),
+            _LightHourRow(
+                hours: _hours, onChanged: (h) => setState(() => _hours = h)),
           ],
           const SizedBox(height: 20),
           SizedBox(
@@ -1508,7 +1550,8 @@ class _BookingScreenState extends State<BookingScreen> {
                 final vc = _kVehicleClasses[i];
                 return _VehicleCard(
                   vehicleClass: vc,
-                  price: DefaultPricing.estimate(vc, _service, km: _km, hours: _hours),
+                  price: DefaultPricing.estimate(vc, _service,
+                      km: _km, hours: _hours),
                   selected: _selected == vc,
                   onTap: () => setState(() => _selected = vc),
                   serviceType: _service,
@@ -1534,24 +1577,40 @@ class _BookingScreenState extends State<BookingScreen> {
         children: [
           const Text('DETALLES DEL VIAJE',
               style: TextStyle(
-                fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w700,
-                color: _kTextTertiary, letterSpacing: 2.0,
+                fontFamily: kSans,
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: _kTextTertiary,
+                letterSpacing: 2.0,
               )),
           const SizedBox(height: 20),
-          _LightCounterRow(label: 'Pasajeros', icon: Icons.person_outline,
-              value: _passengers, min: 1, max: _selected.capacity,
+          _LightCounterRow(
+              label: 'Pasajeros',
+              icon: Icons.person_outline,
+              value: _passengers,
+              min: 1,
+              max: _selected.capacity,
               onChanged: (v) => setState(() => _passengers = v)),
           const SizedBox(height: 10),
-          _LightCounterRow(label: 'Equipaje', icon: Icons.luggage_outlined,
-              value: _luggage, min: 0, max: 6,
+          _LightCounterRow(
+              label: 'Equipaje',
+              icon: Icons.luggage_outlined,
+              value: _luggage,
+              min: 0,
+              max: 6,
               onChanged: (v) => setState(() => _luggage = v)),
           const SizedBox(height: 20),
-          _LightTextField(label: 'Número de vuelo', hint: 'ej. LA 8810 (opcional)',
-              icon: Icons.flight_outlined, onChanged: (v) => _flight = v),
+          _LightTextField(
+              label: 'Número de vuelo',
+              hint: 'ej. LA 8810 (opcional)',
+              icon: Icons.flight_outlined,
+              onChanged: (v) => _flight = v),
           const SizedBox(height: 12),
-          _LightTextField(label: 'Solicitudes especiales',
+          _LightTextField(
+              label: 'Solicitudes especiales',
               hint: 'Asiento infantil, letrero de bienvenida…',
-              icon: Icons.chat_bubble_outline_rounded, maxLines: 3,
+              icon: Icons.chat_bubble_outline_rounded,
+              maxLines: 3,
               onChanged: (v) => _notes = v),
         ],
       );
@@ -1566,14 +1625,20 @@ class _BookingScreenState extends State<BookingScreen> {
             borderRadius: BorderRadius.zero,
             child: SizedBox(
               height: 180,
-              child: LuxMap(origin: _formData!.origin, destination: _formData!.destination),
+              child: LuxMap(
+                  origin: _formData!.origin,
+                  destination: _formData!.destination),
             ),
           ),
           const SizedBox(height: 20),
         ],
         const Text('RESUMEN DE RESERVA',
-            style: TextStyle(fontFamily: kSans, fontSize: 10,
-                fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 2.0)),
+            style: TextStyle(
+                fontFamily: kSans,
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+                color: _kTextTertiary,
+                letterSpacing: 2.0)),
         const SizedBox(height: 14),
         Container(
           decoration: BoxDecoration(
@@ -1582,23 +1647,28 @@ class _BookingScreenState extends State<BookingScreen> {
             border: Border.all(color: _kBorder),
           ),
           child: Column(children: [
-            _SummaryRow('Servicio',    _service.label,       isFirst: true),
-            _SummaryRow('Vehículo',    _selected.label),
+            _SummaryRow('Servicio', _service.label, isFirst: true),
+            _SummaryRow('Vehículo', _selected.label),
             if (_formData?.origin != null)
-              _SummaryRow('Desde',     _formData!.origin.displayName),
+              _SummaryRow('Desde', _formData!.origin.displayName),
             if (_formData?.destination != null)
-              _SummaryRow('Hasta',       _formData!.destination!.displayName),
+              _SummaryRow('Hasta', _formData!.destination!.displayName),
             _SummaryRow(
               _service == ServiceType.byTheHour ? 'Duración' : 'Distancia',
-              _service == ServiceType.byTheHour ? '$_hours horas'
-                  : _km > 0 ? '${_km.toStringAsFixed(1)} km' : '—',
+              _service == ServiceType.byTheHour
+                  ? '$_hours horas'
+                  : _km > 0
+                      ? '${_km.toStringAsFixed(1)} km'
+                      : '—',
             ),
-            if (_formData?.routeDurationMin != null && _formData!.routeDurationMin > 0)
-              _SummaryRow('Duración est.', '${_formData!.routeDurationMin} min'),
+            if (_formData?.routeDurationMin != null &&
+                _formData!.routeDurationMin > 0)
+              _SummaryRow(
+                  'Duración est.', '${_formData!.routeDurationMin} min'),
             _SummaryRow('Pasajeros', '$_passengers'),
-            _SummaryRow('Equipaje',    '$_luggage bultos'),
+            _SummaryRow('Equipaje', '$_luggage bultos'),
             if (_flight.isNotEmpty) _SummaryRow('Vuelo', _flight),
-            if (_notes.isNotEmpty)  _SummaryRow('Notas',  _notes),
+            if (_notes.isNotEmpty) _SummaryRow('Notas', _notes),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: const BoxDecoration(
@@ -1607,27 +1677,41 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
               child: Row(children: [
                 const Text('TOTAL · PRECIO FIJO',
-                    style: TextStyle(fontFamily: kSans, fontSize: 10,
-                        fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 1.8)),
+                    style: TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: _kTextTertiary,
+                        letterSpacing: 1.8)),
                 const Spacer(),
                 Text('Bs ${_price.toStringAsFixed(2)}',
-                    style: const TextStyle(fontFamily: kSans, fontSize: 18,
-                        fontWeight: FontWeight.w700, color: _kTextPrimary, letterSpacing: -0.3)),
+                    style: const TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        color: _kTextPrimary,
+                        letterSpacing: -0.3)),
               ]),
             ),
           ]),
         ),
         const SizedBox(height: 20),
         if (_savedCards.isEmpty)
-          _OutlinedBtn(label: 'Agregar método de pago', icon: Icons.add_card_outlined,
+          _OutlinedBtn(
+              label: 'Agregar método de pago',
+              icon: Icons.add_card_outlined,
               onPressed: () => context.push('/payment/add'))
         else ...[
           const Text('MÉTODO DE PAGO',
-              style: TextStyle(fontFamily: kSans, fontSize: 10,
-                  fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 2.0)),
+              style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: _kTextTertiary,
+                  letterSpacing: 2.0)),
           const SizedBox(height: 12),
           ..._savedCards.map((card) {
-            final id    = card['id'] as String;
+            final id = card['id'] as String;
             final brand = _cap(card['brand'] as String? ?? 'Card');
             final last4 = card['last4'] as String? ?? '****';
             final isSel = _selectedCardId == id;
@@ -1637,7 +1721,8 @@ class _BookingScreenState extends State<BookingScreen> {
                 onTap: () => setState(() => _selectedCardId = id),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 160),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
                     color: _kCardBg,
                     borderRadius: BorderRadius.zero,
@@ -1646,18 +1731,25 @@ class _BookingScreenState extends State<BookingScreen> {
                         width: isSel ? 1.5 : 1),
                   ),
                   child: Row(children: [
-                    Icon(Icons.credit_card_outlined, size: 20,
+                    Icon(Icons.credit_card_outlined,
+                        size: 20,
                         color: isSel ? LuxColors.sapphire : _kTextSub),
                     const SizedBox(width: 12),
-                    Expanded(child: Text('$brand •••• $last4',
-                        style: const TextStyle(fontFamily: kSans,
-                            fontSize: 13, fontWeight: FontWeight.w500, color: _kTextPrimary))),
+                    Expanded(
+                        child: Text('$brand •••• $last4',
+                            style: const TextStyle(
+                                fontFamily: kSans,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: _kTextPrimary))),
                     if (isSel)
                       Container(
-                        width: 18, height: 18,
+                        width: 18,
+                        height: 18,
                         decoration: const BoxDecoration(
                             color: LuxColors.sapphire, shape: BoxShape.circle),
-                        child: const Icon(Icons.check, size: 11, color: Colors.white),
+                        child: const Icon(Icons.check,
+                            size: 11, color: Colors.white),
                       ),
                   ]),
                 ),
@@ -1666,7 +1758,8 @@ class _BookingScreenState extends State<BookingScreen> {
           }),
         ],
         const SizedBox(height: 16),
-        _GuaranteeRow(Icons.event_available_outlined, LuxPromise.freeCancelLong),
+        _GuaranteeRow(
+            Icons.event_available_outlined, LuxPromise.freeCancelLong),
         const SizedBox(height: 8),
         _GuaranteeRow(Icons.lock_outline_rounded, LuxPromise.fixedPriceLong),
         const SizedBox(height: 8),
@@ -1727,11 +1820,15 @@ class _WebTopBar extends StatelessWidget {
               child: GestureDetector(
                 onTap: onBack,
                 child: Row(mainAxisSize: MainAxisSize.min, children: const [
-                  Icon(Icons.arrow_back_ios_new_rounded, size: 12, color: _kTextSub),
+                  Icon(Icons.arrow_back_ios_new_rounded,
+                      size: 12, color: _kTextSub),
                   SizedBox(width: 5),
                   Text('Volver',
-                      style: TextStyle(fontFamily: kSans, fontSize: 11,
-                          fontWeight: FontWeight.w400, letterSpacing: 0.8,
+                      style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 0.8,
                           color: _kTextSub)),
                 ]),
               ),
@@ -1752,8 +1849,8 @@ class _WebTopBar extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: _kVehicleClasses.map((vc) {
-                              final price = DefaultPricing.estimate(
-                                  vc, service, km: km, hours: hours);
+                              final price = DefaultPricing.estimate(vc, service,
+                                  km: km, hours: hours);
                               final isActive = selectedVehicle == vc;
                               return Padding(
                                 padding: const EdgeInsets.only(right: 10),
@@ -1762,7 +1859,8 @@ class _WebTopBar extends StatelessWidget {
                                   child: GestureDetector(
                                     onTap: () => onVehicleChanged?.call(vc),
                                     child: AnimatedContainer(
-                                      duration: const Duration(milliseconds: 180),
+                                      duration:
+                                          const Duration(milliseconds: 180),
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 18, vertical: 10),
                                       decoration: BoxDecoration(
@@ -1798,8 +1896,8 @@ class _WebTopBar extends StatelessWidget {
                                             width: 1,
                                             height: 12,
                                             color: isActive
-                                                ? _kPanelAccent
-                                                    .withValues(alpha: 0.3)
+                                                ? _kPanelAccent.withValues(
+                                                    alpha: 0.3)
                                                 : _kBorder,
                                           ),
                                           const SizedBox(width: 8),
@@ -1835,7 +1933,8 @@ class _WebTopBar extends StatelessWidget {
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 320),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
                     color: _kCardBg,
                     borderRadius: BorderRadius.zero,
@@ -1847,24 +1946,30 @@ class _WebTopBar extends StatelessWidget {
                       Flexible(
                         child: Text(
                           formData!.origin.displayName,
-                          style: const TextStyle(fontFamily: kSans,
-                              fontSize: 12, fontWeight: FontWeight.w500,
+                          style: const TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
                               color: _kTextPrimary),
-                          maxLines: 1, overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const Padding(
                         padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Icon(Icons.arrow_forward_rounded, size: 14,
-                            color: _kTextSub),
+                        child: Icon(Icons.arrow_forward_rounded,
+                            size: 14, color: _kTextSub),
                       ),
                       Flexible(
                         child: Text(
                           formData!.destination?.displayName ?? '—',
-                          style: const TextStyle(fontFamily: kSans,
-                              fontSize: 12, fontWeight: FontWeight.w500,
+                          style: const TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
                               color: _kTextPrimary),
-                          maxLines: 1, overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -1905,14 +2010,14 @@ class _VehicleCard extends StatefulWidget {
   });
 
   final VehicleClass vehicleClass;
-  final double       price;
-  final bool         selected;
-  final Color        cardBg;
-  final Color        cardBgSelected;
+  final double price;
+  final bool selected;
+  final Color cardBg;
+  final Color cardBgSelected;
   final VoidCallback onTap;
-  final ServiceType  serviceType;
-  final int?         hours;
-  final double?      width;
+  final ServiceType serviceType;
+  final int? hours;
+  final double? width;
 
   // Asset path for transparent-background PNG
   String get _assetPath {
@@ -1945,10 +2050,14 @@ class _VehicleCard extends StatefulWidget {
   // Sapphire-family accent per vehicle (border + pill)
   Color get _accentColor {
     switch (vehicleClass) {
-      case VehicleClass.business:    return const Color(0xFF3A7BD5);
-      case VehicleClass.firstClass:  return const Color(0xFF7B4DB5);
-      case VehicleClass.businessVan: return const Color(0xFF2E6AC8);
-      case VehicleClass.electric:    return const Color(0xFF2A9E72);
+      case VehicleClass.business:
+        return const Color(0xFF3A7BD5);
+      case VehicleClass.firstClass:
+        return const Color(0xFF7B4DB5);
+      case VehicleClass.businessVan:
+        return const Color(0xFF2E6AC8);
+      case VehicleClass.electric:
+        return const Color(0xFF2A9E72);
     }
   }
 
@@ -1960,8 +2069,8 @@ class _VehicleCardState extends State<_VehicleCard>
     with SingleTickerProviderStateMixin {
   bool _hover = false;
   late AnimationController _popCtrl;
-  late Animation<double>   _scaleAnim;
-  late Animation<double>   _tiltAnim;
+  late Animation<double> _scaleAnim;
+  late Animation<double> _tiltAnim;
 
   @override
   void initState() {
@@ -2004,11 +2113,11 @@ class _VehicleCardState extends State<_VehicleCard>
     // Car image is fixed at 480 px wide, anchored to the LEFT edge.
     // Unselected card (210 px) → shows left ~44 % of the car (corner only).
     // Selected card (500 px)   → shows the entire car + 20 px right margin.
-    const kCarW    = 480.0;
-    const kCarLeft = 0.0;   // car left edge flush with card left edge
-    const kSelPad  = 20.0;  // extra breathing room on the right when selected
+    const kCarW = 480.0;
+    const kCarLeft = 0.0; // car left edge flush with card left edge
+    const kSelPad = 20.0; // extra breathing room on the right when selected
 
-    final baseW   = widget.width ?? 210.0;
+    final baseW = widget.width ?? 210.0;
     final targetW = widget.selected ? kCarW + kSelPad : baseW;
 
     final accent = widget._accentColor;
@@ -2017,7 +2126,7 @@ class _VehicleCardState extends State<_VehicleCard>
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       onEnter: (_) => setState(() => _hover = true),
-      onExit:  (_) => setState(() => _hover = false),
+      onExit: (_) => setState(() => _hover = false),
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedBuilder(
@@ -2027,7 +2136,8 @@ class _VehicleCardState extends State<_VehicleCard>
               ..setEntry(3, 2, 0.0008) // perspective depth
               ..rotateY(_tiltAnim.value);
             return Transform(
-              transform: perspective * (Matrix4.identity()..scale(_scaleAnim.value)),
+              transform:
+                  perspective * (Matrix4.identity()..scale(_scaleAnim.value)),
               alignment: Alignment.center,
               child: child,
             );
@@ -2063,19 +2173,17 @@ class _VehicleCardState extends State<_VehicleCard>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-
                   // ── Vehicle image — fills most of the card ───────────────
                   // Car is anchored to the BOTTOM-RIGHT corner at a FIXED
                   // 440 px width.  As the card expands from 210 → 310 px the
                   // ClipRRect reveals an extra 100 px of the car's left side.
                   Expanded(
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(20)),
+                      borderRadius:
+                          const BorderRadius.vertical(top: Radius.circular(20)),
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
-
                           // bg colour
                           AnimatedContainer(
                             duration: const Duration(milliseconds: 600),
@@ -2091,8 +2199,8 @@ class _VehicleCardState extends State<_VehicleCard>
                                     center: const Alignment(-0.5, 0.5),
                                     radius: 0.9,
                                     colors: [
-                                      accent.withAlpha(
-                                          widget.selected ? 65 : 32),
+                                      accent
+                                          .withAlpha(widget.selected ? 65 : 32),
                                       Colors.transparent,
                                     ],
                                   ),
@@ -2107,7 +2215,7 @@ class _VehicleCardState extends State<_VehicleCard>
                           // Selected   (500 px): full car visible + 20 px margin.
                           Positioned(
                             bottom: -14,
-                            left:   kCarLeft,
+                            left: kCarLeft,
                             child: SizedBox(
                               width: kCarW,
                               child: _CarImage(
@@ -2119,7 +2227,9 @@ class _VehicleCardState extends State<_VehicleCard>
 
                           // bottom fade — blends car into info strip
                           Positioned(
-                            bottom: 0, left: 0, right: 0,
+                            bottom: 0,
+                            left: 0,
+                            right: 0,
                             child: IgnorePointer(
                               child: Container(
                                 height: 60,
@@ -2139,12 +2249,14 @@ class _VehicleCardState extends State<_VehicleCard>
 
                           // checkmark badge
                           Positioned(
-                            top: 14, right: 14,
+                            top: 14,
+                            right: 14,
                             child: AnimatedOpacity(
                               duration: const Duration(milliseconds: 300),
                               opacity: widget.selected ? 1.0 : 0.0,
                               child: Container(
-                                width: 24, height: 24,
+                                width: 24,
+                                height: 24,
                                 decoration: BoxDecoration(
                                   color: accent,
                                   shape: BoxShape.circle,
@@ -2318,8 +2430,8 @@ class _CapacityImage extends StatelessWidget {
     required this.fallbackUrl,
     required this.fallbackIcon,
   });
-  final String   assetPath;
-  final String   fallbackUrl;
+  final String assetPath;
+  final String fallbackUrl;
   final IconData fallbackIcon;
 
   @override
@@ -2358,14 +2470,14 @@ class _BookOptionCard extends StatelessWidget {
     this.trailing,
   });
 
-  final IconData  icon;
-  final Color     iconBg;
-  final Color     iconColor;
-  final String    title;
-  final String    subtitle;
-  final bool      selected;
+  final IconData icon;
+  final Color iconBg;
+  final Color iconColor;
+  final String title;
+  final String subtitle;
+  final bool selected;
   final VoidCallback onTap;
-  final Widget?   trailing;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
@@ -2384,7 +2496,8 @@ class _BookOptionCard extends StatelessWidget {
           child: Row(
             children: [
               Container(
-                width: 44, height: 44,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   color: iconBg,
                   shape: BoxShape.circle,
@@ -2431,7 +2544,7 @@ class _ReserveBar extends StatelessWidget {
   });
 
   final VehicleClass selected;
-  final bool         loading;
+  final bool loading;
   final VoidCallback onReserve;
 
   @override
@@ -2447,11 +2560,13 @@ class _ReserveBar extends StatelessWidget {
             duration: const Duration(milliseconds: 180),
             width: double.infinity,
             height: 52,
-            color: loading ? _kPanelAccent.withValues(alpha: 0.6) : _kPanelAccent,
+            color:
+                loading ? _kPanelAccent.withValues(alpha: 0.6) : _kPanelAccent,
             child: Center(
               child: loading
                   ? const SizedBox(
-                      width: 18, height: 18,
+                      width: 18,
+                      height: 18,
                       child: CircularProgressIndicator(
                           strokeWidth: 1.5, color: Colors.white))
                   : Text(
@@ -2481,13 +2596,14 @@ class _Btn extends StatelessWidget {
   Widget build(BuildContext context) => GestureDetector(
         onTap: enabled ? onTap : null,
         child: Container(
-          width: 28, height: 28,
+          width: 28,
+          height: 28,
           decoration: BoxDecoration(
             color: enabled ? const Color(0xFFEEEBE4) : const Color(0xFFF5F4F1),
             borderRadius: BorderRadius.circular(4),
           ),
-          child: Icon(icon, size: 14,
-              color: enabled ? _kTextPrimary : _kTextTertiary),
+          child: Icon(icon,
+              size: 14, color: enabled ? _kTextPrimary : _kTextTertiary),
         ),
       );
 }
@@ -2520,9 +2636,10 @@ class _MobileVehicleDetail extends StatelessWidget {
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
-            Expanded(child: Text(vehicleClass.description,
-                style: const TextStyle(fontFamily: kSans,
-                    fontSize: 12, color: _kTextSub))),
+            Expanded(
+                child: Text(vehicleClass.description,
+                    style: const TextStyle(
+                        fontFamily: kSans, fontSize: 12, color: _kTextSub))),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
@@ -2530,8 +2647,11 @@ class _MobileVehicleDetail extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text('Hasta ${vehicleClass.capacity} pax',
-                  style: const TextStyle(fontFamily: kSans,
-                      fontSize: 10, fontWeight: FontWeight.w600, color: _kTextSub)),
+                  style: const TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: _kTextSub)),
             ),
           ]),
           const SizedBox(height: 10),
@@ -2559,12 +2679,17 @@ class _SummaryRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           child: Row(children: [
             Text(label,
-                style: const TextStyle(fontFamily: kSans, fontSize: 12, color: _kTextSub)),
+                style: const TextStyle(
+                    fontFamily: kSans, fontSize: 12, color: _kTextSub)),
             const SizedBox(width: 16),
-            Flexible(child: Text(value,
-                textAlign: TextAlign.end,
-                style: const TextStyle(fontFamily: kSans, fontSize: 12,
-                    fontWeight: FontWeight.w500, color: _kTextPrimary))),
+            Flexible(
+                child: Text(value,
+                    textAlign: TextAlign.end,
+                    style: const TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: _kTextPrimary))),
           ]),
         ),
       ]);
@@ -2609,7 +2734,8 @@ class _LightServiceTypeTab extends StatelessWidget {
               child: compact
                   ? Text(t.label,
                       style: TextStyle(
-                        fontFamily: kSans, fontSize: 12,
+                        fontFamily: kSans,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         color: active ? Colors.white : _kTextSub,
                       ))
@@ -2639,12 +2765,23 @@ class _CompactHourPicker extends StatelessWidget {
           border: Border.all(color: _kBorder),
         ),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
-          _Btn(icon: Icons.remove, enabled: hours > 2, onTap: () => onChanged(hours - 1)),
-          SizedBox(width: 40,
-              child: Text('${hours}h', textAlign: TextAlign.center,
-                  style: const TextStyle(fontFamily: kSans, fontSize: 13,
-                      fontWeight: FontWeight.w600, color: _kTextPrimary))),
-          _Btn(icon: Icons.add, enabled: hours < 12, onTap: () => onChanged(hours + 1)),
+          _Btn(
+              icon: Icons.remove,
+              enabled: hours > 2,
+              onTap: () => onChanged(hours - 1)),
+          SizedBox(
+              width: 40,
+              child: Text('${hours}h',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: _kTextPrimary))),
+          _Btn(
+              icon: Icons.add,
+              enabled: hours < 12,
+              onTap: () => onChanged(hours + 1)),
         ]),
       );
 }
@@ -2660,19 +2797,35 @@ class _LightHourRow extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: _kCardBg, borderRadius: BorderRadius.zero,
+          color: _kCardBg,
+          borderRadius: BorderRadius.zero,
           border: Border.all(color: _kBorder),
         ),
         child: Row(children: [
           const Text('Duración',
-              style: TextStyle(fontFamily: kSans, fontSize: 13,
-                  fontWeight: FontWeight.w500, color: _kTextPrimary)),
+              style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: _kTextPrimary)),
           const Spacer(),
-          _Btn(icon: Icons.remove, enabled: hours > 2, onTap: () => onChanged(hours - 1)),
-          SizedBox(width: 48, child: Text('${hours}h', textAlign: TextAlign.center,
-              style: const TextStyle(fontFamily: kSans, fontSize: 15,
-                  fontWeight: FontWeight.w600, color: _kTextPrimary))),
-          _Btn(icon: Icons.add, enabled: hours < 12, onTap: () => onChanged(hours + 1)),
+          _Btn(
+              icon: Icons.remove,
+              enabled: hours > 2,
+              onTap: () => onChanged(hours - 1)),
+          SizedBox(
+              width: 48,
+              child: Text('${hours}h',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: _kTextPrimary))),
+          _Btn(
+              icon: Icons.add,
+              enabled: hours < 12,
+              onTap: () => onChanged(hours + 1)),
         ]),
       );
 }
@@ -2681,8 +2834,11 @@ class _LightHourRow extends StatelessWidget {
 
 class _LightCounterRow extends StatelessWidget {
   const _LightCounterRow({
-    required this.label, required this.icon,
-    required this.value, required this.min, required this.max,
+    required this.label,
+    required this.icon,
+    required this.value,
+    required this.min,
+    required this.max,
     required this.onChanged,
   });
   final String label;
@@ -2694,20 +2850,37 @@ class _LightCounterRow extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: _kCardBg, borderRadius: BorderRadius.zero,
+          color: _kCardBg,
+          borderRadius: BorderRadius.zero,
           border: Border.all(color: _kBorder),
         ),
         child: Row(children: [
           Icon(icon, size: 18, color: _kTextSub),
           const SizedBox(width: 12),
-          Expanded(child: Text(label,
-              style: const TextStyle(fontFamily: kSans, fontSize: 13,
-                  fontWeight: FontWeight.w500, color: _kTextPrimary))),
-          _Btn(icon: Icons.remove, enabled: value > min, onTap: () => onChanged(value - 1)),
-          SizedBox(width: 40, child: Text('$value', textAlign: TextAlign.center,
-              style: const TextStyle(fontFamily: kSans, fontSize: 15,
-                  fontWeight: FontWeight.w600, color: _kTextPrimary))),
-          _Btn(icon: Icons.add, enabled: value < max, onTap: () => onChanged(value + 1)),
+          Expanded(
+              child: Text(label,
+                  style: const TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: _kTextPrimary))),
+          _Btn(
+              icon: Icons.remove,
+              enabled: value > min,
+              onTap: () => onChanged(value - 1)),
+          SizedBox(
+              width: 40,
+              child: Text('$value',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: _kTextPrimary))),
+          _Btn(
+              icon: Icons.add,
+              enabled: value < max,
+              onTap: () => onChanged(value + 1)),
         ]),
       );
 }
@@ -2716,8 +2889,11 @@ class _LightCounterRow extends StatelessWidget {
 
 class _LightTextField extends StatelessWidget {
   const _LightTextField({
-    required this.label, this.hint, required this.icon,
-    required this.onChanged, this.maxLines = 1,
+    required this.label,
+    this.hint,
+    required this.icon,
+    required this.onChanged,
+    this.maxLines = 1,
   });
   final String label;
   final String? hint;
@@ -2727,23 +2903,36 @@ class _LightTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => TextField(
-        onChanged: onChanged, maxLines: maxLines,
-        style: const TextStyle(fontFamily: kSans, fontSize: 13,
-            color: _kTextPrimary),
+        onChanged: onChanged,
+        maxLines: maxLines,
+        style: const TextStyle(
+            fontFamily: kSans, fontSize: 13, color: _kTextPrimary),
         decoration: InputDecoration(
-          labelText: label, hintText: hint,
-          hintStyle: const TextStyle(fontFamily: kSans, fontSize: 13,
-              color: _kTextTertiary, fontWeight: FontWeight.w300),
-          labelStyle: const TextStyle(fontFamily: kSans, fontSize: 12,
-              color: _kTextSub, fontWeight: FontWeight.w500),
+          labelText: label,
+          hintText: hint,
+          hintStyle: const TextStyle(
+              fontFamily: kSans,
+              fontSize: 13,
+              color: _kTextTertiary,
+              fontWeight: FontWeight.w300),
+          labelStyle: const TextStyle(
+              fontFamily: kSans,
+              fontSize: 12,
+              color: _kTextSub,
+              fontWeight: FontWeight.w500),
           prefixIcon: Icon(icon, size: 18, color: _kTextSub),
-          filled: true, fillColor: _kCardBg,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          border: OutlineInputBorder(borderRadius: BorderRadius.zero,
+          filled: true,
+          fillColor: _kCardBg,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
               borderSide: const BorderSide(color: _kBorder)),
-          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.zero,
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
               borderSide: const BorderSide(color: _kBorder)),
-          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.zero,
+          focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.zero,
               borderSide: const BorderSide(color: _kTextPrimary, width: 1.5)),
         ),
       );
@@ -2752,7 +2941,8 @@ class _LightTextField extends StatelessWidget {
 // ── OUTLINED ACTION BTN ───────────────────────────────────────────────────────
 
 class _OutlinedBtn extends StatelessWidget {
-  const _OutlinedBtn({required this.label, required this.icon, required this.onPressed});
+  const _OutlinedBtn(
+      {required this.label, required this.icon, required this.onPressed});
   final String label;
   final IconData icon;
   final VoidCallback onPressed;
@@ -2762,14 +2952,20 @@ class _OutlinedBtn extends StatelessWidget {
         onTap: onPressed,
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(color: _kCardBg,
-              borderRadius: BorderRadius.zero, border: Border.all(color: _kBorder)),
+          decoration: BoxDecoration(
+              color: _kCardBg,
+              borderRadius: BorderRadius.zero,
+              border: Border.all(color: _kBorder)),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(icon, size: 18, color: _kTextSub),
             const SizedBox(width: 8),
             Text(label.toUpperCase(),
-                style: const TextStyle(fontFamily: kSans, fontSize: 11,
-                    fontWeight: FontWeight.w600, color: _kTextPrimary, letterSpacing: 1.2)),
+                style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: _kTextPrimary,
+                    letterSpacing: 1.2)),
           ]),
         ),
       );
@@ -2779,8 +2975,10 @@ class _OutlinedBtn extends StatelessWidget {
 
 class _LightPriceBar extends StatelessWidget {
   const _LightPriceBar({
-    required this.price, required this.onConfirm,
-    this.loading = false, this.label = 'Confirmar reserva',
+    required this.price,
+    required this.onConfirm,
+    this.loading = false,
+    this.label = 'Confirmar reserva',
   });
   final double price;
   final VoidCallback onConfirm;
@@ -2795,14 +2993,24 @@ class _LightPriceBar extends StatelessWidget {
           border: Border(top: BorderSide(color: _kBorder)),
         ),
         child: Row(children: [
-          Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min,
+          Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Text('PRECIO FINAL · TODO INCLUIDO',
-                    style: TextStyle(fontFamily: kSans, fontSize: 9,
-                        fontWeight: FontWeight.w700, color: _kTextTertiary, letterSpacing: 1.5)),
+                    style: TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        color: _kTextTertiary,
+                        letterSpacing: 1.5)),
                 Text('Bs ${price.toStringAsFixed(0)}',
-                    style: const TextStyle(fontFamily: kSans, fontSize: 22,
-                        fontWeight: FontWeight.w700, color: _kTextPrimary, letterSpacing: -0.5)),
+                    style: const TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: _kTextPrimary,
+                        letterSpacing: -0.5)),
               ]),
           const SizedBox(width: 16),
           Expanded(
@@ -2811,15 +3019,23 @@ class _LightPriceBar extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: loading ? null : onConfirm,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: _kTextPrimary, foregroundColor: Colors.white,
+                  backgroundColor: _kTextPrimary,
+                  foregroundColor: Colors.white,
                   elevation: 0,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  textStyle: const TextStyle(fontFamily: kSans, fontSize: 11,
-                      fontWeight: FontWeight.w700, letterSpacing: 1.2),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                  textStyle: const TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.2),
                 ),
                 child: loading
-                    ? const SizedBox(width: 18, height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 1.5, color: Colors.white))
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 1.5, color: Colors.white))
                     : Text(label.toUpperCase()),
               ),
             ),
@@ -2839,15 +3055,18 @@ class _LightStepIndicator extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         children: List.generate(steps.length * 2 - 1, (i) {
           if (i.isOdd) {
-            return Expanded(child: Container(height: 1,
-                color: i ~/ 2 < currentStep ? _kTextPrimary : _kBorder));
+            return Expanded(
+                child: Container(
+                    height: 1,
+                    color: i ~/ 2 < currentStep ? _kTextPrimary : _kBorder));
           }
-          final idx    = i ~/ 2;
-          final done   = idx < currentStep;
+          final idx = i ~/ 2;
+          final done = idx < currentStep;
           final active = idx == currentStep;
           return Column(children: [
             Container(
-              width: 22, height: 22,
+              width: 22,
+              height: 22,
               decoration: BoxDecoration(
                 color: done ? _kTextPrimary : Colors.white,
                 shape: BoxShape.circle,
@@ -2855,17 +3074,24 @@ class _LightStepIndicator extends StatelessWidget {
                     color: done || active ? _kTextPrimary : _kBorder,
                     width: active ? 1.5 : 1),
               ),
-              child: Center(child: done
-                  ? const Icon(Icons.check, size: 11, color: Colors.white)
-                  : Text('${idx + 1}',
-                      style: TextStyle(fontFamily: kSans, fontSize: 9,
-                          fontWeight: FontWeight.w600,
-                          color: active ? _kTextPrimary : _kTextTertiary))),
+              child: Center(
+                  child: done
+                      ? const Icon(Icons.check, size: 11, color: Colors.white)
+                      : Text('${idx + 1}',
+                          style: TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w600,
+                              color: active ? _kTextPrimary : _kTextTertiary))),
             ),
             const SizedBox(height: 3),
-            Text(steps[idx], style: TextStyle(fontFamily: kSans, fontSize: 9,
-                fontWeight: active ? FontWeight.w600 : FontWeight.w400,
-                color: active ? _kTextPrimary : _kTextTertiary, letterSpacing: 0.3)),
+            Text(steps[idx],
+                style: TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 9,
+                    fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                    color: active ? _kTextPrimary : _kTextTertiary,
+                    letterSpacing: 0.3)),
           ]);
         }),
       );
@@ -2882,8 +3108,8 @@ class _WebAuthGateDialog extends StatefulWidget {
 class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
   bool _showRegister = false;
   final _emailCtrl = TextEditingController();
-  final _passCtrl  = TextEditingController();
-  final _nameCtrl  = TextEditingController();
+  final _passCtrl = TextEditingController();
+  final _nameCtrl = TextEditingController();
   bool _loading = false;
   bool _obscure = true;
 
@@ -2897,18 +3123,22 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
 
   void _submit() {
     final email = _emailCtrl.text.trim();
-    final pass  = _passCtrl.text;
+    final pass = _passCtrl.text;
     if (email.isEmpty || pass.isEmpty) return;
     setState(() => _loading = true);
     if (_showRegister) {
       context.read<AuthBloc>().add(RegisterRequested(
-            email: email, password: pass,
-            displayName: _nameCtrl.text.trim().isNotEmpty
-                ? _nameCtrl.text.trim()
-                : email.split('@').first,
-            phone: '', role: UserRole.rider));
+          email: email,
+          password: pass,
+          displayName: _nameCtrl.text.trim().isNotEmpty
+              ? _nameCtrl.text.trim()
+              : email.split('@').first,
+          phone: '',
+          role: UserRole.rider));
     } else {
-      context.read<AuthBloc>().add(LoginRequested(email: email, password: pass));
+      context
+          .read<AuthBloc>()
+          .add(LoginRequested(email: email, password: pass));
     }
   }
 
@@ -2918,8 +3148,9 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
           if (state is AuthAuthenticated) Navigator.of(ctx).pop(true);
           if (state is AuthError) {
             setState(() => _loading = false);
-            ScaffoldMessenger.of(ctx).showSnackBar(
-                SnackBar(content: Text(state.message), backgroundColor: LuxColors.error));
+            ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
+                content: Text(state.message),
+                backgroundColor: LuxColors.error));
           }
         },
         child: Dialog(
@@ -2932,13 +3163,18 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
             width: 420,
             child: Padding(
               padding: const EdgeInsets.all(LuxSpacing.xxl),
-              child: Column(mainAxisSize: MainAxisSize.min,
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(children: [
-                      Expanded(child: Text(
-                        _showRegister ? 'Crear una cuenta' : 'Inicia sesión para continuar',
-                        style: LuxTypography.headlineLarge.copyWith(fontSize: 24))),
+                      Expanded(
+                          child: Text(
+                              _showRegister
+                                  ? 'Crear una cuenta'
+                                  : 'Inicia sesión para continuar',
+                              style: LuxTypography.headlineLarge
+                                  .copyWith(fontSize: 24))),
                       IconButton(
                           onPressed: () => Navigator.of(context).pop(false),
                           icon: const Icon(Icons.close_rounded,
@@ -2946,42 +3182,60 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
                     ]),
                     const SizedBox(height: LuxSpacing.sm),
                     Text(
-                      _showRegister
-                          ? 'Crea tu cuenta de Luxelane para completar la reserva.'
-                          : 'Inicia sesión para confirmar tu reserva.',
-                      style: LuxTypography.bodyMedium),
+                        _showRegister
+                            ? 'Crea tu cuenta de Luxelane para completar la reserva.'
+                            : 'Inicia sesión para confirmar tu reserva.',
+                        style: LuxTypography.bodyMedium),
                     const SizedBox(height: LuxSpacing.xl),
                     if (_showRegister) ...[
-                      LuxTextField(label: 'Nombre completo', hint: 'Tu nombre',
+                      LuxTextField(
+                          label: 'Nombre completo',
+                          hint: 'Tu nombre',
                           prefixIcon: Icons.person_outline,
-                          controller: _nameCtrl, onChanged: (_) {}),
+                          controller: _nameCtrl,
+                          onChanged: (_) {}),
                       const SizedBox(height: LuxSpacing.md),
                     ],
-                    LuxTextField(label: 'Correo electrónico', hint: 'tu@ejemplo.com',
-                        prefixIcon: Icons.email_outlined, controller: _emailCtrl,
-                        keyboardType: TextInputType.emailAddress, onChanged: (_) {}),
+                    LuxTextField(
+                        label: 'Correo electrónico',
+                        hint: 'tu@ejemplo.com',
+                        prefixIcon: Icons.email_outlined,
+                        controller: _emailCtrl,
+                        keyboardType: TextInputType.emailAddress,
+                        onChanged: (_) {}),
                     const SizedBox(height: LuxSpacing.md),
-                    LuxTextField(label: 'Contraseña', hint: '••••••••',
-                        prefixIcon: Icons.lock_outline, controller: _passCtrl,
-                        obscureText: _obscure, onChanged: (_) {},
+                    LuxTextField(
+                        label: 'Contraseña',
+                        hint: '••••••••',
+                        prefixIcon: Icons.lock_outline,
+                        controller: _passCtrl,
+                        obscureText: _obscure,
+                        onChanged: (_) {},
                         suffixIcon: IconButton(
-                          icon: Icon(_obscure
-                              ? Icons.visibility_off_outlined
-                              : Icons.visibility_outlined,
-                              color: LuxColors.whiteTertiary, size: 20),
+                          icon: Icon(
+                              _obscure
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
+                              color: LuxColors.whiteTertiary,
+                              size: 20),
                           onPressed: () => setState(() => _obscure = !_obscure),
                         )),
                     const SizedBox(height: LuxSpacing.xl),
-                    LuxButton(label: _showRegister ? 'Crear cuenta' : 'Iniciar sesión',
-                        loading: _loading, onPressed: _loading ? null : _submit),
+                    LuxButton(
+                        label:
+                            _showRegister ? 'Crear cuenta' : 'Iniciar sesión',
+                        loading: _loading,
+                        onPressed: _loading ? null : _submit),
                     const SizedBox(height: LuxSpacing.md),
                     TextButton(
-                      onPressed: () => setState(() => _showRegister = !_showRegister),
+                      onPressed: () =>
+                          setState(() => _showRegister = !_showRegister),
                       child: Text(
-                        _showRegister
-                            ? '¿Ya tienes cuenta? Inicia sesión'
-                            : '¿No tienes cuenta? Crear una',
-                        style: LuxTypography.bodyMedium.copyWith(color: LuxColors.sapphire)),
+                          _showRegister
+                              ? '¿Ya tienes cuenta? Inicia sesión'
+                              : '¿No tienes cuenta? Crear una',
+                          style: LuxTypography.bodyMedium
+                              .copyWith(color: LuxColors.sapphire)),
                     ),
                   ]),
             ),
@@ -2993,23 +3247,23 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
 // ── ADD GUEST DIALOG ──────────────────────────────────────────────────────────
 
 InputDecoration _guestFieldDecor(String hint) => InputDecoration(
-  hintText: hint,
-  hintStyle: const TextStyle(
-    fontFamily: kSans,
-    fontSize: 15,
-    color: _kTextTertiary,
-    fontWeight: FontWeight.w400,
-  ),
-  border: const UnderlineInputBorder(
-      borderSide: BorderSide(color: _kBorder)),
-  enabledBorder: const UnderlineInputBorder(
-      borderSide: BorderSide(color: _kBorder)),
-  focusedBorder: const UnderlineInputBorder(
-      borderSide: BorderSide(color: _kTextPrimary, width: 1.5)),
-  contentPadding: const EdgeInsets.symmetric(vertical: 10),
-  filled: false,
-  isDense: false,
-);
+      hintText: hint,
+      hintStyle: const TextStyle(
+        fontFamily: kSans,
+        fontSize: 15,
+        color: _kTextTertiary,
+        fontWeight: FontWeight.w400,
+      ),
+      border:
+          const UnderlineInputBorder(borderSide: BorderSide(color: _kBorder)),
+      enabledBorder:
+          const UnderlineInputBorder(borderSide: BorderSide(color: _kBorder)),
+      focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: _kTextPrimary, width: 1.5)),
+      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+      filled: false,
+      isDense: false,
+    );
 
 const _kGuestValueStyle = TextStyle(
   fontFamily: kSans,
@@ -3019,25 +3273,25 @@ const _kGuestValueStyle = TextStyle(
 );
 
 Widget _guestFieldLabel(String text) => Padding(
-  padding: const EdgeInsets.only(bottom: 4),
-  child: Text(
-    text,
-    style: const TextStyle(
-      fontFamily: kSans,
-      fontSize: 13,
-      fontWeight: FontWeight.w600,
-      color: _kTextPrimary,
-    ),
-  ),
-);
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontFamily: kSans,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: _kTextPrimary,
+        ),
+      ),
+    );
 
 class _AddGuestDialog extends StatefulWidget {
   const _AddGuestDialog({
-    this.initialTitle     = 'Sr.',
+    this.initialTitle = 'Sr.',
     this.initialFirstName = '',
-    this.initialLastName  = '',
-    this.initialEmail     = '',
-    this.initialPhone     = '',
+    this.initialLastName = '',
+    this.initialEmail = '',
+    this.initialPhone = '',
   });
 
   final String initialTitle;
@@ -3062,9 +3316,9 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
   @override
   void initState() {
     super.initState();
-    _title     = widget.initialTitle;
+    _title = widget.initialTitle;
     _firstCtrl = TextEditingController(text: widget.initialFirstName);
-    _lastCtrl  = TextEditingController(text: widget.initialLastName);
+    _lastCtrl = TextEditingController(text: widget.initialLastName);
     _emailCtrl = TextEditingController(text: widget.initialEmail);
     _phoneCtrl = TextEditingController(text: widget.initialPhone);
   }
@@ -3080,11 +3334,11 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
 
   void _confirm() {
     Navigator.of(context).pop(<String, String>{
-      'title':     _title,
+      'title': _title,
       'firstName': _firstCtrl.text.trim(),
-      'lastName':  _lastCtrl.text.trim(),
-      'email':     _emailCtrl.text.trim(),
-      'phone':     _phoneCtrl.text.trim(),
+      'lastName': _lastCtrl.text.trim(),
+      'email': _emailCtrl.text.trim(),
+      'phone': _phoneCtrl.text.trim(),
     });
   }
 
@@ -3102,7 +3356,6 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-
               // ── Header ─────────────────────────────────────────────────
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -3124,13 +3377,15 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                   GestureDetector(
                     onTap: () => Navigator.of(context).pop(),
                     child: Container(
-                      width: 38, height: 38,
+                      width: 38,
+                      height: 38,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(color: _kBorder, width: 1.5),
                         color: Colors.white,
                       ),
-                      child: const Icon(Icons.close, size: 18, color: _kTextSub),
+                      child:
+                          const Icon(Icons.close, size: 18, color: _kTextSub),
                     ),
                   ),
                 ],
@@ -3173,10 +3428,12 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                 ),
                 icon: const Icon(Icons.keyboard_arrow_down_rounded,
                     color: _kTextSub, size: 22),
-                items: _kTitles.map((t) => DropdownMenuItem(
-                  value: t,
-                  child: Text(t, style: _kGuestValueStyle),
-                )).toList(),
+                items: _kTitles
+                    .map((t) => DropdownMenuItem(
+                          value: t,
+                          child: Text(t, style: _kGuestValueStyle),
+                        ))
+                    .toList(),
                 onChanged: (v) => setState(() => _title = v!),
               ),
 
@@ -3235,7 +3492,8 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                 controller: _phoneCtrl,
                 keyboardType: TextInputType.phone,
                 style: _kGuestValueStyle,
-                decoration: _guestFieldDecor('Número de móvil del invitado').copyWith(
+                decoration:
+                    _guestFieldDecor('Número de móvil del invitado').copyWith(
                   prefixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 2, right: 6),
                     child: Row(
@@ -3251,8 +3509,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                       ],
                     ),
                   ),
-                  prefixIconConstraints:
-                      const BoxConstraints(),
+                  prefixIconConstraints: const BoxConstraints(),
                 ),
               ),
 

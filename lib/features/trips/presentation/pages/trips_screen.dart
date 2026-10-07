@@ -68,7 +68,9 @@ class _TripsScreenState extends State<TripsScreen> {
               // Upcoming first (soonest on top), then history (latest on top):
               // the question a traveller opens this screen with is "what's next?".
               const done = {BookingStatus.completed, BookingStatus.cancelled};
-              final upcoming = trips.where((b) => !done.contains(b.status)).toList()
+              final upcoming = trips
+                  .where((b) => !done.contains(b.status))
+                  .toList()
                 ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
               final past = trips.where((b) => done.contains(b.status)).toList()
                 ..sort((a, b) => b.scheduledAt.compareTo(a.scheduledAt));
@@ -78,8 +80,8 @@ class _TripsScreenState extends State<TripsScreen> {
                 backgroundColor: LuxColors.blackSurface,
                 onRefresh: () async => _loadTrips(),
                 child: ListView(
-                  padding: const EdgeInsets.fromLTRB(
-                      LuxSpacing.md, LuxSpacing.md, LuxSpacing.md, LuxSpacing.xxl),
+                  padding: const EdgeInsets.fromLTRB(LuxSpacing.md,
+                      LuxSpacing.md, LuxSpacing.md, LuxSpacing.xxl),
                   children: [
                     if (upcoming.isNotEmpty) ...[
                       const _SectionLabel('Próximos'),
@@ -122,7 +124,9 @@ class _SectionLabel extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: LuxSpacing.sm + 4, left: 2),
         child: Text(text.toUpperCase(),
             style: LuxTypography.caption.copyWith(
-                color: LuxColors.whiteSecondary, letterSpacing: 2.2, fontSize: 10)),
+                color: LuxColors.whiteSecondary,
+                letterSpacing: 2.2,
+                fontSize: 10)),
       );
 }
 
@@ -166,7 +170,8 @@ class _TripCard extends StatelessWidget {
                   booking.serviceType == ServiceType.byTheHour
                       ? Icons.schedule_rounded
                       : Icons.directions_car_outlined,
-                  color: LuxColors.sapphireBright, size: 22),
+                  color: LuxColors.sapphireBright,
+                  size: 22),
             ),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
@@ -186,7 +191,8 @@ class _TripCard extends StatelessWidget {
                     Text('SEGUIR EN EL MAPA →',
                         style: LuxTypography.caption.copyWith(
                             color: LuxColors.sapphireBright,
-                            letterSpacing: 1.4, fontSize: 9.5)),
+                            letterSpacing: 1.4,
+                            fontSize: 9.5)),
                   ],
                 ],
               ),

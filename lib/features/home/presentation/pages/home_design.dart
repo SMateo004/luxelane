@@ -7,30 +7,29 @@ import 'package:google_fonts/google_fonts.dart';
 
 abstract class LD {
   // Backgrounds
-  static const bg     = Color(0xFFFAFBFE);
-  static const bg2    = Color(0xFFF2F5FB);
-  static const bg3    = Color(0xFFE8EDF7);
+  static const bg = Color(0xFFFAFBFE);
+  static const bg2 = Color(0xFFF2F5FB);
+  static const bg3 = Color(0xFFE8EDF7);
   // Text
-  static const ink    = Color(0xFF0D1B2E);
-  static const ink2   = Color(0xFF2C3D55);
-  static const ink3   = Color(0xFF637490);
+  static const ink = Color(0xFF0D1B2E);
+  static const ink2 = Color(0xFF2C3D55);
+  static const ink3 = Color(0xFF637490);
   // Sapphire
-  static const sph    = Color(0xFF1B4F8A);
-  static const sphLt  = Color(0xFF2E6FBF);
+  static const sph = Color(0xFF1B4F8A);
+  static const sphLt = Color(0xFF2E6FBF);
   static const sphDim = Color(0xFF0D3066);
-  static const sphTint= Color(0xFFEEF3FA);
+  static const sphTint = Color(0xFFEEF3FA);
   // Border
   static const border = Color(0xFFDDE4F0);
   // Dark
-  static const dark   = Color(0xFF070E18);
+  static const dark = Color(0xFF070E18);
 }
 
 // Semantic font family names
 const kSerif = 'Cormorant Garamond';
-const kSans  = 'Montserrat';
+const kSans = 'Montserrat';
 
-TextStyle eyebrow({Color color = LD.sph}) =>
-    GoogleFonts.montserrat(
+TextStyle eyebrow({Color color = LD.sph}) => GoogleFonts.montserrat(
       fontSize: 10,
       fontWeight: FontWeight.w400,
       letterSpacing: 3.2,
@@ -38,7 +37,8 @@ TextStyle eyebrow({Color color = LD.sph}) =>
       decoration: TextDecoration.none,
     );
 
-TextStyle uiLabel({double size = 10, Color color = LD.ink3, double spacing = 2.4}) =>
+TextStyle uiLabel(
+        {double size = 10, Color color = LD.ink3, double spacing = 2.4}) =>
     GoogleFonts.montserrat(
       fontSize: size,
       fontWeight: FontWeight.w400,
@@ -77,7 +77,8 @@ TextStyle bodyText({double size = 15, Color color = LD.ink2}) =>
 // ============================================================
 
 class LuxEyebrow extends StatelessWidget {
-  const LuxEyebrow(this.text, {super.key, this.color = LD.sph, this.dark = false});
+  const LuxEyebrow(this.text,
+      {super.key, this.color = LD.sph, this.dark = false});
   final String text;
   final Color color;
   final bool dark;
@@ -136,11 +137,14 @@ class RevealOnScroll extends StatefulWidget {
     super.key,
     required this.child,
     this.delay = Duration.zero,
+
     /// Horizontal offset in logical pixels (positive = from right, negative = from left)
     this.dx = 0,
+
     /// Vertical offset in logical pixels (positive = from below)
     this.dy = 72,
     this.duration = const Duration(milliseconds: 1100),
+
     /// Fraction of viewport height the element must pass before triggering.
     /// 1.0 = trigger when top edge reaches the bottom of the screen.
     /// 0.85 = trigger slightly earlier (recommended for large blocks).
@@ -259,8 +263,7 @@ class VisibilityDetectorWrapper extends StatefulWidget {
       _VisibilityDetectorWrapperState();
 }
 
-class _VisibilityDetectorWrapperState
-    extends State<VisibilityDetectorWrapper> {
+class _VisibilityDetectorWrapperState extends State<VisibilityDetectorWrapper> {
   bool _fired = false;
 
   void _check() {
@@ -341,12 +344,10 @@ class _AnimatedCounterState extends State<AnimatedCounter>
         child: AnimatedBuilder(
           animation: _ctrl,
           builder: (_, __) {
-            final val =
-                (_quarticEase(_ctrl.value) * widget.target).round();
+            final val = (_quarticEase(_ctrl.value) * widget.target).round();
             return Text(
               widget.format(val),
-              style: widget.style ??
-                  displayText(size: 72, color: Colors.white),
+              style: widget.style ?? displayText(size: 72, color: Colors.white),
             );
           },
         ),

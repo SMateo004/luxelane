@@ -19,7 +19,8 @@ class _AddCardScreenState extends State<AddCardScreen> {
 
   Future<void> _submit() async {
     if (_cardDetails == null || !(_cardDetails!.complete)) {
-      showLuxSnackbar(context, 'Ingresa los datos completos de la tarjeta', isError: true);
+      showLuxSnackbar(context, 'Ingresa los datos completos de la tarjeta',
+          isError: true);
       return;
     }
 
@@ -28,7 +29,8 @@ class _AddCardScreenState extends State<AddCardScreen> {
 
     final user = authState.user;
     if (user.stripeCustomerId == null || user.stripeCustomerId!.isEmpty) {
-      showLuxSnackbar(context, 'La cuenta no está configurada para pagos', isError: true);
+      showLuxSnackbar(context, 'La cuenta no está configurada para pagos',
+          isError: true);
       return;
     }
 
@@ -99,8 +101,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
                   ),
-                  onCardChanged: (card) =>
-                      setState(() => _cardDetails = card),
+                  onCardChanged: (card) => setState(() => _cardDetails = card),
                 ),
               ),
               const SizedBox(height: LuxSpacing.lg),

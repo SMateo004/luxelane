@@ -15,14 +15,14 @@ import 'components.dart';
 
 /// Service catalogue: one list feeds the nav dropdown, mobile menu and footer.
 abstract class LuxServiceRoutes {
-  static const pickup  = '/servicios/recogida-inmediata';
+  static const pickup = '/servicios/recogida-inmediata';
   static const airport = '/servicios/traslado-aeropuerto';
-  static const hourly  = '/servicios/contratacion-por-horas';
+  static const hourly = '/servicios/contratacion-por-horas';
 
   static const all = <(String, String, IconData)>[
     ('Traslado al aeropuerto', airport, Icons.flight_takeoff_rounded),
-    ('Chófer por horas',       hourly,  Icons.schedule_rounded),
-    ('Recogida inmediata',     pickup,  Icons.bolt_rounded),
+    ('Chófer por horas', hourly, Icons.schedule_rounded),
+    ('Recogida inmediata', pickup, Icons.bolt_rounded),
   ];
 }
 
@@ -42,6 +42,7 @@ class LuxSiteNav extends StatelessWidget {
   final bool solid;
   final VoidCallback? onFleet;
   final VoidCallback? onBusiness;
+
   /// Primary CTA. Defaults to the home booking widget.
   final VoidCallback? onBook;
 
@@ -81,7 +82,8 @@ class LuxSiteNav extends StatelessWidget {
             const SizedBox(width: 32),
             LuxNavLink('Flota', onTap: onFleet ?? () => context.go('/')),
             const SizedBox(width: 32),
-            LuxNavLink('Para empresas', onTap: onBusiness ?? () => context.go('/')),
+            LuxNavLink('Para empresas',
+                onTap: onBusiness ?? () => context.go('/')),
             const SizedBox(width: 40),
           ],
           BlocBuilder<AuthBloc, AuthState>(
@@ -98,7 +100,8 @@ class LuxSiteNav extends StatelessWidget {
                   ),
                   if (narrow) ...[
                     const SizedBox(width: 4),
-                    _MenuButton(onBook: book, onFleet: onFleet, onBusiness: onBusiness),
+                    _MenuButton(
+                        onBook: book, onFleet: onFleet, onBusiness: onBusiness),
                   ],
                 ]);
               }
@@ -110,7 +113,8 @@ class LuxSiteNav extends StatelessWidget {
                 LuxNavCta(onTap: book, compact: narrow),
                 if (narrow) ...[
                   const SizedBox(width: 4),
-                  _MenuButton(onBook: book, onFleet: onFleet, onBusiness: onBusiness),
+                  _MenuButton(
+                      onBook: book, onFleet: onFleet, onBusiness: onBusiness),
                 ],
               ]);
             },
@@ -147,7 +151,9 @@ class _LuxNavLinkState extends State<LuxNavLink> {
               Text(
                 widget.label.toUpperCase(),
                 style: TextStyle(
-                  fontFamily: kSans, fontSize: 11, fontWeight: FontWeight.w400,
+                  fontFamily: kSans,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w400,
                   letterSpacing: 1.2,
                   color: _hover ? Colors.white : Colors.white.withAlpha(170),
                   decoration: TextDecoration.none,
@@ -193,7 +199,8 @@ class _LuxServicesMenuState extends State<LuxServicesMenu> {
   void _hide() {
     setState(() => _hover = false);
     Future.delayed(const Duration(milliseconds: 140), () {
-      if (!_dropHover && !_hover && mounted && _portal.isShowing) _portal.hide();
+      if (!_dropHover && !_hover && mounted && _portal.isShowing)
+        _portal.hide();
     });
   }
 
@@ -220,7 +227,10 @@ class _LuxServicesMenuState extends State<LuxServicesMenu> {
                   color: const Color(0xFF0A1220),
                   border: Border.all(color: const Color(0xFF1A2B40)),
                   boxShadow: const [
-                    BoxShadow(color: Color(0x66000000), blurRadius: 32, offset: Offset(0, 16)),
+                    BoxShadow(
+                        color: Color(0x66000000),
+                        blurRadius: 32,
+                        offset: Offset(0, 16)),
                   ],
                 ),
                 child: Column(
@@ -252,7 +262,9 @@ class _LuxServicesMenuState extends State<LuxServicesMenu> {
               Text(
                 'SERVICIOS',
                 style: TextStyle(
-                  fontFamily: kSans, fontSize: 11, fontWeight: FontWeight.w400,
+                  fontFamily: kSans,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w400,
                   letterSpacing: 1.2,
                   color: _hover ? Colors.white : Colors.white.withAlpha(170),
                   decoration: TextDecoration.none,
@@ -262,7 +274,8 @@ class _LuxServicesMenuState extends State<LuxServicesMenu> {
               AnimatedRotation(
                 turns: _hover ? 0.5 : 0,
                 duration: const Duration(milliseconds: 200),
-                child: Icon(Icons.keyboard_arrow_down_rounded, size: 14,
+                child: Icon(Icons.keyboard_arrow_down_rounded,
+                    size: 14,
                     color: _hover ? Colors.white : Colors.white.withAlpha(170)),
               ),
             ],
@@ -272,7 +285,8 @@ class _LuxServicesMenuState extends State<LuxServicesMenu> {
 }
 
 class _DropItem extends StatefulWidget {
-  const _DropItem({required this.label, required this.icon, required this.onTap});
+  const _DropItem(
+      {required this.label, required this.icon, required this.onTap});
   final String label;
   final IconData icon;
   final VoidCallback onTap;
@@ -297,16 +311,20 @@ class _DropItemState extends State<_DropItem> {
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             child: Row(
               children: [
-                Icon(widget.icon, size: 16,
+                Icon(widget.icon,
+                    size: 16,
                     color: _hover ? Colors.white : const Color(0xFF8CB2E3)),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Text(
                     widget.label,
                     style: TextStyle(
-                      fontFamily: kSans, fontSize: 12.5, fontWeight: FontWeight.w400,
+                      fontFamily: kSans,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w400,
                       letterSpacing: 0.3,
-                      color: _hover ? Colors.white : Colors.white.withAlpha(190),
+                      color:
+                          _hover ? Colors.white : Colors.white.withAlpha(190),
                       decoration: TextDecoration.none,
                     ),
                   ),
@@ -314,7 +332,8 @@ class _DropItemState extends State<_DropItem> {
                 AnimatedOpacity(
                   opacity: _hover ? 1 : 0,
                   duration: const Duration(milliseconds: 150),
-                  child: const Icon(Icons.arrow_forward_rounded, size: 14, color: Colors.white),
+                  child: const Icon(Icons.arrow_forward_rounded,
+                      size: 14, color: Colors.white),
                 ),
               ],
             ),
@@ -351,8 +370,11 @@ class _LuxNavCtaState extends State<LuxNavCta> {
             child: Text(
               widget.compact ? 'RESERVAR' : 'RESERVAR UN VIAJE',
               style: const TextStyle(
-                fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w600,
-                letterSpacing: 1.8, color: Colors.white,
+                fontFamily: kSans,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.8,
+                color: Colors.white,
                 decoration: TextDecoration.none,
               ),
             ),
@@ -375,7 +397,8 @@ class _AvatarDot extends StatelessWidget {
           child: MouseRegion(
             cursor: SystemMouseCursors.click,
             child: Container(
-              width: 34, height: 34,
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white.withAlpha(90)),
@@ -384,8 +407,11 @@ class _AvatarDot extends StatelessWidget {
                 child: Text(
                   name.isNotEmpty ? name[0].toUpperCase() : 'L',
                   style: const TextStyle(
-                    fontFamily: kSerif, fontSize: 16, fontWeight: FontWeight.w500,
-                    color: Colors.white, decoration: TextDecoration.none,
+                    fontFamily: kSerif,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    decoration: TextDecoration.none,
                   ),
                 ),
               ),
@@ -414,13 +440,16 @@ class _MenuButton extends StatelessWidget {
           barrierColor: Colors.black54,
           transitionDuration: const Duration(milliseconds: 320),
           pageBuilder: (ctx, _, __) => _MobileMenu(
-            onBook: onBook, onFleet: onFleet, onBusiness: onBusiness,
+            onBook: onBook,
+            onFleet: onFleet,
+            onBusiness: onBusiness,
           ),
           transitionBuilder: (_, a, __, child) => FadeTransition(
             opacity: CurvedAnimation(parent: a, curve: Curves.easeOut),
             child: SlideTransition(
               position: Tween(begin: const Offset(0, -0.03), end: Offset.zero)
-                  .animate(CurvedAnimation(parent: a, curve: Curves.easeOutCubic)),
+                  .animate(
+                      CurvedAnimation(parent: a, curve: Curves.easeOutCubic)),
               child: child,
             ),
           ),
@@ -452,10 +481,14 @@ class _MobileMenu extends StatelessWidget {
               ],
               Expanded(
                 child: Text(label,
-                    style: displayText(size: 26, color: Colors.white, weight: FontWeight.w400)
+                    style: displayText(
+                            size: 26,
+                            color: Colors.white,
+                            weight: FontWeight.w400)
                         .copyWith(height: 1.2, letterSpacing: 0)),
               ),
-              Icon(Icons.arrow_forward_rounded, size: 16, color: Colors.white.withAlpha(110)),
+              Icon(Icons.arrow_forward_rounded,
+                  size: 16, color: Colors.white.withAlpha(110)),
             ]),
           ),
         );
@@ -497,15 +530,19 @@ class _MobileMenu extends StatelessWidget {
                     shape: const RoundedRectangleBorder(),
                   ),
                   child: const Text('RESERVAR UN VIAJE',
-                      style: TextStyle(fontFamily: kSans, fontSize: 11,
-                          fontWeight: FontWeight.w600, letterSpacing: 2)),
+                      style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 2)),
                 ),
               ),
               const SizedBox(height: 12),
               Text(
                 '${LuxPromise.fixedPrice}  ·  ${LuxPromise.freeCancel}',
                 textAlign: TextAlign.center,
-                style: uiLabel(size: 10, color: Colors.white.withAlpha(120), spacing: 0.6),
+                style: uiLabel(
+                    size: 10, color: Colors.white.withAlpha(120), spacing: 0.6),
               ),
             ],
           ),
@@ -565,7 +602,8 @@ class LuxSiteFooter extends StatelessWidget {
       child: Column(children: [
         Container(height: 1, color: LD.sph.withAlpha(102)),
         Padding(
-          padding: EdgeInsets.fromLTRB(narrow ? 24 : 56, 64, narrow ? 24 : 56, 36),
+          padding:
+              EdgeInsets.fromLTRB(narrow ? 24 : 56, 64, narrow ? 24 : 56, 36),
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1200),
@@ -575,7 +613,10 @@ class LuxSiteFooter extends StatelessWidget {
                   if (narrow) ...[
                     brand,
                     const SizedBox(height: 40),
-                    Wrap(spacing: 48, runSpacing: 36, children: [services, company, promises]),
+                    Wrap(
+                        spacing: 48,
+                        runSpacing: 36,
+                        children: [services, company, promises]),
                   ] else
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -591,7 +632,10 @@ class LuxSiteFooter extends StatelessWidget {
                   const SizedBox(height: 22),
                   Text(
                     '© ${DateTime.now().year} Luxelane. Todos los derechos reservados.',
-                    style: uiLabel(size: 10, color: Colors.white.withAlpha(70), spacing: 0.8),
+                    style: uiLabel(
+                        size: 10,
+                        color: Colors.white.withAlpha(70),
+                        spacing: 0.8),
                   ),
                 ],
               ),
@@ -614,13 +658,17 @@ class _FooterCol extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(title.toUpperCase(),
-              style: uiLabel(size: 10, color: Colors.white.withAlpha(110), spacing: 2.4)),
+              style: uiLabel(
+                  size: 10, color: Colors.white.withAlpha(110), spacing: 2.4)),
           const SizedBox(height: 18),
           for (final l in links)
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: l.$2 == null
-                  ? Text(l.$1, style: bodyText(size: 13, color: Colors.white.withAlpha(150)).copyWith(height: 1.4))
+                  ? Text(l.$1,
+                      style:
+                          bodyText(size: 13, color: Colors.white.withAlpha(150))
+                              .copyWith(height: 1.4))
                   : _FooterLink(l.$1, l.$2!),
             ),
         ],
@@ -648,7 +696,9 @@ class _FooterLinkState extends State<_FooterLink> {
           onTap: widget.onTap,
           child: Text(
             widget.label,
-            style: bodyText(size: 13, color: _hover ? Colors.white : Colors.white.withAlpha(150))
+            style: bodyText(
+                    size: 13,
+                    color: _hover ? Colors.white : Colors.white.withAlpha(150))
                 .copyWith(height: 1.4),
           ),
         ),

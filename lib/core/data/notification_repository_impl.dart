@@ -25,10 +25,8 @@ class NotificationRepositoryImpl implements NotificationRepository {
 
   @override
   Future<int> getUnreadCount(String userId) async {
-    final snap = await _col(userId)
-        .where('isRead', isEqualTo: false)
-        .count()
-        .get();
+    final snap =
+        await _col(userId).where('isRead', isEqualTo: false).count().get();
     return snap.count ?? 0;
   }
 

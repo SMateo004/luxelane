@@ -39,10 +39,8 @@ class RideRepositoryImpl implements RideRepository {
   @override
   Future<Either<Failure, Ride>> getRideByBooking(String bookingId) async {
     try {
-      final snap = await _col
-          .where('bookingId', isEqualTo: bookingId)
-          .limit(1)
-          .get();
+      final snap =
+          await _col.where('bookingId', isEqualTo: bookingId).limit(1).get();
       if (snap.docs.isEmpty) return const Left(NotFoundFailure());
       final d = snap.docs.first;
       return Right(Ride.fromJson({'id': d.id, ...d.data()}));

@@ -29,25 +29,25 @@ import '../shell/app_shell.dart';
 import '../theme/app_theme.dart';
 
 abstract class LuxRoutes {
-  static const splash   = '/splash';
-  static const login    = '/login';
+  static const splash = '/splash';
+  static const login = '/login';
   static const register = '/register';
-  static const home     = '/';
-  static const booking  = '/booking';
+  static const home = '/';
+  static const booking = '/booking';
   static const rideType = '/ride-type';
-  static const ride     = '/ride/:rideId';
-  static const profile  = '/profile';
-  static const trips    = '/trips';
-  static const admin    = '/admin';
-  static const payment  = '/payment';
-  static const addCard  = '/payment/add';
+  static const ride = '/ride/:rideId';
+  static const profile = '/profile';
+  static const trips = '/trips';
+  static const admin = '/admin';
+  static const payment = '/payment';
+  static const addCard = '/payment/add';
 
   // Driver Routes
-  static const driverHome     = '/driver';
-  static const driverLogin    = '/driver/login';
-  static const driverQueue    = '/driver/queue';
+  static const driverHome = '/driver';
+  static const driverLogin = '/driver/login';
+  static const driverQueue = '/driver/queue';
   static const driverEarnings = '/driver/earnings';
-  static const driverProfile  = '/driver/profile';
+  static const driverProfile = '/driver/profile';
   static const driverActiveRide = '/driver/active-ride/:bookingId';
 }
 
@@ -63,13 +63,13 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
 
         // 1. Initial State: Only show splash if we are NOT already trying to reach a specific driver path.
         if (authState is AuthInitial) {
-          if (going.startsWith('/driver')) return null; 
+          if (going.startsWith('/driver')) return null;
           return going == LuxRoutes.splash ? null : LuxRoutes.splash;
         }
 
         // 2. Loading State: Don't block navigation to driver paths while auth is resolving.
         if (authState is AuthLoading) {
-           return null;
+          return null;
         }
 
         // 3. User is Authenticated: Role-based destination rules
@@ -98,8 +98,10 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
           }
 
           // If landing on splash/auth while authed, send to correct home
-          if (going == LuxRoutes.splash || going == LuxRoutes.login ||
-              going == LuxRoutes.register || going == LuxRoutes.driverLogin) {
+          if (going == LuxRoutes.splash ||
+              going == LuxRoutes.login ||
+              going == LuxRoutes.register ||
+              going == LuxRoutes.driverLogin) {
             return isDriver ? LuxRoutes.driverHome : LuxRoutes.home;
           }
         }
@@ -107,20 +109,25 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         // 4. Guest (Unauthenticated) logic
         if (!isAuth) {
           final isDriverPath = going.startsWith('/driver');
-          
+
           if (kIsWeb) {
-            const webGuestOk = {LuxRoutes.login, LuxRoutes.register, LuxRoutes.home, LuxRoutes.driverLogin};
+            const webGuestOk = {
+              LuxRoutes.login,
+              LuxRoutes.register,
+              LuxRoutes.home,
+              LuxRoutes.driverLogin
+            };
             final guestOk = webGuestOk.contains(going) ||
                 going.startsWith('/ride-type') ||
                 going.startsWith('/booking') ||
                 going.startsWith('/servicios');
-            
+
             // If explicitly trying to enter via driver path, go to driver login.
             // But if on general pages, stay on general login.
             if (isDriverPath && going != LuxRoutes.driverLogin) {
               return LuxRoutes.driverLogin;
             }
-            
+
             if (!guestOk) return LuxRoutes.login;
           } else {
             // Mobile rules...
@@ -183,7 +190,8 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: LuxRoutes.driverActiveRide,
           pageBuilder: (c, s) => _slide(
-            DriverActiveRideScreen(bookingId: s.pathParameters['bookingId'] ?? ''),
+            DriverActiveRideScreen(
+                bookingId: s.pathParameters['bookingId'] ?? ''),
             s,
           ),
         ),
@@ -200,7 +208,8 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
 
         // Driver Shell
         StatefulShellRoute.indexedStack(
-          builder: (context, state, shell) => DriverShell(navigationShell: shell),
+          builder: (context, state, shell) =>
+              DriverShell(navigationShell: shell),
           branches: [
             StatefulShellBranch(
               routes: [
@@ -318,8 +327,8 @@ CustomTransitionPage<void> _slide(Widget child, GoRouterState state) =>
       key: state.pageKey,
       child: child,
       transitionsBuilder: (_, animation, __, child) => SlideTransition(
-        position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-            .animate(
+        position:
+            Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero).animate(
           CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
         ),
         child: child,
@@ -340,7 +349,8 @@ class _SplashPage extends StatelessWidget {
             curve: Curves.easeOutCubic,
             builder: (_, t, child) => Opacity(
               opacity: t,
-              child: Transform.translate(offset: Offset(0, 8 * (1 - t)), child: child),
+              child: Transform.translate(
+                  offset: Offset(0, 8 * (1 - t)), child: child),
             ),
             child: const Column(
               mainAxisSize: MainAxisSize.min,
@@ -377,10 +387,12 @@ class _NotFoundPage extends StatelessWidget {
                 const SizedBox(height: 48),
                 Text('Este camino no existe.',
                     textAlign: TextAlign.center,
-                    style: LuxTypography.displayMedium.copyWith(fontWeight: FontWeight.w400)),
+                    style: LuxTypography.displayMedium
+                        .copyWith(fontWeight: FontWeight.w400)),
                 const SizedBox(height: 12),
                 const Text('Te llevamos de vuelta al inicio.',
-                    textAlign: TextAlign.center, style: LuxTypography.bodyMedium),
+                    textAlign: TextAlign.center,
+                    style: LuxTypography.bodyMedium),
                 const SizedBox(height: 32),
                 SizedBox(
                   width: 240,

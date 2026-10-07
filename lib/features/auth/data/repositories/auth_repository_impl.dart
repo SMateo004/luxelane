@@ -33,8 +33,7 @@ class AuthRepositoryImpl implements AuthRepository {
   /// Raw Firebase sign-in flag — no Firestore involved, so it never
   /// produces a false-negative that would accidentally sign the user out.
   @override
-  Stream<bool> get isSignedIn =>
-      _auth.authStateChanges().map((u) => u != null);
+  Stream<bool> get isSignedIn => _auth.authStateChanges().map((u) => u != null);
 
   @override
   Future<Either<Failure, User>> login({
@@ -48,13 +47,14 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       final doc = await _db.collection('users').doc(cred.user!.uid).get();
       var user = User.fromJson({'id': doc.id, ...doc.data()!});
-      
+
       // Auto-promote this specific email if it wasn't admin already
-      if (email.toLowerCase() == 'admin@luxelane.com' && user.role != UserRole.admin) {
+      if (email.toLowerCase() == 'admin@luxelane.com' &&
+          user.role != UserRole.admin) {
         user = user.copyWith(role: UserRole.admin);
         await _db.collection('users').doc(user.id).update({'role': 'admin'});
       }
-      
+
       return Right(user);
     } on fb.FirebaseAuthException catch (e) {
       return Left(AuthFailure(e.message ?? 'Login failed'));
@@ -81,7 +81,8 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         phone: phone,
         displayName: displayName,
-        role: email.toLowerCase() == 'admin@luxelane.com' ? UserRole.admin : role,
+        role:
+            email.toLowerCase() == 'admin@luxelane.com' ? UserRole.admin : role,
         createdAt: DateTime.now(),
         isVerified: true, // Auto-verify admin
         isActive: true,

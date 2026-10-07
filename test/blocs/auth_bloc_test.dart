@@ -38,7 +38,8 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [AuthLoading, AuthAuthenticated] on LoginRequested success',
       build: () {
-        when(() => repo.login(email: any(named: 'email'), password: any(named: 'password')))
+        when(() => repo.login(
+                email: any(named: 'email'), password: any(named: 'password')))
             .thenAnswer((_) async => Right(_mockUser));
         return AuthBloc(authRepository: repo);
       },
@@ -54,8 +55,10 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [AuthLoading, AuthError] on LoginRequested failure',
       build: () {
-        when(() => repo.login(email: any(named: 'email'), password: any(named: 'password')))
-            .thenAnswer((_) async => const Left(AuthFailure('Wrong credentials')));
+        when(() => repo.login(
+                email: any(named: 'email'), password: any(named: 'password')))
+            .thenAnswer(
+                (_) async => const Left(AuthFailure('Wrong credentials')));
         return AuthBloc(authRepository: repo);
       },
       act: (bloc) => bloc.add(
