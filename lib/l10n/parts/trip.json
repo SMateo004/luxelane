@@ -1,183 +1,1106 @@
 {
-  "driverConnectionErrorTitle": {"es": "Error de conexión", "en": "Connection error", "pt": "Erro de conexão", "description": "Driver home: title when the driver data cannot load"},
-  "driverErrorUnauthorized": {"es": "Esta cuenta no tiene acceso de chófer.", "en": "This account doesn't have chauffeur access.", "pt": "Esta conta não tem acesso de motorista.", "description": "Driver home: signed-in user is not a chauffeur"},
-  "driverTodaySummary": {"es": "Resumen de hoy", "en": "Today's summary", "pt": "Resumo de hoje"},
-  "driverStatCompleted": {"es": "Completados", "en": "Completed", "pt": "Concluídas", "description": "Stat card label (completed trips); shown uppercase"},
-  "driverStatEarnings": {"es": "Ganancias", "en": "Earnings", "pt": "Ganhos", "description": "Stat card label, earnings tab and page title"},
-  "driverGoOnline": {"es": "Conectarse", "en": "Go online", "pt": "Ficar online"},
-  "driverOnlineTitle": {"es": "Estás conectado", "en": "You're online", "pt": "Você está online"},
-  "driverOfflineTitle": {"es": "Estás desconectado", "en": "You're offline", "pt": "Você está offline"},
-  "driverOnlineSubtitle": {"es": "Esperando nuevas solicitudes de viaje", "en": "Waiting for new ride requests", "pt": "Aguardando novas solicitações de viagem"},
-  "driverOfflineSubtitle": {"es": "Activa el interruptor para conectarte", "en": "Turn on the switch to go online", "pt": "Ative a chave para ficar online"},
-  "driverActionGoToPickup": {"es": "Ir al punto de recogida", "en": "Head to pickup point", "pt": "Ir ao local de embarque"},
-  "driverActionGoToPickupShort": {"es": "Ir a la recogida", "en": "Head to pickup", "pt": "Ir ao embarque"},
-  "driverActionArrived": {"es": "He llegado", "en": "I've arrived", "pt": "Cheguei"},
-  "driverActionStartTrip": {"es": "Iniciar viaje", "en": "Start trip", "pt": "Iniciar viagem"},
-  "driverActionCompleteTrip": {"es": "Completar viaje", "en": "Complete trip", "pt": "Concluir viagem"},
-  "driverNoMapsApps": {"es": "No hay aplicaciones de mapas disponibles", "en": "No map apps available", "pt": "Nenhum aplicativo de mapas disponível"},
-  "driverMapsOpenError": {"es": "No se pudieron abrir los mapas", "en": "Couldn't open maps", "pt": "Não foi possível abrir os mapas"},
-  "driverNavigateTo": {"es": "Navegar hacia {address}", "en": "Navigate to {address}", "pt": "Navegar até {address}", "placeholders": {"address": {"type": "String"}}},
-  "driverNavigateToPickup": {"es": "Navegar hacia la recogida", "en": "Navigate to pickup", "pt": "Navegar até o embarque"},
-  "driverNavigateToDestination": {"es": "Navegar hacia el destino", "en": "Navigate to destination", "pt": "Navegar até o destino"},
-  "driverActiveRide": {"es": "Viaje activo", "en": "Active ride", "pt": "Viagem ativa"},
-  "driverRequestExclusive": {"es": "SOLICITUD EXCLUSIVA PARA TI", "en": "EXCLUSIVE REQUEST FOR YOU", "pt": "SOLICITAÇÃO EXCLUSIVA PARA VOCÊ", "description": "Incoming request sheet eyebrow (uppercase)"},
-  "driverRequestNew": {"es": "NUEVA SOLICITUD DE VIAJE", "en": "NEW RIDE REQUEST", "pt": "NOVA SOLICITAÇÃO DE VIAGEM", "description": "Incoming request sheet eyebrow (uppercase)"},
-  "driverEstimatedFare": {"es": "Tarifa estimada", "en": "Estimated fare", "pt": "Tarifa estimada"},
-  "driverDecline": {"es": "Rechazar", "en": "Decline", "pt": "Recusar"},
-  "driverAcceptRide": {"es": "Aceptar viaje", "en": "Accept ride", "pt": "Aceitar viagem"},
-  "driverRespondIn": {"es": "Responde en {seconds}s", "en": "Respond within {seconds}s", "pt": "Responda em {seconds}s", "description": "Countdown to accept an exclusive offer", "placeholders": {"seconds": {"type": "int"}}},
-  "driverOfferExpiring": {"es": "Oferta por expirar", "en": "Offer about to expire", "pt": "Oferta prestes a expirar"},
-  "driverTripNotFound": {"es": "Viaje no encontrado", "en": "Trip not found", "pt": "Viagem não encontrada"},
-  "driverMsgHeadToPickup": {"es": "Dirígete al punto de recogida", "en": "Head to the pickup point", "pt": "Siga para o local de embarque"},
-  "driverMsgOnTheWay": {"es": "En camino a la recogida · llegando pronto", "en": "On the way to pickup · arriving soon", "pt": "A caminho do embarque · chegando em breve"},
-  "driverMsgWaitingPassenger": {"es": "Esperando al pasajero", "en": "Waiting for the passenger", "pt": "Aguardando o passageiro"},
-  "driverMsgInProgress": {"es": "Viaje en curso · ve al destino", "en": "Trip in progress · head to destination", "pt": "Viagem em andamento · siga para o destino"},
-  "driverQueueTitle": {"es": "Cola de trabajos", "en": "Job queue", "pt": "Fila de serviços"},
-  "driverQueueAvailable": {"es": "SOLICITUDES DISPONIBLES", "en": "AVAILABLE REQUESTS", "pt": "SOLICITAÇÕES DISPONÍVEIS"},
-  "driverQueueMyActive": {"es": "MIS TRABAJOS ACTIVOS", "en": "MY ACTIVE JOBS", "pt": "MEUS SERVIÇOS ATIVOS"},
-  "driverQueueEmptyTitle": {"es": "Sin trabajos aún", "en": "No jobs yet", "pt": "Nenhum serviço ainda"},
-  "driverQueueEmptyBody": {"es": "Las nuevas reservas aparecerán aquí", "en": "New bookings will appear here", "pt": "As novas reservas aparecerão aqui"},
-  "driverQueueOfflineTitle": {"es": "Conéctate para recibir trabajos", "en": "Go online to receive jobs", "pt": "Fique online para receber serviços"},
-  "driverQueueOfflineBody": {"es": "Activa tu disponibilidad en la pestaña Inicio", "en": "Turn on your availability in the Home tab", "pt": "Ative sua disponibilidade na aba Início"},
-  "driverCompletedTrips": {"es": "Viajes completados", "en": "Completed trips", "pt": "Viagens concluídas"},
-  "driverTotalEarnings": {"es": "Ganancias totales", "en": "Total earnings", "pt": "Ganhos totais"},
-  "driverCompletedCount": {"es": "{count, plural, =1{1 viaje completado} other{{count} viajes completados}}", "en": "{count, plural, =1{1 completed trip} other{{count} completed trips}}", "pt": "{count, plural, =1{1 viagem concluída} other{{count} viagens concluídas}}", "placeholders": {"count": {"type": "int"}}},
-  "driverPaid": {"es": "PAGADO", "en": "PAID", "pt": "PAGO"},
-  "driverNoCompletedTrips": {"es": "Aún no hay viajes completados", "en": "No completed trips yet", "pt": "Ainda não há viagens concluídas"},
-  "driverTabHome": {"es": "Inicio", "en": "Home", "pt": "Início"},
-  "driverTabJobs": {"es": "Trabajos", "en": "Jobs", "pt": "Serviços"},
-  "driverTabProfile": {"es": "Perfil", "en": "Profile", "pt": "Perfil"},
-
-  "driverOnbLogout": {"es": "Cerrar sesión", "en": "Sign out", "pt": "Sair"},
-  "driverOnbVehicleTitle": {"es": "Tu vehículo", "en": "Your vehicle", "pt": "Seu veículo"},
-  "driverOnbVehicleSubtitle": {"es": "Registra el vehículo que vas a conducir.", "en": "Register the vehicle you'll be driving.", "pt": "Cadastre o veículo que você vai dirigir."},
-  "driverOnbLicenseTitle": {"es": "Licencia de conducir", "en": "Driver's license", "pt": "Carteira de motorista"},
-  "driverOnbLicenseSubtitle": {"es": "Tus documentos serán revisados antes de que puedas aceptar viajes.", "en": "Your documents will be reviewed before you can accept rides.", "pt": "Seus documentos serão analisados antes que você possa aceitar viagens."},
-  "driverOnbReviewNotice": {"es": "Un administrador verificará tus documentos antes de que puedas conectarte.", "en": "An administrator will verify your documents before you can go online.", "pt": "Um administrador vai verificar seus documentos antes que você possa ficar online."},
-  "driverOnbBack": {"es": "Atrás", "en": "Back", "pt": "Voltar"},
-  "driverOnbSaveError": {"es": "No pudimos guardar tus datos. Inténtalo de nuevo.", "en": "We couldn't save your details. Please try again.", "pt": "Não foi possível salvar seus dados. Tente novamente."},
-  "driverOnbVehicleClass": {"es": "Categoría del vehículo", "en": "Vehicle category", "pt": "Categoria do veículo"},
-  "driverOnbMake": {"es": "Marca", "en": "Make", "pt": "Marca"},
-  "driverOnbModel": {"es": "Modelo", "en": "Model", "pt": "Modelo"},
-  "driverOnbPlate": {"es": "Placa", "en": "License plate", "pt": "Placa"},
-  "driverOnbYear": {"es": "Año", "en": "Year", "pt": "Ano"},
-  "driverOnbColor": {"es": "Color", "en": "Color", "pt": "Cor"},
-  "driverOnbDefaultColor": {"es": "Negro", "en": "Black", "pt": "Preto", "description": "Pre-filled vehicle colour"},
-  "driverOnbInvalid": {"es": "Inválido", "en": "Invalid", "pt": "Inválido"},
-  "driverOnbLicenseNumber": {"es": "Número de licencia", "en": "License number", "pt": "Número da CNH"},
-  "driverOnbLicenseExpiry": {"es": "Fecha de vencimiento (MM/AAAA)", "en": "Expiration date (MM/YYYY)", "pt": "Data de validade (MM/AAAA)"},
-  "driverOnbExpiryFormat": {"es": "Usa MM/AAAA", "en": "Use MM/YYYY", "pt": "Use MM/AAAA"},
-  "driverOnbInvalidMonth": {"es": "Mes inválido", "en": "Invalid month", "pt": "Mês inválido"},
-  "driverOnbLicenseExpired": {"es": "Licencia vencida", "en": "License expired", "pt": "Carteira vencida"},
-
-  "rideYourChauffeur": {"es": "Tu chófer", "en": "Your chauffeur", "pt": "Seu motorista"},
-  "rideRatingThanks": {"es": "¡Gracias por tu calificación!", "en": "Thank you for your rating!", "pt": "Obrigado pela sua avaliação!"},
-  "rideNotifAssignedTitle": {"es": "Chófer asignado", "en": "Chauffeur assigned", "pt": "Motorista designado"},
-  "rideNotifAssignedBody": {"es": "Tu chófer confirmó la reserva.", "en": "Your chauffeur has confirmed the booking.", "pt": "Seu motorista confirmou a reserva."},
-  "rideNotifArrivingTitle": {"es": "El chófer está en camino", "en": "Your chauffeur is on the way", "pt": "O motorista está a caminho"},
-  "rideNotifArrivingBody": {"es": "Tu chófer se dirige a tu punto de recogida.", "en": "Your chauffeur is heading to your pickup point.", "pt": "Seu motorista está indo até o local de embarque."},
-  "rideNotifArrivedTitle": {"es": "El chófer ha llegado", "en": "Your chauffeur has arrived", "pt": "O motorista chegou"},
-  "rideNotifArrivedBody": {"es": "Tu chófer te espera en el punto de recogida.", "en": "Your chauffeur is waiting for you at the pickup point.", "pt": "Seu motorista está esperando você no local de embarque."},
-  "rideNotifStartedTitle": {"es": "Viaje iniciado", "en": "Trip started", "pt": "Viagem iniciada"},
-  "rideNotifStartedBody": {"es": "Ya estás en camino hacia tu destino.", "en": "You're on your way to your destination.", "pt": "Você já está a caminho do seu destino."},
-  "rideNotifCompletedTitle": {"es": "Viaje completado", "en": "Trip completed", "pt": "Viagem concluída"},
-  "rideNotifCompletedBody": {"es": "¡Has llegado! Gracias por viajar con Luxelane.", "en": "You've arrived! Thank you for traveling with Luxelane.", "pt": "Você chegou! Obrigado por viajar com a Luxelane."},
-  "rideLoading": {"es": "Cargando tu reserva…", "en": "Loading your booking…", "pt": "Carregando sua reserva…"},
-  "ridePickupAt": {"es": "Recogida {time}", "en": "Pickup {time}", "pt": "Embarque {time}", "description": "Pickup date/time line; time is already formatted", "placeholders": {"time": {"type": "String"}}},
-  "rideAssigning": {"es": "Asignando a tu chófer", "en": "Assigning your chauffeur", "pt": "Designando seu motorista"},
-  "rideChauffeurArrivesIn": {"es": "Tu chófer llega en {eta}", "en": "Your chauffeur arrives in {eta}", "pt": "Seu motorista chega em {eta}", "description": "eta is a duration like '4 min'", "placeholders": {"eta": {"type": "String"}}},
-  "rideChauffeurConfirmed": {"es": "Chófer confirmado", "en": "Chauffeur confirmed", "pt": "Motorista confirmado"},
-  "rideArrivesIn": {"es": "Llega en {eta}", "en": "Arriving in {eta}", "pt": "Chega em {eta}", "placeholders": {"eta": {"type": "String"}}},
-  "rideChauffeurOnTheWay": {"es": "Tu chófer está en camino", "en": "Your chauffeur is on the way", "pt": "Seu motorista está a caminho"},
-  "rideChauffeurWaiting": {"es": "Tu chófer te espera", "en": "Your chauffeur is waiting", "pt": "Seu motorista está esperando"},
-  "rideYouArriveIn": {"es": "Llegas en {eta}", "en": "You'll arrive in {eta}", "pt": "Você chega em {eta}", "placeholders": {"eta": {"type": "String"}}},
-  "rideHeadingToDestination": {"es": "En camino a tu destino", "en": "On the way to your destination", "pt": "A caminho do seu destino"},
-  "rideArrived": {"es": "¡Has llegado!", "en": "You've arrived!", "pt": "Você chegou!"},
-  "rideThanks": {"es": "Gracias por viajar con Luxelane", "en": "Thank you for traveling with Luxelane", "pt": "Obrigado por viajar com a Luxelane"},
-  "rideCancelled": {"es": "Reserva cancelada", "en": "Booking cancelled", "pt": "Reserva cancelada"},
-  "rideRateTrip": {"es": "Calificar viaje", "en": "Rate your trip", "pt": "Avaliar viagem"},
-  "rideThanksForRating": {"es": "Gracias por calificar", "en": "Thanks for your rating", "pt": "Obrigado pela avaliação"},
-  "rideViewReceipt": {"es": "Ver recibo", "en": "View receipt", "pt": "Ver recibo"},
-  "rideLive": {"es": "EN VIVO", "en": "LIVE", "pt": "AO VIVO"},
-  "rideAssigningBody": {"es": "Estamos confirmando a tu chófer. Te avisaremos apenas esté asignado.", "en": "We're confirming your chauffeur. We'll let you know as soon as one is assigned.", "pt": "Estamos confirmando seu motorista. Avisaremos assim que ele for designado."},
-  "rideVerifiedTrips": {"es": "{count, plural, =1{Verificado · 1 viaje} other{Verificado · {count} viajes}}", "en": "{count, plural, =1{Verified · 1 trip} other{Verified · {count} trips}}", "pt": "{count, plural, =1{Verificado · 1 viagem} other{Verificado · {count} viagens}}", "placeholders": {"count": {"type": "int"}}},
-  "rideVerifiedChauffeur": {"es": "Chófer verificado", "en": "Verified chauffeur", "pt": "Motorista verificado"},
-  "rideFlightTitle": {"es": "Vuelo {number}", "en": "Flight {number}", "pt": "Voo {number}", "placeholders": {"number": {"type": "String"}}},
-  "rideFlightTitleTerminal": {"es": "Vuelo {number} · Terminal {terminal}", "en": "Flight {number} · Terminal {terminal}", "pt": "Voo {number} · Terminal {terminal}", "placeholders": {"number": {"type": "String"}, "terminal": {"type": "String"}}},
-  "rideFlightLandedAt": {"es": "Aterrizó {time}", "en": "Landed {time}", "pt": "Pousou {time}", "placeholders": {"time": {"type": "String"}}},
-  "rideFlightArrivesAt": {"es": "Llega {time}", "en": "Arrives {time}", "pt": "Chega {time}", "placeholders": {"time": {"type": "String"}}},
-  "rideBackHome": {"es": "Volver al inicio", "en": "Back to home", "pt": "Voltar ao início"},
-  "rideRatingTitle": {"es": "Califica tu viaje", "en": "Rate your trip", "pt": "Avalie sua viagem"},
-  "rideRatingStars": {"es": "{count, plural, =1{1 estrella} other{{count} estrellas}}", "en": "{count, plural, =1{1 star} other{{count} stars}}", "pt": "{count, plural, =1{1 estrela} other{{count} estrelas}}", "placeholders": {"count": {"type": "int"}}},
-  "rideRatingExcellent": {"es": "Excelente", "en": "Excellent", "pt": "Excelente"},
-  "rideRatingGood": {"es": "Bueno", "en": "Good", "pt": "Bom"},
-  "rideRatingFair": {"es": "Regular", "en": "Fair", "pt": "Regular"},
-  "rideRatingPoor": {"es": "Malo", "en": "Poor", "pt": "Ruim"},
-  "rideRatingVeryPoor": {"es": "Muy malo", "en": "Very poor", "pt": "Muito ruim"},
-  "rideRatingCommentHint": {"es": "Comentario (opcional)", "en": "Comment (optional)", "pt": "Comentário (opcional)"},
-
-  "tripsTitle": {"es": "Mis viajes", "en": "My trips", "pt": "Minhas viagens"},
-  "tripsLoadError": {"es": "No pudimos cargar tus viajes. Revisa tu conexión.", "en": "We couldn't load your trips. Check your connection.", "pt": "Não foi possível carregar suas viagens. Verifique sua conexão."},
-  "tripsEmpty": {"es": "Aún no tienes viajes.\nReserva tu primera experiencia.", "en": "You don't have any trips yet.\nBook your first experience.", "pt": "Você ainda não tem viagens.\nReserve sua primeira experiência."},
-  "tripsBookNow": {"es": "Reservar ahora", "en": "Book now", "pt": "Reservar agora"},
-  "tripsUpcoming": {"es": "PRÓXIMOS", "en": "UPCOMING", "pt": "PRÓXIMAS"},
-  "tripsPast": {"es": "ANTERIORES", "en": "PAST", "pt": "ANTERIORES"},
-  "tripsRouteByHour": {"es": "{origin} · {hours} h", "en": "{origin} · {hours} h", "pt": "{origin} · {hours} h", "description": "Trip card title for an hourly booking", "placeholders": {"origin": {"type": "String"}, "hours": {"type": "int"}}},
-
-  "notifTitle": {"es": "Notificaciones", "en": "Notifications", "pt": "Notificações"},
-  "notifBellUnread": {"es": "{count, plural, =1{1 notificación sin leer} other{{count} notificaciones sin leer}}", "en": "{count, plural, =1{1 unread notification} other{{count} unread notifications}}", "pt": "{count, plural, =1{1 notificação não lida} other{{count} notificações não lidas}}", "description": "Bell tooltip / screen-reader label when there are unread notifications", "placeholders": {"count": {"type": "int"}}},
-  "notifMarkAllRead": {"es": "Marcar todo como leído", "en": "Mark all as read", "pt": "Marcar tudo como lido"},
-  "notifEmpty": {"es": "Aún no hay notificaciones", "en": "No notifications yet", "pt": "Ainda não há notificações"},
-  "notifJustNow": {"es": "Ahora", "en": "Now", "pt": "Agora"},
-  "notifMinutesAgo": {"es": "Hace {minutes} min", "en": "{minutes} min ago", "pt": "Há {minutes} min", "placeholders": {"minutes": {"type": "int"}}},
-  "notifHoursAgo": {"es": "Hace {hours} h", "en": "{hours} h ago", "pt": "Há {hours} h", "placeholders": {"hours": {"type": "int"}}},
-
-  "tripPickup": {"es": "Recogida", "en": "Pickup", "pt": "Embarque"},
-  "tripDestination": {"es": "Destino", "en": "Destination", "pt": "Destino"},
-  "tripPassenger": {"es": "Pasajero", "en": "Passenger", "pt": "Passageiro"},
-  "tripFlightNumber": {"es": "Vuelo {number}", "en": "Flight {number}", "pt": "Voo {number}", "placeholders": {"number": {"type": "String"}}},
-  "tripShowSign": {"es": "Mostrar cartel", "en": "Show name sign", "pt": "Mostrar placa"},
-  "tripNameSignSemantics": {"es": "Cartel con el nombre {name}. Toca para cerrar.", "en": "Name sign for {name}. Tap to close.", "pt": "Placa com o nome {name}. Toque para fechar.", "placeholders": {"name": {"type": "String"}}},
-  "tripNameSignTapToClose": {"es": "Toca la pantalla para cerrar", "en": "Tap the screen to close", "pt": "Toque na tela para fechar"},
-  "tripFreeWaitOver": {"es": "Espera gratuita terminada a las {time}", "en": "Free waiting ended at {time}", "pt": "Espera grátis encerrada às {time}", "placeholders": {"time": {"type": "String"}}},
-  "tripFreeWaitLeft": {"es": "Espera gratuita: {minutes} min", "en": "Free waiting: {minutes} min", "pt": "Espera grátis: {minutes} min", "placeholders": {"minutes": {"type": "int"}}},
-  "tripFreeWaitOverDriver": {"es": "Contacta al pasajero antes de retirarte.", "en": "Contact the passenger before leaving.", "pt": "Entre em contato com o passageiro antes de sair."},
-  "tripFreeWaitOverRider": {"es": "Tu chófer sigue esperándote. Avísale si necesitas más tiempo.", "en": "Your chauffeur is still waiting for you. Let them know if you need more time.", "pt": "Seu motorista continua esperando por você. Avise-o se precisar de mais tempo."},
-  "tripFreeWaitUntil": {"es": "Hasta las {time} · {summary}", "en": "Until {time} · {summary}", "pt": "Até às {time} · {summary}", "description": "summary is waitAirportSummary/waitCitySummary", "placeholders": {"time": {"type": "String"}, "summary": {"type": "String"}}},
-  "tripMeetGreetTitle": {"es": "Meet & greet en llegadas", "en": "Meet & greet at arrivals", "pt": "Recepção no desembarque"},
-  "tripMeetGreetBodyNamed": {"es": "Tu chófer te esperará en la salida de llegadas con un cartel con el nombre «{name}».", "en": "Your chauffeur will wait for you at the arrivals exit with a sign reading “{name}”.", "pt": "Seu motorista vai esperar você na saída do desembarque com uma placa com o nome “{name}”.", "placeholders": {"name": {"type": "String"}}},
-  "tripMeetGreetBody": {"es": "Tu chófer te esperará en la salida de llegadas con un cartel con tu nombre.", "en": "Your chauffeur will wait for you at the arrivals exit with a sign bearing your name.", "pt": "Seu motorista vai esperar você na saída do desembarque com uma placa com o seu nome."},
-  "tripMeetGreetWait": {"es": "{minutes} min de espera gratuita desde que aterriza tu vuelo.", "en": "{minutes} min of free waiting from when your flight lands.", "pt": "{minutes} min de espera grátis a partir do pouso do seu voo.", "placeholders": {"minutes": {"type": "int"}}},
-
-  "tripPriceBreakdown": {"es": "Desglose del precio", "en": "Price breakdown", "pt": "Detalhamento do preço"},
-  "tripPriceBaseFare": {"es": "Tarifa base", "en": "Base fare", "pt": "Tarifa base"},
-  "tripPriceDistanceLine": {"es": "{km} km × {rate}", "en": "{km} km × {rate}", "pt": "{km} km × {rate}", "placeholders": {"km": {"type": "String"}, "rate": {"type": "String"}}},
-  "tripPriceHoursLine": {"es": "{hours} h × {rate}", "en": "{hours} h × {rate}", "pt": "{hours} h × {rate}", "placeholders": {"hours": {"type": "int"}, "rate": {"type": "String"}}},
-  "tripPriceMinimumAdjustment": {"es": "Ajuste a tarifa mínima", "en": "Minimum fare adjustment", "pt": "Ajuste para tarifa mínima"},
-  "tripPriceEstimatedTotal": {"es": "Total estimado", "en": "Estimated total", "pt": "Total estimado"},
-  "tripPriceFinalNote": {"es": "El precio fijo final se confirma antes de reservar.", "en": "The final fixed price is confirmed before you book.", "pt": "O preço fixo final é confirmado antes da reserva."},
-
-  "tripReceiptTitle": {"es": "Recibo", "en": "Receipt", "pt": "Recibo"},
-  "tripReceiptNumber": {"es": "Nº {code}", "en": "No. {code}", "pt": "Nº {code}", "placeholders": {"code": {"type": "String"}}},
-  "tripReceiptCancelled": {"es": "RESERVA CANCELADA", "en": "BOOKING CANCELLED", "pt": "RESERVA CANCELADA"},
-  "tripReceiptCompleted": {"es": "VIAJE COMPLETADO", "en": "TRIP COMPLETED", "pt": "VIAGEM CONCLUÍDA"},
-  "tripReceiptNoCharge": {"es": "Sin cargo", "en": "No charge", "pt": "Sem cobrança"},
-  "tripReceiptService": {"es": "Servicio", "en": "Service", "pt": "Serviço"},
-  "tripReceiptVehicle": {"es": "Vehículo", "en": "Vehicle", "pt": "Veículo"},
-  "tripReceiptDuration": {"es": "Duración", "en": "Duration", "pt": "Duração"},
-  "tripReceiptFlight": {"es": "Vuelo", "en": "Flight", "pt": "Voo"},
-  "tripReceiptPassengers": {"es": "Pasajeros", "en": "Passengers", "pt": "Passageiros"},
-  "tripReceiptFixedPrice": {"es": "Precio fijo", "en": "Fixed price", "pt": "Preço fixo"},
-  "tripReceiptAdjustment": {"es": "Ajuste", "en": "Adjustment", "pt": "Ajuste"},
-  "tripReceiptTotal": {"es": "Total", "en": "Total", "pt": "Total"},
-  "tripReceiptPaymentMethod": {"es": "Forma de pago", "en": "Payment method", "pt": "Forma de pagamento"},
-  "tripReceiptCard": {"es": "Tarjeta", "en": "Card", "pt": "Cartão"},
-  "tripReceiptPayChauffeur": {"es": "Pago al chófer", "en": "Paid to chauffeur", "pt": "Pagamento ao motorista"},
-  "tripReceiptCopied": {"es": "Recibo copiado al portapapeles", "en": "Receipt copied to clipboard", "pt": "Recibo copiado para a área de transferência"},
-  "tripReceiptCopy": {"es": "Copiar recibo", "en": "Copy receipt", "pt": "Copiar recibo"},
-  "tripReceiptCurrencyNote": {"es": "Montos en bolivianos (BOB).", "en": "Amounts in bolivianos (BOB).", "pt": "Valores em bolivianos (BOB)."},
-  "tripReceiptPlainHeader": {"es": "Luxelane — Recibo {code}", "en": "Luxelane — Receipt {code}", "pt": "Luxelane — Recibo {code}", "description": "First line of the copyable plain-text receipt", "placeholders": {"code": {"type": "String"}}},
-  "tripReceiptPlainFrom": {"es": "Desde: {place}", "en": "From: {place}", "pt": "De: {place}", "placeholders": {"place": {"type": "String"}}},
-  "tripReceiptPlainTo": {"es": "Hasta: {place}", "en": "To: {place}", "pt": "Para: {place}", "placeholders": {"place": {"type": "String"}}},
-  "tripReceiptPlainTotal": {"es": "Total: {amount}", "en": "Total: {amount}", "pt": "Total: {amount}", "placeholders": {"amount": {"type": "String"}}}
+  "driverConnectionErrorTitle": {
+    "es": "Error de conexión",
+    "en": "Connection error",
+    "pt": "Erro de conexão",
+    "description": "Driver home: title when the driver data cannot load"
+  },
+  "driverErrorUnauthorized": {
+    "es": "Esta cuenta no tiene acceso de chófer.",
+    "en": "This account doesn't have chauffeur access.",
+    "pt": "Esta conta não tem acesso de motorista.",
+    "description": "Driver home: signed-in user is not a chauffeur"
+  },
+  "driverTodaySummary": {
+    "es": "Resumen de hoy",
+    "en": "Today's summary",
+    "pt": "Resumo de hoje"
+  },
+  "driverStatCompleted": {
+    "es": "Completados",
+    "en": "Completed",
+    "pt": "Concluídas",
+    "description": "Stat card label (completed trips); shown uppercase"
+  },
+  "driverStatEarnings": {
+    "es": "Ganancias",
+    "en": "Earnings",
+    "pt": "Ganhos",
+    "description": "Stat card label, earnings tab and page title"
+  },
+  "driverGoOnline": {
+    "es": "Conectarse",
+    "en": "Go online",
+    "pt": "Ficar online"
+  },
+  "driverOnlineTitle": {
+    "es": "Estás conectado",
+    "en": "You're online",
+    "pt": "Você está online"
+  },
+  "driverOfflineTitle": {
+    "es": "Estás desconectado",
+    "en": "You're offline",
+    "pt": "Você está offline"
+  },
+  "driverOnlineSubtitle": {
+    "es": "Esperando nuevas solicitudes de viaje",
+    "en": "Waiting for new ride requests",
+    "pt": "Aguardando novas solicitações de viagem"
+  },
+  "driverOfflineSubtitle": {
+    "es": "Activa el interruptor para conectarte",
+    "en": "Turn on the switch to go online",
+    "pt": "Ative a chave para ficar online"
+  },
+  "driverActionGoToPickup": {
+    "es": "Ir al punto de recogida",
+    "en": "Head to pickup point",
+    "pt": "Ir ao local de embarque"
+  },
+  "driverActionGoToPickupShort": {
+    "es": "Ir a la recogida",
+    "en": "Head to pickup",
+    "pt": "Ir ao embarque"
+  },
+  "driverActionArrived": {
+    "es": "He llegado",
+    "en": "I've arrived",
+    "pt": "Cheguei"
+  },
+  "driverActionStartTrip": {
+    "es": "Iniciar viaje",
+    "en": "Start trip",
+    "pt": "Iniciar viagem"
+  },
+  "driverActionCompleteTrip": {
+    "es": "Completar viaje",
+    "en": "Complete trip",
+    "pt": "Concluir viagem"
+  },
+  "driverNoMapsApps": {
+    "es": "No hay aplicaciones de mapas disponibles",
+    "en": "No map apps available",
+    "pt": "Nenhum aplicativo de mapas disponível"
+  },
+  "driverMapsOpenError": {
+    "es": "No se pudieron abrir los mapas",
+    "en": "Couldn't open maps",
+    "pt": "Não foi possível abrir os mapas"
+  },
+  "driverNavigateTo": {
+    "es": "Navegar hacia {address}",
+    "en": "Navigate to {address}",
+    "pt": "Navegar até {address}",
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "driverNavigateToPickup": {
+    "es": "Navegar hacia la recogida",
+    "en": "Navigate to pickup",
+    "pt": "Navegar até o embarque"
+  },
+  "driverNavigateToDestination": {
+    "es": "Navegar hacia el destino",
+    "en": "Navigate to destination",
+    "pt": "Navegar até o destino"
+  },
+  "driverActiveRide": {
+    "es": "Viaje activo",
+    "en": "Active ride",
+    "pt": "Viagem ativa"
+  },
+  "driverRequestExclusive": {
+    "es": "SOLICITUD EXCLUSIVA PARA TI",
+    "en": "EXCLUSIVE REQUEST FOR YOU",
+    "pt": "SOLICITAÇÃO EXCLUSIVA PARA VOCÊ",
+    "description": "Incoming request sheet eyebrow (uppercase)"
+  },
+  "driverRequestNew": {
+    "es": "NUEVA SOLICITUD DE VIAJE",
+    "en": "NEW RIDE REQUEST",
+    "pt": "NOVA SOLICITAÇÃO DE VIAGEM",
+    "description": "Incoming request sheet eyebrow (uppercase)"
+  },
+  "driverEstimatedFare": {
+    "es": "Tarifa estimada",
+    "en": "Estimated fare",
+    "pt": "Tarifa estimada"
+  },
+  "driverDecline": {
+    "es": "Rechazar",
+    "en": "Decline",
+    "pt": "Recusar"
+  },
+  "driverAcceptRide": {
+    "es": "Aceptar viaje",
+    "en": "Accept ride",
+    "pt": "Aceitar viagem"
+  },
+  "driverRespondIn": {
+    "es": "Responde en {seconds}s",
+    "en": "Respond within {seconds}s",
+    "pt": "Responda em {seconds}s",
+    "description": "Countdown to accept an exclusive offer",
+    "placeholders": {
+      "seconds": {
+        "type": "int"
+      }
+    }
+  },
+  "driverOfferExpiring": {
+    "es": "Oferta por expirar",
+    "en": "Offer about to expire",
+    "pt": "Oferta prestes a expirar"
+  },
+  "driverTripNotFound": {
+    "es": "Viaje no encontrado",
+    "en": "Trip not found",
+    "pt": "Viagem não encontrada"
+  },
+  "driverMsgHeadToPickup": {
+    "es": "Dirígete al punto de recogida",
+    "en": "Head to the pickup point",
+    "pt": "Siga para o local de embarque"
+  },
+  "driverMsgOnTheWay": {
+    "es": "En camino a la recogida · llegando pronto",
+    "en": "On the way to pickup · arriving soon",
+    "pt": "A caminho do embarque · chegando em breve"
+  },
+  "driverMsgWaitingPassenger": {
+    "es": "Esperando al pasajero",
+    "en": "Waiting for the passenger",
+    "pt": "Aguardando o passageiro"
+  },
+  "driverMsgInProgress": {
+    "es": "Viaje en curso · ve al destino",
+    "en": "Trip in progress · head to destination",
+    "pt": "Viagem em andamento · siga para o destino"
+  },
+  "driverQueueTitle": {
+    "es": "Cola de trabajos",
+    "en": "Job queue",
+    "pt": "Fila de serviços"
+  },
+  "driverQueueAvailable": {
+    "es": "SOLICITUDES DISPONIBLES",
+    "en": "AVAILABLE REQUESTS",
+    "pt": "SOLICITAÇÕES DISPONÍVEIS"
+  },
+  "driverQueueMyActive": {
+    "es": "MIS TRABAJOS ACTIVOS",
+    "en": "MY ACTIVE JOBS",
+    "pt": "MEUS SERVIÇOS ATIVOS"
+  },
+  "driverQueueEmptyTitle": {
+    "es": "Sin trabajos aún",
+    "en": "No jobs yet",
+    "pt": "Nenhum serviço ainda"
+  },
+  "driverQueueEmptyBody": {
+    "es": "Las nuevas reservas aparecerán aquí",
+    "en": "New bookings will appear here",
+    "pt": "As novas reservas aparecerão aqui"
+  },
+  "driverQueueOfflineTitle": {
+    "es": "Conéctate para recibir trabajos",
+    "en": "Go online to receive jobs",
+    "pt": "Fique online para receber serviços"
+  },
+  "driverQueueOfflineBody": {
+    "es": "Activa tu disponibilidad en la pestaña Inicio",
+    "en": "Turn on your availability in the Home tab",
+    "pt": "Ative sua disponibilidade na aba Início"
+  },
+  "driverCompletedTrips": {
+    "es": "Viajes completados",
+    "en": "Completed trips",
+    "pt": "Viagens concluídas"
+  },
+  "driverTotalEarnings": {
+    "es": "Ganancias totales",
+    "en": "Total earnings",
+    "pt": "Ganhos totais"
+  },
+  "driverCompletedCount": {
+    "es": "{count, plural, =1{1 viaje completado} other{{count} viajes completados}}",
+    "en": "{count, plural, =1{1 completed trip} other{{count} completed trips}}",
+    "pt": "{count, plural, =1{1 viagem concluída} other{{count} viagens concluídas}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "driverPaid": {
+    "es": "PAGADO",
+    "en": "PAID",
+    "pt": "PAGO"
+  },
+  "driverNoCompletedTrips": {
+    "es": "Aún no hay viajes completados",
+    "en": "No completed trips yet",
+    "pt": "Ainda não há viagens concluídas"
+  },
+  "driverTabHome": {
+    "es": "Inicio",
+    "en": "Home",
+    "pt": "Início"
+  },
+  "driverTabJobs": {
+    "es": "Trabajos",
+    "en": "Jobs",
+    "pt": "Serviços"
+  },
+  "driverTabProfile": {
+    "es": "Perfil",
+    "en": "Profile",
+    "pt": "Perfil"
+  },
+  "driverOnbLogout": {
+    "es": "Cerrar sesión",
+    "en": "Sign out",
+    "pt": "Sair"
+  },
+  "driverOnbVehicleTitle": {
+    "es": "Tu vehículo",
+    "en": "Your vehicle",
+    "pt": "Seu veículo"
+  },
+  "driverOnbVehicleSubtitle": {
+    "es": "Registra el vehículo que vas a conducir.",
+    "en": "Register the vehicle you'll be driving.",
+    "pt": "Cadastre o veículo que você vai dirigir."
+  },
+  "driverOnbLicenseTitle": {
+    "es": "Licencia de conducir",
+    "en": "Driver's license",
+    "pt": "Carteira de motorista"
+  },
+  "driverOnbLicenseSubtitle": {
+    "es": "Tus documentos serán revisados antes de que puedas aceptar viajes.",
+    "en": "Your documents will be reviewed before you can accept rides.",
+    "pt": "Seus documentos serão analisados antes que você possa aceitar viagens."
+  },
+  "driverOnbReviewNotice": {
+    "es": "Un administrador verificará tus documentos antes de que puedas conectarte.",
+    "en": "An administrator will verify your documents before you can go online.",
+    "pt": "Um administrador vai verificar seus documentos antes que você possa ficar online."
+  },
+  "driverOnbBack": {
+    "es": "Atrás",
+    "en": "Back",
+    "pt": "Voltar"
+  },
+  "driverOnbSaveError": {
+    "es": "No pudimos guardar tus datos. Inténtalo de nuevo.",
+    "en": "We couldn't save your details. Please try again.",
+    "pt": "Não foi possível salvar seus dados. Tente novamente."
+  },
+  "driverOnbVehicleClass": {
+    "es": "Categoría del vehículo",
+    "en": "Vehicle category",
+    "pt": "Categoria do veículo"
+  },
+  "driverOnbMake": {
+    "es": "Marca",
+    "en": "Make",
+    "pt": "Marca"
+  },
+  "driverOnbModel": {
+    "es": "Modelo",
+    "en": "Model",
+    "pt": "Modelo"
+  },
+  "driverOnbPlate": {
+    "es": "Placa",
+    "en": "License plate",
+    "pt": "Placa"
+  },
+  "driverOnbYear": {
+    "es": "Año",
+    "en": "Year",
+    "pt": "Ano"
+  },
+  "driverOnbColor": {
+    "es": "Color",
+    "en": "Color",
+    "pt": "Cor"
+  },
+  "driverOnbDefaultColor": {
+    "es": "Negro",
+    "en": "Black",
+    "pt": "Preto",
+    "description": "Pre-filled vehicle colour"
+  },
+  "driverOnbInvalid": {
+    "es": "Inválido",
+    "en": "Invalid",
+    "pt": "Inválido"
+  },
+  "driverOnbLicenseNumber": {
+    "es": "Número de licencia",
+    "en": "License number",
+    "pt": "Número da CNH"
+  },
+  "driverOnbLicenseExpiry": {
+    "es": "Fecha de vencimiento (MM/AAAA)",
+    "en": "Expiration date (MM/YYYY)",
+    "pt": "Data de validade (MM/AAAA)"
+  },
+  "driverOnbExpiryFormat": {
+    "es": "Usa MM/AAAA",
+    "en": "Use MM/YYYY",
+    "pt": "Use MM/AAAA"
+  },
+  "driverOnbInvalidMonth": {
+    "es": "Mes inválido",
+    "en": "Invalid month",
+    "pt": "Mês inválido"
+  },
+  "driverOnbLicenseExpired": {
+    "es": "Licencia vencida",
+    "en": "License expired",
+    "pt": "Carteira vencida"
+  },
+  "rideYourChauffeur": {
+    "es": "Tu chófer",
+    "en": "Your chauffeur",
+    "pt": "Seu motorista"
+  },
+  "rideRatingThanks": {
+    "es": "¡Gracias por tu calificación!",
+    "en": "Thank you for your rating!",
+    "pt": "Obrigado pela sua avaliação!"
+  },
+  "rideNotifAssignedTitle": {
+    "es": "Chófer asignado",
+    "en": "Chauffeur assigned",
+    "pt": "Motorista designado"
+  },
+  "rideNotifAssignedBody": {
+    "es": "Tu chófer confirmó la reserva.",
+    "en": "Your chauffeur has confirmed the booking.",
+    "pt": "Seu motorista confirmou a reserva."
+  },
+  "rideNotifArrivingTitle": {
+    "es": "El chófer está en camino",
+    "en": "Your chauffeur is on the way",
+    "pt": "O motorista está a caminho"
+  },
+  "rideNotifArrivingBody": {
+    "es": "Tu chófer se dirige a tu punto de recogida.",
+    "en": "Your chauffeur is heading to your pickup point.",
+    "pt": "Seu motorista está indo até o local de embarque."
+  },
+  "rideNotifArrivedTitle": {
+    "es": "El chófer ha llegado",
+    "en": "Your chauffeur has arrived",
+    "pt": "O motorista chegou"
+  },
+  "rideNotifArrivedBody": {
+    "es": "Tu chófer te espera en el punto de recogida.",
+    "en": "Your chauffeur is waiting for you at the pickup point.",
+    "pt": "Seu motorista está esperando você no local de embarque."
+  },
+  "rideNotifStartedTitle": {
+    "es": "Viaje iniciado",
+    "en": "Trip started",
+    "pt": "Viagem iniciada"
+  },
+  "rideNotifStartedBody": {
+    "es": "Ya estás en camino hacia tu destino.",
+    "en": "You're on your way to your destination.",
+    "pt": "Você já está a caminho do seu destino."
+  },
+  "rideNotifCompletedTitle": {
+    "es": "Viaje completado",
+    "en": "Trip completed",
+    "pt": "Viagem concluída"
+  },
+  "rideNotifCompletedBody": {
+    "es": "¡Has llegado! Gracias por viajar con Luxelane.",
+    "en": "You've arrived! Thank you for traveling with Luxelane.",
+    "pt": "Você chegou! Obrigado por viajar com a Luxelane."
+  },
+  "rideLoading": {
+    "es": "Cargando tu reserva…",
+    "en": "Loading your booking…",
+    "pt": "Carregando sua reserva…"
+  },
+  "ridePickupAt": {
+    "es": "Recogida {time}",
+    "en": "Pickup {time}",
+    "pt": "Embarque {time}",
+    "description": "Pickup date/time line; time is already formatted",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "rideAssigning": {
+    "es": "Asignando a tu chófer",
+    "en": "Assigning your chauffeur",
+    "pt": "Designando seu motorista"
+  },
+  "rideChauffeurArrivesIn": {
+    "es": "Tu chófer llega en {eta}",
+    "en": "Your chauffeur arrives in {eta}",
+    "pt": "Seu motorista chega em {eta}",
+    "description": "eta is a duration like '4 min'",
+    "placeholders": {
+      "eta": {
+        "type": "String"
+      }
+    }
+  },
+  "rideChauffeurConfirmed": {
+    "es": "Chófer confirmado",
+    "en": "Chauffeur confirmed",
+    "pt": "Motorista confirmado"
+  },
+  "rideArrivesIn": {
+    "es": "Llega en {eta}",
+    "en": "Arriving in {eta}",
+    "pt": "Chega em {eta}",
+    "placeholders": {
+      "eta": {
+        "type": "String"
+      }
+    }
+  },
+  "rideChauffeurOnTheWay": {
+    "es": "Tu chófer está en camino",
+    "en": "Your chauffeur is on the way",
+    "pt": "Seu motorista está a caminho"
+  },
+  "rideChauffeurWaiting": {
+    "es": "Tu chófer te espera",
+    "en": "Your chauffeur is waiting",
+    "pt": "Seu motorista está esperando"
+  },
+  "rideYouArriveIn": {
+    "es": "Llegas en {eta}",
+    "en": "You'll arrive in {eta}",
+    "pt": "Você chega em {eta}",
+    "placeholders": {
+      "eta": {
+        "type": "String"
+      }
+    }
+  },
+  "rideHeadingToDestination": {
+    "es": "En camino a tu destino",
+    "en": "On the way to your destination",
+    "pt": "A caminho do seu destino"
+  },
+  "rideArrived": {
+    "es": "¡Has llegado!",
+    "en": "You've arrived!",
+    "pt": "Você chegou!"
+  },
+  "rideThanks": {
+    "es": "Gracias por viajar con Luxelane",
+    "en": "Thank you for traveling with Luxelane",
+    "pt": "Obrigado por viajar com a Luxelane"
+  },
+  "rideCancelled": {
+    "es": "Reserva cancelada",
+    "en": "Booking cancelled",
+    "pt": "Reserva cancelada"
+  },
+  "rideRateTrip": {
+    "es": "Calificar viaje",
+    "en": "Rate your trip",
+    "pt": "Avaliar viagem"
+  },
+  "rideThanksForRating": {
+    "es": "Gracias por calificar",
+    "en": "Thanks for your rating",
+    "pt": "Obrigado pela avaliação"
+  },
+  "rideViewReceipt": {
+    "es": "Ver recibo",
+    "en": "View receipt",
+    "pt": "Ver recibo"
+  },
+  "rideLive": {
+    "es": "EN VIVO",
+    "en": "LIVE",
+    "pt": "AO VIVO"
+  },
+  "rideAssigningBody": {
+    "es": "Estamos confirmando a tu chófer. Te avisaremos apenas esté asignado.",
+    "en": "We're confirming your chauffeur. We'll let you know as soon as one is assigned.",
+    "pt": "Estamos confirmando seu motorista. Avisaremos assim que ele for designado."
+  },
+  "rideVerifiedTrips": {
+    "es": "{count, plural, =1{Verificado · 1 viaje} other{Verificado · {count} viajes}}",
+    "en": "{count, plural, =1{Verified · 1 trip} other{Verified · {count} trips}}",
+    "pt": "{count, plural, =1{Verificado · 1 viagem} other{Verificado · {count} viagens}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rideVerifiedChauffeur": {
+    "es": "Chófer verificado",
+    "en": "Verified chauffeur",
+    "pt": "Motorista verificado"
+  },
+  "rideFlightTitle": {
+    "es": "Vuelo {number}",
+    "en": "Flight {number}",
+    "pt": "Voo {number}",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "rideFlightTitleTerminal": {
+    "es": "Vuelo {number} · Terminal {terminal}",
+    "en": "Flight {number} · Terminal {terminal}",
+    "pt": "Voo {number} · Terminal {terminal}",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      },
+      "terminal": {
+        "type": "String"
+      }
+    }
+  },
+  "rideFlightLandedAt": {
+    "es": "Aterrizó {time}",
+    "en": "Landed {time}",
+    "pt": "Pousou {time}",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "rideFlightArrivesAt": {
+    "es": "Llega {time}",
+    "en": "Arrives {time}",
+    "pt": "Chega {time}",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "rideBackHome": {
+    "es": "Volver al inicio",
+    "en": "Back to home",
+    "pt": "Voltar ao início"
+  },
+  "rideRatingTitle": {
+    "es": "Califica tu viaje",
+    "en": "Rate your trip",
+    "pt": "Avalie sua viagem"
+  },
+  "rideRatingStars": {
+    "es": "{count, plural, =1{1 estrella} other{{count} estrellas}}",
+    "en": "{count, plural, =1{1 star} other{{count} stars}}",
+    "pt": "{count, plural, =1{1 estrela} other{{count} estrelas}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rideRatingExcellent": {
+    "es": "Excelente",
+    "en": "Excellent",
+    "pt": "Excelente"
+  },
+  "rideRatingGood": {
+    "es": "Bueno",
+    "en": "Good",
+    "pt": "Bom"
+  },
+  "rideRatingFair": {
+    "es": "Regular",
+    "en": "Fair",
+    "pt": "Regular"
+  },
+  "rideRatingPoor": {
+    "es": "Malo",
+    "en": "Poor",
+    "pt": "Ruim"
+  },
+  "rideRatingVeryPoor": {
+    "es": "Muy malo",
+    "en": "Very poor",
+    "pt": "Muito ruim"
+  },
+  "rideRatingCommentHint": {
+    "es": "Comentario (opcional)",
+    "en": "Comment (optional)",
+    "pt": "Comentário (opcional)"
+  },
+  "tripsTitle": {
+    "es": "Mis viajes",
+    "en": "My trips",
+    "pt": "Minhas viagens"
+  },
+  "tripsLoadError": {
+    "es": "No pudimos cargar tus viajes. Revisa tu conexión.",
+    "en": "We couldn't load your trips. Check your connection.",
+    "pt": "Não foi possível carregar suas viagens. Verifique sua conexão."
+  },
+  "tripsEmpty": {
+    "es": "Aún no tienes viajes.\nReserva tu primera experiencia.",
+    "en": "You don't have any trips yet.\nBook your first experience.",
+    "pt": "Você ainda não tem viagens.\nReserve sua primeira experiência."
+  },
+  "tripsBookNow": {
+    "es": "Reservar ahora",
+    "en": "Book now",
+    "pt": "Reservar agora"
+  },
+  "tripsUpcoming": {
+    "es": "PRÓXIMOS",
+    "en": "UPCOMING",
+    "pt": "PRÓXIMAS"
+  },
+  "tripsPast": {
+    "es": "ANTERIORES",
+    "en": "PAST",
+    "pt": "ANTERIORES"
+  },
+  "tripsRouteByHour": {
+    "es": "{origin} · {hours} h",
+    "en": "{origin} · {hours} h",
+    "pt": "{origin} · {hours} h",
+    "description": "Trip card title for an hourly booking",
+    "placeholders": {
+      "origin": {
+        "type": "String"
+      },
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "notifTitle": {
+    "es": "Notificaciones",
+    "en": "Notifications",
+    "pt": "Notificações"
+  },
+  "notifBellUnread": {
+    "es": "{count, plural, =1{1 notificación sin leer} other{{count} notificaciones sin leer}}",
+    "en": "{count, plural, =1{1 unread notification} other{{count} unread notifications}}",
+    "pt": "{count, plural, =1{1 notificação não lida} other{{count} notificações não lidas}}",
+    "description": "Bell tooltip / screen-reader label when there are unread notifications",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notifMarkAllRead": {
+    "es": "Marcar todo como leído",
+    "en": "Mark all as read",
+    "pt": "Marcar tudo como lido"
+  },
+  "notifEmpty": {
+    "es": "Aún no hay notificaciones",
+    "en": "No notifications yet",
+    "pt": "Ainda não há notificações"
+  },
+  "notifJustNow": {
+    "es": "Ahora",
+    "en": "Now",
+    "pt": "Agora"
+  },
+  "notifMinutesAgo": {
+    "es": "Hace {minutes} min",
+    "en": "{minutes} min ago",
+    "pt": "Há {minutes} min",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "notifHoursAgo": {
+    "es": "Hace {hours} h",
+    "en": "{hours} h ago",
+    "pt": "Há {hours} h",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "tripPickup": {
+    "es": "Recogida",
+    "en": "Pickup",
+    "pt": "Embarque"
+  },
+  "tripDestination": {
+    "es": "Destino",
+    "en": "Destination",
+    "pt": "Destino"
+  },
+  "tripPassenger": {
+    "es": "Pasajero",
+    "en": "Passenger",
+    "pt": "Passageiro"
+  },
+  "tripFlightNumber": {
+    "es": "Vuelo {number}",
+    "en": "Flight {number}",
+    "pt": "Voo {number}",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "tripShowSign": {
+    "es": "Mostrar cartel",
+    "en": "Show name sign",
+    "pt": "Mostrar placa"
+  },
+  "tripNameSignSemantics": {
+    "es": "Cartel con el nombre {name}. Toca para cerrar.",
+    "en": "Name sign for {name}. Tap to close.",
+    "pt": "Placa com o nome {name}. Toque para fechar.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tripNameSignTapToClose": {
+    "es": "Toca la pantalla para cerrar",
+    "en": "Tap the screen to close",
+    "pt": "Toque na tela para fechar"
+  },
+  "tripFreeWaitOver": {
+    "es": "Espera gratuita terminada a las {time}",
+    "en": "Free waiting ended at {time}",
+    "pt": "Espera grátis encerrada às {time}",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "tripFreeWaitLeft": {
+    "es": "Espera gratuita: {minutes} min",
+    "en": "Free waiting: {minutes} min",
+    "pt": "Espera grátis: {minutes} min",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "tripFreeWaitOverDriver": {
+    "es": "Contacta al pasajero antes de retirarte.",
+    "en": "Contact the passenger before leaving.",
+    "pt": "Entre em contato com o passageiro antes de sair."
+  },
+  "tripFreeWaitOverRider": {
+    "es": "Tu chófer sigue esperándote. Avísale si necesitas más tiempo.",
+    "en": "Your chauffeur is still waiting for you. Let them know if you need more time.",
+    "pt": "Seu motorista continua esperando por você. Avise-o se precisar de mais tempo."
+  },
+  "tripFreeWaitUntil": {
+    "es": "Hasta las {time} · {summary}",
+    "en": "Until {time} · {summary}",
+    "pt": "Até às {time} · {summary}",
+    "description": "summary is waitAirportSummary/waitCitySummary",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      },
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "tripMeetGreetTitle": {
+    "es": "Meet & greet en llegadas",
+    "en": "Meet & greet at arrivals",
+    "pt": "Recepção no desembarque"
+  },
+  "tripMeetGreetBodyNamed": {
+    "es": "Tu chófer te esperará en la salida de llegadas con un cartel con el nombre «{name}».",
+    "en": "Your chauffeur will wait for you at the arrivals exit with a sign reading “{name}”.",
+    "pt": "Seu motorista vai esperar você na saída do desembarque com uma placa com o nome “{name}”.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "tripMeetGreetBody": {
+    "es": "Tu chófer te esperará en la salida de llegadas con un cartel con tu nombre.",
+    "en": "Your chauffeur will wait for you at the arrivals exit with a sign bearing your name.",
+    "pt": "Seu motorista vai esperar você na saída do desembarque com uma placa com o seu nome."
+  },
+  "tripMeetGreetWait": {
+    "es": "{minutes} min de espera gratuita desde que aterriza tu vuelo.",
+    "en": "{minutes} min of free waiting from when your flight lands.",
+    "pt": "{minutes} min de espera grátis a partir do pouso do seu voo.",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "tripPriceBreakdown": {
+    "es": "Desglose del precio",
+    "en": "Price breakdown",
+    "pt": "Detalhamento do preço"
+  },
+  "tripPriceBaseFare": {
+    "es": "Tarifa base",
+    "en": "Base fare",
+    "pt": "Tarifa base"
+  },
+  "tripPriceDistanceLine": {
+    "es": "{km} km × {rate}",
+    "en": "{km} km × {rate}",
+    "pt": "{km} km × {rate}",
+    "placeholders": {
+      "km": {
+        "type": "String"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "tripPriceHoursLine": {
+    "es": "{hours} h × {rate}",
+    "en": "{hours} h × {rate}",
+    "pt": "{hours} h × {rate}",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
+  "tripPriceMinimumAdjustment": {
+    "es": "Ajuste a tarifa mínima",
+    "en": "Minimum fare adjustment",
+    "pt": "Ajuste para tarifa mínima"
+  },
+  "tripPriceEstimatedTotal": {
+    "es": "Total estimado",
+    "en": "Estimated total",
+    "pt": "Total estimado"
+  },
+  "tripPriceFinalNote": {
+    "es": "El precio fijo final se confirma antes de reservar.",
+    "en": "The final fixed price is confirmed before you book.",
+    "pt": "O preço fixo final é confirmado antes da reserva."
+  },
+  "tripReceiptTitle": {
+    "es": "Recibo",
+    "en": "Receipt",
+    "pt": "Recibo"
+  },
+  "tripReceiptNumber": {
+    "es": "Nº {code}",
+    "en": "No. {code}",
+    "pt": "Nº {code}",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "tripReceiptCancelled": {
+    "es": "RESERVA CANCELADA",
+    "en": "BOOKING CANCELLED",
+    "pt": "RESERVA CANCELADA"
+  },
+  "tripReceiptCompleted": {
+    "es": "VIAJE COMPLETADO",
+    "en": "TRIP COMPLETED",
+    "pt": "VIAGEM CONCLUÍDA"
+  },
+  "tripReceiptNoCharge": {
+    "es": "Sin cargo",
+    "en": "No charge",
+    "pt": "Sem cobrança"
+  },
+  "tripReceiptService": {
+    "es": "Servicio",
+    "en": "Service",
+    "pt": "Serviço"
+  },
+  "tripReceiptVehicle": {
+    "es": "Vehículo",
+    "en": "Vehicle",
+    "pt": "Veículo"
+  },
+  "tripReceiptDuration": {
+    "es": "Duración",
+    "en": "Duration",
+    "pt": "Duração"
+  },
+  "tripReceiptFlight": {
+    "es": "Vuelo",
+    "en": "Flight",
+    "pt": "Voo"
+  },
+  "tripReceiptPassengers": {
+    "es": "Pasajeros",
+    "en": "Passengers",
+    "pt": "Passageiros"
+  },
+  "tripReceiptFixedPrice": {
+    "es": "Precio fijo",
+    "en": "Fixed price",
+    "pt": "Preço fixo"
+  },
+  "tripReceiptAdjustment": {
+    "es": "Ajuste",
+    "en": "Adjustment",
+    "pt": "Ajuste"
+  },
+  "tripReceiptTotal": {
+    "es": "Total",
+    "en": "Total",
+    "pt": "Total"
+  },
+  "tripReceiptPaymentMethod": {
+    "es": "Forma de pago",
+    "en": "Payment method",
+    "pt": "Forma de pagamento"
+  },
+  "tripReceiptCard": {
+    "es": "Tarjeta",
+    "en": "Card",
+    "pt": "Cartão"
+  },
+  "tripReceiptPayChauffeur": {
+    "es": "Pago al chófer",
+    "en": "Paid to chauffeur",
+    "pt": "Pagamento ao motorista"
+  },
+  "tripReceiptCopied": {
+    "es": "Recibo copiado al portapapeles",
+    "en": "Receipt copied to clipboard",
+    "pt": "Recibo copiado para a área de transferência"
+  },
+  "tripReceiptCopy": {
+    "es": "Copiar recibo",
+    "en": "Copy receipt",
+    "pt": "Copiar recibo"
+  },
+  "tripReceiptCurrencyNote": {
+    "es": "Montos en bolivianos (BOB).",
+    "en": "Amounts in bolivianos (BOB).",
+    "pt": "Valores em bolivianos (BOB)."
+  },
+  "tripReceiptPlainHeader": {
+    "es": "Luxelane — Recibo {code}",
+    "en": "Luxelane — Receipt {code}",
+    "pt": "Luxelane — Recibo {code}",
+    "description": "First line of the copyable plain-text receipt",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "tripReceiptPlainFrom": {
+    "es": "Desde: {place}",
+    "en": "From: {place}",
+    "pt": "De: {place}",
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "tripReceiptPlainTo": {
+    "es": "Hasta: {place}",
+    "en": "To: {place}",
+    "pt": "Para: {place}",
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "tripReceiptPlainTotal": {
+    "es": "Total: {amount}",
+    "en": "Total: {amount}",
+    "pt": "Total: {amount}",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "rideCancelBooking": {
+    "es": "Cancelar reserva",
+    "en": "Cancel booking",
+    "pt": "Cancelar reserva"
+  },
+  "rideCancelTitle": {
+    "es": "¿Cancelar esta reserva?",
+    "en": "Cancel this booking?",
+    "pt": "Cancelar esta reserva?"
+  },
+  "rideCancelFree": {
+    "es": "La cancelación es gratuita: faltan más de 1 hora para la recogida.",
+    "en": "Cancellation is free: pickup is more than 1 hour away.",
+    "pt": "O cancelamento é grátis: falta mais de 1 hora para o embarque."
+  },
+  "rideCancelLate": {
+    "es": "Faltan menos de 1 hora para la recogida. Revisa nuestros términos sobre cancelaciones tardías.",
+    "en": "Pickup is less than 1 hour away. Please review our terms on late cancellations.",
+    "pt": "Falta menos de 1 hora para o embarque. Consulte nossos termos sobre cancelamentos tardios."
+  },
+  "rideCancelChauffeurNotified": {
+    "es": "Avisaremos a tu chófer.",
+    "en": "We will let your chauffeur know.",
+    "pt": "Avisaremos o seu motorista."
+  },
+  "rideCancelKeep": {
+    "es": "Mantener reserva",
+    "en": "Keep booking",
+    "pt": "Manter reserva"
+  },
+  "rideCancelConfirm": {
+    "es": "Sí, cancelar",
+    "en": "Yes, cancel",
+    "pt": "Sim, cancelar"
+  },
+  "rideCancelDone": {
+    "es": "Tu reserva fue cancelada.",
+    "en": "Your booking has been cancelled.",
+    "pt": "Sua reserva foi cancelada."
+  },
+  "rideCancelFailed": {
+    "es": "No pudimos cancelar la reserva. Inténtalo de nuevo.",
+    "en": "We couldn’t cancel the booking. Please try again.",
+    "pt": "Não foi possível cancelar a reserva. Tente novamente."
+  },
+  "rideCancelNotAllowed": {
+    "es": "Esta reserva ya no se puede cancelar desde la app.",
+    "en": "This booking can no longer be cancelled in the app.",
+    "pt": "Esta reserva não pode mais ser cancelada pelo app."
+  }
 }

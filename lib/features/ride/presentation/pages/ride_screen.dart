@@ -17,6 +17,7 @@ import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/trip_widgets.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../booking/domain/booking_error_codes.dart';
 import '../../../booking/presentation/bloc/booking_bloc.dart';
 import '../../../notifications/presentation/bloc/notification_bloc.dart';
 
@@ -75,6 +76,46 @@ class _RideScreenState extends State<RideScreen> {
         if (mounted) _showRatingDialog();
       });
     }
+  }
+
+  Future<void> _confirmCancel() async {
+    final booking = _booking;
+    if (booking == null) return;
+    final l = context.l10n;
+    final late = booking.effectivePickup.difference(DateTime.now()) < const Duration(hours: 1);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: LuxColors.blackSurface,
+        title: Text(l.rideCancelTitle, style: LuxTypography.titleMedium),
+        content: Text(
+          [
+            late ? l.rideCancelLate : l.rideCancelFree,
+            if (booking.driverId != null) l.rideCancelChauffeurNotified,
+          ].join('\n\n'),
+          style: LuxTypography.bodyMedium,
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(l.rideCancelKeep)),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: TextButton.styleFrom(foregroundColor: LuxColors.error),
+            child: Text(l.rideCancelConfirm),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    final result = await sl<BookingRepository>().cancelBooking(booking.id);
+    if (!mounted) return;
+    result.fold(
+      (f) => showLuxSnackbar(
+        context,
+        f.message == BookingErrorCodes.notCancellable ? l.rideCancelNotAllowed : l.rideCancelFailed,
+        isError: true,
+      ),
+      (_) => showLuxSnackbar(context, l.rideCancelDone),
+    );
   }
 
   void _showRatingDialog() {
@@ -160,6 +201,7 @@ class _RideScreenState extends State<RideScreen> {
       status: _status,
       live: live,
       onRate: _showRatingDialog,
+      onCancel: _confirmCancel,
     );
     return Scaffold(
       body: isWeb(context)
@@ -224,12 +266,14 @@ class _TripPanel extends StatelessWidget {
     required this.status,
     required this.live,
     required this.onRate,
+    required this.onCancel,
   });
 
   final Booking? booking;
   final BookingStatus status;
   final LiveLocation? live;
   final VoidCallback onRate;
+  final VoidCallback onCancel;
 
   /// Headline + supporting line, ETA-aware.
   (String, String?) _headline(AppLocalizations l) {
@@ -309,6 +353,19 @@ class _TripPanel extends StatelessWidget {
           _ChauffeurCard(chauffeur: b!.chauffeur!, showContact: _contactable(status))
         else if (status == BookingStatus.pending)
           const _AssigningCard(),
+        if (b != null && _cancellable(status)) ...[
+          const SizedBox(height: LuxSpacing.sm),
+          Center(
+            child: TextButton(
+              onPressed: onCancel,
+              style: TextButton.styleFrom(
+                foregroundColor: LuxColors.error,
+                minimumSize: const Size(0, 48),
+              ),
+              child: Text(l10n.rideCancelBooking),
+            ),
+          ),
+        ],
         if (status == BookingStatus.completed && b != null) ...[
           const SizedBox(height: LuxSpacing.md),
           if (b.riderRating == null)
@@ -339,6 +396,12 @@ class _TripPanel extends StatelessWidget {
       ],
     );
   }
+
+  static bool _cancellable(BookingStatus s) =>
+      s == BookingStatus.pending ||
+      s == BookingStatus.confirmed ||
+      s == BookingStatus.driverArriving ||
+      s == BookingStatus.driverArrived;
 
   static bool _contactable(BookingStatus s) =>
       s == BookingStatus.confirmed ||

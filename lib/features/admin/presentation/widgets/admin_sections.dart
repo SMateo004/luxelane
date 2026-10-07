@@ -18,7 +18,21 @@ String _noticeText(AppLocalizations l, AdminNotice n) => switch (n) {
       AdminNotice.settingsSaved => l.adminNoticeSettingsSaved,
       AdminNotice.bookingDeleted => l.adminNoticeBookingDeleted,
       AdminNotice.roleUpdated => l.adminNoticeRoleUpdated,
+      AdminNotice.driverAssigned => l.adminNoticeDriverAssigned,
+      AdminNotice.noDriverAvailable => l.adminNoticeNoDriver,
+      AdminNotice.bookingCancelled => l.adminNoticeBookingCancelled,
     };
+
+/// Pending bookings with no chauffeur whose pickup is within 2 hours.
+List<Booking> _needsAttention(List<Booking> bookings) {
+  final soon = DateTime.now().add(const Duration(hours: 2));
+  return bookings
+      .where((b) =>
+          b.status == BookingStatus.pending &&
+          b.driverId == null &&
+          b.effectivePickup.isBefore(soon))
+      .toList();
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TAB: Dashboard  (Overview real con KPIs, gráfico y actividad reciente)
@@ -47,6 +61,25 @@ class DashboardTab extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // ── Bookings that need a chauffeur now ───────────────────────
+              if (_needsAttention(state.bookings).isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: LuxSpacing.lg),
+                  child: LuxCard(
+                    child: Row(
+                      children: [
+                        const Icon(Icons.priority_high_rounded, color: LuxColors.warning),
+                        const SizedBox(width: LuxSpacing.md),
+                        Expanded(
+                          child: Text(
+                            l.adminAttentionBanner(_needsAttention(state.bookings).length),
+                            style: const TextStyle(color: LuxColors.warning, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               // ── Maintenance banner ───────────────────────────────────────
               if (state.isMaintenanceMode)
                 Padding(
@@ -287,6 +320,7 @@ class BookingsTab extends StatefulWidget {
 
 class _BookingsTabState extends State<BookingsTab> {
   BookingStatus? _filter;
+  bool _unassignedOnly = false;
 
   @override
   Widget build(BuildContext context) {
@@ -299,6 +333,12 @@ class _BookingsTabState extends State<BookingsTab> {
 
         if (_filter != null && !widget.compact) {
           rows = rows.where((b) => b.status == _filter).toList();
+        }
+        if (_unassignedOnly && !widget.compact) {
+          rows = rows
+              .where((b) => b.status == BookingStatus.pending && b.driverId == null)
+              .toList()
+            ..sort((a, b) => a.effectivePickup.compareTo(b.effectivePickup));
         }
 
         if (state.isLoading && rows.isEmpty) {
@@ -340,16 +380,32 @@ class _BookingsTabState extends State<BookingsTab> {
                   children: [
                     _FilterChip(
                       label: context.l10n.adminFilterAll.toUpperCase(),
-                      selected: _filter == null,
-                      onTap: () => setState(() => _filter = null),
+                      selected: _filter == null && !_unassignedOnly,
+                      onTap: () => setState(() {
+                        _filter = null;
+                        _unassignedOnly = false;
+                      }),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: LuxSpacing.sm),
+                      child: _FilterChip(
+                        label: context.l10n.adminFilterUnassigned.toUpperCase(),
+                        selected: _unassignedOnly,
+                        onTap: () => setState(() {
+                          _unassignedOnly = !_unassignedOnly;
+                          _filter = null;
+                        }),
+                      ),
                     ),
                     ...BookingStatus.values.map((s) => Padding(
                           padding: const EdgeInsets.only(left: LuxSpacing.sm),
                           child: _FilterChip(
                             label: s.localizedLabel(context.l10n).toUpperCase(),
                             selected: _filter == s,
-                            onTap: () => setState(
-                                () => _filter = _filter == s ? null : s),
+                            onTap: () => setState(() {
+                              _filter = _filter == s ? null : s;
+                              _unassignedOnly = false;
+                            }),
                           ),
                         )),
                   ],
@@ -392,6 +448,8 @@ class _FilterChip extends StatelessWidget {
         ),
       );
 }
+
+enum _BookingAction { assign, cancel, delete }
 
 class _AdminBookingTile extends StatelessWidget {
   const _AdminBookingTile({
@@ -464,16 +522,55 @@ class _AdminBookingTile extends StatelessWidget {
               ],
             ),
             const SizedBox(width: LuxSpacing.sm),
-            // Delete button
-            IconButton(
-              icon: const Icon(Icons.delete_outline_rounded,
-                  color: LuxColors.error, size: 18),
-              tooltip: l.adminDeleteBookingTooltip,
-              onPressed: () => _confirmDelete(context),
+            PopupMenuButton<_BookingAction>(
+              tooltip: l.adminBookingActions,
+              icon: const Icon(Icons.more_vert_rounded, color: LuxColors.whiteSecondary),
+              color: LuxColors.blackElevated,
+              onSelected: (a) => switch (a) {
+                _BookingAction.assign => context.read<AdminBloc>().add(AdminAssignNearestRequested(booking)),
+                _BookingAction.cancel => _confirmCancel(context),
+                _BookingAction.delete => _confirmDelete(context),
+              },
+              itemBuilder: (_) => [
+                if (booking.status == BookingStatus.pending && booking.driverId == null)
+                  PopupMenuItem(value: _BookingAction.assign, child: Text(l.adminAssignNearest)),
+                if (_cancellable(booking.status))
+                  PopupMenuItem(value: _BookingAction.cancel, child: Text(l.adminCancelBooking)),
+                PopupMenuItem(
+                  value: _BookingAction.delete,
+                  child: Text(l.adminDeleteBookingTooltip, style: const TextStyle(color: LuxColors.error)),
+                ),
+              ],
             ),
           ],
         ),
       );
+  }
+
+  static bool _cancellable(BookingStatus s) =>
+      s != BookingStatus.completed && s != BookingStatus.cancelled;
+
+  void _confirmCancel(BuildContext context) {
+    final l = context.l10n;
+    final code = booking.id.length > 8 ? booking.id.substring(0, 8) : booking.id;
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: LuxColors.blackElevated,
+        title: Text(l.adminCancelBookingTitle(code.toUpperCase()), style: LuxTypography.titleLarge),
+        content: Text(l.adminCancelBookingBody, style: LuxTypography.bodyMedium),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.commonBack)),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<AdminBloc>().add(AdminCancelBookingRequested(booking.id));
+            },
+            child: Text(l.adminCancelBooking, style: const TextStyle(color: LuxColors.error)),
+          ),
+        ],
+      ),
+    );
   }
 
   void _confirmDelete(BuildContext context) {

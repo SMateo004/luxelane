@@ -84,7 +84,7 @@ void _registerRepositories() {
   );
 
   sl.registerLazySingleton<AdminRepository>(
-    () => AdminRepositoryImpl(sl()),
+    () => AdminRepositoryImpl(sl(), sl()),
   );
 
   sl.registerLazySingleton<NotificationRepository>(

@@ -70,6 +70,20 @@ class AdminDeleteBookingRequested extends AdminEvent {
   List<Object?> get props => [bookingId];
 }
 
+class AdminAssignNearestRequested extends AdminEvent {
+  final Booking booking;
+  const AdminAssignNearestRequested(this.booking);
+  @override
+  List<Object?> get props => [booking.id];
+}
+
+class AdminCancelBookingRequested extends AdminEvent {
+  final String bookingId;
+  const AdminCancelBookingRequested(this.bookingId);
+  @override
+  List<Object?> get props => [bookingId];
+}
+
 class AdminUpdateUserRoleRequested extends AdminEvent {
   final String userId;
   final UserRole role;
@@ -91,6 +105,9 @@ enum AdminNotice {
   settingsSaved,
   bookingDeleted,
   roleUpdated,
+  driverAssigned,
+  noDriverAvailable,
+  bookingCancelled,
 }
 
 class AdminState extends Equatable {
@@ -227,6 +244,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<AdminToggleMaintenanceModeRequested>(_onToggleMaintenance);
     on<AdminUpdateGlobalSettingsRequested>(_onUpdateGlobalSettings);
     on<AdminDeleteBookingRequested>(_onDeleteBooking);
+    on<AdminAssignNearestRequested>(_onAssignNearest);
+    on<AdminCancelBookingRequested>(_onCancelBooking);
     on<AdminUpdateUserRoleRequested>(_onUpdateUserRole);
 
     // Internal stream updates
@@ -305,6 +324,23 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     result.fold(
       (f) => emit(state.copyWith(error: f.message)),
       (_) => emit(state.copyWith(notice: AdminNotice.bookingDeleted)),
+    );
+  }
+
+  Future<void> _onAssignNearest(AdminAssignNearestRequested event, Emitter<AdminState> emit) async {
+    final result = await _repo.assignNearestDriver(event.booking);
+    result.fold(
+      (f) => emit(state.copyWith(error: f.message)),
+      (assigned) => emit(state.copyWith(
+          notice: assigned ? AdminNotice.driverAssigned : AdminNotice.noDriverAvailable)),
+    );
+  }
+
+  Future<void> _onCancelBooking(AdminCancelBookingRequested event, Emitter<AdminState> emit) async {
+    final result = await _repo.cancelBooking(event.bookingId);
+    result.fold(
+      (f) => emit(state.copyWith(error: f.message)),
+      (_) => emit(state.copyWith(notice: AdminNotice.bookingCancelled)),
     );
   }
 

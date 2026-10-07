@@ -18,12 +18,32 @@ class AppLocalizationsEs extends AppLocalizations {
   String get adminAppVersion => 'Versión de la app';
 
   @override
+  String get adminAssignNearest => 'Asignar chófer más cercano';
+
+  @override
+  String adminAttentionBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count reservas sin chófer con recogida en menos de 2 horas',
+      one: '1 reserva sin chófer con recogida en menos de 2 horas',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get adminAttentionView => 'Ver';
+
+  @override
   String adminAuditBy(String id) {
     return 'Admin: $id';
   }
 
   @override
   String get adminBackend => 'Backend';
+
+  @override
+  String get adminBookingActions => 'Acciones';
 
   @override
   String adminBookingDriver(String name) {
@@ -37,6 +57,17 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get adminBusinessPerformance => 'Rendimiento del negocio';
+
+  @override
+  String get adminCancelBooking => 'Cancelar reserva';
+
+  @override
+  String get adminCancelBookingBody => 'El pasajero y el chófer asignado recibirán un aviso.';
+
+  @override
+  String adminCancelBookingTitle(String code) {
+    return '¿Cancelar la reserva $code?';
+  }
 
   @override
   String adminChangeRoleTitle(String name) {
@@ -80,6 +111,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get adminFilterAll => 'Todos';
+
+  @override
+  String get adminFilterUnassigned => 'Sin chófer';
 
   @override
   String get adminFirestoreRules => 'Reglas de precios de Firestore';
@@ -170,7 +204,13 @@ class AppLocalizationsEs extends AppLocalizations {
   String get adminNoVehiclesHint => 'Los vehículos vinculados a chóferes aparecen aquí';
 
   @override
+  String get adminNoticeBookingCancelled => 'Reserva cancelada';
+
+  @override
   String get adminNoticeBookingDeleted => 'Reserva eliminada';
+
+  @override
+  String get adminNoticeDriverAssigned => 'Chófer asignado';
 
   @override
   String get adminNoticeDriverVerified => 'Chófer verificado';
@@ -180,6 +220,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get adminNoticeMaintenanceOn => 'Modo mantenimiento activado';
+
+  @override
+  String get adminNoticeNoDriver => 'No hay chóferes disponibles cerca para esta clase de vehículo';
 
   @override
   String get adminNoticePricingUpdated => 'Regla de precios actualizada';
@@ -1831,6 +1874,36 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get rideBackHome => 'Volver al inicio';
+
+  @override
+  String get rideCancelBooking => 'Cancelar reserva';
+
+  @override
+  String get rideCancelChauffeurNotified => 'Avisaremos a tu chófer.';
+
+  @override
+  String get rideCancelConfirm => 'Sí, cancelar';
+
+  @override
+  String get rideCancelDone => 'Tu reserva fue cancelada.';
+
+  @override
+  String get rideCancelFailed => 'No pudimos cancelar la reserva. Inténtalo de nuevo.';
+
+  @override
+  String get rideCancelFree => 'La cancelación es gratuita: faltan más de 1 hora para la recogida.';
+
+  @override
+  String get rideCancelKeep => 'Mantener reserva';
+
+  @override
+  String get rideCancelLate => 'Faltan menos de 1 hora para la recogida. Revisa nuestros términos sobre cancelaciones tardías.';
+
+  @override
+  String get rideCancelNotAllowed => 'Esta reserva ya no se puede cancelar desde la app.';
+
+  @override
+  String get rideCancelTitle => '¿Cancelar esta reserva?';
 
   @override
   String get rideCancelled => 'Reserva cancelada';

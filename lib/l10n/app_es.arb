@@ -3,6 +3,16 @@
   "adminActionFailed": "No se pudo completar la acción. Inténtalo de nuevo.",
   "adminActive": "Activo",
   "adminAppVersion": "Versión de la app",
+  "adminAssignNearest": "Asignar chófer más cercano",
+  "adminAttentionBanner": "{count, plural, =1{1 reserva sin chófer con recogida en menos de 2 horas} other{{count} reservas sin chófer con recogida en menos de 2 horas}}",
+  "@adminAttentionBanner": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminAttentionView": "Ver",
   "adminAuditBy": "Admin: {id}",
   "@adminAuditBy": {
     "placeholders": {
@@ -12,6 +22,7 @@
     }
   },
   "adminBackend": "Backend",
+  "adminBookingActions": "Acciones",
   "adminBookingDriver": "Chófer: {name}",
   "@adminBookingDriver": {
     "placeholders": {
@@ -29,6 +40,16 @@
     }
   },
   "adminBusinessPerformance": "Rendimiento del negocio",
+  "adminCancelBooking": "Cancelar reserva",
+  "adminCancelBookingBody": "El pasajero y el chófer asignado recibirán un aviso.",
+  "adminCancelBookingTitle": "¿Cancelar la reserva {code}?",
+  "@adminCancelBookingTitle": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "adminChangeRoleTitle": "Cambiar rol de {name}",
   "@adminChangeRoleTitle": {
     "placeholders": {
@@ -56,6 +77,7 @@
   "adminFieldPerHour": "Por hora (Bs)",
   "adminFieldPerKm": "Por km (Bs)",
   "adminFilterAll": "Todos",
+  "adminFilterUnassigned": "Sin chófer",
   "adminFirestoreRules": "Reglas de precios de Firestore",
   "adminGlobalSettings": "Configuración global de la app",
   "adminInactive": "Inactivo",
@@ -116,10 +138,13 @@
   "adminNoUsersMatch": "Ningún usuario coincide con la búsqueda",
   "adminNoVehicles": "Aún no hay vehículos registrados",
   "adminNoVehiclesHint": "Los vehículos vinculados a chóferes aparecen aquí",
+  "adminNoticeBookingCancelled": "Reserva cancelada",
   "adminNoticeBookingDeleted": "Reserva eliminada",
+  "adminNoticeDriverAssigned": "Chófer asignado",
   "adminNoticeDriverVerified": "Chófer verificado",
   "adminNoticeMaintenanceOff": "Modo mantenimiento desactivado",
   "adminNoticeMaintenanceOn": "Modo mantenimiento activado",
+  "adminNoticeNoDriver": "No hay chóferes disponibles cerca para esta clase de vehículo",
   "adminNoticePricingUpdated": "Regla de precios actualizada",
   "adminNoticeRoleUpdated": "Rol actualizado",
   "adminNoticeSettingsSaved": "Configuración guardada",
@@ -1203,6 +1228,16 @@
   "rideAssigning": "Asignando a tu chófer",
   "rideAssigningBody": "Estamos confirmando a tu chófer. Te avisaremos apenas esté asignado.",
   "rideBackHome": "Volver al inicio",
+  "rideCancelBooking": "Cancelar reserva",
+  "rideCancelChauffeurNotified": "Avisaremos a tu chófer.",
+  "rideCancelConfirm": "Sí, cancelar",
+  "rideCancelDone": "Tu reserva fue cancelada.",
+  "rideCancelFailed": "No pudimos cancelar la reserva. Inténtalo de nuevo.",
+  "rideCancelFree": "La cancelación es gratuita: faltan más de 1 hora para la recogida.",
+  "rideCancelKeep": "Mantener reserva",
+  "rideCancelLate": "Faltan menos de 1 hora para la recogida. Revisa nuestros términos sobre cancelaciones tardías.",
+  "rideCancelNotAllowed": "Esta reserva ya no se puede cancelar desde la app.",
+  "rideCancelTitle": "¿Cancelar esta reserva?",
   "rideCancelled": "Reserva cancelada",
   "rideChauffeurArrivesIn": "Tu chófer llega en {eta}",
   "@rideChauffeurArrivesIn": {

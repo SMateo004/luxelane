@@ -18,12 +18,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminAppVersion => 'App version';
 
   @override
+  String get adminAssignNearest => 'Assign nearest chauffeur';
+
+  @override
+  String adminAttentionBanner(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bookings without a chauffeur, pickup within 2 hours',
+      one: '1 booking without a chauffeur, pickup within 2 hours',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get adminAttentionView => 'View';
+
+  @override
   String adminAuditBy(String id) {
     return 'Admin: $id';
   }
 
   @override
   String get adminBackend => 'Backend';
+
+  @override
+  String get adminBookingActions => 'Actions';
 
   @override
   String adminBookingDriver(String name) {
@@ -37,6 +57,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminBusinessPerformance => 'Business performance';
+
+  @override
+  String get adminCancelBooking => 'Cancel booking';
+
+  @override
+  String get adminCancelBookingBody => 'The passenger and the assigned chauffeur will be notified.';
+
+  @override
+  String adminCancelBookingTitle(String code) {
+    return 'Cancel booking $code?';
+  }
 
   @override
   String adminChangeRoleTitle(String name) {
@@ -80,6 +111,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminFilterAll => 'All';
+
+  @override
+  String get adminFilterUnassigned => 'Unassigned';
 
   @override
   String get adminFirestoreRules => 'Firestore pricing rules';
@@ -170,7 +204,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminNoVehiclesHint => 'Vehicles linked to chauffeurs appear here';
 
   @override
+  String get adminNoticeBookingCancelled => 'Booking cancelled';
+
+  @override
   String get adminNoticeBookingDeleted => 'Booking deleted';
+
+  @override
+  String get adminNoticeDriverAssigned => 'Chauffeur assigned';
 
   @override
   String get adminNoticeDriverVerified => 'Chauffeur verified';
@@ -180,6 +220,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminNoticeMaintenanceOn => 'Maintenance mode turned on';
+
+  @override
+  String get adminNoticeNoDriver => 'No nearby chauffeurs available for this vehicle class';
 
   @override
   String get adminNoticePricingUpdated => 'Pricing rule updated';
@@ -1831,6 +1874,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rideBackHome => 'Back to home';
+
+  @override
+  String get rideCancelBooking => 'Cancel booking';
+
+  @override
+  String get rideCancelChauffeurNotified => 'We will let your chauffeur know.';
+
+  @override
+  String get rideCancelConfirm => 'Yes, cancel';
+
+  @override
+  String get rideCancelDone => 'Your booking has been cancelled.';
+
+  @override
+  String get rideCancelFailed => 'We couldn’t cancel the booking. Please try again.';
+
+  @override
+  String get rideCancelFree => 'Cancellation is free: pickup is more than 1 hour away.';
+
+  @override
+  String get rideCancelKeep => 'Keep booking';
+
+  @override
+  String get rideCancelLate => 'Pickup is less than 1 hour away. Please review our terms on late cancellations.';
+
+  @override
+  String get rideCancelNotAllowed => 'This booking can no longer be cancelled in the app.';
+
+  @override
+  String get rideCancelTitle => 'Cancel this booking?';
 
   @override
   String get rideCancelled => 'Booking cancelled';

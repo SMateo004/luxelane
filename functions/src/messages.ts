@@ -71,6 +71,12 @@ const M = {
     en: 'Flight {flight}: new pickup time {time}.',
     pt: 'Voo {flight}: novo horário de embarque {time}.',
   },
+  riderCancelledTitle: { es: 'Viaje cancelado', en: 'Ride cancelled', pt: 'Viagem cancelada' },
+  riderCancelledBody: {
+    es: 'El pasajero canceló el viaje de las {time}. Ya estás libre para otras solicitudes.',
+    en: 'The passenger cancelled the {time} ride. You are free for other requests.',
+    pt: 'O passageiro cancelou a viagem das {time}. Você está livre para outras solicitações.',
+  },
   paymentTitle: { es: 'Pago confirmado', en: 'Payment confirmed', pt: 'Pagamento confirmado' },
   paymentBody: {
     es: 'Se cobró {price} por tu viaje',

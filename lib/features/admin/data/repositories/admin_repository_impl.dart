@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
@@ -6,9 +7,34 @@ import '../../../../core/models/models.dart';
 import '../../domain/repositories/admin_repository.dart';
 
 class AdminRepositoryImpl implements AdminRepository {
-  AdminRepositoryImpl(this._db);
+  AdminRepositoryImpl(this._db, [FirebaseFunctions? functions])
+      : _fn = functions ?? FirebaseFunctions.instance;
 
   final FirebaseFirestore _db;
+  final FirebaseFunctions _fn;
+
+  @override
+  Future<Either<Failure, bool>> assignNearestDriver(Booking booking) async {
+    try {
+      final result = await _fn.httpsCallable('assignNearestDriver').call({
+        'bookingId': booking.id,
+        'vehicleClass': booking.vehicleClass.name,
+      });
+      return Right((result.data as Map)['assigned'] == true);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> cancelBooking(String bookingId) async {
+    try {
+      await _fn.httpsCallable('cancelBooking').call({'bookingId': bookingId});
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 
   @override
   Stream<List<Booking>> watchAllBookings() {

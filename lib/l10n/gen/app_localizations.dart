@@ -115,6 +115,24 @@ abstract class AppLocalizations {
   /// **'Versión de la app'**
   String get adminAppVersion;
 
+  /// No description provided for @adminAssignNearest.
+  ///
+  /// In es, this message translates to:
+  /// **'Asignar chófer más cercano'**
+  String get adminAssignNearest;
+
+  /// No description provided for @adminAttentionBanner.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 reserva sin chófer con recogida en menos de 2 horas} other{{count} reservas sin chófer con recogida en menos de 2 horas}}'**
+  String adminAttentionBanner(int count);
+
+  /// No description provided for @adminAttentionView.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver'**
+  String get adminAttentionView;
+
   /// No description provided for @adminAuditBy.
   ///
   /// In es, this message translates to:
@@ -126,6 +144,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Backend'**
   String get adminBackend;
+
+  /// No description provided for @adminBookingActions.
+  ///
+  /// In es, this message translates to:
+  /// **'Acciones'**
+  String get adminBookingActions;
 
   /// No description provided for @adminBookingDriver.
   ///
@@ -144,6 +168,24 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Rendimiento del negocio'**
   String get adminBusinessPerformance;
+
+  /// No description provided for @adminCancelBooking.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar reserva'**
+  String get adminCancelBooking;
+
+  /// No description provided for @adminCancelBookingBody.
+  ///
+  /// In es, this message translates to:
+  /// **'El pasajero y el chófer asignado recibirán un aviso.'**
+  String get adminCancelBookingBody;
+
+  /// No description provided for @adminCancelBookingTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cancelar la reserva {code}?'**
+  String adminCancelBookingTitle(String code);
 
   /// No description provided for @adminChangeRoleTitle.
   ///
@@ -222,6 +264,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Todos'**
   String get adminFilterAll;
+
+  /// No description provided for @adminFilterUnassigned.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin chófer'**
+  String get adminFilterUnassigned;
 
   /// No description provided for @adminFirestoreRules.
   ///
@@ -367,11 +415,23 @@ abstract class AppLocalizations {
   /// **'Los vehículos vinculados a chóferes aparecen aquí'**
   String get adminNoVehiclesHint;
 
+  /// No description provided for @adminNoticeBookingCancelled.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva cancelada'**
+  String get adminNoticeBookingCancelled;
+
   /// No description provided for @adminNoticeBookingDeleted.
   ///
   /// In es, this message translates to:
   /// **'Reserva eliminada'**
   String get adminNoticeBookingDeleted;
+
+  /// No description provided for @adminNoticeDriverAssigned.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer asignado'**
+  String get adminNoticeDriverAssigned;
 
   /// No description provided for @adminNoticeDriverVerified.
   ///
@@ -390,6 +450,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Modo mantenimiento activado'**
   String get adminNoticeMaintenanceOn;
+
+  /// No description provided for @adminNoticeNoDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay chóferes disponibles cerca para esta clase de vehículo'**
+  String get adminNoticeNoDriver;
 
   /// No description provided for @adminNoticePricingUpdated.
   ///
@@ -3462,6 +3528,66 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Volver al inicio'**
   String get rideBackHome;
+
+  /// No description provided for @rideCancelBooking.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar reserva'**
+  String get rideCancelBooking;
+
+  /// No description provided for @rideCancelChauffeurNotified.
+  ///
+  /// In es, this message translates to:
+  /// **'Avisaremos a tu chófer.'**
+  String get rideCancelChauffeurNotified;
+
+  /// No description provided for @rideCancelConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Sí, cancelar'**
+  String get rideCancelConfirm;
+
+  /// No description provided for @rideCancelDone.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu reserva fue cancelada.'**
+  String get rideCancelDone;
+
+  /// No description provided for @rideCancelFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos cancelar la reserva. Inténtalo de nuevo.'**
+  String get rideCancelFailed;
+
+  /// No description provided for @rideCancelFree.
+  ///
+  /// In es, this message translates to:
+  /// **'La cancelación es gratuita: faltan más de 1 hora para la recogida.'**
+  String get rideCancelFree;
+
+  /// No description provided for @rideCancelKeep.
+  ///
+  /// In es, this message translates to:
+  /// **'Mantener reserva'**
+  String get rideCancelKeep;
+
+  /// No description provided for @rideCancelLate.
+  ///
+  /// In es, this message translates to:
+  /// **'Faltan menos de 1 hora para la recogida. Revisa nuestros términos sobre cancelaciones tardías.'**
+  String get rideCancelLate;
+
+  /// No description provided for @rideCancelNotAllowed.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta reserva ya no se puede cancelar desde la app.'**
+  String get rideCancelNotAllowed;
+
+  /// No description provided for @rideCancelTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cancelar esta reserva?'**
+  String get rideCancelTitle;
 
   /// No description provided for @rideCancelled.
   ///

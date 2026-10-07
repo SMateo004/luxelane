@@ -103,3 +103,20 @@ export function freeWaitEnd(params: {
   const start = driverArrivedAt && driverArrivedAt > pickup ? driverArrivedAt : pickup;
   return new Date(start.getTime() + CITY_FREE_WAIT_MIN * 60000);
 }
+
+// ---------------------------------------------------------------------------
+// Cancellation (free up to 1 hour before pickup)
+// ---------------------------------------------------------------------------
+
+export const FREE_CANCELLATION_MS = 60 * 60 * 1000;
+
+/** Statuses in which the rider may still cancel (before the ride starts). */
+export const RIDER_CANCELLABLE: BookingStatus[] = ['pending', 'confirmed', 'driver_arriving', 'driver_arrived'];
+
+/** Admins may cancel anything that hasn't finished. */
+export const ADMIN_CANCELLABLE: BookingStatus[] = [...RIDER_CANCELLABLE, 'in_progress'];
+
+/** True when the rider cancels less than an hour before pickup. */
+export function isLateCancellation(pickup: Date, now: Date): boolean {
+  return pickup.getTime() - now.getTime() < FREE_CANCELLATION_MS;
+}

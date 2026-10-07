@@ -157,12 +157,15 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 | **Android listo para la tienda**: permisos de Internet, ubicación y notificaciones; dos apps (`com.luxelane.rider` y `com.luxelane.driver`); firma de release con `key.properties`; clave de Maps para Android | ✅ Configurado. ⚠ No se pudo compilar aquí (sin Android SDK); hay que verificarlo con `flutter build appbundle` |
 | **Firebase para Android/iOS**: hoy solo está configurado para web, así que las apps móviles se caen al iniciar | ⏳ Requiere `flutterfire configure` con tu cuenta (pasos en `DEPLOY.md`) |
 | Proyecto iOS | ⏳ No existe la carpeta `ios/` (pasos en `DEPLOY.md`) |
+| **Cancelación por el pasajero.** No existía en la app aunque se prometía | ✅ "Cancelar reserva" en el viaje, con aviso de si es gratuita. El servidor libera al chófer, le avisa en su idioma y marca `lateCancellation` cuando faltaba menos de 1 h, para la futura política |
+| **Panel de operaciones** | ✅ Alerta de reservas sin chófer con recogida en menos de 2 h, filtro "Sin chófer", y por reserva: asignar al chófer más cercano (mismo ranking que el despacho automático), cancelar (con aviso al pasajero y al chófer, auditado) o eliminar |
+| Textos de marketing no respaldados (gerente de cuenta, facturación centralizada, champán, Wi-Fi, "todo el mundo", clase Eléctrico no reservable, 4 asientos) | ✅ Reemplazados por funciones reales |
 
 ## 5. Cómo probar
 
 ```
-flutter test                      # 149 tests Dart
-(cd functions && npm test)        # 45 tests de negocio, precios, vuelos, chófer, espera, despacho y mensajes
+flutter test                      # 150 tests Dart
+(cd functions && npm test)        # 47 tests de negocio, precios, vuelos, chófer, espera, despacho, cancelación y mensajes
 (cd rules-tests && npm test)      # 22 tests de reglas de seguridad (requiere Java)
 ```
 

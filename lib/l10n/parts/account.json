@@ -1013,5 +1013,70 @@
     "en": "Sharing your location while you're available",
     "pt": "Compartilhando sua localização enquanto você está disponível",
     "description": "Android foreground-service notification while a chauffeur is on duty"
+  },
+  "adminBookingActions": {
+    "es": "Acciones",
+    "en": "Actions",
+    "pt": "Ações"
+  },
+  "adminAssignNearest": {
+    "es": "Asignar chófer más cercano",
+    "en": "Assign nearest chauffeur",
+    "pt": "Atribuir motorista mais próximo"
+  },
+  "adminCancelBooking": {
+    "es": "Cancelar reserva",
+    "en": "Cancel booking",
+    "pt": "Cancelar reserva"
+  },
+  "adminCancelBookingTitle": {
+    "es": "¿Cancelar la reserva {code}?",
+    "en": "Cancel booking {code}?",
+    "pt": "Cancelar a reserva {code}?",
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "adminCancelBookingBody": {
+    "es": "El pasajero y el chófer asignado recibirán un aviso.",
+    "en": "The passenger and the assigned chauffeur will be notified.",
+    "pt": "O passageiro e o motorista designado serão avisados."
+  },
+  "adminNoticeDriverAssigned": {
+    "es": "Chófer asignado",
+    "en": "Chauffeur assigned",
+    "pt": "Motorista designado"
+  },
+  "adminNoticeNoDriver": {
+    "es": "No hay chóferes disponibles cerca para esta clase de vehículo",
+    "en": "No nearby chauffeurs available for this vehicle class",
+    "pt": "Nenhum motorista disponível por perto para esta categoria"
+  },
+  "adminNoticeBookingCancelled": {
+    "es": "Reserva cancelada",
+    "en": "Booking cancelled",
+    "pt": "Reserva cancelada"
+  },
+  "adminAttentionBanner": {
+    "es": "{count, plural, =1{1 reserva sin chófer con recogida en menos de 2 horas} other{{count} reservas sin chófer con recogida en menos de 2 horas}}",
+    "en": "{count, plural, =1{1 booking without a chauffeur, pickup within 2 hours} other{{count} bookings without a chauffeur, pickup within 2 hours}}",
+    "pt": "{count, plural, =1{1 reserva sem motorista, embarque em menos de 2 horas} other{{count} reservas sem motorista, embarque em menos de 2 horas}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminAttentionView": {
+    "es": "Ver",
+    "en": "View",
+    "pt": "Ver"
+  },
+  "adminFilterUnassigned": {
+    "es": "Sin chófer",
+    "en": "Unassigned",
+    "pt": "Sem motorista"
   }
 }

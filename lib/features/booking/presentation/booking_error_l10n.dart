@@ -12,5 +12,7 @@ String localizedBookingError(AppLocalizations l, String message) => switch (mess
       BookingErrorCodes.invalidFlight => l.bookingErrorInvalidFlight,
       BookingErrorCodes.tooManyPassengers => l.bookingErrorTooManyPassengers,
       BookingErrorCodes.rateFailed => l.bookingErrorRateFailed,
+      BookingErrorCodes.cancelFailed => l.rideCancelFailed,
+      BookingErrorCodes.notCancellable => l.rideCancelNotAllowed,
       _ => message,
     };

@@ -19,6 +19,12 @@ abstract class AdminRepository {
   Future<Either<Failure, void>> toggleMaintenanceMode(bool active);
   Future<Either<Failure, void>> updateGlobalSettings(Map<String, dynamic> fields);
   Future<Either<Failure, void>> deleteBooking(String bookingId);
+
+  /// Runs the server dispatcher; Right(true) when a chauffeur was assigned.
+  Future<Either<Failure, bool>> assignNearestDriver(Booking booking);
+
+  /// Cancels via the backend (notifies passenger and chauffeur, audited).
+  Future<Either<Failure, void>> cancelBooking(String bookingId);
   Future<Either<Failure, void>> updateUserRole(String userId, UserRole role);
 }
 

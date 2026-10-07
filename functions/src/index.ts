@@ -32,6 +32,9 @@ import {
   chunk,
   freeWaitEnd,
   isStalePending,
+  isLateCancellation,
+  ADMIN_CANCELLABLE,
+  RIDER_CANCELLABLE,
   isValidAmount,
   toMinorUnits,
 } from './policy';
@@ -88,6 +91,7 @@ interface BookingDoc {
   driverArrivedAt?: admin.firestore.Timestamp;
   origin?: { coordinates?: admin.firestore.GeoPoint };
   dispatch?: StoredDispatch;
+  cancelledBy?: 'rider' | 'admin' | 'system';
   flight?: { estimatedArrival?: admin.firestore.Timestamp | null } | null;
 }
 
@@ -867,6 +871,8 @@ export const onBookingStatusChanged = onDocumentUpdated(
 
     const key = statusKeys[after.status];
     if (!key) return;
+    // The rider cancelled it themselves in the app: no need to tell them.
+    if (after.status === 'cancelled' && after.cancelledBy === 'rider') return;
 
     await pushUser(after.riderId, 'statusTitle', key, (lang) => ({
       time: freeUntil ? clock(freeUntil, lang) : '',
@@ -925,16 +931,14 @@ export const assignNearestDriver = onCall(async (req) => {
 
   logger.info('assignNearestDriver', 'searching', { bookingId, vehicleClass });
 
-  // TODO: rank by distance (geohash) instead of first match.
-  const vehicleSnap = await db
-    .collection('vehicles')
-    .where('class', '==', vehicleClass)
-    .where('isActive', '==', true)
-    .limit(10)
-    .get();
+  // Same ranking as automatic dispatch: nearest verified, available driver
+  // of the right class with a fresh position.
+  const geo = booking.origin?.coordinates;
+  const ranked = geo
+    ? rankDrivers(await loadDriverCandidates(), { lat: geo.latitude, lng: geo.longitude }, vehicleClass, new Date())
+    : [];
 
-  for (const vehicleDoc of vehicleSnap.docs) {
-    const driverId = vehicleDoc.data().driverId as string;
+  for (const { driverId } of ranked) {
     const driverRef = db.collection('driverProfiles').doc(driverId);
 
     const assigned = await db.runTransaction(async (tx) => {
@@ -1137,6 +1141,57 @@ export const trackFlights = onSchedule(
     }
   },
 );
+
+// ---------------------------------------------------------------------------
+// cancelBooking — rider (before the ride starts) or admin. Free up to 1 h
+// before pickup; later cancellations are flagged for the future policy.
+// ---------------------------------------------------------------------------
+
+export const cancelBooking = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const { bookingId, reason } = (req.data ?? {}) as { bookingId: string; reason?: string };
+  if (!bookingId) throw err.invalidArgument('bookingId required');
+
+  const caller = await getUser(uid);
+  const isAdmin = caller.role === 'admin';
+  const ref = db.collection('bookings').doc(bookingId);
+  const now = new Date();
+
+  const result = await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw err.notFound('Booking not found');
+    const b = snap.data() as BookingDoc;
+    if (!isAdmin && b.riderId !== uid) throw err.permissionDenied();
+    const allowed = isAdmin ? ADMIN_CANCELLABLE : RIDER_CANCELLABLE;
+    if (!allowed.includes(b.status)) throw err.failedPrecondition('booking/not-cancellable');
+
+    const pickup = (b.pickupAt ?? b.scheduledAt)?.toDate() ?? now;
+    const late = !isAdmin && isLateCancellation(pickup, now);
+    tx.update(ref, {
+      status: 'cancelled' as BookingStatus,
+      cancelledBy: isAdmin ? 'admin' : 'rider',
+      cancelledAt: admin.firestore.Timestamp.fromDate(now),
+      cancelReason: reason ? String(reason).slice(0, 300) : null,
+      lateCancellation: late,
+      updatedAt: admin.firestore.Timestamp.fromDate(now),
+    });
+    if (b.driverId) {
+      tx.update(db.collection('driverProfiles').doc(b.driverId), { isAvailable: true });
+    }
+    return { driverId: b.driverId, pickup, late, riderId: b.riderId };
+  });
+
+  if (result.driverId) {
+    await pushUser(result.driverId, 'riderCancelledTitle', 'riderCancelledBody', (lang) => ({
+      time: clock(result.pickup, lang),
+    }));
+  }
+  if (isAdmin) {
+    await writeAudit('booking_cancelled_by_admin', { bookingId, by: uid, reason: reason ?? null });
+  }
+  logger.info('cancelBooking', 'cancelled', { bookingId, by: isAdmin ? 'admin' : 'rider', late: result.late });
+  return { cancelled: true, lateCancellation: result.late };
+});
 
 // ---------------------------------------------------------------------------
 // deleteAccount — required by app stores and personal-data rules.

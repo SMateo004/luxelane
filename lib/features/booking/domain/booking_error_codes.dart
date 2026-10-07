@@ -12,4 +12,6 @@ abstract final class BookingErrorCodes {
   static const invalidFlight = 'booking/invalid-flight';
   static const tooManyPassengers = 'booking/too-many-passengers';
   static const rateFailed = 'booking/rate-failed';
+  static const cancelFailed = 'booking/cancel-failed';
+  static const notCancellable = 'booking/not-cancellable';
 }

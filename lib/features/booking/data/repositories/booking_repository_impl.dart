@@ -214,14 +214,17 @@ class BookingRepositoryImpl implements BookingRepository {
 
   @override
   Future<Either<Failure, void>> cancelBooking(String bookingId) async {
+    // Server-side so the chauffeur is released and notified, and late
+    // cancellations (< 1 h before pickup) are recorded.
     try {
-      await _col.doc(bookingId).update({
-        'status': BookingStatus.cancelled.label,
-        'updatedAt': Timestamp.now(),
-      });
+      await _fn.httpsCallable('cancelBooking').call({'bookingId': bookingId});
       return const Right(null);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on FirebaseFunctionsException catch (e) {
+      final notCancellable = e.message?.contains('not-cancellable') ?? false;
+      return Left(ServerFailure(
+          notCancellable ? BookingErrorCodes.notCancellable : BookingErrorCodes.cancelFailed));
+    } catch (_) {
+      return const Left(ServerFailure(BookingErrorCodes.cancelFailed));
     }
   }
 

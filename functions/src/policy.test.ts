@@ -4,7 +4,10 @@ import {
   chunk,
   formatMoney,
   freeWaitEnd,
+  isLateCancellation,
   isStalePending,
+  ADMIN_CANCELLABLE,
+  RIDER_CANCELLABLE,
   isValidAmount,
   isValidDriverTransition,
   MAX_CHARGE_MINOR,
@@ -113,5 +116,22 @@ describe('freeWaitEnd', () => {
     const landing = new Date('2026-10-07T14:40:00Z');
     expect(freeWaitEnd({ pickup, isAirport: true, landing }).toISOString()).toBe('2026-10-07T15:40:00.000Z');
     expect(freeWaitEnd({ pickup, isAirport: true }).toISOString()).toBe('2026-10-07T15:00:00.000Z');
+  });
+});
+
+describe('cancellation', () => {
+  const pickup = new Date('2026-10-07T14:00:00Z');
+
+  it('is free until one hour before pickup', () => {
+    expect(isLateCancellation(pickup, new Date('2026-10-07T12:30:00Z'))).toBe(false);
+    expect(isLateCancellation(pickup, new Date('2026-10-07T13:00:00Z'))).toBe(false);
+    expect(isLateCancellation(pickup, new Date('2026-10-07T13:30:00Z'))).toBe(true);
+  });
+
+  it('lets riders cancel only before the ride starts', () => {
+    expect(RIDER_CANCELLABLE).toContain('driver_arrived');
+    expect(RIDER_CANCELLABLE).not.toContain('in_progress');
+    expect(ADMIN_CANCELLABLE).toContain('in_progress');
+    expect(ADMIN_CANCELLABLE).not.toContain('completed');
   });
 });
