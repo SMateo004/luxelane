@@ -13,18 +13,19 @@ import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../driver_shell/driver_shell.dart';
 
 abstract class DriverRoutes {
-  static const login        = '/driver/login';
-  static const home         = '/driver';
-  static const onboarding   = '/driver/onboarding';
-  static const queue        = '/driver/queue';
-  static const earnings     = '/driver/earnings';
-  static const profile      = '/driver/profile';
-  static const activeRide   = '/driver/active-ride/:bookingId';
+  static const login = '/driver/login';
+  static const home = '/driver';
+  static const onboarding = '/driver/onboarding';
+  static const queue = '/driver/queue';
+  static const earnings = '/driver/earnings';
+  static const profile = '/driver/profile';
+  static const activeRide = '/driver/active-ride/:bookingId';
 }
 
 final _rootKey = GlobalKey<NavigatorState>();
 
-GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter(
+GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) =>
+    GoRouter(
       navigatorKey: _rootKey,
       initialLocation: DriverRoutes.home,
       redirect: (context, state) {
@@ -88,8 +89,7 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
               routes: [
                 GoRoute(
                   path: DriverRoutes.home,
-                  pageBuilder: (c, s) =>
-                      _fade(const DriverHomeScreen(), s),
+                  pageBuilder: (c, s) => _fade(const DriverHomeScreen(), s),
                 ),
               ],
             ),
@@ -97,8 +97,7 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
               routes: [
                 GoRoute(
                   path: DriverRoutes.queue,
-                  pageBuilder: (c, s) =>
-                      _fade(const DriverQueueScreen(), s),
+                  pageBuilder: (c, s) => _fade(const DriverQueueScreen(), s),
                 ),
               ],
             ),
@@ -106,8 +105,7 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
               routes: [
                 GoRoute(
                   path: DriverRoutes.earnings,
-                  pageBuilder: (c, s) =>
-                      _fade(const DriverEarningsScreen(), s),
+                  pageBuilder: (c, s) => _fade(const DriverEarningsScreen(), s),
                 ),
               ],
             ),
@@ -115,8 +113,7 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
               routes: [
                 GoRoute(
                   path: DriverRoutes.profile,
-                  pageBuilder: (c, s) =>
-                      _fade(const ProfileScreen(), s),
+                  pageBuilder: (c, s) => _fade(const ProfileScreen(), s),
                 ),
               ],
             ),
@@ -157,8 +154,8 @@ CustomTransitionPage<void> _slide(Widget child, GoRouterState state) =>
         position: Tween<Offset>(
           begin: const Offset(0, 1),
           end: Offset.zero,
-        ).animate(CurvedAnimation(
-            parent: animation, curve: Curves.easeOutCubic)),
+        ).animate(
+            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
         child: child,
       ),
     );
@@ -168,7 +165,8 @@ class _NotFoundPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const Scaffold(
         body: Center(
-          child: Text('404', style: TextStyle(color: Colors.white, fontSize: 64)),
+          child:
+              Text('404', style: TextStyle(color: Colors.white, fontSize: 64)),
         ),
       );
 }

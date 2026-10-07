@@ -37,7 +37,8 @@ class BookingCreateRequested extends BookingEvent {
   final double estimatedPrice;
   final String? notes;
   @override
-  List<Object?> get props => [riderId, vehicleClass, scheduledAt, estimatedPrice];
+  List<Object?> get props =>
+      [riderId, vehicleClass, scheduledAt, estimatedPrice];
 }
 
 class BookingStatusWatched extends BookingEvent {

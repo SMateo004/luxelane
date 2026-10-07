@@ -13,11 +13,11 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _form  = GlobalKey<FormState>();
-  final _name  = TextEditingController();
+  final _form = GlobalKey<FormState>();
+  final _name = TextEditingController();
   final _email = TextEditingController();
   final _phone = TextEditingController();
-  final _pass  = TextEditingController();
+  final _pass = TextEditingController();
 
   @override
   void dispose() {
@@ -73,7 +73,8 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: LuxSpacing.xl),
               const Text('Crear cuenta.', style: LuxTypography.displayMedium),
               const SizedBox(height: LuxSpacing.sm),
-              const Text('Únete a Luxelane hoy', style: LuxTypography.bodyMedium),
+              const Text('Únete a Luxelane hoy',
+                  style: LuxTypography.bodyMedium),
               const SizedBox(height: LuxSpacing.xl),
               _formContent(),
             ],

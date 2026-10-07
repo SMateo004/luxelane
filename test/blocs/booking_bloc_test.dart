@@ -64,6 +64,7 @@ void main() {
         serviceType: ServiceType.oneWay,
         scheduledAt: _now,
         riderId: 'rider-1',
+        estimatedPrice: 75.0,
       )),
       expect: () => [
         const BookingLoading(),
@@ -85,6 +86,7 @@ void main() {
         serviceType: ServiceType.oneWay,
         scheduledAt: _now,
         riderId: 'rider-1',
+        estimatedPrice: 75.0,
       )),
       expect: () => [
         const BookingLoading(),
@@ -126,7 +128,8 @@ void main() {
       'emits BookingStatusUpdated on BookingStatusChanged',
       build: () => BookingBloc(bookingRepository: repo),
       act: (bloc) => bloc.add(
-        BookingStatusChanged(booking: _makeBooking(status: BookingStatus.confirmed)),
+        BookingStatusChanged(
+            booking: _makeBooking(status: BookingStatus.confirmed)),
       ),
       expect: () => [
         isA<BookingStatusUpdated>()

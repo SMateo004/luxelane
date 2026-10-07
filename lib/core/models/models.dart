@@ -290,8 +290,9 @@ class Booking {
         riderId: j['riderId'] as String? ?? '',
         driverId: j['driverId'] as String?,
         origin: Place.fromJson(j['origin'] as Map<String, dynamic>? ?? {}),
-        destination: Place.fromJson(j['destination'] as Map<String, dynamic>? ?? {}),
-        scheduledAt: j['scheduledAt'] != null 
+        destination:
+            Place.fromJson(j['destination'] as Map<String, dynamic>? ?? {}),
+        scheduledAt: j['scheduledAt'] != null
             ? (j['scheduledAt'] as Timestamp).toDate()
             : DateTime.now(),
         vehicleClass: VehicleClass.values.firstWhere(
@@ -306,10 +307,10 @@ class Booking {
         estimatedPrice: (j['estimatedPrice'] as num?)?.toDouble() ?? 0.0,
         finalPrice: (j['finalPrice'] as num?)?.toDouble(),
         paymentId: j['paymentId'] as String?,
-        createdAt: j['createdAt'] != null 
+        createdAt: j['createdAt'] != null
             ? (j['createdAt'] as Timestamp).toDate()
             : DateTime.now(),
-        updatedAt: j['updatedAt'] != null 
+        updatedAt: j['updatedAt'] != null
             ? (j['updatedAt'] as Timestamp).toDate()
             : DateTime.now(),
         notes: j['notes'] as String?,
@@ -426,7 +427,8 @@ class Ride {
         'riderId': riderId,
         'driverId': driverId,
         'startedAt': Timestamp.fromDate(startedAt),
-        'completedAt': completedAt != null ? Timestamp.fromDate(completedAt!) : null,
+        'completedAt':
+            completedAt != null ? Timestamp.fromDate(completedAt!) : null,
         'driverRoute': driverRoute,
         'distanceKm': distanceKm,
         'durationMin': durationMin,
@@ -536,11 +538,11 @@ class PricingRule {
         'minimumPriceUsd': minimumPriceUsd,
       };
 
-  double estimateOneWay(double km) =>
-      (basePriceUsd + km * pricePerKmUsd).clamp(minimumPriceUsd, double.infinity);
+  double estimateOneWay(double km) => (basePriceUsd + km * pricePerKmUsd)
+      .clamp(minimumPriceUsd, double.infinity);
 
-  double estimateByHour(int hours) =>
-      (basePriceUsd + hours * pricePerHourUsd).clamp(minimumPriceUsd, double.infinity);
+  double estimateByHour(int hours) => (basePriceUsd + hours * pricePerHourUsd)
+      .clamp(minimumPriceUsd, double.infinity);
 }
 
 // ---------------------------------------------------------------------------
@@ -592,26 +594,38 @@ class AuditLog {
 // ---------------------------------------------------------------------------
 
 abstract class DefaultPricing {
-  static const Map<VehicleClass, Map<ServiceType, Map<String, double>>> rules = {
+  static const Map<VehicleClass, Map<ServiceType, Map<String, double>>> rules =
+      {
     VehicleClass.business: {
-      ServiceType.oneWay:     {'base': 50, 'perKm': 3.0,  'perHour': 0,   'min': 50},
-      ServiceType.byTheHour: {'base': 0,  'perKm': 0,    'perHour': 80,  'min': 160},
+      ServiceType.oneWay: {'base': 50, 'perKm': 3.0, 'perHour': 0, 'min': 50},
+      ServiceType.byTheHour: {'base': 0, 'perKm': 0, 'perHour': 80, 'min': 160},
     },
     VehicleClass.firstClass: {
-      ServiceType.oneWay:     {'base': 80, 'perKm': 4.0,  'perHour': 0,   'min': 80},
-      ServiceType.byTheHour: {'base': 0,  'perKm': 0,    'perHour': 120, 'min': 240},
+      ServiceType.oneWay: {'base': 80, 'perKm': 4.0, 'perHour': 0, 'min': 80},
+      ServiceType.byTheHour: {
+        'base': 0,
+        'perKm': 0,
+        'perHour': 120,
+        'min': 240
+      },
     },
     VehicleClass.businessVan: {
-      ServiceType.oneWay:     {'base': 90, 'perKm': 5.0,  'perHour': 0,   'min': 90},
-      ServiceType.byTheHour: {'base': 0,  'perKm': 0,    'perHour': 150, 'min': 300},
+      ServiceType.oneWay: {'base': 90, 'perKm': 5.0, 'perHour': 0, 'min': 90},
+      ServiceType.byTheHour: {
+        'base': 0,
+        'perKm': 0,
+        'perHour': 150,
+        'min': 300
+      },
     },
     VehicleClass.electric: {
-      ServiceType.oneWay:     {'base': 60, 'perKm': 3.5,  'perHour': 0,   'min': 60},
-      ServiceType.byTheHour: {'base': 0,  'perKm': 0,    'perHour': 90,  'min': 180},
+      ServiceType.oneWay: {'base': 60, 'perKm': 3.5, 'perHour': 0, 'min': 60},
+      ServiceType.byTheHour: {'base': 0, 'perKm': 0, 'perHour': 90, 'min': 180},
     },
   };
 
-  static double estimate(VehicleClass vc, ServiceType st, {double km = 0, int hours = 2}) {
+  static double estimate(VehicleClass vc, ServiceType st,
+      {double km = 0, int hours = 2}) {
     final r = rules[vc]![st]!;
     if (st == ServiceType.byTheHour) {
       return (r['perHour']! * hours).clamp(r['min']!, double.infinity);
@@ -640,7 +654,8 @@ class AppNotification {
   final String userId;
   final String title;
   final String body;
-  final String type; // booking_confirmed, driver_arriving, driver_arrived, ride_started, ride_completed, etc.
+  final String
+      type; // booking_confirmed, driver_arriving, driver_arrived, ride_started, ride_completed, etc.
   final bool isRead;
   final DateTime createdAt;
   final String? bookingId;

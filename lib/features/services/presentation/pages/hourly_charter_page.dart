@@ -89,7 +89,8 @@ class _DesktopLayout extends StatelessWidget {
       children: [
         Flexible(
           flex: 2,
-          child: _BookingPanel(isIda: isIda, onToggle: onToggle, isMobile: false),
+          child:
+              _BookingPanel(isIda: isIda, onToggle: onToggle, isMobile: false),
         ),
         Flexible(
           flex: 3,
@@ -416,9 +417,8 @@ class _BookingPanel extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: _kSans,
                         fontSize: 12,
-                        color: isIda
-                            ? Colors.white
-                            : Colors.white.withAlpha(130),
+                        color:
+                            isIda ? Colors.white : Colors.white.withAlpha(130),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -444,9 +444,8 @@ class _BookingPanel extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: _kSans,
                         fontSize: 12,
-                        color: !isIda
-                            ? Colors.white
-                            : Colors.white.withAlpha(130),
+                        color:
+                            !isIda ? Colors.white : Colors.white.withAlpha(130),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -491,8 +490,8 @@ class _BookingPanel extends StatelessWidget {
           children: [
             Expanded(
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: _kElevated,
                   border: Border.all(color: _kBorder),
@@ -518,8 +517,8 @@ class _BookingPanel extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 14),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 decoration: BoxDecoration(
                   color: _kElevated,
                   border: Border.all(color: _kBorder),

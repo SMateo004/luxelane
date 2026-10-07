@@ -27,7 +27,7 @@ class RideScreen extends StatefulWidget {
 
 class _RideScreenState extends State<RideScreen> {
   Booking? _booking;
-  String?  _actualRideId; // real ride doc ID fetched after completion
+  String? _actualRideId; // real ride doc ID fetched after completion
   bool _ratingSubmitted = false;
 
   @override
@@ -51,15 +51,13 @@ class _RideScreenState extends State<RideScreen> {
   // Fetch the actual ride document for this booking so we can submit rating
   Future<void> _fetchRideId() async {
     if (_actualRideId != null) return;
-    final result = await sl<RideRepository>()
-        .getRideByBooking(widget.rideId);
+    final result = await sl<RideRepository>().getRideByBooking(widget.rideId);
     result.fold((_) {}, (ride) {
       if (mounted) setState(() => _actualRideId = ride.id);
     });
   }
 
-  BookingStatus get _status =>
-      _booking?.status ?? BookingStatus.confirmed;
+  BookingStatus get _status => _booking?.status ?? BookingStatus.confirmed;
 
   String get _statusMessage {
     switch (_status) {
@@ -205,8 +203,8 @@ class _RideScreenState extends State<RideScreen> {
       },
       child: _booking?.driverId != null
           ? StreamBuilder<DriverProfile?>(
-              stream: sl<UserRepository>()
-                  .watchDriverProfile(_booking!.driverId!),
+              stream:
+                  sl<UserRepository>().watchDriverProfile(_booking!.driverId!),
               builder: (context, snap) =>
                   _buildScaffold(snap.data?.currentLocation),
             )
@@ -220,9 +218,7 @@ class _RideScreenState extends State<RideScreen> {
         : null;
     final web = isWeb(context);
     return Scaffold(
-      body: web
-          ? _webLayout(driverLatLng)
-          : _mobileLayout(driverLatLng),
+      body: web ? _webLayout(driverLatLng) : _mobileLayout(driverLatLng),
     );
   }
 
@@ -270,8 +266,7 @@ class _RideScreenState extends State<RideScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(_statusMessage,
-                              style: LuxTypography.bodyMedium),
+                          Text(_statusMessage, style: LuxTypography.bodyMedium),
                           const SizedBox(height: LuxSpacing.lg),
                           const DriverCard(
                             name: 'James Whitmore',
@@ -292,8 +287,7 @@ class _RideScreenState extends State<RideScreen> {
                               const SizedBox(width: LuxSpacing.sm),
                               Expanded(
                                 child: LuxButton(
-                                  label: _status ==
-                                          BookingStatus.completed
+                                  label: _status == BookingStatus.completed
                                       ? 'Calificar y finalizar'
                                       : 'Siguiente (dev)',
                                   onPressed: _advance,
@@ -494,10 +488,12 @@ class _RatingDialogState extends State<_RatingDialog> {
                 return GestureDetector(
                   onTap: () => setState(() => _rating = star.toDouble()),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: LuxSpacing.xs),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: LuxSpacing.xs),
                     child: Icon(
-                      star <= _rating ? Icons.star_rounded : Icons.star_outline_rounded,
+                      star <= _rating
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
                       color: LuxColors.sapphire,
                       size: 36,
                     ),

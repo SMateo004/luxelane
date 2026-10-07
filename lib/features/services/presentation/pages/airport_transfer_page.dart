@@ -414,9 +414,8 @@ class _BookingPanel extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: _kSans,
                         fontSize: 12,
-                        color: isIda
-                            ? Colors.white
-                            : Colors.white.withAlpha(130),
+                        color:
+                            isIda ? Colors.white : Colors.white.withAlpha(130),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -442,9 +441,8 @@ class _BookingPanel extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: _kSans,
                         fontSize: 12,
-                        color: !isIda
-                            ? Colors.white
-                            : Colors.white.withAlpha(130),
+                        color:
+                            !isIda ? Colors.white : Colors.white.withAlpha(130),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -999,8 +997,7 @@ class _VehicleCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: _kSapphire.withAlpha(40),
                 border: Border.all(color: _kSapphire),
@@ -1048,9 +1045,8 @@ class _VehicleCard extends StatelessWidget {
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: imageOnLeft
-            ? [imageWidget, textWidget]
-            : [textWidget, imageWidget],
+        children:
+            imageOnLeft ? [imageWidget, textWidget] : [textWidget, imageWidget],
       ),
     );
   }

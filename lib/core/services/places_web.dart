@@ -22,20 +22,30 @@ String _str(dynamic raw) {
   if (raw == null) return '';
   if (raw is String) return raw;
   // FormattableText object — use js_util (works on Promise-resolved objects)
-  try { return js_util.getProperty(raw as Object, 'text') as String? ?? ''; }
-  catch (_) {}
+  try {
+    return js_util.getProperty(raw as Object, 'text') as String? ?? '';
+  } catch (_) {}
   // Fallback: dart:js [] operator
-  try { return (raw as js.JsObject)['text'] as String? ?? ''; }
-  catch (_) { return ''; }
+  try {
+    return (raw as js.JsObject)['text'] as String? ?? '';
+  } catch (_) {
+    return '';
+  }
 }
 
 // ── Property access that works on Promise-resolved JS objects ─────────────────
 dynamic _prop(dynamic obj, String key) {
   if (obj == null) return null;
   // Try js_util first (for promise-resolved values)
-  try { return js_util.getProperty(obj as Object, key); } catch (_) {}
+  try {
+    return js_util.getProperty(obj as Object, key);
+  } catch (_) {}
   // Fallback to dart:js [] (for JsObject instances)
-  try { return (obj as js.JsObject)[key]; } catch (_) { return null; }
+  try {
+    return (obj as js.JsObject)[key];
+  } catch (_) {
+    return null;
+  }
 }
 
 // ── Autocomplete ──────────────────────────────────────────────────────────────
@@ -47,11 +57,20 @@ Future<List<PlaceSuggestion>> webAutocomplete(
 }) async {
   try {
     final google = js.context['google'];
-    if (google == null) { _dbg('google not loaded'); return []; }
+    if (google == null) {
+      _dbg('google not loaded');
+      return [];
+    }
     final maps = _prop(google, 'maps');
-    if (maps == null) { _dbg('maps not loaded'); return []; }
+    if (maps == null) {
+      _dbg('maps not loaded');
+      return [];
+    }
     final places = _prop(maps, 'places');
-    if (places == null) { _dbg('places not loaded'); return []; }
+    if (places == null) {
+      _dbg('places not loaded');
+      return [];
+    }
 
     // ── New Places API (AutocompleteSuggestion) — required for post-Mar-2025 keys ──
     final newApiClass = _prop(places, 'AutocompleteSuggestion');
@@ -113,21 +132,21 @@ Future<List<PlaceSuggestion>> _newAutocomplete(
       final pred = _prop(sugg, 'placePrediction');
       if (pred == null) continue;
 
-      final placeId       = _prop(pred, 'placeId') as String? ?? '';
-      final textObj       = _prop(pred, 'text');
-      final mainTextObj   = _prop(pred, 'mainText');
-      final secTextObj    = _prop(pred, 'secondaryText');
+      final placeId = _prop(pred, 'placeId') as String? ?? '';
+      final textObj = _prop(pred, 'text');
+      final mainTextObj = _prop(pred, 'mainText');
+      final secTextObj = _prop(pred, 'secondaryText');
 
-      final description  = _str(textObj);
-      final mainText     = _str(mainTextObj);
+      final description = _str(textObj);
+      final mainText = _str(mainTextObj);
       final secondaryText = _str(secTextObj);
 
       if (placeId.isEmpty && description.isEmpty) continue;
 
       results.add(PlaceSuggestion(
-        placeId:       placeId,
-        description:   description,
-        mainText:      mainText.isNotEmpty ? mainText : description,
+        placeId: placeId,
+        description: description,
+        mainText: mainText.isNotEmpty ? mainText : description,
         secondaryText: secondaryText,
       ));
     }
@@ -168,11 +187,12 @@ Future<List<PlaceSuggestion>> _legacyAutocomplete(
             final results = <PlaceSuggestion>[];
             for (int i = 0; i < list.length; i++) {
               final jsP = js.JsObject.fromBrowserObject(list[i] as Object);
-              final sf  = js.JsObject.fromBrowserObject(jsP['structured_formatting'] as Object);
+              final sf = js.JsObject.fromBrowserObject(
+                  jsP['structured_formatting'] as Object);
               results.add(PlaceSuggestion(
-                placeId:       jsP['place_id'] as String? ?? '',
-                description:   jsP['description'] as String? ?? '',
-                mainText:      sf['main_text'] as String? ?? '',
+                placeId: jsP['place_id'] as String? ?? '',
+                description: jsP['description'] as String? ?? '',
+                mainText: sf['main_text'] as String? ?? '',
                 secondaryText: sf['secondary_text'] as String? ?? '',
               ));
             }
@@ -209,7 +229,7 @@ Future<Place?> webPlaceDetails(String placeId, {String? address}) async {
     // Try Geocoder first as it's often more reliable for coordinates than PlacesService
     // especially regarding API restrictions.
     final geocoder = js.JsObject(maps['Geocoder'] as js.JsFunction);
-    
+
     geocoder.callMethod('geocode', [
       js.JsObject.jsify({
         'placeId': placeId,
@@ -219,7 +239,7 @@ Future<Place?> webPlaceDetails(String placeId, {String? address}) async {
           final res = js.JsObject.fromBrowserObject((results)[0] as Object);
           final geom = js.JsObject.fromBrowserObject(res['geometry'] as Object);
           final loc = js.JsObject.fromBrowserObject(geom['location'] as Object);
-          
+
           completer.complete(Place(
             name: address?.split(',').first ?? '',
             address: res['formatted_address'] as String? ?? address ?? '',
@@ -233,17 +253,22 @@ Future<Place?> webPlaceDetails(String placeId, {String? address}) async {
             geocoder.callMethod('geocode', [
               js.JsObject.jsify({'address': address}),
               js.allowInterop((dynamic results2, dynamic status2) {
-                if (status2 == 'OK' && results2 != null && (results2 as List).isNotEmpty) {
-                   final res2 = js.JsObject.fromBrowserObject((results2)[0] as Object);
-                   final geom2 = js.JsObject.fromBrowserObject(res2['geometry'] as Object);
-                   final loc2 = js.JsObject.fromBrowserObject(geom2['location'] as Object);
-                   
-                   completer.complete(Place(
-                     name: address.split(',').first,
-                     address: res2['formatted_address'] as String? ?? address,
-                     lat: (loc2.callMethod('lat') as num).toDouble(),
-                     lng: (loc2.callMethod('lng') as num).toDouble(),
-                   ));
+                if (status2 == 'OK' &&
+                    results2 != null &&
+                    (results2 as List).isNotEmpty) {
+                  final res2 =
+                      js.JsObject.fromBrowserObject((results2)[0] as Object);
+                  final geom2 =
+                      js.JsObject.fromBrowserObject(res2['geometry'] as Object);
+                  final loc2 = js.JsObject.fromBrowserObject(
+                      geom2['location'] as Object);
+
+                  completer.complete(Place(
+                    name: address.split(',').first,
+                    address: res2['formatted_address'] as String? ?? address,
+                    lat: (loc2.callMethod('lat') as num).toDouble(),
+                    lng: (loc2.callMethod('lng') as num).toDouble(),
+                  ));
                 } else {
                   completer.complete(null);
                 }
@@ -277,7 +302,9 @@ Future<Place?> webReverseGeocode(double lat, double lng) async {
     final completer = Completer<Place?>();
 
     geocoder.callMethod('geocode', [
-      js.JsObject.jsify({'location': {'lat': lat, 'lng': lng}}),
+      js.JsObject.jsify({
+        'location': {'lat': lat, 'lng': lng}
+      }),
       js.allowInterop((dynamic results, dynamic status) {
         if (status == 'OK' && results != null) {
           try {
@@ -286,8 +313,7 @@ Future<Place?> webReverseGeocode(double lat, double lng) async {
               final address =
                   (arr[0] as js.JsObject)['formatted_address'] as String? ??
                       '$lat,$lng';
-              completer.complete(
-                  Place(address: address, lat: lat, lng: lng));
+              completer.complete(Place(address: address, lat: lat, lng: lng));
               return;
             }
           } catch (_) {}
@@ -317,7 +343,8 @@ Future<RouteInfo?> webGetRoute({
 
     final service = js.JsObject(maps['DirectionsService'] as js.JsFunction);
     final completer = Completer<RouteInfo?>();
-    final travelMode = ((maps['TravelMode'] as js.JsObject)['DRIVING']) as dynamic;
+    final travelMode =
+        ((maps['TravelMode'] as js.JsObject)['DRIVING']) as dynamic;
 
     service.callMethod('route', [
       js.JsObject.jsify({
@@ -330,12 +357,17 @@ Future<RouteInfo?> webGetRoute({
           try {
             final r = result as js.JsObject;
             final routes = r['routes'] as js.JsArray;
-            if (routes.isEmpty) { completer.complete(null); return; }
+            if (routes.isEmpty) {
+              completer.complete(null);
+              return;
+            }
             final route = routes[0] as js.JsObject;
             final leg = (route['legs'] as js.JsArray)[0] as js.JsObject;
-            final distM = ((leg['distance'] as js.JsObject)['value'] as num).toDouble();
-            final durS  = ((leg['duration'] as js.JsObject)['value'] as num).toInt();
-            final path  = route['overview_path'] as js.JsArray;
+            final distM =
+                ((leg['distance'] as js.JsObject)['value'] as num).toDouble();
+            final durS =
+                ((leg['duration'] as js.JsObject)['value'] as num).toInt();
+            final path = route['overview_path'] as js.JsArray;
             final points = <LatLng>[];
             for (int i = 0; i < path.length; i++) {
               final pt = path[i] as js.JsObject;
@@ -349,8 +381,12 @@ Future<RouteInfo?> webGetRoute({
               durationMin: durS ~/ 60,
               polylinePoints: points,
             ));
-          } catch (_) { completer.complete(null); }
-        } else { completer.complete(null); }
+          } catch (_) {
+            completer.complete(null);
+          }
+        } else {
+          completer.complete(null);
+        }
       }),
     ]);
 

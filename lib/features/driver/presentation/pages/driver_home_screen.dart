@@ -89,8 +89,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       },
       builder: (context, state) {
         final authState = context.read<AuthBloc>().state;
-        final isAuthedDriver = authState is AuthAuthenticated && 
-                              authState.user.role == UserRole.driver;
+        final isAuthedDriver = authState is AuthAuthenticated &&
+            authState.user.role == UserRole.driver;
 
         if (state is DriverError) {
           return Scaffold(
@@ -98,18 +98,24 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.error_outline, color: LuxColors.error, size: 48),
+                  const Icon(Icons.error_outline,
+                      color: LuxColors.error, size: 48),
                   const SizedBox(height: 16),
-                  const Text('Error de conexión', style: LuxTypography.headlineMedium),
+                  const Text('Error de conexión',
+                      style: LuxTypography.headlineMedium),
                   const SizedBox(height: 8),
-                  Text(state.message, style: LuxTypography.caption, textAlign: TextAlign.center),
+                  Text(state.message,
+                      style: LuxTypography.caption,
+                      textAlign: TextAlign.center),
                   const SizedBox(height: 24),
                   LuxButton(
                     label: 'Reintentar',
                     onPressed: () {
                       final auth = context.read<AuthBloc>().state;
                       if (auth is AuthAuthenticated) {
-                        context.read<DriverBloc>().add(DriverStarted(userId: auth.user.id));
+                        context
+                            .read<DriverBloc>()
+                            .add(DriverStarted(userId: auth.user.id));
                       }
                     },
                   ),
@@ -284,8 +290,7 @@ class _StatusBanner extends StatelessWidget {
                   Text(
                     isAvailable ? 'Estás conectado' : 'Estás desconectado',
                     style: LuxTypography.titleMedium.copyWith(
-                      color:
-                          isAvailable ? LuxColors.success : LuxColors.white,
+                      color: isAvailable ? LuxColors.success : LuxColors.white,
                     ),
                   ),
                   Text(
@@ -310,11 +315,16 @@ class _ActiveRidePanel extends StatelessWidget {
 
   String get _actionLabel {
     switch (booking.status) {
-      case BookingStatus.confirmed:      return 'Ir al punto de recogida';
-      case BookingStatus.driverArriving: return 'He llegado';
-      case BookingStatus.driverArrived:  return 'Iniciar viaje';
-      case BookingStatus.inProgress:     return 'Completar viaje';
-      default:                           return '';
+      case BookingStatus.confirmed:
+        return 'Ir al punto de recogida';
+      case BookingStatus.driverArriving:
+        return 'He llegado';
+      case BookingStatus.driverArrived:
+        return 'Iniciar viaje';
+      case BookingStatus.inProgress:
+        return 'Completar viaje';
+      default:
+        return '';
     }
   }
 
@@ -337,7 +347,8 @@ class _ActiveRidePanel extends StatelessWidget {
   Future<void> _openMaps(BuildContext context, Place target) async {
     try {
       if (kIsWeb) {
-        final url = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=${target.lat},${target.lng}');
+        final url = Uri.parse(
+            'https://www.google.com/maps/dir/?api=1&destination=${target.lat},${target.lng}');
         if (await canLaunchUrl(url)) {
           await launchUrl(url);
         } else {
@@ -350,7 +361,8 @@ class _ActiveRidePanel extends StatelessWidget {
       if (!context.mounted) return;
 
       if (availableMaps.isEmpty) {
-        showLuxSnackbar(context, 'No hay aplicaciones de mapas disponibles', isError: true);
+        showLuxSnackbar(context, 'No hay aplicaciones de mapas disponibles',
+            isError: true);
         return;
       }
 
@@ -365,7 +377,8 @@ class _ActiveRidePanel extends StatelessWidget {
                   padding: const EdgeInsets.all(LuxSpacing.md),
                   child: Text('Navegar hacia ${target.address}',
                       style: LuxTypography.titleMedium,
-                      maxLines: 1, overflow: TextOverflow.ellipsis),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
                 ),
                 Flexible(
                   child: ListView.builder(
@@ -376,9 +389,11 @@ class _ActiveRidePanel extends StatelessWidget {
                       return ListTile(
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: const Icon(Icons.map_outlined, color: LuxColors.sapphire, size: 24),
+                          child: const Icon(Icons.map_outlined,
+                              color: LuxColors.sapphire, size: 24),
                         ),
-                        title: Text(map.mapName, style: LuxTypography.bodyLarge),
+                        title:
+                            Text(map.mapName, style: LuxTypography.bodyLarge),
                         onTap: () {
                           map.showMarker(
                             coords: ml.Coords(target.lat, target.lng),
@@ -397,15 +412,16 @@ class _ActiveRidePanel extends StatelessWidget {
       );
     } catch (e) {
       if (context.mounted) {
-        showLuxSnackbar(context, 'No se pudieron abrir los mapas', isError: true);
+        showLuxSnackbar(context, 'No se pudieron abrir los mapas',
+            isError: true);
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool goingToPickup = booking.status == BookingStatus.confirmed || 
-                               booking.status == BookingStatus.driverArriving;
+    final bool goingToPickup = booking.status == BookingStatus.confirmed ||
+        booking.status == BookingStatus.driverArriving;
     final targetPlace = goingToPickup ? booking.origin : booking.destination;
 
     return Padding(
@@ -484,8 +500,7 @@ class _AddressRow extends StatelessWidget {
           Stack(
             alignment: Alignment.center,
             children: [
-              if (isCurrent)
-                _PulseIndicator(color: color),
+              if (isCurrent) _PulseIndicator(color: color),
               Icon(icon, color: color, size: 18),
             ],
           ),
@@ -494,13 +509,16 @@ class _AddressRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: LuxTypography.caption.copyWith(
-                  color: isCurrent ? color : LuxColors.whiteTertiary,
-                  fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
-                )),
+                Text(label,
+                    style: LuxTypography.caption.copyWith(
+                      color: isCurrent ? color : LuxColors.whiteTertiary,
+                      fontWeight:
+                          isCurrent ? FontWeight.bold : FontWeight.normal,
+                    )),
                 Text(address,
                     style: LuxTypography.bodyMedium.copyWith(
-                      fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          isCurrent ? FontWeight.bold : FontWeight.normal,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis),
@@ -518,26 +536,36 @@ class _PulseIndicator extends StatefulWidget {
   State<_PulseIndicator> createState() => _PulseIndicatorState();
 }
 
-class _PulseIndicatorState extends State<_PulseIndicator> with SingleTickerProviderStateMixin {
+class _PulseIndicatorState extends State<_PulseIndicator>
+    with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
+    _ctrl =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2))
+          ..repeat();
   }
+
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => ScaleTransition(
-    scale: Tween(begin: 1.0, end: 1.8).animate(_ctrl),
-    child: FadeTransition(
-      opacity: Tween(begin: 0.5, end: 0.0).animate(_ctrl),
-      child: Container(
-        width: 14, height: 14,
-        decoration: BoxDecoration(color: widget.color, shape: BoxShape.circle),
-      ),
-    ),
-  );
+        scale: Tween(begin: 1.0, end: 1.8).animate(_ctrl),
+        child: FadeTransition(
+          opacity: Tween(begin: 0.5, end: 0.0).animate(_ctrl),
+          child: Container(
+            width: 14,
+            height: 14,
+            decoration:
+                BoxDecoration(color: widget.color, shape: BoxShape.circle),
+          ),
+        ),
+      );
 }
 
 class _StatCard extends StatelessWidget {
@@ -557,8 +585,8 @@ class _StatCard extends StatelessWidget {
             Icon(icon, color: LuxColors.sapphire, size: 24),
             const SizedBox(height: LuxSpacing.sm),
             Text(value,
-                style:
-                    LuxTypography.headlineLarge.copyWith(color: LuxColors.sapphire)),
+                style: LuxTypography.headlineLarge
+                    .copyWith(color: LuxColors.sapphire)),
             const SizedBox(height: 4),
             Text(label.toUpperCase(), style: LuxTypography.caption),
           ],
@@ -656,7 +684,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     ],
                   ),
                 ),
-                const Icon(Icons.notifications_active_rounded, 
+                const Icon(Icons.notifications_active_rounded,
                     color: LuxColors.sapphire, size: 40),
               ],
             ),
@@ -668,7 +696,8 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
               decoration: BoxDecoration(
                 color: LuxColors.sapphire.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: LuxColors.sapphire.withValues(alpha: 0.25)),
+                border: Border.all(
+                    color: LuxColors.sapphire.withValues(alpha: 0.25)),
               ),
               child: Row(
                 children: [
@@ -715,7 +744,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
               ),
               child: Column(
                 children: [
-                   _RouteItem(
+                  _RouteItem(
                     icon: Icons.radio_button_checked,
                     color: LuxColors.sapphire,
                     label: 'RECOGIDA',

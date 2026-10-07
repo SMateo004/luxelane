@@ -34,7 +34,6 @@ class CrashService {
     bool fatal = false,
   }) async {
     if (kIsWeb) return;
-    await FirebaseCrashlytics.instance
-        .recordError(error, stack, fatal: fatal);
+    await FirebaseCrashlytics.instance.recordError(error, stack, fatal: fatal);
   }
 }

@@ -50,6 +50,7 @@ class LuxMap extends StatefulWidget {
   final RouteInfo? routeInfo;
   final LatLng? driverLocation;
   final void Function(LatLng)? onTap;
+
   /// Use Google Maps default light style instead of the custom dark style.
   final bool lightStyle;
 
@@ -89,20 +90,22 @@ class _LuxMapState extends State<LuxMap> {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 14.0; // Ultra discrete
-    
+
     // White border (outer circle)
     final Paint whitePaint = Paint()..color = Colors.white;
-    canvas.drawCircle(const Offset(size/2, size/2), size/2, whitePaint);
+    canvas.drawCircle(const Offset(size / 2, size / 2), size / 2, whitePaint);
 
     // Inner color
     final Paint colorPaint = Paint()..color = color;
-    canvas.drawCircle(const Offset(size/2, size/2), size/2 - 2, colorPaint);
+    canvas.drawCircle(
+        const Offset(size / 2, size / 2), size / 2 - 2, colorPaint);
 
     final ui.Image image = await pictureRecorder.endRecording().toImage(
-      size.toInt(),
-      size.toInt(),
-    );
-    final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+          size.toInt(),
+          size.toInt(),
+        );
+    final ByteData? byteData =
+        await image.toByteData(format: ui.ImageByteFormat.png);
     return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
   }
 
@@ -112,7 +115,8 @@ class _LuxMapState extends State<LuxMap> {
       m.add(Marker(
         markerId: const MarkerId('origin'),
         position: widget.origin!.latLng,
-        icon: _originIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
+        icon: _originIcon ??
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
         infoWindow: InfoWindow(title: widget.origin!.displayName),
       ));
     }
@@ -120,7 +124,8 @@ class _LuxMapState extends State<LuxMap> {
       m.add(Marker(
         markerId: const MarkerId('destination'),
         position: widget.destination!.latLng,
-        icon: _destIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        icon: _destIcon ??
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
         infoWindow: InfoWindow(title: widget.destination!.displayName),
       ));
     }
@@ -128,8 +133,7 @@ class _LuxMapState extends State<LuxMap> {
   }
 
   Set<Polyline> get _polylines {
-    if (widget.routeInfo == null ||
-        widget.routeInfo!.polylinePoints.isEmpty) {
+    if (widget.routeInfo == null || widget.routeInfo!.polylinePoints.isEmpty) {
       return {};
     }
     return {
@@ -148,12 +152,16 @@ class _LuxMapState extends State<LuxMap> {
 
     final bounds = LatLngBounds(
       southwest: LatLng(
-        [widget.origin!.lat, widget.destination!.lat].reduce((a, b) => a < b ? a : b),
-        [widget.origin!.lng, widget.destination!.lng].reduce((a, b) => a < b ? a : b),
+        [widget.origin!.lat, widget.destination!.lat]
+            .reduce((a, b) => a < b ? a : b),
+        [widget.origin!.lng, widget.destination!.lng]
+            .reduce((a, b) => a < b ? a : b),
       ),
       northeast: LatLng(
-        [widget.origin!.lat, widget.destination!.lat].reduce((a, b) => a > b ? a : b),
-        [widget.origin!.lng, widget.destination!.lng].reduce((a, b) => a > b ? a : b),
+        [widget.origin!.lat, widget.destination!.lat]
+            .reduce((a, b) => a > b ? a : b),
+        [widget.origin!.lng, widget.destination!.lng]
+            .reduce((a, b) => a > b ? a : b),
       ),
     );
     _controller!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 80));
@@ -169,8 +177,7 @@ class _LuxMapState extends State<LuxMap> {
   @override
   void didUpdateWidget(LuxMap old) {
     super.didUpdateWidget(old);
-    if (old.origin != widget.origin ||
-        old.destination != widget.destination) {
+    if (old.origin != widget.origin || old.destination != widget.destination) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _fitBounds());
     }
     if (old.driverLocation != widget.driverLocation &&
@@ -211,9 +218,7 @@ class _LuxMapState extends State<LuxMap> {
                   color: LuxColors.whiteTertiary, size: 48),
               const SizedBox(height: LuxSpacing.md),
               Text(
-                widget.origin != null
-                    ? widget.origin!.displayName
-                    : 'Map view',
+                widget.origin != null ? widget.origin!.displayName : 'Map view',
                 style: LuxTypography.caption,
                 textAlign: TextAlign.center,
               ),

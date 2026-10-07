@@ -74,7 +74,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             },
             child: const Text(
               'Cerrar sesión',
-              style: TextStyle(color: LuxColors.error, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: LuxColors.error, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -195,15 +196,24 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   Widget _sectionBody() {
     switch (_section) {
-      case 0: return const DashboardTab();
-      case 1: return const BookingsTab();
-      case 2: return const DriversTab();
-      case 3: return const VehiclesTab();
-      case 4: return const UsersTab();
-      case 5: return const PricingTab();
-      case 6: return const AuditTab();
-      case 7: return const SettingsTab();
-      default: return const SizedBox();
+      case 0:
+        return const DashboardTab();
+      case 1:
+        return const BookingsTab();
+      case 2:
+        return const DriversTab();
+      case 3:
+        return const VehiclesTab();
+      case 4:
+        return const UsersTab();
+      case 5:
+        return const PricingTab();
+      case 6:
+        return const AuditTab();
+      case 7:
+        return const SettingsTab();
+      default:
+        return const SizedBox();
     }
   }
 }

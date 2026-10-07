@@ -7,6 +7,9 @@ analyzer:
     - '**/*.g.dart'
     - '**/*.freezed.dart'
     - 'lib/firebase_config.dart'
+    # Stray `flutter create` template project, not part of the app.
+    - 'luxelane/**'
+    - 'build/**'
 
 linter:
   rules:

@@ -98,7 +98,8 @@ class ProfileLoaded extends ProfileState {
   final int totalRides;
   final double? rating;
   @override
-  List<Object?> get props => [user.id, driverProfile?.userId, totalRides, rating];
+  List<Object?> get props =>
+      [user.id, driverProfile?.userId, totalRides, rating];
 }
 
 class ProfileUpdated extends ProfileState {

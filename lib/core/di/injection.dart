@@ -133,7 +133,8 @@ void _registerBlocs() {
   sl.registerFactory(() => VehicleBloc(vehicleRepository: sl()));
   sl.registerFactory(() => RideBloc(rideRepository: sl()));
   sl.registerFactory(() => PaymentBloc(paymentRepository: sl()));
-  sl.registerFactory(() => ProfileBloc(userRepository: sl(), bookingRepository: sl()));
+  sl.registerFactory(
+      () => ProfileBloc(userRepository: sl(), bookingRepository: sl()));
   sl.registerFactory(() => AdminBloc(adminRepository: sl()));
   sl.registerFactory(() => NotificationBloc(notificationRepository: sl()));
   sl.registerFactory(() => DriverBloc(

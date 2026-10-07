@@ -40,19 +40,21 @@ class DashboardTab extends StatelessWidget {
                   child: LuxCard(
                     child: Row(
                       children: [
-                        const Icon(Icons.warning_amber_rounded, color: LuxColors.error),
+                        const Icon(Icons.warning_amber_rounded,
+                            color: LuxColors.error),
                         const SizedBox(width: LuxSpacing.md),
                         const Expanded(
                           child: Text(
                             'MODO MANTENIMIENTO ACTIVO — Los pasajeros no pueden reservar nuevos viajes.',
-                            style: TextStyle(color: LuxColors.error, fontWeight: FontWeight.w600),
+                            style: TextStyle(
+                                color: LuxColors.error,
+                                fontWeight: FontWeight.w600),
                           ),
                         ),
                         LuxOutlinedButton(
                           label: 'Deshabilitar',
-                          onPressed: () => context
-                              .read<AdminBloc>()
-                              .add(const AdminToggleMaintenanceModeRequested(false)),
+                          onPressed: () => context.read<AdminBloc>().add(
+                              const AdminToggleMaintenanceModeRequested(false)),
                           width: 100,
                           height: 32,
                         ),
@@ -108,7 +110,8 @@ class DashboardTab extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Tendencia de ingresos 7 días (Bs)', style: LuxTypography.titleLarge),
+                    const Text('Tendencia de ingresos 7 días (Bs)',
+                        style: LuxTypography.titleLarge),
                     const SizedBox(height: LuxSpacing.xxl),
                     SizedBox(
                       height: 200,
@@ -155,14 +158,16 @@ class _KpiTile extends StatelessWidget {
                   Icon(icon, color: color, size: 20),
                   const Spacer(),
                   Text(label,
-                      style:
-                          LuxTypography.caption.copyWith(color: LuxColors.whiteTertiary)),
+                      style: LuxTypography.caption
+                          .copyWith(color: LuxColors.whiteTertiary)),
                 ],
               ),
               const SizedBox(height: LuxSpacing.sm),
               Text(value,
                   style: LuxTypography.headlineLarge.copyWith(
-                      color: color, fontFamily: 'Cormorant Garamond', fontSize: 36)),
+                      color: color,
+                      fontFamily: 'Cormorant Garamond',
+                      fontSize: 36)),
               const SizedBox(height: 2),
               Text(sub, style: LuxTypography.caption),
             ],
@@ -271,9 +276,8 @@ class _BookingsTabState extends State<BookingsTab> {
     return BlocBuilder<AdminBloc, AdminState>(
       builder: (context, blocState) {
         final state = widget.state ?? blocState;
-        var rows = widget.compact
-            ? state.bookings.take(5).toList()
-            : state.bookings;
+        var rows =
+            widget.compact ? state.bookings.take(5).toList() : state.bookings;
 
         if (_filter != null && !widget.compact) {
           rows = rows.where((b) => b.status == _filter).toList();
@@ -362,8 +366,7 @@ class _FilterChip extends StatelessWidget {
           child: Text(label,
               style: LuxTypography.caption.copyWith(
                   color: selected ? Colors.black : LuxColors.whiteTertiary,
-                  fontWeight:
-                      selected ? FontWeight.w700 : FontWeight.normal)),
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.normal)),
         ),
       );
 }
@@ -385,8 +388,7 @@ class _AdminBookingTile extends StatelessWidget {
           children: [
             // ID badge
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
                 color: LuxColors.sapphireSubtle,
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
@@ -402,7 +404,8 @@ class _AdminBookingTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Pasajero: $riderName', style: LuxTypography.titleMedium),
+                  Text('Pasajero: $riderName',
+                      style: LuxTypography.titleMedium),
                   if (driverName != null)
                     Text('Chófer: $driverName',
                         style: LuxTypography.caption
@@ -448,7 +451,8 @@ class _AdminBookingTile extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: LuxColors.blackElevated,
-        title: const Text('¿Eliminar reserva?', style: LuxTypography.titleLarge),
+        title:
+            const Text('¿Eliminar reserva?', style: LuxTypography.titleLarge),
         content: Text(
           'Se eliminará permanentemente la reserva #${booking.id.substring(0, 8)}. Esta acción no se puede deshacer.',
           style: LuxTypography.bodyMedium,
@@ -464,8 +468,8 @@ class _AdminBookingTile extends StatelessWidget {
                   .read<AdminBloc>()
                   .add(AdminDeleteBookingRequested(booking.id));
             },
-            child:
-                const Text('Eliminar', style: TextStyle(color: LuxColors.error)),
+            child: const Text('Eliminar',
+                style: TextStyle(color: LuxColors.error)),
           ),
         ],
       ),
@@ -519,8 +523,8 @@ class _DriverTile extends StatelessWidget {
                 (user?.displayName.isNotEmpty == true)
                     ? user!.displayName[0].toUpperCase()
                     : '?',
-                style:
-                    LuxTypography.titleLarge.copyWith(color: LuxColors.sapphire),
+                style: LuxTypography.titleLarge
+                    .copyWith(color: LuxColors.sapphire),
               ),
             ),
             const SizedBox(width: LuxSpacing.md),
@@ -661,8 +665,7 @@ class _VehicleTile extends StatelessWidget {
               ),
             ),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
                 color: vehicle.isActive
                     ? LuxColors.success.withOpacity(0.1)
@@ -672,9 +675,8 @@ class _VehicleTile extends StatelessWidget {
               child: Text(
                 vehicle.isActive ? 'ACTIVO' : 'INACTIVO',
                 style: LuxTypography.caption.copyWith(
-                    color: vehicle.isActive
-                        ? LuxColors.success
-                        : LuxColors.error),
+                    color:
+                        vehicle.isActive ? LuxColors.success : LuxColors.error),
               ),
             ),
             const SizedBox(width: LuxSpacing.sm),
@@ -713,9 +715,7 @@ class _UsersTabState extends State<UsersTab> {
         final filtered = state.users
             .where((u) =>
                 _search.isEmpty ||
-                u.displayName
-                    .toLowerCase()
-                    .contains(_search.toLowerCase()) ||
+                u.displayName.toLowerCase().contains(_search.toLowerCase()) ||
                 u.email.toLowerCase().contains(_search.toLowerCase()))
             .toList();
 
@@ -734,17 +734,15 @@ class _UsersTabState extends State<UsersTab> {
                       color: LuxColors.whiteTertiary, size: 20),
                   filled: true,
                   fillColor: LuxColors.blackElevated,
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 10, horizontal: 12),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LuxRadius.sm),
-                    borderSide:
-                        const BorderSide(color: LuxColors.blackBorder),
+                    borderSide: const BorderSide(color: LuxColors.blackBorder),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LuxRadius.sm),
-                    borderSide:
-                        const BorderSide(color: LuxColors.blackBorder),
+                    borderSide: const BorderSide(color: LuxColors.blackBorder),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LuxRadius.sm),
@@ -755,13 +753,13 @@ class _UsersTabState extends State<UsersTab> {
             ),
             Expanded(
               child: filtered.isEmpty
-                  ? const Center(child: Text('Ningún usuario coincide con la búsqueda'))
+                  ? const Center(
+                      child: Text('Ningún usuario coincide con la búsqueda'))
                   : ListView.separated(
                       padding: const EdgeInsets.all(LuxSpacing.lg),
                       itemCount: filtered.length,
                       separatorBuilder: (_, __) => const LuxDivider(),
-                      itemBuilder: (_, i) =>
-                          _UserTile(user: filtered[i]),
+                      itemBuilder: (_, i) => _UserTile(user: filtered[i]),
                     ),
             ),
           ],
@@ -914,61 +912,51 @@ class PricingTab extends StatelessWidget {
               ),
               const SizedBox(height: LuxSpacing.lg),
               // Always show the local DefaultPricing values as editable cards
-              ...VehicleClass.values.expand((vc) =>
-                  ServiceType.values.map((st) {
-                    final r = DefaultPricing.rules[vc]?[st];
-                    if (r == null) return const SizedBox.shrink();
-                    return Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: LuxSpacing.sm),
-                      child: _PricingCard(
-                        vehicleClass: vc,
-                        serviceType: st,
-                        rules: r,
-                      ),
-                    );
-                  })),
+              ...VehicleClass.values
+                  .expand((vc) => ServiceType.values.map((st) {
+                        final r = DefaultPricing.rules[vc]?[st];
+                        if (r == null) return const SizedBox.shrink();
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: LuxSpacing.sm),
+                          child: _PricingCard(
+                            vehicleClass: vc,
+                            serviceType: st,
+                            rules: r,
+                          ),
+                        );
+                      })),
               if (state.pricingRules.isNotEmpty) ...[
                 const SizedBox(height: LuxSpacing.xl),
                 const SectionHeader(title: 'Reglas de precios de Firestore'),
                 const SizedBox(height: LuxSpacing.md),
-                ...state.pricingRules.map((rule) =>
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: LuxSpacing.sm),
+                ...state.pricingRules.map((rule) => Padding(
+                      padding: const EdgeInsets.only(bottom: LuxSpacing.sm),
                       child: LuxCard(
                         child: Row(
                           children: [
                             Expanded(
                               child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                      rule.vehicleClass.name
-                                          .toUpperCase(),
-                                      style:
-                                          LuxTypography.titleMedium),
+                                  Text(rule.vehicleClass.name.toUpperCase(),
+                                      style: LuxTypography.titleMedium),
                                   Text(rule.serviceType.name,
                                       style: LuxTypography.caption),
                                 ],
                               ),
                             ),
                             Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Text(
-                                  rule.serviceType ==
-                                          ServiceType.byTheHour
+                                  rule.serviceType == ServiceType.byTheHour
                                       ? 'Bs${rule.pricePerHourUsd}/h'
                                       : 'Bs${rule.basePriceUsd} base + Bs${rule.pricePerKmUsd}/km',
                                   style: LuxTypography.bodyMedium,
                                 ),
                                 Text('Min: Bs${rule.minimumPriceUsd}',
                                     style: LuxTypography.caption
-                                        .copyWith(
-                                            color: LuxColors.sapphire)),
+                                        .copyWith(color: LuxColors.sapphire)),
                               ],
                             ),
                           ],
@@ -1036,8 +1024,8 @@ class _PricingCardState extends State<_PricingCard> {
             child: Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: LuxColors.sapphireSubtle,
                     borderRadius: BorderRadius.circular(LuxRadius.sm),
@@ -1079,25 +1067,23 @@ class _PricingCardState extends State<_PricingCard> {
               children: [
                 if (!isHourly) ...[
                   Expanded(
-                    child: _PriceField(
-                        label: 'Base (Bs)', controller: _baseCtrl),
+                    child:
+                        _PriceField(label: 'Base (Bs)', controller: _baseCtrl),
                   ),
                   const SizedBox(width: LuxSpacing.sm),
                   Expanded(
                     child: _PriceField(
-                        label: 'Por km (Bs)',
-                        controller: _perKmCtrl),
+                        label: 'Por km (Bs)', controller: _perKmCtrl),
                   ),
                 ] else
                   Expanded(
                     child: _PriceField(
-                        label: 'Por hora (Bs)',
-                        controller: _perHourCtrl),
+                        label: 'Por hora (Bs)', controller: _perHourCtrl),
                   ),
                 const SizedBox(width: LuxSpacing.sm),
                 Expanded(
-                  child: _PriceField(
-                      label: 'Mínimo (Bs)', controller: _minCtrl),
+                  child:
+                      _PriceField(label: 'Mínimo (Bs)', controller: _minCtrl),
                 ),
               ],
             ),
@@ -1111,18 +1097,13 @@ class _PricingCardState extends State<_PricingCard> {
                   height: 38,
                   onPressed: () {
                     final rule = PricingRule(
-                      id:
-                          '${widget.vehicleClass.name}_${widget.serviceType.name}',
+                      id: '${widget.vehicleClass.name}_${widget.serviceType.name}',
                       vehicleClass: widget.vehicleClass,
                       serviceType: widget.serviceType,
-                      basePriceUsd:
-                          double.tryParse(_baseCtrl.text) ?? 0,
-                      pricePerKmUsd:
-                          double.tryParse(_perKmCtrl.text) ?? 0,
-                      pricePerHourUsd:
-                          double.tryParse(_perHourCtrl.text) ?? 0,
-                      minimumPriceUsd:
-                          double.tryParse(_minCtrl.text) ?? 0,
+                      basePriceUsd: double.tryParse(_baseCtrl.text) ?? 0,
+                      pricePerKmUsd: double.tryParse(_perKmCtrl.text) ?? 0,
+                      pricePerHourUsd: double.tryParse(_perHourCtrl.text) ?? 0,
+                      minimumPriceUsd: double.tryParse(_minCtrl.text) ?? 0,
                     );
                     context
                         .read<AdminBloc>()
@@ -1152,26 +1133,23 @@ class _PriceField extends StatelessWidget {
           const SizedBox(height: 4),
           TextField(
             controller: controller,
-            keyboardType:
-                const TextInputType.numberWithOptions(decimal: true),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
             style: LuxTypography.bodyMedium,
             decoration: InputDecoration(
               prefixText: 'Bs ',
-              prefixStyle: LuxTypography.caption
-                  .copyWith(color: LuxColors.sapphire),
+              prefixStyle:
+                  LuxTypography.caption.copyWith(color: LuxColors.sapphire),
               filled: true,
               fillColor: LuxColors.blackElevated,
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
-                borderSide:
-                    const BorderSide(color: LuxColors.blackBorder),
+                borderSide: const BorderSide(color: LuxColors.blackBorder),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
-                borderSide:
-                    const BorderSide(color: LuxColors.blackBorder),
+                borderSide: const BorderSide(color: LuxColors.blackBorder),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
@@ -1204,9 +1182,11 @@ class AuditTab extends StatelessWidget {
                 Icon(Icons.history_rounded,
                     size: 48, color: LuxColors.whiteTertiary),
                 SizedBox(height: LuxSpacing.md),
-                Text('Aún no hay registros de auditoría', style: LuxTypography.titleMedium),
+                Text('Aún no hay registros de auditoría',
+                    style: LuxTypography.titleMedium),
                 SizedBox(height: LuxSpacing.sm),
-                Text('Las acciones administrativas aparecerán aquí en tiempo real',
+                Text(
+                    'Las acciones administrativas aparecerán aquí en tiempo real',
                     style: LuxTypography.caption),
               ],
             ),
@@ -1252,9 +1232,7 @@ class _AuditTile extends StatelessWidget {
                     style: LuxTypography.bodyMedium,
                     children: [
                       TextSpan(
-                        text: log.action
-                            .replaceAll('_', ' ')
-                            .toUpperCase(),
+                        text: log.action.replaceAll('_', ' ').toUpperCase(),
                         style: TextStyle(
                             fontWeight: FontWeight.w700,
                             color: _getColor(log.action)),
@@ -1262,8 +1240,7 @@ class _AuditTile extends StatelessWidget {
                       const TextSpan(text: ' · '),
                       TextSpan(
                           text: log.targetType,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600)),
+                          style: const TextStyle(fontWeight: FontWeight.w600)),
                       TextSpan(
                           text:
                               ' (${log.targetId.length > 8 ? log.targetId.substring(0, 8) : log.targetId})',
@@ -1300,7 +1277,8 @@ class _AuditTile extends StatelessWidget {
   }
 
   Color _getColor(String action) {
-    if (action.contains('block') || action.contains('delete') ||
+    if (action.contains('block') ||
+        action.contains('delete') ||
         action.contains('maintenance') && action.contains('enable')) {
       return LuxColors.error;
     }
@@ -1397,8 +1375,7 @@ class SettingsTab extends StatelessWidget {
                     const LuxDivider(),
                     _InfoRow(
                         label: 'Ingresos totales',
-                        value:
-                            'Bs${state.totalRevenue.toStringAsFixed(2)}'),
+                        value: 'Bs${state.totalRevenue.toStringAsFixed(2)}'),
                   ],
                 ),
               ),
@@ -1410,12 +1387,9 @@ class SettingsTab extends StatelessWidget {
                   children: [
                     _InfoRow(label: 'Versión de la app', value: '1.0.4+22'),
                     LuxDivider(),
-                    _InfoRow(
-                        label: 'Moneda',
-                        value: 'Bolivianos (Bs)'),
+                    _InfoRow(label: 'Moneda', value: 'Bolivianos (Bs)'),
                     LuxDivider(),
-                    _InfoRow(
-                        label: 'Backend', value: 'Firebase / Firestore'),
+                    _InfoRow(label: 'Backend', value: 'Firebase / Firestore'),
                     LuxDivider(),
                     _InfoRow(
                         label: 'Plataforma', value: 'Flutter Web + Mobile'),

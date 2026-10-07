@@ -10,9 +10,21 @@ class AppShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   static const _tabs = [
-    _Tab(icon: Icons.home_outlined,    activeIcon: Icons.home_rounded,    label: 'Inicio',  path: '/'),
-    _Tab(icon: Icons.history_outlined, activeIcon: Icons.history_rounded,  label: 'Viajes',  path: '/trips'),
-    _Tab(icon: Icons.person_outline,   activeIcon: Icons.person_rounded,   label: 'Perfil',  path: '/profile'),
+    _Tab(
+        icon: Icons.home_outlined,
+        activeIcon: Icons.home_rounded,
+        label: 'Inicio',
+        path: '/'),
+    _Tab(
+        icon: Icons.history_outlined,
+        activeIcon: Icons.history_rounded,
+        label: 'Viajes',
+        path: '/trips'),
+    _Tab(
+        icon: Icons.person_outline,
+        activeIcon: Icons.person_rounded,
+        label: 'Perfil',
+        path: '/profile'),
   ];
 
   @override
@@ -128,14 +140,16 @@ class _WebNav extends StatelessWidget {
               const SizedBox(width: 40),
               _TextNavBtn('Iniciar sesión', () => context.go('/login')),
               const SizedBox(width: 20),
-              _FilledNavBtn(label: 'Reservar un viaje', onTap: () => context.go('/')),
+              _FilledNavBtn(
+                  label: 'Reservar un viaje', onTap: () => context.go('/')),
             ] else ...[
               const Spacer(),
               _TextNavBtn('Inicio', () => shell.goBranch(0)),
               const SizedBox(width: 32),
               _TextNavBtn('Mis viajes', () => shell.goBranch(1)),
               const SizedBox(width: 40),
-              _FilledNavBtn(label: 'Reservar un viaje', onTap: () => context.go('/')),
+              _FilledNavBtn(
+                  label: 'Reservar un viaje', onTap: () => context.go('/')),
               const SizedBox(width: 12),
               NotificationBell(color: const Color(0xFF111111)),
               const SizedBox(width: 8),
@@ -227,9 +241,7 @@ class _FilledNavBtn extends StatelessWidget {
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
             padding: const EdgeInsets.symmetric(horizontal: 24),
             elevation: 0,
-            shape: const RoundedRectangleBorder(
-              
-            ),
+            shape: const RoundedRectangleBorder(),
             textStyle: const TextStyle(
               fontFamily: 'Montserrat',
               fontSize: 11,
@@ -312,9 +324,8 @@ class _WebRail extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 32),
                 child: TextButton.icon(
-                  onPressed: () => context
-                      .read<AuthBloc>()
-                      .add(const LogoutRequested()),
+                  onPressed: () =>
+                      context.read<AuthBloc>().add(const LogoutRequested()),
                   icon: const Icon(Icons.logout_rounded, size: 16),
                   label: const Text('Cerrar sesión'),
                   style: TextButton.styleFrom(

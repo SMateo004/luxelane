@@ -26,8 +26,8 @@ class _DriverAppState extends State<DriverApp> {
   @override
   void initState() {
     super.initState();
-    _authBloc         = sl<AuthBloc>()..add(const AuthStarted());
-    _driverBloc       = sl<DriverBloc>();
+    _authBloc = sl<AuthBloc>()..add(const AuthStarted());
+    _driverBloc = sl<DriverBloc>();
     _notificationBloc = sl<NotificationBloc>();
     _router = buildDriverRouter(_authBloc, _driverBloc);
 

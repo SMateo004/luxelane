@@ -21,6 +21,5 @@ abstract class AppConfig {
 
   static bool get enableLogs => isDev;
 
-  static const String fcmVapidKey =
-      String.fromEnvironment('FCM_VAPID_KEY');
+  static const String fcmVapidKey = String.fromEnvironment('FCM_VAPID_KEY');
 }

@@ -33,8 +33,7 @@ class DriverEarningsScreen extends StatelessWidget {
                 const _EmptyEarnings()
               else
                 ...completed.map((b) => Padding(
-                      padding:
-                          const EdgeInsets.only(bottom: LuxSpacing.sm),
+                      padding: const EdgeInsets.only(bottom: LuxSpacing.sm),
                       child: _EarningsCard(booking: b),
                     )),
             ],

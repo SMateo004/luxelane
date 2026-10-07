@@ -71,10 +71,8 @@ class PaymentRepositoryImpl implements PaymentRepository {
     String bookingId,
   ) async {
     try {
-      final snap = await _col
-          .where('bookingId', isEqualTo: bookingId)
-          .limit(1)
-          .get();
+      final snap =
+          await _col.where('bookingId', isEqualTo: bookingId).limit(1).get();
       if (snap.docs.isEmpty) return const Left(NotFoundFailure());
       final d = snap.docs.first;
       return Right(Payment.fromJson({'id': d.id, ...d.data()}));
@@ -104,7 +102,9 @@ class PaymentRepositoryImpl implements PaymentRepository {
   Future<Either<Failure, void>> refundPayment(String paymentId) async {
     try {
       await _fn.httpsCallable('refundPayment').call({'paymentId': paymentId});
-      await _col.doc(paymentId).update({'status': PaymentStatus.refunded.label});
+      await _col
+          .doc(paymentId)
+          .update({'status': PaymentStatus.refunded.label});
       return const Right(null);
     } catch (e) {
       return Left(PaymentFailure(e.toString()));
