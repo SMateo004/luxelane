@@ -16,6 +16,7 @@ import '../../../../core/widgets/trip_widgets.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
+import 'driver_documents_screen.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key});
@@ -222,6 +223,10 @@ class _IdlePanel extends StatelessWidget {
     return ListView(
         padding: const EdgeInsets.all(LuxSpacing.md),
         children: [
+          DriverVerificationBanner(
+            driverId: state.user.id,
+            verified: state.profile.documentsVerified,
+          ),
           _StatusBanner(isAvailable: state.isAvailable),
           const SizedBox(height: LuxSpacing.lg),
           SectionHeader(title: l.driverTodaySummary),

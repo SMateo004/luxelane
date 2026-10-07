@@ -7,6 +7,7 @@ import {
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { getBytes, ref, uploadBytes } from 'firebase/storage';
 
 let env;
 
@@ -33,6 +34,7 @@ before(async () => {
   env = await initializeTestEnvironment({
     projectId: 'demo-luxelane',
     firestore: { rules: readFileSync(new URL('../firestore.rules', import.meta.url), 'utf8') },
+    storage: { rules: readFileSync(new URL('../storage.rules', import.meta.url), 'utf8') },
   });
 });
 
@@ -239,5 +241,49 @@ describe('companies', () => {
     await assertFails(getDoc(doc(db('boss'), 'bookings/p1')));
     await seed('bookings/c2', booking({ riderId: 'boss', companyId: 'acme' }));
     await assertFails(getDoc(doc(db('emp'), 'bookings/c2')));
+  });
+});
+
+describe('verification documents', () => {
+  const upload = (overrides = {}) => ({
+    type: 'soat',
+    status: 'pending',
+    storagePath: 'driver_documents/driver/soat-1.pdf',
+    fileName: 'soat.pdf',
+    contentType: 'application/pdf',
+    expiresAt: null,
+    uploadedAt: null,
+    ...overrides,
+  });
+
+  it('chauffeur uploads own documents as pending only', async () => {
+    await assertSucceeds(setDoc(doc(db('driver'), 'driverProfiles/driver/verificationDocs/soat'), upload()));
+    await assertFails(setDoc(doc(db('driver'), 'driverProfiles/driver/verificationDocs/soat'), upload({ status: 'approved' })));
+    await assertFails(setDoc(doc(db('driver'), 'driverProfiles/driver/verificationDocs/soat'), upload({ reviewedBy: 'driver' })));
+    await assertFails(setDoc(doc(db('driver'), 'driverProfiles/driver/verificationDocs/passport'), upload({ type: 'passport' })));
+    await assertFails(
+      setDoc(doc(db('driver'), 'driverProfiles/driver/verificationDocs/soat'),
+        upload({ storagePath: 'driver_documents/newdriver/x.pdf' })),
+    );
+    await assertFails(setDoc(doc(db('newdriver'), 'driverProfiles/driver/verificationDocs/soat'), upload()));
+    await assertFails(setDoc(doc(db('rider'), 'driverProfiles/rider/verificationDocs/soat'), upload({ storagePath: 'driver_documents/rider/a.pdf' })));
+  });
+
+  it('only the chauffeur and admins read them', async () => {
+    await seed('driverProfiles/driver/verificationDocs/license', upload({ type: 'license', status: 'approved' }));
+    await assertSucceeds(getDoc(doc(db('driver'), 'driverProfiles/driver/verificationDocs/license')));
+    await assertSucceeds(getDoc(doc(db('admin'), 'driverProfiles/driver/verificationDocs/license')));
+    await assertFails(getDoc(doc(db('rider'), 'driverProfiles/driver/verificationDocs/license')));
+    await assertFails(getDoc(doc(db('newdriver'), 'driverProfiles/driver/verificationDocs/license')));
+  });
+
+  it('storage: own folder, images or PDF under 10 MB, admins can read', async () => {
+    const st = (uid) => env.authenticatedContext(uid).storage();
+    const pdf = new Uint8Array([37, 80, 68, 70]);
+    await assertSucceeds(uploadBytes(ref(st('driver'), 'driver_documents/driver/soat.pdf'), pdf, { contentType: 'application/pdf' }));
+    await assertFails(uploadBytes(ref(st('driver'), 'driver_documents/driver/x.exe'), pdf, { contentType: 'application/octet-stream' }));
+    await assertFails(uploadBytes(ref(st('rider'), 'driver_documents/driver/soat.pdf'), pdf, { contentType: 'application/pdf' }));
+    await assertSucceeds(getBytes(ref(st('admin'), 'driver_documents/driver/soat.pdf')));
+    await assertFails(getBytes(ref(st('rider'), 'driver_documents/driver/soat.pdf')));
   });
 });

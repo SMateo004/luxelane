@@ -7,6 +7,7 @@ import '../../features/driver/presentation/bloc/driver_bloc.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
 import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
 import '../../features/driver/presentation/pages/driver_home_screen.dart';
+import '../../features/driver/presentation/pages/driver_documents_screen.dart';
 import '../../features/driver/presentation/pages/driver_onboarding_screen.dart';
 import '../../features/driver/presentation/pages/driver_queue_screen.dart';
 import '../../features/legal/presentation/pages/legal_pages.dart';
@@ -18,6 +19,7 @@ abstract class DriverRoutes {
   static const login        = '/driver/login';
   static const home         = '/driver';
   static const onboarding   = '/driver/onboarding';
+  static const documents    = '/driver/documents';
   static const queue        = '/driver/queue';
   static const earnings     = '/driver/earnings';
   static const profile      = '/driver/profile';
@@ -81,6 +83,10 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
         GoRoute(
           path: DriverRoutes.onboarding,
           pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),
+        ),
+        GoRoute(
+          path: DriverRoutes.documents,
+          pageBuilder: (c, s) => _slide(const DriverDocumentsScreen(), s),
         ),
         GoRoute(
           path: '/driver/active-ride/:bookingId',

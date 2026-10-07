@@ -952,6 +952,141 @@
       }
     }
   },
+  "docApprovedCount": "{approved} de {total} aprobados",
+  "@docApprovedCount": {
+    "placeholders": {
+      "approved": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "docBannerExpiring": "Tu {doc} vence pronto. Sube la versión renovada.",
+  "@docBannerExpiring": {
+    "placeholders": {
+      "doc": {
+        "type": "String"
+      }
+    }
+  },
+  "docBannerInReview": "Estamos revisando tus documentos. Te avisaremos al aprobarlos.",
+  "docBannerToUpload": "{count, plural, =1{Falta 1 documento para que puedas recibir viajes.} other{Faltan {count} documentos para que puedas recibir viajes.}}",
+  "@docBannerToUpload": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "docCriminalRecord": "Certificado de antecedentes",
+  "docCriminalRecordHint": "REJAP o FELCC, emitido en los últimos 3 meses",
+  "docErrorAlreadyExpired": "Ese documento ya está vencido.",
+  "docErrorExpiryRequired": "Indica la fecha de vencimiento.",
+  "docErrorFailed": "No se pudo completar. Inténtalo de nuevo.",
+  "docErrorReasonRequired": "Escribe el motivo del rechazo.",
+  "docErrorTooLarge": "El archivo pesa más de 10 MB.",
+  "docExpiredOn": "Venció el {date}",
+  "@docExpiredOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "docExpiresOn": "Vence el {date}",
+  "@docExpiresOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "docExpiryPickerTitle": "¿Cuándo vence tu {doc}?",
+  "@docExpiryPickerTitle": {
+    "placeholders": {
+      "doc": {
+        "type": "String"
+      }
+    }
+  },
+  "docIdCard": "Cédula de identidad",
+  "docIdCardHint": "Ambos lados, legible",
+  "docLicense": "Licencia de conducir",
+  "docLicenseHint": "Categoría profesional, ambos lados",
+  "docPendingCount": "{count, plural, =1{1 en revisión} other{{count} en revisión}}",
+  "@docPendingCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "docPendingHint": "Lo revisamos normalmente en menos de 24 horas.",
+  "docPrivacyNote": "Tus documentos solo los ve el equipo de Luxelane para verificarte. Se borran si eliminas tu cuenta.",
+  "docProfileLink": "Mis documentos y verificación",
+  "docRejectedReason": "Motivo: {reason}",
+  "@docRejectedReason": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "docReplace": "Reemplazar",
+  "docReviewAction": "Revisar documentos",
+  "docReviewAllApproved": "Todos los documentos están aprobados y vigentes.",
+  "docReviewApprove": "Aprobar",
+  "docReviewApproved": "Documento aprobado",
+  "docReviewConfirmExpiry": "Confirma la fecha de vencimiento",
+  "docReviewOpen": "Ver archivo",
+  "docReviewReject": "Rechazar",
+  "docReviewRejectReason": "Motivo",
+  "docReviewRejectReasonHint": "Ej.: la foto está borrosa",
+  "docReviewRejectTitle": "Rechazar documento",
+  "docReviewRejected": "Documento rechazado; avisamos al chófer",
+  "docReviewTitle": "Documentos de {name}",
+  "@docReviewTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "docSoat": "SOAT",
+  "docSoatHint": "Seguro obligatorio vigente del vehículo",
+  "docStatusApproved": "Aprobado",
+  "docStatusExpired": "Vencido",
+  "docStatusExpiring": "Por vencer",
+  "docStatusMissing": "Falta",
+  "docStatusPending": "En revisión",
+  "docStatusRejected": "Rechazado",
+  "docSummaryBody": "Para recibir viajes revisamos y aprobamos estos documentos. Sube fotos nítidas o PDF; te avisamos cuando estén revisados.",
+  "docSummaryTitle": "Verificación pendiente",
+  "docSummaryVerified": "Chófer verificado",
+  "docSummaryVerifiedBody": "Todos tus documentos están aprobados. Te avisaremos 30 y 7 días antes de que venza alguno.",
+  "docTitle": "Documentos",
+  "docToUploadCount": "{count, plural, =1{1 por subir} other{{count} por subir}}",
+  "@docToUploadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "docUpload": "Subir",
+  "docUploaded": "Documento enviado a revisión",
+  "docUploadedOn": "Subido el {date}",
+  "@docUploadedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "docVehicleRegistration": "Registro del vehículo (RUAT)",
+  "docVehicleRegistrationHint": "Certificado de propiedad o RUAT a tu nombre o autorizado",
   "driverAcceptRide": "Aceptar viaje",
   "driverActionArrived": "He llegado",
   "driverActionCompleteTrip": "Completar viaje",

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
@@ -227,6 +228,12 @@ class _ProfileBody extends StatelessWidget {
             ],
           ),
           CompanyProfileEntry(uid: user.id),
+          if (user.role == UserRole.driver) ...[
+            const SizedBox(height: LuxSpacing.xl),
+            SectionHeader(title: l.docTitle),
+            const SizedBox(height: LuxSpacing.sm),
+            _LinkTile(icon: Icons.verified_user_outlined, label: l.docProfileLink, path: '/driver/documents'),
+          ],
           const SizedBox(height: LuxSpacing.xl),
           SectionHeader(title: l.profileSectionHelp),
           const SizedBox(height: LuxSpacing.sm),

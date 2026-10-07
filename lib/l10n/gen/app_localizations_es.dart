@@ -1581,6 +1581,211 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String docApprovedCount(int approved, int total) {
+    return '$approved de $total aprobados';
+  }
+
+  @override
+  String docBannerExpiring(String doc) {
+    return 'Tu $doc vence pronto. Sube la versión renovada.';
+  }
+
+  @override
+  String get docBannerInReview => 'Estamos revisando tus documentos. Te avisaremos al aprobarlos.';
+
+  @override
+  String docBannerToUpload(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Faltan $count documentos para que puedas recibir viajes.',
+      one: 'Falta 1 documento para que puedas recibir viajes.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get docCriminalRecord => 'Certificado de antecedentes';
+
+  @override
+  String get docCriminalRecordHint => 'REJAP o FELCC, emitido en los últimos 3 meses';
+
+  @override
+  String get docErrorAlreadyExpired => 'Ese documento ya está vencido.';
+
+  @override
+  String get docErrorExpiryRequired => 'Indica la fecha de vencimiento.';
+
+  @override
+  String get docErrorFailed => 'No se pudo completar. Inténtalo de nuevo.';
+
+  @override
+  String get docErrorReasonRequired => 'Escribe el motivo del rechazo.';
+
+  @override
+  String get docErrorTooLarge => 'El archivo pesa más de 10 MB.';
+
+  @override
+  String docExpiredOn(String date) {
+    return 'Venció el $date';
+  }
+
+  @override
+  String docExpiresOn(String date) {
+    return 'Vence el $date';
+  }
+
+  @override
+  String docExpiryPickerTitle(String doc) {
+    return '¿Cuándo vence tu $doc?';
+  }
+
+  @override
+  String get docIdCard => 'Cédula de identidad';
+
+  @override
+  String get docIdCardHint => 'Ambos lados, legible';
+
+  @override
+  String get docLicense => 'Licencia de conducir';
+
+  @override
+  String get docLicenseHint => 'Categoría profesional, ambos lados';
+
+  @override
+  String docPendingCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count en revisión',
+      one: '1 en revisión',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get docPendingHint => 'Lo revisamos normalmente en menos de 24 horas.';
+
+  @override
+  String get docPrivacyNote => 'Tus documentos solo los ve el equipo de Luxelane para verificarte. Se borran si eliminas tu cuenta.';
+
+  @override
+  String get docProfileLink => 'Mis documentos y verificación';
+
+  @override
+  String docRejectedReason(String reason) {
+    return 'Motivo: $reason';
+  }
+
+  @override
+  String get docReplace => 'Reemplazar';
+
+  @override
+  String get docReviewAction => 'Revisar documentos';
+
+  @override
+  String get docReviewAllApproved => 'Todos los documentos están aprobados y vigentes.';
+
+  @override
+  String get docReviewApprove => 'Aprobar';
+
+  @override
+  String get docReviewApproved => 'Documento aprobado';
+
+  @override
+  String get docReviewConfirmExpiry => 'Confirma la fecha de vencimiento';
+
+  @override
+  String get docReviewOpen => 'Ver archivo';
+
+  @override
+  String get docReviewReject => 'Rechazar';
+
+  @override
+  String get docReviewRejectReason => 'Motivo';
+
+  @override
+  String get docReviewRejectReasonHint => 'Ej.: la foto está borrosa';
+
+  @override
+  String get docReviewRejectTitle => 'Rechazar documento';
+
+  @override
+  String get docReviewRejected => 'Documento rechazado; avisamos al chófer';
+
+  @override
+  String docReviewTitle(String name) {
+    return 'Documentos de $name';
+  }
+
+  @override
+  String get docSoat => 'SOAT';
+
+  @override
+  String get docSoatHint => 'Seguro obligatorio vigente del vehículo';
+
+  @override
+  String get docStatusApproved => 'Aprobado';
+
+  @override
+  String get docStatusExpired => 'Vencido';
+
+  @override
+  String get docStatusExpiring => 'Por vencer';
+
+  @override
+  String get docStatusMissing => 'Falta';
+
+  @override
+  String get docStatusPending => 'En revisión';
+
+  @override
+  String get docStatusRejected => 'Rechazado';
+
+  @override
+  String get docSummaryBody => 'Para recibir viajes revisamos y aprobamos estos documentos. Sube fotos nítidas o PDF; te avisamos cuando estén revisados.';
+
+  @override
+  String get docSummaryTitle => 'Verificación pendiente';
+
+  @override
+  String get docSummaryVerified => 'Chófer verificado';
+
+  @override
+  String get docSummaryVerifiedBody => 'Todos tus documentos están aprobados. Te avisaremos 30 y 7 días antes de que venza alguno.';
+
+  @override
+  String get docTitle => 'Documentos';
+
+  @override
+  String docToUploadCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count por subir',
+      one: '1 por subir',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get docUpload => 'Subir';
+
+  @override
+  String get docUploaded => 'Documento enviado a revisión';
+
+  @override
+  String docUploadedOn(String date) {
+    return 'Subido el $date';
+  }
+
+  @override
+  String get docVehicleRegistration => 'Registro del vehículo (RUAT)';
+
+  @override
+  String get docVehicleRegistrationHint => 'Certificado de propiedad o RUAT a tu nombre o autorizado';
+
+  @override
   String get driverAcceptRide => 'Aceptar viaje';
 
   @override

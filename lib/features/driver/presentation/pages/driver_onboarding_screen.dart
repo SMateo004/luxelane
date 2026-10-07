@@ -115,7 +115,8 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
       // Re-dispatch DriverStarted so the bloc reloads the profile
       // (it was in DriverOnboardingRequired — now the profile exists).
       context.read<DriverBloc>().add(DriverStarted(userId: driverId));
-      context.go('/driver');
+      // Next: upload the verification documents.
+      context.go('/driver/documents');
     } catch (e) {
       debugPrint('Driver onboarding failed: $e');
       if (mounted) {

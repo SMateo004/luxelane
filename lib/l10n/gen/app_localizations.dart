@@ -2929,6 +2929,336 @@ abstract class AppLocalizations {
   /// **'NIT {taxId}'**
   String corpTaxIdShort(String taxId);
 
+  /// No description provided for @docApprovedCount.
+  ///
+  /// In es, this message translates to:
+  /// **'{approved} de {total} aprobados'**
+  String docApprovedCount(int approved, int total);
+
+  /// No description provided for @docBannerExpiring.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu {doc} vence pronto. Sube la versión renovada.'**
+  String docBannerExpiring(String doc);
+
+  /// No description provided for @docBannerInReview.
+  ///
+  /// In es, this message translates to:
+  /// **'Estamos revisando tus documentos. Te avisaremos al aprobarlos.'**
+  String get docBannerInReview;
+
+  /// No description provided for @docBannerToUpload.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{Falta 1 documento para que puedas recibir viajes.} other{Faltan {count} documentos para que puedas recibir viajes.}}'**
+  String docBannerToUpload(int count);
+
+  /// No description provided for @docCriminalRecord.
+  ///
+  /// In es, this message translates to:
+  /// **'Certificado de antecedentes'**
+  String get docCriminalRecord;
+
+  /// No description provided for @docCriminalRecordHint.
+  ///
+  /// In es, this message translates to:
+  /// **'REJAP o FELCC, emitido en los últimos 3 meses'**
+  String get docCriminalRecordHint;
+
+  /// No description provided for @docErrorAlreadyExpired.
+  ///
+  /// In es, this message translates to:
+  /// **'Ese documento ya está vencido.'**
+  String get docErrorAlreadyExpired;
+
+  /// No description provided for @docErrorExpiryRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica la fecha de vencimiento.'**
+  String get docErrorExpiryRequired;
+
+  /// No description provided for @docErrorFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo completar. Inténtalo de nuevo.'**
+  String get docErrorFailed;
+
+  /// No description provided for @docErrorReasonRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe el motivo del rechazo.'**
+  String get docErrorReasonRequired;
+
+  /// No description provided for @docErrorTooLarge.
+  ///
+  /// In es, this message translates to:
+  /// **'El archivo pesa más de 10 MB.'**
+  String get docErrorTooLarge;
+
+  /// No description provided for @docExpiredOn.
+  ///
+  /// In es, this message translates to:
+  /// **'Venció el {date}'**
+  String docExpiredOn(String date);
+
+  /// No description provided for @docExpiresOn.
+  ///
+  /// In es, this message translates to:
+  /// **'Vence el {date}'**
+  String docExpiresOn(String date);
+
+  /// No description provided for @docExpiryPickerTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cuándo vence tu {doc}?'**
+  String docExpiryPickerTitle(String doc);
+
+  /// No description provided for @docIdCard.
+  ///
+  /// In es, this message translates to:
+  /// **'Cédula de identidad'**
+  String get docIdCard;
+
+  /// No description provided for @docIdCardHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ambos lados, legible'**
+  String get docIdCardHint;
+
+  /// No description provided for @docLicense.
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia de conducir'**
+  String get docLicense;
+
+  /// No description provided for @docLicenseHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría profesional, ambos lados'**
+  String get docLicenseHint;
+
+  /// No description provided for @docPendingCount.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 en revisión} other{{count} en revisión}}'**
+  String docPendingCount(int count);
+
+  /// No description provided for @docPendingHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo revisamos normalmente en menos de 24 horas.'**
+  String get docPendingHint;
+
+  /// No description provided for @docPrivacyNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus documentos solo los ve el equipo de Luxelane para verificarte. Se borran si eliminas tu cuenta.'**
+  String get docPrivacyNote;
+
+  /// No description provided for @docProfileLink.
+  ///
+  /// In es, this message translates to:
+  /// **'Mis documentos y verificación'**
+  String get docProfileLink;
+
+  /// No description provided for @docRejectedReason.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo: {reason}'**
+  String docRejectedReason(String reason);
+
+  /// No description provided for @docReplace.
+  ///
+  /// In es, this message translates to:
+  /// **'Reemplazar'**
+  String get docReplace;
+
+  /// No description provided for @docReviewAction.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisar documentos'**
+  String get docReviewAction;
+
+  /// No description provided for @docReviewAllApproved.
+  ///
+  /// In es, this message translates to:
+  /// **'Todos los documentos están aprobados y vigentes.'**
+  String get docReviewAllApproved;
+
+  /// No description provided for @docReviewApprove.
+  ///
+  /// In es, this message translates to:
+  /// **'Aprobar'**
+  String get docReviewApprove;
+
+  /// No description provided for @docReviewApproved.
+  ///
+  /// In es, this message translates to:
+  /// **'Documento aprobado'**
+  String get docReviewApproved;
+
+  /// No description provided for @docReviewConfirmExpiry.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirma la fecha de vencimiento'**
+  String get docReviewConfirmExpiry;
+
+  /// No description provided for @docReviewOpen.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver archivo'**
+  String get docReviewOpen;
+
+  /// No description provided for @docReviewReject.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazar'**
+  String get docReviewReject;
+
+  /// No description provided for @docReviewRejectReason.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo'**
+  String get docReviewRejectReason;
+
+  /// No description provided for @docReviewRejectReasonHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej.: la foto está borrosa'**
+  String get docReviewRejectReasonHint;
+
+  /// No description provided for @docReviewRejectTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazar documento'**
+  String get docReviewRejectTitle;
+
+  /// No description provided for @docReviewRejected.
+  ///
+  /// In es, this message translates to:
+  /// **'Documento rechazado; avisamos al chófer'**
+  String get docReviewRejected;
+
+  /// No description provided for @docReviewTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Documentos de {name}'**
+  String docReviewTitle(String name);
+
+  /// No description provided for @docSoat.
+  ///
+  /// In es, this message translates to:
+  /// **'SOAT'**
+  String get docSoat;
+
+  /// No description provided for @docSoatHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguro obligatorio vigente del vehículo'**
+  String get docSoatHint;
+
+  /// No description provided for @docStatusApproved.
+  ///
+  /// In es, this message translates to:
+  /// **'Aprobado'**
+  String get docStatusApproved;
+
+  /// No description provided for @docStatusExpired.
+  ///
+  /// In es, this message translates to:
+  /// **'Vencido'**
+  String get docStatusExpired;
+
+  /// No description provided for @docStatusExpiring.
+  ///
+  /// In es, this message translates to:
+  /// **'Por vencer'**
+  String get docStatusExpiring;
+
+  /// No description provided for @docStatusMissing.
+  ///
+  /// In es, this message translates to:
+  /// **'Falta'**
+  String get docStatusMissing;
+
+  /// No description provided for @docStatusPending.
+  ///
+  /// In es, this message translates to:
+  /// **'En revisión'**
+  String get docStatusPending;
+
+  /// No description provided for @docStatusRejected.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazado'**
+  String get docStatusRejected;
+
+  /// No description provided for @docSummaryBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Para recibir viajes revisamos y aprobamos estos documentos. Sube fotos nítidas o PDF; te avisamos cuando estén revisados.'**
+  String get docSummaryBody;
+
+  /// No description provided for @docSummaryTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Verificación pendiente'**
+  String get docSummaryTitle;
+
+  /// No description provided for @docSummaryVerified.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer verificado'**
+  String get docSummaryVerified;
+
+  /// No description provided for @docSummaryVerifiedBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Todos tus documentos están aprobados. Te avisaremos 30 y 7 días antes de que venza alguno.'**
+  String get docSummaryVerifiedBody;
+
+  /// No description provided for @docTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Documentos'**
+  String get docTitle;
+
+  /// No description provided for @docToUploadCount.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 por subir} other{{count} por subir}}'**
+  String docToUploadCount(int count);
+
+  /// No description provided for @docUpload.
+  ///
+  /// In es, this message translates to:
+  /// **'Subir'**
+  String get docUpload;
+
+  /// No description provided for @docUploaded.
+  ///
+  /// In es, this message translates to:
+  /// **'Documento enviado a revisión'**
+  String get docUploaded;
+
+  /// No description provided for @docUploadedOn.
+  ///
+  /// In es, this message translates to:
+  /// **'Subido el {date}'**
+  String docUploadedOn(String date);
+
+  /// No description provided for @docVehicleRegistration.
+  ///
+  /// In es, this message translates to:
+  /// **'Registro del vehículo (RUAT)'**
+  String get docVehicleRegistration;
+
+  /// No description provided for @docVehicleRegistrationHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Certificado de propiedad o RUAT a tu nombre o autorizado'**
+  String get docVehicleRegistrationHint;
+
   /// No description provided for @driverAcceptRide.
   ///
   /// In es, this message translates to:

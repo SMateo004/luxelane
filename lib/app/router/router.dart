@@ -15,6 +15,7 @@ import '../../features/company/presentation/pages/company_portal_page.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
 import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
 import '../../features/driver/presentation/pages/driver_home_screen.dart';
+import '../../features/driver/presentation/pages/driver_documents_screen.dart';
 import '../../features/driver/presentation/pages/driver_onboarding_screen.dart';
 import '../../features/driver/presentation/pages/driver_queue_screen.dart';
 import '../../features/services/presentation/pages/airport_transfer_page.dart';
@@ -219,6 +220,10 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: '/empresa',
           pageBuilder: (c, s) => _slide(const CompanyPortalPage(), s),
+        ),
+        GoRoute(
+          path: '/driver/documents',
+          pageBuilder: (c, s) => _slide(const DriverDocumentsScreen(), s),
         ),
         GoRoute(
           path: LuxRoutes.driverActiveRide,

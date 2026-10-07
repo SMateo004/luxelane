@@ -55,6 +55,30 @@ const M = {
     en: 'You can now bill your rides to {company}.',
     pt: 'Agora você pode faturar suas viagens para {company}.',
   },
+  docApprovedTitle: { es: 'Documento aprobado', en: 'Document approved', pt: 'Documento aprovado' },
+  docApprovedBody: {
+    es: 'Aprobamos tu {doc}.',
+    en: 'Your {doc} was approved.',
+    pt: 'Aprovamos seu {doc}.',
+  },
+  docRejectedTitle: { es: 'Revisa tu documento', en: 'Check your document', pt: 'Revise seu documento' },
+  docRejectedBody: {
+    es: 'No pudimos aprobar tu {doc}: {reason}. Súbelo de nuevo desde Documentos.',
+    en: "We couldn't approve your {doc}: {reason}. Upload it again from Documents.",
+    pt: 'Não conseguimos aprovar seu {doc}: {reason}. Envie novamente em Documentos.',
+  },
+  docExpiringTitle: { es: 'Documento por vencer', en: 'Document expiring soon', pt: 'Documento a vencer' },
+  docExpiringBody: {
+    es: 'Tu {doc} vence en {days} días. Sube la versión renovada para seguir recibiendo viajes.',
+    en: 'Your {doc} expires in {days} days. Upload the renewed one to keep receiving rides.',
+    pt: 'Seu {doc} vence em {days} dias. Envie a versão renovada para continuar recebendo viagens.',
+  },
+  docExpiredTitle: { es: 'Documento vencido', en: 'Document expired', pt: 'Documento vencido' },
+  docExpiredBody: {
+    es: 'Tu {doc} venció. No recibirás viajes hasta que subas uno vigente y lo aprobemos.',
+    en: "Your {doc} has expired. You won't get rides until you upload a current one and we approve it.",
+    pt: 'Seu {doc} venceu. Você não receberá viagens até enviar um válido e aprovarmos.',
+  },
   statusCancelled: { es: 'Tu reserva ha sido cancelada', en: 'Your booking has been cancelled', pt: 'Sua reserva foi cancelada' },
   assignedTitle: { es: 'Nueva reserva', en: 'New booking', pt: 'Nova reserva' },
   assignedBody: { es: 'Se te ha asignado un nuevo viaje', en: 'A new ride has been assigned to you', pt: 'Uma nova viagem foi atribuída a você' },
@@ -106,4 +130,16 @@ export function vehicleName(cls: string, lang: Lang): string {
     electric: { es: 'Eléctrico', en: 'Electric', pt: 'Elétrico' },
   };
   return names[cls]?.[lang] ?? cls;
+}
+
+const DOC_NAMES: Record<string, Template> = {
+  license: { es: 'licencia de conducir', en: "driver's license", pt: 'carteira de motorista' },
+  idCard: { es: 'cédula de identidad', en: 'ID card', pt: 'documento de identidade' },
+  criminalRecord: { es: 'certificado de antecedentes', en: 'criminal record certificate', pt: 'certidão de antecedentes' },
+  soat: { es: 'SOAT', en: 'SOAT insurance', pt: 'seguro SOAT' },
+  vehicleRegistration: { es: 'registro del vehículo (RUAT)', en: 'vehicle registration (RUAT)', pt: 'registro do veículo (RUAT)' },
+};
+
+export function docName(type: string, lang: Lang): string {
+  return DOC_NAMES[type]?.[lang] ?? type;
 }

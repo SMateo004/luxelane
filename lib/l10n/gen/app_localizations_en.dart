@@ -1581,6 +1581,199 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String docApprovedCount(int approved, int total) {
+    return '$approved of $total approved';
+  }
+
+  @override
+  String docBannerExpiring(String doc) {
+    return 'Your $doc expires soon. Upload the renewed one.';
+  }
+
+  @override
+  String get docBannerInReview => 'We\'re reviewing your documents. We\'ll let you know once approved.';
+
+  @override
+  String docBannerToUpload(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count documents missing before you can receive rides.',
+      one: '1 document missing before you can receive rides.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get docCriminalRecord => 'Criminal record certificate';
+
+  @override
+  String get docCriminalRecordHint => 'REJAP or FELCC, issued in the last 3 months';
+
+  @override
+  String get docErrorAlreadyExpired => 'That document has already expired.';
+
+  @override
+  String get docErrorExpiryRequired => 'Enter the expiry date.';
+
+  @override
+  String get docErrorFailed => 'That didn\'t work. Please try again.';
+
+  @override
+  String get docErrorReasonRequired => 'Enter the reason for rejecting it.';
+
+  @override
+  String get docErrorTooLarge => 'The file is larger than 10 MB.';
+
+  @override
+  String docExpiredOn(String date) {
+    return 'Expired $date';
+  }
+
+  @override
+  String docExpiresOn(String date) {
+    return 'Expires $date';
+  }
+
+  @override
+  String docExpiryPickerTitle(String doc) {
+    return 'When does your $doc expire?';
+  }
+
+  @override
+  String get docIdCard => 'ID card';
+
+  @override
+  String get docIdCardHint => 'Both sides, readable';
+
+  @override
+  String get docLicense => 'Driver\'s license';
+
+  @override
+  String get docLicenseHint => 'Professional category, both sides';
+
+  @override
+  String docPendingCount(int count) {
+    return '$count in review';
+  }
+
+  @override
+  String get docPendingHint => 'We usually review it within 24 hours.';
+
+  @override
+  String get docPrivacyNote => 'Only the Luxelane team sees your documents, to verify you. They\'re deleted if you delete your account.';
+
+  @override
+  String get docProfileLink => 'My documents and verification';
+
+  @override
+  String docRejectedReason(String reason) {
+    return 'Reason: $reason';
+  }
+
+  @override
+  String get docReplace => 'Replace';
+
+  @override
+  String get docReviewAction => 'Review documents';
+
+  @override
+  String get docReviewAllApproved => 'All documents are approved and current.';
+
+  @override
+  String get docReviewApprove => 'Approve';
+
+  @override
+  String get docReviewApproved => 'Document approved';
+
+  @override
+  String get docReviewConfirmExpiry => 'Confirm the expiry date';
+
+  @override
+  String get docReviewOpen => 'Open file';
+
+  @override
+  String get docReviewReject => 'Reject';
+
+  @override
+  String get docReviewRejectReason => 'Reason';
+
+  @override
+  String get docReviewRejectReasonHint => 'E.g. the photo is blurry';
+
+  @override
+  String get docReviewRejectTitle => 'Reject document';
+
+  @override
+  String get docReviewRejected => 'Document rejected; the chauffeur was notified';
+
+  @override
+  String docReviewTitle(String name) {
+    return '$name\'s documents';
+  }
+
+  @override
+  String get docSoat => 'SOAT insurance';
+
+  @override
+  String get docSoatHint => 'The vehicle\'s current mandatory insurance';
+
+  @override
+  String get docStatusApproved => 'Approved';
+
+  @override
+  String get docStatusExpired => 'Expired';
+
+  @override
+  String get docStatusExpiring => 'Expiring';
+
+  @override
+  String get docStatusMissing => 'Missing';
+
+  @override
+  String get docStatusPending => 'In review';
+
+  @override
+  String get docStatusRejected => 'Rejected';
+
+  @override
+  String get docSummaryBody => 'To receive rides we review and approve these documents. Upload clear photos or PDFs; we\'ll let you know once they\'re reviewed.';
+
+  @override
+  String get docSummaryTitle => 'Verification pending';
+
+  @override
+  String get docSummaryVerified => 'Verified chauffeur';
+
+  @override
+  String get docSummaryVerifiedBody => 'All your documents are approved. We\'ll remind you 30 and 7 days before any of them expires.';
+
+  @override
+  String get docTitle => 'Documents';
+
+  @override
+  String docToUploadCount(int count) {
+    return '$count to upload';
+  }
+
+  @override
+  String get docUpload => 'Upload';
+
+  @override
+  String get docUploaded => 'Document sent for review';
+
+  @override
+  String docUploadedOn(String date) {
+    return 'Uploaded $date';
+  }
+
+  @override
+  String get docVehicleRegistration => 'Vehicle registration (RUAT)';
+
+  @override
+  String get docVehicleRegistrationHint => 'Ownership certificate or RUAT in your name or authorised';
+
+  @override
   String get driverAcceptRide => 'Accept ride';
 
   @override

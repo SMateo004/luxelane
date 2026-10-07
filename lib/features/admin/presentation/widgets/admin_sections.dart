@@ -8,6 +8,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../driver/presentation/pages/driver_documents_review_page.dart';
 import '../bloc/admin_bloc.dart';
 
 String _noticeText(AppLocalizations l, AdminNotice n) => switch (n) {
@@ -687,19 +688,24 @@ class _DriverTile extends StatelessWidget {
               ],
             ),
             const SizedBox(width: LuxSpacing.md),
-            if (!driver.documentsVerified)
-              TextButton(
-                onPressed: () => context
-                    .read<AdminBloc>()
-                    .add(AdminVerifyDriverRequested(driver.userId)),
-                child: Text(l.adminVerify.toUpperCase()),
-              )
-            else
+            if (driver.documentsVerified)
               Tooltip(
                 message: l.adminDocumentsVerified,
                 child: const Icon(Icons.verified_rounded,
                     color: LuxColors.success, size: 20),
               ),
+            // Verification comes from the reviewed documents (backend).
+            IconButton(
+              tooltip: l.docReviewAction,
+              icon: const Icon(Icons.fact_check_outlined,
+                  color: LuxColors.accent),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(
+                builder: (_) => DriverDocumentsReviewPage(
+                  driverId: driver.userId,
+                  driverName: user?.displayName ?? driver.userId,
+                ),
+              )),
+            ),
             const SizedBox(width: LuxSpacing.md),
             Tooltip(
               message: driver.isAvailable ? l.adminOnline : l.adminOffline,

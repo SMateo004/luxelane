@@ -122,6 +122,22 @@ service cloud.firestore {
         notChanging(['documentsVerified', 'rating', 'ratingCount', 'totalRides', 'userId'])
       );
       allow delete: if false;
+
+      // Verification documents. The chauffeur uploads (always as 'pending',
+      // pointing at a file in their own Storage folder); only admins review,
+      // through the reviewDriverDocument Cloud Function.
+      match /verificationDocs/{docType} {
+        allow read: if isOwner(uid) || isAdmin();
+        allow create, update: if isOwner(uid) && isDriver() &&
+          docType in ['license', 'idCard', 'criminalRecord', 'soat', 'vehicleRegistration'] &&
+          request.resource.data.keys().hasOnly(
+            ['type', 'status', 'storagePath', 'fileName', 'contentType', 'expiresAt', 'uploadedAt']) &&
+          request.resource.data.type == docType &&
+          request.resource.data.status == 'pending' &&
+          request.resource.data.storagePath is string &&
+          request.resource.data.storagePath.matches('driver_documents/' + uid + '/[^/]+');
+        allow delete: if false;
+      }
     }
 
     // -------------------------------------------------------------------------

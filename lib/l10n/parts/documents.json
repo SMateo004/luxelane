@@ -1,0 +1,335 @@
+{
+  "docTitle": {
+    "es": "Documentos",
+    "en": "Documents",
+    "pt": "Documentos"
+  },
+  "docProfileLink": {
+    "es": "Mis documentos y verificación",
+    "en": "My documents and verification",
+    "pt": "Meus documentos e verificação"
+  },
+  "docSummaryTitle": {
+    "es": "Verificación pendiente",
+    "en": "Verification pending",
+    "pt": "Verificação pendente"
+  },
+  "docSummaryBody": {
+    "es": "Para recibir viajes revisamos y aprobamos estos documentos. Sube fotos nítidas o PDF; te avisamos cuando estén revisados.",
+    "en": "To receive rides we review and approve these documents. Upload clear photos or PDFs; we'll let you know once they're reviewed.",
+    "pt": "Para receber viagens revisamos e aprovamos estes documentos. Envie fotos nítidas ou PDF; avisaremos quando forem revisados."
+  },
+  "docSummaryVerified": {
+    "es": "Chófer verificado",
+    "en": "Verified chauffeur",
+    "pt": "Motorista verificado"
+  },
+  "docSummaryVerifiedBody": {
+    "es": "Todos tus documentos están aprobados. Te avisaremos 30 y 7 días antes de que venza alguno.",
+    "en": "All your documents are approved. We'll remind you 30 and 7 days before any of them expires.",
+    "pt": "Todos os seus documentos estão aprovados. Avisaremos 30 e 7 dias antes de algum vencer."
+  },
+  "docApprovedCount": {
+    "es": "{approved} de {total} aprobados",
+    "en": "{approved} of {total} approved",
+    "pt": "{approved} de {total} aprovados",
+    "placeholders": {
+      "approved": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "docPendingCount": {
+    "es": "{count, plural, =1{1 en revisión} other{{count} en revisión}}",
+    "en": "{count} in review",
+    "pt": "{count, plural, =1{1 em revisão} other{{count} em revisão}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "docToUploadCount": {
+    "es": "{count, plural, =1{1 por subir} other{{count} por subir}}",
+    "en": "{count} to upload",
+    "pt": "{count, plural, =1{1 para enviar} other{{count} para enviar}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "docLicense": {
+    "es": "Licencia de conducir",
+    "en": "Driver's license",
+    "pt": "Carteira de motorista"
+  },
+  "docLicenseHint": {
+    "es": "Categoría profesional, ambos lados",
+    "en": "Professional category, both sides",
+    "pt": "Categoria profissional, frente e verso"
+  },
+  "docIdCard": {
+    "es": "Cédula de identidad",
+    "en": "ID card",
+    "pt": "Documento de identidade"
+  },
+  "docIdCardHint": {
+    "es": "Ambos lados, legible",
+    "en": "Both sides, readable",
+    "pt": "Frente e verso, legível"
+  },
+  "docCriminalRecord": {
+    "es": "Certificado de antecedentes",
+    "en": "Criminal record certificate",
+    "pt": "Certidão de antecedentes"
+  },
+  "docCriminalRecordHint": {
+    "es": "REJAP o FELCC, emitido en los últimos 3 meses",
+    "en": "REJAP or FELCC, issued in the last 3 months",
+    "pt": "REJAP ou FELCC, emitida nos últimos 3 meses"
+  },
+  "docSoat": {
+    "es": "SOAT",
+    "en": "SOAT insurance",
+    "pt": "Seguro SOAT"
+  },
+  "docSoatHint": {
+    "es": "Seguro obligatorio vigente del vehículo",
+    "en": "The vehicle's current mandatory insurance",
+    "pt": "Seguro obrigatório vigente do veículo"
+  },
+  "docVehicleRegistration": {
+    "es": "Registro del vehículo (RUAT)",
+    "en": "Vehicle registration (RUAT)",
+    "pt": "Registro do veículo (RUAT)"
+  },
+  "docVehicleRegistrationHint": {
+    "es": "Certificado de propiedad o RUAT a tu nombre o autorizado",
+    "en": "Ownership certificate or RUAT in your name or authorised",
+    "pt": "Certificado de propriedade ou RUAT em seu nome ou autorizado"
+  },
+  "docStatusMissing": {
+    "es": "Falta",
+    "en": "Missing",
+    "pt": "Faltando"
+  },
+  "docStatusPending": {
+    "es": "En revisión",
+    "en": "In review",
+    "pt": "Em revisão"
+  },
+  "docStatusApproved": {
+    "es": "Aprobado",
+    "en": "Approved",
+    "pt": "Aprovado"
+  },
+  "docStatusRejected": {
+    "es": "Rechazado",
+    "en": "Rejected",
+    "pt": "Recusado"
+  },
+  "docStatusExpired": {
+    "es": "Vencido",
+    "en": "Expired",
+    "pt": "Vencido"
+  },
+  "docStatusExpiring": {
+    "es": "Por vencer",
+    "en": "Expiring",
+    "pt": "A vencer"
+  },
+  "docExpiresOn": {
+    "es": "Vence el {date}",
+    "en": "Expires {date}",
+    "pt": "Vence em {date}",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "docExpiredOn": {
+    "es": "Venció el {date}",
+    "en": "Expired {date}",
+    "pt": "Venceu em {date}",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "docUploadedOn": {
+    "es": "Subido el {date}",
+    "en": "Uploaded {date}",
+    "pt": "Enviado em {date}",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "docRejectedReason": {
+    "es": "Motivo: {reason}",
+    "en": "Reason: {reason}",
+    "pt": "Motivo: {reason}",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "docPendingHint": {
+    "es": "Lo revisamos normalmente en menos de 24 horas.",
+    "en": "We usually review it within 24 hours.",
+    "pt": "Normalmente revisamos em menos de 24 horas."
+  },
+  "docUpload": {
+    "es": "Subir",
+    "en": "Upload",
+    "pt": "Enviar"
+  },
+  "docReplace": {
+    "es": "Reemplazar",
+    "en": "Replace",
+    "pt": "Substituir"
+  },
+  "docUploaded": {
+    "es": "Documento enviado a revisión",
+    "en": "Document sent for review",
+    "pt": "Documento enviado para revisão"
+  },
+  "docExpiryPickerTitle": {
+    "es": "¿Cuándo vence tu {doc}?",
+    "en": "When does your {doc} expire?",
+    "pt": "Quando vence seu {doc}?",
+    "placeholders": {
+      "doc": {
+        "type": "String"
+      }
+    }
+  },
+  "docPrivacyNote": {
+    "es": "Tus documentos solo los ve el equipo de Luxelane para verificarte. Se borran si eliminas tu cuenta.",
+    "en": "Only the Luxelane team sees your documents, to verify you. They're deleted if you delete your account.",
+    "pt": "Somente a equipe Luxelane vê seus documentos, para verificar você. Eles são apagados se você excluir sua conta."
+  },
+  "docBannerToUpload": {
+    "es": "{count, plural, =1{Falta 1 documento para que puedas recibir viajes.} other{Faltan {count} documentos para que puedas recibir viajes.}}",
+    "en": "{count, plural, =1{1 document missing before you can receive rides.} other{{count} documents missing before you can receive rides.}}",
+    "pt": "{count, plural, =1{Falta 1 documento para você receber viagens.} other{Faltam {count} documentos para você receber viagens.}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "docBannerInReview": {
+    "es": "Estamos revisando tus documentos. Te avisaremos al aprobarlos.",
+    "en": "We're reviewing your documents. We'll let you know once approved.",
+    "pt": "Estamos revisando seus documentos. Avisaremos quando forem aprovados."
+  },
+  "docBannerExpiring": {
+    "es": "Tu {doc} vence pronto. Sube la versión renovada.",
+    "en": "Your {doc} expires soon. Upload the renewed one.",
+    "pt": "Seu {doc} vence em breve. Envie a versão renovada.",
+    "placeholders": {
+      "doc": {
+        "type": "String"
+      }
+    }
+  },
+  "docErrorExpiryRequired": {
+    "es": "Indica la fecha de vencimiento.",
+    "en": "Enter the expiry date.",
+    "pt": "Informe a data de vencimento."
+  },
+  "docErrorAlreadyExpired": {
+    "es": "Ese documento ya está vencido.",
+    "en": "That document has already expired.",
+    "pt": "Esse documento já está vencido."
+  },
+  "docErrorReasonRequired": {
+    "es": "Escribe el motivo del rechazo.",
+    "en": "Enter the reason for rejecting it.",
+    "pt": "Escreva o motivo da recusa."
+  },
+  "docErrorTooLarge": {
+    "es": "El archivo pesa más de 10 MB.",
+    "en": "The file is larger than 10 MB.",
+    "pt": "O arquivo tem mais de 10 MB."
+  },
+  "docErrorFailed": {
+    "es": "No se pudo completar. Inténtalo de nuevo.",
+    "en": "That didn't work. Please try again.",
+    "pt": "Não foi possível concluir. Tente novamente."
+  },
+  "docReviewAction": {
+    "es": "Revisar documentos",
+    "en": "Review documents",
+    "pt": "Revisar documentos"
+  },
+  "docReviewTitle": {
+    "es": "Documentos de {name}",
+    "en": "{name}'s documents",
+    "pt": "Documentos de {name}",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "docReviewAllApproved": {
+    "es": "Todos los documentos están aprobados y vigentes.",
+    "en": "All documents are approved and current.",
+    "pt": "Todos os documentos estão aprovados e vigentes."
+  },
+  "docReviewOpen": {
+    "es": "Ver archivo",
+    "en": "Open file",
+    "pt": "Ver arquivo"
+  },
+  "docReviewApprove": {
+    "es": "Aprobar",
+    "en": "Approve",
+    "pt": "Aprovar"
+  },
+  "docReviewReject": {
+    "es": "Rechazar",
+    "en": "Reject",
+    "pt": "Recusar"
+  },
+  "docReviewConfirmExpiry": {
+    "es": "Confirma la fecha de vencimiento",
+    "en": "Confirm the expiry date",
+    "pt": "Confirme a data de vencimento"
+  },
+  "docReviewApproved": {
+    "es": "Documento aprobado",
+    "en": "Document approved",
+    "pt": "Documento aprovado"
+  },
+  "docReviewRejected": {
+    "es": "Documento rechazado; avisamos al chófer",
+    "en": "Document rejected; the chauffeur was notified",
+    "pt": "Documento recusado; o motorista foi avisado"
+  },
+  "docReviewRejectTitle": {
+    "es": "Rechazar documento",
+    "en": "Reject document",
+    "pt": "Recusar documento"
+  },
+  "docReviewRejectReason": {
+    "es": "Motivo",
+    "en": "Reason",
+    "pt": "Motivo"
+  },
+  "docReviewRejectReasonHint": {
+    "es": "Ej.: la foto está borrosa",
+    "en": "E.g. the photo is blurry",
+    "pt": "Ex.: a foto está borrada"
+  }
+}

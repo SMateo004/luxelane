@@ -1,12 +1,12 @@
 import * as admin from 'firebase-admin';
 import { onCall, CallableRequest } from 'firebase-functions/v2/https';
-import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
+import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import * as stripe from './stripe_service';
 import { STRIPE_SECRET_KEY } from './stripe_service';
 import { defineSecret } from 'firebase-functions/params';
 import { logger } from './logger';
-import { Lang, MessageKey, clock, langOf, money, t, vehicleName } from './messages';
+import { Lang, MessageKey, clock, docName, langOf, money, t, vehicleName } from './messages';
 import { buildChauffeur, isValidRating, nextAverage } from './chauffeur';
 import {
   DispatchState,
@@ -25,6 +25,18 @@ import {
   shouldTrack,
 } from './flights';
 import * as err from './errors';
+import {
+  DocStatus,
+  DocType,
+  DriverDoc,
+  REMINDER_DAYS,
+  approvalError,
+  daysLeft,
+  isDocType,
+  isExpired,
+  isFullyVerified,
+  reminderDue,
+} from './documents';
 import {
   CompanyDoc,
   CompanyRole,
@@ -1289,6 +1301,10 @@ export const deleteAccount = onCall(async (req) => {
   }
 
   if (user.role === 'driver') {
+    // Identity documents are personal data: remove files and their records.
+    const docs = await verificationDocs(uid).get();
+    await Promise.all(docs.docs.map((d) => d.ref.delete()));
+    await admin.storage().bucket().deleteFiles({ prefix: `driver_documents/${uid}/` }).catch(() => undefined);
     await db.collection('driverProfiles').doc(uid).delete().catch(() => undefined);
     const vehicles = await db.collection('vehicles').where('driverId', '==', uid).get();
     await Promise.all(vehicles.docs.map((v) => v.ref.update({ isActive: false })));
@@ -1523,6 +1539,149 @@ export const claimCompanyInvite = onDocumentCreated('users/{uid}', async (event)
     logger.error('claimCompanyInvite', 'failed', { uid: event.params.uid, error: String(e) });
   }
 });
+
+// ---------------------------------------------------------------------------
+// Chauffeur verification documents — driverProfiles/{uid}/verificationDocs/{type}
+// The chauffeur uploads (status 'pending'), an admin approves or rejects, and
+// a daily job expires documents and sends renewal reminders. Verification
+// (driverProfiles.documentsVerified) is always recomputed from the documents.
+// ---------------------------------------------------------------------------
+
+const verificationDocs = (uid: string) => db.collection('driverProfiles').doc(uid).collection('verificationDocs');
+
+function toDriverDoc(data: admin.firestore.DocumentData | undefined): DriverDoc | undefined {
+  if (!data) return undefined;
+  return {
+    status: data.status as DocStatus,
+    expiresAt: (data.expiresAt as admin.firestore.Timestamp | null | undefined)?.toDate() ?? null,
+    remindedDays: (data.remindedDays as number | null | undefined) ?? null,
+  };
+}
+
+/** Recomputes documentsVerified; an unverified chauffeur goes offline. */
+async function recomputeVerification(uid: string): Promise<boolean> {
+  const snap = await verificationDocs(uid).get();
+  const docs: Partial<Record<DocType, DriverDoc>> = {};
+  snap.docs.forEach((d) => {
+    if (isDocType(d.id)) docs[d.id] = toDriverDoc(d.data());
+  });
+  const verified = isFullyVerified(docs, new Date());
+  const profileRef = db.collection('driverProfiles').doc(uid);
+  const profile = await profileRef.get();
+  if (!profile.exists) return verified;
+  const update: Record<string, unknown> = { documentsVerified: verified };
+  if (!verified) update.isAvailable = false;
+  if (profile.data()?.documentsVerified !== verified || (!verified && profile.data()?.isAvailable)) {
+    await profileRef.update(update);
+  }
+  return verified;
+}
+
+export const onVerificationDocWritten = onDocumentWritten(
+  'driverProfiles/{uid}/verificationDocs/{type}',
+  async (event) => {
+    const verified = await recomputeVerification(event.params.uid);
+    logger.info('onVerificationDocWritten', 'recomputed', { uid: event.params.uid, type: event.params.type, verified });
+  },
+);
+
+export const reviewDriverDocument = onCall(async (req) => {
+  const uid = await requireAdmin(req);
+  const d = (req.data ?? {}) as {
+    driverId?: unknown;
+    type?: unknown;
+    approve?: unknown;
+    reason?: unknown;
+    expiresAt?: unknown;
+  };
+  if (typeof d.driverId !== 'string' || !d.driverId) throw err.invalidArgument('driverId required');
+  if (!isDocType(d.type)) throw err.invalidArgument('documents/invalid-type');
+  const ref = verificationDocs(d.driverId).doc(d.type);
+  const snap = await ref.get();
+  if (!snap.exists) throw err.notFound('Document not found');
+
+  const now = new Date();
+  const approve = d.approve === true;
+  const update: Record<string, unknown> = {
+    reviewedAt: admin.firestore.Timestamp.fromDate(now),
+    reviewedBy: uid,
+    remindedDays: null,
+  };
+  if (approve) {
+    // The admin confirms (or corrects) the expiry printed on the document.
+    const ms = Number(d.expiresAt);
+    const expiresAt = Number.isFinite(ms) && ms > 0
+      ? new Date(ms)
+      : (snap.data()?.expiresAt as admin.firestore.Timestamp | undefined)?.toDate() ?? null;
+    const error = approvalError(d.type, expiresAt, now);
+    if (error) throw err.invalidArgument(error);
+    update.status = 'approved' as DocStatus;
+    update.expiresAt = expiresAt ? admin.firestore.Timestamp.fromDate(expiresAt) : null;
+    update.rejectionReason = null;
+  } else {
+    const reason = typeof d.reason === 'string' ? d.reason.trim().slice(0, 300) : '';
+    if (!reason) throw err.invalidArgument('documents/reason-required');
+    update.status = 'rejected' as DocStatus;
+    update.rejectionReason = reason;
+  }
+  await ref.update(update);
+
+  const type = d.type;
+  if (approve) {
+    await pushUser(d.driverId, 'docApprovedTitle', 'docApprovedBody', (lang) => ({ doc: docName(type, lang) }));
+  } else {
+    await pushUser(d.driverId, 'docRejectedTitle', 'docRejectedBody', (lang) => ({
+      doc: docName(type, lang),
+      reason: update.rejectionReason as string,
+    }));
+  }
+  await writeAudit(approve ? 'driver_document_approved' : 'driver_document_rejected', {
+    driverId: d.driverId,
+    type,
+    by: uid,
+  });
+  return { ok: true };
+});
+
+/** Daily: expires documents and reminds chauffeurs 30 and 7 days before. */
+export const checkDocumentExpiry = onSchedule(
+  { schedule: 'every day 09:00', timeZone: 'America/La_Paz' },
+  async () => {
+    const now = new Date();
+    const horizon = admin.firestore.Timestamp.fromMillis(now.getTime() + REMINDER_DAYS[0] * 86400000);
+    const snap = await db
+      .collectionGroup('verificationDocs')
+      .where('status', '==', 'approved')
+      .where('expiresAt', '<=', horizon)
+      .get();
+
+    let expired = 0;
+    let reminded = 0;
+    for (const doc of snap.docs) {
+      const driverId = doc.ref.parent.parent?.id;
+      const data = toDriverDoc(doc.data());
+      if (!driverId || !data) continue;
+      const type = doc.id;
+      if (isExpired(data, now)) {
+        await doc.ref.update({ status: 'expired' as DocStatus });
+        await pushUser(driverId, 'docExpiredTitle', 'docExpiredBody', (lang) => ({ doc: docName(type, lang) }));
+        expired++;
+        continue;
+      }
+      const due = reminderDue(data, now);
+      if (due !== null && data.expiresAt) {
+        const left = daysLeft(data.expiresAt, now);
+        await doc.ref.update({ remindedDays: due });
+        await pushUser(driverId, 'docExpiringTitle', 'docExpiringBody', (lang) => ({
+          doc: docName(type, lang),
+          days: left,
+        }));
+        reminded++;
+      }
+    }
+    logger.info('checkDocumentExpiry', 'done', { expired, reminded });
+  },
+);
 
 // ---------------------------------------------------------------------------
 // scheduledCleanup — cancels pending bookings whose pickup time has passed

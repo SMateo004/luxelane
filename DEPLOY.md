@@ -39,16 +39,20 @@
    - Firestore → create database (production mode)
    - Cloud Functions → enable billing (Blaze plan required)
    - Cloud Messaging → enabled by default
+   - Storage → enable it (Build → Storage → Get started). Chauffeur
+     verification documents are stored there under `driver_documents/`.
 
 ---
 
 ## Deploy
 
-### Functions + Rules + Indexes
+### Functions + Rules + Indexes + Storage rules
 ```
 firebase use luxelane-prod
-firebase deploy --only functions,firestore
+firebase deploy --only functions,firestore,storage
 ```
+Storage rules read the admin role from Firestore (cross-service rules); the
+first deploy asks to grant that permission — accept it.
 
 ### Flutter Android (prod)
 ```
