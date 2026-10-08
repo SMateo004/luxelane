@@ -13,6 +13,7 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/utils/waiting_policy.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../home/presentation/pages/home_design.dart';
+import '../../../loyalty/presentation/loyalty_widgets.dart';
 
 /// Shown right after a booking is created: animated confirmation, the
 /// fixed price, trip summary and a countdown to pickup.
@@ -251,7 +252,11 @@ class _SummaryCard extends StatelessWidget {
                           style: displayText(size: 30, weight: FontWeight.w500)),
                     ),
                     if (booking.discount > 0)
-                      Text(l.promoSavedLine(LuxMoney.format(booking.discount), booking.promoCode ?? ''),
+                      Text(
+                          booking.loyaltyTier != null
+                              ? l.loyaltySavedLine(
+                                  LuxMoney.format(booking.discount), loyaltyTierName(l, booking.loyaltyTier) ?? '')
+                              : l.promoSavedLine(LuxMoney.format(booking.discount), booking.promoCode ?? ''),
                           textAlign: TextAlign.end,
                           style: uiLabel(spacing: 0.4, color: LD.accent)),
                     Text(booking.isCorporate

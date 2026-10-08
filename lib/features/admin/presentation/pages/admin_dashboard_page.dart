@@ -8,6 +8,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../company/presentation/widgets/companies_admin_tab.dart';
 import '../../../health/presentation/health_admin_tab.dart';
+import '../../../loyalty/presentation/loyalty_widgets.dart';
 import '../../../promo/presentation/promos_admin_tab.dart';
 import '../../../settlements/presentation/settlements_admin_tab.dart';
 import '../../../support/presentation/widgets/support_admin_tab.dart';
@@ -32,6 +33,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         l.adminSectionReports,
         l.adminSectionCompanies,
         l.adminSectionPromos,
+        l.adminSectionLoyalty,
         l.adminSectionSupport,
         l.adminSectionHealth,
         l.adminSectionSettlements,
@@ -48,6 +50,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     Icons.insights_outlined,
     Icons.business_outlined,
     Icons.local_offer_outlined,
+    Icons.workspace_premium_outlined,
     Icons.support_agent_outlined,
     Icons.monitor_heart_outlined,
     Icons.account_balance_wallet_outlined,
@@ -220,15 +223,16 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       case 2: return const ReportsTab();
       case 3: return const CompaniesAdminTab();
       case 4: return const PromosAdminTab();
-      case 5: return const SupportAdminTab();
-      case 6: return const HealthAdminTab();
-      case 7: return const SettlementsAdminTab();
-      case 8: return const DriversTab();
-      case 9: return const VehiclesTab();
-      case 10: return const UsersTab();
-      case 11: return const PricingTab();
-      case 12: return const AuditTab();
-      case 13: return const SettingsTab();
+      case 5: return const LoyaltyAdminTab();
+      case 6: return const SupportAdminTab();
+      case 7: return const HealthAdminTab();
+      case 8: return const SettlementsAdminTab();
+      case 9: return const DriversTab();
+      case 10: return const VehiclesTab();
+      case 11: return const UsersTab();
+      case 12: return const PricingTab();
+      case 13: return const AuditTab();
+      case 14: return const SettingsTab();
       default: return const SizedBox();
     }
   }

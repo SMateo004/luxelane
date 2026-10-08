@@ -1384,10 +1384,14 @@ class _PromoCodeField extends StatelessWidget {
     required this.checking,
     required this.onApply,
     required this.onRemove,
+    this.note,
   });
 
   final TextEditingController controller;
   final String? applied;
+
+  /// Shown under an applied code, e.g. when the Circle discount is larger.
+  final String? note;
 
   /// Previewed discount for the current fare (null while re-checking).
   final double? discount;
@@ -1400,7 +1404,7 @@ class _PromoCodeField extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     if (applied != null) {
-      return Container(
+      final chip = Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(color: LD.accentTint, border: Border.all(color: LD.accent)),
         child: Row(children: [
@@ -1427,6 +1431,12 @@ class _PromoCodeField extends StatelessWidget {
             ),
         ]),
       );
+      if (note == null) return chip;
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        chip,
+        const SizedBox(height: 6),
+        Text(note!, style: const TextStyle(fontFamily: kSans, fontSize: 12, color: _kTextSub)),
+      ]);
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

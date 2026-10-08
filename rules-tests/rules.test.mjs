@@ -403,3 +403,14 @@ describe('settlements', () => {
     await assertFails(getDoc(doc(db('newdriver'), 'settlements/driver_20261005')));
   });
 });
+
+describe('loyalty config', () => {
+  it('only admins configure it, with at most 3 tiers', async () => {
+    const tiers = [{ id: 'silver', minRides: 5, discountPct: 3 }];
+    await assertSucceeds(setDoc(doc(db('admin'), 'config/loyalty'), { enabled: true, tiers }));
+    await assertFails(setDoc(doc(db('admin'), 'config/loyalty'), { enabled: 'yes', tiers }));
+    await assertFails(setDoc(doc(db('admin'), 'config/loyalty'), { enabled: true, tiers: [...tiers, ...tiers, ...tiers, ...tiers] }));
+    await assertFails(setDoc(doc(db('rider'), 'config/loyalty'), { enabled: true, tiers }));
+    await assertSucceeds(getDoc(doc(db('rider'), 'config/loyalty')));
+  });
+});

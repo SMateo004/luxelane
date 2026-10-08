@@ -31,4 +31,7 @@ abstract final class PromoErrorCodes {
   static const vehicleClass = 'promo/vehicle-class';
   static const minFare = 'promo/min-fare';
   static const failed = 'promo/failed';
+
+  /// The rider's loyalty discount was larger, so the code wasn't used.
+  static const loyaltyBetter = 'promo/loyalty-better';
 }

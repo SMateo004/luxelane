@@ -301,6 +301,7 @@ class Booking {
     this.baseAmount,
     this.days = 1,
     this.distanceKm,
+    this.loyaltyTier,
   });
 
   final String id;
@@ -388,6 +389,9 @@ class Booking {
   /// Route distance the price was quoted with (one-way trips).
   final double? distanceKm;
 
+  /// Loyalty tier whose discount applied (instead of a promo code).
+  final String? loyaltyTier;
+
   /// Whether [driverId] should see this pending booking as a request.
   bool isOfferedTo(String driverId) {
     final d = dispatch;
@@ -460,6 +464,7 @@ class Booking {
         baseAmount: (j['baseAmount'] as num?)?.toDouble(),
         days: (j['days'] as num?)?.toInt() ?? 1,
         distanceKm: (j['distanceKm'] as num?)?.toDouble(),
+        loyaltyTier: j['loyaltyTier'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -538,6 +543,7 @@ class Booking {
         baseAmount: baseAmount,
         days: days,
         distanceKm: distanceKm,
+        loyaltyTier: loyaltyTier,
       );
 }
 
@@ -706,6 +712,7 @@ class Quote {
     this.discount = 0,
     this.promoCode,
     this.promoError,
+    this.loyaltyTier,
   });
 
   final String id;
@@ -722,6 +729,9 @@ class Quote {
 
   /// Why the requested code was not applied (e.g. 'promo/expired').
   final String? promoError;
+
+  /// Loyalty tier ('silver', 'gold', 'platinum') whose discount applied.
+  final String? loyaltyTier;
   final String currency;
   final DateTime expiresAt;
   final double? distanceKm;
@@ -745,6 +755,7 @@ class Quote {
         discount: (j['discount'] as num?)?.toDouble() ?? 0,
         promoCode: j['promoCode'] as String?,
         promoError: j['promoError'] as String?,
+        loyaltyTier: j['loyaltyTier'] as String?,
       );
 }
 

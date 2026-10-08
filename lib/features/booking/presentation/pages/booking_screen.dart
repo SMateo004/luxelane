@@ -22,8 +22,12 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../company/data/company_repository.dart';
 import '../../../company/domain/company.dart';
 import '../../../home/presentation/pages/home_design.dart';
+import '../../../loyalty/data/loyalty_repository.dart';
+import '../../../loyalty/domain/loyalty.dart';
+import '../../../loyalty/presentation/loyalty_widgets.dart';
 import '../../../payments/presentation/bloc/payment_bloc.dart';
 import '../bloc/booking_bloc.dart';
+import '../../domain/booking_error_codes.dart';
 import '../booking_error_l10n.dart';
 
 part 'booking/widgets.dart';
@@ -90,6 +94,9 @@ class _BookingScreenState extends State<BookingScreen> {
   bool _promoChecking = false;
   String? _promoCheckedFor;
 
+  // Luxelane Circle standing (off unless the program is enabled).
+  LoyaltyStatus _loyalty = LoyaltyStatus.off;
+
   // Corporate billing (riders who belong to a company account).
   Company? _company;
   bool _billCompany = false;
@@ -114,9 +121,28 @@ class _BookingScreenState extends State<BookingScreen> {
 
   String get _promoKey => '${_selected.name}|${_price.round()}';
 
-  /// Estimate after the previewed promo (only while it matches the inputs).
-  double get _payable =>
-      _promo != null && _promoCheckedFor == _promoKey ? (_price - _promoDiscount).clamp(0, _price).toDouble() : _price;
+  double get _promoAmount => _promo != null && _promoCheckedFor == _promoKey ? _promoDiscount : 0;
+
+  double get _loyaltyAmount {
+    final tier = _loyalty.enabled ? _loyalty.tier : null;
+    return tier == null ? 0 : Loyalty.discount(_price, tier.discountPct);
+  }
+
+  /// Discounts don't stack: the larger applies, a promo wins ties (as the server).
+  bool get _loyaltyWins => _loyaltyAmount > _promoAmount;
+
+  /// Estimate after the previewed discount (only while it matches the inputs).
+  double get _payable {
+    final off = _loyaltyWins ? _loyaltyAmount : _promoAmount;
+    return (_price - off).clamp(0, _price).toDouble();
+  }
+
+  String get _discountLabel {
+    final l = context.l10n;
+    return _loyaltyWins
+        ? l.loyaltyDiscountLine(_loyalty.tier!.id.localizedName(l))
+        : l.promoDiscountLine(_promo ?? '');
+  }
 
   Future<void> _applyPromo([String? raw]) async {
     final code = (raw ?? _promoCtrl.text).replaceAll(RegExp(r'\s+'), '').toUpperCase();
@@ -176,6 +202,7 @@ class _BookingScreenState extends State<BookingScreen> {
         checking: _promoChecking,
         onApply: () => _applyPromo(),
         onRemove: _removePromo,
+        note: _promo != null && _loyaltyWins ? context.l10n.promoLoyaltyBetter : null,
       );
 
   @override
@@ -209,7 +236,14 @@ class _BookingScreenState extends State<BookingScreen> {
       }
       _loadSavedCards();
       _loadCompany();
+      _loadLoyalty();
     }
+  }
+
+  Future<void> _loadLoyalty() async {
+    if (!sl.isRegistered<LoyaltyRepository>()) return;
+    final status = await sl<LoyaltyRepository>().myStatus();
+    if (mounted && status.enabled) setState(() => _loyalty = status);
   }
 
   Future<void> _loadCompany() async {
@@ -314,10 +348,11 @@ class _BookingScreenState extends State<BookingScreen> {
     // The code stopped applying (expired, used up…): say why; the price
     // check below then asks to confirm the full price.
     if (_promo != null && quote.promoCode == null) {
+      final loyaltyBetter = quote.promoError == PromoErrorCodes.loyaltyBetter;
       showLuxSnackbar(context, localizedBookingError(context.l10n, quote.promoError ?? 'promo/invalid'),
-          isError: true);
+          isError: !loyaltyBetter);
       setState(() {
-        _promoError = quote.promoError;
+        _promoError = loyaltyBetter ? null : quote.promoError;
         _promo = null;
         _promoDiscount = 0;
         _promoCheckedFor = null;
@@ -1872,7 +1907,7 @@ class _BookingScreenState extends State<BookingScreen> {
             if (_flight.isNotEmpty) _SummaryRow(l.bookingSummaryFlight, _flight),
             if (_notes.isNotEmpty)  _SummaryRow(l.bookingSummaryNotes, _notes),
             if (_payable < _price)
-              _SummaryRow(l.promoDiscountLine(_promo ?? ''),
+              _SummaryRow(_discountLabel,
                   '−${LuxMoney.format((_price - _payable).round())}'),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

@@ -901,6 +901,12 @@ abstract class AppLocalizations {
   /// **'Salud'**
   String get adminSectionHealth;
 
+  /// No description provided for @adminSectionLoyalty.
+  ///
+  /// In es, this message translates to:
+  /// **'Fidelidad'**
+  String get adminSectionLoyalty;
+
   /// No description provided for @adminSectionPricing.
   ///
   /// In es, this message translates to:
@@ -4831,6 +4837,162 @@ abstract class AppLocalizations {
   /// **'Última actualización: {date}'**
   String legalLastUpdated(DateTime date);
 
+  /// No description provided for @loyaltyAdminIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'Programa de fidelidad por niveles según los viajes completados en los últimos 12 meses. Cada nivel da un descuento sobre la tarifa. Tú decides los umbrales y los porcentajes.'**
+  String get loyaltyAdminIntro;
+
+  /// No description provided for @loyaltyAdminTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane Circle'**
+  String get loyaltyAdminTitle;
+
+  /// No description provided for @loyaltyBenefit.
+  ///
+  /// In es, this message translates to:
+  /// **'Tienes {pct} % de descuento en cada viaje.'**
+  String loyaltyBenefit(String pct);
+
+  /// No description provided for @loyaltyDisabledHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Apagado: nadie ve el programa ni recibe descuentos.'**
+  String get loyaltyDisabledHint;
+
+  /// No description provided for @loyaltyDiscountLine.
+  ///
+  /// In es, this message translates to:
+  /// **'Descuento Circle {tier}'**
+  String loyaltyDiscountLine(String tier);
+
+  /// No description provided for @loyaltyDiscountPct.
+  ///
+  /// In es, this message translates to:
+  /// **'Descuento %'**
+  String get loyaltyDiscountPct;
+
+  /// No description provided for @loyaltyEnable.
+  ///
+  /// In es, this message translates to:
+  /// **'Programa activo'**
+  String get loyaltyEnable;
+
+  /// No description provided for @loyaltyEnabledHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Los clientes ven su nivel en el perfil y el descuento se aplica al cotizar.'**
+  String get loyaltyEnabledHint;
+
+  /// No description provided for @loyaltyErrorDiscounts.
+  ///
+  /// In es, this message translates to:
+  /// **'Cada nivel debe dar al menos el mismo descuento que el anterior.'**
+  String get loyaltyErrorDiscounts;
+
+  /// No description provided for @loyaltyErrorMinRides.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa al menos 1 viaje para cada nivel.'**
+  String get loyaltyErrorMinRides;
+
+  /// No description provided for @loyaltyErrorRange.
+  ///
+  /// In es, this message translates to:
+  /// **'El descuento debe estar entre 0 y 20 %.'**
+  String get loyaltyErrorRange;
+
+  /// No description provided for @loyaltyErrorThresholds.
+  ///
+  /// In es, this message translates to:
+  /// **'Cada nivel debe pedir más viajes que el anterior.'**
+  String get loyaltyErrorThresholds;
+
+  /// No description provided for @loyaltyGold.
+  ///
+  /// In es, this message translates to:
+  /// **'Gold'**
+  String get loyaltyGold;
+
+  /// No description provided for @loyaltyHowItWorks.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuentan los viajes completados en los últimos 12 meses. No se suma a códigos promocionales.'**
+  String get loyaltyHowItWorks;
+
+  /// No description provided for @loyaltyMember.
+  ///
+  /// In es, this message translates to:
+  /// **'Miembro'**
+  String get loyaltyMember;
+
+  /// No description provided for @loyaltyMinRides.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes en 12 meses'**
+  String get loyaltyMinRides;
+
+  /// No description provided for @loyaltyNoBenefitYet.
+  ///
+  /// In es, this message translates to:
+  /// **'Completa viajes para subir de nivel y obtener descuentos.'**
+  String get loyaltyNoBenefitYet;
+
+  /// No description provided for @loyaltyPlatinum.
+  ///
+  /// In es, this message translates to:
+  /// **'Platinum'**
+  String get loyaltyPlatinum;
+
+  /// No description provided for @loyaltyProgramName.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane Circle'**
+  String get loyaltyProgramName;
+
+  /// No description provided for @loyaltyRulesNote.
+  ///
+  /// In es, this message translates to:
+  /// **'El descuento no se suma a un código promocional: se aplica el mayor de los dos. Solo cuentan los viajes completados.'**
+  String get loyaltyRulesNote;
+
+  /// No description provided for @loyaltySave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get loyaltySave;
+
+  /// No description provided for @loyaltySaved.
+  ///
+  /// In es, this message translates to:
+  /// **'Programa de fidelidad guardado'**
+  String get loyaltySaved;
+
+  /// No description provided for @loyaltySavedLine.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahorras {amount} por ser Circle {tier}'**
+  String loyaltySavedLine(String amount, String tier);
+
+  /// No description provided for @loyaltySilver.
+  ///
+  /// In es, this message translates to:
+  /// **'Silver'**
+  String get loyaltySilver;
+
+  /// No description provided for @loyaltyToNext.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 viaje más para {tier} ({pct} %)} other{{count} viajes más para {tier} ({pct} %)}}'**
+  String loyaltyToNext(int count, String tier, String pct);
+
+  /// No description provided for @loyaltyTopTier.
+  ///
+  /// In es, this message translates to:
+  /// **'{rides, plural, =1{Nivel máximo · 1 viaje en 12 meses} other{Nivel máximo · {rides} viajes en 12 meses}}'**
+  String loyaltyTopTier(int rides);
+
   /// Bell tooltip / screen-reader label when there are unread notifications
   ///
   /// In es, this message translates to:
@@ -5418,6 +5580,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Código promocional'**
   String get promoFieldLabel;
+
+  /// No description provided for @promoLoyaltyBetter.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu descuento Circle es mayor que el del código, así que aplicamos el Circle.'**
+  String get promoLoyaltyBetter;
 
   /// No description provided for @promoRemove.
   ///

@@ -25,6 +25,7 @@ import {
   shouldTrack,
 } from './flights';
 import * as err from './errors';
+import { WINDOW_MS, bestDiscount, loyaltyDiscount, nextTier, parseConfig, tierFor } from './loyalty';
 import {
   MAX_MESSAGE,
   MAX_STACK,
@@ -218,6 +219,8 @@ interface QuoteDoc {
   promoCode?: string | null;
   baseAmount?: number;
   discount?: number;
+  /** Loyalty tier whose discount applied instead of a promo (if larger). */
+  loyaltyTier?: string | null;
 }
 
 interface UserDoc {
@@ -449,6 +452,32 @@ export const savePromoCode = onCall(async (req) => {
 });
 
 // ---------------------------------------------------------------------------
+// Loyalty — tiers by completed rides in the last 12 months (config/loyalty)
+// ---------------------------------------------------------------------------
+
+async function loadLoyalty(uid: string) {
+  const config = parseConfig((await db.collection('config').doc('loyalty').get()).data());
+  if (!config.enabled) return { config, rides: 0, tier: null, next: null };
+  const since = admin.firestore.Timestamp.fromMillis(Date.now() - WINDOW_MS);
+  const count = await db
+    .collection('bookings')
+    .where('riderId', '==', uid)
+    .where('status', '==', 'completed')
+    .where('scheduledAt', '>=', since)
+    .count()
+    .get();
+  const rides = count.data().count;
+  return { config, rides, tier: tierFor(rides, config), next: nextTier(rides, config) };
+}
+
+/** The rider's standing for the profile and the booking screen. */
+export const myLoyalty = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const { config, rides, tier, next } = await loadLoyalty(uid);
+  return { enabled: config.enabled, rides, tier, next, tiers: config.tiers };
+});
+
+// ---------------------------------------------------------------------------
 // quoteBooking — fixed, server-computed price in Bs, valid for 15 minutes
 // ---------------------------------------------------------------------------
 
@@ -486,19 +515,30 @@ export const quoteBooking = onCall(async (req) => {
 
   // A valid promo lowers the fixed price; an invalid one is reported and the
   // quote keeps the full price.
-  let discount = 0;
+  let promoDiscount = 0;
   let appliedCode: string | null = null;
   let promoError: string | null = null;
   if (promoCode !== undefined && promoCode !== null && promoCode !== '') {
     const code = normalizeCode(promoCode);
     const result = code ? await checkPromo(uid, code, baseAmount, vehicleClass) : { ok: false as const, error: 'promo/invalid' };
     if (result.ok) {
-      discount = result.discount;
+      promoDiscount = result.discount;
       appliedCode = code;
     } else {
       promoError = result.error;
     }
   }
+
+  // Loyalty tier discount; discounts don't stack, the larger one applies.
+  const loyalty = await loadLoyalty(uid);
+  const best = bestDiscount(promoDiscount, loyaltyDiscount(baseAmount, loyalty.tier));
+  let loyaltyTier: string | null = null;
+  if (best.source === 'loyalty') {
+    loyaltyTier = loyalty.tier!.id;
+    if (appliedCode) promoError = 'promo/loyalty-better';
+    appliedCode = null; // the promo isn't used, so it isn't redeemed either
+  }
+  const discount = best.amount;
   const amount = baseAmount - discount;
 
   const now = admin.firestore.Timestamp.now();
@@ -519,6 +559,7 @@ export const quoteBooking = onCall(async (req) => {
     promoCode: appliedCode,
     baseAmount,
     discount,
+    loyaltyTier,
   };
   const ref = await db.collection('quotes').add(quote);
 
@@ -535,6 +576,7 @@ export const quoteBooking = onCall(async (req) => {
     discount,
     promoCode: appliedCode,
     promoError,
+    loyaltyTier,
   };
 });
 
@@ -693,6 +735,7 @@ export const createBooking = onCall(stripeOpts, async (req) => {
       baseAmount: quote.baseAmount ?? quote.amount,
       discount: quote.discount ?? 0,
       promoCode: quote.promoCode ?? null,
+      loyaltyTier: quote.loyaltyTier ?? null,
       finalPrice: null,
       paymentId: null,
       currency: quote.currency,

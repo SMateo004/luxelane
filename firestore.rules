@@ -409,7 +409,11 @@ service cloud.firestore {
       allow write: if isAdmin() && (docId != 'finance' || (
         request.resource.data.commissionPct is number &&
         request.resource.data.commissionPct >= 0 &&
-        request.resource.data.commissionPct <= 50));
+        request.resource.data.commissionPct <= 50)) && (docId != 'loyalty' || (
+        // The server re-validates every tier (functions/src/loyalty.ts).
+        request.resource.data.enabled is bool &&
+        request.resource.data.tiers is list &&
+        request.resource.data.tiers.size() <= 3));
     }
 
     // -------------------------------------------------------------------------

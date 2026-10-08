@@ -490,6 +490,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminSectionHealth => 'Health';
 
   @override
+  String get adminSectionLoyalty => 'Loyalty';
+
+  @override
   String get adminSectionPricing => 'Pricing';
 
   @override
@@ -2615,6 +2618,106 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get loyaltyAdminIntro => 'Tiered loyalty program based on rides completed in the last 12 months. Each tier gives a discount on the fare. You decide the thresholds and percentages.';
+
+  @override
+  String get loyaltyAdminTitle => 'Luxelane Circle';
+
+  @override
+  String loyaltyBenefit(String pct) {
+    return 'You get $pct % off every ride.';
+  }
+
+  @override
+  String get loyaltyDisabledHint => 'Off: no one sees the program or gets discounts.';
+
+  @override
+  String loyaltyDiscountLine(String tier) {
+    return 'Circle $tier discount';
+  }
+
+  @override
+  String get loyaltyDiscountPct => 'Discount %';
+
+  @override
+  String get loyaltyEnable => 'Program active';
+
+  @override
+  String get loyaltyEnabledHint => 'Riders see their tier in their profile and the discount applies when quoting.';
+
+  @override
+  String get loyaltyErrorDiscounts => 'Each tier must give at least the same discount as the one before.';
+
+  @override
+  String get loyaltyErrorMinRides => 'Enter at least 1 ride for each tier.';
+
+  @override
+  String get loyaltyErrorRange => 'The discount must be between 0 and 20 %.';
+
+  @override
+  String get loyaltyErrorThresholds => 'Each tier must require more rides than the one before.';
+
+  @override
+  String get loyaltyGold => 'Gold';
+
+  @override
+  String get loyaltyHowItWorks => 'Rides completed in the last 12 months count. Doesn\'t stack with promo codes.';
+
+  @override
+  String get loyaltyMember => 'Member';
+
+  @override
+  String get loyaltyMinRides => 'Rides in 12 months';
+
+  @override
+  String get loyaltyNoBenefitYet => 'Complete rides to move up a tier and earn discounts.';
+
+  @override
+  String get loyaltyPlatinum => 'Platinum';
+
+  @override
+  String get loyaltyProgramName => 'Luxelane Circle';
+
+  @override
+  String get loyaltyRulesNote => 'The discount doesn\'t stack with a promo code: the larger of the two applies. Only completed rides count.';
+
+  @override
+  String get loyaltySave => 'Save';
+
+  @override
+  String get loyaltySaved => 'Loyalty program saved';
+
+  @override
+  String loyaltySavedLine(String amount, String tier) {
+    return 'You save $amount as Circle $tier';
+  }
+
+  @override
+  String get loyaltySilver => 'Silver';
+
+  @override
+  String loyaltyToNext(int count, String tier, String pct) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more rides to $tier ($pct %)',
+      one: '1 more ride to $tier ($pct %)',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String loyaltyTopTier(int rides) {
+    String _temp0 = intl.Intl.pluralLogic(
+      rides,
+      locale: localeName,
+      other: 'Top tier · $rides rides in 12 months',
+      one: 'Top tier · 1 ride in 12 months',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String notifBellUnread(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -2950,6 +3053,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get promoFieldLabel => 'Promo code';
+
+  @override
+  String get promoLoyaltyBetter => 'Your Circle discount is larger than the code\'s, so we applied Circle.';
 
   @override
   String get promoRemove => 'Remove code';

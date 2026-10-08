@@ -10,6 +10,7 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/lux_states.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../home/presentation/pages/home_design.dart';
+import '../../../loyalty/presentation/loyalty_widgets.dart';
 
 /// In-app receipt for a completed (or cancelled) trip.
 class ReceiptPage extends StatefulWidget {
@@ -162,7 +163,10 @@ class _ReceiptCard extends StatelessWidget {
             ),
             if (booking.discount > 0 && booking.baseAmount != null) ...[
               _Line(l.tripReceiptFixedPrice, LuxMoney.format(booking.baseAmount!, cents: true)),
-              _Line(l.promoDiscountLine(booking.promoCode ?? ''),
+              _Line(
+                  booking.loyaltyTier != null
+                      ? l.loyaltyDiscountLine(loyaltyTierName(l, booking.loyaltyTier) ?? '')
+                      : l.promoDiscountLine(booking.promoCode ?? ''),
                   '−${LuxMoney.format(booking.discount, cents: true)}'),
             ] else
               _Line(l.tripReceiptFixedPrice, LuxMoney.format(booking.estimatedPrice, cents: true)),

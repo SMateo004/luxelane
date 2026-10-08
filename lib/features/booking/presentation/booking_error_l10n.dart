@@ -27,5 +27,6 @@ String localizedBookingError(AppLocalizations l, String message) => switch (mess
       PromoErrorCodes.vehicleClass => l.promoErrorVehicleClass,
       PromoErrorCodes.minFare => l.promoErrorMinFare,
       PromoErrorCodes.failed => l.promoErrorFailed,
+      PromoErrorCodes.loyaltyBetter => l.promoLoyaltyBetter,
       _ => message,
     };

@@ -10,6 +10,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../company/presentation/widgets/company_profile_entry.dart';
+import '../../../loyalty/presentation/loyalty_widgets.dart';
 import '../bloc/profile_bloc.dart';
 
 // ---------------------------------------------------------------------------
@@ -227,6 +228,7 @@ class _ProfileBody extends StatelessWidget {
 
             ],
           ),
+          if (user.role == UserRole.rider) const LoyaltyProfileCard(),
           CompanyProfileEntry(uid: user.id),
           if (user.role == UserRole.driver) ...[
             const SizedBox(height: LuxSpacing.xl),

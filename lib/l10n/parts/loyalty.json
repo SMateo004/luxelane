@@ -1,0 +1,99 @@
+{
+  "adminSectionLoyalty": {"es": "Fidelidad", "en": "Loyalty", "pt": "Fidelidade"},
+  "loyaltySilver": {"es": "Silver", "en": "Silver", "pt": "Silver"},
+  "loyaltyGold": {"es": "Gold", "en": "Gold", "pt": "Gold"},
+  "loyaltyPlatinum": {"es": "Platinum", "en": "Platinum", "pt": "Platinum"},
+  "loyaltyErrorThresholds": {
+    "es": "Cada nivel debe pedir más viajes que el anterior.",
+    "en": "Each tier must require more rides than the one before.",
+    "pt": "Cada nível deve exigir mais viagens que o anterior."
+  },
+  "loyaltyErrorDiscounts": {
+    "es": "Cada nivel debe dar al menos el mismo descuento que el anterior.",
+    "en": "Each tier must give at least the same discount as the one before.",
+    "pt": "Cada nível deve dar pelo menos o mesmo desconto que o anterior."
+  },
+  "loyaltyErrorRange": {
+    "es": "El descuento debe estar entre 0 y 20 %.",
+    "en": "The discount must be between 0 and 20 %.",
+    "pt": "O desconto deve estar entre 0 e 20 %."
+  },
+  "loyaltyErrorMinRides": {
+    "es": "Ingresa al menos 1 viaje para cada nivel.",
+    "en": "Enter at least 1 ride for each tier.",
+    "pt": "Informe pelo menos 1 viagem para cada nível."
+  },
+  "loyaltySaved": {"es": "Programa de fidelidad guardado", "en": "Loyalty program saved", "pt": "Programa de fidelidade salvo"},
+  "loyaltyAdminTitle": {"es": "Luxelane Circle", "en": "Luxelane Circle", "pt": "Luxelane Circle"},
+  "loyaltyAdminIntro": {
+    "es": "Programa de fidelidad por niveles según los viajes completados en los últimos 12 meses. Cada nivel da un descuento sobre la tarifa. Tú decides los umbrales y los porcentajes.",
+    "en": "Tiered loyalty program based on rides completed in the last 12 months. Each tier gives a discount on the fare. You decide the thresholds and percentages.",
+    "pt": "Programa de fidelidade por níveis segundo as viagens concluídas nos últimos 12 meses. Cada nível dá um desconto na tarifa. Você define os limites e as porcentagens."
+  },
+  "loyaltyEnable": {"es": "Programa activo", "en": "Program active", "pt": "Programa ativo"},
+  "loyaltyEnabledHint": {
+    "es": "Los clientes ven su nivel en el perfil y el descuento se aplica al cotizar.",
+    "en": "Riders see their tier in their profile and the discount applies when quoting.",
+    "pt": "Os clientes veem seu nível no perfil e o desconto é aplicado na cotação."
+  },
+  "loyaltyDisabledHint": {
+    "es": "Apagado: nadie ve el programa ni recibe descuentos.",
+    "en": "Off: no one sees the program or gets discounts.",
+    "pt": "Desligado: ninguém vê o programa nem recebe descontos."
+  },
+  "loyaltyMinRides": {"es": "Viajes en 12 meses", "en": "Rides in 12 months", "pt": "Viagens em 12 meses"},
+  "loyaltyDiscountPct": {"es": "Descuento %", "en": "Discount %", "pt": "Desconto %"},
+  "loyaltyRulesNote": {
+    "es": "El descuento no se suma a un código promocional: se aplica el mayor de los dos. Solo cuentan los viajes completados.",
+    "en": "The discount doesn't stack with a promo code: the larger of the two applies. Only completed rides count.",
+    "pt": "O desconto não se soma a um código promocional: aplica-se o maior dos dois. Só contam viagens concluídas."
+  },
+  "loyaltySave": {"es": "Guardar", "en": "Save", "pt": "Salvar"},
+  "loyaltyProgramName": {"es": "Luxelane Circle", "en": "Luxelane Circle", "pt": "Luxelane Circle"},
+  "loyaltyMember": {"es": "Miembro", "en": "Member", "pt": "Membro"},
+  "loyaltyNoBenefitYet": {
+    "es": "Completa viajes para subir de nivel y obtener descuentos.",
+    "en": "Complete rides to move up a tier and earn discounts.",
+    "pt": "Conclua viagens para subir de nível e ganhar descontos."
+  },
+  "loyaltyBenefit": {
+    "es": "Tienes {pct} % de descuento en cada viaje.",
+    "en": "You get {pct} % off every ride.",
+    "pt": "Você tem {pct} % de desconto em cada viagem.",
+    "placeholders": {"pct": {"type": "String"}}
+  },
+  "loyaltyTopTier": {
+    "es": "{rides, plural, =1{Nivel máximo · 1 viaje en 12 meses} other{Nivel máximo · {rides} viajes en 12 meses}}",
+    "en": "{rides, plural, =1{Top tier · 1 ride in 12 months} other{Top tier · {rides} rides in 12 months}}",
+    "pt": "{rides, plural, =1{Nível máximo · 1 viagem em 12 meses} other{Nível máximo · {rides} viagens em 12 meses}}",
+    "placeholders": {"rides": {"type": "int"}}
+  },
+  "loyaltyToNext": {
+    "es": "{count, plural, =1{1 viaje más para {tier} ({pct} %)} other{{count} viajes más para {tier} ({pct} %)}}",
+    "en": "{count, plural, =1{1 more ride to {tier} ({pct} %)} other{{count} more rides to {tier} ({pct} %)}}",
+    "pt": "{count, plural, =1{Mais 1 viagem para {tier} ({pct} %)} other{Mais {count} viagens para {tier} ({pct} %)}}",
+    "placeholders": {"count": {"type": "int"}, "tier": {"type": "String"}, "pct": {"type": "String"}}
+  },
+  "loyaltyHowItWorks": {
+    "es": "Cuentan los viajes completados en los últimos 12 meses. No se suma a códigos promocionales.",
+    "en": "Rides completed in the last 12 months count. Doesn't stack with promo codes.",
+    "pt": "Contam as viagens concluídas nos últimos 12 meses. Não se soma a códigos promocionais."
+  },
+  "loyaltyDiscountLine": {
+    "es": "Descuento Circle {tier}",
+    "en": "Circle {tier} discount",
+    "pt": "Desconto Circle {tier}",
+    "placeholders": {"tier": {"type": "String"}}
+  },
+  "loyaltySavedLine": {
+    "es": "Ahorras {amount} por ser Circle {tier}",
+    "en": "You save {amount} as Circle {tier}",
+    "pt": "Você economiza {amount} como Circle {tier}",
+    "placeholders": {"amount": {"type": "String"}, "tier": {"type": "String"}}
+  },
+  "promoLoyaltyBetter": {
+    "es": "Tu descuento Circle es mayor que el del código, así que aplicamos el Circle.",
+    "en": "Your Circle discount is larger than the code's, so we applied Circle.",
+    "pt": "Seu desconto Circle é maior que o do código, então aplicamos o Circle."
+  }
+}

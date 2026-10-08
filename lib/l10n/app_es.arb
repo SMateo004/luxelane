@@ -315,6 +315,7 @@
   "adminSectionDashboard": "Panel",
   "adminSectionDrivers": "Chóferes",
   "adminSectionHealth": "Salud",
+  "adminSectionLoyalty": "Fidelidad",
   "adminSectionPricing": "Precios",
   "adminSectionPromos": "Promociones",
   "adminSectionReports": "Reportes",
@@ -1652,6 +1653,76 @@
       }
     }
   },
+  "loyaltyAdminIntro": "Programa de fidelidad por niveles según los viajes completados en los últimos 12 meses. Cada nivel da un descuento sobre la tarifa. Tú decides los umbrales y los porcentajes.",
+  "loyaltyAdminTitle": "Luxelane Circle",
+  "loyaltyBenefit": "Tienes {pct} % de descuento en cada viaje.",
+  "@loyaltyBenefit": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "loyaltyDisabledHint": "Apagado: nadie ve el programa ni recibe descuentos.",
+  "loyaltyDiscountLine": "Descuento Circle {tier}",
+  "@loyaltyDiscountLine": {
+    "placeholders": {
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
+  "loyaltyDiscountPct": "Descuento %",
+  "loyaltyEnable": "Programa activo",
+  "loyaltyEnabledHint": "Los clientes ven su nivel en el perfil y el descuento se aplica al cotizar.",
+  "loyaltyErrorDiscounts": "Cada nivel debe dar al menos el mismo descuento que el anterior.",
+  "loyaltyErrorMinRides": "Ingresa al menos 1 viaje para cada nivel.",
+  "loyaltyErrorRange": "El descuento debe estar entre 0 y 20 %.",
+  "loyaltyErrorThresholds": "Cada nivel debe pedir más viajes que el anterior.",
+  "loyaltyGold": "Gold",
+  "loyaltyHowItWorks": "Cuentan los viajes completados en los últimos 12 meses. No se suma a códigos promocionales.",
+  "loyaltyMember": "Miembro",
+  "loyaltyMinRides": "Viajes en 12 meses",
+  "loyaltyNoBenefitYet": "Completa viajes para subir de nivel y obtener descuentos.",
+  "loyaltyPlatinum": "Platinum",
+  "loyaltyProgramName": "Luxelane Circle",
+  "loyaltyRulesNote": "El descuento no se suma a un código promocional: se aplica el mayor de los dos. Solo cuentan los viajes completados.",
+  "loyaltySave": "Guardar",
+  "loyaltySaved": "Programa de fidelidad guardado",
+  "loyaltySavedLine": "Ahorras {amount} por ser Circle {tier}",
+  "@loyaltySavedLine": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      },
+      "tier": {
+        "type": "String"
+      }
+    }
+  },
+  "loyaltySilver": "Silver",
+  "loyaltyToNext": "{count, plural, =1{1 viaje más para {tier} ({pct} %)} other{{count} viajes más para {tier} ({pct} %)}}",
+  "@loyaltyToNext": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "tier": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "loyaltyTopTier": "{rides, plural, =1{Nivel máximo · 1 viaje en 12 meses} other{Nivel máximo · {rides} viajes en 12 meses}}",
+  "@loyaltyTopTier": {
+    "placeholders": {
+      "rides": {
+        "type": "int"
+      }
+    }
+  },
   "notifBellUnread": "{count, plural, =1{1 notificación sin leer} other{{count} notificaciones sin leer}}",
   "@notifBellUnread": {
     "description": "Bell tooltip / screen-reader label when there are unread notifications",
@@ -1877,6 +1948,7 @@
   "promoErrorNotStarted": "Ese código todavía no está vigente.",
   "promoErrorVehicleClass": "Este código no aplica a esta categoría de vehículo.",
   "promoFieldLabel": "Código promocional",
+  "promoLoyaltyBetter": "Tu descuento Circle es mayor que el del código, así que aplicamos el Circle.",
   "promoRemove": "Quitar código",
   "promoSavedLine": "Ahorras {amount} con {code}",
   "@promoSavedLine": {
