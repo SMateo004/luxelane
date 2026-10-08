@@ -207,6 +207,22 @@ jobs:
     needs: [build_web_rider, build_android]
     if: github.ref == 'refs/heads/main'
     steps:
+      # Fail fast with a clear message instead of deploying a half-configured
+      # app (e.g. a web build without a Maps key has no address autocomplete).
+      - name: Check deploy secrets
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          FCM_VAPID_KEY: ${{ secrets.FCM_VAPID_KEY }}
+        run: |
+          missing=0
+          for name in GCP_SA_KEY GOOGLE_MAPS_API_KEY FCM_VAPID_KEY; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Missing repository secret: $name"
+              missing=1
+            fi
+          done
+          exit $missing
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
@@ -218,7 +234,8 @@ jobs:
         with:
           args: deploy --only functions,firestore:rules
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          # Service-account JSON (or base64 of it); replaces deprecated CI tokens.
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
           PROJECT_ID: luxelane-prod
 
   # ---------------------------------------------------------------------------
@@ -252,5 +269,6 @@ jobs:
         with:
           args: deploy --only hosting
         env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          # Service-account JSON (or base64 of it); replaces deprecated CI tokens.
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
           PROJECT_ID: luxelane-prod
