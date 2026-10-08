@@ -4297,6 +4297,12 @@ abstract class AppLocalizations {
   /// **'Recogida inmediata'**
   String get homeServiceImmediatePickup;
 
+  /// No description provided for @homeServiceIntercity.
+  ///
+  /// In es, this message translates to:
+  /// **'Ciudad a ciudad'**
+  String get homeServiceIntercity;
+
   /// Web header link
   ///
   /// In es, this message translates to:
@@ -4380,6 +4386,156 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Viajar con confianza,\nde principio a fin.'**
   String get homeTrustTitle;
+
+  /// No description provided for @intercityBuenaVista.
+  ///
+  /// In es, this message translates to:
+  /// **'Puerta de entrada al Parque Amboró'**
+  String get intercityBuenaVista;
+
+  /// No description provided for @intercityCardMeta.
+  ///
+  /// In es, this message translates to:
+  /// **'≈ {km} km · desde {price}'**
+  String intercityCardMeta(String km, String price);
+
+  /// No description provided for @intercityCochabamba.
+  ///
+  /// In es, this message translates to:
+  /// **'La ciudad del valle'**
+  String get intercityCochabamba;
+
+  /// No description provided for @intercityConcepcion.
+  ///
+  /// In es, this message translates to:
+  /// **'Misiones jesuíticas de Chiquitos'**
+  String get intercityConcepcion;
+
+  /// No description provided for @intercityContinue.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver vehículos y precio'**
+  String get intercityContinue;
+
+  /// No description provided for @intercityEstimateNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Distancia y precio estimados desde el centro en Business. El precio final se calcula con tu dirección real y queda fijo al reservar.'**
+  String get intercityEstimateNote;
+
+  /// No description provided for @intercityEyebrow.
+  ///
+  /// In es, this message translates to:
+  /// **'Ciudad a ciudad'**
+  String get intercityEyebrow;
+
+  /// No description provided for @intercityFormEyebrow.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje privado'**
+  String get intercityFormEyebrow;
+
+  /// No description provided for @intercityFormTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'A {city}'**
+  String intercityFormTitle(String city);
+
+  /// No description provided for @intercityHomeLink.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes a otras ciudades'**
+  String get intercityHomeLink;
+
+  /// No description provided for @intercityIncChauffeurBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Con licencia, antecedentes y SOAT revisados y vigentes.'**
+  String get intercityIncChauffeurBody;
+
+  /// No description provided for @intercityIncChauffeurTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer verificado'**
+  String get intercityIncChauffeurTitle;
+
+  /// No description provided for @intercityIncFixedBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo ves y lo confirmas antes de reservar; no cambia en el camino.'**
+  String get intercityIncFixedBody;
+
+  /// No description provided for @intercityIncFixedTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo'**
+  String get intercityIncFixedTitle;
+
+  /// No description provided for @intercityIncTrackingBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Ves dónde está tu chófer y cuánto falta para llegar.'**
+  String get intercityIncTrackingBody;
+
+  /// No description provided for @intercityIncTrackingTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguimiento en vivo'**
+  String get intercityIncTrackingTitle;
+
+  /// No description provided for @intercityIncludedTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'En cada viaje'**
+  String get intercityIncludedTitle;
+
+  /// No description provided for @intercityIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'Te recogemos donde estés y te llevamos puerta a puerta, con el precio fijado antes de salir. Elige un destino para empezar.'**
+  String get intercityIntro;
+
+  /// No description provided for @intercityMontero.
+  ///
+  /// In es, this message translates to:
+  /// **'Norte integrado de Santa Cruz'**
+  String get intercityMontero;
+
+  /// No description provided for @intercityOtherDestination.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Otro destino? Escríbelo en el inicio'**
+  String get intercityOtherDestination;
+
+  /// No description provided for @intercityPickupRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica dónde te recogemos.'**
+  String get intercityPickupRequired;
+
+  /// No description provided for @intercitySamaipata.
+  ///
+  /// In es, this message translates to:
+  /// **'Valles y El Fuerte, Patrimonio de la Humanidad'**
+  String get intercitySamaipata;
+
+  /// No description provided for @intercitySanJose.
+  ///
+  /// In es, this message translates to:
+  /// **'Misiones jesuíticas de Chiquitos'**
+  String get intercitySanJose;
+
+  /// No description provided for @intercityTimeInPast.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige una fecha y hora futuras.'**
+  String get intercityTimeInPast;
+
+  /// No description provided for @intercityTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes privados desde Santa Cruz'**
+  String get intercityTitle;
 
   /// Company tax ID and address under the contact details
   ///

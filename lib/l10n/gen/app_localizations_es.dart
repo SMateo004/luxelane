@@ -2333,6 +2333,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeServiceImmediatePickup => 'Recogida inmediata';
 
   @override
+  String get homeServiceIntercity => 'Ciudad a ciudad';
+
+  @override
   String get homeShellMyTrips => 'Mis viajes';
 
   @override
@@ -2373,6 +2376,85 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get homeTrustTitle => 'Viajar con confianza,\nde principio a fin.';
+
+  @override
+  String get intercityBuenaVista => 'Puerta de entrada al Parque Amboró';
+
+  @override
+  String intercityCardMeta(String km, String price) {
+    return '≈ $km km · desde $price';
+  }
+
+  @override
+  String get intercityCochabamba => 'La ciudad del valle';
+
+  @override
+  String get intercityConcepcion => 'Misiones jesuíticas de Chiquitos';
+
+  @override
+  String get intercityContinue => 'Ver vehículos y precio';
+
+  @override
+  String get intercityEstimateNote => 'Distancia y precio estimados desde el centro en Business. El precio final se calcula con tu dirección real y queda fijo al reservar.';
+
+  @override
+  String get intercityEyebrow => 'Ciudad a ciudad';
+
+  @override
+  String get intercityFormEyebrow => 'Viaje privado';
+
+  @override
+  String intercityFormTitle(String city) {
+    return 'A $city';
+  }
+
+  @override
+  String get intercityHomeLink => 'Viajes a otras ciudades';
+
+  @override
+  String get intercityIncChauffeurBody => 'Con licencia, antecedentes y SOAT revisados y vigentes.';
+
+  @override
+  String get intercityIncChauffeurTitle => 'Chófer verificado';
+
+  @override
+  String get intercityIncFixedBody => 'Lo ves y lo confirmas antes de reservar; no cambia en el camino.';
+
+  @override
+  String get intercityIncFixedTitle => 'Precio fijo';
+
+  @override
+  String get intercityIncTrackingBody => 'Ves dónde está tu chófer y cuánto falta para llegar.';
+
+  @override
+  String get intercityIncTrackingTitle => 'Seguimiento en vivo';
+
+  @override
+  String get intercityIncludedTitle => 'En cada viaje';
+
+  @override
+  String get intercityIntro => 'Te recogemos donde estés y te llevamos puerta a puerta, con el precio fijado antes de salir. Elige un destino para empezar.';
+
+  @override
+  String get intercityMontero => 'Norte integrado de Santa Cruz';
+
+  @override
+  String get intercityOtherDestination => '¿Otro destino? Escríbelo en el inicio';
+
+  @override
+  String get intercityPickupRequired => 'Indica dónde te recogemos.';
+
+  @override
+  String get intercitySamaipata => 'Valles y El Fuerte, Patrimonio de la Humanidad';
+
+  @override
+  String get intercitySanJose => 'Misiones jesuíticas de Chiquitos';
+
+  @override
+  String get intercityTimeInPast => 'Elige una fecha y hora futuras.';
+
+  @override
+  String get intercityTitle => 'Viajes privados desde Santa Cruz';
 
   @override
   String legalCompanyDetails(String nit, String address) {

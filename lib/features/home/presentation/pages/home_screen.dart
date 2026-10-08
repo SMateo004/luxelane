@@ -382,6 +382,14 @@ class _MobileBottomPanel extends StatelessWidget {
             ],
             const SizedBox(height: LuxSpacing.md),
             LuxButton(label: context.l10n.homeSearchVehicles, onPressed: onSearch),
+            const SizedBox(height: LuxSpacing.sm),
+            // City to city: popular routes out of Santa Cruz.
+            TextButton.icon(
+              onPressed: () => context.push('/servicios/ciudad-a-ciudad'),
+              icon: const Icon(Icons.route_outlined, size: 18, color: LuxColors.accent),
+              label: Text(context.l10n.intercityHomeLink,
+                  style: const TextStyle(color: LuxColors.accent)),
+            ),
           ],
         ),
       );

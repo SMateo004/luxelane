@@ -1452,6 +1452,7 @@
   "@homeServiceImmediatePickup": {
     "description": "Services dropdown item"
   },
+  "homeServiceIntercity": "Ciudad a ciudad",
   "homeShellMyTrips": "Mis viajes",
   "@homeShellMyTrips": {
     "description": "Web header link"
@@ -1484,6 +1485,48 @@
   "homeStepPriceTitle": "Confirma tu precio fijo",
   "homeTrustEyebrow": "La promesa Luxelane",
   "homeTrustTitle": "Viajar con confianza,\nde principio a fin.",
+  "intercityBuenaVista": "Puerta de entrada al Parque Amboró",
+  "intercityCardMeta": "≈ {km} km · desde {price}",
+  "@intercityCardMeta": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "intercityCochabamba": "La ciudad del valle",
+  "intercityConcepcion": "Misiones jesuíticas de Chiquitos",
+  "intercityContinue": "Ver vehículos y precio",
+  "intercityEstimateNote": "Distancia y precio estimados desde el centro en Business. El precio final se calcula con tu dirección real y queda fijo al reservar.",
+  "intercityEyebrow": "Ciudad a ciudad",
+  "intercityFormEyebrow": "Viaje privado",
+  "intercityFormTitle": "A {city}",
+  "@intercityFormTitle": {
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "intercityHomeLink": "Viajes a otras ciudades",
+  "intercityIncChauffeurBody": "Con licencia, antecedentes y SOAT revisados y vigentes.",
+  "intercityIncChauffeurTitle": "Chófer verificado",
+  "intercityIncFixedBody": "Lo ves y lo confirmas antes de reservar; no cambia en el camino.",
+  "intercityIncFixedTitle": "Precio fijo",
+  "intercityIncTrackingBody": "Ves dónde está tu chófer y cuánto falta para llegar.",
+  "intercityIncTrackingTitle": "Seguimiento en vivo",
+  "intercityIncludedTitle": "En cada viaje",
+  "intercityIntro": "Te recogemos donde estés y te llevamos puerta a puerta, con el precio fijado antes de salir. Elige un destino para empezar.",
+  "intercityMontero": "Norte integrado de Santa Cruz",
+  "intercityOtherDestination": "¿Otro destino? Escríbelo en el inicio",
+  "intercityPickupRequired": "Indica dónde te recogemos.",
+  "intercitySamaipata": "Valles y El Fuerte, Patrimonio de la Humanidad",
+  "intercitySanJose": "Misiones jesuíticas de Chiquitos",
+  "intercityTimeInPast": "Elige una fecha y hora futuras.",
+  "intercityTitle": "Viajes privados desde Santa Cruz",
   "legalCompanyDetails": "NIT {nit} · {address}",
   "@legalCompanyDetails": {
     "description": "Company tax ID and address under the contact details",

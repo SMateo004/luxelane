@@ -1,0 +1,145 @@
+{
+  "homeServiceIntercity": {
+    "es": "Ciudad a ciudad",
+    "en": "City to city",
+    "pt": "Cidade a cidade"
+  },
+  "intercityHomeLink": {
+    "es": "Viajes a otras ciudades",
+    "en": "Trips to other cities",
+    "pt": "Viagens para outras cidades"
+  },
+  "intercityEyebrow": {
+    "es": "Ciudad a ciudad",
+    "en": "City to city",
+    "pt": "Cidade a cidade"
+  },
+  "intercityTitle": {
+    "es": "Viajes privados desde Santa Cruz",
+    "en": "Private trips from Santa Cruz",
+    "pt": "Viagens privadas a partir de Santa Cruz"
+  },
+  "intercityIntro": {
+    "es": "Te recogemos donde estés y te llevamos puerta a puerta, con el precio fijado antes de salir. Elige un destino para empezar.",
+    "en": "We pick you up wherever you are and take you door to door, with the price fixed before you leave. Choose a destination to start.",
+    "pt": "Buscamos você onde estiver e levamos de porta a porta, com o preço fixado antes de sair. Escolha um destino para começar."
+  },
+  "intercitySamaipata": {
+    "es": "Valles y El Fuerte, Patrimonio de la Humanidad",
+    "en": "Valleys and El Fuerte, a World Heritage Site",
+    "pt": "Vales e El Fuerte, Patrimônio da Humanidade"
+  },
+  "intercityBuenaVista": {
+    "es": "Puerta de entrada al Parque Amboró",
+    "en": "Gateway to Amboró National Park",
+    "pt": "Porta de entrada ao Parque Amboró"
+  },
+  "intercityMontero": {
+    "es": "Norte integrado de Santa Cruz",
+    "en": "Santa Cruz's northern hub",
+    "pt": "Polo norte de Santa Cruz"
+  },
+  "intercitySanJose": {
+    "es": "Misiones jesuíticas de Chiquitos",
+    "en": "Jesuit Missions of Chiquitos",
+    "pt": "Missões jesuíticas de Chiquitos"
+  },
+  "intercityConcepcion": {
+    "es": "Misiones jesuíticas de Chiquitos",
+    "en": "Jesuit Missions of Chiquitos",
+    "pt": "Missões jesuíticas de Chiquitos"
+  },
+  "intercityCochabamba": {
+    "es": "La ciudad del valle",
+    "en": "The valley city",
+    "pt": "A cidade do vale"
+  },
+  "intercityCardMeta": {
+    "es": "≈ {km} km · desde {price}",
+    "en": "≈ {km} km · from {price}",
+    "pt": "≈ {km} km · a partir de {price}",
+    "placeholders": {
+      "km": {
+        "type": "String"
+      },
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "intercityEstimateNote": {
+    "es": "Distancia y precio estimados desde el centro en Business. El precio final se calcula con tu dirección real y queda fijo al reservar.",
+    "en": "Estimated distance and price from the city centre in Business. The final price uses your real address and is fixed when you book.",
+    "pt": "Distância e preço estimados a partir do centro em Business. O preço final usa seu endereço real e fica fixo ao reservar."
+  },
+  "intercityIncludedTitle": {
+    "es": "En cada viaje",
+    "en": "On every trip",
+    "pt": "Em cada viagem"
+  },
+  "intercityIncFixedTitle": {
+    "es": "Precio fijo",
+    "en": "Fixed price",
+    "pt": "Preço fixo"
+  },
+  "intercityIncFixedBody": {
+    "es": "Lo ves y lo confirmas antes de reservar; no cambia en el camino.",
+    "en": "You see and confirm it before booking; it doesn't change on the way.",
+    "pt": "Você vê e confirma antes de reservar; não muda no caminho."
+  },
+  "intercityIncChauffeurTitle": {
+    "es": "Chófer verificado",
+    "en": "Verified chauffeur",
+    "pt": "Motorista verificado"
+  },
+  "intercityIncChauffeurBody": {
+    "es": "Con licencia, antecedentes y SOAT revisados y vigentes.",
+    "en": "With license, criminal record and SOAT reviewed and current.",
+    "pt": "Com carteira, antecedentes e SOAT revisados e vigentes."
+  },
+  "intercityIncTrackingTitle": {
+    "es": "Seguimiento en vivo",
+    "en": "Live tracking",
+    "pt": "Acompanhamento ao vivo"
+  },
+  "intercityIncTrackingBody": {
+    "es": "Ves dónde está tu chófer y cuánto falta para llegar.",
+    "en": "See where your chauffeur is and how long until you arrive.",
+    "pt": "Veja onde está seu motorista e quanto falta para chegar."
+  },
+  "intercityOtherDestination": {
+    "es": "¿Otro destino? Escríbelo en el inicio",
+    "en": "Another destination? Enter it on the home page",
+    "pt": "Outro destino? Digite-o na página inicial"
+  },
+  "intercityFormEyebrow": {
+    "es": "Viaje privado",
+    "en": "Private trip",
+    "pt": "Viagem privada"
+  },
+  "intercityFormTitle": {
+    "es": "A {city}",
+    "en": "To {city}",
+    "pt": "Para {city}",
+    "placeholders": {
+      "city": {
+        "type": "String"
+      }
+    }
+  },
+  "intercityContinue": {
+    "es": "Ver vehículos y precio",
+    "en": "See vehicles and price",
+    "pt": "Ver veículos e preço"
+  },
+  "intercityPickupRequired": {
+    "es": "Indica dónde te recogemos.",
+    "en": "Tell us where to pick you up.",
+    "pt": "Informe onde buscamos você."
+  },
+  "intercityTimeInPast": {
+    "es": "Elige una fecha y hora futuras.",
+    "en": "Choose a future date and time.",
+    "pt": "Escolha uma data e hora futuras."
+  }
+}

@@ -21,6 +21,7 @@ import '../../features/driver/presentation/pages/driver_queue_screen.dart';
 import '../../features/services/presentation/pages/airport_transfer_page.dart';
 import '../../features/services/presentation/pages/hourly_charter_page.dart';
 import '../../features/services/presentation/pages/immediate_pickup_page.dart';
+import '../../features/services/presentation/pages/intercity_page.dart';
 import '../../features/home/presentation/pages/home_screen.dart';
 import '../../features/legal/presentation/pages/legal_pages.dart';
 import '../../features/support/presentation/pages/help_center_page.dart';
@@ -184,6 +185,10 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: '/servicios/contratacion-por-horas',
           pageBuilder: (c, s) => _fade(const HourlyCharterPage(), s),
+        ),
+        GoRoute(
+          path: '/servicios/ciudad-a-ciudad',
+          pageBuilder: (c, s) => _fade(const IntercityPage(), s),
         ),
         GoRoute(path: '/terminos', pageBuilder: (c, s) => _fade(LegalPage.terms(), s)),
         GoRoute(path: '/privacidad', pageBuilder: (c, s) => _fade(LegalPage.privacy(), s)),
