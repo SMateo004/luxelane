@@ -6,7 +6,7 @@ import {
   assertSucceeds,
   initializeTestEnvironment,
 } from '@firebase/rules-unit-testing';
-import { doc, getDoc, serverTimestamp, setDoc, updateDoc, writeBatch } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where, writeBatch } from 'firebase/firestore';
 import { getBytes, ref, uploadBytes } from 'firebase/storage';
 
 let env;
@@ -412,5 +412,22 @@ describe('loyalty config', () => {
     await assertFails(setDoc(doc(db('admin'), 'config/loyalty'), { enabled: true, tiers: [...tiers, ...tiers, ...tiers, ...tiers] }));
     await assertFails(setDoc(doc(db('rider'), 'config/loyalty'), { enabled: true, tiers }));
     await assertSucceeds(getDoc(doc(db('rider'), 'config/loyalty')));
+  });
+});
+
+describe('partner hotels', () => {
+  const hotel = { name: 'Los Tajibos', address: 'Av. San Martín', lat: -17.76, lng: -63.19, meetingPoint: 'Lobby', active: true };
+  it('admins manage them; active ones are public', async () => {
+    await assertSucceeds(setDoc(doc(db('admin'), 'hotels/h1'), hotel));
+    await assertFails(setDoc(doc(db('admin'), 'hotels/h2'), { ...hotel, name: '' }));
+    await assertFails(setDoc(doc(db('admin'), 'hotels/h2'), { ...hotel, rate: 100 }));
+    await assertFails(setDoc(doc(db('rider'), 'hotels/h2'), hotel));
+    await seed('hotels/off', { ...hotel, active: false });
+    const guest = env.unauthenticatedContext().firestore();
+    await assertSucceeds(getDoc(doc(guest, 'hotels/h1')));
+    await assertSucceeds(getDocs(query(collection(guest, 'hotels'), where('active', '==', true))));
+    await assertFails(getDoc(doc(guest, 'hotels/off')));
+    await assertFails(getDocs(collection(db('rider'), 'hotels')));
+    await assertSucceeds(getDoc(doc(db('admin'), 'hotels/off')));
   });
 });

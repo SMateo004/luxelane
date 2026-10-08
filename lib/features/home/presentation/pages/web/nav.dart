@@ -191,6 +191,7 @@ class _ServicesDropdownLinkState extends State<_ServicesDropdownLink> {
     (l.homeServiceAirportTransfer, '/servicios/traslado-aeropuerto'),
     (l.homeServiceHourly,          '/servicios/contratacion-por-horas'),
     (l.homeServiceIntercity,       '/servicios/ciudad-a-ciudad'),
+    (l.homeServiceHotels,          '/servicios/hoteles'),
   ];
 
   @override

@@ -901,6 +901,12 @@ abstract class AppLocalizations {
   /// **'Salud'**
   String get adminSectionHealth;
 
+  /// No description provided for @adminSectionHotels.
+  ///
+  /// In es, this message translates to:
+  /// **'Hoteles'**
+  String get adminSectionHotels;
+
   /// No description provided for @adminSectionLoyalty.
   ///
   /// In es, this message translates to:
@@ -4435,6 +4441,12 @@ abstract class AppLocalizations {
   /// **'Traslado al aeropuerto'**
   String get homeServiceAirportTransfer;
 
+  /// No description provided for @homeServiceHotels.
+  ///
+  /// In es, this message translates to:
+  /// **'Traslados de hotel'**
+  String get homeServiceHotels;
+
   /// Services dropdown item
   ///
   /// In es, this message translates to:
@@ -4536,6 +4548,258 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Viajar con confianza,\nde principio a fin.'**
   String get homeTrustTitle;
+
+  /// No description provided for @hotelAdminAdd.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar hotel'**
+  String get hotelAdminAdd;
+
+  /// No description provided for @hotelAdminAddress.
+  ///
+  /// In es, this message translates to:
+  /// **'Dirección'**
+  String get hotelAdminAddress;
+
+  /// No description provided for @hotelAdminAddressHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Busca el hotel'**
+  String get hotelAdminAddressHint;
+
+  /// No description provided for @hotelAdminCopyLink.
+  ///
+  /// In es, this message translates to:
+  /// **'Copiar enlace'**
+  String get hotelAdminCopyLink;
+
+  /// No description provided for @hotelAdminEdit.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get hotelAdminEdit;
+
+  /// No description provided for @hotelAdminEditTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar {name}'**
+  String hotelAdminEditTitle(String name);
+
+  /// No description provided for @hotelAdminEmpty.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no hay hoteles aliados. La página pública dice que pronto los anunciarán.'**
+  String get hotelAdminEmpty;
+
+  /// No description provided for @hotelAdminHidden.
+  ///
+  /// In es, this message translates to:
+  /// **'Oculto'**
+  String get hotelAdminHidden;
+
+  /// No description provided for @hotelAdminHide.
+  ///
+  /// In es, this message translates to:
+  /// **'Ocultar de la página'**
+  String get hotelAdminHide;
+
+  /// No description provided for @hotelAdminIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'Los hoteles visibles aparecen en la página de traslados de hotel. Cada uno tiene un enlace para poner en un QR en recepción: abre la página con ese hotel ya elegido. Para facturar los traslados al hotel, créale una cuenta de empresa.'**
+  String get hotelAdminIntro;
+
+  /// No description provided for @hotelAdminLinkCopied.
+  ///
+  /// In es, this message translates to:
+  /// **'Enlace copiado. Puedes convertirlo en un código QR.'**
+  String get hotelAdminLinkCopied;
+
+  /// No description provided for @hotelAdminMeetingPoint.
+  ///
+  /// In es, this message translates to:
+  /// **'Punto de encuentro (opcional)'**
+  String get hotelAdminMeetingPoint;
+
+  /// No description provided for @hotelAdminMeetingPointHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej.: Lobby principal'**
+  String get hotelAdminMeetingPointHint;
+
+  /// No description provided for @hotelAdminName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre del hotel'**
+  String get hotelAdminName;
+
+  /// No description provided for @hotelAdminSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get hotelAdminSave;
+
+  /// No description provided for @hotelAdminSaved.
+  ///
+  /// In es, this message translates to:
+  /// **'Hotel guardado'**
+  String get hotelAdminSaved;
+
+  /// No description provided for @hotelAdminShow.
+  ///
+  /// In es, this message translates to:
+  /// **'Mostrar en la página'**
+  String get hotelAdminShow;
+
+  /// No description provided for @hotelAdminTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Hoteles aliados'**
+  String get hotelAdminTitle;
+
+  /// No description provided for @hotelAdminVisible.
+  ///
+  /// In es, this message translates to:
+  /// **'Visible'**
+  String get hotelAdminVisible;
+
+  /// No description provided for @hotelErrorMeetingPoint.
+  ///
+  /// In es, this message translates to:
+  /// **'El punto de encuentro admite hasta 120 caracteres.'**
+  String get hotelErrorMeetingPoint;
+
+  /// No description provided for @hotelErrorName.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa el nombre del hotel (hasta 80 caracteres).'**
+  String get hotelErrorName;
+
+  /// No description provided for @hotelErrorPlace.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige la dirección del hotel de la lista.'**
+  String get hotelErrorPlace;
+
+  /// No description provided for @hotelEyebrow.
+  ///
+  /// In es, this message translates to:
+  /// **'Traslados de hotel'**
+  String get hotelEyebrow;
+
+  /// No description provided for @hotelFromAirport.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde el aeropuerto'**
+  String get hotelFromAirport;
+
+  /// No description provided for @hotelFromAirportHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica la hora de llegada de tu vuelo y, en el siguiente paso, el número de vuelo: lo seguimos y la espera es gratis hasta {minutes} min después del aterrizaje.'**
+  String hotelFromAirportHint(int minutes);
+
+  /// No description provided for @hotelHomeLink.
+  ///
+  /// In es, this message translates to:
+  /// **'Traslados de hotel'**
+  String get hotelHomeLink;
+
+  /// No description provided for @hotelIncFlightBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Si llegas al aeropuerto, seguimos tu vuelo: espera gratis hasta {minutes} min tras el aterrizaje.'**
+  String hotelIncFlightBody(int minutes);
+
+  /// No description provided for @hotelIncFlightTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguimiento de vuelo'**
+  String get hotelIncFlightTitle;
+
+  /// No description provided for @hotelIncLobbyBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer te espera en el punto de encuentro acordado con el hotel.'**
+  String get hotelIncLobbyBody;
+
+  /// No description provided for @hotelIncLobbyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida en el hotel'**
+  String get hotelIncLobbyTitle;
+
+  /// No description provided for @hotelIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'Traslados privados entre nuestros hoteles aliados y el Aeropuerto Internacional Viru Viru. Elige tu hotel, la dirección y la hora; el precio queda fijo antes de confirmar.'**
+  String get hotelIntro;
+
+  /// No description provided for @hotelLandingAt.
+  ///
+  /// In es, this message translates to:
+  /// **'Llegada del vuelo: {when}'**
+  String hotelLandingAt(String when);
+
+  /// No description provided for @hotelMeetingPoint.
+  ///
+  /// In es, this message translates to:
+  /// **'Punto de encuentro: {place}'**
+  String hotelMeetingPoint(String place);
+
+  /// No description provided for @hotelMeetingPointLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Punto de encuentro'**
+  String get hotelMeetingPointLabel;
+
+  /// No description provided for @hotelNoneBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Mientras tanto, puedes reservar un traslado desde o hacia cualquier hotel con la reserva normal.'**
+  String get hotelNoneBody;
+
+  /// No description provided for @hotelNoneTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Pronto anunciaremos nuestros hoteles aliados'**
+  String get hotelNoneTitle;
+
+  /// No description provided for @hotelOtherHotel.
+  ///
+  /// In es, this message translates to:
+  /// **'Otro hotel o dirección'**
+  String get hotelOtherHotel;
+
+  /// No description provided for @hotelPartnerCta.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Tienes un hotel? Escríbenos'**
+  String get hotelPartnerCta;
+
+  /// No description provided for @hotelPickupAt.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida: {when}'**
+  String hotelPickupAt(String when);
+
+  /// No description provided for @hotelTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Del hotel al aeropuerto, sin pensarlo'**
+  String get hotelTitle;
+
+  /// No description provided for @hotelToAirport.
+  ///
+  /// In es, this message translates to:
+  /// **'Al aeropuerto'**
+  String get hotelToAirport;
+
+  /// No description provided for @hotelToAirportHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer te recoge en el hotel a la hora que elijas. Para vuelos nacionales, sal unas 2 h antes; para internacionales, unas 3 h.'**
+  String get hotelToAirportHint;
 
   /// No description provided for @intercityBuenaVista.
   ///

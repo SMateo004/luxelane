@@ -490,6 +490,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get adminSectionHealth => 'Salud';
 
   @override
+  String get adminSectionHotels => 'Hoteles';
+
+  @override
   String get adminSectionLoyalty => 'Fidelidad';
 
   @override
@@ -2416,6 +2419,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeServiceAirportTransfer => 'Traslado al aeropuerto';
 
   @override
+  String get homeServiceHotels => 'Traslados de hotel';
+
+  @override
   String get homeServiceHourly => 'Contratación por horas';
 
   @override
@@ -2465,6 +2471,144 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get homeTrustTitle => 'Viajar con confianza,\nde principio a fin.';
+
+  @override
+  String get hotelAdminAdd => 'Agregar hotel';
+
+  @override
+  String get hotelAdminAddress => 'Dirección';
+
+  @override
+  String get hotelAdminAddressHint => 'Busca el hotel';
+
+  @override
+  String get hotelAdminCopyLink => 'Copiar enlace';
+
+  @override
+  String get hotelAdminEdit => 'Editar';
+
+  @override
+  String hotelAdminEditTitle(String name) {
+    return 'Editar $name';
+  }
+
+  @override
+  String get hotelAdminEmpty => 'Aún no hay hoteles aliados. La página pública dice que pronto los anunciarán.';
+
+  @override
+  String get hotelAdminHidden => 'Oculto';
+
+  @override
+  String get hotelAdminHide => 'Ocultar de la página';
+
+  @override
+  String get hotelAdminIntro => 'Los hoteles visibles aparecen en la página de traslados de hotel. Cada uno tiene un enlace para poner en un QR en recepción: abre la página con ese hotel ya elegido. Para facturar los traslados al hotel, créale una cuenta de empresa.';
+
+  @override
+  String get hotelAdminLinkCopied => 'Enlace copiado. Puedes convertirlo en un código QR.';
+
+  @override
+  String get hotelAdminMeetingPoint => 'Punto de encuentro (opcional)';
+
+  @override
+  String get hotelAdminMeetingPointHint => 'Ej.: Lobby principal';
+
+  @override
+  String get hotelAdminName => 'Nombre del hotel';
+
+  @override
+  String get hotelAdminSave => 'Guardar';
+
+  @override
+  String get hotelAdminSaved => 'Hotel guardado';
+
+  @override
+  String get hotelAdminShow => 'Mostrar en la página';
+
+  @override
+  String get hotelAdminTitle => 'Hoteles aliados';
+
+  @override
+  String get hotelAdminVisible => 'Visible';
+
+  @override
+  String get hotelErrorMeetingPoint => 'El punto de encuentro admite hasta 120 caracteres.';
+
+  @override
+  String get hotelErrorName => 'Ingresa el nombre del hotel (hasta 80 caracteres).';
+
+  @override
+  String get hotelErrorPlace => 'Elige la dirección del hotel de la lista.';
+
+  @override
+  String get hotelEyebrow => 'Traslados de hotel';
+
+  @override
+  String get hotelFromAirport => 'Desde el aeropuerto';
+
+  @override
+  String hotelFromAirportHint(int minutes) {
+    return 'Indica la hora de llegada de tu vuelo y, en el siguiente paso, el número de vuelo: lo seguimos y la espera es gratis hasta $minutes min después del aterrizaje.';
+  }
+
+  @override
+  String get hotelHomeLink => 'Traslados de hotel';
+
+  @override
+  String hotelIncFlightBody(int minutes) {
+    return 'Si llegas al aeropuerto, seguimos tu vuelo: espera gratis hasta $minutes min tras el aterrizaje.';
+  }
+
+  @override
+  String get hotelIncFlightTitle => 'Seguimiento de vuelo';
+
+  @override
+  String get hotelIncLobbyBody => 'Tu chófer te espera en el punto de encuentro acordado con el hotel.';
+
+  @override
+  String get hotelIncLobbyTitle => 'Recogida en el hotel';
+
+  @override
+  String get hotelIntro => 'Traslados privados entre nuestros hoteles aliados y el Aeropuerto Internacional Viru Viru. Elige tu hotel, la dirección y la hora; el precio queda fijo antes de confirmar.';
+
+  @override
+  String hotelLandingAt(String when) {
+    return 'Llegada del vuelo: $when';
+  }
+
+  @override
+  String hotelMeetingPoint(String place) {
+    return 'Punto de encuentro: $place';
+  }
+
+  @override
+  String get hotelMeetingPointLabel => 'Punto de encuentro';
+
+  @override
+  String get hotelNoneBody => 'Mientras tanto, puedes reservar un traslado desde o hacia cualquier hotel con la reserva normal.';
+
+  @override
+  String get hotelNoneTitle => 'Pronto anunciaremos nuestros hoteles aliados';
+
+  @override
+  String get hotelOtherHotel => 'Otro hotel o dirección';
+
+  @override
+  String get hotelPartnerCta => '¿Tienes un hotel? Escríbenos';
+
+  @override
+  String hotelPickupAt(String when) {
+    return 'Recogida: $when';
+  }
+
+  @override
+  String get hotelTitle => 'Del hotel al aeropuerto, sin pensarlo';
+
+  @override
+  String get hotelToAirport => 'Al aeropuerto';
+
+  @override
+  String get hotelToAirportHint => 'Tu chófer te recoge en el hotel a la hora que elijas. Para vuelos nacionales, sal unas 2 h antes; para internacionales, unas 3 h.';
 
   @override
   String get intercityBuenaVista => 'Puerta de entrada al Parque Amboró';

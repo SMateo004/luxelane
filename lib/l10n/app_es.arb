@@ -315,6 +315,7 @@
   "adminSectionDashboard": "Panel",
   "adminSectionDrivers": "Chóferes",
   "adminSectionHealth": "Salud",
+  "adminSectionHotels": "Hoteles",
   "adminSectionLoyalty": "Fidelidad",
   "adminSectionPricing": "Precios",
   "adminSectionPromos": "Promociones",
@@ -1500,6 +1501,7 @@
   "@homeServiceAirportTransfer": {
     "description": "Services dropdown item"
   },
+  "homeServiceHotels": "Traslados de hotel",
   "homeServiceHourly": "Contratación por horas",
   "@homeServiceHourly": {
     "description": "Services dropdown item"
@@ -1541,6 +1543,90 @@
   "homeStepPriceTitle": "Confirma tu precio fijo",
   "homeTrustEyebrow": "La promesa Luxelane",
   "homeTrustTitle": "Viajar con confianza,\nde principio a fin.",
+  "hotelAdminAdd": "Agregar hotel",
+  "hotelAdminAddress": "Dirección",
+  "hotelAdminAddressHint": "Busca el hotel",
+  "hotelAdminCopyLink": "Copiar enlace",
+  "hotelAdminEdit": "Editar",
+  "hotelAdminEditTitle": "Editar {name}",
+  "@hotelAdminEditTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "hotelAdminEmpty": "Aún no hay hoteles aliados. La página pública dice que pronto los anunciarán.",
+  "hotelAdminHidden": "Oculto",
+  "hotelAdminHide": "Ocultar de la página",
+  "hotelAdminIntro": "Los hoteles visibles aparecen en la página de traslados de hotel. Cada uno tiene un enlace para poner en un QR en recepción: abre la página con ese hotel ya elegido. Para facturar los traslados al hotel, créale una cuenta de empresa.",
+  "hotelAdminLinkCopied": "Enlace copiado. Puedes convertirlo en un código QR.",
+  "hotelAdminMeetingPoint": "Punto de encuentro (opcional)",
+  "hotelAdminMeetingPointHint": "Ej.: Lobby principal",
+  "hotelAdminName": "Nombre del hotel",
+  "hotelAdminSave": "Guardar",
+  "hotelAdminSaved": "Hotel guardado",
+  "hotelAdminShow": "Mostrar en la página",
+  "hotelAdminTitle": "Hoteles aliados",
+  "hotelAdminVisible": "Visible",
+  "hotelErrorMeetingPoint": "El punto de encuentro admite hasta 120 caracteres.",
+  "hotelErrorName": "Ingresa el nombre del hotel (hasta 80 caracteres).",
+  "hotelErrorPlace": "Elige la dirección del hotel de la lista.",
+  "hotelEyebrow": "Traslados de hotel",
+  "hotelFromAirport": "Desde el aeropuerto",
+  "hotelFromAirportHint": "Indica la hora de llegada de tu vuelo y, en el siguiente paso, el número de vuelo: lo seguimos y la espera es gratis hasta {minutes} min después del aterrizaje.",
+  "@hotelFromAirportHint": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hotelHomeLink": "Traslados de hotel",
+  "hotelIncFlightBody": "Si llegas al aeropuerto, seguimos tu vuelo: espera gratis hasta {minutes} min tras el aterrizaje.",
+  "@hotelIncFlightBody": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hotelIncFlightTitle": "Seguimiento de vuelo",
+  "hotelIncLobbyBody": "Tu chófer te espera en el punto de encuentro acordado con el hotel.",
+  "hotelIncLobbyTitle": "Recogida en el hotel",
+  "hotelIntro": "Traslados privados entre nuestros hoteles aliados y el Aeropuerto Internacional Viru Viru. Elige tu hotel, la dirección y la hora; el precio queda fijo antes de confirmar.",
+  "hotelLandingAt": "Llegada del vuelo: {when}",
+  "@hotelLandingAt": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "hotelMeetingPoint": "Punto de encuentro: {place}",
+  "@hotelMeetingPoint": {
+    "placeholders": {
+      "place": {
+        "type": "String"
+      }
+    }
+  },
+  "hotelMeetingPointLabel": "Punto de encuentro",
+  "hotelNoneBody": "Mientras tanto, puedes reservar un traslado desde o hacia cualquier hotel con la reserva normal.",
+  "hotelNoneTitle": "Pronto anunciaremos nuestros hoteles aliados",
+  "hotelOtherHotel": "Otro hotel o dirección",
+  "hotelPartnerCta": "¿Tienes un hotel? Escríbenos",
+  "hotelPickupAt": "Recogida: {when}",
+  "@hotelPickupAt": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "hotelTitle": "Del hotel al aeropuerto, sin pensarlo",
+  "hotelToAirport": "Al aeropuerto",
+  "hotelToAirportHint": "Tu chófer te recoge en el hotel a la hora que elijas. Para vuelos nacionales, sal unas 2 h antes; para internacionales, unas 3 h.",
   "intercityBuenaVista": "Puerta de entrada al Parque Amboró",
   "intercityCardMeta": "≈ {km} km · desde {price}",
   "@intercityCardMeta": {

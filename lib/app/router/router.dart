@@ -22,6 +22,7 @@ import '../../features/driver/presentation/pages/driver_queue_screen.dart';
 import '../../features/services/presentation/pages/airport_transfer_page.dart';
 import '../../features/services/presentation/pages/hourly_charter_page.dart';
 import '../../features/services/presentation/pages/immediate_pickup_page.dart';
+import '../../features/hotels/presentation/hotel_transfers_page.dart';
 import '../../features/services/presentation/pages/intercity_page.dart';
 import '../../features/home/presentation/pages/home_screen.dart';
 import '../../features/legal/presentation/pages/legal_pages.dart';
@@ -192,6 +193,10 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: '/servicios/ciudad-a-ciudad',
           pageBuilder: (c, s) => _fade(const IntercityPage(), s),
+        ),
+        GoRoute(
+          path: '/servicios/hoteles',
+          pageBuilder: (c, s) => _fade(HotelTransfersPage(initialHotelId: s.uri.queryParameters['h']), s),
         ),
         GoRoute(path: '/terminos', pageBuilder: (c, s) => _fade(LegalPage.terms(), s)),
         GoRoute(path: '/privacidad', pageBuilder: (c, s) => _fade(LegalPage.privacy(), s)),

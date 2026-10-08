@@ -390,6 +390,12 @@ class _MobileBottomPanel extends StatelessWidget {
               label: Text(context.l10n.intercityHomeLink,
                   style: const TextStyle(color: LuxColors.accent)),
             ),
+            TextButton.icon(
+              onPressed: () => context.push('/servicios/hoteles'),
+              icon: const Icon(Icons.hotel_outlined, size: 18, color: LuxColors.accent),
+              label: Text(context.l10n.hotelHomeLink,
+                  style: const TextStyle(color: LuxColors.accent)),
+            ),
           ],
         ),
       );

@@ -12,6 +12,7 @@ import '../../../../core/widgets/place_autocomplete_field.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../domain/intercity.dart';
+import '../widgets/service_widgets.dart';
 
 /// Route lookup used to price the trip; injectable for tests.
 typedef RouteLookup = Future<RouteInfo?> Function(Place origin, Place destination);
@@ -76,7 +77,7 @@ class IntercityPage extends StatelessWidget {
                     child: Text(l.intercityIntro, style: bodyText(size: 16)),
                   ),
                   const SizedBox(height: 36),
-                  _Grid(
+                  EvenGrid(
                     columns: cols,
                     minHeight: 168,
                     children: [
@@ -92,11 +93,11 @@ class IntercityPage extends StatelessWidget {
                   const SizedBox(height: 48),
                   Text(l.intercityIncludedTitle.toUpperCase(), style: eyebrow()),
                   const SizedBox(height: 16),
-                  _Grid(columns: cols, minHeight: 128, children: [
-                    _Included(icon: Icons.lock_outline, title: l.intercityIncFixedTitle, body: l.intercityIncFixedBody),
-                    _Included(
+                  EvenGrid(columns: cols, minHeight: 128, children: [
+                    IncludedCard(icon: Icons.lock_outline, title: l.intercityIncFixedTitle, body: l.intercityIncFixedBody),
+                    IncludedCard(
                         icon: Icons.verified_user_outlined, title: l.intercityIncChauffeurTitle, body: l.intercityIncChauffeurBody),
-                    _Included(icon: Icons.near_me_outlined, title: l.intercityIncTrackingTitle, body: l.intercityIncTrackingBody),
+                    IncludedCard(icon: Icons.near_me_outlined, title: l.intercityIncTrackingTitle, body: l.intercityIncTrackingBody),
                   ]),
                   const SizedBox(height: 40),
                   TextButton.icon(
@@ -139,36 +140,6 @@ class IntercityPage extends StatelessWidget {
       );
     }
   }
-}
-
-class _Grid extends StatelessWidget {
-  const _Grid({required this.columns, required this.children, this.minHeight = 0});
-  final int columns;
-  final List<Widget> children;
-
-  /// Keeps cards in a row visually even without measuring intrinsic heights
-  /// (which go stale when web fonts load after the first layout).
-  final double minHeight;
-
-  @override
-  Widget build(BuildContext context) => LayoutBuilder(builder: (context, c) {
-        const gap = 16.0;
-        final w = (c.maxWidth - gap * (columns - 1)) / columns;
-        return Wrap(
-          spacing: gap,
-          runSpacing: gap,
-          children: [
-            for (final child in children)
-              SizedBox(
-                width: w,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(minHeight: columns > 1 ? minHeight : 0),
-                  child: child,
-                ),
-              ),
-          ],
-        );
-      });
 }
 
 class _DestinationCard extends StatelessWidget {
@@ -214,29 +185,6 @@ class _DestinationCard extends StatelessWidget {
       ),
     );
   }
-}
-
-class _Included extends StatelessWidget {
-  const _Included({required this.icon, required this.title, required this.body});
-  final IconData icon;
-  final String title, body;
-
-  @override
-  Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(color: Colors.white, border: Border.all(color: LD.border)),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Icon(icon, color: LD.accent, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: bodyText(size: 15, color: LD.ink).copyWith(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 4),
-              Text(body, style: bodyText(size: 13)),
-            ]),
-          ),
-        ]),
-      );
 }
 
 /// Pickup and date for a city-to-city trip, then on to the booking.

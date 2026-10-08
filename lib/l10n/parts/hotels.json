@@ -1,0 +1,124 @@
+{
+  "adminSectionHotels": {"es": "Hoteles", "en": "Hotels", "pt": "Hotéis"},
+  "homeServiceHotels": {"es": "Traslados de hotel", "en": "Hotel transfers", "pt": "Traslados de hotel"},
+  "hotelHomeLink": {"es": "Traslados de hotel", "en": "Hotel transfers", "pt": "Traslados de hotel"},
+  "hotelEyebrow": {"es": "Traslados de hotel", "en": "Hotel transfers", "pt": "Traslados de hotel"},
+  "hotelTitle": {
+    "es": "Del hotel al aeropuerto, sin pensarlo",
+    "en": "From hotel to airport, without a second thought",
+    "pt": "Do hotel ao aeroporto, sem preocupação"
+  },
+  "hotelIntro": {
+    "es": "Traslados privados entre nuestros hoteles aliados y el Aeropuerto Internacional Viru Viru. Elige tu hotel, la dirección y la hora; el precio queda fijo antes de confirmar.",
+    "en": "Private transfers between our partner hotels and Viru Viru International Airport. Choose your hotel, direction and time; the price is fixed before you confirm.",
+    "pt": "Traslados privados entre nossos hotéis parceiros e o Aeroporto Internacional Viru Viru. Escolha seu hotel, a direção e o horário; o preço fica fixo antes de confirmar."
+  },
+  "hotelNoneTitle": {
+    "es": "Pronto anunciaremos nuestros hoteles aliados",
+    "en": "Our partner hotels are coming soon",
+    "pt": "Em breve anunciaremos nossos hotéis parceiros"
+  },
+  "hotelNoneBody": {
+    "es": "Mientras tanto, puedes reservar un traslado desde o hacia cualquier hotel con la reserva normal.",
+    "en": "Meanwhile, you can book a transfer to or from any hotel with a regular booking.",
+    "pt": "Enquanto isso, você pode reservar um traslado de ou para qualquer hotel com a reserva normal."
+  },
+  "hotelMeetingPoint": {
+    "es": "Punto de encuentro: {place}",
+    "en": "Meeting point: {place}",
+    "pt": "Ponto de encontro: {place}",
+    "placeholders": {"place": {"type": "String"}}
+  },
+  "hotelMeetingPointLabel": {"es": "Punto de encuentro", "en": "Meeting point", "pt": "Ponto de encontro"},
+  "hotelToAirport": {"es": "Al aeropuerto", "en": "To the airport", "pt": "Para o aeroporto"},
+  "hotelFromAirport": {"es": "Desde el aeropuerto", "en": "From the airport", "pt": "Do aeroporto"},
+  "hotelToAirportHint": {
+    "es": "Tu chófer te recoge en el hotel a la hora que elijas. Para vuelos nacionales, sal unas 2 h antes; para internacionales, unas 3 h.",
+    "en": "Your chauffeur picks you up at the hotel at the time you choose. For domestic flights leave about 2 h before; for international, about 3 h.",
+    "pt": "Seu motorista te busca no hotel no horário escolhido. Para voos nacionais, saia cerca de 2 h antes; para internacionais, cerca de 3 h."
+  },
+  "hotelFromAirportHint": {
+    "es": "Indica la hora de llegada de tu vuelo y, en el siguiente paso, el número de vuelo: lo seguimos y la espera es gratis hasta {minutes} min después del aterrizaje.",
+    "en": "Enter your flight's arrival time and, in the next step, the flight number: we track it and waiting is free for up to {minutes} min after landing.",
+    "pt": "Informe o horário de chegada do voo e, no próximo passo, o número do voo: nós o acompanhamos e a espera é grátis por até {minutes} min após o pouso.",
+    "placeholders": {"minutes": {"type": "int"}}
+  },
+  "hotelPickupAt": {
+    "es": "Recogida: {when}",
+    "en": "Pickup: {when}",
+    "pt": "Embarque: {when}",
+    "placeholders": {"when": {"type": "String"}}
+  },
+  "hotelLandingAt": {
+    "es": "Llegada del vuelo: {when}",
+    "en": "Flight arrival: {when}",
+    "pt": "Chegada do voo: {when}",
+    "placeholders": {"when": {"type": "String"}}
+  },
+  "hotelIncFlightTitle": {"es": "Seguimiento de vuelo", "en": "Flight tracking", "pt": "Acompanhamento do voo"},
+  "hotelIncFlightBody": {
+    "es": "Si llegas al aeropuerto, seguimos tu vuelo: espera gratis hasta {minutes} min tras el aterrizaje.",
+    "en": "Arriving at the airport? We track your flight: free waiting up to {minutes} min after landing.",
+    "pt": "Chegando ao aeroporto? Acompanhamos seu voo: espera grátis por até {minutes} min após o pouso.",
+    "placeholders": {"minutes": {"type": "int"}}
+  },
+  "hotelIncLobbyTitle": {"es": "Recogida en el hotel", "en": "Pickup at the hotel", "pt": "Embarque no hotel"},
+  "hotelIncLobbyBody": {
+    "es": "Tu chófer te espera en el punto de encuentro acordado con el hotel.",
+    "en": "Your chauffeur waits at the meeting point agreed with the hotel.",
+    "pt": "Seu motorista espera no ponto de encontro combinado com o hotel."
+  },
+  "hotelOtherHotel": {"es": "Otro hotel o dirección", "en": "Another hotel or address", "pt": "Outro hotel ou endereço"},
+  "hotelPartnerCta": {"es": "¿Tienes un hotel? Escríbenos", "en": "Own a hotel? Contact us", "pt": "Tem um hotel? Fale conosco"},
+  "hotelErrorName": {
+    "es": "Ingresa el nombre del hotel (hasta 80 caracteres).",
+    "en": "Enter the hotel's name (up to 80 characters).",
+    "pt": "Informe o nome do hotel (até 80 caracteres)."
+  },
+  "hotelErrorPlace": {
+    "es": "Elige la dirección del hotel de la lista.",
+    "en": "Choose the hotel's address from the list.",
+    "pt": "Escolha o endereço do hotel na lista."
+  },
+  "hotelErrorMeetingPoint": {
+    "es": "El punto de encuentro admite hasta 120 caracteres.",
+    "en": "The meeting point allows up to 120 characters.",
+    "pt": "O ponto de encontro permite até 120 caracteres."
+  },
+  "hotelAdminTitle": {"es": "Hoteles aliados", "en": "Partner hotels", "pt": "Hotéis parceiros"},
+  "hotelAdminIntro": {
+    "es": "Los hoteles visibles aparecen en la página de traslados de hotel. Cada uno tiene un enlace para poner en un QR en recepción: abre la página con ese hotel ya elegido. Para facturar los traslados al hotel, créale una cuenta de empresa.",
+    "en": "Visible hotels appear on the hotel transfers page. Each one has a link for a QR code at reception: it opens the page with that hotel already chosen. To bill transfers to the hotel, create a company account for it.",
+    "pt": "Os hotéis visíveis aparecem na página de traslados de hotel. Cada um tem um link para colocar num QR na recepção: abre a página com esse hotel já escolhido. Para faturar os traslados ao hotel, crie uma conta de empresa para ele."
+  },
+  "hotelAdminAdd": {"es": "Agregar hotel", "en": "Add hotel", "pt": "Adicionar hotel"},
+  "hotelAdminEmpty": {
+    "es": "Aún no hay hoteles aliados. La página pública dice que pronto los anunciarán.",
+    "en": "No partner hotels yet. The public page says they're coming soon.",
+    "pt": "Ainda não há hotéis parceiros. A página pública diz que serão anunciados em breve."
+  },
+  "hotelAdminVisible": {"es": "Visible", "en": "Visible", "pt": "Visível"},
+  "hotelAdminHidden": {"es": "Oculto", "en": "Hidden", "pt": "Oculto"},
+  "hotelAdminHide": {"es": "Ocultar de la página", "en": "Hide from the page", "pt": "Ocultar da página"},
+  "hotelAdminShow": {"es": "Mostrar en la página", "en": "Show on the page", "pt": "Mostrar na página"},
+  "hotelAdminEdit": {"es": "Editar", "en": "Edit", "pt": "Editar"},
+  "hotelAdminEditTitle": {
+    "es": "Editar {name}",
+    "en": "Edit {name}",
+    "pt": "Editar {name}",
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "hotelAdminCopyLink": {"es": "Copiar enlace", "en": "Copy link", "pt": "Copiar link"},
+  "hotelAdminLinkCopied": {
+    "es": "Enlace copiado. Puedes convertirlo en un código QR.",
+    "en": "Link copied. You can turn it into a QR code.",
+    "pt": "Link copiado. Você pode transformá-lo em um código QR."
+  },
+  "hotelAdminName": {"es": "Nombre del hotel", "en": "Hotel name", "pt": "Nome do hotel"},
+  "hotelAdminAddress": {"es": "Dirección", "en": "Address", "pt": "Endereço"},
+  "hotelAdminAddressHint": {"es": "Busca el hotel", "en": "Search for the hotel", "pt": "Busque o hotel"},
+  "hotelAdminMeetingPoint": {"es": "Punto de encuentro (opcional)", "en": "Meeting point (optional)", "pt": "Ponto de encontro (opcional)"},
+  "hotelAdminMeetingPointHint": {"es": "Ej.: Lobby principal", "en": "E.g. Main lobby", "pt": "Ex.: Lobby principal"},
+  "hotelAdminSave": {"es": "Guardar", "en": "Save", "pt": "Salvar"},
+  "hotelAdminSaved": {"es": "Hotel guardado", "en": "Hotel saved", "pt": "Hotel salvo"}
+}

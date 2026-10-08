@@ -13,6 +13,7 @@ class BookingFormData {
     this.routeDistanceKm = 0,
     this.routeDurationMin = 0,
     this.polylinePoints = const [],
+    this.pickupNote = '',
   });
 
   final Place origin;
@@ -26,4 +27,8 @@ class BookingFormData {
   final double routeDistanceKm;
   final int routeDurationMin;
   final List<LatLng> polylinePoints;
+
+  /// Meeting point for the chauffeur (e.g. a partner hotel's lobby); added
+  /// to the booking notes.
+  final String pickupNote;
 }

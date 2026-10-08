@@ -25,6 +25,10 @@ abstract class AppConfig {
   static const String currency =
       String.fromEnvironment('CURRENCY', defaultValue: 'bob');
 
+  /// Public rider web app, for links shared outside the app (hotel QR codes).
+  static const String riderWebUrl =
+      String.fromEnvironment('RIDER_URL', defaultValue: 'https://luxelane-4e7ae.web.app');
+
   static const String fcmVapidKey =
       String.fromEnvironment('FCM_VAPID_KEY');
 }

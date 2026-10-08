@@ -501,6 +501,7 @@ class _BookingScreenState extends State<BookingScreen> {
     // rider's language.
     final notes = [
       if (forGuest && _guestEmail.isNotEmpty) 'Correo del pasajero: $_guestEmail',
+      if ((_formData?.pickupNote ?? '').isNotEmpty) 'Punto de encuentro: ${_formData!.pickupNote}',
       if (_notes.isNotEmpty) _notes,
     ].join('\n');
 
@@ -1905,6 +1906,8 @@ class _BookingScreenState extends State<BookingScreen> {
             _SummaryRow(l.bookingPassengers, l.unitPassengers(_passengers)),
             _SummaryRow(l.bookingLuggage, l.unitBags(_luggage)),
             if (_flight.isNotEmpty) _SummaryRow(l.bookingSummaryFlight, _flight),
+            if ((_formData?.pickupNote ?? '').isNotEmpty)
+              _SummaryRow(l.hotelMeetingPointLabel, _formData!.pickupNote),
             if (_notes.isNotEmpty)  _SummaryRow(l.bookingSummaryNotes, _notes),
             if (_payable < _price)
               _SummaryRow(_discountLabel,
