@@ -8,7 +8,9 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:luxelane/features/support/data/support_hours_repository.dart';
 import 'package:luxelane/features/support/data/support_repository.dart';
+import 'package:luxelane/features/support/domain/support_hours.dart';
 import 'package:luxelane/features/support/domain/support_ticket.dart';
 import 'package:luxelane/features/support/presentation/pages/help_center_page.dart';
 import 'package:luxelane/features/support/presentation/pages/ticket_thread_page.dart';
@@ -90,6 +92,14 @@ Widget _app(Widget child, {Locale locale = const Locale('es'), UserRole role = U
   return BlocProvider<AuthBloc>.value(value: auth, child: localizedApp(child, locale: locale));
 }
 
+class _FakeHours implements SupportHoursRepository {
+  @override
+  Stream<SupportHours?> watch() =>
+      Stream.value(const SupportHours(days: {1, 2, 3, 4, 5, 6, 7}, openMin: 0, closeMin: 1440));
+  @override
+  Future<void> save(SupportHours? hours) async {}
+}
+
 Future<void> _size(WidgetTester t, Size s) async {
   t.view
     ..physicalSize = s
@@ -112,6 +122,12 @@ void main() {
   });
 
   group('HelpCenterPage', () {
+    testWidgets('shows the support hours once set', (tester) async {
+      await tester.pumpWidget(_app(HelpCenterPage(repository: _FakeRepo(const []), hoursRepository: _FakeHours())));
+      await tester.pumpAndSettle();
+      expect(find.text('Atención todos los días, las 24 horas'), findsOneWidget);
+    });
+
     for (final size in const [Size(360, 2000), Size(1280, 1600)]) {
       testWidgets('FAQ, my requests and a new request (${size.width.toInt()}px)', (tester) async {
         await _size(tester, size);

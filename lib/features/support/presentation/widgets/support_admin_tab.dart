@@ -5,17 +5,20 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../admin/presentation/widgets/admin_shared_widgets.dart';
+import '../../data/support_hours_repository.dart';
 import '../../data/support_repository.dart';
 import '../../domain/support_ticket.dart';
 import '../pages/help_center_page.dart' show TicketListTile;
 import '../pages/ticket_thread_page.dart';
+import 'support_hours_widgets.dart';
 
 enum _Filter { pending, answered, resolved, all }
 
 /// Admin panel → Soporte: the queue of requests, safety reports first.
 class SupportAdminTab extends StatefulWidget {
-  const SupportAdminTab({super.key, this.repository});
+  const SupportAdminTab({super.key, this.repository, this.hoursRepository});
   final SupportRepository? repository;
+  final SupportHoursRepository? hoursRepository;
 
   @override
   State<SupportAdminTab> createState() => _SupportAdminTabState();
@@ -53,6 +56,7 @@ class _SupportAdminTabState extends State<SupportAdminTab> {
           padding: const EdgeInsets.all(LuxSpacing.lg),
           children: [
             SectionHeader(title: l.supportAdminTitle),
+            SupportHoursAdminCard(repository: widget.hoursRepository),
             if (urgent > 0) ...[
               const SizedBox(height: LuxSpacing.md),
               LuxCard(

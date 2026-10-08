@@ -413,7 +413,16 @@ service cloud.firestore {
         // The server re-validates every tier (functions/src/loyalty.ts).
         request.resource.data.enabled is bool &&
         request.resource.data.tiers is list &&
-        request.resource.data.tiers.size() <= 3));
+        request.resource.data.tiers.size() <= 3)) && (docId != 'support' || request.method == 'delete' || (
+        request.resource.data.keys().hasOnly(['days', 'openMin', 'closeMin']) &&
+        request.resource.data.days is list &&
+        request.resource.data.days.size() >= 1 &&
+        request.resource.data.days.size() <= 7 &&
+        request.resource.data.openMin is int &&
+        request.resource.data.closeMin is int &&
+        request.resource.data.openMin >= 0 &&
+        request.resource.data.closeMin <= 1440 &&
+        request.resource.data.openMin < request.resource.data.closeMin));
     }
 
     // -------------------------------------------------------------------------

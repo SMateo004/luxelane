@@ -2574,6 +2574,56 @@
     }
   },
   "supportHelpCenter": "Centro de ayuda",
+  "supportHours24h": "Las 24 horas",
+  "supportHoursAlways": "Atención todos los días, las 24 horas",
+  "supportHoursClear": "Quitar horario",
+  "supportHoursClosedUntil": "Fuera de horario: respondemos desde {when}. Puedes escribirnos igual.",
+  "@supportHoursClosedUntil": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "supportHoursClosesAt": "Cierra: {time}",
+  "@supportHoursClosesAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "supportHoursEdit": "Editar",
+  "supportHoursErrorDays": "Elige al menos un día.",
+  "supportHoursErrorTimes": "La hora de cierre debe ser posterior a la de apertura.",
+  "supportHoursEveryDay": "Todos los días",
+  "supportHoursIntro": "Días y horas en que el equipo responde las solicitudes, en hora de Bolivia. Se muestran en el centro de ayuda, con un aviso si ahora están fuera de horario.",
+  "supportHoursMidnight": "medianoche",
+  "supportHoursOpenNow": "Ahora estamos atendiendo",
+  "supportHoursOpensAt": "Abre: {time}",
+  "@supportHoursOpensAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "supportHoursSave": "Guardar",
+  "supportHoursSaved": "Horario guardado",
+  "supportHoursSet": "Definir",
+  "supportHoursSummary": "Atención: {days}, {times} (hora de Bolivia)",
+  "@supportHoursSummary": {
+    "placeholders": {
+      "days": {
+        "type": "String"
+      },
+      "times": {
+        "type": "String"
+      }
+    }
+  },
+  "supportHoursTitle": "Horario de atención",
+  "supportHoursUnset": "Sin definir: la app no muestra ningún horario.",
   "supportLinkedTrip": "Vinculada al viaje {code}",
   "@supportLinkedTrip": {
     "placeholders": {

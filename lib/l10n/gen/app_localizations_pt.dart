@@ -4046,6 +4046,71 @@ class AppLocalizationsPt extends AppLocalizations {
   String get supportHelpCenter => 'Central de ajuda';
 
   @override
+  String get supportHours24h => '24 horas';
+
+  @override
+  String get supportHoursAlways => 'Atendimento todos os dias, 24 horas';
+
+  @override
+  String get supportHoursClear => 'Remover horário';
+
+  @override
+  String supportHoursClosedUntil(String when) {
+    return 'Fora do horário: respondemos a partir de $when. Você pode escrever mesmo assim.';
+  }
+
+  @override
+  String supportHoursClosesAt(String time) {
+    return 'Fecha: $time';
+  }
+
+  @override
+  String get supportHoursEdit => 'Editar';
+
+  @override
+  String get supportHoursErrorDays => 'Escolha pelo menos um dia.';
+
+  @override
+  String get supportHoursErrorTimes => 'O horário de fechamento deve ser depois do de abertura.';
+
+  @override
+  String get supportHoursEveryDay => 'Todos os dias';
+
+  @override
+  String get supportHoursIntro => 'Dias e horários em que a equipe responde às solicitações, no horário da Bolívia. Aparecem na central de ajuda, com um aviso quando estiver fora do horário.';
+
+  @override
+  String get supportHoursMidnight => 'meia-noite';
+
+  @override
+  String get supportHoursOpenNow => 'Estamos atendendo agora';
+
+  @override
+  String supportHoursOpensAt(String time) {
+    return 'Abre: $time';
+  }
+
+  @override
+  String get supportHoursSave => 'Salvar';
+
+  @override
+  String get supportHoursSaved => 'Horário salvo';
+
+  @override
+  String get supportHoursSet => 'Definir';
+
+  @override
+  String supportHoursSummary(String days, String times) {
+    return 'Atendimento: $days, $times (horário da Bolívia)';
+  }
+
+  @override
+  String get supportHoursTitle => 'Horário de atendimento';
+
+  @override
+  String get supportHoursUnset => 'Não definido: o app não mostra nenhum horário.';
+
+  @override
   String supportLinkedTrip(String code) {
     return 'Vinculada à viagem $code';
   }

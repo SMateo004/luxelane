@@ -7339,6 +7339,120 @@ abstract class AppLocalizations {
   /// **'Centro de ayuda'**
   String get supportHelpCenter;
 
+  /// No description provided for @supportHours24h.
+  ///
+  /// In es, this message translates to:
+  /// **'Las 24 horas'**
+  String get supportHours24h;
+
+  /// No description provided for @supportHoursAlways.
+  ///
+  /// In es, this message translates to:
+  /// **'Atención todos los días, las 24 horas'**
+  String get supportHoursAlways;
+
+  /// No description provided for @supportHoursClear.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar horario'**
+  String get supportHoursClear;
+
+  /// No description provided for @supportHoursClosedUntil.
+  ///
+  /// In es, this message translates to:
+  /// **'Fuera de horario: respondemos desde {when}. Puedes escribirnos igual.'**
+  String supportHoursClosedUntil(String when);
+
+  /// No description provided for @supportHoursClosesAt.
+  ///
+  /// In es, this message translates to:
+  /// **'Cierra: {time}'**
+  String supportHoursClosesAt(String time);
+
+  /// No description provided for @supportHoursEdit.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get supportHoursEdit;
+
+  /// No description provided for @supportHoursErrorDays.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige al menos un día.'**
+  String get supportHoursErrorDays;
+
+  /// No description provided for @supportHoursErrorTimes.
+  ///
+  /// In es, this message translates to:
+  /// **'La hora de cierre debe ser posterior a la de apertura.'**
+  String get supportHoursErrorTimes;
+
+  /// No description provided for @supportHoursEveryDay.
+  ///
+  /// In es, this message translates to:
+  /// **'Todos los días'**
+  String get supportHoursEveryDay;
+
+  /// No description provided for @supportHoursIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'Días y horas en que el equipo responde las solicitudes, en hora de Bolivia. Se muestran en el centro de ayuda, con un aviso si ahora están fuera de horario.'**
+  String get supportHoursIntro;
+
+  /// No description provided for @supportHoursMidnight.
+  ///
+  /// In es, this message translates to:
+  /// **'medianoche'**
+  String get supportHoursMidnight;
+
+  /// No description provided for @supportHoursOpenNow.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahora estamos atendiendo'**
+  String get supportHoursOpenNow;
+
+  /// No description provided for @supportHoursOpensAt.
+  ///
+  /// In es, this message translates to:
+  /// **'Abre: {time}'**
+  String supportHoursOpensAt(String time);
+
+  /// No description provided for @supportHoursSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get supportHoursSave;
+
+  /// No description provided for @supportHoursSaved.
+  ///
+  /// In es, this message translates to:
+  /// **'Horario guardado'**
+  String get supportHoursSaved;
+
+  /// No description provided for @supportHoursSet.
+  ///
+  /// In es, this message translates to:
+  /// **'Definir'**
+  String get supportHoursSet;
+
+  /// No description provided for @supportHoursSummary.
+  ///
+  /// In es, this message translates to:
+  /// **'Atención: {days}, {times} (hora de Bolivia)'**
+  String supportHoursSummary(String days, String times);
+
+  /// No description provided for @supportHoursTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Horario de atención'**
+  String get supportHoursTitle;
+
+  /// No description provided for @supportHoursUnset.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin definir: la app no muestra ningún horario.'**
+  String get supportHoursUnset;
+
   /// No description provided for @supportLinkedTrip.
   ///
   /// In es, this message translates to:

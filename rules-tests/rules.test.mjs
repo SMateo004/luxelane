@@ -431,3 +431,15 @@ describe('partner hotels', () => {
     await assertSucceeds(getDoc(doc(db('admin'), 'hotels/off')));
   });
 });
+
+describe('support hours config', () => {
+  it('admins set valid hours; anyone signed in reads them', async () => {
+    const hours = { days: [1, 2, 3, 4, 5], openMin: 480, closeMin: 1200 };
+    await assertSucceeds(setDoc(doc(db('admin'), 'config/support'), hours));
+    await assertFails(setDoc(doc(db('admin'), 'config/support'), { ...hours, openMin: 1300 }));
+    await assertFails(setDoc(doc(db('admin'), 'config/support'), { ...hours, days: [] }));
+    await assertFails(setDoc(doc(db('admin'), 'config/support'), { ...hours, note: 'x' }));
+    await assertFails(setDoc(doc(db('rider'), 'config/support'), hours));
+    await assertSucceeds(getDoc(doc(db('rider'), 'config/support')));
+  });
+});

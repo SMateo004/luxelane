@@ -1,0 +1,57 @@
+{
+  "supportHoursTitle": {"es": "Horario de atención", "en": "Support hours", "pt": "Horário de atendimento"},
+  "supportHoursUnset": {
+    "es": "Sin definir: la app no muestra ningún horario.",
+    "en": "Not set: the app doesn't show any hours.",
+    "pt": "Não definido: o app não mostra nenhum horário."
+  },
+  "supportHoursSet": {"es": "Definir", "en": "Set", "pt": "Definir"},
+  "supportHoursEdit": {"es": "Editar", "en": "Edit", "pt": "Editar"},
+  "supportHoursIntro": {
+    "es": "Días y horas en que el equipo responde las solicitudes, en hora de Bolivia. Se muestran en el centro de ayuda, con un aviso si ahora están fuera de horario.",
+    "en": "Days and hours the team answers requests, in Bolivia time. Shown in the help center, with a note when it's outside hours.",
+    "pt": "Dias e horários em que a equipe responde às solicitações, no horário da Bolívia. Aparecem na central de ajuda, com um aviso quando estiver fora do horário."
+  },
+  "supportHours24h": {"es": "Las 24 horas", "en": "24 hours", "pt": "24 horas"},
+  "supportHoursEveryDay": {"es": "Todos los días", "en": "Every day", "pt": "Todos os dias"},
+  "supportHoursAlways": {
+    "es": "Atención todos los días, las 24 horas",
+    "en": "Support every day, 24 hours",
+    "pt": "Atendimento todos os dias, 24 horas"
+  },
+  "supportHoursSummary": {
+    "es": "Atención: {days}, {times} (hora de Bolivia)",
+    "en": "Support: {days}, {times} (Bolivia time)",
+    "pt": "Atendimento: {days}, {times} (horário da Bolívia)",
+    "placeholders": {"days": {"type": "String"}, "times": {"type": "String"}}
+  },
+  "supportHoursMidnight": {"es": "medianoche", "en": "midnight", "pt": "meia-noite"},
+  "supportHoursOpenNow": {"es": "Ahora estamos atendiendo", "en": "We're answering now", "pt": "Estamos atendendo agora"},
+  "supportHoursClosedUntil": {
+    "es": "Fuera de horario: respondemos desde {when}. Puedes escribirnos igual.",
+    "en": "Outside hours: we'll answer from {when}. You can still write to us.",
+    "pt": "Fora do horário: respondemos a partir de {when}. Você pode escrever mesmo assim.",
+    "placeholders": {"when": {"type": "String"}}
+  },
+  "supportHoursOpensAt": {
+    "es": "Abre: {time}",
+    "en": "Opens: {time}",
+    "pt": "Abre: {time}",
+    "placeholders": {"time": {"type": "String"}}
+  },
+  "supportHoursClosesAt": {
+    "es": "Cierra: {time}",
+    "en": "Closes: {time}",
+    "pt": "Fecha: {time}",
+    "placeholders": {"time": {"type": "String"}}
+  },
+  "supportHoursErrorDays": {"es": "Elige al menos un día.", "en": "Choose at least one day.", "pt": "Escolha pelo menos um dia."},
+  "supportHoursErrorTimes": {
+    "es": "La hora de cierre debe ser posterior a la de apertura.",
+    "en": "Closing time must be after opening time.",
+    "pt": "O horário de fechamento deve ser depois do de abertura."
+  },
+  "supportHoursClear": {"es": "Quitar horario", "en": "Remove hours", "pt": "Remover horário"},
+  "supportHoursSave": {"es": "Guardar", "en": "Save", "pt": "Salvar"},
+  "supportHoursSaved": {"es": "Horario guardado", "en": "Hours saved", "pt": "Horário salvo"}
+}

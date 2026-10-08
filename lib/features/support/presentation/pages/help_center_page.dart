@@ -9,20 +9,23 @@ import '../../../../core/utils/waiting_policy.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../data/support_hours_repository.dart';
 import '../../data/support_repository.dart';
 import '../../domain/support_ticket.dart';
 import '../support_l10n.dart';
+import '../widgets/support_hours_widgets.dart';
 import 'new_ticket_page.dart';
 import 'ticket_thread_page.dart';
 
 /// Help center: answers to common questions, the rider's or chauffeur's
 /// requests, and a way to write to the team (optionally about one trip).
 class HelpCenterPage extends StatelessWidget {
-  const HelpCenterPage({super.key, this.bookingId, this.repository});
+  const HelpCenterPage({super.key, this.bookingId, this.repository, this.hoursRepository});
 
   /// Trip the help is about (from the receipt or the ride screen).
   final String? bookingId;
   final SupportRepository? repository;
+  final SupportHoursRepository? hoursRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +76,7 @@ class HelpCenterPage extends StatelessWidget {
                       const SizedBox(width: LuxSpacing.sm),
                       Expanded(child: Text(l.supportEmergencyNote, style: LuxTypography.caption)),
                     ]),
+                    SupportHoursLine(repository: hoursRepository),
                   ],
                 ),
               ),
