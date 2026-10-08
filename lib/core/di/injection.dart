@@ -29,6 +29,7 @@ import '../../features/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/ride/data/repositories/ride_repository_impl.dart';
 import '../../features/ride/domain/usecases/ride_usecases.dart';
 import '../../features/ride/presentation/bloc/ride_bloc.dart';
+import '../../features/settlements/data/settlement_repository.dart';
 import '../../features/support/data/support_repository.dart';
 import '../data/notification_repository_impl.dart';
 import '../repositories/repositories.dart';
@@ -114,6 +115,10 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<HealthRepository>(
     () => HealthRepositoryImpl(sl()),
+  );
+
+  sl.registerLazySingleton<SettlementRepository>(
+    () => SettlementRepositoryImpl(sl()),
   );
 }
 

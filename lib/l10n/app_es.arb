@@ -319,6 +319,7 @@
   "adminSectionPromos": "Promociones",
   "adminSectionReports": "Reportes",
   "adminSectionSettings": "Configuración",
+  "adminSectionSettlements": "Liquidaciones",
   "adminSectionSupport": "Soporte",
   "adminSectionUsers": "Usuarios",
   "adminSectionVehicles": "Vehículos",
@@ -2216,6 +2217,137 @@
   "servicesVehicleMostCities": "Disponible en Santa Cruz de la Sierra",
   "servicesVehiclePremiumLuxury": "Servicio de lujo premium",
   "servicesVehicleVanModels": "Mercedes Clase V, Toyota Alphard o similar",
+  "settleChangedSincePaid": "Cambió desde que se liquidó (entonces: {amount})",
+  "@settleChangedSincePaid": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleColBalance": "Saldo (+ Luxelane paga)",
+  "settleColByDriver": "Cobrado por el chófer",
+  "settleColByLuxelane": "Cobrado por Luxelane",
+  "settleColCommission": "Comisión",
+  "settleColGross": "Total de viajes",
+  "settleCommissionEdit": "Cambiar",
+  "settleCommissionHelp": "Porcentaje que Luxelane retiene de cada viaje completado. Se aplica a las semanas que liquides desde ahora; las ya liquidadas guardan el porcentaje de ese momento.",
+  "settleCommissionIs": "Comisión de Luxelane: {pct} % por viaje",
+  "@settleCommissionIs": {
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "settleCommissionLabel": "Comisión (%)",
+  "settleCommissionMissing": "Aún no definiste la comisión de Luxelane. Defínela para calcular las liquidaciones.",
+  "settleCommissionRange": "Ingresa un porcentaje entre 0 y 50.",
+  "settleCommissionSaved": "Comisión guardada",
+  "settleCommissionSet": "Definir",
+  "settleCommissionTitle": "Comisión de Luxelane",
+  "settleDriverBreakdown": "{gross} en viajes − {pct} % de comisión ({commission})",
+  "@settleDriverBreakdown": {
+    "placeholders": {
+      "gross": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "String"
+      },
+      "commission": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverEarnings": "Tus ganancias: {amount}",
+  "@settleDriverEarnings": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverGrossOnly": "Total de tus viajes: {amount}",
+  "@settleDriverGrossOnly": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverHow": "Lo que cobraste en efectivo o QR ya es tuyo: de esos viajes debes la comisión. De los viajes de empresas o tarjeta, Luxelane te paga el monto menos la comisión.",
+  "settleDriverNoCommission": "La comisión todavía no está configurada; verás tu saldo cuando lo esté.",
+  "settleDriverNoTrips": "Sin viajes completados.",
+  "settleDriverOwes": "El chófer debe {amount}",
+  "@settleDriverOwes": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverPays": "Debes a Luxelane {amount}",
+  "@settleDriverPays": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverReceives": "Luxelane te paga {amount}",
+  "@settleDriverReceives": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverTitle": "Liquidación semanal",
+  "settleEven": "Saldo en cero",
+  "settleExport": "Exportar semana (CSV)",
+  "settleIntro": "Por semana (lunes a domingo). En los viajes que cobra el chófer (efectivo o QR), el chófer le debe la comisión a Luxelane. En los que cobra Luxelane (empresas o tarjeta), Luxelane le paga al chófer el monto menos la comisión. El saldo dice quién paga a quién.",
+  "settleLastWeek": "Semana pasada",
+  "settleLuxelanePays": "Luxelane paga {amount}",
+  "@settleLuxelanePays": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleMarkPaid": "Marcar liquidado",
+  "settleNeedsCommission": "Define la comisión para ver las liquidaciones.",
+  "settleNextWeek": "Semana siguiente",
+  "settleNoTrips": "No hay viajes completados esta semana.",
+  "settlePaid": "Liquidado",
+  "settlePaidOn": "Liquidado el {date}",
+  "@settlePaidOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "settlePrevWeek": "Semana anterior",
+  "settleSave": "Guardar",
+  "settleStatCommission": "Comisión de Luxelane",
+  "settleStatToCollect": "Los chóferes deben",
+  "settleStatToPay": "Luxelane debe pagar",
+  "settleThisWeek": "Esta semana",
+  "settleTitle": "Liquidaciones a chóferes",
+  "settleUndo": "Deshacer",
+  "settleWeekRange": "{from} – {to}",
+  "@settleWeekRange": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
   "statusCancelled": "Cancelado",
   "statusCompleted": "Completado",
   "statusConfirmed": "Confirmado",

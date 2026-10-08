@@ -1,0 +1,296 @@
+{
+  "adminSectionSettlements": {
+    "es": "Liquidaciones",
+    "en": "Settlements",
+    "pt": "Acertos"
+  },
+  "settleTitle": {
+    "es": "Liquidaciones a chóferes",
+    "en": "Chauffeur settlements",
+    "pt": "Acertos com motoristas"
+  },
+  "settleIntro": {
+    "es": "Por semana (lunes a domingo). En los viajes que cobra el chófer (efectivo o QR), el chófer le debe la comisión a Luxelane. En los que cobra Luxelane (empresas o tarjeta), Luxelane le paga al chófer el monto menos la comisión. El saldo dice quién paga a quién.",
+    "en": "Weekly (Monday to Sunday). On rides the chauffeur collects (cash or QR), the chauffeur owes Luxelane the commission. On rides Luxelane collects (companies or card), Luxelane pays the chauffeur the fare minus commission. The balance says who pays whom.",
+    "pt": "Por semana (segunda a domingo). Nas viagens que o motorista cobra (dinheiro ou QR), o motorista deve a comissão à Luxelane. Nas que a Luxelane cobra (empresas ou cartão), a Luxelane paga ao motorista o valor menos a comissão. O saldo diz quem paga a quem."
+  },
+  "settleCommissionMissing": {
+    "es": "Aún no definiste la comisión de Luxelane. Defínela para calcular las liquidaciones.",
+    "en": "Luxelane's commission isn't set yet. Set it to calculate settlements.",
+    "pt": "A comissão da Luxelane ainda não foi definida. Defina-a para calcular os acertos."
+  },
+  "settleCommissionIs": {
+    "es": "Comisión de Luxelane: {pct} % por viaje",
+    "en": "Luxelane commission: {pct} % per ride",
+    "pt": "Comissão da Luxelane: {pct} % por viagem",
+    "placeholders": {
+      "pct": {
+        "type": "String"
+      }
+    }
+  },
+  "settleCommissionSet": {
+    "es": "Definir",
+    "en": "Set",
+    "pt": "Definir"
+  },
+  "settleCommissionEdit": {
+    "es": "Cambiar",
+    "en": "Change",
+    "pt": "Alterar"
+  },
+  "settleCommissionTitle": {
+    "es": "Comisión de Luxelane",
+    "en": "Luxelane commission",
+    "pt": "Comissão da Luxelane"
+  },
+  "settleCommissionHelp": {
+    "es": "Porcentaje que Luxelane retiene de cada viaje completado. Se aplica a las semanas que liquides desde ahora; las ya liquidadas guardan el porcentaje de ese momento.",
+    "en": "Percentage Luxelane keeps from each completed ride. It applies to the weeks you settle from now on; settled weeks keep the percentage they were settled with.",
+    "pt": "Porcentagem que a Luxelane retém de cada viagem concluída. Vale para as semanas acertadas a partir de agora; as já acertadas mantêm a porcentagem daquele momento."
+  },
+  "settleCommissionLabel": {
+    "es": "Comisión (%)",
+    "en": "Commission (%)",
+    "pt": "Comissão (%)"
+  },
+  "settleCommissionRange": {
+    "es": "Ingresa un porcentaje entre 0 y 50.",
+    "en": "Enter a percentage between 0 and 50.",
+    "pt": "Digite uma porcentagem entre 0 e 50."
+  },
+  "settleCommissionSaved": {
+    "es": "Comisión guardada",
+    "en": "Commission saved",
+    "pt": "Comissão salva"
+  },
+  "settleSave": {
+    "es": "Guardar",
+    "en": "Save",
+    "pt": "Salvar"
+  },
+  "settlePrevWeek": {
+    "es": "Semana anterior",
+    "en": "Previous week",
+    "pt": "Semana anterior"
+  },
+  "settleNextWeek": {
+    "es": "Semana siguiente",
+    "en": "Next week",
+    "pt": "Próxima semana"
+  },
+  "settleWeekRange": {
+    "es": "{from} – {to}",
+    "en": "{from} – {to}",
+    "pt": "{from} – {to}",
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "to": {
+        "type": "String"
+      }
+    }
+  },
+  "settleNeedsCommission": {
+    "es": "Define la comisión para ver las liquidaciones.",
+    "en": "Set the commission to see settlements.",
+    "pt": "Defina a comissão para ver os acertos."
+  },
+  "settleNoTrips": {
+    "es": "No hay viajes completados esta semana.",
+    "en": "No completed rides this week.",
+    "pt": "Nenhuma viagem concluída nesta semana."
+  },
+  "settleStatCommission": {
+    "es": "Comisión de Luxelane",
+    "en": "Luxelane commission",
+    "pt": "Comissão da Luxelane"
+  },
+  "settleStatToPay": {
+    "es": "Luxelane debe pagar",
+    "en": "Luxelane must pay",
+    "pt": "A Luxelane deve pagar"
+  },
+  "settleStatToCollect": {
+    "es": "Los chóferes deben",
+    "en": "Chauffeurs owe",
+    "pt": "Os motoristas devem"
+  },
+  "settleExport": {
+    "es": "Exportar semana (CSV)",
+    "en": "Export week (CSV)",
+    "pt": "Exportar semana (CSV)"
+  },
+  "settleColGross": {
+    "es": "Total de viajes",
+    "en": "Ride total",
+    "pt": "Total das viagens"
+  },
+  "settleColByDriver": {
+    "es": "Cobrado por el chófer",
+    "en": "Collected by chauffeur",
+    "pt": "Cobrado pelo motorista"
+  },
+  "settleColByLuxelane": {
+    "es": "Cobrado por Luxelane",
+    "en": "Collected by Luxelane",
+    "pt": "Cobrado pela Luxelane"
+  },
+  "settleColCommission": {
+    "es": "Comisión",
+    "en": "Commission",
+    "pt": "Comissão"
+  },
+  "settleColBalance": {
+    "es": "Saldo (+ Luxelane paga)",
+    "en": "Balance (+ Luxelane pays)",
+    "pt": "Saldo (+ Luxelane paga)"
+  },
+  "settleEven": {
+    "es": "Saldo en cero",
+    "en": "Balance is zero",
+    "pt": "Saldo zerado"
+  },
+  "settleLuxelanePays": {
+    "es": "Luxelane paga {amount}",
+    "en": "Luxelane pays {amount}",
+    "pt": "A Luxelane paga {amount}",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverOwes": {
+    "es": "El chófer debe {amount}",
+    "en": "The chauffeur owes {amount}",
+    "pt": "O motorista deve {amount}",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleMarkPaid": {
+    "es": "Marcar liquidado",
+    "en": "Mark settled",
+    "pt": "Marcar acertado"
+  },
+  "settlePaid": {
+    "es": "Liquidado",
+    "en": "Settled",
+    "pt": "Acertado"
+  },
+  "settlePaidOn": {
+    "es": "Liquidado el {date}",
+    "en": "Settled on {date}",
+    "pt": "Acertado em {date}",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "settleUndo": {
+    "es": "Deshacer",
+    "en": "Undo",
+    "pt": "Desfazer"
+  },
+  "settleChangedSincePaid": {
+    "es": "Cambió desde que se liquidó (entonces: {amount})",
+    "en": "Changed since it was settled (then: {amount})",
+    "pt": "Mudou desde o acerto (na época: {amount})",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverTitle": {
+    "es": "Liquidación semanal",
+    "en": "Weekly settlement",
+    "pt": "Acerto semanal"
+  },
+  "settleThisWeek": {
+    "es": "Esta semana",
+    "en": "This week",
+    "pt": "Esta semana"
+  },
+  "settleLastWeek": {
+    "es": "Semana pasada",
+    "en": "Last week",
+    "pt": "Semana passada"
+  },
+  "settleDriverNoTrips": {
+    "es": "Sin viajes completados.",
+    "en": "No completed rides.",
+    "pt": "Sem viagens concluídas."
+  },
+  "settleDriverGrossOnly": {
+    "es": "Total de tus viajes: {amount}",
+    "en": "Your rides total: {amount}",
+    "pt": "Total das suas viagens: {amount}",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverEarnings": {
+    "es": "Tus ganancias: {amount}",
+    "en": "Your earnings: {amount}",
+    "pt": "Seus ganhos: {amount}",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverBreakdown": {
+    "es": "{gross} en viajes − {pct} % de comisión ({commission})",
+    "en": "{gross} in rides − {pct} % commission ({commission})",
+    "pt": "{gross} em viagens − {pct} % de comissão ({commission})",
+    "placeholders": {
+      "gross": {
+        "type": "String"
+      },
+      "pct": {
+        "type": "String"
+      },
+      "commission": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverReceives": {
+    "es": "Luxelane te paga {amount}",
+    "en": "Luxelane pays you {amount}",
+    "pt": "A Luxelane paga a você {amount}",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverPays": {
+    "es": "Debes a Luxelane {amount}",
+    "en": "You owe Luxelane {amount}",
+    "pt": "Você deve à Luxelane {amount}",
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "settleDriverHow": {
+    "es": "Lo que cobraste en efectivo o QR ya es tuyo: de esos viajes debes la comisión. De los viajes de empresas o tarjeta, Luxelane te paga el monto menos la comisión.",
+    "en": "What you collected in cash or QR is already yours: on those rides you owe the commission. On company or card rides, Luxelane pays you the fare minus commission.",
+    "pt": "O que você recebeu em dinheiro ou QR já é seu: dessas viagens você deve a comissão. Nas viagens de empresas ou cartão, a Luxelane paga a você o valor menos a comissão."
+  },
+  "settleDriverNoCommission": {
+    "es": "La comisión todavía no está configurada; verás tu saldo cuando lo esté.",
+    "en": "The commission isn't configured yet; you'll see your balance once it is.",
+    "pt": "A comissão ainda não foi configurada; você verá seu saldo quando estiver."
+  }
+}

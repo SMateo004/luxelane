@@ -925,6 +925,12 @@ abstract class AppLocalizations {
   /// **'Configuración'**
   String get adminSectionSettings;
 
+  /// No description provided for @adminSectionSettlements.
+  ///
+  /// In es, this message translates to:
+  /// **'Liquidaciones'**
+  String get adminSectionSettlements;
+
   /// No description provided for @adminSectionSupport.
   ///
   /// In es, this message translates to:
@@ -6384,6 +6390,276 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Mercedes Clase V, Toyota Alphard o similar'**
   String get servicesVehicleVanModels;
+
+  /// No description provided for @settleChangedSincePaid.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambió desde que se liquidó (entonces: {amount})'**
+  String settleChangedSincePaid(String amount);
+
+  /// No description provided for @settleColBalance.
+  ///
+  /// In es, this message translates to:
+  /// **'Saldo (+ Luxelane paga)'**
+  String get settleColBalance;
+
+  /// No description provided for @settleColByDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Cobrado por el chófer'**
+  String get settleColByDriver;
+
+  /// No description provided for @settleColByLuxelane.
+  ///
+  /// In es, this message translates to:
+  /// **'Cobrado por Luxelane'**
+  String get settleColByLuxelane;
+
+  /// No description provided for @settleColCommission.
+  ///
+  /// In es, this message translates to:
+  /// **'Comisión'**
+  String get settleColCommission;
+
+  /// No description provided for @settleColGross.
+  ///
+  /// In es, this message translates to:
+  /// **'Total de viajes'**
+  String get settleColGross;
+
+  /// No description provided for @settleCommissionEdit.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar'**
+  String get settleCommissionEdit;
+
+  /// No description provided for @settleCommissionHelp.
+  ///
+  /// In es, this message translates to:
+  /// **'Porcentaje que Luxelane retiene de cada viaje completado. Se aplica a las semanas que liquides desde ahora; las ya liquidadas guardan el porcentaje de ese momento.'**
+  String get settleCommissionHelp;
+
+  /// No description provided for @settleCommissionIs.
+  ///
+  /// In es, this message translates to:
+  /// **'Comisión de Luxelane: {pct} % por viaje'**
+  String settleCommissionIs(String pct);
+
+  /// No description provided for @settleCommissionLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Comisión (%)'**
+  String get settleCommissionLabel;
+
+  /// No description provided for @settleCommissionMissing.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no definiste la comisión de Luxelane. Defínela para calcular las liquidaciones.'**
+  String get settleCommissionMissing;
+
+  /// No description provided for @settleCommissionRange.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa un porcentaje entre 0 y 50.'**
+  String get settleCommissionRange;
+
+  /// No description provided for @settleCommissionSaved.
+  ///
+  /// In es, this message translates to:
+  /// **'Comisión guardada'**
+  String get settleCommissionSaved;
+
+  /// No description provided for @settleCommissionSet.
+  ///
+  /// In es, this message translates to:
+  /// **'Definir'**
+  String get settleCommissionSet;
+
+  /// No description provided for @settleCommissionTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Comisión de Luxelane'**
+  String get settleCommissionTitle;
+
+  /// No description provided for @settleDriverBreakdown.
+  ///
+  /// In es, this message translates to:
+  /// **'{gross} en viajes − {pct} % de comisión ({commission})'**
+  String settleDriverBreakdown(String gross, String pct, String commission);
+
+  /// No description provided for @settleDriverEarnings.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus ganancias: {amount}'**
+  String settleDriverEarnings(String amount);
+
+  /// No description provided for @settleDriverGrossOnly.
+  ///
+  /// In es, this message translates to:
+  /// **'Total de tus viajes: {amount}'**
+  String settleDriverGrossOnly(String amount);
+
+  /// No description provided for @settleDriverHow.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo que cobraste en efectivo o QR ya es tuyo: de esos viajes debes la comisión. De los viajes de empresas o tarjeta, Luxelane te paga el monto menos la comisión.'**
+  String get settleDriverHow;
+
+  /// No description provided for @settleDriverNoCommission.
+  ///
+  /// In es, this message translates to:
+  /// **'La comisión todavía no está configurada; verás tu saldo cuando lo esté.'**
+  String get settleDriverNoCommission;
+
+  /// No description provided for @settleDriverNoTrips.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin viajes completados.'**
+  String get settleDriverNoTrips;
+
+  /// No description provided for @settleDriverOwes.
+  ///
+  /// In es, this message translates to:
+  /// **'El chófer debe {amount}'**
+  String settleDriverOwes(String amount);
+
+  /// No description provided for @settleDriverPays.
+  ///
+  /// In es, this message translates to:
+  /// **'Debes a Luxelane {amount}'**
+  String settleDriverPays(String amount);
+
+  /// No description provided for @settleDriverReceives.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane te paga {amount}'**
+  String settleDriverReceives(String amount);
+
+  /// No description provided for @settleDriverTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Liquidación semanal'**
+  String get settleDriverTitle;
+
+  /// No description provided for @settleEven.
+  ///
+  /// In es, this message translates to:
+  /// **'Saldo en cero'**
+  String get settleEven;
+
+  /// No description provided for @settleExport.
+  ///
+  /// In es, this message translates to:
+  /// **'Exportar semana (CSV)'**
+  String get settleExport;
+
+  /// No description provided for @settleIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'Por semana (lunes a domingo). En los viajes que cobra el chófer (efectivo o QR), el chófer le debe la comisión a Luxelane. En los que cobra Luxelane (empresas o tarjeta), Luxelane le paga al chófer el monto menos la comisión. El saldo dice quién paga a quién.'**
+  String get settleIntro;
+
+  /// No description provided for @settleLastWeek.
+  ///
+  /// In es, this message translates to:
+  /// **'Semana pasada'**
+  String get settleLastWeek;
+
+  /// No description provided for @settleLuxelanePays.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane paga {amount}'**
+  String settleLuxelanePays(String amount);
+
+  /// No description provided for @settleMarkPaid.
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar liquidado'**
+  String get settleMarkPaid;
+
+  /// No description provided for @settleNeedsCommission.
+  ///
+  /// In es, this message translates to:
+  /// **'Define la comisión para ver las liquidaciones.'**
+  String get settleNeedsCommission;
+
+  /// No description provided for @settleNextWeek.
+  ///
+  /// In es, this message translates to:
+  /// **'Semana siguiente'**
+  String get settleNextWeek;
+
+  /// No description provided for @settleNoTrips.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay viajes completados esta semana.'**
+  String get settleNoTrips;
+
+  /// No description provided for @settlePaid.
+  ///
+  /// In es, this message translates to:
+  /// **'Liquidado'**
+  String get settlePaid;
+
+  /// No description provided for @settlePaidOn.
+  ///
+  /// In es, this message translates to:
+  /// **'Liquidado el {date}'**
+  String settlePaidOn(String date);
+
+  /// No description provided for @settlePrevWeek.
+  ///
+  /// In es, this message translates to:
+  /// **'Semana anterior'**
+  String get settlePrevWeek;
+
+  /// No description provided for @settleSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get settleSave;
+
+  /// No description provided for @settleStatCommission.
+  ///
+  /// In es, this message translates to:
+  /// **'Comisión de Luxelane'**
+  String get settleStatCommission;
+
+  /// No description provided for @settleStatToCollect.
+  ///
+  /// In es, this message translates to:
+  /// **'Los chóferes deben'**
+  String get settleStatToCollect;
+
+  /// No description provided for @settleStatToPay.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane debe pagar'**
+  String get settleStatToPay;
+
+  /// No description provided for @settleThisWeek.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta semana'**
+  String get settleThisWeek;
+
+  /// No description provided for @settleTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Liquidaciones a chóferes'**
+  String get settleTitle;
+
+  /// No description provided for @settleUndo.
+  ///
+  /// In es, this message translates to:
+  /// **'Deshacer'**
+  String get settleUndo;
+
+  /// No description provided for @settleWeekRange.
+  ///
+  /// In es, this message translates to:
+  /// **'{from} – {to}'**
+  String settleWeekRange(String from, String to);
 
   /// No description provided for @statusCancelled.
   ///

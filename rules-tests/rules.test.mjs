@@ -383,3 +383,23 @@ describe('observability', () => {
     await assertFails(setDoc(doc(db('admin'), 'system/health'), { onlineDrivers: 99 }));
   });
 });
+
+describe('settlements', () => {
+  const record = (overrides = {}) => ({ driverId: 'driver', weekStart: null, balance: 120, paidBy: 'admin', ...overrides });
+
+  it('only admins set a commission between 0 and 50 %', async () => {
+    await assertSucceeds(setDoc(doc(db('admin'), 'config/finance'), { commissionPct: 20 }));
+    await assertFails(setDoc(doc(db('admin'), 'config/finance'), { commissionPct: 80 }));
+    await assertFails(setDoc(doc(db('driver'), 'config/finance'), { commissionPct: 0 }));
+    await assertSucceeds(getDoc(doc(db('driver'), 'config/finance')));
+  });
+
+  it('admins record settled weeks; chauffeurs read only theirs', async () => {
+    await assertSucceeds(setDoc(doc(db('admin'), 'settlements/driver_20261005'), record()));
+    await assertFails(setDoc(doc(db('admin'), 'settlements/other_20261005'), record()));
+    await assertFails(setDoc(doc(db('admin'), 'settlements/driver_20261012'), record({ paidBy: 'someone' })));
+    await assertFails(setDoc(doc(db('driver'), 'settlements/driver_20261012'), record({ paidBy: 'driver' })));
+    await assertSucceeds(getDoc(doc(db('driver'), 'settlements/driver_20261005')));
+    await assertFails(getDoc(doc(db('newdriver'), 'settlements/driver_20261005')));
+  });
+});

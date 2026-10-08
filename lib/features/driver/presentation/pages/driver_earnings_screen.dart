@@ -5,6 +5,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../settlements/presentation/driver_week_settlement.dart';
 import '../bloc/driver_bloc.dart';
 
 class DriverEarningsScreen extends StatelessWidget {
@@ -27,6 +28,10 @@ class DriverEarningsScreen extends StatelessWidget {
             padding: const EdgeInsets.all(LuxSpacing.md),
             children: [
               _EarningsSummary(total: total, rides: completed.length),
+              const SizedBox(height: LuxSpacing.lg),
+              SectionHeader(title: context.l10n.settleDriverTitle),
+              const SizedBox(height: LuxSpacing.md),
+              DriverWeekSettlement(driverId: state.user.id, bookings: completed),
               const SizedBox(height: LuxSpacing.lg),
               SectionHeader(title: context.l10n.driverCompletedTrips),
               const SizedBox(height: LuxSpacing.md),

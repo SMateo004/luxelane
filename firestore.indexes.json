@@ -1,6 +1,14 @@
 {
   "indexes": [
     {
+      "collectionGroup": "settlements",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "driverId", "order": "ASCENDING" },
+        { "fieldPath": "weekStart", "order": "DESCENDING" }
+      ]
+    },
+    {
       "collectionGroup": "supportTickets",
       "queryScope": "COLLECTION",
       "fields": [

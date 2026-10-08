@@ -502,6 +502,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get adminSectionSettings => 'Configuración';
 
   @override
+  String get adminSectionSettlements => 'Liquidaciones';
+
+  @override
   String get adminSectionSupport => 'Soporte';
 
   @override
@@ -3505,6 +3508,163 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get servicesVehicleVanModels => 'Mercedes Clase V, Toyota Alphard o similar';
+
+  @override
+  String settleChangedSincePaid(String amount) {
+    return 'Cambió desde que se liquidó (entonces: $amount)';
+  }
+
+  @override
+  String get settleColBalance => 'Saldo (+ Luxelane paga)';
+
+  @override
+  String get settleColByDriver => 'Cobrado por el chófer';
+
+  @override
+  String get settleColByLuxelane => 'Cobrado por Luxelane';
+
+  @override
+  String get settleColCommission => 'Comisión';
+
+  @override
+  String get settleColGross => 'Total de viajes';
+
+  @override
+  String get settleCommissionEdit => 'Cambiar';
+
+  @override
+  String get settleCommissionHelp => 'Porcentaje que Luxelane retiene de cada viaje completado. Se aplica a las semanas que liquides desde ahora; las ya liquidadas guardan el porcentaje de ese momento.';
+
+  @override
+  String settleCommissionIs(String pct) {
+    return 'Comisión de Luxelane: $pct % por viaje';
+  }
+
+  @override
+  String get settleCommissionLabel => 'Comisión (%)';
+
+  @override
+  String get settleCommissionMissing => 'Aún no definiste la comisión de Luxelane. Defínela para calcular las liquidaciones.';
+
+  @override
+  String get settleCommissionRange => 'Ingresa un porcentaje entre 0 y 50.';
+
+  @override
+  String get settleCommissionSaved => 'Comisión guardada';
+
+  @override
+  String get settleCommissionSet => 'Definir';
+
+  @override
+  String get settleCommissionTitle => 'Comisión de Luxelane';
+
+  @override
+  String settleDriverBreakdown(String gross, String pct, String commission) {
+    return '$gross en viajes − $pct % de comisión ($commission)';
+  }
+
+  @override
+  String settleDriverEarnings(String amount) {
+    return 'Tus ganancias: $amount';
+  }
+
+  @override
+  String settleDriverGrossOnly(String amount) {
+    return 'Total de tus viajes: $amount';
+  }
+
+  @override
+  String get settleDriverHow => 'Lo que cobraste en efectivo o QR ya es tuyo: de esos viajes debes la comisión. De los viajes de empresas o tarjeta, Luxelane te paga el monto menos la comisión.';
+
+  @override
+  String get settleDriverNoCommission => 'La comisión todavía no está configurada; verás tu saldo cuando lo esté.';
+
+  @override
+  String get settleDriverNoTrips => 'Sin viajes completados.';
+
+  @override
+  String settleDriverOwes(String amount) {
+    return 'El chófer debe $amount';
+  }
+
+  @override
+  String settleDriverPays(String amount) {
+    return 'Debes a Luxelane $amount';
+  }
+
+  @override
+  String settleDriverReceives(String amount) {
+    return 'Luxelane te paga $amount';
+  }
+
+  @override
+  String get settleDriverTitle => 'Liquidación semanal';
+
+  @override
+  String get settleEven => 'Saldo en cero';
+
+  @override
+  String get settleExport => 'Exportar semana (CSV)';
+
+  @override
+  String get settleIntro => 'Por semana (lunes a domingo). En los viajes que cobra el chófer (efectivo o QR), el chófer le debe la comisión a Luxelane. En los que cobra Luxelane (empresas o tarjeta), Luxelane le paga al chófer el monto menos la comisión. El saldo dice quién paga a quién.';
+
+  @override
+  String get settleLastWeek => 'Semana pasada';
+
+  @override
+  String settleLuxelanePays(String amount) {
+    return 'Luxelane paga $amount';
+  }
+
+  @override
+  String get settleMarkPaid => 'Marcar liquidado';
+
+  @override
+  String get settleNeedsCommission => 'Define la comisión para ver las liquidaciones.';
+
+  @override
+  String get settleNextWeek => 'Semana siguiente';
+
+  @override
+  String get settleNoTrips => 'No hay viajes completados esta semana.';
+
+  @override
+  String get settlePaid => 'Liquidado';
+
+  @override
+  String settlePaidOn(String date) {
+    return 'Liquidado el $date';
+  }
+
+  @override
+  String get settlePrevWeek => 'Semana anterior';
+
+  @override
+  String get settleSave => 'Guardar';
+
+  @override
+  String get settleStatCommission => 'Comisión de Luxelane';
+
+  @override
+  String get settleStatToCollect => 'Los chóferes deben';
+
+  @override
+  String get settleStatToPay => 'Luxelane debe pagar';
+
+  @override
+  String get settleThisWeek => 'Esta semana';
+
+  @override
+  String get settleTitle => 'Liquidaciones a chóferes';
+
+  @override
+  String get settleUndo => 'Deshacer';
+
+  @override
+  String settleWeekRange(String from, String to) {
+    return '$from – $to';
+  }
 
   @override
   String get statusCancelled => 'Cancelado';

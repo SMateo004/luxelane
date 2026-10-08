@@ -406,7 +406,25 @@ service cloud.firestore {
 
     match /config/{docId} {
       allow read:  if isAuthenticated();
-      allow write: if isAdmin();
+      allow write: if isAdmin() && (docId != 'finance' || (
+        request.resource.data.commissionPct is number &&
+        request.resource.data.commissionPct >= 0 &&
+        request.resource.data.commissionPct <= 50));
+    }
+
+    // -------------------------------------------------------------------------
+    // /settlements/{driverId_week} — weeks an admin marked as settled with a
+    // chauffeur. Chauffeurs see their own.
+    // -------------------------------------------------------------------------
+
+    match /settlements/{recordId} {
+      allow read: if isAdmin() ||
+        (isAuthenticated() && resource.data.driverId == request.auth.uid);
+      allow create, update: if isAdmin() &&
+        recordId.matches(request.resource.data.driverId + '_[0-9]{8}') &&
+        request.resource.data.balance is number &&
+        request.resource.data.paidBy == request.auth.uid;
+      allow delete: if isAdmin();
     }
   }
 }
