@@ -1,0 +1,140 @@
+{
+  "adminSectionHealth": {
+    "es": "Salud",
+    "en": "Health",
+    "pt": "Saúde"
+  },
+  "healthTitle": {
+    "es": "Salud del sistema",
+    "en": "System health",
+    "pt": "Saúde do sistema"
+  },
+  "healthBuildInfo": {
+    "es": "Entorno: {env} · versión {version}",
+    "en": "Environment: {env} · version {version}",
+    "pt": "Ambiente: {env} · versão {version}",
+    "placeholders": {
+      "env": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "healthEnvProd": {
+    "es": "producción",
+    "en": "production",
+    "pt": "produção"
+  },
+  "healthEnvDev": {
+    "es": "desarrollo",
+    "en": "development",
+    "pt": "desenvolvimento"
+  },
+  "healthMonitorOk": {
+    "es": "Monitor activo · última revisión a las {time}",
+    "en": "Monitor running · last check at {time}",
+    "pt": "Monitor ativo · última verificação às {time}",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "healthMonitorStale": {
+    "es": "El monitor no informa hace más de 15 minutos. Revisa que las Cloud Functions estén desplegadas.",
+    "en": "The monitor hasn't reported for over 15 minutes. Check that the Cloud Functions are deployed.",
+    "pt": "O monitor não informa há mais de 15 minutos. Verifique se as Cloud Functions estão implantadas."
+  },
+  "healthOnlineDrivers": {
+    "es": "Chóferes verificados en línea",
+    "en": "Verified chauffeurs online",
+    "pt": "Motoristas verificados on-line"
+  },
+  "healthPendingNext2h": {
+    "es": "Reservas en las próximas 2 h",
+    "en": "Bookings in the next 2 h",
+    "pt": "Reservas nas próximas 2 h"
+  },
+  "healthUnassignedSoon": {
+    "es": "Sin chófer, recogida en < 30 min",
+    "en": "No chauffeur, pickup in < 30 min",
+    "pt": "Sem motorista, embarque em < 30 min"
+  },
+  "healthUrgentTickets": {
+    "es": "Reportes de seguridad abiertos",
+    "en": "Open safety reports",
+    "pt": "Relatos de segurança abertos"
+  },
+  "healthErrors24h": {
+    "es": "Errores distintos en 24 h",
+    "en": "Distinct errors in 24 h",
+    "pt": "Erros distintos em 24 h"
+  },
+  "healthNeedsAttention": {
+    "es": "Requiere atención",
+    "en": "Needs attention",
+    "pt": "Requer atenção"
+  },
+  "healthAlertsNote": {
+    "es": "Los admins reciben un aviso cuando una reserva queda sin chófer a 30 minutos de la recogida y cuando no hay chóferes en línea con reservas próximas (como máximo una vez por hora).",
+    "en": "Admins get a notification when a booking has no chauffeur 30 minutes before pickup, and when no chauffeur is online with bookings coming up (at most once an hour).",
+    "pt": "Os admins recebem um aviso quando uma reserva fica sem motorista a 30 minutos do embarque e quando não há motoristas on-line com reservas próximas (no máximo uma vez por hora)."
+  },
+  "healthErrorsTitle": {
+    "es": "Errores de la app web",
+    "en": "Web app errors",
+    "pt": "Erros do app web"
+  },
+  "healthErrorsNote": {
+    "es": "Agrupados: el mismo error de muchos usuarios aparece una vez con su conteo. Los de Android e iOS están en Firebase Crashlytics.",
+    "en": "Grouped: the same error from many users appears once with its count. Android and iOS errors are in Firebase Crashlytics.",
+    "pt": "Agrupados: o mesmo erro de muitos usuários aparece uma vez com sua contagem. Os de Android e iOS estão no Firebase Crashlytics."
+  },
+  "healthNoErrors": {
+    "es": "Sin errores pendientes.",
+    "en": "No pending errors.",
+    "pt": "Sem erros pendentes."
+  },
+  "healthShowResolved": {
+    "es": "Ver resueltos",
+    "en": "Show resolved",
+    "pt": "Ver resolvidos"
+  },
+  "healthHideResolved": {
+    "es": "Ocultar resueltos",
+    "en": "Hide resolved",
+    "pt": "Ocultar resolvidos"
+  },
+  "healthOccurrences": {
+    "es": "{count, plural, =1{1 vez} other{{count} veces}}",
+    "en": "{count, plural, =1{1 time} other{{count} times}}",
+    "pt": "{count, plural, =1{1 vez} other{{count} vezes}}",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "healthLastSeen": {
+    "es": "último: {date}",
+    "en": "last: {date}",
+    "pt": "último: {date}",
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "healthMarkResolved": {
+    "es": "Marcar resuelto",
+    "en": "Mark resolved",
+    "pt": "Marcar resolvido"
+  },
+  "healthReopen": {
+    "es": "Reabrir",
+    "en": "Reopen",
+    "pt": "Reabrir"
+  }
+}

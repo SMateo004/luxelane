@@ -1,9 +1,26 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 
+import 'client_error_reporter.dart';
+
 class CrashService {
+  /// Web error reporting (Crashlytics doesn't support web).
+  static final webReporter = ClientErrorReporter();
+
   static Future<void> init() async {
-    if (kIsWeb) return; // Crashlytics not supported on web
+    if (kIsWeb) {
+      if (kDebugMode) return;
+      final previous = FlutterError.onError;
+      FlutterError.onError = (details) {
+        previous?.call(details);
+        webReporter.report(details.exception, details.stack);
+      };
+      PlatformDispatcher.instance.onError = (error, stack) {
+        webReporter.report(error, stack);
+        return true;
+      };
+      return;
+    }
 
     await FirebaseCrashlytics.instance
         .setCrashlyticsCollectionEnabled(!kDebugMode);
@@ -33,7 +50,10 @@ class CrashService {
     StackTrace? stack, {
     bool fatal = false,
   }) async {
-    if (kIsWeb) return;
+    if (kIsWeb) {
+      if (!kDebugMode) await webReporter.report(error, stack);
+      return;
+    }
     await FirebaseCrashlytics.instance
         .recordError(error, stack, fatal: fatal);
   }

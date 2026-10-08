@@ -84,6 +84,18 @@ const M = {
   supportNewTitle: { es: 'Nueva solicitud de soporte', en: 'New support request', pt: 'Nova solicitação de suporte' },
   supportUrgentTitle: { es: 'URGENTE: reporte de seguridad', en: 'URGENT: safety report', pt: 'URGENTE: relato de segurança' },
   supportNewBody: { es: '{name}: {preview}', en: '{name}: {preview}', pt: '{name}: {preview}' },
+  opsNoDriverTitle: { es: 'Reserva sin chófer', en: 'Booking without a chauffeur', pt: 'Reserva sem motorista' },
+  opsNoDriverBody: {
+    es: 'Recogida a las {time} en {place}. Nadie la ha tomado todavía.',
+    en: 'Pickup at {time} at {place}. Nobody has taken it yet.',
+    pt: 'Embarque às {time} em {place}. Ninguém aceitou ainda.',
+  },
+  opsNoDriversOnlineTitle: { es: 'Ningún chófer en línea', en: 'No chauffeurs online', pt: 'Nenhum motorista on-line' },
+  opsNoDriversOnlineBody: {
+    es: 'Hay {count} reservas en las próximas 2 horas y ningún chófer verificado conectado.',
+    en: 'There are {count} bookings in the next 2 hours and no verified chauffeur online.',
+    pt: 'Há {count} reservas nas próximas 2 horas e nenhum motorista verificado on-line.',
+  },
   statusCancelled: { es: 'Tu reserva ha sido cancelada', en: 'Your booking has been cancelled', pt: 'Sua reserva foi cancelada' },
   assignedTitle: { es: 'Nueva reserva', en: 'New booking', pt: 'Nova reserva' },
   assignedBody: { es: 'Se te ha asignado un nuevo viaje', en: 'A new ride has been assigned to you', pt: 'Uma nova viagem foi atribuída a você' },

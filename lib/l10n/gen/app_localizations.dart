@@ -895,6 +895,12 @@ abstract class AppLocalizations {
   /// **'Chóferes'**
   String get adminSectionDrivers;
 
+  /// No description provided for @adminSectionHealth.
+  ///
+  /// In es, this message translates to:
+  /// **'Salud'**
+  String get adminSectionHealth;
+
   /// No description provided for @adminSectionPricing.
   ///
   /// In es, this message translates to:
@@ -3744,6 +3750,138 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'A tiempo'**
   String get flightOnTime;
+
+  /// No description provided for @healthAlertsNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Los admins reciben un aviso cuando una reserva queda sin chófer a 30 minutos de la recogida y cuando no hay chóferes en línea con reservas próximas (como máximo una vez por hora).'**
+  String get healthAlertsNote;
+
+  /// No description provided for @healthBuildInfo.
+  ///
+  /// In es, this message translates to:
+  /// **'Entorno: {env} · versión {version}'**
+  String healthBuildInfo(String env, String version);
+
+  /// No description provided for @healthEnvDev.
+  ///
+  /// In es, this message translates to:
+  /// **'desarrollo'**
+  String get healthEnvDev;
+
+  /// No description provided for @healthEnvProd.
+  ///
+  /// In es, this message translates to:
+  /// **'producción'**
+  String get healthEnvProd;
+
+  /// No description provided for @healthErrors24h.
+  ///
+  /// In es, this message translates to:
+  /// **'Errores distintos en 24 h'**
+  String get healthErrors24h;
+
+  /// No description provided for @healthErrorsNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Agrupados: el mismo error de muchos usuarios aparece una vez con su conteo. Los de Android e iOS están en Firebase Crashlytics.'**
+  String get healthErrorsNote;
+
+  /// No description provided for @healthErrorsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Errores de la app web'**
+  String get healthErrorsTitle;
+
+  /// No description provided for @healthHideResolved.
+  ///
+  /// In es, this message translates to:
+  /// **'Ocultar resueltos'**
+  String get healthHideResolved;
+
+  /// No description provided for @healthLastSeen.
+  ///
+  /// In es, this message translates to:
+  /// **'último: {date}'**
+  String healthLastSeen(String date);
+
+  /// No description provided for @healthMarkResolved.
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar resuelto'**
+  String get healthMarkResolved;
+
+  /// No description provided for @healthMonitorOk.
+  ///
+  /// In es, this message translates to:
+  /// **'Monitor activo · última revisión a las {time}'**
+  String healthMonitorOk(String time);
+
+  /// No description provided for @healthMonitorStale.
+  ///
+  /// In es, this message translates to:
+  /// **'El monitor no informa hace más de 15 minutos. Revisa que las Cloud Functions estén desplegadas.'**
+  String get healthMonitorStale;
+
+  /// No description provided for @healthNeedsAttention.
+  ///
+  /// In es, this message translates to:
+  /// **'Requiere atención'**
+  String get healthNeedsAttention;
+
+  /// No description provided for @healthNoErrors.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin errores pendientes.'**
+  String get healthNoErrors;
+
+  /// No description provided for @healthOccurrences.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 vez} other{{count} veces}}'**
+  String healthOccurrences(int count);
+
+  /// No description provided for @healthOnlineDrivers.
+  ///
+  /// In es, this message translates to:
+  /// **'Chóferes verificados en línea'**
+  String get healthOnlineDrivers;
+
+  /// No description provided for @healthPendingNext2h.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas en las próximas 2 h'**
+  String get healthPendingNext2h;
+
+  /// No description provided for @healthReopen.
+  ///
+  /// In es, this message translates to:
+  /// **'Reabrir'**
+  String get healthReopen;
+
+  /// No description provided for @healthShowResolved.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver resueltos'**
+  String get healthShowResolved;
+
+  /// No description provided for @healthTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Salud del sistema'**
+  String get healthTitle;
+
+  /// No description provided for @healthUnassignedSoon.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin chófer, recogida en < 30 min'**
+  String get healthUnassignedSoon;
+
+  /// No description provided for @healthUrgentTickets.
+  ///
+  /// In es, this message translates to:
+  /// **'Reportes de seguridad abiertos'**
+  String get healthUrgentTickets;
 
   /// Booking bar field label (uppercased)
   ///

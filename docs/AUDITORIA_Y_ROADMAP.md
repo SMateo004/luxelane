@@ -129,7 +129,7 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 | 6 | **Despacho por cercanía.** Las recogidas de los próximos 90 min se ofrecen primero al chófer verificado más cercano con la clase correcta, dentro de 25 km y con ubicación de menos de 10 min. Tiene 1 minuto para aceptar (lo ve como "Solicitud exclusiva" con cuenta regresiva). Si la rechaza o no responde, pasa al siguiente (hasta 5) y luego se abre a todos. Las reservas anticipadas se abren a todos desde el inicio. Las reglas impiden que otro chófer tome una oferta exclusiva | ✅ Hecho |
 | 7 | **Meet & greet.** La reserva guarda el nombre y teléfono reales del pasajero (o del invitado). El chófer tiene llamar, WhatsApp y **"Mostrar cartel"**, que pone el nombre a pantalla completa en horizontal. El pasajero ve en el viaje cómo y dónde lo esperan | ✅ Hecho |
 | 7b | **Espera gratuita: 60 min en aeropuerto** desde el aterrizaje y **15 min en ciudad** desde la recogida o la llegada del chófer. Cuenta regresiva para pasajero y chófer, aviso push con la hora límite, y se muestra en la confirmación y en la landing | ✅ Hecho |
-| 8 | **Idiomas es / en / pt.** La app sigue el idioma del dispositivo o navegador y cambia en vivo, sin reiniciar; si el idioma no está soportado usa inglés. Hay 1170 textos en ARB, con fechas, horas y montos según el idioma. Las push salen en el idioma del usuario, y en Android 13+ se puede elegir el idioma por app. Los tests impiden textos fijos y traducciones incompletas (ver `lib/l10n/README.md`) | ✅ Hecho |
+| 8 | **Idiomas es / en / pt.** La app sigue el idioma del dispositivo o navegador y cambia en vivo, sin reiniciar; si el idioma no está soportado usa inglés. Hay 1193 textos en ARB, con fechas, horas y montos según el idioma. Las push salen en el idioma del usuario, y en Android 13+ se puede elegir el idioma por app. Los tests impiden textos fijos y traducciones incompletas (ver `lib/l10n/README.md`) | ✅ Hecho |
 | 9 | **Reportes de operaciones** (admin → Reportes). Se calculan sobre las reservas reales, por fecha de recogida y en hora local, para los últimos 7, 30 o 90 días. Incluyen viajes completados e ingresos (con variación contra el período anterior), ticket promedio, tasa de cancelación, cancelaciones tardías, reservas que nadie tomó y calificación promedio. Gráficos: viajes por día, ingresos por día, demanda por hora de recogida, mezcla por categoría y servicio, y origen de las cancelaciones. Tabla de rendimiento por chófer. Los datos diarios y los de chóferes se exportan a CSV (descarga en web; en móvil se copian) | ✅ Hecho |
 
 ### Fase 3: Super app y B2B (4–6 semanas) — en curso
@@ -148,12 +148,14 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 
 | 6 | **Ciudad a ciudad.** Nueva página `/servicios/ciudad-a-ciudad`, enlazada desde el menú Servicios en la web y desde el inicio en móvil. Muestra seis destinos desde Santa Cruz: Samaipata, Buena Vista, Montero, San José de Chiquitos, Concepción y Cochabamba. Cada uno trae distancia y precio "desde", marcados como estimados. Al elegir uno se piden dirección de recogida y fecha/hora (por defecto mañana a las 8:00); se calcula la ruta real con Google y se pasa a la reserva normal, donde el servidor fija el precio con la tarifa por km de siempre | ✅ Hecho |
 
+| 7 | **Observabilidad.** **Admin → Salud** muestra lo que escribe el monitor `opsWatch` cada 5 minutos: chóferes verificados en línea, reservas de las próximas 2 h, recogidas sin chófer a menos de 30 min, reportes de seguridad abiertos y errores web. Avisa si el monitor dejó de informar. Los admins reciben un **aviso** cuando una reserva sigue sin chófer a 30 min de la recogida, y cuando no hay chóferes en línea con reservas próximas (como máximo una vez por hora). Los **errores de la app web**, que Crashlytics no cubre, se agrupan por huella con conteo, pantalla y versión, y se marcan como resueltos (vuelven si reaparecen). Los logs del servidor llevan `severity`, y `scripts/setup_alerts.sh` crea una alerta por correo si hay más de 5 errores en 10 minutos. DEPLOY.md explica cómo crear el entorno de staging | ✅ Hecho (desplegar functions y firestore; correr `setup_alerts.sh` una vez) |
+
 Pendiente de la Fase 3:
 2. **Programa de fidelidad** (niveles y beneficios reales).
 3. **Más verticales**: traslados de hotel (convenios con hoteles).
 4. **Pagos a chóferes** (liquidaciones; sin Stripe Connect).
 5. **Protocolo de incidentes** (guía interna para el equipo) y horarios de atención.
-6. **Observabilidad**: Crashlytics, Performance, alertas y entornos dev/staging/prod separados.
+6. **Entorno de staging**: crear el proyecto `luxelane-staging` (pasos en DEPLOY.md).
 
 ### Señales de confianza para la landing (rápido, alto impacto)
 - Una franja con: **precio fijo garantizado**, **cancelación gratuita hasta 1 h antes**, **chóferes verificados**, **seguro incluido** y **soporte 24/7**.
@@ -180,9 +182,9 @@ Pendiente de la Fase 3:
 ## 5. Cómo probar
 
 ```
-flutter test                      # 206 tests Dart
-(cd functions && npm test)        # 74 tests de negocio, precios, vuelos, chófer, espera, despacho, cancelación, mensajes, cuentas corporativas, documentos, promociones y soporte
-(cd rules-tests && npm test)      # 34 tests de reglas de Firestore y Storage (requiere Java)
+flutter test                      # 212 tests Dart
+(cd functions && npm test)        # 79 tests de negocio, precios, vuelos, chófer, espera, despacho, cancelación, mensajes, cuentas corporativas, documentos, promociones, soporte y observabilidad
+(cd rules-tests && npm test)      # 35 tests de reglas de Firestore y Storage (requiere Java)
 ```
 
 **Deploy:**

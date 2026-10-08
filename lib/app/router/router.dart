@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/services/crash_service.dart';
 
 import '../../core/enums/enums.dart';
 import '../../core/models/models.dart';
@@ -70,6 +71,8 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         final authState = authBloc.state;
         final isAuth = authState is AuthAuthenticated;
         final going = state.matchedLocation;
+        // Error reports say which screen they came from.
+        CrashService.webReporter.route = going;
 
         // Public legal/contact pages are always reachable (store listings link
         // to them, and deletion must be possible from the web).

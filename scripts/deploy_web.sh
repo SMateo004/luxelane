@@ -7,7 +7,9 @@
 set -euo pipefail
 
 : "${GOOGLE_MAPS_KEY:?Set GOOGLE_MAPS_KEY (restricted browser key)}"
-DEFINES=(--dart-define=ENV=prod --dart-define=GOOGLE_MAPS_KEY="$GOOGLE_MAPS_KEY")
+# The commit goes into error reports (admin → Salud) to tell releases apart.
+APP_VERSION="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
+DEFINES=(--dart-define=ENV=prod --dart-define=GOOGLE_MAPS_KEY="$GOOGLE_MAPS_KEY" --dart-define=APP_VERSION="$APP_VERSION")
 if [[ -n "${FCM_VAPID_KEY:-}" ]]; then
   DEFINES+=(--dart-define=FCM_VAPID_KEY="$FCM_VAPID_KEY")
 else

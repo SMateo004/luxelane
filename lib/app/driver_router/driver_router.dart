@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/services/crash_service.dart';
 
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
@@ -36,6 +37,8 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
         final authState = authBloc.state;
         final isAuth = authState is AuthAuthenticated;
         final going = state.matchedLocation;
+        // Error reports say which screen they came from.
+        CrashService.webReporter.route = going;
 
         // Legal, contact and account deletion are public.
         if (const {'/terminos', '/privacidad', '/contacto', '/eliminar-cuenta'}.contains(going)) {

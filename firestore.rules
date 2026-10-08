@@ -326,6 +326,23 @@ service cloud.firestore {
     }
 
     // -------------------------------------------------------------------------
+    // Observability — grouped app errors and the monitor's health summary.
+    // Written only by Cloud Functions (reportClientError, opsWatch).
+    // -------------------------------------------------------------------------
+
+    match /clientErrors/{fingerprint} {
+      allow read:   if isAdmin();
+      // Admins only toggle the resolved flag.
+      allow update: if isAdmin() && onlyUpdating(['resolved']);
+      allow create, delete: if false;
+    }
+
+    match /system/{docId} {
+      allow read:  if isAdmin();
+      allow write: if false;
+    }
+
+    // -------------------------------------------------------------------------
     // /promoCodes/{code} — managed with the savePromoCode Cloud Function and
     // redeemed only by createBooking. Riders never list codes.
     // -------------------------------------------------------------------------

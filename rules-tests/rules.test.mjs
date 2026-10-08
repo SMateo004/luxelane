@@ -368,3 +368,18 @@ describe('support tickets', () => {
     await assertSucceeds(updateDoc(doc(db('admin'), 'supportTickets/t1'), { status: 'open' }));
   });
 });
+
+describe('observability', () => {
+  it('errors and health are admin-only; clients cannot forge them', async () => {
+    await seed('clientErrors/abc', { message: 'boom', count: 3, resolved: false });
+    await seed('system/health', { onlineDrivers: 2 });
+    await assertSucceeds(getDoc(doc(db('admin'), 'clientErrors/abc')));
+    await assertSucceeds(updateDoc(doc(db('admin'), 'clientErrors/abc'), { resolved: true }));
+    await assertFails(updateDoc(doc(db('admin'), 'clientErrors/abc'), { count: 0 }));
+    await assertFails(getDoc(doc(db('rider'), 'clientErrors/abc')));
+    await assertFails(setDoc(doc(db('rider'), 'clientErrors/x'), { message: 'spam' }));
+    await assertSucceeds(getDoc(doc(db('admin'), 'system/health')));
+    await assertFails(getDoc(doc(db('driver'), 'system/health')));
+    await assertFails(setDoc(doc(db('admin'), 'system/health'), { onlineDrivers: 99 }));
+  });
+});

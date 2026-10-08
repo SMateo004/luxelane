@@ -1,6 +1,8 @@
 type LogLevel = 'info' | 'warn' | 'error';
 
 interface LogEntry {
+  /** Read by Cloud Logging, so alerts can filter on severity>=ERROR. */
+  severity: 'INFO' | 'WARNING' | 'ERROR';
   level: LogLevel;
   fn: string;
   message: string;
@@ -10,6 +12,7 @@ interface LogEntry {
 
 function log(level: LogLevel, fn: string, message: string, data?: unknown): void {
   const entry: LogEntry = {
+    severity: level === 'error' ? 'ERROR' : level === 'warn' ? 'WARNING' : 'INFO',
     level,
     fn,
     message,

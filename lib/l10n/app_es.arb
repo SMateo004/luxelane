@@ -314,6 +314,7 @@
   "adminSectionCompanies": "Empresas",
   "adminSectionDashboard": "Panel",
   "adminSectionDrivers": "Chóferes",
+  "adminSectionHealth": "Salud",
   "adminSectionPricing": "Precios",
   "adminSectionPromos": "Promociones",
   "adminSectionReports": "Reportes",
@@ -1238,6 +1239,59 @@
   },
   "flightLanded": "Aterrizó",
   "flightOnTime": "A tiempo",
+  "healthAlertsNote": "Los admins reciben un aviso cuando una reserva queda sin chófer a 30 minutos de la recogida y cuando no hay chóferes en línea con reservas próximas (como máximo una vez por hora).",
+  "healthBuildInfo": "Entorno: {env} · versión {version}",
+  "@healthBuildInfo": {
+    "placeholders": {
+      "env": {
+        "type": "String"
+      },
+      "version": {
+        "type": "String"
+      }
+    }
+  },
+  "healthEnvDev": "desarrollo",
+  "healthEnvProd": "producción",
+  "healthErrors24h": "Errores distintos en 24 h",
+  "healthErrorsNote": "Agrupados: el mismo error de muchos usuarios aparece una vez con su conteo. Los de Android e iOS están en Firebase Crashlytics.",
+  "healthErrorsTitle": "Errores de la app web",
+  "healthHideResolved": "Ocultar resueltos",
+  "healthLastSeen": "último: {date}",
+  "@healthLastSeen": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "healthMarkResolved": "Marcar resuelto",
+  "healthMonitorOk": "Monitor activo · última revisión a las {time}",
+  "@healthMonitorOk": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "healthMonitorStale": "El monitor no informa hace más de 15 minutos. Revisa que las Cloud Functions estén desplegadas.",
+  "healthNeedsAttention": "Requiere atención",
+  "healthNoErrors": "Sin errores pendientes.",
+  "healthOccurrences": "{count, plural, =1{1 vez} other{{count} veces}}",
+  "@healthOccurrences": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "healthOnlineDrivers": "Chóferes verificados en línea",
+  "healthPendingNext2h": "Reservas en las próximas 2 h",
+  "healthReopen": "Reabrir",
+  "healthShowResolved": "Ver resueltos",
+  "healthTitle": "Salud del sistema",
+  "healthUnassignedSoon": "Sin chófer, recogida en < 30 min",
+  "healthUrgentTickets": "Reportes de seguridad abiertos",
   "homeBarDateTime": "Fecha y hora",
   "@homeBarDateTime": {
     "description": "Booking bar field label (uppercased)"

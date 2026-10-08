@@ -487,6 +487,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminSectionDrivers => 'Chauffeurs';
 
   @override
+  String get adminSectionHealth => 'Health';
+
+  @override
   String get adminSectionPricing => 'Pricing';
 
   @override
@@ -2033,6 +2036,86 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get flightOnTime => 'On time';
+
+  @override
+  String get healthAlertsNote => 'Admins get a notification when a booking has no chauffeur 30 minutes before pickup, and when no chauffeur is online with bookings coming up (at most once an hour).';
+
+  @override
+  String healthBuildInfo(String env, String version) {
+    return 'Environment: $env · version $version';
+  }
+
+  @override
+  String get healthEnvDev => 'development';
+
+  @override
+  String get healthEnvProd => 'production';
+
+  @override
+  String get healthErrors24h => 'Distinct errors in 24 h';
+
+  @override
+  String get healthErrorsNote => 'Grouped: the same error from many users appears once with its count. Android and iOS errors are in Firebase Crashlytics.';
+
+  @override
+  String get healthErrorsTitle => 'Web app errors';
+
+  @override
+  String get healthHideResolved => 'Hide resolved';
+
+  @override
+  String healthLastSeen(String date) {
+    return 'last: $date';
+  }
+
+  @override
+  String get healthMarkResolved => 'Mark resolved';
+
+  @override
+  String healthMonitorOk(String time) {
+    return 'Monitor running · last check at $time';
+  }
+
+  @override
+  String get healthMonitorStale => 'The monitor hasn\'t reported for over 15 minutes. Check that the Cloud Functions are deployed.';
+
+  @override
+  String get healthNeedsAttention => 'Needs attention';
+
+  @override
+  String get healthNoErrors => 'No pending errors.';
+
+  @override
+  String healthOccurrences(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count times',
+      one: '1 time',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get healthOnlineDrivers => 'Verified chauffeurs online';
+
+  @override
+  String get healthPendingNext2h => 'Bookings in the next 2 h';
+
+  @override
+  String get healthReopen => 'Reopen';
+
+  @override
+  String get healthShowResolved => 'Show resolved';
+
+  @override
+  String get healthTitle => 'System health';
+
+  @override
+  String get healthUnassignedSoon => 'No chauffeur, pickup in < 30 min';
+
+  @override
+  String get healthUrgentTickets => 'Open safety reports';
 
   @override
   String get homeBarDateTime => 'Date & time';

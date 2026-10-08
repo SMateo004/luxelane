@@ -169,3 +169,39 @@ iOS: there is no `ios/` folder yet. Create it with `flutter create --platforms=i
 
 - `lib/core/config/legal.dart`: company name, NIT, address, support email and WhatsApp, record retention. The legal pages show a *borrador* banner until every placeholder is filled.
 - Lawyer review of `lib/features/legal/presentation/pages/legal_content.dart`, including the bracketed decisions: late cancellation, extra waiting time and liability.
+
+
+---
+
+## Observability
+
+- **Admin → Salud**: summary written every 5 minutes by `opsWatch`
+  (chauffeurs online, bookings in the next 2 h, unassigned pickups,
+  open safety reports, web errors). If it says the monitor stopped, the
+  Cloud Functions are not deployed or the scheduler is off.
+- **Operational alerts** (push to every admin): a booking still without a
+  chauffeur 30 minutes before pickup, and no verified chauffeur online
+  while bookings are coming up (at most hourly).
+- **Web errors**: the web app reports uncaught errors to
+  `reportClientError`, grouped in `clientErrors` (Crashlytics covers
+  Android/iOS only). Deploys tag them with the commit (`APP_VERSION`).
+- **Backend error alerts by e-mail** (run once per project):
+  ```
+  PROJECT=luxelane-4e7ae ALERT_EMAIL=ops@your-domain ./scripts/setup_alerts.sh
+  ```
+  Creates a log-based metric on `severity>=ERROR` and an alert policy
+  (> 5 errors in 10 minutes).
+
+## Environments (staging / production)
+
+Today the apps point at one Firebase project (`luxelane-4e7ae`). To test
+changes without touching real bookings, add a staging project:
+
+1. Create `luxelane-staging` in the Firebase console (Blaze plan, same
+   products: Auth, Firestore, Functions, Storage, Hosting).
+2. `firebase use --add luxelane-staging` and name the alias `staging`.
+3. `flutterfire configure --project=luxelane-staging
+   --out=lib/firebase_options_staging.dart` and pick the options file by
+   `--dart-define=ENV=staging` in `main.dart`.
+4. Deploy there first: `firebase use staging && firebase deploy`, then
+   `firebase use luxelane && firebase deploy` once verified.

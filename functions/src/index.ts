@@ -25,6 +25,17 @@ import {
   shouldTrack,
 } from './flights';
 import * as err from './errors';
+import {
+  MAX_MESSAGE,
+  MAX_STACK,
+  NO_DRIVERS_ONLINE_THROTTLE_MS,
+  clip,
+  fingerprint,
+  isPlatform,
+  needsNoDriverAlert,
+  normalizeMessage,
+  throttled,
+} from './observability';
 import { AuthorRole, TicketCategory, preview, priorityFor, statusAfterMessage } from './support';
 import { PromoDoc, evaluatePromo, normalizeCode, promoDefinitionError } from './promo';
 import {
@@ -1921,6 +1932,127 @@ export const onSupportMessageCreated = onDocumentCreated(
     logger.info('onSupportMessageCreated', 'notified', { ticketId: event.params.ticketId, fromTeam, urgent });
   },
 );
+
+// ---------------------------------------------------------------------------
+// Observability — client errors (web has no Crashlytics) and an operations
+// monitor that pages the team and keeps system/health up to date.
+// ---------------------------------------------------------------------------
+
+async function pushAdmins(
+  titleKey: MessageKey,
+  bodyKey: MessageKey,
+  params: (lang: Lang) => Record<string, string | number>,
+): Promise<void> {
+  const admins = await db.collection('users').where('role', '==', 'admin').limit(20).get();
+  await Promise.all(admins.docs.map((a) => pushUser(a.id, titleKey, bodyKey, params)));
+}
+
+/** Groups app errors by fingerprint in clientErrors/{fp}. */
+export const reportClientError = onCall(async (req) => {
+  const d = (req.data ?? {}) as Record<string, unknown>;
+  if (!isPlatform(d.platform)) throw err.invalidArgument('invalid platform');
+  const message = clip(d.message, MAX_MESSAGE);
+  if (!message) throw err.invalidArgument('message required');
+  const stack = clip(d.stack, MAX_STACK);
+  const fp = fingerprint(d.platform, message, stack);
+  const ref = db.collection('clientErrors').doc(fp);
+  const now = admin.firestore.Timestamp.now();
+  const common = {
+    lastSeen: now,
+    lastRoute: clip(d.route, 120) || null,
+    lastAppVersion: clip(d.appVersion, 40) || null,
+    lastUserId: req.auth?.uid ?? null,
+    // A new occurrence of a resolved error reopens it (regression).
+    resolved: false,
+  };
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    if (snap.exists) {
+      tx.update(ref, { ...common, count: admin.firestore.FieldValue.increment(1) });
+    } else {
+      tx.set(ref, {
+        ...common,
+        fingerprint: fp,
+        platform: d.platform,
+        message,
+        normalized: normalizeMessage(message),
+        stack,
+        count: 1,
+        firstSeen: now,
+      });
+    }
+  });
+  return { ok: true };
+});
+
+/** Every 5 minutes: unassigned bookings close to pickup, nobody online, health summary. */
+export const opsWatch = onSchedule('every 5 minutes', async () => {
+  const now = new Date();
+  const in2h = admin.firestore.Timestamp.fromMillis(now.getTime() + 2 * 60 * 60 * 1000);
+  const pendingSnap = await db
+    .collection('bookings')
+    .where('status', '==', 'pending')
+    .where('scheduledAt', '<=', in2h)
+    .get();
+
+  const upcoming = pendingSnap.docs.filter((doc) => {
+    const b = doc.data() as BookingDoc;
+    const pickup = (b.pickupAt ?? b.scheduledAt)?.toDate();
+    return !!pickup && pickup.getTime() > now.getTime();
+  });
+
+  // 1. Pending bookings within 30 min without a chauffeur → page once each.
+  let unassignedSoon = 0;
+  for (const doc of upcoming) {
+    const b = doc.data() as BookingDoc & { alertedNoDriver?: boolean; origin?: { name?: string; address?: string } };
+    const pickup = (b.pickupAt ?? b.scheduledAt)?.toDate() ?? null;
+    if (!b.driverId && pickup && pickup.getTime() - now.getTime() <= 30 * 60 * 1000) unassignedSoon++;
+    if (!needsNoDriverAlert({ status: b.status, driverId: b.driverId, pickup, alertedNoDriver: b.alertedNoDriver }, now)) {
+      continue;
+    }
+    await doc.ref.update({ alertedNoDriver: true });
+    await pushAdmins('opsNoDriverTitle', 'opsNoDriverBody', (lang) => ({
+      time: clock(pickup!, lang),
+      place: b.origin?.name || b.origin?.address || '—',
+    }));
+  }
+
+  // 2. Bookings coming up and nobody online → page, at most hourly.
+  const online = await db
+    .collection('driverProfiles')
+    .where('isAvailable', '==', true)
+    .where('documentsVerified', '==', true)
+    .count()
+    .get();
+  const onlineDrivers = online.data().count;
+  const alertsRef = db.collection('system').doc('alerts');
+  if (upcoming.length > 0 && onlineDrivers === 0) {
+    const last = ((await alertsRef.get()).data()?.noDriversOnlineAt as admin.firestore.Timestamp | undefined)?.toDate();
+    if (!throttled(last, now, NO_DRIVERS_ONLINE_THROTTLE_MS)) {
+      await alertsRef.set({ noDriversOnlineAt: admin.firestore.Timestamp.fromDate(now) }, { merge: true });
+      await pushAdmins('opsNoDriversOnlineTitle', 'opsNoDriversOnlineBody', () => ({ count: upcoming.length }));
+    }
+  }
+
+  // 3. Health summary for the admin panel.
+  const [urgent, errors] = await Promise.all([
+    db.collection('supportTickets').where('status', '==', 'open').where('priority', '==', 'urgent').count().get(),
+    db
+      .collection('clientErrors')
+      .where('lastSeen', '>=', admin.firestore.Timestamp.fromMillis(now.getTime() - 24 * 60 * 60 * 1000))
+      .count()
+      .get(),
+  ]);
+  await db.collection('system').doc('health').set({
+    checkedAt: admin.firestore.Timestamp.fromDate(now),
+    pendingNext2h: upcoming.length,
+    unassignedSoon,
+    onlineDrivers,
+    urgentTickets: urgent.data().count,
+    clientErrors24h: errors.data().count,
+  });
+  logger.info('opsWatch', 'checked', { pending: upcoming.length, unassignedSoon, onlineDrivers });
+});
 
 // ---------------------------------------------------------------------------
 // scheduledCleanup — cancels pending bookings whose pickup time has passed

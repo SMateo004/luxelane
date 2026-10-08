@@ -487,6 +487,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get adminSectionDrivers => 'Chóferes';
 
   @override
+  String get adminSectionHealth => 'Salud';
+
+  @override
   String get adminSectionPricing => 'Precios';
 
   @override
@@ -2045,6 +2048,86 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get flightOnTime => 'A tiempo';
+
+  @override
+  String get healthAlertsNote => 'Los admins reciben un aviso cuando una reserva queda sin chófer a 30 minutos de la recogida y cuando no hay chóferes en línea con reservas próximas (como máximo una vez por hora).';
+
+  @override
+  String healthBuildInfo(String env, String version) {
+    return 'Entorno: $env · versión $version';
+  }
+
+  @override
+  String get healthEnvDev => 'desarrollo';
+
+  @override
+  String get healthEnvProd => 'producción';
+
+  @override
+  String get healthErrors24h => 'Errores distintos en 24 h';
+
+  @override
+  String get healthErrorsNote => 'Agrupados: el mismo error de muchos usuarios aparece una vez con su conteo. Los de Android e iOS están en Firebase Crashlytics.';
+
+  @override
+  String get healthErrorsTitle => 'Errores de la app web';
+
+  @override
+  String get healthHideResolved => 'Ocultar resueltos';
+
+  @override
+  String healthLastSeen(String date) {
+    return 'último: $date';
+  }
+
+  @override
+  String get healthMarkResolved => 'Marcar resuelto';
+
+  @override
+  String healthMonitorOk(String time) {
+    return 'Monitor activo · última revisión a las $time';
+  }
+
+  @override
+  String get healthMonitorStale => 'El monitor no informa hace más de 15 minutos. Revisa que las Cloud Functions estén desplegadas.';
+
+  @override
+  String get healthNeedsAttention => 'Requiere atención';
+
+  @override
+  String get healthNoErrors => 'Sin errores pendientes.';
+
+  @override
+  String healthOccurrences(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count veces',
+      one: '1 vez',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get healthOnlineDrivers => 'Chóferes verificados en línea';
+
+  @override
+  String get healthPendingNext2h => 'Reservas en las próximas 2 h';
+
+  @override
+  String get healthReopen => 'Reabrir';
+
+  @override
+  String get healthShowResolved => 'Ver resueltos';
+
+  @override
+  String get healthTitle => 'Salud del sistema';
+
+  @override
+  String get healthUnassignedSoon => 'Sin chófer, recogida en < 30 min';
+
+  @override
+  String get healthUrgentTickets => 'Reportes de seguridad abiertos';
 
   @override
   String get homeBarDateTime => 'Fecha y hora';
