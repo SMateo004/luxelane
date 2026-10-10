@@ -12,9 +12,55 @@ class MapsService {
   static const _base = 'maps.googleapis.com';
   String get _key => AppConfig.googleMapsKey;
 
-  // Santa Cruz de la Sierra — bias center for all location queries
+  // Santa Cruz de la Sierra — default center for location queries when the
+  // user's own position is unknown or outside Bolivia.
   static const _sczLat = -17.7833;
   static const _sczLng = -63.1821;
+
+  // Radius around the search center that results are biased to (~ a city).
+  static const _cityRadiusMeters = 30000.0;
+
+  // Search center, cached so we read the device position at most once per
+  // [_centerTtl] instead of on every keystroke.
+  static ({double lat, double lng})? _center;
+  static DateTime? _centerAt;
+  static const _centerTtl = Duration(minutes: 10);
+
+  static bool _inBolivia(double lat, double lng) =>
+      lat >= -22.95 && lat <= -9.65 && lng >= -69.7 && lng <= -57.4;
+
+  /// Center for autocomplete: the user's position when location permission
+  /// is already granted and they are in Bolivia, otherwise Santa Cruz.
+  /// Never shows a permission prompt — typing in a search box shouldn't.
+  Future<({double lat, double lng})> _searchCenter() async {
+    final cached = _center;
+    if (cached != null &&
+        _centerAt != null &&
+        DateTime.now().difference(_centerAt!) < _centerTtl) {
+      return cached;
+    }
+    var center = (lat: _sczLat, lng: _sczLng);
+    try {
+      final permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always) {
+        final pos = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.low,
+            timeLimit: Duration(seconds: 4),
+          ),
+        );
+        if (_inBolivia(pos.latitude, pos.longitude)) {
+          center = (lat: pos.latitude, lng: pos.longitude);
+        }
+      }
+    } catch (_) {
+      // Keep the Santa Cruz default.
+    }
+    _center = center;
+    _centerAt = DateTime.now();
+    return center;
+  }
 
   // ---------------------------------------------------------------------------
   // Current device location
@@ -84,6 +130,8 @@ class MapsService {
     if (input.length < 2) return [];
     if (_key.isEmpty) return [];
 
+    final center = await _searchCenter();
+
     try {
       // ── Places API (New) ─────────────────────────────────────────────────────
       final uri =
@@ -101,10 +149,12 @@ class MapsService {
           'input': input,
           'languageCode': 'es',
           'regionCode': 'BO',
+          // Only places in Bolivia; the user's city first.
+          'includedRegionCodes': ['bo'],
           'locationBias': {
             'circle': {
-              'center': {'latitude': _sczLat, 'longitude': _sczLng},
-              'radius': 50000.0,
+              'center': {'latitude': center.lat, 'longitude': center.lng},
+              'radius': _cityRadiusMeters,
             },
           },
         }),
@@ -152,8 +202,8 @@ class MapsService {
       final params = <String, String>{
         'input': input,
         'key': _key,
-        'location': '$_sczLat,$_sczLng',
-        'radius': '50000',
+        'location': '${center.lat},${center.lng}',
+        'radius': '${_cityRadiusMeters.toInt()}',
         'components': 'country:bo',
         'language': 'es',
       };
@@ -183,7 +233,8 @@ class MapsService {
     // API which is already loaded in the browser and bypasses all that.
     if (kIsWeb) {
       try {
-        final jsResults = await webAutocomplete(input);
+        final jsResults =
+            await webAutocomplete(input, lat: center.lat, lng: center.lng);
         debugPrint('[Maps] JS API results=${jsResults.length}');
         return jsResults;
       } catch (e) {
