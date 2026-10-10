@@ -6,6 +6,8 @@ import '../../app/theme/app_theme.dart';
 import '../di/injection.dart';
 import '../models/place_model.dart';
 import '../services/maps_service.dart';
+import '../utils/service_area.dart';
+import 'components.dart';
 
 class PlaceAutocompleteField extends StatefulWidget {
   const PlaceAutocompleteField({
@@ -16,6 +18,7 @@ class PlaceAutocompleteField extends StatefulWidget {
     this.initialValue,
     this.onPlaceSelected,
     this.onMapPick,
+    this.sameCityAs,
     this.glass = false, // true → transparent/glass look for hero bar
   });
 
@@ -25,6 +28,11 @@ class PlaceAutocompleteField extends StatefulWidget {
   final Place? initialValue;
   final ValueChanged<Place>? onPlaceSelected;
   final VoidCallback? onMapPick;
+
+  /// For destination fields: the pickup. Suggestions are limited to its city
+  /// and a place in another city is rejected with a message instead of
+  /// reaching [onPlaceSelected].
+  final Place? sameCityAs;
   final bool glass;
 
   @override
@@ -94,9 +102,10 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   void didUpdateWidget(PlaceAutocompleteField old) {
     super.didUpdateWidget(old);
     if (_ignoreUpdates) return;
-    if (widget.initialValue != old.initialValue &&
-        widget.initialValue != null) {
-      _ctrl.text = widget.initialValue!.displayName;
+    if (widget.initialValue != old.initialValue) {
+      // Null means the parent cleared the place (e.g. a destination left in
+      // another city after the pickup changed).
+      _ctrl.text = widget.initialValue?.displayName ?? '';
       _hideDropdown();
     }
   }
@@ -132,7 +141,9 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
 
   Future<void> _search(String q) async {
     setState(() => _loading = true);
-    final res = await _maps.autocomplete(q, sessionToken: _token);
+    final res = await _maps.autocomplete(q,
+        sessionToken: _token,
+        restrictTo: ServiceArea.destinationAreaFor(widget.sameCityAs));
     _dbg('autocomplete("$q") → ${res.length} results');
     if (!mounted) return;
     setState(() {
@@ -166,22 +177,28 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
       );
       if (!mounted) return;
 
-      if (place != null) {
-        _ctrl.text = place.displayName;
-        _token = _newToken();
-        widget.onPlaceSelected?.call(place);
-      } else {
-        // FALLBACK: If details fail, create a Place with 0,0 or dummy coords
-        // so the 'Get Prices' button can at least be pressed.
-        _dbg('Fallback for: ${s.description}');
-        final fallback = Place(
-          name: s.mainText,
-          address: s.description,
-          lat: 0.0,
-          lng: 0.0,
-        );
-        widget.onPlaceSelected?.call(fallback);
+      // FALLBACK: If details fail, create a Place with 0,0 or dummy coords
+      // so the 'Get Prices' button can at least be pressed.
+      if (place == null) _dbg('Fallback for: ${s.description}');
+      final picked = place ??
+          Place(
+            name: s.mainText,
+            address: s.description,
+            lat: 0.0,
+            lng: 0.0,
+          );
+      _token = _newToken();
+
+      final origin = widget.sameCityAs;
+      final error =
+          origin == null ? null : ServiceArea.destinationError(origin, picked);
+      if (error != null) {
+        _ctrl.text = widget.initialValue?.displayName ?? '';
+        showLuxSnackbar(context, error, isError: true);
+        return;
       }
+      if (place != null) _ctrl.text = place.displayName;
+      widget.onPlaceSelected?.call(picked);
     } catch (e) {
       _dbg('Error in _pick: $e');
     } finally {

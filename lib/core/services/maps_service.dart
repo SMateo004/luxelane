@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import '../config/env.dart';
 import '../models/place_model.dart';
+import '../utils/service_area.dart';
 // Web uses the Maps JS API (no CORS); mobile/desktop uses the HTTP REST API.
 import 'places_web.dart' if (dart.library.io) 'places_stub.dart';
 
@@ -123,14 +124,27 @@ class MapsService {
   // Uses Places API (New) REST — works on web + mobile, no JS interop needed.
   // ---------------------------------------------------------------------------
 
+  /// With [restrictTo], only places inside that circle are returned (used to
+  /// keep the destination in the pickup's city); otherwise results are only
+  /// biased to the user's city.
   Future<List<PlaceSuggestion>> autocomplete(
     String input, {
     String? sessionToken,
+    SearchArea? restrictTo,
   }) async {
     if (input.length < 2) return [];
     if (_key.isEmpty) return [];
 
-    final center = await _searchCenter();
+    final center = restrictTo != null
+        ? (lat: restrictTo.lat, lng: restrictTo.lng)
+        : await _searchCenter();
+    final radius = restrictTo?.radiusMeters ?? _cityRadiusMeters;
+    final circle = {
+      'circle': {
+        'center': {'latitude': center.lat, 'longitude': center.lng},
+        'radius': radius,
+      },
+    };
 
     try {
       // ── Places API (New) ─────────────────────────────────────────────────────
@@ -149,14 +163,12 @@ class MapsService {
           'input': input,
           'languageCode': 'es',
           'regionCode': 'BO',
-          // Only places in Bolivia; the user's city first.
+          // Only places in Bolivia; the user's city first (or only).
           'includedRegionCodes': ['bo'],
-          'locationBias': {
-            'circle': {
-              'center': {'latitude': center.lat, 'longitude': center.lng},
-              'radius': _cityRadiusMeters,
-            },
-          },
+          if (restrictTo != null)
+            'locationRestriction': circle
+          else
+            'locationBias': circle,
         }),
       );
 
@@ -203,9 +215,10 @@ class MapsService {
         'input': input,
         'key': _key,
         'location': '${center.lat},${center.lng}',
-        'radius': '${_cityRadiusMeters.toInt()}',
+        'radius': '${radius.toInt()}',
         'components': 'country:bo',
         'language': 'es',
+        if (restrictTo != null) 'strictbounds': 'true',
       };
       if (sessionToken != null) params['sessiontoken'] = sessionToken;
       final uri = Uri.https(_base, '/maps/api/place/autocomplete/json', params);
@@ -233,8 +246,11 @@ class MapsService {
     // API which is already loaded in the browser and bypasses all that.
     if (kIsWeb) {
       try {
-        final jsResults =
-            await webAutocomplete(input, lat: center.lat, lng: center.lng);
+        final jsResults = await webAutocomplete(input,
+            lat: center.lat,
+            lng: center.lng,
+            radiusMeters: radius,
+            strict: restrictTo != null);
         debugPrint('[Maps] JS API results=${jsResults.length}');
         return jsResults;
       } catch (e) {
