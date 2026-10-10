@@ -6,7 +6,7 @@ import * as stripe from './stripe_service';
 import { STRIPE_SECRET_KEY } from './stripe_service';
 import { defineSecret } from 'firebase-functions/params';
 import { logger } from './logger';
-import { Lang, MessageKey, clock, docName, langOf, money, t, vehicleName } from './messages';
+import { Lang, MessageKey, clock, docName, langOf, money, moneyExact, shortDate, t, vehicleName } from './messages';
 import { buildChauffeur, isValidRating, nextAverage } from './chauffeur';
 import {
   DispatchState,
@@ -25,6 +25,7 @@ import {
   shouldTrack,
 } from './flights';
 import * as err from './errors';
+import { MAX_REASON, RefundMethod, refundError } from './refunds';
 import { ASSIGNED_STATUSES, SUSPENDED, isSuspended, suspensionChange } from './accounts';
 import { WINDOW_MS, bestDiscount, loyaltyDiscount, nextTier, parseConfig, tierFor } from './loyalty';
 import {
@@ -114,6 +115,9 @@ type PaymentStatus = 'pending' | 'captured' | 'refunded' | 'failed';
 
 interface BookingDoc {
   riderId: string;
+  refundedAmount?: number;
+  companyId?: string | null;
+  paymentMethod?: string;
   driverId?: string;
   status: BookingStatus;
   // Dart writes `class`; `vehicleClass` kept for older documents.
@@ -1544,6 +1548,66 @@ export const cancelBooking = onCall(async (req) => {
   }
   logger.info('cancelBooking', 'cancelled', { bookingId, by: isAdmin ? 'admin' : 'rider', late: result.late });
   return { cancelled: true, lateCancellation: result.late };
+});
+
+// ---------------------------------------------------------------------------
+// recordRefund — an admin records money given back for a completed ride
+// (paid outside the app: QR, transfer, cash, or a credit on a company
+// invoice). Partial refunds add up to at most what was paid. The rider is
+// notified; refunds/{id} and the audit log keep the trail. A refund doesn't
+// change the chauffeur's settlement: Luxelane bears it.
+// ---------------------------------------------------------------------------
+
+export const recordRefund = onCall(async (req) => {
+  const adminId = await requireAdmin(req);
+  const { bookingId, amount, method, reason } = (req.data ?? {}) as Record<string, unknown>;
+  if (typeof bookingId !== 'string' || !bookingId) throw err.invalidArgument('bookingId required');
+  const ref = db.collection('bookings').doc(bookingId);
+  const refundRef = db.collection('refunds').doc();
+  const now = admin.firestore.Timestamp.now();
+
+  const result = await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw err.notFound('Booking not found');
+    const b = snap.data() as BookingDoc & { companyId?: string | null };
+    const paid = b.finalPrice ?? b.estimatedPrice;
+    const refunded = b.refundedAmount ?? 0;
+    const corporate = !!b.companyId;
+    const error = refundError({ paid, refunded, amount, method, reason, status: b.status, corporate });
+    if (error) throw err.failedPrecondition(error);
+    const value = Number(amount);
+    tx.set(refundRef, {
+      bookingId,
+      riderId: b.riderId,
+      driverId: b.driverId ?? null,
+      companyId: b.companyId ?? null,
+      amount: value,
+      method,
+      reason: String(reason).trim().slice(0, MAX_REASON),
+      by: adminId,
+      createdAt: now,
+    });
+    tx.update(ref, {
+      refundedAmount: Math.round((refunded + value) * 100) / 100,
+      lastRefundAt: now,
+    });
+    return { riderId: b.riderId, value, pickup: (b.pickupAt ?? b.scheduledAt)?.toDate() ?? new Date() };
+  });
+
+  await writeAudit('booking_refund_recorded', {
+    bookingId,
+    refundId: refundRef.id,
+    by: adminId,
+    amount: result.value,
+    method,
+  });
+  await pushUser(result.riderId, 'refundTitle', 'refundBody', (lang) => ({
+    amount: moneyExact(result.value, lang),
+    date: shortDate(result.pickup, lang),
+    method: t(lang, `refundMethod_${method as RefundMethod}` as MessageKey),
+  }));
+  logger.info('recordRefund', 'recorded', { bookingId, amount: result.value, method });
+  return { refundId: refundRef.id };
 });
 
 // ---------------------------------------------------------------------------

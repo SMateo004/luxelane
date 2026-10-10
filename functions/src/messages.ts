@@ -17,6 +17,21 @@ export function money(amount: number, lang: Lang): string {
   return `Bs ${n}`;
 }
 
+/** Like [money] but keeps cents when there are any: "Bs 12,50". */
+export function moneyExact(amount: number, lang: Lang): string {
+  const cents = Math.round(amount * 100) % 100 !== 0;
+  const n = new Intl.NumberFormat(intlTag[lang], {
+    minimumFractionDigits: cents ? 2 : 0,
+    maximumFractionDigits: cents ? 2 : 0,
+  }).format(amount);
+  return `Bs ${n}`;
+}
+
+/** Local Bolivian date, e.g. "8 oct" / "Oct 8". */
+export function shortDate(date: Date, lang: Lang): string {
+  return date.toLocaleDateString(intlTag[lang], { day: 'numeric', month: 'short', timeZone: TZ });
+}
+
 /** Local Bolivian time, e.g. "14:35" / "2:35 PM". */
 export function clock(date: Date, lang: Lang): string {
   // 24-hour clock in Spanish and Portuguese, 12-hour in English.
@@ -150,6 +165,16 @@ const M = {
     en: "Your chauffeur can't make it. We're already assigning another one for your {time} ride.",
     pt: 'Seu motorista não poderá ir. Já estamos atribuindo outro para sua viagem das {time}.',
   },
+  refundTitle: { es: 'Reembolso registrado', en: 'Refund recorded', pt: 'Reembolso registrado' },
+  refundBody: {
+    es: 'Te devolvemos {amount} por tu viaje del {date} ({method}).',
+    en: "We're refunding {amount} for your {date} ride ({method}).",
+    pt: 'Vamos devolver {amount} pela sua viagem de {date} ({method}).',
+  },
+  refundMethod_qr: { es: 'por QR', en: 'by QR', pt: 'por QR' },
+  refundMethod_transfer: { es: 'por transferencia', en: 'by bank transfer', pt: 'por transferência' },
+  refundMethod_cash: { es: 'en efectivo', en: 'in cash', pt: 'em dinheiro' },
+  refundMethod_invoiceCredit: { es: 'como crédito en la factura de tu empresa', en: "as a credit on your company's invoice", pt: 'como crédito na fatura da sua empresa' },
   riderCancelledTitle: { es: 'Viaje cancelado', en: 'Ride cancelled', pt: 'Viagem cancelada' },
   riderCancelledBody: {
     es: 'El pasajero canceló el viaje de las {time}. Ya estás libre para otras solicitudes.',

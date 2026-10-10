@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import '../../../refunds/domain/refund.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
@@ -29,6 +30,15 @@ abstract class AdminRepository {
   /// Takes the ride away from its chauffeur and back to dispatch (before
   /// the trip starts); rider and chauffeur are notified, audited.
   Future<Either<Failure, void>> releaseChauffeur(String bookingId, {String? reason});
+
+  /// Records money given back for a completed ride (paid outside the app).
+  /// Left carries a refund/* code from the server when it refuses.
+  Future<Either<Failure, void>> recordRefund({
+    required String bookingId,
+    required double amount,
+    required RefundMethod method,
+    required String reason,
+  });
   Future<Either<Failure, void>> updateUserRole(String userId, UserRole role);
 }
 

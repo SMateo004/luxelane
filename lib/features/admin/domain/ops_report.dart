@@ -39,6 +39,8 @@ class OpsReport {
     required this.total,
     required this.completed,
     required this.revenue,
+    this.refunded = 0,
+    this.refundedTrips = 0,
     required this.cancelled,
     required this.lateCancellations,
     required this.unserved,
@@ -59,6 +61,10 @@ class OpsReport {
   final int total;
   final int completed;
   final double revenue;
+
+  /// Money given back on completed rides in the window (revenue is gross).
+  final double refunded;
+  final int refundedTrips;
   final int cancelled;
 
   /// Rider cancellations inside the late-cancellation window.
@@ -129,7 +135,7 @@ class OpsReport {
     final dayRevenue = {for (final d in dayKeys) d: 0.0};
 
     var total = 0, completed = 0, cancelled = 0, late = 0, unserved = 0;
-    var revenue = 0.0, ratingSum = 0, ratingCount = 0;
+    var revenue = 0.0, refunded = 0.0, ratingSum = 0, ratingCount = 0, refundedTrips = 0;
     final cancelledBy = <String, int>{};
     final byHour = List<int>.filled(24, 0);
     final byVehicle = {for (final v in VehicleClass.values) v: 0};
@@ -157,6 +163,10 @@ class OpsReport {
       final price = b.finalPrice ?? b.estimatedPrice;
       completed++;
       revenue += price;
+      if (b.refundedAmount > 0) {
+        refunded += b.refundedAmount;
+        refundedTrips++;
+      }
       final key = DateTime(at.year, at.month, at.day);
       dayTrips[key] = (dayTrips[key] ?? 0) + 1;
       dayRevenue[key] = (dayRevenue[key] ?? 0) + price;
@@ -206,6 +216,8 @@ class OpsReport {
       total: total,
       completed: completed,
       revenue: revenue,
+      refunded: refunded,
+      refundedTrips: refundedTrips,
       cancelled: cancelled,
       lateCancellations: late,
       unserved: unserved,

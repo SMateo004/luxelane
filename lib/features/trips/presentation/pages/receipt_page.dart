@@ -96,6 +96,8 @@ class _ReceiptCard extends StatelessWidget {
       l.tripReceiptPlainFrom(booking.origin.displayName),
       if (booking.serviceType == ServiceType.oneWay) l.tripReceiptPlainTo(booking.destination.displayName),
       l.tripReceiptPlainTotal(LuxMoney.format(total, cents: true)),
+      if (booking.refundedAmount > 0)
+        '${l.refundReceiptLine}: −${LuxMoney.format(booking.refundedAmount, cents: true)}',
       if (booking.isCorporate) l.corpBilledTo(booking.companyName ?? ''),
     ].join('\n');
   }
@@ -108,6 +110,7 @@ class _ReceiptCard extends StatelessWidget {
     final date = '${DateFormat.yMMMMEEEEd().format(booking.scheduledAt)} · '
         '${DateFormat.jm().format(booking.scheduledAt)}';
     final paidByCard = booking.stripePaymentIntentId != null;
+    final refunded = booking.refundedAmount > 0;
 
     return Container(
       padding: const EdgeInsets.all(28),
@@ -172,7 +175,11 @@ class _ReceiptCard extends StatelessWidget {
               _Line(l.tripReceiptFixedPrice, LuxMoney.format(booking.estimatedPrice, cents: true)),
             if (booking.finalPrice != null && booking.finalPrice != booking.estimatedPrice)
               _Line(l.tripReceiptAdjustment, LuxMoney.format(booking.finalPrice! - booking.estimatedPrice, cents: true)),
-            _Line(l.tripReceiptTotal, LuxMoney.format(total, cents: true), strong: true),
+            _Line(l.tripReceiptTotal, LuxMoney.format(total, cents: true), strong: !refunded),
+            if (refunded) ...[
+              _Line(l.refundReceiptLine, '−${LuxMoney.format(booking.refundedAmount, cents: true)}'),
+              _Line(l.refundReceiptNet, LuxMoney.format(total - booking.refundedAmount, cents: true), strong: true),
+            ],
             _Line(
                 l.tripReceiptPaymentMethod,
                 booking.isCorporate

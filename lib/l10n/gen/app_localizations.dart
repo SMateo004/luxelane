@@ -5959,6 +5959,156 @@ abstract class AppLocalizations {
   /// **'Ahorras {amount} con {code}'**
   String promoSavedLine(String amount, String code);
 
+  /// No description provided for @refundAmount.
+  ///
+  /// In es, this message translates to:
+  /// **'Monto (máximo {max})'**
+  String refundAmount(String max);
+
+  /// No description provided for @refundErrorAmount.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa un monto mayor a 0 (hasta 2 decimales).'**
+  String get refundErrorAmount;
+
+  /// No description provided for @refundErrorMethod.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige cómo se le devuelve.'**
+  String get refundErrorMethod;
+
+  /// No description provided for @refundErrorNotCompleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo se reembolsan viajes completados.'**
+  String get refundErrorNotCompleted;
+
+  /// No description provided for @refundErrorReason.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe el motivo.'**
+  String get refundErrorReason;
+
+  /// No description provided for @refundErrorTooMuch.
+  ///
+  /// In es, this message translates to:
+  /// **'El monto supera lo que queda por devolver.'**
+  String get refundErrorTooMuch;
+
+  /// No description provided for @refundHow.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cómo se le devuelve?'**
+  String get refundHow;
+
+  /// No description provided for @refundMenu.
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar reembolso'**
+  String get refundMenu;
+
+  /// No description provided for @refundMethodCash.
+  ///
+  /// In es, this message translates to:
+  /// **'Efectivo'**
+  String get refundMethodCash;
+
+  /// No description provided for @refundMethodInvoiceCredit.
+  ///
+  /// In es, this message translates to:
+  /// **'Crédito en la factura de la empresa'**
+  String get refundMethodInvoiceCredit;
+
+  /// No description provided for @refundMethodQr.
+  ///
+  /// In es, this message translates to:
+  /// **'QR'**
+  String get refundMethodQr;
+
+  /// No description provided for @refundMethodTransfer.
+  ///
+  /// In es, this message translates to:
+  /// **'Transferencia'**
+  String get refundMethodTransfer;
+
+  /// No description provided for @refundNote.
+  ///
+  /// In es, this message translates to:
+  /// **'La devolución la haces tú por fuera de la app; aquí queda registrada, el pasajero recibe un aviso y su recibo la muestra. No cambia la liquidación del chófer: el costo es de Luxelane.'**
+  String get refundNote;
+
+  /// No description provided for @refundPaid.
+  ///
+  /// In es, this message translates to:
+  /// **'El pasajero pagó {paid}.'**
+  String refundPaid(String paid);
+
+  /// No description provided for @refundPaidAndRefunded.
+  ///
+  /// In es, this message translates to:
+  /// **'El pasajero pagó {paid}; ya se le devolvieron {refunded}.'**
+  String refundPaidAndRefunded(String paid, String refunded);
+
+  /// No description provided for @refundReason.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo'**
+  String get refundReason;
+
+  /// No description provided for @refundReasonHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej.: el chófer llegó 25 min tarde'**
+  String get refundReasonHint;
+
+  /// No description provided for @refundReceiptLine.
+  ///
+  /// In es, this message translates to:
+  /// **'Reembolsado'**
+  String get refundReceiptLine;
+
+  /// No description provided for @refundReceiptNet.
+  ///
+  /// In es, this message translates to:
+  /// **'Total neto'**
+  String get refundReceiptNet;
+
+  /// No description provided for @refundRecorded.
+  ///
+  /// In es, this message translates to:
+  /// **'Reembolso registrado. Avisamos al pasajero.'**
+  String get refundRecorded;
+
+  /// No description provided for @refundRefundedShort.
+  ///
+  /// In es, this message translates to:
+  /// **'Reembolsado {amount}'**
+  String refundRefundedShort(String amount);
+
+  /// No description provided for @refundReportLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Reembolsos'**
+  String get refundReportLabel;
+
+  /// No description provided for @refundReportTrips.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =0{Ningún viaje} =1{En 1 viaje} other{En {count} viajes}}'**
+  String refundReportTrips(int count);
+
+  /// No description provided for @refundSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar'**
+  String get refundSave;
+
+  /// No description provided for @refundTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Registrar reembolso'**
+  String get refundTitle;
+
   /// No description provided for @rideArrived.
   ///
   /// In es, this message translates to:

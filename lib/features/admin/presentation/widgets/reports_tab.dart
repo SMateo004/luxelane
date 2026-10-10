@@ -210,6 +210,12 @@ class _Kpis extends StatelessWidget {
             sub: _delta(l, report.revenue, prev.revenue),
           ),
           _ReportKpi(
+            icon: Icons.currency_exchange_rounded,
+            label: l.refundReportLabel,
+            value: LuxMoney.format(report.refunded),
+            sub: l.refundReportTrips(report.refundedTrips),
+          ),
+          _ReportKpi(
             icon: Icons.receipt_long_outlined,
             label: l.adminReportsAvgTicket,
             value: LuxMoney.format(report.avgTicket),

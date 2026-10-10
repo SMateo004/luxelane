@@ -434,6 +434,16 @@ service cloud.firestore {
     }
 
     // -------------------------------------------------------------------------
+    // /refunds/{refundId} — money given back for a ride, recorded by admins
+    // through the recordRefund Cloud Function. Riders see their own.
+    // -------------------------------------------------------------------------
+
+    match /refunds/{refundId} {
+      allow read: if isAdmin() || (isAuthenticated() && resource.data.riderId == request.auth.uid);
+      allow write: if false;
+    }
+
+    // -------------------------------------------------------------------------
     // /hotels/{hotelId} — partner hotels for hotel transfers. Active ones are
     // public (the page works for guests); admins manage them.
     // -------------------------------------------------------------------------

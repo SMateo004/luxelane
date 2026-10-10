@@ -2077,6 +2077,69 @@
       }
     }
   },
+  "refundAmount": "Monto (máximo {max})",
+  "@refundAmount": {
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "refundErrorAmount": "Ingresa un monto mayor a 0 (hasta 2 decimales).",
+  "refundErrorMethod": "Elige cómo se le devuelve.",
+  "refundErrorNotCompleted": "Solo se reembolsan viajes completados.",
+  "refundErrorReason": "Escribe el motivo.",
+  "refundErrorTooMuch": "El monto supera lo que queda por devolver.",
+  "refundHow": "¿Cómo se le devuelve?",
+  "refundMenu": "Registrar reembolso",
+  "refundMethodCash": "Efectivo",
+  "refundMethodInvoiceCredit": "Crédito en la factura de la empresa",
+  "refundMethodQr": "QR",
+  "refundMethodTransfer": "Transferencia",
+  "refundNote": "La devolución la haces tú por fuera de la app; aquí queda registrada, el pasajero recibe un aviso y su recibo la muestra. No cambia la liquidación del chófer: el costo es de Luxelane.",
+  "refundPaid": "El pasajero pagó {paid}.",
+  "@refundPaid": {
+    "placeholders": {
+      "paid": {
+        "type": "String"
+      }
+    }
+  },
+  "refundPaidAndRefunded": "El pasajero pagó {paid}; ya se le devolvieron {refunded}.",
+  "@refundPaidAndRefunded": {
+    "placeholders": {
+      "paid": {
+        "type": "String"
+      },
+      "refunded": {
+        "type": "String"
+      }
+    }
+  },
+  "refundReason": "Motivo",
+  "refundReasonHint": "Ej.: el chófer llegó 25 min tarde",
+  "refundReceiptLine": "Reembolsado",
+  "refundReceiptNet": "Total neto",
+  "refundRecorded": "Reembolso registrado. Avisamos al pasajero.",
+  "refundRefundedShort": "Reembolsado {amount}",
+  "@refundRefundedShort": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "refundReportLabel": "Reembolsos",
+  "refundReportTrips": "{count, plural, =0{Ningún viaje} =1{En 1 viaje} other{En {count} viajes}}",
+  "@refundReportTrips": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "refundSave": "Registrar",
+  "refundTitle": "Registrar reembolso",
   "rideArrived": "¡Has llegado!",
   "rideArrivesIn": "Llega en {eta}",
   "@rideArrivesIn": {

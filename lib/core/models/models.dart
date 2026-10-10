@@ -302,6 +302,7 @@ class Booking {
     this.days = 1,
     this.distanceKm,
     this.loyaltyTier,
+    this.refundedAmount = 0,
   });
 
   final String id;
@@ -392,6 +393,12 @@ class Booking {
   /// Loyalty tier whose discount applied (instead of a promo code).
   final String? loyaltyTier;
 
+  /// Money given back for this ride (recordRefund), in Bs.
+  final double refundedAmount;
+
+  /// What the rider paid: the final price, or the quote.
+  double get paidAmount => finalPrice ?? estimatedPrice;
+
   /// Whether [driverId] should see this pending booking as a request.
   bool isOfferedTo(String driverId) {
     final d = dispatch;
@@ -465,6 +472,7 @@ class Booking {
         days: (j['days'] as num?)?.toInt() ?? 1,
         distanceKm: (j['distanceKm'] as num?)?.toDouble(),
         loyaltyTier: j['loyaltyTier'] as String?,
+        refundedAmount: (j['refundedAmount'] as num?)?.toDouble() ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -544,6 +552,7 @@ class Booking {
         days: days,
         distanceKm: distanceKm,
         loyaltyTier: loyaltyTier,
+        refundedAmount: refundedAmount,
       );
 }
 

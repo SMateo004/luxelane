@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
+import '../../../refunds/domain/refund.dart';
 import '../../domain/repositories/admin_repository.dart';
 
 // ---------------------------------------------------------------------------
@@ -118,6 +119,7 @@ enum AdminNotice {
   noDriverAvailable,
   bookingCancelled,
   chauffeurReleased,
+  refundRecorded,
 }
 
 class AdminState extends Equatable {
@@ -268,6 +270,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<AdminUpdateUserRoleRequested>(_onUpdateUserRole);
 
     // Internal stream updates
+    on<_AdminNoticeShown>((e, emit) => emit(state.copyWith(notice: e.notice)));
     on<_InternalBookingsUpdated>((e, emit) => emit(state.copyWith(bookings: e.data, isLoading: false)));
     on<_InternalUsersUpdated>((e, emit) => emit(state.copyWith(users: e.data, isLoading: false)));
     on<_InternalDriversUpdated>((e, emit) => emit(state.copyWith(drivers: e.data, isLoading: false)));
@@ -363,6 +366,20 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     );
   }
 
+  /// Records a refund; returns a refund/* error code, or null when saved.
+  Future<String?> recordRefund({
+    required String bookingId,
+    required double amount,
+    required RefundMethod method,
+    required String reason,
+  }) async {
+    final result = await _repo.recordRefund(bookingId: bookingId, amount: amount, method: method, reason: reason);
+    return result.fold((f) => f.message, (_) {
+      if (!isClosed) add(const _AdminNoticeShown(AdminNotice.refundRecorded));
+      return null;
+    });
+  }
+
   Future<void> _onReleaseChauffeur(AdminReleaseChauffeurRequested event, Emitter<AdminState> emit) async {
     final result = await _repo.releaseChauffeur(event.bookingId, reason: event.reason);
     result.fold(
@@ -393,6 +410,11 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
 }
 
 // Internal stream events
+class _AdminNoticeShown extends AdminEvent {
+  final AdminNotice notice;
+  const _AdminNoticeShown(this.notice);
+  @override List<Object?> get props => [notice];
+}
 class _InternalBookingsUpdated extends AdminEvent {
   final List<Booking> data;
   const _InternalBookingsUpdated(this.data);

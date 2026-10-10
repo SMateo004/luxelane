@@ -10,6 +10,8 @@ import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../driver/presentation/pages/driver_documents_review_page.dart';
+import '../../../refunds/domain/refund.dart';
+import '../../../refunds/presentation/refund_dialog.dart';
 import '../bloc/admin_bloc.dart';
 
 String _noticeText(AppLocalizations l, AdminNotice n) => switch (n) {
@@ -24,6 +26,7 @@ String _noticeText(AppLocalizations l, AdminNotice n) => switch (n) {
       AdminNotice.noDriverAvailable => l.adminNoticeNoDriver,
       AdminNotice.bookingCancelled => l.adminNoticeBookingCancelled,
       AdminNotice.chauffeurReleased => l.adminNoticeChauffeurReleased,
+      AdminNotice.refundRecorded => l.refundRecorded,
     };
 
 /// Pending bookings with no chauffeur whose pickup is within 2 hours.
@@ -457,7 +460,7 @@ class _FilterChip extends StatelessWidget {
       );
 }
 
-enum _BookingAction { assign, release, cancel, delete }
+enum _BookingAction { assign, release, refund, cancel, delete }
 
 class _AdminBookingTile extends StatelessWidget {
   const _AdminBookingTile({
@@ -536,6 +539,9 @@ class _AdminBookingTile extends StatelessWidget {
                     style: LuxTypography.titleMedium
                         .copyWith(color: LuxColors.accent)),
                 BookingStatusChip(status: booking.status),
+                if (booking.refundedAmount > 0)
+                  Text(l.refundRefundedShort(LuxMoney.format(booking.refundedAmount, cents: true)),
+                      style: LuxTypography.caption.copyWith(color: LuxColors.warning)),
               ],
             ),
             const SizedBox(width: LuxSpacing.sm),
@@ -546,6 +552,7 @@ class _AdminBookingTile extends StatelessWidget {
               onSelected: (a) => switch (a) {
                 _BookingAction.assign => context.read<AdminBloc>().add(AdminAssignNearestRequested(booking)),
                 _BookingAction.release => _confirmRelease(context),
+                _BookingAction.refund => _recordRefund(context),
                 _BookingAction.cancel => _confirmCancel(context),
                 _BookingAction.delete => _confirmDelete(context),
               },
@@ -554,6 +561,8 @@ class _AdminBookingTile extends StatelessWidget {
                   PopupMenuItem(value: _BookingAction.assign, child: Text(l.adminAssignNearest)),
                 if (_releasable(booking))
                   PopupMenuItem(value: _BookingAction.release, child: Text(l.adminReleaseChauffeur)),
+                if (Refunds.canRefund(booking))
+                  PopupMenuItem(value: _BookingAction.refund, child: Text(l.refundMenu)),
                 if (_cancellable(booking.status))
                   PopupMenuItem(value: _BookingAction.cancel, child: Text(l.adminCancelBooking)),
                 PopupMenuItem(
@@ -595,6 +604,18 @@ class _AdminBookingTile extends StatelessWidget {
       ),
     );
     if (reason != null) bloc.add(AdminCancelBookingRequested(booking.id, reason: reason));
+  }
+
+  Future<void> _recordRefund(BuildContext context) async {
+    final bloc = context.read<AdminBloc>();
+    await showDialog<bool>(
+      context: context,
+      builder: (_) => RefundDialog(
+        booking: booking,
+        onSubmit: (amount, method, reason) =>
+            bloc.recordRefund(bookingId: booking.id, amount: amount, method: method, reason: reason),
+      ),
+    );
   }
 
   Future<void> _confirmRelease(BuildContext context) async {

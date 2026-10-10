@@ -3262,6 +3262,98 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String refundAmount(String max) {
+    return 'Amount (up to $max)';
+  }
+
+  @override
+  String get refundErrorAmount => 'Enter an amount above 0 (up to 2 decimals).';
+
+  @override
+  String get refundErrorMethod => 'Choose how it\'s paid back.';
+
+  @override
+  String get refundErrorNotCompleted => 'Only completed rides can be refunded.';
+
+  @override
+  String get refundErrorReason => 'Write the reason.';
+
+  @override
+  String get refundErrorTooMuch => 'The amount is more than what\'s left to refund.';
+
+  @override
+  String get refundHow => 'How is it paid back?';
+
+  @override
+  String get refundMenu => 'Record refund';
+
+  @override
+  String get refundMethodCash => 'Cash';
+
+  @override
+  String get refundMethodInvoiceCredit => 'Credit on the company invoice';
+
+  @override
+  String get refundMethodQr => 'QR';
+
+  @override
+  String get refundMethodTransfer => 'Bank transfer';
+
+  @override
+  String get refundNote => 'You pay the money back outside the app; here it is recorded, the passenger is notified and their receipt shows it. It doesn\'t change the chauffeur\'s settlement: Luxelane bears the cost.';
+
+  @override
+  String refundPaid(String paid) {
+    return 'The passenger paid $paid.';
+  }
+
+  @override
+  String refundPaidAndRefunded(String paid, String refunded) {
+    return 'The passenger paid $paid; $refunded was already refunded.';
+  }
+
+  @override
+  String get refundReason => 'Reason';
+
+  @override
+  String get refundReasonHint => 'E.g. the chauffeur was 25 min late';
+
+  @override
+  String get refundReceiptLine => 'Refunded';
+
+  @override
+  String get refundReceiptNet => 'Net total';
+
+  @override
+  String get refundRecorded => 'Refund recorded. The passenger was notified.';
+
+  @override
+  String refundRefundedShort(String amount) {
+    return 'Refunded $amount';
+  }
+
+  @override
+  String get refundReportLabel => 'Refunds';
+
+  @override
+  String refundReportTrips(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'On $count rides',
+      one: 'On 1 ride',
+      zero: 'No rides',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get refundSave => 'Record';
+
+  @override
+  String get refundTitle => 'Record a refund';
+
+  @override
   String get rideArrived => 'You\'ve arrived!';
 
   @override

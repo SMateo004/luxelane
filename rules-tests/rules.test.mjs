@@ -461,3 +461,15 @@ describe('suspended accounts', () => {
     await assertSucceeds(updateDoc(doc(db('admin'), 'users/admin'), { displayName: 'Admin' }));
   });
 });
+
+describe('refunds', () => {
+  it('written only by the server; riders read their own', async () => {
+    await seed('refunds/x1', { riderId: 'rider', bookingId: 'b1', amount: 50 });
+    await assertSucceeds(getDoc(doc(db('rider'), 'refunds/x1')));
+    await assertSucceeds(getDoc(doc(db('admin'), 'refunds/x1')));
+    await assertFails(getDoc(doc(db('driver'), 'refunds/x1')));
+    await assertFails(setDoc(doc(db('admin'), 'refunds/x2'), { riderId: 'rider', amount: 10 }));
+    await seed('bookings/b1', booking({ status: 'completed' }));
+    await assertFails(updateDoc(doc(db('rider'), 'bookings/b1'), { refundedAmount: 120 }));
+  });
+});

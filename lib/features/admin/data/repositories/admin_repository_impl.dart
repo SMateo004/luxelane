@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
+import '../../../refunds/domain/refund.dart';
 import '../../domain/repositories/admin_repository.dart';
 
 class AdminRepositoryImpl implements AdminRepository {
@@ -36,6 +37,29 @@ class AdminRepositoryImpl implements AdminRepository {
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> recordRefund({
+    required String bookingId,
+    required double amount,
+    required RefundMethod method,
+    required String reason,
+  }) async {
+    try {
+      await _fn.httpsCallable('recordRefund').call({
+        'bookingId': bookingId,
+        'amount': amount,
+        'method': method.name,
+        'reason': reason.trim(),
+      });
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      final code = RegExp(r'refund/[a-z-]+').firstMatch(e.message ?? '')?.group(0);
+      return Left(ServerFailure(code ?? 'refund/failed'));
+    } catch (_) {
+      return const Left(ServerFailure('refund/failed'));
     }
   }
 

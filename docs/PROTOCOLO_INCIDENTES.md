@@ -71,7 +71,13 @@ Push **"No hay chóferes en línea"** (como máximo uno por hora) cuando hay res
 
 ### 4.6 Cobros y reembolsos (S3)
 - El cliente ve el precio fijo antes de confirmar. El recibo muestra el precio, los descuentos (código o Circle) y cualquier diferencia.
-- **Hoy no hay botón de reembolso ni de ajuste de precio en el panel.** Los reembolsos los autoriza el responsable de operaciones y se hacen por fuera del panel (transferencia o QR), dejando constancia en la solicitud de soporte.
+- **Reembolsos:** los autoriza el responsable de operaciones. Primero se devuelve el dinero por fuera de la app (QR, transferencia o efectivo; a una empresa, como crédito en su factura). Después se registra en Admin → Reservas → menú del viaje → **Registrar reembolso**, con el monto, el medio y el motivo.
+  - Solo se reembolsan viajes completados.
+  - Se puede devolver una parte, en varias veces, hasta lo que pagó el pasajero.
+  - El pasajero recibe un aviso y su recibo muestra el reembolso y el total neto.
+  - Queda en la auditoría y en Admin → Reportes (*Reembolsos*).
+  - **No cambia la liquidación del chófer:** el costo es de Luxelane. Si el reembolso es por culpa del chófer, se habla con él aparte.
+- **Ajustes de precio:** todavía no hay botón para cambiar el precio de un viaje. Si hubo un recargo acordado (espera extra, peaje), se cobra por fuera y se anota en la solicitud de soporte.
 - **Cancelación tardía** (menos de 1 h antes): queda marcada y se ve en Admin → Reportes, pero **hoy no se cobra recargo**. La política está pendiente de revisión legal (ver DEPLOY.md).
 
 ### 4.7 Objeto perdido (S3)
@@ -111,5 +117,5 @@ Estas son cosas que el sistema **todavía no hace**. Están aquí para que nadie
 - Las cuentas de administrador no se pueden suspender (para que nadie quede fuera del panel).
 - El segundo aviso de una solicitud urgente sale **una sola vez** por mensaje sin responder: después, el turno debe revisar el banner rojo.
 - Si el monitor automático se detiene, **no llega ningún aviso**: solo se ve en Admin → Salud.
-- No hay reembolsos ni ajustes de precio desde el panel (§4.6).
+- No hay ajustes de precio desde el panel; los reembolsos se registran, pero el dinero se mueve por fuera de la app (§4.6).
 - No hay enlace para compartir el viaje en vivo con terceros.

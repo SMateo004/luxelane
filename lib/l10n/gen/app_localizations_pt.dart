@@ -3274,6 +3274,98 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String refundAmount(String max) {
+    return 'Valor (máximo $max)';
+  }
+
+  @override
+  String get refundErrorAmount => 'Informe um valor maior que 0 (até 2 casas decimais).';
+
+  @override
+  String get refundErrorMethod => 'Escolha como será devolvido.';
+
+  @override
+  String get refundErrorNotCompleted => 'Só viagens concluídas podem ser reembolsadas.';
+
+  @override
+  String get refundErrorReason => 'Escreva o motivo.';
+
+  @override
+  String get refundErrorTooMuch => 'O valor é maior que o que resta devolver.';
+
+  @override
+  String get refundHow => 'Como é devolvido?';
+
+  @override
+  String get refundMenu => 'Registrar reembolso';
+
+  @override
+  String get refundMethodCash => 'Dinheiro';
+
+  @override
+  String get refundMethodInvoiceCredit => 'Crédito na fatura da empresa';
+
+  @override
+  String get refundMethodQr => 'QR';
+
+  @override
+  String get refundMethodTransfer => 'Transferência';
+
+  @override
+  String get refundNote => 'Você faz a devolução fora do app; aqui ela fica registrada, o passageiro recebe um aviso e o recibo a mostra. Não muda o acerto do motorista: o custo é da Luxelane.';
+
+  @override
+  String refundPaid(String paid) {
+    return 'O passageiro pagou $paid.';
+  }
+
+  @override
+  String refundPaidAndRefunded(String paid, String refunded) {
+    return 'O passageiro pagou $paid; já foram devolvidos $refunded.';
+  }
+
+  @override
+  String get refundReason => 'Motivo';
+
+  @override
+  String get refundReasonHint => 'Ex.: o motorista chegou 25 min atrasado';
+
+  @override
+  String get refundReceiptLine => 'Reembolsado';
+
+  @override
+  String get refundReceiptNet => 'Total líquido';
+
+  @override
+  String get refundRecorded => 'Reembolso registrado. Avisamos o passageiro.';
+
+  @override
+  String refundRefundedShort(String amount) {
+    return 'Reembolsado $amount';
+  }
+
+  @override
+  String get refundReportLabel => 'Reembolsos';
+
+  @override
+  String refundReportTrips(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Em $count viagens',
+      one: 'Em 1 viagem',
+      zero: 'Nenhuma viagem',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get refundSave => 'Registrar';
+
+  @override
+  String get refundTitle => 'Registrar reembolso';
+
+  @override
   String get rideArrived => 'Você chegou!';
 
   @override
