@@ -36,8 +36,6 @@ class AuthRepositoryImpl implements AuthRepository {
             : AppConfig.googleServerClientId,
       );
 
-  static const _adminEmail = 'admin@luxelane.com';
-
   @override
   Stream<User?> get authStateChanges => _auth.authStateChanges().asyncMap(
         (fbUser) async {
@@ -68,16 +66,7 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
       );
       final doc = await _db.collection('users').doc(cred.user!.uid).get();
-      var user = User.fromJson({'id': doc.id, ...doc.data()!});
-
-      // Auto-promote this specific email if it wasn't admin already
-      if (email.toLowerCase() == 'admin@luxelane.com' &&
-          user.role != UserRole.admin) {
-        user = user.copyWith(role: UserRole.admin);
-        await _db.collection('users').doc(user.id).update({'role': 'admin'});
-      }
-
-      return Right(user);
+      return Right(User.fromJson({'id': doc.id, ...doc.data()!}));
     } on fb.FirebaseAuthException catch (e) {
       return Left(AuthFailure(e.message ?? 'Login failed'));
     } catch (e) {
@@ -103,10 +92,11 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         phone: phone,
         displayName: displayName,
-        role:
-            email.toLowerCase() == 'admin@luxelane.com' ? UserRole.admin : role,
+        // firestore.rules only accepts self-signups as `rider`; other roles
+        // are granted by an admin.
+        role: role,
         createdAt: DateTime.now(),
-        isVerified: true, // Auto-verify admin
+        isVerified: true,
         isActive: true,
         fcmTokens: const [],
       );
@@ -168,15 +158,8 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<User> _ensureProfile(fb.User fbUser) async {
     final ref = _db.collection('users').doc(fbUser.uid);
     final doc = await ref.get();
+    if (doc.exists) return User.fromJson({'id': doc.id, ...doc.data()!});
     final email = (fbUser.email ?? '').toLowerCase();
-    if (doc.exists) {
-      var user = User.fromJson({'id': doc.id, ...doc.data()!});
-      if (email == _adminEmail && user.role != UserRole.admin) {
-        user = user.copyWith(role: UserRole.admin);
-        await ref.update({'role': 'admin'});
-      }
-      return user;
-    }
     final name = (fbUser.displayName ?? '').trim();
     final user = User(
       id: fbUser.uid,
@@ -184,7 +167,8 @@ class AuthRepositoryImpl implements AuthRepository {
       phone: fbUser.phoneNumber ?? '',
       displayName: name.isNotEmpty ? name : email.split('@').first,
       photoUrl: fbUser.photoURL,
-      role: email == _adminEmail ? UserRole.admin : UserRole.rider,
+      // Roles are granted server-side only (see firestore.rules).
+      role: UserRole.rider,
       createdAt: DateTime.now(),
       // Google has already verified the address.
       isVerified: fbUser.emailVerified,

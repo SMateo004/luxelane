@@ -50,7 +50,8 @@ class _LoginPageState extends State<LoginPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          context.go(state.user.email == 'admin@luxelane.com' ? '/admin' : '/');
+          // The router sends each role to its home (admins to /admin).
+          context.go('/');
         }
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(

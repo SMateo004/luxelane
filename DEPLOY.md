@@ -33,6 +33,12 @@
    - Cloud Functions → enable billing (Blaze plan required)
    - Cloud Messaging → enabled by default
 
+6. **Primer administrador.** Las reglas de Firestore no permiten que nadie se
+   asigne `admin` (ni `driver`) desde la app: todo registro nace como `rider`.
+   Para el primer admin: registrarse normalmente y, en Firestore Console →
+   `users/{uid}`, cambiar `role` a `admin`. A partir de ahí, ese admin
+   asigna roles desde el panel `/admin`.
+
 ---
 
 ## Inicio de sesión con Google
@@ -44,9 +50,13 @@ crea el perfil en `users/{uid}` con rol `rider`.
 
 ### 1. Firebase Console (proyecto `luxelane-4e7ae`)
 1. Authentication → Sign-in method → **Google** → Habilitar → correo de soporte → Guardar.
-2. Authentication → Settings → **Authorized domains**: añadir los dominios de
-   Hosting (`luxelane-4e7ae.web.app`, `luxelane-4e7ae.firebaseapp.com`, el del
-   sitio del chófer y cualquier dominio propio). `localhost` ya viene incluido.
+2. Authentication → Settings → **Authorized domains**: deben estar los dominios
+   de los dos sitios de Hosting (`.firebaserc`):
+   - Pasajeros (`rider` → sitio `luxelane-4e7ae`): `luxelane-4e7ae.web.app` y
+     `luxelane-4e7ae.firebaseapp.com` (Firebase los autoriza por defecto).
+   - Chóferes (`driver` → sitio `luxelane-driver`): **añadir**
+     `luxelane-driver.web.app` y `luxelane-driver.firebaseapp.com`.
+   - Cualquier dominio propio conectado en Hosting. `localhost` ya viene incluido.
 
 Con eso **la web ya funciona**; no requiere más configuración.
 
