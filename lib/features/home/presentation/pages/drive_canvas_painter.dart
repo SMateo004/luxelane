@@ -97,9 +97,9 @@ class DrivePainter extends CustomPainter {
     // Background Sky
     final skyPaint = Paint()
       ..shader = ui.Gradient.linear(Offset.zero, Offset(0, H * 0.5), [
-        const Color(0xFFF2ECE0),
-        const Color(0xFFEDE6D8),
-        const Color(0xFFE8E0D0),
+        const Color(0xFFF2F5FB),
+        const Color(0xFFE8EDF7),
+        const Color(0xFFDDE4F0),
       ]);
     canvas.drawRect(Rect.fromLTWH(0, 0, W, H * 0.5), skyPaint);
 
@@ -262,7 +262,7 @@ class DrivePainter extends CustomPainter {
           ..shader = ui.Gradient.linear(
               const Offset(0, -26),
               const Offset(0, 12),
-              [const Color(0xFF2A2520), const Color(0xFF1A1510)]));
+              [const Color(0xFF1E3350), const Color(0xFF0D1B2E)]));
 
     for (var wx in [-bw * 0.62, bw * 0.6]) {
       canvas.drawCircle(
@@ -279,7 +279,7 @@ class DrivePainter extends CustomPainter {
               ..strokeWidth = 1.5);
       }
       canvas.drawCircle(
-          Offset(wx, 14), 3, Paint()..color = const Color(0xFF1A1510));
+          Offset(wx, 14), 3, Paint()..color = const Color(0xFF0D1B2E));
     }
 
     // Headlight

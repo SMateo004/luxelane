@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -7,9 +8,11 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app/app.dart';
 import 'core/config/env.dart';
+import 'core/config/remote_flags.dart';
 import 'core/di/injection.dart';
 import 'core/services/crash_service.dart';
 import 'core/services/performance_service.dart';
+import 'core/services/pricing_catalog.dart';
 import 'core/utils/maps_web_loader.dart'
     if (dart.library.io) 'core/utils/maps_web_loader_stub.dart';
 import 'firebase_options.dart';
@@ -41,6 +44,8 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    // Admin-controlled switches (e.g. First Class availability).
+    RemoteFlags.instance.listen(FirebaseFirestore.instance);
   } catch (e) {
     if (AppConfig.enableLogs) {
       debugPrint('[Luxelane] Firebase init skipped: $e');
@@ -63,6 +68,11 @@ void main() async {
   await CrashService.init();
   await PerformanceService.init();
   await configureDependencies();
+
+  // Tarifas y estado operativo en vivo (los configura el panel admin).
+  if (Firebase.apps.isNotEmpty) {
+    PricingCatalog.instance.start(FirebaseFirestore.instance);
+  }
 
   // FCM background handler — not supported on web
   if (!kIsWeb) {

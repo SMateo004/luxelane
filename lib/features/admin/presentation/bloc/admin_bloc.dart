@@ -1,10 +1,13 @@
 import 'dart:async';
 
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/enums/enums.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
+import '../../domain/admin_finance.dart';
 import '../../domain/repositories/admin_repository.dart';
 
 // ---------------------------------------------------------------------------
@@ -24,6 +27,65 @@ class AdminUpdatePricingRequested extends AdminEvent {
   const AdminUpdatePricingRequested(this.rule);
   @override
   List<Object?> get props => [rule];
+}
+
+class AdminResetPricingRequested extends AdminEvent {
+  final PricingRule rule;
+  const AdminResetPricingRequested(this.rule);
+  @override
+  List<Object?> get props => [rule];
+}
+
+class AdminChangeBookingStatusRequested extends AdminEvent {
+  final Booking booking;
+  final BookingStatus status;
+  final String reason;
+  const AdminChangeBookingStatusRequested(this.booking, this.status,
+      {this.reason = ''});
+  @override
+  List<Object?> get props => [booking.id, status, reason];
+}
+
+class AdminAssignDriverRequested extends AdminEvent {
+  final Booking booking;
+  final String driverId;
+  const AdminAssignDriverRequested(this.booking, this.driverId);
+  @override
+  List<Object?> get props => [booking.id, driverId];
+}
+
+class AdminAdjustFinalPriceRequested extends AdminEvent {
+  final Booking booking;
+  final double finalPrice;
+  final String reason;
+  const AdminAdjustFinalPriceRequested(
+      this.booking, this.finalPrice, this.reason);
+  @override
+  List<Object?> get props => [booking.id, finalPrice, reason];
+}
+
+class AdminRefundPaymentRequested extends AdminEvent {
+  final Payment payment;
+  final String reason;
+  const AdminRefundPaymentRequested(this.payment, this.reason);
+  @override
+  List<Object?> get props => [payment.id, reason];
+}
+
+class AdminRecordPaymentRequested extends AdminEvent {
+  final Booking booking;
+  final String method;
+  final String reference;
+  const AdminRecordPaymentRequested(this.booking, this.method, this.reference);
+  @override
+  List<Object?> get props => [booking.id, method, reference];
+}
+
+class AdminUpdateFinanceSettingsRequested extends AdminEvent {
+  final Map<String, dynamic> fields;
+  const AdminUpdateFinanceSettingsRequested(this.fields);
+  @override
+  List<Object?> get props => [fields];
 }
 
 class AdminVerifyDriverRequested extends AdminEvent {
@@ -63,13 +125,6 @@ class AdminUpdateGlobalSettingsRequested extends AdminEvent {
   List<Object?> get props => [fields];
 }
 
-class AdminDeleteBookingRequested extends AdminEvent {
-  final String bookingId;
-  const AdminDeleteBookingRequested(this.bookingId);
-  @override
-  List<Object?> get props => [bookingId];
-}
-
 class AdminUpdateUserRoleRequested extends AdminEvent {
   final String userId;
   final UserRole role;
@@ -85,24 +140,30 @@ class AdminUpdateUserRoleRequested extends AdminEvent {
 class AdminState extends Equatable {
   const AdminState({
     this.bookings = const [],
+    this.payments = const [],
     this.users = const [],
     this.drivers = const [],
     this.pricingRules = const [],
     this.vehicles = const [],
     this.auditLogs = const [],
     this.globalSettings = const {},
+    this.financeSettings = const {},
+    this.bookingsLimit = 1000,
     this.isLoading = false,
     this.error,
     this.successMessage,
   });
 
   final List<Booking> bookings;
+  final List<Payment> payments;
   final List<User> users;
   final List<DriverProfile> drivers;
   final List<PricingRule> pricingRules;
   final List<Vehicle> vehicles;
   final List<AuditLog> auditLogs;
   final Map<String, dynamic> globalSettings;
+  final Map<String, dynamic> financeSettings;
+  final int bookingsLimit;
   final bool isLoading;
   final String? error;
   final String? successMessage;
@@ -111,29 +172,63 @@ class AdminState extends Equatable {
   bool get pushNotificationsEnabled =>
       globalSettings['pushNotificationsEnabled'] ?? true;
   bool get twoFactorEnabled => globalSettings['twoFactorEnabled'] ?? false;
+  bool get firstClassEnabled => globalSettings['firstClassEnabled'] ?? false;
+
+  /// Comisión de la plataforma sobre cada viaje (0–100).
+  double get commissionPct =>
+      (financeSettings['platformCommissionPct'] as num?)?.toDouble() ??
+      kDefaultCommissionPct;
+
+  /// True si se cargó el máximo de reservas: las cifras pueden estar
+  /// incompletas para periodos largos.
+  bool get bookingsTruncated => bookings.length >= bookingsLimit;
 
   /// Cross-reference: get a user's display name by their ID
   String userName(String userId) {
-    try {
-      return users.firstWhere((u) => u.id == userId).displayName;
-    } catch (_) {
-      return userId.length > 8 ? userId.substring(0, 8) : userId;
-    }
+    final u = userById(userId);
+    if (u != null) return u.displayName;
+    return userId.length > 8 ? userId.substring(0, 8) : userId;
   }
 
   /// Cross-reference: get a user by their ID
   User? userById(String userId) {
-    try {
-      return users.firstWhere((u) => u.id == userId);
-    } catch (_) {
-      return null;
+    for (final u in users) {
+      if (u.id == userId) return u;
     }
+    return null;
   }
 
-  // Revenue computed properties
-  double get totalRevenue => bookings
-      .where((b) => b.status == BookingStatus.completed)
-      .fold(0.0, (sum, b) => sum + (b.finalPrice ?? b.estimatedPrice));
+  DriverProfile? driverById(String userId) {
+    for (final d in drivers) {
+      if (d.userId == userId) return d;
+    }
+    return null;
+  }
+
+  Payment? paymentFor(Booking b) => FinancialSummary.paymentIndex(payments)(b);
+
+  /// Tarifa vigente (Firestore o, si no existe, la de fábrica).
+  PricingRule effectiveRule(VehicleClass vc, ServiceType st) {
+    final id = PricingRule.idFor(vc, st);
+    for (final r in pricingRules) {
+      if (r.id == id) return r;
+    }
+    return PricingRule.fallback(vc, st);
+  }
+
+  bool hasCustomRule(VehicleClass vc, ServiceType st) {
+    final id = PricingRule.idFor(vc, st);
+    return pricingRules.any((r) => r.id == id);
+  }
+
+  FinancialSummary finance(FinancePeriod period, {DateTime? now}) =>
+      FinancialSummary.compute(
+        bookings: bookings,
+        payments: payments,
+        commissionPct: commissionPct,
+        period: period,
+        now: now,
+      );
 
   int get activeRidesCount =>
       bookings.where((b) => b.status == BookingStatus.inProgress).length;
@@ -141,40 +236,32 @@ class AdminState extends Equatable {
   int get pendingRidesCount =>
       bookings.where((b) => b.status == BookingStatus.pending).length;
 
-  int get completedRidesCount =>
-      bookings.where((b) => b.status == BookingStatus.completed).length;
-
-  double get todayRevenue {
-    final today = DateTime.now();
-    return bookings
-        .where((b) =>
-            b.status == BookingStatus.completed &&
-            b.createdAt.year == today.year &&
-            b.createdAt.month == today.month &&
-            b.createdAt.day == today.day)
-        .fold(0.0, (sum, b) => sum + (b.finalPrice ?? b.estimatedPrice));
-  }
-
   AdminState copyWith({
     List<Booking>? bookings,
+    List<Payment>? payments,
     List<User>? users,
     List<DriverProfile>? drivers,
     List<PricingRule>? pricingRules,
     List<Vehicle>? vehicles,
     List<AuditLog>? auditLogs,
     Map<String, dynamic>? globalSettings,
+    Map<String, dynamic>? financeSettings,
+    int? bookingsLimit,
     bool? isLoading,
     String? error,
     String? successMessage,
   }) {
     return AdminState(
       bookings: bookings ?? this.bookings,
+      payments: payments ?? this.payments,
       users: users ?? this.users,
       drivers: drivers ?? this.drivers,
       pricingRules: pricingRules ?? this.pricingRules,
       vehicles: vehicles ?? this.vehicles,
       auditLogs: auditLogs ?? this.auditLogs,
       globalSettings: globalSettings ?? this.globalSettings,
+      financeSettings: financeSettings ?? this.financeSettings,
+      bookingsLimit: bookingsLimit ?? this.bookingsLimit,
       isLoading: isLoading ?? this.isLoading,
       error: error,
       successMessage: successMessage,
@@ -184,12 +271,15 @@ class AdminState extends Equatable {
   @override
   List<Object?> get props => [
         bookings,
+        payments,
         users,
         drivers,
         pricingRules,
         vehicles,
         auditLogs,
         globalSettings,
+        financeSettings,
+        bookingsLimit,
         isLoading,
         error,
         successMessage,
@@ -202,206 +292,135 @@ class AdminState extends Equatable {
 
 class AdminBloc extends Bloc<AdminEvent, AdminState> {
   final AdminRepository _repo;
-  StreamSubscription? _bookingsSub;
-  StreamSubscription? _usersSub;
-  StreamSubscription? _driversSub;
-  StreamSubscription? _pricingSub;
-  StreamSubscription? _vehiclesSub;
-  StreamSubscription? _auditSub;
-  StreamSubscription? _settingsSub;
+  final List<StreamSubscription<dynamic>> _subs = [];
 
   AdminBloc({required AdminRepository adminRepository})
       : _repo = adminRepository,
         super(const AdminState()) {
     on<AdminDataRequested>(_onDataRequested);
-    on<AdminUpdatePricingRequested>(_onUpdatePricing);
-    on<AdminVerifyDriverRequested>(_onVerifyDriver);
-    on<AdminToggleUserStatusRequested>(_onToggleUserStatus);
-    on<AdminToggleVehicleStatusRequested>(_onToggleVehicleStatus);
-    on<AdminToggleMaintenanceModeRequested>(_onToggleMaintenance);
-    on<AdminUpdateGlobalSettingsRequested>(_onUpdateGlobalSettings);
-    on<AdminDeleteBookingRequested>(_onDeleteBooking);
-    on<AdminUpdateUserRoleRequested>(_onUpdateUserRole);
 
-    // Internal stream updates
-    on<_InternalBookingsUpdated>(
-        (e, emit) => emit(state.copyWith(bookings: e.data, isLoading: false)));
-    on<_InternalUsersUpdated>(
-        (e, emit) => emit(state.copyWith(users: e.data, isLoading: false)));
-    on<_InternalDriversUpdated>(
-        (e, emit) => emit(state.copyWith(drivers: e.data, isLoading: false)));
-    on<_InternalPricingUpdated>((e, emit) =>
-        emit(state.copyWith(pricingRules: e.data, isLoading: false)));
-    on<_InternalVehiclesUpdated>(
-        (e, emit) => emit(state.copyWith(vehicles: e.data, isLoading: false)));
-    on<_InternalAuditLogsUpdated>(
-        (e, emit) => emit(state.copyWith(auditLogs: e.data, isLoading: false)));
-    on<_InternalSettingsUpdated>((e, emit) =>
-        emit(state.copyWith(globalSettings: e.data, isLoading: false)));
+    on<AdminUpdatePricingRequested>((e, emit) => _perform(
+        emit,
+        _repo.updatePricingRule(e.rule),
+        'Tarifa ${e.rule.vehicleClass.label} · ${e.rule.serviceType.label} '
+        'guardada'));
+    on<AdminResetPricingRequested>((e, emit) => _perform(emit,
+        _repo.resetPricingRule(e.rule), 'Tarifa restablecida a la de fábrica'));
+    on<AdminChangeBookingStatusRequested>((e, emit) => _perform(
+        emit,
+        _repo.changeBookingStatus(e.booking, e.status, reason: e.reason),
+        e.status == BookingStatus.cancelled
+            ? 'Reserva cancelada'
+            : 'Reserva marcada como "${e.status.displayLabel}"'));
+    on<AdminAssignDriverRequested>((e, emit) => _perform(
+        emit, _repo.assignDriver(e.booking, e.driverId), 'Chófer asignado'));
+    on<AdminAdjustFinalPriceRequested>((e, emit) => _perform(
+        emit,
+        _repo.adjustFinalPrice(e.booking, e.finalPrice, e.reason),
+        'Precio final actualizado'));
+    on<AdminRefundPaymentRequested>((e, emit) => _perform(
+        emit, _repo.refundPayment(e.payment, e.reason), 'Pago reembolsado'));
+    on<AdminRecordPaymentRequested>((e, emit) => _perform(
+        emit,
+        _repo.markPaymentCollected(e.booking, e.method, e.reference),
+        'Cobro registrado'));
+    on<AdminUpdateFinanceSettingsRequested>((e, emit) => _perform(
+        emit,
+        _repo.updateFinanceSettings(e.fields),
+        'Configuración financiera guardada'));
+    on<AdminVerifyDriverRequested>((e, emit) =>
+        _perform(emit, _repo.verifyDriver(e.driverId), 'Chófer verificado'));
+    on<AdminToggleUserStatusRequested>((e, emit) => _perform(
+        emit,
+        _repo.toggleUserStatus(e.userId, e.active),
+        e.active ? 'Usuario reactivado' : 'Usuario bloqueado'));
+    on<AdminToggleVehicleStatusRequested>((e, emit) => _perform(
+        emit,
+        _repo.toggleVehicleStatus(e.vehicleId, e.active),
+        e.active ? 'Vehículo activado' : 'Vehículo desactivado'));
+    on<AdminToggleMaintenanceModeRequested>((e, emit) => _perform(
+        emit,
+        _repo.toggleMaintenanceMode(e.active),
+        e.active ? 'Modo mantenimiento activado' : 'Reservas reanudadas'));
+    on<AdminUpdateGlobalSettingsRequested>((e, emit) => _perform(
+        emit, _repo.updateGlobalSettings(e.fields), 'Configuración guardada'));
+    on<AdminUpdateUserRoleRequested>((e, emit) => _perform(
+        emit, _repo.updateUserRole(e.userId, e.role), 'Rol actualizado'));
+
+    on<_AdminStreamUpdated>((e, emit) => emit(e.apply(state)));
+    on<_AdminStreamFailed>((e, emit) => emit(state.copyWith(
+        isLoading: false, error: 'No se pudo cargar ${e.what}: ${e.error}')));
+  }
+
+  Future<void> _perform(Emitter<AdminState> emit,
+      Future<Either<Failure, void>> action, String success) async {
+    final result = await action;
+    result.fold(
+      (f) => emit(state.copyWith(error: f.message)),
+      (_) => emit(state.copyWith(successMessage: success)),
+    );
+  }
+
+  void _listen<T>(
+      Stream<T> stream, String what, AdminState Function(AdminState, T) apply) {
+    _subs.add(stream.listen(
+      (data) => add(_AdminStreamUpdated(
+          (s) => apply(s, data).copyWith(isLoading: false))),
+      onError: (Object e) => add(_AdminStreamFailed(what, e.toString())),
+    ));
   }
 
   Future<void> _onDataRequested(
       AdminDataRequested event, Emitter<AdminState> emit) async {
-    emit(state.copyWith(isLoading: true));
-    await _bookingsSub?.cancel();
-    await _usersSub?.cancel();
-    await _driversSub?.cancel();
-    await _pricingSub?.cancel();
-    await _vehiclesSub?.cancel();
-    await _auditSub?.cancel();
-    await _settingsSub?.cancel();
+    emit(state.copyWith(isLoading: true, bookingsLimit: _repo.bookingsLimit));
+    await _cancelSubs();
 
-    _bookingsSub = _repo
-        .watchAllBookings()
-        .listen((data) => add(_InternalBookingsUpdated(data)));
-    _usersSub = _repo
-        .watchAllUsers()
-        .listen((data) => add(_InternalUsersUpdated(data)));
-    _driversSub = _repo
-        .watchAllDrivers()
-        .listen((data) => add(_InternalDriversUpdated(data)));
-    _pricingSub = _repo
-        .watchPricingRules()
-        .listen((data) => add(_InternalPricingUpdated(data)));
-    _vehiclesSub = _repo
-        .watchAllVehicles()
-        .listen((data) => add(_InternalVehiclesUpdated(data)));
-    _auditSub = _repo
-        .watchAuditLogs()
-        .listen((data) => add(_InternalAuditLogsUpdated(data)));
-    _settingsSub = _repo
-        .watchGlobalSettings()
-        .listen((data) => add(_InternalSettingsUpdated(data)));
+    _listen(_repo.watchAllBookings(), 'las reservas',
+        (s, d) => s.copyWith(bookings: d));
+    _listen(_repo.watchAllPayments(), 'los pagos',
+        (s, d) => s.copyWith(payments: d));
+    _listen(
+        _repo.watchAllUsers(), 'los usuarios', (s, d) => s.copyWith(users: d));
+    _listen(_repo.watchAllDrivers(), 'los chóferes',
+        (s, d) => s.copyWith(drivers: d));
+    _listen(_repo.watchPricingRules(), 'las tarifas',
+        (s, d) => s.copyWith(pricingRules: d));
+    _listen(_repo.watchAllVehicles(), 'los vehículos',
+        (s, d) => s.copyWith(vehicles: d));
+    _listen(_repo.watchAuditLogs(), 'la auditoría',
+        (s, d) => s.copyWith(auditLogs: d));
+    _listen(_repo.watchGlobalSettings(), 'la configuración',
+        (s, d) => s.copyWith(globalSettings: d));
+    _listen(_repo.watchFinanceSettings(), 'la configuración financiera',
+        (s, d) => s.copyWith(financeSettings: d));
   }
 
-  Future<void> _onToggleMaintenance(AdminToggleMaintenanceModeRequested event,
-      Emitter<AdminState> emit) async {
-    final result = await _repo.toggleMaintenanceMode(event.active);
-    result.fold(
-      (f) => emit(state.copyWith(error: f.message)),
-      (_) => emit(state.copyWith(
-          successMessage: event.active ? 'Maintenance ON' : 'Maintenance OFF')),
-    );
-  }
-
-  Future<void> _onToggleVehicleStatus(
-      AdminToggleVehicleStatusRequested event, Emitter<AdminState> emit) async {
-    final result =
-        await _repo.toggleVehicleStatus(event.vehicleId, event.active);
-    result.fold((f) => emit(state.copyWith(error: f.message)), (_) => null);
-  }
-
-  Future<void> _onUpdatePricing(
-      AdminUpdatePricingRequested event, Emitter<AdminState> emit) async {
-    final result = await _repo.updatePricingRule(event.rule);
-    result.fold(
-      (f) => emit(state.copyWith(error: f.message)),
-      (_) => emit(state.copyWith(successMessage: 'Pricing rule updated')),
-    );
-  }
-
-  Future<void> _onVerifyDriver(
-      AdminVerifyDriverRequested event, Emitter<AdminState> emit) async {
-    final result = await _repo.verifyDriver(event.driverId);
-    result.fold(
-      (f) => emit(state.copyWith(error: f.message)),
-      (_) =>
-          emit(state.copyWith(successMessage: 'Driver verified successfully')),
-    );
-  }
-
-  Future<void> _onToggleUserStatus(
-      AdminToggleUserStatusRequested event, Emitter<AdminState> emit) async {
-    final result = await _repo.toggleUserStatus(event.userId, event.active);
-    result.fold((f) => emit(state.copyWith(error: f.message)), (_) => null);
-  }
-
-  Future<void> _onUpdateGlobalSettings(AdminUpdateGlobalSettingsRequested event,
-      Emitter<AdminState> emit) async {
-    final result = await _repo.updateGlobalSettings(event.fields);
-    result.fold(
-      (f) => emit(state.copyWith(error: f.message)),
-      (_) => emit(state.copyWith(successMessage: 'Settings saved')),
-    );
-  }
-
-  Future<void> _onDeleteBooking(
-      AdminDeleteBookingRequested event, Emitter<AdminState> emit) async {
-    final result = await _repo.deleteBooking(event.bookingId);
-    result.fold(
-      (f) => emit(state.copyWith(error: f.message)),
-      (_) => emit(state.copyWith(successMessage: 'Booking deleted')),
-    );
-  }
-
-  Future<void> _onUpdateUserRole(
-      AdminUpdateUserRoleRequested event, Emitter<AdminState> emit) async {
-    final result = await _repo.updateUserRole(event.userId, event.role);
-    result.fold(
-      (f) => emit(state.copyWith(error: f.message)),
-      (_) => emit(state.copyWith(successMessage: 'User role updated')),
-    );
+  Future<void> _cancelSubs() async {
+    for (final s in _subs) {
+      await s.cancel();
+    }
+    _subs.clear();
   }
 
   @override
-  Future<void> close() {
-    _bookingsSub?.cancel();
-    _usersSub?.cancel();
-    _driversSub?.cancel();
-    _pricingSub?.cancel();
-    _vehiclesSub?.cancel();
-    _auditSub?.cancel();
-    _settingsSub?.cancel();
+  Future<void> close() async {
+    await _cancelSubs();
     return super.close();
   }
 }
 
 // Internal stream events
-class _InternalBookingsUpdated extends AdminEvent {
-  final List<Booking> data;
-  const _InternalBookingsUpdated(this.data);
+class _AdminStreamUpdated extends AdminEvent {
+  const _AdminStreamUpdated(this.apply);
+  final AdminState Function(AdminState) apply;
   @override
-  List<Object?> get props => [data];
+  List<Object?> get props => [identityHashCode(this)];
 }
 
-class _InternalUsersUpdated extends AdminEvent {
-  final List<User> data;
-  const _InternalUsersUpdated(this.data);
+class _AdminStreamFailed extends AdminEvent {
+  const _AdminStreamFailed(this.what, this.error);
+  final String what;
+  final String error;
   @override
-  List<Object?> get props => [data];
-}
-
-class _InternalDriversUpdated extends AdminEvent {
-  final List<DriverProfile> data;
-  const _InternalDriversUpdated(this.data);
-  @override
-  List<Object?> get props => [data];
-}
-
-class _InternalPricingUpdated extends AdminEvent {
-  final List<PricingRule> data;
-  const _InternalPricingUpdated(this.data);
-  @override
-  List<Object?> get props => [data];
-}
-
-class _InternalVehiclesUpdated extends AdminEvent {
-  final List<Vehicle> data;
-  const _InternalVehiclesUpdated(this.data);
-  @override
-  List<Object?> get props => [data];
-}
-
-class _InternalAuditLogsUpdated extends AdminEvent {
-  final List<AuditLog> data;
-  const _InternalAuditLogsUpdated(this.data);
-  @override
-  List<Object?> get props => [data];
-}
-
-class _InternalSettingsUpdated extends AdminEvent {
-  final Map<String, dynamic> data;
-  const _InternalSettingsUpdated(this.data);
-  @override
-  List<Object?> get props => [data];
+  List<Object?> get props => [what, error];
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/widgets/lux_raised.dart';
+
 // ---------------------------------------------------------------------------
 // Tokens
 // ---------------------------------------------------------------------------
@@ -222,16 +224,29 @@ ThemeData get luxTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: LuxColors.sapphire,
+        // Painted by backgroundBuilder: the shared, subtle Luxelane relief.
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         foregroundColor: LuxColors.onAccent,
-        disabledBackgroundColor: LuxColors.surfaceDeep,
-        disabledForegroundColor: LuxColors.inkTertiary,
+        disabledBackgroundColor: Colors.transparent,
+        disabledForegroundColor: LuxColors.onAccent.withValues(alpha: 0.7),
         minimumSize: const Size(double.infinity, 52),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(LuxRadius.md)),
         textStyle: LuxTypography.labelLarge
             .copyWith(color: LuxColors.onAccent, letterSpacing: 1.6),
         elevation: 0,
+      ).copyWith(
+        backgroundBuilder: (context, states, child) => AnimatedContainer(
+          duration: const Duration(milliseconds: 140),
+          decoration: luxRaisedDecoration(
+            pressed: states.contains(WidgetState.pressed),
+            enabled: !states.contains(WidgetState.disabled),
+            radius: LuxRadius.md,
+          ),
+          child: child,
+        ),
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
