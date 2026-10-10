@@ -30,6 +30,8 @@ class BookingCreateRequested extends BookingEvent {
     this.passengerCount = 1,
     this.luggageCount = 0,
     this.flightNumber,
+    this.flightType,
+    this.pickupAirport,
     this.hours,
   });
   final Place origin;
@@ -43,6 +45,8 @@ class BookingCreateRequested extends BookingEvent {
   final int passengerCount;
   final int luggageCount;
   final String? flightNumber;
+  final String? flightType;
+  final String? pickupAirport;
   final int? hours;
   @override
   List<Object?> get props =>
@@ -190,6 +194,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       passengerCount: event.passengerCount,
       luggageCount: event.luggageCount,
       flightNumber: event.flightNumber,
+      flightType: event.flightType,
+      pickupAirport: event.pickupAirport,
       hours: event.hours,
     );
     final result = await _repo.createBooking(booking);

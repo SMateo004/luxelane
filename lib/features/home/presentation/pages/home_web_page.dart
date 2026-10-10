@@ -456,6 +456,7 @@ class _HeroSectionState extends State<_HeroSection>
                                             child: PlaceAutocompleteField(
                                               label: '¿A dónde vas?',
                                               initialValue: widget.destination,
+                                              sameCityAs: widget.origin,
                                               onPlaceSelected:
                                                   widget.onDestinationSelected,
                                               onMapPick:
@@ -523,6 +524,7 @@ class _HeroSectionState extends State<_HeroSection>
                                                 label: '¿A dónde vas?',
                                                 initialValue:
                                                     widget.destination,
+                                                sameCityAs: widget.origin,
                                                 onPlaceSelected: widget
                                                     .onDestinationSelected,
                                                 onMapPick:

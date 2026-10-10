@@ -10,6 +10,7 @@ import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/place_model.dart';
 import '../../../../core/services/maps_service.dart';
 import '../../../../core/utils/lux_format.dart';
+import '../../../../core/utils/service_area.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/map_picker_dialog.dart';
@@ -64,8 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
       title: 'Seleccionar lugar de recogida',
     );
     if (!mounted || picked == null) return;
-    setState(() => _origin = picked);
-    if (_destination != null) _fetchRoute();
+    _onOriginSelected(picked);
   }
 
   Future<void> _pickOriginFromMap() async {
@@ -77,8 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
       title: 'Seleccionar lugar de recogida',
     );
     if (!mounted || picked == null) return;
-    setState(() => _origin = picked);
-    if (_destination != null) _fetchRoute();
+    _onOriginSelected(picked);
   }
 
   Future<void> _pickDestinationFromMap() async {
@@ -86,12 +85,13 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       initial: _destination != null
           ? LatLng(_destination!.lat, _destination!.lng)
-          : const LatLng(-17.7833, -63.1821),
+          : _origin != null && ServiceArea.hasCoords(_origin!)
+              ? LatLng(_origin!.lat, _origin!.lng)
+              : const LatLng(-17.7833, -63.1821),
       title: 'Seleccionar destino',
     );
     if (!mounted || picked == null) return;
-    setState(() => _destination = picked);
-    if (_origin != null) _fetchRoute();
+    _onDestinationSelected(picked);
   }
 
   Future<void> _fetchRoute() async {
@@ -103,12 +103,33 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted) setState(() => _routeInfo = route);
   }
 
+  /// A destination in another city than the new pickup no longer applies.
   void _onOriginSelected(Place p) {
-    setState(() => _origin = p);
-    if (_destination != null) _fetchRoute();
+    final dest = _destination;
+    final stale = dest != null && ServiceArea.destinationError(p, dest) != null;
+    setState(() {
+      _origin = p;
+      if (stale) {
+        _destination = null;
+        _routeInfo = null;
+      }
+    });
+    if (stale) {
+      showLuxSnackbar(context,
+          'El destino estaba en otra ciudad. Elige uno en la ciudad de recogida.',
+          isError: true);
+    } else if (_destination != null) {
+      _fetchRoute();
+    }
   }
 
   void _onDestinationSelected(Place p) {
+    final error =
+        _origin == null ? null : ServiceArea.destinationError(_origin!, p);
+    if (error != null) {
+      showLuxSnackbar(context, error, isError: true);
+      return;
+    }
     setState(() => _destination = p);
     if (_origin != null) _fetchRoute();
   }
@@ -124,6 +145,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     if (_serviceType == ServiceType.oneWay && _destination == null) {
       showLuxSnackbar(context, 'Ingresa un destino', isError: true);
+      return;
+    }
+    final cityError = _destination == null
+        ? null
+        : ServiceArea.destinationError(_origin!, _destination!);
+    if (cityError != null) {
+      showLuxSnackbar(context, cityError, isError: true);
       return;
     }
     context.go(
@@ -575,6 +603,7 @@ class _BookingForm extends StatelessWidget {
             hint: '¿A dónde vas?',
             prefixIcon: Icons.location_on_outlined,
             initialValue: destination,
+            sameCityAs: origin,
             onPlaceSelected: onDestinationSelected,
             onMapPick: onDestinationMapPick,
           ),

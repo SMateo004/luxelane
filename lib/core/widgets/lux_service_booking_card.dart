@@ -10,6 +10,7 @@ import '../models/booking_form_data.dart';
 import '../models/place_model.dart';
 import '../services/maps_service.dart';
 import '../utils/lux_format.dart';
+import '../utils/service_area.dart';
 import 'map_picker_dialog.dart';
 import 'place_autocomplete_field.dart';
 
@@ -66,20 +67,40 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
   bool get _needsDestination => _service == ServiceType.oneWay;
 
   Future<void> _pickFromMap({required bool origin}) async {
-    final current = origin ? _origin : _destination;
+    // The destination map opens on the pickup's city.
+    final current = origin ? _origin : _destination ?? _origin;
     final picked = await showMapPickerDialog(
       context,
-      initial: current != null ? LatLng(current.lat, current.lng) : _santaCruz,
+      initial: current != null && ServiceArea.hasCoords(current)
+          ? LatLng(current.lat, current.lng)
+          : _santaCruz,
       title: origin ? 'Seleccionar lugar de recogida' : 'Seleccionar destino',
     );
     if (!mounted || picked == null) return;
+    origin ? _setOrigin(picked) : _setDestination(picked);
+  }
+
+  /// A destination in another city than the new pickup no longer applies.
+  void _setOrigin(Place p) {
+    final dest = _destination;
+    final stale = dest != null && ServiceArea.destinationError(p, dest) != null;
     setState(() {
-      if (origin) {
-        _origin = picked;
-      } else {
-        _destination = picked;
-      }
-      _error = null;
+      _origin = p;
+      if (stale) _destination = null;
+      _error = stale
+          ? 'El destino estaba en otra ciudad. Elige uno en la ciudad de '
+              'recogida.'
+          : null;
+    });
+  }
+
+  void _setDestination(Place p) {
+    final origin = _origin;
+    setState(() {
+      final error =
+          origin == null ? null : ServiceArea.destinationError(origin, p);
+      if (error == null) _destination = p;
+      _error = error;
     });
   }
 
@@ -121,6 +142,13 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
     if (_needsDestination && _destination == null) {
       setState(
           () => _error = 'Indica tu destino para calcular el precio fijo.');
+      return;
+    }
+    final cityError = _destination == null
+        ? null
+        : ServiceArea.destinationError(_origin!, _destination!);
+    if (cityError != null) {
+      setState(() => _error = cityError);
       return;
     }
     setState(() {
@@ -209,10 +237,7 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
               hint: originHint,
               prefixIcon: Icons.trip_origin_rounded,
               initialValue: _origin,
-              onPlaceSelected: (p) => setState(() {
-                _origin = p;
-                _error = null;
-              }),
+              onPlaceSelected: _setOrigin,
               onMapPick: () => _pickFromMap(origin: true),
             ),
             _MapLink(onTap: () => _pickFromMap(origin: true)),
@@ -221,10 +246,8 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
               hint: destHint,
               prefixIcon: Icons.place_outlined,
               initialValue: _destination,
-              onPlaceSelected: (p) => setState(() {
-                _destination = p;
-                _error = null;
-              }),
+              sameCityAs: _origin,
+              onPlaceSelected: _setDestination,
               onMapPick: () => _pickFromMap(origin: false),
             ),
             _MapLink(onTap: () => _pickFromMap(origin: false)),
