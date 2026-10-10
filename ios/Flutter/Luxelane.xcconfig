@@ -5,8 +5,7 @@
 GOOGLE_MAPS_API_KEY = AIzaSyBbDde6GtLHy9_6qys4BMmq2P2G2INRUkM
 
 // Google Sign-In — from the iOS app's GoogleService-Info.plist:
-//   CLIENT_ID          → GOOGLE_IOS_CLIENT_ID
-//   REVERSED_CLIENT_ID → GOOGLE_REVERSED_CLIENT_ID (URL scheme Google
-//                        uses to return to the app after signing in)
-GOOGLE_IOS_CLIENT_ID = REPLACE_WITH_IOS_CLIENT_ID.apps.googleusercontent.com
-GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.REPLACE_WITH_IOS_CLIENT_ID
+//   CLIENT_ID          → 51157842817-8bo82sf25c3qrsbqq4b0lh2ie00gc9t7.apps.googleusercontent.com
+//   REVERSED_CLIENT_ID → com.googleusercontent.apps.51157842817-8bo82sf25c3qrsbqq4b0lh2ie00gc9t7
+GOOGLE_IOS_CLIENT_ID = 51157842817-8bo82sf25c3qrsbqq4b0lh2ie00gc9t7.apps.googleusercontent.com
+GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.51157842817-8bo82sf25c3qrsbqq4b0lh2ie00gc9t7
