@@ -31,6 +31,15 @@ abstract class AdminRepository {
   /// the trip starts); rider and chauffeur are notified, audited.
   Future<Either<Failure, void>> releaseChauffeur(String bookingId, {String? reason});
 
+  /// Adds an extra charge or a correction to a ride's price. Left carries
+  /// an adjust/* code from the server when it refuses.
+  Future<Either<Failure, double>> adjustPrice({
+    required String bookingId,
+    required AdjustmentType type,
+    required double amount,
+    String? note,
+  });
+
   /// Records money given back for a completed ride (paid outside the app).
   /// Left carries a refund/* code from the server when it refuses.
   Future<Either<Failure, void>> recordRefund({

@@ -24,6 +24,95 @@ class AppLocalizationsEs extends AppLocalizations {
   String get accountSuspendedTitle => 'Tu cuenta está suspendida';
 
   @override
+  String get adjustAmount => 'Monto en Bs';
+
+  @override
+  String get adjustAmountSigned => 'Monto en Bs (negativo para bajar el precio)';
+
+  @override
+  String adjustCurrent(String total) {
+    return 'Total actual: $total';
+  }
+
+  @override
+  String get adjustDriverTotal => 'Total (incluye ajustes)';
+
+  @override
+  String get adjustErrorAmount => 'Ingresa un monto distinto de 0, hasta Bs 2.000 y 2 decimales. Solo una corrección puede ser negativa.';
+
+  @override
+  String get adjustErrorBelowZero => 'El total no puede quedar por debajo de 0 ni de lo ya reembolsado.';
+
+  @override
+  String get adjustErrorCard => 'Un pago con tarjeta no se puede ajustar después de cobrado.';
+
+  @override
+  String get adjustErrorNote => 'Escribe el motivo de la corrección.';
+
+  @override
+  String get adjustErrorStatus => 'Solo se ajusta desde que el chófer llega hasta que termina el viaje.';
+
+  @override
+  String get adjustErrorType => 'Elige qué se agrega.';
+
+  @override
+  String adjustLine(String type, String amount) {
+    return '$type: $amount';
+  }
+
+  @override
+  String adjustLineNote(String type, String amount, String note) {
+    return '$type: $amount · $note';
+  }
+
+  @override
+  String get adjustMenu => 'Ajustar precio';
+
+  @override
+  String adjustNewTotal(String total) {
+    return 'Nuevo total: $total';
+  }
+
+  @override
+  String get adjustNote => 'Detalle (opcional)';
+
+  @override
+  String get adjustNote2 => 'El pasajero recibe un aviso con el nuevo total y su recibo muestra el detalle. Si el viaje no terminó, también avisamos al chófer. El nuevo total cuenta en reportes, facturas de empresa y liquidaciones.';
+
+  @override
+  String get adjustNoteHint => 'Ej.: 20 min de espera tras el aterrizaje';
+
+  @override
+  String get adjustNoteRequired => 'Motivo de la corrección';
+
+  @override
+  String get adjustSave => 'Guardar ajuste';
+
+  @override
+  String get adjustSaved => 'Precio ajustado. Avisamos al pasajero.';
+
+  @override
+  String get adjustTitle => 'Ajustar precio';
+
+  @override
+  String get adjustTypeCorrection => 'Corrección';
+
+  @override
+  String get adjustTypeExtraStop => 'Parada adicional';
+
+  @override
+  String get adjustTypeParking => 'Estacionamiento';
+
+  @override
+  String get adjustTypeToll => 'Peaje';
+
+  @override
+  String get adjustTypeWaiting => 'Espera adicional';
+
+  @override
+  String get adjustWhat => '¿Qué se agrega?';
+
+  @override
   String get adminActionFailed => 'No se pudo completar la acción. Inténtalo de nuevo.';
 
   @override

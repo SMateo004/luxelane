@@ -5,6 +5,70 @@
   "accountSuspendedError": "Tu cuenta está suspendida. Escríbenos desde Ayuda.",
   "accountSuspendedSignOut": "Cerrar sesión",
   "accountSuspendedTitle": "Tu cuenta está suspendida",
+  "adjustAmount": "Monto en Bs",
+  "adjustAmountSigned": "Monto en Bs (negativo para bajar el precio)",
+  "adjustCurrent": "Total actual: {total}",
+  "@adjustCurrent": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "adjustDriverTotal": "Total (incluye ajustes)",
+  "adjustErrorAmount": "Ingresa un monto distinto de 0, hasta Bs 2.000 y 2 decimales. Solo una corrección puede ser negativa.",
+  "adjustErrorBelowZero": "El total no puede quedar por debajo de 0 ni de lo ya reembolsado.",
+  "adjustErrorCard": "Un pago con tarjeta no se puede ajustar después de cobrado.",
+  "adjustErrorNote": "Escribe el motivo de la corrección.",
+  "adjustErrorStatus": "Solo se ajusta desde que el chófer llega hasta que termina el viaje.",
+  "adjustErrorType": "Elige qué se agrega.",
+  "adjustLine": "{type}: {amount}",
+  "@adjustLine": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "adjustLineNote": "{type}: {amount} · {note}",
+  "@adjustLineNote": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "note": {
+        "type": "String"
+      }
+    }
+  },
+  "adjustMenu": "Ajustar precio",
+  "adjustNewTotal": "Nuevo total: {total}",
+  "@adjustNewTotal": {
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "adjustNote": "Detalle (opcional)",
+  "adjustNote2": "El pasajero recibe un aviso con el nuevo total y su recibo muestra el detalle. Si el viaje no terminó, también avisamos al chófer. El nuevo total cuenta en reportes, facturas de empresa y liquidaciones.",
+  "adjustNoteHint": "Ej.: 20 min de espera tras el aterrizaje",
+  "adjustNoteRequired": "Motivo de la corrección",
+  "adjustSave": "Guardar ajuste",
+  "adjustSaved": "Precio ajustado. Avisamos al pasajero.",
+  "adjustTitle": "Ajustar precio",
+  "adjustTypeCorrection": "Corrección",
+  "adjustTypeExtraStop": "Parada adicional",
+  "adjustTypeParking": "Estacionamiento",
+  "adjustTypeToll": "Peaje",
+  "adjustTypeWaiting": "Espera adicional",
+  "adjustWhat": "¿Qué se agrega?",
   "adminActionFailed": "No se pudo completar la acción. Inténtalo de nuevo.",
   "adminActive": "Activo",
   "adminAppVersion": "Versión de la app",

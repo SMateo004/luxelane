@@ -1,0 +1,166 @@
+{
+  "adjustMenu": {
+    "es": "Ajustar precio",
+    "en": "Adjust price",
+    "pt": "Ajustar preço"
+  },
+  "adjustTitle": {
+    "es": "Ajustar precio",
+    "en": "Adjust price",
+    "pt": "Ajustar preço"
+  },
+  "adjustCurrent": {
+    "es": "Total actual: {total}",
+    "en": "Current total: {total}",
+    "pt": "Total atual: {total}",
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "adjustWhat": {
+    "es": "¿Qué se agrega?",
+    "en": "What's being added?",
+    "pt": "O que está sendo adicionado?"
+  },
+  "adjustTypeWaiting": {
+    "es": "Espera adicional",
+    "en": "Extra waiting",
+    "pt": "Espera adicional"
+  },
+  "adjustTypeToll": {
+    "es": "Peaje",
+    "en": "Toll",
+    "pt": "Pedágio"
+  },
+  "adjustTypeParking": {
+    "es": "Estacionamiento",
+    "en": "Parking",
+    "pt": "Estacionamento"
+  },
+  "adjustTypeExtraStop": {
+    "es": "Parada adicional",
+    "en": "Extra stop",
+    "pt": "Parada adicional"
+  },
+  "adjustTypeCorrection": {
+    "es": "Corrección",
+    "en": "Correction",
+    "pt": "Correção"
+  },
+  "adjustAmount": {
+    "es": "Monto en Bs",
+    "en": "Amount in Bs",
+    "pt": "Valor em Bs"
+  },
+  "adjustAmountSigned": {
+    "es": "Monto en Bs (negativo para bajar el precio)",
+    "en": "Amount in Bs (negative to lower the price)",
+    "pt": "Valor em Bs (negativo para baixar o preço)"
+  },
+  "adjustNote": {
+    "es": "Detalle (opcional)",
+    "en": "Detail (optional)",
+    "pt": "Detalhe (opcional)"
+  },
+  "adjustNoteRequired": {
+    "es": "Motivo de la corrección",
+    "en": "Reason for the correction",
+    "pt": "Motivo da correção"
+  },
+  "adjustNoteHint": {
+    "es": "Ej.: 20 min de espera tras el aterrizaje",
+    "en": "E.g. 20 min of waiting after landing",
+    "pt": "Ex.: 20 min de espera após o pouso"
+  },
+  "adjustNewTotal": {
+    "es": "Nuevo total: {total}",
+    "en": "New total: {total}",
+    "pt": "Novo total: {total}",
+    "placeholders": {
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "adjustNote2": {
+    "es": "El pasajero recibe un aviso con el nuevo total y su recibo muestra el detalle. Si el viaje no terminó, también avisamos al chófer. El nuevo total cuenta en reportes, facturas de empresa y liquidaciones.",
+    "en": "The passenger is notified of the new total and their receipt shows the detail. If the ride hasn't finished, we tell the chauffeur too. The new total counts in reports, company invoices and settlements.",
+    "pt": "O passageiro recebe um aviso com o novo total e o recibo mostra o detalhe. Se a viagem não terminou, avisamos também o motorista. O novo total conta nos relatórios, faturas de empresa e acertos."
+  },
+  "adjustSave": {
+    "es": "Guardar ajuste",
+    "en": "Save adjustment",
+    "pt": "Salvar ajuste"
+  },
+  "adjustSaved": {
+    "es": "Precio ajustado. Avisamos al pasajero.",
+    "en": "Price adjusted. The passenger was notified.",
+    "pt": "Preço ajustado. Avisamos o passageiro."
+  },
+  "adjustErrorType": {
+    "es": "Elige qué se agrega.",
+    "en": "Choose what's being added.",
+    "pt": "Escolha o que está sendo adicionado."
+  },
+  "adjustErrorAmount": {
+    "es": "Ingresa un monto distinto de 0, hasta Bs 2.000 y 2 decimales. Solo una corrección puede ser negativa.",
+    "en": "Enter a non-zero amount, up to Bs 2,000 and 2 decimals. Only a correction can be negative.",
+    "pt": "Informe um valor diferente de 0, até Bs 2.000 e 2 casas decimais. Só uma correção pode ser negativa."
+  },
+  "adjustErrorBelowZero": {
+    "es": "El total no puede quedar por debajo de 0 ni de lo ya reembolsado.",
+    "en": "The total can't go below 0 or below what was already refunded.",
+    "pt": "O total não pode ficar abaixo de 0 nem do que já foi reembolsado."
+  },
+  "adjustErrorNote": {
+    "es": "Escribe el motivo de la corrección.",
+    "en": "Write the reason for the correction.",
+    "pt": "Escreva o motivo da correção."
+  },
+  "adjustErrorStatus": {
+    "es": "Solo se ajusta desde que el chófer llega hasta que termina el viaje.",
+    "en": "Prices can only be adjusted from the chauffeur's arrival until the ride ends.",
+    "pt": "Só é possível ajustar desde a chegada do motorista até o fim da viagem."
+  },
+  "adjustErrorCard": {
+    "es": "Un pago con tarjeta no se puede ajustar después de cobrado.",
+    "en": "A card payment can't be adjusted after it's charged.",
+    "pt": "Um pagamento com cartão não pode ser ajustado depois de cobrado."
+  },
+  "adjustDriverTotal": {
+    "es": "Total (incluye ajustes)",
+    "en": "Total (includes adjustments)",
+    "pt": "Total (inclui ajustes)"
+  },
+  "adjustLine": {
+    "es": "{type}: {amount}",
+    "en": "{type}: {amount}",
+    "pt": "{type}: {amount}",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "adjustLineNote": {
+    "es": "{type}: {amount} · {note}",
+    "en": "{type}: {amount} · {note}",
+    "pt": "{type}: {amount} · {note}",
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      },
+      "note": {
+        "type": "String"
+      }
+    }
+  }
+}

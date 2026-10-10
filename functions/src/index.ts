@@ -26,6 +26,7 @@ import {
 } from './flights';
 import * as err from './errors';
 import { MAX_REASON, RefundMethod, refundError } from './refunds';
+import { AdjustmentType, MAX_NOTE, adjustmentError, round2 } from './adjustments';
 import { ASSIGNED_STATUSES, SUSPENDED, isSuspended, suspensionChange } from './accounts';
 import { WINDOW_MS, bestDiscount, loyaltyDiscount, nextTier, parseConfig, tierFor } from './loyalty';
 import {
@@ -1548,6 +1549,84 @@ export const cancelBooking = onCall(async (req) => {
   }
   logger.info('cancelBooking', 'cancelled', { bookingId, by: isAdmin ? 'admin' : 'rider', late: result.late });
   return { cancelled: true, lateCancellation: result.late };
+});
+
+// ---------------------------------------------------------------------------
+// adjustPrice — an admin adds an extra charge agreed during the ride
+// (waiting, toll, parking, extra stop) or a correction. finalPrice becomes
+// quote + adjustments; rider and chauffeur are told the new total.
+// ---------------------------------------------------------------------------
+
+interface StoredAdjustment {
+  type: AdjustmentType;
+  amount: number;
+  note: string | null;
+  by: string;
+  at: admin.firestore.Timestamp;
+}
+
+export const adjustPrice = onCall(async (req) => {
+  const adminId = await requireAdmin(req);
+  const { bookingId, type, amount, note } = (req.data ?? {}) as Record<string, unknown>;
+  if (typeof bookingId !== 'string' || !bookingId) throw err.invalidArgument('bookingId required');
+  const ref = db.collection('bookings').doc(bookingId);
+
+  const result = await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw err.notFound('Booking not found');
+    const b = snap.data() as BookingDoc & { adjustments?: StoredAdjustment[] };
+    const list = b.adjustments ?? [];
+    const adjusted = round2(list.reduce((sum, x) => sum + x.amount, 0));
+    const error = adjustmentError({
+      status: b.status,
+      base: b.estimatedPrice,
+      adjusted,
+      refunded: b.refundedAmount ?? 0,
+      cardPayment: b.paymentMethod === 'card',
+      type,
+      amount,
+      note,
+    });
+    if (error) throw err.failedPrecondition(error);
+    const value = Number(amount);
+    const entry: StoredAdjustment = {
+      type: type as AdjustmentType,
+      amount: value,
+      note: typeof note === 'string' && note.trim() ? note.trim().slice(0, MAX_NOTE) : null,
+      by: adminId,
+      at: admin.firestore.Timestamp.now(),
+    };
+    const finalPrice = round2(b.estimatedPrice + adjusted + value);
+    tx.update(ref, {
+      adjustments: [...list, entry],
+      finalPrice,
+      updatedAt: admin.firestore.Timestamp.now(),
+    });
+    return { riderId: b.riderId, driverId: b.driverId, status: b.status, value, finalPrice };
+  });
+
+  await writeAudit('booking_price_adjusted', {
+    bookingId,
+    by: adminId,
+    type,
+    amount: result.value,
+    finalPrice: result.finalPrice,
+  });
+  const reason = (lang: Lang) => t(lang, `adjustType_${type as AdjustmentType}` as MessageKey);
+  await pushUser(result.riderId, 'adjustTitle', 'adjustBody', (lang) => ({
+    change: `${result.value > 0 ? '+' : '−'}${moneyExact(Math.abs(result.value), lang)}`,
+    reason: reason(lang),
+    total: moneyExact(result.finalPrice, lang),
+  }));
+  // Before completion the chauffeur may be the one collecting the fare.
+  if (result.driverId && result.status !== 'completed') {
+    await pushUser(result.driverId, 'adjustDriverTitle', 'adjustDriverBody', (lang) => ({
+      total: moneyExact(result.finalPrice, lang),
+      reason: reason(lang),
+    }));
+  }
+  logger.info('adjustPrice', 'adjusted', { bookingId, type, amount: result.value, finalPrice: result.finalPrice });
+  return { finalPrice: result.finalPrice };
 });
 
 // ---------------------------------------------------------------------------

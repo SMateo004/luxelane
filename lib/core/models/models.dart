@@ -303,6 +303,7 @@ class Booking {
     this.distanceKm,
     this.loyaltyTier,
     this.refundedAmount = 0,
+    this.adjustments = const [],
   });
 
   final String id;
@@ -396,6 +397,10 @@ class Booking {
   /// Money given back for this ride (recordRefund), in Bs.
   final double refundedAmount;
 
+  /// Extra charges / corrections added by an admin (adjustPrice); the
+  /// server keeps finalPrice = estimatedPrice + their sum.
+  final List<PriceAdjustment> adjustments;
+
   /// What the rider paid: the final price, or the quote.
   double get paidAmount => finalPrice ?? estimatedPrice;
 
@@ -473,6 +478,10 @@ class Booking {
         distanceKm: (j['distanceKm'] as num?)?.toDouble(),
         loyaltyTier: j['loyaltyTier'] as String?,
         refundedAmount: (j['refundedAmount'] as num?)?.toDouble() ?? 0,
+        adjustments: (j['adjustments'] as List? ?? const [])
+            .map(PriceAdjustment.fromJson)
+            .whereType<PriceAdjustment>()
+            .toList(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -553,7 +562,31 @@ class Booking {
         distanceKm: distanceKm,
         loyaltyTier: loyaltyTier,
         refundedAmount: refundedAmount,
+        adjustments: adjustments,
       );
+}
+
+/// One line of [Booking.adjustments].
+class PriceAdjustment {
+  const PriceAdjustment({required this.type, required this.amount, this.note, this.at});
+
+  final AdjustmentType type;
+  final double amount;
+  final String? note;
+  final DateTime? at;
+
+  static PriceAdjustment? fromJson(Object? raw) {
+    if (raw is! Map) return null;
+    final type = AdjustmentType.values.where((t) => t.name == raw['type']).firstOrNull;
+    final amount = (raw['amount'] as num?)?.toDouble();
+    if (type == null || amount == null) return null;
+    return PriceAdjustment(
+      type: type,
+      amount: amount,
+      note: raw['note'] as String?,
+      at: (raw['at'] as Timestamp?)?.toDate(),
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------

@@ -127,6 +127,168 @@ abstract class AppLocalizations {
   /// **'Tu cuenta está suspendida'**
   String get accountSuspendedTitle;
 
+  /// No description provided for @adjustAmount.
+  ///
+  /// In es, this message translates to:
+  /// **'Monto en Bs'**
+  String get adjustAmount;
+
+  /// No description provided for @adjustAmountSigned.
+  ///
+  /// In es, this message translates to:
+  /// **'Monto en Bs (negativo para bajar el precio)'**
+  String get adjustAmountSigned;
+
+  /// No description provided for @adjustCurrent.
+  ///
+  /// In es, this message translates to:
+  /// **'Total actual: {total}'**
+  String adjustCurrent(String total);
+
+  /// No description provided for @adjustDriverTotal.
+  ///
+  /// In es, this message translates to:
+  /// **'Total (incluye ajustes)'**
+  String get adjustDriverTotal;
+
+  /// No description provided for @adjustErrorAmount.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa un monto distinto de 0, hasta Bs 2.000 y 2 decimales. Solo una corrección puede ser negativa.'**
+  String get adjustErrorAmount;
+
+  /// No description provided for @adjustErrorBelowZero.
+  ///
+  /// In es, this message translates to:
+  /// **'El total no puede quedar por debajo de 0 ni de lo ya reembolsado.'**
+  String get adjustErrorBelowZero;
+
+  /// No description provided for @adjustErrorCard.
+  ///
+  /// In es, this message translates to:
+  /// **'Un pago con tarjeta no se puede ajustar después de cobrado.'**
+  String get adjustErrorCard;
+
+  /// No description provided for @adjustErrorNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe el motivo de la corrección.'**
+  String get adjustErrorNote;
+
+  /// No description provided for @adjustErrorStatus.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo se ajusta desde que el chófer llega hasta que termina el viaje.'**
+  String get adjustErrorStatus;
+
+  /// No description provided for @adjustErrorType.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige qué se agrega.'**
+  String get adjustErrorType;
+
+  /// No description provided for @adjustLine.
+  ///
+  /// In es, this message translates to:
+  /// **'{type}: {amount}'**
+  String adjustLine(String type, String amount);
+
+  /// No description provided for @adjustLineNote.
+  ///
+  /// In es, this message translates to:
+  /// **'{type}: {amount} · {note}'**
+  String adjustLineNote(String type, String amount, String note);
+
+  /// No description provided for @adjustMenu.
+  ///
+  /// In es, this message translates to:
+  /// **'Ajustar precio'**
+  String get adjustMenu;
+
+  /// No description provided for @adjustNewTotal.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuevo total: {total}'**
+  String adjustNewTotal(String total);
+
+  /// No description provided for @adjustNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Detalle (opcional)'**
+  String get adjustNote;
+
+  /// No description provided for @adjustNote2.
+  ///
+  /// In es, this message translates to:
+  /// **'El pasajero recibe un aviso con el nuevo total y su recibo muestra el detalle. Si el viaje no terminó, también avisamos al chófer. El nuevo total cuenta en reportes, facturas de empresa y liquidaciones.'**
+  String get adjustNote2;
+
+  /// No description provided for @adjustNoteHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej.: 20 min de espera tras el aterrizaje'**
+  String get adjustNoteHint;
+
+  /// No description provided for @adjustNoteRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo de la corrección'**
+  String get adjustNoteRequired;
+
+  /// No description provided for @adjustSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar ajuste'**
+  String get adjustSave;
+
+  /// No description provided for @adjustSaved.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio ajustado. Avisamos al pasajero.'**
+  String get adjustSaved;
+
+  /// No description provided for @adjustTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Ajustar precio'**
+  String get adjustTitle;
+
+  /// No description provided for @adjustTypeCorrection.
+  ///
+  /// In es, this message translates to:
+  /// **'Corrección'**
+  String get adjustTypeCorrection;
+
+  /// No description provided for @adjustTypeExtraStop.
+  ///
+  /// In es, this message translates to:
+  /// **'Parada adicional'**
+  String get adjustTypeExtraStop;
+
+  /// No description provided for @adjustTypeParking.
+  ///
+  /// In es, this message translates to:
+  /// **'Estacionamiento'**
+  String get adjustTypeParking;
+
+  /// No description provided for @adjustTypeToll.
+  ///
+  /// In es, this message translates to:
+  /// **'Peaje'**
+  String get adjustTypeToll;
+
+  /// No description provided for @adjustTypeWaiting.
+  ///
+  /// In es, this message translates to:
+  /// **'Espera adicional'**
+  String get adjustTypeWaiting;
+
+  /// No description provided for @adjustWhat.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Qué se agrega?'**
+  String get adjustWhat;
+
   /// No description provided for @adminActionFailed.
   ///
   /// In es, this message translates to:

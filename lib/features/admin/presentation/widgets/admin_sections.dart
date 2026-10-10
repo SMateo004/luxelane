@@ -10,6 +10,8 @@ import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../driver/presentation/pages/driver_documents_review_page.dart';
+import '../../../adjustments/domain/adjustments.dart';
+import '../../../adjustments/presentation/adjust_price_dialog.dart';
 import '../../../refunds/domain/refund.dart';
 import '../../../refunds/presentation/refund_dialog.dart';
 import '../bloc/admin_bloc.dart';
@@ -27,6 +29,7 @@ String _noticeText(AppLocalizations l, AdminNotice n) => switch (n) {
       AdminNotice.bookingCancelled => l.adminNoticeBookingCancelled,
       AdminNotice.chauffeurReleased => l.adminNoticeChauffeurReleased,
       AdminNotice.refundRecorded => l.refundRecorded,
+      AdminNotice.priceAdjusted => l.adjustSaved,
     };
 
 /// Pending bookings with no chauffeur whose pickup is within 2 hours.
@@ -460,7 +463,7 @@ class _FilterChip extends StatelessWidget {
       );
 }
 
-enum _BookingAction { assign, release, refund, cancel, delete }
+enum _BookingAction { assign, release, adjust, refund, cancel, delete }
 
 class _AdminBookingTile extends StatelessWidget {
   const _AdminBookingTile({
@@ -535,7 +538,7 @@ class _AdminBookingTile extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(LuxMoney.format(booking.estimatedPrice),
+                Text(LuxMoney.format(booking.paidAmount),
                     style: LuxTypography.titleMedium
                         .copyWith(color: LuxColors.accent)),
                 BookingStatusChip(status: booking.status),
@@ -552,6 +555,7 @@ class _AdminBookingTile extends StatelessWidget {
               onSelected: (a) => switch (a) {
                 _BookingAction.assign => context.read<AdminBloc>().add(AdminAssignNearestRequested(booking)),
                 _BookingAction.release => _confirmRelease(context),
+                _BookingAction.adjust => _adjustPrice(context),
                 _BookingAction.refund => _recordRefund(context),
                 _BookingAction.cancel => _confirmCancel(context),
                 _BookingAction.delete => _confirmDelete(context),
@@ -561,6 +565,8 @@ class _AdminBookingTile extends StatelessWidget {
                   PopupMenuItem(value: _BookingAction.assign, child: Text(l.adminAssignNearest)),
                 if (_releasable(booking))
                   PopupMenuItem(value: _BookingAction.release, child: Text(l.adminReleaseChauffeur)),
+                if (Adjustments.canAdjust(booking))
+                  PopupMenuItem(value: _BookingAction.adjust, child: Text(l.adjustMenu)),
                 if (Refunds.canRefund(booking))
                   PopupMenuItem(value: _BookingAction.refund, child: Text(l.refundMenu)),
                 if (_cancellable(booking.status))
@@ -604,6 +610,18 @@ class _AdminBookingTile extends StatelessWidget {
       ),
     );
     if (reason != null) bloc.add(AdminCancelBookingRequested(booking.id, reason: reason));
+  }
+
+  Future<void> _adjustPrice(BuildContext context) async {
+    final bloc = context.read<AdminBloc>();
+    await showDialog<bool>(
+      context: context,
+      builder: (_) => AdjustPriceDialog(
+        booking: booking,
+        onSubmit: (type, amount, note) =>
+            bloc.adjustPrice(bookingId: booking.id, type: type, amount: amount, note: note),
+      ),
+    );
   }
 
   Future<void> _recordRefund(BuildContext context) async {

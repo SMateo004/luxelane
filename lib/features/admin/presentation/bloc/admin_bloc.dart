@@ -120,6 +120,7 @@ enum AdminNotice {
   bookingCancelled,
   chauffeurReleased,
   refundRecorded,
+  priceAdjusted,
 }
 
 class AdminState extends Equatable {
@@ -364,6 +365,20 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       (f) => emit(state.copyWith(error: f.message)),
       (_) => emit(state.copyWith(notice: AdminNotice.bookingCancelled)),
     );
+  }
+
+  /// Adjusts a ride's price; returns an adjust/* error code, or null when saved.
+  Future<String?> adjustPrice({
+    required String bookingId,
+    required AdjustmentType type,
+    required double amount,
+    String? note,
+  }) async {
+    final result = await _repo.adjustPrice(bookingId: bookingId, type: type, amount: amount, note: note);
+    return result.fold((f) => f.message, (_) {
+      if (!isClosed) add(const _AdminNoticeShown(AdminNotice.priceAdjusted));
+      return null;
+    });
   }
 
   /// Records a refund; returns a refund/* error code, or null when saved.

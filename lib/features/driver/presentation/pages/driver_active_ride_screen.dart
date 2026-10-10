@@ -316,13 +316,16 @@ class _RideInfoRow extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
-                  child: Text(context.l10n.driverEstimatedFare,
+                  child: Text(
+                      booking.adjustments.isNotEmpty
+                          ? context.l10n.adjustDriverTotal
+                          : context.l10n.driverEstimatedFare,
                       style: LuxTypography.caption,
                       overflow: TextOverflow.ellipsis),
                 ),
                 const SizedBox(width: LuxSpacing.sm),
                 Text(
-                  LuxMoney.format(booking.estimatedPrice, cents: true),
+                  LuxMoney.format(booking.paidAmount, cents: true),
                   style: LuxTypography.bodyLarge
                       .copyWith(color: LuxColors.accent),
                 ),

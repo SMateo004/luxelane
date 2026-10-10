@@ -473,3 +473,11 @@ describe('refunds', () => {
     await assertFails(updateDoc(doc(db('rider'), 'bookings/b1'), { refundedAmount: 120 }));
   });
 });
+
+describe('price adjustments', () => {
+  it('only the server changes the final price or the adjustments', async () => {
+    await seed('bookings/b1', booking({ status: 'in_progress', driverId: 'driver' }));
+    await assertFails(updateDoc(doc(db('rider'), 'bookings/b1'), { finalPrice: 10 }));
+    await assertFails(updateDoc(doc(db('driver'), 'bookings/b1'), { adjustments: [{ type: 'toll', amount: 50 }], finalPrice: 170 }));
+  });
+});

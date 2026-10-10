@@ -175,6 +175,23 @@ const M = {
   refundMethod_transfer: { es: 'por transferencia', en: 'by bank transfer', pt: 'por transferência' },
   refundMethod_cash: { es: 'en efectivo', en: 'in cash', pt: 'em dinheiro' },
   refundMethod_invoiceCredit: { es: 'como crédito en la factura de tu empresa', en: "as a credit on your company's invoice", pt: 'como crédito na fatura da sua empresa' },
+  adjustTitle: { es: 'Ajuste en tu viaje', en: 'Your ride was adjusted', pt: 'Ajuste na sua viagem' },
+  adjustBody: {
+    es: '{change} ({reason}). Nuevo total: {total}.',
+    en: '{change} ({reason}). New total: {total}.',
+    pt: '{change} ({reason}). Novo total: {total}.',
+  },
+  adjustDriverTitle: { es: 'Cambió el total del viaje', en: 'The ride total changed', pt: 'O total da viagem mudou' },
+  adjustDriverBody: {
+    es: 'Ahora el total es {total} ({reason}).',
+    en: 'The total is now {total} ({reason}).',
+    pt: 'Agora o total é {total} ({reason}).',
+  },
+  adjustType_waiting: { es: 'espera adicional', en: 'extra waiting', pt: 'espera adicional' },
+  adjustType_toll: { es: 'peaje', en: 'toll', pt: 'pedágio' },
+  adjustType_parking: { es: 'estacionamiento', en: 'parking', pt: 'estacionamento' },
+  adjustType_extraStop: { es: 'parada adicional', en: 'extra stop', pt: 'parada adicional' },
+  adjustType_correction: { es: 'corrección', en: 'correction', pt: 'correção' },
   riderCancelledTitle: { es: 'Viaje cancelado', en: 'Ride cancelled', pt: 'Viagem cancelada' },
   riderCancelledBody: {
     es: 'El pasajero canceló el viaje de las {time}. Ya estás libre para otras solicitudes.',

@@ -125,3 +125,7 @@ extension PaymentStatusX on PaymentStatus {
 // Keep backward-compatible alias
 // ignore: non_constant_identifier_names
 PaymentStatus Function(String) get PaymentStatusLabel => PaymentStatusX.fromString;
+
+/// Extra charge or correction added by an admin to a ride's price
+/// (mirrors functions/src/adjustments.ts).
+enum AdjustmentType { waiting, toll, parking, extraStop, correction }

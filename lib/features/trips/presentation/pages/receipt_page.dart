@@ -10,6 +10,7 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/lux_states.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../home/presentation/pages/home_design.dart';
+import '../../../adjustments/presentation/adjust_price_dialog.dart';
 import '../../../loyalty/presentation/loyalty_widgets.dart';
 
 /// In-app receipt for a completed (or cancelled) trip.
@@ -173,7 +174,11 @@ class _ReceiptCard extends StatelessWidget {
                   '−${LuxMoney.format(booking.discount, cents: true)}'),
             ] else
               _Line(l.tripReceiptFixedPrice, LuxMoney.format(booking.estimatedPrice, cents: true)),
-            if (booking.finalPrice != null && booking.finalPrice != booking.estimatedPrice)
+            // Itemized adjustments (waiting, toll…); older bookings only
+            // have the difference.
+            if (booking.adjustments.isNotEmpty)
+              for (final a in booking.adjustments) _Line(a.type.label(l), signedMoney(a.amount))
+            else if (booking.finalPrice != null && booking.finalPrice != booking.estimatedPrice)
               _Line(l.tripReceiptAdjustment, LuxMoney.format(booking.finalPrice! - booking.estimatedPrice, cents: true)),
             _Line(l.tripReceiptTotal, LuxMoney.format(total, cents: true), strong: !refunded),
             if (refunded) ...[

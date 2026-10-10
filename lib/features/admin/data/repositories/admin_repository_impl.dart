@@ -41,6 +41,29 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
+  Future<Either<Failure, double>> adjustPrice({
+    required String bookingId,
+    required AdjustmentType type,
+    required double amount,
+    String? note,
+  }) async {
+    try {
+      final r = await _fn.httpsCallable('adjustPrice').call({
+        'bookingId': bookingId,
+        'type': type.name,
+        'amount': amount,
+        if (note != null && note.trim().isNotEmpty) 'note': note.trim(),
+      });
+      return Right(((r.data as Map)['finalPrice'] as num).toDouble());
+    } on FirebaseFunctionsException catch (e) {
+      final code = RegExp(r'adjust/[a-z-]+').firstMatch(e.message ?? '')?.group(0);
+      return Left(ServerFailure(code ?? 'adjust/failed'));
+    } catch (_) {
+      return const Left(ServerFailure('adjust/failed'));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> recordRefund({
     required String bookingId,
     required double amount,
