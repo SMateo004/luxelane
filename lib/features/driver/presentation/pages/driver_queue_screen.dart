@@ -7,6 +7,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
+import '../widgets/flight_info_card.dart';
 
 class DriverQueueScreen extends StatelessWidget {
   const DriverQueueScreen({super.key});
@@ -150,6 +151,10 @@ class _JobCard extends StatelessWidget {
             ),
             const SizedBox(height: LuxSpacing.md),
             _RouteRow(origin: booking.origin, destination: booking.destination),
+            if (booking.flightNumber?.isNotEmpty == true) ...[
+              const SizedBox(height: LuxSpacing.md),
+              FlightInfoCard(booking: booking),
+            ],
             const SizedBox(height: LuxSpacing.md),
             _JobActions(booking: booking, isPending: isPending),
           ],

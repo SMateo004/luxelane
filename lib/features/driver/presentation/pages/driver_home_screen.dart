@@ -14,6 +14,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
+import '../widgets/flight_info_card.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key});
@@ -465,6 +466,10 @@ class _ActiveRidePanel extends StatelessWidget {
               ],
             ),
           ),
+          if (booking.flightNumber?.isNotEmpty == true) ...[
+            const SizedBox(height: LuxSpacing.md),
+            FlightInfoCard(booking: booking),
+          ],
           const SizedBox(height: LuxSpacing.md),
           LuxButton(label: _actionLabel, onPressed: () => _advance(context)),
           const SizedBox(height: LuxSpacing.sm),
@@ -767,6 +772,11 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                 ],
               ),
             ),
+
+            if (widget.booking.flightNumber?.isNotEmpty == true) ...[
+              const SizedBox(height: 10),
+              FlightInfoCard(booking: widget.booking),
+            ],
 
             if (widget.booking.notes?.isNotEmpty == true) ...[
               const SizedBox(height: 10),

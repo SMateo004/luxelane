@@ -260,6 +260,8 @@ class Booking {
     required this.updatedAt,
     this.notes,
     this.flightNumber,
+    this.flightType,
+    this.pickupAirport,
     this.hours,
     this.passengerCount = 1,
     this.luggageCount = 0,
@@ -281,6 +283,12 @@ class Booking {
   final DateTime updatedAt;
   final String? notes;
   final String? flightNumber;
+
+  /// [FlightType.name] of the passenger's flight (airport pickups only).
+  final String? flightType;
+
+  /// IATA code of the pickup airport, e.g. "VVI" (airport pickups only).
+  final String? pickupAirport;
   final int? hours;
   final int passengerCount;
   final int luggageCount;
@@ -315,6 +323,8 @@ class Booking {
             : DateTime.now(),
         notes: j['notes'] as String?,
         flightNumber: j['flightNumber'] as String?,
+        flightType: j['flightType'] as String?,
+        pickupAirport: j['pickupAirport'] as String?,
         hours: j['hours'] as int?,
         passengerCount: j['passengerCount'] as int? ?? 1,
         luggageCount: j['luggageCount'] as int? ?? 0,
@@ -337,6 +347,8 @@ class Booking {
         'updatedAt': Timestamp.fromDate(updatedAt),
         'notes': notes,
         'flightNumber': flightNumber,
+        'flightType': flightType,
+        'pickupAirport': pickupAirport,
         'hours': hours,
         'passengerCount': passengerCount,
         'luggageCount': luggageCount,
@@ -366,6 +378,8 @@ class Booking {
         updatedAt: updatedAt ?? this.updatedAt,
         notes: notes,
         flightNumber: flightNumber,
+        flightType: flightType,
+        pickupAirport: pickupAirport,
         hours: hours,
         passengerCount: passengerCount,
         luggageCount: luggageCount,
