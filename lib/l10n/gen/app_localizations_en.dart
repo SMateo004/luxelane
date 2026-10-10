@@ -4184,6 +4184,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get startupErrorBody => 'Close the app and open it again. If it keeps happening, update it from the store or contact us.';
+
+  @override
+  String get startupErrorTitle => 'We couldn\'t start Luxelane';
+
+  @override
   String get statusCancelled => 'Cancelled';
 
   @override

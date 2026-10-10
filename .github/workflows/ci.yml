@@ -157,12 +157,24 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter pub get
+      # Firebase config of the Android app (scripts/setup_mobile.sh writes
+      # it; store the file's content in this secret). Without it the app
+      # can't start, so the job fails instead of shipping a broken bundle.
+      - name: Firebase config
+        env:
+          FIREBASE_ENV: ${{ secrets.FIREBASE_RIDER_ANDROID_ENV }}
+        run: |
+          [ -n "$FIREBASE_ENV" ] || { echo "::error::Set the FIREBASE_RIDER_ANDROID_ENV secret (scripts/setup_mobile.sh)"; exit 1; }
+          printf '%s\n' "$FIREBASE_ENV" > firebase.android.env
       - name: Build rider AAB
+        env:
+          MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_ANDROID_KEY }}
         run: |
           flutter build appbundle --release --flavor rider -t lib/main.dart \
+            --dart-define-from-file=firebase.android.env \
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
-            --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
+            --dart-define=APP_VERSION=${{ github.sha }} \
             --obfuscate \
             --split-debug-info=build/debug-info
       - uses: actions/upload-artifact@v4
@@ -188,13 +200,22 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter pub get
+      - name: Firebase config
+        env:
+          FIREBASE_ENV: ${{ secrets.FIREBASE_DRIVER_ANDROID_ENV }}
+        run: |
+          [ -n "$FIREBASE_ENV" ] || { echo "::error::Set the FIREBASE_DRIVER_ANDROID_ENV secret (scripts/setup_mobile.sh)"; exit 1; }
+          printf '%s\n' "$FIREBASE_ENV" > firebase.android.env
       - name: Build driver AAB
+        env:
+          MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_ANDROID_KEY }}
         run: |
           flutter build appbundle --release --flavor driver \
             -t lib/main_driver.dart \
+            --dart-define-from-file=firebase.android.env \
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
-            --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
+            --dart-define=APP_VERSION=${{ github.sha }} \
             --obfuscate \
             --split-debug-info=build/debug-info-driver
       - uses: actions/upload-artifact@v4
@@ -207,7 +228,7 @@ jobs:
   # ---------------------------------------------------------------------------
     name: Deploy Functions
     runs-on: ubuntu-latest
-    needs: [build_web_rider, build_android, rules_test]
+    needs: [build_web_rider, rules_test]  # Android builds are independent of the backend
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4

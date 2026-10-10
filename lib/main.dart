@@ -10,6 +10,7 @@ import 'app/app.dart';
 import 'core/config/env.dart';
 import 'core/config/firebase_env.dart';
 import 'core/di/injection.dart';
+import 'core/widgets/startup_error_app.dart';
 import 'core/services/crash_service.dart';
 import 'core/services/performance_service.dart';
 import 'core/utils/maps_web_loader.dart'
@@ -44,12 +45,14 @@ void main() async {
   try {
     await Firebase.initializeApp(
       // Production, unless a project is given with dart-defines (staging).
-      options: FirebaseEnv.options(DefaultFirebaseOptions.currentPlatform),
+      options: FirebaseEnv.options(() => DefaultFirebaseOptions.currentPlatform),
     );
   } catch (e) {
-    if (AppConfig.enableLogs) {
-      debugPrint('[Luxelane] Firebase init skipped: $e');
-    }
+    // Without Firebase nothing works (sign-in, bookings, push): say so
+    // instead of running an app that silently does nothing.
+    debugPrint('[Luxelane] Firebase init failed: $e');
+    runApp(const StartupErrorApp());
+    return;
   }
 
   // Google Maps JS API — load dynamically so the dart-define key is used

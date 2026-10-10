@@ -1248,6 +1248,8 @@
   "settleTitle": "Acertos com motoristas",
   "settleUndo": "Desfazer",
   "settleWeekRange": "{from} – {to}",
+  "startupErrorBody": "Feche o app e abra de novo. Se continuar, atualize-o pela loja ou fale conosco.",
+  "startupErrorTitle": "Não conseguimos iniciar a Luxelane",
   "statusCancelled": "Cancelado",
   "statusCompleted": "Concluído",
   "statusConfirmed": "Confirmado",

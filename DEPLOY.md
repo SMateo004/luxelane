@@ -56,12 +56,10 @@ Storage rules read the admin role from Firestore (cross-service rules); the
 first deploy asks to grant that permission — accept it.
 
 ### Flutter Android (prod)
+See **Mobile release (Android)** below:
 ```
-flutter build appbundle --release \
-  --dart-define=ENV=prod \
-  --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY \
-  --obfuscate \
-  --split-debug-info=build/debug-info
+APP=rider  GOOGLE_MAPS_KEY=… ./scripts/build_mobile.sh
+APP=driver GOOGLE_MAPS_KEY=… ./scripts/build_mobile.sh
 ```
 
 ### Flutter iOS (prod)
@@ -82,10 +80,15 @@ flutter run --dart-define=ENV=dev --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
 ## GitHub Secrets Required
 
 ```
-FIREBASE_TOKEN          → firebase login:ci
-GOOGLE_MAPS_API_KEY     → Google Cloud Console
-STRIPE_SECRET_KEY       → Stripe Dashboard
+FIREBASE_TOKEN               → firebase login:ci
+GOOGLE_MAPS_API_KEY          → Google Cloud Console (web key)
+GOOGLE_MAPS_ANDROID_KEY      → Google Cloud Console (Android key)
+FIREBASE_RIDER_ANDROID_ENV   → content of .env.luxelane-4e7ae.rider.android
+FIREBASE_DRIVER_ANDROID_ENV  → content of .env.luxelane-4e7ae.driver.android
+FCM_VAPID_KEY                → Firebase Console → Cloud Messaging (web push)
 ```
+The Android jobs fail with a clear error while the two `FIREBASE_*_ANDROID_ENV`
+secrets are missing (a bundle without them can't start).
 
 ---
 
@@ -129,16 +132,17 @@ Two apps share this codebase via product flavors (`android/app/build.gradle.kts`
 
 > ⚠ Application IDs can't change after the first Play Store upload. Confirm them before publishing.
 
-1. **Firebase for Android:** today Firebase is configured for **web only**, so the Android apps crash on start until this step is done.
+1. **Firebase for Android:** the apps read their Firebase config at build
+   time (dart-defines, `lib/core/config/firebase_env.dart`); without it they
+   show "No pudimos iniciar Luxelane" instead of starting. Register both
+   apps and write their config once per project:
    ```
-   flutterfire configure --project=luxelane-4e7ae --platforms=android,web \
-     --android-package-name=com.luxelane.rider \
-     --android-out=android/app/src/rider/google-services.json
-   flutterfire configure --project=luxelane-4e7ae --platforms=android,web \
-     --android-package-name=com.luxelane.driver \
-     --out=lib/firebase_options_driver.dart \
-     --android-out=android/app/src/driver/google-services.json
+   ./scripts/setup_mobile.sh                          # production
+   PROJECT=luxelane-staging ./scripts/setup_mobile.sh # staging, optional
    ```
+   It creates `.env.<project>.rider.android` and `.env.<project>.driver.android`
+   (git-ignored). For CI, paste their content into the
+   `FIREBASE_RIDER_ANDROID_ENV` / `FIREBASE_DRIVER_ANDROID_ENV` secrets.
 2. **Upload key:** create an upload keystore, then `android/key.properties`:
    ```
    keytool -genkey -v -keystore ~/luxelane-upload.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload
@@ -150,14 +154,12 @@ Two apps share this codebase via product flavors (`android/app/build.gradle.kts`
    keyPassword=...
    ```
 3. **Maps key for Android:** an Android-restricted key (package name + SHA-1), passed at build time.
-4. **Build:**
+4. **Build** (signed with `android/key.properties`, obfuscated, tagged with the commit):
    ```
-   flutter build appbundle --release --flavor rider  -t lib/main.dart \
-     --dart-define=ENV=prod --dart-define=GOOGLE_MAPS_KEY=$WEB_KEY -PMAPS_API_KEY=$ANDROID_KEY
-   flutter build appbundle --release --flavor driver -t lib/main_driver.dart \
-     --dart-define=ENV=prod --dart-define=GOOGLE_MAPS_KEY=$WEB_KEY -PMAPS_API_KEY=$ANDROID_KEY
+   APP=rider  GOOGLE_MAPS_KEY=$ANDROID_KEY ./scripts/build_mobile.sh
+   APP=driver GOOGLE_MAPS_KEY=$ANDROID_KEY ./scripts/build_mobile.sh
    ```
-   (If your Flutter version doesn't forward `-P`, export `MAPS_API_KEY=$ANDROID_KEY` instead.)
+   Add `PROJECT=luxelane-staging` for a staging build (it shows the STAGING ribbon).
 5. **Play Console:**
    - Privacy policy URL: `https://<tu-dominio>/privacidad`
    - Account deletion URL: `https://<tu-dominio>/eliminar-cuenta`

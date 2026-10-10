@@ -7585,6 +7585,18 @@ abstract class AppLocalizations {
   /// **'{from} – {to}'**
   String settleWeekRange(String from, String to);
 
+  /// No description provided for @startupErrorBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Cierra la app y vuelve a abrirla. Si sigue pasando, actualízala desde la tienda o escríbenos.'**
+  String get startupErrorBody;
+
+  /// No description provided for @startupErrorTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos iniciar Luxelane'**
+  String get startupErrorTitle;
+
   /// No description provided for @statusCancelled.
   ///
   /// In es, this message translates to:

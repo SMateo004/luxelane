@@ -129,7 +129,7 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 | 6 | **Despacho por cercanía.** Las recogidas de los próximos 90 min se ofrecen primero al chófer verificado más cercano con la clase correcta, dentro de 25 km y con ubicación de menos de 10 min. Tiene 1 minuto para aceptar (lo ve como "Solicitud exclusiva" con cuenta regresiva). Si la rechaza o no responde, pasa al siguiente (hasta 5) y luego se abre a todos. Las reservas anticipadas se abren a todos desde el inicio. Las reglas impiden que otro chófer tome una oferta exclusiva | ✅ Hecho |
 | 7 | **Meet & greet.** La reserva guarda el nombre y teléfono reales del pasajero (o del invitado). El chófer tiene llamar, WhatsApp y **"Mostrar cartel"**, que pone el nombre a pantalla completa en horizontal. El pasajero ve en el viaje cómo y dónde lo esperan | ✅ Hecho |
 | 7b | **Espera gratuita: 60 min en aeropuerto** desde el aterrizaje y **15 min en ciudad** desde la recogida o la llegada del chófer. Cuenta regresiva para pasajero y chófer, aviso push con la hora límite, y se muestra en la confirmación y en la landing | ✅ Hecho |
-| 8 | **Idiomas es / en / pt.** La app sigue el idioma del dispositivo o navegador y cambia en vivo, sin reiniciar; si el idioma no está soportado usa inglés. Hay 1427 textos en ARB, con fechas, horas y montos según el idioma. Las push salen en el idioma del usuario, y en Android 13+ se puede elegir el idioma por app. Los tests impiden textos fijos y traducciones incompletas (ver `lib/l10n/README.md`) | ✅ Hecho |
+| 8 | **Idiomas es / en / pt.** La app sigue el idioma del dispositivo o navegador y cambia en vivo, sin reiniciar; si el idioma no está soportado usa inglés. Hay 1429 textos en ARB, con fechas, horas y montos según el idioma. Las push salen en el idioma del usuario, y en Android 13+ se puede elegir el idioma por app. Los tests impiden textos fijos y traducciones incompletas (ver `lib/l10n/README.md`) | ✅ Hecho |
 | 9 | **Reportes de operaciones** (admin → Reportes). Se calculan sobre las reservas reales, por fecha de recogida y en hora local, para los últimos 7, 30 o 90 días. Incluyen viajes completados e ingresos (con variación contra el período anterior), ticket promedio, tasa de cancelación, cancelaciones tardías, reservas que nadie tomó y calificación promedio. Gráficos: viajes por día, ingresos por día, demanda por hora de recogida, mezcla por categoría y servicio, y origen de las cancelaciones. Tabla de rendimiento por chófer. Los datos diarios y los de chóferes se exportan a CSV (descarga en web; en móvil se copian) | ✅ Hecho |
 
 ### Fase 3: Super app y B2B (4–6 semanas) — en curso
@@ -174,6 +174,19 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 Pendiente de la Fase 3:
 1. **Entorno de staging**: correr `PROJECT=luxelane-staging ./scripts/setup_staging.sh` con tu cuenta (pasos en DEPLOY.md).
 
+## Fase 4 — Lanzamiento en tiendas
+
+Al revisar la app móvil apareció un bloqueo: Firebase estaba configurado **solo para la web**. En Android e iOS la app arrancaba sin Firebase, porque el error se ignoraba, así que no funcionaba nada. Los paquetes de Android que compilaba la CI salían rotos.
+
+| # | Tarea | Estado |
+|---|---|---|
+| 1 | **Arranque móvil.** Las apps leen su configuración de Firebase al compilar (`--dart-define-from-file`), con el mismo mecanismo que staging. Si Firebase no arranca, muestran "No pudimos iniciar Luxelane" en vez de funcionar rotas en silencio | ✅ Hecho |
+| 2 | **Registrar las apps de Android** (`com.luxelane.rider`, `com.luxelane.driver`) en Firebase y guardar su configuración: `scripts/setup_mobile.sh` | 🟡 Correr con tu cuenta |
+| 3 | **Compilación para Google Play:** `scripts/build_mobile.sh` (firmado, ofuscado y con la versión). La CI usa los secretos `FIREBASE_*_ANDROID_ENV` y falla con un error claro si faltan, en vez de producir un paquete roto. El despliegue del servidor ya no depende de la compilación de Android | ✅ Hecho (cargar los secretos) |
+| 4 | **Firma y claves:** keystore de subida (`android/key.properties`) y clave de Maps para Android | 🟡 Tu cuenta |
+| 5 | **Ficha de Play Console:** textos, capturas, formulario de seguridad de datos y video del permiso de ubicación del chófer. Las URLs de privacidad y de eliminación de cuenta ya existen | Pendiente |
+| 6 | **iOS:** crear `ios/` en una Mac, con identificadores, textos de permisos, clave APNs para el push y TestFlight | Pendiente (requiere Mac) |
+
 ### Señales de confianza para la landing (rápido, alto impacto)
 - Una franja con: **precio fijo garantizado**, **cancelación gratuita hasta 1 h antes**, **chóferes verificados**, **seguro incluido** (solo si la póliza lo cubre) y el **horario de atención** real (Admin → Soporte).
 - Una sección "Cómo funciona" en 3 pasos, ciudades disponibles, badges de App Store y Google Play, y logos de medios de pago.
@@ -199,7 +212,7 @@ Pendiente de la Fase 3:
 ## 5. Cómo probar
 
 ```
-flutter test                      # 302 tests Dart
+flutter test                      # 304 tests Dart
 (cd functions && npm test)        # 97 tests de negocio, precios, vuelos, chófer, espera, despacho, cancelación, mensajes, cuentas corporativas, documentos, promociones, soporte, observabilidad, fidelidad y suspensión de cuentas
 (cd rules-tests && npm test)      # 51 tests de reglas de Firestore y Storage (requiere Java)
 ```

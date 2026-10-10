@@ -1,0 +1,8 @@
+{
+  "startupErrorTitle": {"es": "No pudimos iniciar Luxelane", "en": "We couldn't start Luxelane", "pt": "Não conseguimos iniciar a Luxelane"},
+  "startupErrorBody": {
+    "es": "Cierra la app y vuelve a abrirla. Si sigue pasando, actualízala desde la tienda o escríbenos.",
+    "en": "Close the app and open it again. If it keeps happening, update it from the store or contact us.",
+    "pt": "Feche o app e abra de novo. Se continuar, atualize-o pela loja ou fale conosco."
+  }
+}

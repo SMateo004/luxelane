@@ -2691,6 +2691,8 @@
       }
     }
   },
+  "startupErrorBody": "Cierra la app y vuelve a abrirla. Si sigue pasando, actualízala desde la tienda o escríbenos.",
+  "startupErrorTitle": "No pudimos iniciar Luxelane",
   "statusCancelled": "Cancelado",
   "statusCompleted": "Completado",
   "statusConfirmed": "Confirmado",
