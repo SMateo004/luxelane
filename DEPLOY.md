@@ -44,8 +44,11 @@ firebase deploy --only functions,firestore
 ```
 
 ### Flutter Android (prod)
+The native Maps SDK reads its key from the manifest, which Gradle fills from
+the `GOOGLE_MAPS_API_KEY` env var (or `MAPS_API_KEY=...` in
+`android/local.properties` for local builds). Without it the map renders blank.
 ```
-flutter build appbundle --release \
+GOOGLE_MAPS_API_KEY=YOUR_KEY flutter build appbundle --release \
   --dart-define=ENV=prod \
   --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY \
   --obfuscate \
@@ -62,6 +65,7 @@ open ios/Runner.xcworkspace   # archive from Xcode
 
 ### Flutter Android (dev)
 ```
+# android/local.properties must contain MAPS_API_KEY=YOUR_KEY
 flutter run --dart-define=ENV=dev --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
 ```
 
