@@ -52,3 +52,19 @@ export function computeSettlement(
     driverPayout: round2(amount - platformCommission),
   };
 }
+
+/**
+ * Repartos que faltan en un lote de reservas: los viajes completados sin
+ * reparto (anteriores a settleBooking) o con uno de otro importe.
+ */
+export function planBackfill(
+  bookings: Array<{ id: string; data: SettlementInput }>,
+  currentCommissionPct: number,
+): Array<{ id: string; settlement: Settlement }> {
+  const out: Array<{ id: string; settlement: Settlement }> = [];
+  for (const b of bookings) {
+    const settlement = computeSettlement(b.data, currentCommissionPct);
+    if (settlement) out.push({ id: b.id, settlement });
+  }
+  return out;
+}

@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { computeSettlement } from './settlement';
+import { computeSettlement, planBackfill } from './settlement';
 
 describe('computeSettlement', () => {
   it('reparte un viaje completado con la comisión vigente', () => {
@@ -34,5 +34,24 @@ describe('computeSettlement', () => {
   it('acota porcentajes fuera de rango', () => {
     expect(computeSettlement({ status: 'completed', estimatedPrice: 100 }, 150)?.driverPayout).toBe(0);
     expect(computeSettlement({ status: 'completed', estimatedPrice: 100 }, NaN)?.commissionPct).toBe(20);
+  });
+});
+
+describe('planBackfill', () => {
+  it('solo reparte los completados que no tienen reparto vigente', () => {
+    const settled = { amount: 100, commissionPct: 20, platformCommission: 20, driverPayout: 80 };
+    const plan = planBackfill(
+      [
+        { id: 'a', data: { status: 'completed', estimatedPrice: 100 } },
+        { id: 'b', data: { status: 'completed', estimatedPrice: 100, settlement: settled } },
+        { id: 'c', data: { status: 'cancelled', estimatedPrice: 100 } },
+        { id: 'd', data: { status: 'completed', estimatedPrice: 100, finalPrice: 50, settlement: settled } },
+      ],
+      15,
+    );
+    expect(plan.map((p) => p.id)).toEqual(['a', 'd']);
+    expect(plan[0].settlement.commissionPct).toBe(15);
+    // El que ya tenía reparto conserva su porcentaje.
+    expect(plan[1].settlement).toEqual({ amount: 50, commissionPct: 20, platformCommission: 10, driverPayout: 40 });
   });
 });

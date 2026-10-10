@@ -116,6 +116,8 @@ AdminRepository _repo() {
       .thenAnswer((_) => Stream.value({'isMaintenanceMode': true}));
   when(r.watchFinanceSettings)
       .thenAnswer((_) => Stream.value({'platformCommissionPct': 20}));
+  when(r.backfillSettlements)
+      .thenAnswer((_) async => const Right<Failure, int>(2));
   when(() => r.updatePricingRule(any()))
       .thenAnswer((_) async => const Right<Failure, void>(null));
   when(() => r.verifyDriver(any()))
@@ -205,5 +207,19 @@ void main() {
     expect(saved.pricePerKmUsd, 4);
     expect(saved.basePriceUsd, 55);
     expect(saved.isActive, isFalse);
+  });
+
+  testWidgets('asigna los repartos pendientes desde configuración',
+      (tester) async {
+    await _pump(tester, const SettingsTab(), const Size(1280, 2400));
+    // Dos viajes completados de ejemplo, sin reparto del servidor.
+    expect(find.textContaining('2 viajes completados sin reparto'),
+        findsOneWidget);
+    await tester.tap(find.text('Asignar'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Asignar').last);
+    await tester.pumpAndSettle();
+    verify(_last.backfillSettlements).called(1);
+    expect(tester.takeException(), isNull);
   });
 }
