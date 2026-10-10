@@ -4003,6 +4003,12 @@ abstract class AppLocalizations {
   /// **'Viaje no encontrado'**
   String get driverTripNotFound;
 
+  /// No description provided for @envStagingRibbon.
+  ///
+  /// In es, this message translates to:
+  /// **'STAGING'**
+  String get envStagingRibbon;
+
   /// No description provided for @flightCancelled.
   ///
   /// In es, this message translates to:

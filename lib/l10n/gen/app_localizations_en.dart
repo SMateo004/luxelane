@@ -2174,6 +2174,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get driverTripNotFound => 'Trip not found';
 
   @override
+  String get envStagingRibbon => 'STAGING';
+
+  @override
   String get flightCancelled => 'Cancelled';
 
   @override

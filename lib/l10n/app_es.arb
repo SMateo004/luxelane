@@ -1325,6 +1325,7 @@
   "driverTodaySummary": "Resumen de hoy",
   "driverTotalEarnings": "Ganancias totales",
   "driverTripNotFound": "Viaje no encontrado",
+  "envStagingRibbon": "STAGING",
   "flightCancelled": "Cancelado",
   "flightDelayed": "Retrasado {minutes} min",
   "@flightDelayed": {

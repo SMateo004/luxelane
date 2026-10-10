@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
+import '../core/widgets/environment_banner.dart';
 import '../core/repositories/repositories.dart';
 import '../core/enums/enums.dart';
 import '../core/services/crash_service.dart';
@@ -118,10 +119,10 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         // No fixed `locale`: the app follows the device language and
         // updates live when it changes in system settings.
         localeListResolutionCallback: resolveAppLocale,
-        builder: (context, child) => IntlLocaleSync(
+        builder: (context, child) => EnvironmentBanner(child: IntlLocaleSync(
           onLocaleChanged: _rememberLocale,
           child: child ?? const SizedBox.shrink(),
-        ),
+        )),
         routerConfig: _router,
       ),
     );

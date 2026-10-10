@@ -29,9 +29,10 @@
    firebase functions:secrets:set FLIGHT_API_KEY --project=luxelane-4e7ae
    ```
 
-4. Grant the first admin with the Admin SDK (the app never self-promotes):
+4. Grant the first admin with the Admin SDK (the app never self-promotes).
+   Register that account in the app first:
    ```
-   node scripts/promote_admin.mjs
+   PROJECT=luxelane-4e7ae EMAIL=you@example.com node scripts/promote_admin.mjs
    ```
 
 5. Enable in Firebase Console (both projects):
@@ -200,14 +201,32 @@ iOS: there is no `ios/` folder yet. Create it with `flutter create --platforms=i
 
 ## Environments (staging / production)
 
-Today the apps point at one Firebase project (`luxelane-4e7ae`). To test
-changes without touching real bookings, add a staging project:
+Production is `luxelane-4e7ae` (alias `luxelane`). A staging project lets
+you try changes without touching real bookings. Builds choose the project at
+build time: the generated `firebase_options*.dart` are production, and
+dart-defines (`FIREBASE_PROJECT_ID`, `FIREBASE_API_KEY`, `FIREBASE_APP_ID`,
+`FIREBASE_MESSAGING_SENDER_ID`, …, see `lib/core/config/firebase_env.dart`)
+point a build at any other project. Non-production builds show a red
+**STAGING** ribbon on every screen.
 
-1. Create `luxelane-staging` in the Firebase console (Blaze plan, same
-   products: Auth, Firestore, Functions, Storage, Hosting).
-2. `firebase use --add luxelane-staging` and name the alias `staging`.
-3. `flutterfire configure --project=luxelane-staging
-   --out=lib/firebase_options_staging.dart` and pick the options file by
-   `--dart-define=ENV=staging` in `main.dart`.
-4. Deploy there first: `firebase use staging && firebase deploy`, then
-   `firebase use luxelane && firebase deploy` once verified.
+**Create it once** (Firebase CLI logged in, gcloud signed in as the owner):
+```
+PROJECT=luxelane-staging ./scripts/setup_staging.sh
+```
+It creates the project, waits for you to link billing (Blaze) and to turn
+on Email/Password sign-in and Storage in the console, enables the APIs,
+creates Firestore (`FIRESTORE_LOCATION`, default `nam5` — use production's),
+registers a web app and writes its config to `.env.staging` (git-ignored),
+creates the driver hosting site, adds the `staging` alias and hosting
+targets to `.firebaserc`, sets the function secrets (flight tracking off
+unless `FLIGHT_API_KEY` is given) and deploys rules, indexes and functions.
+Safe to re-run. It ends with the next steps: deploy the web apps, promote
+an admin and configure pricing.
+
+**Day to day**
+```
+firebase deploy -P staging --only functions,firestore,storage   # backend
+DEPLOY_ENV=staging GOOGLE_MAPS_KEY=… ./scripts/deploy_web.sh    # web apps
+```
+Check it there, then deploy the same commit to production (`-P luxelane`,
+and `deploy_web.sh` without `DEPLOY_ENV`).

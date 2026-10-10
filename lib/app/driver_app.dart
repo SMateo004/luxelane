@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
+import '../core/widgets/environment_banner.dart';
 import '../core/repositories/repositories.dart';
 import '../core/services/notification_service.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
@@ -79,7 +80,7 @@ class _DriverAppState extends State<DriverApp> {
         // No fixed `locale`: the app follows the device language and
         // updates live when it changes in system settings.
         localeListResolutionCallback: resolveAppLocale,
-        builder: (context, child) => IntlLocaleSync(
+        builder: (context, child) => EnvironmentBanner(child: IntlLocaleSync(
           onLocaleChanged: (locale) {
             final state = _authBloc.state;
             if (state is AuthAuthenticated) {
@@ -87,7 +88,7 @@ class _DriverAppState extends State<DriverApp> {
             }
           },
           child: child ?? const SizedBox.shrink(),
-        ),
+        )),
         routerConfig: _router,
       ),
     );

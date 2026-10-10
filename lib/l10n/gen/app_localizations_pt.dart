@@ -2186,6 +2186,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get driverTripNotFound => 'Viagem não encontrada';
 
   @override
+  String get envStagingRibbon => 'STAGING';
+
+  @override
   String get flightCancelled => 'Cancelado';
 
   @override

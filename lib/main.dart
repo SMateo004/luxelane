@@ -8,6 +8,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app/app.dart';
 import 'core/config/env.dart';
+import 'core/config/firebase_env.dart';
 import 'core/di/injection.dart';
 import 'core/services/crash_service.dart';
 import 'core/services/performance_service.dart';
@@ -42,7 +43,8 @@ void main() async {
 
   try {
     await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+      // Production, unless a project is given with dart-defines (staging).
+      options: FirebaseEnv.options(DefaultFirebaseOptions.currentPlatform),
     );
   } catch (e) {
     if (AppConfig.enableLogs) {
