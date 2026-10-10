@@ -1,5 +1,10 @@
 {
   "@@locale": "es",
+  "accountSuspendedBody": "El equipo de Luxelane suspendió tu cuenta, así que por ahora no puedes reservar ni recibir viajes. Si crees que es un error o quieres saber más, escríbenos.",
+  "accountSuspendedContact": "Escribir a soporte",
+  "accountSuspendedError": "Tu cuenta está suspendida. Escríbenos desde Ayuda.",
+  "accountSuspendedSignOut": "Cerrar sesión",
+  "accountSuspendedTitle": "Tu cuenta está suspendida",
   "adminActionFailed": "No se pudo completar la acción. Inténtalo de nuevo.",
   "adminActive": "Activo",
   "adminAppVersion": "Versión de la app",
@@ -331,6 +336,9 @@
   "adminTotalBookings": "Total de reservas",
   "adminTwoFactor": "Autenticación admin de dos factores",
   "adminTwoFactorDesc": "Requiere 2FA para todas las acciones administrativas.",
+  "adminUserCannotSuspendAdmin": "Las cuentas de administrador no se pueden suspender",
+  "adminUserReactivate": "Reactivar cuenta",
+  "adminUserSuspend": "Suspender cuenta",
   "adminVehicleDetails": "Placa: {plate} · Clase: {vehicleClass}",
   "@adminVehicleDetails": {
     "placeholders": {

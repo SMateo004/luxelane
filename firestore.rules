@@ -21,8 +21,13 @@ service cloud.firestore {
       return request.auth != null && getUserRole() == 'driver';
     }
 
+    // Admins turn accounts off with users/{uid}.isActive (missing = active).
+    function isActiveUser() {
+      return myUser().get('isActive', true) != false;
+    }
+
     function isVerifiedDriver() {
-      return isDriver() &&
+      return isDriver() && isActiveUser() &&
         get(/databases/$(database)/documents/driverProfiles/$(request.auth.uid)).data.documentsVerified == true;
     }
 
@@ -84,7 +89,8 @@ service cloud.firestore {
 
       // Users can edit their own profile, but never their role, verification
       // or Stripe linkage.
-      allow update: if isAdmin() || (
+      // Admins can't turn their own account off (no lock-out).
+      allow update: if (isAdmin() && !(isOwner(uid) && request.resource.data.get('isActive', true) == false)) || (
         isOwner(uid) &&
         notChanging(['role', 'isVerified', 'isActive', 'stripeCustomerId', 'email', 'companyId', 'companyRole'])
       );
@@ -119,7 +125,9 @@ service cloud.firestore {
       // rating and ride count are owned by admins / Cloud Functions.
       allow update: if isAdmin() || (
         isOwner(uid) && isDriver() &&
-        notChanging(['documentsVerified', 'rating', 'ratingCount', 'totalRides', 'userId'])
+        notChanging(['documentsVerified', 'rating', 'ratingCount', 'totalRides', 'userId', 'suspended']) &&
+        // A suspended chauffeur can't go online.
+        (request.resource.data.get('isAvailable', false) != true || isActiveUser())
       );
       allow delete: if false;
 

@@ -443,3 +443,21 @@ describe('support hours config', () => {
     await assertSucceeds(getDoc(doc(db('rider'), 'config/support')));
   });
 });
+
+describe('suspended accounts', () => {
+  it('a suspended chauffeur cannot go online or take a booking, but can go offline', async () => {
+    await seed('users/driver', { role: 'driver', email: 'd@x.com', isActive: false });
+    await seed('bookings/b1', booking());
+    await assertFails(updateDoc(doc(db('driver'), 'driverProfiles/driver'), { isAvailable: true }));
+    await assertSucceeds(updateDoc(doc(db('driver'), 'driverProfiles/driver'), { isAvailable: false }));
+    await assertFails(updateDoc(doc(db('driver'), 'driverProfiles/driver'), { suspended: false }));
+    await assertFails(updateDoc(doc(db('driver'), 'bookings/b1'), { driverId: 'driver', status: 'confirmed', updatedAt: 1 }));
+  });
+
+  it('only admins change isActive, and never on themselves', async () => {
+    await assertFails(updateDoc(doc(db('rider'), 'users/rider'), { isActive: true }));
+    await assertSucceeds(updateDoc(doc(db('admin'), 'users/rider'), { isActive: false }));
+    await assertFails(updateDoc(doc(db('admin'), 'users/admin'), { isActive: false }));
+    await assertSucceeds(updateDoc(doc(db('admin'), 'users/admin'), { displayName: 'Admin' }));
+  });
+});

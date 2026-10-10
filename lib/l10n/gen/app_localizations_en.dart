@@ -9,6 +9,21 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get accountSuspendedBody => 'The Luxelane team suspended your account, so for now you can\'t book or receive rides. If you think this is a mistake or want to know more, write to us.';
+
+  @override
+  String get accountSuspendedContact => 'Contact support';
+
+  @override
+  String get accountSuspendedError => 'Your account is suspended. Contact us from Help.';
+
+  @override
+  String get accountSuspendedSignOut => 'Sign out';
+
+  @override
+  String get accountSuspendedTitle => 'Your account is suspended';
+
+  @override
   String get adminActionFailed => 'That action couldn\'t be completed. Please try again.';
 
   @override
@@ -536,6 +551,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminTwoFactorDesc => 'Requires 2FA for all admin actions.';
+
+  @override
+  String get adminUserCannotSuspendAdmin => 'Admin accounts can\'t be suspended';
+
+  @override
+  String get adminUserReactivate => 'Reactivate account';
+
+  @override
+  String get adminUserSuspend => 'Suspend account';
 
   @override
   String adminVehicleDetails(String plate, String vehicleClass) {

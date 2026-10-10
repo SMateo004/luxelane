@@ -35,8 +35,12 @@ class _DriverAppState extends State<DriverApp> {
     _router = buildDriverRouter(_authBloc, _driverBloc);
 
     // When auth completes, init driver + notifications
+    // Once per signed-in user (status changes re-emit the same user).
+    String? startedFor;
     _authBloc.stream.listen((state) {
-      if (state is AuthAuthenticated) {
+      if (state is! AuthAuthenticated) startedFor = null;
+      if (state is AuthAuthenticated && state.user.id != startedFor) {
+        startedFor = state.user.id;
         _driverBloc.add(DriverStarted(userId: state.user.id));
         _notificationBloc.add(
           NotificationWatchStarted(userId: state.user.id),

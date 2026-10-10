@@ -41,7 +41,7 @@ El cliente o el chófer la abren desde **Ayuda → Nueva solicitud → Seguridad
 1. Abrir la solicitud y **responder en el chat en menos de 5 min**: "Te leemos. ¿Estás a salvo ahora?".
 2. Si hay peligro inmediato: indicar llamar al **110**. Si está en un viaje, identificar la reserva (la solicitud puede traer el viaje asociado) y conseguir los teléfonos del chófer y del cliente (ver §6: hoy están en la consola de Firebase, colección `users`, campo `phone`).
 3. Llamar por teléfono a la persona afectada. No resolver un S1 solo por chat.
-4. Si el problema involucra al chófer: **retirarlo de servicio** rechazando un documento en Admin → Chóferes → Documentos, con el motivo "Suspensión preventiva por incidente". Eso lo saca de línea y del despacho al instante. Ver la limitación en §6.
+4. Si el problema involucra al chófer: **suspender su cuenta** con el interruptor en Admin → Usuarios. Al instante queda desconectado y fuera del despacho; no puede volver a conectarse, tomar reservas ni cotizar, y la app le muestra "Tu cuenta está suspendida", con acceso solo a Ayuda. Si tenía viajes asignados, llega un aviso a los admins: hay que cancelarlos y volver a reservarlos (§4.4). Para un cliente, la suspensión le impide cotizar y reservar. Para reactivar, se vuelve a encender el interruptor (el chófer se conecta él mismo). Queda registro en la auditoría.
 5. Escalar al responsable de operaciones y dejar todo escrito en la solicitud. Marcarla como **Resuelta** solo cuando la persona esté a salvo y haya un siguiente paso acordado.
 
 ### 4.2 Recogida sin chófer (S2)
@@ -80,7 +80,7 @@ Push **"No hay chóferes en línea"** (como máximo uno por hora) cuando hay res
 
 ### 4.8 Queja sobre un chófer (S3; S1 si hay riesgo)
 1. Leer la solicitud y la calificación del viaje, y pedir la versión del chófer.
-2. Si corresponde retirarlo de servicio, usar el mismo método de §4.1, paso 4.
+2. Si corresponde retirarlo de servicio, suspender su cuenta como en §4.1, paso 4.
 
 ### 4.9 Falla del sistema
 | Síntoma | Qué hacer |
@@ -108,7 +108,7 @@ Estas son cosas que el sistema **todavía no hace**. Están aquí para que nadie
 - **No hay botón de pánico/SOS en el viaje.** El cliente pide ayuda desde Ayuda → Seguridad o llama al chófer o al 110. El centro de ayuda se abre desde el perfil y desde el recibo, no desde la pantalla del viaje en curso.
 - **No se puede cambiar el chófer** de una reserva ya asignada: se cancela y se crea otra.
 - **El panel no muestra teléfonos ni permite llamar** al cliente o al chófer: hay que buscarlos en la consola de Firebase (`users/{id}.phone`) o en la planilla de chóferes. Conviene tener esa planilla actualizada e impresa en el turno.
-- **Desactivar un usuario** en Admin → Usuarios **todavía no le bloquea el acceso**. Para retirar a un chófer, usar el rechazo de documento (§4.1, paso 4).
+- Las cuentas de administrador no se pueden suspender (para que nadie quede fuera del panel).
 - Si una solicitud urgente queda sin respuesta, **no hay un segundo aviso**: el turno debe revisar el banner rojo.
 - Si el monitor automático se detiene, **no llega ningún aviso**: solo se ve en Admin → Salud.
 - No hay reembolsos ni ajustes de precio desde el panel (§4.6).

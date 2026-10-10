@@ -54,8 +54,12 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
     _router = buildRouter(_authBloc);
 
     // Start DriverBloc + NotificationBloc only when authenticated
+    // Once per signed-in user (status changes re-emit the same user).
+    String? startedFor;
     _authBloc.stream.listen((state) {
-      if (state is AuthAuthenticated) {
+      if (state is! AuthAuthenticated) startedFor = null;
+      if (state is AuthAuthenticated && state.user.id != startedFor) {
+        startedFor = state.user.id;
         CrashService.setUser(state.user.id);
         if (state.user.role == UserRole.driver &&
             _driverBloc.state is DriverInitial) {

@@ -76,6 +76,15 @@ class _AuthSignedOut extends AuthEvent {
   const _AuthSignedOut();
 }
 
+/// users/{uid}.isActive changed while signed in (an admin suspended or
+/// reactivated the account).
+class _AccountStatusChanged extends AuthEvent {
+  const _AccountStatusChanged(this.isActive);
+  final bool isActive;
+  @override
+  List<Object?> get props => [isActive];
+}
+
 // ---------------------------------------------------------------------------
 // States
 // ---------------------------------------------------------------------------
@@ -98,7 +107,7 @@ class AuthAuthenticated extends AuthState {
   const AuthAuthenticated(this.user);
   final User user;
   @override
-  List<Object?> get props => [user.id];
+  List<Object?> get props => [user.id, user.isActive];
 }
 
 class AuthUnauthenticated extends AuthState {
@@ -127,8 +136,9 @@ class AuthError extends AuthState {
 // ---------------------------------------------------------------------------
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc({required AuthRepository authRepository})
+  AuthBloc({required AuthRepository authRepository, Stream<bool> Function(String uid)? watchIsActive})
       : _repo = authRepository,
+        _watchIsActive = watchIsActive,
         super(const AuthInitial()) {
     on<AuthStarted>(_onStarted);
     on<LoginRequested>(_onLogin);
@@ -138,9 +148,35 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<VerificationEmailSent>(_onVerificationEmail);
     on<PhoneVerificationRequested>(_onPhoneVerification);
     on<PasswordResetRequested>(_onPasswordReset);
+    on<_AccountStatusChanged>(_onAccountStatusChanged);
   }
 
   final AuthRepository _repo;
+
+  /// Live users/{uid}.isActive, so a suspension applies without restarting.
+  final Stream<bool> Function(String uid)? _watchIsActive;
+  StreamSubscription<bool>? _statusSub;
+
+  void _watchStatus() {
+    _statusSub?.cancel();
+    _statusSub = null;
+    final s = state;
+    final watch = _watchIsActive;
+    if (watch == null || s is! AuthAuthenticated || s.user.role == UserRole.admin) return;
+    _statusSub = watch(s.user.id).listen(
+      (active) {
+        if (!isClosed) add(_AccountStatusChanged(active));
+      },
+      onError: (_) {},
+    );
+  }
+
+  void _onAccountStatusChanged(_AccountStatusChanged event, Emitter<AuthState> emit) {
+    final s = state;
+    if (s is AuthAuthenticated && s.user.isActive != event.isActive) {
+      emit(AuthAuthenticated(s.user.copyWith(isActive: event.isActive)));
+    }
+  }
 
   // Watches the raw Firebase sign-in flag after the initial state is resolved.
   // Only reacts to sign-out (false) so it never races with _onLogin/_onRegister.
@@ -160,6 +196,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           user != null ? AuthAuthenticated(user) : const AuthUnauthenticated(),
       onError: (_, __) => const AuthUnauthenticated(),
     );
+    _watchStatus();
 
     // After initial state is known, watch *only* for sign-out via the raw
     // Firebase stream (no Firestore) — login/register own their transitions.
@@ -178,6 +215,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (f) => emit(AuthError.fromFailure(f)),
       (user) => emit(AuthAuthenticated(user)),
     );
+    _watchStatus();
   }
 
   // ── _onRegister ────────────────────────────────────────────────────────────
@@ -195,12 +233,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (f) => emit(AuthError.fromFailure(f)),
       (user) => emit(AuthAuthenticated(user)),
     );
+    _watchStatus();
   }
 
   // ── _onLogout ──────────────────────────────────────────────────────────────
   Future<void> _onLogout(LogoutRequested event, Emitter<AuthState> emit) async {
     // Cancel the watcher so it doesn't double-fire _AuthSignedOut.
     await _signOutSub?.cancel();
+    await _statusSub?.cancel();
     final result = await _repo.logout();
     result.fold(
       (f) => emit(AuthError.fromFailure(f)),
@@ -209,8 +249,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   // ── _onSignedOut (internal) ────────────────────────────────────────────────
-  void _onSignedOut(_AuthSignedOut event, Emitter<AuthState> emit) =>
-      emit(const AuthUnauthenticated());
+  void _onSignedOut(_AuthSignedOut event, Emitter<AuthState> emit) {
+    _statusSub?.cancel();
+    emit(const AuthUnauthenticated());
+  }
 
   // ── Misc ───────────────────────────────────────────────────────────────────
   Future<void> _onVerificationEmail(
@@ -237,6 +279,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   @override
   Future<void> close() {
     _signOutSub?.cancel();
+    _statusSub?.cancel();
     return super.close();
   }
 }

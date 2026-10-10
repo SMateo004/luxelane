@@ -25,6 +25,7 @@ import {
   shouldTrack,
 } from './flights';
 import * as err from './errors';
+import { ASSIGNED_STATUSES, SUSPENDED, isSuspended, suspensionChange } from './accounts';
 import { WINDOW_MS, bestDiscount, loyaltyDiscount, nextTier, parseConfig, tierFor } from './loyalty';
 import {
   MAX_MESSAGE,
@@ -225,6 +226,7 @@ interface QuoteDoc {
 
 interface UserDoc {
   locale?: string;
+  isActive?: boolean;
   role?: UserRole;
   email?: string;
   displayName?: string;
@@ -246,6 +248,13 @@ function requireAuth(req: CallableRequest): string {
 async function getUser(uid: string): Promise<UserDoc> {
   const doc = await db.collection('users').doc(uid).get();
   return (doc.data() as UserDoc | undefined) ?? {};
+}
+
+/** Suspended accounts (isActive=false) can't book or take rides. */
+async function requireActive(uid: string): Promise<UserDoc> {
+  const user = await getUser(uid);
+  if (isSuspended(user)) throw err.permissionDenied(SUSPENDED);
+  return user;
 }
 
 async function requireAdmin(req: CallableRequest): Promise<string> {
@@ -483,6 +492,7 @@ export const myLoyalty = onCall(async (req) => {
 
 export const quoteBooking = onCall(async (req) => {
   const uid = requireAuth(req);
+  await requireActive(uid);
   const { vehicleClass, serviceType, origin, destination, routeDistanceKm, hours, days, promoCode } = (req.data ?? {}) as {
     vehicleClass: unknown;
     serviceType: unknown;
@@ -621,6 +631,7 @@ export const createPaymentIntent = onCall(stripeOpts, async (req) => {
 
 export const createBooking = onCall(stripeOpts, async (req) => {
   const uid = requireAuth(req);
+  await requireActive(uid);
   const d = (req.data ?? {}) as {
     quoteId: string;
     scheduledAt: number;
@@ -918,7 +929,7 @@ async function loadDriverCandidates(): Promise<DriverCandidate[]> {
     .map((id) => db.collection('vehicles').doc(id));
   const vehicles = vehicleRefs.length ? await db.getAll(...vehicleRefs) : [];
   const classById = new Map(vehicles.map((v) => [v.id, (v.data()?.class as string) ?? null]));
-  return snap.docs.map((d) => {
+  return snap.docs.filter((d) => d.data().suspended !== true).map((d) => {
     const p = d.data();
     const geo = p.currentLocation as admin.firestore.GeoPoint | undefined;
     return {
@@ -1260,6 +1271,44 @@ export const assignNearestDriver = onCall(async (req) => {
 });
 
 // ---------------------------------------------------------------------------
+// onUserSuspensionChanged — when an admin turns an account off (isActive),
+// a chauffeur is taken offline and out of dispatch, and admins are told
+// about rides still assigned to them. Turning it back on lifts the flag
+// (the chauffeur goes online again themselves).
+// ---------------------------------------------------------------------------
+
+export const onUserSuspensionChanged = onDocumentUpdated('users/{uid}', async (event) => {
+  const before = event.data?.before.data() as UserDoc | undefined;
+  const after = event.data?.after.data() as UserDoc | undefined;
+  const change = suspensionChange(before, after);
+  if (!change) return;
+  const uid = event.params.uid;
+  await writeAudit(change === 'suspended' ? 'user_suspended' : 'user_reactivated', { userId: uid, role: after?.role ?? null });
+  if (after?.role !== 'driver') return;
+
+  const profileRef = db.collection('driverProfiles').doc(uid);
+  if (!(await profileRef.get()).exists) return;
+  if (change === 'reactivated') {
+    await profileRef.update({ suspended: false });
+    return;
+  }
+  await profileRef.update({ suspended: true, isAvailable: false });
+
+  const assigned = await db
+    .collection('bookings')
+    .where('driverId', '==', uid)
+    .where('status', 'in', [...ASSIGNED_STATUSES])
+    .get();
+  logger.warn('onUserSuspensionChanged', 'chauffeur suspended', { uid, assigned: assigned.size });
+  if (assigned.size > 0) {
+    await pushAdmins('opsSuspendedDriverTitle', 'opsSuspendedDriverBody', () => ({
+      name: after?.displayName || after?.email || uid,
+      count: assigned.size,
+    }));
+  }
+});
+
+// ---------------------------------------------------------------------------
 // acceptBooking  (HTTPS Callable) — atomic self-assignment by a verified driver.
 // Prevents two drivers from accepting the same booking simultaneously.
 // ---------------------------------------------------------------------------
@@ -1269,7 +1318,7 @@ export const acceptBooking = onCall(async (req) => {
   const { bookingId } = req.data as { bookingId: string };
   if (!bookingId) throw err.invalidArgument('bookingId required');
 
-  const caller = await getUser(driverId);
+  const caller = await requireActive(driverId);
   if (caller.role !== 'driver') throw err.permissionDenied('Drivers only');
 
   const bookingRef = db.collection('bookings').doc(bookingId);

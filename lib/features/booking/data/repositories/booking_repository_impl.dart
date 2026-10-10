@@ -45,8 +45,12 @@ class BookingRepositoryImpl implements BookingRepository {
       });
       return Right(
           Quote.fromJson(Map<String, dynamic>.from(result.data as Map)));
-    } catch (_) {
+    } on FirebaseFunctionsException catch (e) {
       // Server messages are technical English; the UI shows a translated one.
+      return Left(ServerFailure((e.message ?? '').contains('account/suspended')
+          ? BookingErrorCodes.accountSuspended
+          : BookingErrorCodes.quoteFailed));
+    } catch (_) {
       return const Left(ServerFailure(BookingErrorCodes.quoteFailed));
     }
   }
@@ -115,6 +119,7 @@ class BookingRepositoryImpl implements BookingRepository {
 
   /// Maps createBooking's server errors (functions/src/index.ts) to codes.
   static String _createErrorCode(String message) {
+    if (message.contains('account/suspended')) return BookingErrorCodes.accountSuspended;
     if (message.contains('quote/expired')) return BookingErrorCodes.quoteExpired;
     if (message.contains('payment/not-authorised')) return BookingErrorCodes.paymentNotAuthorised;
     if (message.contains('invalid flightNumber')) return BookingErrorCodes.invalidFlight;

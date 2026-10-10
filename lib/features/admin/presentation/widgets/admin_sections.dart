@@ -986,12 +986,22 @@ class _UserTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: LuxSpacing.md),
-            Switch.adaptive(
-              value: user.isActive,
-              activeColor: LuxColors.accent,
-              onChanged: (val) => context
-                  .read<AdminBloc>()
-                  .add(AdminToggleUserStatusRequested(user.id, val)),
+            // Admin accounts can't be suspended (no lock-out).
+            Tooltip(
+              message: user.role == UserRole.admin
+                  ? context.l10n.adminUserCannotSuspendAdmin
+                  : user.isActive
+                      ? context.l10n.adminUserSuspend
+                      : context.l10n.adminUserReactivate,
+              child: Switch.adaptive(
+                value: user.isActive,
+                activeColor: LuxColors.accent,
+                onChanged: user.role == UserRole.admin
+                    ? null
+                    : (val) => context
+                        .read<AdminBloc>()
+                        .add(AdminToggleUserStatusRequested(user.id, val)),
+              ),
             ),
           ],
         ),

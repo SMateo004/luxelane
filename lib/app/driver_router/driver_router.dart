@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/services/crash_service.dart';
 
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../features/auth/presentation/pages/account_suspended_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/driver/presentation/bloc/driver_bloc.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
@@ -53,6 +54,11 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
           return DriverRoutes.login;
         }
 
+        // Suspended accounts only see the notice and help.
+        if (isAuth && (isAccountSuspended(authState) || going == accountSuspendedPath)) {
+          return accountSuspensionRedirect(authState, going, home: DriverRoutes.home);
+        }
+
         // If authenticated and on login page, go to home
         if (isAuth && going == DriverRoutes.login) {
           return DriverRoutes.home;
@@ -80,6 +86,7 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
           path: DriverRoutes.login,
           pageBuilder: (c, s) => _fade(const LoginPage(), s),
         ),
+        GoRoute(path: accountSuspendedPath, pageBuilder: (c, s) => _fade(const AccountSuspendedPage(), s)),
         GoRoute(path: '/terminos', pageBuilder: (c, s) => _fade(LegalPage.terms(), s)),
         GoRoute(path: '/privacidad', pageBuilder: (c, s) => _fade(LegalPage.privacy(), s)),
         GoRoute(path: '/contacto', pageBuilder: (c, s) => _fade(const ContactPage(), s)),

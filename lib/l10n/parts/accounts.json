@@ -1,0 +1,22 @@
+{
+  "accountSuspendedTitle": {"es": "Tu cuenta está suspendida", "en": "Your account is suspended", "pt": "Sua conta está suspensa"},
+  "accountSuspendedBody": {
+    "es": "El equipo de Luxelane suspendió tu cuenta, así que por ahora no puedes reservar ni recibir viajes. Si crees que es un error o quieres saber más, escríbenos.",
+    "en": "The Luxelane team suspended your account, so for now you can't book or receive rides. If you think this is a mistake or want to know more, write to us.",
+    "pt": "A equipe da Luxelane suspendeu sua conta, então por enquanto você não pode reservar nem receber viagens. Se acha que é um engano ou quer saber mais, escreva para nós."
+  },
+  "accountSuspendedContact": {"es": "Escribir a soporte", "en": "Contact support", "pt": "Falar com o suporte"},
+  "accountSuspendedSignOut": {"es": "Cerrar sesión", "en": "Sign out", "pt": "Sair"},
+  "accountSuspendedError": {
+    "es": "Tu cuenta está suspendida. Escríbenos desde Ayuda.",
+    "en": "Your account is suspended. Contact us from Help.",
+    "pt": "Sua conta está suspensa. Fale conosco pela Ajuda."
+  },
+  "adminUserCannotSuspendAdmin": {
+    "es": "Las cuentas de administrador no se pueden suspender",
+    "en": "Admin accounts can't be suspended",
+    "pt": "Contas de administrador não podem ser suspensas"
+  },
+  "adminUserSuspend": {"es": "Suspender cuenta", "en": "Suspend account", "pt": "Suspender conta"},
+  "adminUserReactivate": {"es": "Reactivar cuenta", "en": "Reactivate account", "pt": "Reativar conta"}
+}

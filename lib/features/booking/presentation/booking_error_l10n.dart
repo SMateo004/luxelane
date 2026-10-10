@@ -17,6 +17,7 @@ String localizedBookingError(AppLocalizations l, String message) => switch (mess
       BookingErrorCodes.costCenterRequired => l.corpErrorCostCenterRequired,
       BookingErrorCodes.companyInactive => l.corpErrorCompanyInactive,
       BookingErrorCodes.corporateNotAllowed => l.corpErrorNotAllowed,
+      BookingErrorCodes.accountSuspended => l.accountSuspendedError,
       BookingErrorCodes.promoNoLongerValid => l.promoErrorNoLongerValid,
       PromoErrorCodes.invalid => l.promoErrorInvalid,
       PromoErrorCodes.notStarted => l.promoErrorNotStarted,

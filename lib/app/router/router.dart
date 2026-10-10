@@ -22,6 +22,7 @@ import '../../features/driver/presentation/pages/driver_queue_screen.dart';
 import '../../features/services/presentation/pages/airport_transfer_page.dart';
 import '../../features/services/presentation/pages/hourly_charter_page.dart';
 import '../../features/services/presentation/pages/immediate_pickup_page.dart';
+import '../../features/auth/presentation/pages/account_suspended_page.dart';
 import '../../features/hotels/presentation/hotel_transfers_page.dart';
 import '../../features/services/presentation/pages/intercity_page.dart';
 import '../../features/home/presentation/pages/home_screen.dart';
@@ -96,6 +97,12 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
           final isAdmin = user.role == UserRole.admin;
           final isDriver = user.role == UserRole.driver;
           final isDriverPath = going.startsWith('/driver');
+
+          // ── Suspended accounts only see the notice and help ─────────────
+          if (isAccountSuspended(authState) || going == accountSuspendedPath) {
+            return accountSuspensionRedirect(authState, going,
+                home: isDriver ? LuxRoutes.driverHome : LuxRoutes.home);
+          }
 
           // ── Admin: always send to /admin, never block them ───────────────
           if (isAdmin) {
@@ -198,6 +205,7 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
           path: '/servicios/hoteles',
           pageBuilder: (c, s) => _fade(HotelTransfersPage(initialHotelId: s.uri.queryParameters['h']), s),
         ),
+        GoRoute(path: accountSuspendedPath, pageBuilder: (c, s) => _fade(const AccountSuspendedPage(), s)),
         GoRoute(path: '/terminos', pageBuilder: (c, s) => _fade(LegalPage.terms(), s)),
         GoRoute(path: '/privacidad', pageBuilder: (c, s) => _fade(LegalPage.privacy(), s)),
         GoRoute(path: '/contacto', pageBuilder: (c, s) => _fade(const ContactPage(), s)),

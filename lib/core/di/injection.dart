@@ -173,7 +173,15 @@ void _registerUseCases() {
 }
 
 void _registerBlocs() {
-  sl.registerFactory(() => AuthBloc(authRepository: sl()));
+  sl.registerFactory(() => AuthBloc(
+        authRepository: sl(),
+        watchIsActive: (uid) => sl<FirebaseFirestore>()
+            .collection('users')
+            .doc(uid)
+            .snapshots()
+            .map((d) => d.data()?['isActive'] != false)
+            .distinct(),
+      ));
   sl.registerFactory(() => BookingBloc(bookingRepository: sl()));
   sl.registerFactory(() => VehicleBloc(vehicleRepository: sl()));
   sl.registerFactory(() => RideBloc(rideRepository: sl()));

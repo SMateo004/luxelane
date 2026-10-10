@@ -17,6 +17,9 @@ abstract final class BookingErrorCodes {
   static const costCenterRequired = 'booking/cost-center-required';
   static const companyInactive = 'booking/company-inactive';
   static const corporateNotAllowed = 'booking/corporate-not-allowed';
+
+  /// An admin suspended the account (users/{uid}.isActive = false).
+  static const accountSuspended = 'booking/account-suspended';
   static const promoNoLongerValid = 'booking/promo-no-longer-valid';
 }
 

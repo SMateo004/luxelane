@@ -90,6 +90,16 @@ const M = {
     en: 'Pickup at {time} at {place}. Nobody has taken it yet.',
     pt: 'Embarque às {time} em {place}. Ninguém aceitou ainda.',
   },
+  opsSuspendedDriverTitle: {
+    es: 'Chófer suspendido con viajes asignados',
+    en: 'Suspended chauffeur has assigned rides',
+    pt: 'Motorista suspenso com viagens atribuídas',
+  },
+  opsSuspendedDriverBody: {
+    es: '{name} tiene {count} viaje(s) asignado(s). Cancélalos y vuelve a reservarlos en Admin → Reservas.',
+    en: '{name} has {count} assigned ride(s). Cancel and rebook them in Admin → Bookings.',
+    pt: '{name} tem {count} viagem(ns) atribuída(s). Cancele e reserve de novo em Admin → Reservas.',
+  },
   opsNoDriversOnlineTitle: { es: 'Ningún chófer en línea', en: 'No chauffeurs online', pt: 'Nenhum motorista on-line' },
   opsNoDriversOnlineBody: {
     es: 'Hay {count} reservas en las próximas 2 horas y ningún chófer verificado conectado.',

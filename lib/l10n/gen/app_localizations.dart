@@ -97,6 +97,36 @@ abstract class AppLocalizations {
     Locale('pt')
   ];
 
+  /// No description provided for @accountSuspendedBody.
+  ///
+  /// In es, this message translates to:
+  /// **'El equipo de Luxelane suspendió tu cuenta, así que por ahora no puedes reservar ni recibir viajes. Si crees que es un error o quieres saber más, escríbenos.'**
+  String get accountSuspendedBody;
+
+  /// No description provided for @accountSuspendedContact.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribir a soporte'**
+  String get accountSuspendedContact;
+
+  /// No description provided for @accountSuspendedError.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu cuenta está suspendida. Escríbenos desde Ayuda.'**
+  String get accountSuspendedError;
+
+  /// No description provided for @accountSuspendedSignOut.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar sesión'**
+  String get accountSuspendedSignOut;
+
+  /// No description provided for @accountSuspendedTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu cuenta está suspendida'**
+  String get accountSuspendedTitle;
+
   /// No description provided for @adminActionFailed.
   ///
   /// In es, this message translates to:
@@ -996,6 +1026,24 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Requiere 2FA para todas las acciones administrativas.'**
   String get adminTwoFactorDesc;
+
+  /// No description provided for @adminUserCannotSuspendAdmin.
+  ///
+  /// In es, this message translates to:
+  /// **'Las cuentas de administrador no se pueden suspender'**
+  String get adminUserCannotSuspendAdmin;
+
+  /// No description provided for @adminUserReactivate.
+  ///
+  /// In es, this message translates to:
+  /// **'Reactivar cuenta'**
+  String get adminUserReactivate;
+
+  /// No description provided for @adminUserSuspend.
+  ///
+  /// In es, this message translates to:
+  /// **'Suspender cuenta'**
+  String get adminUserSuspend;
 
   /// No description provided for @adminVehicleDetails.
   ///
