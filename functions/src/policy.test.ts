@@ -12,6 +12,7 @@ import {
   isValidDriverTransition,
   MAX_CHARGE_MINOR,
   toMinorUnits,
+  canRelease,
 } from './policy';
 
 describe('toMinorUnits / isValidAmount', () => {
@@ -133,5 +134,16 @@ describe('cancellation', () => {
     expect(RIDER_CANCELLABLE).not.toContain('in_progress');
     expect(ADMIN_CANCELLABLE).toContain('in_progress');
     expect(ADMIN_CANCELLABLE).not.toContain('completed');
+  });
+});
+
+describe('canRelease', () => {
+  it('only an assigned ride that has not started', () => {
+    expect(canRelease('confirmed', 'd1')).toBe(true);
+    expect(canRelease('driver_arrived', 'd1')).toBe(true);
+    expect(canRelease('in_progress', 'd1')).toBe(false);
+    expect(canRelease('pending', null)).toBe(false);
+    expect(canRelease('confirmed', null)).toBe(false);
+    expect(canRelease('completed', 'd1')).toBe(false);
   });
 });

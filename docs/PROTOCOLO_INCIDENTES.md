@@ -36,12 +36,12 @@ Guía interna para el equipo de operaciones. Describe qué hacer ante cada tipo 
 ## 4. Procedimientos por incidente
 
 ### 4.1 Solicitud de Seguridad (S1)
-El cliente o el chófer la abren desde **Ayuda → Nueva solicitud → Seguridad**. Llega como **push urgente** a los admins y aparece en el banner rojo de Admin → Soporte.
+El cliente o el chófer la abren con el botón **Seguridad** de la pantalla del viaje en curso (que también ofrece llamar al 110) o desde **Ayuda → Nueva solicitud → Seguridad**. Llega como **push urgente** a los admins, con el viaje adjunto si se abrió desde el viaje, y aparece en el banner rojo de Admin → Soporte. Si nadie del equipo responde en 10 min, **llega un segundo aviso** ("URGENTE sin respuesta").
 
 1. Abrir la solicitud y **responder en el chat en menos de 5 min**: "Te leemos. ¿Estás a salvo ahora?".
-2. Si hay peligro inmediato: indicar llamar al **110**. Si está en un viaje, identificar la reserva (la solicitud puede traer el viaje asociado) y conseguir los teléfonos del chófer y del cliente (ver §6: hoy están en la consola de Firebase, colección `users`, campo `phone`).
+2. Si hay peligro inmediato: indicar llamar al **110**. Si está en un viaje, identificar la reserva (la solicitud puede traer el viaje asociado) y buscarla en Admin → Reservas: ahí están los teléfonos del pasajero y del chófer (tocar para llamar).
 3. Llamar por teléfono a la persona afectada. No resolver un S1 solo por chat.
-4. Si el problema involucra al chófer: **suspender su cuenta** con el interruptor en Admin → Usuarios. Al instante queda desconectado y fuera del despacho; no puede volver a conectarse, tomar reservas ni cotizar, y la app le muestra "Tu cuenta está suspendida", con acceso solo a Ayuda. Si tenía viajes asignados, llega un aviso a los admins: hay que cancelarlos y volver a reservarlos (§4.4). Para un cliente, la suspensión le impide cotizar y reservar. Para reactivar, se vuelve a encender el interruptor (el chófer se conecta él mismo). Queda registro en la auditoría.
+4. Si el problema involucra al chófer: **suspender su cuenta** con el interruptor en Admin → Usuarios. Al instante queda desconectado y fuera del despacho; no puede volver a conectarse, tomar reservas ni cotizar, y la app le muestra "Tu cuenta está suspendida", con acceso solo a Ayuda. Si tenía viajes asignados, llega un aviso a los admins: hay que reasignarlos (§4.4). Para un cliente, la suspensión le impide cotizar y reservar. Para reactivar, se vuelve a encender el interruptor (el chófer se conecta él mismo). Queda registro en la auditoría.
 5. Escalar al responsable de operaciones y dejar todo escrito en la solicitud. Marcarla como **Resuelta** solo cuando la persona esté a salvo y haya un siguiente paso acordado.
 
 ### 4.2 Recogida sin chófer (S2)
@@ -59,14 +59,14 @@ Push **"No hay chóferes en línea"** (como máximo uno por hora) cuando hay res
 2. Revisar en Admin → Chóferes que tengan los documentos verificados. Uno con un documento vencido no puede conectarse.
 
 ### 4.4 Chófer asignado que no llega o no responde (S2)
-1. Llamar al chófer (teléfono en la planilla de chóferes del equipo o en la consola de Firebase, `users/{id}.phone`).
-2. Si no puede cumplir: **hoy no se puede cambiar el chófer de una reserva ya asignada**. Hay que cancelarla (menú → Cancelar) y crear una nueva para el cliente con los mismos datos; entra al despacho como reserva pendiente. Llamar al cliente para explicarle.
+1. Llamar al chófer (su teléfono aparece en la reserva, en Admin → Reservas).
+2. Si no puede cumplir: menú de la reserva → **Reasignar chófer**, con el motivo. Se le quita el viaje, vuelve al despacho (se ofrece a los más cercanos) y el sistema avisa al chófer y al pasajero. Si no lo toma nadie en unos minutos, usar **Asignar el más cercano** (§4.2). Se puede reasignar hasta que empieza el viaje; después, solo cancelar.
 3. Registrar el incidente en una solicitud de soporte de categoría **Chófer**, para tener historial.
 
 ### 4.5 Accidente de tránsito (S1)
 1. Confirmar si hay heridos → **110** (y emergencias médicas locales).
 2. El chófer no debe mover el vehículo hasta que llegue la policía, salvo que haya riesgo.
-3. Si el cliente puede seguir: organizar otro vehículo como en §4.4.
+3. Si el viaje aún no empezó, reasignarlo como en §4.4. Si ya estaba en curso, cancelarlo (menú → Cancelar, con el motivo) y crear una reserva nueva para el cliente.
 4. Pedir al chófer fotos, el acta policial y los datos del SOAT. Escalar al responsable de operaciones.
 
 ### 4.6 Cobros y reembolsos (S3)
@@ -105,11 +105,11 @@ Se guarda junto a la solicitud de soporte relacionada.
 ## 6. Límites actuales del sistema (a tener en cuenta)
 Estas son cosas que el sistema **todavía no hace**. Están aquí para que nadie las dé por hechas.
 
-- **No hay botón de pánico/SOS en el viaje.** El cliente pide ayuda desde Ayuda → Seguridad o llama al chófer o al 110. El centro de ayuda se abre desde el perfil y desde el recibo, no desde la pantalla del viaje en curso.
-- **No se puede cambiar el chófer** de una reserva ya asignada: se cancela y se crea otra.
-- **El panel no muestra teléfonos ni permite llamar** al cliente o al chófer: hay que buscarlos en la consola de Firebase (`users/{id}.phone`) o en la planilla de chóferes. Conviene tener esa planilla actualizada e impresa en el turno.
+- El botón **Seguridad** no envía la ubicación automáticamente ni llama al equipo: abre el 110, el reporte urgente o Ayuda.
+- Un viaje **ya en curso** no se puede reasignar: se cancela y se crea otro.
+- Los teléfonos del panel salen del perfil de cada usuario: si alguien no cargó el suyo, no aparece. Conviene tener la planilla de chóferes actualizada.
 - Las cuentas de administrador no se pueden suspender (para que nadie quede fuera del panel).
-- Si una solicitud urgente queda sin respuesta, **no hay un segundo aviso**: el turno debe revisar el banner rojo.
+- El segundo aviso de una solicitud urgente sale **una sola vez** por mensaje sin responder: después, el turno debe revisar el banner rojo.
 - Si el monitor automático se detiene, **no llega ningún aviso**: solo se ve en Admin → Salud.
 - No hay reembolsos ni ajustes de precio desde el panel (§4.6).
 - No hay enlace para compartir el viaje en vivo con terceros.

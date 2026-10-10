@@ -225,6 +225,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get adminNoticeBookingDeleted => 'Reserva excluída';
 
   @override
+  String get adminNoticeChauffeurReleased => 'Motorista liberado. A reserva voltou para o despacho e avisamos o passageiro.';
+
+  @override
   String get adminNoticeDriverAssigned => 'Motorista designado';
 
   @override
@@ -259,6 +262,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get adminPanelBadge => 'Painel admin';
+
+  @override
+  String get adminPhoneChauffeur => 'Motorista';
+
+  @override
+  String get adminPhoneRider => 'Passageiro';
 
   @override
   String get adminPlatform => 'Plataforma';
@@ -299,6 +308,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get adminPushNotificationsDesc => 'Ativa notificações em todo o sistema para novas reservas.';
 
   @override
+  String get adminReasonHint => 'Fica na auditoria';
+
+  @override
+  String get adminReasonLabel => 'Motivo (opcional)';
+
+  @override
   String get adminRecentActivity => 'Atividade recente';
 
   @override
@@ -306,6 +321,19 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get adminRegisteredVehicles => 'Veículos cadastrados';
+
+  @override
+  String adminReleaseBody(String name) {
+    return 'A viagem é retirada de $name e oferecida de novo aos motoristas mais próximos. Avisamos o motorista e o passageiro.';
+  }
+
+  @override
+  String get adminReleaseChauffeur => 'Reatribuir motorista';
+
+  @override
+  String adminReleaseTitle(String code) {
+    return 'Reatribuir a reserva $code?';
+  }
 
   @override
   String get adminReportsAvgRating => 'Avaliação média';
@@ -4412,6 +4440,40 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get tripReceiptVehicle => 'Veículo';
+
+  @override
+  String get tripSafetyButton => 'Segurança';
+
+  @override
+  String tripSafetyCallFailed(String number) {
+    return 'Não conseguimos abrir o telefone. Disque $number.';
+  }
+
+  @override
+  String tripSafetyCallPolice(String number) {
+    return 'Ligar para o $number (Polícia)';
+  }
+
+  @override
+  String get tripSafetyCallPoliceBody => 'Se estiver em perigo, ligue primeiro.';
+
+  @override
+  String get tripSafetyHelp => 'Ajuda com esta viagem';
+
+  @override
+  String get tripSafetyHelpBody => 'Perguntas frequentes e outras solicitações.';
+
+  @override
+  String get tripSafetyReport => 'Relatar um problema de segurança';
+
+  @override
+  String get tripSafetyReportBody => 'Avisa a equipe da Luxelane na hora, com esta viagem anexada.';
+
+  @override
+  String get tripSafetyReportSubject => 'Problema de segurança na minha viagem';
+
+  @override
+  String get tripSafetyTitle => 'Segurança na viagem';
 
   @override
   String get tripShowSign => 'Mostrar placa';

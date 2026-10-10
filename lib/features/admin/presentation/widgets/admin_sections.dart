@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
@@ -22,6 +23,7 @@ String _noticeText(AppLocalizations l, AdminNotice n) => switch (n) {
       AdminNotice.driverAssigned => l.adminNoticeDriverAssigned,
       AdminNotice.noDriverAvailable => l.adminNoticeNoDriver,
       AdminNotice.bookingCancelled => l.adminNoticeBookingCancelled,
+      AdminNotice.chauffeurReleased => l.adminNoticeChauffeurReleased,
     };
 
 /// Pending bookings with no chauffeur whose pickup is within 2 hours.
@@ -365,6 +367,11 @@ class _BookingsTabState extends State<BookingsTab> {
             driverName: rows[i].driverId != null
                 ? state.userName(rows[i].driverId!)
                 : null,
+            // A guest booking carries the passenger's own phone.
+            riderPhone: (rows[i].passengerPhone ?? '').trim().isNotEmpty
+                ? rows[i].passengerPhone!.trim()
+                : state.userPhone(rows[i].riderId),
+            driverPhone: rows[i].driverId != null ? state.userPhone(rows[i].driverId!) : null,
           ),
         );
 
@@ -450,24 +457,33 @@ class _FilterChip extends StatelessWidget {
       );
 }
 
-enum _BookingAction { assign, cancel, delete }
+enum _BookingAction { assign, release, cancel, delete }
 
 class _AdminBookingTile extends StatelessWidget {
   const _AdminBookingTile({
     required this.booking,
     required this.riderName,
     this.driverName,
+    this.riderPhone,
+    this.driverPhone,
   });
   final Booking booking;
   final String riderName;
   final String? driverName;
+  final String? riderPhone;
+  final String? driverPhone;
 
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
+    final phones = [
+      if (riderPhone != null) AdminPhoneLink(label: l.adminPhoneRider, phone: riderPhone!),
+      if (driverPhone != null) AdminPhoneLink(label: l.adminPhoneChauffeur, phone: driverPhone!),
+    ];
     return Padding(
-        padding: const EdgeInsets.symmetric(vertical: LuxSpacing.sm),
-        child: Row(
+      padding: const EdgeInsets.symmetric(vertical: LuxSpacing.sm),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(
           children: [
             // ID badge
             Container(
@@ -478,7 +494,7 @@ class _AdminBookingTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
               ),
               child: Text(
-                booking.id.substring(0, 6).toUpperCase(),
+                (booking.id.length > 6 ? booking.id.substring(0, 6) : booking.id).toUpperCase(),
                 style:
                     LuxTypography.caption.copyWith(color: LuxColors.accent),
               ),
@@ -529,12 +545,15 @@ class _AdminBookingTile extends StatelessWidget {
               color: LuxColors.blackElevated,
               onSelected: (a) => switch (a) {
                 _BookingAction.assign => context.read<AdminBloc>().add(AdminAssignNearestRequested(booking)),
+                _BookingAction.release => _confirmRelease(context),
                 _BookingAction.cancel => _confirmCancel(context),
                 _BookingAction.delete => _confirmDelete(context),
               },
               itemBuilder: (_) => [
                 if (booking.status == BookingStatus.pending && booking.driverId == null)
                   PopupMenuItem(value: _BookingAction.assign, child: Text(l.adminAssignNearest)),
+                if (_releasable(booking))
+                  PopupMenuItem(value: _BookingAction.release, child: Text(l.adminReleaseChauffeur)),
                 if (_cancellable(booking.status))
                   PopupMenuItem(value: _BookingAction.cancel, child: Text(l.adminCancelBooking)),
                 PopupMenuItem(
@@ -545,33 +564,51 @@ class _AdminBookingTile extends StatelessWidget {
             ),
           ],
         ),
-      );
+        // Full width below, so narrow screens don't squeeze them.
+        if (phones.isNotEmpty) Wrap(spacing: LuxSpacing.md, children: phones),
+      ]),
+    );
   }
 
   static bool _cancellable(BookingStatus s) =>
       s != BookingStatus.completed && s != BookingStatus.cancelled;
 
-  void _confirmCancel(BuildContext context) {
+  /// Same as the server (functions/src/policy.ts canRelease).
+  static bool _releasable(Booking b) =>
+      b.driverId != null &&
+      (b.status == BookingStatus.confirmed ||
+          b.status == BookingStatus.driverArriving ||
+          b.status == BookingStatus.driverArrived);
+
+  String get _code => (booking.id.length > 8 ? booking.id.substring(0, 8) : booking.id).toUpperCase();
+
+  Future<void> _confirmCancel(BuildContext context) async {
     final l = context.l10n;
-    final code = booking.id.length > 8 ? booking.id.substring(0, 8) : booking.id;
-    showDialog<void>(
+    final bloc = context.read<AdminBloc>();
+    final reason = await showDialog<String>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: LuxColors.blackElevated,
-        title: Text(l.adminCancelBookingTitle(code.toUpperCase()), style: LuxTypography.titleLarge),
-        content: Text(l.adminCancelBookingBody, style: LuxTypography.bodyMedium),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l.commonBack)),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              context.read<AdminBloc>().add(AdminCancelBookingRequested(booking.id));
-            },
-            child: Text(l.adminCancelBooking, style: const TextStyle(color: LuxColors.error)),
-          ),
-        ],
+      builder: (_) => AdminReasonDialog(
+        title: l.adminCancelBookingTitle(_code),
+        body: l.adminCancelBookingBody,
+        confirm: l.adminCancelBooking,
+        destructive: true,
       ),
     );
+    if (reason != null) bloc.add(AdminCancelBookingRequested(booking.id, reason: reason));
+  }
+
+  Future<void> _confirmRelease(BuildContext context) async {
+    final l = context.l10n;
+    final bloc = context.read<AdminBloc>();
+    final reason = await showDialog<String>(
+      context: context,
+      builder: (_) => AdminReasonDialog(
+        title: l.adminReleaseTitle(_code),
+        body: l.adminReleaseBody(driverName ?? ''),
+        confirm: l.adminReleaseChauffeur,
+      ),
+    );
+    if (reason != null) bloc.add(AdminReleaseChauffeurRequested(booking.id, reason: reason));
   }
 
   void _confirmDelete(BuildContext context) {
@@ -1658,6 +1695,85 @@ class _InfoRow extends StatelessWidget {
                       color: LuxColors.accent, fontWeight: FontWeight.w600)),
             ),
           ],
+        ),
+      );
+}
+
+/// Confirmation with an optional reason (kept in the audit log). Pops the
+/// reason ('' when left blank) or null when dismissed.
+class AdminReasonDialog extends StatefulWidget {
+  const AdminReasonDialog({
+    super.key,
+    required this.title,
+    required this.body,
+    required this.confirm,
+    this.destructive = false,
+  });
+  final String title;
+  final String body;
+  final String confirm;
+  final bool destructive;
+
+  @override
+  State<AdminReasonDialog> createState() => _AdminReasonDialogState();
+}
+
+class _AdminReasonDialogState extends State<AdminReasonDialog> {
+  final _reason = TextEditingController();
+
+  @override
+  void dispose() {
+    _reason.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    return AlertDialog(
+      backgroundColor: LuxColors.blackElevated,
+      title: Text(widget.title, style: LuxTypography.titleLarge),
+      content: SizedBox(
+        width: 420,
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text(widget.body, style: LuxTypography.bodyMedium),
+          const SizedBox(height: LuxSpacing.md),
+          LuxTextField(controller: _reason, label: l.adminReasonLabel, hint: l.adminReasonHint, maxLines: 2),
+        ]),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l.commonBack)),
+        TextButton(
+          onPressed: () => Navigator.pop(context, _reason.text.trim()),
+          child: Text(widget.confirm,
+              style: TextStyle(color: widget.destructive ? LuxColors.error : LuxColors.accent, fontWeight: FontWeight.w600)),
+        ),
+      ],
+    );
+  }
+}
+
+/// "Pasajero: +591 7…" — tap to call.
+class AdminPhoneLink extends StatelessWidget {
+  const AdminPhoneLink({super.key, required this.label, required this.phone});
+  final String label;
+  final String phone;
+
+  @override
+  Widget build(BuildContext context) => InkWell(
+        onTap: () => launchUrl(Uri(scheme: 'tel', path: phone.replaceAll(RegExp(r'[^0-9+]'), ''))),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            const Icon(Icons.call_outlined, size: 14, color: LuxColors.accent),
+            const SizedBox(width: 4),
+            Flexible(
+              child: Text('$label: $phone',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: LuxTypography.caption.copyWith(color: LuxColors.white)),
+            ),
+          ]),
         ),
       );
 }

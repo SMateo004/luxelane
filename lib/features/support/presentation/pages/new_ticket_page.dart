@@ -12,17 +12,22 @@ import 'ticket_thread_page.dart';
 
 /// Form to write to the Luxelane team.
 class NewTicketPage extends StatefulWidget {
-  const NewTicketPage({super.key, required this.repository, this.bookingId});
+  const NewTicketPage({super.key, required this.repository, this.bookingId, this.initialCategory, this.initialSubject});
   final SupportRepository repository;
   final String? bookingId;
+
+  /// Preselected from the trip's safety sheet.
+  final TicketCategory? initialCategory;
+  final String? initialSubject;
 
   @override
   State<NewTicketPage> createState() => _NewTicketPageState();
 }
 
 class _NewTicketPageState extends State<NewTicketPage> {
-  late TicketCategory? _category = widget.bookingId != null ? TicketCategory.trip : null;
-  final _subject = TextEditingController();
+  late TicketCategory? _category =
+      widget.initialCategory ?? (widget.bookingId != null ? TicketCategory.trip : null);
+  late final _subject = TextEditingController(text: widget.initialSubject ?? '');
   final _message = TextEditingController();
   bool _busy = false;
   bool _tried = false;

@@ -1,0 +1,34 @@
+{
+  "tripSafetyButton": {"es": "Seguridad", "en": "Safety", "pt": "Segurança"},
+  "tripSafetyTitle": {"es": "Seguridad en el viaje", "en": "Trip safety", "pt": "Segurança na viagem"},
+  "tripSafetyCallPolice": {
+    "es": "Llamar al {number} (Policía)",
+    "en": "Call {number} (Police)",
+    "pt": "Ligar para o {number} (Polícia)",
+    "placeholders": {"number": {"type": "String"}}
+  },
+  "tripSafetyCallPoliceBody": {
+    "es": "Si estás en peligro, llama primero.",
+    "en": "If you're in danger, call first.",
+    "pt": "Se estiver em perigo, ligue primeiro."
+  },
+  "tripSafetyCallFailed": {
+    "es": "No pudimos abrir el teléfono. Marca el {number}.",
+    "en": "We couldn't open the phone. Dial {number}.",
+    "pt": "Não conseguimos abrir o telefone. Disque {number}.",
+    "placeholders": {"number": {"type": "String"}}
+  },
+  "tripSafetyReport": {"es": "Reportar un problema de seguridad", "en": "Report a safety problem", "pt": "Relatar um problema de segurança"},
+  "tripSafetyReportBody": {
+    "es": "Avisa al equipo de Luxelane al instante, con este viaje adjunto.",
+    "en": "Alerts the Luxelane team right away, with this trip attached.",
+    "pt": "Avisa a equipe da Luxelane na hora, com esta viagem anexada."
+  },
+  "tripSafetyReportSubject": {"es": "Problema de seguridad en mi viaje", "en": "Safety problem on my trip", "pt": "Problema de segurança na minha viagem"},
+  "tripSafetyHelp": {"es": "Ayuda con este viaje", "en": "Help with this trip", "pt": "Ajuda com esta viagem"},
+  "tripSafetyHelpBody": {
+    "es": "Preguntas frecuentes y otras solicitudes.",
+    "en": "Common questions and other requests.",
+    "pt": "Perguntas frequentes e outras solicitações."
+  }
+}

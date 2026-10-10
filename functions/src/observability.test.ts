@@ -1,4 +1,4 @@
-import { fingerprint, needsNoDriverAlert, normalizeMessage, throttled, topFrame } from './observability';
+import { fingerprint, needsEscalation, needsNoDriverAlert, normalizeMessage, throttled, topFrame } from './observability';
 
 const now = new Date('2026-10-08T12:00:00Z');
 const inMin = (m: number) => new Date(now.getTime() + m * 60000);
@@ -39,5 +39,28 @@ describe('operational alerts', () => {
     expect(throttled(null, now, 3600000)).toBe(false);
     expect(throttled(inMin(-30), now, 3600000)).toBe(true);
     expect(throttled(inMin(-61), now, 3600000)).toBe(false);
+  });
+});
+
+describe('needsEscalation', () => {
+  const now = new Date('2026-10-10T12:00:00Z');
+  const t = {
+    status: 'open',
+    priority: 'urgent',
+    lastAuthorRole: 'rider',
+    lastMessageAt: new Date('2026-10-10T11:45:00Z'),
+    escalatedAt: null,
+  };
+  it('pages again once after 10 min without a team reply', () => {
+    expect(needsEscalation(t, now)).toBe(true);
+    expect(needsEscalation({ ...t, escalatedAt: new Date('2026-10-10T11:56:00Z') }, now)).toBe(false);
+    // A new message after the last escalation counts again.
+    expect(needsEscalation({ ...t, escalatedAt: new Date('2026-10-10T11:40:00Z') }, now)).toBe(true);
+  });
+  it('not before 10 min, not when answered, not for normal tickets', () => {
+    expect(needsEscalation({ ...t, lastMessageAt: new Date('2026-10-10T11:55:00Z') }, now)).toBe(false);
+    expect(needsEscalation({ ...t, lastAuthorRole: 'admin' }, now)).toBe(false);
+    expect(needsEscalation({ ...t, priority: 'normal' }, now)).toBe(false);
+    expect(needsEscalation({ ...t, status: 'answered' }, now)).toBe(false);
   });
 });

@@ -100,6 +100,16 @@ const M = {
     en: '{name} has {count} assigned ride(s). Cancel and rebook them in Admin → Bookings.',
     pt: '{name} tem {count} viagem(ns) atribuída(s). Cancele e reserve de novo em Admin → Reservas.',
   },
+  supportEscalationTitle: {
+    es: 'URGENTE sin respuesta',
+    en: 'URGENT, still unanswered',
+    pt: 'URGENTE sem resposta',
+  },
+  supportEscalationBody: {
+    es: 'El reporte de seguridad de {name} lleva {minutes} min sin respuesta del equipo.',
+    en: "{name}'s safety report has had no reply from the team for {minutes} min.",
+    pt: 'O relato de segurança de {name} está há {minutes} min sem resposta da equipe.',
+  },
   opsNoDriversOnlineTitle: { es: 'Ningún chófer en línea', en: 'No chauffeurs online', pt: 'Nenhum motorista on-line' },
   opsNoDriversOnlineBody: {
     es: 'Hay {count} reservas en las próximas 2 horas y ningún chófer verificado conectado.',
@@ -127,6 +137,18 @@ const M = {
     es: 'Vuelo {flight}: nueva hora de recogida {time}.',
     en: 'Flight {flight}: new pickup time {time}.',
     pt: 'Voo {flight}: novo horário de embarque {time}.',
+  },
+  releasedTitle: { es: 'Viaje reasignado', en: 'Ride reassigned', pt: 'Viagem reatribuída' },
+  releasedBody: {
+    es: 'El equipo de Luxelane reasignó tu viaje de las {time}. Ya no está en tu agenda.',
+    en: 'The Luxelane team reassigned your {time} ride. It is no longer on your schedule.',
+    pt: 'A equipe da Luxelane reatribuiu sua viagem das {time}. Ela não está mais na sua agenda.',
+  },
+  reassigningTitle: { es: 'Buscando otro chófer', en: 'Finding another chauffeur', pt: 'Procurando outro motorista' },
+  reassigningBody: {
+    es: 'Tu chófer no podrá llegar. Ya estamos asignando otro para tu viaje de las {time}.',
+    en: "Your chauffeur can't make it. We're already assigning another one for your {time} ride.",
+    pt: 'Seu motorista não poderá ir. Já estamos atribuindo outro para sua viagem das {time}.',
   },
   riderCancelledTitle: { es: 'Viaje cancelado', en: 'Ride cancelled', pt: 'Viagem cancelada' },
   riderCancelledBody: {

@@ -12,6 +12,27 @@ export const NO_DRIVER_ALERT_MS = 30 * 60 * 1000;
 /** "No chauffeur online" is repeated at most once per hour. */
 export const NO_DRIVERS_ONLINE_THROTTLE_MS = 60 * 60 * 1000;
 
+/** An urgent (safety) ticket the team hasn't answered in this long pages again. */
+export const URGENT_ESCALATION_MS = 10 * 60 * 1000;
+
+export interface UrgentTicketState {
+  status?: string;
+  priority?: string;
+  lastAuthorRole?: string;
+  lastMessageAt?: Date | null;
+  escalatedAt?: Date | null;
+}
+
+/**
+ * True once per unanswered customer message on an open urgent ticket, after
+ * [URGENT_ESCALATION_MS] without a reply from the team.
+ */
+export function needsEscalation(t: UrgentTicketState, now: Date): boolean {
+  if (t.status !== 'open' || t.priority !== 'urgent' || t.lastAuthorRole === 'admin') return false;
+  if (!t.lastMessageAt || now.getTime() - t.lastMessageAt.getTime() < URGENT_ESCALATION_MS) return false;
+  return !t.escalatedAt || t.escalatedAt.getTime() < t.lastMessageAt.getTime();
+}
+
 /** The monitor runs every 5 minutes; older than this means it stopped. */
 export const HEALTH_STALE_MS = 15 * 60 * 1000;
 

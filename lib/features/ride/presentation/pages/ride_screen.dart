@@ -16,6 +16,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/trip_widgets.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../support/presentation/widgets/trip_safety.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../booking/domain/booking_error_codes.dart';
 import '../../../booking/presentation/bloc/booking_bloc.dart';
@@ -353,6 +354,7 @@ class _TripPanel extends StatelessWidget {
           _ChauffeurCard(chauffeur: b!.chauffeur!, showContact: _contactable(status))
         else if (status == BookingStatus.pending)
           const _AssigningCard(),
+        if (b != null && _contactable(status)) TripSafetyButton(bookingId: b.id),
         if (b != null && _cancellable(status)) ...[
           const SizedBox(height: LuxSpacing.sm),
           Center(

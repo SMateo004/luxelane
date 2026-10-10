@@ -457,6 +457,12 @@ abstract class AppLocalizations {
   /// **'Reserva eliminada'**
   String get adminNoticeBookingDeleted;
 
+  /// No description provided for @adminNoticeChauffeurReleased.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer liberado. La reserva volvió al despacho y avisamos al pasajero.'**
+  String get adminNoticeChauffeurReleased;
+
   /// No description provided for @adminNoticeDriverAssigned.
   ///
   /// In es, this message translates to:
@@ -529,6 +535,18 @@ abstract class AppLocalizations {
   /// **'Panel admin'**
   String get adminPanelBadge;
 
+  /// No description provided for @adminPhoneChauffeur.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer'**
+  String get adminPhoneChauffeur;
+
+  /// No description provided for @adminPhoneRider.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero'**
+  String get adminPhoneRider;
+
   /// No description provided for @adminPlatform.
   ///
   /// In es, this message translates to:
@@ -589,6 +607,18 @@ abstract class AppLocalizations {
   /// **'Habilita notificaciones a nivel del sistema para nuevas reservas.'**
   String get adminPushNotificationsDesc;
 
+  /// No description provided for @adminReasonHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Queda en la auditoría'**
+  String get adminReasonHint;
+
+  /// No description provided for @adminReasonLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo (opcional)'**
+  String get adminReasonLabel;
+
   /// No description provided for @adminRecentActivity.
   ///
   /// In es, this message translates to:
@@ -606,6 +636,24 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Vehículos registrados'**
   String get adminRegisteredVehicles;
+
+  /// No description provided for @adminReleaseBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Se le quita el viaje a {name} y vuelve a ofrecerse a los chóferes más cercanos. Avisamos al chófer y al pasajero.'**
+  String adminReleaseBody(String name);
+
+  /// No description provided for @adminReleaseChauffeur.
+  ///
+  /// In es, this message translates to:
+  /// **'Reasignar chófer'**
+  String get adminReleaseChauffeur;
+
+  /// No description provided for @adminReleaseTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Reasignar la reserva {code}?'**
+  String adminReleaseTitle(String code);
 
   /// No description provided for @adminReportsAvgRating.
   ///
@@ -7974,6 +8022,66 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Vehículo'**
   String get tripReceiptVehicle;
+
+  /// No description provided for @tripSafetyButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguridad'**
+  String get tripSafetyButton;
+
+  /// No description provided for @tripSafetyCallFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos abrir el teléfono. Marca el {number}.'**
+  String tripSafetyCallFailed(String number);
+
+  /// No description provided for @tripSafetyCallPolice.
+  ///
+  /// In es, this message translates to:
+  /// **'Llamar al {number} (Policía)'**
+  String tripSafetyCallPolice(String number);
+
+  /// No description provided for @tripSafetyCallPoliceBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Si estás en peligro, llama primero.'**
+  String get tripSafetyCallPoliceBody;
+
+  /// No description provided for @tripSafetyHelp.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda con este viaje'**
+  String get tripSafetyHelp;
+
+  /// No description provided for @tripSafetyHelpBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Preguntas frecuentes y otras solicitudes.'**
+  String get tripSafetyHelpBody;
+
+  /// No description provided for @tripSafetyReport.
+  ///
+  /// In es, this message translates to:
+  /// **'Reportar un problema de seguridad'**
+  String get tripSafetyReport;
+
+  /// No description provided for @tripSafetyReportBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Avisa al equipo de Luxelane al instante, con este viaje adjunto.'**
+  String get tripSafetyReportBody;
+
+  /// No description provided for @tripSafetyReportSubject.
+  ///
+  /// In es, this message translates to:
+  /// **'Problema de seguridad en mi viaje'**
+  String get tripSafetyReportSubject;
+
+  /// No description provided for @tripSafetyTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguridad en el viaje'**
+  String get tripSafetyTitle;
 
   /// No description provided for @tripShowSign.
   ///

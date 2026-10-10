@@ -34,6 +34,7 @@ import {
   clip,
   fingerprint,
   isPlatform,
+  needsEscalation,
   needsNoDriverAlert,
   normalizeMessage,
   throttled,
@@ -67,6 +68,7 @@ import {
   BookingStatus,
   UserRole,
   canCapture,
+  canRelease,
   chunk,
   freeWaitEnd,
   isStalePending,
@@ -970,7 +972,15 @@ async function notifyBroadcast(booking: BookingDoc): Promise<void> {
 export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async (event) => {
   const booking = event.data?.data() as BookingDoc | undefined;
   if (!booking || !event.data) return;
+  await startDispatch(event.data.ref, booking, event.params.bookingId);
+});
 
+/** Offers a pending booking to the nearest chauffeurs, or to everyone. */
+async function startDispatch(
+  ref: admin.firestore.DocumentReference,
+  booking: BookingDoc,
+  bookingId: string,
+): Promise<void> {
   const now = new Date();
   const pickup = booking.scheduledAt?.toDate() ?? now;
   const geo = booking.origin?.coordinates;
@@ -986,10 +996,10 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
     );
   }
   const dispatch = initialDispatch(ranked, mode, now.getTime());
-  await event.data.ref.update({ dispatch: toStored(dispatch) });
+  await ref.update({ dispatch: toStored(dispatch) });
 
-  logger.info('onBookingCreated', 'dispatch', {
-    bookingId: event.params.bookingId,
+  logger.info('startDispatch', 'dispatch', {
+    bookingId,
     mode: dispatch.mode,
     candidates: dispatch.candidates.length,
   });
@@ -999,7 +1009,7 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
   } else {
     await notifyBroadcast(booking);
   }
-});
+}
 
 /** Applies [advanceOffer] in a transaction and notifies whoever is next. */
 async function moveOffer(bookingId: string, declinedBy?: string): Promise<void> {
@@ -1534,6 +1544,53 @@ export const cancelBooking = onCall(async (req) => {
   }
   logger.info('cancelBooking', 'cancelled', { bookingId, by: isAdmin ? 'admin' : 'rider', late: result.late });
   return { cancelled: true, lateCancellation: result.late };
+});
+
+// ---------------------------------------------------------------------------
+// releaseChauffeur — admin takes a ride away from its chauffeur (can't make
+// it, suspended…) before the trip starts; it goes back to pending and to
+// dispatch, and both rider and chauffeur are told.
+// ---------------------------------------------------------------------------
+
+export const releaseChauffeur = onCall(async (req) => {
+  const adminId = await requireAdmin(req);
+  const { bookingId, reason } = (req.data ?? {}) as { bookingId?: string; reason?: string };
+  if (!bookingId) throw err.invalidArgument('bookingId required');
+  const ref = db.collection('bookings').doc(bookingId);
+
+  const released = await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw err.notFound('Booking not found');
+    const b = snap.data() as BookingDoc;
+    if (!canRelease(b.status, b.driverId)) throw err.failedPrecondition('booking/not-releasable');
+    tx.update(ref, {
+      status: 'pending' as BookingStatus,
+      driverId: null,
+      chauffeur: null,
+      driverArrivedAt: null,
+      alertedNoDriver: false,
+      updatedAt: admin.firestore.Timestamp.now(),
+    });
+    tx.update(db.collection('driverProfiles').doc(b.driverId!), { isAvailable: true });
+    return b;
+  });
+
+  await ref.collection('tracking').doc('live').delete().catch(() => undefined);
+  const pickup = (released.pickupAt ?? released.scheduledAt)?.toDate() ?? new Date();
+  const time = (lang: Lang) => ({ time: clock(pickup, lang) });
+  await Promise.all([
+    pushUser(released.driverId!, 'releasedTitle', 'releasedBody', time),
+    pushUser(released.riderId, 'reassigningTitle', 'reassigningBody', time),
+  ]);
+  await writeAudit('booking_chauffeur_released', {
+    bookingId,
+    by: adminId,
+    driverId: released.driverId,
+    reason: reason ? String(reason).slice(0, 300) : null,
+  });
+  await startDispatch(ref, { ...released, status: 'pending', driverId: undefined }, bookingId);
+  logger.info('releaseChauffeur', 'released', { bookingId, driverId: released.driverId });
+  return { released: true };
 });
 
 // ---------------------------------------------------------------------------
@@ -2126,9 +2183,28 @@ export const opsWatch = onSchedule('every 5 minutes', async () => {
     }
   }
 
-  // 3. Health summary for the admin panel.
-  const [urgent, errors] = await Promise.all([
-    db.collection('supportTickets').where('status', '==', 'open').where('priority', '==', 'urgent').count().get(),
+  // 3. Urgent (safety) tickets unanswered for 10 min → page again, once per message.
+  const urgent = await db.collection('supportTickets').where('status', '==', 'open').where('priority', '==', 'urgent').get();
+  for (const doc of urgent.docs) {
+    const tk = doc.data();
+    const lastMessageAt = (tk.lastMessageAt as admin.firestore.Timestamp | undefined)?.toDate() ?? null;
+    const state = {
+      status: tk.status as string,
+      priority: tk.priority as string,
+      lastAuthorRole: tk.lastAuthorRole as string | undefined,
+      lastMessageAt,
+      escalatedAt: (tk.escalatedAt as admin.firestore.Timestamp | undefined)?.toDate() ?? null,
+    };
+    if (!needsEscalation(state, now)) continue;
+    await doc.ref.update({ escalatedAt: admin.firestore.Timestamp.fromDate(now) });
+    await pushAdmins('supportEscalationTitle', 'supportEscalationBody', () => ({
+      name: (tk.userName as string) || '—',
+      minutes: Math.floor((now.getTime() - lastMessageAt!.getTime()) / 60000),
+    }));
+  }
+
+  // 4. Health summary for the admin panel.
+  const [errors] = await Promise.all([
     db
       .collection('clientErrors')
       .where('lastSeen', '>=', admin.firestore.Timestamp.fromMillis(now.getTime() - 24 * 60 * 60 * 1000))
@@ -2140,7 +2216,7 @@ export const opsWatch = onSchedule('every 5 minutes', async () => {
     pendingNext2h: upcoming.length,
     unassignedSoon,
     onlineDrivers,
-    urgentTickets: urgent.data().count,
+    urgentTickets: urgent.size,
     clientErrors24h: errors.data().count,
   });
   logger.info('opsWatch', 'checked', { pending: upcoming.length, unassignedSoon, onlineDrivers });

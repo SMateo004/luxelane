@@ -225,6 +225,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminNoticeBookingDeleted => 'Booking deleted';
 
   @override
+  String get adminNoticeChauffeurReleased => 'Chauffeur released. The booking is back in dispatch and the passenger was told.';
+
+  @override
   String get adminNoticeDriverAssigned => 'Chauffeur assigned';
 
   @override
@@ -259,6 +262,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminPanelBadge => 'Admin panel';
+
+  @override
+  String get adminPhoneChauffeur => 'Chauffeur';
+
+  @override
+  String get adminPhoneRider => 'Passenger';
 
   @override
   String get adminPlatform => 'Platform';
@@ -299,6 +308,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminPushNotificationsDesc => 'Enables system-wide notifications for new bookings.';
 
   @override
+  String get adminReasonHint => 'Kept in the audit log';
+
+  @override
+  String get adminReasonLabel => 'Reason (optional)';
+
+  @override
   String get adminRecentActivity => 'Recent activity';
 
   @override
@@ -306,6 +321,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminRegisteredVehicles => 'Registered vehicles';
+
+  @override
+  String adminReleaseBody(String name) {
+    return 'The ride is taken from $name and offered again to the nearest chauffeurs. We\'ll tell the chauffeur and the passenger.';
+  }
+
+  @override
+  String get adminReleaseChauffeur => 'Reassign chauffeur';
+
+  @override
+  String adminReleaseTitle(String code) {
+    return 'Reassign booking $code?';
+  }
 
   @override
   String get adminReportsAvgRating => 'Average rating';
@@ -4400,6 +4428,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tripReceiptVehicle => 'Vehicle';
+
+  @override
+  String get tripSafetyButton => 'Safety';
+
+  @override
+  String tripSafetyCallFailed(String number) {
+    return 'We couldn\'t open the phone. Dial $number.';
+  }
+
+  @override
+  String tripSafetyCallPolice(String number) {
+    return 'Call $number (Police)';
+  }
+
+  @override
+  String get tripSafetyCallPoliceBody => 'If you\'re in danger, call first.';
+
+  @override
+  String get tripSafetyHelp => 'Help with this trip';
+
+  @override
+  String get tripSafetyHelpBody => 'Common questions and other requests.';
+
+  @override
+  String get tripSafetyReport => 'Report a safety problem';
+
+  @override
+  String get tripSafetyReportBody => 'Alerts the Luxelane team right away, with this trip attached.';
+
+  @override
+  String get tripSafetyReportSubject => 'Safety problem on my trip';
+
+  @override
+  String get tripSafetyTitle => 'Trip safety';
 
   @override
   String get tripShowSign => 'Show name sign';

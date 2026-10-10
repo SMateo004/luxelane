@@ -79,9 +79,18 @@ class AdminAssignNearestRequested extends AdminEvent {
 
 class AdminCancelBookingRequested extends AdminEvent {
   final String bookingId;
-  const AdminCancelBookingRequested(this.bookingId);
+  final String? reason;
+  const AdminCancelBookingRequested(this.bookingId, {this.reason});
   @override
-  List<Object?> get props => [bookingId];
+  List<Object?> get props => [bookingId, reason];
+}
+
+class AdminReleaseChauffeurRequested extends AdminEvent {
+  final String bookingId;
+  final String? reason;
+  const AdminReleaseChauffeurRequested(this.bookingId, {this.reason});
+  @override
+  List<Object?> get props => [bookingId, reason];
 }
 
 class AdminUpdateUserRoleRequested extends AdminEvent {
@@ -108,6 +117,7 @@ enum AdminNotice {
   driverAssigned,
   noDriverAvailable,
   bookingCancelled,
+  chauffeurReleased,
 }
 
 class AdminState extends Equatable {
@@ -141,6 +151,14 @@ class AdminState extends Equatable {
   bool get twoFactorEnabled => globalSettings['twoFactorEnabled'] ?? false;
 
   /// Cross-reference: get a user's display name by their ID
+  /// Phone on the user's profile, if any.
+  String? userPhone(String userId) {
+    for (final u in users) {
+      if (u.id == userId) return u.phone.trim().isEmpty ? null : u.phone.trim();
+    }
+    return null;
+  }
+
   String userName(String userId) {
     try {
       return users.firstWhere((u) => u.id == userId).displayName;
@@ -246,6 +264,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<AdminDeleteBookingRequested>(_onDeleteBooking);
     on<AdminAssignNearestRequested>(_onAssignNearest);
     on<AdminCancelBookingRequested>(_onCancelBooking);
+    on<AdminReleaseChauffeurRequested>(_onReleaseChauffeur);
     on<AdminUpdateUserRoleRequested>(_onUpdateUserRole);
 
     // Internal stream updates
@@ -337,10 +356,18 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   }
 
   Future<void> _onCancelBooking(AdminCancelBookingRequested event, Emitter<AdminState> emit) async {
-    final result = await _repo.cancelBooking(event.bookingId);
+    final result = await _repo.cancelBooking(event.bookingId, reason: event.reason);
     result.fold(
       (f) => emit(state.copyWith(error: f.message)),
       (_) => emit(state.copyWith(notice: AdminNotice.bookingCancelled)),
+    );
+  }
+
+  Future<void> _onReleaseChauffeur(AdminReleaseChauffeurRequested event, Emitter<AdminState> emit) async {
+    final result = await _repo.releaseChauffeur(event.bookingId, reason: event.reason);
+    result.fold(
+      (f) => emit(state.copyWith(error: f.message)),
+      (_) => emit(state.copyWith(notice: AdminNotice.chauffeurReleased)),
     );
   }
 

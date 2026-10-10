@@ -145,6 +145,7 @@
   "adminNoVehiclesHint": "Los vehículos vinculados a chóferes aparecen aquí",
   "adminNoticeBookingCancelled": "Reserva cancelada",
   "adminNoticeBookingDeleted": "Reserva eliminada",
+  "adminNoticeChauffeurReleased": "Chófer liberado. La reserva volvió al despacho y avisamos al pasajero.",
   "adminNoticeDriverAssigned": "Chófer asignado",
   "adminNoticeDriverVerified": "Chófer verificado",
   "adminNoticeMaintenanceOff": "Modo mantenimiento desactivado",
@@ -157,6 +158,8 @@
   "adminOnline": "En línea",
   "adminOverview": "Resumen",
   "adminPanelBadge": "Panel admin",
+  "adminPhoneChauffeur": "Chófer",
+  "adminPhoneRider": "Pasajero",
   "adminPlatform": "Plataforma",
   "adminPlatformValue": "Flutter Web + móvil",
   "adminPriceBaseAndKm": "{base} base + {perKm}/km",
@@ -201,9 +204,28 @@
   "adminPricingRules": "Reglas de precios (Bs)",
   "adminPushNotifications": "Notificaciones push",
   "adminPushNotificationsDesc": "Habilita notificaciones a nivel del sistema para nuevas reservas.",
+  "adminReasonHint": "Queda en la auditoría",
+  "adminReasonLabel": "Motivo (opcional)",
   "adminRecentActivity": "Actividad reciente",
   "adminRegisteredDrivers": "Chóferes registrados",
   "adminRegisteredVehicles": "Vehículos registrados",
+  "adminReleaseBody": "Se le quita el viaje a {name} y vuelve a ofrecerse a los chóferes más cercanos. Avisamos al chófer y al pasajero.",
+  "@adminReleaseBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminReleaseChauffeur": "Reasignar chófer",
+  "adminReleaseTitle": "¿Reasignar la reserva {code}?",
+  "@adminReleaseTitle": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
   "adminReportsAvgRating": "Calificación promedio",
   "adminReportsAvgTicket": "Ticket promedio",
   "adminReportsByAdmin": "Operaciones",
@@ -2854,6 +2876,30 @@
   "tripReceiptTitle": "Recibo",
   "tripReceiptTotal": "Total",
   "tripReceiptVehicle": "Vehículo",
+  "tripSafetyButton": "Seguridad",
+  "tripSafetyCallFailed": "No pudimos abrir el teléfono. Marca el {number}.",
+  "@tripSafetyCallFailed": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "tripSafetyCallPolice": "Llamar al {number} (Policía)",
+  "@tripSafetyCallPolice": {
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "tripSafetyCallPoliceBody": "Si estás en peligro, llama primero.",
+  "tripSafetyHelp": "Ayuda con este viaje",
+  "tripSafetyHelpBody": "Preguntas frecuentes y otras solicitudes.",
+  "tripSafetyReport": "Reportar un problema de seguridad",
+  "tripSafetyReportBody": "Avisa al equipo de Luxelane al instante, con este viaje adjunto.",
+  "tripSafetyReportSubject": "Problema de seguridad en mi viaje",
+  "tripSafetyTitle": "Seguridad en el viaje",
   "tripShowSign": "Mostrar cartel",
   "tripsBookNow": "Reservar ahora",
   "tripsEmpty": "Aún no tienes viajes.\nReserva tu primera experiencia.",

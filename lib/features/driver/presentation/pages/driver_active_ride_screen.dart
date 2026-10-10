@@ -8,6 +8,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/trip_widgets.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../support/presentation/widgets/trip_safety.dart';
 import '../bloc/driver_bloc.dart';
 
 class DriverActiveRideScreen extends StatelessWidget {
@@ -259,6 +260,8 @@ class _DriverSidePanel extends StatelessWidget {
               label: actionLabel,
               onPressed: () => _advance(context),
             ),
+          if (booking.status != BookingStatus.completed && booking.status != BookingStatus.cancelled)
+            TripSafetyButton(bookingId: booking.id),
         ],
       );
   }

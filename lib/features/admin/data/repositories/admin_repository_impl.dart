@@ -27,9 +27,25 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
-  Future<Either<Failure, void>> cancelBooking(String bookingId) async {
+  Future<Either<Failure, void>> cancelBooking(String bookingId, {String? reason}) async {
     try {
-      await _fn.httpsCallable('cancelBooking').call({'bookingId': bookingId});
+      await _fn.httpsCallable('cancelBooking').call({
+        'bookingId': bookingId,
+        if (reason != null && reason.trim().isNotEmpty) 'reason': reason.trim(),
+      });
+      return const Right(null);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> releaseChauffeur(String bookingId, {String? reason}) async {
+    try {
+      await _fn.httpsCallable('releaseChauffeur').call({
+        'bookingId': bookingId,
+        if (reason != null && reason.trim().isNotEmpty) 'reason': reason.trim(),
+      });
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));

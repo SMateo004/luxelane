@@ -24,7 +24,11 @@ abstract class AdminRepository {
   Future<Either<Failure, bool>> assignNearestDriver(Booking booking);
 
   /// Cancels via the backend (notifies passenger and chauffeur, audited).
-  Future<Either<Failure, void>> cancelBooking(String bookingId);
+  Future<Either<Failure, void>> cancelBooking(String bookingId, {String? reason});
+
+  /// Takes the ride away from its chauffeur and back to dispatch (before
+  /// the trip starts); rider and chauffeur are notified, audited.
+  Future<Either<Failure, void>> releaseChauffeur(String bookingId, {String? reason});
   Future<Either<Failure, void>> updateUserRole(String userId, UserRole role);
 }
 

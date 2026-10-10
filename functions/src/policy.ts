@@ -116,6 +116,16 @@ export const RIDER_CANCELLABLE: BookingStatus[] = ['pending', 'confirmed', 'driv
 /** Admins may cancel anything that hasn't finished. */
 export const ADMIN_CANCELLABLE: BookingStatus[] = [...RIDER_CANCELLABLE, 'in_progress'];
 
+/**
+ * An admin can take a ride away from its chauffeur (who can't make it, or
+ * was suspended) and send it back to dispatch, until the trip starts.
+ */
+export const RELEASABLE: BookingStatus[] = ['confirmed', 'driver_arriving', 'driver_arrived'];
+
+export function canRelease(status: BookingStatus, driverId: string | null | undefined): boolean {
+  return !!driverId && RELEASABLE.includes(status);
+}
+
 /** True when the rider cancels less than an hour before pickup. */
 export function isLateCancellation(pickup: Date, now: Date): boolean {
   return pickup.getTime() - now.getTime() < FREE_CANCELLATION_MS;

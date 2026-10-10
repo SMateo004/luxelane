@@ -1,0 +1,28 @@
+{
+  "adminNoticeChauffeurReleased": {
+    "es": "Chófer liberado. La reserva volvió al despacho y avisamos al pasajero.",
+    "en": "Chauffeur released. The booking is back in dispatch and the passenger was told.",
+    "pt": "Motorista liberado. A reserva voltou para o despacho e avisamos o passageiro."
+  },
+  "adminReleaseChauffeur": {"es": "Reasignar chófer", "en": "Reassign chauffeur", "pt": "Reatribuir motorista"},
+  "adminReleaseTitle": {
+    "es": "¿Reasignar la reserva {code}?",
+    "en": "Reassign booking {code}?",
+    "pt": "Reatribuir a reserva {code}?",
+    "placeholders": {"code": {"type": "String"}}
+  },
+  "adminReleaseBody": {
+    "es": "Se le quita el viaje a {name} y vuelve a ofrecerse a los chóferes más cercanos. Avisamos al chófer y al pasajero.",
+    "en": "The ride is taken from {name} and offered again to the nearest chauffeurs. We'll tell the chauffeur and the passenger.",
+    "pt": "A viagem é retirada de {name} e oferecida de novo aos motoristas mais próximos. Avisamos o motorista e o passageiro.",
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "adminReasonLabel": {"es": "Motivo (opcional)", "en": "Reason (optional)", "pt": "Motivo (opcional)"},
+  "adminReasonHint": {
+    "es": "Queda en la auditoría",
+    "en": "Kept in the audit log",
+    "pt": "Fica na auditoria"
+  },
+  "adminPhoneRider": {"es": "Pasajero", "en": "Passenger", "pt": "Passageiro"},
+  "adminPhoneChauffeur": {"es": "Chófer", "en": "Chauffeur", "pt": "Motorista"}
+}
