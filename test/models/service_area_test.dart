@@ -107,4 +107,27 @@ void main() {
       expect(FlightNumber.error('OB760'), isNull);
     });
   });
+
+  group('airports for flight pickups', () {
+    test('airportFor matches by name within a few km of the airport', () {
+      const named = Place(
+          name: 'Aeropuerto Internacional Viru Viru',
+          address: '',
+          lat: -17.6550,
+          lng: -63.1400);
+      expect(ServiceArea.airportAt(named), isNull);
+      expect(ServiceArea.airportFor(named)?.iata, 'VVI');
+      expect(ServiceArea.airportFor(_scz), isNull);
+    });
+
+    test('airport city and arrivals exit by flight type', () {
+      final lpb = ServiceArea.airportByIata('LPB')!;
+      expect(lpb.cityName, 'La Paz');
+      expect(lpb.exitFor(FlightType.domestic), contains('nacionales'));
+      expect(
+          lpb.exitFor(FlightType.international), contains('internacionales'));
+      expect(FlightType.fromName('international'), FlightType.international);
+      expect(FlightType.fromName(null), isNull);
+    });
+  });
 }

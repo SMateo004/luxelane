@@ -52,7 +52,8 @@ class _BookingScreenState extends State<BookingScreen> {
   int _luggage = 0;
   String _notes = '';
   String _flight = '';
-  bool _flightAttempted = false; // show the flight error only after a try
+  FlightType? _flightType;
+  bool _flightAttempted = false; // show the flight errors only after a try
   bool _bookForSelf = true;
   int _heroPage = 0;
   int _capacityTab = 0; // 0 = Luggage, 1 = Seating
@@ -93,8 +94,12 @@ class _BookingScreenState extends State<BookingScreen> {
     return FlightNumber.error(_flight);
   }
 
+  String? get _flightTypeError => _airportPickup && _flightType == null
+      ? 'Indica si tu vuelo es nacional o internacional.'
+      : null;
+
   bool _checkFlight() {
-    final error = _flightError;
+    final error = _flightError ?? _flightTypeError;
     if (error == null) return true;
     setState(() => _flightAttempted = true);
     showLuxSnackbar(context, error, isError: true);
@@ -268,6 +273,10 @@ class _BookingScreenState extends State<BookingScreen> {
           notes: combinedNotes,
           flightNumber:
               _flight.trim().isEmpty ? null : FlightNumber.normalize(_flight),
+          flightType: _airportPickup ? _flightType?.name : null,
+          pickupAirport: _airportPickup
+              ? ServiceArea.airportFor(_formData!.origin)?.iata
+              : null,
         ));
   }
 
@@ -1651,14 +1660,27 @@ class _BookingScreenState extends State<BookingScreen> {
         ],
       );
 
-  Widget _flightField() => _LightTextField(
-        label: _airportPickup ? 'Número de vuelo *' : 'Número de vuelo',
-        hint: _airportPickup ? 'ej. OB 760' : 'ej. OB 760 (opcional)',
-        icon: Icons.flight_outlined,
-        initialValue: _flight,
-        errorText: _flightAttempted ? _flightError : null,
-        textCapitalization: TextCapitalization.characters,
-        onChanged: (v) => setState(() => _flight = v),
+  Widget _flightField() => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _LightTextField(
+            label: _airportPickup ? 'Número de vuelo *' : 'Número de vuelo',
+            hint: _airportPickup ? 'ej. OB 760' : 'ej. OB 760 (opcional)',
+            icon: Icons.flight_outlined,
+            initialValue: _flight,
+            errorText: _flightAttempted ? _flightError : null,
+            textCapitalization: TextCapitalization.characters,
+            onChanged: (v) => setState(() => _flight = v),
+          ),
+          if (_airportPickup) ...[
+            const SizedBox(height: 12),
+            _FlightTypeSelector(
+              value: _flightType,
+              errorText: _flightAttempted ? _flightTypeError : null,
+              onChanged: (t) => setState(() => _flightType = t),
+            ),
+          ],
+        ],
       );
 
   Widget _confirmStep() {
@@ -1713,7 +1735,12 @@ class _BookingScreenState extends State<BookingScreen> {
                   'Duración est.', '${_formData!.routeDurationMin} min'),
             _SummaryRow('Pasajeros', '$_passengers'),
             _SummaryRow('Equipaje', '$_luggage bultos'),
-            if (_flight.isNotEmpty) _SummaryRow('Vuelo', _flight),
+            if (_flight.isNotEmpty)
+              _SummaryRow(
+                  'Vuelo',
+                  _flightType == null || !_airportPickup
+                      ? _flight
+                      : '$_flight · ${_flightType!.label}'),
             if (_notes.isNotEmpty) _SummaryRow('Notas', _notes),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -3015,6 +3042,84 @@ class _FlightNote extends StatelessWidget {
                   color: _kTextSub),
             ),
           ),
+        ],
+      );
+}
+
+// ── FLIGHT TYPE (airport pickups) ─────────────────────────────────────────────
+
+/// National or international: the driver waits at a different arrivals exit.
+class _FlightTypeSelector extends StatelessWidget {
+  const _FlightTypeSelector({
+    required this.value,
+    required this.onChanged,
+    this.errorText,
+  });
+  final FlightType? value;
+  final ValueChanged<FlightType> onChanged;
+  final String? errorText;
+
+  @override
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Tipo de vuelo *',
+              style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 12,
+                  color: _kTextSub,
+                  fontWeight: FontWeight.w500)),
+          const SizedBox(height: 8),
+          Row(children: [
+            for (final t in FlightType.values) ...[
+              if (t != FlightType.values.first) const SizedBox(width: 8),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => onChanged(t),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 13),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: value == t ? _kPanelAccent : _kCardBg,
+                      border: Border.all(
+                          color: value == t
+                              ? _kPanelAccent
+                              : errorText != null
+                                  ? Colors.red.shade700
+                                  : _kBorder),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                            t == FlightType.domestic
+                                ? Icons.flight_land_rounded
+                                : Icons.public_rounded,
+                            size: 16,
+                            color: value == t ? Colors.white : _kTextSub),
+                        const SizedBox(width: 6),
+                        Text(t.label,
+                            style: TextStyle(
+                                fontFamily: kSans,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color:
+                                    value == t ? Colors.white : _kTextPrimary)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ]),
+          if (errorText != null) ...[
+            const SizedBox(height: 6),
+            Text(errorText!,
+                style: TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 12,
+                    color: Colors.red.shade700)),
+          ],
         ],
       );
 }

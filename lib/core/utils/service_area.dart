@@ -15,14 +15,50 @@ class ServiceCity {
   final double radiusKm;
 }
 
+/// Whether a flight lands from inside Bolivia or from abroad; passengers
+/// come out through a different arrivals hall for each.
+enum FlightType {
+  domestic('Nacional'),
+  international('Internacional');
+
+  const FlightType(this.label);
+  final String label;
+
+  static FlightType? fromName(String? name) {
+    for (final t in values) {
+      if (t.name == name) return t;
+    }
+    return null;
+  }
+}
+
 /// A commercial airport we pick up from.
 class ServiceAirport {
-  const ServiceAirport(this.iata, this.name, this.lat, this.lng);
+  const ServiceAirport(
+    this.iata,
+    this.name,
+    this.lat,
+    this.lng, {
+    this.domesticExit = 'Salida de llegadas nacionales',
+    this.internationalExit = 'Salida de llegadas internacionales',
+  });
 
   final String iata;
   final String name;
   final double lat;
   final double lng;
+
+  /// Where the passenger walks out, shown to the driver. Override per airport
+  /// with the actual door once confirmed on site.
+  final String domesticExit;
+  final String internationalExit;
+
+  String exitFor(FlightType type) =>
+      type == FlightType.domestic ? domesticExit : internationalExit;
+
+  /// City the airport serves (El Alto → La Paz, Viru Viru → Santa Cruz).
+  String? get cityName =>
+      ServiceArea.cityOf(Place(address: name, lat: lat, lng: lng))?.name;
 }
 
 /// Circle a destination search is restricted to.
@@ -71,6 +107,9 @@ abstract final class ServiceArea {
 
   /// A pin this close to an airport's reference point is the airport.
   static const _airportRadiusKm = 1.2;
+
+  /// A place *named* like an airport is matched to the nearest one this close.
+  static const _namedAirportRadiusKm = 6.0;
 
   /// Coordinates are unknown when Place Details failed (see
   /// PlaceAutocompleteField's fallback), so no distance rule can apply.
@@ -159,14 +198,39 @@ abstract final class ServiceArea {
     return null;
   }
 
-  /// Whether the pickup is an airport: by position, or by the place's own
-  /// name when it came from search ("Aeropuerto Internacional Viru Viru").
-  static bool isAirport(Place p) {
-    if (airportAt(p) != null) return true;
+  static bool _namedAirport(Place p) {
     final name = _fold(p.name);
     return name.isNotEmpty &&
         _airportWord.hasMatch(name) &&
         !_streetPrefix.hasMatch(name);
+  }
+
+  /// Whether the pickup is an airport: by position, or by the place's own
+  /// name when it came from search ("Aeropuerto Internacional Viru Viru").
+  static bool isAirport(Place p) => airportAt(p) != null || _namedAirport(p);
+
+  /// The airport [p] is, also when it was matched by name and its pin is a
+  /// bit off our reference point. Null when it isn't one we know.
+  static ServiceAirport? airportFor(Place p) {
+    final exact = airportAt(p);
+    if (exact != null || !_namedAirport(p) || !hasCoords(p)) return exact;
+    ServiceAirport? best;
+    var bestKm = _namedAirportRadiusKm;
+    for (final a in airports) {
+      final km = distanceKm(p.lat, p.lng, a.lat, a.lng);
+      if (km <= bestKm) {
+        best = a;
+        bestKm = km;
+      }
+    }
+    return best;
+  }
+
+  static ServiceAirport? airportByIata(String? iata) {
+    for (final a in airports) {
+      if (a.iata == iata) return a;
+    }
+    return null;
   }
 }
 
