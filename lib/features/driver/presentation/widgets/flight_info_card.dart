@@ -35,7 +35,7 @@ class FlightInfoCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(LuxSpacing.md),
       decoration: BoxDecoration(
-        color: LuxColors.blackElevated,
+        color: LuxColors.sapphireTint,
         borderRadius: BorderRadius.circular(LuxRadius.sm),
         border: Border.all(color: LuxColors.sapphire.withOpacity(0.4)),
       ),
