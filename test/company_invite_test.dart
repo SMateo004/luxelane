@@ -21,6 +21,14 @@ class _FakeService implements CompanyInviteService {
     return joinError;
   }
 
+  int declines = 0;
+  @override
+  Future<String?> decline() async {
+    declines++;
+    _status = CompanyInviteStatus.none;
+    return null;
+  }
+
   @override
   Future<void> sendVerificationEmail() async => verificationsSent++;
 }
@@ -67,5 +75,17 @@ void main() {
     expect(svc.joins, 1);
     expect(find.text('You joined Acme'), findsOneWidget);
     expect(find.text('Acme invited you to its company account'), findsNothing);
+  });
+
+  testWidgets('declining removes the invite', (tester) async {
+    final svc = _FakeService(const CompanyInviteStatus(company: 'Acme', verified: true));
+    await tester.pumpWidget(localizedApp(Scaffold(body: CompanyInviteCard(service: svc))));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Tus viajes personales siguen siendo tuyos'), findsOneWidget);
+    await tester.tap(find.text('Rechazar'));
+    await tester.pumpAndSettle();
+    expect(svc.declines, 1);
+    expect(find.text('Rechazaste la invitación'), findsOneWidget);
+    expect(find.text('Acme te invitó a su cuenta de empresa'), findsNothing);
   });
 }

@@ -64,6 +64,12 @@ const M = {
     en: 'You have arrived. Thank you for riding with Luxelane!',
     pt: 'Você chegou. Obrigado por viajar com a Luxelane!',
   },
+  companyInvitedTitle: { es: 'Invitación de empresa', en: 'Company invitation', pt: 'Convite de empresa' },
+  companyInvitedBody: {
+    es: '{company} te invitó a su cuenta de empresa. Acéptala desde tu perfil.',
+    en: '{company} invited you to its company account. Accept it from your profile.',
+    pt: '{company} convidou você para a conta da empresa. Aceite pelo seu perfil.',
+  },
   companyAddedTitle: { es: 'Cuenta corporativa', en: 'Corporate account', pt: 'Conta corporativa' },
   companyAddedBody: {
     es: 'Ahora puedes facturar tus viajes a {company}.',

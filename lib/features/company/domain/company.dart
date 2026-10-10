@@ -98,6 +98,7 @@ abstract final class CompanyErrorCodes {
   static const notARider = 'company/not-a-rider';
   static const otherCompany = 'company/user-in-other-company';
   static const lastAdmin = 'company/last-admin';
+  static const alreadyMember = 'company/already-member';
   static const costCentersEmpty = 'company/cost-center-required-without-list';
   static const inactive = 'billing/company-inactive';
   static const failed = 'company/failed';

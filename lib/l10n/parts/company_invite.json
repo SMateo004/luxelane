@@ -3,26 +3,42 @@
     "es": "{company} te invitó a su cuenta de empresa",
     "en": "{company} invited you to its company account",
     "pt": "{company} convidou você para a conta da empresa",
-    "placeholders": {"company": {"type": "String"}}
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
   },
   "companyInviteBody": {
-    "es": "Al unirte podrás cargar tus viajes de trabajo a la empresa.",
-    "en": "Once you join you can bill your work rides to the company.",
-    "pt": "Ao entrar, você poderá faturar suas viagens de trabalho para a empresa."
+    "es": "Si aceptas, la empresa verá los viajes que le cargues y podrás facturarle tus viajes de trabajo. Tus viajes personales siguen siendo tuyos.",
+    "en": "If you accept, the company will see the rides you bill to it and you can bill your work rides to it. Your personal rides stay yours.",
+    "pt": "Se aceitar, a empresa verá as viagens que você faturar para ela e você poderá faturar suas viagens de trabalho. Suas viagens pessoais continuam suas."
   },
   "companyInviteVerifyFirst": {
     "es": "Para unirte, primero confirma que este correo es tuyo: te enviamos un enlace de verificación.",
     "en": "To join, first confirm this e-mail is yours: we'll send you a verification link.",
     "pt": "Para entrar, primeiro confirme que este e-mail é seu: enviaremos um link de verificação."
   },
-  "companyInviteSendVerification": {"es": "Enviar correo de verificación", "en": "Send verification e-mail", "pt": "Enviar e-mail de verificação"},
+  "companyInviteSendVerification": {
+    "es": "Enviar correo de verificación",
+    "en": "Send verification e-mail",
+    "pt": "Enviar e-mail de verificação"
+  },
   "companyInviteVerificationSent": {
     "es": "Te enviamos el correo. Abre el enlace y vuelve para unirte.",
     "en": "We sent the e-mail. Open the link and come back to join.",
     "pt": "Enviamos o e-mail. Abra o link e volte para entrar."
   },
-  "companyInviteJoin": {"es": "Unirme", "en": "Join", "pt": "Entrar"},
-  "companyInviteVerifiedJoin": {"es": "Ya lo verifiqué, unirme", "en": "I've verified it, join", "pt": "Já verifiquei, entrar"},
+  "companyInviteJoin": {
+    "es": "Unirme",
+    "en": "Join",
+    "pt": "Entrar"
+  },
+  "companyInviteVerifiedJoin": {
+    "es": "Ya lo verifiqué, unirme",
+    "en": "I've verified it, join",
+    "pt": "Já verifiquei, entrar"
+  },
   "companyInviteNotVerified": {
     "es": "Tu correo aún no está verificado. Abre el enlace que te enviamos.",
     "en": "Your e-mail isn't verified yet. Open the link we sent you.",
@@ -32,6 +48,20 @@
     "es": "Te uniste a {company}",
     "en": "You joined {company}",
     "pt": "Você entrou em {company}",
-    "placeholders": {"company": {"type": "String"}}
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "companyInviteDecline": {
+    "es": "Rechazar",
+    "en": "Decline",
+    "pt": "Recusar"
+  },
+  "companyInviteDeclined": {
+    "es": "Rechazaste la invitación",
+    "en": "You declined the invitation",
+    "pt": "Você recusou o convite"
   }
 }

@@ -1380,7 +1380,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get commonWhatsApp => 'WhatsApp';
 
   @override
-  String get companyInviteBody => 'Ao entrar, você poderá faturar suas viagens de trabalho para a empresa.';
+  String get companyInviteBody => 'Se aceitar, a empresa verá as viagens que você faturar para ela e você poderá faturar suas viagens de trabalho. Suas viagens pessoais continuam suas.';
+
+  @override
+  String get companyInviteDecline => 'Recusar';
+
+  @override
+  String get companyInviteDeclined => 'Você recusou o convite';
 
   @override
   String get companyInviteJoin => 'Entrar';
@@ -1472,13 +1478,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get corpAddMemberAction => 'Adicionar';
 
   @override
-  String get corpAddMemberHint => 'Poderá faturar suas viagens para a empresa. Se ainda não tiver conta, entrará ao se cadastrar com este e-mail.';
+  String get corpAddMemberHint => 'Poderá faturar viagens para a empresa depois de aceitar o convite pelo perfil (se ainda não tem conta, após se cadastrar com este e-mail).';
 
   @override
   String get corpAdminEmail => 'E-mail do administrador';
 
   @override
-  String get corpAdminEmailHint => 'Se ainda não tiver conta, entrará ao se cadastrar com este e-mail.';
+  String get corpAdminEmailHint => 'Recebe um convite para aceitar pelo perfil no app (se ainda não tem conta, após se cadastrar com este e-mail).';
 
   @override
   String get corpAdminEmpty => 'Ainda não há empresas.';
@@ -1548,7 +1554,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get corpColVehicle => 'Veículo';
 
   @override
-  String get corpCompanyCreated => 'Empresa criada';
+  String get corpCompanyCreated => 'Empresa criada. O administrador aceita o convite pelo perfil no app.';
 
   @override
   String get corpCompanyName => 'Razão social';
@@ -1584,6 +1590,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get corpEmail => 'E-mail';
+
+  @override
+  String get corpErrorAlreadyMember => 'Essa pessoa já faz parte da empresa.';
 
   @override
   String get corpErrorCompanyInactive => 'A conta corporativa está suspensa.';
@@ -1661,7 +1670,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get corpMemberActions => 'Opções do membro';
 
   @override
-  String get corpMemberAdded => 'Pronto. Se a pessoa já tinha conta, foi adicionada; se não, entrará ao se cadastrar.';
+  String get corpMemberAdded => 'Convite enviado. A pessoa aceita pelo perfil no app; se ainda não tem conta, após se cadastrar.';
 
   @override
   String get corpMemberRemoved => 'Membro removido';

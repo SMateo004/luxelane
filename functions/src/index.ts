@@ -1919,27 +1919,28 @@ async function linkMember(
   await pushUser(uid, 'companyAddedTitle', 'companyAddedBody', { company: company.name });
 }
 
-/** Adds by e-mail: links the account if it exists, otherwise leaves an invite. */
+/**
+ * Invites by e-mail. Nobody is added without accepting: the person joins
+ * from the invite card in their profile (companyInvite callable), with a
+ * verified e-mail. Someone who already has an account is told by push.
+ */
 async function addMemberByEmail(
   companyId: string,
   company: CompanyDoc,
   email: string,
   role: CompanyRole,
   by: string,
-): Promise<'linked' | 'invited'> {
-  // Only an account that proved it owns the address is linked right away;
-  // anyone can sign up with someone else's e-mail without verifying it.
-  let authUid: string | null = null;
+): Promise<'invited'> {
+  let existingUid: string | null = null;
   try {
-    const authUser = await admin.auth().getUserByEmail(email);
-    authUid = authUser.emailVerified ? authUser.uid : null;
+    existingUid = (await admin.auth().getUserByEmail(email)).uid;
   } catch {
-    authUid = null;
+    existingUid = null;
   }
-  const userDoc = authUid ? await db.collection('users').doc(authUid).get() : null;
-  if (authUid && userDoc?.exists) {
-    await linkMember(companyId, company, authUid, role, by);
-    return 'linked';
+  if (existingUid) {
+    const user = await getUser(existingUid);
+    if (user.companyId === companyId) throw err.failedPrecondition('company/already-member');
+    if (user.companyId) throw err.failedPrecondition('company/user-in-other-company');
   }
   await db.collection('companyInvites').doc(email).set({
     email,
@@ -1949,6 +1950,9 @@ async function addMemberByEmail(
     invitedBy: by,
     createdAt: admin.firestore.Timestamp.now(),
   });
+  if (existingUid) {
+    await pushUser(existingUid, 'companyInvitedTitle', 'companyInvitedBody', { company: company.name });
+  }
   return 'invited';
 }
 
@@ -2066,19 +2070,6 @@ export const cancelCompanyInvite = onCall(async (req) => {
   return { ok: true };
 });
 
-/**
- * The verified e-mail of [uid]'s Auth account, or null. The profile's
- * `email` field is written by the client, so it is never trusted here.
- */
-async function verifiedEmail(uid: string): Promise<string | null> {
-  try {
-    const u = await admin.auth().getUser(uid);
-    return u.emailVerified ? normalizeEmail(u.email) : null;
-  } catch {
-    return null;
-  }
-}
-
 /** Joins the company that invited [uid]'s verified e-mail, if any. */
 async function claimInviteFor(uid: string, email: string): Promise<string | null> {
   const ref = db.collection('companyInvites').doc(email);
@@ -2093,17 +2084,23 @@ async function claimInviteFor(uid: string, email: string): Promise<string | null
   return company.name;
 }
 
-/** A new rider whose verified e-mail was invited joins on sign-up. */
+/**
+ * A new rider whose e-mail has an invite is told about it; they accept from
+ * the invite card in their profile (nobody joins a company without saying
+ * yes). Kept under its old name so deploys don't delete and recreate it.
+ */
 export const claimCompanyInvite = onDocumentCreated('users/{uid}', async (event) => {
   const data = event.data?.data() as UserDoc | undefined;
   if (!data || data.role !== 'rider') return;
-  const email = await verifiedEmail(event.params.uid);
-  // Unverified: the rider joins later from their profile (companyInvite).
-  if (!email) return;
   try {
-    await claimInviteFor(event.params.uid, email);
+    const email = normalizeEmail((await admin.auth().getUser(event.params.uid)).email);
+    if (!email) return;
+    const invite = await db.collection('companyInvites').doc(email).get();
+    if (!invite.exists) return;
+    const name = (invite.data()?.companyName as string | undefined) ?? '';
+    await pushUser(event.params.uid, 'companyInvitedTitle', 'companyInvitedBody', { company: name });
   } catch (e) {
-    logger.error('claimCompanyInvite', 'failed', { uid: event.params.uid, error: String(e) });
+    logger.error('claimCompanyInvite', 'notify failed', { uid: event.params.uid, error: String(e) });
   }
 });
 
@@ -2114,7 +2111,8 @@ export const claimCompanyInvite = onDocumentCreated('users/{uid}', async (event)
  */
 export const companyInvite = onCall(async (req) => {
   const uid = requireAuth(req);
-  const action = (req.data ?? {}).action === 'join' ? 'join' : 'status';
+  const raw = (req.data ?? {}).action;
+  const action = raw === 'join' || raw === 'decline' ? raw : 'status';
   const authUser = await admin.auth().getUser(uid);
   const email = normalizeEmail(authUser.email);
   if (!email) return { company: null };
@@ -2124,6 +2122,11 @@ export const companyInvite = onCall(async (req) => {
   const company = (await companies().doc(companyId).get()).data() as CompanyDoc | undefined;
   if (!company?.active) return { company: null };
   if (action === 'status') return { company: company.name, verified: authUser.emailVerified };
+  if (action === 'decline') {
+    await invite.ref.delete();
+    await writeAudit('company_invite_declined', { companyId, uid });
+    return { declined: true };
+  }
   if (!authUser.emailVerified) throw err.failedPrecondition('company/email-not-verified');
   const user = await getUser(uid);
   if (user.role !== 'rider') throw err.failedPrecondition('company/not-a-rider');

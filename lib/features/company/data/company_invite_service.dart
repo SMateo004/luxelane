@@ -17,6 +17,7 @@ abstract class CompanyInviteService {
 
   /// Joins; returns an error code ('company/email-not-verified', …) or null.
   Future<String?> join();
+  Future<String?> decline();
   Future<void> sendVerificationEmail();
 }
 
@@ -43,6 +44,16 @@ class CompanyInviteServiceImpl implements CompanyInviteService {
       return null;
     } on FirebaseFunctionsException catch (e) {
       return RegExp(r'company/[a-z-]+').firstMatch(e.message ?? '')?.group(0) ?? 'company/failed';
+    } catch (_) {
+      return 'company/failed';
+    }
+  }
+
+  @override
+  Future<String?> decline() async {
+    try {
+      await _fn.httpsCallable('companyInvite').call({'action': 'decline'});
+      return null;
     } catch (_) {
       return 'company/failed';
     }

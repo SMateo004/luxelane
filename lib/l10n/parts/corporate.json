@@ -30,9 +30,9 @@
     "pt": "Criar"
   },
   "corpCompanyCreated": {
-    "es": "Empresa creada",
-    "en": "Company created",
-    "pt": "Empresa criada"
+    "es": "Empresa creada. Su administrador acepta la invitación desde su perfil en la app.",
+    "en": "Company created. Its administrator accepts the invitation from their profile in the app.",
+    "pt": "Empresa criada. O administrador aceita o convite pelo perfil no app."
   },
   "corpCompanyName": {
     "es": "Razón social",
@@ -65,9 +65,9 @@
     "pt": "E-mail do administrador"
   },
   "corpAdminEmailHint": {
-    "es": "Si aún no tiene cuenta, se unirá al registrarse con este correo.",
-    "en": "If they don't have an account yet, they join when they sign up with this e-mail.",
-    "pt": "Se ainda não tiver conta, entrará ao se cadastrar com este e-mail."
+    "es": "Le llega una invitación que acepta desde su perfil en la app (si aún no tiene cuenta, después de registrarse con este correo).",
+    "en": "They get an invitation to accept from their profile in the app (if they don't have an account yet, after signing up with this e-mail).",
+    "pt": "Recebe um convite para aceitar pelo perfil no app (se ainda não tem conta, após se cadastrar com este e-mail)."
   },
   "corpSuspend": {
     "es": "Suspender cuenta",
@@ -263,9 +263,9 @@
     "pt": "Adicionar membro"
   },
   "corpAddMemberHint": {
-    "es": "Podrá facturar sus viajes a la empresa. Si aún no tiene cuenta, se unirá al registrarse con este correo.",
-    "en": "They'll be able to bill rides to the company. If they don't have an account yet, they join when they sign up with this e-mail.",
-    "pt": "Poderá faturar suas viagens para a empresa. Se ainda não tiver conta, entrará ao se cadastrar com este e-mail."
+    "es": "Podrá facturar sus viajes a la empresa una vez que acepte la invitación desde su perfil (si aún no tiene cuenta, después de registrarse con este correo).",
+    "en": "They can bill rides to the company once they accept the invitation from their profile (if they don't have an account yet, after signing up with this e-mail).",
+    "pt": "Poderá faturar viagens para a empresa depois de aceitar o convite pelo perfil (se ainda não tem conta, após se cadastrar com este e-mail)."
   },
   "corpEmail": {
     "es": "Correo electrónico",
@@ -328,9 +328,9 @@
     }
   },
   "corpMemberAdded": {
-    "es": "Listo. Si la persona ya tenía cuenta, se agregó; si no, se unirá al registrarse.",
-    "en": "Done. If they already had an account they were added; otherwise they'll join when they sign up.",
-    "pt": "Pronto. Se a pessoa já tinha conta, foi adicionada; se não, entrará ao se cadastrar."
+    "es": "Invitación enviada. La persona la acepta desde su perfil en la app; si aún no tiene cuenta, al registrarse.",
+    "en": "Invitation sent. They accept it from their profile in the app; if they don't have an account yet, after signing up.",
+    "pt": "Convite enviado. A pessoa aceita pelo perfil no app; se ainda não tem conta, após se cadastrar."
   },
   "corpMemberUpdated": {
     "es": "Permisos actualizados",
@@ -556,5 +556,10 @@
     "es": "Agrega al menos un centro de costo antes de exigirlo.",
     "en": "Add at least one cost center before requiring it.",
     "pt": "Adicione pelo menos um centro de custo antes de exigi-lo."
+  },
+  "corpErrorAlreadyMember": {
+    "es": "Esa persona ya es parte de la empresa.",
+    "en": "That person is already in the company.",
+    "pt": "Essa pessoa já faz parte da empresa."
   }
 }

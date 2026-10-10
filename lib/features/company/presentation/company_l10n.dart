@@ -14,6 +14,7 @@ String localizedCompanyError(AppLocalizations l, String code) => switch (code) {
       CompanyErrorCodes.invalidEmail || CompanyErrorCodes.invalidAdminEmail => l.corpErrorInvalidEmail,
       CompanyErrorCodes.notARider => l.corpErrorNotARider,
       CompanyErrorCodes.otherCompany => l.corpErrorOtherCompany,
+      CompanyErrorCodes.alreadyMember => l.corpErrorAlreadyMember,
       CompanyErrorCodes.lastAdmin => l.corpErrorLastAdmin,
       CompanyErrorCodes.costCentersEmpty => l.corpErrorCostCentersEmpty,
       CompanyErrorCodes.inactive => l.corpErrorCompanyInactive,

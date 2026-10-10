@@ -55,6 +55,20 @@ class _CompanyInviteCardState extends State<CompanyInviteCard> {
     if (mounted) setState(() => _busy = false);
   }
 
+  Future<void> _decline() async {
+    final l = context.l10n;
+    setState(() => _busy = true);
+    final e = await _svc!.decline();
+    if (!mounted) return;
+    setState(() => _busy = false);
+    if (e == null) {
+      showLuxSnackbar(context, l.companyInviteDeclined);
+      setState(() => _status = CompanyInviteStatus.none);
+    } else {
+      showLuxSnackbar(context, l.adminActionFailed, isError: true);
+    }
+  }
+
   Future<void> _sendVerification() async {
     final l = context.l10n;
     try {
@@ -104,6 +118,10 @@ class _CompanyInviteCardState extends State<CompanyInviteCard> {
               height: 44,
               loading: _busy,
               onPressed: _busy ? null : _join,
+            ),
+            TextButton(
+              onPressed: _busy ? null : _decline,
+              child: Text(l.companyInviteDecline, style: const TextStyle(color: LuxColors.whiteSecondary)),
             ),
           ]),
         ]),

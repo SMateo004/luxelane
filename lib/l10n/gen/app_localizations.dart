@@ -2548,8 +2548,20 @@ abstract class AppLocalizations {
   /// No description provided for @companyInviteBody.
   ///
   /// In es, this message translates to:
-  /// **'Al unirte podrás cargar tus viajes de trabajo a la empresa.'**
+  /// **'Si aceptas, la empresa verá los viajes que le cargues y podrás facturarle tus viajes de trabajo. Tus viajes personales siguen siendo tuyos.'**
   String get companyInviteBody;
+
+  /// No description provided for @companyInviteDecline.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazar'**
+  String get companyInviteDecline;
+
+  /// No description provided for @companyInviteDeclined.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazaste la invitación'**
+  String get companyInviteDeclined;
 
   /// No description provided for @companyInviteJoin.
   ///
@@ -2716,7 +2728,7 @@ abstract class AppLocalizations {
   /// No description provided for @corpAddMemberHint.
   ///
   /// In es, this message translates to:
-  /// **'Podrá facturar sus viajes a la empresa. Si aún no tiene cuenta, se unirá al registrarse con este correo.'**
+  /// **'Podrá facturar sus viajes a la empresa una vez que acepte la invitación desde su perfil (si aún no tiene cuenta, después de registrarse con este correo).'**
   String get corpAddMemberHint;
 
   /// No description provided for @corpAdminEmail.
@@ -2728,7 +2740,7 @@ abstract class AppLocalizations {
   /// No description provided for @corpAdminEmailHint.
   ///
   /// In es, this message translates to:
-  /// **'Si aún no tiene cuenta, se unirá al registrarse con este correo.'**
+  /// **'Le llega una invitación que acepta desde su perfil en la app (si aún no tiene cuenta, después de registrarse con este correo).'**
   String get corpAdminEmailHint;
 
   /// No description provided for @corpAdminEmpty.
@@ -2860,7 +2872,7 @@ abstract class AppLocalizations {
   /// No description provided for @corpCompanyCreated.
   ///
   /// In es, this message translates to:
-  /// **'Empresa creada'**
+  /// **'Empresa creada. Su administrador acepta la invitación desde su perfil en la app.'**
   String get corpCompanyCreated;
 
   /// No description provided for @corpCompanyName.
@@ -2928,6 +2940,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Correo electrónico'**
   String get corpEmail;
+
+  /// No description provided for @corpErrorAlreadyMember.
+  ///
+  /// In es, this message translates to:
+  /// **'Esa persona ya es parte de la empresa.'**
+  String get corpErrorAlreadyMember;
 
   /// No description provided for @corpErrorCompanyInactive.
   ///
@@ -3064,7 +3082,7 @@ abstract class AppLocalizations {
   /// No description provided for @corpMemberAdded.
   ///
   /// In es, this message translates to:
-  /// **'Listo. Si la persona ya tenía cuenta, se agregó; si no, se unirá al registrarse.'**
+  /// **'Invitación enviada. La persona la acepta desde su perfil en la app; si aún no tiene cuenta, al registrarse.'**
   String get corpMemberAdded;
 
   /// No description provided for @corpMemberRemoved.
