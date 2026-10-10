@@ -7,6 +7,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../bloc/driver_bloc.dart';
+import '../widgets/flight_info_card.dart';
 
 class DriverActiveRideScreen extends StatelessWidget {
   const DriverActiveRideScreen({super.key, required this.bookingId});
@@ -285,6 +286,10 @@ class _RideInfoRow extends StatelessWidget {
               ),
             ],
           ),
+          if (booking.flightNumber?.isNotEmpty == true) ...[
+            const SizedBox(height: LuxSpacing.md),
+            FlightInfoCard(booking: booking),
+          ],
           const SizedBox(height: LuxSpacing.md),
           Container(
             padding: const EdgeInsets.all(LuxSpacing.sm),
