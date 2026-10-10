@@ -85,10 +85,21 @@ Con eso **la web ya funciona**; no requiere más configuración.
 > distintas en Google Play hará falta un ID por app (p. ej. con *flavors*)
 > y registrar cada una en Firebase con sus huellas.
 
-### 3. iOS (cuando exista la carpeta `ios/`)
-Registrar la app iOS en Firebase y pasar `FIREBASE_IOS_APP_ID` y
-`GOOGLE_IOS_CLIENT_ID`; añadir el `REVERSED_CLIENT_ID` como URL scheme en
-`Info.plist`.
+### 3. iOS (Bundle ID `com.luxelane.app`, iOS 14+)
+1. Firebase → Project settings → **Add app → iOS**, Bundle ID
+   `com.luxelane.app`. Descargar `GoogleService-Info.plist` (no hace falta
+   añadirlo al proyecto; solo se leen dos valores de él).
+2. En `ios/Flutter/Luxelane.xcconfig` reemplazar:
+   - `GOOGLE_IOS_CLIENT_ID` → `CLIENT_ID` del plist.
+   - `GOOGLE_REVERSED_CLIENT_ID` → `REVERSED_CLIENT_ID` del plist.
+   No son secretos (viajan dentro de la app); se pueden commitear.
+3. GitHub → Secrets → `FIREBASE_IOS_APP_ID` → `GOOGLE_APP_ID` del plist
+   (`1:51157842817:ios:...`). En local:
+   `flutter run --dart-define=FIREBASE_IOS_APP_ID=...`
+4. Compilar/firmar: en una Mac con Xcode, `open ios/Runner.xcworkspace`,
+   elegir el Team en *Signing & Capabilities* y, para notificaciones push,
+   añadir la capability **Push Notifications** y la clave APNs en Firebase
+   → Cloud Messaging.
 
 ---
 

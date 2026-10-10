@@ -185,10 +185,6 @@ jobs:
     name: Build iOS (Rider)
     runs-on: macos-latest
     needs: test
-    # Disabled: the app has no ios/ platform folder yet ("Application not
-    # configured for iOS"). Run `flutter create --platforms=ios .` and remove
-    # this line to enable it.
-    if: false
     steps:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
@@ -201,7 +197,9 @@ jobs:
           flutter build ios --release --no-codesign \
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
-            --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }}
+            --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
+            --dart-define=FIREBASE_IOS_APP_ID=${{ secrets.FIREBASE_IOS_APP_ID }} \
+            --dart-define=GOOGLE_IOS_CLIENT_ID=${{ secrets.GOOGLE_IOS_CLIENT_ID }}
 
   # ---------------------------------------------------------------------------
   deploy_functions:
