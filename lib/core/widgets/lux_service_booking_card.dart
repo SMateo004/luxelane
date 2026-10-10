@@ -169,15 +169,16 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
             : 'Destino — dirección, hotel o lugar';
 
     return Theme(
-      data: Theme.of(context).copyWith(brightness: Brightness.dark),
+      data: Theme.of(context).copyWith(brightness: Brightness.light),
       child: Container(
         padding: const EdgeInsets.all(28),
         decoration: BoxDecoration(
-          color: const Color(0xFF0A1220),
-          border: Border.all(color: const Color(0xFF1A2B40)),
+          color: LD.bg,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: LD.border),
           boxShadow: const [
             BoxShadow(
-                color: Color(0x55000000),
+                color: Color(0x290D1B2E),
                 blurRadius: 40,
                 offset: Offset(0, 24)),
           ],
@@ -187,8 +188,7 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text('RESERVA TU CHÓFER',
-                style: uiLabel(
-                    size: 10, color: const Color(0xFF8CB2E3), spacing: 3)),
+                style: uiLabel(size: 10, color: LD.sph, spacing: 3)),
             const SizedBox(height: 18),
 
             if (widget.mode != LuxBookingMode.immediate) ...[
@@ -270,13 +270,13 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
                       padding: const EdgeInsets.only(bottom: 12),
                       child: Row(children: [
                         const Icon(Icons.info_outline_rounded,
-                            size: 14, color: Color(0xFFE59A9A)),
+                            size: 14, color: Color(0xFFB83A3A)),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(_error!,
                               style: uiLabel(
                                   size: 12,
-                                  color: const Color(0xFFE59A9A),
+                                  color: const Color(0xFFB83A3A),
                                   spacing: 0.2)),
                         ),
                       ]),
@@ -292,7 +292,8 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
                   backgroundColor: LD.sph,
                   foregroundColor: Colors.white,
                   disabledBackgroundColor: LD.sph.withAlpha(140),
-                  shape: const RoundedRectangleBorder(),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
                   elevation: 0,
                 ),
                 child: _submitting
@@ -322,14 +323,13 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
             Text(
               'Sin compromiso: verás el precio final antes de confirmar.',
               textAlign: TextAlign.center,
-              style: uiLabel(
-                  size: 11, color: Colors.white.withAlpha(130), spacing: 0.2),
+              style: uiLabel(size: 11, color: LD.ink3, spacing: 0.2),
             ),
             const SizedBox(height: 20),
-            Container(height: 1, color: Colors.white.withAlpha(20)),
+            Container(height: 1, color: LD.border),
             const SizedBox(height: 18),
-            _Assurance(LuxPromise.fixedPrice),
-            _Assurance(LuxPromise.freeCancel),
+            const _Assurance(LuxPromise.fixedPrice),
+            const _Assurance(LuxPromise.freeCancel),
             _Assurance(
                 airport ? LuxPromise.waitAirport : LuxPromise.waitStandard),
           ],
@@ -355,8 +355,9 @@ class _Segmented extends StatelessWidget {
         height: 42,
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
-          color: const Color(0xFF070E18),
-          border: Border.all(color: const Color(0xFF1A2B40)),
+          color: LD.bg2,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: LD.border),
         ),
         child: Row(
           children: [
@@ -373,15 +374,16 @@ class _Segmented extends StatelessWidget {
                         duration: const Duration(milliseconds: 220),
                         curve: Curves.easeOutCubic,
                         alignment: Alignment.center,
-                        color: i == index ? LD.sph : Colors.transparent,
+                        decoration: BoxDecoration(
+                          color: i == index ? LD.sph : Colors.transparent,
+                          borderRadius: BorderRadius.circular(7),
+                        ),
                         child: Text(
                           options[i].toUpperCase(),
                           style: uiLabel(
                             size: 10,
                             spacing: 1.6,
-                            color: i == index
-                                ? Colors.white
-                                : Colors.white.withAlpha(140),
+                            color: i == index ? Colors.white : LD.ink3,
                           ).copyWith(fontWeight: FontWeight.w500),
                         ),
                       ),
@@ -407,14 +409,11 @@ class _MapLink extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
             minimumSize: Size.zero,
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            foregroundColor: Colors.white.withAlpha(140),
+            foregroundColor: LD.sph,
           ),
           icon: const Icon(Icons.map_outlined, size: 13),
           label: Text('Elegir en el mapa',
-              style: uiLabel(
-                  size: 10.5,
-                  color: Colors.white.withAlpha(140),
-                  spacing: 0.3)),
+              style: uiLabel(size: 10.5, color: LD.sph, spacing: 0.3)),
         ),
       );
 }
@@ -436,22 +435,21 @@ class _FieldTile extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
           decoration: BoxDecoration(
-            color: const Color(0xFF0D1928),
-            border: Border.all(color: const Color(0xFF1A2B40)),
-            borderRadius: BorderRadius.circular(2),
+            color: Colors.white,
+            border: Border.all(color: LD.border),
+            borderRadius: BorderRadius.circular(10),
           ),
           child: Row(children: [
-            Icon(icon, size: 16, color: Colors.white.withAlpha(150)),
+            Icon(icon, size: 16, color: LD.ink3),
             const SizedBox(width: 12),
             Expanded(
               child: Text(label,
                   style: const TextStyle(
-                      fontFamily: kSans, fontSize: 13, color: Colors.white)),
+                      fontFamily: kSans, fontSize: 13, color: LD.ink)),
             ),
             if (trailing != null)
               Text(trailing!.toUpperCase(),
-                  style: uiLabel(
-                      size: 9.5, color: const Color(0xFF8CB2E3), spacing: 1.4)),
+                  style: uiLabel(size: 9.5, color: LD.sph, spacing: 1.4)),
           ]),
         ),
       );
@@ -468,24 +466,22 @@ class _HoursStepper extends StatelessWidget {
           tooltip: tip,
           onPressed: f,
           icon: Icon(i, size: 16),
-          color: Colors.white,
-          disabledColor: Colors.white24,
+          color: LD.sph,
+          disabledColor: LD.border,
         );
     return Container(
       padding: const EdgeInsets.only(left: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFF0D1928),
-        border: Border.all(color: const Color(0xFF1A2B40)),
-        borderRadius: BorderRadius.circular(2),
+        color: Colors.white,
+        border: Border.all(color: LD.border),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: Row(children: [
-        Icon(Icons.hourglass_empty_rounded,
-            size: 16, color: Colors.white.withAlpha(150)),
+        const Icon(Icons.hourglass_empty_rounded, size: 16, color: LD.ink3),
         const SizedBox(width: 12),
         const Expanded(
           child: Text('Duración',
-              style: TextStyle(
-                  fontFamily: kSans, fontSize: 13, color: Colors.white)),
+              style: TextStyle(fontFamily: kSans, fontSize: 13, color: LD.ink)),
         ),
         btn(Icons.remove_rounded, hours > 2 ? () => onChanged(hours - 1) : null,
             'Menos horas'),
@@ -497,7 +493,7 @@ class _HoursStepper extends StatelessWidget {
                   fontFamily: kSans,
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: Colors.white)),
+                  color: LD.ink)),
         ),
         btn(Icons.add_rounded, hours < 24 ? () => onChanged(hours + 1) : null,
             'Más horas'),
@@ -514,14 +510,11 @@ class _Assurance extends StatelessWidget {
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: Row(children: [
-          const Icon(Icons.check_rounded, size: 14, color: Color(0xFF8CB2E3)),
+          const Icon(Icons.check_rounded, size: 14, color: LD.sph),
           const SizedBox(width: 10),
           Expanded(
             child: Text(text,
-                style: uiLabel(
-                    size: 11.5,
-                    color: Colors.white.withAlpha(170),
-                    spacing: 0.2)),
+                style: uiLabel(size: 11.5, color: LD.ink2, spacing: 0.2)),
           ),
         ]),
       );

@@ -154,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // ---------------------------------------------------------------------------
 
   Widget _mobileLayout() => Scaffold(
-        backgroundColor: const Color(0xFF0D1B2E),
+        backgroundColor: LuxColors.bg,
         body: Stack(
           children: [
             Positioned.fill(
@@ -232,12 +232,12 @@ class _MobileTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
-        // Soft scrim so the brand mark stays legible over any map tile.
+        // Ivory scrim so the brand mark stays legible over any map tile.
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xCC070E18), Color(0x00070E18)],
+            colors: [Color(0xF2FAFBFE), Color(0x00FAFBFE)],
           ),
         ),
         child: Padding(
@@ -266,8 +266,10 @@ class _MobileTopBar extends StatelessWidget {
                         height: 36,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: LuxColors.blackSurface,
-                          border: Border.all(color: LuxColors.blackBorder),
+                          color: LuxColors.sapphire,
+                          border:
+                              Border.all(color: LuxColors.surface, width: 2),
+                          boxShadow: luxSoftShadow,
                         ),
                         alignment: Alignment.center,
                         child: name.isNotEmpty
@@ -275,13 +277,13 @@ class _MobileTopBar extends StatelessWidget {
                                 name[0].toUpperCase(),
                                 style: const TextStyle(
                                   fontFamily: 'Cormorant Garamond',
-                                  color: LuxColors.white,
+                                  color: LuxColors.onAccent,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 17,
                                 ),
                               )
                             : const Icon(Icons.person_outline_rounded,
-                                size: 18, color: LuxColors.white),
+                                size: 18, color: LuxColors.onAccent),
                       ),
                     ),
                   );
@@ -306,8 +308,9 @@ class _LocateButton extends StatelessWidget {
           height: 38,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: LuxColors.blackSurface,
-            border: Border.all(color: LuxColors.blackBorder),
+            color: LuxColors.surface,
+            border: Border.all(color: LuxColors.border),
+            boxShadow: luxSoftShadow,
           ),
           child: loading
               ? const Center(
@@ -316,12 +319,11 @@ class _LocateButton extends StatelessWidget {
                     height: 16,
                     child: CircularProgressIndicator(
                         strokeWidth: 1.5,
-                        valueColor:
-                            AlwaysStoppedAnimation(LuxColors.sapphireBright)),
+                        valueColor: AlwaysStoppedAnimation(LuxColors.sapphire)),
                   ),
                 )
               : const Icon(Icons.my_location_rounded,
-                  size: 18, color: LuxColors.white),
+                  size: 18, color: LuxColors.sapphire),
         ),
       );
 }
@@ -364,10 +366,13 @@ class _MobileBottomPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         decoration: const BoxDecoration(
-          color: LuxColors.blackSurface,
+          color: LuxColors.surface,
           borderRadius:
-              BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
-          border: Border(top: BorderSide(color: LuxColors.blackBorder)),
+              BorderRadius.vertical(top: Radius.circular(LuxRadius.xl + 8)),
+          boxShadow: [
+            BoxShadow(
+                color: LuxColors.shadow, blurRadius: 32, offset: Offset(0, -8)),
+          ],
         ),
         padding: const EdgeInsets.fromLTRB(
             LuxSpacing.md + 4, LuxSpacing.sm, LuxSpacing.md + 4, LuxSpacing.lg),
@@ -376,10 +381,10 @@ class _MobileBottomPanel extends StatelessWidget {
           children: [
             Center(
               child: Container(
-                width: 32,
+                width: 36,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: LuxColors.whiteTertiary,
+                  color: LuxColors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -425,11 +430,11 @@ class _MobileBottomPanel extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(Icons.check_rounded,
-                          size: 12, color: LuxColors.sapphireBright),
+                          size: 12, color: LuxColors.sapphire),
                       const SizedBox(width: 4),
                       Text(p,
                           style: LuxTypography.caption
-                              .copyWith(color: LuxColors.whiteSecondary)),
+                              .copyWith(color: LuxColors.inkSecondary)),
                     ],
                   ),
               ],
@@ -460,7 +465,7 @@ class _Greeting extends StatelessWidget {
                           : '${LuxFormat.greeting()}, $first')
                       .toUpperCase(),
                   style: LuxTypography.caption.copyWith(
-                    color: LuxColors.sapphireBright,
+                    color: LuxColors.sapphire,
                     letterSpacing: 2.2,
                     fontSize: 10,
                   ),
@@ -517,10 +522,8 @@ class _BookingForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final locBg = isDark ? LuxColors.blackElevated : const Color(0xFFF0EFEb);
-    final locIconColor =
-        isDark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
+    const locBg = LuxColors.sapphireTint;
+    const locIconColor = LuxColors.sapphire;
     return Column(
       children: [
         Row(
@@ -540,19 +543,16 @@ class _BookingForm extends StatelessWidget {
             GestureDetector(
               onTap: onLocate,
               child: Container(
-                width: 44,
-                height: 44,
+                width: 46,
+                height: 46,
                 decoration: BoxDecoration(
                   color: locBg,
-                  borderRadius: BorderRadius.circular(LuxRadius.sm),
-                  border: Border.all(
-                    color: isDark
-                        ? LuxColors.blackBorder
-                        : const Color(0xFFE4E1DA),
-                  ),
+                  borderRadius: BorderRadius.circular(LuxRadius.md),
+                  border:
+                      Border.all(color: LuxColors.sapphire.withOpacity(0.15)),
                 ),
                 child: locating
-                    ? Center(
+                    ? const Center(
                         child: SizedBox(
                           width: 16,
                           height: 16,
@@ -562,7 +562,7 @@ class _BookingForm extends StatelessWidget {
                           ),
                         ),
                       )
-                    : Icon(Icons.my_location_rounded,
+                    : const Icon(Icons.my_location_rounded,
                         size: 18, color: locIconColor),
               ),
             ),
@@ -599,20 +599,19 @@ class _RouteInfoBadge extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
             horizontal: LuxSpacing.md, vertical: LuxSpacing.sm),
         decoration: BoxDecoration(
-          color: LuxColors.sapphireSubtle,
-          borderRadius: BorderRadius.circular(LuxRadius.sm),
-          border: Border.all(color: LuxColors.sapphire.withOpacity(0.3)),
+          color: LuxColors.sapphireTint,
+          borderRadius: BorderRadius.circular(LuxRadius.xl),
+          border: Border.all(color: LuxColors.sapphire.withOpacity(0.15)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.route_outlined,
-                size: 16, color: LuxColors.sapphireBright),
+                size: 16, color: LuxColors.sapphire),
             const SizedBox(width: LuxSpacing.xs),
             Text(
               '${route.distanceKm.toStringAsFixed(1)} km · ${route.durationMin} min',
-              style: LuxTypography.caption
-                  .copyWith(color: LuxColors.sapphireBright),
+              style: LuxTypography.caption.copyWith(color: LuxColors.sapphire),
             ),
           ],
         ),
@@ -653,31 +652,25 @@ class _DateTimeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) => InkWell(
         onTap: () => _pick(context),
-        borderRadius: BorderRadius.circular(LuxRadius.sm),
+        borderRadius: BorderRadius.circular(LuxRadius.md),
         child: Builder(builder: (context) {
-          final dark = Theme.of(context).brightness == Brightness.dark;
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
             decoration: BoxDecoration(
-              color: dark ? LuxColors.blackElevated : const Color(0xFFF5F4F1),
-              borderRadius: BorderRadius.circular(LuxRadius.sm),
-              border: Border.all(
-                color: dark ? LuxColors.blackBorder : const Color(0xFFE4E1DA),
-              ),
+              color: LuxColors.surface,
+              borderRadius: BorderRadius.circular(LuxRadius.md),
+              border: Border.all(color: LuxColors.border),
             ),
             child: Row(
               children: [
-                Icon(Icons.event_outlined,
-                    size: 18,
-                    color: dark
-                        ? LuxColors.whiteTertiary
-                        : const Color(0xFFAAAAAA)),
+                const Icon(Icons.event_outlined,
+                    size: 18, color: LuxColors.inkTertiary),
                 const SizedBox(width: LuxSpacing.md - 4),
                 Expanded(
                   child: Text(
                     LuxFormat.dateTime(date),
-                    style: TextStyle(
-                      color: dark ? LuxColors.white : const Color(0xFF111111),
+                    style: const TextStyle(
+                      color: LuxColors.ink,
                       fontSize: 13,
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.w400,
@@ -686,7 +679,7 @@ class _DateTimeTile extends StatelessWidget {
                 ),
                 Text('CAMBIAR',
                     style: LuxTypography.caption.copyWith(
-                        color: LuxColors.sapphireBright,
+                        color: LuxColors.sapphire,
                         letterSpacing: 1.4,
                         fontSize: 9.5)),
               ],
@@ -703,24 +696,21 @@ class _HourSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final iconColor = dark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
-    final textColor = dark ? LuxColors.white : const Color(0xFF111111);
-    final accentColor = dark ? LuxColors.white : const Color(0xFF111111);
+    const iconColor = LuxColors.inkTertiary;
+    const textColor = LuxColors.ink;
+    const accentColor = LuxColors.sapphire;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: BoxDecoration(
-        color: dark ? LuxColors.blackElevated : const Color(0xFFF5F4F1),
-        borderRadius: BorderRadius.circular(LuxRadius.sm),
-        border: Border.all(
-          color: dark ? LuxColors.blackBorder : const Color(0xFFE4E1DA),
-        ),
+        color: LuxColors.surface,
+        borderRadius: BorderRadius.circular(LuxRadius.md),
+        border: Border.all(color: LuxColors.border),
       ),
       child: Row(
         children: [
-          Icon(Icons.schedule_outlined, size: 20, color: iconColor),
+          const Icon(Icons.schedule_outlined, size: 20, color: iconColor),
           const SizedBox(width: LuxSpacing.md),
-          Text('Duración',
+          const Text('Duración',
               style: TextStyle(
                 color: textColor,
                 fontSize: 13,
@@ -730,13 +720,13 @@ class _HourSelector extends StatelessWidget {
           const Spacer(),
           IconButton(
             onPressed: hours > 2 ? () => onChanged(hours - 1) : null,
-            icon: Icon(Icons.remove_circle_outline, color: accentColor),
+            icon: const Icon(Icons.remove_circle_outline, color: accentColor),
             iconSize: 22,
           ),
           SizedBox(
             width: 40,
             child: Text('${hours}h',
-                style: TextStyle(
+                style: const TextStyle(
                   color: textColor,
                   fontSize: 16,
                   fontFamily: 'Montserrat',
@@ -746,7 +736,7 @@ class _HourSelector extends StatelessWidget {
           ),
           IconButton(
             onPressed: hours < 24 ? () => onChanged(hours + 1) : null,
-            icon: Icon(Icons.add_circle_outline, color: accentColor),
+            icon: const Icon(Icons.add_circle_outline, color: accentColor),
             iconSize: 22,
           ),
         ],

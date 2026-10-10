@@ -80,7 +80,7 @@ class _SectionTitle extends StatelessWidget {
           fontFamily: 'Montserrat',
           fontSize: 11,
           fontWeight: FontWeight.w700,
-          color: isGold ? LuxColors.sapphire : LuxColors.whiteTertiary,
+          color: isGold ? LuxColors.sapphire : LuxColors.inkTertiary,
           letterSpacing: 2,
         ),
       );
@@ -100,7 +100,7 @@ class _EmptyQueue extends StatelessWidget {
                   ? Icons.hourglass_empty_rounded
                   : Icons.wifi_tethering_off_rounded,
               size: 48,
-              color: LuxColors.whiteTertiary,
+              color: LuxColors.inkTertiary,
             ),
             const SizedBox(height: LuxSpacing.md),
             Text(
@@ -181,8 +181,7 @@ class _RouteRow extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 7),
-            child:
-                Container(width: 2, height: 16, color: LuxColors.blackBorder),
+            child: Container(width: 2, height: 16, color: LuxColors.border),
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,

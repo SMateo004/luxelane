@@ -10,25 +10,24 @@ import '../models/place_model.dart';
 
 // ignore_for_file: prefer_const_constructors
 
-const _kDarkMapStyle = '''
+/// Ivory map style — the same light palette as the app (LD tokens):
+/// pale ivory land, soft blue-grey roads, sapphire-tinted water.
+const _kIvoryMapStyle = '''
 [
-  {"elementType":"geometry","stylers":[{"color":"#212121"}]},
+  {"elementType":"geometry","stylers":[{"color":"#f2f5fb"}]},
   {"elementType":"labels.icon","stylers":[{"visibility":"off"}]},
-  {"elementType":"labels.text.fill","stylers":[{"color":"#757575"}]},
-  {"elementType":"labels.text.stroke","stylers":[{"color":"#212121"}]},
-  {"featureType":"administrative","elementType":"geometry","stylers":[{"color":"#757575"}]},
-  {"featureType":"administrative.country","elementType":"labels.text.fill","stylers":[{"color":"#9e9e9e"}]},
+  {"elementType":"labels.text.fill","stylers":[{"color":"#637490"}]},
+  {"elementType":"labels.text.stroke","stylers":[{"color":"#fafbfe"}]},
   {"featureType":"administrative.land_parcel","stylers":[{"visibility":"off"}]},
-  {"featureType":"administrative.locality","elementType":"labels.text.fill","stylers":[{"color":"#bdbdbd"}]},
-  {"featureType":"poi","elementType":"labels.text.fill","stylers":[{"color":"#757575"}]},
-  {"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#181818"}]},
-  {"featureType":"road","elementType":"geometry","stylers":[{"color":"#2c2c2c"}]},
-  {"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#333333"}]},
-  {"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#3c3c3c"}]},
-  {"featureType":"road.local","elementType":"labels.text.fill","stylers":[{"color":"#616161"}]},
-  {"featureType":"transit","elementType":"labels.text.fill","stylers":[{"color":"#757575"}]},
-  {"featureType":"water","elementType":"geometry","stylers":[{"color":"#000000"}]},
-  {"featureType":"water","elementType":"labels.text.fill","stylers":[{"color":"#3d3d3d"}]}
+  {"featureType":"poi","elementType":"geometry","stylers":[{"color":"#e8edf7"}]},
+  {"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#e3eee8"}]},
+  {"featureType":"road","elementType":"geometry","stylers":[{"color":"#ffffff"}]},
+  {"featureType":"road.arterial","elementType":"labels.text.fill","stylers":[{"color":"#637490"}]},
+  {"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#dde4f0"}]},
+  {"featureType":"road.local","elementType":"labels.text.fill","stylers":[{"color":"#8a98ae"}]},
+  {"featureType":"transit.line","elementType":"geometry","stylers":[{"color":"#dde4f0"}]},
+  {"featureType":"water","elementType":"geometry","stylers":[{"color":"#cfdcee"}]},
+  {"featureType":"water","elementType":"labels.text.fill","stylers":[{"color":"#2c3d55"}]}
 ]
 ''';
 
@@ -51,7 +50,7 @@ class LuxMap extends StatefulWidget {
   final LatLng? driverLocation;
   final void Function(LatLng)? onTap;
 
-  /// Use Google Maps default light style instead of the custom dark style.
+  /// Use the plain Google Maps style instead of the branded ivory style.
   final bool lightStyle;
 
   @override
@@ -76,8 +75,8 @@ class _LuxMapState extends State<LuxMap> {
   }
 
   Future<void> _loadIcons() async {
-    final origin = await _drawCircleMarker(Colors.cyan);
-    final dest = await _drawCircleMarker(Colors.blueAccent);
+    final origin = await _drawCircleMarker(LuxColors.sapphireLight);
+    final dest = await _drawCircleMarker(LuxColors.sapphireDark);
     if (mounted) {
       setState(() {
         _originIcon = origin;
@@ -140,7 +139,7 @@ class _LuxMapState extends State<LuxMap> {
       Polyline(
         polylineId: const PolylineId('route'),
         points: widget.routeInfo!.polylinePoints,
-        color: const Color(0xFFFFFFFF), // white
+        color: LuxColors.sapphire,
         width: 5,
       ),
     };
@@ -195,7 +194,7 @@ class _LuxMapState extends State<LuxMap> {
       initialCameraPosition: CameraPosition(target: _center, zoom: 13),
       markers: _markers,
       polylines: _polylines,
-      style: widget.lightStyle ? null : _kDarkMapStyle,
+      style: widget.lightStyle ? null : _kIvoryMapStyle,
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
       compassEnabled: false,
@@ -209,13 +208,13 @@ class _LuxMapState extends State<LuxMap> {
   }
 
   Widget _placeholder() => Container(
-        color: const Color(0xFF111111),
+        color: LuxColors.surfaceMuted,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.map_outlined,
-                  color: LuxColors.whiteTertiary, size: 48),
+                  color: LuxColors.inkTertiary, size: 48),
               const SizedBox(height: LuxSpacing.md),
               Text(
                 widget.origin != null ? widget.origin!.displayName : 'Map view',

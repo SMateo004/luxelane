@@ -21,18 +21,18 @@ class SectionChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
               horizontal: LuxSpacing.lg, vertical: LuxSpacing.sm),
           decoration: BoxDecoration(
-            color: selected ? LuxColors.sapphire : LuxColors.blackElevated,
+            color: selected ? LuxColors.sapphire : LuxColors.surfaceMuted,
             borderRadius: BorderRadius.circular(100),
             border: Border.all(
               color: selected
                   ? LuxColors.sapphire
-                  : LuxColors.white.withOpacity(0.1),
+                  : LuxColors.ink.withOpacity(0.1),
             ),
           ),
           child: Text(
             label,
             style: LuxTypography.bodyMedium.copyWith(
-              color: selected ? LuxColors.black : LuxColors.white,
+              color: selected ? LuxColors.onAccent : LuxColors.ink,
               fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -59,10 +59,10 @@ class AdminNavItem extends StatelessWidget {
         selected: selected,
         onTap: onTap,
         leading: Icon(icon,
-            color: selected ? LuxColors.sapphire : LuxColors.whiteTertiary),
+            color: selected ? LuxColors.sapphire : LuxColors.inkTertiary),
         title: Text(label,
             style: LuxTypography.bodyLarge.copyWith(
-              color: selected ? LuxColors.sapphire : LuxColors.white,
+              color: selected ? LuxColors.sapphire : LuxColors.ink,
               fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             )),
         dense: true,
@@ -109,7 +109,7 @@ class KpiCard extends StatelessWidget {
             const SizedBox(height: LuxSpacing.sm),
             Text(value,
                 style: LuxTypography.headlineMedium
-                    .copyWith(color: LuxColors.white)),
+                    .copyWith(color: LuxColors.ink)),
             Text(label, style: LuxTypography.caption),
           ],
         ),

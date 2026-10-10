@@ -96,7 +96,7 @@ class DashboardTab extends StatelessWidget {
                     value: '${state.users.length}',
                     icon: Icons.people_outline,
                     sub: '${state.drivers.length} chóferes',
-                    color: LuxColors.white,
+                    color: LuxColors.ink,
                   ),
                 ],
               ),
@@ -159,7 +159,7 @@ class _KpiTile extends StatelessWidget {
                   const Spacer(),
                   Text(label,
                       style: LuxTypography.caption
-                          .copyWith(color: LuxColors.whiteTertiary)),
+                          .copyWith(color: LuxColors.inkTertiary)),
                 ],
               ),
               const SizedBox(height: LuxSpacing.sm),
@@ -204,7 +204,7 @@ class _RevenueChart extends StatelessWidget {
         gridData: FlGridData(
           drawVerticalLine: false,
           getDrawingHorizontalLine: (value) =>
-              FlLine(color: LuxColors.white.withOpacity(0.05), strokeWidth: 1),
+              FlLine(color: LuxColors.ink.withOpacity(0.05), strokeWidth: 1),
         ),
         titlesData: FlTitlesData(
           rightTitles: const AxisTitles(),
@@ -358,14 +358,14 @@ class _FilterChip extends StatelessWidget {
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: selected ? LuxColors.sapphire : LuxColors.blackElevated,
+            color: selected ? LuxColors.sapphire : LuxColors.surfaceMuted,
             borderRadius: BorderRadius.circular(LuxRadius.sm),
             border: Border.all(
-                color: selected ? LuxColors.sapphire : LuxColors.blackBorder),
+                color: selected ? LuxColors.sapphire : LuxColors.border),
           ),
           child: Text(label,
               style: LuxTypography.caption.copyWith(
-                  color: selected ? Colors.black : LuxColors.whiteTertiary,
+                  color: selected ? LuxColors.onAccent : LuxColors.inkTertiary,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.normal)),
         ),
       );
@@ -409,7 +409,7 @@ class _AdminBookingTile extends StatelessWidget {
                   if (driverName != null)
                     Text('Chófer: $driverName',
                         style: LuxTypography.caption
-                            .copyWith(color: LuxColors.whiteTertiary)),
+                            .copyWith(color: LuxColors.inkTertiary)),
                   Text(
                     '${booking.origin.address} → ${booking.destination.address}',
                     style: LuxTypography.caption,
@@ -419,7 +419,7 @@ class _AdminBookingTile extends StatelessWidget {
                   Text(
                     DateFormat('dd/MM/yyyy HH:mm').format(booking.scheduledAt),
                     style: LuxTypography.caption
-                        .copyWith(color: LuxColors.whiteTertiary),
+                        .copyWith(color: LuxColors.inkTertiary),
                   ),
                 ],
               ),
@@ -450,7 +450,7 @@ class _AdminBookingTile extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: LuxColors.blackElevated,
+        backgroundColor: LuxColors.surfaceMuted,
         title:
             const Text('¿Eliminar reserva?', style: LuxTypography.titleLarge),
         content: Text(
@@ -518,7 +518,7 @@ class _DriverTile extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 22,
-              backgroundColor: LuxColors.blackElevated,
+              backgroundColor: LuxColors.surfaceMuted,
               child: Text(
                 (user?.displayName.isNotEmpty == true)
                     ? user!.displayName[0].toUpperCase()
@@ -537,7 +537,7 @@ class _DriverTile extends StatelessWidget {
                   Text(user?.email ?? '', style: LuxTypography.caption),
                   Text('Licencia: ${driver.licenseNumber}',
                       style: LuxTypography.caption
-                          .copyWith(color: LuxColors.whiteTertiary)),
+                          .copyWith(color: LuxColors.inkTertiary)),
                 ],
               ),
             ),
@@ -582,7 +582,7 @@ class _DriverTile extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: driver.isAvailable
                       ? LuxColors.success
-                      : LuxColors.whiteTertiary,
+                      : LuxColors.inkTertiary,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -611,7 +611,7 @@ class VehiclesTab extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.directions_car_outlined,
-                    size: 48, color: LuxColors.whiteTertiary),
+                    size: 48, color: LuxColors.inkTertiary),
                 SizedBox(height: LuxSpacing.md),
                 Text('Aún no hay vehículos registrados',
                     style: LuxTypography.titleMedium),
@@ -644,7 +644,7 @@ class _VehicleTile extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: LuxColors.blackElevated,
+                color: LuxColors.surfaceMuted,
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
               ),
               child: const Icon(Icons.directions_car_filled_rounded,
@@ -731,18 +731,18 @@ class _UsersTabState extends State<UsersTab> {
                   hintText: 'Buscar usuarios…',
                   hintStyle: LuxTypography.caption,
                   prefixIcon: const Icon(Icons.search_rounded,
-                      color: LuxColors.whiteTertiary, size: 20),
+                      color: LuxColors.inkTertiary, size: 20),
                   filled: true,
-                  fillColor: LuxColors.blackElevated,
+                  fillColor: LuxColors.surfaceMuted,
                   contentPadding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LuxRadius.sm),
-                    borderSide: const BorderSide(color: LuxColors.blackBorder),
+                    borderSide: const BorderSide(color: LuxColors.border),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LuxRadius.sm),
-                    borderSide: const BorderSide(color: LuxColors.blackBorder),
+                    borderSide: const BorderSide(color: LuxColors.border),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(LuxRadius.sm),
@@ -778,7 +778,7 @@ class _UserTile extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 20,
-              backgroundColor: LuxColors.blackElevated,
+              backgroundColor: LuxColors.surfaceMuted,
               child: Text(
                 user.displayName.isNotEmpty ? user.displayName[0] : '?',
                 style:
@@ -795,7 +795,7 @@ class _UserTile extends StatelessWidget {
                   Text(
                     'Miembro desde ${DateFormat('MMM yyyy').format(user.createdAt)}',
                     style: LuxTypography.caption
-                        .copyWith(color: LuxColors.whiteTertiary),
+                        .copyWith(color: LuxColors.inkTertiary),
                   ),
                 ],
               ),
@@ -811,7 +811,7 @@ class _UserTile extends StatelessWidget {
                       ? LuxColors.sapphire.withOpacity(0.15)
                       : user.role == UserRole.driver
                           ? LuxColors.success.withOpacity(0.1)
-                          : LuxColors.blackElevated,
+                          : LuxColors.surfaceMuted,
                   borderRadius: BorderRadius.circular(LuxRadius.sm),
                   border: Border.all(
                     color: user.role == UserRole.admin
@@ -829,13 +829,13 @@ class _UserTile extends StatelessWidget {
                             ? LuxColors.sapphire
                             : user.role == UserRole.driver
                                 ? LuxColors.success
-                                : LuxColors.whiteTertiary,
+                                : LuxColors.inkTertiary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
                     const SizedBox(width: 4),
                     const Icon(Icons.arrow_drop_down_rounded,
-                        size: 14, color: LuxColors.whiteTertiary),
+                        size: 14, color: LuxColors.inkTertiary),
                   ],
                 ),
               ),
@@ -856,7 +856,7 @@ class _UserTile extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: LuxColors.blackElevated,
+        backgroundColor: LuxColors.surfaceMuted,
         title: Text('Cambiar rol de ${user.displayName}',
             style: LuxTypography.titleLarge),
         content: Column(
@@ -1047,14 +1047,14 @@ class _PricingCardState extends State<_PricingCard> {
                       ? 'Bs${_perHourCtrl.text}/h'
                       : 'Bs${_baseCtrl.text} + Bs${_perKmCtrl.text}/km',
                   style: LuxTypography.bodyMedium
-                      .copyWith(color: LuxColors.whiteTertiary),
+                      .copyWith(color: LuxColors.inkTertiary),
                 ),
                 const SizedBox(width: LuxSpacing.sm),
                 Icon(
                   _expanded
                       ? Icons.expand_less_rounded
                       : Icons.expand_more_rounded,
-                  color: LuxColors.whiteTertiary,
+                  color: LuxColors.inkTertiary,
                 ),
               ],
             ),
@@ -1140,16 +1140,16 @@ class _PriceField extends StatelessWidget {
               prefixStyle:
                   LuxTypography.caption.copyWith(color: LuxColors.sapphire),
               filled: true,
-              fillColor: LuxColors.blackElevated,
+              fillColor: LuxColors.surfaceMuted,
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
-                borderSide: const BorderSide(color: LuxColors.blackBorder),
+                borderSide: const BorderSide(color: LuxColors.border),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
-                borderSide: const BorderSide(color: LuxColors.blackBorder),
+                borderSide: const BorderSide(color: LuxColors.border),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
@@ -1180,7 +1180,7 @@ class AuditTab extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.history_rounded,
-                    size: 48, color: LuxColors.whiteTertiary),
+                    size: 48, color: LuxColors.inkTertiary),
                 SizedBox(height: LuxSpacing.md),
                 Text('Aún no hay registros de auditoría',
                     style: LuxTypography.titleMedium),
@@ -1216,7 +1216,7 @@ class _AuditTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(LuxSpacing.xs),
             decoration: BoxDecoration(
-              color: LuxColors.blackElevated,
+              color: LuxColors.surfaceMuted,
               borderRadius: BorderRadius.circular(LuxRadius.sm),
             ),
             child: Icon(_getIcon(log.action),
@@ -1453,7 +1453,7 @@ class _InfoRow extends StatelessWidget {
           children: [
             Text(label,
                 style: LuxTypography.bodyMedium
-                    .copyWith(color: LuxColors.whiteTertiary)),
+                    .copyWith(color: LuxColors.inkTertiary)),
             Text(value,
                 style: LuxTypography.bodyMedium.copyWith(
                     color: LuxColors.sapphire, fontWeight: FontWeight.w600)),

@@ -7,12 +7,13 @@ import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
 
 // ── Design tokens (aligned with home_web_page / LD) ─────────────────────────
-const _dark = Color(0xFF070E18);
-const _panel = Color(0xFF0A1220);
-const _border = Color(0xFF1A2B40);
-const _sph = Color(0xFF1B4F8A);
-const _sphLt = Color(0xFF2563B0);
-const _white = Colors.white;
+const _bg = LuxColors.bg;
+const _panel = LuxColors.surface;
+const _border = LuxColors.border;
+const _sph = LuxColors.sapphire;
+const _sphLt = LuxColors.sapphireLight;
+const _ink = LuxColors.ink;
+const _onSph = LuxColors.onAccent;
 const _kSans = 'Montserrat';
 const _kSerif = 'Cormorant Garamond';
 
@@ -61,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: _dark,
+        backgroundColor: _bg,
         body: isWeb(context) ? _webLayout() : _mobileLayout(),
       ),
     );
@@ -92,19 +93,19 @@ class _LoginPageState extends State<LoginPage> {
                           style: TextStyle(
                             fontFamily: _kSerif,
                             fontSize: 42,
-                            fontWeight: FontWeight.w600,
-                            color: _white,
+                            fontWeight: FontWeight.w500,
+                            color: _ink,
                             height: 1.1,
                           ),
                         ),
                         const SizedBox(height: 6),
-                        Text(
+                        const Text(
                           'Bienvenido de nuevo a Luxelane.',
                           style: TextStyle(
                             fontFamily: _kSans,
                             fontSize: 13,
-                            fontWeight: FontWeight.w300,
-                            color: _white.withAlpha(130),
+                            fontWeight: FontWeight.w400,
+                            color: LuxColors.inkTertiary,
                           ),
                         ),
                         const SizedBox(height: 40),
@@ -123,36 +124,43 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _mobileLayout() => SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(28, 48, 28, 28),
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GestureDetector(
                 onTap: () => context.go('/'),
-                child: const LuxelaneWordmark(color: _white),
+                child: const LuxelaneWordmark(size: 11),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 28),
+              const _AuthHeroPhoto(),
+              const SizedBox(height: 32),
+              Text('BIENVENIDO',
+                  style: LuxTypography.caption
+                      .copyWith(color: _sph, letterSpacing: 3, fontSize: 10)),
+              const SizedBox(height: 10),
               const Text(
-                'Bienvenido\nde nuevo.',
+                'Tu chófer,\ncomo lo recuerdas.',
                 style: TextStyle(
                   fontFamily: _kSerif,
-                  fontSize: 40,
-                  fontWeight: FontWeight.w600,
-                  color: _white,
-                  height: 1.15,
+                  fontSize: 38,
+                  fontWeight: FontWeight.w500,
+                  color: _ink,
+                  height: 1.08,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Inicia sesión en tu cuenta',
+              const SizedBox(height: 10),
+              const Text(
+                'Inicia sesión para reservar y seguir tus trayectos.',
                 style: TextStyle(
                   fontFamily: _kSans,
                   fontSize: 13,
-                  fontWeight: FontWeight.w300,
-                  color: _white.withAlpha(130),
+                  fontWeight: FontWeight.w400,
+                  color: LuxColors.inkTertiary,
+                  height: 1.5,
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 32),
               _formContent(),
             ],
           ),
@@ -217,12 +225,12 @@ class _LoginPageState extends State<LoginPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       '¿No tienes cuenta? ',
                       style: TextStyle(
                         fontFamily: _kSans,
                         fontSize: 12,
-                        color: _white.withAlpha(120),
+                        color: LuxColors.inkTertiary,
                       ),
                     ),
                     _TextLink(
@@ -254,8 +262,8 @@ class AuthBrandPanel extends StatelessWidget {
   Widget build(BuildContext context) => Stack(
         fit: StackFit.expand,
         children: [
-          // Deep navy base
-          const ColoredBox(color: _dark),
+          // Ivory base
+          const ColoredBox(color: LuxColors.surfaceMuted),
           // Editorial photo — the promise of the experience, not a form.
           Image.asset(
             'assets/images/home/promise_photo.jpg',
@@ -263,18 +271,18 @@ class AuthBrandPanel extends StatelessWidget {
             errorBuilder: (_, __, ___) =>
                 CustomPaint(painter: _DotGridPainter()),
           ),
-          // Scrim for legibility
+          // Ivory veil so ink text stays legible over the photo.
           DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  _dark.withAlpha(150),
-                  _dark.withAlpha(110),
-                  _dark.withAlpha(235),
+                  _bg.withAlpha(60),
+                  _bg.withAlpha(215),
+                  _bg.withAlpha(250),
                 ],
-                stops: const [0.0, 0.45, 1.0],
+                stops: const [0.0, 0.4, 0.75],
               ),
             ),
           ),
@@ -297,7 +305,7 @@ class AuthBrandPanel extends StatelessWidget {
                     cursor: SystemMouseCursors.click,
                     child: GestureDetector(
                       onTap: () => context.go('/'),
-                      child: const LuxelaneWordmark(color: _white),
+                      child: const LuxelaneWordmark(color: _ink),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -306,19 +314,19 @@ class AuthBrandPanel extends StatelessWidget {
                     style: const TextStyle(
                       fontFamily: _kSerif,
                       fontSize: 52,
-                      fontWeight: FontWeight.w300,
-                      color: _white,
-                      height: 1.15,
+                      fontWeight: FontWeight.w400,
+                      color: _ink,
+                      height: 1.1,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     subtitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: _kSans,
                       fontSize: 13,
-                      fontWeight: FontWeight.w300,
-                      color: _white.withAlpha(170),
+                      fontWeight: FontWeight.w400,
+                      color: LuxColors.inkSecondary,
                       height: 1.6,
                     ),
                   ),
@@ -335,13 +343,13 @@ class AuthBrandPanel extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 14),
                       child: Row(children: [
                         const Icon(Icons.check_rounded,
-                            size: 14, color: LuxColors.sapphireBright),
+                            size: 14, color: LuxColors.sapphire),
                         const SizedBox(width: 12),
                         Text(line,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontFamily: _kSans,
                                 fontSize: 12.5,
-                                color: _white.withAlpha(200))),
+                                color: LuxColors.inkSecondary)),
                       ]),
                     ),
                 ],
@@ -380,34 +388,40 @@ class _AuthField extends StatelessWidget {
         style: const TextStyle(
           fontFamily: _kSans,
           fontSize: 14,
-          color: _white,
+          color: _ink,
         ),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(
+          labelStyle: const TextStyle(
             fontFamily: _kSans,
             fontSize: 12,
             fontWeight: FontWeight.w400,
-            color: _white.withAlpha(130),
+            color: LuxColors.inkTertiary,
           ),
-          prefixIcon: Icon(icon, size: 18, color: _white.withAlpha(100)),
+          floatingLabelStyle: const TextStyle(
+            fontFamily: _kSans,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: _sph,
+          ),
+          prefixIcon: Icon(icon, size: 18, color: LuxColors.inkTertiary),
           filled: true,
-          fillColor: const Color(0xFF0D1928),
+          fillColor: _panel,
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: _border.withAlpha(180)),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: _border),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: _sph, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: LuxColors.error),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: LuxColors.error),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: LuxColors.error, width: 1.5),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: LuxColors.error, width: 1.5),
           ),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -450,7 +464,8 @@ class _AuthButtonState extends State<_AuthButton> {
               color: widget.onTap == null
                   ? _sph.withAlpha(80)
                   : (_hover ? _sphLt : _sph),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: widget.onTap == null ? null : luxSoftShadow,
             ),
             alignment: Alignment.center,
             child: widget.loading
@@ -458,7 +473,7 @@ class _AuthButtonState extends State<_AuthButton> {
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: _white),
+                        strokeWidth: 2, color: _onSph),
                   )
                 : Text(
                     widget.label.toUpperCase(),
@@ -467,7 +482,7 @@ class _AuthButtonState extends State<_AuthButton> {
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 2.0,
-                      color: _white,
+                      color: _onSph,
                     ),
                   ),
           ),
@@ -517,7 +532,7 @@ class _TextLinkState extends State<_TextLink> {
 class _DotGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final p = Paint()..color = const Color(0x0FFFFFFF);
+    final p = Paint()..color = const Color(0x141B4F8A);
     const s = 40.0;
     for (double x = s; x < size.width; x += s)
       for (double y = s; y < size.height; y += s)
@@ -526,4 +541,41 @@ class _DotGridPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_DotGridPainter _) => false;
+}
+
+// ── Mobile hero photo — the promise of the experience, framed in ivory ──────
+
+class _AuthHeroPhoto extends StatelessWidget {
+  const _AuthHeroPhoto();
+
+  @override
+  Widget build(BuildContext context) => ClipRRect(
+        borderRadius: BorderRadius.circular(LuxRadius.xl),
+        child: SizedBox(
+          height: 180,
+          width: double.infinity,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              const ColoredBox(color: LuxColors.surfaceMuted),
+              Image.asset(
+                'assets/images/home/promise_photo.jpg',
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) =>
+                    CustomPaint(painter: _DotGridPainter()),
+              ),
+              // Soft ivory fade into the page below.
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [_bg.withAlpha(0), _bg.withAlpha(90)],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
 }

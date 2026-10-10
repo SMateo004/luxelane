@@ -5,36 +5,42 @@ import 'package:google_fonts/google_fonts.dart';
 // Tokens
 // ---------------------------------------------------------------------------
 
+/// App palette — "Marfil". The same light tokens the public web uses
+/// (`LD.*` in `home_design.dart`): ivory surfaces, ink text and a single
+/// sapphire accent. Luxelane never paints black surfaces.
 abstract class LuxColors {
-  // Dark palette (app-wide) — navy design system
-  static const black = Color(0xFF070E18);
-  static const blackSurface = Color(0xFF0A1220);
-  static const blackElevated = Color(0xFF0D1928);
-  static const blackBorder = Color(0xFF1A2B40);
-  // Accent
-  static const gold = Color(0xFFC9A84C);
-  static const sapphire = Color(0xFF1B4F8A);
-  static const sapphireLight = Color(0xFF2563B0);
-  static const sapphireDark = Color(0xFF153D6B);
+  // Surfaces
+  static const bg = Color(0xFFFAFBFE); // LD.bg — page background
+  static const surface = Color(0xFFFFFFFF); // cards, sheets, bars
+  static const surfaceMuted = Color(0xFFF2F5FB); // LD.bg2 — inputs, chips
+  static const surfaceDeep = Color(0xFFE8EDF7); // LD.bg3 — pressed / tracks
+  static const border = Color(0xFFDDE4F0); // LD.border
+  // Ink (text & icons)
+  static const ink = Color(0xFF0D1B2E); // LD.ink
+  static const inkSecondary = Color(0xFF2C3D55); // LD.ink2
+  static const inkTertiary = Color(0xFF637490); // LD.ink3
+  // Accent — sapphire, the only accent
+  static const sapphire = Color(0xFF1B4F8A); // LD.sph
+  static const sapphireLight = Color(0xFF2E6FBF); // LD.sphLt
+  static const sapphireDark = Color(0xFF0D3066); // LD.sphDim
+  static const sapphireTint = Color(0xFFEEF3FA); // LD.sphTint
   static const sapphireSubtle = Color(0x141B4F8A);
 
-  /// Sapphire tint for text/icons on dark surfaces. Plain [sapphire] on the
-  /// navy background falls below WCAG contrast; this keeps the accent legible.
-  static const sapphireBright = Color(0xFF8CB2E3);
-  // On-dark text
-  static const white = Color(0xFFF5F5F5);
-  static const whiteSecondary = Color(0xFF9A9A9A);
-  static const whiteTertiary = Color(0xFF6E7A8A);
-  // Light sections (web landing)
-  static const cream = Color(0xFFF3F1ED);
-  static const creamBorder = Color(0xFFE0DDD6);
-  static const darkText = Color(0xFF0D0D0D);
-  static const midGray = Color(0xFF6B6B6B);
-  // Semantic
-  static const error = Color(0xFFCF4B4B);
-  static const success = Color(0xFF4B9B6F);
-  static const warning = Color(0xFFC9984C);
+  /// Text and icons placed on a sapphire fill (primary buttons, badges).
+  static const onAccent = Color(0xFFFFFFFF);
+
+  /// Soft navy shadow for floating elements over the map.
+  static const shadow = Color(0x1A0D1B2E);
+  // Semantic — tuned for AA contrast on ivory
+  static const error = Color(0xFFB83A3A);
+  static const success = Color(0xFF2F7D55);
+  static const warning = Color(0xFFA8741F);
 }
+
+/// Shared soft elevation: floating cards over the map and bottom sheets.
+const luxSoftShadow = [
+  BoxShadow(color: LuxColors.shadow, blurRadius: 24, offset: Offset(0, 8)),
+];
 
 abstract class LuxSpacing {
   static const double xs = 4;
@@ -47,10 +53,10 @@ abstract class LuxSpacing {
 }
 
 abstract class LuxRadius {
-  static const double sm = 4;
-  static const double md = 6;
-  static const double lg = 12;
-  static const double xl = 16;
+  static const double sm = 6;
+  static const double md = 10;
+  static const double lg = 14;
+  static const double xl = 20;
 }
 
 abstract class LuxTypography {
@@ -60,74 +66,75 @@ abstract class LuxTypography {
   static const displayLarge = TextStyle(
     fontFamily: _serif,
     fontSize: 48,
-    fontWeight: FontWeight.w600,
-    color: LuxColors.white,
-    letterSpacing: 0.5,
-    height: 1.1,
+    fontWeight: FontWeight.w500,
+    color: LuxColors.ink,
+    letterSpacing: -0.5,
+    height: 1.05,
   );
   static const displayMedium = TextStyle(
     fontFamily: _serif,
     fontSize: 36,
-    fontWeight: FontWeight.w600,
-    color: LuxColors.white,
-    letterSpacing: 0.3,
-    height: 1.15,
+    fontWeight: FontWeight.w500,
+    color: LuxColors.ink,
+    letterSpacing: -0.3,
+    height: 1.1,
   );
   static const headlineLarge = TextStyle(
     fontFamily: _serif,
     fontSize: 28,
-    fontWeight: FontWeight.w600,
-    color: LuxColors.white,
-    letterSpacing: 0.2,
+    fontWeight: FontWeight.w500,
+    color: LuxColors.ink,
+    letterSpacing: -0.1,
   );
   static const headlineMedium = TextStyle(
     fontFamily: _sans,
     fontSize: 20,
     fontWeight: FontWeight.w600,
-    color: LuxColors.white,
-    letterSpacing: 0.5,
+    color: LuxColors.ink,
+    letterSpacing: 0.2,
   );
   static const titleLarge = TextStyle(
     fontFamily: _sans,
     fontSize: 16,
     fontWeight: FontWeight.w600,
-    color: LuxColors.white,
-    letterSpacing: 0.8,
+    color: LuxColors.ink,
+    letterSpacing: 0.3,
   );
   static const titleMedium = TextStyle(
     fontFamily: _sans,
     fontSize: 14,
     fontWeight: FontWeight.w600,
-    color: LuxColors.white,
-    letterSpacing: 0.4,
+    color: LuxColors.ink,
+    letterSpacing: 0.2,
   );
   static const bodyLarge = TextStyle(
     fontFamily: _sans,
     fontSize: 16,
     fontWeight: FontWeight.w400,
-    color: LuxColors.white,
-    letterSpacing: 0.2,
+    color: LuxColors.ink,
+    letterSpacing: 0.1,
   );
   static const bodyMedium = TextStyle(
     fontFamily: _sans,
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    color: LuxColors.whiteSecondary,
-    letterSpacing: 0.2,
+    color: LuxColors.inkSecondary,
+    letterSpacing: 0.1,
+    height: 1.45,
   );
   static const labelLarge = TextStyle(
     fontFamily: _sans,
     fontSize: 13,
-    fontWeight: FontWeight.w500,
-    color: LuxColors.sapphireBright,
+    fontWeight: FontWeight.w600,
+    color: LuxColors.sapphire,
     letterSpacing: 1.2,
   );
   static const caption = TextStyle(
     fontFamily: _sans,
     fontSize: 11,
     fontWeight: FontWeight.w400,
-    color: LuxColors.whiteTertiary,
-    letterSpacing: 0.4,
+    color: LuxColors.inkTertiary,
+    letterSpacing: 0.3,
   );
 }
 
@@ -137,249 +144,320 @@ abstract class LuxTypography {
 
 ThemeData get luxTheme {
   // Build base text theme using GoogleFonts — guarantees fonts load on all platforms
-  final serif = GoogleFonts.cormorantGaramond;
-  final sans = GoogleFonts.montserrat;
+  const serif = GoogleFonts.cormorantGaramond;
+  const sans = GoogleFonts.montserrat;
+
+  TextStyle gf(
+          TextStyle t,
+          TextStyle Function({
+            Color? color,
+            double? fontSize,
+            FontWeight? fontWeight,
+            double? letterSpacing,
+            double? height,
+          }) font) =>
+      font(
+        color: t.color,
+        fontSize: t.fontSize,
+        fontWeight: t.fontWeight,
+        letterSpacing: t.letterSpacing,
+        height: t.height,
+      );
 
   final textTheme = TextTheme(
-    displayLarge: serif(
-        fontSize: 48,
-        fontWeight: FontWeight.w600,
-        color: LuxColors.white,
-        letterSpacing: 0.5,
-        height: 1.1),
-    displayMedium: serif(
-        fontSize: 36,
-        fontWeight: FontWeight.w600,
-        color: LuxColors.white,
-        letterSpacing: 0.3,
-        height: 1.15),
-    headlineLarge: serif(
-        fontSize: 28,
-        fontWeight: FontWeight.w600,
-        color: LuxColors.white,
-        letterSpacing: 0.2),
-    headlineMedium: sans(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: LuxColors.white,
-        letterSpacing: 0.5),
-    titleLarge: sans(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: LuxColors.white,
-        letterSpacing: 0.8),
-    titleMedium: sans(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: LuxColors.white,
-        letterSpacing: 0.4),
-    bodyLarge: sans(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: LuxColors.white,
-        letterSpacing: 0.2),
-    bodyMedium: sans(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: LuxColors.whiteSecondary,
-        letterSpacing: 0.2),
-    labelLarge: sans(
-        fontSize: 13,
-        fontWeight: FontWeight.w500,
-        color: LuxColors.sapphireBright,
-        letterSpacing: 1.2),
-    bodySmall: sans(
-        fontSize: 11,
-        fontWeight: FontWeight.w400,
-        color: LuxColors.whiteTertiary,
-        letterSpacing: 0.4),
+    displayLarge: gf(LuxTypography.displayLarge, serif),
+    displayMedium: gf(LuxTypography.displayMedium, serif),
+    headlineLarge: gf(LuxTypography.headlineLarge, serif),
+    headlineMedium: gf(LuxTypography.headlineMedium, sans),
+    titleLarge: gf(LuxTypography.titleLarge, sans),
+    titleMedium: gf(LuxTypography.titleMedium, sans),
+    bodyLarge: gf(LuxTypography.bodyLarge, sans),
+    bodyMedium: gf(LuxTypography.bodyMedium, sans),
+    labelLarge: gf(LuxTypography.labelLarge, sans),
+    bodySmall: gf(LuxTypography.caption, sans),
   );
+
+  final fieldRadius = BorderRadius.circular(LuxRadius.md);
 
   return ThemeData(
     useMaterial3: true,
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: LuxColors.black,
-    colorScheme: const ColorScheme.dark(
+    brightness: Brightness.light,
+    scaffoldBackgroundColor: LuxColors.bg,
+    canvasColor: LuxColors.bg,
+    colorScheme: const ColorScheme.light(
       primary: LuxColors.sapphire,
-      onPrimary: LuxColors.white,
+      onPrimary: LuxColors.onAccent,
+      primaryContainer: LuxColors.sapphireTint,
+      onPrimaryContainer: LuxColors.sapphireDark,
       secondary: LuxColors.sapphireLight,
-      onSecondary: LuxColors.white,
-      surface: LuxColors.blackSurface,
-      onSurface: LuxColors.white,
+      onSecondary: LuxColors.onAccent,
+      surface: LuxColors.surface,
+      onSurface: LuxColors.ink,
+      onSurfaceVariant: LuxColors.inkTertiary,
+      surfaceContainerLowest: LuxColors.surface,
+      surfaceContainerLow: LuxColors.bg,
+      surfaceContainer: LuxColors.surface,
+      surfaceContainerHigh: LuxColors.surface,
+      surfaceContainerHighest: LuxColors.surfaceMuted,
+      outline: LuxColors.border,
+      outlineVariant: LuxColors.border,
       error: LuxColors.error,
-      onError: LuxColors.white,
+      onError: LuxColors.onAccent,
+      shadow: LuxColors.shadow,
+      surfaceTint: Colors.transparent,
     ),
     textTheme: textTheme,
+    iconTheme: const IconThemeData(color: LuxColors.ink),
+    progressIndicatorTheme:
+        const ProgressIndicatorThemeData(color: LuxColors.sapphire),
     appBarTheme: const AppBarTheme(
-      backgroundColor: LuxColors.black,
-      foregroundColor: LuxColors.white,
+      backgroundColor: LuxColors.bg,
+      foregroundColor: LuxColors.ink,
+      surfaceTintColor: Colors.transparent,
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: true,
+      iconTheme: IconThemeData(color: LuxColors.ink),
       titleTextStyle: LuxTypography.headlineMedium,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: LuxColors.sapphire,
-        foregroundColor: LuxColors.white,
-        disabledBackgroundColor: LuxColors.blackBorder,
-        disabledForegroundColor: LuxColors.whiteSecondary,
+        foregroundColor: LuxColors.onAccent,
+        disabledBackgroundColor: LuxColors.surfaceDeep,
+        disabledForegroundColor: LuxColors.inkTertiary,
         minimumSize: const Size(double.infinity, 52),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(LuxRadius.sm)),
+            borderRadius: BorderRadius.circular(LuxRadius.md)),
         textStyle: LuxTypography.labelLarge
-            .copyWith(color: LuxColors.white, letterSpacing: 1.6),
+            .copyWith(color: LuxColors.onAccent, letterSpacing: 1.6),
         elevation: 0,
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        backgroundColor: LuxColors.sapphire,
+        foregroundColor: LuxColors.onAccent,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(LuxRadius.md)),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: LuxColors.white,
+        foregroundColor: LuxColors.sapphire,
+        backgroundColor: LuxColors.surface,
         minimumSize: const Size(double.infinity, 52),
-        side: const BorderSide(color: LuxColors.blackBorder),
+        side: const BorderSide(color: LuxColors.border),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(LuxRadius.sm)),
+            borderRadius: BorderRadius.circular(LuxRadius.md)),
         textStyle: LuxTypography.labelLarge,
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: LuxColors.sapphireBright,
+        foregroundColor: LuxColors.sapphire,
         textStyle: LuxTypography.labelLarge,
       ),
     ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(foregroundColor: LuxColors.ink),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: LuxColors.blackElevated,
-      hintStyle: LuxTypography.bodyMedium,
+      fillColor: LuxColors.surface,
+      hintStyle:
+          LuxTypography.bodyMedium.copyWith(color: LuxColors.inkTertiary),
       labelStyle: LuxTypography.bodyMedium,
+      floatingLabelStyle: LuxTypography.caption
+          .copyWith(color: LuxColors.sapphire, letterSpacing: 0.6),
+      prefixIconColor: LuxColors.inkTertiary,
+      suffixIconColor: LuxColors.inkTertiary,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(LuxRadius.sm),
-        borderSide: const BorderSide(color: LuxColors.whiteTertiary),
+        borderRadius: fieldRadius,
+        borderSide: const BorderSide(color: LuxColors.border),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(LuxRadius.sm),
-        borderSide: const BorderSide(color: LuxColors.blackBorder),
+        borderRadius: fieldRadius,
+        borderSide: const BorderSide(color: LuxColors.border),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(LuxRadius.sm),
+        borderRadius: fieldRadius,
         borderSide: const BorderSide(color: LuxColors.sapphire, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(LuxRadius.sm),
+        borderRadius: fieldRadius,
         borderSide: const BorderSide(color: LuxColors.error),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(LuxRadius.sm),
+        borderRadius: fieldRadius,
         borderSide: const BorderSide(color: LuxColors.error, width: 1.5),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     ),
     cardTheme: CardTheme(
-      color: LuxColors.blackSurface,
+      color: LuxColors.surface,
+      surfaceTintColor: Colors.transparent,
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(LuxRadius.md),
-        side: const BorderSide(color: LuxColors.blackBorder),
+        borderRadius: BorderRadius.circular(LuxRadius.lg),
+        side: const BorderSide(color: LuxColors.border),
       ),
     ),
     dividerTheme: const DividerThemeData(
-      color: LuxColors.blackBorder,
+      color: LuxColors.border,
       thickness: 1,
       space: 1,
     ),
+    listTileTheme: const ListTileThemeData(
+      iconColor: LuxColors.inkTertiary,
+      textColor: LuxColors.ink,
+    ),
+    chipTheme: ChipThemeData(
+      backgroundColor: LuxColors.surfaceMuted,
+      selectedColor: LuxColors.sapphireTint,
+      side: const BorderSide(color: LuxColors.border),
+      labelStyle: LuxTypography.caption.copyWith(color: LuxColors.ink),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(LuxRadius.xl)),
+    ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: LuxColors.blackSurface,
-      selectedItemColor: LuxColors.white,
-      unselectedItemColor: LuxColors.whiteTertiary,
+      backgroundColor: LuxColors.surface,
+      selectedItemColor: LuxColors.sapphire,
+      unselectedItemColor: LuxColors.inkTertiary,
       type: BottomNavigationBarType.fixed,
       elevation: 0,
     ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: LuxColors.surface,
+      surfaceTintColor: Colors.transparent,
+      indicatorColor: LuxColors.sapphireTint,
+      iconTheme: WidgetStateProperty.resolveWith(
+        (s) => IconThemeData(
+          color: s.contains(WidgetState.selected)
+              ? LuxColors.sapphire
+              : LuxColors.inkTertiary,
+        ),
+      ),
+    ),
     navigationRailTheme: const NavigationRailThemeData(
-      backgroundColor: LuxColors.blackSurface,
-      selectedIconTheme: IconThemeData(color: LuxColors.sapphireBright),
-      unselectedIconTheme: IconThemeData(color: LuxColors.whiteTertiary),
+      backgroundColor: LuxColors.surface,
+      selectedIconTheme: IconThemeData(color: LuxColors.sapphire),
+      unselectedIconTheme: IconThemeData(color: LuxColors.inkTertiary),
       selectedLabelTextStyle: LuxTypography.labelLarge,
       unselectedLabelTextStyle: TextStyle(
         fontFamily: 'Montserrat',
         fontSize: 11,
-        color: LuxColors.whiteTertiary,
+        color: LuxColors.inkTertiary,
       ),
-      indicatorColor: LuxColors.sapphireSubtle,
+      indicatorColor: LuxColors.sapphireTint,
     ),
     checkboxTheme: CheckboxThemeData(
       fillColor: WidgetStateProperty.resolveWith(
         (s) => s.contains(WidgetState.selected)
             ? LuxColors.sapphire
-            : LuxColors.blackElevated,
+            : LuxColors.surface,
       ),
-      checkColor: WidgetStateProperty.all(LuxColors.white),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
-      side: const BorderSide(color: LuxColors.whiteTertiary),
+      checkColor: WidgetStateProperty.all(LuxColors.onAccent),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
+      side: const BorderSide(color: LuxColors.inkTertiary),
+    ),
+    radioTheme: RadioThemeData(
+      fillColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected)
+            ? LuxColors.sapphire
+            : LuxColors.inkTertiary,
+      ),
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith(
         (s) => s.contains(WidgetState.selected)
-            ? LuxColors.sapphire
-            : LuxColors.whiteTertiary,
+            ? LuxColors.onAccent
+            : LuxColors.inkTertiary,
       ),
       trackColor: WidgetStateProperty.resolveWith(
         (s) => s.contains(WidgetState.selected)
-            ? LuxColors.sapphireSubtle
-            : LuxColors.blackElevated,
+            ? LuxColors.sapphire
+            : LuxColors.surfaceMuted,
+      ),
+      trackOutlineColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected)
+            ? LuxColors.sapphire
+            : LuxColors.border,
       ),
     ),
     popupMenuTheme: PopupMenuThemeData(
-      color: LuxColors.blackSurface,
+      color: LuxColors.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 6,
+      shadowColor: LuxColors.shadow,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(LuxRadius.md),
-        side: const BorderSide(color: LuxColors.blackBorder),
+        side: const BorderSide(color: LuxColors.border),
       ),
       textStyle: LuxTypography.bodyMedium,
     ),
+    dialogTheme: DialogTheme(
+      backgroundColor: LuxColors.surface,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(LuxRadius.lg)),
+      titleTextStyle: LuxTypography.headlineLarge,
+      contentTextStyle: LuxTypography.bodyMedium,
+    ),
     snackBarTheme: const SnackBarThemeData(
-      backgroundColor: LuxColors.blackElevated,
+      backgroundColor: LuxColors.surface,
       contentTextStyle: LuxTypography.bodyMedium,
       behavior: SnackBarBehavior.floating,
+      elevation: 4,
     ),
     datePickerTheme: DatePickerThemeData(
-      backgroundColor: LuxColors.blackSurface,
-      headerBackgroundColor: LuxColors.blackElevated,
-      headerForegroundColor: LuxColors.white,
+      backgroundColor: LuxColors.surface,
+      headerBackgroundColor: LuxColors.sapphireTint,
+      headerForegroundColor: LuxColors.ink,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(LuxRadius.md)),
+          borderRadius: BorderRadius.circular(LuxRadius.lg)),
       dayForegroundColor: WidgetStateProperty.resolveWith(
-        (s) => s.contains(WidgetState.disabled)
-            ? LuxColors.whiteTertiary
-            : LuxColors.white,
+        (s) => s.contains(WidgetState.selected)
+            ? LuxColors.onAccent
+            : s.contains(WidgetState.disabled)
+                ? LuxColors.inkTertiary.withOpacity(0.5)
+                : LuxColors.ink,
       ),
-      todayBorder: const BorderSide(color: LuxColors.sapphireBright),
+      dayBackgroundColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.selected)
+            ? LuxColors.sapphire
+            : Colors.transparent,
+      ),
+      todayBorder: const BorderSide(color: LuxColors.sapphire),
     ),
     timePickerTheme: TimePickerThemeData(
-      backgroundColor: LuxColors.blackSurface,
-      dialBackgroundColor: LuxColors.blackElevated,
-      hourMinuteColor: LuxColors.blackElevated,
-      hourMinuteTextColor: LuxColors.white,
+      backgroundColor: LuxColors.surface,
+      dialBackgroundColor: LuxColors.surfaceMuted,
+      hourMinuteColor: LuxColors.surfaceMuted,
+      hourMinuteTextColor: LuxColors.ink,
       dialHandColor: LuxColors.sapphire,
-      dialTextColor: LuxColors.white,
-      entryModeIconColor: LuxColors.whiteSecondary,
+      dialTextColor: LuxColors.ink,
+      entryModeIconColor: LuxColors.inkTertiary,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(LuxRadius.md)),
+          borderRadius: BorderRadius.circular(LuxRadius.lg)),
     ),
     bottomSheetTheme: const BottomSheetThemeData(
-      backgroundColor: LuxColors.blackSurface,
+      backgroundColor: LuxColors.surface,
       surfaceTintColor: Colors.transparent,
       showDragHandle: true,
-      dragHandleColor: LuxColors.blackBorder,
+      dragHandleColor: LuxColors.border,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
+      ),
     ),
     tooltipTheme: TooltipThemeData(
       decoration: BoxDecoration(
-        color: LuxColors.blackElevated,
+        color: LuxColors.sapphireDark,
         borderRadius: BorderRadius.circular(LuxRadius.sm),
       ),
-      textStyle: LuxTypography.caption,
+      textStyle: LuxTypography.caption.copyWith(color: LuxColors.onAccent),
     ),
   ); // ThemeData
 } // luxTheme

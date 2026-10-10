@@ -27,7 +27,7 @@ class LuxErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: const Color(0xFF0A0A0A),
+        backgroundColor: LuxColors.bg,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(LuxSpacing.lg),
@@ -43,7 +43,7 @@ class LuxErrorScreen extends StatelessWidget {
                 const Text(
                   'Algo salió mal',
                   style: TextStyle(
-                    color: LuxColors.white,
+                    color: LuxColors.ink,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
@@ -52,7 +52,7 @@ class LuxErrorScreen extends StatelessWidget {
                 const SizedBox(height: LuxSpacing.sm),
                 const Text(
                   'Hemos sido notificados y estamos trabajando en una solución.',
-                  style: TextStyle(color: LuxColors.whiteTertiary),
+                  style: TextStyle(color: LuxColors.inkTertiary),
                   textAlign: TextAlign.center,
                 ),
                 if (onRetry != null) ...[

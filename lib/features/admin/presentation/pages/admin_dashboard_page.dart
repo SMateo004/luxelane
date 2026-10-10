@@ -46,7 +46,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     return BlocProvider(
       create: (context) => sl<AdminBloc>()..add(AdminDataRequested()),
       child: Scaffold(
-        backgroundColor: LuxColors.black,
+        backgroundColor: LuxColors.bg,
         body: web ? _webLayout() : _mobileLayout(),
       ),
     );
@@ -56,7 +56,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: LuxColors.blackElevated,
+        backgroundColor: LuxColors.surfaceMuted,
         title: const Text('Cerrar sesión', style: LuxTypography.titleLarge),
         content: const Text(
           '¿Seguro que quieres cerrar sesión del panel de administración?',
@@ -136,7 +136,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           SizedBox(
             width: 240,
             child: Container(
-              color: LuxColors.blackSurface,
+              color: LuxColors.surface,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -69,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: LuxColors.blackSurface,
+      backgroundColor: LuxColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
       ),
@@ -314,7 +314,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.close_rounded,
-                      color: LuxColors.whiteTertiary),
+                      color: LuxColors.inkTertiary),
                 ),
               ],
             ),
@@ -358,11 +358,61 @@ class _ProfileHeader extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: LuxSpacing.lg, vertical: LuxSpacing.xl),
+        decoration: BoxDecoration(
+          color: LuxColors.surface,
+          borderRadius: BorderRadius.circular(LuxRadius.xl),
+          border: Border.all(color: LuxColors.border),
+          boxShadow: luxSoftShadow,
+        ),
+        child: _content(),
+      );
+
+  Widget _content() => Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                  color: LuxColors.sapphire.withOpacity(0.35), width: 1.2),
+            ),
+            child: _avatar(),
+          ),
+          const SizedBox(height: LuxSpacing.md),
+          Text(user.displayName, style: LuxTypography.headlineLarge),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(
+                horizontal: LuxSpacing.md, vertical: LuxSpacing.xs),
+            decoration: BoxDecoration(
+              color: LuxColors.sapphireTint,
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: Text(
+              user.role == UserRole.admin
+                  ? 'ADMIN'
+                  : user.role == UserRole.driver
+                      ? 'CHÓFER'
+                      : 'PASAJERO',
+              style: LuxTypography.caption.copyWith(
+                color: LuxColors.sapphire,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.6,
+              ),
+            ),
+          ),
+        ],
+      );
+
+  Widget _avatar() => Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           CircleAvatar(
             radius: 44,
-            backgroundColor: LuxColors.blackElevated,
+            backgroundColor: LuxColors.sapphireTint,
             backgroundImage:
                 user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
             child: user.photoUrl == null
@@ -374,30 +424,6 @@ class _ProfileHeader extends StatelessWidget {
                       color: LuxColors.sapphire,
                     ))
                 : null,
-          ),
-          const SizedBox(height: LuxSpacing.md),
-          Text(user.displayName, style: LuxTypography.headlineLarge),
-          const SizedBox(height: 4),
-          Container(
-            padding: const EdgeInsets.symmetric(
-                horizontal: LuxSpacing.sm, vertical: LuxSpacing.xs),
-            decoration: BoxDecoration(
-              color: LuxColors.sapphireSubtle,
-              borderRadius: BorderRadius.circular(LuxRadius.sm),
-              border: Border.all(color: LuxColors.sapphire.withOpacity(0.4)),
-            ),
-            child: Text(
-              user.role == UserRole.admin
-                  ? 'ADMIN'
-                  : user.role == UserRole.driver
-                      ? 'CHÓFER'
-                      : 'PASAJERO',
-              style: LuxTypography.caption.copyWith(
-                color: LuxColors.sapphire,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.2,
-              ),
-            ),
           ),
         ],
       );
@@ -414,10 +440,10 @@ class _InfoTile extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.symmetric(vertical: LuxSpacing.sm),
         decoration: const BoxDecoration(
-            border: Border(bottom: BorderSide(color: LuxColors.blackBorder))),
+            border: Border(bottom: BorderSide(color: LuxColors.border))),
         child: Row(
           children: [
-            Icon(icon, color: LuxColors.whiteTertiary, size: 18),
+            Icon(icon, color: LuxColors.inkTertiary, size: 18),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
               child: Column(
@@ -469,7 +495,7 @@ class _PrefTile extends StatelessWidget {
     showDialog<String>(
       context: context,
       builder: (ctx) => SimpleDialog(
-        backgroundColor: LuxColors.blackSurface,
+        backgroundColor: LuxColors.surface,
         title: Text(label,
             style: LuxTypography.titleMedium.copyWith(fontSize: 15)),
         children: options
@@ -502,14 +528,14 @@ class _PrefTile extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: LuxSpacing.md),
           decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: LuxColors.blackBorder))),
+              border: Border(bottom: BorderSide(color: LuxColors.border))),
           child: Row(
             children: [
               Expanded(child: Text(label, style: LuxTypography.bodyLarge)),
               Text(value, style: LuxTypography.bodyMedium),
               const SizedBox(width: LuxSpacing.sm),
               const Icon(Icons.chevron_right_rounded,
-                  color: LuxColors.whiteTertiary, size: 18),
+                  color: LuxColors.inkTertiary, size: 18),
             ],
           ),
         ),

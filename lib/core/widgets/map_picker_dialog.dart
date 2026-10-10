@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../app/theme/app_theme.dart';
 import '../di/injection.dart';
 import '../models/place_model.dart';
 import '../services/maps_service.dart';
@@ -12,11 +12,11 @@ import '../services/maps_service.dart';
 Future<Place?> showMapPickerDialog(
   BuildContext context, {
   LatLng? initial,
-  String title = 'Select location',
+  String title = 'Seleccionar ubicación',
 }) {
   return showDialog<Place>(
     context: context,
-    barrierColor: Colors.black54,
+    barrierColor: LuxColors.ink.withOpacity(0.35),
     builder: (_) => _MapPickerDialog(
       initial: initial ?? const LatLng(-17.7833, -63.1821), // Santa Cruz center
       title: title,
@@ -91,17 +91,15 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final cardBg = isLight ? Colors.white : const Color(0xFF141414);
-    final textColor = isLight ? const Color(0xFF111111) : Colors.white;
-    final subColor =
-        isLight ? const Color(0xFF888888) : const Color(0xFF777777);
+    const cardBg = LuxColors.surface;
+    const textColor = LuxColors.ink;
+    const subColor = LuxColors.inkTertiary;
 
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(20),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(LuxRadius.lg),
         child: SizedBox(
           width: 700,
           height: 560,
@@ -138,7 +136,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                       Flexible(
                         child: Text(
                           widget.title,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: textColor,
                             fontSize: 15,
                             fontFamily: 'Montserrat',
@@ -151,7 +149,8 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                       const SizedBox(width: 8),
                       IconButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        icon: Icon(Icons.close, color: subColor, size: 20),
+                        icon:
+                            const Icon(Icons.close, color: subColor, size: 20),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -175,8 +174,8 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              'Selected location',
+                            const Text(
+                              'UBICACIÓN SELECCIONADA',
                               style: TextStyle(
                                 color: subColor,
                                 fontSize: 10,
@@ -187,7 +186,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                             ),
                             const SizedBox(height: 4),
                             if (_loading)
-                              SizedBox(
+                              const SizedBox(
                                 height: 14,
                                 width: 14,
                                 child: CircularProgressIndicator(
@@ -198,7 +197,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                             else
                               Text(
                                 _address,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: textColor,
                                   fontSize: 13,
                                   fontFamily: 'Montserrat',
@@ -216,13 +215,15 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                         child: ElevatedButton(
                           onPressed: _loading ? null : _confirm,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF111111),
-                            foregroundColor: Colors.white,
+                            backgroundColor: LuxColors.sapphire,
+                            foregroundColor: LuxColors.onAccent,
                             minimumSize: Size.zero,
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             padding: const EdgeInsets.symmetric(horizontal: 28),
                             elevation: 0,
-                            shape: const RoundedRectangleBorder(),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(LuxRadius.md)),
                             textStyle: const TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 11,
@@ -230,7 +231,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                               letterSpacing: 1.5,
                             ),
                           ),
-                          child: const Text('CONFIRM'),
+                          child: const Text('CONFIRMAR'),
                         ),
                       ),
                     ],
@@ -260,12 +261,12 @@ class _CenterPin extends StatelessWidget {
             width: 14,
             height: 14,
             decoration: BoxDecoration(
-              color: const Color(0xFF111111),
+              color: LuxColors.sapphire,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2),
+              border: Border.all(color: LuxColors.surface, width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: LuxColors.ink.withOpacity(0.25),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
@@ -275,13 +276,13 @@ class _CenterPin extends StatelessWidget {
           Container(
             width: 1.5,
             height: 20,
-            color: const Color(0xFF111111),
+            color: LuxColors.sapphire,
           ),
           Container(
             width: 8,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.2),
+              color: LuxColors.ink.withOpacity(0.2),
               borderRadius: BorderRadius.circular(4),
             ),
           ),

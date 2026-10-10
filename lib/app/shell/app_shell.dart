@@ -5,6 +5,7 @@ import '../../app/theme/app_theme.dart';
 import '../../core/widgets/components.dart';
 import '../../core/widgets/lux_site_chrome.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../features/home/presentation/pages/home_design.dart';
 import '../../features/notifications/presentation/widgets/notification_bell.dart';
 
 class AppShell extends StatelessWidget {
@@ -46,8 +47,14 @@ class _MobileShell extends StatelessWidget {
         body: shell,
         bottomNavigationBar: DecoratedBox(
           decoration: const BoxDecoration(
-            color: LuxColors.blackSurface,
-            border: Border(top: BorderSide(color: LuxColors.blackBorder)),
+            color: LuxColors.surface,
+            border: Border(top: BorderSide(color: LuxColors.border)),
+            boxShadow: [
+              BoxShadow(
+                  color: LuxColors.shadow,
+                  blurRadius: 20,
+                  offset: Offset(0, -4)),
+            ],
           ),
           child: SafeArea(
             top: false,
@@ -97,11 +104,11 @@ class _MobileTabItem extends StatelessWidget {
                 width: active ? 18 : 0,
                 height: 1.5,
                 margin: const EdgeInsets.only(bottom: 8),
-                color: LuxColors.sapphireBright,
+                color: LuxColors.sapphire,
               ),
               Icon(active ? tab.activeIcon : tab.icon,
                   size: 22,
-                  color: active ? LuxColors.white : LuxColors.whiteTertiary),
+                  color: active ? LuxColors.sapphire : LuxColors.inkTertiary),
               const SizedBox(height: 4),
               Text(
                 tab.label.toUpperCase(),
@@ -110,7 +117,7 @@ class _MobileTabItem extends StatelessWidget {
                   fontSize: 9,
                   letterSpacing: 1.2,
                   fontWeight: active ? FontWeight.w600 : FontWeight.w400,
-                  color: active ? LuxColors.white : LuxColors.whiteTertiary,
+                  color: active ? LuxColors.sapphire : LuxColors.inkTertiary,
                 ),
               ),
             ],
@@ -162,9 +169,11 @@ class _WebNav extends StatelessWidget {
     final narrow = MediaQuery.sizeOf(context).width < 900;
     return Container(
       height: kSiteNavHeight,
+      // Uses the public site's nav tokens (LuxSiteNav), not the app palette:
+      // its links and CTA come from lux_site_chrome.
       decoration: const BoxDecoration(
-        color: LuxColors.black,
-        border: Border(bottom: BorderSide(color: LuxColors.blackBorder)),
+        color: LD.dark,
+        border: Border(bottom: BorderSide(color: Color(0xFF1A2B40))),
       ),
       padding: EdgeInsets.symmetric(horizontal: narrow ? 20 : 56),
       child: Row(
@@ -238,7 +247,7 @@ class _ShellLink extends StatelessWidget {
                   duration: const Duration(milliseconds: 250),
                   height: 1,
                   width: active ? 18 : 0,
-                  color: LuxColors.sapphireBright,
+                  color: const Color(0xFF8CB2E3),
                 ),
               ),
             ],

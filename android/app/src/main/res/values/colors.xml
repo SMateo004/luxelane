@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Luxelane ivory (LD.bg / LuxColors.bg): the app never paints black. -->
+    <color name="lux_ivory">#FAFBFE</color>
+</resources>

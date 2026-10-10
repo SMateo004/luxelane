@@ -82,7 +82,7 @@ class DriverActiveRideScreen extends StatelessWidget {
           SizedBox(
             width: 400,
             child: Container(
-              color: LuxColors.blackSurface,
+              color: LuxColors.surface,
               child: Column(
                 children: [
                   _DriverWebHeader(booking: booking),
@@ -110,12 +110,12 @@ class _DriverTopBar extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: LuxColors.blackSurface,
+                  color: LuxColors.surface,
                   borderRadius: BorderRadius.circular(LuxRadius.sm),
-                  border: Border.all(color: LuxColors.blackBorder),
+                  border: Border.all(color: LuxColors.border),
                 ),
                 child: const Icon(Icons.keyboard_arrow_down_rounded,
-                    color: LuxColors.white),
+                    color: LuxColors.ink),
               ),
             ),
             const SizedBox(width: LuxSpacing.md),
@@ -153,10 +153,10 @@ class _DriverBottomPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         decoration: const BoxDecoration(
-          color: LuxColors.blackSurface,
+          color: LuxColors.surface,
           borderRadius:
               BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
-          border: Border(top: BorderSide(color: LuxColors.blackBorder)),
+          border: Border(top: BorderSide(color: LuxColors.border)),
         ),
         padding: const EdgeInsets.fromLTRB(
             LuxSpacing.md, LuxSpacing.md, LuxSpacing.md, LuxSpacing.xxl),
@@ -289,7 +289,7 @@ class _RideInfoRow extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(LuxSpacing.sm),
             decoration: BoxDecoration(
-              color: LuxColors.blackElevated,
+              color: LuxColors.surfaceMuted,
               borderRadius: BorderRadius.circular(LuxRadius.sm),
             ),
             child: Row(

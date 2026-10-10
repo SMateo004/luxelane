@@ -57,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: LuxColors.black,
+        backgroundColor: LuxColors.bg,
         body: isWeb(context) ? _webLayout() : _mobileLayout(),
       ),
     );
@@ -65,15 +65,21 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _mobileLayout() => SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(28, 48, 28, 28),
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GestureDetector(
                 onTap: () => context.go('/'),
-                child: const LuxelaneWordmark(),
+                child: const LuxelaneWordmark(size: 11),
               ),
               const SizedBox(height: 48),
+              Text('CREAR CUENTA',
+                  style: LuxTypography.caption.copyWith(
+                      color: LuxColors.sapphire,
+                      letterSpacing: 3,
+                      fontSize: 10)),
+              const SizedBox(height: 10),
               Text('Bienvenido\na Luxelane.',
                   style: LuxTypography.displayMedium
                       .copyWith(fontSize: 40, height: 1.15)),
@@ -98,7 +104,7 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           Expanded(
             child: Container(
-              color: LuxColors.blackSurface,
+              color: LuxColors.surface,
               child: Center(
                 child: SingleChildScrollView(
                   child: ConstrainedBox(
@@ -185,7 +191,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   'Tu nombre y teléfono permiten a tu chófer recibirte y contactarte.',
                   textAlign: TextAlign.center,
                   style: LuxTypography.caption
-                      .copyWith(color: LuxColors.whiteSecondary),
+                      .copyWith(color: LuxColors.inkSecondary),
                 ),
                 const SizedBox(height: LuxSpacing.sm),
                 Row(

@@ -115,8 +115,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.lock_outline,
-                  size: 14, color: LuxColors.whiteTertiary),
+              Icon(Icons.lock_outline, size: 14, color: LuxColors.inkTertiary),
               SizedBox(width: LuxSpacing.xs),
               Text('Protegido por Stripe', style: LuxTypography.caption),
             ],
@@ -140,7 +139,7 @@ class _EmptyCards extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Icon(Icons.credit_card_outlined,
-                size: 48, color: LuxColors.whiteTertiary),
+                size: 48, color: LuxColors.inkTertiary),
             const SizedBox(height: LuxSpacing.md),
             const Text('Sin métodos de pago', style: LuxTypography.titleMedium),
             const SizedBox(height: LuxSpacing.sm),
@@ -175,7 +174,7 @@ class _CardTile extends StatelessWidget {
               width: 48,
               height: 30,
               decoration: BoxDecoration(
-                color: LuxColors.blackElevated,
+                color: LuxColors.surfaceMuted,
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
               ),
               child: const Icon(Icons.credit_card_outlined,

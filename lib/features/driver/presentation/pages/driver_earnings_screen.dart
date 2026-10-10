@@ -56,7 +56,7 @@ class _EarningsSummary extends StatelessWidget {
           gradient: LinearGradient(
             colors: [
               LuxColors.sapphire.withOpacity(0.12),
-              LuxColors.blackElevated,
+              LuxColors.surfaceMuted,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -82,7 +82,7 @@ class _EarningsSummary extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.check_circle_outline,
-                    color: LuxColors.whiteTertiary, size: 14),
+                    color: LuxColors.inkTertiary, size: 14),
                 const SizedBox(width: LuxSpacing.xs),
                 Text(
                   '$rides viaje${rides == 1 ? '' : 's'} completado${rides == 1 ? '' : 's'}',
@@ -168,11 +168,10 @@ class _EmptyEarnings extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.attach_money,
-                  size: 48, color: LuxColors.whiteTertiary),
+              Icon(Icons.attach_money, size: 48, color: LuxColors.inkTertiary),
               SizedBox(height: LuxSpacing.md),
               Text('Aún no hay viajes completados',
-                  style: TextStyle(color: LuxColors.white)),
+                  style: TextStyle(color: LuxColors.ink)),
             ],
           ),
         ),

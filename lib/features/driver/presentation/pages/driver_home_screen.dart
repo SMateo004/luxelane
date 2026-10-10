@@ -132,7 +132,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               body: Center(child: CircularProgressIndicator()),
             );
           }
-          return const Scaffold(backgroundColor: Colors.black);
+          return const Scaffold(backgroundColor: LuxColors.bg);
         }
         final active = state.activeBooking;
         return Scaffold(
@@ -265,12 +265,12 @@ class _StatusBanner extends StatelessWidget {
         decoration: BoxDecoration(
           color: isAvailable
               ? LuxColors.success.withValues(alpha: 0.08)
-              : LuxColors.blackElevated,
+              : LuxColors.surfaceMuted,
           borderRadius: BorderRadius.circular(LuxRadius.lg),
           border: Border.all(
             color: isAvailable
                 ? LuxColors.success.withValues(alpha: 0.3)
-                : LuxColors.blackBorder,
+                : LuxColors.border,
           ),
         ),
         child: Row(
@@ -279,7 +279,7 @@ class _StatusBanner extends StatelessWidget {
               isAvailable
                   ? Icons.wifi_tethering_rounded
                   : Icons.wifi_tethering_off_rounded,
-              color: isAvailable ? LuxColors.success : LuxColors.whiteTertiary,
+              color: isAvailable ? LuxColors.success : LuxColors.inkTertiary,
               size: 24,
             ),
             const SizedBox(width: LuxSpacing.md),
@@ -290,7 +290,7 @@ class _StatusBanner extends StatelessWidget {
                   Text(
                     isAvailable ? 'Estás conectado' : 'Estás desconectado',
                     style: LuxTypography.titleMedium.copyWith(
-                      color: isAvailable ? LuxColors.success : LuxColors.white,
+                      color: isAvailable ? LuxColors.success : LuxColors.ink,
                     ),
                   ),
                   Text(
@@ -511,7 +511,7 @@ class _AddressRow extends StatelessWidget {
               children: [
                 Text(label,
                     style: LuxTypography.caption.copyWith(
-                      color: isCurrent ? color : LuxColors.whiteTertiary,
+                      color: isCurrent ? color : LuxColors.inkTertiary,
                       fontWeight:
                           isCurrent ? FontWeight.bold : FontWeight.normal,
                     )),
@@ -637,9 +637,9 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
     return SafeArea(
       child: Container(
         decoration: const BoxDecoration(
-          color: LuxColors.blackSurface,
+          color: LuxColors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          border: Border(top: BorderSide(color: LuxColors.blackBorder)),
+          border: Border(top: BorderSide(color: LuxColors.border)),
         ),
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
         child: Column(
@@ -652,7 +652,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: LuxColors.blackBorder,
+                  color: LuxColors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -739,7 +739,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: LuxColors.blackElevated,
+                color: LuxColors.surfaceMuted,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
@@ -755,7 +755,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     child: Container(
                       width: 1.5,
                       height: 18,
-                      color: LuxColors.blackBorder,
+                      color: LuxColors.border,
                     ),
                   ),
                   _RouteItem(
@@ -773,14 +773,14 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: LuxColors.blackElevated,
+                  color: LuxColors.surfaceMuted,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Icon(Icons.notes_rounded,
-                        size: 15, color: LuxColors.whiteTertiary),
+                        size: 15, color: LuxColors.inkTertiary),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(widget.booking.notes!,
@@ -825,7 +825,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     label: const Text('Aceptar viaje'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: LuxColors.sapphire,
-                      foregroundColor: Colors.black,
+                      foregroundColor: LuxColors.onAccent,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -875,7 +875,7 @@ class _RouteItem extends StatelessWidget {
                     fontFamily: 'Montserrat',
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
-                    color: LuxColors.whiteTertiary,
+                    color: LuxColors.inkTertiary,
                     letterSpacing: 1.5,
                   ),
                 ),

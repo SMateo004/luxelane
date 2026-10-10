@@ -391,7 +391,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     child: Text(
                       _selected.label.toUpperCase(),
                       key: ValueKey(_selected),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
@@ -971,8 +971,8 @@ class _BookingScreenState extends State<BookingScreen> {
           // Segmented control
           Container(
             padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: const Color(0xFFEEEBE4),
+            decoration: const BoxDecoration(
+              color: Color(0xFFEEEBE4),
               borderRadius: BorderRadius.zero,
             ),
             child: Row(
@@ -1197,8 +1197,8 @@ class _BookingScreenState extends State<BookingScreen> {
 
     return Container(
       padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF5F4F1),
+      decoration: const BoxDecoration(
+        color: Color(0xFFF5F4F1),
         borderRadius: BorderRadius.zero,
       ),
       child: Column(
@@ -1423,11 +1423,11 @@ class _BookingScreenState extends State<BookingScreen> {
         const SizedBox(height: 16),
 
         // ── All fees included ───────────────────────────────────────────
-        Row(
+        const Row(
           children: [
-            const Icon(Icons.lock_outline_rounded, size: 14, color: _kTextSub),
-            const SizedBox(width: 8),
-            const Text(
+            Icon(Icons.lock_outline_rounded, size: 14, color: _kTextSub),
+            SizedBox(width: 8),
+            Text(
               LuxPromise.fixedPrice,
               style: TextStyle(
                 fontFamily: kSans,
@@ -1819,7 +1819,7 @@ class _WebTopBar extends StatelessWidget {
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: onBack,
-                child: Row(mainAxisSize: MainAxisSize.min, children: const [
+                child: const Row(mainAxisSize: MainAxisSize.min, children: [
                   Icon(Icons.arrow_back_ios_new_rounded,
                       size: 12, color: _kTextSub),
                   SizedBox(width: 5),
@@ -2712,8 +2712,8 @@ class _LightServiceTypeTab extends StatelessWidget {
     final h = compact ? 38.0 : 42.0;
     return Container(
       height: h,
-      decoration: BoxDecoration(
-        color: const Color(0xFFEEEBE4),
+      decoration: const BoxDecoration(
+        color: Color(0xFFEEEBE4),
         borderRadius: BorderRadius.zero,
       ),
       child: Row(
@@ -2925,15 +2925,15 @@ class _LightTextField extends StatelessWidget {
           fillColor: _kCardBg,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          border: OutlineInputBorder(
+          border: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: const BorderSide(color: _kBorder)),
-          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: _kBorder)),
+          enabledBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: const BorderSide(color: _kBorder)),
-          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: _kBorder)),
+          focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: const BorderSide(color: _kTextPrimary, width: 1.5)),
+              borderSide: BorderSide(color: _kTextPrimary, width: 1.5)),
         ),
       );
 }
@@ -3154,10 +3154,10 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
           }
         },
         child: Dialog(
-          backgroundColor: LuxColors.blackSurface,
+          backgroundColor: LuxColors.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(LuxRadius.lg),
-            side: const BorderSide(color: LuxColors.blackBorder),
+            side: const BorderSide(color: LuxColors.border),
           ),
           child: SizedBox(
             width: 420,
@@ -3178,7 +3178,7 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
                       IconButton(
                           onPressed: () => Navigator.of(context).pop(false),
                           icon: const Icon(Icons.close_rounded,
-                              color: LuxColors.whiteTertiary)),
+                              color: LuxColors.inkTertiary)),
                     ]),
                     const SizedBox(height: LuxSpacing.sm),
                     Text(
@@ -3216,7 +3216,7 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
                               _obscure
                                   ? Icons.visibility_off_outlined
                                   : Icons.visibility_outlined,
-                              color: LuxColors.whiteTertiary,
+                              color: LuxColors.inkTertiary,
                               size: 20),
                           onPressed: () => setState(() => _obscure = !_obscure),
                         )),

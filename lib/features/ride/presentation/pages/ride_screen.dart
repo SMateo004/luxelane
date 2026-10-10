@@ -321,7 +321,7 @@ class _RideScreenState extends State<RideScreen> {
           SizedBox(
             width: 400,
             child: Container(
-              color: LuxColors.blackSurface,
+              color: LuxColors.surface,
               child: Column(
                 children: [
                   _WebRideHeader(status: _status),
@@ -382,12 +382,13 @@ class _TopBar extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: LuxColors.blackSurface,
-                  borderRadius: BorderRadius.circular(LuxRadius.sm),
-                  border: Border.all(color: LuxColors.blackBorder),
+                  color: LuxColors.surface,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: LuxColors.border),
+                  boxShadow: luxSoftShadow,
                 ),
                 child: const Icon(Icons.keyboard_arrow_down_rounded,
-                    color: LuxColors.white),
+                    color: LuxColors.ink),
               ),
             ),
             const SizedBox(width: LuxSpacing.md),
@@ -413,10 +414,13 @@ class _BottomPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         decoration: const BoxDecoration(
-          color: LuxColors.blackSurface,
+          color: LuxColors.surface,
           borderRadius:
-              BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
-          border: Border(top: BorderSide(color: LuxColors.blackBorder)),
+              BorderRadius.vertical(top: Radius.circular(LuxRadius.xl + 8)),
+          boxShadow: [
+            BoxShadow(
+                color: LuxColors.shadow, blurRadius: 32, offset: Offset(0, -8)),
+          ],
         ),
         padding: const EdgeInsets.fromLTRB(
           LuxSpacing.md + 4,
@@ -430,7 +434,9 @@ class _BottomPanel extends StatelessWidget {
           children: [
             BookingStatusChip(status: status),
             const SizedBox(height: LuxSpacing.sm + 4),
-            Text(message, style: LuxTypography.bodyLarge.copyWith(height: 1.5)),
+            Text(message,
+                style: LuxTypography.headlineLarge
+                    .copyWith(fontSize: 24, height: 1.2)),
             const SizedBox(height: LuxSpacing.lg),
             driver,
             const SizedBox(height: LuxSpacing.md),
@@ -452,7 +458,7 @@ class _AssigningCard extends StatelessWidget {
               width: 28,
               height: 28,
               child: CircularProgressIndicator(
-                  strokeWidth: 1.2, color: LuxColors.sapphireBright),
+                  strokeWidth: 1.2, color: LuxColors.sapphire),
             ),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
@@ -464,7 +470,7 @@ class _AssigningCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text('Verás su nombre, vehículo y valoración aquí.',
                       style: LuxTypography.caption
-                          .copyWith(color: LuxColors.whiteSecondary)),
+                          .copyWith(color: LuxColors.inkSecondary)),
                 ],
               ),
             ),
@@ -513,10 +519,10 @@ class _RatingDialogState extends State<_RatingDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        backgroundColor: LuxColors.blackSurface,
+        backgroundColor: LuxColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(LuxRadius.lg),
-          side: const BorderSide(color: LuxColors.blackBorder),
+          side: const BorderSide(color: LuxColors.border),
         ),
         title: const Text('Califica tu viaje',
             style: LuxTypography.titleMedium, textAlign: TextAlign.center),
@@ -525,7 +531,7 @@ class _RatingDialogState extends State<_RatingDialog> {
           children: [
             Text(widget.driverName,
                 style: LuxTypography.bodyMedium
-                    .copyWith(color: LuxColors.whiteTertiary)),
+                    .copyWith(color: LuxColors.inkTertiary)),
             const SizedBox(height: LuxSpacing.lg),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
