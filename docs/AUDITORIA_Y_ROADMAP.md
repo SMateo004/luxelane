@@ -129,7 +129,7 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 | 6 | **Despacho por cercanía.** Las recogidas de los próximos 90 min se ofrecen primero al chófer verificado más cercano con la clase correcta, dentro de 25 km y con ubicación de menos de 10 min. Tiene 1 minuto para aceptar (lo ve como "Solicitud exclusiva" con cuenta regresiva). Si la rechaza o no responde, pasa al siguiente (hasta 5) y luego se abre a todos. Las reservas anticipadas se abren a todos desde el inicio. Las reglas impiden que otro chófer tome una oferta exclusiva | ✅ Hecho |
 | 7 | **Meet & greet.** La reserva guarda el nombre y teléfono reales del pasajero (o del invitado). El chófer tiene llamar, WhatsApp y **"Mostrar cartel"**, que pone el nombre a pantalla completa en horizontal. El pasajero ve en el viaje cómo y dónde lo esperan | ✅ Hecho |
 | 7b | **Espera gratuita: 60 min en aeropuerto** desde el aterrizaje y **15 min en ciudad** desde la recogida o la llegada del chófer. Cuenta regresiva para pasajero y chófer, aviso push con la hora límite, y se muestra en la confirmación y en la landing | ✅ Hecho |
-| 8 | **Idiomas es / en / pt.** La app sigue el idioma del dispositivo o navegador y cambia en vivo, sin reiniciar; si el idioma no está soportado usa inglés. Hay 1419 textos en ARB, con fechas, horas y montos según el idioma. Las push salen en el idioma del usuario, y en Android 13+ se puede elegir el idioma por app. Los tests impiden textos fijos y traducciones incompletas (ver `lib/l10n/README.md`) | ✅ Hecho |
+| 8 | **Idiomas es / en / pt.** La app sigue el idioma del dispositivo o navegador y cambia en vivo, sin reiniciar; si el idioma no está soportado usa inglés. Hay 1424 textos en ARB, con fechas, horas y montos según el idioma. Las push salen en el idioma del usuario, y en Android 13+ se puede elegir el idioma por app. Los tests impiden textos fijos y traducciones incompletas (ver `lib/l10n/README.md`) | ✅ Hecho |
 | 9 | **Reportes de operaciones** (admin → Reportes). Se calculan sobre las reservas reales, por fecha de recogida y en hora local, para los últimos 7, 30 o 90 días. Incluyen viajes completados e ingresos (con variación contra el período anterior), ticket promedio, tasa de cancelación, cancelaciones tardías, reservas que nadie tomó y calificación promedio. Gráficos: viajes por día, ingresos por día, demanda por hora de recogida, mezcla por categoría y servicio, y origen de las cancelaciones. Tabla de rendimiento por chófer. Los datos diarios y los de chóferes se exportan a CSV (descarga en web; en móvil se copian) | ✅ Hecho |
 
 ### Fase 3: Super app y B2B (4–6 semanas) — en curso
@@ -168,6 +168,7 @@ Decisiones: **paleta marino + champagne** y **cobro en bolivianos (Bs)**.
 • **Montos con centavos** (Bs 19,99) ya se aceptan en reembolsos y ajustes.
 • **Reembolsos con tarjeta:** el de Stripe queda anotado en la reserva, y un pago con tarjeta no se puede "reembolsar" dos veces.
 • **Otros:** los documentos aprobados no se pueden reemplazar; el pasajero cancela solo por el servidor, así que la cancelación tardía siempre queda registrada; la comisión no la ven los pasajeros; los errores web nuevos tienen un tope diario; la empresa nunca queda sin admin. | ✅ Hecho (desplegar `functions,firestore,storage`) |
+| 19 | **Cierre de la auditoría.** El chófer recién aprobado empieza a ver solicitudes **sin reabrir la app**, porque la app escucha su perfil en vivo; ese mismo cambio lo desconecta en el acto si lo suspenden o se le vence un documento. En la revisión de documentos, el admin ve el **vehículo declarado** con su categoría y puede corregirla si no coincide con el documento, ya que el despacho ofrece viajes según la categoría | ✅ Hecho |
 
 Pendiente de la Fase 3:
 1. **Entorno de staging**: correr `PROJECT=luxelane-staging ./scripts/setup_staging.sh` con tu cuenta (pasos en DEPLOY.md).
@@ -197,7 +198,7 @@ Pendiente de la Fase 3:
 ## 5. Cómo probar
 
 ```
-flutter test                      # 297 tests Dart
+flutter test                      # 301 tests Dart
 (cd functions && npm test)        # 97 tests de negocio, precios, vuelos, chófer, espera, despacho, cancelación, mensajes, cuentas corporativas, documentos, promociones, soporte, observabilidad, fidelidad y suspensión de cuentas
 (cd rules-tests && npm test)      # 51 tests de reglas de Firestore y Storage (requiere Java)
 ```

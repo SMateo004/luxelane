@@ -34,6 +34,15 @@ class DriverBookingsWatched extends DriverEvent {
   List<Object?> get props => [driverId];
 }
 
+/// The chauffeur's profile changed on the server (documents approved,
+/// suspended…).
+class _DriverProfileUpdated extends DriverEvent {
+  const _DriverProfileUpdated(this.profile);
+  final DriverProfile profile;
+  @override
+  List<Object?> get props => [profile];
+}
+
 class DriverPendingBookingsWatched extends DriverEvent {
   const DriverPendingBookingsWatched();
 }
@@ -261,6 +270,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     on<DriverTripCompleted>(_onCompleteTrip);
     on<DriverRequestAccepted>(_onAcceptRequest);
     on<DriverRequestDeclined>(_onDeclineRequest);
+    on<_DriverProfileUpdated>(_onProfileUpdated);
   }
 
   final BookingRepository _bookingRepo;
@@ -269,6 +279,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
   final MapsService _mapsService;
   Timer? _locationTimer;
   StreamSubscription<Position>? _positionSub;
+  StreamSubscription<DriverProfile?>? _profileSub;
   DateTime? _lastWrite;
 
   /// Minimum spacing between Firestore writes from the position stream.
@@ -307,12 +318,42 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       add(DriverBookingsWatched(driverId: event.userId));
       add(const DriverPendingBookingsWatched());
       if (profile.isAvailable) add(DriverLocationTrackingStarted(userId: event.userId));
+      _watchProfile(event.userId);
     } catch (e) {
       emit(DriverError('Startup failed: ${e.toString()}'));
     }
   }
 
   // ── Streams ───────────────────────────────────────────────────────────────
+
+  /// Live profile, so an approval or a suspension applies without
+  /// reopening the app.
+  void _watchProfile(String userId) {
+    _profileSub?.cancel();
+    try {
+      _profileSub = _userRepo.watchDriverProfile(userId).listen(
+        (p) {
+          if (p != null && !isClosed) add(_DriverProfileUpdated(p));
+        },
+        onError: (_) {},
+      );
+    } catch (_) {
+      // No live profile (e.g. tests): the one read at start stays.
+    }
+  }
+
+  void _onProfileUpdated(_DriverProfileUpdated event, Emitter<DriverState> emit) {
+    final cur = state;
+    if (cur is! DriverLoaded) return;
+    final wasVerified = cur.profile.documentsVerified;
+    final p = event.profile;
+    emit(cur.copyWith(profile: p, isAvailable: p.isAvailable));
+    // Requests are readable only once verified: start watching them now
+    // (the earlier attempt was refused).
+    if (!wasVerified && p.documentsVerified) add(const DriverPendingBookingsWatched());
+    // Taken offline on the server (suspension, expired document).
+    if (cur.isAvailable && !p.isAvailable) add(const DriverLocationTrackingStopped());
+  }
 
   /// Watches bookings assigned to this driver (confirmed, active, completed).
   Future<void> _onWatchBookings(
@@ -524,6 +565,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
   Future<void> close() {
     _locationTimer?.cancel();
     _positionSub?.cancel();
+    _profileSub?.cancel();
     return super.close();
   }
 }

@@ -1,0 +1,16 @@
+{
+  "vehicleDeclaredTitle": {"es": "Vehículo declarado", "en": "Declared vehicle", "pt": "Veículo declarado"},
+  "vehicleDeclaredLine": {
+    "es": "{vehicle} · placa {plate}",
+    "en": "{vehicle} · plate {plate}",
+    "pt": "{vehicle} · placa {plate}",
+    "placeholders": {"vehicle": {"type": "String"}, "plate": {"type": "String"}}
+  },
+  "vehicleClassCheck": {
+    "es": "Comprueba que la categoría coincida con el vehículo del documento: el despacho ofrece viajes según la categoría.",
+    "en": "Check the class matches the vehicle in the registration: dispatch offers rides by class.",
+    "pt": "Confira se a categoria corresponde ao veículo do documento: o despacho oferece viagens pela categoria."
+  },
+  "vehicleClassSave": {"es": "Guardar categoría", "en": "Save class", "pt": "Salvar categoria"},
+  "vehicleClassSaved": {"es": "Categoría actualizada", "en": "Class updated", "pt": "Categoria atualizada"}
+}

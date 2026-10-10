@@ -6,9 +6,11 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/repositories/repositories.dart';
 import '../../data/driver_documents_repository.dart';
 import '../../domain/driver_document.dart';
 import '../driver_document_l10n.dart';
+import '../widgets/declared_vehicle_card.dart';
 import 'driver_documents_screen.dart' show DocStatusChip;
 
 /// Admin review of one chauffeur's documents: open each file, approve it
@@ -20,6 +22,7 @@ class DriverDocumentsReviewPage extends StatelessWidget {
     required this.driverId,
     required this.driverName,
     this.repository,
+    this.vehicleRepository,
     this.openUrl,
     this.now,
   });
@@ -27,6 +30,7 @@ class DriverDocumentsReviewPage extends StatelessWidget {
   final String driverId;
   final String driverName;
   final DriverDocumentsRepository? repository;
+  final VehicleRepository? vehicleRepository;
 
   /// Test seam for opening a file link.
   final Future<void> Function(String url)? openUrl;
@@ -60,6 +64,7 @@ class DriverDocumentsReviewPage extends StatelessWidget {
                     style: LuxTypography.bodyMedium,
                   ),
                   const SizedBox(height: LuxSpacing.md),
+                  DeclaredVehicleCard(driverId: driverId, repository: vehicleRepository),
                   for (final d in summary.documents)
                     Padding(
                       padding: const EdgeInsets.only(bottom: LuxSpacing.md),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -89,6 +91,38 @@ void main() {
       );
 
   group('DriverBloc', () {
+    test('starts watching requests once the documents are approved', () async {
+      DriverProfile profile({required bool verified, bool available = false}) => DriverProfile(
+            userId: 'driver-1',
+            licenseNumber: 'DL-001',
+            licenseExpiry: DateTime(2027),
+            vehicleId: 'vehicle-1',
+            documentsVerified: verified,
+            rating: 0,
+            totalRides: 0,
+            isAvailable: available,
+          );
+      final live = StreamController<DriverProfile?>();
+      addTearDown(live.close);
+      when(() => userRepo.getDriverProfile(any())).thenAnswer((_) async => Right(profile(verified: false)));
+      when(() => userRepo.watchDriverProfile(any())).thenAnswer((_) => live.stream);
+      // Unverified: the rules refuse the requests query.
+      var calls = 0;
+      when(() => bookingRepo.streamPendingBookings()).thenAnswer((_) {
+        calls++;
+        return calls == 1 ? Stream.error(Exception('permission-denied')) : Stream.value([]);
+      });
+      final b = bloc()..add(const DriverStarted(userId: 'driver-1'));
+      addTearDown(b.close);
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      expect(calls, 1);
+
+      live.add(profile(verified: true));
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      expect(calls, 2);
+      expect((b.state as DriverLoaded).profile.documentsVerified, isTrue);
+    });
+
     blocTest<DriverBloc, DriverState>(
       'emits DriverLoaded on DriverStarted',
       build: bloc,

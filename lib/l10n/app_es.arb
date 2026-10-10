@@ -3140,6 +3140,21 @@
   "vehicleBusinessDesc": "Mercedes E-Class o similar",
   "vehicleBusinessVan": "Business Van",
   "vehicleBusinessVanDesc": "Mercedes V-Class · Hasta 7",
+  "vehicleClassCheck": "Comprueba que la categoría coincida con el vehículo del documento: el despacho ofrece viajes según la categoría.",
+  "vehicleClassSave": "Guardar categoría",
+  "vehicleClassSaved": "Categoría actualizada",
+  "vehicleDeclaredLine": "{vehicle} · placa {plate}",
+  "@vehicleDeclaredLine": {
+    "placeholders": {
+      "vehicle": {
+        "type": "String"
+      },
+      "plate": {
+        "type": "String"
+      }
+    }
+  },
+  "vehicleDeclaredTitle": "Vehículo declarado",
   "vehicleElectric": "Eléctrico",
   "vehicleElectricDesc": "Tesla Model S o similar",
   "vehicleFirstClass": "First Class",

@@ -4791,6 +4791,23 @@ class AppLocalizationsPt extends AppLocalizations {
   String get vehicleBusinessVanDesc => 'Mercedes Classe V · Até 7';
 
   @override
+  String get vehicleClassCheck => 'Confira se a categoria corresponde ao veículo do documento: o despacho oferece viagens pela categoria.';
+
+  @override
+  String get vehicleClassSave => 'Salvar categoria';
+
+  @override
+  String get vehicleClassSaved => 'Categoria atualizada';
+
+  @override
+  String vehicleDeclaredLine(String vehicle, String plate) {
+    return '$vehicle · placa $plate';
+  }
+
+  @override
+  String get vehicleDeclaredTitle => 'Veículo declarado';
+
+  @override
   String get vehicleElectric => 'Elétrico';
 
   @override

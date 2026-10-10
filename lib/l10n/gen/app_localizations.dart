@@ -8575,6 +8575,36 @@ abstract class AppLocalizations {
   /// **'Mercedes V-Class · Hasta 7'**
   String get vehicleBusinessVanDesc;
 
+  /// No description provided for @vehicleClassCheck.
+  ///
+  /// In es, this message translates to:
+  /// **'Comprueba que la categoría coincida con el vehículo del documento: el despacho ofrece viajes según la categoría.'**
+  String get vehicleClassCheck;
+
+  /// No description provided for @vehicleClassSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar categoría'**
+  String get vehicleClassSave;
+
+  /// No description provided for @vehicleClassSaved.
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría actualizada'**
+  String get vehicleClassSaved;
+
+  /// No description provided for @vehicleDeclaredLine.
+  ///
+  /// In es, this message translates to:
+  /// **'{vehicle} · placa {plate}'**
+  String vehicleDeclaredLine(String vehicle, String plate);
+
+  /// No description provided for @vehicleDeclaredTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo declarado'**
+  String get vehicleDeclaredTitle;
+
   /// No description provided for @vehicleElectric.
   ///
   /// In es, this message translates to:
