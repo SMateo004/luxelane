@@ -62,7 +62,7 @@ Con eso **la web ya funciona**; no requiere más configuración.
 
 ### 2. Android (rider y chófer usan el mismo `applicationId`)
 1. Project settings → Your apps → **Add app → Android**, package
-   `com.example.luxelane` (o el definitivo, ver nota).
+   `com.luxelane.app`.
 2. Añadir las huellas **SHA-1 y SHA-256** de cada firma que usarás:
    - debug: `cd android && ./gradlew signingReport`
    - release/Play: Play Console → Integridad de la app → certificado de firma.
@@ -80,9 +80,10 @@ Con eso **la web ya funciona**; no requiere más configuración.
                --dart-define=GOOGLE_SERVER_CLIENT_ID=...
    ```
 
-> Nota: `com.example.luxelane` no se puede publicar en Google Play. Si se
-> cambia el `applicationId`, hay que registrar la app Android con el nuevo
-> paquete y volver a subir las huellas.
+> Nota: la app de pasajeros y la de chóferes comparten hoy el mismo
+> `applicationId` (`com.luxelane.app`). Para publicarlas como dos apps
+> distintas en Google Play hará falta un ID por app (p. ej. con *flavors*)
+> y registrar cada una en Firebase con sus huellas.
 
 ### 3. iOS (cuando exista la carpeta `ios/`)
 Registrar la app iOS en Firebase y pasar `FIREBASE_IOS_APP_ID` y
