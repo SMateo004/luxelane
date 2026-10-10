@@ -1,30 +1,77 @@
 {
-  "refundMenu": {"es": "Registrar reembolso", "en": "Record refund", "pt": "Registrar reembolso"},
-  "refundTitle": {"es": "Registrar reembolso", "en": "Record a refund", "pt": "Registrar reembolso"},
+  "refundMenu": {
+    "es": "Registrar reembolso",
+    "en": "Record refund",
+    "pt": "Registrar reembolso"
+  },
+  "refundTitle": {
+    "es": "Registrar reembolso",
+    "en": "Record a refund",
+    "pt": "Registrar reembolso"
+  },
   "refundPaid": {
     "es": "El pasajero pagó {paid}.",
     "en": "The passenger paid {paid}.",
     "pt": "O passageiro pagou {paid}.",
-    "placeholders": {"paid": {"type": "String"}}
+    "placeholders": {
+      "paid": {
+        "type": "String"
+      }
+    }
   },
   "refundPaidAndRefunded": {
     "es": "El pasajero pagó {paid}; ya se le devolvieron {refunded}.",
     "en": "The passenger paid {paid}; {refunded} was already refunded.",
     "pt": "O passageiro pagou {paid}; já foram devolvidos {refunded}.",
-    "placeholders": {"paid": {"type": "String"}, "refunded": {"type": "String"}}
+    "placeholders": {
+      "paid": {
+        "type": "String"
+      },
+      "refunded": {
+        "type": "String"
+      }
+    }
   },
   "refundAmount": {
     "es": "Monto (máximo {max})",
     "en": "Amount (up to {max})",
     "pt": "Valor (máximo {max})",
-    "placeholders": {"max": {"type": "String"}}
+    "placeholders": {
+      "max": {
+        "type": "String"
+      }
+    }
   },
-  "refundHow": {"es": "¿Cómo se le devuelve?", "en": "How is it paid back?", "pt": "Como é devolvido?"},
-  "refundMethodQr": {"es": "QR", "en": "QR", "pt": "QR"},
-  "refundMethodTransfer": {"es": "Transferencia", "en": "Bank transfer", "pt": "Transferência"},
-  "refundMethodCash": {"es": "Efectivo", "en": "Cash", "pt": "Dinheiro"},
-  "refundMethodInvoiceCredit": {"es": "Crédito en la factura de la empresa", "en": "Credit on the company invoice", "pt": "Crédito na fatura da empresa"},
-  "refundReason": {"es": "Motivo", "en": "Reason", "pt": "Motivo"},
+  "refundHow": {
+    "es": "¿Cómo se le devuelve?",
+    "en": "How is it paid back?",
+    "pt": "Como é devolvido?"
+  },
+  "refundMethodQr": {
+    "es": "QR",
+    "en": "QR",
+    "pt": "QR"
+  },
+  "refundMethodTransfer": {
+    "es": "Transferencia",
+    "en": "Bank transfer",
+    "pt": "Transferência"
+  },
+  "refundMethodCash": {
+    "es": "Efectivo",
+    "en": "Cash",
+    "pt": "Dinheiro"
+  },
+  "refundMethodInvoiceCredit": {
+    "es": "Crédito en la factura de la empresa",
+    "en": "Credit on the company invoice",
+    "pt": "Crédito na fatura da empresa"
+  },
+  "refundReason": {
+    "es": "Motivo",
+    "en": "Reason",
+    "pt": "Motivo"
+  },
   "refundReasonHint": {
     "es": "Ej.: el chófer llegó 25 min tarde",
     "en": "E.g. the chauffeur was 25 min late",
@@ -35,30 +82,79 @@
     "en": "You pay the money back outside the app; here it is recorded, the passenger is notified and their receipt shows it. It doesn't change the chauffeur's settlement: Luxelane bears the cost.",
     "pt": "Você faz a devolução fora do app; aqui ela fica registrada, o passageiro recebe um aviso e o recibo a mostra. Não muda o acerto do motorista: o custo é da Luxelane."
   },
-  "refundSave": {"es": "Registrar", "en": "Record", "pt": "Registrar"},
+  "refundSave": {
+    "es": "Registrar",
+    "en": "Record",
+    "pt": "Registrar"
+  },
   "refundRecorded": {
     "es": "Reembolso registrado. Avisamos al pasajero.",
     "en": "Refund recorded. The passenger was notified.",
     "pt": "Reembolso registrado. Avisamos o passageiro."
   },
-  "refundErrorAmount": {"es": "Ingresa un monto mayor a 0 (hasta 2 decimales).", "en": "Enter an amount above 0 (up to 2 decimals).", "pt": "Informe um valor maior que 0 (até 2 casas decimais)."},
-  "refundErrorTooMuch": {"es": "El monto supera lo que queda por devolver.", "en": "The amount is more than what's left to refund.", "pt": "O valor é maior que o que resta devolver."},
-  "refundErrorMethod": {"es": "Elige cómo se le devuelve.", "en": "Choose how it's paid back.", "pt": "Escolha como será devolvido."},
-  "refundErrorReason": {"es": "Escribe el motivo.", "en": "Write the reason.", "pt": "Escreva o motivo."},
-  "refundErrorNotCompleted": {"es": "Solo se reembolsan viajes completados.", "en": "Only completed rides can be refunded.", "pt": "Só viagens concluídas podem ser reembolsadas."},
+  "refundErrorAmount": {
+    "es": "Ingresa un monto mayor a 0 (hasta 2 decimales).",
+    "en": "Enter an amount above 0 (up to 2 decimals).",
+    "pt": "Informe um valor maior que 0 (até 2 casas decimais)."
+  },
+  "refundErrorTooMuch": {
+    "es": "El monto supera lo que queda por devolver.",
+    "en": "The amount is more than what's left to refund.",
+    "pt": "O valor é maior que o que resta devolver."
+  },
+  "refundErrorMethod": {
+    "es": "Elige cómo se le devuelve.",
+    "en": "Choose how it's paid back.",
+    "pt": "Escolha como será devolvido."
+  },
+  "refundErrorReason": {
+    "es": "Escribe el motivo.",
+    "en": "Write the reason.",
+    "pt": "Escreva o motivo."
+  },
+  "refundErrorNotCompleted": {
+    "es": "Solo se reembolsan viajes completados.",
+    "en": "Only completed rides can be refunded.",
+    "pt": "Só viagens concluídas podem ser reembolsadas."
+  },
   "refundRefundedShort": {
     "es": "Reembolsado {amount}",
     "en": "Refunded {amount}",
     "pt": "Reembolsado {amount}",
-    "placeholders": {"amount": {"type": "String"}}
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
   },
-  "refundReceiptLine": {"es": "Reembolsado", "en": "Refunded", "pt": "Reembolsado"},
-  "refundReceiptNet": {"es": "Total neto", "en": "Net total", "pt": "Total líquido"},
-  "refundReportLabel": {"es": "Reembolsos", "en": "Refunds", "pt": "Reembolsos"},
+  "refundReceiptLine": {
+    "es": "Reembolsado",
+    "en": "Refunded",
+    "pt": "Reembolsado"
+  },
+  "refundReceiptNet": {
+    "es": "Total neto",
+    "en": "Net total",
+    "pt": "Total líquido"
+  },
+  "refundReportLabel": {
+    "es": "Reembolsos",
+    "en": "Refunds",
+    "pt": "Reembolsos"
+  },
   "refundReportTrips": {
     "es": "{count, plural, =0{Ningún viaje} =1{En 1 viaje} other{En {count} viajes}}",
     "en": "{count, plural, =0{No rides} =1{On 1 ride} other{On {count} rides}}",
     "pt": "{count, plural, =0{Nenhuma viagem} =1{Em 1 viagem} other{Em {count} viagens}}",
-    "placeholders": {"count": {"type": "int"}}
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "refundErrorCard": {
+    "es": "Los pagos con tarjeta se reembolsan por Stripe, no se registran aquí.",
+    "en": "Card payments are refunded through Stripe, not recorded here.",
+    "pt": "Pagamentos com cartão são reembolsados pelo Stripe, não registrados aqui."
   }
 }

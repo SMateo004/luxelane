@@ -24,6 +24,7 @@ Booking _b({
   double? finalPrice,
   double refunded = 0,
   String? companyId,
+  String? method,
 }) =>
     Booking(
       id: 'booking123',
@@ -42,6 +43,7 @@ Booking _b({
       refundedAmount: refunded,
       companyId: companyId,
       companyName: companyId == null ? null : 'Acme',
+      paymentMethod: method,
     );
 
 void main() {
@@ -53,6 +55,8 @@ void main() {
       expect(Refunds.refundable(_b(finalPrice: 280, refunded: 30.5)), 249.5);
       expect(Refunds.canRefund(_b(refunded: 250)), isFalse);
       expect(Refunds.canRefund(_b(status: BookingStatus.cancelled)), isFalse);
+      // Card charges go back through Stripe instead.
+      expect(Refunds.canRefund(_b(method: 'card')), isFalse);
     });
 
     test('validation mirrors the server', () {
@@ -61,6 +65,8 @@ void main() {
       expect(Refunds.validate(b, 51, RefundMethod.qr, 'Llegó tarde'), 'refund/too-much');
       expect(Refunds.validate(b, 0, RefundMethod.qr, 'Llegó tarde'), 'refund/amount');
       expect(Refunds.validate(b, 10.555, RefundMethod.qr, 'Llegó tarde'), 'refund/amount');
+      expect(Refunds.validate(b, 19.99, RefundMethod.qr, 'Llegó tarde'), isNull);
+      expect(Refunds.validate(b, 4.35, RefundMethod.qr, 'Llegó tarde'), isNull);
       expect(Refunds.validate(b, 10, RefundMethod.invoiceCredit, 'Llegó tarde'), 'refund/method');
       expect(Refunds.validate(b, 10, RefundMethod.qr, ' '), 'refund/reason');
       expect(Refunds.methodsFor(_b(companyId: 'acme')), [RefundMethod.invoiceCredit]);

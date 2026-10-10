@@ -20,7 +20,7 @@ abstract final class Adjustments {
 
   static String? validate(Booking b, AdjustmentType? type, double? amount, String note) {
     if (type == null) return 'adjust/type';
-    if (amount == null || amount == 0 || (amount * 100).round() != amount * 100 || amount.abs() > maxAmount) {
+    if (amount == null || amount == 0 || ((amount * 100) - (amount * 100).round()).abs() > 1e-6 || amount.abs() > maxAmount) {
       return 'adjust/amount';
     }
     if (amount < 0 && type != AdjustmentType.correction) return 'adjust/amount';

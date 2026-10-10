@@ -106,14 +106,14 @@ const M = {
     pt: 'Embarque às {time} em {place}. Ninguém aceitou ainda.',
   },
   opsSuspendedDriverTitle: {
-    es: 'Chófer suspendido con viajes asignados',
-    en: 'Suspended chauffeur has assigned rides',
-    pt: 'Motorista suspenso com viagens atribuídas',
+    es: 'Chófer suspendido en pleno viaje',
+    en: 'Suspended chauffeur is mid-ride',
+    pt: 'Motorista suspenso em plena viagem',
   },
   opsSuspendedDriverBody: {
-    es: '{name} tiene {count} viaje(s) asignado(s). Cancélalos y vuelve a reservarlos en Admin → Reservas.',
-    en: '{name} has {count} assigned ride(s). Cancel and rebook them in Admin → Bookings.',
-    pt: '{name} tem {count} viagem(ns) atribuída(s). Cancele e reserve de novo em Admin → Reservas.',
+    es: '{name} tiene {count} viaje(s) en curso que ya no puede avanzar. Llama al pasajero y cancela o vuelve a reservar en Admin → Reservas. Sus viajes sin empezar volvieron al despacho.',
+    en: "{name} has {count} ride(s) in progress they can no longer advance. Call the passenger and cancel or rebook in Admin → Bookings. Their rides not yet started went back to dispatch.",
+    pt: '{name} tem {count} viagem(ns) em andamento que não pode mais avançar. Ligue para o passageiro e cancele ou reserve de novo em Admin → Reservas. As viagens não iniciadas voltaram para o despacho.',
   },
   supportEscalationTitle: {
     es: 'URGENTE sin respuesta',

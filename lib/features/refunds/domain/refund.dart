@@ -10,7 +10,9 @@ abstract final class Refunds {
   static double refundable(Booking b) =>
       ((b.paidAmount - b.refundedAmount) * 100).round().clamp(0, 1 << 40) / 100;
 
-  static bool canRefund(Booking b) => b.status == BookingStatus.completed && refundable(b) > 0;
+  /// Card charges are refunded through Stripe, not recorded here.
+  static bool canRefund(Booking b) =>
+      b.status == BookingStatus.completed && b.paymentMethod != 'card' && refundable(b) > 0;
 
   /// Methods that fit the booking: company rides are credited on the invoice.
   static List<RefundMethod> methodsFor(Booking b) => b.isCorporate
@@ -19,7 +21,7 @@ abstract final class Refunds {
 
   /// Same checks as the server; returns a refund/* code or null.
   static String? validate(Booking b, double? amount, RefundMethod? method, String reason) {
-    if (amount == null || amount <= 0 || (amount * 100).round() != amount * 100) return 'refund/amount';
+    if (amount == null || amount <= 0 || ((amount * 100) - (amount * 100).round()).abs() > 1e-6) return 'refund/amount';
     if (amount > refundable(b)) return 'refund/too-much';
     if (method == null || !methodsFor(b).contains(method)) return 'refund/method';
     if (reason.trim().length < 3) return 'refund/reason';

@@ -22,6 +22,7 @@ describe('adjustments', () => {
     expect(adjustmentError({ ...base, amount: 0 })).toBe('adjust/amount');
     expect(adjustmentError({ ...base, amount: 2500 })).toBe('adjust/amount');
     expect(adjustmentError({ ...base, amount: 1.234 })).toBe('adjust/amount');
+    expect(adjustmentError({ ...base, amount: 4.35 })).toBeNull();
     expect(adjustmentError({ ...base, type: 'tip' })).toBe('adjust/type');
     expect(adjustmentError({ ...base, cardPayment: true })).toBe('adjust/card');
   });

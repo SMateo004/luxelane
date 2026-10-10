@@ -1380,6 +1380,37 @@ class AppLocalizationsEs extends AppLocalizations {
   String get commonWhatsApp => 'WhatsApp';
 
   @override
+  String get companyInviteBody => 'Al unirte podrás cargar tus viajes de trabajo a la empresa.';
+
+  @override
+  String get companyInviteJoin => 'Unirme';
+
+  @override
+  String companyInviteJoined(String company) {
+    return 'Te uniste a $company';
+  }
+
+  @override
+  String get companyInviteNotVerified => 'Tu correo aún no está verificado. Abre el enlace que te enviamos.';
+
+  @override
+  String get companyInviteSendVerification => 'Enviar correo de verificación';
+
+  @override
+  String companyInviteTitle(String company) {
+    return '$company te invitó a su cuenta de empresa';
+  }
+
+  @override
+  String get companyInviteVerificationSent => 'Te enviamos el correo. Abre el enlace y vuelve para unirte.';
+
+  @override
+  String get companyInviteVerifiedJoin => 'Ya lo verifiqué, unirme';
+
+  @override
+  String get companyInviteVerifyFirst => 'Para unirte, primero confirma que este correo es tuyo: te enviamos un enlace de verificación.';
+
+  @override
   String get coreClearField => 'Borrar';
 
   @override
@@ -3372,6 +3403,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get refundErrorAmount => 'Ingresa un monto mayor a 0 (hasta 2 decimales).';
+
+  @override
+  String get refundErrorCard => 'Los pagos con tarjeta se reembolsan por Stripe, no se registran aquí.';
 
   @override
   String get refundErrorMethod => 'Elige cómo se le devuelve.';

@@ -4,6 +4,8 @@
 // adjustments; finalPrice = quote + adjustments, which receipts, reports,
 // company statements and chauffeur settlements already use. Pure helpers.
 
+import { hasCents } from './refunds';
+
 export const ADJUSTMENT_TYPES = ['waiting', 'toll', 'parking', 'extraStop', 'correction'] as const;
 export type AdjustmentType = (typeof ADJUSTMENT_TYPES)[number];
 
@@ -37,7 +39,7 @@ export function adjustmentError(a: AdjustmentInput): string | null {
   if (a.cardPayment) return 'adjust/card';
   if (!(ADJUSTMENT_TYPES as readonly unknown[]).includes(a.type)) return 'adjust/type';
   const amount = Number(a.amount);
-  if (!Number.isFinite(amount) || amount === 0 || Math.round(amount * 100) !== amount * 100) return 'adjust/amount';
+  if (!Number.isFinite(amount) || amount === 0 || !hasCents(amount)) return 'adjust/amount';
   if (Math.abs(amount) > MAX_ADJUSTMENT) return 'adjust/amount';
   // Only a correction lowers the price (refunds are recorded separately).
   if (amount < 0 && a.type !== 'correction') return 'adjust/amount';

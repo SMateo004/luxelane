@@ -6,6 +6,9 @@ import { createHash } from 'crypto';
 export const MAX_MESSAGE = 300;
 export const MAX_STACK = 2000;
 
+/** New error fingerprints accepted per day (reportClientError is public). */
+export const MAX_NEW_ERRORS_PER_DAY = 300;
+
 /** Pending bookings this close to pickup without a chauffeur page the team. */
 export const NO_DRIVER_ALERT_MS = 30 * 60 * 1000;
 

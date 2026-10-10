@@ -1380,6 +1380,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonWhatsApp => 'WhatsApp';
 
   @override
+  String get companyInviteBody => 'Once you join you can bill your work rides to the company.';
+
+  @override
+  String get companyInviteJoin => 'Join';
+
+  @override
+  String companyInviteJoined(String company) {
+    return 'You joined $company';
+  }
+
+  @override
+  String get companyInviteNotVerified => 'Your e-mail isn\'t verified yet. Open the link we sent you.';
+
+  @override
+  String get companyInviteSendVerification => 'Send verification e-mail';
+
+  @override
+  String companyInviteTitle(String company) {
+    return '$company invited you to its company account';
+  }
+
+  @override
+  String get companyInviteVerificationSent => 'We sent the e-mail. Open the link and come back to join.';
+
+  @override
+  String get companyInviteVerifiedJoin => 'I\'ve verified it, join';
+
+  @override
+  String get companyInviteVerifyFirst => 'To join, first confirm this e-mail is yours: we\'ll send you a verification link.';
+
+  @override
   String get coreClearField => 'Clear';
 
   @override
@@ -3360,6 +3391,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get refundErrorAmount => 'Enter an amount above 0 (up to 2 decimals).';
+
+  @override
+  String get refundErrorCard => 'Card payments are refunded through Stripe, not recorded here.';
 
   @override
   String get refundErrorMethod => 'Choose how it\'s paid back.';

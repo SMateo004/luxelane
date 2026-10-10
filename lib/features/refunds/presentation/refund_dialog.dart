@@ -22,6 +22,7 @@ String localizedRefundError(AppLocalizations l, String code) => switch (code) {
       'refund/method' => l.refundErrorMethod,
       'refund/reason' => l.refundErrorReason,
       'refund/not-completed' => l.refundErrorNotCompleted,
+      'refund/card' => l.refundErrorCard,
       _ => l.adminActionFailed,
     };
 

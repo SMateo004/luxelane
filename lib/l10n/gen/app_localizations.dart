@@ -2545,6 +2545,60 @@ abstract class AppLocalizations {
   /// **'WhatsApp'**
   String get commonWhatsApp;
 
+  /// No description provided for @companyInviteBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Al unirte podrás cargar tus viajes de trabajo a la empresa.'**
+  String get companyInviteBody;
+
+  /// No description provided for @companyInviteJoin.
+  ///
+  /// In es, this message translates to:
+  /// **'Unirme'**
+  String get companyInviteJoin;
+
+  /// No description provided for @companyInviteJoined.
+  ///
+  /// In es, this message translates to:
+  /// **'Te uniste a {company}'**
+  String companyInviteJoined(String company);
+
+  /// No description provided for @companyInviteNotVerified.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu correo aún no está verificado. Abre el enlace que te enviamos.'**
+  String get companyInviteNotVerified;
+
+  /// No description provided for @companyInviteSendVerification.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar correo de verificación'**
+  String get companyInviteSendVerification;
+
+  /// No description provided for @companyInviteTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'{company} te invitó a su cuenta de empresa'**
+  String companyInviteTitle(String company);
+
+  /// No description provided for @companyInviteVerificationSent.
+  ///
+  /// In es, this message translates to:
+  /// **'Te enviamos el correo. Abre el enlace y vuelve para unirte.'**
+  String get companyInviteVerificationSent;
+
+  /// No description provided for @companyInviteVerifiedJoin.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya lo verifiqué, unirme'**
+  String get companyInviteVerifiedJoin;
+
+  /// No description provided for @companyInviteVerifyFirst.
+  ///
+  /// In es, this message translates to:
+  /// **'Para unirte, primero confirma que este correo es tuyo: te enviamos un enlace de verificación.'**
+  String get companyInviteVerifyFirst;
+
   /// No description provided for @coreClearField.
   ///
   /// In es, this message translates to:
@@ -6138,6 +6192,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Ingresa un monto mayor a 0 (hasta 2 decimales).'**
   String get refundErrorAmount;
+
+  /// No description provided for @refundErrorCard.
+  ///
+  /// In es, this message translates to:
+  /// **'Los pagos con tarjeta se reembolsan por Stripe, no se registran aquí.'**
+  String get refundErrorCard;
 
   /// No description provided for @refundErrorMethod.
   ///

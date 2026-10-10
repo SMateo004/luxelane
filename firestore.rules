@@ -116,7 +116,9 @@ service cloud.firestore {
       allow read:   if isOwner(uid) || isAdmin();
 
       // Onboarding: a driver creates an unverified profile with no history.
-      allow create: if isOwner(uid) && isDriver() &&
+      allow create: if isOwner(uid) && isDriver() && isActiveUser() &&
+        request.resource.data.get('isAvailable', false) == false &&
+        request.resource.data.get('suspended', false) == false &&
         request.resource.data.documentsVerified == false &&
         request.resource.data.totalRides == 0 &&
         request.resource.data.rating == 0;
@@ -126,6 +128,10 @@ service cloud.firestore {
       allow update: if isAdmin() || (
         isOwner(uid) && isDriver() &&
         notChanging(['documentsVerified', 'rating', 'ratingCount', 'totalRides', 'userId', 'suspended']) &&
+        // Only one of the chauffeur's own vehicles.
+        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['vehicleId']) ||
+          request.resource.data.vehicleId == null ||
+          get(/databases/$(database)/documents/vehicles/$(request.resource.data.vehicleId)).data.driverId == uid) &&
         // A suspended chauffeur can't go online.
         (request.resource.data.get('isAvailable', false) != true || isActiveUser())
       );
@@ -156,7 +162,9 @@ service cloud.firestore {
       allow read: if isAuthenticated() && (
         resource.data.riderId == request.auth.uid ||
         resource.data.driverId == request.auth.uid ||
-        (resource.data.status == 'pending' && isDriver()) ||
+        // Only verified, active chauffeurs see open requests (they carry the
+        // passenger's name, phone and addresses).
+        (resource.data.status == 'pending' && isVerifiedDriver()) ||
         // Company admins see every ride billed to their company.
         (resource.data.get('companyId', null) != null && isCompanyAdminOf(resource.data.companyId)) ||
         isAdmin()
@@ -178,16 +186,13 @@ service cloud.firestore {
           request.resource.data.status == 'confirmed' &&
           onlyUpdating(['driverId', 'status', 'updatedAt'])) ||
         // Assigned driver progresses the booking along the state machine
-        (isDriver() &&
+        // (not once suspended: an admin reassigns or cancels the ride).
+        (isDriver() && isActiveUser() &&
           resource.data.driverId == request.auth.uid &&
           onlyUpdating(['status', 'updatedAt']) &&
-          isValidDriverTransition(resource.data.status, request.resource.data.status)) ||
-        // Rider cancels their own booking before the ride starts
-        (isAuthenticated() &&
-          resource.data.riderId == request.auth.uid &&
-          resource.data.status in ['pending', 'confirmed', 'driver_arriving', 'driver_arrived'] &&
-          onlyUpdating(['status', 'updatedAt']) &&
-          request.resource.data.status == 'cancelled');
+          isValidDriverTransition(resource.data.status, request.resource.data.status));
+      // Riders cancel through the cancelBooking Cloud Function, which records
+      // late cancellations and frees the chauffeur.
 
       allow delete: if isAdmin();
 
@@ -202,7 +207,7 @@ service cloud.firestore {
           booking().driverId == request.auth.uid ||
           isAdmin()
         );
-        allow create, update: if isDriver() &&
+        allow create, update: if isDriver() && isActiveUser() &&
           docId == 'live' &&
           booking().driverId == request.auth.uid &&
           booking().status in ['confirmed', 'driver_arriving', 'driver_arrived', 'in_progress'] &&
@@ -296,6 +301,15 @@ service cloud.firestore {
         request.resource.data.userRole == getUserRole() &&
         request.resource.data.category in supportCategories() &&
         request.resource.data.status == 'open' &&
+        // Summary fields start as the server would set them (opsWatch reads them).
+        request.resource.data.createdAt == request.time &&
+        request.resource.data.updatedAt == request.time &&
+        request.resource.data.lastMessageAt == request.time &&
+        request.resource.data.lastAuthorRole == 'user' &&
+        request.resource.data.unreadForUser == false &&
+        request.resource.data.unreadForAdmin == true &&
+        request.resource.data.userName is string && request.resource.data.userName.size() <= 120 &&
+        request.resource.data.lastMessagePreview is string && request.resource.data.lastMessagePreview.size() <= 140 &&
         ((request.resource.data.category == 'safety' && request.resource.data.priority == 'urgent') ||
          (request.resource.data.category != 'safety' && request.resource.data.priority == 'normal')) &&
         request.resource.data.subject is string &&
@@ -413,7 +427,8 @@ service cloud.firestore {
     }
 
     match /config/{docId} {
-      allow read:  if isAuthenticated();
+      // The commission is for admins and chauffeurs (their settlement), not riders.
+      allow read:  if isAuthenticated() && (docId != 'finance' || isAdmin() || isDriver());
       allow write: if isAdmin() && (docId != 'finance' || (
         request.resource.data.commissionPct is number &&
         request.resource.data.commissionPct >= 0 &&

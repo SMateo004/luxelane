@@ -886,6 +886,29 @@
   "commonSave": "Guardar",
   "commonSend": "Enviar",
   "commonWhatsApp": "WhatsApp",
+  "companyInviteBody": "Al unirte podrás cargar tus viajes de trabajo a la empresa.",
+  "companyInviteJoin": "Unirme",
+  "companyInviteJoined": "Te uniste a {company}",
+  "@companyInviteJoined": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "companyInviteNotVerified": "Tu correo aún no está verificado. Abre el enlace que te enviamos.",
+  "companyInviteSendVerification": "Enviar correo de verificación",
+  "companyInviteTitle": "{company} te invitó a su cuenta de empresa",
+  "@companyInviteTitle": {
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
+  },
+  "companyInviteVerificationSent": "Te enviamos el correo. Abre el enlace y vuelve para unirte.",
+  "companyInviteVerifiedJoin": "Ya lo verifiqué, unirme",
+  "companyInviteVerifyFirst": "Para unirte, primero confirma que este correo es tuyo: te enviamos un enlace de verificación.",
   "coreClearField": "Borrar",
   "coreConfirmBooking": "Confirmar reserva",
   "coreDriverLocationNotification": "Compartiendo tu ubicación mientras estás disponible",
@@ -2151,6 +2174,7 @@
     }
   },
   "refundErrorAmount": "Ingresa un monto mayor a 0 (hasta 2 decimales).",
+  "refundErrorCard": "Los pagos con tarjeta se reembolsan por Stripe, no se registran aquí.",
   "refundErrorMethod": "Elige cómo se le devuelve.",
   "refundErrorNotCompleted": "Solo se reembolsan viajes completados.",
   "refundErrorReason": "Escribe el motivo.",

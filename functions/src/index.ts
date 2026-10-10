@@ -36,6 +36,7 @@ import {
   clip,
   fingerprint,
   isPlatform,
+  MAX_NEW_ERRORS_PER_DAY,
   needsEscalation,
   watchdogDecision,
   needsNoDriverAlert,
@@ -841,6 +842,16 @@ export const refundPayment = onCall(stripeOpts, async (req) => {
   try {
     await stripe.refundIntent(payment.stripePaymentIntentId);
     await db.collection('payments').doc(paymentId).update({ status: 'refunded' as PaymentStatus });
+    // The whole charge went back: record it on the booking so recordRefund
+    // can't pay the same ride out again.
+    if (payment.bookingId) {
+      const bRef = db.collection('bookings').doc(payment.bookingId);
+      await db.runTransaction(async (tx) => {
+        const b = (await tx.get(bRef)).data() as BookingDoc | undefined;
+        if (!b) return;
+        tx.update(bRef, { refundedAmount: b.finalPrice ?? b.estimatedPrice, lastRefundAt: admin.firestore.Timestamp.now() });
+      });
+    }
     await writeAudit('payment_refunded', { paymentId, bookingId: payment.bookingId, by: uid });
     logger.info('refundPayment', 'success', { paymentId });
     return { status: 'refunded' };
@@ -936,15 +947,17 @@ async function loadDriverCandidates(): Promise<DriverCandidate[]> {
     .filter((id): id is string => !!id)
     .map((id) => db.collection('vehicles').doc(id));
   const vehicles = vehicleRefs.length ? await db.getAll(...vehicleRefs) : [];
-  const classById = new Map(vehicles.map((v) => [v.id, (v.data()?.class as string) ?? null]));
+  const vehicleById = new Map(vehicles.map((v) => [v.id, v.data()]));
   return snap.docs.filter((d) => d.data().suspended !== true).map((d) => {
     const p = d.data();
     const geo = p.currentLocation as admin.firestore.GeoPoint | undefined;
+    // The class only counts for the chauffeur's own vehicle.
+    const vehicle = p.vehicleId ? vehicleById.get(p.vehicleId) : undefined;
     return {
       driverId: d.id,
       location: geo ? { lat: geo.latitude, lng: geo.longitude } : null,
       locationUpdatedAt: (p.locationUpdatedAt as admin.firestore.Timestamp | undefined)?.toDate() ?? null,
-      vehicleClass: p.vehicleId ? classById.get(p.vehicleId) ?? null : null,
+      vehicleClass: vehicle && vehicle.driverId === d.id ? ((vehicle.class as string) ?? null) : null,
       isAvailable: true,
       documentsVerified: true,
     };
@@ -1265,7 +1278,7 @@ export const assignNearestDriver = onCall(async (req) => {
     const assigned = await db.runTransaction(async (tx) => {
       const [b, d] = await Promise.all([tx.get(bookingRef), tx.get(driverRef)]);
       if ((b.data() as BookingDoc | undefined)?.status !== 'pending') return false;
-      if (!d.exists || !d.data()?.isAvailable || !d.data()?.documentsVerified) return false;
+      if (!d.exists || !d.data()?.isAvailable || !d.data()?.documentsVerified || d.data()?.suspended === true) return false;
       tx.update(bookingRef, {
         driverId,
         status: 'confirmed' as BookingStatus,
@@ -1315,11 +1328,24 @@ export const onUserSuspensionChanged = onDocumentUpdated('users/{uid}', async (e
     .where('driverId', '==', uid)
     .where('status', 'in', [...ASSIGNED_STATUSES])
     .get();
-  logger.warn('onUserSuspensionChanged', 'chauffeur suspended', { uid, assigned: assigned.size });
-  if (assigned.size > 0) {
+  // Rides that haven't started go back to dispatch right away; a ride in
+  // progress needs a person (call the chauffeur, cancel or rebook).
+  let inProgress = 0;
+  for (const doc of assigned.docs) {
+    const b = doc.data() as BookingDoc;
+    if (canRelease(b.status, b.driverId)) {
+      await releaseBooking(doc.id, 'system', 'chauffeur_suspended', { notifyDriver: false }).catch((e) =>
+        logger.error('onUserSuspensionChanged', 'release failed', { bookingId: doc.id, error: String(e) }),
+      );
+    } else {
+      inProgress++;
+    }
+  }
+  logger.warn('onUserSuspensionChanged', 'chauffeur suspended', { uid, assigned: assigned.size, inProgress });
+  if (inProgress > 0) {
     await pushAdmins('opsSuspendedDriverTitle', 'opsSuspendedDriverBody', () => ({
       name: after?.displayName || after?.email || uid,
-      count: assigned.size,
+      count: inProgress,
     }));
   }
 });
@@ -1520,6 +1546,7 @@ export const cancelBooking = onCall(async (req) => {
     const snap = await tx.get(ref);
     if (!snap.exists) throw err.notFound('Booking not found');
     const b = snap.data() as BookingDoc;
+    const driverSnap = b.driverId ? await tx.get(db.collection('driverProfiles').doc(b.driverId)) : null;
     if (!isAdmin && b.riderId !== uid) throw err.permissionDenied();
     const allowed = isAdmin ? ADMIN_CANCELLABLE : RIDER_CANCELLABLE;
     if (!allowed.includes(b.status)) throw err.failedPrecondition('booking/not-cancellable');
@@ -1534,8 +1561,8 @@ export const cancelBooking = onCall(async (req) => {
       lateCancellation: late,
       updatedAt: admin.firestore.Timestamp.fromDate(now),
     });
-    if (b.driverId) {
-      tx.update(db.collection('driverProfiles').doc(b.driverId), { isAvailable: true });
+    if (b.driverId && driverSnap?.exists && driverSnap.data()?.suspended !== true) {
+      tx.update(driverSnap.ref, { isAvailable: true });
     }
     return { driverId: b.driverId, pickup, late, riderId: b.riderId };
   });
@@ -1546,7 +1573,7 @@ export const cancelBooking = onCall(async (req) => {
     }));
   }
   if (isAdmin) {
-    await writeAudit('booking_cancelled_by_admin', { bookingId, by: uid, reason: reason ?? null });
+    await writeAudit('booking_cancelled_by_admin', { bookingId, by: uid, reason: reason ? String(reason).slice(0, 300) : null });
   }
   logger.info('cancelBooking', 'cancelled', { bookingId, by: isAdmin ? 'admin' : 'rider', late: result.late });
   return { cancelled: true, lateCancellation: result.late };
@@ -1589,7 +1616,7 @@ export const adjustPrice = onCall(async (req) => {
       note,
     });
     if (error) throw err.failedPrecondition(error);
-    const value = Number(amount);
+    const value = round2(Number(amount));
     const entry: StoredAdjustment = {
       type: type as AdjustmentType,
       amount: value,
@@ -1655,7 +1682,9 @@ export const recordRefund = onCall(async (req) => {
     const corporate = !!b.companyId;
     const error = refundError({ paid, refunded, amount, method, reason, status: b.status, corporate });
     if (error) throw err.failedPrecondition(error);
-    const value = Number(amount);
+    // Card charges are refunded through Stripe (refundPayment).
+    if (b.paymentMethod === 'card') throw err.failedPrecondition('refund/card');
+    const value = Math.round(Number(amount) * 100) / 100;
     tx.set(refundRef, {
       bookingId,
       riderId: b.riderId,
@@ -1700,13 +1729,27 @@ export const releaseChauffeur = onCall(async (req) => {
   const adminId = await requireAdmin(req);
   const { bookingId, reason } = (req.data ?? {}) as { bookingId?: string; reason?: string };
   if (!bookingId) throw err.invalidArgument('bookingId required');
-  const ref = db.collection('bookings').doc(bookingId);
+  await releaseBooking(bookingId, adminId, reason ?? null, { notifyDriver: true });
+  return { released: true };
+});
 
+/**
+ * Takes a not-yet-started ride from its chauffeur, back to pending and to
+ * dispatch; the rider is told. A suspended chauffeur stays offline.
+ */
+async function releaseBooking(
+  bookingId: string,
+  by: string,
+  reason: string | null,
+  opts: { notifyDriver: boolean },
+): Promise<void> {
+  const ref = db.collection('bookings').doc(bookingId);
   const released = await db.runTransaction(async (tx) => {
     const snap = await tx.get(ref);
     if (!snap.exists) throw err.notFound('Booking not found');
     const b = snap.data() as BookingDoc;
     if (!canRelease(b.status, b.driverId)) throw err.failedPrecondition('booking/not-releasable');
+    const driverSnap = await tx.get(db.collection('driverProfiles').doc(b.driverId!));
     tx.update(ref, {
       status: 'pending' as BookingStatus,
       driverId: null,
@@ -1715,7 +1758,9 @@ export const releaseChauffeur = onCall(async (req) => {
       alertedNoDriver: false,
       updatedAt: admin.firestore.Timestamp.now(),
     });
-    tx.update(db.collection('driverProfiles').doc(b.driverId!), { isAvailable: true });
+    if (driverSnap.exists && driverSnap.data()?.suspended !== true) {
+      tx.update(driverSnap.ref, { isAvailable: true });
+    }
     return b;
   });
 
@@ -1723,19 +1768,18 @@ export const releaseChauffeur = onCall(async (req) => {
   const pickup = (released.pickupAt ?? released.scheduledAt)?.toDate() ?? new Date();
   const time = (lang: Lang) => ({ time: clock(pickup, lang) });
   await Promise.all([
-    pushUser(released.driverId!, 'releasedTitle', 'releasedBody', time),
+    opts.notifyDriver ? pushUser(released.driverId!, 'releasedTitle', 'releasedBody', time) : Promise.resolve(),
     pushUser(released.riderId, 'reassigningTitle', 'reassigningBody', time),
   ]);
   await writeAudit('booking_chauffeur_released', {
     bookingId,
-    by: adminId,
+    by,
     driverId: released.driverId,
     reason: reason ? String(reason).slice(0, 300) : null,
   });
   await startDispatch(ref, { ...released, status: 'pending', driverId: undefined }, bookingId);
-  logger.info('releaseChauffeur', 'released', { bookingId, driverId: released.driverId });
-  return { released: true };
-});
+  logger.info('releaseBooking', 'released', { bookingId, driverId: released.driverId, by });
+}
 
 // ---------------------------------------------------------------------------
 // deleteAccount — required by app stores and personal-data rules.
@@ -1843,11 +1887,6 @@ async function requireCompanyManager(uid: string, companyId: string): Promise<{ 
   return { platformAdmin: false };
 }
 
-async function companyAdminUids(companyId: string): Promise<string[]> {
-  const snap = await companies().doc(companyId).collection('members').where('role', '==', 'admin').get();
-  return snap.docs.map((d) => d.id);
-}
-
 /** Links an existing rider account to a company (one company per rider). */
 async function linkMember(
   companyId: string,
@@ -1863,6 +1902,10 @@ async function linkMember(
     if (!userSnap.exists) throw err.notFound('User not found');
     if (user.role !== 'rider') throw err.failedPrecondition('company/not-a-rider');
     if (user.companyId && user.companyId !== companyId) throw err.failedPrecondition('company/user-in-other-company');
+    // Re-adding an existing admin as a member must not leave the company
+    // without an admin.
+    const admins = await tx.get(companies().doc(companyId).collection('members').where('role', '==', 'admin'));
+    if (!leavesAdmin(admins.docs.map((d) => d.id), uid, role)) throw err.failedPrecondition('company/last-admin');
     tx.set(companies().doc(companyId).collection('members').doc(uid), {
       uid,
       email: user.email ?? '',
@@ -1884,9 +1927,12 @@ async function addMemberByEmail(
   role: CompanyRole,
   by: string,
 ): Promise<'linked' | 'invited'> {
+  // Only an account that proved it owns the address is linked right away;
+  // anyone can sign up with someone else's e-mail without verifying it.
   let authUid: string | null = null;
   try {
-    authUid = (await admin.auth().getUserByEmail(email)).uid;
+    const authUser = await admin.auth().getUserByEmail(email);
+    authUid = authUser.emailVerified ? authUser.uid : null;
   } catch {
     authUid = null;
   }
@@ -1979,21 +2025,25 @@ export const updateCompanyMember = onCall(async (req) => {
   if (!remove && !role) throw err.invalidArgument('company/invalid-role');
 
   const memberRef = companies().doc(id).collection('members').doc(memberUid);
-  if (!(await memberRef.get()).exists) throw err.notFound('Member not found');
-  if (!leavesAdmin(await companyAdminUids(id), memberUid, remove ? null : role)) {
-    throw err.failedPrecondition('company/last-admin');
-  }
-
   const userRef = db.collection('users').doc(memberUid);
-  const batch = db.batch();
-  if (remove) {
-    batch.delete(memberRef);
-    batch.set(userRef, { companyId: null, companyRole: null }, { merge: true });
-  } else {
-    batch.update(memberRef, { role });
-    batch.set(userRef, { companyRole: role }, { merge: true });
-  }
-  await batch.commit();
+  // One transaction, so two admins demoting each other can't both succeed.
+  await db.runTransaction(async (tx) => {
+    const [member, admins] = await Promise.all([
+      tx.get(memberRef),
+      tx.get(companies().doc(id).collection('members').where('role', '==', 'admin')),
+    ]);
+    if (!member.exists) throw err.notFound('Member not found');
+    if (!leavesAdmin(admins.docs.map((d) => d.id), memberUid, remove ? null : role)) {
+      throw err.failedPrecondition('company/last-admin');
+    }
+    if (remove) {
+      tx.delete(memberRef);
+      tx.set(userRef, { companyId: null, companyRole: null }, { merge: true });
+    } else {
+      tx.update(memberRef, { role });
+      tx.set(userRef, { companyRole: role }, { merge: true });
+    }
+  });
   await writeAudit(remove ? 'company_member_removed' : 'company_member_role', {
     companyId: id,
     by: uid,
@@ -2016,24 +2066,68 @@ export const cancelCompanyInvite = onCall(async (req) => {
   return { ok: true };
 });
 
-/** A new rider whose e-mail was invited joins the company on sign-up. */
-export const claimCompanyInvite = onDocumentCreated('users/{uid}', async (event) => {
-  const data = event.data?.data() as UserDoc | undefined;
-  const email = normalizeEmail(data?.email);
-  if (!data || data.role !== 'rider' || !email) return;
+/**
+ * The verified e-mail of [uid]'s Auth account, or null. The profile's
+ * `email` field is written by the client, so it is never trusted here.
+ */
+async function verifiedEmail(uid: string): Promise<string | null> {
+  try {
+    const u = await admin.auth().getUser(uid);
+    return u.emailVerified ? normalizeEmail(u.email) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Joins the company that invited [uid]'s verified e-mail, if any. */
+async function claimInviteFor(uid: string, email: string): Promise<string | null> {
   const ref = db.collection('companyInvites').doc(email);
   const invite = await ref.get();
-  if (!invite.exists) return;
+  if (!invite.exists) return null;
   const inv = invite.data() as { companyId: string; role: CompanyRole; invitedBy: string };
+  const { id, data: company } = await loadCompany(inv.companyId);
+  if (!company.active) throw err.failedPrecondition('billing/company-inactive');
+  await linkMember(id, company, uid, inv.role, inv.invitedBy);
+  await ref.delete();
+  logger.info('claimInvite', 'joined', { uid, companyId: id });
+  return company.name;
+}
+
+/** A new rider whose verified e-mail was invited joins on sign-up. */
+export const claimCompanyInvite = onDocumentCreated('users/{uid}', async (event) => {
+  const data = event.data?.data() as UserDoc | undefined;
+  if (!data || data.role !== 'rider') return;
+  const email = await verifiedEmail(event.params.uid);
+  // Unverified: the rider joins later from their profile (companyInvite).
+  if (!email) return;
   try {
-    const { id, data: company } = await loadCompany(inv.companyId);
-    if (!company.active) return;
-    await linkMember(id, company, event.params.uid, inv.role, inv.invitedBy);
-    await ref.delete();
-    logger.info('claimCompanyInvite', 'joined', { uid: event.params.uid, companyId: id });
+    await claimInviteFor(event.params.uid, email);
   } catch (e) {
     logger.error('claimCompanyInvite', 'failed', { uid: event.params.uid, error: String(e) });
   }
+});
+
+/**
+ * companyInvite — the signed-in rider's pending company invite.
+ * action 'status' → { company, verified } (or { company: null });
+ * action 'join'   → joins once the account's e-mail is verified.
+ */
+export const companyInvite = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const action = (req.data ?? {}).action === 'join' ? 'join' : 'status';
+  const authUser = await admin.auth().getUser(uid);
+  const email = normalizeEmail(authUser.email);
+  if (!email) return { company: null };
+  const invite = await db.collection('companyInvites').doc(email).get();
+  if (!invite.exists) return { company: null };
+  const companyId = invite.data()!.companyId as string;
+  const company = (await companies().doc(companyId).get()).data() as CompanyDoc | undefined;
+  if (!company?.active) return { company: null };
+  if (action === 'status') return { company: company.name, verified: authUser.emailVerified };
+  if (!authUser.emailVerified) throw err.failedPrecondition('company/email-not-verified');
+  const user = await getUser(uid);
+  if (user.role !== 'rider') throw err.failedPrecondition('company/not-a-rider');
+  return { joined: await claimInviteFor(uid, email) };
 });
 
 // ---------------------------------------------------------------------------
@@ -2192,12 +2286,23 @@ export const onSupportMessageCreated = onDocumentCreated(
     if (!msg?.authorRole || typeof msg.text !== 'string') return;
     const ticketRef = db.collection('supportTickets').doc(event.params.ticketId);
     const ticket = (await ticketRef.get()).data() as
-      | { userId: string; userName?: string; category?: TicketCategory }
+      | {
+          userId: string;
+          userName?: string;
+          category?: TicketCategory;
+          unreadForAdmin?: boolean;
+          createdAt?: admin.firestore.Timestamp;
+          updatedAt?: admin.firestore.Timestamp;
+        }
       | undefined;
     if (!ticket) return;
 
     const text = preview(msg.text);
     const fromTeam = msg.authorRole === 'admin';
+    // Already waiting on the team: don't page admins again for every follow-up.
+    const alreadyUnread = ticket.unreadForAdmin === true;
+    // The ticket is created with its first message; the server hasn't touched it yet.
+    const firstMessage = !!ticket.createdAt && !!ticket.updatedAt && ticket.createdAt.isEqual(ticket.updatedAt);
     await ticketRef.update({
       status: statusAfterMessage(msg.authorRole),
       lastMessageAt: msg.createdAt ?? admin.firestore.Timestamp.now(),
@@ -2213,6 +2318,10 @@ export const onSupportMessageCreated = onDocumentCreated(
       return;
     }
     const urgent = ticket.category ? priorityFor(ticket.category) === 'urgent' : false;
+    if (alreadyUnread && !urgent && !firstMessage) {
+      logger.info('onSupportMessageCreated', 'follow-up, admins already notified', { ticketId: event.params.ticketId });
+      return;
+    }
     const admins = await db.collection('users').where('role', '==', 'admin').limit(20).get();
     await Promise.all(
       admins.docs.map((a) =>
@@ -2258,11 +2367,19 @@ export const reportClientError = onCall(async (req) => {
     // A new occurrence of a resolved error reopens it (regression).
     resolved: false,
   };
+  // Anyone (even signed out) can report, so new error kinds are capped per
+  // day; repeats of a known one only bump its count.
+  const day = now.toDate().toISOString().slice(0, 10);
+  const quotaRef = db.collection('system').doc('clientErrorQuota');
   await db.runTransaction(async (tx) => {
-    const snap = await tx.get(ref);
+    const [snap, quota] = await Promise.all([tx.get(ref), tx.get(quotaRef)]);
     if (snap.exists) {
       tx.update(ref, { ...common, count: admin.firestore.FieldValue.increment(1) });
     } else {
+      const q = quota.data();
+      const used = q?.day === day ? Number(q?.count ?? 0) : 0;
+      if (used >= MAX_NEW_ERRORS_PER_DAY) return;
+      tx.set(quotaRef, { day, count: used + 1 });
       tx.set(ref, {
         ...common,
         fingerprint: fp,
@@ -2331,20 +2448,26 @@ export const opsWatch = onSchedule('every 5 minutes', async () => {
   const urgent = await db.collection('supportTickets').where('status', '==', 'open').where('priority', '==', 'urgent').get();
   for (const doc of urgent.docs) {
     const tk = doc.data();
-    const lastMessageAt = (tk.lastMessageAt as admin.firestore.Timestamp | undefined)?.toDate() ?? null;
+    // Defensive: a malformed ticket must not stop the rest of the monitor.
+    const ts = (v: unknown) => (v instanceof admin.firestore.Timestamp ? v.toDate() : null);
+    const lastMessageAt = ts(tk.lastMessageAt);
     const state = {
       status: tk.status as string,
       priority: tk.priority as string,
       lastAuthorRole: tk.lastAuthorRole as string | undefined,
       lastMessageAt,
-      escalatedAt: (tk.escalatedAt as admin.firestore.Timestamp | undefined)?.toDate() ?? null,
+      escalatedAt: ts(tk.escalatedAt),
     };
     if (!needsEscalation(state, now)) continue;
-    await doc.ref.update({ escalatedAt: admin.firestore.Timestamp.fromDate(now) });
-    await pushAdmins('supportEscalationTitle', 'supportEscalationBody', () => ({
-      name: (tk.userName as string) || '—',
-      minutes: Math.floor((now.getTime() - lastMessageAt!.getTime()) / 60000),
-    }));
+    try {
+      await doc.ref.update({ escalatedAt: admin.firestore.Timestamp.fromDate(now) });
+      await pushAdmins('supportEscalationTitle', 'supportEscalationBody', () => ({
+        name: typeof tk.userName === 'string' && tk.userName ? tk.userName.slice(0, 80) : '—',
+        minutes: Math.floor((now.getTime() - lastMessageAt!.getTime()) / 60000),
+      }));
+    } catch (e) {
+      logger.error('opsWatch', 'escalation failed', { ticketId: doc.id, error: String(e) });
+    }
   }
 
   // 4. Health summary for the admin panel.

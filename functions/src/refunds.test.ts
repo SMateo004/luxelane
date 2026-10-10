@@ -7,6 +7,7 @@ describe('refunds', () => {
     expect(refundError(base)).toBeNull();
     expect(refundError({ ...base, amount: 250 })).toBeNull();
     expect(refundError({ ...base, amount: 12.5 })).toBeNull();
+    for (const cents of [19.99, 4.35, 1.13, 0.29, 0.57]) expect(refundError({ ...base, amount: cents })).toBeNull();
   });
 
   it('never more than what is left', () => {

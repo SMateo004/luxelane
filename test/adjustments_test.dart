@@ -72,6 +72,7 @@ void main() {
       expect(Adjustments.validate(b, AdjustmentType.correction, -5, ''), 'adjust/note');
       expect(Adjustments.validate(b, AdjustmentType.correction, -70, 'Error de cobro'), 'adjust/below-zero');
       expect(Adjustments.totalWith(b, 15), 280);
+      expect(Adjustments.validate(b, AdjustmentType.toll, 4.35, ''), isNull);
     });
   });
 

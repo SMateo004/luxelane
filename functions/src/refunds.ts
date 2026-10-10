@@ -8,6 +8,11 @@ export type RefundMethod = (typeof REFUND_METHODS)[number];
 
 export const MAX_REASON = 300;
 
+/** At most two decimals, tolerant of binary floating point (19.99 * 100). */
+export function hasCents(v: number): boolean {
+  return Math.abs(v * 100 - Math.round(v * 100)) < 1e-6;
+}
+
 export interface RefundInput {
   /** What the rider paid for the ride (final price, or the quote). */
   paid: number;
@@ -29,7 +34,7 @@ export function refundError(r: RefundInput): string | null {
   if (r.status !== 'completed') return 'refund/not-completed';
   const amount = Number(r.amount);
   if (!Number.isFinite(amount) || amount <= 0) return 'refund/amount';
-  if (Math.round(amount * 100) !== amount * 100) return 'refund/amount';
+  if (!hasCents(amount)) return 'refund/amount';
   if (amount > refundable(r.paid, r.refunded)) return 'refund/too-much';
   if (!(REFUND_METHODS as readonly unknown[]).includes(r.method)) return 'refund/method';
   // Company rides are invoiced: credit the invoice; riders get money back.

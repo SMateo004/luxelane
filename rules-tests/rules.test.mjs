@@ -140,11 +140,9 @@ describe('bookings', () => {
     await assertFails(updateDoc(doc(db('driver'), 'bookings/b1'), { estimatedPrice: 9999 }));
   });
 
-  it('rider can cancel before the ride starts, not during', async () => {
+  it('riders cancel only through the cancelBooking function', async () => {
     await seed('bookings/b1', booking({ driverId: 'driver', status: 'confirmed' }));
-    await seed('bookings/b2', booking({ driverId: 'driver', status: 'in_progress' }));
-    await assertSucceeds(updateDoc(doc(db('rider'), 'bookings/b1'), { status: 'cancelled' }));
-    await assertFails(updateDoc(doc(db('rider'), 'bookings/b2'), { status: 'cancelled' }));
+    await assertFails(updateDoc(doc(db('rider'), 'bookings/b1'), { status: 'cancelled' }));
   });
 });
 
@@ -310,9 +308,9 @@ describe('support tickets', () => {
     bookingId: null,
     status: 'open',
     priority: 'normal',
-    createdAt: null,
-    updatedAt: null,
-    lastMessageAt: null,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    lastMessageAt: serverTimestamp(),
     lastMessagePreview: 'Olvidé mi paraguas',
     lastAuthorRole: 'user',
     unreadForUser: false,
@@ -479,5 +477,63 @@ describe('price adjustments', () => {
     await seed('bookings/b1', booking({ status: 'in_progress', driverId: 'driver' }));
     await assertFails(updateDoc(doc(db('rider'), 'bookings/b1'), { finalPrice: 10 }));
     await assertFails(updateDoc(doc(db('driver'), 'bookings/b1'), { adjustments: [{ type: 'toll', amount: 50 }], finalPrice: 170 }));
+  });
+});
+
+describe('security audit fixes', () => {
+  it('only verified, active chauffeurs read open requests', async () => {
+    await seed('bookings/p1', booking());
+    await assertSucceeds(getDoc(doc(db('driver'), 'bookings/p1')));
+    await assertFails(getDoc(doc(db('newdriver'), 'bookings/p1'))); // documents not verified
+    await seed('users/driver', { role: 'driver', email: 'd@x.com', isActive: false });
+    await assertFails(getDoc(doc(db('driver'), 'bookings/p1')));
+  });
+
+  it('a suspended chauffeur cannot progress an assigned ride or share position', async () => {
+    await seed('bookings/b1', booking({ driverId: 'driver', status: 'confirmed' }));
+    await seed('users/driver', { role: 'driver', email: 'd@x.com', isActive: false });
+    await assertFails(updateDoc(doc(db('driver'), 'bookings/b1'), { status: 'driver_arriving', updatedAt: 1 }));
+    await assertFails(setDoc(doc(db('driver'), 'bookings/b1/tracking/live'), { lat: 1, lng: 1 }));
+  });
+
+  it('chauffeur profiles start offline and only point at their own vehicle', async () => {
+    await seed('users/fresh', { role: 'driver', email: 'f@x.com' });
+    const profile = { userId: 'fresh', documentsVerified: false, rating: 0, totalRides: 0 };
+    await assertFails(setDoc(doc(db('fresh'), 'driverProfiles/fresh'), { ...profile, isAvailable: true }));
+    await assertSucceeds(setDoc(doc(db('fresh'), 'driverProfiles/fresh'), profile));
+    await seed('vehicles/theirs', { driverId: 'driver', class: 'first' });
+    await seed('vehicles/mine', { driverId: 'fresh', class: 'business' });
+    await assertFails(updateDoc(doc(db('fresh'), 'driverProfiles/fresh'), { vehicleId: 'theirs' }));
+    await assertSucceeds(updateDoc(doc(db('fresh'), 'driverProfiles/fresh'), { vehicleId: 'mine' }));
+  });
+
+  it('a suspended account cannot start a chauffeur profile', async () => {
+    await seed('users/gone', { role: 'driver', email: 'g@x.com', isActive: false });
+    await assertFails(setDoc(doc(db('gone'), 'driverProfiles/gone'), { userId: 'gone', documentsVerified: false, rating: 0, totalRides: 0 }));
+  });
+
+  it('ticket summary fields cannot be forged', async () => {
+    const t = {
+      userId: 'rider', userName: 'Ana', userRole: 'rider', category: 'safety', subject: 'x', bookingId: null,
+      status: 'open', priority: 'urgent', createdAt: serverTimestamp(), updatedAt: serverTimestamp(),
+      lastMessageAt: serverTimestamp(), lastMessagePreview: 'x', lastAuthorRole: 'user', unreadForUser: false, unreadForAdmin: true,
+    };
+    await assertSucceeds(setDoc(doc(db('rider'), 'supportTickets/s1'), t));
+    await assertFails(setDoc(doc(db('rider'), 'supportTickets/s2'), { ...t, lastMessageAt: 'x' }));
+    await assertFails(setDoc(doc(db('rider'), 'supportTickets/s3'), { ...t, lastAuthorRole: 'admin' }));
+  });
+
+  it('riders cannot read the commission; chauffeurs can', async () => {
+    await seed('config/finance', { commissionPct: 20 });
+    await assertFails(getDoc(doc(db('rider'), 'config/finance')));
+    await assertSucceeds(getDoc(doc(db('driver'), 'config/finance')));
+    await assertSucceeds(getDoc(doc(db('rider'), 'config/support')));
+  });
+
+  it('chauffeur documents cannot be overwritten', async () => {
+    const st = env.authenticatedContext('driver').storage();
+    const file = ref(st, 'driver_documents/driver/license-1.pdf');
+    await assertSucceeds(uploadBytes(file, new Uint8Array([1]), { contentType: 'application/pdf' }));
+    await assertFails(uploadBytes(file, new Uint8Array([2]), { contentType: 'application/pdf' }));
   });
 });

@@ -18,6 +18,7 @@ import '../../features/company/data/company_repository.dart';
 import '../../features/driver/data/driver_documents_repository.dart';
 import '../../features/driver/presentation/bloc/driver_bloc.dart';
 import '../../features/health/data/health_repository.dart';
+import '../../features/company/data/company_invite_service.dart';
 import '../../features/hotels/data/hotel_repository.dart';
 import '../../features/support/data/support_hours_repository.dart';
 import '../../features/loyalty/data/loyalty_repository.dart';
@@ -130,6 +131,10 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<HotelRepository>(
     () => HotelRepositoryImpl(sl()),
+  );
+
+  sl.registerLazySingleton<CompanyInviteService>(
+    () => CompanyInviteServiceImpl(sl(), sl()),
   );
 
   sl.registerLazySingleton<SupportHoursRepository>(
