@@ -1,4 +1,4 @@
-import { fingerprint, needsEscalation, needsNoDriverAlert, normalizeMessage, throttled, topFrame } from './observability';
+import { fingerprint, needsEscalation, watchdogDecision, needsNoDriverAlert, normalizeMessage, throttled, topFrame } from './observability';
 
 const now = new Date('2026-10-08T12:00:00Z');
 const inMin = (m: number) => new Date(now.getTime() + m * 60000);
@@ -62,5 +62,20 @@ describe('needsEscalation', () => {
     expect(needsEscalation({ ...t, lastAuthorRole: 'admin' }, now)).toBe(false);
     expect(needsEscalation({ ...t, priority: 'normal' }, now)).toBe(false);
     expect(needsEscalation({ ...t, status: 'answered' }, now)).toBe(false);
+  });
+});
+
+describe('watchdogDecision', () => {
+  const now = new Date('2026-10-10T12:00:00Z');
+  const min = (m: number) => new Date(now.getTime() - m * 60000);
+  it('pages when the monitor stopped writing, at most hourly', () => {
+    expect(watchdogDecision(min(5), now, null)).toBeNull();
+    expect(watchdogDecision(min(20), now, null)).toBe('stale');
+    expect(watchdogDecision(min(40), now, min(25))).toBeNull();
+    expect(watchdogDecision(min(90), now, min(61))).toBe('stale');
+  });
+  it('says when it recovers; nothing before the first run', () => {
+    expect(watchdogDecision(min(3), now, min(30))).toBe('recovered');
+    expect(watchdogDecision(null, now, null)).toBeNull();
   });
 });

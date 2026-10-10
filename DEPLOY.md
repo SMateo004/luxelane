@@ -189,8 +189,14 @@ iOS: there is no `ios/` folder yet. Create it with `flutter create --platforms=i
   ```
   PROJECT=luxelane-4e7ae ALERT_EMAIL=ops@your-domain ./scripts/setup_alerts.sh
   ```
-  Creates a log-based metric on `severity>=ERROR` and an alert policy
-  (> 5 errors in 10 minutes).
+  Creates log-based metrics and two alert policies: > 5 errors in 10
+  minutes, and the operations monitor (`opsWatch`) silent for 20 minutes.
+  Safe to run again (existing ones are kept); re-run it after this update
+  to add the second policy.
+- **Monitor watchdog**: `opsWatchdog` runs every 10 minutes on its own
+  schedule. If `opsWatch` hasn't written `system/health` for 15 minutes it
+  pushes every admin (at most hourly) and again when it recovers. The
+  e-mail policy above covers the case where all functions are down.
 
 ## Environments (staging / production)
 

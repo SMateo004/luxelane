@@ -125,6 +125,18 @@ const M = {
     en: "{name}'s safety report has had no reply from the team for {minutes} min.",
     pt: 'O relato de segurança de {name} está há {minutes} min sem resposta da equipe.',
   },
+  opsMonitorStaleTitle: { es: 'El monitor dejó de funcionar', en: 'The monitor stopped working', pt: 'O monitor parou de funcionar' },
+  opsMonitorStaleBody: {
+    es: 'Hace {minutes} min que no revisa reservas ni chóferes: no llegarán avisos automáticos. Vigila Admin → Reservas y avisa al responsable técnico.',
+    en: "It hasn't checked bookings or chauffeurs for {minutes} min: automatic alerts won't arrive. Watch Admin → Bookings and tell the technical lead.",
+    pt: 'Há {minutes} min não verifica reservas nem motoristas: não chegarão avisos automáticos. Acompanhe Admin → Reservas e avise o responsável técnico.',
+  },
+  opsMonitorRecoveredTitle: { es: 'El monitor volvió a funcionar', en: 'The monitor is working again', pt: 'O monitor voltou a funcionar' },
+  opsMonitorRecoveredBody: {
+    es: 'Los avisos automáticos están activos otra vez.',
+    en: 'Automatic alerts are active again.',
+    pt: 'Os avisos automáticos estão ativos de novo.',
+  },
   opsNoDriversOnlineTitle: { es: 'Ningún chófer en línea', en: 'No chauffeurs online', pt: 'Nenhum motorista on-line' },
   opsNoDriversOnlineBody: {
     es: 'Hay {count} reservas en las próximas 2 horas y ningún chófer verificado conectado.',

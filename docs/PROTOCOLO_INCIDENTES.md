@@ -28,7 +28,7 @@ Guía interna para el equipo de operaciones. Describe qué hacer ante cada tipo 
 
 ## 3. Monitoreo diario (inicio de cada turno)
 
-1. **Admin → Salud:** revisar chóferes verificados en línea, reservas de las próximas 2 h, recogidas sin chófer en < 30 min, solicitudes urgentes abiertas y errores web. **Si dice que el monitor no informa hace más de 15 min, es un S1 técnico**: el monitor automático (`opsWatch`) dejó de correr y **nadie recibirá avisos automáticos**. Avisar al técnico y vigilar a mano Admin → Reservas (filtro *Sin chófer*).
+1. **Admin → Salud:** revisar chóferes verificados en línea, reservas de las próximas 2 h, recogidas sin chófer en < 30 min, solicitudes urgentes abiertas y errores web. **Si dice que el monitor no informa hace más de 15 min, es un S1 técnico**: el monitor automático (`opsWatch`) dejó de correr y **no llegan los avisos de reservas sin chófer ni de urgentes**. Avisar al técnico y vigilar a mano Admin → Reservas (filtro *Sin chófer*). Normalmente uno se entera antes, porque llega el push **"El monitor dejó de funcionar"** y, si se cayeron todas las funciones, el correo de Cloud Monitoring **"el monitor de operaciones no responde"**. Cuando se recupera llega **"El monitor volvió a funcionar"**.
 2. **Admin → Soporte:** atender primero las urgentes (banner rojo) y después las pendientes, de la más antigua a la más nueva.
 3. **Admin → Reservas → Sin chófer:** confirmar que las reservas del día tengan chófer.
 4. **Admin → Chóferes:** revisar documentos por revisar o vencidos. Un documento vencido saca al chófer de línea automáticamente.
@@ -100,7 +100,7 @@ Push **"No hay chóferes en línea"** (como máximo uno por hora) cuando hay res
 |---|---|
 | Correo **"más de 5 errores en 10 min"** | El técnico revisa los logs de Cloud Functions (`severity>=ERROR`) e identifica la función. |
 | Muchos **errores web** nuevos en Admin → Salud | Mirar la pantalla y la versión del error. Si apareció con un despliegue reciente, volver a la versión anterior (abajo). |
-| Monitor sin informar (> 15 min) | Ver §3.1. Revisar en la consola de Firebase que la función programada `opsWatch` esté activa. |
+| Push **"El monitor dejó de funcionar"**, correo **"el monitor de operaciones no responde"** o Admin → Salud con el monitor sin informar | Ver §3.1. Revisar en la consola de Firebase que la función programada `opsWatch` esté activa y sus logs. Si llegó solo el correo, probablemente se cayeron todas las funciones: revisar el último despliegue y volver a la versión anterior. |
 | Nadie puede reservar | S1. Avisar a los clientes con reservas próximas por teléfono mientras se resuelve. |
 
 **Volver a una versión anterior:**
@@ -123,6 +123,6 @@ Estas son cosas que el sistema **todavía no hace**. Están aquí para que nadie
 - Los teléfonos del panel salen del perfil de cada usuario: si alguien no cargó el suyo, no aparece. Conviene tener la planilla de chóferes actualizada.
 - Las cuentas de administrador no se pueden suspender (para que nadie quede fuera del panel).
 - El segundo aviso de una solicitud urgente sale **una sola vez** por mensaje sin responder: después, el turno debe revisar el banner rojo.
-- Si el monitor automático se detiene, **no llega ningún aviso**: solo se ve en Admin → Salud.
+- El correo de "monitor sin responder" solo existe si se corrió `scripts/setup_alerts.sh` (una vez por proyecto, y otra vez después de esta actualización).
 - Los reembolsos y los ajustes se registran en el panel, pero el dinero se mueve por fuera de la app (§4.6).
 - No hay enlace para compartir el viaje en vivo con terceros.

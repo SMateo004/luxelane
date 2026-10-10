@@ -88,3 +88,20 @@ export function needsNoDriverAlert(
 export function throttled(lastAt: Date | null | undefined, now: Date, windowMs: number): boolean {
   return !!lastAt && now.getTime() - lastAt.getTime() < windowMs;
 }
+
+/** The watchdog repeats "monitor stopped" at most once per hour. */
+export const MONITOR_STALE_THROTTLE_MS = 60 * 60 * 1000;
+
+export type WatchdogDecision = 'stale' | 'recovered' | null;
+
+/**
+ * opsWatchdog: [checkedAt] is when opsWatch last wrote system/health,
+ * [staleAlertAt] when the watchdog last paged about it (cleared on
+ * recovery). No health yet (fresh deploy) is not an alert.
+ */
+export function watchdogDecision(checkedAt: Date | null, now: Date, staleAlertAt: Date | null): WatchdogDecision {
+  if (!checkedAt) return null;
+  const stale = now.getTime() - checkedAt.getTime() > HEALTH_STALE_MS;
+  if (!stale) return staleAlertAt ? 'recovered' : null;
+  return throttled(staleAlertAt, now, MONITOR_STALE_THROTTLE_MS) ? null : 'stale';
+}

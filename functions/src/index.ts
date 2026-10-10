@@ -37,6 +37,7 @@ import {
   fingerprint,
   isPlatform,
   needsEscalation,
+  watchdogDecision,
   needsNoDriverAlert,
   normalizeMessage,
   throttled,
@@ -2363,6 +2364,35 @@ export const opsWatch = onSchedule('every 5 minutes', async () => {
     clientErrors24h: errors.data().count,
   });
   logger.info('opsWatch', 'checked', { pending: upcoming.length, unassignedSoon, onlineDrivers });
+});
+
+// ---------------------------------------------------------------------------
+// opsWatchdog — a separate schedule that checks opsWatch is still writing
+// system/health. If it stopped (crash, quota, a bad deploy) nobody would get
+// the operational alerts, so admins are paged (hourly at most) and told when
+// it recovers. If every function is down, the Cloud Monitoring "monitor
+// silent" alert from scripts/setup_alerts.sh e-mails the team instead.
+// ---------------------------------------------------------------------------
+
+export const opsWatchdog = onSchedule('every 10 minutes', async () => {
+  const now = new Date();
+  const [health, alerts] = await Promise.all([
+    db.collection('system').doc('health').get(),
+    db.collection('system').doc('alerts').get(),
+  ]);
+  const checkedAt = (health.data()?.checkedAt as admin.firestore.Timestamp | undefined)?.toDate() ?? null;
+  const staleAlertAt = (alerts.data()?.monitorStaleAt as admin.firestore.Timestamp | undefined)?.toDate() ?? null;
+  const decision = watchdogDecision(checkedAt, now, staleAlertAt);
+  if (decision === 'stale') {
+    const minutes = Math.floor((now.getTime() - checkedAt!.getTime()) / 60000);
+    await alerts.ref.set({ monitorStaleAt: admin.firestore.Timestamp.fromDate(now) }, { merge: true });
+    await pushAdmins('opsMonitorStaleTitle', 'opsMonitorStaleBody', () => ({ minutes }));
+    logger.error('opsWatchdog', 'opsWatch is not reporting', { minutes });
+  } else if (decision === 'recovered') {
+    await alerts.ref.set({ monitorStaleAt: admin.firestore.FieldValue.delete() }, { merge: true });
+    await pushAdmins('opsMonitorRecoveredTitle', 'opsMonitorRecoveredBody', () => ({}));
+    logger.info('opsWatchdog', 'opsWatch recovered');
+  }
 });
 
 // ---------------------------------------------------------------------------
