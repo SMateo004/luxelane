@@ -97,17 +97,17 @@ Future<List<PlaceSuggestion>> _newAutocomplete(
 ) async {
   try {
     // Build request as a plain JS object via jsify, then set LatLng bias separately
+    // Only places in Bolivia, biased to the user's city (LatLngLiteral circle).
     final request = js_util.jsify({
       'input': input,
       'language': 'es',
       'region': 'bo',
+      'includedRegionCodes': ['bo'],
+      'locationBias': {
+        'center': {'lat': lat, 'lng': lng},
+        'radius': 30000,
+      },
     });
-    // locationBias must be a real LatLng object, not a plain map
-    final latLng = js.JsObject(
-      (maps as js.JsObject)['LatLng'] as js.JsFunction,
-      [lat, lng],
-    );
-    js_util.setProperty(request as Object, 'locationBias', latLng);
 
     final promise = js_util.callMethod(
       autocompleteSuggestionClass as Object,
@@ -173,7 +173,7 @@ Future<List<PlaceSuggestion>> _legacyAutocomplete(
     final request = js.JsObject.jsify({
       'input': input,
       'location': js.JsObject(maps['LatLng'] as js.JsFunction, [lat, lng]),
-      'radius': 50000,
+      'radius': 30000,
       'componentRestrictions': {'country': 'bo'},
       'language': 'es',
     });
