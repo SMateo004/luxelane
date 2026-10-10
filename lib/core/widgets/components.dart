@@ -287,6 +287,8 @@ class _VehicleIcon extends StatelessWidget {
         return Icons.star_outline_rounded;
       case VehicleClass.businessVan:
         return Icons.airport_shuttle_outlined;
+      case VehicleClass.businessSuv:
+        return Icons.directions_car_filled_outlined;
       case VehicleClass.electric:
         return Icons.electric_car_outlined;
     }

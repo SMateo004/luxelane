@@ -93,9 +93,9 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
   Widget build(BuildContext context) {
     final isLight = Theme.of(context).brightness == Brightness.light;
     final cardBg = isLight ? Colors.white : const Color(0xFF141414);
-    final textColor = isLight ? const Color(0xFF111111) : Colors.white;
+    final textColor = isLight ? const Color(0xFF0D1B2E) : Colors.white;
     final subColor =
-        isLight ? const Color(0xFF888888) : const Color(0xFF777777);
+        isLight ? const Color(0xFF637490) : const Color(0xFF637490);
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -216,7 +216,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                         child: ElevatedButton(
                           onPressed: _loading ? null : _confirm,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF111111),
+                            backgroundColor: const Color(0xFF0D1B2E),
                             foregroundColor: Colors.white,
                             minimumSize: Size.zero,
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -260,7 +260,7 @@ class _CenterPin extends StatelessWidget {
             width: 14,
             height: 14,
             decoration: BoxDecoration(
-              color: const Color(0xFF111111),
+              color: const Color(0xFF0D1B2E),
               shape: BoxShape.circle,
               border: Border.all(color: Colors.white, width: 2),
               boxShadow: [
@@ -275,7 +275,7 @@ class _CenterPin extends StatelessWidget {
           Container(
             width: 1.5,
             height: 20,
-            color: const Color(0xFF111111),
+            color: const Color(0xFF0D1B2E),
           ),
           Container(
             width: 8,

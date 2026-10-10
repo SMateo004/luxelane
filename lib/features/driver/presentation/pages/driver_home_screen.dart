@@ -133,7 +133,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               body: Center(child: CircularProgressIndicator()),
             );
           }
-          return const Scaffold(backgroundColor: Colors.black);
+          return const Scaffold(backgroundColor: LuxColors.black);
         }
         final active = state.activeBooking;
         return Scaffold(
@@ -835,7 +835,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     label: const Text('Aceptar viaje'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: LuxColors.sapphire,
-                      foregroundColor: Colors.black,
+                      foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),

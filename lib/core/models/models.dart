@@ -344,6 +344,8 @@ class Booking {
         'destination': destination.toJson(),
         'scheduledAt': Timestamp.fromDate(scheduledAt),
         'class': vehicleClass.name,
+        // Cloud Functions read `vehicleClass`; keep both keys in sync.
+        'vehicleClass': vehicleClass.name,
         'serviceType': serviceType.name,
         'status': status.label,
         'estimatedPrice': estimatedPrice,
@@ -734,6 +736,16 @@ abstract class DefaultPricing {
         'perKm': 0,
         'perHour': 120,
         'min': 240
+      },
+    },
+    // Between Business Class and Business Van.
+    VehicleClass.businessSuv: {
+      ServiceType.oneWay: {'base': 70, 'perKm': 4.0, 'perHour': 0, 'min': 70},
+      ServiceType.byTheHour: {
+        'base': 0,
+        'perKm': 0,
+        'perHour': 115,
+        'min': 230
       },
     },
     VehicleClass.businessVan: {

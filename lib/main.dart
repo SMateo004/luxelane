@@ -8,6 +8,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app/app.dart';
 import 'core/config/env.dart';
+import 'core/config/remote_flags.dart';
 import 'core/di/injection.dart';
 import 'core/services/crash_service.dart';
 import 'core/services/performance_service.dart';
@@ -43,6 +44,8 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    // Admin-controlled switches (e.g. First Class availability).
+    RemoteFlags.instance.listen(FirebaseFirestore.instance);
   } catch (e) {
     if (AppConfig.enableLogs) {
       debugPrint('[Luxelane] Firebase init skipped: $e');
@@ -83,7 +86,7 @@ void main() async {
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Color(0xFF0A0A0A),
+        systemNavigationBarColor: Color(0xFF070E18),
       ),
     );
     await SystemChrome.setPreferredOrientations([

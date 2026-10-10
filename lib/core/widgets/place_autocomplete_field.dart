@@ -58,32 +58,32 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   // glass=true → fully transparent field that sits inside the hero liquid-glass bar
   Color get _fieldBg => widget.glass
       ? Colors.transparent
-      : (_isDark ? LuxColors.blackElevated : const Color(0xFFF5F4F1));
+      : (_isDark ? LuxColors.blackElevated : const Color(0xFFF2F5FB));
   Color get _borderColor => widget.glass
       ? Colors.transparent
-      : (_isDark ? LuxColors.blackBorder : const Color(0xFFE4E1DA));
+      : (_isDark ? LuxColors.blackBorder : const Color(0xFFDDE4F0));
   Color get _focusBorder => widget.glass
       ? Colors.transparent
       : (_isDark
           ? LuxColors.sapphire.withOpacity(0.6)
-          : const Color(0xFF111111));
+          : const Color(0xFF0D1B2E));
   Color get _iconColor => widget.glass
       ? const Color(0x99FFFFFF)
-      : (_isDark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA));
+      : (_isDark ? LuxColors.whiteTertiary : const Color(0xFF8A99B0));
   Color get _textColor => widget.glass
       ? Colors.white
-      : (_isDark ? LuxColors.white : const Color(0xFF111111));
+      : (_isDark ? LuxColors.white : const Color(0xFF0D1B2E));
   Color get _hintColor => widget.glass
       ? const Color(0x66FFFFFF)
-      : (_isDark ? LuxColors.whiteTertiary : const Color(0xFFBBBBBB));
+      : (_isDark ? LuxColors.whiteTertiary : const Color(0xFF9AA8BC));
   Color get _dropBg => _isDark ? LuxColors.blackSurface : Colors.white;
   Color get _dropDivider =>
-      _isDark ? LuxColors.blackBorder : const Color(0xFFEEECE8);
-  Color get _suggPrimary => _isDark ? LuxColors.white : const Color(0xFF111111);
+      _isDark ? LuxColors.blackBorder : const Color(0xFFE8EDF7);
+  Color get _suggPrimary => _isDark ? LuxColors.white : const Color(0xFF0D1B2E);
   Color get _suggSecondary =>
       _isDark ? LuxColors.whiteTertiary : const Color(0xFF999999);
   Color get _suggIcon =>
-      _isDark ? LuxColors.whiteTertiary : const Color(0xFFCCCCCC);
+      _isDark ? LuxColors.whiteTertiary : const Color(0xFFB3BFD0);
 
   void _dbg(String msg) => debugPrint('[PAF] $msg');
 

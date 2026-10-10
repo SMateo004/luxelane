@@ -171,6 +171,8 @@ class AdminState extends Equatable {
   bool get isMaintenanceMode => globalSettings['isMaintenanceMode'] ?? false;
   bool get pushNotificationsEnabled =>
       globalSettings['pushNotificationsEnabled'] ?? true;
+  bool get twoFactorEnabled => globalSettings['twoFactorEnabled'] ?? false;
+  bool get firstClassEnabled => globalSettings['firstClassEnabled'] ?? false;
 
   /// Comisión de la plataforma sobre cada viaje (0–100).
   double get commissionPct =>

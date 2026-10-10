@@ -27,7 +27,7 @@ class LuxErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: const Color(0xFF0A0A0A),
+        backgroundColor: const Color(0xFF070E18),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(LuxSpacing.lg),

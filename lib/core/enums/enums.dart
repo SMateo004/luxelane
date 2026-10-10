@@ -1,6 +1,7 @@
 enum UserRole { rider, driver, admin }
 
-enum VehicleClass { business, firstClass, businessVan, electric }
+/// Order matters only for serialisation (`name`); never reorder or rename.
+enum VehicleClass { business, firstClass, businessVan, electric, businessSuv }
 
 enum ServiceType { oneWay, byTheHour }
 
@@ -25,6 +26,8 @@ extension VehicleClassX on VehicleClass {
     switch (this) {
       case VehicleClass.business:
         return 'Business Class';
+      case VehicleClass.businessSuv:
+        return 'Business SUV';
       case VehicleClass.firstClass:
         return 'First Class';
       case VehicleClass.businessVan:
@@ -34,25 +37,60 @@ extension VehicleClassX on VehicleClass {
     }
   }
 
+  /// What the client gets, never a car make or model: we promise the
+  /// experience, not a badge we can't always guarantee.
   String get description {
     switch (this) {
       case VehicleClass.business:
-        return 'Mercedes E-Class o similar';
+        return 'Sedán ejecutivo';
+      case VehicleClass.businessSuv:
+        return 'SUV ejecutiva, más espacio';
       case VehicleClass.firstClass:
-        return 'Mercedes S-Class o similar';
+        return 'Sedán insignia';
       case VehicleClass.businessVan:
-        return 'Mercedes V-Class · Hasta 7';
+        return 'Van ejecutiva para grupos';
       case VehicleClass.electric:
-        return 'Tesla Model S o similar';
+        return 'Sedán ejecutivo eléctrico';
     }
   }
 
+  /// Maximum passengers.
   int get capacity {
     switch (this) {
       case VehicleClass.businessVan:
         return 7;
+      case VehicleClass.businessSuv:
+        return 4;
       default:
         return 3;
+    }
+  }
+
+  /// Maximum standard checked suitcases.
+  int get luggageCapacity {
+    switch (this) {
+      case VehicleClass.businessVan:
+        return 6;
+      case VehicleClass.businessSuv:
+        return 4;
+      default:
+        return 2;
+    }
+  }
+
+  /// Asset folder under assets/images/vehicles/.
+  String get assetKey {
+    switch (this) {
+      case VehicleClass.business:
+        return 'business';
+      case VehicleClass.businessSuv:
+        return 'business_suv';
+      case VehicleClass.firstClass:
+        return 'first_class';
+      case VehicleClass.businessVan:
+        return 'van';
+      case VehicleClass.electric:
+        return 'electric';
     }
   }
 }

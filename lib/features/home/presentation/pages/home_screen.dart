@@ -546,9 +546,9 @@ class _BookingForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final locBg = isDark ? LuxColors.blackElevated : const Color(0xFFF0EFEb);
+    final locBg = isDark ? LuxColors.blackElevated : const Color(0xFFE8EDF7);
     final locIconColor =
-        isDark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
+        isDark ? LuxColors.whiteTertiary : const Color(0xFF8A99B0);
     return Column(
       children: [
         Row(
@@ -576,7 +576,7 @@ class _BookingForm extends StatelessWidget {
                   border: Border.all(
                     color: isDark
                         ? LuxColors.blackBorder
-                        : const Color(0xFFE4E1DA),
+                        : const Color(0xFFDDE4F0),
                   ),
                 ),
                 child: locating
@@ -688,10 +688,10 @@ class _DateTimeTile extends StatelessWidget {
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
-              color: dark ? LuxColors.blackElevated : const Color(0xFFF5F4F1),
+              color: dark ? LuxColors.blackElevated : const Color(0xFFF2F5FB),
               borderRadius: BorderRadius.circular(LuxRadius.sm),
               border: Border.all(
-                color: dark ? LuxColors.blackBorder : const Color(0xFFE4E1DA),
+                color: dark ? LuxColors.blackBorder : const Color(0xFFDDE4F0),
               ),
             ),
             child: Row(
@@ -700,13 +700,13 @@ class _DateTimeTile extends StatelessWidget {
                     size: 18,
                     color: dark
                         ? LuxColors.whiteTertiary
-                        : const Color(0xFFAAAAAA)),
+                        : const Color(0xFF8A99B0)),
                 const SizedBox(width: LuxSpacing.md - 4),
                 Expanded(
                   child: Text(
                     LuxFormat.dateTime(date),
                     style: TextStyle(
-                      color: dark ? LuxColors.white : const Color(0xFF111111),
+                      color: dark ? LuxColors.white : const Color(0xFF0D1B2E),
                       fontSize: 13,
                       fontFamily: 'Montserrat',
                       fontWeight: FontWeight.w400,
@@ -733,16 +733,16 @@ class _HourSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
-    final iconColor = dark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA);
-    final textColor = dark ? LuxColors.white : const Color(0xFF111111);
-    final accentColor = dark ? LuxColors.white : const Color(0xFF111111);
+    final iconColor = dark ? LuxColors.whiteTertiary : const Color(0xFF8A99B0);
+    final textColor = dark ? LuxColors.white : const Color(0xFF0D1B2E);
+    final accentColor = dark ? LuxColors.white : const Color(0xFF0D1B2E);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: dark ? LuxColors.blackElevated : const Color(0xFFF5F4F1),
+        color: dark ? LuxColors.blackElevated : const Color(0xFFF2F5FB),
         borderRadius: BorderRadius.circular(LuxRadius.sm),
         border: Border.all(
-          color: dark ? LuxColors.blackBorder : const Color(0xFFE4E1DA),
+          color: dark ? LuxColors.blackBorder : const Color(0xFFDDE4F0),
         ),
       ),
       child: Row(

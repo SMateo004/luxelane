@@ -174,7 +174,11 @@ void main() {
     await _pump(tester, const PricingTab(), const Size(1280, 4000));
     expect(find.text('PERSONALIZADA'), findsOneWidget);
     expect(find.text('DESACTIVADA'), findsOneWidget);
-    expect(find.text('DE FÁBRICA'), findsNWidgets(7));
+    // Every class × service except the one customised rule above.
+    expect(
+        find.text('DE FÁBRICA'),
+        findsNWidgets(
+            VehicleClass.values.length * ServiceType.values.length - 1));
   });
 
   testWidgets('el panel alerta de lo que requiere atención', (tester) async {
