@@ -6,6 +6,19 @@ import { logger } from './logger';
 // Every function that touches Stripe must list it in `secrets`.
 export const STRIPE_SECRET_KEY = defineSecret('STRIPE_SECRET_KEY');
 
+/**
+ * Card payments are off until a real Stripe key is set (sk_live_… or
+ * sk_test_…); the secret only has to exist to deploy. While off, no user
+ * data is sent to Stripe.
+ */
+export function stripeEnabled(): boolean {
+  return isStripeKey(STRIPE_SECRET_KEY.value());
+}
+
+export function isStripeKey(key: string | undefined): boolean {
+  return /^sk_(live|test)_/.test((key ?? '').trim());
+}
+
 let client: Stripe | undefined;
 
 function stripeClient(): Stripe {

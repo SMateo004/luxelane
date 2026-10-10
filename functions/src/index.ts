@@ -3,7 +3,7 @@ import { onCall, CallableRequest } from 'firebase-functions/v2/https';
 import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import * as stripe from './stripe_service';
-import { STRIPE_SECRET_KEY } from './stripe_service';
+import { STRIPE_SECRET_KEY, stripeEnabled } from './stripe_service';
 import { defineSecret } from 'firebase-functions/params';
 import { logger } from './logger';
 import { Lang, MessageKey, clock, docName, langOf, money, moneyExact, shortDate, t, vehicleName } from './messages';
@@ -917,6 +917,8 @@ export const createStripeCustomer = onDocumentCreated(
   async (event) => {
     const data = event.data?.data();
     if (!data || data.role !== 'rider') return;
+    // No card payments configured: don't share anyone's name or e-mail with Stripe.
+    if (!stripeEnabled()) return;
 
     logger.info('createStripeCustomer', 'start', { uid: event.params.uid });
 

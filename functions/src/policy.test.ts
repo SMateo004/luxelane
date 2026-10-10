@@ -147,3 +147,15 @@ describe('canRelease', () => {
     expect(canRelease('completed', 'd1')).toBe(false);
   });
 });
+
+import { isStripeKey } from './stripe_service';
+
+describe('isStripeKey', () => {
+  it('only real Stripe secret keys turn card payments on', () => {
+    expect(isStripeKey('sk_live_abc')).toBe(true);
+    expect(isStripeKey('sk_test_abc')).toBe(true);
+    expect(isStripeKey('not-used-in-staging')).toBe(false);
+    expect(isStripeKey('')).toBe(false);
+    expect(isStripeKey(undefined)).toBe(false);
+  });
+});

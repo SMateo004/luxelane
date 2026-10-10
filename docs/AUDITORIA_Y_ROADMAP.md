@@ -184,8 +184,9 @@ Al revisar la app móvil apareció un bloqueo: Firebase estaba configurado **sol
 | 2 | **Registrar las apps de Android** (`com.luxelane.rider`, `com.luxelane.driver`) en Firebase y guardar su configuración: `scripts/setup_mobile.sh` | 🟡 Correr con tu cuenta |
 | 3 | **Compilación para Google Play:** `scripts/build_mobile.sh` (firmado, ofuscado y con la versión). La CI usa los secretos `FIREBASE_*_ANDROID_ENV` y falla con un error claro si faltan, en vez de producir un paquete roto. El despliegue del servidor ya no depende de la compilación de Android | ✅ Hecho (cargar los secretos) |
 | 4 | **Firma y claves:** keystore de subida (`android/key.properties`) y clave de Maps para Android | 🟡 Tu cuenta |
-| 5 | **Ficha de Play Console:** textos, capturas, formulario de seguridad de datos y video del permiso de ubicación del chófer. Las URLs de privacidad y de eliminación de cuenta ya existen | Pendiente |
-| 6 | **iOS:** crear `ios/` en una Mac, con identificadores, textos de permisos, clave APNs para el push y TestFlight | Pendiente (requiere Mac) |
+| 5 | **Ficha de Play Console.** **`docs/PLAY_STORE.md`** tiene las fichas de las dos apps en es/en/pt (todas dentro de los límites de caracteres y solo con lo que la app hace), el formulario de seguridad de datos basado en un inventario del código, la declaración de ubicación del chófer con el guion del video, la clasificación, las cuentas de prueba para la revisión y la lista para publicar. Faltan el ícono, la imagen destacada y las capturas tomadas en un teléfono | 🟡 Borrador listo; faltan los gráficos |
+| 6 | **Sin datos a Stripe sin pagos con tarjeta.** Cada pasajero nuevo se enviaba a Stripe (nombre y correo) aunque no se cobra con tarjeta, y con la clave de prueba eso generaba errores. Ahora solo ocurre si hay una clave real de Stripe (`sk_live_`/`sk_test_`) | ✅ Hecho |
+| 7 | **iOS:** crear `ios/` en una Mac, con identificadores, textos de permisos, clave APNs para el push y TestFlight | Pendiente (requiere Mac) |
 
 ### Señales de confianza para la landing (rápido, alto impacto)
 - Una franja con: **precio fijo garantizado**, **cancelación gratuita hasta 1 h antes**, **chóferes verificados**, **seguro incluido** (solo si la póliza lo cubre) y el **horario de atención** real (Admin → Soporte).
@@ -213,7 +214,7 @@ Al revisar la app móvil apareció un bloqueo: Firebase estaba configurado **sol
 
 ```
 flutter test                      # 304 tests Dart
-(cd functions && npm test)        # 97 tests de negocio, precios, vuelos, chófer, espera, despacho, cancelación, mensajes, cuentas corporativas, documentos, promociones, soporte, observabilidad, fidelidad y suspensión de cuentas
+(cd functions && npm test)        # 98 tests de negocio, precios, vuelos, chófer, espera, despacho, cancelación, mensajes, cuentas corporativas, documentos, promociones, soporte, observabilidad, fidelidad y suspensión de cuentas
 (cd rules-tests && npm test)      # 51 tests de reglas de Firestore y Storage (requiere Java)
 ```
 
