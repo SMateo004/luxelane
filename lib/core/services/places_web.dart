@@ -3,6 +3,7 @@
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:async';
 import 'dart:js' as js;
+import 'dart:math' as math;
 import 'dart:js_util' as js_util;
 
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -50,10 +51,25 @@ dynamic _prop(dynamic obj, String key) {
 
 // ── Autocomplete ──────────────────────────────────────────────────────────────
 
+// LatLngBoundsLiteral around a circle — the JS API restricts by bounds only.
+Map<String, double> _bounds(double lat, double lng, double radiusMeters) {
+  final dLat = radiusMeters / 111320.0;
+  final dLng = radiusMeters / (111320.0 * math.cos(lat * math.pi / 180));
+  return {
+    'north': lat + dLat,
+    'south': lat - dLat,
+    'east': lng + dLng,
+    'west': lng - dLng,
+  };
+}
+
+/// With [strict], only places within [radiusMeters] of [lat],[lng] come back.
 Future<List<PlaceSuggestion>> webAutocomplete(
   String input, {
   double lat = _sczLat,
   double lng = _sczLng,
+  double radiusMeters = 30000,
+  bool strict = false,
 }) async {
   try {
     final google = js.context['google'];
@@ -76,12 +92,14 @@ Future<List<PlaceSuggestion>> webAutocomplete(
     final newApiClass = _prop(places, 'AutocompleteSuggestion');
     if (newApiClass != null) {
       _dbg('Using new AutocompleteSuggestion API');
-      return await _newAutocomplete(input, lat, lng, maps, newApiClass);
+      return await _newAutocomplete(
+          input, lat, lng, radiusMeters, strict, maps, newApiClass);
     }
 
     // ── Legacy fallback (AutocompleteService) — only for older API keys ──
     _dbg('Falling back to legacy AutocompleteService');
-    return await _legacyAutocomplete(input, lat, lng, maps, places);
+    return await _legacyAutocomplete(
+        input, lat, lng, radiusMeters, strict, maps, places);
   } catch (e) {
     _dbg('webAutocomplete top error: $e');
     return [];
@@ -92,6 +110,8 @@ Future<List<PlaceSuggestion>> _newAutocomplete(
   String input,
   double lat,
   double lng,
+  double radiusMeters,
+  bool strict,
   dynamic maps,
   dynamic autocompleteSuggestionClass,
 ) async {
@@ -103,10 +123,13 @@ Future<List<PlaceSuggestion>> _newAutocomplete(
       'language': 'es',
       'region': 'bo',
       'includedRegionCodes': ['bo'],
-      'locationBias': {
-        'center': {'lat': lat, 'lng': lng},
-        'radius': 30000,
-      },
+      if (strict)
+        'locationRestriction': _bounds(lat, lng, radiusMeters)
+      else
+        'locationBias': {
+          'center': {'lat': lat, 'lng': lng},
+          'radius': radiusMeters,
+        },
     });
 
     final promise = js_util.callMethod(
@@ -163,6 +186,8 @@ Future<List<PlaceSuggestion>> _legacyAutocomplete(
   String input,
   double lat,
   double lng,
+  double radiusMeters,
+  bool strict,
   dynamic maps,
   dynamic places,
 ) async {
@@ -172,8 +197,12 @@ Future<List<PlaceSuggestion>> _legacyAutocomplete(
 
     final request = js.JsObject.jsify({
       'input': input,
-      'location': js.JsObject(maps['LatLng'] as js.JsFunction, [lat, lng]),
-      'radius': 30000,
+      if (strict)
+        'locationRestriction': _bounds(lat, lng, radiusMeters)
+      else ...{
+        'location': js.JsObject(maps['LatLng'] as js.JsFunction, [lat, lng]),
+        'radius': radiusMeters,
+      },
       'componentRestrictions': {'country': 'bo'},
       'language': 'es',
     });

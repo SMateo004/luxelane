@@ -3,7 +3,10 @@
 import '../models/place_model.dart';
 
 Future<List<PlaceSuggestion>> webAutocomplete(String input,
-        {double lat = -17.7833, double lng = -63.1821}) async =>
+        {double lat = -17.7833,
+        double lng = -63.1821,
+        double radiusMeters = 30000,
+        bool strict = false}) async =>
     [];
 
 Future<Place?> webPlaceDetails(String placeId, {String? address}) async => null;

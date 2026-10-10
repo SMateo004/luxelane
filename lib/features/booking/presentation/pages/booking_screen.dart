@@ -9,6 +9,7 @@ import '../../../../core/design/lux_promise.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/service_area.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -51,6 +52,7 @@ class _BookingScreenState extends State<BookingScreen> {
   int _luggage = 0;
   String _notes = '';
   String _flight = '';
+  bool _flightAttempted = false; // show the flight error only after a try
   bool _bookForSelf = true;
   int _heroPage = 0;
   int _capacityTab = 0; // 0 = Luggage, 1 = Seating
@@ -81,6 +83,23 @@ class _BookingScreenState extends State<BookingScreen> {
 
   double get _price =>
       DefaultPricing.estimate(_selected, _service, km: _km, hours: _hours);
+
+  /// Airport pickups need the flight number so the driver can follow it.
+  bool get _airportPickup =>
+      _formData != null && ServiceArea.isAirport(_formData!.origin);
+
+  String? get _flightError {
+    if (!_airportPickup && _flight.trim().isEmpty) return null;
+    return FlightNumber.error(_flight);
+  }
+
+  bool _checkFlight() {
+    final error = _flightError;
+    if (error == null) return true;
+    setState(() => _flightAttempted = true);
+    showLuxSnackbar(context, error, isError: true);
+    return false;
+  }
 
   @override
   void initState() {
@@ -126,6 +145,10 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Future<void> _confirm() async {
+    if (!_checkFlight()) {
+      if (!isWeb(context)) setState(() => _step = 1);
+      return;
+    }
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) {
       if (kIsWeb) {
@@ -243,6 +266,8 @@ class _BookingScreenState extends State<BookingScreen> {
           riderId: authState.user.id,
           estimatedPrice: _price,
           notes: combinedNotes,
+          flightNumber:
+              _flight.trim().isEmpty ? null : FlightNumber.normalize(_flight),
         ));
   }
 
@@ -1381,6 +1406,12 @@ class _BookingScreenState extends State<BookingScreen> {
           label: 'Destino',
           value: _formData?.destination?.displayName ?? '—',
         ),
+        if (_airportPickup) ...[
+          const SizedBox(height: 20),
+          const _FlightNote(),
+          const SizedBox(height: 10),
+          _flightField(),
+        ],
 
         const SizedBox(height: 24),
         const Divider(color: _kDivider, height: 1),
@@ -1497,7 +1528,12 @@ class _BookingScreenState extends State<BookingScreen> {
                 price: _price,
                 label: _step < 2 ? 'Continuar' : 'Confirmar reserva',
                 loading: _loading,
-                onConfirm: _step < 2 ? () => setState(() => _step++) : _confirm,
+                onConfirm: _step < 2
+                    ? () {
+                        if (_step == 1 && !_checkFlight()) return;
+                        setState(() => _step++);
+                      }
+                    : _confirm,
               ),
             ],
           ),
@@ -1600,11 +1636,11 @@ class _BookingScreenState extends State<BookingScreen> {
               max: 6,
               onChanged: (v) => setState(() => _luggage = v)),
           const SizedBox(height: 20),
-          _LightTextField(
-              label: 'Número de vuelo',
-              hint: 'ej. LA 8810 (opcional)',
-              icon: Icons.flight_outlined,
-              onChanged: (v) => _flight = v),
+          if (_airportPickup) ...[
+            const _FlightNote(),
+            const SizedBox(height: 10),
+          ],
+          _flightField(),
           const SizedBox(height: 12),
           _LightTextField(
               label: 'Solicitudes especiales',
@@ -1613,6 +1649,16 @@ class _BookingScreenState extends State<BookingScreen> {
               maxLines: 3,
               onChanged: (v) => _notes = v),
         ],
+      );
+
+  Widget _flightField() => _LightTextField(
+        label: _airportPickup ? 'Número de vuelo *' : 'Número de vuelo',
+        hint: _airportPickup ? 'ej. OB 760' : 'ej. OB 760 (opcional)',
+        icon: Icons.flight_outlined,
+        initialValue: _flight,
+        errorText: _flightAttempted ? _flightError : null,
+        textCapitalization: TextCapitalization.characters,
+        onChanged: (v) => setState(() => _flight = v),
       );
 
   Widget _confirmStep() {
@@ -2894,22 +2940,31 @@ class _LightTextField extends StatelessWidget {
     required this.icon,
     required this.onChanged,
     this.maxLines = 1,
+    this.initialValue,
+    this.errorText,
+    this.textCapitalization = TextCapitalization.none,
   });
   final String label;
   final String? hint;
   final IconData icon;
   final ValueChanged<String> onChanged;
   final int maxLines;
+  final String? initialValue;
+  final String? errorText;
+  final TextCapitalization textCapitalization;
 
   @override
-  Widget build(BuildContext context) => TextField(
+  Widget build(BuildContext context) => TextFormField(
+        initialValue: initialValue,
         onChanged: onChanged,
         maxLines: maxLines,
+        textCapitalization: textCapitalization,
         style: const TextStyle(
             fontFamily: kSans, fontSize: 13, color: _kTextPrimary),
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
+          errorText: errorText,
           hintStyle: const TextStyle(
               fontFamily: kSans,
               fontSize: 13,
@@ -2935,6 +2990,32 @@ class _LightTextField extends StatelessWidget {
               borderRadius: BorderRadius.zero,
               borderSide: const BorderSide(color: _kTextPrimary, width: 1.5)),
         ),
+      );
+}
+
+// ── FLIGHT NOTE (airport pickups) ─────────────────────────────────────────────
+
+class _FlightNote extends StatelessWidget {
+  const _FlightNote();
+
+  @override
+  Widget build(BuildContext context) => const Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.flight_land_rounded, size: 16, color: _kPanelAccent),
+          SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Recogida en aeropuerto: indica tu número de vuelo. '
+              '${LuxPromise.flightTrackingLong}',
+              style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 12,
+                  height: 1.4,
+                  color: _kTextSub),
+            ),
+          ),
+        ],
       );
 }
 
