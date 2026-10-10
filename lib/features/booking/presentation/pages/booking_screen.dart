@@ -9,6 +9,7 @@ import '../../../../core/design/lux_promise.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/services/pricing_catalog.dart';
 import '../../../../core/utils/service_area.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
@@ -82,8 +83,12 @@ class _BookingScreenState extends State<BookingScreen> {
           ? _formData!.routeDistanceKm
           : 25.0;
 
-  double get _price =>
-      DefaultPricing.estimate(_selected, _service, km: _km, hours: _hours);
+  double get _price => PricingCatalog.instance
+      .estimate(_selected, _service, km: _km, hours: _hours);
+
+  void _onPricingChanged() {
+    if (mounted) setState(() {});
+  }
 
   /// Airport pickups need the flight number so the driver can follow it.
   bool get _airportPickup =>
@@ -109,6 +114,7 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   void initState() {
     super.initState();
+    PricingCatalog.instance.addListener(_onPricingChanged);
     _leftScrollCtrl.addListener(() {
       final show = _leftScrollCtrl.offset > _kStickyThreshold;
       if (show != _showStickySelector) {
@@ -119,6 +125,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   @override
   void dispose() {
+    PricingCatalog.instance.removeListener(_onPricingChanged);
     _leftScrollCtrl.dispose();
     super.dispose();
   }
@@ -175,6 +182,12 @@ class _BookingScreenState extends State<BookingScreen> {
     final freshState = context.read<AuthBloc>().state;
     if (freshState is! AuthAuthenticated) return;
     final user = freshState.user;
+    final blocked =
+        PricingCatalog.instance.unavailableReason(_selected, _service);
+    if (blocked != null) {
+      showLuxSnackbar(context, blocked, isError: true);
+      return;
+    }
     setState(() => _loading = true);
 
     if (user.stripeCustomerId != null &&
@@ -476,8 +489,8 @@ class _BookingScreenState extends State<BookingScreen> {
                         final vc = _kVehicleClasses[i];
                         return _VehicleCard(
                           vehicleClass: vc,
-                          price: DefaultPricing.estimate(vc, _service,
-                              km: _km, hours: _hours),
+                          price: PricingCatalog.instance
+                              .estimate(vc, _service, km: _km, hours: _hours),
                           selected: _selected == vc,
                           cardBg: _vehicleCardBg(vc),
                           cardBgSelected: _vehicleCardBgSelected(vc),
@@ -1595,8 +1608,8 @@ class _BookingScreenState extends State<BookingScreen> {
                 final vc = _kVehicleClasses[i];
                 return _VehicleCard(
                   vehicleClass: vc,
-                  price: DefaultPricing.estimate(vc, _service,
-                      km: _km, hours: _hours),
+                  price: PricingCatalog.instance
+                      .estimate(vc, _service, km: _km, hours: _hours),
                   selected: _selected == vc,
                   onTap: () => setState(() => _selected = vc),
                   serviceType: _service,
@@ -1922,8 +1935,8 @@ class _WebTopBar extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: _kVehicleClasses.map((vc) {
-                              final price = DefaultPricing.estimate(vc, service,
-                                  km: km, hours: hours);
+                              final price = PricingCatalog.instance
+                                  .estimate(vc, service, km: km, hours: hours);
                               final isActive = selectedVehicle == vc;
                               return Padding(
                                 padding: const EdgeInsets.only(right: 10),

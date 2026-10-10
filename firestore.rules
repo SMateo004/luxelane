@@ -154,11 +154,51 @@ service cloud.firestore {
 
     // -------------------------------------------------------------------------
     // /pricingRules/{ruleId}
+    // Tarifas públicas (la web las muestra sin sesión); solo el admin las
+    // edita, con importes numéricos no negativos.
     // -------------------------------------------------------------------------
 
+    function validFare(d) {
+      return d.basePriceUsd is number && d.basePriceUsd >= 0 &&
+        d.pricePerKmUsd is number && d.pricePerKmUsd >= 0 &&
+        d.pricePerHourUsd is number && d.pricePerHourUsd >= 0 &&
+        d.minimumPriceUsd is number && d.minimumPriceUsd >= 0 &&
+        d.isActive is bool;
+    }
+
     match /pricingRules/{ruleId} {
-      allow read:   if isAuthenticated();
-      allow write:  if isAdmin();
+      allow read:   if true;
+      allow create, update: if isAdmin() && validFare(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    // -------------------------------------------------------------------------
+    // /config/{docId}
+    // global: estado operativo (mantenimiento) que lee la app del pasajero.
+    // finance: comisión y parámetros internos, solo para el admin.
+    // -------------------------------------------------------------------------
+
+    match /config/{docId} {
+      allow read:  if docId == 'global' || isAdmin();
+      allow write: if isAdmin() && (
+        docId != 'finance' ||
+        !('platformCommissionPct' in request.resource.data) || (
+          request.resource.data.platformCommissionPct is number &&
+          request.resource.data.platformCommissionPct >= 0 &&
+          request.resource.data.platformCommissionPct <= 100
+        )
+      );
+    }
+
+    // -------------------------------------------------------------------------
+    // /admin_logs/{logId}  — auditoría inmutable
+    // -------------------------------------------------------------------------
+
+    match /admin_logs/{logId} {
+      allow read:   if isAdmin();
+      allow create: if isAdmin() &&
+        request.resource.data.adminId == request.auth.uid;
+      allow update, delete: if false;
     }
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/design/lux_promise.dart';
 import '../../../../core/enums/enums.dart';
-import '../../../../core/models/models.dart';
+import '../../../../core/services/pricing_catalog.dart';
 import '../../../../core/widgets/lux_service_booking_card.dart';
 import '../../../../core/widgets/lux_site_chrome.dart';
 import '../../../home/presentation/pages/home_design.dart';
@@ -594,8 +594,14 @@ class _ClassesSection extends StatelessWidget {
     (VehicleClass.businessVan, 'assets/images/vehicles/van/car.png'),
   ];
 
+  // Se reconstruye cuando el admin cambia las tarifas.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ListenableBuilder(
+        listenable: PricingCatalog.instance,
+        builder: (context, _) => _content(context),
+      );
+
+  Widget _content(BuildContext context) {
     final narrow = _narrow(context);
     final pad = _hPad(context);
     final cards = [
@@ -606,7 +612,8 @@ class _ClassesSection extends StatelessWidget {
           child: _ClassCard(
             vc: _classes[i].$1,
             image: _classes[i].$2,
-            from: DefaultPricing.rules[_classes[i].$1]![service]!['min']!,
+            from:
+                PricingCatalog.instance.startingPrice(_classes[i].$1, service),
             perHour: service == ServiceType.byTheHour,
             featured: _classes[i].$1 == VehicleClass.firstClass,
             onChoose: onChoose,

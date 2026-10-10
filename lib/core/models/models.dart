@@ -265,6 +265,7 @@ class Booking {
     this.hours,
     this.passengerCount = 1,
     this.luggageCount = 0,
+    this.pricingReviewReason,
   });
 
   final String id;
@@ -292,6 +293,10 @@ class Booking {
   final int? hours;
   final int passengerCount;
   final int luggageCount;
+
+  /// Lo marca el servidor si el precio no respeta la tarifa vigente
+  /// (`below_fare`, `fare_disabled`, `unknown_fare`). Solo lectura.
+  final String? pricingReviewReason;
 
   factory Booking.fromJson(Map<String, dynamic> j) => Booking(
         id: j['id'] as String? ?? '',
@@ -328,6 +333,7 @@ class Booking {
         hours: j['hours'] as int?,
         passengerCount: j['passengerCount'] as int? ?? 1,
         luggageCount: j['luggageCount'] as int? ?? 0,
+        pricingReviewReason: (j['pricingReview'] as Map?)?['reason'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -383,6 +389,7 @@ class Booking {
         hours: hours,
         passengerCount: passengerCount,
         luggageCount: luggageCount,
+        pricingReviewReason: pricingReviewReason,
       );
 }
 
@@ -480,13 +487,15 @@ class Payment {
 
   factory Payment.fromJson(Map<String, dynamic> j) => Payment(
         id: j['id'] as String,
-        bookingId: j['bookingId'] as String,
-        riderId: j['riderId'] as String,
-        stripePaymentIntentId: j['stripePaymentIntentId'] as String,
-        amount: (j['amount'] as num).toDouble(),
-        currency: j['currency'] as String,
-        status: PaymentStatusX.fromString(j['status'] as String),
-        createdAt: (j['createdAt'] as Timestamp).toDate(),
+        bookingId: j['bookingId'] as String? ?? '',
+        riderId: j['riderId'] as String? ?? '',
+        stripePaymentIntentId: j['stripePaymentIntentId'] as String? ?? '',
+        amount: (j['amount'] as num?)?.toDouble() ?? 0.0,
+        currency: j['currency'] as String? ?? 'bob',
+        status: PaymentStatusX.fromString(j['status'] as String? ?? 'pending'),
+        createdAt: j['createdAt'] is Timestamp
+            ? (j['createdAt'] as Timestamp).toDate()
+            : DateTime.now(),
         receiptUrl: j['receiptUrl'] as String?,
       );
 
@@ -507,6 +516,10 @@ class Payment {
 // PricingRule (admin-configurable)
 // ---------------------------------------------------------------------------
 
+/// Tarifa de un tipo de servicio para una clase de vehículo.
+///
+/// Los importes están en bolivianos (Bs). Los nombres de campo `*Usd` se
+/// mantienen por compatibilidad con los documentos ya guardados en Firestore.
 class PricingRule {
   const PricingRule({
     required this.id,
@@ -516,6 +529,9 @@ class PricingRule {
     required this.pricePerKmUsd,
     required this.pricePerHourUsd,
     required this.minimumPriceUsd,
+    this.isActive = true,
+    this.updatedAt,
+    this.updatedBy,
   });
 
   final String id;
@@ -525,6 +541,31 @@ class PricingRule {
   final double pricePerKmUsd;
   final double pricePerHourUsd;
   final double minimumPriceUsd;
+
+  /// Si es false, la combinación clase + servicio no se puede reservar.
+  final bool isActive;
+  final DateTime? updatedAt;
+  final String? updatedBy;
+
+  /// Id de documento canónico en /pricingRules: `business_oneWay`, etc.
+  static String idFor(VehicleClass vc, ServiceType st) =>
+      '${vc.name}_${st.name}';
+
+  /// Tarifa de fábrica, usada mientras el admin no haya guardado otra.
+  factory PricingRule.fallback(VehicleClass vc, ServiceType st) {
+    final r = DefaultPricing.rules[vc]![st]!;
+    return PricingRule(
+      id: idFor(vc, st),
+      vehicleClass: vc,
+      serviceType: st,
+      basePriceUsd: r['base']!,
+      pricePerKmUsd: r['perKm']!,
+      pricePerHourUsd: r['perHour']!,
+      minimumPriceUsd: r['min']!,
+    );
+  }
+
+  static double _num(Object? v) => (v as num?)?.toDouble() ?? 0.0;
 
   factory PricingRule.fromJson(Map<String, dynamic> j) => PricingRule(
         id: j['id'] as String,
@@ -536,10 +577,15 @@ class PricingRule {
           (e) => e.name == j['serviceType'],
           orElse: () => ServiceType.oneWay,
         ),
-        basePriceUsd: (j['basePriceUsd'] as num).toDouble(),
-        pricePerKmUsd: (j['pricePerKmUsd'] as num).toDouble(),
-        pricePerHourUsd: (j['pricePerHourUsd'] as num).toDouble(),
-        minimumPriceUsd: (j['minimumPriceUsd'] as num).toDouble(),
+        basePriceUsd: _num(j['basePriceUsd']),
+        pricePerKmUsd: _num(j['pricePerKmUsd']),
+        pricePerHourUsd: _num(j['pricePerHourUsd']),
+        minimumPriceUsd: _num(j['minimumPriceUsd']),
+        isActive: j['isActive'] as bool? ?? true,
+        updatedAt: j['updatedAt'] is Timestamp
+            ? (j['updatedAt'] as Timestamp).toDate()
+            : null,
+        updatedBy: j['updatedBy'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -550,13 +596,73 @@ class PricingRule {
         'pricePerKmUsd': pricePerKmUsd,
         'pricePerHourUsd': pricePerHourUsd,
         'minimumPriceUsd': minimumPriceUsd,
+        'isActive': isActive,
       };
 
-  double estimateOneWay(double km) => (basePriceUsd + km * pricePerKmUsd)
-      .clamp(minimumPriceUsd, double.infinity);
+  PricingRule copyWith({
+    double? basePriceUsd,
+    double? pricePerKmUsd,
+    double? pricePerHourUsd,
+    double? minimumPriceUsd,
+    bool? isActive,
+  }) =>
+      PricingRule(
+        id: id,
+        vehicleClass: vehicleClass,
+        serviceType: serviceType,
+        basePriceUsd: basePriceUsd ?? this.basePriceUsd,
+        pricePerKmUsd: pricePerKmUsd ?? this.pricePerKmUsd,
+        pricePerHourUsd: pricePerHourUsd ?? this.pricePerHourUsd,
+        minimumPriceUsd: minimumPriceUsd ?? this.minimumPriceUsd,
+        isActive: isActive ?? this.isActive,
+        updatedAt: updatedAt,
+        updatedBy: updatedBy,
+      );
 
-  double estimateByHour(int hours) => (basePriceUsd + hours * pricePerHourUsd)
-      .clamp(minimumPriceUsd, double.infinity);
+  /// Mismos importes que [other] (ignora metadatos).
+  bool sameFareAs(PricingRule other) =>
+      basePriceUsd == other.basePriceUsd &&
+      pricePerKmUsd == other.pricePerKmUsd &&
+      pricePerHourUsd == other.pricePerHourUsd &&
+      minimumPriceUsd == other.minimumPriceUsd &&
+      isActive == other.isActive;
+
+  /// Errores de validación en español; lista vacía si la tarifa es válida.
+  List<String> validate() {
+    final errors = <String>[];
+    final values = [
+      basePriceUsd,
+      pricePerKmUsd,
+      pricePerHourUsd,
+      minimumPriceUsd,
+    ];
+    if (values.any((v) => v.isNaN || v < 0)) {
+      errors.add('Los importes no pueden ser negativos');
+    }
+    if (serviceType == ServiceType.oneWay &&
+        basePriceUsd == 0 &&
+        pricePerKmUsd == 0 &&
+        minimumPriceUsd == 0) {
+      errors.add('Un traslado no puede costar Bs0');
+    }
+    if (serviceType == ServiceType.byTheHour && pricePerHourUsd <= 0) {
+      errors.add('El servicio por horas necesita un precio por hora');
+    }
+    return errors;
+  }
+
+  /// Precio de un servicio: base + distancia (solo ida) o base + horas
+  /// (por horas), nunca por debajo del mínimo.
+  double estimate({double km = 0, int hours = 2}) {
+    final raw = serviceType == ServiceType.byTheHour
+        ? basePriceUsd + hours * pricePerHourUsd
+        : basePriceUsd + km * pricePerKmUsd;
+    return raw < minimumPriceUsd ? minimumPriceUsd : raw;
+  }
+
+  double estimateOneWay(double km) => estimate(km: km);
+
+  double estimateByHour(int hours) => estimate(hours: hours);
 }
 
 // ---------------------------------------------------------------------------
@@ -572,10 +678,12 @@ class AuditLog {
     required this.targetType,
     required this.details,
     required this.createdAt,
+    this.adminEmail,
   });
 
   final String id;
   final String adminId;
+  final String? adminEmail;
   final String action;
   final String targetId;
   final String targetType;
@@ -584,17 +692,22 @@ class AuditLog {
 
   factory AuditLog.fromJson(Map<String, dynamic> j) => AuditLog(
         id: j['id'] as String,
-        adminId: j['adminId'] as String,
-        action: j['action'] as String,
-        targetId: j['targetId'] as String,
-        targetType: j['targetType'] as String,
+        adminId: j['adminId'] as String? ?? '',
+        adminEmail: j['adminEmail'] as String?,
+        action: j['action'] as String? ?? '',
+        targetId: j['targetId'] as String? ?? '',
+        targetType: j['targetType'] as String? ?? '',
         details: j['details'] as String? ?? '',
-        createdAt: (j['createdAt'] as Timestamp).toDate(),
+        // serverTimestamp() llega como null en la escritura local pendiente.
+        createdAt: j['createdAt'] is Timestamp
+            ? (j['createdAt'] as Timestamp).toDate()
+            : DateTime.now(),
       );
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'adminId': adminId,
+        'adminEmail': adminEmail,
         'action': action,
         'targetId': targetId,
         'targetType': targetType,
@@ -638,14 +751,11 @@ abstract class DefaultPricing {
     },
   };
 
+  /// Precio con las tarifas de fábrica. La app usa `PricingCatalog`, que
+  /// aplica las tarifas que el admin haya guardado en Firestore.
   static double estimate(VehicleClass vc, ServiceType st,
-      {double km = 0, int hours = 2}) {
-    final r = rules[vc]![st]!;
-    if (st == ServiceType.byTheHour) {
-      return (r['perHour']! * hours).clamp(r['min']!, double.infinity);
-    }
-    return (r['base']! + km * r['perKm']!).clamp(r['min']!, double.infinity);
-  }
+          {double km = 0, int hours = 2}) =>
+      PricingRule.fallback(vc, st).estimate(km: km, hours: hours);
 }
 
 // ---------------------------------------------------------------------------

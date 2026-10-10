@@ -5,6 +5,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import * as stripe from './stripe_service';
 import { logger } from './logger';
 import * as err from './errors';
+import { checkBookingPrice, DEFAULT_FARES, fareId, FareRule } from './pricing';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -28,7 +29,11 @@ interface BookingDoc {
   riderId: string;
   driverId?: string;
   status: BookingStatus;
-  vehicleClass: string;
+  // La app guarda la clase en `class`; `vehicleClass` es el nombre antiguo.
+  class?: string;
+  vehicleClass?: string;
+  serviceType?: string;
+  hours?: number | null;
   estimatedPrice: number;
   finalPrice?: number;
   paymentId?: string;
@@ -61,6 +66,13 @@ interface PaymentDoc {
 function requireAuth(req: CallableRequest): string {
   if (!req.auth?.uid) throw err.unauthenticated();
   return req.auth.uid;
+}
+
+async function requireAdmin(req: CallableRequest): Promise<string> {
+  const uid = requireAuth(req);
+  const user = await db.collection('users').doc(uid).get();
+  if (user.data()?.role !== 'admin') throw err.permissionDenied('Admin role required');
+  return uid;
 }
 
 async function sendPush(tokens: string[], title: string, body: string): Promise<void> {
@@ -157,22 +169,44 @@ export const capturePayment = onCall(async (req) => {
 // ---------------------------------------------------------------------------
 
 export const refundPayment = onCall(async (req) => {
-  requireAuth(req);
-  const { paymentId } = req.data as { paymentId: string };
+  // Solo un admin puede reembolsar: mueve dinero y altera las finanzas.
+  const adminId = await requireAdmin(req);
+  const { paymentId, reason } = req.data as { paymentId: string; reason?: string };
 
   if (!paymentId) throw err.invalidArgument('paymentId required');
 
-  const snap = await db.collection('payments').doc(paymentId).get();
+  const paymentRef = db.collection('payments').doc(paymentId);
+  const snap = await paymentRef.get();
   if (!snap.exists) throw err.notFound('Payment not found');
 
   const payment = snap.data() as PaymentDoc;
   if (payment.status !== 'captured') throw err.failedPrecondition('Only captured payments can be refunded');
 
-  logger.info('refundPayment', 'start', { paymentId });
+  logger.info('refundPayment', 'start', { paymentId, adminId });
 
   try {
-    await stripe.refundIntent(payment.stripePaymentIntentId);
-    await db.collection('payments').doc(paymentId).update({ status: 'refunded' as PaymentStatus });
+    // Los cobros registrados a mano (efectivo, QR…) no pasan por Stripe.
+    if (payment.stripePaymentIntentId) {
+      await stripe.refundIntent(payment.stripePaymentIntentId);
+    }
+    const now = admin.firestore.Timestamp.now();
+    const batch = db.batch();
+    batch.update(paymentRef, {
+      status: 'refunded' as PaymentStatus,
+      refundedAt: now,
+      refundedBy: adminId,
+      refundReason: reason ?? '',
+    });
+    batch.set(db.collection('admin_logs').doc(), {
+      adminId,
+      adminEmail: req.auth?.token.email ?? null,
+      action: 'refund_payment',
+      targetId: payment.bookingId,
+      targetType: 'payment',
+      details: `Pago ${paymentId}${reason ? ` · ${reason}` : ''}`,
+      createdAt: now,
+    });
+    await batch.commit();
     logger.info('refundPayment', 'success', { paymentId });
     return { status: 'refunded' };
   } catch (e) {
@@ -257,10 +291,23 @@ export const createStripeCustomer = onDocumentCreated('users/{uid}', async (even
 export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async (event) => {
   const booking = event.data?.data() as BookingDoc | undefined;
   if (!booking) return;
+  const vehicleClass = booking.class ?? booking.vehicleClass ?? 'business';
+
+  // Control de tarifas: la reserva debe respetar la tarifa vigente del admin.
+  const id = fareId(vehicleClass, booking.serviceType ?? 'oneWay');
+  const ruleSnap = await db.collection('pricingRules').doc(id).get();
+  const rule = ruleSnap.exists ? (ruleSnap.data() as FareRule) : DEFAULT_FARES[id];
+  const check = checkBookingPrice(booking, rule);
+  if (!check.ok) {
+    logger.warn('onBookingCreated', 'pricing review', { bookingId: event.params.bookingId, ...check });
+    await event.data!.ref.update({
+      pricingReview: { reason: check.reason, expectedMinimum: check.expectedMinimum ?? null },
+    });
+  }
 
   logger.info('onBookingCreated', 'notifying drivers', {
     bookingId: event.params.bookingId,
-    vehicleClass: booking.vehicleClass,
+    vehicleClass,
   });
 
   const driversSnap = await db
@@ -276,7 +323,7 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
     tokens.push(...driverTokens);
   }
 
-  await sendPush(tokens, 'New Ride Available', `${booking.vehicleClass} · $${booking.estimatedPrice}`);
+  await sendPush(tokens, 'New Ride Available', `${vehicleClass} · Bs ${booking.estimatedPrice}`);
 });
 
 // ---------------------------------------------------------------------------
@@ -495,6 +542,6 @@ export const sendRideReceipt = onDocumentUpdated('payments/{paymentId}', async (
   await sendPush(
     tokens,
     'Payment Confirmed',
-    `Your ride has been charged $${(after.amount / 100).toFixed(2)}`,
+    `Your ride has been charged Bs ${(after.amount / 100).toFixed(2)}`,
   );
 });
