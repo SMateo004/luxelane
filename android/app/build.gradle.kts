@@ -27,6 +27,12 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // Google Maps key for AndroidManifest (same key as AppConfig and the
+        // iOS xcconfig). CI can override it with the GOOGLE_MAPS_API_KEY env.
+        manifestPlaceholders["MAPS_API_KEY"] =
+            System.getenv("GOOGLE_MAPS_API_KEY")?.takeIf { it.isNotBlank() }
+                ?: (project.findProperty("MAPS_API_KEY") as String?)
+                ?: "AIzaSyBbDde6GtLHy9_6qys4BMmq2P2G2INRUkM"
     }
 
     buildTypes {

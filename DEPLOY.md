@@ -80,6 +80,12 @@ Con eso **la web ya funciona**; no requiere más configuración.
                --dart-define=GOOGLE_SERVER_CLIENT_ID=...
    ```
 
+> Google Maps en Android: la clave va en el manifiesto vía
+> `android/app/build.gradle.kts` (variable de entorno `GOOGLE_MAPS_API_KEY`,
+> que el CI toma del secret del mismo nombre). En Google Cloud Console →
+> Credentials, si la clave está restringida, añade la app Android
+> `com.luxelane.app` con su SHA-1 y habilita *Maps SDK for Android*.
+
 > Nota: la app de pasajeros y la de chóferes comparten hoy el mismo
 > `applicationId` (`com.luxelane.app`). Para publicarlas como dos apps
 > distintas en Google Play hará falta un ID por app (p. ej. con *flavors*)
