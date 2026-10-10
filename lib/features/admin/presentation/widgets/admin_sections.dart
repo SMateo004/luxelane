@@ -461,8 +461,7 @@ class _BookingDetail extends StatelessWidget {
             .toList();
         final canCancel = AdminOperations.canTransition(
             booking.status, BookingStatus.cancelled);
-        final amount = booking.finalPrice ?? booking.estimatedPrice;
-        final commission = amount * state.commissionPct / 100;
+        final split = booking.settlementOr(state.commissionPct);
 
         return ListView(
           shrinkWrap: true,
@@ -519,11 +518,11 @@ class _BookingDetail extends StatelessWidget {
                     booking.finalPrice == null ? '—' : bs(booking.finalPrice!)),
             if (booking.status == BookingStatus.completed) ...[
               AdminInfoRow(
-                  label:
-                      'Comisión (${state.commissionPct.toStringAsFixed(0)} %)',
-                  value: bs(commission)),
+                  label: 'Comisión (${split.commissionPct.toStringAsFixed(0)} %'
+                      '${booking.settlement == null ? ', provisional' : ''})',
+                  value: bs(split.platformCommission)),
               AdminInfoRow(
-                  label: 'Parte chófer', value: bs(amount - commission)),
+                  label: 'Parte chófer', value: bs(split.driverPayout)),
             ],
             AdminInfoRow(
               label: 'Cobro',
@@ -1455,7 +1454,8 @@ class _CommissionCardState extends State<_CommissionCard> {
                       context,
                       title: 'Cambiar comisión',
                       message: '${_fmt(widget.current)} % → ${_fmt(value)} %. '
-                          'Afecta al reparto mostrado de todos los viajes.',
+                          'Se aplica a los viajes que se completen desde '
+                          'ahora; los ya completados conservan su reparto.',
                       confirmLabel: 'Guardar',
                     );
                     if (ok == null || !context.mounted) return;

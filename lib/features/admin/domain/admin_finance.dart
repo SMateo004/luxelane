@@ -1,9 +1,6 @@
 import '../../../core/enums/enums.dart';
 import '../../../core/models/models.dart';
 
-/// Comisión de plataforma por defecto si el admin no ha configurado otra.
-const double kDefaultCommissionPct = 20;
-
 enum FinancePeriod { today, last7, last30, thisMonth, all }
 
 extension FinancePeriodX on FinancePeriod {
@@ -147,7 +144,6 @@ class FinancialSummary {
     final n = now ?? DateTime.now();
     final from = period.start(n);
     bool inPeriod(DateTime d) => from == null || !d.isBefore(from);
-    final rate = (commissionPct.clamp(0, 100)) / 100;
 
     final paymentFor = paymentIndex(payments);
 
@@ -164,10 +160,13 @@ class FinancialSummary {
           if (!inPeriod(b.updatedAt)) continue;
           final p = paymentFor(b);
           final status = chargeStatusOf(p);
-          final amount = b.finalPrice ?? b.estimatedPrice;
+          final amount = b.chargedAmount;
           final refunded = status == ChargeStatus.refunded;
-          final commission = refunded ? 0.0 : _round(amount * rate);
-          final payout = refunded ? 0.0 : _round(amount - commission);
+          // Mismo reparto que ve el chófer: el fijado por el servidor o, si
+          // aún no existe, uno provisional con la comisión vigente.
+          final split = b.settlementOr(commissionPct);
+          final commission = refunded ? 0.0 : split.platformCommission;
+          final payout = refunded ? 0.0 : split.driverPayout;
           entries.add(LedgerEntry(
             booking: b,
             payment: p,

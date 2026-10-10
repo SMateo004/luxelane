@@ -6,6 +6,7 @@ import * as stripe from './stripe_service';
 import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, DEFAULT_FARES, fareId, FareRule } from './pricing';
+import { computeSettlement, Settlement } from './settlement';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -37,6 +38,7 @@ interface BookingDoc {
   estimatedPrice: number;
   finalPrice?: number;
   paymentId?: string;
+  settlement?: Settlement;
 }
 
 interface RideDoc {
@@ -356,6 +358,25 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
 
   const tokens = await getUserTokens(after.riderId);
   await sendPush(tokens, 'Luxelane', message);
+});
+
+// ---------------------------------------------------------------------------
+// settleBooking  (onUpdate /bookings/{bookingId})
+// Fija el reparto plataforma / chófer de cada viaje completado. Se dispara
+// también al ajustar el precio final; la segunda escritura no cambia nada,
+// así que no hay bucle.
+// ---------------------------------------------------------------------------
+
+export const settleBooking = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const after = event.data?.after.data() as BookingDoc | undefined;
+  if (!after || after.status !== 'completed') return;
+
+  const finance = await db.collection('config').doc('finance').get();
+  const settlement = computeSettlement(after, finance.data()?.platformCommissionPct);
+  if (!settlement) return;
+
+  await event.data!.after.ref.update({ settlement });
+  logger.info('settleBooking', 'settled', { bookingId: event.params.bookingId, ...settlement });
 });
 
 // ---------------------------------------------------------------------------

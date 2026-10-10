@@ -15,6 +15,7 @@ Booking _b(
   DateTime? at,
   String? paymentId,
   VehicleClass vc = VehicleClass.business,
+  BookingSettlement? settlement,
 }) =>
     Booking(
       id: id,
@@ -31,6 +32,7 @@ Booking _b(
       paymentId: paymentId,
       createdAt: at ?? _now,
       updatedAt: at ?? _now,
+      settlement: settlement,
     );
 
 Payment _p(String id, String bookingId, PaymentStatus status, {DateTime? at}) =>
@@ -76,6 +78,28 @@ void main() {
       expect(s.driverPayouts, 304);
       expect(s.platformRevenue + s.driverPayouts, s.netRevenue);
       expect(s.averageTicket, closeTo(126.67, 0.01));
+    });
+
+    test('usa el reparto fijado por el servidor (mismo que ve el chófer)', () {
+      const locked = BookingSettlement(
+          amount: 100,
+          commissionPct: 10,
+          platformCommission: 10,
+          driverPayout: 90);
+      final s = FinancialSummary.compute(
+        bookings: [
+          _b('a', price: 100, settlement: locked),
+          // Reparto de otro importe (precio ajustado después): se recalcula
+          // con el porcentaje fijado, no con el vigente.
+          _b('b', price: 100, finalPrice: 200, settlement: locked),
+          _b('c', price: 100), // sin reparto: comisión vigente
+        ],
+        payments: const [],
+        commissionPct: 30,
+        now: _now,
+      );
+      expect(s.byDriver['driver-1']!.payout, 90 + 180 + 70);
+      expect(s.platformRevenue, 10 + 20 + 30);
     });
 
     test('usa el precio final si existe', () {
