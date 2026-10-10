@@ -5,23 +5,25 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/config/remote_flags.dart';
 import '../../../../core/design/lux_promise.dart';
+import '../../../../core/design/vehicle_catalog.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
+import '../../../../core/widgets/lux_raised.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../../payments/presentation/bloc/payment_bloc.dart';
 import '../bloc/booking_bloc.dart';
+import '../widgets/vehicle_details.dart';
+import '../widgets/vehicle_visuals.dart';
 
-// ── Vehicle classes (Electric excluded) ───────────────────────────────────────
-const _kVehicleClasses = [
-  VehicleClass.business,
-  VehicleClass.firstClass,
-  VehicleClass.businessVan,
-];
+// Classes offered right now (First Class only when the admin enables it).
+List<VehicleClass> get _kVehicleClasses => VehicleCatalog.bookable(
+    firstClassEnabled: RemoteFlags.instance.firstClassEnabled.value);
 
 // ── Luxelane design tokens (mirrors home_design.dart LD class) ─────────────────
 const _kBg = LD.bg; // #FAFBFE
@@ -52,7 +54,6 @@ class _BookingScreenState extends State<BookingScreen> {
   String _notes = '';
   String _flight = '';
   bool _bookForSelf = true;
-  int _heroPage = 0;
   int _capacityTab = 0; // 0 = Luggage, 1 = Seating
   int _luggageOption = 0; // 0, 1, 2
   int _seatingOption = 0; // 0, 1, 2, 3
@@ -243,8 +244,21 @@ class _BookingScreenState extends State<BookingScreen> {
           riderId: authState.user.id,
           estimatedPrice: _price,
           notes: combinedNotes,
+          passengerCount: _passengers,
+          luggageCount: _luggage,
+          flightNumber: _flight.trim().isEmpty ? null : _flight.trim(),
+          hours: _service == ServiceType.byTheHour ? _hours : null,
         ));
   }
+
+  void _selectVehicle(VehicleClass vc) => setState(() {
+        _selected = vc;
+        _luggageOption = 0;
+        _seatingOption = 0;
+        // Never keep more people or bags than the new class takes.
+        _passengers = _passengers.clamp(1, vc.capacity);
+        _luggage = _luggage.clamp(0, vc.luggageCapacity);
+      });
 
   static String _cap(String s) =>
       s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
@@ -287,7 +301,16 @@ class _BookingScreenState extends State<BookingScreen> {
           }
         }),
       ],
-      child: isWeb(context) ? _webLayout() : _mobileLayout(),
+      // Rebuild when the admin toggles which classes are on offer.
+      child: ValueListenableBuilder<bool>(
+        valueListenable: RemoteFlags.instance.firstClassEnabled,
+        builder: (context, _, __) {
+          if (!_kVehicleClasses.contains(_selected)) {
+            _selected = VehicleClass.business;
+          }
+          return isWeb(context) ? _webLayout() : _mobileLayout();
+        },
+      ),
     );
   }
 
@@ -306,12 +329,7 @@ class _BookingScreenState extends State<BookingScreen> {
               onHoursChanged: (h) => setState(() => _hours = h),
               showStickySelector: _showStickySelector,
               selectedVehicle: _selected,
-              onVehicleChanged: (vc) => setState(() {
-                _selected = vc;
-                _luggageOption = 0;
-                _seatingOption = 0;
-                _heroPage = 0;
-              }),
+              onVehicleChanged: _selectVehicle,
               km: _km,
             ),
             const Divider(color: _kDivider, height: 1),
@@ -328,48 +346,10 @@ class _BookingScreenState extends State<BookingScreen> {
         ),
       );
 
-  // Per-vehicle dark atmospheric backgrounds
-  // Section background — near-white with a whisper of the vehicle's accent
-  static Color _vehicleBg(VehicleClass vc) {
-    switch (vc) {
-      case VehicleClass.business:
-        return const Color(0xFFF0F5FB); // icy navy white
-      case VehicleClass.firstClass:
-        return const Color(0xFFF5F0FB); // icy lavender white
-      case VehicleClass.businessVan:
-        return const Color(0xFFF0F4FB); // icy slate white
-      case VehicleClass.electric:
-        return const Color(0xFFEFF9F5); // icy mint white
-    }
-  }
-
-  // Card accent tint (unselected). Pure white (selected) is applied in the card widget itself.
-  static Color _vehicleCardBg(VehicleClass vc) {
-    switch (vc) {
-      case VehicleClass.business:
-        return const Color(0xFFF8FBFF); // barely blue-white
-      case VehicleClass.firstClass:
-        return const Color(0xFFFAF8FF); // barely lavender-white
-      case VehicleClass.businessVan:
-        return const Color(0xFFF8FAFF); // barely slate-white
-      case VehicleClass.electric:
-        return const Color(0xFFF7FDF9); // barely mint-white
-    }
-  }
-
-  // Stronger accent tint shown when a card IS selected
-  static Color _vehicleCardBgSelected(VehicleClass vc) {
-    switch (vc) {
-      case VehicleClass.business:
-        return const Color(0xFFEDF4FF); // soft navy tint
-      case VehicleClass.firstClass:
-        return const Color(0xFFF0EBFF); // soft lavender tint
-      case VehicleClass.businessVan:
-        return const Color(0xFFEBF2FF); // soft slate tint
-      case VehicleClass.electric:
-        return const Color(0xFFE8FAF2); // soft mint tint
-    }
-  }
+  // One calm palette for every class: the car is the hero, not a tint.
+  static Color _vehicleBg(VehicleClass vc) => LD.bg2;
+  static Color _vehicleCardBg(VehicleClass vc) => Colors.white;
+  static Color _vehicleCardBgSelected(VehicleClass vc) => Colors.white;
 
   Widget _webLeft() => SingleChildScrollView(
         controller: _leftScrollCtrl,
@@ -447,12 +427,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           selected: _selected == vc,
                           cardBg: _vehicleCardBg(vc),
                           cardBgSelected: _vehicleCardBgSelected(vc),
-                          onTap: () => setState(() {
-                            _selected = vc;
-                            _luggageOption = 0;
-                            _seatingOption = 0;
-                            _heroPage = 0;
-                          }),
+                          onTap: () => _selectVehicle(vc),
                           serviceType: _service,
                           hours:
                               _service == ServiceType.byTheHour ? _hours : null,
@@ -470,12 +445,9 @@ class _BookingScreenState extends State<BookingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ── Hero carousel ────────────────────────────────────────
-                  _webHeroSection(),
-                  const SizedBox(height: 52),
-
-                  // ── Descriptive heading ──────────────────────────────────
-                  _webDescriptiveText(),
+                  // ── Detalles: exterior, cabina, maletero ─────────────────
+                  VehicleDetailsGallery(vehicleClass: _selected),
+                  const SizedBox(height: 64),
 
                   // ── What's included ──────────────────────────────────────
                   _webWhatsIncluded(),
@@ -485,7 +457,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   const SizedBox(height: 64),
 
                   // ── Capacity ─────────────────────────────────────────────
-                  _webCapacity(),
+                  _capacitySection(),
 
                   const SizedBox(height: 64),
                   const Divider(color: _kDivider, height: 1),
@@ -500,275 +472,26 @@ class _BookingScreenState extends State<BookingScreen> {
         ),
       );
 
-  // ── Luggage capacity per vehicle ───────────────────────────────────────────
-
-  static List<String> _luggageOptionsFor(VehicleClass vc) {
-    switch (vc) {
-      case VehicleClass.business:
-        return ['2 x De mano', '2 x Facturada estándar', '1 x Extra grande'];
-      case VehicleClass.firstClass:
-        return ['3 x De mano', '2 x Facturada estándar', '1 x Extra grande'];
-      case VehicleClass.businessVan:
-        return ['8 x De mano', '6 x Facturada estándar', '4 x Extra grande'];
-      case VehicleClass.electric:
-        return ['2 x De mano', '2 x Facturada estándar', '1 x Extra grande'];
-    }
-  }
-
-  static List<String> _seatingOptionsFor(VehicleClass vc) {
-    switch (vc) {
-      case VehicleClass.business:
-      case VehicleClass.firstClass:
-      case VehicleClass.electric:
-        return ['Tres pasajeros', 'Dos pasajeros', 'Asiento de bebé'];
-      case VehicleClass.businessVan:
-        return ['Cinco pasajeros', 'Dos pasajeros'];
-    }
-  }
-
-  // (Seating images are now per-vehicle assets via _seatingAsset() — see below)
-
-  // ── Hero slides per vehicle class ──────────────────────────────────────────
-
-  static const _kVehicleSlides = <VehicleClass, List<List<String>>>{
-    VehicleClass.business: [
-      [
-        'Confort ejecutivo en cada trayecto',
-        'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Puntual, profesional y perfectamente refinado',
-        'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Llega con confianza, en cada ocasión',
-        'https://images.unsplash.com/photo-1511919884226-fd3cad34687c?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Premium hecho práctico para el ejecutivo moderno',
-        'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?w=900&q=90&auto=format&fit=crop',
-      ],
-    ],
-    VehicleClass.firstClass: [
-      [
-        'Un nivel extraordinario de lujo te espera',
-        'https://images.unsplash.com/photo-1563720223523-e75db7d32e5c?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Diseñado para quienes exigen lo mejor',
-        'https://images.unsplash.com/photo-1485291571150-772bcfc10da5?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Privacidad y elegancia en cada traslado',
-        'https://images.unsplash.com/photo-1493238792000-8113da705763?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Primera clase, de puerta a puerta',
-        'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=900&q=90&auto=format&fit=crop',
-      ],
-    ],
-    VehicleClass.businessVan: [
-      [
-        'Espacio y confort para todo tu equipo',
-        'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Traslados grupales sin estrés y con puntualidad',
-        'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'El viaje perfecto para familias y grupos',
-        'https://images.unsplash.com/photo-1570125909232-eb263c188f7e?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Capacidad premium, sin compromiso en el confort',
-        'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=900&q=90&auto=format&fit=crop',
-      ],
-    ],
-    VehicleClass.electric: [
-      [
-        'Totalmente eléctrico, silencioso y de nivel ejecutivo',
-        'https://images.unsplash.com/photo-1617788138017-80ad40651399?w=900&q=90&auto=format&fit=crop',
-      ],
-      [
-        'Cero emisiones, máxima experiencia de lujo',
-        'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=900&q=90&auto=format&fit=crop',
-      ],
-    ],
-  };
-
-  List<List<String>> get _currentSlides =>
-      _kVehicleSlides[_selected] ?? _kVehicleSlides[VehicleClass.business]!;
-
-  Widget _webHeroSection() {
-    final slides = _currentSlides;
-    final page = _heroPage.clamp(0, slides.length - 1);
-    final slide = slides[page];
-    final text = slide[0];
-    final img = slide[1];
-
-    return ClipRRect(
-      borderRadius: BorderRadius.zero,
-      child: SizedBox(
-        height: 340,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // ── Gradient background ─────────────────────────────────────
-            Container(
-              decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFFC8DDD0), // left: soft desaturated green
-                    Color(0xFFE6E2DA), // right: warm beige/grey
-                  ],
-                ),
-              ),
-            ),
-
-            // ── Car image — lateral, ~80% width, centered ───────────────
-            Positioned.fill(
-              child: Align(
-                child: FractionallySizedBox(
-                  widthFactor: 0.82,
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 400),
-                    child: Image.network(
-                      img,
-                      key: ValueKey(img),
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => const SizedBox(),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // ── Glassmorphism bottom overlay ────────────────────────────
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                  child: Container(
-                    padding: const EdgeInsets.fromLTRB(24, 18, 20, 20),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.30),
-                    ),
-                    child: Row(
-                      children: [
-                        // Text + dots
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 300),
-                                child: Text(
-                                  text,
-                                  key: ValueKey(text),
-                                  style: TextStyle(
-                                    fontFamily: kSans,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.white.withValues(alpha: 0.92),
-                                    height: 1.4,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              // Carousel dots
-                              Row(
-                                children: List.generate(
-                                  slides.length,
-                                  (i) => AnimatedContainer(
-                                    duration: const Duration(milliseconds: 250),
-                                    margin: const EdgeInsets.only(right: 6),
-                                    width: i == page ? 20 : 6,
-                                    height: 6,
-                                    decoration: BoxDecoration(
-                                      color: i == page
-                                          ? _kPanelAccent
-                                          : Colors.white
-                                              .withValues(alpha: 0.40),
-                                      borderRadius: BorderRadius.zero,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(width: 16),
-
-                        // Right arrow button
-                        GestureDetector(
-                          onTap: () => setState(
-                              () => _heroPage = (page + 1) % slides.length),
-                          child: Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.88),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.14),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.arrow_forward_rounded,
-                              size: 20,
-                              color: _kTextPrimary,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ── Descriptive heading ────────────────────────────────────────────────────
-
-  Widget _webDescriptiveText() => const Padding(
-        padding: EdgeInsets.only(right: 40),
-        child: Text(
-          'Premium hecho práctico. Asientos espaciosos, un viaje suave '
-          'y recogidas puntuales que mantienen tu día en ritmo.',
-          style: TextStyle(
-            fontFamily: kSans,
-            fontSize: 26,
-            fontWeight: FontWeight.w400,
-            color: Color(0xFF888888),
-            height: 1.6,
-            letterSpacing: -0.2,
-          ),
-        ),
+  Widget _capacitySection({bool compact = false}) => CapacitySection(
+        vehicleClass: _selected,
+        tab: _capacityTab,
+        luggageIndex: _luggageOption,
+        seatingIndex: _seatingOption,
+        onTab: (t) => setState(() => _capacityTab = t),
+        onLuggage: (i) => setState(() => _luggageOption = i),
+        onSeating: (i) => setState(() => _seatingOption = i),
+        compact: compact,
       );
 
   // ── What's Included ────────────────────────────────────────────────────────
 
   Widget _webWhatsIncluded() {
-    const accent = Color(0xFF4A7FD4);
+    const accent = LD.sph;
     const itemText = TextStyle(
       fontFamily: kSans,
       fontSize: 15,
       fontWeight: FontWeight.w400,
-      color: Color(0xFF444444),
+      color: LD.ink2,
       height: 1.5,
     );
 
@@ -840,278 +563,6 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  // ── Capacity ───────────────────────────────────────────────────────────────
-
-  // Returns asset path for luggage image, with per-vehicle + per-option keys.
-  // User places files at: assets/images/booking/luggage/<vehicle>_<0|1|2>.png
-  // e.g. assets/images/booking/luggage/business_0.png
-  static String _luggageAsset(VehicleClass vc, int option) {
-    final key = switch (vc) {
-      VehicleClass.business => 'business',
-      VehicleClass.firstClass => 'first_class',
-      VehicleClass.businessVan => 'van',
-      VehicleClass.electric => 'electric',
-    };
-    return 'assets/images/booking/luggage/${key}_$option.png';
-  }
-
-  // Fallback network images per option (generic, shown if asset not uploaded yet)
-  static const _kLuggageFallbacks = [
-    'https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=900&q=90&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1553440569-bcc63803a83d?w=900&q=90&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=900&q=90&auto=format&fit=crop',
-  ];
-
-  // Returns asset path for seating image, with per-vehicle + per-option keys.
-  // User places files at: assets/images/booking/seating/<vehicle>_<0|1|2|3>.png
-  static String _seatingAsset(VehicleClass vc, int option) {
-    final key = switch (vc) {
-      VehicleClass.business => 'business',
-      VehicleClass.firstClass => 'first_class',
-      VehicleClass.businessVan => 'van',
-      VehicleClass.electric => 'electric',
-    };
-    return 'assets/images/booking/seating/${key}_$option.png';
-  }
-
-  // Fallback network images per seating option index
-  static const _kSeatingFallbacks = [
-    'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=900&q=90&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?w=900&q=90&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?w=900&q=90&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1629310576093-9ddd4e666490?w=900&q=90&auto=format&fit=crop',
-  ];
-
-  Widget _webCapacity() {
-    // Per-vehicle luggage options (dynamic)
-    final luggageOpts = _luggageOptionsFor(_selected);
-
-    // Tab widget
-    Widget tab(String label, bool active, VoidCallback onTap) =>
-        GestureDetector(
-          onTap: onTap,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 15,
-                    fontWeight: active ? FontWeight.w700 : FontWeight.w400,
-                    color: active ? _kTextPrimary : _kTextSub,
-                  ),
-                ),
-              ),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                height: 2.5,
-                width: 60,
-                decoration: BoxDecoration(
-                  color: active ? _kPanelAccent : Colors.transparent,
-                  borderRadius: BorderRadius.zero,
-                ),
-              ),
-            ],
-          ),
-        );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Title
-        const Text(
-          'Capacidad',
-          style: TextStyle(
-            fontFamily: kSerif,
-            fontSize: 38,
-            fontWeight: FontWeight.w600,
-            color: _kTextPrimary,
-            letterSpacing: 0.1,
-          ),
-        ),
-        const SizedBox(height: 24),
-
-        // Tabs + underline
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                tab('Equipaje', _capacityTab == 0,
-                    () => setState(() => _capacityTab = 0)),
-                const SizedBox(width: 36),
-                tab('Asientos', _capacityTab == 1,
-                    () => setState(() => _capacityTab = 1)),
-              ],
-            ),
-            const Divider(color: _kDivider, height: 1),
-          ],
-        ),
-
-        const SizedBox(height: 22),
-
-        if (_capacityTab == 0) ...[
-          // Description
-          const Text(
-            'Basado en tamaños estándar de equipaje, que pueden diferir de los tuyos. '
-            'Puedes especificar los detalles de tu equipaje en las '
-            '"Notas de recogida" en el siguiente paso.',
-            style: TextStyle(
-              fontFamily: kSans,
-              fontSize: 14,
-              color: _kTextSub,
-              height: 1.6,
-            ),
-          ),
-          const SizedBox(height: 22),
-
-          // Segmented control
-          Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: const Color(0xFFEEEBE4),
-              borderRadius: BorderRadius.zero,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(luggageOpts.length, (i) {
-                final active = _luggageOption == i;
-                return MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: GestureDetector(
-                    onTap: () => setState(() => _luggageOption = i),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 180),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 11),
-                      decoration: BoxDecoration(
-                        color: active ? _kPanelAccent : Colors.transparent,
-                        borderRadius: BorderRadius.zero,
-                      ),
-                      child: Text(
-                        luggageOpts[i],
-                        style: TextStyle(
-                          fontFamily: kSans,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: active ? Colors.white : _kTextPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-          const SizedBox(height: 22),
-
-          // Luggage image — per vehicle + per option
-          ClipRRect(
-            borderRadius: BorderRadius.zero,
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              transitionBuilder: (child, anim) =>
-                  FadeTransition(opacity: anim, child: child),
-              child: _CapacityImage(
-                key: ValueKey('lug-$_selected-$_luggageOption'),
-                assetPath: _luggageAsset(
-                    _selected, _luggageOption.clamp(0, luggageOpts.length - 1)),
-                fallbackUrl: _kLuggageFallbacks[
-                    _luggageOption.clamp(0, _kLuggageFallbacks.length - 1)],
-                fallbackIcon: Icons.luggage_outlined,
-              ),
-            ),
-          ),
-        ] else ...[
-          // ── Seating — mirrors Luggage structure ──────────────────────────
-          Builder(builder: (_) {
-            final seatingOpts = _seatingOptionsFor(_selected);
-            final safeIdx = _seatingOption.clamp(0, seatingOpts.length - 1);
-
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Elige la configuración de asientos que mejor se adapte a tus necesidades. '
-                  'Los asientos especiales (infantil / bebé) deben solicitarse con anticipación '
-                  'y están sujetos a disponibilidad.',
-                  style: TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 14,
-                    color: _kTextSub,
-                    height: 1.6,
-                  ),
-                ),
-                const SizedBox(height: 22),
-
-                // Segmented control
-                Container(
-                  padding: const EdgeInsets.all(6),
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFEEEBE4),
-                    borderRadius: BorderRadius.zero,
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(seatingOpts.length, (i) {
-                      final active = safeIdx == i;
-                      return MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: GestureDetector(
-                          onTap: () => setState(() => _seatingOption = i),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 180),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 11),
-                            decoration: BoxDecoration(
-                              color:
-                                  active ? _kPanelAccent : Colors.transparent,
-                              borderRadius: BorderRadius.zero,
-                            ),
-                            child: Text(
-                              seatingOpts[i],
-                              style: TextStyle(
-                                fontFamily: kSans,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: active ? Colors.white : _kTextPrimary,
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
-                  ),
-                ),
-                const SizedBox(height: 22),
-
-                // Seating image — per vehicle + per option
-                ClipRRect(
-                  borderRadius: BorderRadius.zero,
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    transitionBuilder: (child, anim) =>
-                        FadeTransition(opacity: anim, child: child),
-                    child: _CapacityImage(
-                      key: ValueKey('seat-$_selected-$safeIdx'),
-                      assetPath: _seatingAsset(_selected, safeIdx),
-                      fallbackUrl: _kSeatingFallbacks[
-                          safeIdx.clamp(0, _kSeatingFallbacks.length - 1)],
-                      fallbackIcon: Icons.airline_seat_recline_extra,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }),
-        ],
-      ],
-    );
-  }
-
   // ── Price breakdown ────────────────────────────────────────────────────────
 
   Widget _webPriceBreakdown() {
@@ -1173,7 +624,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 width: 22,
                 height: 22,
                 decoration: const BoxDecoration(
-                  color: Color(0xFFE4ECF9),
+                  color: LD.sphTint,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.info_outline,
@@ -1198,8 +649,8 @@ class _BookingScreenState extends State<BookingScreen> {
     return Container(
       padding: const EdgeInsets.all(30),
       decoration: BoxDecoration(
-        color: const Color(0xFFF5F4F1),
-        borderRadius: BorderRadius.zero,
+        color: LD.bg2,
+        borderRadius: BorderRadius.circular(4),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1265,7 +716,7 @@ class _BookingScreenState extends State<BookingScreen> {
             // ── Dark map ─────────────────────────────────────────────────
             Container(
               height: 260,
-              color: const Color(0xFF1A1A1A),
+              color: LD.bg3,
               child: _formData?.origin != null
                   ? LuxMap(
                       origin: _formData!.origin,
@@ -1280,14 +731,13 @@ class _BookingScreenState extends State<BookingScreen> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.map_outlined,
-                              size: 40, color: Colors.grey.shade700),
+                          Icon(Icons.map_outlined, size: 36, color: LD.ink3),
                           const SizedBox(height: 8),
                           Text('Vista previa de ruta',
                               style: TextStyle(
                                 fontFamily: kSans,
                                 fontSize: 12,
-                                color: Colors.grey.shade600,
+                                color: LD.ink3,
                               )),
                         ],
                       ),
@@ -1389,7 +839,7 @@ class _BookingScreenState extends State<BookingScreen> {
         // ── Book for myself ─────────────────────────────────────────────
         _BookOptionCard(
           icon: Icons.person_outlined,
-          iconBg: const Color(0xFFDDE6F8),
+          iconBg: LD.sphTint,
           iconColor: _kPanelAccent,
           title: 'Reservar para mí',
           subtitle: 'Reserva con la información de tu cuenta',
@@ -1402,8 +852,7 @@ class _BookingScreenState extends State<BookingScreen> {
         // ── Book for a guest ────────────────────────────────────────────
         _BookOptionCard(
           icon: Icons.group_outlined,
-          iconBg:
-              !_bookForSelf ? const Color(0xFFDDE6F8) : const Color(0xFFF0EDE8),
+          iconBg: !_bookForSelf ? LD.sphTint : LD.bg2,
           iconColor: !_bookForSelf ? _kPanelAccent : _kTextSub,
           title: 'Reservar para un invitado',
           subtitle: (!_bookForSelf && _guestFirstName.isNotEmpty)
@@ -1553,10 +1002,11 @@ class _BookingScreenState extends State<BookingScreen> {
                   price: DefaultPricing.estimate(vc, _service,
                       km: _km, hours: _hours),
                   selected: _selected == vc,
-                  onTap: () => setState(() => _selected = vc),
+                  onTap: () => _selectVehicle(vc),
                   serviceType: _service,
                   hours: _service == ServiceType.byTheHour ? _hours : null,
-                  width: 190,
+                  width: 168,
+                  carWidth: 270,
                   cardBg: _vehicleCardBg(vc),
                   cardBgSelected: _vehicleCardBgSelected(vc),
                 );
@@ -1569,6 +1019,11 @@ class _BookingScreenState extends State<BookingScreen> {
             child: _MobileVehicleDetail(
                 key: ValueKey(_selected), vehicleClass: _selected),
           ),
+          const SizedBox(height: 36),
+          VehicleDetailsGallery(vehicleClass: _selected, compact: true),
+          const SizedBox(height: 40),
+          _capacitySection(compact: true),
+          const SizedBox(height: 12),
         ],
       );
 
@@ -1597,7 +1052,7 @@ class _BookingScreenState extends State<BookingScreen> {
               icon: Icons.luggage_outlined,
               value: _luggage,
               min: 0,
-              max: 6,
+              max: _selected.luggageCapacity,
               onChanged: (v) => setState(() => _luggage = v)),
           const SizedBox(height: 20),
           _LightTextField(
@@ -1672,7 +1127,7 @@ class _BookingScreenState extends State<BookingScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: const BoxDecoration(
-                color: Color(0xFFF9F7F3),
+                color: LD.bg2,
                 borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
               ),
               child: Row(children: [
@@ -1865,7 +1320,7 @@ class _WebTopBar extends StatelessWidget {
                                           horizontal: 18, vertical: 10),
                                       decoration: BoxDecoration(
                                         color: isActive
-                                            ? const Color(0xFFEEF2FC)
+                                            ? LD.sphTint
                                             : Colors.white,
                                         borderRadius: BorderRadius.zero,
                                         border: Border.all(
@@ -2007,6 +1462,7 @@ class _VehicleCard extends StatefulWidget {
     this.serviceType = ServiceType.oneWay,
     this.hours,
     this.width,
+    this.carWidth = 480,
   });
 
   final VehicleClass vehicleClass;
@@ -2019,380 +1475,181 @@ class _VehicleCard extends StatefulWidget {
   final int? hours;
   final double? width;
 
-  // Asset path for transparent-background PNG
-  String get _assetPath {
-    switch (vehicleClass) {
-      case VehicleClass.business:
-        return 'assets/images/vehicles/business/car.png';
-      case VehicleClass.firstClass:
-        return 'assets/images/vehicles/first_class/car.png';
-      case VehicleClass.businessVan:
-        return 'assets/images/vehicles/van/car.png';
-      case VehicleClass.electric:
-        return 'assets/images/vehicles/electric/car.png';
-    }
-  }
-
-  // Network fallback
-  String get _fallbackUrl {
-    switch (vehicleClass) {
-      case VehicleClass.business:
-        return 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=700&q=90&auto=format&fit=crop';
-      case VehicleClass.firstClass:
-        return 'https://images.unsplash.com/photo-1563720223523-e75db7d32e5c?w=700&q=90&auto=format&fit=crop';
-      case VehicleClass.businessVan:
-        return 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=700&q=90&auto=format&fit=crop';
-      case VehicleClass.electric:
-        return 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=700&q=90&auto=format&fit=crop';
-    }
-  }
-
-  // Sapphire-family accent per vehicle (border + pill)
-  Color get _accentColor {
-    switch (vehicleClass) {
-      case VehicleClass.business:
-        return const Color(0xFF3A7BD5);
-      case VehicleClass.firstClass:
-        return const Color(0xFF7B4DB5);
-      case VehicleClass.businessVan:
-        return const Color(0xFF2E6AC8);
-      case VehicleClass.electric:
-        return const Color(0xFF2A9E72);
-    }
-  }
+  /// Width of the car artwork. The selected card grows to show all of it;
+  /// unselected cards show the front three-quarters as a teaser.
+  final double carWidth;
 
   @override
   State<_VehicleCard> createState() => _VehicleCardState();
 }
 
-class _VehicleCardState extends State<_VehicleCard>
-    with SingleTickerProviderStateMixin {
+class _VehicleCardState extends State<_VehicleCard> {
   bool _hover = false;
-  late AnimationController _popCtrl;
-  late Animation<double> _scaleAnim;
-  late Animation<double> _tiltAnim;
-
-  @override
-  void initState() {
-    super.initState();
-    _popCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 550),
-    );
-    // Scale: pops up then settles (elastic feel)
-    _scaleAnim = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 1.06), weight: 25),
-      TweenSequenceItem(tween: Tween(begin: 1.06, end: 0.98), weight: 35),
-      TweenSequenceItem(tween: Tween(begin: 0.98, end: 1.01), weight: 25),
-      TweenSequenceItem(tween: Tween(begin: 1.01, end: 1.0), weight: 15),
-    ]).animate(CurvedAnimation(parent: _popCtrl, curve: Curves.easeOut));
-    // Tilt: brief perspective lean on the Y axis (3D feel)
-    _tiltAnim = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: -0.06), weight: 30),
-      TweenSequenceItem(tween: Tween(begin: -0.06, end: 0.02), weight: 50),
-      TweenSequenceItem(tween: Tween(begin: 0.02, end: 0.0), weight: 20),
-    ]).animate(CurvedAnimation(parent: _popCtrl, curve: Curves.easeInOut));
-  }
-
-  @override
-  void didUpdateWidget(_VehicleCard old) {
-    super.didUpdateWidget(old);
-    if (widget.selected && !old.selected) {
-      _popCtrl.forward(from: 0);
-    }
-  }
-
-  @override
-  void dispose() {
-    _popCtrl.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    // Car image is fixed at 480 px wide, anchored to the LEFT edge.
-    // Unselected card (210 px) → shows left ~44 % of the car (corner only).
-    // Selected card (500 px)   → shows the entire car + 20 px right margin.
-    const kCarW = 480.0;
-    const kCarLeft = 0.0; // car left edge flush with card left edge
-    const kSelPad = 20.0; // extra breathing room on the right when selected
-
+    const accent = LD.sph;
+    const kSelPad = 20.0;
     final baseW = widget.width ?? 210.0;
-    final targetW = widget.selected ? kCarW + kSelPad : baseW;
-
-    final accent = widget._accentColor;
+    final targetW = widget.selected ? widget.carWidth + kSelPad : baseW;
     final bgColor = widget.selected ? widget.cardBgSelected : widget.cardBg;
+    final sel = widget.selected;
 
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hover = true),
-      onExit: (_) => setState(() => _hover = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedBuilder(
-          animation: _popCtrl,
-          builder: (context, child) {
-            final perspective = Matrix4.identity()
-              ..setEntry(3, 2, 0.0008) // perspective depth
-              ..rotateY(_tiltAnim.value);
-            return Transform(
-              transform:
-                  perspective * (Matrix4.identity()..scale(_scaleAnim.value)),
-              alignment: Alignment.center,
-              child: child,
-            );
-          },
+    return Semantics(
+      button: true,
+      selected: sel,
+      label:
+          '${widget.vehicleClass.label}, Bs ${widget.price.toStringAsFixed(0)}',
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        child: GestureDetector(
+          onTap: widget.onTap,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 480),
             curve: Curves.easeInOutCubic,
             width: targetW,
+            transform: Matrix4.translationValues(0, _hover && !sel ? -4 : 0, 0),
             decoration: BoxDecoration(
               color: bgColor,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(6),
               border: Border.all(
-                color: widget.selected ? accent : const Color(0xFFE0DDD8),
-                width: widget.selected ? 1.8 : 1.0,
+                color: sel ? accent : LD.border,
+                width: sel ? 1.6 : 1.0,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: widget.selected
-                      ? accent.withAlpha(55)
-                      : Colors.black.withAlpha(18),
-                  blurRadius: widget.selected ? 32 : 12,
-                  spreadRadius: widget.selected ? 2 : 0,
-                  offset: const Offset(0, 8),
+                  color: LD.ink.withValues(alpha: sel ? 0.08 : 0.04),
+                  blurRadius: 2,
+                  offset: const Offset(0, 1),
+                ),
+                BoxShadow(
+                  color: (sel ? accent : LD.ink)
+                      .withValues(alpha: sel ? 0.18 : (_hover ? 0.10 : 0.05)),
+                  blurRadius: sel ? 30 : 18,
+                  spreadRadius: -8,
+                  offset: const Offset(0, 14),
                 ),
               ],
             ),
-            // Hover lift (only when not selected)
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut,
-              transform: Matrix4.translationValues(
-                  0, _hover && !widget.selected ? -5 : 0, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // ── Vehicle image — fills most of the card ───────────────
-                  // Car is anchored to the BOTTOM-RIGHT corner at a FIXED
-                  // 440 px width.  As the card expands from 210 → 310 px the
-                  // ClipRRect reveals an extra 100 px of the car's left side.
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius:
-                          const BorderRadius.vertical(top: Radius.circular(20)),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          // bg colour
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 600),
-                            color: bgColor,
-                          ),
-
-                          // radial spotlight — centred towards bottom-left
-                          Positioned.fill(
-                            child: IgnorePointer(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  gradient: RadialGradient(
-                                    center: const Alignment(-0.5, 0.5),
-                                    radius: 0.9,
-                                    colors: [
-                                      accent
-                                          .withAlpha(widget.selected ? 65 : 32),
-                                      Colors.transparent,
-                                    ],
-                                  ),
-                                ),
-                              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ── Vehicle artwork ────────────────────────────────────────
+                Expanded(
+                  child: ClipRRect(
+                    borderRadius:
+                        const BorderRadius.vertical(top: Radius.circular(6)),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        const DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.white, LD.bg2],
                             ),
                           ),
-
-                          // ── car — fixed 480 px, pinned to BOTTOM-LEFT ───────
-                          // Card clips the right side of the image.
-                          // Unselected (210 px): left 44 % visible = corner only.
-                          // Selected   (500 px): full car visible + 20 px margin.
-                          Positioned(
-                            bottom: -14,
-                            left: kCarLeft,
-                            child: SizedBox(
-                              width: kCarW,
-                              child: _CarImage(
-                                assetPath: widget._assetPath,
-                                fallbackUrl: widget._fallbackUrl,
-                              ),
+                        ),
+                        Positioned(
+                          bottom: -14,
+                          left: 0,
+                          child: SizedBox(
+                            width: widget.carWidth,
+                            height: widget.carWidth,
+                            child: VehicleImage(widget.vehicleClass),
+                          ),
+                        ),
+                        Positioned(
+                          top: 14,
+                          right: 14,
+                          child: AnimatedOpacity(
+                            duration: const Duration(milliseconds: 300),
+                            opacity: sel ? 1.0 : 0.0,
+                            child: Container(
+                              width: 24,
+                              height: 24,
+                              decoration: luxRaisedDecoration(radius: 12),
+                              child: const Icon(Icons.check,
+                                  size: 13, color: Colors.white),
                             ),
                           ),
-
-                          // bottom fade — blends car into info strip
-                          Positioned(
-                            bottom: 0,
-                            left: 0,
-                            right: 0,
-                            child: IgnorePointer(
-                              child: Container(
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.transparent,
-                                      bgColor,
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-
-                          // checkmark badge
-                          Positioned(
-                            top: 14,
-                            right: 14,
-                            child: AnimatedOpacity(
-                              duration: const Duration(milliseconds: 300),
-                              opacity: widget.selected ? 1.0 : 0.0,
-                              child: Container(
-                                width: 24,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  color: accent,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: accent.withAlpha(90),
-                                      blurRadius: 10,
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(Icons.check,
-                                    size: 13, color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
+                ),
 
-                  // ── Info strip — always at the very bottom ───────────────
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Name row + selected pill
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Text(
-                                widget.vehicleClass.label,
-                                style: const TextStyle(
-                                  fontFamily: kSerif,
-                                  fontSize: 21,
-                                  fontWeight: FontWeight.w400,
-                                  color: _kTextPrimary,
-                                  letterSpacing: 0.1,
-                                  height: 1.1,
-                                  decoration: TextDecoration.none,
-                                ),
-                              ),
-                            ),
-                            AnimatedOpacity(
-                              duration: const Duration(milliseconds: 300),
-                              opacity: widget.selected ? 1.0 : 0.0,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 7, vertical: 3),
-                                decoration: BoxDecoration(
-                                  color: accent.withAlpha(22),
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                      color: accent.withAlpha(60), width: 1),
-                                ),
-                                child: Text(
-                                  'SELECCIONADO',
-                                  style: TextStyle(
-                                    fontFamily: kSans,
-                                    fontSize: 7,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 1.6,
-                                    color: accent,
-                                    decoration: TextDecoration.none,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                // ── Info strip ──────────────────────────────────────────────
+                Container(
+                  padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                  decoration: const BoxDecoration(
+                    border: Border(top: BorderSide(color: LD.border)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        widget.vehicleClass.label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: kSerif,
+                          fontSize: 21,
+                          fontWeight: FontWeight.w500,
+                          color: _kTextPrimary,
+                          height: 1.1,
+                          decoration: TextDecoration.none,
                         ),
-                        const SizedBox(height: 2),
-                        // Description
-                        Text(
-                          widget.vehicleClass.description,
-                          style: const TextStyle(
-                            fontFamily: kSans,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w300,
-                            color: _kTextTertiary,
-                            letterSpacing: 0.2,
-                            decoration: TextDecoration.none,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        widget.vehicleClass.description,
+                        style: const TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          color: _kTextTertiary,
+                          decoration: TextDecoration.none,
                         ),
-                        const SizedBox(height: 10),
-                        // Price + capacity
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Flexible(
+                            child: Text(
                               'Bs ${widget.price.toStringAsFixed(0)}',
                               style: const TextStyle(
                                 fontFamily: kSerif,
                                 fontSize: 24,
-                                fontWeight: FontWeight.w300,
+                                fontWeight: FontWeight.w500,
                                 color: _kTextPrimary,
                                 height: 1,
                                 decoration: TextDecoration.none,
                               ),
                             ),
-                            const Spacer(),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 7, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFEEEBE4),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(Icons.people_outline,
-                                      size: 11, color: _kTextSub),
-                                  const SizedBox(width: 3),
-                                  Text(
-                                    '${widget.vehicleClass.capacity}',
-                                    style: const TextStyle(
-                                      fontFamily: kSans,
-                                      fontSize: 10,
-                                      color: _kTextSub,
-                                      decoration: TextDecoration.none,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                          ),
+                          // Narrow teaser cards keep just the price.
+                          if (sel || baseW >= 200) ...[
+                            const SizedBox(width: 8),
+                            _CapChip(Icons.person_outline_rounded,
+                                widget.vehicleClass.capacity),
+                            const SizedBox(width: 6),
+                            _CapChip(Icons.luggage_outlined,
+                                widget.vehicleClass.luggageCapacity),
                           ],
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -2401,57 +1658,30 @@ class _VehicleCardState extends State<_VehicleCard>
   }
 }
 
-/// Tries local asset first; falls back to a placeholder icon if not found.
-class _CarImage extends StatelessWidget {
-  const _CarImage({required this.assetPath, required this.fallbackUrl});
-  final String assetPath;
-  final String fallbackUrl;
-
+class _CapChip extends StatelessWidget {
+  const _CapChip(this.icon, this.value);
+  final IconData icon;
+  final int value;
   @override
-  Widget build(BuildContext context) => Image.asset(
-        assetPath,
-        fit: BoxFit.contain,
-        width: double.infinity,
-        errorBuilder: (_, __, ___) => const Center(
-          child: Icon(
-            Icons.directions_car_outlined,
-            size: 80,
-            color: Colors.black12,
-          ),
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        decoration: BoxDecoration(
+          color: LD.bg2,
+          borderRadius: BorderRadius.circular(3),
         ),
-      );
-}
-
-/// Capacity section image: tries local asset, falls back to network, then icon.
-class _CapacityImage extends StatelessWidget {
-  const _CapacityImage({
-    super.key,
-    required this.assetPath,
-    required this.fallbackUrl,
-    required this.fallbackIcon,
-  });
-  final String assetPath;
-  final String fallbackUrl;
-  final IconData fallbackIcon;
-
-  @override
-  Widget build(BuildContext context) => Image.asset(
-        assetPath,
-        width: double.infinity,
-        height: 290,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Image.network(
-          fallbackUrl,
-          width: double.infinity,
-          height: 290,
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => Container(
-            height: 290,
-            color: const Color(0xFFF0EDE8),
-            child: Center(
-              child: Icon(fallbackIcon, size: 60, color: _kTextTertiary),
-            ),
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 12, color: _kTextSub),
+            const SizedBox(width: 3),
+            Text('$value',
+                style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: _kTextSub,
+                    decoration: TextDecoration.none)),
+          ],
         ),
       );
 }
@@ -2554,34 +1784,10 @@ class _ReserveBar extends StatelessWidget {
           color: _kCardBg,
           border: Border(top: BorderSide(color: _kBorder)),
         ),
-        child: GestureDetector(
-          onTap: loading ? null : onReserve,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            width: double.infinity,
-            height: 52,
-            color:
-                loading ? _kPanelAccent.withValues(alpha: 0.6) : _kPanelAccent,
-            child: Center(
-              child: loading
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 1.5, color: Colors.white))
-                  : Text(
-                      'RESERVE ${selected.label.toUpperCase()}',
-                      style: const TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 2.0,
-                        color: Colors.white,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-            ),
-          ),
+        child: LuxRaisedButton(
+          label: 'Reservar ${selected.label}',
+          loading: loading,
+          onPressed: onReserve,
         ),
       );
 }
@@ -2599,7 +1805,8 @@ class _Btn extends StatelessWidget {
           width: 28,
           height: 28,
           decoration: BoxDecoration(
-            color: enabled ? const Color(0xFFEEEBE4) : const Color(0xFFF5F4F1),
+            color: enabled ? LD.bg2 : LD.bg,
+            border: Border.all(color: LD.border),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Icon(icon,
@@ -2630,7 +1837,7 @@ class _MobileVehicleDetail extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: const Color(0xFFF9F7F3),
+          color: LD.bg2,
           borderRadius: BorderRadius.zero,
           border: Border.all(color: _kDivider),
         ),
@@ -2643,7 +1850,8 @@ class _MobileVehicleDetail extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
-                color: const Color(0xFFEEEBE4),
+                color: Colors.white,
+                border: Border.all(color: LD.border),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text('Hasta ${vehicleClass.capacity} pax',
@@ -2709,40 +1917,51 @@ class _LightServiceTypeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final h = compact ? 38.0 : 42.0;
-    return Container(
-      height: h,
-      decoration: BoxDecoration(
-        color: const Color(0xFFEEEBE4),
-        borderRadius: BorderRadius.zero,
-      ),
-      child: Row(
-        mainAxisSize: compact ? MainAxisSize.min : MainAxisSize.max,
-        children: ServiceType.values.map((t) {
-          final active = selected == t;
-          return GestureDetector(
+    final h = compact ? 40.0 : 46.0;
+    Widget segment(ServiceType t) {
+      final active = selected == t;
+      return Semantics(
+        button: true,
+        selected: active,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
             onTap: () => onChanged(t),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 160),
               margin: const EdgeInsets.all(3),
-              padding: EdgeInsets.symmetric(horizontal: compact ? 14 : 0),
-              decoration: BoxDecoration(
-                color: active ? _kTextPrimary : Colors.transparent,
-                borderRadius: BorderRadius.zero,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: compact ? 16 : 0),
+              decoration: active
+                  ? luxRaisedDecoration(radius: 3)
+                  : const BoxDecoration(color: Colors.transparent),
               alignment: Alignment.center,
-              child: compact
-                  ? Text(t.label,
-                      style: TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: active ? Colors.white : _kTextSub,
-                      ))
-                  : null,
+              child: Text(t.label,
+                  style: TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.3,
+                    color: active ? Colors.white : _kTextSub,
+                  )),
             ),
-          );
-        }).toList(),
+          ),
+        ),
+      );
+    }
+
+    return Container(
+      height: h,
+      decoration: BoxDecoration(
+        color: LD.bg2,
+        border: Border.all(color: LD.border),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: Row(
+        mainAxisSize: compact ? MainAxisSize.min : MainAxisSize.max,
+        children: [
+          for (final t in ServiceType.values)
+            compact ? segment(t) : Expanded(child: segment(t)),
+        ],
       ),
     );
   }
@@ -3014,30 +2233,11 @@ class _LightPriceBar extends StatelessWidget {
               ]),
           const SizedBox(width: 16),
           Expanded(
-            child: SizedBox(
-              height: 48,
-              child: ElevatedButton(
-                onPressed: loading ? null : onConfirm,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _kTextPrimary,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
-                  textStyle: const TextStyle(
-                      fontFamily: kSans,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1.2),
-                ),
-                child: loading
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 1.5, color: Colors.white))
-                    : Text(label.toUpperCase()),
-              ),
+            child: LuxRaisedButton(
+              label: label,
+              height: 50,
+              loading: loading,
+              onPressed: onConfirm,
             ),
           ),
         ]),
@@ -3058,7 +2258,7 @@ class _LightStepIndicator extends StatelessWidget {
             return Expanded(
                 child: Container(
                     height: 1,
-                    color: i ~/ 2 < currentStep ? _kTextPrimary : _kBorder));
+                    color: i ~/ 2 < currentStep ? LD.sph : _kBorder));
           }
           final idx = i ~/ 2;
           final done = idx < currentStep;
@@ -3068,10 +2268,10 @@ class _LightStepIndicator extends StatelessWidget {
               width: 22,
               height: 22,
               decoration: BoxDecoration(
-                color: done ? _kTextPrimary : Colors.white,
+                color: done ? LD.sph : Colors.white,
                 shape: BoxShape.circle,
                 border: Border.all(
-                    color: done || active ? _kTextPrimary : _kBorder,
+                    color: done || active ? LD.sph : _kBorder,
                     width: active ? 1.5 : 1),
               ),
               child: Center(
@@ -3082,7 +2282,7 @@ class _LightStepIndicator extends StatelessWidget {
                               fontFamily: kSans,
                               fontSize: 9,
                               fontWeight: FontWeight.w600,
-                              color: active ? _kTextPrimary : _kTextTertiary))),
+                              color: active ? LD.sph : _kTextTertiary))),
             ),
             const SizedBox(height: 3),
             Text(steps[idx],
@@ -3573,7 +2773,7 @@ class _SummaryAddressRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 18, color: const Color(0xFF777777)),
+        Icon(icon, size: 18, color: LD.ink3),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -3585,7 +2785,7 @@ class _SummaryAddressRow extends StatelessWidget {
                   fontFamily: kSans,
                   fontSize: 10,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFFBBBBBB),
+                  color: LD.ink3,
                   letterSpacing: 1.0,
                 ),
               ),
@@ -3596,7 +2796,7 @@ class _SummaryAddressRow extends StatelessWidget {
                   fontFamily: kSans,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF111111),
+                  color: LD.ink,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

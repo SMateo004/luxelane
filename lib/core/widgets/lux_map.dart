@@ -209,7 +209,7 @@ class _LuxMapState extends State<LuxMap> {
   }
 
   Widget _placeholder() => Container(
-        color: const Color(0xFF111111),
+        color: const Color(0xFF0D1B2E),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

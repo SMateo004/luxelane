@@ -12,12 +12,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart'
         Marker,
         MarkerId;
 import 'package:video_player/video_player.dart';
+import '../../../../core/config/remote_flags.dart';
 import '../../../../core/design/lux_promise.dart';
+import '../../../../core/design/vehicle_catalog.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/place_model.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/place_autocomplete_field.dart';
 import '../../../../core/widgets/lux_site_chrome.dart';
+import '../../../booking/presentation/widgets/vehicle_visuals.dart';
 import 'home_design.dart';
 
 // ============================================================
@@ -1034,9 +1037,17 @@ class _BarCtaState extends State<_BarCta> {
               width: 180,
               height: double.infinity,
               decoration: BoxDecoration(
-                color: _hover ? LD.sphLt : LD.sph,
+                // Same soft relief as every Luxelane button.
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: _hover
+                      ? const [Color(0xFF3270B5), Color(0xFF1B4F8A)]
+                      : const [Color(0xFF2A62A3), Color(0xFF17457A)],
+                ),
                 border: Border(
                   left: BorderSide(color: Colors.white.withAlpha(40)),
+                  top: BorderSide(color: Colors.white.withAlpha(30)),
                 ),
               ),
               alignment: Alignment.center,
@@ -1634,32 +1645,24 @@ class _FleetSection extends StatelessWidget {
   final GlobalKey sectionKey;
   final VoidCallback onBook;
 
-  static final _vehicles = [
-    _FleetItem(
-        cls: 'Business Class',
-        model: 'Mercedes E-Class / o similar',
-        asset: 'assets/images/vehicles/business/car.png',
-        tags: ['4 Asientos', 'Interior de cuero', 'Wi-Fi'],
-        accent: const Color(0xFF1B4F8A)),
-    _FleetItem(
-        cls: 'First Class',
-        model: 'Mercedes S-Class / o similar',
-        asset: 'assets/images/vehicles/first_class/car.png',
-        tags: ['4 Asientos', 'Audio premium', 'Champán'],
-        accent: const Color(0xFFC9A96E)),
-    _FleetItem(
-        cls: 'Business Van',
-        model: 'Mercedes V-Class / o similar',
-        asset: 'assets/images/vehicles/van/car.png',
-        tags: ['7 Asientos', 'Equipaje extra', 'Wi-Fi'],
-        accent: const Color(0xFF2E6FBF)),
-    _FleetItem(
-        cls: 'Electric Class',
-        model: 'Tesla Model S / o similar',
-        asset: 'assets/images/vehicles/electric/car.png',
-        tags: ['4 Asientos', 'Cero emisiones', 'Premium'],
-        accent: const Color(0xFF3DA05E)),
-  ];
+  // Same classes clients can book — First Class only when the admin enables
+  // it. We describe what the client gets, never a make or model.
+  static List<_FleetItem> get _vehicles => [
+        for (final vc in VehicleCatalog.bookable(
+            firstClassEnabled: RemoteFlags.instance.firstClassEnabled.value))
+          _FleetItem(
+            vc: vc,
+            cls: vc.label,
+            model: vc.description,
+            asset: VehicleCatalog.carImage(vc),
+            tags: [
+              '${vc.capacity} pasajeros',
+              '${vc.luggageCapacity} maletas',
+              LuxPromise.fixedPrice,
+            ],
+            accent: LD.sph,
+          ),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -1724,12 +1727,14 @@ class _FleetSection extends StatelessWidget {
 @immutable
 class _FleetItem {
   const _FleetItem({
+    required this.vc,
     required this.cls,
     required this.model,
     required this.asset,
     required this.tags,
     required this.accent,
   });
+  final VehicleClass vc;
   final String cls;
   final String model;
   final String asset;
@@ -1791,13 +1796,7 @@ class _FleetCardState extends State<_FleetCard> {
                 height: 220,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Image.asset(widget.item.asset,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => Icon(
-                            Icons.directions_car_rounded,
-                            size: 80,
-                            color: Colors.white.withAlpha(16),
-                          )),
+                  child: VehicleImage(widget.item.vc),
                 ),
               ),
               // Bottom info bar
@@ -1921,7 +1920,7 @@ class _TestimonialsSectionState extends State<_TestimonialsSection> {
   Widget build(BuildContext context) {
     final r = _reviews[_current];
     return Container(
-      color: const Color(0xFFF7F5F0),
+      color: const Color(0xFFF2F5FB),
       padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 140),
       child: Column(children: [
         // Decorative large quote mark
@@ -2914,7 +2913,7 @@ class _BookRightPanel extends StatelessWidget {
     // Front cover: clean white page with centered logo
     if (data.headline.isEmpty) {
       return Container(
-        color: const Color(0xFFF7F5F0),
+        color: const Color(0xFFF2F5FB),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -2958,7 +2957,7 @@ class _BookRightPanel extends StatelessWidget {
       );
     }
     return Container(
-      color: const Color(0xFFF7F5F0),
+      color: const Color(0xFFF2F5FB),
       child: Stack(children: [
         // Ghost number
         Positioned(

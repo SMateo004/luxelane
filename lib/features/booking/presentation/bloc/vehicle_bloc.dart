@@ -101,6 +101,7 @@ class VehicleBloc extends Bloc<VehicleEvent, VehicleState> {
     VehicleClass.business: 75,
     VehicleClass.firstClass: 140,
     VehicleClass.businessVan: 90,
+    VehicleClass.businessSuv: 85,
     VehicleClass.electric: 60,
   };
 

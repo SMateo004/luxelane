@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/config/remote_flags.dart';
 import '../../../../core/design/lux_promise.dart';
+import '../../../../core/design/vehicle_catalog.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/lux_service_booking_card.dart';
 import '../../../../core/widgets/lux_site_chrome.dart';
+import '../../../booking/presentation/widgets/vehicle_visuals.dart';
 import '../../../home/presentation/pages/home_design.dart';
 
 // ============================================================
@@ -588,11 +591,11 @@ class _ClassesSection extends StatelessWidget {
   final ServiceType service;
   final VoidCallback onChoose;
 
-  static const _classes = [
-    (VehicleClass.business, 'assets/images/vehicles/business/car.png'),
-    (VehicleClass.firstClass, 'assets/images/vehicles/first_class/car.png'),
-    (VehicleClass.businessVan, 'assets/images/vehicles/van/car.png'),
-  ];
+  static List<(VehicleClass, String)> get _classes => [
+        for (final vc in VehicleCatalog.bookable(
+            firstClassEnabled: RemoteFlags.instance.firstClassEnabled.value))
+          (vc, VehicleCatalog.carImage(vc)),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -608,7 +611,7 @@ class _ClassesSection extends StatelessWidget {
             image: _classes[i].$2,
             from: DefaultPricing.rules[_classes[i].$1]![service]!['min']!,
             perHour: service == ServiceType.byTheHour,
-            featured: _classes[i].$1 == VehicleClass.firstClass,
+            featured: _classes[i].$1 == VehicleClass.business,
             onChoose: onChoose,
           ),
         ),
@@ -728,12 +731,7 @@ class _ClassCardState extends State<_ClassCard> {
                 SizedBox(
                   height: 120,
                   child: Center(
-                    child: Image.asset(widget.image,
-                        fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => const Icon(
-                            Icons.directions_car_outlined,
-                            size: 56,
-                            color: LD.border)),
+                    child: VehicleImage(widget.vc),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -939,9 +937,6 @@ class _ClosingSection extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: onBook,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: LD.ink,
-                    shape: const RoundedRectangleBorder(),
                     padding: const EdgeInsets.symmetric(horizontal: 40),
                     minimumSize: const Size(0, 56),
                   ),

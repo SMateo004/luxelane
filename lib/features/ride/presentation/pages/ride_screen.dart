@@ -179,7 +179,7 @@ class _RideScreenState extends State<RideScreen> {
         break;
       case BookingStatus.completed:
         title = 'Viaje completado';
-        body = '¡Has llegado. Gracias por viajar con Luxelane!';
+        body = 'Has llegado. Gracias por viajar con Luxelane.';
         type = 'ride_completed';
         break;
       default:

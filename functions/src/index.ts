@@ -63,6 +63,18 @@ function requireAuth(req: CallableRequest): string {
   return req.auth.uid;
 }
 
+const VEHICLE_CLASS_LABELS: Record<string, string> = {
+  business: 'Business Class',
+  businessSuv: 'Business SUV',
+  businessVan: 'Business Van',
+  firstClass: 'First Class',
+  electric: 'Eléctrico',
+};
+
+function vehicleClassLabel(vehicleClass: string | undefined): string {
+  return (vehicleClass && VEHICLE_CLASS_LABELS[vehicleClass]) || 'Luxelane';
+}
+
 async function sendPush(tokens: string[], title: string, body: string): Promise<void> {
   if (!tokens.length) return;
   await admin.messaging().sendEachForMulticast({ tokens, notification: { title, body } });
@@ -276,7 +288,11 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
     tokens.push(...driverTokens);
   }
 
-  await sendPush(tokens, 'New Ride Available', `${booking.vehicleClass} · $${booking.estimatedPrice}`);
+  await sendPush(
+    tokens,
+    'Nuevo viaje disponible',
+    `${vehicleClassLabel(booking.vehicleClass)} · Bs ${Math.round(booking.estimatedPrice)}`,
+  );
 });
 
 // ---------------------------------------------------------------------------
@@ -296,12 +312,12 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
   });
 
   const statusMessages: Partial<Record<BookingStatus, string>> = {
-    confirmed: 'Your driver has been assigned',
-    driver_arriving: 'Your driver is on the way',
-    driver_arrived: 'Your driver has arrived',
-    in_progress: 'Your ride has started',
-    completed: 'You have arrived. Have a great day!',
-    cancelled: 'Your booking has been cancelled',
+    confirmed: 'Tu chófer ha sido asignado.',
+    driver_arriving: 'Tu chófer está en camino.',
+    driver_arrived: 'Tu chófer te espera en el punto de recogida.',
+    in_progress: 'Tu trayecto ha comenzado.',
+    completed: 'Has llegado. Gracias por viajar con Luxelane.',
+    cancelled: 'Tu reserva ha sido cancelada.',
   };
 
   const message = statusMessages[after.status];
@@ -387,7 +403,7 @@ export const assignNearestDriver = onCall(async (req) => {
   await db.collection('driverProfiles').doc(driverId).update({ isAvailable: false });
 
   const driverTokens = await getUserTokens(driverId);
-  await sendPush(driverTokens, 'New Booking', 'You have been assigned a new ride');
+  await sendPush(driverTokens, 'Nueva reserva', 'Se te ha asignado un nuevo viaje.');
 
   logger.info('assignNearestDriver', 'assigned', { bookingId, driverId });
   return { assigned: true, driverId };
@@ -435,7 +451,7 @@ export const acceptBooking = onCall(async (req) => {
     // Notify rider their driver is confirmed
     if (riderId) {
       const tokens = await getUserTokens(riderId);
-      await sendPush(tokens, 'Driver Assigned', 'Your driver is on the way!');
+      await sendPush(tokens, 'Chófer asignado', 'Tu chófer está en camino.');
     }
 
     logger.info('acceptBooking', 'success', { bookingId, driverId });
@@ -494,7 +510,7 @@ export const sendRideReceipt = onDocumentUpdated('payments/{paymentId}', async (
   const tokens = await getUserTokens(after.riderId);
   await sendPush(
     tokens,
-    'Payment Confirmed',
-    `Your ride has been charged $${(after.amount / 100).toFixed(2)}`,
+    'Pago confirmado',
+    `Se cobraron Bs ${(after.amount / 100).toFixed(2)} por tu trayecto.`,
   );
 });

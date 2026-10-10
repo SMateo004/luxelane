@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'lux_raised.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -366,7 +367,8 @@ class _LuxNavCtaState extends State<LuxNavCta> {
             duration: const Duration(milliseconds: 200),
             padding: EdgeInsets.symmetric(
                 horizontal: widget.compact ? 16 : 22, vertical: 11),
-            color: _hover ? LD.sphLt : LD.sph,
+            transform: Matrix4.translationValues(0, _hover ? -1 : 0, 0),
+            decoration: luxRaisedDecoration(radius: 3),
             child: Text(
               widget.compact ? 'RESERVAR' : 'RESERVAR UN VIAJE',
               style: const TextStyle(

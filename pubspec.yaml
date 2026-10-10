@@ -77,6 +77,7 @@ flutter:
     - assets/images/vehicles/first_class/
     - assets/images/vehicles/van/
     - assets/images/vehicles/electric/
+    - assets/images/vehicles/business_suv/
     - assets/images/booking/luggage/
     - assets/images/booking/seating/
     - assets/images/services/recogida/

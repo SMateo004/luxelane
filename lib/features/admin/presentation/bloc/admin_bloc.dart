@@ -111,6 +111,7 @@ class AdminState extends Equatable {
   bool get pushNotificationsEnabled =>
       globalSettings['pushNotificationsEnabled'] ?? true;
   bool get twoFactorEnabled => globalSettings['twoFactorEnabled'] ?? false;
+  bool get firstClassEnabled => globalSettings['firstClassEnabled'] ?? false;
 
   /// Cross-reference: get a user's display name by their ID
   String userName(String userId) {

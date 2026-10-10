@@ -32,7 +32,7 @@ class SectionChip extends StatelessWidget {
           child: Text(
             label,
             style: LuxTypography.bodyMedium.copyWith(
-              color: selected ? LuxColors.black : LuxColors.white,
+              color: LuxColors.white,
               fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             ),
           ),

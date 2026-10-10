@@ -288,13 +288,6 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
               height: 54,
               child: ElevatedButton(
                 onPressed: _submitting ? null : _submit,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: LD.sph,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: LD.sph.withAlpha(140),
-                  shape: const RoundedRectangleBorder(),
-                  elevation: 0,
-                ),
                 child: _submitting
                     ? const SizedBox(
                         width: 18,

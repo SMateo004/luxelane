@@ -365,7 +365,7 @@ class _FilterChip extends StatelessWidget {
           ),
           child: Text(label,
               style: LuxTypography.caption.copyWith(
-                  color: selected ? Colors.black : LuxColors.whiteTertiary,
+                  color: selected ? Colors.white : LuxColors.whiteTertiary,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.normal)),
         ),
       );
@@ -1344,6 +1344,23 @@ class SettingsTab extends StatelessWidget {
                           ),
                     ),
                   ],
+                ),
+              ),
+              const SizedBox(height: LuxSpacing.xl),
+              const SectionHeader(title: 'Clases de vehículo'),
+              const SizedBox(height: LuxSpacing.md),
+              LuxCard(
+                child: _SettingTile(
+                  icon: Icons.workspace_premium_outlined,
+                  title: 'First Class disponible',
+                  subtitle: state.firstClassEnabled
+                      ? 'Visible para los clientes en la web y la app.'
+                      : 'Oculta: los clientes no ven ni pueden reservar First Class.',
+                  value: state.firstClassEnabled,
+                  onChanged: (val) => context.read<AdminBloc>().add(
+                        AdminUpdateGlobalSettingsRequested(
+                            {'firstClassEnabled': val}),
+                      ),
                 ),
               ),
               const SizedBox(height: LuxSpacing.xl),

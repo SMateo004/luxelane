@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../core/widgets/lux_raised.dart';
+
 // ---------------------------------------------------------------------------
 // Tokens
 // ---------------------------------------------------------------------------
@@ -11,8 +13,7 @@ abstract class LuxColors {
   static const blackSurface = Color(0xFF0A1220);
   static const blackElevated = Color(0xFF0D1928);
   static const blackBorder = Color(0xFF1A2B40);
-  // Accent
-  static const gold = Color(0xFFC9A84C);
+  // Accent — sapphire is the only accent (no gold in the brand palette).
   static const sapphire = Color(0xFF1B4F8A);
   static const sapphireLight = Color(0xFF2563B0);
   static const sapphireDark = Color(0xFF153D6B);
@@ -26,14 +27,14 @@ abstract class LuxColors {
   static const whiteSecondary = Color(0xFF9A9A9A);
   static const whiteTertiary = Color(0xFF6E7A8A);
   // Light sections (web landing)
-  static const cream = Color(0xFFF3F1ED);
-  static const creamBorder = Color(0xFFE0DDD6);
-  static const darkText = Color(0xFF0D0D0D);
-  static const midGray = Color(0xFF6B6B6B);
+  static const cream = Color(0xFFF2F5FB);
+  static const creamBorder = Color(0xFFDDE4F0);
+  static const darkText = Color(0xFF0D1B2E);
+  static const midGray = Color(0xFF637490);
   // Semantic
   static const error = Color(0xFFCF4B4B);
   static const success = Color(0xFF4B9B6F);
-  static const warning = Color(0xFFC9984C);
+  static const warning = Color(0xFFD08A3A);
 }
 
 abstract class LuxSpacing {
@@ -220,16 +221,29 @@ ThemeData get luxTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: LuxColors.sapphire,
+        // Painted by backgroundBuilder: the shared, subtle Luxelane relief.
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         foregroundColor: LuxColors.white,
-        disabledBackgroundColor: LuxColors.blackBorder,
-        disabledForegroundColor: LuxColors.whiteSecondary,
+        disabledBackgroundColor: Colors.transparent,
+        disabledForegroundColor: LuxColors.white.withValues(alpha: 0.7),
         minimumSize: const Size(double.infinity, 52),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(LuxRadius.sm)),
         textStyle: LuxTypography.labelLarge
             .copyWith(color: LuxColors.white, letterSpacing: 1.6),
         elevation: 0,
+      ).copyWith(
+        backgroundBuilder: (context, states, child) => AnimatedContainer(
+          duration: const Duration(milliseconds: 140),
+          decoration: luxRaisedDecoration(
+            pressed: states.contains(WidgetState.pressed),
+            enabled: !states.contains(WidgetState.disabled),
+            radius: LuxRadius.sm,
+          ),
+          child: child,
+        ),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
