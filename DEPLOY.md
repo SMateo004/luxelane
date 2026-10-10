@@ -28,10 +28,56 @@
 4. Set Firebase Auth custom claims via Admin SDK after first user creation
 
 5. Enable in Firebase Console (both projects):
-   - Authentication → Email/Password + Phone
+   - Authentication → Email/Password + Phone + **Google** (see below)
    - Firestore → create database (production mode)
    - Cloud Functions → enable billing (Blaze plan required)
    - Cloud Messaging → enabled by default
+
+---
+
+## Inicio de sesión con Google
+
+El botón "Continuar con Google" está en login, registro y en el diálogo de
+acceso al confirmar una reserva. En web usa el popup de Firebase; en
+Android/iOS, el selector nativo de cuentas (`google_sign_in`). La primera vez
+crea el perfil en `users/{uid}` con rol `rider`.
+
+### 1. Firebase Console (proyecto `luxelane-4e7ae`)
+1. Authentication → Sign-in method → **Google** → Habilitar → correo de soporte → Guardar.
+2. Authentication → Settings → **Authorized domains**: añadir los dominios de
+   Hosting (`luxelane-4e7ae.web.app`, `luxelane-4e7ae.firebaseapp.com`, el del
+   sitio del chófer y cualquier dominio propio). `localhost` ya viene incluido.
+
+Con eso **la web ya funciona**; no requiere más configuración.
+
+### 2. Android (rider y chófer usan el mismo `applicationId`)
+1. Project settings → Your apps → **Add app → Android**, package
+   `com.example.luxelane` (o el definitivo, ver nota).
+2. Añadir las huellas **SHA-1 y SHA-256** de cada firma que usarás:
+   - debug: `cd android && ./gradlew signingReport`
+   - release/Play: Play Console → Integridad de la app → certificado de firma.
+3. Copiar el **App ID** (`1:51157842817:android:...`).
+4. Google Cloud Console → APIs & Services → Credentials → copiar el
+   **Client ID** de "Web client (auto created by Google Service)".
+5. GitHub → Settings → Secrets → Actions:
+   ```
+   FIREBASE_ANDROID_APP_ID   → App ID del paso 3
+   GOOGLE_SERVER_CLIENT_ID   → Client ID web del paso 4
+   ```
+   En local:
+   ```
+   flutter run --dart-define=FIREBASE_ANDROID_APP_ID=... \
+               --dart-define=GOOGLE_SERVER_CLIENT_ID=...
+   ```
+
+> Nota: `com.example.luxelane` no se puede publicar en Google Play. Si se
+> cambia el `applicationId`, hay que registrar la app Android con el nuevo
+> paquete y volver a subir las huellas.
+
+### 3. iOS (cuando exista la carpeta `ios/`)
+Registrar la app iOS en Firebase y pasar `FIREBASE_IOS_APP_ID` y
+`GOOGLE_IOS_CLIENT_ID`; añadir el `REVERSED_CLIENT_ID` como URL scheme en
+`Info.plist`.
 
 ---
 
@@ -72,6 +118,8 @@ flutter run --dart-define=ENV=dev --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
 ```
 FIREBASE_TOKEN          → firebase login:ci
 GOOGLE_MAPS_API_KEY     → Google Cloud Console
+FIREBASE_ANDROID_APP_ID → Firebase → Project settings → app Android
+GOOGLE_SERVER_CLIENT_ID → OAuth "Web client" del proyecto (Google Sign-In en Android)
 STRIPE_SECRET_KEY       → Stripe Dashboard
 ```
 

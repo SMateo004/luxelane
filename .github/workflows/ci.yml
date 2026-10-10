@@ -137,6 +137,8 @@ jobs:
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
+            --dart-define=FIREBASE_ANDROID_APP_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }} \
+            --dart-define=GOOGLE_SERVER_CLIENT_ID=${{ secrets.GOOGLE_SERVER_CLIENT_ID }} \
             --obfuscate \
             --split-debug-info=build/debug-info
       - uses: actions/upload-artifact@v4
@@ -168,6 +170,8 @@ jobs:
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
+            --dart-define=FIREBASE_ANDROID_APP_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }} \
+            --dart-define=GOOGLE_SERVER_CLIENT_ID=${{ secrets.GOOGLE_SERVER_CLIENT_ID }} \
             --obfuscate \
             --split-debug-info=build/debug-info-driver
       - uses: actions/upload-artifact@v4

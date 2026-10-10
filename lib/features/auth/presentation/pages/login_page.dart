@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
+import '../widgets/google_sign_in_button.dart';
 
 // ── Design tokens (aligned with home_web_page / LD) ─────────────────────────
 const _bg = LuxColors.bg;
@@ -55,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message,
-                  style: const TextStyle(fontFamily: _kSans)),
+                  style: const TextStyle(fontFamily: _kSans, color: _onSph)),
               backgroundColor: LuxColors.error,
             ),
           );
@@ -177,6 +178,10 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const GoogleSignInButton(),
+                const SizedBox(height: 24),
+                const AuthOrDivider(),
+                const SizedBox(height: 24),
                 _AuthField(
                   label: 'Correo electrónico',
                   controller: _email,

@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -12,6 +11,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/widgets/google_sign_in_button.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../../payments/presentation/bloc/payment_bloc.dart';
 import '../bloc/booking_bloc.dart';
@@ -128,21 +128,18 @@ class _BookingScreenState extends State<BookingScreen> {
   Future<void> _confirm() async {
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) {
-      if (kIsWeb) {
-        final ok = await showDialog<bool>(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => BlocProvider.value(
-            value: context.read<AuthBloc>(),
-            child: const _WebAuthGateDialog(),
-          ),
-        );
-        if (ok != true || !mounted) return;
-        final freshAuth = context.read<AuthBloc>().state;
-        if (freshAuth is! AuthAuthenticated) return;
-      } else {
-        return;
-      }
+      // Guests sign in (Google or email) without leaving their booking.
+      final ok = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => BlocProvider.value(
+          value: context.read<AuthBloc>(),
+          child: const _AuthGateDialog(),
+        ),
+      );
+      if (ok != true || !mounted) return;
+      final freshAuth = context.read<AuthBloc>().state;
+      if (freshAuth is! AuthAuthenticated) return;
     }
     final freshState = context.read<AuthBloc>().state;
     if (freshState is! AuthAuthenticated) return;
@@ -3097,15 +3094,15 @@ class _LightStepIndicator extends StatelessWidget {
       );
 }
 
-// ── WEB AUTH GATE DIALOG ──────────────────────────────────────────────────────
+// ── AUTH GATE DIALOG ──────────────────────────────────────────────────────
 
-class _WebAuthGateDialog extends StatefulWidget {
-  const _WebAuthGateDialog();
+class _AuthGateDialog extends StatefulWidget {
+  const _AuthGateDialog();
   @override
-  State<_WebAuthGateDialog> createState() => _WebAuthGateDialogState();
+  State<_AuthGateDialog> createState() => _AuthGateDialogState();
 }
 
-class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
+class _AuthGateDialogState extends State<_AuthGateDialog> {
   bool _showRegister = false;
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
@@ -3149,20 +3146,23 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
           if (state is AuthError) {
             setState(() => _loading = false);
             ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-                content: Text(state.message),
+                content: Text(state.message,
+                    style: const TextStyle(color: LuxColors.onAccent)),
                 backgroundColor: LuxColors.error));
           }
         },
         child: Dialog(
           backgroundColor: LuxColors.surface,
+          insetPadding: const EdgeInsets.all(LuxSpacing.md),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(LuxRadius.lg),
             side: const BorderSide(color: LuxColors.border),
           ),
           child: SizedBox(
             width: 420,
-            child: Padding(
-              padding: const EdgeInsets.all(LuxSpacing.xxl),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(
+                  isWeb(context) ? LuxSpacing.xxl : LuxSpacing.lg),
               child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -3187,6 +3187,10 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
                             : 'Inicia sesión para confirmar tu reserva.',
                         style: LuxTypography.bodyMedium),
                     const SizedBox(height: LuxSpacing.xl),
+                    const GoogleSignInButton(),
+                    const SizedBox(height: LuxSpacing.lg),
+                    const AuthOrDivider(),
+                    const SizedBox(height: LuxSpacing.lg),
                     if (_showRegister) ...[
                       LuxTextField(
                           label: 'Nombre completo',

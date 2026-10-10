@@ -71,6 +71,48 @@ void main() {
     );
 
     blocTest<AuthBloc, AuthState>(
+      'emits [AuthLoading, AuthAuthenticated] on GoogleSignInRequested success',
+      build: () {
+        when(() => repo.signInWithGoogle())
+            .thenAnswer((_) async => Right(_mockUser));
+        return AuthBloc(authRepository: repo);
+      },
+      act: (bloc) => bloc.add(const GoogleSignInRequested()),
+      expect: () => [
+        const AuthLoading(),
+        AuthAuthenticated(_mockUser),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'returns to AuthUnauthenticated without error when Google is cancelled',
+      build: () {
+        when(() => repo.signInWithGoogle())
+            .thenAnswer((_) async => const Left(AuthCancelledFailure()));
+        return AuthBloc(authRepository: repo);
+      },
+      act: (bloc) => bloc.add(const GoogleSignInRequested()),
+      expect: () => [
+        const AuthLoading(),
+        const AuthUnauthenticated(),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'emits [AuthLoading, AuthError] on GoogleSignInRequested failure',
+      build: () {
+        when(() => repo.signInWithGoogle()).thenAnswer(
+            (_) async => const Left(AuthFailure('Google no disponible')));
+        return AuthBloc(authRepository: repo);
+      },
+      act: (bloc) => bloc.add(const GoogleSignInRequested()),
+      expect: () => [
+        const AuthLoading(),
+        const AuthError('Google no disponible'),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
       'emits [AuthUnauthenticated] on LogoutRequested',
       build: () {
         when(() => repo.logout()).thenAnswer((_) async => const Right(null));

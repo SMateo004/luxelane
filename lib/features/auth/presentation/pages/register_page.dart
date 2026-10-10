@@ -5,6 +5,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
+import '../widgets/google_sign_in_button.dart';
 import 'login_page.dart' show AuthBrandPanel;
 
 class RegisterPage extends StatefulWidget {
@@ -50,7 +51,8 @@ class _RegisterPageState extends State<RegisterPage> {
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(state.message,
+                  style: const TextStyle(color: LuxColors.onAccent)),
               backgroundColor: LuxColors.error,
             ),
           );
@@ -143,6 +145,10 @@ class _RegisterPageState extends State<RegisterPage> {
             key: _form,
             child: Column(
               children: [
+                const GoogleSignInButton(label: 'Registrarte con Google'),
+                const SizedBox(height: LuxSpacing.lg),
+                const AuthOrDivider(),
+                const SizedBox(height: LuxSpacing.lg),
                 LuxTextField(
                   label: 'Nombre completo',
                   controller: _name,
