@@ -236,7 +236,7 @@ jobs:
         env:
           # Service-account JSON (or base64 of it); replaces deprecated CI tokens.
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-          PROJECT_ID: luxelane-prod
+          PROJECT_ID: luxelane-4e7ae  # matches .firebaserc / firebase_options.dart
 
   # ---------------------------------------------------------------------------
   deploy_hosting:
@@ -247,23 +247,18 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+
+      # Reuse the web builds from this run (already built with the prod
+      # secrets) and place them where firebase.json's hosting targets expect:
+      # rider -> hosting/public, driver -> hosting/driver.
+      - uses: actions/download-artifact@v4
         with:
-          flutter-version: ${{ env.FLUTTER_VERSION }}
-          cache: true
-      - run: flutter pub get
-
-      - name: Build rider web for hosting
-        run: |
-          flutter build web --release \
-            --dart-define=ENV=prod \
-            --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
-            --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }}
-
-      - name: Copy web build to hosting/public
-        run: |
-          mkdir -p hosting/public
-          cp -r build/web/. hosting/public/
+          name: web-rider
+          path: hosting/public
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-driver
+          path: hosting/driver
 
       - uses: w9jds/firebase-action@master
         with:
@@ -271,4 +266,4 @@ jobs:
         env:
           # Service-account JSON (or base64 of it); replaces deprecated CI tokens.
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-          PROJECT_ID: luxelane-prod
+          PROJECT_ID: luxelane-4e7ae  # matches .firebaserc / firebase_options.dart
