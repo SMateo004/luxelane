@@ -5,7 +5,10 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../domain/admin_finance.dart';
 import '../bloc/admin_bloc.dart';
+import '../widgets/admin_finance_tab.dart';
+import '../widgets/admin_pricing_tab.dart';
 import '../widgets/admin_sections.dart';
 import '../widgets/admin_shared_widgets.dart';
 
@@ -17,37 +20,65 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
-  int _section = 0;
+  AdminSection _section = AdminSection.dashboard;
 
-  static const _sections = [
-    'Panel',
-    'Reservas',
-    'Chóferes',
-    'Vehículos',
-    'Usuarios',
-    'Precios',
-    'Auditoría',
-    'Configuración'
-  ];
-  static const _icons = [
-    Icons.dashboard_outlined,
-    Icons.confirmation_number_outlined,
-    Icons.directions_car_outlined,
-    Icons.car_crash_outlined,
-    Icons.people_outline,
-    Icons.attach_money_rounded,
-    Icons.history_rounded,
-    Icons.settings_outlined,
-  ];
+  static const _labels = {
+    AdminSection.dashboard: 'Panel',
+    AdminSection.operations: 'Operaciones',
+    AdminSection.finance: 'Finanzas',
+    AdminSection.pricing: 'Tarifas',
+    AdminSection.drivers: 'Chóferes',
+    AdminSection.vehicles: 'Vehículos',
+    AdminSection.users: 'Usuarios',
+    AdminSection.audit: 'Auditoría',
+    AdminSection.settings: 'Configuración',
+  };
+  static const _icons = {
+    AdminSection.dashboard: Icons.dashboard_outlined,
+    AdminSection.operations: Icons.confirmation_number_outlined,
+    AdminSection.finance: Icons.account_balance_outlined,
+    AdminSection.pricing: Icons.sell_outlined,
+    AdminSection.drivers: Icons.badge_outlined,
+    AdminSection.vehicles: Icons.directions_car_outlined,
+    AdminSection.users: Icons.people_outline,
+    AdminSection.audit: Icons.history_rounded,
+    AdminSection.settings: Icons.settings_outlined,
+  };
+
+  void _go(AdminSection s) => setState(() => _section = s);
+
+  /// Elementos que requieren acción en cada sección.
+  int? _badge(AdminSection s, AdminState state) => switch (s) {
+        AdminSection.operations => state.pendingRidesCount,
+        AdminSection.finance =>
+          state.finance(FinancePeriod.all).receivablesCount,
+        AdminSection.drivers =>
+          state.drivers.where((d) => !d.documentsVerified).length,
+        _ => null,
+      };
 
   @override
   Widget build(BuildContext context) {
     final web = isWeb(context);
     return BlocProvider(
       create: (context) => sl<AdminBloc>()..add(AdminDataRequested()),
-      child: Scaffold(
-        backgroundColor: LuxColors.black,
-        body: web ? _webLayout() : _mobileLayout(),
+      child: BlocListener<AdminBloc, AdminState>(
+        // Un único punto de avisos para todas las secciones.
+        listenWhen: (a, b) =>
+            (b.successMessage != null &&
+                a.successMessage != b.successMessage) ||
+            (b.error != null && a.error != b.error),
+        listener: (context, state) {
+          if (state.error != null) {
+            showLuxSnackbar(context, state.error!, isError: true);
+          } else if (state.successMessage != null) {
+            showLuxSnackbar(context, state.successMessage!);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: LuxColors.black,
+          body: web ? _webLayout() : _mobileLayout(),
+        ),
       ),
     );
   }
@@ -89,39 +120,35 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
             onPressed: () => context.go('/'),
           ),
-          title: const Text('Administrador'),
+          title: Text(_labels[_section]!),
           actions: [
-            Container(
-              margin: const EdgeInsets.only(right: LuxSpacing.md),
-              padding: const EdgeInsets.symmetric(
-                  horizontal: LuxSpacing.sm, vertical: 2),
-              decoration: BoxDecoration(
-                color: LuxColors.sapphireSubtle,
-                borderRadius: BorderRadius.circular(LuxRadius.sm),
-                border: Border.all(color: LuxColors.sapphire.withOpacity(0.4)),
-              ),
-              child: Text('ADMIN',
-                  style: LuxTypography.caption.copyWith(
-                      color: LuxColors.sapphire, fontWeight: FontWeight.w700)),
+            IconButton(
+              tooltip: 'Cerrar sesión',
+              icon: const Icon(Icons.logout_rounded, size: 20),
+              onPressed: () => _confirmSignOut(context),
             ),
           ],
         ),
         body: Column(
           children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.all(LuxSpacing.md),
-              child: Row(
-                children: List.generate(
-                  _sections.length,
-                  (i) => Padding(
-                    padding: const EdgeInsets.only(right: LuxSpacing.sm),
-                    child: SectionChip(
-                      label: _sections[i],
-                      selected: _section == i,
-                      onTap: () => setState(() => _section = i),
-                    ),
-                  ),
+            BlocBuilder<AdminBloc, AdminState>(
+              builder: (context, state) => SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.all(LuxSpacing.md),
+                child: Row(
+                  children: [
+                    for (final s in AdminSection.values)
+                      Padding(
+                        padding: const EdgeInsets.only(right: LuxSpacing.sm),
+                        child: SectionChip(
+                          label: (_badge(s, state) ?? 0) > 0
+                              ? '${_labels[s]} · ${_badge(s, state)}'
+                              : _labels[s]!,
+                          selected: _section == s,
+                          onTap: () => _go(s),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
@@ -132,7 +159,6 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   Widget _webLayout() => Row(
         children: [
-          // Admin sidebar
           SizedBox(
             width: 240,
             child: Container(
@@ -157,7 +183,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                           child: Text(
                             'PANEL ADMIN',
                             style: LuxTypography.caption.copyWith(
-                                color: LuxColors.sapphire,
+                                color: LuxColors.sapphireBright,
                                 fontWeight: FontWeight.w700),
                           ),
                         ),
@@ -166,16 +192,22 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                   ),
                   const LuxDivider(),
                   const SizedBox(height: LuxSpacing.sm),
-                  ...List.generate(
-                    _sections.length,
-                    (i) => AdminNavItem(
-                      icon: _icons[i],
-                      label: _sections[i],
-                      selected: _section == i,
-                      onTap: () => setState(() => _section = i),
+                  Expanded(
+                    child: BlocBuilder<AdminBloc, AdminState>(
+                      builder: (context, state) => ListView(
+                        children: [
+                          for (final s in AdminSection.values)
+                            AdminNavItem(
+                              icon: _icons[s]!,
+                              label: _labels[s]!,
+                              badge: _badge(s, state),
+                              selected: _section == s,
+                              onTap: () => _go(s),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
-                  const Spacer(),
                   const LuxDivider(),
                   AdminNavItem(
                     icon: Icons.logout_rounded,
@@ -189,31 +221,19 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             ),
           ),
           const LuxDivider(vertical: true),
-          // Main content
           Expanded(child: _sectionBody()),
         ],
       );
 
-  Widget _sectionBody() {
-    switch (_section) {
-      case 0:
-        return const DashboardTab();
-      case 1:
-        return const BookingsTab();
-      case 2:
-        return const DriversTab();
-      case 3:
-        return const VehiclesTab();
-      case 4:
-        return const UsersTab();
-      case 5:
-        return const PricingTab();
-      case 6:
-        return const AuditTab();
-      case 7:
-        return const SettingsTab();
-      default:
-        return const SizedBox();
-    }
-  }
+  Widget _sectionBody() => switch (_section) {
+        AdminSection.dashboard => DashboardTab(onNavigate: _go),
+        AdminSection.operations => const BookingsTab(),
+        AdminSection.finance => const FinanceTab(),
+        AdminSection.pricing => const PricingTab(),
+        AdminSection.drivers => const DriversTab(),
+        AdminSection.vehicles => const VehiclesTab(),
+        AdminSection.users => const UsersTab(),
+        AdminSection.audit => const AuditTab(),
+        AdminSection.settings => const SettingsTab(),
+      };
 }

@@ -12,6 +12,7 @@ import 'core/config/remote_flags.dart';
 import 'core/di/injection.dart';
 import 'core/services/crash_service.dart';
 import 'core/services/performance_service.dart';
+import 'core/services/pricing_catalog.dart';
 import 'core/utils/maps_web_loader.dart'
     if (dart.library.io) 'core/utils/maps_web_loader_stub.dart';
 import 'firebase_options.dart';
@@ -67,6 +68,11 @@ void main() async {
   await CrashService.init();
   await PerformanceService.init();
   await configureDependencies();
+
+  // Tarifas y estado operativo en vivo (los configura el panel admin).
+  if (Firebase.apps.isNotEmpty) {
+    PricingCatalog.instance.start(FirebaseFirestore.instance);
+  }
 
   // FCM background handler — not supported on web
   if (!kIsWeb) {
