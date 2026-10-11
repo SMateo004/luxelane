@@ -1,0 +1,10 @@
+// Which app this iOS build is: rider (Luxelane) or driver (Luxelane Chófer).
+// scripts/build_ios.sh rewrites this file before building; the committed
+// default is the rider app. Both apps share one Runner target: this file
+// picks the bundle id, the display name and the Info.plist.
+LUX_APP = rider
+LUX_BUNDLE_ID = com.luxelane.rider
+LUX_DISPLAY_NAME = Luxelane
+// Google Maps SDK for iOS key (restricted to the bundle id). Set by the
+// build script from GOOGLE_MAPS_KEY; never commit a real key here.
+LUX_MAPS_KEY =

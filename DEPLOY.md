@@ -63,11 +63,10 @@ APP=driver GOOGLE_MAPS_KEY=… ./scripts/build_mobile.sh
 ```
 
 ### Flutter iOS (prod)
+See **Mobile release (iOS)** below (needs a Mac with Xcode):
 ```
-flutter build ios --release \
-  --dart-define=ENV=prod \
-  --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
-open ios/Runner.xcworkspace   # archive from Xcode
+APP=rider  GOOGLE_MAPS_KEY=… ./scripts/build_ios.sh
+APP=driver GOOGLE_MAPS_KEY=… ./scripts/build_ios.sh
 ```
 
 ### Flutter Android (dev)
@@ -166,7 +165,33 @@ Two apps share this codebase via product flavors (`android/app/build.gradle.kts`
    - Data safety: location (driver: while on duty, foreground service), name, email, phone, app activity.
    - Driver app: declare the *location* foreground service with a short video of the "Disponible" toggle.
 
-iOS: there is no `ios/` folder yet. Create it with `flutter create --platforms=ios .`, then add location usage strings (`NSLocationWhenInUseUsageDescription`, plus background `location` mode for the driver target) before configuring Firebase for iOS.
+## Mobile release (iOS)
+
+`ios/` holds one Runner target for both apps. `ios/Flutter/App.xcconfig` picks
+the app — bundle id (`com.luxelane.rider` / `com.luxelane.driver`), display name
+and `Runner/Info-<app>.plist` (location texts; the driver plist adds the
+background `location` mode) — and `scripts/build_ios.sh` rewrites it per build.
+The committed default is the rider app, so opening Xcode just works.
+
+1. **Apple Developer account** (USD 99/year) and both bundle ids registered
+   with the **Push Notifications** capability.
+2. **Firebase:** `./scripts/setup_mobile.sh` also registers the iOS apps and
+   writes `.env.<project>.<app>.ios`. In Firebase Console → Project settings →
+   Cloud Messaging, upload an **APNs authentication key** (.p8) — without it
+   iOS gets no push.
+3. **Maps:** a Maps SDK for iOS key restricted to both bundle ids.
+4. **Signing (once):** `open ios/Runner.xcworkspace`, select Runner → Signing &
+   Capabilities, choose your team (automatic signing). Do it once with the
+   rider default and once after `APP=driver` (or set both profiles).
+5. **Build and upload:**
+   ```
+   APP=rider  GOOGLE_MAPS_KEY=$IOS_KEY ./scripts/build_ios.sh
+   APP=driver GOOGLE_MAPS_KEY=$IOS_KEY ./scripts/build_ios.sh
+   ```
+   Upload `build/ios/ipa/*.ipa` with Transporter, test on TestFlight, then
+   fill the listing from `docs/APP_STORE.md`.
+
+The first build runs `pod install` (iOS 13+, set in `ios/Podfile`).
 
 ## Before launch: content you must provide
 
