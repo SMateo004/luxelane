@@ -124,7 +124,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: LuxColors.black,
+      backgroundColor: LuxColors.bg,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const LuxelaneWordmark(),
@@ -134,7 +134,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
                 context.read<AuthBloc>().add(const LogoutRequested()),
             child: Text('Cerrar sesión',
                 style: LuxTypography.caption
-                    .copyWith(color: LuxColors.whiteTertiary)),
+                    .copyWith(color: LuxColors.inkTertiary)),
           ),
         ],
       ),
@@ -258,8 +258,7 @@ class _StepIndicator extends StatelessWidget {
               margin: EdgeInsets.only(right: i < totalSteps - 1 ? 6 : 0),
               height: 3,
               decoration: BoxDecoration(
-                color:
-                    done || active ? LuxColors.sapphire : LuxColors.blackBorder,
+                color: done || active ? LuxColors.sapphire : LuxColors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -317,15 +316,15 @@ class _VehicleForm extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: sel
                           ? LuxColors.sapphire.withOpacity(0.15)
-                          : LuxColors.blackElevated,
+                          : LuxColors.surfaceMuted,
                       borderRadius: BorderRadius.circular(LuxRadius.md),
                       border: Border.all(
-                        color: sel ? LuxColors.sapphire : LuxColors.blackBorder,
+                        color: sel ? LuxColors.sapphire : LuxColors.border,
                       ),
                     ),
                     child: Text(vc.label,
                         style: LuxTypography.bodyMedium.copyWith(
-                          color: sel ? LuxColors.sapphire : LuxColors.white,
+                          color: sel ? LuxColors.sapphire : LuxColors.ink,
                         )),
                   ),
                 );

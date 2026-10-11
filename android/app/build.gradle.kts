@@ -9,16 +9,19 @@ plugins {
 
 // Google Maps key for the native SDK. CI passes it as the GOOGLE_MAPS_API_KEY
 // env var; locally, add `MAPS_API_KEY=...` to android/local.properties.
+// Falls back to the project key (same as AppConfig and the iOS xcconfig) so
+// the map never renders blank when neither is set.
 val localProperties = Properties().apply {
     val file = rootProject.file("local.properties")
     if (file.exists()) file.inputStream().use { load(it) }
 }
-val mapsApiKey: String = System.getenv("GOOGLE_MAPS_API_KEY")
-    ?: localProperties.getProperty("MAPS_API_KEY")
-    ?: ""
+val mapsApiKey: String =
+    System.getenv("GOOGLE_MAPS_API_KEY")?.takeIf { it.isNotBlank() }
+        ?: localProperties.getProperty("MAPS_API_KEY")?.takeIf { it.isNotBlank() }
+        ?: "AIzaSyBbDde6GtLHy9_6qys4BMmq2P2G2INRUkM"
 
 android {
-    namespace = "com.example.luxelane"
+    namespace = "com.luxelane.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -32,8 +35,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.luxelane"
+        applicationId = "com.luxelane.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 23

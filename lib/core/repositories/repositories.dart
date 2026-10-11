@@ -22,6 +22,10 @@ abstract class AuthRepository {
     required UserRole role,
   });
 
+  /// Google sign-in (popup on web, native account picker on Android/iOS).
+  /// Creates the Firestore profile on first sign-in.
+  Future<Either<Failure, User>> signInWithGoogle();
+
   Future<Either<Failure, void>> logout();
   Future<Either<Failure, void>> sendVerificationEmail();
   Future<Either<Failure, void>> sendPhoneVerification(String phone);

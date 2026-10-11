@@ -38,7 +38,7 @@ class LuxButton extends StatelessWidget {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: LuxColors.white,
+                    color: LuxColors.onAccent,
                   ),
                 )
               : Row(
@@ -150,7 +150,7 @@ class LuxTextField extends StatelessWidget {
           labelText: label,
           hintText: hint,
           prefixIcon: prefixIcon != null
-              ? Icon(prefixIcon, color: LuxColors.whiteTertiary, size: 20)
+              ? Icon(prefixIcon, color: LuxColors.inkTertiary, size: 20)
               : null,
           suffixIcon: suffixIcon,
         ),
@@ -182,19 +182,20 @@ class LuxCard extends StatelessWidget {
         duration: const Duration(milliseconds: 180),
         margin: margin,
         decoration: BoxDecoration(
-          color: LuxColors.blackSurface,
-          borderRadius: BorderRadius.circular(LuxRadius.md),
+          color: selected ? LuxColors.sapphireTint : LuxColors.surface,
+          borderRadius: BorderRadius.circular(LuxRadius.lg),
           border: Border.all(
-            color: selected ? LuxColors.sapphire : LuxColors.blackBorder,
+            color: selected ? LuxColors.sapphire : LuxColors.border,
             width: selected ? 1.5 : 1,
           ),
+          boxShadow: selected ? luxSoftShadow : null,
         ),
         child: Material(
           color: Colors.transparent,
-          borderRadius: BorderRadius.circular(LuxRadius.md),
+          borderRadius: BorderRadius.circular(LuxRadius.lg),
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(LuxRadius.md),
+            borderRadius: BorderRadius.circular(LuxRadius.lg),
             child: Padding(padding: padding, child: child),
           ),
         ),
@@ -229,7 +230,7 @@ class VehicleCard extends StatelessWidget {
         onTap: onTap,
         child: Row(
           children: [
-            _VehicleIcon(vehicleClass: vehicleClass),
+            _VehicleIcon(vehicleClass: vehicleClass, selected: selected),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
               child: Column(
@@ -242,7 +243,7 @@ class VehicleCard extends StatelessWidget {
                   Row(
                     children: [
                       const Icon(Icons.person_outline,
-                          size: 14, color: LuxColors.whiteTertiary),
+                          size: 14, color: LuxColors.inkTertiary),
                       const SizedBox(width: 4),
                       Text(
                         'Hasta ${vehicleClass.capacity}',
@@ -259,7 +260,7 @@ class VehicleCard extends StatelessWidget {
                 Text(
                   'Bs${price.toStringAsFixed(0)}',
                   style: LuxTypography.headlineMedium.copyWith(
-                    color: selected ? LuxColors.sapphire : LuxColors.white,
+                    color: selected ? LuxColors.sapphire : LuxColors.ink,
                   ),
                 ),
                 Text(
@@ -276,8 +277,9 @@ class VehicleCard extends StatelessWidget {
 }
 
 class _VehicleIcon extends StatelessWidget {
-  const _VehicleIcon({required this.vehicleClass});
+  const _VehicleIcon({required this.vehicleClass, this.selected = false});
   final VehicleClass vehicleClass;
+  final bool selected;
 
   IconData get _icon {
     switch (vehicleClass) {
@@ -299,8 +301,8 @@ class _VehicleIcon extends StatelessWidget {
         width: 52,
         height: 52,
         decoration: BoxDecoration(
-          color: LuxColors.blackElevated,
-          borderRadius: BorderRadius.circular(LuxRadius.sm),
+          color: selected ? LuxColors.surface : LuxColors.sapphireTint,
+          borderRadius: BorderRadius.circular(LuxRadius.md),
         ),
         child: Icon(_icon, color: LuxColors.sapphire, size: 26),
       );
@@ -322,9 +324,11 @@ class ServiceTypeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: LuxColors.blackElevated,
-          borderRadius: BorderRadius.circular(LuxRadius.sm),
+          color: LuxColors.surfaceMuted,
+          borderRadius: BorderRadius.circular(LuxRadius.md),
+          border: Border.all(color: LuxColors.border),
         ),
         child: Row(
           children: ServiceType.values
@@ -334,20 +338,21 @@ class ServiceTypeTab extends StatelessWidget {
                     onTap: () => onChanged(t),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 180),
-                      height: 44,
+                      height: 40,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: selected == t
                             ? LuxColors.sapphire
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(LuxRadius.sm),
+                        boxShadow: selected == t ? luxSoftShadow : null,
                       ),
                       child: Text(
                         t.label.toUpperCase(),
                         style: LuxTypography.caption.copyWith(
                           color: selected == t
-                              ? LuxColors.white
-                              : LuxColors.whiteSecondary,
+                              ? LuxColors.onAccent
+                              : LuxColors.inkSecondary,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
                         ),
@@ -372,7 +377,7 @@ class BookingStatusChip extends StatelessWidget {
   Color get _color {
     switch (status) {
       case BookingStatus.pending:
-        return LuxColors.whiteTertiary;
+        return LuxColors.inkTertiary;
       case BookingStatus.confirmed:
         return LuxColors.sapphire;
       case BookingStatus.driverArriving:
@@ -418,7 +423,7 @@ class LoadingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ColoredBox(
-        color: LuxColors.black.withOpacity(0.85),
+        color: LuxColors.bg.withOpacity(0.9),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -466,13 +471,21 @@ class EmptyState extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, color: LuxColors.whiteTertiary, size: 40),
+              Container(
+                width: 72,
+                height: 72,
+                decoration: const BoxDecoration(
+                  color: LuxColors.sapphireTint,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: LuxColors.sapphire, size: 30),
+              ),
               const SizedBox(height: LuxSpacing.md),
               Text(
                 message,
                 style: LuxTypography.headlineLarge.copyWith(
                   fontStyle: FontStyle.italic,
-                  color: LuxColors.whiteSecondary,
+                  color: LuxColors.inkSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -545,13 +558,14 @@ class DriverCard extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 28,
-              backgroundColor: LuxColors.blackElevated,
+              backgroundColor: LuxColors.sapphireTint,
               backgroundImage:
                   photoUrl != null ? NetworkImage(photoUrl!) : null,
               child: photoUrl == null
                   ? Text(
                       name.isNotEmpty ? name[0].toUpperCase() : '?',
-                      style: LuxTypography.headlineMedium,
+                      style: LuxTypography.headlineMedium
+                          .copyWith(color: LuxColors.sapphire),
                     )
                   : null,
             ),
@@ -571,7 +585,7 @@ class DriverCard extends StatelessWidget {
             Column(
               children: [
                 const Icon(Icons.star_rounded,
-                    color: LuxColors.sapphireBright, size: 18),
+                    color: LuxColors.sapphire, size: 18),
                 const SizedBox(height: 2),
                 Text(rating.toStringAsFixed(1),
                     style: LuxTypography.titleLarge),
@@ -609,8 +623,9 @@ class PriceEstimateBar extends StatelessWidget {
           LuxSpacing.lg,
         ),
         decoration: const BoxDecoration(
-          color: LuxColors.blackSurface,
-          border: Border(top: BorderSide(color: LuxColors.blackBorder)),
+          color: LuxColors.surface,
+          border: Border(top: BorderSide(color: LuxColors.border)),
+          boxShadow: luxSoftShadow,
         ),
         child: Row(
           children: [
@@ -656,10 +671,14 @@ void showLuxSnackbar(BuildContext context, String message,
             size: 18,
           ),
           const SizedBox(width: LuxSpacing.sm),
-          Expanded(child: Text(message, style: LuxTypography.bodyMedium)),
+          Expanded(
+              child: Text(message,
+                  style:
+                      LuxTypography.bodyMedium.copyWith(color: LuxColors.ink))),
         ],
       ),
-      backgroundColor: LuxColors.blackElevated,
+      backgroundColor: LuxColors.surface,
+      elevation: 4,
       behavior: SnackBarBehavior.floating,
       duration: Duration(seconds: isError ? 4 : 3),
       shape: RoundedRectangleBorder(
@@ -685,8 +704,8 @@ class LuxDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => vertical
-      ? Container(width: 1, color: LuxColors.blackBorder)
-      : Container(height: 1, color: LuxColors.blackBorder);
+      ? Container(width: 1, color: LuxColors.border)
+      : Container(height: 1, color: LuxColors.border);
 }
 
 // ---------------------------------------------------------------------------
@@ -712,7 +731,7 @@ class StepIndicator extends StatelessWidget {
                 height: 1,
                 color: i ~/ 2 < currentStep
                     ? LuxColors.sapphire
-                    : LuxColors.blackBorder,
+                    : LuxColors.border,
               ),
             );
           }
@@ -728,25 +747,24 @@ class StepIndicator extends StatelessWidget {
                   color: done
                       ? LuxColors.sapphire
                       : active
-                          ? LuxColors.sapphireSubtle
-                          : LuxColors.blackElevated,
+                          ? LuxColors.sapphireTint
+                          : LuxColors.surface,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: active || done
-                        ? LuxColors.sapphire
-                        : LuxColors.blackBorder,
+                    color:
+                        active || done ? LuxColors.sapphire : LuxColors.border,
                   ),
                 ),
                 child: Center(
                   child: done
                       ? const Icon(Icons.check,
-                          size: 14, color: LuxColors.white)
+                          size: 14, color: LuxColors.onAccent)
                       : Text(
                           '${idx + 1}',
                           style: LuxTypography.caption.copyWith(
                             color: active
                                 ? LuxColors.sapphire
-                                : LuxColors.whiteTertiary,
+                                : LuxColors.inkTertiary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -756,7 +774,7 @@ class StepIndicator extends StatelessWidget {
               Text(
                 steps[idx],
                 style: LuxTypography.caption.copyWith(
-                  color: active ? LuxColors.sapphire : LuxColors.whiteTertiary,
+                  color: active ? LuxColors.sapphire : LuxColors.inkTertiary,
                 ),
               ),
             ],
@@ -784,8 +802,8 @@ class LuxelaneWordmark extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = color ??
         (Theme.of(context).brightness == Brightness.dark
-            ? LuxColors.white
-            : const Color(0xFF0D1B2E));
+            ? Colors.white
+            : LuxColors.ink);
     final box = size * 2.15;
     return Row(
       mainAxisSize: MainAxisSize.min,

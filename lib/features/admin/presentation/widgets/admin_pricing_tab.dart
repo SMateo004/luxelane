@@ -45,11 +45,10 @@ class PricingTab extends StatelessWidget {
               spacing: LuxSpacing.sm,
               runSpacing: LuxSpacing.sm,
               children: [
-                AdminTag('$custom personalizadas',
-                    color: LuxColors.sapphireBright),
+                AdminTag('$custom personalizadas', color: LuxColors.sapphire),
                 AdminTag(
                     '${VehicleClass.values.length * ServiceType.values.length - custom} de fábrica',
-                    color: LuxColors.whiteTertiary),
+                    color: LuxColors.inkTertiary),
                 if (disabled > 0)
                   AdminTag('$disabled desactivadas', color: LuxColors.warning),
                 if (state.isMaintenanceMode)
@@ -259,10 +258,10 @@ class _PricingCardState extends State<_PricingCard> {
                               style: LuxTypography.titleMedium),
                           if (widget.isCustom)
                             const AdminTag('Personalizada',
-                                color: LuxColors.sapphireBright)
+                                color: LuxColors.sapphire)
                           else
                             const AdminTag('De fábrica',
-                                color: LuxColors.whiteTertiary),
+                                color: LuxColors.inkTertiary),
                           if (!r.isActive)
                             const AdminTag('Desactivada',
                                 color: LuxColors.warning),
@@ -271,7 +270,7 @@ class _PricingCardState extends State<_PricingCard> {
                       const SizedBox(height: 4),
                       Text(_summary(r),
                           style: LuxTypography.bodyMedium
-                              .copyWith(color: LuxColors.whiteSecondary)),
+                              .copyWith(color: LuxColors.inkSecondary)),
                       if (widget.isCustom && r.updatedAt != null)
                         Text(
                           'Actualizada ${adminDate(r.updatedAt!)}'
@@ -285,7 +284,7 @@ class _PricingCardState extends State<_PricingCard> {
                   _expanded
                       ? Icons.expand_less_rounded
                       : Icons.expand_more_rounded,
-                  color: LuxColors.whiteTertiary,
+                  color: LuxColors.inkTertiary,
                 ),
               ],
             ),
@@ -297,7 +296,7 @@ class _PricingCardState extends State<_PricingCard> {
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               value: _active,
-              activeColor: LuxColors.sapphireBright,
+              activeColor: LuxColors.sapphire,
               title: const Text('Disponible para reservar',
                   style: LuxTypography.bodyMedium),
               subtitle: const Text(
@@ -344,14 +343,14 @@ class _PricingCardState extends State<_PricingCard> {
             Container(
               padding: const EdgeInsets.all(LuxSpacing.md),
               decoration: BoxDecoration(
-                color: LuxColors.black,
+                color: LuxColors.bg,
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
-                border: Border.all(color: LuxColors.blackBorder),
+                border: Border.all(color: LuxColors.border),
               ),
               child: Row(
                 children: [
                   const Icon(Icons.calculate_outlined,
-                      size: 18, color: LuxColors.whiteTertiary),
+                      size: 18, color: LuxColors.inkTertiary),
                   const SizedBox(width: LuxSpacing.sm),
                   const Flexible(
                     child: Text('Simular',
@@ -379,7 +378,7 @@ class _PricingCardState extends State<_PricingCard> {
                         fit: BoxFit.scaleDown,
                         child: Text(simPrice == null ? '—' : bs(simPrice),
                             style: LuxTypography.titleMedium
-                                .copyWith(color: LuxColors.sapphireBright)),
+                                .copyWith(color: LuxColors.sapphire)),
                       ),
                     ),
                   ),
@@ -402,7 +401,7 @@ class _PricingCardState extends State<_PricingCard> {
                 if (_dirty)
                   AdminActionButton(
                     label: 'Descartar cambios',
-                    color: LuxColors.whiteSecondary,
+                    color: LuxColors.inkSecondary,
                     onTap: () => setState(() => _load(widget.rule)),
                   ),
                 AdminActionButton(

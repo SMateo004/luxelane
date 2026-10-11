@@ -144,7 +144,7 @@ class DashboardTab extends StatelessWidget {
                     sub: 'Esperando chófer',
                     color: state.pendingRidesCount > 0
                         ? LuxColors.warning
-                        : LuxColors.whiteSecondary,
+                        : LuxColors.inkSecondary,
                   ),
                   AdminKpiTile(
                     width: w,
@@ -153,7 +153,7 @@ class DashboardTab extends StatelessWidget {
                     icon: Icons.cancel_outlined,
                     sub:
                         '${bs(month.cancelledValue, short: true)} no facturados',
-                    color: LuxColors.whiteSecondary,
+                    color: LuxColors.inkSecondary,
                   ),
                   AdminKpiTile(
                     width: w,
@@ -162,7 +162,7 @@ class DashboardTab extends StatelessWidget {
                     icon: Icons.people_outline,
                     sub: '${state.drivers.where((d) => d.isAvailable).length}'
                         ' de ${state.drivers.length} chóferes en línea',
-                    color: LuxColors.whiteSecondary,
+                    color: LuxColors.inkSecondary,
                   ),
                 ],
               );
@@ -285,7 +285,7 @@ class _BookingsTabState extends State<BookingsTab> {
                 decoration: adminInputDecoration(
                   hint: 'Buscar por código, pasajero, chófer o dirección…',
                   prefixIcon: const Icon(Icons.search_rounded,
-                      color: LuxColors.whiteTertiary, size: 20),
+                      color: LuxColors.inkTertiary, size: 20),
                 ),
               ),
             ),
@@ -363,7 +363,7 @@ class _AdminBookingTile extends StatelessWidget {
               ),
               child: Text(shortId(b.id),
                   style: LuxTypography.caption
-                      .copyWith(color: LuxColors.sapphireBright)),
+                      .copyWith(color: LuxColors.sapphire)),
             ),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
@@ -382,7 +382,7 @@ class _AdminBookingTile extends StatelessWidget {
                     '${adminDate(b.scheduledAt)} · ${b.vehicleClass.label} · '
                     '${b.driverId != null ? state.userName(b.driverId!) : 'Sin chófer'}',
                     style: LuxTypography.caption
-                        .copyWith(color: LuxColors.whiteTertiary),
+                        .copyWith(color: LuxColors.inkTertiary),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -423,7 +423,7 @@ Future<void> showBookingDetail(BuildContext context, String bookingId) {
     builder: (_) => BlocProvider.value(
       value: bloc,
       child: Dialog(
-        backgroundColor: LuxColors.blackSurface,
+        backgroundColor: LuxColors.surface,
         insetPadding: const EdgeInsets.all(LuxSpacing.md),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 560, maxHeight: 760),
@@ -619,7 +619,7 @@ class _BookingDetail extends StatelessWidget {
     final chosen = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: LuxColors.blackElevated,
+        backgroundColor: LuxColors.surfaceMuted,
         title: const Text('Asignar chófer', style: LuxTypography.titleLarge),
         content: SizedBox(
           width: 420,
@@ -636,7 +636,7 @@ class _BookingDetail extends StatelessWidget {
                             size: 10,
                             color: d.isAvailable
                                 ? LuxColors.success
-                                : LuxColors.whiteTertiary),
+                                : LuxColors.inkTertiary),
                         title: Text(state.userName(d.userId),
                             style: LuxTypography.bodyMedium),
                         subtitle: Text(
@@ -715,10 +715,10 @@ class _DriverTile extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 22,
-            backgroundColor: LuxColors.blackElevated,
+            backgroundColor: LuxColors.surfaceMuted,
             child: Text(name.isNotEmpty ? name[0].toUpperCase() : '?',
                 style: LuxTypography.titleLarge
-                    .copyWith(color: LuxColors.sapphireBright)),
+                    .copyWith(color: LuxColors.sapphire)),
           ),
           const SizedBox(width: LuxSpacing.md),
           Expanded(
@@ -733,7 +733,7 @@ class _DriverTile extends StatelessWidget {
                   style: LuxTypography.caption.copyWith(
                       color: licenseExpired
                           ? LuxColors.error
-                          : LuxColors.whiteTertiary),
+                          : LuxColors.inkTertiary),
                 ),
                 Text(
                   '★ ${driver.rating.toStringAsFixed(1)} · '
@@ -777,7 +777,7 @@ class _DriverTile extends StatelessWidget {
               decoration: BoxDecoration(
                 color: driver.isAvailable
                     ? LuxColors.success
-                    : LuxColors.whiteTertiary,
+                    : LuxColors.inkTertiary,
                 shape: BoxShape.circle,
               ),
             ),
@@ -833,11 +833,11 @@ class _VehicleTile extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: LuxColors.blackElevated,
+                color: LuxColors.surfaceMuted,
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
               ),
               child: const Icon(Icons.directions_car_filled_rounded,
-                  color: LuxColors.sapphireBright, size: 24),
+                  color: LuxColors.sapphire, size: 24),
             ),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
@@ -858,7 +858,7 @@ class _VehicleTile extends StatelessWidget {
             const SizedBox(width: LuxSpacing.sm),
             Switch.adaptive(
               value: vehicle.isActive,
-              activeColor: LuxColors.sapphireBright,
+              activeColor: LuxColors.sapphire,
               onChanged: (val) => context
                   .read<AdminBloc>()
                   .add(AdminToggleVehicleStatusRequested(vehicle.id, val)),
@@ -910,7 +910,7 @@ class _UsersTabState extends State<UsersTab> {
                 decoration: adminInputDecoration(
                   hint: 'Buscar por nombre, email o teléfono…',
                   prefixIcon: const Icon(Icons.search_rounded,
-                      color: LuxColors.whiteTertiary, size: 20),
+                      color: LuxColors.inkTertiary, size: 20),
                 ),
               ),
             ),
@@ -962,9 +962,9 @@ class _UserTile extends StatelessWidget {
   final User user;
 
   Color get _roleColor => switch (user.role) {
-        UserRole.admin => LuxColors.sapphireBright,
+        UserRole.admin => LuxColors.sapphire,
         UserRole.driver => LuxColors.success,
-        UserRole.rider => LuxColors.whiteTertiary,
+        UserRole.rider => LuxColors.inkTertiary,
       };
 
   @override
@@ -974,11 +974,11 @@ class _UserTile extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 20,
-              backgroundColor: LuxColors.blackElevated,
+              backgroundColor: LuxColors.surfaceMuted,
               child: Text(
                 user.displayName.isNotEmpty ? user.displayName[0] : '?',
-                style: LuxTypography.bodyLarge
-                    .copyWith(color: LuxColors.sapphireBright),
+                style:
+                    LuxTypography.bodyLarge.copyWith(color: LuxColors.sapphire),
               ),
             ),
             const SizedBox(width: LuxSpacing.md),
@@ -993,7 +993,7 @@ class _UserTile extends StatelessWidget {
                     '${user.isActive ? '' : ' · BLOQUEADO'}',
                     style: LuxTypography.caption.copyWith(
                         color: user.isActive
-                            ? LuxColors.whiteTertiary
+                            ? LuxColors.inkTertiary
                             : LuxColors.error),
                   ),
                 ],
@@ -1006,7 +1006,7 @@ class _UserTile extends StatelessWidget {
                 children: [
                   AdminTag(user.role.displayLabel, color: _roleColor),
                   const Icon(Icons.arrow_drop_down_rounded,
-                      size: 18, color: LuxColors.whiteTertiary),
+                      size: 18, color: LuxColors.inkTertiary),
                 ],
               ),
             ),
@@ -1015,7 +1015,7 @@ class _UserTile extends StatelessWidget {
               message: user.isActive ? 'Bloquear' : 'Reactivar',
               child: Switch.adaptive(
                 value: user.isActive,
-                activeColor: LuxColors.sapphireBright,
+                activeColor: LuxColors.sapphire,
                 onChanged: (val) async {
                   if (!val) {
                     final ok = await confirmAdminAction(
@@ -1042,7 +1042,7 @@ class _UserTile extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: LuxColors.blackElevated,
+        backgroundColor: LuxColors.surfaceMuted,
         title: Text('Cambiar rol de ${user.displayName}',
             style: LuxTypography.titleLarge),
         content: Column(
@@ -1057,7 +1057,7 @@ class _UserTile extends StatelessWidget {
                         ? const Text('Acceso total al panel y a las finanzas',
                             style: LuxTypography.caption)
                         : null,
-                    activeColor: LuxColors.sapphireBright,
+                    activeColor: LuxColors.sapphire,
                     onChanged: (r) async {
                       Navigator.pop(ctx);
                       if (r == null || r == user.role) return;
@@ -1152,7 +1152,7 @@ class _AuditTabState extends State<AuditTab> {
                 decoration: adminInputDecoration(
                   hint: 'Filtrar por acción, admin, detalle o código…',
                   prefixIcon: const Icon(Icons.search_rounded,
-                      color: LuxColors.whiteTertiary, size: 20),
+                      color: LuxColors.inkTertiary, size: 20),
                 ),
               ),
             ),
@@ -1198,7 +1198,7 @@ class _AuditTile extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(LuxSpacing.xs),
             decoration: BoxDecoration(
-              color: LuxColors.blackElevated,
+              color: LuxColors.surfaceMuted,
               borderRadius: BorderRadius.circular(LuxRadius.sm),
             ),
             child: Icon(_icon(log.action), color: color, size: 16),
@@ -1225,7 +1225,7 @@ class _AuditTile extends StatelessWidget {
                   Text(log.details, style: LuxTypography.caption),
                 Text('por $actor',
                     style: LuxTypography.caption
-                        .copyWith(color: LuxColors.whiteTertiary)),
+                        .copyWith(color: LuxColors.inkTertiary)),
               ],
             ),
           ),
@@ -1270,7 +1270,7 @@ class _AuditTile extends StatelessWidget {
     if (a.contains('pricing') || a.contains('price')) {
       return LuxColors.warning;
     }
-    return LuxColors.sapphireBright;
+    return LuxColors.sapphire;
   }
 }
 
@@ -1439,7 +1439,7 @@ class _CommissionCardState extends State<_CommissionCard> {
     return LuxCard(
       child: Row(
         children: [
-          const Icon(Icons.percent_rounded, color: LuxColors.sapphireBright),
+          const Icon(Icons.percent_rounded, color: LuxColors.sapphire),
           const SizedBox(width: LuxSpacing.md),
           const Expanded(
             child: Column(
@@ -1529,7 +1529,7 @@ class _BackfillCardState extends State<_BackfillCard> {
         child: Row(
           children: [
             const Icon(Icons.account_balance_wallet_outlined,
-                color: LuxColors.sapphireBright),
+                color: LuxColors.sapphire),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
               child: Column(
@@ -1582,7 +1582,7 @@ class _SettingTile extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: LuxSpacing.md),
         child: Row(
           children: [
-            Icon(icon, color: LuxColors.sapphireBright, size: 24),
+            Icon(icon, color: LuxColors.sapphire, size: 24),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
               child: Column(
@@ -1595,7 +1595,7 @@ class _SettingTile extends StatelessWidget {
             ),
             Switch.adaptive(
               value: value,
-              activeColor: LuxColors.sapphireBright,
+              activeColor: LuxColors.sapphire,
               onChanged: onChanged,
             ),
           ],

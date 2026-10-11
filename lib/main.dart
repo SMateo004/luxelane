@@ -85,8 +85,10 @@ void main() async {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Color(0xFF070E18),
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: Color(0xFFFFFFFF),
+        systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
     await SystemChrome.setPreferredOrientations([

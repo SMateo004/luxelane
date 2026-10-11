@@ -81,7 +81,7 @@ class _ServiceCard extends StatelessWidget {
               ),
             ),
             const Icon(Icons.chevron_right_rounded,
-                color: LuxColors.whiteTertiary),
+                color: LuxColors.inkTertiary),
           ],
         ),
       );

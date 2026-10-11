@@ -341,7 +341,7 @@ class _SplashPage extends StatelessWidget {
   const _SplashPage();
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: LuxColors.black,
+        backgroundColor: LuxColors.bg,
         body: Center(
           child: TweenAnimationBuilder<double>(
             tween: Tween(begin: 0, end: 1),
@@ -361,8 +361,8 @@ class _SplashPage extends StatelessWidget {
                   width: 72,
                   child: LinearProgressIndicator(
                     minHeight: 1,
-                    backgroundColor: LuxColors.blackBorder,
-                    color: LuxColors.sapphireBright,
+                    backgroundColor: LuxColors.border,
+                    color: LuxColors.sapphire,
                   ),
                 ),
               ],
@@ -376,7 +376,7 @@ class _NotFoundPage extends StatelessWidget {
   const _NotFoundPage();
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: LuxColors.black,
+        backgroundColor: LuxColors.bg,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(32),

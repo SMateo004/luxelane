@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/enums/enums.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
@@ -44,6 +45,10 @@ class RegisterRequested extends AuthEvent {
   final UserRole role;
   @override
   List<Object?> get props => [email, phone, displayName, role];
+}
+
+class GoogleSignInRequested extends AuthEvent {
+  const GoogleSignInRequested();
 }
 
 class LogoutRequested extends AuthEvent {
@@ -121,6 +126,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthStarted>(_onStarted);
     on<LoginRequested>(_onLogin);
     on<RegisterRequested>(_onRegister);
+    on<GoogleSignInRequested>(_onGoogleSignIn);
     on<LogoutRequested>(_onLogout);
     on<_AuthSignedOut>(_onSignedOut);
     on<VerificationEmailSent>(_onVerificationEmail);
@@ -181,6 +187,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     result.fold(
       (f) => emit(AuthError(f.message)),
+      (user) => emit(AuthAuthenticated(user)),
+    );
+  }
+
+  // ── _onGoogleSignIn ────────────────────────────────────────────────────────
+  Future<void> _onGoogleSignIn(
+      GoogleSignInRequested event, Emitter<AuthState> emit) async {
+    emit(const AuthLoading());
+    final result = await _repo.signInWithGoogle();
+    result.fold(
+      // Closing the Google sheet is a choice, not an error: no message.
+      (f) => emit(f is AuthCancelledFailure
+          ? const AuthUnauthenticated()
+          : AuthError(f.message)),
       (user) => emit(AuthAuthenticated(user)),
     );
   }

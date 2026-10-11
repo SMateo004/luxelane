@@ -33,18 +33,17 @@ InputDecoration adminInputDecoration({
     hintText: hint,
     hintStyle: LuxTypography.caption,
     prefixText: prefixText,
-    prefixStyle:
-        LuxTypography.caption.copyWith(color: LuxColors.sapphireBright),
+    prefixStyle: LuxTypography.caption.copyWith(color: LuxColors.sapphire),
     suffixText: suffixText,
     suffixStyle: LuxTypography.caption,
     prefixIcon: prefixIcon,
     filled: true,
-    fillColor: LuxColors.blackElevated,
+    fillColor: LuxColors.surfaceMuted,
     isDense: true,
     contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-    border: border(LuxColors.blackBorder),
-    enabledBorder: border(LuxColors.blackBorder),
-    focusedBorder: border(LuxColors.sapphireBright),
+    border: border(LuxColors.border),
+    enabledBorder: border(LuxColors.border),
+    focusedBorder: border(LuxColors.sapphire),
     errorBorder: border(LuxColors.error),
   );
 }
@@ -72,18 +71,18 @@ class SectionChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
               horizontal: LuxSpacing.lg, vertical: LuxSpacing.sm),
           decoration: BoxDecoration(
-            color: selected ? LuxColors.sapphire : LuxColors.blackElevated,
+            color: selected ? LuxColors.sapphire : LuxColors.surfaceMuted,
             borderRadius: BorderRadius.circular(100),
             border: Border.all(
               color: selected
                   ? LuxColors.sapphire
-                  : LuxColors.white.withOpacity(0.1),
+                  : LuxColors.ink.withOpacity(0.1),
             ),
           ),
           child: Text(
             label,
             style: LuxTypography.bodyMedium.copyWith(
-              color: LuxColors.white,
+              color: selected ? LuxColors.onAccent : LuxColors.ink,
               fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
@@ -114,11 +113,10 @@ class AdminNavItem extends StatelessWidget {
         selected: selected,
         onTap: onTap,
         leading: Icon(icon,
-            color:
-                selected ? LuxColors.sapphireBright : LuxColors.whiteTertiary),
+            color: selected ? LuxColors.sapphire : LuxColors.inkTertiary),
         title: Text(label,
             style: LuxTypography.bodyLarge.copyWith(
-              color: selected ? LuxColors.sapphireBright : LuxColors.white,
+              color: selected ? LuxColors.sapphire : LuxColors.ink,
               fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             )),
         trailing: (badge ?? 0) > 0
@@ -156,14 +154,14 @@ class AdminFilterChip extends StatelessWidget {
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: selected ? LuxColors.sapphire : LuxColors.blackElevated,
+            color: selected ? LuxColors.sapphire : LuxColors.surfaceMuted,
             borderRadius: BorderRadius.circular(LuxRadius.sm),
             border: Border.all(
-                color: selected ? LuxColors.sapphire : LuxColors.blackBorder),
+                color: selected ? LuxColors.sapphire : LuxColors.border),
           ),
           child: Text(count == null ? label : '$label · $count',
               style: LuxTypography.caption.copyWith(
-                  color: selected ? LuxColors.white : LuxColors.whiteTertiary,
+                  color: selected ? LuxColors.ink : LuxColors.inkTertiary,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.normal)),
         ),
       );
@@ -180,7 +178,7 @@ class AdminKpiTile extends StatelessWidget {
     required this.value,
     required this.icon,
     required this.sub,
-    this.color = LuxColors.sapphireBright,
+    this.color = LuxColors.sapphire,
     this.width = 220,
   });
   final String label, value, sub;
@@ -203,7 +201,7 @@ class AdminKpiTile extends StatelessWidget {
                     child: Text(label,
                         overflow: TextOverflow.ellipsis,
                         style: LuxTypography.caption
-                            .copyWith(color: LuxColors.whiteSecondary)),
+                            .copyWith(color: LuxColors.inkSecondary)),
                   ),
                 ],
               ),
@@ -232,7 +230,7 @@ class AdminActionButton extends StatelessWidget {
     required this.label,
     required this.onTap,
     this.icon,
-    this.color = LuxColors.sapphireBright,
+    this.color = LuxColors.sapphire,
     this.filled = false,
   });
   final String label;
@@ -245,9 +243,9 @@ class AdminActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final enabled = onTap != null;
     final fg = !enabled
-        ? LuxColors.whiteTertiary
+        ? LuxColors.inkTertiary
         : filled
-            ? LuxColors.white
+            ? LuxColors.onAccent
             : color;
     return OutlinedButton(
       onPressed: onTap,
@@ -256,7 +254,7 @@ class AdminActionButton extends StatelessWidget {
         side: BorderSide(
             color: enabled
                 ? (filled ? LuxColors.sapphire : color.withOpacity(0.5))
-                : LuxColors.blackBorder),
+                : LuxColors.border),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
         minimumSize: const Size(0, 36),
         shape: RoundedRectangleBorder(
@@ -312,14 +310,14 @@ class AdminInfoRow extends StatelessWidget {
             Expanded(
               child: Text(label,
                   style: LuxTypography.bodyMedium
-                      .copyWith(color: LuxColors.whiteTertiary)),
+                      .copyWith(color: LuxColors.inkTertiary)),
             ),
             const SizedBox(width: LuxSpacing.md),
             Flexible(
               child: Text(value,
                   textAlign: TextAlign.right,
                   style: LuxTypography.bodyMedium.copyWith(
-                      color: valueColor ?? LuxColors.white,
+                      color: valueColor ?? LuxColors.ink,
                       fontWeight: FontWeight.w600)),
             ),
           ],
@@ -341,7 +339,7 @@ class AdminEmpty extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 44, color: LuxColors.whiteTertiary),
+              Icon(icon, size: 44, color: LuxColors.inkTertiary),
               const SizedBox(height: LuxSpacing.md),
               Text(title,
                   style: LuxTypography.titleMedium,
@@ -379,7 +377,7 @@ Future<String?> confirmAdminAction(
       builder: (ctx, setState) {
         final canConfirm = reasonLabel == null || ctrl.text.trim().length >= 3;
         return AlertDialog(
-          backgroundColor: LuxColors.blackElevated,
+          backgroundColor: LuxColors.surfaceMuted,
           title: Text(title, style: LuxTypography.titleLarge),
           content: SizedBox(
             width: 420,
@@ -416,10 +414,10 @@ Future<String?> confirmAdminAction(
               child: Text(confirmLabel,
                   style: TextStyle(
                       color: !canConfirm
-                          ? LuxColors.whiteTertiary
+                          ? LuxColors.inkTertiary
                           : destructive
                               ? LuxColors.error
-                              : LuxColors.sapphireBright,
+                              : LuxColors.sapphire,
                       fontWeight: FontWeight.w600)),
             ),
           ],

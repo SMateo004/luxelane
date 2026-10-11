@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../theme/app_theme.dart';
 
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
@@ -166,7 +167,7 @@ class _NotFoundPage extends StatelessWidget {
   Widget build(BuildContext context) => const Scaffold(
         body: Center(
           child:
-              Text('404', style: TextStyle(color: Colors.white, fontSize: 64)),
+              Text('404', style: TextStyle(color: LuxColors.ink, fontSize: 64)),
         ),
       );
 }

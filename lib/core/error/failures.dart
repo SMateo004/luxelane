@@ -11,6 +11,11 @@ class AuthFailure extends Failure {
   const AuthFailure([super.message = 'Authentication error']);
 }
 
+/// The user closed the Google / provider sheet. Not an error to show.
+class AuthCancelledFailure extends AuthFailure {
+  const AuthCancelledFailure([super.message = 'Sign-in cancelled']);
+}
+
 class NetworkFailure extends Failure {
   const NetworkFailure([super.message = 'No internet connection']);
 }

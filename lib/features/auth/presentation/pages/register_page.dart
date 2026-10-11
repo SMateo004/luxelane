@@ -5,6 +5,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
+import '../widgets/google_sign_in_button.dart';
 import 'login_page.dart' show AuthBrandPanel;
 
 class RegisterPage extends StatefulWidget {
@@ -50,14 +51,15 @@ class _RegisterPageState extends State<RegisterPage> {
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(state.message,
+                  style: const TextStyle(color: LuxColors.onAccent)),
               backgroundColor: LuxColors.error,
             ),
           );
         }
       },
       child: Scaffold(
-        backgroundColor: LuxColors.black,
+        backgroundColor: LuxColors.bg,
         body: isWeb(context) ? _webLayout() : _mobileLayout(),
       ),
     );
@@ -65,15 +67,21 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _mobileLayout() => SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(28, 48, 28, 28),
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GestureDetector(
                 onTap: () => context.go('/'),
-                child: const LuxelaneWordmark(),
+                child: const LuxelaneWordmark(size: 11),
               ),
               const SizedBox(height: 48),
+              Text('CREAR CUENTA',
+                  style: LuxTypography.caption.copyWith(
+                      color: LuxColors.sapphire,
+                      letterSpacing: 3,
+                      fontSize: 10)),
+              const SizedBox(height: 10),
               Text('Bienvenido\na Luxelane.',
                   style: LuxTypography.displayMedium
                       .copyWith(fontSize: 40, height: 1.15)),
@@ -98,7 +106,7 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           Expanded(
             child: Container(
-              color: LuxColors.blackSurface,
+              color: LuxColors.surface,
               child: Center(
                 child: SingleChildScrollView(
                   child: ConstrainedBox(
@@ -137,6 +145,10 @@ class _RegisterPageState extends State<RegisterPage> {
             key: _form,
             child: Column(
               children: [
+                const GoogleSignInButton(label: 'Registrarte con Google'),
+                const SizedBox(height: LuxSpacing.lg),
+                const AuthOrDivider(),
+                const SizedBox(height: LuxSpacing.lg),
                 LuxTextField(
                   label: 'Nombre completo',
                   controller: _name,
@@ -185,7 +197,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   'Tu nombre y teléfono permiten a tu chófer recibirte y contactarte.',
                   textAlign: TextAlign.center,
                   style: LuxTypography.caption
-                      .copyWith(color: LuxColors.whiteSecondary),
+                      .copyWith(color: LuxColors.inkSecondary),
                 ),
                 const SizedBox(height: LuxSpacing.sm),
                 Row(

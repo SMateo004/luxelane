@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -17,6 +16,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/lux_raised.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/widgets/google_sign_in_button.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../../payments/presentation/bloc/payment_bloc.dart';
 import '../bloc/booking_bloc.dart';
@@ -164,21 +164,18 @@ class _BookingScreenState extends State<BookingScreen> {
     }
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) {
-      if (kIsWeb) {
-        final ok = await showDialog<bool>(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => BlocProvider.value(
-            value: context.read<AuthBloc>(),
-            child: const _WebAuthGateDialog(),
-          ),
-        );
-        if (ok != true || !mounted) return;
-        final freshAuth = context.read<AuthBloc>().state;
-        if (freshAuth is! AuthAuthenticated) return;
-      } else {
-        return;
-      }
+      // Guests sign in (Google or email) without leaving their booking.
+      final ok = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => BlocProvider.value(
+          value: context.read<AuthBloc>(),
+          child: const _AuthGateDialog(),
+        ),
+      );
+      if (ok != true || !mounted) return;
+      final freshAuth = context.read<AuthBloc>().state;
+      if (freshAuth is! AuthAuthenticated) return;
     }
     final freshState = context.read<AuthBloc>().state;
     if (freshState is! AuthAuthenticated) return;
@@ -417,7 +414,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     child: Text(
                       _selected.label.toUpperCase(),
                       key: ValueKey(_selected),
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 10,
                         fontWeight: FontWeight.w500,
@@ -924,11 +921,11 @@ class _BookingScreenState extends State<BookingScreen> {
         const SizedBox(height: 16),
 
         // ── All fees included ───────────────────────────────────────────
-        Row(
+        const Row(
           children: [
-            const Icon(Icons.lock_outline_rounded, size: 14, color: _kTextSub),
-            const SizedBox(width: 8),
-            const Text(
+            Icon(Icons.lock_outline_rounded, size: 14, color: _kTextSub),
+            SizedBox(width: 8),
+            Text(
               LuxPromise.fixedPrice,
               style: TextStyle(
                 fontFamily: kSans,
@@ -1359,7 +1356,7 @@ class _WebTopBar extends StatelessWidget {
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: onBack,
-                child: Row(mainAxisSize: MainAxisSize.min, children: const [
+                child: const Row(mainAxisSize: MainAxisSize.min, children: [
                   Icon(Icons.arrow_back_ios_new_rounded,
                       size: 12, color: _kTextSub),
                   SizedBox(width: 5),
@@ -2238,15 +2235,15 @@ class _LightTextField extends StatelessWidget {
           fillColor: _kCardBg,
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          border: OutlineInputBorder(
+          border: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: const BorderSide(color: _kBorder)),
-          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: _kBorder)),
+          enabledBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: const BorderSide(color: _kBorder)),
-          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: _kBorder)),
+          focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.zero,
-              borderSide: const BorderSide(color: _kTextPrimary, width: 1.5)),
+              borderSide: BorderSide(color: _kTextPrimary, width: 1.5)),
         ),
       );
 }
@@ -2495,15 +2492,15 @@ class _LightStepIndicator extends StatelessWidget {
       );
 }
 
-// ── WEB AUTH GATE DIALOG ──────────────────────────────────────────────────────
+// ── AUTH GATE DIALOG ──────────────────────────────────────────────────────
 
-class _WebAuthGateDialog extends StatefulWidget {
-  const _WebAuthGateDialog();
+class _AuthGateDialog extends StatefulWidget {
+  const _AuthGateDialog();
   @override
-  State<_WebAuthGateDialog> createState() => _WebAuthGateDialogState();
+  State<_AuthGateDialog> createState() => _AuthGateDialogState();
 }
 
-class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
+class _AuthGateDialogState extends State<_AuthGateDialog> {
   bool _showRegister = false;
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
@@ -2547,20 +2544,23 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
           if (state is AuthError) {
             setState(() => _loading = false);
             ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(
-                content: Text(state.message),
+                content: Text(state.message,
+                    style: const TextStyle(color: LuxColors.onAccent)),
                 backgroundColor: LuxColors.error));
           }
         },
         child: Dialog(
-          backgroundColor: LuxColors.blackSurface,
+          backgroundColor: LuxColors.surface,
+          insetPadding: const EdgeInsets.all(LuxSpacing.md),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(LuxRadius.lg),
-            side: const BorderSide(color: LuxColors.blackBorder),
+            side: const BorderSide(color: LuxColors.border),
           ),
           child: SizedBox(
             width: 420,
-            child: Padding(
-              padding: const EdgeInsets.all(LuxSpacing.xxl),
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(
+                  isWeb(context) ? LuxSpacing.xxl : LuxSpacing.lg),
               child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -2576,7 +2576,7 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
                       IconButton(
                           onPressed: () => Navigator.of(context).pop(false),
                           icon: const Icon(Icons.close_rounded,
-                              color: LuxColors.whiteTertiary)),
+                              color: LuxColors.inkTertiary)),
                     ]),
                     const SizedBox(height: LuxSpacing.sm),
                     Text(
@@ -2585,6 +2585,10 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
                             : 'Inicia sesión para confirmar tu reserva.',
                         style: LuxTypography.bodyMedium),
                     const SizedBox(height: LuxSpacing.xl),
+                    const GoogleSignInButton(),
+                    const SizedBox(height: LuxSpacing.lg),
+                    const AuthOrDivider(),
+                    const SizedBox(height: LuxSpacing.lg),
                     if (_showRegister) ...[
                       LuxTextField(
                           label: 'Nombre completo',
@@ -2614,7 +2618,7 @@ class _WebAuthGateDialogState extends State<_WebAuthGateDialog> {
                               _obscure
                                   ? Icons.visibility_off_outlined
                                   : Icons.visibility_outlined,
-                              color: LuxColors.whiteTertiary,
+                              color: LuxColors.inkTertiary,
                               size: 20),
                           onPressed: () => setState(() => _obscure = !_obscure),
                         )),

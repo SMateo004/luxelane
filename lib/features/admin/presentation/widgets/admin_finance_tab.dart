@@ -19,7 +19,7 @@ Color chargeStatusColor(ChargeStatus s) {
     case ChargeStatus.pendingCollection:
       return LuxColors.warning;
     case ChargeStatus.refunded:
-      return LuxColors.whiteTertiary;
+      return LuxColors.inkTertiary;
     case ChargeStatus.failed:
       return LuxColors.error;
   }
@@ -223,7 +223,7 @@ class FinanceKpis extends StatelessWidget {
         icon: Icons.pending_actions_outlined,
         sub: '${f.receivablesCount} viajes sin cobro'
             '${f.failed > 0 ? ' · ${bs(f.failed, short: true)} fallidos' : ''}',
-        color: f.receivables > 0 ? LuxColors.warning : LuxColors.whiteSecondary,
+        color: f.receivables > 0 ? LuxColors.warning : LuxColors.inkSecondary,
       ),
       AdminKpiTile(
         label: 'Ingresos plataforma',
@@ -237,28 +237,28 @@ class FinanceKpis extends StatelessWidget {
           value: bs(f.driverPayouts, short: true),
           icon: Icons.badge_outlined,
           sub: '${f.byDriver.length} chóferes con viajes',
-          color: LuxColors.whiteSecondary,
+          color: LuxColors.inkSecondary,
         ),
         AdminKpiTile(
           label: 'Reembolsado',
           value: bs(f.refunded, short: true),
           icon: Icons.undo_rounded,
           sub: '${f.refundedCount} reembolsos',
-          color: f.refunded > 0 ? LuxColors.error : LuxColors.whiteSecondary,
+          color: f.refunded > 0 ? LuxColors.error : LuxColors.inkSecondary,
         ),
         AdminKpiTile(
           label: 'Ticket medio',
           value: bs(f.averageTicket, short: true),
           icon: Icons.receipt_outlined,
           sub: 'Por viaje facturado',
-          color: LuxColors.whiteSecondary,
+          color: LuxColors.inkSecondary,
         ),
         AdminKpiTile(
           label: 'Ingresos en curso',
           value: bs(f.pipelineValue, short: true),
           icon: Icons.hourglass_top_rounded,
           sub: '${f.pipelineCount} activas · ${f.pendingCount} pendientes',
-          color: LuxColors.whiteSecondary,
+          color: LuxColors.inkSecondary,
         ),
       ],
     ];
@@ -306,17 +306,17 @@ class DailyRevenueChart extends StatelessWidget {
         gridData: FlGridData(
           drawVerticalLine: false,
           getDrawingHorizontalLine: (_) =>
-              FlLine(color: LuxColors.white.withOpacity(0.05), strokeWidth: 1),
+              FlLine(color: LuxColors.ink.withOpacity(0.05), strokeWidth: 1),
         ),
         borderData: FlBorderData(show: false),
         barTouchData: BarTouchData(
           touchTooltipData: BarTouchTooltipData(
-            getTooltipColor: (_) => LuxColors.blackElevated,
+            getTooltipColor: (_) => LuxColors.surfaceMuted,
             getTooltipItem: (group, _, rod, __) {
               final d = days[group.x];
               return BarTooltipItem(
                 '${d.day}/${d.month}\n${bs(rod.toY)}',
-                LuxTypography.caption.copyWith(color: LuxColors.white),
+                LuxTypography.caption.copyWith(color: LuxColors.ink),
               );
             },
           ),
@@ -361,7 +361,7 @@ class DailyRevenueChart extends StatelessWidget {
               BarChartRodData(
                 toY: values[i],
                 width: days.length <= 7 ? 18 : 6,
-                color: LuxColors.sapphireBright,
+                color: LuxColors.sapphire,
                 borderRadius: BorderRadius.circular(3),
               ),
             ]),
@@ -405,7 +405,7 @@ class _LedgerTile extends StatelessWidget {
                 if (b.finalPrice != null && b.finalPrice != b.estimatedPrice)
                   Text('Estimado ${bs(b.estimatedPrice)}',
                       style: LuxTypography.caption
-                          .copyWith(color: LuxColors.whiteTertiary)),
+                          .copyWith(color: LuxColors.inkTertiary)),
               ],
             ),
           ),
@@ -415,8 +415,8 @@ class _LedgerTile extends StatelessWidget {
               Text(bs(entry.amount),
                   style: LuxTypography.titleMedium.copyWith(
                     color: entry.status == ChargeStatus.refunded
-                        ? LuxColors.whiteTertiary
-                        : LuxColors.white,
+                        ? LuxColors.inkTertiary
+                        : LuxColors.ink,
                     decoration: entry.status == ChargeStatus.refunded
                         ? TextDecoration.lineThrough
                         : null,
@@ -427,9 +427,9 @@ class _LedgerTile extends StatelessWidget {
           ),
           PopupMenuButton<String>(
             tooltip: 'Acciones',
-            color: LuxColors.blackElevated,
+            color: LuxColors.surfaceMuted,
             icon: const Icon(Icons.more_vert_rounded,
-                color: LuxColors.whiteTertiary),
+                color: LuxColors.inkTertiary),
             enabled: canCollect || canRefund || canAdjust,
             onSelected: (v) {
               switch (v) {
@@ -493,7 +493,7 @@ Future<void> recordPaymentDialog(BuildContext context, Booking b) async {
     context: context,
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AlertDialog(
-        backgroundColor: LuxColors.blackElevated,
+        backgroundColor: LuxColors.surfaceMuted,
         title: Text('Registrar cobro de ${bs(amount)}',
             style: LuxTypography.titleLarge),
         content: SizedBox(
@@ -563,7 +563,7 @@ Future<void> adjustPriceDialog(BuildContext context, Booking b) async {
       final valid =
           value != null && value >= 0 && reason.text.trim().length >= 3;
       return AlertDialog(
-        backgroundColor: LuxColors.blackElevated,
+        backgroundColor: LuxColors.surfaceMuted,
         title:
             const Text('Ajustar precio final', style: LuxTypography.titleLarge),
         content: SizedBox(
@@ -634,7 +634,7 @@ class _DriverPayouts extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         child: DataTable(
           headingTextStyle:
-              LuxTypography.caption.copyWith(color: LuxColors.whiteSecondary),
+              LuxTypography.caption.copyWith(color: LuxColors.inkSecondary),
           dataTextStyle: LuxTypography.bodyMedium,
           columnSpacing: LuxSpacing.lg,
           columns: const [
@@ -695,8 +695,8 @@ class _Segments extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: total == 0 ? 0 : e.value.billed / total,
                   minHeight: 4,
-                  backgroundColor: LuxColors.blackBorder,
-                  color: LuxColors.sapphireBright,
+                  backgroundColor: LuxColors.border,
+                  color: LuxColors.sapphire,
                 ),
               ),
             ],

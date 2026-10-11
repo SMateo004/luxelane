@@ -7,19 +7,31 @@ evalúa contra esa idea. Referencias de nivel: Blacklane, Uber Black.
 
 ---
 
-## 1. Dos superficies, una marca
+## 1. Una superficie clara, una marca
 
-| Superficie | Cuándo | Tokens |
+La app (móvil, cuenta, chófer y admin) usa **una sola paleta: Marfil**, la misma
+paleta clara de la web (`LD.*` en `home_design.dart`). En la app se consume como
+`LuxColors.*` (`app/theme/app_theme.dart`), que replica esos valores.
+
+| Token | Valor | Uso |
 |---|---|---|
-| **Medianoche** (oscura) | Momentos de marca y emoción: navegación, portadas, splash, mapa, seguimiento del viaje, cuenta | `LuxColors.*` (`app_theme.dart`) |
-| **Marfil** (clara) | Momentos de tarea y lectura: elegir vehículo, detalles, resumen, FAQs, promesas | `LD.*` (`home_design.dart`) |
+| `bg` | `#FAFBFE` | Fondo de página |
+| `surface` | `#FFFFFF` | Tarjetas, hojas inferiores, barras |
+| `surfaceMuted` | `#F2F5FB` | Controles segmentados, chips |
+| `border` | `#DDE4F0` | Bordes y divisores |
+| `ink` / `inkSecondary` / `inkTertiary` | `#0D1B2E` / `#2C3D55` / `#637490` | Texto e íconos |
+| `sapphire` / `sapphireTint` | `#1B4F8A` / `#EEF3FA` | Acento único / fondo de acento suave |
+| `onAccent` | `#FFFFFF` | Texto e íconos sobre zafiro |
 
-Regla: **se emociona en oscuro, se decide en claro.** Es el mismo patrón de Uber
-(mapa oscuro + hojas claras) y de Blacklane (portadas oscuras + formularios limpios).
+Reglas:
 
-- Un solo acento: **zafiro** (`LD.sph` / `LuxColors.sapphire`). Sin dorados ni degradados llamativos.
-- Sobre fondo oscuro, el texto/ícono de acento usa `LuxColors.sapphireBright` (el zafiro puro no cumple contraste).
-- Botón primario: zafiro con texto **blanco**. Nunca texto negro sobre zafiro.
+- **No usamos negro.** Ningún fondo, barra, diálogo o velo de la app es negro
+  ni azul medianoche; los velos sobre mapa/foto son marfil y las sombras son
+  azul tinta muy suave (`luxSoftShadow`).
+- Un solo acento: **zafiro**. Sin dorados ni degradados llamativos.
+- Botón primario: zafiro con texto **blanco** (`onAccent`). Nunca texto oscuro sobre zafiro.
+- El mapa usa el estilo marfil (`LuxMap`), con ruta y marcadores en zafiro.
+- La barra de estado y la de navegación del sistema son claras con íconos oscuros.
 
 ## 2. Tipografía
 
@@ -31,7 +43,7 @@ Regla: **se emociona en oscuro, se decide en claro.** Es el mismo patrón de Ube
 
 - Un único logotipo: `LuxelaneWordmark` (monograma "L" enmarcado + LUXELANE). No dibujar logos a mano.
 - Un único nav público: `LuxSiteNav`; un único footer: `LuxSiteFooter` (`core/widgets/lux_site_chrome.dart`).
-- El nav de la cuenta (`AppShell`) usa la misma barra medianoche para que web pública y cuenta se sientan un solo producto.
+- En móvil, la navegación inferior es una barra blanca con el ítem activo en zafiro.
 
 ## 4. Promesas: una sola fuente de verdad
 
@@ -82,6 +94,6 @@ Para crear un servicio nuevo: añadir su ruta en `LuxServiceRoutes`, crear un
 
 ## 8. Accesibilidad
 
-- Contraste mínimo AA en texto; acento sobre oscuro con `sapphireBright`.
+- Contraste mínimo AA en texto: tinta sobre marfil, blanco sobre zafiro.
 - Controles con `Semantics` (botones, pestañas, FAQs expandibles).
 - Áreas táctiles ≥ 44 px en móvil.

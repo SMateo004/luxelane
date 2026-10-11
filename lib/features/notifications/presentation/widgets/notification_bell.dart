@@ -26,7 +26,7 @@ class NotificationBell extends StatelessWidget {
             children: [
               Icon(
                 Icons.notifications_outlined,
-                color: color ?? LuxColors.white,
+                color: color ?? LuxColors.ink,
                 size: 22,
               ),
               if (unread > 0)
@@ -76,7 +76,7 @@ class NotificationBell extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: LuxColors.blackSurface,
+      backgroundColor: LuxColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
       ),
@@ -111,7 +111,7 @@ class _NotificationSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: LuxColors.blackBorder,
+                color: LuxColors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -152,7 +152,7 @@ class _NotificationSheet extends StatelessWidget {
                 ],
               ),
             ),
-            const Divider(color: LuxColors.blackBorder, height: 1),
+            const Divider(color: LuxColors.border, height: 1),
             Expanded(
               child: BlocBuilder<NotificationBloc, NotificationState>(
                 builder: (context, state) {
@@ -164,14 +164,14 @@ class _NotificationSheet extends StatelessWidget {
                       : <AppNotification>[];
 
                   if (notifications.isEmpty) {
-                    return Center(
+                    return const Center(
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.notifications_none_rounded,
-                              color: LuxColors.whiteTertiary, size: 48),
-                          const SizedBox(height: LuxSpacing.md),
-                          const Text('Aún no hay notificaciones',
+                              color: LuxColors.inkTertiary, size: 48),
+                          SizedBox(height: LuxSpacing.md),
+                          Text('Aún no hay notificaciones',
                               style: LuxTypography.bodyMedium),
                         ],
                       ),
@@ -184,7 +184,7 @@ class _NotificationSheet extends StatelessWidget {
                         const EdgeInsets.symmetric(vertical: LuxSpacing.sm),
                     itemCount: notifications.length,
                     separatorBuilder: (_, __) => const Divider(
-                      color: LuxColors.blackBorder,
+                      color: LuxColors.border,
                       height: 1,
                       indent: LuxSpacing.lg,
                     ),
@@ -286,7 +286,7 @@ class _NotificationTile extends StatelessWidget {
                 Text(
                   notification.body,
                   style: LuxTypography.caption
-                      .copyWith(color: LuxColors.whiteTertiary),
+                      .copyWith(color: LuxColors.inkTertiary),
                 ),
               ],
             ),

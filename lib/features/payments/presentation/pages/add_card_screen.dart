@@ -91,12 +91,12 @@ class _AddCardScreenState extends State<AddCardScreen> {
               Container(
                 padding: const EdgeInsets.all(LuxSpacing.sm),
                 decoration: BoxDecoration(
-                  color: LuxColors.blackElevated,
+                  color: LuxColors.surfaceMuted,
                   borderRadius: BorderRadius.circular(LuxRadius.sm),
-                  border: Border.all(color: LuxColors.blackBorder),
+                  border: Border.all(color: LuxColors.border),
                 ),
                 child: CardField(
-                  style: const TextStyle(color: LuxColors.white, fontSize: 16),
+                  style: const TextStyle(color: LuxColors.ink, fontSize: 16),
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
@@ -108,7 +108,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
               const Row(
                 children: [
                   Icon(Icons.lock_outline,
-                      size: 14, color: LuxColors.whiteTertiary),
+                      size: 14, color: LuxColors.inkTertiary),
                   SizedBox(width: LuxSpacing.xs),
                   Text(
                     'Protegido por Stripe · Cumplimiento PCI DSS',

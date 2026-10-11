@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/services.dart' show PlatformException;
+import 'package:google_sign_in/google_sign_in.dart';
+import '../../../../core/config/env.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
@@ -10,11 +14,27 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
     required fb.FirebaseAuth firebaseAuth,
     required FirebaseFirestore firestore,
+    GoogleSignIn? googleSignIn,
   })  : _auth = firebaseAuth,
-        _db = firestore;
+        _db = firestore,
+        _googleOverride = googleSignIn;
 
   final fb.FirebaseAuth _auth;
   final FirebaseFirestore _db;
+  final GoogleSignIn? _googleOverride;
+
+  // Native Google account picker (Android/iOS). Created lazily: on web the
+  // Firebase popup is used instead and this is never touched.
+  late final GoogleSignIn _google = _googleOverride ??
+      GoogleSignIn(
+        scopes: const ['email', 'profile'],
+        clientId: AppConfig.googleIosClientId.isEmpty
+            ? null
+            : AppConfig.googleIosClientId,
+        serverClientId: AppConfig.googleServerClientId.isEmpty
+            ? null
+            : AppConfig.googleServerClientId,
+      );
 
   @override
   Stream<User?> get authStateChanges => _auth.authStateChanges().asyncMap(
@@ -46,16 +66,7 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
       );
       final doc = await _db.collection('users').doc(cred.user!.uid).get();
-      var user = User.fromJson({'id': doc.id, ...doc.data()!});
-
-      // Auto-promote this specific email if it wasn't admin already
-      if (email.toLowerCase() == 'admin@luxelane.com' &&
-          user.role != UserRole.admin) {
-        user = user.copyWith(role: UserRole.admin);
-        await _db.collection('users').doc(user.id).update({'role': 'admin'});
-      }
-
-      return Right(user);
+      return Right(User.fromJson({'id': doc.id, ...doc.data()!}));
     } on fb.FirebaseAuthException catch (e) {
       return Left(AuthFailure(e.message ?? 'Login failed'));
     } catch (e) {
@@ -81,10 +92,11 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         phone: phone,
         displayName: displayName,
-        role:
-            email.toLowerCase() == 'admin@luxelane.com' ? UserRole.admin : role,
+        // firestore.rules only accepts self-signups as `rider`; other roles
+        // are granted by an admin.
+        role: role,
         createdAt: DateTime.now(),
-        isVerified: true, // Auto-verify admin
+        isVerified: true,
         isActive: true,
         fcmTokens: const [],
       );
@@ -98,8 +110,109 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, User>> signInWithGoogle() async {
+    try {
+      final fb.UserCredential cred;
+      if (kIsWeb) {
+        final provider = fb.GoogleAuthProvider()
+          ..addScope('email')
+          ..setCustomParameters({'prompt': 'select_account'});
+        cred = await _auth.signInWithPopup(provider);
+      } else {
+        final account = await _google.signIn();
+        if (account == null) return const Left(AuthCancelledFailure());
+        final tokens = await account.authentication;
+        cred = await _auth.signInWithCredential(
+          fb.GoogleAuthProvider.credential(
+            idToken: tokens.idToken,
+            accessToken: tokens.accessToken,
+          ),
+        );
+      }
+      final fbUser = cred.user;
+      if (fbUser == null) return const Left(AuthFailure(_googleGenericError));
+      return Right(await _ensureProfile(fbUser));
+    } on fb.FirebaseAuthException catch (e) {
+      if (e.code == 'popup-closed-by-user' ||
+          e.code == 'cancelled-popup-request' ||
+          e.code == 'web-context-cancelled') {
+        return const Left(AuthCancelledFailure());
+      }
+      return Left(AuthFailure(_googleErrorMessage(e.code)));
+    } on PlatformException catch (e) {
+      // google_sign_in reports a closed picker as `sign_in_canceled`.
+      if (e.code == GoogleSignIn.kSignInCanceledError) {
+        return const Left(AuthCancelledFailure());
+      }
+      return Left(AuthFailure(e.code == GoogleSignIn.kNetworkError
+          ? 'Sin conexión. Revisa tu internet e inténtalo de nuevo.'
+          : _googleGenericError));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  /// Returns the Firestore profile for [fbUser], creating it the first time
+  /// someone signs in with Google. Existing profiles (e.g. an email/password
+  /// account linked to the same address) are kept as they are.
+  Future<User> _ensureProfile(fb.User fbUser) async {
+    final ref = _db.collection('users').doc(fbUser.uid);
+    final doc = await ref.get();
+    if (doc.exists) return User.fromJson({'id': doc.id, ...doc.data()!});
+    final email = (fbUser.email ?? '').toLowerCase();
+    final name = (fbUser.displayName ?? '').trim();
+    final user = User(
+      id: fbUser.uid,
+      email: fbUser.email ?? '',
+      phone: fbUser.phoneNumber ?? '',
+      displayName: name.isNotEmpty ? name : email.split('@').first,
+      photoUrl: fbUser.photoURL,
+      // Roles are granted server-side only (see firestore.rules).
+      role: UserRole.rider,
+      createdAt: DateTime.now(),
+      // Google has already verified the address.
+      isVerified: fbUser.emailVerified,
+      isActive: true,
+      fcmTokens: const [],
+    );
+    await ref.set(user.toJson());
+    return user;
+  }
+
+  static const _googleGenericError =
+      'No pudimos iniciar sesión con Google. Inténtalo de nuevo.';
+
+  static String _googleErrorMessage(String code) {
+    switch (code) {
+      case 'account-exists-with-different-credential':
+        return 'Ya tienes una cuenta con este correo. Inicia sesión con tu '
+            'contraseña.';
+      case 'popup-blocked':
+        return 'Tu navegador bloqueó la ventana de Google. Permite las '
+            'ventanas emergentes e inténtalo de nuevo.';
+      case 'unauthorized-domain':
+        return 'Este dominio no está autorizado para iniciar sesión con '
+            'Google.';
+      case 'operation-not-allowed':
+        return 'El inicio de sesión con Google no está habilitado.';
+      case 'user-disabled':
+        return 'Esta cuenta está desactivada.';
+      case 'network-request-failed':
+        return 'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
+      default:
+        return _googleGenericError;
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> logout() async {
     try {
+      // Forget the chosen Google account so the picker shows next time.
+      if (!kIsWeb) {
+        try {
+          if (await _google.isSignedIn()) await _google.signOut();
+        } catch (_) {/* not signed in with Google */}
+      }
       await _auth.signOut();
       return const Right(null);
     } catch (e) {

@@ -21,15 +21,23 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for android - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        if (_androidAppId.isEmpty) {
+          throw UnsupportedError(
+            'Firebase Android app not configured: pass '
+            '--dart-define=FIREBASE_ANDROID_APP_ID=... (see DEPLOY.md) or '
+            'run the FlutterFire CLI again.',
+          );
+        }
+        return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        if (_iosAppId.isEmpty) {
+          throw UnsupportedError(
+            'Firebase iOS app not configured: pass '
+            '--dart-define=FIREBASE_IOS_APP_ID=... (see DEPLOY.md) or '
+            'run the FlutterFire CLI again.',
+          );
+        }
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -60,5 +68,37 @@ class DefaultFirebaseOptions {
     authDomain: 'luxelane-4e7ae.firebaseapp.com',
     storageBucket: 'luxelane-4e7ae.firebasestorage.app',
     measurementId: 'G-363NE1J1QR',
+  );
+
+  // Native apps (Android/iOS) — registered in the same Firebase project
+  // (luxelane-4e7ae). IDs come from the Firebase console → Project settings
+  // → Your apps, and are passed at build time so no file must be committed.
+  static const _androidAppId =
+      String.fromEnvironment('FIREBASE_ANDROID_APP_ID');
+  static const _androidApiKey = String.fromEnvironment(
+    'FIREBASE_ANDROID_API_KEY',
+    defaultValue: 'AIzaSyBkEwrqa7umZjRv91CR3YKaHLAkdBjNvoM',
+  );
+  static const _iosAppId = String.fromEnvironment('FIREBASE_IOS_APP_ID');
+  static const _iosApiKey = String.fromEnvironment(
+    'FIREBASE_IOS_API_KEY',
+    defaultValue: 'AIzaSyBkEwrqa7umZjRv91CR3YKaHLAkdBjNvoM',
+  );
+
+  static const FirebaseOptions android = FirebaseOptions(
+    apiKey: _androidApiKey,
+    appId: _androidAppId,
+    messagingSenderId: '51157842817',
+    projectId: 'luxelane-4e7ae',
+    storageBucket: 'luxelane-4e7ae.firebasestorage.app',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: _iosApiKey,
+    appId: _iosAppId,
+    messagingSenderId: '51157842817',
+    projectId: 'luxelane-4e7ae',
+    storageBucket: 'luxelane-4e7ae.firebasestorage.app',
+    iosClientId: String.fromEnvironment('GOOGLE_IOS_CLIENT_ID'),
   );
 }

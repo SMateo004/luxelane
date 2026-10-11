@@ -54,36 +54,22 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   String? _token;
 
   // ── theme helpers ──────────────────────────────────────────────────────────
-  bool get _isDark => Theme.of(context).brightness == Brightness.dark;
   // glass=true → fully transparent field that sits inside the hero liquid-glass bar
-  Color get _fieldBg => widget.glass
-      ? Colors.transparent
-      : (_isDark ? LuxColors.blackElevated : const Color(0xFFF2F5FB));
-  Color get _borderColor => widget.glass
-      ? Colors.transparent
-      : (_isDark ? LuxColors.blackBorder : const Color(0xFFDDE4F0));
-  Color get _focusBorder => widget.glass
-      ? Colors.transparent
-      : (_isDark
-          ? LuxColors.sapphire.withOpacity(0.6)
-          : const Color(0xFF0D1B2E));
-  Color get _iconColor => widget.glass
-      ? const Color(0x99FFFFFF)
-      : (_isDark ? LuxColors.whiteTertiary : const Color(0xFF8A99B0));
-  Color get _textColor => widget.glass
-      ? Colors.white
-      : (_isDark ? LuxColors.white : const Color(0xFF0D1B2E));
-  Color get _hintColor => widget.glass
-      ? const Color(0x66FFFFFF)
-      : (_isDark ? LuxColors.whiteTertiary : const Color(0xFF9AA8BC));
-  Color get _dropBg => _isDark ? LuxColors.blackSurface : Colors.white;
-  Color get _dropDivider =>
-      _isDark ? LuxColors.blackBorder : const Color(0xFFE8EDF7);
-  Color get _suggPrimary => _isDark ? LuxColors.white : const Color(0xFF0D1B2E);
-  Color get _suggSecondary =>
-      _isDark ? LuxColors.whiteTertiary : const Color(0xFF999999);
-  Color get _suggIcon =>
-      _isDark ? LuxColors.whiteTertiary : const Color(0xFFB3BFD0);
+  Color get _fieldBg => widget.glass ? Colors.transparent : LuxColors.surface;
+  Color get _borderColor =>
+      widget.glass ? Colors.transparent : LuxColors.border;
+  Color get _focusBorder =>
+      widget.glass ? Colors.transparent : LuxColors.sapphire;
+  Color get _iconColor =>
+      widget.glass ? const Color(0x99FFFFFF) : LuxColors.inkTertiary;
+  Color get _textColor => widget.glass ? Colors.white : LuxColors.ink;
+  Color get _hintColor =>
+      widget.glass ? const Color(0x66FFFFFF) : LuxColors.inkTertiary;
+  Color get _dropBg => LuxColors.surface;
+  Color get _dropDivider => LuxColors.border;
+  Color get _suggPrimary => LuxColors.ink;
+  Color get _suggSecondary => LuxColors.inkTertiary;
+  Color get _suggIcon => LuxColors.sapphire;
 
   void _dbg(String msg) => debugPrint('[PAF] $msg');
 
@@ -328,7 +314,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
         decoration: BoxDecoration(
           color: _fieldBg,
           // glass mode: larger radius so it looks rounded inside the glass bar
-          borderRadius: BorderRadius.circular(widget.glass ? 10 : 2),
+          borderRadius: BorderRadius.circular(widget.glass ? 10 : LuxRadius.md),
           border: Border.all(
             color: _focus.hasFocus ? _focusBorder : _borderColor,
           ),

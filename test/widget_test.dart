@@ -1,8 +1,16 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:luxelane/app/theme/app_theme.dart';
 import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/widgets/components.dart';
+import 'package:luxelane/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:luxelane/features/auth/presentation/widgets/google_sign_in_button.dart';
+import 'package:mocktail/mocktail.dart';
+
+class _MockAuthBloc extends MockBloc<AuthEvent, AuthState>
+    implements AuthBloc {}
 
 Widget _themed(Widget child) => MaterialApp(
       theme: luxTheme,
@@ -96,6 +104,36 @@ void main() {
     testWidgets('renders without error', (tester) async {
       await tester.pumpWidget(_themed(const LuxDivider()));
       expect(find.byType(LuxDivider), findsOneWidget);
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // GoogleSignInButton
+  // ---------------------------------------------------------------------------
+  group('GoogleSignInButton', () {
+    testWidgets('dispatches GoogleSignInRequested when tapped', (tester) async {
+      final bloc = _MockAuthBloc();
+      whenListen(bloc, const Stream<AuthState>.empty(),
+          initialState: const AuthUnauthenticated());
+      await tester.pumpWidget(_themed(BlocProvider<AuthBloc>.value(
+        value: bloc,
+        child: const GoogleSignInButton(),
+      )));
+      expect(find.text('Continuar con Google'), findsOneWidget);
+      await tester.tap(find.byType(OutlinedButton));
+      verify(() => bloc.add(const GoogleSignInRequested())).called(1);
+    });
+
+    testWidgets('is disabled while auth is loading', (tester) async {
+      final bloc = _MockAuthBloc();
+      whenListen(bloc, const Stream<AuthState>.empty(),
+          initialState: const AuthLoading());
+      await tester.pumpWidget(_themed(BlocProvider<AuthBloc>.value(
+        value: bloc,
+        child: const GoogleSignInButton(),
+      )));
+      final btn = tester.widget<OutlinedButton>(find.byType(OutlinedButton));
+      expect(btn.onPressed, isNull);
     });
   });
 }

@@ -76,8 +76,8 @@ class _TripsScreenState extends State<TripsScreen> {
                 ..sort((a, b) => b.scheduledAt.compareTo(a.scheduledAt));
 
               return RefreshIndicator(
-                color: LuxColors.sapphireBright,
-                backgroundColor: LuxColors.blackSurface,
+                color: LuxColors.sapphire,
+                backgroundColor: LuxColors.surface,
                 onRefresh: () async => _loadTrips(),
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(LuxSpacing.md,
@@ -124,7 +124,7 @@ class _SectionLabel extends StatelessWidget {
         padding: const EdgeInsets.only(bottom: LuxSpacing.sm + 4, left: 2),
         child: Text(text.toUpperCase(),
             style: LuxTypography.caption.copyWith(
-                color: LuxColors.whiteSecondary,
+                color: LuxColors.inkSecondary,
                 letterSpacing: 2.2,
                 fontSize: 10)),
       );
@@ -163,14 +163,14 @@ class _TripCard extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: LuxColors.blackElevated,
+                color: LuxColors.surfaceMuted,
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
               ),
               child: Icon(
                   booking.serviceType == ServiceType.byTheHour
                       ? Icons.schedule_rounded
                       : Icons.directions_car_outlined,
-                  color: LuxColors.sapphireBright,
+                  color: LuxColors.sapphire,
                   size: 22),
             ),
             const SizedBox(width: LuxSpacing.md),
@@ -190,7 +190,7 @@ class _TripCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text('SEGUIR EN EL MAPA →',
                         style: LuxTypography.caption.copyWith(
-                            color: LuxColors.sapphireBright,
+                            color: LuxColors.sapphire,
                             letterSpacing: 1.4,
                             fontSize: 9.5)),
                   ],
