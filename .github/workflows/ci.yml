@@ -132,6 +132,8 @@ jobs:
           cache: true
       - run: flutter pub get
       - name: Build rider AAB
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
           flutter build appbundle --release \
             --dart-define=ENV=prod \
@@ -162,6 +164,8 @@ jobs:
           cache: true
       - run: flutter pub get
       - name: Build driver AAB
+        env:
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
         run: |
           flutter build appbundle --release \
             -t lib/main_driver.dart \
