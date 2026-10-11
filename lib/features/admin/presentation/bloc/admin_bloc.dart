@@ -81,6 +81,10 @@ class AdminRecordPaymentRequested extends AdminEvent {
   List<Object?> get props => [booking.id, method, reference];
 }
 
+class AdminBackfillSettlementsRequested extends AdminEvent {
+  const AdminBackfillSettlementsRequested();
+}
+
 class AdminUpdateFinanceSettingsRequested extends AdminEvent {
   final Map<String, dynamic> fields;
   const AdminUpdateFinanceSettingsRequested(this.fields);
@@ -178,6 +182,15 @@ class AdminState extends Equatable {
   double get commissionPct =>
       (financeSettings['platformCommissionPct'] as num?)?.toDouble() ??
       kDefaultCommissionPct;
+
+  /// Viajes completados sin reparto confirmado por el servidor (anteriores a
+  /// settleBooking, o con un precio ajustado aún sin recalcular).
+  int get unsettledCount => bookings
+      .where((b) =>
+          b.status == BookingStatus.completed &&
+          (b.settlement == null ||
+              (b.settlement!.amount - b.chargedAmount).abs() >= 0.005))
+      .length;
 
   /// True si se cargó el máximo de reservas: las cifras pueden estar
   /// incompletas para periodos largos.
@@ -324,6 +337,16 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         emit,
         _repo.markPaymentCollected(e.booking, e.method, e.reference),
         'Cobro registrado'));
+    on<AdminBackfillSettlementsRequested>((e, emit) async {
+      final result = await _repo.backfillSettlements();
+      result.fold(
+        (f) => emit(state.copyWith(error: f.message)),
+        (n) => emit(state.copyWith(
+            successMessage: n == 0
+                ? 'No había viajes pendientes de repartir'
+                : '$n viajes repartidos')),
+      );
+    });
     on<AdminUpdateFinanceSettingsRequested>((e, emit) => _perform(
         emit,
         _repo.updateFinanceSettings(e.fields),

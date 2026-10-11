@@ -461,8 +461,7 @@ class _BookingDetail extends StatelessWidget {
             .toList();
         final canCancel = AdminOperations.canTransition(
             booking.status, BookingStatus.cancelled);
-        final amount = booking.finalPrice ?? booking.estimatedPrice;
-        final commission = amount * state.commissionPct / 100;
+        final split = booking.settlementOr(state.commissionPct);
 
         return ListView(
           shrinkWrap: true,
@@ -519,11 +518,11 @@ class _BookingDetail extends StatelessWidget {
                     booking.finalPrice == null ? '—' : bs(booking.finalPrice!)),
             if (booking.status == BookingStatus.completed) ...[
               AdminInfoRow(
-                  label:
-                      'Comisión (${state.commissionPct.toStringAsFixed(0)} %)',
-                  value: bs(commission)),
+                  label: 'Comisión (${split.commissionPct.toStringAsFixed(0)} %'
+                      '${booking.settlement == null ? ', provisional' : ''})',
+                  value: bs(split.platformCommission)),
               AdminInfoRow(
-                  label: 'Parte chófer', value: bs(amount - commission)),
+                  label: 'Parte chófer', value: bs(split.driverPayout)),
             ],
             AdminInfoRow(
               label: 'Cobro',
@@ -1103,6 +1102,7 @@ const _auditLabels = {
   'record_payment': 'Cobro registrado',
   'refund_payment': 'Reembolso',
   'update_finance_settings': 'Config. financiera',
+  'backfill_settlements': 'Repartos asignados',
   'verify_driver': 'Chófer verificado',
   'block_user': 'Usuario bloqueado',
   'unblock_user': 'Usuario reactivado',
@@ -1351,6 +1351,8 @@ class SettingsTab extends StatelessWidget {
             const SectionHeader(title: 'Finanzas'),
             const SizedBox(height: LuxSpacing.md),
             _CommissionCard(current: state.commissionPct),
+            const SizedBox(height: LuxSpacing.md),
+            _BackfillCard(pending: state.unsettledCount),
             const SizedBox(height: LuxSpacing.xl),
             const SectionHeader(title: 'Totales históricos'),
             const SizedBox(height: LuxSpacing.md),
@@ -1472,7 +1474,8 @@ class _CommissionCardState extends State<_CommissionCard> {
                       context,
                       title: 'Cambiar comisión',
                       message: '${_fmt(widget.current)} % → ${_fmt(value)} %. '
-                          'Afecta al reparto mostrado de todos los viajes.',
+                          'Se aplica a los viajes que se completen desde '
+                          'ahora; los ya completados conservan su reparto.',
                       confirmLabel: 'Guardar',
                     );
                     if (ok == null || !context.mounted) return;
@@ -1487,6 +1490,78 @@ class _CommissionCardState extends State<_CommissionCard> {
       ),
     );
   }
+}
+
+/// Asigna el reparto a los viajes completados antes de que el servidor lo
+/// fijara automáticamente, para que admin y chóferes vean las mismas cifras.
+class _BackfillCard extends StatefulWidget {
+  const _BackfillCard({required this.pending});
+  final int pending;
+
+  @override
+  State<_BackfillCard> createState() => _BackfillCardState();
+}
+
+class _BackfillCardState extends State<_BackfillCard> {
+  bool _running = false;
+
+  Future<void> _run() async {
+    final ok = await confirmAdminAction(
+      context,
+      title: 'Asignar repartos pendientes',
+      message: '${widget.pending} viajes completados no tienen reparto '
+          'confirmado. Se les asignará con la comisión vigente y el chófer '
+          'verá esas cifras en su app. Los viajes ya repartidos no cambian.',
+      confirmLabel: 'Asignar',
+    );
+    if (ok == null || !mounted) return;
+    setState(() => _running = true);
+    final bloc = context.read<AdminBloc>()
+      ..add(const AdminBackfillSettlementsRequested());
+    // Se desbloquea cuando llega el resultado (éxito o error).
+    await bloc.stream
+        .firstWhere((s) => s.successMessage != null || s.error != null);
+    if (mounted) setState(() => _running = false);
+  }
+
+  @override
+  Widget build(BuildContext context) => LuxCard(
+        child: Row(
+          children: [
+            const Icon(Icons.account_balance_wallet_outlined,
+                color: LuxColors.sapphireBright),
+            const SizedBox(width: LuxSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text('Repartos de viajes',
+                      style: LuxTypography.titleMedium),
+                  Text(
+                    widget.pending == 0
+                        ? 'Todos los viajes completados tienen su reparto '
+                            'confirmado.'
+                        : '${widget.pending} viajes completados sin reparto '
+                            'confirmado: el chófer los ve como provisionales.',
+                    style: LuxTypography.caption,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: LuxSpacing.md),
+            if (_running)
+              const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2))
+            else
+              AdminActionButton(
+                label: 'Asignar',
+                onTap: widget.pending == 0 ? null : _run,
+              ),
+          ],
+        ),
+      );
 }
 
 class _SettingTile extends StatelessWidget {

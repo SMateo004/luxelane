@@ -225,7 +225,7 @@ class _IdlePanel extends StatelessWidget {
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                 child: _StatCard(
-                  label: 'Ganancias',
+                  label: 'Ganancias netas',
                   value: 'Bs${state.totalEarnings.toStringAsFixed(0)}',
                   icon: Icons.attach_money,
                 ),
