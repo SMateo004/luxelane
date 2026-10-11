@@ -149,9 +149,10 @@ class _FinanceTabState extends State<FinanceTab> {
             const SectionHeader(title: 'Liquidación a chóferes'),
             const SizedBox(height: LuxSpacing.sm),
             Text(
-              'Reparto con comisión de plataforma del '
-              '${f.commissionPct.toStringAsFixed(f.commissionPct % 1 == 0 ? 0 : 1)} %. '
-              '"Liquidable" es la parte del chófer en viajes ya cobrados.',
+              'Cada viaje se reparte con la comisión vigente al completarse '
+              '(ahora ${f.commissionPct.toStringAsFixed(f.commissionPct % 1 == 0 ? 0 : 1)} %); '
+              'el chófer ve las mismas cifras en su app. "Liquidable" es su '
+              'parte en viajes ya cobrados.',
               style: LuxTypography.caption,
             ),
             const SizedBox(height: LuxSpacing.md),

@@ -6,6 +6,7 @@ import * as stripe from './stripe_service';
 import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, DEFAULT_FARES, fareId, FareRule } from './pricing';
+import { computeSettlement, planBackfill, Settlement } from './settlement';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -37,6 +38,7 @@ interface BookingDoc {
   estimatedPrice: number;
   finalPrice?: number;
   paymentId?: string;
+  settlement?: Settlement;
 }
 
 interface RideDoc {
@@ -372,6 +374,82 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
 
   const tokens = await getUserTokens(after.riderId);
   await sendPush(tokens, 'Luxelane', message);
+});
+
+// ---------------------------------------------------------------------------
+// settleBooking  (onUpdate /bookings/{bookingId})
+// Fija el reparto plataforma / chófer de cada viaje completado. Se dispara
+// también al ajustar el precio final; la segunda escritura no cambia nada,
+// así que no hay bucle.
+// ---------------------------------------------------------------------------
+
+export const settleBooking = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const after = event.data?.after.data() as BookingDoc | undefined;
+  if (!after || after.status !== 'completed') return;
+
+  const finance = await db.collection('config').doc('finance').get();
+  const settlement = computeSettlement(after, finance.data()?.platformCommissionPct);
+  if (!settlement) return;
+
+  await event.data!.after.ref.update({ settlement });
+  logger.info('settleBooking', 'settled', { bookingId: event.params.bookingId, ...settlement });
+});
+
+// ---------------------------------------------------------------------------
+// backfillSettlements  (HTTPS Callable, solo admin)
+// Asigna el reparto a los viajes completados antes de existir settleBooking,
+// con la comisión vigente. Es idempotente: volver a ejecutarlo no cambia
+// los viajes ya repartidos.
+// ---------------------------------------------------------------------------
+
+export const backfillSettlements = onCall({ timeoutSeconds: 540 }, async (req) => {
+  const adminId = await requireAdmin(req);
+  const finance = await db.collection('config').doc('finance').get();
+  const pct = finance.data()?.platformCommissionPct;
+
+  const PAGE = 300;
+  let scanned = 0;
+  let settled = 0;
+  let last: admin.firestore.QueryDocumentSnapshot | undefined;
+
+  for (;;) {
+    let query = db
+      .collection('bookings')
+      .where('status', '==', 'completed')
+      .orderBy(admin.firestore.FieldPath.documentId())
+      .limit(PAGE);
+    if (last) query = query.startAfter(last);
+    const snap = await query.get();
+    if (snap.empty) break;
+
+    scanned += snap.size;
+    const plan = planBackfill(
+      snap.docs.map((d) => ({ id: d.id, data: d.data() as BookingDoc })),
+      pct,
+    );
+    if (plan.length) {
+      const batch = db.batch();
+      for (const p of plan) {
+        batch.update(db.collection('bookings').doc(p.id), { settlement: p.settlement });
+      }
+      await batch.commit();
+      settled += plan.length;
+    }
+    last = snap.docs[snap.docs.length - 1];
+    if (snap.size < PAGE) break;
+  }
+
+  await db.collection('admin_logs').add({
+    adminId,
+    adminEmail: req.auth?.token.email ?? null,
+    action: 'backfill_settlements',
+    targetId: 'bookings',
+    targetType: 'finance',
+    details: `${settled} de ${scanned} viajes completados repartidos`,
+    createdAt: admin.firestore.Timestamp.now(),
+  });
+  logger.info('backfillSettlements', 'done', { scanned, settled });
+  return { scanned, settled };
 });
 
 // ---------------------------------------------------------------------------

@@ -239,6 +239,59 @@ class Vehicle {
 }
 
 // ---------------------------------------------------------------------------
+// BookingSettlement
+// ---------------------------------------------------------------------------
+
+/// Comisión de plataforma por defecto, mientras el admin no configure otra
+/// (el servidor usa el mismo valor: functions/src/settlement.ts).
+const double kDefaultCommissionPct = 20;
+
+/// Reparto de un viaje completado entre la plataforma y el chófer.
+///
+/// Lo fija el servidor (Cloud Function `settleBooking`) con la comisión
+/// vigente al completar el viaje; la app solo lo lee.
+class BookingSettlement {
+  const BookingSettlement({
+    required this.amount,
+    required this.commissionPct,
+    required this.platformCommission,
+    required this.driverPayout,
+  });
+
+  /// Importe repartido (precio final o estimado en ese momento).
+  final double amount;
+  final double commissionPct;
+  final double platformCommission;
+  final double driverPayout;
+
+  static BookingSettlement? fromJson(Object? j) {
+    if (j is! Map) return null;
+    double n(String k) => (j[k] as num?)?.toDouble() ?? 0.0;
+    return BookingSettlement(
+      amount: n('amount'),
+      commissionPct: n('commissionPct'),
+      platformCommission: n('platformCommission'),
+      driverPayout: n('driverPayout'),
+    );
+  }
+
+  /// Reparto provisional con [commissionPct], para viajes que el servidor aún
+  /// no ha repartido.
+  factory BookingSettlement.estimate(double amount,
+      {double commissionPct = kDefaultCommissionPct}) {
+    double round(double v) => (v * 100).roundToDouble() / 100;
+    final pct = commissionPct.clamp(0, 100).toDouble();
+    final commission = round(amount * pct / 100);
+    return BookingSettlement(
+      amount: amount,
+      commissionPct: pct,
+      platformCommission: commission,
+      driverPayout: round(amount - commission),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Booking
 // ---------------------------------------------------------------------------
 
@@ -266,6 +319,7 @@ class Booking {
     this.passengerCount = 1,
     this.luggageCount = 0,
     this.pricingReviewReason,
+    this.settlement,
   });
 
   final String id;
@@ -297,6 +351,21 @@ class Booking {
   /// Lo marca el servidor si el precio no respeta la tarifa vigente
   /// (`below_fare`, `fare_disabled`, `unknown_fare`). Solo lectura.
   final String? pricingReviewReason;
+
+  /// Reparto plataforma / chófer fijado por el servidor. Solo lectura.
+  final BookingSettlement? settlement;
+
+  /// Importe que se factura: el precio final o, si no hay, el estimado.
+  double get chargedAmount => finalPrice ?? estimatedPrice;
+
+  /// Reparto vigente del viaje: el del servidor si corresponde al importe
+  /// actual o, si no, uno provisional con [commissionPct].
+  BookingSettlement settlementOr(double commissionPct) {
+    final s = settlement;
+    if (s != null && (s.amount - chargedAmount).abs() < 0.005) return s;
+    return BookingSettlement.estimate(chargedAmount,
+        commissionPct: s?.commissionPct ?? commissionPct);
+  }
 
   factory Booking.fromJson(Map<String, dynamic> j) => Booking(
         id: j['id'] as String? ?? '',
@@ -334,6 +403,7 @@ class Booking {
         passengerCount: j['passengerCount'] as int? ?? 1,
         luggageCount: j['luggageCount'] as int? ?? 0,
         pricingReviewReason: (j['pricingReview'] as Map?)?['reason'] as String?,
+        settlement: BookingSettlement.fromJson(j['settlement']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -392,6 +462,7 @@ class Booking {
         passengerCount: passengerCount,
         luggageCount: luggageCount,
         pricingReviewReason: pricingReviewReason,
+        settlement: settlement,
       );
 }
 

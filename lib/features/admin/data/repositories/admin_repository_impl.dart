@@ -314,6 +314,20 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
+  Future<Either<Failure, int>> backfillSettlements() async {
+    // Lo hace la Cloud Function: el reparto solo lo escribe el servidor.
+    try {
+      final result =
+          await _functions.httpsCallable('backfillSettlements').call();
+      return Right((result.data['settled'] as num?)?.toInt() ?? 0);
+    } on FirebaseFunctionsException catch (e) {
+      return Left(ServerFailure(e.message ?? e.code));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> markPaymentCollected(
       Booking booking, String method, String reference) {
     final amount = booking.finalPrice ?? booking.estimatedPrice;

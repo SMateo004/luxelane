@@ -179,10 +179,27 @@ class DriverLoaded extends DriverState {
   List<Booking> get completedBookings =>
       bookings.where((b) => b.status == BookingStatus.completed).toList();
 
-  double get totalEarnings => completedBookings.fold(
-        0,
-        (sum, b) => sum + (b.finalPrice ?? b.estimatedPrice),
-      );
+  /// Reparto de un viaje: el fijado por el servidor al completarlo o, si aún
+  /// no existe, uno provisional con la comisión por defecto.
+  BookingSettlement earningsOf(Booking b) =>
+      b.settlementOr(kDefaultCommissionPct);
+
+  /// Ganancias netas del chófer (tarifa menos comisión de la plataforma).
+  double get totalEarnings => _sum((s) => s.driverPayout);
+
+  /// Total facturado a los pasajeros por sus viajes.
+  double get grossEarnings => _sum((s) => s.amount);
+
+  double get totalCommission => _sum((s) => s.platformCommission);
+
+  /// Algún viaje aún sin reparto confirmado por el servidor.
+  bool get hasProvisionalEarnings =>
+      completedBookings.any((b) => b.settlement == null);
+
+  double _sum(double Function(BookingSettlement) f) {
+    final total = completedBookings.fold(0.0, (s, b) => s + f(earningsOf(b)));
+    return (total * 100).roundToDouble() / 100;
+  }
 
   @override
   List<Object?> get props => [

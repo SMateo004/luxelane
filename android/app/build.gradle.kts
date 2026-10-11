@@ -1,9 +1,24 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// Google Maps key for the native SDK. CI passes it as the GOOGLE_MAPS_API_KEY
+// env var; locally, add `MAPS_API_KEY=...` to android/local.properties.
+// Falls back to the project key (same as AppConfig and the iOS xcconfig) so
+// the map never renders blank when neither is set.
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+val mapsApiKey: String =
+    System.getenv("GOOGLE_MAPS_API_KEY")?.takeIf { it.isNotBlank() }
+        ?: localProperties.getProperty("MAPS_API_KEY")?.takeIf { it.isNotBlank() }
+        ?: "AIzaSyBbDde6GtLHy9_6qys4BMmq2P2G2INRUkM"
 
 android {
     namespace = "com.luxelane.app"
@@ -27,12 +42,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        // Google Maps key for AndroidManifest (same key as AppConfig and the
-        // iOS xcconfig). CI can override it with the GOOGLE_MAPS_API_KEY env.
-        manifestPlaceholders["MAPS_API_KEY"] =
-            System.getenv("GOOGLE_MAPS_API_KEY")?.takeIf { it.isNotBlank() }
-                ?: (project.findProperty("MAPS_API_KEY") as String?)
-                ?: "AIzaSyBbDde6GtLHy9_6qys4BMmq2P2G2INRUkM"
+        manifestPlaceholders["mapsApiKey"] = mapsApiKey
     }
 
     buildTypes {

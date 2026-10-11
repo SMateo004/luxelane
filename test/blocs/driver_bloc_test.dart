@@ -41,7 +41,8 @@ final _driverUser = User(
   fcmTokens: const [],
 );
 
-Booking _makeBooking(BookingStatus status) => Booking(
+Booking _makeBooking(BookingStatus status, {BookingSettlement? settlement}) =>
+    Booking(
       id: 'booking-1',
       riderId: 'rider-1',
       driverId: 'driver-1',
@@ -54,6 +55,7 @@ Booking _makeBooking(BookingStatus status) => Booking(
       estimatedPrice: 75,
       createdAt: _now,
       updatedAt: _now,
+      settlement: settlement,
     );
 
 void main() {
@@ -198,7 +200,7 @@ void main() {
       expect(state.activeBooking, isNull);
     });
 
-    test('totalEarnings sums completed booking prices', () {
+    test('totalEarnings descuenta la comisión de los viajes completados', () {
       final bookings = [
         _makeBooking(BookingStatus.completed),
         _makeBooking(BookingStatus.completed),
@@ -210,7 +212,32 @@ void main() {
         isAvailable: true,
         bookings: bookings,
       );
-      expect(state.totalEarnings, 150.0); // 75 + 75
+      // Sin reparto del servidor: comisión por defecto del 20 %.
+      expect(state.grossEarnings, 150.0); // 75 + 75
+      expect(state.totalCommission, 30.0);
+      expect(state.totalEarnings, 120.0);
+      expect(state.hasProvisionalEarnings, isTrue);
+    });
+
+    test('totalEarnings usa el reparto fijado por el servidor', () {
+      const settled = BookingSettlement(
+        amount: 75,
+        commissionPct: 10,
+        platformCommission: 7.5,
+        driverPayout: 67.5,
+      );
+      final state = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: [
+          _makeBooking(BookingStatus.completed, settlement: settled),
+          _makeBooking(BookingStatus.completed, settlement: settled),
+        ],
+      );
+      expect(state.totalEarnings, 135.0);
+      expect(state.totalCommission, 15.0);
+      expect(state.hasProvisionalEarnings, isFalse);
     });
   });
 }

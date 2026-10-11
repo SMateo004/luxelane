@@ -33,6 +33,10 @@ abstract class AdminRepository {
   Future<Either<Failure, void>> refundPayment(Payment payment, String reason);
   Future<Either<Failure, void>> markPaymentCollected(
       Booking booking, String method, String reference);
+
+  /// Asigna el reparto plataforma / chófer a los viajes completados que aún
+  /// no lo tienen. Devuelve cuántos se repartieron.
+  Future<Either<Failure, int>> backfillSettlements();
   Future<Either<Failure, void>> updateFinanceSettings(
       Map<String, dynamic> fields);
 
