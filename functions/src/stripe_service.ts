@@ -26,10 +26,22 @@ export async function createIntent(params: {
   return intent.client_secret!;
 }
 
-export async function captureIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
-  logger.info(FN, 'captureIntent', { paymentIntentId });
+/**
+ * Captura un PaymentIntent autorizado. Con [amountToCapture] (centavos) cobra
+ * ese importe, sin pasar de lo autorizado; sin él, todo lo autorizado.
+ */
+export async function captureIntent(
+  paymentIntentId: string,
+  amountToCapture?: number,
+): Promise<Stripe.PaymentIntent> {
+  logger.info(FN, 'captureIntent', { paymentIntentId, amountToCapture });
 
-  const intent = await stripe.paymentIntents.capture(paymentIntentId);
+  let params: Stripe.PaymentIntentCaptureParams | undefined;
+  if (amountToCapture !== undefined) {
+    const authorized = await stripe.paymentIntents.retrieve(paymentIntentId);
+    params = { amount_to_capture: Math.min(amountToCapture, authorized.amount_capturable) };
+  }
+  const intent = await stripe.paymentIntents.capture(paymentIntentId, params);
 
   logger.info(FN, 'captureIntent.success', { status: intent.status });
   return intent;

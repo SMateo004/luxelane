@@ -337,8 +337,8 @@ class AdminRepositoryImpl implements AdminRepository {
         'bookingId': booking.id,
         'riderId': booking.riderId,
         'stripePaymentIntentId': '',
-        // Misma unidad que la Cloud Function capturePayment (centavos).
-        'amount': (amount * 100).round(),
+        // Pagos en centavos, como Stripe y capturePayment.
+        'amount': Payment.toCents(amount),
         'currency': 'bob',
         'status': PaymentStatus.captured.label,
         'method': method,

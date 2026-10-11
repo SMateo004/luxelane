@@ -7,6 +7,8 @@ import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, DEFAULT_FARES, fareId, FareRule } from './pricing';
 import { computeSettlement, planBackfill, Settlement } from './settlement';
+import { rankCandidates } from './assignment';
+import { fromCents, toCents } from './money';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -28,6 +30,7 @@ type PaymentStatus = 'pending' | 'captured' | 'refunded' | 'failed';
 
 interface BookingDoc {
   riderId: string;
+  origin?: { lat?: number; lng?: number };
   driverId?: string;
   status: BookingStatus;
   // La app guarda la clase en `class`; `vehicleClass` es el nombre antiguo.
@@ -54,6 +57,7 @@ interface PaymentDoc {
   bookingId: string;
   riderId: string;
   stripePaymentIntentId: string;
+  /** Centavos enteros (como Stripe); ver money.ts. */
   amount: number;
   currency: string;
   status: PaymentStatus;
@@ -131,47 +135,61 @@ export const createPaymentIntent = onCall(async (req) => {
 // ---------------------------------------------------------------------------
 
 export const capturePayment = onCall(async (req) => {
-  requireAuth(req);
-  const { bookingId, riderId, stripePaymentIntentId, amount, currency } = req.data as {
+  const uid = requireAuth(req);
+  // El importe y el pasajero salen de la reserva, nunca del cliente.
+  const { bookingId, stripePaymentIntentId } = req.data as {
     bookingId: string;
-    riderId: string;
     stripePaymentIntentId: string;
-    amount: number;
-    currency: string;
   };
 
   if (!bookingId || !stripePaymentIntentId) throw err.invalidArgument('bookingId and stripePaymentIntentId required');
 
-  const bookingSnap = await db.collection('bookings').doc(bookingId).get();
+  const bookingRef = db.collection('bookings').doc(bookingId);
+  const bookingSnap = await bookingRef.get();
   if (!bookingSnap.exists) throw err.notFound('Booking not found');
 
   const booking = bookingSnap.data() as BookingDoc;
+  if (booking.riderId !== uid) await requireAdmin(req);
   if (booking.status !== 'completed') throw err.failedPrecondition('Ride must be completed before capture');
 
-  logger.info('capturePayment', 'start', { bookingId, amount });
+  if (booking.paymentId) {
+    const existing = await db.collection('payments').doc(booking.paymentId).get();
+    if (existing.data()?.status === 'captured') throw err.failedPrecondition('Booking already paid');
+  }
+
+  const chargedBs = booking.finalPrice ?? booking.estimatedPrice;
+  const amountToCapture = toCents(chargedBs);
+  logger.info('capturePayment', 'start', { bookingId, amountToCapture });
 
   try {
-    const intent = await stripe.captureIntent(stripePaymentIntentId);
+    const intent = await stripe.captureIntent(stripePaymentIntentId, amountToCapture);
+    const captured = intent.amount_received ?? amountToCapture;
+    if (captured < amountToCapture) {
+      logger.warn('capturePayment', 'captured less than charged', { bookingId, captured, amountToCapture });
+    }
 
     const paymentRef = db.collection('payments').doc();
     const payment: PaymentDoc = {
       bookingId,
-      riderId,
+      riderId: booking.riderId,
       stripePaymentIntentId,
-      amount,
-      currency,
+      amount: captured,
+      currency: intent.currency ?? 'bob',
       status: intent.status === 'succeeded' ? 'captured' : 'failed',
       createdAt: admin.firestore.Timestamp.now(),
     };
 
-    await paymentRef.set(payment);
-    await db.collection('bookings').doc(bookingId).update({
+    const batch = db.batch();
+    batch.set(paymentRef, payment);
+    batch.update(bookingRef, {
       paymentId: paymentRef.id,
-      finalPrice: amount / 100,
+      // El precio final se mantiene si ya existía; si no, es lo cobrado.
+      ...(booking.finalPrice == null ? { finalPrice: fromCents(captured) } : {}),
     });
+    await batch.commit();
 
     logger.info('capturePayment', 'success', { paymentId: paymentRef.id });
-    return { paymentId: paymentRef.id, status: payment.status };
+    return { paymentId: paymentRef.id, status: payment.status, amount: captured, currency: payment.currency };
   } catch (e) {
     logger.error('capturePayment', 'stripe error', { error: String(e) });
     throw err.paymentFailed(String(e));
@@ -483,55 +501,81 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
 // ---------------------------------------------------------------------------
 
 export const assignNearestDriver = onCall(async (req) => {
-  requireAuth(req);
-  const { bookingId, vehicleClass } = req.data as {
-    bookingId: string;
-    vehicleClass: string;
-  };
+  const uid = requireAuth(req);
+  const { bookingId } = req.data as { bookingId: string };
+  if (!bookingId) throw err.invalidArgument('bookingId required');
 
-  if (!bookingId || !vehicleClass) throw err.invalidArgument('bookingId and vehicleClass required');
-
-  const bookingSnap = await db.collection('bookings').doc(bookingId).get();
+  const bookingRef = db.collection('bookings').doc(bookingId);
+  const bookingSnap = await bookingRef.get();
   if (!bookingSnap.exists) throw err.notFound('Booking not found');
 
   const booking = bookingSnap.data() as BookingDoc;
+  if (booking.riderId !== uid) await requireAdmin(req);
   if (booking.status !== 'pending') throw err.failedPrecondition('Booking must be pending');
 
+  const vehicleClass = booking.class ?? booking.vehicleClass ?? 'business';
   logger.info('assignNearestDriver', 'searching', { bookingId, vehicleClass });
 
-  const vehicleSnap = await db
-    .collection('vehicles')
-    .where('vehicleClass', '==', vehicleClass)
-    .where('isActive', '==', true)
-    .limit(10)
-    .get();
-
-  if (vehicleSnap.empty) {
+  // La app guarda la clase del vehículo en `class`; `vehicleClass` es el
+  // nombre de documentos antiguos.
+  const vehicleQueries = await Promise.all(
+    ['class', 'vehicleClass'].map((field) =>
+      db.collection('vehicles').where(field, '==', vehicleClass).where('isActive', '==', true).limit(50).get(),
+    ),
+  );
+  const driverIds = [
+    ...new Set(vehicleQueries.flatMap((q) => q.docs.map((d) => d.data().driverId as string)).filter(Boolean)),
+  ];
+  if (!driverIds.length) {
     logger.warn('assignNearestDriver', 'no vehicles found', { vehicleClass });
     return { assigned: false, reason: 'no_drivers_available' };
   }
 
-  const vehicleDoc = vehicleSnap.docs[0];
-  const driverId = vehicleDoc.data().driverId as string;
+  const profiles = await db.getAll(...driverIds.map((id) => db.collection('driverProfiles').doc(id)));
+  const ranked = rankCandidates(
+    profiles
+      .filter((p) => p.exists)
+      .map((p) => {
+        const d = p.data()!;
+        const gp = d.currentLocation as admin.firestore.GeoPoint | undefined;
+        return {
+          driverId: p.id,
+          isAvailable: d.isAvailable === true,
+          documentsVerified: d.documentsVerified === true,
+          location: gp ? { lat: gp.latitude, lng: gp.longitude } : null,
+        };
+      }),
+    booking.origin?.lat != null && booking.origin?.lng != null
+      ? { lat: booking.origin.lat, lng: booking.origin.lng }
+      : null,
+  );
 
-  const driverSnap = await db.collection('driverProfiles').doc(driverId).get();
-  if (!driverSnap.exists || !driverSnap.data()?.isAvailable) {
-    return { assigned: false, reason: 'no_drivers_available' };
+  // Del más cercano al más lejano; la transacción evita asignar una reserva
+  // ya tomada o un chófer que acaba de ocuparse.
+  for (const driverId of ranked) {
+    const driverRef = db.collection('driverProfiles').doc(driverId);
+    const outcome = await db.runTransaction(async (tx) => {
+      const [b, d] = await Promise.all([tx.get(bookingRef), tx.get(driverRef)]);
+      if ((b.data() as BookingDoc | undefined)?.status !== 'pending') return 'taken';
+      if (!d.data()?.isAvailable) return 'busy';
+      tx.update(bookingRef, {
+        driverId,
+        status: 'confirmed' as BookingStatus,
+        updatedAt: admin.firestore.Timestamp.now(),
+      });
+      tx.update(driverRef, { isAvailable: false });
+      return 'assigned';
+    });
+    if (outcome === 'taken') return { assigned: false, reason: 'already_taken' };
+    if (outcome === 'busy') continue;
+
+    const driverTokens = await getUserTokens(driverId);
+    await sendPush(driverTokens, 'Nueva reserva', 'Se te ha asignado un nuevo viaje.');
+    logger.info('assignNearestDriver', 'assigned', { bookingId, driverId });
+    return { assigned: true, driverId };
   }
 
-  await db.collection('bookings').doc(bookingId).update({
-    driverId,
-    status: 'confirmed' as BookingStatus,
-    updatedAt: admin.firestore.Timestamp.now(),
-  });
-
-  await db.collection('driverProfiles').doc(driverId).update({ isAvailable: false });
-
-  const driverTokens = await getUserTokens(driverId);
-  await sendPush(driverTokens, 'Nueva reserva', 'Se te ha asignado un nuevo viaje.');
-
-  logger.info('assignNearestDriver', 'assigned', { bookingId, driverId });
-  return { assigned: true, driverId };
+  return { assigned: false, reason: 'no_drivers_available' };
 });
 
 // ---------------------------------------------------------------------------
