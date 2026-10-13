@@ -389,6 +389,10 @@ class _BookingScreenState extends State<BookingScreen> {
         ),
       );
 
+  /// An hourly booking has no route to draw, so it gets no map.
+  bool get _showRouteMap =>
+      _service != ServiceType.byTheHour && _formData?.origin != null;
+
   /// Colours of the selected class; the page follows them as you choose.
   VehicleTone get _tone => VehicleCatalog.tone(_selected);
 
@@ -752,38 +756,33 @@ class _BookingScreenState extends State<BookingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ── Dark map ─────────────────────────────────────────────────
-            Container(
-              height: 260,
-              color: LD.bg3,
-              child: _formData?.origin != null
-                  ? LuxMap(
-                      origin: _formData!.origin,
-                      destination: _formData!.destination,
-                      routeInfo: RouteInfo(
-                        polylinePoints: _formData!.polylinePoints,
-                        distanceKm: _formData!.routeDistanceKm,
-                        durationMin: _formData!.routeDurationMin,
-                      ),
+            // ── Route map: only when there is a route (not for hourly) ────
+            AnimatedSize(
+              duration: const Duration(milliseconds: 320),
+              curve: Curves.easeInOut,
+              alignment: Alignment.topCenter,
+              child: _showRouteMap
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          height: 260,
+                          color: LD.bg3,
+                          child: LuxMap(
+                            origin: _formData!.origin,
+                            destination: _formData!.destination,
+                            routeInfo: RouteInfo(
+                              polylinePoints: _formData!.polylinePoints,
+                              distanceKm: _formData!.routeDistanceKm,
+                              durationMin: _formData!.routeDurationMin,
+                            ),
+                          ),
+                        ),
+                        const Divider(color: _kDivider, height: 1),
+                      ],
                     )
-                  : Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.map_outlined, size: 36, color: LD.ink3),
-                          const SizedBox(height: 8),
-                          Text('Vista previa de ruta',
-                              style: TextStyle(
-                                fontFamily: kSans,
-                                fontSize: 12,
-                                color: LD.ink3,
-                              )),
-                        ],
-                      ),
-                    ),
+                  : const SizedBox(width: double.infinity),
             ),
-
-            const Divider(color: _kDivider, height: 1),
 
             // ── Booking summary ───────────────────────────────────────────
             Expanded(
@@ -865,11 +864,17 @@ class _BookingScreenState extends State<BookingScreen> {
           value: _formData?.origin.displayName ?? '—',
         ),
         const SizedBox(height: 12),
-        _SummaryAddressRow(
-          icon: Icons.flag_outlined,
-          label: 'Destino',
-          value: _formData?.destination?.displayName ?? '—',
-        ),
+        _service == ServiceType.byTheHour
+            ? _SummaryAddressRow(
+                icon: Icons.schedule_rounded,
+                label: 'Duración',
+                value: '$_hours horas a tu disposición',
+              )
+            : _SummaryAddressRow(
+                icon: Icons.flag_outlined,
+                label: 'Destino',
+                value: _formData?.destination?.displayName ?? '—',
+              ),
         if (_airportPickup) ...[
           const SizedBox(height: 20),
           const _FlightNote(),
@@ -1147,7 +1152,7 @@ class _BookingScreenState extends State<BookingScreen> {
       );
 
   Widget _confirmStep() {
-    final hasRoute = _formData?.origin != null;
+    final hasRoute = _showRouteMap;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
