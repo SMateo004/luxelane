@@ -38,12 +38,17 @@ LUX_MAPS_KEY = $GOOGLE_MAPS_KEY
 CONF
 
 APP_VERSION="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
-echo "▶ Building $APP for $PROJECT ($APP_VERSION)…"
+# Build number (pubspec "version: x.y.z+N"): the apps compare it with the
+# minimum set in Admin → Settings. Bump N for every store upload.
+BUILD_NUMBER="$(sed -n 's/^version: *[^+]*+\([0-9]*\).*/\1/p' pubspec.yaml)"
+[[ -n "$BUILD_NUMBER" ]] || { echo "✗ pubspec.yaml version needs a +build number"; exit 1; }
+echo "▶ Building $APP for $PROJECT (build $BUILD_NUMBER, $APP_VERSION)…"
 flutter build ipa --release -t "$TARGET" \
   --dart-define-from-file="$ENV_FILE" \
   --dart-define=ENV=prod \
   --dart-define=GOOGLE_MAPS_KEY="$GOOGLE_MAPS_KEY" \
   --dart-define=APP_VERSION="$APP_VERSION" \
+  --dart-define=LUX_BUILD="$BUILD_NUMBER" \
   --obfuscate --split-debug-info="build/debug-info-ios-$APP"
 
 echo "✓ build/ios/ipa — upload with Transporter or: xcrun altool --upload-app"

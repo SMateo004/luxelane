@@ -481,6 +481,18 @@ abstract class AppLocalizations {
   /// **'Inactivo'**
   String get adminInactive;
 
+  /// No description provided for @adminIosUrlDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer: enlace de App Store'**
+  String get adminIosUrlDriver;
+
+  /// No description provided for @adminIosUrlRider.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero: enlace de App Store'**
+  String get adminIosUrlRider;
+
   /// No description provided for @adminKpiAwaitingDriver.
   ///
   /// In es, this message translates to:
@@ -547,6 +559,24 @@ abstract class AppLocalizations {
   /// **'MODO MANTENIMIENTO ACTIVO — Los pasajeros no pueden reservar nuevos viajes.'**
   String get adminMaintenanceBanner;
 
+  /// No description provided for @adminMaintenanceConfirmAction.
+  ///
+  /// In es, this message translates to:
+  /// **'Pausar reservas'**
+  String get adminMaintenanceConfirmAction;
+
+  /// No description provided for @adminMaintenanceConfirmBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Los pasajeros no podrán cotizar ni reservar hasta que lo desactives, y verán un aviso en la app y en la web. Los viajes ya reservados y en curso siguen normalmente.'**
+  String get adminMaintenanceConfirmBody;
+
+  /// No description provided for @adminMaintenanceConfirmTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Pausar las reservas nuevas?'**
+  String get adminMaintenanceConfirmTitle;
+
   /// No description provided for @adminMaintenanceMode.
   ///
   /// In es, this message translates to:
@@ -556,7 +586,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminMaintenanceModeDesc.
   ///
   /// In es, this message translates to:
-  /// **'Deshabilita todas las reservas y muestra la pantalla de mantenimiento a los usuarios.'**
+  /// **'Pausa las reservas nuevas: los pasajeros no pueden cotizar ni reservar y ven un aviso. Los viajes ya reservados y en curso siguen normalmente.'**
   String get adminMaintenanceModeDesc;
 
   /// No description provided for @adminMemberSince.
@@ -564,6 +594,54 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Miembro desde {date}'**
   String adminMemberSince(String date);
+
+  /// No description provided for @adminMinBuildDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer: compilación mínima'**
+  String get adminMinBuildDriver;
+
+  /// No description provided for @adminMinBuildRider.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero: compilación mínima'**
+  String get adminMinBuildRider;
+
+  /// No description provided for @adminMinVersionDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Quien tenga una compilación más antigua ve una pantalla para actualizar y no puede seguir usando la app. Úsalo solo cuando un cambio del servidor deje de funcionar con versiones viejas. 0 = sin mínimo.'**
+  String get adminMinVersionDesc;
+
+  /// No description provided for @adminMinVersionHint.
+  ///
+  /// In es, this message translates to:
+  /// **'El número de compilación es el que va después del + en la versión (1.0.0+7 → 7).'**
+  String get adminMinVersionHint;
+
+  /// No description provided for @adminMinVersionInvalid.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa los valores: números enteros desde 0, y enlaces vacíos o que empiecen con https://apps.apple.com/'**
+  String get adminMinVersionInvalid;
+
+  /// No description provided for @adminMinVersionNone.
+  ///
+  /// In es, this message translates to:
+  /// **'sin mínimo'**
+  String get adminMinVersionNone;
+
+  /// No description provided for @adminMinVersionSummary.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero: {rider} · Chófer: {driver}'**
+  String adminMinVersionSummary(String rider, String driver);
+
+  /// No description provided for @adminMinVersionTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Versión mínima de las apps'**
+  String get adminMinVersionTitle;
 
   /// No description provided for @adminNoAuditLogs.
   ///
@@ -756,18 +834,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Reglas de precios (Bs)'**
   String get adminPricingRules;
-
-  /// No description provided for @adminPushNotifications.
-  ///
-  /// In es, this message translates to:
-  /// **'Notificaciones push'**
-  String get adminPushNotifications;
-
-  /// No description provided for @adminPushNotificationsDesc.
-  ///
-  /// In es, this message translates to:
-  /// **'Habilita notificaciones a nivel del sistema para nuevas reservas.'**
-  String get adminPushNotificationsDesc;
 
   /// No description provided for @adminReasonHint.
   ///
@@ -1224,18 +1290,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Total de reservas'**
   String get adminTotalBookings;
-
-  /// No description provided for @adminTwoFactor.
-  ///
-  /// In es, this message translates to:
-  /// **'Autenticación admin de dos factores'**
-  String get adminTwoFactor;
-
-  /// No description provided for @adminTwoFactorDesc.
-  ///
-  /// In es, this message translates to:
-  /// **'Requiere 2FA para todas las acciones administrativas.'**
-  String get adminTwoFactorDesc;
 
   /// No description provided for @adminUserCannotSuspendAdmin.
   ///
@@ -1740,6 +1794,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Revisa el número de vuelo (ej. LA 8810).'**
   String get bookingErrorInvalidFlight;
+
+  /// No description provided for @bookingErrorMaintenance.
+  ///
+  /// In es, this message translates to:
+  /// **'Por mantenimiento, no se pueden hacer reservas en este momento. Inténtalo de nuevo en un rato.'**
+  String get bookingErrorMaintenance;
 
   /// No description provided for @bookingErrorPaymentNotAuthorised.
   ///
@@ -5593,6 +5653,12 @@ abstract class AppLocalizations {
   /// **'{rides, plural, =1{Nivel máximo · 1 viaje en 12 meses} other{Nivel máximo · {rides} viajes en 12 meses}}'**
   String loyaltyTopTier(int rides);
 
+  /// No description provided for @maintenanceBar.
+  ///
+  /// In es, this message translates to:
+  /// **'Las reservas nuevas están pausadas por mantenimiento. Tus viajes ya reservados siguen en pie.'**
+  String get maintenanceBar;
+
   /// Bell tooltip / screen-reader label when there are unread notifications
   ///
   /// In es, this message translates to:
@@ -8580,6 +8646,30 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'{count, plural, =1{1 viaje} other{{count} viajes}}'**
   String unitTrips(int count);
+
+  /// No description provided for @updateRequiredBody.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta versión de la app ya no es compatible. Instala la última para seguir usándola; tu cuenta y tus viajes no cambian.'**
+  String get updateRequiredBody;
+
+  /// No description provided for @updateRequiredButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Actualizar'**
+  String get updateRequiredButton;
+
+  /// No description provided for @updateRequiredNoLink.
+  ///
+  /// In es, this message translates to:
+  /// **'Búscala en la App Store para actualizarla.'**
+  String get updateRequiredNoLink;
+
+  /// No description provided for @updateRequiredTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Actualiza Luxelane'**
+  String get updateRequiredTitle;
 
   /// No description provided for @vehicleBusiness.
   ///

@@ -25,13 +25,18 @@ ENV_FILE=".env.${PROJECT}.${APP}.android"
 [[ -f android/key.properties ]] || echo "⚠ android/key.properties missing — the bundle will be debug-signed and Play will reject it."
 
 APP_VERSION="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"
-echo "▶ Building $APP for $PROJECT ($APP_VERSION)…"
+# Build number (pubspec "version: x.y.z+N"): the apps compare it with the
+# minimum set in Admin → Settings. Bump N for every store upload.
+BUILD_NUMBER="$(sed -n 's/^version: *[^+]*+\([0-9]*\).*/\1/p' pubspec.yaml)"
+[[ -n "$BUILD_NUMBER" ]] || { echo "✗ pubspec.yaml version needs a +build number"; exit 1; }
+echo "▶ Building $APP for $PROJECT (build $BUILD_NUMBER, $APP_VERSION)…"
 MAPS_API_KEY="$GOOGLE_MAPS_KEY" flutter build appbundle --release \
   --flavor "$APP" -t "$TARGET" \
   --dart-define-from-file="$ENV_FILE" \
   --dart-define=ENV=prod \
   --dart-define=GOOGLE_MAPS_KEY="$GOOGLE_MAPS_KEY" \
   --dart-define=APP_VERSION="$APP_VERSION" \
+  --dart-define=LUX_BUILD="$BUILD_NUMBER" \
   --obfuscate --split-debug-info="build/debug-info-$APP"
 
 echo "✓ build/app/outputs/bundle/${APP}Release/app-${APP}-release.aab"

@@ -150,8 +150,6 @@ class AdminState extends Equatable {
   final AdminNotice? notice;
 
   bool get isMaintenanceMode => globalSettings['isMaintenanceMode'] ?? false;
-  bool get pushNotificationsEnabled => globalSettings['pushNotificationsEnabled'] ?? true;
-  bool get twoFactorEnabled => globalSettings['twoFactorEnabled'] ?? false;
 
   /// Cross-reference: get a user's display name by their ID
   /// Phone on the user's profile, if any.

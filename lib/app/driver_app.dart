@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
+import '../core/app_gate/app_gate.dart';
+import '../core/app_gate/global_config.dart';
 import '../core/widgets/environment_banner.dart';
 import '../core/repositories/repositories.dart';
 import '../core/services/notification_service.dart';
@@ -87,7 +89,7 @@ class _DriverAppState extends State<DriverApp> {
               sl<UserRepository>().updatePreferredLocale(userId: state.user.id, locale: locale);
             }
           },
-          child: child ?? const SizedBox.shrink(),
+          child: AppGate(app: LuxApp.driver, child: child ?? const SizedBox.shrink()),
         )),
         routerConfig: _router,
       ),

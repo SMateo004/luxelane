@@ -442,6 +442,22 @@ describe('support hours config', () => {
   });
 });
 
+describe('global config', () => {
+  it('admins set maintenance and minimum builds; anyone reads it, even signed out', async () => {
+    const cfg = { isMaintenanceMode: false, riderMinBuild: 3, driverMinBuild: 0, riderIosUrl: 'https://apps.apple.com/app/id123', driverIosUrl: '' };
+    await assertSucceeds(setDoc(doc(db('admin'), 'config/global'), cfg));
+    await assertSucceeds(setDoc(doc(db('admin'), 'config/global'), { twoFactorEnabled: false }, { merge: true }));
+    await assertFails(setDoc(doc(db('admin'), 'config/global'), { ...cfg, riderMinBuild: -1 }));
+    await assertFails(setDoc(doc(db('admin'), 'config/global'), { ...cfg, riderMinBuild: 1.5 }));
+    await assertFails(setDoc(doc(db('admin'), 'config/global'), { ...cfg, isMaintenanceMode: 'yes' }));
+    await assertFails(setDoc(doc(db('admin'), 'config/global'), { ...cfg, riderIosUrl: 'https://evil.example/app' }));
+    await assertFails(setDoc(doc(db('admin'), 'config/global'), { ...cfg, banner: 'x' }));
+    await assertFails(setDoc(doc(db('rider'), 'config/global'), cfg));
+    await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(), 'config/global')));
+    await assertFails(getDoc(doc(env.unauthenticatedContext().firestore(), 'config/support')));
+  });
+});
+
 describe('suspended accounts', () => {
   it('a suspended chauffeur cannot go online or take a booking, but can go offline', async () => {
     await seed('users/driver', { role: 'driver', email: 'd@x.com', isActive: false });

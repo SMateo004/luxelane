@@ -175,6 +175,7 @@ jobs:
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=APP_VERSION=${{ github.sha }} \
+            --dart-define=LUX_BUILD="$(sed -n 's/^version: *[^+]*+\([0-9]*\).*/\1/p' pubspec.yaml)" \
             --obfuscate \
             --split-debug-info=build/debug-info
       - uses: actions/upload-artifact@v4
@@ -216,6 +217,7 @@ jobs:
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=APP_VERSION=${{ github.sha }} \
+            --dart-define=LUX_BUILD="$(sed -n 's/^version: *[^+]*+\([0-9]*\).*/\1/p' pubspec.yaml)" \
             --obfuscate \
             --split-debug-info=build/debug-info-driver
       - uses: actions/upload-artifact@v4

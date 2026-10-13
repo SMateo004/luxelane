@@ -15,6 +15,7 @@ import '../../../adjustments/presentation/adjust_price_dialog.dart';
 import '../../../refunds/domain/refund.dart';
 import '../../../refunds/presentation/refund_dialog.dart';
 import '../bloc/admin_bloc.dart';
+import 'min_version_card.dart';
 
 String _noticeText(AppLocalizations l, AdminNotice n) => switch (n) {
       AdminNotice.maintenanceOn => l.adminNoticeMaintenanceOn,
@@ -1565,6 +1566,26 @@ class _AuditTile extends StatelessWidget {
 // TAB: Settings  (todas las opciones funcionales, guardadas en Firestore)
 // ─────────────────────────────────────────────────────────────────────────────
 
+Future<bool> _confirmMaintenance(BuildContext context) async {
+  final l = context.l10n;
+  final ok = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      backgroundColor: LuxColors.blackElevated,
+      title: Text(l.adminMaintenanceConfirmTitle, style: LuxTypography.titleLarge),
+      content: Text(l.adminMaintenanceConfirmBody, style: LuxTypography.bodyMedium),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l.commonCancel)),
+        TextButton(
+          onPressed: () => Navigator.pop(ctx, true),
+          child: Text(l.adminMaintenanceConfirmAction, style: const TextStyle(color: LuxColors.accent)),
+        ),
+      ],
+    ),
+  );
+  return ok ?? false;
+}
+
 class SettingsTab extends StatelessWidget {
   const SettingsTab({super.key});
 
@@ -1588,35 +1609,17 @@ class SettingsTab extends StatelessWidget {
                       title: l.adminMaintenanceMode,
                       subtitle: l.adminMaintenanceModeDesc,
                       value: state.isMaintenanceMode,
-                      onChanged: (val) => context
-                          .read<AdminBloc>()
-                          .add(AdminToggleMaintenanceModeRequested(val)),
-                    ),
-                    const LuxDivider(),
-                    _SettingTile(
-                      icon: Icons.notifications_active_outlined,
-                      title: l.adminPushNotifications,
-                      subtitle: l.adminPushNotificationsDesc,
-                      value: state.pushNotificationsEnabled,
-                      onChanged: (val) => context.read<AdminBloc>().add(
-                            AdminUpdateGlobalSettingsRequested(
-                                {'pushNotificationsEnabled': val}),
-                          ),
-                    ),
-                    const LuxDivider(),
-                    _SettingTile(
-                      icon: Icons.security_rounded,
-                      title: l.adminTwoFactor,
-                      subtitle: l.adminTwoFactorDesc,
-                      value: state.twoFactorEnabled,
-                      onChanged: (val) => context.read<AdminBloc>().add(
-                            AdminUpdateGlobalSettingsRequested(
-                                {'twoFactorEnabled': val}),
-                          ),
+                      onChanged: (val) async {
+                        final bloc = context.read<AdminBloc>();
+                        if (val && !await _confirmMaintenance(context)) return;
+                        bloc.add(AdminToggleMaintenanceModeRequested(val));
+                      },
                     ),
                   ],
                 ),
               ),
+              const SizedBox(height: LuxSpacing.md),
+              MinVersionCard(settings: state.globalSettings),
               const SizedBox(height: LuxSpacing.xl),
               SectionHeader(title: l.adminLiveStats),
               const SizedBox(height: LuxSpacing.md),

@@ -193,6 +193,20 @@ The committed default is the rider app, so opening Xcode just works.
 
 The first build runs `pod install` (iOS 13+, set in `ios/Podfile`).
 
+## Versions, forced updates and maintenance
+
+- **Build number:** every store upload needs a higher `+N` in `pubspec.yaml`
+  (`version: 1.0.0+N`). The build scripts and the CI pass it to the app
+  (`LUX_BUILD`).
+- **Forced update:** Admin → Ajustes → *Versión mínima de las apps*. A build
+  below the minimum shows "Actualiza Luxelane" with a link to Google Play (or
+  to the App Store page, once you paste its link there) and can't be used.
+  Raise it only after the new build is live in both stores, and only when a
+  server change breaks old versions. Debug and web builds are never blocked.
+- **Maintenance mode** (Admin → Ajustes) pauses new bookings: the server
+  refuses quotes and bookings, and riders see a notice on the app and the web.
+  Rides already booked or in progress carry on. It asks for confirmation.
+
 ## Before launch: content you must provide
 
 - `lib/core/config/legal.dart`: company name, NIT, address, support email and WhatsApp, record retention. The legal pages show a *borrador* banner until every placeholder is filled.

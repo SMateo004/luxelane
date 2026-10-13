@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
+import '../core/app_gate/app_gate.dart';
+import '../core/app_gate/global_config.dart';
 import '../core/widgets/environment_banner.dart';
 import '../core/repositories/repositories.dart';
 import '../core/enums/enums.dart';
@@ -119,12 +121,23 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         // No fixed `locale`: the app follows the device language and
         // updates live when it changes in system settings.
         localeListResolutionCallback: resolveAppLocale,
-        builder: (context, child) => EnvironmentBanner(child: IntlLocaleSync(
-          onLocaleChanged: _rememberLocale,
-          child: child ?? const SizedBox.shrink(),
-        )),
+        builder: (context, child) => EnvironmentBanner(
+          child: BlocBuilder<AuthBloc, AuthState>(
+            buildWhen: (a, b) => _isAdmin(a) != _isAdmin(b),
+            builder: (context, auth) => AppGate(
+              app: LuxApp.rider,
+              showMaintenance: !_isAdmin(auth),
+              child: IntlLocaleSync(
+                onLocaleChanged: _rememberLocale,
+                child: child ?? const SizedBox.shrink(),
+              ),
+            ),
+          ),
+        ),
         routerConfig: _router,
       ),
     );
   }
 }
+
+bool _isAdmin(AuthState s) => s is AuthAuthenticated && s.user.role == UserRole.admin;

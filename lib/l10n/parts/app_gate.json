@@ -1,0 +1,62 @@
+{
+  "updateRequiredTitle": {"es": "Actualiza Luxelane", "en": "Update Luxelane", "pt": "Atualize o Luxelane"},
+  "updateRequiredBody": {
+    "es": "Esta versión de la app ya no es compatible. Instala la última para seguir usándola; tu cuenta y tus viajes no cambian.",
+    "en": "This version of the app is no longer supported. Install the latest one to keep using it; your account and rides stay as they are.",
+    "pt": "Esta versão do app não é mais compatível. Instale a mais recente para continuar usando; sua conta e suas viagens não mudam."
+  },
+  "updateRequiredButton": {"es": "Actualizar", "en": "Update", "pt": "Atualizar"},
+  "updateRequiredNoLink": {
+    "es": "Búscala en la App Store para actualizarla.",
+    "en": "Find it in the App Store to update it.",
+    "pt": "Procure-o na App Store para atualizá-lo."
+  },
+  "maintenanceBar": {
+    "es": "Las reservas nuevas están pausadas por mantenimiento. Tus viajes ya reservados siguen en pie.",
+    "en": "New bookings are paused for maintenance. Rides you've already booked go ahead as planned.",
+    "pt": "As novas reservas estão pausadas para manutenção. As viagens já reservadas continuam de pé."
+  },
+  "bookingErrorMaintenance": {
+    "es": "Por mantenimiento, no se pueden hacer reservas en este momento. Inténtalo de nuevo en un rato.",
+    "en": "Bookings are paused for maintenance right now. Please try again in a little while.",
+    "pt": "Por manutenção, não é possível reservar neste momento. Tente novamente daqui a pouco."
+  },
+  "adminMaintenanceConfirmTitle": {
+    "es": "¿Pausar las reservas nuevas?",
+    "en": "Pause new bookings?",
+    "pt": "Pausar as novas reservas?"
+  },
+  "adminMaintenanceConfirmBody": {
+    "es": "Los pasajeros no podrán cotizar ni reservar hasta que lo desactives, y verán un aviso en la app y en la web. Los viajes ya reservados y en curso siguen normalmente.",
+    "en": "Passengers won't be able to get prices or book until you turn it off, and they'll see a notice in the app and on the web. Rides already booked or in progress carry on as normal.",
+    "pt": "Os passageiros não poderão cotar nem reservar até você desativar, e verão um aviso no app e na web. As viagens já reservadas e em andamento continuam normalmente."
+  },
+  "adminMaintenanceConfirmAction": {"es": "Pausar reservas", "en": "Pause bookings", "pt": "Pausar reservas"},
+  "adminMinVersionTitle": {"es": "Versión mínima de las apps", "en": "Minimum app version", "pt": "Versão mínima dos apps"},
+  "adminMinVersionDesc": {
+    "es": "Quien tenga una compilación más antigua ve una pantalla para actualizar y no puede seguir usando la app. Úsalo solo cuando un cambio del servidor deje de funcionar con versiones viejas. 0 = sin mínimo.",
+    "en": "Anyone on an older build sees an update screen and can't keep using the app. Use it only when a server change stops working with old versions. 0 = no minimum.",
+    "pt": "Quem tiver uma compilação mais antiga vê uma tela para atualizar e não pode continuar usando o app. Use apenas quando uma mudança no servidor deixar de funcionar com versões antigas. 0 = sem mínimo."
+  },
+  "adminMinVersionHint": {
+    "es": "El número de compilación es el que va después del + en la versión (1.0.0+7 → 7).",
+    "en": "The build number is the one after the + in the version (1.0.0+7 → 7).",
+    "pt": "O número da compilação é o que vem depois do + na versão (1.0.0+7 → 7)."
+  },
+  "adminMinBuildRider": {"es": "Pasajero: compilación mínima", "en": "Passenger: minimum build", "pt": "Passageiro: compilação mínima"},
+  "adminMinBuildDriver": {"es": "Chófer: compilación mínima", "en": "Chauffeur: minimum build", "pt": "Motorista: compilação mínima"},
+  "adminIosUrlRider": {"es": "Pasajero: enlace de App Store", "en": "Passenger: App Store link", "pt": "Passageiro: link da App Store"},
+  "adminIosUrlDriver": {"es": "Chófer: enlace de App Store", "en": "Chauffeur: App Store link", "pt": "Motorista: link da App Store"},
+  "adminMinVersionSummary": {
+    "es": "Pasajero: {rider} · Chófer: {driver}",
+    "en": "Passenger: {rider} · Chauffeur: {driver}",
+    "pt": "Passageiro: {rider} · Motorista: {driver}",
+    "placeholders": {"rider": {"type": "String"}, "driver": {"type": "String"}}
+  },
+  "adminMinVersionNone": {"es": "sin mínimo", "en": "no minimum", "pt": "sem mínimo"},
+  "adminMinVersionInvalid": {
+    "es": "Revisa los valores: números enteros desde 0, y enlaces vacíos o que empiecen con https://apps.apple.com/",
+    "en": "Check the values: whole numbers from 0, and links either empty or starting with https://apps.apple.com/",
+    "pt": "Confira os valores: números inteiros a partir de 0, e links vazios ou começando com https://apps.apple.com/"
+  }
+}

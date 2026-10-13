@@ -428,7 +428,10 @@ service cloud.firestore {
 
     match /config/{docId} {
       // The commission is for admins and chauffeurs (their settlement), not riders.
-      allow read:  if isAuthenticated() && (docId != 'finance' || isAdmin() || isDriver());
+      // config/global (maintenance, minimum app builds) is public: the apps
+      // check it before anyone signs in.
+      allow read:  if docId == 'global' ||
+        (isAuthenticated() && (docId != 'finance' || isAdmin() || isDriver()));
       allow write: if isAdmin() && (docId != 'finance' || (
         request.resource.data.commissionPct is number &&
         request.resource.data.commissionPct >= 0 &&
@@ -445,7 +448,21 @@ service cloud.firestore {
         request.resource.data.closeMin is int &&
         request.resource.data.openMin >= 0 &&
         request.resource.data.closeMin <= 1440 &&
-        request.resource.data.openMin < request.resource.data.closeMin));
+        request.resource.data.openMin < request.resource.data.closeMin)) && (docId != 'global' || (
+        // Legacy keys (push, 2FA) stay allowed so merges of old docs work.
+        request.resource.data.keys().hasOnly(['isMaintenanceMode', 'riderMinBuild', 'driverMinBuild',
+          'riderIosUrl', 'driverIosUrl', 'updatedAt', 'pushNotificationsEnabled', 'twoFactorEnabled']) &&
+        request.resource.data.get('isMaintenanceMode', false) is bool &&
+        request.resource.data.get('riderMinBuild', 0) is int &&
+        request.resource.data.get('driverMinBuild', 0) is int &&
+        request.resource.data.get('riderMinBuild', 0) >= 0 &&
+        request.resource.data.get('driverMinBuild', 0) >= 0 &&
+        request.resource.data.get('riderIosUrl', '') is string &&
+        request.resource.data.get('driverIosUrl', '') is string &&
+        (request.resource.data.get('riderIosUrl', '') == '' ||
+          request.resource.data.riderIosUrl.matches('https://apps[.]apple[.]com/.{1,200}')) &&
+        (request.resource.data.get('driverIosUrl', '') == '' ||
+          request.resource.data.driverIosUrl.matches('https://apps[.]apple[.]com/.{1,200}'))));
     }
 
     // -------------------------------------------------------------------------

@@ -150,6 +150,8 @@
   "adminFirestoreRules": "Reglas de precios de Firestore",
   "adminGlobalSettings": "Configuración global de la app",
   "adminInactive": "Inactivo",
+  "adminIosUrlDriver": "Chófer: enlace de App Store",
+  "adminIosUrlRider": "Pasajero: enlace de App Store",
   "adminKpiAwaitingDriver": "Esperando chófer",
   "adminKpiCompleted": "Viajes completados",
   "adminKpiDriversCount": "{count, plural, =1{1 chófer} other{{count} chóferes}}",
@@ -190,8 +192,11 @@
   },
   "adminLiveStats": "Estadísticas en vivo",
   "adminMaintenanceBanner": "MODO MANTENIMIENTO ACTIVO — Los pasajeros no pueden reservar nuevos viajes.",
+  "adminMaintenanceConfirmAction": "Pausar reservas",
+  "adminMaintenanceConfirmBody": "Los pasajeros no podrán cotizar ni reservar hasta que lo desactives, y verán un aviso en la app y en la web. Los viajes ya reservados y en curso siguen normalmente.",
+  "adminMaintenanceConfirmTitle": "¿Pausar las reservas nuevas?",
   "adminMaintenanceMode": "Modo mantenimiento",
-  "adminMaintenanceModeDesc": "Deshabilita todas las reservas y muestra la pantalla de mantenimiento a los usuarios.",
+  "adminMaintenanceModeDesc": "Pausa las reservas nuevas: los pasajeros no pueden cotizar ni reservar y ven un aviso. Los viajes ya reservados y en curso siguen normalmente.",
   "adminMemberSince": "Miembro desde {date}",
   "@adminMemberSince": {
     "placeholders": {
@@ -200,6 +205,24 @@
       }
     }
   },
+  "adminMinBuildDriver": "Chófer: compilación mínima",
+  "adminMinBuildRider": "Pasajero: compilación mínima",
+  "adminMinVersionDesc": "Quien tenga una compilación más antigua ve una pantalla para actualizar y no puede seguir usando la app. Úsalo solo cuando un cambio del servidor deje de funcionar con versiones viejas. 0 = sin mínimo.",
+  "adminMinVersionHint": "El número de compilación es el que va después del + en la versión (1.0.0+7 → 7).",
+  "adminMinVersionInvalid": "Revisa los valores: números enteros desde 0, y enlaces vacíos o que empiecen con https://apps.apple.com/",
+  "adminMinVersionNone": "sin mínimo",
+  "adminMinVersionSummary": "Pasajero: {rider} · Chófer: {driver}",
+  "@adminMinVersionSummary": {
+    "placeholders": {
+      "rider": {
+        "type": "String"
+      },
+      "driver": {
+        "type": "String"
+      }
+    }
+  },
+  "adminMinVersionTitle": "Versión mínima de las apps",
   "adminNoAuditLogs": "Aún no hay registros de auditoría",
   "adminNoAuditLogsHint": "Las acciones administrativas aparecerán aquí en tiempo real",
   "adminNoBookings": "No se encontraron reservas",
@@ -266,8 +289,6 @@
   },
   "adminPricingNote": "Los precios reflejan el modelo DefaultPricing. Si la colección pricingRules está vacía, los precios se calculan localmente.",
   "adminPricingRules": "Reglas de precios (Bs)",
-  "adminPushNotifications": "Notificaciones push",
-  "adminPushNotificationsDesc": "Habilita notificaciones a nivel del sistema para nuevas reservas.",
   "adminReasonHint": "Queda en la auditoría",
   "adminReasonLabel": "Motivo (opcional)",
   "adminRecentActivity": "Actividad reciente",
@@ -420,8 +441,6 @@
   "adminSystemInfo": "Información del sistema",
   "adminTitle": "Administrador",
   "adminTotalBookings": "Total de reservas",
-  "adminTwoFactor": "Autenticación admin de dos factores",
-  "adminTwoFactorDesc": "Requiere 2FA para todas las acciones administrativas.",
   "adminUserCannotSuspendAdmin": "Las cuentas de administrador no se pueden suspender",
   "adminUserReactivate": "Reactivar cuenta",
   "adminUserSuspend": "Suspender cuenta",
@@ -606,6 +625,7 @@
   },
   "bookingErrorCreateFailed": "No se pudo crear la reserva",
   "bookingErrorInvalidFlight": "Revisa el número de vuelo (ej. LA 8810).",
+  "bookingErrorMaintenance": "Por mantenimiento, no se pueden hacer reservas en este momento. Inténtalo de nuevo en un rato.",
   "bookingErrorPaymentNotAuthorised": "No pudimos autorizar tu tarjeta. Inténtalo de nuevo o elige otra.",
   "bookingErrorQuoteExpired": "La cotización venció. Vuelve a confirmar para ver el precio actualizado.",
   "bookingErrorQuoteFailed": "No se pudo cotizar el viaje",
@@ -1930,6 +1950,7 @@
       }
     }
   },
+  "maintenanceBar": "Las reservas nuevas están pausadas por mantenimiento. Tus viajes ya reservados siguen en pie.",
   "notifBellUnread": "{count, plural, =1{1 notificación sin leer} other{{count} notificaciones sin leer}}",
   "@notifBellUnread": {
     "description": "Bell tooltip / screen-reader label when there are unread notifications",
@@ -3141,6 +3162,10 @@
       }
     }
   },
+  "updateRequiredBody": "Esta versión de la app ya no es compatible. Instala la última para seguir usándola; tu cuenta y tus viajes no cambian.",
+  "updateRequiredButton": "Actualizar",
+  "updateRequiredNoLink": "Búscala en la App Store para actualizarla.",
+  "updateRequiredTitle": "Actualiza Luxelane",
   "vehicleBusiness": "Business Class",
   "vehicleBusinessDesc": "Mercedes E-Class o similar",
   "vehicleBusinessVan": "Business Van",

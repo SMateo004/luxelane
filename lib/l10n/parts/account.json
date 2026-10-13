@@ -782,29 +782,9 @@
     "pt": "Modo de manutenção"
   },
   "adminMaintenanceModeDesc": {
-    "es": "Deshabilita todas las reservas y muestra la pantalla de mantenimiento a los usuarios.",
-    "en": "Turns off all bookings and shows users the maintenance screen.",
-    "pt": "Desativa todas as reservas e mostra a tela de manutenção aos usuários."
-  },
-  "adminPushNotifications": {
-    "es": "Notificaciones push",
-    "en": "Push notifications",
-    "pt": "Notificações push"
-  },
-  "adminPushNotificationsDesc": {
-    "es": "Habilita notificaciones a nivel del sistema para nuevas reservas.",
-    "en": "Enables system-wide notifications for new bookings.",
-    "pt": "Ativa notificações em todo o sistema para novas reservas."
-  },
-  "adminTwoFactor": {
-    "es": "Autenticación admin de dos factores",
-    "en": "Admin two-factor authentication",
-    "pt": "Autenticação de dois fatores para admins"
-  },
-  "adminTwoFactorDesc": {
-    "es": "Requiere 2FA para todas las acciones administrativas.",
-    "en": "Requires 2FA for all admin actions.",
-    "pt": "Exige 2FA para todas as ações administrativas."
+    "es": "Pausa las reservas nuevas: los pasajeros no pueden cotizar ni reservar y ven un aviso. Los viajes ya reservados y en curso siguen normalmente.",
+    "en": "Pauses new bookings: passengers can't get prices or book, and see a notice. Rides already booked or in progress carry on as normal.",
+    "pt": "Pausa as novas reservas: os passageiros não podem cotar nem reservar e veem um aviso. As viagens já reservadas e em andamento continuam normalmente."
   },
   "adminLiveStats": {
     "es": "Estadísticas en vivo",

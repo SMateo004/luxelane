@@ -28,6 +28,7 @@ import * as err from './errors';
 import { MAX_REASON, RefundMethod, refundError } from './refunds';
 import { AdjustmentType, MAX_NOTE, adjustmentError, round2 } from './adjustments';
 import { ASSIGNED_STATUSES, SUSPENDED, isSuspended, suspensionChange } from './accounts';
+import { MAINTENANCE, bookingsPaused } from './app_config';
 import { WINDOW_MS, bestDiscount, loyaltyDiscount, nextTier, parseConfig, tierFor } from './loyalty';
 import {
   MAX_MESSAGE,
@@ -266,6 +267,12 @@ async function requireActive(uid: string): Promise<UserDoc> {
   return user;
 }
 
+/** Admin → Settings → Maintenance mode pauses new bookings. */
+async function requireBookingsOpen(): Promise<void> {
+  const config = await db.collection('config').doc('global').get();
+  if (bookingsPaused(config.data())) throw err.failedPrecondition(MAINTENANCE);
+}
+
 async function requireAdmin(req: CallableRequest): Promise<string> {
   const uid = requireAuth(req);
   const user = await getUser(uid);
@@ -502,6 +509,7 @@ export const myLoyalty = onCall(async (req) => {
 export const quoteBooking = onCall(async (req) => {
   const uid = requireAuth(req);
   await requireActive(uid);
+  await requireBookingsOpen();
   const { vehicleClass, serviceType, origin, destination, routeDistanceKm, hours, days, promoCode } = (req.data ?? {}) as {
     vehicleClass: unknown;
     serviceType: unknown;
@@ -641,6 +649,7 @@ export const createPaymentIntent = onCall(stripeOpts, async (req) => {
 export const createBooking = onCall(stripeOpts, async (req) => {
   const uid = requireAuth(req);
   await requireActive(uid);
+  await requireBookingsOpen();
   const d = (req.data ?? {}) as {
     quoteId: string;
     scheduledAt: number;

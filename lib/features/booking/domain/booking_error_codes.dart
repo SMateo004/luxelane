@@ -21,6 +21,9 @@ abstract final class BookingErrorCodes {
   /// An admin suspended the account (users/{uid}.isActive = false).
   static const accountSuspended = 'booking/account-suspended';
   static const promoNoLongerValid = 'booking/promo-no-longer-valid';
+
+  /// Admin → Settings → Maintenance mode: new bookings are paused.
+  static const maintenance = 'booking/maintenance';
 }
 
 /// Promo error codes from checkPromoCode / quoteBooking (functions/src/promo.ts).

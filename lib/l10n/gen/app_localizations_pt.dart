@@ -229,6 +229,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get adminInactive => 'Inativo';
 
   @override
+  String get adminIosUrlDriver => 'Motorista: link da App Store';
+
+  @override
+  String get adminIosUrlRider => 'Passageiro: link da App Store';
+
+  @override
   String get adminKpiAwaitingDriver => 'Aguardando motorista';
 
   @override
@@ -276,15 +282,50 @@ class AppLocalizationsPt extends AppLocalizations {
   String get adminMaintenanceBanner => 'MODO DE MANUTENÇÃO ATIVO — Os passageiros não podem reservar novas viagens.';
 
   @override
+  String get adminMaintenanceConfirmAction => 'Pausar reservas';
+
+  @override
+  String get adminMaintenanceConfirmBody => 'Os passageiros não poderão cotar nem reservar até você desativar, e verão um aviso no app e na web. As viagens já reservadas e em andamento continuam normalmente.';
+
+  @override
+  String get adminMaintenanceConfirmTitle => 'Pausar as novas reservas?';
+
+  @override
   String get adminMaintenanceMode => 'Modo de manutenção';
 
   @override
-  String get adminMaintenanceModeDesc => 'Desativa todas as reservas e mostra a tela de manutenção aos usuários.';
+  String get adminMaintenanceModeDesc => 'Pausa as novas reservas: os passageiros não podem cotar nem reservar e veem um aviso. As viagens já reservadas e em andamento continuam normalmente.';
 
   @override
   String adminMemberSince(String date) {
     return 'Membro desde $date';
   }
+
+  @override
+  String get adminMinBuildDriver => 'Motorista: compilação mínima';
+
+  @override
+  String get adminMinBuildRider => 'Passageiro: compilação mínima';
+
+  @override
+  String get adminMinVersionDesc => 'Quem tiver uma compilação mais antiga vê uma tela para atualizar e não pode continuar usando o app. Use apenas quando uma mudança no servidor deixar de funcionar com versões antigas. 0 = sem mínimo.';
+
+  @override
+  String get adminMinVersionHint => 'O número da compilação é o que vem depois do + na versão (1.0.0+7 → 7).';
+
+  @override
+  String get adminMinVersionInvalid => 'Confira os valores: números inteiros a partir de 0, e links vazios ou começando com https://apps.apple.com/';
+
+  @override
+  String get adminMinVersionNone => 'sem mínimo';
+
+  @override
+  String adminMinVersionSummary(String rider, String driver) {
+    return 'Passageiro: $rider · Motorista: $driver';
+  }
+
+  @override
+  String get adminMinVersionTitle => 'Versão mínima dos apps';
 
   @override
   String get adminNoAuditLogs => 'Nenhum registro de auditoria ainda';
@@ -389,12 +430,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get adminPricingRules => 'Regras de preços (Bs)';
-
-  @override
-  String get adminPushNotifications => 'Notificações push';
-
-  @override
-  String get adminPushNotificationsDesc => 'Ativa notificações em todo o sistema para novas reservas.';
 
   @override
   String get adminReasonHint => 'Fica na auditoria';
@@ -664,12 +699,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get adminTotalBookings => 'Total de reservas';
 
   @override
-  String get adminTwoFactor => 'Autenticação de dois fatores para admins';
-
-  @override
-  String get adminTwoFactorDesc => 'Exige 2FA para todas as ações administrativas.';
-
-  @override
   String get adminUserCannotSuspendAdmin => 'Contas de administrador não podem ser suspensas';
 
   @override
@@ -936,6 +965,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get bookingErrorInvalidFlight => 'Verifique o número do voo (ex.: LA 8810).';
+
+  @override
+  String get bookingErrorMaintenance => 'Por manutenção, não é possível reservar neste momento. Tente novamente daqui a pouco.';
 
   @override
   String get bookingErrorPaymentNotAuthorised => 'Não conseguimos autorizar seu cartão. Tente novamente ou escolha outro.';
@@ -3058,6 +3090,9 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get maintenanceBar => 'As novas reservas estão pausadas para manutenção. As viagens já reservadas continuam de pé.';
+
+  @override
   String notifBellUnread(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -4792,6 +4827,18 @@ class AppLocalizationsPt extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get updateRequiredBody => 'Esta versão do app não é mais compatível. Instale a mais recente para continuar usando; sua conta e suas viagens não mudam.';
+
+  @override
+  String get updateRequiredButton => 'Atualizar';
+
+  @override
+  String get updateRequiredNoLink => 'Procure-o na App Store para atualizá-lo.';
+
+  @override
+  String get updateRequiredTitle => 'Atualize o Luxelane';
 
   @override
   String get vehicleBusiness => 'Business Class';
