@@ -490,7 +490,9 @@ class _HeroSectionState extends State<_HeroSection>
                                         bottomLeft: Radius.circular(13),
                                         bottomRight: Radius.circular(13),
                                       ),
-                                      child: _BarCta(onTap: widget.onSearch),
+                                      child: _BarCta(
+                                          onTap: widget.onSearch,
+                                          stacked: true),
                                     ),
                                   ],
                                 )
@@ -1012,8 +1014,13 @@ class _BarSeparator extends StatelessWidget {
 }
 
 class _BarCta extends StatefulWidget {
-  const _BarCta({required this.onTap});
+  const _BarCta({required this.onTap, this.stacked = false});
   final VoidCallback onTap;
+
+  /// Full-width row under the stacked fields (narrow screens). Otherwise a
+  /// 180px block filling the bar's height. An unbounded height here leaves
+  /// the gradient without a size and the whole hero fails to paint.
+  final bool stacked;
 
   @override
   State<_BarCta> createState() => _BarCtaState();
@@ -1030,14 +1037,16 @@ class _BarCtaState extends State<_BarCta> {
         child: GestureDetector(
           onTap: widget.onTap,
           child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(13),
-              bottomRight: Radius.circular(13),
-            ),
+            borderRadius: widget.stacked
+                ? BorderRadius.zero
+                : const BorderRadius.only(
+                    topRight: Radius.circular(13),
+                    bottomRight: Radius.circular(13),
+                  ),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              width: 180,
-              height: double.infinity,
+              width: widget.stacked ? double.infinity : 180,
+              height: widget.stacked ? 54 : double.infinity,
               decoration: BoxDecoration(
                 // Same soft relief as every Luxelane button.
                 gradient: LinearGradient(
