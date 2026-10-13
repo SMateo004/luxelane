@@ -18,6 +18,13 @@ abstract class VehicleCatalog {
   static String carImage(VehicleClass vc) =>
       'assets/images/vehicles/${vc.assetKey}/car.png';
 
+  /// Up to three photos for the "Detalles" carousel, in order. Only the files
+  /// that exist are shown; see [VehicleDetailsGallery].
+  static List<String> galleryPhotos(VehicleClass vc) => [
+        for (var i = 1; i <= 3; i++)
+          'assets/images/vehicles/${vc.assetKey}/gallery_$i.png',
+      ];
+
   /// Photo of the trunk for a luggage option (illustration if missing).
   static String luggagePhoto(VehicleClass vc, int option) =>
       'assets/images/booking/luggage/${vc.assetKey}_$option.png';
@@ -28,12 +35,12 @@ abstract class VehicleCatalog {
 
   static List<LuggageOption> luggage(VehicleClass vc) => switch (vc) {
         VehicleClass.businessVan => const [
-            LuggageOption(8, LuggageSize.cabin),
-            LuggageOption(6, LuggageSize.checked),
-            LuggageOption(4, LuggageSize.oversize),
+            LuggageOption(4, LuggageSize.cabin),
+            LuggageOption(2, LuggageSize.checked),
+            LuggageOption(1, LuggageSize.oversize),
           ],
         VehicleClass.businessSuv => const [
-            LuggageOption(5, LuggageSize.cabin),
+            LuggageOption(8, LuggageSize.cabin),
             LuggageOption(4, LuggageSize.checked),
             LuggageOption(2, LuggageSize.oversize),
           ],
@@ -43,9 +50,9 @@ abstract class VehicleCatalog {
             LuggageOption(1, LuggageSize.oversize),
           ],
         _ => const [
-            LuggageOption(2, LuggageSize.cabin),
-            LuggageOption(2, LuggageSize.checked),
-            LuggageOption(1, LuggageSize.oversize),
+            LuggageOption(4, LuggageSize.cabin),
+            LuggageOption(3, LuggageSize.checked),
+            LuggageOption(2, LuggageSize.oversize),
           ],
       };
 
@@ -67,7 +74,7 @@ abstract class VehicleCatalog {
         VehicleClass.business => const [
             'Sedán ejecutivo, discreto y silencioso',
             'Asientos traseros en cuero para tres',
-            'Maletero para dos maletas facturadas',
+            'Maletero para tres maletas facturadas',
           ],
         VehicleClass.businessSuv => const [
             'SUV ejecutiva, posición de manejo elevada',
@@ -77,7 +84,7 @@ abstract class VehicleCatalog {
         VehicleClass.businessVan => const [
             'Van ejecutiva para grupos y familias',
             'Hasta siete pasajeros en tres filas',
-            'Espacio para seis maletas facturadas',
+            'Espacio para dos maletas facturadas',
           ],
         VehicleClass.firstClass => const [
             'Sedán insignia, nuestro máximo nivel',
