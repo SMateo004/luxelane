@@ -287,10 +287,12 @@ Respuestas basadas en el código actual. Sirven para las dos apps salvo donde se
 | Eliminación de cuenta | `https://<tu-dominio>/eliminar-cuenta` |
 | Correo de contacto | El de `lib/core/config/legal.dart` |
 
-**Recursos gráficos que faltan**
-- Ícono de 512×512.
-- Imagen destacada de 1024×500.
-- De 2 a 8 capturas de teléfono por app, tomadas de la app real en un teléfono: inicio, elegir vehículo, viaje en curso y recibo (pasajero); disponible, solicitud entrante y ganancias (chófer).
+**Recursos gráficos**
+- Ícono de 512×512: `docs/store/icon-512.png` (provisorio, ver abajo).
+- Imagen destacada de 1024×500: `docs/store/feature-graphic.png` (provisoria).
+- **Faltan:** de 2 a 8 capturas de teléfono por app, tomadas de la app real en un teléfono: inicio, elegir vehículo, viaje en curso y recibo (pasajero); disponible, solicitud entrante y ganancias (chófer).
+
+> Los íconos son **provisorios**: usan el monograma "L" que la app ya muestra en la barra de navegación, en azul marino y champagne. Cuando exista el logo oficial, hay que reemplazar los PNG de `docs/store/`, `web/icons/`, `web/favicon.png`, `android/app/src/main/res/mipmap-*/` (incluido `ic_launcher_foreground.png`) y `ios/Runner/Assets.xcassets/AppIcon.appiconset/`.
 
 ---
 
