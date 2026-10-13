@@ -389,10 +389,8 @@ class _BookingScreenState extends State<BookingScreen> {
         ),
       );
 
-  // One calm palette for every class: the car is the hero, not a tint.
-  static Color _vehicleBg(VehicleClass vc) => LD.bg2;
-  static Color _vehicleCardBg(VehicleClass vc) => Colors.white;
-  static Color _vehicleCardBgSelected(VehicleClass vc) => Colors.white;
+  /// Colours of the selected class; the page follows them as you choose.
+  VehicleTone get _tone => VehicleCatalog.tone(_selected);
 
   Widget _webLeft() => SingleChildScrollView(
         controller: _leftScrollCtrl,
@@ -403,7 +401,7 @@ class _BookingScreenState extends State<BookingScreen> {
             AnimatedContainer(
               duration: const Duration(milliseconds: 600),
               curve: Curves.easeInOut,
-              color: _vehicleBg(_selected),
+              color: _tone.wash,
               padding: const EdgeInsets.fromLTRB(56, 52, 40, 52),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -468,8 +466,6 @@ class _BookingScreenState extends State<BookingScreen> {
                           price: PricingCatalog.instance
                               .estimate(vc, _service, km: _km, hours: _hours),
                           selected: _selected == vc,
-                          cardBg: _vehicleCardBg(vc),
-                          cardBgSelected: _vehicleCardBgSelected(vc),
                           onTap: () => _selectVehicle(vc),
                           serviceType: _service,
                           hours:
@@ -944,11 +940,16 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // ── MOBILE LAYOUT ──────────────────────────────────────────────────────────
 
-  Widget _mobileLayout() => Theme(
+  // The vehicle step wears the selected class colour, like the web hero.
+  Widget _mobileLayout() => AnimatedContainer(
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeInOut,
+      color: _step == 0 ? _tone.wash : _kBg,
+      child: Theme(
         data: Theme.of(context).copyWith(
-          scaffoldBackgroundColor: _kBg,
+          scaffoldBackgroundColor: Colors.transparent,
           appBarTheme: const AppBarTheme(
-            backgroundColor: _kBg,
+            backgroundColor: Colors.transparent,
             foregroundColor: _kTextPrimary,
             elevation: 0,
             scrolledUnderElevation: 0,
@@ -964,7 +965,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
         child: Scaffold(
-          backgroundColor: _kBg,
+          backgroundColor: Colors.transparent,
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
@@ -1005,7 +1006,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ],
           ),
         ),
-      );
+      ));
 
   Widget _mobileStepContent() {
     switch (_step) {
@@ -1061,8 +1062,6 @@ class _BookingScreenState extends State<BookingScreen> {
                   hours: _service == ServiceType.byTheHour ? _hours : null,
                   width: 168,
                   carWidth: 270,
-                  cardBg: _vehicleCardBg(vc),
-                  cardBgSelected: _vehicleCardBgSelected(vc),
                 );
               },
             ),
@@ -1538,8 +1537,6 @@ class _VehicleCard extends StatefulWidget {
     required this.vehicleClass,
     required this.price,
     required this.selected,
-    required this.cardBg,
-    required this.cardBgSelected,
     required this.onTap,
     this.serviceType = ServiceType.oneWay,
     this.hours,
@@ -1550,8 +1547,6 @@ class _VehicleCard extends StatefulWidget {
   final VehicleClass vehicleClass;
   final double price;
   final bool selected;
-  final Color cardBg;
-  final Color cardBgSelected;
   final VoidCallback onTap;
   final ServiceType serviceType;
   final int? hours;
@@ -1570,11 +1565,13 @@ class _VehicleCardState extends State<_VehicleCard> {
 
   @override
   Widget build(BuildContext context) {
-    const accent = LD.sph;
+    // Each card wears its class colours, so the page tint that follows the
+    // selection always matches a card.
+    final tone = VehicleCatalog.tone(widget.vehicleClass);
+    final accent = tone.accent;
     const kSelPad = 20.0;
     final baseW = widget.width ?? 210.0;
     final targetW = widget.selected ? widget.carWidth + kSelPad : baseW;
-    final bgColor = widget.selected ? widget.cardBgSelected : widget.cardBg;
     final sel = widget.selected;
 
     return Semantics(
@@ -1594,7 +1591,7 @@ class _VehicleCardState extends State<_VehicleCard> {
             width: targetW,
             transform: Matrix4.translationValues(0, _hover && !sel ? -4 : 0, 0),
             decoration: BoxDecoration(
-              color: bgColor,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
                 color: sel ? accent : LD.border,
@@ -1626,14 +1623,9 @@ class _VehicleCardState extends State<_VehicleCard> {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        const DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.white, LD.bg2],
-                            ),
-                          ),
+                        DecoratedBox(
+                          decoration:
+                              BoxDecoration(gradient: tone.stageGradient),
                         ),
                         Positioned(
                           bottom: -14,
@@ -1653,7 +1645,17 @@ class _VehicleCardState extends State<_VehicleCard> {
                             child: Container(
                               width: 24,
                               height: 24,
-                              decoration: luxRaisedDecoration(radius: 12),
+                              decoration: BoxDecoration(
+                                color: accent,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: accent.withValues(alpha: 0.35),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
                               child: const Icon(Icons.check,
                                   size: 13, color: Colors.white),
                             ),

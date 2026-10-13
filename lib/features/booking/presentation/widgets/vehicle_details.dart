@@ -68,6 +68,7 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
   @override
   Widget build(BuildContext context) {
     final vc = widget.vehicleClass;
+    final tone = VehicleCatalog.tone(vc);
     final highlights = VehicleCatalog.highlights(vc);
 
     final stage = FutureBuilder<Set<String>>(
@@ -98,9 +99,10 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 2),
-                  child: Icon(Icons.check_rounded, size: 16, color: LD.sph),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child:
+                      Icon(Icons.check_rounded, size: 16, color: tone.accent),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -123,40 +125,43 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
       ],
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('DETALLES', style: eyebrow()),
-        const SizedBox(height: 10),
-        Text(
-          vc.label,
-          style: TextStyle(
-            fontFamily: kSerif,
-            fontSize: widget.compact ? 30 : 40,
-            fontWeight: FontWeight.w500,
-            color: LD.ink,
-            height: 1.05,
+    return _Tone(
+      tone: tone,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('DETALLES', style: eyebrow()),
+          const SizedBox(height: 10),
+          Text(
+            vc.label,
+            style: TextStyle(
+              fontFamily: kSerif,
+              fontSize: widget.compact ? 30 : 40,
+              fontWeight: FontWeight.w500,
+              color: LD.ink,
+              height: 1.05,
+            ),
           ),
-        ),
-        const SizedBox(height: 6),
-        Text(vc.description,
-            style: const TextStyle(
-                fontFamily: kSans, fontSize: 14, color: LD.ink3)),
-        const SizedBox(height: 22),
-        if (widget.compact) ...[
-          stage,
+          const SizedBox(height: 6),
+          Text(vc.description,
+              style: const TextStyle(
+                  fontFamily: kSans, fontSize: 14, color: LD.ink3)),
           const SizedBox(height: 22),
-          facts,
-        ] else
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(flex: 7, child: stage),
-              const SizedBox(width: 36),
-              Expanded(flex: 4, child: facts),
-            ],
-          ),
-      ],
+          if (widget.compact) ...[
+            stage,
+            const SizedBox(height: 22),
+            facts,
+          ] else
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 7, child: stage),
+                const SizedBox(width: 36),
+                Expanded(flex: 4, child: facts),
+              ],
+            ),
+        ],
+      ),
     );
   }
 }
@@ -251,52 +256,55 @@ class CapacitySection extends StatelessWidget {
           fontFamily: kSans, fontSize: 12.5, height: 1.6, color: LD.ink3),
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('CAPACIDAD', style: eyebrow()),
-        const SizedBox(height: 10),
-        Text(
-          '¿Cuánto cabe?',
-          style: TextStyle(
-            fontFamily: kSerif,
-            fontSize: compact ? 30 : 40,
-            fontWeight: FontWeight.w500,
-            color: LD.ink,
-            height: 1.05,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          'Hasta ${vc.capacity} pasajeros y ${vc.luggageCapacity} maletas facturadas',
-          style:
-              const TextStyle(fontFamily: kSans, fontSize: 14, color: LD.ink3),
-        ),
-        const SizedBox(height: 22),
-        Row(children: [
-          _UnderlineTab(
-              label: 'Equipaje', active: isLuggage, onTap: () => onTab(0)),
-          const SizedBox(width: 28),
-          _UnderlineTab(
-              label: 'Asientos', active: !isLuggage, onTap: () => onTab(1)),
-        ]),
-        const Divider(color: LD.border, height: 1),
-        const SizedBox(height: 20),
-        Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 720),
-            child: Column(
-              children: [
-                carousel,
-                const SizedBox(height: 16),
-                caption,
-                const SizedBox(height: 14),
-                note,
-              ],
+    return _Tone(
+      tone: VehicleCatalog.tone(vc),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('CAPACIDAD', style: eyebrow()),
+          const SizedBox(height: 10),
+          Text(
+            '¿Cuánto cabe?',
+            style: TextStyle(
+              fontFamily: kSerif,
+              fontSize: compact ? 30 : 40,
+              fontWeight: FontWeight.w500,
+              color: LD.ink,
+              height: 1.05,
             ),
           ),
-        ),
-      ],
+          const SizedBox(height: 6),
+          Text(
+            'Hasta ${vc.capacity} pasajeros y ${vc.luggageCapacity} maletas facturadas',
+            style: const TextStyle(
+                fontFamily: kSans, fontSize: 14, color: LD.ink3),
+          ),
+          const SizedBox(height: 22),
+          Row(children: [
+            _UnderlineTab(
+                label: 'Equipaje', active: isLuggage, onTap: () => onTab(0)),
+            const SizedBox(width: 28),
+            _UnderlineTab(
+                label: 'Asientos', active: !isLuggage, onTap: () => onTab(1)),
+          ]),
+          const Divider(color: LD.border, height: 1),
+          const SizedBox(height: 20),
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 720),
+              child: Column(
+                children: [
+                  carousel,
+                  const SizedBox(height: 16),
+                  caption,
+                  const SizedBox(height: 14),
+                  note,
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -369,7 +377,9 @@ class _Carousel extends StatelessWidget {
                     width: i == index ? 22 : 7,
                     height: 7,
                     decoration: BoxDecoration(
-                      color: i == index ? LD.sph : LD.border,
+                      color: i == index
+                          ? (_Tone.of(context)?.accent ?? LD.sph)
+                          : LD.border,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -447,14 +457,16 @@ class _RoundedStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _withArrow(
-        DecoratedBox(
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 500),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(_photoRadius),
-            gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.white, LD.bg2],
-            ),
+            gradient: _Tone.of(context)?.stageGradient ??
+                const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.white, LD.bg2],
+                ),
           ),
           child: SizedBox.expand(child: child),
         ),
@@ -499,7 +511,7 @@ class _UnderlineTab extends StatelessWidget {
                   duration: const Duration(milliseconds: 180),
                   height: 2,
                   width: active ? 40 : 0,
-                  color: LD.sph,
+                  color: _Tone.of(context)?.accent ?? LD.sph,
                 ),
               ],
             ),
@@ -571,4 +583,16 @@ class _Spec extends StatelessWidget {
                   color: LD.ink2)),
         ],
       );
+}
+
+/// The selected class colours, for the pieces deep inside a section.
+class _Tone extends InheritedWidget {
+  const _Tone({required this.tone, required super.child});
+  final VehicleTone tone;
+
+  static VehicleTone? of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_Tone>()?.tone;
+
+  @override
+  bool updateShouldNotify(_Tone old) => old.tone != tone;
 }
