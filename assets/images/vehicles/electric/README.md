@@ -1,11 +1,11 @@
 # vehicles/electric/
 
-Imágenes para la clase **Electric** (vehículo eléctrico de lujo).
+Imágenes de la clase **Eléctrico**.
 
-| Archivo      | Dónde se usa                                      | Tamaño sugerido |
-|--------------|---------------------------------------------------|-----------------|
-| `card.jpg`   | Thumbnail en la tarjeta de selección de vehículo  | 600 × 400 px    |
-| `slide_1.jpg`| Carrusel hero cuando Electric está seleccionado   | 1200 × 800 px   |
-| `slide_2.jpg`| Carrusel hero — segunda imagen                    | 1200 × 800 px   |
-| `slide_3.jpg`| Carrusel hero — tercera imagen                    | 1200 × 800 px   |
-| `slide_4.jpg`| Carrusel hero — cuarta imagen                     | 1200 × 800 px   |
+| Archivo | Dónde se usa | Formato |
+|---|---|---|
+| `car.png` | Tarjeta de la clase y portada de "Detalles" mientras no haya galería | PNG 1024 × 1024, fondo transparente, coche de 3/4 frontal |
+| `gallery_1.png`, `gallery_2.png`, `gallery_3.png` | Carrusel de "Detalles", en ese orden | PNG, cualquier proporción (se muestra entera, con esquinas redondeadas) |
+
+Si no hay ninguna `gallery_N.png`, el carrusel muestra `car.png` y las fotos
+de cabina y maletero de la clase.
