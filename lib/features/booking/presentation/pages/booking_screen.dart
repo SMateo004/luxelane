@@ -535,41 +535,32 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                     const SizedBox(height: 24),
 
-                    // The chosen class grows to show its car large; the
-                    // others step back. Every car is always shown whole.
+                    // Narrow cards tease the front of each car; the chosen
+                    // one opens up to reveal it whole.
                     SizedBox(
-                      height: 380,
-                      child: LayoutBuilder(builder: (context, c) {
-                        const gap = 16.0;
-                        final n = _kVehicleClasses.length;
-                        final room = c.maxWidth - gap * (n - 1);
-                        // Selected card takes half the row, the rest share it.
-                        final selW = n > 1 ? room * 0.5 : room;
-                        final otherW = n > 1 ? (room - selW) / (n - 1) : room;
-                        return Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            for (var i = 0; i < n; i++) ...[
-                              if (i > 0) const SizedBox(width: gap),
-                              _VehicleCard(
-                                vehicleClass: _kVehicleClasses[i],
-                                price: PricingCatalog.instance.estimate(
-                                    _kVehicleClasses[i], _service,
-                                    km: _km, hours: _hours),
-                                selected: _selected == _kVehicleClasses[i],
-                                onTap: () =>
-                                    _selectVehicle(_kVehicleClasses[i]),
-                                serviceType: _service,
-                                hours: _service == ServiceType.byTheHour
-                                    ? _hours
-                                    : null,
-                                width: otherW,
-                                carWidth: selW - 20,
-                              ),
-                            ],
-                          ],
-                        );
-                      }),
+                      height: 450,
+                      child: ListView.separated(
+                        controller: _cardsCtrl,
+                        scrollDirection: Axis.horizontal,
+                        clipBehavior: Clip.none,
+                        padding: EdgeInsets.zero,
+                        itemCount: _kVehicleClasses.length,
+                        separatorBuilder: (_, __) => const SizedBox(width: 14),
+                        itemBuilder: (_, i) {
+                          final vc = _kVehicleClasses[i];
+                          return _VehicleCard(
+                            vehicleClass: vc,
+                            price: PricingCatalog.instance
+                                .estimate(vc, _service, km: _km, hours: _hours),
+                            selected: _selected == vc,
+                            onTap: () => _selectVehicle(vc),
+                            serviceType: _service,
+                            hours: _service == ServiceType.byTheHour
+                                ? _hours
+                                : null,
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),
@@ -1728,12 +1719,17 @@ class _VehicleCardState extends State<_VehicleCard> {
                           decoration:
                               BoxDecoration(gradient: tone.stageGradient),
                         ),
-                        // The car photos are square with the car across
-                        // the middle half: a 2:1 window shows the whole car
-                        // and none of the empty margin, never cut off.
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(14, 22, 14, 8),
+                        // The car at full size, anchored left: a narrow card
+                        // shows its front, the selected one all of it. The
+                        // 2:1 window keeps only the car (the photos are
+                        // square with the car across the middle), centred
+                        // vertically so it is never cut at the top.
+                        Positioned(
+                          left: 10,
+                          top: 0,
+                          bottom: 0,
+                          width: widget.carWidth,
+                          child: Center(
                             child: AspectRatio(
                               aspectRatio: 2,
                               child: VehicleImage(widget.vehicleClass,
