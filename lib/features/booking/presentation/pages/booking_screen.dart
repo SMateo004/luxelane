@@ -535,16 +535,23 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Every class side by side, each car shown whole.
+                    // The chosen class grows to show its car large; the
+                    // others step back. Every car is always shown whole.
                     SizedBox(
-                      height: 320,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          for (var i = 0; i < _kVehicleClasses.length; i++) ...[
-                            if (i > 0) const SizedBox(width: 16),
-                            Expanded(
-                              child: _VehicleCard(
+                      height: 380,
+                      child: LayoutBuilder(builder: (context, c) {
+                        const gap = 16.0;
+                        final n = _kVehicleClasses.length;
+                        final room = c.maxWidth - gap * (n - 1);
+                        // Selected card takes half the row, the rest share it.
+                        final selW = n > 1 ? room * 0.5 : room;
+                        final otherW = n > 1 ? (room - selW) / (n - 1) : room;
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            for (var i = 0; i < n; i++) ...[
+                              if (i > 0) const SizedBox(width: gap),
+                              _VehicleCard(
                                 vehicleClass: _kVehicleClasses[i],
                                 price: PricingCatalog.instance.estimate(
                                     _kVehicleClasses[i], _service,
@@ -556,12 +563,13 @@ class _BookingScreenState extends State<BookingScreen> {
                                 hours: _service == ServiceType.byTheHour
                                     ? _hours
                                     : null,
-                                fill: true,
+                                width: otherW,
+                                carWidth: selW - 20,
                               ),
-                            ),
+                            ],
                           ],
-                        ],
-                      ),
+                        );
+                      }),
                     ),
                   ],
                 ),
@@ -1635,7 +1643,6 @@ class _VehicleCard extends StatefulWidget {
     this.hours,
     this.width,
     this.carWidth = 480,
-    this.fill = false,
   });
 
   final VehicleClass vehicleClass;
@@ -1649,9 +1656,6 @@ class _VehicleCard extends StatefulWidget {
   /// Width of the car artwork. The selected card grows to show all of it;
   /// unselected cards show the front three-quarters as a teaser.
   final double carWidth;
-
-  /// Takes the width its parent gives it (web row) instead of sizing itself.
-  final bool fill;
 
   @override
   State<_VehicleCard> createState() => _VehicleCardState();
@@ -1685,7 +1689,7 @@ class _VehicleCardState extends State<_VehicleCard> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 480),
             curve: Curves.easeInOutCubic,
-            width: widget.fill ? null : targetW,
+            width: targetW,
             transform: Matrix4.translationValues(0, _hover && !sel ? -4 : 0, 0),
             decoration: BoxDecoration(
               color: Colors.white,
