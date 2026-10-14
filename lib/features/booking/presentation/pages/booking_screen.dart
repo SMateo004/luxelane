@@ -10,6 +10,8 @@ import '../../../../core/design/vehicle_catalog.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/services/maps_service.dart';
 import '../../../../core/services/pricing_catalog.dart';
 import '../../../../core/utils/service_area.dart';
 import '../../../../core/widgets/components.dart';
@@ -149,9 +151,41 @@ class _BookingScreenState extends State<BookingScreen> {
         _formData = extra;
         _service = extra.serviceType;
         _hours = extra.hours;
+        _ensureRoute();
       }
       _loadSavedCards();
     }
+  }
+
+  /// Si la reserva llega sin el recorrido por calles (p. ej. al recargar la
+  /// página, o si falló al calcularlo antes), lo calcula aquí: el mapa lo
+  /// dibuja y el precio usa los km reales en lugar de una estimación.
+  Future<void> _ensureRoute() async {
+    final data = _formData;
+    final dest = data?.destination;
+    if (data == null || dest == null) return;
+    if (data.polylinePoints.length > 2 && data.routeDistanceKm > 0) return;
+    RouteInfo? route;
+    try {
+      route = await sl<MapsService>()
+          .getRoute(origin: data.origin, destination: dest);
+    } catch (_) {
+      route = null;
+    }
+    if (!mounted || route == null || route.polylinePoints.length <= 2) return;
+    if (_formData != data) return; // cambió mientras se calculaba
+    setState(() => _formData = data.withRoute(route!));
+  }
+
+  /// Recorrido de la reserva para el mapa (null si aún no se tiene).
+  RouteInfo? get _routeInfo {
+    final d = _formData;
+    if (d == null || d.polylinePoints.length <= 2) return null;
+    return RouteInfo(
+      polylinePoints: d.polylinePoints,
+      distanceKm: d.routeDistanceKm,
+      durationMin: d.routeDurationMin,
+    );
   }
 
   void _loadSavedCards() {
@@ -815,11 +849,7 @@ class _BookingScreenState extends State<BookingScreen> {
                           child: LuxMap(
                             origin: _formData!.origin,
                             destination: _formData!.destination,
-                            routeInfo: RouteInfo(
-                              polylinePoints: _formData!.polylinePoints,
-                              distanceKm: _formData!.routeDistanceKm,
-                              durationMin: _formData!.routeDurationMin,
-                            ),
+                            routeInfo: _routeInfo,
                           ),
                         ),
                         const Divider(color: _kDivider, height: 1),
@@ -1219,7 +1249,8 @@ class _BookingScreenState extends State<BookingScreen> {
               height: 180,
               child: LuxMap(
                   origin: _formData!.origin,
-                  destination: _formData!.destination),
+                  destination: _formData!.destination,
+                  routeInfo: _routeInfo),
             ),
           ),
           const SizedBox(height: 20),

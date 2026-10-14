@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
-import 'package:uuid/uuid.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
@@ -16,7 +15,6 @@ class PaymentRepositoryImpl implements PaymentRepository {
 
   final FirebaseFirestore _db;
   final FirebaseFunctions _fn;
-  final _uuid = const Uuid();
 
   CollectionReference<Map<String, dynamic>> get _col =>
       _db.collection('payments');
@@ -29,7 +27,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
   }) async {
     try {
       final result = await _fn.httpsCallable('createPaymentIntent').call({
-        'amount': (amount * 100).toInt(),
+        'amount': Payment.toCents(amount),
         'currency': currency,
         'customerId': stripeCustomerId,
       });
@@ -47,20 +45,26 @@ class PaymentRepositoryImpl implements PaymentRepository {
     required double amount,
     required String currency,
   }) async {
+    // Lo registra la Cloud Function: cobra el importe de la reserva (no el
+    // que manda el cliente) y guarda el pago en centavos. Las reglas no
+    // permiten a un pasajero crear pagos directamente.
     try {
-      final id = _uuid.v4();
-      final payment = Payment(
-        id: id,
+      final result = await _fn.httpsCallable('capturePayment').call({
+        'bookingId': bookingId,
+        'stripePaymentIntentId': stripePaymentIntentId,
+      });
+      final data = Map<String, dynamic>.from(result.data as Map);
+      return Right(Payment(
+        id: data['paymentId'] as String,
         bookingId: bookingId,
         riderId: riderId,
         stripePaymentIntentId: stripePaymentIntentId,
-        amount: amount,
-        currency: currency,
-        status: PaymentStatus.captured,
+        amount: (data['amount'] as num?)?.toDouble() ??
+            Payment.toCents(amount).toDouble(),
+        currency: data['currency'] as String? ?? currency,
+        status: PaymentStatusX.fromString(data['status'] as String? ?? ''),
         createdAt: DateTime.now(),
-      );
-      await _col.doc(id).set(payment.toJson());
-      return Right(payment);
+      ));
     } catch (e) {
       return Left(PaymentFailure(e.toString()));
     }
@@ -101,10 +105,8 @@ class PaymentRepositoryImpl implements PaymentRepository {
   @override
   Future<Either<Failure, void>> refundPayment(String paymentId) async {
     try {
+      // La Cloud Function marca el pago como reembolsado.
       await _fn.httpsCallable('refundPayment').call({'paymentId': paymentId});
-      await _col
-          .doc(paymentId)
-          .update({'status': PaymentStatus.refunded.label});
       return const Right(null);
     } catch (e) {
       return Left(PaymentFailure(e.toString()));

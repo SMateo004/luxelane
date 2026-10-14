@@ -552,11 +552,20 @@ class Payment {
   final String bookingId;
   final String riderId;
   final String stripePaymentIntentId;
+
+  /// Importe en centavos enteros, como Stripe (12550 = Bs 125,50). Las
+  /// reservas guardan bolivianos; convierte con [amountBs] / [toCents].
   final double amount;
   final String currency;
   final PaymentStatus status;
   final DateTime createdAt;
   final String? receiptUrl;
+
+  /// Importe en bolivianos.
+  double get amountBs => amount / 100;
+
+  /// Bolivianos → centavos enteros (sin errores de coma flotante).
+  static int toCents(double bs) => (bs * 100).round();
 
   factory Payment.fromJson(Map<String, dynamic> j) => Payment(
         id: j['id'] as String,
