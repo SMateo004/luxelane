@@ -7,6 +7,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../app/theme/app_theme.dart';
 import '../config/env.dart';
 import '../models/place_model.dart';
+import '../services/maps_service.dart';
+import '../utils/route_geometry.dart';
 
 // ignore_for_file: prefer_const_constructors
 
@@ -31,7 +33,9 @@ const _kIvoryMapStyle = '''
 ]
 ''';
 
-const _kDefaultCenter = LatLng(48.8566, 2.3522); // Paris
+/// Calcula el recorrido entre dos lugares. Se puede sustituir en tests.
+typedef RouteLoader = Future<RouteInfo?> Function(
+    Place origin, Place destination);
 
 class LuxMap extends StatefulWidget {
   const LuxMap({
@@ -53,17 +57,38 @@ class LuxMap extends StatefulWidget {
   /// Use the plain Google Maps style instead of the branded ivory style.
   final bool lightStyle;
 
+  /// Cómo se calcula el recorrido cuando [routeInfo] no lo trae.
+  @visibleForTesting
+  static RouteLoader routeLoader = (origin, destination) =>
+      MapsService().getRoute(origin: origin, destination: destination);
+
+  /// Recorridos ya calculados, para no repetir la consulta al reconstruir.
+  static final Map<String, RouteInfo> _routeCache = {};
+
+  @visibleForTesting
+  static void clearRouteCache() => _routeCache.clear();
+
   @override
-  State<LuxMap> createState() => _LuxMapState();
+  State<LuxMap> createState() => LuxMapState();
 }
 
-class _LuxMapState extends State<LuxMap> {
+@visibleForTesting
+class LuxMapState extends State<LuxMap> {
   GoogleMapController? _controller;
 
-  LatLng get _center {
-    if (widget.origin != null) return widget.origin!.latLng;
-    return _kDefaultCenter;
-  }
+  /// Recorrido calculado aquí cuando el que llega no trae las calles.
+  RouteInfo? _fetchedRoute;
+  String? _fetchingKey;
+
+  /// Recorrido que se dibuja: el recibido si es real, si no el calculado.
+  @visibleForTesting
+  RouteInfo? get route =>
+      hasRoadPath(widget.routeInfo) ? widget.routeInfo : _fetchedRoute;
+
+  /// Centro inicial: la recogida, el destino o, sin ninguno, Santa Cruz.
+  @visibleForTesting
+  LatLng get initialCenter =>
+      widget.origin?.latLng ?? widget.destination?.latLng ?? kSantaCruzCenter;
 
   BitmapDescriptor? _originIcon;
   BitmapDescriptor? _destIcon;
@@ -72,6 +97,34 @@ class _LuxMapState extends State<LuxMap> {
   void initState() {
     super.initState();
     _loadIcons();
+    _ensureRoute();
+  }
+
+  /// Si hay recogida y destino pero no el recorrido por calles, lo pide a
+  /// Google (Directions) y lo guarda en caché.
+  Future<void> _ensureRoute() async {
+    final o = widget.origin, d = widget.destination;
+    if (o == null || d == null || hasRoadPath(widget.routeInfo)) return;
+    final key = routeKey(o, d);
+    final cached = LuxMap._routeCache[key];
+    if (cached != null) {
+      _fetchedRoute = cached;
+      return;
+    }
+    if (_fetchingKey == key) return;
+    _fetchingKey = key;
+    RouteInfo? r;
+    try {
+      r = await LuxMap.routeLoader(o, d);
+    } catch (_) {
+      r = null;
+    }
+    if (!mounted || _fetchingKey != key) return;
+    _fetchingKey = null;
+    if (!hasRoadPath(r)) return;
+    LuxMap._routeCache[key] = r!;
+    setState(() => _fetchedRoute = r);
+    _fitBounds();
   }
 
   Future<void> _loadIcons() async {
@@ -132,38 +185,56 @@ class _LuxMapState extends State<LuxMap> {
   }
 
   Set<Polyline> get _polylines {
-    if (widget.routeInfo == null || widget.routeInfo!.polylinePoints.isEmpty) {
-      return {};
-    }
+    final r = route;
+    if (!hasRoadPath(r)) return {};
+    // Borde blanco bajo la línea para que se lea sobre cualquier calle.
     return {
       Polyline(
+        polylineId: const PolylineId('route-casing'),
+        points: r!.polylinePoints,
+        color: Colors.white,
+        width: 8,
+        zIndex: 1,
+      ),
+      Polyline(
         polylineId: const PolylineId('route'),
-        points: widget.routeInfo!.polylinePoints,
+        points: r.polylinePoints,
         color: LuxColors.sapphire,
         width: 5,
+        zIndex: 2,
       ),
     };
   }
 
-  void _fitBounds() {
-    if (_controller == null) return;
-    if (widget.origin == null || widget.destination == null) return;
+  /// Puntos que la cámara debe encuadrar: marcadores y recorrido.
+  @visibleForTesting
+  List<LatLng> get framePoints => [
+        if (widget.origin != null) widget.origin!.latLng,
+        if (widget.destination != null) widget.destination!.latLng,
+        ...?route?.polylinePoints,
+      ];
 
-    final bounds = LatLngBounds(
-      southwest: LatLng(
-        [widget.origin!.lat, widget.destination!.lat]
-            .reduce((a, b) => a < b ? a : b),
-        [widget.origin!.lng, widget.destination!.lng]
-            .reduce((a, b) => a < b ? a : b),
-      ),
-      northeast: LatLng(
-        [widget.origin!.lat, widget.destination!.lat]
-            .reduce((a, b) => a > b ? a : b),
-        [widget.origin!.lng, widget.destination!.lng]
-            .reduce((a, b) => a > b ? a : b),
-      ),
-    );
-    _controller!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 80));
+  void _fitBounds([int attempt = 0]) {
+    final c = _controller;
+    if (c == null) return;
+    if (widget.origin == null || widget.destination == null) return;
+    final bounds = boundsOf(framePoints);
+    if (bounds == null) return;
+    // En web el mapa puede no tener tamaño aún justo al crearse: reintenta.
+    void retry(Object _) {
+      if (attempt < 3 && mounted) {
+        Future.delayed(const Duration(milliseconds: 300),
+            () => mounted ? _fitBounds(attempt + 1) : null);
+      }
+    }
+
+    try {
+      c
+          .animateCamera(CameraUpdate.newLatLngBounds(bounds, 48))
+          .catchError(retry);
+    } catch (e) {
+      retry(e);
+    }
   }
 
   void _animateToDriver() {
@@ -177,6 +248,12 @@ class _LuxMapState extends State<LuxMap> {
   void didUpdateWidget(LuxMap old) {
     super.didUpdateWidget(old);
     if (old.origin != widget.origin || old.destination != widget.destination) {
+      _fetchedRoute = null;
+      _fetchingKey = null;
+      _ensureRoute();
+      WidgetsBinding.instance.addPostFrameCallback((_) => _fitBounds());
+    } else if (old.routeInfo != widget.routeInfo) {
+      _ensureRoute();
       WidgetsBinding.instance.addPostFrameCallback((_) => _fitBounds());
     }
     if (old.driverLocation != widget.driverLocation &&
@@ -191,7 +268,8 @@ class _LuxMapState extends State<LuxMap> {
     if (AppConfig.googleMapsKey.isEmpty) return _placeholder();
 
     return GoogleMap(
-      initialCameraPosition: CameraPosition(target: _center, zoom: 13),
+      initialCameraPosition:
+          CameraPosition(target: initialCenter, zoom: kCityZoom),
       markers: _markers,
       polylines: _polylines,
       style: widget.lightStyle ? null : _kIvoryMapStyle,
@@ -217,7 +295,7 @@ class _LuxMapState extends State<LuxMap> {
                   color: LuxColors.inkTertiary, size: 48),
               const SizedBox(height: LuxSpacing.md),
               Text(
-                widget.origin != null ? widget.origin!.displayName : 'Map view',
+                widget.origin != null ? widget.origin!.displayName : 'Mapa',
                 style: LuxTypography.caption,
                 textAlign: TextAlign.center,
               ),
