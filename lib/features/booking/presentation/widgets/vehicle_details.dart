@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -49,7 +51,18 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
       ];
     }
     return [
-      (arrow) => _RoundedStage(arrow: arrow, child: VehicleImage(vc)),
+      (arrow) => _RoundedStage(
+            arrow: arrow,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: AspectRatio(
+                  aspectRatio: 2,
+                  child: VehicleImage(vc, fit: BoxFit.cover),
+                ),
+              ),
+            ),
+          ),
       (arrow) => _RoundedPhoto(
             VehicleCatalog.seatingPhoto(vc, 0),
             arrow: arrow,
@@ -73,11 +86,11 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
 
     final stage = FutureBuilder<Set<String>>(
       future: _bundledAssets,
+      // Show the class straight away; uploaded gallery photos join in as
+      // soon as the asset list is known.
+      initialData: const <String>{},
       builder: (context, snap) {
-        if (!snap.hasData) {
-          return AspectRatio(aspectRatio: widget.compact ? 4 / 3 : 16 / 10);
-        }
-        final slides = _slides(snap.data!);
+        final slides = _slides(snap.data ?? const <String>{});
         final page = _page.clamp(0, slides.length - 1);
         return _Carousel(
           aspectRatio: widget.compact ? 4 / 3 : 16 / 10,
@@ -125,43 +138,60 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
       ],
     );
 
+    final heading = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('DETALLES', style: eyebrow()),
+        const SizedBox(height: 10),
+        Text(
+          vc.label,
+          style: TextStyle(
+            fontFamily: kSerif,
+            fontSize: widget.compact ? 30 : 32,
+            fontWeight: FontWeight.w500,
+            color: LD.ink,
+            height: 1.05,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(vc.description,
+            style: const TextStyle(
+                fontFamily: kSans, fontSize: 14, color: LD.ink3)),
+      ],
+    );
+
     return _Tone(
       tone: tone,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('DETALLES', style: eyebrow()),
-          const SizedBox(height: 10),
-          Text(
-            vc.label,
-            style: TextStyle(
-              fontFamily: kSerif,
-              fontSize: widget.compact ? 30 : 40,
-              fontWeight: FontWeight.w500,
-              color: LD.ink,
-              height: 1.05,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(vc.description,
-              style: const TextStyle(
-                  fontFamily: kSans, fontSize: 14, color: LD.ink3)),
-          const SizedBox(height: 22),
-          if (widget.compact) ...[
-            stage,
-            const SizedBox(height: 22),
-            facts,
-          ] else
-            Row(
+      child: widget.compact
+          ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(flex: 7, child: stage),
-                const SizedBox(width: 36),
-                Expanded(flex: 4, child: facts),
+                heading,
+                const SizedBox(height: 18),
+                stage,
+                const SizedBox(height: 18),
+                facts,
+              ],
+            )
+          // Photo and story side by side: the heading sits with the facts
+          // so the section reads as one block.
+          : Row(
+              children: [
+                Expanded(flex: 3, child: stage),
+                const SizedBox(width: 40),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      heading,
+                      const SizedBox(height: 22),
+                      facts,
+                    ],
+                  ),
+                ),
               ],
             ),
-        ],
-      ),
     );
   }
 }
@@ -205,7 +235,7 @@ class CapacitySection extends StatelessWidget {
     final detail = isLuggage ? luggage[li].size.dimensions : seating[si].detail;
 
     final carousel = _Carousel(
-      aspectRatio: compact ? 4 / 3 : 16 / 11,
+      aspectRatio: compact ? 4 / 3 : 16 / 10,
       slideKey: '$vc-$tab-$index',
       count: count,
       index: index,
@@ -226,9 +256,11 @@ class CapacitySection extends StatelessWidget {
       duration: const Duration(milliseconds: 250),
       child: Column(
         key: ValueKey('$vc-$tab-$index'),
+        crossAxisAlignment:
+            compact ? CrossAxisAlignment.center : CrossAxisAlignment.start,
         children: [
           Text(title,
-              textAlign: TextAlign.center,
+              textAlign: compact ? TextAlign.center : TextAlign.start,
               style: const TextStyle(
                   fontFamily: kSans,
                   fontSize: 16,
@@ -236,7 +268,7 @@ class CapacitySection extends StatelessWidget {
                   color: LD.ink)),
           const SizedBox(height: 4),
           Text(detail,
-              textAlign: TextAlign.center,
+              textAlign: compact ? TextAlign.center : TextAlign.start,
               style: const TextStyle(
                   fontFamily: kSans, fontSize: 13, color: LD.ink3)),
         ],
@@ -251,60 +283,80 @@ class CapacitySection extends StatelessWidget {
           : 'El asiento infantil se solicita con antelación y está sujeto a '
               'disponibilidad. Indica la edad del niño en las notas de '
               'recogida.',
-      textAlign: TextAlign.center,
+      textAlign: compact ? TextAlign.center : TextAlign.start,
       style: const TextStyle(
           fontFamily: kSans, fontSize: 12.5, height: 1.6, color: LD.ink3),
     );
 
+    final heading = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('CAPACIDAD', style: eyebrow()),
+        const SizedBox(height: 10),
+        Text(
+          '¿Cuánto cabe?',
+          style: TextStyle(
+            fontFamily: kSerif,
+            fontSize: compact ? 30 : 32,
+            fontWeight: FontWeight.w500,
+            color: LD.ink,
+            height: 1.05,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Hasta ${vc.capacity} pasajeros y ${vc.luggageCapacity} maletas facturadas',
+          style:
+              const TextStyle(fontFamily: kSans, fontSize: 14, color: LD.ink3),
+        ),
+        const SizedBox(height: 18),
+        Row(children: [
+          _UnderlineTab(
+              label: 'Equipaje', active: isLuggage, onTap: () => onTab(0)),
+          const SizedBox(width: 28),
+          _UnderlineTab(
+              label: 'Asientos', active: !isLuggage, onTap: () => onTab(1)),
+        ]),
+        const Divider(color: LD.border, height: 1),
+      ],
+    );
+
     return _Tone(
       tone: VehicleCatalog.tone(vc),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('CAPACIDAD', style: eyebrow()),
-          const SizedBox(height: 10),
-          Text(
-            '¿Cuánto cabe?',
-            style: TextStyle(
-              fontFamily: kSerif,
-              fontSize: compact ? 30 : 40,
-              fontWeight: FontWeight.w500,
-              color: LD.ink,
-              height: 1.05,
+      child: compact
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                heading,
+                const SizedBox(height: 18),
+                carousel,
+                const SizedBox(height: 14),
+                caption,
+                const SizedBox(height: 12),
+                note,
+              ],
+            )
+          // Same rhythm as Detalles: the photo on one side, what it shows
+          // on the other.
+          : Row(
+              children: [
+                Expanded(flex: 3, child: carousel),
+                const SizedBox(width: 40),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      heading,
+                      const SizedBox(height: 20),
+                      caption,
+                      const SizedBox(height: 14),
+                      note,
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            'Hasta ${vc.capacity} pasajeros y ${vc.luggageCapacity} maletas facturadas',
-            style: const TextStyle(
-                fontFamily: kSans, fontSize: 14, color: LD.ink3),
-          ),
-          const SizedBox(height: 22),
-          Row(children: [
-            _UnderlineTab(
-                label: 'Equipaje', active: isLuggage, onTap: () => onTab(0)),
-            const SizedBox(width: 28),
-            _UnderlineTab(
-                label: 'Asientos', active: !isLuggage, onTap: () => onTab(1)),
-          ]),
-          const Divider(color: LD.border, height: 1),
-          const SizedBox(height: 20),
-          Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 720),
-              child: Column(
-                children: [
-                  carousel,
-                  const SizedBox(height: 16),
-                  caption,
-                  const SizedBox(height: 14),
-                  note,
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -414,8 +466,10 @@ Widget _withArrow(Widget child, Widget? arrow) => arrow == null
         ],
       );
 
-/// A whole, uncropped photo with rounded corners, centred in its slot; the
-/// class illustration when the photo is missing.
+/// Every photo in the same rounded frame: the whole image, never cropped,
+/// over a soft blurred copy of itself that fills the rest of the frame, so
+/// photos of any proportion look like one set. Shows the class illustration
+/// when the photo is missing.
 class _RoundedPhoto extends StatelessWidget {
   const _RoundedPhoto(this.asset, {this.fallback, this.arrow});
   final String asset;
@@ -423,29 +477,39 @@ class _RoundedPhoto extends StatelessWidget {
   final Widget? arrow;
 
   @override
-  Widget build(BuildContext context) => Center(
-        child: Image.asset(
-          asset,
-          filterQuality: FilterQuality.high,
-          // Unsized, the image fits the slot keeping its own proportions, so
-          // the rounded corners and the arrow sit on the photo itself.
-          // While it loads, a soft placeholder keeps the arrow in reach.
-          frameBuilder: (_, image, frame, sync) => frame == null && !sync
-              ? _RoundedStage(arrow: arrow, child: const SizedBox())
-              : _withArrow(
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(_photoRadius),
-                    child: image,
+  Widget build(BuildContext context) => _withArrow(
+        ClipRRect(
+          borderRadius: BorderRadius.circular(_photoRadius),
+          child: Image.asset(
+            asset,
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.high,
+            width: double.infinity,
+            height: double.infinity,
+            frameBuilder: (_, image, frame, sync) {
+              if (frame == null && !sync) {
+                return const _RoundedStage(child: SizedBox());
+              }
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  ImageFiltered(
+                    imageFilter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
+                    child: Image.asset(asset, fit: BoxFit.cover),
                   ),
-                  arrow,
-                ),
-          errorBuilder: (_, __, ___) => fallback == null
-              ? const SizedBox.shrink()
-              : _RoundedStage(
-                  arrow: arrow,
-                  child: Padding(
-                      padding: const EdgeInsets.all(18), child: fallback)),
+                  ColoredBox(color: Colors.black.withValues(alpha: 0.08)),
+                  image,
+                ],
+              );
+            },
+            errorBuilder: (_, __, ___) => _RoundedStage(
+              child: fallback == null
+                  ? const SizedBox()
+                  : Padding(padding: const EdgeInsets.all(18), child: fallback),
+            ),
+          ),
         ),
+        arrow,
       );
 }
 
