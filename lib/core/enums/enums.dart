@@ -70,9 +70,11 @@ extension VehicleClassX on VehicleClass {
   int get luggageCapacity {
     switch (this) {
       case VehicleClass.businessVan:
-        return 6;
+        return 2;
       case VehicleClass.businessSuv:
         return 4;
+      case VehicleClass.business:
+        return 3;
       default:
         return 2;
     }
@@ -82,7 +84,7 @@ extension VehicleClassX on VehicleClass {
   String get assetKey {
     switch (this) {
       case VehicleClass.business:
-        return 'business';
+        return 'business_class';
       case VehicleClass.businessSuv:
         return 'business_suv';
       case VehicleClass.firstClass:

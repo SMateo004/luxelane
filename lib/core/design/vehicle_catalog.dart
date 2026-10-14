@@ -1,3 +1,5 @@
+import 'package:flutter/painting.dart';
+
 import '../enums/enums.dart';
 
 /// Single source of truth for which classes clients can book and how each one
@@ -18,6 +20,13 @@ abstract class VehicleCatalog {
   static String carImage(VehicleClass vc) =>
       'assets/images/vehicles/${vc.assetKey}/car.png';
 
+  /// Up to three photos for the "Detalles" carousel, in order. Only the files
+  /// that exist are shown; see [VehicleDetailsGallery].
+  static List<String> galleryPhotos(VehicleClass vc) => [
+        for (var i = 1; i <= 3; i++)
+          'assets/images/vehicles/${vc.assetKey}/gallery_$i.png',
+      ];
+
   /// Photo of the trunk for a luggage option (illustration if missing).
   static String luggagePhoto(VehicleClass vc, int option) =>
       'assets/images/booking/luggage/${vc.assetKey}_$option.png';
@@ -26,14 +35,49 @@ abstract class VehicleCatalog {
   static String seatingPhoto(VehicleClass vc, int option) =>
       'assets/images/booking/seating/${vc.assetKey}_$option.png';
 
+  /// Signature colours of each class: soft enough for large backgrounds,
+  /// distinct enough that the interface changes with the car you pick.
+  static VehicleTone tone(VehicleClass vc) => switch (vc) {
+        // Mist blue
+        VehicleClass.business => const VehicleTone(
+            wash: Color(0xFFEAF0F8),
+            stage: Color(0xFFD5E1F0),
+            accent: Color(0xFF2B4E7E),
+          ),
+        // Sage slate
+        VehicleClass.businessSuv => const VehicleTone(
+            wash: Color(0xFFE9F1EE),
+            stage: Color(0xFFD0E2DB),
+            accent: Color(0xFF2E5B50),
+          ),
+        // Lavender grey
+        VehicleClass.businessVan => const VehicleTone(
+            wash: Color(0xFFEFEDF6),
+            stage: Color(0xFFDDD8EC),
+            accent: Color(0xFF4A4373),
+          ),
+        // Bordeaux rose
+        VehicleClass.firstClass => const VehicleTone(
+            wash: Color(0xFFF5EDF0),
+            stage: Color(0xFFEAD7DE),
+            accent: Color(0xFF6E2E42),
+          ),
+        // Glacier teal
+        VehicleClass.electric => const VehicleTone(
+            wash: Color(0xFFE8F3F4),
+            stage: Color(0xFFCFE6E8),
+            accent: Color(0xFF235F67),
+          ),
+      };
+
   static List<LuggageOption> luggage(VehicleClass vc) => switch (vc) {
         VehicleClass.businessVan => const [
-            LuggageOption(8, LuggageSize.cabin),
-            LuggageOption(6, LuggageSize.checked),
-            LuggageOption(4, LuggageSize.oversize),
+            LuggageOption(4, LuggageSize.cabin),
+            LuggageOption(2, LuggageSize.checked),
+            LuggageOption(1, LuggageSize.oversize),
           ],
         VehicleClass.businessSuv => const [
-            LuggageOption(5, LuggageSize.cabin),
+            LuggageOption(8, LuggageSize.cabin),
             LuggageOption(4, LuggageSize.checked),
             LuggageOption(2, LuggageSize.oversize),
           ],
@@ -43,9 +87,9 @@ abstract class VehicleCatalog {
             LuggageOption(1, LuggageSize.oversize),
           ],
         _ => const [
-            LuggageOption(2, LuggageSize.cabin),
-            LuggageOption(2, LuggageSize.checked),
-            LuggageOption(1, LuggageSize.oversize),
+            LuggageOption(4, LuggageSize.cabin),
+            LuggageOption(3, LuggageSize.checked),
+            LuggageOption(2, LuggageSize.oversize),
           ],
       };
 
@@ -67,7 +111,7 @@ abstract class VehicleCatalog {
         VehicleClass.business => const [
             'Sedán ejecutivo, discreto y silencioso',
             'Asientos traseros en cuero para tres',
-            'Maletero para dos maletas facturadas',
+            'Maletero para tres maletas facturadas',
           ],
         VehicleClass.businessSuv => const [
             'SUV ejecutiva, posición de manejo elevada',
@@ -77,7 +121,7 @@ abstract class VehicleCatalog {
         VehicleClass.businessVan => const [
             'Van ejecutiva para grupos y familias',
             'Hasta siete pasajeros en tres filas',
-            'Espacio para seis maletas facturadas',
+            'Espacio para dos maletas facturadas',
           ],
         VehicleClass.firstClass => const [
             'Sedán insignia, nuestro máximo nivel',
@@ -130,4 +174,29 @@ class SeatingOption {
   final bool childSeat;
   final String title;
   final String detail;
+}
+
+/// Colours that follow the selected class across the booking screen.
+class VehicleTone {
+  const VehicleTone({
+    required this.wash,
+    required this.stage,
+    required this.accent,
+  });
+
+  /// Page background behind the class.
+  final Color wash;
+
+  /// Bottom of the gradient the car stands on.
+  final Color stage;
+
+  /// Borders, checks and indicators.
+  final Color accent;
+
+  /// Backdrop for the car: white at the top fading into [stage].
+  LinearGradient get stageGradient => LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [const Color(0xFFFFFFFF), stage],
+      );
 }

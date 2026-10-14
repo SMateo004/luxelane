@@ -82,7 +82,11 @@ jobs:
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
+            --pwa-strategy=none \
             --output=build/web_rider
+          # Flutter writes an empty worker with --pwa-strategy=none; ours also
+          # retires the old caching worker on returning visitors.
+          cp web/flutter_service_worker.js build/web_rider/
       - uses: actions/upload-artifact@v4
         with:
           name: web-rider
@@ -108,7 +112,11 @@ jobs:
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
+            --pwa-strategy=none \
             --output=build/web_driver
+          # Flutter writes an empty worker with --pwa-strategy=none; ours also
+          # retires the old caching worker on returning visitors.
+          cp web/flutter_service_worker.js build/web_driver/
       - uses: actions/upload-artifact@v4
         with:
           name: web-driver

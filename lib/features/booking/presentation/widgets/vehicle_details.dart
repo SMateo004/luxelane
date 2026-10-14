@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../core/design/vehicle_catalog.dart';
 import '../../../../core/enums/enums.dart';
@@ -6,7 +7,14 @@ import '../../../../core/widgets/lux_raised.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import 'vehicle_visuals.dart';
 
-// ── Detalles: what the selected class really is ─────────────────────────────
+// ── Detalles: a quiet carousel of the class ──────────────────────────────────
+
+/// Asset paths bundled with the app, loaded once, so the carousel shows only
+/// the gallery photos that really exist.
+final Future<Set<String>> _bundledAssets =
+    AssetManifest.loadFromAssetBundle(rootBundle)
+        .then((m) => m.listAssets().toSet())
+        .catchError((Object _) => <String>{});
 
 class VehicleDetailsGallery extends StatefulWidget {
   const VehicleDetailsGallery({
@@ -21,12 +29,6 @@ class VehicleDetailsGallery extends StatefulWidget {
   State<VehicleDetailsGallery> createState() => _VehicleDetailsGalleryState();
 }
 
-class _Slide {
-  const _Slide(this.label, this.builder);
-  final String label;
-  final Widget Function() builder;
-}
-
 class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
   int _page = 0;
 
@@ -36,94 +38,56 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
     if (old.vehicleClass != widget.vehicleClass) _page = 0;
   }
 
-  List<_Slide> get _slides {
+  /// The class's gallery photos; until they are uploaded, the car itself and
+  /// its cabin and trunk photos.
+  List<_SlideBuilder> _slides(Set<String> assets) {
     final vc = widget.vehicleClass;
+    final gallery = VehicleCatalog.galleryPhotos(vc).where(assets.contains);
+    if (gallery.isNotEmpty) {
+      return [
+        for (final a in gallery) (arrow) => _RoundedPhoto(a, arrow: arrow),
+      ];
+    }
     return [
-      // Car PNGs have generous transparent margins: cover fills the stage
-      // without ever cutting the car itself.
-      _Slide('Exterior', () => VehicleImage(vc, fit: BoxFit.cover)),
-      _Slide(
-        'Cabina',
-        () => _Photo(
-          VehicleCatalog.seatingPhoto(vc, 0),
-          fallback: CabinSchematic(
-              vehicleClass: vc, option: VehicleCatalog.seating(vc).first),
-        ),
-      ),
-      _Slide(
-        'Maletero',
-        () => _Photo(
-          VehicleCatalog.luggagePhoto(vc, 1),
-          fallback: TrunkSchematic(
-              vehicleClass: vc, option: VehicleCatalog.luggage(vc)[1]),
-        ),
-      ),
+      (arrow) => _RoundedStage(arrow: arrow, child: VehicleImage(vc)),
+      (arrow) => _RoundedPhoto(
+            VehicleCatalog.seatingPhoto(vc, 0),
+            arrow: arrow,
+            fallback: CabinSchematic(
+                vehicleClass: vc, option: VehicleCatalog.seating(vc).first),
+          ),
+      (arrow) => _RoundedPhoto(
+            VehicleCatalog.luggagePhoto(vc, 1),
+            arrow: arrow,
+            fallback: TrunkSchematic(
+                vehicleClass: vc, option: VehicleCatalog.luggage(vc)[1]),
+          ),
     ];
   }
 
   @override
   Widget build(BuildContext context) {
     final vc = widget.vehicleClass;
-    final slides = _slides;
-    final page = _page.clamp(0, slides.length - 1);
+    final tone = VehicleCatalog.tone(vc);
     final highlights = VehicleCatalog.highlights(vc);
 
-    final stage = AspectRatio(
-      aspectRatio: widget.compact ? 4 / 3 : 16 / 9,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(4),
-        child: DecoratedBox(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.white, LD.bg2],
-            ),
-          ),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 350),
-                child: KeyedSubtree(
-                  key: ValueKey('$vc-$page'),
-                  child: slides[page].builder(),
-                ),
-              ),
-              Positioned(
-                right: 14,
-                bottom: 14,
-                child: Row(children: [
-                  _RoundNav(
-                    icon: Icons.arrow_back_rounded,
-                    onTap: () => setState(() =>
-                        _page = (page - 1 + slides.length) % slides.length),
-                  ),
-                  const SizedBox(width: 8),
-                  _RoundNav(
-                    icon: Icons.arrow_forward_rounded,
-                    onTap: () =>
-                        setState(() => _page = (page + 1) % slides.length),
-                  ),
-                ]),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    final tabs = Row(
-      children: [
-        for (var i = 0; i < slides.length; i++) ...[
-          _UnderlineTab(
-            label: slides[i].label,
-            active: i == page,
-            onTap: () => setState(() => _page = i),
-          ),
-          const SizedBox(width: 28),
-        ],
-      ],
+    final stage = FutureBuilder<Set<String>>(
+      future: _bundledAssets,
+      builder: (context, snap) {
+        if (!snap.hasData) {
+          return AspectRatio(aspectRatio: widget.compact ? 4 / 3 : 16 / 10);
+        }
+        final slides = _slides(snap.data!);
+        final page = _page.clamp(0, slides.length - 1);
+        return _Carousel(
+          aspectRatio: widget.compact ? 4 / 3 : 16 / 10,
+          slideKey: '$vc-$page',
+          count: slides.length,
+          index: page,
+          onIndex: (i) => setState(() => _page = i),
+          slide: slides[page],
+        );
+      },
     );
 
     final facts = Column(
@@ -135,9 +99,10 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(top: 2),
-                  child: Icon(Icons.check_rounded, size: 16, color: LD.sph),
+                Padding(
+                  padding: const EdgeInsets.only(top: 2),
+                  child:
+                      Icon(Icons.check_rounded, size: 16, color: tone.accent),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -160,43 +125,43 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
       ],
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('DETALLES', style: eyebrow()),
-        const SizedBox(height: 10),
-        Text(
-          vc.label,
-          style: TextStyle(
-            fontFamily: kSerif,
-            fontSize: widget.compact ? 30 : 40,
-            fontWeight: FontWeight.w500,
-            color: LD.ink,
-            height: 1.05,
+    return _Tone(
+      tone: tone,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('DETALLES', style: eyebrow()),
+          const SizedBox(height: 10),
+          Text(
+            vc.label,
+            style: TextStyle(
+              fontFamily: kSerif,
+              fontSize: widget.compact ? 30 : 40,
+              fontWeight: FontWeight.w500,
+              color: LD.ink,
+              height: 1.05,
+            ),
           ),
-        ),
-        const SizedBox(height: 6),
-        Text(vc.description,
-            style: const TextStyle(
-                fontFamily: kSans, fontSize: 14, color: LD.ink3)),
-        const SizedBox(height: 22),
-        tabs,
-        const Divider(color: LD.border, height: 1),
-        const SizedBox(height: 18),
-        if (widget.compact) ...[
-          stage,
+          const SizedBox(height: 6),
+          Text(vc.description,
+              style: const TextStyle(
+                  fontFamily: kSans, fontSize: 14, color: LD.ink3)),
           const SizedBox(height: 22),
-          facts,
-        ] else
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(flex: 7, child: stage),
-              const SizedBox(width: 36),
-              Expanded(flex: 4, child: facts),
-            ],
-          ),
-      ],
+          if (widget.compact) ...[
+            stage,
+            const SizedBox(height: 22),
+            facts,
+          ] else
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(flex: 7, child: stage),
+                const SizedBox(width: 36),
+                Expanded(flex: 4, child: facts),
+              ],
+            ),
+        ],
+      ),
     );
   }
 }
@@ -233,249 +198,280 @@ class CapacitySection extends StatelessWidget {
     final li = luggageIndex.clamp(0, luggage.length - 1);
     final si = seatingIndex.clamp(0, seating.length - 1);
 
-    final tiles = tab == 0
-        ? [
-            for (var i = 0; i < luggage.length; i++)
-              _OptionTile(
-                selected: i == li,
-                onTap: () => onLuggage(i),
-                glyphs: (c) => LuggageGlyphs(option: luggage[i], color: c),
-                title: luggage[i].title,
-                detail: luggage[i].size.dimensions,
-                compact: compact,
-              ),
-          ]
-        : [
-            for (var i = 0; i < seating.length; i++)
-              _OptionTile(
-                selected: i == si,
-                onTap: () => onSeating(i),
-                glyphs: (c) => SeatGlyphs(option: seating[i], color: c),
-                title: seating[i].title,
-                detail: seating[i].detail,
-                compact: compact,
-              ),
-          ];
+    final isLuggage = tab == 0;
+    final count = isLuggage ? luggage.length : seating.length;
+    final index = isLuggage ? li : si;
+    final title = isLuggage ? luggage[li].title : seating[si].title;
+    final detail = isLuggage ? luggage[li].size.dimensions : seating[si].detail;
 
-    final photo = tab == 0
-        ? VehicleCatalog.luggagePhoto(vc, li)
-        : VehicleCatalog.seatingPhoto(vc, si);
-    // Photos are 754 × 694; illustrations share the frame for a calm layout.
-    final stage = AspectRatio(
-      aspectRatio: 754 / 694,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(4),
-        child: ColoredBox(
-          color: LD.bg2,
-          child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            child: KeyedSubtree(
-              key: ValueKey('$vc-$tab-$li-$si'),
-              child: _Photo(
-                photo,
-                fallback: tab == 0
-                    ? TrunkSchematic(vehicleClass: vc, option: luggage[li])
-                    : CabinSchematic(vehicleClass: vc, option: seating[si]),
-              ),
-            ),
-          ),
-        ),
+    final carousel = _Carousel(
+      aspectRatio: compact ? 4 / 3 : 16 / 11,
+      slideKey: '$vc-$tab-$index',
+      count: count,
+      index: index,
+      onIndex: isLuggage ? onLuggage : onSeating,
+      slide: (arrow) => _RoundedPhoto(
+        isLuggage
+            ? VehicleCatalog.luggagePhoto(vc, li)
+            : VehicleCatalog.seatingPhoto(vc, si),
+        arrow: arrow,
+        fallback: isLuggage
+            ? TrunkSchematic(vehicleClass: vc, option: luggage[li])
+            : CabinSchematic(vehicleClass: vc, option: seating[si]),
+      ),
+    );
+
+    // The caption follows the photo: it changes with it.
+    final caption = AnimatedSwitcher(
+      duration: const Duration(milliseconds: 250),
+      child: Column(
+        key: ValueKey('$vc-$tab-$index'),
+        children: [
+          Text(title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: LD.ink)),
+          const SizedBox(height: 4),
+          Text(detail,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                  fontFamily: kSans, fontSize: 13, color: LD.ink3)),
+        ],
       ),
     );
 
     final note = Text(
-      tab == 0
+      isLuggage
           ? 'Medidas estándar de referencia. Si llevas equipaje especial '
               '(palos de golf, cochecito, instrumentos), indícalo en las notas '
               'de recogida.'
           : 'El asiento infantil se solicita con antelación y está sujeto a '
               'disponibilidad. Indica la edad del niño en las notas de '
               'recogida.',
+      textAlign: TextAlign.center,
       style: const TextStyle(
           fontFamily: kSans, fontSize: 12.5, height: 1.6, color: LD.ink3),
     );
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('CAPACIDAD', style: eyebrow()),
-        const SizedBox(height: 10),
-        Text(
-          '¿Cuánto cabe?',
-          style: TextStyle(
-            fontFamily: kSerif,
-            fontSize: compact ? 30 : 40,
-            fontWeight: FontWeight.w500,
-            color: LD.ink,
-            height: 1.05,
+    return _Tone(
+      tone: VehicleCatalog.tone(vc),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('CAPACIDAD', style: eyebrow()),
+          const SizedBox(height: 10),
+          Text(
+            '¿Cuánto cabe?',
+            style: TextStyle(
+              fontFamily: kSerif,
+              fontSize: compact ? 30 : 40,
+              fontWeight: FontWeight.w500,
+              color: LD.ink,
+              height: 1.05,
+            ),
           ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          'Hasta ${vc.capacity} pasajeros y ${vc.luggageCapacity} maletas facturadas',
-          style:
-              const TextStyle(fontFamily: kSans, fontSize: 14, color: LD.ink3),
-        ),
-        const SizedBox(height: 22),
-        Row(children: [
-          _UnderlineTab(
-              label: 'Equipaje', active: tab == 0, onTap: () => onTab(0)),
-          const SizedBox(width: 28),
-          _UnderlineTab(
-              label: 'Asientos', active: tab == 1, onTap: () => onTab(1)),
-        ]),
-        const Divider(color: LD.border, height: 1),
-        const SizedBox(height: 20),
-        if (compact) ...[
-          for (final t in tiles)
-            Padding(padding: const EdgeInsets.only(bottom: 10), child: t),
-          const SizedBox(height: 8),
-          stage,
-          const SizedBox(height: 14),
-          note,
-        ] else
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 320,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    for (final t in tiles)
-                      Padding(
-                          padding: const EdgeInsets.only(bottom: 12), child: t),
-                    const SizedBox(height: 6),
-                    note,
-                  ],
-                ),
+          const SizedBox(height: 6),
+          Text(
+            'Hasta ${vc.capacity} pasajeros y ${vc.luggageCapacity} maletas facturadas',
+            style: const TextStyle(
+                fontFamily: kSans, fontSize: 14, color: LD.ink3),
+          ),
+          const SizedBox(height: 22),
+          Row(children: [
+            _UnderlineTab(
+                label: 'Equipaje', active: isLuggage, onTap: () => onTab(0)),
+            const SizedBox(width: 28),
+            _UnderlineTab(
+                label: 'Asientos', active: !isLuggage, onTap: () => onTab(1)),
+          ]),
+          const Divider(color: LD.border, height: 1),
+          const SizedBox(height: 20),
+          Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 720),
+              child: Column(
+                children: [
+                  carousel,
+                  const SizedBox(height: 16),
+                  caption,
+                  const SizedBox(height: 14),
+                  note,
+                ],
               ),
-              const SizedBox(width: 28),
-              Expanded(child: stage),
-            ],
+            ),
           ),
-      ],
+        ],
+      ),
     );
   }
 }
 
 // ── Building blocks ──────────────────────────────────────────────────────────
 
-/// Full, uncropped photo; the class illustration when the photo is missing.
-class _Photo extends StatelessWidget {
-  const _Photo(this.asset, {required this.fallback});
-  final String asset;
-  final Widget fallback;
-  @override
-  Widget build(BuildContext context) => Image.asset(
-        asset,
-        fit: BoxFit.contain,
-        filterQuality: FilterQuality.high,
-        width: double.infinity,
-        height: double.infinity,
-        errorBuilder: (_, __, ___) =>
-            Padding(padding: const EdgeInsets.all(18), child: fallback),
-      );
-}
+const _photoRadius = 18.0;
 
-class _OptionTile extends StatefulWidget {
-  const _OptionTile({
-    required this.selected,
-    required this.onTap,
-    required this.glyphs,
-    required this.title,
-    required this.detail,
-    this.compact = false,
+/// Builds a slide; [arrow] is the "next" button the slide pins to its right
+/// edge, or null when there is a single slide.
+typedef _SlideBuilder = Widget Function(Widget? arrow);
+
+/// One photo at a time with a round "next" arrow on its right edge and page
+/// dots below. Swiping works too.
+class _Carousel extends StatelessWidget {
+  const _Carousel({
+    required this.aspectRatio,
+    required this.slideKey,
+    required this.count,
+    required this.index,
+    required this.onIndex,
+    required this.slide,
   });
-  final bool selected;
-  final VoidCallback onTap;
-  final Widget Function(Color) glyphs;
-  final String title;
-  final String detail;
-  final bool compact;
+  final double aspectRatio;
+  final String slideKey;
+  final int count;
+  final int index;
+  final ValueChanged<int> onIndex;
+  final _SlideBuilder slide;
 
-  @override
-  State<_OptionTile> createState() => _OptionTileState();
-}
-
-class _OptionTileState extends State<_OptionTile> {
-  bool _hover = false;
+  void _go(int delta) => onIndex((index + delta + count) % count);
 
   @override
   Widget build(BuildContext context) {
-    final sel = widget.selected;
-    final accent = sel ? LD.sph : LD.ink3;
-    return Semantics(
-      button: true,
-      selected: sel,
-      label: widget.title,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        onEnter: (_) => setState(() => _hover = true),
-        onExit: (_) => setState(() => _hover = false),
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-            transform: Matrix4.translationValues(0, _hover && !sel ? -1 : 0, 0),
-            decoration: BoxDecoration(
-              color: sel ? Colors.white : const Color(0xFFFDFEFF),
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(
-                  color: sel ? LD.sph : LD.border, width: sel ? 1.5 : 1),
-              boxShadow: sel || _hover
-                  ? [
-                      BoxShadow(
-                          color: LD.ink.withValues(alpha: 0.06),
-                          blurRadius: 2,
-                          offset: const Offset(0, 1)),
-                      BoxShadow(
-                          color: (sel ? LD.sph : LD.ink)
-                              .withValues(alpha: sel ? 0.14 : 0.06),
-                          blurRadius: 16,
-                          spreadRadius: -6,
-                          offset: const Offset(0, 8)),
-                    ]
-                  : const [],
-            ),
-            child: Row(
-              children: [
-                SizedBox(width: 76, child: widget.glyphs(accent)),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(widget.title,
-                          style: TextStyle(
-                              fontFamily: kSans,
-                              fontSize: 14,
-                              fontWeight:
-                                  sel ? FontWeight.w600 : FontWeight.w500,
-                              color: LD.ink)),
-                      const SizedBox(height: 2),
-                      Text(widget.detail,
-                          style: const TextStyle(
-                              fontFamily: kSans,
-                              fontSize: 11.5,
-                              color: LD.ink3)),
-                    ],
-                  ),
-                ),
-                AnimatedOpacity(
-                  duration: const Duration(milliseconds: 180),
-                  opacity: sel ? 1 : 0,
-                  child: const Icon(Icons.check_circle_rounded,
-                      size: 18, color: LD.sph),
-                ),
-              ],
+    final arrow = count < 2
+        ? null
+        : _RoundNav(
+            icon: Icons.arrow_forward_rounded,
+            tooltip: 'Siguiente',
+            onTap: () => _go(1),
+          );
+    return Column(
+      children: [
+        GestureDetector(
+          onHorizontalDragEnd: count < 2
+              ? null
+              : (d) {
+                  final v = d.primaryVelocity ?? 0;
+                  if (v.abs() > 200) _go(v < 0 ? 1 : -1);
+                },
+          child: AspectRatio(
+            aspectRatio: aspectRatio,
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 350),
+              child: KeyedSubtree(key: ValueKey(slideKey), child: slide(arrow)),
             ),
           ),
         ),
-      ),
+        if (count > 1) ...[
+          const SizedBox(height: 14),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (var i = 0; i < count; i++)
+                GestureDetector(
+                  onTap: () => onIndex(i),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
+                    width: i == index ? 22 : 7,
+                    height: 7,
+                    decoration: BoxDecoration(
+                      color: i == index
+                          ? (_Tone.of(context)?.accent ?? LD.sph)
+                          : LD.border,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ],
     );
   }
+}
+
+/// Half the arrow's width: how far it sits past the photo's right edge.
+const _arrowOverhang = 24.0;
+
+/// Pins [arrow] half over the right edge of [child], vertically centred. The
+/// extra right padding keeps the whole arrow inside the hit-testable area.
+Widget _withArrow(Widget child, Widget? arrow) => arrow == null
+    ? child
+    : Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: _arrowOverhang),
+            child: child,
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: Center(child: arrow),
+          ),
+        ],
+      );
+
+/// A whole, uncropped photo with rounded corners, centred in its slot; the
+/// class illustration when the photo is missing.
+class _RoundedPhoto extends StatelessWidget {
+  const _RoundedPhoto(this.asset, {this.fallback, this.arrow});
+  final String asset;
+  final Widget? fallback;
+  final Widget? arrow;
+
+  @override
+  Widget build(BuildContext context) => Center(
+        child: Image.asset(
+          asset,
+          filterQuality: FilterQuality.high,
+          // Unsized, the image fits the slot keeping its own proportions, so
+          // the rounded corners and the arrow sit on the photo itself.
+          // While it loads, a soft placeholder keeps the arrow in reach.
+          frameBuilder: (_, image, frame, sync) => frame == null && !sync
+              ? _RoundedStage(arrow: arrow, child: const SizedBox())
+              : _withArrow(
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(_photoRadius),
+                    child: image,
+                  ),
+                  arrow,
+                ),
+          errorBuilder: (_, __, ___) => fallback == null
+              ? const SizedBox.shrink()
+              : _RoundedStage(
+                  arrow: arrow,
+                  child: Padding(
+                      padding: const EdgeInsets.all(18), child: fallback)),
+        ),
+      );
+}
+
+/// Soft rounded backdrop for cut-out cars and illustrations; fills its slot.
+class _RoundedStage extends StatelessWidget {
+  const _RoundedStage({required this.child, this.arrow});
+  final Widget child;
+  final Widget? arrow;
+
+  @override
+  Widget build(BuildContext context) => _withArrow(
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 500),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(_photoRadius),
+            gradient: _Tone.of(context)?.stageGradient ??
+                const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.white, LD.bg2],
+                ),
+          ),
+          child: SizedBox.expand(child: child),
+        ),
+        arrow,
+      );
 }
 
 class _UnderlineTab extends StatelessWidget {
@@ -515,7 +511,7 @@ class _UnderlineTab extends StatelessWidget {
                   duration: const Duration(milliseconds: 180),
                   height: 2,
                   width: active ? 40 : 0,
-                  color: LD.sph,
+                  color: _Tone.of(context)?.accent ?? LD.sph,
                 ),
               ],
             ),
@@ -525,35 +521,45 @@ class _UnderlineTab extends StatelessWidget {
 }
 
 class _RoundNav extends StatefulWidget {
-  const _RoundNav({required this.icon, required this.onTap});
+  const _RoundNav(
+      {required this.icon, required this.onTap, required this.tooltip});
   final IconData icon;
   final VoidCallback onTap;
+  final String tooltip;
   @override
   State<_RoundNav> createState() => _RoundNavState();
 }
 
+/// Round "balloon" arrow with the same soft relief as the buttons.
 class _RoundNavState extends State<_RoundNav> {
   bool _down = false;
   @override
-  Widget build(BuildContext context) => MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTapDown: (_) => setState(() => _down = true),
-          onTapCancel: () => setState(() => _down = false),
-          onTapUp: (_) {
-            setState(() => _down = false);
-            widget.onTap();
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 120),
-            width: 40,
-            height: 40,
-            decoration: luxRaisedDecoration(
-              variant: LuxRaisedVariant.secondary,
-              pressed: _down,
-              radius: 20,
+  Widget build(BuildContext context) => Tooltip(
+        message: widget.tooltip,
+        child: Semantics(
+          button: true,
+          label: widget.tooltip,
+          child: MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTapDown: (_) => setState(() => _down = true),
+              onTapCancel: () => setState(() => _down = false),
+              onTapUp: (_) {
+                setState(() => _down = false);
+                widget.onTap();
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 120),
+                width: 48,
+                height: 48,
+                decoration: luxRaisedDecoration(
+                  variant: LuxRaisedVariant.secondary,
+                  pressed: _down,
+                  radius: 24,
+                ),
+                child: Icon(widget.icon, size: 20, color: LD.ink),
+              ),
             ),
-            child: Icon(widget.icon, size: 18, color: LD.ink),
           ),
         ),
       );
@@ -577,4 +583,16 @@ class _Spec extends StatelessWidget {
                   color: LD.ink2)),
         ],
       );
+}
+
+/// The selected class colours, for the pieces deep inside a section.
+class _Tone extends InheritedWidget {
+  const _Tone({required this.tone, required super.child});
+  final VehicleTone tone;
+
+  static VehicleTone? of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_Tone>()?.tone;
+
+  @override
+  bool updateShouldNotify(_Tone old) => old.tone != tone;
 }

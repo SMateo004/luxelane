@@ -74,7 +74,7 @@ flutter:
     - assets/images/brand/
     - assets/images/home/
     - assets/images/vehicles/
-    - assets/images/vehicles/business/
+    - assets/images/vehicles/business_class/
     - assets/images/vehicles/first_class/
     - assets/images/vehicles/van/
     - assets/images/vehicles/electric/

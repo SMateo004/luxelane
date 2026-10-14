@@ -1,10 +1,11 @@
 # vehicles/business_suv/
 
-Imagen de la clase **Business SUV**.
+Imágenes de la clase **Business SUV**.
 
-| Archivo   | Dónde se usa                                         | Formato |
-|-----------|------------------------------------------------------|---------|
-| `car.png` | Tarjeta de la clase y "Detalles" en la reserva        | PNG 1024 × 1024 con fondo transparente, coche negro de 3/4 frontal mirando a la izquierda (igual que `business/car.png`) |
+| Archivo | Dónde se usa | Formato |
+|---|---|---|
+| `car.png` | Tarjeta de la clase y portada de "Detalles" mientras no haya galería | PNG 1024 × 1024, fondo transparente, coche de 3/4 frontal |
+| `gallery_1.png`, `gallery_2.png`, `gallery_3.png` | Carrusel de "Detalles", en ese orden | PNG, cualquier proporción (se muestra entera, con esquinas redondeadas) |
 
-Mientras no exista `car.png`, la app muestra una ilustración vectorial de una SUV.
-No uses fotos de otra clase ni de stock con marcas visibles: mostramos lo que el cliente recibe.
+Si no hay ninguna `gallery_N.png`, el carrusel muestra `car.png` y las fotos
+de cabina y maletero de la clase.

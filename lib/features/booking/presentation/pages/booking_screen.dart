@@ -77,7 +77,15 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // Approximate offset at which the vehicle cards scroll out of view:
   // heading (~110px) + 28px gap + 430px cards + 28px gap ≈ 596px
-  static const double _kStickyThreshold = 560.0;
+  static const double _kStickyThreshold = 520.0;
+
+  /// Narrowest window that shows cards and summary side by side.
+  static const double _kSplitMinWidth = 1100;
+
+  /// Horizontal page margin of the split layout.
+  double get _gutter => MediaQuery.sizeOf(context).width >= 1400 ? 56 : 36;
+
+  final ScrollController _cardsCtrl = ScrollController();
 
   double get _km =>
       _formData?.routeDistanceKm != null && _formData!.routeDistanceKm > 0
@@ -128,6 +136,7 @@ class _BookingScreenState extends State<BookingScreen> {
   void dispose() {
     PricingCatalog.instance.removeListener(_onPricingChanged);
     _leftScrollCtrl.dispose();
+    _cardsCtrl.dispose();
     super.dispose();
   }
 
@@ -294,14 +303,39 @@ class _BookingScreenState extends State<BookingScreen> {
         ));
   }
 
-  void _selectVehicle(VehicleClass vc) => setState(() {
-        _selected = vc;
-        _luggageOption = 0;
-        _seatingOption = 0;
-        // Never keep more people or bags than the new class takes.
-        _passengers = _passengers.clamp(1, vc.capacity);
-        _luggage = _luggage.clamp(0, vc.luggageCapacity);
-      });
+  void _selectVehicle(VehicleClass vc) {
+    setState(() {
+      _selected = vc;
+      _luggageOption = 0;
+      _seatingOption = 0;
+      // Never keep more people or bags than the new class takes.
+      _passengers = _passengers.clamp(1, vc.capacity);
+      _luggage = _luggage.clamp(0, vc.luggageCapacity);
+    });
+    _revealCard(vc);
+  }
+
+  /// Slides the card row so the chosen card is fully in view once it has
+  /// finished growing.
+  void _revealCard(VehicleClass vc) {
+    final i = _kVehicleClasses.indexOf(vc);
+    final split = MediaQuery.sizeOf(context).width >= _kSplitMinWidth;
+    final teaser = split ? 210.0 : _mobileCardWidth;
+    final gap = split ? 14.0 : 12.0;
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (!mounted || !_cardsCtrl.hasClients || i < 0) return;
+      final pos = _cardsCtrl.position;
+      _cardsCtrl.animateTo(
+        (i * (teaser + gap)).clamp(0.0, pos.maxScrollExtent),
+        duration: const Duration(milliseconds: 420),
+        curve: Curves.easeOutCubic,
+      );
+    });
+  }
+
+  /// Phone cards are narrow teasers; tablets get roomier ones.
+  double get _mobileCardWidth =>
+      MediaQuery.sizeOf(context).width >= 600 ? 220 : 168;
 
   static String _cap(String s) =>
       s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
@@ -351,7 +385,11 @@ class _BookingScreenState extends State<BookingScreen> {
           if (!_kVehicleClasses.contains(_selected)) {
             _selected = VehicleClass.business;
           }
-          return isWeb(context) ? _webLayout() : _mobileLayout();
+          // The split layout needs room for the cards and the summary side
+          // by side; phones and tablets get the step-by-step flow.
+          return MediaQuery.sizeOf(context).width >= _kSplitMinWidth
+              ? _webLayout()
+              : _mobileLayout();
         },
       ),
     );
@@ -389,10 +427,12 @@ class _BookingScreenState extends State<BookingScreen> {
         ),
       );
 
-  // One calm palette for every class: the car is the hero, not a tint.
-  static Color _vehicleBg(VehicleClass vc) => LD.bg2;
-  static Color _vehicleCardBg(VehicleClass vc) => Colors.white;
-  static Color _vehicleCardBgSelected(VehicleClass vc) => Colors.white;
+  /// An hourly booking has no route to draw, so it gets no map.
+  bool get _showRouteMap =>
+      _service != ServiceType.byTheHour && _formData?.origin != null;
+
+  /// Colours of the selected class; the page follows them as you choose.
+  VehicleTone get _tone => VehicleCatalog.tone(_selected);
 
   Widget _webLeft() => SingleChildScrollView(
         controller: _leftScrollCtrl,
@@ -403,8 +443,8 @@ class _BookingScreenState extends State<BookingScreen> {
             AnimatedContainer(
               duration: const Duration(milliseconds: 600),
               curve: Curves.easeInOut,
-              color: _vehicleBg(_selected),
-              padding: const EdgeInsets.fromLTRB(56, 52, 40, 52),
+              color: _tone.wash,
+              padding: EdgeInsets.fromLTRB(_gutter, 40, 36, 44),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -430,7 +470,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     'Elige tu\nexperiencia',
                     style: TextStyle(
                       fontFamily: kSerif,
-                      fontSize: 60,
+                      fontSize: 52,
                       fontWeight: FontWeight.w300,
                       color: _kTextPrimary,
                       letterSpacing: -0.5,
@@ -450,12 +490,13 @@ class _BookingScreenState extends State<BookingScreen> {
                       decoration: TextDecoration.none,
                     ),
                   ),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 28),
 
                   // Vehicle cards
                   SizedBox(
-                    height: 490,
+                    height: 450,
                     child: ListView.separated(
+                      controller: _cardsCtrl,
                       scrollDirection: Axis.horizontal,
                       clipBehavior: Clip.none,
                       padding: EdgeInsets.zero,
@@ -468,8 +509,6 @@ class _BookingScreenState extends State<BookingScreen> {
                           price: PricingCatalog.instance
                               .estimate(vc, _service, km: _km, hours: _hours),
                           selected: _selected == vc,
-                          cardBg: _vehicleCardBg(vc),
-                          cardBgSelected: _vehicleCardBgSelected(vc),
                           onTap: () => _selectVehicle(vc),
                           serviceType: _service,
                           hours:
@@ -484,7 +523,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
             // ── Light content below ──
             Padding(
-              padding: const EdgeInsets.fromLTRB(56, 48, 40, 64),
+              padding: EdgeInsets.fromLTRB(_gutter, 44, 36, 56),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -751,43 +790,41 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Widget _webRight() => Container(
-        width: 440,
+        // Summary column: generous on large screens, slimmer on laptops.
+        width: MediaQuery.sizeOf(context).width >= 1440 ? 440 : 380,
         color: _kCardBg,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ── Dark map ─────────────────────────────────────────────────
-            Container(
-              height: 260,
-              color: LD.bg3,
-              child: _formData?.origin != null
-                  ? LuxMap(
-                      origin: _formData!.origin,
-                      destination: _formData!.destination,
-                      routeInfo: RouteInfo(
-                        polylinePoints: _formData!.polylinePoints,
-                        distanceKm: _formData!.routeDistanceKm,
-                        durationMin: _formData!.routeDurationMin,
-                      ),
+            // ── Route map: only when there is a route (not for hourly) ────
+            AnimatedSize(
+              duration: const Duration(milliseconds: 320),
+              curve: Curves.easeInOut,
+              alignment: Alignment.topCenter,
+              child: _showRouteMap
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          height: MediaQuery.sizeOf(context).width >= 1440
+                              ? 260
+                              : 210,
+                          color: LD.bg3,
+                          child: LuxMap(
+                            origin: _formData!.origin,
+                            destination: _formData!.destination,
+                            routeInfo: RouteInfo(
+                              polylinePoints: _formData!.polylinePoints,
+                              distanceKm: _formData!.routeDistanceKm,
+                              durationMin: _formData!.routeDurationMin,
+                            ),
+                          ),
+                        ),
+                        const Divider(color: _kDivider, height: 1),
+                      ],
                     )
-                  : Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.map_outlined, size: 36, color: LD.ink3),
-                          const SizedBox(height: 8),
-                          Text('Vista previa de ruta',
-                              style: TextStyle(
-                                fontFamily: kSans,
-                                fontSize: 12,
-                                color: LD.ink3,
-                              )),
-                        ],
-                      ),
-                    ),
+                  : const SizedBox(width: double.infinity),
             ),
-
-            const Divider(color: _kDivider, height: 1),
 
             // ── Booking summary ───────────────────────────────────────────
             Expanded(
@@ -869,11 +906,17 @@ class _BookingScreenState extends State<BookingScreen> {
           value: _formData?.origin.displayName ?? '—',
         ),
         const SizedBox(height: 12),
-        _SummaryAddressRow(
-          icon: Icons.flag_outlined,
-          label: 'Destino',
-          value: _formData?.destination?.displayName ?? '—',
-        ),
+        _service == ServiceType.byTheHour
+            ? _SummaryAddressRow(
+                icon: Icons.schedule_rounded,
+                label: 'Duración',
+                value: '$_hours horas a tu disposición',
+              )
+            : _SummaryAddressRow(
+                icon: Icons.flag_outlined,
+                label: 'Destino',
+                value: _formData?.destination?.displayName ?? '—',
+              ),
         if (_airportPickup) ...[
           const SizedBox(height: 20),
           const _FlightNote(),
@@ -944,11 +987,16 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // ── MOBILE LAYOUT ──────────────────────────────────────────────────────────
 
-  Widget _mobileLayout() => Theme(
+  // The vehicle step wears the selected class colour, like the web hero.
+  Widget _mobileLayout() => AnimatedContainer(
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeInOut,
+      color: _step == 0 ? _tone.wash : _kBg,
+      child: Theme(
         data: Theme.of(context).copyWith(
-          scaffoldBackgroundColor: _kBg,
+          scaffoldBackgroundColor: Colors.transparent,
           appBarTheme: const AppBarTheme(
-            backgroundColor: _kBg,
+            backgroundColor: Colors.transparent,
             foregroundColor: _kTextPrimary,
             elevation: 0,
             scrolledUnderElevation: 0,
@@ -964,7 +1012,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
         child: Scaffold(
-          backgroundColor: _kBg,
+          backgroundColor: Colors.transparent,
           appBar: AppBar(
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
@@ -976,9 +1024,14 @@ class _BookingScreenState extends State<BookingScreen> {
               preferredSize: const Size.fromHeight(48),
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-                child: _LightStepIndicator(
-                  steps: const ['Vehículo', 'Detalles', 'Confirmar'],
-                  currentStep: _step,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 760),
+                    child: _LightStepIndicator(
+                      steps: const ['Vehículo', 'Detalles', 'Confirmar'],
+                      currentStep: _step,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -988,12 +1041,18 @@ class _BookingScreenState extends State<BookingScreen> {
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
-                  child: _mobileStepContent(),
+                  // Tablets keep a comfortable reading width.
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 760),
+                      child: _mobileStepContent(),
+                    ),
+                  ),
                 ),
               ),
               _LightPriceBar(
                 price: _price,
-                label: _step < 2 ? 'Continuar' : 'Confirmar reserva',
+                label: _step < 2 ? 'Continuar' : 'Reservar',
                 loading: _loading,
                 onConfirm: _step < 2
                     ? () {
@@ -1005,7 +1064,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ],
           ),
         ),
-      );
+      ));
 
   Widget _mobileStepContent() {
     switch (_step) {
@@ -1042,8 +1101,9 @@ class _BookingScreenState extends State<BookingScreen> {
           ],
           const SizedBox(height: 20),
           SizedBox(
-            height: 340,
+            height: _mobileCardWidth > 168 ? 400 : 340,
             child: ListView.separated(
+              controller: _cardsCtrl,
               scrollDirection: Axis.horizontal,
               clipBehavior: Clip.none,
               padding: EdgeInsets.zero,
@@ -1059,10 +1119,8 @@ class _BookingScreenState extends State<BookingScreen> {
                   onTap: () => _selectVehicle(vc),
                   serviceType: _service,
                   hours: _service == ServiceType.byTheHour ? _hours : null,
-                  width: 168,
-                  carWidth: 270,
-                  cardBg: _vehicleCardBg(vc),
-                  cardBgSelected: _vehicleCardBgSelected(vc),
+                  width: _mobileCardWidth,
+                  carWidth: _mobileCardWidth > 168 ? 360 : 270,
                 );
               },
             ),
@@ -1148,7 +1206,7 @@ class _BookingScreenState extends State<BookingScreen> {
       );
 
   Widget _confirmStep() {
-    final hasRoute = _formData?.origin != null;
+    final hasRoute = _showRouteMap;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1339,7 +1397,8 @@ class _WebTopBar extends StatelessWidget {
           color: _kBg,
           border: Border(bottom: BorderSide(color: _kBorder, width: 1)),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 56),
+        padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.sizeOf(context).width >= 1400 ? 56 : 36),
         child: Row(
           children: [
             // ── Luxelane logo mark ───────────────────────────────────────
@@ -1389,6 +1448,7 @@ class _WebTopBar extends StatelessWidget {
                               final price = PricingCatalog.instance
                                   .estimate(vc, service, km: km, hours: hours);
                               final isActive = selectedVehicle == vc;
+                              final tone = VehicleCatalog.tone(vc);
                               return Padding(
                                 padding: const EdgeInsets.only(right: 10),
                                 child: MouseRegion(
@@ -1401,14 +1461,12 @@ class _WebTopBar extends StatelessWidget {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 18, vertical: 10),
                                       decoration: BoxDecoration(
-                                        color: isActive
-                                            ? LD.sphTint
-                                            : Colors.white,
+                                        color:
+                                            isActive ? tone.wash : Colors.white,
                                         borderRadius: BorderRadius.zero,
                                         border: Border.all(
-                                          color: isActive
-                                              ? _kPanelAccent
-                                              : _kBorder,
+                                          color:
+                                              isActive ? tone.accent : _kBorder,
                                           width: isActive ? 2.0 : 1.0,
                                         ),
                                       ),
@@ -1424,7 +1482,7 @@ class _WebTopBar extends StatelessWidget {
                                                   ? FontWeight.w600
                                                   : FontWeight.w400,
                                               color: isActive
-                                                  ? _kPanelAccent
+                                                  ? tone.accent
                                                   : _kTextPrimary,
                                             ),
                                           ),
@@ -1433,8 +1491,8 @@ class _WebTopBar extends StatelessWidget {
                                             width: 1,
                                             height: 12,
                                             color: isActive
-                                                ? _kPanelAccent.withValues(
-                                                    alpha: 0.3)
+                                                ? tone.accent
+                                                    .withValues(alpha: 0.3)
                                                 : _kBorder,
                                           ),
                                           const SizedBox(width: 8),
@@ -1445,7 +1503,7 @@ class _WebTopBar extends StatelessWidget {
                                               fontSize: 12,
                                               fontWeight: FontWeight.w500,
                                               color: isActive
-                                                  ? _kPanelAccent
+                                                  ? tone.accent
                                                   : _kTextSub,
                                             ),
                                           ),
@@ -1465,8 +1523,9 @@ class _WebTopBar extends StatelessWidget {
 
             const Spacer(),
 
-            // ── Route summary pill ───────────────────────────────────────
-            if (formData?.origin != null)
+            // ── Route summary pill (only where it fits beside the rest) ──
+            if (formData?.origin != null &&
+                MediaQuery.sizeOf(context).width >= 1280)
               ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 320),
                 child: Container(
@@ -1538,8 +1597,6 @@ class _VehicleCard extends StatefulWidget {
     required this.vehicleClass,
     required this.price,
     required this.selected,
-    required this.cardBg,
-    required this.cardBgSelected,
     required this.onTap,
     this.serviceType = ServiceType.oneWay,
     this.hours,
@@ -1550,8 +1607,6 @@ class _VehicleCard extends StatefulWidget {
   final VehicleClass vehicleClass;
   final double price;
   final bool selected;
-  final Color cardBg;
-  final Color cardBgSelected;
   final VoidCallback onTap;
   final ServiceType serviceType;
   final int? hours;
@@ -1570,11 +1625,13 @@ class _VehicleCardState extends State<_VehicleCard> {
 
   @override
   Widget build(BuildContext context) {
-    const accent = LD.sph;
+    // Each card wears its class colours, so the page tint that follows the
+    // selection always matches a card.
+    final tone = VehicleCatalog.tone(widget.vehicleClass);
+    final accent = tone.accent;
     const kSelPad = 20.0;
     final baseW = widget.width ?? 210.0;
     final targetW = widget.selected ? widget.carWidth + kSelPad : baseW;
-    final bgColor = widget.selected ? widget.cardBgSelected : widget.cardBg;
     final sel = widget.selected;
 
     return Semantics(
@@ -1594,7 +1651,7 @@ class _VehicleCardState extends State<_VehicleCard> {
             width: targetW,
             transform: Matrix4.translationValues(0, _hover && !sel ? -4 : 0, 0),
             decoration: BoxDecoration(
-              color: bgColor,
+              color: Colors.white,
               borderRadius: BorderRadius.circular(6),
               border: Border.all(
                 color: sel ? accent : LD.border,
@@ -1626,14 +1683,9 @@ class _VehicleCardState extends State<_VehicleCard> {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        const DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [Colors.white, LD.bg2],
-                            ),
-                          ),
+                        DecoratedBox(
+                          decoration:
+                              BoxDecoration(gradient: tone.stageGradient),
                         ),
                         Positioned(
                           bottom: -14,
@@ -1653,7 +1705,17 @@ class _VehicleCardState extends State<_VehicleCard> {
                             child: Container(
                               width: 24,
                               height: 24,
-                              decoration: luxRaisedDecoration(radius: 12),
+                              decoration: BoxDecoration(
+                                color: accent,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: accent.withValues(alpha: 0.35),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
                               child: const Icon(Icons.check,
                                   size: 13, color: Colors.white),
                             ),
@@ -2406,36 +2468,41 @@ class _LightPriceBar extends StatelessWidget {
           color: Colors.white,
           border: Border(top: BorderSide(color: _kBorder)),
         ),
-        child: Row(children: [
-          Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('PRECIO FINAL · TODO INCLUIDO',
-                    style: TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
-                        color: _kTextTertiary,
-                        letterSpacing: 1.5)),
-                Text('Bs ${price.toStringAsFixed(0)}',
-                    style: const TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: _kTextPrimary,
-                        letterSpacing: -0.5)),
-              ]),
-          const SizedBox(width: 16),
-          Expanded(
-            child: LuxRaisedButton(
-              label: label,
-              height: 50,
-              loading: loading,
-              onPressed: onConfirm,
-            ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 760),
+            child: Row(children: [
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text('PRECIO FINAL',
+                        style: TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color: _kTextTertiary,
+                            letterSpacing: 1.5)),
+                    Text('Bs ${price.toStringAsFixed(0)}',
+                        style: const TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            color: _kTextPrimary,
+                            letterSpacing: -0.5)),
+                  ]),
+              const SizedBox(width: 16),
+              Expanded(
+                child: LuxRaisedButton(
+                  label: label,
+                  height: 50,
+                  loading: loading,
+                  onPressed: onConfirm,
+                ),
+              ),
+            ]),
           ),
-        ]),
+        ),
       );
 }
 
