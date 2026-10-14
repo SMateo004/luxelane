@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -83,9 +84,6 @@ class _BookingScreenState extends State<BookingScreen> {
 
   /// Narrowest window that shows cards and summary side by side.
   static const double _kSplitMinWidth = 1100;
-
-  /// Horizontal page margin of the split layout.
-  double get _gutter => MediaQuery.sizeOf(context).width >= 1400 ? 56 : 36;
 
   final ScrollController _cardsCtrl = ScrollController();
 
@@ -449,13 +447,32 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             const Divider(color: _kDivider, height: 1),
             Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(child: _webLeft()),
-                  _webRight(),
-                ],
-              ),
+              child: LayoutBuilder(builder: (context, c) {
+                // Content and summary card travel together as one centred
+                // block; the card floats over the page beside the content.
+                final w = c.maxWidth;
+                final cardW = w >= 1440 ? 400.0 : 360.0;
+                const cardGap = 32.0;
+                final outer = w >= 1400 ? 48.0 : 28.0;
+                final blockW =
+                    math.min(w - 2 * outer, _kContentMax + cardGap + cardW);
+                final blockLeft = (w - blockW) / 2;
+                final contentRight = blockLeft + cardW + cardGap;
+                return Stack(
+                  children: [
+                    Positioned.fill(
+                      child: _webLeft(left: blockLeft, right: contentRight),
+                    ),
+                    Positioned(
+                      top: 24,
+                      bottom: 24,
+                      right: blockLeft,
+                      width: cardW,
+                      child: _webRight(),
+                    ),
+                  ],
+                );
+              }),
             ),
           ],
         ),
@@ -472,14 +489,10 @@ class _BookingScreenState extends State<BookingScreen> {
   /// centred instead of stretching edge to edge.
   static const double _kContentMax = 1040;
 
-  Widget _centered(Widget child) => Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: _kContentMax),
-          child: child,
-        ),
-      );
-
-  Widget _webLeft() => SingleChildScrollView(
+  /// [left]/[right] are the page margins that keep the content inside the
+  /// centred block, clear of the floating summary card.
+  Widget _webLeft({required double left, required double right}) =>
+      SingleChildScrollView(
         controller: _leftScrollCtrl,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -489,9 +502,9 @@ class _BookingScreenState extends State<BookingScreen> {
               duration: const Duration(milliseconds: 600),
               curve: Curves.easeInOut,
               color: _tone.wash,
-              padding: EdgeInsets.symmetric(horizontal: _gutter, vertical: 36),
-              child: _centered(
-                Column(
+              padding: EdgeInsets.fromLTRB(left, 36, right, 40),
+              child: SizedBox(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AnimatedSwitcher(
@@ -535,33 +548,49 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                     const SizedBox(height: 24),
 
-                    // Every class side by side, each car shown whole.
+                    // Narrow cards tease the front of each car; the chosen
+                    // one opens up to reveal it whole.
                     SizedBox(
-                      height: 320,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          for (var i = 0; i < _kVehicleClasses.length; i++) ...[
-                            if (i > 0) const SizedBox(width: 16),
-                            Expanded(
-                              child: _VehicleCard(
-                                vehicleClass: _kVehicleClasses[i],
-                                price: PricingCatalog.instance.estimate(
-                                    _kVehicleClasses[i], _service,
-                                    km: _km, hours: _hours),
-                                selected: _selected == _kVehicleClasses[i],
-                                onTap: () =>
-                                    _selectVehicle(_kVehicleClasses[i]),
-                                serviceType: _service,
-                                hours: _service == ServiceType.byTheHour
-                                    ? _hours
-                                    : null,
-                                fill: true,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
+                      height: 450,
+                      child: LayoutBuilder(builder: (context, c) {
+                        // Fit the row to the column: the open card up to
+                        // 500px, the teasers share what is left (140–210px)
+                        // so nothing slides under the summary card.
+                        const gap = 14.0;
+                        final n = _kVehicleClasses.length;
+                        final selW =
+                            math.min(500.0, c.maxWidth - (n - 1) * (140 + gap));
+                        final teaserW = n > 1
+                            ? ((c.maxWidth - selW - (n - 1) * gap) / (n - 1))
+                                .clamp(140.0, 210.0)
+                            : selW;
+                        return ListView.separated(
+                          controller: _cardsCtrl,
+                          scrollDirection: Axis.horizontal,
+                          clipBehavior: Clip.none,
+                          padding: EdgeInsets.zero,
+                          itemCount: n,
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(width: gap),
+                          itemBuilder: (_, i) {
+                            final vc = _kVehicleClasses[i];
+                            return _VehicleCard(
+                              vehicleClass: vc,
+                              price: PricingCatalog.instance.estimate(
+                                  vc, _service,
+                                  km: _km, hours: _hours),
+                              selected: _selected == vc,
+                              onTap: () => _selectVehicle(vc),
+                              serviceType: _service,
+                              hours: _service == ServiceType.byTheHour
+                                  ? _hours
+                                  : null,
+                              width: teaserW,
+                              carWidth: selW - 20,
+                            );
+                          },
+                        );
+                      }),
                     ),
                   ],
                 ),
@@ -570,9 +599,9 @@ class _BookingScreenState extends State<BookingScreen> {
 
             // ── Everything about the selected class ───────────────────────
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: _gutter, vertical: 40),
-              child: _centered(
-                Column(
+              padding: EdgeInsets.fromLTRB(left, 40, right, 48),
+              child: SizedBox(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     VehicleDetailsGallery(vehicleClass: _selected),
@@ -825,54 +854,74 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
-  Widget _webRight() => Container(
-        // Summary column: generous on large screens, slimmer on laptops.
-        width: MediaQuery.sizeOf(context).width >= 1440 ? 440 : 380,
-        color: _kCardBg,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // ── Route map: only when there is a route (not for hourly) ────
-            AnimatedSize(
-              duration: const Duration(milliseconds: 320),
-              curve: Curves.easeInOut,
-              alignment: Alignment.topCenter,
-              child: _showRouteMap
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Container(
-                          height: MediaQuery.sizeOf(context).width >= 1440
-                              ? 260
-                              : 210,
-                          color: LD.bg3,
-                          child: LuxMap(
-                            origin: _formData!.origin,
-                            destination: _formData!.destination,
-                            routeInfo: _routeInfo,
-                          ),
-                        ),
-                        const Divider(color: _kDivider, height: 1),
-                      ],
-                    )
-                  : const SizedBox(width: double.infinity),
+  /// Summary card: rounded, lifted off the page with a soft shadow, sitting
+  /// beside the content it summarises.
+  Widget _webRight() => DecoratedBox(
+        decoration: BoxDecoration(
+          color: _kCardBg,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: LD.border),
+          boxShadow: [
+            BoxShadow(
+              color: LD.ink.withValues(alpha: 0.05),
+              blurRadius: 3,
+              offset: const Offset(0, 1),
             ),
-
-            // ── Booking summary ───────────────────────────────────────────
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(24, 22, 24, 8),
-                child: _webSummaryContent(),
-              ),
-            ),
-
-            // ── Reserve button — pinned bottom ────────────────────────────
-            _ReserveBar(
-              selected: _selected,
-              loading: _loading,
-              onReserve: _confirm,
+            BoxShadow(
+              color: LD.ink.withValues(alpha: 0.10),
+              blurRadius: 40,
+              spreadRadius: -12,
+              offset: const Offset(0, 24),
             ),
           ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // ── Route map: only when there is a route (not for hourly) ────
+              AnimatedSize(
+                duration: const Duration(milliseconds: 320),
+                curve: Curves.easeInOut,
+                alignment: Alignment.topCenter,
+                child: _showRouteMap
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            height: MediaQuery.sizeOf(context).width >= 1440
+                                ? 260
+                                : 210,
+                            color: LD.bg3,
+                            child: LuxMap(
+                              origin: _formData!.origin,
+                              destination: _formData!.destination,
+                              routeInfo: _routeInfo,
+                            ),
+                          ),
+                          const Divider(color: _kDivider, height: 1),
+                        ],
+                      )
+                    : const SizedBox(width: double.infinity),
+              ),
+
+              // ── Booking summary ───────────────────────────────────────────
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(24, 22, 24, 8),
+                  child: _webSummaryContent(),
+                ),
+              ),
+
+              // ── Reserve button — pinned bottom ────────────────────────────
+              _ReserveBar(
+                selected: _selected,
+                loading: _loading,
+                onReserve: _confirm,
+              ),
+            ],
+          ),
         ),
       );
 
@@ -1635,7 +1684,6 @@ class _VehicleCard extends StatefulWidget {
     this.hours,
     this.width,
     this.carWidth = 480,
-    this.fill = false,
   });
 
   final VehicleClass vehicleClass;
@@ -1649,9 +1697,6 @@ class _VehicleCard extends StatefulWidget {
   /// Width of the car artwork. The selected card grows to show all of it;
   /// unselected cards show the front three-quarters as a teaser.
   final double carWidth;
-
-  /// Takes the width its parent gives it (web row) instead of sizing itself.
-  final bool fill;
 
   @override
   State<_VehicleCard> createState() => _VehicleCardState();
@@ -1685,7 +1730,7 @@ class _VehicleCardState extends State<_VehicleCard> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 480),
             curve: Curves.easeInOutCubic,
-            width: widget.fill ? null : targetW,
+            width: targetW,
             transform: Matrix4.translationValues(0, _hover && !sel ? -4 : 0, 0),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -1724,12 +1769,17 @@ class _VehicleCardState extends State<_VehicleCard> {
                           decoration:
                               BoxDecoration(gradient: tone.stageGradient),
                         ),
-                        // The car photos are square with the car across
-                        // the middle half: a 2:1 window shows the whole car
-                        // and none of the empty margin, never cut off.
-                        Center(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(14, 22, 14, 8),
+                        // The car at full size, anchored left: a narrow card
+                        // shows its front, the selected one all of it. The
+                        // 2:1 window keeps only the car (the photos are
+                        // square with the car across the middle), centred
+                        // vertically so it is never cut at the top.
+                        Positioned(
+                          left: 10,
+                          top: 0,
+                          bottom: 0,
+                          width: widget.carWidth,
+                          child: Center(
                             child: AspectRatio(
                               aspectRatio: 2,
                               child: VehicleImage(widget.vehicleClass,
