@@ -77,7 +77,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // Approximate offset at which the vehicle cards scroll out of view:
   // heading (~110px) + 28px gap + 430px cards + 28px gap ≈ 596px
-  static const double _kStickyThreshold = 520.0;
+  static const double _kStickyThreshold = 420.0;
 
   /// Narrowest window that shows cards and summary side by side.
   static const double _kSplitMinWidth = 1100;
@@ -434,120 +434,126 @@ class _BookingScreenState extends State<BookingScreen> {
   /// Colours of the selected class; the page follows them as you choose.
   VehicleTone get _tone => VehicleCatalog.tone(_selected);
 
+  /// Widest the reading column gets: on big screens the content stays
+  /// centred instead of stretching edge to edge.
+  static const double _kContentMax = 1040;
+
+  Widget _centered(Widget child) => Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: _kContentMax),
+          child: child,
+        ),
+      );
+
   Widget _webLeft() => SingleChildScrollView(
         controller: _leftScrollCtrl,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // ── Animated light-tinted hero section — changes with selected vehicle ──
+            // ── Hero: tinted with the selected class ─────────────────────
             AnimatedContainer(
               duration: const Duration(milliseconds: 600),
               curve: Curves.easeInOut,
               color: _tone.wash,
-              padding: EdgeInsets.fromLTRB(_gutter, 40, 36, 44),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Eyebrow
-                  AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 350),
-                    child: Text(
-                      _selected.label.toUpperCase(),
-                      key: ValueKey(_selected),
-                      style: const TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 3.5,
-                        color: _kTextTertiary,
+              padding: EdgeInsets.symmetric(horizontal: _gutter, vertical: 36),
+              child: _centered(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 350),
+                      child: Text(
+                        _selected.label.toUpperCase(),
+                        key: ValueKey(_selected),
+                        style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 3.5,
+                          color: _tone.accent,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Elige tu experiencia',
+                      style: TextStyle(
+                        fontFamily: kSerif,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w400,
+                        color: _kTextPrimary,
+                        letterSpacing: -0.3,
+                        height: 1.05,
                         decoration: TextDecoration.none,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  // Heading
-                  const Text(
-                    'Elige tu\nexperiencia',
-                    style: TextStyle(
-                      fontFamily: kSerif,
-                      fontSize: 52,
-                      fontWeight: FontWeight.w300,
-                      color: _kTextPrimary,
-                      letterSpacing: -0.5,
-                      height: 0.93,
-                      decoration: TextDecoration.none,
+                    const SizedBox(height: 8),
+                    const Text(
+                      '${LuxPromise.fixedPrice}  ·  ${LuxPromise.freeCancel}  ·  ${LuxPromise.chauffeurs}',
+                      style: TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 11,
+                        color: _kTextTertiary,
+                        letterSpacing: 1.2,
+                        decoration: TextDecoration.none,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    '${LuxPromise.fixedPrice}  ·  ${LuxPromise.freeCancel}  ·  ${LuxPromise.chauffeurs}',
-                    style: TextStyle(
-                      fontFamily: kSans,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w300,
-                      color: _kTextTertiary,
-                      letterSpacing: 1.5,
-                      decoration: TextDecoration.none,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
+                    const SizedBox(height: 24),
 
-                  // Vehicle cards
-                  SizedBox(
-                    height: 450,
-                    child: ListView.separated(
-                      controller: _cardsCtrl,
-                      scrollDirection: Axis.horizontal,
-                      clipBehavior: Clip.none,
-                      padding: EdgeInsets.zero,
-                      itemCount: _kVehicleClasses.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 14),
-                      itemBuilder: (_, i) {
-                        final vc = _kVehicleClasses[i];
-                        return _VehicleCard(
-                          vehicleClass: vc,
-                          price: PricingCatalog.instance
-                              .estimate(vc, _service, km: _km, hours: _hours),
-                          selected: _selected == vc,
-                          onTap: () => _selectVehicle(vc),
-                          serviceType: _service,
-                          hours:
-                              _service == ServiceType.byTheHour ? _hours : null,
-                        );
-                      },
+                    // Every class side by side, each car shown whole.
+                    SizedBox(
+                      height: 320,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          for (var i = 0; i < _kVehicleClasses.length; i++) ...[
+                            if (i > 0) const SizedBox(width: 16),
+                            Expanded(
+                              child: _VehicleCard(
+                                vehicleClass: _kVehicleClasses[i],
+                                price: PricingCatalog.instance.estimate(
+                                    _kVehicleClasses[i], _service,
+                                    km: _km, hours: _hours),
+                                selected: _selected == _kVehicleClasses[i],
+                                onTap: () =>
+                                    _selectVehicle(_kVehicleClasses[i]),
+                                serviceType: _service,
+                                hours: _service == ServiceType.byTheHour
+                                    ? _hours
+                                    : null,
+                                fill: true,
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
 
-            // ── Light content below ──
+            // ── Everything about the selected class ───────────────────────
             Padding(
-              padding: EdgeInsets.fromLTRB(_gutter, 44, 36, 56),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ── Detalles: exterior, cabina, maletero ─────────────────
-                  VehicleDetailsGallery(vehicleClass: _selected),
-                  const SizedBox(height: 64),
-
-                  // ── What's included ──────────────────────────────────────
-                  _webWhatsIncluded(),
-
-                  const SizedBox(height: 64),
-                  const Divider(color: _kDivider, height: 1),
-                  const SizedBox(height: 64),
-
-                  // ── Capacity ─────────────────────────────────────────────
-                  _capacitySection(),
-
-                  const SizedBox(height: 64),
-                  const Divider(color: _kDivider, height: 1),
-                  const SizedBox(height: 64),
-
-                  // ── Price breakdown ──────────────────────────────────────
-                  _webPriceBreakdown(),
-                ],
+              padding: EdgeInsets.symmetric(horizontal: _gutter, vertical: 40),
+              child: _centered(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    VehicleDetailsGallery(vehicleClass: _selected),
+                    const SizedBox(height: 40),
+                    const Divider(color: _kDivider, height: 1),
+                    const SizedBox(height: 36),
+                    _webWhatsIncluded(),
+                    const SizedBox(height: 40),
+                    const Divider(color: _kDivider, height: 1),
+                    const SizedBox(height: 36),
+                    _capacitySection(),
+                    const SizedBox(height: 40),
+                    _webPriceBreakdown(),
+                  ],
+                ),
               ),
             ),
           ],
@@ -568,79 +574,75 @@ class _BookingScreenState extends State<BookingScreen> {
   // ── What's Included ────────────────────────────────────────────────────────
 
   Widget _webWhatsIncluded() {
-    const accent = LD.sph;
-    const itemText = TextStyle(
-      fontFamily: kSans,
-      fontSize: 15,
-      fontWeight: FontWeight.w400,
-      color: LD.ink2,
-      height: 1.5,
-    );
+    const items = [
+      (Icons.badge_outlined, 'Recibimiento personalizado'),
+      (
+        Icons.timer_outlined,
+        'Espera gratis: 60 min en aeropuertos, 15 min en otras recogidas'
+      ),
+      (Icons.event_available_outlined, 'Cancelación gratuita hasta 1 h antes'),
+      (Icons.cable_outlined, 'Cargadores iOS y Android a bordo'),
+      (Icons.clean_hands_outlined, 'Pañuelos y toallitas de cortesía'),
+      (Icons.water_drop_outlined, 'Agua fría de cortesía'),
+    ];
 
-    Widget item(IconData icon, String label) => Column(
+    Widget item(IconData icon, String label) => Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: 36, color: accent),
-            const SizedBox(height: 14),
-            Text(label, style: itemText),
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 500),
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: _tone.wash,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 18, color: _tone.accent),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(label,
+                    style: const TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 13.5,
+                        height: 1.45,
+                        color: LD.ink2)),
+              ),
+            ),
           ],
         );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Divider(color: _kDivider, height: 1),
-        const SizedBox(height: 60),
-
-        // Title (serif, editorial)
+        Text('INCLUIDO EN CADA VIAJE', style: eyebrow()),
+        const SizedBox(height: 10),
         const Text(
           'Qué incluye',
           style: TextStyle(
             fontFamily: kSerif,
-            fontSize: 38,
-            fontWeight: FontWeight.w600,
+            fontSize: 32,
+            fontWeight: FontWeight.w500,
             color: _kTextPrimary,
-            letterSpacing: 0.1,
+            height: 1.05,
           ),
         ),
-        const SizedBox(height: 44),
-
-        // Row 1
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-                child:
-                    item(Icons.badge_outlined, 'Recibimiento personalizado')),
-            const SizedBox(width: 48),
-            Expanded(
-                child: item(Icons.timer_outlined,
-                    'Espera gratuita: 60 min en aeropuertos, 15 min en otras recogidas')),
-            const SizedBox(width: 48),
-            Expanded(
-                child: item(Icons.event_available_outlined,
-                    'Cancelación gratuita hasta 1 hora antes de la recogida')),
-          ],
-        ),
-        const SizedBox(height: 50),
-
-        // Row 2
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-                child: item(Icons.cable_outlined,
-                    'Cargadores para iOS y Android a bordo')),
-            const SizedBox(width: 48),
-            Expanded(
-                child: item(Icons.clean_hands_outlined,
-                    'Pañuelos y toallitas desinfectantes de cortesía')),
-            const SizedBox(width: 48),
-            Expanded(
-                child: item(Icons.water_drop_outlined,
-                    'Agua fría de cortesía incluida')),
-          ],
-        ),
+        const SizedBox(height: 24),
+        LayoutBuilder(builder: (context, c) {
+          final cols = c.maxWidth >= 720 ? 3 : 2;
+          const gap = 24.0;
+          final w = (c.maxWidth - gap * (cols - 1)) / cols;
+          return Wrap(
+            spacing: gap,
+            runSpacing: 20,
+            children: [
+              for (final (icon, label) in items)
+                SizedBox(width: w, child: item(icon, label)),
+            ],
+          );
+        }),
       ],
     );
   }
@@ -742,7 +744,7 @@ class _BookingScreenState extends State<BookingScreen> {
             'Desglose de precio',
             style: TextStyle(
               fontFamily: kSerif,
-              fontSize: 36,
+              fontSize: 28,
               fontWeight: FontWeight.w600,
               color: _kTextPrimary,
               letterSpacing: 0.1,
@@ -1602,6 +1604,7 @@ class _VehicleCard extends StatefulWidget {
     this.hours,
     this.width,
     this.carWidth = 480,
+    this.fill = false,
   });
 
   final VehicleClass vehicleClass;
@@ -1615,6 +1618,9 @@ class _VehicleCard extends StatefulWidget {
   /// Width of the car artwork. The selected card grows to show all of it;
   /// unselected cards show the front three-quarters as a teaser.
   final double carWidth;
+
+  /// Takes the width its parent gives it (web row) instead of sizing itself.
+  final bool fill;
 
   @override
   State<_VehicleCard> createState() => _VehicleCardState();
@@ -1648,7 +1654,7 @@ class _VehicleCardState extends State<_VehicleCard> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 480),
             curve: Curves.easeInOutCubic,
-            width: targetW,
+            width: widget.fill ? null : targetW,
             transform: Matrix4.translationValues(0, _hover && !sel ? -4 : 0, 0),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -1687,13 +1693,17 @@ class _VehicleCardState extends State<_VehicleCard> {
                           decoration:
                               BoxDecoration(gradient: tone.stageGradient),
                         ),
-                        Positioned(
-                          bottom: -14,
-                          left: 0,
-                          child: SizedBox(
-                            width: widget.carWidth,
-                            height: widget.carWidth,
-                            child: VehicleImage(widget.vehicleClass),
+                        // The car photos are square with the car across
+                        // the middle half: a 2:1 window shows the whole car
+                        // and none of the empty margin, never cut off.
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(14, 22, 14, 8),
+                            child: AspectRatio(
+                              aspectRatio: 2,
+                              child: VehicleImage(widget.vehicleClass,
+                                  fit: BoxFit.cover),
+                            ),
                           ),
                         ),
                         Positioned(
