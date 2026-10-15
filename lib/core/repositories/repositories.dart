@@ -32,6 +32,9 @@ abstract class AuthRepository {
   Future<Either<Failure, void>> resetPassword(String email);
   Future<Either<Failure, User>> getCurrentUser();
 
+  /// Perfil del usuario en vivo (bloqueos, datos de pago, nombre…).
+  Stream<User?> watchCurrentUser(String uid);
+
   /// Processed stream: Firebase user → Firestore lookup → app User.
   /// Used only for the initial one-shot auth check on app start.
   Stream<User?> get authStateChanges;

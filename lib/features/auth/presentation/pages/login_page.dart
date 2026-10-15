@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/repositories/repositories.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
@@ -36,6 +38,18 @@ class _LoginPageState extends State<LoginPage> {
     _email.dispose();
     _pass.dispose();
     super.dispose();
+  }
+
+  Future<void> _resetPassword() async {
+    final result = await sl<AuthRepository>().resetPassword(_email.text.trim());
+    if (!mounted) return;
+    result.fold(
+      (f) => showLuxSnackbar(context, f.message, isError: true),
+      (_) => showLuxSnackbar(
+          context,
+          'Si hay una cuenta con ese correo, te enviamos un enlace para '
+          'restablecer la contraseña.'),
+    );
   }
 
   void _submit() {
@@ -208,11 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                     label: '¿Olvidaste tu contraseña?',
                     onTap: () {
                       if (_email.text.contains('@')) {
-                        context.read<AuthBloc>().add(
-                              PasswordResetRequested(email: _email.text.trim()),
-                            );
-                        showLuxSnackbar(context,
-                            'Te enviamos un enlace para restablecer tu contraseña.');
+                        _resetPassword();
                       } else {
                         showLuxSnackbar(context,
                             'Escribe tu correo arriba y te enviaremos un enlace.',

@@ -51,8 +51,12 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
     _router = buildRouter(_authBloc);
 
     // Start DriverBloc + NotificationBloc only when authenticated
+    String? startedFor;
     _authBloc.stream.listen((state) {
       if (state is AuthAuthenticated) {
+        // El perfil en vivo re-emite en cada cambio: arrancar una sola vez.
+        if (startedFor == state.user.id) return;
+        startedFor = state.user.id;
         CrashService.setUser(state.user.id);
         if (state.user.role == UserRole.driver &&
             _driverBloc.state is DriverInitial) {
@@ -61,9 +65,11 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         _notificationBloc.add(
           NotificationWatchStarted(userId: state.user.id),
         );
-      } else if (state is AuthUnauthenticated &&
-          _driverBloc.state is! DriverInitial) {
-        _driverBloc.add(const DriverSignedOut());
+      } else if (state is! AuthLoading) {
+        startedFor = null;
+        if (_driverBloc.state is! DriverInitial) {
+          _driverBloc.add(const DriverSignedOut());
+        }
       }
     });
   }

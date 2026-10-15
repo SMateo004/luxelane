@@ -32,6 +32,8 @@ void main() {
   setUp(() {
     repo = MockAuthRepository();
     when(() => repo.authStateChanges).thenAnswer((_) => Stream.value(null));
+    when(() => repo.watchCurrentUser(any()))
+        .thenAnswer((_) => const Stream.empty());
   });
 
   group('AuthBloc', () {
@@ -145,6 +147,39 @@ void main() {
         const AuthLoading(),
         AuthAuthenticated(_mockUser),
       ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'si el admin suspende la cuenta, cierra sesión y avisa',
+      build: () {
+        when(() => repo.login(
+                email: any(named: 'email'), password: any(named: 'password')))
+            .thenAnswer((_) async => Right(_mockUser));
+        when(() => repo.logout()).thenAnswer((_) async => const Right(null));
+        when(() => repo.watchCurrentUser('uid-1'))
+            .thenAnswer((_) => Stream.value(User(
+                  id: 'uid-1',
+                  email: 'test@luxelane.com',
+                  phone: '',
+                  displayName: 'Test User',
+                  role: UserRole.rider,
+                  createdAt: DateTime(2025),
+                  isVerified: false,
+                  isActive: false,
+                  fcmTokens: const [],
+                )));
+        return AuthBloc(authRepository: repo);
+      },
+      act: (bloc) => bloc.add(
+        const LoginRequested(email: 'test@luxelane.com', password: 'secret'),
+      ),
+      expect: () => [
+        const AuthLoading(),
+        AuthAuthenticated(_mockUser),
+        isA<AuthError>()
+            .having((s) => s.message, 'message', contains('suspendida')),
+      ],
+      verify: (_) => verify(() => repo.logout()).called(1),
     );
   });
 }

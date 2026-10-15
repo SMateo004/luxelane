@@ -26,10 +26,18 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, void>> updateUser(User user) async {
     try {
-      await _users.doc(user.id).update(user.toJson());
+      // Solo lo que el usuario puede editar de sí mismo (firestore.rules);
+      // rol, bloqueo, Stripe o tokens no se reescriben desde la app.
+      await _users.doc(user.id).update({
+        'displayName': user.displayName.trim(),
+        'phone': user.phone.trim(),
+        'photoUrl': user.photoUrl,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return const Left(
+          ServerFailure('No pudimos guardar tu perfil. Inténtalo de nuevo.'));
     }
   }
 

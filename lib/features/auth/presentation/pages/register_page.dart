@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/utils/validators.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/widgets/components.dart';
@@ -153,9 +154,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   label: 'Nombre completo',
                   controller: _name,
                   prefixIcon: Icons.person_outline,
-                  validator: (v) => v == null || v.trim().isEmpty
-                      ? 'Indica tu nombre para que tu chófer pueda recibirte'
-                      : null,
+                  validator: LuxValidators.name,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
@@ -163,9 +162,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
-                  validator: (v) => v == null || !v.contains('@')
-                      ? 'Ingresa un correo válido'
-                      : null,
+                  validator: LuxValidators.email,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
@@ -173,9 +170,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _phone,
                   keyboardType: TextInputType.phone,
                   prefixIcon: Icons.phone_outlined,
-                  validator: (v) => v == null || v.trim().length < 6
-                      ? 'Tu chófer lo necesita para contactarte'
-                      : null,
+                  validator: LuxValidators.phone,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
@@ -183,8 +178,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _pass,
                   obscureText: true,
                   prefixIcon: Icons.lock_outline,
-                  validator: (v) =>
-                      v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
+                  validator: LuxValidators.newPassword,
                 ),
                 const SizedBox(height: LuxSpacing.xl),
                 LuxButton(

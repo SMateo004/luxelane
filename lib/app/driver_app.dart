@@ -32,13 +32,24 @@ class _DriverAppState extends State<DriverApp> {
     _router = buildDriverRouter(_authBloc, _driverBloc);
 
     // When auth completes, init driver + notifications
+    // El perfil en vivo re-emite AuthAuthenticated en cada cambio: solo se
+    // arranca de nuevo cuando cambia el usuario o el chófer estaba parado.
+    String? startedFor;
     _authBloc.stream.listen((state) {
       if (state is AuthAuthenticated) {
-        _driverBloc.add(DriverStarted(userId: state.user.id));
-        _notificationBloc.add(
-          NotificationWatchStarted(userId: state.user.id),
-        );
-      } else if (state is AuthUnauthenticated &&
+        final uid = state.user.id;
+        if (startedFor != uid || _driverBloc.state is DriverInitial) {
+          _driverBloc.add(DriverStarted(userId: uid));
+        }
+        if (startedFor != uid) {
+          _notificationBloc.add(NotificationWatchStarted(userId: uid));
+        }
+        startedFor = uid;
+      } else if (state is! AuthLoading) {
+        startedFor = null;
+      }
+      if (state is! AuthAuthenticated &&
+          state is! AuthLoading &&
           _driverBloc.state is! DriverInitial) {
         // Sesión cerrada o expirada: nada de escuchas ni ubicación.
         _driverBloc.add(const DriverSignedOut());

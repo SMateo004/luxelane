@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../core/utils/validators.dart';
+import '../../../../core/repositories/repositories.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../app/sign_out.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
@@ -282,16 +285,27 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
     super.dispose();
   }
 
-  void _save() {
-    if (!_form.currentState!.validate()) return;
+  bool _saving = false;
+
+  Future<void> _save() async {
+    if (_saving || !_form.currentState!.validate()) return;
+    setState(() => _saving = true);
     final updated = widget.user.copyWith(
       displayName: _name.text.trim(),
       phone: _phone.text.trim(),
     );
-    context.read<ProfileBloc>().add(ProfileUpdateRequested(user: updated));
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Perfil actualizado')),
+    final result = await sl<UserRepository>().updateUser(updated);
+    if (!mounted) return;
+    setState(() => _saving = false);
+    result.fold(
+      (f) => showLuxSnackbar(context, f.message, isError: true),
+      (_) {
+        context
+            .read<ProfileBloc>()
+            .add(ProfileLoadRequested(userId: widget.user.id));
+        Navigator.of(context).pop();
+        showLuxSnackbar(context, 'Perfil actualizado');
+      },
     );
   }
 
@@ -323,8 +337,7 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               label: 'Nombre',
               controller: _name,
               prefixIcon: Icons.person_outline_rounded,
-              validator: (v) =>
-                  v == null || v.trim().isEmpty ? 'Requerido' : null,
+              validator: LuxValidators.name,
             ),
             const SizedBox(height: LuxSpacing.md),
             LuxTextField(
@@ -332,9 +345,13 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               controller: _phone,
               keyboardType: TextInputType.phone,
               prefixIcon: Icons.phone_outlined,
+              validator: LuxValidators.phone,
             ),
             const SizedBox(height: LuxSpacing.lg),
-            LuxButton(label: 'Guardar cambios', onPressed: _save),
+            LuxButton(
+                label: 'Guardar cambios',
+                loading: _saving,
+                onPressed: _saving ? null : _save),
           ],
         ),
       ),

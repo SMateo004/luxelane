@@ -41,14 +41,29 @@ class AuthRepositoryImpl implements AuthRepository {
         (fbUser) async {
           if (fbUser == null) return null;
           try {
-            final doc = await _db.collection('users').doc(fbUser.uid).get();
-            if (!doc.exists) return null;
-            return User.fromJson({'id': doc.id, ...doc.data()!});
+            // Repara cuentas sin perfil (un registro que se cortó a medias).
+            final user = await _ensureProfile(fbUser);
+            if (!user.isActive) {
+              await _auth.signOut();
+              return null;
+            }
+            return user;
           } catch (_) {
             return null;
           }
         },
       );
+
+  @override
+  Stream<User?> watchCurrentUser(String uid) =>
+      _db.collection('users').doc(uid).snapshots().map((doc) {
+        if (!doc.exists) return null;
+        try {
+          return User.fromJson({...doc.data()!, 'id': doc.id});
+        } catch (_) {
+          return null;
+        }
+      });
 
   /// Raw Firebase sign-in flag — no Firestore involved, so it never
   /// produces a false-negative that would accidentally sign the user out.
@@ -62,15 +77,19 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     try {
       final cred = await _auth.signInWithEmailAndPassword(
-        email: email,
+        email: email.trim(),
         password: password,
       );
-      final doc = await _db.collection('users').doc(cred.user!.uid).get();
-      return Right(User.fromJson({'id': doc.id, ...doc.data()!}));
+      final user = await _ensureProfile(cred.user!);
+      if (!user.isActive) {
+        await _auth.signOut();
+        return const Left(AuthFailure(suspendedMessage));
+      }
+      return Right(user);
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(e.message ?? 'Login failed'));
+      return Left(AuthFailure(authErrorMessage(e.code)));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return const Left(ServerFailure(_genericError));
     }
   }
 
@@ -82,30 +101,41 @@ class AuthRepositoryImpl implements AuthRepository {
     required String displayName,
     required UserRole role,
   }) async {
+    fb.UserCredential? cred;
     try {
-      final cred = await _auth.createUserWithEmailAndPassword(
-        email: email,
+      cred = await _auth.createUserWithEmailAndPassword(
+        email: email.trim(),
         password: password,
       );
       final user = User(
         id: cred.user!.uid,
-        email: email,
-        phone: phone,
-        displayName: displayName,
-        // firestore.rules only accepts self-signups as `rider`; other roles
-        // are granted by an admin.
-        role: role,
+        email: email.trim(),
+        phone: phone.trim(),
+        displayName: displayName.trim(),
+        // Las reglas solo aceptan altas propias como pasajero; los chóferes
+        // y administradores los nombra un admin.
+        role: UserRole.rider,
         createdAt: DateTime.now(),
-        isVerified: true,
+        // Se verifica con el correo; las reglas rechazan un "true" falso.
+        isVerified: false,
         isActive: true,
         fcmTokens: const [],
       );
       await _db.collection('users').doc(user.id).set(user.toJson());
+      try {
+        await cred.user!.sendEmailVerification();
+      } catch (_) {/* no impide usar la app */}
       return Right(user);
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(e.message ?? 'Registration failed'));
+      return Left(AuthFailure(authErrorMessage(e.code)));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      // Si no se pudo guardar el perfil, se borra la cuenta recién creada
+      // para que el usuario pueda volver a registrarse con el mismo correo.
+      try {
+        await cred?.user?.delete();
+      } catch (_) {}
+      return const Left(ServerFailure(
+          'No pudimos crear tu cuenta. Revisa tu conexión e inténtalo de nuevo.'));
     }
   }
 
@@ -131,7 +161,12 @@ class AuthRepositoryImpl implements AuthRepository {
       }
       final fbUser = cred.user;
       if (fbUser == null) return const Left(AuthFailure(_googleGenericError));
-      return Right(await _ensureProfile(fbUser));
+      final user = await _ensureProfile(fbUser);
+      if (!user.isActive) {
+        await _auth.signOut();
+        return const Left(AuthFailure(suspendedMessage));
+      }
+      return Right(user);
     } on fb.FirebaseAuthException catch (e) {
       if (e.code == 'popup-closed-by-user' ||
           e.code == 'cancelled-popup-request' ||
@@ -160,12 +195,15 @@ class AuthRepositoryImpl implements AuthRepository {
     final doc = await ref.get();
     if (doc.exists) return User.fromJson({'id': doc.id, ...doc.data()!});
     final email = (fbUser.email ?? '').toLowerCase();
-    final name = (fbUser.displayName ?? '').trim();
+    var name = (fbUser.displayName ?? '').trim();
+    if (name.isEmpty) name = email.split('@').first;
+    if (name.isEmpty) name = 'Pasajero';
+    if (name.length > 80) name = name.substring(0, 80);
     final user = User(
       id: fbUser.uid,
       email: fbUser.email ?? '',
       phone: fbUser.phoneNumber ?? '',
-      displayName: name.isNotEmpty ? name : email.split('@').first,
+      displayName: name,
       photoUrl: fbUser.photoURL,
       // Roles are granted server-side only (see firestore.rules).
       role: UserRole.rider,
@@ -177,6 +215,39 @@ class AuthRepositoryImpl implements AuthRepository {
     );
     await ref.set(user.toJson());
     return user;
+  }
+
+  static const suspendedMessage =
+      'Tu cuenta está suspendida. Contacta con soporte de Luxelane.';
+  static const _genericError = 'Algo salió mal. Inténtalo de nuevo.';
+
+  /// Errores de Firebase Auth en español y sin jerga técnica.
+  static String authErrorMessage(String code) {
+    switch (code) {
+      case 'invalid-email':
+        return 'El correo no es válido.';
+      case 'user-not-found':
+      case 'wrong-password':
+      case 'invalid-credential':
+      case 'INVALID_LOGIN_CREDENTIALS':
+        return 'Correo o contraseña incorrectos.';
+      case 'user-disabled':
+        return suspendedMessage;
+      case 'email-already-in-use':
+        return 'Ya existe una cuenta con este correo. Inicia sesión.';
+      case 'weak-password':
+        return 'La contraseña es muy débil: usa al menos 8 caracteres.';
+      case 'too-many-requests':
+        return 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
+      case 'network-request-failed':
+        return 'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
+      case 'operation-not-allowed':
+        return 'Este método de acceso no está habilitado.';
+      case 'missing-email':
+        return 'Escribe tu correo.';
+      default:
+        return _genericError;
+    }
   }
 
   static const _googleGenericError =
@@ -241,9 +312,11 @@ class AuthRepositoryImpl implements AuthRepository {
       await _auth.sendPasswordResetEmail(email: email);
       return const Right(null);
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(e.message ?? 'Reset failed'));
+      // Por privacidad no se revela si el correo tiene cuenta.
+      if (e.code == 'user-not-found') return const Right(null);
+      return Left(AuthFailure(authErrorMessage(e.code)));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return const Left(ServerFailure(_genericError));
     }
   }
 
