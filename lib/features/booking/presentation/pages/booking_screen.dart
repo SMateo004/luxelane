@@ -46,6 +46,10 @@ class BookingScreen extends StatefulWidget {
   State<BookingScreen> createState() => _BookingScreenState();
 }
 
+/// Corner radius shared by the phone layout's cards and fields, matching the
+/// rounded summary card on desktop.
+const double _kMobileRadius = 14;
+
 class _BookingScreenState extends State<BookingScreen> {
   BookingFormData? _formData;
   VehicleClass _selected = VehicleClass.business;
@@ -636,7 +640,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // ── What's Included ────────────────────────────────────────────────────────
 
-  Widget _webWhatsIncluded() {
+  Widget _webWhatsIncluded({bool compact = false}) {
     const items = [
       (Icons.badge_outlined, 'Recibimiento personalizado'),
       (
@@ -682,24 +686,29 @@ class _BookingScreenState extends State<BookingScreen> {
       children: [
         Text('INCLUIDO EN CADA VIAJE', style: eyebrow()),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           'Qué incluye',
           style: TextStyle(
             fontFamily: kSerif,
-            fontSize: 32,
+            fontSize: compact ? 26 : 32,
             fontWeight: FontWeight.w500,
             color: _kTextPrimary,
             height: 1.05,
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: compact ? 18 : 24),
         LayoutBuilder(builder: (context, c) {
-          final cols = c.maxWidth >= 720 ? 3 : 2;
+          // Phones list the perks in one column so each line stays readable.
+          final cols = c.maxWidth >= 720
+              ? 3
+              : c.maxWidth >= 480
+                  ? 2
+                  : 1;
           const gap = 24.0;
           final w = (c.maxWidth - gap * (cols - 1)) / cols;
           return Wrap(
             spacing: gap,
-            runSpacing: 20,
+            runSpacing: cols == 1 ? 14 : 20,
             children: [
               for (final (icon, label) in items)
                 SizedBox(width: w, child: item(icon, label)),
@@ -712,7 +721,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // ── Price breakdown ────────────────────────────────────────────────────────
 
-  Widget _webPriceBreakdown() {
+  Widget _webPriceBreakdown({bool compact = false}) {
     final base = _price * 0.9185;
     final tax = _price * 0.0815;
 
@@ -794,20 +803,21 @@ class _BookingScreenState extends State<BookingScreen> {
         );
 
     return Container(
-      padding: const EdgeInsets.all(30),
+      padding: EdgeInsets.all(compact ? 20 : 30),
       decoration: BoxDecoration(
-        color: LD.bg2,
-        borderRadius: BorderRadius.circular(4),
+        color: compact ? Colors.white : LD.bg2,
+        borderRadius: BorderRadius.circular(compact ? _kMobileRadius : 4),
+        border: compact ? Border.all(color: _kBorder) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Title
-          const Text(
+          Text(
             'Desglose de precio',
             style: TextStyle(
               fontFamily: kSerif,
-              fontSize: 28,
+              fontSize: compact ? 22 : 28,
               fontWeight: FontWeight.w600,
               color: _kTextPrimary,
               letterSpacing: 0.1,
@@ -1206,17 +1216,17 @@ class _BookingScreenState extends State<BookingScreen> {
               },
             ),
           ),
-          const SizedBox(height: 16),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            child: _MobileVehicleDetail(
-                key: ValueKey(_selected), vehicleClass: _selected),
-          ),
-          const SizedBox(height: 36),
+          const SizedBox(height: 14),
+          const _MobilePromises(),
+          const SizedBox(height: 32),
           VehicleDetailsGallery(vehicleClass: _selected, compact: true),
-          const SizedBox(height: 40),
+          const SizedBox(height: 36),
           _capacitySection(compact: true),
-          const SizedBox(height: 12),
+          const SizedBox(height: 36),
+          _webWhatsIncluded(compact: true),
+          const SizedBox(height: 32),
+          _webPriceBreakdown(compact: true),
+          const SizedBox(height: 8),
         ],
       );
 
@@ -1293,7 +1303,7 @@ class _BookingScreenState extends State<BookingScreen> {
       children: [
         if (hasRoute) ...[
           ClipRRect(
-            borderRadius: BorderRadius.zero,
+            borderRadius: BorderRadius.circular(_kMobileRadius),
             child: SizedBox(
               height: 180,
               child: LuxMap(
@@ -1315,7 +1325,7 @@ class _BookingScreenState extends State<BookingScreen> {
         Container(
           decoration: BoxDecoration(
             color: _kCardBg,
-            borderRadius: BorderRadius.zero,
+            borderRadius: BorderRadius.circular(_kMobileRadius),
             border: Border.all(color: _kBorder),
           ),
           child: Column(children: [
@@ -1350,7 +1360,8 @@ class _BookingScreenState extends State<BookingScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: const BoxDecoration(
                 color: LD.bg2,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
+                borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(_kMobileRadius - 1)),
               ),
               child: Row(children: [
                 const Text('TOTAL · PRECIO FIJO',
@@ -1402,7 +1413,7 @@ class _BookingScreenState extends State<BookingScreen> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   decoration: BoxDecoration(
                     color: _kCardBg,
-                    borderRadius: BorderRadius.zero,
+                    borderRadius: BorderRadius.circular(_kMobileRadius),
                     border: Border.all(
                         color: isSel ? LuxColors.sapphire : _kBorder,
                         width: isSel ? 1.5 : 1),
@@ -1734,7 +1745,7 @@ class _VehicleCardState extends State<_VehicleCard> {
             transform: Matrix4.translationValues(0, _hover && !sel ? -4 : 0, 0),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: sel ? accent : LD.border,
                 width: sel ? 1.6 : 1.0,
@@ -1761,7 +1772,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                 Expanded(
                   child: ClipRRect(
                     borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(6)),
+                        const BorderRadius.vertical(top: Radius.circular(13)),
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
@@ -2064,42 +2075,20 @@ Widget _GuaranteeRow(IconData icon, String text) => Row(children: [
 
 // ── MOBILE VEHICLE DETAIL ─────────────────────────────────────────────────────
 
-class _MobileVehicleDetail extends StatelessWidget {
-  const _MobileVehicleDetail({super.key, required this.vehicleClass});
-  final VehicleClass vehicleClass;
+/// The two promises under the class cards, on one rounded strip. The card
+/// itself already names the class and its capacity.
+class _MobilePromises extends StatelessWidget {
+  const _MobilePromises();
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: LD.bg2,
-          borderRadius: BorderRadius.zero,
+          color: Colors.white.withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(_kMobileRadius),
           border: Border.all(color: _kDivider),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Expanded(
-                child: Text(vehicleClass.description,
-                    style: const TextStyle(
-                        fontFamily: kSans, fontSize: 12, color: _kTextSub))),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: LD.border),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text('Hasta ${vehicleClass.capacity} pax',
-                  style: const TextStyle(
-                      fontFamily: kSans,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: _kTextSub)),
-            ),
-          ]),
-          const SizedBox(height: 10),
-          const Divider(color: _kDivider, height: 1),
-          const SizedBox(height: 10),
           _GuaranteeRow(Icons.price_check_outlined, LuxPromise.fixedPrice),
           const SizedBox(height: 6),
           _GuaranteeRow(Icons.event_available_outlined, LuxPromise.freeCancel),
@@ -2167,7 +2156,7 @@ class _LightServiceTypeTab extends StatelessWidget {
               margin: const EdgeInsets.all(3),
               padding: EdgeInsets.symmetric(horizontal: compact ? 16 : 0),
               decoration: active
-                  ? luxRaisedDecoration(radius: 3)
+                  ? luxRaisedDecoration(radius: 8)
                   : const BoxDecoration(color: Colors.transparent),
               alignment: Alignment.center,
               child: Text(t.label,
@@ -2189,7 +2178,7 @@ class _LightServiceTypeTab extends StatelessWidget {
       decoration: BoxDecoration(
         color: LD.bg2,
         border: Border.all(color: LD.border),
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(11),
       ),
       child: Row(
         mainAxisSize: compact ? MainAxisSize.min : MainAxisSize.max,
@@ -2252,7 +2241,7 @@ class _LightHourRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: _kCardBg,
-          borderRadius: BorderRadius.zero,
+          borderRadius: BorderRadius.circular(_kMobileRadius),
           border: Border.all(color: _kBorder),
         ),
         child: Row(children: [
@@ -2305,7 +2294,7 @@ class _LightCounterRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: _kCardBg,
-          borderRadius: BorderRadius.zero,
+          borderRadius: BorderRadius.circular(_kMobileRadius),
           border: Border.all(color: _kBorder),
         ),
         child: Row(children: [
@@ -2389,13 +2378,13 @@ class _LightTextField extends StatelessWidget {
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           border: const OutlineInputBorder(
-              borderRadius: BorderRadius.zero,
+              borderRadius: BorderRadius.all(Radius.circular(_kMobileRadius)),
               borderSide: BorderSide(color: _kBorder)),
           enabledBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.zero,
+              borderRadius: BorderRadius.all(Radius.circular(_kMobileRadius)),
               borderSide: BorderSide(color: _kBorder)),
           focusedBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.zero,
+              borderRadius: BorderRadius.all(Radius.circular(_kMobileRadius)),
               borderSide: BorderSide(color: _kTextPrimary, width: 1.5)),
         ),
       );
@@ -2462,6 +2451,7 @@ class _FlightTypeSelector extends StatelessWidget {
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: value == t ? _kPanelAccent : _kCardBg,
+                      borderRadius: BorderRadius.circular(_kMobileRadius),
                       border: Border.all(
                           color: value == t
                               ? _kPanelAccent
@@ -2521,7 +2511,7 @@ class _OutlinedBtn extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
               color: _kCardBg,
-              borderRadius: BorderRadius.zero,
+              borderRadius: BorderRadius.circular(_kMobileRadius),
               border: Border.all(color: _kBorder)),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(icon, size: 18, color: _kTextSub),
@@ -2554,7 +2544,8 @@ class _LightPriceBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+        padding: EdgeInsets.fromLTRB(
+            20, 12, 20, 14 + MediaQuery.paddingOf(context).bottom),
         decoration: const BoxDecoration(
           color: Colors.white,
           border: Border(top: BorderSide(color: _kBorder)),
