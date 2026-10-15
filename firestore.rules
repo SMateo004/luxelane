@@ -105,10 +105,11 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // In-app notifications: each user reads and marks their own as read.
+    // Notificaciones de la app: las escribe el servidor; cada usuario lee
+    // las suyas, las marca como leídas o las borra.
     match /users/{uid}/notifications/{notificationId} {
       allow read:   if isOwner(uid) || isAdmin();
-      allow create: if isOwner(uid) || isAdmin();
+      allow create: if isAdmin();
       allow update: if (isOwner(uid) &&
         onlyUpdating(['isRead'])) || isAdmin();
       allow delete: if isOwner(uid) || isAdmin();

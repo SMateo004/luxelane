@@ -6,10 +6,11 @@ import * as stripe from './stripe_service';
 import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, DEFAULT_FARES, fareId, FareRule } from './pricing';
+import { distanceKm } from './assignment';
 import { computeSettlement, planBackfill, Settlement } from './settlement';
 import { rankCandidates } from './assignment';
 import { fromCents, toCents } from './money';
-import { driverBookkeeping, driverSnapshot, isExpiredPending, isRecentlySeen, riderMessage } from './lifecycle';
+import { driverBookkeeping, driverSnapshot, isExpiredPending, isRecentlySeen, nextRating, riderMessage } from './lifecycle';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -33,6 +34,7 @@ interface BookingDoc {
   riderId: string;
   // La app guarda las coordenadas como GeoPoint en `coordinates`.
   origin?: { coordinates?: admin.firestore.GeoPoint; lat?: number; lng?: number };
+  destination?: { coordinates?: admin.firestore.GeoPoint; lat?: number; lng?: number } | null;
   scheduledAt?: admin.firestore.Timestamp;
   cancelledBy?: string;
   driverId?: string;
@@ -324,6 +326,13 @@ export const createStripeCustomer = onDocumentCreated('users/{uid}', async (even
 // onBookingCreated  (onCreate /bookings/{bookingId})
 // ---------------------------------------------------------------------------
 
+/** Coordenadas de un lugar de la reserva (GeoPoint o lat/lng sueltos). */
+function pointOf(p?: { coordinates?: admin.firestore.GeoPoint; lat?: number; lng?: number } | null) {
+  if (p?.coordinates) return { lat: p.coordinates.latitude, lng: p.coordinates.longitude };
+  if (p?.lat != null && p?.lng != null) return { lat: p.lat, lng: p.lng };
+  return null;
+}
+
 export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async (event) => {
   const booking = event.data?.data() as BookingDoc | undefined;
   if (!booking) return;
@@ -333,12 +342,21 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
   const id = fareId(vehicleClass, booking.serviceType ?? 'oneWay');
   const ruleSnap = await db.collection('pricingRules').doc(id).get();
   const rule = ruleSnap.exists ? (ruleSnap.data() as FareRule) : DEFAULT_FARES[id];
-  const check = checkBookingPrice(booking, rule);
+  const o = pointOf(booking.origin);
+  const d = pointOf(booking.destination);
+  const check = checkBookingPrice(booking, rule, o && d ? distanceKm(o, d) : 0);
   if (!check.ok) {
-    logger.warn('onBookingCreated', 'pricing review', { bookingId: event.params.bookingId, ...check });
+    // Precio por debajo de la tarifa (manipulado o tarifa cambiada) o
+    // servicio desactivado: no se ofrece a chóferes y se avisa al pasajero.
+    logger.warn('onBookingCreated', 'pricing rejected', { bookingId: event.params.bookingId, ...check });
     await event.data!.ref.update({
       pricingReview: { reason: check.reason, expectedMinimum: check.expectedMinimum ?? null },
+      status: 'cancelled' as BookingStatus,
+      cancelledBy: 'pricing',
+      cancellationReason: 'Precio no válido para la tarifa vigente',
+      updatedAt: admin.firestore.Timestamp.now(),
     });
+    return;
   }
 
   logger.info('onBookingCreated', 'notifying drivers', {
@@ -346,15 +364,27 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
     vehicleClass,
   });
 
-  const driversSnap = await db
-    .collection('driverProfiles')
-    .where('isAvailable', '==', true)
-    .where('documentsVerified', '==', true)
-    .limit(20)
-    .get();
+  // Solo chóferes conectados de la clase pedida.
+  const [driversSnap, ...classSnaps] = await Promise.all([
+    db
+      .collection('driverProfiles')
+      .where('isAvailable', '==', true)
+      .where('documentsVerified', '==', true)
+      .limit(100)
+      .get(),
+    ...['class', 'vehicleClass'].map((field) =>
+      db.collection('vehicles').where(field, '==', vehicleClass).where('isActive', '==', true).get(),
+    ),
+  ]);
+  const ofClass = new Set(classSnaps.flatMap((q) => q.docs.map((v) => v.data().driverId as string)));
+  const nowMs = Date.now();
+  const targets = driversSnap.docs
+    .filter((p) => ofClass.has(p.id))
+    .filter((p) => isRecentlySeen((p.data().lastSeenAt as admin.firestore.Timestamp | undefined)?.toMillis(), nowMs))
+    .slice(0, 20);
 
   const tokens: string[] = [];
-  for (const doc of driversSnap.docs) {
+  for (const doc of targets) {
     const driverTokens = await getUserTokens(doc.id);
     tokens.push(...driverTokens);
   }
@@ -440,11 +470,33 @@ export const syncBookingDriver = onDocumentUpdated('bookings/{bookingId}', async
 
   const [userSnap, vehicleSnap] = await Promise.all([
     db.collection('users').doc(after.driverId).get(),
-    db.collection('vehicles').doc(`v_${after.driverId}`).get(),
+    // El vehículo puede tener otro id si lo dio de alta un admin.
+    db.collection('vehicles').where('driverId', '==', after.driverId).limit(1).get(),
   ]);
   await event.data!.after.ref.update(
-    driverSnapshot(userSnap.data() as never, vehicleSnap.data() as never),
+    driverSnapshot(userSnap.data() as never, vehicleSnap.docs[0]?.data() as never),
   );
+});
+
+// ---------------------------------------------------------------------------
+// onBookingRated  (onUpdate /bookings/{bookingId})
+// El pasajero valora en su reserva (las reglas permiten una sola vez, 1-5);
+// el servidor actualiza la media del chófer y el registro del trayecto.
+// ---------------------------------------------------------------------------
+
+export const onBookingRated = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const before = event.data?.before.data() as (BookingDoc & { riderRating?: number }) | undefined;
+  const after = event.data?.after.data() as (BookingDoc & { riderRating?: number }) | undefined;
+  if (!after?.driverId || after.riderRating == null || before?.riderRating != null) return;
+
+  const stars = after.riderRating;
+  const driverRef = db.collection('driverProfiles').doc(after.driverId);
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(driverRef);
+    if (!snap.exists) return;
+    tx.update(driverRef, nextRating(snap.data() ?? {}, stars));
+  });
+  await db.collection('rides').doc(event.params.bookingId).set({ riderRating: stars }, { merge: true });
 });
 
 

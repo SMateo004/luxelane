@@ -77,6 +77,12 @@ export function riderMessage(
   if (status === 'cancelled' && cancelledBy === 'rider') {
     return { ...m, body: 'Cancelaste tu reserva.' };
   }
+  if (status === 'cancelled' && cancelledBy === 'pricing') {
+    return {
+      ...m,
+      body: 'Las tarifas cambiaron mientras reservabas. Vuelve a reservar para ver el precio actual. No se te cobrará.',
+    };
+  }
   if (status === 'cancelled' && cancelledBy === 'system') {
     return {
       ...m,
@@ -130,4 +136,19 @@ export function isRecentlySeen(
 ): boolean {
   if (lastSeenMs == null) return false;
   return nowMs - lastSeenMs <= maxMinutes * 60_000;
+}
+
+/**
+ * Media de valoraciones del chófer tras una nueva (1 a 5). Perfiles antiguos
+ * sin contador empiezan de cero, para que el 5.0 por defecto no cuente como
+ * una valoración real.
+ */
+export function nextRating(
+  prev: { ratingSum?: number | null; ratingCount?: number | null },
+  stars: number,
+): { rating: number; ratingSum: number; ratingCount: number } {
+  const s = Math.min(5, Math.max(1, Math.round(stars)));
+  const count = Math.max(0, prev.ratingCount ?? 0) + 1;
+  const sum = Math.max(0, prev.ratingSum ?? 0) + s;
+  return { rating: Math.round((sum / count) * 100) / 100, ratingSum: sum, ratingCount: count };
 }

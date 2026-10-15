@@ -112,6 +112,9 @@ abstract class BookingRepository {
   Future<Either<Failure, List<Booking>>> getPendingBookings();
   Stream<List<Booking>> streamPendingBookings();
   Stream<List<Booking>> watchDriverBookings(String driverId);
+
+  /// Reservas del pasajero en vivo, de la más reciente a la más antigua.
+  Stream<List<Booking>> watchRiderBookings(String riderId);
   Future<Either<Failure, void>> updateBookingStatus({
     required String bookingId,
     required BookingStatus status,

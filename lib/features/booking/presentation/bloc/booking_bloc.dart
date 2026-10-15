@@ -33,6 +33,7 @@ class BookingCreateRequested extends BookingEvent {
     this.flightType,
     this.pickupAirport,
     this.hours,
+    this.paymentMethod = 'cash',
   });
   final Place origin;
   final Place destination;
@@ -48,6 +49,9 @@ class BookingCreateRequested extends BookingEvent {
   final String? flightType;
   final String? pickupAirport;
   final int? hours;
+
+  /// `cash` o `card`.
+  final String paymentMethod;
   @override
   List<Object?> get props =>
       [riderId, vehicleClass, scheduledAt, estimatedPrice];
@@ -197,6 +201,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       flightType: event.flightType,
       pickupAirport: event.pickupAirport,
       hours: event.hours,
+      paymentMethod: event.paymentMethod,
     );
     final result = await _repo.createBooking(booking);
     result.fold(

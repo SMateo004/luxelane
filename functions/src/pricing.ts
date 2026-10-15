@@ -30,6 +30,8 @@ export const DEFAULT_FARES: Record<string, FareRule> = {
   businessVan_byTheHour: fare(0, 0, 150, 300),
   electric_oneWay: fare(60, 3.5, 0, 60),
   electric_byTheHour: fare(0, 0, 90, 180),
+  businessSuv_oneWay: fare(70, 4, 0, 70),
+  businessSuv_byTheHour: fare(0, 0, 115, 230),
 };
 
 export const fareId = (vehicleClass: string, serviceType: string): string =>
@@ -45,6 +47,12 @@ export interface PriceCheck {
 export function checkBookingPrice(
   booking: { estimatedPrice?: number; hours?: number | null; serviceType?: string },
   rule: FareRule | undefined,
+  /**
+   * Distancia en línea recta entre recogida y destino. La ruta por calles
+   * nunca es más corta, así que base + km en línea recta × tarifa es un
+   * mínimo seguro: atrapa precios manipulados sin rechazar los legítimos.
+   */
+  straightKm = 0,
 ): PriceCheck {
   if (!rule) return { ok: false, reason: 'unknown_fare' };
   if (rule.isActive === false) return { ok: false, reason: 'fare_disabled' };
@@ -56,6 +64,11 @@ export function checkBookingPrice(
       expectedMinimum,
       rule.basePriceUsd + booking.hours * rule.pricePerHourUsd,
     );
+  } else if (booking.serviceType !== 'byTheHour' && straightKm > 0) {
+    expectedMinimum = Math.max(
+      expectedMinimum,
+      rule.basePriceUsd + straightKm * rule.pricePerKmUsd,
+    );
   }
   // Tolerancia de céntimos por redondeo en el cliente.
   if (!(price + 0.01 >= expectedMinimum)) {
@@ -63,3 +76,4 @@ export function checkBookingPrice(
   }
   return { ok: true };
 }
+

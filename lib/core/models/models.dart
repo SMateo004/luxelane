@@ -804,7 +804,9 @@ class PricingRule {
     final raw = serviceType == ServiceType.byTheHour
         ? basePriceUsd + hours * pricePerHourUsd
         : basePriceUsd + km * pricePerKmUsd;
-    return raw < minimumPriceUsd ? minimumPriceUsd : raw;
+    // Bolivianos enteros, redondeando hacia arriba: nunca por debajo de la
+    // tarifa que comprueba el servidor y sin céntimos raros en pantalla.
+    return (raw < minimumPriceUsd ? minimumPriceUsd : raw).ceilToDouble();
   }
 
   double estimateOneWay(double km) => estimate(km: km);

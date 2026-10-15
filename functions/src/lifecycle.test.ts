@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { driverBookkeeping, driverSnapshot, isExpiredPending, isRecentlySeen, riderMessage } from './lifecycle';
+import { driverBookkeeping, driverSnapshot, isExpiredPending, isRecentlySeen, nextRating, riderMessage } from './lifecycle';
 
 describe('driverBookkeeping', () => {
   it('al completar libera al chófer y suma el viaje', () => {
@@ -60,5 +60,18 @@ describe('isRecentlySeen', () => {
   it('descarta chóferes sin señal o con señal vieja', () => {
     expect(isRecentlySeen(undefined, now)).toBe(false);
     expect(isRecentlySeen(now - 20 * 60e3, now)).toBe(false);
+  });
+});
+
+describe('nextRating', () => {
+  it('la primera valoración define la media', () => {
+    expect(nextRating({}, 4)).toEqual({ rating: 4, ratingSum: 4, ratingCount: 1 });
+  });
+  it('acumula y redondea a dos decimales', () => {
+    expect(nextRating({ ratingSum: 9, ratingCount: 2 }, 5)).toEqual({ rating: 4.67, ratingSum: 14, ratingCount: 3 });
+  });
+  it('acota valores fuera de rango', () => {
+    expect(nextRating({}, 9).rating).toBe(5);
+    expect(nextRating({}, 0).rating).toBe(1);
   });
 });

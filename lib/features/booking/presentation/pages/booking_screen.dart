@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -87,10 +88,15 @@ class _BookingScreenState extends State<BookingScreen> {
 
   final ScrollController _cardsCtrl = ScrollController();
 
+  /// Km reales del recorrido. Sin ruta no se inventa una distancia: el
+  /// precio se muestra provisional y no se puede reservar hasta tenerla.
   double get _km =>
-      _formData?.routeDistanceKm != null && _formData!.routeDistanceKm > 0
-          ? _formData!.routeDistanceKm
-          : 25.0;
+      (_formData?.routeDistanceKm ?? 0) > 0 ? _formData!.routeDistanceKm : 0;
+
+  /// Un traslado necesita el recorrido para cobrar lo justo.
+  bool get _needsRoute =>
+      _service == ServiceType.oneWay && (_formData?.routeDistanceKm ?? 0) <= 0;
+  bool _routeFailed = false;
 
   double get _price => PricingCatalog.instance
       .estimate(_selected, _service, km: _km, hours: _hours);
@@ -150,6 +156,14 @@ class _BookingScreenState extends State<BookingScreen> {
         _service = extra.serviceType;
         _hours = extra.hours;
         _ensureRoute();
+      } else {
+        // Al recargar la página se pierde el formulario: no se puede
+        // reservar un viaje sin origen ni destino, se vuelve al inicio.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!mounted) return;
+          showLuxSnackbar(context, 'Elige de nuevo tu recogida y destino.');
+          context.go('/');
+        });
       }
       _loadSavedCards();
     }
@@ -170,9 +184,16 @@ class _BookingScreenState extends State<BookingScreen> {
     } catch (_) {
       route = null;
     }
-    if (!mounted || route == null || route.polylinePoints.length <= 2) return;
-    if (_formData != data) return; // cambió mientras se calculaba
-    setState(() => _formData = data.withRoute(route!));
+    if (!mounted || _formData != data) return; // cambió mientras se calculaba
+    if (route == null || route.distanceKm <= 0) {
+      setState(() => _routeFailed = true);
+      return;
+    }
+    final r = route;
+    setState(() {
+      _routeFailed = false;
+      _formData = data.withRoute(r);
+    });
   }
 
   /// Recorrido de la reserva para el mapa (null si aún no se tiene).
@@ -199,6 +220,22 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Future<void> _confirm() async {
+    if (_loading) return; // doble toque
+    if (_formData == null) return;
+    if (_needsRoute) {
+      if (_routeFailed) {
+        showLuxSnackbar(
+            context,
+            'No pudimos calcular la ruta. Revisa tu conexión o cambia el '
+            'destino.',
+            isError: true);
+        setState(() => _routeFailed = false);
+        _ensureRoute();
+      } else {
+        showLuxSnackbar(context, 'Calculando la ruta, un momento…');
+      }
+      return;
+    }
     if (!_checkFlight()) {
       if (!isWeb(context)) setState(() => _step = 1);
       return;
@@ -227,9 +264,17 @@ class _BookingScreenState extends State<BookingScreen> {
       showLuxSnackbar(context, blocked, isError: true);
       return;
     }
+    if (!user.isActive) {
+      showLuxSnackbar(
+          context, 'Tu cuenta está suspendida. Contacta con soporte.',
+          isError: true);
+      return;
+    }
     setState(() => _loading = true);
 
-    if (user.stripeCustomerId != null &&
+    // El cobro con tarjeta guardada solo existe en la app móvil.
+    if (!kIsWeb &&
+        user.stripeCustomerId != null &&
         user.stripeCustomerId!.isNotEmpty &&
         _selectedCardId != null) {
       setState(() => _awaitingPaymentIntent = true);
@@ -254,17 +299,23 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
       );
-      _createBooking();
+      _createBooking(paymentMethod: 'card');
     } on StripeException catch (e) {
       if (mounted) {
         setState(() => _loading = false);
-        showLuxSnackbar(context, e.error.message ?? 'El pago falló',
+        showLuxSnackbar(
+            context,
+            e.error.code == FailureCode.Canceled
+                ? 'Pago cancelado.'
+                : 'Tu tarjeta fue rechazada. Prueba con otra o paga en efectivo.',
             isError: true);
       }
     } catch (e) {
       if (mounted) {
         setState(() => _loading = false);
-        showLuxSnackbar(context, e.toString(), isError: true);
+        showLuxSnackbar(
+            context, 'No se pudo procesar el pago. Inténtalo de nuevo.',
+            isError: true);
       }
     }
   }
@@ -293,15 +344,19 @@ class _BookingScreenState extends State<BookingScreen> {
     }
   }
 
-  void _createBooking() {
+  void _createBooking({String paymentMethod = 'cash'}) {
     final authState = context.read<AuthBloc>().state;
-    if (authState is! AuthAuthenticated) return;
-    final origin =
-        _formData?.origin ?? const Place(address: 'Recogida', lat: 0, lng: 0);
-    final destination = _formData?.destination ??
-        const Place(address: 'Destino', lat: 0, lng: 0);
-    final scheduledAt =
-        _formData?.scheduledAt ?? DateTime.now().add(const Duration(hours: 1));
+    final data = _formData;
+    if (authState is! AuthAuthenticated || data == null) {
+      setState(() => _loading = false);
+      return;
+    }
+    final origin = data.origin;
+    // Por horas no hay destino fijo: se guarda la recogida.
+    final destination = data.destination ?? data.origin;
+    // Si el pasajero tardó en confirmar y la hora ya pasó, es "ahora".
+    final now = DateTime.now();
+    final scheduledAt = data.scheduledAt.isBefore(now) ? now : data.scheduledAt;
 
     String? combinedNotes;
     if (!_bookForSelf && _guestFirstName.isNotEmpty) {
@@ -332,6 +387,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ? ServiceArea.airportFor(_formData!.origin)?.iata
               : null,
           hours: _service == ServiceType.byTheHour ? _hours : null,
+          paymentMethod: paymentMethod,
         ));
   }
 

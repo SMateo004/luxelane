@@ -46,8 +46,17 @@ class BookingRepositoryImpl implements BookingRepository {
       final data = booking.toJson()..['id'] = id;
       await _col.doc(id).set(data);
       return Right(Booking.fromJson(data));
+    } on FirebaseException catch (e) {
+      debugPrint('[Bookings] crear: ${e.code} ${e.message}');
+      return Left(ServerFailure(e.code == 'permission-denied'
+          ? 'No pudimos crear tu reserva: revisa la hora de recogida o si '
+              'las reservas están en pausa.'
+          : 'No pudimos crear tu reserva. Revisa tu conexión e inténtalo de '
+              'nuevo.'));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      debugPrint('[Bookings] crear: $e');
+      return const Left(
+          ServerFailure('No pudimos crear tu reserva. Inténtalo de nuevo.'));
     }
   }
 
@@ -102,6 +111,14 @@ class BookingRepositoryImpl implements BookingRepository {
           .map((snap) {
         final list = _parse(snap.docs);
         list.sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+        return list;
+      });
+
+  @override
+  Stream<List<Booking>> watchRiderBookings(String riderId) =>
+      _col.where('riderId', isEqualTo: riderId).snapshots().map((snap) {
+        final list = _parse(snap.docs);
+        list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
         return list;
       });
 

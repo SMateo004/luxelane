@@ -435,3 +435,40 @@ describe('configuración y auditoría', () => {
       { riderId: 'rider', status: 'captured', amount: 1 }));
   });
 });
+
+describe('notificaciones y datos nuevos', () => {
+  test('el usuario no se fabrica notificaciones; solo las lee y marca', async () => {
+    await assertFails(setDoc(doc(db('rider'), 'users/rider/notifications/n1'),
+      { title: 'x', body: 'y', isRead: false }));
+    await seed((f) => setDoc(doc(f, 'users/rider/notifications/n1'),
+      { title: 'x', body: 'y', isRead: false }));
+    await assertSucceeds(updateDoc(doc(db('rider'), 'users/rider/notifications/n1'), { isRead: true }));
+    await assertFails(updateDoc(doc(db('rider'), 'users/rider/notifications/n1'), { title: 'z' }));
+    await assertFails(getDoc(doc(db('rider2'), 'users/rider/notifications/n1')));
+  });
+
+  test('la reserva guarda el método de pago', async () => {
+    await assertSucceeds(setDoc(doc(db('rider'), 'bookings/b1'),
+      newBooking('rider', { paymentMethod: 'cash' })));
+  });
+
+  test('el pasajero lista solo sus reservas', async () => {
+    await assertSucceeds(getDocs(query(collection(db('rider'), 'bookings'),
+      where('riderId', '==', 'rider'))));
+    await assertFails(getDocs(query(collection(db('rider'), 'bookings'),
+      where('riderId', '==', 'rider2'))));
+  });
+
+  test('el chófer reporta señal pero no toca su media de valoraciones', async () => {
+    await assertSucceeds(updateDoc(doc(db('driver'), 'driverProfiles/driver'),
+      { lastSeenAt: serverTimestamp(), isAvailable: true }));
+    await assertFails(updateDoc(doc(db('driver'), 'driverProfiles/driver'),
+      { ratingSum: 500, ratingCount: 100 }));
+  });
+
+  test('el pasajero no se inventa una cancelación del sistema', async () => {
+    await seed((f) => setDoc(doc(f, 'bookings/b1'), newBooking('rider')));
+    await assertFails(updateDoc(doc(db('rider'), 'bookings/b1'),
+      { status: 'cancelled', cancelledBy: 'pricing' }));
+  });
+});
