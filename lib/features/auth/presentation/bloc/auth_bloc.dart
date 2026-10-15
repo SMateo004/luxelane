@@ -83,6 +83,10 @@ class _AuthSignedOut extends AuthEvent {
 // States
 // ---------------------------------------------------------------------------
 
+class _AuthSessionDetected extends AuthEvent {
+  const _AuthSessionDetected();
+}
+
 class _AuthUserChanged extends AuthEvent {
   const _AuthUserChanged(this.user);
   final User user;
@@ -118,6 +122,8 @@ class AuthAuthenticated extends AuthState {
         user.phone,
         user.photoUrl,
         user.stripeCustomerId,
+        user.companyId,
+        user.companyRole,
       ];
 }
 
@@ -150,6 +156,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<PhoneVerificationRequested>(_onPhoneVerification);
     on<PasswordResetRequested>(_onPasswordReset);
     on<_AuthUserChanged>(_onUserChanged);
+    on<_AuthSessionDetected>(_onSessionDetected);
+  }
+
+  Future<void> _onSessionDetected(
+      _AuthSessionDetected event, Emitter<AuthState> emit) async {
+    // Solo si la app cree que no hay sesión; el login la gestiona él mismo.
+    if (state is! AuthUnauthenticated && state is! AuthInitial) return;
+    User? user;
+    try {
+      user = await _repo.authStateChanges.first;
+    } catch (_) {
+      user = null;
+    }
+    if (user != null && state is! AuthAuthenticated) {
+      _emitAuthenticated(user, emit);
+    }
   }
 
   final AuthRepository _repo;
@@ -224,7 +246,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // toda la vida del bloc, también tras volver a iniciar sesión.
     await _signOutSub?.cancel();
     _signOutSub = _repo.isSignedIn.listen((signedIn) {
-      if (!signedIn && !isClosed) add(const _AuthSignedOut());
+      if (isClosed) return;
+      // En web Firebase restaura la sesión guardada un instante después de
+      // arrancar: si llega tarde, se recupera en vez de dejarla cerrada.
+      add(signedIn ? const _AuthSessionDetected() : const _AuthSignedOut());
     });
   }
 

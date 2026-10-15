@@ -3,6 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:get_it/get_it.dart';
 
+import '../../features/business/data/business_repository.dart';
 import '../../features/admin/data/repositories/admin_repository_impl.dart';
 import '../../features/admin/domain/repositories/admin_repository.dart';
 import '../../features/admin/presentation/bloc/admin_bloc.dart';
@@ -69,6 +70,10 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<BookingRepository>(
     () => BookingRepositoryImpl(firestore: sl(), functions: sl()),
+  );
+
+  sl.registerLazySingleton<BusinessRepository>(
+    () => BusinessRepository(firestore: sl(), functions: sl()),
   );
 
   sl.registerLazySingleton<VehicleRepository>(

@@ -77,6 +77,12 @@ export function riderMessage(
   if (status === 'cancelled' && cancelledBy === 'rider') {
     return { ...m, body: 'Cancelaste tu reserva.' };
   }
+  if (status === 'cancelled' && cancelledBy === 'corporate') {
+    return {
+      ...m,
+      body: 'No pudimos cargar el viaje a la cuenta de tu empresa. Reserva con otro método de pago.',
+    };
+  }
   if (status === 'cancelled' && cancelledBy === 'pricing') {
     return {
       ...m,

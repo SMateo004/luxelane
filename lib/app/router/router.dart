@@ -8,6 +8,8 @@ import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/booking/presentation/pages/booking_screen.dart';
+import '../../features/business/presentation/pages/business_landing_page.dart';
+import '../../features/business/presentation/pages/company_dashboard_page.dart';
 import '../../features/booking/presentation/pages/ride_type_page.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
 import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
@@ -41,6 +43,8 @@ abstract class LuxRoutes {
   static const admin = '/admin';
   static const payment = '/payment';
   static const addCard = '/payment/add';
+  static const business = '/empresas';
+  static const company = '/empresa';
 
   // Driver Routes
   static const driverHome = '/driver';
@@ -64,12 +68,28 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         // 1. Initial State: Only show splash if we are NOT already trying to reach a specific driver path.
         if (authState is AuthInitial) {
           if (going.startsWith('/driver')) return null;
-          return going == LuxRoutes.splash ? null : LuxRoutes.splash;
+          if (going == LuxRoutes.splash) return null;
+          // Recuerda adónde iba (enlace directo o recarga) para volver ahí
+          // en cuanto se sepa si hay sesión.
+          return Uri(
+              path: LuxRoutes.splash,
+              queryParameters: {'from': state.uri.toString()}).toString();
         }
 
         // 2. Loading State: Don't block navigation to driver paths while auth is resolving.
         if (authState is AuthLoading) {
           return null;
+        }
+
+        // Sesión resuelta: salir del splash hacia la página pedida.
+        if (going == LuxRoutes.splash) {
+          final from = state.uri.queryParameters['from'];
+          if (from != null &&
+              from.startsWith('/') &&
+              !from.startsWith(LuxRoutes.splash)) {
+            return from;
+          }
+          if (!isAuth) return LuxRoutes.home;
         }
 
         // 3. User is Authenticated: Role-based destination rules
@@ -120,6 +140,7 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
             final guestOk = webGuestOk.contains(going) ||
                 going.startsWith('/ride-type') ||
                 going.startsWith('/booking') ||
+                going == LuxRoutes.business ||
                 going.startsWith('/servicios');
 
             // If explicitly trying to enter via driver path, go to driver login.
@@ -136,6 +157,7 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
                 going == LuxRoutes.home ||
                 going == LuxRoutes.driverLogin ||
                 going.startsWith('/ride-type') ||
+                going == LuxRoutes.business ||
                 going.startsWith('/booking');
             if (!mobileGuestOk) return LuxRoutes.login;
           }
@@ -178,6 +200,14 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: '/servicios/contratacion-por-horas',
           pageBuilder: (c, s) => _fade(const HourlyCharterPage(), s),
+        ),
+        GoRoute(
+          path: LuxRoutes.business,
+          pageBuilder: (c, s) => _fade(const BusinessLandingPage(), s),
+        ),
+        GoRoute(
+          path: LuxRoutes.company,
+          pageBuilder: (c, s) => _fade(const CompanyDashboardPage(), s),
         ),
         GoRoute(
           path: LuxRoutes.register,

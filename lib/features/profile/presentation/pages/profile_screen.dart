@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../business/data/business_repository.dart';
+import '../../../business/presentation/widgets/business_widgets.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/di/injection.dart';
@@ -220,6 +222,23 @@ class _ProfileBody extends StatelessWidget {
             onPressed: () => context.push('/payment'),
             icon: Icons.credit_card_outlined,
           ),
+          if (user.role == UserRole.rider) ...[
+            const SizedBox(height: LuxSpacing.xl),
+            const SectionHeader(title: 'Empresa'),
+            const SizedBox(height: LuxSpacing.md),
+            if (user.companyId == null)
+              CompanyInvitesCard(
+                  email: user.email,
+                  emailVerified: sl<BusinessRepository>().emailVerified),
+            LuxOutlinedButton(
+              label: user.companyId != null
+                  ? 'Mi empresa'
+                  : 'Cuenta de empresa: registrar mi empresa',
+              onPressed: () => context
+                  .push(user.companyId != null ? '/empresa' : '/empresas'),
+              icon: Icons.apartment_outlined,
+            ),
+          ],
           const SizedBox(height: LuxSpacing.xl),
           const SectionHeader(title: 'Preferencias'),
           const SizedBox(height: LuxSpacing.md),

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -24,6 +25,8 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/google_sign_in_button.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../../payments/presentation/bloc/payment_bloc.dart';
+import '../../../business/data/business_repository.dart';
+import '../../../business/domain/business_models.dart';
 import '../bloc/booking_bloc.dart';
 import '../widgets/vehicle_details.dart';
 import '../widgets/vehicle_visuals.dart';
@@ -80,6 +83,43 @@ class _BookingScreenState extends State<BookingScreen> {
 
   /// Retención de tarjeta ya autorizada, pendiente de vincular a la reserva.
   String? _pendingIntentId;
+
+  /// Cargar el viaje a la cuenta de empresa del usuario.
+  bool _corporate = false;
+  final _costCenter = TextEditingController();
+  StreamSubscription<Company?>? _companySub;
+  StreamSubscription<CompanyMember?>? _memberSub;
+  Company? _company;
+  CompanyMember? _member;
+  String? _watchingCompany;
+
+  /// La cuenta de empresa se ofrece si está activa y el usuario habilitado.
+  bool get _corporateAvailable =>
+      _company?.isActive == true && (_member?.active ?? false);
+
+  void _watchCompany() {
+    final auth = context.read<AuthBloc>().state;
+    final user = auth is AuthAuthenticated ? auth.user : null;
+    final cid = user?.companyId;
+    if (cid == _watchingCompany) return;
+    _watchingCompany = cid;
+    _companySub?.cancel();
+    _memberSub?.cancel();
+    _company = null;
+    _member = null;
+    if (cid == null || user == null) return;
+    final repo = sl<BusinessRepository>();
+    _companySub = repo.watchCompany(cid).listen((c) {
+      if (mounted) setState(() => _company = c);
+    }, onError: (Object _) {});
+    _memberSub = repo.watchMember(cid, user.id).listen((m) {
+      if (!mounted) return;
+      setState(() {
+        _member = m;
+        if (!_corporateAvailable) _corporate = false;
+      });
+    }, onError: (Object _) {});
+  }
 
   // Scroll-based sticky selector
   final ScrollController _leftScrollCtrl = ScrollController();
@@ -149,12 +189,16 @@ class _BookingScreenState extends State<BookingScreen> {
     PricingCatalog.instance.removeListener(_onPricingChanged);
     _leftScrollCtrl.dispose();
     _cardsCtrl.dispose();
+    _costCenter.dispose();
+    _companySub?.cancel();
+    _memberSub?.cancel();
     super.dispose();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _watchCompany();
     if (_formData == null) {
       final extra = GoRouterState.of(context).extra;
       if (extra is BookingFormData) {
@@ -277,6 +321,21 @@ class _BookingScreenState extends State<BookingScreen> {
     }
     setState(() => _loading = true);
 
+    if (_corporate) {
+      if (!_corporateAvailable) {
+        setState(() {
+          _loading = false;
+          _corporate = false;
+        });
+        showLuxSnackbar(
+            context, 'La cuenta de empresa no está disponible ahora mismo.',
+            isError: true);
+        return;
+      }
+      _createBooking(paymentMethod: 'corporate');
+      return;
+    }
+
     // El cobro con tarjeta guardada solo existe en la app móvil.
     if (!kIsWeb && _selectedCardId != null) {
       setState(() => _awaitingPaymentIntent = true);
@@ -392,6 +451,11 @@ class _BookingScreenState extends State<BookingScreen> {
               : null,
           hours: _service == ServiceType.byTheHour ? _hours : null,
           paymentMethod: paymentMethod,
+          companyId: paymentMethod == 'corporate' ? _company?.id : null,
+          costCenter:
+              paymentMethod == 'corporate' && _costCenter.text.trim().isNotEmpty
+                  ? _costCenter.text.trim()
+                  : null,
         ));
   }
 
@@ -464,6 +528,10 @@ class _BookingScreenState extends State<BookingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // La sesión puede resolverse después de abrir la pantalla (recarga):
+    // se vuelve a mirar la empresa del usuario cuando cambia.
+    context.watch<AuthBloc>();
+    _watchCompany();
     return MultiBlocListener(
       listeners: [
         BlocListener<BookingBloc, BookingState>(listener: (ctx, state) {
@@ -1132,6 +1200,12 @@ class _BookingScreenState extends State<BookingScreen> {
         const Divider(color: _kDivider, height: 1),
         const SizedBox(height: 16),
 
+        // ── Método de pago ──────────────────────────────────────────────
+        _paymentSection(),
+        const SizedBox(height: 4),
+        const Divider(color: _kDivider, height: 1),
+        const SizedBox(height: 16),
+
         // ── All fees included ───────────────────────────────────────────
         const Row(
           children: [
@@ -1153,6 +1227,115 @@ class _BookingScreenState extends State<BookingScreen> {
       ],
     );
   }
+
+  /// Método de pago: cuenta de empresa (si la hay), efectivo y tarjetas
+  /// guardadas (solo en la app móvil). Se usa en móvil y en escritorio.
+  Widget _paymentSection() => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text('MÉTODO DE PAGO',
+              style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: _kTextTertiary,
+                  letterSpacing: 2.0)),
+          const SizedBox(height: 12),
+          if (_corporateAvailable) ...[
+            _PayOption(
+              icon: Icons.apartment_outlined,
+              label: 'Cuenta de empresa · ${_company!.name}',
+              selected: _corporate,
+              onTap: () => setState(() {
+                _corporate = true;
+                _selectedCardId = null;
+              }),
+            ),
+            if (_corporate)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: TextField(
+                  controller: _costCenter,
+                  maxLength: 60,
+                  decoration: const InputDecoration(
+                    labelText: 'Centro de coste o motivo (opcional)',
+                    counterText: '',
+                    isDense: true,
+                  ),
+                ),
+              ),
+          ],
+          _PayOption(
+            icon: Icons.payments_outlined,
+            label: 'Efectivo al chófer',
+            selected: _selectedCardId == null && !_corporate,
+            onTap: () => setState(() {
+              _selectedCardId = null;
+              _corporate = false;
+            }),
+          ),
+          if (!kIsWeb)
+            ..._savedCards.map((card) {
+              final id = card['id'] as String;
+              final brand = _cap(card['brand'] as String? ?? 'Card');
+              final last4 = card['last4'] as String? ?? '****';
+              final isSel = _selectedCardId == id && !_corporate;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: GestureDetector(
+                  onTap: () => setState(() {
+                    _selectedCardId = id;
+                    _corporate = false;
+                  }),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 160),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: _kCardBg,
+                      borderRadius: BorderRadius.zero,
+                      border: Border.all(
+                          color: isSel ? LuxColors.sapphire : _kBorder,
+                          width: isSel ? 1.5 : 1),
+                    ),
+                    child: Row(children: [
+                      Icon(Icons.credit_card_outlined,
+                          size: 20,
+                          color: isSel ? LuxColors.sapphire : _kTextSub),
+                      const SizedBox(width: 12),
+                      Expanded(
+                          child: Text('$brand •••• $last4',
+                              style: const TextStyle(
+                                  fontFamily: kSans,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: _kTextPrimary))),
+                      if (isSel)
+                        Container(
+                          width: 18,
+                          height: 18,
+                          decoration: const BoxDecoration(
+                              color: LuxColors.sapphire,
+                              shape: BoxShape.circle),
+                          child: const Icon(Icons.check,
+                              size: 11, color: Colors.white),
+                        ),
+                    ]),
+                  ),
+                ),
+              );
+            }),
+          if (!kIsWeb)
+            _OutlinedBtn(
+                label: 'Agregar tarjeta',
+                icon: Icons.add_card_outlined,
+                onPressed: () => context.push('/payment/add'))
+          else
+            const Text('El pago con tarjeta está disponible en la app móvil.',
+                style: TextStyle(
+                    fontFamily: kSans, fontSize: 12, color: _kTextTertiary)),
+        ],
+      );
 
   // ── MOBILE LAYOUT ──────────────────────────────────────────────────────────
 
@@ -1461,79 +1644,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ]),
         ),
         const SizedBox(height: 20),
-        ...[
-          const Text('MÉTODO DE PAGO',
-              style: TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: _kTextTertiary,
-                  letterSpacing: 2.0)),
-          const SizedBox(height: 12),
-          _PayOption(
-            icon: Icons.payments_outlined,
-            label: 'Efectivo al chófer',
-            selected: _selectedCardId == null,
-            onTap: () => setState(() => _selectedCardId = null),
-          ),
-          if (!kIsWeb)
-            ..._savedCards.map((card) {
-              final id = card['id'] as String;
-              final brand = _cap(card['brand'] as String? ?? 'Card');
-              final last4 = card['last4'] as String? ?? '****';
-              final isSel = _selectedCardId == id;
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: GestureDetector(
-                  onTap: () => setState(() => _selectedCardId = id),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 160),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: _kCardBg,
-                      borderRadius: BorderRadius.zero,
-                      border: Border.all(
-                          color: isSel ? LuxColors.sapphire : _kBorder,
-                          width: isSel ? 1.5 : 1),
-                    ),
-                    child: Row(children: [
-                      Icon(Icons.credit_card_outlined,
-                          size: 20,
-                          color: isSel ? LuxColors.sapphire : _kTextSub),
-                      const SizedBox(width: 12),
-                      Expanded(
-                          child: Text('$brand •••• $last4',
-                              style: const TextStyle(
-                                  fontFamily: kSans,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: _kTextPrimary))),
-                      if (isSel)
-                        Container(
-                          width: 18,
-                          height: 18,
-                          decoration: const BoxDecoration(
-                              color: LuxColors.sapphire,
-                              shape: BoxShape.circle),
-                          child: const Icon(Icons.check,
-                              size: 11, color: Colors.white),
-                        ),
-                    ]),
-                  ),
-                ),
-              );
-            }),
-          if (!kIsWeb)
-            _OutlinedBtn(
-                label: 'Agregar tarjeta',
-                icon: Icons.add_card_outlined,
-                onPressed: () => context.push('/payment/add'))
-          else
-            const Text('El pago con tarjeta está disponible en la app móvil.',
-                style: TextStyle(
-                    fontFamily: kSans, fontSize: 12, color: _kTextTertiary)),
-        ],
+        _paymentSection(),
         const SizedBox(height: 16),
         _GuaranteeRow(
             Icons.event_available_outlined, LuxPromise.freeCancelLong),

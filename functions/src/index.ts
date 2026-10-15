@@ -1,4 +1,5 @@
 import * as admin from 'firebase-admin';
+import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { onCall, CallableRequest } from 'firebase-functions/v2/https';
 import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
@@ -11,6 +12,9 @@ import { computeSettlement, planBackfill, Settlement } from './settlement';
 import { rankCandidates } from './assignment';
 import { fromCents, toCents } from './money';
 import { linkRejection, paymentAction, validIntentAmount } from './payments';
+import { checkCorporateBooking } from './corporate_functions';
+
+export * from './corporate_functions';
 import { driverBookkeeping, driverSnapshot, isExpiredPending, isRecentlySeen, nextRating, riderMessage } from './lifecycle';
 
 admin.initializeApp();
@@ -36,7 +40,7 @@ interface BookingDoc {
   // La app guarda las coordenadas como GeoPoint en `coordinates`.
   origin?: { coordinates?: admin.firestore.GeoPoint; lat?: number; lng?: number };
   destination?: { coordinates?: admin.firestore.GeoPoint; lat?: number; lng?: number } | null;
-  scheduledAt?: admin.firestore.Timestamp;
+  scheduledAt?: Timestamp;
   cancelledBy?: string;
   driverId?: string;
   status: BookingStatus;
@@ -57,7 +61,7 @@ interface RideDoc {
   bookingId: string;
   riderId: string;
   driverId: string;
-  completedAt?: admin.firestore.Timestamp;
+  completedAt?: Timestamp;
   distanceKm?: number;
   durationMin?: number;
 }
@@ -70,7 +74,7 @@ interface PaymentDoc {
   amount: number;
   currency: string;
   status: PaymentStatus;
-  createdAt: admin.firestore.Timestamp;
+  createdAt: Timestamp;
   receiptUrl?: string;
 }
 
@@ -239,7 +243,7 @@ async function settleCardPayment(bookingId: string, after: BookingDoc): Promise<
       amount: captured,
       currency: intent.currency ?? 'bob',
       status: ok ? 'captured' : 'failed',
-      createdAt: admin.firestore.Timestamp.now(),
+      createdAt: Timestamp.now(),
     };
     const batch = db.batch();
     batch.set(paymentRef, payment);
@@ -263,7 +267,7 @@ async function settleCardPayment(bookingId: string, after: BookingDoc): Promise<
       amount: amountToCapture,
       currency: 'bob',
       status: 'failed',
-      createdAt: admin.firestore.Timestamp.now(),
+      createdAt: Timestamp.now(),
     } as PaymentDoc);
     batch.update(bookingRef, { paymentId: paymentRef.id, paymentStatus: 'failed' });
     await batch.commit();
@@ -319,7 +323,7 @@ export const refundPayment = onCall(async (req) => {
     if (payment.stripePaymentIntentId) {
       await stripe.refundIntent(payment.stripePaymentIntentId);
     }
-    const now = admin.firestore.Timestamp.now();
+    const now = Timestamp.now();
     const batch = db.batch();
     batch.update(paymentRef, {
       status: 'refunded' as PaymentStatus,
@@ -452,9 +456,15 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
       status: 'cancelled' as BookingStatus,
       cancelledBy: 'pricing',
       cancellationReason: 'Precio no válido para la tarifa vigente',
-      updatedAt: admin.firestore.Timestamp.now(),
+      updatedAt: Timestamp.now(),
     });
     return;
+  }
+
+  // Cuenta de empresa: miembro activo, empresa aprobada y dentro de límites.
+  if ((booking as BookingDoc & { paymentMethod?: string }).paymentMethod === 'corporate') {
+    const ok = await checkCorporateBooking(event.data!.ref, booking as never);
+    if (!ok) return;
   }
 
   logger.info('onBookingCreated', 'notifying drivers', {
@@ -478,7 +488,7 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
   const nowMs = Date.now();
   const targets = driversSnap.docs
     .filter((p) => ofClass.has(p.id))
-    .filter((p) => isRecentlySeen((p.data().lastSeenAt as admin.firestore.Timestamp | undefined)?.toMillis(), nowMs))
+    .filter((p) => isRecentlySeen((p.data().lastSeenAt as Timestamp | undefined)?.toMillis(), nowMs))
     .slice(0, 20);
 
   const tokens: string[] = [];
@@ -511,7 +521,7 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
     to: after.status,
   });
 
-  const now = admin.firestore.Timestamp.now();
+  const now = Timestamp.now();
 
   // 1. Chófer: libre al terminar o cancelar; suma el viaje al completar.
   const book = driverBookkeeping(before, after);
@@ -519,7 +529,7 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
     await db.collection('driverProfiles').doc(book.driverId).set(
       {
         isAvailable: true,
-        ...(book.countRide ? { totalRides: admin.firestore.FieldValue.increment(1) } : {}),
+        ...(book.countRide ? { totalRides: FieldValue.increment(1) } : {}),
       },
       { merge: true },
     );
@@ -675,7 +685,7 @@ export const backfillSettlements = onCall({ timeoutSeconds: 540 }, async (req) =
     targetId: 'bookings',
     targetType: 'finance',
     details: `${settled} de ${scanned} viajes completados repartidos`,
-    createdAt: admin.firestore.Timestamp.now(),
+    createdAt: Timestamp.now(),
   });
   logger.info('backfillSettlements', 'done', { scanned, settled });
   return { scanned, settled };
@@ -700,7 +710,7 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
   if (booking?.status !== 'in_progress') return;
 
   logger.info('onRideCompleted', 'ride completed', { rideId: event.params.rideId });
-  await bookingRef.update({ status: 'completed' as BookingStatus, updatedAt: admin.firestore.Timestamp.now() });
+  await bookingRef.update({ status: 'completed' as BookingStatus, updatedAt: Timestamp.now() });
 });
 
 
@@ -745,7 +755,7 @@ export const assignNearestDriver = onCall(async (req) => {
     profiles
       .filter((p) => p.exists)
       .filter((p) =>
-        isRecentlySeen((p.data()!.lastSeenAt as admin.firestore.Timestamp | undefined)?.toMillis(), nowMs),
+        isRecentlySeen((p.data()!.lastSeenAt as Timestamp | undefined)?.toMillis(), nowMs),
       )
       .map((p) => {
         const d = p.data()!;
@@ -781,7 +791,7 @@ export const assignNearestDriver = onCall(async (req) => {
       tx.update(bookingRef, {
         driverId,
         status: 'confirmed' as BookingStatus,
-        updatedAt: admin.firestore.Timestamp.now(),
+        updatedAt: Timestamp.now(),
       });
       tx.update(driverRef, { isAvailable: false });
       return 'assigned';
@@ -843,7 +853,7 @@ export const acceptBooking = onCall(async (req) => {
       tx.update(bookingRef, {
         driverId,
         status: 'confirmed' as BookingStatus,
-        updatedAt: admin.firestore.Timestamp.now(),
+        updatedAt: Timestamp.now(),
       });
       tx.update(driverRef, { isAvailable: false });
     });
@@ -887,7 +897,7 @@ export const scheduledCleanup = onSchedule('every 1 hours', async () => {
   const staleSnap = await db
     .collection('bookings')
     .where('status', '==', 'pending')
-    .where('scheduledAt', '<', admin.firestore.Timestamp.fromMillis(nowMs - 30 * 60 * 1000))
+    .where('scheduledAt', '<', Timestamp.fromMillis(nowMs - 30 * 60 * 1000))
     .limit(450)
     .get();
 
@@ -895,7 +905,7 @@ export const scheduledCleanup = onSchedule('every 1 hours', async () => {
     isExpiredPending(
       {
         status: d.data().status,
-        scheduledAtMs: (d.data().scheduledAt as admin.firestore.Timestamp | undefined)?.toMillis(),
+        scheduledAtMs: (d.data().scheduledAt as Timestamp | undefined)?.toMillis(),
       },
       nowMs,
     ),
@@ -908,7 +918,7 @@ export const scheduledCleanup = onSchedule('every 1 hours', async () => {
       status: 'cancelled' as BookingStatus,
       cancelledBy: 'system',
       cancellationReason: 'Sin chófer disponible a la hora de recogida',
-      updatedAt: admin.firestore.Timestamp.now(),
+      updatedAt: Timestamp.now(),
     });
   }
   await batch.commit();

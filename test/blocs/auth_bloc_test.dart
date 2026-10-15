@@ -181,5 +181,23 @@ void main() {
       ],
       verify: (_) => verify(() => repo.logout()).called(1),
     );
+
+    blocTest<AuthBloc, AuthState>(
+      'recupera la sesión que Firebase restaura tarde al recargar en web',
+      build: () {
+        var calls = 0;
+        when(() => repo.authStateChanges)
+            .thenAnswer((_) => Stream.value(calls++ == 0 ? null : _mockUser));
+        when(() => repo.isSignedIn).thenAnswer((_) => Stream.value(true));
+        return AuthBloc(authRepository: repo);
+      },
+      act: (bloc) => bloc.add(const AuthStarted()),
+      wait: const Duration(milliseconds: 50),
+      expect: () => [
+        const AuthLoading(),
+        const AuthUnauthenticated(),
+        AuthAuthenticated(_mockUser),
+      ],
+    );
   });
 }

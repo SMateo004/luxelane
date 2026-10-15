@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart'
     show
@@ -174,7 +175,7 @@ class _WebHomePageState extends State<WebHomePage> {
                   // ── Business split ────────────────────────────────────
                   _BusinessSection(
                     sectionKey: _businessKey,
-                    onLearnMore: widget.onSearch,
+                    onLearnMore: () => context.go('/empresas'),
                   ),
 
                   // ── CTA full-bleed ────────────────────────────────────
@@ -2128,7 +2129,7 @@ class _BusinessSection extends StatelessWidget {
           delay: const Duration(milliseconds: 220),
           dx: -120,
           child: _GhostBtn(
-              label: 'Más información', light: true, onTap: onLearnMore),
+              label: 'Cuenta de empresa', light: true, onTap: onLearnMore),
         ),
       ]),
     );

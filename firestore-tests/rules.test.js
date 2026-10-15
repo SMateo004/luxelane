@@ -472,3 +472,73 @@ describe('notificaciones y datos nuevos', () => {
       { status: 'cancelled', cancelledBy: 'pricing' }));
   });
 });
+
+describe('programa para empresas', () => {
+  beforeEach(async () => {
+    await seed(async (f) => {
+      await setDoc(doc(f, 'users/boss'), user('rider', { companyId: 'acme', companyRole: 'admin' }));
+      await setDoc(doc(f, 'users/emp'), user('rider', { companyId: 'acme', companyRole: 'employee' }));
+      await setDoc(doc(f, 'companies/acme'), { name: 'Acme', status: 'active' });
+      await setDoc(doc(f, 'companies/acme/members/emp'), { role: 'employee', active: true });
+      await setDoc(doc(f, 'companies/other'), { name: 'Otra', status: 'active' });
+      await setDoc(doc(f, 'companyStatements/acme_2026-10'), { companyId: 'acme', totalBs: 100, status: 'issued' });
+      await setDoc(doc(f, 'companyStatements/acme_2026-11'), { companyId: 'acme', totalBs: 50, status: 'draft' });
+      await setDoc(doc(f, 'bookings/corp1'), newBooking('emp', { paymentMethod: 'corporate', companyId: 'acme' }));
+      await setDoc(doc(f, 'companyInvites/acme_x'), { companyId: 'acme', email: 'nuevo@test.com', status: 'pending' });
+    });
+  });
+
+  test('nadie se registra ya dentro de una empresa', async () => {
+    await assertFails(setDoc(doc(db('n'), 'users/n'), user('rider', { companyId: 'acme', companyRole: 'admin' })));
+  });
+
+  test('nadie se añade a una empresa editando su perfil', async () => {
+    await assertFails(updateDoc(doc(db('rider'), 'users/rider'), { companyId: 'acme', companyRole: 'admin' }));
+    await assertFails(updateDoc(doc(db('emp'), 'users/emp'), { companyRole: 'admin' }));
+  });
+
+  test('el empleado reserva con la cuenta de su empresa, no con otra', async () => {
+    await assertSucceeds(setDoc(doc(db('emp'), 'bookings/c2'),
+      newBooking('emp', { paymentMethod: 'corporate', companyId: 'acme', costCenter: 'Ventas' })));
+    await assertFails(setDoc(doc(db('emp'), 'bookings/c3'),
+      newBooking('emp', { paymentMethod: 'corporate', companyId: 'other' })));
+    await assertFails(setDoc(doc(db('rider'), 'bookings/c4'),
+      newBooking('rider', { paymentMethod: 'corporate', companyId: 'acme' })));
+    await assertFails(setDoc(doc(db('emp'), 'bookings/c5'),
+      newBooking('emp', { paymentMethod: 'cash', companyId: 'acme' })));
+    await assertFails(setDoc(doc(db('emp'), 'bookings/c6'),
+      newBooking('emp', { paymentMethod: 'corporate', companyId: 'acme', statementId: 'x' })));
+  });
+
+  test('el admin de la empresa ve los viajes de su empresa; un empleado no ve los ajenos', async () => {
+    await assertSucceeds(getDocs(query(collection(db('boss'), 'bookings'), where('companyId', '==', 'acme'))));
+    await assertFails(getDocs(query(collection(db('emp'), 'bookings'), where('companyId', '==', 'acme'))));
+    await assertFails(getDocs(query(collection(db('rider'), 'bookings'), where('companyId', '==', 'acme'))));
+  });
+
+  test('extractos y equipo: solo el admin de la empresa', async () => {
+    await assertSucceeds(getDoc(doc(db('boss'), 'companyStatements/acme_2026-10')));
+    await assertFails(getDoc(doc(db('emp'), 'companyStatements/acme_2026-10')));
+    await assertFails(getDoc(doc(db('boss'), 'companyStatements/acme_2026-11')));
+    await assertSucceeds(getDocs(query(collection(db('boss'), 'companyStatements'),
+      where('companyId', '==', 'acme'), where('status', 'in', ['issued', 'paid']))));
+    await assertSucceeds(getDocs(collection(db('boss'), 'companies/acme/members')));
+    await assertSucceeds(getDoc(doc(db('emp'), 'companies/acme/members/emp')));
+    await assertFails(getDocs(collection(db('emp'), 'companies/acme/members')));
+    await assertSucceeds(getDoc(doc(db('emp'), 'companies/acme')));
+    await assertFails(getDoc(doc(db('emp'), 'companies/other')));
+  });
+
+  test('nada de la empresa se escribe desde la app', async () => {
+    await assertFails(updateDoc(doc(db('boss'), 'companies/acme'), { discountPct: 50 }));
+    await assertFails(setDoc(doc(db('boss'), 'companies/acme/members/rider'), { role: 'admin' }));
+    await assertFails(updateDoc(doc(db('boss'), 'companyStatements/acme_2026-10'), { totalBs: 0 }));
+  });
+
+  test('las invitaciones las ve el invitado (por su correo) y su empresa', async () => {
+    const invited = env.authenticatedContext('nuevo', { email: 'Nuevo@Test.com' }).firestore();
+    await assertSucceeds(getDoc(doc(invited, 'companyInvites/acme_x')));
+    await assertSucceeds(getDoc(doc(db('boss'), 'companyInvites/acme_x')));
+    await assertFails(getDoc(doc(db('rider'), 'companyInvites/acme_x')));
+  });
+});

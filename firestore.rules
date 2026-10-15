@@ -76,6 +76,7 @@ service cloud.firestore {
     function isValidSelfSignup(uid) {
       let d = request.resource.data;
       return d.role == 'rider' &&
+        !d.keys().hasAny(['companyId', 'companyRole']) &&
         d.get('isActive', true) == true &&
         d.get('stripeCustomerId', null) == null &&
         d.get('id', uid) == uid &&
@@ -163,7 +164,16 @@ service cloud.firestore {
         !d.keys().hasAny(['settlement', 'pricingReview', 'cancelledBy',
           'cancellationReason', 'priceAdjustmentReason', 'driverName',
           'driverPhone', 'driverPhotoUrl', 'vehicleLabel', 'vehiclePlate',
-          'paymentIntentId', 'paymentStatus', 'riderRating', 'ratedAt']) &&
+          'paymentIntentId', 'paymentStatus', 'riderRating', 'ratedAt',
+          'statementId', 'companyName', 'riderName']) &&
+        // Cuenta de empresa: solo la propia; el resto de controles (empresa
+        // activa, límites) los aplica el servidor al crearse la reserva.
+        (d.get('paymentMethod', 'cash') == 'corporate'
+          ? d.get('companyId', null) != null &&
+            d.companyId == userData().get('companyId', null)
+          : d.get('companyId', null) == null) &&
+        (d.get('costCenter', null) == null ||
+          (d.costCenter is string && d.costCenter.size() <= 60)) &&
         d.estimatedPrice is number && d.estimatedPrice > 0 &&
         d.scheduledAt is timestamp &&
         d.scheduledAt > request.time - duration.value(15, 'm') &&
@@ -184,9 +194,18 @@ service cloud.firestore {
         (from == 'in_progress' && to == 'completed');
     }
 
+    // Administrador activo de la empresa [cid].
+    function isCompanyAdminOf(cid) {
+      return request.auth != null && cid != null &&
+        userData().get('companyId', null) == cid &&
+        userData().get('companyRole', null) == 'admin' &&
+        userData().get('isActive', true) == true;
+    }
+
     match /bookings/{bookingId} {
       allow read: if isAuthenticated() && (
         resource.data.riderId == request.auth.uid ||
+        isCompanyAdminOf(resource.data.get('companyId', null)) ||
         resource.data.driverId == request.auth.uid ||
         (resource.data.status == 'pending' && isWorkingDriver()) ||
         isAdmin()
@@ -310,6 +329,37 @@ service cloud.firestore {
           request.resource.data.platformCommissionPct <= 100
         )
       );
+    }
+
+    // -------------------------------------------------------------------------
+    // Programa para empresas — todo lo escribe el servidor (Cloud Functions)
+    // -------------------------------------------------------------------------
+
+    match /companies/{cid} {
+      allow read: if isAdmin() ||
+        (isAuthenticated() && userData().get('companyId', null) == cid);
+      allow write: if false;
+
+      match /members/{uid} {
+        allow read: if isAdmin() || isOwner(uid) || isCompanyAdminOf(cid);
+        allow write: if false;
+      }
+    }
+
+    match /companyInvites/{inviteId} {
+      allow read: if isAdmin() ||
+        isCompanyAdminOf(resource.data.companyId) ||
+        (isAuthenticated() &&
+          resource.data.email == request.auth.token.email.lower());
+      allow write: if false;
+    }
+
+    match /companyStatements/{statementId} {
+      // La empresa ve sus extractos emitidos; el borrador es interno.
+      allow read: if isAdmin() || (
+        isCompanyAdminOf(resource.data.companyId) &&
+        resource.data.status != 'draft');
+      allow write: if false;
     }
 
     // -------------------------------------------------------------------------

@@ -23,6 +23,8 @@ class User {
     required this.isActive,
     this.stripeCustomerId,
     required this.fcmTokens,
+    this.companyId,
+    this.companyRole,
   });
 
   final String id;
@@ -37,6 +39,13 @@ class User {
   final bool isActive;
   final String? stripeCustomerId;
   final List<String> fcmTokens;
+
+  /// Empresa a la que pertenece (programa para empresas) y su papel en ella:
+  /// `admin` o `employee`. Los asigna el servidor.
+  final String? companyId;
+  final String? companyRole;
+
+  bool get isCompanyAdmin => companyId != null && companyRole == 'admin';
 
   factory User.fromJson(Map<String, dynamic> j) => User(
         id: j['id'] as String? ?? '',
@@ -60,6 +69,8 @@ class User {
         isActive: j['isActive'] as bool? ?? true,
         stripeCustomerId: j['stripeCustomerId'] as String?,
         fcmTokens: List<String>.from(j['fcmTokens'] ?? []),
+        companyId: j['companyId'] as String?,
+        companyRole: j['companyRole'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -101,6 +112,8 @@ class User {
         isActive: isActive ?? this.isActive,
         stripeCustomerId: stripeCustomerId ?? this.stripeCustomerId,
         fcmTokens: fcmTokens ?? this.fcmTokens,
+        companyId: companyId,
+        companyRole: companyRole,
       );
 }
 
@@ -330,6 +343,10 @@ class Booking {
     this.cancellationReason,
     this.riderRating,
     this.paymentMethod,
+    this.companyId,
+    this.costCenter,
+    this.statementId,
+    this.riderName,
   });
 
   final String id;
@@ -380,8 +397,19 @@ class Booking {
   /// Valoración del pasajero (1 a 5) una vez completado el viaje.
   final int? riderRating;
 
-  /// `cash` o `card`. Reservas antiguas no lo tienen.
+  /// `cash`, `card` o `corporate`. Reservas antiguas no lo tienen.
   final String? paymentMethod;
+
+  /// Cuenta de empresa a la que se carga (solo `corporate`), centro de coste
+  /// opcional y extracto mensual en el que se facturó.
+  final String? companyId;
+  final String? costCenter;
+  final String? statementId;
+
+  /// Nombre del pasajero, copiado por el servidor en viajes de empresa.
+  final String? riderName;
+
+  bool get isCorporate => paymentMethod == 'corporate';
 
   bool get isHourly => serviceType == ServiceType.byTheHour;
 
@@ -459,6 +487,10 @@ class Booking {
         cancellationReason: j['cancellationReason'] as String?,
         riderRating: (j['riderRating'] as num?)?.toInt(),
         paymentMethod: j['paymentMethod'] as String?,
+        companyId: j['companyId'] as String?,
+        costCenter: j['costCenter'] as String?,
+        statementId: j['statementId'] as String?,
+        riderName: j['riderName'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -486,6 +518,9 @@ class Booking {
         'passengerCount': passengerCount,
         'luggageCount': luggageCount,
         if (paymentMethod != null) 'paymentMethod': paymentMethod,
+        if (companyId != null) 'companyId': companyId,
+        if (costCenter != null && costCenter!.isNotEmpty)
+          'costCenter': costCenter,
       };
 
   Booking copyWith({
@@ -528,6 +563,10 @@ class Booking {
         cancellationReason: cancellationReason,
         riderRating: riderRating,
         paymentMethod: paymentMethod,
+        companyId: companyId,
+        costCenter: costCenter,
+        statementId: statementId,
+        riderName: riderName,
       );
 }
 

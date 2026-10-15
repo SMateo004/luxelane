@@ -123,6 +123,8 @@ class _RideScreenState extends State<RideScreen> {
             'No encontramos chófer a tiempo y cancelamos la reserva. No se te cobrará.',
           'driver' =>
             'El chófer no pudo realizar el viaje. Puedes reservar de nuevo.',
+          'corporate' => b?.cancellationReason ??
+              'No pudimos cargar el viaje a la cuenta de tu empresa.',
           'pricing' =>
             'Las tarifas cambiaron mientras reservabas. Vuelve a reservar para '
                 'ver el precio actual. No se te cobrará.',
@@ -330,7 +332,8 @@ class _RideScreenState extends State<RideScreen> {
     final b = _booking!;
     return Text(
       '${LuxFormat.dateTime(b.scheduledAt)} · ${LuxFormat.bs(b.chargedAmount)}'
-      '${b.paymentMethod == 'cash' ? ' · efectivo' : ''}',
+      '${b.paymentMethod == 'cash' ? ' · efectivo' : ''}'
+      '${b.isCorporate ? ' · cuenta de empresa' : ''}',
       style: LuxTypography.caption,
     );
   }

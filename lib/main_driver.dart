@@ -8,6 +8,7 @@ import 'core/config/env.dart';
 import 'core/di/injection.dart';
 import 'core/services/crash_service.dart';
 import 'core/services/performance_service.dart';
+import 'core/config/emulators.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -17,6 +18,9 @@ void main() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    if (AppConfig.useEmulators && !AppConfig.isProd) {
+      await useFirebaseEmulators(AppConfig.emulatorHost);
+    }
   } catch (e) {
     if (AppConfig.enableLogs) {
       debugPrint('[LuxelaneDriver] Firebase init skipped: $e');
