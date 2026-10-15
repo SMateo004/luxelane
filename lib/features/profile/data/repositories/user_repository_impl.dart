@@ -85,6 +85,8 @@ class UserRepositoryImpl implements UserRepository {
     try {
       await _db.collection('driverProfiles').doc(userId).update({
         'currentLocation': GeoPoint(latitude, longitude),
+        // El servidor solo asigna viajes a chóferes vistos hace poco.
+        'lastSeenAt': FieldValue.serverTimestamp(),
       });
       return const Right(null);
     } catch (e) {
@@ -100,6 +102,7 @@ class UserRepositoryImpl implements UserRepository {
     try {
       await _db.collection('driverProfiles').doc(userId).update({
         'isAvailable': isAvailable,
+        'lastSeenAt': FieldValue.serverTimestamp(),
       });
       return const Right(null);
     } catch (e) {

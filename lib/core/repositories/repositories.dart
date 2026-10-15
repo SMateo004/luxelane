@@ -85,6 +85,26 @@ abstract class VehicleRepository {
 // BookingRepository
 // ---------------------------------------------------------------------------
 
+/// Resultado de que un chófer intente aceptar una reserva.
+enum AcceptOutcome {
+  accepted,
+
+  /// Otro chófer la tomó antes, o el pasajero la canceló.
+  alreadyTaken,
+
+  /// El chófer ya está en otro viaje o desconectado.
+  driverBusy,
+
+  /// Documentos aún no verificados por un administrador.
+  notVerified,
+
+  /// Cuenta bloqueada, sin rol de chófer o sin vehículo activo.
+  notAllowed,
+
+  /// La reserva pide otra clase de vehículo.
+  wrongClass,
+}
+
 abstract class BookingRepository {
   Future<Either<Failure, Booking>> createBooking(Booking booking);
   Future<Either<Failure, Booking>> getBookingById(String bookingId);
@@ -101,6 +121,14 @@ abstract class BookingRepository {
     required String driverId,
   });
   Future<Either<Failure, void>> cancelBooking(String bookingId);
+
+  /// El chófer acepta una reserva pendiente. Lo resuelve el servidor en una
+  /// transacción: nunca dos chóferes en el mismo viaje.
+  Future<Either<Failure, AcceptOutcome>> acceptBooking(String bookingId);
+
+  /// El pasajero valora (1 a 5) un viaje completado.
+  Future<Either<Failure, void>> rateBooking(String bookingId, int rating);
+
   Stream<Booking> watchBooking(String bookingId);
 }
 

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
@@ -16,15 +16,26 @@ class DriverQueueScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Cola de trabajos')),
-      body: BlocBuilder<DriverBloc, DriverState>(
+      body: BlocConsumer<DriverBloc, DriverState>(
+        listenWhen: (p, c) =>
+            c is DriverLoaded &&
+            c.notice != null &&
+            (p is! DriverLoaded || p.noticeSeq != c.noticeSeq),
+        listener: (context, state) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(
+              content: Text((state as DriverLoaded).notice!),
+              behavior: SnackBarBehavior.floating,
+            ));
+        },
         builder: (context, state) {
           if (state is! DriverLoaded) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final pending = state.pendingRequests
-              .where((b) => !state.declinedIds.contains(b.id))
-              .toList()
+          // Solo lo que este chófer puede aceptar: su clase y estando libre.
+          final pending = state.eligibleRequests
             ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
 
           final upcoming = state.bookings.where((b) {
@@ -35,8 +46,7 @@ class DriverQueueScreen extends StatelessWidget {
             ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
 
           if (pending.isEmpty && upcoming.isEmpty) {
-            return const _EmptyQueue(
-                isAvailable: true); // Show 'No jobs yet' instead of 'Go online'
+            return _EmptyQueue(isAvailable: state.isOnline && state.canWork);
           }
 
           return ListView(
@@ -114,7 +124,7 @@ class _EmptyQueue extends StatelessWidget {
             Text(
               isAvailable
                   ? 'Las nuevas reservas aparecerán aquí'
-                  : 'Activa tu disponibilidad en la pestaña Inicio',
+                  : 'Conéctate en la pestaña Inicio (requiere cuenta verificada)',
               style: LuxTypography.bodyMedium,
               textAlign: TextAlign.center,
             ),
@@ -138,7 +148,7 @@ class _JobCard extends StatelessWidget {
                 BookingStatusChip(status: booking.status),
                 const Spacer(),
                 Text(
-                  'Bs${booking.estimatedPrice.toStringAsFixed(0)}',
+                  LuxFormat.bs(booking.chargedAmount),
                   style: LuxTypography.titleMedium
                       .copyWith(color: LuxColors.sapphire),
                 ),
@@ -146,7 +156,7 @@ class _JobCard extends StatelessWidget {
             ),
             const SizedBox(height: LuxSpacing.sm),
             Text(
-              DateFormat('EEE, MMM d · h:mm a').format(booking.scheduledAt),
+              LuxFormat.dateTime(booking.scheduledAt),
               style: LuxTypography.caption,
             ),
             const SizedBox(height: LuxSpacing.md),
@@ -218,13 +228,18 @@ class _JobActions extends StatelessWidget {
     final driverId = auth is AuthAuthenticated ? auth.user.id : '';
 
     if (isPending) {
+      final accepting =
+          bloc.state is DriverLoaded && (bloc.state as DriverLoaded).accepting;
       return LuxButton(
         label: 'Aceptar viaje',
         icon: Icons.check_circle_outline_rounded,
-        onPressed: () => bloc.add(DriverRequestAccepted(
-          bookingId: booking.id,
-          driverId: driverId,
-        )),
+        loading: accepting,
+        onPressed: accepting
+            ? null
+            : () => bloc.add(DriverRequestAccepted(
+                  bookingId: booking.id,
+                  driverId: driverId,
+                )),
       );
     }
 

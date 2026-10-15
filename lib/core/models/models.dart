@@ -39,10 +39,10 @@ class User {
   final List<String> fcmTokens;
 
   factory User.fromJson(Map<String, dynamic> j) => User(
-        id: j['id'] as String,
-        email: j['email'] as String,
+        id: j['id'] as String? ?? '',
+        email: j['email'] as String? ?? '',
         phone: j['phone'] as String? ?? '',
-        displayName: j['displayName'] as String,
+        displayName: j['displayName'] as String? ?? '',
         photoUrl: j['photoUrl'] as String?,
         role: UserRole.values.firstWhere(
           (e) => e.name == j['role'],
@@ -54,7 +54,8 @@ class User {
                 orElse: () => VehicleClass.business,
               )
             : null,
-        createdAt: (j['createdAt'] as Timestamp).toDate(),
+        // serverTimestamp() llega null en la escritura local pendiente.
+        createdAt: (j['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
         isVerified: j['isVerified'] as bool? ?? false,
         isActive: j['isActive'] as bool? ?? true,
         stripeCustomerId: j['stripeCustomerId'] as String?,
@@ -131,7 +132,7 @@ class DriverProfile {
   final GeoPoint? currentLocation;
 
   factory DriverProfile.fromJson(Map<String, dynamic> j) => DriverProfile(
-        userId: j['userId'] as String,
+        userId: j['userId'] as String? ?? '',
         licenseNumber: j['licenseNumber'] as String? ?? '',
         licenseExpiry: j['licenseExpiry'] != null
             ? (j['licenseExpiry'] as Timestamp).toDate()
@@ -139,7 +140,7 @@ class DriverProfile {
         vehicleId: j['vehicleId'] as String? ?? '',
         documentsVerified: j['documentsVerified'] as bool? ?? false,
         rating: (j['rating'] as num?)?.toDouble() ?? 5.0,
-        totalRides: j['totalRides'] as int? ?? 0,
+        totalRides: (j['totalRides'] as num?)?.toInt() ?? 0,
         isAvailable: j['isAvailable'] as bool? ?? false,
         currentLocation: j['currentLocation'] as GeoPoint?,
       );
@@ -320,6 +321,15 @@ class Booking {
     this.luggageCount = 0,
     this.pricingReviewReason,
     this.settlement,
+    this.driverName,
+    this.driverPhone,
+    this.driverPhotoUrl,
+    this.vehicleLabel,
+    this.vehiclePlate,
+    this.cancelledBy,
+    this.cancellationReason,
+    this.riderRating,
+    this.paymentMethod,
   });
 
   final String id;
@@ -355,6 +365,26 @@ class Booking {
   /// Reparto plataforma / chófer fijado por el servidor. Solo lectura.
   final BookingSettlement? settlement;
 
+  /// Datos del chófer y su vehículo copiados por el servidor al asignarlo:
+  /// el pasajero no puede leer el perfil del chófer. Solo lectura.
+  final String? driverName;
+  final String? driverPhone;
+  final String? driverPhotoUrl;
+  final String? vehicleLabel;
+  final String? vehiclePlate;
+
+  /// Quién canceló (`rider`, `driver`, `admin`, `system`) y por qué.
+  final String? cancelledBy;
+  final String? cancellationReason;
+
+  /// Valoración del pasajero (1 a 5) una vez completado el viaje.
+  final int? riderRating;
+
+  /// `cash` o `card`. Reservas antiguas no lo tienen.
+  final String? paymentMethod;
+
+  bool get isHourly => serviceType == ServiceType.byTheHour;
+
   /// Importe que se factura: el precio final o, si no hay, el estimado.
   double get chargedAmount => finalPrice ?? estimatedPrice;
 
@@ -367,16 +397,36 @@ class Booking {
         commissionPct: s?.commissionPct ?? commissionPct);
   }
 
-  factory Booking.fromJson(Map<String, dynamic> j) => Booking(
+  static DateTime? _date(Object? v) => switch (v) {
+        Timestamp t => t.toDate(),
+        DateTime d => d,
+        String s => DateTime.tryParse(s),
+        _ => null,
+      };
+
+  factory Booking.fromJson(Map<String, dynamic> j) {
+    final origin =
+        Place.fromJson(Map<String, dynamic>.from(j['origin'] as Map? ?? {}));
+    // Las reservas por horas pueden no tener destino: se usa el origen.
+    Place destination;
+    try {
+      destination = Place.fromJson(
+          Map<String, dynamic>.from(j['destination'] as Map? ?? {}));
+    } on FormatException {
+      destination = origin;
+    }
+    return Booking._fromJson(j, origin, destination);
+  }
+
+  factory Booking._fromJson(
+          Map<String, dynamic> j, Place origin, Place destination) =>
+      Booking(
         id: j['id'] as String? ?? '',
         riderId: j['riderId'] as String? ?? '',
         driverId: j['driverId'] as String?,
-        origin: Place.fromJson(j['origin'] as Map<String, dynamic>? ?? {}),
-        destination:
-            Place.fromJson(j['destination'] as Map<String, dynamic>? ?? {}),
-        scheduledAt: j['scheduledAt'] != null
-            ? (j['scheduledAt'] as Timestamp).toDate()
-            : DateTime.now(),
+        origin: origin,
+        destination: destination,
+        scheduledAt: _date(j['scheduledAt']) ?? DateTime.now(),
         vehicleClass: VehicleClass.values.firstWhere(
           (e) => e.name == (j['class'] ?? j['vehicleClass'] ?? 'business'),
           orElse: () => VehicleClass.business,
@@ -389,21 +439,26 @@ class Booking {
         estimatedPrice: (j['estimatedPrice'] as num?)?.toDouble() ?? 0.0,
         finalPrice: (j['finalPrice'] as num?)?.toDouble(),
         paymentId: j['paymentId'] as String?,
-        createdAt: j['createdAt'] != null
-            ? (j['createdAt'] as Timestamp).toDate()
-            : DateTime.now(),
-        updatedAt: j['updatedAt'] != null
-            ? (j['updatedAt'] as Timestamp).toDate()
-            : DateTime.now(),
+        createdAt: _date(j['createdAt']) ?? DateTime.now(),
+        updatedAt: _date(j['updatedAt']) ?? DateTime.now(),
         notes: j['notes'] as String?,
         flightNumber: j['flightNumber'] as String?,
         flightType: j['flightType'] as String?,
         pickupAirport: j['pickupAirport'] as String?,
-        hours: j['hours'] as int?,
-        passengerCount: j['passengerCount'] as int? ?? 1,
-        luggageCount: j['luggageCount'] as int? ?? 0,
+        hours: (j['hours'] as num?)?.toInt(),
+        passengerCount: (j['passengerCount'] as num?)?.toInt() ?? 1,
+        luggageCount: (j['luggageCount'] as num?)?.toInt() ?? 0,
         pricingReviewReason: (j['pricingReview'] as Map?)?['reason'] as String?,
         settlement: BookingSettlement.fromJson(j['settlement']),
+        driverName: j['driverName'] as String?,
+        driverPhone: j['driverPhone'] as String?,
+        driverPhotoUrl: j['driverPhotoUrl'] as String?,
+        vehicleLabel: j['vehicleLabel'] as String?,
+        vehiclePlate: j['vehiclePlate'] as String?,
+        cancelledBy: j['cancelledBy'] as String?,
+        cancellationReason: j['cancellationReason'] as String?,
+        riderRating: (j['riderRating'] as num?)?.toInt(),
+        paymentMethod: j['paymentMethod'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -430,6 +485,7 @@ class Booking {
         'hours': hours,
         'passengerCount': passengerCount,
         'luggageCount': luggageCount,
+        if (paymentMethod != null) 'paymentMethod': paymentMethod,
       };
 
   Booking copyWith({
@@ -463,6 +519,15 @@ class Booking {
         luggageCount: luggageCount,
         pricingReviewReason: pricingReviewReason,
         settlement: settlement,
+        driverName: driverName,
+        driverPhone: driverPhone,
+        driverPhotoUrl: driverPhotoUrl,
+        vehicleLabel: vehicleLabel,
+        vehiclePlate: vehiclePlate,
+        cancelledBy: cancelledBy,
+        cancellationReason: cancellationReason,
+        riderRating: riderRating,
+        paymentMethod: paymentMethod,
       );
 }
 

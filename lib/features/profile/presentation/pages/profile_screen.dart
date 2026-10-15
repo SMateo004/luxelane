@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../../app/sign_out.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
@@ -240,8 +241,7 @@ class _ProfileBody extends StatelessWidget {
           const SizedBox(height: LuxSpacing.xl),
           LuxOutlinedButton(
             label: 'Cerrar sesión',
-            onPressed: () =>
-                context.read<AuthBloc>().add(const LogoutRequested()),
+            onPressed: () => signOut(context),
           ),
           const SizedBox(height: LuxSpacing.md),
           const Center(

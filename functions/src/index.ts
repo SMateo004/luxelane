@@ -9,6 +9,7 @@ import { checkBookingPrice, DEFAULT_FARES, fareId, FareRule } from './pricing';
 import { computeSettlement, planBackfill, Settlement } from './settlement';
 import { rankCandidates } from './assignment';
 import { fromCents, toCents } from './money';
+import { driverBookkeeping, driverSnapshot, isExpiredPending, isRecentlySeen, riderMessage } from './lifecycle';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -30,7 +31,10 @@ type PaymentStatus = 'pending' | 'captured' | 'refunded' | 'failed';
 
 interface BookingDoc {
   riderId: string;
-  origin?: { lat?: number; lng?: number };
+  // La app guarda las coordenadas como GeoPoint en `coordinates`.
+  origin?: { coordinates?: admin.firestore.GeoPoint; lat?: number; lng?: number };
+  scheduledAt?: admin.firestore.Timestamp;
+  cancelledBy?: string;
   driverId?: string;
   status: BookingStatus;
   // La app guarda la clase en `class`; `vehicleClass` es el nombre antiguo.
@@ -369,30 +373,80 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
 export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', async (event) => {
   const before = event.data?.before.data() as BookingDoc | undefined;
   const after = event.data?.after.data() as BookingDoc | undefined;
+  const bookingId = event.params.bookingId;
 
   if (!before || !after || before.status === after.status) return;
 
   logger.info('onBookingStatusChanged', 'status changed', {
-    bookingId: event.params.bookingId,
+    bookingId,
     from: before.status,
     to: after.status,
   });
 
-  const statusMessages: Partial<Record<BookingStatus, string>> = {
-    confirmed: 'Tu chófer ha sido asignado.',
-    driver_arriving: 'Tu chófer está en camino.',
-    driver_arrived: 'Tu chófer te espera en el punto de recogida.',
-    in_progress: 'Tu trayecto ha comenzado.',
-    completed: 'Has llegado. Gracias por viajar con Luxelane.',
-    cancelled: 'Tu reserva ha sido cancelada.',
-  };
+  const now = admin.firestore.Timestamp.now();
 
-  const message = statusMessages[after.status];
-  if (!message) return;
+  // 1. Chófer: libre al terminar o cancelar; suma el viaje al completar.
+  const book = driverBookkeeping(before, after);
+  if (book) {
+    await db.collection('driverProfiles').doc(book.driverId).set(
+      {
+        isAvailable: true,
+        ...(book.countRide ? { totalRides: admin.firestore.FieldValue.increment(1) } : {}),
+      },
+      { merge: true },
+    );
+  }
 
+  // 2. Registro del trayecto (rides/{bookingId}): lo escribe solo el servidor.
+  const rideRef = db.collection('rides').doc(bookingId);
+  if (after.status === 'in_progress' && after.driverId) {
+    await rideRef.set(
+      { bookingId, riderId: after.riderId, driverId: after.driverId, startedAt: now },
+      { merge: true },
+    );
+  } else if (after.status === 'completed' && after.driverId) {
+    await rideRef.set(
+      { bookingId, riderId: after.riderId, driverId: after.driverId, completedAt: now },
+      { merge: true },
+    );
+  }
+
+  // 3. Aviso al pasajero: push y bandeja de notificaciones de la app.
+  const msg = riderMessage(after.status, after.cancelledBy);
+  if (!msg) return;
+  await db.collection('users').doc(after.riderId).collection('notifications').add({
+    userId: after.riderId,
+    title: msg.title,
+    body: msg.body,
+    type: msg.type,
+    bookingId,
+    isRead: false,
+    createdAt: now,
+  });
   const tokens = await getUserTokens(after.riderId);
-  await sendPush(tokens, 'Luxelane', message);
+  await sendPush(tokens, msg.title, msg.body);
 });
+
+// ---------------------------------------------------------------------------
+// syncBookingDriver  (onUpdate /bookings/{bookingId})
+// Copia en la reserva el nombre, teléfono y vehículo del chófer asignado: el
+// pasajero no puede leer /users de otros, y así ve a su chófer.
+// ---------------------------------------------------------------------------
+
+export const syncBookingDriver = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const before = event.data?.before.data() as BookingDoc | undefined;
+  const after = event.data?.after.data() as BookingDoc | undefined;
+  if (!after || !after.driverId || before?.driverId === after.driverId) return;
+
+  const [userSnap, vehicleSnap] = await Promise.all([
+    db.collection('users').doc(after.driverId).get(),
+    db.collection('vehicles').doc(`v_${after.driverId}`).get(),
+  ]);
+  await event.data!.after.ref.update(
+    driverSnapshot(userSnap.data() as never, vehicleSnap.data() as never),
+  );
+});
+
 
 // ---------------------------------------------------------------------------
 // settleBooking  (onUpdate /bookings/{bookingId})
@@ -481,20 +535,17 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
   if (!before || !after) return;
   if (before.completedAt || !after.completedAt) return;
 
+  // El registro lo crea onBookingStatusChanged cuando la reserva ya está
+  // completada; solo un cierre hecho desde el trayecto (admin) completa aquí
+  // la reserva. La contabilidad del chófer la hace onBookingStatusChanged.
+  const bookingRef = db.collection('bookings').doc(after.bookingId);
+  const booking = (await bookingRef.get()).data() as BookingDoc | undefined;
+  if (booking?.status !== 'in_progress') return;
+
   logger.info('onRideCompleted', 'ride completed', { rideId: event.params.rideId });
-
-  await db.collection('bookings').doc(after.bookingId).update({ status: 'completed' as BookingStatus, updatedAt: admin.firestore.Timestamp.now() });
-
-  const driverRef = db.collection('driverProfiles').doc(after.driverId);
-  await db.runTransaction(async (tx) => {
-    const driverSnap = await tx.get(driverRef);
-    const current = driverSnap.data() ?? {};
-    tx.update(driverRef, {
-      totalRides: (current.totalRides ?? 0) + 1,
-      isAvailable: true,
-    });
-  });
+  await bookingRef.update({ status: 'completed' as BookingStatus, updatedAt: admin.firestore.Timestamp.now() });
 });
+
 
 // ---------------------------------------------------------------------------
 // assignNearestDriver  (HTTPS Callable)
@@ -532,9 +583,13 @@ export const assignNearestDriver = onCall(async (req) => {
   }
 
   const profiles = await db.getAll(...driverIds.map((id) => db.collection('driverProfiles').doc(id)));
+  const nowMs = Date.now();
   const ranked = rankCandidates(
     profiles
       .filter((p) => p.exists)
+      .filter((p) =>
+        isRecentlySeen((p.data()!.lastSeenAt as admin.firestore.Timestamp | undefined)?.toMillis(), nowMs),
+      )
       .map((p) => {
         const d = p.data()!;
         const gp = d.currentLocation as admin.firestore.GeoPoint | undefined;
@@ -545,9 +600,11 @@ export const assignNearestDriver = onCall(async (req) => {
           location: gp ? { lat: gp.latitude, lng: gp.longitude } : null,
         };
       }),
-    booking.origin?.lat != null && booking.origin?.lng != null
-      ? { lat: booking.origin.lat, lng: booking.origin.lng }
-      : null,
+    booking.origin?.coordinates
+      ? { lat: booking.origin.coordinates.latitude, lng: booking.origin.coordinates.longitude }
+      : booking.origin?.lat != null && booking.origin?.lng != null
+        ? { lat: booking.origin.lat, lng: booking.origin.lng }
+        : null,
   );
 
   // Del más cercano al más lejano; la transacción evita asignar una reserva
@@ -555,9 +612,15 @@ export const assignNearestDriver = onCall(async (req) => {
   for (const driverId of ranked) {
     const driverRef = db.collection('driverProfiles').doc(driverId);
     const outcome = await db.runTransaction(async (tx) => {
-      const [b, d] = await Promise.all([tx.get(bookingRef), tx.get(driverRef)]);
+      const [b, d, u] = await Promise.all([
+        tx.get(bookingRef),
+        tx.get(driverRef),
+        tx.get(db.collection('users').doc(driverId)),
+      ]);
       if ((b.data() as BookingDoc | undefined)?.status !== 'pending') return 'taken';
       if (!d.data()?.isAvailable) return 'busy';
+      // Cuenta bloqueada por un administrador: no recibe viajes.
+      if (u.data()?.isActive === false || u.data()?.role !== 'driver') return 'busy';
       tx.update(bookingRef, {
         driverId,
         status: 'confirmed' as BookingStatus,
@@ -591,7 +654,6 @@ export const acceptBooking = onCall(async (req) => {
   const bookingRef = db.collection('bookings').doc(bookingId);
   const driverRef  = db.collection('driverProfiles').doc(driverId);
 
-  let riderId = '';
 
   try {
     await db.runTransaction(async (tx) => {
@@ -605,9 +667,21 @@ export const acceptBooking = onCall(async (req) => {
       if (booking.status !== 'pending') throw new Error('ALREADY_TAKEN');
 
       if (!driverSnap.exists) throw err.notFound('Driver profile not found');
+      // Solo un chófer verificado, activo y conectado (no en otro viaje).
+      const userSnap = await tx.get(db.collection('users').doc(driverId));
+      const user = userSnap.data();
+      if (user?.role !== 'driver' || user?.isActive === false) throw new Error('NOT_ALLOWED');
+      if (driverSnap.data()?.documentsVerified !== true) throw new Error('NOT_VERIFIED');
       if (!driverSnap.data()?.isAvailable) throw new Error('DRIVER_BUSY');
-
-      riderId = booking.riderId;
+      // Como Uber: solo se aceptan viajes de la clase del vehículo del chófer.
+      const vehicleSnap = await tx.get(
+        db.collection('vehicles').where('driverId', '==', driverId).limit(1),
+      );
+      const vehicle = vehicleSnap.docs[0]?.data();
+      if (!vehicle || vehicle.isActive === false) throw new Error('NOT_ALLOWED');
+      const wanted = booking.class ?? booking.vehicleClass ?? 'business';
+      const has = vehicle.class ?? vehicle.vehicleClass ?? 'business';
+      if (wanted !== has) throw new Error('WRONG_CLASS');
 
       tx.update(bookingRef, {
         driverId,
@@ -617,11 +691,7 @@ export const acceptBooking = onCall(async (req) => {
       tx.update(driverRef, { isAvailable: false });
     });
 
-    // Notify rider their driver is confirmed
-    if (riderId) {
-      const tokens = await getUserTokens(riderId);
-      await sendPush(tokens, 'Chófer asignado', 'Tu chófer está en camino.');
-    }
+    // El aviso al pasajero lo envía onBookingStatusChanged (confirmed).
 
     logger.info('acceptBooking', 'success', { bookingId, driverId });
     return { accepted: true };
@@ -632,6 +702,15 @@ export const acceptBooking = onCall(async (req) => {
     if (e.message === 'DRIVER_BUSY') {
       return { accepted: false, reason: 'driver_busy' };
     }
+    if (e.message === 'NOT_VERIFIED') {
+      return { accepted: false, reason: 'not_verified' };
+    }
+    if (e.message === 'WRONG_CLASS') {
+      return { accepted: false, reason: 'wrong_class' };
+    }
+    if (e.message === 'NOT_ALLOWED') {
+      return { accepted: false, reason: 'not_allowed' };
+    }
     logger.error('acceptBooking', 'error', { error: String(e) });
     throw e;
   }
@@ -641,27 +720,44 @@ export const acceptBooking = onCall(async (req) => {
 // scheduledCleanup  (daily)
 // ---------------------------------------------------------------------------
 
-export const scheduledCleanup = onSchedule('every 24 hours', async () => {
+export const scheduledCleanup = onSchedule('every 1 hours', async () => {
   logger.info('scheduledCleanup', 'start');
 
-  const cutoff = new Date(Date.now() - 30 * 60 * 1000);
+  // Pendientes cuya hora de recogida ya pasó sin chófer. Las programadas
+  // para el futuro no se tocan (antes se filtraba por createdAt y se
+  // cancelaban reservas de mañana).
+  const nowMs = Date.now();
   const staleSnap = await db
     .collection('bookings')
     .where('status', '==', 'pending')
-    .where('createdAt', '<', admin.firestore.Timestamp.fromDate(cutoff))
+    .where('scheduledAt', '<', admin.firestore.Timestamp.fromMillis(nowMs - 30 * 60 * 1000))
+    .limit(450)
     .get();
 
+  const expired = staleSnap.docs.filter((d) =>
+    isExpiredPending(
+      {
+        status: d.data().status,
+        scheduledAtMs: (d.data().scheduledAt as admin.firestore.Timestamp | undefined)?.toMillis(),
+      },
+      nowMs,
+    ),
+  );
+  if (!expired.length) return;
+
   const batch = db.batch();
-  staleSnap.docs.forEach((doc) => {
-    batch.update(doc.ref, {
+  for (const d of expired) {
+    batch.update(d.ref, {
       status: 'cancelled' as BookingStatus,
+      cancelledBy: 'system',
+      cancellationReason: 'Sin chófer disponible a la hora de recogida',
       updatedAt: admin.firestore.Timestamp.now(),
     });
-  });
-
+  }
   await batch.commit();
-  logger.info('scheduledCleanup', 'done', { cancelled: staleSnap.size });
+  logger.info('scheduledCleanup', 'done', { cancelled: expired.length });
 });
+
 
 // ---------------------------------------------------------------------------
 // sendRideReceipt  (onUpdate /payments/{paymentId})

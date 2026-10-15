@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
@@ -7,10 +9,31 @@ import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
 class BookingRepositoryImpl implements BookingRepository {
-  BookingRepositoryImpl({required FirebaseFirestore firestore})
-      : _db = firestore;
+  BookingRepositoryImpl({
+    required FirebaseFirestore firestore,
+    FirebaseFunctions? functions,
+  })  : _db = firestore,
+        _functionsOverride = functions;
 
   final FirebaseFirestore _db;
+  final FirebaseFunctions? _functionsOverride;
+  FirebaseFunctions get _fn => _functionsOverride ?? FirebaseFunctions.instance;
+
+  /// Convierte documentos en reservas saltando los mal formados: una reserva
+  /// corrupta no debe dejar sin lista al chófer ni al pasajero.
+  static List<Booking> _parse(
+      Iterable<QueryDocumentSnapshot<Map<String, dynamic>>> docs) {
+    final out = <Booking>[];
+    for (final d in docs) {
+      try {
+        out.add(Booking.fromJson({...d.data(), 'id': d.id}));
+      } catch (e) {
+        debugPrint('[Bookings] documento ${d.id} ignorado: $e');
+      }
+    }
+    return out;
+  }
+
   final _uuid = const Uuid();
 
   CollectionReference<Map<String, dynamic>> get _col =>
@@ -45,9 +68,7 @@ class BookingRepositoryImpl implements BookingRepository {
   ) async {
     try {
       final snap = await _col.where('riderId', isEqualTo: riderId).get();
-      final list = snap.docs
-          .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-          .toList();
+      final list = _parse(snap.docs);
 
       // Manual sort to avoid index requirement
       list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -65,9 +86,7 @@ class BookingRepositoryImpl implements BookingRepository {
           .where('status', isEqualTo: BookingStatus.pending.label)
           .orderBy('scheduledAt')
           .get();
-      final bookings = snap.docs
-          .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-          .toList();
+      final bookings = _parse(snap.docs);
       return Right(bookings);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -75,12 +94,13 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
-  Stream<List<Booking>> streamPendingBookings() => _col.snapshots().map((snap) {
-        final list = snap.docs
-            .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-            .where((b) => b.status == BookingStatus.pending)
-            .toList();
-        // Manual sort to avoid needing a composite index
+  Stream<List<Booking>> streamPendingBookings() => _col
+          // Filtrado en la consulta: las reglas solo dejan leer pendientes al
+          // chófer, y Firestore rechaza una consulta que pida más.
+          .where('status', isEqualTo: BookingStatus.pending.label)
+          .snapshots()
+          .map((snap) {
+        final list = _parse(snap.docs);
         list.sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
         return list;
       });
@@ -88,9 +108,7 @@ class BookingRepositoryImpl implements BookingRepository {
   @override
   Stream<List<Booking>> watchDriverBookings(String driverId) =>
       _col.where('driverId', isEqualTo: driverId).snapshots().map((snap) {
-        final list = snap.docs
-            .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-            .toList();
+        final list = _parse(snap.docs);
         // Manual sort by updatedAt descending
         list.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
         return list;
@@ -146,11 +164,64 @@ class BookingRepositoryImpl implements BookingRepository {
     try {
       await _col.doc(bookingId).update({
         'status': BookingStatus.cancelled.label,
+        'cancelledBy': 'rider',
         'updatedAt': Timestamp.now(),
       });
       return const Right(null);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on FirebaseException catch (e) {
+      return Left(ServerFailure(e.code == 'permission-denied'
+          ? 'Esta reserva ya no se puede cancelar: el viaje ya empezó o terminó.'
+          : 'No se pudo cancelar. Revisa tu conexión e inténtalo de nuevo.'));
+    } catch (_) {
+      return const Left(ServerFailure(
+          'No se pudo cancelar. Revisa tu conexión e inténtalo de nuevo.'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, AcceptOutcome>> acceptBooking(String bookingId) async {
+    try {
+      final res = await _fn
+          .httpsCallable('acceptBooking')
+          .call<dynamic>({'bookingId': bookingId});
+      final data = Map<String, dynamic>.from(res.data as Map);
+      if (data['accepted'] == true) return const Right(AcceptOutcome.accepted);
+      return Right(switch (data['reason']) {
+        'driver_busy' => AcceptOutcome.driverBusy,
+        'not_verified' => AcceptOutcome.notVerified,
+        'not_allowed' => AcceptOutcome.notAllowed,
+        'wrong_class' => AcceptOutcome.wrongClass,
+        _ => AcceptOutcome.alreadyTaken,
+      });
+    } on FirebaseFunctionsException catch (e) {
+      return Left(ServerFailure(e.code == 'not-found'
+          ? 'Esta solicitud ya no existe.'
+          : 'No se pudo aceptar el viaje. Revisa tu conexión.'));
+    } catch (_) {
+      return const Left(
+          ServerFailure('No se pudo aceptar el viaje. Revisa tu conexión.'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> rateBooking(
+      String bookingId, int rating) async {
+    if (rating < 1 || rating > 5) {
+      return const Left(ValidationFailure('Elige de 1 a 5 estrellas.'));
+    }
+    try {
+      await _col.doc(bookingId).update({
+        'riderRating': rating,
+        'ratedAt': Timestamp.now(),
+      });
+      return const Right(null);
+    } on FirebaseException catch (e) {
+      return Left(ServerFailure(e.code == 'permission-denied'
+          ? 'Este viaje ya fue valorado.'
+          : 'No se pudo enviar tu valoración. Inténtalo de nuevo.'));
+    } catch (_) {
+      return const Left(ServerFailure(
+          'No se pudo enviar tu valoración. Inténtalo de nuevo.'));
     }
   }
 
@@ -159,5 +230,5 @@ class BookingRepositoryImpl implements BookingRepository {
       .doc(bookingId)
       .snapshots()
       .where((s) => s.exists)
-      .map((s) => Booking.fromJson({'id': s.id, ...s.data()!}));
+      .map((s) => Booking.fromJson({...s.data()!, 'id': s.id}));
 }

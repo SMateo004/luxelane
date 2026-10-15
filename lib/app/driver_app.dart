@@ -38,6 +38,10 @@ class _DriverAppState extends State<DriverApp> {
         _notificationBloc.add(
           NotificationWatchStarted(userId: state.user.id),
         );
+      } else if (state is AuthUnauthenticated &&
+          _driverBloc.state is! DriverInitial) {
+        // Sesión cerrada o expirada: nada de escuchas ni ubicación.
+        _driverBloc.add(const DriverSignedOut());
       }
     });
   }

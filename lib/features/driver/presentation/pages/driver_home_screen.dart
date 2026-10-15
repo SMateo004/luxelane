@@ -6,10 +6,12 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:map_launcher/map_launcher.dart' as ml;
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../app/sign_out.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/services/maps_service.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -24,11 +26,22 @@ class DriverHomeScreen extends StatefulWidget {
 }
 
 class _DriverHomeScreenState extends State<DriverHomeScreen> {
-  /// Tracks which booking ID we're currently showing a sheet for — avoids duplicates.
+  /// Solicitud que muestra la hoja abierta (evita duplicados) y el
+  /// navegador de esa hoja, para cerrarla aunque el usuario esté en otra
+  /// ruta o haya otro diálogo encima.
   String? _activeSheetId;
+  NavigatorState? _sheetNav;
+
+  void _closeSheet() {
+    final nav = _sheetNav;
+    _sheetNav = null;
+    _activeSheetId = null;
+    if (nav != null && nav.mounted && nav.canPop()) nav.pop();
+  }
 
   void _maybeShowRequest(BuildContext context, Booking booking) {
     if (_activeSheetId == booking.id) return;
+    if (_activeSheetId != null) _closeSheet();
     _activeSheetId = booking.id;
 
     showModalBottomSheet<void>(
@@ -37,28 +50,40 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       isDismissible: false,
       enableDrag: false,
       backgroundColor: Colors.transparent,
-      builder: (_) => _IncomingRequestSheet(
-        booking: booking,
-        onAccept: () {
-          final auth = context.read<AuthBloc>().state;
-          if (auth is AuthAuthenticated) {
-            context.read<DriverBloc>().add(DriverRequestAccepted(
-                  bookingId: booking.id,
-                  driverId: auth.user.id,
-                ));
-          }
-          if (mounted) Navigator.of(context).pop();
-          _activeSheetId = null;
-        },
-        onDecline: () {
-          context.read<DriverBloc>().add(
-                DriverRequestDeclined(bookingId: booking.id),
-              );
-          if (mounted) Navigator.of(context).pop();
-          _activeSheetId = null;
-        },
-      ),
-    ).then((_) => _activeSheetId = null);
+      builder: (sheetContext) {
+        _sheetNav = Navigator.of(sheetContext);
+        return _IncomingRequestSheet(
+          booking: booking,
+          onAccept: () {
+            final auth = context.read<AuthBloc>().state;
+            if (auth is AuthAuthenticated) {
+              context.read<DriverBloc>().add(DriverRequestAccepted(
+                    bookingId: booking.id,
+                    driverId: auth.user.id,
+                  ));
+            }
+            _closeSheet();
+          },
+          onDecline: () {
+            context
+                .read<DriverBloc>()
+                .add(DriverRequestDeclined(bookingId: booking.id));
+            _closeSheet();
+          },
+        );
+      },
+    ).then((_) {
+      if (_activeSheetId == booking.id) {
+        _activeSheetId = null;
+        _sheetNav = null;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _closeSheet();
+    super.dispose();
   }
 
   @override
@@ -66,26 +91,35 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
     return BlocConsumer<DriverBloc, DriverState>(
       listenWhen: (prev, curr) {
         if (curr is DriverOnboardingRequired) return true;
-        if (curr is! DriverLoaded) return false;
-        final prevId = prev is DriverLoaded ? prev.currentRequest?.id : null;
-        final currId = curr.currentRequest?.id;
-        final prevAvail = prev is DriverLoaded ? prev.isAvailable : false;
-        return prevId != currId || curr.isAvailable != prevAvail;
+        if (curr is! DriverLoaded) return _activeSheetId != null;
+        final p = prev is DriverLoaded ? prev : null;
+        return p?.currentRequest?.id != curr.currentRequest?.id ||
+            p?.noticeSeq != curr.noticeSeq;
       },
       listener: (context, state) {
         if (state is DriverOnboardingRequired) {
           context.go('/driver/onboarding');
           return;
         }
-        if (state is DriverLoaded) {
-          final req = state.currentRequest;
-          if (req != null && state.isAvailable) {
-            _maybeShowRequest(context, req);
-          } else if (_activeSheetId != null) {
-            // The request disappeared or driver went offline
-            if (mounted) Navigator.of(context, rootNavigator: true).pop();
-            _activeSheetId = null;
-          }
+        if (state is! DriverLoaded) {
+          _closeSheet();
+          return;
+        }
+        final req = state.currentRequest;
+        if (req != null) {
+          _maybeShowRequest(context, req);
+        } else if (_activeSheetId != null) {
+          // La tomó otro chófer, el pasajero la canceló o nos desconectamos.
+          _closeSheet();
+        }
+        final notice = state.notice;
+        if (notice != null) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(
+              content: Text(notice),
+              behavior: SnackBarBehavior.floating,
+            ));
         }
       },
       builder: (context, state) {
@@ -102,7 +136,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   const Icon(Icons.error_outline,
                       color: LuxColors.error, size: 48),
                   const SizedBox(height: 16),
-                  const Text('Error de conexión',
+                  const Text('No se pudo continuar',
                       style: LuxTypography.headlineMedium),
                   const SizedBox(height: 8),
                   Text(state.message,
@@ -119,6 +153,11 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                             .add(DriverStarted(userId: auth.user.id));
                       }
                     },
+                  ),
+                  const SizedBox(height: 12),
+                  TextButton(
+                    onPressed: () => signOut(context),
+                    child: const Text('Cerrar sesión'),
                   ),
                 ],
               ),
@@ -142,7 +181,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
             centerTitle: false,
             actions: [
               _AvailabilityToggle(
-                isAvailable: state.isAvailable,
+                isAvailable: state.isOnline,
                 isTracking: state.isTracking,
               ),
               const SizedBox(width: LuxSpacing.md),
@@ -209,7 +248,10 @@ class _IdlePanel extends StatelessWidget {
   Widget build(BuildContext context) => ListView(
         padding: const EdgeInsets.all(LuxSpacing.md),
         children: [
-          _StatusBanner(isAvailable: state.isAvailable),
+          if (!state.canWork)
+            _VerificationBanner(isActive: state.user.isActive)
+          else
+            _StatusBanner(isAvailable: state.isAvailable),
           const SizedBox(height: LuxSpacing.lg),
           const SectionHeader(title: 'Resumen de hoy'),
           const SizedBox(height: LuxSpacing.md),
@@ -218,7 +260,7 @@ class _IdlePanel extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   label: 'Completados',
-                  value: '${state.completedBookings.length}',
+                  value: '${state.completedToday.length}',
                   icon: Icons.check_circle_outline,
                 ),
               ),
@@ -226,14 +268,14 @@ class _IdlePanel extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   label: 'Ganancias netas',
-                  value: 'Bs${state.totalEarnings.toStringAsFixed(0)}',
+                  value: LuxFormat.bs(state.todayEarnings),
                   icon: Icons.attach_money,
                 ),
               ),
             ],
           ),
           const SizedBox(height: LuxSpacing.lg),
-          if (!state.isAvailable) ...[
+          if (!state.isAvailable && state.canWork) ...[
             const SectionHeader(title: 'Conectarse'),
             const SizedBox(height: LuxSpacing.md),
             LuxButton(
@@ -251,6 +293,50 @@ class _IdlePanel extends StatelessWidget {
             ),
           ],
         ],
+      );
+}
+
+// ── Verification banner ────────────────────────────────────────────────────
+
+class _VerificationBanner extends StatelessWidget {
+  const _VerificationBanner({required this.isActive});
+  final bool isActive;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.all(LuxSpacing.md),
+        decoration: BoxDecoration(
+          color: LuxColors.warning.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(LuxRadius.lg),
+          border: Border.all(color: LuxColors.warning.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isActive ? Icons.hourglass_top_rounded : Icons.block_rounded,
+              color: LuxColors.warning,
+            ),
+            const SizedBox(width: LuxSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isActive ? 'Verificación pendiente' : 'Cuenta suspendida',
+                    style: LuxTypography.titleMedium,
+                  ),
+                  Text(
+                    isActive
+                        ? 'Un administrador está revisando tus documentos. '
+                            'Podrás conectarte en cuanto te verifiquen.'
+                        : 'Contacta con soporte de Luxelane.',
+                    style: LuxTypography.caption,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       );
 }
 
@@ -441,7 +527,7 @@ class _ActiveRidePanel extends StatelessWidget {
                     BookingStatusChip(status: booking.status),
                     const Spacer(),
                     Text(
-                      '\$${booking.estimatedPrice.toStringAsFixed(0)}',
+                      LuxFormat.bs(booking.chargedAmount),
                       style: LuxTypography.headlineLarge
                           .copyWith(color: LuxColors.sapphire),
                     ),
@@ -712,7 +798,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                   const Text('Tarifa estimada', style: LuxTypography.caption),
                   const Spacer(),
                   Text(
-                    'Bs${widget.booking.estimatedPrice.toStringAsFixed(2)}',
+                    LuxFormat.bs(widget.booking.estimatedPrice),
                     style: const TextStyle(
                       fontFamily: 'Cormorant Garamond',
                       fontSize: 30,
@@ -722,6 +808,29 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                   ),
                 ],
               ),
+            ),
+            const SizedBox(height: 12),
+
+            // ── Hora y detalles ──────────────────────────────────────────
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _InfoPill(
+                  icon: Icons.schedule_rounded,
+                  text: LuxFormat.dateTime(widget.booking.scheduledAt),
+                ),
+                if (widget.booking.isHourly)
+                  _InfoPill(
+                    icon: Icons.timelapse_rounded,
+                    text: 'Por horas · ${widget.booking.hours ?? 1} h',
+                  ),
+                _InfoPill(
+                  icon: Icons.person_outline_rounded,
+                  text: '${widget.booking.passengerCount} pas. · '
+                      '${widget.booking.luggageCount} maletas',
+                ),
+              ],
             ),
             const SizedBox(height: 16),
 
@@ -900,5 +1009,28 @@ class _RouteItem extends StatelessWidget {
             ),
           ),
         ],
+      );
+}
+
+class _InfoPill extends StatelessWidget {
+  const _InfoPill({required this.icon, required this.text});
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: LuxColors.surfaceMuted,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: LuxColors.inkTertiary),
+            const SizedBox(width: 6),
+            Text(text, style: LuxTypography.caption),
+          ],
+        ),
       );
 }

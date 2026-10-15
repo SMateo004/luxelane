@@ -61,6 +61,9 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         _notificationBloc.add(
           NotificationWatchStarted(userId: state.user.id),
         );
+      } else if (state is AuthUnauthenticated &&
+          _driverBloc.state is! DriverInitial) {
+        _driverBloc.add(const DriverSignedOut());
       }
     });
   }
