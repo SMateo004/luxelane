@@ -11,19 +11,37 @@ export async function createIntent(params: {
   amount: number;
   currency: string;
   customerId: string;
-}): Promise<string> {
+  metadata: Record<string, string>;
+}): Promise<{ id: string; clientSecret: string }> {
   logger.info(FN, 'createIntent', { amount: params.amount, currency: params.currency });
 
+  // Solo tarjeta y captura manual: se retiene al reservar y se cobra al
+  // terminar el viaje.
   const intent = await stripe.paymentIntents.create({
     amount: params.amount,
     currency: params.currency,
     customer: params.customerId,
     capture_method: 'manual',
-    automatic_payment_methods: { enabled: true },
+    payment_method_types: ['card'],
+    metadata: params.metadata,
   });
 
   logger.info(FN, 'createIntent.success', { intentId: intent.id });
-  return intent.client_secret!;
+  return { id: intent.id, clientSecret: intent.client_secret! };
+}
+
+export async function retrieveIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
+  return stripe.paymentIntents.retrieve(paymentIntentId);
+}
+
+/** Libera una retención no cobrada (reserva cancelada). */
+export async function cancelIntent(paymentIntentId: string): Promise<void> {
+  logger.info(FN, 'cancelIntent', { paymentIntentId });
+  await stripe.paymentIntents.cancel(paymentIntentId);
+}
+
+export async function retrievePaymentMethod(paymentMethodId: string): Promise<Stripe.PaymentMethod> {
+  return stripe.paymentMethods.retrieve(paymentMethodId);
 }
 
 /**

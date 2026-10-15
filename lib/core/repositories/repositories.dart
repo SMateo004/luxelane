@@ -193,6 +193,16 @@ abstract class PaymentRepository {
     required String stripeCustomerId,
     required String paymentMethodId,
   });
+
+  /// Vincula una retención de tarjeta ya autorizada a la reserva; el
+  /// servidor la cobra al completar el viaje o la libera al cancelarlo.
+  Future<Either<Failure, bool>> linkBookingPayment({
+    required String bookingId,
+    required String paymentIntentId,
+  });
+
+  /// Libera una retención que no llegó a asociarse a ninguna reserva.
+  Future<void> releasePaymentHold(String paymentIntentId);
 }
 
 abstract class NotificationRepository {

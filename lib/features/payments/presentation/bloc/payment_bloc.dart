@@ -219,9 +219,14 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   }
 
   Future<void> _onAddCard(CardAdded event, Emitter<PaymentState> emit) async {
-    await _repo.addCard(
+    emit(const PaymentLoading());
+    final result = await _repo.addCard(
       stripeCustomerId: event.stripeCustomerId,
       paymentMethodId: event.paymentMethodId,
+    );
+    result.fold(
+      (f) => emit(PaymentError(f.message)),
+      (_) => emit(const CardOperationSuccess()),
     );
   }
 

@@ -13,6 +13,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/repositories/repositories.dart';
 import '../../../../core/services/maps_service.dart';
 import '../../../../core/services/pricing_catalog.dart';
 import '../../../../core/utils/service_area.dart';
@@ -72,8 +73,13 @@ class _BookingScreenState extends State<BookingScreen> {
   String _guestPhone = '';
 
   List<Map<String, dynamic>> _savedCards = [];
+
+  /// Tarjeta elegida; null = efectivo al chófer.
   String? _selectedCardId;
   bool _awaitingPaymentIntent = false;
+
+  /// Retención de tarjeta ya autorizada, pendiente de vincular a la reserva.
+  String? _pendingIntentId;
 
   // Scroll-based sticky selector
   final ScrollController _leftScrollCtrl = ScrollController();
@@ -209,12 +215,11 @@ class _BookingScreenState extends State<BookingScreen> {
 
   void _loadSavedCards() {
     final authState = context.read<AuthBloc>().state;
-    if (authState is AuthAuthenticated &&
-        authState.user.stripeCustomerId != null &&
-        authState.user.stripeCustomerId!.isNotEmpty) {
+    // Las tarjetas guardadas solo se usan en la app móvil.
+    if (!kIsWeb && authState is AuthAuthenticated) {
       context.read<PaymentBloc>().add(
             CardsLoadRequested(
-                stripeCustomerId: authState.user.stripeCustomerId!),
+                stripeCustomerId: authState.user.stripeCustomerId ?? ''),
           );
     }
   }
@@ -273,15 +278,12 @@ class _BookingScreenState extends State<BookingScreen> {
     setState(() => _loading = true);
 
     // El cobro con tarjeta guardada solo existe en la app móvil.
-    if (!kIsWeb &&
-        user.stripeCustomerId != null &&
-        user.stripeCustomerId!.isNotEmpty &&
-        _selectedCardId != null) {
+    if (!kIsWeb && _selectedCardId != null) {
       setState(() => _awaitingPaymentIntent = true);
       context.read<PaymentBloc>().add(PaymentIntentRequested(
             amount: _price,
             currency: 'bob',
-            stripeCustomerId: user.stripeCustomerId!,
+            stripeCustomerId: user.stripeCustomerId ?? '',
           ));
       return;
     }
@@ -299,6 +301,8 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
       );
+      // "pi_123_secret_abc" → "pi_123": el id de la retención autorizada.
+      _pendingIntentId = clientSecret.split('_secret_').first;
       _createBooking(paymentMethod: 'card');
     } on StripeException catch (e) {
       if (mounted) {
@@ -391,6 +395,34 @@ class _BookingScreenState extends State<BookingScreen> {
         ));
   }
 
+  /// Con tarjeta, la retención se asocia a la reserva antes de seguir; si
+  /// no se puede, la reserva se cancela (nunca un viaje "con tarjeta" que el
+  /// servidor no pueda cobrar).
+  Future<void> _onBookingCreated(Booking booking) async {
+    final hold = _pendingIntentId;
+    _pendingIntentId = null;
+    if (hold != null) {
+      final linked = await sl<PaymentRepository>()
+          .linkBookingPayment(bookingId: booking.id, paymentIntentId: hold);
+      if (!mounted) return;
+      if (!linked.getOrElse(() => false)) {
+        await sl<BookingRepository>().cancelBooking(booking.id);
+        await sl<PaymentRepository>().releasePaymentHold(hold);
+        if (!mounted) return;
+        setState(() => _loading = false);
+        showLuxSnackbar(
+            context,
+            'No pudimos confirmar el pago con tarjeta. No se te cobró nada; '
+            'inténtalo de nuevo o paga en efectivo.',
+            isError: true);
+        return;
+      }
+    }
+    if (!mounted) return;
+    setState(() => _loading = false);
+    context.go('/ride/${booking.id}');
+  }
+
   void _selectVehicle(VehicleClass vc) {
     setState(() {
       _selected = vc;
@@ -435,12 +467,12 @@ class _BookingScreenState extends State<BookingScreen> {
     return MultiBlocListener(
       listeners: [
         BlocListener<BookingBloc, BookingState>(listener: (ctx, state) {
-          if (state is BookingCreated) {
-            setState(() => _loading = false);
-            ctx.go('/ride/${state.booking.id}');
-          }
+          if (state is BookingCreated) _onBookingCreated(state.booking);
           if (state is BookingError) {
             setState(() => _loading = false);
+            final hold = _pendingIntentId;
+            _pendingIntentId = null;
+            if (hold != null) sl<PaymentRepository>().releasePaymentHold(hold);
             showLuxSnackbar(ctx, state.message, isError: true);
           }
         }),
@@ -1429,12 +1461,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ]),
         ),
         const SizedBox(height: 20),
-        if (_savedCards.isEmpty)
-          _OutlinedBtn(
-              label: 'Agregar método de pago',
-              icon: Icons.add_card_outlined,
-              onPressed: () => context.push('/payment/add'))
-        else ...[
+        ...[
           const Text('MÉTODO DE PAGO',
               style: TextStyle(
                   fontFamily: kSans,
@@ -1443,52 +1470,69 @@ class _BookingScreenState extends State<BookingScreen> {
                   color: _kTextTertiary,
                   letterSpacing: 2.0)),
           const SizedBox(height: 12),
-          ..._savedCards.map((card) {
-            final id = card['id'] as String;
-            final brand = _cap(card['brand'] as String? ?? 'Card');
-            final last4 = card['last4'] as String? ?? '****';
-            final isSel = _selectedCardId == id;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: GestureDetector(
-                onTap: () => setState(() => _selectedCardId = id),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 160),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: _kCardBg,
-                    borderRadius: BorderRadius.zero,
-                    border: Border.all(
-                        color: isSel ? LuxColors.sapphire : _kBorder,
-                        width: isSel ? 1.5 : 1),
+          _PayOption(
+            icon: Icons.payments_outlined,
+            label: 'Efectivo al chófer',
+            selected: _selectedCardId == null,
+            onTap: () => setState(() => _selectedCardId = null),
+          ),
+          if (!kIsWeb)
+            ..._savedCards.map((card) {
+              final id = card['id'] as String;
+              final brand = _cap(card['brand'] as String? ?? 'Card');
+              final last4 = card['last4'] as String? ?? '****';
+              final isSel = _selectedCardId == id;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: GestureDetector(
+                  onTap: () => setState(() => _selectedCardId = id),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 160),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: _kCardBg,
+                      borderRadius: BorderRadius.zero,
+                      border: Border.all(
+                          color: isSel ? LuxColors.sapphire : _kBorder,
+                          width: isSel ? 1.5 : 1),
+                    ),
+                    child: Row(children: [
+                      Icon(Icons.credit_card_outlined,
+                          size: 20,
+                          color: isSel ? LuxColors.sapphire : _kTextSub),
+                      const SizedBox(width: 12),
+                      Expanded(
+                          child: Text('$brand •••• $last4',
+                              style: const TextStyle(
+                                  fontFamily: kSans,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: _kTextPrimary))),
+                      if (isSel)
+                        Container(
+                          width: 18,
+                          height: 18,
+                          decoration: const BoxDecoration(
+                              color: LuxColors.sapphire,
+                              shape: BoxShape.circle),
+                          child: const Icon(Icons.check,
+                              size: 11, color: Colors.white),
+                        ),
+                    ]),
                   ),
-                  child: Row(children: [
-                    Icon(Icons.credit_card_outlined,
-                        size: 20,
-                        color: isSel ? LuxColors.sapphire : _kTextSub),
-                    const SizedBox(width: 12),
-                    Expanded(
-                        child: Text('$brand •••• $last4',
-                            style: const TextStyle(
-                                fontFamily: kSans,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: _kTextPrimary))),
-                    if (isSel)
-                      Container(
-                        width: 18,
-                        height: 18,
-                        decoration: const BoxDecoration(
-                            color: LuxColors.sapphire, shape: BoxShape.circle),
-                        child: const Icon(Icons.check,
-                            size: 11, color: Colors.white),
-                      ),
-                  ]),
                 ),
-              ),
-            );
-          }),
+              );
+            }),
+          if (!kIsWeb)
+            _OutlinedBtn(
+                label: 'Agregar tarjeta',
+                icon: Icons.add_card_outlined,
+                onPressed: () => context.push('/payment/add'))
+          else
+            const Text('El pago con tarjeta está disponible en la app móvil.',
+                style: TextStyle(
+                    fontFamily: kSans, fontSize: 12, color: _kTextTertiary)),
         ],
         const SizedBox(height: 16),
         _GuaranteeRow(
@@ -3223,4 +3267,50 @@ class _SummaryAddressRow extends StatelessWidget {
       ],
     );
   }
+}
+
+class _PayOption extends StatelessWidget {
+  const _PayOption({
+    required this.icon,
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+  final IconData icon;
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: GestureDetector(
+          onTap: onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: _kCardBg,
+              border: Border.all(
+                  color: selected ? LuxColors.sapphire : _kBorder,
+                  width: selected ? 1.5 : 1),
+            ),
+            child: Row(children: [
+              Icon(icon,
+                  size: 20, color: selected ? LuxColors.sapphire : _kTextSub),
+              const SizedBox(width: 12),
+              Expanded(
+                  child: Text(label,
+                      style: const TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: _kTextPrimary))),
+              if (selected)
+                const Icon(Icons.check_circle,
+                    size: 18, color: LuxColors.sapphire),
+            ]),
+          ),
+        ),
+      );
 }

@@ -28,11 +28,6 @@ class _AddCardScreenState extends State<AddCardScreen> {
     if (authState is! AuthAuthenticated) return;
 
     final user = authState.user;
-    if (user.stripeCustomerId == null || user.stripeCustomerId!.isEmpty) {
-      showLuxSnackbar(context, 'La cuenta no está configurada para pagos',
-          isError: true);
-      return;
-    }
 
     setState(() => _loading = true);
 
@@ -47,14 +42,25 @@ class _AddCardScreenState extends State<AddCardScreen> {
 
       context.read<PaymentBloc>().add(
             CardAdded(
-              stripeCustomerId: user.stripeCustomerId!,
+              stripeCustomerId: user.stripeCustomerId ?? '',
               paymentMethodId: pm.id,
             ),
           );
-    } catch (e) {
+    } on StripeException catch (e) {
       if (mounted) {
         setState(() => _loading = false);
-        showLuxSnackbar(context, e.toString(), isError: true);
+        showLuxSnackbar(
+            context,
+            e.error.localizedMessage ??
+                'Revisa los datos de la tarjeta e inténtalo de nuevo.',
+            isError: true);
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _loading = false);
+        showLuxSnackbar(
+            context, 'No pudimos guardar la tarjeta. Inténtalo de nuevo.',
+            isError: true);
       }
     }
   }

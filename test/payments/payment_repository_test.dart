@@ -61,6 +61,16 @@ void main() {
           .captured
           .single as Map;
       expect(sent['amount'], 12556);
+      // El cliente Stripe lo decide el servidor, no la app.
+      expect(sent.containsKey('customerId'), isFalse);
+    });
+
+    test('linkBookingPayment informa si quedó vinculado', () async {
+      stubCall(
+          'linkBookingPayment', {'linked': false, 'reason': 'amount_too_low'});
+      final r = await repo.linkBookingPayment(
+          bookingId: 'b-1', paymentIntentId: 'pi_1');
+      expect(r.getOrElse(() => true), isFalse);
     });
 
     test('capturePayment delega en la Cloud Function sin enviar el importe',
@@ -81,7 +91,7 @@ void main() {
       final sent = verify(() => callable.call<dynamic>(captureAny()))
           .captured
           .single as Map;
-      expect(sent, {'bookingId': 'b-1', 'stripePaymentIntentId': 'pi_1'});
+      expect(sent, {'bookingId': 'b-1'});
       final payment = r.getOrElse(() => throw StateError('falló'));
       expect(payment.id, 'pay-1');
       expect(payment.amount, 12550);

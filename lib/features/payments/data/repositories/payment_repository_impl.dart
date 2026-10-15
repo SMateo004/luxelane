@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
@@ -26,14 +27,13 @@ class PaymentRepositoryImpl implements PaymentRepository {
     required String stripeCustomerId,
   }) async {
     try {
+      // El servidor usa el cliente Stripe de la cuenta y cobra en Bs.
       final result = await _fn.httpsCallable('createPaymentIntent').call({
         'amount': Payment.toCents(amount),
-        'currency': currency,
-        'customerId': stripeCustomerId,
       });
       return Right(result.data['clientSecret'] as String);
     } catch (e) {
-      return Left(PaymentFailure(e.toString()));
+      return Left(_failure(e, 'No pudimos preparar el pago con tarjeta.'));
     }
   }
 
@@ -49,9 +49,10 @@ class PaymentRepositoryImpl implements PaymentRepository {
     // que manda el cliente) y guarda el pago en centavos. Las reglas no
     // permiten a un pasajero crear pagos directamente.
     try {
+      // Reintento manual del admin: el servidor usa la retención vinculada
+      // a la reserva (normalmente se cobra solo al completar el viaje).
       final result = await _fn.httpsCallable('capturePayment').call({
         'bookingId': bookingId,
-        'stripePaymentIntentId': stripePaymentIntentId,
       });
       final data = Map<String, dynamic>.from(result.data as Map);
       return Right(Payment(
@@ -118,13 +119,13 @@ class PaymentRepositoryImpl implements PaymentRepository {
     String stripeCustomerId,
   ) async {
     try {
-      final result = await _fn.httpsCallable('listPaymentMethods').call({
-        'customerId': stripeCustomerId,
-      });
-      final cards = List<Map<String, dynamic>>.from(result.data['cards'] ?? []);
+      final result = await _fn.httpsCallable('listPaymentMethods').call({});
+      final cards = (result.data['cards'] as List? ?? const [])
+          .map((c) => Map<String, dynamic>.from(c as Map))
+          .toList();
       return Right(cards);
     } catch (e) {
-      return Left(PaymentFailure(e.toString()));
+      return Left(_failure(e, 'No pudimos cargar tus tarjetas.'));
     }
   }
 
@@ -135,12 +136,11 @@ class PaymentRepositoryImpl implements PaymentRepository {
   }) async {
     try {
       await _fn.httpsCallable('attachPaymentMethod').call({
-        'customerId': stripeCustomerId,
         'paymentMethodId': paymentMethodId,
       });
       return const Right(null);
     } catch (e) {
-      return Left(PaymentFailure(e.toString()));
+      return Left(_failure(e, 'No pudimos guardar la tarjeta.'));
     }
   }
 
@@ -155,7 +155,44 @@ class PaymentRepositoryImpl implements PaymentRepository {
       });
       return const Right(null);
     } catch (e) {
-      return Left(PaymentFailure(e.toString()));
+      return Left(_failure(e, 'No pudimos quitar la tarjeta.'));
     }
+  }
+
+  @override
+  Future<Either<Failure, bool>> linkBookingPayment({
+    required String bookingId,
+    required String paymentIntentId,
+  }) async {
+    try {
+      final result = await _fn.httpsCallable('linkBookingPayment').call({
+        'bookingId': bookingId,
+        'paymentIntentId': paymentIntentId,
+      });
+      return Right((result.data as Map?)?['linked'] == true);
+    } catch (e) {
+      return Left(_failure(e, 'No pudimos asociar el pago a tu reserva.'));
+    }
+  }
+
+  @override
+  Future<void> releasePaymentHold(String paymentIntentId) async {
+    try {
+      await _fn
+          .httpsCallable('releasePaymentHold')
+          .call({'paymentIntentId': paymentIntentId});
+    } catch (e) {
+      // Si falla, Stripe la libera sola a los 7 días.
+      debugPrint('[Payments] liberar retención: $e');
+    }
+  }
+
+  /// Mensaje en español: nunca el error técnico de Firebase o Stripe.
+  static Failure _failure(Object e, String fallback) {
+    debugPrint('[Payments] $e');
+    if (e is FirebaseFunctionsException && e.code == 'unavailable') {
+      return const PaymentFailure('Sin conexión. Inténtalo de nuevo.');
+    }
+    return PaymentFailure(fallback);
   }
 }
