@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../business/data/business_lead_repository.dart';
 import '../../domain/admin_finance.dart';
 import '../../domain/admin_operations.dart';
 import '../bloc/admin_bloc.dart';
@@ -209,6 +211,7 @@ enum AdminSection {
   drivers,
   vehicles,
   users,
+  business,
   audit,
   settings,
 }
@@ -1617,5 +1620,80 @@ class _SettingTile extends StatelessWidget {
             ),
           ],
         ),
+      );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB: Empresas — solicitudes del formulario "Para empresas"
+// ─────────────────────────────────────────────────────────────────────────────
+
+class BusinessLeadsTab extends StatelessWidget {
+  const BusinessLeadsTab({super.key});
+
+  @override
+  Widget build(BuildContext context) => StreamBuilder<List<BusinessLead>>(
+        stream: sl<BusinessLeadRepository>().watchAll(),
+        builder: (context, snap) {
+          if (snap.hasError) {
+            return const AdminEmpty(
+                icon: Icons.cloud_off_rounded,
+                title: 'No se pudieron cargar las solicitudes');
+          }
+          if (!snap.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final leads = snap.data!;
+          if (leads.isEmpty) {
+            return const AdminEmpty(
+                icon: Icons.business_outlined,
+                title: 'Aún no hay solicitudes de empresas');
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.all(LuxSpacing.md),
+            itemCount: leads.length,
+            separatorBuilder: (_, __) => const SizedBox(height: LuxSpacing.sm),
+            itemBuilder: (context, i) {
+              final l = leads[i];
+              return LuxCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      Expanded(
+                          child: Text(l.company,
+                              style: LuxTypography.titleMedium)),
+                      Text(DateFormat('dd/MM/yyyy HH:mm').format(l.createdAt),
+                          style: LuxTypography.caption),
+                    ]),
+                    const SizedBox(height: 4),
+                    Text('${l.contactName} · ${l.email} · ${l.phone}',
+                        style: LuxTypography.bodyMedium),
+                    Text('Personas que viajarían: ${l.travellers}',
+                        style: LuxTypography.caption),
+                    if (l.message.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Text(l.message, style: LuxTypography.bodyMedium),
+                    ],
+                    const SizedBox(height: 6),
+                    Row(children: [
+                      Text(l.handled ? 'Atendida' : 'Pendiente',
+                          style: LuxTypography.caption.copyWith(
+                              color: l.handled
+                                  ? LuxColors.success
+                                  : LuxColors.warning)),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () => sl<BusinessLeadRepository>()
+                            .setHandled(l.id, !l.handled),
+                        child: Text(
+                            l.handled ? 'Marcar pendiente' : 'Marcar atendida'),
+                      ),
+                    ]),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       );
 }

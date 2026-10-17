@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'dart:ui' show ImageFilter;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart'
     show
@@ -183,7 +184,7 @@ class _WebHomePageState extends State<WebHomePage> {
                   // ── Business split ────────────────────────────────────
                   _BusinessSection(
                     sectionKey: _businessKey,
-                    onLearnMore: _scrollToTop,
+                    onLearnMore: () => context.go('/empresas'),
                   ),
 
                   // ── CTA full-bleed ────────────────────────────────────

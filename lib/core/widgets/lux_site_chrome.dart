@@ -84,7 +84,7 @@ class LuxSiteNav extends StatelessWidget {
             LuxNavLink('Flota', onTap: onFleet ?? () => context.go('/')),
             const SizedBox(width: 32),
             LuxNavLink('Para empresas',
-                onTap: onBusiness ?? () => context.go('/')),
+                onTap: onBusiness ?? () => context.go('/empresas')),
             const SizedBox(width: 40),
           ],
           BlocBuilder<AuthBloc, AuthState>(
@@ -520,7 +520,7 @@ class _MobileMenu extends StatelessWidget {
               const SizedBox(height: 24),
               Divider(color: Colors.white.withAlpha(25)),
               item('Flota', onFleet ?? () => context.go('/')),
-              item('Para empresas', onBusiness ?? () => context.go('/')),
+              item('Para empresas', onBusiness ?? () => context.go('/empresas')),
               const Spacer(),
               SizedBox(
                 height: 54,
@@ -589,8 +589,10 @@ class LuxSiteFooter extends StatelessWidget {
     ]);
     final company = _FooterCol('Luxelane', [
       ('Flota', onFleet ?? () => context.go('/')),
-      ('Para empresas', onBusiness ?? () => context.go('/')),
+      ('Para empresas', () => context.go('/empresas')),
       ('Conduce con nosotros', () => context.go('/driver/login')),
+      ('Términos y condiciones', () => context.go('/legal/terminos')),
+      ('Política de privacidad', () => context.go('/legal/privacidad')),
     ]);
     const promises = _FooterCol('Nuestra promesa', [
       (LuxPromise.fixedPrice, null),

@@ -202,6 +202,36 @@ class _RegisterPageState extends State<RegisterPage> {
                   style: LuxTypography.caption
                       .copyWith(color: LuxColors.inkSecondary),
                 ),
+                const SizedBox(height: LuxSpacing.xs),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text('Al crear tu cuenta aceptas los ',
+                        style: LuxTypography.caption
+                            .copyWith(color: LuxColors.inkSecondary)),
+                    GestureDetector(
+                      onTap: () => context.push('/legal/terminos'),
+                      child: Text('Términos',
+                          style: LuxTypography.caption.copyWith(
+                              color: LuxColors.sapphire,
+                              decoration: TextDecoration.underline)),
+                    ),
+                    Text(' y la ',
+                        style: LuxTypography.caption
+                            .copyWith(color: LuxColors.inkSecondary)),
+                    GestureDetector(
+                      onTap: () => context.push('/legal/privacidad'),
+                      child: Text('Política de privacidad',
+                          style: LuxTypography.caption.copyWith(
+                              color: LuxColors.sapphire,
+                              decoration: TextDecoration.underline)),
+                    ),
+                    Text('.',
+                        style: LuxTypography.caption
+                            .copyWith(color: LuxColors.inkSecondary)),
+                  ],
+                ),
                 const SizedBox(height: LuxSpacing.sm),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
