@@ -54,9 +54,11 @@ class AuthRepositoryImpl implements AuthRepository {
             // Una cuenta bloqueada por el admin pierde la sesión abierta.
             if (!user.isActive) {
               await _auth.signOut();
-              return null;
+              throw const AuthFailure(kBlockedAccountMessage);
             }
             return user;
+          } on AuthFailure {
+            rethrow;
           } catch (_) {
             return null;
           }
@@ -310,11 +312,11 @@ class AuthRepositoryImpl implements AuthRepository {
       if (e.code == 'failed-precondition' && e.message != null) {
         return Left(ServerFailure(e.message!));
       }
-      return const Left(ServerFailure(
-          'No pudimos eliminar tu cuenta. Inténtalo de nuevo.'));
+      return const Left(
+          ServerFailure('No pudimos eliminar tu cuenta. Inténtalo de nuevo.'));
     } catch (_) {
-      return const Left(ServerFailure(
-          'No pudimos eliminar tu cuenta. Revisa tu conexión.'));
+      return const Left(
+          ServerFailure('No pudimos eliminar tu cuenta. Revisa tu conexión.'));
     }
   }
 
@@ -339,9 +341,18 @@ class AuthRepositoryImpl implements AuthRepository {
       await _auth.sendPasswordResetEmail(email: email);
       return const Right(null);
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(e.message ?? 'Reset failed'));
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(AuthFailure(switch (e.code) {
+        'invalid-email' => 'Ese correo no es válido. Revísalo.',
+        'user-not-found' => 'No hay ninguna cuenta con ese correo.',
+        'too-many-requests' =>
+          'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
+        'network-request-failed' =>
+          'Sin conexión. Revisa tu internet e inténtalo de nuevo.',
+        _ => 'No pudimos enviar el enlace. Inténtalo de nuevo.',
+      }));
+    } catch (_) {
+      return const Left(
+          ServerFailure('No pudimos enviar el enlace. Inténtalo de nuevo.'));
     }
   }
 

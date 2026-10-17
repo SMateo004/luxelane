@@ -103,7 +103,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ],
         ),
-        body: BlocBuilder<ProfileBloc, ProfileState>(
+        body: BlocConsumer<ProfileBloc, ProfileState>(
+          listenWhen: (prev, next) =>
+              next is ProfileLoaded &&
+              next.message != null &&
+              (prev is! ProfileLoaded || prev.messageSeq != next.messageSeq),
+          listener: (context, state) {
+            final s = state as ProfileLoaded;
+            showLuxSnackbar(context, s.message!, isError: s.isError);
+          },
           builder: (context, state) {
             if (state is ProfileLoading || state is ProfileInitial) {
               return const Center(child: CircularProgressIndicator());
@@ -382,11 +390,9 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
       displayName: _name.text.trim(),
       phone: _phone.text.trim(),
     );
+    // El resultado (guardado o error) lo muestra la pantalla de perfil.
     context.read<ProfileBloc>().add(ProfileUpdateRequested(user: updated));
     Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Perfil actualizado')),
-    );
   }
 
   @override
@@ -426,6 +432,9 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               controller: _phone,
               keyboardType: TextInputType.phone,
               prefixIcon: Icons.phone_outlined,
+              validator: (v) => v == null || v.trim().length < 6
+                  ? 'Tu chófer lo necesita para contactarte'
+                  : null,
             ),
             const SizedBox(height: LuxSpacing.lg),
             LuxButton(label: 'Guardar cambios', onPressed: _save),

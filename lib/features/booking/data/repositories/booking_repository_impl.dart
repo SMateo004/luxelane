@@ -40,6 +40,15 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
+  Stream<List<Booking>> watchBookingsByRider(String riderId) => _col
+      .where('riderId', isEqualTo: riderId)
+      .snapshots()
+      .map((snap) => snap.docs
+          .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
+          .toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt)));
+
+  @override
   Future<Either<Failure, List<Booking>>> getBookingsByRider(
     String riderId,
   ) async {

@@ -104,6 +104,9 @@ abstract class BookingRepository {
   Future<Either<Failure, Booking>> createBooking(Booking booking);
   Future<Either<Failure, Booking>> getBookingById(String bookingId);
   Future<Either<Failure, List<Booking>>> getBookingsByRider(String riderId);
+
+  /// Reservas del pasajero en vivo, las más recientes primero.
+  Stream<List<Booking>> watchBookingsByRider(String riderId);
   Future<Either<Failure, List<Booking>>> getPendingBookings();
   Stream<List<Booking>> streamPendingBookings();
   Stream<List<Booking>> watchDriverBookings(String driverId);
@@ -186,6 +189,12 @@ abstract class PaymentRepository {
     required String stripeCustomerId,
     required String paymentMethodId,
   });
+
+  /// Tarjeta que se propone primero al reservar (se guarda en Stripe).
+  Future<Either<Failure, void>> setDefaultCard(String paymentMethodId);
+
+  /// Cliente de Stripe del usuario; lo crea si no se pudo al registrarse.
+  Future<Either<Failure, String>> ensureStripeCustomer();
 }
 
 abstract class NotificationRepository {

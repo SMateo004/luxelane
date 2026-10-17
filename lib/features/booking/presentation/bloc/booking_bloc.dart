@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
@@ -92,6 +93,15 @@ class BookingRiderTripsRequested extends BookingEvent {
   List<Object?> get props => [riderId];
 }
 
+/// Como [BookingRiderTripsRequested], pero la lista sigue en vivo: una
+/// reserva nueva o un cambio de estado aparecen sin recargar.
+class BookingRiderTripsWatched extends BookingEvent {
+  const BookingRiderTripsWatched({required this.riderId});
+  final String riderId;
+  @override
+  List<Object?> get props => [riderId];
+}
+
 class BookingUpdateStatusRequested extends BookingEvent {
   const BookingUpdateStatusRequested({
     required this.bookingId,
@@ -167,6 +177,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     on<BookingCancelRequested>(_onCancel);
     on<BookingStatusChanged>(_onStatusChanged);
     on<BookingRiderTripsRequested>(_onLoadTrips);
+    on<BookingRiderTripsWatched>(_onWatchTrips,
+        transformer: (events, mapper) => events.switchMap(mapper));
     on<BookingUpdateStatusRequested>(_onUpdateStatus);
   }
 
@@ -268,6 +280,19 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     result.fold(
       (f) => emit(BookingError(f.message)),
       (list) => emit(BookingTripsLoaded(list)),
+    );
+  }
+
+  Future<void> _onWatchTrips(
+    BookingRiderTripsWatched event,
+    Emitter<BookingState> emit,
+  ) async {
+    if (state is! BookingTripsLoaded) emit(const BookingLoading());
+    await emit.forEach<List<Booking>>(
+      _repo.watchBookingsByRider(event.riderId),
+      onData: BookingTripsLoaded.new,
+      onError: (_, __) =>
+          const BookingError('No pudimos cargar tus viajes. Reintenta.'),
     );
   }
 }

@@ -62,6 +62,8 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
     String? sessionUid;
     _authBloc.stream.listen((state) {
       if (state is! AuthAuthenticated) {
+        // Sin sesión no quedan a la vista las tarjetas del usuario anterior.
+        if (sessionUid != null) _paymentBloc.add(const PaymentReset());
         sessionUid = null;
         return;
       }

@@ -92,14 +92,34 @@ class ProfileLoaded extends ProfileState {
     this.driverProfile,
     this.totalRides = 0,
     this.rating,
+    this.message,
+    this.isError = false,
+    this.messageSeq = 0,
   });
   final User user;
   final DriverProfile? driverProfile;
   final int totalRides;
   final double? rating;
+
+  /// Resultado del último guardado; [messageSeq] cambia con cada uno para
+  /// que la pantalla lo muestre aunque el texto se repita.
+  final String? message;
+  final bool isError;
+  final int messageSeq;
+
   @override
-  List<Object?> get props =>
-      [user.id, driverProfile?.userId, totalRides, rating];
+  List<Object?> get props => [
+        user.id,
+        user.displayName,
+        user.phone,
+        user.photoUrl,
+        driverProfile?.userId,
+        totalRides,
+        rating,
+        message,
+        isError,
+        messageSeq,
+      ];
 }
 
 class ProfileUpdated extends ProfileState {
@@ -183,17 +203,31 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     final prev = state;
     final result = await _repo.updateUser(event.user);
+    if (prev is! ProfileLoaded) {
+      result.fold((f) => emit(ProfileError(f.message)),
+          (_) => emit(ProfileUpdated(event.user)));
+      return;
+    }
+    // Se conservan los viajes y la valoración ya cargados; si falla, el
+    // perfil sigue a la vista con los datos anteriores.
     result.fold(
-      (f) => emit(ProfileError(f.message)),
-      // Se conservan los viajes y la valoración ya cargados.
-      (_) => emit(prev is ProfileLoaded
-          ? ProfileLoaded(
-              user: event.user,
-              driverProfile: prev.driverProfile,
-              totalRides: prev.totalRides,
-              rating: prev.rating,
-            )
-          : ProfileUpdated(event.user)),
+      (f) => emit(ProfileLoaded(
+        user: prev.user,
+        driverProfile: prev.driverProfile,
+        totalRides: prev.totalRides,
+        rating: prev.rating,
+        message: 'No pudimos guardar los cambios. Inténtalo de nuevo.',
+        isError: true,
+        messageSeq: prev.messageSeq + 1,
+      )),
+      (_) => emit(ProfileLoaded(
+        user: event.user,
+        driverProfile: prev.driverProfile,
+        totalRides: prev.totalRides,
+        rating: prev.rating,
+        message: 'Perfil actualizado',
+        messageSeq: prev.messageSeq + 1,
+      )),
     );
   }
 

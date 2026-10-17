@@ -80,10 +80,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc({required NotificationRepository notificationRepository})
       : _repo = notificationRepository,
         super(const NotificationInitial()) {
-    // Un solo listener: AuthAuthenticated se repite cuando cambia el perfil.
+    // Las apps lo piden una vez por sesión; al volver a entrar (aunque sea
+    // el mismo usuario) se reemplaza el listener que cortó el cierre.
     on<NotificationWatchStarted>(_onWatch,
-        transformer: (events, mapper) =>
-            events.distinct((a, b) => a.userId == b.userId).switchMap(mapper));
+        transformer: (events, mapper) => events.switchMap(mapper));
     on<NotificationCreated>(_onCreate);
     on<NotificationMarkedRead>(_onMarkRead);
     on<NotificationAllMarkedRead>(_onMarkAllRead);

@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
 import '../widgets/google_sign_in_button.dart';
@@ -32,10 +34,40 @@ class _LoginPageState extends State<LoginPage> {
   final _pass = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Un bloqueo detectado antes de llegar aquí (al abrir la app o con la
+    // sesión abierta) no pasa por el listener: se muestra al entrar.
+    final s = context.read<AuthBloc>().state;
+    if (s is AuthError && s.message == kBlockedAccountMessage) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) showLuxSnackbar(context, s.message, isError: true);
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _email.dispose();
     _pass.dispose();
     super.dispose();
+  }
+
+  Future<void> _resetPassword() async {
+    final email = _email.text.trim();
+    if (!email.contains('@')) {
+      showLuxSnackbar(
+          context, 'Escribe tu correo arriba y te enviaremos un enlace.',
+          isError: true);
+      return;
+    }
+    final result = await sl<AuthRepository>().resetPassword(email);
+    if (!mounted) return;
+    result.fold(
+      (f) => showLuxSnackbar(context, f.message, isError: true),
+      (_) => showLuxSnackbar(context,
+          'Te enviamos un enlace a $email para restablecer tu contraseña.'),
+    );
   }
 
   void _submit() {
@@ -208,19 +240,7 @@ class _LoginPageState extends State<LoginPage> {
                   alignment: Alignment.centerRight,
                   child: _TextLink(
                     label: '¿Olvidaste tu contraseña?',
-                    onTap: () {
-                      if (_email.text.contains('@')) {
-                        context.read<AuthBloc>().add(
-                              PasswordResetRequested(email: _email.text.trim()),
-                            );
-                        showLuxSnackbar(context,
-                            'Te enviamos un enlace para restablecer tu contraseña.');
-                      } else {
-                        showLuxSnackbar(context,
-                            'Escribe tu correo arriba y te enviaremos un enlace.',
-                            isError: true);
-                      }
-                    },
+                    onTap: _resetPassword,
                   ),
                 ),
                 const SizedBox(height: 28),

@@ -97,6 +97,20 @@ export async function listPaymentMethods(customerId: string): Promise<Stripe.Pay
   return methods.data;
 }
 
+/** Tarjeta predeterminada del cliente (la que se propone al reservar). */
+export async function defaultPaymentMethod(customerId: string): Promise<string | null> {
+  const customer = await stripe.customers.retrieve(customerId);
+  if (customer.deleted) return null;
+  const pm = customer.invoice_settings?.default_payment_method;
+  return typeof pm === 'string' ? pm : pm?.id ?? null;
+}
+
+export async function setDefaultPaymentMethod(customerId: string, paymentMethodId: string): Promise<void> {
+  await stripe.customers.update(customerId, {
+    invoice_settings: { default_payment_method: paymentMethodId },
+  });
+}
+
 export async function attachPaymentMethod(
   customerId: string,
   paymentMethodId: string,

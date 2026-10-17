@@ -1,7 +1,10 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/payment_bloc.dart';
@@ -13,30 +16,62 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  String? _defaultCardId;
-
   @override
   void initState() {
     super.initState();
     _loadCards();
   }
 
-  void _loadCards() {
+  Future<void> _loadCards() async {
     final authState = context.read<AuthBloc>().state;
-    if (authState is AuthAuthenticated &&
-        authState.user.stripeCustomerId != null &&
-        authState.user.stripeCustomerId!.isNotEmpty) {
-      context.read<PaymentBloc>().add(
-            CardsLoadRequested(
-                stripeCustomerId: authState.user.stripeCustomerId!),
-          );
+    if (authState is! AuthAuthenticated) return;
+    var customerId = authState.user.stripeCustomerId ?? '';
+    if (customerId.isEmpty) {
+      // El perfil de pagos no se creó al registrarse: se crea ahora.
+      final result = await sl<PaymentRepository>().ensureStripeCustomer();
+      if (!mounted) return;
+      customerId = result.fold((_) => '', (id) => id);
+      if (customerId.isEmpty) return;
     }
+    context
+        .read<PaymentBloc>()
+        .add(CardsLoadRequested(stripeCustomerId: customerId));
   }
 
-  void _removeCard(String paymentMethodId) {
+  /// Stripe solo está configurado en la app móvil.
+  void _addCard() {
+    if (kIsWeb) {
+      showLuxSnackbar(context,
+          'Agrega tus tarjetas desde la app de Luxelane en tu teléfono.');
+      return;
+    }
+    context.push('/payment/add');
+  }
+
+  Future<void> _removeCard(String paymentMethodId) async {
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) return;
     if (authState.user.stripeCustomerId == null) return;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿Quitar esta tarjeta?'),
+        content: const Text(
+            'Dejará de estar disponible para tus próximas reservas.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: FilledButton.styleFrom(backgroundColor: LuxColors.error),
+            child: const Text('Quitar'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
 
     context.read<PaymentBloc>().add(
           CardRemoved(
@@ -53,6 +88,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
         if (state is CardOperationSuccess) _loadCards();
         if (state is PaymentError) {
           showLuxSnackbar(context, state.message, isError: true);
+          // Tras un fallo se vuelve a mostrar la lista en vez de vaciarla.
+          _loadCards();
         }
       },
       builder: (context, state) {
@@ -65,7 +102,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
             ),
             actions: [
               TextButton.icon(
-                onPressed: () => context.push('/payment/add'),
+                onPressed: _addCard,
                 icon:
                     const Icon(Icons.add, size: 18, color: LuxColors.sapphire),
                 label: Text(
@@ -89,7 +126,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     if (state is CardsLoaded) {
       if (state.cards.isEmpty) {
-        return _EmptyCards(onAdd: () => context.push('/payment/add'));
+        return _EmptyCards(onAdd: _addCard);
       }
       return ListView(
         padding: const EdgeInsets.all(LuxSpacing.md),
@@ -99,16 +136,17 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ...state.cards.map(
             (card) => _CardTile(
               card: card,
-              isDefault: _defaultCardId == card['id'],
-              onSetDefault: () =>
-                  setState(() => _defaultCardId = card['id'] as String),
+              isDefault: card['isDefault'] == true,
+              onSetDefault: () => context
+                  .read<PaymentBloc>()
+                  .add(DefaultCardSet(paymentMethodId: card['id'] as String)),
               onRemove: () => _removeCard(card['id'] as String),
             ),
           ),
           const SizedBox(height: LuxSpacing.lg),
           LuxOutlinedButton(
             label: 'Agregar nueva tarjeta',
-            onPressed: () => context.push('/payment/add'),
+            onPressed: _addCard,
             icon: Icons.add,
           ),
           const SizedBox(height: LuxSpacing.md),
@@ -125,7 +163,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
     }
 
     // No Stripe customer yet
-    return _EmptyCards(onAdd: () => context.push('/payment/add'));
+    return _EmptyCards(onAdd: _addCard);
   }
 }
 

@@ -40,7 +40,7 @@ class _TripsScreenState extends State<_TripsView> {
     final authState = context.read<AuthBloc>().state;
     if (authState is AuthAuthenticated) {
       context.read<BookingBloc>().add(
-            BookingRiderTripsRequested(riderId: authState.user.id),
+            BookingRiderTripsWatched(riderId: authState.user.id),
           );
     }
   }

@@ -73,6 +73,9 @@ interface PaymentDoc {
 // Helpers
 // ---------------------------------------------------------------------------
 
+/** Reservas que siguen en curso o pendientes de realizarse. */
+const ACTIVE_BOOKING_STATUSES = ['pending', 'confirmed', 'driver_arriving', 'driver_arrived', 'in_progress'];
+
 function requireAuth(req: CallableRequest): string {
   if (!req.auth?.uid) throw err.unauthenticated();
   return req.auth.uid;
@@ -132,10 +135,7 @@ export const createPaymentIntent = onCall(async (req) => {
   if (!bookingId) throw err.invalidArgument('bookingId required');
 
   const bookingRef = db.collection('bookings').doc(bookingId);
-  const [bookingSnap, userSnap] = await Promise.all([
-    bookingRef.get(),
-    db.collection('users').doc(uid).get(),
-  ]);
+  const bookingSnap = await bookingRef.get();
   if (!bookingSnap.exists) throw err.notFound('Booking not found');
   const booking = bookingSnap.data() as BookingDoc;
   if (booking.riderId !== uid) throw err.permissionDenied('Not your booking');
@@ -146,8 +146,7 @@ export const createPaymentIntent = onCall(async (req) => {
   if (booking.stripePaymentIntentId || booking.stripePaymentMethodId) {
     throw err.failedPrecondition('Booking already has a payment');
   }
-  const customerId = userSnap.data()?.stripeCustomerId as string | undefined;
-  if (!customerId) throw err.failedPrecondition('No payment profile');
+  const customerId = await ensureStripeCustomerFor(uid);
 
   // Stripe libera una autorización a los 7 días: para viajes más lejanos se
   // guarda la tarjeta y se cobra al completar (cobro sin el pasajero
@@ -390,16 +389,37 @@ export const listPaymentMethods = onCall(async (req) => {
   if (!customerId) throw err.invalidArgument('customerId required');
   await requireOwnCustomer(uid, customerId);
 
-  const methods = await stripe.listPaymentMethods(customerId);
-  return {
-    cards: methods.map((m) => ({
-      id: m.id,
-      brand: m.card?.brand,
-      last4: m.card?.last4,
-      expMonth: m.card?.exp_month,
-      expYear: m.card?.exp_year,
-    })),
-  };
+  const [methods, defaultId] = await Promise.all([
+    stripe.listPaymentMethods(customerId),
+    stripe.defaultPaymentMethod(customerId),
+  ]);
+  // La predeterminada va primero: la reserva propone la primera tarjeta.
+  const cards = methods.map((m) => ({
+    id: m.id,
+    brand: m.card?.brand,
+    last4: m.card?.last4,
+    expMonth: m.card?.exp_month,
+    expYear: m.card?.exp_year,
+    isDefault: m.id === defaultId,
+  }));
+  cards.sort((a, b) => Number(b.isDefault) - Number(a.isDefault));
+  return { cards };
+});
+
+// ---------------------------------------------------------------------------
+// setDefaultPaymentMethod
+// ---------------------------------------------------------------------------
+
+export const setDefaultPaymentMethod = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const { paymentMethodId } = req.data as { paymentMethodId: string };
+  if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+  const owner = await stripe.paymentMethodCustomer(paymentMethodId);
+  if (!owner) throw err.permissionDenied('Not your payment method');
+  await requireOwnCustomer(uid, owner);
+
+  await stripe.setDefaultPaymentMethod(owner, paymentMethodId);
+  return { success: true };
 });
 
 // ---------------------------------------------------------------------------
@@ -431,6 +451,15 @@ export const detachPaymentMethod = onCall(async (req) => {
   if (!owner) throw err.permissionDenied('Not your payment method');
   await requireOwnCustomer(uid, owner);
 
+  // Una reserva futura se cobra fuera de sesión con esta tarjeta: quitarla
+  // dejaría ese viaje sin pago.
+  const inUse = await db.collection('bookings')
+    .where('riderId', '==', uid)
+    .where('stripePaymentMethodId', '==', paymentMethodId)
+    .where('status', 'in', ACTIVE_BOOKING_STATUSES)
+    .limit(1).get();
+  if (!inUse.empty) throw err.failedPrecondition('card-in-use');
+
   await stripe.detachPaymentMethod(paymentMethodId);
   return { success: true };
 });
@@ -438,8 +467,6 @@ export const detachPaymentMethod = onCall(async (req) => {
 // ---------------------------------------------------------------------------
 // deleteAccount
 // ---------------------------------------------------------------------------
-
-const ACTIVE_BOOKING_STATUSES = ['pending', 'confirmed', 'driverArriving', 'driverArrived', 'inProgress'];
 
 // El propio usuario elimina su cuenta (exigido por App Store y Google Play).
 // Se borran el perfil, los avisos, el perfil de chófer, el cliente de Stripe
@@ -506,6 +533,31 @@ export const deleteAccount = onCall(async (req) => {
 // createStripeCustomer  (onCreate /users/{uid})
 // ---------------------------------------------------------------------------
 
+/**
+ * Devuelve el cliente de Stripe del usuario y lo crea si falta (p. ej. si
+ * Stripe falló al registrarse). Si dos llamadas compiten, gana la primera
+ * en guardarse y la otra borra el cliente que sobra.
+ */
+async function ensureStripeCustomerFor(uid: string): Promise<string> {
+  const ref = db.collection('users').doc(uid);
+  const snap = await ref.get();
+  const data = snap.data();
+  if (!data) throw err.failedPrecondition('No payment profile');
+  if (data.stripeCustomerId) return data.stripeCustomerId as string;
+
+  const created = await stripe.createCustomer(data.email, data.displayName);
+  const kept = await db.runTransaction(async (tx) => {
+    const current = (await tx.get(ref)).data()?.stripeCustomerId as string | undefined;
+    if (current) return current;
+    tx.update(ref, { stripeCustomerId: created });
+    return created;
+  });
+  if (kept !== created) {
+    await stripe.deleteCustomer(created).catch(() => undefined);
+  }
+  return kept;
+}
+
 export const createStripeCustomer = onDocumentCreated('users/{uid}', async (event) => {
   const data = event.data?.data();
   if (!data || data.role !== 'rider') return;
@@ -513,12 +565,18 @@ export const createStripeCustomer = onDocumentCreated('users/{uid}', async (even
   logger.info('createStripeCustomer', 'start', { uid: event.params.uid });
 
   try {
-    const customerId = await stripe.createCustomer(data.email, data.displayName);
-    await db.collection('users').doc(event.params.uid).update({ stripeCustomerId: customerId });
+    const customerId = await ensureStripeCustomerFor(event.params.uid);
     logger.info('createStripeCustomer', 'success', { uid: event.params.uid, customerId });
   } catch (e) {
+    // ensureStripeCustomer lo reintenta cuando el pasajero vaya a pagar.
     logger.error('createStripeCustomer', 'failed', { error: String(e) });
   }
+});
+
+// Perfil de pagos bajo demanda (pantalla de tarjetas y alta de tarjeta).
+export const ensureStripeCustomer = onCall(async (req) => {
+  const uid = requireAuth(req);
+  return { customerId: await ensureStripeCustomerFor(uid) };
 });
 
 // ---------------------------------------------------------------------------

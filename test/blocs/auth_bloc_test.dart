@@ -60,6 +60,20 @@ void main() {
     );
 
     blocTest<AuthBloc, AuthState>(
+      'al abrir la app con la cuenta bloqueada explica el motivo',
+      build: () {
+        when(() => repo.authStateChanges).thenAnswer(
+            (_) => Stream.error(const AuthFailure(kBlockedAccountMessage)));
+        return AuthBloc(authRepository: repo);
+      },
+      act: (bloc) => bloc.add(const AuthStarted()),
+      expect: () => [
+        const AuthLoading(),
+        const AuthError(kBlockedAccountMessage),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
       'emits [AuthLoading, AuthAuthenticated] on LoginRequested success',
       build: () {
         when(() => repo.login(
