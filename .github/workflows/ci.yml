@@ -104,6 +104,7 @@ jobs:
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
+            --dart-define=APP_CHECK_WEB_KEY=${{ secrets.APP_CHECK_WEB_KEY }} \
             --dart-define=APP_VERSION=${{ github.sha }} \
             --output=build/web_rider
       - uses: actions/upload-artifact@v4
@@ -132,6 +133,7 @@ jobs:
             --dart-define=ENV=prod \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
+            --dart-define=APP_CHECK_WEB_KEY=${{ secrets.APP_CHECK_WEB_KEY }} \
             --dart-define=APP_VERSION=${{ github.sha }} \
             --output=build/web_driver
       - uses: actions/upload-artifact@v4

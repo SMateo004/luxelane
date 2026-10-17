@@ -6,5 +6,8 @@
 	     production environment when archiving for the App Store. -->
 	<key>aps-environment</key>
 	<string>development</string>
+	<!-- Firebase App Check (App Attest, iOS 14+; DeviceCheck before that). -->
+	<key>com.apple.developer.devicecheck.appattest-environment</key>
+	<string>production</string>
 </dict>
 </plist>

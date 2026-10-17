@@ -1,5 +1,6 @@
 import * as admin from 'firebase-admin';
-import { onCall, CallableRequest } from 'firebase-functions/v2/https';
+import { CallableRequest, onCall as onCallWithoutAppCheck } from 'firebase-functions/v2/https';
+import { onCall } from './app_check';
 import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import * as stripe from './stripe_service';
@@ -2364,7 +2365,9 @@ async function pushAdmins(
 }
 
 /** Groups app errors by fingerprint in clientErrors/{fp}. */
-export const reportClientError = onCall(async (req) => {
+// No App Check: errors must reach us even from a client whose App Check
+// failed (that may be the very error being reported). Capped per day.
+export const reportClientError = onCallWithoutAppCheck(async (req) => {
   const d = (req.data ?? {}) as Record<string, unknown>;
   if (!isPlatform(d.platform)) throw err.invalidArgument('invalid platform');
   const message = clip(d.message, MAX_MESSAGE);

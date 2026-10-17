@@ -32,6 +32,11 @@ if [[ -n "${FCM_VAPID_KEY:-}" ]]; then
 else
   echo "⚠ FCM_VAPID_KEY not set — web push notifications will be disabled."
 fi
+if [[ -n "${APP_CHECK_WEB_KEY:-}" ]]; then
+  DEFINES+=(--dart-define=APP_CHECK_WEB_KEY="$APP_CHECK_WEB_KEY")
+else
+  echo "⚠ APP_CHECK_WEB_KEY not set — the web won't send App Check tokens (don't enforce App Check yet)."
+fi
 
 echo "▶ Building rider web..."
 flutter build web --release "${DEFINES[@]}" --output=build/web_rider

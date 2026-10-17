@@ -11,6 +11,7 @@ import 'core/config/env.dart';
 import 'core/config/firebase_env.dart';
 import 'core/di/injection.dart';
 import 'core/widgets/startup_error_app.dart';
+import 'core/services/app_check_service.dart';
 import 'core/services/crash_service.dart';
 import 'core/services/performance_service.dart';
 import 'core/utils/maps_web_loader.dart'
@@ -68,6 +69,7 @@ void main() async {
     await Stripe.instance.applySettings();
   }
 
+  await AppCheckService.init();
   await CrashService.init();
   await PerformanceService.init();
   await configureDependencies();

@@ -85,6 +85,7 @@ GOOGLE_MAPS_ANDROID_KEY      → Google Cloud Console (Android key)
 FIREBASE_RIDER_ANDROID_ENV   → content of .env.luxelane-4e7ae.rider.android
 FIREBASE_DRIVER_ANDROID_ENV  → content of .env.luxelane-4e7ae.driver.android
 FCM_VAPID_KEY                → Firebase Console → Cloud Messaging (web push)
+APP_CHECK_WEB_KEY            → reCAPTCHA Enterprise site key (App Check, web)
 ```
 The Android jobs fail with a clear error while the two `FIREBASE_*_ANDROID_ENV`
 secrets are missing (a bundle without them can't start).
@@ -206,6 +207,33 @@ The first build runs `pod install` (iOS 13+, set in `ios/Podfile`).
 - **Maintenance mode** (Admin → Ajustes) pauses new bookings: the server
   refuses quotes and bookings, and riders see a notice on the app and the web.
   Rides already booked or in progress carry on. It asks for confirmation.
+
+## App Check (only the real apps can call the server)
+
+The apps send a Firebase App Check token with every call: Play Integrity on
+Android, App Attest on iOS (DeviceCheck before iOS 14), reCAPTCHA Enterprise
+on the web. The server (`functions/src/app_check.ts`) starts in **monitor
+mode**: calls without a token still work and are logged as
+`appcheck/missing`.
+
+1. Firebase Console → App Check: register the two Android apps (Play
+   Integrity, with the SHA-256 of the **Play app signing** key), the two iOS
+   apps (App Attest, plus DeviceCheck with a DeviceCheck .p8 key from Apple) and the web
+   app (create a reCAPTCHA Enterprise key for your domains). Put the web key
+   in `APP_CHECK_WEB_KEY` (GitHub secret, or the env var for
+   `scripts/deploy_web.sh`).
+2. Debug builds use the debug provider: run the app, copy the debug token it
+   prints and add it under App Check → Manage debug tokens.
+3. Once the new builds are in use, check the logs:
+   `gcloud logging read 'jsonPayload.message="appcheck/missing"' --freshness=7d --limit=50`.
+   When only old app versions show up (raise the minimum version if needed),
+   create `functions/.env` with `APP_CHECK_ENFORCE=true` and run
+   `firebase deploy --only functions`. Calls without a token then fail.
+4. Optionally enforce App Check for Firestore and Storage in the console
+   (same order: watch its metrics first).
+
+`reportClientError` stays open so error reports arrive even when App Check
+is the problem; it is capped per day.
 
 ## Before launch: content you must provide
 

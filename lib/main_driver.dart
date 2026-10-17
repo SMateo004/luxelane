@@ -9,6 +9,7 @@ import 'core/config/env.dart';
 import 'core/config/firebase_env.dart';
 import 'core/di/injection.dart';
 import 'core/widgets/startup_error_app.dart';
+import 'core/services/app_check_service.dart';
 import 'core/services/crash_service.dart';
 import 'core/services/performance_service.dart';
 import 'firebase_options_driver.dart';
@@ -38,6 +39,7 @@ void main() async {
     );
   }
 
+  await AppCheckService.init();
   await CrashService.init();
   await PerformanceService.init();
   await configureDependencies();
