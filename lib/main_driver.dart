@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'app/driver_app.dart';
+import 'core/config/brand_fonts.dart';
 import 'core/config/env.dart';
 import 'core/config/firebase_env.dart';
 import 'core/di/injection.dart';
@@ -19,6 +20,8 @@ void main() async {
   // Date symbols for every supported language; the active one follows the
   // device language (see IntlLocaleSync in the app widget).
   await initializeDateFormatting();
+  BrandFonts.registerLicenses();
+  await BrandFonts.preload();
 
   try {
     await Firebase.initializeApp(

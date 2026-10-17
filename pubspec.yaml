@@ -91,4 +91,37 @@ flutter:
     - assets/images/services/por-horas/
     - assets/icons/
     - assets/videos/
-  # fonts are loaded via Google Fonts fallback on web
+    - assets/google_fonts/OFL-Montserrat.txt
+    - assets/google_fonts/OFL-CormorantGaramond.txt
+  # Brand fonts ship with the app: no download at startup (works offline),
+  # and both TextStyle(fontFamily: 'Montserrat') and google_fonts (which
+  # looks for these files by name in the assets) use them.
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/google_fonts/Montserrat-Light.ttf
+          weight: 300
+        - asset: assets/google_fonts/Montserrat-Regular.ttf
+          weight: 400
+        - asset: assets/google_fonts/Montserrat-Medium.ttf
+          weight: 500
+        - asset: assets/google_fonts/Montserrat-SemiBold.ttf
+          weight: 600
+        - asset: assets/google_fonts/Montserrat-Bold.ttf
+          weight: 700
+    - family: Cormorant Garamond
+      fonts:
+        - asset: assets/google_fonts/CormorantGaramond-Light.ttf
+          weight: 300
+        - asset: assets/google_fonts/CormorantGaramond-LightItalic.ttf
+          weight: 300
+          style: italic
+        - asset: assets/google_fonts/CormorantGaramond-Regular.ttf
+          weight: 400
+        - asset: assets/google_fonts/CormorantGaramond-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/google_fonts/CormorantGaramond-Medium.ttf
+          weight: 500
+        - asset: assets/google_fonts/CormorantGaramond-SemiBold.ttf
+          weight: 600

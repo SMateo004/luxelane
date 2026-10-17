@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app/app.dart';
+import 'core/config/brand_fonts.dart';
 import 'core/config/env.dart';
 import 'core/config/firebase_env.dart';
 import 'core/di/injection.dart';
@@ -24,24 +24,9 @@ void main() async {
   // device language (see IntlLocaleSync in the app widget).
   await initializeDateFormatting();
 
-  // Pre-load brand fonts so every TextStyle(fontFamily: 'Montserrat'/
-  // 'Cormorant Garamond') resolves correctly across the entire app —
-  // web and native.
-  GoogleFonts.config.allowRuntimeFetching = true;
-  await Future.wait([
-    GoogleFonts.pendingFonts([
-      GoogleFonts.montserrat(),
-      GoogleFonts.montserrat(fontWeight: FontWeight.w300),
-      GoogleFonts.montserrat(fontWeight: FontWeight.w500),
-      GoogleFonts.montserrat(fontWeight: FontWeight.w600),
-      GoogleFonts.montserrat(fontWeight: FontWeight.w700),
-      GoogleFonts.cormorantGaramond(),
-      GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w300),
-      GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w500),
-      GoogleFonts.cormorantGaramond(fontStyle: FontStyle.italic),
-      GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w300, fontStyle: FontStyle.italic),
-    ]),
-  ]);
+  // Brand fonts are bundled (pubspec.yaml); this only warms them up.
+  BrandFonts.registerLicenses();
+  await BrandFonts.preload();
 
   try {
     await Firebase.initializeApp(

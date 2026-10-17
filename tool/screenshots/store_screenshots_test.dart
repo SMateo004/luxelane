@@ -3,8 +3,8 @@
 //   ./scripts/store_screenshots.sh
 //
 // Renders each screen at the exact sizes Google Play (1080×1920) and the
-// App Store (6.9", 1320×2868) ask for, in es/en/pt, with the brand fonts,
-// into docs/store/screenshots/<app>/<locale>/. Screens that need a live map
+// App Store (6.9", 1320×2868) ask for, in es/en/pt, with the bundled brand
+// fonts, into docs/store/screenshots/<app>/<locale>/. Screens that need a live map
 // aren't included: take those on a phone.
 import 'dart:io';
 import 'dart:ui' as ui;
@@ -16,12 +16,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
-// ignore: implementation_imports
-import 'package:google_fonts/src/google_fonts_base.dart' as google_fonts;
-import 'package:http/http.dart' as http;
-import 'package:http/testing.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:luxelane/app/theme/app_theme.dart';
+import 'package:luxelane/core/config/brand_fonts.dart';
 import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/features/auth/presentation/bloc/auth_bloc.dart';
@@ -37,7 +34,6 @@ class _MockAuthBloc extends MockBloc<AuthEvent, AuthState> implements AuthBloc {
 
 class _MockDriverBloc extends MockBloc<DriverEvent, DriverState> implements DriverBloc {}
 
-final _fontsDir = Platform.environment['FONTS_DIR'] ?? 'build/store_fonts';
 final _outDir = Platform.environment['OUT_DIR'] ?? 'docs/store/screenshots';
 
 const _sizes = {
@@ -46,45 +42,30 @@ const _sizes = {
 };
 
 Future<void> _loadFonts() async {
-  Future<void> family(String name, List<String> files) async {
+  Future<void> family(String name, Iterable<Future<ByteData>> files) async {
     final loader = FontLoader(name);
-    for (final f in files) {
-      final bytes = File(f).readAsBytesSync();
-      loader.addFont(Future.value(ByteData.view(bytes.buffer)));
-    }
+    files.forEach(loader.addFont);
     await loader.load();
   }
 
-  List<String> ttf(String prefix) =>
-      Directory(_fontsDir).listSync().map((e) => e.path).where((p) => p.split('/').last.startsWith(prefix)).toList();
-  final flutterRoot = Platform.environment['FLUTTER_ROOT'] ?? '/opt/flutter';
-  final material = '$flutterRoot/bin/cache/artifacts/material_fonts';
-  await family('Montserrat', ttf('Montserrat-'));
-  await family('Cormorant Garamond', ttf('CormorantGaramond-'));
-  await family('Roboto', ['$material/Roboto-Regular.ttf', '$material/Roboto-Medium.ttf', '$material/Roboto-Bold.ttf']);
-  await family('MaterialIcons', ['$material/MaterialIcons-Regular.otf']);
+  ByteData file(String path) => ByteData.view(File(path).readAsBytesSync().buffer);
+  Iterable<Future<ByteData>> bundled(String prefix) => Directory('assets/google_fonts')
+      .listSync()
+      .map((e) => e.path)
+      .where((p) => p.split('/').last.startsWith(prefix) && p.endsWith('.ttf'))
+      .map((p) => Future.value(file(p)));
 
-  // The theme uses google_fonts, which downloads each weight by its hash:
-  // serve those files from FONTS_DIR/gf (scripts/store_screenshots.sh).
-  // ignore: invalid_use_of_visible_for_testing_member
-  google_fonts.httpClient = MockClient((req) async {
-    final file = File('$_fontsDir/gf/${req.url.pathSegments.last}');
-    return file.existsSync() ? http.Response.bytes(file.readAsBytesSync(), 200) : http.Response('', 404);
-  });
-  // google_fonts also caches each file on disk via path_provider.
-  final cache = Directory.systemTemp.createTempSync('store_fonts');
-  TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger.setMockMethodCallHandler(
-      const MethodChannel('plugins.flutter.io/path_provider'), (_) async => cache.path);
-  // Load every weight up front: a weight first used mid-test would render
-  // before its file is ready.
-  const weights = [FontWeight.w300, FontWeight.w400, FontWeight.w500, FontWeight.w600, FontWeight.w700];
-  await GoogleFonts.pendingFonts([
-    for (final w in weights) ...[
-      GoogleFonts.montserrat(fontWeight: w),
-      GoogleFonts.cormorantGaramond(fontWeight: w),
-      GoogleFonts.cormorantGaramond(fontWeight: w, fontStyle: FontStyle.italic),
-    ],
-  ]);
+  // Tests don't load pubspec fonts by themselves: register the bundled
+  // brand fonts, plus Roboto and the Material icons from the Flutter SDK.
+  final material = '${Platform.environment['FLUTTER_ROOT'] ?? '/opt/flutter'}/bin/cache/artifacts/material_fonts';
+  await family('Montserrat', bundled('Montserrat-'));
+  await family('Cormorant Garamond', bundled('CormorantGaramond-'));
+  await family('Roboto', ['Regular', 'Medium', 'Bold'].map((w) => Future.value(file('$material/Roboto-$w.ttf'))));
+  await family('MaterialIcons', [Future.value(file('$material/MaterialIcons-Regular.otf'))]);
+
+  // google_fonts (used by the theme) finds the same files in the assets.
+  GoogleFonts.config.allowRuntimeFetching = false;
+  await BrandFonts.preload();
 }
 
 // ── Demo data ───────────────────────────────────────────────────────────────
@@ -265,7 +246,6 @@ Future<void> _shoot(WidgetTester tester, _Screen s, Locale locale, String size) 
 
 void main() {
   setUpAll(() async {
-    TestWidgetsFlutterBinding.ensureInitialized();
     await initializeDateFormatting();
     await _loadFonts();
   });
