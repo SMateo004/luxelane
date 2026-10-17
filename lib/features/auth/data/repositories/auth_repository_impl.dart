@@ -188,6 +188,20 @@ class AuthRepositoryImpl implements AuthRepository {
     return user;
   }
 
+  /// Un chófer que cierra sesión deja de figurar como disponible; después
+  /// ya no podría escribir su perfil. Si está en un viaje, el servidor lo
+  /// vuelve a liberar al cerrarlo.
+  Future<void> _goOfflineIfDriver() async {
+    final uid = _auth.currentUser?.uid;
+    if (uid == null) return;
+    try {
+      final ref = _db.collection('driverProfiles').doc(uid);
+      if ((await ref.get()).exists) await ref.update({'isAvailable': false});
+    } catch (_) {
+      // Pasajeros (sin perfil de chófer) o sin conexión: no bloquea la salida.
+    }
+  }
+
   /// Las cuentas bloqueadas desde el panel admin no pueden entrar.
   Future<Either<Failure, User>> _activeOrBlocked(User user) async {
     if (user.isActive) return Right(user);
@@ -229,6 +243,7 @@ class AuthRepositoryImpl implements AuthRepository {
           if (await _google.isSignedIn()) await _google.signOut();
         } catch (_) {/* not signed in with Google */}
       }
+      await _goOfflineIfDriver();
       await _auth.signOut();
       return const Right(null);
     } catch (e) {
