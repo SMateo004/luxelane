@@ -48,6 +48,8 @@ class MapsService {
           notificationText: l.coreDriverLocationNotification,
           enableWakeLock: true,
           setOngoing: true,
+          // Monochrome status-bar icon (android/app/src/main/res/drawable-*).
+          notificationIcon: const AndroidResource(name: 'ic_notification'),
         ),
       );
     } else if (defaultTargetPlatform == TargetPlatform.iOS) {

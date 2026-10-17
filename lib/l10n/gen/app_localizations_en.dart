@@ -3429,6 +3429,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get pushOpen => 'View';
+
+  @override
   String refundAmount(String max) {
     return 'Amount (up to $max)';
   }

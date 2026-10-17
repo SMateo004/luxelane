@@ -42,10 +42,21 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
+        <!-- Pushes: high-priority "trips" channel (created in MainActivity),
+             monochrome status-bar icon and brand tint. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/trips_channel_id" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_notification" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notification_accent" />
         <!-- Firebase config comes from dart-defines (no google-services.json or
              Crashlytics Gradle plugin), so there is no Crashlytics build ID;
              without this the Crashlytics SDK throws at startup. Dart crashes
-             are symbolicated from the --split-debug-info files instead. -->
+             are symbolicated from the split-debug-info files instead. -->
         <meta-data
             android:name="com.crashlytics.RequireBuildId"
             android:value="false" />

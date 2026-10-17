@@ -31,6 +31,8 @@ jobs:
           flutter gen-l10n
           git diff --exit-code lib/l10n/gen
       - run: flutter analyze --no-fatal-infos
+      - name: Android and iOS config files parse
+        run: python3 tool/check_native_config.py
       # TODO: enforce `dart format --set-exit-if-changed lib/ test/` once the
       # codebase has been formatted in a dedicated commit.
 

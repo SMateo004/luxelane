@@ -6265,6 +6265,12 @@ abstract class AppLocalizations {
   /// **'Ahorras {amount} con {code}'**
   String promoSavedLine(String amount, String code);
 
+  /// Action on the banner of a notification received with the app open
+  ///
+  /// In es, this message translates to:
+  /// **'Ver'**
+  String get pushOpen;
+
   /// No description provided for @refundAmount.
   ///
   /// In es, this message translates to:

@@ -2189,6 +2189,10 @@
       }
     }
   },
+  "pushOpen": "Ver",
+  "@pushOpen": {
+    "description": "Action on the banner of a notification received with the app open"
+  },
   "refundAmount": "Monto (máximo {max})",
   "@refundAmount": {
     "placeholders": {

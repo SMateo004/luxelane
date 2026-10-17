@@ -30,6 +30,7 @@ import { MAX_REASON, RefundMethod, refundError } from './refunds';
 import { AdjustmentType, MAX_NOTE, adjustmentError, round2 } from './adjustments';
 import { ASSIGNED_STATUSES, SUSPENDED, isSuspended, suspensionChange } from './accounts';
 import { MAINTENANCE, bookingsPaused } from './app_config';
+import { buildPush, deadTokens, links } from './push';
 import { WINDOW_MS, bestDiscount, loyaltyDiscount, nextTier, parseConfig, tierFor } from './loyalty';
 import {
   MAX_MESSAGE,
@@ -297,9 +298,14 @@ function bookingClass(b: BookingDoc): string {
   return b.class ?? b.vehicleClass ?? 'business';
 }
 
-async function sendPush(tokens: string[], title: string, body: string): Promise<void> {
+/** Sends to every device of [userId] and forgets the ones that are gone. */
+async function sendPush(userId: string, tokens: string[], title: string, body: string, link?: string): Promise<void> {
   if (!tokens.length) return;
-  await admin.messaging().sendEachForMulticast({ tokens, notification: { title, body } });
+  const res = await admin.messaging().sendEachForMulticast(buildPush(tokens, title, body, link));
+  const dead = deadTokens(tokens, res.responses);
+  if (dead.length) {
+    await db.collection('users').doc(userId).update({ fcmTokens: admin.firestore.FieldValue.arrayRemove(...dead) });
+  }
 }
 
 /**
@@ -311,13 +317,14 @@ async function pushUser(
   titleKey: MessageKey,
   bodyKey: MessageKey,
   params: Record<string, string | number> | ((lang: Lang) => Record<string, string | number>) = {},
+  link?: string,
 ): Promise<void> {
   const user = await getUser(userId);
   const tokens = user.fcmTokens ?? [];
   if (!tokens.length) return;
   const lang = langOf(user.locale);
   const p = typeof params === 'function' ? params(lang) : params;
-  await sendPush(tokens, t(lang, titleKey, p), t(lang, bodyKey, p));
+  await sendPush(userId, tokens, t(lang, titleKey, p), t(lang, bodyKey, p), link);
 }
 
 
@@ -980,7 +987,7 @@ async function notifyOffer(driverId: string, booking: BookingDoc, distanceKm?: n
   await pushUser(driverId, 'offerTitle', 'offerBody', (lang) => ({
     price: money(booking.estimatedPrice, lang),
     distance: distanceKm !== undefined ? t(lang, 'offerDistance', { km: distanceKm.toFixed(1) }) : '',
-  }));
+  }), links.driverHome);
 }
 
 async function notifyBroadcast(booking: BookingDoc): Promise<void> {
@@ -990,7 +997,7 @@ async function notifyBroadcast(booking: BookingDoc): Promise<void> {
       pushUser(d.driverId, 'broadcastTitle', 'broadcastBody', (lang) => ({
         vehicle: vehicleName(bookingClass(booking), lang),
         price: money(booking.estimatedPrice, lang),
-      })),
+      }), links.driverHome),
     ),
   );
 }
@@ -1222,7 +1229,7 @@ export const onBookingStatusChanged = onDocumentUpdated(
 
     await pushUser(after.riderId, 'statusTitle', key, (lang) => ({
       time: freeUntil ? clock(freeUntil, lang) : '',
-    }));
+    }), after.status === 'completed' ? links.receipt(bookingId) : links.ride(bookingId));
   },
 );
 
@@ -1301,7 +1308,7 @@ export const assignNearestDriver = onCall(async (req) => {
     });
 
     if (assigned) {
-      await pushUser(driverId, 'assignedTitle', 'assignedBody');
+      await pushUser(driverId, 'assignedTitle', 'assignedBody', {}, links.driverQueue);
       logger.info('assignNearestDriver', 'assigned', { bookingId, driverId });
       return { assigned: true, driverId };
     }
@@ -1403,7 +1410,7 @@ export const acceptBooking = onCall(async (req) => {
     });
 
     if (riderId) {
-      await pushUser(riderId, 'acceptedTitle', 'acceptedBody');
+      await pushUser(riderId, 'acceptedTitle', 'acceptedBody', {}, links.ride(bookingId));
     }
 
     logger.info('acceptBooking', 'success', { bookingId, driverId });
@@ -1527,9 +1534,9 @@ export const trackFlights = onSchedule(
 
         if (moved || status.cancelled) {
           const params = (lang: Lang) => ({ flight, minutes: delayMin, time: clock(pickup, lang) });
-          await pushUser(b.riderId, 'flightTitle', status.cancelled ? 'flightCancelled' : 'flightDelayed', params);
+          await pushUser(b.riderId, 'flightTitle', status.cancelled ? 'flightCancelled' : 'flightDelayed', params, links.ride(doc.id));
           if (b.driverId && !status.cancelled) {
-            await pushUser(b.driverId, 'pickupMovedTitle', 'pickupMovedBody', params);
+            await pushUser(b.driverId, 'pickupMovedTitle', 'pickupMovedBody', params, links.driverQueue);
           }
         }
       } catch (e) {
@@ -1582,7 +1589,7 @@ export const cancelBooking = onCall(async (req) => {
   if (result.driverId) {
     await pushUser(result.driverId, 'riderCancelledTitle', 'riderCancelledBody', (lang) => ({
       time: clock(result.pickup, lang),
-    }));
+    }), links.driverQueue);
   }
   if (isAdmin) {
     await writeAudit('booking_cancelled_by_admin', { bookingId, by: uid, reason: reason ? String(reason).slice(0, 300) : null });
@@ -1657,13 +1664,13 @@ export const adjustPrice = onCall(async (req) => {
     change: `${result.value > 0 ? '+' : '−'}${moneyExact(Math.abs(result.value), lang)}`,
     reason: reason(lang),
     total: moneyExact(result.finalPrice, lang),
-  }));
+  }), result.status === 'completed' ? links.receipt(bookingId) : links.ride(bookingId));
   // Before completion the chauffeur may be the one collecting the fare.
   if (result.driverId && result.status !== 'completed') {
     await pushUser(result.driverId, 'adjustDriverTitle', 'adjustDriverBody', (lang) => ({
       total: moneyExact(result.finalPrice, lang),
       reason: reason(lang),
-    }));
+    }), links.driverQueue);
   }
   logger.info('adjustPrice', 'adjusted', { bookingId, type, amount: result.value, finalPrice: result.finalPrice });
   return { finalPrice: result.finalPrice };
@@ -1726,7 +1733,7 @@ export const recordRefund = onCall(async (req) => {
     amount: moneyExact(result.value, lang),
     date: shortDate(result.pickup, lang),
     method: t(lang, `refundMethod_${method as RefundMethod}` as MessageKey),
-  }));
+  }), links.receipt(bookingId));
   logger.info('recordRefund', 'recorded', { bookingId, amount: result.value, method });
   return { refundId: refundRef.id };
 });
@@ -1780,8 +1787,8 @@ async function releaseBooking(
   const pickup = (released.pickupAt ?? released.scheduledAt)?.toDate() ?? new Date();
   const time = (lang: Lang) => ({ time: clock(pickup, lang) });
   await Promise.all([
-    opts.notifyDriver ? pushUser(released.driverId!, 'releasedTitle', 'releasedBody', time) : Promise.resolve(),
-    pushUser(released.riderId, 'reassigningTitle', 'reassigningBody', time),
+    opts.notifyDriver ? pushUser(released.driverId!, 'releasedTitle', 'releasedBody', time, links.driverQueue) : Promise.resolve(),
+    pushUser(released.riderId, 'reassigningTitle', 'reassigningBody', time, links.ride(bookingId)),
   ]);
   await writeAudit('booking_chauffeur_released', {
     bookingId,
@@ -1928,7 +1935,7 @@ async function linkMember(
     });
     tx.update(userRef, { companyId, companyRole: role });
   });
-  await pushUser(uid, 'companyAddedTitle', 'companyAddedBody', { company: company.name });
+  await pushUser(uid, 'companyAddedTitle', 'companyAddedBody', { company: company.name }, links.profile);
 }
 
 /**
@@ -1963,7 +1970,7 @@ async function addMemberByEmail(
     createdAt: admin.firestore.Timestamp.now(),
   });
   if (existingUid) {
-    await pushUser(existingUid, 'companyInvitedTitle', 'companyInvitedBody', { company: company.name });
+    await pushUser(existingUid, 'companyInvitedTitle', 'companyInvitedBody', { company: company.name }, links.profile);
   }
   return 'invited';
 }
@@ -2110,7 +2117,7 @@ export const claimCompanyInvite = onDocumentCreated('users/{uid}', async (event)
     const invite = await db.collection('companyInvites').doc(email).get();
     if (!invite.exists) return;
     const name = (invite.data()?.companyName as string | undefined) ?? '';
-    await pushUser(event.params.uid, 'companyInvitedTitle', 'companyInvitedBody', { company: name });
+    await pushUser(event.params.uid, 'companyInvitedTitle', 'companyInvitedBody', { company: name }, links.profile);
   } catch (e) {
     logger.error('claimCompanyInvite', 'notify failed', { uid: event.params.uid, error: String(e) });
   }
@@ -2233,12 +2240,12 @@ export const reviewDriverDocument = onCall(async (req) => {
 
   const type = d.type;
   if (approve) {
-    await pushUser(d.driverId, 'docApprovedTitle', 'docApprovedBody', (lang) => ({ doc: docName(type, lang) }));
+    await pushUser(d.driverId, 'docApprovedTitle', 'docApprovedBody', (lang) => ({ doc: docName(type, lang) }), links.driverDocuments);
   } else {
     await pushUser(d.driverId, 'docRejectedTitle', 'docRejectedBody', (lang) => ({
       doc: docName(type, lang),
       reason: update.rejectionReason as string,
-    }));
+    }), links.driverDocuments);
   }
   await writeAudit(approve ? 'driver_document_approved' : 'driver_document_rejected', {
     driverId: d.driverId,
@@ -2269,7 +2276,7 @@ export const checkDocumentExpiry = onSchedule(
       const type = doc.id;
       if (isExpired(data, now)) {
         await doc.ref.update({ status: 'expired' as DocStatus });
-        await pushUser(driverId, 'docExpiredTitle', 'docExpiredBody', (lang) => ({ doc: docName(type, lang) }));
+        await pushUser(driverId, 'docExpiredTitle', 'docExpiredBody', (lang) => ({ doc: docName(type, lang) }), links.driverDocuments);
         expired++;
         continue;
       }
@@ -2280,7 +2287,7 @@ export const checkDocumentExpiry = onSchedule(
         await pushUser(driverId, 'docExpiringTitle', 'docExpiringBody', (lang) => ({
           doc: docName(type, lang),
           days: left,
-        }));
+        }), links.driverDocuments);
         reminded++;
       }
     }
@@ -2329,7 +2336,7 @@ export const onSupportMessageCreated = onDocumentCreated(
     });
 
     if (fromTeam) {
-      await pushUser(ticket.userId, 'supportReplyTitle', 'supportReplyBody', { preview: text });
+      await pushUser(ticket.userId, 'supportReplyTitle', 'supportReplyBody', { preview: text }, links.help);
       return;
     }
     const urgent = ticket.category ? priorityFor(ticket.category) === 'urgent' : false;
@@ -2343,7 +2350,7 @@ export const onSupportMessageCreated = onDocumentCreated(
         pushUser(a.id, urgent ? 'supportUrgentTitle' : 'supportNewTitle', 'supportNewBody', {
           name: ticket.userName || '—',
           preview: text,
-        }),
+        }, links.admin),
       ),
     );
     logger.info('onSupportMessageCreated', 'notified', { ticketId: event.params.ticketId, fromTeam, urgent });
@@ -2361,7 +2368,7 @@ async function pushAdmins(
   params: (lang: Lang) => Record<string, string | number>,
 ): Promise<void> {
   const admins = await db.collection('users').where('role', '==', 'admin').limit(20).get();
-  await Promise.all(admins.docs.map((a) => pushUser(a.id, titleKey, bodyKey, params)));
+  await Promise.all(admins.docs.map((a) => pushUser(a.id, titleKey, bodyKey, params, links.admin)));
 }
 
 /** Groups app errors by fingerprint in clientErrors/{fp}. */
@@ -2581,5 +2588,5 @@ export const sendRideReceipt = onDocumentCreated('payments/{paymentId}', async (
 
   await pushUser(payment.riderId, 'paymentTitle', 'paymentBody', (lang) => ({
     price: money(payment.amount / 100, lang),
-  }));
+  }), links.receipt(payment.bookingId));
 });

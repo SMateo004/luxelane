@@ -58,5 +58,6 @@
   "flightCancelled": {"es": "Cancelado", "en": "Cancelled", "pt": "Cancelado"},
   "flightLanded": {"es": "Aterrizó", "en": "Landed", "pt": "Pousou"},
   "flightDelayed": {"es": "Retrasado {minutes} min", "en": "Delayed {minutes} min", "pt": "Atrasado {minutes} min", "placeholders": {"minutes": {"type": "int"}}},
-  "flightOnTime": {"es": "A tiempo", "en": "On time", "pt": "No horário"}
+  "flightOnTime": {"es": "A tiempo", "en": "On time", "pt": "No horário"},
+  "pushOpen": {"es": "Ver", "en": "View", "pt": "Ver", "description": "Action on the banner of a notification received with the app open"}
 }

@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
 import '../core/app_gate/app_gate.dart';
+import '../core/services/push_links.dart';
 import '../core/app_gate/global_config.dart';
 import '../core/widgets/environment_banner.dart';
 import '../core/repositories/repositories.dart';
@@ -40,6 +42,8 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
 
   // ── Routers — created once ─────────────────────────────────────────────
   late final dynamic _router;
+  final _messenger = GlobalKey<ScaffoldMessengerState>();
+  late final PushLinks _pushLinks;
 
   @override
   void initState() {
@@ -55,6 +59,10 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
     _notificationBloc = sl<NotificationBloc>();
 
     _router = buildRouter(_authBloc);
+
+    // Tapping a notification opens its screen (mobile only).
+    _pushLinks = PushLinks(app: LuxApp.rider, open: (link) => _router.push(link), messenger: _messenger);
+    if (!kIsWeb) _pushLinks.start();
 
     // Start DriverBloc + NotificationBloc only when authenticated
     // Once per signed-in user (status changes re-emit the same user).
@@ -87,6 +95,7 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
 
   @override
   void dispose() {
+    _pushLinks.dispose();
     _authBloc.close();
     _bookingBloc.close();
     _vehicleBloc.close();
@@ -115,6 +124,7 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
       child: MaterialApp.router(
         onGenerateTitle: (context) => context.l10n.appName,
         debugShowCheckedModeBanner: false,
+        scaffoldMessengerKey: _messenger,
         theme: luxTheme,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: supportedAppLocales,

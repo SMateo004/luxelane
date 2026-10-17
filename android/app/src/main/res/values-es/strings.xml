@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="trips_channel_name">Viajes</string>
+    <string name="trips_channel_description">Solicitudes de viaje, llegada de tu chófer y novedades del viaje</string>
+</resources>

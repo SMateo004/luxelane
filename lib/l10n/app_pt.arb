@@ -1028,6 +1028,7 @@
   "promoLoyaltyBetter": "Seu desconto Circle é maior que o do código, então aplicamos o Circle.",
   "promoRemove": "Remover código",
   "promoSavedLine": "Você economiza {amount} com {code}",
+  "pushOpen": "Ver",
   "refundAmount": "Valor (máximo {max})",
   "refundErrorAmount": "Informe um valor maior que 0 (até 2 casas decimais).",
   "refundErrorCard": "Pagamentos com cartão são reembolsados pelo Stripe, não registrados aqui.",

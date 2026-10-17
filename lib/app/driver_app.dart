@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
 import '../core/app_gate/app_gate.dart';
+import '../core/services/push_links.dart';
 import '../core/app_gate/global_config.dart';
 import '../core/widgets/environment_banner.dart';
 import '../core/repositories/repositories.dart';
@@ -28,6 +30,8 @@ class _DriverAppState extends State<DriverApp> {
   late final DriverBloc _driverBloc;
   late final NotificationBloc _notificationBloc;
   late final dynamic _router;
+  final _messenger = GlobalKey<ScaffoldMessengerState>();
+  late final PushLinks _pushLinks;
 
   @override
   void initState() {
@@ -36,6 +40,10 @@ class _DriverAppState extends State<DriverApp> {
     _driverBloc       = sl<DriverBloc>();
     _notificationBloc = sl<NotificationBloc>();
     _router = buildDriverRouter(_authBloc, _driverBloc);
+
+    // Tapping a notification opens its screen (mobile only).
+    _pushLinks = PushLinks(app: LuxApp.driver, open: (link) => _router.push(link), messenger: _messenger);
+    if (!kIsWeb) _pushLinks.start();
 
     // When auth completes, init driver + notifications
     // Once per signed-in user (status changes re-emit the same user).
@@ -56,6 +64,7 @@ class _DriverAppState extends State<DriverApp> {
 
   @override
   void dispose() {
+    _pushLinks.dispose();
     _authBloc.close();
     _driverBloc.close();
     _notificationBloc.close();
@@ -76,6 +85,7 @@ class _DriverAppState extends State<DriverApp> {
       child: MaterialApp.router(
         onGenerateTitle: (context) => context.l10n.appNameDriver,
         debugShowCheckedModeBanner: false,
+        scaffoldMessengerKey: _messenger,
         theme: luxTheme,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: supportedAppLocales,

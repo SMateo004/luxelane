@@ -1028,6 +1028,7 @@
   "promoLoyaltyBetter": "Your Circle discount is larger than the code's, so we applied Circle.",
   "promoRemove": "Remove code",
   "promoSavedLine": "You save {amount} with {code}",
+  "pushOpen": "View",
   "refundAmount": "Amount (up to {max})",
   "refundErrorAmount": "Enter an amount above 0 (up to 2 decimals).",
   "refundErrorCard": "Card payments are refunded through Stripe, not recorded here.",

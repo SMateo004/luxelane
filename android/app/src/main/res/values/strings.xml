@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="trips_channel_id" translatable="false">trips</string>
+    <string name="trips_channel_name">Rides</string>
+    <string name="trips_channel_description">Ride requests, your chauffeur\'s arrival and trip updates</string>
+</resources>

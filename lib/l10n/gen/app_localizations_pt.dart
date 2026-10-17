@@ -3441,6 +3441,9 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get pushOpen => 'Ver';
+
+  @override
   String refundAmount(String max) {
     return 'Valor (máximo $max)';
   }
