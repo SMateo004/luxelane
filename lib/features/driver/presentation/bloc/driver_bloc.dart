@@ -181,8 +181,11 @@ class DriverLoaded extends DriverState {
 
   /// Reparto de un viaje: el fijado por el servidor al completarlo o, si aún
   /// no existe, uno provisional con la comisión por defecto.
-  BookingSettlement earningsOf(Booking b) =>
-      b.settlementOr(kDefaultCommissionPct);
+  /// Un viaje reembolsado no deja ganancias.
+  BookingSettlement earningsOf(Booking b) => b.refunded
+      ? const BookingSettlement(
+          amount: 0, commissionPct: 0, platformCommission: 0, driverPayout: 0)
+      : b.settlementOr(kDefaultCommissionPct);
 
   /// Ganancias netas del chófer (tarifa menos comisión de la plataforma).
   double get totalEarnings => _sum((s) => s.driverPayout);
@@ -194,7 +197,7 @@ class DriverLoaded extends DriverState {
 
   /// Algún viaje aún sin reparto confirmado por el servidor.
   bool get hasProvisionalEarnings =>
-      completedBookings.any((b) => b.settlement == null);
+      completedBookings.any((b) => b.settlement == null && !b.refunded);
 
   double _sum(double Function(BookingSettlement) f) {
     final total = completedBookings.fold(0.0, (s, b) => s + f(earningsOf(b)));

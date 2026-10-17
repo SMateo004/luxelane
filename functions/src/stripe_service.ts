@@ -68,6 +68,12 @@ export async function attachPaymentMethod(
   await stripe.paymentMethods.attach(paymentMethodId, { customer: customerId });
 }
 
+/** Cliente de Stripe al que pertenece la tarjeta, o null si no tiene. */
+export async function paymentMethodCustomer(paymentMethodId: string): Promise<string | null> {
+  const pm = await stripe.paymentMethods.retrieve(paymentMethodId);
+  return typeof pm.customer === 'string' ? pm.customer : pm.customer?.id ?? null;
+}
+
 export async function detachPaymentMethod(paymentMethodId: string): Promise<void> {
   await stripe.paymentMethods.detach(paymentMethodId);
 }

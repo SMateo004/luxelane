@@ -27,6 +27,12 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // El admin bloquea cuentas con isActive = false.
+    function isActiveUser() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid))
+        .data.get('isActive', true) == true;
+    }
+
     function isOwner(uid) {
       return request.auth != null && request.auth.uid == uid;
     }
@@ -90,6 +96,16 @@ service cloud.firestore {
     // /bookings/{bookingId}
     // -------------------------------------------------------------------------
 
+    // Pasos que un chófer puede dar sobre su reserva (igual que
+    // AdminOperations en la app). Repetir el estado actual solo toca updatedAt.
+    function isDriverStep(from, to) {
+      return to == from ||
+        (from == 'confirmed' && to == 'driver_arriving') ||
+        (from == 'driver_arriving' && to == 'driver_arrived') ||
+        (from == 'driver_arrived' && to == 'in_progress') ||
+        (from == 'in_progress' && to == 'completed');
+    }
+
     match /bookings/{bookingId} {
       allow read: if isAuthenticated() && (
         resource.data.riderId == request.auth.uid ||
@@ -101,25 +117,30 @@ service cloud.firestore {
       // Any authenticated user can create a booking for themselves
       // El reparto y la revisión de tarifa solo los escribe el servidor.
       allow create: if isAuthenticated() &&
+        isActiveUser() &&
         request.resource.data.riderId == request.auth.uid &&
         !('settlement' in request.resource.data) &&
-        !('pricingReview' in request.resource.data);
+        !('pricingReview' in request.resource.data) &&
+        !('refunded' in request.resource.data);
 
       allow update: if isAdmin() ||
         // Driver accepts a pending booking (self-assign)
-        (isAuthenticated() &&
+        (isDriver() && isActiveUser() &&
           resource.data.status == 'pending' &&
           request.resource.data.driverId == request.auth.uid &&
           request.resource.data.status == 'confirmed' &&
           onlyUpdating(['driverId', 'status', 'updatedAt'])) ||
-        // Driver progresses their assigned booking through statuses
-        (isAuthenticated() &&
+        // Driver progresses their assigned booking, one step at a time
+        (isDriver() &&
           resource.data.driverId == request.auth.uid &&
-          onlyUpdating(['status', 'updatedAt'])) ||
-        // Rider cancels their own booking
+          onlyUpdating(['status', 'updatedAt']) &&
+          isDriverStep(resource.data.status, request.resource.data.status)) ||
+        // Rider cancels their own booking before the trip starts
         (isAuthenticated() &&
           resource.data.riderId == request.auth.uid &&
           onlyUpdating(['status', 'updatedAt']) &&
+          resource.data.status in
+            ['pending', 'confirmed', 'driver_arriving', 'driver_arrived'] &&
           request.resource.data.status == 'cancelled');
 
       allow delete: if false;
@@ -230,25 +251,6 @@ service cloud.firestore {
       allow read:   if isAdmin();
       allow create: if isAdmin() &&
         request.resource.data.adminId == request.auth.uid;
-      allow update, delete: if false;
-    }
-
-    // -------------------------------------------------------------------------
-    // /config/{doc} — public product switches (e.g. firstClassEnabled).
-    // Guests on the booking page read them; only admins change them.
-    // -------------------------------------------------------------------------
-
-    match /config/{docId} {
-      allow read:  if true;
-      allow write: if isAdmin();
-    }
-
-    // -------------------------------------------------------------------------
-    // /admin_logs/{logId} — audit trail, admins only, append-only.
-    // -------------------------------------------------------------------------
-
-    match /admin_logs/{logId} {
-      allow read, create: if isAdmin();
       allow update, delete: if false;
     }
   }

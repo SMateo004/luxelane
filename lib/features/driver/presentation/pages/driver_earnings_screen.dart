@@ -148,7 +148,7 @@ class _EarningsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provisional = booking.settlement == null;
+    final provisional = booking.settlement == null && !booking.refunded;
     return LuxCard(
       child: Row(
         children: [
@@ -175,8 +175,10 @@ class _EarningsCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Tarifa ${_bs(split.amount)} · comisión '
-                  '${_pct(split.commissionPct)} % (${_bs(split.platformCommission)})',
+                  booking.refunded
+                      ? 'Reembolsado al pasajero · sin comisión ni pago'
+                      : 'Tarifa ${_bs(split.amount)} · comisión '
+                          '${_pct(split.commissionPct)} % (${_bs(split.platformCommission)})',
                   style: LuxTypography.caption
                       .copyWith(color: LuxColors.inkTertiary),
                 ),

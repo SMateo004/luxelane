@@ -320,6 +320,7 @@ class Booking {
     this.luggageCount = 0,
     this.pricingReviewReason,
     this.settlement,
+    this.refunded = false,
   });
 
   final String id;
@@ -354,6 +355,10 @@ class Booking {
 
   /// Reparto plataforma / chófer fijado por el servidor. Solo lectura.
   final BookingSettlement? settlement;
+
+  /// El cobro se reembolsó (lo marca `refundPayment`): el viaje ya no
+  /// genera comisión ni pago al chófer. Solo lectura.
+  final bool refunded;
 
   /// Importe que se factura: el precio final o, si no hay, el estimado.
   double get chargedAmount => finalPrice ?? estimatedPrice;
@@ -404,6 +409,7 @@ class Booking {
         luggageCount: j['luggageCount'] as int? ?? 0,
         pricingReviewReason: (j['pricingReview'] as Map?)?['reason'] as String?,
         settlement: BookingSettlement.fromJson(j['settlement']),
+        refunded: j['refunded'] == true,
       );
 
   Map<String, dynamic> toJson() => {
@@ -463,6 +469,7 @@ class Booking {
         luggageCount: luggageCount,
         pricingReviewReason: pricingReviewReason,
         settlement: settlement,
+        refunded: refunded,
       );
 }
 

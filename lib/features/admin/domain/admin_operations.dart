@@ -75,6 +75,21 @@ String? pricingReviewLabel(Booking b) {
   }
 }
 
+extension PaymentStatusLabel on PaymentStatus {
+  String get displayLabel {
+    switch (this) {
+      case PaymentStatus.pending:
+        return 'Pendiente';
+      case PaymentStatus.captured:
+        return 'Cobrado';
+      case PaymentStatus.refunded:
+        return 'Reembolsado';
+      case PaymentStatus.failed:
+        return 'Fallido';
+    }
+  }
+}
+
 extension UserRoleLabel on UserRole {
   String get displayLabel {
     switch (this) {

@@ -24,6 +24,8 @@ const fare = (base: number, perKm: number, perHour: number, min: number): FareRu
 export const DEFAULT_FARES: Record<string, FareRule> = {
   business_oneWay: fare(50, 3, 0, 50),
   business_byTheHour: fare(0, 0, 80, 160),
+  businessSuv_oneWay: fare(70, 4, 0, 70),
+  businessSuv_byTheHour: fare(0, 0, 115, 230),
   firstClass_oneWay: fare(80, 4, 0, 80),
   firstClass_byTheHour: fare(0, 0, 120, 240),
   businessVan_oneWay: fare(90, 5, 0, 90),
