@@ -15,9 +15,12 @@ abstract class AppConfig {
   static String get firebaseProjectId =>
       isProd ? 'luxelane-prod' : 'luxelane-dev';
 
-  static String get stripePublishableKey => isProd
-      ? 'pk_live_XXXXXXXXXXXXXXXXXXXXXXXX'
-      : 'pk_test_51...'; // Add real keys here or via --dart-define
+  /// Stripe publishable key (`pk_live_…`/`pk_test_…`), only if card
+  /// payments are ever turned on. Empty by default: rides are paid in Bs to
+  /// the chauffeur and Stripe isn't initialised.
+  static const String stripePublishableKey = String.fromEnvironment('STRIPE_PUBLISHABLE_KEY');
+
+  static bool get stripeEnabled => RegExp(r'^pk_(live|test)_\w+$').hasMatch(stripePublishableKey);
 
   static bool get enableLogs => isDev;
 

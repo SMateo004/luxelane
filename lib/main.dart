@@ -62,11 +62,16 @@ void main() async {
     await initMapsForWeb(AppConfig.googleMapsKey);
   }
 
-  // Stripe — not supported on web (uses dart:io internally)
-  if (!kIsWeb) {
-    Stripe.publishableKey = AppConfig.stripePublishableKey;
-    Stripe.merchantIdentifier = 'luxelane';
-    await Stripe.instance.applySettings();
+  // Stripe (card payments) only with a real key; not supported on web.
+  // A failure here must not stop the app: rides are paid in Bs anyway.
+  if (!kIsWeb && AppConfig.stripeEnabled) {
+    try {
+      Stripe.publishableKey = AppConfig.stripePublishableKey;
+      Stripe.merchantIdentifier = 'luxelane';
+      await Stripe.instance.applySettings();
+    } catch (e) {
+      debugPrint('[Luxelane] Stripe init failed: $e');
+    }
   }
 
   await AppCheckService.init();

@@ -235,6 +235,31 @@ mode**: calls without a token still work and are logged as
 `reportClientError` stays open so error reports arrive even when App Check
 is the problem; it is capped per day.
 
+## Backups and restore
+
+Run once per project (production first):
+```
+PROJECT=luxelane-4e7ae ./scripts/setup_backups.sh
+```
+It turns on **point-in-time recovery** (any minute of the last 7 days) and
+schedules **daily backups kept 14 days** and **weekly backups kept 13 weeks**.
+Driver documents in Storage are covered by Cloud Storage soft delete (7 days
+by default).
+
+Restore never overwrites the live database: it goes to a new database you
+inspect first, then copy what you need back.
+```
+gcloud firestore backups list --project=luxelane-4e7ae
+gcloud firestore databases restore --project=luxelane-4e7ae \
+  --source-backup=projects/luxelane-4e7ae/locations/<loc>/backups/<id> \
+  --destination-database=restore-<fecha>
+```
+For a moment in the last 7 days (e.g. just before a bad deploy), export that
+snapshot and import the collections you need:
+```
+gcloud firestore export gs://<bucket>/pitr-<fecha> --snapshot-time=2026-10-17T14:00:00Z --project=luxelane-4e7ae
+```
+
 ## Before launch: content you must provide
 
 - `lib/core/config/legal.dart`: company name, NIT, address, support email and WhatsApp, record retention. The legal pages show a *borrador* banner until every placeholder is filled.

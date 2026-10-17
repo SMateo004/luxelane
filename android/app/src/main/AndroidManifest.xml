@@ -42,6 +42,13 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="${MAPS_API_KEY}" />
+        <!-- Firebase config comes from dart-defines (no google-services.json or
+             Crashlytics Gradle plugin), so there is no Crashlytics build ID;
+             without this the Crashlytics SDK throws at startup. Dart crashes
+             are symbolicated from the --split-debug-info files instead. -->
+        <meta-data
+            android:name="com.crashlytics.RequireBuildId"
+            android:value="false" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

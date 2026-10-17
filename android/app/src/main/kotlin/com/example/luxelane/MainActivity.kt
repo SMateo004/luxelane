@@ -1,5 +1,6 @@
 package com.example.luxelane
 
-import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.android.FlutterFragmentActivity
 
-class MainActivity : FlutterActivity()
+// flutter_stripe needs a FragmentActivity (its card sheets are fragments).
+class MainActivity : FlutterFragmentActivity()

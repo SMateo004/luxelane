@@ -79,10 +79,16 @@ android {
             } else {
                 signingConfigs.getByName("debug")
             }
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    // AppCompat themes (res/values*/styles.xml), required by flutter_stripe.
+    implementation("androidx.appcompat:appcompat:1.7.0")
 }
