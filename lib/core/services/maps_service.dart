@@ -11,6 +11,9 @@ import '../models/place_model.dart';
 // Web uses the Maps JS API (no CORS); mobile/desktop uses the HTTP REST API.
 import 'places_web.dart' if (dart.library.io) 'places_stub.dart';
 
+/// Why a chauffeur's location can't be shared (null when it can).
+enum LocationProblem { serviceOff, denied, deniedForever }
+
 class MapsService {
   static const _base = 'maps.googleapis.com';
   String get _key => AppConfig.googleMapsKey;
@@ -65,6 +68,38 @@ class MapsService {
       settings = const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 25);
     }
     return Geolocator.getPositionStream(locationSettings: settings);
+  }
+
+  /// Asks for location permission if needed. Null when the location can be
+  /// read; otherwise what the chauffeur has to fix.
+  Future<LocationProblem?> requestLocationAccess() async {
+    try {
+      if (!await Geolocator.isLocationServiceEnabled()) return LocationProblem.serviceOff;
+      var permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) permission = await Geolocator.requestPermission();
+      return switch (permission) {
+        LocationPermission.denied => LocationProblem.denied,
+        LocationPermission.deniedForever => LocationProblem.deniedForever,
+        _ => null,
+      };
+    } catch (_) {
+      return LocationProblem.denied;
+    }
+  }
+
+  /// Takes the chauffeur where [problem] is fixed: the phone's location
+  /// settings, the app's settings, or the permission prompt again.
+  Future<void> fixLocation(LocationProblem problem) async {
+    try {
+      switch (problem) {
+        case LocationProblem.serviceOff:
+          await Geolocator.openLocationSettings();
+        case LocationProblem.deniedForever:
+          await Geolocator.openAppSettings();
+        case LocationProblem.denied:
+          await Geolocator.requestPermission();
+      }
+    } catch (_) {}
   }
 
   Future<Position?> getCurrentPosition() async {

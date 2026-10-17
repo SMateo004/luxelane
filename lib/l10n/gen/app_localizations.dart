@@ -3805,6 +3805,48 @@ abstract class AppLocalizations {
   /// **'Conectarse'**
   String get driverGoOnline;
 
+  /// No description provided for @driverLocationAllow.
+  ///
+  /// In es, this message translates to:
+  /// **'Permitir ubicación'**
+  String get driverLocationAllow;
+
+  /// No description provided for @driverLocationDenied.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane necesita permiso de ubicación para ofrecerte viajes cercanos y mostrar tu llegada al pasajero.'**
+  String get driverLocationDenied;
+
+  /// No description provided for @driverLocationDeniedForever.
+  ///
+  /// In es, this message translates to:
+  /// **'El permiso de ubicación está desactivado para esta app. Actívalo en Ajustes → Luxelane Chófer → Ubicación.'**
+  String get driverLocationDeniedForever;
+
+  /// No description provided for @driverLocationOffTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu ubicación no se está compartiendo'**
+  String get driverLocationOffTitle;
+
+  /// No description provided for @driverLocationOpenSettings.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir ajustes'**
+  String get driverLocationOpenSettings;
+
+  /// No description provided for @driverLocationRetry.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get driverLocationRetry;
+
+  /// No description provided for @driverLocationServiceOff.
+  ///
+  /// In es, this message translates to:
+  /// **'Activa la ubicación (GPS) del teléfono. Sin ella no te llegan viajes cercanos y el pasajero no ve tu llegada.'**
+  String get driverLocationServiceOff;
+
   /// No description provided for @driverMapsOpenError.
   ///
   /// In es, this message translates to:

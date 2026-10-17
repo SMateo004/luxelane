@@ -2089,6 +2089,27 @@ class AppLocalizationsPt extends AppLocalizations {
   String get driverGoOnline => 'Ficar online';
 
   @override
+  String get driverLocationAllow => 'Permitir localização';
+
+  @override
+  String get driverLocationDenied => 'O Luxelane precisa de permissão de localização para oferecer viagens próximas e mostrar sua chegada ao passageiro.';
+
+  @override
+  String get driverLocationDeniedForever => 'A permissão de localização está desativada para este app. Ative-a em Ajustes → Luxelane Chófer → Localização.';
+
+  @override
+  String get driverLocationOffTitle => 'Sua localização não está sendo compartilhada';
+
+  @override
+  String get driverLocationOpenSettings => 'Abrir ajustes';
+
+  @override
+  String get driverLocationRetry => 'Tentar novamente';
+
+  @override
+  String get driverLocationServiceOff => 'Ative a localização (GPS) do celular. Sem ela você não recebe viagens próximas e o passageiro não vê sua chegada.';
+
+  @override
   String get driverMapsOpenError => 'Não foi possível abrir os mapas';
 
   @override

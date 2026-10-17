@@ -148,6 +148,7 @@ class DriverLoaded extends DriverState {
     required this.isAvailable,
     required this.bookings,
     this.isTracking = false,
+    this.locationProblem,
     this.pendingRequests = const [],
     this.declinedIds = const [],
   });
@@ -157,6 +158,10 @@ class DriverLoaded extends DriverState {
   final bool isAvailable;
   final List<Booking> bookings;
   final bool isTracking;
+
+  /// Available, but the location can't be shared (GPS off or permission
+  /// denied): nearby rides can't be offered and the rider can't see the car.
+  final LocationProblem? locationProblem;
 
   /// All pending bookings currently in Firestore.
   final List<Booking> pendingRequests;
@@ -203,7 +208,7 @@ class DriverLoaded extends DriverState {
 
   @override
   List<Object?> get props =>
-      [user, profile, isAvailable, bookings, isTracking, pendingRequests, declinedIds];
+      [user, profile, isAvailable, bookings, isTracking, locationProblem, pendingRequests, declinedIds];
 
   DriverLoaded copyWith({
     User? user,
@@ -211,6 +216,8 @@ class DriverLoaded extends DriverState {
     bool? isAvailable,
     List<Booking>? bookings,
     bool? isTracking,
+    LocationProblem? locationProblem,
+    bool clearLocationProblem = false,
     List<Booking>? pendingRequests,
     List<String>? declinedIds,
   }) =>
@@ -220,6 +227,7 @@ class DriverLoaded extends DriverState {
         isAvailable: isAvailable ?? this.isAvailable,
         bookings: bookings ?? this.bookings,
         isTracking: isTracking ?? this.isTracking,
+        locationProblem: clearLocationProblem ? null : locationProblem ?? this.locationProblem,
         pendingRequests: pendingRequests ?? this.pendingRequests,
         declinedIds: declinedIds ?? this.declinedIds,
       );
@@ -416,21 +424,29 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
   ) async {
     _locationTimer?.cancel();
     await _positionSub?.cancel();
-    final granted = await _mapsService.getCurrentPosition() != null;
-    if (kIsWeb || !granted) {
+    _positionSub = null;
+    if (kIsWeb) {
       // Web can't track in the background: poll while the tab is open.
       _locationTimer = Timer.periodic(
         const Duration(seconds: 10),
         (_) => add(_DriverLocationTick(userId: event.userId)),
       );
     } else {
+      // Say so instead of looking online while sharing nothing.
+      final problem = await _mapsService.requestLocationAccess();
+      if (problem != null) {
+        if (state is DriverLoaded) {
+          emit((state as DriverLoaded).copyWith(isTracking: false, locationProblem: problem));
+        }
+        return;
+      }
       _positionSub = _mapsService.driverPositionStream().listen(
         (pos) => add(_DriverLocationTick(userId: event.userId, position: pos)),
         onError: (_) {},
       );
     }
     if (state is DriverLoaded) {
-      emit((state as DriverLoaded).copyWith(isTracking: true));
+      emit((state as DriverLoaded).copyWith(isTracking: true, clearLocationProblem: true));
     }
   }
 
@@ -443,7 +459,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     await _positionSub?.cancel();
     _positionSub = null;
     if (state is DriverLoaded) {
-      emit((state as DriverLoaded).copyWith(isTracking: false));
+      emit((state as DriverLoaded).copyWith(isTracking: false, clearLocationProblem: true));
     }
   }
 

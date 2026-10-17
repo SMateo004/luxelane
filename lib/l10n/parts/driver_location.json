@@ -1,0 +1,25 @@
+{
+  "driverLocationOffTitle": {
+    "es": "Tu ubicación no se está compartiendo",
+    "en": "Your location isn't being shared",
+    "pt": "Sua localização não está sendo compartilhada"
+  },
+  "driverLocationServiceOff": {
+    "es": "Activa la ubicación (GPS) del teléfono. Sin ella no te llegan viajes cercanos y el pasajero no ve tu llegada.",
+    "en": "Turn on your phone's location (GPS). Without it you won't get nearby rides and the passenger can't see you arriving.",
+    "pt": "Ative a localização (GPS) do celular. Sem ela você não recebe viagens próximas e o passageiro não vê sua chegada."
+  },
+  "driverLocationDenied": {
+    "es": "Luxelane necesita permiso de ubicación para ofrecerte viajes cercanos y mostrar tu llegada al pasajero.",
+    "en": "Luxelane needs location permission to offer you nearby rides and show the passenger you're on your way.",
+    "pt": "O Luxelane precisa de permissão de localização para oferecer viagens próximas e mostrar sua chegada ao passageiro."
+  },
+  "driverLocationDeniedForever": {
+    "es": "El permiso de ubicación está desactivado para esta app. Actívalo en Ajustes → Luxelane Chófer → Ubicación.",
+    "en": "Location permission is turned off for this app. Turn it on in Settings → Luxelane Chófer → Location.",
+    "pt": "A permissão de localização está desativada para este app. Ative-a em Ajustes → Luxelane Chófer → Localização."
+  },
+  "driverLocationAllow": {"es": "Permitir ubicación", "en": "Allow location", "pt": "Permitir localização"},
+  "driverLocationOpenSettings": {"es": "Abrir ajustes", "en": "Open settings", "pt": "Abrir ajustes"},
+  "driverLocationRetry": {"es": "Reintentar", "en": "Try again", "pt": "Tentar novamente"}
+}

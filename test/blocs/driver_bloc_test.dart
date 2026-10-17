@@ -81,6 +81,8 @@ void main() {
         .thenAnswer((_) => Stream.value([]));
     // No location permission in tests → the bloc falls back to polling.
     when(() => mapsService.getCurrentPosition()).thenAnswer((_) async => null);
+    when(() => mapsService.requestLocationAccess()).thenAnswer((_) async => null);
+    when(() => mapsService.driverPositionStream()).thenAnswer((_) => const Stream.empty());
   });
 
   DriverBloc bloc() => DriverBloc(
@@ -163,6 +165,33 @@ void main() {
               isAvailable: true,
             )).called(1);
       },
+    );
+
+    blocTest<DriverBloc, DriverState>(
+      'without location access it says why instead of looking online',
+      build: () {
+        when(() => userRepo.setDriverAvailability(
+              userId: any(named: 'userId'),
+              isAvailable: any(named: 'isAvailable'),
+            )).thenAnswer((_) async => const Right(null));
+        when(() => mapsService.requestLocationAccess()).thenAnswer((_) async => LocationProblem.deniedForever);
+        return bloc()
+          ..emit(DriverLoaded(user: _driverUser, profile: _driverProfile, isAvailable: false, bookings: const []));
+      },
+      act: (bloc) async {
+        bloc.add(const DriverAvailabilityToggled(userId: 'driver-1', isAvailable: true));
+        await Future<void>.delayed(Duration.zero);
+        bloc.add(const DriverAvailabilityToggled(userId: 'driver-1', isAvailable: false));
+      },
+      expect: () => [
+        isA<DriverLoaded>().having((s) => s.isAvailable, 'isAvailable', true),
+        isA<DriverLoaded>()
+            .having((s) => s.isTracking, 'isTracking', false)
+            .having((s) => s.locationProblem, 'locationProblem', LocationProblem.deniedForever),
+        isA<DriverLoaded>().having((s) => s.isAvailable, 'isAvailable', false),
+        isA<DriverLoaded>().having((s) => s.locationProblem, 'locationProblem', isNull),
+      ],
+      verify: (_) => verifyNever(() => mapsService.driverPositionStream()),
     );
 
     blocTest<DriverBloc, DriverState>(

@@ -16,6 +16,7 @@ import '../../../../core/widgets/trip_widgets.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
+import '../widgets/driver_location_banner.dart';
 import 'driver_documents_screen.dart';
 
 class DriverHomeScreen extends StatefulWidget {
@@ -154,9 +155,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               const SizedBox(width: LuxSpacing.md),
             ],
           ),
-          body: active != null
-              ? _ActiveRidePanel(booking: active)
-              : _IdlePanel(state: state),
+          body: Column(children: [
+            if (state.isAvailable && state.locationProblem != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(LuxSpacing.md, LuxSpacing.md, LuxSpacing.md, 0),
+                child: DriverLocationBanner(problem: state.locationProblem!, userId: state.user.id),
+              ),
+            Expanded(child: active != null ? _ActiveRidePanel(booking: active) : _IdlePanel(state: state)),
+          ]),
         );
       },
     );
