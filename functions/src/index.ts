@@ -43,6 +43,8 @@ interface BookingDoc {
   finalPrice?: number;
   paymentId?: string;
   stripePaymentIntentId?: string;
+  stripePaymentMethodId?: string;
+  scheduledAt?: admin.firestore.Timestamp;
   settlement?: Settlement;
 }
 
@@ -116,9 +118,12 @@ async function getUserTokens(userId: string): Promise<string[]> {
 // cliente de Stripe salen del servidor; el id del intent queda en la reserva
 // para cobrarlo al completar el viaje (captureOnCompletion) o liberarlo si se
 // cancela.
+/** Margen bajo los 7 días que Stripe mantiene una autorización. */
+const HOLD_WINDOW_MS = 6 * 24 * 60 * 60 * 1000;
+
 export const createPaymentIntent = onCall(async (req) => {
   const uid = requireAuth(req);
-  const { bookingId } = req.data as { bookingId: string };
+  const { bookingId, paymentMethodId } = req.data as { bookingId: string; paymentMethodId?: string };
   if (!bookingId) throw err.invalidArgument('bookingId required');
 
   const bookingRef = db.collection('bookings').doc(bookingId);
@@ -130,9 +135,24 @@ export const createPaymentIntent = onCall(async (req) => {
   const booking = bookingSnap.data() as BookingDoc;
   if (booking.riderId !== uid) throw err.permissionDenied('Not your booking');
   if (booking.status !== 'pending') throw err.failedPrecondition('Booking is not pending');
-  if (booking.stripePaymentIntentId) throw err.failedPrecondition('Booking already has a payment');
+  if (booking.stripePaymentIntentId || booking.stripePaymentMethodId) {
+    throw err.failedPrecondition('Booking already has a payment');
+  }
   const customerId = userSnap.data()?.stripeCustomerId as string | undefined;
   if (!customerId) throw err.failedPrecondition('No payment profile');
+
+  // Stripe libera una autorización a los 7 días: para viajes más lejanos se
+  // guarda la tarjeta y se cobra al completar (cobro sin el pasajero
+  // presente, con la tarjeta que ya autorizó al guardarla).
+  const scheduledMs = booking.scheduledAt?.toMillis() ?? Date.now();
+  if (scheduledMs - Date.now() > HOLD_WINDOW_MS) {
+    if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+    const owner = await stripe.paymentMethodCustomer(paymentMethodId);
+    if (owner !== customerId) throw err.permissionDenied('Not your payment method');
+    await bookingRef.update({ stripePaymentMethodId: paymentMethodId });
+    logger.info('createPaymentIntent', 'deferred', { uid, bookingId });
+    return { deferred: true };
+  }
 
   const amount = toCents(booking.estimatedPrice);
   if (amount <= 0) throw err.invalidArgument('amount must be positive');
@@ -245,11 +265,27 @@ export const captureOnCompletion = onDocumentUpdated('bookings/{bookingId}', asy
   const before = event.data?.before.data() as BookingDoc | undefined;
   const after = event.data?.after.data() as BookingDoc | undefined;
   if (!before || !after || before.status === after.status) return;
+  if (after.paymentId) return;
   const intentId = after.stripePaymentIntentId;
-  if (!intentId || after.paymentId) return;
 
   try {
-    if (after.status === 'completed') {
+    if (after.status === 'completed' && !intentId && after.stripePaymentMethodId) {
+      // Reserva lejana: cobro de la tarjeta guardada al completar.
+      const customerId = (await db.collection('users').doc(after.riderId).get()).data()
+        ?.stripeCustomerId as string | undefined;
+      if (!customerId) throw new Error('rider has no payment profile');
+      const id = await stripe.chargeOffSession({
+        amount: toCents(after.finalPrice ?? after.estimatedPrice),
+        currency: 'bob',
+        customerId,
+        paymentMethodId: after.stripePaymentMethodId,
+        bookingId: event.params.bookingId,
+      });
+      await event.data!.after.ref.update({ stripePaymentIntentId: id });
+      await captureBookingPayment(event.data!.after.ref, after, id);
+    } else if (!intentId) {
+      return;
+    } else if (after.status === 'completed') {
       await captureBookingPayment(event.data!.after.ref, after, intentId);
     } else if (after.status === 'cancelled') {
       await stripe.cancelIntent(intentId);

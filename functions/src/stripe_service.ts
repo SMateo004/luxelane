@@ -28,6 +28,31 @@ export async function createIntent(params: {
   return { id: intent.id, clientSecret: intent.client_secret! };
 }
 
+/**
+ * Autoriza sin el pasajero presente la tarjeta que guardó, para cobrarla
+ * enseguida con captureIntent (reservas de más de 6 días de antelación).
+ */
+export async function chargeOffSession(params: {
+  amount: number;
+  currency: string;
+  customerId: string;
+  paymentMethodId: string;
+  bookingId: string;
+}): Promise<string> {
+  const intent = await stripe.paymentIntents.create({
+    amount: params.amount,
+    currency: params.currency,
+    customer: params.customerId,
+    payment_method: params.paymentMethodId,
+    capture_method: 'manual',
+    off_session: true,
+    confirm: true,
+    metadata: { bookingId: params.bookingId },
+  });
+  logger.info(FN, 'chargeOffSession', { intentId: intent.id, status: intent.status });
+  return intent.id;
+}
+
 /** Libera una autorización que no se va a cobrar (reserva cancelada). */
 export async function cancelIntent(paymentIntentId: string): Promise<void> {
   const intent = await stripe.paymentIntents.retrieve(paymentIntentId);

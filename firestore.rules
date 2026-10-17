@@ -137,7 +137,8 @@ service cloud.firestore {
         request.resource.data.estimatedPrice is number &&
         request.resource.data.estimatedPrice > 0 &&
         !request.resource.data.keys().hasAny(['settlement', 'pricingReview',
-          'refunded', 'stripePaymentIntentId', 'driverInfo', 'riderRating']);
+          'refunded', 'stripePaymentIntentId', 'stripePaymentMethodId',
+          'driverInfo', 'riderRating']);
 
       allow update: if isAdmin() ||
         // Driver accepts a pending booking (self-assign)

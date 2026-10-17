@@ -17,10 +17,17 @@ abstract class PaymentEvent extends Equatable {
 /// Autoriza la tarjeta para una reserva; importe y cliente los fija el
 /// servidor a partir de la reserva.
 class PaymentIntentRequested extends PaymentEvent {
-  const PaymentIntentRequested({required this.bookingId});
+  const PaymentIntentRequested({
+    required this.bookingId,
+    required this.paymentMethodId,
+  });
   final String bookingId;
+
+  /// Tarjeta elegida: se guarda para cobrarla al completar si el viaje es a
+  /// más de 6 días (Stripe no mantiene una autorización tanto tiempo).
+  final String paymentMethodId;
   @override
-  List<Object?> get props => [bookingId];
+  List<Object?> get props => [bookingId, paymentMethodId];
 }
 
 class PaymentCaptureRequested extends PaymentEvent {
@@ -103,7 +110,10 @@ class PaymentLoading extends PaymentState {
 
 class PaymentIntentCreated extends PaymentState {
   const PaymentIntentCreated(this.clientSecret);
-  final String clientSecret;
+
+  /// Null si el cobro se hará al completar el viaje (reserva lejana): no
+  /// hay nada que confirmar ahora.
+  final String? clientSecret;
   @override
   List<Object?> get props => [clientSecret];
 }
@@ -161,7 +171,10 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     Emitter<PaymentState> emit,
   ) async {
     emit(const PaymentLoading());
-    final result = await _repo.createPaymentIntent(bookingId: event.bookingId);
+    final result = await _repo.createPaymentIntent(
+      bookingId: event.bookingId,
+      paymentMethodId: event.paymentMethodId,
+    );
     result.fold(
       (f) => emit(PaymentError(f.message)),
       (secret) => emit(PaymentIntentCreated(secret)),

@@ -257,9 +257,10 @@ class _BookingScreenState extends State<BookingScreen> {
   void _authorizeCard(Booking booking) {
     _pendingBookingId = booking.id;
     setState(() => _awaitingPaymentIntent = true);
-    context
-        .read<PaymentBloc>()
-        .add(PaymentIntentRequested(bookingId: booking.id));
+    context.read<PaymentBloc>().add(PaymentIntentRequested(
+          bookingId: booking.id,
+          paymentMethodId: _selectedCardId!,
+        ));
   }
 
   /// La tarjeta no se pudo autorizar: la reserva se cancela para no dejarla
@@ -443,7 +444,17 @@ class _BookingScreenState extends State<BookingScreen> {
           }
           if (state is PaymentIntentCreated && _awaitingPaymentIntent) {
             setState(() => _awaitingPaymentIntent = false);
-            _handleStripeConfirm(state.clientSecret);
+            final secret = state.clientSecret;
+            if (secret != null) {
+              _handleStripeConfirm(secret);
+            } else {
+              // Viaje lejano: la tarjeta queda guardada en la reserva y se
+              // cobra al completar.
+              final id = _pendingBookingId;
+              _pendingBookingId = null;
+              setState(() => _loading = false);
+              if (id != null) ctx.go('/ride/$id');
+            }
           }
           if (state is PaymentError) {
             if (_awaitingPaymentIntent) {
