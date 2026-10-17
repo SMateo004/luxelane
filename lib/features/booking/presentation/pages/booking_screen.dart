@@ -156,6 +156,10 @@ class _BookingScreenState extends State<BookingScreen> {
       if (extra is BookingFormData) {
         _formData = extra;
         _service = extra.serviceType;
+        if (extra.preferredClass != null &&
+            _kVehicleClasses.contains(extra.preferredClass)) {
+          _selected = extra.preferredClass!;
+        }
         _hours = extra.hours;
         _ensureRoute();
       }
@@ -244,6 +248,14 @@ class _BookingScreenState extends State<BookingScreen> {
         PricingCatalog.instance.unavailableReason(_selected, _service);
     if (blocked != null) {
       showLuxSnackbar(context, blocked, isError: true);
+      return;
+    }
+    if (_formData!.scheduledAt
+        .isBefore(DateTime.now().subtract(const Duration(minutes: 5)))) {
+      showLuxSnackbar(
+          context, 'La hora de recogida ya pasó. Elige una nueva hora.',
+          isError: true);
+      context.go('/');
       return;
     }
     // La reserva se crea primero y la tarjeta se autoriza contra ella: si la

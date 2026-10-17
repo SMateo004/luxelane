@@ -163,16 +163,17 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
       );
       if (!mounted) return;
 
-      // FALLBACK: If details fail, create a Place with 0,0 or dummy coords
-      // so the 'Get Prices' button can at least be pressed.
-      if (place == null) _dbg('Fallback for: ${s.description}');
-      final picked = place ??
-          Place(
-            name: s.mainText,
-            address: s.description,
-            lat: 0.0,
-            lng: 0.0,
-          );
+      // Sin coordenadas no se puede recoger ni calcular el precio: mejor
+      // pedir otra dirección que guardar un lugar en (0,0).
+      if (place == null) {
+        _dbg('Place details failed for: ${s.description}');
+        _ctrl.text = widget.initialValue?.displayName ?? '';
+        showLuxSnackbar(context,
+            'No pudimos ubicar esa dirección. Prueba con otra o elígela en el mapa.',
+            isError: true);
+        return;
+      }
+      final picked = place;
       _token = _newToken();
 
       final origin = widget.sameCityAs;
@@ -183,7 +184,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
         showLuxSnackbar(context, error, isError: true);
         return;
       }
-      if (place != null) _ctrl.text = place.displayName;
+      _ctrl.text = place.displayName;
       widget.onPlaceSelected?.call(picked);
     } catch (e) {
       _dbg('Error in _pick: $e');

@@ -57,4 +57,17 @@ class NotificationService {
 
   Stream<RemoteMessage> get onMessageOpenedApp =>
       FirebaseMessaging.onMessageOpenedApp;
+
+  /// Reservas de los avisos que el usuario toca (con la app en segundo plano
+  /// o cerrada), para abrirlas.
+  Stream<String> get openedBookings async* {
+    if (kIsWeb) return;
+    final initial = await _messaging.getInitialMessage();
+    final first = initial?.data['bookingId'];
+    if (first is String && first.isNotEmpty) yield first;
+    yield* FirebaseMessaging.onMessageOpenedApp
+        .map((m) => m.data['bookingId'])
+        .where((id) => id is String && id.isNotEmpty)
+        .cast<String>();
+  }
 }

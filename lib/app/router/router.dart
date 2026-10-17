@@ -60,11 +60,23 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         final authState = authBloc.state;
         final isAuth = authState is AuthAuthenticated;
         final going = state.matchedLocation;
+        // Enlace al que quería ir (p. ej. /ride/abc) antes de pasar por el
+        // splash o el login, para volver a él después.
+        final from = state.uri.queryParameters['from'];
+        final target = from ?? state.uri.toString();
+        String keep(String route) {
+          final t = target;
+          final isEntry = t == '/' ||
+              t.startsWith(LuxRoutes.splash) ||
+              t.startsWith(LuxRoutes.login) ||
+              t.startsWith(LuxRoutes.register);
+          return isEntry ? route : '$route?from=${Uri.encodeComponent(t)}';
+        }
 
         // 1. Initial State: Only show splash if we are NOT already trying to reach a specific driver path.
         if (authState is AuthInitial) {
           if (going.startsWith('/driver')) return null;
-          return going == LuxRoutes.splash ? null : LuxRoutes.splash;
+          return going == LuxRoutes.splash ? null : keep(LuxRoutes.splash);
         }
 
         // 2. Loading State: Don't block navigation to driver paths while auth is resolving.
@@ -102,6 +114,7 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
               going == LuxRoutes.login ||
               going == LuxRoutes.register ||
               going == LuxRoutes.driverLogin) {
+            if (from != null && from.startsWith('/') && !isDriver) return from;
             return isDriver ? LuxRoutes.driverHome : LuxRoutes.home;
           }
         }
@@ -128,7 +141,7 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
               return LuxRoutes.driverLogin;
             }
 
-            if (!guestOk) return LuxRoutes.login;
+            if (!guestOk) return keep(LuxRoutes.login);
           } else {
             // Mobile rules...
             final mobileGuestOk = going == LuxRoutes.login ||
@@ -137,7 +150,7 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
                 going == LuxRoutes.driverLogin ||
                 going.startsWith('/ride-type') ||
                 going.startsWith('/booking');
-            if (!mobileGuestOk) return LuxRoutes.login;
+            if (!mobileGuestOk) return keep(LuxRoutes.login);
           }
         }
 

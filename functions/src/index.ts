@@ -97,12 +97,17 @@ async function requireAdmin(req: CallableRequest): Promise<string> {
   return uid;
 }
 
-async function sendPush(tokens: string[], title: string, body: string): Promise<void> {
+async function sendPush(
+  tokens: string[],
+  title: string,
+  body: string,
+  data?: Record<string, string>,
+): Promise<void> {
   if (!tokens.length) return;
   // Interruptor "Notificaciones push" del panel admin (activado por defecto).
   const global = await db.collection('config').doc('global').get();
   if (global.data()?.pushNotificationsEnabled === false) return;
-  await admin.messaging().sendEachForMulticast({ tokens, notification: { title, body } });
+  await admin.messaging().sendEachForMulticast({ tokens, notification: { title, body }, ...(data ? { data } : {}) });
 }
 
 async function getUserTokens(userId: string): Promise<string[]> {
@@ -534,7 +539,7 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
   });
 
   const tokens = await getUserTokens(after.riderId);
-  await sendPush(tokens, title, body);
+  await sendPush(tokens, title, body, { bookingId: event.params.bookingId });
 });
 
 // ---------------------------------------------------------------------------

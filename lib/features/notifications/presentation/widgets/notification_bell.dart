@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../app/theme/app_theme.dart';
@@ -17,6 +18,11 @@ class NotificationBell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Sin sesión no hay notificaciones: la campana solo daría una carga
+    // infinita.
+    final signedIn =
+        context.select<AuthBloc, bool>((b) => b.state is AuthAuthenticated);
+    if (!signedIn) return const SizedBox.shrink();
     return BlocBuilder<NotificationBloc, NotificationState>(
       builder: (context, state) {
         final unread = state is NotificationLoaded ? state.unreadCount : 0;
@@ -190,7 +196,17 @@ class _NotificationSheet extends StatelessWidget {
                     ),
                     itemBuilder: (context, i) {
                       final n = notifications[i];
-                      return _NotificationTile(notification: n);
+                      final id = n.bookingId;
+                      // Cada aviso de una reserva abre esa reserva.
+                      return InkWell(
+                        onTap: id == null || id.isEmpty
+                            ? null
+                            : () {
+                                Navigator.of(context).pop();
+                                GoRouter.of(context).go('/ride/$id');
+                              },
+                        child: _NotificationTile(notification: n),
+                      );
                     },
                   );
                 },

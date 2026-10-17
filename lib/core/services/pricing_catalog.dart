@@ -20,32 +20,56 @@ class PricingCatalog extends ChangeNotifier {
 
   final Map<String, PricingRule> _rules = {};
   bool _maintenance = false;
+
+  // Hasta recibir las tarifas y el estado del admin no se reserva: con las
+  // de fábrica se cobraría otro precio o se saltaría un servicio apagado.
+  bool _started = false;
+  bool _rulesLoaded = false;
+  bool _configLoaded = false;
+
+  bool get isReady => !_started || (_rulesLoaded && _configLoaded);
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _rulesSub;
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? _configSub;
 
   bool get isMaintenanceMode => _maintenance;
 
   void start(FirebaseFirestore db) {
+    _started = true;
     _rulesSub?.cancel();
     _configSub?.cancel();
     _rulesSub = db.collection('pricingRules').snapshots().listen(
-          (snap) => setRules(snap.docs.map((d) {
-            try {
-              return PricingRule.fromJson({...d.data(), 'id': d.id});
-            } catch (_) {
-              return null;
-            }
-          }).whereType<PricingRule>()),
-          onError: (Object e) => debugPrint('[PricingCatalog] reglas: $e'),
-        );
+      (snap) => setRules(snap.docs.map((d) {
+        try {
+          return PricingRule.fromJson({...d.data(), 'id': d.id});
+        } catch (_) {
+          return null;
+        }
+      }).whereType<PricingRule>()),
+      onError: (Object e) {
+        debugPrint('[PricingCatalog] reglas: $e');
+        _retry(db);
+      },
+    );
     _configSub = db.collection('config').doc('global').snapshots().listen(
-          (doc) => setMaintenanceMode(doc.data()?['isMaintenanceMode'] == true),
-          onError: (Object e) => debugPrint('[PricingCatalog] config: $e'),
-        );
+      (doc) => setMaintenanceMode(doc.data()?['isMaintenanceMode'] == true),
+      onError: (Object e) {
+        debugPrint('[PricingCatalog] config: $e');
+        _retry(db);
+      },
+    );
+  }
+
+  Timer? _retryTimer;
+
+  /// Un error corta la escucha de Firestore: se vuelve a intentar.
+  void _retry(FirebaseFirestore db) {
+    _retryTimer?.cancel();
+    _retryTimer = Timer(const Duration(seconds: 10), () => start(db));
   }
 
   @visibleForTesting
   void setRules(Iterable<PricingRule> rules) {
+    _rulesLoaded = true;
     _rules
       ..clear()
       ..addEntries(rules.map((r) =>
@@ -55,7 +79,12 @@ class PricingCatalog extends ChangeNotifier {
 
   @visibleForTesting
   void setMaintenanceMode(bool value) {
-    if (value == _maintenance) return;
+    final first = !_configLoaded;
+    _configLoaded = true;
+    if (value == _maintenance) {
+      if (first) notifyListeners();
+      return;
+    }
     _maintenance = value;
     notifyListeners();
   }
@@ -77,6 +106,9 @@ class PricingCatalog extends ChangeNotifier {
 
   /// Motivo legible por el que no se puede reservar, o null si se puede.
   String? unavailableReason(VehicleClass vc, ServiceType st) {
+    if (!isReady) {
+      return 'Cargando las tarifas vigentes… inténtalo en unos segundos.';
+    }
     if (_maintenance) {
       return 'Las reservas están en pausa por mantenimiento. '
           'Vuelve a intentarlo en unos minutos.';

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
@@ -79,7 +80,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc({required NotificationRepository notificationRepository})
       : _repo = notificationRepository,
         super(const NotificationInitial()) {
-    on<NotificationWatchStarted>(_onWatch);
+    // Un solo listener: AuthAuthenticated se repite cuando cambia el perfil.
+    on<NotificationWatchStarted>(_onWatch,
+        transformer: (events, mapper) =>
+            events.distinct((a, b) => a.userId == b.userId).switchMap(mapper));
     on<NotificationCreated>(_onCreate);
     on<NotificationMarkedRead>(_onMarkRead);
     on<NotificationAllMarkedRead>(_onMarkAllRead);
