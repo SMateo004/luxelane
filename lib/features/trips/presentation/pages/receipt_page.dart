@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
@@ -56,6 +57,8 @@ class _ReceiptPageState extends State<ReceiptPage> {
       appBar: AppBar(
         backgroundColor: LD.bg2,
         foregroundColor: LD.ink,
+        // The theme's title style is white (dark app bars); this one is light.
+        titleTextStyle: LuxTypography.headlineMedium.copyWith(color: LD.ink),
         title: Text(context.l10n.tripReceiptTitle),
         leading: IconButton(
           tooltip: context.l10n.commonBack,

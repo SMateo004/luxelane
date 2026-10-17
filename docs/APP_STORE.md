@@ -63,4 +63,4 @@ Límites de App Store: nombre y subtítulo, 30 caracteres cada uno; palabras cla
 ## 4. Recursos gráficos
 
 - Ícono de 1024×1024, sin transparencia: ya está en `AppIcon.appiconset` (copia en `docs/store/icon-1024.png`). Es provisorio, ver `docs/PLAY_STORE.md`.
-- Capturas para iPhone de 6,9" (1320×2868) y, si se publica también para iPad, de iPad de 13".
+- Capturas para iPhone de 6,9" (1320×2868): `docs/store/screenshots/<rider|driver>/<es|en|pt>/ios69_*.png` (`./scripts/store_screenshots.sh` las regenera). Las apps son solo para iPhone; si algún día se publican para iPad, harán falta capturas de iPad de 13".
