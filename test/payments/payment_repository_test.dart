@@ -52,15 +52,16 @@ void main() {
   });
 
   group('PaymentRepositoryImpl', () {
-    test('createPaymentIntent envía centavos redondeados', () async {
+    test(
+        'createPaymentIntent solo envía la reserva (el importe lo fija el '
+        'servidor)', () async {
       stubCall('createPaymentIntent', {'clientSecret': 'secret'});
-      final r = await repo.createPaymentIntent(
-          amount: 125.555, currency: 'bob', stripeCustomerId: 'cus');
-      expect(r.isRight(), isTrue);
+      final r = await repo.createPaymentIntent(bookingId: 'b1');
+      expect(r.getOrElse(() => ''), 'secret');
       final sent = verify(() => callable.call<dynamic>(captureAny()))
           .captured
           .single as Map;
-      expect(sent['amount'], 12556);
+      expect(sent, {'bookingId': 'b1'});
     });
 
     test('capturePayment delega en la Cloud Function sin enviar el importe',

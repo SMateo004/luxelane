@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
+import '../core/services/notification_service.dart';
 import '../core/enums/enums.dart';
 import '../core/services/crash_service.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
@@ -61,6 +62,9 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         _notificationBloc.add(
           NotificationWatchStarted(userId: state.user.id),
         );
+        // Registra el dispositivo para los avisos de la reserva aunque el
+        // pasajero no abra la pantalla del viaje.
+        sl<NotificationService>().init(userId: state.user.id);
       }
     });
   }

@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -11,6 +12,7 @@ import '../../../../core/design/vehicle_catalog.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/repositories/repositories.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/services/maps_service.dart';
 import '../../../../core/services/pricing_catalog.dart';
@@ -77,6 +79,8 @@ class _BookingScreenState extends State<BookingScreen> {
   List<Map<String, dynamic>> _savedCards = [];
   String? _selectedCardId;
   bool _awaitingPaymentIntent = false;
+  bool _payByCard = false;
+  String? _pendingBookingId;
 
   // Scroll-based sticky selector
   final ScrollController _leftScrollCtrl = ScrollController();
@@ -190,7 +194,11 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
+  /// El pago con tarjeta usa el SDK nativo de Stripe, que no existe en web.
+  static bool get _cardsSupported => !kIsWeb;
+
   void _loadSavedCards() {
+    if (!_cardsSupported) return;
     final authState = context.read<AuthBloc>().state;
     if (authState is AuthAuthenticated &&
         authState.user.stripeCustomerId != null &&
@@ -224,27 +232,53 @@ class _BookingScreenState extends State<BookingScreen> {
     }
     final freshState = context.read<AuthBloc>().state;
     if (freshState is! AuthAuthenticated) return;
-    final user = freshState.user;
+    if (_formData == null) {
+      // Sin recogida (recarga de página, enlace directo…): no se inventa
+      // un lugar; se vuelve a empezar la búsqueda.
+      showLuxSnackbar(context, 'Vuelve a indicar tu recogida para reservar.',
+          isError: true);
+      context.go('/');
+      return;
+    }
     final blocked =
         PricingCatalog.instance.unavailableReason(_selected, _service);
     if (blocked != null) {
       showLuxSnackbar(context, blocked, isError: true);
       return;
     }
+    // La reserva se crea primero y la tarjeta se autoriza contra ella: si la
+    // tarjeta falla, se cancela la reserva y no queda ninguna retención.
+    _payByCard = _cardsSupported && _selectedCardId != null;
     setState(() => _loading = true);
-
-    if (user.stripeCustomerId != null &&
-        user.stripeCustomerId!.isNotEmpty &&
-        _selectedCardId != null) {
-      setState(() => _awaitingPaymentIntent = true);
-      context.read<PaymentBloc>().add(PaymentIntentRequested(
-            amount: _price,
-            currency: 'bob',
-            stripeCustomerId: user.stripeCustomerId!,
-          ));
-      return;
-    }
     _createBooking();
+  }
+
+  /// Autoriza la tarjeta para la reserva recién creada.
+  void _authorizeCard(Booking booking) {
+    _pendingBookingId = booking.id;
+    setState(() => _awaitingPaymentIntent = true);
+    context
+        .read<PaymentBloc>()
+        .add(PaymentIntentRequested(bookingId: booking.id));
+  }
+
+  /// La tarjeta no se pudo autorizar: la reserva se cancela para no dejarla
+  /// sin pago, y el pasajero puede intentarlo de nuevo.
+  Future<void> _cardFailed(String message) async {
+    final id = _pendingBookingId;
+    _pendingBookingId = null;
+    _payByCard = false;
+    if (id != null) await sl<BookingRepository>().cancelBooking(id);
+    if (!mounted) return;
+    setState(() {
+      _loading = false;
+      _awaitingPaymentIntent = false;
+    });
+    showLuxSnackbar(
+        context,
+        'No se pudo autorizar tu tarjeta ($message). La reserva no se '
+        'confirmó; inténtalo de nuevo o elige otra tarjeta.',
+        isError: true);
   }
 
   Future<void> _handleStripeConfirm(String clientSecret) async {
@@ -258,18 +292,15 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
       );
-      _createBooking();
+      final id = _pendingBookingId;
+      _pendingBookingId = null;
+      if (!mounted || id == null) return;
+      setState(() => _loading = false);
+      context.go('/ride/$id');
     } on StripeException catch (e) {
-      if (mounted) {
-        setState(() => _loading = false);
-        showLuxSnackbar(context, e.error.message ?? 'El pago falló',
-            isError: true);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _loading = false);
-        showLuxSnackbar(context, e.toString(), isError: true);
-      }
+      await _cardFailed(e.error.localizedMessage ?? 'pago rechazado');
+    } catch (_) {
+      await _cardFailed('error de conexión');
     }
   }
 
@@ -300,10 +331,15 @@ class _BookingScreenState extends State<BookingScreen> {
   void _createBooking() {
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) return;
-    final origin =
-        _formData?.origin ?? const Place(address: 'Recogida', lat: 0, lng: 0);
-    final destination = _formData?.destination ??
-        const Place(address: 'Destino', lat: 0, lng: 0);
+    final origin = _formData!.origin;
+    // Por horas sin destino fijo: se guarda la recogida como referencia (con
+    // coordenadas reales) en lugar de un lugar inventado en (0,0).
+    final destination = _formData!.destination ??
+        Place(
+            name: 'Servicio por horas',
+            address: origin.address,
+            lat: origin.lat,
+            lng: origin.lng);
     final scheduledAt =
         _formData?.scheduledAt ?? DateTime.now().add(const Duration(hours: 1));
 
@@ -384,6 +420,10 @@ class _BookingScreenState extends State<BookingScreen> {
       listeners: [
         BlocListener<BookingBloc, BookingState>(listener: (ctx, state) {
           if (state is BookingCreated) {
+            if (_payByCard) {
+              _authorizeCard(state.booking);
+              return;
+            }
             setState(() => _loading = false);
             ctx.go('/ride/${state.booking.id}');
           }
@@ -406,11 +446,12 @@ class _BookingScreenState extends State<BookingScreen> {
             _handleStripeConfirm(state.clientSecret);
           }
           if (state is PaymentError) {
-            setState(() {
-              _loading = false;
-              _awaitingPaymentIntent = false;
-            });
-            showLuxSnackbar(ctx, state.message, isError: true);
+            if (_awaitingPaymentIntent) {
+              _cardFailed(state.message);
+              return;
+            }
+            // Un fallo al cargar las tarjetas no bloquea reservar.
+            setState(() => _loading = false);
           }
         }),
       ],
@@ -1384,11 +1425,16 @@ class _BookingScreenState extends State<BookingScreen> {
           ]),
         ),
         const SizedBox(height: 20),
-        if (_savedCards.isEmpty)
+        if (!_cardsSupported)
+          const SizedBox.shrink()
+        else if (_savedCards.isEmpty)
           _OutlinedBtn(
               label: 'Agregar método de pago',
               icon: Icons.add_card_outlined,
-              onPressed: () => context.push('/payment/add'))
+              onPressed: () async {
+                await context.push('/payment/add');
+                if (mounted) _loadSavedCards();
+              })
         else ...[
           const Text('MÉTODO DE PAGO',
               style: TextStyle(

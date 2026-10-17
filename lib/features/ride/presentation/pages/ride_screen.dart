@@ -1,7 +1,7 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../app/theme/app_theme.dart';
@@ -9,14 +9,9 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
-import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../../auth/presentation/bloc/auth_bloc.dart';
-import '../../../booking/presentation/bloc/booking_bloc.dart';
-import '../../../notifications/presentation/bloc/notification_bloc.dart';
-import '../bloc/ride_bloc.dart';
 
 class RideScreen extends StatefulWidget {
   const RideScreen({super.key, required this.rideId});
@@ -28,46 +23,50 @@ class RideScreen extends StatefulWidget {
 }
 
 class _RideScreenState extends State<RideScreen> {
+  // La pantalla sigue su propia reserva: con el BookingBloc compartido, una
+  // reserva vista antes seguía emitiendo y pisaba esta y la lista de viajes.
+  late final Stream<Booking> _bookingStream;
+  StreamSubscription<Booking>? _sub;
   Booking? _booking;
-  User? _driver; // assigned chauffeur's account (name, phone)
-  String? _actualRideId; // real ride doc ID fetched after completion
-  bool _ratingSubmitted = false;
+  bool _loadError = false;
+  bool _ratingPrompted = false;
+  bool _cancelling = false;
 
   @override
   void initState() {
     super.initState();
-    if (widget.rideId.isNotEmpty) {
-      context
-          .read<BookingBloc>()
-          .add(BookingStatusWatched(bookingId: widget.rideId));
-    }
-    _initNotifications();
+    _bookingStream = widget.rideId.isEmpty
+        ? const Stream<Booking>.empty()
+        : sl<BookingRepository>().watchBooking(widget.rideId);
+    _sub = _bookingStream.listen(
+      (b) {
+        if (!mounted) return;
+        setState(() {
+          _booking = b;
+          _loadError = false;
+        });
+        // Al completarse, se invita a valorar una sola vez por visita.
+        if (b.status == BookingStatus.completed &&
+            b.riderRating == null &&
+            !_ratingPrompted) {
+          _ratingPrompted = true;
+          WidgetsBinding.instance
+              .addPostFrameCallback((_) => _showRatingDialog());
+        }
+      },
+      onError: (_) {
+        if (mounted) setState(() => _loadError = true);
+      },
+    );
   }
 
-  void _initNotifications() {
-    final authState = context.read<AuthBloc>().state;
-    if (authState is AuthAuthenticated) {
-      sl<NotificationService>().init(userId: authState.user.id);
-    }
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
   }
 
-  // Fetch the actual ride document for this booking so we can submit rating
-  Future<void> _fetchRideId() async {
-    if (_actualRideId != null) return;
-    final result = await sl<RideRepository>().getRideByBooking(widget.rideId);
-    result.fold((_) {}, (ride) {
-      if (mounted) setState(() => _actualRideId = ride.id);
-    });
-  }
-
-  Future<void> _ensureDriver() async {
-    final id = _booking?.driverId;
-    if (id == null || id.isEmpty || _driver?.id == id) return;
-    final result = await sl<UserRepository>().getUserById(id);
-    result.fold((_) {}, (u) {
-      if (mounted) setState(() => _driver = u);
-    });
-  }
+  DriverInfo? get _driver => _booking?.driverInfo;
 
   Future<void> _callDriver() async {
     final phone = _driver?.phone ?? '';
@@ -75,10 +74,15 @@ class _RideScreenState extends State<RideScreen> {
     await launchUrl(Uri(scheme: 'tel', path: phone));
   }
 
-  BookingStatus get _status => _booking?.status ?? BookingStatus.confirmed;
+  BookingStatus? get _status => _booking?.status;
 
   String get _statusMessage {
+    if (_loadError) {
+      return 'No pudimos cargar tu reserva. Revisa tu conexión.';
+    }
     switch (_status) {
+      case null:
+        return 'Cargando tu reserva…';
       case BookingStatus.pending:
         return 'Estamos asignando a tu chófer. Te avisaremos en cuanto esté confirmado.';
       case BookingStatus.confirmed:
@@ -96,141 +100,80 @@ class _RideScreenState extends State<RideScreen> {
     }
   }
 
-  static const _nextStatus = {
-    BookingStatus.confirmed: BookingStatus.driverArriving,
-    BookingStatus.driverArriving: BookingStatus.driverArrived,
-    BookingStatus.driverArrived: BookingStatus.inProgress,
-    BookingStatus.inProgress: BookingStatus.completed,
+  /// Estados en los que el pasajero aún puede cancelar (igual que las
+  /// reglas de Firestore).
+  static const _cancellable = {
+    BookingStatus.pending,
+    BookingStatus.confirmed,
+    BookingStatus.driverArriving,
+    BookingStatus.driverArrived,
   };
 
-  void _advance() {
-    if (_status == BookingStatus.completed) {
-      if (!_ratingSubmitted) {
-        _showRatingDialog();
-      } else {
-        context.go('/');
-      }
-      return;
-    }
-    final next = _nextStatus[_status];
-    if (next != null && widget.rideId.isNotEmpty) {
-      context.read<BookingBloc>().add(
-            BookingUpdateStatusRequested(
-              bookingId: widget.rideId,
-              status: next,
-            ),
-          );
-    }
+  Future<void> _cancel() async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: LuxColors.surface,
+        title: const Text('Cancelar reserva', style: LuxTypography.titleMedium),
+        content: const Text(
+            'Tu chófer quedará libre y, si pagaste con tarjeta, se liberará '
+            'la retención. ¿Quieres cancelar?',
+            style: LuxTypography.bodyMedium),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Volver')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('Cancelar reserva',
+                  style: TextStyle(color: LuxColors.error))),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    setState(() => _cancelling = true);
+    final result = await sl<BookingRepository>().cancelBooking(widget.rideId);
+    if (!mounted) return;
+    setState(() => _cancelling = false);
+    result.fold(
+      (f) => showLuxSnackbar(context, f.message, isError: true),
+      (_) => showLuxSnackbar(context, 'Reserva cancelada'),
+    );
   }
 
   void _showRatingDialog() {
+    if (!mounted) return;
     showDialog<void>(
       context: context,
-      barrierDismissible: false,
-      builder: (ctx) => BlocProvider.value(
-        value: context.read<RideBloc>(),
-        child: _RatingDialog(
-          driverName: _driver?.displayName ?? 'tu chófer',
-          rideId: _actualRideId,
-          onSubmit: (rating) {
-            // Submit rating to Firestore if ride doc exists
-            if (_actualRideId != null) {
-              context.read<RideBloc>().add(RideRatingSubmitted(
-                    rideId: _actualRideId!,
-                    rating: rating,
-                    isRiderRating: true,
-                  ));
-            }
-            setState(() => _ratingSubmitted = true);
-            Navigator.of(context).pop();
-            context.go('/');
-          },
-        ),
+      builder: (ctx) => _RatingDialog(
+        driverName:
+            _driver?.name.isNotEmpty == true ? _driver!.name : 'tu chófer',
+        onSubmit: (rating) async {
+          final result = await sl<BookingRepository>().rateBooking(
+            bookingId: widget.rideId,
+            rating: rating.round(),
+          );
+          if (!mounted || !ctx.mounted) return;
+          Navigator.of(ctx).pop();
+          result.fold(
+            (f) => showLuxSnackbar(context, f.message, isError: true),
+            (_) => showLuxSnackbar(context, '¡Gracias por tu valoración!'),
+          );
+        },
       ),
     );
   }
 
-  void _createStatusNotification(
-    BuildContext context,
-    BookingStatus status, {
-    required String riderId,
-  }) {
-    String title, body, type;
-    switch (status) {
-      case BookingStatus.confirmed:
-        title = 'Chófer asignado';
-        body = 'Tu chófer está en camino para recogerte.';
-        type = 'booking_confirmed';
-        break;
-      case BookingStatus.driverArriving:
-        title = 'El chófer está en camino';
-        body = 'Tu chófer se dirige a tu punto de recogida.';
-        type = 'driver_arriving';
-        break;
-      case BookingStatus.driverArrived:
-        title = 'El chófer ha llegado';
-        body = 'Tu chófer te espera en el punto de recogida.';
-        type = 'driver_arrived';
-        break;
-      case BookingStatus.inProgress:
-        title = 'Viaje iniciado';
-        body = 'Ya estás en camino hacia tu destino.';
-        type = 'ride_started';
-        break;
-      case BookingStatus.completed:
-        title = 'Viaje completado';
-        body = 'Has llegado. Gracias por viajar con Luxelane.';
-        type = 'ride_completed';
-        break;
-      default:
-        return;
-    }
-    context.read<NotificationBloc>().add(
-          NotificationCreated(
-            notification: AppNotification(
-              id: '',
-              userId: riderId,
-              title: title,
-              body: body,
-              type: type,
-              isRead: false,
-              createdAt: DateTime.now(),
-              bookingId: widget.rideId,
-            ),
-          ),
-        );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BlocListener<BookingBloc, BookingState>(
-      listener: (context, state) {
-        if (state is BookingStatusUpdated) {
-          setState(() => _booking = state.booking);
-          _ensureDriver();
-          _createStatusNotification(context, state.booking.status,
-              riderId: state.booking.riderId);
-          if (state.booking.status == BookingStatus.completed &&
-              !_ratingSubmitted) {
-            // Fetch the actual ride document, then show rating
-            _fetchRideId().then((_) {
-              if (mounted) {
-                WidgetsBinding.instance
-                    .addPostFrameCallback((_) => _showRatingDialog());
-              }
-            });
-          }
-        }
-      },
-      child: _booking?.driverId != null
-          ? StreamBuilder<DriverProfile?>(
-              stream:
-                  sl<UserRepository>().watchDriverProfile(_booking!.driverId!),
-              builder: (context, snap) =>
-                  _buildScaffold(snap.data?.currentLocation, snap.data),
-            )
-          : _buildScaffold(null, null),
-    );
+    final driverId = _booking?.driverId;
+    return driverId != null
+        ? StreamBuilder<DriverProfile?>(
+            stream: sl<UserRepository>().watchDriverProfile(driverId),
+            builder: (context, snap) =>
+                _buildScaffold(snap.data?.currentLocation, snap.data),
+          )
+        : _buildScaffold(null, null);
   }
 
   Widget _buildScaffold(GeoPoint? driverGeo, DriverProfile? profile) {
@@ -245,13 +188,16 @@ class _RideScreenState extends State<RideScreen> {
     );
   }
 
-  /// The action row: contact the chauffeur when we have a number; the manual
-  /// status stepper only exists in debug builds, never in front of a client.
+  /// Acciones del pasajero: llamar al chófer, cancelar mientras se pueda y
+  /// valorar un viaje completado que aún no valoró.
   Widget _actions() {
-    final canCall = (_driver?.phone ?? '').isNotEmpty;
-    final completed = _status == BookingStatus.completed;
-    final showAdvance = completed || kDebugMode;
-    if (!canCall && !showAdvance) return const SizedBox.shrink();
+    final canCall = (_driver?.phone ?? '').isNotEmpty &&
+        _status != BookingStatus.completed &&
+        _status != BookingStatus.cancelled;
+    final canCancel = _cancellable.contains(_status);
+    final canRate =
+        _status == BookingStatus.completed && _booking?.riderRating == null;
+    if (!canCall && !canCancel && !canRate) return const SizedBox.shrink();
     return Row(
       children: [
         if (canCall)
@@ -262,12 +208,21 @@ class _RideScreenState extends State<RideScreen> {
               icon: Icons.call_outlined,
             ),
           ),
-        if (canCall && showAdvance) const SizedBox(width: LuxSpacing.sm),
-        if (showAdvance)
+        if (canCall && (canCancel || canRate))
+          const SizedBox(width: LuxSpacing.sm),
+        if (canCancel)
+          Expanded(
+            child: LuxOutlinedButton(
+              label: _cancelling ? 'Cancelando…' : 'Cancelar reserva',
+              onPressed: _cancelling ? null : _cancel,
+              icon: Icons.close_rounded,
+            ),
+          ),
+        if (canRate)
           Expanded(
             child: LuxButton(
-              label: completed ? 'Calificar viaje' : 'Siguiente (dev)',
-              onPressed: _advance,
+              label: 'Calificar viaje',
+              onPressed: _showRatingDialog,
             ),
           ),
       ],
@@ -276,13 +231,14 @@ class _RideScreenState extends State<RideScreen> {
 
   Widget _driverSection(DriverProfile? profile) {
     final d = _driver;
+    if (_status == BookingStatus.cancelled) return const SizedBox.shrink();
     if (d == null) return const _AssigningCard();
+    final b = _booking!;
     return DriverCard(
-      name: d.displayName,
+      name: d.name.isNotEmpty ? d.name : 'Tu chófer',
       rating: profile?.rating ?? 5.0,
-      vehicle: _booking != null
-          ? '${_booking!.vehicleClass.label} · ${_booking!.vehicleClass.description}'
-          : '',
+      vehicle: d.vehicle ??
+          '${b.vehicleClass.label} · ${b.vehicleClass.description}',
       photoUrl: d.photoUrl,
     );
   }
@@ -299,7 +255,7 @@ class _RideScreenState extends State<RideScreen> {
                 _TopBar(),
                 const Spacer(),
                 _BottomPanel(
-                  status: _status,
+                  status: _status ?? BookingStatus.pending,
                   message: _statusMessage,
                   driver: _driverSection(profile),
                   actions: _actions(),
@@ -324,7 +280,7 @@ class _RideScreenState extends State<RideScreen> {
               color: LuxColors.surface,
               child: Column(
                 children: [
-                  _WebRideHeader(status: _status),
+                  _WebRideHeader(status: _status ?? BookingStatus.pending),
                   const LuxDivider(),
                   Expanded(
                     child: Padding(
@@ -504,11 +460,9 @@ class _RatingDialog extends StatefulWidget {
   const _RatingDialog({
     required this.driverName,
     required this.onSubmit,
-    this.rideId,
   });
   final String driverName;
-  final String? rideId;
-  final void Function(double rating) onSubmit;
+  final Future<void> Function(double rating) onSubmit;
 
   @override
   State<_RatingDialog> createState() => _RatingDialogState();
@@ -516,6 +470,7 @@ class _RatingDialog extends StatefulWidget {
 
 class _RatingDialogState extends State<_RatingDialog> {
   double _rating = 5;
+  bool _sending = false;
 
   @override
   Widget build(BuildContext context) => AlertDialog(
@@ -561,9 +516,21 @@ class _RatingDialogState extends State<_RatingDialog> {
           ],
         ),
         actions: [
+          TextButton(
+            onPressed: _sending ? null : () => Navigator.of(context).pop(),
+            child: const Text('Ahora no'),
+          ),
           LuxButton(
             label: 'Enviar',
-            onPressed: () => widget.onSubmit(_rating),
+            width: 160,
+            loading: _sending,
+            onPressed: _sending
+                ? null
+                : () async {
+                    setState(() => _sending = true);
+                    await widget.onSubmit(_rating);
+                    if (mounted) setState(() => _sending = false);
+                  },
           ),
         ],
         actionsAlignment: MainAxisAlignment.center,

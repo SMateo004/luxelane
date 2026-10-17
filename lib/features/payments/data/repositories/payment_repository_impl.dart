@@ -21,17 +21,17 @@ class PaymentRepositoryImpl implements PaymentRepository {
 
   @override
   Future<Either<Failure, String>> createPaymentIntent({
-    required double amount,
-    required String currency,
-    required String stripeCustomerId,
+    required String bookingId,
   }) async {
     try {
-      final result = await _fn.httpsCallable('createPaymentIntent').call({
-        'amount': Payment.toCents(amount),
-        'currency': currency,
-        'customerId': stripeCustomerId,
-      });
+      final result = await _fn
+          .httpsCallable('createPaymentIntent')
+          .call({'bookingId': bookingId});
       return Right(result.data['clientSecret'] as String);
+    } on FirebaseFunctionsException catch (e) {
+      return Left(PaymentFailure(e.code == 'failed-precondition'
+          ? 'tu cuenta aún no tiene pagos habilitados'
+          : 'no se pudo contactar con el servidor de pagos'));
     } catch (e) {
       return Left(PaymentFailure(e.toString()));
     }

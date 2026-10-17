@@ -85,10 +85,19 @@ service cloud.firestore {
     // /driverProfiles/{uid}
     // -------------------------------------------------------------------------
 
+    // Verificación, valoración y contador de viajes los fijan el admin y el
+    // servidor; el chófer no puede darse de alta ya verificado.
+    function driverManagedFields() {
+      return ['documentsVerified', 'rating', 'totalRides'];
+    }
+
     match /driverProfiles/{uid} {
       allow read:   if isAuthenticated();
-      allow create: if isOwner(uid) && isDriver();
-      allow update: if (isOwner(uid) && isDriver()) || isAdmin();
+      allow create: if isOwner(uid) && isDriver() &&
+        !request.resource.data.keys().hasAny(driverManagedFields());
+      allow update: if isAdmin() || (isOwner(uid) && isDriver() &&
+        !request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(driverManagedFields()));
       allow delete: if false;
     }
 
@@ -116,16 +125,25 @@ service cloud.firestore {
 
       // Any authenticated user can create a booking for themselves
       // El reparto y la revisión de tarifa solo los escribe el servidor.
+      // Nace pendiente, sin chófer ni cobro: esos campos los escriben el
+      // chófer al aceptar, el admin y el servidor.
       allow create: if isAuthenticated() &&
         isActiveUser() &&
         request.resource.data.riderId == request.auth.uid &&
-        !('settlement' in request.resource.data) &&
-        !('pricingReview' in request.resource.data) &&
-        !('refunded' in request.resource.data);
+        request.resource.data.status == 'pending' &&
+        request.resource.data.get('driverId', null) == null &&
+        request.resource.data.get('paymentId', null) == null &&
+        request.resource.data.get('finalPrice', null) == null &&
+        request.resource.data.estimatedPrice is number &&
+        request.resource.data.estimatedPrice > 0 &&
+        !request.resource.data.keys().hasAny(['settlement', 'pricingReview',
+          'refunded', 'stripePaymentIntentId', 'driverInfo', 'riderRating']);
 
       allow update: if isAdmin() ||
         // Driver accepts a pending booking (self-assign)
         (isDriver() && isActiveUser() &&
+          get(/databases/$(database)/documents/driverProfiles/$(request.auth.uid))
+            .data.get('documentsVerified', false) == true &&
           resource.data.status == 'pending' &&
           request.resource.data.driverId == request.auth.uid &&
           request.resource.data.status == 'confirmed' &&
@@ -141,7 +159,16 @@ service cloud.firestore {
           onlyUpdating(['status', 'updatedAt']) &&
           resource.data.status in
             ['pending', 'confirmed', 'driver_arriving', 'driver_arrived'] &&
-          request.resource.data.status == 'cancelled');
+          request.resource.data.status == 'cancelled') ||
+        // Rider rates a completed trip, once
+        (isAuthenticated() &&
+          resource.data.riderId == request.auth.uid &&
+          resource.data.status == 'completed' &&
+          !('riderRating' in resource.data) &&
+          onlyUpdating(['riderRating', 'riderComment', 'updatedAt']) &&
+          request.resource.data.riderRating is int &&
+          request.resource.data.riderRating >= 1 &&
+          request.resource.data.riderRating <= 5);
 
       allow delete: if false;
     }
@@ -197,10 +224,11 @@ service cloud.firestore {
       allow read:   if isAuthenticated();
       allow create: if isAdmin() ||
         (isDriver() && isOwner(request.resource.data.driverId));
+      // Activar o desactivar un vehículo es decisión del admin.
       allow update: if isAdmin() || (
         isDriver() &&
         resource.data.driverId == request.auth.uid &&
-        onlyUpdating(['isActive', 'color', 'photoUrl'])
+        onlyUpdating(['color', 'photoUrl'])
       );
       allow delete: if false;
     }

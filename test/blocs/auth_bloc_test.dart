@@ -32,9 +32,33 @@ void main() {
   setUp(() {
     repo = MockAuthRepository();
     when(() => repo.authStateChanges).thenAnswer((_) => Stream.value(null));
+    when(() => repo.isSignedIn).thenAnswer((_) => const Stream.empty());
+    when(() => repo.watchUser(any())).thenAnswer((_) => const Stream.empty());
   });
 
   group('AuthBloc', () {
+    blocTest<AuthBloc, AuthState>(
+      'cierra la sesión si el admin bloquea la cuenta con la app abierta',
+      build: () {
+        when(() => repo.login(
+                email: any(named: 'email'), password: any(named: 'password')))
+            .thenAnswer((_) async => Right(_mockUser));
+        when(() => repo.watchUser('uid-1')).thenAnswer((_) => Stream.value(
+            User.fromJson({..._mockUser.toJson(), 'isActive': false})));
+        when(() => repo.logout()).thenAnswer((_) async => const Right(null));
+        return AuthBloc(authRepository: repo);
+      },
+      act: (bloc) => bloc.add(
+        const LoginRequested(email: 'test@luxelane.com', password: 'secret'),
+      ),
+      expect: () => [
+        const AuthLoading(),
+        AuthAuthenticated(_mockUser),
+        const AuthError(kBlockedAccountMessage),
+      ],
+      verify: (_) => verify(() => repo.logout()).called(1),
+    );
+
     blocTest<AuthBloc, AuthState>(
       'emits [AuthLoading, AuthAuthenticated] on LoginRequested success',
       build: () {

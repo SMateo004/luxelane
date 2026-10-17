@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
+import '../core/services/notification_service.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/booking/presentation/bloc/booking_bloc.dart';
 import '../features/driver/presentation/bloc/driver_bloc.dart';
@@ -38,6 +39,10 @@ class _DriverAppState extends State<DriverApp> {
         _notificationBloc.add(
           NotificationWatchStarted(userId: state.user.id),
         );
+        // Sin token FCM el chófer no recibe los avisos de viajes nuevos.
+        sl<NotificationService>().init(userId: state.user.id);
+      } else if (state is AuthUnauthenticated) {
+        _driverBloc.add(const DriverStopped());
       }
     });
   }

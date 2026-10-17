@@ -76,7 +76,18 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
         capacity: _vehicleClass.capacity,
         isActive: true,
       );
-      await sl<VehicleRepository>().createVehicle(vehicle);
+      final vehicles = sl<VehicleRepository>();
+      final existing = (await vehicles.getVehicleByDriver(driverId))
+          .fold((_) => null, (v) => v);
+      // Un vehículo ya registrado solo lo cambia Luxelane.
+      if (existing == null) {
+        final created = await vehicles.createVehicle(vehicle);
+        if (created.isLeft()) {
+          throw const _OnboardingError(
+              'No se pudo registrar el vehículo. Revisa los datos e '
+              'inténtalo de nuevo.');
+        }
+      }
 
       // 2. Create driverProfile document
       DateTime? expiry;
@@ -100,7 +111,12 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
         totalRides: 0,
         isAvailable: false,
       );
-      await sl<UserRepository>().updateDriverProfile(profile);
+      final saved = await sl<UserRepository>().updateDriverProfile(profile);
+      if (saved.isLeft()) {
+        throw const _OnboardingError(
+            'No se pudo guardar tu licencia. Revisa tu conexión e inténtalo '
+            'de nuevo.');
+      }
 
       if (!mounted) return;
       // Re-dispatch DriverStarted so the bloc reloads the profile
@@ -111,7 +127,9 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text(e is _OnboardingError
+                ? e.message
+                : 'No se pudo completar el registro. Inténtalo de nuevo.'),
             backgroundColor: LuxColors.error,
           ),
         );
@@ -452,4 +470,9 @@ class _LicenseForm extends StatelessWidget {
           ],
         ),
       );
+}
+
+class _OnboardingError implements Exception {
+  const _OnboardingError(this.message);
+  final String message;
 }

@@ -42,6 +42,7 @@ interface BookingDoc {
   estimatedPrice: number;
   finalPrice?: number;
   paymentId?: string;
+  stripePaymentIntentId?: string;
   settlement?: Settlement;
 }
 
@@ -111,22 +112,41 @@ async function getUserTokens(userId: string): Promise<string[]> {
 // createPaymentIntent
 // ---------------------------------------------------------------------------
 
+// Autoriza la tarjeta para una reserva ya creada. El importe, la moneda y el
+// cliente de Stripe salen del servidor; el id del intent queda en la reserva
+// para cobrarlo al completar el viaje (captureOnCompletion) o liberarlo si se
+// cancela.
 export const createPaymentIntent = onCall(async (req) => {
   const uid = requireAuth(req);
-  const { amount, currency, customerId } = req.data as {
-    amount: number;
-    currency: string;
-    customerId: string;
-  };
+  const { bookingId } = req.data as { bookingId: string };
+  if (!bookingId) throw err.invalidArgument('bookingId required');
 
-  if (!amount || !currency || !customerId) throw err.invalidArgument('amount, currency, customerId required');
+  const bookingRef = db.collection('bookings').doc(bookingId);
+  const [bookingSnap, userSnap] = await Promise.all([
+    bookingRef.get(),
+    db.collection('users').doc(uid).get(),
+  ]);
+  if (!bookingSnap.exists) throw err.notFound('Booking not found');
+  const booking = bookingSnap.data() as BookingDoc;
+  if (booking.riderId !== uid) throw err.permissionDenied('Not your booking');
+  if (booking.status !== 'pending') throw err.failedPrecondition('Booking is not pending');
+  if (booking.stripePaymentIntentId) throw err.failedPrecondition('Booking already has a payment');
+  const customerId = userSnap.data()?.stripeCustomerId as string | undefined;
+  if (!customerId) throw err.failedPrecondition('No payment profile');
+
+  const amount = toCents(booking.estimatedPrice);
   if (amount <= 0) throw err.invalidArgument('amount must be positive');
-
-  logger.info('createPaymentIntent', 'start', { uid, amount, currency });
+  logger.info('createPaymentIntent', 'start', { uid, bookingId, amount });
 
   try {
-    const clientSecret = await stripe.createIntent({ amount, currency, customerId });
-    logger.info('createPaymentIntent', 'success', { uid });
+    const { id, clientSecret } = await stripe.createIntent({
+      amount,
+      currency: 'bob',
+      customerId,
+      bookingId,
+    });
+    await bookingRef.update({ stripePaymentIntentId: id });
+    logger.info('createPaymentIntent', 'success', { uid, bookingId });
     return { clientSecret };
   } catch (e) {
     logger.error('createPaymentIntent', 'stripe error', { error: String(e) });
@@ -161,11 +181,26 @@ export const capturePayment = onCall(async (req) => {
     if (existing.data()?.status === 'captured') throw err.failedPrecondition('Booking already paid');
   }
 
+  try {
+    return await captureBookingPayment(bookingRef, booking, stripePaymentIntentId);
+  } catch (e) {
+    logger.error('capturePayment', 'stripe error', { error: String(e) });
+    throw err.paymentFailed(String(e));
+  }
+});
+
+/** Cobra lo autorizado de una reserva completada y registra el pago. */
+async function captureBookingPayment(
+  bookingRef: admin.firestore.DocumentReference,
+  booking: BookingDoc,
+  stripePaymentIntentId: string,
+): Promise<{ paymentId: string; status: PaymentStatus; amount: number; currency: string }> {
+  const bookingId = bookingRef.id;
   const chargedBs = booking.finalPrice ?? booking.estimatedPrice;
   const amountToCapture = toCents(chargedBs);
   logger.info('capturePayment', 'start', { bookingId, amountToCapture });
 
-  try {
+  {
     const intent = await stripe.captureIntent(stripePaymentIntentId, amountToCapture);
     const captured = intent.amount_received ?? amountToCapture;
     // Stripe no cobra más de lo autorizado: si queda por debajo, el precio
@@ -197,9 +232,32 @@ export const capturePayment = onCall(async (req) => {
 
     logger.info('capturePayment', 'success', { paymentId: paymentRef.id });
     return { paymentId: paymentRef.id, status: payment.status, amount: captured, currency: payment.currency };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// captureOnCompletion  (onUpdate /bookings/{bookingId})
+// Al completarse un viaje pagado con tarjeta se cobra lo autorizado; si se
+// cancela, se libera la retención en la tarjeta del pasajero.
+// ---------------------------------------------------------------------------
+
+export const captureOnCompletion = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const before = event.data?.before.data() as BookingDoc | undefined;
+  const after = event.data?.after.data() as BookingDoc | undefined;
+  if (!before || !after || before.status === after.status) return;
+  const intentId = after.stripePaymentIntentId;
+  if (!intentId || after.paymentId) return;
+
+  try {
+    if (after.status === 'completed') {
+      await captureBookingPayment(event.data!.after.ref, after, intentId);
+    } else if (after.status === 'cancelled') {
+      await stripe.cancelIntent(intentId);
+      logger.info('captureOnCompletion', 'hold released', { bookingId: event.params.bookingId });
+    }
   } catch (e) {
-    logger.error('capturePayment', 'stripe error', { error: String(e) });
-    throw err.paymentFailed(String(e));
+    // El admin puede registrar el cobro a mano desde el panel.
+    logger.error('captureOnCompletion', 'failed', { bookingId: event.params.bookingId, error: String(e) });
   }
 });
 
@@ -353,7 +411,17 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
   const id = fareId(vehicleClass, booking.serviceType ?? 'oneWay');
   const ruleSnap = await db.collection('pricingRules').doc(id).get();
   const rule = ruleSnap.exists ? (ruleSnap.data() as FareRule) : DEFAULT_FARES[id];
-  const check = checkBookingPrice(booking, rule);
+  const global = (await db.collection('config').doc('global').get()).data() ?? {};
+  // Apps antiguas o escrituras directas pueden saltarse los interruptores
+  // del panel: se marcan para revisión igual que una tarifa fuera de rango.
+  const blocked = global.isMaintenanceMode === true
+    ? 'maintenance'
+    : vehicleClass === 'firstClass' && global.firstClassEnabled !== true
+      ? 'class_disabled'
+      : null;
+  const check = blocked
+    ? { ok: false as const, reason: blocked, expectedMinimum: undefined }
+    : checkBookingPrice(booking, rule);
   if (!check.ok) {
     logger.warn('onBookingCreated', 'pricing review', { bookingId: event.params.bookingId, ...check });
     await event.data!.ref.update({
@@ -402,20 +470,128 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
     to: after.status,
   });
 
-  const statusMessages: Partial<Record<BookingStatus, string>> = {
-    confirmed: 'Tu chófer ha sido asignado.',
-    driver_arriving: 'Tu chófer está en camino.',
-    driver_arrived: 'Tu chófer te espera en el punto de recogida.',
-    in_progress: 'Tu trayecto ha comenzado.',
-    completed: 'Has llegado. Gracias por viajar con Luxelane.',
-    cancelled: 'Tu reserva ha sido cancelada.',
+  const statusMessages: Partial<Record<BookingStatus, [string, string, string]>> = {
+    confirmed: ['Chófer asignado', 'Tu chófer ha sido asignado.', 'booking_confirmed'],
+    driver_arriving: ['El chófer está en camino', 'Tu chófer va hacia el punto de recogida.', 'driver_arriving'],
+    driver_arrived: ['El chófer ha llegado', 'Tu chófer te espera en el punto de recogida.', 'driver_arrived'],
+    in_progress: ['Viaje iniciado', 'Tu trayecto ha comenzado.', 'ride_started'],
+    completed: ['Viaje completado', 'Has llegado. Gracias por viajar con Luxelane.', 'ride_completed'],
+    cancelled: ['Reserva cancelada', 'Tu reserva ha sido cancelada.', 'booking_cancelled'],
   };
 
-  const message = statusMessages[after.status];
-  if (!message) return;
+  const entry = statusMessages[after.status];
+  if (!entry) return;
+  const [title, body, type] = entry;
+
+  // Una sola notificación por cambio, escrita aquí y no por la app (que la
+  // duplicaba cada vez que se abría el viaje).
+  const ref = db.collection('users').doc(after.riderId).collection('notifications').doc();
+  await ref.set({
+    id: ref.id,
+    userId: after.riderId,
+    title,
+    body,
+    type,
+    isRead: false,
+    bookingId: event.params.bookingId,
+    createdAt: admin.firestore.Timestamp.now(),
+  });
 
   const tokens = await getUserTokens(after.riderId);
-  await sendPush(tokens, 'Luxelane', message);
+  await sendPush(tokens, title, body);
+});
+
+// ---------------------------------------------------------------------------
+// publishDriverInfo  (onUpdate /bookings/{bookingId})
+// El pasajero no puede leer /users de otros: el nombre, teléfono y vehículo
+// del chófer asignado se copian a la reserva.
+// ---------------------------------------------------------------------------
+
+export const publishDriverInfo = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const before = event.data?.before.data() as BookingDoc | undefined;
+  const after = event.data?.after.data() as BookingDoc | undefined;
+  if (!before || !after || before.driverId === after.driverId) return;
+
+  if (!after.driverId) {
+    await event.data!.after.ref.update({ driverInfo: admin.firestore.FieldValue.delete() });
+    return;
+  }
+  const [userSnap, vehicleSnap] = await Promise.all([
+    db.collection('users').doc(after.driverId).get(),
+    db.collection('vehicles').where('driverId', '==', after.driverId).limit(1).get(),
+  ]);
+  const u = userSnap.data() ?? {};
+  const v = vehicleSnap.docs[0]?.data();
+  await event.data!.after.ref.update({
+    driverInfo: {
+      name: u.displayName ?? '',
+      phone: u.phone ?? '',
+      photoUrl: u.photoUrl ?? null,
+      vehicle: v
+        ? { make: v.make ?? '', model: v.model ?? '', plate: v.plate ?? '', color: v.color ?? '' }
+        : null,
+    },
+  });
+});
+
+// ---------------------------------------------------------------------------
+// applyRiderRating  (onUpdate /bookings/{bookingId})
+// La valoración del pasajero (1–5) actualiza la media del chófer.
+// ---------------------------------------------------------------------------
+
+export const applyRiderRating = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const before = event.data?.before.data() as (BookingDoc & { riderRating?: number }) | undefined;
+  const after = event.data?.after.data() as (BookingDoc & { riderRating?: number }) | undefined;
+  if (!before || !after || before.riderRating != null || after.riderRating == null) return;
+  const rating = Math.min(5, Math.max(1, Math.round(after.riderRating)));
+  if (!after.driverId) return;
+
+  const driverRef = db.collection('driverProfiles').doc(after.driverId);
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(driverRef);
+    if (!snap.exists) return;
+    const d = snap.data() ?? {};
+    const count = Number(d.ratingCount ?? 0);
+    const avg = count > 0 ? Number(d.rating ?? 5) : 0;
+    const next = Math.round(((avg * count + rating) / (count + 1)) * 100) / 100;
+    tx.update(driverRef, { rating: next, ratingCount: count + 1 });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// releaseDriver  (onUpdate /bookings/{bookingId})
+// Único punto que libera al chófer al cerrarse un viaje, lo cierre quien lo
+// cierre (chófer, pasajero, admin o el viaje en /rides), y que suma el viaje
+// a su contador. Si el pasajero cancela, avisa al chófer.
+// ---------------------------------------------------------------------------
+
+export const releaseDriver = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const before = event.data?.before.data() as BookingDoc | undefined;
+  const after = event.data?.after.data() as BookingDoc | undefined;
+  if (!before || !after || before.status === after.status) return;
+  if (after.status !== 'completed' && after.status !== 'cancelled') return;
+
+  // Un chófer reasignado antes del cierre ya lo liberó quien lo reasignó.
+  const driverId = after.driverId;
+  if (!driverId) return;
+
+  const driverRef = db.collection('driverProfiles').doc(driverId);
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(driverRef);
+    if (!snap.exists) return;
+    tx.update(driverRef, {
+      isAvailable: true,
+      ...(after.status === 'completed'
+        ? { totalRides: (snap.data()?.totalRides ?? 0) + 1 }
+        : {}),
+    });
+  });
+
+  if (after.status === 'cancelled' && (after as { cancelledBy?: string }).cancelledBy !== 'admin') {
+    const tokens = await getUserTokens(driverId);
+    await sendPush(tokens, 'Viaje cancelado', 'El pasajero canceló la reserva. Ya estás disponible.');
+  }
+  logger.info('releaseDriver', 'released', { bookingId: event.params.bookingId, driverId, status: after.status });
 });
 
 // ---------------------------------------------------------------------------
@@ -507,20 +683,14 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
 
   logger.info('onRideCompleted', 'ride completed', { rideId: event.params.rideId });
 
-  // Solo cierra reservas abiertas: una cancelada no se reabre y una ya
-  // completada (p. ej. por el admin) no suma el viaje dos veces.
+  // Solo cierra reservas abiertas: una cancelada no se reabre. Liberar al
+  // chófer y contar el viaje lo hace releaseDriver al completarse la reserva.
   const bookingRef = db.collection('bookings').doc(after.bookingId);
-  const driverRef = db.collection('driverProfiles').doc(after.driverId);
   await db.runTransaction(async (tx) => {
-    const [bookingSnap, driverSnap] = await Promise.all([tx.get(bookingRef), tx.get(driverRef)]);
+    const bookingSnap = await tx.get(bookingRef);
     const status = (bookingSnap.data() as BookingDoc | undefined)?.status;
     if (!status || status === 'completed' || status === 'cancelled') return;
     tx.update(bookingRef, { status: 'completed' as BookingStatus, updatedAt: admin.firestore.Timestamp.now() });
-    const current = driverSnap.data() ?? {};
-    tx.update(driverRef, {
-      totalRides: (current.totalRides ?? 0) + 1,
-      isAvailable: true,
-    });
   });
 });
 
@@ -637,6 +807,7 @@ export const acceptBooking = onCall(async (req) => {
       if (booking.status !== 'pending') throw new Error('ALREADY_TAKEN');
 
       if (!driverSnap.exists) throw err.notFound('Driver profile not found');
+      if (driverSnap.data()?.documentsVerified !== true) throw err.permissionDenied('Driver not verified');
       if (!driverSnap.data()?.isAvailable) throw new Error('DRIVER_BUSY');
 
       riderId = booking.riderId;

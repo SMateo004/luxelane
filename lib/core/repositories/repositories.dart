@@ -8,6 +8,10 @@ import '../models/models.dart';
 // AuthRepository
 // ---------------------------------------------------------------------------
 
+/// Mensaje para una cuenta bloqueada desde el panel admin.
+const kBlockedAccountMessage =
+    'Tu cuenta está bloqueada. Escríbenos a soporte si crees que es un error.';
+
 abstract class AuthRepository {
   Future<Either<Failure, User>> login({
     required String email,
@@ -27,6 +31,10 @@ abstract class AuthRepository {
   Future<Either<Failure, User>> signInWithGoogle();
 
   Future<Either<Failure, void>> logout();
+
+  /// Perfil en vivo de [uid] (null si no existe), para reflejar cambios del
+  /// admin o del servidor (bloqueo, cliente de pagos…) sin reiniciar.
+  Stream<User?> watchUser(String uid);
   Future<Either<Failure, void>> sendVerificationEmail();
   Future<Either<Failure, void>> sendPhoneVerification(String phone);
   Future<Either<Failure, void>> resetPassword(String email);
@@ -96,6 +104,14 @@ abstract class BookingRepository {
     required String bookingId,
     required BookingStatus status,
   });
+
+  /// El pasajero valora (1–5) un viaje completado; solo una vez.
+  Future<Either<Failure, void>> rateBooking({
+    required String bookingId,
+    required int rating,
+    String comment = '',
+  });
+
   Future<Either<Failure, void>> assignDriver({
     required String bookingId,
     required String driverId,
@@ -137,10 +153,9 @@ abstract class RideRepository {
 // ---------------------------------------------------------------------------
 
 abstract class PaymentRepository {
+  /// Autoriza la tarjeta para [bookingId]; devuelve el client secret.
   Future<Either<Failure, String>> createPaymentIntent({
-    required double amount,
-    required String currency,
-    required String stripeCustomerId,
+    required String bookingId,
   });
   Future<Either<Failure, Payment>> capturePayment({
     required String bookingId,

@@ -292,6 +292,48 @@ class BookingSettlement {
 }
 
 // ---------------------------------------------------------------------------
+// DriverInfo
+// ---------------------------------------------------------------------------
+
+/// Datos públicos del chófer asignado que el servidor copia en la reserva
+/// (el pasajero no puede leer el perfil de otros usuarios).
+class DriverInfo {
+  const DriverInfo({
+    required this.name,
+    this.phone = '',
+    this.photoUrl,
+    this.vehicle,
+  });
+
+  final String name;
+  final String phone;
+  final String? photoUrl;
+
+  /// "Toyota Camry · Negro · 1234ABC", o null si no hay vehículo.
+  final String? vehicle;
+
+  static DriverInfo? fromJson(Object? j) {
+    if (j is! Map) return null;
+    final v = j['vehicle'];
+    String? vehicle;
+    if (v is Map) {
+      final parts = [
+        '${v['make'] ?? ''} ${v['model'] ?? ''}'.trim(),
+        (v['color'] as String?) ?? '',
+        (v['plate'] as String?) ?? '',
+      ].where((p) => p.isNotEmpty);
+      vehicle = parts.isEmpty ? null : parts.join(' · ');
+    }
+    return DriverInfo(
+      name: (j['name'] as String?) ?? '',
+      phone: (j['phone'] as String?) ?? '',
+      photoUrl: j['photoUrl'] as String?,
+      vehicle: vehicle,
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Booking
 // ---------------------------------------------------------------------------
 
@@ -321,6 +363,8 @@ class Booking {
     this.pricingReviewReason,
     this.settlement,
     this.refunded = false,
+    this.driverInfo,
+    this.riderRating,
   });
 
   final String id;
@@ -359,6 +403,12 @@ class Booking {
   /// El cobro se reembolsó (lo marca `refundPayment`): el viaje ya no
   /// genera comisión ni pago al chófer. Solo lectura.
   final bool refunded;
+
+  /// Chófer asignado, copiado por el servidor. Solo lectura.
+  final DriverInfo? driverInfo;
+
+  /// Valoración (1–5) que dio el pasajero, si ya valoró.
+  final int? riderRating;
 
   /// Importe que se factura: el precio final o, si no hay, el estimado.
   double get chargedAmount => finalPrice ?? estimatedPrice;
@@ -410,6 +460,8 @@ class Booking {
         pricingReviewReason: (j['pricingReview'] as Map?)?['reason'] as String?,
         settlement: BookingSettlement.fromJson(j['settlement']),
         refunded: j['refunded'] == true,
+        driverInfo: DriverInfo.fromJson(j['driverInfo']),
+        riderRating: (j['riderRating'] as num?)?.toInt(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -470,6 +522,8 @@ class Booking {
         pricingReviewReason: pricingReviewReason,
         settlement: settlement,
         refunded: refunded,
+        driverInfo: driverInfo,
+        riderRating: riderRating,
       );
 }
 

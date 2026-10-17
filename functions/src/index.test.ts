@@ -5,7 +5,9 @@ import { describe, it, expect, jest } from '@jest/globals';
 const mockAsync = () => jest.fn<(...args: any[]) => Promise<any>>();
 
 jest.mock('./stripe_service', () => ({
-  createIntent: mockAsync().mockResolvedValue('pi_test_secret'),
+  createIntent: mockAsync().mockResolvedValue({ id: 'pi_test', clientSecret: 'pi_test_secret' }),
+  cancelIntent: mockAsync().mockResolvedValue(undefined),
+  paymentMethodCustomer: mockAsync().mockResolvedValue('cus_test'),
   captureIntent: mockAsync().mockResolvedValue({ status: 'succeeded' }),
   refundIntent: mockAsync().mockResolvedValue({ id: 're_test', status: 'succeeded' }),
   createCustomer: mockAsync().mockResolvedValue('cus_test'),
@@ -54,13 +56,14 @@ jest.mock('firebase-admin', () => ({
 import * as stripeService from './stripe_service';
 
 describe('StripeService', () => {
-  it('createIntent returns clientSecret', async () => {
-    const secret = await stripeService.createIntent({
+  it('createIntent returns the intent id and clientSecret', async () => {
+    const intent = await stripeService.createIntent({
       amount: 7500,
-      currency: 'usd',
+      currency: 'bob',
       customerId: 'cus_test',
+      bookingId: 'booking-1',
     });
-    expect(secret).toBe('pi_test_secret');
+    expect(intent).toEqual({ id: 'pi_test', clientSecret: 'pi_test_secret' });
   });
 
   it('captureIntent returns succeeded status', async () => {

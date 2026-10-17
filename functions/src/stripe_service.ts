@@ -11,7 +11,8 @@ export async function createIntent(params: {
   amount: number;
   currency: string;
   customerId: string;
-}): Promise<string> {
+  bookingId: string;
+}): Promise<{ id: string; clientSecret: string }> {
   logger.info(FN, 'createIntent', { amount: params.amount, currency: params.currency });
 
   const intent = await stripe.paymentIntents.create({
@@ -20,10 +21,20 @@ export async function createIntent(params: {
     customer: params.customerId,
     capture_method: 'manual',
     automatic_payment_methods: { enabled: true },
+    metadata: { bookingId: params.bookingId },
   });
 
   logger.info(FN, 'createIntent.success', { intentId: intent.id });
-  return intent.client_secret!;
+  return { id: intent.id, clientSecret: intent.client_secret! };
+}
+
+/** Libera una autorización que no se va a cobrar (reserva cancelada). */
+export async function cancelIntent(paymentIntentId: string): Promise<void> {
+  const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
+  if (intent.status === 'requires_capture' || intent.status === 'requires_payment_method' ||
+      intent.status === 'requires_confirmation' || intent.status === 'requires_action') {
+    await stripe.paymentIntents.cancel(paymentIntentId);
+  }
 }
 
 /**

@@ -75,6 +75,13 @@ class PasswordResetRequested extends AuthEvent {
 
 // Internal — fired by the background Firebase watcher when the session
 // expires or the user signs out on another device.
+class _AuthProfileChanged extends AuthEvent {
+  const _AuthProfileChanged(this.user);
+  final User? user;
+  @override
+  List<Object?> get props => [user?.id, user?.isActive];
+}
+
 class _AuthSignedOut extends AuthEvent {
   const _AuthSignedOut();
 }
@@ -100,8 +107,18 @@ class AuthLoading extends AuthState {
 class AuthAuthenticated extends AuthState {
   const AuthAuthenticated(this.user);
   final User user;
+  // Los campos que pueden cambiar en vivo (admin o servidor) forman parte
+  // del estado, así un cambio real se emite y uno irrelevante no.
   @override
-  List<Object?> get props => [user.id];
+  List<Object?> get props => [
+        user.id,
+        user.role,
+        user.isActive,
+        user.stripeCustomerId,
+        user.displayName,
+        user.phone,
+        user.photoUrl,
+      ];
 }
 
 class AuthUnauthenticated extends AuthState {
@@ -132,6 +149,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<VerificationEmailSent>(_onVerificationEmail);
     on<PhoneVerificationRequested>(_onPhoneVerification);
     on<PasswordResetRequested>(_onPasswordReset);
+    on<_AuthProfileChanged>(_onProfileChanged);
+  }
+
+  StreamSubscription<User?>? _profileSub;
+
+  /// Tras entrar: vigila el cierre de sesión y el perfil en vivo.
+  void _watchSession(String uid) {
+    _signOutSub?.cancel();
+    _signOutSub = _repo.isSignedIn.listen((signedIn) {
+      if (!signedIn && !isClosed) add(const _AuthSignedOut());
+    });
+    _profileSub?.cancel();
+    _profileSub = _repo.watchUser(uid).listen(
+      (u) {
+        if (!isClosed) add(_AuthProfileChanged(u));
+      },
+      onError: (_) {},
+    );
+  }
+
+  Future<void> _onProfileChanged(
+      _AuthProfileChanged event, Emitter<AuthState> emit) async {
+    final current = state;
+    if (current is! AuthAuthenticated) return;
+    final u = event.user;
+    if (u == null) return; // aún creándose (registro)
+    if (!u.isActive) {
+      // Bloqueado desde el panel admin con la app abierta.
+      await _profileSub?.cancel();
+      await _signOutSub?.cancel();
+      await _repo.logout();
+      emit(const AuthError(kBlockedAccountMessage));
+      return;
+    }
+    emit(AuthAuthenticated(u));
   }
 
   final AuthRepository _repo;
@@ -155,12 +207,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       onError: (_, __) => const AuthUnauthenticated(),
     );
 
-    // After initial state is known, watch *only* for sign-out via the raw
-    // Firebase stream (no Firestore) — login/register own their transitions.
-    await _signOutSub?.cancel();
-    _signOutSub = _repo.isSignedIn.listen((signedIn) {
-      if (!signedIn && !isClosed) add(const _AuthSignedOut());
-    });
+    final s = state;
+    if (s is AuthAuthenticated) {
+      _watchSession(s.user.id);
+    } else {
+      // Sin sesión: solo hace falta enterarse de un cierre externo.
+      await _signOutSub?.cancel();
+      _signOutSub = _repo.isSignedIn.listen((signedIn) {
+        if (!signedIn && !isClosed) add(const _AuthSignedOut());
+      });
+    }
   }
 
   // ── _onLogin ───────────────────────────────────────────────────────────────
@@ -170,7 +226,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await _repo.login(email: event.email, password: event.password);
     result.fold(
       (f) => emit(AuthError(f.message)),
-      (user) => emit(AuthAuthenticated(user)),
+      (user) {
+        emit(AuthAuthenticated(user));
+        _watchSession(user.id);
+      },
     );
   }
 
@@ -187,7 +246,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     result.fold(
       (f) => emit(AuthError(f.message)),
-      (user) => emit(AuthAuthenticated(user)),
+      (user) {
+        emit(AuthAuthenticated(user));
+        _watchSession(user.id);
+      },
     );
   }
 
@@ -201,14 +263,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (f) => emit(f is AuthCancelledFailure
           ? const AuthUnauthenticated()
           : AuthError(f.message)),
-      (user) => emit(AuthAuthenticated(user)),
+      (user) {
+        emit(AuthAuthenticated(user));
+        _watchSession(user.id);
+      },
     );
   }
 
   // ── _onLogout ──────────────────────────────────────────────────────────────
   Future<void> _onLogout(LogoutRequested event, Emitter<AuthState> emit) async {
-    // Cancel the watcher so it doesn't double-fire _AuthSignedOut.
+    // Cancel the watchers so they don't double-fire _AuthSignedOut.
     await _signOutSub?.cancel();
+    await _profileSub?.cancel();
     final result = await _repo.logout();
     result.fold(
       (f) => emit(AuthError(f.message)),
@@ -217,8 +283,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   // ── _onSignedOut (internal) ────────────────────────────────────────────────
-  void _onSignedOut(_AuthSignedOut event, Emitter<AuthState> emit) =>
-      emit(const AuthUnauthenticated());
+  void _onSignedOut(_AuthSignedOut event, Emitter<AuthState> emit) {
+    _profileSub?.cancel();
+    emit(const AuthUnauthenticated());
+  }
 
   // ── Misc ───────────────────────────────────────────────────────────────────
   Future<void> _onVerificationEmail(
@@ -245,6 +313,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   @override
   Future<void> close() {
     _signOutSub?.cancel();
+    _profileSub?.cancel();
     return super.close();
   }
 }

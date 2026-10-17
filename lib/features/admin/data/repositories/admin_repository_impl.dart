@@ -260,7 +260,6 @@ class AdminRepositoryImpl implements AdminRepository {
             'No se puede pasar de "${current.displayLabel}" a '
             '"${status.displayLabel}"');
       }
-      final driverId = snap.data()?['driverId'] as String?;
       final update = <String, dynamic>{
         'status': status.label,
         'updatedAt': FieldValue.serverTimestamp(),
@@ -275,14 +274,8 @@ class AdminRepositoryImpl implements AdminRepository {
       }
       batch.update(_booking(booking.id), update);
 
-      // El chófer queda libre al cerrar el viaje.
-      if (driverId != null && AdminOperations.isClosed(status)) {
-        batch.update(_driver(driverId), {
-          'isAvailable': true,
-          if (status == BookingStatus.completed)
-            'totalRides': FieldValue.increment(1),
-        });
-      }
+      // Liberar al chófer y contar el viaje lo hace el servidor
+      // (releaseDriver) para cualquier cierre, también este.
       _log(
         batch,
         status == BookingStatus.cancelled ? 'cancel_booking' : 'update_status',

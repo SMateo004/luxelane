@@ -14,17 +14,13 @@ abstract class PaymentEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+/// Autoriza la tarjeta para una reserva; importe y cliente los fija el
+/// servidor a partir de la reserva.
 class PaymentIntentRequested extends PaymentEvent {
-  const PaymentIntentRequested({
-    required this.amount,
-    required this.currency,
-    required this.stripeCustomerId,
-  });
-  final double amount;
-  final String currency;
-  final String stripeCustomerId;
+  const PaymentIntentRequested({required this.bookingId});
+  final String bookingId;
   @override
-  List<Object?> get props => [amount, currency, stripeCustomerId];
+  List<Object?> get props => [bookingId];
 }
 
 class PaymentCaptureRequested extends PaymentEvent {
@@ -165,11 +161,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     Emitter<PaymentState> emit,
   ) async {
     emit(const PaymentLoading());
-    final result = await _repo.createPaymentIntent(
-      amount: event.amount,
-      currency: event.currency,
-      stripeCustomerId: event.stripeCustomerId,
-    );
+    final result = await _repo.createPaymentIntent(bookingId: event.bookingId);
     result.fold(
       (f) => emit(PaymentError(f.message)),
       (secret) => emit(PaymentIntentCreated(secret)),
@@ -219,9 +211,14 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   }
 
   Future<void> _onAddCard(CardAdded event, Emitter<PaymentState> emit) async {
-    await _repo.addCard(
+    emit(const PaymentLoading());
+    final result = await _repo.addCard(
       stripeCustomerId: event.stripeCustomerId,
       paymentMethodId: event.paymentMethodId,
+    );
+    result.fold(
+      (f) => emit(PaymentError(f.message)),
+      (_) => emit(const CardOperationSuccess()),
     );
   }
 
