@@ -146,7 +146,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 ),
               ),
             ),
-            Expanded(child: _sectionBody()),
+            Expanded(child: _withLoadError(_sectionBody())),
           ],
         ),
       );
@@ -215,8 +215,36 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             ),
           ),
           const LuxDivider(vertical: true),
-          Expanded(child: _sectionBody()),
+          Expanded(child: _withLoadError(_sectionBody())),
         ],
+      );
+
+  /// Si alguna lista no cargó, se dice arriba en vez de mostrar la sección
+  /// como si estuviera vacía.
+  Widget _withLoadError(Widget body) => BlocBuilder<AdminBloc, AdminState>(
+        buildWhen: (a, b) => a.loadError != b.loadError,
+        builder: (context, state) => Column(
+          children: [
+            if (state.loadError != null)
+              MaterialBanner(
+                backgroundColor: LuxColors.error.withValues(alpha: 0.08),
+                leading:
+                    const Icon(Icons.cloud_off_rounded, color: LuxColors.error),
+                content: Text(
+                    '${state.loadError} Los datos de esta pantalla pueden '
+                    'estar incompletos.',
+                    style: LuxTypography.bodyMedium),
+                actions: [
+                  TextButton(
+                    onPressed: () =>
+                        context.read<AdminBloc>().add(AdminDataRequested()),
+                    child: const Text('Reintentar'),
+                  ),
+                ],
+              ),
+            Expanded(child: body),
+          ],
+        ),
       );
 
   Widget _sectionBody() => switch (_section) {

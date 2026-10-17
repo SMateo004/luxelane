@@ -153,9 +153,11 @@ abstract class RideRepository {
 // ---------------------------------------------------------------------------
 
 abstract class PaymentRepository {
-  /// Autoriza la tarjeta para [bookingId]; devuelve el client secret.
-  Future<Either<Failure, String>> createPaymentIntent({
+  /// Autoriza la tarjeta para [bookingId]; devuelve el client secret, o
+  /// null si el servidor la cobrará al completar (viaje lejano).
+  Future<Either<Failure, String?>> createPaymentIntent({
     required String bookingId,
+    required String paymentMethodId,
   });
   Future<Either<Failure, Payment>> capturePayment({
     required String bookingId,

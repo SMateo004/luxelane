@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../core/di/injection.dart';
 import '../core/services/notification_service.dart';
 import '../core/enums/enums.dart';
@@ -50,6 +51,11 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
     _notificationBloc = sl<NotificationBloc>();
 
     _router = buildRouter(_authBloc);
+
+    // Tocar el aviso de una reserva la abre.
+    sl<NotificationService>().openedBookings.listen((id) {
+      (_router as GoRouter).go('/ride/$id');
+    });
 
     // Start DriverBloc + NotificationBloc only when authenticated
     _authBloc.stream.listen((state) {

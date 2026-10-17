@@ -56,12 +56,21 @@ void main() {
         'createPaymentIntent solo envía la reserva (el importe lo fija el '
         'servidor)', () async {
       stubCall('createPaymentIntent', {'clientSecret': 'secret'});
-      final r = await repo.createPaymentIntent(bookingId: 'b1');
+      final r = await repo.createPaymentIntent(
+          bookingId: 'b1', paymentMethodId: 'pm');
       expect(r.getOrElse(() => ''), 'secret');
       final sent = verify(() => callable.call<dynamic>(captureAny()))
           .captured
           .single as Map;
-      expect(sent, {'bookingId': 'b1'});
+      expect(sent, {'bookingId': 'b1', 'paymentMethodId': 'pm'});
+    });
+
+    test('createPaymentIntent devuelve null si el cobro se difiere', () async {
+      stubCall('createPaymentIntent', {'deferred': true});
+      final r = await repo.createPaymentIntent(
+          bookingId: 'b1', paymentMethodId: 'pm');
+      expect(r.isRight(), isTrue);
+      expect(r.getOrElse(() => 'x'), isNull);
     });
 
     test('capturePayment delega en la Cloud Function sin enviar el importe',

@@ -20,13 +20,15 @@ class PaymentRepositoryImpl implements PaymentRepository {
       _db.collection('payments');
 
   @override
-  Future<Either<Failure, String>> createPaymentIntent({
+  Future<Either<Failure, String?>> createPaymentIntent({
     required String bookingId,
+    required String paymentMethodId,
   }) async {
     try {
       final result = await _fn
           .httpsCallable('createPaymentIntent')
-          .call({'bookingId': bookingId});
+          .call({'bookingId': bookingId, 'paymentMethodId': paymentMethodId});
+      if (result.data['deferred'] == true) return const Right(null);
       return Right(result.data['clientSecret'] as String);
     } on FirebaseFunctionsException catch (e) {
       return Left(PaymentFailure(e.code == 'failed-precondition'

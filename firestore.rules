@@ -131,13 +131,17 @@ service cloud.firestore {
         isActiveUser() &&
         request.resource.data.riderId == request.auth.uid &&
         request.resource.data.status == 'pending' &&
+        // Sin recogidas en el pasado (margen para la recogida inmediata).
+        request.resource.data.scheduledAt is timestamp &&
+        request.resource.data.scheduledAt > request.time - duration.value(15, 'm') &&
         request.resource.data.get('driverId', null) == null &&
         request.resource.data.get('paymentId', null) == null &&
         request.resource.data.get('finalPrice', null) == null &&
         request.resource.data.estimatedPrice is number &&
         request.resource.data.estimatedPrice > 0 &&
         !request.resource.data.keys().hasAny(['settlement', 'pricingReview',
-          'refunded', 'stripePaymentIntentId', 'driverInfo', 'riderRating']);
+          'refunded', 'stripePaymentIntentId', 'stripePaymentMethodId',
+          'driverInfo', 'riderRating']);
 
       allow update: if isAdmin() ||
         // Driver accepts a pending booking (self-assign)

@@ -47,7 +47,10 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthAuthenticated) context.go('/');
+        if (state is AuthAuthenticated) {
+          final from = GoRouterState.of(context).uri.queryParameters['from'];
+          context.go(from != null && from.startsWith('/') ? from : '/');
+        }
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

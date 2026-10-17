@@ -156,6 +156,10 @@ class _BookingScreenState extends State<BookingScreen> {
       if (extra is BookingFormData) {
         _formData = extra;
         _service = extra.serviceType;
+        if (extra.preferredClass != null &&
+            _kVehicleClasses.contains(extra.preferredClass)) {
+          _selected = extra.preferredClass!;
+        }
         _hours = extra.hours;
         _ensureRoute();
       }
@@ -246,6 +250,14 @@ class _BookingScreenState extends State<BookingScreen> {
       showLuxSnackbar(context, blocked, isError: true);
       return;
     }
+    if (_formData!.scheduledAt
+        .isBefore(DateTime.now().subtract(const Duration(minutes: 5)))) {
+      showLuxSnackbar(
+          context, 'La hora de recogida ya pasó. Elige una nueva hora.',
+          isError: true);
+      context.go('/');
+      return;
+    }
     // La reserva se crea primero y la tarjeta se autoriza contra ella: si la
     // tarjeta falla, se cancela la reserva y no queda ninguna retención.
     _payByCard = _cardsSupported && _selectedCardId != null;
@@ -257,9 +269,10 @@ class _BookingScreenState extends State<BookingScreen> {
   void _authorizeCard(Booking booking) {
     _pendingBookingId = booking.id;
     setState(() => _awaitingPaymentIntent = true);
-    context
-        .read<PaymentBloc>()
-        .add(PaymentIntentRequested(bookingId: booking.id));
+    context.read<PaymentBloc>().add(PaymentIntentRequested(
+          bookingId: booking.id,
+          paymentMethodId: _selectedCardId!,
+        ));
   }
 
   /// La tarjeta no se pudo autorizar: la reserva se cancela para no dejarla
@@ -443,7 +456,17 @@ class _BookingScreenState extends State<BookingScreen> {
           }
           if (state is PaymentIntentCreated && _awaitingPaymentIntent) {
             setState(() => _awaitingPaymentIntent = false);
-            _handleStripeConfirm(state.clientSecret);
+            final secret = state.clientSecret;
+            if (secret != null) {
+              _handleStripeConfirm(secret);
+            } else {
+              // Viaje lejano: la tarjeta queda guardada en la reserva y se
+              // cobra al completar.
+              final id = _pendingBookingId;
+              _pendingBookingId = null;
+              setState(() => _loading = false);
+              if (id != null) ctx.go('/ride/$id');
+            }
           }
           if (state is PaymentError) {
             if (_awaitingPaymentIntent) {

@@ -35,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime _date = LuxFormat.nextQuarter();
   int _hours = 3;
   bool _locating = false;
+  VehicleClass? _preferredClass;
 
   // ---------------------------------------------------------------------------
   // Location & Route
@@ -52,10 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
       initial = const LatLng(-17.7833, -63.1821);
     }
 
-    if (!mounted) {
-      setState(() => _locating = false);
-      return;
-    }
+    if (!mounted) return;
     setState(() => _locating = false);
 
     // Open map picker centered on detected/default location
@@ -143,6 +141,23 @@ class _HomeScreenState extends State<HomeScreen> {
       showLuxSnackbar(context, 'Ingresa un lugar de recogida', isError: true);
       return;
     }
+    final originError = ServiceArea.originError(_origin!);
+    if (originError != null) {
+      showLuxSnackbar(context, originError, isError: true);
+      return;
+    }
+    // La pantalla de inicio sigue viva entre visitas: una hora elegida (o la
+    // de por defecto) puede haber quedado en el pasado.
+    final later = adjustedPickup(_date);
+    if (later != null) {
+      setState(() => _date = later);
+      showLuxSnackbar(
+          context,
+          'Esa hora ya no da tiempo: la movimos a '
+          '${LuxFormat.dateTime(later)}. Revísala y continúa.',
+          isError: true);
+      return;
+    }
     if (_serviceType == ServiceType.oneWay && _destination == null) {
       showLuxSnackbar(context, 'Ingresa un destino', isError: true);
       return;
@@ -165,6 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
         routeDistanceKm: _routeInfo?.distanceKm ?? 0,
         routeDurationMin: _routeInfo?.durationMin ?? 0,
         polylinePoints: _routeInfo?.polylinePoints ?? [],
+        preferredClass: _preferredClass,
       ),
     );
   }
@@ -246,6 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
         onSearch: _search,
         onOriginMapPick: _pickOriginFromMap,
         onDestinationMapPick: _pickDestinationFromMap,
+        onChooseClass: (vc) => setState(() => _preferredClass = vc),
       );
 }
 
