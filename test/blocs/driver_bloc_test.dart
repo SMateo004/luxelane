@@ -105,6 +105,8 @@ void main() {
         .thenAnswer((_) => const Stream.empty());
     when(() => vehicleRepo.getVehicleByDriver(any()))
         .thenAnswer((_) async => const Right(_vehicle));
+    when(() => mapsService.driverPositionStream())
+        .thenAnswer((_) => const Stream.empty());
   });
 
   DriverBloc bloc() => DriverBloc(

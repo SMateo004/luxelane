@@ -89,6 +89,57 @@ class MapsService {
     }
   }
 
+  /// Ubicación continua del chófer conectado. En Android corre como
+  /// servicio en primer plano (con una notificación fija) y en iOS con el
+  /// indicador azul, así sigue llegando con la app minimizada. Emite un
+  /// error si no hay permiso de ubicación.
+  Stream<Position> driverPositionStream() async* {
+    if (!await Geolocator.isLocationServiceEnabled()) {
+      throw const LocationServiceDisabledException();
+    }
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      throw const PermissionDeniedException('location');
+    }
+    final LocationSettings settings;
+    if (kIsWeb) {
+      settings = const LocationSettings(
+          accuracy: LocationAccuracy.high, distanceFilter: 25);
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      settings = AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 25,
+        intervalDuration: const Duration(seconds: 10),
+        foregroundNotificationConfig: const ForegroundNotificationConfig(
+          notificationTitle: 'Luxelane · estás conectado',
+          notificationText:
+              'Compartimos tu ubicación para asignarte viajes y guiar al '
+              'pasajero.',
+          notificationChannelName: 'Ubicación del chófer',
+          enableWakeLock: true,
+          setOngoing: true,
+        ),
+      );
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      settings = AppleSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 25,
+        activityType: ActivityType.automotiveNavigation,
+        pauseLocationUpdatesAutomatically: false,
+        allowBackgroundLocationUpdates: true,
+        showBackgroundLocationIndicator: true,
+      );
+    } else {
+      settings = const LocationSettings(
+          accuracy: LocationAccuracy.high, distanceFilter: 25);
+    }
+    yield* Geolocator.getPositionStream(locationSettings: settings);
+  }
+
   // ---------------------------------------------------------------------------
   // Reverse geocode lat/lng → Place
   // ---------------------------------------------------------------------------

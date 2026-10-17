@@ -520,7 +520,8 @@ class _MobileMenu extends StatelessWidget {
               const SizedBox(height: 24),
               Divider(color: Colors.white.withAlpha(25)),
               item('Flota', onFleet ?? () => context.go('/')),
-              item('Para empresas', onBusiness ?? () => context.go('/empresas')),
+              item(
+                  'Para empresas', onBusiness ?? () => context.go('/empresas')),
               const Spacer(),
               SizedBox(
                 height: 54,

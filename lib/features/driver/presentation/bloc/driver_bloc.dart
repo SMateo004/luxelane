@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart' show Position;
 import 'package:rxdart/rxdart.dart';
 
 import '../../../../core/enums/enums.dart';
@@ -60,10 +61,17 @@ class DriverLocationTrackingStopped extends DriverEvent {
 }
 
 class _DriverLocationTick extends DriverEvent {
-  const _DriverLocationTick({required this.userId});
+  const _DriverLocationTick(
+      {required this.userId, required this.lat, required this.lng});
   final String userId;
+  final double lat;
+  final double lng;
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [userId, lat, lng];
+}
+
+class _DriverLocationDenied extends DriverEvent {
+  const _DriverLocationDenied();
 }
 
 class DriverBookingAccepted extends DriverEvent {
@@ -320,6 +328,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     on<DriverLocationTrackingStarted>(_onStartTracking);
     on<DriverLocationTrackingStopped>(_onStopTracking);
     on<_DriverLocationTick>(_onLocationTick);
+    on<_DriverLocationDenied>(_onLocationDenied);
     on<DriverBookingAccepted>(_onAccept);
     on<DriverArrivedAtPickup>(_onArrived);
     on<DriverTripStarted>(_onStartTrip);
@@ -338,7 +347,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
   final UserRepository _userRepo;
   final VehicleRepository _vehicleRepo;
   final MapsService _mapsService;
-  Timer? _locationTimer;
+  StreamSubscription<Position>? _positionSub;
 
   // ── Startup ───────────────────────────────────────────────────────────────
 
@@ -404,6 +413,11 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
         // figure como ocupado.
         if (next.activeBooking != null && !next.isTracking) {
           add(DriverLocationTrackingStarted(userId: event.driverId));
+        } else if (next.activeBooking == null &&
+            !next.isAvailable &&
+            next.isTracking) {
+          // Terminó el viaje y el chófer está desconectado.
+          add(const DriverLocationTrackingStopped());
         }
         return next;
       },
@@ -477,7 +491,9 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     }
     if (event.isAvailable) {
       add(DriverLocationTrackingStarted(userId: event.userId));
-    } else {
+    } else if (state is! DriverLoaded ||
+        (state as DriverLoaded).activeBooking == null) {
+      // Con un viaje en curso se sigue compartiendo hasta terminarlo.
       add(const DriverLocationTrackingStopped());
     }
   }
@@ -486,10 +502,23 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     DriverLocationTrackingStarted event,
     Emitter<DriverState> emit,
   ) async {
-    _locationTimer?.cancel();
-    _locationTimer = Timer.periodic(
-      const Duration(seconds: 10),
-      (_) => add(_DriverLocationTick(userId: event.userId)),
+    await _positionSub?.cancel();
+    DateTime? lastSent;
+    // Flujo continuo (también con la app minimizada); se escribe como mucho
+    // cada 10 s para no gastar batería ni escrituras.
+    _positionSub = _mapsService.driverPositionStream().listen(
+      (pos) {
+        final now = DateTime.now();
+        if (lastSent != null &&
+            now.difference(lastSent!) < const Duration(seconds: 10)) {
+          return;
+        }
+        lastSent = now;
+        add(_DriverLocationTick(
+            userId: event.userId, lat: pos.latitude, lng: pos.longitude));
+      },
+      onError: (_) => add(const _DriverLocationDenied()),
+      cancelOnError: true,
     );
     if (state is DriverLoaded) {
       emit((state as DriverLoaded).copyWith(isTracking: true));
@@ -500,8 +529,8 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     DriverLocationTrackingStopped event,
     Emitter<DriverState> emit,
   ) async {
-    _locationTimer?.cancel();
-    _locationTimer = null;
+    await _positionSub?.cancel();
+    _positionSub = null;
     if (state is DriverLoaded) {
       emit((state as DriverLoaded).copyWith(isTracking: false));
     }
@@ -511,13 +540,22 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     _DriverLocationTick event,
     Emitter<DriverState> emit,
   ) async {
-    final pos = await _mapsService.getCurrentPosition();
-    if (pos != null) {
-      await _userRepo.updateDriverLocation(
-        userId: event.userId,
-        latitude: pos.latitude,
-        longitude: pos.longitude,
-      );
+    await _userRepo.updateDriverLocation(
+      userId: event.userId,
+      latitude: event.lat,
+      longitude: event.lng,
+    );
+  }
+
+  void _onLocationDenied(
+      _DriverLocationDenied event, Emitter<DriverState> emit) {
+    _positionSub = null;
+    if (state is DriverLoaded) {
+      emit((state as DriverLoaded).copyWith(
+        isTracking: false,
+        notice: 'Activa la ubicación para recibir viajes y que el pasajero '
+            'vea dónde estás.',
+      ));
     }
   }
 
@@ -608,14 +646,14 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
 
   Future<void> _onStopped(
       DriverStopped event, Emitter<DriverState> emit) async {
-    _locationTimer?.cancel();
-    _locationTimer = null;
+    await _positionSub?.cancel();
+    _positionSub = null;
     emit(const DriverInitial());
   }
 
   @override
   Future<void> close() {
-    _locationTimer?.cancel();
+    _positionSub?.cancel();
     return super.close();
   }
 }
