@@ -32,6 +32,10 @@ abstract class AuthRepository {
 
   Future<Either<Failure, void>> logout();
 
+  /// Elimina la cuenta en el servidor (perfil, tarjetas y acceso). Falla si
+  /// quedan viajes activos o reservados.
+  Future<Either<Failure, void>> deleteAccount();
+
   /// Perfil en vivo de [uid] (null si no existe), para reflejar cambios del
   /// admin o del servidor (bloqueo, cliente de pagos…) sin reiniciar.
   Stream<User?> watchUser(String uid);

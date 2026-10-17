@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/profile_bloc.dart';
@@ -243,10 +245,102 @@ class _ProfileBody extends StatelessWidget {
             onPressed: () =>
                 context.read<AuthBloc>().add(const LogoutRequested()),
           ),
+          const SizedBox(height: LuxSpacing.sm),
+          Center(
+            child: TextButton(
+              onPressed: () => _confirmDeleteAccount(context),
+              style: TextButton.styleFrom(foregroundColor: LuxColors.error),
+              child: const Text('Eliminar cuenta'),
+            ),
+          ),
           const SizedBox(height: LuxSpacing.md),
           const Center(
               child: Text('Luxelane v1.0.0', style: LuxTypography.caption)),
           const SizedBox(height: LuxSpacing.md),
+        ],
+      );
+}
+
+// ---------------------------------------------------------------------------
+// Eliminar cuenta
+// ---------------------------------------------------------------------------
+
+Future<void> _confirmDeleteAccount(BuildContext context) async {
+  final auth = context.read<AuthBloc>();
+  final deleted = await showDialog<bool>(
+    context: context,
+    builder: (_) => const _DeleteAccountDialog(),
+  );
+  if (deleted != true) return;
+  // El servidor ya borró el acceso: se cierra la sesión local.
+  auth.add(const LogoutRequested());
+  if (context.mounted) showLuxSnackbar(context, 'Tu cuenta fue eliminada.');
+}
+
+class _DeleteAccountDialog extends StatefulWidget {
+  const _DeleteAccountDialog();
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  bool _busy = false;
+  String? _error;
+
+  Future<void> _delete() async {
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    final result = await sl<AuthRepository>().deleteAccount();
+    if (!mounted) return;
+    result.fold(
+      (f) => setState(() {
+        _busy = false;
+        _error = f.message;
+      }),
+      (_) => Navigator.of(context).pop(true),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        icon: const Icon(Icons.delete_outline, color: LuxColors.error),
+        title: const Text('¿Eliminar tu cuenta?'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Borraremos tu perfil, tus tarjetas guardadas y tus avisos, y '
+              'no podrás volver a entrar con esta cuenta. Conservamos el '
+              'registro de viajes y pagos que exige la ley.\n\n'
+              'Esta acción no se puede deshacer.',
+            ),
+            if (_error != null) ...[
+              const SizedBox(height: LuxSpacing.md),
+              Text(_error!,
+                  style: LuxTypography.bodyMedium
+                      .copyWith(color: LuxColors.error)),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: _busy ? null : () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: _busy ? null : _delete,
+            style: FilledButton.styleFrom(backgroundColor: LuxColors.error),
+            child: _busy
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white))
+                : const Text('Eliminar'),
+          ),
         ],
       );
 }

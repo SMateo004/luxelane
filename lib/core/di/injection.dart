@@ -61,6 +61,7 @@ void _registerRepositories() {
     () => AuthRepositoryImpl(
       firebaseAuth: sl(),
       firestore: sl(),
+      functions: sl(),
     ),
   );
 

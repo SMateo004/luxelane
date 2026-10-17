@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -15,13 +16,18 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
     required fb.FirebaseAuth firebaseAuth,
     required FirebaseFirestore firestore,
+    FirebaseFunctions? functions,
     GoogleSignIn? googleSignIn,
   })  : _auth = firebaseAuth,
         _db = firestore,
+        _functionsOverride = functions,
         _googleOverride = googleSignIn;
 
   final fb.FirebaseAuth _auth;
   final FirebaseFirestore _db;
+  final FirebaseFunctions? _functionsOverride;
+  FirebaseFunctions get _functions =>
+      _functionsOverride ?? FirebaseFunctions.instance;
   final GoogleSignIn? _googleOverride;
 
   // Native Google account picker (Android/iOS). Created lazily: on web the
@@ -287,6 +293,28 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteAccount() async {
+    try {
+      await _functions.httpsCallable('deleteAccount').call();
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      if (e.message == 'active-bookings') {
+        return const Left(ServerFailure(
+            'Tienes viajes activos o reservados. Cancélalos o espera a que '
+            'terminen antes de eliminar tu cuenta.'));
+      }
+      if (e.code == 'failed-precondition' && e.message != null) {
+        return Left(ServerFailure(e.message!));
+      }
+      return const Left(ServerFailure(
+          'No pudimos eliminar tu cuenta. Inténtalo de nuevo.'));
+    } catch (_) {
+      return const Left(ServerFailure(
+          'No pudimos eliminar tu cuenta. Revisa tu conexión.'));
     }
   }
 

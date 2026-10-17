@@ -114,6 +114,11 @@ export async function detachPaymentMethod(paymentMethodId: string): Promise<void
   await stripe.paymentMethods.detach(paymentMethodId);
 }
 
+/** Borra el cliente y, con él, sus tarjetas guardadas (cuenta eliminada). */
+export async function deleteCustomer(customerId: string): Promise<void> {
+  await stripe.customers.del(customerId);
+}
+
 export async function createCustomer(email: string, name: string): Promise<string> {
   const customer = await stripe.customers.create({ email, name });
   return customer.id;

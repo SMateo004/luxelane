@@ -436,6 +436,73 @@ export const detachPaymentMethod = onCall(async (req) => {
 });
 
 // ---------------------------------------------------------------------------
+// deleteAccount
+// ---------------------------------------------------------------------------
+
+const ACTIVE_BOOKING_STATUSES = ['pending', 'confirmed', 'driverArriving', 'driverArrived', 'inProgress'];
+
+// El propio usuario elimina su cuenta (exigido por App Store y Google Play).
+// Se borran el perfil, los avisos, el perfil de chófer, el cliente de Stripe
+// y el acceso; las reservas y pagos se conservan por obligación contable y
+// solo guardan el uid, que deja de apuntar a datos personales.
+export const deleteAccount = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const userRef = db.collection('users').doc(uid);
+  const user = (await userRef.get()).data();
+  if (user?.role === 'admin') {
+    throw err.failedPrecondition('Las cuentas de administración se eliminan desde la consola.');
+  }
+
+  const [asRider, asDriver] = await Promise.all([
+    db.collection('bookings').where('riderId', '==', uid)
+      .where('status', 'in', ACTIVE_BOOKING_STATUSES).limit(1).get(),
+    db.collection('bookings').where('driverId', '==', uid)
+      .where('status', 'in', ACTIVE_BOOKING_STATUSES).limit(1).get(),
+  ]);
+  if (!asRider.empty || !asDriver.empty) {
+    throw err.failedPrecondition('active-bookings');
+  }
+
+  if (user?.stripeCustomerId) {
+    try {
+      await stripe.deleteCustomer(user.stripeCustomerId);
+    } catch (e) {
+      // Un cliente ya borrado en Stripe no impide eliminar la cuenta.
+      logger.warn('deleteAccount', 'stripe customer not deleted', { uid, error: String(e) });
+    }
+  }
+
+  const notifications = await userRef.collection('notifications').get();
+  const vehicles = await db.collection('vehicles').where('driverId', '==', uid).get();
+  const refs = notifications.docs.map((d) => d.ref);
+  // Lotes de 400 para no rozar el límite de 500 escrituras por lote.
+  for (let i = 0; i < refs.length; i += 400) {
+    const batch = db.batch();
+    refs.slice(i, i + 400).forEach((r) => batch.delete(r));
+    await batch.commit();
+  }
+  const batch = db.batch();
+  // Los vehículos siguen en el historial de reservas, pero salen de servicio.
+  vehicles.docs.forEach((v) => batch.update(v.ref, { isActive: false }));
+  batch.delete(db.collection('driverProfiles').doc(uid));
+  batch.delete(userRef);
+  batch.set(db.collection('admin_logs').doc(), {
+    adminId: uid,
+    adminEmail: req.auth?.token.email ?? null,
+    action: 'delete_account',
+    targetId: uid,
+    targetType: 'user',
+    details: `Cuenta eliminada por el usuario (${user?.role ?? 'sin perfil'})`,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  });
+  await batch.commit();
+
+  await admin.auth().deleteUser(uid);
+  logger.info('deleteAccount', 'success', { uid });
+  return { success: true };
+});
+
+// ---------------------------------------------------------------------------
 // createStripeCustomer  (onCreate /users/{uid})
 // ---------------------------------------------------------------------------
 
