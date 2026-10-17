@@ -156,6 +156,7 @@ class AdminState extends Equatable {
     this.isLoading = false,
     this.error,
     this.successMessage,
+    this.messageSeq = 0,
   });
 
   final List<Booking> bookings;
@@ -171,6 +172,10 @@ class AdminState extends Equatable {
   final bool isLoading;
   final String? error;
   final String? successMessage;
+
+  /// Sube con cada aviso, para que dos avisos iguales seguidos (p. ej. el
+  /// mismo error al reintentar) se muestren los dos.
+  final int messageSeq;
 
   bool get isMaintenanceMode => globalSettings['isMaintenanceMode'] ?? false;
   bool get pushNotificationsEnabled =>
@@ -264,6 +269,7 @@ class AdminState extends Equatable {
     String? error,
     String? successMessage,
   }) {
+    final notice = error != null || successMessage != null;
     return AdminState(
       bookings: bookings ?? this.bookings,
       payments: payments ?? this.payments,
@@ -278,6 +284,7 @@ class AdminState extends Equatable {
       isLoading: isLoading ?? this.isLoading,
       error: error,
       successMessage: successMessage,
+      messageSeq: notice ? messageSeq + 1 : messageSeq,
     );
   }
 
@@ -296,6 +303,7 @@ class AdminState extends Equatable {
         isLoading,
         error,
         successMessage,
+        messageSeq,
       ];
 }
 
@@ -372,7 +380,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
 
     on<_AdminStreamUpdated>((e, emit) => emit(e.apply(state)));
     on<_AdminStreamFailed>((e, emit) => emit(state.copyWith(
-        isLoading: false, error: 'No se pudo cargar ${e.what}: ${e.error}')));
+        isLoading: false,
+        error: e.error.contains('permission-denied')
+            ? 'No se pudo cargar ${e.what}: permiso denegado'
+            : 'No se pudo cargar ${e.what}. Revisa la conexión y recarga.')));
   }
 
   Future<void> _perform(Emitter<AdminState> emit,

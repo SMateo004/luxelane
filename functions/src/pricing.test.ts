@@ -23,6 +23,15 @@ describe('checkBookingPrice', () => {
     expect(checkBookingPrice({ estimatedPrice: 999 }, { ...rule, isActive: false }).reason).toBe('fare_disabled');
   });
 
+  it('tiene tarifa de fábrica para todas las clases que se reservan', () => {
+    for (const vc of ['business', 'businessSuv', 'firstClass', 'businessVan', 'electric']) {
+      for (const st of ['oneWay', 'byTheHour']) {
+        expect(DEFAULT_FARES[fareId(vc, st)]).toBeDefined();
+      }
+    }
+    expect(DEFAULT_FARES[fareId('businessSuv', 'oneWay')].minimumPriceUsd).toBe(70);
+  });
+
   it('rechaza combinaciones sin tarifa', () => {
     expect(checkBookingPrice({ estimatedPrice: 999 }, undefined).reason).toBe('unknown_fare');
   });

@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin';
 import { onCall, CallableRequest } from 'firebase-functions/v2/https';
-import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
+import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import * as stripe from './stripe_service';
 import { logger } from './logger';
@@ -30,7 +30,8 @@ type PaymentStatus = 'pending' | 'captured' | 'refunded' | 'failed';
 
 interface BookingDoc {
   riderId: string;
-  origin?: { lat?: number; lng?: number };
+  // Place.toJson guarda la posición como GeoPoint en `coordinates`.
+  origin?: { coordinates?: admin.firestore.GeoPoint };
   driverId?: string;
   status: BookingStatus;
   // La app guarda la clase en `class`; `vehicleClass` es el nombre antiguo.
@@ -95,6 +96,9 @@ async function requireAdmin(req: CallableRequest): Promise<string> {
 
 async function sendPush(tokens: string[], title: string, body: string): Promise<void> {
   if (!tokens.length) return;
+  // Interruptor "Notificaciones push" del panel admin (activado por defecto).
+  const global = await db.collection('config').doc('global').get();
+  if (global.data()?.pushNotificationsEnabled === false) return;
   await admin.messaging().sendEachForMulticast({ tokens, notification: { title, body } });
 }
 
@@ -164,7 +168,10 @@ export const capturePayment = onCall(async (req) => {
   try {
     const intent = await stripe.captureIntent(stripePaymentIntentId, amountToCapture);
     const captured = intent.amount_received ?? amountToCapture;
-    if (captured < amountToCapture) {
+    // Stripe no cobra más de lo autorizado: si queda por debajo, el precio
+    // final pasa a ser lo cobrado para que el reparto use dinero real.
+    const shortfall = captured < amountToCapture;
+    if (shortfall) {
       logger.warn('capturePayment', 'captured less than charged', { bookingId, captured, amountToCapture });
     }
 
@@ -184,7 +191,7 @@ export const capturePayment = onCall(async (req) => {
     batch.update(bookingRef, {
       paymentId: paymentRef.id,
       // El precio final se mantiene si ya existía; si no, es lo cobrado.
-      ...(booking.finalPrice == null ? { finalPrice: fromCents(captured) } : {}),
+      ...(booking.finalPrice == null || shortfall ? { finalPrice: fromCents(captured) } : {}),
     });
     await batch.commit();
 
@@ -229,6 +236,10 @@ export const refundPayment = onCall(async (req) => {
       refundedBy: adminId,
       refundReason: reason ?? '',
     });
+    // La app del chófer no lee pagos: la reserva le indica que ya no cobra.
+    if (payment.bookingId) {
+      batch.update(db.collection('bookings').doc(payment.bookingId), { refunded: true });
+    }
     batch.set(db.collection('admin_logs').doc(), {
       adminId,
       adminEmail: req.auth?.token.email ?? null,
@@ -251,10 +262,19 @@ export const refundPayment = onCall(async (req) => {
 // listPaymentMethods
 // ---------------------------------------------------------------------------
 
+/** Cada usuario solo opera sobre su propio cliente de Stripe. */
+async function requireOwnCustomer(uid: string, customerId: string): Promise<void> {
+  const user = await db.collection('users').doc(uid).get();
+  if (user.data()?.stripeCustomerId !== customerId) {
+    throw err.permissionDenied('Not your payment profile');
+  }
+}
+
 export const listPaymentMethods = onCall(async (req) => {
-  requireAuth(req);
+  const uid = requireAuth(req);
   const { customerId } = req.data as { customerId: string };
   if (!customerId) throw err.invalidArgument('customerId required');
+  await requireOwnCustomer(uid, customerId);
 
   const methods = await stripe.listPaymentMethods(customerId);
   return {
@@ -273,12 +293,13 @@ export const listPaymentMethods = onCall(async (req) => {
 // ---------------------------------------------------------------------------
 
 export const attachPaymentMethod = onCall(async (req) => {
-  requireAuth(req);
+  const uid = requireAuth(req);
   const { customerId, paymentMethodId } = req.data as {
     customerId: string;
     paymentMethodId: string;
   };
   if (!customerId || !paymentMethodId) throw err.invalidArgument('customerId and paymentMethodId required');
+  await requireOwnCustomer(uid, customerId);
 
   await stripe.attachPaymentMethod(customerId, paymentMethodId);
   return { success: true };
@@ -289,9 +310,12 @@ export const attachPaymentMethod = onCall(async (req) => {
 // ---------------------------------------------------------------------------
 
 export const detachPaymentMethod = onCall(async (req) => {
-  requireAuth(req);
+  const uid = requireAuth(req);
   const { paymentMethodId } = req.data as { paymentMethodId: string };
   if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+  const owner = await stripe.paymentMethodCustomer(paymentMethodId);
+  if (!owner) throw err.permissionDenied('Not your payment method');
+  await requireOwnCustomer(uid, owner);
 
   await stripe.detachPaymentMethod(paymentMethodId);
   return { success: true };
@@ -483,11 +507,15 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
 
   logger.info('onRideCompleted', 'ride completed', { rideId: event.params.rideId });
 
-  await db.collection('bookings').doc(after.bookingId).update({ status: 'completed' as BookingStatus, updatedAt: admin.firestore.Timestamp.now() });
-
+  // Solo cierra reservas abiertas: una cancelada no se reabre y una ya
+  // completada (p. ej. por el admin) no suma el viaje dos veces.
+  const bookingRef = db.collection('bookings').doc(after.bookingId);
   const driverRef = db.collection('driverProfiles').doc(after.driverId);
   await db.runTransaction(async (tx) => {
-    const driverSnap = await tx.get(driverRef);
+    const [bookingSnap, driverSnap] = await Promise.all([tx.get(bookingRef), tx.get(driverRef)]);
+    const status = (bookingSnap.data() as BookingDoc | undefined)?.status;
+    if (!status || status === 'completed' || status === 'cancelled') return;
+    tx.update(bookingRef, { status: 'completed' as BookingStatus, updatedAt: admin.firestore.Timestamp.now() });
     const current = driverSnap.data() ?? {};
     tx.update(driverRef, {
       totalRides: (current.totalRides ?? 0) + 1,
@@ -545,8 +573,8 @@ export const assignNearestDriver = onCall(async (req) => {
           location: gp ? { lat: gp.latitude, lng: gp.longitude } : null,
         };
       }),
-    booking.origin?.lat != null && booking.origin?.lng != null
-      ? { lat: booking.origin.lat, lng: booking.origin.lng }
+    booking.origin?.coordinates
+      ? { lat: booking.origin.coordinates.latitude, lng: booking.origin.coordinates.longitude }
       : null,
   );
 
@@ -587,6 +615,10 @@ export const acceptBooking = onCall(async (req) => {
   const driverId = requireAuth(req);
   const { bookingId } = req.data as { bookingId: string };
   if (!bookingId) throw err.invalidArgument('bookingId required');
+
+  // Solo un chófer activo (no bloqueado desde el panel) acepta viajes.
+  const me = (await db.collection('users').doc(driverId).get()).data();
+  if (me?.role !== 'driver' || me?.isActive === false) throw err.permissionDenied('Active driver required');
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const driverRef  = db.collection('driverProfiles').doc(driverId);
@@ -644,35 +676,38 @@ export const acceptBooking = onCall(async (req) => {
 export const scheduledCleanup = onSchedule('every 24 hours', async () => {
   logger.info('scheduledCleanup', 'start');
 
+  // Solo las reservas cuya hora de recogida pasó hace más de 30 min sin
+  // chófer; las programadas para otro día siguen esperando.
   const cutoff = new Date(Date.now() - 30 * 60 * 1000);
   const staleSnap = await db
     .collection('bookings')
     .where('status', '==', 'pending')
-    .where('createdAt', '<', admin.firestore.Timestamp.fromDate(cutoff))
+    .where('scheduledAt', '<', admin.firestore.Timestamp.fromDate(cutoff))
     .get();
 
-  const batch = db.batch();
-  staleSnap.docs.forEach((doc) => {
-    batch.update(doc.ref, {
-      status: 'cancelled' as BookingStatus,
-      updatedAt: admin.firestore.Timestamp.now(),
+  // Un batch admite 500 escrituras.
+  const now = admin.firestore.Timestamp.now();
+  for (let i = 0; i < staleSnap.docs.length; i += 500) {
+    const batch = db.batch();
+    staleSnap.docs.slice(i, i + 500).forEach((doc) => {
+      batch.update(doc.ref, { status: 'cancelled' as BookingStatus, updatedAt: now });
     });
-  });
-
-  await batch.commit();
+    await batch.commit();
+  }
   logger.info('scheduledCleanup', 'done', { cancelled: staleSnap.size });
 });
 
 // ---------------------------------------------------------------------------
-// sendRideReceipt  (onUpdate /payments/{paymentId})
+// sendRideReceipt  (onWrite /payments/{paymentId})
+// Los cobros se crean ya capturados (capturePayment, cobro manual del admin),
+// así que se escucha también la creación.
 // ---------------------------------------------------------------------------
 
-export const sendRideReceipt = onDocumentUpdated('payments/{paymentId}', async (event) => {
+export const sendRideReceipt = onDocumentWritten('payments/{paymentId}', async (event) => {
   const before = event.data?.before.data() as PaymentDoc | undefined;
   const after = event.data?.after.data() as PaymentDoc | undefined;
 
-  if (!before || !after) return;
-  if (before.status === after.status || after.status !== 'captured') return;
+  if (!after || after.status !== 'captured' || before?.status === 'captured') return;
 
   logger.info('sendRideReceipt', 'sending receipt', { paymentId: event.params.paymentId });
 

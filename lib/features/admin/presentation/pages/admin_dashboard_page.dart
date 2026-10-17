@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/widgets/components.dart';
@@ -64,10 +63,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       create: (context) => sl<AdminBloc>()..add(AdminDataRequested()),
       child: BlocListener<AdminBloc, AdminState>(
         // Un único punto de avisos para todas las secciones.
-        listenWhen: (a, b) =>
-            (b.successMessage != null &&
-                a.successMessage != b.successMessage) ||
-            (b.error != null && a.error != b.error),
+        listenWhen: (a, b) => a.messageSeq != b.messageSeq,
         listener: (context, state) {
           if (state.error != null) {
             showLuxSnackbar(context, state.error!, isError: true);
@@ -116,10 +112,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   Widget _mobileLayout() => Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
-            onPressed: () => context.go('/'),
-          ),
+          // El admin siempre vuelve al panel (router), así que no hay "atrás".
+          automaticallyImplyLeading: false,
           title: Text(_labels[_section]!),
           actions: [
             IconButton(

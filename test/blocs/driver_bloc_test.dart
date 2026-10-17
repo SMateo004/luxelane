@@ -41,7 +41,8 @@ final _driverUser = User(
   fcmTokens: const [],
 );
 
-Booking _makeBooking(BookingStatus status, {BookingSettlement? settlement}) =>
+Booking _makeBooking(BookingStatus status,
+        {BookingSettlement? settlement, bool refunded = false}) =>
     Booking(
       id: 'booking-1',
       riderId: 'rider-1',
@@ -56,6 +57,7 @@ Booking _makeBooking(BookingStatus status, {BookingSettlement? settlement}) =>
       createdAt: _now,
       updatedAt: _now,
       settlement: settlement,
+      refunded: refunded,
     );
 
 void main() {
@@ -238,6 +240,21 @@ void main() {
       expect(state.totalEarnings, 135.0);
       expect(state.totalCommission, 15.0);
       expect(state.hasProvisionalEarnings, isFalse);
+    });
+
+    test('un viaje reembolsado no suma ganancias ni queda provisional', () {
+      final state = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: [
+          _makeBooking(BookingStatus.completed),
+          _makeBooking(BookingStatus.completed, refunded: true),
+        ],
+      );
+      expect(state.grossEarnings, 75.0);
+      expect(state.totalEarnings, 60.0);
+      expect(state.totalCommission, 15.0);
     });
   });
 }

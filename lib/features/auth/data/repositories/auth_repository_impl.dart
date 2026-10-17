@@ -10,6 +10,9 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
+const kBlockedAccountMessage =
+    'Tu cuenta está bloqueada. Escríbenos a soporte si crees que es un error.';
+
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
     required fb.FirebaseAuth firebaseAuth,
@@ -43,7 +46,13 @@ class AuthRepositoryImpl implements AuthRepository {
           try {
             final doc = await _db.collection('users').doc(fbUser.uid).get();
             if (!doc.exists) return null;
-            return User.fromJson({'id': doc.id, ...doc.data()!});
+            final user = User.fromJson({'id': doc.id, ...doc.data()!});
+            // Una cuenta bloqueada por el admin pierde la sesión abierta.
+            if (!user.isActive) {
+              await _auth.signOut();
+              return null;
+            }
+            return user;
           } catch (_) {
             return null;
           }
@@ -66,7 +75,7 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
       );
       final doc = await _db.collection('users').doc(cred.user!.uid).get();
-      return Right(User.fromJson({'id': doc.id, ...doc.data()!}));
+      return _activeOrBlocked(User.fromJson({'id': doc.id, ...doc.data()!}));
     } on fb.FirebaseAuthException catch (e) {
       return Left(AuthFailure(e.message ?? 'Login failed'));
     } catch (e) {
@@ -131,7 +140,7 @@ class AuthRepositoryImpl implements AuthRepository {
       }
       final fbUser = cred.user;
       if (fbUser == null) return const Left(AuthFailure(_googleGenericError));
-      return Right(await _ensureProfile(fbUser));
+      return _activeOrBlocked(await _ensureProfile(fbUser));
     } on fb.FirebaseAuthException catch (e) {
       if (e.code == 'popup-closed-by-user' ||
           e.code == 'cancelled-popup-request' ||
@@ -177,6 +186,13 @@ class AuthRepositoryImpl implements AuthRepository {
     );
     await ref.set(user.toJson());
     return user;
+  }
+
+  /// Las cuentas bloqueadas desde el panel admin no pueden entrar.
+  Future<Either<Failure, User>> _activeOrBlocked(User user) async {
+    if (user.isActive) return Right(user);
+    await _auth.signOut();
+    return const Left(AuthFailure(kBlockedAccountMessage));
   }
 
   static const _googleGenericError =
