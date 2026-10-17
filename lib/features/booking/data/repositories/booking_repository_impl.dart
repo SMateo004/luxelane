@@ -118,6 +118,25 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
+  Future<Either<Failure, void>> rateBooking({
+    required String bookingId,
+    required int rating,
+    String comment = '',
+  }) async {
+    try {
+      await _col.doc(bookingId).update({
+        'riderRating': rating.clamp(1, 5),
+        if (comment.trim().isNotEmpty) 'riderComment': comment.trim(),
+        'updatedAt': Timestamp.now(),
+      });
+      return const Right(null);
+    } catch (e) {
+      return const Left(ServerFailure(
+          'No se pudo guardar tu valoración. Inténtalo de nuevo.'));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> assignDriver({
     required String bookingId,
     required String driverId,
@@ -171,6 +190,11 @@ class BookingRepositoryImpl implements BookingRepository {
         'updatedAt': Timestamp.now(),
       });
       return const Right(null);
+    } on FirebaseException catch (e) {
+      return Left(ServerFailure(e.code == 'permission-denied'
+          ? 'Esta reserva ya no se puede cancelar: el viaje está en curso o '
+              'terminó.'
+          : 'No se pudo cancelar. Revisa tu conexión e inténtalo de nuevo.'));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

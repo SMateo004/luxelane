@@ -125,12 +125,19 @@ service cloud.firestore {
 
       // Any authenticated user can create a booking for themselves
       // El reparto y la revisión de tarifa solo los escribe el servidor.
+      // Nace pendiente, sin chófer ni cobro: esos campos los escriben el
+      // chófer al aceptar, el admin y el servidor.
       allow create: if isAuthenticated() &&
         isActiveUser() &&
         request.resource.data.riderId == request.auth.uid &&
-        !('settlement' in request.resource.data) &&
-        !('pricingReview' in request.resource.data) &&
-        !('refunded' in request.resource.data);
+        request.resource.data.status == 'pending' &&
+        request.resource.data.get('driverId', null) == null &&
+        request.resource.data.get('paymentId', null) == null &&
+        request.resource.data.get('finalPrice', null) == null &&
+        request.resource.data.estimatedPrice is number &&
+        request.resource.data.estimatedPrice > 0 &&
+        !request.resource.data.keys().hasAny(['settlement', 'pricingReview',
+          'refunded', 'stripePaymentIntentId', 'driverInfo', 'riderRating']);
 
       allow update: if isAdmin() ||
         // Driver accepts a pending booking (self-assign)
@@ -152,7 +159,16 @@ service cloud.firestore {
           onlyUpdating(['status', 'updatedAt']) &&
           resource.data.status in
             ['pending', 'confirmed', 'driver_arriving', 'driver_arrived'] &&
-          request.resource.data.status == 'cancelled');
+          request.resource.data.status == 'cancelled') ||
+        // Rider rates a completed trip, once
+        (isAuthenticated() &&
+          resource.data.riderId == request.auth.uid &&
+          resource.data.status == 'completed' &&
+          !('riderRating' in resource.data) &&
+          onlyUpdating(['riderRating', 'riderComment', 'updatedAt']) &&
+          request.resource.data.riderRating is int &&
+          request.resource.data.riderRating >= 1 &&
+          request.resource.data.riderRating <= 5);
 
       allow delete: if false;
     }

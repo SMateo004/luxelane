@@ -26,7 +26,13 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, void>> updateUser(User user) async {
     try {
-      await _users.doc(user.id).update(user.toJson());
+      // Solo lo que el usuario edita: reenviar el perfil entero pisaba los
+      // tokens de notificación y, con datos viejos, campos protegidos.
+      await _users.doc(user.id).update({
+        'displayName': user.displayName,
+        'phone': user.phone,
+        'photoUrl': user.photoUrl,
+      });
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));

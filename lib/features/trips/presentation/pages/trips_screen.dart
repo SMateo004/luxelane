@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/utils/lux_format.dart';
@@ -9,14 +10,26 @@ import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../booking/presentation/bloc/booking_bloc.dart';
 
-class TripsScreen extends StatefulWidget {
+/// Lista de viajes con su propio BookingBloc: el compartido también recibe
+/// los estados de crear o seguir una reserva, que vaciaban esta lista.
+class TripsScreen extends StatelessWidget {
   const TripsScreen({super.key});
 
   @override
-  State<TripsScreen> createState() => _TripsScreenState();
+  Widget build(BuildContext context) => BlocProvider<BookingBloc>(
+        create: (_) => sl<BookingBloc>(),
+        child: const _TripsView(),
+      );
 }
 
-class _TripsScreenState extends State<TripsScreen> {
+class _TripsView extends StatefulWidget {
+  const _TripsView();
+
+  @override
+  State<_TripsView> createState() => _TripsScreenState();
+}
+
+class _TripsScreenState extends State<_TripsView> {
   @override
   void initState() {
     super.initState();
@@ -145,18 +158,29 @@ class _TripCard extends StatelessWidget {
   String get _price =>
       'Bs ${(booking.finalPrice ?? booking.estimatedPrice).toStringAsFixed(0)}';
 
-  bool get _trackable => const {
-        BookingStatus.confirmed,
-        BookingStatus.driverArriving,
-        BookingStatus.driverArrived,
-        BookingStatus.inProgress,
-      }.contains(booking.status);
-
   String get _date => LuxFormat.dateTime(booking.scheduledAt);
+
+  /// Qué hace el toque: seguir el viaje, valorarlo o ver la reserva.
+  String? get _cta {
+    switch (booking.status) {
+      case BookingStatus.confirmed:
+      case BookingStatus.driverArriving:
+      case BookingStatus.driverArrived:
+      case BookingStatus.inProgress:
+        return 'SEGUIR EN EL MAPA →';
+      case BookingStatus.completed:
+        return booking.riderRating == null ? 'CALIFICAR VIAJE →' : null;
+      case BookingStatus.pending:
+        return 'VER RESERVA →';
+      case BookingStatus.cancelled:
+        return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) => LuxCard(
-        onTap: _trackable ? () => context.go('/ride/${booking.id}') : null,
+        // Cualquier viaje se abre: seguirlo, cancelarlo o valorarlo.
+        onTap: () => context.go('/ride/${booking.id}'),
         child: Row(
           children: [
             Container(
@@ -186,9 +210,9 @@ class _TripCard extends StatelessWidget {
                   Text(_vehicle, style: LuxTypography.bodyMedium),
                   const SizedBox(height: 2),
                   Text(_date, style: LuxTypography.caption),
-                  if (_trackable) ...[
+                  if (_cta != null) ...[
                     const SizedBox(height: 6),
-                    Text('SEGUIR EN EL MAPA →',
+                    Text(_cta!,
                         style: LuxTypography.caption.copyWith(
                             color: LuxColors.sapphire,
                             letterSpacing: 1.4,

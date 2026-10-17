@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:google_sign_in/google_sign_in.dart';
@@ -9,9 +10,6 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
-
-const kBlockedAccountMessage =
-    'Tu cuenta está bloqueada. Escríbenos a soporte si crees que es un error.';
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
@@ -59,6 +57,11 @@ class AuthRepositoryImpl implements AuthRepository {
         },
       );
 
+  @override
+  Stream<User?> watchUser(String uid) =>
+      _db.collection('users').doc(uid).snapshots().map((doc) =>
+          doc.exists ? User.fromJson({'id': doc.id, ...doc.data()!}) : null);
+
   /// Raw Firebase sign-in flag — no Firestore involved, so it never
   /// produces a false-negative that would accidentally sign the user out.
   @override
@@ -74,10 +77,11 @@ class AuthRepositoryImpl implements AuthRepository {
         email: email,
         password: password,
       );
-      final doc = await _db.collection('users').doc(cred.user!.uid).get();
-      return _activeOrBlocked(User.fromJson({'id': doc.id, ...doc.data()!}));
+      // Si el registro creó la cuenta pero no llegó a guardar el perfil, se
+      // crea ahora en vez de dejar la cuenta inservible.
+      return _activeOrBlocked(await _ensureProfile(cred.user!));
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(e.message ?? 'Login failed'));
+      return Left(AuthFailure(_emailErrorMessage(e.code)));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -112,7 +116,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await _db.collection('users').doc(user.id).set(user.toJson());
       return Right(user);
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(e.message ?? 'Registration failed'));
+      return Left(AuthFailure(_emailErrorMessage(e.code)));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -191,9 +195,20 @@ class AuthRepositoryImpl implements AuthRepository {
   /// Un chófer que cierra sesión deja de figurar como disponible; después
   /// ya no podría escribir su perfil. Si está en un viaje, el servidor lo
   /// vuelve a liberar al cerrarlo.
-  Future<void> _goOfflineIfDriver() async {
+  Future<void> _beforeSignOut() async {
     final uid = _auth.currentUser?.uid;
     if (uid == null) return;
+    // El dispositivo deja de recibir los avisos de esta cuenta.
+    if (!kIsWeb) {
+      try {
+        final token = await FirebaseMessaging.instance.getToken();
+        if (token != null) {
+          await _db.collection('users').doc(uid).update({
+            'fcmTokens': FieldValue.arrayRemove([token]),
+          });
+        }
+      } catch (_) {/* sin token o sin conexión */}
+    }
     try {
       final ref = _db.collection('driverProfiles').doc(uid);
       if ((await ref.get()).exists) await ref.update({'isAvailable': false});
@@ -207,6 +222,28 @@ class AuthRepositoryImpl implements AuthRepository {
     if (user.isActive) return Right(user);
     await _auth.signOut();
     return const Left(AuthFailure(kBlockedAccountMessage));
+  }
+
+  static String _emailErrorMessage(String code) {
+    switch (code) {
+      case 'invalid-credential':
+      case 'wrong-password':
+      case 'user-not-found':
+      case 'invalid-email':
+        return 'Correo o contraseña incorrectos.';
+      case 'email-already-in-use':
+        return 'Ya existe una cuenta con este correo. Inicia sesión.';
+      case 'weak-password':
+        return 'La contraseña es muy débil: usa al menos 6 caracteres.';
+      case 'user-disabled':
+        return 'Esta cuenta está desactivada.';
+      case 'too-many-requests':
+        return 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
+      case 'network-request-failed':
+        return 'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
+      default:
+        return 'No pudimos iniciar sesión. Inténtalo de nuevo.';
+    }
   }
 
   static const _googleGenericError =
@@ -243,7 +280,7 @@ class AuthRepositoryImpl implements AuthRepository {
           if (await _google.isSignedIn()) await _google.signOut();
         } catch (_) {/* not signed in with Google */}
       }
-      await _goOfflineIfDriver();
+      await _beforeSignOut();
       await _auth.signOut();
       return const Right(null);
     } catch (e) {

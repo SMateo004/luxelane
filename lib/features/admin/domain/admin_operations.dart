@@ -70,6 +70,10 @@ String? pricingReviewLabel(Booking b) {
       return 'Precio por debajo de la tarifa vigente';
     case 'fare_disabled':
       return 'Reservada con un servicio desactivado';
+    case 'maintenance':
+      return 'Reservada en modo mantenimiento';
+    case 'class_disabled':
+      return 'Reservada con una clase desactivada';
     default:
       return 'Tarifa no reconocida';
   }

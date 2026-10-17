@@ -181,10 +181,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileUpdateRequested event,
     Emitter<ProfileState> emit,
   ) async {
+    final prev = state;
     final result = await _repo.updateUser(event.user);
     result.fold(
       (f) => emit(ProfileError(f.message)),
-      (_) => emit(ProfileUpdated(event.user)),
+      // Se conservan los viajes y la valoración ya cargados.
+      (_) => emit(prev is ProfileLoaded
+          ? ProfileLoaded(
+              user: event.user,
+              driverProfile: prev.driverProfile,
+              totalRides: prev.totalRides,
+              rating: prev.rating,
+            )
+          : ProfileUpdated(event.user)),
     );
   }
 

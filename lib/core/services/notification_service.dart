@@ -15,9 +15,14 @@ class NotificationService {
   final UserRepository _userRepo;
   final _messaging = FirebaseMessaging.instance;
 
+  String? _initializedFor;
+
   Future<void> init({required String userId}) async {
     if (kIsWeb)
       return; // FCM background + token not supported on web without vapid setup
+    // Una sola vez por usuario: cada llamada añadía otro listener.
+    if (_initializedFor == userId) return;
+    _initializedFor = userId;
 
     await _messaging.requestPermission();
 
