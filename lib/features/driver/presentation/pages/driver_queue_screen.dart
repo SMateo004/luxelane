@@ -22,9 +22,8 @@ class DriverQueueScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final pending = state.pendingRequests
-              .where((b) => !state.declinedIds.contains(b.id))
-              .toList()
+          // Solo las de su clase de vehículo.
+          final pending = state.matchingRequests
             ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
 
           final upcoming = state.bookings.where((b) {
@@ -218,13 +217,26 @@ class _JobActions extends StatelessWidget {
     final driverId = auth is AuthAuthenticated ? auth.user.id : '';
 
     if (isPending) {
+      final s = bloc.state;
+      final loaded = s is DriverLoaded ? s : null;
+      final blocker = loaded == null
+          ? 'Cargando…'
+          : !loaded.profile.documentsVerified
+              ? 'Pendiente de verificación'
+              : loaded.activeBooking != null
+                  ? 'Termina tu viaje actual'
+                  : !loaded.isAvailable
+                      ? 'Conéctate para aceptar'
+                      : null;
       return LuxButton(
-        label: 'Aceptar viaje',
+        label: blocker ?? 'Aceptar viaje',
         icon: Icons.check_circle_outline_rounded,
-        onPressed: () => bloc.add(DriverRequestAccepted(
-          bookingId: booking.id,
-          driverId: driverId,
-        )),
+        onPressed: blocker != null
+            ? null
+            : () => bloc.add(DriverRequestAccepted(
+                  bookingId: booking.id,
+                  driverId: driverId,
+                )),
       );
     }
 

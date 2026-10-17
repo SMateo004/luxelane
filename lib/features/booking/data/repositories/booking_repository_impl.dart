@@ -75,10 +75,15 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
-  Stream<List<Booking>> streamPendingBookings() => _col.snapshots().map((snap) {
+  // El filtro por estado es obligatorio: las reglas solo dejan a un chófer
+  // leer reservas pendientes, y Firestore rechaza una consulta que no lo
+  // garantice.
+  Stream<List<Booking>> streamPendingBookings() => _col
+          .where('status', isEqualTo: BookingStatus.pending.label)
+          .snapshots()
+          .map((snap) {
         final list = snap.docs
             .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-            .where((b) => b.status == BookingStatus.pending)
             .toList();
         // Manual sort to avoid needing a composite index
         list.sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
@@ -119,23 +124,40 @@ class BookingRepositoryImpl implements BookingRepository {
   }) async {
     try {
       final docRef = _col.doc(bookingId);
+      final driverRef = _db.collection('driverProfiles').doc(driverId);
       await _db.runTransaction((transaction) async {
         final snapshot = await transaction.get(docRef);
+        final driver = await transaction.get(driverRef);
         if (!snapshot.exists) {
-          throw Exception('Booking does not exist');
+          throw const _AcceptError('Esta reserva ya no existe.');
         }
         final currentStatus = snapshot.get('status') as String?;
         if (currentStatus != BookingStatus.pending.label) {
-          throw Exception(
-              'Booking is no longer pending. It may have been accepted by another driver.');
+          throw const _AcceptError('Otro chófer ya aceptó este viaje.');
+        }
+        if (driver.data()?['documentsVerified'] != true) {
+          throw const _AcceptError(
+              'Tus documentos aún no están verificados por Luxelane.');
+        }
+        if (driver.data()?['isAvailable'] != true) {
+          throw const _AcceptError(
+              'Conéctate y termina tu viaje actual antes de aceptar otro.');
         }
         transaction.update(docRef, {
           'driverId': driverId,
           'status': BookingStatus.confirmed.label,
           'updatedAt': Timestamp.now(),
         });
+        // Ocupado hasta que el viaje termine (el servidor lo libera).
+        transaction.update(driverRef, {'isAvailable': false});
       });
       return const Right(null);
+    } on _AcceptError catch (e) {
+      return Left(ValidationFailure(e.message));
+    } on FirebaseException catch (e) {
+      return Left(ServerFailure(e.code == 'permission-denied'
+          ? 'No se pudo aceptar: tu cuenta de chófer no está habilitada.'
+          : 'No se pudo aceptar el viaje. Revisa tu conexión.'));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -160,4 +182,9 @@ class BookingRepositoryImpl implements BookingRepository {
       .snapshots()
       .where((s) => s.exists)
       .map((s) => Booking.fromJson({'id': s.id, ...s.data()!}));
+}
+
+class _AcceptError implements Exception {
+  const _AcceptError(this.message);
+  final String message;
 }

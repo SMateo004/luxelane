@@ -69,7 +69,14 @@ class UserRepositoryImpl implements UserRepository {
       await _db
           .collection('driverProfiles')
           .doc(profile.userId)
-          .set(profile.toJson(), SetOptions(merge: true));
+          // Solo los datos que el chófer declara. Verificación, valoración,
+          // viajes y disponibilidad los fijan el admin y el servidor.
+          .set({
+        'userId': profile.userId,
+        'licenseNumber': profile.licenseNumber,
+        'licenseExpiry': Timestamp.fromDate(profile.licenseExpiry),
+        'vehicleId': profile.vehicleId,
+      }, SetOptions(merge: true));
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -112,5 +119,7 @@ class UserRepositoryImpl implements UserRepository {
       .collection('driverProfiles')
       .doc(driverId)
       .snapshots()
-      .map((s) => s.exists ? DriverProfile.fromJson(s.data()!) : null);
+      .map((s) => s.exists
+          ? DriverProfile.fromJson({...s.data()!, 'userId': s.id})
+          : null);
 }

@@ -33,6 +33,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
     showModalBottomSheet<void>(
       context: context,
+      // En el navegador raíz, para poder cerrarlo desde el listener.
+      useRootNavigator: true,
       isScrollControlled: true,
       isDismissible: false,
       enableDrag: false,
@@ -47,14 +49,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   driverId: auth.user.id,
                 ));
           }
-          if (mounted) Navigator.of(context).pop();
+          if (mounted) Navigator.of(context, rootNavigator: true).pop();
           _activeSheetId = null;
         },
         onDecline: () {
           context.read<DriverBloc>().add(
                 DriverRequestDeclined(bookingId: booking.id),
               );
-          if (mounted) Navigator.of(context).pop();
+          if (mounted) Navigator.of(context, rootNavigator: true).pop();
           _activeSheetId = null;
         },
       ),
@@ -70,12 +72,20 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         final prevId = prev is DriverLoaded ? prev.currentRequest?.id : null;
         final currId = curr.currentRequest?.id;
         final prevAvail = prev is DriverLoaded ? prev.isAvailable : false;
-        return prevId != currId || curr.isAvailable != prevAvail;
+        final prevSeq = prev is DriverLoaded ? prev.noticeSeq : 0;
+        return prevId != currId ||
+            curr.isAvailable != prevAvail ||
+            curr.noticeSeq != prevSeq;
       },
       listener: (context, state) {
         if (state is DriverOnboardingRequired) {
           context.go('/driver/onboarding');
           return;
+        }
+        if (state is DriverLoaded && state.notice != null) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(state.notice!)));
         }
         if (state is DriverLoaded) {
           final req = state.currentRequest;
@@ -102,7 +112,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   const Icon(Icons.error_outline,
                       color: LuxColors.error, size: 48),
                   const SizedBox(height: 16),
-                  const Text('Error de conexión',
+                  const Text('No pudimos abrir tu panel',
                       style: LuxTypography.headlineMedium),
                   const SizedBox(height: 8),
                   Text(state.message,
@@ -210,6 +220,14 @@ class _IdlePanel extends StatelessWidget {
         padding: const EdgeInsets.all(LuxSpacing.md),
         children: [
           _StatusBanner(isAvailable: state.isAvailable),
+          // Lo que impide recibir viajes, dicho claramente.
+          if (!state.profile.documentsVerified)
+            const _Notice(
+                'Tus documentos están en revisión. Podrás aceptar viajes '
+                'cuando Luxelane los verifique.')
+          else if (state.vehicleClass == null)
+            const _Notice('No tienes un vehículo activo registrado. Pide a '
+                'Luxelane que lo active para recibir solicitudes.'),
           const SizedBox(height: LuxSpacing.lg),
           const SectionHeader(title: 'Resumen de hoy'),
           const SizedBox(height: LuxSpacing.md),
@@ -218,7 +236,7 @@ class _IdlePanel extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   label: 'Completados',
-                  value: '${state.completedBookings.length}',
+                  value: '${state.completedToday.length}',
                   icon: Icons.check_circle_outline,
                 ),
               ),
@@ -226,7 +244,7 @@ class _IdlePanel extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   label: 'Ganancias netas',
-                  value: 'Bs${state.totalEarnings.toStringAsFixed(0)}',
+                  value: 'Bs${state.todayEarnings.toStringAsFixed(0)}',
                   icon: Icons.attach_money,
                 ),
               ),
@@ -255,6 +273,30 @@ class _IdlePanel extends StatelessWidget {
 }
 
 // ── Status banner ──────────────────────────────────────────────────────────
+
+class _Notice extends StatelessWidget {
+  const _Notice(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(top: LuxSpacing.sm),
+        child: Container(
+          padding: const EdgeInsets.all(LuxSpacing.md),
+          decoration: BoxDecoration(
+            color: LuxColors.warning.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(LuxRadius.lg),
+            border: Border.all(color: LuxColors.warning.withValues(alpha: 0.3)),
+          ),
+          child: Row(children: [
+            const Icon(Icons.info_outline_rounded,
+                color: LuxColors.warning, size: 20),
+            const SizedBox(width: LuxSpacing.sm),
+            Expanded(child: Text(text, style: LuxTypography.bodyMedium)),
+          ]),
+        ),
+      );
+}
 
 class _StatusBanner extends StatelessWidget {
   const _StatusBanner({required this.isAvailable});
@@ -441,7 +483,7 @@ class _ActiveRidePanel extends StatelessWidget {
                     BookingStatusChip(status: booking.status),
                     const Spacer(),
                     Text(
-                      '\$${booking.estimatedPrice.toStringAsFixed(0)}',
+                      'Bs ${booking.chargedAmount.toStringAsFixed(0)}',
                       style: LuxTypography.headlineLarge
                           .copyWith(color: LuxColors.sapphire),
                     ),

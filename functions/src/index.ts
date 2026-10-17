@@ -419,6 +419,42 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
 });
 
 // ---------------------------------------------------------------------------
+// releaseDriver  (onUpdate /bookings/{bookingId})
+// Único punto que libera al chófer al cerrarse un viaje, lo cierre quien lo
+// cierre (chófer, pasajero, admin o el viaje en /rides), y que suma el viaje
+// a su contador. Si el pasajero cancela, avisa al chófer.
+// ---------------------------------------------------------------------------
+
+export const releaseDriver = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const before = event.data?.before.data() as BookingDoc | undefined;
+  const after = event.data?.after.data() as BookingDoc | undefined;
+  if (!before || !after || before.status === after.status) return;
+  if (after.status !== 'completed' && after.status !== 'cancelled') return;
+
+  // Un chófer reasignado antes del cierre ya lo liberó quien lo reasignó.
+  const driverId = after.driverId;
+  if (!driverId) return;
+
+  const driverRef = db.collection('driverProfiles').doc(driverId);
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(driverRef);
+    if (!snap.exists) return;
+    tx.update(driverRef, {
+      isAvailable: true,
+      ...(after.status === 'completed'
+        ? { totalRides: (snap.data()?.totalRides ?? 0) + 1 }
+        : {}),
+    });
+  });
+
+  if (after.status === 'cancelled' && (after as { cancelledBy?: string }).cancelledBy !== 'admin') {
+    const tokens = await getUserTokens(driverId);
+    await sendPush(tokens, 'Viaje cancelado', 'El pasajero canceló la reserva. Ya estás disponible.');
+  }
+  logger.info('releaseDriver', 'released', { bookingId: event.params.bookingId, driverId, status: after.status });
+});
+
+// ---------------------------------------------------------------------------
 // settleBooking  (onUpdate /bookings/{bookingId})
 // Fija el reparto plataforma / chófer de cada viaje completado. Se dispara
 // también al ajustar el precio final; la segunda escritura no cambia nada,
@@ -507,20 +543,14 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
 
   logger.info('onRideCompleted', 'ride completed', { rideId: event.params.rideId });
 
-  // Solo cierra reservas abiertas: una cancelada no se reabre y una ya
-  // completada (p. ej. por el admin) no suma el viaje dos veces.
+  // Solo cierra reservas abiertas: una cancelada no se reabre. Liberar al
+  // chófer y contar el viaje lo hace releaseDriver al completarse la reserva.
   const bookingRef = db.collection('bookings').doc(after.bookingId);
-  const driverRef = db.collection('driverProfiles').doc(after.driverId);
   await db.runTransaction(async (tx) => {
-    const [bookingSnap, driverSnap] = await Promise.all([tx.get(bookingRef), tx.get(driverRef)]);
+    const bookingSnap = await tx.get(bookingRef);
     const status = (bookingSnap.data() as BookingDoc | undefined)?.status;
     if (!status || status === 'completed' || status === 'cancelled') return;
     tx.update(bookingRef, { status: 'completed' as BookingStatus, updatedAt: admin.firestore.Timestamp.now() });
-    const current = driverSnap.data() ?? {};
-    tx.update(driverRef, {
-      totalRides: (current.totalRides ?? 0) + 1,
-      isAvailable: true,
-    });
   });
 });
 
@@ -637,6 +667,7 @@ export const acceptBooking = onCall(async (req) => {
       if (booking.status !== 'pending') throw new Error('ALREADY_TAKEN');
 
       if (!driverSnap.exists) throw err.notFound('Driver profile not found');
+      if (driverSnap.data()?.documentsVerified !== true) throw err.permissionDenied('Driver not verified');
       if (!driverSnap.data()?.isAvailable) throw new Error('DRIVER_BUSY');
 
       riderId = booking.riderId;

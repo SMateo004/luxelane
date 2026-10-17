@@ -2,6 +2,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import '../repositories/repositories.dart';
 
+/// Mensajes push con la app cerrada: el sistema muestra la notificación. Tiene
+/// que ser una función de nivel superior (Android la invoca en su propio
+/// isolate).
+@pragma('vm:entry-point')
+Future<void> firebaseBackgroundHandler(RemoteMessage message) async {}
+
 class NotificationService {
   NotificationService({required UserRepository userRepository})
       : _userRepo = userRepository;

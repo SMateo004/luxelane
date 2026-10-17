@@ -2,6 +2,7 @@ import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:luxelane/core/enums/enums.dart';
+import 'package:luxelane/core/error/failures.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/core/repositories/repositories.dart';
 import 'package:luxelane/core/services/maps_service.dart';
@@ -39,6 +40,19 @@ final _driverUser = User(
   isVerified: true,
   isActive: true,
   fcmTokens: const [],
+);
+
+const _vehicle = Vehicle(
+  id: 'vehicle-1',
+  driverId: 'driver-1',
+  make: 'Toyota',
+  model: 'Camry',
+  year: 2024,
+  plate: '1234ABC',
+  vehicleClass: VehicleClass.business,
+  color: 'Negro',
+  capacity: 3,
+  isActive: true,
 );
 
 Booking _makeBooking(BookingStatus status,
@@ -86,6 +100,10 @@ void main() {
         .thenAnswer((_) async => Right(_driverUser));
     when(() => userRepo.getDriverProfile(any()))
         .thenAnswer((_) async => Right(_driverProfile));
+    when(() => userRepo.watchDriverProfile(any()))
+        .thenAnswer((_) => const Stream.empty());
+    when(() => vehicleRepo.getVehicleByDriver(any()))
+        .thenAnswer((_) async => const Right(_vehicle));
   });
 
   DriverBloc bloc() => DriverBloc(
@@ -101,7 +119,10 @@ void main() {
       build: bloc,
       act: (bloc) => bloc.add(const DriverStarted(userId: 'driver-1')),
       expect: () => [
-        isA<DriverLoaded>().having((s) => s.isAvailable, 'isAvailable', false),
+        isA<DriverLoaded>()
+            .having((s) => s.isAvailable, 'isAvailable', false)
+            .having(
+                (s) => s.vehicleClass, 'vehicleClass', VehicleClass.business),
       ],
       verify: (_) {
         verify(() => userRepo.getDriverProfile('driver-1')).called(1);
@@ -240,6 +261,66 @@ void main() {
       expect(state.totalEarnings, 135.0);
       expect(state.totalCommission, 15.0);
       expect(state.hasProvisionalEarnings, isFalse);
+    });
+
+    blocTest<DriverBloc, DriverState>(
+      'si otro chófer ganó la reserva avisa y la descarta',
+      build: () {
+        when(() => bookingRepo.assignDriver(
+                  bookingId: any(named: 'bookingId'),
+                  driverId: any(named: 'driverId'),
+                ))
+            .thenAnswer((_) async => const Left(
+                ValidationFailure('Otro chófer ya aceptó este viaje.')));
+        return bloc()
+          ..emit(DriverLoaded(
+            user: _driverUser,
+            profile: _driverProfile,
+            isAvailable: true,
+            bookings: const [],
+          ));
+      },
+      act: (bloc) => bloc.add(const DriverRequestAccepted(
+          bookingId: 'booking-1', driverId: 'driver-1')),
+      expect: () => [
+        isA<DriverLoaded>()
+            .having(
+                (s) => s.notice, 'notice', 'Otro chófer ya aceptó este viaje.')
+            .having((s) => s.declinedIds, 'declinedIds', ['booking-1']),
+      ],
+      verify: (_) => verifyNever(() => bookingRepo.updateBookingStatus(
+            bookingId: any(named: 'bookingId'),
+            status: any(named: 'status'),
+          )),
+    );
+
+    test('solo ofrece solicitudes de su clase y si puede aceptarlas', () {
+      final van = Booking.fromJson({
+        ..._makeBooking(BookingStatus.pending).toJson(),
+        'id': 'van',
+        'class': 'businessVan',
+      });
+      final sedan = Booking.fromJson({
+        ..._makeBooking(BookingStatus.pending).toJson(),
+        'id': 'sedan',
+      });
+      final base = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: const [],
+        pendingRequests: [van, sedan],
+        vehicleClass: VehicleClass.business,
+      );
+      expect(base.currentRequest?.id, 'sedan');
+      expect(base.matchingRequests.map((b) => b.id), ['sedan']);
+      // Desconectado o con un viaje en curso: no se le ofrece nada.
+      expect(base.copyWith(isAvailable: false).currentRequest, isNull);
+      expect(
+          base.copyWith(bookings: [
+            _makeBooking(BookingStatus.inProgress)
+          ]).currentRequest,
+          isNull);
     });
 
     test('un viaje reembolsado no suma ganancias ni queda provisional', () {
