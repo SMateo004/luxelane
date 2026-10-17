@@ -111,14 +111,24 @@ class UserRepositoryImpl implements UserRepository {
     required bool isAvailable,
   }) async {
     try {
+      // `online` es lo que el chófer eligió; `isAvailable` además baja
+      // mientras atiende un viaje. Al cerrar el viaje el servidor solo lo
+      // vuelve a marcar disponible si sigue `online`.
       await _db.collection('driverProfiles').doc(userId).update({
         'isAvailable': isAvailable,
+        'online': isAvailable,
       });
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<void> markDriverBusy(String driverId) => _db
+      .collection('driverProfiles')
+      .doc(driverId)
+      .update({'isAvailable': false});
 
   @override
   Stream<DriverProfile?> watchDriverProfile(String driverId) => _db

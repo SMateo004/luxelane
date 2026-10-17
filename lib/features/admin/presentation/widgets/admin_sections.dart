@@ -528,7 +528,11 @@ class _BookingDetail extends StatelessWidget {
               label: 'Cobro',
               value: charge?.label ??
                   (payment == null
-                      ? 'Se cobra al completar'
+                      ? booking.cardPaymentFailed
+                          ? 'Falló el cobro con tarjeta · cobrar a mano'
+                          : booking.cardPayment
+                              ? 'Tarjeta · se cobra sola al completar'
+                              : 'Se cobra al completar'
                       : payment.status.displayLabel),
               valueColor: charge == null ? null : chargeStatusColor(charge),
             ),

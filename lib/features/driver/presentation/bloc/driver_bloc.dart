@@ -213,18 +213,12 @@ class DriverLoaded extends DriverState {
     return (total * 100).roundToDouble() / 100;
   }
 
+  /// El viaje que ocupa ahora al chófer (en curso o con recogida próxima).
   Booking? get activeBooking {
-    const active = {
-      BookingStatus.confirmed,
-      BookingStatus.driverArriving,
-      BookingStatus.driverArrived,
-      BookingStatus.inProgress,
-    };
-    try {
-      return bookings.firstWhere((b) => active.contains(b.status));
-    } catch (_) {
-      return null;
+    for (final b in bookings) {
+      if (b.occupiesDriver()) return b;
     }
+    return null;
   }
 
   List<Booking> get completedBookings =>
@@ -413,10 +407,11 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
         }
         return next;
       },
+      // Tras cerrar sesión el listener falla por permisos: se ignora.
       onError: (e, _) => state is DriverLoaded
           ? (state as DriverLoaded)
               .copyWith(notice: 'No se pudieron cargar tus viajes.')
-          : const DriverError('No se pudieron cargar tus viajes.'),
+          : state,
     );
   }
 
@@ -533,6 +528,13 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     Emitter<DriverState> emit,
   ) async {
     await _advance(emit, event.bookingId, BookingStatus.driverArriving);
+    // Sale a buscar al pasajero: deja de recibir otros viajes (el servidor
+    // lo libera al cerrar este). Solo `isAvailable`: sigue `online`.
+    if (state is DriverLoaded) {
+      try {
+        await _userRepo.markDriverBusy((state as DriverLoaded).user.id);
+      } catch (_) {}
+    }
   }
 
   Future<void> _onArrived(

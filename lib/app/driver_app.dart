@@ -32,17 +32,23 @@ class _DriverAppState extends State<DriverApp> {
     _notificationBloc = sl<NotificationBloc>();
     _router = buildDriverRouter(_authBloc, _driverBloc);
 
-    // When auth completes, init driver + notifications
+    // When auth completes, init driver + notifications. AuthAuthenticated se
+    // repite al editar el perfil: arrancar de nuevo perdería los descartes.
+    String? sessionUid;
     _authBloc.stream.listen((state) {
       if (state is AuthAuthenticated) {
+        if (state.user.id == sessionUid) return;
+        sessionUid = state.user.id;
         _driverBloc.add(DriverStarted(userId: state.user.id));
         _notificationBloc.add(
           NotificationWatchStarted(userId: state.user.id),
         );
         // Sin token FCM el chófer no recibe los avisos de viajes nuevos.
         sl<NotificationService>().init(userId: state.user.id);
-      } else if (state is AuthUnauthenticated) {
-        _driverBloc.add(const DriverStopped());
+      } else if (state is AuthUnauthenticated || state is AuthError) {
+        // Cerrar sesión o un bloqueo en vivo: se detiene el rastreo.
+        if (sessionUid != null) _driverBloc.add(const DriverStopped());
+        sessionUid = null;
       }
     });
   }

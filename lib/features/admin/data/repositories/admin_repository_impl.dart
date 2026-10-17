@@ -312,7 +312,11 @@ class AdminRepositoryImpl implements AdminRepository {
           'status': BookingStatus.confirmed.label,
         'updatedAt': FieldValue.serverTimestamp(),
       });
-      tx.update(_driver(driverId), {'isAvailable': false});
+      if (fresh.status != BookingStatus.confirmed &&
+              fresh.status != BookingStatus.pending ||
+          fresh.scheduledAt.isBefore(DateTime.now().add(kBusyLead))) {
+        tx.update(_driver(driverId), {'isAvailable': false});
+      }
       if (previous != null && previous != driverId) {
         tx.update(_driver(previous), {'isAvailable': true});
       }
@@ -390,6 +394,12 @@ class AdminRepositoryImpl implements AdminRepository {
       final data = snap.data() ?? const <String, dynamic>{};
       if (data['status'] != BookingStatus.completed.label) {
         throw _AdminRuleViolation('Solo se cobran viajes completados');
+      }
+      final card = data['stripePaymentIntentId'] != null ||
+          data['stripePaymentMethodId'] != null;
+      if (card && data['cardPaymentFailed'] != true) {
+        throw _AdminRuleViolation('Este viaje se paga con tarjeta y el cobro '
+            'es automático; solo se registra a mano si ese cobro falla.');
       }
       final existingId = data['paymentId'] as String?;
       if (existingId != null && existingId.isNotEmpty) {

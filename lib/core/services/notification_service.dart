@@ -16,12 +16,13 @@ class NotificationService {
   final _messaging = FirebaseMessaging.instance;
 
   String? _initializedFor;
+  bool _listening = false;
 
   Future<void> init({required String userId}) async {
     if (kIsWeb)
       return; // FCM background + token not supported on web without vapid setup
-    // Una sola vez por usuario: cada llamada añadía otro listener.
-    if (_initializedFor == userId) return;
+    // El token se registra en cada entrada (al salir se quita); los
+    // listeners, una sola vez.
     _initializedFor = userId;
 
     await _messaging.requestPermission();
@@ -40,8 +41,11 @@ class NotificationService {
       // Token unavailable in emulator / web without vapid key
     }
 
+    if (_listening) return;
+    _listening = true;
     _messaging.onTokenRefresh.listen((newToken) {
-      _userRepo.updateFcmToken(userId: userId, token: newToken);
+      final uid = _initializedFor;
+      if (uid != null) _userRepo.updateFcmToken(userId: uid, token: newToken);
     });
 
     FirebaseMessaging.onMessage.listen(_onForegroundMessage);

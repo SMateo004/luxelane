@@ -167,8 +167,12 @@ class BookingRepositoryImpl implements BookingRepository {
           'status': BookingStatus.confirmed.label,
           'updatedAt': Timestamp.now(),
         });
-        // Ocupado hasta que el viaje termine (el servidor lo libera).
-        transaction.update(driverRef, {'isAvailable': false});
+        // Ocupado ya solo si la recogida es próxima; si es para más
+        // adelante, al salir hacia el pasajero.
+        final at = (snapshot.data()?['scheduledAt'] as Timestamp?)?.toDate();
+        if (at == null || at.isBefore(DateTime.now().add(kBusyLead))) {
+          transaction.update(driverRef, {'isAvailable': false});
+        }
       });
       return const Right(null);
     } on _AcceptError catch (e) {

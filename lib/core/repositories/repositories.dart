@@ -74,6 +74,9 @@ abstract class UserRepository {
   });
 
   Stream<DriverProfile?> watchDriverProfile(String driverId);
+
+  /// Ocupado por un viaje, sin cambiar si el chófer quiere estar conectado.
+  Future<void> markDriverBusy(String driverId);
 }
 
 // ---------------------------------------------------------------------------

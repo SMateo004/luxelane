@@ -246,6 +246,9 @@ class Vehicle {
 /// (el servidor usa el mismo valor: functions/src/settlement.ts).
 const double kDefaultCommissionPct = 20;
 
+/// Antelación con la que una reserva confirmada ya ocupa al chófer.
+const kBusyLead = Duration(minutes: 60);
+
 /// Reparto de un viaje completado entre la plataforma y el chófer.
 ///
 /// Lo fija el servidor (Cloud Function `settleBooking`) con la comisión
@@ -365,6 +368,8 @@ class Booking {
     this.refunded = false,
     this.driverInfo,
     this.riderRating,
+    this.cardPayment = false,
+    this.cardPaymentFailed = false,
   });
 
   final String id;
@@ -409,6 +414,33 @@ class Booking {
 
   /// Valoración (1–5) que dio el pasajero, si ya valoró.
   final int? riderRating;
+
+  /// Se paga con tarjeta: el servidor la cobra al completar el viaje.
+  final bool cardPayment;
+
+  /// El cobro automático con tarjeta falló; se cobra a mano.
+  final bool cardPaymentFailed;
+
+  /// Cobro con tarjeta aún por resolver por el servidor: no se registra a
+  /// mano para no cobrar dos veces.
+  bool get cardPaymentPending =>
+      cardPayment && !cardPaymentFailed && paymentId == null;
+
+  /// Un viaje ocupa al chófer desde que sale a buscar al pasajero, o si la
+  /// recogida es en menos de [kBusyLead]. Uno confirmado para más adelante
+  /// no le impide atender otros mientras tanto.
+  bool occupiesDriver([DateTime? now]) {
+    switch (status) {
+      case BookingStatus.driverArriving:
+      case BookingStatus.driverArrived:
+      case BookingStatus.inProgress:
+        return true;
+      case BookingStatus.confirmed:
+        return scheduledAt.isBefore((now ?? DateTime.now()).add(kBusyLead));
+      default:
+        return false;
+    }
+  }
 
   /// Importe que se factura: el precio final o, si no hay, el estimado.
   double get chargedAmount => finalPrice ?? estimatedPrice;
@@ -462,6 +494,9 @@ class Booking {
         refunded: j['refunded'] == true,
         driverInfo: DriverInfo.fromJson(j['driverInfo']),
         riderRating: (j['riderRating'] as num?)?.toInt(),
+        cardPayment: j['stripePaymentIntentId'] != null ||
+            j['stripePaymentMethodId'] != null,
+        cardPaymentFailed: j['cardPaymentFailed'] == true,
       );
 
   Map<String, dynamic> toJson() => {
@@ -524,6 +559,8 @@ class Booking {
         refunded: refunded,
         driverInfo: driverInfo,
         riderRating: riderRating,
+        cardPayment: cardPayment,
+        cardPaymentFailed: cardPaymentFailed,
       );
 }
 

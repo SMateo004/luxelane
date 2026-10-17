@@ -88,7 +88,7 @@ service cloud.firestore {
     // Verificación, valoración y contador de viajes los fijan el admin y el
     // servidor; el chófer no puede darse de alta ya verificado.
     function driverManagedFields() {
-      return ['documentsVerified', 'rating', 'totalRides'];
+      return ['documentsVerified', 'rating', 'ratingCount', 'totalRides'];
     }
 
     match /driverProfiles/{uid} {
@@ -141,7 +141,7 @@ service cloud.firestore {
         request.resource.data.estimatedPrice > 0 &&
         !request.resource.data.keys().hasAny(['settlement', 'pricingReview',
           'refunded', 'stripePaymentIntentId', 'stripePaymentMethodId',
-          'driverInfo', 'riderRating']);
+          'cardPaymentFailed', 'driverInfo', 'riderRating']);
 
       allow update: if isAdmin() ||
         // Driver accepts a pending booking (self-assign)

@@ -57,9 +57,17 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
       (_router as GoRouter).go('/ride/$id');
     });
 
-    // Start DriverBloc + NotificationBloc only when authenticated
+    // Start DriverBloc + NotificationBloc only when authenticated. El estado
+    // se repite al cambiar el perfil: solo se arranca al entrar un usuario.
+    String? sessionUid;
     _authBloc.stream.listen((state) {
-      if (state is AuthAuthenticated) {
+      if (state is! AuthAuthenticated) {
+        sessionUid = null;
+        return;
+      }
+      if (state.user.id == sessionUid) return;
+      sessionUid = state.user.id;
+      {
         CrashService.setUser(state.user.id);
         if (state.user.role == UserRole.driver &&
             _driverBloc.state is DriverInitial) {

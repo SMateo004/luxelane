@@ -211,7 +211,9 @@ class AuthRepositoryImpl implements AuthRepository {
     }
     try {
       final ref = _db.collection('driverProfiles').doc(uid);
-      if ((await ref.get()).exists) await ref.update({'isAvailable': false});
+      if ((await ref.get()).exists) {
+        await ref.update({'isAvailable': false, 'online': false});
+      }
     } catch (_) {
       // Pasajeros (sin perfil de chófer) o sin conexión: no bloquea la salida.
     }
