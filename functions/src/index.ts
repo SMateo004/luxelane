@@ -139,7 +139,10 @@ export const createPaymentIntent = onCall(async (req) => {
   if (!bookingSnap.exists) throw err.notFound('Booking not found');
   const booking = bookingSnap.data() as BookingDoc;
   if (booking.riderId !== uid) throw err.permissionDenied('Not your booking');
-  if (booking.status !== 'pending') throw err.failedPrecondition('Booking is not pending');
+  // Un chófer puede aceptar en los segundos entre crear y autorizar.
+  if (booking.status !== 'pending' && booking.status !== 'confirmed') {
+    throw err.failedPrecondition('Booking is not open');
+  }
   if (booking.stripePaymentIntentId || booking.stripePaymentMethodId) {
     throw err.failedPrecondition('Booking already has a payment');
   }
@@ -221,6 +224,14 @@ async function captureBookingPayment(
   stripePaymentIntentId: string,
 ): Promise<{ paymentId: string; status: PaymentStatus; amount: number; currency: string }> {
   const bookingId = bookingRef.id;
+  // Si mientras tanto el admin registró el cobro a mano (efectivo, QR…),
+  // no se cobra la tarjeta: se libera la retención.
+  const fresh = (await bookingRef.get()).data() as BookingDoc | undefined;
+  if (fresh?.paymentId) {
+    await stripe.cancelIntent(stripePaymentIntentId);
+    logger.warn('capturePayment', 'already paid, hold released', { bookingId });
+    return { paymentId: fresh.paymentId, status: 'captured', amount: 0, currency: 'bob' };
+  }
   const chargedBs = booking.finalPrice ?? booking.estimatedPrice;
   const amountToCapture = toCents(chargedBs);
   logger.info('capturePayment', 'start', { bookingId, amountToCapture });
@@ -297,8 +308,12 @@ export const captureOnCompletion = onDocumentUpdated('bookings/{bookingId}', asy
       logger.info('captureOnCompletion', 'hold released', { bookingId: event.params.bookingId });
     }
   } catch (e) {
-    // El admin puede registrar el cobro a mano desde el panel.
+    // El admin puede registrar el cobro a mano desde el panel: se marca
+    // para que el panel lo permita.
     logger.error('captureOnCompletion', 'failed', { bookingId: event.params.bookingId, error: String(e) });
+    if (after.status === 'completed') {
+      await event.data!.after.ref.update({ cardPaymentFailed: true });
+    }
   }
 });
 
@@ -621,7 +636,9 @@ export const releaseDriver = onDocumentUpdated('bookings/{bookingId}', async (ev
     const snap = await tx.get(driverRef);
     if (!snap.exists) return;
     tx.update(driverRef, {
-      isAvailable: true,
+      // Solo vuelve a estar disponible si sigue conectado (no se desconectó
+      // ni cerró sesión durante el viaje).
+      isAvailable: snap.data()?.online !== false,
       ...(after.status === 'completed'
         ? { totalRides: (snap.data()?.totalRides ?? 0) + 1 }
         : {}),

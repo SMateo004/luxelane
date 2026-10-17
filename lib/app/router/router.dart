@@ -23,6 +23,8 @@ import '../../features/payments/presentation/pages/payment_screen.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../../features/ride/presentation/pages/ride_screen.dart';
 import '../../features/trips/presentation/pages/trips_screen.dart';
+import '../../features/business/presentation/pages/business_page.dart';
+import '../../features/legal/presentation/pages/legal_page.dart';
 import '../../core/widgets/components.dart';
 import '../driver_shell/driver_shell.dart';
 import '../shell/app_shell.dart';
@@ -133,7 +135,9 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
             final guestOk = webGuestOk.contains(going) ||
                 going.startsWith('/ride-type') ||
                 going.startsWith('/booking') ||
-                going.startsWith('/servicios');
+                going.startsWith('/servicios') ||
+                going.startsWith('/legal') ||
+                going == '/empresas';
 
             // If explicitly trying to enter via driver path, go to driver login.
             // But if on general pages, stay on general login.
@@ -149,7 +153,9 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
                 going == LuxRoutes.home ||
                 going == LuxRoutes.driverLogin ||
                 going.startsWith('/ride-type') ||
-                going.startsWith('/booking');
+                going.startsWith('/booking') ||
+                going.startsWith('/legal') ||
+                going == '/empresas';
             if (!mobileGuestOk) return keep(LuxRoutes.login);
           }
         }
@@ -179,6 +185,19 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: '/driver/onboarding',
           pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),
+        ),
+        GoRoute(
+          path: '/empresas',
+          pageBuilder: (c, s) => _fade(const BusinessPage(), s),
+        ),
+        GoRoute(
+          path: '/legal/terminos',
+          pageBuilder: (c, s) => _fade(const LegalPage(doc: LegalDoc.terms), s),
+        ),
+        GoRoute(
+          path: '/legal/privacidad',
+          pageBuilder: (c, s) =>
+              _fade(const LegalPage(doc: LegalDoc.privacy), s),
         ),
         GoRoute(
           path: '/servicios/recogida-inmediata',

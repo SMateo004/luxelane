@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -104,6 +105,8 @@ void main() {
         .thenAnswer((_) => const Stream.empty());
     when(() => vehicleRepo.getVehicleByDriver(any()))
         .thenAnswer((_) async => const Right(_vehicle));
+    when(() => mapsService.driverPositionStream())
+        .thenAnswer((_) => const Stream.empty());
   });
 
   DriverBloc bloc() => DriverBloc(
@@ -321,6 +324,28 @@ void main() {
             _makeBooking(BookingStatus.inProgress)
           ]).currentRequest,
           isNull);
+    });
+
+    test('una reserva confirmada para otro día no ocupa al chófer', () {
+      final future = Booking.fromJson({
+        ..._makeBooking(BookingStatus.confirmed).toJson(),
+        'scheduledAt':
+            Timestamp.fromDate(DateTime.now().add(const Duration(days: 3))),
+      });
+      final soon = Booking.fromJson({
+        ..._makeBooking(BookingStatus.confirmed).toJson(),
+        'scheduledAt':
+            Timestamp.fromDate(DateTime.now().add(const Duration(minutes: 20))),
+      });
+      final base = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: [future],
+      );
+      expect(base.activeBooking, isNull);
+      expect(base.canAccept, isTrue);
+      expect(base.copyWith(bookings: [soon]).activeBooking, isNotNull);
     });
 
     test('un viaje reembolsado no suma ganancias ni queda provisional', () {

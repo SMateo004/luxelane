@@ -88,7 +88,7 @@ service cloud.firestore {
     // Verificación, valoración y contador de viajes los fijan el admin y el
     // servidor; el chófer no puede darse de alta ya verificado.
     function driverManagedFields() {
-      return ['documentsVerified', 'rating', 'totalRides'];
+      return ['documentsVerified', 'rating', 'ratingCount', 'totalRides'];
     }
 
     match /driverProfiles/{uid} {
@@ -141,7 +141,7 @@ service cloud.firestore {
         request.resource.data.estimatedPrice > 0 &&
         !request.resource.data.keys().hasAny(['settlement', 'pricingReview',
           'refunded', 'stripePaymentIntentId', 'stripePaymentMethodId',
-          'driverInfo', 'riderRating']);
+          'cardPaymentFailed', 'driverInfo', 'riderRating']);
 
       allow update: if isAdmin() ||
         // Driver accepts a pending booking (self-assign)
@@ -273,6 +273,34 @@ service cloud.firestore {
           request.resource.data.platformCommissionPct <= 100
         )
       );
+    }
+
+    // -------------------------------------------------------------------------
+    // /businessLeads/{id} — solicitudes de empresas (sin cuenta). Se crean
+    // con campos acotados; solo el admin las lee y las marca atendidas.
+    // -------------------------------------------------------------------------
+
+    function shortText(v, max) {
+      return v is string && v.size() <= max;
+    }
+
+    match /businessLeads/{id} {
+      allow create: if
+        request.resource.data.keys().hasOnly(['company', 'contactName',
+          'email', 'phone', 'travellers', 'message', 'handled', 'createdAt']) &&
+        shortText(request.resource.data.company, 120) &&
+        request.resource.data.company.size() > 0 &&
+        shortText(request.resource.data.contactName, 120) &&
+        shortText(request.resource.data.email, 160) &&
+        request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$') &&
+        shortText(request.resource.data.phone, 40) &&
+        shortText(request.resource.data.travellers, 20) &&
+        shortText(request.resource.data.message, 2000) &&
+        request.resource.data.handled == false &&
+        request.resource.data.createdAt == request.time;
+      allow read: if isAdmin();
+      allow update: if isAdmin() && onlyUpdating(['handled']);
+      allow delete: if false;
     }
 
     // -------------------------------------------------------------------------

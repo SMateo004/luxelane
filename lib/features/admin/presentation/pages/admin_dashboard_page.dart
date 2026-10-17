@@ -29,6 +29,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.drivers: 'Chóferes',
     AdminSection.vehicles: 'Vehículos',
     AdminSection.users: 'Usuarios',
+    AdminSection.business: 'Empresas',
     AdminSection.audit: 'Auditoría',
     AdminSection.settings: 'Configuración',
   };
@@ -40,6 +41,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.drivers: Icons.badge_outlined,
     AdminSection.vehicles: Icons.directions_car_outlined,
     AdminSection.users: Icons.people_outline,
+    AdminSection.business: Icons.business_outlined,
     AdminSection.audit: Icons.history_rounded,
     AdminSection.settings: Icons.settings_outlined,
   };
@@ -254,6 +256,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         AdminSection.pricing => const PricingTab(),
         AdminSection.drivers => const DriversTab(),
         AdminSection.vehicles => const VehiclesTab(),
+        AdminSection.business => const BusinessLeadsTab(),
         AdminSection.users => const UsersTab(),
         AdminSection.audit => const AuditTab(),
         AdminSection.settings => const SettingsTab(),

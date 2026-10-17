@@ -63,6 +63,9 @@
 	<!-- Location: pickup point and chauffeur tracking (geolocator). -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Luxelane usa tu ubicación para proponerte el lugar de recogida y mostrar el trayecto de tu chófer.</string>
+	<!-- Chófer conectado con la app minimizada (indicador azul de iOS). -->
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Si eres chófer, Luxelane comparte tu ubicación mientras estás conectado para asignarte viajes y que el pasajero vea dónde estás, aunque la app esté en segundo plano.</string>
 	<!-- Apps the "open in maps" / call actions may hand off to (map_launcher, url_launcher). -->
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
@@ -74,6 +77,7 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
+		<string>location</string>
 	</array>
 </dict>
 </plist>
