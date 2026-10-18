@@ -21,6 +21,15 @@ class BookingRepositoryImpl implements BookingRepository {
     try {
       final id = _uuid.v4();
       final data = booking.toJson()..['id'] = id;
+      // El chófer no lee perfiles ajenos: el estilo de viaje del pasajero
+      // viaja con la reserva. Si no se puede leer, se reserva igual.
+      try {
+        final profile =
+            await _db.collection('users').doc(booking.riderId).get();
+        final prefs =
+            RidePreferences.fromJson(profile.data()?['ridePreferences']);
+        if (!prefs.isEmpty) data['riderPreferences'] = prefs.toJson();
+      } catch (_) {}
       await _col.doc(id).set(data);
       return Right(Booking.fromJson(data));
     } catch (e) {

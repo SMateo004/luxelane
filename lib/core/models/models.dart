@@ -23,6 +23,7 @@ class User {
     required this.isActive,
     this.stripeCustomerId,
     required this.fcmTokens,
+    this.ridePreferences = RidePreferences.none,
   });
 
   final String id;
@@ -37,6 +38,9 @@ class User {
   final bool isActive;
   final String? stripeCustomerId;
   final List<String> fcmTokens;
+
+  /// Cómo le gusta viajar (silencio, temperatura…); el chófer lo ve.
+  final RidePreferences ridePreferences;
 
   factory User.fromJson(Map<String, dynamic> j) => User(
         id: j['id'] as String,
@@ -59,6 +63,7 @@ class User {
         isActive: j['isActive'] as bool? ?? true,
         stripeCustomerId: j['stripeCustomerId'] as String?,
         fcmTokens: List<String>.from(j['fcmTokens'] ?? []),
+        ridePreferences: RidePreferences.fromJson(j['ridePreferences']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -74,6 +79,7 @@ class User {
         'isActive': isActive,
         'stripeCustomerId': stripeCustomerId,
         'fcmTokens': fcmTokens,
+        'ridePreferences': ridePreferences.toJson(),
       };
 
   User copyWith({
@@ -86,6 +92,7 @@ class User {
     bool? isActive,
     String? stripeCustomerId,
     List<String>? fcmTokens,
+    RidePreferences? ridePreferences,
   }) =>
       User(
         id: id,
@@ -100,7 +107,114 @@ class User {
         isActive: isActive ?? this.isActive,
         stripeCustomerId: stripeCustomerId ?? this.stripeCustomerId,
         fcmTokens: fcmTokens ?? this.fcmTokens,
+        ridePreferences: ridePreferences ?? this.ridePreferences,
       );
+}
+
+// ---------------------------------------------------------------------------
+// RidePreferences — el "estilo de viaje" del pasajero
+// ---------------------------------------------------------------------------
+
+enum CabinTemperature {
+  cool('Fresca', '20 °C'),
+  mild('Templada', '22 °C'),
+  warm('Cálida', '24 °C');
+
+  const CabinTemperature(this.label, this.hint);
+  final String label;
+  final String hint;
+}
+
+/// Lo que el pasajero prefiere en cada viaje. Se guarda en su perfil, se
+/// copia a cada reserva y el chófer lo ve antes de recogerlo: nadie tiene
+/// que pedir lo mismo dos veces.
+class RidePreferences {
+  const RidePreferences({
+    this.quiet = false,
+    this.temperature,
+    this.music = true,
+    this.luggageHelp = false,
+    this.openDoor = false,
+  });
+
+  static const none = RidePreferences();
+
+  /// Prefiere viajar sin conversación.
+  final bool quiet;
+  final CabinTemperature? temperature;
+
+  /// Música suave de fondo (false: viaje sin música).
+  final bool music;
+
+  /// Ayuda con el equipaje al subir y bajar.
+  final bool luggageHelp;
+
+  /// Que el chófer le abra la puerta.
+  final bool openDoor;
+
+  bool get isEmpty =>
+      !quiet && temperature == null && music && !luggageHelp && !openDoor;
+
+  /// Indicaciones breves para el chófer, en el orden en que las aplicará.
+  List<String> get driverNotes => [
+        if (openDoor) 'Abrir la puerta',
+        if (luggageHelp) 'Ayuda con el equipaje',
+        if (temperature != null)
+          'Cabina ${temperature!.label.toLowerCase()} (${temperature!.hint})',
+        if (quiet) 'Viaje en silencio',
+        if (!music) 'Sin música',
+      ];
+
+  factory RidePreferences.fromJson(Object? raw) {
+    if (raw is! Map) return none;
+    final t = raw['temperature'];
+    return RidePreferences(
+      quiet: raw['quiet'] == true,
+      temperature:
+          CabinTemperature.values.where((e) => e.name == t).firstOrNull,
+      music: raw['music'] != false,
+      luggageHelp: raw['luggageHelp'] == true,
+      openDoor: raw['openDoor'] == true,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'quiet': quiet,
+        'temperature': temperature?.name,
+        'music': music,
+        'luggageHelp': luggageHelp,
+        'openDoor': openDoor,
+      };
+
+  RidePreferences copyWith({
+    bool? quiet,
+    CabinTemperature? temperature,
+    bool clearTemperature = false,
+    bool? music,
+    bool? luggageHelp,
+    bool? openDoor,
+  }) =>
+      RidePreferences(
+        quiet: quiet ?? this.quiet,
+        temperature:
+            clearTemperature ? null : (temperature ?? this.temperature),
+        music: music ?? this.music,
+        luggageHelp: luggageHelp ?? this.luggageHelp,
+        openDoor: openDoor ?? this.openDoor,
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is RidePreferences &&
+      other.quiet == quiet &&
+      other.temperature == temperature &&
+      other.music == music &&
+      other.luggageHelp == luggageHelp &&
+      other.openDoor == openDoor;
+
+  @override
+  int get hashCode =>
+      Object.hash(quiet, temperature, music, luggageHelp, openDoor);
 }
 
 // ---------------------------------------------------------------------------
@@ -370,6 +484,7 @@ class Booking {
     this.riderRating,
     this.cardPayment = false,
     this.cardPaymentFailed = false,
+    this.riderPreferences = RidePreferences.none,
   });
 
   final String id;
@@ -414,6 +529,9 @@ class Booking {
 
   /// Valoración (1–5) que dio el pasajero, si ya valoró.
   final int? riderRating;
+
+  /// Estilo de viaje del pasajero, copiado de su perfil al reservar.
+  final RidePreferences riderPreferences;
 
   /// Se paga con tarjeta: el servidor la cobra al completar el viaje.
   final bool cardPayment;
@@ -497,6 +615,7 @@ class Booking {
         cardPayment: j['stripePaymentIntentId'] != null ||
             j['stripePaymentMethodId'] != null,
         cardPaymentFailed: j['cardPaymentFailed'] == true,
+        riderPreferences: RidePreferences.fromJson(j['riderPreferences']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -561,6 +680,7 @@ class Booking {
         riderRating: riderRating,
         cardPayment: cardPayment,
         cardPaymentFailed: cardPaymentFailed,
+        riderPreferences: riderPreferences,
       );
 }
 

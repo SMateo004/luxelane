@@ -29,6 +29,7 @@ import '../../core/widgets/components.dart';
 import '../driver_shell/driver_shell.dart';
 import '../shell/app_shell.dart';
 import '../theme/app_theme.dart';
+import 'lux_transitions.dart';
 
 abstract class LuxRoutes {
   static const splash = '/splash';
@@ -338,28 +339,10 @@ class _BlocListenable extends ChangeNotifier {
 // ---------------------------------------------------------------------------
 
 CustomTransitionPage<void> _fade(Widget child, GoRouterState state) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionDuration: const Duration(milliseconds: 250),
-      transitionsBuilder: (_, animation, __, child) => FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-        child: child,
-      ),
-    );
+    luxFadeThroughPage(child, state);
 
 CustomTransitionPage<void> _slide(Widget child, GoRouterState state) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionsBuilder: (_, animation, __, child) => SlideTransition(
-        position:
-            Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero).animate(
-          CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-        ),
-        child: child,
-      ),
-    );
+    luxPushPage(child, state);
 
 // ---------------------------------------------------------------------------
 

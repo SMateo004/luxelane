@@ -23,8 +23,12 @@ class ProfileLoadRequested extends ProfileEvent {
 }
 
 class ProfileUpdateRequested extends ProfileEvent {
-  const ProfileUpdateRequested({required this.user});
+  const ProfileUpdateRequested({required this.user, this.silent = false});
   final User user;
+
+  /// Ajustes que se aplican al instante (preferencias de viaje): se ven en
+  /// el acto y solo se avisa si fallan.
+  final bool silent;
   @override
   List<Object?> get props => [user.id];
 }
@@ -113,6 +117,7 @@ class ProfileLoaded extends ProfileState {
         user.displayName,
         user.phone,
         user.photoUrl,
+        user.ridePreferences,
         driverProfile?.userId,
         totalRides,
         rating,
@@ -202,6 +207,15 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     final prev = state;
+    if (event.silent && prev is ProfileLoaded) {
+      emit(ProfileLoaded(
+        user: event.user,
+        driverProfile: prev.driverProfile,
+        totalRides: prev.totalRides,
+        rating: prev.rating,
+        messageSeq: prev.messageSeq,
+      ));
+    }
     final result = await _repo.updateUser(event.user);
     if (prev is! ProfileLoaded) {
       result.fold((f) => emit(ProfileError(f.message)),
@@ -220,14 +234,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         isError: true,
         messageSeq: prev.messageSeq + 1,
       )),
-      (_) => emit(ProfileLoaded(
-        user: event.user,
-        driverProfile: prev.driverProfile,
-        totalRides: prev.totalRides,
-        rating: prev.rating,
-        message: 'Perfil actualizado',
-        messageSeq: prev.messageSeq + 1,
-      )),
+      (_) {
+        if (event.silent) return;
+        emit(ProfileLoaded(
+          user: event.user,
+          driverProfile: prev.driverProfile,
+          totalRides: prev.totalRides,
+          rating: prev.rating,
+          message: 'Perfil actualizado',
+          messageSeq: prev.messageSeq + 1,
+        ));
+      },
     );
   }
 

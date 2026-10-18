@@ -459,7 +459,7 @@ class _AuthField extends StatelessWidget {
 
 // ── Primary action button ──────────────────────────────────────────────────────
 
-class _AuthButton extends StatefulWidget {
+class _AuthButton extends StatelessWidget {
   const _AuthButton({
     required this.label,
     required this.loading,
@@ -469,53 +469,10 @@ class _AuthButton extends StatefulWidget {
   final bool loading;
   final VoidCallback? onTap;
 
+  // El mismo botón principal que el resto de la app.
   @override
-  State<_AuthButton> createState() => _AuthButtonState();
-}
-
-class _AuthButtonState extends State<_AuthButton> {
-  bool _hover = false;
-
-  @override
-  Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) => setState(() => _hover = true),
-        onExit: (_) => setState(() => _hover = false),
-        cursor:
-            widget.onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            width: double.infinity,
-            height: 52,
-            decoration: BoxDecoration(
-              color: widget.onTap == null
-                  ? _sph.withAlpha(80)
-                  : (_hover ? _sphLt : _sph),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: widget.onTap == null ? null : luxSoftShadow,
-            ),
-            alignment: Alignment.center,
-            child: widget.loading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                        strokeWidth: 2, color: _onSph),
-                  )
-                : Text(
-                    widget.label.toUpperCase(),
-                    style: const TextStyle(
-                      fontFamily: _kSans,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.0,
-                      color: _onSph,
-                    ),
-                  ),
-          ),
-        ),
-      );
+  Widget build(BuildContext context) =>
+      LuxButton(label: label, loading: loading, onPressed: onTap);
 }
 
 // ── Text link ─────────────────────────────────────────────────────────────────

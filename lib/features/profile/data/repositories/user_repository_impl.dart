@@ -32,6 +32,7 @@ class UserRepositoryImpl implements UserRepository {
         'displayName': user.displayName,
         'phone': user.phone,
         'photoUrl': user.photoUrl,
+        'ridePreferences': user.ridePreferences.toJson(),
       });
       return const Right(null);
     } catch (e) {

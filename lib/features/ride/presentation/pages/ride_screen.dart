@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
@@ -198,32 +199,23 @@ class _RideScreenState extends State<RideScreen> {
     final canRate =
         _status == BookingStatus.completed && _booking?.riderRating == null;
     if (!canCall && !canCancel && !canRate) return const SizedBox.shrink();
-    return Row(
+    // Una acción visible a la vez; cancelar queda discreta debajo para que
+    // nunca compita con lo que la persona suele querer hacer.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (canCall)
-          Expanded(
-            child: LuxOutlinedButton(
-              label: 'Llamar al chófer',
-              onPressed: _callDriver,
-              icon: Icons.call_outlined,
-            ),
-          ),
-        if (canCall && (canCancel || canRate))
-          const SizedBox(width: LuxSpacing.sm),
-        if (canCancel)
-          Expanded(
-            child: LuxOutlinedButton(
-              label: _cancelling ? 'Cancelando…' : 'Cancelar reserva',
-              onPressed: _cancelling ? null : _cancel,
-              icon: Icons.close_rounded,
-            ),
-          ),
         if (canRate)
-          Expanded(
-            child: LuxButton(
-              label: 'Calificar viaje',
-              onPressed: _showRatingDialog,
-            ),
+          LuxButton(label: 'Calificar viaje', onPressed: _showRatingDialog)
+        else if (canCall)
+          LuxOutlinedButton(
+            label: 'Llamar a tu chófer',
+            onPressed: _callDriver,
+            icon: Icons.call_outlined,
+          ),
+        if (canCancel)
+          LuxButton.ghost(
+            label: _cancelling ? 'Cancelando…' : 'Cancelar reserva',
+            onPressed: _cancelling ? null : _cancel,
           ),
       ],
     );
@@ -259,6 +251,8 @@ class _RideScreenState extends State<RideScreen> {
                   message: _statusMessage,
                   driver: _driverSection(profile),
                   actions: _actions(),
+                  preferences:
+                      _booking?.riderPreferences ?? RidePreferences.none,
                 ),
               ],
             ),
@@ -360,46 +354,177 @@ class _BottomPanel extends StatelessWidget {
     required this.message,
     required this.driver,
     required this.actions,
+    this.preferences = RidePreferences.none,
   });
 
   final BookingStatus status;
   final String message;
   final Widget driver;
   final Widget actions;
+  final RidePreferences preferences;
 
   @override
-  Widget build(BuildContext context) => Container(
-        decoration: const BoxDecoration(
-          color: LuxColors.surface,
-          borderRadius:
-              BorderRadius.vertical(top: Radius.circular(LuxRadius.xl + 8)),
-          boxShadow: [
-            BoxShadow(
-                color: LuxColors.shadow, blurRadius: 32, offset: Offset(0, -8)),
-          ],
-        ),
-        padding: const EdgeInsets.fromLTRB(
-          LuxSpacing.md + 4,
-          LuxSpacing.lg,
-          LuxSpacing.md + 4,
-          LuxSpacing.xl,
-        ),
+  Widget build(BuildContext context) {
+    final duration = LuxMotion.of(context, LuxMotion.slow);
+    final open =
+        status != BookingStatus.completed && status != BookingStatus.cancelled;
+    final notes = preferences.driverNotes;
+    return Container(
+      decoration: const BoxDecoration(
+        color: LuxColors.surface,
+        borderRadius:
+            BorderRadius.vertical(top: Radius.circular(LuxRadius.xl + 4)),
+        boxShadow: [
+          BoxShadow(
+              color: LuxColors.shadow, blurRadius: 32, offset: Offset(0, -8)),
+        ],
+      ),
+      padding: const EdgeInsets.fromLTRB(
+        LuxSpacing.md + 4,
+        LuxSpacing.lg,
+        LuxSpacing.md + 4,
+        LuxSpacing.xl,
+      ),
+      child: AnimatedSize(
+        duration: duration,
+        curve: LuxMotion.emphasized,
+        alignment: Alignment.topCenter,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            BookingStatusChip(status: status),
-            const SizedBox(height: LuxSpacing.sm + 4),
-            Text(message,
-                style: LuxTypography.headlineLarge
-                    .copyWith(fontSize: 24, height: 1.2)),
+            if (status != BookingStatus.cancelled) ...[
+              RideProgressBar(status: status),
+              const SizedBox(height: LuxSpacing.md),
+            ],
+            // Cada cambio de estado se anuncia con un fundido, no un salto.
+            AnimatedSwitcher(
+              duration: duration,
+              switchInCurve: LuxMotion.decelerate,
+              switchOutCurve: LuxMotion.accelerate,
+              layoutBuilder: (current, previous) => Stack(
+                alignment: Alignment.topLeft,
+                children: [...previous, if (current != null) current],
+              ),
+              child: Column(
+                key: ValueKey(status),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  BookingStatusChip(status: status),
+                  const SizedBox(height: LuxSpacing.sm + 2),
+                  Text(message,
+                      style: LuxTypography.headlineLarge
+                          .copyWith(fontSize: 26, height: 1.15)),
+                ],
+              ),
+            ),
+            if (open && notes.isNotEmpty) ...[
+              const SizedBox(height: LuxSpacing.sm),
+              Row(
+                children: [
+                  const Icon(Icons.verified_outlined,
+                      size: 14, color: LuxColors.sapphire),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      'Tu chófer conoce tu estilo: '
+                      '${notes.take(3).join(' · ').toLowerCase()}',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.caption.copyWith(fontSize: 12),
+                    ),
+                  ),
+                ],
+              ),
+            ],
             const SizedBox(height: LuxSpacing.lg),
             driver,
             const SizedBox(height: LuxSpacing.md),
             actions,
           ],
         ),
-      );
+      ),
+    );
+  }
+}
+
+/// Las etapas del viaje como una barra en cuatro tramos: se ve qué pasó,
+/// qué está pasando (el tramo que respira) y cuánto falta.
+class RideProgressBar extends StatefulWidget {
+  const RideProgressBar({super.key, required this.status});
+  final BookingStatus status;
+
+  @override
+  State<RideProgressBar> createState() => _RideProgressBarState();
+}
+
+class _RideProgressBarState extends State<RideProgressBar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1600),
+  )..repeat(reverse: true);
+
+  int get _step => switch (widget.status) {
+        BookingStatus.pending => 0,
+        BookingStatus.confirmed => 1,
+        BookingStatus.driverArriving => 2,
+        BookingStatus.driverArrived => 3,
+        BookingStatus.inProgress => 4,
+        BookingStatus.completed => 5,
+        BookingStatus.cancelled => 0,
+      };
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const segments = 4;
+    final step = _step;
+    final calm = LuxMotion.reduced(context);
+    return Semantics(
+      label: 'Etapa ${step.clamp(1, segments)} de $segments',
+      child: Row(
+        children: [
+          for (var i = 0; i < segments; i++) ...[
+            if (i > 0) const SizedBox(width: 4),
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: SizedBox(
+                  height: 3,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      const ColoredBox(color: LuxColors.surfaceDeep),
+                      AnimatedFractionallySizedBox(
+                        duration: LuxMotion.of(context, LuxMotion.slow),
+                        curve: LuxMotion.emphasized,
+                        alignment: Alignment.centerLeft,
+                        widthFactor: i < step ? 1 : 0,
+                        child: i == step - 1 && step < 5 && !calm
+                            ? FadeTransition(
+                                opacity: Tween(begin: 0.45, end: 1.0)
+                                    .animate(_pulse),
+                                child:
+                                    const ColoredBox(color: LuxColors.sapphire),
+                              )
+                            : const ColoredBox(color: LuxColors.sapphire),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 }
 
 /// Shown until a chauffeur is assigned — honest, calm, no placeholder person.
@@ -411,10 +536,8 @@ class _AssigningCard extends StatelessWidget {
         child: Row(
           children: [
             const SizedBox(
-              width: 28,
-              height: 28,
-              child: CircularProgressIndicator(
-                  strokeWidth: 1.2, color: LuxColors.sapphire),
+              width: 32,
+              child: LuxLoadingDots(color: LuxColors.sapphire, size: 5),
             ),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
