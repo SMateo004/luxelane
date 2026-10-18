@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme/app_theme.dart';
 import '../../app/theme/lux_motion.dart';
+import '../enums/enums.dart';
 
 // ---------------------------------------------------------------------------
 // LuxFadeIn — entrada suave (aparece y sube 10 px). Con [index], los
@@ -347,4 +348,222 @@ Future<void> showLuxSuccess(
       child: child,
     ),
   );
+}
+
+// ---------------------------------------------------------------------------
+// RideProgressBar
+// ---------------------------------------------------------------------------
+
+/// Las etapas del viaje como una barra en cuatro tramos: se ve qué pasó,
+/// qué está pasando (el tramo que respira) y cuánto falta.
+class RideProgressBar extends StatefulWidget {
+  const RideProgressBar({super.key, required this.status});
+  final BookingStatus status;
+
+  @override
+  State<RideProgressBar> createState() => _RideProgressBarState();
+}
+
+class _RideProgressBarState extends State<RideProgressBar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1600),
+  )..repeat(reverse: true);
+
+  int get _step => switch (widget.status) {
+        BookingStatus.pending => 0,
+        BookingStatus.confirmed => 1,
+        BookingStatus.driverArriving => 2,
+        BookingStatus.driverArrived => 3,
+        BookingStatus.inProgress => 4,
+        BookingStatus.completed => 5,
+        BookingStatus.cancelled => 0,
+      };
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const segments = 4;
+    final step = _step;
+    final calm = LuxMotion.reduced(context);
+    return Semantics(
+      label: 'Etapa ${step.clamp(1, segments)} de $segments',
+      child: Row(
+        children: [
+          for (var i = 0; i < segments; i++) ...[
+            if (i > 0) const SizedBox(width: 4),
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: SizedBox(
+                  height: 3,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      const ColoredBox(color: LuxColors.surfaceDeep),
+                      AnimatedFractionallySizedBox(
+                        duration: LuxMotion.of(context, LuxMotion.slow),
+                        curve: LuxMotion.emphasized,
+                        alignment: Alignment.centerLeft,
+                        widthFactor: i < step ? 1 : 0,
+                        child: i == step - 1 && step < 5 && !calm
+                            ? FadeTransition(
+                                opacity: Tween(begin: 0.45, end: 1.0)
+                                    .animate(_pulse),
+                                child:
+                                    const ColoredBox(color: LuxColors.sapphire),
+                              )
+                            : const ColoredBox(color: LuxColors.sapphire),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// LuxSlideToConfirm — deslizar para confirmar. Para acciones que no deben
+// dispararse con un toque accidental (iniciar o completar un viaje mientras
+// se conduce). Al soltar antes del final, vuelve a su sitio.
+// ---------------------------------------------------------------------------
+
+class LuxSlideToConfirm extends StatefulWidget {
+  const LuxSlideToConfirm({
+    super.key,
+    required this.label,
+    required this.onConfirmed,
+    this.height = 60,
+    this.enabled = true,
+  });
+
+  final String label;
+  final VoidCallback onConfirmed;
+  final double height;
+  final bool enabled;
+
+  @override
+  State<LuxSlideToConfirm> createState() => _LuxSlideToConfirmState();
+}
+
+class _LuxSlideToConfirmState extends State<LuxSlideToConfirm>
+    with SingleTickerProviderStateMixin {
+  double _drag = 0;
+  bool _done = false;
+  late final AnimationController _back =
+      AnimationController(vsync: this, duration: LuxMotion.base)
+        ..addListener(() => setState(() => _drag = _from * (1 - _back.value)));
+  double _from = 0;
+
+  @override
+  void didUpdateWidget(LuxSlideToConfirm old) {
+    super.didUpdateWidget(old);
+    // Un nuevo paso del viaje: el control vuelve a empezar.
+    if (old.label != widget.label) {
+      _done = false;
+      _drag = 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _back.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(builder: (context, c) {
+        final knob = widget.height - 8;
+        final max = c.maxWidth - knob - 8;
+        final t = max <= 0 ? 0.0 : (_drag / max).clamp(0.0, 1.0);
+        return Semantics(
+          button: true,
+          label: widget.label,
+          hint: 'Desliza para confirmar',
+          onTap: widget.enabled && !_done
+              ? () {
+                  // Lectores de pantalla: un toque basta.
+                  setState(() => _done = true);
+                  widget.onConfirmed();
+                }
+              : null,
+          child: Container(
+            height: widget.height,
+            decoration: BoxDecoration(
+              color: widget.enabled
+                  ? LuxColors.sapphire
+                  : LuxColors.sapphire.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(widget.height / 2),
+              boxShadow: widget.enabled ? LuxElevation.mid : null,
+            ),
+            child: Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                Center(
+                  child: Opacity(
+                    opacity: 1 - t,
+                    child: Padding(
+                      padding: EdgeInsets.only(left: knob * 0.6),
+                      child: Text(
+                        widget.label,
+                        style: LuxTypography.button
+                            .copyWith(color: LuxColors.onAccent, fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 4 + _drag.clamp(0.0, max < 0 ? 0.0 : max),
+                  child: GestureDetector(
+                    onHorizontalDragUpdate: !widget.enabled || _done
+                        ? null
+                        : (d) => setState(
+                            () => _drag = (_drag + d.delta.dx).clamp(0, max)),
+                    onHorizontalDragEnd: !widget.enabled || _done
+                        ? null
+                        : (_) {
+                            if (t > 0.85) {
+                              setState(() {
+                                _done = true;
+                                _drag = max;
+                              });
+                              LuxHaptics.confirm();
+                              widget.onConfirmed();
+                            } else {
+                              _from = _drag;
+                              _back.forward(from: 0);
+                            }
+                          },
+                    child: Container(
+                      width: knob,
+                      height: knob,
+                      decoration: const BoxDecoration(
+                        color: LuxColors.surface,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        _done
+                            ? Icons.check_rounded
+                            : Icons.arrow_forward_rounded,
+                        color: LuxColors.sapphire,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      });
 }

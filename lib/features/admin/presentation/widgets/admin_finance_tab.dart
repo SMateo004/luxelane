@@ -40,7 +40,7 @@ class _FinanceTabState extends State<FinanceTab> {
   Widget build(BuildContext context) =>
       BlocBuilder<AdminBloc, AdminState>(builder: (context, state) {
         if (state.isLoading && state.bookings.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const LuxSkeletonList();
         }
         final f = state.finance(_period);
         final rows = _filter == null
@@ -265,7 +265,7 @@ class FinanceKpis extends StatelessWidget {
     return LayoutBuilder(builder: (context, c) {
       final cols = c.maxWidth >= 920
           ? 4
-          : c.maxWidth >= 460
+          : c.maxWidth >= 300
               ? 2
               : 1;
       final w = (c.maxWidth - (cols - 1) * LuxSpacing.md) / cols;
