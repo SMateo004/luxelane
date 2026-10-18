@@ -67,7 +67,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       [
         AdminSection.finance,
         AdminSection.pricing,
-        AdminSection.business,
+        AdminSection.companies,
+        AdminSection.special,
         AdminSection.users,
       ]
     ),
@@ -83,7 +84,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.drivers: 'Verificación y disponibilidad de chóferes.',
     AdminSection.vehicles: 'La flota y su estado.',
     AdminSection.users: 'Cuentas, roles y accesos.',
-    AdminSection.business: 'Solicitudes de empresas.',
+    AdminSection.companies: 'Cuentas de empresa, extractos y contactos.',
+    AdminSection.special: 'Aerotaxi y paseos por cotizar.',
     AdminSection.audit: 'Cada acción del panel, con su autor.',
     AdminSection.settings: 'Ajustes generales de la plataforma.',
   };
