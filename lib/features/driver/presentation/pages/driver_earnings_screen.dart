@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../bloc/driver_bloc.dart';
 
@@ -20,9 +21,7 @@ class DriverEarningsScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('Ganancias')),
       body: BlocBuilder<DriverBloc, DriverState>(
         builder: (context, state) {
-          if (state is! DriverLoaded) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          if (state is! DriverLoaded) return const LuxSkeletonList();
 
           final completed = [...state.completedBookings]
             ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
@@ -30,18 +29,20 @@ class DriverEarningsScreen extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.all(LuxSpacing.md),
             children: [
-              _EarningsSummary(state: state),
+              LuxFadeIn(child: _EarningsSummary(state: state)),
               const SizedBox(height: LuxSpacing.lg),
               const SectionHeader(title: 'Viajes completados'),
-              const SizedBox(height: LuxSpacing.md),
+              const SizedBox(height: LuxSpacing.sm + 2),
               if (completed.isEmpty)
                 const _EmptyEarnings()
               else
-                ...completed.map((b) => Padding(
-                      padding: const EdgeInsets.only(bottom: LuxSpacing.sm),
-                      child:
-                          _EarningsCard(booking: b, split: state.earningsOf(b)),
-                    )),
+                LuxFadeIn(
+                  index: 1,
+                  child: LuxGroup(children: [
+                    for (final b in completed)
+                      _EarningsCard(booking: b, split: state.earningsOf(b)),
+                  ]),
+                ),
             ],
           );
         },
@@ -58,63 +59,46 @@ class _EarningsSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     final rides = state.completedBookings.length;
     return Container(
-      padding: const EdgeInsets.all(LuxSpacing.lg),
+      padding: const EdgeInsets.fromLTRB(
+          LuxSpacing.lg, LuxSpacing.lg, LuxSpacing.lg, LuxSpacing.md),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            LuxColors.sapphire.withOpacity(0.12),
-            LuxColors.surfaceMuted,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(LuxRadius.lg),
-        border: Border.all(color: LuxColors.sapphire.withOpacity(0.2)),
+        color: LuxColors.surface,
+        borderRadius: BorderRadius.circular(LuxRadius.xl),
+        border: Border.all(color: LuxColors.border),
+        boxShadow: LuxElevation.low,
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Tus ganancias netas', style: LuxTypography.caption),
+          Text('TUS GANANCIAS NETAS', style: LuxTypography.eyebrow),
           const SizedBox(height: LuxSpacing.sm),
           FittedBox(
             fit: BoxFit.scaleDown,
             child: Text(
               _bs(state.totalEarnings),
-              style: const TextStyle(
-                fontFamily: 'Cormorant Garamond',
-                fontSize: 48,
-                fontWeight: FontWeight.w600,
-                color: LuxColors.sapphire,
-              ),
+              style: LuxTypography.displayLarge.copyWith(fontSize: 52),
             ),
           ),
+          const SizedBox(height: 4),
+          Text(
+            '$rides viaje${rides == 1 ? '' : 's'} completado${rides == 1 ? '' : 's'}',
+            style: LuxTypography.caption.copyWith(fontSize: 12),
+          ),
           const SizedBox(height: LuxSpacing.md),
+          const LuxDivider(),
+          const SizedBox(height: LuxSpacing.sm),
           _Line(
               label: 'Tarifas de tus viajes', value: _bs(state.grossEarnings)),
           _Line(
               label: 'Comisión Luxelane',
               value: '− ${_bs(state.totalCommission)}'),
-          const SizedBox(height: LuxSpacing.sm),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.check_circle_outline,
-                  color: LuxColors.inkTertiary, size: 14),
-              const SizedBox(width: LuxSpacing.xs),
-              Text(
-                '$rides viaje${rides == 1 ? '' : 's'} completado${rides == 1 ? '' : 's'}',
-                style: LuxTypography.caption,
-              ),
-            ],
-          ),
           if (state.hasProvisionalEarnings) ...[
             const SizedBox(height: LuxSpacing.sm),
             Text(
-              'Los viajes marcados como provisionales se calculan con una '
-              'comisión del ${_pct(kDefaultCommissionPct)} % hasta que se '
-              'confirme su liquidación.',
-              textAlign: TextAlign.center,
-              style:
-                  LuxTypography.caption.copyWith(color: LuxColors.inkTertiary),
+              'Los viajes provisionales se calculan con una comisión del '
+              '${_pct(kDefaultCommissionPct)} % hasta que se confirme su '
+              'liquidación.',
+              style: LuxTypography.caption,
             ),
           ],
         ],
@@ -129,13 +113,14 @@ class _Line extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 2),
+        padding: const EdgeInsets.symmetric(vertical: 4),
         child: Row(
           children: [
-            Expanded(child: Text(label, style: LuxTypography.caption)),
+            Expanded(
+                child: Text(label,
+                    style: LuxTypography.bodyMedium.copyWith(fontSize: 13))),
             Text(value,
-                style: LuxTypography.bodyMedium
-                    .copyWith(color: LuxColors.inkSecondary)),
+                style: LuxTypography.titleMedium.copyWith(fontSize: 13)),
           ],
         ),
       );
@@ -149,7 +134,9 @@ class _EarningsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provisional = booking.settlement == null && !booking.refunded;
-    return LuxCard(
+    final hourly = booking.serviceType == ServiceType.byTheHour;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 13, 16, 13),
       child: Row(
         children: [
           Expanded(
@@ -157,30 +144,23 @@ class _EarningsCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  DateFormat('dd/MM/yyyy · HH:mm').format(booking.scheduledAt),
-                  style: LuxTypography.caption,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  booking.origin.address,
-                  style: LuxTypography.bodyMedium,
+                  hourly
+                      ? '${booking.hours ?? 2} h desde ${booking.origin.displayName}'
+                      : booking.destination.displayName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  style: LuxTypography.bodyLarge.copyWith(fontSize: 15),
                 ),
-                Text(
-                  '→ ${booking.destination.address}',
-                  style: LuxTypography.caption,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   booking.refunded
-                      ? 'Reembolsado al pasajero · sin comisión ni pago'
-                      : 'Tarifa ${_bs(split.amount)} · comisión '
-                          '${_pct(split.commissionPct)} % (${_bs(split.platformCommission)})',
-                  style: LuxTypography.caption
-                      .copyWith(color: LuxColors.inkTertiary),
+                      ? '${LuxFormat.dateTime(booking.scheduledAt)} · reembolsado'
+                      : '${LuxFormat.dateTime(booking.scheduledAt)} · '
+                          'tarifa ${_bs(split.amount)} · '
+                          '${_pct(split.commissionPct)} %',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: LuxTypography.caption.copyWith(fontSize: 12),
                 ),
               ],
             ),
@@ -189,27 +169,12 @@ class _EarningsCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                _bs(split.driverPayout),
-                style: LuxTypography.titleMedium
-                    .copyWith(color: LuxColors.sapphire),
-              ),
-              if (provisional) ...[
-                const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: LuxSpacing.sm, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: LuxColors.warning.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(LuxRadius.sm),
-                  ),
-                  child: Text(
-                    'PROVISIONAL',
+              Text(_bs(split.driverPayout),
+                  style: LuxTypography.titleMedium.copyWith(fontSize: 15)),
+              if (provisional)
+                Text('Provisional',
                     style: LuxTypography.caption
-                        .copyWith(color: LuxColors.warning, fontSize: 9),
-                  ),
-                ),
-              ],
+                        .copyWith(color: LuxColors.warning, fontSize: 11)),
             ],
           ),
         ],
@@ -222,18 +187,11 @@ class _EmptyEarnings extends StatelessWidget {
   const _EmptyEarnings();
 
   @override
-  Widget build(BuildContext context) => const Padding(
-        padding: EdgeInsets.symmetric(vertical: LuxSpacing.xl),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.attach_money, size: 48, color: LuxColors.inkTertiary),
-              SizedBox(height: LuxSpacing.md),
-              Text('Aún no hay viajes completados',
-                  style: TextStyle(color: LuxColors.ink)),
-            ],
-          ),
+  Widget build(BuildContext context) => const SizedBox(
+        height: 260,
+        child: EmptyState(
+          icon: Icons.account_balance_wallet_outlined,
+          message: 'Tu primer viaje\naparecerá aquí.',
         ),
       );
 }

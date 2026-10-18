@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
@@ -15,12 +15,10 @@ class DriverQueueScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Cola de trabajos')),
+      appBar: AppBar(title: const Text('Solicitudes')),
       body: BlocBuilder<DriverBloc, DriverState>(
         builder: (context, state) {
-          if (state is! DriverLoaded) {
-            return const Center(child: CircularProgressIndicator());
-          }
+          if (state is! DriverLoaded) return const LuxSkeletonList();
 
           // Solo las de su clase de vehículo.
           final pending = state.matchingRequests
@@ -34,31 +32,40 @@ class DriverQueueScreen extends StatelessWidget {
             ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
 
           if (pending.isEmpty && upcoming.isEmpty) {
-            return const _EmptyQueue(
-                isAvailable: true); // Show 'No jobs yet' instead of 'Go online'
+            return EmptyState(
+              icon: Icons.inbox_outlined,
+              message: state.isAvailable
+                  ? 'Las nuevas solicitudes\naparecerán aquí.'
+                  : 'Conéctate para\nrecibir solicitudes.',
+            );
           }
+          var i = 0;
 
           return ListView(
             padding: const EdgeInsets.all(LuxSpacing.md),
             children: [
               if (pending.isNotEmpty) ...[
-                const _SectionTitle(
-                    title: 'SOLICITUDES DISPONIBLES', isGold: true),
-                const SizedBox(height: LuxSpacing.sm),
-                ...pending.map((b) => Padding(
-                      padding: const EdgeInsets.only(bottom: LuxSpacing.md),
-                      child: _JobCard(booking: b, isPending: true),
-                    )),
-                const SizedBox(height: LuxSpacing.lg),
+                const SectionHeader(title: 'Disponibles para ti'),
+                const SizedBox(height: LuxSpacing.sm + 2),
+                for (final b in pending)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: LuxSpacing.md),
+                    child: LuxFadeIn(
+                        index: i++,
+                        child: _JobCard(booking: b, isPending: true)),
+                  ),
+                const SizedBox(height: LuxSpacing.md),
               ],
               if (upcoming.isNotEmpty) ...[
-                const _SectionTitle(
-                    title: 'MIS TRABAJOS ACTIVOS', isGold: false),
-                const SizedBox(height: LuxSpacing.sm),
-                ...upcoming.map((b) => Padding(
-                      padding: const EdgeInsets.only(bottom: LuxSpacing.md),
-                      child: _JobCard(booking: b, isPending: false),
-                    )),
+                const SectionHeader(title: 'Tus viajes asignados'),
+                const SizedBox(height: LuxSpacing.sm + 2),
+                for (final b in upcoming)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: LuxSpacing.md),
+                    child: LuxFadeIn(
+                        index: i++,
+                        child: _JobCard(booking: b, isPending: false)),
+                  ),
               ],
             ],
           );
@@ -68,145 +75,74 @@ class DriverQueueScreen extends StatelessWidget {
   }
 }
 
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle({required this.title, required this.isGold});
-  final String title;
-  final bool isGold;
-
-  @override
-  Widget build(BuildContext context) => Text(
-        title,
-        style: TextStyle(
-          fontFamily: 'Montserrat',
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: isGold ? LuxColors.sapphire : LuxColors.inkTertiary,
-          letterSpacing: 2,
-        ),
-      );
-}
-
-class _EmptyQueue extends StatelessWidget {
-  const _EmptyQueue({required this.isAvailable});
-  final bool isAvailable;
-
-  @override
-  Widget build(BuildContext context) => Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              isAvailable
-                  ? Icons.hourglass_empty_rounded
-                  : Icons.wifi_tethering_off_rounded,
-              size: 48,
-              color: LuxColors.inkTertiary,
-            ),
-            const SizedBox(height: LuxSpacing.md),
-            Text(
-              isAvailable
-                  ? 'Sin trabajos aún'
-                  : 'Conéctate para recibir trabajos',
-              style: LuxTypography.titleMedium,
-            ),
-            const SizedBox(height: LuxSpacing.sm),
-            Text(
-              isAvailable
-                  ? 'Las nuevas reservas aparecerán aquí'
-                  : 'Activa tu disponibilidad en la pestaña Inicio',
-              style: LuxTypography.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      );
-}
-
 class _JobCard extends StatelessWidget {
   const _JobCard({required this.booking, required this.isPending});
   final Booking booking;
   final bool isPending;
 
   @override
-  Widget build(BuildContext context) => LuxCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                BookingStatusChip(status: booking.status),
-                const Spacer(),
-                Text(
-                  'Bs${booking.estimatedPrice.toStringAsFixed(0)}',
-                  style: LuxTypography.titleMedium
-                      .copyWith(color: LuxColors.sapphire),
-                ),
-              ],
-            ),
-            const SizedBox(height: LuxSpacing.sm),
-            Text(
-              DateFormat('EEE, MMM d · h:mm a').format(booking.scheduledAt),
-              style: LuxTypography.caption,
-            ),
-            const SizedBox(height: LuxSpacing.md),
-            _RouteRow(origin: booking.origin, destination: booking.destination),
-            if (!booking.riderPreferences.isEmpty) ...[
-              const SizedBox(height: LuxSpacing.md),
-              RiderPreferencesNote(preferences: booking.riderPreferences),
-            ],
-            if (booking.flightNumber?.isNotEmpty == true) ...[
-              const SizedBox(height: LuxSpacing.md),
-              FlightInfoCard(booking: booking),
-            ],
-            const SizedBox(height: LuxSpacing.md),
-            _JobActions(booking: booking, isPending: isPending),
-          ],
-        ),
-      );
-}
-
-class _RouteRow extends StatelessWidget {
-  const _RouteRow({required this.origin, required this.destination});
-  final Place origin;
-  final Place destination;
-
-  @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) {
+    final hourly = booking.serviceType == ServiceType.byTheHour;
+    return LuxCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.radio_button_checked,
-                  color: LuxColors.sapphire, size: 16),
-              const SizedBox(width: LuxSpacing.sm),
               Expanded(
-                child: Text(origin.address,
-                    style: LuxTypography.bodyMedium,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      hourly
+                          ? '${booking.hours ?? 2} h a disposición'
+                          : booking.destination.displayName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.titleLarge,
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      '${LuxFormat.dateTime(booking.scheduledAt)} · '
+                      'desde ${booking.origin.displayName}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.caption.copyWith(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: LuxSpacing.md),
+              Text(
+                'Bs ${booking.estimatedPrice.toStringAsFixed(0)}',
+                style: LuxTypography.headlineLarge.copyWith(fontSize: 24),
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 7),
-            child: Container(width: 2, height: 16, color: LuxColors.border),
-          ),
+          const SizedBox(height: LuxSpacing.sm + 2),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.location_on_rounded,
-                  color: LuxColors.error, size: 16),
+              BookingStatusChip(status: booking.status),
               const SizedBox(width: LuxSpacing.sm),
-              Expanded(
-                child: Text(destination.address,
-                    style: LuxTypography.bodyMedium,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis),
-              ),
+              Text(booking.vehicleClass.label,
+                  style: LuxTypography.caption.copyWith(fontSize: 12)),
             ],
           ),
+          if (!booking.riderPreferences.isEmpty) ...[
+            const SizedBox(height: LuxSpacing.md),
+            RiderPreferencesNote(preferences: booking.riderPreferences),
+          ],
+          if (booking.flightNumber?.isNotEmpty == true) ...[
+            const SizedBox(height: LuxSpacing.md),
+            FlightInfoCard(booking: booking),
+          ],
+          const SizedBox(height: LuxSpacing.md),
+          _JobActions(booking: booking, isPending: isPending),
         ],
-      );
+      ),
+    );
+  }
 }
 
 class _JobActions extends StatelessWidget {

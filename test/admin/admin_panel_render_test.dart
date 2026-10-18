@@ -174,11 +174,11 @@ void main() {
 
   testWidgets('tarifas muestra todas las combinaciones', (tester) async {
     await _pump(tester, const PricingTab(), const Size(1280, 4000));
-    expect(find.text('PERSONALIZADA'), findsOneWidget);
-    expect(find.text('DESACTIVADA'), findsOneWidget);
+    expect(find.text('Personalizada'), findsOneWidget);
+    expect(find.text('Desactivada'), findsOneWidget);
     // Every class × service except the one customised rule above.
     expect(
-        find.text('DE FÁBRICA'),
+        find.text('De fábrica'),
         findsNWidgets(
             VehicleClass.values.length * ServiceType.values.length - 1));
   });
