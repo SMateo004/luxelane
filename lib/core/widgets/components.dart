@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../app/theme/app_theme.dart';
 import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
+import '../vehicles/vehicle_catalog.dart';
 
 /// Localized user role (Pasajero / Passenger / Passageiro…).
 extension UserRoleL10n on UserRole {
@@ -299,14 +300,7 @@ class _VehicleIcon extends StatelessWidget {
   const _VehicleIcon({required this.vehicleClass});
   final VehicleClass vehicleClass;
 
-  IconData get _icon {
-    switch (vehicleClass) {
-      case VehicleClass.business:    return Icons.directions_car_outlined;
-      case VehicleClass.firstClass:  return Icons.star_outline_rounded;
-      case VehicleClass.businessVan: return Icons.airport_shuttle_outlined;
-      case VehicleClass.electric:    return Icons.electric_car_outlined;
-    }
-  }
+  IconData get _icon => VehicleCatalog.instance.info(vehicleClass).iconData;
 
   @override
   Widget build(BuildContext context) => Container(

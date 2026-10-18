@@ -663,7 +663,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get adminSectionLoyalty => 'Fidelidad';
 
   @override
-  String get adminSectionPricing => 'Precios';
+  String get adminSectionPricing => 'Tipos y precios';
 
   @override
   String get adminSectionPromos => 'Promociones';
@@ -2520,9 +2520,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get homeFleetEyebrow => 'Nuestra flota';
-
-  @override
-  String get homeFleetModelVan => 'Mercedes V-Class o similar';
 
   @override
   String get homeFleetSwipeHint => 'Desliza para explorar →';
@@ -4863,6 +4860,220 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get updateRequiredTitle => 'Actualiza Luxelane';
+
+  @override
+  String get vehAdminActive => 'Activo';
+
+  @override
+  String get vehAdminArchived => 'Archivado';
+
+  @override
+  String vehAdminCapacityLine(String passengers, String bags) {
+    return '$passengers · $bags';
+  }
+
+  @override
+  String get vehAdminDefault => 'Valores predeterminados';
+
+  @override
+  String get vehAdminEdit => 'Editar';
+
+  @override
+  String vehAdminHourlyLine(String perHour, String min) {
+    return 'Por horas: $perHour/h (mín. $min)';
+  }
+
+  @override
+  String get vehAdminIntro => 'Lo que configures aquí es lo que ven los pasajeros al reservar y lo que cobra el servidor. Los cambios llegan a todas las apps en menos de un minuto.';
+
+  @override
+  String get vehAdminNew => 'Nuevo tipo';
+
+  @override
+  String vehAdminNotOffered(String service) {
+    return '$service: no se ofrece';
+  }
+
+  @override
+  String vehAdminOneWayLine(String base, String perKm, String min) {
+    return 'Traslado: $base + $perKm/km (mín. $min)';
+  }
+
+  @override
+  String get vehAdminTitle => 'Tipos de vehículo y precios';
+
+  @override
+  String get vehEdActive => 'Disponible para reservar';
+
+  @override
+  String get vehEdActiveHint => 'Si lo apagas, el tipo queda archivado: nadie puede reservarlo ni elegirlo como chófer y desaparece de la web, pero las reservas pasadas lo conservan.';
+
+  @override
+  String get vehEdAddSlide => 'Agregar foto';
+
+  @override
+  String get vehEdBase => 'Tarifa base';
+
+  @override
+  String vehEdCaption(String lang) {
+    return 'Texto · $lang';
+  }
+
+  @override
+  String get vehEdCarryOn => 'Equipaje de mano';
+
+  @override
+  String get vehEdChecked => 'Maletas grandes';
+
+  @override
+  String get vehEdChildSeat => 'Ofrece asiento de bebé';
+
+  @override
+  String get vehEdColor => 'Color de acento';
+
+  @override
+  String vehEdDescription(String lang) {
+    return 'Descripción · $lang';
+  }
+
+  @override
+  String vehEdEditTitle(String name) {
+    return 'Editar $name';
+  }
+
+  @override
+  String get vehEdExtraLarge => 'Equipaje extra grande';
+
+  @override
+  String get vehEdGallery => 'Galería de la reserva';
+
+  @override
+  String get vehEdGalleryHint => 'Fotos grandes que se ven al elegir el vehículo, con un texto en cada idioma. Hasta 8.';
+
+  @override
+  String get vehEdHourly => 'Chófer por horas';
+
+  @override
+  String get vehEdIcon => 'Ícono';
+
+  @override
+  String get vehEdId => 'Identificador';
+
+  @override
+  String get vehEdIdFirst => 'Escribe un identificador válido antes de subir fotos.';
+
+  @override
+  String get vehEdIdHint => 'Ej.: suvPremium. Se guarda en las reservas y no se puede cambiar.';
+
+  @override
+  String get vehEdMainPhoto => 'Foto principal';
+
+  @override
+  String get vehEdMainPhotoHint => 'Se muestra en la tarjeta del vehículo y en la flota de la web. Ideal: PNG con fondo transparente, de lado.';
+
+  @override
+  String get vehEdMin => 'Mínimo';
+
+  @override
+  String vehEdName(String lang) {
+    return 'Nombre · $lang';
+  }
+
+  @override
+  String get vehEdNewTitle => 'Nuevo tipo de vehículo';
+
+  @override
+  String get vehEdOneWay => 'Traslado a precio fijo';
+
+  @override
+  String get vehEdOrder => 'Orden en la lista (menor primero)';
+
+  @override
+  String get vehEdPassengers => 'Pasajeros';
+
+  @override
+  String get vehEdPerHour => 'Por hora';
+
+  @override
+  String get vehEdPerKm => 'Por km';
+
+  @override
+  String get vehEdPricesHint => 'Traslado: tarifa base + km × precio por km, nunca menos que el mínimo. Por horas: horas × precio por hora, con un mínimo por día.';
+
+  @override
+  String get vehEdRemove => 'Quitar';
+
+  @override
+  String get vehEdReplace => 'Cambiar foto';
+
+  @override
+  String get vehEdSave => 'Guardar';
+
+  @override
+  String get vehEdSaved => 'Tipo de vehículo guardado';
+
+  @override
+  String get vehEdSectionCapacity => 'Capacidad';
+
+  @override
+  String get vehEdSectionIdentity => 'Nombre y descripción';
+
+  @override
+  String get vehEdSectionLook => 'Apariencia';
+
+  @override
+  String get vehEdSectionPhotos => 'Fotos';
+
+  @override
+  String get vehEdSectionPrices => 'Servicios y precios (Bs)';
+
+  @override
+  String get vehEdSectionStatus => 'Disponibilidad';
+
+  @override
+  String get vehEdUpload => 'Subir foto';
+
+  @override
+  String get vehEdUploadFailed => 'No se pudo subir la foto. Usa PNG, JPG o WebP de menos de 5 MB.';
+
+  @override
+  String get vehEdUploading => 'Subiendo…';
+
+  @override
+  String get vehErrCapacity => 'Revisa las cantidades: pasajeros de 1 a 60 y equipaje desde 0.';
+
+  @override
+  String get vehErrExists => 'Ya existe un tipo con ese identificador.';
+
+  @override
+  String get vehErrFailed => 'No se pudo guardar. Revisa la conexión e inténtalo de nuevo.';
+
+  @override
+  String get vehErrId => 'El identificador debe empezar con una letra y tener de 2 a 40 letras, números, guiones o guiones bajos.';
+
+  @override
+  String get vehErrLength => 'Los nombres pueden tener hasta 40 caracteres, y las descripciones y textos hasta 120.';
+
+  @override
+  String get vehErrName => 'Completa el nombre en los tres idiomas.';
+
+  @override
+  String get vehErrPrice => 'Revisa los precios: el mínimo debe ser mayor que 0 y, por horas, también el precio por hora.';
+
+  @override
+  String get vehErrServices => 'Activa al menos un servicio.';
+
+  @override
+  String get vehErrSlides => 'La galería admite hasta 8 fotos.';
+
+  @override
+  String get vehLangEn => 'Inglés';
+
+  @override
+  String get vehLangEs => 'Español';
+
+  @override
+  String get vehLangPt => 'Portugués';
 
   @override
   String get vehicleBusiness => 'Business Class';

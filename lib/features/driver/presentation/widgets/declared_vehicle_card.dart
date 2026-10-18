@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/vehicles/vehicle_catalog.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
@@ -92,7 +93,7 @@ class _DeclaredVehicleCardState extends State<DeclaredVehicleCard> {
           Text(l.vehicleClassCheck, style: LuxTypography.caption),
           const SizedBox(height: LuxSpacing.sm),
           Wrap(spacing: 6, runSpacing: 6, children: [
-            for (final c in VehicleClass.values)
+            for (final c in {...VehicleCatalog.instance.active.map((v) => v.vehicleClass), if (_class != null) _class!})
               ChoiceChip(
                 label: Text(c.localizedLabel(l)),
                 selected: _class == c,

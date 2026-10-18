@@ -2,6 +2,7 @@ import '../../../core/enums/enums.dart';
 import '../../../core/models/models.dart';
 import '../../../core/models/place_model.dart';
 import '../../../core/utils/eta.dart';
+import '../../../core/vehicles/vehicle_catalog.dart';
 
 /// Popular city-to-city destinations from Santa Cruz de la Sierra.
 enum IntercityDestination {
@@ -40,5 +41,5 @@ abstract final class Intercity {
 
   /// Estimated one-way fare from the city centre in the given class.
   static double estimatedFare(IntercityDestination d, {VehicleClass vehicleClass = VehicleClass.business}) =>
-      DefaultPricing.estimate(vehicleClass, ServiceType.oneWay, km: estimatedKm(d).toDouble()).ceilToDouble();
+      VehicleCatalog.instance.info(vehicleClass).estimate(ServiceType.oneWay, km: estimatedKm(d).toDouble()).ceilToDouble();
 }

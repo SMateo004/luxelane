@@ -1,4 +1,5 @@
 import '../../../core/enums/enums.dart';
+import '../../../core/vehicles/vehicle_catalog.dart';
 import '../../../core/models/models.dart';
 
 /// One calendar day of the report (local time).
@@ -138,7 +139,8 @@ class OpsReport {
     var revenue = 0.0, refunded = 0.0, ratingSum = 0, ratingCount = 0, refundedTrips = 0;
     final cancelledBy = <String, int>{};
     final byHour = List<int>.filled(24, 0);
-    final byVehicle = {for (final v in VehicleClass.values) v: 0};
+    // Every type in the catalog, plus any old type still on a booking.
+    final byVehicle = {for (final v in VehicleCatalog.instance.all) v.vehicleClass: 0};
     final byService = {for (final s in ServiceType.values) s: 0};
     final drv = <String, _DriverAcc>{};
 
@@ -170,7 +172,7 @@ class OpsReport {
       final key = DateTime(at.year, at.month, at.day);
       dayTrips[key] = (dayTrips[key] ?? 0) + 1;
       dayRevenue[key] = (dayRevenue[key] ?? 0) + price;
-      byVehicle[b.vehicleClass] = byVehicle[b.vehicleClass]! + 1;
+      byVehicle[b.vehicleClass] = (byVehicle[b.vehicleClass] ?? 0) + 1;
       byService[b.serviceType] = byService[b.serviceType]! + 1;
       final r = b.riderRating;
       if (r != null) {

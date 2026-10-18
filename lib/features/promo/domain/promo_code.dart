@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../../../core/enums/enums.dart';
+import '../../../core/vehicles/vehicle_catalog.dart';
 
 enum PromoType { percent, fixed }
 
@@ -64,7 +65,8 @@ class PromoCode {
         firstRideOnly: j['firstRideOnly'] as bool? ?? false,
         vehicleClasses: [
           for (final v in (j['vehicleClasses'] as List? ?? const []))
-            ...VehicleClass.values.where((c) => c.name == v),
+            // Any catalog type, including ones added by admins later.
+            if (v is String && vehicleIdPattern.hasMatch(v)) VehicleClass(v),
         ],
         active: j['active'] as bool? ?? true,
       );

@@ -13,6 +13,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/utils/waiting_policy.dart';
+import '../../../../core/vehicles/vehicle_catalog.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_states.dart';
 import '../../../../core/widgets/lux_map.dart';
@@ -33,12 +34,11 @@ import '../booking_error_l10n.dart';
 part 'booking/widgets.dart';
 part 'booking/dialogs.dart';
 
-// ── Vehicle classes (Electric excluded) ───────────────────────────────────────
-const _kVehicleClasses = [
-  VehicleClass.business,
-  VehicleClass.firstClass,
-  VehicleClass.businessVan,
-];
+// ── Vehicle types riders can book for a service (admin catalog) ─────────────
+List<VehicleClass> _bookableClasses(ServiceType st) =>
+    VehicleCatalog.instance.activeFor(st).map((v) => v.vehicleClass).toList();
+
+VehicleClassInfo _infoOf(VehicleClass vc) => VehicleCatalog.instance.info(vc);
 
 // ── Luxelane design tokens (mirrors home_design.dart LD class) ─────────────────
 const _kBg           = LD.bg;            // #FAFBFE
@@ -116,8 +116,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ? _formData!.routeDistanceKm
           : 25.0;
 
-  double get _price =>
-      DefaultPricing.estimate(_selected, _service, km: _km, hours: _hours, days: _days);
+  double get _price => _infoOf(_selected).estimate(_service, km: _km, hours: _hours, days: _days);
 
   String get _promoKey => '${_selected.name}|${_price.round()}';
 
@@ -190,7 +189,7 @@ class _BookingScreenState extends State<BookingScreen> {
         icon: Icons.date_range_outlined,
         value: _days,
         min: 1,
-        max: DefaultPricing.maxDays,
+        max: VehicleClassInfo.maxCharterDays,
         onChanged: (v) => setState(() => _days = v),
       );
 
@@ -214,10 +213,29 @@ class _BookingScreenState extends State<BookingScreen> {
         setState(() => _showStickySelector = show);
       }
     });
+    VehicleCatalog.instance.addListener(_onCatalogChanged);
+    _keepSelectionValid();
   }
+
+  /// An admin edited the vehicle types: show the change, and move off a type
+  /// that was archived or no longer offers this service.
+  void _onCatalogChanged() {
+    if (mounted) setState(_keepSelectionValid);
+  }
+
+  void _keepSelectionValid() {
+    final options = _bookableClasses(_service);
+    if (options.isNotEmpty && !options.contains(_selected)) _selected = options.first;
+  }
+
+  void _setService(ServiceType t) => setState(() {
+        _service = t;
+        _keepSelectionValid();
+      });
 
   @override
   void dispose() {
+    VehicleCatalog.instance.removeListener(_onCatalogChanged);
     _promoCtrl.dispose();
     _leftScrollCtrl.dispose();
     super.dispose();
@@ -231,6 +249,7 @@ class _BookingScreenState extends State<BookingScreen> {
       if (extra is BookingFormData) {
         _formData = extra;
         _service  = extra.serviceType;
+        _keepSelectionValid();
         _hours    = extra.hours;
         _days     = extra.days;
       }
@@ -585,7 +604,7 @@ class _BookingScreenState extends State<BookingScreen> {
               service: _service,
               hours: _hours,
               onBack: () => context.pop(),
-              onServiceChanged: (t) => setState(() => _service = t),
+              onServiceChanged: _setService,
               onHoursChanged: (h) => setState(() => _hours = h),
               showStickySelector: _showStickySelector,
               selectedVehicle: _selected,
@@ -606,36 +625,10 @@ class _BookingScreenState extends State<BookingScreen> {
         ),
       );
 
-  // Per-vehicle dark atmospheric backgrounds
-  // Section background — near-white with a whisper of the vehicle's accent
-  static Color _vehicleBg(VehicleClass vc) {
-    switch (vc) {
-      case VehicleClass.business:    return const Color(0xFFF0F5FB); // icy navy white
-      case VehicleClass.firstClass:  return const Color(0xFFF5F0FB); // icy lavender white
-      case VehicleClass.businessVan: return const Color(0xFFF0F4FB); // icy slate white
-      case VehicleClass.electric:    return const Color(0xFFEFF9F5); // icy mint white
-    }
-  }
-
-  // Card accent tint (unselected). Pure white (selected) is applied in the card widget itself.
-  static Color _vehicleCardBg(VehicleClass vc) {
-    switch (vc) {
-      case VehicleClass.business:    return const Color(0xFFF8FBFF); // barely blue-white
-      case VehicleClass.firstClass:  return const Color(0xFFFAF8FF); // barely lavender-white
-      case VehicleClass.businessVan: return const Color(0xFFF8FAFF); // barely slate-white
-      case VehicleClass.electric:    return const Color(0xFFF7FDF9); // barely mint-white
-    }
-  }
-
-  // Stronger accent tint shown when a card IS selected
-  static Color _vehicleCardBgSelected(VehicleClass vc) {
-    switch (vc) {
-      case VehicleClass.business:    return const Color(0xFFEDF4FF); // soft navy tint
-      case VehicleClass.firstClass:  return const Color(0xFFF0EBFF); // soft lavender tint
-      case VehicleClass.businessVan: return const Color(0xFFEBF2FF); // soft slate tint
-      case VehicleClass.electric:    return const Color(0xFFE8FAF2); // soft mint tint
-    }
-  }
+  // Light tints of each type's accent colour (set in the admin catalog).
+  static Color _vehicleBg(VehicleClass vc) => _infoOf(vc).sectionTint;
+  static Color _vehicleCardBg(VehicleClass vc) => _infoOf(vc).cardTint;
+  static Color _vehicleCardBgSelected(VehicleClass vc) => _infoOf(vc).selectedTint;
 
   Widget _webLeft() => SingleChildScrollView(
         controller: _leftScrollCtrl,
@@ -703,13 +696,13 @@ class _BookingScreenState extends State<BookingScreen> {
                       scrollDirection: Axis.horizontal,
                       clipBehavior: Clip.none,
                       padding: EdgeInsets.zero,
-                      itemCount: _kVehicleClasses.length,
+                      itemCount: _bookableClasses(_service).length,
                       separatorBuilder: (_, __) => const SizedBox(width: 14),
                       itemBuilder: (_, i) {
-                        final vc = _kVehicleClasses[i];
+                        final vc = _bookableClasses(_service)[i];
                         return _VehicleCard(
                           vehicleClass: vc,
-                          price: DefaultPricing.estimate(vc, _service,
+                          price: _infoOf(vc).estimate(_service,
                               km: _km, hours: _hours, days: _days),
                           selected: _selected == vc,
                           cardBg: _vehicleCardBg(vc),
@@ -771,65 +764,31 @@ class _BookingScreenState extends State<BookingScreen> {
   // ── Luggage capacity per vehicle ───────────────────────────────────────────
 
   static List<String> _luggageOptionsFor(VehicleClass vc, AppLocalizations l) {
-    final (carryOn, checked, extraLarge) = switch (vc) {
-      VehicleClass.business    => (2, 2, 1),
-      VehicleClass.firstClass  => (3, 2, 1),
-      VehicleClass.businessVan => (8, 6, 4),
-      VehicleClass.electric    => (2, 2, 1),
-    };
+    final v = _infoOf(vc);
     return [
-      l.bookingLuggageCarryOn(carryOn),
-      l.bookingLuggageChecked(checked),
-      l.bookingLuggageExtraLarge(extraLarge),
+      l.bookingLuggageCarryOn(v.carryOn),
+      l.bookingLuggageChecked(v.checked),
+      l.bookingLuggageExtraLarge(v.extraLarge),
     ];
   }
 
   static List<String> _seatingOptionsFor(VehicleClass vc, AppLocalizations l) {
-    switch (vc) {
-      case VehicleClass.business:
-      case VehicleClass.firstClass:
-      case VehicleClass.electric:
-        return [l.bookingSeatingThree, l.bookingSeatingTwo, l.bookingSeatingInfantSeat];
-      case VehicleClass.businessVan:
-        return [l.bookingSeatingFive, l.bookingSeatingTwo];
-    }
+    final v = _infoOf(vc);
+    return [
+      l.unitPassengers(v.capacity),
+      if (v.capacity > 2) l.bookingSeatingTwo,
+      if (v.childSeat) l.bookingSeatingInfantSeat,
+    ];
   }
 
-  // (Seating images are now per-vehicle assets via _seatingAsset() — see below)
-
-  // ── Hero slides per vehicle class: (caption, image URL) ────────────────────
+  // ── Hero slides per vehicle type: (caption, image URL) ─────────────────────
 
   static List<(String, String)> _slidesFor(VehicleClass vc, AppLocalizations l) {
-    const img = 'https://images.unsplash.com/photo-';
-    const q = '?w=900&q=90&auto=format&fit=crop';
-    switch (vc) {
-      case VehicleClass.business:
-        return [
-          (l.bookingSlideBusiness1, '${img}1555215695-3004980ad54e$q'),
-          (l.bookingSlideBusiness2, '${img}1549317661-bd32c8ce0db2$q'),
-          (l.bookingSlideBusiness3, '${img}1511919884226-fd3cad34687c$q'),
-          (l.bookingSlideBusiness4, '${img}1503736334956-4c8f8e92946d$q'),
-        ];
-      case VehicleClass.firstClass:
-        return [
-          (l.bookingSlideFirst1, '${img}1563720223523-e75db7d32e5c$q'),
-          (l.bookingSlideFirst2, '${img}1485291571150-772bcfc10da5$q'),
-          (l.bookingSlideFirst3, '${img}1493238792000-8113da705763$q'),
-          (l.bookingSlideFirst4, '${img}1617788138017-80ad40651399$q'),
-        ];
-      case VehicleClass.businessVan:
-        return [
-          (l.bookingSlideVan1, '${img}1519641471654-76ce0107ad1b$q'),
-          (l.bookingSlideVan2, '${img}1544620347-c4fd4a3d5957$q'),
-          (l.bookingSlideVan3, '${img}1570125909232-eb263c188f7e$q'),
-          (l.bookingSlideVan4, '${img}1560958089-b8a1929cea89$q'),
-        ];
-      case VehicleClass.electric:
-        return [
-          (l.bookingSlideElectric1, '${img}1617788138017-80ad40651399$q'),
-          (l.bookingSlideElectric2, '${img}1560958089-b8a1929cea89$q'),
-        ];
-    }
+    final v = _infoOf(vc);
+    final slides = [for (final s in v.slides) (s.captionIn(l.localeName), s.url)];
+    if (slides.isNotEmpty) return slides;
+    // A type without a gallery shows its main photo.
+    return [(v.descriptionIn(l.localeName), v.imageUrl ?? _kLuggageFallbacks.first)];
   }
 
   Widget _webHeroSection() {
@@ -1067,15 +1026,14 @@ class _BookingScreenState extends State<BookingScreen> {
   // Returns asset path for luggage image, with per-vehicle + per-option keys.
   // User places files at: assets/images/booking/luggage/<vehicle>_<0|1|2>.png
   // e.g. assets/images/booking/luggage/business_0.png
-  static String _luggageAsset(VehicleClass vc, int option) {
-    final key = switch (vc) {
-      VehicleClass.business    => 'business',
-      VehicleClass.firstClass  => 'first_class',
-      VehicleClass.businessVan => 'van',
-      VehicleClass.electric    => 'electric',
-    };
-    return 'assets/images/booking/luggage/${key}_$option.png';
+  static String? _luggageAsset(VehicleClass vc, int option) {
+    final key = _assetKey(vc);
+    return key == null ? null : 'assets/images/booking/luggage/${key}_$option.png';
   }
+
+  /// Folder of a built-in type's bundled images (types added by admins have none).
+  static String? _assetKey(VehicleClass vc) =>
+      RegExp(r'assets/images/vehicles/([a-z_]+)/').firstMatch(_infoOf(vc).asset ?? '')?.group(1);
 
   // Fallback network images per option (generic, shown if asset not uploaded yet)
   static const _kLuggageFallbacks = [
@@ -1086,14 +1044,9 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // Returns asset path for seating image, with per-vehicle + per-option keys.
   // User places files at: assets/images/booking/seating/<vehicle>_<0|1|2|3>.png
-  static String _seatingAsset(VehicleClass vc, int option) {
-    final key = switch (vc) {
-      VehicleClass.business    => 'business',
-      VehicleClass.firstClass  => 'first_class',
-      VehicleClass.businessVan => 'van',
-      VehicleClass.electric    => 'electric',
-    };
-    return 'assets/images/booking/seating/${key}_$option.png';
+  static String? _seatingAsset(VehicleClass vc, int option) {
+    final key = _assetKey(vc);
+    return key == null ? null : 'assets/images/booking/seating/${key}_$option.png';
   }
 
   // Fallback network images per seating option index
@@ -1786,7 +1739,7 @@ class _BookingScreenState extends State<BookingScreen> {
           const SizedBox(height: 16),
           _LightServiceTypeTab(
             selected: _service,
-            onChanged: (t) => setState(() => _service = t),
+            onChanged: _setService,
           ),
           if (_service == ServiceType.byTheHour) ...[
             const SizedBox(height: 12),
@@ -1801,13 +1754,13 @@ class _BookingScreenState extends State<BookingScreen> {
               scrollDirection: Axis.horizontal,
               clipBehavior: Clip.none,
               padding: EdgeInsets.zero,
-              itemCount: _kVehicleClasses.length,
+              itemCount: _bookableClasses(_service).length,
               separatorBuilder: (_, __) => const SizedBox(width: 12),
               itemBuilder: (_, i) {
-                final vc = _kVehicleClasses[i];
+                final vc = _bookableClasses(_service)[i];
                 return _VehicleCard(
                   vehicleClass: vc,
-                  price: DefaultPricing.estimate(vc, _service, km: _km, hours: _hours, days: _days),
+                  price: _infoOf(vc).estimate(_service, km: _km, hours: _hours, days: _days),
                   selected: _selected == vc,
                   onTap: () => setState(() => _selected = vc),
                   serviceType: _service,

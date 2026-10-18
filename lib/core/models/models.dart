@@ -59,10 +59,7 @@ class User {
           orElse: () => UserRole.rider,
         ),
         vehicleClass: j['class'] != null || j['vehicleClass'] != null
-            ? VehicleClass.values.firstWhere(
-                (e) => e.name == (j['class'] ?? j['vehicleClass']),
-                orElse: () => VehicleClass.business,
-              )
+            ? VehicleClass.fromId(j['class'] ?? j['vehicleClass'])
             : null,
         createdAt: (j['createdAt'] as Timestamp).toDate(),
         isVerified: j['isVerified'] as bool? ?? false,
@@ -227,10 +224,7 @@ class Vehicle {
         model: j['model'] as String? ?? '',
         year: j['year'] as int? ?? 2024,
         plate: j['plate'] as String? ?? '',
-        vehicleClass: VehicleClass.values.firstWhere(
-          (e) => e.name == j['class'],
-          orElse: () => VehicleClass.business,
-        ),
+        vehicleClass: VehicleClass.fromId(j['class']),
         color: j['color'] as String? ?? 'Black',
         photoUrl: j['photoUrl'] as String?,
         capacity: j['capacity'] as int? ?? 3,
@@ -423,10 +417,7 @@ class Booking {
         scheduledAt: j['scheduledAt'] != null 
             ? (j['scheduledAt'] as Timestamp).toDate()
             : DateTime.now(),
-        vehicleClass: VehicleClass.values.firstWhere(
-          (e) => e.name == (j['class'] ?? j['vehicleClass'] ?? 'business'),
-          orElse: () => VehicleClass.business,
-        ),
+        vehicleClass: VehicleClass.fromId(j['class'] ?? j['vehicleClass']),
         serviceType: ServiceType.values.firstWhere(
           (e) => e.name == (j['serviceType'] ?? 'oneWay'),
           orElse: () => ServiceType.oneWay,
@@ -942,10 +933,7 @@ class PricingRule {
 
   factory PricingRule.fromJson(Map<String, dynamic> j) => PricingRule(
         id: j['id'] as String,
-        vehicleClass: VehicleClass.values.firstWhere(
-          (e) => e.name == j['vehicleClass'],
-          orElse: () => VehicleClass.business,
-        ),
+        vehicleClass: VehicleClass.fromId(j['vehicleClass']),
         serviceType: ServiceType.values.firstWhere(
           (e) => e.name == j['serviceType'],
           orElse: () => ServiceType.oneWay,
@@ -1015,43 +1003,6 @@ class AuditLog {
         'details': details,
         'createdAt': Timestamp.fromDate(createdAt),
       };
-}
-
-// ---------------------------------------------------------------------------
-// Default pricing (fallback when Firestore unavailable)
-// ---------------------------------------------------------------------------
-
-abstract class DefaultPricing {
-  static const Map<VehicleClass, Map<ServiceType, Map<String, double>>> rules = {
-    VehicleClass.business: {
-      ServiceType.oneWay:     {'base': 50, 'perKm': 3.0,  'perHour': 0,   'min': 50},
-      ServiceType.byTheHour: {'base': 0,  'perKm': 0,    'perHour': 80,  'min': 160},
-    },
-    VehicleClass.firstClass: {
-      ServiceType.oneWay:     {'base': 80, 'perKm': 4.0,  'perHour': 0,   'min': 80},
-      ServiceType.byTheHour: {'base': 0,  'perKm': 0,    'perHour': 120, 'min': 240},
-    },
-    VehicleClass.businessVan: {
-      ServiceType.oneWay:     {'base': 90, 'perKm': 5.0,  'perHour': 0,   'min': 90},
-      ServiceType.byTheHour: {'base': 0,  'perKm': 0,    'perHour': 150, 'min': 300},
-    },
-    VehicleClass.electric: {
-      ServiceType.oneWay:     {'base': 60, 'perKm': 3.5,  'perHour': 0,   'min': 60},
-      ServiceType.byTheHour: {'base': 0,  'perKm': 0,    'perHour': 90,  'min': 180},
-    },
-  };
-
-  /// Chauffeur by the day: up to [maxDays], the same hours each day.
-  static const maxDays = 7;
-
-  static double estimate(VehicleClass vc, ServiceType st, {double km = 0, int hours = 2, int days = 1}) {
-    final r = rules[vc]![st]!;
-    if (st == ServiceType.byTheHour) {
-      // Each day is priced as an hourly charter, with its own minimum.
-      return days.clamp(1, maxDays) * (r['perHour']! * hours).clamp(r['min']!, double.infinity);
-    }
-    return (r['base']! + km * r['perKm']!).clamp(r['min']!, double.infinity);
-  }
 }
 
 // ---------------------------------------------------------------------------

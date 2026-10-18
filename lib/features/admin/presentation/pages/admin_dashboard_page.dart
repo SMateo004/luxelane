@@ -17,6 +17,7 @@ import '../bloc/admin_bloc.dart';
 import '../widgets/admin_sections.dart';
 import '../widgets/admin_shared_widgets.dart';
 import '../widgets/reports_tab.dart';
+import '../../../vehicles/presentation/vehicle_classes_admin_tab.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -60,7 +61,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     Icons.directions_car_outlined,
     Icons.car_crash_outlined,
     Icons.people_outline,
-    Icons.attach_money_rounded,
+    Icons.local_taxi_outlined,
     Icons.history_rounded,
     Icons.settings_outlined,
   ];
@@ -234,7 +235,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       case 10: return const DriversTab();
       case 11: return const VehiclesTab();
       case 12: return const UsersTab();
-      case 13: return const PricingTab();
+      case 13: return const VehicleClassesAdminTab();
       case 14: return const AuditTab();
       case 15: return const SettingsTab();
       default: return const SizedBox();

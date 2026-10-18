@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../core/vehicles/vehicle_catalog.dart';
 
 // ---------------------------------------------------------------------------
 // Events
@@ -97,12 +98,8 @@ class VehicleBloc extends Bloc<VehicleEvent, VehicleState> {
 
   final VehicleRepository _repo;
 
-  static const Map<VehicleClass, double> _basePrices = {
-    VehicleClass.business:    75,
-    VehicleClass.firstClass:  140,
-    VehicleClass.businessVan: 90,
-    VehicleClass.electric:    60,
-  };
+  /// Starting price of a type (its one-way minimum), from the catalog.
+  static double _fromPrice(VehicleClass vc) => VehicleCatalog.instance.info(vc).oneWay?.min ?? 0;
 
   Future<void> _onLoad(
     VehiclesLoadRequested event,
@@ -119,7 +116,7 @@ class VehicleBloc extends Bloc<VehicleEvent, VehicleState> {
   void _onSelect(VehicleClassSelected event, Emitter<VehicleState> emit) {
     emit(VehicleSelected(
       vehicleClass: event.vehicleClass,
-      price: _basePrices[event.vehicleClass] ?? 0,
+      price: _fromPrice(event.vehicleClass),
     ));
   }
 
@@ -129,7 +126,7 @@ class VehicleBloc extends Bloc<VehicleEvent, VehicleState> {
   ) async {
     emit(VehicleSelected(
       vehicleClass: event.vehicleClass,
-      price: _basePrices[event.vehicleClass] ?? 0,
+      price: _fromPrice(event.vehicleClass),
     ));
   }
 }

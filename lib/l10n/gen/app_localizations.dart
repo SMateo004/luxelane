@@ -1222,7 +1222,7 @@ abstract class AppLocalizations {
   /// No description provided for @adminSectionPricing.
   ///
   /// In es, this message translates to:
-  /// **'Precios'**
+  /// **'Tipos y precios'**
   String get adminSectionPricing;
 
   /// No description provided for @adminSectionPromos.
@@ -4626,12 +4626,6 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Nuestra flota'**
   String get homeFleetEyebrow;
-
-  /// No description provided for @homeFleetModelVan.
-  ///
-  /// In es, this message translates to:
-  /// **'Mercedes V-Class o similar'**
-  String get homeFleetModelVan;
 
   /// Hint above the horizontal fleet carousel (uppercased)
   ///
@@ -8718,6 +8712,402 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Actualiza Luxelane'**
   String get updateRequiredTitle;
+
+  /// No description provided for @vehAdminActive.
+  ///
+  /// In es, this message translates to:
+  /// **'Activo'**
+  String get vehAdminActive;
+
+  /// No description provided for @vehAdminArchived.
+  ///
+  /// In es, this message translates to:
+  /// **'Archivado'**
+  String get vehAdminArchived;
+
+  /// No description provided for @vehAdminCapacityLine.
+  ///
+  /// In es, this message translates to:
+  /// **'{passengers} · {bags}'**
+  String vehAdminCapacityLine(String passengers, String bags);
+
+  /// No description provided for @vehAdminDefault.
+  ///
+  /// In es, this message translates to:
+  /// **'Valores predeterminados'**
+  String get vehAdminDefault;
+
+  /// No description provided for @vehAdminEdit.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get vehAdminEdit;
+
+  /// No description provided for @vehAdminHourlyLine.
+  ///
+  /// In es, this message translates to:
+  /// **'Por horas: {perHour}/h (mín. {min})'**
+  String vehAdminHourlyLine(String perHour, String min);
+
+  /// No description provided for @vehAdminIntro.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo que configures aquí es lo que ven los pasajeros al reservar y lo que cobra el servidor. Los cambios llegan a todas las apps en menos de un minuto.'**
+  String get vehAdminIntro;
+
+  /// No description provided for @vehAdminNew.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuevo tipo'**
+  String get vehAdminNew;
+
+  /// No description provided for @vehAdminNotOffered.
+  ///
+  /// In es, this message translates to:
+  /// **'{service}: no se ofrece'**
+  String vehAdminNotOffered(String service);
+
+  /// No description provided for @vehAdminOneWayLine.
+  ///
+  /// In es, this message translates to:
+  /// **'Traslado: {base} + {perKm}/km (mín. {min})'**
+  String vehAdminOneWayLine(String base, String perKm, String min);
+
+  /// No description provided for @vehAdminTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipos de vehículo y precios'**
+  String get vehAdminTitle;
+
+  /// No description provided for @vehEdActive.
+  ///
+  /// In es, this message translates to:
+  /// **'Disponible para reservar'**
+  String get vehEdActive;
+
+  /// No description provided for @vehEdActiveHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Si lo apagas, el tipo queda archivado: nadie puede reservarlo ni elegirlo como chófer y desaparece de la web, pero las reservas pasadas lo conservan.'**
+  String get vehEdActiveHint;
+
+  /// No description provided for @vehEdAddSlide.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar foto'**
+  String get vehEdAddSlide;
+
+  /// No description provided for @vehEdBase.
+  ///
+  /// In es, this message translates to:
+  /// **'Tarifa base'**
+  String get vehEdBase;
+
+  /// No description provided for @vehEdCaption.
+  ///
+  /// In es, this message translates to:
+  /// **'Texto · {lang}'**
+  String vehEdCaption(String lang);
+
+  /// No description provided for @vehEdCarryOn.
+  ///
+  /// In es, this message translates to:
+  /// **'Equipaje de mano'**
+  String get vehEdCarryOn;
+
+  /// No description provided for @vehEdChecked.
+  ///
+  /// In es, this message translates to:
+  /// **'Maletas grandes'**
+  String get vehEdChecked;
+
+  /// No description provided for @vehEdChildSeat.
+  ///
+  /// In es, this message translates to:
+  /// **'Ofrece asiento de bebé'**
+  String get vehEdChildSeat;
+
+  /// No description provided for @vehEdColor.
+  ///
+  /// In es, this message translates to:
+  /// **'Color de acento'**
+  String get vehEdColor;
+
+  /// No description provided for @vehEdDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Descripción · {lang}'**
+  String vehEdDescription(String lang);
+
+  /// No description provided for @vehEdEditTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar {name}'**
+  String vehEdEditTitle(String name);
+
+  /// No description provided for @vehEdExtraLarge.
+  ///
+  /// In es, this message translates to:
+  /// **'Equipaje extra grande'**
+  String get vehEdExtraLarge;
+
+  /// No description provided for @vehEdGallery.
+  ///
+  /// In es, this message translates to:
+  /// **'Galería de la reserva'**
+  String get vehEdGallery;
+
+  /// No description provided for @vehEdGalleryHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Fotos grandes que se ven al elegir el vehículo, con un texto en cada idioma. Hasta 8.'**
+  String get vehEdGalleryHint;
+
+  /// No description provided for @vehEdHourly.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer por horas'**
+  String get vehEdHourly;
+
+  /// No description provided for @vehEdIcon.
+  ///
+  /// In es, this message translates to:
+  /// **'Ícono'**
+  String get vehEdIcon;
+
+  /// No description provided for @vehEdId.
+  ///
+  /// In es, this message translates to:
+  /// **'Identificador'**
+  String get vehEdId;
+
+  /// No description provided for @vehEdIdFirst.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe un identificador válido antes de subir fotos.'**
+  String get vehEdIdFirst;
+
+  /// No description provided for @vehEdIdHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej.: suvPremium. Se guarda en las reservas y no se puede cambiar.'**
+  String get vehEdIdHint;
+
+  /// No description provided for @vehEdMainPhoto.
+  ///
+  /// In es, this message translates to:
+  /// **'Foto principal'**
+  String get vehEdMainPhoto;
+
+  /// No description provided for @vehEdMainPhotoHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Se muestra en la tarjeta del vehículo y en la flota de la web. Ideal: PNG con fondo transparente, de lado.'**
+  String get vehEdMainPhotoHint;
+
+  /// No description provided for @vehEdMin.
+  ///
+  /// In es, this message translates to:
+  /// **'Mínimo'**
+  String get vehEdMin;
+
+  /// No description provided for @vehEdName.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre · {lang}'**
+  String vehEdName(String lang);
+
+  /// No description provided for @vehEdNewTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuevo tipo de vehículo'**
+  String get vehEdNewTitle;
+
+  /// No description provided for @vehEdOneWay.
+  ///
+  /// In es, this message translates to:
+  /// **'Traslado a precio fijo'**
+  String get vehEdOneWay;
+
+  /// No description provided for @vehEdOrder.
+  ///
+  /// In es, this message translates to:
+  /// **'Orden en la lista (menor primero)'**
+  String get vehEdOrder;
+
+  /// No description provided for @vehEdPassengers.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajeros'**
+  String get vehEdPassengers;
+
+  /// No description provided for @vehEdPerHour.
+  ///
+  /// In es, this message translates to:
+  /// **'Por hora'**
+  String get vehEdPerHour;
+
+  /// No description provided for @vehEdPerKm.
+  ///
+  /// In es, this message translates to:
+  /// **'Por km'**
+  String get vehEdPerKm;
+
+  /// No description provided for @vehEdPricesHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Traslado: tarifa base + km × precio por km, nunca menos que el mínimo. Por horas: horas × precio por hora, con un mínimo por día.'**
+  String get vehEdPricesHint;
+
+  /// No description provided for @vehEdRemove.
+  ///
+  /// In es, this message translates to:
+  /// **'Quitar'**
+  String get vehEdRemove;
+
+  /// No description provided for @vehEdReplace.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar foto'**
+  String get vehEdReplace;
+
+  /// No description provided for @vehEdSave.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get vehEdSave;
+
+  /// No description provided for @vehEdSaved.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de vehículo guardado'**
+  String get vehEdSaved;
+
+  /// No description provided for @vehEdSectionCapacity.
+  ///
+  /// In es, this message translates to:
+  /// **'Capacidad'**
+  String get vehEdSectionCapacity;
+
+  /// No description provided for @vehEdSectionIdentity.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre y descripción'**
+  String get vehEdSectionIdentity;
+
+  /// No description provided for @vehEdSectionLook.
+  ///
+  /// In es, this message translates to:
+  /// **'Apariencia'**
+  String get vehEdSectionLook;
+
+  /// No description provided for @vehEdSectionPhotos.
+  ///
+  /// In es, this message translates to:
+  /// **'Fotos'**
+  String get vehEdSectionPhotos;
+
+  /// No description provided for @vehEdSectionPrices.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicios y precios (Bs)'**
+  String get vehEdSectionPrices;
+
+  /// No description provided for @vehEdSectionStatus.
+  ///
+  /// In es, this message translates to:
+  /// **'Disponibilidad'**
+  String get vehEdSectionStatus;
+
+  /// No description provided for @vehEdUpload.
+  ///
+  /// In es, this message translates to:
+  /// **'Subir foto'**
+  String get vehEdUpload;
+
+  /// No description provided for @vehEdUploadFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo subir la foto. Usa PNG, JPG o WebP de menos de 5 MB.'**
+  String get vehEdUploadFailed;
+
+  /// No description provided for @vehEdUploading.
+  ///
+  /// In es, this message translates to:
+  /// **'Subiendo…'**
+  String get vehEdUploading;
+
+  /// No description provided for @vehErrCapacity.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa las cantidades: pasajeros de 1 a 60 y equipaje desde 0.'**
+  String get vehErrCapacity;
+
+  /// No description provided for @vehErrExists.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya existe un tipo con ese identificador.'**
+  String get vehErrExists;
+
+  /// No description provided for @vehErrFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo guardar. Revisa la conexión e inténtalo de nuevo.'**
+  String get vehErrFailed;
+
+  /// No description provided for @vehErrId.
+  ///
+  /// In es, this message translates to:
+  /// **'El identificador debe empezar con una letra y tener de 2 a 40 letras, números, guiones o guiones bajos.'**
+  String get vehErrId;
+
+  /// No description provided for @vehErrLength.
+  ///
+  /// In es, this message translates to:
+  /// **'Los nombres pueden tener hasta 40 caracteres, y las descripciones y textos hasta 120.'**
+  String get vehErrLength;
+
+  /// No description provided for @vehErrName.
+  ///
+  /// In es, this message translates to:
+  /// **'Completa el nombre en los tres idiomas.'**
+  String get vehErrName;
+
+  /// No description provided for @vehErrPrice.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa los precios: el mínimo debe ser mayor que 0 y, por horas, también el precio por hora.'**
+  String get vehErrPrice;
+
+  /// No description provided for @vehErrServices.
+  ///
+  /// In es, this message translates to:
+  /// **'Activa al menos un servicio.'**
+  String get vehErrServices;
+
+  /// No description provided for @vehErrSlides.
+  ///
+  /// In es, this message translates to:
+  /// **'La galería admite hasta 8 fotos.'**
+  String get vehErrSlides;
+
+  /// No description provided for @vehLangEn.
+  ///
+  /// In es, this message translates to:
+  /// **'Inglés'**
+  String get vehLangEn;
+
+  /// No description provided for @vehLangEs.
+  ///
+  /// In es, this message translates to:
+  /// **'Español'**
+  String get vehLangEs;
+
+  /// No description provided for @vehLangPt.
+  ///
+  /// In es, this message translates to:
+  /// **'Portugués'**
+  String get vehLangPt;
 
   /// No description provided for @vehicleBusiness.
   ///

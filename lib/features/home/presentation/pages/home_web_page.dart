@@ -13,6 +13,7 @@ import 'package:video_player/video_player.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/place_model.dart';
 import '../../../../core/utils/waiting_policy.dart';
+import '../../../../core/vehicles/vehicle_catalog.dart';
 import '../../../../core/widgets/place_autocomplete_field.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../notifications/presentation/widgets/notification_bell.dart';

@@ -253,11 +253,6 @@ void main() {
           expect(find.text('COMPLETED'), findsOneWidget);
         }
 
-        await tester.pumpWidget(_admin(const PricingTab(), state, locale));
-        await tester.pump();
-        await tester.tap(find.byIcon(Icons.expand_more_rounded).first);
-        await tester.pump();
-
         await tester.pumpWidget(_admin(const SettingsTab(), state, locale));
         await tester.pump();
         if (locale.languageCode == 'pt') {

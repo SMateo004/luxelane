@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 import '../../app/theme/app_theme.dart';
 import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
-import '../models/models.dart';
+import '../vehicles/vehicle_catalog.dart';
 
 // ============================================================
 // Loading, empty and error states + price breakdown.
@@ -206,28 +206,31 @@ class PriceBreakdown extends StatelessWidget {
   final bool light;
 
   List<(String, double)> lines(AppLocalizations l) {
-    final r = DefaultPricing.rules[vehicleClass]![serviceType]!;
+    final r = _info.rule(serviceType);
+    if (r == null) return const [];
     if (serviceType == ServiceType.byTheHour) {
       if (days > 1) {
         return [
-          (l.tripPriceDaysLine(days, hours, LuxMoney.format(r['perHour']!)), r['perHour']! * hours * days),
+          (l.tripPriceDaysLine(days, hours, LuxMoney.format(r.perHour)), r.perHour * hours * days),
         ];
       }
-      return [(l.tripPriceHoursLine(hours, LuxMoney.format(r['perHour']!)), r['perHour']! * hours)];
+      return [(l.tripPriceHoursLine(hours, LuxMoney.format(r.perHour)), r.perHour * hours)];
     }
     return [
-      (l.tripPriceBaseFare, r['base']!),
+      (l.tripPriceBaseFare, r.base),
       (
         l.tripPriceDistanceLine(
           NumberFormat('0.0').format(km),
-          LuxMoney.format(r['perKm']!, cents: true),
+          LuxMoney.format(r.perKm, cents: true),
         ),
-        km * r['perKm']!
+        km * r.perKm
       ),
     ];
   }
 
-  double get total => DefaultPricing.estimate(vehicleClass, serviceType, km: km, hours: hours, days: days);
+  VehicleClassInfo get _info => VehicleCatalog.instance.info(vehicleClass);
+
+  double get total => _info.estimate(serviceType, km: km, hours: hours, days: days);
 
   @override
   Widget build(BuildContext context) {

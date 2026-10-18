@@ -9,14 +9,31 @@ class _FleetSection extends StatelessWidget {
   final GlobalKey sectionKey;
   final VoidCallback onBook;
 
+  static const _accents = [LuxPalette.champagne, LuxPalette.champagneLight, LuxPalette.champagneDeep];
+
+  /// The bookable vehicle types, as set in the admin catalog.
   static List<_FleetItem> _vehicles(AppLocalizations l) => [
-    _FleetItem(cls: VehicleClass.business.localizedLabel(l),    model: VehicleClass.business.localizedDescription(l),   asset: 'assets/images/vehicles/business/car.png',    tags: [l.unitPassengers(VehicleClass.business.capacity), l.homeFleetTagFixedPrice, l.homeFleetTagVerified],              accent: LuxPalette.champagne),
-    _FleetItem(cls: VehicleClass.firstClass.localizedLabel(l),  model: VehicleClass.firstClass.localizedDescription(l), asset: 'assets/images/vehicles/first_class/car.png', tags: [l.unitPassengers(VehicleClass.firstClass.capacity), l.homeFleetTagFixedPrice, l.homeFleetTagTracking],   accent: LuxPalette.champagneLight),
-    _FleetItem(cls: VehicleClass.businessVan.localizedLabel(l), model: l.homeFleetModelVan,                             asset: 'assets/images/vehicles/van/car.png',          tags: [l.unitPassengers(VehicleClass.businessVan.capacity), l.homeFleetTagExtraLuggage, l.homeFleetTagGroups],         accent: LuxPalette.champagneDeep),
-  ];
+        for (final (i, v) in VehicleCatalog.instance.active.indexed)
+          _FleetItem(
+            cls: v.nameIn(l.localeName),
+            model: v.descriptionIn(l.localeName),
+            info: v,
+            tags: [
+              l.unitPassengers(v.capacity),
+              if (v.capacity >= 5) l.homeFleetTagGroups else l.homeFleetTagFixedPrice,
+              if (v.extraLarge >= 3) l.homeFleetTagExtraLuggage else if (i.isEven) l.homeFleetTagVerified else l.homeFleetTagTracking,
+            ],
+            accent: _accents[i % _accents.length],
+          ),
+      ];
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ListenableBuilder(
+        listenable: VehicleCatalog.instance,
+        builder: (context, _) => _build(context),
+      );
+
+  Widget _build(BuildContext context) {
     final w = MediaQuery.sizeOf(context).width;
     final narrow = w < 900;
     final hPad = narrow ? 24.0 : 64.0;
@@ -75,13 +92,13 @@ class _FleetItem {
   const _FleetItem({
     required this.cls,
     required this.model,
-    required this.asset,
+    required this.info,
     required this.tags,
     required this.accent,
   });
   final String cls;
   final String model;
-  final String asset;
+  final VehicleClassInfo info;
   final List<String> tags;
   final Color accent;
 }
@@ -131,11 +148,7 @@ class _FleetCardState extends State<_FleetCard> {
                 bottom: 110, left: 0, right: 0, height: 220,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Image.asset(widget.item.asset, fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => Icon(
-                        Icons.directions_car_rounded, size: 80,
-                        color: Colors.white.withAlpha(16),
-                      )),
+                  child: _FleetImage(info: widget.item.info),
                 ),
               ),
               // Bottom info bar
@@ -185,4 +198,21 @@ class _FleetCardState extends State<_FleetCard> {
           ),
         ),
       );
+}
+
+/// Uploaded photo, else the bundled one of a built-in type, else its icon.
+class _FleetImage extends StatelessWidget {
+  const _FleetImage({required this.info});
+  final VehicleClassInfo info;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget icon() => Icon(info.iconData, size: 80, color: Colors.white.withAlpha(16));
+    Widget asset() => info.asset == null
+        ? icon()
+        : Image.asset(info.asset!, fit: BoxFit.contain, errorBuilder: (_, __, ___) => icon());
+    return info.imageUrl == null
+        ? asset()
+        : Image.network(info.imageUrl!, fit: BoxFit.contain, errorBuilder: (_, __, ___) => asset());
+  }
 }

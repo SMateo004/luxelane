@@ -105,8 +105,9 @@ void main() {
     expect(m['maxDiscount'], 100);
     expect(m['firstRideOnly'], true);
     expect(m['validUntil'], DateTime(2026, 12, 31).millisecondsSinceEpoch);
-    expect(PromoCode.fromJson('X', {'type': 'fixed', 'value': 40, 'vehicleClasses': ['firstClass', 'bogus']}).vehicleClasses,
-        [VehicleClass.firstClass]);
+    // Types added by admins are kept; malformed ids are dropped.
+    expect(PromoCode.fromJson('X', {'type': 'fixed', 'value': 40, 'vehicleClasses': ['firstClass', 'suvPremium', '1 bad']}).vehicleClasses,
+        [VehicleClass.firstClass, const VehicleClass('suvPremium')]);
   });
 
   group('PromosAdminTab', () {

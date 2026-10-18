@@ -1,0 +1,384 @@
+{
+  "vehAdminTitle": {
+    "es": "Tipos de vehículo y precios",
+    "en": "Vehicle types & prices",
+    "pt": "Tipos de veículo e preços"
+  },
+  "vehAdminIntro": {
+    "es": "Lo que configures aquí es lo que ven los pasajeros al reservar y lo que cobra el servidor. Los cambios llegan a todas las apps en menos de un minuto.",
+    "en": "What you set here is what passengers see when booking and what the server charges. Changes reach every app in under a minute.",
+    "pt": "O que você configurar aqui é o que os passageiros veem ao reservar e o que o servidor cobra. As mudanças chegam a todos os apps em menos de um minuto."
+  },
+  "vehAdminNew": {
+    "es": "Nuevo tipo",
+    "en": "New type",
+    "pt": "Novo tipo"
+  },
+  "vehAdminEdit": {
+    "es": "Editar",
+    "en": "Edit",
+    "pt": "Editar"
+  },
+  "vehAdminActive": {
+    "es": "Activo",
+    "en": "Active",
+    "pt": "Ativo"
+  },
+  "vehAdminArchived": {
+    "es": "Archivado",
+    "en": "Archived",
+    "pt": "Arquivado"
+  },
+  "vehAdminDefault": {
+    "es": "Valores predeterminados",
+    "en": "Default values",
+    "pt": "Valores padrão"
+  },
+  "vehAdminCapacityLine": {
+    "es": "{passengers} · {bags}",
+    "en": "{passengers} · {bags}",
+    "pt": "{passengers} · {bags}",
+    "placeholders": {
+      "passengers": {
+        "type": "String"
+      },
+      "bags": {
+        "type": "String"
+      }
+    }
+  },
+  "vehAdminOneWayLine": {
+    "es": "Traslado: {base} + {perKm}/km (mín. {min})",
+    "en": "Transfer: {base} + {perKm}/km (min. {min})",
+    "pt": "Traslado: {base} + {perKm}/km (mín. {min})",
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "perKm": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "vehAdminHourlyLine": {
+    "es": "Por horas: {perHour}/h (mín. {min})",
+    "en": "By the hour: {perHour}/h (min. {min})",
+    "pt": "Por hora: {perHour}/h (mín. {min})",
+    "placeholders": {
+      "perHour": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "vehAdminNotOffered": {
+    "es": "{service}: no se ofrece",
+    "en": "{service}: not offered",
+    "pt": "{service}: não oferecido",
+    "placeholders": {
+      "service": {
+        "type": "String"
+      }
+    }
+  },
+  "vehEdNewTitle": {
+    "es": "Nuevo tipo de vehículo",
+    "en": "New vehicle type",
+    "pt": "Novo tipo de veículo"
+  },
+  "vehEdEditTitle": {
+    "es": "Editar {name}",
+    "en": "Edit {name}",
+    "pt": "Editar {name}",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "vehEdSectionIdentity": {
+    "es": "Nombre y descripción",
+    "en": "Name and description",
+    "pt": "Nome e descrição"
+  },
+  "vehEdId": {
+    "es": "Identificador",
+    "en": "Identifier",
+    "pt": "Identificador"
+  },
+  "vehEdIdHint": {
+    "es": "Ej.: suvPremium. Se guarda en las reservas y no se puede cambiar.",
+    "en": "E.g. premiumSuv. It's stored on bookings and can't be changed.",
+    "pt": "Ex.: suvPremium. Fica salvo nas reservas e não pode ser alterado."
+  },
+  "vehLangEs": {
+    "es": "Español",
+    "en": "Spanish",
+    "pt": "Espanhol"
+  },
+  "vehLangEn": {
+    "es": "Inglés",
+    "en": "English",
+    "pt": "Inglês"
+  },
+  "vehLangPt": {
+    "es": "Portugués",
+    "en": "Portuguese",
+    "pt": "Português"
+  },
+  "vehEdName": {
+    "es": "Nombre · {lang}",
+    "en": "Name · {lang}",
+    "pt": "Nome · {lang}",
+    "placeholders": {
+      "lang": {
+        "type": "String"
+      }
+    }
+  },
+  "vehEdDescription": {
+    "es": "Descripción · {lang}",
+    "en": "Description · {lang}",
+    "pt": "Descrição · {lang}",
+    "placeholders": {
+      "lang": {
+        "type": "String"
+      }
+    }
+  },
+  "vehEdSectionPhotos": {
+    "es": "Fotos",
+    "en": "Photos",
+    "pt": "Fotos"
+  },
+  "vehEdMainPhoto": {
+    "es": "Foto principal",
+    "en": "Main photo",
+    "pt": "Foto principal"
+  },
+  "vehEdMainPhotoHint": {
+    "es": "Se muestra en la tarjeta del vehículo y en la flota de la web. Ideal: PNG con fondo transparente, de lado.",
+    "en": "Shown on the vehicle card and in the website's fleet. Best: a side-view PNG with a transparent background.",
+    "pt": "Aparece no cartão do veículo e na frota do site. Ideal: PNG com fundo transparente, de lado."
+  },
+  "vehEdUpload": {
+    "es": "Subir foto",
+    "en": "Upload photo",
+    "pt": "Enviar foto"
+  },
+  "vehEdReplace": {
+    "es": "Cambiar foto",
+    "en": "Change photo",
+    "pt": "Trocar foto"
+  },
+  "vehEdRemove": {
+    "es": "Quitar",
+    "en": "Remove",
+    "pt": "Remover"
+  },
+  "vehEdGallery": {
+    "es": "Galería de la reserva",
+    "en": "Booking gallery",
+    "pt": "Galeria da reserva"
+  },
+  "vehEdGalleryHint": {
+    "es": "Fotos grandes que se ven al elegir el vehículo, con un texto en cada idioma. Hasta 8.",
+    "en": "Large photos shown when choosing the vehicle, with a caption in each language. Up to 8.",
+    "pt": "Fotos grandes exibidas ao escolher o veículo, com um texto em cada idioma. Até 8."
+  },
+  "vehEdAddSlide": {
+    "es": "Agregar foto",
+    "en": "Add photo",
+    "pt": "Adicionar foto"
+  },
+  "vehEdCaption": {
+    "es": "Texto · {lang}",
+    "en": "Caption · {lang}",
+    "pt": "Texto · {lang}",
+    "placeholders": {
+      "lang": {
+        "type": "String"
+      }
+    }
+  },
+  "vehEdUploading": {
+    "es": "Subiendo…",
+    "en": "Uploading…",
+    "pt": "Enviando…"
+  },
+  "vehEdUploadFailed": {
+    "es": "No se pudo subir la foto. Usa PNG, JPG o WebP de menos de 5 MB.",
+    "en": "The photo couldn't be uploaded. Use a PNG, JPG or WebP under 5 MB.",
+    "pt": "Não foi possível enviar a foto. Use PNG, JPG ou WebP com menos de 5 MB."
+  },
+  "vehEdIdFirst": {
+    "es": "Escribe un identificador válido antes de subir fotos.",
+    "en": "Enter a valid identifier before uploading photos.",
+    "pt": "Digite um identificador válido antes de enviar fotos."
+  },
+  "vehEdSectionCapacity": {
+    "es": "Capacidad",
+    "en": "Capacity",
+    "pt": "Capacidade"
+  },
+  "vehEdPassengers": {
+    "es": "Pasajeros",
+    "en": "Passengers",
+    "pt": "Passageiros"
+  },
+  "vehEdCarryOn": {
+    "es": "Equipaje de mano",
+    "en": "Carry-on bags",
+    "pt": "Bagagem de mão"
+  },
+  "vehEdChecked": {
+    "es": "Maletas grandes",
+    "en": "Large suitcases",
+    "pt": "Malas grandes"
+  },
+  "vehEdExtraLarge": {
+    "es": "Equipaje extra grande",
+    "en": "Extra-large luggage",
+    "pt": "Bagagem extragrande"
+  },
+  "vehEdChildSeat": {
+    "es": "Ofrece asiento de bebé",
+    "en": "Offers an infant seat",
+    "pt": "Oferece assento de bebê"
+  },
+  "vehEdSectionPrices": {
+    "es": "Servicios y precios (Bs)",
+    "en": "Services and prices (Bs)",
+    "pt": "Serviços e preços (Bs)"
+  },
+  "vehEdPricesHint": {
+    "es": "Traslado: tarifa base + km × precio por km, nunca menos que el mínimo. Por horas: horas × precio por hora, con un mínimo por día.",
+    "en": "Transfer: base fare + km × price per km, never below the minimum. By the hour: hours × hourly price, with a minimum per day.",
+    "pt": "Traslado: tarifa base + km × preço por km, nunca abaixo do mínimo. Por hora: horas × preço por hora, com um mínimo por dia."
+  },
+  "vehEdOneWay": {
+    "es": "Traslado a precio fijo",
+    "en": "Fixed-price transfer",
+    "pt": "Traslado com preço fixo"
+  },
+  "vehEdHourly": {
+    "es": "Chófer por horas",
+    "en": "Chauffeur by the hour",
+    "pt": "Motorista por hora"
+  },
+  "vehEdBase": {
+    "es": "Tarifa base",
+    "en": "Base fare",
+    "pt": "Tarifa base"
+  },
+  "vehEdPerKm": {
+    "es": "Por km",
+    "en": "Per km",
+    "pt": "Por km"
+  },
+  "vehEdMin": {
+    "es": "Mínimo",
+    "en": "Minimum",
+    "pt": "Mínimo"
+  },
+  "vehEdPerHour": {
+    "es": "Por hora",
+    "en": "Per hour",
+    "pt": "Por hora"
+  },
+  "vehEdSectionLook": {
+    "es": "Apariencia",
+    "en": "Appearance",
+    "pt": "Aparência"
+  },
+  "vehEdIcon": {
+    "es": "Ícono",
+    "en": "Icon",
+    "pt": "Ícone"
+  },
+  "vehEdColor": {
+    "es": "Color de acento",
+    "en": "Accent colour",
+    "pt": "Cor de destaque"
+  },
+  "vehEdSectionStatus": {
+    "es": "Disponibilidad",
+    "en": "Availability",
+    "pt": "Disponibilidade"
+  },
+  "vehEdActive": {
+    "es": "Disponible para reservar",
+    "en": "Available to book",
+    "pt": "Disponível para reservar"
+  },
+  "vehEdActiveHint": {
+    "es": "Si lo apagas, el tipo queda archivado: nadie puede reservarlo ni elegirlo como chófer y desaparece de la web, pero las reservas pasadas lo conservan.",
+    "en": "Turned off, the type is archived: nobody can book it or pick it as a chauffeur and it leaves the website, but past bookings keep it.",
+    "pt": "Desligado, o tipo fica arquivado: ninguém pode reservá-lo nem escolhê-lo como motorista e ele sai do site, mas as reservas anteriores o mantêm."
+  },
+  "vehEdOrder": {
+    "es": "Orden en la lista (menor primero)",
+    "en": "Position in the list (lowest first)",
+    "pt": "Ordem na lista (menor primeiro)"
+  },
+  "vehEdSave": {
+    "es": "Guardar",
+    "en": "Save",
+    "pt": "Salvar"
+  },
+  "vehEdSaved": {
+    "es": "Tipo de vehículo guardado",
+    "en": "Vehicle type saved",
+    "pt": "Tipo de veículo salvo"
+  },
+  "vehErrId": {
+    "es": "El identificador debe empezar con una letra y tener de 2 a 40 letras, números, guiones o guiones bajos.",
+    "en": "The identifier must start with a letter and have 2 to 40 letters, numbers, hyphens or underscores.",
+    "pt": "O identificador deve começar com uma letra e ter de 2 a 40 letras, números, hífens ou sublinhados."
+  },
+  "vehErrName": {
+    "es": "Completa el nombre en los tres idiomas.",
+    "en": "Fill in the name in all three languages.",
+    "pt": "Preencha o nome nos três idiomas."
+  },
+  "vehErrLength": {
+    "es": "Los nombres pueden tener hasta 40 caracteres, y las descripciones y textos hasta 120.",
+    "en": "Names can be up to 40 characters, descriptions and captions up to 120.",
+    "pt": "Os nomes podem ter até 40 caracteres, e as descrições e textos até 120."
+  },
+  "vehErrCapacity": {
+    "es": "Revisa las cantidades: pasajeros de 1 a 60 y equipaje desde 0.",
+    "en": "Check the numbers: 1 to 60 passengers and luggage from 0.",
+    "pt": "Confira as quantidades: de 1 a 60 passageiros e bagagem a partir de 0."
+  },
+  "vehErrServices": {
+    "es": "Activa al menos un servicio.",
+    "en": "Turn on at least one service.",
+    "pt": "Ative pelo menos um serviço."
+  },
+  "vehErrPrice": {
+    "es": "Revisa los precios: el mínimo debe ser mayor que 0 y, por horas, también el precio por hora.",
+    "en": "Check the prices: the minimum must be above 0, and so must the hourly price.",
+    "pt": "Confira os preços: o mínimo deve ser maior que 0 e, por hora, também o preço por hora."
+  },
+  "vehErrSlides": {
+    "es": "La galería admite hasta 8 fotos.",
+    "en": "The gallery takes up to 8 photos.",
+    "pt": "A galeria aceita até 8 fotos."
+  },
+  "vehErrExists": {
+    "es": "Ya existe un tipo con ese identificador.",
+    "en": "A type with that identifier already exists.",
+    "pt": "Já existe um tipo com esse identificador."
+  },
+  "vehErrFailed": {
+    "es": "No se pudo guardar. Revisa la conexión e inténtalo de nuevo.",
+    "en": "Couldn't save. Check your connection and try again.",
+    "pt": "Não foi possível salvar. Verifique a conexão e tente novamente."
+  }
+}

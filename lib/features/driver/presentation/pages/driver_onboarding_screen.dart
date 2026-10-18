@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/vehicles/vehicle_catalog.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
@@ -308,7 +309,8 @@ class _VehicleForm extends StatelessWidget {
   final VehicleClass vehicleClass;
   final ValueChanged<VehicleClass> onClassChanged;
 
-  static const _classes = VehicleClass.values;
+  /// Types chauffeurs can sign up with: the ones riders can book.
+  static List<VehicleClass> get _classes => VehicleCatalog.instance.active.map((v) => v.vehicleClass).toList();
 
   @override
   Widget build(BuildContext context) {

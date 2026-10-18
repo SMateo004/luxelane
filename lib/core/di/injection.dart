@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:get_it/get_it.dart';
 
 import '../app_gate/global_config.dart';
+import '../vehicles/vehicle_catalog.dart';
 import '../../features/admin/data/repositories/admin_repository_impl.dart';
 import '../../features/admin/domain/repositories/admin_repository.dart';
 import '../../features/admin/presentation/bloc/admin_bloc.dart';
@@ -36,6 +37,7 @@ import '../../features/ride/domain/usecases/ride_usecases.dart';
 import '../../features/ride/presentation/bloc/ride_bloc.dart';
 import '../../features/settlements/data/settlement_repository.dart';
 import '../../features/support/data/support_repository.dart';
+import '../../features/vehicles/data/vehicle_class_repository.dart';
 import '../data/notification_repository_impl.dart';
 import '../repositories/repositories.dart';
 import '../services/maps_service.dart';
@@ -49,6 +51,8 @@ Future<void> configureDependencies() async {
   _registerRepositories();
   _registerUseCases();
   _registerBlocs();
+  // Vehicle types, prices and photos edited by admins, watched live.
+  VehicleCatalog.instance.watch(sl());
 }
 
 void _registerServices() {
@@ -108,6 +112,10 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<DriverDocumentsRepository>(
     () => DriverDocumentsRepositoryImpl(sl(), sl()),
+  );
+
+  sl.registerLazySingleton<VehicleClassRepository>(
+    () => VehicleClassRepositoryImpl(sl()),
   );
 
   sl.registerLazySingleton<PromoRepository>(

@@ -663,7 +663,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminSectionLoyalty => 'Loyalty';
 
   @override
-  String get adminSectionPricing => 'Pricing';
+  String get adminSectionPricing => 'Types & prices';
 
   @override
   String get adminSectionPromos => 'Promotions';
@@ -2508,9 +2508,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeFleetEyebrow => 'Our fleet';
-
-  @override
-  String get homeFleetModelVan => 'Mercedes V-Class or similar';
 
   @override
   String get homeFleetSwipeHint => 'Swipe to explore →';
@@ -4851,6 +4848,220 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get updateRequiredTitle => 'Update Luxelane';
+
+  @override
+  String get vehAdminActive => 'Active';
+
+  @override
+  String get vehAdminArchived => 'Archived';
+
+  @override
+  String vehAdminCapacityLine(String passengers, String bags) {
+    return '$passengers · $bags';
+  }
+
+  @override
+  String get vehAdminDefault => 'Default values';
+
+  @override
+  String get vehAdminEdit => 'Edit';
+
+  @override
+  String vehAdminHourlyLine(String perHour, String min) {
+    return 'By the hour: $perHour/h (min. $min)';
+  }
+
+  @override
+  String get vehAdminIntro => 'What you set here is what passengers see when booking and what the server charges. Changes reach every app in under a minute.';
+
+  @override
+  String get vehAdminNew => 'New type';
+
+  @override
+  String vehAdminNotOffered(String service) {
+    return '$service: not offered';
+  }
+
+  @override
+  String vehAdminOneWayLine(String base, String perKm, String min) {
+    return 'Transfer: $base + $perKm/km (min. $min)';
+  }
+
+  @override
+  String get vehAdminTitle => 'Vehicle types & prices';
+
+  @override
+  String get vehEdActive => 'Available to book';
+
+  @override
+  String get vehEdActiveHint => 'Turned off, the type is archived: nobody can book it or pick it as a chauffeur and it leaves the website, but past bookings keep it.';
+
+  @override
+  String get vehEdAddSlide => 'Add photo';
+
+  @override
+  String get vehEdBase => 'Base fare';
+
+  @override
+  String vehEdCaption(String lang) {
+    return 'Caption · $lang';
+  }
+
+  @override
+  String get vehEdCarryOn => 'Carry-on bags';
+
+  @override
+  String get vehEdChecked => 'Large suitcases';
+
+  @override
+  String get vehEdChildSeat => 'Offers an infant seat';
+
+  @override
+  String get vehEdColor => 'Accent colour';
+
+  @override
+  String vehEdDescription(String lang) {
+    return 'Description · $lang';
+  }
+
+  @override
+  String vehEdEditTitle(String name) {
+    return 'Edit $name';
+  }
+
+  @override
+  String get vehEdExtraLarge => 'Extra-large luggage';
+
+  @override
+  String get vehEdGallery => 'Booking gallery';
+
+  @override
+  String get vehEdGalleryHint => 'Large photos shown when choosing the vehicle, with a caption in each language. Up to 8.';
+
+  @override
+  String get vehEdHourly => 'Chauffeur by the hour';
+
+  @override
+  String get vehEdIcon => 'Icon';
+
+  @override
+  String get vehEdId => 'Identifier';
+
+  @override
+  String get vehEdIdFirst => 'Enter a valid identifier before uploading photos.';
+
+  @override
+  String get vehEdIdHint => 'E.g. premiumSuv. It\'s stored on bookings and can\'t be changed.';
+
+  @override
+  String get vehEdMainPhoto => 'Main photo';
+
+  @override
+  String get vehEdMainPhotoHint => 'Shown on the vehicle card and in the website\'s fleet. Best: a side-view PNG with a transparent background.';
+
+  @override
+  String get vehEdMin => 'Minimum';
+
+  @override
+  String vehEdName(String lang) {
+    return 'Name · $lang';
+  }
+
+  @override
+  String get vehEdNewTitle => 'New vehicle type';
+
+  @override
+  String get vehEdOneWay => 'Fixed-price transfer';
+
+  @override
+  String get vehEdOrder => 'Position in the list (lowest first)';
+
+  @override
+  String get vehEdPassengers => 'Passengers';
+
+  @override
+  String get vehEdPerHour => 'Per hour';
+
+  @override
+  String get vehEdPerKm => 'Per km';
+
+  @override
+  String get vehEdPricesHint => 'Transfer: base fare + km × price per km, never below the minimum. By the hour: hours × hourly price, with a minimum per day.';
+
+  @override
+  String get vehEdRemove => 'Remove';
+
+  @override
+  String get vehEdReplace => 'Change photo';
+
+  @override
+  String get vehEdSave => 'Save';
+
+  @override
+  String get vehEdSaved => 'Vehicle type saved';
+
+  @override
+  String get vehEdSectionCapacity => 'Capacity';
+
+  @override
+  String get vehEdSectionIdentity => 'Name and description';
+
+  @override
+  String get vehEdSectionLook => 'Appearance';
+
+  @override
+  String get vehEdSectionPhotos => 'Photos';
+
+  @override
+  String get vehEdSectionPrices => 'Services and prices (Bs)';
+
+  @override
+  String get vehEdSectionStatus => 'Availability';
+
+  @override
+  String get vehEdUpload => 'Upload photo';
+
+  @override
+  String get vehEdUploadFailed => 'The photo couldn\'t be uploaded. Use a PNG, JPG or WebP under 5 MB.';
+
+  @override
+  String get vehEdUploading => 'Uploading…';
+
+  @override
+  String get vehErrCapacity => 'Check the numbers: 1 to 60 passengers and luggage from 0.';
+
+  @override
+  String get vehErrExists => 'A type with that identifier already exists.';
+
+  @override
+  String get vehErrFailed => 'Couldn\'t save. Check your connection and try again.';
+
+  @override
+  String get vehErrId => 'The identifier must start with a letter and have 2 to 40 letters, numbers, hyphens or underscores.';
+
+  @override
+  String get vehErrLength => 'Names can be up to 40 characters, descriptions and captions up to 120.';
+
+  @override
+  String get vehErrName => 'Fill in the name in all three languages.';
+
+  @override
+  String get vehErrPrice => 'Check the prices: the minimum must be above 0, and so must the hourly price.';
+
+  @override
+  String get vehErrServices => 'Turn on at least one service.';
+
+  @override
+  String get vehErrSlides => 'The gallery takes up to 8 photos.';
+
+  @override
+  String get vehLangEn => 'English';
+
+  @override
+  String get vehLangEs => 'Spanish';
+
+  @override
+  String get vehLangPt => 'Portuguese';
 
   @override
   String get vehicleBusiness => 'Business Class';

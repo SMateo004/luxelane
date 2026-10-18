@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../app/theme/app_theme.dart';
 import '../../../core/di/injection.dart';
 import '../../../core/enums/enums.dart';
+import '../../../core/vehicles/vehicle_catalog.dart';
 import '../../../core/widgets/components.dart';
 import '../../../l10n/l10n.dart';
 import '../data/promo_repository.dart';
@@ -356,7 +357,7 @@ class _PromoEditDialogState extends State<PromoEditDialog> {
               Text(l.promoAdminClasses, style: LuxTypography.caption),
               const SizedBox(height: LuxSpacing.xs),
               Wrap(spacing: LuxSpacing.sm, runSpacing: LuxSpacing.sm, children: [
-                for (final c in VehicleClass.values)
+                for (final c in {...VehicleCatalog.instance.all.where((v) => v.active).map((v) => v.vehicleClass), ..._classes})
                   FilterChip(
                     label: Text(c.localizedLabel(l)),
                     selected: _classes.contains(c),

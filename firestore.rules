@@ -412,6 +412,13 @@ service cloud.firestore {
     // /pricingRules/{ruleId}
     // -------------------------------------------------------------------------
 
+    // Vehicle catalog: public (the website shows the fleet); written only by
+    // the saveVehicleClass callable, which validates every field.
+    match /vehicleClasses/{classId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     match /pricingRules/{ruleId} {
       allow read:   if isAuthenticated();
       allow write:  if isAdmin();

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../core/enums/enums.dart';
 import '../core/models/models.dart';
+import '../core/vehicles/vehicle_catalog.dart';
 import 'gen/app_localizations.dart';
 
 export 'gen/app_localizations.dart';
@@ -61,19 +62,10 @@ class IntlLocaleSync extends StatelessWidget {
 }
 
 extension VehicleClassL10n on VehicleClass {
-  String localizedLabel(AppLocalizations l) => switch (this) {
-        VehicleClass.business => l.vehicleBusiness,
-        VehicleClass.firstClass => l.vehicleFirstClass,
-        VehicleClass.businessVan => l.vehicleBusinessVan,
-        VehicleClass.electric => l.vehicleElectric,
-      };
+  /// Name and description in the app language, from the vehicle catalog.
+  String localizedLabel(AppLocalizations l) => VehicleCatalog.instance.info(this).nameIn(l.localeName);
 
-  String localizedDescription(AppLocalizations l) => switch (this) {
-        VehicleClass.business => l.vehicleBusinessDesc,
-        VehicleClass.firstClass => l.vehicleFirstClassDesc,
-        VehicleClass.businessVan => l.vehicleBusinessVanDesc,
-        VehicleClass.electric => l.vehicleElectricDesc,
-      };
+  String localizedDescription(AppLocalizations l) => VehicleCatalog.instance.info(this).descriptionIn(l.localeName);
 }
 
 extension ServiceTypeL10n on ServiceType {

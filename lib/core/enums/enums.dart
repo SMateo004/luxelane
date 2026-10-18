@@ -1,6 +1,37 @@
+import 'package:flutter/foundation.dart' show immutable;
+
+import '../vehicles/vehicle_catalog.dart';
+
 enum UserRole { rider, driver, admin }
 
-enum VehicleClass { business, firstClass, businessVan, electric }
+/// A vehicle type, by id. The id is what bookings, vehicles and promos store;
+/// names, photos, capacity and prices live in the catalog
+/// (lib/core/vehicles/vehicle_catalog.dart), editable by admins.
+@immutable
+class VehicleClass {
+  const VehicleClass(this.id);
+  final String id;
+
+  static const business = VehicleClass('business');
+  static const firstClass = VehicleClass('firstClass');
+  static const businessVan = VehicleClass('businessVan');
+  static const electric = VehicleClass('electric');
+
+  /// Same as [id] (kept from when this was an enum).
+  String get name => id;
+
+  /// Reads a stored id; unknown ids are kept (types added by admins).
+  static VehicleClass fromId(Object? id) => id is String && id.isNotEmpty ? VehicleClass(id) : business;
+
+  @override
+  bool operator ==(Object other) => other is VehicleClass && other.id == id;
+
+  @override
+  int get hashCode => id.hashCode;
+
+  @override
+  String toString() => id;
+}
 
 enum ServiceType { oneWay, byTheHour }
 
@@ -20,36 +51,12 @@ enum PaymentStatus { pending, captured, refunded, failed }
 // Extensions
 // ---------------------------------------------------------------------------
 
-// Display names live in lib/l10n (VehicleClassL10n, ServiceTypeL10n,
-// BookingStatusL10n). These Spanish getters remain only for non-UI uses
-// such as logs and admin exports.
+// Display names live in lib/l10n (ServiceTypeL10n, BookingStatusL10n) and,
+// for vehicles, in the catalog. These Spanish getters remain only for non-UI
+// uses such as logs and admin exports.
 extension VehicleClassX on VehicleClass {
-  @Deprecated('UI text must use localizedLabel(context.l10n)')
-  String get label {
-    switch (this) {
-      case VehicleClass.business:      return 'Business Class';
-      case VehicleClass.firstClass:    return 'First Class';
-      case VehicleClass.businessVan:   return 'Business Van';
-      case VehicleClass.electric:      return 'Eléctrico';
-    }
-  }
-
-  @Deprecated('UI text must use localizedDescription(context.l10n)')
-  String get description {
-    switch (this) {
-      case VehicleClass.business:    return 'Mercedes E-Class o similar';
-      case VehicleClass.firstClass:  return 'Mercedes S-Class o similar';
-      case VehicleClass.businessVan: return 'Mercedes V-Class · Hasta 7';
-      case VehicleClass.electric:    return 'Tesla Model S o similar';
-    }
-  }
-
-  int get capacity {
-    switch (this) {
-      case VehicleClass.businessVan: return 7;
-      default:                       return 3;
-    }
-  }
+  /// Passengers it seats (from the catalog).
+  int get capacity => VehicleCatalog.instance.info(this).capacity;
 }
 
 extension ServiceTypeX on ServiceType {

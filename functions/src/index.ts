@@ -7,7 +7,7 @@ import * as stripe from './stripe_service';
 import { STRIPE_SECRET_KEY, stripeEnabled } from './stripe_service';
 import { defineSecret } from 'firebase-functions/params';
 import { logger } from './logger';
-import { Lang, MessageKey, clock, docName, langOf, money, moneyExact, shortDate, t, vehicleName } from './messages';
+import { Lang, MessageKey, clock, docName, langOf, money, moneyExact, shortDate, t } from './messages';
 import { buildChauffeur, isValidRating, nextAverage } from './chauffeur';
 import {
   DispatchState,
@@ -86,28 +86,55 @@ import {
   toMinorUnits,
 } from './policy';
 import {
-  CAPACITY,
   CURRENCY,
-  DEFAULT_RULES,
   LatLng,
   QUOTE_TTL_MS,
+  SERVICE_TYPES,
   ServiceType,
-  VehicleClass,
   clampDays,
   clampHours,
   computeCharterPrice,
   computePrice,
   isLatLng,
   isServiceType,
-  isVehicleClass,
   resolveDistanceKm,
   ruleFromDoc,
 } from './pricing';
+import {
+  ResolvedVehicleClass,
+  isVehicleClassId,
+  nameIn as vehicleNameIn,
+  resolveVehicleClass,
+  validateVehicleClassInput,
+} from './vehicle_classes';
 
 admin.initializeApp();
 const db = admin.firestore();
 
 const MAX_ADVANCE_MS = 365 * 24 * 60 * 60 * 1000;
+
+// Vehicle catalog lookups, cached briefly per instance (admin edits apply
+// within half a minute; saveVehicleClass clears its own instance's cache).
+const vehicleCache = new Map<string, { at: number; value: ResolvedVehicleClass | null }>();
+const VEHICLE_CACHE_MS = 30 * 1000;
+
+async function loadVehicleClass(id: string): Promise<ResolvedVehicleClass | null> {
+  const hit = vehicleCache.get(id);
+  if (hit && Date.now() - hit.at < VEHICLE_CACHE_MS) return hit.value;
+  const doc = await db.collection('vehicleClasses').doc(id).get();
+  // Built-ins never saved in the catalog keep prices from the old pricing tab.
+  const legacy: Partial<Record<ServiceType, Record<string, unknown> | undefined>> = {};
+  if (!doc.exists) {
+    await Promise.all(
+      SERVICE_TYPES.map(async (st) => {
+        legacy[st] = (await db.collection('pricingRules').doc(`${id}_${st}`).get()).data();
+      }),
+    );
+  }
+  const value = resolveVehicleClass(id, doc.data(), (st, fallback) => ruleFromDoc(legacy[st], fallback));
+  vehicleCache.set(id, { at: Date.now(), value });
+  return value;
+}
 const stripeOpts = { secrets: [STRIPE_SECRET_KEY] };
 
 // AeroDataBox key (RapidAPI). Set with: firebase functions:secrets:set FLIGHT_API_KEY
@@ -215,7 +242,9 @@ interface StoredPlace {
 
 interface QuoteDoc {
   riderId: string;
-  vehicleClass: VehicleClass;
+  vehicleClass: string;
+  /** Passengers the type seated when quoted (vehicle catalog). */
+  capacity?: number;
   serviceType: ServiceType;
   origin: StoredPlace;
   destination: StoredPlace;
@@ -459,7 +488,7 @@ export const savePromoCode = onCall(async (req) => {
     maxRedemptions: Math.max(0, Math.floor(Number(d.maxRedemptions) || 0)),
     perUserLimit: Math.max(1, Math.floor(Number(d.perUserLimit) || 1)),
     firstRideOnly: d.firstRideOnly === true,
-    vehicleClasses: Array.isArray(d.vehicleClasses) ? d.vehicleClasses.filter(isVehicleClass) : [],
+    vehicleClasses: Array.isArray(d.vehicleClasses) ? d.vehicleClasses.filter(isVehicleClassId).slice(0, 50) : [],
     active: d.active !== false,
   };
   const error = promoDefinitionError(def);
@@ -529,7 +558,7 @@ export const quoteBooking = onCall(async (req) => {
     promoCode?: unknown;
   };
 
-  if (!isVehicleClass(vehicleClass)) throw err.invalidArgument('invalid vehicleClass');
+  if (!isVehicleClassId(vehicleClass)) throw err.invalidArgument('invalid vehicleClass');
   if (!isServiceType(serviceType)) throw err.invalidArgument('invalid serviceType');
   if (!isLatLng(origin)) throw err.invalidArgument('origin required');
 
@@ -538,8 +567,11 @@ export const quoteBooking = onCall(async (req) => {
   const dest = isLatLng(destination) ? destination : hourly ? origin : null;
   if (!dest) throw err.invalidArgument('destination required');
 
-  const ruleSnap = await db.collection('pricingRules').doc(`${vehicleClass}_${serviceType}`).get();
-  const rule = ruleFromDoc(ruleSnap.data(), DEFAULT_RULES[vehicleClass][serviceType]);
+  // Prices come from the vehicle catalog; archived types can't be booked.
+  const cls = await loadVehicleClass(vehicleClass);
+  if (!cls || !cls.active) throw err.invalidArgument('invalid vehicleClass');
+  const rule = cls.services[serviceType];
+  if (!rule) throw err.invalidArgument('vehicle/service-not-offered');
 
   const distanceKm = hourly ? null : resolveDistanceKm(origin, dest, routeDistanceKm);
   const quoteHours = hourly ? clampHours(hours) : null;
@@ -581,6 +613,7 @@ export const quoteBooking = onCall(async (req) => {
   const quote: QuoteDoc = {
     riderId: uid,
     vehicleClass,
+    capacity: cls.capacity,
     serviceType,
     origin: toPlace(origin as PlaceInput),
     destination: toPlace(dest as PlaceInput),
@@ -680,7 +713,7 @@ export const createBooking = onCall(stripeOpts, async (req) => {
     throw err.invalidArgument('invalid scheduledAt');
   }
 
-  const capacity = CAPACITY[quote.vehicleClass];
+  const capacity = quote.capacity ?? (await loadVehicleClass(quote.vehicleClass))?.capacity ?? 3;
   const passengers = Math.round(Number(d.passengerCount ?? 1));
   if (!(passengers >= 1 && passengers <= capacity)) throw err.invalidArgument('invalid passengerCount');
   const luggage = Math.round(Number(d.luggageCount ?? 0));
@@ -992,10 +1025,12 @@ async function notifyOffer(driverId: string, booking: BookingDoc, distanceKm?: n
 
 async function notifyBroadcast(booking: BookingDoc): Promise<void> {
   const drivers = await loadDriverCandidates();
+  const clsId = bookingClass(booking);
+  const cls = await loadVehicleClass(clsId);
   await Promise.all(
     drivers.map((d) =>
       pushUser(d.driverId, 'broadcastTitle', 'broadcastBody', (lang) => ({
-        vehicle: vehicleName(bookingClass(booking), lang),
+        vehicle: vehicleNameIn(cls, clsId, lang),
         price: money(booking.estimatedPrice, lang),
       }), links.driverHome),
     ),
@@ -1799,6 +1834,32 @@ async function releaseBooking(
   await startDispatch(ref, { ...released, status: 'pending', driverId: undefined }, bookingId);
   logger.info('releaseBooking', 'released', { bookingId, driverId: released.driverId, by });
 }
+
+// ---------------------------------------------------------------------------
+// saveVehicleClass (admin) — creates or edits a vehicle type: names, photos,
+// capacity, services and prices. Types are never deleted (bookings keep their
+// id): archiving sets active=false.
+// ---------------------------------------------------------------------------
+
+export const saveVehicleClass = onCall(async (req) => {
+  const uid = await requireAdmin(req);
+  const { id, data, create } = (req.data ?? {}) as { id?: unknown; data?: unknown; create?: unknown };
+  const result = validateVehicleClassInput(id, data);
+  if (!result.ok) throw err.invalidArgument(result.error);
+  const ref = db.collection('vehicleClasses').doc(id as string);
+  await db.runTransaction(async (tx) => {
+    const existing = await tx.get(ref);
+    // A new type can't take the id of an existing (or built-in) one.
+    if (create === true && (existing.exists || resolveVehicleClass(id as string, undefined, (_, f) => f))) {
+      throw err.failedPrecondition('vehicle/exists');
+    }
+    tx.set(ref, { ...result.doc, updatedAt: admin.firestore.Timestamp.now(), updatedBy: uid });
+  });
+  vehicleCache.delete(id as string);
+  await writeAudit('vehicle_class_saved', { vehicleClass: id, by: uid, active: result.doc.active });
+  logger.info('saveVehicleClass', 'saved', { id, by: uid, create: create === true });
+  return { id };
+});
 
 // ---------------------------------------------------------------------------
 // deleteAccount — required by app stores and personal-data rules.

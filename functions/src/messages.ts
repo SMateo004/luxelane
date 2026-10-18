@@ -230,17 +230,6 @@ export function t(lang: Lang, key: MessageKey, params: Record<string, string | n
   return M[key][lang].replace(/\{(\w+)\}/g, (_, name: string) => String(params[name] ?? ''));
 }
 
-/** Vehicle class names as shown to drivers. */
-export function vehicleName(cls: string, lang: Lang): string {
-  const names: Record<string, Template> = {
-    business: { es: 'Business Class', en: 'Business Class', pt: 'Business Class' },
-    firstClass: { es: 'First Class', en: 'First Class', pt: 'First Class' },
-    businessVan: { es: 'Business Van', en: 'Business Van', pt: 'Business Van' },
-    electric: { es: 'Eléctrico', en: 'Electric', pt: 'Elétrico' },
-  };
-  return names[cls]?.[lang] ?? cls;
-}
-
 const DOC_NAMES: Record<string, Template> = {
   license: { es: 'licencia de conducir', en: "driver's license", pt: 'carteira de motorista' },
   idCard: { es: 'cédula de identidad', en: 'ID card', pt: 'documento de identidade' },

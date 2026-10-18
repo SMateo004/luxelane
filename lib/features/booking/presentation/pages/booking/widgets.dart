@@ -89,9 +89,8 @@ class _WebTopBar extends StatelessWidget {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: _kVehicleClasses.map((vc) {
-                              final price = DefaultPricing.estimate(
-                                  vc, service, km: km, hours: hours);
+                            children: _bookableClasses(service).map((vc) {
+                              final price = _infoOf(vc).estimate(service, km: km, hours: hours);
                               final isActive = selectedVehicle == vc;
                               return Padding(
                                 padding: const EdgeInsets.only(right: 10),
@@ -252,43 +251,10 @@ class _VehicleCard extends StatefulWidget {
   final int?         hours;
   final double?      width;
 
-  // Asset path for transparent-background PNG
-  String get _assetPath {
-    switch (vehicleClass) {
-      case VehicleClass.business:
-        return 'assets/images/vehicles/business/car.png';
-      case VehicleClass.firstClass:
-        return 'assets/images/vehicles/first_class/car.png';
-      case VehicleClass.businessVan:
-        return 'assets/images/vehicles/van/car.png';
-      case VehicleClass.electric:
-        return 'assets/images/vehicles/electric/car.png';
-    }
-  }
+  VehicleClassInfo get _info => _infoOf(vehicleClass);
 
-  // Network fallback
-  String get _fallbackUrl {
-    switch (vehicleClass) {
-      case VehicleClass.business:
-        return 'https://images.unsplash.com/photo-1555215695-3004980ad54e?w=700&q=90&auto=format&fit=crop';
-      case VehicleClass.firstClass:
-        return 'https://images.unsplash.com/photo-1563720223523-e75db7d32e5c?w=700&q=90&auto=format&fit=crop';
-      case VehicleClass.businessVan:
-        return 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=700&q=90&auto=format&fit=crop';
-      case VehicleClass.electric:
-        return 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=700&q=90&auto=format&fit=crop';
-    }
-  }
-
-  // Sapphire-family accent per vehicle (border + pill)
-  Color get _accentColor {
-    switch (vehicleClass) {
-      case VehicleClass.business:    return const Color(0xFF3A7BD5);
-      case VehicleClass.firstClass:  return const Color(0xFF7B4DB5);
-      case VehicleClass.businessVan: return const Color(0xFF2E6AC8);
-      case VehicleClass.electric:    return const Color(0xFF2A9E72);
-    }
-  }
+  // Accent per vehicle type (border + pill), from the admin catalog.
+  Color get _accentColor => _info.color;
 
   @override
   State<_VehicleCard> createState() => _VehicleCardState();
@@ -448,10 +414,7 @@ class _VehicleCardState extends State<_VehicleCard>
                             left:   kCarLeft,
                             child: SizedBox(
                               width: kCarW,
-                              child: _CarImage(
-                                assetPath: widget._assetPath,
-                                fallbackUrl: widget._fallbackUrl,
-                              ),
+                              child: _CarImage(info: widget._info),
                             ),
                           ),
 
@@ -627,25 +590,22 @@ class _VehicleCardState extends State<_VehicleCard>
   }
 }
 
-/// Tries local asset first; falls back to a placeholder icon if not found.
+/// The vehicle type's photo: the one uploaded in the admin, else the bundled
+/// image of a built-in type, else its icon.
 class _CarImage extends StatelessWidget {
-  const _CarImage({required this.assetPath, required this.fallbackUrl});
-  final String assetPath;
-  final String fallbackUrl;
+  const _CarImage({required this.info});
+  final VehicleClassInfo info;
 
   @override
-  Widget build(BuildContext context) => Image.asset(
-        assetPath,
-        fit: BoxFit.contain,
-        width: double.infinity,
-        errorBuilder: (_, __, ___) => const Center(
-          child: Icon(
-            Icons.directions_car_outlined,
-            size: 80,
-            color: Colors.black12,
-          ),
-        ),
-      );
+  Widget build(BuildContext context) {
+    Widget icon() => Center(child: Icon(info.iconData, size: 80, color: Colors.black12));
+    Widget asset() => info.asset == null
+        ? icon()
+        : Image.asset(info.asset!, fit: BoxFit.contain, width: double.infinity, errorBuilder: (_, __, ___) => icon());
+    final url = info.imageUrl;
+    if (url == null) return asset();
+    return Image.network(url, fit: BoxFit.contain, width: double.infinity, errorBuilder: (_, __, ___) => asset());
+  }
 }
 
 /// Capacity section image: tries local asset, falls back to network, then icon.
@@ -656,17 +616,14 @@ class _CapacityImage extends StatelessWidget {
     required this.fallbackUrl,
     required this.fallbackIcon,
   });
-  final String   assetPath;
+  /// Bundled image of a built-in type; null for types added by admins.
+  final String?  assetPath;
   final String   fallbackUrl;
   final IconData fallbackIcon;
 
   @override
-  Widget build(BuildContext context) => Image.asset(
-        assetPath,
-        width: double.infinity,
-        height: 290,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Image.network(
+  Widget build(BuildContext context) {
+    Widget network() => Image.network(
           fallbackUrl,
           width: double.infinity,
           height: 290,
@@ -678,8 +635,16 @@ class _CapacityImage extends StatelessWidget {
               child: Icon(fallbackIcon, size: 60, color: _kTextTertiary),
             ),
           ),
-        ),
-      );
+        );
+    if (assetPath == null) return network();
+    return Image.asset(
+      assetPath!,
+      width: double.infinity,
+      height: 290,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => network(),
+    );
+  }
 }
 
 // ── BOOK OPTION CARD (Blacklane "Book for myself / guest" style) ───────────────

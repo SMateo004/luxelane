@@ -208,11 +208,6 @@
     "pt": "Deslize para explorar →",
     "description": "Hint above the horizontal fleet carousel (uppercased)"
   },
-  "homeFleetModelVan": {
-    "es": "Mercedes V-Class o similar",
-    "en": "Mercedes V-Class or similar",
-    "pt": "Mercedes Classe V ou similar"
-  },
   "homeFleetTagExtraLuggage": {
     "es": "Equipaje extra",
     "en": "Extra luggage space",

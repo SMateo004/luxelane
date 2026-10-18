@@ -429,7 +429,7 @@
   "adminSectionHealth": "Salud",
   "adminSectionHotels": "Hoteles",
   "adminSectionLoyalty": "Fidelidad",
-  "adminSectionPricing": "Precios",
+  "adminSectionPricing": "Tipos y precios",
   "adminSectionPromos": "Promociones",
   "adminSectionReports": "Reportes",
   "adminSectionSettings": "Configuración",
@@ -1538,7 +1538,6 @@
   "homeErrorDestinationRequired": "Ingresa un destino",
   "homeErrorPickupRequired": "Ingresa un lugar de recogida",
   "homeFleetEyebrow": "Nuestra flota",
-  "homeFleetModelVan": "Mercedes V-Class o similar",
   "homeFleetSwipeHint": "Desliza para explorar →",
   "@homeFleetSwipeHint": {
     "description": "Hint above the horizontal fleet carousel (uppercased)"
@@ -3177,6 +3176,140 @@
   "updateRequiredButton": "Actualizar",
   "updateRequiredNoLink": "Búscala en la App Store para actualizarla.",
   "updateRequiredTitle": "Actualiza Luxelane",
+  "vehAdminActive": "Activo",
+  "vehAdminArchived": "Archivado",
+  "vehAdminCapacityLine": "{passengers} · {bags}",
+  "@vehAdminCapacityLine": {
+    "placeholders": {
+      "passengers": {
+        "type": "String"
+      },
+      "bags": {
+        "type": "String"
+      }
+    }
+  },
+  "vehAdminDefault": "Valores predeterminados",
+  "vehAdminEdit": "Editar",
+  "vehAdminHourlyLine": "Por horas: {perHour}/h (mín. {min})",
+  "@vehAdminHourlyLine": {
+    "placeholders": {
+      "perHour": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "vehAdminIntro": "Lo que configures aquí es lo que ven los pasajeros al reservar y lo que cobra el servidor. Los cambios llegan a todas las apps en menos de un minuto.",
+  "vehAdminNew": "Nuevo tipo",
+  "vehAdminNotOffered": "{service}: no se ofrece",
+  "@vehAdminNotOffered": {
+    "placeholders": {
+      "service": {
+        "type": "String"
+      }
+    }
+  },
+  "vehAdminOneWayLine": "Traslado: {base} + {perKm}/km (mín. {min})",
+  "@vehAdminOneWayLine": {
+    "placeholders": {
+      "base": {
+        "type": "String"
+      },
+      "perKm": {
+        "type": "String"
+      },
+      "min": {
+        "type": "String"
+      }
+    }
+  },
+  "vehAdminTitle": "Tipos de vehículo y precios",
+  "vehEdActive": "Disponible para reservar",
+  "vehEdActiveHint": "Si lo apagas, el tipo queda archivado: nadie puede reservarlo ni elegirlo como chófer y desaparece de la web, pero las reservas pasadas lo conservan.",
+  "vehEdAddSlide": "Agregar foto",
+  "vehEdBase": "Tarifa base",
+  "vehEdCaption": "Texto · {lang}",
+  "@vehEdCaption": {
+    "placeholders": {
+      "lang": {
+        "type": "String"
+      }
+    }
+  },
+  "vehEdCarryOn": "Equipaje de mano",
+  "vehEdChecked": "Maletas grandes",
+  "vehEdChildSeat": "Ofrece asiento de bebé",
+  "vehEdColor": "Color de acento",
+  "vehEdDescription": "Descripción · {lang}",
+  "@vehEdDescription": {
+    "placeholders": {
+      "lang": {
+        "type": "String"
+      }
+    }
+  },
+  "vehEdEditTitle": "Editar {name}",
+  "@vehEdEditTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "vehEdExtraLarge": "Equipaje extra grande",
+  "vehEdGallery": "Galería de la reserva",
+  "vehEdGalleryHint": "Fotos grandes que se ven al elegir el vehículo, con un texto en cada idioma. Hasta 8.",
+  "vehEdHourly": "Chófer por horas",
+  "vehEdIcon": "Ícono",
+  "vehEdId": "Identificador",
+  "vehEdIdFirst": "Escribe un identificador válido antes de subir fotos.",
+  "vehEdIdHint": "Ej.: suvPremium. Se guarda en las reservas y no se puede cambiar.",
+  "vehEdMainPhoto": "Foto principal",
+  "vehEdMainPhotoHint": "Se muestra en la tarjeta del vehículo y en la flota de la web. Ideal: PNG con fondo transparente, de lado.",
+  "vehEdMin": "Mínimo",
+  "vehEdName": "Nombre · {lang}",
+  "@vehEdName": {
+    "placeholders": {
+      "lang": {
+        "type": "String"
+      }
+    }
+  },
+  "vehEdNewTitle": "Nuevo tipo de vehículo",
+  "vehEdOneWay": "Traslado a precio fijo",
+  "vehEdOrder": "Orden en la lista (menor primero)",
+  "vehEdPassengers": "Pasajeros",
+  "vehEdPerHour": "Por hora",
+  "vehEdPerKm": "Por km",
+  "vehEdPricesHint": "Traslado: tarifa base + km × precio por km, nunca menos que el mínimo. Por horas: horas × precio por hora, con un mínimo por día.",
+  "vehEdRemove": "Quitar",
+  "vehEdReplace": "Cambiar foto",
+  "vehEdSave": "Guardar",
+  "vehEdSaved": "Tipo de vehículo guardado",
+  "vehEdSectionCapacity": "Capacidad",
+  "vehEdSectionIdentity": "Nombre y descripción",
+  "vehEdSectionLook": "Apariencia",
+  "vehEdSectionPhotos": "Fotos",
+  "vehEdSectionPrices": "Servicios y precios (Bs)",
+  "vehEdSectionStatus": "Disponibilidad",
+  "vehEdUpload": "Subir foto",
+  "vehEdUploadFailed": "No se pudo subir la foto. Usa PNG, JPG o WebP de menos de 5 MB.",
+  "vehEdUploading": "Subiendo…",
+  "vehErrCapacity": "Revisa las cantidades: pasajeros de 1 a 60 y equipaje desde 0.",
+  "vehErrExists": "Ya existe un tipo con ese identificador.",
+  "vehErrFailed": "No se pudo guardar. Revisa la conexión e inténtalo de nuevo.",
+  "vehErrId": "El identificador debe empezar con una letra y tener de 2 a 40 letras, números, guiones o guiones bajos.",
+  "vehErrLength": "Los nombres pueden tener hasta 40 caracteres, y las descripciones y textos hasta 120.",
+  "vehErrName": "Completa el nombre en los tres idiomas.",
+  "vehErrPrice": "Revisa los precios: el mínimo debe ser mayor que 0 y, por horas, también el precio por hora.",
+  "vehErrServices": "Activa al menos un servicio.",
+  "vehErrSlides": "La galería admite hasta 8 fotos.",
+  "vehLangEn": "Inglés",
+  "vehLangEs": "Español",
+  "vehLangPt": "Portugués",
   "vehicleBusiness": "Business Class",
   "vehicleBusinessDesc": "Mercedes E-Class o similar",
   "vehicleBusinessVan": "Business Van",

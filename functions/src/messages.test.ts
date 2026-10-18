@@ -1,5 +1,5 @@
 import { describe, it, expect } from '@jest/globals';
-import { clock, langOf, money, t, vehicleName } from './messages';
+import { clock, langOf, money, t } from './messages';
 
 describe('push messages', () => {
   it('maps device locales to supported languages, defaulting to Spanish', () => {
@@ -28,6 +28,5 @@ describe('push messages', () => {
       expect(msg).not.toMatch(/\{\w+\}/);
     }
     expect(t('en', 'statusArrived', { time: '2:35 PM' })).toBe('Your chauffeur has arrived. Free waiting until 2:35 PM.');
-    expect(vehicleName('electric', 'pt')).toBe('Elétrico');
   });
 });

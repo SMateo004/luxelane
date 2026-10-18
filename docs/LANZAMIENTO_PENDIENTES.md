@@ -20,7 +20,7 @@ Si prefieres hacerlo tú, desde tu computadora con `gcloud` y `firebase` iniciad
 
 | # | Comando | Para qué |
 |---|---|---|
-| 6 | `firebase deploy --only functions,firestore,storage` | Sube el servidor y las reglas de todo lo hecho en las fases 3 y 4 |
+| 6 | `firebase deploy --only functions,firestore,storage` | Sube el servidor y las reglas de todo lo hecho en las fases 3 y 4 (incluido el catálogo de vehículos: sin esto, guardar en **Tipos y precios** falla) |
 | 7 | `PROJECT=luxelane-4e7ae ./scripts/setup_backups.sh` | Copias de seguridad (hoy no hay ninguna) |
 | 8 | `PROJECT=luxelane-4e7ae ALERT_EMAIL=<tu correo> ./scripts/setup_alerts.sh` | Avisos por correo si el servidor falla |
 | 9 | `./scripts/setup_mobile.sh` | Registra las 4 apps móviles en Firebase y escribe su configuración |

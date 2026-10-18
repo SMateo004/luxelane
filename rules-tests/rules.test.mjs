@@ -442,6 +442,23 @@ describe('support hours config', () => {
   });
 });
 
+describe('vehicle catalog', () => {
+  it('anyone reads the catalog; nobody writes it directly (saveVehicleClass does)', async () => {
+    await assertSucceeds(getDoc(doc(env.unauthenticatedContext().firestore(), 'vehicleClasses/business')));
+    await assertFails(setDoc(doc(db('admin'), 'vehicleClasses/suv'), { active: true }));
+    await assertFails(setDoc(doc(db('rider'), 'vehicleClasses/suv'), { active: true }));
+  });
+
+  it('storage: admins upload vehicle photos (images under 5 MB); everyone can see them', async () => {
+    const st = (uid) => env.authenticatedContext(uid).storage();
+    const png = new Uint8Array([137, 80, 78, 71]);
+    await assertSucceeds(uploadBytes(ref(st('admin'), 'vehicle_classes/suv/main.png'), png, { contentType: 'image/png' }));
+    await assertFails(uploadBytes(ref(st('admin'), 'vehicle_classes/suv/x.pdf'), png, { contentType: 'application/pdf' }));
+    await assertFails(uploadBytes(ref(st('driver'), 'vehicle_classes/suv/main2.png'), png, { contentType: 'image/png' }));
+    await assertSucceeds(getBytes(ref(env.unauthenticatedContext().storage(), 'vehicle_classes/suv/main.png')));
+  });
+});
+
 describe('global config', () => {
   it('admins set maintenance and minimum builds; anyone reads it, even signed out', async () => {
     const cfg = { isMaintenanceMode: false, riderMinBuild: 3, driverMinBuild: 0, riderIosUrl: 'https://apps.apple.com/app/id123', driverIosUrl: '' };

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:luxelane/core/enums/enums.dart';
+import 'package:luxelane/core/vehicles/vehicle_catalog.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/core/widgets/lux_states.dart';
 import 'package:luxelane/features/booking/presentation/pages/booking_confirmed_page.dart';
@@ -34,13 +35,13 @@ void main() {
 
   group('chauffeur by the day', () {
     test('estimate multiplies the daily price and caps at 7 days', () {
-      expect(DefaultPricing.estimate(VehicleClass.business, ServiceType.byTheHour, hours: 8), 640);
-      expect(DefaultPricing.estimate(VehicleClass.business, ServiceType.byTheHour, hours: 8, days: 3), 1920);
+      expect(VehicleCatalog.instance.info(VehicleClass.business).estimate(ServiceType.byTheHour, hours: 8), 640);
+      expect(VehicleCatalog.instance.info(VehicleClass.business).estimate(ServiceType.byTheHour, hours: 8, days: 3), 1920);
       // Minimum applies per day (2 h × Bs 80 = 160).
-      expect(DefaultPricing.estimate(VehicleClass.business, ServiceType.byTheHour, hours: 1, days: 2), 320);
-      expect(DefaultPricing.estimate(VehicleClass.business, ServiceType.byTheHour, hours: 8, days: 30), 640 * 7);
+      expect(VehicleCatalog.instance.info(VehicleClass.business).estimate(ServiceType.byTheHour, hours: 1, days: 2), 320);
+      expect(VehicleCatalog.instance.info(VehicleClass.business).estimate(ServiceType.byTheHour, hours: 8, days: 30), 640 * 7);
       // Days never change one-way prices.
-      expect(DefaultPricing.estimate(VehicleClass.business, ServiceType.oneWay, km: 10, days: 3), 80);
+      expect(VehicleCatalog.instance.info(VehicleClass.business).estimate(ServiceType.oneWay, km: 10, days: 3), 80);
     });
 
     test('quote and booking read days (default 1)', () {
