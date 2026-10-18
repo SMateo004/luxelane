@@ -133,7 +133,7 @@ class _BookSectionState extends State<_BookSection> {
           child: SizedBox(
             height: screenH,
             child: Container(
-              color: LD.dark,
+              color: LD.bg2,
               child: Stack(children: [
                 // Radial champagne glow
                 Positioned.fill(
@@ -141,7 +141,7 @@ class _BookSectionState extends State<_BookSection> {
                     decoration: BoxDecoration(
                       gradient: RadialGradient(
                         center: const Alignment(0, 0.3), radius: 0.85,
-                        colors: [LD.accent.withAlpha(70), Colors.transparent],
+                        colors: [LD.cta.withAlpha(46), LD.cta.withAlpha(0)],
                       ),
                     ),
                   ),
@@ -257,7 +257,7 @@ class _BookWidget extends StatelessWidget {
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF040A12), Color(0xFF1B3050), Color(0xFF040A12)],
+                  colors: [LuxPalette.champagneDeep, LuxPalette.champagne, LuxPalette.champagneDeep],
                 ),
               ),
             ),
@@ -328,34 +328,35 @@ class _BookLeftPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pad = isMobile ? 20.0 : 36.0;
-    // Back cover: dark with minimal branding
+    // Back cover: quiet paper with minimal branding
     if (data.headline.isEmpty) {
       return ClipRect(
         child: Container(
-          color: const Color(0xFF04090F),
+          color: LD.bg3,
           child: Stack(children: [
             Positioned(bottom: 40, left: 0, right: 0,
               child: Center(child: Container(
                 width: 40, height: 40,
                 decoration: BoxDecoration(
-                  border: Border.all(color: LD.accent.withAlpha(60), width: 1),
+                  border: Border.all(color: LD.accent.withAlpha(90), width: 1),
                 ),
                 child: Center(child: Text('L', style: GoogleFonts.cormorantGaramond(
                   fontSize: 22, fontWeight: FontWeight.w400,
-                  color: LD.accent.withAlpha(80), decoration: TextDecoration.none,
+                  color: LD.accent.withAlpha(140), decoration: TextDecoration.none,
                 ))),
               ))),
           ]),
         ),
       );
     }
+    final onPhoto = data.photoPath != null;
     return ClipRect(
       child: Container(
         decoration: BoxDecoration(
           gradient: data.photoPath == null
               ? const LinearGradient(
                   begin: Alignment.topLeft, end: Alignment.bottomRight,
-                  colors: [Color(0xFF060E1A), Color(0xFF18233A), Color(0xFF060E1A)],
+                  colors: [LuxPalette.paper2, LuxPalette.paper, LuxPalette.paper3],
                   stops: [0, 0.55, 1])
               : null,
           image: data.photoPath != null
@@ -366,7 +367,7 @@ class _BookLeftPanel extends StatelessWidget {
           // Photo dark overlay
           if (data.photoPath != null)
             Positioned.fill(child: DecoratedBox(
-              decoration: BoxDecoration(color: const Color(0xFF0B1220).withAlpha(122)),
+              decoration: BoxDecoration(color: LD.ink.withAlpha(70)),
             )),
 
           // Ghost page number
@@ -374,7 +375,7 @@ class _BookLeftPanel extends StatelessWidget {
             child: Text(data.num,
               style: GoogleFonts.cormorantGaramond(
                 fontSize: isMobile ? 100 : 180, fontWeight: FontWeight.w600,
-                color: Colors.white.withAlpha(6), height: 1,
+                color: (onPhoto ? Colors.white : LD.ink).withAlpha(onPhoto ? 6 : 10), height: 1,
                 decoration: TextDecoration.none))),
 
           // Car PNG (page 0)
@@ -404,7 +405,9 @@ class _BookLeftPanel extends StatelessWidget {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter, end: Alignment.topCenter,
-                  colors: [const Color(0xFF040A12).withAlpha(230), Colors.transparent],
+                  colors: onPhoto
+                      ? [LD.ink.withAlpha(200), LD.ink.withAlpha(0)]
+                      : [LD.bg.withAlpha(0), LD.bg.withAlpha(0)],
                 ),
               ),
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
@@ -415,7 +418,8 @@ class _BookLeftPanel extends StatelessWidget {
                 Text(data.sub,
                   style: GoogleFonts.cormorantGaramond(
                     fontSize: isMobile ? 11 : 13, fontWeight: FontWeight.w300,
-                    fontStyle: FontStyle.italic, color: Colors.white.withAlpha(140),
+                    fontStyle: FontStyle.italic,
+                    color: onPhoto ? Colors.white.withAlpha(170) : LD.ink2,
                     decoration: TextDecoration.none)),
               ]),
             )),

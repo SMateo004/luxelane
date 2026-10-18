@@ -32,7 +32,7 @@ part 'web/book.dart';
 /// Landing sections that can be pumped on their own (tests, previews):
 /// they need no auth or video plugins (the hero needs a `MapsService`).
 @visibleForTesting
-enum WebHomeSection { hero, marquee, fleet, trust, footer, datePanel, book }
+enum WebHomeSection { hero, marquee, fleet, trust, footer, datePanel, book, business, cta }
 
 @visibleForTesting
 class WebHomeSectionPreview extends StatelessWidget {
@@ -56,6 +56,8 @@ class WebHomeSectionPreview extends StatelessWidget {
         WebHomeSection.datePanel => _InlineDatePanel(
             date: date ?? DateTime.now(), onChanged: (_) {}, onClose: () {}),
         WebHomeSection.book => const _BookSection(),
+        WebHomeSection.business => _BusinessSection(sectionKey: GlobalKey(), onLearnMore: () {}),
+        WebHomeSection.cta => _CtaSection(onBook: () {}, onViewFleet: () {}),
       };
 }
 
@@ -151,7 +153,7 @@ class _WebHomePageState extends State<WebHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: LD.dark,
+      backgroundColor: LD.bg,
       body: LuxScrollProvider(
         notifier: _luxScroll,
         child: Stack(

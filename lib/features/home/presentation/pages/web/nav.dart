@@ -27,10 +27,10 @@ class _LuxNav extends StatelessWidget {
       duration: const Duration(milliseconds: 400),
       height: 72,
       decoration: BoxDecoration(
-        color: scrolled ? const Color(0xF50B1220) : Colors.transparent,
+        color: scrolled ? const Color(0xF5FAF8F4) : Colors.transparent,
         border: Border(
           bottom: BorderSide(
-            color: scrolled ? Colors.white.withAlpha(25) : Colors.transparent,
+            color: scrolled ? LD.border : Colors.transparent,
           ),
         ),
       ),
@@ -43,7 +43,7 @@ class _LuxNav extends StatelessWidget {
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: () => context.go('/'),
-                child: const _LuxLogo(light: true),
+                child: const _LuxLogo(),
               ),
             ),
             const Spacer(),
@@ -51,9 +51,9 @@ class _LuxNav extends StatelessWidget {
             if (!narrow) ...[
               const _ServicesDropdownLink(),
               const SizedBox(width: 32),
-              _NavLink(l.homeNavFleet,    light: true, onTap: onFleet),
+              _NavLink(l.homeNavFleet,    onTap: onFleet),
               const SizedBox(width: 32),
-              _NavLink(l.homeNavBusiness, light: true, onTap: onBusiness),
+              _NavLink(l.homeNavBusiness, onTap: onBusiness),
               const SizedBox(width: 40),
             ],
             // Auth-aware right side
@@ -63,7 +63,7 @@ class _LuxNav extends StatelessWidget {
                   return Row(children: [
                     if (!narrow) _NavCta(onTap: () => ctx.go('/')),
                     if (!narrow) const SizedBox(width: 12),
-                    const NotificationBell(color: Colors.white),
+                    const NotificationBell(color: LD.ink),
                     const SizedBox(width: 8),
                     _AvatarDot(
                       name:  auth.user.displayName,
@@ -82,8 +82,7 @@ class _LuxNav extends StatelessWidget {
 }
 
 class _LuxLogo extends StatelessWidget {
-  const _LuxLogo({this.light = false});
-  final bool light;
+  const _LuxLogo();
 
   @override
   Widget build(BuildContext context) => Row(
@@ -93,7 +92,7 @@ class _LuxLogo extends StatelessWidget {
             width: 26, height: 26,
             decoration: BoxDecoration(
               border: Border.all(
-                color: light ? Colors.white.withAlpha(200) : LD.ink,
+                color: LD.ink,
                 width: 1.5,
               ),
             ),
@@ -102,7 +101,7 @@ class _LuxLogo extends StatelessWidget {
                 'L',
                 style: TextStyle(
                   fontFamily: kSerif, fontSize: 15, fontWeight: FontWeight.w500,
-                  color: light ? Colors.white : LD.ink,
+                  color: LD.ink,
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -114,7 +113,7 @@ class _LuxLogo extends StatelessWidget {
             style: TextStyle(
               fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w600,
               letterSpacing: 3.0,
-              color: light ? Colors.white : LD.ink,
+              color: LD.ink,
               decoration: TextDecoration.none,
             ),
           ),
@@ -123,10 +122,9 @@ class _LuxLogo extends StatelessWidget {
 }
 
 class _NavLink extends StatefulWidget {
-  const _NavLink(this.label, {required this.onTap, this.light = false});
+  const _NavLink(this.label, {required this.onTap});
   final String label;
   final VoidCallback onTap;
-  final bool light;
 
   @override
   State<_NavLink> createState() => _NavLinkState();
@@ -147,9 +145,7 @@ class _NavLinkState extends State<_NavLink> {
             style: TextStyle(
               fontFamily: kSans, fontSize: 11, fontWeight: FontWeight.w400,
               letterSpacing: 1.0,
-              color: _hover
-                  ? (widget.light ? Colors.white : LD.ink)
-                  : (widget.light ? Colors.white.withAlpha(160) : LD.ink3),
+              color: _hover ? LD.ink : LD.ink2,
               decoration: TextDecoration.none,
             ),
           ),
@@ -214,8 +210,9 @@ class _ServicesDropdownLinkState extends State<_ServicesDropdownLink> {
               child: Container(
                 width: 240,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF111A2B),
-                  border: Border.all(color: const Color(0xFF24314A)),
+                  color: Colors.white,
+                  border: Border.all(color: LD.border),
+                  boxShadow: const [BoxShadow(color: Color(0x140B1220), blurRadius: 24, offset: Offset(0, 8))],
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -244,7 +241,7 @@ class _ServicesDropdownLinkState extends State<_ServicesDropdownLink> {
                 style: TextStyle(
                   fontFamily: kSans, fontSize: 11, fontWeight: FontWeight.w400,
                   letterSpacing: 1.0,
-                  color: _hover ? Colors.white : Colors.white.withAlpha(160),
+                  color: _hover ? LD.ink : LD.ink2,
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -252,7 +249,7 @@ class _ServicesDropdownLinkState extends State<_ServicesDropdownLink> {
               Icon(
                 Icons.keyboard_arrow_down_rounded,
                 size: 14,
-                color: _hover ? Colors.white : Colors.white.withAlpha(160),
+                color: _hover ? LD.ink : LD.ink2,
               ),
             ],
           ),
@@ -297,7 +294,7 @@ class _DropItemState extends State<_DropItem> {
                   style: TextStyle(
                     fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w400,
                     letterSpacing: 0.3,
-                    color: _hover ? Colors.white : Colors.white.withAlpha(180),
+                    color: _hover ? LD.ink : LD.ink2,
                     decoration: TextDecoration.none,
                   ),
                 )),

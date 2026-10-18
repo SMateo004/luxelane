@@ -123,10 +123,10 @@ class _HeroSectionState extends State<_HeroSection>
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    const Color(0xFF0A101C).withAlpha(210),
-                    Colors.transparent,
+                    LD.bg.withAlpha(235),
+                    LD.bg.withAlpha(0),
                   ],
-                  stops: const [0.0, 0.38],
+                  stops: const [0.0, 0.30],
                 ),
               ),
             ),
@@ -140,11 +140,11 @@ class _HeroSectionState extends State<_HeroSection>
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [
-                    const Color(0xFF0A101C).withAlpha(240),
-                    const Color(0xFF0A101C).withAlpha(160),
-                    Colors.transparent,
+                    LD.bg,
+                    LD.bg.withAlpha(225),
+                    LD.bg.withAlpha(0),
                   ],
-                  stops: const [0.0, 0.35, 0.65],
+                  stops: const [0.0, 0.42, 0.78],
                 ),
               ),
             ),
@@ -171,9 +171,9 @@ class _HeroSectionState extends State<_HeroSection>
                           TextSpan(
                             children: emphasisSpans(
                               l.homeHeroTitle,
-                              style: displayText(size: headlineSize, color: Colors.white),
+                              style: displayText(size: headlineSize, color: LD.ink),
                               emphasis: displayText(
-                                size: headlineSize, color: Colors.white,
+                                size: headlineSize, color: LD.accent,
                                 style: FontStyle.italic,
                               ),
                             ),
@@ -200,11 +200,9 @@ class _HeroSectionState extends State<_HeroSection>
                           // No fixed height on narrow — content determines size
                           height: narrow ? null : 84,
                           decoration: BoxDecoration(
-                            color: Colors.white.withAlpha(22),
+                            color: Colors.white.withAlpha(235),
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
-                              color: Colors.white.withAlpha(55),
-                            ),
+                            border: Border.all(color: LD.border),
                           ),
                           child: narrow
                               // ── Mobile: stacked fields ──────────────
@@ -223,7 +221,7 @@ class _HeroSectionState extends State<_HeroSection>
                                         glass: true,
                                       ),
                                     ),
-                                    Container(height: 1, color: Colors.white.withAlpha(30)),
+                                    Container(height: 1, color: LD.border),
                                     isOneWay
                                         ? _BarField(
                                             label: l.homeBarDestination,
@@ -244,7 +242,7 @@ class _HeroSectionState extends State<_HeroSection>
                                               onChanged: widget.onHoursChanged,
                                             ),
                                           ),
-                                    Container(height: 1, color: Colors.white.withAlpha(30)),
+                                    Container(height: 1, color: LD.border),
                                     _BarField(
                                       label: l.homeBarDateTime,
                                       icon: Icons.calendar_today_outlined,
@@ -423,7 +421,7 @@ class _HeroBg extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [Color(0xFF0A101C), Color(0xFF0B1220), Color(0xFF091525)],
+                colors: [LD.bg, LD.bg2, LD.bg3],
               ),
             ),
           ),
@@ -440,7 +438,7 @@ class _HeroBg extends StatelessWidget {
 class _DotGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final p = Paint()..color = const Color(0x0FFFFFFF);
+    final p = Paint()..color = const Color(0x140B1220);
     const s = 40.0;
     for (double x = s; x < size.width;  x += s)
     for (double y = s; y < size.height; y += s)
@@ -488,35 +486,14 @@ class _ClipRevealState extends State<_ClipReveal>
 // Grayscale Google Map anchored below its booking-bar field.
 // ============================================================
 
-// Dark navy map style — matches the date/time panel background (0xFF090F1A)
-// so all inline panels feel visually unified.
-const _kDarkMapStyle = '''[
-  {"elementType":"geometry",
-   "stylers":[{"color":"#090f1a"}]},
-  {"elementType":"labels.text.stroke",
-   "stylers":[{"color":"#090f1a"}]},
-  {"elementType":"labels.text.fill",
-   "stylers":[{"color":"#3a5f8a"}]},
-  {"featureType":"administrative","elementType":"geometry",
-   "stylers":[{"color":"#1a2b3c"}]},
+// Soft warm map style for the light booking bar: muted roads, no POIs.
+const _kLightMapStyle = '''[
   {"featureType":"poi","elementType":"all",
    "stylers":[{"visibility":"off"}]},
-  {"featureType":"road","elementType":"geometry",
-   "stylers":[{"color":"#1a2538"}]},
-  {"featureType":"road","elementType":"geometry.stroke",
-   "stylers":[{"color":"#0d1624"}]},
-  {"featureType":"road","elementType":"labels.text.fill",
-   "stylers":[{"color":"#4a6a8a"}]},
-  {"featureType":"road.highway","elementType":"geometry",
-   "stylers":[{"color":"#1e3455"}]},
-  {"featureType":"road.highway","elementType":"labels.text.fill",
-   "stylers":[{"color":"#6a90b8"}]},
   {"featureType":"transit","elementType":"all",
    "stylers":[{"visibility":"off"}]},
-  {"featureType":"water","elementType":"geometry",
-   "stylers":[{"color":"#030b14"}]},
-  {"featureType":"water","elementType":"labels.text.fill",
-   "stylers":[{"color":"#1a3a5a"}]}
+  {"elementType":"geometry",
+   "stylers":[{"saturation":-60},{"lightness":8}]}
 ]''';
 
 class _InlineMapPanel extends StatefulWidget {
@@ -573,7 +550,7 @@ class _InlineMapPanelState extends State<_InlineMapPanel> {
             ),
             onMapCreated: (ctrl) {
               _ctrl = ctrl;
-              ctrl.setMapStyle(_kDarkMapStyle);
+              ctrl.setMapStyle(_kLightMapStyle);
             },
             markers: {
               Marker(
@@ -597,12 +574,12 @@ class _InlineMapPanelState extends State<_InlineMapPanel> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 12, vertical: 7),
-                  color: const Color(0xEE060C16),
+                  color: Colors.white.withAlpha(240),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(Icons.edit_location_alt_outlined,
-                          size: 12, color: Colors.white),
+                          size: 12, color: LD.ink),
                       const SizedBox(width: 6),
                       Text(
                         context.l10n.homeMapChangeLocation.toUpperCase(),
@@ -611,7 +588,7 @@ class _InlineMapPanelState extends State<_InlineMapPanel> {
                           fontSize: 8.5,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.6,
-                          color: Colors.white,
+                          color: LD.ink,
                           decoration: TextDecoration.none,
                         ),
                       ),
@@ -631,9 +608,9 @@ class _InlineMapPanelState extends State<_InlineMapPanel> {
                 cursor: SystemMouseCursors.click,
                 child: Container(
                   padding: const EdgeInsets.all(6),
-                  color: const Color(0xCC060C16),
+                  color: Colors.white.withAlpha(230),
                   child: const Icon(Icons.close,
-                      size: 14, color: Colors.white),
+                      size: 14, color: LD.ink),
                 ),
               ),
             ),
@@ -652,9 +629,9 @@ class _ServicePillToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
-          color: Colors.white.withAlpha(20),
+          color: Colors.white.withAlpha(200),
           borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: Colors.white.withAlpha(40)),
+          border: Border.all(color: LD.border),
         ),
         padding: const EdgeInsets.all(3),
         child: Row(
@@ -680,7 +657,7 @@ class _Pill extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
           decoration: BoxDecoration(
-            color: selected ? Colors.white : Colors.transparent,
+            color: selected ? LD.ink : Colors.transparent,
             borderRadius: BorderRadius.circular(28),
           ),
           child: Text(
@@ -688,7 +665,7 @@ class _Pill extends StatelessWidget {
             style: TextStyle(
               fontFamily: kSans, fontSize: 11, fontWeight: FontWeight.w500,
               letterSpacing: 0.3,
-              color: selected ? LD.ink : Colors.white.withAlpha(170),
+              color: selected ? Colors.white : LD.ink2,
               decoration: TextDecoration.none,
             ),
           ),
@@ -710,7 +687,7 @@ class _BarField extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(children: [
-              Icon(icon, size: 11, color: Colors.white.withAlpha(160)),
+              Icon(icon, size: 11, color: LD.ink3),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(label.toUpperCase(),
@@ -718,7 +695,7 @@ class _BarField extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: kSans, fontSize: 9.5, fontWeight: FontWeight.w600,
                     letterSpacing: 1.8,
-                    color: Colors.white.withAlpha(160),
+                    color: LD.ink3,
                     decoration: TextDecoration.none,
                   )),
               ),
@@ -735,7 +712,7 @@ class _BarSeparator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      Container(width: 1, height: 36, color: Colors.white.withAlpha(50));
+      Container(width: 1, height: 36, color: LD.border);
 }
 
 class _BarCta extends StatefulWidget {
@@ -775,7 +752,7 @@ class _BarCtaState extends State<_BarCta> {
               color: _hover ? LuxPalette.champagneLight : LD.cta,
               border: widget.stacked
                   ? null
-                  : Border(left: BorderSide(color: Colors.white.withAlpha(40))),
+                  : const Border(left: BorderSide(color: LD.border)),
             ),
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -799,10 +776,9 @@ class _BarCtaState extends State<_BarCta> {
 // ── Shared button widgets ─────────────────────────────────────
 
 class _SolidBtn extends StatefulWidget {
-  const _SolidBtn({required this.label, required this.onTap, this.white = false});
+  const _SolidBtn({required this.label, required this.onTap});
   final String label;
   final VoidCallback onTap;
-  final bool white;
 
   @override
   State<_SolidBtn> createState() => _SolidBtnState();
@@ -821,15 +797,13 @@ class _SolidBtnState extends State<_SolidBtn> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
-            color: widget.white
-                ? (_h ? const Color(0xFFE8E2D6) : Colors.white)
-                : (_h ? LuxPalette.champagneLight : LD.cta),
+            color: _h ? LuxPalette.champagneLight : LD.cta,
             child: Text(
               widget.label.toUpperCase(),
               style: TextStyle(
                 fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w600,
                 letterSpacing: 2.0,
-                color: widget.white ? LD.ink : LD.onCta,
+                color: LD.onCta,
                 decoration: TextDecoration.none,
               ),
             ),
@@ -839,10 +813,9 @@ class _SolidBtnState extends State<_SolidBtn> {
 }
 
 class _GhostBtn extends StatefulWidget {
-  const _GhostBtn({required this.label, required this.onTap, this.light = false});
+  const _GhostBtn({required this.label, required this.onTap});
   final String label;
   final VoidCallback onTap;
-  final bool light;
 
   @override
   State<_GhostBtn> createState() => _GhostBtnState();
@@ -863,22 +836,16 @@ class _GhostBtnState extends State<_GhostBtn> {
             padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
             decoration: BoxDecoration(
               border: Border.all(
-                color: _h
-                    ? (widget.light ? Colors.white : LD.ink)
-                    : (widget.light ? Colors.white.withAlpha(90) : LD.border),
+                color: _h ? LD.ink : LD.border,
               ),
-              color: _h
-                  ? (widget.light ? Colors.white.withAlpha(20) : LD.bg3)
-                  : Colors.transparent,
+              color: _h ? LD.bg3 : Colors.transparent,
             ),
             child: Text(
               widget.label.toUpperCase(),
               style: TextStyle(
                 fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w500,
                 letterSpacing: 1.8,
-                color: widget.light
-                    ? (_h ? Colors.white : Colors.white.withAlpha(166))
-                    : LD.ink,
+                color: LD.ink,
                 decoration: TextDecoration.none,
               ),
             ),
@@ -916,7 +883,7 @@ class _DateDisplayTrigger extends StatelessWidget {
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,
                 child: Text(_fmt(context.l10n, date), style: const TextStyle(
-                  fontFamily: kSans, fontSize: 13, color: Colors.white,
+                  fontFamily: kSans, fontSize: 13, color: LD.ink,
                   decoration: TextDecoration.none,
                 )),
               ),
@@ -925,7 +892,7 @@ class _DateDisplayTrigger extends StatelessWidget {
               turns: isOpen ? 0.5 : 0.0,
               duration: const Duration(milliseconds: 250),
               child: Icon(Icons.expand_more, size: 16,
-                  color: Colors.white.withAlpha(160)),
+                  color: LD.ink3),
             ),
           ]),
         ),
@@ -990,10 +957,10 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
     final monthTitle  = toBeginningOfSentenceCase(
         DateFormat.yMMMM().format(_month));
 
-    const bg      = Color(0xFF090F1A);
-    const divider = Color(0xFF1A2538);
-    const white60 = Color(0x99FFFFFF);
-    const white30 = Color(0x4DFFFFFF);
+    const bg      = Colors.white;
+    const divider = LD.border;
+    const white60 = LD.ink2;
+    const white30 = Color(0x4D0B1220);
 
     return Container(
       margin: const EdgeInsets.only(top: 2),
@@ -1014,7 +981,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                   style: const TextStyle(
                     fontFamily: kSans, fontSize: 10.5,
                     fontWeight: FontWeight.w600, letterSpacing: 1.4,
-                    color: Colors.white, decoration: TextDecoration.none,
+                    color: LD.ink, decoration: TextDecoration.none,
                   ),
                 ),
               ),
@@ -1071,7 +1038,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 180),
                         decoration: BoxDecoration(
-                          color: isSel ? LD.accent : Colors.transparent,
+                          color: isSel ? LD.cta : Colors.transparent,
                         ),
                         alignment: Alignment.center,
                         child: Text('$d',
@@ -1082,7 +1049,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                             color: isPast
                                 ? white30
                                 : isSel
-                                    ? Colors.white
+                                    ? LD.onCta
                                     : white60,
                             decoration: TextDecoration.none,
                           )),
@@ -1114,7 +1081,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                     style: TextStyle(
                       fontFamily: kSans, fontSize: 22,
                       fontWeight: FontWeight.w200,
-                      color: Colors.white,
+                      color: LD.ink,
                       decoration: TextDecoration.none,
                     )),
                 ),
@@ -1138,14 +1105,14 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
               cursor: SystemMouseCursors.click,
               child: Container(
                 width: double.infinity,
-                color: LD.accent,
+                color: LD.cta,
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 alignment: Alignment.center,
                 child: Text(context.l10n.commonConfirm.toUpperCase(),
                   style: const TextStyle(
                     fontFamily: kSans, fontSize: 10,
                     fontWeight: FontWeight.w600, letterSpacing: 2.0,
-                    color: Colors.white, decoration: TextDecoration.none,
+                    color: LD.onCta, decoration: TextDecoration.none,
                   )),
               ),
             ),
@@ -1169,7 +1136,7 @@ class _ChevBtn extends StatelessWidget {
           cursor: SystemMouseCursors.click,
           child: Padding(
             padding: const EdgeInsets.all(6),
-            child: Icon(icon, size: 16, color: const Color(0x80FFFFFF)),
+            child: Icon(icon, size: 16, color: LD.ink3),
           ),
         ),
       );
@@ -1195,7 +1162,7 @@ class _TimeStep extends StatelessWidget {
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: const Icon(Icons.keyboard_arrow_up,
-                  size: 18, color: Color(0x80FFFFFF)),
+                  size: 18, color: LD.ink3),
             ),
           ),
           Text(
@@ -1203,7 +1170,7 @@ class _TimeStep extends StatelessWidget {
             style: const TextStyle(
               fontFamily: kSans, fontSize: 26,
               fontWeight: FontWeight.w200,
-              color: Colors.white,
+              color: LD.ink,
               decoration: TextDecoration.none,
             ),
           ),
@@ -1212,7 +1179,7 @@ class _TimeStep extends StatelessWidget {
             child: MouseRegion(
               cursor: SystemMouseCursors.click,
               child: const Icon(Icons.keyboard_arrow_down,
-                  size: 18, color: Color(0x80FFFFFF)),
+                  size: 18, color: LD.ink3),
             ),
           ),
         ],
@@ -1230,20 +1197,20 @@ class _HoursPicker extends StatelessWidget {
           child: Text(context.l10n.unitHours(hours),
             maxLines: 1, overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontFamily: kSans, fontSize: 13, color: Colors.white,
+              fontFamily: kSans, fontSize: 13, color: LD.ink,
               decoration: TextDecoration.none,
             )),
         ),
         IconButton(
           icon: Icon(Icons.remove, size: 16,
-              color: Colors.white.withAlpha(160)),
+              color: LD.ink3),
           onPressed: hours > 1 ? () => onChanged(hours - 1) : null,
           padding: EdgeInsets.zero, constraints: const BoxConstraints(),
         ),
         const SizedBox(width: 8),
         IconButton(
           icon: Icon(Icons.add, size: 16,
-              color: Colors.white.withAlpha(160)),
+              color: LD.ink3),
           onPressed: hours < 12 ? () => onChanged(hours + 1) : null,
           padding: EdgeInsets.zero, constraints: const BoxConstraints(),
         ),

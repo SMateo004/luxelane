@@ -9,13 +9,14 @@ import '../auth_error_messages.dart';
 import '../bloc/auth_bloc.dart';
 
 // ── Design tokens (aligned with home_web_page / LD) ─────────────────────────
-const _dark    = LuxPalette.ink;
-const _panel   = LuxPalette.surface;
-const _border  = LuxPalette.line;
+const _bg      = LuxPalette.paper;
+const _brandBg = LuxPalette.paper2;
+const _panel   = Colors.white;
+const _border  = LuxPalette.hairline;
 const _sph     = LuxPalette.champagne;      // brand accent
 const _sphLt   = LuxPalette.champagneLight;
 const _ink     = LuxPalette.ink;            // text on accent
-const _white   = Colors.white;
+const _text    = LuxPalette.ink;
 const _kSans   = 'Montserrat';
 const _kSerif  = 'Cormorant Garamond';
 
@@ -64,7 +65,7 @@ class _LoginPageState extends State<LoginPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: _dark,
+        backgroundColor: _bg,
         body: isWeb(context) ? _webLayout() : _mobileLayout(),
       ),
     );
@@ -96,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                             fontFamily: _kSerif,
                             fontSize: 42,
                             fontWeight: FontWeight.w600,
-                            color: _white,
+                            color: _text,
                             height: 1.1,
                           ),
                         ),
@@ -107,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                             fontFamily: _kSans,
                             fontSize: 13,
                             fontWeight: FontWeight.w300,
-                            color: _white.withAlpha(130),
+                            color: _text.withAlpha(130),
                           ),
                         ),
                         const SizedBox(height: 40),
@@ -138,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
                   fontFamily: _kSerif,
                   fontSize: 40,
                   fontWeight: FontWeight.w600,
-                  color: _white,
+                  color: _text,
                   height: 1.15,
                 ),
               ),
@@ -149,7 +150,7 @@ class _LoginPageState extends State<LoginPage> {
                   fontFamily: _kSans,
                   fontSize: 13,
                   fontWeight: FontWeight.w300,
-                  color: _white.withAlpha(130),
+                  color: _text.withAlpha(130),
                 ),
               ),
               const SizedBox(height: 40),
@@ -230,7 +231,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(
                         fontFamily: _kSans,
                         fontSize: 12,
-                        color: _white.withAlpha(120),
+                        color: _text.withAlpha(120),
                       ),
                     ),
                     _TextLink(
@@ -253,8 +254,8 @@ class _BrandPanel extends StatelessWidget {
   Widget build(BuildContext context) => Stack(
         fit: StackFit.expand,
         children: [
-          // Deep navy base
-          const ColoredBox(color: _dark),
+          // Warm paper base
+          const ColoredBox(color: _brandBg),
           // Dot grid — same as hero
           CustomPaint(painter: _DotGridPainter()),
           // Subtle bottom vignette
@@ -264,8 +265,8 @@ class _BrandPanel extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.transparent,
-                  _dark.withAlpha(200),
+                  _brandBg.withAlpha(0),
+                  LuxPalette.paper3.withAlpha(200),
                 ],
                 stops: const [0.5, 1.0],
               ),
@@ -292,7 +293,7 @@ class _BrandPanel extends StatelessWidget {
                       fontFamily: _kSerif,
                       fontSize: 52,
                       fontWeight: FontWeight.w300,
-                      color: _white,
+                      color: _text,
                       height: 1.15,
                     ),
                   ),
@@ -304,7 +305,7 @@ class _BrandPanel extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
                       letterSpacing: 1.6,
-                      color: _white.withAlpha(140),
+                      color: _text.withAlpha(140),
                     ),
                   ),
                   const SizedBox(height: 40),
@@ -346,7 +347,7 @@ class _AuthField extends StatelessWidget {
         style: const TextStyle(
           fontFamily: _kSans,
           fontSize: 14,
-          color: _white,
+          color: _text,
         ),
         decoration: InputDecoration(
           labelText: label,
@@ -354,11 +355,11 @@ class _AuthField extends StatelessWidget {
             fontFamily: _kSans,
             fontSize: 12,
             fontWeight: FontWeight.w400,
-            color: _white.withAlpha(130),
+            color: _text.withAlpha(130),
           ),
-          prefixIcon: Icon(icon, size: 18, color: _white.withAlpha(100)),
+          prefixIcon: Icon(icon, size: 18, color: _text.withAlpha(100)),
           filled: true,
-          fillColor: const Color(0xFF0D1928),
+          fillColor: LuxPalette.paper,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(8),
             borderSide: BorderSide(color: _border.withAlpha(180)),
@@ -468,9 +469,9 @@ class _TextLinkState extends State<_TextLink> {
               fontFamily: _kSans,
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: _hover ? _sphLt : _sph.withAlpha(220),
+              color: _hover ? _sph : LuxPalette.champagneDeep,
               decoration: _hover ? TextDecoration.underline : TextDecoration.none,
-              decorationColor: _sphLt,
+              decorationColor: _sph,
             ),
           ),
         ),
@@ -500,7 +501,7 @@ class _LuxLogo extends StatelessWidget {
               fontSize: 13,
               fontWeight: FontWeight.w600,
               letterSpacing: 3.5,
-              color: _white,
+              color: _text,
             ),
           ),
         ],
@@ -512,7 +513,7 @@ class _LuxLogo extends StatelessWidget {
 class _DotGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final p = Paint()..color = const Color(0x0FFFFFFF);
+    final p = Paint()..color = const Color(0x140B1220);
     const s = 40.0;
     for (double x = s; x < size.width;  x += s)
     for (double y = s; y < size.height; y += s)

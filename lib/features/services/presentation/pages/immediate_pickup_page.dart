@@ -6,14 +6,18 @@ import '../../../../l10n/l10n.dart';
 
 const String _kSans = 'Montserrat';
 const String _kSerif = 'Cormorant Garamond';
-const Color _kBg = LuxPalette.ink;
-const Color _kSurface = LuxPalette.surface;
-const Color _kElevated = LuxPalette.elevated;
-const Color _kBorder = LuxPalette.line;
-// Brand accent (champagne). Text placed on top of it uses _kInk.
-const Color _kSapphire = LuxPalette.champagne;
+const Color _kBg = LuxPalette.paper;
+const Color _kSurface = Colors.white;
+const Color _kElevated = LuxPalette.paper2;
+const Color _kBorder = LuxPalette.hairline;
+// Brand accent: deep champagne for text and lines, champagne for fills
+// (text placed on a fill uses _kInk).
+const Color _kSapphire = LuxPalette.champagneDeep;
+const Color _kAccentFill = LuxPalette.champagne;
 const Color _kSapphireLight = LuxPalette.champagneLight;
 const Color _kInk = LuxPalette.ink;
+// Body text on the light paper background.
+const Color _kText = LuxPalette.ink;
 
 class ImmediatePickupPage extends StatefulWidget {
   const ImmediatePickupPage({super.key});
@@ -156,7 +160,7 @@ class _WordMark extends StatelessWidget {
             fontSize: 16,
             fontWeight: FontWeight.w600,
             letterSpacing: 3.5,
-            color: Colors.white,
+            color: _kText,
           ),
         ),
       ],
@@ -189,7 +193,7 @@ class _NavLinkState extends State<_NavLink> {
             fontFamily: _kSans,
             fontSize: 11,
             letterSpacing: 1.0,
-            color: _hovered ? Colors.white : Colors.white.withAlpha(160),
+            color: _hovered ? _kText : _kText.withAlpha(160),
           ),
         ),
       ),
@@ -219,7 +223,7 @@ class _NavTextState extends State<_NavText> {
           fontFamily: _kSans,
           fontSize: 11,
           letterSpacing: 1.0,
-          color: _hovered ? Colors.white : Colors.white.withAlpha(160),
+          color: _hovered ? _kText : _kText.withAlpha(160),
         ),
       ),
     );
@@ -248,7 +252,7 @@ class _ReserveButtonState extends State<_ReserveButton> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
-            color: _hovered ? _kSapphireLight : _kSapphire,
+            color: _hovered ? _kSapphireLight : _kAccentFill,
             borderRadius: BorderRadius.circular(2),
           ),
           child: FittedBox(
@@ -305,8 +309,8 @@ class _HeroSection extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.transparent,
-                  Color(0xCC070E18),
+                  Color(0x00FAF8F4),
+                  Color(0xF2FAF8F4),
                 ],
                 stops: [0.3, 1.0],
               ),
@@ -329,7 +333,7 @@ class _HeroSection extends StatelessWidget {
                       fontFamily: _kSerif,
                       fontSize: titleSize,
                       fontWeight: FontWeight.w300,
-                      color: Colors.white,
+                      color: _kText,
                       height: 1.1,
                     ),
                   ),
@@ -341,7 +345,7 @@ class _HeroSection extends StatelessWidget {
                       fontFamily: _kSans,
                       fontSize: 14,
                       letterSpacing: 2.0,
-                      color: Color(0xFFA0A0A0),
+                      color: LuxPalette.slate,
                     ),
                   ),
                 ],
@@ -390,7 +394,7 @@ class _IntroSection extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: _kSerif,
                   fontSize: titleSize,
-                  color: Colors.white,
+                  color: _kText,
                   height: 1.15,
                 ),
               ),
@@ -401,7 +405,7 @@ class _IntroSection extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: _kSans,
                   fontSize: 15,
-                  color: Colors.white.withAlpha(160),
+                  color: _kText.withAlpha(160),
                   height: 1.7,
                 ),
               ),
@@ -530,7 +534,7 @@ class _FeatureCard extends StatelessWidget {
               fontFamily: _kSans,
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: _kText,
               letterSpacing: 0.5,
             ),
           ),
@@ -540,7 +544,7 @@ class _FeatureCard extends StatelessWidget {
             style: TextStyle(
               fontFamily: _kSans,
               fontSize: 13,
-              color: Colors.white.withAlpha(160),
+              color: _kText.withAlpha(160),
               height: 1.65,
             ),
           ),
@@ -599,7 +603,7 @@ class _SplitSection extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: _kSerif,
                     fontSize: titleSize,
-                    color: Colors.white,
+                    color: _kText,
                     height: 1.15,
                   ),
                 ),
@@ -609,7 +613,7 @@ class _SplitSection extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: _kSans,
                     fontSize: 14,
-                    color: Colors.white.withAlpha(160),
+                    color: _kText.withAlpha(160),
                     height: 1.7,
                   ),
                 ),
@@ -670,7 +674,7 @@ class _SplitSection extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: _kSerif,
                       fontSize: titleSize,
-                      color: Colors.white,
+                      color: _kText,
                       height: 1.15,
                     ),
                   ),
@@ -680,7 +684,7 @@ class _SplitSection extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: _kSans,
                       fontSize: 14,
-                      color: Colors.white.withAlpha(160),
+                      color: _kText.withAlpha(160),
                       height: 1.7,
                     ),
                   ),
@@ -722,7 +726,7 @@ class _CtaButtonState extends State<_CtaButton> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
           decoration: BoxDecoration(
-            color: _hovered ? _kSapphireLight : _kSapphire,
+            color: _hovered ? _kSapphireLight : _kAccentFill,
             borderRadius: BorderRadius.circular(2),
           ),
           child: Text(
@@ -755,7 +759,7 @@ class _FooterSection extends StatelessWidget {
           style: TextStyle(
             fontFamily: _kSans,
             fontSize: 11,
-            color: Colors.white.withAlpha(60),
+            color: _kText.withAlpha(60),
           ),
         ),
       ),

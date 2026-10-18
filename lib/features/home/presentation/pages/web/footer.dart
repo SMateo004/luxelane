@@ -27,9 +27,9 @@ class _FooterSection extends StatelessWidget {
     ];
 
     return Container(
-      color: const Color(0xFF03050A),
+      color: LD.bg2,
       child: Stack(children: [
-        // Sapphire top line (40% opacity)
+        // Champagne top line
         Positioned(top: 0, left: 0, right: 0,
           child: Container(height: 1, color: LD.accent.withAlpha(102))),
         Padding(
@@ -38,17 +38,17 @@ class _FooterSection extends StatelessWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1100),
               child: Column(children: [
-                // Logo (35% opacity)
+                // Logo
                 Row(mainAxisSize: MainAxisSize.min, children: [
                   Container(
                     width: 26, height: 26,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white.withAlpha(90), width: 1.5),
+                      border: Border.all(color: LD.accent, width: 1.5),
                     ),
                     child: Center(
                       child: Text('L', style: TextStyle(
                         fontFamily: kSerif, fontSize: 15, fontWeight: FontWeight.w500,
-                        color: Colors.white.withAlpha(90),
+                        color: LD.accent,
                         decoration: TextDecoration.none,
                       )),
                     ),
@@ -57,7 +57,7 @@ class _FooterSection extends StatelessWidget {
                   Text('LUXELANE', style: TextStyle(
                     fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w600,
                     letterSpacing: 3.0,
-                    color: Colors.white.withAlpha(90),
+                    color: LD.ink,
                     decoration: TextDecoration.none,
                   )),
                 ]),
@@ -76,7 +76,7 @@ class _FooterSection extends StatelessWidget {
                         child: Text(link.$1.toUpperCase(), style: TextStyle(
                           fontFamily: kSans, fontSize: 9.5, fontWeight: FontWeight.w400,
                           letterSpacing: 2.5,
-                          color: Colors.white.withAlpha(71),
+                          color: LD.ink2,
                           decoration: TextDecoration.none,
                         )),
                       ),
@@ -88,7 +88,7 @@ class _FooterSection extends StatelessWidget {
                     textAlign: TextAlign.center, style: TextStyle(
                   fontFamily: kSans, fontSize: 9.5, fontWeight: FontWeight.w300,
                   letterSpacing: 1.0,
-                  color: Colors.white.withAlpha(38),
+                  color: LD.ink3,
                   decoration: TextDecoration.none,
                 )),
               ]),

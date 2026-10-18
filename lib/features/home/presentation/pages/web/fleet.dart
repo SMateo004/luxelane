@@ -42,7 +42,7 @@ class _FleetSection extends StatelessWidget {
     final vehicles = _vehicles(l);
     return Container(
         key: sectionKey,
-        color: LD.dark,
+        color: LD.bg,
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // Header row
           Padding(
@@ -55,7 +55,7 @@ class _FleetSection extends StatelessWidget {
                   RevealOnScroll(
                     delay: const Duration(milliseconds: 80),
                     child: Text(l.homeFleetTitle,
-                        style: displayText(size: narrow ? 36 : 52, color: Colors.white)),
+                        style: displayText(size: narrow ? 36 : 52, color: LD.ink)),
                   ),
                 ]),
               ),
@@ -64,7 +64,7 @@ class _FleetSection extends StatelessWidget {
                 delay: const Duration(milliseconds: 160),
                 child: Text(l.homeFleetSwipeHint.toUpperCase(), style: TextStyle(
                   fontFamily: kSans, fontSize: 9, letterSpacing: 2.4,
-                  color: Colors.white.withAlpha(60),
+                  color: LD.ink3,
                   decoration: TextDecoration.none,
                 )),
               ),
@@ -126,10 +126,13 @@ class _FleetCardState extends State<_FleetCard> {
             duration: const Duration(milliseconds: 280),
             width: 340,
             decoration: BoxDecoration(
-              color: const Color(0xFF0B1220),
+              color: Colors.white,
               border: Border.all(
-                color: _hover ? widget.item.accent.withAlpha(180) : Colors.white.withAlpha(18),
+                color: _hover ? LD.accent : LD.border,
               ),
+              boxShadow: _hover
+                  ? [BoxShadow(color: LD.ink.withAlpha(20), blurRadius: 24, offset: const Offset(0, 10))]
+                  : const [],
             ),
             child: Stack(children: [
               // Accent gradient wash
@@ -138,7 +141,7 @@ class _FleetCardState extends State<_FleetCard> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topLeft, end: Alignment.bottomRight,
-                      colors: [widget.item.accent.withAlpha(_hover ? 45 : 20), Colors.transparent],
+                      colors: [widget.item.accent.withAlpha(_hover ? 40 : 22), Colors.transparent],
                     ),
                   ),
                 ),
@@ -159,21 +162,21 @@ class _FleetCardState extends State<_FleetCard> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.bottomCenter, end: Alignment.topCenter,
-                      colors: [const Color(0xFF0B1220).withAlpha(242), Colors.transparent],
+                      colors: [Colors.white, Colors.white.withAlpha(0)],
                     ),
                   ),
                   child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                     // Class name — 22px serif
                     Text(widget.item.cls, style: const TextStyle(
                       fontFamily: kSerif, fontSize: 22, fontWeight: FontWeight.w400,
-                      color: Colors.white, height: 1.1,
+                      color: LD.ink, height: 1.1,
                       decoration: TextDecoration.none,
                     )),
                     const SizedBox(height: 4),
                     // Model — 12px dim
                     Text(widget.item.model, style: TextStyle(
                       fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w300,
-                      color: Colors.white.withAlpha(115), height: 1.5,
+                      color: LD.ink3, height: 1.5,
                       decoration: TextDecoration.none,
                     )),
                     const SizedBox(height: 16),
@@ -182,12 +185,12 @@ class _FleetCardState extends State<_FleetCard> {
                       children: widget.item.tags.map((t) => Container(
                         padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.white.withAlpha(36)),
+                          border: Border.all(color: LD.border),
                         ),
                         child: Text(t, style: TextStyle(
                           fontFamily: kSans, fontSize: 9, fontWeight: FontWeight.w500,
                           letterSpacing: 1.5,
-                          color: Colors.white.withAlpha(128),
+                          color: LD.ink2,
                           decoration: TextDecoration.none,
                         )),
                       )).toList()),
@@ -207,7 +210,7 @@ class _FleetImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget icon() => Icon(info.iconData, size: 80, color: Colors.white.withAlpha(16));
+    Widget icon() => Icon(info.iconData, size: 80, color: LD.ink.withAlpha(30));
     Widget asset() => info.asset == null
         ? icon()
         : Image.asset(info.asset!, fit: BoxFit.contain, errorBuilder: (_, __, ___) => icon());

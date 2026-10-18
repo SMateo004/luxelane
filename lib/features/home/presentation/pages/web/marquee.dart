@@ -25,7 +25,7 @@ class _MarqueeBarState extends State<_MarqueeBar>
   static final _style = TextStyle(
     fontFamily: kSans, fontSize: 9, fontWeight: FontWeight.w300,
     letterSpacing: 3.0,
-    color: Colors.white.withAlpha(70),
+    color: LD.ink3,
     decoration: TextDecoration.none,
   );
   static const _gap = 24.0 + 3.0 + 24.0; // spacer + dot + spacer
@@ -62,7 +62,11 @@ class _MarqueeBarState extends State<_MarqueeBar>
     final items = _items(context.l10n).map((t) => t.toUpperCase()).toList();
     final oneSetPx = _setWidth(context, items);
     return Container(
-        height: 40, color: LD.dark,
+        height: 40,
+        decoration: const BoxDecoration(
+          color: LD.bg2,
+          border: Border.symmetric(horizontal: BorderSide(color: LD.border)),
+        ),
         child: ClipRect(
           child: AnimatedBuilder(
             animation: _ctrl,

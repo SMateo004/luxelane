@@ -293,7 +293,7 @@ Respuestas basadas en el código actual. Sirven para las dos apps salvo donde se
 - Capturas de teléfono (1080×1920) en `docs/store/screenshots/<rider|driver>/<es|en|pt>/play_*.png`: reserva confirmada, servicios y recibo (pasajero); viajes disponibles y ganancias (chófer). Son las pantallas reales con datos de ejemplo; se regeneran con `./scripts/store_screenshots.sh` (por ejemplo, al cambiar el logo).
 - Conviene sumar una captura del viaje en curso con el mapa, tomada en un teléfono (el generador no dibuja mapas).
 
-> Los íconos son **provisorios**: usan el monograma "L" que la app ya muestra en la barra de navegación, en azul marino y champagne. Cuando exista el logo oficial, hay que reemplazar los PNG de `docs/store/`, `web/icons/`, `web/favicon.png`, `android/app/src/main/res/mipmap-*/` (incluido `ic_launcher_foreground.png`) y `ios/Runner/Assets.xcassets/AppIcon.appiconset/`.
+> Los íconos son **provisorios**: usan el monograma "L" que la app ya muestra en la barra de navegación, en champagne oscuro sobre fondo papel (la paleta clara de la app). Cuando exista el logo oficial, hay que reemplazar los PNG de `docs/store/`, `web/icons/`, `web/favicon.png`, `android/app/src/main/res/mipmap-*/` (incluido `ic_launcher_foreground.png`) y `ios/Runner/Assets.xcassets/AppIcon.appiconset/`.
 
 ---
 

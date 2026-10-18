@@ -30,7 +30,7 @@ class _BusinessSection extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: const [Color(0xCC0B1220), Color(0xE8070E18)],
+                  colors: const [Color(0xD9FAF8F4), Color(0xF2F2EEE7)],
                 ),
               ),
             ),
@@ -47,7 +47,7 @@ class _BusinessSection extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 22),
                     decoration: BoxDecoration(
-                      border: Border(bottom: BorderSide(color: Colors.white.withAlpha(20))),
+                      border: const Border(bottom: BorderSide(color: LD.border)),
                     ),
                     child: Row(children: [
                       SizedBox(
@@ -55,7 +55,7 @@ class _BusinessSection extends StatelessWidget {
                         child: Text('0${i + 1}', style: TextStyle(
                           fontFamily: kSerif, fontSize: 28,
                           fontWeight: FontWeight.w300,
-                          color: LD.accent.withAlpha(180),
+                          color: LD.accent,
                           decoration: TextDecoration.none,
                         )),
                       ),
@@ -64,7 +64,7 @@ class _BusinessSection extends StatelessWidget {
                         child: Text(e.value, style: const TextStyle(
                           fontFamily: kSans, fontSize: 13,
                           fontWeight: FontWeight.w400,
-                          color: Color(0xE6FFFFFF),
+                          color: LD.ink,
                           letterSpacing: 0.2,
                           decoration: TextDecoration.none,
                         )),
@@ -93,27 +93,27 @@ class _BusinessSection extends StatelessWidget {
         RevealOnScroll(
           delay: const Duration(milliseconds: 80), dx: -160,
           child: Text(l.homeBusinessTitle,
-              style: displayText(size: narrow ? 36 : 52, color: Colors.white)),
+              style: displayText(size: narrow ? 36 : 52, color: LD.ink)),
         ),
         const SizedBox(height: 28),
         RevealOnScroll(
           delay: const Duration(milliseconds: 160), dx: -120,
           child: Text(
             l.homeBusinessBody,
-            style: bodyText(size: 14, color: const Color(0xCCFFFFFF)),
+            style: bodyText(size: 14, color: LD.ink2),
           ),
         ),
         const SizedBox(height: 44),
         RevealOnScroll(
           delay: const Duration(milliseconds: 220), dx: -120,
-          child: _GhostBtn(label: l.homeBusinessLearnMore, light: true, onTap: onLearnMore),
+          child: _GhostBtn(label: l.homeBusinessLearnMore, onTap: onLearnMore),
         ),
       ]),
     );
 
     return Container(
       key: sectionKey,
-      color: LD.dark,
+      color: LD.bg,
       child: narrow
           ? Column(children: [
               headlinePanel,
@@ -152,9 +152,9 @@ class _CtaSection extends StatelessWidget {
           Positioned.fill(
             child: _VideoBackground(assetPath: _videoAsset),
           ),
-          // Dark overlay — video stays cinematic, text is bright
+          // Light wash — the video stays visible behind ink text
           const Positioned.fill(
-            child: ColoredBox(color: Color(0x85050A12)),
+            child: ColoredBox(color: Color(0xD1FAF8F4)),
           ),
           // Content
           Padding(
@@ -172,7 +172,7 @@ class _CtaSection extends StatelessWidget {
                         style: const TextStyle(
                           fontFamily: kSans, fontSize: 9, fontWeight: FontWeight.w600,
                           letterSpacing: 4.0,
-                          color: Color(0xE0FFFFFF),
+                          color: LD.accent,
                           decoration: TextDecoration.none,
                         )),
                     ),
@@ -183,8 +183,8 @@ class _CtaSection extends StatelessWidget {
                       child: Text.rich(TextSpan(
                         children: emphasisSpans(
                           l.homeCtaTitle,
-                          style: displayText(size: titleSize, color: Colors.white),
-                          emphasis: displayText(size: titleSize, color: Colors.white,
+                          style: displayText(size: titleSize, color: LD.ink),
+                          emphasis: displayText(size: titleSize, color: LD.accent,
                               style: FontStyle.italic),
                         ),
                       )),
@@ -198,7 +198,7 @@ class _CtaSection extends StatelessWidget {
                         style: const TextStyle(
                           fontFamily: kSans, fontSize: 11, fontWeight: FontWeight.w400,
                           letterSpacing: 2.8,
-                          color: Color(0xCCFFFFFF),
+                          color: LD.ink2,
                           decoration: TextDecoration.none,
                         )),
                     ),
@@ -209,11 +209,8 @@ class _CtaSection extends StatelessWidget {
                       child: Wrap(spacing: 20, runSpacing: 16,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          _SolidBtn(
-                            label: l.homeBookRide, white: true,
-                            onTap: onBook,
-                          ),
-                          _GhostBtn(label: l.homeCtaViewFleet, light: true, onTap: onViewFleet),
+                          _SolidBtn(label: l.homeBookRide, onTap: onBook),
+                          _GhostBtn(label: l.homeCtaViewFleet, onTap: onViewFleet),
                         ]),
                     ),
                   ],
@@ -264,7 +261,7 @@ class _VideoBackgroundState extends State<_VideoBackground> {
       await ctrl.play();
       setState(() { _ctrl = ctrl; _ready = true; });
     } catch (_) {
-      // Asset not present yet — section shows solid dark colour as fallback
+      // Asset not present yet — the section shows its paper colour
     }
   }
 
@@ -277,8 +274,8 @@ class _VideoBackgroundState extends State<_VideoBackground> {
   @override
   Widget build(BuildContext context) {
     if (!_ready || _ctrl == null) {
-      // Fallback: dark colour while video loads / file not placed yet
-      return const ColoredBox(color: Color(0xFF0B1220));
+      // Fallback while the video loads / file not placed yet
+      return const ColoredBox(color: LD.bg2);
     }
     return FittedBox(
       fit: BoxFit.cover,

@@ -7,14 +7,18 @@ import '../../../../l10n/l10n.dart';
 
 const String _kSans = 'Montserrat';
 const String _kSerif = 'Cormorant Garamond';
-const Color _kBg = LuxPalette.ink;
-const Color _kSurface = LuxPalette.surface;
-const Color _kElevated = LuxPalette.elevated;
-const Color _kBorder = LuxPalette.line;
-// Brand accent (champagne). Text placed on top of it uses _kInk.
-const Color _kSapphire = LuxPalette.champagne;
+const Color _kBg = LuxPalette.paper;
+const Color _kSurface = Colors.white;
+const Color _kElevated = LuxPalette.paper2;
+const Color _kBorder = LuxPalette.hairline;
+// Brand accent: deep champagne for text and lines, champagne for fills
+// (text placed on a fill uses _kInk).
+const Color _kSapphire = LuxPalette.champagneDeep;
+const Color _kAccentFill = LuxPalette.champagne;
 const Color _kSapphireLight = LuxPalette.champagneLight;
 const Color _kInk = LuxPalette.ink;
+// Body text on the light paper background.
+const Color _kText = LuxPalette.ink;
 
 class HourlyCharterPage extends StatefulWidget {
   const HourlyCharterPage({super.key});
@@ -230,7 +234,7 @@ class _WordMark extends StatelessWidget {
             fontSize: 16,
             fontWeight: FontWeight.w600,
             letterSpacing: 3.5,
-            color: Colors.white,
+            color: _kText,
           ),
         ),
       ],
@@ -263,7 +267,7 @@ class _NavLinkState extends State<_NavLink> {
             fontFamily: _kSans,
             fontSize: 11,
             letterSpacing: 1.0,
-            color: _hovered ? Colors.white : Colors.white.withAlpha(160),
+            color: _hovered ? _kText : _kText.withAlpha(160),
           ),
         ),
       ),
@@ -293,7 +297,7 @@ class _NavTextState extends State<_NavText> {
           fontFamily: _kSans,
           fontSize: 11,
           letterSpacing: 1.0,
-          color: _hovered ? Colors.white : Colors.white.withAlpha(160),
+          color: _hovered ? _kText : _kText.withAlpha(160),
         ),
       ),
     );
@@ -322,7 +326,7 @@ class _ReserveButtonState extends State<_ReserveButton> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           decoration: BoxDecoration(
-            color: _hovered ? _kSapphireLight : _kSapphire,
+            color: _hovered ? _kSapphireLight : _kAccentFill,
             borderRadius: BorderRadius.circular(2),
           ),
           child: FittedBox(
@@ -389,7 +393,7 @@ class _BookingPanel extends StatelessWidget {
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 3.5,
-                color: Colors.white,
+                color: _kText,
               ),
             ),
           ],
@@ -400,7 +404,7 @@ class _BookingPanel extends StatelessWidget {
           style: TextStyle(
             fontFamily: _kSerif,
             fontSize: titleSize,
-            color: Colors.white,
+            color: _kText,
             height: 1.15,
           ),
         ),
@@ -410,7 +414,7 @@ class _BookingPanel extends StatelessWidget {
           style: TextStyle(
             fontFamily: _kSans,
             fontSize: 13,
-            color: Colors.white.withAlpha(130),
+            color: _kText.withAlpha(130),
           ),
         ),
         const SizedBox(height: 32),
@@ -428,7 +432,7 @@ class _BookingPanel extends StatelessWidget {
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: isIda ? _kSapphire : Colors.transparent,
+                      color: isIda ? _kAccentFill : Colors.transparent,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(2),
                         bottomLeft: Radius.circular(2),
@@ -442,7 +446,7 @@ class _BookingPanel extends StatelessWidget {
                         fontSize: 12,
                         color: isIda
                             ? _kInk
-                            : Colors.white.withAlpha(130),
+                            : _kText.withAlpha(130),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -456,7 +460,7 @@ class _BookingPanel extends StatelessWidget {
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
-                      color: !isIda ? _kSapphire : Colors.transparent,
+                      color: !isIda ? _kAccentFill : Colors.transparent,
                       borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(2),
                         bottomRight: Radius.circular(2),
@@ -470,7 +474,7 @@ class _BookingPanel extends StatelessWidget {
                         fontSize: 12,
                         color: !isIda
                             ? _kInk
-                            : Colors.white.withAlpha(130),
+                            : _kText.withAlpha(130),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -502,12 +506,12 @@ class _BookingPanel extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: _kSans,
                     fontSize: 13,
-                    color: Colors.white.withAlpha(80),
+                    color: _kText.withAlpha(80),
                   ),
                 ),
               ),
               Icon(Icons.keyboard_arrow_down,
-                  color: Colors.white.withAlpha(80), size: 18),
+                  color: _kText.withAlpha(80), size: 18),
             ],
           ),
         ),
@@ -536,7 +540,7 @@ class _BookingPanel extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: _kSans,
                           fontSize: 12,
-                          color: Colors.white.withAlpha(160),
+                          color: _kText.withAlpha(160),
                         ),
                       ),
                     ),
@@ -567,7 +571,7 @@ class _BookingPanel extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: _kSans,
                           fontSize: 12,
-                          color: Colors.white.withAlpha(160),
+                          color: _kText.withAlpha(160),
                         ),
                       ),
                     ),
@@ -591,7 +595,7 @@ class _BookingPanel extends StatelessWidget {
               style: TextStyle(
                 fontFamily: _kSans,
                 fontSize: 12,
-                color: Colors.white.withAlpha(130),
+                color: _kText.withAlpha(130),
               ),
             ),
           ),
@@ -635,14 +639,14 @@ class _DarkTextField extends StatelessWidget {
       style: const TextStyle(
         fontFamily: _kSans,
         fontSize: 13,
-        color: Colors.white,
+        color: _kText,
       ),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(
           fontFamily: _kSans,
           fontSize: 13,
-          color: Colors.white.withAlpha(80),
+          color: _kText.withAlpha(80),
         ),
         filled: true,
         fillColor: _kElevated,
@@ -689,7 +693,7 @@ class _FullWidthCtaButtonState extends State<_FullWidthCtaButton> {
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: _hovered ? _kSapphireLight : _kSapphire,
+            color: _hovered ? _kSapphireLight : _kAccentFill,
             borderRadius: BorderRadius.circular(2),
           ),
           child: Text(
@@ -743,7 +747,7 @@ class _HeroSection extends StatelessWidget {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Colors.transparent, Color(0xCC070E18)],
+                colors: [Color(0x00FAF8F4), Color(0xF2FAF8F4)],
                 stops: [0.3, 1.0],
               ),
             ),
@@ -776,7 +780,7 @@ class _HeroSection extends StatelessWidget {
                       fontFamily: _kSerif,
                       fontSize: titleSize,
                       fontWeight: FontWeight.w300,
-                      color: Colors.white,
+                      color: _kText,
                       height: 1.1,
                     ),
                   ),
@@ -822,7 +826,7 @@ class _ServiceDescriptionSection extends StatelessWidget {
             style: TextStyle(
               fontFamily: _kSerif,
               fontSize: titleSize,
-              color: Colors.white,
+              color: _kText,
               height: 1.15,
             ),
           ),
@@ -832,7 +836,7 @@ class _ServiceDescriptionSection extends StatelessWidget {
             style: TextStyle(
               fontFamily: _kSans,
               fontSize: 14,
-              color: Colors.white.withAlpha(160),
+              color: _kText.withAlpha(160),
               height: 1.7,
             ),
           ),
@@ -854,7 +858,7 @@ class _ServiceDescriptionSection extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: _kSans,
                       fontSize: 13,
-                      color: Colors.white.withAlpha(160),
+                      color: _kText.withAlpha(160),
                       height: 1.6,
                     ),
                   ),
@@ -914,7 +918,7 @@ class _UseCasesSection extends StatelessWidget {
               style: TextStyle(
                 fontFamily: _kSerif,
                 fontSize: titleSize,
-                color: Colors.white,
+                color: _kText,
                 height: 1.15,
               ),
             ),
@@ -939,7 +943,7 @@ class _UseCasesSection extends StatelessWidget {
             style: TextStyle(
               fontFamily: _kSerif,
               fontSize: titleSize,
-              color: Colors.white,
+              color: _kText,
               height: 1.15,
             ),
           ),
@@ -1000,7 +1004,7 @@ class _UseCaseCard extends StatelessWidget {
               fontFamily: _kSans,
               fontSize: 13,
               fontWeight: FontWeight.w600,
-              color: Colors.white,
+              color: _kText,
             ),
           ),
           const SizedBox(height: 8),
@@ -1009,7 +1013,7 @@ class _UseCaseCard extends StatelessWidget {
             style: TextStyle(
               fontFamily: _kSans,
               fontSize: 12,
-              color: Colors.white.withAlpha(160),
+              color: _kText.withAlpha(160),
               height: 1.6,
             ),
           ),
@@ -1040,7 +1044,7 @@ class _WorldReachSection extends StatelessWidget {
             ),
           ),
           Container(
-            color: const Color(0x99070E18),
+            color: const Color(0xCCFAF8F4),
           ),
           Center(
             child: Padding(
@@ -1052,7 +1056,7 @@ class _WorldReachSection extends StatelessWidget {
                   fontFamily: _kSans,
                   fontSize: 16,
                   letterSpacing: 2.0,
-                  color: Colors.white,
+                  color: _kText,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -1099,7 +1103,7 @@ class _FaqSection extends StatelessWidget {
             style: TextStyle(
               fontFamily: _kSerif,
               fontSize: titleSize,
-              color: Colors.white,
+              color: _kText,
               height: 1.15,
             ),
           ),
@@ -1133,13 +1137,13 @@ class _FaqTile extends StatelessWidget {
         backgroundColor: Colors.transparent,
         collapsedBackgroundColor: Colors.transparent,
         iconColor: _kSapphire,
-        collapsedIconColor: Colors.white.withAlpha(80),
+        collapsedIconColor: _kText.withAlpha(80),
         title: Text(
           item.question,
           style: const TextStyle(
             fontFamily: _kSans,
             fontSize: 14,
-            color: Colors.white,
+            color: _kText,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -1151,7 +1155,7 @@ class _FaqTile extends StatelessWidget {
               style: TextStyle(
                 fontFamily: _kSans,
                 fontSize: 13,
-                color: Colors.white.withAlpha(160),
+                color: _kText.withAlpha(160),
                 height: 1.65,
               ),
             ),
@@ -1176,7 +1180,7 @@ class _FooterSection extends StatelessWidget {
           style: TextStyle(
             fontFamily: _kSans,
             fontSize: 11,
-            color: Colors.white.withAlpha(60),
+            color: _kText.withAlpha(60),
           ),
         ),
       ),

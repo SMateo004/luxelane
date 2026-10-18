@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Launch splash (before Android 12): navy with the Luxelane monogram. -->
+<!-- Launch splash (before Android 12): warm paper with the Luxelane monogram. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@color/ic_launcher_background" />
     <item>
