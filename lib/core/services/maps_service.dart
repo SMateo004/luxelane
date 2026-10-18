@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import '../../l10n/l10n.dart';
 import '../config/env.dart';
 import '../models/place_model.dart';
+import '../utils/service_area.dart';
 // Web uses the Maps JS API (no CORS); mobile/desktop uses the HTTP REST API.
 import 'places_web.dart' if (dart.library.io) 'places_stub.dart';
 
@@ -24,51 +25,59 @@ class MapsService {
     return supportedAppLocales.any((l) => l.languageCode == lang) ? lang : fallbackAppLocale.languageCode;
   }
 
-  // Santa Cruz de la Sierra — bias center for all location queries
+  // Santa Cruz de la Sierra — default center for location queries when the
+  // user's own position is unknown or outside Bolivia.
   static const _sczLat = -17.7833;
   static const _sczLng = -63.1821;
+
+  // Radius around the search center that results are biased to (~ a city).
+  static const _cityRadiusMeters = 30000.0;
+
+  // Search center, cached so we read the device position at most once per
+  // [_centerTtl] instead of on every keystroke.
+  static ({double lat, double lng})? _center;
+  static DateTime? _centerAt;
+  static const _centerTtl = Duration(minutes: 10);
+
+  static bool _inBolivia(double lat, double lng) =>
+      lat >= -22.95 && lat <= -9.65 && lng >= -69.7 && lng <= -57.4;
+
+  /// Center for autocomplete: the user's position when location permission
+  /// is already granted and they are in Bolivia, otherwise Santa Cruz.
+  /// Never shows a permission prompt — typing in a search box shouldn't.
+  Future<({double lat, double lng})> _searchCenter() async {
+    final cached = _center;
+    if (cached != null &&
+        _centerAt != null &&
+        DateTime.now().difference(_centerAt!) < _centerTtl) {
+      return cached;
+    }
+    var center = (lat: _sczLat, lng: _sczLng);
+    try {
+      final permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always) {
+        final pos = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.low,
+            timeLimit: Duration(seconds: 4),
+          ),
+        );
+        if (_inBolivia(pos.latitude, pos.longitude)) {
+          center = (lat: pos.latitude, lng: pos.longitude);
+        }
+      }
+    } catch (_) {
+      // Keep the Santa Cruz default.
+    }
+    _center = center;
+    _centerAt = DateTime.now();
+    return center;
+  }
 
   // ---------------------------------------------------------------------------
   // Current device location
   // ---------------------------------------------------------------------------
-
-  /// Continuous position updates for an on-duty chauffeur.
-  ///
-  /// Android runs a foreground service with a persistent notification, so
-  /// tracking survives the app being minimised using the regular
-  /// "while in use" permission. iOS keeps updating in the background with
-  /// the blue location indicator. Not used on web (see DriverBloc).
-  Stream<Position> driverPositionStream() {
-    final l = lookupAppLocalizations(Locale(_lang));
-    final LocationSettings settings;
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      settings = AndroidSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 25,
-        intervalDuration: const Duration(seconds: 10),
-        foregroundNotificationConfig: ForegroundNotificationConfig(
-          notificationTitle: l.appNameDriver,
-          notificationText: l.coreDriverLocationNotification,
-          enableWakeLock: true,
-          setOngoing: true,
-          // Monochrome status-bar icon (android/app/src/main/res/drawable-*).
-          notificationIcon: const AndroidResource(name: 'ic_notification'),
-        ),
-      );
-    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      settings = AppleSettings(
-        accuracy: LocationAccuracy.high,
-        distanceFilter: 25,
-        activityType: ActivityType.automotiveNavigation,
-        pauseLocationUpdatesAutomatically: false,
-        allowBackgroundLocationUpdates: true,
-        showBackgroundLocationIndicator: true,
-      );
-    } else {
-      settings = const LocationSettings(accuracy: LocationAccuracy.high, distanceFilter: 25);
-    }
-    return Geolocator.getPositionStream(locationSettings: settings);
-  }
 
   /// Asks for location permission if needed. Null when the location can be
   /// read; otherwise what the chauffeur has to fix.
@@ -124,6 +133,58 @@ class MapsService {
     }
   }
 
+  /// Ubicación continua del chófer conectado. En Android corre como
+  /// servicio en primer plano (con una notificación fija) y en iOS con el
+  /// indicador azul, así sigue llegando con la app minimizada. Emite un
+  /// error si no hay permiso de ubicación.
+  Stream<Position> driverPositionStream() async* {
+    if (!await Geolocator.isLocationServiceEnabled()) {
+      throw const LocationServiceDisabledException();
+    }
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      throw const PermissionDeniedException('location');
+    }
+    final l = lookupAppLocalizations(Locale(_lang));
+    final LocationSettings settings;
+    if (kIsWeb) {
+      settings = const LocationSettings(
+          accuracy: LocationAccuracy.high, distanceFilter: 25);
+    } else if (defaultTargetPlatform == TargetPlatform.android) {
+      settings = AndroidSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 25,
+        intervalDuration: const Duration(seconds: 10),
+        foregroundNotificationConfig: ForegroundNotificationConfig(
+          notificationTitle: l.appNameDriver,
+          notificationText: l.coreDriverLocationNotification,
+          notificationChannelName: 'Ubicación del chófer',
+          enableWakeLock: true,
+          // Monochrome status-bar icon (android/app/src/main/res/drawable-*).
+          notificationIcon: const AndroidResource(name: 'ic_notification'),
+          setOngoing: true,
+        ),
+      );
+    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
+      settings = AppleSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 25,
+        activityType: ActivityType.automotiveNavigation,
+        pauseLocationUpdatesAutomatically: false,
+        allowBackgroundLocationUpdates: true,
+        showBackgroundLocationIndicator: true,
+      );
+    } else {
+      settings = const LocationSettings(
+          accuracy: LocationAccuracy.high, distanceFilter: 25);
+    }
+    yield* Geolocator.getPositionStream(locationSettings: settings);
+  }
+
   // ---------------------------------------------------------------------------
   // Reverse geocode lat/lng → Place
   // ---------------------------------------------------------------------------
@@ -160,23 +221,38 @@ class MapsService {
   // Uses Places API (New) REST — works on web + mobile, no JS interop needed.
   // ---------------------------------------------------------------------------
 
+  /// With [restrictTo], only places inside that circle are returned (used to
+  /// keep the destination in the pickup's city); otherwise results are only
+  /// biased to the user's city.
   Future<List<PlaceSuggestion>> autocomplete(
     String input, {
     String? sessionToken,
+    SearchArea? restrictTo,
   }) async {
     if (input.length < 2) return [];
     if (_key.isEmpty) return [];
 
+    final center = restrictTo != null
+        ? (lat: restrictTo.lat, lng: restrictTo.lng)
+        : await _searchCenter();
+    final radius = restrictTo?.radiusMeters ?? _cityRadiusMeters;
+    final circle = {
+      'circle': {
+        'center': {'latitude': center.lat, 'longitude': center.lng},
+        'radius': radius,
+      },
+    };
+
     try {
       // ── Places API (New) ─────────────────────────────────────────────────────
-      final uri = Uri.parse('https://places.googleapis.com/v1/places:autocomplete');
+      final uri =
+          Uri.parse('https://places.googleapis.com/v1/places:autocomplete');
       final res = await http.post(
         uri,
         headers: {
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': _key,
-          'X-Goog-FieldMask':
-              'suggestions.placePrediction.placeId,'
+          'X-Goog-FieldMask': 'suggestions.placePrediction.placeId,'
               'suggestions.placePrediction.structuredFormat,'
               'suggestions.placePrediction.text',
         },
@@ -184,16 +260,17 @@ class MapsService {
           'input': input,
           'languageCode': _lang,
           'regionCode': 'BO',
-          'locationBias': {
-            'circle': {
-              'center': {'latitude': _sczLat, 'longitude': _sczLng},
-              'radius': 50000.0,
-            },
-          },
+          // Only places in Bolivia; the user's city first (or only).
+          'includedRegionCodes': ['bo'],
+          if (restrictTo != null)
+            'locationRestriction': circle
+          else
+            'locationBias': circle,
         }),
       );
 
-      debugPrint('[Maps] Places v1 status=${res.statusCode} body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
+      debugPrint(
+          '[Maps] Places v1 status=${res.statusCode} body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
 
       if (res.statusCode == 200) {
         final data = json.decode(res.body) as Map<String, dynamic>;
@@ -201,17 +278,21 @@ class MapsService {
         final results = <PlaceSuggestion>[];
         for (final s in suggestions) {
           final pred = (s as Map<String, dynamic>)['placePrediction']
-              as Map<String, dynamic>? ?? {};
+                  as Map<String, dynamic>? ??
+              {};
           final placeId = pred['placeId'] as String? ?? '';
           if (placeId.isEmpty) continue;
-          final structured = pred['structuredFormat']
-              as Map<String, dynamic>? ?? {};
+          final structured =
+              pred['structuredFormat'] as Map<String, dynamic>? ?? {};
           final mainText = ((structured['mainText']
-              as Map<String, dynamic>?)?['text'] as String?) ?? '';
+                  as Map<String, dynamic>?)?['text'] as String?) ??
+              '';
           final secText = ((structured['secondaryText']
-              as Map<String, dynamic>?)?['text'] as String?) ?? '';
-          final fullText = ((pred['text']
-              as Map<String, dynamic>?)?['text'] as String?) ?? '';
+                  as Map<String, dynamic>?)?['text'] as String?) ??
+              '';
+          final fullText =
+              ((pred['text'] as Map<String, dynamic>?)?['text'] as String?) ??
+                  '';
           results.add(PlaceSuggestion(
             placeId: placeId,
             description: fullText,
@@ -230,17 +311,19 @@ class MapsService {
       final params = <String, String>{
         'input': input,
         'key': _key,
-        'location': '$_sczLat,$_sczLng',
-        'radius': '50000',
+        'location': '${center.lat},${center.lng}',
+        'radius': '${radius.toInt()}',
         'components': 'country:bo',
         'language': _lang,
+        if (restrictTo != null) 'strictbounds': 'true',
       };
       if (sessionToken != null) params['sessiontoken'] = sessionToken;
       final uri = Uri.https(_base, '/maps/api/place/autocomplete/json', params);
       final res = await http.get(uri);
       debugPrint('[Maps] Classic status=${res.statusCode}');
       if (res.statusCode != 200) {
-        debugPrint('[Maps] Classic body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
+        debugPrint(
+            '[Maps] Classic body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
       } else {
         final data = json.decode(res.body) as Map<String, dynamic>;
         final predictions = data['predictions'] as List? ?? [];
@@ -260,7 +343,11 @@ class MapsService {
     // API which is already loaded in the browser and bypasses all that.
     if (kIsWeb) {
       try {
-        final jsResults = await webAutocomplete(input);
+        final jsResults = await webAutocomplete(input,
+            lat: center.lat,
+            lng: center.lng,
+            radiusMeters: radius,
+            strict: restrictTo != null);
         debugPrint('[Maps] JS API results=${jsResults.length}');
         return jsResults;
       } catch (e) {
@@ -289,8 +376,7 @@ class MapsService {
 
     try {
       // ── Places API (New) ───────────────────────────────────────────────────
-      final uri = Uri.parse(
-          'https://places.googleapis.com/v1/places/$placeId');
+      final uri = Uri.parse('https://places.googleapis.com/v1/places/$placeId');
       final res = await http.get(uri, headers: {
         'X-Goog-Api-Key': _key,
         'X-Goog-FieldMask': 'id,location,displayName,formattedAddress',
@@ -372,16 +458,13 @@ class MapsService {
       final routes = data['routes'] as List?;
       if (routes == null || routes.isEmpty) return null;
 
-      final leg =
-          (routes.first as Map)['legs'][0] as Map<String, dynamic>;
+      final leg = (routes.first as Map)['legs'][0] as Map<String, dynamic>;
       final encodedPolyline =
           (routes.first as Map)['overview_polyline']['points'] as String;
 
       return RouteInfo(
-        distanceKm:
-            ((leg['distance'] as Map)['value'] as int) / 1000.0,
-        durationMin:
-            ((leg['duration'] as Map)['value'] as int) ~/ 60,
+        distanceKm: ((leg['distance'] as Map)['value'] as int) / 1000.0,
+        durationMin: ((leg['duration'] as Map)['value'] as int) ~/ 60,
         polylinePoints: _decodePolyline(encodedPolyline),
       );
     } catch (_) {

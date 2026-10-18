@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../app/theme/app_theme.dart';
+import '../../core/widgets/components.dart';
+import '../../core/widgets/lux_site_chrome.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../features/home/presentation/pages/home_design.dart';
 import '../../features/notifications/presentation/widgets/notification_bell.dart';
 import '../../l10n/l10n.dart';
 
@@ -11,10 +14,19 @@ class AppShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
   static List<_Tab> _tabs(AppLocalizations l) => [
-    _Tab(icon: Icons.home_outlined,    activeIcon: Icons.home_rounded,    label: l.homeShellTabHome,    path: '/'),
-    _Tab(icon: Icons.history_outlined, activeIcon: Icons.history_rounded,  label: l.homeShellTabTrips,   path: '/trips'),
-    _Tab(icon: Icons.person_outline,   activeIcon: Icons.person_rounded,   label: l.homeShellTabProfile, path: '/profile'),
-  ];
+        _Tab(
+            icon: Icons.near_me_outlined,
+            activeIcon: Icons.near_me_rounded,
+            label: l.homeShellTabHome),
+        _Tab(
+            icon: Icons.event_note_outlined,
+            activeIcon: Icons.event_note_rounded,
+            label: l.homeShellMyTrips),
+        _Tab(
+            icon: Icons.person_outline,
+            activeIcon: Icons.person_rounded,
+            label: l.homeShellTabProfile),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -37,21 +49,82 @@ class _MobileShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: shell,
-        bottomNavigationBar: Container(
+        bottomNavigationBar: DecoratedBox(
           decoration: const BoxDecoration(
-            border: Border(top: BorderSide(color: LuxColors.blackBorder)),
+            color: LuxColors.surface,
+            border: Border(top: BorderSide(color: LuxColors.border)),
+            boxShadow: [
+              BoxShadow(
+                  color: LuxColors.shadow,
+                  blurRadius: 20,
+                  offset: Offset(0, -4)),
+            ],
           ),
-          child: BottomNavigationBar(
-            currentIndex: shell.currentIndex,
-            onTap: (i) =>
-                shell.goBranch(i, initialLocation: i == shell.currentIndex),
-            items: tabs
-                .map((t) => BottomNavigationBarItem(
-                      icon: Icon(t.icon),
-                      activeIcon: Icon(t.activeIcon),
-                      label: t.label,
-                    ))
-                .toList(),
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              height: 64,
+              child: Row(
+                children: [
+                  for (var i = 0; i < tabs.length; i++)
+                    Expanded(
+                      child: _MobileTabItem(
+                        tab: tabs[i],
+                        active: shell.currentIndex == i,
+                        onTap: () => shell.goBranch(i,
+                            initialLocation: i == shell.currentIndex),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+}
+
+class _MobileTabItem extends StatelessWidget {
+  const _MobileTabItem(
+      {required this.tab, required this.active, required this.onTap});
+  final _Tab tab;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        selected: active,
+        button: true,
+        label: tab.label,
+        child: InkResponse(
+          onTap: onTap,
+          radius: 40,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Hairline indicator: quiet, precise — no loud pills.
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                width: active ? 18 : 0,
+                height: 1.5,
+                margin: const EdgeInsets.only(bottom: 8),
+                color: LuxColors.sapphire,
+              ),
+              Icon(active ? tab.activeIcon : tab.icon,
+                  size: 22,
+                  color: active ? LuxColors.sapphire : LuxColors.inkTertiary),
+              const SizedBox(height: 4),
+              Text(
+                tab.label.toUpperCase(),
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 9,
+                  letterSpacing: 1.2,
+                  fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                  color: active ? LuxColors.sapphire : LuxColors.inkTertiary,
+                ),
+              ),
+            ],
           ),
         ),
       );
@@ -69,21 +142,13 @@ class _WebShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<AuthBloc, AuthState>(builder: (context, auth) {
-        final isAuth = auth is AuthAuthenticated;
         return Scaffold(
-          drawer: isAuth
-              ? Drawer(
-                  backgroundColor: LuxColors.blackSurface,
-                  width: 240,
-                  child: _WebRail(shell: shell, tabs: tabs),
-                )
-              : null,
           // Home page (index 0) has its own full-bleed nav overlay —
           // don't add a second header above it.
           body: Column(
             children: [
               if (shell.currentIndex != 0)
-                _WebNav(isAuth: isAuth, auth: auth, shell: shell),
+                _WebNav(auth: auth, shell: shell, tabs: tabs),
               Expanded(child: shell),
             ],
           ),
@@ -92,192 +157,142 @@ class _WebShell extends StatelessWidget {
 }
 
 // ---------------------------------------------------------------------------
-// Web Navigation Bar — Blacklane-style
+// Web Navigation Bar — same midnight bar as the public site, so moving from
+// the landing page into the account area feels like one product.
 // ---------------------------------------------------------------------------
 
 class _WebNav extends StatelessWidget {
-  const _WebNav(
-      {required this.isAuth, required this.auth, required this.shell});
-  final bool isAuth;
+  const _WebNav({required this.auth, required this.shell, required this.tabs});
   final AuthState auth;
   final StatefulNavigationShell shell;
+  final List<_Tab> tabs;
 
   @override
   Widget build(BuildContext context) {
-    final l = context.l10n;
+    final isAuth = auth is AuthAuthenticated;
+    final narrow = MediaQuery.sizeOf(context).width < 900;
     return Container(
-        height: 68,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(bottom: BorderSide(color: Color(0xFFE8E2D6))),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 56),
-        child: Row(
-          children: [
-            GestureDetector(
-              onTap: () {
-                if (isAuth) {
-                  Scaffold.of(context).openDrawer();
-                } else {
-                  context.go('/');
-                }
-              },
-              child: const _WordmarkLogo(),
+      height: kSiteNavHeight,
+      // Uses the public site's nav tokens (LuxSiteNav), not the app palette:
+      // its links and CTA come from lux_site_chrome.
+      decoration: const BoxDecoration(
+        color: LD.dark,
+        border: Border(bottom: BorderSide(color: Color(0xFF1A2B40))),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: narrow ? 20 : 56),
+      child: Row(
+        children: [
+          MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: () => context.go('/'),
+              child: const LuxelaneWordmark(),
             ),
-            if (!isAuth) ...[
-              const Spacer(),
-              _TextNavBtn(l.homeNavServices, () {}),
-              const SizedBox(width: 32),
-              _TextNavBtn(l.homeNavBusiness, () {}),
-              const SizedBox(width: 40),
-              Container(width: 1, height: 18, color: const Color(0xFFE4DED2)),
-              const SizedBox(width: 40),
-              _TextNavBtn(l.homeShellSignIn, () => context.go('/login')),
-              const SizedBox(width: 20),
-              _FilledNavBtn(label: l.homeBookRide, onTap: () => context.go('/')),
-            ] else ...[
-              const Spacer(),
-              _TextNavBtn(l.homeShellTabHome, () => shell.goBranch(0)),
-              const SizedBox(width: 32),
-              _TextNavBtn(l.homeShellMyTrips, () => shell.goBranch(1)),
-              const SizedBox(width: 40),
-              _FilledNavBtn(label: l.homeBookRide, onTap: () => context.go('/')),
-              const SizedBox(width: 12),
-              NotificationBell(color: const Color(0xFF0B1220)),
-              const SizedBox(width: 8),
-              _AvatarBtn(auth: auth),
+          ),
+          const Spacer(),
+          if (isAuth) ...[
+            if (!narrow)
+              for (var i = 1; i < tabs.length; i++) ...[
+                _ShellLink(
+                  label: tabs[i].label,
+                  active: shell.currentIndex == i,
+                  onTap: () => shell.goBranch(i),
+                ),
+                const SizedBox(width: 32),
+              ],
+            if (!narrow) ...[
+              LuxNavCta(onTap: () => context.go('/')),
+              const SizedBox(width: 16),
             ],
+            const NotificationBell(color: Colors.white),
+            const SizedBox(width: 8),
+            _AvatarBtn(auth: auth, onTap: () => shell.goBranch(2)),
+          ] else ...[
+            const LuxServicesMenu(),
+            const SizedBox(width: 32),
+            LuxNavLink(context.l10n.homeShellSignIn, onTap: () => context.go('/login')),
+            const SizedBox(width: 24),
+            LuxNavCta(onTap: () => context.go('/'), compact: narrow),
           ],
-        ),
-      );
+        ],
+      ),
+    );
   }
 }
 
-class _WordmarkLogo extends StatelessWidget {
-  const _WordmarkLogo();
+class _ShellLink extends StatelessWidget {
+  const _ShellLink(
+      {required this.label, required this.active, required this.onTap});
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 26,
-            height: 26,
-            decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFF0B1220)),
-            ),
-            child: const Center(
-              child: Text(
-                'L',
+  Widget build(BuildContext context) => MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Text(
+                label.toUpperCase(),
                 style: TextStyle(
-                  color: Color(0xFF0B1220),
-                  fontSize: 15,
-                  fontFamily: 'Cormorant Garamond',
-                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Montserrat',
+                  fontSize: 11,
+                  letterSpacing: 1.2,
+                  color: active ? Colors.white : Colors.white.withAlpha(150),
                 ),
               ),
-            ),
+              Positioned(
+                left: 0,
+                bottom: -6,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  height: 1,
+                  width: active ? 18 : 0,
+                  color: const Color(0xFF8CB2E3),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          const Text(
-            'LUXELANE',
-            style: TextStyle(
-              color: Color(0xFF0B1220),
-              fontSize: 12,
-              fontFamily: 'Montserrat',
-              fontWeight: FontWeight.w600,
-              letterSpacing: 4,
-            ),
-          ),
-        ],
-      );
-}
-
-class _TextNavBtn extends StatelessWidget {
-  const _TextNavBtn(this.label, this.onTap);
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => TextButton(
-        onPressed: onTap,
-        style: TextButton.styleFrom(
-          foregroundColor: const Color(0xFF5E6676),
-          minimumSize: Size.zero,
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          padding: EdgeInsets.zero,
-          textStyle: const TextStyle(
-            fontFamily: 'Montserrat',
-            fontSize: 12,
-            fontWeight: FontWeight.w400,
-            letterSpacing: 0.2,
-          ),
-        ),
-        child: Text(label),
-      );
-}
-
-class _FilledNavBtn extends StatelessWidget {
-  const _FilledNavBtn({required this.label, required this.onTap});
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-        height: 38,
-        child: ElevatedButton(
-          onPressed: onTap,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF0B1220),
-            foregroundColor: Colors.white,
-            minimumSize: Size.zero,
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            elevation: 0,
-            shape: const RoundedRectangleBorder(
-              
-            ),
-            textStyle: const TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.8,
-            ),
-          ),
-          child: Text(label.toUpperCase()),
         ),
       );
 }
 
 class _AvatarBtn extends StatelessWidget {
-  const _AvatarBtn({required this.auth});
+  const _AvatarBtn({required this.auth, required this.onTap});
   final AuthState auth;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final initial = auth is AuthAuthenticated
-        ? (auth as AuthAuthenticated).user.displayName.isNotEmpty
-            ? (auth as AuthAuthenticated).user.displayName[0].toUpperCase()
-            : 'U'
-        : 'U';
-    return GestureDetector(
-      onTap: () => context.go('/profile'),
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xFFE4DED2)),
-          color: const Color(0xFFFAF8F4),
-        ),
-        child: Center(
-          child: Text(
-            initial,
-            style: const TextStyle(
-              color: Color(0xFF0B1220),
-              fontWeight: FontWeight.w500,
-              fontSize: 13,
-              fontFamily: 'Montserrat',
+    final a = auth;
+    final name = a is AuthAuthenticated ? a.user.displayName : '';
+    return Semantics(
+      button: true,
+      label: 'Mi perfil',
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white.withAlpha(90)),
+            ),
+            child: Center(
+              child: Text(
+                name.isNotEmpty ? name[0].toUpperCase() : 'L',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                  fontFamily: 'Cormorant Garamond',
+                ),
+              ),
             ),
           ),
         ),
@@ -286,69 +301,10 @@ class _AvatarBtn extends StatelessWidget {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Web Rail (authenticated)
-// ---------------------------------------------------------------------------
-
-class _WebRail extends StatelessWidget {
-  const _WebRail({required this.shell, required this.tabs});
-  final StatefulNavigationShell shell;
-  final List<_Tab> tabs;
-
-  @override
-  Widget build(BuildContext context) => SizedBox(
-        width: 240,
-        child: NavigationRail(
-          extended: true,
-          selectedIndex: shell.currentIndex,
-          onDestinationSelected: (i) {
-            Navigator.of(context).pop(); // Close the drawer
-            shell.goBranch(i, initialLocation: i == shell.currentIndex);
-          },
-          backgroundColor: LuxColors.blackSurface,
-          destinations: tabs
-              .map((t) => NavigationRailDestination(
-                    icon: Icon(t.icon),
-                    selectedIcon: Icon(t.activeIcon),
-                    label: Text(t.label),
-                  ))
-              .toList(),
-          trailing: Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 32),
-                child: TextButton.icon(
-                  onPressed: () => context
-                      .read<AuthBloc>()
-                      .add(const LogoutRequested()),
-                  icon: const Icon(Icons.logout_rounded, size: 16),
-                  label: Text(context.l10n.homeShellSignOut),
-                  style: TextButton.styleFrom(
-                    foregroundColor: LuxColors.whiteTertiary,
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    textStyle: const TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 12,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-}
-
 class _Tab {
   const _Tab(
-      {required this.icon,
-      required this.activeIcon,
-      required this.label,
-      required this.path});
+      {required this.icon, required this.activeIcon, required this.label});
   final IconData icon;
   final IconData activeIcon;
   final String label;
-  final String path;
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
@@ -19,7 +22,6 @@ import '../../../../l10n/l10n.dart';
 import '../../../support/presentation/widgets/trip_safety.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../booking/domain/booking_error_codes.dart';
-import '../../../booking/presentation/bloc/booking_bloc.dart';
 import '../../../notifications/presentation/bloc/notification_bloc.dart';
 
 /// Rider's live trip view: chauffeur, ETA, flight status and rating.
@@ -33,6 +35,9 @@ class RideScreen extends StatefulWidget {
 }
 
 class _RideScreenState extends State<RideScreen> {
+  // La pantalla sigue su propia reserva: con el BookingBloc compartido, una
+  // reserva vista antes seguía emitiendo y pisaba esta y la lista de viajes.
+  StreamSubscription<Booking>? _sub;
   Booking? _booking;
   BookingStatus? _notifiedStatus;
   bool _ratingPrompted = false;
@@ -48,14 +53,23 @@ class _RideScreenState extends State<RideScreen> {
   void initState() {
     super.initState();
     if (widget.rideId.isNotEmpty) {
-      context
-          .read<BookingBloc>()
-          .add(BookingStatusWatched(bookingId: widget.rideId));
+      _sub = sl<BookingRepository>().watchBooking(widget.rideId).listen(
+        (b) {
+          if (mounted) _onBooking(b);
+        },
+        onError: (_) {},
+      );
     }
     final authState = context.read<AuthBloc>().state;
     if (authState is AuthAuthenticated) {
       sl<NotificationService>().init(userId: authState.user.id);
     }
+  }
+
+  @override
+  void dispose() {
+    _sub?.cancel();
+    super.dispose();
   }
 
   BookingStatus get _status => _booking?.status ?? BookingStatus.pending;
@@ -87,7 +101,7 @@ class _RideScreenState extends State<RideScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: LuxColors.blackSurface,
+        backgroundColor: LuxColors.surface,
         title: Text(l.rideCancelTitle, style: LuxTypography.titleMedium),
         content: Text(
           [
@@ -132,7 +146,7 @@ class _RideScreenState extends State<RideScreen> {
           final result = await sl<BookingRepository>().rateBooking(
             bookingId: booking.id,
             rating: rating,
-            comment: comment,
+            comment: comment ?? '',
           );
           if (!ctx.mounted) return;
           Navigator.of(ctx).pop();
@@ -180,19 +194,12 @@ class _RideScreenState extends State<RideScreen> {
   @override
   Widget build(BuildContext context) {
     final tracked = _booking?.driverId != null && _trackedStatuses.contains(_status);
-    return BlocListener<BookingBloc, BookingState>(
-      listener: (context, state) {
-        if (state is BookingStatusUpdated && state.booking.id == widget.rideId) {
-          _onBooking(state.booking);
-        }
-      },
-      child: tracked
-          ? StreamBuilder<LiveLocation?>(
-              stream: sl<BookingRepository>().watchLiveLocation(widget.rideId),
-              builder: (context, snap) => _buildScaffold(snap.data),
-            )
-          : _buildScaffold(null),
-    );
+    return tracked
+        ? StreamBuilder<LiveLocation?>(
+            stream: sl<BookingRepository>().watchLiveLocation(widget.rideId),
+            builder: (context, snap) => _buildScaffold(snap.data),
+          )
+        : _buildScaffold(null);
   }
 
   Widget _buildScaffold(LiveLocation? live) {
@@ -212,7 +219,7 @@ class _RideScreenState extends State<RideScreen> {
                 SizedBox(
                   width: 420,
                   child: Container(
-                    color: LuxColors.blackSurface,
+                    color: LuxColors.surface,
                     child: Column(
                       children: [
                         _WebRideHeader(status: _status),
@@ -240,9 +247,9 @@ class _RideScreenState extends State<RideScreen> {
                       Container(
                         width: double.infinity,
                         decoration: const BoxDecoration(
-                          color: LuxColors.blackSurface,
+                          color: LuxColors.surface,
                           borderRadius: BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
-                          border: Border(top: BorderSide(color: LuxColors.blackBorder)),
+                          border: Border(top: BorderSide(color: LuxColors.border)),
                         ),
                         padding: const EdgeInsets.fromLTRB(
                             LuxSpacing.md, LuxSpacing.md, LuxSpacing.md, LuxSpacing.xl),
@@ -312,10 +319,17 @@ class _TripPanel extends StatelessWidget {
     final l10n = context.l10n;
     final (title, subtitle) = _headline(l10n);
     final b = booking;
+    final open =
+        status != BookingStatus.completed && status != BookingStatus.cancelled;
+    final notes = b?.riderPreferences.driverNotes ?? const <String>[];
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (status != BookingStatus.cancelled) ...[
+          RideProgressBar(status: status),
+          const SizedBox(height: LuxSpacing.md),
+        ],
         Row(
           children: [
             BookingStatusChip(status: status),
@@ -332,6 +346,25 @@ class _TripPanel extends StatelessWidget {
         if (subtitle != null) ...[
           const SizedBox(height: 4),
           Text(subtitle, style: LuxTypography.bodyMedium),
+        ],
+        if (open && notes.isNotEmpty) ...[
+          const SizedBox(height: LuxSpacing.sm),
+          Row(
+            children: [
+              const Icon(Icons.verified_outlined,
+                  size: 14, color: LuxColors.sapphire),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  'Tu chófer conoce tu estilo: '
+                  '${notes.take(3).join(' · ').toLowerCase()}',
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: LuxTypography.caption.copyWith(fontSize: 12),
+                ),
+              ),
+            ],
+          ),
         ],
         if (b != null && showsFreeWait(b)) ...[
           const SizedBox(height: LuxSpacing.md),
@@ -380,7 +413,7 @@ class _TripPanel extends StatelessWidget {
                   5,
                   (i) => Icon(
                     i < b.riderRating! ? Icons.star_rounded : Icons.star_outline_rounded,
-                    color: LuxColors.accent,
+                    color: LuxColors.sapphire,
                     size: 20,
                   ),
                 ),
@@ -412,6 +445,85 @@ class _TripPanel extends StatelessWidget {
       s == BookingStatus.inProgress;
 }
 
+/// Las etapas del viaje como una barra en cuatro tramos: se ve qué pasó,
+/// qué está pasando (el tramo que respira) y cuánto falta.
+class RideProgressBar extends StatefulWidget {
+  const RideProgressBar({super.key, required this.status});
+  final BookingStatus status;
+
+  @override
+  State<RideProgressBar> createState() => _RideProgressBarState();
+}
+
+class _RideProgressBarState extends State<RideProgressBar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pulse = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1600),
+  )..repeat(reverse: true);
+
+  int get _step => switch (widget.status) {
+        BookingStatus.pending => 0,
+        BookingStatus.confirmed => 1,
+        BookingStatus.driverArriving => 2,
+        BookingStatus.driverArrived => 3,
+        BookingStatus.inProgress => 4,
+        BookingStatus.completed => 5,
+        BookingStatus.cancelled => 0,
+      };
+
+  @override
+  void dispose() {
+    _pulse.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const segments = 4;
+    final step = _step;
+    final calm = LuxMotion.reduced(context);
+    return Semantics(
+      label: 'Etapa ${step.clamp(1, segments)} de $segments',
+      child: Row(
+        children: [
+          for (var i = 0; i < segments; i++) ...[
+            if (i > 0) const SizedBox(width: 4),
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: SizedBox(
+                  height: 3,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      const ColoredBox(color: LuxColors.surfaceDeep),
+                      AnimatedFractionallySizedBox(
+                        duration: LuxMotion.of(context, LuxMotion.slow),
+                        curve: LuxMotion.emphasized,
+                        alignment: Alignment.centerLeft,
+                        widthFactor: i < step ? 1 : 0,
+                        child: i == step - 1 && step < 5 && !calm
+                            ? FadeTransition(
+                                opacity: Tween(begin: 0.45, end: 1.0)
+                                    .animate(_pulse),
+                                child:
+                                    const ColoredBox(color: LuxColors.sapphire),
+                              )
+                            : const ColoredBox(color: LuxColors.sapphire),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 class _LiveDot extends StatelessWidget {
   const _LiveDot();
 
@@ -440,7 +552,7 @@ class _AssigningCard extends StatelessWidget {
             const SizedBox(
               width: 22,
               height: 22,
-              child: CircularProgressIndicator(strokeWidth: 2, color: LuxColors.accent),
+              child: CircularProgressIndicator(strokeWidth: 2, color: LuxColors.sapphire),
             ),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
@@ -484,11 +596,11 @@ class _ChauffeurCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 28,
-                backgroundColor: LuxColors.blackElevated,
+                backgroundColor: LuxColors.surfaceMuted,
                 backgroundImage: chauffeur.photoUrl != null ? NetworkImage(chauffeur.photoUrl!) : null,
                 child: chauffeur.photoUrl == null
                     ? Text(_displayName(context).characters.first.toUpperCase(),
-                        style: LuxTypography.headlineMedium.copyWith(color: LuxColors.accent))
+                        style: LuxTypography.headlineMedium.copyWith(color: LuxColors.sapphire))
                     : null,
               ),
               const SizedBox(width: LuxSpacing.md),
@@ -502,7 +614,7 @@ class _ChauffeurCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Row(
                       children: [
-                        const Icon(Icons.verified_user_outlined, size: 13, color: LuxColors.accent),
+                        const Icon(Icons.verified_user_outlined, size: 13, color: LuxColors.sapphire),
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
@@ -524,7 +636,7 @@ class _ChauffeurCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        border: Border.all(color: LuxColors.accent),
+                        border: Border.all(color: LuxColors.sapphire),
                         borderRadius: BorderRadius.circular(LuxRadius.sm),
                       ),
                       child: Text(chauffeur.plate,
@@ -535,7 +647,7 @@ class _ChauffeurCard extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.star_rounded, color: LuxColors.accent, size: 16),
+                        const Icon(Icons.star_rounded, color: LuxColors.sapphire, size: 16),
                         const SizedBox(width: 2),
                         Text(chauffeur.rating!.toStringAsFixed(1), style: LuxTypography.titleMedium),
                       ],
@@ -594,13 +706,13 @@ class _FlightCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(LuxSpacing.md),
       decoration: BoxDecoration(
-        color: LuxColors.blackElevated,
+        color: LuxColors.surfaceMuted,
         borderRadius: BorderRadius.circular(LuxRadius.md),
-        border: Border.all(color: LuxColors.blackBorder),
+        border: Border.all(color: LuxColors.border),
       ),
       child: Row(
         children: [
-          const Icon(Icons.flight_land_rounded, color: LuxColors.accent),
+          const Icon(Icons.flight_land_rounded, color: LuxColors.sapphire),
           const SizedBox(width: LuxSpacing.md),
           Expanded(
             child: Column(
@@ -670,7 +782,7 @@ class _TopBar extends StatelessWidget {
               button: true,
               label: context.l10n.rideBackHome,
               child: Material(
-                color: LuxColors.blackSurface,
+                color: LuxColors.surface,
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
                 child: InkWell(
                   borderRadius: BorderRadius.circular(LuxRadius.sm),
@@ -680,9 +792,9 @@ class _TopBar extends StatelessWidget {
                     height: 48,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(LuxRadius.sm),
-                      border: Border.all(color: LuxColors.blackBorder),
+                      border: Border.all(color: LuxColors.border),
                     ),
-                    child: const Icon(Icons.keyboard_arrow_down_rounded, color: LuxColors.white),
+                    child: const Icon(Icons.keyboard_arrow_down_rounded, color: LuxColors.ink),
                   ),
                 ),
               ),
@@ -737,10 +849,10 @@ class _RatingDialogState extends State<_RatingDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        backgroundColor: LuxColors.blackSurface,
+        backgroundColor: LuxColors.surface,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(LuxRadius.lg),
-          side: const BorderSide(color: LuxColors.blackBorder),
+          side: const BorderSide(color: LuxColors.border),
         ),
         title: Text(context.l10n.rideRatingTitle,
             style: LuxTypography.titleMedium, textAlign: TextAlign.center),
@@ -748,7 +860,7 @@ class _RatingDialogState extends State<_RatingDialog> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(widget.driverName,
-                style: LuxTypography.bodyMedium.copyWith(color: LuxColors.whiteSecondary)),
+                style: LuxTypography.bodyMedium.copyWith(color: LuxColors.inkSecondary)),
             const SizedBox(height: LuxSpacing.lg),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -759,7 +871,7 @@ class _RatingDialogState extends State<_RatingDialog> {
                   onPressed: () => setState(() => _rating = star),
                   icon: Icon(
                     star <= _rating ? Icons.star_rounded : Icons.star_outline_rounded,
-                    color: LuxColors.accent,
+                    color: LuxColors.sapphire,
                     size: 34,
                   ),
                 );
@@ -767,7 +879,7 @@ class _RatingDialogState extends State<_RatingDialog> {
             ),
             Text(
               _ratingLabel(context.l10n, _rating),
-              style: LuxTypography.caption.copyWith(color: LuxColors.accent),
+              style: LuxTypography.caption.copyWith(color: LuxColors.sapphire),
             ),
             const SizedBox(height: LuxSpacing.md),
             TextField(

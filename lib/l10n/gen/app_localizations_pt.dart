@@ -1349,6 +1349,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get bookingTripDetailsHeading => 'DETALHES DA VIAGEM';
 
   @override
+  String get bookingVehicleUnavailable => 'Este veículo não está disponível para este serviço no momento. Escolha outro.';
+
+  @override
   String get bookingViewMyBooking => 'VER MINHA RESERVA';
 
   @override

@@ -32,7 +32,7 @@ class AccountSuspendedPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     return Scaffold(
-      backgroundColor: LuxColors.black,
+      backgroundColor: LuxColors.bg,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -43,7 +43,7 @@ class AccountSuspendedPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Icon(Icons.pause_circle_outline_rounded, size: 56, color: LuxColors.accent),
+                  const Icon(Icons.pause_circle_outline_rounded, size: 56, color: LuxColors.sapphire),
                   const SizedBox(height: LuxSpacing.lg),
                   Semantics(
                     header: true,

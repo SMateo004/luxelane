@@ -63,11 +63,11 @@ class _ServiceCard extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: LuxColors.accentSubtle,
+                color: LuxColors.sapphireSubtle,
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
-                border: Border.all(color: LuxColors.accent.withOpacity(0.3)),
+                border: Border.all(color: LuxColors.sapphire.withOpacity(0.3)),
               ),
-              child: Icon(icon, color: LuxColors.accent, size: 28),
+              child: Icon(icon, color: LuxColors.sapphire, size: 28),
             ),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
@@ -80,7 +80,8 @@ class _ServiceCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: LuxColors.whiteTertiary),
+            const Icon(Icons.chevron_right_rounded,
+                color: LuxColors.inkTertiary),
           ],
         ),
       );

@@ -57,7 +57,7 @@ class HotelsAdminTab extends StatelessWidget {
             ),
             const SizedBox(height: LuxSpacing.lg),
             if (!snap.hasData && !snap.hasError)
-              const Center(child: CircularProgressIndicator(color: LuxColors.accent))
+              const Center(child: CircularProgressIndicator(color: LuxColors.sapphire))
             else if (hotels.isEmpty)
               EmptyState(icon: Icons.hotel_outlined, message: l.hotelAdminEmpty)
             else
@@ -84,14 +84,14 @@ class _HotelTile extends StatelessWidget {
       child: LuxCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
-            const Icon(Icons.hotel_outlined, color: LuxColors.accent),
+            const Icon(Icons.hotel_outlined, color: LuxColors.sapphire),
             const SizedBox(width: LuxSpacing.md),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Wrap(spacing: LuxSpacing.sm, crossAxisAlignment: WrapCrossAlignment.center, children: [
                   Text(h.name, style: LuxTypography.titleMedium),
                   Text(h.active ? l.hotelAdminVisible : l.hotelAdminHidden,
-                      style: LuxTypography.caption.copyWith(color: LuxColors.whiteSecondary)),
+                      style: LuxTypography.caption.copyWith(color: LuxColors.inkSecondary)),
                 ]),
                 const SizedBox(height: 2),
                 Text(h.address, maxLines: 2, overflow: TextOverflow.ellipsis, style: LuxTypography.bodyMedium),
@@ -102,7 +102,7 @@ class _HotelTile extends StatelessWidget {
               message: h.active ? l.hotelAdminHide : l.hotelAdminShow,
               child: Switch(
                 value: h.active,
-                activeColor: LuxColors.accent,
+                activeColor: LuxColors.sapphire,
                 onChanged: (v) async {
                   try {
                     await repo.setActive(h.id, v);
@@ -114,7 +114,7 @@ class _HotelTile extends StatelessWidget {
             ),
             IconButton(
               tooltip: l.hotelAdminEdit,
-              icon: const Icon(Icons.edit_outlined, color: LuxColors.whiteSecondary),
+              icon: const Icon(Icons.edit_outlined, color: LuxColors.inkSecondary),
               onPressed: () =>
                   showDialog<void>(context: context, builder: (_) => HotelEditDialog(repo: repo, initial: h)),
             ),
@@ -122,15 +122,15 @@ class _HotelTile extends StatelessWidget {
           const SizedBox(height: LuxSpacing.sm),
           Row(children: [
             Expanded(
-              child: SelectableText(link, maxLines: 1, style: LuxTypography.caption.copyWith(color: LuxColors.white)),
+              child: SelectableText(link, maxLines: 1, style: LuxTypography.caption.copyWith(color: LuxColors.ink)),
             ),
             TextButton.icon(
               onPressed: () async {
                 await Clipboard.setData(ClipboardData(text: link));
                 if (context.mounted) showLuxSnackbar(context, l.hotelAdminLinkCopied);
               },
-              icon: const Icon(Icons.link_rounded, size: 16, color: LuxColors.accent),
-              label: Text(l.hotelAdminCopyLink, style: const TextStyle(color: LuxColors.accent)),
+              icon: const Icon(Icons.link_rounded, size: 16, color: LuxColors.sapphire),
+              label: Text(l.hotelAdminCopyLink, style: const TextStyle(color: LuxColors.sapphire)),
             ),
           ]),
         ]),
@@ -201,7 +201,7 @@ class _HotelEditDialogState extends State<HotelEditDialog> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     return AlertDialog(
-      backgroundColor: LuxColors.blackElevated,
+      backgroundColor: LuxColors.surfaceMuted,
       title: Text(_i == null ? l.hotelAdminAdd : l.hotelAdminEditTitle(_i.name), style: LuxTypography.titleLarge),
       content: SizedBox(
         width: 460,
@@ -242,7 +242,7 @@ class _HotelEditDialogState extends State<HotelEditDialog> {
         TextButton(onPressed: _busy ? null : () => Navigator.of(context).pop(), child: Text(l.commonCancel)),
         TextButton(
           onPressed: _busy ? null : _save,
-          child: Text(l.hotelAdminSave, style: const TextStyle(color: LuxColors.accent, fontWeight: FontWeight.w600)),
+          child: Text(l.hotelAdminSave, style: const TextStyle(color: LuxColors.sapphire, fontWeight: FontWeight.w600)),
         ),
       ],
     );

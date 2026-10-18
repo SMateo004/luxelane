@@ -1,7 +1,11 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../app/theme/lux_motion.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -14,30 +18,62 @@ class PaymentScreen extends StatefulWidget {
 }
 
 class _PaymentScreenState extends State<PaymentScreen> {
-  String? _defaultCardId;
-
   @override
   void initState() {
     super.initState();
     _loadCards();
   }
 
-  void _loadCards() {
+  Future<void> _loadCards() async {
     final authState = context.read<AuthBloc>().state;
-    if (authState is AuthAuthenticated &&
-        authState.user.stripeCustomerId != null &&
-        authState.user.stripeCustomerId!.isNotEmpty) {
-      context.read<PaymentBloc>().add(
-            CardsLoadRequested(
-                stripeCustomerId: authState.user.stripeCustomerId!),
-          );
+    if (authState is! AuthAuthenticated) return;
+    var customerId = authState.user.stripeCustomerId ?? '';
+    if (customerId.isEmpty) {
+      // El perfil de pagos no se creó al registrarse: se crea ahora.
+      final result = await sl<PaymentRepository>().ensureStripeCustomer();
+      if (!mounted) return;
+      customerId = result.fold((_) => '', (id) => id);
+      if (customerId.isEmpty) return;
     }
+    context
+        .read<PaymentBloc>()
+        .add(CardsLoadRequested(stripeCustomerId: customerId));
   }
 
-  void _removeCard(String paymentMethodId) {
+  /// Stripe solo está configurado en la app móvil.
+  void _addCard() {
+    if (kIsWeb) {
+      showLuxSnackbar(context,
+          'Agrega tus tarjetas desde la app de Luxelane en tu teléfono.');
+      return;
+    }
+    context.push('/payment/add');
+  }
+
+  Future<void> _removeCard(String paymentMethodId) async {
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) return;
     if (authState.user.stripeCustomerId == null) return;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿Quitar esta tarjeta?'),
+        content: const Text(
+            'Dejará de estar disponible para tus próximas reservas.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: FilledButton.styleFrom(backgroundColor: LuxColors.error),
+            child: const Text('Quitar'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
 
     context.read<PaymentBloc>().add(
           CardRemoved(
@@ -53,7 +89,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
       listener: (context, state) {
         if (state is CardOperationSuccess) _loadCards();
         if (state is PaymentError) {
-          showLuxSnackbar(context, context.l10n.paymentsError, isError: true);
+          showLuxSnackbar(context, state.message, isError: true);
+          // Tras un fallo se vuelve a mostrar la lista en vez de vaciarla.
+          _loadCards();
         }
       },
       builder: (context, state) {
@@ -66,14 +104,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
               onPressed: () => context.pop(),
             ),
             actions: [
-              TextButton.icon(
-                onPressed: () => context.push('/payment/add'),
-                icon: const Icon(Icons.add, size: 18, color: LuxColors.accent),
-                label: Text(
-                  context.l10n.paymentsAdd.toUpperCase(),
-                  style: LuxTypography.labelLarge
-                      .copyWith(color: LuxColors.accent, fontSize: 11),
-                ),
+              IconButton(
+                tooltip: context.l10n.paymentsAddCard,
+                onPressed: _addCard,
+                icon: const Icon(Icons.add_rounded, color: LuxColors.sapphire),
               ),
             ],
           ),
@@ -83,54 +117,68 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
+  /// Última lista conocida: mientras se guarda un cambio se sigue viendo,
+  /// atenuada, en lugar de desaparecer tras una rueda de carga.
+  List<Map<String, dynamic>>? _lastCards;
+
   Widget _buildBody(PaymentState state) {
-    if (state is PaymentLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    if (state is CardsLoaded) _lastCards = state.cards;
+    final cards = _lastCards;
+    final busy = state is PaymentLoading;
 
-    if (state is CardsLoaded) {
-      if (state.cards.isEmpty) {
-        return _EmptyCards(onAdd: () => context.push('/payment/add'));
-      }
-      return ListView(
-        padding: const EdgeInsets.all(LuxSpacing.md),
-        children: [
-          SectionHeader(title: context.l10n.paymentsSavedCards),
-          const SizedBox(height: LuxSpacing.md),
-          ...state.cards.map(
-            (card) => _CardTile(
-              card: card,
-              isDefault: _defaultCardId == card['id'],
-              onSetDefault: () =>
-                  setState(() => _defaultCardId = card['id'] as String),
-              onRemove: () => _removeCard(card['id'] as String),
+    if (cards == null) {
+      return busy
+          ? const LuxSkeletonList(count: 2, itemHeight: 72)
+          : _EmptyCards(onAdd: _addCard);
+    }
+    if (cards.isEmpty) return _EmptyCards(onAdd: _addCard);
+
+    return AnimatedOpacity(
+      opacity: busy ? 0.55 : 1,
+      duration: LuxMotion.of(context, LuxMotion.base),
+      child: IgnorePointer(
+        ignoring: busy,
+        child: ListView(
+          padding: const EdgeInsets.all(LuxSpacing.md),
+          children: [
+            SectionHeader(title: context.l10n.paymentsSavedCards),
+            const SizedBox(height: LuxSpacing.sm),
+            LuxGroup(
+              footer: 'Toca una tarjeta para usarla por defecto al reservar.',
+              children: [
+                for (final card in cards)
+                  _CardTile(
+                    card: card,
+                    isDefault: card['isDefault'] == true,
+                    onSetDefault: () => context.read<PaymentBloc>().add(
+                        DefaultCardSet(paymentMethodId: card['id'] as String)),
+                    onRemove: () => _removeCard(card['id'] as String),
+                  ),
+              ],
             ),
-          ),
-          const SizedBox(height: LuxSpacing.lg),
-          LuxOutlinedButton(
-            label: context.l10n.paymentsAddNewCard,
-            onPressed: () => context.push('/payment/add'),
-            icon: Icons.add,
-          ),
-          const SizedBox(height: LuxSpacing.md),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.lock_outline,
-                  size: 14, color: LuxColors.whiteTertiary),
-              const SizedBox(width: LuxSpacing.xs),
-              Flexible(
-                child: Text(context.l10n.paymentsSecured,
-                    style: LuxTypography.caption),
-              ),
-            ],
-          ),
-        ],
-      );
-    }
-
-    // No Stripe customer yet
-    return _EmptyCards(onAdd: () => context.push('/payment/add'));
+            const SizedBox(height: LuxSpacing.lg),
+            LuxOutlinedButton(
+              label: context.l10n.paymentsAddCard,
+              onPressed: _addCard,
+              icon: Icons.add_rounded,
+            ),
+            const SizedBox(height: LuxSpacing.md),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.lock_outline,
+                    size: 14, color: LuxColors.inkTertiary),
+                const SizedBox(width: LuxSpacing.xs),
+                Flexible(
+                  child: Text(context.l10n.paymentsSecured,
+                      style: LuxTypography.caption),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -139,25 +187,11 @@ class _EmptyCards extends StatelessWidget {
   final VoidCallback onAdd;
 
   @override
-  Widget build(BuildContext context) => Center(
-        child: Padding(
-          padding: const EdgeInsets.all(LuxSpacing.lg),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.credit_card_outlined,
-                  size: 48, color: LuxColors.whiteTertiary),
-              const SizedBox(height: LuxSpacing.md),
-              Text(context.l10n.paymentsEmptyTitle,
-                  style: LuxTypography.titleMedium, textAlign: TextAlign.center),
-              const SizedBox(height: LuxSpacing.sm),
-              Text(context.l10n.paymentsEmptyBody,
-                  style: LuxTypography.bodyMedium, textAlign: TextAlign.center),
-              const SizedBox(height: LuxSpacing.xl),
-              LuxButton(label: context.l10n.paymentsAddCard, onPressed: onAdd),
-            ],
-          ),
-        ),
+  Widget build(BuildContext context) => EmptyState(
+        icon: Icons.credit_card_outlined,
+        message: context.l10n.paymentsEmptyBody,
+        actionLabel: context.l10n.paymentsAddCard,
+        onAction: onAdd,
       );
 }
 
@@ -174,81 +208,88 @@ class _CardTile extends StatelessWidget {
   final VoidCallback onSetDefault;
   final VoidCallback onRemove;
 
+  static String _brand(String? b) => switch (b) {
+        'visa' => 'Visa',
+        'mastercard' => 'Mastercard',
+        'amex' => 'American Express',
+        null || '' => '',
+        _ => '${b[0].toUpperCase()}${b.substring(1)}',
+      };
+
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final brand = _capitalize(card['brand'] as String? ?? l.paymentsCardFallback);
-    final last4 = card['last4'] ?? '****';
     final month = '${card['expMonth'] ?? ''}'.padLeft(2, '0');
     final year = '${card['expYear'] ?? ''}';
-    return LuxCard(
-        selected: isDefault,
-        child: Row(
-          children: [
-            Container(
-              width: 48,
-              height: 30,
-              decoration: BoxDecoration(
-                color: LuxColors.blackElevated,
-                borderRadius: BorderRadius.circular(LuxRadius.sm),
+    final expires = l.paymentsCardExpires(month, year.length == 4 ? year.substring(2) : year);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: isDefault
+            ? null
+            : () {
+                LuxHaptics.tap();
+                onSetDefault();
+              },
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 4, 12),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: isDefault ? LuxColors.ink : LuxColors.surfaceMuted,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Icon(Icons.credit_card_rounded,
+                    size: 15,
+                    color: isDefault ? Colors.white : LuxColors.inkSecondary),
               ),
-              child: const Icon(Icons.credit_card_outlined,
-                  color: LuxColors.accent, size: 20),
-            ),
-            const SizedBox(width: LuxSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '$brand •••• $last4',
-                    style: LuxTypography.bodyLarge,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Text(
-                    l.paymentsCardExpires(month, year),
-                    style: LuxTypography.caption,
-                  ),
-                  const SizedBox(height: LuxSpacing.xs),
-                  // Below the card details so long labels (en/pt) never
-                  // squeeze the row on narrow phones.
-                  if (isDefault)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: LuxSpacing.sm, vertical: LuxSpacing.xs),
-                      decoration: BoxDecoration(
-                        color: LuxColors.success.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(LuxRadius.sm),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        '${_brand(card['brand'] as String?).isEmpty ? context.l10n.paymentsCardFallback : _brand(card['brand'] as String?)} ·· ${card['last4'] ?? '····'}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: LuxTypography.bodyLarge.copyWith(fontSize: 15)),
+                    const SizedBox(height: 2),
+                    Text(
+                      isDefault ? '${l.paymentsDefault} · $expires' : expires,
+                      style: LuxTypography.caption.copyWith(
+                        fontSize: 12,
+                        color: isDefault
+                            ? LuxColors.sapphire
+                            : LuxColors.inkTertiary,
                       ),
-                      child: Text(l.paymentsDefault.toUpperCase(),
-                          style: LuxTypography.caption
-                              .copyWith(color: LuxColors.success)),
-                    )
-                  else
-                    TextButton(
-                      onPressed: onSetDefault,
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(0, 36),
-                        alignment: Alignment.centerLeft,
-                      ),
-                      child: Text(l.paymentsSetDefault.toUpperCase()),
                     ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            IconButton(
-              tooltip: l.paymentsRemoveCard,
-              icon: const Icon(Icons.delete_outline,
-                  size: 18, color: LuxColors.error),
-              onPressed: onRemove,
-            ),
-          ],
+              AnimatedSwitcher(
+                duration: LuxMotion.of(context, LuxMotion.base),
+                child: isDefault
+                    ? const Padding(
+                        key: ValueKey('on'),
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Icon(Icons.check_circle_rounded,
+                            color: LuxColors.sapphire, size: 22),
+                      )
+                    : const SizedBox(key: ValueKey('off'), width: 38),
+              ),
+              IconButton(
+                tooltip: l.paymentsRemoveCard,
+                onPressed: onRemove,
+                icon: const Icon(Icons.delete_outline_rounded,
+                    size: 20, color: LuxColors.inkTertiary),
+              ),
+            ],
+          ),
         ),
-      );
+      ),
+    );
   }
-
-  static String _capitalize(String s) =>
-      s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
 }

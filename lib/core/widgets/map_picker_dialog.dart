@@ -1,8 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../l10n/l10n.dart';
+import '../../app/theme/app_theme.dart';
 import '../di/injection.dart';
 import '../models/place_model.dart';
 import '../services/maps_service.dart';
@@ -17,7 +17,7 @@ Future<Place?> showMapPickerDialog(
 }) {
   return showDialog<Place>(
     context: context,
-    barrierColor: Colors.black54,
+    barrierColor: LuxColors.ink.withOpacity(0.35),
     builder: (_) => _MapPickerDialog(
       initial: initial ??
           const LatLng(-17.7833, -63.1821), // Santa Cruz center
@@ -64,7 +64,8 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
     final place = await _maps.reverseGeocode(pos.latitude, pos.longitude);
     if (!mounted) return;
     setState(() {
-      _address = place?.address ?? '${pos.latitude.toStringAsFixed(5)}, ${pos.longitude.toStringAsFixed(5)}';
+      _address = place?.address ??
+          '${pos.latitude.toStringAsFixed(5)}, ${pos.longitude.toStringAsFixed(5)}';
       _loading = false;
     });
   }
@@ -92,38 +93,34 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
-    final cardBg = isLight ? Colors.white : const Color(0xFF141414);
-    final textColor = isLight ? const Color(0xFF111111) : Colors.white;
-    final subColor = isLight ? const Color(0xFF888888) : const Color(0xFF777777);
+    const cardBg = LuxColors.surface;
+    const textColor = LuxColors.ink;
+    const subColor = LuxColors.inkTertiary;
 
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.all(20),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(4),
+        borderRadius: BorderRadius.circular(LuxRadius.lg),
         child: SizedBox(
           width: 700,
           height: 560,
           child: Stack(
             children: [
               // ── Map ────────────────────────────────────────────────────
-              kIsWeb && false
-                  // On web without Maps JS key, show placeholder
-                  ? const _MapPlaceholder()
-                  : GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: _center,
-                        zoom: 15,
-                      ),
-                      onMapCreated: (c) => _ctrl = c,
-                      onCameraMove: _onCameraMove,
-                      onCameraIdle: _onCameraIdle,
-                      myLocationButtonEnabled: false,
-                      zoomControlsEnabled: false,
-                      mapToolbarEnabled: false,
-                      compassEnabled: false,
-                    ),
+              GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: _center,
+                  zoom: 15,
+                ),
+                onMapCreated: (c) => _ctrl = c,
+                onCameraMove: _onCameraMove,
+                onCameraIdle: _onCameraIdle,
+                myLocationButtonEnabled: false,
+                zoomControlsEnabled: false,
+                mapToolbarEnabled: false,
+                compassEnabled: false,
+              ),
 
               // ── Center pin (stays fixed, map moves under it) ────────
               const Center(child: _CenterPin()),
@@ -141,7 +138,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                       Flexible(
                         child: Text(
                           widget.title,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: textColor,
                             fontSize: 15,
                             fontFamily: 'Montserrat',
@@ -191,7 +188,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                             ),
                             const SizedBox(height: 4),
                             if (_loading)
-                              SizedBox(
+                              const SizedBox(
                                 height: 14,
                                 width: 14,
                                 child: CircularProgressIndicator(
@@ -220,15 +217,15 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                         child: ElevatedButton(
                           onPressed: _loading || _address == null ? null : _confirm,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF111111),
-                            foregroundColor: Colors.white,
+                            backgroundColor: LuxColors.sapphire,
+                            foregroundColor: LuxColors.onAccent,
                             minimumSize: Size.zero,
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             padding: const EdgeInsets.symmetric(horizontal: 28),
                             elevation: 0,
-                            shape: const RoundedRectangleBorder(
-                              
-                            ),
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(LuxRadius.md)),
                             textStyle: const TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 11,
@@ -266,12 +263,12 @@ class _CenterPin extends StatelessWidget {
             width: 14,
             height: 14,
             decoration: BoxDecoration(
-              color: const Color(0xFF111111),
+              color: LuxColors.sapphire,
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 2),
+              border: Border.all(color: LuxColors.surface, width: 2),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: LuxColors.ink.withOpacity(0.25),
                   blurRadius: 6,
                   offset: const Offset(0, 2),
                 ),
@@ -281,13 +278,13 @@ class _CenterPin extends StatelessWidget {
           Container(
             width: 1.5,
             height: 20,
-            color: const Color(0xFF111111),
+            color: LuxColors.sapphire,
           ),
           Container(
             width: 8,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.2),
+              color: LuxColors.ink.withOpacity(0.2),
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -298,30 +295,3 @@ class _CenterPin extends StatelessWidget {
 // ---------------------------------------------------------------------------
 // Placeholder when Maps JS key is missing
 // ---------------------------------------------------------------------------
-
-class _MapPlaceholder extends StatelessWidget {
-  const _MapPlaceholder();
-
-  @override
-  Widget build(BuildContext context) => Container(
-        color: const Color(0xFFE8E5DF),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.map_outlined, size: 48, color: Color(0xFFBBBBBB)),
-              const SizedBox(height: 12),
-              Text(
-                context.l10n.coreMapKeyMissing,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Color(0xFF999999),
-                  fontSize: 12,
-                  fontFamily: 'Montserrat',
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-}

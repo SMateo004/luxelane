@@ -36,8 +36,8 @@ class _DriverAppState extends State<DriverApp> {
   @override
   void initState() {
     super.initState();
-    _authBloc         = sl<AuthBloc>()..add(const AuthStarted());
-    _driverBloc       = sl<DriverBloc>();
+    _authBloc = sl<AuthBloc>()..add(const AuthStarted());
+    _driverBloc = sl<DriverBloc>();
     _notificationBloc = sl<NotificationBloc>();
     _router = buildDriverRouter(_authBloc, _driverBloc);
 
@@ -45,19 +45,23 @@ class _DriverAppState extends State<DriverApp> {
     _pushLinks = PushLinks(app: LuxApp.driver, open: (link) => _router.push(link), messenger: _messenger);
     if (!kIsWeb) _pushLinks.start();
 
-    // When auth completes, init driver + notifications
-    // Once per signed-in user (status changes re-emit the same user).
-    String? startedFor;
+    // When auth completes, init driver + notifications. AuthAuthenticated
+    // re-emits when the profile changes: restarting would lose dismissals.
+    String? sessionUid;
     _authBloc.stream.listen((state) {
-      if (state is! AuthAuthenticated) startedFor = null;
-      if (state is AuthAuthenticated && state.user.id != startedFor) {
-        startedFor = state.user.id;
+      if (state is AuthAuthenticated) {
+        if (state.user.id == sessionUid) return;
+        sessionUid = state.user.id;
         _driverBloc.add(DriverStarted(userId: state.user.id));
         _notificationBloc.add(
           NotificationWatchStarted(userId: state.user.id),
         );
-        // Drivers must receive "new booking" pushes.
+        // Sin token FCM el chófer no recibe los avisos de viajes nuevos.
         sl<NotificationService>().init(userId: state.user.id);
+      } else if (state is AuthUnauthenticated || state is AuthError) {
+        // Cerrar sesión o un bloqueo en vivo: se detiene el rastreo.
+        if (sessionUid != null) _driverBloc.add(const DriverStopped());
+        sessionUid = null;
       }
     });
   }

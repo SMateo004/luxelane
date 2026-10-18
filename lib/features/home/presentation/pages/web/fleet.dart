@@ -7,9 +7,11 @@ part of '../home_web_page.dart';
 class _FleetSection extends StatelessWidget {
   const _FleetSection({required this.sectionKey, required this.onBook});
   final GlobalKey sectionKey;
-  final VoidCallback onBook;
 
-  static const _accents = [LuxPalette.champagne, LuxPalette.champagneLight, LuxPalette.champagneDeep];
+  /// Choosing a class takes it to the booking widget, selected.
+  final ValueChanged<VehicleClass> onBook;
+
+  static const _accents = [LuxColors.sapphire, LuxColors.sapphireLight, LuxColors.sapphire];
 
   /// The bookable vehicle types, as set in the admin catalog.
   static List<_FleetItem> _vehicles(AppLocalizations l) => [
@@ -106,7 +108,7 @@ class _FleetItem {
 class _FleetCard extends StatefulWidget {
   const _FleetCard({required this.item, required this.onBook});
   final _FleetItem item;
-  final VoidCallback onBook;
+  final ValueChanged<VehicleClass> onBook;
 
   @override
   State<_FleetCard> createState() => _FleetCardState();
@@ -121,14 +123,14 @@ class _FleetCardState extends State<_FleetCard> {
         onExit:  (_) => setState(() => _hover = false),
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
-          onTap: widget.onBook,
+          onTap: () => widget.onBook(VehicleClass.fromId(widget.item.info.id)),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 280),
             width: 340,
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(
-                color: _hover ? LD.accent : LD.border,
+                color: _hover ? LD.sph : LD.border,
               ),
               boxShadow: _hover
                   ? [BoxShadow(color: LD.ink.withAlpha(20), blurRadius: 24, offset: const Offset(0, 10))]

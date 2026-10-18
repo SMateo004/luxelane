@@ -39,7 +39,7 @@ class HelpCenterPage extends StatelessWidget {
         ));
 
     return Scaffold(
-      backgroundColor: LuxColors.black,
+      backgroundColor: LuxColors.bg,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
@@ -113,8 +113,8 @@ class HelpCenterPage extends StatelessWidget {
                   child: ExpansionTile(
                     tilePadding: EdgeInsets.zero,
                     childrenPadding: const EdgeInsets.only(bottom: LuxSpacing.md),
-                    iconColor: LuxColors.accent,
-                    collapsedIconColor: LuxColors.whiteTertiary,
+                    iconColor: LuxColors.sapphire,
+                    collapsedIconColor: LuxColors.inkTertiary,
                     expandedAlignment: Alignment.centerLeft,
                     title: Text(q, style: LuxTypography.bodyLarge),
                     children: [Text(a, style: LuxTypography.bodyMedium)],
@@ -168,7 +168,7 @@ class TicketListTile extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(t.category.icon, color: t.urgent ? LuxColors.warning : LuxColors.accent),
+                Icon(t.category.icon, color: t.urgent ? LuxColors.warning : LuxColors.sapphire),
                 const SizedBox(width: LuxSpacing.md),
                 Expanded(
                   child: Column(
@@ -181,7 +181,7 @@ class TicketListTile extends StatelessWidget {
                             child: Container(
                               width: 8,
                               height: 8,
-                              decoration: const BoxDecoration(color: LuxColors.accent, shape: BoxShape.circle),
+                              decoration: const BoxDecoration(color: LuxColors.sapphire, shape: BoxShape.circle),
                             ),
                           ),
                           const SizedBox(width: 6),

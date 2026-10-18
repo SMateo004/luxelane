@@ -12,6 +12,7 @@ import 'core/di/injection.dart';
 import 'core/widgets/startup_error_app.dart';
 import 'core/services/app_check_service.dart';
 import 'core/services/crash_service.dart';
+import 'core/services/notification_service.dart';
 import 'core/services/performance_service.dart';
 import 'firebase_options_driver.dart';
 
@@ -37,9 +38,7 @@ void main() async {
   }
 
   if (!kIsWeb) {
-    FirebaseMessaging.onBackgroundMessage(
-      (msg) async {/* handled by NotificationService */},
-    );
+    FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
   }
 
   await AppCheckService.init();
@@ -54,7 +53,7 @@ void main() async {
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Color(0xFFFAF8F4),
+        systemNavigationBarColor: Color(0xFFFFFFFF),
         systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );

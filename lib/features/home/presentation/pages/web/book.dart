@@ -11,7 +11,6 @@ class _BookPageData {
     required this.label,
     required this.sub,
     this.photoPath,
-    this.carPath,
     required this.tag,
     required this.headline,
     required this.body,
@@ -21,7 +20,6 @@ class _BookPageData {
   final String label;
   final String sub;
   final String? photoPath;
-  final String? carPath;
   final String tag;
   final String headline;
   final String body;
@@ -135,13 +133,13 @@ class _BookSectionState extends State<_BookSection> {
             child: Container(
               color: LD.bg2,
               child: Stack(children: [
-                // Radial champagne glow
+                // Radial sapphire glow
                 Positioned.fill(
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       gradient: RadialGradient(
                         center: const Alignment(0, 0.3), radius: 0.85,
-                        colors: [LD.cta.withAlpha(46), LD.cta.withAlpha(0)],
+                        colors: [LD.sph.withAlpha(46), LD.sph.withAlpha(0)],
                       ),
                     ),
                   ),
@@ -151,7 +149,7 @@ class _BookSectionState extends State<_BookSection> {
                 Positioned(top: 44, left: 0, right: 0,
                   child: Center(child: Text(l.homeBookEyebrow.toUpperCase(),
                     style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w500,
-                      letterSpacing: 4.0, color: LD.accent.withAlpha(200),
+                      letterSpacing: 4.0, color: LD.sph.withAlpha(200),
                       decoration: TextDecoration.none)))),
 
                 // Book
@@ -174,7 +172,7 @@ class _BookSectionState extends State<_BookSection> {
                         margin: const EdgeInsets.symmetric(horizontal: 6),
                         width: active ? 7.5 : 5, height: active ? 7.5 : 5,
                         decoration: BoxDecoration(
-                          color: active ? LD.accent : LD.accent.withAlpha(70),
+                          color: active ? LD.sph : LD.sph.withAlpha(70),
                           shape: BoxShape.circle,
                         ),
                       );
@@ -193,7 +191,7 @@ class _BookSectionState extends State<_BookSection> {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                              colors: [LD.accent, Colors.transparent],
+                              colors: [LD.sph, Colors.transparent],
                             ),
                           ),
                         ),
@@ -201,7 +199,7 @@ class _BookSectionState extends State<_BookSection> {
                         RotatedBox(quarterTurns: 1,
                           child: Text(l.homeBookScrollCue.toUpperCase(),
                             style: GoogleFonts.montserrat(fontSize: 7.5, fontWeight: FontWeight.w500,
-                              letterSpacing: 3.5, color: LD.accent,
+                              letterSpacing: 3.5, color: LD.sph,
                               decoration: TextDecoration.none))),
                       ]),
                     ),
@@ -217,7 +215,6 @@ class _BookSectionState extends State<_BookSection> {
 
 class _BookWidget extends StatelessWidget {
   const _BookWidget({
-    super.key,
     required this.pages,
     required this.currentPage,
     required this.flipAngle,
@@ -257,7 +254,7 @@ class _BookWidget extends StatelessWidget {
             Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [LuxPalette.champagneDeep, LuxPalette.champagne, LuxPalette.champagneDeep],
+                  colors: [LuxColors.sapphire, LuxColors.sapphire, LuxColors.sapphire],
                 ),
               ),
             ),
@@ -269,7 +266,7 @@ class _BookWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, LD.accent.withAlpha(180), Colors.transparent],
+                      colors: [Colors.transparent, LD.sph.withAlpha(180), Colors.transparent],
                     ),
                   ),
                 ),
@@ -320,7 +317,7 @@ class _BookWidget extends StatelessWidget {
 }
 
 class _BookLeftPanel extends StatelessWidget {
-  const _BookLeftPanel({super.key, required this.data, required this.height, required this.isMobile});
+  const _BookLeftPanel({required this.data, required this.height, required this.isMobile});
   final _BookPageData data;
   final double height;
   final bool isMobile;
@@ -338,11 +335,11 @@ class _BookLeftPanel extends StatelessWidget {
               child: Center(child: Container(
                 width: 40, height: 40,
                 decoration: BoxDecoration(
-                  border: Border.all(color: LD.accent.withAlpha(90), width: 1),
+                  border: Border.all(color: LD.sph.withAlpha(90), width: 1),
                 ),
                 child: Center(child: Text('L', style: GoogleFonts.cormorantGaramond(
                   fontSize: 22, fontWeight: FontWeight.w400,
-                  color: LD.accent.withAlpha(140), decoration: TextDecoration.none,
+                  color: LD.sph.withAlpha(140), decoration: TextDecoration.none,
                 ))),
               ))),
           ]),
@@ -356,7 +353,7 @@ class _BookLeftPanel extends StatelessWidget {
           gradient: data.photoPath == null
               ? const LinearGradient(
                   begin: Alignment.topLeft, end: Alignment.bottomRight,
-                  colors: [LuxPalette.paper2, LuxPalette.paper, LuxPalette.paper3],
+                  colors: [LuxColors.surfaceMuted, LuxColors.bg, LuxColors.surfaceDeep],
                   stops: [0, 0.55, 1])
               : null,
           image: data.photoPath != null
@@ -378,22 +375,17 @@ class _BookLeftPanel extends StatelessWidget {
                 color: (onPhoto ? Colors.white : LD.ink).withAlpha(onPhoto ? 6 : 10), height: 1,
                 decoration: TextDecoration.none))),
 
-          // Car PNG (page 0)
-          if (data.carPath != null)
-            Positioned(bottom: 48, left: 0, right: 0, height: isMobile ? 100 : 180,
-              child: Image.asset(data.carPath!, fit: BoxFit.contain, alignment: Alignment.bottomCenter,
-                  errorBuilder: (_, __, ___) => const SizedBox.shrink())),
 
           // Deco label top-left
           Positioned(top: pad, left: pad, right: pad,
             child: Row(children: [
-              Container(width: 24, height: 1, color: LD.accent.withAlpha(180)),
+              Container(width: 24, height: 1, color: LD.sph.withAlpha(180)),
               const SizedBox(width: 10),
               Flexible(
                 child: Text(data.label.toUpperCase(),
                   maxLines: 1, overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.montserrat(fontSize: 8, fontWeight: FontWeight.w500,
-                    letterSpacing: 3.0, color: LD.accent.withAlpha(200),
+                    letterSpacing: 3.0, color: LD.sph.withAlpha(200),
                     decoration: TextDecoration.none)),
               ),
             ])),
@@ -413,7 +405,7 @@ class _BookLeftPanel extends StatelessWidget {
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: [
                 Text('— ${data.num}',
                   style: GoogleFonts.cormorantGaramond(fontSize: 10, fontWeight: FontWeight.w400,
-                    letterSpacing: 3.0, color: LD.accent, decoration: TextDecoration.none)),
+                    letterSpacing: 3.0, color: LD.sph, decoration: TextDecoration.none)),
                 const SizedBox(height: 5),
                 Text(data.sub,
                   style: GoogleFonts.cormorantGaramond(
@@ -430,7 +422,7 @@ class _BookLeftPanel extends StatelessWidget {
 }
 
 class _BookRightPanel extends StatelessWidget {
-  const _BookRightPanel({super.key, required this.data, required this.isMobile});
+  const _BookRightPanel({required this.data, required this.isMobile});
   final _BookPageData data;
   final bool isMobile;
 
@@ -441,7 +433,7 @@ class _BookRightPanel extends StatelessWidget {
     // Front cover: clean white page with centered logo
     if (data.headline.isEmpty) {
       return Container(
-        color: const Color(0xFFFAF8F4),
+        color: const Color(0xFFFAFBFE),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -474,14 +466,14 @@ class _BookRightPanel extends StatelessWidget {
       );
     }
     return Container(
-      color: const Color(0xFFFAF8F4),
+      color: const Color(0xFFFAFBFE),
       child: Stack(children: [
         // Ghost number
         Positioned(bottom: -12, right: -8,
           child: Text(data.num,
             style: GoogleFonts.cormorantGaramond(
               fontSize: isMobile ? 100 : 180, fontWeight: FontWeight.w600,
-              color: LD.accent.withAlpha(10), height: 1,
+              color: LD.sph.withAlpha(10), height: 1,
               decoration: TextDecoration.none))),
 
         // Content — scaled down (never clipped) when a translation runs long
@@ -495,7 +487,7 @@ class _BookRightPanel extends StatelessWidget {
               child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(data.tag,
               style: GoogleFonts.montserrat(fontSize: 9, fontWeight: FontWeight.w500,
-                letterSpacing: 3.5, color: LD.accent, decoration: TextDecoration.none)),
+                letterSpacing: 3.5, color: LD.sph, decoration: TextDecoration.none)),
             const SizedBox(height: 22),
             Text(data.headline,
               style: GoogleFonts.cormorantGaramond(
@@ -511,7 +503,7 @@ class _BookRightPanel extends StatelessWidget {
             ...data.bullets.map((b) => Padding(
               padding: const EdgeInsets.only(bottom: 9),
               child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Container(width: 18, height: 1, color: LD.accent, margin: const EdgeInsets.only(right: 14)),
+                Container(width: 18, height: 1, color: LD.sph, margin: const EdgeInsets.only(right: 14)),
                 Expanded(child: Text(b,
                   style: GoogleFonts.montserrat(
                     fontSize: isMobile ? 11 : 11.5, fontWeight: FontWeight.w400,

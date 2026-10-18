@@ -885,6 +885,7 @@
   "bookingSummaryService": "Servicio",
   "bookingSummaryTo": "Hasta",
   "bookingTripDetailsHeading": "DETALLES DEL VIAJE",
+  "bookingVehicleUnavailable": "Este vehículo no está disponible para este servicio en este momento. Elige otro.",
   "bookingViewMyBooking": "VER MI RESERVA",
   "commonBack": "Volver",
   "commonCall": "Llamar",

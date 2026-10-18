@@ -61,7 +61,7 @@ class DriverWeekSettlement extends StatelessWidget {
                     Text(l.settleDriverGrossOnly(LuxMoney.format(s.gross, cents: true)), style: LuxTypography.bodyMedium)
                   else ...[
                     Text(l.settleDriverEarnings(LuxMoney.format(s.earnings, cents: true)),
-                        style: LuxTypography.bodyLarge.copyWith(color: LuxColors.white)),
+                        style: LuxTypography.bodyLarge.copyWith(color: LuxColors.ink)),
                     const SizedBox(height: 2),
                     Text(
                       l.settleDriverBreakdown(
@@ -78,7 +78,7 @@ class DriverWeekSettlement extends StatelessWidget {
                           : s.balance > 0
                               ? l.settleDriverReceives(LuxMoney.format(s.balance, cents: true))
                               : l.settleDriverPays(LuxMoney.format(-s.balance, cents: true)),
-                      style: LuxTypography.titleMedium.copyWith(color: LuxColors.accent),
+                      style: LuxTypography.titleMedium.copyWith(color: LuxColors.sapphire),
                     ),
                   ],
                   if (rec != null) ...[
@@ -87,7 +87,7 @@ class DriverWeekSettlement extends StatelessWidget {
                       const Icon(Icons.verified_rounded, size: 16, color: LuxColors.success),
                       const SizedBox(width: 6),
                       Text(rec.paidAt == null ? l.settlePaid : l.settlePaidOn(DateFormat.MMMd().format(rec.paidAt!)),
-                          style: LuxTypography.caption.copyWith(color: LuxColors.white)),
+                          style: LuxTypography.caption.copyWith(color: LuxColors.ink)),
                     ]),
                   ],
                 ]),

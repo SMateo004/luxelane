@@ -1,9 +1,11 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:luxelane/core/enums/enums.dart';
+import 'package:luxelane/core/error/failures.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/core/repositories/repositories.dart';
 import 'package:luxelane/core/services/maps_service.dart';
@@ -11,23 +13,14 @@ import 'package:luxelane/features/driver/presentation/bloc/driver_bloc.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockBookingRepository extends Mock implements BookingRepository {}
+
 class MockUserRepository extends Mock implements UserRepository {}
+
 class MockMapsService extends Mock implements MapsService {}
+
 class MockVehicleRepository extends Mock implements VehicleRepository {}
 
 final _now = DateTime(2025, 6);
-
-final _driverUser = User(
-  id: 'driver-1',
-  email: 'driver@luxelane.com',
-  phone: '+59170000000',
-  displayName: 'Driver One',
-  role: UserRole.driver,
-  createdAt: DateTime(2025),
-  isVerified: true,
-  isActive: true,
-  fcmTokens: const [],
-);
 
 final _driverProfile = DriverProfile(
   userId: 'driver-1',
@@ -40,7 +33,34 @@ final _driverProfile = DriverProfile(
   isAvailable: false,
 );
 
-Booking _makeBooking(BookingStatus status) => Booking(
+final _driverUser = User(
+  id: 'driver-1',
+  email: 'driver@luxelane.com',
+  phone: '+59170000000',
+  displayName: 'Driver One',
+  role: UserRole.driver,
+  createdAt: _now,
+  isVerified: true,
+  isActive: true,
+  fcmTokens: const [],
+);
+
+const _vehicle = Vehicle(
+  id: 'vehicle-1',
+  driverId: 'driver-1',
+  make: 'Toyota',
+  model: 'Camry',
+  year: 2024,
+  plate: '1234ABC',
+  vehicleClass: VehicleClass.business,
+  color: 'Negro',
+  capacity: 3,
+  isActive: true,
+);
+
+Booking _makeBooking(BookingStatus status,
+        {BookingSettlement? settlement, bool refunded = false}) =>
+    Booking(
       id: 'booking-1',
       riderId: 'rider-1',
       driverId: 'driver-1',
@@ -53,12 +73,15 @@ Booking _makeBooking(BookingStatus status) => Booking(
       estimatedPrice: 75,
       createdAt: _now,
       updatedAt: _now,
+      settlement: settlement,
+      refunded: refunded,
     );
 
 void main() {
   late MockBookingRepository bookingRepo;
   late MockUserRepository userRepo;
   late MockMapsService mapsService;
+  late MockVehicleRepository vehicleRepo;
 
   setUpAll(() {
     registerFallbackValue(_makeBooking(BookingStatus.pending));
@@ -70,25 +93,31 @@ void main() {
     bookingRepo = MockBookingRepository();
     userRepo = MockUserRepository();
     mapsService = MockMapsService();
+    vehicleRepo = MockVehicleRepository();
 
     when(() => bookingRepo.watchDriverBookings(any()))
         .thenAnswer((_) => Stream.value([]));
-    when(() => userRepo.getDriverProfile(any()))
-        .thenAnswer((_) async => Right(_driverProfile));
-    when(() => userRepo.getUserById(any()))
-        .thenAnswer((_) async => Right(_driverUser));
     when(() => bookingRepo.streamPendingBookings())
         .thenAnswer((_) => Stream.value([]));
+    when(() => userRepo.getUserById(any()))
+        .thenAnswer((_) async => Right(_driverUser));
+    when(() => userRepo.getDriverProfile(any()))
+        .thenAnswer((_) async => Right(_driverProfile));
     // No location permission in tests → the bloc falls back to polling.
     when(() => mapsService.getCurrentPosition()).thenAnswer((_) async => null);
     when(() => mapsService.requestLocationAccess()).thenAnswer((_) async => null);
-    when(() => mapsService.driverPositionStream()).thenAnswer((_) => const Stream.empty());
+    when(() => userRepo.watchDriverProfile(any()))
+        .thenAnswer((_) => const Stream.empty());
+    when(() => vehicleRepo.getVehicleByDriver(any()))
+        .thenAnswer((_) async => const Right(_vehicle));
+    when(() => mapsService.driverPositionStream())
+        .thenAnswer((_) => const Stream.empty());
   });
 
   DriverBloc bloc() => DriverBloc(
         bookingRepository: bookingRepo,
         userRepository: userRepo,
-        vehicleRepository: MockVehicleRepository(),
+        vehicleRepository: vehicleRepo,
         mapsService: mapsService,
       );
 
@@ -130,7 +159,10 @@ void main() {
       build: bloc,
       act: (bloc) => bloc.add(const DriverStarted(userId: 'driver-1')),
       expect: () => [
-        isA<DriverLoaded>().having((s) => s.isAvailable, 'isAvailable', false),
+        isA<DriverLoaded>()
+            .having((s) => s.isAvailable, 'isAvailable', false)
+            .having(
+                (s) => s.vehicleClass, 'vehicleClass', VehicleClass.business),
       ],
       verify: (_) {
         verify(() => userRepo.getDriverProfile('driver-1')).called(1);
@@ -146,10 +178,11 @@ void main() {
             )).thenAnswer((_) async => const Right(null));
         return bloc()
           ..emit(DriverLoaded(
-              user: _driverUser,
-              profile: _driverProfile,
-              isAvailable: false,
-              bookings: const []));
+            user: _driverUser,
+            profile: _driverProfile,
+            isAvailable: false,
+            bookings: const [],
+          ));
       },
       act: (bloc) => bloc.add(const DriverAvailabilityToggled(
         userId: 'driver-1',
@@ -257,7 +290,7 @@ void main() {
       expect(state.activeBooking, isNull);
     });
 
-    test('totalEarnings sums completed booking prices', () {
+    test('totalEarnings descuenta la comisión de los viajes completados', () {
       final bookings = [
         _makeBooking(BookingStatus.completed),
         _makeBooking(BookingStatus.completed),
@@ -269,7 +302,129 @@ void main() {
         isAvailable: true,
         bookings: bookings,
       );
-      expect(state.totalEarnings, 150.0); // 75 + 75
+      // Sin reparto del servidor: comisión por defecto del 20 %.
+      expect(state.grossEarnings, 150.0); // 75 + 75
+      expect(state.totalCommission, 30.0);
+      expect(state.totalEarnings, 120.0);
+      expect(state.hasProvisionalEarnings, isTrue);
+    });
+
+    test('totalEarnings usa el reparto fijado por el servidor', () {
+      const settled = BookingSettlement(
+        amount: 75,
+        commissionPct: 10,
+        platformCommission: 7.5,
+        driverPayout: 67.5,
+      );
+      final state = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: [
+          _makeBooking(BookingStatus.completed, settlement: settled),
+          _makeBooking(BookingStatus.completed, settlement: settled),
+        ],
+      );
+      expect(state.totalEarnings, 135.0);
+      expect(state.totalCommission, 15.0);
+      expect(state.hasProvisionalEarnings, isFalse);
+    });
+
+    blocTest<DriverBloc, DriverState>(
+      'si otro chófer ganó la reserva avisa y la descarta',
+      build: () {
+        when(() => bookingRepo.assignDriver(
+                  bookingId: any(named: 'bookingId'),
+                  driverId: any(named: 'driverId'),
+                ))
+            .thenAnswer((_) async => const Left(
+                ValidationFailure('Otro chófer ya aceptó este viaje.')));
+        return bloc()
+          ..emit(DriverLoaded(
+            user: _driverUser,
+            profile: _driverProfile,
+            isAvailable: true,
+            bookings: const [],
+          ));
+      },
+      act: (bloc) => bloc.add(const DriverRequestAccepted(
+          bookingId: 'booking-1', driverId: 'driver-1')),
+      expect: () => [
+        isA<DriverLoaded>()
+            .having(
+                (s) => s.notice, 'notice', 'Otro chófer ya aceptó este viaje.')
+            .having((s) => s.declinedIds, 'declinedIds', ['booking-1']),
+      ],
+      verify: (_) => verifyNever(() => bookingRepo.updateBookingStatus(
+            bookingId: any(named: 'bookingId'),
+            status: any(named: 'status'),
+          )),
+    );
+
+    test('solo ofrece solicitudes de su clase y si puede aceptarlas', () {
+      final van = Booking.fromJson({
+        ..._makeBooking(BookingStatus.pending).toJson(),
+        'id': 'van',
+        'class': 'businessVan',
+      });
+      final sedan = Booking.fromJson({
+        ..._makeBooking(BookingStatus.pending).toJson(),
+        'id': 'sedan',
+      });
+      final base = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: const [],
+        pendingRequests: [van, sedan],
+        vehicleClass: VehicleClass.business,
+      );
+      expect(base.currentRequest?.id, 'sedan');
+      expect(base.matchingRequests.map((b) => b.id), ['sedan']);
+      // Desconectado o con un viaje en curso: no se le ofrece nada.
+      expect(base.copyWith(isAvailable: false).currentRequest, isNull);
+      expect(
+          base.copyWith(bookings: [
+            _makeBooking(BookingStatus.inProgress)
+          ]).currentRequest,
+          isNull);
+    });
+
+    test('una reserva confirmada para otro día no ocupa al chófer', () {
+      final future = Booking.fromJson({
+        ..._makeBooking(BookingStatus.confirmed).toJson(),
+        'scheduledAt':
+            Timestamp.fromDate(DateTime.now().add(const Duration(days: 3))),
+      });
+      final soon = Booking.fromJson({
+        ..._makeBooking(BookingStatus.confirmed).toJson(),
+        'scheduledAt':
+            Timestamp.fromDate(DateTime.now().add(const Duration(minutes: 20))),
+      });
+      final base = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: [future],
+      );
+      expect(base.activeBooking, isNull);
+      expect(base.canAccept, isTrue);
+      expect(base.copyWith(bookings: [soon]).activeBooking, isNotNull);
+    });
+
+    test('un viaje reembolsado no suma ganancias ni queda provisional', () {
+      final state = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: [
+          _makeBooking(BookingStatus.completed),
+          _makeBooking(BookingStatus.completed, refunded: true),
+        ],
+      );
+      expect(state.grossEarnings, 75.0);
+      expect(state.totalEarnings, 60.0);
+      expect(state.totalCommission, 15.0);
     });
   });
 }

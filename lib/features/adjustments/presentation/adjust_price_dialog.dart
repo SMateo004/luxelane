@@ -98,7 +98,7 @@ class _AdjustPriceDialogState extends State<AdjustPriceDialog> {
     final v = _value;
     final correction = _type == AdjustmentType.correction;
     return AlertDialog(
-      backgroundColor: LuxColors.blackElevated,
+      backgroundColor: LuxColors.surfaceMuted,
       title: Text(l.adjustTitle, style: LuxTypography.titleLarge),
       content: SizedBox(
         width: 440,
@@ -119,7 +119,7 @@ class _AdjustPriceDialogState extends State<AdjustPriceDialog> {
                 ChoiceChip(
                   label: Text(t.label(l)),
                   selected: _type == t,
-                  selectedColor: LuxColors.accent.withValues(alpha: 0.25),
+                  selectedColor: LuxColors.sapphire.withValues(alpha: 0.25),
                   onSelected: (_) => setState(() => _type = t),
                 ),
             ]),
@@ -140,7 +140,7 @@ class _AdjustPriceDialogState extends State<AdjustPriceDialog> {
             if (v != null && v != 0) ...[
               const SizedBox(height: LuxSpacing.sm),
               Text(l.adjustNewTotal(LuxMoney.format(Adjustments.totalWith(b, v), cents: true)),
-                  style: LuxTypography.titleMedium.copyWith(color: LuxColors.accent)),
+                  style: LuxTypography.titleMedium.copyWith(color: LuxColors.sapphire)),
             ],
             const SizedBox(height: LuxSpacing.sm),
             Text(l.adjustNote2, style: LuxTypography.caption),
@@ -155,7 +155,7 @@ class _AdjustPriceDialogState extends State<AdjustPriceDialog> {
         TextButton(onPressed: _busy ? null : () => Navigator.of(context).pop(), child: Text(l.commonCancel)),
         TextButton(
           onPressed: _busy ? null : _save,
-          child: Text(l.adjustSave, style: const TextStyle(color: LuxColors.accent, fontWeight: FontWeight.w600)),
+          child: Text(l.adjustSave, style: const TextStyle(color: LuxColors.sapphire, fontWeight: FontWeight.w600)),
         ),
       ],
     );

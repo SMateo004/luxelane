@@ -8,6 +8,8 @@ import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../auth_error_messages.dart';
 import '../bloc/auth_bloc.dart';
+import '../widgets/google_sign_in_button.dart';
+import 'login_page.dart' show AuthBrandPanel;
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -16,11 +18,11 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _form  = GlobalKey<FormState>();
-  final _name  = TextEditingController();
+  final _form = GlobalKey<FormState>();
+  final _name = TextEditingController();
   final _email = TextEditingController();
   final _phone = TextEditingController();
-  final _pass  = TextEditingController();
+  final _pass = TextEditingController();
 
   @override
   void dispose() {
@@ -48,7 +50,10 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        if (state is AuthAuthenticated) context.go('/');
+        if (state is AuthAuthenticated) {
+          final from = GoRouterState.of(context).uri.queryParameters['from'];
+          context.go(from != null && from.startsWith('/') ? from : '/');
+        }
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -59,7 +64,7 @@ class _RegisterPageState extends State<RegisterPage> {
         }
       },
       child: Scaffold(
-        backgroundColor: LuxColors.black,
+        backgroundColor: LuxColors.bg,
         body: isWeb(context) ? _webLayout() : _mobileLayout(),
       ),
     );
@@ -67,43 +72,64 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _mobileLayout() => SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(LuxSpacing.md),
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: LuxSpacing.xl),
-              const LuxelaneWordmark(size: 16),
-              const SizedBox(height: LuxSpacing.xl),
-              Text(context.l10n.authRegisterHeadline, style: LuxTypography.displayMedium),
-              const SizedBox(height: LuxSpacing.sm),
-              Text(context.l10n.authRegisterSubtitle, style: LuxTypography.bodyMedium),
-              const SizedBox(height: LuxSpacing.xl),
+              GestureDetector(
+                onTap: () => context.go('/'),
+                child: const LuxelaneWordmark(size: 11),
+              ),
+              const SizedBox(height: 48),
+              Text(context.l10n.authRegisterHeadline,
+                  style: LuxTypography.displayMedium
+                      .copyWith(fontSize: 40, height: 1.15)),
+              const SizedBox(height: 8),
+              Text(context.l10n.authRegisterSubtitle,
+                  style: LuxTypography.bodyMedium),
+              const SizedBox(height: 40),
               _formContent(),
             ],
           ),
         ),
       );
 
-  Widget _webLayout() => Center(
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
-            child: Padding(
-              padding: const EdgeInsets.all(LuxSpacing.xxl),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const LuxelaneWordmark(),
-                  const SizedBox(height: LuxSpacing.xl),
-                  Text(context.l10n.authRegisterTitle, style: LuxTypography.displayMedium),
-                  const SizedBox(height: LuxSpacing.xl),
-                  _formContent(),
-                ],
+  Widget _webLayout() => Row(
+        children: [
+          Expanded(
+            child: AuthBrandPanel(
+              title: context.l10n.authRegisterHeadline,
+              subtitle: context.l10n.authRegisterSubtitle,
+            ),
+          ),
+          Expanded(
+            child: Container(
+              color: LuxColors.surface,
+              child: Center(
+                child: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 440),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 48, vertical: 64),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(context.l10n.authRegisterTitle,
+                              style: LuxTypography.displayMedium
+                                  .copyWith(fontSize: 42)),
+                          const SizedBox(height: 40),
+                          _formContent(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-        ),
+        ],
       );
 
   Widget _formContent() => BlocBuilder<AuthBloc, AuthState>(
@@ -114,6 +140,10 @@ class _RegisterPageState extends State<RegisterPage> {
             key: _form,
             child: Column(
               children: [
+                const GoogleSignInButton(label: 'Registrarte con Google'),
+                const SizedBox(height: LuxSpacing.lg),
+                const AuthOrDivider(),
+                const SizedBox(height: LuxSpacing.lg),
                 LuxTextField(
                   label: l.authFullNameLabel,
                   controller: _name,
@@ -135,7 +165,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _phone,
                   keyboardType: TextInputType.phone,
                   prefixIcon: Icons.phone_outlined,
-                  validator: (v) => v == null || v.trim().isEmpty ? l.commonRequired : null,
+                  // The chauffeur needs a reachable number.
+                  validator: (v) => v == null || v.trim().length < 6 ? l.commonRequired : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
@@ -159,7 +190,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           Checkbox(
                             value: field.value ?? false,
                             onChanged: field.didChange,
-                            activeColor: LuxColors.accent,
+                            activeColor: LuxColors.sapphire,
                             checkColor: LuxColors.onAccent,
                             semanticLabel: l.authConsentText(
                                 l.authConsentTermsLink, l.authConsentPrivacyLink),
@@ -236,9 +267,9 @@ class _ConsentTextState extends State<_ConsentText> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final link = LuxTypography.bodyMedium.copyWith(
-      color: LuxColors.accent,
+      color: LuxColors.sapphire,
       decoration: TextDecoration.underline,
-      decorationColor: LuxColors.accent,
+      decorationColor: LuxColors.sapphire,
     );
     final spans = <InlineSpan>[];
     l.authConsentText('{terms}', '{privacy}').splitMapJoin(

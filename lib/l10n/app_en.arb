@@ -397,6 +397,7 @@
   "bookingSummaryService": "Service",
   "bookingSummaryTo": "To",
   "bookingTripDetailsHeading": "TRIP DETAILS",
+  "bookingVehicleUnavailable": "This vehicle isn't available for this service right now. Please choose another.",
   "bookingViewMyBooking": "VIEW MY BOOKING",
   "commonBack": "Back",
   "commonCall": "Call",

@@ -51,9 +51,26 @@
 	<array>
 		<string>remote-notification</string>
 	</array>
-	<!-- Google Maps SDK key, read by AppDelegate (App.xcconfig). -->
+	<!-- Google Maps SDK key, read by AppDelegate. LUX_MAPS_KEY comes from
+	     App.xcconfig (scripts/build_ios.sh); it defaults to the project key
+	     in Luxelane.xcconfig. -->
 	<key>GMSApiKey</key>
 	<string>$(LUX_MAPS_KEY)</string>
+	<!-- Google Sign-In (google_sign_in reads GIDClientID). Values:
+	     ios/Flutter/Luxelane.xcconfig. -->
+	<key>GIDClientID</key>
+	<string>$(GOOGLE_IOS_CLIENT_ID)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(GOOGLE_REVERSED_CLIENT_ID)</string>
+			</array>
+		</dict>
+	</array>
 	<!-- Trip calls and WhatsApp (url_launcher). -->
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
@@ -61,6 +78,7 @@
 		<string>whatsapp</string>
 		<string>comgooglemaps</string>
 		<string>waze</string>
+		<string>https</string>
 	</array>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>

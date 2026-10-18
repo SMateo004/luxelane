@@ -173,7 +173,7 @@ class _HeroSectionState extends State<_HeroSection>
                               l.homeHeroTitle,
                               style: displayText(size: headlineSize, color: LD.ink),
                               emphasis: displayText(
-                                size: headlineSize, color: LD.accent,
+                                size: headlineSize, color: LD.sph,
                                 style: FontStyle.italic,
                               ),
                             ),
@@ -749,7 +749,7 @@ class _BarCtaState extends State<_BarCta> {
             width: widget.stacked ? double.infinity : 180,
             height: widget.stacked ? 56 : double.infinity,
             decoration: BoxDecoration(
-              color: _hover ? LuxPalette.champagneLight : LD.cta,
+              color: _hover ? LuxColors.sapphireLight : LD.sph,
               border: widget.stacked
                   ? null
                   : const Border(left: BorderSide(color: LD.border)),
@@ -762,7 +762,7 @@ class _BarCtaState extends State<_BarCta> {
                 context.l10n.homeBarSeeOptions.toUpperCase(),
                 style: const TextStyle(
                   fontFamily: kSans, fontSize: 10.5, fontWeight: FontWeight.w600,
-                  letterSpacing: 2.2, color: LD.onCta,
+                  letterSpacing: 2.2, color: Colors.white,
                   decoration: TextDecoration.none,
                 ),
               ),
@@ -797,13 +797,13 @@ class _SolidBtnState extends State<_SolidBtn> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
-            color: _h ? LuxPalette.champagneLight : LD.cta,
+            color: _h ? LuxColors.sapphireLight : LD.sph,
             child: Text(
               widget.label.toUpperCase(),
               style: TextStyle(
                 fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w600,
                 letterSpacing: 2.0,
-                color: LD.onCta,
+                color: Colors.white,
                 decoration: TextDecoration.none,
               ),
             ),
@@ -1038,7 +1038,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 180),
                         decoration: BoxDecoration(
-                          color: isSel ? LD.cta : Colors.transparent,
+                          color: isSel ? LD.sph : Colors.transparent,
                         ),
                         alignment: Alignment.center,
                         child: Text('$d',
@@ -1049,7 +1049,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                             color: isPast
                                 ? white30
                                 : isSel
-                                    ? LD.onCta
+                                    ? Colors.white
                                     : white60,
                             decoration: TextDecoration.none,
                           )),
@@ -1105,14 +1105,14 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
               cursor: SystemMouseCursors.click,
               child: Container(
                 width: double.infinity,
-                color: LD.cta,
+                color: LD.sph,
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 alignment: Alignment.center,
                 child: Text(context.l10n.commonConfirm.toUpperCase(),
                   style: const TextStyle(
                     fontFamily: kSans, fontSize: 10,
                     fontWeight: FontWeight.w600, letterSpacing: 2.0,
-                    color: LD.onCta, decoration: TextDecoration.none,
+                    color: Colors.white, decoration: TextDecoration.none,
                   )),
               ),
             ),

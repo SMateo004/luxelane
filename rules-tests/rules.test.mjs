@@ -152,9 +152,24 @@ describe('payments & admin collections', () => {
   });
 
   it('admin logs are admin-only and append-only', async () => {
-    await assertFails(setDoc(doc(db('rider'), 'admin_logs/l1'), { action: 'x' }));
-    await assertSucceeds(setDoc(doc(db('admin'), 'admin_logs/l1'), { action: 'x' }));
+    await assertFails(setDoc(doc(db('rider'), 'admin_logs/l1'), { action: 'x', adminId: 'rider' }));
+    // The log names the admin who acted; it can't be signed as someone else.
+    await assertFails(setDoc(doc(db('admin'), 'admin_logs/l0'), { action: 'x', adminId: 'other' }));
+    await assertSucceeds(setDoc(doc(db('admin'), 'admin_logs/l1'), { action: 'x', adminId: 'admin' }));
     await assertFails(updateDoc(doc(db('admin'), 'admin_logs/l1'), { action: 'y' }));
+  });
+
+  it('business leads: anyone sends a bounded request, only admins read it', async () => {
+    const anon = env.unauthenticatedContext().firestore();
+    const lead = {
+      company: 'Acme', contactName: 'Ana', email: 'ana@acme.bo', phone: '+591 7000000',
+      travellers: '10', message: 'Viajes al aeropuerto', handled: false, createdAt: serverTimestamp(),
+    };
+    await assertSucceeds(setDoc(doc(anon, 'businessLeads/a1'), lead));
+    await assertFails(setDoc(doc(anon, 'businessLeads/a2'), { ...lead, handled: true }));
+    await assertFails(setDoc(doc(anon, 'businessLeads/a3'), { ...lead, extra: 'x' }));
+    await assertFails(getDoc(doc(db('rider'), 'businessLeads/a1')));
+    await assertSucceeds(getDoc(doc(db('admin'), 'businessLeads/a1')));
   });
 });
 

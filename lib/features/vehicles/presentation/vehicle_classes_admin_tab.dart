@@ -118,15 +118,15 @@ class _VehicleClassCard extends StatelessWidget {
           ),
           child: Text(text, style: LuxTypography.caption.copyWith(color: color)),
         );
-    final edit = TextButton(onPressed: onEdit, child: Text(l.vehAdminEdit, style: const TextStyle(color: LuxColors.accent)));
+    final edit = TextButton(onPressed: onEdit, child: Text(l.vehAdminEdit, style: const TextStyle(color: LuxColors.sapphire)));
     return LuxCard(
       child: LayoutBuilder(builder: (context, c) {
         final narrow = c.maxWidth < 520;
         final details = Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Wrap(spacing: LuxSpacing.sm, runSpacing: 4, crossAxisAlignment: WrapCrossAlignment.center, children: [
             Text(info.nameIn(lang), style: LuxTypography.titleMedium),
-            badge(info.active ? l.vehAdminActive : l.vehAdminArchived, info.active ? LuxColors.success : LuxColors.whiteTertiary),
-            if (info.builtIn && !VehicleCatalog.instance.isCustomized(info.id)) badge(l.vehAdminDefault, LuxColors.info),
+            badge(info.active ? l.vehAdminActive : l.vehAdminArchived, info.active ? LuxColors.success : LuxColors.inkTertiary),
+            if (info.builtIn && !VehicleCatalog.instance.isCustomized(info.id)) badge(l.vehAdminDefault, LuxColors.sapphireLight),
           ]),
           if (info.descriptionIn(lang).isNotEmpty) Text(info.descriptionIn(lang), style: LuxTypography.caption),
           const SizedBox(height: 4),
@@ -178,7 +178,7 @@ class VehicleThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget icon() => Icon(info.iconData, color: LuxColors.accent, size: height * 0.5);
+    Widget icon() => Icon(info.iconData, color: LuxColors.sapphire, size: height * 0.5);
     Widget asset() => info.asset == null ? icon() : Image.asset(info.asset!, fit: BoxFit.contain, errorBuilder: (_, __, ___) => icon());
     final src = url ?? info.imageUrl;
     return Container(
@@ -186,7 +186,7 @@ class VehicleThumb extends StatelessWidget {
       height: height,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: LuxColors.blackElevated,
+        color: LuxColors.surfaceMuted,
         borderRadius: BorderRadius.circular(LuxRadius.sm),
       ),
       clipBehavior: Clip.antiAlias,
@@ -200,7 +200,7 @@ const _swatches = [
   Color(0xFF7B4DB5),
   Color(0xFF2E6AC8),
   Color(0xFF2A9E72),
-  Color(0xFFC6A15B),
+  Color(0xFF1B4F8A),
   Color(0xFFB3261E),
   Color(0xFF5F6B7A),
   Color(0xFF0B1220),
@@ -242,7 +242,7 @@ class _VehicleClassEditorState extends State<VehicleClassEditor> {
         id: '',
         name: const {},
         order: VehicleCatalog.instance.all.fold<int>(0, (m, v) => v.order >= 9000 ? m : (v.order >= m ? v.order + 1 : m)),
-        color: const Color(0xFFC6A15B),
+        color: const Color(0xFF1B4F8A),
         oneWay: builtInVehicleClasses['business']!.oneWay,
         byTheHour: builtInVehicleClasses['business']!.byTheHour,
       );
@@ -390,7 +390,7 @@ class _VehicleClassEditorState extends State<VehicleClassEditor> {
     Widget section(String title, List<Widget> children) => Padding(
           padding: const EdgeInsets.only(top: LuxSpacing.lg),
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            Text(title.toUpperCase(), style: LuxTypography.caption.copyWith(color: LuxColors.accent, letterSpacing: 1.6)),
+            Text(title.toUpperCase(), style: LuxTypography.caption.copyWith(color: LuxColors.sapphire, letterSpacing: 1.6)),
             const SizedBox(height: LuxSpacing.sm),
             ...children,
           ]),
@@ -415,7 +415,7 @@ class _VehicleClassEditorState extends State<VehicleClassEditor> {
         );
     Widget toggle(String label, bool value, ValueChanged<bool> onChanged, {String? hint}) => SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          activeColor: LuxColors.accent,
+          activeColor: LuxColors.sapphire,
           title: Text(label, style: LuxTypography.bodyMedium),
           subtitle: hint == null ? null : Text(hint, style: LuxTypography.caption),
           value: value,
@@ -424,7 +424,7 @@ class _VehicleClassEditorState extends State<VehicleClassEditor> {
 
     final preview = _build();
     return Dialog(
-      backgroundColor: LuxColors.blackSurface,
+      backgroundColor: LuxColors.surface,
       insetPadding: const EdgeInsets.all(LuxSpacing.md),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 760),
@@ -548,9 +548,9 @@ class _VehicleClassEditorState extends State<VehicleClassEditor> {
                   Wrap(spacing: LuxSpacing.sm, runSpacing: LuxSpacing.sm, children: [
                     for (final e in vehicleIcons.entries)
                       ChoiceChip(
-                        label: Icon(e.value, size: 20, color: _icon == e.key ? LuxColors.onAccent : LuxColors.white),
+                        label: Icon(e.value, size: 20, color: _icon == e.key ? LuxColors.onAccent : LuxColors.ink),
                         selected: _icon == e.key,
-                        selectedColor: LuxColors.accentFill,
+                        selectedColor: LuxColors.sapphire,
                         onSelected: (_) => setState(() => _icon = e.key),
                       ),
                   ]),
@@ -573,7 +573,7 @@ class _VehicleClassEditorState extends State<VehicleClassEditor> {
                               color: c,
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: c.toARGB32() == _color.toARGB32() ? LuxColors.white : LuxColors.blackBorder,
+                                color: c.toARGB32() == _color.toARGB32() ? LuxColors.ink : LuxColors.border,
                                 width: 2,
                               ),
                             ),
@@ -589,7 +589,7 @@ class _VehicleClassEditorState extends State<VehicleClassEditor> {
               ]),
             ),
           ),
-          const Divider(height: 1, color: LuxColors.blackBorder),
+          const Divider(height: 1, color: LuxColors.border),
           Padding(
             padding: const EdgeInsets.all(LuxSpacing.md),
             child: Row(children: [

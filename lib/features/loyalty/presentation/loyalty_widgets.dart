@@ -111,7 +111,7 @@ class _LoyaltyAdminTabState extends State<LoyaltyAdminTab> {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    if (!_loaded) return const Center(child: CircularProgressIndicator(color: LuxColors.accent));
+    if (!_loaded) return const Center(child: CircularProgressIndicator(color: LuxColors.sapphire));
     final digits = [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))];
     return ListView(
       padding: const EdgeInsets.all(LuxSpacing.lg),
@@ -122,7 +122,7 @@ class _LoyaltyAdminTabState extends State<LoyaltyAdminTab> {
         const SizedBox(height: LuxSpacing.md),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          activeColor: LuxColors.accent,
+          activeColor: LuxColors.sapphire,
           value: _enabled,
           onChanged: (v) => setState(() => _enabled = v),
           title: Text(l.loyaltyEnable, style: LuxTypography.bodyLarge),
@@ -205,18 +205,18 @@ class _LoyaltyProfileCardState extends State<LoyaltyProfileCard> {
           child: LuxCard(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(children: [
-                const Icon(Icons.workspace_premium_outlined, color: LuxColors.accent),
+                const Icon(Icons.workspace_premium_outlined, color: LuxColors.sapphire),
                 const SizedBox(width: LuxSpacing.sm),
                 Expanded(child: Text(l.loyaltyProgramName, style: LuxTypography.titleMedium)),
                 Text(tier == null ? l.loyaltyMember : tier.id.localizedName(l),
-                    style: LuxTypography.titleMedium.copyWith(color: LuxColors.accent)),
+                    style: LuxTypography.titleMedium.copyWith(color: LuxColors.sapphire)),
               ]),
               const SizedBox(height: LuxSpacing.sm),
               Text(
                 tier == null || tier.discountPct <= 0
                     ? l.loyaltyNoBenefitYet
                     : l.loyaltyBenefit(_pct(tier.discountPct)),
-                style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white),
+                style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink),
               ),
               const SizedBox(height: LuxSpacing.md),
               ClipRRect(
@@ -224,8 +224,8 @@ class _LoyaltyProfileCardState extends State<LoyaltyProfileCard> {
                 child: LinearProgressIndicator(
                   value: s.progress,
                   minHeight: 6,
-                  color: LuxColors.accent,
-                  backgroundColor: LuxColors.white.withValues(alpha: 0.08),
+                  color: LuxColors.sapphire,
+                  backgroundColor: LuxColors.ink.withValues(alpha: 0.08),
                 ),
               ),
               const SizedBox(height: LuxSpacing.sm),

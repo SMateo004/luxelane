@@ -61,33 +61,34 @@ void main() {
 
   group('AuthBloc watches the account status', () {
     late _MockAuthRepository repo;
-    late StreamController<bool> status;
+    late StreamController<User?> profile;
 
     setUp(() {
       repo = _MockAuthRepository();
-      status = StreamController<bool>();
+      profile = StreamController<User?>();
       when(() => repo.isSignedIn).thenAnswer((_) => const Stream.empty());
+      when(() => repo.watchUser(any())).thenAnswer((_) => profile.stream);
     });
     // Not awaited: close() never completes on a stream nobody listened to.
     tearDown(() {
-      status.close();
+      profile.close();
     });
 
     blocTest<AuthBloc, AuthState>(
-      'a suspension while signed in updates the user',
+      'a suspension while signed in keeps the session and updates the user',
       build: () {
         when(() => repo.login(email: any(named: 'email'), password: any(named: 'password')))
             .thenAnswer((_) async => Right(_user()));
-        return AuthBloc(authRepository: repo, watchIsActive: (_) => status.stream);
+        return AuthBloc(authRepository: repo);
       },
       act: (bloc) async {
         bloc.add(const LoginRequested(email: 'u@luxelane.bo', password: 'x'));
         await Future<void>.delayed(Duration.zero);
-        status
-          ..add(true)
-          ..add(false);
+        profile
+          ..add(_user())
+          ..add(_user(active: false));
         await Future<void>.delayed(Duration.zero);
-        status.add(true);
+        profile.add(_user());
       },
       wait: const Duration(milliseconds: 10),
       expect: () => [
@@ -96,17 +97,6 @@ void main() {
         AuthAuthenticated(_user(active: false)),
         AuthAuthenticated(_user()),
       ],
-    );
-
-    blocTest<AuthBloc, AuthState>(
-      'admins are not watched',
-      build: () {
-        when(() => repo.login(email: any(named: 'email'), password: any(named: 'password')))
-            .thenAnswer((_) async => Right(_user(role: UserRole.admin)));
-        return AuthBloc(authRepository: repo, watchIsActive: (_) => throw StateError('watched an admin'));
-      },
-      act: (bloc) => bloc.add(const LoginRequested(email: 'a@luxelane.bo', password: 'x')),
-      expect: () => [const AuthLoading(), AuthAuthenticated(_user(role: UserRole.admin))],
     );
   });
 

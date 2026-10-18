@@ -53,6 +53,32 @@ export async function createIntent(params: {
   return intent.client_secret!;
 }
 
+/**
+ * Authorises, without the rider present, the card they saved, to capture it
+ * right away with captureIntent (bookings more than 6 days ahead, beyond the
+ * 7 days Stripe keeps an authorisation).
+ */
+export async function chargeOffSession(params: {
+  amount: number;
+  currency: string;
+  customerId: string;
+  paymentMethodId: string;
+  metadata?: Record<string, string>;
+}): Promise<string> {
+  const intent = await stripeClient().paymentIntents.create({
+    amount: params.amount,
+    currency: params.currency,
+    customer: params.customerId,
+    payment_method: params.paymentMethodId,
+    capture_method: 'manual',
+    off_session: true,
+    confirm: true,
+    metadata: params.metadata,
+  });
+  logger.info(FN, 'chargeOffSession', { intentId: intent.id, status: intent.status });
+  return intent.id;
+}
+
 export async function retrieveIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
   return stripeClient().paymentIntents.retrieve(paymentIntentId);
 }
@@ -63,18 +89,26 @@ export async function captureIntent(
 ): Promise<Stripe.PaymentIntent> {
   logger.info(FN, 'captureIntent', { paymentIntentId, amountToCapture });
 
-  const intent = await stripeClient().paymentIntents.capture(
-    paymentIntentId,
-    amountToCapture ? { amount_to_capture: amountToCapture } : undefined,
-  );
+  // Never ask for more than was authorised: Stripe would reject the capture.
+  let params: Stripe.PaymentIntentCaptureParams | undefined;
+  if (amountToCapture) {
+    const authorized = await stripeClient().paymentIntents.retrieve(paymentIntentId);
+    params = { amount_to_capture: Math.min(amountToCapture, authorized.amount_capturable) };
+  }
+  const intent = await stripeClient().paymentIntents.capture(paymentIntentId, params);
 
   logger.info(FN, 'captureIntent.success', { status: intent.status });
   return intent;
 }
 
-export async function cancelIntent(paymentIntentId: string): Promise<Stripe.PaymentIntent> {
+/** Releases an authorisation that won't be charged (cancelled booking). */
+export async function cancelIntent(paymentIntentId: string): Promise<void> {
   logger.info(FN, 'cancelIntent', { paymentIntentId });
-  return stripeClient().paymentIntents.cancel(paymentIntentId);
+  const intent = await stripeClient().paymentIntents.retrieve(paymentIntentId);
+  if (intent.status === 'requires_capture' || intent.status === 'requires_payment_method' ||
+      intent.status === 'requires_confirmation' || intent.status === 'requires_action') {
+    await stripeClient().paymentIntents.cancel(paymentIntentId);
+  }
 }
 
 export async function refundIntent(paymentIntentId: string): Promise<Stripe.Refund> {
@@ -91,6 +125,20 @@ export async function listPaymentMethods(customerId: string): Promise<Stripe.Pay
   return methods.data;
 }
 
+/** The customer's default card (the one proposed when booking). */
+export async function defaultPaymentMethod(customerId: string): Promise<string | null> {
+  const customer = await stripeClient().customers.retrieve(customerId);
+  if (customer.deleted) return null;
+  const pm = customer.invoice_settings?.default_payment_method;
+  return typeof pm === 'string' ? pm : pm?.id ?? null;
+}
+
+export async function setDefaultPaymentMethod(customerId: string, paymentMethodId: string): Promise<void> {
+  await stripeClient().customers.update(customerId, {
+    invoice_settings: { default_payment_method: paymentMethodId },
+  });
+}
+
 export async function attachPaymentMethod(
   customerId: string,
   paymentMethodId: string,
@@ -102,8 +150,19 @@ export async function retrievePaymentMethod(paymentMethodId: string): Promise<St
   return stripeClient().paymentMethods.retrieve(paymentMethodId);
 }
 
+/** Stripe customer the card belongs to, or null if none. */
+export async function paymentMethodCustomer(paymentMethodId: string): Promise<string | null> {
+  const pm = await stripeClient().paymentMethods.retrieve(paymentMethodId);
+  return typeof pm.customer === 'string' ? pm.customer : pm.customer?.id ?? null;
+}
+
 export async function detachPaymentMethod(paymentMethodId: string): Promise<void> {
   await stripeClient().paymentMethods.detach(paymentMethodId);
+}
+
+/** Deletes the customer and, with it, their saved cards (account deleted). */
+export async function deleteCustomer(customerId: string): Promise<void> {
+  await stripeClient().customers.del(customerId);
 }
 
 export async function createCustomer(email: string, name: string): Promise<string> {

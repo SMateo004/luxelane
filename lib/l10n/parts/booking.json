@@ -877,5 +877,10 @@
     "es": "No se pudo enviar tu calificación",
     "en": "We couldn't send your rating",
     "pt": "Não foi possível enviar sua avaliação"
+  },
+  "bookingVehicleUnavailable": {
+    "es": "Este vehículo no está disponible para este servicio en este momento. Elige otro.",
+    "en": "This vehicle isn't available for this service right now. Please choose another.",
+    "pt": "Este veículo não está disponível para este serviço no momento. Escolha outro."
   }
 }

@@ -35,36 +35,41 @@ import '../../features/ride/presentation/pages/ride_screen.dart';
 import '../../features/trips/presentation/pages/receipt_page.dart';
 import '../../features/trips/presentation/pages/trips_screen.dart';
 import '../../l10n/l10n.dart';
+import '../../features/business/presentation/pages/business_page.dart';
+import '../../core/widgets/components.dart';
 import '../driver_shell/driver_shell.dart';
 import '../shell/app_shell.dart';
 import '../theme/app_theme.dart';
+import 'lux_transitions.dart';
 
 abstract class LuxRoutes {
-  static const splash   = '/splash';
-  static const login    = '/login';
+  static const splash = '/splash';
+  static const login = '/login';
   static const register = '/register';
-  static const home     = '/';
-  static const booking  = '/booking';
+  static const home = '/';
+  static const booking = '/booking';
   static const rideType = '/ride-type';
-  static const ride     = '/ride/:rideId';
-  static const profile  = '/profile';
-  static const trips    = '/trips';
-  static const admin    = '/admin';
-  static const payment  = '/payment';
-  static const addCard  = '/payment/add';
+  static const ride = '/ride/:rideId';
+  static const profile = '/profile';
+  static const trips = '/trips';
+  static const admin = '/admin';
+  static const payment = '/payment';
+  static const addCard = '/payment/add';
 
   // Driver Routes
-  static const driverHome     = '/driver';
-  static const driverLogin    = '/driver/login';
-  static const driverQueue    = '/driver/queue';
+  static const driverHome = '/driver';
+  static const driverLogin = '/driver/login';
+  static const driverQueue = '/driver/queue';
   static const driverEarnings = '/driver/earnings';
-  static const driverProfile  = '/driver/profile';
+  static const driverProfile = '/driver/profile';
   static const driverActiveRide = '/driver/active-ride/:bookingId';
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
-const _publicPaths = {'/terminos', '/privacidad', '/contacto', '/eliminar-cuenta'};
+const _publicPaths = {
+  '/terminos', '/privacidad', '/legal/terminos', '/legal/privacidad', '/contacto', '/eliminar-cuenta',
+};
 
 GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
       navigatorKey: _rootNavigatorKey,
@@ -79,16 +84,28 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         // Public legal/contact pages are always reachable (store listings link
         // to them, and deletion must be possible from the web).
         if (_publicPaths.contains(going)) return null;
+        // Enlace al que quería ir (p. ej. /ride/abc) antes de pasar por el
+        // splash o el login, para volver a él después.
+        final from = state.uri.queryParameters['from'];
+        final target = from ?? state.uri.toString();
+        String keep(String route) {
+          final t = target;
+          final isEntry = t == '/' ||
+              t.startsWith(LuxRoutes.splash) ||
+              t.startsWith(LuxRoutes.login) ||
+              t.startsWith(LuxRoutes.register);
+          return isEntry ? route : '$route?from=${Uri.encodeComponent(t)}';
+        }
 
         // 1. Initial State: Only show splash if we are NOT already trying to reach a specific driver path.
         if (authState is AuthInitial) {
-          if (going.startsWith('/driver')) return null; 
-          return going == LuxRoutes.splash ? null : LuxRoutes.splash;
+          if (going.startsWith('/driver')) return null;
+          return going == LuxRoutes.splash ? null : keep(LuxRoutes.splash);
         }
 
         // 2. Loading State: Don't block navigation to driver paths while auth is resolving.
         if (authState is AuthLoading) {
-           return null;
+          return null;
         }
 
         // 3. User is Authenticated: Role-based destination rules
@@ -123,40 +140,46 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
           }
 
           // If landing on splash/auth while authed, send to correct home
-          if (going == LuxRoutes.splash || going == LuxRoutes.login ||
-              going == LuxRoutes.register || going == LuxRoutes.driverLogin) {
+          if (going == LuxRoutes.splash ||
+              going == LuxRoutes.login ||
+              going == LuxRoutes.register ||
+              going == LuxRoutes.driverLogin) {
+            if (from != null && from.startsWith('/') && !isDriver) return from;
             return isDriver ? LuxRoutes.driverHome : LuxRoutes.home;
           }
         }
 
         // 4. Guest (Unauthenticated) logic
         if (!isAuth) {
-          final isDriverPath = going.startsWith('/driver');
-          
-          if (kIsWeb) {
-            const webGuestOk = {LuxRoutes.login, LuxRoutes.register, LuxRoutes.home, LuxRoutes.driverLogin};
-            final guestOk = webGuestOk.contains(going) ||
-                going.startsWith('/ride-type') ||
-                going.startsWith('/booking') ||
-                going.startsWith('/servicios');
-            
-            // If explicitly trying to enter via driver path, go to driver login.
-            // But if on general pages, stay on general login.
-            if (isDriverPath && going != LuxRoutes.driverLogin) {
-              return LuxRoutes.driverLogin;
-            }
-            
-            if (!guestOk) return LuxRoutes.login;
-          } else {
-            // Mobile rules...
-            final mobileGuestOk = going == LuxRoutes.login ||
-                going == LuxRoutes.register ||
-                going == LuxRoutes.home ||
-                going == LuxRoutes.driverLogin ||
-                going.startsWith('/ride-type') ||
-                going.startsWith('/booking');
-            if (!mobileGuestOk) return LuxRoutes.login;
+          bool guestOk(String path) {
+            final common = path == LuxRoutes.login ||
+                path == LuxRoutes.register ||
+                path == LuxRoutes.home ||
+                path == LuxRoutes.driverLogin ||
+                path.startsWith('/ride-type') ||
+                path.startsWith('/booking') ||
+                path.startsWith('/legal') ||
+                path == '/empresas';
+            return common || (kIsWeb && path.startsWith('/servicios'));
           }
+
+          // Al resolverse la sesión sin usuario, el splash lleva al enlace
+          // público pedido (privacidad, empresas…) en vez de al login.
+          if (going == LuxRoutes.splash) {
+            final wanted = from != null ? Uri.tryParse(from)?.path : null;
+            if (wanted != null && wanted.startsWith('/')) {
+              // Un enlace privado (p. ej. /trips) pasa por el login y vuelve.
+              return guestOk(wanted) ? from : keep(LuxRoutes.login);
+            }
+            return kIsWeb ? LuxRoutes.home : LuxRoutes.login;
+          }
+
+          final isDriverPath = going.startsWith('/driver');
+          // If explicitly trying to enter via driver path, go to driver login.
+          if (kIsWeb && isDriverPath && going != LuxRoutes.driverLogin) {
+            return LuxRoutes.driverLogin;
+          }
+          if (!guestOk(going)) return keep(LuxRoutes.login);
         }
 
         // 5. Admin guard
@@ -184,6 +207,19 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: '/driver/onboarding',
           pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),
+        ),
+        GoRoute(
+          path: '/empresas',
+          pageBuilder: (c, s) => _fade(const BusinessPage(), s),
+        ),
+        GoRoute(
+          path: '/legal/terminos',
+          // Older links (site footer, sign-up) use /legal/…; same pages.
+          pageBuilder: (c, s) => _fade(LegalPage.terms(), s),
+        ),
+        GoRoute(
+          path: '/legal/privacidad',
+          pageBuilder: (c, s) => _fade(LegalPage.privacy(), s),
         ),
         GoRoute(
           path: '/servicios/recogida-inmediata',
@@ -255,7 +291,8 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: LuxRoutes.driverActiveRide,
           pageBuilder: (c, s) => _slide(
-            DriverActiveRideScreen(bookingId: s.pathParameters['bookingId'] ?? ''),
+            DriverActiveRideScreen(
+                bookingId: s.pathParameters['bookingId'] ?? ''),
             s,
           ),
         ),
@@ -272,7 +309,8 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
 
         // Driver Shell
         StatefulShellRoute.indexedStack(
-          builder: (context, state, shell) => DriverShell(navigationShell: shell),
+          builder: (context, state, shell) =>
+              DriverShell(navigationShell: shell),
           branches: [
             StatefulShellBranch(
               routes: [
@@ -375,28 +413,10 @@ class _BlocListenable extends ChangeNotifier {
 // ---------------------------------------------------------------------------
 
 CustomTransitionPage<void> _fade(Widget child, GoRouterState state) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionDuration: const Duration(milliseconds: 250),
-      transitionsBuilder: (_, animation, __, child) => FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-        child: child,
-      ),
-    );
+    luxFadeThroughPage(child, state);
 
 CustomTransitionPage<void> _slide(Widget child, GoRouterState state) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionsBuilder: (_, animation, __, child) => SlideTransition(
-        position: Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero)
-            .animate(
-          CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-        ),
-        child: child,
-      ),
-    );
+    luxPushPage(child, state);
 
 // ---------------------------------------------------------------------------
 
@@ -404,33 +424,32 @@ class _SplashPage extends StatelessWidget {
   const _SplashPage();
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: const Color(0xFF0A0A0A),
+        backgroundColor: LuxColors.bg,
         body: Center(
-          child: Semantics(
-            label: context.l10n.commonLoading,
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 900),
+            curve: Curves.easeOutCubic,
+            builder: (_, t, child) => Opacity(
+              opacity: t,
+              child: Transform.translate(
+                  offset: Offset(0, 8 * (1 - t)), child: child),
+            ),
             child: const Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'LUXELANE',
-                style: TextStyle(
-                  color: LuxColors.accent,
-                  fontSize: 32,
-                  fontWeight: FontWeight.w300,
-                  letterSpacing: 8,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LuxelaneWordmark(size: 14),
+                SizedBox(height: 36),
+                SizedBox(
+                  width: 72,
+                  child: LinearProgressIndicator(
+                    minHeight: 1,
+                    backgroundColor: LuxColors.border,
+                    color: LuxColors.sapphire,
+                  ),
                 ),
-              ),
-              SizedBox(height: 32),
-              SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 1.5,
-                  color: LuxColors.accent,
-                ),
-              ),
-            ],
-          ),
+              ],
+            ),
           ),
         ),
       );
@@ -440,24 +459,30 @@ class _NotFoundPage extends StatelessWidget {
   const _NotFoundPage();
   @override
   Widget build(BuildContext context) => Scaffold(
+        backgroundColor: LuxColors.bg,
         body: Center(
           child: Padding(
-            padding: const EdgeInsets.all(LuxSpacing.lg),
+            padding: const EdgeInsets.all(32),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text('404',
-                    style: TextStyle(color: Colors.white, fontSize: 64)),
-                const SizedBox(height: 8),
+                const LuxelaneWordmark(),
+                const SizedBox(height: 48),
                 Text(context.l10n.routerNotFoundTitle,
-                    style: LuxTypography.titleLarge, textAlign: TextAlign.center),
-                const SizedBox(height: 8),
+                    textAlign: TextAlign.center,
+                    style: LuxTypography.displayMedium
+                        .copyWith(fontWeight: FontWeight.w400)),
+                const SizedBox(height: 12),
                 Text(context.l10n.routerNotFoundBody,
-                    style: LuxTypography.bodyMedium, textAlign: TextAlign.center),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () => context.go('/'),
-                  child: Text(context.l10n.routerGoHome),
+                    textAlign: TextAlign.center,
+                    style: LuxTypography.bodyMedium),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: 240,
+                  child: ElevatedButton(
+                    onPressed: () => context.go('/'),
+                    child: Text(context.l10n.routerGoHome.toUpperCase()),
+                  ),
                 ),
               ],
             ),

@@ -6,5 +6,6 @@ LUX_APP = rider
 LUX_BUNDLE_ID = com.luxelane.rider
 LUX_DISPLAY_NAME = Luxelane
 // Google Maps SDK for iOS key (restricted to the bundle id). Set by the
-// build script from GOOGLE_MAPS_KEY; never commit a real key here.
-LUX_MAPS_KEY =
+// build script from GOOGLE_MAPS_KEY; by default the project key from
+// Luxelane.xcconfig.
+LUX_MAPS_KEY = $(GOOGLE_MAPS_API_KEY)

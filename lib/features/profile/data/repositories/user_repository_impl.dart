@@ -26,15 +26,14 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, void>> updateUser(User user) async {
     try {
-      // Privileged fields are managed by admins / Cloud Functions and are
-      // rejected by security rules if they differ, so never write them here.
-      final data = user.toJson()
-        ..remove('role')
-        ..remove('isVerified')
-        ..remove('isActive')
-        ..remove('stripeCustomerId')
-        ..remove('email');
-      await _users.doc(user.id).update(data);
+      // Solo lo que el usuario edita: reenviar el perfil entero pisaba los
+      // tokens de notificación y, con datos viejos, campos protegidos.
+      await _users.doc(user.id).update({
+        'displayName': user.displayName,
+        'phone': user.phone,
+        'photoUrl': user.photoUrl,
+        'ridePreferences': user.ridePreferences.toJson(),
+      });
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -86,7 +85,14 @@ class UserRepositoryImpl implements UserRepository {
       await _db
           .collection('driverProfiles')
           .doc(profile.userId)
-          .set(profile.toJson(), SetOptions(merge: true));
+          // Solo los datos que el chófer declara. Verificación, valoración,
+          // viajes y disponibilidad los fijan el admin y el servidor.
+          .set({
+        'userId': profile.userId,
+        'licenseNumber': profile.licenseNumber,
+        'licenseExpiry': Timestamp.fromDate(profile.licenseExpiry),
+        'vehicleId': profile.vehicleId,
+      }, SetOptions(merge: true));
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -117,8 +123,12 @@ class UserRepositoryImpl implements UserRepository {
     required bool isAvailable,
   }) async {
     try {
+      // `online` es lo que el chófer eligió; `isAvailable` además baja
+      // mientras atiende un viaje. Al cerrar el viaje el servidor solo lo
+      // vuelve a marcar disponible si sigue `online`.
       await _db.collection('driverProfiles').doc(userId).update({
         'isAvailable': isAvailable,
+        'online': isAvailable,
       });
       return const Right(null);
     } catch (e) {
@@ -127,9 +137,17 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<void> markDriverBusy(String driverId) => _db
+      .collection('driverProfiles')
+      .doc(driverId)
+      .update({'isAvailable': false});
+
+  @override
   Stream<DriverProfile?> watchDriverProfile(String driverId) => _db
       .collection('driverProfiles')
       .doc(driverId)
       .snapshots()
-      .map((s) => s.exists ? DriverProfile.fromJson(s.data()!) : null);
+      .map((s) => s.exists
+          ? DriverProfile.fromJson({...s.data()!, 'userId': s.id})
+          : null);
 }

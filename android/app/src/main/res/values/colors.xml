@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Tint of the notification icon (brand champagne). -->
-    <color name="notification_accent">#C6A15B</color>
+    <!-- Luxelane ivory (LD.bg / LuxColors.bg): the app never paints black. -->
+    <color name="lux_ivory">#FAFBFE</color>
+    <!-- Tint of the notification icon (brand sapphire, LuxColors.sapphire). -->
+    <color name="notification_accent">#1B4F8A</color>
 </resources>

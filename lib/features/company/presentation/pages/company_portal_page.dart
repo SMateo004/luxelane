@@ -39,7 +39,7 @@ class CompanyPortalPage extends StatelessWidget {
     final platformAdmin = user?.role == UserRole.admin;
 
     Widget denied() => Scaffold(
-          backgroundColor: LuxColors.black,
+          backgroundColor: LuxColors.bg,
           appBar: AppBar(title: Text(l.corpPortalTitle)),
           body: EmptyState(icon: Icons.lock_outline, message: l.corpNoAccess),
         );
@@ -53,8 +53,8 @@ class CompanyPortalPage extends StatelessWidget {
       builder: (context, snap) {
         if (!snap.hasData && snap.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            backgroundColor: LuxColors.black,
-            body: Center(child: CircularProgressIndicator(color: LuxColors.accent)),
+            backgroundColor: LuxColors.bg,
+            body: Center(child: CircularProgressIndicator(color: LuxColors.sapphire)),
           );
         }
         final m = snap.data;
@@ -82,7 +82,7 @@ class _Portal extends StatelessWidget {
         return DefaultTabController(
           length: 3,
           child: Scaffold(
-            backgroundColor: LuxColors.black,
+            backgroundColor: LuxColors.bg,
             appBar: AppBar(
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
@@ -95,9 +95,9 @@ class _Portal extends StatelessWidget {
               bottom: TabBar(
                 isScrollable: true,
                 tabAlignment: TabAlignment.start,
-                indicatorColor: LuxColors.accent,
-                labelColor: LuxColors.white,
-                unselectedLabelColor: LuxColors.whiteTertiary,
+                indicatorColor: LuxColors.sapphire,
+                labelColor: LuxColors.ink,
+                unselectedLabelColor: LuxColors.inkTertiary,
                 tabs: [
                   Tab(text: l.corpTabStatement),
                   Tab(text: l.corpTabMembers),
@@ -106,7 +106,7 @@ class _Portal extends StatelessWidget {
               ),
             ),
             body: company == null
-                ? const Center(child: CircularProgressIndicator(color: LuxColors.accent))
+                ? const Center(child: CircularProgressIndicator(color: LuxColors.sapphire))
                 : Column(
                     children: [
                       if (!company.active)
@@ -119,7 +119,7 @@ class _Portal extends StatelessWidget {
                             const SizedBox(width: LuxSpacing.sm),
                             Expanded(
                               child: Text(l.corpSuspendedBanner,
-                                  style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white)),
+                                  style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink)),
                             ),
                           ]),
                         ),
@@ -216,7 +216,7 @@ class _StatementTabState extends State<StatementTab> {
                 if (snap.connectionState == ConnectionState.waiting && !snap.hasData)
                   const Padding(
                     padding: EdgeInsets.all(LuxSpacing.xl),
-                    child: Center(child: CircularProgressIndicator(color: LuxColors.accent)),
+                    child: Center(child: CircularProgressIndicator(color: LuxColors.sapphire)),
                   )
                 else if (st.bookings.isEmpty)
                   Padding(
@@ -320,14 +320,14 @@ class _Kpi extends StatelessWidget {
             Text(label,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: LuxTypography.caption.copyWith(color: LuxColors.whiteSecondary)),
+                style: LuxTypography.caption.copyWith(color: LuxColors.inkSecondary)),
             const SizedBox(height: LuxSpacing.sm),
             FittedBox(
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,
               child: Text(value,
                   style: LuxTypography.headlineLarge.copyWith(
-                      color: LuxColors.white, fontFamily: 'Cormorant Garamond', fontSize: 32)),
+                      color: LuxColors.ink, fontFamily: 'Cormorant Garamond', fontSize: 32)),
             ),
             if (sub != null) ...[
               const SizedBox(height: 2),
@@ -359,13 +359,13 @@ class _GroupCard extends StatelessWidget {
                 Expanded(
                   child: Text(r.label,
                       overflow: TextOverflow.ellipsis,
-                      style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white)),
+                      style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink)),
                 ),
                 const SizedBox(width: LuxSpacing.sm),
                 Text(l.adminReportsTooltipTrips(r.trips), style: LuxTypography.caption),
                 const SizedBox(width: LuxSpacing.md),
                 Text(LuxMoney.format(r.amount),
-                    style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white)),
+                    style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink)),
               ]),
             ),
         ],
@@ -399,7 +399,7 @@ class _RideTile extends StatelessWidget {
             Row(children: [
               Expanded(
                 child: Text('${DateFormat.MMMd().format(at)} · ${DateFormat.jm().format(at)}',
-                    style: LuxTypography.caption.copyWith(color: LuxColors.whiteSecondary)),
+                    style: LuxTypography.caption.copyWith(color: LuxColors.inkSecondary)),
               ),
               BookingStatusChip(status: b.status),
             ]),
@@ -410,7 +410,7 @@ class _RideTile extends StatelessWidget {
                   : l.corpRoute(b.origin.displayName, b.destination.displayName),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white),
+              style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink),
             ),
             const SizedBox(height: LuxSpacing.xs),
             Row(children: [
@@ -421,7 +421,7 @@ class _RideTile extends StatelessWidget {
               const SizedBox(width: LuxSpacing.sm),
               Text(
                 b.status == BookingStatus.cancelled ? '—' : LuxMoney.format(CompanyStatement.billable(b)),
-                style: LuxTypography.bodyMedium.copyWith(color: LuxColors.accent),
+                style: LuxTypography.bodyMedium.copyWith(color: LuxColors.sapphire),
               ),
             ]),
           ],
@@ -531,10 +531,10 @@ class _MembersTabState extends State<MembersTab> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   leading: CircleAvatar(
-                    backgroundColor: LuxColors.accentSubtle,
+                    backgroundColor: LuxColors.sapphireSubtle,
                     child: Text(
                       (m.displayName.isNotEmpty ? m.displayName : m.email).characters.first.toUpperCase(),
-                      style: const TextStyle(color: LuxColors.accent),
+                      style: const TextStyle(color: LuxColors.sapphire),
                     ),
                   ),
                   title: Text(m.displayName.isNotEmpty ? m.displayName : m.email,
@@ -543,7 +543,7 @@ class _MembersTabState extends State<MembersTab> {
                       overflow: TextOverflow.ellipsis, style: LuxTypography.caption),
                   trailing: PopupMenuButton<String>(
                     tooltip: l.corpMemberActions,
-                    color: LuxColors.blackElevated,
+                    color: LuxColors.surfaceMuted,
                     onSelected: (v) => switch (v) {
                       'admin' => _run(() => widget.repo.setMemberRole(widget.company.id, m.uid, CompanyRole.admin),
                           l.corpMemberUpdated),
@@ -582,12 +582,12 @@ class _MembersTabState extends State<MembersTab> {
                 for (final i in invites)
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.mail_outline, color: LuxColors.whiteTertiary),
+                    leading: const Icon(Icons.mail_outline, color: LuxColors.inkTertiary),
                     title: Text(i.email, overflow: TextOverflow.ellipsis, style: LuxTypography.bodyLarge),
                     subtitle: Text(i.role.localizedLabel(l), style: LuxTypography.caption),
                     trailing: IconButton(
                       tooltip: l.corpCancelInvite,
-                      icon: const Icon(Icons.close_rounded, color: LuxColors.whiteTertiary),
+                      icon: const Icon(Icons.close_rounded, color: LuxColors.inkTertiary),
                       onPressed: () => _run(() => widget.repo.cancelInvite(i.email), l.corpInviteCancelled),
                     ),
                   ),
@@ -604,7 +604,7 @@ class _MembersTabState extends State<MembersTab> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: LuxColors.blackElevated,
+        backgroundColor: LuxColors.surfaceMuted,
         title: Text(l.corpRemoveMember, style: LuxTypography.titleLarge),
         content: Text(l.corpRemoveMemberBody(m.displayName.isNotEmpty ? m.displayName : m.email),
             style: LuxTypography.bodyMedium),
@@ -723,7 +723,7 @@ class _CompanySettingsTabState extends State<CompanySettingsTab> {
         const SizedBox(height: LuxSpacing.sm),
         SwitchListTile(
           contentPadding: EdgeInsets.zero,
-          activeColor: LuxColors.accent,
+          activeColor: LuxColors.sapphire,
           value: _require && _centers.isNotEmpty,
           onChanged: _centers.isEmpty ? null : (v) => setState(() => _require = v),
           title: Text(l.corpRequireCostCenter, style: LuxTypography.bodyLarge),

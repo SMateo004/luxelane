@@ -40,7 +40,7 @@ class CompanyProfileEntry extends StatelessWidget {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   minTileHeight: 52,
-                  leading: const Icon(Icons.business_outlined, color: LuxColors.accent),
+                  leading: const Icon(Icons.business_outlined, color: LuxColors.sapphire),
                   title: Text(company.name, style: LuxTypography.bodyLarge),
                   subtitle: Text(
                     !company.active
@@ -51,7 +51,7 @@ class CompanyProfileEntry extends StatelessWidget {
                     style: LuxTypography.caption,
                   ),
                   trailing: membership.isAdmin
-                      ? const Icon(Icons.chevron_right_rounded, color: LuxColors.whiteTertiary)
+                      ? const Icon(Icons.chevron_right_rounded, color: LuxColors.inkTertiary)
                       : null,
                   onTap: membership.isAdmin ? () => context.push('/empresa') : null,
                 ),

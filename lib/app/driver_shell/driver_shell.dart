@@ -50,15 +50,14 @@ class DriverShell extends StatelessWidget {
             initialLocation: i == navigationShell.currentIndex,
           ),
           type: BottomNavigationBarType.fixed,
-          backgroundColor: LuxColors.blackSurface,
-          selectedItemColor: LuxColors.accent,
-          unselectedItemColor: LuxColors.whiteTertiary,
+          backgroundColor: LuxColors.surface,
+          selectedItemColor: LuxColors.sapphire,
+          unselectedItemColor: LuxColors.inkTertiary,
           showSelectedLabels: true,
           showUnselectedLabels: true,
           selectedLabelStyle: LuxTypography.caption
-              .copyWith(color: LuxColors.accent, fontSize: 10),
-          unselectedLabelStyle:
-              LuxTypography.caption.copyWith(fontSize: 10),
+              .copyWith(color: LuxColors.sapphire, fontSize: 10),
+          unselectedLabelStyle: LuxTypography.caption.copyWith(fontSize: 10),
           items: _items(context.l10n),
         ),
       );

@@ -101,7 +101,7 @@ class MeetAndGreetCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(Icons.badge_outlined, color: LuxColors.accent),
+          const Icon(Icons.badge_outlined, color: LuxColors.sapphire),
           const SizedBox(width: LuxSpacing.md),
           Expanded(
             child: Column(
@@ -160,7 +160,7 @@ class PassengerCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.person_outline, color: LuxColors.accent),
+              const Icon(Icons.person_outline, color: LuxColors.sapphire),
               const SizedBox(width: LuxSpacing.md),
               Expanded(
                 child: Column(
@@ -229,8 +229,8 @@ class _ActionChip extends StatelessWidget {
           label: Text(label),
           style: OutlinedButton.styleFrom(
             minimumSize: const Size(0, 44),
-            foregroundColor: LuxColors.accent,
-            side: const BorderSide(color: LuxColors.accent),
+            foregroundColor: LuxColors.sapphire,
+            side: const BorderSide(color: LuxColors.sapphire),
             padding: const EdgeInsets.symmetric(horizontal: 14),
           ),
         ),
@@ -285,7 +285,7 @@ class _NameSignPageState extends State<NameSignPage> {
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 6,
-                        color: LuxPalette.champagneDeep,
+                        color: LuxColors.sapphire,
                       ),
                     ),
                     Expanded(
@@ -299,7 +299,7 @@ class _NameSignPageState extends State<NameSignPage> {
                               fontFamily: 'Cormorant Garamond',
                               fontSize: 140,
                               fontWeight: FontWeight.w600,
-                              color: LuxPalette.ink,
+                              color: LuxColors.ink,
                               height: 1,
                             ),
                           ),
@@ -309,7 +309,7 @@ class _NameSignPageState extends State<NameSignPage> {
                     Text(
                       context.l10n.tripNameSignTapToClose,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontFamily: 'Montserrat', fontSize: 12, color: LuxPalette.slate),
+                      style: const TextStyle(fontFamily: 'Montserrat', fontSize: 12, color: LuxColors.inkTertiary),
                     ),
                   ],
                 ),

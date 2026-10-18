@@ -102,8 +102,8 @@ class IntercityPage extends StatelessWidget {
                   const SizedBox(height: 40),
                   TextButton.icon(
                     onPressed: () => context.go('/'),
-                    icon: const Icon(Icons.edit_location_alt_outlined, size: 18, color: LD.accent),
-                    label: Text(l.intercityOtherDestination, style: const TextStyle(color: LD.accent)),
+                    icon: const Icon(Icons.edit_location_alt_outlined, size: 18, color: LD.sph),
+                    label: Text(l.intercityOtherDestination, style: const TextStyle(color: LD.sph)),
                   ),
                 ],
               ),
@@ -166,7 +166,7 @@ class _DestinationCard extends StatelessWidget {
               children: [
                 Row(children: [
                   Expanded(child: Text(d.name, style: displayText(size: 28, weight: FontWeight.w500))),
-                  const Icon(Icons.arrow_forward_rounded, color: LD.accent, size: 20),
+                  const Icon(Icons.arrow_forward_rounded, color: LD.sph, size: 20),
                 ]),
                 const SizedBox(height: 6),
                 Text(IntercityPage.tagline(l, d), style: bodyText(size: 14)),
@@ -268,7 +268,7 @@ class _IntercityFormState extends State<IntercityForm> {
       data: ThemeData(
         brightness: Brightness.light,
         fontFamily: kSans,
-        colorScheme: const ColorScheme.light(primary: LD.accent, onPrimary: Colors.white, surface: Colors.white),
+        colorScheme: const ColorScheme.light(primary: LD.sph, onPrimary: Colors.white, surface: Colors.white),
       ),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -304,7 +304,7 @@ class _IntercityFormState extends State<IntercityForm> {
             ),
             if (_error != null) ...[
               const SizedBox(height: 10),
-              Text(_error!, style: const TextStyle(fontFamily: kSans, fontSize: 13, color: LuxPalette.error)),
+              Text(_error!, style: const TextStyle(fontFamily: kSans, fontSize: 13, color: LuxColors.error)),
             ],
             const SizedBox(height: 20),
             SizedBox(
@@ -312,14 +312,14 @@ class _IntercityFormState extends State<IntercityForm> {
               child: ElevatedButton(
                 onPressed: _loading ? null : _continue,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: LD.cta,
-                  foregroundColor: LD.onCta,
+                  backgroundColor: LD.sph,
+                  foregroundColor: Colors.white,
                   elevation: 0,
                   shape: const RoundedRectangleBorder(),
                 ),
                 child: _loading
                     ? const SizedBox(
-                        width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: LD.onCta))
+                        width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                     : Text(l.intercityContinue.toUpperCase(),
                         style: const TextStyle(fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 2)),
               ),

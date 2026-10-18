@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -27,13 +29,21 @@ class _AddCardScreenState extends State<AddCardScreen> {
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) return;
 
-    final user = authState.user;
-    if (user.stripeCustomerId == null || user.stripeCustomerId!.isEmpty) {
-      showLuxSnackbar(context, context.l10n.paymentsAccountNotSetUp, isError: true);
-      return;
-    }
-
     setState(() => _loading = true);
+    var customerId = authState.user.stripeCustomerId ?? '';
+    if (customerId.isEmpty) {
+      final result = await sl<PaymentRepository>().ensureStripeCustomer();
+      if (!mounted) return;
+      final failure = result.fold((f) => f.message, (id) {
+        customerId = id;
+        return null;
+      });
+      if (failure != null) {
+        setState(() => _loading = false);
+        showLuxSnackbar(context, failure, isError: true);
+        return;
+      }
+    }
 
     try {
       final pm = await Stripe.instance.createPaymentMethod(
@@ -46,7 +56,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
 
       context.read<PaymentBloc>().add(
             CardAdded(
-              stripeCustomerId: user.stripeCustomerId!,
+              stripeCustomerId: customerId,
               paymentMethodId: pm.id,
             ),
           );
@@ -92,25 +102,24 @@ class _AddCardScreenState extends State<AddCardScreen> {
               Container(
                 padding: const EdgeInsets.all(LuxSpacing.sm),
                 decoration: BoxDecoration(
-                  color: LuxColors.blackElevated,
+                  color: LuxColors.surfaceMuted,
                   borderRadius: BorderRadius.circular(LuxRadius.sm),
-                  border: Border.all(color: LuxColors.blackBorder),
+                  border: Border.all(color: LuxColors.border),
                 ),
                 child: CardField(
-                  style: const TextStyle(color: LuxColors.white, fontSize: 16),
+                  style: const TextStyle(color: LuxColors.ink, fontSize: 16),
                   decoration: const InputDecoration(
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
                   ),
-                  onCardChanged: (card) =>
-                      setState(() => _cardDetails = card),
+                  onCardChanged: (card) => setState(() => _cardDetails = card),
                 ),
               ),
               const SizedBox(height: LuxSpacing.lg),
               Row(
                 children: [
                   const Icon(Icons.lock_outline,
-                      size: 14, color: LuxColors.whiteTertiary),
+                      size: 14, color: LuxColors.inkTertiary),
                   const SizedBox(width: LuxSpacing.xs),
                   Expanded(
                     child: Text(

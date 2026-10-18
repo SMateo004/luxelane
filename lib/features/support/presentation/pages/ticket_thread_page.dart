@@ -77,7 +77,7 @@ class _TicketThreadPageState extends State<TicketThreadPage> {
         final t = tSnap.data;
         if (t != null) _markRead(t);
         return Scaffold(
-          backgroundColor: LuxColors.black,
+          backgroundColor: LuxColors.bg,
           appBar: AppBar(
             title: Text(t?.subject ?? l.supportTitle, overflow: TextOverflow.ellipsis),
             actions: [
@@ -94,7 +94,7 @@ class _TicketThreadPageState extends State<TicketThreadPage> {
             ],
           ),
           body: t == null
-              ? const Center(child: CircularProgressIndicator(color: LuxColors.accent))
+              ? const Center(child: CircularProgressIndicator(color: LuxColors.sapphire))
               : Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 760),
@@ -135,14 +135,14 @@ class _TicketThreadPageState extends State<TicketThreadPage> {
                                 minLines: 1,
                                 maxLines: 4,
                                 textInputAction: TextInputAction.newline,
-                                style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white),
+                                style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink),
                                 decoration: InputDecoration(
                                   hintText: l.supportWriteHint,
                                   filled: true,
-                                  fillColor: LuxColors.blackElevated,
+                                  fillColor: LuxColors.surfaceMuted,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(LuxRadius.md),
-                                    borderSide: const BorderSide(color: LuxColors.blackBorder),
+                                    borderSide: const BorderSide(color: LuxColors.border),
                                   ),
                                 ),
                               ),
@@ -155,8 +155,8 @@ class _TicketThreadPageState extends State<TicketThreadPage> {
                                   ? const SizedBox(
                                       width: 20,
                                       height: 20,
-                                      child: CircularProgressIndicator(strokeWidth: 2, color: LuxColors.accent))
-                                  : const Icon(Icons.send_rounded, color: LuxColors.accent),
+                                      child: CircularProgressIndicator(strokeWidth: 2, color: LuxColors.sapphire))
+                                  : const Icon(Icons.send_rounded, color: LuxColors.sapphire),
                             ),
                           ]),
                         ),
@@ -182,7 +182,7 @@ class _Header extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(LuxSpacing.md),
       child: Row(children: [
-        Icon(t.category.icon, color: t.urgent ? LuxColors.warning : LuxColors.accent),
+        Icon(t.category.icon, color: t.urgent ? LuxColors.warning : LuxColors.sapphire),
         const SizedBox(width: LuxSpacing.sm),
         Expanded(
           child: Text(
@@ -192,7 +192,7 @@ class _Header extends StatelessWidget {
               if (t.urgent) l.supportUrgent,
               if (t.bookingId != null) l.supportTripRef(t.bookingId!.substring(0, t.bookingId!.length.clamp(0, 8)).toUpperCase()),
             ].join(' · '),
-            style: LuxTypography.caption.copyWith(color: LuxColors.whiteSecondary),
+            style: LuxTypography.caption.copyWith(color: LuxColors.inkSecondary),
           ),
         ),
         TicketStatusChip(status: t.status, forTeam: asTeam),
@@ -221,17 +221,17 @@ class _Bubble extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: LuxSpacing.sm),
           padding: const EdgeInsets.all(LuxSpacing.md),
           decoration: BoxDecoration(
-            color: mine ? LuxColors.accentSubtle : LuxColors.blackElevated,
-            border: Border.all(color: mine ? LuxColors.accent.withOpacity(0.35) : LuxColors.blackBorder),
+            color: mine ? LuxColors.sapphireSubtle : LuxColors.surfaceMuted,
+            border: Border.all(color: mine ? LuxColors.sapphire.withOpacity(0.35) : LuxColors.border),
             borderRadius: BorderRadius.circular(LuxRadius.md),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text([who, if (when.isNotEmpty) when].join(' · '),
-                  style: LuxTypography.caption.copyWith(color: m.fromTeam ? LuxColors.accent : LuxColors.whiteSecondary)),
+                  style: LuxTypography.caption.copyWith(color: m.fromTeam ? LuxColors.sapphire : LuxColors.inkSecondary)),
               const SizedBox(height: 4),
-              SelectableText(m.text, style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white)),
+              SelectableText(m.text, style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink)),
             ],
           ),
         ),

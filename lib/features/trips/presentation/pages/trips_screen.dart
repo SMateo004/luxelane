@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
@@ -11,18 +12,26 @@ import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../booking/presentation/bloc/booking_bloc.dart';
 
-class TripsScreen extends StatefulWidget {
+/// Lista de viajes con su propio BookingBloc: el compartido también recibe
+/// los estados de crear o seguir una reserva, que vaciaban esta lista.
+class TripsScreen extends StatelessWidget {
   const TripsScreen({super.key});
 
   @override
-  State<TripsScreen> createState() => _TripsScreenState();
+  Widget build(BuildContext context) => BlocProvider<BookingBloc>(
+        create: (_) => sl<BookingBloc>(),
+        child: const _TripsView(),
+      );
 }
 
-class _TripsScreenState extends State<TripsScreen> {
-  // Cached so unrelated BookingBloc states (e.g. a booking being watched
-  // elsewhere) don't blank the list.
-  List<Booking>? _trips;
+class _TripsView extends StatefulWidget {
+  const _TripsView();
 
+  @override
+  State<_TripsView> createState() => _TripsScreenState();
+}
+
+class _TripsScreenState extends State<_TripsView> {
   @override
   void initState() {
     super.initState();
@@ -33,7 +42,7 @@ class _TripsScreenState extends State<TripsScreen> {
     final authState = context.read<AuthBloc>().state;
     if (authState is AuthAuthenticated) {
       context.read<BookingBloc>().add(
-            BookingRiderTripsRequested(riderId: authState.user.id),
+            BookingRiderTripsWatched(riderId: authState.user.id),
           );
     }
   }
@@ -49,80 +58,76 @@ class _TripsScreenState extends State<TripsScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
+          // La lista está en vivo: no hace falta un botón de recargar.
           title: Text(context.l10n.tripsTitle),
-          actions: [
-            IconButton(
-              tooltip: context.l10n.commonRefresh,
-              icon: const Icon(Icons.refresh_rounded),
-              onPressed: _loadTrips,
-            ),
-          ],
         ),
-        body: BlocConsumer<BookingBloc, BookingState>(
-          listener: (_, state) {
-            if (state is BookingTripsLoaded) setState(() => _trips = state.bookings);
-          },
+        body: BlocBuilder<BookingBloc, BookingState>(
           builder: (context, state) {
-            final trips = _trips;
-            if (trips == null) {
-              if (state is BookingError) {
-                return LuxErrorState(
-                  message: context.l10n.tripsLoadError,
-                  onRetry: _loadTrips,
-                );
-              }
+            if (state is BookingLoading || state is BookingInitial) {
               return const LuxSkeletonList();
             }
-            if (trips.isEmpty) {
-              return EmptyState(
-                message: context.l10n.tripsEmpty,
-                actionLabel: context.l10n.tripsBookNow,
-                onAction: () => context.go('/'),
-                icon: Icons.directions_car_outlined,
+            if (state is BookingError) {
+              return LuxErrorState(
+                message: context.l10n.tripsLoadError,
+                onRetry: _loadTrips,
               );
             }
+            if (state is BookingTripsLoaded) {
+              final trips = state.bookings;
+              if (trips.isEmpty) return _empty(context);
 
-            final upcoming = trips.where((b) => _upcomingStatuses.contains(b.status)).toList()
-              ..sort((a, b) => a.effectivePickup.compareTo(b.effectivePickup));
-            final past = trips.where((b) => !_upcomingStatuses.contains(b.status)).toList()
-              ..sort((a, b) => b.scheduledAt.compareTo(a.scheduledAt));
+              // Upcoming first (soonest on top), then history (latest on top):
+              // the question a traveller opens this screen with is "what's next?".
+              final upcoming = trips
+                  .where((b) => _upcomingStatuses.contains(b.status))
+                  .toList()
+                ..sort((a, b) => a.effectivePickup.compareTo(b.effectivePickup));
+              final past = trips
+                  .where((b) => !_upcomingStatuses.contains(b.status))
+                  .toList()
+                ..sort((a, b) => b.scheduledAt.compareTo(a.scheduledAt));
 
-            return RefreshIndicator(
-              color: LuxColors.accent,
-              onRefresh: () async => _loadTrips(),
-              child: ListView(
-                padding: const EdgeInsets.all(LuxSpacing.md),
-                children: [
-                  if (upcoming.isNotEmpty) ...[
-                    _SectionLabel(context.l10n.tripsUpcoming),
-                    for (final b in upcoming) _TripCard(booking: b),
-                    const SizedBox(height: LuxSpacing.lg),
+              return RefreshIndicator(
+                color: LuxColors.sapphire,
+                backgroundColor: LuxColors.surface,
+                onRefresh: () async => _loadTrips(),
+                child: ListView(
+                  padding: const EdgeInsets.fromLTRB(LuxSpacing.md,
+                      LuxSpacing.md, LuxSpacing.md, LuxSpacing.xxl),
+                  children: [
+                    if (upcoming.isNotEmpty) ...[
+                      SectionHeader(title: context.l10n.tripsUpcoming),
+                      const SizedBox(height: LuxSpacing.sm + 2),
+                      for (final (i, b) in upcoming.indexed) ...[
+                        LuxFadeIn(index: i, child: _TripCard(booking: b)),
+                        const SizedBox(height: LuxSpacing.sm),
+                      ],
+                      const SizedBox(height: LuxSpacing.lg),
+                    ],
+                    if (past.isNotEmpty) ...[
+                      SectionHeader(title: context.l10n.tripsPast),
+                      const SizedBox(height: LuxSpacing.sm + 2),
+                      for (final (i, b) in past.indexed) ...[
+                        LuxFadeIn(
+                            index: upcoming.length + i,
+                            child: _TripCard(booking: b)),
+                        const SizedBox(height: LuxSpacing.sm),
+                      ],
+                    ],
                   ],
-                  if (past.isNotEmpty) ...[
-                    _SectionLabel(context.l10n.tripsPast),
-                    for (final b in past) _TripCard(booking: b),
-                  ],
-                ],
-              ),
-            );
+                ),
+              );
+            }
+            return _empty(context);
           },
         ),
       );
-}
 
-class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.text);
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: LuxSpacing.sm, top: LuxSpacing.xs),
-        child: Semantics(
-          header: true,
-          child: Text(text,
-              style: LuxTypography.caption.copyWith(
-                  letterSpacing: 2, color: LuxColors.whiteSecondary)),
-        ),
+  Widget _empty(BuildContext context) => EmptyState(
+        message: context.l10n.tripsEmpty,
+        actionLabel: context.l10n.tripsBookNow,
+        onAction: () => context.go('/'),
+        icon: Icons.directions_car_outlined,
       );
 }
 
@@ -130,9 +135,12 @@ class _TripCard extends StatelessWidget {
   const _TripCard({required this.booking});
   final Booking booking;
 
-  String _route(AppLocalizations l) {
+  bool get _hourly => booking.serviceType == ServiceType.byTheHour;
+
+  /// Lo que la persona recuerda de un viaje: a dónde fue.
+  String _title(AppLocalizations l) {
     final o = booking.origin.displayName;
-    if (booking.serviceType == ServiceType.byTheHour) {
+    if (_hourly) {
       return booking.days > 1
           ? l.tripsRouteByDays(o, booking.days, booking.hours ?? 2)
           : l.tripsRouteByHour(o, booking.hours ?? 2);
@@ -140,78 +148,111 @@ class _TripCard extends StatelessWidget {
     return '$o → ${booking.destination.displayName}';
   }
 
-  String get _price => LuxMoney.format(booking.finalPrice ?? booking.estimatedPrice);
-
   String get _date => '${DateFormat.yMMMd().format(booking.effectivePickup)} · '
       '${DateFormat.jm().format(booking.effectivePickup)}';
 
-  void _open(BuildContext context) {
+  String get _price => LuxMoney.format(booking.finalPrice ?? booking.estimatedPrice);
+
+  bool get _toRate =>
+      booking.status == BookingStatus.completed && booking.riderRating == null;
+
+  /// Qué hace el toque: seguir el viaje, valorarlo o ver la reserva.
+  String? get _cta {
     switch (booking.status) {
+      case BookingStatus.confirmed:
+      case BookingStatus.driverArriving:
+      case BookingStatus.driverArrived:
+      case BookingStatus.inProgress:
+        return 'Seguir en el mapa';
       case BookingStatus.completed:
-      case BookingStatus.cancelled:
-        context.push('/viajes/${booking.id}/recibo', extra: booking);
+        return _toRate ? 'Calificar viaje' : null;
+      case BookingStatus.pending:
+        return 'Ver reserva';
       default:
-        context.push('/ride/${booking.id}');
+        return null;
+    }
+  }
+
+  /// Finished trips open their receipt (an unrated one opens the trip to
+  /// rate it first); anything else is followed on the trip screen.
+  void _open(BuildContext context) {
+    final finished = booking.status == BookingStatus.completed ||
+        booking.status == BookingStatus.cancelled;
+    if (finished && !_toRate) {
+      context.push('/viajes/${booking.id}/recibo', extra: booking);
+    } else {
+      context.push('/ride/${booking.id}');
     }
   }
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: LuxSpacing.sm),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(LuxRadius.md),
-            onTap: () => _open(context),
-            child: LuxCard(
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: LuxColors.blackElevated,
-                      borderRadius: BorderRadius.circular(LuxRadius.sm),
+  Widget build(BuildContext context) {
+    final cancelled = booking.status == BookingStatus.cancelled;
+    return LuxCard(
+      onTap: () => _open(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _title(context.l10n),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.titleLarge.copyWith(
+                        color:
+                            cancelled ? LuxColors.inkTertiary : LuxColors.ink,
+                      ),
                     ),
-                    child: Icon(
-                      booking.serviceType == ServiceType.byTheHour
-                          ? Icons.schedule
-                          : Icons.directions_car_outlined,
-                      color: LuxColors.accent,
-                      size: 24,
-                    ),
-                  ),
-                  const SizedBox(width: LuxSpacing.md),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(_route(context.l10n),
-                            style: LuxTypography.titleMedium,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis),
-                        const SizedBox(height: 2),
-                        Text(booking.vehicleClass.localizedLabel(context.l10n),
-                            style: LuxTypography.bodyMedium),
-                        const SizedBox(height: 2),
-                        Text(_date, style: LuxTypography.caption),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: LuxSpacing.sm),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(_price,
-                          style: LuxTypography.titleLarge.copyWith(color: LuxColors.accent)),
-                      const SizedBox(height: 4),
-                      BookingStatusChip(status: booking.status),
-                    ],
-                  ),
-                ],
+                    const SizedBox(height: 3),
+                    Text(_date,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: LuxTypography.caption.copyWith(fontSize: 12)),
+                  ],
+                ),
               ),
-            ),
+              const SizedBox(width: LuxSpacing.md),
+              Text(
+                _price,
+                style: LuxTypography.titleLarge.copyWith(
+                  color: cancelled ? LuxColors.inkTertiary : LuxColors.ink,
+                  decoration: cancelled ? TextDecoration.lineThrough : null,
+                ),
+              ),
+            ],
           ),
-        ),
-      );
+          const SizedBox(height: LuxSpacing.sm + 4),
+          Row(
+            children: [
+              BookingStatusChip(status: booking.status),
+              const SizedBox(width: LuxSpacing.sm),
+              Expanded(
+                child: Text(
+                  booking.vehicleClass.localizedLabel(context.l10n),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: LuxTypography.caption.copyWith(fontSize: 12),
+                ),
+              ),
+              if (_cta != null) ...[
+                Text(_cta!,
+                    style: LuxTypography.caption.copyWith(
+                        color: LuxColors.sapphire,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12)),
+                const Icon(Icons.chevron_right_rounded,
+                    size: 16, color: LuxColors.sapphire),
+              ],
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }

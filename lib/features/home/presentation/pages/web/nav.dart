@@ -27,7 +27,7 @@ class _LuxNav extends StatelessWidget {
       duration: const Duration(milliseconds: 400),
       height: 72,
       decoration: BoxDecoration(
-        color: scrolled ? const Color(0xF5FAF8F4) : Colors.transparent,
+        color: scrolled ? const Color(0xF5FAFBFE) : Colors.transparent,
         border: Border(
           bottom: BorderSide(
             color: scrolled ? LD.border : Colors.transparent,
@@ -278,14 +278,14 @@ class _DropItemState extends State<_DropItem> {
           onTap: widget.onTap,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
-            color: _hover ? LD.accent.withAlpha(30) : Colors.transparent,
+            color: _hover ? LD.sph.withAlpha(30) : Colors.transparent,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
             child: Row(
               children: [
                 Container(
                   width: 3, height: 3,
                   decoration: const BoxDecoration(
-                    color: LD.accent, shape: BoxShape.circle,
+                    color: LD.sph, shape: BoxShape.circle,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -328,12 +328,12 @@ class _NavCtaState extends State<_NavCta> {
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 10),
-            color: _hover ? LuxPalette.champagneLight : LD.cta,
+            color: _hover ? LuxColors.sapphireLight : LD.sph,
             child: Text(
               context.l10n.homeBookRide.toUpperCase(),
               style: const TextStyle(
                 fontFamily: kSans, fontSize: 10, fontWeight: FontWeight.w600,
-                letterSpacing: 1.8, color: LD.onCta,
+                letterSpacing: 1.8, color: Colors.white,
                 decoration: TextDecoration.none,
               ),
             ),
@@ -352,13 +352,13 @@ class _AvatarDot extends StatelessWidget {
         onTap: onTap,
         child: Container(
           width: 34, height: 34,
-          decoration: const BoxDecoration(shape: BoxShape.circle, color: LD.accentTint),
+          decoration: const BoxDecoration(shape: BoxShape.circle, color: LD.sphTint),
           child: Center(
             child: Text(
               name.isNotEmpty ? name[0].toUpperCase() : 'U',
               style: const TextStyle(
                 fontFamily: kSans, fontSize: 13, fontWeight: FontWeight.w500,
-                color: LD.accent, decoration: TextDecoration.none,
+                color: LD.sph, decoration: TextDecoration.none,
               ),
             ),
           ),

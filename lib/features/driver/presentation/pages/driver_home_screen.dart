@@ -18,6 +18,7 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
 import '../widgets/driver_location_banner.dart';
 import 'driver_documents_screen.dart';
+import '../widgets/flight_info_card.dart';
 
 class DriverHomeScreen extends StatefulWidget {
   const DriverHomeScreen({super.key});
@@ -36,6 +37,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
     showModalBottomSheet<void>(
       context: context,
+      // En el navegador raíz, para poder cerrarlo desde el listener.
+      useRootNavigator: true,
       isScrollControlled: true,
       isDismissible: false,
       enableDrag: false,
@@ -50,14 +53,14 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   driverId: auth.user.id,
                 ));
           }
-          if (mounted) Navigator.of(context).pop();
+          if (mounted) Navigator.of(context, rootNavigator: true).pop();
           _activeSheetId = null;
         },
         onDecline: () {
           context.read<DriverBloc>().add(
                 DriverRequestDeclined(bookingId: booking.id),
               );
-          if (mounted) Navigator.of(context).pop();
+          if (mounted) Navigator.of(context, rootNavigator: true).pop();
           _activeSheetId = null;
         },
       ),
@@ -73,12 +76,20 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         final prevId = prev is DriverLoaded ? prev.currentRequest?.id : null;
         final currId = curr.currentRequest?.id;
         final prevAvail = prev is DriverLoaded ? prev.isAvailable : false;
-        return prevId != currId || curr.isAvailable != prevAvail;
+        final prevSeq = prev is DriverLoaded ? prev.noticeSeq : 0;
+        return prevId != currId ||
+            curr.isAvailable != prevAvail ||
+            curr.noticeSeq != prevSeq;
       },
       listener: (context, state) {
         if (state is DriverOnboardingRequired) {
           context.go('/driver/onboarding');
           return;
+        }
+        if (state is DriverLoaded && state.notice != null) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(state.notice!)));
         }
         if (state is DriverLoaded) {
           final req = state.currentRequest;
@@ -93,8 +104,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       },
       builder: (context, state) {
         final authState = context.read<AuthBloc>().state;
-        final isAuthedDriver = authState is AuthAuthenticated && 
-                              authState.user.role == UserRole.driver;
+        final isAuthedDriver = authState is AuthAuthenticated &&
+            authState.user.role == UserRole.driver;
 
         if (state is DriverError) {
           return Scaffold(
@@ -102,7 +113,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.error_outline, color: LuxColors.error, size: 48),
+                  const Icon(Icons.error_outline,
+                      color: LuxColors.error, size: 48),
                   const SizedBox(height: 16),
                   Text(context.l10n.driverConnectionErrorTitle,
                       style: LuxTypography.headlineMedium, textAlign: TextAlign.center),
@@ -123,7 +135,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                     onPressed: () {
                       final auth = context.read<AuthBloc>().state;
                       if (auth is AuthAuthenticated) {
-                        context.read<DriverBloc>().add(DriverStarted(userId: auth.user.id));
+                        context
+                            .read<DriverBloc>()
+                            .add(DriverStarted(userId: auth.user.id));
                       }
                     },
                   ),
@@ -140,7 +154,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
               body: Center(child: CircularProgressIndicator()),
             );
           }
-          return const Scaffold(backgroundColor: LuxColors.black);
+          return const Scaffold(backgroundColor: LuxColors.bg);
         }
         final active = state.activeBooking;
         return Scaffold(
@@ -206,7 +220,7 @@ class _AvailabilityToggle extends StatelessWidget {
               : context.l10n.driverOfflineTitle,
           child: Switch(
             value: isAvailable,
-            activeColor: LuxColors.accent,
+            activeColor: LuxColors.sapphire,
             onChanged: (val) => context.read<DriverBloc>().add(
                   DriverAvailabilityToggled(userId: userId, isAvailable: val),
                 ),
@@ -234,6 +248,11 @@ class _IdlePanel extends StatelessWidget {
             verified: state.profile.documentsVerified,
           ),
           _StatusBanner(isAvailable: state.isAvailable),
+          // What stops rides from coming in, said plainly (pending documents
+          // are covered by the verification banner above).
+          if (state.profile.documentsVerified && state.vehicleClass == null)
+            const _Notice('No tienes un vehículo activo registrado. Pide a '
+                'Luxelane que lo active para recibir solicitudes.'),
           const SizedBox(height: LuxSpacing.lg),
           SectionHeader(title: l.driverTodaySummary),
           const SizedBox(height: LuxSpacing.md),
@@ -242,7 +261,7 @@ class _IdlePanel extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   label: l.driverStatCompleted,
-                  value: '${state.completedBookings.length}',
+                  value: '${state.completedToday.length}',
                   icon: Icons.check_circle_outline,
                 ),
               ),
@@ -250,7 +269,7 @@ class _IdlePanel extends StatelessWidget {
               Expanded(
                 child: _StatCard(
                   label: l.driverStatEarnings,
-                  value: LuxMoney.format(state.totalEarnings),
+                  value: LuxMoney.format(state.todayEarnings),
                   icon: Icons.attach_money,
                 ),
               ),
@@ -281,6 +300,30 @@ class _IdlePanel extends StatelessWidget {
 
 // ── Status banner ──────────────────────────────────────────────────────────
 
+class _Notice extends StatelessWidget {
+  const _Notice(this.text);
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(top: LuxSpacing.sm),
+        child: Container(
+          padding: const EdgeInsets.all(LuxSpacing.md),
+          decoration: BoxDecoration(
+            color: LuxColors.warning.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(LuxRadius.lg),
+            border: Border.all(color: LuxColors.warning.withValues(alpha: 0.3)),
+          ),
+          child: Row(children: [
+            const Icon(Icons.info_outline_rounded,
+                color: LuxColors.warning, size: 20),
+            const SizedBox(width: LuxSpacing.sm),
+            Expanded(child: Text(text, style: LuxTypography.bodyMedium)),
+          ]),
+        ),
+      );
+}
+
 class _StatusBanner extends StatelessWidget {
   const _StatusBanner({required this.isAvailable});
   final bool isAvailable;
@@ -291,12 +334,12 @@ class _StatusBanner extends StatelessWidget {
         decoration: BoxDecoration(
           color: isAvailable
               ? LuxColors.success.withValues(alpha: 0.08)
-              : LuxColors.blackElevated,
+              : LuxColors.surfaceMuted,
           borderRadius: BorderRadius.circular(LuxRadius.lg),
           border: Border.all(
             color: isAvailable
                 ? LuxColors.success.withValues(alpha: 0.3)
-                : LuxColors.blackBorder,
+                : LuxColors.border,
           ),
         ),
         child: Row(
@@ -305,7 +348,7 @@ class _StatusBanner extends StatelessWidget {
               isAvailable
                   ? Icons.wifi_tethering_rounded
                   : Icons.wifi_tethering_off_rounded,
-              color: isAvailable ? LuxColors.success : LuxColors.whiteTertiary,
+              color: isAvailable ? LuxColors.success : LuxColors.inkTertiary,
               size: 24,
             ),
             const SizedBox(width: LuxSpacing.md),
@@ -316,8 +359,7 @@ class _StatusBanner extends StatelessWidget {
                   Text(
                     isAvailable ? context.l10n.driverOnlineTitle : context.l10n.driverOfflineTitle,
                     style: LuxTypography.titleMedium.copyWith(
-                      color:
-                          isAvailable ? LuxColors.success : LuxColors.white,
+                      color: isAvailable ? LuxColors.success : LuxColors.ink,
                     ),
                   ),
                   Text(
@@ -369,7 +411,8 @@ class _ActiveRidePanel extends StatelessWidget {
   Future<void> _openMaps(BuildContext context, Place target) async {
     try {
       if (kIsWeb) {
-        final url = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=${target.lat},${target.lng}');
+        final url = Uri.parse(
+            'https://www.google.com/maps/dir/?api=1&destination=${target.lat},${target.lng}');
         if (await canLaunchUrl(url)) {
           await launchUrl(url);
         } else {
@@ -397,7 +440,8 @@ class _ActiveRidePanel extends StatelessWidget {
                   padding: const EdgeInsets.all(LuxSpacing.md),
                   child: Text(context.l10n.driverNavigateTo(target.address),
                       style: LuxTypography.titleMedium,
-                      maxLines: 1, overflow: TextOverflow.ellipsis),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
                 ),
                 Flexible(
                   child: ListView.builder(
@@ -408,9 +452,11 @@ class _ActiveRidePanel extends StatelessWidget {
                       return ListTile(
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: const Icon(Icons.map_outlined, color: LuxColors.accent, size: 24),
+                          child: const Icon(Icons.map_outlined,
+                              color: LuxColors.sapphire, size: 24),
                         ),
-                        title: Text(map.mapName, style: LuxTypography.bodyLarge),
+                        title:
+                            Text(map.mapName, style: LuxTypography.bodyLarge),
                         onTap: () {
                           map.showMarker(
                             coords: ml.Coords(target.lat, target.lng),
@@ -436,8 +482,8 @@ class _ActiveRidePanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool goingToPickup = booking.status == BookingStatus.confirmed || 
-                               booking.status == BookingStatus.driverArriving;
+    final bool goingToPickup = booking.status == BookingStatus.confirmed ||
+        booking.status == BookingStatus.driverArriving;
     final targetPlace = goingToPickup ? booking.origin : booking.destination;
     final l = context.l10n;
 
@@ -457,16 +503,16 @@ class _ActiveRidePanel extends StatelessWidget {
                     BookingStatusChip(status: booking.status),
                     const Spacer(),
                     Text(
-                      LuxMoney.format(booking.estimatedPrice),
+                      LuxMoney.format(booking.chargedAmount),
                       style: LuxTypography.headlineLarge
-                          .copyWith(color: LuxColors.accent),
+                          .copyWith(color: LuxColors.sapphire),
                     ),
                   ],
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 _AddressRow(
                   icon: Icons.radio_button_checked,
-                  color: LuxColors.accent,
+                  color: LuxColors.sapphire,
                   label: l.tripPickup,
                   address: booking.origin.address,
                   isCurrent: goingToPickup,
@@ -485,6 +531,10 @@ class _ActiveRidePanel extends StatelessWidget {
           if (showsFreeWait(booking)) ...[
             const SizedBox(height: LuxSpacing.md),
             FreeWaitBanner(booking: booking, forDriver: true),
+          ],
+          if (booking.flightNumber?.isNotEmpty == true) ...[
+            const SizedBox(height: LuxSpacing.md),
+            FlightInfoCard(booking: booking),
           ],
           const SizedBox(height: LuxSpacing.md),
           PassengerCard(booking: booking),
@@ -523,8 +573,7 @@ class _AddressRow extends StatelessWidget {
           Stack(
             alignment: Alignment.center,
             children: [
-              if (isCurrent)
-                _PulseIndicator(color: color),
+              if (isCurrent) _PulseIndicator(color: color),
               Icon(icon, color: color, size: 18),
             ],
           ),
@@ -533,13 +582,16 @@ class _AddressRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: LuxTypography.caption.copyWith(
-                  color: isCurrent ? color : LuxColors.whiteTertiary,
-                  fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
-                )),
+                Text(label,
+                    style: LuxTypography.caption.copyWith(
+                      color: isCurrent ? color : LuxColors.inkTertiary,
+                      fontWeight:
+                          isCurrent ? FontWeight.bold : FontWeight.normal,
+                    )),
                 Text(address,
                     style: LuxTypography.bodyMedium.copyWith(
-                      fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          isCurrent ? FontWeight.bold : FontWeight.normal,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis),
@@ -557,26 +609,36 @@ class _PulseIndicator extends StatefulWidget {
   State<_PulseIndicator> createState() => _PulseIndicatorState();
 }
 
-class _PulseIndicatorState extends State<_PulseIndicator> with SingleTickerProviderStateMixin {
+class _PulseIndicatorState extends State<_PulseIndicator>
+    with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
+    _ctrl =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2))
+          ..repeat();
   }
+
   @override
-  void dispose() { _ctrl.dispose(); super.dispose(); }
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) => ScaleTransition(
-    scale: Tween(begin: 1.0, end: 1.8).animate(_ctrl),
-    child: FadeTransition(
-      opacity: Tween(begin: 0.5, end: 0.0).animate(_ctrl),
-      child: Container(
-        width: 14, height: 14,
-        decoration: BoxDecoration(color: widget.color, shape: BoxShape.circle),
-      ),
-    ),
-  );
+        scale: Tween(begin: 1.0, end: 1.8).animate(_ctrl),
+        child: FadeTransition(
+          opacity: Tween(begin: 0.5, end: 0.0).animate(_ctrl),
+          child: Container(
+            width: 14,
+            height: 14,
+            decoration:
+                BoxDecoration(color: widget.color, shape: BoxShape.circle),
+          ),
+        ),
+      );
 }
 
 class _StatCard extends StatelessWidget {
@@ -593,11 +655,11 @@ class _StatCard extends StatelessWidget {
   Widget build(BuildContext context) => LuxCard(
         child: Column(
           children: [
-            Icon(icon, color: LuxColors.accent, size: 24),
+            Icon(icon, color: LuxColors.sapphire, size: 24),
             const SizedBox(height: LuxSpacing.sm),
             Text(value,
-                style:
-                    LuxTypography.headlineLarge.copyWith(color: LuxColors.accent)),
+                style: LuxTypography.headlineLarge
+                    .copyWith(color: LuxColors.sapphire)),
             const SizedBox(height: 4),
             Text(label.toUpperCase(),
                 style: LuxTypography.caption,
@@ -653,9 +715,9 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
     return SafeArea(
       child: Container(
         decoration: const BoxDecoration(
-          color: LuxColors.blackSurface,
+          color: LuxColors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-          border: Border(top: BorderSide(color: LuxColors.blackBorder)),
+          border: Border(top: BorderSide(color: LuxColors.border)),
         ),
         padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
         child: Column(
@@ -668,7 +730,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: LuxColors.blackBorder,
+                  color: LuxColors.border,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -690,7 +752,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                           fontFamily: 'Montserrat',
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          color: LuxColors.accent,
+                          color: LuxColors.sapphire,
                           letterSpacing: 2.5,
                         ),
                       ),
@@ -705,22 +767,22 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     ],
                   ),
                 ),
-                const Icon(Icons.notifications_active_rounded, 
-                    color: LuxColors.accent, size: 40),
+                const Icon(Icons.notifications_active_rounded,
+                    color: LuxColors.sapphire, size: 40),
               ],
             ),
             // Hourly charters: how long the chauffeur is booked for.
             if (widget.booking.serviceType == ServiceType.byTheHour) ...[
               const SizedBox(height: 12),
               Row(children: [
-                const Icon(Icons.schedule_rounded, color: LuxColors.accent, size: 18),
+                const Icon(Icons.schedule_rounded, color: LuxColors.sapphire, size: 18),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     widget.booking.days > 1
                         ? l.bookingDaysSummary(widget.booking.days, widget.booking.hours ?? 2)
                         : l.unitHours(widget.booking.hours ?? 2),
-                    style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white),
+                    style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink),
                   ),
                 ),
               ]),
@@ -731,14 +793,15 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: BoxDecoration(
-                color: LuxColors.accent.withValues(alpha: 0.08),
+                color: LuxColors.sapphire.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: LuxColors.accent.withValues(alpha: 0.25)),
+                border: Border.all(
+                    color: LuxColors.sapphire.withValues(alpha: 0.25)),
               ),
               child: Row(
                 children: [
                   const Icon(Icons.attach_money_rounded,
-                      color: LuxColors.accent, size: 20),
+                      color: LuxColors.sapphire, size: 20),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(l.driverEstimatedFare,
@@ -753,7 +816,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                       fontFamily: 'Cormorant Garamond',
                       fontSize: 30,
                       fontWeight: FontWeight.w600,
-                      color: LuxColors.accent,
+                      color: LuxColors.sapphire,
                     ),
                   ),
                 ],
@@ -780,14 +843,14 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: LuxColors.blackElevated,
+                color: LuxColors.surfaceMuted,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 children: [
-                   _RouteItem(
+                  _RouteItem(
                     icon: Icons.radio_button_checked,
-                    color: LuxColors.accent,
+                    color: LuxColors.sapphire,
                     label: l.tripPickup.toUpperCase(),
                     address: widget.booking.origin.address,
                   ),
@@ -796,7 +859,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     child: Container(
                       width: 1.5,
                       height: 18,
-                      color: LuxColors.blackBorder,
+                      color: LuxColors.border,
                     ),
                   ),
                   _RouteItem(
@@ -809,19 +872,24 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
               ),
             ),
 
+            if (widget.booking.flightNumber?.isNotEmpty == true) ...[
+              const SizedBox(height: 10),
+              FlightInfoCard(booking: widget.booking),
+            ],
+
             if (widget.booking.notes?.isNotEmpty == true) ...[
               const SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: LuxColors.blackElevated,
+                  color: LuxColors.surfaceMuted,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Icon(Icons.notes_rounded,
-                        size: 15, color: LuxColors.whiteTertiary),
+                        size: 15, color: LuxColors.inkTertiary),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(widget.booking.notes!,
@@ -865,7 +933,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     icon: const Icon(Icons.check_rounded, size: 18),
                     label: Text(l.driverAcceptRide, maxLines: 1, overflow: TextOverflow.ellipsis),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: LuxColors.accentFill,
+                      backgroundColor: LuxColors.sapphire,
                       foregroundColor: LuxColors.onAccent,
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
@@ -916,7 +984,7 @@ class _RouteItem extends StatelessWidget {
                     fontFamily: 'Montserrat',
                     fontSize: 9,
                     fontWeight: FontWeight.w700,
-                    color: LuxColors.whiteTertiary,
+                    color: LuxColors.inkTertiary,
                     letterSpacing: 1.5,
                   ),
                 ),
@@ -968,7 +1036,7 @@ class _OfferCountdownState extends State<_OfferCountdown> {
       child: Text(
         left > 0 ? context.l10n.driverRespondIn(left) : context.l10n.driverOfferExpiring,
         style: LuxTypography.caption.copyWith(
-          color: left > 15 ? LuxColors.whiteSecondary : LuxColors.warning,
+          color: left > 15 ? LuxColors.inkSecondary : LuxColors.warning,
         ),
       ),
     );

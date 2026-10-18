@@ -114,7 +114,7 @@ class _DriverDocumentsScreenState extends State<DriverDocumentsScreen> {
     final l = context.l10n;
     final now = widget.now ?? DateTime.now();
     return Scaffold(
-      backgroundColor: LuxColors.black,
+      backgroundColor: LuxColors.bg,
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
@@ -127,7 +127,7 @@ class _DriverDocumentsScreenState extends State<DriverDocumentsScreen> {
         stream: _stream,
         builder: (context, snap) {
           if (!snap.hasData && snap.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: LuxColors.accent));
+            return const Center(child: CircularProgressIndicator(color: LuxColors.sapphire));
           }
           final summary = DocumentsSummary(snap.data ?? const {}, now);
           return Center(
@@ -175,7 +175,7 @@ class _SummaryCard extends StatelessWidget {
         children: [
           Row(children: [
             Icon(complete ? Icons.verified_rounded : Icons.shield_outlined,
-                color: complete ? LuxColors.success : LuxColors.accent),
+                color: complete ? LuxColors.success : LuxColors.sapphire),
             const SizedBox(width: LuxSpacing.sm),
             Expanded(
               child: Text(complete ? l.docSummaryVerified : l.docSummaryTitle,
@@ -195,8 +195,8 @@ class _SummaryCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: total == 0 ? 0 : summary.approved / total,
               minHeight: 6,
-              color: complete ? LuxColors.success : LuxColors.accent,
-              backgroundColor: LuxColors.white.withOpacity(0.08),
+              color: complete ? LuxColors.success : LuxColors.sapphire,
+              backgroundColor: LuxColors.ink.withOpacity(0.08),
             ),
           ),
           const SizedBox(height: LuxSpacing.sm),
@@ -206,7 +206,7 @@ class _SummaryCard extends StatelessWidget {
               if (summary.pending > 0) l.docPendingCount(summary.pending),
               if (summary.toUpload > 0) l.docToUploadCount(summary.toUpload),
             ].join(' · '),
-            style: LuxTypography.caption.copyWith(color: LuxColors.whiteSecondary),
+            style: LuxTypography.caption.copyWith(color: LuxColors.inkSecondary),
           ),
         ],
       ),
@@ -233,7 +233,7 @@ class _DocumentCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(doc.type.icon, color: LuxColors.accent),
+              Icon(doc.type.icon, color: LuxColors.sapphire),
               const SizedBox(width: LuxSpacing.md),
               Expanded(
                 child: Column(
@@ -258,7 +258,7 @@ class _DocumentCard extends StatelessWidget {
               style: LuxTypography.caption.copyWith(
                   color: expiring || status == DriverDocStatus.expired
                       ? LuxColors.warning
-                      : LuxColors.whiteSecondary),
+                      : LuxColors.inkSecondary),
             ),
           ],
           if (status == DriverDocStatus.rejected && (doc.rejectionReason ?? '').isNotEmpty) ...[
@@ -271,7 +271,7 @@ class _DocumentCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(LuxRadius.sm),
               ),
               child: Text(l.docRejectedReason(doc.rejectionReason!),
-                  style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white)),
+                  style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink)),
             ),
           ],
           if (status == DriverDocStatus.pending) ...[
@@ -285,7 +285,7 @@ class _DocumentCard extends StatelessWidget {
                 ? const SizedBox(
                     width: 24,
                     height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: LuxColors.accent),
+                    child: CircularProgressIndicator(strokeWidth: 2, color: LuxColors.sapphire),
                   )
                 : OutlinedButton.icon(
                     onPressed: onUpload,
@@ -312,10 +312,10 @@ class DocStatusChip extends StatelessWidget {
     final (IconData icon, Color color, String label) = switch (status) {
       DriverDocStatus.approved when expiring => (Icons.schedule_rounded, LuxColors.warning, l.docStatusExpiring),
       DriverDocStatus.approved => (Icons.check_circle_rounded, LuxColors.success, l.docStatusApproved),
-      DriverDocStatus.pending => (Icons.hourglass_top_rounded, LuxColors.info, l.docStatusPending),
+      DriverDocStatus.pending => (Icons.hourglass_top_rounded, LuxColors.sapphireLight, l.docStatusPending),
       DriverDocStatus.rejected => (Icons.error_outline_rounded, LuxColors.error, l.docStatusRejected),
       DriverDocStatus.expired => (Icons.event_busy_rounded, LuxColors.error, l.docStatusExpired),
-      DriverDocStatus.missing => (Icons.radio_button_unchecked_rounded, LuxColors.whiteTertiary, l.docStatusMissing),
+      DriverDocStatus.missing => (Icons.radio_button_unchecked_rounded, LuxColors.inkTertiary, l.docStatusMissing),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: LuxSpacing.sm, vertical: 4),
@@ -326,7 +326,7 @@ class DocStatusChip extends StatelessWidget {
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         Icon(icon, size: 14, color: color),
         const SizedBox(width: 4),
-        Text(label, style: LuxTypography.caption.copyWith(color: LuxColors.white)),
+        Text(label, style: LuxTypography.caption.copyWith(color: LuxColors.ink)),
       ]),
     );
   }
@@ -372,9 +372,9 @@ class DriverVerificationBanner extends StatelessWidget {
                   Icon(verified ? Icons.schedule_rounded : Icons.shield_outlined, color: LuxColors.warning),
                   const SizedBox(width: LuxSpacing.md),
                   Expanded(
-                    child: Text(message, style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white)),
+                    child: Text(message, style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink)),
                   ),
-                  const Icon(Icons.chevron_right_rounded, color: LuxColors.whiteTertiary),
+                  const Icon(Icons.chevron_right_rounded, color: LuxColors.inkTertiary),
                 ]),
               ),
             ),

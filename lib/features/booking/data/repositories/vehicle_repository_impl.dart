@@ -28,10 +28,8 @@ class VehicleRepositoryImpl implements VehicleRepository {
   @override
   Future<Either<Failure, Vehicle>> getVehicleByDriver(String driverId) async {
     try {
-      final snap = await _col
-          .where('driverId', isEqualTo: driverId)
-          .limit(1)
-          .get();
+      final snap =
+          await _col.where('driverId', isEqualTo: driverId).limit(1).get();
       if (snap.docs.isEmpty) return const Left(NotFoundFailure());
       final d = snap.docs.first;
       return Right(Vehicle.fromJson({'id': d.id, ...d.data()}));

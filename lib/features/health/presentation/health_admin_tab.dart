@@ -45,7 +45,7 @@ class _HealthAdminTabState extends State<HealthAdminTab> {
           builder: (context, snap) {
             final h = snap.data;
             if (snap.connectionState == ConnectionState.waiting && !snap.hasData) {
-              return const Center(child: CircularProgressIndicator(color: LuxColors.accent));
+              return const Center(child: CircularProgressIndicator(color: LuxColors.sapphire));
             }
             final stale = h == null || h.staleAt(now);
             return Column(
@@ -67,19 +67,19 @@ class _HealthAdminTabState extends State<HealthAdminTab> {
                           child: LuxCard(
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               Row(children: [
-                                Icon(icon, size: 18, color: alert ? LuxColors.warning : LuxColors.accent),
+                                Icon(icon, size: 18, color: alert ? LuxColors.warning : LuxColors.sapphire),
                                 const SizedBox(width: LuxSpacing.sm),
                                 Expanded(
                                   child: Text(label,
                                       maxLines: 3,
                                       overflow: TextOverflow.ellipsis,
-                                      style: LuxTypography.caption.copyWith(color: LuxColors.whiteSecondary)),
+                                      style: LuxTypography.caption.copyWith(color: LuxColors.inkSecondary)),
                                 ),
                               ]),
                               const SizedBox(height: LuxSpacing.sm),
                               Text(NumberFormat.decimalPattern().format(value),
                                   style: LuxTypography.headlineLarge.copyWith(
-                                      color: LuxColors.white, fontFamily: 'Cormorant Garamond', fontSize: 32)),
+                                      color: LuxColors.ink, fontFamily: 'Cormorant Garamond', fontSize: 32)),
                               if (alert)
                                 Text(l.healthNeedsAttention,
                                     style: LuxTypography.caption.copyWith(color: LuxColors.warning)),
@@ -148,7 +148,7 @@ class _Banner extends StatelessWidget {
         child: Row(children: [
           Icon(icon, color: color),
           const SizedBox(width: LuxSpacing.md),
-          Expanded(child: Text(text, style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white))),
+          Expanded(child: Text(text, style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink))),
         ]),
       );
 }
@@ -176,10 +176,10 @@ class _ErrorTile extends StatelessWidget {
         child: ExpansionTile(
           leading: Icon(e.resolved ? Icons.check_circle_outline_rounded : Icons.bug_report_outlined,
               color: e.resolved ? LuxColors.success : LuxColors.warning),
-          iconColor: LuxColors.accent,
-          collapsedIconColor: LuxColors.whiteTertiary,
+          iconColor: LuxColors.sapphire,
+          collapsedIconColor: LuxColors.inkTertiary,
           title: Text(e.message,
-              maxLines: 2, overflow: TextOverflow.ellipsis, style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white)),
+              maxLines: 2, overflow: TextOverflow.ellipsis, style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink)),
           subtitle: Text(meta, maxLines: 2, overflow: TextOverflow.ellipsis, style: LuxTypography.caption),
           childrenPadding: const EdgeInsets.fromLTRB(LuxSpacing.md, 0, LuxSpacing.md, LuxSpacing.md),
           expandedCrossAxisAlignment: CrossAxisAlignment.start,
@@ -189,11 +189,11 @@ class _ErrorTile extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(LuxSpacing.sm),
                 decoration: BoxDecoration(
-                  color: LuxColors.black,
+                  color: LuxColors.bg,
                   borderRadius: BorderRadius.circular(LuxRadius.sm),
                 ),
                 child: SelectableText(e.stack,
-                    style: const TextStyle(fontFamily: 'monospace', fontSize: 11, color: LuxColors.whiteSecondary)),
+                    style: const TextStyle(fontFamily: 'monospace', fontSize: 11, color: LuxColors.inkSecondary)),
               ),
             const SizedBox(height: LuxSpacing.sm),
             TextButton.icon(

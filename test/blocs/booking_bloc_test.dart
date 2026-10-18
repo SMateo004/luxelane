@@ -53,7 +53,7 @@ void main() {
     blocTest<BookingBloc, BookingState>(
       'emits [BookingLoading, BookingCreated] on BookingCreateRequested success',
       build: () {
-        when(() => repo.createBooking(any()))
+        when(() => repo.createBooking(any(), paymentMethodId: any(named: 'paymentMethodId')))
             .thenAnswer((_) async => Right(_makeBooking()));
         return BookingBloc(bookingRepository: repo);
       },
@@ -75,7 +75,7 @@ void main() {
     blocTest<BookingBloc, BookingState>(
       'emits [BookingLoading, BookingError] on BookingCreateRequested failure',
       build: () {
-        when(() => repo.createBooking(any())).thenAnswer(
+        when(() => repo.createBooking(any(), paymentMethodId: any(named: 'paymentMethodId'))).thenAnswer(
             (_) async => const Left(ServerFailure('Network error')));
         return BookingBloc(bookingRepository: repo);
       },
@@ -110,6 +110,28 @@ void main() {
     );
 
     blocTest<BookingBloc, BookingState>(
+      'la lista de viajes se actualiza en vivo al llegar una reserva nueva',
+      build: () {
+        when(() => repo.watchBookingsByRider('rider-1'))
+            .thenAnswer((_) => Stream.fromIterable([
+                  [_makeBooking()],
+                  [
+                    _makeBooking(),
+                    _makeBooking(status: BookingStatus.confirmed)
+                  ],
+                ]));
+        return BookingBloc(bookingRepository: repo);
+      },
+      act: (bloc) =>
+          bloc.add(const BookingRiderTripsWatched(riderId: 'rider-1')),
+      expect: () => [
+        const BookingLoading(),
+        isA<BookingTripsLoaded>().having((s) => s.bookings.length, 'length', 1),
+        isA<BookingTripsLoaded>().having((s) => s.bookings.length, 'length', 2),
+      ],
+    );
+
+    blocTest<BookingBloc, BookingState>(
       'emits [BookingTripsLoaded] on BookingRiderTripsRequested success',
       build: () {
         when(() => repo.getBookingsByRider(any()))
@@ -128,7 +150,8 @@ void main() {
       'emits BookingStatusUpdated on BookingStatusChanged',
       build: () => BookingBloc(bookingRepository: repo),
       act: (bloc) => bloc.add(
-        BookingStatusChanged(booking: _makeBooking(status: BookingStatus.confirmed)),
+        BookingStatusChanged(
+            booking: _makeBooking(status: BookingStatus.confirmed)),
       ),
       expect: () => [
         isA<BookingStatusUpdated>()

@@ -8,6 +8,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
+import '../widgets/flight_info_card.dart';
 
 class DriverQueueScreen extends StatelessWidget {
   const DriverQueueScreen({super.key});
@@ -22,9 +23,8 @@ class DriverQueueScreen extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final pending = state.pendingRequests
-              .where((b) => !state.declinedIds.contains(b.id))
-              .toList()
+          // Only requests for their vehicle class (and offered to them).
+          final pending = state.matchingRequests
             ..sort((a, b) => a.effectivePickup.compareTo(b.effectivePickup));
 
           final upcoming = state.bookings.where((b) {
@@ -35,7 +35,8 @@ class DriverQueueScreen extends StatelessWidget {
             ..sort((a, b) => a.effectivePickup.compareTo(b.effectivePickup));
 
           if (pending.isEmpty && upcoming.isEmpty) {
-            return const _EmptyQueue(isAvailable: true); // Show 'No jobs yet' instead of 'Go online'
+            return const _EmptyQueue(
+                isAvailable: true); // Show 'No jobs yet' instead of 'Go online'
           }
 
           return ListView(
@@ -78,7 +79,7 @@ class _SectionTitle extends StatelessWidget {
           fontFamily: 'Montserrat',
           fontSize: 11,
           fontWeight: FontWeight.w700,
-          color: isGold ? LuxColors.accent : LuxColors.whiteTertiary,
+          color: isGold ? LuxColors.sapphire : LuxColors.inkTertiary,
           letterSpacing: 2,
         ),
       );
@@ -100,7 +101,7 @@ class _EmptyQueue extends StatelessWidget {
                   ? Icons.hourglass_empty_rounded
                   : Icons.wifi_tethering_off_rounded,
               size: 48,
-              color: LuxColors.whiteTertiary,
+              color: LuxColors.inkTertiary,
             ),
             const SizedBox(height: LuxSpacing.md),
             Text(
@@ -139,7 +140,7 @@ class _JobCard extends StatelessWidget {
                 Text(
                   LuxMoney.format(booking.estimatedPrice),
                   style: LuxTypography.titleMedium
-                      .copyWith(color: LuxColors.accent),
+                      .copyWith(color: LuxColors.sapphire),
                 ),
               ],
             ),
@@ -151,6 +152,14 @@ class _JobCard extends StatelessWidget {
             ),
             const SizedBox(height: LuxSpacing.md),
             _RouteRow(origin: booking.origin, destination: booking.destination),
+            if (!booking.riderPreferences.isEmpty) ...[
+              const SizedBox(height: LuxSpacing.md),
+              RiderPreferencesNote(preferences: booking.riderPreferences),
+            ],
+            if (booking.flightNumber?.isNotEmpty == true) ...[
+              const SizedBox(height: LuxSpacing.md),
+              FlightInfoCard(booking: booking),
+            ],
             const SizedBox(height: LuxSpacing.md),
             _JobActions(booking: booking, isPending: isPending),
           ],
@@ -170,7 +179,7 @@ class _RouteRow extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Icon(Icons.radio_button_checked,
-                  color: LuxColors.accent, size: 16),
+                  color: LuxColors.sapphire, size: 16),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                 child: Text(origin.address,
@@ -182,10 +191,7 @@ class _RouteRow extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 7),
-            child: Container(
-                width: 2,
-                height: 16,
-                color: LuxColors.blackBorder),
+            child: Container(width: 2, height: 16, color: LuxColors.border),
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -217,13 +223,26 @@ class _JobActions extends StatelessWidget {
     final driverId = auth is AuthAuthenticated ? auth.user.id : '';
 
     if (isPending) {
+      final s = bloc.state;
+      final loaded = s is DriverLoaded ? s : null;
+      final blocker = loaded == null
+          ? 'Cargando…'
+          : !loaded.profile.documentsVerified
+              ? 'Pendiente de verificación'
+              : loaded.activeBooking != null
+                  ? 'Termina tu viaje actual'
+                  : !loaded.isAvailable
+                      ? 'Conéctate para aceptar'
+                      : null;
       return LuxButton(
-        label: context.l10n.driverAcceptRide,
+        label: blocker ?? context.l10n.driverAcceptRide,
         icon: Icons.check_circle_outline_rounded,
-        onPressed: () => bloc.add(DriverRequestAccepted(
-          bookingId: booking.id,
-          driverId: driverId,
-        )),
+        onPressed: blocker != null
+            ? null
+            : () => bloc.add(DriverRequestAccepted(
+                  bookingId: booking.id,
+                  driverId: driverId,
+                )),
       );
     }
 
@@ -246,8 +265,7 @@ class _JobActions extends StatelessWidget {
         return LuxButton(
           label: context.l10n.driverActionStartTrip,
           icon: Icons.play_arrow_rounded,
-          onPressed: () =>
-              bloc.add(DriverTripStarted(bookingId: booking.id)),
+          onPressed: () => bloc.add(DriverTripStarted(bookingId: booking.id)),
         );
       default:
         return const SizedBox.shrink();

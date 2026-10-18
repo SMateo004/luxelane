@@ -16,6 +16,12 @@ class VehicleClass {
   static const firstClass = VehicleClass('firstClass');
   static const businessVan = VehicleClass('businessVan');
   static const electric = VehicleClass('electric');
+  static const businessSuv = VehicleClass('businessSuv');
+
+  /// Every type in the catalog (built-ins and admin-added, archived
+  /// included), in display order.
+  static List<VehicleClass> get values =>
+      [for (final v in VehicleCatalog.instance.all) VehicleClass(v.id)];
 
   /// Same as [id] (kept from when this was an enum).
   String get name => id;
@@ -57,22 +63,52 @@ enum PaymentStatus { pending, captured, refunded, failed }
 extension VehicleClassX on VehicleClass {
   /// Passengers it seats (from the catalog).
   int get capacity => VehicleCatalog.instance.info(this).capacity;
+
+  /// Display name (Spanish), for logs, admin exports and audit entries.
+  /// UI text uses localizedLabel(context.l10n).
+  String get label {
+    final name = VehicleCatalog.instance.info(this).name;
+    return name['es'] ?? (name.isNotEmpty ? name.values.first : id);
+  }
+
+  /// Short description (Spanish): the experience, never a car make.
+  String get description {
+    final d = VehicleCatalog.instance.info(this).description;
+    return d['es'] ?? (d.isNotEmpty ? d.values.first : '');
+  }
+
+  /// Maximum standard checked suitcases (from the catalog).
+  int get luggageCapacity => VehicleCatalog.instance.info(this).checked;
+
+  /// Asset folder under assets/images/vehicles/ (types added by admins use
+  /// their id; their photos come from the catalog image instead).
+  String get assetKey => switch (id) {
+        'business' => 'business_class',
+        'businessSuv' => 'business_suv',
+        'firstClass' => 'first_class',
+        'businessVan' => 'van',
+        _ => id,
+      };
 }
 
 extension ServiceTypeX on ServiceType {
   @Deprecated('UI text must use localizedLabel(context.l10n)')
   String get label {
     switch (this) {
-      case ServiceType.oneWay:     return 'Solo ida';
-      case ServiceType.byTheHour: return 'Por horas';
+      case ServiceType.oneWay:
+        return 'Solo ida';
+      case ServiceType.byTheHour:
+        return 'Por horas';
     }
   }
 
   @Deprecated('UI text must use localizedDescription(context.l10n)')
   String get description {
     switch (this) {
-      case ServiceType.oneWay:     return 'Traslado a precio fijo a tu destino';
-      case ServiceType.byTheHour: return 'Chófer a tu disposición por un tiempo determinado';
+      case ServiceType.oneWay:
+        return 'Traslado a precio fijo a tu destino';
+      case ServiceType.byTheHour:
+        return 'Chófer a tu disposición por un tiempo determinado';
     }
   }
 }
@@ -80,26 +116,40 @@ extension ServiceTypeX on ServiceType {
 extension BookingStatusX on BookingStatus {
   String get label {
     switch (this) {
-      case BookingStatus.pending:        return 'pending';
-      case BookingStatus.confirmed:      return 'confirmed';
-      case BookingStatus.driverArriving: return 'driver_arriving';
-      case BookingStatus.driverArrived:  return 'driver_arrived';
-      case BookingStatus.inProgress:     return 'in_progress';
-      case BookingStatus.completed:      return 'completed';
-      case BookingStatus.cancelled:      return 'cancelled';
+      case BookingStatus.pending:
+        return 'pending';
+      case BookingStatus.confirmed:
+        return 'confirmed';
+      case BookingStatus.driverArriving:
+        return 'driver_arriving';
+      case BookingStatus.driverArrived:
+        return 'driver_arrived';
+      case BookingStatus.inProgress:
+        return 'in_progress';
+      case BookingStatus.completed:
+        return 'completed';
+      case BookingStatus.cancelled:
+        return 'cancelled';
     }
   }
 
   @Deprecated('UI text must use localizedLabel(context.l10n)')
   String get displayLabel {
     switch (this) {
-      case BookingStatus.pending:        return 'Pendiente';
-      case BookingStatus.confirmed:      return 'Confirmado';
-      case BookingStatus.driverArriving: return 'En camino';
-      case BookingStatus.driverArrived:  return 'Chófer llegó';
-      case BookingStatus.inProgress:     return 'En progreso';
-      case BookingStatus.completed:      return 'Completado';
-      case BookingStatus.cancelled:      return 'Cancelado';
+      case BookingStatus.pending:
+        return 'Pendiente';
+      case BookingStatus.confirmed:
+        return 'Confirmado';
+      case BookingStatus.driverArriving:
+        return 'En camino';
+      case BookingStatus.driverArrived:
+        return 'Chófer llegó';
+      case BookingStatus.inProgress:
+        return 'En progreso';
+      case BookingStatus.completed:
+        return 'Completado';
+      case BookingStatus.cancelled:
+        return 'Cancelado';
     }
   }
 
@@ -111,15 +161,20 @@ extension BookingStatusX on BookingStatus {
 
 // Keep backward-compatible alias
 // ignore: non_constant_identifier_names
-BookingStatus Function(String) get BookingStatusLabel => BookingStatusX.fromString;
+BookingStatus Function(String) get BookingStatusLabel =>
+    BookingStatusX.fromString;
 
 extension PaymentStatusX on PaymentStatus {
   String get label {
     switch (this) {
-      case PaymentStatus.pending:  return 'pending';
-      case PaymentStatus.captured: return 'captured';
-      case PaymentStatus.refunded: return 'refunded';
-      case PaymentStatus.failed:   return 'failed';
+      case PaymentStatus.pending:
+        return 'pending';
+      case PaymentStatus.captured:
+        return 'captured';
+      case PaymentStatus.refunded:
+        return 'refunded';
+      case PaymentStatus.failed:
+        return 'failed';
     }
   }
 

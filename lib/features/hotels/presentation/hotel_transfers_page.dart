@@ -122,7 +122,7 @@ class _HotelTransfersPageState extends State<HotelTransfersPage> {
                       if (loading)
                         const Padding(
                           padding: EdgeInsets.all(32),
-                          child: Center(child: CircularProgressIndicator(color: LD.accent)),
+                          child: Center(child: CircularProgressIndicator(color: LD.sph)),
                         )
                       else if (hotels.isEmpty)
                         _NoHotels(onBook: () => context.go('/'))
@@ -153,13 +153,13 @@ class _HotelTransfersPageState extends State<HotelTransfersPage> {
                       Wrap(spacing: 8, runSpacing: 8, children: [
                         TextButton.icon(
                           onPressed: () => context.go('/'),
-                          icon: const Icon(Icons.edit_location_alt_outlined, size: 18, color: LD.accent),
-                          label: Text(l.hotelOtherHotel, style: const TextStyle(color: LD.accent)),
+                          icon: const Icon(Icons.edit_location_alt_outlined, size: 18, color: LD.sph),
+                          label: Text(l.hotelOtherHotel, style: const TextStyle(color: LD.sph)),
                         ),
                         TextButton.icon(
                           onPressed: () => context.go('/contacto'),
-                          icon: const Icon(Icons.handshake_outlined, size: 18, color: LD.accent),
-                          label: Text(l.hotelPartnerCta, style: const TextStyle(color: LD.accent)),
+                          icon: const Icon(Icons.handshake_outlined, size: 18, color: LD.sph),
+                          label: Text(l.hotelPartnerCta, style: const TextStyle(color: LD.sph)),
                         ),
                       ]),
                     ],
@@ -186,7 +186,7 @@ class _NoHotels extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(color: Colors.white, border: Border.all(color: LD.border)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Icon(Icons.hotel_outlined, color: LD.accent),
+        const Icon(Icons.hotel_outlined, color: LD.sph),
         const SizedBox(height: 12),
         Text(l.hotelNoneTitle, style: bodyText(size: 16, color: LD.ink).copyWith(fontWeight: FontWeight.w600)),
         const SizedBox(height: 6),
@@ -226,13 +226,13 @@ class _HotelCard extends StatelessWidget {
           OutlinedButton.icon(
             style: style(),
             onPressed: () => onPick(HotelTransferDirection.toAirport),
-            icon: const Icon(Icons.flight_takeoff_outlined, size: 16, color: LD.accent),
+            icon: const Icon(Icons.flight_takeoff_outlined, size: 16, color: LD.sph),
             label: Text(l.hotelToAirport),
           ),
           OutlinedButton.icon(
             style: style(),
             onPressed: () => onPick(HotelTransferDirection.fromAirport),
-            icon: const Icon(Icons.flight_land_outlined, size: 16, color: LD.accent),
+            icon: const Icon(Icons.flight_land_outlined, size: 16, color: LD.sph),
             label: Text(l.hotelFromAirport),
           ),
         ]),
@@ -328,7 +328,7 @@ class _HotelTransferFormState extends State<HotelTransferForm> {
       data: ThemeData(
         brightness: Brightness.light,
         fontFamily: kSans,
-        colorScheme: const ColorScheme.light(primary: LD.accent, onPrimary: Colors.white, surface: Colors.white),
+        colorScheme: const ColorScheme.light(primary: LD.sph, onPrimary: Colors.white, surface: Colors.white),
       ),
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -344,7 +344,7 @@ class _HotelTransferFormState extends State<HotelTransferForm> {
               showSelectedIcon: false,
               style: SegmentedButton.styleFrom(
                 shape: const RoundedRectangleBorder(),
-                selectedBackgroundColor: LD.accentTint,
+                selectedBackgroundColor: LD.sphTint,
                 selectedForegroundColor: LD.ink,
                 foregroundColor: LD.ink,
                 side: const BorderSide(color: LD.border),
@@ -382,7 +382,7 @@ class _HotelTransferFormState extends State<HotelTransferForm> {
             ),
             if (_error != null) ...[
               const SizedBox(height: 10),
-              Text(_error!, style: const TextStyle(fontFamily: kSans, fontSize: 13, color: LuxPalette.error)),
+              Text(_error!, style: const TextStyle(fontFamily: kSans, fontSize: 13, color: LuxColors.error)),
             ],
             const SizedBox(height: 20),
             SizedBox(
@@ -390,14 +390,14 @@ class _HotelTransferFormState extends State<HotelTransferForm> {
               child: ElevatedButton(
                 onPressed: _loading ? null : _continue,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: LD.cta,
-                  foregroundColor: LD.onCta,
+                  backgroundColor: LD.sph,
+                  foregroundColor: Colors.white,
                   elevation: 0,
                   shape: const RoundedRectangleBorder(),
                 ),
                 child: _loading
                     ? const SizedBox(
-                        width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: LD.onCta))
+                        width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
                     : Text(l.intercityContinue.toUpperCase(),
                         style: const TextStyle(fontFamily: kSans, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 2)),
               ),

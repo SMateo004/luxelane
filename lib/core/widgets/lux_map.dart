@@ -8,32 +8,35 @@ import '../../app/theme/app_theme.dart';
 import '../../l10n/l10n.dart';
 import '../config/env.dart';
 import '../models/place_model.dart';
+import '../services/maps_service.dart';
+import '../utils/route_geometry.dart';
 
 // ignore_for_file: prefer_const_constructors
 
-const _kDarkMapStyle = '''
+/// Ivory map style — the same light palette as the app (LD tokens):
+/// pale ivory land, soft blue-grey roads, sapphire-tinted water.
+const _kIvoryMapStyle = '''
 [
-  {"elementType":"geometry","stylers":[{"color":"#212121"}]},
+  {"elementType":"geometry","stylers":[{"color":"#f2f5fb"}]},
   {"elementType":"labels.icon","stylers":[{"visibility":"off"}]},
-  {"elementType":"labels.text.fill","stylers":[{"color":"#757575"}]},
-  {"elementType":"labels.text.stroke","stylers":[{"color":"#212121"}]},
-  {"featureType":"administrative","elementType":"geometry","stylers":[{"color":"#757575"}]},
-  {"featureType":"administrative.country","elementType":"labels.text.fill","stylers":[{"color":"#9e9e9e"}]},
+  {"elementType":"labels.text.fill","stylers":[{"color":"#637490"}]},
+  {"elementType":"labels.text.stroke","stylers":[{"color":"#fafbfe"}]},
   {"featureType":"administrative.land_parcel","stylers":[{"visibility":"off"}]},
-  {"featureType":"administrative.locality","elementType":"labels.text.fill","stylers":[{"color":"#bdbdbd"}]},
-  {"featureType":"poi","elementType":"labels.text.fill","stylers":[{"color":"#757575"}]},
-  {"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#181818"}]},
-  {"featureType":"road","elementType":"geometry","stylers":[{"color":"#2c2c2c"}]},
-  {"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#333333"}]},
-  {"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#3c3c3c"}]},
-  {"featureType":"road.local","elementType":"labels.text.fill","stylers":[{"color":"#616161"}]},
-  {"featureType":"transit","elementType":"labels.text.fill","stylers":[{"color":"#757575"}]},
-  {"featureType":"water","elementType":"geometry","stylers":[{"color":"#000000"}]},
-  {"featureType":"water","elementType":"labels.text.fill","stylers":[{"color":"#3d3d3d"}]}
+  {"featureType":"poi","elementType":"geometry","stylers":[{"color":"#e8edf7"}]},
+  {"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#e3eee8"}]},
+  {"featureType":"road","elementType":"geometry","stylers":[{"color":"#ffffff"}]},
+  {"featureType":"road.arterial","elementType":"labels.text.fill","stylers":[{"color":"#637490"}]},
+  {"featureType":"road.highway","elementType":"geometry","stylers":[{"color":"#dde4f0"}]},
+  {"featureType":"road.local","elementType":"labels.text.fill","stylers":[{"color":"#8a98ae"}]},
+  {"featureType":"transit.line","elementType":"geometry","stylers":[{"color":"#dde4f0"}]},
+  {"featureType":"water","elementType":"geometry","stylers":[{"color":"#cfdcee"}]},
+  {"featureType":"water","elementType":"labels.text.fill","stylers":[{"color":"#2c3d55"}]}
 ]
 ''';
 
-const _kDefaultCenter = LatLng(-17.7833, -63.1821); // Santa Cruz de la Sierra
+/// Calcula el recorrido entre dos lugares. Se puede sustituir en tests.
+typedef RouteLoader = Future<RouteInfo?> Function(
+    Place origin, Place destination);
 
 class LuxMap extends StatefulWidget {
   const LuxMap({
@@ -43,7 +46,7 @@ class LuxMap extends StatefulWidget {
     this.routeInfo,
     this.driverLocation,
     this.onTap,
-    this.lightStyle = true,
+    this.lightStyle = false,
   });
 
   final Place? origin;
@@ -51,21 +54,42 @@ class LuxMap extends StatefulWidget {
   final RouteInfo? routeInfo;
   final LatLng? driverLocation;
   final void Function(LatLng)? onTap;
-  /// Google's light map (default, matches the light app); false for the
-  /// custom dark style.
+
+  /// Use the plain Google Maps style instead of the branded ivory style.
   final bool lightStyle;
 
+  /// Cómo se calcula el recorrido cuando [routeInfo] no lo trae.
+  @visibleForTesting
+  static RouteLoader routeLoader = (origin, destination) =>
+      MapsService().getRoute(origin: origin, destination: destination);
+
+  /// Recorridos ya calculados, para no repetir la consulta al reconstruir.
+  static final Map<String, RouteInfo> _routeCache = {};
+
+  @visibleForTesting
+  static void clearRouteCache() => _routeCache.clear();
+
   @override
-  State<LuxMap> createState() => _LuxMapState();
+  State<LuxMap> createState() => LuxMapState();
 }
 
-class _LuxMapState extends State<LuxMap> {
+@visibleForTesting
+class LuxMapState extends State<LuxMap> {
   GoogleMapController? _controller;
 
-  LatLng get _center {
-    if (widget.origin != null) return widget.origin!.latLng;
-    return _kDefaultCenter;
-  }
+  /// Recorrido calculado aquí cuando el que llega no trae las calles.
+  RouteInfo? _fetchedRoute;
+  String? _fetchingKey;
+
+  /// Recorrido que se dibuja: el recibido si es real, si no el calculado.
+  @visibleForTesting
+  RouteInfo? get route =>
+      hasRoadPath(widget.routeInfo) ? widget.routeInfo : _fetchedRoute;
+
+  /// Centro inicial: la recogida, el destino o, sin ninguno, Santa Cruz.
+  @visibleForTesting
+  LatLng get initialCenter =>
+      widget.origin?.latLng ?? widget.destination?.latLng ?? kSantaCruzCenter;
 
   BitmapDescriptor? _originIcon;
   BitmapDescriptor? _destIcon;
@@ -74,11 +98,39 @@ class _LuxMapState extends State<LuxMap> {
   void initState() {
     super.initState();
     _loadIcons();
+    _ensureRoute();
+  }
+
+  /// Si hay recogida y destino pero no el recorrido por calles, lo pide a
+  /// Google (Directions) y lo guarda en caché.
+  Future<void> _ensureRoute() async {
+    final o = widget.origin, d = widget.destination;
+    if (o == null || d == null || hasRoadPath(widget.routeInfo)) return;
+    final key = routeKey(o, d);
+    final cached = LuxMap._routeCache[key];
+    if (cached != null) {
+      _fetchedRoute = cached;
+      return;
+    }
+    if (_fetchingKey == key) return;
+    _fetchingKey = key;
+    RouteInfo? r;
+    try {
+      r = await LuxMap.routeLoader(o, d);
+    } catch (_) {
+      r = null;
+    }
+    if (!mounted || _fetchingKey != key) return;
+    _fetchingKey = null;
+    if (!hasRoadPath(r)) return;
+    LuxMap._routeCache[key] = r!;
+    setState(() => _fetchedRoute = r);
+    _fitBounds();
   }
 
   Future<void> _loadIcons() async {
-    final origin = await _drawCircleMarker(Colors.cyan);
-    final dest = await _drawCircleMarker(Colors.blueAccent);
+    final origin = await _drawCircleMarker(LuxColors.sapphireLight);
+    final dest = await _drawCircleMarker(LuxColors.sapphireDark);
     if (mounted) {
       setState(() {
         _originIcon = origin;
@@ -91,20 +143,22 @@ class _LuxMapState extends State<LuxMap> {
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
     const double size = 14.0; // Ultra discrete
-    
+
     // White border (outer circle)
     final Paint whitePaint = Paint()..color = Colors.white;
-    canvas.drawCircle(const Offset(size/2, size/2), size/2, whitePaint);
+    canvas.drawCircle(const Offset(size / 2, size / 2), size / 2, whitePaint);
 
     // Inner color
     final Paint colorPaint = Paint()..color = color;
-    canvas.drawCircle(const Offset(size/2, size/2), size/2 - 2, colorPaint);
+    canvas.drawCircle(
+        const Offset(size / 2, size / 2), size / 2 - 2, colorPaint);
 
     final ui.Image image = await pictureRecorder.endRecording().toImage(
-      size.toInt(),
-      size.toInt(),
-    );
-    final ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+          size.toInt(),
+          size.toInt(),
+        );
+    final ByteData? byteData =
+        await image.toByteData(format: ui.ImageByteFormat.png);
     return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
   }
 
@@ -114,7 +168,8 @@ class _LuxMapState extends State<LuxMap> {
       m.add(Marker(
         markerId: const MarkerId('origin'),
         position: widget.origin!.latLng,
-        icon: _originIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
+        icon: _originIcon ??
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
         infoWindow: InfoWindow(title: widget.origin!.displayName),
       ));
     }
@@ -122,7 +177,8 @@ class _LuxMapState extends State<LuxMap> {
       m.add(Marker(
         markerId: const MarkerId('destination'),
         position: widget.destination!.latLng,
-        icon: _destIcon ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        icon: _destIcon ??
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
         infoWindow: InfoWindow(title: widget.destination!.displayName),
       ));
     }
@@ -130,36 +186,56 @@ class _LuxMapState extends State<LuxMap> {
   }
 
   Set<Polyline> get _polylines {
-    if (widget.routeInfo == null ||
-        widget.routeInfo!.polylinePoints.isEmpty) {
-      return {};
-    }
+    final r = route;
+    if (!hasRoadPath(r)) return {};
+    // Borde blanco bajo la línea para que se lea sobre cualquier calle.
     return {
       Polyline(
+        polylineId: const PolylineId('route-casing'),
+        points: r!.polylinePoints,
+        color: Colors.white,
+        width: 8,
+        zIndex: 1,
+      ),
+      Polyline(
         polylineId: const PolylineId('route'),
-        points: widget.routeInfo!.polylinePoints,
-        // Ink route on the light map, white on the dark one.
-        color: widget.lightStyle ? LuxPalette.ink : const Color(0xFFFFFFFF),
+        points: r.polylinePoints,
+        color: LuxColors.sapphire,
         width: 5,
+        zIndex: 2,
       ),
     };
   }
 
-  void _fitBounds() {
-    if (_controller == null) return;
-    if (widget.origin == null || widget.destination == null) return;
+  /// Puntos que la cámara debe encuadrar: marcadores y recorrido.
+  @visibleForTesting
+  List<LatLng> get framePoints => [
+        if (widget.origin != null) widget.origin!.latLng,
+        if (widget.destination != null) widget.destination!.latLng,
+        ...?route?.polylinePoints,
+      ];
 
-    final bounds = LatLngBounds(
-      southwest: LatLng(
-        [widget.origin!.lat, widget.destination!.lat].reduce((a, b) => a < b ? a : b),
-        [widget.origin!.lng, widget.destination!.lng].reduce((a, b) => a < b ? a : b),
-      ),
-      northeast: LatLng(
-        [widget.origin!.lat, widget.destination!.lat].reduce((a, b) => a > b ? a : b),
-        [widget.origin!.lng, widget.destination!.lng].reduce((a, b) => a > b ? a : b),
-      ),
-    );
-    _controller!.animateCamera(CameraUpdate.newLatLngBounds(bounds, 80));
+  void _fitBounds([int attempt = 0]) {
+    final c = _controller;
+    if (c == null) return;
+    if (widget.origin == null || widget.destination == null) return;
+    final bounds = boundsOf(framePoints);
+    if (bounds == null) return;
+    // En web el mapa puede no tener tamaño aún justo al crearse: reintenta.
+    void retry(Object _) {
+      if (attempt < 3 && mounted) {
+        Future.delayed(const Duration(milliseconds: 300),
+            () => mounted ? _fitBounds(attempt + 1) : null);
+      }
+    }
+
+    try {
+      c
+          .animateCamera(CameraUpdate.newLatLngBounds(bounds, 48))
+          .catchError(retry);
+    } catch (e) {
+      retry(e);
+    }
   }
 
   void _animateToDriver() {
@@ -172,8 +248,13 @@ class _LuxMapState extends State<LuxMap> {
   @override
   void didUpdateWidget(LuxMap old) {
     super.didUpdateWidget(old);
-    if (old.origin != widget.origin ||
-        old.destination != widget.destination) {
+    if (old.origin != widget.origin || old.destination != widget.destination) {
+      _fetchedRoute = null;
+      _fetchingKey = null;
+      _ensureRoute();
+      WidgetsBinding.instance.addPostFrameCallback((_) => _fitBounds());
+    } else if (old.routeInfo != widget.routeInfo) {
+      _ensureRoute();
       WidgetsBinding.instance.addPostFrameCallback((_) => _fitBounds());
     }
     if (old.driverLocation != widget.driverLocation &&
@@ -188,10 +269,11 @@ class _LuxMapState extends State<LuxMap> {
     if (AppConfig.googleMapsKey.isEmpty) return _placeholder();
 
     return GoogleMap(
-      initialCameraPosition: CameraPosition(target: _center, zoom: 13),
+      initialCameraPosition:
+          CameraPosition(target: initialCenter, zoom: kCityZoom),
       markers: _markers,
       polylines: _polylines,
-      style: widget.lightStyle ? null : _kDarkMapStyle,
+      style: widget.lightStyle ? null : _kIvoryMapStyle,
       myLocationButtonEnabled: false,
       zoomControlsEnabled: false,
       compassEnabled: false,
@@ -205,13 +287,13 @@ class _LuxMapState extends State<LuxMap> {
   }
 
   Widget _placeholder() => Container(
-        color: LuxColors.blackElevated,
+        color: LuxColors.surfaceMuted,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.map_outlined,
-                  color: LuxColors.whiteTertiary, size: 48),
+                  color: LuxColors.inkTertiary, size: 48),
               const SizedBox(height: LuxSpacing.md),
               Text(
                 widget.origin != null

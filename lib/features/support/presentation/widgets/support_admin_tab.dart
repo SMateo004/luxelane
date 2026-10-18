@@ -77,7 +77,7 @@ class _SupportAdminTabState extends State<SupportAdminTab> {
             ]),
             const SizedBox(height: LuxSpacing.lg),
             if (snap.connectionState == ConnectionState.waiting && !snap.hasData)
-              const Center(child: CircularProgressIndicator(color: LuxColors.accent))
+              const Center(child: CircularProgressIndicator(color: LuxColors.sapphire))
             else if (shown.isEmpty)
               EmptyState(icon: Icons.support_agent_outlined, message: l.supportAdminEmpty)
             else

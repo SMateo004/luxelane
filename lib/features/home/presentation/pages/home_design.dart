@@ -5,39 +5,33 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../../app/theme/lux_tokens.dart';
-
 export '../../../../app/theme/lux_tokens.dart';
 
 abstract class LD {
-  // Backgrounds — paper
-  static const bg     = LuxPalette.paper;
-  static const bg2    = LuxPalette.paper2;
-  static const bg3    = LuxPalette.paper3;
+  // Backgrounds
+  static const bg = Color(0xFFFAFBFE);
+  static const bg2 = Color(0xFFF2F5FB);
+  static const bg3 = Color(0xFFE8EDF7);
   // Text
-  static const ink    = LuxPalette.ink;
-  static const ink2   = LuxPalette.ink2;
-  static const ink3   = LuxPalette.slate;
-  // Accent on light surfaces: deep champagne for text and hairlines
-  // (4.6:1 on paper); filled CTAs use champagne with ink text.
-  static const accent      = LuxPalette.champagneDeep;
-  static const accentHover = LuxPalette.champagne;
-  static const accentDeep  = Color(0xFF6E5222);
-  static const accentTint  = LuxPalette.champagneTint;
-  static const cta         = LuxPalette.champagne;
-  static const onCta       = LuxPalette.ink;
+  static const ink = Color(0xFF0D1B2E);
+  static const ink2 = Color(0xFF2C3D55);
+  static const ink3 = Color(0xFF637490);
+  // Sapphire
+  static const sph = Color(0xFF1B4F8A);
+  static const sphLt = Color(0xFF2E6FBF);
+  static const sphDim = Color(0xFF0D3066);
+  static const sphTint = Color(0xFFEEF3FA);
   // Border
-  static const border = LuxPalette.hairline;
+  static const border = Color(0xFFDDE4F0);
   // Dark
-  static const dark   = LuxPalette.ink;
+  static const dark = Color(0xFF070E18);
 }
 
 // Semantic font family names
 const kSerif = 'Cormorant Garamond';
-const kSans  = 'Montserrat';
+const kSans = 'Montserrat';
 
-TextStyle eyebrow({Color color = LD.accent}) =>
-    GoogleFonts.montserrat(
+TextStyle eyebrow({Color color = LD.sph}) => GoogleFonts.montserrat(
       fontSize: 10,
       fontWeight: FontWeight.w400,
       letterSpacing: 3.2,
@@ -45,7 +39,8 @@ TextStyle eyebrow({Color color = LD.accent}) =>
       decoration: TextDecoration.none,
     );
 
-TextStyle uiLabel({double size = 10, Color color = LD.ink3, double spacing = 2.4}) =>
+TextStyle uiLabel(
+        {double size = 10, Color color = LD.ink3, double spacing = 2.4}) =>
     GoogleFonts.montserrat(
       fontSize: size,
       fontWeight: FontWeight.w400,
@@ -101,7 +96,8 @@ List<TextSpan> emphasisSpans(String text,
 // ============================================================
 
 class LuxEyebrow extends StatelessWidget {
-  const LuxEyebrow(this.text, {super.key, this.color = LD.accent, this.dark = false});
+  const LuxEyebrow(this.text,
+      {super.key, this.color = LD.sph, this.dark = false});
   final String text;
   final Color color;
   final bool dark;
@@ -160,11 +156,14 @@ class RevealOnScroll extends StatefulWidget {
     super.key,
     required this.child,
     this.delay = Duration.zero,
+
     /// Horizontal offset in logical pixels (positive = from right, negative = from left)
     this.dx = 0,
+
     /// Vertical offset in logical pixels (positive = from below)
     this.dy = 72,
     this.duration = const Duration(milliseconds: 1100),
+
     /// Fraction of viewport height the element must pass before triggering.
     /// 1.0 = trigger when top edge reaches the bottom of the screen.
     /// 0.85 = trigger slightly earlier (recommended for large blocks).
@@ -283,8 +282,7 @@ class VisibilityDetectorWrapper extends StatefulWidget {
       _VisibilityDetectorWrapperState();
 }
 
-class _VisibilityDetectorWrapperState
-    extends State<VisibilityDetectorWrapper> {
+class _VisibilityDetectorWrapperState extends State<VisibilityDetectorWrapper> {
   bool _fired = false;
 
   void _check() {
@@ -365,12 +363,10 @@ class _AnimatedCounterState extends State<AnimatedCounter>
         child: AnimatedBuilder(
           animation: _ctrl,
           builder: (_, __) {
-            final val =
-                (_quarticEase(_ctrl.value) * widget.target).round();
+            final val = (_quarticEase(_ctrl.value) * widget.target).round();
             return Text(
               widget.format(val),
-              style: widget.style ??
-                  displayText(size: 72, color: Colors.white),
+              style: widget.style ?? displayText(size: 72, color: Colors.white),
             );
           },
         ),

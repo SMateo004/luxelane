@@ -1,0 +1,11 @@
+// Luxelane iOS settings. These values are not secret (they ship inside
+// the app); see DEPLOY.md → "iOS" for where each one comes from.
+
+// Google Maps SDK key (same key the web and AppConfig use).
+GOOGLE_MAPS_API_KEY = AIzaSyBbDde6GtLHy9_6qys4BMmq2P2G2INRUkM
+
+// Google Sign-In — from the iOS app's GoogleService-Info.plist:
+//   CLIENT_ID          → 51157842817-8bo82sf25c3qrsbqq4b0lh2ie00gc9t7.apps.googleusercontent.com
+//   REVERSED_CLIENT_ID → com.googleusercontent.apps.51157842817-8bo82sf25c3qrsbqq4b0lh2ie00gc9t7
+GOOGLE_IOS_CLIENT_ID = 51157842817-8bo82sf25c3qrsbqq4b0lh2ie00gc9t7.apps.googleusercontent.com
+GOOGLE_REVERSED_CLIENT_ID = com.googleusercontent.apps.51157842817-8bo82sf25c3qrsbqq4b0lh2ie00gc9t7

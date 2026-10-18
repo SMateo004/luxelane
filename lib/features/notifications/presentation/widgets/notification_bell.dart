@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../app/theme/app_theme.dart';
@@ -18,6 +19,11 @@ class NotificationBell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Sin sesión no hay notificaciones: la campana solo daría una carga
+    // infinita.
+    final signedIn =
+        context.select<AuthBloc, bool>((b) => b.state is AuthAuthenticated);
+    if (!signedIn) return const SizedBox.shrink();
     return BlocBuilder<NotificationBloc, NotificationState>(
       builder: (context, state) {
         final unread = state is NotificationLoaded ? state.unreadCount : 0;
@@ -27,7 +33,7 @@ class NotificationBell extends StatelessWidget {
             children: [
               Icon(
                 Icons.notifications_outlined,
-                color: color ?? LuxColors.white,
+                color: color ?? LuxColors.ink,
                 size: 22,
               ),
               if (unread > 0)
@@ -38,7 +44,7 @@ class NotificationBell extends StatelessWidget {
                     width: 16,
                     height: 16,
                     decoration: const BoxDecoration(
-                      color: LuxColors.accentFill,
+                      color: LuxColors.sapphire,
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -77,7 +83,7 @@ class NotificationBell extends StatelessWidget {
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: LuxColors.blackSurface,
+      backgroundColor: LuxColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
       ),
@@ -112,7 +118,7 @@ class _NotificationSheet extends StatelessWidget {
               width: 40,
               height: 4,
               decoration: BoxDecoration(
-                color: LuxColors.blackBorder,
+                color: LuxColors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -132,8 +138,8 @@ class _NotificationSheet extends StatelessWidget {
                   ),
                   BlocBuilder<NotificationBloc, NotificationState>(
                     builder: (context, state) {
-                      final hasUnread = state is NotificationLoaded &&
-                          state.unreadCount > 0;
+                      final hasUnread =
+                          state is NotificationLoaded && state.unreadCount > 0;
                       if (!hasUnread) return const SizedBox.shrink();
                       final authState = context.read<AuthBloc>().state;
                       final userId = authState is AuthAuthenticated
@@ -148,7 +154,7 @@ class _NotificationSheet extends StatelessWidget {
                         child: Text(
                           context.l10n.notifMarkAllRead,
                           style: LuxTypography.caption
-                              .copyWith(color: LuxColors.accent),
+                              .copyWith(color: LuxColors.sapphire),
                         ),
                       );
                     },
@@ -156,13 +162,12 @@ class _NotificationSheet extends StatelessWidget {
                 ],
               ),
             ),
-            const Divider(color: LuxColors.blackBorder, height: 1),
+            const Divider(color: LuxColors.border, height: 1),
             Expanded(
               child: BlocBuilder<NotificationBloc, NotificationState>(
                 builder: (context, state) {
                   if (state is NotificationInitial) {
-                    return const Center(
-                        child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
                   final notifications = state is NotificationLoaded
                       ? state.notifications
@@ -173,8 +178,8 @@ class _NotificationSheet extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.notifications_none_rounded,
-                              color: LuxColors.whiteTertiary, size: 48),
+                          const Icon(Icons.notifications_none_rounded,
+                              color: LuxColors.inkTertiary, size: 48),
                           const SizedBox(height: LuxSpacing.md),
                           Text(context.l10n.notifEmpty,
                               textAlign: TextAlign.center,
@@ -186,17 +191,27 @@ class _NotificationSheet extends StatelessWidget {
 
                   return ListView.separated(
                     controller: scrollController,
-                    padding: const EdgeInsets.symmetric(
-                        vertical: LuxSpacing.sm),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: LuxSpacing.sm),
                     itemCount: notifications.length,
                     separatorBuilder: (_, __) => const Divider(
-                      color: LuxColors.blackBorder,
+                      color: LuxColors.border,
                       height: 1,
                       indent: LuxSpacing.lg,
                     ),
                     itemBuilder: (context, i) {
                       final n = notifications[i];
-                      return _NotificationTile(notification: n);
+                      final id = n.bookingId;
+                      // Cada aviso de una reserva abre esa reserva.
+                      return InkWell(
+                        onTap: id == null || id.isEmpty
+                            ? null
+                            : () {
+                                Navigator.of(context).pop();
+                                GoRouter.of(context).go('/ride/$id');
+                              },
+                        child: _NotificationTile(notification: n),
+                      );
                     },
                   );
                 },
@@ -247,7 +262,7 @@ class _NotificationTile extends StatelessWidget {
     return Container(
       color: notification.isRead
           ? Colors.transparent
-          : LuxColors.accent.withAlpha(13),
+          : LuxColors.sapphire.withAlpha(13),
       padding: const EdgeInsets.symmetric(
         horizontal: LuxSpacing.lg,
         vertical: LuxSpacing.md,
@@ -259,10 +274,10 @@ class _NotificationTile extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: LuxColors.accent.withAlpha(26),
+              color: LuxColors.sapphire.withAlpha(26),
               borderRadius: BorderRadius.circular(LuxRadius.sm),
             ),
-            child: Icon(_icon, color: LuxColors.accent, size: 18),
+            child: Icon(_icon, color: LuxColors.sapphire, size: 18),
           ),
           const SizedBox(width: LuxSpacing.md),
           Expanded(
@@ -292,7 +307,7 @@ class _NotificationTile extends StatelessWidget {
                 Text(
                   notification.body,
                   style: LuxTypography.caption
-                      .copyWith(color: LuxColors.whiteTertiary),
+                      .copyWith(color: LuxColors.inkTertiary),
                 ),
               ],
             ),
@@ -304,7 +319,7 @@ class _NotificationTile extends StatelessWidget {
                 width: 6,
                 height: 6,
                 decoration: const BoxDecoration(
-                  color: LuxColors.accent,
+                  color: LuxColors.sapphire,
                   shape: BoxShape.circle,
                 ),
               ),

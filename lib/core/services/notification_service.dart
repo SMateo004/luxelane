@@ -4,6 +4,12 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import '../repositories/repositories.dart';
 
+/// Mensajes push con la app cerrada: el sistema muestra la notificación. Tiene
+/// que ser una función de nivel superior (Android la invoca en su propio
+/// isolate).
+@pragma('vm:entry-point')
+Future<void> firebaseBackgroundHandler(RemoteMessage message) async {}
+
 class NotificationService {
   NotificationService({required UserRepository userRepository})
       : _userRepo = userRepository;
@@ -13,17 +19,16 @@ class NotificationService {
 
   static const _vapidKey = String.fromEnvironment('FCM_VAPID_KEY');
 
-  String? _registeredUserId;
+  String? _initializedFor;
   StreamSubscription<String>? _refreshSub;
   StreamSubscription<RemoteMessage>? _messageSub;
 
-  /// Registers this device's push token for [userId]. Safe to call on every
-  /// sign-in: it only does work once per user.
+  /// Registers this device's push token for [userId]. Runs on every sign-in
+  /// (signing out removes the token); the listeners are set up only once.
   Future<void> init({required String userId}) async {
-    if (_registeredUserId == userId) return;
     // Web push needs a VAPID key (pass --dart-define=FCM_VAPID_KEY=...).
     if (kIsWeb && _vapidKey.isEmpty) return;
-    _registeredUserId = userId;
+    _initializedFor = userId;
 
     try {
       await _messaging.requestPermission();
@@ -43,9 +48,9 @@ class NotificationService {
       // Token unavailable in emulator / web without vapid key
     }
 
-    await _refreshSub?.cancel();
-    _refreshSub = _messaging.onTokenRefresh.listen((newToken) {
-      _userRepo.updateFcmToken(userId: userId, token: newToken);
+    _refreshSub ??= _messaging.onTokenRefresh.listen((newToken) {
+      final uid = _initializedFor;
+      if (uid != null) _userRepo.updateFcmToken(userId: uid, token: newToken);
     });
 
     _messageSub ??= FirebaseMessaging.onMessage.listen(_onForegroundMessage);
@@ -54,7 +59,9 @@ class NotificationService {
   Future<void> dispose() async {
     await _refreshSub?.cancel();
     await _messageSub?.cancel();
-    _registeredUserId = null;
+    _refreshSub = null;
+    _messageSub = null;
+    _initializedFor = null;
   }
 
   void _onForegroundMessage(RemoteMessage message) {
@@ -67,4 +74,17 @@ class NotificationService {
 
   Stream<RemoteMessage> get onMessageOpenedApp =>
       FirebaseMessaging.onMessageOpenedApp;
+
+  /// Reservas de los avisos que el usuario toca (con la app en segundo plano
+  /// o cerrada), para abrirlas.
+  Stream<String> get openedBookings async* {
+    if (kIsWeb) return;
+    final initial = await _messaging.getInitialMessage();
+    final first = initial?.data['bookingId'];
+    if (first is String && first.isNotEmpty) yield first;
+    yield* FirebaseMessaging.onMessageOpenedApp
+        .map((m) => m.data['bookingId'])
+        .where((id) => id is String && id.isNotEmpty)
+        .cast<String>();
+  }
 }

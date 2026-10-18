@@ -101,12 +101,12 @@ class _SettlementsAdminTabState extends State<SettlementsAdminTab> {
             LuxCard(
               child: Row(children: [
                 Icon(pct == null ? Icons.warning_amber_rounded : Icons.percent_rounded,
-                    color: pct == null ? LuxColors.warning : LuxColors.accent),
+                    color: pct == null ? LuxColors.warning : LuxColors.sapphire),
                 const SizedBox(width: LuxSpacing.md),
                 Expanded(
                   child: Text(
                     pct == null ? l.settleCommissionMissing : l.settleCommissionIs(NumberFormat.decimalPattern().format(pct)),
-                    style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white),
+                    style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink),
                   ),
                 ),
                 TextButton(
@@ -141,7 +141,7 @@ class _SettlementsAdminTabState extends State<SettlementsAdminTab> {
                   stream: _records,
                   builder: (context, rSnap) {
                     if (!bSnap.hasData) {
-                      return const Center(child: CircularProgressIndicator(color: LuxColors.accent));
+                      return const Center(child: CircularProgressIndicator(color: LuxColors.sapphire));
                     }
                     final rows = Settlements.compute(bSnap.data!, _week, pct);
                     final records = {for (final r in rSnap.data ?? const <SettlementRecord>[]) r.driverId: r};
@@ -204,12 +204,12 @@ class _Stat extends StatelessWidget {
         width: width,
         child: LuxCard(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(label, maxLines: 2, style: LuxTypography.caption.copyWith(color: LuxColors.whiteSecondary)),
+            Text(label, maxLines: 2, style: LuxTypography.caption.copyWith(color: LuxColors.inkSecondary)),
             const SizedBox(height: LuxSpacing.sm),
             FittedBox(
               fit: BoxFit.scaleDown,
               alignment: Alignment.centerLeft,
-              child: Text(value, style: LuxTypography.headlineMedium.copyWith(color: LuxColors.white)),
+              child: Text(value, style: LuxTypography.headlineMedium.copyWith(color: LuxColors.ink)),
             ),
           ]),
         ),
@@ -233,7 +233,7 @@ class _SettlementCard extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 2),
           child: Row(children: [
             Expanded(child: Text(label, style: LuxTypography.caption)),
-            Text(LuxMoney.format(amount, cents: true), style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white)),
+            Text(LuxMoney.format(amount, cents: true), style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink)),
           ]),
         );
     return LuxCard(
@@ -252,9 +252,9 @@ class _SettlementCard extends StatelessWidget {
           line(l.settleColByDriver, s.collectedByChauffeur),
           line(l.settleColByLuxelane, s.collectedByLuxelane),
           line(l.settleColCommission, s.commission),
-          const Divider(color: LuxColors.blackBorder),
+          const Divider(color: LuxColors.border),
           Text(settlementLabel(l, s.balance),
-              style: LuxTypography.titleMedium.copyWith(color: s.balance >= 0 ? LuxColors.accent : LuxColors.white)),
+              style: LuxTypography.titleMedium.copyWith(color: s.balance >= 0 ? LuxColors.sapphire : LuxColors.ink)),
           const SizedBox(height: LuxSpacing.sm),
           if (rec == null)
             OutlinedButton.icon(
@@ -268,7 +268,7 @@ class _SettlementCard extends StatelessWidget {
               const Icon(Icons.verified_rounded, color: LuxColors.success, size: 18),
               Text(
                 rec.paidAt == null ? l.settlePaid : l.settlePaidOn(DateFormat.MMMd().format(rec.paidAt!)),
-                style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white),
+                style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink),
               ),
               TextButton(onPressed: onUndo, child: Text(l.settleUndo)),
               if (changed)
@@ -313,7 +313,7 @@ class _CommissionDialogState extends State<_CommissionDialog> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     return AlertDialog(
-      backgroundColor: LuxColors.blackElevated,
+      backgroundColor: LuxColors.surfaceMuted,
       title: Text(l.settleCommissionTitle, style: LuxTypography.titleLarge),
       content: SizedBox(
         width: 380,
@@ -336,7 +336,7 @@ class _CommissionDialogState extends State<_CommissionDialog> {
         TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(l.commonCancel)),
         TextButton(
           onPressed: _save,
-          child: Text(l.settleSave, style: const TextStyle(color: LuxColors.accent, fontWeight: FontWeight.w600)),
+          child: Text(l.settleSave, style: const TextStyle(color: LuxColors.sapphire, fontWeight: FontWeight.w600)),
         ),
       ],
     );

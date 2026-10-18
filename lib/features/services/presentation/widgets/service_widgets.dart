@@ -44,7 +44,7 @@ class IncludedCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(color: Colors.white, border: Border.all(color: LD.border)),
         child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Icon(icon, color: LD.accent, size: 20),
+          Icon(icon, color: LD.sph, size: 20),
           const SizedBox(width: 12),
           Expanded(
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

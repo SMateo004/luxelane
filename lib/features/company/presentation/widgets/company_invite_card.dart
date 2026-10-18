@@ -89,7 +89,7 @@ class _CompanyInviteCardState extends State<CompanyInviteCard> {
       child: LuxCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
-            const Icon(Icons.business_outlined, color: LuxColors.accent),
+            const Icon(Icons.business_outlined, color: LuxColors.sapphire),
             const SizedBox(width: LuxSpacing.sm),
             Expanded(child: Text(l.companyInviteTitle(company), style: LuxTypography.titleMedium)),
           ]),
@@ -121,7 +121,7 @@ class _CompanyInviteCardState extends State<CompanyInviteCard> {
             ),
             TextButton(
               onPressed: _busy ? null : _decline,
-              child: Text(l.companyInviteDecline, style: const TextStyle(color: LuxColors.whiteSecondary)),
+              child: Text(l.companyInviteDecline, style: const TextStyle(color: LuxColors.inkSecondary)),
             ),
           ]),
         ]),

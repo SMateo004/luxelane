@@ -48,7 +48,7 @@ class MinVersionCard extends StatelessWidget {
     String show(int b) => b == 0 ? l.adminMinVersionNone : '$b';
     return LuxCard(
       child: Row(children: [
-        const Icon(Icons.system_update_rounded, color: LuxColors.accent),
+        const Icon(Icons.system_update_rounded, color: LuxColors.sapphire),
         const SizedBox(width: LuxSpacing.md),
         Expanded(
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -62,7 +62,7 @@ class MinVersionCard extends StatelessWidget {
             final save = onSave ?? (f) => context.read<AdminBloc>().add(AdminUpdateGlobalSettingsRequested(f));
             showDialog<void>(context: context, builder: (_) => _MinVersionDialog(config: c, onSave: save));
           },
-          child: Text(l.supportHoursEdit, style: const TextStyle(color: LuxColors.accent)),
+          child: Text(l.supportHoursEdit, style: const TextStyle(color: LuxColors.sapphire)),
         ),
       ]),
     );
@@ -110,7 +110,7 @@ class _MinVersionDialogState extends State<_MinVersionDialog> {
     final l = context.l10n;
     final digits = [FilteringTextInputFormatter.digitsOnly];
     return AlertDialog(
-      backgroundColor: LuxColors.blackElevated,
+      backgroundColor: LuxColors.surfaceMuted,
       title: Text(l.adminMinVersionTitle, style: LuxTypography.titleLarge),
       content: SizedBox(
         width: 420,
@@ -136,7 +136,7 @@ class _MinVersionDialogState extends State<_MinVersionDialog> {
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l.commonCancel)),
-        TextButton(onPressed: _save, child: Text(l.commonSave, style: const TextStyle(color: LuxColors.accent))),
+        TextButton(onPressed: _save, child: Text(l.commonSave, style: const TextStyle(color: LuxColors.sapphire))),
       ],
     );
   }

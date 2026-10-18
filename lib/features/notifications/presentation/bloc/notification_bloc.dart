@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
@@ -79,7 +80,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc({required NotificationRepository notificationRepository})
       : _repo = notificationRepository,
         super(const NotificationInitial()) {
-    on<NotificationWatchStarted>(_onWatch);
+    // Las apps lo piden una vez por sesión; al volver a entrar (aunque sea
+    // el mismo usuario) se reemplaza el listener que cortó el cierre.
+    on<NotificationWatchStarted>(_onWatch,
+        transformer: (events, mapper) => events.switchMap(mapper));
     on<NotificationCreated>(_onCreate);
     on<NotificationMarkedRead>(_onMarkRead);
     on<NotificationAllMarkedRead>(_onMarkAllRead);

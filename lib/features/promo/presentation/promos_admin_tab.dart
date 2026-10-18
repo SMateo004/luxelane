@@ -67,7 +67,7 @@ class PromosAdminTab extends StatelessWidget {
             ),
             const SizedBox(height: LuxSpacing.lg),
             if (snap.connectionState == ConnectionState.waiting && !snap.hasData)
-              const Center(child: CircularProgressIndicator(color: LuxColors.accent))
+              const Center(child: CircularProgressIndicator(color: LuxColors.sapphire))
             else if (promos.isEmpty)
               EmptyState(icon: Icons.local_offer_outlined, message: l.promoAdminEmpty)
             else
@@ -110,7 +110,7 @@ class _PromoTile extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: LuxSpacing.sm),
       child: LuxCard(
         child: Row(children: [
-          const Icon(Icons.local_offer_outlined, color: LuxColors.accent),
+          const Icon(Icons.local_offer_outlined, color: LuxColors.sapphire),
           const SizedBox(width: LuxSpacing.md),
           Expanded(
             child: Column(
@@ -118,7 +118,7 @@ class _PromoTile extends StatelessWidget {
               children: [
                 Wrap(spacing: LuxSpacing.sm, crossAxisAlignment: WrapCrossAlignment.center, children: [
                   Text(p.code, style: LuxTypography.titleMedium.copyWith(letterSpacing: 1)),
-                  Text(state, style: LuxTypography.caption.copyWith(color: LuxColors.whiteSecondary)),
+                  Text(state, style: LuxTypography.caption.copyWith(color: LuxColors.inkSecondary)),
                 ]),
                 if (p.description.isNotEmpty) ...[
                   const SizedBox(height: 2),
@@ -133,7 +133,7 @@ class _PromoTile extends StatelessWidget {
             message: p.active ? l.promoAdminPause : l.promoAdminResume,
             child: Switch(
               value: p.active,
-              activeColor: LuxColors.accent,
+              activeColor: LuxColors.sapphire,
               onChanged: (v) async {
                 final e = await repo.save(p.copyWith(active: v), create: false);
                 if (context.mounted && e != null) {
@@ -144,7 +144,7 @@ class _PromoTile extends StatelessWidget {
           ),
           IconButton(
             tooltip: l.promoAdminEdit,
-            icon: const Icon(Icons.edit_outlined, color: LuxColors.whiteSecondary),
+            icon: const Icon(Icons.edit_outlined, color: LuxColors.inkSecondary),
             onPressed: () => showDialog<void>(
               context: context,
               builder: (_) => PromoEditDialog(repo: repo, initial: p),
@@ -268,7 +268,7 @@ class _PromoEditDialogState extends State<PromoEditDialog> {
     }
 
     return AlertDialog(
-      backgroundColor: LuxColors.blackElevated,
+      backgroundColor: LuxColors.surfaceMuted,
       title: Text(_i == null ? l.promoAdminCreate : l.promoAdminEditTitle(_i.code), style: LuxTypography.titleLarge),
       content: SizedBox(
         width: 460,
@@ -366,7 +366,7 @@ class _PromoEditDialogState extends State<PromoEditDialog> {
               ]),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                activeColor: LuxColors.accent,
+                activeColor: LuxColors.sapphire,
                 value: _firstRide,
                 onChanged: (v) => setState(() => _firstRide = v),
                 title: Text(l.promoAdminFirstRideSwitch, style: LuxTypography.bodyLarge),
@@ -384,7 +384,7 @@ class _PromoEditDialogState extends State<PromoEditDialog> {
         TextButton(
           onPressed: _busy ? null : _save,
           child: Text(l.promoAdminSave,
-              style: const TextStyle(color: LuxColors.accent, fontWeight: FontWeight.w600)),
+              style: const TextStyle(color: LuxColors.sapphire, fontWeight: FontWeight.w600)),
         ),
       ],
     );

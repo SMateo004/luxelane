@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/widgets/components.dart';
@@ -13,7 +12,10 @@ import '../../../loyalty/presentation/loyalty_widgets.dart';
 import '../../../promo/presentation/promos_admin_tab.dart';
 import '../../../settlements/presentation/settlements_admin_tab.dart';
 import '../../../support/presentation/widgets/support_admin_tab.dart';
+import '../../domain/admin_finance.dart';
 import '../bloc/admin_bloc.dart';
+import '../widgets/admin_finance_tab.dart';
+import '../widgets/admin_pricing_tab.dart';
 import '../widgets/admin_sections.dart';
 import '../widgets/admin_shared_widgets.dart';
 import '../widgets/reports_tab.dart';
@@ -27,53 +29,82 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
-  int _section = 0;
+  AdminSection _section = AdminSection.dashboard;
 
-  List<String> _sections(AppLocalizations l) => [
-        l.adminSectionDashboard,
-        l.adminSectionBookings,
-        l.adminSectionReports,
-        l.adminSectionCompanies,
-        l.adminSectionPromos,
-        l.adminSectionLoyalty,
-        l.adminSectionHotels,
-        l.adminSectionSupport,
-        l.adminSectionHealth,
-        l.adminSectionSettlements,
-        l.adminSectionDrivers,
-        l.adminSectionVehicles,
-        l.adminSectionUsers,
-        l.adminSectionPricing,
-        l.adminSectionAudit,
-        l.adminSectionSettings,
-      ];
-  static const _icons = [
-    Icons.dashboard_outlined,
-    Icons.confirmation_number_outlined,
-    Icons.insights_outlined,
-    Icons.business_outlined,
-    Icons.local_offer_outlined,
-    Icons.workspace_premium_outlined,
-    Icons.hotel_outlined,
-    Icons.support_agent_outlined,
-    Icons.monitor_heart_outlined,
-    Icons.account_balance_wallet_outlined,
-    Icons.directions_car_outlined,
-    Icons.car_crash_outlined,
-    Icons.people_outline,
-    Icons.local_taxi_outlined,
-    Icons.history_rounded,
-    Icons.settings_outlined,
-  ];
+  static const _labels = {
+    AdminSection.dashboard: 'Panel',
+    AdminSection.operations: 'Operaciones',
+    AdminSection.finance: 'Finanzas',
+    AdminSection.reports: 'Reportes',
+    AdminSection.settlements: 'Liquidaciones',
+    AdminSection.pricing: 'Tarifas',
+    AdminSection.vehicleClasses: 'Tipos de vehículo',
+    AdminSection.drivers: 'Chóferes',
+    AdminSection.vehicles: 'Vehículos',
+    AdminSection.users: 'Usuarios',
+    AdminSection.business: 'Contactos de empresas',
+    AdminSection.companies: 'Cuentas de empresa',
+    AdminSection.promos: 'Promociones',
+    AdminSection.loyalty: 'Fidelidad',
+    AdminSection.hotels: 'Hoteles',
+    AdminSection.support: 'Soporte',
+    AdminSection.health: 'Salud',
+    AdminSection.audit: 'Auditoría',
+    AdminSection.settings: 'Configuración',
+  };
+  static const _icons = {
+    AdminSection.dashboard: Icons.dashboard_outlined,
+    AdminSection.operations: Icons.confirmation_number_outlined,
+    AdminSection.finance: Icons.account_balance_outlined,
+    AdminSection.reports: Icons.insights_outlined,
+    AdminSection.settlements: Icons.account_balance_wallet_outlined,
+    AdminSection.pricing: Icons.sell_outlined,
+    AdminSection.vehicleClasses: Icons.local_taxi_outlined,
+    AdminSection.drivers: Icons.badge_outlined,
+    AdminSection.vehicles: Icons.directions_car_outlined,
+    AdminSection.users: Icons.people_outline,
+    AdminSection.business: Icons.contact_mail_outlined,
+    AdminSection.companies: Icons.business_outlined,
+    AdminSection.promos: Icons.local_offer_outlined,
+    AdminSection.loyalty: Icons.workspace_premium_outlined,
+    AdminSection.hotels: Icons.hotel_outlined,
+    AdminSection.support: Icons.support_agent_outlined,
+    AdminSection.health: Icons.monitor_heart_outlined,
+    AdminSection.audit: Icons.history_rounded,
+    AdminSection.settings: Icons.settings_outlined,
+  };
+
+  void _go(AdminSection s) => setState(() => _section = s);
+
+  /// Elementos que requieren acción en cada sección.
+  int? _badge(AdminSection s, AdminState state) => switch (s) {
+        AdminSection.operations => state.pendingRidesCount,
+        AdminSection.finance =>
+          state.finance(FinancePeriod.all).receivablesCount,
+        AdminSection.drivers =>
+          state.drivers.where((d) => !d.documentsVerified).length,
+        _ => null,
+      };
 
   @override
   Widget build(BuildContext context) {
     final web = isWeb(context);
     return BlocProvider(
       create: (context) => sl<AdminBloc>()..add(AdminDataRequested()),
-      child: Scaffold(
-        backgroundColor: LuxColors.black,
-        body: web ? _webLayout() : _mobileLayout(),
+      child: BlocListener<AdminBloc, AdminState>(
+        // Un único punto de avisos para todas las secciones.
+        listenWhen: (a, b) => a.messageSeq != b.messageSeq,
+        listener: (context, state) {
+          if (state.error != null) {
+            showLuxSnackbar(context, state.error!, isError: true);
+          } else if (state.successMessage != null) {
+            showLuxSnackbar(context, state.successMessage!);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: LuxColors.bg,
+          body: web ? _webLayout() : _mobileLayout(),
+        ),
       ),
     );
   }
@@ -82,10 +113,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: LuxColors.blackElevated,
-        title: Text(context.l10n.profileSignOut, style: LuxTypography.titleLarge),
-        content: Text(
-          context.l10n.adminSignOutConfirm,
+        backgroundColor: LuxColors.surfaceMuted,
+        title: const Text('Cerrar sesión', style: LuxTypography.titleLarge),
+        content: const Text(
+          '¿Seguro que quieres cerrar sesión del panel de administración?',
           style: LuxTypography.bodyMedium,
         ),
         actions: [
@@ -98,9 +129,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               Navigator.pop(ctx);
               context.read<AuthBloc>().add(const LogoutRequested());
             },
-            child: Text(
-              context.l10n.profileSignOut,
-              style: const TextStyle(color: LuxColors.error, fontWeight: FontWeight.w600),
+            child: const Text(
+              'Cerrar sesión',
+              style: TextStyle(
+                  color: LuxColors.error, fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -110,59 +142,51 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   Widget _mobileLayout() => Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
-            tooltip: context.l10n.commonBack,
-            onPressed: () => context.go('/'),
-          ),
-          title: Text(context.l10n.adminTitle),
+          // El admin siempre vuelve al panel (router), así que no hay "atrás".
+          automaticallyImplyLeading: false,
+          title: Text(_labels[_section]!),
           actions: [
-            Container(
-              margin: const EdgeInsets.only(right: LuxSpacing.md),
-              padding: const EdgeInsets.symmetric(
-                  horizontal: LuxSpacing.sm, vertical: 2),
-              decoration: BoxDecoration(
-                color: LuxColors.accentSubtle,
-                borderRadius: BorderRadius.circular(LuxRadius.sm),
-                border: Border.all(color: LuxColors.accent.withOpacity(0.4)),
-              ),
-              child: Text(context.l10n.coreRoleAdmin.toUpperCase(),
-                  style: LuxTypography.caption.copyWith(
-                      color: LuxColors.accent, fontWeight: FontWeight.w700)),
+            IconButton(
+              tooltip: 'Cerrar sesión',
+              icon: const Icon(Icons.logout_rounded, size: 20),
+              onPressed: () => _confirmSignOut(context),
             ),
           ],
         ),
         body: Column(
           children: [
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.all(LuxSpacing.md),
-              child: Row(
-                children: List.generate(
-                  _sections(context.l10n).length,
-                  (i) => Padding(
-                    padding: const EdgeInsets.only(right: LuxSpacing.sm),
-                    child: SectionChip(
-                      label: _sections(context.l10n)[i],
-                      selected: _section == i,
-                      onTap: () => setState(() => _section = i),
-                    ),
-                  ),
+            BlocBuilder<AdminBloc, AdminState>(
+              builder: (context, state) => SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.all(LuxSpacing.md),
+                child: Row(
+                  children: [
+                    for (final s in AdminSection.values)
+                      Padding(
+                        padding: const EdgeInsets.only(right: LuxSpacing.sm),
+                        child: SectionChip(
+                          label: (_badge(s, state) ?? 0) > 0
+                              ? '${_labels[s]} · ${_badge(s, state)}'
+                              : _labels[s]!,
+                          selected: _section == s,
+                          onTap: () => _go(s),
+                        ),
+                      ),
+                  ],
                 ),
               ),
             ),
-            Expanded(child: _sectionBody()),
+            Expanded(child: _withLoadError(_sectionBody())),
           ],
         ),
       );
 
   Widget _webLayout() => Row(
         children: [
-          // Admin sidebar
           SizedBox(
             width: 240,
             child: Container(
-              color: LuxColors.blackSurface,
+              color: LuxColors.surface,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -177,13 +201,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: LuxSpacing.sm, vertical: 2),
                           decoration: BoxDecoration(
-                            color: LuxColors.accentSubtle,
+                            color: LuxColors.sapphireSubtle,
                             borderRadius: BorderRadius.circular(LuxRadius.sm),
                           ),
                           child: Text(
                             context.l10n.adminPanelBadge.toUpperCase(),
                             style: LuxTypography.caption.copyWith(
-                                color: LuxColors.accent,
+                                color: LuxColors.sapphire,
                                 fontWeight: FontWeight.w700),
                           ),
                         ),
@@ -192,16 +216,22 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                   ),
                   const LuxDivider(),
                   const SizedBox(height: LuxSpacing.sm),
-                  ...List.generate(
-                    _sections(context.l10n).length,
-                    (i) => AdminNavItem(
-                      icon: _icons[i],
-                      label: _sections(context.l10n)[i],
-                      selected: _section == i,
-                      onTap: () => setState(() => _section = i),
+                  Expanded(
+                    child: BlocBuilder<AdminBloc, AdminState>(
+                      builder: (context, state) => ListView(
+                        children: [
+                          for (final s in AdminSection.values)
+                            AdminNavItem(
+                              icon: _icons[s]!,
+                              label: _labels[s]!,
+                              badge: _badge(s, state),
+                              selected: _section == s,
+                              onTap: () => _go(s),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
-                  const Spacer(),
                   const LuxDivider(),
                   AdminNavItem(
                     icon: Icons.logout_rounded,
@@ -215,30 +245,57 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             ),
           ),
           const LuxDivider(vertical: true),
-          // Main content
-          Expanded(child: _sectionBody()),
+          Expanded(child: _withLoadError(_sectionBody())),
         ],
       );
 
-  Widget _sectionBody() {
-    switch (_section) {
-      case 0: return const DashboardTab();
-      case 1: return const BookingsTab();
-      case 2: return const ReportsTab();
-      case 3: return const CompaniesAdminTab();
-      case 4: return const PromosAdminTab();
-      case 5: return const LoyaltyAdminTab();
-      case 6: return const HotelsAdminTab();
-      case 7: return const SupportAdminTab();
-      case 8: return const HealthAdminTab();
-      case 9: return const SettlementsAdminTab();
-      case 10: return const DriversTab();
-      case 11: return const VehiclesTab();
-      case 12: return const UsersTab();
-      case 13: return const VehicleClassesAdminTab();
-      case 14: return const AuditTab();
-      case 15: return const SettingsTab();
-      default: return const SizedBox();
-    }
-  }
+  /// Si alguna lista no cargó, se dice arriba en vez de mostrar la sección
+  /// como si estuviera vacía.
+  Widget _withLoadError(Widget body) => BlocBuilder<AdminBloc, AdminState>(
+        buildWhen: (a, b) => a.loadError != b.loadError,
+        builder: (context, state) => Column(
+          children: [
+            if (state.loadError != null)
+              MaterialBanner(
+                backgroundColor: LuxColors.error.withValues(alpha: 0.08),
+                leading:
+                    const Icon(Icons.cloud_off_rounded, color: LuxColors.error),
+                content: Text(
+                    '${state.loadError} Los datos de esta pantalla pueden '
+                    'estar incompletos.',
+                    style: LuxTypography.bodyMedium),
+                actions: [
+                  TextButton(
+                    onPressed: () =>
+                        context.read<AdminBloc>().add(AdminDataRequested()),
+                    child: const Text('Reintentar'),
+                  ),
+                ],
+              ),
+            Expanded(child: body),
+          ],
+        ),
+      );
+
+  Widget _sectionBody() => switch (_section) {
+        AdminSection.dashboard => DashboardTab(onNavigate: _go),
+        AdminSection.operations => const BookingsTab(),
+        AdminSection.finance => const FinanceTab(),
+        AdminSection.reports => const ReportsTab(),
+        AdminSection.settlements => const SettlementsAdminTab(),
+        AdminSection.pricing => const PricingTab(),
+        AdminSection.vehicleClasses => const VehicleClassesAdminTab(),
+        AdminSection.drivers => const DriversTab(),
+        AdminSection.vehicles => const VehiclesTab(),
+        AdminSection.business => const BusinessLeadsTab(),
+        AdminSection.companies => const CompaniesAdminTab(),
+        AdminSection.promos => const PromosAdminTab(),
+        AdminSection.loyalty => const LoyaltyAdminTab(),
+        AdminSection.hotels => const HotelsAdminTab(),
+        AdminSection.support => const SupportAdminTab(),
+        AdminSection.health => const HealthAdminTab(),
+        AdminSection.users => const UsersTab(),
+        AdminSection.audit => const AuditTab(),
+        AdminSection.settings => const SettingsTab(),
+      };
 }

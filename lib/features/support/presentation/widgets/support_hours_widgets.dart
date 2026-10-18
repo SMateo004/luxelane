@@ -61,14 +61,14 @@ class SupportHoursLine extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.only(top: LuxSpacing.md),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Icon(Icons.schedule_outlined, size: 16, color: LuxColors.accent),
+            const Icon(Icons.schedule_outlined, size: 16, color: LuxColors.sapphire),
             const SizedBox(width: LuxSpacing.sm),
             Expanded(
               child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(supportHoursSummary(l, h), style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white)),
+                Text(supportHoursSummary(l, h), style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink)),
                 if (status != null && !h.always)
                   Text(status,
-                      style: LuxTypography.caption.copyWith(color: open ? LuxColors.success : LuxColors.whiteSecondary)),
+                      style: LuxTypography.caption.copyWith(color: open ? LuxColors.success : LuxColors.inkSecondary)),
               ]),
             ),
           ]),
@@ -96,7 +96,7 @@ class SupportHoursAdminCard extends StatelessWidget {
           padding: const EdgeInsets.only(top: LuxSpacing.md),
           child: LuxCard(
             child: Row(children: [
-              const Icon(Icons.schedule_outlined, color: LuxColors.accent),
+              const Icon(Icons.schedule_outlined, color: LuxColors.sapphire),
               const SizedBox(width: LuxSpacing.md),
               Expanded(
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -111,7 +111,7 @@ class SupportHoursAdminCard extends StatelessWidget {
                   builder: (_) => SupportHoursDialog(repo: repo, initial: h),
                 ),
                 child: Text(h == null ? l.supportHoursSet : l.supportHoursEdit,
-                    style: const TextStyle(color: LuxColors.accent)),
+                    style: const TextStyle(color: LuxColors.sapphire)),
               ),
             ]),
           ),
@@ -188,7 +188,7 @@ class _SupportHoursDialogState extends State<SupportHoursDialog> {
     final l = context.l10n;
     final hours = SupportHours(days: _days, openMin: _allDay ? 0 : _open, closeMin: _allDay ? 1440 : _close);
     return AlertDialog(
-      backgroundColor: LuxColors.blackElevated,
+      backgroundColor: LuxColors.surfaceMuted,
       title: Text(l.supportHoursTitle, style: LuxTypography.titleLarge),
       content: SizedBox(
         width: 440,
@@ -201,13 +201,13 @@ class _SupportHoursDialogState extends State<SupportHoursDialog> {
                 FilterChip(
                   label: Text(weekdayShort(d)),
                   selected: _days.contains(d),
-                  selectedColor: LuxColors.accent.withValues(alpha: 0.25),
+                  selectedColor: LuxColors.sapphire.withValues(alpha: 0.25),
                   onSelected: (v) => setState(() => _days = v ? ({..._days, d}) : (_days.toSet()..remove(d))),
                 ),
             ]),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
-              activeColor: LuxColors.accent,
+              activeColor: LuxColors.sapphire,
               value: _allDay,
               onChanged: (v) => setState(() => _allDay = v),
               title: Text(l.supportHours24h, style: LuxTypography.bodyLarge),
@@ -243,7 +243,7 @@ class _SupportHoursDialogState extends State<SupportHoursDialog> {
         TextButton(onPressed: _busy ? null : () => Navigator.of(context).pop(), child: Text(l.commonCancel)),
         TextButton(
           onPressed: _busy ? null : () => _save(hours),
-          child: Text(l.supportHoursSave, style: const TextStyle(color: LuxColors.accent, fontWeight: FontWeight.w600)),
+          child: Text(l.supportHoursSave, style: const TextStyle(color: LuxColors.sapphire, fontWeight: FontWeight.w600)),
         ),
       ],
     );

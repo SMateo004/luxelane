@@ -23,8 +23,7 @@ class DriverOnboardingScreen extends StatefulWidget {
   const DriverOnboardingScreen({super.key});
 
   @override
-  State<DriverOnboardingScreen> createState() =>
-      _DriverOnboardingScreenState();
+  State<DriverOnboardingScreen> createState() => _DriverOnboardingScreenState();
 }
 
 class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
@@ -42,7 +41,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
   VehicleClass _vehicleClass = VehicleClass.business;
 
   // License fields
-  final _licenseForm   = GlobalKey<FormState>();
+  final _licenseForm = GlobalKey<FormState>();
   final _licenseNumber = TextEditingController();
   final _licenseExpiry = TextEditingController();
 
@@ -58,9 +57,13 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
 
   @override
   void dispose() {
-    _make.dispose(); _model.dispose(); _year.dispose();
-    _plate.dispose(); _color.dispose();
-    _licenseNumber.dispose(); _licenseExpiry.dispose();
+    _make.dispose();
+    _model.dispose();
+    _year.dispose();
+    _plate.dispose();
+    _color.dispose();
+    _licenseNumber.dispose();
+    _licenseExpiry.dispose();
     super.dispose();
   }
 
@@ -86,7 +89,18 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
         capacity: _vehicleClass.capacity,
         isActive: true,
       );
-      await sl<VehicleRepository>().createVehicle(vehicle);
+      final vehicles = sl<VehicleRepository>();
+      final existing = (await vehicles.getVehicleByDriver(driverId))
+          .fold((_) => null, (v) => v);
+      // Un vehículo ya registrado solo lo cambia Luxelane.
+      if (existing == null) {
+        final created = await vehicles.createVehicle(vehicle);
+        if (created.isLeft()) {
+          throw const _OnboardingError(
+              'No se pudo registrar el vehículo. Revisa los datos e '
+              'inténtalo de nuevo.');
+        }
+      }
 
       // 2. Create driverProfile document
       DateTime? expiry;
@@ -110,7 +124,12 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
         totalRides: 0,
         isAvailable: false,
       );
-      await sl<UserRepository>().updateDriverProfile(profile);
+      final saved = await sl<UserRepository>().updateDriverProfile(profile);
+      if (saved.isLeft()) {
+        throw const _OnboardingError(
+            'No se pudo guardar tu licencia. Revisa tu conexión e inténtalo '
+            'de nuevo.');
+      }
 
       if (!mounted) return;
       // Re-dispatch DriverStarted so the bloc reloads the profile
@@ -123,7 +142,9 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(context.l10n.driverOnbSaveError),
+            content: Text(e is _OnboardingError
+                ? e.message
+                : context.l10n.driverOnbSaveError),
             backgroundColor: LuxColors.error,
           ),
         );
@@ -137,7 +158,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     return Scaffold(
-      backgroundColor: LuxColors.black,
+      backgroundColor: LuxColors.bg,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: const LuxelaneWordmark(),
@@ -147,7 +168,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
                 context.read<AuthBloc>().add(const LogoutRequested()),
             child: Text(l.driverOnbLogout,
                 style: LuxTypography.caption
-                    .copyWith(color: LuxColors.whiteTertiary)),
+                    .copyWith(color: LuxColors.inkTertiary)),
           ),
         ],
       ),
@@ -176,8 +197,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
                   plate: _plate,
                   color: _color,
                   vehicleClass: _vehicleClass,
-                  onClassChanged: (v) =>
-                      setState(() => _vehicleClass = v),
+                  onClassChanged: (v) => setState(() => _vehicleClass = v),
                 ),
                 const SizedBox(height: LuxSpacing.xl),
                 LuxButton(
@@ -205,21 +225,21 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
                 Container(
                   padding: const EdgeInsets.all(LuxSpacing.md),
                   decoration: BoxDecoration(
-                    color: LuxColors.accent.withOpacity(0.08),
+                    color: LuxColors.sapphire.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(LuxRadius.md),
-                    border: Border.all(
-                        color: LuxColors.accent.withOpacity(0.3)),
+                    border:
+                        Border.all(color: LuxColors.sapphire.withOpacity(0.3)),
                   ),
                   child: Row(
                     children: [
                       const Icon(Icons.info_outline_rounded,
-                          color: LuxColors.accent, size: 18),
+                          color: LuxColors.sapphire, size: 18),
                       const SizedBox(width: LuxSpacing.sm),
                       Expanded(
                         child: Text(
                           l.driverOnbReviewNotice,
                           style: LuxTypography.caption
-                              .copyWith(color: LuxColors.accent),
+                              .copyWith(color: LuxColors.sapphire),
                         ),
                       ),
                     ],
@@ -258,8 +278,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
 // ---------------------------------------------------------------------------
 
 class _StepIndicator extends StatelessWidget {
-  const _StepIndicator(
-      {required this.currentStep, required this.totalSteps});
+  const _StepIndicator({required this.currentStep, required this.totalSteps});
   final int currentStep;
   final int totalSteps;
 
@@ -267,15 +286,13 @@ class _StepIndicator extends StatelessWidget {
   Widget build(BuildContext context) => Row(
         children: List.generate(totalSteps, (i) {
           final active = i == currentStep;
-          final done   = i < currentStep;
+          final done = i < currentStep;
           return Expanded(
             child: Container(
               margin: EdgeInsets.only(right: i < totalSteps - 1 ? 6 : 0),
               height: 3,
               decoration: BoxDecoration(
-                color: done || active
-                    ? LuxColors.accent
-                    : LuxColors.blackBorder,
+                color: done || active ? LuxColors.sapphire : LuxColors.border,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -336,20 +353,16 @@ class _VehicleForm extends StatelessWidget {
                         horizontal: LuxSpacing.md, vertical: LuxSpacing.sm),
                     decoration: BoxDecoration(
                       color: sel
-                          ? LuxColors.accent.withOpacity(0.15)
-                          : LuxColors.blackElevated,
+                          ? LuxColors.sapphire.withOpacity(0.15)
+                          : LuxColors.surfaceMuted,
                       borderRadius: BorderRadius.circular(LuxRadius.md),
                       border: Border.all(
-                        color: sel
-                            ? LuxColors.accent
-                            : LuxColors.blackBorder,
+                        color: sel ? LuxColors.sapphire : LuxColors.border,
                       ),
                     ),
                     child: Text(vc.localizedLabel(l),
                         style: LuxTypography.bodyMedium.copyWith(
-                          color: sel
-                              ? LuxColors.accent
-                              : LuxColors.white,
+                          color: sel ? LuxColors.sapphire : LuxColors.ink,
                         )),
                   ),
                 );
@@ -477,4 +490,9 @@ class _LicenseForm extends StatelessWidget {
         ),
       );
   }
+}
+
+class _OnboardingError implements Exception {
+  const _OnboardingError(this.message);
+  final String message;
 }

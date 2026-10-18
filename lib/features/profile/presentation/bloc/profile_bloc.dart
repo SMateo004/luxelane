@@ -23,8 +23,12 @@ class ProfileLoadRequested extends ProfileEvent {
 }
 
 class ProfileUpdateRequested extends ProfileEvent {
-  const ProfileUpdateRequested({required this.user});
+  const ProfileUpdateRequested({required this.user, this.silent = false});
   final User user;
+
+  /// Ajustes que se aplican al instante (preferencias de viaje): se ven en
+  /// el acto y solo se avisa si fallan.
+  final bool silent;
   @override
   List<Object?> get props => [user.id];
 }
@@ -92,13 +96,35 @@ class ProfileLoaded extends ProfileState {
     this.driverProfile,
     this.totalRides = 0,
     this.rating,
+    this.message,
+    this.isError = false,
+    this.messageSeq = 0,
   });
   final User user;
   final DriverProfile? driverProfile;
   final int totalRides;
   final double? rating;
+
+  /// Resultado del último guardado; [messageSeq] cambia con cada uno para
+  /// que la pantalla lo muestre aunque el texto se repita.
+  final String? message;
+  final bool isError;
+  final int messageSeq;
+
   @override
-  List<Object?> get props => [user.id, driverProfile?.userId, totalRides, rating];
+  List<Object?> get props => [
+        user.id,
+        user.displayName,
+        user.phone,
+        user.photoUrl,
+        user.ridePreferences,
+        driverProfile?.userId,
+        totalRides,
+        rating,
+        message,
+        isError,
+        messageSeq,
+      ];
 }
 
 class ProfileUpdated extends ProfileState {
@@ -180,10 +206,45 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileUpdateRequested event,
     Emitter<ProfileState> emit,
   ) async {
+    final prev = state;
+    if (event.silent && prev is ProfileLoaded) {
+      emit(ProfileLoaded(
+        user: event.user,
+        driverProfile: prev.driverProfile,
+        totalRides: prev.totalRides,
+        rating: prev.rating,
+        messageSeq: prev.messageSeq,
+      ));
+    }
     final result = await _repo.updateUser(event.user);
+    if (prev is! ProfileLoaded) {
+      result.fold((f) => emit(ProfileError(f.message)),
+          (_) => emit(ProfileUpdated(event.user)));
+      return;
+    }
+    // Se conservan los viajes y la valoración ya cargados; si falla, el
+    // perfil sigue a la vista con los datos anteriores.
     result.fold(
-      (f) => emit(ProfileError(f.message)),
-      (_) => emit(ProfileUpdated(event.user)),
+      (f) => emit(ProfileLoaded(
+        user: prev.user,
+        driverProfile: prev.driverProfile,
+        totalRides: prev.totalRides,
+        rating: prev.rating,
+        message: 'No pudimos guardar los cambios. Inténtalo de nuevo.',
+        isError: true,
+        messageSeq: prev.messageSeq + 1,
+      )),
+      (_) {
+        if (event.silent) return;
+        emit(ProfileLoaded(
+          user: event.user,
+          driverProfile: prev.driverProfile,
+          totalRides: prev.totalRides,
+          rating: prev.rating,
+          message: 'Perfil actualizado',
+          messageSeq: prev.messageSeq + 1,
+        ));
+      },
     );
   }
 

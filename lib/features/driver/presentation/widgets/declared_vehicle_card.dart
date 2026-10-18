@@ -82,13 +82,13 @@ class _DeclaredVehicleCardState extends State<DeclaredVehicleCard> {
       child: LuxCard(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(children: [
-            const Icon(Icons.directions_car_outlined, color: LuxColors.accent),
+            const Icon(Icons.directions_car_outlined, color: LuxColors.sapphire),
             const SizedBox(width: LuxSpacing.sm),
             Expanded(child: Text(l.vehicleDeclaredTitle, style: LuxTypography.titleMedium)),
           ]),
           const SizedBox(height: LuxSpacing.sm),
           Text(l.vehicleDeclaredLine('${v.make} ${v.model} ${v.year}'.trim(), v.plate),
-              style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white)),
+              style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink)),
           const SizedBox(height: LuxSpacing.xs),
           Text(l.vehicleClassCheck, style: LuxTypography.caption),
           const SizedBox(height: LuxSpacing.sm),
@@ -97,7 +97,7 @@ class _DeclaredVehicleCardState extends State<DeclaredVehicleCard> {
               ChoiceChip(
                 label: Text(c.localizedLabel(l)),
                 selected: _class == c,
-                selectedColor: LuxColors.accent.withValues(alpha: 0.25),
+                selectedColor: LuxColors.sapphire.withValues(alpha: 0.25),
                 onSelected: (_) => setState(() => _class = c),
               ),
           ]),

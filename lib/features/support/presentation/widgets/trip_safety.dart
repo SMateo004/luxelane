@@ -31,7 +31,7 @@ class TripSafetyButton extends StatelessWidget {
       child: TextButton.icon(
         onPressed: () => showModalBottomSheet<void>(
           context: context,
-          backgroundColor: LuxColors.blackElevated,
+          backgroundColor: LuxColors.surfaceMuted,
           builder: (_) => TripSafetySheet(bookingId: bookingId, repository: repository, launcher: launcher),
         ),
         style: TextButton.styleFrom(foregroundColor: LuxColors.warning, minimumSize: const Size(0, 48)),
@@ -62,7 +62,7 @@ class TripSafetySheet extends StatelessWidget {
     Widget option(IconData icon, String title, String body, VoidCallback onTap, {Color? color}) => ListTile(
           contentPadding: EdgeInsets.zero,
           minVerticalPadding: 12,
-          leading: Icon(icon, color: color ?? LuxColors.accent),
+          leading: Icon(icon, color: color ?? LuxColors.sapphire),
           title: Text(title, style: LuxTypography.bodyLarge.copyWith(color: color)),
           subtitle: Text(body, style: LuxTypography.caption),
           onTap: onTap,

@@ -10,6 +10,7 @@ import '../../../../core/widgets/trip_widgets.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../support/presentation/widgets/trip_safety.dart';
 import '../bloc/driver_bloc.dart';
+import '../widgets/flight_info_card.dart';
 
 class DriverActiveRideScreen extends StatelessWidget {
   const DriverActiveRideScreen({super.key, required this.bookingId});
@@ -85,7 +86,7 @@ class DriverActiveRideScreen extends StatelessWidget {
           SizedBox(
             width: 400,
             child: Container(
-              color: LuxColors.blackSurface,
+              color: LuxColors.surface,
               child: Column(
                 children: [
                   _DriverWebHeader(booking: booking),
@@ -116,12 +117,12 @@ class _DriverTopBar extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: LuxColors.blackSurface,
+                  color: LuxColors.surface,
                   borderRadius: BorderRadius.circular(LuxRadius.sm),
-                  border: Border.all(color: LuxColors.blackBorder),
+                  border: Border.all(color: LuxColors.border),
                 ),
                 child: const Icon(Icons.keyboard_arrow_down_rounded,
-                    color: LuxColors.white),
+                    color: LuxColors.ink),
               ),
             ),
             ),
@@ -161,10 +162,10 @@ class _DriverBottomPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
         decoration: const BoxDecoration(
-          color: LuxColors.blackSurface,
+          color: LuxColors.surface,
           borderRadius:
               BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
-          border: Border(top: BorderSide(color: LuxColors.blackBorder)),
+          border: Border(top: BorderSide(color: LuxColors.border)),
         ),
         padding: const EdgeInsets.fromLTRB(
             LuxSpacing.md, LuxSpacing.md, LuxSpacing.md, LuxSpacing.xxl),
@@ -277,7 +278,7 @@ class _RideInfoRow extends StatelessWidget {
           Row(
             children: [
               const Icon(Icons.radio_button_checked,
-                  color: LuxColors.accent, size: 16),
+                  color: LuxColors.sapphire, size: 16),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                 child: Text(
@@ -305,11 +306,19 @@ class _RideInfoRow extends StatelessWidget {
               ),
             ],
           ),
+          if (!booking.riderPreferences.isEmpty) ...[
+            const SizedBox(height: LuxSpacing.md),
+            RiderPreferencesNote(preferences: booking.riderPreferences),
+          ],
+          if (booking.flightNumber?.isNotEmpty == true) ...[
+            const SizedBox(height: LuxSpacing.md),
+            FlightInfoCard(booking: booking),
+          ],
           const SizedBox(height: LuxSpacing.md),
           Container(
             padding: const EdgeInsets.all(LuxSpacing.sm),
             decoration: BoxDecoration(
-              color: LuxColors.blackElevated,
+              color: LuxColors.surfaceMuted,
               borderRadius: BorderRadius.circular(LuxRadius.sm),
             ),
             child: Row(
@@ -327,7 +336,7 @@ class _RideInfoRow extends StatelessWidget {
                 Text(
                   LuxMoney.format(booking.paidAmount, cents: true),
                   style: LuxTypography.bodyLarge
-                      .copyWith(color: LuxColors.accent),
+                      .copyWith(color: LuxColors.sapphire),
                 ),
               ],
             ),
@@ -337,12 +346,12 @@ class _RideInfoRow extends StatelessWidget {
             const SizedBox(height: LuxSpacing.sm),
             Row(
               children: [
-                const Icon(Icons.business_outlined, size: 16, color: LuxColors.accent),
+                const Icon(Icons.business_outlined, size: 16, color: LuxColors.sapphire),
                 const SizedBox(width: LuxSpacing.sm),
                 Expanded(
                   child: Text(
                     context.l10n.corpDriverNoCollect(booking.companyName ?? ''),
-                    style: LuxTypography.caption.copyWith(color: LuxColors.white),
+                    style: LuxTypography.caption.copyWith(color: LuxColors.ink),
                   ),
                 ),
               ],

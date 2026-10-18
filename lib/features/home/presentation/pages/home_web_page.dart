@@ -10,6 +10,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart'
          Marker, MarkerId;
 import 'package:intl/intl.dart' show DateFormat, toBeginningOfSentenceCase;
 import 'package:video_player/video_player.dart';
+import '../../../../app/theme/app_theme.dart';
+import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/place_model.dart';
 import '../../../../core/utils/waiting_policy.dart';
@@ -50,7 +52,7 @@ class WebHomeSectionPreview extends StatelessWidget {
             onHoursChanged: (_) {}, onLocate: () {}, onSearch: () {},
             onOriginMapPick: () {}, onDestinationMapPick: () {}, scrollY: 0),
         WebHomeSection.marquee => const _MarqueeBar(),
-        WebHomeSection.fleet => _FleetSection(sectionKey: GlobalKey(), onBook: () {}),
+        WebHomeSection.fleet => _FleetSection(sectionKey: GlobalKey(), onBook: (_) {}),
         WebHomeSection.trust => _TrustSection(onBook: () {}),
         WebHomeSection.footer => _FooterSection(onFleet: () {}, onServices: () {}, onBusiness: () {}),
         WebHomeSection.datePanel => _InlineDatePanel(
@@ -84,7 +86,11 @@ class WebHomePage extends StatefulWidget {
     required this.onOriginMapPick,
     required this.onDestinationMapPick,
     required this.routeInfo,
+    this.onChooseClass,
   });
+
+  /// Elegir una clase en la flota: queda para la reserva.
+  final ValueChanged<VehicleClass>? onChooseClass;
 
   final ServiceType serviceType;
   final Place? origin;
@@ -150,6 +156,12 @@ class _WebHomePageState extends State<WebHomePage> {
     });
   }
 
+  void _scrollToTop() => _scroll.animateTo(
+        0,
+        duration: const Duration(milliseconds: 900),
+        curve: const Cubic(0.16, 1, 0.3, 1),
+      );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -194,9 +206,14 @@ class _WebHomePageState extends State<WebHomePage> {
                   const _BookSection(),
 
                   // ── Fleet horizontal carousel ─────────────────────────
+                  // Elegir una clase sube al buscador con ella seleccionada:
+                  // reservar sin recogida solo mostraría un error lejos.
                   _FleetSection(
                     sectionKey: _fleetKey,
-                    onBook: widget.onSearch,
+                    onBook: (vc) {
+                      widget.onChooseClass?.call(vc);
+                      _scrollToTop();
+                    },
                   ),
 
                   // ── Trust: promise + how it works ─────────────────────
@@ -205,7 +222,7 @@ class _WebHomePageState extends State<WebHomePage> {
                   // ── Business split ────────────────────────────────────
                   _BusinessSection(
                     sectionKey:  _businessKey,
-                    onLearnMore: widget.onSearch,
+                    onLearnMore: () => context.go('/empresas'),
                   ),
 
                   // ── CTA full-bleed ────────────────────────────────────

@@ -12,6 +12,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/utils/waiting_policy.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../app/theme/lux_motion.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../../loyalty/presentation/loyalty_widgets.dart';
 
@@ -104,7 +105,7 @@ class _Content extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final fade = CurvedAnimation(parent: anim, curve: const Interval(0.35, 1, curve: LuxMotion.curve));
+    final fade = CurvedAnimation(parent: anim, curve: const Interval(0.35, 1, curve: LuxMotion.emphasized));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -143,8 +144,8 @@ class _Content extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () => context.go('/ride/${booking.id}'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: LD.cta,
-                      foregroundColor: LD.onCta,
+                      backgroundColor: LD.sph,
+                      foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                       textStyle: const TextStyle(
@@ -235,7 +236,7 @@ class _SummaryCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(booking.vehicleClass.localizedLabel(l).toUpperCase(), style: uiLabel(color: LD.accent)),
+                    Text(booking.vehicleClass.localizedLabel(l).toUpperCase(), style: uiLabel(color: LD.sph)),
                     const SizedBox(height: 4),
                     Text(booking.vehicleClass.localizedDescription(l), style: bodyText(size: 13, color: LD.ink3)),
                   ],
@@ -258,7 +259,7 @@ class _SummaryCard extends StatelessWidget {
                                   LuxMoney.format(booking.discount), loyaltyTierName(l, booking.loyaltyTier) ?? '')
                               : l.promoSavedLine(LuxMoney.format(booking.discount), booking.promoCode ?? ''),
                           textAlign: TextAlign.end,
-                          style: uiLabel(spacing: 0.4, color: LD.accent)),
+                          style: uiLabel(spacing: 0.4, color: LD.sph)),
                     Text(booking.isCorporate
                             ? l.corpBilledTo(booking.companyName ?? '')
                             : paidByCard ? l.bookingFixedPricePaidByCard : l.bookingFixedPricePayDriver,
@@ -312,7 +313,7 @@ class _Row extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: 18, color: LD.accent),
+            Icon(icon, size: 18, color: LD.sph),
             const SizedBox(width: 12),
             Expanded(child: Text(label, style: bodyText(size: 14, color: LD.ink).copyWith(height: 1.4))),
           ],
@@ -339,7 +340,7 @@ class _Assurances extends StatelessWidget {
         children: [
           for (final (icon, text) in _items(context.l10n))
             Row(mainAxisSize: MainAxisSize.min, children: [
-              Icon(icon, size: 14, color: LD.accent),
+              Icon(icon, size: 14, color: LD.sph),
               const SizedBox(width: 6),
               Flexible(child: Text(text, style: uiLabel(size: 11, spacing: 0.3, color: LD.ink2))),
             ]),
@@ -358,7 +359,7 @@ class _AnimatedCheck extends StatelessWidget {
           animation: progress,
           builder: (_, __) => CustomPaint(
             size: const Size(88, 88),
-            painter: _CheckPainter(LuxMotion.curve.transform(progress.value)),
+            painter: _CheckPainter(LuxMotion.emphasized.transform(progress.value)),
           ),
         ),
       );
@@ -375,14 +376,14 @@ class _CheckPainter extends CustomPainter {
     final ring = (t / 0.55).clamp(0.0, 1.0);
     final tick = ((t - 0.45) / 0.55).clamp(0.0, 1.0);
 
-    canvas.drawCircle(c, r * (0.85 + 0.15 * ring), Paint()..color = LuxPalette.champagne.withValues(alpha: 0.14 * ring));
+    canvas.drawCircle(c, r * (0.85 + 0.15 * ring), Paint()..color = LD.sph.withValues(alpha: 0.14 * ring));
     canvas.drawArc(
       Rect.fromCircle(center: c, radius: r - 4),
       -1.5708,
       6.2832 * ring,
       false,
       Paint()
-        ..color = LuxPalette.champagne
+        ..color = LD.sph
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.5
         ..strokeCap = StrokeCap.round,
@@ -402,7 +403,7 @@ class _CheckPainter extends CustomPainter {
       canvas.drawPath(
         path,
         Paint()
-          ..color = LuxPalette.champagneDeep
+          ..color = LD.sphDim
           ..style = PaintingStyle.stroke
           ..strokeWidth = 3
           ..strokeCap = StrokeCap.round
@@ -427,7 +428,7 @@ class _Status extends StatelessWidget {
         child: SizedBox(
           width: 28,
           height: 28,
-          child: CircularProgressIndicator(strokeWidth: 2, color: LuxPalette.champagne),
+          child: CircularProgressIndicator(strokeWidth: 2, color: LD.sph),
         ),
       );
     }

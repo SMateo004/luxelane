@@ -6,7 +6,7 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <meta name="description" content="Luxelane — private chauffeur in Santa Cruz, Bolivia">
-  <meta name="theme-color" content="#FAF8F4">
+  <meta name="theme-color" content="#FAFBFE">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Luxelane">
@@ -26,7 +26,7 @@
 
   <style>
     body {
-      background-color: #FAF8F4;
+      background-color: #FAFBFE;
       margin: 0;
       padding: 0;
       overflow: hidden;
@@ -40,6 +40,14 @@
     // Firebase is initialized by FlutterFire — no manual init needed here
   </script>
 
-  <script src="flutter_bootstrap.js" async></script>
+  <!-- A new URL per build, so browsers never reuse an old app after a deploy. -->
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.src = 'flutter_bootstrap.js?v=' + {{flutter_service_worker_version}};
+      s.async = true;
+      document.body.appendChild(s);
+    })();
+  </script>
 </body>
 </html>

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
@@ -30,9 +31,12 @@ class BookingCreateRequested extends BookingEvent {
     this.passengerCount = 1,
     this.luggageCount = 0,
     this.flightNumber,
+    this.flightType,
+    this.pickupAirport,
     this.hours,
     this.currency = 'bob',
     this.stripePaymentIntentId,
+    this.paymentMethodId,
     this.quoteId,
     this.passengerName,
     this.passengerPhone,
@@ -52,9 +56,14 @@ class BookingCreateRequested extends BookingEvent {
   final int passengerCount;
   final int luggageCount;
   final String? flightNumber;
+  final String? flightType;
+  final String? pickupAirport;
   final int? hours;
   final String currency;
   final String? stripePaymentIntentId;
+
+  /// Saved card for a trip beyond the card-hold window.
+  final String? paymentMethodId;
   final String? quoteId;
   final String? passengerName;
   final String? passengerPhone;
@@ -77,6 +86,8 @@ class BookingCreateRequested extends BookingEvent {
         passengerCount,
         luggageCount,
         flightNumber,
+        flightType,
+        pickupAirport,
         hours,
         stripePaymentIntentId,
       ];
@@ -116,6 +127,15 @@ class BookingStatusChanged extends BookingEvent {
 
 class BookingRiderTripsRequested extends BookingEvent {
   const BookingRiderTripsRequested({required this.riderId});
+  final String riderId;
+  @override
+  List<Object?> get props => [riderId];
+}
+
+/// Como [BookingRiderTripsRequested], pero la lista sigue en vivo: una
+/// reserva nueva o un cambio de estado aparecen sin recargar.
+class BookingRiderTripsWatched extends BookingEvent {
+  const BookingRiderTripsWatched({required this.riderId});
   final String riderId;
   @override
   List<Object?> get props => [riderId];
@@ -196,6 +216,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     on<BookingCancelRequested>(_onCancel);
     on<BookingStatusChanged>(_onStatusChanged);
     on<BookingRiderTripsRequested>(_onLoadTrips);
+    on<BookingRiderTripsWatched>(_onWatchTrips,
+        transformer: (events, mapper) => events.switchMap(mapper));
     on<BookingUpdateStatusRequested>(_onUpdateStatus);
   }
 
@@ -223,6 +245,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       passengerCount: event.passengerCount,
       luggageCount: event.luggageCount,
       flightNumber: event.flightNumber,
+      flightType: event.flightType,
+      pickupAirport: event.pickupAirport,
       hours: event.hours,
       currency: event.currency,
       stripePaymentIntentId: event.stripePaymentIntentId,
@@ -234,7 +258,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       billingReference: event.billingReference,
       promoCode: event.promoCode,
     );
-    final result = await _repo.createBooking(booking);
+    final result = await _repo.createBooking(booking,
+        paymentMethodId: event.paymentMethodId);
     result.fold(
       (f) => emit(BookingError(f.message)),
       (b) => emit(BookingCreated(b)),
@@ -304,6 +329,19 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     result.fold(
       (f) => emit(BookingError(f.message)),
       (list) => emit(BookingTripsLoaded(list)),
+    );
+  }
+
+  Future<void> _onWatchTrips(
+    BookingRiderTripsWatched event,
+    Emitter<BookingState> emit,
+  ) async {
+    if (state is! BookingTripsLoaded) emit(const BookingLoading());
+    await emit.forEach<List<Booking>>(
+      _repo.watchBookingsByRider(event.riderId),
+      onData: BookingTripsLoaded.new,
+      onError: (_, __) =>
+          const BookingError('No pudimos cargar tus viajes. Reintenta.'),
     );
   }
 }

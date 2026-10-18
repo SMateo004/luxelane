@@ -29,9 +29,9 @@ class _FooterSection extends StatelessWidget {
     return Container(
       color: LD.bg2,
       child: Stack(children: [
-        // Champagne top line
+        // Sapphire top line
         Positioned(top: 0, left: 0, right: 0,
-          child: Container(height: 1, color: LD.accent.withAlpha(102))),
+          child: Container(height: 1, color: LD.sph.withAlpha(102))),
         Padding(
           padding: EdgeInsets.fromLTRB(narrow ? 24 : 48, 60, narrow ? 24 : 48, 40),
           child: Center(
@@ -43,12 +43,12 @@ class _FooterSection extends StatelessWidget {
                   Container(
                     width: 26, height: 26,
                     decoration: BoxDecoration(
-                      border: Border.all(color: LD.accent, width: 1.5),
+                      border: Border.all(color: LD.sph, width: 1.5),
                     ),
                     child: Center(
                       child: Text('L', style: TextStyle(
                         fontFamily: kSerif, fontSize: 15, fontWeight: FontWeight.w500,
-                        color: LD.accent,
+                        color: LD.sph,
                         decoration: TextDecoration.none,
                       )),
                     ),

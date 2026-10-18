@@ -28,7 +28,7 @@ class LuxErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: const Color(0xFF0A0A0A),
+        backgroundColor: LuxColors.bg,
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(LuxSpacing.lg),
@@ -37,14 +37,14 @@ class LuxErrorScreen extends StatelessWidget {
               children: [
                 const Icon(
                   Icons.warning_amber_rounded,
-                  color: LuxColors.accent,
+                  color: LuxColors.sapphire,
                   size: 56,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 Text(
                   context.l10n.coreErrorTitle,
                   style: const TextStyle(
-                    color: LuxColors.white,
+                    color: LuxColors.ink,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
@@ -53,7 +53,7 @@ class LuxErrorScreen extends StatelessWidget {
                 const SizedBox(height: LuxSpacing.sm),
                 Text(
                   context.l10n.coreErrorBody,
-                  style: const TextStyle(color: LuxColors.whiteTertiary),
+                  style: const TextStyle(color: LuxColors.inkTertiary),
                   textAlign: TextAlign.center,
                 ),
                 if (onRetry != null) ...[
@@ -62,7 +62,7 @@ class LuxErrorScreen extends StatelessWidget {
                     onPressed: onRetry,
                     child: Text(
                       context.l10n.commonRetry,
-                      style: const TextStyle(color: LuxColors.accent),
+                      style: const TextStyle(color: LuxColors.sapphire),
                     ),
                   ),
                 ],

@@ -16,7 +16,7 @@ import 'admin_shared_widgets.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TAB: Reportes — operations metrics over the bookings already streamed into
-// AdminState. Every chart is a single series in champagne (identity comes from
+// AdminState. Every chart is a single series in sapphire (identity comes from
 // the axis/row labels, never from color); status colors are not used here.
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -268,14 +268,14 @@ class _ReportKpi extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(children: [
-                Icon(icon, color: LuxColors.accent, size: 18),
+                Icon(icon, color: LuxColors.sapphire, size: 18),
                 const SizedBox(width: LuxSpacing.sm),
                 Expanded(
                   child: Text(label,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: LuxTypography.caption
-                          .copyWith(color: LuxColors.whiteSecondary)),
+                          .copyWith(color: LuxColors.inkSecondary)),
                 ),
               ]),
               const SizedBox(height: LuxSpacing.sm),
@@ -284,7 +284,7 @@ class _ReportKpi extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(value,
                     style: LuxTypography.headlineLarge.copyWith(
-                        color: LuxColors.white,
+                        color: LuxColors.ink,
                         fontFamily: 'Cormorant Garamond',
                         fontSize: 34)),
               ),
@@ -362,17 +362,17 @@ class _ChartCard extends StatelessWidget {
 FlGridData _grid() => FlGridData(
       drawVerticalLine: false,
       getDrawingHorizontalLine: (_) =>
-          FlLine(color: LuxColors.white.withOpacity(0.06), strokeWidth: 1),
+          FlLine(color: LuxColors.ink.withOpacity(0.06), strokeWidth: 1),
     );
 
 BarTouchData _touch(String Function(int index) text) => BarTouchData(
       touchTooltipData: BarTouchTooltipData(
-        getTooltipColor: (_) => LuxColors.blackElevated,
-        tooltipBorder: const BorderSide(color: LuxColors.blackBorder),
+        getTooltipColor: (_) => LuxColors.surfaceMuted,
+        tooltipBorder: const BorderSide(color: LuxColors.border),
         tooltipRoundedRadius: LuxRadius.sm,
         getTooltipItem: (group, _, __, ___) => BarTooltipItem(
           text(group.x),
-          LuxTypography.caption.copyWith(color: LuxColors.white),
+          LuxTypography.caption.copyWith(color: LuxColors.ink),
         ),
       ),
     );
@@ -380,7 +380,7 @@ BarTouchData _touch(String Function(int index) text) => BarTouchData(
 BarChartRodData _rod(double y, double width) => BarChartRodData(
       toY: y,
       width: width,
-      color: LuxColors.accent,
+      color: LuxColors.sapphire,
       // 4px rounded data end, square at the baseline.
       borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
     );
@@ -538,11 +538,11 @@ class _ShareRows extends StatelessWidget {
                       child: Text(r.label,
                           overflow: TextOverflow.ellipsis,
                           style: LuxTypography.bodyMedium
-                              .copyWith(color: LuxColors.white))),
+                              .copyWith(color: LuxColors.ink))),
                   Text(
                     '${n.format(r.count)} · ${pct.format(total == 0 ? 0 : r.count / total)}',
                     style: LuxTypography.caption
-                        .copyWith(color: LuxColors.whiteSecondary),
+                        .copyWith(color: LuxColors.inkSecondary),
                   ),
                 ]),
                 const SizedBox(height: 6),
@@ -551,10 +551,10 @@ class _ShareRows extends StatelessWidget {
                   child: SizedBox(
                     height: 8,
                     child: Stack(children: [
-                      Container(color: LuxColors.white.withOpacity(0.06)),
+                      Container(color: LuxColors.ink.withOpacity(0.06)),
                       FractionallySizedBox(
                         widthFactor: total == 0 ? 0 : r.count / total,
-                        child: Container(color: LuxColors.accent),
+                        child: Container(color: LuxColors.sapphire),
                       ),
                     ]),
                   ),
@@ -583,8 +583,8 @@ String _stamp(OpsReport r) => '${DateFormat('yyyyMMdd').format(r.from)}-'
     '${DateFormat('yyyyMMdd').format(r.to.subtract(const Duration(days: 1)))}';
 
 TextStyle get _th => LuxTypography.caption
-    .copyWith(color: LuxColors.whiteSecondary, fontWeight: FontWeight.w600);
-TextStyle get _td => LuxTypography.bodyMedium.copyWith(color: LuxColors.white);
+    .copyWith(color: LuxColors.inkSecondary, fontWeight: FontWeight.w600);
+TextStyle get _td => LuxTypography.bodyMedium.copyWith(color: LuxColors.ink);
 
 /// The table view behind the two daily charts (and their CSV export).
 class _DailyTable extends StatelessWidget {
@@ -600,8 +600,8 @@ class _DailyTable extends StatelessWidget {
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
-          iconColor: LuxColors.accent,
-          collapsedIconColor: LuxColors.whiteSecondary,
+          iconColor: LuxColors.sapphire,
+          collapsedIconColor: LuxColors.inkSecondary,
           title:
               Text(l.adminReportsDailyTable, style: LuxTypography.bodyMedium),
           expandedCrossAxisAlignment: CrossAxisAlignment.start,

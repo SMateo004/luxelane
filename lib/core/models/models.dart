@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../enums/enums.dart';
+import '../vehicles/vehicle_catalog.dart';
 import 'place_model.dart';
 
 export 'place_model.dart';
@@ -25,6 +26,7 @@ class User {
     required this.fcmTokens,
     this.companyId,
     this.companyRole,
+    this.ridePreferences = RidePreferences.none,
   });
 
   final String id;
@@ -48,6 +50,9 @@ class User {
 
   bool get isCompanyAdmin => companyId != null && companyRole == 'admin';
 
+  /// Cómo le gusta viajar (silencio, temperatura…); el chófer lo ve.
+  final RidePreferences ridePreferences;
+
   factory User.fromJson(Map<String, dynamic> j) => User(
         id: j['id'] as String,
         email: j['email'] as String,
@@ -68,6 +73,7 @@ class User {
         fcmTokens: List<String>.from(j['fcmTokens'] ?? []),
         companyId: j['companyId'] as String?,
         companyRole: j['companyRole'] as String?,
+        ridePreferences: RidePreferences.fromJson(j['ridePreferences']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -83,6 +89,7 @@ class User {
         'isActive': isActive,
         'stripeCustomerId': stripeCustomerId,
         'fcmTokens': fcmTokens,
+        'ridePreferences': ridePreferences.toJson(),
       };
 
   User copyWith({
@@ -95,6 +102,7 @@ class User {
     bool? isActive,
     String? stripeCustomerId,
     List<String>? fcmTokens,
+    RidePreferences? ridePreferences,
   }) =>
       User(
         id: id,
@@ -111,7 +119,114 @@ class User {
         fcmTokens: fcmTokens ?? this.fcmTokens,
         companyId: companyId,
         companyRole: companyRole,
+        ridePreferences: ridePreferences ?? this.ridePreferences,
       );
+}
+
+// ---------------------------------------------------------------------------
+// RidePreferences — el "estilo de viaje" del pasajero
+// ---------------------------------------------------------------------------
+
+enum CabinTemperature {
+  cool('Fresca', '20 °C'),
+  mild('Templada', '22 °C'),
+  warm('Cálida', '24 °C');
+
+  const CabinTemperature(this.label, this.hint);
+  final String label;
+  final String hint;
+}
+
+/// Lo que el pasajero prefiere en cada viaje. Se guarda en su perfil, se
+/// copia a cada reserva y el chófer lo ve antes de recogerlo: nadie tiene
+/// que pedir lo mismo dos veces.
+class RidePreferences {
+  const RidePreferences({
+    this.quiet = false,
+    this.temperature,
+    this.music = true,
+    this.luggageHelp = false,
+    this.openDoor = false,
+  });
+
+  static const none = RidePreferences();
+
+  /// Prefiere viajar sin conversación.
+  final bool quiet;
+  final CabinTemperature? temperature;
+
+  /// Música suave de fondo (false: viaje sin música).
+  final bool music;
+
+  /// Ayuda con el equipaje al subir y bajar.
+  final bool luggageHelp;
+
+  /// Que el chófer le abra la puerta.
+  final bool openDoor;
+
+  bool get isEmpty =>
+      !quiet && temperature == null && music && !luggageHelp && !openDoor;
+
+  /// Indicaciones breves para el chófer, en el orden en que las aplicará.
+  List<String> get driverNotes => [
+        if (openDoor) 'Abrir la puerta',
+        if (luggageHelp) 'Ayuda con el equipaje',
+        if (temperature != null)
+          'Cabina ${temperature!.label.toLowerCase()} (${temperature!.hint})',
+        if (quiet) 'Viaje en silencio',
+        if (!music) 'Sin música',
+      ];
+
+  factory RidePreferences.fromJson(Object? raw) {
+    if (raw is! Map) return none;
+    final t = raw['temperature'];
+    return RidePreferences(
+      quiet: raw['quiet'] == true,
+      temperature:
+          CabinTemperature.values.where((e) => e.name == t).firstOrNull,
+      music: raw['music'] != false,
+      luggageHelp: raw['luggageHelp'] == true,
+      openDoor: raw['openDoor'] == true,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'quiet': quiet,
+        'temperature': temperature?.name,
+        'music': music,
+        'luggageHelp': luggageHelp,
+        'openDoor': openDoor,
+      };
+
+  RidePreferences copyWith({
+    bool? quiet,
+    CabinTemperature? temperature,
+    bool clearTemperature = false,
+    bool? music,
+    bool? luggageHelp,
+    bool? openDoor,
+  }) =>
+      RidePreferences(
+        quiet: quiet ?? this.quiet,
+        temperature:
+            clearTemperature ? null : (temperature ?? this.temperature),
+        music: music ?? this.music,
+        luggageHelp: luggageHelp ?? this.luggageHelp,
+        openDoor: openDoor ?? this.openDoor,
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is RidePreferences &&
+      other.quiet == quiet &&
+      other.temperature == temperature &&
+      other.music == music &&
+      other.luggageHelp == luggageHelp &&
+      other.openDoor == openDoor;
+
+  @override
+  int get hashCode =>
+      Object.hash(quiet, temperature, music, luggageHelp, openDoor);
 }
 
 // ---------------------------------------------------------------------------
@@ -247,6 +362,104 @@ class Vehicle {
 }
 
 // ---------------------------------------------------------------------------
+// BookingSettlement
+// ---------------------------------------------------------------------------
+
+/// Comisión de plataforma por defecto, mientras el admin no configure otra
+/// (el servidor usa el mismo valor: functions/src/settlement.ts).
+const double kDefaultCommissionPct = 20;
+
+/// Antelación con la que una reserva confirmada ya ocupa al chófer.
+const kBusyLead = Duration(minutes: 60);
+
+/// Reparto de un viaje completado entre la plataforma y el chófer.
+///
+/// Lo fija el servidor (Cloud Function `settleBooking`) con la comisión
+/// vigente al completar el viaje; la app solo lo lee.
+class BookingSettlement {
+  const BookingSettlement({
+    required this.amount,
+    required this.commissionPct,
+    required this.platformCommission,
+    required this.driverPayout,
+  });
+
+  /// Importe repartido (precio final o estimado en ese momento).
+  final double amount;
+  final double commissionPct;
+  final double platformCommission;
+  final double driverPayout;
+
+  static BookingSettlement? fromJson(Object? j) {
+    if (j is! Map) return null;
+    double n(String k) => (j[k] as num?)?.toDouble() ?? 0.0;
+    return BookingSettlement(
+      amount: n('amount'),
+      commissionPct: n('commissionPct'),
+      platformCommission: n('platformCommission'),
+      driverPayout: n('driverPayout'),
+    );
+  }
+
+  /// Reparto provisional con [commissionPct], para viajes que el servidor aún
+  /// no ha repartido.
+  factory BookingSettlement.estimate(double amount,
+      {double commissionPct = kDefaultCommissionPct}) {
+    double round(double v) => (v * 100).roundToDouble() / 100;
+    final pct = commissionPct.clamp(0, 100).toDouble();
+    final commission = round(amount * pct / 100);
+    return BookingSettlement(
+      amount: amount,
+      commissionPct: pct,
+      platformCommission: commission,
+      driverPayout: round(amount - commission),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// DriverInfo
+// ---------------------------------------------------------------------------
+
+/// Datos públicos del chófer asignado que el servidor copia en la reserva
+/// (el pasajero no puede leer el perfil de otros usuarios).
+class DriverInfo {
+  const DriverInfo({
+    required this.name,
+    this.phone = '',
+    this.photoUrl,
+    this.vehicle,
+  });
+
+  final String name;
+  final String phone;
+  final String? photoUrl;
+
+  /// "Toyota Camry · Negro · 1234ABC", o null si no hay vehículo.
+  final String? vehicle;
+
+  static DriverInfo? fromJson(Object? j) {
+    if (j is! Map) return null;
+    final v = j['vehicle'];
+    String? vehicle;
+    if (v is Map) {
+      final parts = [
+        '${v['make'] ?? ''} ${v['model'] ?? ''}'.trim(),
+        (v['color'] as String?) ?? '',
+        (v['plate'] as String?) ?? '',
+      ].where((p) => p.isNotEmpty);
+      vehicle = parts.isEmpty ? null : parts.join(' · ');
+    }
+    return DriverInfo(
+      name: (j['name'] as String?) ?? '',
+      phone: (j['phone'] as String?) ?? '',
+      photoUrl: j['photoUrl'] as String?,
+      vehicle: vehicle,
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Booking
 // ---------------------------------------------------------------------------
 
@@ -268,6 +481,8 @@ class Booking {
     required this.updatedAt,
     this.notes,
     this.flightNumber,
+    this.flightType,
+    this.pickupAirport,
     this.hours,
     this.passengerCount = 1,
     this.luggageCount = 0,
@@ -298,6 +513,13 @@ class Booking {
     this.loyaltyTier,
     this.refundedAmount = 0,
     this.adjustments = const [],
+    this.pricingReviewReason,
+    this.settlement,
+    this.refunded = false,
+    this.driverInfo,
+    this.cardPayment = false,
+    this.cardPaymentFailed = false,
+    this.riderPreferences = RidePreferences.none,
   });
 
   final String id;
@@ -316,6 +538,12 @@ class Booking {
   final DateTime updatedAt;
   final String? notes;
   final String? flightNumber;
+
+  /// [FlightType.name] of the passenger's flight (airport pickups only).
+  final String? flightType;
+
+  /// IATA code of the pickup airport, e.g. "VVI" (airport pickups only).
+  final String? pickupAirport;
   final int? hours;
   final int passengerCount;
   final int luggageCount;
@@ -408,13 +636,70 @@ class Booking {
   /// When the chauffeur will actually be there.
   DateTime get effectivePickup => pickupAt ?? scheduledAt;
 
+  /// Lo marca el servidor si el precio no respeta la tarifa vigente
+  /// (`below_fare`, `fare_disabled`, `unknown_fare`). Solo lectura.
+  final String? pricingReviewReason;
+
+  /// Reparto plataforma / chófer fijado por el servidor. Solo lectura.
+  final BookingSettlement? settlement;
+
+  /// El cobro se reembolsó (lo marca `refundPayment`): el viaje ya no
+  /// genera comisión ni pago al chófer. Solo lectura.
+  final bool refunded;
+
+  /// Chófer asignado, copiado por el servidor. Solo lectura.
+  final DriverInfo? driverInfo;
+
+  /// Estilo de viaje del pasajero, copiado de su perfil al reservar.
+  final RidePreferences riderPreferences;
+
+  /// Se paga con tarjeta: el servidor la cobra al completar el viaje.
+  final bool cardPayment;
+
+  /// El cobro automático con tarjeta falló; se cobra a mano.
+  final bool cardPaymentFailed;
+
+  /// Cobro con tarjeta aún por resolver por el servidor: no se registra a
+  /// mano para no cobrar dos veces.
+  bool get cardPaymentPending =>
+      cardPayment && !cardPaymentFailed && paymentId == null;
+
+  /// Un viaje ocupa al chófer desde que sale a buscar al pasajero, o si la
+  /// recogida es en menos de [kBusyLead]. Uno confirmado para más adelante
+  /// no le impide atender otros mientras tanto.
+  bool occupiesDriver([DateTime? now]) {
+    switch (status) {
+      case BookingStatus.driverArriving:
+      case BookingStatus.driverArrived:
+      case BookingStatus.inProgress:
+        return true;
+      case BookingStatus.confirmed:
+        return scheduledAt.isBefore((now ?? DateTime.now()).add(kBusyLead));
+      default:
+        return false;
+    }
+  }
+
+  /// Importe que se factura: el precio final o, si no hay, el estimado.
+  double get chargedAmount => finalPrice ?? estimatedPrice;
+
+  /// Reparto vigente del viaje: el del servidor si corresponde al importe
+  /// actual o, si no, uno provisional con [commissionPct].
+  BookingSettlement settlementOr(double commissionPct) {
+    final s = settlement;
+    if (s != null && (s.amount - chargedAmount).abs() < 0.005) return s;
+    return BookingSettlement.estimate(chargedAmount,
+        commissionPct: s?.commissionPct ?? commissionPct);
+  }
+
   factory Booking.fromJson(Map<String, dynamic> j) => Booking(
         id: j['id'] as String? ?? '',
         riderId: j['riderId'] as String? ?? '',
         driverId: j['driverId'] as String?,
         origin: Place.fromJson(j['origin'] as Map<String, dynamic>? ?? {}),
-        destination: Place.fromJson(j['destination'] as Map<String, dynamic>? ?? {}),
-        scheduledAt: j['scheduledAt'] != null 
+        destination:
+            Place.fromJson(j['destination'] as Map<String, dynamic>? ?? {}),
+        scheduledAt: j['scheduledAt'] != null
             ? (j['scheduledAt'] as Timestamp).toDate()
             : DateTime.now(),
         vehicleClass: VehicleClass.fromId(j['class'] ?? j['vehicleClass']),
@@ -426,14 +711,16 @@ class Booking {
         estimatedPrice: (j['estimatedPrice'] as num?)?.toDouble() ?? 0.0,
         finalPrice: (j['finalPrice'] as num?)?.toDouble(),
         paymentId: j['paymentId'] as String?,
-        createdAt: j['createdAt'] != null 
+        createdAt: j['createdAt'] != null
             ? (j['createdAt'] as Timestamp).toDate()
             : DateTime.now(),
-        updatedAt: j['updatedAt'] != null 
+        updatedAt: j['updatedAt'] != null
             ? (j['updatedAt'] as Timestamp).toDate()
             : DateTime.now(),
         notes: j['notes'] as String?,
         flightNumber: j['flightNumber'] as String?,
+        flightType: j['flightType'] as String?,
+        pickupAirport: j['pickupAirport'] as String?,
         hours: j['hours'] as int?,
         passengerCount: j['passengerCount'] as int? ?? 1,
         luggageCount: j['luggageCount'] as int? ?? 0,
@@ -473,6 +760,14 @@ class Booking {
             .map(PriceAdjustment.fromJson)
             .whereType<PriceAdjustment>()
             .toList(),
+        pricingReviewReason: (j['pricingReview'] as Map?)?['reason'] as String?,
+        settlement: BookingSettlement.fromJson(j['settlement']),
+        refunded: j['refunded'] == true,
+        driverInfo: DriverInfo.fromJson(j['driverInfo']),
+        cardPayment: j['stripePaymentIntentId'] != null ||
+            j['stripePaymentMethodId'] != null,
+        cardPaymentFailed: j['cardPaymentFailed'] == true,
+        riderPreferences: RidePreferences.fromJson(j['riderPreferences']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -483,6 +778,8 @@ class Booking {
         'destination': destination.toJson(),
         'scheduledAt': Timestamp.fromDate(scheduledAt),
         'class': vehicleClass.name,
+        // Cloud Functions read `vehicleClass`; keep both keys in sync.
+        'vehicleClass': vehicleClass.name,
         'serviceType': serviceType.name,
         'status': status.label,
         'estimatedPrice': estimatedPrice,
@@ -492,6 +789,8 @@ class Booking {
         'updatedAt': Timestamp.fromDate(updatedAt),
         'notes': notes,
         'flightNumber': flightNumber,
+        'flightType': flightType,
+        'pickupAirport': pickupAirport,
         'hours': hours,
         'passengerCount': passengerCount,
         'luggageCount': luggageCount,
@@ -524,6 +823,8 @@ class Booking {
         updatedAt: updatedAt ?? this.updatedAt,
         notes: notes,
         flightNumber: flightNumber,
+        flightType: flightType,
+        pickupAirport: pickupAirport,
         hours: hours,
         passengerCount: passengerCount,
         luggageCount: luggageCount,
@@ -554,6 +855,13 @@ class Booking {
         loyaltyTier: loyaltyTier,
         refundedAmount: refundedAmount,
         adjustments: adjustments,
+        pricingReviewReason: pricingReviewReason,
+        settlement: settlement,
+        refunded: refunded,
+        driverInfo: driverInfo,
+        cardPayment: cardPayment,
+        cardPaymentFailed: cardPaymentFailed,
+        riderPreferences: riderPreferences,
       );
 }
 
@@ -847,7 +1155,8 @@ class Ride {
         'riderId': riderId,
         'driverId': driverId,
         'startedAt': Timestamp.fromDate(startedAt),
-        'completedAt': completedAt != null ? Timestamp.fromDate(completedAt!) : null,
+        'completedAt':
+            completedAt != null ? Timestamp.fromDate(completedAt!) : null,
         'driverRoute': driverRoute,
         'distanceKm': distanceKm,
         'durationMin': durationMin,
@@ -877,21 +1186,32 @@ class Payment {
   final String bookingId;
   final String riderId;
   final String stripePaymentIntentId;
+
+  /// Importe en centavos enteros, como Stripe (12550 = Bs 125,50). Las
+  /// reservas guardan bolivianos; convierte con [amountBs] / [toCents].
   final double amount;
   final String currency;
   final PaymentStatus status;
   final DateTime createdAt;
   final String? receiptUrl;
 
+  /// Importe en bolivianos.
+  double get amountBs => amount / 100;
+
+  /// Bolivianos → centavos enteros (sin errores de coma flotante).
+  static int toCents(double bs) => (bs * 100).round();
+
   factory Payment.fromJson(Map<String, dynamic> j) => Payment(
         id: j['id'] as String,
-        bookingId: j['bookingId'] as String,
-        riderId: j['riderId'] as String,
-        stripePaymentIntentId: j['stripePaymentIntentId'] as String,
-        amount: (j['amount'] as num).toDouble(),
-        currency: j['currency'] as String,
-        status: PaymentStatusX.fromString(j['status'] as String),
-        createdAt: (j['createdAt'] as Timestamp).toDate(),
+        bookingId: j['bookingId'] as String? ?? '',
+        riderId: j['riderId'] as String? ?? '',
+        stripePaymentIntentId: j['stripePaymentIntentId'] as String? ?? '',
+        amount: (j['amount'] as num?)?.toDouble() ?? 0.0,
+        currency: j['currency'] as String? ?? 'bob',
+        status: PaymentStatusX.fromString(j['status'] as String? ?? 'pending'),
+        createdAt: j['createdAt'] is Timestamp
+            ? (j['createdAt'] as Timestamp).toDate()
+            : DateTime.now(),
         receiptUrl: j['receiptUrl'] as String?,
       );
 
@@ -912,6 +1232,10 @@ class Payment {
 // PricingRule (admin-configurable)
 // ---------------------------------------------------------------------------
 
+/// Tarifa de un tipo de servicio para una clase de vehículo.
+///
+/// Los importes están en bolivianos (Bs). Los nombres de campo `*Usd` se
+/// mantienen por compatibilidad con los documentos ya guardados en Firestore.
 class PricingRule {
   const PricingRule({
     required this.id,
@@ -921,6 +1245,9 @@ class PricingRule {
     required this.pricePerKmUsd,
     required this.pricePerHourUsd,
     required this.minimumPriceUsd,
+    this.isActive = true,
+    this.updatedAt,
+    this.updatedBy,
   });
 
   final String id;
@@ -931,6 +1258,38 @@ class PricingRule {
   final double pricePerHourUsd;
   final double minimumPriceUsd;
 
+  /// Si es false, la combinación clase + servicio no se puede reservar.
+  final bool isActive;
+  final DateTime? updatedAt;
+  final String? updatedBy;
+
+  /// Id de documento canónico en /pricingRules: `business_oneWay`, etc.
+  static String idFor(VehicleClass vc, ServiceType st) =>
+      '${vc.name}_${st.name}';
+
+  /// Tarifa de fábrica, usada mientras el admin no haya guardado otra.
+  factory PricingRule.fallback(VehicleClass vc, ServiceType st) {
+    final r = DefaultPricing.rules[vc]?[st] ?? _catalogRule(vc, st);
+    return PricingRule(
+      id: idFor(vc, st),
+      vehicleClass: vc,
+      serviceType: st,
+      basePriceUsd: r['base']!,
+      pricePerKmUsd: r['perKm']!,
+      pricePerHourUsd: r['perHour']!,
+      minimumPriceUsd: r['min']!,
+    );
+  }
+
+  /// Types added by admins have no factory table: their own catalog prices.
+  static Map<String, double> _catalogRule(VehicleClass vc, ServiceType st) {
+    final info = VehicleCatalog.instance.info(vc);
+    final p = st == ServiceType.oneWay ? info.oneWay : info.byTheHour;
+    return {'base': p?.base ?? 0, 'perKm': p?.perKm ?? 0, 'perHour': p?.perHour ?? 0, 'min': p?.min ?? 0};
+  }
+
+  static double _num(Object? v) => (v as num?)?.toDouble() ?? 0.0;
+
   factory PricingRule.fromJson(Map<String, dynamic> j) => PricingRule(
         id: j['id'] as String,
         vehicleClass: VehicleClass.fromId(j['vehicleClass']),
@@ -938,10 +1297,15 @@ class PricingRule {
           (e) => e.name == j['serviceType'],
           orElse: () => ServiceType.oneWay,
         ),
-        basePriceUsd: (j['basePriceUsd'] as num).toDouble(),
-        pricePerKmUsd: (j['pricePerKmUsd'] as num).toDouble(),
-        pricePerHourUsd: (j['pricePerHourUsd'] as num).toDouble(),
-        minimumPriceUsd: (j['minimumPriceUsd'] as num).toDouble(),
+        basePriceUsd: _num(j['basePriceUsd']),
+        pricePerKmUsd: _num(j['pricePerKmUsd']),
+        pricePerHourUsd: _num(j['pricePerHourUsd']),
+        minimumPriceUsd: _num(j['minimumPriceUsd']),
+        isActive: j['isActive'] as bool? ?? true,
+        updatedAt: j['updatedAt'] is Timestamp
+            ? (j['updatedAt'] as Timestamp).toDate()
+            : null,
+        updatedBy: j['updatedBy'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -952,13 +1316,73 @@ class PricingRule {
         'pricePerKmUsd': pricePerKmUsd,
         'pricePerHourUsd': pricePerHourUsd,
         'minimumPriceUsd': minimumPriceUsd,
+        'isActive': isActive,
       };
 
-  double estimateOneWay(double km) =>
-      (basePriceUsd + km * pricePerKmUsd).clamp(minimumPriceUsd, double.infinity);
+  PricingRule copyWith({
+    double? basePriceUsd,
+    double? pricePerKmUsd,
+    double? pricePerHourUsd,
+    double? minimumPriceUsd,
+    bool? isActive,
+  }) =>
+      PricingRule(
+        id: id,
+        vehicleClass: vehicleClass,
+        serviceType: serviceType,
+        basePriceUsd: basePriceUsd ?? this.basePriceUsd,
+        pricePerKmUsd: pricePerKmUsd ?? this.pricePerKmUsd,
+        pricePerHourUsd: pricePerHourUsd ?? this.pricePerHourUsd,
+        minimumPriceUsd: minimumPriceUsd ?? this.minimumPriceUsd,
+        isActive: isActive ?? this.isActive,
+        updatedAt: updatedAt,
+        updatedBy: updatedBy,
+      );
 
-  double estimateByHour(int hours) =>
-      (basePriceUsd + hours * pricePerHourUsd).clamp(minimumPriceUsd, double.infinity);
+  /// Mismos importes que [other] (ignora metadatos).
+  bool sameFareAs(PricingRule other) =>
+      basePriceUsd == other.basePriceUsd &&
+      pricePerKmUsd == other.pricePerKmUsd &&
+      pricePerHourUsd == other.pricePerHourUsd &&
+      minimumPriceUsd == other.minimumPriceUsd &&
+      isActive == other.isActive;
+
+  /// Errores de validación en español; lista vacía si la tarifa es válida.
+  List<String> validate() {
+    final errors = <String>[];
+    final values = [
+      basePriceUsd,
+      pricePerKmUsd,
+      pricePerHourUsd,
+      minimumPriceUsd,
+    ];
+    if (values.any((v) => v.isNaN || v < 0)) {
+      errors.add('Los importes no pueden ser negativos');
+    }
+    if (serviceType == ServiceType.oneWay &&
+        basePriceUsd == 0 &&
+        pricePerKmUsd == 0 &&
+        minimumPriceUsd == 0) {
+      errors.add('Un traslado no puede costar Bs0');
+    }
+    if (serviceType == ServiceType.byTheHour && pricePerHourUsd <= 0) {
+      errors.add('El servicio por horas necesita un precio por hora');
+    }
+    return errors;
+  }
+
+  /// Precio de un servicio: base + distancia (solo ida) o base + horas
+  /// (por horas), nunca por debajo del mínimo.
+  double estimate({double km = 0, int hours = 2}) {
+    final raw = serviceType == ServiceType.byTheHour
+        ? basePriceUsd + hours * pricePerHourUsd
+        : basePriceUsd + km * pricePerKmUsd;
+    return raw < minimumPriceUsd ? minimumPriceUsd : raw;
+  }
+
+  double estimateOneWay(double km) => estimate(km: km);
+
+  double estimateByHour(int hours) => estimate(hours: hours);
 }
 
 // ---------------------------------------------------------------------------
@@ -974,10 +1398,12 @@ class AuditLog {
     required this.targetType,
     required this.details,
     required this.createdAt,
+    this.adminEmail,
   });
 
   final String id;
   final String adminId;
+  final String? adminEmail;
   final String action;
   final String targetId;
   final String targetType;
@@ -986,23 +1412,81 @@ class AuditLog {
 
   factory AuditLog.fromJson(Map<String, dynamic> j) => AuditLog(
         id: j['id'] as String,
-        adminId: j['adminId'] as String,
-        action: j['action'] as String,
-        targetId: j['targetId'] as String,
-        targetType: j['targetType'] as String,
+        adminId: j['adminId'] as String? ?? '',
+        adminEmail: j['adminEmail'] as String?,
+        action: j['action'] as String? ?? '',
+        targetId: j['targetId'] as String? ?? '',
+        targetType: j['targetType'] as String? ?? '',
         details: j['details'] as String? ?? '',
-        createdAt: (j['createdAt'] as Timestamp).toDate(),
+        // serverTimestamp() llega como null en la escritura local pendiente.
+        createdAt: j['createdAt'] is Timestamp
+            ? (j['createdAt'] as Timestamp).toDate()
+            : DateTime.now(),
       );
 
   Map<String, dynamic> toJson() => {
         'id': id,
         'adminId': adminId,
+        'adminEmail': adminEmail,
         'action': action,
         'targetId': targetId,
         'targetType': targetType,
         'details': details,
         'createdAt': Timestamp.fromDate(createdAt),
       };
+}
+
+// ---------------------------------------------------------------------------
+// Default pricing (fallback when Firestore unavailable)
+// ---------------------------------------------------------------------------
+
+abstract class DefaultPricing {
+  // Not const: VehicleClass overrides ==, so it can't key a const map.
+  static final Map<VehicleClass, Map<ServiceType, Map<String, double>>> rules =
+      {
+    VehicleClass.business: {
+      ServiceType.oneWay: {'base': 50, 'perKm': 3.0, 'perHour': 0, 'min': 50},
+      ServiceType.byTheHour: {'base': 0, 'perKm': 0, 'perHour': 80, 'min': 160},
+    },
+    VehicleClass.firstClass: {
+      ServiceType.oneWay: {'base': 80, 'perKm': 4.0, 'perHour': 0, 'min': 80},
+      ServiceType.byTheHour: {
+        'base': 0,
+        'perKm': 0,
+        'perHour': 120,
+        'min': 240
+      },
+    },
+    // Between Business Class and Business Van.
+    VehicleClass.businessSuv: {
+      ServiceType.oneWay: {'base': 70, 'perKm': 4.0, 'perHour': 0, 'min': 70},
+      ServiceType.byTheHour: {
+        'base': 0,
+        'perKm': 0,
+        'perHour': 115,
+        'min': 230
+      },
+    },
+    VehicleClass.businessVan: {
+      ServiceType.oneWay: {'base': 90, 'perKm': 5.0, 'perHour': 0, 'min': 90},
+      ServiceType.byTheHour: {
+        'base': 0,
+        'perKm': 0,
+        'perHour': 150,
+        'min': 300
+      },
+    },
+    VehicleClass.electric: {
+      ServiceType.oneWay: {'base': 60, 'perKm': 3.5, 'perHour': 0, 'min': 60},
+      ServiceType.byTheHour: {'base': 0, 'perKm': 0, 'perHour': 90, 'min': 180},
+    },
+  };
+
+  /// Precio con las tarifas de fábrica. La app usa `PricingCatalog`, que
+  /// aplica las tarifas que el admin haya guardado en Firestore.
+  static double estimate(VehicleClass vc, ServiceType st,
+          {double km = 0, int hours = 2}) =>
+      PricingRule.fallback(vc, st).estimate(km: km, hours: hours);
 }
 
 // ---------------------------------------------------------------------------
@@ -1025,7 +1509,8 @@ class AppNotification {
   final String userId;
   final String title;
   final String body;
-  final String type; // booking_confirmed, driver_arriving, driver_arrived, ride_started, ride_completed, etc.
+  final String
+      type; // booking_confirmed, driver_arriving, driver_arrived, ride_started, ride_completed, etc.
   final bool isRead;
   final DateTime createdAt;
   final String? bookingId;

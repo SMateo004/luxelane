@@ -172,8 +172,8 @@ class _PromiseCard extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: const BoxDecoration(
-                  color: LD.accentTint, shape: BoxShape.circle),
-              child: Icon(icon, size: 20, color: LD.accent),
+                  color: LD.sphTint, shape: BoxShape.circle),
+              child: Icon(icon, size: 20, color: LD.sph),
             ),
             const SizedBox(height: 24),
             Text(title, style: displayText(size: 24, weight: FontWeight.w500)),
@@ -194,14 +194,14 @@ class _StepTile extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         padding: const EdgeInsets.only(top: 20),
         decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: LD.accent)),
+          border: Border(top: BorderSide(color: LD.sph)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(n,
                 style: displayText(
-                    size: 34, color: LD.accent, weight: FontWeight.w400)),
+                    size: 34, color: LD.sph, weight: FontWeight.w400)),
             const SizedBox(height: 12),
             Text(title,
                 style: bodyText(size: 16, color: LD.ink)
@@ -236,10 +236,10 @@ class _TrustCtaState extends State<_TrustCta> {
             onTap: widget.onTap,
             child: AnimatedContainer(
               duration: LuxMotion.fast,
-              curve: LuxMotion.curve,
+              curve: LuxMotion.emphasized,
               height: 52,
               padding: const EdgeInsets.symmetric(horizontal: 32),
-              color: _hover ? LuxPalette.champagneLight : LD.cta,
+              color: _hover ? LuxColors.sapphireLight : LD.sph,
               // widthFactor keeps the button as wide as its label.
               child: Center(
                 widthFactor: 1,
@@ -250,7 +250,7 @@ class _TrustCtaState extends State<_TrustCta> {
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 2.2,
-                    color: LD.onCta,
+                    color: Colors.white,
                     decoration: TextDecoration.none,
                   ),
                 ),

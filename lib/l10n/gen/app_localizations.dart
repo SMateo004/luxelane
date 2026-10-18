@@ -2479,6 +2479,12 @@ abstract class AppLocalizations {
   /// **'DETALLES DEL VIAJE'**
   String get bookingTripDetailsHeading;
 
+  /// No description provided for @bookingVehicleUnavailable.
+  ///
+  /// In es, this message translates to:
+  /// **'Este vehículo no está disponible para este servicio en este momento. Elige otro.'**
+  String get bookingVehicleUnavailable;
+
   /// No description provided for @bookingViewMyBooking.
   ///
   /// In es, this message translates to:

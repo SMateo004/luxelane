@@ -32,6 +32,15 @@ abstract class AppConfig {
   static const String riderWebUrl =
       String.fromEnvironment('RIDER_URL', defaultValue: 'https://luxelane-4e7ae.web.app');
 
-  static const String fcmVapidKey =
-      String.fromEnvironment('FCM_VAPID_KEY');
+  static const String fcmVapidKey = String.fromEnvironment('FCM_VAPID_KEY');
+
+  /// OAuth *Web* client ID of the Firebase project (Google Cloud Console →
+  /// Credentials → "Web client (auto created by Google Service)").
+  /// Android needs it to obtain the ID token Firebase verifies.
+  static const String googleServerClientId =
+      String.fromEnvironment('GOOGLE_SERVER_CLIENT_ID');
+
+  /// OAuth iOS client ID (from GoogleService-Info.plist → CLIENT_ID).
+  static const String googleIosClientId =
+      String.fromEnvironment('GOOGLE_IOS_CLIENT_ID');
 }

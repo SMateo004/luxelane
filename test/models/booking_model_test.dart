@@ -46,6 +46,20 @@ void main() {
       expect(booking.destination.address, 'JFK Airport');
     });
 
+    test('flight details survive a roundtrip', () {
+      final booking = Booking.fromJson({
+        ...json,
+        'flightNumber': 'OB760',
+        'flightType': 'international',
+        'pickupAirport': 'VVI',
+      });
+      final again = Booking.fromJson(booking.toJson());
+      expect(again.flightNumber, 'OB760');
+      expect(again.flightType, 'international');
+      expect(again.pickupAirport, 'VVI');
+      expect(again.copyWith(driverId: 'd').pickupAirport, 'VVI');
+    });
+
     test('toJson roundtrip preserves values', () {
       final booking = Booking.fromJson(json);
       final encoded = booking.toJson();
@@ -76,7 +90,8 @@ void main() {
     test('BookingStatus.fromString maps all values', () {
       expect(BookingStatusX.fromString('pending'), BookingStatus.pending);
       expect(BookingStatusX.fromString('confirmed'), BookingStatus.confirmed);
-      expect(BookingStatusX.fromString('in_progress'), BookingStatus.inProgress);
+      expect(
+          BookingStatusX.fromString('in_progress'), BookingStatus.inProgress);
       expect(BookingStatusX.fromString('completed'), BookingStatus.completed);
       expect(BookingStatusX.fromString('cancelled'), BookingStatus.cancelled);
     });

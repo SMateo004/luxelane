@@ -17,8 +17,23 @@ val keystoreProperties = Properties().apply {
     if (file.exists()) file.inputStream().use { load(it) }
 }
 
+// Google Maps key for the native SDK: -PMAPS_API_KEY=..., the MAPS_API_KEY or
+// GOOGLE_MAPS_API_KEY env var (CI), or `MAPS_API_KEY=...` in
+// android/local.properties. Falls back to the project key (same as AppConfig
+// and the iOS xcconfig) so the map never renders blank when none is set.
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+val mapsApiKey: String =
+    (project.findProperty("MAPS_API_KEY") as String?)?.takeIf { it.isNotBlank() }
+        ?: System.getenv("MAPS_API_KEY")?.takeIf { it.isNotBlank() }
+        ?: System.getenv("GOOGLE_MAPS_API_KEY")?.takeIf { it.isNotBlank() }
+        ?: localProperties.getProperty("MAPS_API_KEY")?.takeIf { it.isNotBlank() }
+        ?: "AIzaSyBbDde6GtLHy9_6qys4BMmq2P2G2INRUkM"
+
 android {
-    namespace = "com.example.luxelane"
+    namespace = "com.luxelane.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "27.0.12077973"
 
@@ -36,9 +51,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        // Android Maps SDK key: pass -PMAPS_API_KEY=... or set the env var.
-        manifestPlaceholders["MAPS_API_KEY"] =
-            (project.findProperty("MAPS_API_KEY") as String?) ?: System.getenv("MAPS_API_KEY") ?: ""
+        manifestPlaceholders["mapsApiKey"] = mapsApiKey
     }
 
     // Two apps from one codebase:

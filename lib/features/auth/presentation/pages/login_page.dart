@@ -1,24 +1,27 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/repositories/repositories.dart';
+import '../../../../core/widgets/components.dart';
+import '../bloc/auth_bloc.dart';
 import '../../../../l10n/l10n.dart';
 import '../auth_error_messages.dart';
-import '../bloc/auth_bloc.dart';
+import '../../domain/auth_failure.dart';
+import '../widgets/google_sign_in_button.dart';
 
 // ── Design tokens (aligned with home_web_page / LD) ─────────────────────────
-const _bg      = LuxPalette.paper;
-const _brandBg = LuxPalette.paper2;
-const _panel   = Colors.white;
-const _border  = LuxPalette.hairline;
-const _sph     = LuxPalette.champagne;      // brand accent
-const _sphLt   = LuxPalette.champagneLight;
-const _ink     = LuxPalette.ink;            // text on accent
-const _text    = LuxPalette.ink;
-const _kSans   = 'Montserrat';
-const _kSerif  = 'Cormorant Garamond';
+const _bg = LuxColors.bg;
+const _panel = LuxColors.surface;
+const _border = LuxColors.border;
+const _sph = LuxColors.sapphire;
+const _sphLt = LuxColors.sapphireLight;
+const _ink = LuxColors.ink;
+const _onSph = LuxColors.onAccent;
+const _kSans = 'Montserrat';
+const _kSerif = 'Cormorant Garamond';
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -29,15 +32,46 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _form  = GlobalKey<FormState>();
+  final _form = GlobalKey<FormState>();
   final _email = TextEditingController();
-  final _pass  = TextEditingController();
+  final _pass = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Un bloqueo detectado antes de llegar aquí (al abrir la app o con la
+    // sesión abierta) no pasa por el listener: se muestra al entrar.
+    final s = context.read<AuthBloc>().state;
+    if (s is AuthError && s.message == kBlockedAccountMessage) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) showLuxSnackbar(context, s.message, isError: true);
+      });
+    }
+  }
 
   @override
   void dispose() {
     _email.dispose();
     _pass.dispose();
     super.dispose();
+  }
+
+  Future<void> _resetPassword() async {
+    final email = _email.text.trim();
+    final l = context.l10n;
+    if (!email.contains('@')) {
+      showLuxSnackbar(context, l.authResetNeedsEmail, isError: true);
+      return;
+    }
+    final result = await sl<AuthRepository>().resetPassword(email);
+    if (!mounted) return;
+    result.fold(
+      (f) => showLuxSnackbar(
+          context,
+          authErrorMessage(l, f is AuthCodeFailure ? f.code : null),
+          isError: true),
+      (_) => showLuxSnackbar(context, l.authResetEmailSent),
+    );
   }
 
   void _submit() {
@@ -52,13 +86,21 @@ class _LoginPageState extends State<LoginPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          context.go(state.user.email == 'admin@luxelane.com' ? '/admin' : '/');
+          // The router sends each role to its home (admins to /admin), or
+          // back to the link that asked for sign-in.
+          final from = GoRouterState.of(context).uri.queryParameters['from'];
+          context.go(from != null && from.startsWith('/') ? from : '/');
         }
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(authErrorMessage(context.l10n, state.code),
-                  style: const TextStyle(fontFamily: _kSans)),
+              // Firebase errors arrive as a code and are translated; other
+              // failures (e.g. Google sign-in) already carry their message.
+              content: Text(
+                  state.code != null
+                      ? authErrorMessage(context.l10n, state.code)
+                      : state.message,
+                  style: const TextStyle(fontFamily: _kSans, color: _onSph)),
               backgroundColor: LuxColors.error,
             ),
           );
@@ -76,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _webLayout() => Row(
         children: [
           // Left — brand panel
-          Expanded(child: _BrandPanel()),
+          const Expanded(child: AuthBrandPanel()),
           // Right — form panel
           Expanded(
             child: Container(
@@ -96,19 +138,19 @@ class _LoginPageState extends State<LoginPage> {
                           style: const TextStyle(
                             fontFamily: _kSerif,
                             fontSize: 42,
-                            fontWeight: FontWeight.w600,
-                            color: _text,
+                            fontWeight: FontWeight.w500,
+                            color: _ink,
                             height: 1.1,
                           ),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           context.l10n.authLoginWelcomeBack,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: _kSans,
                             fontSize: 13,
-                            fontWeight: FontWeight.w300,
-                            color: _text.withAlpha(130),
+                            fontWeight: FontWeight.w400,
+                            color: LuxColors.inkTertiary,
                           ),
                         ),
                         const SizedBox(height: 40),
@@ -127,33 +169,43 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _mobileLayout() => SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(28, 48, 28, 28),
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const _LuxLogo(),
-              const SizedBox(height: 48),
-              Text(
-                context.l10n.authLoginHeadline,
-                style: const TextStyle(
+              GestureDetector(
+                onTap: () => context.go('/'),
+                child: const LuxelaneWordmark(size: 11),
+              ),
+              const SizedBox(height: 28),
+              const _AuthHeroPhoto(),
+              const SizedBox(height: 32),
+              Text('BIENVENIDO',
+                  style: LuxTypography.caption
+                      .copyWith(color: _sph, letterSpacing: 3, fontSize: 10)),
+              const SizedBox(height: 10),
+              const Text(
+                'Tu chófer,\ncomo lo recuerdas.',
+                style: TextStyle(
                   fontFamily: _kSerif,
-                  fontSize: 40,
-                  fontWeight: FontWeight.w600,
-                  color: _text,
-                  height: 1.15,
+                  fontSize: 38,
+                  fontWeight: FontWeight.w500,
+                  color: _ink,
+                  height: 1.08,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                context.l10n.authLoginSubtitle,
+              const SizedBox(height: 10),
+              const Text(
+                'Inicia sesión para reservar y seguir tus trayectos.',
                 style: TextStyle(
                   fontFamily: _kSans,
                   fontSize: 13,
-                  fontWeight: FontWeight.w300,
-                  color: _text.withAlpha(130),
+                  fontWeight: FontWeight.w400,
+                  color: LuxColors.inkTertiary,
+                  height: 1.5,
                 ),
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 32),
               _formContent(),
             ],
           ),
@@ -170,15 +222,18 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const GoogleSignInButton(),
+                const SizedBox(height: 24),
+                const AuthOrDivider(),
+                const SizedBox(height: 24),
                 _AuthField(
                   label: context.l10n.authEmailLabel,
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   icon: Icons.email_outlined,
-                  validator: (v) =>
-                      v == null || !v.contains('@')
-                          ? context.l10n.authEmailInvalid
-                          : null,
+                  validator: (v) => v == null || !v.contains('@')
+                      ? context.l10n.authEmailInvalid
+                      : null,
                 ),
                 const SizedBox(height: 14),
                 _AuthField(
@@ -196,22 +251,7 @@ class _LoginPageState extends State<LoginPage> {
                   alignment: Alignment.centerRight,
                   child: _TextLink(
                     label: context.l10n.authForgotPassword,
-                    onTap: () {
-                      final l = context.l10n;
-                      if (_email.text.contains('@')) {
-                        context.read<AuthBloc>().add(
-                              PasswordResetRequested(
-                                  email: _email.text.trim()),
-                            );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l.authResetEmailSent)),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(l.authResetNeedsEmail)),
-                        );
-                      }
-                    },
+                    onTap: _resetPassword,
                   ),
                 ),
                 const SizedBox(height: 28),
@@ -228,10 +268,10 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     Text(
                       context.l10n.authNoAccount,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: _kSans,
                         fontSize: 12,
-                        color: _text.withAlpha(120),
+                        color: LuxColors.inkTertiary,
                       ),
                     ),
                     _TextLink(
@@ -249,32 +289,49 @@ class _LoginPageState extends State<LoginPage> {
 
 // ── Brand panel (left side on web) ────────────────────────────────────────────
 
-class _BrandPanel extends StatelessWidget {
+/// Shared by the login and register pages so both read as one experience.
+class AuthBrandPanel extends StatelessWidget {
+  const AuthBrandPanel({
+    super.key,
+    this.title = 'Tu chófer,\ncomo lo recuerdas.',
+    this.subtitle = 'Tus direcciones, preferencias y viajes, siempre a mano.',
+  });
+  final String title;
+  final String subtitle;
+
   @override
   Widget build(BuildContext context) => Stack(
         fit: StackFit.expand,
         children: [
-          // Warm paper base
-          const ColoredBox(color: _brandBg),
-          // Dot grid — same as hero
-          CustomPaint(painter: _DotGridPainter()),
-          // Subtle bottom vignette
+          // Ivory base
+          const ColoredBox(color: LuxColors.surfaceMuted),
+          // Editorial photo — the promise of the experience, not a form.
+          Image.asset(
+            'assets/images/home/promise_photo.jpg',
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) =>
+                CustomPaint(painter: _DotGridPainter()),
+          ),
+          // Ivory veil so ink text stays legible over the photo.
           DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  _brandBg.withAlpha(0),
-                  LuxPalette.paper3.withAlpha(200),
+                  _bg.withAlpha(60),
+                  _bg.withAlpha(215),
+                  _bg.withAlpha(250),
                 ],
-                stops: const [0.5, 1.0],
+                stops: const [0.0, 0.4, 0.75],
               ),
             ),
           ),
           // Left accent line
           Positioned(
-            left: 0, top: 0, bottom: 0,
+            left: 0,
+            top: 0,
+            bottom: 0,
             child: Container(width: 1, color: _border),
           ),
           // Content
@@ -285,32 +342,57 @@ class _BrandPanel extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const _LuxLogo(),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () => context.go('/'),
+                      child: const LuxelaneWordmark(color: _ink),
+                    ),
+                  ),
                   const SizedBox(height: 40),
                   Text(
-                    context.l10n.authBrandHeadline,
+                    title,
                     style: const TextStyle(
                       fontFamily: _kSerif,
                       fontSize: 52,
-                      fontWeight: FontWeight.w300,
-                      color: _text,
-                      height: 1.15,
+                      fontWeight: FontWeight.w400,
+                      color: _ink,
+                      height: 1.1,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    context.l10n.authBrandTagline,
-                    style: TextStyle(
+                    subtitle,
+                    style: const TextStyle(
                       fontFamily: _kSans,
-                      fontSize: 12,
+                      fontSize: 13,
                       fontWeight: FontWeight.w400,
-                      letterSpacing: 1.6,
-                      color: _text.withAlpha(140),
+                      color: LuxColors.inkSecondary,
+                      height: 1.6,
                     ),
                   ),
                   const SizedBox(height: 40),
                   // Sapphire divider
                   Container(width: 40, height: 1, color: _sph),
+                  const SizedBox(height: 32),
+                  for (final line in const [
+                    'Reserva en menos de 2 minutos',
+                    'Todos tus viajes en un solo lugar',
+                    'Seguimiento de tu chófer en tiempo real',
+                  ])
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 14),
+                      child: Row(children: [
+                        const Icon(Icons.check_rounded,
+                            size: 14, color: LuxColors.sapphire),
+                        const SizedBox(width: 12),
+                        Text(line,
+                            style: const TextStyle(
+                                fontFamily: _kSans,
+                                fontSize: 12.5,
+                                color: LuxColors.inkSecondary)),
+                      ]),
+                    ),
                 ],
               ),
             ),
@@ -347,34 +429,40 @@ class _AuthField extends StatelessWidget {
         style: const TextStyle(
           fontFamily: _kSans,
           fontSize: 14,
-          color: _text,
+          color: _ink,
         ),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: TextStyle(
+          labelStyle: const TextStyle(
             fontFamily: _kSans,
             fontSize: 12,
             fontWeight: FontWeight.w400,
-            color: _text.withAlpha(130),
+            color: LuxColors.inkTertiary,
           ),
-          prefixIcon: Icon(icon, size: 18, color: _text.withAlpha(100)),
+          floatingLabelStyle: const TextStyle(
+            fontFamily: _kSans,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: _sph,
+          ),
+          prefixIcon: Icon(icon, size: 18, color: LuxColors.inkTertiary),
           filled: true,
-          fillColor: LuxPalette.paper,
+          fillColor: _panel,
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: _border.withAlpha(180)),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: _border),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(10),
             borderSide: const BorderSide(color: _sph, width: 1.5),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: LuxColors.error),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: LuxColors.error),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: LuxColors.error, width: 1.5),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: LuxColors.error, width: 1.5),
           ),
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -384,7 +472,7 @@ class _AuthField extends StatelessWidget {
 
 // ── Primary action button ──────────────────────────────────────────────────────
 
-class _AuthButton extends StatefulWidget {
+class _AuthButton extends StatelessWidget {
   const _AuthButton({
     required this.label,
     required this.loading,
@@ -394,52 +482,10 @@ class _AuthButton extends StatefulWidget {
   final bool loading;
   final VoidCallback? onTap;
 
+  // El mismo botón principal que el resto de la app.
   @override
-  State<_AuthButton> createState() => _AuthButtonState();
-}
-
-class _AuthButtonState extends State<_AuthButton> {
-  bool _hover = false;
-
-  @override
-  Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) => setState(() => _hover = true),
-        onExit:  (_) => setState(() => _hover = false),
-        cursor: widget.onTap != null
-            ? SystemMouseCursors.click
-            : MouseCursor.defer,
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            width: double.infinity,
-            height: 52,
-            decoration: BoxDecoration(
-              color: widget.onTap == null
-                  ? _sph.withAlpha(80)
-                  : (_hover ? _sphLt : _sph),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            alignment: Alignment.center,
-            child: widget.loading
-                ? const SizedBox(
-                    width: 20, height: 20,
-                    child: CircularProgressIndicator(
-                        strokeWidth: 2, color: _ink),
-                  )
-                : Text(
-                    widget.label.toUpperCase(),
-                    style: const TextStyle(
-                      fontFamily: _kSans,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.0,
-                      color: _ink,
-                    ),
-                  ),
-          ),
-        ),
-      );
+  Widget build(BuildContext context) =>
+      LuxButton(label: label, loading: loading, onPressed: onTap);
 }
 
 // ── Text link ─────────────────────────────────────────────────────────────────
@@ -459,7 +505,7 @@ class _TextLinkState extends State<_TextLink> {
   @override
   Widget build(BuildContext context) => MouseRegion(
         onEnter: (_) => setState(() => _hover = true),
-        onExit:  (_) => setState(() => _hover = false),
+        onExit: (_) => setState(() => _hover = false),
         cursor: SystemMouseCursors.click,
         child: GestureDetector(
           onTap: widget.onTap,
@@ -469,42 +515,13 @@ class _TextLinkState extends State<_TextLink> {
               fontFamily: _kSans,
               fontSize: 12,
               fontWeight: FontWeight.w500,
-              color: _hover ? _sph : LuxPalette.champagneDeep,
-              decoration: _hover ? TextDecoration.underline : TextDecoration.none,
-              decorationColor: _sph,
+              color: _hover ? _sphLt : _sph.withAlpha(220),
+              decoration:
+                  _hover ? TextDecoration.underline : TextDecoration.none,
+              decorationColor: _sphLt,
             ),
           ),
         ),
-      );
-}
-
-// ── Luxelane wordmark ─────────────────────────────────────────────────────────
-
-class _LuxLogo extends StatelessWidget {
-  const _LuxLogo();
-
-  @override
-  Widget build(BuildContext context) => Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 6, height: 6,
-            decoration: const BoxDecoration(
-              color: _sph, shape: BoxShape.circle,
-            ),
-          ),
-          const SizedBox(width: 10),
-          const Text(
-            'LUXELANE',
-            style: TextStyle(
-              fontFamily: _kSans,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 3.5,
-              color: _text,
-            ),
-          ),
-        ],
       );
 }
 
@@ -513,13 +530,50 @@ class _LuxLogo extends StatelessWidget {
 class _DotGridPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final p = Paint()..color = const Color(0x140B1220);
+    final p = Paint()..color = const Color(0x141B4F8A);
     const s = 40.0;
-    for (double x = s; x < size.width;  x += s)
-    for (double y = s; y < size.height; y += s)
-      canvas.drawCircle(Offset(x, y), 1.2, p);
+    for (double x = s; x < size.width; x += s)
+      for (double y = s; y < size.height; y += s)
+        canvas.drawCircle(Offset(x, y), 1.2, p);
   }
 
   @override
   bool shouldRepaint(_DotGridPainter _) => false;
+}
+
+// ── Mobile hero photo — the promise of the experience, framed in ivory ──────
+
+class _AuthHeroPhoto extends StatelessWidget {
+  const _AuthHeroPhoto();
+
+  @override
+  Widget build(BuildContext context) => ClipRRect(
+        borderRadius: BorderRadius.circular(LuxRadius.xl),
+        child: SizedBox(
+          height: 180,
+          width: double.infinity,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              const ColoredBox(color: LuxColors.surfaceMuted),
+              Image.asset(
+                'assets/images/home/promise_photo.jpg',
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) =>
+                    CustomPaint(painter: _DotGridPainter()),
+              ),
+              // Soft ivory fade into the page below.
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [_bg.withAlpha(0), _bg.withAlpha(90)],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
 }

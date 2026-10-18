@@ -31,14 +31,14 @@ class LuxelaneApp extends StatefulWidget {
 
 class _LuxelaneAppState extends State<LuxelaneApp> {
   // ── BLoCs — created once, never recreated ──────────────────────────────
-  late final AuthBloc    _authBloc;
+  late final AuthBloc _authBloc;
   late final BookingBloc _bookingBloc;
   late final VehicleBloc _vehicleBloc;
-  late final RideBloc    _rideBloc;
+  late final RideBloc _rideBloc;
   late final PaymentBloc _paymentBloc;
   late final ProfileBloc _profileBloc;
-  late final DriverBloc           _driverBloc;
-  late final NotificationBloc     _notificationBloc;
+  late final DriverBloc _driverBloc;
+  late final NotificationBloc _notificationBloc;
 
   // ── Routers — created once ─────────────────────────────────────────────
   late final dynamic _router;
@@ -49,28 +49,35 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
   void initState() {
     super.initState();
 
-    _authBloc         = sl<AuthBloc>()..add(const AuthStarted());
-    _bookingBloc      = sl<BookingBloc>();
-    _vehicleBloc      = sl<VehicleBloc>();
-    _rideBloc         = sl<RideBloc>();
-    _paymentBloc      = sl<PaymentBloc>();
-    _profileBloc      = sl<ProfileBloc>();
-    _driverBloc       = sl<DriverBloc>();
+    _authBloc = sl<AuthBloc>()..add(const AuthStarted());
+    _bookingBloc = sl<BookingBloc>();
+    _vehicleBloc = sl<VehicleBloc>();
+    _rideBloc = sl<RideBloc>();
+    _paymentBloc = sl<PaymentBloc>();
+    _profileBloc = sl<ProfileBloc>();
+    _driverBloc = sl<DriverBloc>();
     _notificationBloc = sl<NotificationBloc>();
 
     _router = buildRouter(_authBloc);
 
-    // Tapping a notification opens its screen (mobile only).
+    // Tapping a notification opens its screen (mobile only). PushLinks
+    // covers booking notices too, so it replaces a separate listener.
     _pushLinks = PushLinks(app: LuxApp.rider, open: (link) => _router.push(link), messenger: _messenger);
     if (!kIsWeb) _pushLinks.start();
 
-    // Start DriverBloc + NotificationBloc only when authenticated
-    // Once per signed-in user (status changes re-emit the same user).
-    String? startedFor;
+    // Start DriverBloc + NotificationBloc only when authenticated. El estado
+    // se repite al cambiar el perfil: solo se arranca al entrar un usuario.
+    String? sessionUid;
     _authBloc.stream.listen((state) {
-      if (state is! AuthAuthenticated) startedFor = null;
-      if (state is AuthAuthenticated && state.user.id != startedFor) {
-        startedFor = state.user.id;
+      if (state is! AuthAuthenticated) {
+        // Sin sesión no quedan a la vista las tarjetas del usuario anterior.
+        if (sessionUid != null) _paymentBloc.add(const PaymentReset());
+        sessionUid = null;
+        return;
+      }
+      if (state.user.id == sessionUid) return;
+      sessionUid = state.user.id;
+      {
         CrashService.setUser(state.user.id);
         if (state.user.role == UserRole.driver &&
             _driverBloc.state is DriverInitial) {
@@ -79,6 +86,8 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         _notificationBloc.add(
           NotificationWatchStarted(userId: state.user.id),
         );
+        // Registra el dispositivo para los avisos de la reserva aunque el
+        // pasajero no abra la pantalla del viaje.
         sl<NotificationService>().init(userId: state.user.id);
       }
     });

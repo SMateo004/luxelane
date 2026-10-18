@@ -6,6 +6,9 @@ import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
 import '../vehicles/vehicle_catalog.dart';
 
+// The list skeleton lives with the design system's feedback widgets.
+export 'lux_feedback.dart' show LuxSkeletonList;
+
 // ============================================================
 // Loading, empty and error states + price breakdown.
 // Each widget works on dark (app) and light (editorial) surfaces via
@@ -53,8 +56,8 @@ class _LuxSkeletonState extends State<LuxSkeleton> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    final base = widget.light ? LuxPalette.paper3 : LuxPalette.elevated;
-    final glow = widget.light ? LuxPalette.paper : LuxPalette.line;
+    final base = widget.light ? LuxColors.surfaceDeep : LuxColors.surfaceMuted;
+    final glow = widget.light ? LuxColors.bg : LuxColors.border;
     return ExcludeSemantics(
       child: AnimatedBuilder(
         animation: _c,
@@ -78,52 +81,6 @@ class _LuxSkeletonState extends State<LuxSkeleton> with SingleTickerProviderStat
   }
 }
 
-/// Skeleton list mimicking trip/booking cards while data loads.
-class LuxSkeletonList extends StatelessWidget {
-  const LuxSkeletonList({super.key, this.count = 4, this.light = false});
-  final int count;
-  final bool light;
-
-  @override
-  Widget build(BuildContext context) => Semantics(
-        label: context.l10n.commonLoading,
-        child: ListView.separated(
-          padding: const EdgeInsets.all(LuxSpacing.md),
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: count,
-          separatorBuilder: (_, __) => const SizedBox(height: LuxSpacing.sm),
-          itemBuilder: (_, __) => Container(
-            padding: const EdgeInsets.all(LuxSpacing.md),
-            decoration: BoxDecoration(
-              color: light ? Colors.white : LuxColors.blackSurface,
-              border: Border.all(color: light ? LuxPalette.hairline : LuxColors.blackBorder),
-              borderRadius: BorderRadius.circular(LuxRadius.md),
-            ),
-            child: Row(
-              children: [
-                LuxSkeleton(width: 48, height: 48, light: light),
-                const SizedBox(width: LuxSpacing.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      LuxSkeleton(light: light),
-                      const SizedBox(height: 8),
-                      LuxSkeleton(width: 120, height: 12, light: light),
-                      const SizedBox(height: 8),
-                      LuxSkeleton(width: 80, height: 10, light: light),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: LuxSpacing.md),
-                LuxSkeleton(width: 64, height: 18, light: light),
-              ],
-            ),
-          ),
-        ),
-      );
-}
-
 /// Friendly error with a retry action.
 class LuxErrorState extends StatelessWidget {
   const LuxErrorState({
@@ -142,8 +99,8 @@ class LuxErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = light ? LuxPalette.ink : LuxColors.white;
-    final secondary = light ? LuxPalette.slate : LuxColors.whiteSecondary;
+    final primary = light ? LuxColors.ink : LuxColors.ink;
+    final secondary = light ? LuxColors.inkTertiary : LuxColors.inkSecondary;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(LuxSpacing.xl),
@@ -151,7 +108,7 @@ class LuxErrorState extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.wifi_tethering_error_rounded, size: 40,
-                color: light ? LuxPalette.champagneDeep : LuxColors.accent),
+                color: light ? LuxColors.sapphire : LuxColors.sapphire),
             const SizedBox(height: LuxSpacing.md),
             Text(title ?? context.l10n.commonGenericError,
                 textAlign: TextAlign.center,
@@ -170,8 +127,8 @@ class LuxErrorState extends StatelessWidget {
                   label: Text(context.l10n.commonRetry),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size(180, 48),
-                    foregroundColor: light ? LuxPalette.champagneDeep : LuxColors.accent,
-                    side: BorderSide(color: light ? LuxPalette.champagneDeep : LuxColors.accent),
+                    foregroundColor: light ? LuxColors.sapphire : LuxColors.sapphire,
+                    side: BorderSide(color: light ? LuxColors.sapphire : LuxColors.sapphire),
                   ),
                 ),
               ),
@@ -234,9 +191,9 @@ class PriceBreakdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ink = light ? LuxPalette.ink : LuxColors.white;
-    final muted = light ? LuxPalette.slate : LuxColors.whiteSecondary;
-    final line = light ? LuxPalette.hairline : LuxColors.blackBorder;
+    final ink = light ? LuxColors.ink : LuxColors.ink;
+    final muted = light ? LuxColors.inkTertiary : LuxColors.inkSecondary;
+    final line = light ? LuxColors.border : LuxColors.border;
     final l10n = context.l10n;
     final items = lines(l10n);
     final subtotal = items.fold<double>(0, (a, l) => a + l.$2);

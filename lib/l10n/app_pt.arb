@@ -397,6 +397,7 @@
   "bookingSummaryService": "Serviço",
   "bookingSummaryTo": "Para",
   "bookingTripDetailsHeading": "DETALHES DA VIAGEM",
+  "bookingVehicleUnavailable": "Este veículo não está disponível para este serviço no momento. Escolha outro.",
   "bookingViewMyBooking": "VER MINHA RESERVA",
   "commonBack": "Voltar",
   "commonCall": "Ligar",

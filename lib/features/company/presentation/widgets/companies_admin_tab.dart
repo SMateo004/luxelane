@@ -45,7 +45,7 @@ class CompaniesAdminTab extends StatelessWidget {
             ),
             const SizedBox(height: LuxSpacing.lg),
             if (snap.connectionState == ConnectionState.waiting && !snap.hasData)
-              const Center(child: CircularProgressIndicator(color: LuxColors.accent))
+              const Center(child: CircularProgressIndicator(color: LuxColors.sapphire))
             else if (companies.isEmpty)
               EmptyState(icon: Icons.business_outlined, message: l.corpAdminEmpty)
             else
@@ -54,7 +54,7 @@ class CompaniesAdminTab extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: LuxSpacing.sm),
                   child: LuxCard(
                     child: Row(children: [
-                      const Icon(Icons.business_outlined, color: LuxColors.accent),
+                      const Icon(Icons.business_outlined, color: LuxColors.sapphire),
                       const SizedBox(width: LuxSpacing.md),
                       Expanded(
                         child: Column(
@@ -75,7 +75,7 @@ class CompaniesAdminTab extends StatelessWidget {
                         message: c.active ? l.corpSuspend : l.corpReactivate,
                         child: Switch(
                           value: c.active,
-                          activeColor: LuxColors.accent,
+                          activeColor: LuxColors.sapphire,
                           onChanged: (v) async {
                             final e = await repo.updateCompany(c.id, active: v);
                             if (!context.mounted) return;
@@ -91,7 +91,7 @@ class CompaniesAdminTab extends StatelessWidget {
                       ),
                       IconButton(
                         tooltip: l.corpOpenPortal,
-                        icon: const Icon(Icons.open_in_new_rounded, color: LuxColors.whiteSecondary),
+                        icon: const Icon(Icons.open_in_new_rounded, color: LuxColors.inkSecondary),
                         onPressed: () => Navigator.of(context).push(MaterialPageRoute<void>(
                           builder: (_) => CompanyPortalPage(companyId: c.id, repository: repo),
                         )),
@@ -158,7 +158,7 @@ class _CreateCompanyDialogState extends State<_CreateCompanyDialog> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     return AlertDialog(
-      backgroundColor: LuxColors.blackElevated,
+      backgroundColor: LuxColors.surfaceMuted,
       title: Text(l.corpCreateCompany, style: LuxTypography.titleLarge),
       content: SizedBox(
         width: 420,
@@ -192,7 +192,7 @@ class _CreateCompanyDialogState extends State<_CreateCompanyDialog> {
         ),
         TextButton(
           onPressed: _busy ? null : _submit,
-          child: Text(l.corpCreate, style: const TextStyle(color: LuxColors.accent, fontWeight: FontWeight.w600)),
+          child: Text(l.corpCreate, style: const TextStyle(color: LuxColors.sapphire, fontWeight: FontWeight.w600)),
         ),
       ],
     );

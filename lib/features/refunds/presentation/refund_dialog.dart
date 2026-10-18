@@ -87,7 +87,7 @@ class _RefundDialogState extends State<RefundDialog> {
     final l = context.l10n;
     final b = widget.booking;
     return AlertDialog(
-      backgroundColor: LuxColors.blackElevated,
+      backgroundColor: LuxColors.surfaceMuted,
       title: Text(l.refundTitle, style: LuxTypography.titleLarge),
       content: SizedBox(
         width: 440,
@@ -115,7 +115,7 @@ class _RefundDialogState extends State<RefundDialog> {
                 ChoiceChip(
                   label: Text(m.label(l)),
                   selected: _method == m,
-                  selectedColor: LuxColors.accent.withValues(alpha: 0.25),
+                  selectedColor: LuxColors.sapphire.withValues(alpha: 0.25),
                   onSelected: (_) => setState(() => _method = m),
                 ),
             ]),
@@ -134,7 +134,7 @@ class _RefundDialogState extends State<RefundDialog> {
         TextButton(onPressed: _busy ? null : () => Navigator.of(context).pop(), child: Text(l.commonCancel)),
         TextButton(
           onPressed: _busy ? null : _save,
-          child: Text(l.refundSave, style: const TextStyle(color: LuxColors.accent, fontWeight: FontWeight.w600)),
+          child: Text(l.refundSave, style: const TextStyle(color: LuxColors.sapphire, fontWeight: FontWeight.w600)),
         ),
       ],
     );

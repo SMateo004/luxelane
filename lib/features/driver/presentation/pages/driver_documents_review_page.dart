@@ -41,7 +41,7 @@ class DriverDocumentsReviewPage extends StatelessWidget {
     final repo = repository ?? sl<DriverDocumentsRepository>();
     final l = context.l10n;
     return Scaffold(
-      backgroundColor: LuxColors.black,
+      backgroundColor: LuxColors.bg,
       appBar: AppBar(
         title: Text(l.docReviewTitle(driverName), overflow: TextOverflow.ellipsis),
       ),
@@ -49,7 +49,7 @@ class DriverDocumentsReviewPage extends StatelessWidget {
         stream: repo.watch(driverId),
         builder: (context, snap) {
           if (!snap.hasData) {
-            return const Center(child: CircularProgressIndicator(color: LuxColors.accent));
+            return const Center(child: CircularProgressIndicator(color: LuxColors.sapphire));
           }
           final t = now ?? DateTime.now();
           final summary = DocumentsSummary(snap.data!, t);
@@ -178,7 +178,7 @@ class _ReviewCardState extends State<_ReviewCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            Icon(d.type.icon, color: LuxColors.accent),
+            Icon(d.type.icon, color: LuxColors.sapphire),
             const SizedBox(width: LuxSpacing.md),
             Expanded(child: Text(d.type.localizedName(l), style: LuxTypography.titleMedium)),
             DocStatusChip(status: status, expiring: d.expiringSoon(widget.now)),
@@ -190,7 +190,7 @@ class _ReviewCardState extends State<_ReviewCard> {
           if (status == DriverDocStatus.rejected && (d.rejectionReason ?? '').isNotEmpty) ...[
             const SizedBox(height: LuxSpacing.xs),
             Text(l.docRejectedReason(d.rejectionReason!),
-                style: LuxTypography.caption.copyWith(color: LuxColors.whiteSecondary)),
+                style: LuxTypography.caption.copyWith(color: LuxColors.inkSecondary)),
           ],
           if (hasFile) ...[
             const SizedBox(height: LuxSpacing.md),
@@ -198,7 +198,7 @@ class _ReviewCardState extends State<_ReviewCard> {
                 ? const SizedBox(
                     width: 24,
                     height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: LuxColors.accent),
+                    child: CircularProgressIndicator(strokeWidth: 2, color: LuxColors.sapphire),
                   )
                 : Wrap(
                     spacing: LuxSpacing.sm,
@@ -215,7 +215,7 @@ class _ReviewCardState extends State<_ReviewCard> {
                         FilledButton.icon(
                           style: FilledButton.styleFrom(
                               minimumSize: const Size(0, 40),
-                              backgroundColor: LuxColors.accentFill, foregroundColor: LuxColors.onAccent),
+                              backgroundColor: LuxColors.sapphire, foregroundColor: LuxColors.onAccent),
                           onPressed: _approve,
                           icon: const Icon(Icons.check_rounded, size: 16),
                           label: Text(l.docReviewApprove),
@@ -256,7 +256,7 @@ class _RejectDialogState extends State<_RejectDialog> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     return AlertDialog(
-      backgroundColor: LuxColors.blackElevated,
+      backgroundColor: LuxColors.surfaceMuted,
       title: Text(l.docReviewRejectTitle, style: LuxTypography.titleLarge),
       content: SizedBox(
         width: 420,

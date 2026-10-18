@@ -1,3 +1,4 @@
+import '../../features/business/data/business_lead_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
@@ -75,6 +76,7 @@ void _registerRepositories() {
     () => AuthRepositoryImpl(
       firebaseAuth: sl(),
       firestore: sl(),
+      functions: sl(),
     ),
   );
 
@@ -99,7 +101,7 @@ void _registerRepositories() {
   );
 
   sl.registerLazySingleton<AdminRepository>(
-    () => AdminRepositoryImpl(sl(), sl()),
+    () => AdminRepositoryImpl(sl(), auth: sl(), functions: sl()),
   );
 
   sl.registerLazySingleton<NotificationRepository>(
@@ -188,23 +190,19 @@ void _registerUseCases() {
   sl.registerLazySingleton(() => UpdateUserUseCase(sl()));
   sl.registerLazySingleton(() => UpdateDriverLocationUseCase(sl()));
   sl.registerLazySingleton(() => SetDriverAvailabilityUseCase(sl()));
+  sl.registerLazySingleton(() => BusinessLeadRepository(sl()));
 }
 
 void _registerBlocs() {
   sl.registerFactory(() => AuthBloc(
         authRepository: sl(),
-        watchIsActive: (uid) => sl<FirebaseFirestore>()
-            .collection('users')
-            .doc(uid)
-            .snapshots()
-            .map((d) => d.data()?['isActive'] != false)
-            .distinct(),
       ));
   sl.registerFactory(() => BookingBloc(bookingRepository: sl()));
   sl.registerFactory(() => VehicleBloc(vehicleRepository: sl()));
   sl.registerFactory(() => RideBloc(rideRepository: sl()));
   sl.registerFactory(() => PaymentBloc(paymentRepository: sl()));
-  sl.registerFactory(() => ProfileBloc(userRepository: sl(), bookingRepository: sl()));
+  sl.registerFactory(
+      () => ProfileBloc(userRepository: sl(), bookingRepository: sl()));
   sl.registerFactory(() => AdminBloc(adminRepository: sl()));
   sl.registerFactory(() => NotificationBloc(notificationRepository: sl()));
   sl.registerFactory(() => DriverBloc(

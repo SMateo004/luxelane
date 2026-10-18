@@ -84,7 +84,7 @@ class _MarqueeBarState extends State<_MarqueeBar>
                       const SizedBox(width: 24),
                       Container(
                         width: 3, height: 3,
-                        decoration: const BoxDecoration(color: LD.accent, shape: BoxShape.circle),
+                        decoration: const BoxDecoration(color: LD.sph, shape: BoxShape.circle),
                       ),
                       const SizedBox(width: 24),
                     ],

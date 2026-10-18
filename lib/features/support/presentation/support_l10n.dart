@@ -40,12 +40,12 @@ class TicketStatusChip extends StatelessWidget {
     final (IconData icon, Color color, String label) = switch (status) {
       TicketStatus.open => (
           Icons.schedule_rounded,
-          LuxColors.info,
+          LuxColors.sapphireLight,
           forTeam ? l.supportStatusOpenTeam : l.supportStatusOpen
         ),
       TicketStatus.answered => (
           Icons.mark_chat_read_outlined,
-          LuxColors.accent,
+          LuxColors.sapphire,
           forTeam ? l.supportStatusAnsweredTeam : l.supportStatusAnswered
         ),
       TicketStatus.resolved => (Icons.check_circle_outline_rounded, LuxColors.success, l.supportStatusResolved),
@@ -59,7 +59,7 @@ class TicketStatusChip extends StatelessWidget {
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         Icon(icon, size: 13, color: color),
         const SizedBox(width: 4),
-        Text(label, style: LuxTypography.caption.copyWith(color: LuxColors.white)),
+        Text(label, style: LuxTypography.caption.copyWith(color: LuxColors.ink)),
       ]),
     );
   }

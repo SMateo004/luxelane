@@ -30,7 +30,7 @@ class _BusinessSection extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.centerRight,
                   end: Alignment.centerLeft,
-                  colors: const [Color(0xD9FAF8F4), Color(0xF2F2EEE7)],
+                  colors: const [Color(0xD9FAFBFE), Color(0xF2F2F5FB)],
                 ),
               ),
             ),
@@ -55,7 +55,7 @@ class _BusinessSection extends StatelessWidget {
                         child: Text('0${i + 1}', style: TextStyle(
                           fontFamily: kSerif, fontSize: 28,
                           fontWeight: FontWeight.w300,
-                          color: LD.accent,
+                          color: LD.sph,
                           decoration: TextDecoration.none,
                         )),
                       ),
@@ -154,7 +154,7 @@ class _CtaSection extends StatelessWidget {
           ),
           // Light wash — the video stays visible behind ink text
           const Positioned.fill(
-            child: ColoredBox(color: Color(0xD1FAF8F4)),
+            child: ColoredBox(color: Color(0xD1FAFBFE)),
           ),
           // Content
           Padding(
@@ -172,7 +172,7 @@ class _CtaSection extends StatelessWidget {
                         style: const TextStyle(
                           fontFamily: kSans, fontSize: 9, fontWeight: FontWeight.w600,
                           letterSpacing: 4.0,
-                          color: LD.accent,
+                          color: LD.sph,
                           decoration: TextDecoration.none,
                         )),
                     ),
@@ -184,7 +184,7 @@ class _CtaSection extends StatelessWidget {
                         children: emphasisSpans(
                           l.homeCtaTitle,
                           style: displayText(size: titleSize, color: LD.ink),
-                          emphasis: displayText(size: titleSize, color: LD.accent,
+                          emphasis: displayText(size: titleSize, color: LD.sph,
                               style: FontStyle.italic),
                         ),
                       )),

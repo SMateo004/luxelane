@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../app/theme/app_theme.dart';
 import '../../../../core/config/legal.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../l10n/l10n.dart';
@@ -58,8 +59,8 @@ class _DraftBanner extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: LuxPalette.warning.withValues(alpha: 0.12),
-        border: Border.all(color: LuxPalette.warning),
+        color: LuxColors.warning.withValues(alpha: 0.12),
+        border: Border.all(color: LuxColors.warning),
       ),
       child: Text(
         context.l10n.legalDraftBanner,
@@ -183,13 +184,13 @@ class _ContactTile extends StatelessWidget {
               decoration: BoxDecoration(border: Border.all(color: LD.border)),
               child: Row(
                 children: [
-                  Icon(icon, color: LD.accent),
+                  Icon(icon, color: LD.sph),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(label.toUpperCase(), style: uiLabel(color: LD.accent)),
+                        Text(label.toUpperCase(), style: uiLabel(color: LD.sph)),
                         const SizedBox(height: 4),
                         Text(value, style: bodyText(size: 16, color: LD.ink)),
                       ],
@@ -278,7 +279,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
                 children: [
                   const Padding(
                     padding: EdgeInsets.only(top: 9, right: 10),
-                    child: Icon(Icons.circle, size: 5, color: LD.accent),
+                    child: Icon(Icons.circle, size: 5, color: LD.sph),
                   ),
                   Expanded(child: Text(line, style: bodyText(size: 14))),
                 ],
@@ -308,7 +309,7 @@ class _DeleteAccountPageState extends State<DeleteAccountPage> {
             ),
             if (_error != null) ...[
               const SizedBox(height: 12),
-              Text(_error!, style: bodyText(size: 13, color: LuxPalette.error)),
+              Text(_error!, style: bodyText(size: 13, color: LuxColors.error)),
             ],
             const SizedBox(height: 16),
             _PrimaryButton(
@@ -339,8 +340,8 @@ class _PrimaryButton extends StatelessWidget {
           onPressed: onTap,
           style: ElevatedButton.styleFrom(
             elevation: 0,
-            backgroundColor: danger ? LuxPalette.error : LD.cta,
-            foregroundColor: danger ? Colors.white : LD.onCta,
+            backgroundColor: danger ? LuxColors.error : LD.sph,
+            foregroundColor: danger ? Colors.white : Colors.white,
             disabledBackgroundColor: LD.bg3,
             disabledForegroundColor: LD.ink3,
             shape: const RoundedRectangleBorder(),

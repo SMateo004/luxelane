@@ -69,7 +69,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
       body: booking == null
           ? (_failed
               ? LuxErrorState(light: true, message: context.l10n.commonConnectionError, onRetry: _load)
-              : const Center(child: CircularProgressIndicator(color: LuxPalette.champagne)))
+              : const Center(child: CircularProgressIndicator(color: LuxColors.sapphire)))
           : Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
@@ -135,7 +135,7 @@ class _ReceiptCard extends StatelessWidget {
           ),
           const SizedBox(height: 28),
           Text(cancelled ? l.tripReceiptCancelled : l.tripReceiptCompleted,
-              style: eyebrow(color: cancelled ? LuxPalette.error : LD.accent)),
+              style: eyebrow(color: cancelled ? LuxColors.error : LD.sph)),
           const SizedBox(height: 8),
           Semantics(
             header: true,
@@ -211,8 +211,8 @@ class _ReceiptCard extends StatelessWidget {
               icon: const Icon(Icons.copy_rounded, size: 18),
               label: Text(l.tripReceiptCopy),
               style: OutlinedButton.styleFrom(
-                foregroundColor: LD.accent,
-                side: const BorderSide(color: LD.accent),
+                foregroundColor: LD.sph,
+                side: const BorderSide(color: LD.sph),
                 shape: const RoundedRectangleBorder(),
               ),
             ),
@@ -220,8 +220,8 @@ class _ReceiptCard extends StatelessWidget {
           const SizedBox(height: 8),
           TextButton.icon(
             onPressed: () => context.push('/ayuda?booking=${booking.id}'),
-            icon: const Icon(Icons.support_agent_outlined, size: 18, color: LD.accent),
-            label: Text(l.supportTripHelpCta, style: const TextStyle(color: LD.accent)),
+            icon: const Icon(Icons.support_agent_outlined, size: 18, color: LD.sph),
+            label: Text(l.supportTripHelpCta, style: const TextStyle(color: LD.sph)),
           ),
           const SizedBox(height: 4),
           Text(l.tripReceiptCurrencyNote,

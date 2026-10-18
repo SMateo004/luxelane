@@ -7,6 +7,8 @@ import '../../l10n/l10n.dart';
 import '../di/injection.dart';
 import '../models/place_model.dart';
 import '../services/maps_service.dart';
+import '../utils/service_area.dart';
+import 'components.dart';
 
 class PlaceAutocompleteField extends StatefulWidget {
   const PlaceAutocompleteField({
@@ -17,7 +19,9 @@ class PlaceAutocompleteField extends StatefulWidget {
     this.initialValue,
     this.onPlaceSelected,
     this.onMapPick,
-    this.glass = false,   // true → transparent/glass look for hero bar
+    this.sameCityAs,
+    this.glass = false, // true → transparent/glass look for hero bar
+    this.bare = false,
   });
 
   final String label;
@@ -26,54 +30,59 @@ class PlaceAutocompleteField extends StatefulWidget {
   final Place? initialValue;
   final ValueChanged<Place>? onPlaceSelected;
   final VoidCallback? onMapPick;
+
+  /// For destination fields: the pickup. Suggestions are limited to its city
+  /// and a place in another city is rejected with a message instead of
+  /// reaching [onPlaceSelected].
+  final Place? sameCityAs;
   final bool glass;
 
+  /// Sin caja ni borde: para ir dentro de una tarjeta que agrupa recogida y
+  /// destino (la tarjeta pone el marco).
+  final bool bare;
+
   @override
-  State<PlaceAutocompleteField> createState() =>
-      _PlaceAutocompleteFieldState();
+  State<PlaceAutocompleteField> createState() => _PlaceAutocompleteFieldState();
 }
 
 class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
-  final _ctrl     = TextEditingController();
-  final _focus    = FocusNode();
-  final _maps     = sl<MapsService>();
+  final _ctrl = TextEditingController();
+  final _focus = FocusNode();
+  final _maps = sl<MapsService>();
   final _fieldKey = GlobalKey();
   final _portalController = OverlayPortalController();
 
   List<PlaceSuggestion> _suggestions = [];
-  Timer?  _debounce;
-  bool    _loading  = false;
-  bool    _showDrop = false;
-  bool    _ignoreUpdates = false;
+  Timer? _debounce;
+  bool _loading = false;
+  bool _showDrop = false;
+  bool _ignoreUpdates = false;
   String? _token;
 
   // ── theme helpers ──────────────────────────────────────────────────────────
-  bool get _isDark => Theme.of(context).brightness == Brightness.dark;
   // glass=true → fully transparent field that sits inside the hero liquid-glass bar
-  Color get _fieldBg     => widget.glass ? Colors.transparent
-      : (_isDark ? LuxColors.blackElevated : const Color(0xFFF5F4F1));
-  Color get _borderColor => widget.glass ? Colors.transparent
-      : (_isDark ? LuxColors.blackBorder   : const Color(0xFFE4E1DA));
-  Color get _focusBorder => widget.glass ? Colors.transparent
-      : (_isDark ? LuxColors.accent.withOpacity(0.6) : const Color(0xFF111111));
-  Color get _iconColor   => widget.glass ? const Color(0x990B1220)
-      : (_isDark ? LuxColors.whiteTertiary : const Color(0xFFAAAAAA));
-  Color get _textColor   => widget.glass ? LuxPalette.ink
-      : (_isDark ? LuxColors.white         : const Color(0xFF111111));
-  Color get _hintColor   => widget.glass ? const Color(0x730B1220)
-      : (_isDark ? LuxColors.whiteTertiary : const Color(0xFFBBBBBB));
-  Color get _dropBg      => _isDark ? LuxColors.blackSurface    : Colors.white;
-  Color get _dropDivider => _isDark ? LuxColors.blackBorder     : const Color(0xFFEEECE8);
-  Color get _suggPrimary   => _isDark ? LuxColors.white         : const Color(0xFF111111);
-  Color get _suggSecondary => _isDark ? LuxColors.whiteTertiary : const Color(0xFF999999);
-  Color get _suggIcon      => _isDark ? LuxColors.whiteTertiary : const Color(0xFFCCCCCC);
+  bool get _plain => widget.glass || widget.bare;
+  Color get _fieldBg => _plain ? Colors.transparent : LuxColors.surface;
+  Color get _borderColor => _plain ? Colors.transparent : LuxColors.border;
+  Color get _focusBorder => _plain ? Colors.transparent : LuxColors.sapphire;
+  Color get _iconColor =>
+      widget.glass ? const Color(0x99FFFFFF) : LuxColors.inkTertiary;
+  Color get _textColor => widget.glass ? Colors.white : LuxColors.ink;
+  Color get _hintColor =>
+      widget.glass ? const Color(0x66FFFFFF) : LuxColors.inkTertiary;
+  Color get _dropBg => LuxColors.surface;
+  Color get _dropDivider => LuxColors.border;
+  Color get _suggPrimary => LuxColors.ink;
+  Color get _suggSecondary => LuxColors.inkTertiary;
+  Color get _suggIcon => LuxColors.sapphire;
 
   void _dbg(String msg) => debugPrint('[PAF] $msg');
 
   @override
   void initState() {
     super.initState();
-    if (widget.initialValue != null) _ctrl.text = widget.initialValue!.displayName;
+    if (widget.initialValue != null)
+      _ctrl.text = widget.initialValue!.displayName;
     _token = _newToken();
     _focus.addListener(() {
       if (!_focus.hasFocus) _hideDropdown();
@@ -84,8 +93,10 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   void didUpdateWidget(PlaceAutocompleteField old) {
     super.didUpdateWidget(old);
     if (_ignoreUpdates) return;
-    if (widget.initialValue != old.initialValue && widget.initialValue != null) {
-      _ctrl.text = widget.initialValue!.displayName;
+    if (widget.initialValue != old.initialValue) {
+      // Null means the parent cleared the place (e.g. a destination left in
+      // another city after the pickup changed).
+      _ctrl.text = widget.initialValue?.displayName ?? '';
       _hideDropdown();
     }
   }
@@ -112,13 +123,18 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
 
   void _onChanged(String value) {
     _debounce?.cancel();
-    if (value.length < 2) { _hideDropdown(); return; }
+    if (value.length < 2) {
+      _hideDropdown();
+      return;
+    }
     _debounce = Timer(const Duration(milliseconds: 320), () => _search(value));
   }
 
   Future<void> _search(String q) async {
     setState(() => _loading = true);
-    final res = await _maps.autocomplete(q, sessionToken: _token);
+    final res = await _maps.autocomplete(q,
+        sessionToken: _token,
+        restrictTo: ServiceArea.destinationAreaFor(widget.sameCityAs));
     _dbg('autocomplete("$q") → ${res.length} results');
     if (!mounted) return;
     setState(() {
@@ -135,12 +151,12 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   Future<void> _pick(PlaceSuggestion s) async {
     _ignoreUpdates = true;
     _ctrl.text = s.mainText;
-    
-    setState(() { 
-      _suggestions = []; 
-      _loading = true; 
+
+    setState(() {
+      _suggestions = [];
+      _loading = true;
     });
-    
+
     _hideDropdown();
     _focus.unfocus();
 
@@ -151,23 +167,30 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
         address: s.description,
       );
       if (!mounted) return;
-      
-      if (place != null) {
-        _ctrl.text = place.displayName;
-        _token = _newToken();
-        widget.onPlaceSelected?.call(place);
-      } else {
-        // FALLBACK: If details fail, create a Place with 0,0 or dummy coords
-        // so the 'Get Prices' button can at least be pressed.
-        _dbg('Fallback for: ${s.description}');
-        final fallback = Place(
-          name: s.mainText,
-          address: s.description,
-          lat: 0.0,
-          lng: 0.0,
-        );
-        widget.onPlaceSelected?.call(fallback);
+
+      // Sin coordenadas no se puede recoger ni calcular el precio: mejor
+      // pedir otra dirección que guardar un lugar en (0,0).
+      if (place == null) {
+        _dbg('Place details failed for: ${s.description}');
+        _ctrl.text = widget.initialValue?.displayName ?? '';
+        showLuxSnackbar(context,
+            'No pudimos ubicar esa dirección. Prueba con otra o elígela en el mapa.',
+            isError: true);
+        return;
       }
+      final picked = place;
+      _token = _newToken();
+
+      final origin = widget.sameCityAs;
+      final error =
+          origin == null ? null : ServiceArea.destinationError(origin, picked);
+      if (error != null) {
+        _ctrl.text = widget.initialValue?.displayName ?? '';
+        showLuxSnackbar(context, error, isError: true);
+        return;
+      }
+      _ctrl.text = place.displayName;
+      widget.onPlaceSelected?.call(picked);
     } catch (e) {
       _dbg('Error in _pick: $e');
     } finally {
@@ -191,47 +214,45 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
     final renderBox =
         _fieldKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null) return const SizedBox.shrink();
-    final size   = renderBox.size;
+    final size = renderBox.size;
     final offset = renderBox.localToGlobal(Offset.zero);
 
     // Flip the dropdown above the field when there isn't enough space below.
-    final screenH    = MediaQuery.sizeOf(ctx).height;
+    final screenH = MediaQuery.sizeOf(ctx).height;
     final dropHeight = (_suggestions.length * 50.0).clamp(0.0, 260.0);
     final spaceBelow = screenH - (offset.dy + size.height + 2);
-    final showAbove  = spaceBelow < dropHeight + 8;
-    final topPos     = showAbove
-        ? offset.dy - dropHeight - 4
-        : offset.dy + size.height + 2;
+    final showAbove = spaceBelow < dropHeight + 8;
+    final topPos =
+        showAbove ? offset.dy - dropHeight - 4 : offset.dy + size.height + 2;
 
-    final bg      = _dropBg;
+    final bg = _dropBg;
     final divider = _dropDivider;
-    final primary   = _suggPrimary;
+    final primary = _suggPrimary;
     final secondary = _suggSecondary;
-    final iconCol   = _suggIcon;
-    final suggs     = List<PlaceSuggestion>.from(_suggestions);
+    final iconCol = _suggIcon;
+    final suggs = List<PlaceSuggestion>.from(_suggestions);
 
     return Positioned(
-      left:  offset.dx,
-      top:   topPos,
+      left: offset.dx,
+      top: topPos,
       width: size.width,
       child: Material(
-        color: bg,
-        elevation: 4,
-        borderRadius: BorderRadius.circular(2),
+        color: Colors.transparent,
         child: Container(
           constraints: const BoxConstraints(maxHeight: 260),
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: bg,
-            borderRadius: BorderRadius.circular(2),
+            borderRadius: BorderRadius.circular(LuxRadius.md),
             border: Border.all(color: divider),
+            boxShadow: LuxElevation.high,
           ),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (int i = 0; i < suggs.length; i++) ...[
-                  if (i > 0)
-                    Divider(height: 1, thickness: 1, color: divider),
+                  if (i > 0) Divider(height: 1, thickness: 1, color: divider),
                   // Use Listener (lower-level than GestureDetector) for reliable
                   // tap detection inside OverlayPortal on Flutter web.
                   GestureDetector(
@@ -299,7 +320,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
         decoration: BoxDecoration(
           color: _fieldBg,
           // glass mode: larger radius so it looks rounded inside the glass bar
-          borderRadius: BorderRadius.circular(widget.glass ? 10 : 2),
+          borderRadius: BorderRadius.circular(widget.glass ? 10 : LuxRadius.md),
           border: Border.all(
             color: _focus.hasFocus ? _focusBorder : _borderColor,
           ),
@@ -318,26 +339,26 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                 onChanged: _onChanged,
                 style: TextStyle(
                   color: _textColor,
-                  fontSize: 13,
+                  fontSize: widget.bare ? 15 : 13,
                   fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.w400,
+                  fontWeight: widget.bare ? FontWeight.w500 : FontWeight.w400,
                 ),
                 decoration: InputDecoration(
                   hintText: widget.hint ?? widget.label,
                   hintStyle: TextStyle(
                     color: _hintColor,
-                    fontSize: 13,
+                    fontSize: widget.bare ? 15 : 13,
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w300,
                   ),
                   // glass mode: explicitly clear any theme-injected fill
-                  filled: widget.glass ? true : null,
-                  fillColor: widget.glass ? Colors.transparent : null,
+                  filled: _plain ? true : null,
+                  fillColor: _plain ? Colors.transparent : null,
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 14),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                 ),
               ),
             ),
@@ -348,7 +369,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                   width: 14,
                   height: 14,
                   child: CircularProgressIndicator(
-                    strokeWidth: 1.2, color: _iconColor),
+                      strokeWidth: 1.2, color: _iconColor),
                 ),
               )
             else if (_ctrl.text.isNotEmpty)

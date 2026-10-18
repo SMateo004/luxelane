@@ -36,12 +36,82 @@
    ```
 
 5. Enable in Firebase Console (both projects):
-   - Authentication → Email/Password + Phone
+   - Authentication → Email/Password + Phone + **Google** (see below)
    - Firestore → create database (production mode)
    - Cloud Functions → enable billing (Blaze plan required)
    - Cloud Messaging → enabled by default
    - Storage → enable it (Build → Storage → Get started). Chauffeur
      verification documents are stored there under `driver_documents/`.
+
+6. **Primer administrador.** Las reglas de Firestore no permiten que nadie se
+   asigne `admin` (ni `driver`) desde la app: todo registro nace como `rider`.
+   Para el primer admin: registrarse normalmente y, en Firestore Console →
+   `users/{uid}`, cambiar `role` a `admin`. A partir de ahí, ese admin
+   asigna roles desde el panel `/admin`.
+
+---
+
+## Inicio de sesión con Google
+
+El botón "Continuar con Google" está en login, registro y en el diálogo de
+acceso al confirmar una reserva. En web usa el popup de Firebase; en
+Android/iOS, el selector nativo de cuentas (`google_sign_in`). La primera vez
+crea el perfil en `users/{uid}` con rol `rider`.
+
+### 1. Firebase Console (proyecto `luxelane-4e7ae`)
+1. Authentication → Sign-in method → **Google** → Habilitar → correo de soporte → Guardar.
+2. Authentication → Settings → **Authorized domains**: deben estar los dominios
+   de los dos sitios de Hosting (`.firebaserc`):
+   - Pasajeros (`rider` → sitio `luxelane-4e7ae`): `luxelane-4e7ae.web.app` y
+     `luxelane-4e7ae.firebaseapp.com` (Firebase los autoriza por defecto).
+   - Chóferes (`driver` → sitio `luxelane-driver`): **añadir**
+     `luxelane-driver.web.app` y `luxelane-driver.firebaseapp.com`.
+   - Cualquier dominio propio conectado en Hosting. `localhost` ya viene incluido.
+
+Con eso **la web ya funciona**; no requiere más configuración.
+
+### 2. Android (dos apps: `com.luxelane.rider` y `com.luxelane.driver`)
+1. Project settings → Your apps → **Add app → Android**, una por paquete:
+   `com.luxelane.rider` y `com.luxelane.driver` (`scripts/setup_mobile.sh`
+   las registra).
+2. Añadir las huellas **SHA-1 y SHA-256** de cada firma que usarás:
+   - debug: `cd android && ./gradlew signingReport`
+   - release/Play: Play Console → Integridad de la app → certificado de firma.
+3. Copiar el **App ID** (`1:51157842817:android:...`).
+4. Google Cloud Console → APIs & Services → Credentials → copiar el
+   **Client ID** de "Web client (auto created by Google Service)".
+5. GitHub → Settings → Secrets → Actions:
+   ```
+   FIREBASE_ANDROID_APP_ID   → App ID del paso 3
+   GOOGLE_SERVER_CLIENT_ID   → Client ID web del paso 4
+   ```
+   En local:
+   ```
+   flutter run --dart-define=FIREBASE_ANDROID_APP_ID=... \
+               --dart-define=GOOGLE_SERVER_CLIENT_ID=...
+   ```
+
+> Google Maps en Android: la clave va en el manifiesto vía
+> `android/app/build.gradle.kts` (variable de entorno `GOOGLE_MAPS_API_KEY`,
+> que el CI toma del secret del mismo nombre). En Google Cloud Console →
+> Credentials, si la clave está restringida, añade las apps Android
+> `com.luxelane.rider` y `com.luxelane.driver` con su SHA-1 y habilita *Maps SDK for Android*.
+
+### 3. iOS (Bundle IDs `com.luxelane.rider` y `com.luxelane.driver`, iOS 14+)
+1. Firebase → Project settings → **Add app → iOS**, una por Bundle ID
+   (`scripts/setup_mobile.sh` las registra). Descargar `GoogleService-Info.plist` (no hace falta
+   añadirlo al proyecto; solo se leen dos valores de él).
+2. En `ios/Flutter/Luxelane.xcconfig` reemplazar:
+   - `GOOGLE_IOS_CLIENT_ID` → `CLIENT_ID` del plist.
+   - `GOOGLE_REVERSED_CLIENT_ID` → `REVERSED_CLIENT_ID` del plist.
+   No son secretos (viajan dentro de la app); se pueden commitear.
+3. GitHub → Secrets → `FIREBASE_IOS_APP_ID` → `GOOGLE_APP_ID` del plist
+   (`1:51157842817:ios:...`). En local:
+   `flutter run --dart-define=FIREBASE_IOS_APP_ID=...`
+4. Compilar/firmar: en una Mac con Xcode, `open ios/Runner.xcworkspace`,
+   elegir el Team en *Signing & Capabilities* y, para notificaciones push,
+   añadir la capability **Push Notifications** y la clave APNs en Firebase
+   → Cloud Messaging.
 
 ---
 
@@ -61,6 +131,9 @@ See **Mobile release (Android)** below:
 APP=rider  GOOGLE_MAPS_KEY=… ./scripts/build_mobile.sh
 APP=driver GOOGLE_MAPS_KEY=… ./scripts/build_mobile.sh
 ```
+The native Maps SDK reads its key from the manifest, which Gradle fills from
+`-PMAPS_API_KEY=…`, the `MAPS_API_KEY` or `GOOGLE_MAPS_API_KEY` env var, or
+`MAPS_API_KEY=...` in `android/local.properties`.
 
 ### Flutter iOS (prod)
 See **Mobile release (iOS)** below (needs a Mac with Xcode):
@@ -71,6 +144,7 @@ APP=driver GOOGLE_MAPS_KEY=… ./scripts/build_ios.sh
 
 ### Flutter Android (dev)
 ```
+# android/local.properties must contain MAPS_API_KEY=YOUR_KEY
 flutter run --dart-define=ENV=dev --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
 ```
 
@@ -79,16 +153,21 @@ flutter run --dart-define=ENV=dev --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
 ## GitHub Secrets Required
 
 ```
-FIREBASE_TOKEN               → firebase login:ci
+GCP_SA_KEY                   → service-account JSON for deploys (replaces FIREBASE_TOKEN)
 GOOGLE_MAPS_API_KEY          → Google Cloud Console (web key)
 GOOGLE_MAPS_ANDROID_KEY      → Google Cloud Console (Android key)
 FIREBASE_RIDER_ANDROID_ENV   → content of .env.luxelane-4e7ae.rider.android
 FIREBASE_DRIVER_ANDROID_ENV  → content of .env.luxelane-4e7ae.driver.android
+FIREBASE_ANDROID_APP_ID      → Firebase → Project settings → app Android
+FIREBASE_IOS_APP_ID          → GOOGLE_APP_ID of GoogleService-Info.plist
+GOOGLE_SERVER_CLIENT_ID      → OAuth "Web client" del proyecto (Google Sign-In en Android)
+GOOGLE_IOS_CLIENT_ID         → CLIENT_ID of GoogleService-Info.plist
 FCM_VAPID_KEY                → Firebase Console → Cloud Messaging (web push)
 APP_CHECK_WEB_KEY            → reCAPTCHA Enterprise site key (App Check, web)
 ```
-The Android jobs fail with a clear error while the two `FIREBASE_*_ANDROID_ENV`
-secrets are missing (a bundle without them can't start).
+`STRIPE_SECRET_KEY` and `FLIGHT_API_KEY` live in Secret Manager (step 3), not
+in GitHub. The Android jobs warn when a `FIREBASE_*_ANDROID_ENV` secret is
+missing; that bundle then depends on `FIREBASE_ANDROID_APP_ID`.
 
 ---
 

@@ -27,7 +27,7 @@ class _StartupErrorPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     return Scaffold(
-      backgroundColor: LuxColors.black,
+      backgroundColor: LuxColors.bg,
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -35,7 +35,7 @@ class _StartupErrorPage extends StatelessWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 420),
               child: Column(mainAxisSize: MainAxisSize.min, children: [
-                const Icon(Icons.cloud_off_outlined, size: 56, color: LuxColors.accent),
+                const Icon(Icons.cloud_off_outlined, size: 56, color: LuxColors.sapphire),
                 const SizedBox(height: LuxSpacing.lg),
                 Text(l.startupErrorTitle, textAlign: TextAlign.center, style: LuxTypography.headlineMedium),
                 const SizedBox(height: LuxSpacing.md),

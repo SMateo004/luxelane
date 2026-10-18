@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/services/crash_service.dart';
+import '../theme/app_theme.dart';
 
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/account_suspended_page.dart';
@@ -17,6 +18,7 @@ import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../../features/support/presentation/pages/help_center_page.dart';
 import '../../l10n/l10n.dart';
 import '../driver_shell/driver_shell.dart';
+import '../router/lux_transitions.dart';
 
 abstract class DriverRoutes {
   static const login        = '/driver/login';
@@ -31,7 +33,8 @@ abstract class DriverRoutes {
 
 final _rootKey = GlobalKey<NavigatorState>();
 
-GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter(
+GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) =>
+    GoRouter(
       navigatorKey: _rootKey,
       initialLocation: DriverRoutes.home,
       redirect: (context, state) {
@@ -42,7 +45,7 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
         CrashService.webReporter.route = going;
 
         // Legal, contact and account deletion are public.
-        if (const {'/terminos', '/privacidad', '/contacto', '/eliminar-cuenta'}.contains(going)) {
+        if (const {'/terminos', '/privacidad', '/legal/terminos', '/legal/privacidad', '/contacto', '/eliminar-cuenta'}.contains(going)) {
           return null;
         }
 
@@ -103,6 +106,15 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
           path: DriverRoutes.documents,
           pageBuilder: (c, s) => _slide(const DriverDocumentsScreen(), s),
         ),
+        // Older links (profile, sign-up) use /legal/…; same pages.
+        GoRoute(
+          path: '/legal/terminos',
+          pageBuilder: (c, s) => _fade(LegalPage.terms(), s),
+        ),
+        GoRoute(
+          path: '/legal/privacidad',
+          pageBuilder: (c, s) => _fade(LegalPage.privacy(), s),
+        ),
         GoRoute(
           path: '/driver/active-ride/:bookingId',
           pageBuilder: (c, s) => _slide(
@@ -120,8 +132,7 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
               routes: [
                 GoRoute(
                   path: DriverRoutes.home,
-                  pageBuilder: (c, s) =>
-                      _fade(const DriverHomeScreen(), s),
+                  pageBuilder: (c, s) => _fade(const DriverHomeScreen(), s),
                 ),
               ],
             ),
@@ -129,8 +140,7 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
               routes: [
                 GoRoute(
                   path: DriverRoutes.queue,
-                  pageBuilder: (c, s) =>
-                      _fade(const DriverQueueScreen(), s),
+                  pageBuilder: (c, s) => _fade(const DriverQueueScreen(), s),
                 ),
               ],
             ),
@@ -138,8 +148,7 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
               routes: [
                 GoRoute(
                   path: DriverRoutes.earnings,
-                  pageBuilder: (c, s) =>
-                      _fade(const DriverEarningsScreen(), s),
+                  pageBuilder: (c, s) => _fade(const DriverEarningsScreen(), s),
                 ),
               ],
             ),
@@ -147,8 +156,7 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) => GoRouter
               routes: [
                 GoRoute(
                   path: DriverRoutes.profile,
-                  pageBuilder: (c, s) =>
-                      _fade(const ProfileScreen(), s),
+                  pageBuilder: (c, s) => _fade(const ProfileScreen(), s),
                 ),
               ],
             ),
@@ -171,29 +179,10 @@ class _DriverBlocListenable extends ChangeNotifier {
 }
 
 CustomTransitionPage<void> _fade(Widget child, GoRouterState state) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionDuration: const Duration(milliseconds: 250),
-      transitionsBuilder: (_, animation, __, child) => FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-        child: child,
-      ),
-    );
+    luxFadeThroughPage(child, state);
 
 CustomTransitionPage<void> _slide(Widget child, GoRouterState state) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionsBuilder: (_, animation, __, child) => SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 1),
-          end: Offset.zero,
-        ).animate(CurvedAnimation(
-            parent: animation, curve: Curves.easeOutCubic)),
-        child: child,
-      ),
-    );
+    luxModalPage(child, state);
 
 class _NotFoundPage extends StatelessWidget {
   const _NotFoundPage();
@@ -203,10 +192,10 @@ class _NotFoundPage extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('404', style: TextStyle(color: Colors.white, fontSize: 64)),
+              const Text('404', style: TextStyle(color: LuxColors.ink, fontSize: 64)),
               const SizedBox(height: 8),
               Text(context.l10n.routerNotFoundTitle,
-                  style: const TextStyle(color: Colors.white70), textAlign: TextAlign.center),
+                  style: const TextStyle(color: LuxColors.inkSecondary), textAlign: TextAlign.center),
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => context.go(DriverRoutes.home),

@@ -34,7 +34,7 @@ cat >"$XC" <<CONF
 LUX_APP = $APP
 LUX_BUNDLE_ID = $BUNDLE
 LUX_DISPLAY_NAME = $NAME
-LUX_MAPS_KEY = $GOOGLE_MAPS_KEY
+LUX_MAPS_KEY = ${GOOGLE_MAPS_KEY:-\$(GOOGLE_MAPS_API_KEY)}
 CONF
 
 APP_VERSION="$(git rev-parse --short HEAD 2>/dev/null || echo unknown)"

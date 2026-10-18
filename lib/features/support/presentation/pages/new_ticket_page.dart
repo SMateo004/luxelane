@@ -71,7 +71,7 @@ class _NewTicketPageState extends State<NewTicketPage> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     return Scaffold(
-      backgroundColor: LuxColors.black,
+      backgroundColor: LuxColors.bg,
       appBar: AppBar(title: Text(l.supportNewRequest)),
       body: Center(
         child: ConstrainedBox(
@@ -81,11 +81,11 @@ class _NewTicketPageState extends State<NewTicketPage> {
             children: [
               if (widget.bookingId != null) ...[
                 Row(children: [
-                  const Icon(Icons.link_rounded, size: 16, color: LuxColors.accent),
+                  const Icon(Icons.link_rounded, size: 16, color: LuxColors.sapphire),
                   const SizedBox(width: LuxSpacing.sm),
                   Expanded(
                     child: Text(l.supportLinkedTrip(widget.bookingId!.substring(0, widget.bookingId!.length.clamp(0, 8)).toUpperCase()),
-                        style: LuxTypography.caption.copyWith(color: LuxColors.whiteSecondary)),
+                        style: LuxTypography.caption.copyWith(color: LuxColors.inkSecondary)),
                   ),
                 ]),
                 const SizedBox(height: LuxSpacing.md),
@@ -122,7 +122,7 @@ class _NewTicketPageState extends State<NewTicketPage> {
                     const SizedBox(width: LuxSpacing.sm),
                     Expanded(
                       child: Text(l.supportSafetyNote,
-                          style: LuxTypography.bodyMedium.copyWith(color: LuxColors.white)),
+                          style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink)),
                     ),
                   ]),
                 ),

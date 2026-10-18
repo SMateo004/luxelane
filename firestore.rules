@@ -80,7 +80,7 @@ service cloud.firestore {
 
       // Self-registration may only pick rider or driver. Admin is granted
       // exclusively via scripts/promote_admin.mjs (Admin SDK) or another admin.
-      allow create: if isOwner(uid) &&
+      allow create: if isAdmin() || isOwner(uid) &&
         request.resource.data.role in ['rider', 'driver'] &&
         request.resource.data.get('isVerified', false) == false &&
         request.resource.data.get('stripeCustomerId', null) == null &&
@@ -101,7 +101,7 @@ service cloud.firestore {
       match /notifications/{notificationId} {
         allow read:   if isOwner(uid) || isAdmin();
         allow create: if (isOwner(uid) && request.resource.data.userId == uid) || isAdmin();
-        allow update: if isOwner(uid) && onlyUpdating(['isRead']);
+        allow update: if (isOwner(uid) && onlyUpdating(['isRead'])) || isAdmin();
         allow delete: if isOwner(uid) || isAdmin();
       }
     }
@@ -403,14 +403,10 @@ service cloud.firestore {
       allow update: if isAdmin() || (
         isDriver() &&
         resource.data.driverId == request.auth.uid &&
-        onlyUpdating(['isActive', 'color', 'photoUrl'])
+        onlyUpdating(['color', 'photoUrl'])
       );
       allow delete: if isAdmin();
     }
-
-    // -------------------------------------------------------------------------
-    // /pricingRules/{ruleId}
-    // -------------------------------------------------------------------------
 
     // Vehicle catalog: public (the website shows the fleet); written only by
     // the saveVehicleClass callable, which validates every field.
@@ -419,9 +415,24 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // -------------------------------------------------------------------------
+    // /pricingRules/{ruleId}
+    // Tarifas públicas (la web las muestra sin sesión); solo el admin las
+    // edita, con importes numéricos no negativos.
+    // -------------------------------------------------------------------------
+
+    function validFare(d) {
+      return d.basePriceUsd is number && d.basePriceUsd >= 0 &&
+        d.pricePerKmUsd is number && d.pricePerKmUsd >= 0 &&
+        d.pricePerHourUsd is number && d.pricePerHourUsd >= 0 &&
+        d.minimumPriceUsd is number && d.minimumPriceUsd >= 0 &&
+        d.get('isActive', true) is bool;
+    }
+
     match /pricingRules/{ruleId} {
-      allow read:   if isAuthenticated();
-      allow write:  if isAdmin();
+      allow read:   if true;
+      allow create, update: if isAdmin() && validFare(request.resource.data);
+      allow delete: if isAdmin();
     }
 
     // -------------------------------------------------------------------------
@@ -429,7 +440,9 @@ service cloud.firestore {
     // -------------------------------------------------------------------------
 
     match /admin_logs/{logId} {
-      allow read, create: if isAdmin();
+      allow read:   if isAdmin();
+      allow create: if isAdmin() &&
+        request.resource.data.adminId == request.auth.uid;
       allow update, delete: if false;
     }
 
@@ -439,10 +452,17 @@ service cloud.firestore {
       // check it before anyone signs in.
       allow read:  if docId == 'global' ||
         (isAuthenticated() && (docId != 'finance' || isAdmin() || isDriver()));
-      allow write: if isAdmin() && (docId != 'finance' || (
-        request.resource.data.commissionPct is number &&
-        request.resource.data.commissionPct >= 0 &&
-        request.resource.data.commissionPct <= 50)) && (docId != 'loyalty' || (
+      // finance: `commissionPct` (settlements) and `platformCommissionPct`
+      // (booking settlement split) are each validated when present.
+      allow write: if isAdmin() && (docId != 'finance' || ((
+        !('commissionPct' in request.resource.data) || (
+          request.resource.data.commissionPct is number &&
+          request.resource.data.commissionPct >= 0 &&
+          request.resource.data.commissionPct <= 50)) && (
+        !('platformCommissionPct' in request.resource.data) || (
+          request.resource.data.platformCommissionPct is number &&
+          request.resource.data.platformCommissionPct >= 0 &&
+          request.resource.data.platformCommissionPct <= 100)))) && (docId != 'loyalty' || (
         // The server re-validates every tier (functions/src/loyalty.ts).
         request.resource.data.enabled is bool &&
         request.resource.data.tiers is list &&
@@ -458,7 +478,9 @@ service cloud.firestore {
         request.resource.data.openMin < request.resource.data.closeMin)) && (docId != 'global' || (
         // Legacy keys (push, 2FA) stay allowed so merges of old docs work.
         request.resource.data.keys().hasOnly(['isMaintenanceMode', 'riderMinBuild', 'driverMinBuild',
-          'riderIosUrl', 'driverIosUrl', 'updatedAt', 'pushNotificationsEnabled', 'twoFactorEnabled']) &&
+          'riderIosUrl', 'driverIosUrl', 'updatedAt', 'pushNotificationsEnabled', 'twoFactorEnabled',
+          'firstClassEnabled']) &&
+        request.resource.data.get('firstClassEnabled', false) is bool &&
         request.resource.data.get('isMaintenanceMode', false) is bool &&
         request.resource.data.get('riderMinBuild', 0) is int &&
         request.resource.data.get('driverMinBuild', 0) is int &&
@@ -470,6 +492,34 @@ service cloud.firestore {
           request.resource.data.riderIosUrl.matches('https://apps[.]apple[.]com/.{1,200}')) &&
         (request.resource.data.get('driverIosUrl', '') == '' ||
           request.resource.data.driverIosUrl.matches('https://apps[.]apple[.]com/.{1,200}'))));
+    }
+
+    // -------------------------------------------------------------------------
+    // /businessLeads/{id} — solicitudes de empresas (sin cuenta). Se crean
+    // con campos acotados; solo el admin las lee y las marca atendidas.
+    // -------------------------------------------------------------------------
+
+    function shortText(v, max) {
+      return v is string && v.size() <= max;
+    }
+
+    match /businessLeads/{id} {
+      allow create: if
+        request.resource.data.keys().hasOnly(['company', 'contactName',
+          'email', 'phone', 'travellers', 'message', 'handled', 'createdAt']) &&
+        shortText(request.resource.data.company, 120) &&
+        request.resource.data.company.size() > 0 &&
+        shortText(request.resource.data.contactName, 120) &&
+        shortText(request.resource.data.email, 160) &&
+        request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$') &&
+        shortText(request.resource.data.phone, 40) &&
+        shortText(request.resource.data.travellers, 20) &&
+        shortText(request.resource.data.message, 2000) &&
+        request.resource.data.handled == false &&
+        request.resource.data.createdAt == request.time;
+      allow read: if isAdmin();
+      allow update: if isAdmin() && onlyUpdating(['handled']);
+      allow delete: if false;
     }
 
     // -------------------------------------------------------------------------
