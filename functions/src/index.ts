@@ -15,6 +15,7 @@ import { linkRejection, paymentAction, validIntentAmount } from './payments';
 import { checkCorporateBooking } from './corporate_functions';
 
 export * from './corporate_functions';
+export * from './special_functions';
 import { driverBookkeeping, driverSnapshot, isExpiredPending, isRecentlySeen, nextRating, riderMessage } from './lifecycle';
 
 admin.initializeApp();

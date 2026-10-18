@@ -10,6 +10,9 @@ import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/booking/presentation/pages/booking_screen.dart';
 import '../../features/business/presentation/pages/business_landing_page.dart';
 import '../../features/business/presentation/pages/company_dashboard_page.dart';
+import '../../features/special/domain/special_models.dart';
+import '../../features/special/presentation/pages/my_special_requests_page.dart';
+import '../../features/special/presentation/pages/special_request_page.dart';
 import '../../features/booking/presentation/pages/ride_type_page.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
 import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
@@ -45,6 +48,7 @@ abstract class LuxRoutes {
   static const addCard = '/payment/add';
   static const business = '/empresas';
   static const company = '/empresa';
+  static const special = '/especiales';
 
   // Driver Routes
   static const driverHome = '/driver';
@@ -117,6 +121,16 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
             return LuxRoutes.home;
           }
 
+          // Volver a la página que pidió iniciar sesión (solo rutas internas).
+          final from = state.uri.queryParameters['from'];
+          if ((going == LuxRoutes.login || going == LuxRoutes.register) &&
+              from != null &&
+              from.startsWith('/') &&
+              !from.startsWith('//') &&
+              !isDriver) {
+            return from;
+          }
+
           // If landing on splash/auth while authed, send to correct home
           if (going == LuxRoutes.splash ||
               going == LuxRoutes.login ||
@@ -141,6 +155,7 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
                 going.startsWith('/ride-type') ||
                 going.startsWith('/booking') ||
                 going == LuxRoutes.business ||
+                going.startsWith('${LuxRoutes.special}/') ||
                 going.startsWith('/servicios');
 
             // If explicitly trying to enter via driver path, go to driver login.
@@ -158,6 +173,7 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
                 going == LuxRoutes.driverLogin ||
                 going.startsWith('/ride-type') ||
                 going == LuxRoutes.business ||
+                going.startsWith('${LuxRoutes.special}/') ||
                 going.startsWith('/booking');
             if (!mobileGuestOk) return LuxRoutes.login;
           }
@@ -204,6 +220,19 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: LuxRoutes.business,
           pageBuilder: (c, s) => _fade(const BusinessLandingPage(), s),
+        ),
+        GoRoute(
+          path: LuxRoutes.special,
+          pageBuilder: (c, s) => _fade(const MySpecialRequestsPage(), s),
+        ),
+        GoRoute(
+          path: '${LuxRoutes.special}/:kind',
+          redirect: (c, s) =>
+              SpecialKindX.parse(s.pathParameters['kind']) == null ? '/' : null,
+          pageBuilder: (c, s) => _slide(
+              SpecialRequestPage(
+                  kind: SpecialKindX.parse(s.pathParameters['kind'])!),
+              s),
         ),
         GoRoute(
           path: LuxRoutes.company,

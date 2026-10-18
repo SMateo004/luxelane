@@ -64,8 +64,13 @@ class _LoginPageState extends State<LoginPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
-          // The router sends each role to its home (admins to /admin).
-          context.go('/');
+          // Vuelve a la página que pidió iniciar sesión, si la hay; si no,
+          // el router manda a cada rol a su inicio (admins a /admin).
+          final from = GoRouterState.of(context).uri.queryParameters['from'];
+          context.go(
+              from != null && from.startsWith('/') && !from.startsWith('//')
+                  ? from
+                  : '/');
         }
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -251,7 +256,16 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     _TextLink(
                       label: 'Crear una',
-                      onTap: () => context.go('/register'),
+                      // Conserva el destino pendiente al pasar a registro.
+                      onTap: () => context.go(Uri(
+                        path: '/register',
+                        queryParameters: GoRouterState.of(context)
+                                .uri
+                                .queryParameters
+                                .isEmpty
+                            ? null
+                            : GoRouterState.of(context).uri.queryParameters,
+                      ).toString()),
                     ),
                   ],
                 ),

@@ -13,6 +13,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart'
         Marker,
         MarkerId;
 import 'package:video_player/video_player.dart';
+import '../../../special/presentation/widgets/special_services_sheet.dart';
 import '../../../../core/config/remote_flags.dart';
 import '../../../../core/design/lux_promise.dart';
 import '../../../../core/design/vehicle_catalog.dart';
@@ -408,9 +409,16 @@ class _HeroSectionState extends State<_HeroSection>
                     const SizedBox(height: 36),
 
                     // ── Service pill toggle ──────────────────────────
-                    _ServicePillToggle(
-                      isOneWay: isOneWay,
-                      onChanged: widget.onServiceTypeChanged,
+                    Row(
+                      children: [
+                        _ServicePillToggle(
+                          isOneWay: isOneWay,
+                          onChanged: widget.onServiceTypeChanged,
+                        ),
+                        const Spacer(),
+                        // Servicios especiales: accesibles, no protagonistas.
+                        const MoreServicesLink(onDark: true),
+                      ],
                     ),
                     const SizedBox(height: 12),
 

@@ -206,6 +206,7 @@ enum AdminSection {
   operations,
   finance,
   companies,
+  special,
   pricing,
   drivers,
   vehicles,

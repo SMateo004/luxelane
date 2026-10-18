@@ -363,6 +363,58 @@ service cloud.firestore {
     }
 
     // -------------------------------------------------------------------------
+    // /specialRequests/{id} — servicios especiales bajo cotización
+    // (aerotaxi, paseo por la ciudad). El cliente solicita; Luxelane cotiza;
+    // el cliente acepta o rechaza.
+    // -------------------------------------------------------------------------
+
+    function isShortText(v, min, max) {
+      return v is string && v.size() >= min && v.size() <= max;
+    }
+
+    function isValidSpecialRequest() {
+      let d = request.resource.data;
+      return d.riderId == request.auth.uid &&
+        d.status == 'new' &&
+        d.keys().hasOnly(['riderId', 'riderName', 'riderEmail', 'riderPhone',
+          'kind', 'date', 'passengers', 'from', 'to', 'pickup',
+          'durationHours', 'language', 'notes', 'status', 'createdAt',
+          'updatedAt']) &&
+        isShortText(d.riderName, 0, 80) &&
+        isShortText(d.get('riderPhone', ''), 0, 20) &&
+        d.date is timestamp &&
+        d.date > request.time &&
+        d.date < request.time + duration.value(365, 'd') &&
+        d.passengers is int && d.passengers >= 1 && d.passengers <= 12 &&
+        isShortText(d.get('notes', ''), 0, 500) &&
+        ((d.kind == 'aerotaxi' &&
+            isShortText(d.from, 2, 60) && isShortText(d.to, 2, 60) &&
+            d.from != d.to) ||
+         (d.kind == 'cityTour' &&
+            isShortText(d.pickup, 3, 120) &&
+            d.durationHours in [2, 3, 4, 6] &&
+            d.get('language', 'es') in ['es', 'en', 'pt']));
+    }
+
+    match /specialRequests/{requestId} {
+      allow read: if isAdmin() ||
+        (isAuthenticated() && resource.data.riderId == request.auth.uid);
+      allow create: if isAuthenticated() && isActiveUser() &&
+        isValidSpecialRequest();
+      allow update: if isAdmin() || (
+        resource.data.riderId == request.auth.uid &&
+        onlyUpdating(['status', 'updatedAt']) && (
+          // Cancelar antes de confirmar
+          (resource.data.status in ['new', 'quoted'] &&
+            request.resource.data.status == 'cancelled') ||
+          // Aceptar la cotización recibida
+          (resource.data.status == 'quoted' &&
+            request.resource.data.status == 'confirmed')
+        ));
+      allow delete: if false;
+    }
+
+    // -------------------------------------------------------------------------
     // /admin_logs/{logId}  — auditoría inmutable
     // -------------------------------------------------------------------------
 

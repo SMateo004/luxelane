@@ -542,3 +542,50 @@ describe('programa para empresas', () => {
     await assertFails(getDoc(doc(db('rider'), 'companyInvites/acme_x')));
   });
 });
+
+describe('servicios especiales', () => {
+  const inDays = (d) => Timestamp.fromMillis(Date.now() + d * 86400e3);
+  const aerotaxi = (extra = {}) => ({
+    riderId: 'rider', riderName: 'Ana', riderEmail: 'a@b.bo', riderPhone: '+591 7',
+    kind: 'aerotaxi', date: inDays(3), passengers: 2,
+    from: 'Santa Cruz', to: 'Uyuni', notes: '', status: 'new',
+    createdAt: now(), updatedAt: now(), ...extra,
+  });
+  const tour = (extra = {}) => ({
+    riderId: 'rider', riderName: 'Ana', kind: 'cityTour', date: inDays(1), passengers: 3,
+    pickup: 'Hotel Los Tajibos', durationHours: 4, language: 'en', notes: 'Mercados',
+    status: 'new', createdAt: now(), updatedAt: now(), ...extra,
+  });
+
+  test('el pasajero pide un aerotaxi o un paseo', async () => {
+    await assertSucceeds(setDoc(doc(db('rider'), 'specialRequests/s1'), aerotaxi()));
+    await assertSucceeds(setDoc(doc(db('rider'), 'specialRequests/s2'), tour()));
+  });
+
+  test('no se fabrican cotizaciones, fechas pasadas ni datos raros', async () => {
+    await assertFails(setDoc(doc(db('rider'), 'specialRequests/x1'), aerotaxi({ status: 'quoted', quoteBs: 1 })));
+    await assertFails(setDoc(doc(db('rider'), 'specialRequests/x2'), aerotaxi({ date: inDays(-1) })));
+    await assertFails(setDoc(doc(db('rider'), 'specialRequests/x3'), aerotaxi({ to: 'Santa Cruz' })));
+    await assertFails(setDoc(doc(db('rider'), 'specialRequests/x4'), aerotaxi({ passengers: 40 })));
+    await assertFails(setDoc(doc(db('rider'), 'specialRequests/x5'), tour({ durationHours: 9 })));
+    await assertFails(setDoc(doc(db('rider'), 'specialRequests/x6'), aerotaxi({ kind: 'submarino' })));
+    await assertFails(setDoc(doc(db('rider'), 'specialRequests/x7'), aerotaxi({ riderId: 'rider2' })));
+    await assertFails(setDoc(doc(db('blocked'), 'specialRequests/x8'), aerotaxi({ riderId: 'blocked' })));
+    await assertFails(setDoc(doc(db('rider'), 'specialRequests/x9'), aerotaxi({ notes: 'x'.repeat(600) })));
+  });
+
+  test('el cliente acepta o cancela; no se pone precio ni ve las ajenas', async () => {
+    await seed((f) => setDoc(doc(f, 'specialRequests/q1'), { ...aerotaxi(), status: 'quoted', quoteBs: 9000 }));
+    await assertFails(updateDoc(doc(db('rider'), 'specialRequests/q1'), { quoteBs: 1 }));
+    await assertFails(updateDoc(doc(db('rider'), 'specialRequests/q1'), { status: 'completed' }));
+    await assertFails(getDoc(doc(db('rider2'), 'specialRequests/q1')));
+    await assertSucceeds(updateDoc(doc(db('rider'), 'specialRequests/q1'), { status: 'confirmed', updatedAt: now() }));
+    await assertFails(updateDoc(doc(db('rider'), 'specialRequests/q1'), { status: 'cancelled' }));
+    await assertSucceeds(getDocs(query(collection(db('rider'), 'specialRequests'), where('riderId', '==', 'rider'))));
+  });
+
+  test('el admin cotiza', async () => {
+    await seed((f) => setDoc(doc(f, 'specialRequests/n1'), aerotaxi()));
+    await assertSucceeds(updateDoc(doc(db('admin'), 'specialRequests/n1'), { status: 'quoted', quoteBs: 8500, adminNote: 'Avioneta 5 plazas' }));
+  });
+});
