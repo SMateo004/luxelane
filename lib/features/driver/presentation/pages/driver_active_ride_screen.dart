@@ -19,8 +19,7 @@ class DriverActiveRideScreen extends StatelessWidget {
     return BlocBuilder<DriverBloc, DriverState>(
       builder: (context, state) {
         if (state is! DriverLoaded) {
-          return const Scaffold(
-              body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(body: LuxSkeletonList(count: 3));
         }
 
         Booking? booking;
@@ -226,6 +225,8 @@ class _DriverSidePanel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          RideProgressBar(status: booking.status),
+          const SizedBox(height: LuxSpacing.md),
           Row(
             children: [
               BookingStatusChip(status: booking.status),
@@ -240,10 +241,11 @@ class _DriverSidePanel extends StatelessWidget {
           const SizedBox(height: LuxSpacing.md),
           _RideInfoRow(booking: booking),
           const SizedBox(height: LuxSpacing.md),
+          // Deslizar evita completar un paso con un toque accidental.
           if (_actionLabel.isNotEmpty)
-            LuxButton(
+            LuxSlideToConfirm(
               label: _actionLabel,
-              onPressed: () => _advance(context),
+              onConfirmed: () => _advance(context),
             ),
         ],
       );

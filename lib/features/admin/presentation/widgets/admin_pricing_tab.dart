@@ -359,7 +359,7 @@ class _PricingCardState extends State<_PricingCard> {
                   ),
                   const SizedBox(width: LuxSpacing.sm),
                   SizedBox(
-                    width: 84,
+                    width: 100,
                     child: TextField(
                       controller: _hourly ? _simHours : _simKm,
                       keyboardType:

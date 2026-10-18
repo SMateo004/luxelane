@@ -388,7 +388,19 @@ ThemeData get luxTheme {
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: LuxColors.surface,
       surfaceTintColor: Colors.transparent,
+      elevation: 0,
       indicatorColor: LuxColors.sapphireTint,
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (s) => LuxTypography.caption.copyWith(
+          fontSize: 11,
+          color: s.contains(WidgetState.selected)
+              ? LuxColors.ink
+              : LuxColors.inkTertiary,
+          fontWeight: s.contains(WidgetState.selected)
+              ? FontWeight.w600
+              : FontWeight.w500,
+        ),
+      ),
       iconTheme: WidgetStateProperty.resolveWith(
         (s) => IconThemeData(
           color: s.contains(WidgetState.selected)

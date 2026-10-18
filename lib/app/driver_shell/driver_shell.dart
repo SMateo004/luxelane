@@ -1,63 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/widgets/components.dart';
-import '../../features/notifications/presentation/widgets/notification_bell.dart';
 import '../theme/app_theme.dart';
+import '../theme/lux_motion.dart';
 
+/// Contenedor de la app del chófer: cada pantalla pone su propia cabecera
+/// (así no se apilan dos barras) y abajo una navegación con indicador.
 class DriverShell extends StatelessWidget {
   const DriverShell({super.key, required this.navigationShell});
   final StatefulNavigationShell navigationShell;
 
   static const _items = [
-    BottomNavigationBarItem(
-      icon: Icon(Icons.home_outlined),
-      activeIcon: Icon(Icons.home_rounded),
-      label: 'Inicio',
+    NavigationDestination(
+      icon: Icon(Icons.radio_button_unchecked_rounded),
+      selectedIcon: Icon(Icons.radio_button_checked_rounded),
+      label: 'Conducir',
     ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.list_alt_outlined),
-      activeIcon: Icon(Icons.list_alt_rounded),
-      label: 'Trabajos',
+    NavigationDestination(
+      icon: Icon(Icons.inbox_outlined),
+      selectedIcon: Icon(Icons.inbox_rounded),
+      label: 'Solicitudes',
     ),
-    BottomNavigationBarItem(
-      icon: Icon(Icons.attach_money_outlined),
-      activeIcon: Icon(Icons.attach_money_rounded),
+    NavigationDestination(
+      icon: Icon(Icons.account_balance_wallet_outlined),
+      selectedIcon: Icon(Icons.account_balance_wallet_rounded),
       label: 'Ganancias',
     ),
-    BottomNavigationBarItem(
+    NavigationDestination(
       icon: Icon(Icons.person_outline_rounded),
-      activeIcon: Icon(Icons.person_rounded),
+      selectedIcon: Icon(Icons.person_rounded),
       label: 'Perfil',
     ),
   ];
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: const LuxelaneWordmark(),
-          actions: const [
-            NotificationBell(),
-            SizedBox(width: 8),
-          ],
-        ),
         body: navigationShell,
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: navigationShell.currentIndex,
-          onTap: (i) => navigationShell.goBranch(
-            i,
-            initialLocation: i == navigationShell.currentIndex,
+        bottomNavigationBar: DecoratedBox(
+          decoration: const BoxDecoration(
+            border: Border(top: BorderSide(color: LuxColors.border)),
           ),
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: LuxColors.surface,
-          selectedItemColor: LuxColors.sapphire,
-          unselectedItemColor: LuxColors.inkTertiary,
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
-          selectedLabelStyle: LuxTypography.caption
-              .copyWith(color: LuxColors.sapphire, fontSize: 10),
-          unselectedLabelStyle: LuxTypography.caption.copyWith(fontSize: 10),
-          items: _items,
+          child: NavigationBar(
+            selectedIndex: navigationShell.currentIndex,
+            height: 68,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+            animationDuration: LuxMotion.base,
+            onDestinationSelected: (i) {
+              if (i != navigationShell.currentIndex) LuxHaptics.tap();
+              navigationShell.goBranch(
+                i,
+                initialLocation: i == navigationShell.currentIndex,
+              );
+            },
+            destinations: _items,
+          ),
         ),
       );
 }

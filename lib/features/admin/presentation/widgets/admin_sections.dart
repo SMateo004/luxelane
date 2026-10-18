@@ -29,7 +29,7 @@ class DashboardTab extends StatelessWidget {
     return BlocBuilder<AdminBloc, AdminState>(
       builder: (context, state) {
         if (state.isLoading && state.bookings.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const LuxSkeletonList();
         }
         final month = state.finance(FinancePeriod.thisMonth);
         final week = state.finance(FinancePeriod.last7);
@@ -122,7 +122,7 @@ class DashboardTab extends StatelessWidget {
             LayoutBuilder(builder: (context, c) {
               final cols = c.maxWidth >= 920
                   ? 4
-                  : c.maxWidth >= 460
+                  : c.maxWidth >= 300
                       ? 2
                       : 1;
               final w = (c.maxWidth - (cols - 1) * LuxSpacing.md) / cols;
@@ -264,7 +264,7 @@ class _BookingsTabState extends State<BookingsTab> {
     return BlocBuilder<AdminBloc, AdminState>(
       builder: (context, state) {
         if (state.isLoading && state.bookings.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const LuxSkeletonList();
         }
         final q = _search.trim().toLowerCase();
         final rows = state.bookings.where((b) {
@@ -692,7 +692,7 @@ class DriversTab extends StatelessWidget {
   Widget build(BuildContext context) =>
       BlocBuilder<AdminBloc, AdminState>(builder: (context, state) {
         if (state.isLoading && state.drivers.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const LuxSkeletonList();
         }
         if (state.drivers.isEmpty) {
           return const AdminEmpty(
@@ -821,7 +821,7 @@ class VehiclesTab extends StatelessWidget {
   Widget build(BuildContext context) =>
       BlocBuilder<AdminBloc, AdminState>(builder: (context, state) {
         if (state.isLoading && state.vehicles.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const LuxSkeletonList();
         }
         if (state.vehicles.isEmpty) {
           return const AdminEmpty(
@@ -909,7 +909,7 @@ class _UsersTabState extends State<UsersTab> {
   Widget build(BuildContext context) =>
       BlocBuilder<AdminBloc, AdminState>(builder: (context, state) {
         if (state.isLoading && state.users.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const LuxSkeletonList();
         }
         final q = _search.toLowerCase();
         final filtered = state.users
@@ -1151,7 +1151,7 @@ class _AuditTabState extends State<AuditTab> {
   Widget build(BuildContext context) =>
       BlocBuilder<AdminBloc, AdminState>(builder: (context, state) {
         if (state.isLoading && state.auditLogs.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const LuxSkeletonList();
         }
         final q = _search.toLowerCase();
         final logs = state.auditLogs.where((l) {
@@ -1641,7 +1641,7 @@ class BusinessLeadsTab extends StatelessWidget {
                 title: 'No se pudieron cargar las solicitudes');
           }
           if (!snap.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const LuxSkeletonList();
           }
           final leads = snap.data!;
           if (leads.isEmpty) {

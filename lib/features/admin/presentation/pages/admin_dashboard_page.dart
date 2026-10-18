@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -50,7 +51,47 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.settings: Icons.settings_outlined,
   };
 
-  void _go(AdminSection s) => setState(() => _section = s);
+  /// La barra lateral agrupa las secciones por tarea.
+  static const _groups = [
+    (
+      'Operación',
+      [
+        AdminSection.dashboard,
+        AdminSection.operations,
+        AdminSection.drivers,
+        AdminSection.vehicles,
+      ]
+    ),
+    (
+      'Negocio',
+      [
+        AdminSection.finance,
+        AdminSection.pricing,
+        AdminSection.business,
+        AdminSection.users,
+      ]
+    ),
+    ('Sistema', [AdminSection.audit, AdminSection.settings]),
+  ];
+
+  /// Una línea de contexto bajo el título de cada sección.
+  static const _subtitles = {
+    AdminSection.dashboard: 'Lo que pasa hoy en Luxelane, de un vistazo.',
+    AdminSection.operations: 'Reservas, asignaciones y estados en vivo.',
+    AdminSection.finance: 'Facturación, cobros y liquidaciones.',
+    AdminSection.pricing: 'Tarifas por clase de vehículo y servicio.',
+    AdminSection.drivers: 'Verificación y disponibilidad de chóferes.',
+    AdminSection.vehicles: 'La flota y su estado.',
+    AdminSection.users: 'Cuentas, roles y accesos.',
+    AdminSection.business: 'Solicitudes de empresas.',
+    AdminSection.audit: 'Cada acción del panel, con su autor.',
+    AdminSection.settings: 'Ajustes generales de la plataforma.',
+  };
+
+  void _go(AdminSection s) {
+    if (s != _section) LuxHaptics.tap();
+    setState(() => _section = s);
+  }
 
   /// Elementos que requieren acción en cada sección.
   int? _badge(AdminSection s, AdminState state) => switch (s) {
@@ -89,8 +130,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: LuxColors.surfaceMuted,
-        title: const Text('Cerrar sesión', style: LuxTypography.titleLarge),
+        title: const Text('¿Cerrar sesión?'),
         content: const Text(
           '¿Seguro que quieres cerrar sesión del panel de administración?',
           style: LuxTypography.bodyMedium,
@@ -100,16 +140,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             onPressed: () => Navigator.pop(ctx),
             child: const Text('Cancelar'),
           ),
-          TextButton(
+          FilledButton(
             onPressed: () {
               Navigator.pop(ctx);
               context.read<AuthBloc>().add(const LogoutRequested());
             },
-            child: const Text(
-              'Cerrar sesión',
-              style: TextStyle(
-                  color: LuxColors.error, fontWeight: FontWeight.w600),
-            ),
+            child: const Text('Cerrar sesión'),
           ),
         ],
       ),
@@ -160,68 +196,111 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   Widget _webLayout() => Row(
         children: [
           SizedBox(
-            width: 240,
+            width: 252,
             child: Container(
               color: LuxColors.surface,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(LuxSpacing.lg),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const LuxelaneWordmark(),
-                        const SizedBox(height: LuxSpacing.xs),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: LuxSpacing.sm, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: LuxColors.sapphireSubtle,
-                            borderRadius: BorderRadius.circular(LuxRadius.sm),
-                          ),
-                          child: Text(
-                            'PANEL ADMIN',
-                            style: LuxTypography.caption.copyWith(
-                                color: LuxColors.sapphire,
-                                fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                      ],
-                    ),
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(24, 28, 24, 8),
+                    child: LuxelaneWordmark(size: 11),
                   ),
-                  const LuxDivider(),
-                  const SizedBox(height: LuxSpacing.sm),
                   Expanded(
                     child: BlocBuilder<AdminBloc, AdminState>(
                       builder: (context, state) => ListView(
+                        padding: const EdgeInsets.only(bottom: 12),
                         children: [
-                          for (final s in AdminSection.values)
-                            AdminNavItem(
-                              icon: _icons[s]!,
-                              label: _labels[s]!,
-                              badge: _badge(s, state),
-                              selected: _section == s,
-                              onTap: () => _go(s),
-                            ),
+                          for (final (label, sections) in _groups) ...[
+                            AdminNavGroup(label),
+                            for (final s in sections)
+                              AdminNavItem(
+                                icon: _icons[s]!,
+                                label: _labels[s]!,
+                                badge: _badge(s, state),
+                                selected: _section == s,
+                                onTap: () => _go(s),
+                              ),
+                          ],
                         ],
                       ),
                     ),
                   ),
                   const LuxDivider(),
-                  AdminNavItem(
-                    icon: Icons.logout_rounded,
-                    label: 'Cerrar sesión',
-                    selected: false,
-                    onTap: () => _confirmSignOut(context),
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, auth) {
+                      final name = auth is AuthAuthenticated
+                          ? auth.user.displayName
+                          : 'Administración';
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 12, 8, 16),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 16,
+                              backgroundColor: LuxColors.sapphireTint,
+                              child: Text(
+                                name.isEmpty ? 'A' : name[0].toUpperCase(),
+                                style: const TextStyle(
+                                  fontFamily: 'Cormorant Garamond',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: LuxColors.sapphire,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(name,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: LuxTypography.titleMedium
+                                          .copyWith(fontSize: 13)),
+                                  const Text('Administración',
+                                      style: LuxTypography.caption),
+                                ],
+                              ),
+                            ),
+                            IconButton(
+                              tooltip: 'Cerrar sesión',
+                              onPressed: () => _confirmSignOut(context),
+                              icon: const Icon(Icons.logout_rounded,
+                                  size: 18, color: LuxColors.inkTertiary),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
                   ),
-                  const SizedBox(height: LuxSpacing.md),
                 ],
               ),
             ),
           ),
           const LuxDivider(vertical: true),
-          Expanded(child: _withLoadError(_sectionBody())),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AdminPageHeader(
+                  title: _labels[_section]!,
+                  subtitle: _subtitles[_section],
+                ),
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: LuxMotion.of(context, LuxMotion.base),
+                    switchInCurve: LuxMotion.decelerate,
+                    child: KeyedSubtree(
+                      key: ValueKey(_section),
+                      child: _withLoadError(_sectionBody()),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       );
 

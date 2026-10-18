@@ -87,6 +87,6 @@ void main() {
     expect(find.text('− Bs30.00'), findsOneWidget); // 10 + 20
     expect(find.text('Bs90.00'), findsOneWidget);
     expect(find.text('Bs80.00'), findsOneWidget);
-    expect(find.text('PROVISIONAL'), findsOneWidget);
+    expect(find.text('Provisional'), findsOneWidget);
   });
 }
