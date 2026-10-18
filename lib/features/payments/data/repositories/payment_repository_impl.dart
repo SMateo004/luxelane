@@ -123,7 +123,10 @@ class PaymentRepositoryImpl implements PaymentRepository {
       final result = await _fn.httpsCallable('listPaymentMethods').call({
         'customerId': stripeCustomerId,
       });
-      final cards = List<Map<String, dynamic>>.from(result.data['cards'] ?? []);
+      // En móvil llegan como Map<Object?, Object?>: se copian una a una.
+      final cards = ((result.data['cards'] as List?) ?? const [])
+          .map((c) => Map<String, dynamic>.from(c as Map))
+          .toList();
       return Right(cards);
     } catch (e) {
       return Left(PaymentFailure(e.toString()));
@@ -156,8 +159,41 @@ class PaymentRepositoryImpl implements PaymentRepository {
         'paymentMethodId': paymentMethodId,
       });
       return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      if (e.message == 'card-in-use') {
+        return const Left(PaymentFailure(
+            'Esta tarjeta paga una reserva pendiente. Cancélala o espera a '
+            'que termine antes de quitar la tarjeta.'));
+      }
+      return const Left(
+          PaymentFailure('No pudimos quitar la tarjeta. Inténtalo de nuevo.'));
     } catch (e) {
       return Left(PaymentFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> setDefaultCard(String paymentMethodId) async {
+    try {
+      await _fn.httpsCallable('setDefaultPaymentMethod').call({
+        'paymentMethodId': paymentMethodId,
+      });
+      return const Right(null);
+    } catch (_) {
+      return const Left(PaymentFailure(
+          'No pudimos cambiar la tarjeta predeterminada. Inténtalo de nuevo.'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, String>> ensureStripeCustomer() async {
+    try {
+      final result =
+          await _fn.httpsCallable('ensureStripeCustomer').call<dynamic>();
+      return Right((result.data as Map)['customerId'] as String);
+    } catch (_) {
+      return const Left(PaymentFailure(
+          'No pudimos preparar tu perfil de pagos. Inténtalo de nuevo.'));
     }
   }
 }

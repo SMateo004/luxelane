@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/config/remote_flags.dart';
 import '../../../../core/design/lux_promise.dart';
 import '../../../../core/design/vehicle_catalog.dart';
@@ -294,6 +295,16 @@ class _BookingScreenState extends State<BookingScreen> {
         isError: true);
   }
 
+  /// Cierra la reserva con un momento de certeza antes de seguir el viaje.
+  Future<void> _celebrate(String bookingId) async {
+    await showLuxSuccess(
+      context,
+      title: 'Reserva confirmada',
+      message: 'Te avisaremos en cuanto tu chófer vaya en camino.',
+    );
+    if (mounted) context.go('/ride/$bookingId');
+  }
+
   Future<void> _handleStripeConfirm(String clientSecret) async {
     if (_selectedCardId == null) return;
     try {
@@ -309,7 +320,7 @@ class _BookingScreenState extends State<BookingScreen> {
       _pendingBookingId = null;
       if (!mounted || id == null) return;
       setState(() => _loading = false);
-      context.go('/ride/$id');
+      await _celebrate(id);
     } on StripeException catch (e) {
       await _cardFailed(e.error.localizedMessage ?? 'pago rechazado');
     } catch (_) {
@@ -438,7 +449,7 @@ class _BookingScreenState extends State<BookingScreen> {
               return;
             }
             setState(() => _loading = false);
-            ctx.go('/ride/${state.booking.id}');
+            _celebrate(state.booking.id);
           }
           if (state is BookingError) {
             setState(() => _loading = false);
@@ -2103,6 +2114,10 @@ class _ReserveBar extends StatelessWidget {
           label: 'Reservar ${selected.label}',
           loading: loading,
           onPressed: onReserve,
+          uppercase: false,
+          fontSize: 15,
+          radius: LuxRadius.md,
+          height: 54,
         ),
       );
 }
@@ -2219,22 +2234,34 @@ class _LightServiceTypeTab extends StatelessWidget {
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: GestureDetector(
-            onTap: () => onChanged(t),
+            onTap: () {
+              LuxHaptics.tap();
+              onChanged(t);
+            },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 160),
               margin: const EdgeInsets.all(3),
               padding: EdgeInsets.symmetric(horizontal: compact ? 16 : 0),
               decoration: active
-                  ? luxRaisedDecoration(radius: 8)
+                  ? BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Color(0x140D1B2E),
+                            blurRadius: 6,
+                            offset: Offset(0, 1)),
+                      ],
+                    )
                   : const BoxDecoration(color: Colors.transparent),
               alignment: Alignment.center,
               child: Text(t.label,
                   style: TextStyle(
                     fontFamily: kSans,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.3,
-                    color: active ? Colors.white : _kTextSub,
+                    fontSize: 13,
+                    fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+                    letterSpacing: 0.2,
+                    color: active ? _kTextPrimary : _kTextSub,
                   )),
             ),
           ),
@@ -2246,8 +2273,7 @@ class _LightServiceTypeTab extends StatelessWidget {
       height: h,
       decoration: BoxDecoration(
         color: LD.bg2,
-        border: Border.all(color: LD.border),
-        borderRadius: BorderRadius.circular(11),
+        borderRadius: BorderRadius.circular(LuxRadius.md),
       ),
       child: Row(
         mainAxisSize: compact ? MainAxisSize.min : MainAxisSize.max,
@@ -2514,7 +2540,10 @@ class _FlightTypeSelector extends StatelessWidget {
               if (t != FlightType.values.first) const SizedBox(width: 8),
               Expanded(
                 child: GestureDetector(
-                  onTap: () => onChanged(t),
+                  onTap: () {
+                    LuxHaptics.tap();
+                    onChanged(t);
+                  },
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 13),
                     alignment: Alignment.center,
@@ -2585,13 +2614,13 @@ class _OutlinedBtn extends StatelessWidget {
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(icon, size: 18, color: _kTextSub),
             const SizedBox(width: 8),
-            Text(label.toUpperCase(),
+            Text(label,
                 style: const TextStyle(
                     fontFamily: kSans,
-                    fontSize: 11,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: _kTextPrimary,
-                    letterSpacing: 1.2)),
+                    letterSpacing: 0.2)),
           ]),
         ),
       );
@@ -2646,9 +2675,13 @@ class _LightPriceBar extends StatelessWidget {
               Expanded(
                 child: LuxRaisedButton(
                   label: label,
-                  height: 50,
+                  height: 52,
                   loading: loading,
                   onPressed: onConfirm,
+                  uppercase: false,
+                  fontSize: 15,
+                  radius: LuxRadius.md,
+                  trailingIcon: Icons.arrow_forward_rounded,
                 ),
               ),
             ]),

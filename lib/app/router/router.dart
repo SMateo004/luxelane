@@ -29,6 +29,7 @@ import '../../core/widgets/components.dart';
 import '../driver_shell/driver_shell.dart';
 import '../shell/app_shell.dart';
 import '../theme/app_theme.dart';
+import 'lux_transitions.dart';
 
 abstract class LuxRoutes {
   static const splash = '/splash';
@@ -123,41 +124,35 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
 
         // 4. Guest (Unauthenticated) logic
         if (!isAuth) {
-          final isDriverPath = going.startsWith('/driver');
-
-          if (kIsWeb) {
-            const webGuestOk = {
-              LuxRoutes.login,
-              LuxRoutes.register,
-              LuxRoutes.home,
-              LuxRoutes.driverLogin
-            };
-            final guestOk = webGuestOk.contains(going) ||
-                going.startsWith('/ride-type') ||
-                going.startsWith('/booking') ||
-                going.startsWith('/servicios') ||
-                going.startsWith('/legal') ||
-                going == '/empresas';
-
-            // If explicitly trying to enter via driver path, go to driver login.
-            // But if on general pages, stay on general login.
-            if (isDriverPath && going != LuxRoutes.driverLogin) {
-              return LuxRoutes.driverLogin;
-            }
-
-            if (!guestOk) return keep(LuxRoutes.login);
-          } else {
-            // Mobile rules...
-            final mobileGuestOk = going == LuxRoutes.login ||
-                going == LuxRoutes.register ||
-                going == LuxRoutes.home ||
-                going == LuxRoutes.driverLogin ||
-                going.startsWith('/ride-type') ||
-                going.startsWith('/booking') ||
-                going.startsWith('/legal') ||
-                going == '/empresas';
-            if (!mobileGuestOk) return keep(LuxRoutes.login);
+          bool guestOk(String path) {
+            final common = path == LuxRoutes.login ||
+                path == LuxRoutes.register ||
+                path == LuxRoutes.home ||
+                path == LuxRoutes.driverLogin ||
+                path.startsWith('/ride-type') ||
+                path.startsWith('/booking') ||
+                path.startsWith('/legal') ||
+                path == '/empresas';
+            return common || (kIsWeb && path.startsWith('/servicios'));
           }
+
+          // Al resolverse la sesión sin usuario, el splash lleva al enlace
+          // público pedido (privacidad, empresas…) en vez de al login.
+          if (going == LuxRoutes.splash) {
+            final wanted = from != null ? Uri.tryParse(from)?.path : null;
+            if (wanted != null && wanted.startsWith('/')) {
+              // Un enlace privado (p. ej. /trips) pasa por el login y vuelve.
+              return guestOk(wanted) ? from : keep(LuxRoutes.login);
+            }
+            return kIsWeb ? LuxRoutes.home : LuxRoutes.login;
+          }
+
+          final isDriverPath = going.startsWith('/driver');
+          // If explicitly trying to enter via driver path, go to driver login.
+          if (kIsWeb && isDriverPath && going != LuxRoutes.driverLogin) {
+            return LuxRoutes.driverLogin;
+          }
+          if (!guestOk(going)) return keep(LuxRoutes.login);
         }
 
         // 5. Admin guard
@@ -344,28 +339,10 @@ class _BlocListenable extends ChangeNotifier {
 // ---------------------------------------------------------------------------
 
 CustomTransitionPage<void> _fade(Widget child, GoRouterState state) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionDuration: const Duration(milliseconds: 250),
-      transitionsBuilder: (_, animation, __, child) => FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-        child: child,
-      ),
-    );
+    luxFadeThroughPage(child, state);
 
 CustomTransitionPage<void> _slide(Widget child, GoRouterState state) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionsBuilder: (_, animation, __, child) => SlideTransition(
-        position:
-            Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero).animate(
-          CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-        ),
-        child: child,
-      ),
-    );
+    luxPushPage(child, state);
 
 // ---------------------------------------------------------------------------
 

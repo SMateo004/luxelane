@@ -10,8 +10,10 @@ import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
 import '../../features/driver/presentation/pages/driver_home_screen.dart';
 import '../../features/driver/presentation/pages/driver_onboarding_screen.dart';
 import '../../features/driver/presentation/pages/driver_queue_screen.dart';
+import '../../features/legal/presentation/pages/legal_page.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../driver_shell/driver_shell.dart';
+import '../router/lux_transitions.dart';
 
 abstract class DriverRoutes {
   static const login = '/driver/login';
@@ -72,6 +74,15 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) =>
         GoRoute(
           path: DriverRoutes.onboarding,
           pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),
+        ),
+        GoRoute(
+          path: '/legal/terminos',
+          pageBuilder: (c, s) => _fade(const LegalPage(doc: LegalDoc.terms), s),
+        ),
+        GoRoute(
+          path: '/legal/privacidad',
+          pageBuilder: (c, s) =>
+              _fade(const LegalPage(doc: LegalDoc.privacy), s),
         ),
         GoRoute(
           path: '/driver/active-ride/:bookingId',
@@ -137,29 +148,10 @@ class _DriverBlocListenable extends ChangeNotifier {
 }
 
 CustomTransitionPage<void> _fade(Widget child, GoRouterState state) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionDuration: const Duration(milliseconds: 250),
-      transitionsBuilder: (_, animation, __, child) => FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-        child: child,
-      ),
-    );
+    luxFadeThroughPage(child, state);
 
 CustomTransitionPage<void> _slide(Widget child, GoRouterState state) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionsBuilder: (_, animation, __, child) => SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 1),
-          end: Offset.zero,
-        ).animate(
-            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
-        child: child,
-      ),
-    );
+    luxModalPage(child, state);
 
 class _NotFoundPage extends StatelessWidget {
   const _NotFoundPage();

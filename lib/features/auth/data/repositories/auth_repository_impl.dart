@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -15,13 +16,18 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
     required fb.FirebaseAuth firebaseAuth,
     required FirebaseFirestore firestore,
+    FirebaseFunctions? functions,
     GoogleSignIn? googleSignIn,
   })  : _auth = firebaseAuth,
         _db = firestore,
+        _functionsOverride = functions,
         _googleOverride = googleSignIn;
 
   final fb.FirebaseAuth _auth;
   final FirebaseFirestore _db;
+  final FirebaseFunctions? _functionsOverride;
+  FirebaseFunctions get _functions =>
+      _functionsOverride ?? FirebaseFunctions.instance;
   final GoogleSignIn? _googleOverride;
 
   // Native Google account picker (Android/iOS). Created lazily: on web the
@@ -48,9 +54,11 @@ class AuthRepositoryImpl implements AuthRepository {
             // Una cuenta bloqueada por el admin pierde la sesión abierta.
             if (!user.isActive) {
               await _auth.signOut();
-              return null;
+              throw const AuthFailure(kBlockedAccountMessage);
             }
             return user;
+          } on AuthFailure {
+            rethrow;
           } catch (_) {
             return null;
           }
@@ -291,6 +299,28 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, void>> deleteAccount() async {
+    try {
+      await _functions.httpsCallable('deleteAccount').call();
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      if (e.message == 'active-bookings') {
+        return const Left(ServerFailure(
+            'Tienes viajes activos o reservados. Cancélalos o espera a que '
+            'terminen antes de eliminar tu cuenta.'));
+      }
+      if (e.code == 'failed-precondition' && e.message != null) {
+        return Left(ServerFailure(e.message!));
+      }
+      return const Left(
+          ServerFailure('No pudimos eliminar tu cuenta. Inténtalo de nuevo.'));
+    } catch (_) {
+      return const Left(
+          ServerFailure('No pudimos eliminar tu cuenta. Revisa tu conexión.'));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> sendVerificationEmail() async {
     try {
       await _auth.currentUser?.sendEmailVerification();
@@ -311,9 +341,18 @@ class AuthRepositoryImpl implements AuthRepository {
       await _auth.sendPasswordResetEmail(email: email);
       return const Right(null);
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(e.message ?? 'Reset failed'));
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(AuthFailure(switch (e.code) {
+        'invalid-email' => 'Ese correo no es válido. Revísalo.',
+        'user-not-found' => 'No hay ninguna cuenta con ese correo.',
+        'too-many-requests' =>
+          'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
+        'network-request-failed' =>
+          'Sin conexión. Revisa tu internet e inténtalo de nuevo.',
+        _ => 'No pudimos enviar el enlace. Inténtalo de nuevo.',
+      }));
+    } catch (_) {
+      return const Left(
+          ServerFailure('No pudimos enviar el enlace. Inténtalo de nuevo.'));
     }
   }
 

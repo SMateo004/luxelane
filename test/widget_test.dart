@@ -22,11 +22,11 @@ void main() {
   // LuxButton
   // ---------------------------------------------------------------------------
   group('LuxButton', () {
-    testWidgets('renders label uppercased', (tester) async {
+    testWidgets('renders label in sentence case', (tester) async {
       await tester.pumpWidget(_themed(
-        LuxButton(label: 'Confirm', onPressed: () {}),
+        LuxButton(label: 'Confirmar reserva', onPressed: () {}),
       ));
-      expect(find.text('CONFIRM'), findsOneWidget);
+      expect(find.text('Confirmar reserva'), findsOneWidget);
     });
 
     testWidgets('calls onPressed when tapped', (tester) async {
@@ -34,16 +34,22 @@ void main() {
       await tester.pumpWidget(_themed(
         LuxButton(label: 'Go', onPressed: () => tapped = true),
       ));
-      await tester.tap(find.byType(ElevatedButton));
+      await tester.tap(find.text('Go'));
+      await tester.pumpAndSettle();
       expect(tapped, isTrue);
     });
 
-    testWidgets('shows spinner when loading=true', (tester) async {
+    testWidgets('does nothing while loading', (tester) async {
+      var tapped = false;
       await tester.pumpWidget(_themed(
-        const LuxButton(label: 'Loading', onPressed: null, loading: true),
+        LuxButton(
+            label: 'Loading', onPressed: () => tapped = true, loading: true),
       ));
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      expect(find.text('LOADING'), findsNothing);
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.byType(LuxLoadingDots), findsOneWidget);
+      expect(find.text('Loading'), findsNothing);
+      await tester.tap(find.byType(LuxLoadingDots));
+      expect(tapped, isFalse);
     });
   });
 
@@ -55,7 +61,7 @@ void main() {
       await tester.pumpWidget(_themed(
         LuxOutlinedButton(label: 'Cancel', onPressed: () {}),
       ));
-      expect(find.text('CANCEL'), findsOneWidget);
+      expect(find.text('Cancel'), findsOneWidget);
     });
 
     testWidgets('renders icon when provided', (tester) async {
@@ -77,10 +83,7 @@ void main() {
     for (final status in BookingStatus.values) {
       testWidgets('renders for $status', (tester) async {
         await tester.pumpWidget(_themed(BookingStatusChip(status: status)));
-        expect(
-          find.text(status.displayLabel.toUpperCase()),
-          findsOneWidget,
-        );
+        expect(find.text(status.displayLabel), findsOneWidget);
       });
     }
   });

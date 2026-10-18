@@ -158,6 +158,10 @@ class LegalPage extends StatelessWidget {
       [
         'Puedes pedir acceso, corrección o eliminación de tus datos, y '
             'retirar el permiso de ubicación desde los ajustes de tu teléfono.',
+        'Puedes eliminar tu cuenta en cualquier momento desde Perfil → '
+            'Eliminar cuenta. Se borran tu perfil, tus tarjetas guardadas y '
+            'tus avisos; conservamos el registro de viajes y pagos durante el '
+            'plazo que exige la normativa contable y fiscal.',
       ]
     ),
     (

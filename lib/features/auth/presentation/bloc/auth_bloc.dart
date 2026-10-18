@@ -204,7 +204,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _repo.authStateChanges.take(1),
       onData: (user) =>
           user != null ? AuthAuthenticated(user) : const AuthUnauthenticated(),
-      onError: (_, __) => const AuthUnauthenticated(),
+      // Cuenta bloqueada al abrir la app: el login muestra el motivo.
+      onError: (e, __) =>
+          e is AuthFailure && e.message == kBlockedAccountMessage
+              ? const AuthError(kBlockedAccountMessage)
+              : const AuthUnauthenticated(),
     );
 
     final s = state;

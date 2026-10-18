@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/di/injection.dart';
+import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
 import '../widgets/google_sign_in_button.dart';
@@ -32,10 +34,40 @@ class _LoginPageState extends State<LoginPage> {
   final _pass = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Un bloqueo detectado antes de llegar aquí (al abrir la app o con la
+    // sesión abierta) no pasa por el listener: se muestra al entrar.
+    final s = context.read<AuthBloc>().state;
+    if (s is AuthError && s.message == kBlockedAccountMessage) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) showLuxSnackbar(context, s.message, isError: true);
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _email.dispose();
     _pass.dispose();
     super.dispose();
+  }
+
+  Future<void> _resetPassword() async {
+    final email = _email.text.trim();
+    if (!email.contains('@')) {
+      showLuxSnackbar(
+          context, 'Escribe tu correo arriba y te enviaremos un enlace.',
+          isError: true);
+      return;
+    }
+    final result = await sl<AuthRepository>().resetPassword(email);
+    if (!mounted) return;
+    result.fold(
+      (f) => showLuxSnackbar(context, f.message, isError: true),
+      (_) => showLuxSnackbar(context,
+          'Te enviamos un enlace a $email para restablecer tu contraseña.'),
+    );
   }
 
   void _submit() {
@@ -208,19 +240,7 @@ class _LoginPageState extends State<LoginPage> {
                   alignment: Alignment.centerRight,
                   child: _TextLink(
                     label: '¿Olvidaste tu contraseña?',
-                    onTap: () {
-                      if (_email.text.contains('@')) {
-                        context.read<AuthBloc>().add(
-                              PasswordResetRequested(email: _email.text.trim()),
-                            );
-                        showLuxSnackbar(context,
-                            'Te enviamos un enlace para restablecer tu contraseña.');
-                      } else {
-                        showLuxSnackbar(context,
-                            'Escribe tu correo arriba y te enviaremos un enlace.',
-                            isError: true);
-                      }
-                    },
+                    onTap: _resetPassword,
                   ),
                 ),
                 const SizedBox(height: 28),
@@ -439,7 +459,7 @@ class _AuthField extends StatelessWidget {
 
 // ── Primary action button ──────────────────────────────────────────────────────
 
-class _AuthButton extends StatefulWidget {
+class _AuthButton extends StatelessWidget {
   const _AuthButton({
     required this.label,
     required this.loading,
@@ -449,53 +469,10 @@ class _AuthButton extends StatefulWidget {
   final bool loading;
   final VoidCallback? onTap;
 
+  // El mismo botón principal que el resto de la app.
   @override
-  State<_AuthButton> createState() => _AuthButtonState();
-}
-
-class _AuthButtonState extends State<_AuthButton> {
-  bool _hover = false;
-
-  @override
-  Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) => setState(() => _hover = true),
-        onExit: (_) => setState(() => _hover = false),
-        cursor:
-            widget.onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            width: double.infinity,
-            height: 52,
-            decoration: BoxDecoration(
-              color: widget.onTap == null
-                  ? _sph.withAlpha(80)
-                  : (_hover ? _sphLt : _sph),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: widget.onTap == null ? null : luxSoftShadow,
-            ),
-            alignment: Alignment.center,
-            child: widget.loading
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                        strokeWidth: 2, color: _onSph),
-                  )
-                : Text(
-                    widget.label.toUpperCase(),
-                    style: const TextStyle(
-                      fontFamily: _kSans,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.0,
-                      color: _onSph,
-                    ),
-                  ),
-          ),
-        ),
-      );
+  Widget build(BuildContext context) =>
+      LuxButton(label: label, loading: loading, onPressed: onTap);
 }
 
 // ── Text link ─────────────────────────────────────────────────────────────────

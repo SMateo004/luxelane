@@ -90,6 +90,11 @@ class DefaultCardSet extends PaymentEvent {
   List<Object?> get props => [paymentMethodId];
 }
 
+/// Al cerrar sesión: el siguiente usuario no ve las tarjetas del anterior.
+class PaymentReset extends PaymentEvent {
+  const PaymentReset();
+}
+
 // ---------------------------------------------------------------------------
 // States
 // ---------------------------------------------------------------------------
@@ -162,6 +167,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     on<CardAdded>(_onAddCard);
     on<CardRemoved>(_onRemoveCard);
     on<DefaultCardSet>(_onDefaultCard);
+    on<PaymentReset>((_, emit) => emit(const PaymentInitial()));
   }
 
   final PaymentRepository _repo;
@@ -250,8 +256,15 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     );
   }
 
-  void _onDefaultCard(DefaultCardSet event, Emitter<PaymentState> emit) {
-    // Handled locally in UI — no server call needed for display
-    emit(const CardOperationSuccess());
+  Future<void> _onDefaultCard(
+    DefaultCardSet event,
+    Emitter<PaymentState> emit,
+  ) async {
+    emit(const PaymentLoading());
+    final result = await _repo.setDefaultCard(event.paymentMethodId);
+    result.fold(
+      (f) => emit(PaymentError(f.message)),
+      (_) => emit(const CardOperationSuccess()),
+    );
   }
 }
