@@ -156,6 +156,17 @@ abstract final class ServiceArea {
     );
   }
 
+  /// Error si la recogida está fuera de las ciudades y aeropuertos donde
+  /// operamos, o no tiene coordenadas reales; null si se puede atender.
+  static String? originError(Place origin) {
+    if (!hasCoords(origin)) {
+      return 'No pudimos ubicar la recogida en el mapa. Elige otra dirección.';
+    }
+    if (cityOf(origin) != null || airportFor(origin) != null) return null;
+    return 'Por ahora operamos en ${cities.map((c) => c.name.split(' de ').first).join(', ')}. '
+        'Elige una recogida en una de esas ciudades.';
+  }
+
   /// Error to show when [destination] is not in [origin]'s city, else null.
   /// Places without coordinates can't be checked and are let through.
   static String? destinationError(Place origin, Place destination) {

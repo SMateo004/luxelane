@@ -33,8 +33,12 @@ enum LuxBookingMode {
 /// Design intent: few fields, sensible defaults, and the reassurance a
 /// first-time luxury client needs exactly where they commit.
 class LuxServiceBookingCard extends StatefulWidget {
-  const LuxServiceBookingCard({super.key, required this.mode});
+  const LuxServiceBookingCard(
+      {super.key, required this.mode, this.preferredClass});
   final LuxBookingMode mode;
+
+  /// Clase que el usuario eligió en la página; la reserva abre con ella.
+  final VehicleClass? preferredClass;
 
   @override
   State<LuxServiceBookingCard> createState() => _LuxServiceBookingCardState();
@@ -139,6 +143,20 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
       setState(() => _error = 'Indica dónde te recogemos.');
       return;
     }
+    final originError = ServiceArea.originError(_origin!);
+    if (originError != null) {
+      setState(() => _error = originError);
+      return;
+    }
+    final later = _asap ? null : adjustedPickup(_date);
+    if (later != null) {
+      setState(() {
+        _date = later;
+        _error = 'Esa hora ya no da tiempo: la movimos a '
+            '${_formatDate(later)}. Revísala y continúa.';
+      });
+      return;
+    }
     if (_needsDestination && _destination == null) {
       setState(
           () => _error = 'Indica tu destino para calcular el precio fijo.');
@@ -180,6 +198,7 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
         routeDistanceKm: route?.distanceKm ?? 0,
         routeDurationMin: route?.durationMin ?? 0,
         polylinePoints: route?.polylinePoints ?? const [],
+        preferredClass: widget.preferredClass,
       ),
     );
   }

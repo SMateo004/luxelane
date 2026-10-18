@@ -20,6 +20,7 @@ class PlaceAutocompleteField extends StatefulWidget {
     this.onMapPick,
     this.sameCityAs,
     this.glass = false, // true → transparent/glass look for hero bar
+    this.bare = false,
   });
 
   final String label;
@@ -34,6 +35,10 @@ class PlaceAutocompleteField extends StatefulWidget {
   /// reaching [onPlaceSelected].
   final Place? sameCityAs;
   final bool glass;
+
+  /// Sin caja ni borde: para ir dentro de una tarjeta que agrupa recogida y
+  /// destino (la tarjeta pone el marco).
+  final bool bare;
 
   @override
   State<PlaceAutocompleteField> createState() => _PlaceAutocompleteFieldState();
@@ -55,11 +60,10 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
 
   // ── theme helpers ──────────────────────────────────────────────────────────
   // glass=true → fully transparent field that sits inside the hero liquid-glass bar
-  Color get _fieldBg => widget.glass ? Colors.transparent : LuxColors.surface;
-  Color get _borderColor =>
-      widget.glass ? Colors.transparent : LuxColors.border;
-  Color get _focusBorder =>
-      widget.glass ? Colors.transparent : LuxColors.sapphire;
+  bool get _plain => widget.glass || widget.bare;
+  Color get _fieldBg => _plain ? Colors.transparent : LuxColors.surface;
+  Color get _borderColor => _plain ? Colors.transparent : LuxColors.border;
+  Color get _focusBorder => _plain ? Colors.transparent : LuxColors.sapphire;
   Color get _iconColor =>
       widget.glass ? const Color(0x99FFFFFF) : LuxColors.inkTertiary;
   Color get _textColor => widget.glass ? Colors.white : LuxColors.ink;
@@ -163,16 +167,17 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
       );
       if (!mounted) return;
 
-      // FALLBACK: If details fail, create a Place with 0,0 or dummy coords
-      // so the 'Get Prices' button can at least be pressed.
-      if (place == null) _dbg('Fallback for: ${s.description}');
-      final picked = place ??
-          Place(
-            name: s.mainText,
-            address: s.description,
-            lat: 0.0,
-            lng: 0.0,
-          );
+      // Sin coordenadas no se puede recoger ni calcular el precio: mejor
+      // pedir otra dirección que guardar un lugar en (0,0).
+      if (place == null) {
+        _dbg('Place details failed for: ${s.description}');
+        _ctrl.text = widget.initialValue?.displayName ?? '';
+        showLuxSnackbar(context,
+            'No pudimos ubicar esa dirección. Prueba con otra o elígela en el mapa.',
+            isError: true);
+        return;
+      }
+      final picked = place;
       _token = _newToken();
 
       final origin = widget.sameCityAs;
@@ -183,7 +188,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
         showLuxSnackbar(context, error, isError: true);
         return;
       }
-      if (place != null) _ctrl.text = place.displayName;
+      _ctrl.text = place.displayName;
       widget.onPlaceSelected?.call(picked);
     } catch (e) {
       _dbg('Error in _pick: $e');
@@ -231,15 +236,15 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
       top: topPos,
       width: size.width,
       child: Material(
-        color: bg,
-        elevation: 4,
-        borderRadius: BorderRadius.circular(2),
+        color: Colors.transparent,
         child: Container(
           constraints: const BoxConstraints(maxHeight: 260),
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: bg,
-            borderRadius: BorderRadius.circular(2),
+            borderRadius: BorderRadius.circular(LuxRadius.md),
             border: Border.all(color: divider),
+            boxShadow: LuxElevation.high,
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -333,21 +338,21 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                 onChanged: _onChanged,
                 style: TextStyle(
                   color: _textColor,
-                  fontSize: 13,
+                  fontSize: widget.bare ? 15 : 13,
                   fontFamily: 'Montserrat',
-                  fontWeight: FontWeight.w400,
+                  fontWeight: widget.bare ? FontWeight.w500 : FontWeight.w400,
                 ),
                 decoration: InputDecoration(
                   hintText: widget.hint ?? widget.label,
                   hintStyle: TextStyle(
                     color: _hintColor,
-                    fontSize: 13,
+                    fontSize: widget.bare ? 15 : 13,
                     fontFamily: 'Montserrat',
                     fontWeight: FontWeight.w300,
                   ),
                   // glass mode: explicitly clear any theme-injected fill
-                  filled: widget.glass ? true : null,
-                  fillColor: widget.glass ? Colors.transparent : null,
+                  filled: _plain ? true : null,
+                  fillColor: _plain ? Colors.transparent : null,
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,

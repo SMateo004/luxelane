@@ -7,6 +7,7 @@ import 'app/driver_app.dart';
 import 'core/config/env.dart';
 import 'core/di/injection.dart';
 import 'core/services/crash_service.dart';
+import 'core/services/notification_service.dart';
 import 'core/services/performance_service.dart';
 import 'core/config/emulators.dart';
 import 'firebase_options.dart';
@@ -28,9 +29,7 @@ void main() async {
   }
 
   if (!kIsWeb) {
-    FirebaseMessaging.onBackgroundMessage(
-      (msg) async {/* handled by NotificationService */},
-    );
+    FirebaseMessaging.onBackgroundMessage(firebaseBackgroundHandler);
   }
 
   await CrashService.init();

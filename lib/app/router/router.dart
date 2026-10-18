@@ -3,16 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/enums/enums.dart';
-import '../../features/admin/presentation/pages/admin_dashboard_page.dart';
-import '../../features/auth/presentation/bloc/auth_bloc.dart';
-import '../../features/auth/presentation/pages/login_page.dart';
-import '../../features/auth/presentation/pages/register_page.dart';
-import '../../features/booking/presentation/pages/booking_screen.dart';
 import '../../features/business/presentation/pages/business_landing_page.dart';
 import '../../features/business/presentation/pages/company_dashboard_page.dart';
 import '../../features/special/domain/special_models.dart';
 import '../../features/special/presentation/pages/my_special_requests_page.dart';
 import '../../features/special/presentation/pages/special_request_page.dart';
+import '../../features/admin/presentation/pages/admin_dashboard_page.dart';
+import '../../features/auth/presentation/bloc/auth_bloc.dart';
+import '../../features/auth/presentation/pages/login_page.dart';
+import '../../features/auth/presentation/pages/register_page.dart';
+import '../../features/booking/presentation/pages/booking_screen.dart';
 import '../../features/booking/presentation/pages/ride_type_page.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
 import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
@@ -28,10 +28,13 @@ import '../../features/payments/presentation/pages/payment_screen.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../../features/ride/presentation/pages/ride_screen.dart';
 import '../../features/trips/presentation/pages/trips_screen.dart';
+import '../../features/business/presentation/pages/business_page.dart';
+import '../../features/legal/presentation/pages/legal_page.dart';
 import '../../core/widgets/components.dart';
 import '../driver_shell/driver_shell.dart';
 import '../shell/app_shell.dart';
 import '../theme/app_theme.dart';
+import 'lux_transitions.dart';
 
 abstract class LuxRoutes {
   static const splash = '/splash';
@@ -46,9 +49,6 @@ abstract class LuxRoutes {
   static const admin = '/admin';
   static const payment = '/payment';
   static const addCard = '/payment/add';
-  static const business = '/empresas';
-  static const company = '/empresa';
-  static const special = '/especiales';
 
   // Driver Routes
   static const driverHome = '/driver';
@@ -57,6 +57,11 @@ abstract class LuxRoutes {
   static const driverEarnings = '/driver/earnings';
   static const driverProfile = '/driver/profile';
   static const driverActiveRide = '/driver/active-ride/:bookingId';
+
+  // Programa para empresas y servicios especiales
+  static const businessSignup = '/empresas/registro';
+  static const company = '/empresa';
+  static const special = '/especiales';
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -68,32 +73,28 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         final authState = authBloc.state;
         final isAuth = authState is AuthAuthenticated;
         final going = state.matchedLocation;
+        // Enlace al que quería ir (p. ej. /ride/abc) antes de pasar por el
+        // splash o el login, para volver a él después.
+        final from = state.uri.queryParameters['from'];
+        final target = from ?? state.uri.toString();
+        String keep(String route) {
+          final t = target;
+          final isEntry = t == '/' ||
+              t.startsWith(LuxRoutes.splash) ||
+              t.startsWith(LuxRoutes.login) ||
+              t.startsWith(LuxRoutes.register);
+          return isEntry ? route : '$route?from=${Uri.encodeComponent(t)}';
+        }
 
         // 1. Initial State: Only show splash if we are NOT already trying to reach a specific driver path.
         if (authState is AuthInitial) {
           if (going.startsWith('/driver')) return null;
-          if (going == LuxRoutes.splash) return null;
-          // Recuerda adónde iba (enlace directo o recarga) para volver ahí
-          // en cuanto se sepa si hay sesión.
-          return Uri(
-              path: LuxRoutes.splash,
-              queryParameters: {'from': state.uri.toString()}).toString();
+          return going == LuxRoutes.splash ? null : keep(LuxRoutes.splash);
         }
 
         // 2. Loading State: Don't block navigation to driver paths while auth is resolving.
         if (authState is AuthLoading) {
           return null;
-        }
-
-        // Sesión resuelta: salir del splash hacia la página pedida.
-        if (going == LuxRoutes.splash) {
-          final from = state.uri.queryParameters['from'];
-          if (from != null &&
-              from.startsWith('/') &&
-              !from.startsWith(LuxRoutes.splash)) {
-            return from;
-          }
-          if (!isAuth) return LuxRoutes.home;
         }
 
         // 3. User is Authenticated: Role-based destination rules
@@ -121,62 +122,49 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
             return LuxRoutes.home;
           }
 
-          // Volver a la página que pidió iniciar sesión (solo rutas internas).
-          final from = state.uri.queryParameters['from'];
-          if ((going == LuxRoutes.login || going == LuxRoutes.register) &&
-              from != null &&
-              from.startsWith('/') &&
-              !from.startsWith('//') &&
-              !isDriver) {
-            return from;
-          }
-
           // If landing on splash/auth while authed, send to correct home
           if (going == LuxRoutes.splash ||
               going == LuxRoutes.login ||
               going == LuxRoutes.register ||
               going == LuxRoutes.driverLogin) {
+            if (from != null && from.startsWith('/') && !isDriver) return from;
             return isDriver ? LuxRoutes.driverHome : LuxRoutes.home;
           }
         }
 
         // 4. Guest (Unauthenticated) logic
         if (!isAuth) {
-          final isDriverPath = going.startsWith('/driver');
-
-          if (kIsWeb) {
-            const webGuestOk = {
-              LuxRoutes.login,
-              LuxRoutes.register,
-              LuxRoutes.home,
-              LuxRoutes.driverLogin
-            };
-            final guestOk = webGuestOk.contains(going) ||
-                going.startsWith('/ride-type') ||
-                going.startsWith('/booking') ||
-                going == LuxRoutes.business ||
-                going.startsWith('${LuxRoutes.special}/') ||
-                going.startsWith('/servicios');
-
-            // If explicitly trying to enter via driver path, go to driver login.
-            // But if on general pages, stay on general login.
-            if (isDriverPath && going != LuxRoutes.driverLogin) {
-              return LuxRoutes.driverLogin;
-            }
-
-            if (!guestOk) return LuxRoutes.login;
-          } else {
-            // Mobile rules...
-            final mobileGuestOk = going == LuxRoutes.login ||
-                going == LuxRoutes.register ||
-                going == LuxRoutes.home ||
-                going == LuxRoutes.driverLogin ||
-                going.startsWith('/ride-type') ||
-                going == LuxRoutes.business ||
-                going.startsWith('${LuxRoutes.special}/') ||
-                going.startsWith('/booking');
-            if (!mobileGuestOk) return LuxRoutes.login;
+          bool guestOk(String path) {
+            final common = path == LuxRoutes.login ||
+                path == LuxRoutes.register ||
+                path == LuxRoutes.home ||
+                path == LuxRoutes.driverLogin ||
+                path.startsWith('/ride-type') ||
+                path.startsWith('/booking') ||
+                path.startsWith('/legal') ||
+                path == '/empresas' ||
+                path == LuxRoutes.businessSignup ||
+                path.startsWith('${LuxRoutes.special}/');
+            return common || (kIsWeb && path.startsWith('/servicios'));
           }
+
+          // Al resolverse la sesión sin usuario, el splash lleva al enlace
+          // público pedido (privacidad, empresas…) en vez de al login.
+          if (going == LuxRoutes.splash) {
+            final wanted = from != null ? Uri.tryParse(from)?.path : null;
+            if (wanted != null && wanted.startsWith('/')) {
+              // Un enlace privado (p. ej. /trips) pasa por el login y vuelve.
+              return guestOk(wanted) ? from : keep(LuxRoutes.login);
+            }
+            return kIsWeb ? LuxRoutes.home : LuxRoutes.login;
+          }
+
+          final isDriverPath = going.startsWith('/driver');
+          // If explicitly trying to enter via driver path, go to driver login.
+          if (kIsWeb && isDriverPath && going != LuxRoutes.driverLogin) {
+            return LuxRoutes.driverLogin;
+          }
+          if (!guestOk(going)) return keep(LuxRoutes.login);
         }
 
         // 5. Admin guard
@@ -206,6 +194,40 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
           pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),
         ),
         GoRoute(
+          path: '/empresas',
+          pageBuilder: (c, s) => _fade(const BusinessPage(), s),
+        ),
+        GoRoute(
+          path: LuxRoutes.businessSignup,
+          pageBuilder: (c, s) => _fade(const BusinessLandingPage(), s),
+        ),
+        GoRoute(
+          path: LuxRoutes.company,
+          pageBuilder: (c, s) => _fade(const CompanyDashboardPage(), s),
+        ),
+        GoRoute(
+          path: LuxRoutes.special,
+          pageBuilder: (c, s) => _fade(const MySpecialRequestsPage(), s),
+        ),
+        GoRoute(
+          path: '${LuxRoutes.special}/:kind',
+          redirect: (c, s) =>
+              SpecialKindX.parse(s.pathParameters['kind']) == null ? '/' : null,
+          pageBuilder: (c, s) => _fade(
+              SpecialRequestPage(
+                  kind: SpecialKindX.parse(s.pathParameters['kind'])!),
+              s),
+        ),
+        GoRoute(
+          path: '/legal/terminos',
+          pageBuilder: (c, s) => _fade(const LegalPage(doc: LegalDoc.terms), s),
+        ),
+        GoRoute(
+          path: '/legal/privacidad',
+          pageBuilder: (c, s) =>
+              _fade(const LegalPage(doc: LegalDoc.privacy), s),
+        ),
+        GoRoute(
           path: '/servicios/recogida-inmediata',
           pageBuilder: (c, s) => _fade(const ImmediatePickupPage(), s),
         ),
@@ -216,27 +238,6 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: '/servicios/contratacion-por-horas',
           pageBuilder: (c, s) => _fade(const HourlyCharterPage(), s),
-        ),
-        GoRoute(
-          path: LuxRoutes.business,
-          pageBuilder: (c, s) => _fade(const BusinessLandingPage(), s),
-        ),
-        GoRoute(
-          path: LuxRoutes.special,
-          pageBuilder: (c, s) => _fade(const MySpecialRequestsPage(), s),
-        ),
-        GoRoute(
-          path: '${LuxRoutes.special}/:kind',
-          redirect: (c, s) =>
-              SpecialKindX.parse(s.pathParameters['kind']) == null ? '/' : null,
-          pageBuilder: (c, s) => _slide(
-              SpecialRequestPage(
-                  kind: SpecialKindX.parse(s.pathParameters['kind'])!),
-              s),
-        ),
-        GoRoute(
-          path: LuxRoutes.company,
-          pageBuilder: (c, s) => _fade(const CompanyDashboardPage(), s),
         ),
         GoRoute(
           path: LuxRoutes.register,
@@ -371,28 +372,10 @@ class _BlocListenable extends ChangeNotifier {
 // ---------------------------------------------------------------------------
 
 CustomTransitionPage<void> _fade(Widget child, GoRouterState state) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionDuration: const Duration(milliseconds: 250),
-      transitionsBuilder: (_, animation, __, child) => FadeTransition(
-        opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
-        child: child,
-      ),
-    );
+    luxFadeThroughPage(child, state);
 
 CustomTransitionPage<void> _slide(Widget child, GoRouterState state) =>
-    CustomTransitionPage<void>(
-      key: state.pageKey,
-      child: child,
-      transitionsBuilder: (_, animation, __, child) => SlideTransition(
-        position:
-            Tween<Offset>(begin: const Offset(1, 0), end: Offset.zero).animate(
-          CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
-        ),
-        child: child,
-      ),
-    );
+    luxPushPage(child, state);
 
 // ---------------------------------------------------------------------------
 

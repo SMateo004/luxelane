@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 
 import '../../../../core/config/remote_flags.dart';
@@ -97,6 +98,9 @@ class _ServicePageTemplateState extends State<ServicePageTemplate> {
   final _fleetKey = GlobalKey();
   bool _solidNav = false;
 
+  /// Clase elegida en las tarjetas; pasa a la reserva.
+  final _chosenClass = ValueNotifier<VehicleClass?>(null);
+
   @override
   void initState() {
     super.initState();
@@ -111,6 +115,7 @@ class _ServicePageTemplateState extends State<ServicePageTemplate> {
   void dispose() {
     _scroll.dispose();
     _luxScroll.dispose();
+    _chosenClass.dispose();
     super.dispose();
   }
 
@@ -140,12 +145,17 @@ class _ServicePageTemplateState extends State<ServicePageTemplate> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _Hero(content: c),
+                  _Hero(content: c, chosenClass: _chosenClass),
                   _AssuranceBand(items: c.assurances),
                   _StepsSection(steps: c.steps),
                   _StorySection(content: c),
                   _ClassesSection(
-                      key: _fleetKey, service: c.serviceType, onChoose: _toTop),
+                      key: _fleetKey,
+                      service: c.serviceType,
+                      onChoose: (vc) {
+                        _chosenClass.value = vc;
+                        _toTop();
+                      }),
                   _FaqSection(faqs: c.faqs),
                   _ClosingSection(
                       title: c.closingTitle,
@@ -213,8 +223,9 @@ class _Bounded extends StatelessWidget {
 // ── 1. Hero ─────────────────────────────────────────────────────────────────
 
 class _Hero extends StatelessWidget {
-  const _Hero({required this.content});
+  const _Hero({required this.content, required this.chosenClass});
   final ServicePageContent content;
+  final ValueListenable<VehicleClass?> chosenClass;
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +254,11 @@ class _Hero extends StatelessWidget {
 
     final card = ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 440),
-      child: LuxServiceBookingCard(mode: content.mode),
+      child: ValueListenableBuilder<VehicleClass?>(
+        valueListenable: chosenClass,
+        builder: (_, vc, __) =>
+            LuxServiceBookingCard(mode: content.mode, preferredClass: vc),
+      ),
     );
 
     if (narrow) {
@@ -588,8 +603,9 @@ class _StorySection extends StatelessWidget {
 class _ClassesSection extends StatelessWidget {
   const _ClassesSection(
       {super.key, required this.service, required this.onChoose});
+
   final ServiceType service;
-  final VoidCallback onChoose;
+  final ValueChanged<VehicleClass> onChoose;
 
   static List<(VehicleClass, String)> get _classes => [
         for (final vc in VehicleCatalog.bookable(
@@ -619,7 +635,7 @@ class _ClassesSection extends StatelessWidget {
                 PricingCatalog.instance.startingPrice(_classes[i].$1, service),
             perHour: service == ServiceType.byTheHour,
             featured: _classes[i].$1 == VehicleClass.business,
-            onChoose: onChoose,
+            onChoose: () => onChoose(_classes[i].$1),
           ),
         ),
     ];

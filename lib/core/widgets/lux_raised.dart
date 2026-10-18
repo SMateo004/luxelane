@@ -1,61 +1,68 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
+import '../../app/theme/lux_motion.dart';
 import '../../features/home/presentation/pages/home_design.dart';
 
-/// Luxelane buttons: a light, believable relief — a soft top light, a crisp
-/// contact shadow and a long diffuse one. Never glossy, never "bubbly".
-enum LuxRaisedVariant { primary, secondary }
+/// Botones de Luxelane: superficies planas y silenciosas. Sin degradados ni
+/// brillos; la profundidad la da una sola sombra difusa del color del botón,
+/// y al presionar el botón se hunde (escala y sombra se recogen).
+enum LuxRaisedVariant {
+  /// Acción principal: zafiro sólido. Una por pantalla.
+  primary,
 
-/// Decoration shared by every raised surface (buttons, selected tiles).
+  /// Acción alternativa: blanco con filete.
+  secondary,
+
+  /// Acción discreta: solo texto, sin caja.
+  ghost,
+
+  /// Acción destructiva (cancelar un viaje, eliminar).
+  danger,
+}
+
+const _danger = Color(0xFFB83A3A);
+
+Color _fill(LuxRaisedVariant v, bool pressed) => switch (v) {
+      LuxRaisedVariant.primary => pressed ? LD.sphDim : LD.sph,
+      LuxRaisedVariant.secondary => pressed ? LD.bg2 : Colors.white,
+      LuxRaisedVariant.ghost => pressed ? LD.sphTint : Colors.transparent,
+      LuxRaisedVariant.danger => pressed ? const Color(0xFF962E2E) : _danger,
+    };
+
+/// Color del texto e iconos sobre cada variante.
+Color luxButtonForeground(LuxRaisedVariant v) => switch (v) {
+      LuxRaisedVariant.primary || LuxRaisedVariant.danger => Colors.white,
+      LuxRaisedVariant.secondary => LD.ink,
+      LuxRaisedVariant.ghost => LD.sph,
+    };
+
+/// Decoración común a botones y superficies seleccionadas.
 BoxDecoration luxRaisedDecoration({
   LuxRaisedVariant variant = LuxRaisedVariant.primary,
   bool pressed = false,
   bool enabled = true,
-  double radius = 4,
+  double radius = 12,
 }) {
-  final primary = variant == LuxRaisedVariant.primary;
-  final top = primary ? const Color(0xFF2A62A3) : Colors.white;
-  final bottom = primary ? const Color(0xFF17457A) : const Color(0xFFF1F4FA);
+  final solid =
+      variant == LuxRaisedVariant.primary || variant == LuxRaisedVariant.danger;
+  final fill = _fill(variant, pressed);
   return BoxDecoration(
     borderRadius: BorderRadius.circular(radius),
-    gradient: LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: enabled
-          ? (pressed ? [bottom, top] : [top, bottom])
-          : [top.withValues(alpha: 0.55), bottom.withValues(alpha: 0.55)],
-    ),
-    border: Border.all(
-      color: primary ? const Color(0xFF123A66) : LD.border,
-      width: 1,
-    ),
-    boxShadow: !enabled
+    color: enabled ? fill : fill.withValues(alpha: solid ? 0.38 : 0.6),
+    border: variant == LuxRaisedVariant.secondary
+        ? Border.all(color: pressed ? LD.ink3 : LD.border)
+        : null,
+    boxShadow: !enabled || pressed || variant == LuxRaisedVariant.ghost
         ? const []
-        : pressed
-            ? [
-                BoxShadow(
-                  color: LD.ink.withValues(alpha: 0.16),
-                  blurRadius: 2,
-                  offset: const Offset(0, 1),
-                ),
-              ]
-            : [
-                // contact shadow
-                BoxShadow(
-                  color: LD.ink.withValues(alpha: primary ? 0.22 : 0.10),
-                  blurRadius: 2,
-                  offset: const Offset(0, 1),
-                ),
-                // diffuse lift
-                BoxShadow(
-                  color: (primary ? LD.sph : LD.ink)
-                      .withValues(alpha: primary ? 0.26 : 0.08),
-                  blurRadius: 18,
-                  spreadRadius: -6,
-                  offset: const Offset(0, 10),
-                ),
-              ],
+        : [
+            BoxShadow(
+              color: (solid ? fill : LD.ink)
+                  .withValues(alpha: solid ? 0.24 : 0.06),
+              blurRadius: solid ? 20 : 12,
+              spreadRadius: -6,
+              offset: const Offset(0, 8),
+            ),
+          ],
   );
 }
 
@@ -72,6 +79,7 @@ class LuxRaisedButton extends StatefulWidget {
     this.radius = 4,
     this.uppercase = true,
     this.fontSize = 11.5,
+    this.trailingIcon,
   });
 
   final String label;
@@ -79,6 +87,9 @@ class LuxRaisedButton extends StatefulWidget {
   final LuxRaisedVariant variant;
   final bool loading;
   final IconData? icon;
+
+  /// Icono al final (p. ej. una flecha que invita a avanzar).
+  final IconData? trailingIcon;
   final double height;
   final bool expand;
   final double radius;
@@ -95,11 +106,45 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
 
   bool get _enabled => widget.onPressed != null && !widget.loading;
 
+  void _setPressed(bool v) {
+    if (_pressed != v) setState(() => _pressed = v);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final primary = widget.variant == LuxRaisedVariant.primary;
-    final fg = primary ? Colors.white : LD.ink;
+    final fg = luxButtonForeground(widget.variant);
     final text = widget.uppercase ? widget.label.toUpperCase() : widget.label;
+    final duration = LuxMotion.of(context, LuxMotion.fast);
+
+    final label = Row(
+      key: const ValueKey('label'),
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (widget.icon != null) ...[
+          Icon(widget.icon, size: 18, color: fg),
+          const SizedBox(width: 10),
+        ],
+        Flexible(
+          child: Text(
+            text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontFamily: kSans,
+              fontSize: widget.fontSize,
+              fontWeight: FontWeight.w600,
+              letterSpacing: widget.uppercase ? 1.8 : 0.2,
+              color: fg,
+              decoration: TextDecoration.none,
+            ),
+          ),
+        ),
+        if (widget.trailingIcon != null) ...[
+          const SizedBox(width: 10),
+          Icon(widget.trailingIcon, size: 18, color: fg),
+        ],
+      ],
+    );
 
     return Semantics(
       button: true,
@@ -113,66 +158,105 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
           _pressed = false;
         }),
         child: GestureDetector(
-          onTapDown: _enabled ? (_) => setState(() => _pressed = true) : null,
-          onTapCancel: () => setState(() => _pressed = false),
+          behavior: HitTestBehavior.opaque,
+          onTapDown: _enabled ? (_) => _setPressed(true) : null,
+          onTapCancel: () => _setPressed(false),
           onTapUp: _enabled
               ? (_) {
-                  setState(() => _pressed = false);
-                  HapticFeedback.lightImpact();
+                  _setPressed(false);
+                  if (widget.variant == LuxRaisedVariant.primary) {
+                    LuxHaptics.confirm();
+                  } else {
+                    LuxHaptics.tap();
+                  }
                   widget.onPressed!();
                 }
               : null,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 140),
-            curve: Curves.easeOut,
-            height: widget.height,
-            width: widget.expand ? double.infinity : null,
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            transform: Matrix4.translationValues(
-                0, _pressed ? 1.5 : (_hover && _enabled ? -1 : 0), 0),
-            decoration: luxRaisedDecoration(
-              variant: widget.variant,
-              pressed: _pressed,
-              enabled: _enabled || widget.loading,
-              radius: widget.radius,
-            ),
-            child: Center(
-              widthFactor: widget.expand ? null : 1,
-              child: widget.loading
-                  ? SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 1.6, color: fg),
-                    )
-                  : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        if (widget.icon != null) ...[
-                          Icon(widget.icon, size: 16, color: fg),
-                          const SizedBox(width: 10),
-                        ],
-                        Flexible(
-                          child: Text(
-                            text,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: kSans,
-                              fontSize: widget.fontSize,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: widget.uppercase ? 1.8 : 0.3,
-                              color: fg,
-                              decoration: TextDecoration.none,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+          child: AnimatedScale(
+            scale: _pressed ? LuxMotion.pressedScale : 1,
+            duration: duration,
+            curve: LuxMotion.emphasized,
+            child: AnimatedContainer(
+              duration: duration,
+              curve: LuxMotion.emphasized,
+              height: widget.height,
+              width: widget.expand ? double.infinity : null,
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              transform: Matrix4.translationValues(
+                  0, _hover && _enabled && !_pressed ? -1 : 0, 0),
+              decoration: luxRaisedDecoration(
+                variant: widget.variant,
+                pressed: _pressed,
+                enabled: _enabled || widget.loading,
+                radius: widget.radius,
+              ),
+              child: Center(
+                widthFactor: widget.expand ? null : 1,
+                child: AnimatedSwitcher(
+                  duration: LuxMotion.of(context, LuxMotion.base),
+                  switchInCurve: LuxMotion.decelerate,
+                  switchOutCurve: LuxMotion.accelerate,
+                  child: widget.loading
+                      ? LuxLoadingDots(
+                          key: const ValueKey('loading'), color: fg)
+                      : label,
+                ),
+              ),
             ),
           ),
         ),
       ),
     );
   }
+}
+
+/// Tres puntos que respiran: espera tranquila dentro de un botón, en lugar
+/// de una rueda que gira.
+class LuxLoadingDots extends StatefulWidget {
+  const LuxLoadingDots({super.key, this.color = Colors.white, this.size = 6});
+  final Color color;
+  final double size;
+
+  @override
+  State<LuxLoadingDots> createState() => _LuxLoadingDotsState();
+}
+
+class _LuxLoadingDotsState extends State<LuxLoadingDots>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1100),
+  )..repeat();
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        label: 'Cargando',
+        child: AnimatedBuilder(
+          animation: _c,
+          builder: (_, __) => Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(3, (i) {
+              // Cada punto se enciende con un pequeño desfase.
+              final t = (_c.value - i * 0.18) % 1.0;
+              final wave = t < 0.5 ? t * 2 : (1 - t) * 2;
+              final eased = Curves.easeInOut.transform(wave);
+              return Container(
+                width: widget.size,
+                height: widget.size,
+                margin: EdgeInsets.symmetric(horizontal: widget.size * 0.45),
+                decoration: BoxDecoration(
+                  color: widget.color.withValues(alpha: 0.35 + 0.65 * eased),
+                  shape: BoxShape.circle,
+                ),
+              );
+            }),
+          ),
+        ),
+      );
 }

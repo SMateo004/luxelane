@@ -1,22 +1,20 @@
 import * as admin from 'firebase-admin';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { onCall, CallableRequest } from 'firebase-functions/v2/https';
-import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
+import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import * as stripe from './stripe_service';
 import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, DEFAULT_FARES, fareId, FareRule } from './pricing';
-import { distanceKm } from './assignment';
 import { computeSettlement, planBackfill, Settlement } from './settlement';
-import { rankCandidates } from './assignment';
+import { distanceKm, rankCandidates } from './assignment';
 import { fromCents, toCents } from './money';
-import { linkRejection, paymentAction, validIntentAmount } from './payments';
 import { checkCorporateBooking } from './corporate_functions';
 
+// Programa para empresas y servicios especiales (módulos propios).
 export * from './corporate_functions';
 export * from './special_functions';
-import { driverBookkeeping, driverSnapshot, isExpiredPending, isRecentlySeen, nextRating, riderMessage } from './lifecycle';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -38,12 +36,12 @@ type PaymentStatus = 'pending' | 'captured' | 'refunded' | 'failed';
 
 interface BookingDoc {
   riderId: string;
-  // La app guarda las coordenadas como GeoPoint en `coordinates`.
-  origin?: { coordinates?: admin.firestore.GeoPoint; lat?: number; lng?: number };
-  destination?: { coordinates?: admin.firestore.GeoPoint; lat?: number; lng?: number } | null;
-  scheduledAt?: Timestamp;
-  cancelledBy?: string;
+  // Place.toJson guarda la posición como GeoPoint en `coordinates`.
+  origin?: { coordinates?: admin.firestore.GeoPoint };
+  destination?: { coordinates?: admin.firestore.GeoPoint } | null;
   driverId?: string;
+  paymentMethod?: string;
+  companyId?: string | null;
   status: BookingStatus;
   // La app guarda la clase en `class`; `vehicleClass` es el nombre antiguo.
   class?: string;
@@ -53,8 +51,9 @@ interface BookingDoc {
   estimatedPrice: number;
   finalPrice?: number;
   paymentId?: string;
-  paymentIntentId?: string | null;
-  paymentStatus?: string | null;
+  stripePaymentIntentId?: string;
+  stripePaymentMethodId?: string;
+  scheduledAt?: admin.firestore.Timestamp;
   settlement?: Settlement;
 }
 
@@ -62,7 +61,7 @@ interface RideDoc {
   bookingId: string;
   riderId: string;
   driverId: string;
-  completedAt?: Timestamp;
+  completedAt?: admin.firestore.Timestamp;
   distanceKm?: number;
   durationMin?: number;
 }
@@ -75,13 +74,16 @@ interface PaymentDoc {
   amount: number;
   currency: string;
   status: PaymentStatus;
-  createdAt: Timestamp;
+  createdAt: admin.firestore.Timestamp;
   receiptUrl?: string;
 }
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/** Reservas que siguen en curso o pendientes de realizarse. */
+const ACTIVE_BOOKING_STATUSES = ['pending', 'confirmed', 'driver_arriving', 'driver_arrived', 'in_progress'];
 
 function requireAuth(req: CallableRequest): string {
   if (!req.auth?.uid) throw err.unauthenticated();
@@ -107,9 +109,17 @@ async function requireAdmin(req: CallableRequest): Promise<string> {
   return uid;
 }
 
-async function sendPush(tokens: string[], title: string, body: string): Promise<void> {
+async function sendPush(
+  tokens: string[],
+  title: string,
+  body: string,
+  data?: Record<string, string>,
+): Promise<void> {
   if (!tokens.length) return;
-  await admin.messaging().sendEachForMulticast({ tokens, notification: { title, body } });
+  // Interruptor "Notificaciones push" del panel admin (activado por defecto).
+  const global = await db.collection('config').doc('global').get();
+  if (global.data()?.pushNotificationsEnabled === false) return;
+  await admin.messaging().sendEachForMulticast({ tokens, notification: { title, body }, ...(data ? { data } : {}) });
 }
 
 async function getUserTokens(userId: string): Promise<string[]> {
@@ -121,29 +131,59 @@ async function getUserTokens(userId: string): Promise<string[]> {
 // createPaymentIntent
 // ---------------------------------------------------------------------------
 
-/** Cliente de Stripe del usuario; lo crea si aún no existe. */
-async function stripeCustomerOf(uid: string): Promise<string> {
-  const ref = db.collection('users').doc(uid);
-  const snap = await ref.get();
-  if (!snap.exists) throw err.notFound('User not found');
-  const existing = snap.data()?.stripeCustomerId as string | undefined;
-  if (existing) return existing;
-  const id = await stripe.createCustomer(snap.data()?.email ?? '', snap.data()?.displayName ?? '');
-  await ref.update({ stripeCustomerId: id });
-  return id;
-}
+// Autoriza la tarjeta para una reserva ya creada. El importe, la moneda y el
+// cliente de Stripe salen del servidor; el id del intent queda en la reserva
+// para cobrarlo al completar el viaje (captureOnCompletion) o liberarlo si se
+// cancela.
+/** Margen bajo los 7 días que Stripe mantiene una autorización. */
+const HOLD_WINDOW_MS = 6 * 24 * 60 * 60 * 1000;
 
 export const createPaymentIntent = onCall(async (req) => {
   const uid = requireAuth(req);
-  // El cliente Stripe sale de la cuenta del usuario, nunca de la petición.
-  const { amount } = req.data as { amount: number };
-  if (!validIntentAmount(amount)) throw err.invalidArgument('amount must be integer cents within limits');
+  const { bookingId, paymentMethodId } = req.data as { bookingId: string; paymentMethodId?: string };
+  if (!bookingId) throw err.invalidArgument('bookingId required');
 
-  logger.info('createPaymentIntent', 'start', { uid, amount });
+  const bookingRef = db.collection('bookings').doc(bookingId);
+  const bookingSnap = await bookingRef.get();
+  if (!bookingSnap.exists) throw err.notFound('Booking not found');
+  const booking = bookingSnap.data() as BookingDoc;
+  if (booking.riderId !== uid) throw err.permissionDenied('Not your booking');
+  // Un chófer puede aceptar en los segundos entre crear y autorizar.
+  if (booking.status !== 'pending' && booking.status !== 'confirmed') {
+    throw err.failedPrecondition('Booking is not open');
+  }
+  if (booking.stripePaymentIntentId || booking.stripePaymentMethodId) {
+    throw err.failedPrecondition('Booking already has a payment');
+  }
+  const customerId = await ensureStripeCustomerFor(uid);
+
+  // Stripe libera una autorización a los 7 días: para viajes más lejanos se
+  // guarda la tarjeta y se cobra al completar (cobro sin el pasajero
+  // presente, con la tarjeta que ya autorizó al guardarla).
+  const scheduledMs = booking.scheduledAt?.toMillis() ?? Date.now();
+  if (scheduledMs - Date.now() > HOLD_WINDOW_MS) {
+    if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+    const owner = await stripe.paymentMethodCustomer(paymentMethodId);
+    if (owner !== customerId) throw err.permissionDenied('Not your payment method');
+    await bookingRef.update({ stripePaymentMethodId: paymentMethodId });
+    logger.info('createPaymentIntent', 'deferred', { uid, bookingId });
+    return { deferred: true };
+  }
+
+  const amount = toCents(booking.estimatedPrice);
+  if (amount <= 0) throw err.invalidArgument('amount must be positive');
+  logger.info('createPaymentIntent', 'start', { uid, bookingId, amount });
+
   try {
-    const customerId = await stripeCustomerOf(uid);
-    const intent = await stripe.createIntent({ amount, currency: 'bob', customerId, metadata: { uid } });
-    return { clientSecret: intent.clientSecret, paymentIntentId: intent.id };
+    const { id, clientSecret } = await stripe.createIntent({
+      amount,
+      currency: 'bob',
+      customerId,
+      bookingId,
+    });
+    await bookingRef.update({ stripePaymentIntentId: id });
+    logger.info('createPaymentIntent', 'success', { uid, bookingId });
+    return { clientSecret };
   } catch (e) {
     logger.error('createPaymentIntent', 'stripe error', { error: String(e) });
     throw err.paymentFailed(String(e));
@@ -151,152 +191,138 @@ export const createPaymentIntent = onCall(async (req) => {
 });
 
 // ---------------------------------------------------------------------------
-// linkBookingPayment — vincula la retención autorizada a la reserva
+// capturePayment
 // ---------------------------------------------------------------------------
 
-export const linkBookingPayment = onCall(async (req) => {
+export const capturePayment = onCall(async (req) => {
   const uid = requireAuth(req);
-  const { bookingId, paymentIntentId } = req.data as { bookingId: string; paymentIntentId: string };
-  if (!bookingId || !paymentIntentId) throw err.invalidArgument('bookingId and paymentIntentId required');
+  // El importe y el pasajero salen de la reserva, nunca del cliente.
+  const { bookingId, stripePaymentIntentId } = req.data as {
+    bookingId: string;
+    stripePaymentIntentId: string;
+  };
+
+  if (!bookingId || !stripePaymentIntentId) throw err.invalidArgument('bookingId and stripePaymentIntentId required');
 
   const bookingRef = db.collection('bookings').doc(bookingId);
-  const intent = await stripe.retrieveIntent(paymentIntentId);
-  const outcome = await db.runTransaction(async (tx) => {
-    const snap = await tx.get(bookingRef);
-    if (!snap.exists) return 'not_found';
-    const booking = snap.data() as BookingDoc;
-    const rejection = linkRejection(uid, booking, intent);
-    if (rejection) return rejection;
-    tx.update(bookingRef, {
-      paymentIntentId,
-      paymentStatus: 'authorized',
-      paymentMethod: 'card',
-    });
-    return 'linked';
-  });
+  const bookingSnap = await bookingRef.get();
+  if (!bookingSnap.exists) throw err.notFound('Booking not found');
 
-  if (outcome !== 'linked') {
-    logger.warn('linkBookingPayment', 'rejected', { bookingId, outcome });
-    // Una retención que no queda vinculada se libera para no bloquear
-    // dinero del pasajero (salvo que sea de otro usuario).
-    if (intent.metadata?.uid === uid && intent.status === 'requires_capture' && outcome !== 'already_linked') {
-      await stripe.cancelIntent(paymentIntentId).catch(() => undefined);
-    }
-    return { linked: false, reason: outcome };
-  }
-  return { linked: true };
-});
+  const booking = bookingSnap.data() as BookingDoc;
+  if (booking.riderId !== uid) await requireAdmin(req);
+  if (booking.status !== 'completed') throw err.failedPrecondition('Ride must be completed before capture');
 
-// ---------------------------------------------------------------------------
-// releasePaymentHold — la app libera una retención que no llegó a reserva
-// ---------------------------------------------------------------------------
-
-export const releasePaymentHold = onCall(async (req) => {
-  const uid = requireAuth(req);
-  const { paymentIntentId } = req.data as { paymentIntentId: string };
-  if (!paymentIntentId) throw err.invalidArgument('paymentIntentId required');
-  const intent = await stripe.retrieveIntent(paymentIntentId);
-  if (intent.metadata?.uid !== uid) throw err.permissionDenied('Not your payment');
-  if (intent.status !== 'requires_capture') return { released: false };
-  // Nunca se libera una retención ya vinculada a una reserva.
-  const linked = await db.collection('bookings').where('paymentIntentId', '==', paymentIntentId).limit(1).get();
-  if (!linked.empty) return { released: false };
-  await stripe.cancelIntent(paymentIntentId);
-  return { released: true };
-});
-
-/** Cobra o libera la retención de una reserva según su nuevo estado. */
-async function settleCardPayment(bookingId: string, after: BookingDoc): Promise<void> {
-  const action = paymentAction(after);
-  if (!action || !after.paymentIntentId) return;
-  const bookingRef = db.collection('bookings').doc(bookingId);
-
-  // Reclama la operación para no cobrar dos veces si el trigger se repite.
-  const claimed = await db.runTransaction(async (tx) => {
-    const cur = (await tx.get(bookingRef)).data() as BookingDoc | undefined;
-    if (cur?.paymentStatus !== 'authorized') return false;
-    tx.update(bookingRef, { paymentStatus: action === 'capture' ? 'capturing' : 'releasing' });
-    return true;
-  });
-  if (!claimed) return;
-
-  if (action === 'release') {
-    try {
-      await stripe.cancelIntent(after.paymentIntentId);
-      await bookingRef.update({ paymentStatus: 'released' });
-    } catch (e) {
-      logger.error('settleCardPayment', 'release failed', { bookingId, error: String(e) });
-      await bookingRef.update({ paymentStatus: 'authorized' });
-    }
-    return;
+  if (booking.paymentId) {
+    const existing = await db.collection('payments').doc(booking.paymentId).get();
+    if (existing.data()?.status === 'captured') throw err.failedPrecondition('Booking already paid');
   }
 
-  const amountToCapture = toCents(after.finalPrice ?? after.estimatedPrice);
-  const paymentRef = db.collection('payments').doc();
   try {
-    const intent = await stripe.captureIntent(after.paymentIntentId, amountToCapture);
+    return await captureBookingPayment(bookingRef, booking, stripePaymentIntentId);
+  } catch (e) {
+    logger.error('capturePayment', 'stripe error', { error: String(e) });
+    throw err.paymentFailed(String(e));
+  }
+});
+
+/** Cobra lo autorizado de una reserva completada y registra el pago. */
+async function captureBookingPayment(
+  bookingRef: admin.firestore.DocumentReference,
+  booking: BookingDoc,
+  stripePaymentIntentId: string,
+): Promise<{ paymentId: string; status: PaymentStatus; amount: number; currency: string }> {
+  const bookingId = bookingRef.id;
+  // Si mientras tanto el admin registró el cobro a mano (efectivo, QR…),
+  // no se cobra la tarjeta: se libera la retención.
+  const fresh = (await bookingRef.get()).data() as BookingDoc | undefined;
+  if (fresh?.paymentId) {
+    await stripe.cancelIntent(stripePaymentIntentId);
+    logger.warn('capturePayment', 'already paid, hold released', { bookingId });
+    return { paymentId: fresh.paymentId, status: 'captured', amount: 0, currency: 'bob' };
+  }
+  const chargedBs = booking.finalPrice ?? booking.estimatedPrice;
+  const amountToCapture = toCents(chargedBs);
+  logger.info('capturePayment', 'start', { bookingId, amountToCapture });
+
+  {
+    const intent = await stripe.captureIntent(stripePaymentIntentId, amountToCapture);
     const captured = intent.amount_received ?? amountToCapture;
-    const ok = intent.status === 'succeeded';
+    // Stripe no cobra más de lo autorizado: si queda por debajo, el precio
+    // final pasa a ser lo cobrado para que el reparto use dinero real.
+    const shortfall = captured < amountToCapture;
+    if (shortfall) {
+      logger.warn('capturePayment', 'captured less than charged', { bookingId, captured, amountToCapture });
+    }
+
+    const paymentRef = db.collection('payments').doc();
     const payment: PaymentDoc = {
       bookingId,
-      riderId: after.riderId,
-      stripePaymentIntentId: after.paymentIntentId,
+      riderId: booking.riderId,
+      stripePaymentIntentId,
       amount: captured,
       currency: intent.currency ?? 'bob',
-      status: ok ? 'captured' : 'failed',
+      status: intent.status === 'succeeded' ? 'captured' : 'failed',
       createdAt: Timestamp.now(),
     };
+
     const batch = db.batch();
     batch.set(paymentRef, payment);
     batch.update(bookingRef, {
       paymentId: paymentRef.id,
-      paymentStatus: ok ? 'captured' : 'failed',
-      ...(after.finalPrice == null ? { finalPrice: fromCents(captured) } : {}),
+      // El precio final se mantiene si ya existía; si no, es lo cobrado.
+      ...(booking.finalPrice == null || shortfall ? { finalPrice: fromCents(captured) } : {}),
     });
     await batch.commit();
-    if (captured < amountToCapture) {
-      logger.warn('settleCardPayment', 'captured less than charged', { bookingId, captured, amountToCapture });
-    }
-  } catch (e) {
-    // Queda como cobro fallido: el admin lo ve en cuentas por cobrar.
-    logger.error('settleCardPayment', 'capture failed', { bookingId, error: String(e) });
-    const batch = db.batch();
-    batch.set(paymentRef, {
-      bookingId,
-      riderId: after.riderId,
-      stripePaymentIntentId: after.paymentIntentId,
-      amount: amountToCapture,
-      currency: 'bob',
-      status: 'failed',
-      createdAt: Timestamp.now(),
-    } as PaymentDoc);
-    batch.update(bookingRef, { paymentId: paymentRef.id, paymentStatus: 'failed' });
-    await batch.commit();
+
+    logger.info('capturePayment', 'success', { paymentId: paymentRef.id });
+    return { paymentId: paymentRef.id, status: payment.status, amount: captured, currency: payment.currency };
   }
 }
 
 // ---------------------------------------------------------------------------
-// capturePayment — reintento manual del admin sobre una reserva completada
+// captureOnCompletion  (onUpdate /bookings/{bookingId})
+// Al completarse un viaje pagado con tarjeta se cobra lo autorizado; si se
+// cancela, se libera la retención en la tarjeta del pasajero.
 // ---------------------------------------------------------------------------
 
-export const capturePayment = onCall(async (req) => {
-  await requireAdmin(req);
-  const { bookingId } = req.data as { bookingId: string };
-  if (!bookingId) throw err.invalidArgument('bookingId required');
+export const captureOnCompletion = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const before = event.data?.before.data() as BookingDoc | undefined;
+  const after = event.data?.after.data() as BookingDoc | undefined;
+  if (!before || !after || before.status === after.status) return;
+  if (after.paymentId) return;
+  const intentId = after.stripePaymentIntentId;
 
-  const bookingRef = db.collection('bookings').doc(bookingId);
-  const snap = await bookingRef.get();
-  if (!snap.exists) throw err.notFound('Booking not found');
-  const booking = snap.data() as BookingDoc;
-  if (booking.status !== 'completed') throw err.failedPrecondition('Ride must be completed before capture');
-  if (!booking.paymentIntentId) throw err.failedPrecondition('Booking has no card payment');
-  if (booking.paymentStatus === 'captured') throw err.failedPrecondition('Booking already paid');
-
-  // Un cobro fallido se puede reintentar mientras la retención siga viva.
-  await bookingRef.update({ paymentStatus: 'authorized' });
-  await settleCardPayment(bookingId, { ...booking, paymentStatus: 'authorized' });
-  const after = (await bookingRef.get()).data() as BookingDoc;
-  return { paymentId: after.paymentId ?? null, status: after.paymentStatus ?? null };
+  try {
+    if (after.status === 'completed' && !intentId && after.stripePaymentMethodId) {
+      // Reserva lejana: cobro de la tarjeta guardada al completar.
+      const customerId = (await db.collection('users').doc(after.riderId).get()).data()
+        ?.stripeCustomerId as string | undefined;
+      if (!customerId) throw new Error('rider has no payment profile');
+      const id = await stripe.chargeOffSession({
+        amount: toCents(after.finalPrice ?? after.estimatedPrice),
+        currency: 'bob',
+        customerId,
+        paymentMethodId: after.stripePaymentMethodId,
+        bookingId: event.params.bookingId,
+      });
+      await event.data!.after.ref.update({ stripePaymentIntentId: id });
+      await captureBookingPayment(event.data!.after.ref, after, id);
+    } else if (!intentId) {
+      return;
+    } else if (after.status === 'completed') {
+      await captureBookingPayment(event.data!.after.ref, after, intentId);
+    } else if (after.status === 'cancelled') {
+      await stripe.cancelIntent(intentId);
+      logger.info('captureOnCompletion', 'hold released', { bookingId: event.params.bookingId });
+    }
+  } catch (e) {
+    // El admin puede registrar el cobro a mano desde el panel: se marca
+    // para que el panel lo permita.
+    logger.error('captureOnCompletion', 'failed', { bookingId: event.params.bookingId, error: String(e) });
+    if (after.status === 'completed') {
+      await event.data!.after.ref.update({ cardPaymentFailed: true });
+    }
+  }
 });
 
 // ---------------------------------------------------------------------------
@@ -332,6 +358,10 @@ export const refundPayment = onCall(async (req) => {
       refundedBy: adminId,
       refundReason: reason ?? '',
     });
+    // La app del chófer no lee pagos: la reserva le indica que ya no cobra.
+    if (payment.bookingId) {
+      batch.update(db.collection('bookings').doc(payment.bookingId), { refunded: true });
+    }
     batch.set(db.collection('admin_logs').doc(), {
       adminId,
       adminEmail: req.auth?.token.email ?? null,
@@ -354,19 +384,51 @@ export const refundPayment = onCall(async (req) => {
 // listPaymentMethods
 // ---------------------------------------------------------------------------
 
+/** Cada usuario solo opera sobre su propio cliente de Stripe. */
+async function requireOwnCustomer(uid: string, customerId: string): Promise<void> {
+  const user = await db.collection('users').doc(uid).get();
+  if (user.data()?.stripeCustomerId !== customerId) {
+    throw err.permissionDenied('Not your payment profile');
+  }
+}
+
 export const listPaymentMethods = onCall(async (req) => {
   const uid = requireAuth(req);
-  const customerId = await stripeCustomerOf(uid);
-  const methods = await stripe.listPaymentMethods(customerId);
-  return {
-    cards: methods.map((m) => ({
-      id: m.id,
-      brand: m.card?.brand,
-      last4: m.card?.last4,
-      expMonth: m.card?.exp_month,
-      expYear: m.card?.exp_year,
-    })),
-  };
+  const { customerId } = req.data as { customerId: string };
+  if (!customerId) throw err.invalidArgument('customerId required');
+  await requireOwnCustomer(uid, customerId);
+
+  const [methods, defaultId] = await Promise.all([
+    stripe.listPaymentMethods(customerId),
+    stripe.defaultPaymentMethod(customerId),
+  ]);
+  // La predeterminada va primero: la reserva propone la primera tarjeta.
+  const cards = methods.map((m) => ({
+    id: m.id,
+    brand: m.card?.brand,
+    last4: m.card?.last4,
+    expMonth: m.card?.exp_month,
+    expYear: m.card?.exp_year,
+    isDefault: m.id === defaultId,
+  }));
+  cards.sort((a, b) => Number(b.isDefault) - Number(a.isDefault));
+  return { cards };
+});
+
+// ---------------------------------------------------------------------------
+// setDefaultPaymentMethod
+// ---------------------------------------------------------------------------
+
+export const setDefaultPaymentMethod = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const { paymentMethodId } = req.data as { paymentMethodId: string };
+  if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+  const owner = await stripe.paymentMethodCustomer(paymentMethodId);
+  if (!owner) throw err.permissionDenied('Not your payment method');
+  await requireOwnCustomer(uid, owner);
+
+  await stripe.setDefaultPaymentMethod(owner, paymentMethodId);
+  return { success: true };
 });
 
 // ---------------------------------------------------------------------------
@@ -375,16 +437,14 @@ export const listPaymentMethods = onCall(async (req) => {
 
 export const attachPaymentMethod = onCall(async (req) => {
   const uid = requireAuth(req);
-  const { paymentMethodId } = req.data as { paymentMethodId: string };
-  if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+  const { customerId, paymentMethodId } = req.data as {
+    customerId: string;
+    paymentMethodId: string;
+  };
+  if (!customerId || !paymentMethodId) throw err.invalidArgument('customerId and paymentMethodId required');
+  await requireOwnCustomer(uid, customerId);
 
-  const customerId = await stripeCustomerOf(uid);
-  try {
-    await stripe.attachPaymentMethod(customerId, paymentMethodId);
-  } catch (e) {
-    logger.warn('attachPaymentMethod', 'stripe error', { error: String(e) });
-    throw err.paymentFailed('No se pudo guardar la tarjeta');
-  }
+  await stripe.attachPaymentMethod(customerId, paymentMethodId);
   return { success: true };
 });
 
@@ -396,19 +456,116 @@ export const detachPaymentMethod = onCall(async (req) => {
   const uid = requireAuth(req);
   const { paymentMethodId } = req.data as { paymentMethodId: string };
   if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+  const owner = await stripe.paymentMethodCustomer(paymentMethodId);
+  if (!owner) throw err.permissionDenied('Not your payment method');
+  await requireOwnCustomer(uid, owner);
 
-  // Solo se quitan tarjetas propias.
-  const customerId = await stripeCustomerOf(uid);
-  const pm = await stripe.retrievePaymentMethod(paymentMethodId);
-  if (pm.customer !== customerId) throw err.permissionDenied('Not your card');
+  // Una reserva futura se cobra fuera de sesión con esta tarjeta: quitarla
+  // dejaría ese viaje sin pago.
+  const inUse = await db.collection('bookings')
+    .where('riderId', '==', uid)
+    .where('stripePaymentMethodId', '==', paymentMethodId)
+    .where('status', 'in', ACTIVE_BOOKING_STATUSES)
+    .limit(1).get();
+  if (!inUse.empty) throw err.failedPrecondition('card-in-use');
 
   await stripe.detachPaymentMethod(paymentMethodId);
   return { success: true };
 });
 
 // ---------------------------------------------------------------------------
+// deleteAccount
+// ---------------------------------------------------------------------------
+
+// El propio usuario elimina su cuenta (exigido por App Store y Google Play).
+// Se borran el perfil, los avisos, el perfil de chófer, el cliente de Stripe
+// y el acceso; las reservas y pagos se conservan por obligación contable y
+// solo guardan el uid, que deja de apuntar a datos personales.
+export const deleteAccount = onCall(async (req) => {
+  const uid = requireAuth(req);
+  const userRef = db.collection('users').doc(uid);
+  const user = (await userRef.get()).data();
+  if (user?.role === 'admin') {
+    throw err.failedPrecondition('Las cuentas de administración se eliminan desde la consola.');
+  }
+
+  const [asRider, asDriver] = await Promise.all([
+    db.collection('bookings').where('riderId', '==', uid)
+      .where('status', 'in', ACTIVE_BOOKING_STATUSES).limit(1).get(),
+    db.collection('bookings').where('driverId', '==', uid)
+      .where('status', 'in', ACTIVE_BOOKING_STATUSES).limit(1).get(),
+  ]);
+  if (!asRider.empty || !asDriver.empty) {
+    throw err.failedPrecondition('active-bookings');
+  }
+
+  if (user?.stripeCustomerId) {
+    try {
+      await stripe.deleteCustomer(user.stripeCustomerId);
+    } catch (e) {
+      // Un cliente ya borrado en Stripe no impide eliminar la cuenta.
+      logger.warn('deleteAccount', 'stripe customer not deleted', { uid, error: String(e) });
+    }
+  }
+
+  const notifications = await userRef.collection('notifications').get();
+  const vehicles = await db.collection('vehicles').where('driverId', '==', uid).get();
+  const refs = notifications.docs.map((d) => d.ref);
+  // Lotes de 400 para no rozar el límite de 500 escrituras por lote.
+  for (let i = 0; i < refs.length; i += 400) {
+    const batch = db.batch();
+    refs.slice(i, i + 400).forEach((r) => batch.delete(r));
+    await batch.commit();
+  }
+  const batch = db.batch();
+  // Los vehículos siguen en el historial de reservas, pero salen de servicio.
+  vehicles.docs.forEach((v) => batch.update(v.ref, { isActive: false }));
+  batch.delete(db.collection('driverProfiles').doc(uid));
+  batch.delete(userRef);
+  batch.set(db.collection('admin_logs').doc(), {
+    adminId: uid,
+    adminEmail: req.auth?.token.email ?? null,
+    action: 'delete_account',
+    targetId: uid,
+    targetType: 'user',
+    details: `Cuenta eliminada por el usuario (${user?.role ?? 'sin perfil'})`,
+    createdAt: FieldValue.serverTimestamp(),
+  });
+  await batch.commit();
+
+  await admin.auth().deleteUser(uid);
+  logger.info('deleteAccount', 'success', { uid });
+  return { success: true };
+});
+
+// ---------------------------------------------------------------------------
 // createStripeCustomer  (onCreate /users/{uid})
 // ---------------------------------------------------------------------------
+
+/**
+ * Devuelve el cliente de Stripe del usuario y lo crea si falta (p. ej. si
+ * Stripe falló al registrarse). Si dos llamadas compiten, gana la primera
+ * en guardarse y la otra borra el cliente que sobra.
+ */
+async function ensureStripeCustomerFor(uid: string): Promise<string> {
+  const ref = db.collection('users').doc(uid);
+  const snap = await ref.get();
+  const data = snap.data();
+  if (!data) throw err.failedPrecondition('No payment profile');
+  if (data.stripeCustomerId) return data.stripeCustomerId as string;
+
+  const created = await stripe.createCustomer(data.email, data.displayName);
+  const kept = await db.runTransaction(async (tx) => {
+    const current = (await tx.get(ref)).data()?.stripeCustomerId as string | undefined;
+    if (current) return current;
+    tx.update(ref, { stripeCustomerId: created });
+    return created;
+  });
+  if (kept !== created) {
+    await stripe.deleteCustomer(created).catch(() => undefined);
+  }
+  return kept;
+}
 
 export const createStripeCustomer = onDocumentCreated('users/{uid}', async (event) => {
   const data = event.data?.data();
@@ -417,24 +574,23 @@ export const createStripeCustomer = onDocumentCreated('users/{uid}', async (even
   logger.info('createStripeCustomer', 'start', { uid: event.params.uid });
 
   try {
-    const customerId = await stripe.createCustomer(data.email, data.displayName);
-    await db.collection('users').doc(event.params.uid).update({ stripeCustomerId: customerId });
+    const customerId = await ensureStripeCustomerFor(event.params.uid);
     logger.info('createStripeCustomer', 'success', { uid: event.params.uid, customerId });
   } catch (e) {
+    // ensureStripeCustomer lo reintenta cuando el pasajero vaya a pagar.
     logger.error('createStripeCustomer', 'failed', { error: String(e) });
   }
+});
+
+// Perfil de pagos bajo demanda (pantalla de tarjetas y alta de tarjeta).
+export const ensureStripeCustomer = onCall(async (req) => {
+  const uid = requireAuth(req);
+  return { customerId: await ensureStripeCustomerFor(uid) };
 });
 
 // ---------------------------------------------------------------------------
 // onBookingCreated  (onCreate /bookings/{bookingId})
 // ---------------------------------------------------------------------------
-
-/** Coordenadas de un lugar de la reserva (GeoPoint o lat/lng sueltos). */
-function pointOf(p?: { coordinates?: admin.firestore.GeoPoint; lat?: number; lng?: number } | null) {
-  if (p?.coordinates) return { lat: p.coordinates.latitude, lng: p.coordinates.longitude };
-  if (p?.lat != null && p?.lng != null) return { lat: p.lat, lng: p.lng };
-  return null;
-}
 
 export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async (event) => {
   const booking = event.data?.data() as BookingDoc | undefined;
@@ -445,25 +601,34 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
   const id = fareId(vehicleClass, booking.serviceType ?? 'oneWay');
   const ruleSnap = await db.collection('pricingRules').doc(id).get();
   const rule = ruleSnap.exists ? (ruleSnap.data() as FareRule) : DEFAULT_FARES[id];
-  const o = pointOf(booking.origin);
-  const d = pointOf(booking.destination);
-  const check = checkBookingPrice(booking, rule, o && d ? distanceKm(o, d) : 0);
+  const global = (await db.collection('config').doc('global').get()).data() ?? {};
+  // Apps antiguas o escrituras directas pueden saltarse los interruptores
+  // del panel: se marcan para revisión igual que una tarifa fuera de rango.
+  const blocked = global.isMaintenanceMode === true
+    ? 'maintenance'
+    : vehicleClass === 'firstClass' && global.firstClassEnabled !== true
+      ? 'class_disabled'
+      : null;
+  // La ruta por calles nunca es más corta que la línea recta: base + km en
+  // línea recta × tarifa es un mínimo seguro contra precios manipulados.
+  const o = booking.origin?.coordinates;
+  const d = booking.destination?.coordinates;
+  const straightKm = o && d
+    ? distanceKm({ lat: o.latitude, lng: o.longitude }, { lat: d.latitude, lng: d.longitude })
+    : 0;
+  const check = blocked
+    ? { ok: false as const, reason: blocked, expectedMinimum: undefined }
+    : checkBookingPrice(booking, rule, straightKm);
   if (!check.ok) {
-    // Precio por debajo de la tarifa (manipulado o tarifa cambiada) o
-    // servicio desactivado: no se ofrece a chóferes y se avisa al pasajero.
-    logger.warn('onBookingCreated', 'pricing rejected', { bookingId: event.params.bookingId, ...check });
+    logger.warn('onBookingCreated', 'pricing review', { bookingId: event.params.bookingId, ...check });
     await event.data!.ref.update({
       pricingReview: { reason: check.reason, expectedMinimum: check.expectedMinimum ?? null },
-      status: 'cancelled' as BookingStatus,
-      cancelledBy: 'pricing',
-      cancellationReason: 'Precio no válido para la tarifa vigente',
-      updatedAt: Timestamp.now(),
     });
-    return;
   }
 
-  // Cuenta de empresa: miembro activo, empresa aprobada y dentro de límites.
-  if ((booking as BookingDoc & { paymentMethod?: string }).paymentMethod === 'corporate') {
+  // Cuenta de empresa: miembro activo, empresa aprobada y dentro de límites;
+  // si no procede se cancela con el motivo y no se ofrece a chóferes.
+  if (booking.paymentMethod === 'corporate') {
     const ok = await checkCorporateBooking(event.data!.ref, booking as never);
     if (!ok) return;
   }
@@ -473,27 +638,15 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
     vehicleClass,
   });
 
-  // Solo chóferes conectados de la clase pedida.
-  const [driversSnap, ...classSnaps] = await Promise.all([
-    db
-      .collection('driverProfiles')
-      .where('isAvailable', '==', true)
-      .where('documentsVerified', '==', true)
-      .limit(100)
-      .get(),
-    ...['class', 'vehicleClass'].map((field) =>
-      db.collection('vehicles').where(field, '==', vehicleClass).where('isActive', '==', true).get(),
-    ),
-  ]);
-  const ofClass = new Set(classSnaps.flatMap((q) => q.docs.map((v) => v.data().driverId as string)));
-  const nowMs = Date.now();
-  const targets = driversSnap.docs
-    .filter((p) => ofClass.has(p.id))
-    .filter((p) => isRecentlySeen((p.data().lastSeenAt as Timestamp | undefined)?.toMillis(), nowMs))
-    .slice(0, 20);
+  const driversSnap = await db
+    .collection('driverProfiles')
+    .where('isAvailable', '==', true)
+    .where('documentsVerified', '==', true)
+    .limit(20)
+    .get();
 
   const tokens: string[] = [];
-  for (const doc of targets) {
+  for (const doc of driversSnap.docs) {
     const driverTokens = await getUserTokens(doc.id);
     tokens.push(...driverTokens);
   }
@@ -512,109 +665,140 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
 export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', async (event) => {
   const before = event.data?.before.data() as BookingDoc | undefined;
   const after = event.data?.after.data() as BookingDoc | undefined;
-  const bookingId = event.params.bookingId;
 
   if (!before || !after || before.status === after.status) return;
 
   logger.info('onBookingStatusChanged', 'status changed', {
-    bookingId,
+    bookingId: event.params.bookingId,
     from: before.status,
     to: after.status,
   });
 
-  const now = Timestamp.now();
+  const statusMessages: Partial<Record<BookingStatus, [string, string, string]>> = {
+    confirmed: ['Chófer asignado', 'Tu chófer ha sido asignado.', 'booking_confirmed'],
+    driver_arriving: ['El chófer está en camino', 'Tu chófer va hacia el punto de recogida.', 'driver_arriving'],
+    driver_arrived: ['El chófer ha llegado', 'Tu chófer te espera en el punto de recogida.', 'driver_arrived'],
+    in_progress: ['Viaje iniciado', 'Tu trayecto ha comenzado.', 'ride_started'],
+    completed: ['Viaje completado', 'Has llegado. Gracias por viajar con Luxelane.', 'ride_completed'],
+    cancelled: ['Reserva cancelada', 'Tu reserva ha sido cancelada.', 'booking_cancelled'],
+  };
 
-  // 1. Chófer: libre al terminar o cancelar; suma el viaje al completar.
-  const book = driverBookkeeping(before, after);
-  if (book) {
-    await db.collection('driverProfiles').doc(book.driverId).set(
-      {
-        isAvailable: true,
-        ...(book.countRide ? { totalRides: FieldValue.increment(1) } : {}),
-      },
-      { merge: true },
-    );
-  }
+  const entry = statusMessages[after.status];
+  if (!entry) return;
+  const [title, body, type] = entry;
 
-  // 2. Tarjeta: cobrar al completar o liberar la retención al cancelar.
-  try {
-    await settleCardPayment(bookingId, after);
-  } catch (e) {
-    logger.error('onBookingStatusChanged', 'payment', { bookingId, error: String(e) });
-  }
-
-  // 3. Registro del trayecto (rides/{bookingId}): lo escribe solo el servidor.
-  const rideRef = db.collection('rides').doc(bookingId);
-  if (after.status === 'in_progress' && after.driverId) {
-    await rideRef.set(
-      { bookingId, riderId: after.riderId, driverId: after.driverId, startedAt: now },
-      { merge: true },
-    );
-  } else if (after.status === 'completed' && after.driverId) {
-    await rideRef.set(
-      { bookingId, riderId: after.riderId, driverId: after.driverId, completedAt: now },
-      { merge: true },
-    );
-  }
-
-  // 4. Aviso al pasajero: push y bandeja de notificaciones de la app.
-  const msg = riderMessage(after.status, after.cancelledBy);
-  if (!msg) return;
-  await db.collection('users').doc(after.riderId).collection('notifications').add({
+  // Una sola notificación por cambio, escrita aquí y no por la app (que la
+  // duplicaba cada vez que se abría el viaje).
+  const ref = db.collection('users').doc(after.riderId).collection('notifications').doc();
+  await ref.set({
+    id: ref.id,
     userId: after.riderId,
-    title: msg.title,
-    body: msg.body,
-    type: msg.type,
-    bookingId,
+    title,
+    body,
+    type,
     isRead: false,
-    createdAt: now,
+    bookingId: event.params.bookingId,
+    createdAt: Timestamp.now(),
   });
+
   const tokens = await getUserTokens(after.riderId);
-  await sendPush(tokens, msg.title, msg.body);
+  await sendPush(tokens, title, body, { bookingId: event.params.bookingId });
 });
 
 // ---------------------------------------------------------------------------
-// syncBookingDriver  (onUpdate /bookings/{bookingId})
-// Copia en la reserva el nombre, teléfono y vehículo del chófer asignado: el
-// pasajero no puede leer /users de otros, y así ve a su chófer.
+// publishDriverInfo  (onUpdate /bookings/{bookingId})
+// El pasajero no puede leer /users de otros: el nombre, teléfono y vehículo
+// del chófer asignado se copian a la reserva.
 // ---------------------------------------------------------------------------
 
-export const syncBookingDriver = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+export const publishDriverInfo = onDocumentUpdated('bookings/{bookingId}', async (event) => {
   const before = event.data?.before.data() as BookingDoc | undefined;
   const after = event.data?.after.data() as BookingDoc | undefined;
-  if (!after || !after.driverId || before?.driverId === after.driverId) return;
+  if (!before || !after || before.driverId === after.driverId) return;
 
+  if (!after.driverId) {
+    await event.data!.after.ref.update({ driverInfo: FieldValue.delete() });
+    return;
+  }
   const [userSnap, vehicleSnap] = await Promise.all([
     db.collection('users').doc(after.driverId).get(),
-    // El vehículo puede tener otro id si lo dio de alta un admin.
     db.collection('vehicles').where('driverId', '==', after.driverId).limit(1).get(),
   ]);
-  await event.data!.after.ref.update(
-    driverSnapshot(userSnap.data() as never, vehicleSnap.docs[0]?.data() as never),
-  );
+  const u = userSnap.data() ?? {};
+  const v = vehicleSnap.docs[0]?.data();
+  await event.data!.after.ref.update({
+    driverInfo: {
+      name: u.displayName ?? '',
+      phone: u.phone ?? '',
+      photoUrl: u.photoUrl ?? null,
+      vehicle: v
+        ? { make: v.make ?? '', model: v.model ?? '', plate: v.plate ?? '', color: v.color ?? '' }
+        : null,
+    },
+  });
 });
 
 // ---------------------------------------------------------------------------
-// onBookingRated  (onUpdate /bookings/{bookingId})
-// El pasajero valora en su reserva (las reglas permiten una sola vez, 1-5);
-// el servidor actualiza la media del chófer y el registro del trayecto.
+// applyRiderRating  (onUpdate /bookings/{bookingId})
+// La valoración del pasajero (1–5) actualiza la media del chófer.
 // ---------------------------------------------------------------------------
 
-export const onBookingRated = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+export const applyRiderRating = onDocumentUpdated('bookings/{bookingId}', async (event) => {
   const before = event.data?.before.data() as (BookingDoc & { riderRating?: number }) | undefined;
   const after = event.data?.after.data() as (BookingDoc & { riderRating?: number }) | undefined;
-  if (!after?.driverId || after.riderRating == null || before?.riderRating != null) return;
+  if (!before || !after || before.riderRating != null || after.riderRating == null) return;
+  const rating = Math.min(5, Math.max(1, Math.round(after.riderRating)));
+  if (!after.driverId) return;
 
-  const stars = after.riderRating;
   const driverRef = db.collection('driverProfiles').doc(after.driverId);
   await db.runTransaction(async (tx) => {
     const snap = await tx.get(driverRef);
     if (!snap.exists) return;
-    tx.update(driverRef, nextRating(snap.data() ?? {}, stars));
+    const d = snap.data() ?? {};
+    const count = Number(d.ratingCount ?? 0);
+    const avg = count > 0 ? Number(d.rating ?? 5) : 0;
+    const next = Math.round(((avg * count + rating) / (count + 1)) * 100) / 100;
+    tx.update(driverRef, { rating: next, ratingCount: count + 1 });
   });
-  await db.collection('rides').doc(event.params.bookingId).set({ riderRating: stars }, { merge: true });
 });
 
+// ---------------------------------------------------------------------------
+// releaseDriver  (onUpdate /bookings/{bookingId})
+// Único punto que libera al chófer al cerrarse un viaje, lo cierre quien lo
+// cierre (chófer, pasajero, admin o el viaje en /rides), y que suma el viaje
+// a su contador. Si el pasajero cancela, avisa al chófer.
+// ---------------------------------------------------------------------------
+
+export const releaseDriver = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const before = event.data?.before.data() as BookingDoc | undefined;
+  const after = event.data?.after.data() as BookingDoc | undefined;
+  if (!before || !after || before.status === after.status) return;
+  if (after.status !== 'completed' && after.status !== 'cancelled') return;
+
+  // Un chófer reasignado antes del cierre ya lo liberó quien lo reasignó.
+  const driverId = after.driverId;
+  if (!driverId) return;
+
+  const driverRef = db.collection('driverProfiles').doc(driverId);
+  await db.runTransaction(async (tx) => {
+    const snap = await tx.get(driverRef);
+    if (!snap.exists) return;
+    tx.update(driverRef, {
+      // Solo vuelve a estar disponible si sigue conectado (no se desconectó
+      // ni cerró sesión durante el viaje).
+      isAvailable: snap.data()?.online !== false,
+      ...(after.status === 'completed'
+        ? { totalRides: (snap.data()?.totalRides ?? 0) + 1 }
+        : {}),
+    });
+  });
+
+  if (after.status === 'cancelled' && (after as { cancelledBy?: string }).cancelledBy !== 'admin') {
+    const tokens = await getUserTokens(driverId);
+    await sendPush(tokens, 'Viaje cancelado', 'El pasajero canceló la reserva. Ya estás disponible.');
+  }
+  logger.info('releaseDriver', 'released', { bookingId: event.params.bookingId, driverId, status: after.status });
+});
 
 // ---------------------------------------------------------------------------
 // settleBooking  (onUpdate /bookings/{bookingId})
@@ -703,17 +887,18 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
   if (!before || !after) return;
   if (before.completedAt || !after.completedAt) return;
 
-  // El registro lo crea onBookingStatusChanged cuando la reserva ya está
-  // completada; solo un cierre hecho desde el trayecto (admin) completa aquí
-  // la reserva. La contabilidad del chófer la hace onBookingStatusChanged.
-  const bookingRef = db.collection('bookings').doc(after.bookingId);
-  const booking = (await bookingRef.get()).data() as BookingDoc | undefined;
-  if (booking?.status !== 'in_progress') return;
-
   logger.info('onRideCompleted', 'ride completed', { rideId: event.params.rideId });
-  await bookingRef.update({ status: 'completed' as BookingStatus, updatedAt: Timestamp.now() });
-});
 
+  // Solo cierra reservas abiertas: una cancelada no se reabre. Liberar al
+  // chófer y contar el viaje lo hace releaseDriver al completarse la reserva.
+  const bookingRef = db.collection('bookings').doc(after.bookingId);
+  await db.runTransaction(async (tx) => {
+    const bookingSnap = await tx.get(bookingRef);
+    const status = (bookingSnap.data() as BookingDoc | undefined)?.status;
+    if (!status || status === 'completed' || status === 'cancelled') return;
+    tx.update(bookingRef, { status: 'completed' as BookingStatus, updatedAt: Timestamp.now() });
+  });
+});
 
 // ---------------------------------------------------------------------------
 // assignNearestDriver  (HTTPS Callable)
@@ -751,13 +936,9 @@ export const assignNearestDriver = onCall(async (req) => {
   }
 
   const profiles = await db.getAll(...driverIds.map((id) => db.collection('driverProfiles').doc(id)));
-  const nowMs = Date.now();
   const ranked = rankCandidates(
     profiles
       .filter((p) => p.exists)
-      .filter((p) =>
-        isRecentlySeen((p.data()!.lastSeenAt as Timestamp | undefined)?.toMillis(), nowMs),
-      )
       .map((p) => {
         const d = p.data()!;
         const gp = d.currentLocation as admin.firestore.GeoPoint | undefined;
@@ -770,9 +951,7 @@ export const assignNearestDriver = onCall(async (req) => {
       }),
     booking.origin?.coordinates
       ? { lat: booking.origin.coordinates.latitude, lng: booking.origin.coordinates.longitude }
-      : booking.origin?.lat != null && booking.origin?.lng != null
-        ? { lat: booking.origin.lat, lng: booking.origin.lng }
-        : null,
+      : null,
   );
 
   // Del más cercano al más lejano; la transacción evita asignar una reserva
@@ -780,15 +959,9 @@ export const assignNearestDriver = onCall(async (req) => {
   for (const driverId of ranked) {
     const driverRef = db.collection('driverProfiles').doc(driverId);
     const outcome = await db.runTransaction(async (tx) => {
-      const [b, d, u] = await Promise.all([
-        tx.get(bookingRef),
-        tx.get(driverRef),
-        tx.get(db.collection('users').doc(driverId)),
-      ]);
+      const [b, d] = await Promise.all([tx.get(bookingRef), tx.get(driverRef)]);
       if ((b.data() as BookingDoc | undefined)?.status !== 'pending') return 'taken';
       if (!d.data()?.isAvailable) return 'busy';
-      // Cuenta bloqueada por un administrador: no recibe viajes.
-      if (u.data()?.isActive === false || u.data()?.role !== 'driver') return 'busy';
       tx.update(bookingRef, {
         driverId,
         status: 'confirmed' as BookingStatus,
@@ -819,9 +992,14 @@ export const acceptBooking = onCall(async (req) => {
   const { bookingId } = req.data as { bookingId: string };
   if (!bookingId) throw err.invalidArgument('bookingId required');
 
+  // Solo un chófer activo (no bloqueado desde el panel) acepta viajes.
+  const me = (await db.collection('users').doc(driverId).get()).data();
+  if (me?.role !== 'driver' || me?.isActive === false) throw err.permissionDenied('Active driver required');
+
   const bookingRef = db.collection('bookings').doc(bookingId);
   const driverRef  = db.collection('driverProfiles').doc(driverId);
 
+  let riderId = '';
 
   try {
     await db.runTransaction(async (tx) => {
@@ -835,21 +1013,10 @@ export const acceptBooking = onCall(async (req) => {
       if (booking.status !== 'pending') throw new Error('ALREADY_TAKEN');
 
       if (!driverSnap.exists) throw err.notFound('Driver profile not found');
-      // Solo un chófer verificado, activo y conectado (no en otro viaje).
-      const userSnap = await tx.get(db.collection('users').doc(driverId));
-      const user = userSnap.data();
-      if (user?.role !== 'driver' || user?.isActive === false) throw new Error('NOT_ALLOWED');
-      if (driverSnap.data()?.documentsVerified !== true) throw new Error('NOT_VERIFIED');
+      if (driverSnap.data()?.documentsVerified !== true) throw err.permissionDenied('Driver not verified');
       if (!driverSnap.data()?.isAvailable) throw new Error('DRIVER_BUSY');
-      // Como Uber: solo se aceptan viajes de la clase del vehículo del chófer.
-      const vehicleSnap = await tx.get(
-        db.collection('vehicles').where('driverId', '==', driverId).limit(1),
-      );
-      const vehicle = vehicleSnap.docs[0]?.data();
-      if (!vehicle || vehicle.isActive === false) throw new Error('NOT_ALLOWED');
-      const wanted = booking.class ?? booking.vehicleClass ?? 'business';
-      const has = vehicle.class ?? vehicle.vehicleClass ?? 'business';
-      if (wanted !== has) throw new Error('WRONG_CLASS');
+
+      riderId = booking.riderId;
 
       tx.update(bookingRef, {
         driverId,
@@ -859,7 +1026,11 @@ export const acceptBooking = onCall(async (req) => {
       tx.update(driverRef, { isAvailable: false });
     });
 
-    // El aviso al pasajero lo envía onBookingStatusChanged (confirmed).
+    // Notify rider their driver is confirmed
+    if (riderId) {
+      const tokens = await getUserTokens(riderId);
+      await sendPush(tokens, 'Chófer asignado', 'Tu chófer está en camino.');
+    }
 
     logger.info('acceptBooking', 'success', { bookingId, driverId });
     return { accepted: true };
@@ -870,15 +1041,6 @@ export const acceptBooking = onCall(async (req) => {
     if (e.message === 'DRIVER_BUSY') {
       return { accepted: false, reason: 'driver_busy' };
     }
-    if (e.message === 'NOT_VERIFIED') {
-      return { accepted: false, reason: 'not_verified' };
-    }
-    if (e.message === 'WRONG_CLASS') {
-      return { accepted: false, reason: 'wrong_class' };
-    }
-    if (e.message === 'NOT_ALLOWED') {
-      return { accepted: false, reason: 'not_allowed' };
-    }
     logger.error('acceptBooking', 'error', { error: String(e) });
     throw e;
   }
@@ -888,55 +1050,41 @@ export const acceptBooking = onCall(async (req) => {
 // scheduledCleanup  (daily)
 // ---------------------------------------------------------------------------
 
-export const scheduledCleanup = onSchedule('every 1 hours', async () => {
+export const scheduledCleanup = onSchedule('every 24 hours', async () => {
   logger.info('scheduledCleanup', 'start');
 
-  // Pendientes cuya hora de recogida ya pasó sin chófer. Las programadas
-  // para el futuro no se tocan (antes se filtraba por createdAt y se
-  // cancelaban reservas de mañana).
-  const nowMs = Date.now();
+  // Solo las reservas cuya hora de recogida pasó hace más de 30 min sin
+  // chófer; las programadas para otro día siguen esperando.
+  const cutoff = new Date(Date.now() - 30 * 60 * 1000);
   const staleSnap = await db
     .collection('bookings')
     .where('status', '==', 'pending')
-    .where('scheduledAt', '<', Timestamp.fromMillis(nowMs - 30 * 60 * 1000))
-    .limit(450)
+    .where('scheduledAt', '<', Timestamp.fromDate(cutoff))
     .get();
 
-  const expired = staleSnap.docs.filter((d) =>
-    isExpiredPending(
-      {
-        status: d.data().status,
-        scheduledAtMs: (d.data().scheduledAt as Timestamp | undefined)?.toMillis(),
-      },
-      nowMs,
-    ),
-  );
-  if (!expired.length) return;
-
-  const batch = db.batch();
-  for (const d of expired) {
-    batch.update(d.ref, {
-      status: 'cancelled' as BookingStatus,
-      cancelledBy: 'system',
-      cancellationReason: 'Sin chófer disponible a la hora de recogida',
-      updatedAt: Timestamp.now(),
+  // Un batch admite 500 escrituras.
+  const now = Timestamp.now();
+  for (let i = 0; i < staleSnap.docs.length; i += 500) {
+    const batch = db.batch();
+    staleSnap.docs.slice(i, i + 500).forEach((doc) => {
+      batch.update(doc.ref, { status: 'cancelled' as BookingStatus, updatedAt: now });
     });
+    await batch.commit();
   }
-  await batch.commit();
-  logger.info('scheduledCleanup', 'done', { cancelled: expired.length });
+  logger.info('scheduledCleanup', 'done', { cancelled: staleSnap.size });
 });
 
-
 // ---------------------------------------------------------------------------
-// sendRideReceipt  (onUpdate /payments/{paymentId})
+// sendRideReceipt  (onWrite /payments/{paymentId})
+// Los cobros se crean ya capturados (capturePayment, cobro manual del admin),
+// así que se escucha también la creación.
 // ---------------------------------------------------------------------------
 
-export const sendRideReceipt = onDocumentUpdated('payments/{paymentId}', async (event) => {
+export const sendRideReceipt = onDocumentWritten('payments/{paymentId}', async (event) => {
   const before = event.data?.before.data() as PaymentDoc | undefined;
   const after = event.data?.after.data() as PaymentDoc | undefined;
 
-  if (!before || !after) return;
-  if (before.status === after.status || after.status !== 'captured') return;
+  if (!after || after.status !== 'captured' || before?.status === 'captured') return;
 
   logger.info('sendRideReceipt', 'sending receipt', { paymentId: event.params.paymentId });
 

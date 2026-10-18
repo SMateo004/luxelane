@@ -7,14 +7,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
+import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/config/remote_flags.dart';
 import '../../../../core/design/lux_promise.dart';
 import '../../../../core/design/vehicle_catalog.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
-import '../../../../core/di/injection.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../core/services/maps_service.dart';
 import '../../../../core/services/pricing_catalog.dart';
 import '../../../../core/utils/service_area.dart';
@@ -23,10 +24,10 @@ import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/lux_raised.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/google_sign_in_button.dart';
-import '../../../home/presentation/pages/home_design.dart';
-import '../../../payments/presentation/bloc/payment_bloc.dart';
 import '../../../business/data/business_repository.dart';
 import '../../../business/domain/business_models.dart';
+import '../../../home/presentation/pages/home_design.dart';
+import '../../../payments/presentation/bloc/payment_bloc.dart';
 import '../bloc/booking_bloc.dart';
 import '../widgets/vehicle_details.dart';
 import '../widgets/vehicle_visuals.dart';
@@ -50,6 +51,10 @@ class BookingScreen extends StatefulWidget {
   @override
   State<BookingScreen> createState() => _BookingScreenState();
 }
+
+/// Corner radius shared by the phone layout's cards and fields, matching the
+/// rounded summary card on desktop.
+const double _kMobileRadius = 14;
 
 class _BookingScreenState extends State<BookingScreen> {
   BookingFormData? _formData;
@@ -76,13 +81,10 @@ class _BookingScreenState extends State<BookingScreen> {
   String _guestPhone = '';
 
   List<Map<String, dynamic>> _savedCards = [];
-
-  /// Tarjeta elegida; null = efectivo al chófer.
   String? _selectedCardId;
   bool _awaitingPaymentIntent = false;
-
-  /// Retención de tarjeta ya autorizada, pendiente de vincular a la reserva.
-  String? _pendingIntentId;
+  bool _payByCard = false;
+  String? _pendingBookingId;
 
   /// Cargar el viaje a la cuenta de empresa del usuario.
   bool _corporate = false;
@@ -134,15 +136,10 @@ class _BookingScreenState extends State<BookingScreen> {
 
   final ScrollController _cardsCtrl = ScrollController();
 
-  /// Km reales del recorrido. Sin ruta no se inventa una distancia: el
-  /// precio se muestra provisional y no se puede reservar hasta tenerla.
   double get _km =>
-      (_formData?.routeDistanceKm ?? 0) > 0 ? _formData!.routeDistanceKm : 0;
-
-  /// Un traslado necesita el recorrido para cobrar lo justo.
-  bool get _needsRoute =>
-      _service == ServiceType.oneWay && (_formData?.routeDistanceKm ?? 0) <= 0;
-  bool _routeFailed = false;
+      _formData?.routeDistanceKm != null && _formData!.routeDistanceKm > 0
+          ? _formData!.routeDistanceKm
+          : 25.0;
 
   double get _price => PricingCatalog.instance
       .estimate(_selected, _service, km: _km, hours: _hours);
@@ -198,22 +195,17 @@ class _BookingScreenState extends State<BookingScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _watchCompany();
     if (_formData == null) {
       final extra = GoRouterState.of(context).extra;
       if (extra is BookingFormData) {
         _formData = extra;
         _service = extra.serviceType;
+        if (extra.preferredClass != null &&
+            _kVehicleClasses.contains(extra.preferredClass)) {
+          _selected = extra.preferredClass!;
+        }
         _hours = extra.hours;
         _ensureRoute();
-      } else {
-        // Al recargar la página se pierde el formulario: no se puede
-        // reservar un viaje sin origen ni destino, se vuelve al inicio.
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
-          showLuxSnackbar(context, 'Elige de nuevo tu recogida y destino.');
-          context.go('/');
-        });
       }
       _loadSavedCards();
     }
@@ -234,16 +226,9 @@ class _BookingScreenState extends State<BookingScreen> {
     } catch (_) {
       route = null;
     }
-    if (!mounted || _formData != data) return; // cambió mientras se calculaba
-    if (route == null || route.distanceKm <= 0) {
-      setState(() => _routeFailed = true);
-      return;
-    }
-    final r = route;
-    setState(() {
-      _routeFailed = false;
-      _formData = data.withRoute(r);
-    });
+    if (!mounted || route == null || route.polylinePoints.length <= 2) return;
+    if (_formData != data) return; // cambió mientras se calculaba
+    setState(() => _formData = data.withRoute(route!));
   }
 
   /// Recorrido de la reserva para el mapa (null si aún no se tiene).
@@ -257,34 +242,23 @@ class _BookingScreenState extends State<BookingScreen> {
     );
   }
 
+  /// El pago con tarjeta usa el SDK nativo de Stripe, que no existe en web.
+  static bool get _cardsSupported => !kIsWeb;
+
   void _loadSavedCards() {
+    if (!_cardsSupported) return;
     final authState = context.read<AuthBloc>().state;
-    // Las tarjetas guardadas solo se usan en la app móvil.
-    if (!kIsWeb && authState is AuthAuthenticated) {
+    if (authState is AuthAuthenticated &&
+        authState.user.stripeCustomerId != null &&
+        authState.user.stripeCustomerId!.isNotEmpty) {
       context.read<PaymentBloc>().add(
             CardsLoadRequested(
-                stripeCustomerId: authState.user.stripeCustomerId ?? ''),
+                stripeCustomerId: authState.user.stripeCustomerId!),
           );
     }
   }
 
   Future<void> _confirm() async {
-    if (_loading) return; // doble toque
-    if (_formData == null) return;
-    if (_needsRoute) {
-      if (_routeFailed) {
-        showLuxSnackbar(
-            context,
-            'No pudimos calcular la ruta. Revisa tu conexión o cambia el '
-            'destino.',
-            isError: true);
-        setState(() => _routeFailed = false);
-        _ensureRoute();
-      } else {
-        showLuxSnackbar(context, 'Calculando la ruta, un momento…');
-      }
-      return;
-    }
     if (!_checkFlight()) {
       if (!isWeb(context)) setState(() => _step = 1);
       return;
@@ -306,47 +280,122 @@ class _BookingScreenState extends State<BookingScreen> {
     }
     final freshState = context.read<AuthBloc>().state;
     if (freshState is! AuthAuthenticated) return;
-    final user = freshState.user;
+    if (_formData == null) {
+      // Sin recogida (recarga de página, enlace directo…): no se inventa
+      // un lugar; se vuelve a empezar la búsqueda.
+      showLuxSnackbar(context, 'Vuelve a indicar tu recogida para reservar.',
+          isError: true);
+      context.go('/');
+      return;
+    }
     final blocked =
         PricingCatalog.instance.unavailableReason(_selected, _service);
     if (blocked != null) {
       showLuxSnackbar(context, blocked, isError: true);
       return;
     }
-    if (!user.isActive) {
+    if (_formData!.scheduledAt
+        .isBefore(DateTime.now().subtract(const Duration(minutes: 5)))) {
       showLuxSnackbar(
-          context, 'Tu cuenta está suspendida. Contacta con soporte.',
+          context, 'La hora de recogida ya pasó. Elige una nueva hora.',
+          isError: true);
+      context.go('/');
+      return;
+    }
+    // La reserva se crea primero y la tarjeta se autoriza contra ella: si la
+    // tarjeta falla, se cancela la reserva y no queda ninguna retención.
+    if (_corporate && !_corporateAvailable) {
+      setState(() => _corporate = false);
+      showLuxSnackbar(
+          context, 'La cuenta de empresa no está disponible ahora mismo.',
           isError: true);
       return;
     }
+    // A cuenta de empresa no se autoriza ninguna tarjeta: se factura a fin
+    // de mes en el extracto de la empresa.
+    _payByCard = !_corporate && _cardsSupported && _selectedCardId != null;
     setState(() => _loading = true);
-
-    if (_corporate) {
-      if (!_corporateAvailable) {
-        setState(() {
-          _loading = false;
-          _corporate = false;
-        });
-        showLuxSnackbar(
-            context, 'La cuenta de empresa no está disponible ahora mismo.',
-            isError: true);
-        return;
-      }
-      _createBooking(paymentMethod: 'corporate');
-      return;
-    }
-
-    // El cobro con tarjeta guardada solo existe en la app móvil.
-    if (!kIsWeb && _selectedCardId != null) {
-      setState(() => _awaitingPaymentIntent = true);
-      context.read<PaymentBloc>().add(PaymentIntentRequested(
-            amount: _price,
-            currency: 'bob',
-            stripeCustomerId: user.stripeCustomerId ?? '',
-          ));
-      return;
-    }
     _createBooking();
+  }
+
+  /// Cuenta de empresa o pago personal. Solo aparece si el usuario pertenece
+  /// a una empresa activa; el resto de pasajeros no ve nada nuevo.
+  Widget _corporateChoice() => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text('¿QUIÉN PAGA?',
+              style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: _kTextTertiary,
+                  letterSpacing: 2.0)),
+          const SizedBox(height: 12),
+          _PayOption(
+            icon: Icons.apartment_outlined,
+            label: 'Cuenta de empresa · ${_company!.name}',
+            selected: _corporate,
+            onTap: () => setState(() => _corporate = true),
+          ),
+          if (_corporate)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: TextField(
+                controller: _costCenter,
+                maxLength: 60,
+                decoration: const InputDecoration(
+                  labelText: 'Centro de coste o motivo (opcional)',
+                  counterText: '',
+                  isDense: true,
+                ),
+              ),
+            ),
+          _PayOption(
+            icon: Icons.person_outline_rounded,
+            label: 'Pago personal',
+            selected: !_corporate,
+            onTap: () => setState(() => _corporate = false),
+          ),
+        ],
+      );
+
+  /// Autoriza la tarjeta para la reserva recién creada.
+  void _authorizeCard(Booking booking) {
+    _pendingBookingId = booking.id;
+    setState(() => _awaitingPaymentIntent = true);
+    context.read<PaymentBloc>().add(PaymentIntentRequested(
+          bookingId: booking.id,
+          paymentMethodId: _selectedCardId!,
+        ));
+  }
+
+  /// La tarjeta no se pudo autorizar: la reserva se cancela para no dejarla
+  /// sin pago, y el pasajero puede intentarlo de nuevo.
+  Future<void> _cardFailed(String message) async {
+    final id = _pendingBookingId;
+    _pendingBookingId = null;
+    _payByCard = false;
+    if (id != null) await sl<BookingRepository>().cancelBooking(id);
+    if (!mounted) return;
+    setState(() {
+      _loading = false;
+      _awaitingPaymentIntent = false;
+    });
+    showLuxSnackbar(
+        context,
+        'No se pudo autorizar tu tarjeta ($message). La reserva no se '
+        'confirmó; inténtalo de nuevo o elige otra tarjeta.',
+        isError: true);
+  }
+
+  /// Cierra la reserva con un momento de certeza antes de seguir el viaje.
+  Future<void> _celebrate(String bookingId) async {
+    await showLuxSuccess(
+      context,
+      title: 'Reserva confirmada',
+      message: 'Te avisaremos en cuanto tu chófer vaya en camino.',
+    );
+    if (mounted) context.go('/ride/$bookingId');
   }
 
   Future<void> _handleStripeConfirm(String clientSecret) async {
@@ -360,26 +409,15 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
       );
-      // "pi_123_secret_abc" → "pi_123": el id de la retención autorizada.
-      _pendingIntentId = clientSecret.split('_secret_').first;
-      _createBooking(paymentMethod: 'card');
+      final id = _pendingBookingId;
+      _pendingBookingId = null;
+      if (!mounted || id == null) return;
+      setState(() => _loading = false);
+      await _celebrate(id);
     } on StripeException catch (e) {
-      if (mounted) {
-        setState(() => _loading = false);
-        showLuxSnackbar(
-            context,
-            e.error.code == FailureCode.Canceled
-                ? 'Pago cancelado.'
-                : 'Tu tarjeta fue rechazada. Prueba con otra o paga en efectivo.',
-            isError: true);
-      }
-    } catch (e) {
-      if (mounted) {
-        setState(() => _loading = false);
-        showLuxSnackbar(
-            context, 'No se pudo procesar el pago. Inténtalo de nuevo.',
-            isError: true);
-      }
+      await _cardFailed(e.error.localizedMessage ?? 'pago rechazado');
+    } catch (_) {
+      await _cardFailed('error de conexión');
     }
   }
 
@@ -407,19 +445,20 @@ class _BookingScreenState extends State<BookingScreen> {
     }
   }
 
-  void _createBooking({String paymentMethod = 'cash'}) {
+  void _createBooking() {
     final authState = context.read<AuthBloc>().state;
-    final data = _formData;
-    if (authState is! AuthAuthenticated || data == null) {
-      setState(() => _loading = false);
-      return;
-    }
-    final origin = data.origin;
-    // Por horas no hay destino fijo: se guarda la recogida.
-    final destination = data.destination ?? data.origin;
-    // Si el pasajero tardó en confirmar y la hora ya pasó, es "ahora".
-    final now = DateTime.now();
-    final scheduledAt = data.scheduledAt.isBefore(now) ? now : data.scheduledAt;
+    if (authState is! AuthAuthenticated) return;
+    final origin = _formData!.origin;
+    // Por horas sin destino fijo: se guarda la recogida como referencia (con
+    // coordenadas reales) en lugar de un lugar inventado en (0,0).
+    final destination = _formData!.destination ??
+        Place(
+            name: 'Servicio por horas',
+            address: origin.address,
+            lat: origin.lat,
+            lng: origin.lng);
+    final scheduledAt =
+        _formData?.scheduledAt ?? DateTime.now().add(const Duration(hours: 1));
 
     String? combinedNotes;
     if (!_bookForSelf && _guestFirstName.isNotEmpty) {
@@ -450,41 +489,13 @@ class _BookingScreenState extends State<BookingScreen> {
               ? ServiceArea.airportFor(_formData!.origin)?.iata
               : null,
           hours: _service == ServiceType.byTheHour ? _hours : null,
-          paymentMethod: paymentMethod,
-          companyId: paymentMethod == 'corporate' ? _company?.id : null,
-          costCenter:
-              paymentMethod == 'corporate' && _costCenter.text.trim().isNotEmpty
-                  ? _costCenter.text.trim()
-                  : null,
+          paymentMethod:
+              _corporate ? 'corporate' : (_payByCard ? 'card' : 'cash'),
+          companyId: _corporate ? _company?.id : null,
+          costCenter: _corporate && _costCenter.text.trim().isNotEmpty
+              ? _costCenter.text.trim()
+              : null,
         ));
-  }
-
-  /// Con tarjeta, la retención se asocia a la reserva antes de seguir; si
-  /// no se puede, la reserva se cancela (nunca un viaje "con tarjeta" que el
-  /// servidor no pueda cobrar).
-  Future<void> _onBookingCreated(Booking booking) async {
-    final hold = _pendingIntentId;
-    _pendingIntentId = null;
-    if (hold != null) {
-      final linked = await sl<PaymentRepository>()
-          .linkBookingPayment(bookingId: booking.id, paymentIntentId: hold);
-      if (!mounted) return;
-      if (!linked.getOrElse(() => false)) {
-        await sl<BookingRepository>().cancelBooking(booking.id);
-        await sl<PaymentRepository>().releasePaymentHold(hold);
-        if (!mounted) return;
-        setState(() => _loading = false);
-        showLuxSnackbar(
-            context,
-            'No pudimos confirmar el pago con tarjeta. No se te cobró nada; '
-            'inténtalo de nuevo o paga en efectivo.',
-            isError: true);
-        return;
-      }
-    }
-    if (!mounted) return;
-    setState(() => _loading = false);
-    context.go('/ride/${booking.id}');
   }
 
   void _selectVehicle(VehicleClass vc) {
@@ -535,12 +546,16 @@ class _BookingScreenState extends State<BookingScreen> {
     return MultiBlocListener(
       listeners: [
         BlocListener<BookingBloc, BookingState>(listener: (ctx, state) {
-          if (state is BookingCreated) _onBookingCreated(state.booking);
+          if (state is BookingCreated) {
+            if (_payByCard) {
+              _authorizeCard(state.booking);
+              return;
+            }
+            setState(() => _loading = false);
+            _celebrate(state.booking.id);
+          }
           if (state is BookingError) {
             setState(() => _loading = false);
-            final hold = _pendingIntentId;
-            _pendingIntentId = null;
-            if (hold != null) sl<PaymentRepository>().releasePaymentHold(hold);
             showLuxSnackbar(ctx, state.message, isError: true);
           }
         }),
@@ -555,14 +570,25 @@ class _BookingScreenState extends State<BookingScreen> {
           }
           if (state is PaymentIntentCreated && _awaitingPaymentIntent) {
             setState(() => _awaitingPaymentIntent = false);
-            _handleStripeConfirm(state.clientSecret);
+            final secret = state.clientSecret;
+            if (secret != null) {
+              _handleStripeConfirm(secret);
+            } else {
+              // Viaje lejano: la tarjeta queda guardada en la reserva y se
+              // cobra al completar.
+              final id = _pendingBookingId;
+              _pendingBookingId = null;
+              setState(() => _loading = false);
+              if (id != null) ctx.go('/ride/$id');
+            }
           }
           if (state is PaymentError) {
-            setState(() {
-              _loading = false;
-              _awaitingPaymentIntent = false;
-            });
-            showLuxSnackbar(ctx, state.message, isError: true);
+            if (_awaitingPaymentIntent) {
+              _cardFailed(state.message);
+              return;
+            }
+            // Un fallo al cargar las tarjetas no bloquea reservar.
+            setState(() => _loading = false);
           }
         }),
       ],
@@ -792,7 +818,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // ── What's Included ────────────────────────────────────────────────────────
 
-  Widget _webWhatsIncluded() {
+  Widget _webWhatsIncluded({bool compact = false}) {
     const items = [
       (Icons.badge_outlined, 'Recibimiento personalizado'),
       (
@@ -838,24 +864,29 @@ class _BookingScreenState extends State<BookingScreen> {
       children: [
         Text('INCLUIDO EN CADA VIAJE', style: eyebrow()),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           'Qué incluye',
           style: TextStyle(
             fontFamily: kSerif,
-            fontSize: 32,
+            fontSize: compact ? 26 : 32,
             fontWeight: FontWeight.w500,
             color: _kTextPrimary,
             height: 1.05,
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: compact ? 18 : 24),
         LayoutBuilder(builder: (context, c) {
-          final cols = c.maxWidth >= 720 ? 3 : 2;
+          // Phones list the perks in one column so each line stays readable.
+          final cols = c.maxWidth >= 720
+              ? 3
+              : c.maxWidth >= 480
+                  ? 2
+                  : 1;
           const gap = 24.0;
           final w = (c.maxWidth - gap * (cols - 1)) / cols;
           return Wrap(
             spacing: gap,
-            runSpacing: 20,
+            runSpacing: cols == 1 ? 14 : 20,
             children: [
               for (final (icon, label) in items)
                 SizedBox(width: w, child: item(icon, label)),
@@ -868,7 +899,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // ── Price breakdown ────────────────────────────────────────────────────────
 
-  Widget _webPriceBreakdown() {
+  Widget _webPriceBreakdown({bool compact = false}) {
     final base = _price * 0.9185;
     final tax = _price * 0.0815;
 
@@ -950,20 +981,21 @@ class _BookingScreenState extends State<BookingScreen> {
         );
 
     return Container(
-      padding: const EdgeInsets.all(30),
+      padding: EdgeInsets.all(compact ? 20 : 30),
       decoration: BoxDecoration(
-        color: LD.bg2,
-        borderRadius: BorderRadius.circular(4),
+        color: compact ? Colors.white : LD.bg2,
+        borderRadius: BorderRadius.circular(compact ? _kMobileRadius : 4),
+        border: compact ? Border.all(color: _kBorder) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Title
-          const Text(
+          Text(
             'Desglose de precio',
             style: TextStyle(
               fontFamily: kSerif,
-              fontSize: 28,
+              fontSize: compact ? 22 : 28,
               fontWeight: FontWeight.w600,
               color: _kTextPrimary,
               letterSpacing: 0.1,
@@ -1196,13 +1228,14 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
         ),
 
-        const SizedBox(height: 20),
-        const Divider(color: _kDivider, height: 1),
-        const SizedBox(height: 16),
+        if (_corporateAvailable) ...[
+          const SizedBox(height: 20),
+          const Divider(color: _kDivider, height: 1),
+          const SizedBox(height: 20),
+          _corporateChoice(),
+        ],
 
-        // ── Método de pago ──────────────────────────────────────────────
-        _paymentSection(),
-        const SizedBox(height: 4),
+        const SizedBox(height: 20),
         const Divider(color: _kDivider, height: 1),
         const SizedBox(height: 16),
 
@@ -1227,115 +1260,6 @@ class _BookingScreenState extends State<BookingScreen> {
       ],
     );
   }
-
-  /// Método de pago: cuenta de empresa (si la hay), efectivo y tarjetas
-  /// guardadas (solo en la app móvil). Se usa en móvil y en escritorio.
-  Widget _paymentSection() => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text('MÉTODO DE PAGO',
-              style: TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w700,
-                  color: _kTextTertiary,
-                  letterSpacing: 2.0)),
-          const SizedBox(height: 12),
-          if (_corporateAvailable) ...[
-            _PayOption(
-              icon: Icons.apartment_outlined,
-              label: 'Cuenta de empresa · ${_company!.name}',
-              selected: _corporate,
-              onTap: () => setState(() {
-                _corporate = true;
-                _selectedCardId = null;
-              }),
-            ),
-            if (_corporate)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: TextField(
-                  controller: _costCenter,
-                  maxLength: 60,
-                  decoration: const InputDecoration(
-                    labelText: 'Centro de coste o motivo (opcional)',
-                    counterText: '',
-                    isDense: true,
-                  ),
-                ),
-              ),
-          ],
-          _PayOption(
-            icon: Icons.payments_outlined,
-            label: 'Efectivo al chófer',
-            selected: _selectedCardId == null && !_corporate,
-            onTap: () => setState(() {
-              _selectedCardId = null;
-              _corporate = false;
-            }),
-          ),
-          if (!kIsWeb)
-            ..._savedCards.map((card) {
-              final id = card['id'] as String;
-              final brand = _cap(card['brand'] as String? ?? 'Card');
-              final last4 = card['last4'] as String? ?? '****';
-              final isSel = _selectedCardId == id && !_corporate;
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: GestureDetector(
-                  onTap: () => setState(() {
-                    _selectedCardId = id;
-                    _corporate = false;
-                  }),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 160),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 14),
-                    decoration: BoxDecoration(
-                      color: _kCardBg,
-                      borderRadius: BorderRadius.zero,
-                      border: Border.all(
-                          color: isSel ? LuxColors.sapphire : _kBorder,
-                          width: isSel ? 1.5 : 1),
-                    ),
-                    child: Row(children: [
-                      Icon(Icons.credit_card_outlined,
-                          size: 20,
-                          color: isSel ? LuxColors.sapphire : _kTextSub),
-                      const SizedBox(width: 12),
-                      Expanded(
-                          child: Text('$brand •••• $last4',
-                              style: const TextStyle(
-                                  fontFamily: kSans,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: _kTextPrimary))),
-                      if (isSel)
-                        Container(
-                          width: 18,
-                          height: 18,
-                          decoration: const BoxDecoration(
-                              color: LuxColors.sapphire,
-                              shape: BoxShape.circle),
-                          child: const Icon(Icons.check,
-                              size: 11, color: Colors.white),
-                        ),
-                    ]),
-                  ),
-                ),
-              );
-            }),
-          if (!kIsWeb)
-            _OutlinedBtn(
-                label: 'Agregar tarjeta',
-                icon: Icons.add_card_outlined,
-                onPressed: () => context.push('/payment/add'))
-          else
-            const Text('El pago con tarjeta está disponible en la app móvil.',
-                style: TextStyle(
-                    fontFamily: kSans, fontSize: 12, color: _kTextTertiary)),
-        ],
-      );
 
   // ── MOBILE LAYOUT ──────────────────────────────────────────────────────────
 
@@ -1477,17 +1401,17 @@ class _BookingScreenState extends State<BookingScreen> {
               },
             ),
           ),
-          const SizedBox(height: 16),
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 200),
-            child: _MobileVehicleDetail(
-                key: ValueKey(_selected), vehicleClass: _selected),
-          ),
-          const SizedBox(height: 36),
+          const SizedBox(height: 14),
+          const _MobilePromises(),
+          const SizedBox(height: 32),
           VehicleDetailsGallery(vehicleClass: _selected, compact: true),
-          const SizedBox(height: 40),
+          const SizedBox(height: 36),
           _capacitySection(compact: true),
-          const SizedBox(height: 12),
+          const SizedBox(height: 36),
+          _webWhatsIncluded(compact: true),
+          const SizedBox(height: 32),
+          _webPriceBreakdown(compact: true),
+          const SizedBox(height: 8),
         ],
       );
 
@@ -1564,7 +1488,7 @@ class _BookingScreenState extends State<BookingScreen> {
       children: [
         if (hasRoute) ...[
           ClipRRect(
-            borderRadius: BorderRadius.zero,
+            borderRadius: BorderRadius.circular(_kMobileRadius),
             child: SizedBox(
               height: 180,
               child: LuxMap(
@@ -1586,7 +1510,7 @@ class _BookingScreenState extends State<BookingScreen> {
         Container(
           decoration: BoxDecoration(
             color: _kCardBg,
-            borderRadius: BorderRadius.zero,
+            borderRadius: BorderRadius.circular(_kMobileRadius),
             border: Border.all(color: _kBorder),
           ),
           child: Column(children: [
@@ -1621,7 +1545,8 @@ class _BookingScreenState extends State<BookingScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               decoration: const BoxDecoration(
                 color: LD.bg2,
-                borderRadius: BorderRadius.vertical(bottom: Radius.circular(8)),
+                borderRadius: BorderRadius.vertical(
+                    bottom: Radius.circular(_kMobileRadius - 1)),
               ),
               child: Row(children: [
                 const Text('TOTAL · PRECIO FIJO',
@@ -1644,7 +1569,76 @@ class _BookingScreenState extends State<BookingScreen> {
           ]),
         ),
         const SizedBox(height: 20),
-        _paymentSection(),
+        if (_corporateAvailable) ...[
+          _corporateChoice(),
+          const SizedBox(height: 12),
+        ],
+        if (!_cardsSupported || _corporate)
+          const SizedBox.shrink()
+        else if (_savedCards.isEmpty)
+          _OutlinedBtn(
+              label: 'Agregar método de pago',
+              icon: Icons.add_card_outlined,
+              onPressed: () async {
+                await context.push('/payment/add');
+                if (mounted) _loadSavedCards();
+              })
+        else ...[
+          const Text('MÉTODO DE PAGO',
+              style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: _kTextTertiary,
+                  letterSpacing: 2.0)),
+          const SizedBox(height: 12),
+          ..._savedCards.map((card) {
+            final id = card['id'] as String;
+            final brand = _cap(card['brand'] as String? ?? 'Card');
+            final last4 = card['last4'] as String? ?? '****';
+            final isSel = _selectedCardId == id;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: GestureDetector(
+                onTap: () => setState(() => _selectedCardId = id),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 160),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  decoration: BoxDecoration(
+                    color: _kCardBg,
+                    borderRadius: BorderRadius.circular(_kMobileRadius),
+                    border: Border.all(
+                        color: isSel ? LuxColors.sapphire : _kBorder,
+                        width: isSel ? 1.5 : 1),
+                  ),
+                  child: Row(children: [
+                    Icon(Icons.credit_card_outlined,
+                        size: 20,
+                        color: isSel ? LuxColors.sapphire : _kTextSub),
+                    const SizedBox(width: 12),
+                    Expanded(
+                        child: Text('$brand •••• $last4',
+                            style: const TextStyle(
+                                fontFamily: kSans,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: _kTextPrimary))),
+                    if (isSel)
+                      Container(
+                        width: 18,
+                        height: 18,
+                        decoration: const BoxDecoration(
+                            color: LuxColors.sapphire, shape: BoxShape.circle),
+                        child: const Icon(Icons.check,
+                            size: 11, color: Colors.white),
+                      ),
+                  ]),
+                ),
+              ),
+            );
+          }),
+        ],
         const SizedBox(height: 16),
         _GuaranteeRow(
             Icons.event_available_outlined, LuxPromise.freeCancelLong),
@@ -1945,7 +1939,7 @@ class _VehicleCardState extends State<_VehicleCard> {
             transform: Matrix4.translationValues(0, _hover && !sel ? -4 : 0, 0),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
+              borderRadius: BorderRadius.circular(14),
               border: Border.all(
                 color: sel ? accent : LD.border,
                 width: sel ? 1.6 : 1.0,
@@ -1972,7 +1966,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                 Expanded(
                   child: ClipRRect(
                     borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(6)),
+                        const BorderRadius.vertical(top: Radius.circular(13)),
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
@@ -2234,6 +2228,10 @@ class _ReserveBar extends StatelessWidget {
           label: 'Reservar ${selected.label}',
           loading: loading,
           onPressed: onReserve,
+          uppercase: false,
+          fontSize: 15,
+          radius: LuxRadius.md,
+          height: 54,
         ),
       );
 }
@@ -2275,42 +2273,20 @@ Widget _GuaranteeRow(IconData icon, String text) => Row(children: [
 
 // ── MOBILE VEHICLE DETAIL ─────────────────────────────────────────────────────
 
-class _MobileVehicleDetail extends StatelessWidget {
-  const _MobileVehicleDetail({super.key, required this.vehicleClass});
-  final VehicleClass vehicleClass;
+/// The two promises under the class cards, on one rounded strip. The card
+/// itself already names the class and its capacity.
+class _MobilePromises extends StatelessWidget {
+  const _MobilePromises();
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: LD.bg2,
-          borderRadius: BorderRadius.zero,
+          color: Colors.white.withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(_kMobileRadius),
           border: Border.all(color: _kDivider),
         ),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            Expanded(
-                child: Text(vehicleClass.description,
-                    style: const TextStyle(
-                        fontFamily: kSans, fontSize: 12, color: _kTextSub))),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: LD.border),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text('Hasta ${vehicleClass.capacity} pax',
-                  style: const TextStyle(
-                      fontFamily: kSans,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: _kTextSub)),
-            ),
-          ]),
-          const SizedBox(height: 10),
-          const Divider(color: _kDivider, height: 1),
-          const SizedBox(height: 10),
           _GuaranteeRow(Icons.price_check_outlined, LuxPromise.fixedPrice),
           const SizedBox(height: 6),
           _GuaranteeRow(Icons.event_available_outlined, LuxPromise.freeCancel),
@@ -2372,22 +2348,34 @@ class _LightServiceTypeTab extends StatelessWidget {
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
           child: GestureDetector(
-            onTap: () => onChanged(t),
+            onTap: () {
+              LuxHaptics.tap();
+              onChanged(t);
+            },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 160),
               margin: const EdgeInsets.all(3),
               padding: EdgeInsets.symmetric(horizontal: compact ? 16 : 0),
               decoration: active
-                  ? luxRaisedDecoration(radius: 3)
+                  ? BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Color(0x140D1B2E),
+                            blurRadius: 6,
+                            offset: Offset(0, 1)),
+                      ],
+                    )
                   : const BoxDecoration(color: Colors.transparent),
               alignment: Alignment.center,
               child: Text(t.label,
                   style: TextStyle(
                     fontFamily: kSans,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 0.3,
-                    color: active ? Colors.white : _kTextSub,
+                    fontSize: 13,
+                    fontWeight: active ? FontWeight.w600 : FontWeight.w500,
+                    letterSpacing: 0.2,
+                    color: active ? _kTextPrimary : _kTextSub,
                   )),
             ),
           ),
@@ -2399,8 +2387,7 @@ class _LightServiceTypeTab extends StatelessWidget {
       height: h,
       decoration: BoxDecoration(
         color: LD.bg2,
-        border: Border.all(color: LD.border),
-        borderRadius: BorderRadius.circular(5),
+        borderRadius: BorderRadius.circular(LuxRadius.md),
       ),
       child: Row(
         mainAxisSize: compact ? MainAxisSize.min : MainAxisSize.max,
@@ -2463,7 +2450,7 @@ class _LightHourRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: _kCardBg,
-          borderRadius: BorderRadius.zero,
+          borderRadius: BorderRadius.circular(_kMobileRadius),
           border: Border.all(color: _kBorder),
         ),
         child: Row(children: [
@@ -2516,7 +2503,7 @@ class _LightCounterRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
           color: _kCardBg,
-          borderRadius: BorderRadius.zero,
+          borderRadius: BorderRadius.circular(_kMobileRadius),
           border: Border.all(color: _kBorder),
         ),
         child: Row(children: [
@@ -2600,13 +2587,13 @@ class _LightTextField extends StatelessWidget {
           contentPadding:
               const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           border: const OutlineInputBorder(
-              borderRadius: BorderRadius.zero,
+              borderRadius: BorderRadius.all(Radius.circular(_kMobileRadius)),
               borderSide: BorderSide(color: _kBorder)),
           enabledBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.zero,
+              borderRadius: BorderRadius.all(Radius.circular(_kMobileRadius)),
               borderSide: BorderSide(color: _kBorder)),
           focusedBorder: const OutlineInputBorder(
-              borderRadius: BorderRadius.zero,
+              borderRadius: BorderRadius.all(Radius.circular(_kMobileRadius)),
               borderSide: BorderSide(color: _kTextPrimary, width: 1.5)),
         ),
       );
@@ -2667,12 +2654,16 @@ class _FlightTypeSelector extends StatelessWidget {
               if (t != FlightType.values.first) const SizedBox(width: 8),
               Expanded(
                 child: GestureDetector(
-                  onTap: () => onChanged(t),
+                  onTap: () {
+                    LuxHaptics.tap();
+                    onChanged(t);
+                  },
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 13),
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: value == t ? _kPanelAccent : _kCardBg,
+                      borderRadius: BorderRadius.circular(_kMobileRadius),
                       border: Border.all(
                           color: value == t
                               ? _kPanelAccent
@@ -2732,18 +2723,18 @@ class _OutlinedBtn extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
               color: _kCardBg,
-              borderRadius: BorderRadius.zero,
+              borderRadius: BorderRadius.circular(_kMobileRadius),
               border: Border.all(color: _kBorder)),
           child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
             Icon(icon, size: 18, color: _kTextSub),
             const SizedBox(width: 8),
-            Text(label.toUpperCase(),
+            Text(label,
                 style: const TextStyle(
                     fontFamily: kSans,
-                    fontSize: 11,
+                    fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: _kTextPrimary,
-                    letterSpacing: 1.2)),
+                    letterSpacing: 0.2)),
           ]),
         ),
       );
@@ -2765,7 +2756,8 @@ class _LightPriceBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+        padding: EdgeInsets.fromLTRB(
+            20, 12, 20, 14 + MediaQuery.paddingOf(context).bottom),
         decoration: const BoxDecoration(
           color: Colors.white,
           border: Border(top: BorderSide(color: _kBorder)),
@@ -2797,9 +2789,13 @@ class _LightPriceBar extends StatelessWidget {
               Expanded(
                 child: LuxRaisedButton(
                   label: label,
-                  height: 50,
+                  height: 52,
                   loading: loading,
                   onPressed: onConfirm,
+                  uppercase: false,
+                  fontSize: 15,
+                  radius: LuxRadius.md,
+                  trailingIcon: Icons.arrow_forward_rounded,
                 ),
               ),
             ]),
@@ -3402,6 +3398,7 @@ class _PayOption extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               color: _kCardBg,
+              borderRadius: BorderRadius.circular(_kMobileRadius),
               border: Border.all(
                   color: selected ? LuxColors.sapphire : _kBorder,
                   width: selected ? 1.5 : 1),

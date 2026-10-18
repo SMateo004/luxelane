@@ -48,7 +48,7 @@ class CompanyDashboardPage extends StatelessWidget {
               const SizedBox(height: LuxSpacing.md),
               LuxButton(
                   label: 'Registrar mi empresa',
-                  onPressed: () => context.go('/empresas')),
+                  onPressed: () => context.go('/empresas/registro')),
             ],
           ),
         ),
@@ -173,7 +173,7 @@ class _EmployeeView extends StatelessWidget {
     return StreamBuilder<CompanyMember?>(
       stream: repo.watchMember(company.id, me.id),
       builder: (context, mSnap) => StreamBuilder<List<Booking>>(
-        stream: sl<BookingRepository>().watchRiderBookings(me.id),
+        stream: sl<BookingRepository>().watchBookingsByRider(me.id),
         builder: (context, bSnap) {
           final member = mSnap.data;
           final mine = (bSnap.data ?? const <Booking>[])

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
+import '../core/services/notification_service.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/booking/presentation/bloc/booking_bloc.dart';
 import '../features/driver/presentation/bloc/driver_bloc.dart';
@@ -31,28 +32,23 @@ class _DriverAppState extends State<DriverApp> {
     _notificationBloc = sl<NotificationBloc>();
     _router = buildDriverRouter(_authBloc, _driverBloc);
 
-    // When auth completes, init driver + notifications
-    // El perfil en vivo re-emite AuthAuthenticated en cada cambio: solo se
-    // arranca de nuevo cuando cambia el usuario o el chófer estaba parado.
-    String? startedFor;
+    // When auth completes, init driver + notifications. AuthAuthenticated se
+    // repite al editar el perfil: arrancar de nuevo perdería los descartes.
+    String? sessionUid;
     _authBloc.stream.listen((state) {
       if (state is AuthAuthenticated) {
-        final uid = state.user.id;
-        if (startedFor != uid || _driverBloc.state is DriverInitial) {
-          _driverBloc.add(DriverStarted(userId: uid));
-        }
-        if (startedFor != uid) {
-          _notificationBloc.add(NotificationWatchStarted(userId: uid));
-        }
-        startedFor = uid;
-      } else if (state is! AuthLoading) {
-        startedFor = null;
-      }
-      if (state is! AuthAuthenticated &&
-          state is! AuthLoading &&
-          _driverBloc.state is! DriverInitial) {
-        // Sesión cerrada o expirada: nada de escuchas ni ubicación.
-        _driverBloc.add(const DriverSignedOut());
+        if (state.user.id == sessionUid) return;
+        sessionUid = state.user.id;
+        _driverBloc.add(DriverStarted(userId: state.user.id));
+        _notificationBloc.add(
+          NotificationWatchStarted(userId: state.user.id),
+        );
+        // Sin token FCM el chófer no recibe los avisos de viajes nuevos.
+        sl<NotificationService>().init(userId: state.user.id);
+      } else if (state is AuthUnauthenticated || state is AuthError) {
+        // Cerrar sesión o un bloqueo en vivo: se detiene el rastreo.
+        if (sessionUid != null) _driverBloc.add(const DriverStopped());
+        sessionUid = null;
       }
     });
   }

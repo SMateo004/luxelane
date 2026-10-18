@@ -14,17 +14,20 @@ abstract class PaymentEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+/// Autoriza la tarjeta para una reserva; importe y cliente los fija el
+/// servidor a partir de la reserva.
 class PaymentIntentRequested extends PaymentEvent {
   const PaymentIntentRequested({
-    required this.amount,
-    required this.currency,
-    required this.stripeCustomerId,
+    required this.bookingId,
+    required this.paymentMethodId,
   });
-  final double amount;
-  final String currency;
-  final String stripeCustomerId;
+  final String bookingId;
+
+  /// Tarjeta elegida: se guarda para cobrarla al completar si el viaje es a
+  /// más de 6 días (Stripe no mantiene una autorización tanto tiempo).
+  final String paymentMethodId;
   @override
-  List<Object?> get props => [amount, currency, stripeCustomerId];
+  List<Object?> get props => [bookingId, paymentMethodId];
 }
 
 class PaymentCaptureRequested extends PaymentEvent {
@@ -87,6 +90,11 @@ class DefaultCardSet extends PaymentEvent {
   List<Object?> get props => [paymentMethodId];
 }
 
+/// Al cerrar sesión: el siguiente usuario no ve las tarjetas del anterior.
+class PaymentReset extends PaymentEvent {
+  const PaymentReset();
+}
+
 // ---------------------------------------------------------------------------
 // States
 // ---------------------------------------------------------------------------
@@ -107,7 +115,10 @@ class PaymentLoading extends PaymentState {
 
 class PaymentIntentCreated extends PaymentState {
   const PaymentIntentCreated(this.clientSecret);
-  final String clientSecret;
+
+  /// Null si el cobro se hará al completar el viaje (reserva lejana): no
+  /// hay nada que confirmar ahora.
+  final String? clientSecret;
   @override
   List<Object?> get props => [clientSecret];
 }
@@ -156,6 +167,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     on<CardAdded>(_onAddCard);
     on<CardRemoved>(_onRemoveCard);
     on<DefaultCardSet>(_onDefaultCard);
+    on<PaymentReset>((_, emit) => emit(const PaymentInitial()));
   }
 
   final PaymentRepository _repo;
@@ -166,9 +178,8 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   ) async {
     emit(const PaymentLoading());
     final result = await _repo.createPaymentIntent(
-      amount: event.amount,
-      currency: event.currency,
-      stripeCustomerId: event.stripeCustomerId,
+      bookingId: event.bookingId,
+      paymentMethodId: event.paymentMethodId,
     );
     result.fold(
       (f) => emit(PaymentError(f.message)),
@@ -245,8 +256,15 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     );
   }
 
-  void _onDefaultCard(DefaultCardSet event, Emitter<PaymentState> emit) {
-    // Handled locally in UI — no server call needed for display
-    emit(const CardOperationSuccess());
+  Future<void> _onDefaultCard(
+    DefaultCardSet event,
+    Emitter<PaymentState> emit,
+  ) async {
+    emit(const PaymentLoading());
+    final result = await _repo.setDefaultCard(event.paymentMethodId);
+    result.fold(
+      (f) => emit(PaymentError(f.message)),
+      (_) => emit(const CardOperationSuccess()),
+    );
   }
 }

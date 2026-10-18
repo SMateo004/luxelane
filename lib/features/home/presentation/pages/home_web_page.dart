@@ -48,7 +48,11 @@ class WebHomePage extends StatefulWidget {
     required this.onOriginMapPick,
     required this.onDestinationMapPick,
     required this.routeInfo,
+    this.onChooseClass,
   });
+
+  /// Elegir una clase en la flota: queda para la reserva.
+  final ValueChanged<VehicleClass>? onChooseClass;
 
   final ServiceType serviceType;
   final Place? origin;
@@ -165,9 +169,14 @@ class _WebHomePageState extends State<WebHomePage> {
                   const _BookSection(),
 
                   // ── Fleet horizontal carousel ─────────────────────────
+                  // Elegir una clase sube al buscador con ella seleccionada:
+                  // reservar sin recogida solo mostraría un error lejos.
                   _FleetSection(
                     sectionKey: _fleetKey,
-                    onBook: widget.onSearch,
+                    onBook: (vc) {
+                      widget.onChooseClass?.call(vc);
+                      _scrollToTop();
+                    },
                   ),
 
                   // ── Testimonials ──────────────────────────────────────
@@ -181,7 +190,7 @@ class _WebHomePageState extends State<WebHomePage> {
 
                   // ── CTA full-bleed ────────────────────────────────────
                   _CtaSection(
-                    onBook: widget.onSearch,
+                    onBook: _scrollToTop,
                     onViewFleet: () => _scrollToKey(_fleetKey),
                   ),
 
@@ -1544,7 +1553,8 @@ class _HoursPicker extends StatelessWidget {
         IconButton(
           icon:
               Icon(Icons.remove, size: 16, color: Colors.white.withAlpha(160)),
-          onPressed: hours > 1 ? () => onChanged(hours - 1) : null,
+          // Mínimo 2 h, como en móvil y en la tarifa.
+          onPressed: hours > 2 ? () => onChanged(hours - 1) : null,
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
         ),
@@ -1663,7 +1673,7 @@ class _MarqueeBarState extends State<_MarqueeBar>
 class _FleetSection extends StatelessWidget {
   const _FleetSection({required this.sectionKey, required this.onBook});
   final GlobalKey sectionKey;
-  final VoidCallback onBook;
+  final ValueChanged<VehicleClass> onBook;
 
   // Same classes clients can book — First Class only when the admin enables
   // it. We describe what the client gets, never a make or model.
@@ -1734,8 +1744,8 @@ class _FleetSection extends StatelessWidget {
             padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 0),
             itemCount: _vehicles.length,
             separatorBuilder: (_, __) => const SizedBox(width: 2),
-            itemBuilder: (_, i) =>
-                _FleetCard(item: _vehicles[i], onBook: onBook),
+            itemBuilder: (_, i) => _FleetCard(
+                item: _vehicles[i], onBook: () => onBook(_vehicles[i].vc)),
           ),
         ),
         const SizedBox(height: 72),

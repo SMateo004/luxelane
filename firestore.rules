@@ -12,7 +12,7 @@ service cloud.firestore {
     }
 
     function getUserRole() {
-      return userData().role;
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
     }
 
     function isAdmin() {
@@ -31,29 +31,14 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // El admin bloquea cuentas con isActive = false.
+    function isActiveUser() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid))
+        .data.get('isActive', true) == true;
+    }
+
     function isOwner(uid) {
       return request.auth != null && request.auth.uid == uid;
-    }
-
-    // Cuenta no bloqueada por un administrador.
-    function isActiveUser() {
-      return request.auth != null && userData().get('isActive', true) == true;
-    }
-
-    // Chófer que puede trabajar: rol chófer, cuenta activa y documentos
-    // verificados por un administrador.
-    function isWorkingDriver() {
-      return isDriver() && isActiveUser() &&
-        exists(/databases/$(database)/documents/driverProfiles/$(request.auth.uid)) &&
-        get(/databases/$(database)/documents/driverProfiles/$(request.auth.uid))
-          .data.get('documentsVerified', false) == true;
-    }
-
-    // El admin puede pausar las reservas nuevas (modo mantenimiento).
-    function bookingsOpen() {
-      return !exists(/databases/$(database)/documents/config/global) ||
-        get(/databases/$(database)/documents/config/global)
-          .data.get('isMaintenanceMode', false) != true;
     }
 
     function onlyUpdating(fields) {
@@ -64,35 +49,21 @@ service cloud.firestore {
     // /users/{uid}
     // -------------------------------------------------------------------------
 
-    // Lo que el propio usuario puede editar de su perfil. Rol, bloqueo,
-    // verificación, email, Stripe, fechas e id solo los cambia un admin o el
-    // servidor (Admin SDK, que no pasa por estas reglas).
-    function selfEditableUserFields() {
-      return ['displayName', 'phone', 'photoUrl', 'fcmTokens', 'updatedAt'];
+    // Privileged fields: only an admin (or the Admin SDK in Cloud Functions,
+    // which bypasses these rules) may set or change them. Nobody can make
+    // themselves admin or driver from the client.
+    function privilegedUserFields() {
+      return ['role', 'isActive', 'stripeCustomerId', 'companyId', 'companyRole'];
     }
 
-    // Un perfil creado por el propio usuario es siempre un pasajero activo,
-    // sin Stripe y sin verificación salvo que Firebase Auth ya la confirme.
+    // A self-created profile is always an active rider with no Stripe link.
     function isValidSelfSignup(uid) {
       let d = request.resource.data;
       return d.role == 'rider' &&
         !d.keys().hasAny(['companyId', 'companyRole']) &&
         d.get('isActive', true) == true &&
         d.get('stripeCustomerId', null) == null &&
-        d.get('id', uid) == uid &&
-        (d.get('isVerified', false) == false ||
-          request.auth.token.email_verified == true) &&
-        d.displayName is string && d.displayName.size() > 0 &&
-        d.displayName.size() <= 80;
-    }
-
-    function isValidSelfEdit() {
-      let d = request.resource.data;
-      return onlyUpdating(selfEditableUserFields()) &&
-        d.displayName is string && d.displayName.size() > 0 &&
-        d.displayName.size() <= 80 &&
-        (!('phone' in d) || d.phone == null ||
-          (d.phone is string && d.phone.size() <= 20));
+        d.get('id', uid) == uid;
     }
 
     match /users/{uid} {
@@ -100,14 +71,14 @@ service cloud.firestore {
       allow create: if isAdmin() || (isOwner(uid) && isValidSelfSignup(uid));
       allow update: if isAdmin() || (
         isOwner(uid) &&
-        resource.data.get('isActive', true) == true &&
-        isValidSelfEdit()
+        !request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(privilegedUserFields())
       );
       allow delete: if false;
     }
 
-    // Notificaciones de la app: las escribe el servidor; cada usuario lee
-    // las suyas, las marca como leídas o las borra.
+    // In-app notifications: each user reads and marks their own as read.
+    // Los avisos los escribe el servidor; nadie se fabrica avisos falsos.
     match /users/{uid}/notifications/{notificationId} {
       allow read:   if isOwner(uid) || isAdmin();
       allow create: if isAdmin();
@@ -120,33 +91,22 @@ service cloud.firestore {
     // /driverProfiles/{uid}
     // -------------------------------------------------------------------------
 
-    // Campos que el chófer gestiona. La verificación, la valoración y el
-    // número de viajes solo los escriben el admin o el servidor.
-    function selfEditableDriverFields() {
-      return ['isAvailable', 'currentLocation', 'licenseNumber',
-        'licenseExpiry', 'vehicleId', 'lastSeenAt', 'updatedAt'];
+    // Verificación, valoración y contador de viajes los fijan el admin y el
+    // servidor; el chófer no puede darse de alta ya verificado.
+    function driverManagedFields() {
+      return ['documentsVerified', 'rating', 'ratingCount', 'totalRides'];
     }
 
     match /driverProfiles/{uid} {
       // Un pasajero lee el perfil (ubicación) de su chófer por id; listar
-      // todos los chóferes (ubicaciones en vivo, licencias) es solo del admin.
+      // todos los chóferes con su ubicación en vivo es solo del admin.
       allow get:    if isAuthenticated();
       allow list:   if isAdmin();
-      allow create: if isAdmin() || (
-        isOwner(uid) && isDriver() && isActiveUser() &&
-        request.resource.data.get('documentsVerified', false) == false &&
-        request.resource.data.get('totalRides', 0) == 0 &&
-        request.resource.data.get('rating', 0) == 0 &&
-        request.resource.data.get('isAvailable', false) == false
-      );
-      allow update: if isAdmin() || (
-        isOwner(uid) && isDriver() &&
-        onlyUpdating(selfEditableDriverFields()) &&
-        // Solo un chófer verificado y activo puede conectarse.
-        (request.resource.data.get('isAvailable', false) == false ||
-          (resource.data.get('documentsVerified', false) == true &&
-            isActiveUser()))
-      );
+      allow create: if isOwner(uid) && isDriver() &&
+        !request.resource.data.keys().hasAny(driverManagedFields());
+      allow update: if isAdmin() || (isOwner(uid) && isDriver() &&
+        !request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(driverManagedFields()));
       allow delete: if false;
     }
 
@@ -154,40 +114,10 @@ service cloud.firestore {
     // /bookings/{bookingId}
     // -------------------------------------------------------------------------
 
-    function isValidNewBooking() {
-      let d = request.resource.data;
-      return d.riderId == request.auth.uid &&
-        d.status == 'pending' &&
-        d.get('driverId', null) == null &&
-        d.get('finalPrice', null) == null &&
-        d.get('paymentId', null) == null &&
-        !d.keys().hasAny(['settlement', 'pricingReview', 'cancelledBy',
-          'cancellationReason', 'priceAdjustmentReason', 'driverName',
-          'driverPhone', 'driverPhotoUrl', 'vehicleLabel', 'vehiclePlate',
-          'paymentIntentId', 'paymentStatus', 'riderRating', 'ratedAt',
-          'statementId', 'companyName', 'riderName']) &&
-        // Cuenta de empresa: solo la propia; el resto de controles (empresa
-        // activa, límites) los aplica el servidor al crearse la reserva.
-        (d.get('paymentMethod', 'cash') == 'corporate'
-          ? d.get('companyId', null) != null &&
-            d.companyId == userData().get('companyId', null)
-          : d.get('companyId', null) == null) &&
-        (d.get('costCenter', null) == null ||
-          (d.costCenter is string && d.costCenter.size() <= 60)) &&
-        d.estimatedPrice is number && d.estimatedPrice > 0 &&
-        d.scheduledAt is timestamp &&
-        d.scheduledAt > request.time - duration.value(15, 'm') &&
-        d.origin.coordinates is latlng &&
-        d.get('passengerCount', 1) is int &&
-        d.get('passengerCount', 1) >= 1 && d.get('passengerCount', 1) <= 8 &&
-        d.get('luggageCount', 0) is int &&
-        d.get('luggageCount', 0) >= 0 && d.get('luggageCount', 0) <= 10;
-    }
-
-    // Avance del chófer: un paso cada vez, sin saltos ni retrocesos.
-    // (Repetir el mismo estado se permite: reescribe updatedAt.)
-    function isValidDriverStep(from, to) {
-      return from == to ||
+    // Pasos que un chófer puede dar sobre su reserva (igual que
+    // AdminOperations en la app). Repetir el estado actual solo toca updatedAt.
+    function isDriverStep(from, to) {
+      return to == from ||
         (from == 'confirmed' && to == 'driver_arriving') ||
         (from == 'driver_arriving' && to == 'driver_arrived') ||
         (from == 'driver_arrived' && to == 'in_progress') ||
@@ -196,10 +126,11 @@ service cloud.firestore {
 
     // Administrador activo de la empresa [cid].
     function isCompanyAdminOf(cid) {
+      let u = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
       return request.auth != null && cid != null &&
-        userData().get('companyId', null) == cid &&
-        userData().get('companyRole', null) == 'admin' &&
-        userData().get('isActive', true) == true;
+        u.get('companyId', null) == cid &&
+        u.get('companyRole', null) == 'admin' &&
+        u.get('isActive', true) == true;
     }
 
     match /bookings/{bookingId} {
@@ -207,37 +138,67 @@ service cloud.firestore {
         resource.data.riderId == request.auth.uid ||
         isCompanyAdminOf(resource.data.get('companyId', null)) ||
         resource.data.driverId == request.auth.uid ||
-        (resource.data.status == 'pending' && isWorkingDriver()) ||
+        (resource.data.status == 'pending' && isDriver()) ||
         isAdmin()
       );
 
-      allow create: if isAuthenticated() && isActiveUser() && bookingsOpen() &&
-        isValidNewBooking();
+      // Any authenticated user can create a booking for themselves
+      // El reparto y la revisión de tarifa solo los escribe el servidor.
+      // Nace pendiente, sin chófer ni cobro: esos campos los escriben el
+      // chófer al aceptar, el admin y el servidor.
+      allow create: if isAuthenticated() &&
+        isActiveUser() &&
+        request.resource.data.riderId == request.auth.uid &&
+        request.resource.data.status == 'pending' &&
+        // Sin recogidas en el pasado (margen para la recogida inmediata).
+        request.resource.data.scheduledAt is timestamp &&
+        request.resource.data.scheduledAt > request.time - duration.value(15, 'm') &&
+        request.resource.data.get('driverId', null) == null &&
+        request.resource.data.get('paymentId', null) == null &&
+        request.resource.data.get('finalPrice', null) == null &&
+        request.resource.data.estimatedPrice is number &&
+        request.resource.data.estimatedPrice > 0 &&
+        !request.resource.data.keys().hasAny(['settlement', 'pricingReview',
+          'refunded', 'stripePaymentIntentId', 'stripePaymentMethodId',
+          'cardPaymentFailed', 'driverInfo', 'riderRating',
+          'statementId', 'companyName', 'riderName']) &&
+        // Cuenta de empresa: solo la propia; empresa activa y límites los
+        // comprueba el servidor al crearse la reserva.
+        (request.resource.data.get('paymentMethod', 'cash') == 'corporate'
+          ? request.resource.data.get('companyId', null) != null &&
+            request.resource.data.companyId == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('companyId', null)
+          : request.resource.data.get('companyId', null) == null) &&
+        (request.resource.data.get('costCenter', null) == null ||
+          (request.resource.data.costCenter is string &&
+            request.resource.data.costCenter.size() <= 60));
 
       allow update: if isAdmin() ||
-        // Chófer verificado acepta una reserva pendiente
-        (isWorkingDriver() &&
+        // Driver accepts a pending booking (self-assign)
+        (isDriver() && isActiveUser() &&
+          get(/databases/$(database)/documents/driverProfiles/$(request.auth.uid))
+            .data.get('documentsVerified', false) == true &&
           resource.data.status == 'pending' &&
           request.resource.data.driverId == request.auth.uid &&
           request.resource.data.status == 'confirmed' &&
           onlyUpdating(['driverId', 'status', 'updatedAt'])) ||
-        // El chófer asignado avanza el viaje paso a paso
+        // Driver progresses their assigned booking, one step at a time
         (isDriver() &&
           resource.data.driverId == request.auth.uid &&
           onlyUpdating(['status', 'updatedAt']) &&
-          isValidDriverStep(resource.data.status, request.resource.data.status)) ||
-        // El pasajero cancela antes de que empiece el viaje
-        (resource.data.riderId == request.auth.uid &&
-          resource.data.status in ['pending', 'confirmed', 'driver_arriving',
-            'driver_arrived'] &&
-          request.resource.data.status == 'cancelled' &&
-          request.resource.data.get('cancelledBy', 'rider') == 'rider' &&
-          onlyUpdating(['status', 'updatedAt', 'cancelledBy'])) ||
-        // El pasajero valora una vez el viaje completado (1 a 5)
-        (resource.data.riderId == request.auth.uid &&
+          isDriverStep(resource.data.status, request.resource.data.status)) ||
+        // Rider cancels their own booking before the trip starts
+        (isAuthenticated() &&
+          resource.data.riderId == request.auth.uid &&
+          onlyUpdating(['status', 'updatedAt']) &&
+          resource.data.status in
+            ['pending', 'confirmed', 'driver_arriving', 'driver_arrived'] &&
+          request.resource.data.status == 'cancelled') ||
+        // Rider rates a completed trip, once
+        (isAuthenticated() &&
+          resource.data.riderId == request.auth.uid &&
           resource.data.status == 'completed' &&
-          resource.data.get('riderRating', null) == null &&
-          onlyUpdating(['riderRating', 'ratedAt']) &&
+          !('riderRating' in resource.data) &&
+          onlyUpdating(['riderRating', 'riderComment', 'updatedAt']) &&
           request.resource.data.riderRating is int &&
           request.resource.data.riderRating >= 1 &&
           request.resource.data.riderRating <= 5);
@@ -246,7 +207,7 @@ service cloud.firestore {
     }
 
     // -------------------------------------------------------------------------
-    // /rides/{rideId} — los crea y actualiza el servidor (Cloud Functions)
+    // /rides/{rideId}
     // -------------------------------------------------------------------------
 
     match /rides/{rideId} {
@@ -255,7 +216,23 @@ service cloud.firestore {
         resource.data.driverId == request.auth.uid ||
         isAdmin()
       );
-      allow create, update: if isAdmin();
+
+      allow create: if isAdmin();
+
+      allow update: if isAdmin() || (
+        isAuthenticated() &&
+        isDriver() &&
+        resource.data.driverId == request.auth.uid &&
+        onlyUpdating([
+          'driverRoute',
+          'completedAt',
+          'distanceKm',
+          'durationMin',
+          'riderRating',
+          'driverRating'
+        ])
+      );
+
       allow delete: if false;
     }
 
@@ -278,17 +255,13 @@ service cloud.firestore {
 
     match /vehicles/{vehicleId} {
       allow read:   if isAuthenticated();
-      // Un chófer registra un único vehículo (v_<uid>); la clase y el estado
-      // activo los controla el admin una vez creado.
-      allow create: if isAdmin() || (
-        isDriver() && isActiveUser() &&
-        vehicleId == 'v_' + request.auth.uid &&
-        request.resource.data.driverId == request.auth.uid
-      );
+      allow create: if isAdmin() ||
+        (isDriver() && isOwner(request.resource.data.driverId));
+      // Activar o desactivar un vehículo es decisión del admin.
       allow update: if isAdmin() || (
         isDriver() &&
         resource.data.driverId == request.auth.uid &&
-        onlyUpdating(['make', 'model', 'year', 'plate', 'color', 'photoUrl'])
+        onlyUpdating(['color', 'photoUrl'])
       );
       allow delete: if false;
     }
@@ -315,8 +288,8 @@ service cloud.firestore {
 
     // -------------------------------------------------------------------------
     // /config/{docId}
-    // global: estado operativo y switches de producto, públicos (la web los
-    // lee sin sesión). finance: comisión y parámetros internos, solo admin.
+    // global: estado operativo (mantenimiento) que lee la app del pasajero.
+    // finance: comisión y parámetros internos, solo para el admin.
     // -------------------------------------------------------------------------
 
     match /config/{docId} {
@@ -329,6 +302,34 @@ service cloud.firestore {
           request.resource.data.platformCommissionPct <= 100
         )
       );
+    }
+
+    // -------------------------------------------------------------------------
+    // /businessLeads/{id} — solicitudes de empresas (sin cuenta). Se crean
+    // con campos acotados; solo el admin las lee y las marca atendidas.
+    // -------------------------------------------------------------------------
+
+    function shortText(v, max) {
+      return v is string && v.size() <= max;
+    }
+
+    match /businessLeads/{id} {
+      allow create: if
+        request.resource.data.keys().hasOnly(['company', 'contactName',
+          'email', 'phone', 'travellers', 'message', 'handled', 'createdAt']) &&
+        shortText(request.resource.data.company, 120) &&
+        request.resource.data.company.size() > 0 &&
+        shortText(request.resource.data.contactName, 120) &&
+        shortText(request.resource.data.email, 160) &&
+        request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$') &&
+        shortText(request.resource.data.phone, 40) &&
+        shortText(request.resource.data.travellers, 20) &&
+        shortText(request.resource.data.message, 2000) &&
+        request.resource.data.handled == false &&
+        request.resource.data.createdAt == request.time;
+      allow read: if isAdmin();
+      allow update: if isAdmin() && onlyUpdating(['handled']);
+      allow delete: if false;
     }
 
     // -------------------------------------------------------------------------

@@ -611,8 +611,10 @@ class LuxSiteFooter extends StatelessWidget {
     ]);
     final company = _FooterCol('Luxelane', [
       ('Flota', onFleet ?? () => context.go('/')),
-      ('Para empresas', onBusiness ?? () => context.go('/empresas')),
+      ('Para empresas', () => context.go('/empresas')),
       ('Conduce con nosotros', () => context.go('/driver/login')),
+      ('Términos y condiciones', () => context.go('/legal/terminos')),
+      ('Política de privacidad', () => context.go('/legal/privacidad')),
     ]);
     const promises = _FooterCol('Nuestra promesa', [
       (LuxPromise.fixedPrice, null),

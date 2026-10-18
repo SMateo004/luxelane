@@ -1,3 +1,4 @@
+import '../../features/business/data/business_lead_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
@@ -62,6 +63,7 @@ void _registerRepositories() {
     () => AuthRepositoryImpl(
       firebaseAuth: sl(),
       firestore: sl(),
+      functions: sl(),
     ),
   );
 
@@ -70,7 +72,7 @@ void _registerRepositories() {
   );
 
   sl.registerLazySingleton<BookingRepository>(
-    () => BookingRepositoryImpl(firestore: sl(), functions: sl()),
+    () => BookingRepositoryImpl(firestore: sl()),
   );
 
   sl.registerLazySingleton<SpecialRepository>(
@@ -135,6 +137,7 @@ void _registerUseCases() {
   sl.registerLazySingleton(() => UpdateUserUseCase(sl()));
   sl.registerLazySingleton(() => UpdateDriverLocationUseCase(sl()));
   sl.registerLazySingleton(() => SetDriverAvailabilityUseCase(sl()));
+  sl.registerLazySingleton(() => BusinessLeadRepository(sl()));
 }
 
 void _registerBlocs() {

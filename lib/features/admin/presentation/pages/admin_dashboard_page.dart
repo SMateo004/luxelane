@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/widgets/components.dart';
@@ -70,10 +69,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       create: (context) => sl<AdminBloc>()..add(AdminDataRequested()),
       child: BlocListener<AdminBloc, AdminState>(
         // Un único punto de avisos para todas las secciones.
-        listenWhen: (a, b) =>
-            (b.successMessage != null &&
-                a.successMessage != b.successMessage) ||
-            (b.error != null && a.error != b.error),
+        listenWhen: (a, b) => a.messageSeq != b.messageSeq,
         listener: (context, state) {
           if (state.error != null) {
             showLuxSnackbar(context, state.error!, isError: true);
@@ -122,10 +118,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   Widget _mobileLayout() => Scaffold(
         appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
-            onPressed: () => context.go('/'),
-          ),
+          // El admin siempre vuelve al panel (router), así que no hay "atrás".
+          automaticallyImplyLeading: false,
           title: Text(_labels[_section]!),
           actions: [
             IconButton(
@@ -158,7 +152,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 ),
               ),
             ),
-            Expanded(child: _sectionBody()),
+            Expanded(child: _withLoadError(_sectionBody())),
           ],
         ),
       );
@@ -227,8 +221,36 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             ),
           ),
           const LuxDivider(vertical: true),
-          Expanded(child: _sectionBody()),
+          Expanded(child: _withLoadError(_sectionBody())),
         ],
+      );
+
+  /// Si alguna lista no cargó, se dice arriba en vez de mostrar la sección
+  /// como si estuviera vacía.
+  Widget _withLoadError(Widget body) => BlocBuilder<AdminBloc, AdminState>(
+        buildWhen: (a, b) => a.loadError != b.loadError,
+        builder: (context, state) => Column(
+          children: [
+            if (state.loadError != null)
+              MaterialBanner(
+                backgroundColor: LuxColors.error.withValues(alpha: 0.08),
+                leading:
+                    const Icon(Icons.cloud_off_rounded, color: LuxColors.error),
+                content: Text(
+                    '${state.loadError} Los datos de esta pantalla pueden '
+                    'estar incompletos.',
+                    style: LuxTypography.bodyMedium),
+                actions: [
+                  TextButton(
+                    onPressed: () =>
+                        context.read<AdminBloc>().add(AdminDataRequested()),
+                    child: const Text('Reintentar'),
+                  ),
+                ],
+              ),
+            Expanded(child: body),
+          ],
+        ),
       );
 
   Widget _sectionBody() => switch (_section) {

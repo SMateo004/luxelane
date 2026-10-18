@@ -52,25 +52,25 @@ void main() {
   });
 
   group('PaymentRepositoryImpl', () {
-    test('createPaymentIntent envía centavos redondeados', () async {
+    test(
+        'createPaymentIntent solo envía la reserva (el importe lo fija el '
+        'servidor)', () async {
       stubCall('createPaymentIntent', {'clientSecret': 'secret'});
       final r = await repo.createPaymentIntent(
-          amount: 125.555, currency: 'bob', stripeCustomerId: 'cus');
-      expect(r.isRight(), isTrue);
+          bookingId: 'b1', paymentMethodId: 'pm');
+      expect(r.getOrElse(() => ''), 'secret');
       final sent = verify(() => callable.call<dynamic>(captureAny()))
           .captured
           .single as Map;
-      expect(sent['amount'], 12556);
-      // El cliente Stripe lo decide el servidor, no la app.
-      expect(sent.containsKey('customerId'), isFalse);
+      expect(sent, {'bookingId': 'b1', 'paymentMethodId': 'pm'});
     });
 
-    test('linkBookingPayment informa si quedó vinculado', () async {
-      stubCall(
-          'linkBookingPayment', {'linked': false, 'reason': 'amount_too_low'});
-      final r = await repo.linkBookingPayment(
-          bookingId: 'b-1', paymentIntentId: 'pi_1');
-      expect(r.getOrElse(() => true), isFalse);
+    test('createPaymentIntent devuelve null si el cobro se difiere', () async {
+      stubCall('createPaymentIntent', {'deferred': true});
+      final r = await repo.createPaymentIntent(
+          bookingId: 'b1', paymentMethodId: 'pm');
+      expect(r.isRight(), isTrue);
+      expect(r.getOrElse(() => 'x'), isNull);
     });
 
     test('capturePayment delega en la Cloud Function sin enviar el importe',
@@ -91,7 +91,7 @@ void main() {
       final sent = verify(() => callable.call<dynamic>(captureAny()))
           .captured
           .single as Map;
-      expect(sent, {'bookingId': 'b-1'});
+      expect(sent, {'bookingId': 'b-1', 'stripePaymentIntentId': 'pi_1'});
       final payment = r.getOrElse(() => throw StateError('falló'));
       expect(payment.id, 'pay-1');
       expect(payment.amount, 12550);

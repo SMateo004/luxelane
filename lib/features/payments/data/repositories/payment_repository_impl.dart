@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
-import 'package:flutter/foundation.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
@@ -21,19 +20,22 @@ class PaymentRepositoryImpl implements PaymentRepository {
       _db.collection('payments');
 
   @override
-  Future<Either<Failure, String>> createPaymentIntent({
-    required double amount,
-    required String currency,
-    required String stripeCustomerId,
+  Future<Either<Failure, String?>> createPaymentIntent({
+    required String bookingId,
+    required String paymentMethodId,
   }) async {
     try {
-      // El servidor usa el cliente Stripe de la cuenta y cobra en Bs.
-      final result = await _fn.httpsCallable('createPaymentIntent').call({
-        'amount': Payment.toCents(amount),
-      });
+      final result = await _fn
+          .httpsCallable('createPaymentIntent')
+          .call({'bookingId': bookingId, 'paymentMethodId': paymentMethodId});
+      if (result.data['deferred'] == true) return const Right(null);
       return Right(result.data['clientSecret'] as String);
+    } on FirebaseFunctionsException catch (e) {
+      return Left(PaymentFailure(e.code == 'failed-precondition'
+          ? 'tu cuenta aún no tiene pagos habilitados'
+          : 'no se pudo contactar con el servidor de pagos'));
     } catch (e) {
-      return Left(_failure(e, 'No pudimos preparar el pago con tarjeta.'));
+      return Left(PaymentFailure(e.toString()));
     }
   }
 
@@ -49,10 +51,9 @@ class PaymentRepositoryImpl implements PaymentRepository {
     // que manda el cliente) y guarda el pago en centavos. Las reglas no
     // permiten a un pasajero crear pagos directamente.
     try {
-      // Reintento manual del admin: el servidor usa la retención vinculada
-      // a la reserva (normalmente se cobra solo al completar el viaje).
       final result = await _fn.httpsCallable('capturePayment').call({
         'bookingId': bookingId,
+        'stripePaymentIntentId': stripePaymentIntentId,
       });
       final data = Map<String, dynamic>.from(result.data as Map);
       return Right(Payment(
@@ -119,13 +120,16 @@ class PaymentRepositoryImpl implements PaymentRepository {
     String stripeCustomerId,
   ) async {
     try {
-      final result = await _fn.httpsCallable('listPaymentMethods').call({});
-      final cards = (result.data['cards'] as List? ?? const [])
+      final result = await _fn.httpsCallable('listPaymentMethods').call({
+        'customerId': stripeCustomerId,
+      });
+      // En móvil llegan como Map<Object?, Object?>: se copian una a una.
+      final cards = ((result.data['cards'] as List?) ?? const [])
           .map((c) => Map<String, dynamic>.from(c as Map))
           .toList();
       return Right(cards);
     } catch (e) {
-      return Left(_failure(e, 'No pudimos cargar tus tarjetas.'));
+      return Left(PaymentFailure(e.toString()));
     }
   }
 
@@ -136,11 +140,12 @@ class PaymentRepositoryImpl implements PaymentRepository {
   }) async {
     try {
       await _fn.httpsCallable('attachPaymentMethod').call({
+        'customerId': stripeCustomerId,
         'paymentMethodId': paymentMethodId,
       });
       return const Right(null);
     } catch (e) {
-      return Left(_failure(e, 'No pudimos guardar la tarjeta.'));
+      return Left(PaymentFailure(e.toString()));
     }
   }
 
@@ -154,45 +159,41 @@ class PaymentRepositoryImpl implements PaymentRepository {
         'paymentMethodId': paymentMethodId,
       });
       return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      if (e.message == 'card-in-use') {
+        return const Left(PaymentFailure(
+            'Esta tarjeta paga una reserva pendiente. Cancélala o espera a '
+            'que termine antes de quitar la tarjeta.'));
+      }
+      return const Left(
+          PaymentFailure('No pudimos quitar la tarjeta. Inténtalo de nuevo.'));
     } catch (e) {
-      return Left(_failure(e, 'No pudimos quitar la tarjeta.'));
+      return Left(PaymentFailure(e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, bool>> linkBookingPayment({
-    required String bookingId,
-    required String paymentIntentId,
-  }) async {
+  Future<Either<Failure, void>> setDefaultCard(String paymentMethodId) async {
     try {
-      final result = await _fn.httpsCallable('linkBookingPayment').call({
-        'bookingId': bookingId,
-        'paymentIntentId': paymentIntentId,
+      await _fn.httpsCallable('setDefaultPaymentMethod').call({
+        'paymentMethodId': paymentMethodId,
       });
-      return Right((result.data as Map?)?['linked'] == true);
-    } catch (e) {
-      return Left(_failure(e, 'No pudimos asociar el pago a tu reserva.'));
+      return const Right(null);
+    } catch (_) {
+      return const Left(PaymentFailure(
+          'No pudimos cambiar la tarjeta predeterminada. Inténtalo de nuevo.'));
     }
   }
 
   @override
-  Future<void> releasePaymentHold(String paymentIntentId) async {
+  Future<Either<Failure, String>> ensureStripeCustomer() async {
     try {
-      await _fn
-          .httpsCallable('releasePaymentHold')
-          .call({'paymentIntentId': paymentIntentId});
-    } catch (e) {
-      // Si falla, Stripe la libera sola a los 7 días.
-      debugPrint('[Payments] liberar retención: $e');
+      final result =
+          await _fn.httpsCallable('ensureStripeCustomer').call<dynamic>();
+      return Right((result.data as Map)['customerId'] as String);
+    } catch (_) {
+      return const Left(PaymentFailure(
+          'No pudimos preparar tu perfil de pagos. Inténtalo de nuevo.'));
     }
-  }
-
-  /// Mensaje en español: nunca el error técnico de Firebase o Stripe.
-  static Failure _failure(Object e, String fallback) {
-    debugPrint('[Payments] $e');
-    if (e is FirebaseFunctionsException && e.code == 'unavailable') {
-      return const PaymentFailure('Sin conexión. Inténtalo de nuevo.');
-    }
-    return PaymentFailure(fallback);
   }
 }

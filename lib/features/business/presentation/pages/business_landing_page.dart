@@ -22,7 +22,8 @@ class BusinessLandingPage extends StatelessWidget {
           title: const LuxelaneWordmark(),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => context.canPop() ? context.pop() : context.go('/'),
+            onPressed: () =>
+                context.canPop() ? context.pop() : context.go('/empresas'),
           ),
         ),
         body: BusinessBody(children: [
@@ -222,11 +223,12 @@ class _RegistrationPanelState extends State<_RegistrationPanel> {
             const SizedBox(height: LuxSpacing.md),
             LuxButton(
                 label: 'Crear cuenta',
-                onPressed: () => context.go('/register')),
+                onPressed: () =>
+                    context.go('/register?from=/empresas/registro')),
             const SizedBox(height: 8),
             LuxOutlinedButton(
                 label: 'Ya tengo cuenta',
-                onPressed: () => context.go('/login')),
+                onPressed: () => context.go('/login?from=/empresas/registro')),
           ],
         ),
       );

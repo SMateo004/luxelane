@@ -54,11 +54,29 @@ abstract class LuxSpacing {
   static const double xxxl = 64;
 }
 
+/// Radios: controles 12, tarjetas 16, hojas 24. Curvas suaves pero firmes.
 abstract class LuxRadius {
-  static const double sm = 6;
-  static const double md = 10;
-  static const double lg = 14;
-  static const double xl = 20;
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16;
+  static const double xl = 24;
+}
+
+/// Elevación: tres niveles y nada más. Sombras difusas en tinta, nunca
+/// negras, para que las superficies floten sin pesar.
+abstract class LuxElevation {
+  /// Tarjetas en reposo sobre el fondo marfil.
+  static const low = [
+    BoxShadow(color: Color(0x0A0D1B2E), blurRadius: 12, offset: Offset(0, 2)),
+  ];
+
+  /// Elementos flotantes: paneles sobre el mapa, tarjeta seleccionada.
+  static const mid = luxSoftShadow;
+
+  /// Hojas modales y avisos.
+  static const high = [
+    BoxShadow(color: Color(0x240D1B2E), blurRadius: 40, offset: Offset(0, 16)),
+  ];
 }
 
 abstract class LuxTypography {
@@ -131,6 +149,26 @@ abstract class LuxTypography {
     color: LuxColors.sapphire,
     letterSpacing: 1.2,
   );
+
+  /// Etiqueta de botón: frase normal, peso firme. Las mayúsculas espaciadas
+  /// quedan para rótulos pequeños (eyebrows), no para acciones.
+  static const button = TextStyle(
+    fontFamily: _sans,
+    fontSize: 15,
+    fontWeight: FontWeight.w600,
+    color: LuxColors.ink,
+    letterSpacing: 0.2,
+  );
+
+  /// Rótulo pequeño en mayúsculas espaciadas sobre un título.
+  static const eyebrow = TextStyle(
+    fontFamily: _sans,
+    fontSize: 10,
+    fontWeight: FontWeight.w600,
+    color: LuxColors.sapphire,
+    letterSpacing: 2.2,
+  );
+
   static const caption = TextStyle(
     fontFamily: _sans,
     fontSize: 11,
@@ -231,11 +269,10 @@ ThemeData get luxTheme {
         foregroundColor: LuxColors.onAccent,
         disabledBackgroundColor: Colors.transparent,
         disabledForegroundColor: LuxColors.onAccent.withValues(alpha: 0.7),
-        minimumSize: const Size(double.infinity, 52),
+        minimumSize: const Size(double.infinity, 54),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(LuxRadius.md)),
-        textStyle: LuxTypography.labelLarge
-            .copyWith(color: LuxColors.onAccent, letterSpacing: 1.6),
+        textStyle: LuxTypography.button.copyWith(color: LuxColors.onAccent),
         elevation: 0,
       ).copyWith(
         backgroundBuilder: (context, states, child) => AnimatedContainer(
@@ -253,25 +290,30 @@ ThemeData get luxTheme {
       style: FilledButton.styleFrom(
         backgroundColor: LuxColors.sapphire,
         foregroundColor: LuxColors.onAccent,
+        elevation: 0,
+        minimumSize: const Size(64, 46),
+        textStyle: LuxTypography.button.copyWith(fontSize: 14),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(LuxRadius.md)),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: LuxColors.sapphire,
         backgroundColor: LuxColors.surface,
-        minimumSize: const Size(double.infinity, 52),
+        foregroundColor: LuxColors.ink,
+        minimumSize: const Size(double.infinity, 54),
         side: const BorderSide(color: LuxColors.border),
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(LuxRadius.md)),
-        textStyle: LuxTypography.labelLarge,
+        textStyle: LuxTypography.button,
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: LuxColors.sapphire,
-        textStyle: LuxTypography.labelLarge,
+        textStyle: LuxTypography.button.copyWith(fontSize: 14),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(LuxRadius.sm)),
       ),
     ),
     iconButtonTheme: IconButtonThemeData(
@@ -415,17 +457,26 @@ ThemeData get luxTheme {
     dialogTheme: DialogTheme(
       backgroundColor: LuxColors.surface,
       surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      barrierColor: const Color(0x660D1B2E),
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(LuxRadius.lg)),
+          borderRadius: BorderRadius.circular(LuxRadius.xl)),
       titleTextStyle: LuxTypography.headlineLarge,
       contentTextStyle: LuxTypography.bodyMedium,
+      actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
     ),
     snackBarTheme: const SnackBarThemeData(
       backgroundColor: LuxColors.surface,
       contentTextStyle: LuxTypography.bodyMedium,
       behavior: SnackBarBehavior.floating,
-      elevation: 4,
+      elevation: 0,
     ),
+    pageTransitionsTheme: const PageTransitionsTheme(builders: {
+      TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+    }),
+    splashFactory: InkSparkle.splashFactory,
+    highlightColor: Colors.transparent,
     datePickerTheme: DatePickerThemeData(
       backgroundColor: LuxColors.surface,
       headerBackgroundColor: LuxColors.sapphireTint,
@@ -463,6 +514,9 @@ ThemeData get luxTheme {
       surfaceTintColor: Colors.transparent,
       showDragHandle: true,
       dragHandleColor: LuxColors.border,
+      dragHandleSize: Size(36, 4),
+      modalBarrierColor: Color(0x660D1B2E),
+      elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
       ),

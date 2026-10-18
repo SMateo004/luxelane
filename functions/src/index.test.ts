@@ -6,6 +6,8 @@ const mockAsync = () => jest.fn<(...args: any[]) => Promise<any>>();
 
 jest.mock('./stripe_service', () => ({
   createIntent: mockAsync().mockResolvedValue({ id: 'pi_test', clientSecret: 'pi_test_secret' }),
+  cancelIntent: mockAsync().mockResolvedValue(undefined),
+  paymentMethodCustomer: mockAsync().mockResolvedValue('cus_test'),
   captureIntent: mockAsync().mockResolvedValue({ status: 'succeeded' }),
   refundIntent: mockAsync().mockResolvedValue({ id: 're_test', status: 'succeeded' }),
   createCustomer: mockAsync().mockResolvedValue('cus_test'),
@@ -54,12 +56,12 @@ jest.mock('firebase-admin', () => ({
 import * as stripeService from './stripe_service';
 
 describe('StripeService', () => {
-  it('createIntent returns id and clientSecret', async () => {
+  it('createIntent returns the intent id and clientSecret', async () => {
     const intent = await stripeService.createIntent({
       amount: 7500,
       currency: 'bob',
       customerId: 'cus_test',
-      metadata: { uid: 'rider-1' },
+      bookingId: 'booking-1',
     });
     expect(intent).toEqual({ id: 'pi_test', clientSecret: 'pi_test_secret' });
   });

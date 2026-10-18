@@ -108,10 +108,10 @@ class AdminRepositoryImpl implements AdminRepository {
   // no puede existir una acción sin rastro ni un rastro sin acción.
   // ---------------------------------------------------------------------------
 
-  void _log(WriteBatch batch, String action, String targetId, String targetType,
-      {String details = ''}) {
+  Map<String, dynamic> _logEntry(
+      String action, String targetId, String targetType, String details) {
     final user = _auth.currentUser;
-    batch.set(_db.collection('admin_logs').doc(), {
+    return {
       'adminId': user?.uid ?? 'unknown',
       'adminEmail': user?.email,
       'action': action,
@@ -119,7 +119,36 @@ class AdminRepositoryImpl implements AdminRepository {
       'targetType': targetType,
       'details': details,
       'createdAt': FieldValue.serverTimestamp(),
-    });
+    };
+  }
+
+  void _log(WriteBatch batch, String action, String targetId, String targetType,
+      {String details = ''}) {
+    batch.set(_db.collection('admin_logs').doc(),
+        _logEntry(action, targetId, targetType, details));
+  }
+
+  /// Como [_run], pero en una transacción: para cambios que dependen del
+  /// estado actual y pueden chocar con otro escritor (un chófer aceptando,
+  /// un cobro de Stripe…).
+  Future<Either<Failure, void>> _runTx(
+      Future<void> Function(Transaction tx) build) async {
+    try {
+      await _db.runTransaction(build);
+      return const Right(null);
+    } on FirebaseException catch (e) {
+      return Left(ServerFailure(_friendly(e)));
+    } on _AdminRuleViolation catch (e) {
+      return Left(ValidationFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  void _logTx(Transaction tx, String action, String targetId, String targetType,
+      {String details = ''}) {
+    tx.set(_db.collection('admin_logs').doc(),
+        _logEntry(action, targetId, targetType, details));
   }
 
   Future<Either<Failure, void>> _run(
@@ -144,6 +173,26 @@ class AdminRepositoryImpl implements AdminRepository {
           'o las reglas de Firestore no están desplegadas.';
     }
     return e.message ?? e.code;
+  }
+
+  /// Los errores de las Cloud Functions llegan en inglés: se traducen por
+  /// código.
+  static String _fnError(FirebaseFunctionsException e) {
+    switch (e.code) {
+      case 'permission-denied':
+        return 'Permiso denegado: se necesita rol de administrador';
+      case 'unauthenticated':
+        return 'Tu sesión expiró; vuelve a iniciar sesión';
+      case 'not-found':
+        return 'No se encontró el registro';
+      case 'failed-precondition':
+        return 'Solo se pueden reembolsar pagos cobrados';
+      case 'unavailable':
+      case 'deadline-exceeded':
+        return 'Sin conexión con el servidor; inténtalo de nuevo';
+      default:
+        return 'No se pudo completar la operación (${e.code})';
+    }
   }
 
   static String _money(double v) => 'Bs${v.toStringAsFixed(2)}';
@@ -225,8 +274,8 @@ class AdminRepositoryImpl implements AdminRepository {
       }
       batch.update(_booking(booking.id), update);
 
-      // Liberar al chófer y sumar el viaje lo hace el servidor
-      // (onBookingStatusChanged) para cualquier cierre, no solo los del admin.
+      // Liberar al chófer y contar el viaje lo hace el servidor
+      // (releaseDriver) para cualquier cierre, también este.
       _log(
         batch,
         status == BookingStatus.cancelled ? 'cancel_booking' : 'update_status',
@@ -240,25 +289,38 @@ class AdminRepositoryImpl implements AdminRepository {
 
   @override
   Future<Either<Failure, void>> assignDriver(Booking booking, String driverId) {
-    return _run((batch) async {
-      final snap = await _booking(booking.id).get();
+    // En transacción: si un chófer acepta la reserva a la vez, una de las dos
+    // escrituras se repite con el estado nuevo en vez de pisar a la otra.
+    return _runTx((tx) async {
+      final snap = await tx.get(_booking(booking.id));
       final fresh = Booking.fromJson({...?snap.data(), 'id': booking.id});
       if (!AdminOperations.canAssignDriver(fresh)) {
         throw _AdminRuleViolation('No se puede asignar chófer a una reserva '
             '"${fresh.status.displayLabel}"');
       }
       final previous = fresh.driverId;
-      batch.update(_booking(booking.id), {
+      if (previous != driverId) {
+        final driver = await tx.get(_driver(driverId));
+        if (driver.data()?['isAvailable'] != true) {
+          throw _AdminRuleViolation(
+              'Ese chófer está ocupado o desconectado; elige otro');
+        }
+      }
+      tx.update(_booking(booking.id), {
         'driverId': driverId,
         if (fresh.status == BookingStatus.pending)
           'status': BookingStatus.confirmed.label,
         'updatedAt': FieldValue.serverTimestamp(),
       });
-      batch.update(_driver(driverId), {'isAvailable': false});
-      if (previous != null && previous != driverId) {
-        batch.update(_driver(previous), {'isAvailable': true});
+      if (fresh.status != BookingStatus.confirmed &&
+              fresh.status != BookingStatus.pending ||
+          fresh.scheduledAt.isBefore(DateTime.now().add(kBusyLead))) {
+        tx.update(_driver(driverId), {'isAvailable': false});
       }
-      _log(batch, previous == null ? 'assign_driver' : 'reassign_driver',
+      if (previous != null && previous != driverId) {
+        tx.update(_driver(previous), {'isAvailable': true});
+      }
+      _logTx(tx, previous == null ? 'assign_driver' : 'reassign_driver',
           booking.id, 'booking',
           details: previous == null
               ? 'Chófer $driverId'
@@ -274,10 +336,11 @@ class AdminRepositoryImpl implements AdminRepository {
           const Left(ValidationFailure('El precio final no es válido')));
     }
     return _run((batch) async {
+      // Sin tocar updatedAt: las finanzas fechan el viaje por él y un ajuste
+      // no debe moverlo al periodo actual.
       batch.update(_booking(booking.id), {
         'finalPrice': finalPrice,
         'priceAdjustmentReason': reason,
-        'updatedAt': FieldValue.serverTimestamp(),
       });
       _log(batch, 'adjust_price', booking.id, 'booking',
           details: '${_money(booking.finalPrice ?? booking.estimatedPrice)} → '
@@ -300,7 +363,7 @@ class AdminRepositoryImpl implements AdminRepository {
           .call({'paymentId': payment.id, 'reason': reason});
       return const Right(null);
     } on FirebaseFunctionsException catch (e) {
-      return Left(PaymentFailure(e.message ?? e.code));
+      return Left(PaymentFailure(_fnError(e)));
     } catch (e) {
       return Left(PaymentFailure(e.toString()));
     }
@@ -314,7 +377,7 @@ class AdminRepositoryImpl implements AdminRepository {
           await _functions.httpsCallable('backfillSettlements').call();
       return Right((result.data['settled'] as num?)?.toInt() ?? 0);
     } on FirebaseFunctionsException catch (e) {
-      return Left(ServerFailure(e.message ?? e.code));
+      return Left(ServerFailure(_fnError(e)));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -324,9 +387,32 @@ class AdminRepositoryImpl implements AdminRepository {
   Future<Either<Failure, void>> markPaymentCollected(
       Booking booking, String method, String reference) {
     final amount = booking.finalPrice ?? booking.estimatedPrice;
-    return _run((batch) async {
+    // En transacción: un doble clic o un cobro de Stripe simultáneo no deben
+    // dejar dos pagos cobrados para el mismo viaje.
+    return _runTx((tx) async {
+      final snap = await tx.get(_booking(booking.id));
+      final data = snap.data() ?? const <String, dynamic>{};
+      if (data['status'] != BookingStatus.completed.label) {
+        throw _AdminRuleViolation('Solo se cobran viajes completados');
+      }
+      final card = data['stripePaymentIntentId'] != null ||
+          data['stripePaymentMethodId'] != null;
+      if (card && data['cardPaymentFailed'] != true) {
+        throw _AdminRuleViolation('Este viaje se paga con tarjeta y el cobro '
+            'es automático; solo se registra a mano si ese cobro falla.');
+      }
+      final existingId = data['paymentId'] as String?;
+      if (existingId != null && existingId.isNotEmpty) {
+        final existing =
+            await tx.get(_db.collection('payments').doc(existingId));
+        final st = existing.data()?['status'];
+        if (st == PaymentStatus.captured.label ||
+            st == PaymentStatus.refunded.label) {
+          throw _AdminRuleViolation('Este viaje ya tiene un cobro registrado');
+        }
+      }
       final ref = _db.collection('payments').doc();
-      batch.set(ref, {
+      tx.set(ref, {
         'bookingId': booking.id,
         'riderId': booking.riderId,
         'stripePaymentIntentId': '',
@@ -339,11 +425,11 @@ class AdminRepositoryImpl implements AdminRepository {
         'recordedBy': _auth.currentUser?.uid,
         'createdAt': FieldValue.serverTimestamp(),
       });
-      batch.update(_booking(booking.id), {
+      tx.update(_booking(booking.id), {
         'paymentId': ref.id,
         'finalPrice': amount,
       });
-      _log(batch, 'record_payment', booking.id, 'payment',
+      _logTx(tx, 'record_payment', booking.id, 'payment',
           details: '${_money(amount)} · $method'
               '${reference.isNotEmpty ? ' · ref. $reference' : ''}');
     });

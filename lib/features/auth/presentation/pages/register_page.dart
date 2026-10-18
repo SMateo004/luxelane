@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/utils/validators.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/widgets/components.dart';
@@ -50,10 +49,7 @@ class _RegisterPageState extends State<RegisterPage> {
       listener: (context, state) {
         if (state is AuthAuthenticated) {
           final from = GoRouterState.of(context).uri.queryParameters['from'];
-          context.go(
-              from != null && from.startsWith('/') && !from.startsWith('//')
-                  ? from
-                  : '/');
+          context.go(from != null && from.startsWith('/') ? from : '/');
         }
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -160,7 +156,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   label: 'Nombre completo',
                   controller: _name,
                   prefixIcon: Icons.person_outline,
-                  validator: LuxValidators.name,
+                  validator: (v) => v == null || v.trim().isEmpty
+                      ? 'Indica tu nombre para que tu chófer pueda recibirte'
+                      : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
@@ -168,7 +166,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icons.email_outlined,
-                  validator: LuxValidators.email,
+                  validator: (v) => v == null || !v.contains('@')
+                      ? 'Ingresa un correo válido'
+                      : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
@@ -176,7 +176,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _phone,
                   keyboardType: TextInputType.phone,
                   prefixIcon: Icons.phone_outlined,
-                  validator: LuxValidators.phone,
+                  validator: (v) => v == null || v.trim().length < 6
+                      ? 'Tu chófer lo necesita para contactarte'
+                      : null,
                 ),
                 const SizedBox(height: LuxSpacing.md),
                 LuxTextField(
@@ -184,7 +186,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   controller: _pass,
                   obscureText: true,
                   prefixIcon: Icons.lock_outline,
-                  validator: LuxValidators.newPassword,
+                  validator: (v) =>
+                      v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
                 ),
                 const SizedBox(height: LuxSpacing.xl),
                 LuxButton(
@@ -198,6 +201,36 @@ class _RegisterPageState extends State<RegisterPage> {
                   textAlign: TextAlign.center,
                   style: LuxTypography.caption
                       .copyWith(color: LuxColors.inkSecondary),
+                ),
+                const SizedBox(height: LuxSpacing.xs),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text('Al crear tu cuenta aceptas los ',
+                        style: LuxTypography.caption
+                            .copyWith(color: LuxColors.inkSecondary)),
+                    GestureDetector(
+                      onTap: () => context.push('/legal/terminos'),
+                      child: Text('Términos',
+                          style: LuxTypography.caption.copyWith(
+                              color: LuxColors.sapphire,
+                              decoration: TextDecoration.underline)),
+                    ),
+                    Text(' y la ',
+                        style: LuxTypography.caption
+                            .copyWith(color: LuxColors.inkSecondary)),
+                    GestureDetector(
+                      onTap: () => context.push('/legal/privacidad'),
+                      child: Text('Política de privacidad',
+                          style: LuxTypography.caption.copyWith(
+                              color: LuxColors.sapphire,
+                              decoration: TextDecoration.underline)),
+                    ),
+                    Text('.',
+                        style: LuxTypography.caption
+                            .copyWith(color: LuxColors.inkSecondary)),
+                  ],
                 ),
                 const SizedBox(height: LuxSpacing.sm),
                 Row(

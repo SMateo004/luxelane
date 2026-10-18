@@ -5,28 +5,25 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/usecases/usecase.dart';
 
 class CreatePaymentIntentUseCase
-    implements UseCase<String, CreateIntentParams> {
+    implements UseCase<String?, CreateIntentParams> {
   CreatePaymentIntentUseCase(this._repo);
   final PaymentRepository _repo;
 
   @override
-  Future<Either<Failure, String>> call(CreateIntentParams params) =>
+  Future<Either<Failure, String?>> call(CreateIntentParams params) =>
       _repo.createPaymentIntent(
-        amount: params.amount,
-        currency: params.currency,
-        stripeCustomerId: params.stripeCustomerId,
+        bookingId: params.bookingId,
+        paymentMethodId: params.paymentMethodId,
       );
 }
 
 class CreateIntentParams {
   const CreateIntentParams({
-    required this.amount,
-    required this.currency,
-    required this.stripeCustomerId,
+    required this.bookingId,
+    required this.paymentMethodId,
   });
-  final double amount;
-  final String currency;
-  final String stripeCustomerId;
+  final String bookingId;
+  final String paymentMethodId;
 }
 
 // ---------------------------------------------------------------------------

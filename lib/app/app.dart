@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import '../core/di/injection.dart';
+import '../core/services/notification_service.dart';
 import '../core/enums/enums.dart';
 import '../core/services/crash_service.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
@@ -50,13 +52,24 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
 
     _router = buildRouter(_authBloc);
 
-    // Start DriverBloc + NotificationBloc only when authenticated
-    String? startedFor;
+    // Tocar el aviso de una reserva la abre.
+    sl<NotificationService>().openedBookings.listen((id) {
+      (_router as GoRouter).go('/ride/$id');
+    });
+
+    // Start DriverBloc + NotificationBloc only when authenticated. El estado
+    // se repite al cambiar el perfil: solo se arranca al entrar un usuario.
+    String? sessionUid;
     _authBloc.stream.listen((state) {
-      if (state is AuthAuthenticated) {
-        // El perfil en vivo re-emite en cada cambio: arrancar una sola vez.
-        if (startedFor == state.user.id) return;
-        startedFor = state.user.id;
+      if (state is! AuthAuthenticated) {
+        // Sin sesión no quedan a la vista las tarjetas del usuario anterior.
+        if (sessionUid != null) _paymentBloc.add(const PaymentReset());
+        sessionUid = null;
+        return;
+      }
+      if (state.user.id == sessionUid) return;
+      sessionUid = state.user.id;
+      {
         CrashService.setUser(state.user.id);
         if (state.user.role == UserRole.driver &&
             _driverBloc.state is DriverInitial) {
@@ -65,11 +78,9 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         _notificationBloc.add(
           NotificationWatchStarted(userId: state.user.id),
         );
-      } else if (state is! AuthLoading) {
-        startedFor = null;
-        if (_driverBloc.state is! DriverInitial) {
-          _driverBloc.add(const DriverSignedOut());
-        }
+        // Registra el dispositivo para los avisos de la reserva aunque el
+        // pasajero no abra la pantalla del viaje.
+        sl<NotificationService>().init(userId: state.user.id);
       }
     });
   }

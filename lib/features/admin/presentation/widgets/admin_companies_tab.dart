@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/widgets/components.dart';
+import 'admin_sections.dart' show BusinessLeadsTab;
 import '../../../business/data/business_repository.dart';
 import '../../../business/domain/business_models.dart';
 import '../../../business/presentation/widgets/business_widgets.dart';
@@ -22,8 +23,38 @@ class _CompaniesTabState extends State<CompaniesTab> {
   String? _selectedId;
   CompanyStatus? _filter;
 
+  /// 0 = cuentas de empresa, 1 = solicitudes de contacto (formulario web).
+  int _view = 0;
+
   @override
-  Widget build(BuildContext context) => StreamBuilder<List<Company>>(
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_selectedId == null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  LuxSpacing.md, LuxSpacing.md, LuxSpacing.md, 0),
+              child: Wrap(spacing: 8, children: [
+                ChoiceChip(
+                  label: const Text('Cuentas'),
+                  selected: _view == 0,
+                  onSelected: (_) => setState(() => _view = 0),
+                ),
+                ChoiceChip(
+                  label: const Text('Contactos'),
+                  selected: _view == 1,
+                  onSelected: (_) => setState(() => _view = 1),
+                ),
+              ]),
+            ),
+          Expanded(
+              child: _view == 1 && _selectedId == null
+                  ? const BusinessLeadsTab()
+                  : _accounts()),
+        ],
+      );
+
+  Widget _accounts() => StreamBuilder<List<Company>>(
         stream: _repo.watchAllCompanies(),
         builder: (context, snap) {
           if (snap.hasError) {

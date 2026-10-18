@@ -3,9 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../app/theme/app_theme.dart';
+import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../business/data/business_lead_repository.dart';
 import '../../domain/admin_finance.dart';
 import '../../domain/admin_operations.dart';
 import '../bloc/admin_bloc.dart';
@@ -530,8 +532,12 @@ class _BookingDetail extends StatelessWidget {
               label: 'Cobro',
               value: charge?.label ??
                   (payment == null
-                      ? 'Se cobra al completar'
-                      : payment.status.label),
+                      ? booking.cardPaymentFailed
+                          ? 'Falló el cobro con tarjeta · cobrar a mano'
+                          : booking.cardPayment
+                              ? 'Tarjeta · se cobra sola al completar'
+                              : 'Se cobra al completar'
+                      : payment.status.displayLabel),
               valueColor: charge == null ? null : chargeStatusColor(charge),
             ),
             if (payment != null)
@@ -613,10 +619,23 @@ class _BookingDetail extends StatelessWidget {
 
   Future<void> _assignDriver(
       BuildContext context, AdminState state, Booking b) async {
+    // Solo se puede elegir a quien está libre y conduce un vehículo activo de
+    // la clase reservada; el resto se muestra atenuado con el motivo.
+    bool hasClass(DriverProfile d) => state.vehicles.any((v) =>
+        v.driverId == d.userId &&
+        v.isActive &&
+        v.vehicleClass == b.vehicleClass);
+    String? blocker(DriverProfile d) {
+      if (!d.isAvailable) return 'Ocupado o fuera de línea';
+      if (!hasClass(d)) return 'Sin vehículo ${b.vehicleClass.label} activo';
+      return null;
+    }
+
     final candidates = state.drivers
         .where((d) => d.documentsVerified && d.userId != b.driverId)
         .toList()
-      ..sort((a, c) => (c.isAvailable ? 1 : 0) - (a.isAvailable ? 1 : 0));
+      ..sort((a, c) =>
+          (blocker(a) == null ? 0 : 1) - (blocker(c) == null ? 0 : 1));
     final bloc = context.read<AdminBloc>();
     final chosen = await showDialog<String>(
       context: context,
@@ -633,16 +652,17 @@ class _BookingDetail extends StatelessWidget {
                   children: [
                     for (final d in candidates)
                       ListTile(
+                        enabled: blocker(d) == null,
                         onTap: () => Navigator.pop(ctx, d.userId),
                         leading: Icon(Icons.circle,
                             size: 10,
-                            color: d.isAvailable
+                            color: blocker(d) == null
                                 ? LuxColors.success
                                 : LuxColors.inkTertiary),
                         title: Text(state.userName(d.userId),
                             style: LuxTypography.bodyMedium),
                         subtitle: Text(
-                            '${d.isAvailable ? 'Disponible' : 'Ocupado / fuera de línea'}'
+                            '${blocker(d) ?? 'Disponible'}'
                             ' · ★ ${d.rating.toStringAsFixed(1)}'
                             ' · ${d.totalRides} viajes',
                             style: LuxTypography.caption),
@@ -1111,8 +1131,8 @@ const _auditLabels = {
   'update_role': 'Cambio de rol',
   'enable_vehicle': 'Vehículo activado',
   'disable_vehicle': 'Vehículo desactivado',
-  'enable_maintenance': 'Mantenimiento ON',
-  'disable_maintenance': 'Mantenimiento OFF',
+  'enable_maintenance': 'Mantenimiento activado',
+  'disable_maintenance': 'Mantenimiento desactivado',
   'update_settings': 'Configuración',
   'delete_booking': 'Reserva eliminada',
 };
@@ -1322,7 +1342,7 @@ class SettingsTab extends StatelessWidget {
                   _SettingTile(
                     icon: Icons.notifications_active_outlined,
                     title: 'Notificaciones push',
-                    subtitle: 'Avisos del sistema por nuevas reservas.',
+                    subtitle: 'Avisos push a pasajeros y chóferes.',
                     value: state.pushNotificationsEnabled,
                     onChanged: (val) => context.read<AdminBloc>().add(
                           AdminUpdateGlobalSettingsRequested(
@@ -1394,8 +1414,7 @@ class SettingsTab extends StatelessWidget {
                 children: [
                   AdminInfoRow(label: 'Moneda', value: 'Bolivianos (Bs)'),
                   AdminInfoRow(label: 'Backend', value: 'Firebase / Firestore'),
-                  AdminInfoRow(
-                      label: 'Plataforma', value: 'Flutter Web + Mobile'),
+                  AdminInfoRow(label: 'Plataforma', value: 'Web y móvil'),
                 ],
               ),
             ),
@@ -1518,11 +1537,11 @@ class _BackfillCardState extends State<_BackfillCard> {
     );
     if (ok == null || !mounted) return;
     setState(() => _running = true);
-    final bloc = context.read<AdminBloc>()
-      ..add(const AdminBackfillSettlementsRequested());
+    final bloc = context.read<AdminBloc>();
+    final seq = bloc.state.messageSeq;
+    bloc.add(const AdminBackfillSettlementsRequested());
     // Se desbloquea cuando llega el resultado (éxito o error).
-    await bloc.stream
-        .firstWhere((s) => s.successMessage != null || s.error != null);
+    await bloc.stream.firstWhere((s) => s.messageSeq > seq);
     if (mounted) setState(() => _running = false);
   }
 
@@ -1602,5 +1621,80 @@ class _SettingTile extends StatelessWidget {
             ),
           ],
         ),
+      );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TAB: Empresas — solicitudes del formulario "Para empresas"
+// ─────────────────────────────────────────────────────────────────────────────
+
+class BusinessLeadsTab extends StatelessWidget {
+  const BusinessLeadsTab({super.key});
+
+  @override
+  Widget build(BuildContext context) => StreamBuilder<List<BusinessLead>>(
+        stream: sl<BusinessLeadRepository>().watchAll(),
+        builder: (context, snap) {
+          if (snap.hasError) {
+            return const AdminEmpty(
+                icon: Icons.cloud_off_rounded,
+                title: 'No se pudieron cargar las solicitudes');
+          }
+          if (!snap.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final leads = snap.data!;
+          if (leads.isEmpty) {
+            return const AdminEmpty(
+                icon: Icons.business_outlined,
+                title: 'Aún no hay solicitudes de empresas');
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.all(LuxSpacing.md),
+            itemCount: leads.length,
+            separatorBuilder: (_, __) => const SizedBox(height: LuxSpacing.sm),
+            itemBuilder: (context, i) {
+              final l = leads[i];
+              return LuxCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      Expanded(
+                          child: Text(l.company,
+                              style: LuxTypography.titleMedium)),
+                      Text(DateFormat('dd/MM/yyyy HH:mm').format(l.createdAt),
+                          style: LuxTypography.caption),
+                    ]),
+                    const SizedBox(height: 4),
+                    Text('${l.contactName} · ${l.email} · ${l.phone}',
+                        style: LuxTypography.bodyMedium),
+                    Text('Personas que viajarían: ${l.travellers}',
+                        style: LuxTypography.caption),
+                    if (l.message.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      Text(l.message, style: LuxTypography.bodyMedium),
+                    ],
+                    const SizedBox(height: 6),
+                    Row(children: [
+                      Text(l.handled ? 'Atendida' : 'Pendiente',
+                          style: LuxTypography.caption.copyWith(
+                              color: l.handled
+                                  ? LuxColors.success
+                                  : LuxColors.warning)),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () => sl<BusinessLeadRepository>()
+                            .setHandled(l.id, !l.handled),
+                        child: Text(
+                            l.handled ? 'Marcar pendiente' : 'Marcar atendida'),
+                      ),
+                    ]),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       );
 }

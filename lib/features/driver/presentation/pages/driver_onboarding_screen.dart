@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../app/sign_out.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
@@ -12,28 +11,6 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
-
-/// Vencimiento de licencia "MM/AAAA" → último instante de ese mes, o null si
-/// el texto no es válido.
-DateTime? parseLicenseExpiry(String text) {
-  final parts = text.trim().split('/');
-  if (parts.length != 2) return null;
-  final m = int.tryParse(parts[0]);
-  final y = int.tryParse(parts[1]);
-  if (m == null || y == null || m < 1 || m > 12 || y < 2000 || y > 2100) {
-    return null;
-  }
-  return DateTime(y, m + 1).subtract(const Duration(milliseconds: 1));
-}
-
-/// Mensaje de error para el vencimiento, o null si es válido y vigente.
-String? validateLicenseExpiry(String? v, {DateTime? now}) {
-  if (v == null || v.trim().isEmpty) return 'Requerido';
-  final expiry = parseLicenseExpiry(v);
-  if (expiry == null) return 'Usa MM/AAAA, p. ej. 08/2027';
-  if (expiry.isBefore(now ?? DateTime.now())) return 'Licencia vencida';
-  return null;
-}
 
 // ---------------------------------------------------------------------------
 // DriverOnboardingScreen
@@ -85,11 +62,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
 
     setState(() => _saving = true);
     try {
-      final vehicles = sl<VehicleRepository>();
-      final users = sl<UserRepository>();
-
-      // 1. Vehículo (v_<uid>). Si ya existe de un intento anterior se
-      // actualizan solo los datos que el chófer puede cambiar.
+      // 1. Create vehicle document
       final vehicleId = 'v_$driverId';
       final vehicle = Vehicle(
         id: vehicleId,
@@ -103,48 +76,46 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
         capacity: _vehicleClass.capacity,
         isActive: true,
       );
-      final existingVehicle = (await vehicles.getVehicleById(vehicleId))
+      final vehicles = sl<VehicleRepository>();
+      final existing = (await vehicles.getVehicleByDriver(driverId))
           .fold((_) => null, (v) => v);
-      final vehicleResult = existingVehicle == null
-          ? await vehicles.createVehicle(vehicle)
-          : await vehicles.updateVehicle(Vehicle(
-              id: vehicleId,
-              driverId: driverId,
-              make: vehicle.make,
-              model: vehicle.model,
-              year: vehicle.year,
-              plate: vehicle.plate,
-              // Clase, capacidad y estado los fija el admin una vez creado.
-              vehicleClass: existingVehicle.vehicleClass,
-              color: vehicle.color,
-              photoUrl: existingVehicle.photoUrl,
-              capacity: existingVehicle.capacity,
-              isActive: existingVehicle.isActive,
-            ));
-      if (vehicleResult.isLeft()) {
-        throw const _OnboardingError(
-            'No pudimos guardar tu vehículo. Revisa tu conexión e inténtalo de nuevo.');
+      // Un vehículo ya registrado solo lo cambia Luxelane.
+      if (existing == null) {
+        final created = await vehicles.createVehicle(vehicle);
+        if (created.isLeft()) {
+          throw const _OnboardingError(
+              'No se pudo registrar el vehículo. Revisa los datos e '
+              'inténtalo de nuevo.');
+        }
       }
 
-      // 2. Perfil de chófer. La verificación, la valoración y los viajes no
-      // se tocan si el perfil ya existía (solo los cambia un admin).
-      final existing =
-          (await users.getDriverProfile(driverId)).fold((_) => null, (p) => p);
+      // 2. Create driverProfile document
+      DateTime? expiry;
+      try {
+        final parts = _licenseExpiry.text.trim().split('/');
+        if (parts.length == 2) {
+          expiry = DateTime(
+            int.parse(parts[1]),
+            int.parse(parts[0]),
+          );
+        }
+      } catch (_) {}
+
       final profile = DriverProfile(
         userId: driverId,
-        licenseNumber: _licenseNumber.text.trim().toUpperCase(),
-        licenseExpiry: parseLicenseExpiry(_licenseExpiry.text)!,
+        licenseNumber: _licenseNumber.text.trim(),
+        licenseExpiry: expiry ?? DateTime(2030),
         vehicleId: vehicleId,
-        documentsVerified: existing?.documentsVerified ?? false,
-        rating: existing?.rating ?? 0,
-        totalRides: existing?.totalRides ?? 0,
-        isAvailable: existing?.isAvailable ?? false,
-        currentLocation: existing?.currentLocation,
+        documentsVerified: false, // admin must verify
+        rating: 0,
+        totalRides: 0,
+        isAvailable: false,
       );
-      final profileResult = await users.updateDriverProfile(profile);
-      if (profileResult.isLeft()) {
+      final saved = await sl<UserRepository>().updateDriverProfile(profile);
+      if (saved.isLeft()) {
         throw const _OnboardingError(
-            'No pudimos guardar tu licencia. Revisa tu conexión e inténtalo de nuevo.');
+            'No se pudo guardar tu licencia. Revisa tu conexión e inténtalo '
+            'de nuevo.');
       }
 
       if (!mounted) return;
@@ -158,7 +129,7 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
           SnackBar(
             content: Text(e is _OnboardingError
                 ? e.message
-                : 'Algo salió mal. Inténtalo de nuevo.'),
+                : 'No se pudo completar el registro. Inténtalo de nuevo.'),
             backgroundColor: LuxColors.error,
           ),
         );
@@ -177,7 +148,8 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
         title: const LuxelaneWordmark(),
         actions: [
           TextButton(
-            onPressed: () => signOut(context),
+            onPressed: () =>
+                context.read<AuthBloc>().add(const LogoutRequested()),
             child: Text('Cerrar sesión',
                 style: LuxTypography.caption
                     .copyWith(color: LuxColors.inkTertiary)),
@@ -409,17 +381,8 @@ class _VehicleForm extends StatelessWidget {
                     label: 'Placa',
                     controller: plate,
                     prefixIcon: Icons.credit_card_outlined,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                          RegExp(r'[A-Za-z0-9 -]')),
-                      LengthLimitingTextInputFormatter(10),
-                    ],
-                    validator: (v) {
-                      final t = (v ?? '').replaceAll(RegExp(r'[\s-]'), '');
-                      if (t.isEmpty) return 'Requerido';
-                      if (t.length < 5) return 'Placa inválida';
-                      return null;
-                    },
+                    validator: (v) =>
+                        v == null || v.trim().isEmpty ? 'Requerido' : null,
                   ),
                 ),
                 const SizedBox(width: LuxSpacing.md),
@@ -434,9 +397,7 @@ class _VehicleForm extends StatelessWidget {
                     ],
                     validator: (v) {
                       final y = int.tryParse(v ?? '');
-                      if (y == null ||
-                          y < 2000 ||
-                          y > DateTime.now().year + 1) {
+                      if (y == null || y < 2000 || y > 2030) {
                         return 'Inválido';
                       }
                       return null;
@@ -495,7 +456,16 @@ class _LicenseForm extends StatelessWidget {
                 FilteringTextInputFormatter.allow(RegExp(r'[\d/]')),
                 LengthLimitingTextInputFormatter(7),
               ],
-              validator: (v) => validateLicenseExpiry(v),
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) return 'Requerido';
+                final parts = v.split('/');
+                if (parts.length != 2) return 'Usa MM/AAAA';
+                final m = int.tryParse(parts[0]);
+                final y = int.tryParse(parts[1]);
+                if (m == null || m < 1 || m > 12) return 'Mes inválido';
+                if (y == null || y < 2024) return 'Licencia vencida';
+                return null;
+              },
             ),
           ],
         ),

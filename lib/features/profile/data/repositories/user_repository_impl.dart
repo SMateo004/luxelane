@@ -26,18 +26,17 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Either<Failure, void>> updateUser(User user) async {
     try {
-      // Solo lo que el usuario puede editar de sí mismo (firestore.rules);
-      // rol, bloqueo, Stripe o tokens no se reescriben desde la app.
+      // Solo lo que el usuario edita: reenviar el perfil entero pisaba los
+      // tokens de notificación y, con datos viejos, campos protegidos.
       await _users.doc(user.id).update({
-        'displayName': user.displayName.trim(),
-        'phone': user.phone.trim(),
+        'displayName': user.displayName,
+        'phone': user.phone,
         'photoUrl': user.photoUrl,
-        'updatedAt': FieldValue.serverTimestamp(),
+        'ridePreferences': user.ridePreferences.toJson(),
       });
       return const Right(null);
     } catch (e) {
-      return const Left(
-          ServerFailure('No pudimos guardar tu perfil. Inténtalo de nuevo.'));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -77,7 +76,14 @@ class UserRepositoryImpl implements UserRepository {
       await _db
           .collection('driverProfiles')
           .doc(profile.userId)
-          .set(profile.toJson(), SetOptions(merge: true));
+          // Solo los datos que el chófer declara. Verificación, valoración,
+          // viajes y disponibilidad los fijan el admin y el servidor.
+          .set({
+        'userId': profile.userId,
+        'licenseNumber': profile.licenseNumber,
+        'licenseExpiry': Timestamp.fromDate(profile.licenseExpiry),
+        'vehicleId': profile.vehicleId,
+      }, SetOptions(merge: true));
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -93,8 +99,6 @@ class UserRepositoryImpl implements UserRepository {
     try {
       await _db.collection('driverProfiles').doc(userId).update({
         'currentLocation': GeoPoint(latitude, longitude),
-        // El servidor solo asigna viajes a chóferes vistos hace poco.
-        'lastSeenAt': FieldValue.serverTimestamp(),
       });
       return const Right(null);
     } catch (e) {
@@ -108,9 +112,12 @@ class UserRepositoryImpl implements UserRepository {
     required bool isAvailable,
   }) async {
     try {
+      // `online` es lo que el chófer eligió; `isAvailable` además baja
+      // mientras atiende un viaje. Al cerrar el viaje el servidor solo lo
+      // vuelve a marcar disponible si sigue `online`.
       await _db.collection('driverProfiles').doc(userId).update({
         'isAvailable': isAvailable,
-        'lastSeenAt': FieldValue.serverTimestamp(),
+        'online': isAvailable,
       });
       return const Right(null);
     } catch (e) {
@@ -119,9 +126,17 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<void> markDriverBusy(String driverId) => _db
+      .collection('driverProfiles')
+      .doc(driverId)
+      .update({'isAvailable': false});
+
+  @override
   Stream<DriverProfile?> watchDriverProfile(String driverId) => _db
       .collection('driverProfiles')
       .doc(driverId)
       .snapshots()
-      .map((s) => s.exists ? DriverProfile.fromJson(s.data()!) : null);
+      .map((s) => s.exists
+          ? DriverProfile.fromJson({...s.data()!, 'userId': s.id})
+          : null);
 }

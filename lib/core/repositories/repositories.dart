@@ -8,6 +8,10 @@ import '../models/models.dart';
 // AuthRepository
 // ---------------------------------------------------------------------------
 
+/// Mensaje para una cuenta bloqueada desde el panel admin.
+const kBlockedAccountMessage =
+    'Tu cuenta está bloqueada. Escríbenos a soporte si crees que es un error.';
+
 abstract class AuthRepository {
   Future<Either<Failure, User>> login({
     required String email,
@@ -27,13 +31,18 @@ abstract class AuthRepository {
   Future<Either<Failure, User>> signInWithGoogle();
 
   Future<Either<Failure, void>> logout();
+
+  /// Elimina la cuenta en el servidor (perfil, tarjetas y acceso). Falla si
+  /// quedan viajes activos o reservados.
+  Future<Either<Failure, void>> deleteAccount();
+
+  /// Perfil en vivo de [uid] (null si no existe), para reflejar cambios del
+  /// admin o del servidor (bloqueo, cliente de pagos…) sin reiniciar.
+  Stream<User?> watchUser(String uid);
   Future<Either<Failure, void>> sendVerificationEmail();
   Future<Either<Failure, void>> sendPhoneVerification(String phone);
   Future<Either<Failure, void>> resetPassword(String email);
   Future<Either<Failure, User>> getCurrentUser();
-
-  /// Perfil del usuario en vivo (bloqueos, datos de pago, nombre…).
-  Stream<User?> watchCurrentUser(String uid);
 
   /// Processed stream: Firebase user → Firestore lookup → app User.
   /// Used only for the initial one-shot auth check on app start.
@@ -69,6 +78,9 @@ abstract class UserRepository {
   });
 
   Stream<DriverProfile?> watchDriverProfile(String driverId);
+
+  /// Ocupado por un viaje, sin cambiar si el chófer quiere estar conectado.
+  Future<void> markDriverBusy(String driverId);
 }
 
 // ---------------------------------------------------------------------------
@@ -88,53 +100,33 @@ abstract class VehicleRepository {
 // BookingRepository
 // ---------------------------------------------------------------------------
 
-/// Resultado de que un chófer intente aceptar una reserva.
-enum AcceptOutcome {
-  accepted,
-
-  /// Otro chófer la tomó antes, o el pasajero la canceló.
-  alreadyTaken,
-
-  /// El chófer ya está en otro viaje o desconectado.
-  driverBusy,
-
-  /// Documentos aún no verificados por un administrador.
-  notVerified,
-
-  /// Cuenta bloqueada, sin rol de chófer o sin vehículo activo.
-  notAllowed,
-
-  /// La reserva pide otra clase de vehículo.
-  wrongClass,
-}
-
 abstract class BookingRepository {
   Future<Either<Failure, Booking>> createBooking(Booking booking);
   Future<Either<Failure, Booking>> getBookingById(String bookingId);
   Future<Either<Failure, List<Booking>>> getBookingsByRider(String riderId);
+
+  /// Reservas del pasajero en vivo, las más recientes primero.
+  Stream<List<Booking>> watchBookingsByRider(String riderId);
   Future<Either<Failure, List<Booking>>> getPendingBookings();
   Stream<List<Booking>> streamPendingBookings();
   Stream<List<Booking>> watchDriverBookings(String driverId);
-
-  /// Reservas del pasajero en vivo, de la más reciente a la más antigua.
-  Stream<List<Booking>> watchRiderBookings(String riderId);
   Future<Either<Failure, void>> updateBookingStatus({
     required String bookingId,
     required BookingStatus status,
   });
+
+  /// El pasajero valora (1–5) un viaje completado; solo una vez.
+  Future<Either<Failure, void>> rateBooking({
+    required String bookingId,
+    required int rating,
+    String comment = '',
+  });
+
   Future<Either<Failure, void>> assignDriver({
     required String bookingId,
     required String driverId,
   });
   Future<Either<Failure, void>> cancelBooking(String bookingId);
-
-  /// El chófer acepta una reserva pendiente. Lo resuelve el servidor en una
-  /// transacción: nunca dos chóferes en el mismo viaje.
-  Future<Either<Failure, AcceptOutcome>> acceptBooking(String bookingId);
-
-  /// El pasajero valora (1 a 5) un viaje completado.
-  Future<Either<Failure, void>> rateBooking(String bookingId, int rating);
-
   Stream<Booking> watchBooking(String bookingId);
 }
 
@@ -171,10 +163,11 @@ abstract class RideRepository {
 // ---------------------------------------------------------------------------
 
 abstract class PaymentRepository {
-  Future<Either<Failure, String>> createPaymentIntent({
-    required double amount,
-    required String currency,
-    required String stripeCustomerId,
+  /// Autoriza la tarjeta para [bookingId]; devuelve el client secret, o
+  /// null si el servidor la cobrará al completar (viaje lejano).
+  Future<Either<Failure, String?>> createPaymentIntent({
+    required String bookingId,
+    required String paymentMethodId,
   });
   Future<Either<Failure, Payment>> capturePayment({
     required String bookingId,
@@ -197,15 +190,11 @@ abstract class PaymentRepository {
     required String paymentMethodId,
   });
 
-  /// Vincula una retención de tarjeta ya autorizada a la reserva; el
-  /// servidor la cobra al completar el viaje o la libera al cancelarlo.
-  Future<Either<Failure, bool>> linkBookingPayment({
-    required String bookingId,
-    required String paymentIntentId,
-  });
+  /// Tarjeta que se propone primero al reservar (se guarda en Stripe).
+  Future<Either<Failure, void>> setDefaultCard(String paymentMethodId);
 
-  /// Libera una retención que no llegó a asociarse a ninguna reserva.
-  Future<void> releasePaymentHold(String paymentIntentId);
+  /// Cliente de Stripe del usuario; lo crea si no se pudo al registrarse.
+  Future<Either<Failure, String>> ensureStripeCustomer();
 }
 
 abstract class NotificationRepository {
