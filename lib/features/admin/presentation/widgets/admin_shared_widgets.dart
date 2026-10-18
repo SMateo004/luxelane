@@ -21,16 +21,16 @@ class SectionChip extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
               horizontal: LuxSpacing.lg, vertical: LuxSpacing.sm),
           decoration: BoxDecoration(
-            color: selected ? LuxColors.accent : LuxColors.blackElevated,
+            color: selected ? LuxColors.accentFill : LuxColors.blackSurface,
             borderRadius: BorderRadius.circular(100),
             border: Border.all(
-              color: selected ? LuxColors.accent : LuxColors.white.withOpacity(0.1),
+              color: selected ? LuxColors.accentFill : LuxColors.blackBorder,
             ),
           ),
           child: Text(
             label,
             style: LuxTypography.bodyMedium.copyWith(
-              color: selected ? LuxColors.black : LuxColors.white,
+              color: selected ? LuxColors.onAccent : LuxColors.white,
               fontWeight: selected ? FontWeight.bold : FontWeight.normal,
             ),
           ),

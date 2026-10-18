@@ -49,7 +49,7 @@ class LuxButton extends StatelessWidget {
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: LuxColors.black,
+                    color: LuxColors.onAccent,
                   ),
                 )
               : Row(
@@ -345,13 +345,13 @@ class ServiceTypeTab extends StatelessWidget {
                       height: 44,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: selected == t ? LuxColors.accent : Colors.transparent,
+                        color: selected == t ? LuxColors.accentFill : Colors.transparent,
                         borderRadius: BorderRadius.circular(LuxRadius.sm),
                       ),
                       child: Text(
                         t.localizedLabel(context.l10n).toUpperCase(),
                         style: LuxTypography.caption.copyWith(
-                          color: selected == t ? LuxColors.black : LuxColors.whiteTertiary,
+                          color: selected == t ? LuxColors.onAccent : LuxColors.whiteTertiary,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.2,
                         ),
@@ -731,7 +731,7 @@ class StepIndicator extends StatelessWidget {
                 ),
                 child: Center(
                   child: done
-                      ? const Icon(Icons.check, size: 14, color: LuxColors.black)
+                      ? const Icon(Icons.check, size: 14, color: LuxColors.accent)
                       : Text(
                           '${idx + 1}',
                           style: LuxTypography.caption.copyWith(

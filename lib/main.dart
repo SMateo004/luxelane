@@ -74,9 +74,12 @@ void main() async {
   if (!kIsWeb) {
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
+        // Light app: dark status-bar icons on paper.
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Color(0xFF0A0A0A),
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemNavigationBarColor: Color(0xFFFAF8F4),
+        systemNavigationBarIconBrightness: Brightness.dark,
       ),
     );
     await SystemChrome.setPreferredOrientations([

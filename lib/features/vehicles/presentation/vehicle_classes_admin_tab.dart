@@ -548,9 +548,9 @@ class _VehicleClassEditorState extends State<VehicleClassEditor> {
                   Wrap(spacing: LuxSpacing.sm, runSpacing: LuxSpacing.sm, children: [
                     for (final e in vehicleIcons.entries)
                       ChoiceChip(
-                        label: Icon(e.value, size: 20, color: _icon == e.key ? LuxColors.black : LuxColors.white),
+                        label: Icon(e.value, size: 20, color: _icon == e.key ? LuxColors.onAccent : LuxColors.white),
                         selected: _icon == e.key,
-                        selectedColor: LuxColors.accent,
+                        selectedColor: LuxColors.accentFill,
                         onSelected: (_) => setState(() => _icon = e.key),
                       ),
                   ]),

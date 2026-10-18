@@ -450,14 +450,14 @@ class _FilterChip extends StatelessWidget {
           duration: const Duration(milliseconds: 180),
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: selected ? LuxColors.accent : LuxColors.blackElevated,
+            color: selected ? LuxColors.accentFill : LuxColors.blackSurface,
             borderRadius: BorderRadius.circular(LuxRadius.sm),
             border: Border.all(
-                color: selected ? LuxColors.accent : LuxColors.blackBorder),
+                color: selected ? LuxColors.accentFill : LuxColors.blackBorder),
           ),
           child: Text(label,
               style: LuxTypography.caption.copyWith(
-                  color: selected ? Colors.black : LuxColors.whiteTertiary,
+                  color: selected ? LuxColors.onAccent : LuxColors.whiteTertiary,
                   fontWeight:
                       selected ? FontWeight.w700 : FontWeight.normal)),
         ),

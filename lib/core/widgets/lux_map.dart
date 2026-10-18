@@ -43,7 +43,7 @@ class LuxMap extends StatefulWidget {
     this.routeInfo,
     this.driverLocation,
     this.onTap,
-    this.lightStyle = false,
+    this.lightStyle = true,
   });
 
   final Place? origin;
@@ -51,7 +51,8 @@ class LuxMap extends StatefulWidget {
   final RouteInfo? routeInfo;
   final LatLng? driverLocation;
   final void Function(LatLng)? onTap;
-  /// Use Google Maps default light style instead of the custom dark style.
+  /// Google's light map (default, matches the light app); false for the
+  /// custom dark style.
   final bool lightStyle;
 
   @override
@@ -137,7 +138,8 @@ class _LuxMapState extends State<LuxMap> {
       Polyline(
         polylineId: const PolylineId('route'),
         points: widget.routeInfo!.polylinePoints,
-        color: const Color(0xFFFFFFFF), // white
+        // Ink route on the light map, white on the dark one.
+        color: widget.lightStyle ? LuxPalette.ink : const Color(0xFFFFFFFF),
         width: 5,
       ),
     };
@@ -203,7 +205,7 @@ class _LuxMapState extends State<LuxMap> {
   }
 
   Widget _placeholder() => Container(
-        color: const Color(0xFF111111),
+        color: LuxColors.blackElevated,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

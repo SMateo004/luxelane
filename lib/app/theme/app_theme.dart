@@ -9,23 +9,29 @@ export 'lux_tokens.dart';
 // Tokens
 // ---------------------------------------------------------------------------
 
+// Light theme: paper surfaces, navy (ink) text, champagne accents — the same
+// palette as the rider screens (LD in home_design.dart). The names come from
+// the old dark theme and are kept so every screen follows this one place:
+// "black*" are the surfaces, "white*" the text.
 abstract class LuxColors {
-  // Dark surfaces — marino
-  static const black         = LuxPalette.ink;
-  static const blackSurface  = LuxPalette.surface;
-  static const blackElevated = LuxPalette.elevated;
-  static const blackBorder   = LuxPalette.line;
-  // Brand accent — champagne (use ink text on top of it)
-  static const accent        = LuxPalette.champagne;
-  static const accentLight   = LuxPalette.champagneLight;
-  static const accentSubtle  = Color(0x1FC6A15B); // champagne @ 12%
+  // Surfaces — paper
+  static const black         = LuxPalette.paper;     // page background
+  static const blackSurface  = Color(0xFFFFFFFF);    // cards, sheets, dialogs
+  static const blackElevated = LuxPalette.paper2;    // inputs, raised blocks
+  static const blackBorder   = LuxPalette.hairline;
+  // Brand accent — deep champagne for text, icons and lines on paper
+  // (4.6:1); fills use [accentFill] with ink text on top.
+  static const accent        = LuxPalette.champagneDeep;
+  static const accentFill    = LuxPalette.champagne;
+  static const accentLight   = LuxPalette.champagne;
+  static const accentSubtle  = Color(0x2EC6A15B); // champagne @ 18%
   static const onAccent      = LuxPalette.ink;
   // Information (links, info badges)
   static const info          = LuxPalette.sapphire;
-  // On-dark text
-  static const white          = LuxPalette.snow;
-  static const whiteSecondary = LuxPalette.mist;
-  static const whiteTertiary  = LuxPalette.fog;
+  // Text — navy ink
+  static const white          = LuxPalette.ink;
+  static const whiteSecondary = LuxPalette.ink2;
+  static const whiteTertiary  = LuxPalette.slate;
   // Light sections
   static const cream         = LuxPalette.paper2;
   static const creamBorder   = LuxPalette.hairline;
@@ -124,17 +130,17 @@ ThemeData get luxTheme {
 
   return ThemeData(
   useMaterial3: true,
-  brightness: Brightness.dark,
+  brightness: Brightness.light,
   scaffoldBackgroundColor: LuxColors.black,
-  colorScheme: const ColorScheme.dark(
-    primary: LuxColors.accent,
+  colorScheme: const ColorScheme.light(
+    primary: LuxColors.accentFill,
     onPrimary: LuxColors.onAccent,
-    secondary: LuxColors.accentLight,
-    onSecondary: LuxColors.onAccent,
+    secondary: LuxColors.accent,
+    onSecondary: LuxColors.blackSurface,
     surface: LuxColors.blackSurface,
     onSurface: LuxColors.white,
     error: LuxColors.error,
-    onError: LuxColors.white,
+    onError: LuxColors.blackSurface,
   ),
   textTheme: textTheme,
   appBarTheme: const AppBarTheme(
@@ -148,7 +154,7 @@ ThemeData get luxTheme {
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       // Ink on champagne ≈ 8.6:1 contrast.
-      backgroundColor: LuxColors.accent,
+      backgroundColor: LuxColors.accentFill,
       foregroundColor: LuxColors.onAccent,
       minimumSize: const Size(double.infinity, 52),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(LuxRadius.sm)),
@@ -233,18 +239,21 @@ ThemeData get luxTheme {
   ),
   checkboxTheme: CheckboxThemeData(
     fillColor: WidgetStateProperty.resolveWith(
-      (s) => s.contains(WidgetState.selected) ? LuxColors.accent : LuxColors.blackElevated,
+      (s) => s.contains(WidgetState.selected) ? LuxColors.accentFill : LuxColors.blackSurface,
     ),
-    checkColor: WidgetStateProperty.all(LuxColors.black),
+    checkColor: WidgetStateProperty.all(LuxColors.onAccent),
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2)),
     side: const BorderSide(color: LuxColors.whiteTertiary),
   ),
   switchTheme: SwitchThemeData(
     thumbColor: WidgetStateProperty.resolveWith(
-      (s) => s.contains(WidgetState.selected) ? LuxColors.accent : LuxColors.whiteTertiary,
+      (s) => s.contains(WidgetState.selected) ? LuxColors.accentFill : LuxColors.blackSurface,
     ),
     trackColor: WidgetStateProperty.resolveWith(
       (s) => s.contains(WidgetState.selected) ? LuxColors.accentSubtle : LuxColors.blackElevated,
+    ),
+    trackOutlineColor: WidgetStateProperty.resolveWith(
+      (s) => s.contains(WidgetState.selected) ? LuxColors.accentFill : LuxColors.blackBorder,
     ),
   ),
   popupMenuTheme: PopupMenuThemeData(
@@ -257,10 +266,16 @@ ThemeData get luxTheme {
   ),
   tooltipTheme: TooltipThemeData(
     decoration: BoxDecoration(
-      color: LuxColors.blackElevated,
+      color: LuxPalette.ink,
       borderRadius: BorderRadius.circular(LuxRadius.sm),
     ),
-    textStyle: LuxTypography.caption,
+    textStyle: LuxTypography.caption.copyWith(color: LuxPalette.snow),
+  ),
+  dialogTheme: const DialogThemeData(backgroundColor: LuxColors.blackSurface),
+  snackBarTheme: const SnackBarThemeData(
+    backgroundColor: LuxPalette.ink,
+    contentTextStyle: TextStyle(fontFamily: 'Montserrat', fontSize: 13, color: LuxPalette.snow),
+    actionTextColor: LuxPalette.champagne,
   ),
 ); // ThemeData
 } // luxTheme

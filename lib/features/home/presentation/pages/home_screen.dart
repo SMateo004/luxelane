@@ -151,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
   // ---------------------------------------------------------------------------
 
   Widget _mobileLayout() => Scaffold(
-        backgroundColor: const Color(0xFF0D1B2E),
+        backgroundColor: LuxColors.black,
         body: Stack(
           children: [
             Positioned.fill(
@@ -566,9 +566,9 @@ class _DateTimeTile extends StatelessWidget {
             lastDate: DateTime.now().add(const Duration(days: 365)),
             builder: (ctx, child) => Theme(
               data: Theme.of(ctx).copyWith(
-                colorScheme: const ColorScheme.dark(
-                  primary: LuxColors.accent,
-                  onPrimary: LuxColors.black,
+                colorScheme: const ColorScheme.light(
+                  primary: LuxColors.accentFill,
+                  onPrimary: LuxColors.onAccent,
                   surface: LuxColors.blackSurface,
                 ),
               ),

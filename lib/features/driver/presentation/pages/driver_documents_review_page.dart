@@ -215,7 +215,7 @@ class _ReviewCardState extends State<_ReviewCard> {
                         FilledButton.icon(
                           style: FilledButton.styleFrom(
                               minimumSize: const Size(0, 40),
-                              backgroundColor: LuxColors.accent, foregroundColor: LuxColors.onAccent),
+                              backgroundColor: LuxColors.accentFill, foregroundColor: LuxColors.onAccent),
                           onPressed: _approve,
                           icon: const Icon(Icons.check_rounded, size: 16),
                           label: Text(l.docReviewApprove),

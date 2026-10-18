@@ -88,17 +88,17 @@ class MaintenanceBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Material(
-        color: LuxColors.accent,
+        color: LuxColors.accentFill,
         child: Semantics(
           liveRegion: true,
           child: Padding(
             padding: EdgeInsets.fromLTRB(LuxSpacing.md, topInset + LuxSpacing.sm, LuxSpacing.md, LuxSpacing.sm),
             child: Row(children: [
-              const Icon(Icons.construction_rounded, size: 18, color: LuxColors.black),
+              const Icon(Icons.construction_rounded, size: 18, color: LuxColors.onAccent),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                 child: Text(context.l10n.maintenanceBar,
-                    style: LuxTypography.caption.copyWith(color: LuxColors.black, fontWeight: FontWeight.w600)),
+                    style: LuxTypography.caption.copyWith(color: LuxColors.onAccent, fontWeight: FontWeight.w600)),
               ),
             ]),
           ),
