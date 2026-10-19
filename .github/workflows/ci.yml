@@ -112,7 +112,7 @@ jobs:
           flutter build web --release \
             --dart-define=ENV=prod \
             --dart-define=FIREBASE_ENV=production \
-            --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
+            --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_WEB_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
             --pwa-strategy=none \
             --output=build/web_rider
@@ -143,7 +143,7 @@ jobs:
             -t lib/main_driver.dart \
             --dart-define=ENV=prod \
             --dart-define=FIREBASE_ENV=production \
-            --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
+            --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_WEB_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
             --pwa-strategy=none \
             --output=build/web_driver
@@ -185,7 +185,7 @@ jobs:
             "$ANDROID_KEY_ALIAS" "$ANDROID_KEY_PASSWORD" > android/key.properties
       - name: Build rider AAB
         env:
-          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_ANDROID_API_KEY }}
         run: |
           flutter build appbundle --release \
             --dart-define=ENV=prod \
@@ -231,7 +231,7 @@ jobs:
             "$ANDROID_KEY_ALIAS" "$ANDROID_KEY_PASSWORD" > android/key.properties
       - name: Build driver AAB
         env:
-          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_ANDROID_API_KEY }}
         run: |
           flutter build appbundle --release \
             -t lib/main_driver.dart \
@@ -261,6 +261,10 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter pub get
+      - name: iOS Maps key (from secrets)
+        env:
+          GOOGLE_MAPS_IOS_API_KEY: ${{ secrets.GOOGLE_MAPS_IOS_API_KEY }}
+        run: echo "GOOGLE_MAPS_API_KEY = $GOOGLE_MAPS_IOS_API_KEY" > ios/Flutter/Secrets.xcconfig
       - name: Build iOS rider (no-codesign)
         run: |
           flutter build ios --release --no-codesign \
@@ -290,11 +294,11 @@ jobs:
       - name: Check deploy secrets
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-          GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          GOOGLE_MAPS_WEB_API_KEY: ${{ secrets.GOOGLE_MAPS_WEB_API_KEY }}
           FCM_VAPID_KEY: ${{ secrets.FCM_VAPID_KEY }}
         run: |
           missing=0
-          for name in GCP_SA_KEY GOOGLE_MAPS_API_KEY FCM_VAPID_KEY; do
+          for name in GCP_SA_KEY GOOGLE_MAPS_WEB_API_KEY FCM_VAPID_KEY; do
             if [ -z "${!name}" ]; then
               echo "::error::Missing repository secret: $name"
               missing=1

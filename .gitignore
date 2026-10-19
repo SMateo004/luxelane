@@ -1,6 +1,8 @@
 # Local dart-define files (contain API keys — never commit)
 dart_defines.json
 *.dart_defines
+env.local.json
+ios/Flutter/Secrets.xcconfig
 
 # Firebase / secrets
 .env

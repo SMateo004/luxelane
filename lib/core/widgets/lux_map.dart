@@ -265,7 +265,7 @@ class LuxMapState extends State<LuxMap> {
 
   @override
   Widget build(BuildContext context) {
-    if (AppConfig.googleMapsKey.isEmpty) return _placeholder();
+    if (!AppConfig.hasMapsKey) return const MapsKeyMissing();
 
     return GoogleMap(
       initialCameraPosition:
@@ -285,17 +285,37 @@ class LuxMapState extends State<LuxMap> {
     );
   }
 
-  Widget _placeholder() => Container(
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+}
+
+/// Shown instead of a map when the app was built without a Google Maps key
+/// (`GOOGLE_MAPS_KEY`), so a missing key is visible instead of a blank map.
+class MapsKeyMissing extends StatelessWidget {
+  const MapsKeyMissing({super.key});
+
+  @override
+  Widget build(BuildContext context) => Container(
         color: LuxColors.surfaceMuted,
-        child: Center(
+        padding: const EdgeInsets.all(LuxSpacing.md),
+        child: const Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.map_outlined,
-                  color: LuxColors.inkTertiary, size: 48),
-              const SizedBox(height: LuxSpacing.md),
+              Icon(Icons.map_outlined, color: LuxColors.inkTertiary, size: 40),
+              SizedBox(height: LuxSpacing.sm),
               Text(
-                widget.origin != null ? widget.origin!.displayName : 'Mapa',
+                'Mapa no disponible',
+                style: LuxTypography.titleMedium,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: LuxSpacing.xs),
+              Text(
+                'Esta versión se compiló sin la clave de Google Maps '
+                '(GOOGLE_MAPS_KEY).',
                 style: LuxTypography.caption,
                 textAlign: TextAlign.center,
               ),
@@ -303,10 +323,4 @@ class LuxMapState extends State<LuxMap> {
           ),
         ),
       );
-
-  @override
-  void dispose() {
-    _controller?.dispose();
-    super.dispose();
-  }
 }

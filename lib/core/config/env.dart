@@ -2,10 +2,14 @@ enum Env { dev, prod }
 
 abstract class AppConfig {
   static const String _env = String.fromEnvironment('ENV', defaultValue: 'dev');
-  static const String googleMapsKey = String.fromEnvironment(
-    'GOOGLE_MAPS_KEY',
-    defaultValue: 'AIzaSyBbDde6GtLHy9_6qys4BMmq2P2G2INRUkM',
-  );
+
+  /// Google Maps key for the web and the Places/Directions calls. It only
+  /// comes from `--dart-define=GOOGLE_MAPS_KEY=...` (or
+  /// `--dart-define-from-file=env.local.json`); there is no built-in key.
+  /// Without it maps show `MapsKeyMissing` instead of a map.
+  static const String googleMapsKey = String.fromEnvironment('GOOGLE_MAPS_KEY');
+
+  static bool get hasMapsKey => googleMapsKey.isNotEmpty;
 
   static Env get env => _env == 'prod' ? Env.prod : Env.dev;
 

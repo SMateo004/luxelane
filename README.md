@@ -32,6 +32,12 @@ flutter run --dart-define=FIREBASE_ENV=staging
 
 Sin `FIREBASE_ENV` la app compila para staging, nunca para producción.
 
+Claves (Google Maps y demás `--dart-define`): copia `env.example.json` a
+`env.local.json` (ignorado por git), complétalo y usa
+`flutter run --dart-define-from-file=env.local.json`. No hay claves en el
+repositorio; sin la de Maps los mapas muestran un aviso. Detalle por
+plataforma en DEPLOY.md, «Claves de Google Maps».
+
 ## Desplegar
 
 - **Staging:** manual, con `--project staging`, después de pasar los tests.

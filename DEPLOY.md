@@ -94,9 +94,8 @@ Con eso **la web ya funciona**; no requiere más configuración.
 
 > Google Maps en Android: la clave va en el manifiesto vía
 > `android/app/build.gradle.kts` (variable de entorno `GOOGLE_MAPS_API_KEY`,
-> que el CI toma del secret del mismo nombre). En Google Cloud Console →
-> Credentials, si la clave está restringida, añade la app Android
-> `com.luxelane.app` con su SHA-1 y habilita *Maps SDK for Android*.
+> que el CI toma del secreto `GOOGLE_MAPS_ANDROID_API_KEY`). Ver «Claves de
+> Google Maps».
 
 > Nota: la app de pasajeros y la de chóferes comparten hoy el mismo
 > `applicationId` (`com.luxelane.app`). Para publicarlas como dos apps
@@ -111,6 +110,8 @@ Con eso **la web ya funciona**; no requiere más configuración.
    - `GOOGLE_IOS_CLIENT_ID` → `CLIENT_ID` del plist.
    - `GOOGLE_REVERSED_CLIENT_ID` → `REVERSED_CLIENT_ID` del plist.
    No son secretos (viajan dentro de la app); se pueden commitear.
+   La clave de Maps de iOS no va aquí sino en `ios/Flutter/Secrets.xcconfig`
+   (ver «Claves de Google Maps»).
 3. GitHub → Secrets → `FIREBASE_IOS_APP_ID` → `GOOGLE_APP_ID` del plist
    (`1:51157842817:ios:...`). En local:
    `flutter run --dart-define=FIREBASE_IOS_APP_ID=...`
@@ -145,30 +146,64 @@ Antes de desplegar, el CI comprueba que existan los secretos de GitHub y
 ### Flutter Android (prod)
 The native Maps SDK reads its key from the manifest, which Gradle fills from
 the `GOOGLE_MAPS_API_KEY` env var (or `MAPS_API_KEY=...` in
-`android/local.properties` for local builds). Without it the map renders blank.
+`android/local.properties` for local builds). Without it the release build
+stops. Requires `android/key.properties` (see «Firma de Android»).
 ```
-GOOGLE_MAPS_API_KEY=YOUR_KEY flutter build appbundle --release \
+GOOGLE_MAPS_API_KEY=ANDROID_SDK_KEY flutter build appbundle --release \
   --dart-define=ENV=prod \
   --dart-define=FIREBASE_ENV=production \
-  --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY \
+  --dart-define=GOOGLE_MAPS_KEY=MOBILE_REST_KEY \
   --obfuscate \
   --split-debug-info=build/debug-info
 ```
 
 ### Flutter iOS (prod)
+Requires `ios/Flutter/Secrets.xcconfig` with the iOS SDK key.
 ```
 flutter build ios --release \
   --dart-define=ENV=prod \
   --dart-define=FIREBASE_ENV=production \
-  --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
+  --dart-define=GOOGLE_MAPS_KEY=MOBILE_REST_KEY
 open ios/Runner.xcworkspace   # archive from Xcode
 ```
 
 ### Flutter Android (dev)
 ```
-# android/local.properties must contain MAPS_API_KEY=YOUR_KEY
-flutter run --dart-define=ENV=dev --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
+# android/local.properties may contain MAPS_API_KEY=ANDROID_SDK_KEY
+flutter run --dart-define-from-file=env.local.json
 ```
+
+---
+
+## Claves de Google Maps
+
+No hay ninguna clave en el repositorio. Cada plataforma usa la suya y una
+build de release sin clave se detiene con un mensaje (Android: Gradle; iOS:
+fase *Check Google Maps key*). En debug sin clave la app arranca y los mapas
+muestran «Mapa no disponible».
+
+| Dónde se usa | Cómo llega | Secreto de GitHub |
+|---|---|---|
+| SDK nativo de Android (manifiesto) | env `GOOGLE_MAPS_API_KEY` o `MAPS_API_KEY` en `android/local.properties` | `GOOGLE_MAPS_ANDROID_API_KEY` |
+| SDK nativo de iOS (`Info.plist` → `GMSApiKey`) | `ios/Flutter/Secrets.xcconfig` (ver `Secrets.xcconfig.example`) | `GOOGLE_MAPS_IOS_API_KEY` |
+| Web (Maps JavaScript y Places en el navegador) | `--dart-define=GOOGLE_MAPS_KEY=...` en la build web | `GOOGLE_MAPS_WEB_API_KEY` |
+| Llamadas REST desde Android/iOS (Places, Geocoding, Directions) | `--dart-define=GOOGLE_MAPS_KEY=...` en la build móvil | `GOOGLE_MAPS_API_KEY` |
+
+En local, las claves de Dart van en un archivo que git ignora:
+
+```
+cp env.example.json env.local.json      # completar los valores
+flutter run --dart-define-from-file=env.local.json
+flutter build web --release --dart-define-from-file=env.local.json
+```
+
+`env.local.json`, `android/local.properties`, `android/key.properties` e
+`ios/Flutter/Secrets.xcconfig` están en `.gitignore`.
+
+> La `apiKey` de Firebase web (`lib/firebase_options.dart`,
+> `web/firebase-messaging-sw.js`) es pública por diseño: identifica el
+> proyecto, no da acceso. Lo que protege los datos son las reglas de
+> Firestore/Storage y App Check.
 
 ---
 
@@ -244,7 +279,10 @@ GCP_SA_KEY              → JSON de la cuenta de servicio que despliega
 Secretos del repositorio (Settings → Secrets and variables → Actions), que
 usan los builds:
 ```
-GOOGLE_MAPS_API_KEY     → Google Cloud Console
+GOOGLE_MAPS_API_KEY         → Maps: llamadas REST de las apps móviles (ver «Claves de Google Maps»)
+GOOGLE_MAPS_WEB_API_KEY     → Maps: web
+GOOGLE_MAPS_ANDROID_API_KEY → Maps: SDK de Android
+GOOGLE_MAPS_IOS_API_KEY     → Maps: SDK de iOS
 FCM_VAPID_KEY           → Firebase → Cloud Messaging → Web Push certificates
 FIREBASE_ANDROID_APP_ID → Firebase → Project settings → app Android
 FIREBASE_IOS_APP_ID     → GoogleService-Info.plist → GOOGLE_APP_ID
