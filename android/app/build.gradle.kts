@@ -7,6 +7,11 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Builds that need the release key. Debug builds (`flutter run`,
+// `flutter build apk --debug`) do not.
+fun Gradle.buildsRelease(): Boolean =
+    startParameter.taskNames.any { it.contains("Release", ignoreCase = true) }
+
 // Google Maps key for the native SDK. CI passes it as the GOOGLE_MAPS_API_KEY
 // env var; locally, add `MAPS_API_KEY=...` to android/local.properties.
 // Falls back to the project key (same as AppConfig and the iOS xcconfig) so
@@ -19,6 +24,28 @@ val mapsApiKey: String =
     System.getenv("GOOGLE_MAPS_API_KEY")?.takeIf { it.isNotBlank() }
         ?: localProperties.getProperty("MAPS_API_KEY")?.takeIf { it.isNotBlank() }
         ?: "AIzaSyBbDde6GtLHy9_6qys4BMmq2P2G2INRUkM"
+
+// Upload key for Play. android/key.properties (never committed, see
+// key.properties.example) points to the keystore; CI writes it from secrets.
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) keystorePropertiesFile.inputStream().use { load(it) }
+}
+
+if (gradle.buildsRelease()) {
+    if (!keystorePropertiesFile.exists()) {
+        throw GradleException(
+            "Release build without android/key.properties. Create it from " +
+                "android/key.properties.example with your upload keystore (see DEPLOY.md, " +
+                "\"Firma de Android\"). Debug builds do not need it."
+        )
+    }
+    val missing = listOf("storeFile", "storePassword", "keyAlias", "keyPassword")
+        .filter { keystoreProperties.getProperty(it).isNullOrBlank() }
+    if (missing.isNotEmpty()) {
+        throw GradleException("android/key.properties is missing: ${missing.joinToString()}")
+    }
+}
 
 android {
     namespace = "com.luxelane.app"
@@ -45,11 +72,20 @@ android {
         manifestPlaceholders["mapsApiKey"] = mapsApiKey
     }
 
+    signingConfigs {
+        create("release") {
+            if (keystorePropertiesFile.exists()) {
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",

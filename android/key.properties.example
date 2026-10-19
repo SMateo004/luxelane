@@ -1,0 +1,6 @@
+# Copy to android/key.properties (ignored by git) and fill in.
+# storeFile is relative to the android/ folder.
+storeFile=../../luxelane-keys/luxelane-upload.jks
+storePassword=CAMBIAR-contrasena-del-keystore
+keyAlias=upload
+keyPassword=CAMBIAR-contrasena-de-la-clave

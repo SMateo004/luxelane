@@ -172,6 +172,45 @@ flutter run --dart-define=ENV=dev --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
 
 ---
 
+## Firma de Android
+
+La build de release se firma con la **clave de subida** (upload key) que
+indica `android/key.properties`; sin ese archivo `flutter build appbundle
+--release` se detiene con un mensaje. Las builds de debug no lo necesitan.
+
+1. Generar el keystore **una sola vez, en tu equipo, fuera del repositorio**:
+   ```
+   mkdir -p ~/luxelane-keys
+   keytool -genkeypair -v -keystore ~/luxelane-keys/luxelane-upload.jks \
+     -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+   ```
+   Guarda una copia del `.jks` y de sus contraseñas fuera del equipo (gestor
+   de contraseñas o almacenamiento cifrado). Con Play App Signing, perder la
+   clave de subida obliga a pedir a Google un restablecimiento; sin Play App
+   Signing, perderla impide publicar actualizaciones de la app.
+2. `cp android/key.properties.example android/key.properties` y completar las
+   rutas y contraseñas. `storeFile` es relativo a `android/` (o una ruta
+   absoluta). `key.properties`, `*.jks` y `*.keystore` están en
+   `android/.gitignore`.
+3. Play Console → la app → **Configuración → Integridad de la app → Firma de
+   apps de Google Play**: aceptar Play App Signing (por defecto en apps
+   nuevas). Google guarda la clave de firma de la app y tú subes los AAB con
+   la clave de subida. Ahí mismo copia los certificados SHA-1/SHA-256 de la
+   *clave de firma de la app* y de la *clave de subida* para Firebase y para
+   la restricción de la clave de Maps.
+4. CI (jobs *Build Android*): secretos del repositorio
+   ```
+   ANDROID_KEYSTORE_BASE64   → base64 -w0 ~/luxelane-keys/luxelane-upload.jks
+   ANDROID_KEYSTORE_PASSWORD → contraseña del keystore
+   ANDROID_KEY_ALIAS         → upload
+   ANDROID_KEY_PASSWORD      → contraseña de la clave
+   ```
+   (en macOS: `base64 -i ~/luxelane-keys/luxelane-upload.jks | pbcopy`).
+   El job escribe el keystore en `$RUNNER_TEMP` y genera
+   `android/key.properties` antes de compilar.
+
+---
+
 ## Migración de reservas existentes (D5/F4)
 
 `functions/scripts/migrate-booking-pii.js` mueve los datos del invitado que
@@ -211,6 +250,8 @@ FIREBASE_ANDROID_APP_ID → Firebase → Project settings → app Android
 FIREBASE_IOS_APP_ID     → GoogleService-Info.plist → GOOGLE_APP_ID
 GOOGLE_SERVER_CLIENT_ID → OAuth "Web client" del proyecto (Google Sign-In en Android)
 GOOGLE_IOS_CLIENT_ID    → GoogleService-Info.plist → CLIENT_ID
+ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
+ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD → ver «Firma de Android»
 ```
 `STRIPE_SECRET_KEY` no va en GitHub: vive en Secret Manager (paso 3).
 
