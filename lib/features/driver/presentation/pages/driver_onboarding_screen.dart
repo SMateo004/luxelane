@@ -74,7 +74,8 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
         vehicleClass: _vehicleClass,
         color: _color.text.trim(),
         capacity: _vehicleClass.capacity,
-        isActive: true,
+        // Lo activa Luxelane al verificar los documentos.
+        isActive: false,
       );
       final vehicles = sl<VehicleRepository>();
       final existing = (await vehicles.getVehicleByDriver(driverId))

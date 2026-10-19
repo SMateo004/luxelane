@@ -14,7 +14,6 @@ import '../../features/booking/data/repositories/booking_repository_impl.dart';
 import '../../features/booking/data/repositories/vehicle_repository_impl.dart';
 import '../../features/booking/domain/usecases/booking_usecases.dart';
 import '../../features/booking/presentation/bloc/booking_bloc.dart';
-import '../../features/booking/presentation/bloc/vehicle_bloc.dart';
 import '../../features/driver/presentation/bloc/driver_bloc.dart';
 import '../../features/notifications/presentation/bloc/notification_bloc.dart';
 import '../../features/payments/data/repositories/payment_repository_impl.dart';
@@ -133,7 +132,6 @@ void _registerUseCases() {
 void _registerBlocs() {
   sl.registerFactory(() => AuthBloc(authRepository: sl()));
   sl.registerFactory(() => BookingBloc(bookingRepository: sl()));
-  sl.registerFactory(() => VehicleBloc(vehicleRepository: sl()));
   sl.registerFactory(() => RideBloc(rideRepository: sl()));
   sl.registerFactory(() => PaymentBloc(paymentRepository: sl()));
   sl.registerFactory(

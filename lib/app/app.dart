@@ -7,7 +7,6 @@ import '../core/enums/enums.dart';
 import '../core/services/crash_service.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/booking/presentation/bloc/booking_bloc.dart';
-import '../features/booking/presentation/bloc/vehicle_bloc.dart';
 import '../features/driver/presentation/bloc/driver_bloc.dart';
 import '../features/payments/presentation/bloc/payment_bloc.dart';
 import '../features/profile/presentation/bloc/profile_bloc.dart';
@@ -27,7 +26,6 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
   // ── BLoCs — created once, never recreated ──────────────────────────────
   late final AuthBloc _authBloc;
   late final BookingBloc _bookingBloc;
-  late final VehicleBloc _vehicleBloc;
   late final RideBloc _rideBloc;
   late final PaymentBloc _paymentBloc;
   late final ProfileBloc _profileBloc;
@@ -43,7 +41,6 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
 
     _authBloc = sl<AuthBloc>()..add(const AuthStarted());
     _bookingBloc = sl<BookingBloc>();
-    _vehicleBloc = sl<VehicleBloc>();
     _rideBloc = sl<RideBloc>();
     _paymentBloc = sl<PaymentBloc>();
     _profileBloc = sl<ProfileBloc>();
@@ -89,7 +86,6 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
   void dispose() {
     _authBloc.close();
     _bookingBloc.close();
-    _vehicleBloc.close();
     _rideBloc.close();
     _paymentBloc.close();
     _profileBloc.close();
@@ -105,7 +101,6 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
       providers: [
         BlocProvider<AuthBloc>.value(value: _authBloc),
         BlocProvider<BookingBloc>.value(value: _bookingBloc),
-        BlocProvider<VehicleBloc>.value(value: _vehicleBloc),
         BlocProvider<RideBloc>.value(value: _rideBloc),
         BlocProvider<PaymentBloc>.value(value: _paymentBloc),
         BlocProvider<ProfileBloc>.value(value: _profileBloc),

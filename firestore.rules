@@ -298,10 +298,15 @@ service cloud.firestore {
     // /vehicles/{vehicleId}
     // -------------------------------------------------------------------------
 
+    // Datos de cada chófer (placa incluida): solo los ven él mismo y el
+    // admin; el pasajero ve el vehículo por driverInfo en su reserva. El
+    // chófer registra su vehículo inactivo: lo activa el admin al verificar.
     match /vehicles/{vehicleId} {
-      allow read:   if isAuthenticated();
+      allow read:   if isAdmin() ||
+        (isAuthenticated() && resource.data.driverId == request.auth.uid);
       allow create: if isAdmin() ||
-        (isDriver() && isOwner(request.resource.data.driverId));
+        (isDriver() && isOwner(request.resource.data.driverId) &&
+          request.resource.data.isActive == false);
       // Activar o desactivar un vehículo es decisión del admin.
       allow update: if isAdmin() || (
         isDriver() &&

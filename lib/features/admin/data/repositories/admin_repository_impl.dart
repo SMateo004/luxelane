@@ -463,6 +463,17 @@ class AdminRepositoryImpl implements AdminRepository {
       _run((batch) async {
         batch.update(_driver(driverId), {'documentsVerified': true});
         _log(batch, 'verify_driver', driverId, 'driver');
+        // El chófer registra su vehículo inactivo: verificarlo lo activa,
+        // para que empiece a recibir solicitudes sin un segundo paso.
+        final vehicles = await _db
+            .collection('vehicles')
+            .where('driverId', isEqualTo: driverId)
+            .get();
+        for (final v in vehicles.docs) {
+          if (v.data()['isActive'] == true) continue;
+          batch.update(v.reference, {'isActive': true});
+          _log(batch, 'enable_vehicle', v.id, 'vehicle');
+        }
       });
 
   @override
