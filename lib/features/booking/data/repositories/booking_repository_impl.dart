@@ -5,6 +5,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../core/utils/service_area.dart';
 
 class BookingRepositoryImpl implements BookingRepository {
   BookingRepositoryImpl({required FirebaseFirestore firestore})
@@ -20,7 +21,7 @@ class BookingRepositoryImpl implements BookingRepository {
   Future<Either<Failure, Booking>> createBooking(Booking booking) async {
     try {
       final id = _uuid.v4();
-      final data = booking.toJson()..['id'] = id;
+      final data = bookingCreateData(booking)..['id'] = id;
       // El chófer no lee perfiles ajenos: el estilo de viaje del pasajero
       // viaja con la reserva. Si no se puede leer, se reserva igual.
       try {
@@ -77,33 +78,12 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
-  Future<Either<Failure, List<Booking>>> getPendingBookings() async {
-    try {
-      final snap = await _col
-          .where('status', isEqualTo: BookingStatus.pending.label)
-          .orderBy('scheduledAt')
-          .get();
-      final bookings = snap.docs
-          .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-          .toList();
-      return Right(bookings);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
-    }
-  }
-
-  @override
-  // El filtro por estado es obligatorio: las reglas solo dejan a un chófer
-  // leer reservas pendientes, y Firestore rechaza una consulta que no lo
-  // garantice.
-  Stream<List<Booking>> streamPendingBookings() => _col
-          .where('status', isEqualTo: BookingStatus.pending.label)
-          .snapshots()
-          .map((snap) {
-        final list = snap.docs
-            .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-            .toList();
-        // Manual sort to avoid needing a composite index
+  // El chófer no lee reservas ajenas: las pendientes le llegan por
+  // openRequests, que el servidor escribe sin datos personales.
+  Stream<List<OpenRequest>> streamOpenRequests() =>
+      _db.collection('openRequests').snapshots().map((snap) {
+        final list =
+            snap.docs.map((d) => OpenRequest.fromJson(d.id, d.data())).toList();
         list.sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
         return list;
       });
@@ -187,15 +167,15 @@ class BookingRepositoryImpl implements BookingRepository {
   }) async {
     try {
       final docRef = _col.doc(bookingId);
+      // Antes de aceptar el chófer no puede leer la reserva: la solicitud
+      // abierta existe mientras siga pendiente, y las reglas comprueban de
+      // nuevo que lo esté al escribir.
+      final requestRef = _db.collection('openRequests').doc(bookingId);
       final driverRef = _db.collection('driverProfiles').doc(driverId);
       await _db.runTransaction((transaction) async {
-        final snapshot = await transaction.get(docRef);
+        final snapshot = await transaction.get(requestRef);
         final driver = await transaction.get(driverRef);
         if (!snapshot.exists) {
-          throw const _AcceptError('Esta reserva ya no existe.');
-        }
-        final currentStatus = snapshot.get('status') as String?;
-        if (currentStatus != BookingStatus.pending.label) {
           throw const _AcceptError('Otro chófer ya aceptó este viaje.');
         }
         if (driver.data()?['documentsVerified'] != true) {
@@ -222,8 +202,10 @@ class BookingRepositoryImpl implements BookingRepository {
     } on _AcceptError catch (e) {
       return Left(ValidationFailure(e.message));
     } on FirebaseException catch (e) {
+      // Verificación y disponibilidad ya se comprobaron: un rechazo aquí es
+      // casi siempre que otro chófer la tomó antes.
       return Left(ServerFailure(e.code == 'permission-denied'
-          ? 'No se pudo aceptar: tu cuenta de chófer no está habilitada.'
+          ? 'Este viaje ya no está disponible.'
           : 'No se pudo aceptar el viaje. Revisa tu conexión.'));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -254,6 +236,20 @@ class BookingRepositoryImpl implements BookingRepository {
       .snapshots()
       .where((s) => s.exists)
       .map((s) => Booking.fromJson({'id': s.id, ...s.data()!}));
+}
+
+/// Lo que se guarda al crear una reserva: además de la reserva, la zona de
+/// recogida y destino (ciudad o aeropuerto) que el servidor copia en la
+/// solicitud abierta en lugar de la dirección exacta.
+Map<String, dynamic> bookingCreateData(Booking booking) {
+  final data = booking.toJson();
+  final pickup = ServiceArea.areaLabel(booking.origin);
+  final dropoff = booking.serviceType == ServiceType.byTheHour
+      ? null
+      : ServiceArea.areaLabel(booking.destination);
+  if (pickup != null) data['pickupArea'] = pickup;
+  if (dropoff != null) data['dropoffArea'] = dropoff;
+  return data;
 }
 
 class _AcceptError implements Exception {

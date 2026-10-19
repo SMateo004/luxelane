@@ -30,9 +30,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
   /// Tracks which booking ID we're currently showing a sheet for — avoids duplicates.
   String? _activeSheetId;
 
-  void _maybeShowRequest(BuildContext context, Booking booking) {
-    if (_activeSheetId == booking.id) return;
-    _activeSheetId = booking.id;
+  void _maybeShowRequest(BuildContext context, OpenRequest request) {
+    if (_activeSheetId == request.id) return;
+    _activeSheetId = request.id;
     // Una solicitud nueva se siente en la mano, aunque no se mire la pantalla.
     LuxHaptics.warning();
 
@@ -45,12 +45,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       enableDrag: false,
       backgroundColor: Colors.transparent,
       builder: (_) => _IncomingRequestSheet(
-        booking: booking,
+        request: request,
         onAccept: () {
           final auth = context.read<AuthBloc>().state;
           if (auth is AuthAuthenticated) {
             context.read<DriverBloc>().add(DriverRequestAccepted(
-                  bookingId: booking.id,
+                  bookingId: request.id,
                   driverId: auth.user.id,
                 ));
           }
@@ -59,7 +59,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         },
         onDecline: () {
           context.read<DriverBloc>().add(
-                DriverRequestDeclined(bookingId: booking.id),
+                DriverRequestDeclined(bookingId: request.id),
               );
           if (mounted) Navigator.of(context, rootNavigator: true).pop();
           _activeSheetId = null;
@@ -841,13 +841,15 @@ class _PulseIndicatorState extends State<_PulseIndicator>
 
 // ── Incoming request sheet ─────────────────────────────────────────────────
 
+/// Solicitud antes de aceptar: zona aproximada, hora, clase y tarifa. La
+/// dirección exacta, las notas y los datos del pasajero llegan al aceptar.
 class _IncomingRequestSheet extends StatefulWidget {
   const _IncomingRequestSheet({
-    required this.booking,
+    required this.request,
     required this.onAccept,
     required this.onDecline,
   });
-  final Booking booking;
+  final OpenRequest request;
   final VoidCallback onAccept;
   final VoidCallback onDecline;
 
@@ -865,12 +867,12 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
   }
 
   Future<void> _loadRoute() async {
+    final from = widget.request.pickupApprox;
+    final to = widget.request.dropoffApprox;
+    if (from == null || to == null) return;
     try {
       final maps = GetIt.instance<MapsService>();
-      final info = await maps.getRoute(
-        origin: widget.booking.origin,
-        destination: widget.booking.destination,
-      );
+      final info = await maps.getRoute(origin: from, destination: to);
       if (mounted) setState(() => _route = info);
     } catch (e) {
       debugPrint('Map Route Error: $e');
@@ -879,15 +881,17 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final b = widget.booking;
+    final b = widget.request;
     final hourly = b.serviceType == ServiceType.byTheHour;
     final mins = b.scheduledAt.difference(DateTime.now()).inMinutes;
     final when = mins <= 45
         ? (mins <= 1 ? 'Ahora' : 'En $mins min')
         : LuxFormat.dateTime(b.scheduledAt);
-    final trip = _route == null
-        ? null
-        : '${_route!.distanceKm.toStringAsFixed(1)} km · ${_route!.durationMin} min';
+    final trip = _route != null
+        ? '~${_route!.distanceKm.toStringAsFixed(0)} km · ${_route!.durationMin} min'
+        : b.tripKm != null
+            ? '~${b.tripKm!.toStringAsFixed(0)} km'
+            : null;
     return Container(
       decoration: const BoxDecoration(
         color: LuxColors.surface,
@@ -938,21 +942,23 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              LuxFadeIn(
-                index: 1,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(LuxRadius.lg),
-                  child: SizedBox(
-                    height: 150,
-                    child: LuxMap(
-                      origin: b.origin,
-                      destination: b.destination,
-                      routeInfo: _route,
+              if (b.pickupApprox != null) ...[
+                const SizedBox(height: 20),
+                LuxFadeIn(
+                  index: 1,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(LuxRadius.lg),
+                    child: SizedBox(
+                      height: 150,
+                      child: LuxMap(
+                        origin: b.pickupApprox,
+                        destination: b.dropoffApprox,
+                        routeInfo: _route,
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
               const SizedBox(height: 12),
               LuxFadeIn(
                 index: 2,
@@ -960,15 +966,15 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                   _RouteItem(
                     icon: Icons.radio_button_checked,
                     color: LuxColors.sapphire,
-                    label: 'RECOGIDA',
-                    address: b.origin.displayName,
+                    label: 'ZONA DE RECOGIDA',
+                    address: b.pickupLabel,
                   ),
                   if (!hourly)
                     _RouteItem(
                       icon: Icons.stop_rounded,
                       color: LuxColors.ink,
-                      label: 'DESTINO',
-                      address: b.destination.displayName,
+                      label: 'ZONA DE DESTINO',
+                      address: b.dropoffLabel,
                     )
                   else
                     _RouteItem(
@@ -979,24 +985,14 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     ),
                 ]),
               ),
-              if (!b.riderPreferences.isEmpty) ...[
-                const SizedBox(height: 12),
-                RiderPreferencesNote(preferences: b.riderPreferences),
-              ],
-              if (b.flightNumber?.isNotEmpty == true) ...[
-                const SizedBox(height: 12),
-                FlightInfoCard(booking: b),
-              ],
-              if (b.notes?.isNotEmpty == true) ...[
-                const SizedBox(height: 12),
-                LuxGroup(children: [
-                  LuxListRow(
-                    icon: Icons.notes_rounded,
-                    title: 'Nota del pasajero',
-                    subtitle: b.notes,
-                  ),
-                ]),
-              ],
+              const SizedBox(height: 12),
+              Text(
+                '${b.passengerCount} pasajero${b.passengerCount == 1 ? '' : 's'}'
+                ' · ${b.luggageCount} maleta${b.luggageCount == 1 ? '' : 's'}'
+                ' · Dirección exacta y datos al aceptar',
+                textAlign: TextAlign.center,
+                style: LuxTypography.caption.copyWith(fontSize: 12),
+              ),
               const SizedBox(height: 20),
               LuxButton(
                 label: 'Aceptar viaje',

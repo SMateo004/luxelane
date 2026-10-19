@@ -124,4 +124,34 @@ void main() {
     expect(info.vehicle, 'Toyota Camry · 1234ABC');
     expect(DriverInfo.fromJson({'name': 'Luis'})!.rating, isNull);
   });
+
+  group('OpenRequest', () {
+    test('lee la solicitud abierta que escribe el servidor', () {
+      final r = OpenRequest.fromJson('b1', {
+        'vehicleClass': 'businessVan',
+        'serviceType': 'oneWay',
+        'scheduledAt': ts,
+        'estimatedPrice': 120,
+        'passengerCount': 3,
+        'pickupArea': 'Aeropuerto Internacional Viru Viru',
+        'pickupApprox': {'lat': -17.64, 'lng': -63.14},
+        'dropoffApprox': {'lat': -17.78, 'lng': -63.18},
+        'tripKm': 16.2,
+      });
+      expect(r.id, 'b1');
+      expect(r.vehicleClass, VehicleClass.businessVan);
+      expect(r.scheduledAt, now);
+      expect(r.pickupLabel, 'Aeropuerto Internacional Viru Viru');
+      expect(r.dropoffLabel, 'Zona de destino');
+      expect(r.pickupApprox?.lat, -17.64);
+      expect(r.tripKm, 16.2);
+    });
+
+    test('sin zona ni puntos aproximados no inventa una ubicación', () {
+      final r = OpenRequest.fromJson('b1', {'scheduledAt': ts});
+      expect(r.pickupApprox, isNull);
+      expect(r.dropoffApprox, isNull);
+      expect(r.pickupLabel, 'Zona de recogida');
+    });
+  });
 }

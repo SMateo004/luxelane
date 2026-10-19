@@ -237,6 +237,9 @@ abstract final class ServiceArea {
     return best;
   }
 
+  /// Zona de [p] sin la dirección exacta: el aeropuerto o la ciudad.
+  static String? areaLabel(Place p) => airportFor(p)?.name ?? cityOf(p)?.name;
+
   static ServiceAirport? airportByIata(String? iata) {
     for (final a in airports) {
       if (a.iata == iata) return a;

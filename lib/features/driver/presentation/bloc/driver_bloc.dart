@@ -170,8 +170,9 @@ class DriverLoaded extends DriverState {
   final List<Booking> bookings;
   final bool isTracking;
 
-  /// All pending bookings currently in Firestore.
-  final List<Booking> pendingRequests;
+  /// Solicitudes abiertas (sin datos personales) que ve el chófer
+  /// verificado.
+  final List<OpenRequest> pendingRequests;
 
   /// IDs of pending bookings this driver has explicitly declined this session.
   final List<String> declinedIds;
@@ -186,11 +187,14 @@ class DriverLoaded extends DriverState {
 
   /// Solicitudes que este chófer puede atender: de su clase de vehículo y
   /// sin descartar.
-  List<Booking> get matchingRequests => pendingRequests
-      .where((b) =>
-          !declinedIds.contains(b.id) &&
+  /// Una que el chófer acaba de aceptar ya está en [bookings] aunque el
+  /// servidor aún no la haya retirado.
+  List<OpenRequest> get matchingRequests => pendingRequests
+      .where((r) =>
+          !declinedIds.contains(r.id) &&
+          !bookings.any((b) => b.id == r.id) &&
           vehicleClass != null &&
-          b.vehicleClass == vehicleClass)
+          r.vehicleClass == vehicleClass)
       .toList();
 
   /// Puede aceptar viajes: conectado, verificado y sin otro viaje en curso.
@@ -198,7 +202,7 @@ class DriverLoaded extends DriverState {
       isAvailable && profile.documentsVerified && activeBooking == null;
 
   /// The next pending booking the driver can take.
-  Booking? get currentRequest {
+  OpenRequest? get currentRequest {
     if (!canAccept) return null;
     final list = matchingRequests;
     return list.isEmpty ? null : list.first;
@@ -290,7 +294,7 @@ class DriverLoaded extends DriverState {
     bool? isAvailable,
     List<Booking>? bookings,
     bool? isTracking,
-    List<Booking>? pendingRequests,
+    List<OpenRequest>? pendingRequests,
     List<String>? declinedIds,
     String? notice,
   }) =>
@@ -398,7 +402,10 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       ));
 
       add(DriverBookingsWatched(driverId: event.userId));
-      add(const DriverPendingBookingsWatched());
+      // Las solicitudes solo se leen verificado (las reglas lo exigen).
+      if (profile.documentsVerified) {
+        add(const DriverPendingBookingsWatched());
+      }
       add(DriverProfileWatched(driverId: event.userId));
       if (profile.isAvailable) {
         add(DriverLocationTrackingStarted(userId: event.userId));
@@ -450,8 +457,12 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       _userRepo.watchDriverProfile(event.driverId),
       onData: (profile) {
         if (state is! DriverLoaded || profile == null) return state;
-        return (state as DriverLoaded)
-            .copyWith(profile: profile, isAvailable: profile.isAvailable);
+        final cur = state as DriverLoaded;
+        // Recién verificado por el admin: empieza a ver solicitudes.
+        if (profile.documentsVerified && !cur.profile.documentsVerified) {
+          add(const DriverPendingBookingsWatched());
+        }
+        return cur.copyWith(profile: profile, isAvailable: profile.isAvailable);
       },
       onError: (_, __) => state,
     );
@@ -462,8 +473,8 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     DriverPendingBookingsWatched event,
     Emitter<DriverState> emit,
   ) async {
-    await emit.forEach<List<Booking>>(
-      _bookingRepo.streamPendingBookings(),
+    await emit.forEach<List<OpenRequest>>(
+      _bookingRepo.streamOpenRequests(),
       onData: (pending) {
         if (state is! DriverLoaded) return state;
         return (state as DriverLoaded).copyWith(pendingRequests: pending);

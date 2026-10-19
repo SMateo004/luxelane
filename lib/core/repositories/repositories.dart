@@ -108,8 +108,10 @@ abstract class BookingRepository {
 
   /// Reservas del pasajero en vivo, las más recientes primero.
   Stream<List<Booking>> watchBookingsByRider(String riderId);
-  Future<Either<Failure, List<Booking>>> getPendingBookings();
-  Stream<List<Booking>> streamPendingBookings();
+
+  /// Solicitudes pendientes sin datos personales (solo chóferes
+  /// verificados y activos), las más próximas primero.
+  Stream<List<OpenRequest>> streamOpenRequests();
   Stream<List<Booking>> watchDriverBookings(String driverId);
 
   /// Ubicación en vivo del chófer de la reserva (solo lat/lng). El pasajero

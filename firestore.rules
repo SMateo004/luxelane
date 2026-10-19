@@ -126,11 +126,13 @@ service cloud.firestore {
         (from == 'in_progress' && to == 'completed');
     }
 
+    // La reserva completa (direcciones, notas, preferencias, datos del
+    // pasajero) solo la leen el pasajero, el chófer asignado y el admin. Los
+    // chóferes ven las pendientes en /openRequests, sin datos personales.
     match /bookings/{bookingId} {
       allow read: if isAuthenticated() && (
         resource.data.riderId == request.auth.uid ||
-        resource.data.driverId == request.auth.uid ||
-        (resource.data.status == 'pending' && isDriver()) ||
+        resource.data.get('driverId', null) == request.auth.uid ||
         isAdmin()
       );
 
@@ -150,6 +152,9 @@ service cloud.firestore {
         request.resource.data.get('finalPrice', null) == null &&
         request.resource.data.estimatedPrice is number &&
         request.resource.data.estimatedPrice > 0 &&
+        // Zona (ciudad o aeropuerto) que el servidor copia en openRequests.
+        optionalText(request.resource.data, 'pickupArea', 80) &&
+        optionalText(request.resource.data, 'dropoffArea', 80) &&
         !request.resource.data.keys().hasAny(['settlement', 'pricingReview',
           'refunded', 'stripePaymentIntentId', 'stripePaymentMethodId',
           'cardPaymentFailed', 'driverInfo', 'riderRating']);
@@ -212,6 +217,16 @@ service cloud.firestore {
           request.resource.data.updatedAt == request.time;
         allow delete: if false;
       }
+    }
+
+    // -------------------------------------------------------------------------
+    // /openRequests/{bookingId} — lo que un chófer ve antes de aceptar: clase,
+    // hora, precio, zona aproximada. La escribe y borra el servidor.
+    // -------------------------------------------------------------------------
+
+    match /openRequests/{bookingId} {
+      allow read:  if isVerifiedDriver() || isAdmin();
+      allow write: if false;
     }
 
     // -------------------------------------------------------------------------
@@ -319,6 +334,10 @@ service cloud.firestore {
 
     function shortText(v, max) {
       return v is string && v.size() <= max;
+    }
+
+    function optionalText(d, field, max) {
+      return !(field in d) || shortText(d[field], max);
     }
 
     match /businessLeads/{id} {

@@ -75,6 +75,16 @@ Booking _makeBooking(BookingStatus status,
       refunded: refunded,
     );
 
+OpenRequest _request(String id,
+        {VehicleClass vehicleClass = VehicleClass.business}) =>
+    OpenRequest(
+      id: id,
+      vehicleClass: vehicleClass,
+      serviceType: ServiceType.oneWay,
+      scheduledAt: _now,
+      estimatedPrice: 75,
+    );
+
 void main() {
   late MockBookingRepository bookingRepo;
   late MockUserRepository userRepo;
@@ -95,7 +105,7 @@ void main() {
 
     when(() => bookingRepo.watchDriverBookings(any()))
         .thenAnswer((_) => Stream.value([]));
-    when(() => bookingRepo.streamPendingBookings())
+    when(() => bookingRepo.streamOpenRequests())
         .thenAnswer((_) => Stream.value([]));
     when(() => userRepo.getUserById(any()))
         .thenAnswer((_) async => Right(_driverUser));
@@ -298,15 +308,8 @@ void main() {
     );
 
     test('solo ofrece solicitudes de su clase y si puede aceptarlas', () {
-      final van = Booking.fromJson({
-        ..._makeBooking(BookingStatus.pending).toJson(),
-        'id': 'van',
-        'class': 'businessVan',
-      });
-      final sedan = Booking.fromJson({
-        ..._makeBooking(BookingStatus.pending).toJson(),
-        'id': 'sedan',
-      });
+      final van = _request('van', vehicleClass: VehicleClass.businessVan);
+      final sedan = _request('sedan');
       final base = DriverLoaded(
         user: _driverUser,
         profile: _driverProfile,
@@ -386,5 +389,45 @@ void main() {
         expect(withStatus(s).liveBooking, isNull);
       }
     });
+
+    test('una solicitud que ya aceptó no se le vuelve a ofrecer', () {
+      final state = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: [_makeBooking(BookingStatus.confirmed)],
+        pendingRequests: [_request('booking-1'), _request('otra')],
+        vehicleClass: VehicleClass.business,
+      );
+      expect(state.matchingRequests.map((r) => r.id), ['otra']);
+    });
+
+    blocTest<DriverBloc, DriverState>(
+      'un chófer verificado escucha las solicitudes abiertas',
+      build: bloc,
+      act: (bloc) => bloc.add(const DriverStarted(userId: 'driver-1')),
+      wait: const Duration(milliseconds: 50),
+      verify: (_) {
+        verify(() => bookingRepo.streamOpenRequests()).called(1);
+      },
+    );
+
+    blocTest<DriverBloc, DriverState>(
+      'un chófer sin verificar no pide las solicitudes (las reglas lo '
+      'rechazarían)',
+      build: () {
+        when(() => userRepo.getDriverProfile(any()))
+            .thenAnswer((_) async => Right(DriverProfile.fromJson({
+                  ..._driverProfile.toJson(),
+                  'documentsVerified': false,
+                })));
+        return bloc();
+      },
+      act: (bloc) => bloc.add(const DriverStarted(userId: 'driver-1')),
+      wait: const Duration(milliseconds: 50),
+      verify: (_) {
+        verifyNever(() => bookingRepo.streamOpenRequests());
+      },
+    );
   });
 }

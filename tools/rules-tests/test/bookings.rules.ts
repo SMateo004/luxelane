@@ -1,116 +1,131 @@
-// Prueba de humo de las reglas actuales, contra el emulador de Firestore con
-// el proyecto ficticio demo-luxelane (nunca el proyecto real).
-// RULES_PATH permite apuntar a otro archivo de reglas (prueba negativa).
-import { readFileSync } from 'fs';
-import { resolve } from 'path';
+// /bookings y /users. La reserva completa (direcciones, notas, preferencias
+// y datos del tercero) solo la leen el pasajero, el chófer asignado y el
+// admin; nunca un chófer antes de aceptar.
+import { assertFails, assertSucceeds, RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import {
-  assertFails,
-  assertSucceeds,
-  initializeTestEnvironment,
-  RulesTestEnvironment,
-} from '@firebase/rules-unit-testing';
-import {
+  collection,
   doc,
   getDoc,
+  getDocs,
+  query,
   setDoc,
   Timestamp,
   updateDoc,
+  where,
 } from 'firebase/firestore';
+import { seed, startEnv } from './setup';
 
-const PROJECT_ID = 'demo-luxelane';
-const RULES_PATH =
-  process.env.RULES_PATH ?? resolve(__dirname, '../../../firestore.rules');
 let env: RulesTestEnvironment;
+beforeAll(async () => { env = await startEnv(); });
+beforeEach(async () => { await seed(env); });
+afterAll(async () => { await env?.cleanup(); });
+
+const db = (uid: string | null) =>
+  (uid ? env.authenticatedContext(uid) : env.unauthenticatedContext()).firestore();
+const read = (uid: string | null, id: string) => getDoc(doc(db(uid), 'bookings', id));
 
 // Reserva válida según las reglas de creación, salvo por su riderId.
-function newBooking(riderId: string) {
+function newBooking(riderId: string, extra: Record<string, unknown> = {}) {
   return {
     riderId,
     status: 'pending',
     estimatedPrice: 100,
     scheduledAt: Timestamp.fromMillis(Date.now() + 60 * 60 * 1000),
+    ...extra,
   };
 }
 
-beforeAll(async () => {
-  env = await initializeTestEnvironment({
-    projectId: PROJECT_ID,
-    firestore: { rules: readFileSync(RULES_PATH, 'utf8') },
-  });
-});
-
-beforeEach(async () => {
-  await env.clearFirestore();
-  // Datos sembrados saltándose las reglas: dos pasajeros, un chófer y una
-  // reserva de Ana.
-  await env.withSecurityRulesDisabled(async (ctx) => {
-    const db = ctx.firestore();
-    for (const [uid, role] of [
-      ['ana', 'rider'],
-      ['beto', 'rider'],
-      ['carla', 'driver'],
-    ]) {
-      await setDoc(doc(db, 'users', uid), { id: uid, role, isActive: true });
-    }
-    await setDoc(doc(db, 'bookings', 'b1'), {
-      riderId: 'ana',
-      status: 'confirmed',
-      estimatedPrice: 100,
-      scheduledAt: Timestamp.now(),
-    });
-  });
-});
-
-afterAll(async () => {
-  await env?.cleanup();
-});
-
-describe('reglas de /bookings (humo)', () => {
+describe('lectura de /bookings', () => {
   test('un usuario sin sesión no puede leer una reserva', async () => {
-    const db = env.unauthenticatedContext().firestore();
-    await assertFails(getDoc(doc(db, 'bookings', 'b1')));
+    await assertFails(read(null, 'pend'));
   });
 
   test('un pasajero no puede leer la reserva de otro', async () => {
-    const db = env.authenticatedContext('beto').firestore();
-    await assertFails(getDoc(doc(db, 'bookings', 'b1')));
+    await assertFails(read('beto', 'pend'));
   });
 
   test('el pasajero dueño sí puede leer su reserva', async () => {
-    const db = env.authenticatedContext('ana').firestore();
-    await assertSucceeds(getDoc(doc(db, 'bookings', 'b1')));
+    await assertSucceeds(read('ana', 'pend'));
+    await assertSucceeds(read('ana', 'activa'));
   });
 
-  test('un chófer no puede crear una reserva a nombre de otro', async () => {
-    const db = env.authenticatedContext('carla').firestore();
-    await assertFails(setDoc(doc(db, 'bookings', 'b2'), newBooking('ana')));
+  test('un chófer no verificado no lee una reserva pendiente', async () => {
+    await assertFails(read('nover', 'pend'));
   });
 
-  test('un pasajero sí puede crear una reserva a su nombre', async () => {
-    const db = env.authenticatedContext('ana').firestore();
-    await assertSucceeds(setDoc(doc(db, 'bookings', 'b2'), newBooking('ana')));
+  test('un chófer verificado sin asignar no lee la reserva pendiente (preferencias y tercero ocultos)', async () => {
+    await assertFails(read('libre', 'pend'));
+    await assertFails(read('asig', 'pend'));
+  });
+
+  test('un chófer bloqueado no lee una reserva pendiente', async () => {
+    await assertFails(read('bloq', 'pend'));
+  });
+
+  test('un chófer no puede listar las reservas pendientes', async () => {
+    await assertFails(getDocs(query(collection(db('libre'), 'bookings'),
+      where('status', '==', 'pending'))));
+  });
+
+  test('el chófer asignado lee su reserva; otro chófer no', async () => {
+    await assertSucceeds(read('asig', 'activa'));
+    await assertFails(read('libre', 'activa'));
+  });
+
+  test('el admin lee cualquier reserva', async () => {
+    await assertSucceeds(read('admin', 'pend'));
   });
 });
 
-describe('reglas de /users (humo)', () => {
+describe('aceptar una reserva pendiente', () => {
+  const accept = (uid: string) => updateDoc(doc(db(uid), 'bookings', 'pend'), {
+    driverId: uid,
+    status: 'confirmed',
+    updatedAt: Timestamp.now(),
+  });
+
+  test('un chófer verificado la acepta y entonces ve los datos completos', async () => {
+    await assertSucceeds(accept('libre'));
+    await assertSucceeds(read('libre', 'pend'));
+  });
+
+  test('un chófer no verificado o bloqueado no la acepta', async () => {
+    await assertFails(accept('nover'));
+    await assertFails(accept('bloq'));
+  });
+});
+
+describe('creación de /bookings', () => {
+  test('un chófer no puede crear una reserva a nombre de otro', async () => {
+    await assertFails(setDoc(doc(db('libre'), 'bookings', 'b2'), newBooking('ana')));
+  });
+
+  test('un pasajero sí puede crear una reserva a su nombre', async () => {
+    await assertSucceeds(setDoc(doc(db('ana'), 'bookings', 'b2'), newBooking('ana')));
+  });
+
+  test('la zona de recogida y destino es un texto corto', async () => {
+    await assertSucceeds(setDoc(doc(db('ana'), 'bookings', 'b2'),
+      newBooking('ana', { pickupArea: 'Santa Cruz de la Sierra', dropoffArea: 'La Paz' })));
+    await assertFails(setDoc(doc(db('ana'), 'bookings', 'b3'),
+      newBooking('ana', { pickupArea: 'x'.repeat(81) })));
+  });
+});
+
+describe('reglas de /users', () => {
   test('un usuario no puede darse el rol de admin', async () => {
-    const db = env.authenticatedContext('ana').firestore();
-    await assertFails(updateDoc(doc(db, 'users', 'ana'), { role: 'admin' }));
+    await assertFails(updateDoc(doc(db('ana'), 'users', 'ana'), { role: 'admin' }));
   });
 
   test('un usuario no puede registrarse ya como admin', async () => {
-    const db = env.authenticatedContext('nuevo').firestore();
-    await assertFails(
-      setDoc(doc(db, 'users', 'nuevo'), {
-        id: 'nuevo',
-        role: 'admin',
-        isActive: true,
-      }),
-    );
+    await assertFails(setDoc(doc(db('nuevo'), 'users', 'nuevo'), {
+      id: 'nuevo',
+      role: 'admin',
+      isActive: true,
+    }));
   });
 
   test('un usuario sí puede editar sus campos no privilegiados', async () => {
-    const db = env.authenticatedContext('ana').firestore();
-    await assertSucceeds(updateDoc(doc(db, 'users', 'ana'), { name: 'Ana' }));
+    await assertSucceeds(updateDoc(doc(db('ana'), 'users', 'ana'), { name: 'Ana' }));
   });
 });

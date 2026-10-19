@@ -9,6 +9,7 @@ import { checkBookingPrice, DEFAULT_FARES, fareId, FareRule } from './pricing';
 import { computeSettlement, planBackfill, Settlement } from './settlement';
 import { rankCandidates } from './assignment';
 import { fromCents, toCents } from './money';
+import { buildOpenRequest } from './open_requests';
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -613,6 +614,14 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
     });
   }
 
+  // Lo que ven los chóferes verificados antes de aceptar, sin datos
+  // personales (la reserva completa solo la leen pasajero, chófer asignado
+  // y admin).
+  if (booking.status === 'pending') {
+    await db.collection('openRequests').doc(event.params.bookingId)
+      .set(buildOpenRequest(booking as Parameters<typeof buildOpenRequest>[0]));
+  }
+
   logger.info('onBookingCreated', 'notifying drivers', {
     bookingId: event.params.bookingId,
     vehicleClass,
@@ -690,6 +699,15 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
 // El pasajero no puede leer /users de otros: el nombre, teléfono y vehículo
 // del chófer asignado se copian a la reserva.
 // ---------------------------------------------------------------------------
+
+// Al dejar de estar pendiente (aceptada, asignada o cancelada) la solicitud
+// desaparece para los demás chóferes.
+export const closeOpenRequest = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const before = event.data?.before.data() as BookingDoc | undefined;
+  const after = event.data?.after.data() as BookingDoc | undefined;
+  if (!before || !after || before.status !== 'pending' || after.status === 'pending') return;
+  await db.collection('openRequests').doc(event.params.bookingId).delete();
+});
 
 export const publishDriverInfo = onDocumentUpdated('bookings/{bookingId}', async (event) => {
   const before = event.data?.before.data() as BookingDoc | undefined;

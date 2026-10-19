@@ -690,6 +690,99 @@ class Booking {
 }
 
 // ---------------------------------------------------------------------------
+// OpenRequest
+// ---------------------------------------------------------------------------
+
+/// Reserva pendiente tal como la ve un chófer antes de aceptarla
+/// (`openRequests/{bookingId}`, escrita por el servidor). Sin nombres,
+/// contactos, direcciones exactas, notas ni preferencias del pasajero.
+class OpenRequest {
+  const OpenRequest({
+    required this.id,
+    required this.vehicleClass,
+    required this.serviceType,
+    required this.scheduledAt,
+    required this.estimatedPrice,
+    this.hours,
+    this.passengerCount = 1,
+    this.luggageCount = 0,
+    this.pickupAirport,
+    this.flightType,
+    this.pickupArea,
+    this.dropoffArea,
+    this.pickupApprox,
+    this.dropoffApprox,
+    this.tripKm,
+  });
+
+  /// Mismo id que la reserva.
+  final String id;
+  final VehicleClass vehicleClass;
+  final ServiceType serviceType;
+  final DateTime scheduledAt;
+  final double estimatedPrice;
+  final int? hours;
+  final int passengerCount;
+  final int luggageCount;
+  final String? pickupAirport;
+  final String? flightType;
+
+  /// Ciudad o aeropuerto de recogida y de destino.
+  final String? pickupArea;
+  final String? dropoffArea;
+
+  /// Puntos redondeados a ~1 km, para el mapa y la ruta aproximada.
+  final Place? pickupApprox;
+  final Place? dropoffApprox;
+
+  /// Distancia en línea recta entre las zonas, en km.
+  final double? tripKm;
+
+  String get pickupLabel => pickupArea ?? 'Zona de recogida';
+  String get dropoffLabel => dropoffArea ?? 'Zona de destino';
+
+  static Place? _approx(Object? j, String label) {
+    if (j is! Map) return null;
+    final lat = j['lat'], lng = j['lng'];
+    if (lat is! num || lng is! num) return null;
+    return Place(
+        name: label, address: label, lat: lat.toDouble(), lng: lng.toDouble());
+  }
+
+  factory OpenRequest.fromJson(String id, Map<String, dynamic> j) {
+    final pickupArea = j['pickupArea'] as String?;
+    final dropoffArea = j['dropoffArea'] as String?;
+    return OpenRequest(
+      id: id,
+      vehicleClass: VehicleClass.values.firstWhere(
+        (e) => e.name == j['vehicleClass'],
+        orElse: () => VehicleClass.business,
+      ),
+      serviceType: ServiceType.values.firstWhere(
+        (e) => e.name == j['serviceType'],
+        orElse: () => ServiceType.oneWay,
+      ),
+      scheduledAt: j['scheduledAt'] is Timestamp
+          ? (j['scheduledAt'] as Timestamp).toDate()
+          : DateTime.now(),
+      estimatedPrice: (j['estimatedPrice'] as num?)?.toDouble() ?? 0,
+      hours: (j['hours'] as num?)?.toInt(),
+      passengerCount: (j['passengerCount'] as num?)?.toInt() ?? 1,
+      luggageCount: (j['luggageCount'] as num?)?.toInt() ?? 0,
+      pickupAirport: j['pickupAirport'] as String?,
+      flightType: j['flightType'] as String?,
+      pickupArea: pickupArea,
+      dropoffArea: dropoffArea,
+      pickupApprox:
+          _approx(j['pickupApprox'], pickupArea ?? 'Zona de recogida'),
+      dropoffApprox:
+          _approx(j['dropoffApprox'], dropoffArea ?? 'Zona de destino'),
+      tripKm: (j['tripKm'] as num?)?.toDouble(),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Ride
 // ---------------------------------------------------------------------------
 

@@ -50,9 +50,8 @@ class DriverQueueScreen extends StatelessWidget {
                 for (final b in pending)
                   Padding(
                     padding: const EdgeInsets.only(bottom: LuxSpacing.md),
-                    child: LuxFadeIn(
-                        index: i++,
-                        child: _JobCard(booking: b, isPending: true)),
+                    child:
+                        LuxFadeIn(index: i++, child: _RequestCard(request: b)),
                   ),
                 const SizedBox(height: LuxSpacing.md),
               ],
@@ -62,9 +61,7 @@ class DriverQueueScreen extends StatelessWidget {
                 for (final b in upcoming)
                   Padding(
                     padding: const EdgeInsets.only(bottom: LuxSpacing.md),
-                    child: LuxFadeIn(
-                        index: i++,
-                        child: _JobCard(booking: b, isPending: false)),
+                    child: LuxFadeIn(index: i++, child: _JobCard(booking: b)),
                   ),
               ],
             ],
@@ -75,10 +72,83 @@ class DriverQueueScreen extends StatelessWidget {
   }
 }
 
+/// Solicitud abierta: zona, hora, clase y tarifa. Los datos del pasajero y
+/// la dirección exacta se ven al aceptar.
+class _RequestCard extends StatelessWidget {
+  const _RequestCard({required this.request});
+  final OpenRequest request;
+
+  @override
+  Widget build(BuildContext context) {
+    final r = request;
+    final hourly = r.serviceType == ServiceType.byTheHour;
+    return LuxCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      hourly
+                          ? '${r.hours ?? 2} h a disposición'
+                          : r.dropoffLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.titleLarge,
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      '${LuxFormat.dateTime(r.scheduledAt)} · '
+                      'desde ${r.pickupLabel}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.caption.copyWith(fontSize: 12),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: LuxSpacing.md),
+              Text(
+                'Bs ${r.estimatedPrice.toStringAsFixed(0)}',
+                style: LuxTypography.headlineLarge.copyWith(fontSize: 24),
+              ),
+            ],
+          ),
+          const SizedBox(height: LuxSpacing.sm + 2),
+          Row(
+            children: [
+              const BookingStatusChip(status: BookingStatus.pending),
+              const SizedBox(width: LuxSpacing.sm),
+              Expanded(
+                child: Text(
+                  [
+                    r.vehicleClass.label,
+                    if (r.tripKm != null) '~${r.tripKm!.toStringAsFixed(0)} km',
+                    '${r.passengerCount} pax',
+                  ].join(' · '),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: LuxTypography.caption.copyWith(fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: LuxSpacing.md),
+          _JobActions(bookingId: r.id, isPending: true),
+        ],
+      ),
+    );
+  }
+}
+
 class _JobCard extends StatelessWidget {
-  const _JobCard({required this.booking, required this.isPending});
+  const _JobCard({required this.booking});
   final Booking booking;
-  final bool isPending;
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +208,7 @@ class _JobCard extends StatelessWidget {
             FlightInfoCard(booking: booking),
           ],
           const SizedBox(height: LuxSpacing.md),
-          _JobActions(booking: booking, isPending: isPending),
+          _JobActions(bookingId: booking.id, status: booking.status),
         ],
       ),
     );
@@ -146,8 +216,13 @@ class _JobCard extends StatelessWidget {
 }
 
 class _JobActions extends StatelessWidget {
-  const _JobActions({required this.booking, required this.isPending});
-  final Booking booking;
+  const _JobActions({
+    required this.bookingId,
+    this.status,
+    this.isPending = false,
+  });
+  final String bookingId;
+  final BookingStatus? status;
   final bool isPending;
 
   @override
@@ -174,32 +249,32 @@ class _JobActions extends StatelessWidget {
         onPressed: blocker != null
             ? null
             : () => bloc.add(DriverRequestAccepted(
-                  bookingId: booking.id,
+                  bookingId: bookingId,
                   driverId: driverId,
                 )),
       );
     }
 
-    switch (booking.status) {
+    switch (status) {
       case BookingStatus.confirmed:
         return LuxButton(
           label: 'Ir a la recogida',
           icon: Icons.navigation_rounded,
           onPressed: () =>
-              bloc.add(DriverBookingAccepted(bookingId: booking.id)),
+              bloc.add(DriverBookingAccepted(bookingId: bookingId)),
         );
       case BookingStatus.driverArriving:
         return LuxButton(
           label: 'He llegado',
           icon: Icons.where_to_vote_rounded,
           onPressed: () =>
-              bloc.add(DriverArrivedAtPickup(bookingId: booking.id)),
+              bloc.add(DriverArrivedAtPickup(bookingId: bookingId)),
         );
       case BookingStatus.driverArrived:
         return LuxButton(
           label: 'Iniciar viaje',
           icon: Icons.play_arrow_rounded,
-          onPressed: () => bloc.add(DriverTripStarted(bookingId: booking.id)),
+          onPressed: () => bloc.add(DriverTripStarted(bookingId: bookingId)),
         );
       default:
         return const SizedBox.shrink();
