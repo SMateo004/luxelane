@@ -9,12 +9,13 @@ con pagos de captura manual.
 Todo usa el proyecto ficticio `demo-luxelane`; no toca ningún proyecto real.
 
 ```
-cd functions
-npm ci
-npm run build && npm test   # tests unitarios de las funciones
-npm run emulators           # Firestore (8080) y Auth (9099) locales
-npm run test:rules          # tests de las reglas de Firestore en el emulador
+(cd functions && npm ci && npm run build && npm test)   # funciones
+(cd tools/rules-tests && npm ci)                         # herramientas de reglas
+npm run emulators     # Firestore (8080) y Auth (9099) locales
+npm run test:rules    # tests de las reglas de Firestore en el emulador
 ```
+
+Los dos últimos se ejecutan desde la raíz o desde `tools/rules-tests`.
 
 App:
 

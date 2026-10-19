@@ -127,7 +127,8 @@ Siempre **staging primero**; producción solo después, con aprobación.
 
 ### 1. Staging (desde la máquina de un responsable, nunca desde el CI)
 ```
-cd functions && npm ci && npm run build && npm test && npm run test:rules && cd ..
+(cd functions && npm ci && npm run build && npm test)
+(cd tools/rules-tests && npm ci) && npm run test:rules
 firebase deploy --only functions,firestore --project staging
 ```
 Hosting de staging: compilar la web con `--dart-define=FIREBASE_ENV=staging`
@@ -196,7 +197,7 @@ GOOGLE_IOS_CLIENT_ID    → GoogleService-Info.plist → CLIENT_ID
 
 Proyecto ficticio `demo-luxelane`; nunca toca un proyecto real.
 ```
-cd functions
+cd tools/rules-tests && npm ci && cd ../..
 npm run emulators     # Firestore y Auth locales
 npm run test:rules    # tests de reglas contra el emulador
 ```

@@ -1,0 +1,22 @@
+{
+  "name": "luxelane-rules-tests",
+  "private": true,
+  "description": "Tests de las reglas de Firestore contra el emulador (proyecto ficticio demo-luxelane).",
+  "scripts": {
+    "emulators": "firebase emulators:start --only firestore,auth --project demo-luxelane",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-luxelane \"jest\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "5.0.2",
+    "@types/jest": "29.5.14",
+    "@types/node": "22.20.5",
+    "firebase": "12.19.0",
+    "firebase-tools": "15.32.1",
+    "jest": "29.7.0",
+    "ts-jest": "29.4.14",
+    "typescript": "5.9.3"
+  },
+  "engines": {
+    "node": "22"
+  }
+}

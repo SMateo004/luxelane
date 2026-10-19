@@ -19,7 +19,7 @@ import {
 
 const PROJECT_ID = 'demo-luxelane';
 const RULES_PATH =
-  process.env.RULES_PATH ?? resolve(__dirname, '../../firestore.rules');
+  process.env.RULES_PATH ?? resolve(__dirname, '../../../firestore.rules');
 let env: RulesTestEnvironment;
 
 // Reserva válida según las reglas de creación, salvo por su riderId.
