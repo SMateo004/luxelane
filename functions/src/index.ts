@@ -13,6 +13,9 @@ import { fromCents, toCents } from './money';
 admin.initializeApp();
 const db = admin.firestore();
 
+// Funciones que llaman a Stripe: reciben la clave de Secret Manager.
+const withStripe = { secrets: [stripe.STRIPE_SECRET_KEY] };
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -129,7 +132,7 @@ async function getUserTokens(userId: string): Promise<string[]> {
 /** Margen bajo los 7 días que Stripe mantiene una autorización. */
 const HOLD_WINDOW_MS = 6 * 24 * 60 * 60 * 1000;
 
-export const createPaymentIntent = onCall(async (req) => {
+export const createPaymentIntent = onCall(withStripe, async (req) => {
   const uid = requireAuth(req);
   const { bookingId, paymentMethodId } = req.data as { bookingId: string; paymentMethodId?: string };
   if (!bookingId) throw err.invalidArgument('bookingId required');
@@ -185,7 +188,7 @@ export const createPaymentIntent = onCall(async (req) => {
 // capturePayment
 // ---------------------------------------------------------------------------
 
-export const capturePayment = onCall(async (req) => {
+export const capturePayment = onCall(withStripe, async (req) => {
   const uid = requireAuth(req);
   // El importe y el pasajero salen de la reserva, nunca del cliente.
   const { bookingId, stripePaymentIntentId } = req.data as {
@@ -276,7 +279,7 @@ async function captureBookingPayment(
 // cancela, se libera la retención en la tarjeta del pasajero.
 // ---------------------------------------------------------------------------
 
-export const captureOnCompletion = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+export const captureOnCompletion = onDocumentUpdated({ document: 'bookings/{bookingId}', ...withStripe }, async (event) => {
   const before = event.data?.before.data() as BookingDoc | undefined;
   const after = event.data?.after.data() as BookingDoc | undefined;
   if (!before || !after || before.status === after.status) return;
@@ -320,7 +323,7 @@ export const captureOnCompletion = onDocumentUpdated('bookings/{bookingId}', asy
 // refundPayment
 // ---------------------------------------------------------------------------
 
-export const refundPayment = onCall(async (req) => {
+export const refundPayment = onCall(withStripe, async (req) => {
   // Solo un admin puede reembolsar: mueve dinero y altera las finanzas.
   const adminId = await requireAdmin(req);
   const { paymentId, reason } = req.data as { paymentId: string; reason?: string };
@@ -383,7 +386,7 @@ async function requireOwnCustomer(uid: string, customerId: string): Promise<void
   }
 }
 
-export const listPaymentMethods = onCall(async (req) => {
+export const listPaymentMethods = onCall(withStripe, async (req) => {
   const uid = requireAuth(req);
   const { customerId } = req.data as { customerId: string };
   if (!customerId) throw err.invalidArgument('customerId required');
@@ -410,7 +413,7 @@ export const listPaymentMethods = onCall(async (req) => {
 // setDefaultPaymentMethod
 // ---------------------------------------------------------------------------
 
-export const setDefaultPaymentMethod = onCall(async (req) => {
+export const setDefaultPaymentMethod = onCall(withStripe, async (req) => {
   const uid = requireAuth(req);
   const { paymentMethodId } = req.data as { paymentMethodId: string };
   if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
@@ -426,7 +429,7 @@ export const setDefaultPaymentMethod = onCall(async (req) => {
 // attachPaymentMethod
 // ---------------------------------------------------------------------------
 
-export const attachPaymentMethod = onCall(async (req) => {
+export const attachPaymentMethod = onCall(withStripe, async (req) => {
   const uid = requireAuth(req);
   const { customerId, paymentMethodId } = req.data as {
     customerId: string;
@@ -443,7 +446,7 @@ export const attachPaymentMethod = onCall(async (req) => {
 // detachPaymentMethod
 // ---------------------------------------------------------------------------
 
-export const detachPaymentMethod = onCall(async (req) => {
+export const detachPaymentMethod = onCall(withStripe, async (req) => {
   const uid = requireAuth(req);
   const { paymentMethodId } = req.data as { paymentMethodId: string };
   if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
@@ -472,7 +475,7 @@ export const detachPaymentMethod = onCall(async (req) => {
 // Se borran el perfil, los avisos, el perfil de chófer, el cliente de Stripe
 // y el acceso; las reservas y pagos se conservan por obligación contable y
 // solo guardan el uid, que deja de apuntar a datos personales.
-export const deleteAccount = onCall(async (req) => {
+export const deleteAccount = onCall(withStripe, async (req) => {
   const uid = requireAuth(req);
   const userRef = db.collection('users').doc(uid);
   const user = (await userRef.get()).data();
@@ -558,7 +561,7 @@ async function ensureStripeCustomerFor(uid: string): Promise<string> {
   return kept;
 }
 
-export const createStripeCustomer = onDocumentCreated('users/{uid}', async (event) => {
+export const createStripeCustomer = onDocumentCreated({ document: 'users/{uid}', ...withStripe }, async (event) => {
   const data = event.data?.data();
   if (!data || data.role !== 'rider') return;
 
@@ -574,7 +577,7 @@ export const createStripeCustomer = onDocumentCreated('users/{uid}', async (even
 });
 
 // Perfil de pagos bajo demanda (pantalla de tarjetas y alta de tarjeta).
-export const ensureStripeCustomer = onCall(async (req) => {
+export const ensureStripeCustomer = onCall(withStripe, async (req) => {
   const uid = requireAuth(req);
   return { customerId: await ensureStripeCustomerFor(uid) };
 });
