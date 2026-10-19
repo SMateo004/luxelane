@@ -1,0 +1,130 @@
+{
+  "places": {
+    "scz_centro": {
+      "city": "Santa Cruz de la Sierra",
+      "airport": null,
+      "areaLabel": "Santa Cruz de la Sierra",
+      "originOk": true
+    },
+    "scz_equipetrol": {
+      "city": "Santa Cruz de la Sierra",
+      "airport": null,
+      "areaLabel": "Santa Cruz de la Sierra",
+      "originOk": true
+    },
+    "vvi_pin": {
+      "city": "Santa Cruz de la Sierra",
+      "airport": "VVI",
+      "areaLabel": "Aeropuerto Internacional Viru Viru",
+      "originOk": true
+    },
+    "vvi_por_nombre": {
+      "city": "Santa Cruz de la Sierra",
+      "airport": "VVI",
+      "areaLabel": "Aeropuerto Internacional Viru Viru",
+      "originOk": true
+    },
+    "av_aeropuerto": {
+      "city": "Santa Cruz de la Sierra",
+      "airport": null,
+      "areaLabel": "Santa Cruz de la Sierra",
+      "originOk": true
+    },
+    "srz": {
+      "city": "Santa Cruz de la Sierra",
+      "airport": "SRZ",
+      "areaLabel": "Aeropuerto El Trompillo",
+      "originOk": true
+    },
+    "lpz_centro": {
+      "city": "La Paz",
+      "airport": null,
+      "areaLabel": "La Paz",
+      "originOk": true
+    },
+    "el_alto_aeropuerto": {
+      "city": "La Paz",
+      "airport": "LPB",
+      "areaLabel": "Aeropuerto Internacional El Alto",
+      "originOk": true
+    },
+    "cbba": {
+      "city": "Cochabamba",
+      "airport": null,
+      "areaLabel": "Cochabamba",
+      "originOk": true
+    },
+    "uyuni_aeropuerto": {
+      "city": null,
+      "airport": "UYU",
+      "areaLabel": "Aeropuerto Joya Andina",
+      "originOk": true
+    },
+    "uyuni_pueblo": {
+      "city": null,
+      "airport": null,
+      "areaLabel": null,
+      "originOk": false
+    },
+    "fuera": {
+      "city": null,
+      "airport": null,
+      "areaLabel": null,
+      "originOk": false
+    },
+    "sin_coords": {
+      "city": null,
+      "airport": null,
+      "areaLabel": null,
+      "originOk": false
+    },
+    "aerodromo_tilde": {
+      "city": "Santa Cruz de la Sierra",
+      "airport": "SRZ",
+      "areaLabel": "Aeropuerto El Trompillo",
+      "originOk": true
+    }
+  },
+  "trips": [
+    {
+      "from": "scz_centro",
+      "to": "scz_equipetrol",
+      "destinationOk": true
+    },
+    {
+      "from": "vvi_pin",
+      "to": "scz_centro",
+      "destinationOk": true
+    },
+    {
+      "from": "scz_centro",
+      "to": "lpz_centro",
+      "destinationOk": false
+    },
+    {
+      "from": "el_alto_aeropuerto",
+      "to": "lpz_centro",
+      "destinationOk": true
+    },
+    {
+      "from": "uyuni_aeropuerto",
+      "to": "uyuni_pueblo",
+      "destinationOk": true
+    },
+    {
+      "from": "fuera",
+      "to": "scz_centro",
+      "destinationOk": false
+    },
+    {
+      "from": "cbba",
+      "to": "srz",
+      "destinationOk": false
+    },
+    {
+      "from": "srz",
+      "to": "scz_equipetrol",
+      "destinationOk": true
+    }
+  ]
+}

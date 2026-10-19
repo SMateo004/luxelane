@@ -1,0 +1,28 @@
+{
+  "places": [
+    {"id": "scz_centro", "name": "", "address": "Plaza 24 de Septiembre", "lat": -17.7834, "lng": -63.1821},
+    {"id": "scz_equipetrol", "name": "Equipetrol", "address": "Av. San Martín", "lat": -17.7650, "lng": -63.1960},
+    {"id": "vvi_pin", "name": "", "address": "Viru Viru", "lat": -17.6447, "lng": -63.1353},
+    {"id": "vvi_por_nombre", "name": "Aeropuerto Internacional Viru Viru", "address": "Warnes", "lat": -17.6600, "lng": -63.1500},
+    {"id": "av_aeropuerto", "name": "Av. Aeropuerto", "address": "Av. Aeropuerto, Santa Cruz", "lat": -17.7700, "lng": -63.1700},
+    {"id": "srz", "name": "", "address": "El Trompillo", "lat": -17.8117, "lng": -63.1717},
+    {"id": "lpz_centro", "name": "", "address": "Plaza Murillo", "lat": -16.4958, "lng": -68.1336},
+    {"id": "el_alto_aeropuerto", "name": "Aeropuerto Internacional El Alto", "address": "El Alto", "lat": -16.5131, "lng": -68.1922},
+    {"id": "cbba", "name": "", "address": "Plaza 14 de Septiembre", "lat": -17.3935, "lng": -66.1570},
+    {"id": "uyuni_aeropuerto", "name": "Aeropuerto Joya Andina", "address": "Uyuni", "lat": -20.4464, "lng": -66.8486},
+    {"id": "uyuni_pueblo", "name": "", "address": "Uyuni centro", "lat": -20.4600, "lng": -66.8250},
+    {"id": "fuera", "name": "", "address": "Ruta 4, km 300", "lat": -18.5000, "lng": -64.5000},
+    {"id": "sin_coords", "name": "Hotel", "address": "Sin coordenadas", "lat": 0, "lng": 0},
+    {"id": "aerodromo_tilde", "name": "Aeródromo de prueba", "address": "Santa Cruz", "lat": -17.8000, "lng": -63.1700}
+  ],
+  "trips": [
+    ["scz_centro", "scz_equipetrol"],
+    ["vvi_pin", "scz_centro"],
+    ["scz_centro", "lpz_centro"],
+    ["el_alto_aeropuerto", "lpz_centro"],
+    ["uyuni_aeropuerto", "uyuni_pueblo"],
+    ["fuera", "scz_centro"],
+    ["cbba", "srz"],
+    ["srz", "scz_equipetrol"]
+  ]
+}
