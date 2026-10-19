@@ -2,6 +2,9 @@
 
 Estas reglas valen para todas las sesiones de trabajo en este repositorio.
 
+**Plan de trabajo:** `docs/AUDITORIA_LUXLANE.md`. Los hallazgos D1–D15 y las
+tareas #1–#17 que se mencionan en las sesiones salen de ese archivo.
+
 ## Ramas y despliegues
 
 - Se trabaja solo en ramas. Nada se mezcla a `main` sin autorización
