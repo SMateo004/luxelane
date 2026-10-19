@@ -429,5 +429,20 @@ void main() {
         verifyNever(() => bookingRepo.streamOpenRequests());
       },
     );
+
+    blocTest<DriverBloc, DriverState>(
+      'un chófer bloqueado (isActive == false) no pide las solicitudes '
+      'aunque esté verificado',
+      build: () {
+        when(() => userRepo.getUserById(any())).thenAnswer(
+            (_) async => Right(_driverUser.copyWith(isActive: false)));
+        return bloc();
+      },
+      act: (bloc) => bloc.add(const DriverStarted(userId: 'driver-1')),
+      wait: const Duration(milliseconds: 50),
+      verify: (_) {
+        verifyNever(() => bookingRepo.streamOpenRequests());
+      },
+    );
   });
 }

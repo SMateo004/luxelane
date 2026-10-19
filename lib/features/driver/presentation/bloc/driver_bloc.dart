@@ -402,8 +402,9 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       ));
 
       add(DriverBookingsWatched(driverId: event.userId));
-      // Las solicitudes solo se leen verificado (las reglas lo exigen).
-      if (profile.documentsVerified) {
+      // Las solicitudes solo se leen verificado y con la cuenta activa (las
+      // reglas lo exigen).
+      if (profile.documentsVerified && user.isActive) {
         add(const DriverPendingBookingsWatched());
       }
       add(DriverProfileWatched(driverId: event.userId));
@@ -459,7 +460,9 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
         if (state is! DriverLoaded || profile == null) return state;
         final cur = state as DriverLoaded;
         // Recién verificado por el admin: empieza a ver solicitudes.
-        if (profile.documentsVerified && !cur.profile.documentsVerified) {
+        if (profile.documentsVerified &&
+            !cur.profile.documentsVerified &&
+            cur.user.isActive) {
           add(const DriverPendingBookingsWatched());
         }
         return cur.copyWith(profile: profile, isAvailable: profile.isAvailable);
