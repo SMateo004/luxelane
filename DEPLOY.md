@@ -172,6 +172,27 @@ flutter run --dart-define=ENV=dev --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
 
 ---
 
+## Migración de reservas existentes (D5/F4)
+
+`functions/scripts/migrate-booking-pii.js` mueve los datos del invitado que
+la app antigua guardaba en `notes` al campo `guest`, y crea `openRequests`
+para las reservas pendientes. **Por defecto es DRY-RUN**: informa qué haría
+con cada reserva (sin mostrar datos personales) y no escribe nada.
+
+Orden: desplegar functions y reglas en el proyecto, luego migrar, luego
+publicar la app. Siempre staging primero.
+
+```
+cd functions && npm ci && npm run build
+gcloud auth application-default login            # credenciales con acceso al proyecto
+node scripts/migrate-booking-pii.js --project <ID_STAGING>            # dry-run
+node scripts/migrate-booking-pii.js --project <ID_STAGING> --apply    # escribe
+```
+Repetir en producción solo después de revisar staging. Una segunda pasada
+no encuentra nada que cambiar.
+
+---
+
 ## GitHub Secrets Required
 
 Secreto del entorno `production` (Settings → Environments → production),

@@ -4,7 +4,8 @@
     "build": "tsc",
     "test": "jest --passWithNoTests",
     "serve": "npm run build && firebase emulators:start --only functions",
-    "deploy": "firebase deploy --only functions"
+    "deploy": "firebase deploy --only functions",
+    "migrate:booking-pii": "npm run build && node scripts/migrate-booking-pii.js"
   },
   "main": "lib/index.js",
   "dependencies": {
