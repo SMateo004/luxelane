@@ -700,12 +700,16 @@ export const publishDriverInfo = onDocumentUpdated('bookings/{bookingId}', async
     await event.data!.after.ref.update({ driverInfo: admin.firestore.FieldValue.delete() });
     return;
   }
-  const [userSnap, vehicleSnap] = await Promise.all([
+  // El pasajero ya no lee driverProfiles: lo que necesita ver del chófer
+  // (nombre, foto, vehículo, placa y valoración) se copia aquí.
+  const [userSnap, vehicleSnap, profileSnap] = await Promise.all([
     db.collection('users').doc(after.driverId).get(),
     db.collection('vehicles').where('driverId', '==', after.driverId).limit(1).get(),
+    db.collection('driverProfiles').doc(after.driverId).get(),
   ]);
   const u = userSnap.data() ?? {};
   const v = vehicleSnap.docs[0]?.data();
+  const rating = profileSnap.data()?.rating;
   await event.data!.after.ref.update({
     driverInfo: {
       name: u.displayName ?? '',
@@ -714,6 +718,7 @@ export const publishDriverInfo = onDocumentUpdated('bookings/{bookingId}', async
       vehicle: v
         ? { make: v.make ?? '', model: v.model ?? '', plate: v.plate ?? '', color: v.color ?? '' }
         : null,
+      rating: typeof rating === 'number' ? rating : null,
     },
   });
 });

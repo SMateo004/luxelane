@@ -420,11 +420,15 @@ class DriverInfo {
     this.phone = '',
     this.photoUrl,
     this.vehicle,
+    this.rating,
   });
 
   final String name;
   final String phone;
   final String? photoUrl;
+
+  /// Valoración media del chófer al asignarlo (copiada por el servidor).
+  final double? rating;
 
   /// "Toyota Camry · Negro · 1234ABC", o null si no hay vehículo.
   final String? vehicle;
@@ -446,6 +450,7 @@ class DriverInfo {
       phone: (j['phone'] as String?) ?? '',
       photoUrl: j['photoUrl'] as String?,
       vehicle: vehicle,
+      rating: (j['rating'] as num?)?.toDouble(),
     );
   }
 }

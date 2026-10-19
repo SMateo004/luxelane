@@ -33,6 +33,14 @@ service cloud.firestore {
         .data.get('isActive', true) == true;
     }
 
+    // Chófer habilitado para ver solicitudes: verificado por el admin y con
+    // la cuenta activa (no bloqueada).
+    function isVerifiedDriver() {
+      return isDriver() && isActiveUser() &&
+        get(/databases/$(database)/documents/driverProfiles/$(request.auth.uid))
+          .data.get('documentsVerified', false) == true;
+    }
+
     function isOwner(uid) {
       return request.auth != null && request.auth.uid == uid;
     }
@@ -91,8 +99,11 @@ service cloud.firestore {
       return ['documentsVerified', 'rating', 'ratingCount', 'totalRides'];
     }
 
+    // Licencia, documentos y verificación solo los ven el propio chófer y
+    // el admin. El pasajero ve al chófer por `driverInfo` en su reserva y
+    // por `bookings/{id}/tracking/driver`.
     match /driverProfiles/{uid} {
-      allow read:   if isAuthenticated();
+      allow read:   if isOwner(uid) || isAdmin();
       allow create: if isOwner(uid) && isDriver() &&
         !request.resource.data.keys().hasAny(driverManagedFields());
       allow update: if isAdmin() || (isOwner(uid) && isDriver() &&
@@ -175,6 +186,32 @@ service cloud.firestore {
           request.resource.data.riderRating <= 5);
 
       allow delete: if false;
+
+      // Ubicación en vivo del chófer asignado: solo lat/lng. El pasajero la
+      // ve únicamente mientras el chófer va, espera o lo lleva.
+      match /tracking/{docId} {
+        function booking() {
+          return get(/databases/$(database)/documents/bookings/$(bookingId)).data;
+        }
+        function isLive(status) {
+          return status in ['driver_arriving', 'driver_arrived', 'in_progress'];
+        }
+
+        allow read: if isAuthenticated() && (
+          (booking().riderId == request.auth.uid && isLive(booking().status)) ||
+          booking().get('driverId', null) == request.auth.uid ||
+          isAdmin()
+        );
+        allow create, update: if docId == 'driver' &&
+          isDriver() && isActiveUser() &&
+          booking().get('driverId', null) == request.auth.uid &&
+          isLive(booking().status) &&
+          request.resource.data.keys().hasOnly(['lat', 'lng', 'updatedAt']) &&
+          request.resource.data.lat is number &&
+          request.resource.data.lng is number &&
+          request.resource.data.updatedAt == request.time;
+        allow delete: if false;
+      }
     }
 
     // -------------------------------------------------------------------------

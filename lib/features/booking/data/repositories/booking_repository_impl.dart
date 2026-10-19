@@ -120,6 +120,32 @@ class BookingRepositoryImpl implements BookingRepository {
       });
 
   @override
+  Stream<GeoPoint?> watchDriverLocation(String bookingId) => _col
+          .doc(bookingId)
+          .collection('tracking')
+          .doc('driver')
+          .snapshots()
+          .map((s) {
+        final d = s.data();
+        final lat = d?['lat'], lng = d?['lng'];
+        return lat is num && lng is num
+            ? GeoPoint(lat.toDouble(), lng.toDouble())
+            : null;
+      });
+
+  @override
+  Future<void> publishDriverLocation({
+    required String bookingId,
+    required double latitude,
+    required double longitude,
+  }) =>
+      _col.doc(bookingId).collection('tracking').doc('driver').set({
+        'lat': latitude,
+        'lng': longitude,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+
+  @override
   Future<Either<Failure, void>> updateBookingStatus({
     required String bookingId,
     required BookingStatus status,

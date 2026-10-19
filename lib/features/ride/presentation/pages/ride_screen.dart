@@ -165,27 +165,50 @@ class _RideScreenState extends State<RideScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final driverId = _booking?.driverId;
-    return driverId != null
-        ? StreamBuilder<DriverProfile?>(
-            stream: sl<UserRepository>().watchDriverProfile(driverId),
-            builder: (context, snap) =>
-                _buildScaffold(snap.data?.currentLocation, snap.data),
-          )
-        : _buildScaffold(null, null);
+  /// El chófer va, espera o lleva al pasajero: solo entonces se puede leer
+  /// su ubicación en vivo.
+  bool get _driverLive => const {
+        BookingStatus.driverArriving,
+        BookingStatus.driverArrived,
+        BookingStatus.inProgress,
+      }.contains(_status);
+
+  Stream<GeoPoint?>? _locationStream;
+  bool _locationLive = false;
+
+  /// Una sola suscripción mientras el viaje está activo; fuera de ese tramo
+  /// las reglas la rechazarían.
+  Stream<GeoPoint?>? get _driverLocation {
+    final live = _driverLive && widget.rideId.isNotEmpty;
+    if (live != _locationLive) {
+      _locationLive = live;
+      _locationStream = live
+          ? sl<BookingRepository>()
+              .watchDriverLocation(widget.rideId)
+              .handleError((_) {})
+          : null;
+    }
+    return _locationStream;
   }
 
-  Widget _buildScaffold(GeoPoint? driverGeo, DriverProfile? profile) {
+  @override
+  Widget build(BuildContext context) {
+    final location = _driverLocation;
+    return location != null
+        ? StreamBuilder<GeoPoint?>(
+            stream: location,
+            builder: (context, snap) => _buildScaffold(snap.data),
+          )
+        : _buildScaffold(null);
+  }
+
+  Widget _buildScaffold(GeoPoint? driverGeo) {
     final driverLatLng = driverGeo != null
         ? LatLng(driverGeo.latitude, driverGeo.longitude)
         : null;
     final web = isWeb(context);
     return Scaffold(
-      body: web
-          ? _webLayout(driverLatLng, profile)
-          : _mobileLayout(driverLatLng, profile),
+      body: web ? _webLayout(driverLatLng) : _mobileLayout(driverLatLng),
     );
   }
 
@@ -221,21 +244,21 @@ class _RideScreenState extends State<RideScreen> {
     );
   }
 
-  Widget _driverSection(DriverProfile? profile) {
+  Widget _driverSection() {
     final d = _driver;
     if (_status == BookingStatus.cancelled) return const SizedBox.shrink();
     if (d == null) return const _AssigningCard();
     final b = _booking!;
     return DriverCard(
       name: d.name.isNotEmpty ? d.name : 'Tu chófer',
-      rating: profile?.rating ?? 5.0,
+      rating: d.rating ?? 5.0,
       vehicle: d.vehicle ??
           '${b.vehicleClass.label} · ${b.vehicleClass.description}',
       photoUrl: d.photoUrl,
     );
   }
 
-  Widget _mobileLayout(LatLng? driverLatLng, DriverProfile? profile) => Stack(
+  Widget _mobileLayout(LatLng? driverLatLng) => Stack(
         children: [
           _MapArea(
             booking: _booking,
@@ -249,7 +272,7 @@ class _RideScreenState extends State<RideScreen> {
                 _BottomPanel(
                   status: _status ?? BookingStatus.pending,
                   message: _statusMessage,
-                  driver: _driverSection(profile),
+                  driver: _driverSection(),
                   actions: _actions(),
                   preferences:
                       _booking?.riderPreferences ?? RidePreferences.none,
@@ -260,7 +283,7 @@ class _RideScreenState extends State<RideScreen> {
         ],
       );
 
-  Widget _webLayout(LatLng? driverLatLng, DriverProfile? profile) => Row(
+  Widget _webLayout(LatLng? driverLatLng) => Row(
         children: [
           Expanded(
             child: _MapArea(
@@ -284,7 +307,7 @@ class _RideScreenState extends State<RideScreen> {
                         children: [
                           Text(_statusMessage, style: LuxTypography.bodyMedium),
                           const SizedBox(height: LuxSpacing.lg),
-                          _driverSection(profile),
+                          _driverSection(),
                           const Spacer(),
                           _actions(),
                         ],

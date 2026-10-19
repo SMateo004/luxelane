@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart' show GeoPoint;
 import 'package:dartz/dartz.dart';
 
 import '../enums/enums.dart';
@@ -110,6 +111,17 @@ abstract class BookingRepository {
   Future<Either<Failure, List<Booking>>> getPendingBookings();
   Stream<List<Booking>> streamPendingBookings();
   Stream<List<Booking>> watchDriverBookings(String driverId);
+
+  /// Ubicación en vivo del chófer de la reserva (solo lat/lng). El pasajero
+  /// solo puede leerla mientras el viaje está activo.
+  Stream<GeoPoint?> watchDriverLocation(String bookingId);
+
+  /// El chófer asignado publica su posición durante el viaje activo.
+  Future<void> publishDriverLocation({
+    required String bookingId,
+    required double latitude,
+    required double longitude,
+  });
   Future<Either<Failure, void>> updateBookingStatus({
     required String bookingId,
     required BookingStatus status,

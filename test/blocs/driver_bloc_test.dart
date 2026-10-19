@@ -362,5 +362,29 @@ void main() {
       expect(state.totalEarnings, 60.0);
       expect(state.totalCommission, 15.0);
     });
+
+    test('solo comparte ubicación en la reserva mientras el viaje está activo',
+        () {
+      DriverLoaded withStatus(BookingStatus s) => DriverLoaded(
+            user: _driverUser,
+            profile: _driverProfile,
+            isAvailable: true,
+            bookings: [_makeBooking(s)],
+          );
+      for (final s in [
+        BookingStatus.driverArriving,
+        BookingStatus.driverArrived,
+        BookingStatus.inProgress,
+      ]) {
+        expect(withStatus(s).liveBooking?.id, 'booking-1');
+      }
+      for (final s in [
+        BookingStatus.confirmed,
+        BookingStatus.completed,
+        BookingStatus.cancelled,
+      ]) {
+        expect(withStatus(s).liveBooking, isNull);
+      }
+    });
   });
 }

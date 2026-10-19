@@ -229,6 +229,19 @@ class DriverLoaded extends DriverState {
     return null;
   }
 
+  /// Viaje en el que el pasajero sigue al chófer en el mapa: de camino a la
+  /// recogida hasta el final del trayecto.
+  Booking? get liveBooking {
+    for (final b in bookings) {
+      if (b.status == BookingStatus.driverArriving ||
+          b.status == BookingStatus.driverArrived ||
+          b.status == BookingStatus.inProgress) {
+        return b;
+      }
+    }
+    return null;
+  }
+
   List<Booking> get completedBookings =>
       bookings.where((b) => b.status == BookingStatus.completed).toList();
 
@@ -545,6 +558,18 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       latitude: event.lat,
       longitude: event.lng,
     );
+    // El pasajero ve la posición en su reserva, no en el perfil del chófer.
+    final live =
+        state is DriverLoaded ? (state as DriverLoaded).liveBooking : null;
+    if (live != null) {
+      try {
+        await _bookingRepo.publishDriverLocation(
+          bookingId: live.id,
+          latitude: event.lat,
+          longitude: event.lng,
+        );
+      } catch (_) {}
+    }
   }
 
   void _onLocationDenied(
