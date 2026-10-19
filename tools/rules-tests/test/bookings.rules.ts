@@ -95,39 +95,52 @@ describe('aceptar una reserva pendiente', () => {
   });
 });
 
-describe('creación de /bookings', () => {
+describe('creación de /bookings (solo el servidor, createBooking)', () => {
+  test('un pasajero no puede crear una reserva, ni con precio ni sin él', async () => {
+    await assertFails(setDoc(doc(db('ana'), 'bookings', 'b2'), newBooking('ana')));
+    const { estimatedPrice: _p, ...sinPrecio } = newBooking('ana');
+    await assertFails(setDoc(doc(db('ana'), 'bookings', 'b3'), sinPrecio));
+  });
+
   test('un chófer no puede crear una reserva a nombre de otro', async () => {
     await assertFails(setDoc(doc(db('libre'), 'bookings', 'b2'), newBooking('ana')));
   });
 
-  test('un pasajero sí puede crear una reserva a su nombre', async () => {
-    await assertSucceeds(setDoc(doc(db('ana'), 'bookings', 'b2'), newBooking('ana')));
+  test('ni siquiera el admin crea reservas desde la app', async () => {
+    await assertFails(setDoc(doc(db('admin'), 'bookings', 'b2'), newBooking('ana')));
+  });
+});
+
+describe('el precio de una reserva no se toca desde la app', () => {
+  const ref = (uid: string, id: string) => doc(db(uid), 'bookings', id);
+
+  test('el pasajero no cambia estimatedPrice ni pricing', async () => {
+    await assertFails(updateDoc(ref('ana', 'pend'), { estimatedPrice: 1 }));
+    await assertFails(updateDoc(ref('ana', 'pend'), { pricing: { source: 'client' } }));
+    await assertFails(updateDoc(ref('ana', 'pend'),
+      { status: 'cancelled', estimatedPrice: 1, updatedAt: Timestamp.now() }));
   });
 
-  test('los datos del tercero van en guest con campos acotados', async () => {
-    const guest = { title: 'Sra.', firstName: 'Carla', phone: '+59170000001', language: 'Español' };
-    await assertSucceeds(setDoc(doc(db('ana'), 'bookings', 'b2'), newBooking('ana', { guest })));
-    await assertFails(setDoc(doc(db('ana'), 'bookings', 'b3'),
-      newBooking('ana', { guest: { ...guest, passport: 'X123' } })));
-    await assertFails(setDoc(doc(db('ana'), 'bookings', 'b4'),
-      newBooking('ana', { guest: { ...guest, firstName: '' } })));
+  test('el chófer no cambia el precio al aceptar ni durante el viaje', async () => {
+    await assertFails(updateDoc(ref('libre', 'pend'),
+      { driverId: 'libre', status: 'confirmed', estimatedPrice: 1, updatedAt: Timestamp.now() }));
+    await assertFails(updateDoc(ref('asig', 'activa'),
+      { status: 'driver_arrived', pricing: {}, updatedAt: Timestamp.now() }));
   });
 
-  test('una reserva nueva no puede guardar el correo del invitado', async () => {
-    await assertFails(setDoc(doc(db('ana'), 'bookings', 'b5'),
-      newBooking('ana', { guest: { firstName: 'Carla', email: 'carla@example.com' } })));
+  test('la app no escribe openRequests', async () => {
+    await assertFails(setDoc(doc(db('ana'), 'openRequests', 'pend'), { estimatedPrice: 1 }));
   });
+});
 
-  test('el pasajero no puede cambiar los datos del tercero después', async () => {
-    await assertFails(updateDoc(doc(db('ana'), 'bookings', 'pend'),
-      { 'guest.phone': '+59170000999' }));
-  });
-
-  test('la zona de recogida y destino es un texto corto', async () => {
-    await assertSucceeds(setDoc(doc(db('ana'), 'bookings', 'b2'),
-      newBooking('ana', { pickupArea: 'Santa Cruz de la Sierra', dropoffArea: 'La Paz' })));
-    await assertFails(setDoc(doc(db('ana'), 'bookings', 'b3'),
-      newBooking('ana', { pickupArea: 'x'.repeat(81) })));
+describe('/adminAlerts', () => {
+  test('solo el admin lee las alertas y nadie las escribe desde la app', async () => {
+    await env.withSecurityRulesDisabled((ctx) =>
+      setDoc(doc(ctx.firestore(), 'adminAlerts', 'a1'), { type: 'distance_fallback' }));
+    await assertSucceeds(getDoc(doc(db('admin'), 'adminAlerts', 'a1')));
+    await assertFails(getDoc(doc(db('ana'), 'adminAlerts', 'a1')));
+    await assertFails(getDoc(doc(db('asig'), 'adminAlerts', 'a1')));
+    await assertFails(setDoc(doc(db('admin'), 'adminAlerts', 'a2'), { type: 'x' }));
   });
 });
 

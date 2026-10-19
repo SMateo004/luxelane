@@ -136,32 +136,9 @@ service cloud.firestore {
         isAdmin()
       );
 
-      // Any authenticated user can create a booking for themselves
-      // El reparto y la revisión de tarifa solo los escribe el servidor.
-      // Nace pendiente, sin chófer ni cobro: esos campos los escriben el
-      // chófer al aceptar, el admin y el servidor.
-      allow create: if isAuthenticated() &&
-        isActiveUser() &&
-        request.resource.data.riderId == request.auth.uid &&
-        request.resource.data.status == 'pending' &&
-        // Sin recogidas en el pasado (margen para la recogida inmediata).
-        request.resource.data.scheduledAt is timestamp &&
-        request.resource.data.scheduledAt > request.time - duration.value(15, 'm') &&
-        request.resource.data.get('driverId', null) == null &&
-        request.resource.data.get('paymentId', null) == null &&
-        request.resource.data.get('finalPrice', null) == null &&
-        request.resource.data.estimatedPrice is number &&
-        request.resource.data.estimatedPrice > 0 &&
-        // Zona (ciudad o aeropuerto) que el servidor copia en openRequests.
-        optionalText(request.resource.data, 'pickupArea', 80) &&
-        optionalText(request.resource.data, 'dropoffArea', 80) &&
-        // Pasajero de una reserva para otra persona: campos acotados, nunca
-        // mezclados con las notas.
-        (!('guest' in request.resource.data) ||
-          validGuest(request.resource.data.guest)) &&
-        !request.resource.data.keys().hasAny(['settlement', 'pricingReview',
-          'refunded', 'stripePaymentIntentId', 'stripePaymentMethodId',
-          'cardPaymentFailed', 'driverInfo', 'riderRating']);
+      // Solo el servidor crea reservas (createBooking): calcula el precio y
+      // escribe la reserva y su solicitud abierta en una transacción (D2).
+      allow create: if false;
 
       allow update: if isAdmin() ||
         // Driver accepts a pending booking (self-assign)
@@ -363,21 +340,6 @@ service cloud.firestore {
       return v is string && v.size() <= max;
     }
 
-    function optionalText(d, field, max) {
-      return !(field in d) || shortText(d[field], max);
-    }
-
-    function validGuest(g) {
-      return g is map &&
-        // Sin correo: no se pide (minimización de datos).
-        g.keys().hasOnly(['title', 'firstName', 'lastName', 'phone',
-          'language']) &&
-        shortText(g.firstName, 80) && g.firstName.size() > 0 &&
-        optionalText(g, 'title', 20) &&
-        optionalText(g, 'lastName', 80) &&
-        optionalText(g, 'phone', 40) &&
-        optionalText(g, 'language', 40);
-    }
 
     match /businessLeads/{id} {
       allow create: if
@@ -396,6 +358,17 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow update: if isAdmin() && onlyUpdating(['handled']);
       allow delete: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // /adminAlerts/{alertId} — avisos del servidor al admin (precio con
+    // distancia aproximada, reconciliación de solicitudes). Solo el servidor
+    // los escribe.
+    // -------------------------------------------------------------------------
+
+    match /adminAlerts/{alertId} {
+      allow read:  if isAdmin();
+      allow write: if false;
     }
 
     // -------------------------------------------------------------------------
