@@ -155,6 +155,10 @@ service cloud.firestore {
         // Zona (ciudad o aeropuerto) que el servidor copia en openRequests.
         optionalText(request.resource.data, 'pickupArea', 80) &&
         optionalText(request.resource.data, 'dropoffArea', 80) &&
+        // Pasajero de una reserva para otra persona: campos acotados, nunca
+        // mezclados con las notas.
+        (!('guest' in request.resource.data) ||
+          validGuest(request.resource.data.guest)) &&
         !request.resource.data.keys().hasAny(['settlement', 'pricingReview',
           'refunded', 'stripePaymentIntentId', 'stripePaymentMethodId',
           'cardPaymentFailed', 'driverInfo', 'riderRating']);
@@ -338,6 +342,18 @@ service cloud.firestore {
 
     function optionalText(d, field, max) {
       return !(field in d) || shortText(d[field], max);
+    }
+
+    function validGuest(g) {
+      return g is map &&
+        g.keys().hasOnly(['title', 'firstName', 'lastName', 'phone', 'email',
+          'language']) &&
+        shortText(g.firstName, 80) && g.firstName.size() > 0 &&
+        optionalText(g, 'title', 20) &&
+        optionalText(g, 'lastName', 80) &&
+        optionalText(g, 'phone', 40) &&
+        optionalText(g, 'email', 160) &&
+        optionalText(g, 'language', 40);
     }
 
     match /businessLeads/{id} {

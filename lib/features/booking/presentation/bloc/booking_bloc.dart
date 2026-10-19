@@ -28,6 +28,7 @@ class BookingCreateRequested extends BookingEvent {
     required this.riderId,
     required this.estimatedPrice,
     this.notes,
+    this.guest,
     this.passengerCount = 1,
     this.luggageCount = 0,
     this.flightNumber,
@@ -43,6 +44,7 @@ class BookingCreateRequested extends BookingEvent {
   final String riderId;
   final double estimatedPrice;
   final String? notes;
+  final BookingGuest? guest;
   final int passengerCount;
   final int luggageCount;
   final String? flightNumber;
@@ -203,6 +205,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       createdAt: now,
       updatedAt: now,
       notes: event.notes,
+      guest: event.guest,
       passengerCount: event.passengerCount,
       luggageCount: event.luggageCount,
       flightNumber: event.flightNumber,

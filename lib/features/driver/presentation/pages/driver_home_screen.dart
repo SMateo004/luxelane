@@ -682,6 +682,18 @@ class _ActiveRidePanel extends StatelessWidget {
                     last: true,
                   ),
               ]),
+              if (booking.guest != null) ...[
+                const SizedBox(height: LuxSpacing.md),
+                LuxGroup(children: [
+                  LuxListRow(
+                    icon: Icons.person_outline_rounded,
+                    title: 'Pasajero: ${booking.guest!.fullName}',
+                    subtitle: booking.guest!.contactLine.isEmpty
+                        ? null
+                        : booking.guest!.contactLine,
+                  ),
+                ]),
+              ],
               if (!booking.riderPreferences.isEmpty) ...[
                 const SizedBox(height: LuxSpacing.md),
                 RiderPreferencesNote(preferences: booking.riderPreferences),

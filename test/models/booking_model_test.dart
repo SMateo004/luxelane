@@ -154,4 +154,38 @@ void main() {
       expect(r.pickupLabel, 'Zona de recogida');
     });
   });
+
+  group('BookingGuest', () {
+    test('viaja en su propio campo, separado de las notas', () {
+      final b = Booking.fromJson({
+        ...json,
+        'notes': 'Llevar agua',
+        'guest': {
+          'title': 'Sra.',
+          'firstName': 'Carla',
+          'lastName': 'Tercero',
+          'phone': '+59170000001',
+          'language': 'Español',
+        },
+      });
+      expect(b.notes, 'Llevar agua');
+      expect(b.guest?.fullName, 'Sra. Carla Tercero');
+      expect(b.guest?.contactLine, '+59170000001 · Español');
+      final out = b.toJson();
+      expect(out['notes'], 'Llevar agua');
+      expect(out['guest'], {
+        'title': 'Sra.',
+        'firstName': 'Carla',
+        'lastName': 'Tercero',
+        'phone': '+59170000001',
+        'language': 'Español',
+      });
+    });
+
+    test('una reserva propia no escribe guest', () {
+      final b = Booking.fromJson(json);
+      expect(b.guest, isNull);
+      expect(b.toJson().containsKey('guest'), isFalse);
+    });
+  });
 }

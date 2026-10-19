@@ -501,6 +501,14 @@ class _BookingDetail extends StatelessWidget {
                 value: '${booking.serviceType.label} · '
                     '${booking.vehicleClass.label}'
                     '${booking.hours != null ? ' · ${booking.hours} h' : ''}'),
+            if (booking.guest != null)
+              AdminInfoRow(
+                  label: 'Pasajero invitado',
+                  value: [
+                    booking.guest!.fullName,
+                    if (booking.guest!.contactLine.isNotEmpty)
+                      booking.guest!.contactLine,
+                  ].join(' · ')),
             if (booking.notes?.isNotEmpty == true)
               AdminInfoRow(label: 'Notas', value: booking.notes!),
             AdminInfoRow(label: 'Creada', value: adminDate(booking.createdAt)),

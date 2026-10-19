@@ -456,6 +456,62 @@ class DriverInfo {
 }
 
 // ---------------------------------------------------------------------------
+// BookingGuest
+// ---------------------------------------------------------------------------
+
+/// Pasajero de una reserva hecha para otra persona. Lo ven el solicitante,
+/// el chófer asignado y el admin; nunca un chófer antes de aceptar.
+class BookingGuest {
+  const BookingGuest({
+    this.title = '',
+    required this.firstName,
+    this.lastName = '',
+    this.phone = '',
+    this.email = '',
+    this.language = '',
+  });
+
+  final String title;
+  final String firstName;
+  final String lastName;
+  final String phone;
+  final String email;
+
+  /// Idioma en que prefiere que le hablen, si el solicitante lo indicó.
+  final String language;
+
+  String get fullName =>
+      [title, firstName, lastName].where((p) => p.isNotEmpty).join(' ');
+
+  /// Teléfono, correo e idioma en una línea, sin los vacíos.
+  String get contactLine =>
+      [phone, email, language].where((p) => p.isNotEmpty).join(' · ');
+
+  static BookingGuest? fromJson(Object? j) {
+    if (j is! Map) return null;
+    String field(String k) => (j[k] as String?) ?? '';
+    if (field('firstName').isEmpty) return null;
+    return BookingGuest(
+      title: field('title'),
+      firstName: field('firstName'),
+      lastName: field('lastName'),
+      phone: field('phone'),
+      email: field('email'),
+      language: field('language'),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        if (title.isNotEmpty) 'title': title,
+        'firstName': firstName,
+        if (lastName.isNotEmpty) 'lastName': lastName,
+        if (phone.isNotEmpty) 'phone': phone,
+        if (email.isNotEmpty) 'email': email,
+        if (language.isNotEmpty) 'language': language,
+      };
+}
+
+// ---------------------------------------------------------------------------
 // Booking
 // ---------------------------------------------------------------------------
 
@@ -476,6 +532,7 @@ class Booking {
     required this.createdAt,
     required this.updatedAt,
     this.notes,
+    this.guest,
     this.flightNumber,
     this.flightType,
     this.pickupAirport,
@@ -506,7 +563,12 @@ class Booking {
   final String? paymentId;
   final DateTime createdAt;
   final DateTime updatedAt;
+
+  /// Notas libres del solicitante.
   final String? notes;
+
+  /// Pasajero, si la reserva es para otra persona.
+  final BookingGuest? guest;
   final String? flightNumber;
 
   /// [FlightType.name] of the passenger's flight (airport pickups only).
@@ -606,6 +668,7 @@ class Booking {
             ? (j['updatedAt'] as Timestamp).toDate()
             : DateTime.now(),
         notes: j['notes'] as String?,
+        guest: BookingGuest.fromJson(j['guest']),
         flightNumber: j['flightNumber'] as String?,
         flightType: j['flightType'] as String?,
         pickupAirport: j['pickupAirport'] as String?,
@@ -641,6 +704,7 @@ class Booking {
         'createdAt': Timestamp.fromDate(createdAt),
         'updatedAt': Timestamp.fromDate(updatedAt),
         'notes': notes,
+        if (guest != null) 'guest': guest!.toJson(),
         'flightNumber': flightNumber,
         'flightType': flightType,
         'pickupAirport': pickupAirport,
@@ -672,6 +736,7 @@ class Booking {
         createdAt: createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
         notes: notes,
+        guest: guest,
         flightNumber: flightNumber,
         flightType: flightType,
         pickupAirport: pickupAirport,

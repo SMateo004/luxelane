@@ -76,6 +76,7 @@ class _BookingScreenState extends State<BookingScreen> {
   String _guestLastName = '';
   String _guestEmail = '';
   String _guestPhone = '';
+  String _guestLanguage = '';
 
   List<Map<String, dynamic>> _savedCards = [];
   String? _selectedCardId;
@@ -338,6 +339,7 @@ class _BookingScreenState extends State<BookingScreen> {
         initialLastName: _guestLastName,
         initialEmail: _guestEmail,
         initialPhone: _guestPhone,
+        initialLanguage: _guestLanguage,
       ),
     );
     if (result != null && mounted) {
@@ -348,6 +350,7 @@ class _BookingScreenState extends State<BookingScreen> {
         _guestLastName = result['lastName'] ?? '';
         _guestEmail = result['email'] ?? '';
         _guestPhone = result['phone'] ?? '';
+        _guestLanguage = result['language'] ?? '';
       });
     }
   }
@@ -367,16 +370,18 @@ class _BookingScreenState extends State<BookingScreen> {
     final scheduledAt =
         _formData?.scheduledAt ?? DateTime.now().add(const Duration(hours: 1));
 
-    String? combinedNotes;
-    if (!_bookForSelf && _guestFirstName.isNotEmpty) {
-      final guestInfo =
-          'Pasajero: $_guestTitle $_guestFirstName $_guestLastName'
-          '${_guestEmail.isNotEmpty ? ' · $_guestEmail' : ''}'
-          '${_guestPhone.isNotEmpty ? ' · $_guestPhone' : ''}';
-      combinedNotes = _notes.isNotEmpty ? '$guestInfo\n$_notes' : guestInfo;
-    } else {
-      combinedNotes = _notes.isNotEmpty ? _notes : null;
-    }
+    // Los datos del invitado van en su propio campo, separados de las notas
+    // del solicitante; ningún chófer los ve antes de aceptar.
+    final guest = !_bookForSelf && _guestFirstName.isNotEmpty
+        ? BookingGuest(
+            title: _guestTitle,
+            firstName: _guestFirstName,
+            lastName: _guestLastName,
+            phone: _guestPhone,
+            email: _guestEmail,
+            language: _guestLanguage,
+          )
+        : null;
 
     context.read<BookingBloc>().add(BookingCreateRequested(
           origin: origin,
@@ -386,7 +391,8 @@ class _BookingScreenState extends State<BookingScreen> {
           scheduledAt: scheduledAt,
           riderId: authState.user.id,
           estimatedPrice: _price,
-          notes: combinedNotes,
+          notes: _notes.isNotEmpty ? _notes : null,
+          guest: guest,
           passengerCount: _passengers,
           luggageCount: _luggage,
           flightNumber:
@@ -2945,6 +2951,7 @@ class _AddGuestDialog extends StatefulWidget {
     this.initialLastName = '',
     this.initialEmail = '',
     this.initialPhone = '',
+    this.initialLanguage = '',
   });
 
   final String initialTitle;
@@ -2952,6 +2959,7 @@ class _AddGuestDialog extends StatefulWidget {
   final String initialLastName;
   final String initialEmail;
   final String initialPhone;
+  final String initialLanguage;
 
   @override
   State<_AddGuestDialog> createState() => _AddGuestDialogState();
@@ -2965,6 +2973,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
   late final TextEditingController _lastCtrl;
   late final TextEditingController _emailCtrl;
   late final TextEditingController _phoneCtrl;
+  late final TextEditingController _languageCtrl;
 
   @override
   void initState() {
@@ -2974,6 +2983,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
     _lastCtrl = TextEditingController(text: widget.initialLastName);
     _emailCtrl = TextEditingController(text: widget.initialEmail);
     _phoneCtrl = TextEditingController(text: widget.initialPhone);
+    _languageCtrl = TextEditingController(text: widget.initialLanguage);
   }
 
   @override
@@ -2982,6 +2992,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
     _lastCtrl.dispose();
     _emailCtrl.dispose();
     _phoneCtrl.dispose();
+    _languageCtrl.dispose();
     super.dispose();
   }
 
@@ -2992,6 +3003,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
       'lastName': _lastCtrl.text.trim(),
       'email': _emailCtrl.text.trim(),
       'phone': _phoneCtrl.text.trim(),
+      'language': _languageCtrl.text.trim(),
     });
   }
 
@@ -3176,6 +3188,18 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                   color: _kTextSub,
                   fontWeight: FontWeight.w400,
                 ),
+              ),
+
+              const SizedBox(height: 26),
+
+              // ── Language ────────────────────────────────────────────────
+              _guestFieldLabel('Idioma del invitado (opcional)'),
+              TextField(
+                controller: _languageCtrl,
+                maxLength: 40,
+                style: _kGuestValueStyle,
+                decoration: _guestFieldDecor('Ej.: español, inglés')
+                    .copyWith(counterText: ''),
               ),
 
               const SizedBox(height: 30),

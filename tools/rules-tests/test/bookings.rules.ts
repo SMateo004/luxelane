@@ -104,6 +104,20 @@ describe('creación de /bookings', () => {
     await assertSucceeds(setDoc(doc(db('ana'), 'bookings', 'b2'), newBooking('ana')));
   });
 
+  test('los datos del tercero van en guest con campos acotados', async () => {
+    const guest = { title: 'Sra.', firstName: 'Carla', phone: '+59170000001', language: 'Español' };
+    await assertSucceeds(setDoc(doc(db('ana'), 'bookings', 'b2'), newBooking('ana', { guest })));
+    await assertFails(setDoc(doc(db('ana'), 'bookings', 'b3'),
+      newBooking('ana', { guest: { ...guest, passport: 'X123' } })));
+    await assertFails(setDoc(doc(db('ana'), 'bookings', 'b4'),
+      newBooking('ana', { guest: { ...guest, firstName: '' } })));
+  });
+
+  test('el pasajero no puede cambiar los datos del tercero después', async () => {
+    await assertFails(updateDoc(doc(db('ana'), 'bookings', 'pend'),
+      { 'guest.phone': '+59170000999' }));
+  });
+
   test('la zona de recogida y destino es un texto corto', async () => {
     await assertSucceeds(setDoc(doc(db('ana'), 'bookings', 'b2'),
       newBooking('ana', { pickupArea: 'Santa Cruz de la Sierra', dropoffArea: 'La Paz' })));
