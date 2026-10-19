@@ -15,6 +15,11 @@ void main() {
     expect(html, isNot(contains('js.stripe.com')));
   });
 
+  test('sin scripts en línea (la CSP no permite unsafe-inline en scripts)', () {
+    final inline = RegExp(r'<script(?![^>]*\bsrc=)[^>]*>');
+    expect(inline.hasMatch(html), isFalse);
+  });
+
   test('no importa el SDK de Firebase a mano (lo carga FlutterFire)', () {
     expect(html, isNot(contains('firebase-app.js')));
   });

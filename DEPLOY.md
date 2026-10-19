@@ -246,6 +246,51 @@ indica `android/key.properties`; sin ese archivo `flutter build appbundle
 
 ---
 
+## Cabeceras de seguridad del hosting (CSP)
+
+`firebase.json` añade a los dos sitios (`rider` y `driver`): `X-Content-Type-Options:
+nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy:
+strict-origin-when-cross-origin`, `Permissions-Policy` (solo geolocalización
+propia; cámara, micrófono, pagos y USB desactivados: la web no los usa),
+`Strict-Transport-Security: max-age=31536000` y la CSP.
+
+La CSP va como **`Content-Security-Policy-Report-Only`**: no bloquea nada, solo
+avisa en la consola del navegador. Se construyó con lo que la build carga de
+verdad (Chromium headless contra `flutter build web --release`, pasajeros y
+chóferes: 0 violaciones). Excepciones y por qué:
+
+| Directiva | Valor | Motivo |
+|---|---|---|
+| `script-src` | `'wasm-unsafe-eval'` | CanvasKit es WebAssembly; sin esto no se compila. No permite `eval` de JavaScript. |
+| `script-src` | 12 hashes `sha256-…` | FlutterFire inyecta un script en línea por librería de Firebase (`window.ff_trigger_<lib>`, que importa el SDK desde `www.gstatic.com/firebasejs/<versión>/`). Hay 2 variantes por librería (con y sin Trusted Types). Cambian al actualizar `firebase_*` o la versión del SDK web. |
+| `script-src` | `https://www.gstatic.com` | CanvasKit (`flutter-canvaskit/`, no está local) y el SDK de Firebase. |
+| `script-src` | `https://*.googleapis.com`, `https://maps.gstatic.com` | Maps JavaScript API. |
+| `script-src`, `frame-src` | `https://apis.google.com`, `https://accounts.google.com`, `https://*.firebaseapp.com` | Inicio de sesión con Google (Firebase Auth y Google Identity Services). |
+| `style-src` | `'unsafe-inline'` | Flutter web y Maps escriben estilos en línea; no hay forma de evitarlo hoy. Es de bajo riesgo comparado con scripts. |
+| `connect-src` | `*.googleapis.com`, `*.cloudfunctions.net`, `*.run.app`, `*.google.com`, `*.firebaseapp.com`, `fonts.*` | Firestore, Auth, Functions, mensajería, Places/Geocoding/Directions y fuentes. |
+| `img-src` | `data:`, `blob:`, `*.googleapis.com`, `*.gstatic.com`, `*.google.com`, `*.googleusercontent.com` | Teselas e íconos de Maps, fotos de perfil de Google. |
+
+Librerías de Firebase cuyos scripts tienen hash hoy: `firebase_core`, `firebase_firestore`, `firebase_functions`, `firebase_auth`, `firebase_messaging`, `firebase_performance` (SDK web 11.9.1).
+
+**Pasar a obligatoria (enforcement)**:
+1. Publicar con Report-Only y usar la web unos días (pasajeros, chóferes, admin,
+   login con Google, mapas con la clave real, reservas).
+2. Revisar violaciones: consola del navegador (`[Report Only] Refused to…`).
+   Chrome muestra el hash exacto si falta uno (`'sha256-…'`). Opcional: añadir
+   un endpoint de informes (`report-to`) para recogerlas en un servidor.
+3. Ajustar la lista y, cuando una semana pase sin violaciones legítimas,
+   renombrar la clave a `Content-Security-Policy` en los dos sitios de
+   `firebase.json`. Mantener la Report-Only en paralelo con la siguiente
+   versión de la política es buena práctica.
+4. Al actualizar `firebase_*`/FlutterFire, volver a revisar los hashes (si
+   cambian, Chrome lo reporta).
+
+`includeSubDomains` y `preload` en HSTS no están activados: es una decisión del
+responsable (afecta a todos los subdominios del dominio propio y el preload
+es difícil de revertir).
+
+---
+
 ## Migración de reservas existentes (D5/F4)
 
 `functions/scripts/migrate-booking-pii.js` mueve los datos del invitado que

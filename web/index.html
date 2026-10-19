@@ -30,14 +30,9 @@
   </style>
 </head>
 <body>
-  <!-- A new URL per build, so browsers never reuse an old app after a deploy. -->
-  <script>
-    (function () {
-      var s = document.createElement('script');
-      s.src = 'flutter_bootstrap.js?v=' + {{flutter_service_worker_version}};
-      s.async = true;
-      document.body.appendChild(s);
-    })();
-  </script>
+  <!-- External (no inline script, so the CSP needs no 'unsafe-inline' for
+       scripts). Hosting serves *.js with Cache-Control: no-cache, and
+       flutter_bootstrap.js gives main.dart.js a new URL per build. -->
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
