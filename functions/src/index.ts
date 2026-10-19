@@ -2,6 +2,8 @@ import * as admin from 'firebase-admin';
 import { onCall, CallableRequest } from 'firebase-functions/v2/https';
 import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
+import { defineSecret } from 'firebase-functions/params';
+import * as bookingService from './booking_service';
 import * as stripe from './stripe_service';
 import { logger } from './logger';
 import * as err from './errors';
@@ -9,13 +11,29 @@ import { checkBookingPrice, DEFAULT_FARES, fareId, FareRule } from './pricing';
 import { computeSettlement, planBackfill, Settlement } from './settlement';
 import { rankCandidates } from './assignment';
 import { fromCents, toCents } from './money';
-import { buildOpenRequest } from './open_requests';
 
 admin.initializeApp();
 const db = admin.firestore();
 
 // Funciones que llaman a Stripe: reciben la clave de Secret Manager.
 const withStripe = { secrets: [stripe.STRIPE_SECRET_KEY] };
+
+// Clave de servidor de Maps (Routes API) para la distancia de los traslados.
+const MAPS_SERVER_KEY = defineSecret('MAPS_SERVER_KEY');
+
+// ---------------------------------------------------------------------------
+// quoteBooking / createBooking — el precio lo calcula el servidor (D2)
+// ---------------------------------------------------------------------------
+
+const bookingDeps = (): bookingService.BookingDeps => ({ db, mapsKey: MAPS_SERVER_KEY.value() });
+
+/** Precio y desglose de un viaje, sin crear nada. */
+export const quoteBooking = onCall({ secrets: [MAPS_SERVER_KEY] }, (req) =>
+  bookingService.quoteBooking(bookingDeps(), req.auth?.uid, req.data));
+
+/** Única forma de crear una reserva: con precio del servidor y su solicitud abierta. */
+export const createBooking = onCall({ secrets: [MAPS_SERVER_KEY] }, (req) =>
+  bookingService.createBooking(bookingDeps(), req.auth?.uid, req.data));
 
 // ---------------------------------------------------------------------------
 // Types
@@ -592,7 +610,7 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
   if (!booking) return;
   const vehicleClass = booking.class ?? booking.vehicleClass ?? 'business';
 
-  // Control de tarifas: la reserva debe respetar la tarifa vigente del admin.
+  // Red de seguridad: createBooking ya calculó el precio con la tarifa vigente.
   const id = fareId(vehicleClass, booking.serviceType ?? 'oneWay');
   const ruleSnap = await db.collection('pricingRules').doc(id).get();
   const rule = ruleSnap.exists ? (ruleSnap.data() as FareRule) : DEFAULT_FARES[id];
@@ -614,13 +632,8 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
     });
   }
 
-  // Lo que ven los chóferes verificados antes de aceptar, sin datos
-  // personales (la reserva completa solo la leen pasajero, chófer asignado
-  // y admin).
-  if (booking.status === 'pending') {
-    await db.collection('openRequests').doc(event.params.bookingId)
-      .set(buildOpenRequest(booking as Parameters<typeof buildOpenRequest>[0]));
-  }
+  // La solicitud abierta la crea createBooking en la misma transacción que
+  // la reserva; este trigger solo avisa a los chóferes.
 
   logger.info('onBookingCreated', 'notifying drivers', {
     bookingId: event.params.bookingId,

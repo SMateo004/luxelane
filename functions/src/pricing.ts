@@ -1,9 +1,10 @@
-// Verificación en servidor de las tarifas que configura el panel admin.
+// Red de seguridad de onBookingCreated: comprueba que una reserva respeta la
+// tarifa vigente (servicio activo y no por debajo del mínimo).
 //
-// El precio de una reserva lo calcula la app con /pricingRules; aquí se
-// comprueba que la reserva respeta la tarifa vigente (servicio activo y no por
-// debajo del mínimo). Los valores de fábrica replican DefaultPricing
-// (lib/core/models/models.dart) para cuando el admin no ha guardado tarifa.
+// El precio lo calcula createBooking con fare.ts y /pricingRules, sin
+// tarifas de fábrica (si falta la tarifa, no se reserva). Los valores de
+// abajo solo los usa este control, para reservas antiguas o escritas a mano.
+// Los importes están en bolivianos aunque los campos se llamen *Usd.
 
 export interface FareRule {
   basePriceUsd: number;
