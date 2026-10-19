@@ -3060,9 +3060,8 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
 
               // ── Description ─────────────────────────────────────────────
               const Text(
-                'Ingresa la información de tu invitado y bríndales un servicio premium. '
-                'Los mantendremos informados sobre su trayecto durante todo el proceso. '
-                'No te preocupes, no compartiremos ninguna información de pago o facturación con ellos.',
+                'Ingresa los datos de la persona que viajará. Compartiremos '
+                'estos datos con el chófer asignado para coordinar la recogida.',
                 style: TextStyle(
                   fontFamily: kSans,
                   fontSize: 13,
@@ -3181,7 +3180,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
               const SizedBox(height: 8),
 
               const Text(
-                'Tu invitado recibirá las notificaciones del trayecto en este número',
+                'El chófer asignado usará este número para coordinar la recogida.',
                 style: TextStyle(
                   fontFamily: kSans,
                   fontSize: 11,
