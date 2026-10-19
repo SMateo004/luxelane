@@ -31,6 +31,41 @@ describe('parseLegacyNotes', () => {
   });
 });
 
+describe('teléfono del chófer (D16)', () => {
+  const withPhone = (status: string) => ({
+    status,
+    riderId: 'ana',
+    driverId: 'luis',
+    driverInfo: { name: 'Luis', phone: '+59170000555' },
+  });
+
+  it('en la ventana activa o confirmada lo mueve a driverContact', () => {
+    for (const s of ['confirmed', 'driver_arriving', 'driver_arrived', 'in_progress']) {
+      expect(planBookingMigration(withPhone(s), true).driverPhone)
+        .toEqual({ contact: '+59170000555' });
+    }
+  });
+
+  it('en el historial solo lo quita de driverInfo', () => {
+    for (const s of ['completed', 'cancelled']) {
+      expect(planBookingMigration(withPhone(s), true).driverPhone).toEqual({ contact: null });
+    }
+  });
+
+  it('no pisa un driverContact existente ni toca reservas ya migradas', () => {
+    expect(planBookingMigration(withPhone('driver_arriving'), true, true).driverPhone)
+      .toEqual({ contact: null });
+    expect(planBookingMigration({ status: 'completed', driverInfo: { name: 'Luis' } }, true))
+      .toEqual({});
+  });
+
+  it('el informe no muestra el número', () => {
+    const text = describePlan(planBookingMigration(withPhone('in_progress'), true)).join(' ');
+    expect(text).toContain('driverContact');
+    expect(text).not.toContain('+5917');
+  });
+});
+
 describe('planBookingMigration', () => {
   const legacy = {
     status: 'pending',

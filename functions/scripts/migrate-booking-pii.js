@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 /*
- * Migra reservas existentes: datos del invitado de `notes` a `guest`, y
- * solicitudes abiertas para las reservas pendientes.
+ * Migra reservas existentes: datos del invitado de `notes` a `guest`,
+ * solicitudes abiertas para las reservas pendientes, y el teléfono del
+ * chófer de `driverInfo` a driverContact/phone (D16).
  *
  * Por defecto es DRY-RUN: solo informa qué haría. Escribe únicamente con
  * --apply.
@@ -39,17 +40,22 @@ async function main() {
   const db = admin.firestore();
   const openIds = new Set((await db.collection('openRequests').select().get()).docs.map((d) => d.id));
 
-  let examined = 0, guests = 0, requests = 0;
+  let examined = 0, guests = 0, requests = 0, phones = 0, contacts = 0;
   let last = null;
   for (;;) {
-    let q = db.collection('bookings').orderBy(admin.firestore.FieldPath.documentId()).limit(300);
+    let q = db.collection('bookings').orderBy(admin.firestore.FieldPath.documentId()).limit(100); // hasta 4 escrituras por reserva: < 500 por lote
     if (last) q = q.startAfter(last);
     const page = await q.get();
     if (page.empty) break;
     const batch = db.batch();
     for (const doc of page.docs) {
       examined++;
-      const plan = planBookingMigration(doc.data(), openIds.has(doc.id));
+      const data = doc.data();
+      const contactRef = doc.ref.collection('driverContact').doc('phone');
+      const hasContact = data.driverInfo && 'phone' in data.driverInfo
+        ? (await contactRef.get()).exists
+        : false;
+      const plan = planBookingMigration(data, openIds.has(doc.id), hasContact);
       const actions = describePlan(plan);
       if (!actions.length) continue;
       console.log(`  ${doc.id}: ${actions.join('; ')}`);
@@ -64,6 +70,14 @@ async function main() {
         requests++;
         batch.set(db.collection('openRequests').doc(doc.id), plan.openRequest);
       }
+      if (plan.driverPhone) {
+        phones++;
+        batch.update(doc.ref, { 'driverInfo.phone': admin.firestore.FieldValue.delete() });
+        if (plan.driverPhone.contact) {
+          contacts++;
+          batch.set(contactRef, { phone: plan.driverPhone.contact });
+        }
+      }
     }
     if (apply) await batch.commit();
     last = page.docs[page.docs.length - 1];
@@ -72,6 +86,7 @@ async function main() {
   console.log(`Reservas revisadas: ${examined}`);
   console.log(`Con datos del invitado en notes: ${guests}`);
   console.log(`Pendientes sin solicitud abierta: ${requests}`);
+  console.log(`Con teléfono del chófer en driverInfo: ${phones} (a driverContact: ${contacts})`);
   console.log(apply ? 'Cambios aplicados.' : 'DRY-RUN: no se escribió nada. Repite con --apply para aplicar.');
 }
 

@@ -175,8 +175,10 @@ flutter run --dart-define=ENV=dev --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
 ## Migración de reservas existentes (D5/F4)
 
 `functions/scripts/migrate-booking-pii.js` mueve los datos del invitado que
-la app antigua guardaba en `notes` al campo `guest`, y crea `openRequests`
-para las reservas pendientes. **Por defecto es DRY-RUN**: informa qué haría
+la app antigua guardaba en `notes` al campo `guest`, crea `openRequests`
+para las reservas pendientes y quita el teléfono del chófer de `driverInfo`
+(D16): en reservas confirmadas o en curso lo copia a
+`driverContact/phone`; en el historial solo lo borra. **Por defecto es DRY-RUN**: informa qué haría
 con cada reserva (sin mostrar datos personales) y no escribe nada.
 
 Orden: desplegar functions y reglas en el proyecto, luego migrar, luego
