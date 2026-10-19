@@ -714,8 +714,12 @@ export const publishDriverInfo = onDocumentUpdated('bookings/{bookingId}', async
   const after = event.data?.after.data() as BookingDoc | undefined;
   if (!before || !after || before.driverId === after.driverId) return;
 
+  const contactRef = event.data!.after.ref.collection('driverContact').doc('phone');
   if (!after.driverId) {
-    await event.data!.after.ref.update({ driverInfo: admin.firestore.FieldValue.delete() });
+    await Promise.all([
+      event.data!.after.ref.update({ driverInfo: admin.firestore.FieldValue.delete() }),
+      contactRef.delete(),
+    ]);
     return;
   }
   // El pasajero ya no lee driverProfiles: lo que necesita ver del chófer
@@ -728,10 +732,12 @@ export const publishDriverInfo = onDocumentUpdated('bookings/{bookingId}', async
   const u = userSnap.data() ?? {};
   const v = vehicleSnap.docs[0]?.data();
   const rating = profileSnap.data()?.rating;
+  // El teléfono no va en driverInfo (visible también en el historial): va
+  // aparte y el pasajero solo lo lee mientras el viaje está activo.
+  await contactRef.set({ phone: u.phone ?? '' });
   await event.data!.after.ref.update({
     driverInfo: {
       name: u.displayName ?? '',
-      phone: u.phone ?? '',
       photoUrl: u.photoUrl ?? null,
       vehicle: v
         ? { make: v.make ?? '', model: v.model ?? '', plate: v.plate ?? '', color: v.color ?? '' }

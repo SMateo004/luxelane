@@ -417,14 +417,13 @@ class BookingSettlement {
 class DriverInfo {
   const DriverInfo({
     required this.name,
-    this.phone = '',
     this.photoUrl,
     this.vehicle,
     this.rating,
   });
 
+  /// Sin teléfono: ese va en driverContact, legible solo durante el viaje.
   final String name;
-  final String phone;
   final String? photoUrl;
 
   /// Valoración media del chófer al asignarlo (copiada por el servidor).
@@ -447,7 +446,6 @@ class DriverInfo {
     }
     return DriverInfo(
       name: (j['name'] as String?) ?? '',
-      phone: (j['phone'] as String?) ?? '',
       photoUrl: j['photoUrl'] as String?,
       vehicle: vehicle,
       rating: (j['rating'] as num?)?.toDouble(),

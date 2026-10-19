@@ -188,4 +188,15 @@ void main() {
       expect(b.toJson().containsKey('guest'), isFalse);
     });
   });
+
+  test('driverInfo ya no lleva el teléfono del chófer (D16)', () {
+    final b = Booking.fromJson({
+      ...json,
+      'status': 'completed',
+      'driverInfo': {'name': 'Luis', 'phone': '+59170000555'},
+    });
+    // DriverInfo no tiene campo de teléfono: el número solo se lee de
+    // driverContact durante el viaje activo.
+    expect(b.driverInfo?.name, 'Luis');
+  });
 }

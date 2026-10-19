@@ -14,6 +14,18 @@ import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+/// Estados en que el chófer va, espera o lleva al pasajero: solo entonces
+/// se ven su ubicación y su teléfono.
+const kDriverLiveStatuses = {
+  BookingStatus.driverArriving,
+  BookingStatus.driverArrived,
+  BookingStatus.inProgress,
+};
+
+/// «Llamar a tu chófer» solo dentro de la ventana activa y con teléfono.
+bool showCallDriver(BookingStatus? status, String? phone) =>
+    kDriverLiveStatuses.contains(status) && (phone ?? '').isNotEmpty;
+
 class RideScreen extends StatefulWidget {
   const RideScreen({super.key, required this.rideId});
   // rideId is the booking ID navigated from BookingScreen
@@ -28,7 +40,12 @@ class _RideScreenState extends State<RideScreen> {
   // reserva vista antes seguía emitiendo y pisaba esta y la lista de viajes.
   late final Stream<Booking> _bookingStream;
   StreamSubscription<Booking>? _sub;
+  StreamSubscription<String?>? _phoneSub;
   Booking? _booking;
+
+  /// Teléfono del chófer: solo existe para la pantalla mientras el viaje
+  /// está activo (bookings/{id}/driverContact/phone).
+  String? _driverPhone;
   bool _loadError = false;
   bool _ratingPrompted = false;
   bool _cancelling = false;
@@ -46,6 +63,7 @@ class _RideScreenState extends State<RideScreen> {
           _booking = b;
           _loadError = false;
         });
+        _syncDriverPhone();
         // Al completarse, se invita a valorar una sola vez por visita.
         if (b.status == BookingStatus.completed &&
             b.riderRating == null &&
@@ -64,13 +82,30 @@ class _RideScreenState extends State<RideScreen> {
   @override
   void dispose() {
     _sub?.cancel();
+    _phoneSub?.cancel();
     super.dispose();
+  }
+
+  /// Escucha el teléfono solo dentro de la ventana activa; al salir se
+  /// olvida, para que el historial y la valoración nunca lo muestren.
+  void _syncDriverPhone() {
+    final live = _driverLive && widget.rideId.isNotEmpty;
+    if (live && _phoneSub == null) {
+      _phoneSub =
+          sl<BookingRepository>().watchDriverPhone(widget.rideId).listen((p) {
+        if (mounted) setState(() => _driverPhone = p);
+      }, onError: (_) {});
+    } else if (!live && _phoneSub != null) {
+      _phoneSub!.cancel();
+      _phoneSub = null;
+      _driverPhone = null;
+    }
   }
 
   DriverInfo? get _driver => _booking?.driverInfo;
 
   Future<void> _callDriver() async {
-    final phone = _driver?.phone ?? '';
+    final phone = _driverPhone ?? '';
     if (phone.isEmpty) return;
     await launchUrl(Uri(scheme: 'tel', path: phone));
   }
@@ -167,11 +202,7 @@ class _RideScreenState extends State<RideScreen> {
 
   /// El chófer va, espera o lleva al pasajero: solo entonces se puede leer
   /// su ubicación en vivo.
-  bool get _driverLive => const {
-        BookingStatus.driverArriving,
-        BookingStatus.driverArrived,
-        BookingStatus.inProgress,
-      }.contains(_status);
+  bool get _driverLive => kDriverLiveStatuses.contains(_status);
 
   Stream<GeoPoint?>? _locationStream;
   bool _locationLive = false;
@@ -215,9 +246,7 @@ class _RideScreenState extends State<RideScreen> {
   /// Acciones del pasajero: llamar al chófer, cancelar mientras se pueda y
   /// valorar un viaje completado que aún no valoró.
   Widget _actions() {
-    final canCall = (_driver?.phone ?? '').isNotEmpty &&
-        _status != BookingStatus.completed &&
-        _status != BookingStatus.cancelled;
+    final canCall = showCallDriver(_status, _driverPhone);
     final canCancel = _cancellable.contains(_status);
     final canRate =
         _status == BookingStatus.completed && _booking?.riderRating == null;

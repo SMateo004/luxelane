@@ -221,6 +221,24 @@ service cloud.firestore {
           request.resource.data.updatedAt == request.time;
         allow delete: if false;
       }
+
+      // Teléfono del chófer asignado (D16): lo escribe el servidor. El
+      // pasajero solo lo lee en la misma ventana que la ubicación en vivo;
+      // en el historial y al valorar ya no está disponible.
+      match /driverContact/{docId} {
+        function contactBooking() {
+          return get(/databases/$(database)/documents/bookings/$(bookingId)).data;
+        }
+
+        allow read: if isAuthenticated() && (
+          (contactBooking().riderId == request.auth.uid &&
+            contactBooking().status in
+              ['driver_arriving', 'driver_arrived', 'in_progress']) ||
+          contactBooking().get('driverId', null) == request.auth.uid ||
+          isAdmin()
+        );
+        allow write: if false;
+      }
     }
 
     // -------------------------------------------------------------------------

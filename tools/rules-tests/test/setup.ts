@@ -97,11 +97,16 @@ export async function seed(env: RulesTestEnvironment): Promise<void> {
       bookingDoc({ status: 'completed', driverId: 'asig' }));
     await setDoc(doc(db, 'bookings', 'activaBloq'),
       bookingDoc({ status: 'driver_arriving', driverId: 'bloq' }));
+    await setDoc(doc(db, 'bookings', 'beto1'),
+      bookingDoc({ riderId: 'beto', status: 'driver_arriving', driverId: 'libre' }));
     for (const id of ['activa', 'conf', 'fin']) {
       await setDoc(doc(db, 'bookings', id, 'tracking', 'driver'), {
         lat: -17.7,
         lng: -63.1,
         updatedAt: Timestamp.now(),
+      });
+      await setDoc(doc(db, 'bookings', id, 'driverContact', 'phone'), {
+        phone: '+59170000555',
       });
     }
     await setDoc(doc(db, 'openRequests', 'pend'), {

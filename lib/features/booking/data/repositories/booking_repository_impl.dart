@@ -114,6 +114,14 @@ class BookingRepositoryImpl implements BookingRepository {
       });
 
   @override
+  Stream<String?> watchDriverPhone(String bookingId) => _col
+      .doc(bookingId)
+      .collection('driverContact')
+      .doc('phone')
+      .snapshots()
+      .map((s) => s.data()?['phone'] as String?);
+
+  @override
   Future<void> publishDriverLocation({
     required String bookingId,
     required double latitude,

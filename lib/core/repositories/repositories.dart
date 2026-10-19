@@ -118,6 +118,10 @@ abstract class BookingRepository {
   /// solo puede leerla mientras el viaje está activo.
   Stream<GeoPoint?> watchDriverLocation(String bookingId);
 
+  /// Teléfono del chófer asignado. El pasajero solo puede leerlo mientras
+  /// el viaje está activo (lo escribe el servidor).
+  Stream<String?> watchDriverPhone(String bookingId);
+
   /// El chófer asignado publica su posición durante el viaje activo.
   Future<void> publishDriverLocation({
     required String bookingId,
