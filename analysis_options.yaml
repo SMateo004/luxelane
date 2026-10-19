@@ -10,6 +10,9 @@ analyzer:
     # Stray `flutter create` template project, not part of the app.
     - 'luxelane/**'
     - 'build/**'
+    # Dependencias de Node de las Cloud Functions (firebase-tools trae
+    # plantillas .dart que no son parte de la app).
+    - 'functions/node_modules/**'
 
 linter:
   rules:
