@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: [main]
 
+# Acciones de terceros fijadas por SHA (la etiqueta va en el comentario).
+
 env:
   # Must satisfy pubspec.lock (google_fonts >=6.3.1 needs Dart >=3.7).
   FLUTTER_VERSION: '3.29.3'
@@ -20,8 +22,8 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
@@ -37,8 +39,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: lint
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
@@ -48,12 +50,12 @@ jobs:
         run: flutter test --coverage --reporter=github
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 # v4.6.0
         with:
           file: coverage/lcov.info
           fail_ci_if_error: false
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -70,8 +72,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
@@ -80,6 +82,7 @@ jobs:
         run: |
           flutter build web --release \
             --dart-define=ENV=prod \
+            --dart-define=FIREBASE_ENV=production \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
             --pwa-strategy=none \
@@ -87,7 +90,7 @@ jobs:
           # Flutter writes an empty worker with --pwa-strategy=none; ours also
           # retires the old caching worker on returning visitors.
           cp web/flutter_service_worker.js build/web_rider/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: web-rider
           path: build/web_rider
@@ -99,8 +102,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
@@ -110,6 +113,7 @@ jobs:
           flutter build web --release \
             -t lib/main_driver.dart \
             --dart-define=ENV=prod \
+            --dart-define=FIREBASE_ENV=production \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
             --pwa-strategy=none \
@@ -117,7 +121,7 @@ jobs:
           # Flutter writes an empty worker with --pwa-strategy=none; ours also
           # retires the old caching worker on returning visitors.
           cp web/flutter_service_worker.js build/web_driver/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: web-driver
           path: build/web_driver
@@ -129,12 +133,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4.9.1
         with:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
@@ -145,13 +149,14 @@ jobs:
         run: |
           flutter build appbundle --release \
             --dart-define=ENV=prod \
+            --dart-define=FIREBASE_ENV=production \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
             --dart-define=FIREBASE_ANDROID_APP_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }} \
             --dart-define=GOOGLE_SERVER_CLIENT_ID=${{ secrets.GOOGLE_SERVER_CLIENT_ID }} \
             --obfuscate \
             --split-debug-info=build/debug-info
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: android-rider-release
           path: build/app/outputs/bundle/release/app-release.aab
@@ -163,12 +168,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: test
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4.9.1
         with:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
-      - uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
@@ -180,13 +185,14 @@ jobs:
           flutter build appbundle --release \
             -t lib/main_driver.dart \
             --dart-define=ENV=prod \
+            --dart-define=FIREBASE_ENV=production \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
             --dart-define=FIREBASE_ANDROID_APP_ID=${{ secrets.FIREBASE_ANDROID_APP_ID }} \
             --dart-define=GOOGLE_SERVER_CLIENT_ID=${{ secrets.GOOGLE_SERVER_CLIENT_ID }} \
             --obfuscate \
             --split-debug-info=build/debug-info-driver
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: android-driver-release
           path: build/app/outputs/bundle/release/app-release.aab
@@ -198,8 +204,8 @@ jobs:
     runs-on: macos-latest
     needs: test
     steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
@@ -208,6 +214,7 @@ jobs:
         run: |
           flutter build ios --release --no-codesign \
             --dart-define=ENV=prod \
+            --dart-define=FIREBASE_ENV=production \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
             --dart-define=FIREBASE_IOS_APP_ID=${{ secrets.FIREBASE_IOS_APP_ID }} \
@@ -219,7 +226,13 @@ jobs:
     name: Deploy Functions
     runs-on: ubuntu-latest
     needs: [build_web_rider, build_android]
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    # Requiere la aprobación de los revisores del entorno `production`.
+    environment: production
+    # Un solo despliegue a la vez; uno en curso nunca se cancela.
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
     steps:
       # Fail fast with a clear message instead of deploying a half-configured
       # app (e.g. a web build without a Maps key has no address autocomplete).
@@ -237,20 +250,30 @@ jobs:
             fi
           done
           exit $missing
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Build & deploy functions
         working-directory: functions
         run: npm ci && npm run build
-      - uses: w9jds/firebase-action@master
+      # Las funciones de pago leen STRIPE_SECRET_KEY de Secret Manager: sin
+      # ese secreto en el proyecto, el despliegue no sigue. Solo lee los
+      # metadatos de las versiones, nunca el valor.
+      - name: Check Secret Manager secrets
+        uses: w9jds/firebase-action@35d0fd9b92b2c66dcd13f1b72dacc588e89e7567 # v15.32.1
+        with:
+          args: functions:secrets:get STRIPE_SECRET_KEY
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          PROJECT_ID: luxelane-4e7ae  # alias `production` de .firebaserc
+      - uses: w9jds/firebase-action@35d0fd9b92b2c66dcd13f1b72dacc588e89e7567 # v15.32.1
         with:
           args: deploy --only functions,firestore:rules
         env:
           # Service-account JSON (or base64 of it); replaces deprecated CI tokens.
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-          PROJECT_ID: luxelane-4e7ae  # matches .firebaserc / firebase_options.dart
+          PROJECT_ID: luxelane-4e7ae  # alias `production` de .firebaserc
 
   # ---------------------------------------------------------------------------
   deploy_hosting:
@@ -258,26 +281,30 @@ jobs:
     name: Deploy Hosting
     runs-on: ubuntu-latest
     needs: [deploy_functions, build_web_rider, build_web_driver]
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
 
       # Reuse the web builds from this run (already built with the prod
       # secrets) and place them where firebase.json's hosting targets expect:
       # rider -> hosting/public, driver -> hosting/driver.
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: web-rider
           path: hosting/public
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: web-driver
           path: hosting/driver
 
-      - uses: w9jds/firebase-action@master
+      - uses: w9jds/firebase-action@35d0fd9b92b2c66dcd13f1b72dacc588e89e7567 # v15.32.1
         with:
           args: deploy --only hosting
         env:
           # Service-account JSON (or base64 of it); replaces deprecated CI tokens.
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-          PROJECT_ID: luxelane-4e7ae  # matches .firebaserc / firebase_options.dart
+          PROJECT_ID: luxelane-4e7ae  # alias `production` de .firebaserc
