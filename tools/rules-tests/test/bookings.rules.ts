@@ -113,6 +113,11 @@ describe('creación de /bookings', () => {
       newBooking('ana', { guest: { ...guest, firstName: '' } })));
   });
 
+  test('una reserva nueva no puede guardar el correo del invitado', async () => {
+    await assertFails(setDoc(doc(db('ana'), 'bookings', 'b5'),
+      newBooking('ana', { guest: { firstName: 'Carla', email: 'carla@example.com' } })));
+  });
+
   test('el pasajero no puede cambiar los datos del tercero después', async () => {
     await assertFails(updateDoc(doc(db('ana'), 'bookings', 'pend'),
       { 'guest.phone': '+59170000999' }));

@@ -473,6 +473,8 @@ class BookingGuest {
   final String firstName;
   final String lastName;
   final String phone;
+
+  /// Solo en reservas antiguas: ya no se pide (minimización de datos).
   final String email;
 
   /// Idioma en que prefiere que le hablen, si el solicitante lo indicó.

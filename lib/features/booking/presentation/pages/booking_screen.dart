@@ -74,7 +74,6 @@ class _BookingScreenState extends State<BookingScreen> {
   String _guestTitle = 'Sr.';
   String _guestFirstName = '';
   String _guestLastName = '';
-  String _guestEmail = '';
   String _guestPhone = '';
   String _guestLanguage = '';
 
@@ -337,7 +336,6 @@ class _BookingScreenState extends State<BookingScreen> {
         initialTitle: _guestTitle,
         initialFirstName: _guestFirstName,
         initialLastName: _guestLastName,
-        initialEmail: _guestEmail,
         initialPhone: _guestPhone,
         initialLanguage: _guestLanguage,
       ),
@@ -348,7 +346,6 @@ class _BookingScreenState extends State<BookingScreen> {
         _guestTitle = result['title'] ?? 'Sr.';
         _guestFirstName = result['firstName'] ?? '';
         _guestLastName = result['lastName'] ?? '';
-        _guestEmail = result['email'] ?? '';
         _guestPhone = result['phone'] ?? '';
         _guestLanguage = result['language'] ?? '';
       });
@@ -378,7 +375,6 @@ class _BookingScreenState extends State<BookingScreen> {
             firstName: _guestFirstName,
             lastName: _guestLastName,
             phone: _guestPhone,
-            email: _guestEmail,
             language: _guestLanguage,
           )
         : null;
@@ -2949,7 +2945,6 @@ class _AddGuestDialog extends StatefulWidget {
     this.initialTitle = 'Sr.',
     this.initialFirstName = '',
     this.initialLastName = '',
-    this.initialEmail = '',
     this.initialPhone = '',
     this.initialLanguage = '',
   });
@@ -2957,7 +2952,6 @@ class _AddGuestDialog extends StatefulWidget {
   final String initialTitle;
   final String initialFirstName;
   final String initialLastName;
-  final String initialEmail;
   final String initialPhone;
   final String initialLanguage;
 
@@ -2971,7 +2965,6 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
   late String _title;
   late final TextEditingController _firstCtrl;
   late final TextEditingController _lastCtrl;
-  late final TextEditingController _emailCtrl;
   late final TextEditingController _phoneCtrl;
   late final TextEditingController _languageCtrl;
 
@@ -2981,7 +2974,6 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
     _title = widget.initialTitle;
     _firstCtrl = TextEditingController(text: widget.initialFirstName);
     _lastCtrl = TextEditingController(text: widget.initialLastName);
-    _emailCtrl = TextEditingController(text: widget.initialEmail);
     _phoneCtrl = TextEditingController(text: widget.initialPhone);
     _languageCtrl = TextEditingController(text: widget.initialLanguage);
   }
@@ -2990,7 +2982,6 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
   void dispose() {
     _firstCtrl.dispose();
     _lastCtrl.dispose();
-    _emailCtrl.dispose();
     _phoneCtrl.dispose();
     _languageCtrl.dispose();
     super.dispose();
@@ -3001,7 +2992,6 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
       'title': _title,
       'firstName': _firstCtrl.text.trim(),
       'lastName': _lastCtrl.text.trim(),
-      'email': _emailCtrl.text.trim(),
       'phone': _phoneCtrl.text.trim(),
       'language': _languageCtrl.text.trim(),
     });
@@ -3135,17 +3125,6 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                     ),
                   ),
                 ],
-              ),
-
-              const SizedBox(height: 26),
-
-              // ── Email ───────────────────────────────────────────────────
-              _guestFieldLabel('Correo electrónico'),
-              TextField(
-                controller: _emailCtrl,
-                keyboardType: TextInputType.emailAddress,
-                style: _kGuestValueStyle,
-                decoration: _guestFieldDecor('Correo del invitado'),
               ),
 
               const SizedBox(height: 26),

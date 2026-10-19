@@ -369,13 +369,13 @@ service cloud.firestore {
 
     function validGuest(g) {
       return g is map &&
-        g.keys().hasOnly(['title', 'firstName', 'lastName', 'phone', 'email',
+        // Sin correo: no se pide (minimización de datos).
+        g.keys().hasOnly(['title', 'firstName', 'lastName', 'phone',
           'language']) &&
         shortText(g.firstName, 80) && g.firstName.size() > 0 &&
         optionalText(g, 'title', 20) &&
         optionalText(g, 'lastName', 80) &&
         optionalText(g, 'phone', 40) &&
-        optionalText(g, 'email', 160) &&
         optionalText(g, 'language', 40);
     }
 
