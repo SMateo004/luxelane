@@ -1,16 +1,41 @@
-# luxelane
+# Luxelane
 
-A new Flutter project.
+App de chófer privado: Flutter (pasajeros, chóferes y panel de
+administración) sobre Firebase (Auth, Firestore, Cloud Functions y Hosting),
+con pagos de captura manual.
 
-## Getting Started
+## Ejecutar en local con emuladores
 
-This project is a starting point for a Flutter application.
+Todo usa el proyecto ficticio `demo-luxelane`; no toca ningún proyecto real.
 
-A few resources to get you started if this is your first Flutter project:
+```
+cd functions
+npm ci
+npm run build && npm test   # tests unitarios de las funciones
+npm run emulators           # Firestore (8080) y Auth (9099) locales
+npm run test:rules          # tests de las reglas de Firestore en el emulador
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+App:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```
+flutter pub get
+flutter analyze --no-fatal-infos
+flutter test
+flutter run --dart-define=FIREBASE_ENV=staging
+```
+
+Sin `FIREBASE_ENV` la app compila para staging, nunca para producción.
+
+## Desplegar
+
+- **Staging:** manual, con `--project staging`, después de pasar los tests.
+- **Producción:** CI al hacer push a `main`, con aprobación del entorno
+  `production` de GitHub.
+
+Pasos y secretos en [DEPLOY.md](DEPLOY.md).
+
+## Plan de trabajo
+
+[docs/AUDITORIA_LUXLANE.md](docs/AUDITORIA_LUXLANE.md): hallazgos D1–D15 y
+tareas #1–#17. Reglas de trabajo en [CLAUDE.md](CLAUDE.md).
