@@ -43,7 +43,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<!-- Google Maps (AppDelegate reads it). Value: ios/Flutter/Luxelane.xcconfig -->
+	<!-- Google Maps (AppDelegate reads it). Value: ios/Flutter/Secrets.xcconfig (not in git). -->
 	<key>GMSApiKey</key>
 	<string>$(GOOGLE_MAPS_API_KEY)</string>
 	<!-- Google Sign-In (google_sign_in reads GIDClientID). -->
