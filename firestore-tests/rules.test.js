@@ -149,19 +149,19 @@ describe('reservas: crear', () => {
       newBooking('rider', { scheduledAt: inHours(-3) })));
   });
 
-  test.todo('sin coordenadas de recogida no se acepta — pendiente: la app y el servidor lo validan; la regla aún no', async () => {
+  test('sin coordenadas de recogida no se acepta', async () => {
     await assertFails(setDoc(doc(db('rider'), 'bookings/b1'),
       newBooking('rider', { origin: { address: 'Recogida' } })));
   });
 
-  test.todo('pasajeros o equipaje absurdos no se aceptan — pendiente: límites de pasajeros y equipaje no están en la regla', async () => {
+  test('pasajeros o equipaje absurdos no se aceptan', async () => {
     await assertFails(setDoc(doc(db('rider'), 'bookings/b1'),
       newBooking('rider', { passengerCount: 0 })));
     await assertFails(setDoc(doc(db('rider'), 'bookings/b1'),
       newBooking('rider', { passengerCount: 40 })));
   });
 
-  test.todo('no puede escribir campos del servidor (reparto, revisión, chófer) — pendiente: la regla de main no prohíbe driverName/cancelledBy al crear', async () => {
+  test('no puede escribir campos del servidor (reparto, revisión, chófer)', async () => {
     for (const extra of [
       { settlement: { driverPayout: 999 } },
       { pricingReview: null },
@@ -176,7 +176,7 @@ describe('reservas: crear', () => {
     await assertFails(setDoc(doc(db('blocked'), 'bookings/b1'), newBooking('blocked')));
   });
 
-  test.todo('en modo mantenimiento nadie reserva — pendiente: main lo marca para revisión en el servidor en vez de bloquear', async () => {
+  test('en modo mantenimiento nadie reserva', async () => {
     await seed((f) => setDoc(doc(f, 'config/global'), { isMaintenanceMode: true }));
     await assertFails(setDoc(doc(db('rider'), 'bookings/b1'), newBooking('rider')));
   });
@@ -206,7 +206,7 @@ describe('reservas: leer', () => {
     await assertFails(getDocs(collection(db('driver'), 'bookings')));
   });
 
-  test.todo('un chófer sin verificar no ve las pendientes — pendiente: en main cualquier chófer lee las pendientes', async () => {
+  test('un chófer sin verificar no ve las pendientes', async () => {
     const q = query(collection(db('newdriver'), 'bookings'), where('status', '==', 'pending'));
     await assertFails(getDocs(q));
   });
@@ -315,7 +315,7 @@ describe('usuarios', () => {
     await assertSucceeds(setDoc(doc(db('nuevo'), 'users/nuevo'), user('rider', { id: 'nuevo' })));
   });
 
-  test.todo('nadie se registra como admin, chófer, verificado o bloqueado a otro — pendiente: main registra con isVerified: true', async () => {
+  test('nadie se registra como admin, chófer, verificado o bloqueado a otro', async () => {
     await assertFails(setDoc(doc(db('n1'), 'users/n1'), user('admin')));
     await assertFails(setDoc(doc(db('n2'), 'users/n2'), user('driver')));
     await assertFails(setDoc(doc(db('n3'), 'users/n3'), user('rider', { isVerified: true })));
@@ -329,7 +329,7 @@ describe('usuarios', () => {
       { fcmTokens: arrayUnion('tok') }));
   });
 
-  test.todo('no puede cambiarse rol, bloqueo, verificación, email ni fecha — pendiente: main solo protege rol, bloqueo, Stripe y empresa', async () => {
+  test('no puede cambiarse rol, bloqueo, verificación, email ni fecha', async () => {
     for (const f of [
       { role: 'admin' }, { isActive: false }, { isVerified: true },
       { email: 'x@y.com' }, { createdAt: 'nada' }, { stripeCustomerId: 'cus_x' },
@@ -338,13 +338,13 @@ describe('usuarios', () => {
     }
   });
 
-  test.todo('nombre vacío o gigante no se acepta — pendiente: sin límites de nombre/teléfono en la regla', async () => {
+  test('nombre vacío o gigante no se acepta', async () => {
     await assertFails(updateDoc(doc(db('rider'), 'users/rider'), { displayName: '' }));
     await assertFails(updateDoc(doc(db('rider'), 'users/rider'),
       { displayName: 'x'.repeat(200) }));
   });
 
-  test.todo('un bloqueado no puede editar su perfil — pendiente: un bloqueado aún puede editar su perfil', async () => {
+  test('un bloqueado no puede editar su perfil', async () => {
     await assertFails(updateDoc(doc(db('blocked'), 'users/blocked'), { displayName: 'B' }));
   });
 
@@ -360,7 +360,7 @@ describe('perfiles de chófer', () => {
     }
   });
 
-  test.todo('sin verificar no puede conectarse; verificado sí — pendiente: el servidor exige verificación al aceptar; la regla no al conectarse', async () => {
+  test('sin verificar no puede conectarse; verificado sí', async () => {
     await assertFails(updateDoc(doc(db('newdriver'), 'driverProfiles/newdriver'),
       { isAvailable: true }));
     await assertSucceeds(updateDoc(doc(db('driver'), 'driverProfiles/driver'),
@@ -381,7 +381,7 @@ describe('perfiles de chófer', () => {
     await assertSucceeds(getDoc(doc(db('rider'), 'driverProfiles/driver')));
   });
 
-  test.todo('el alta del chófer empieza sin verificar — pendiente: la regla de main no fija isAvailable/rating al crear', async () => {
+  test('el alta del chófer empieza sin verificar', async () => {
     await seed((f) => setDoc(doc(f, 'users/alta'), user('driver')));
     await assertFails(setDoc(doc(db('alta'), 'driverProfiles/alta'),
       { documentsVerified: true, rating: 0, totalRides: 0 }));
@@ -391,7 +391,7 @@ describe('perfiles de chófer', () => {
 });
 
 describe('vehículos', () => {
-  test.todo('el chófer registra solo su vehículo v_<uid> — pendiente: main no fija el id del vehículo', async () => {
+  test('el chófer registra solo su vehículo v_<uid>', async () => {
     const v = { driverId: 'newdriver', class: 'business', isActive: true };
     await assertSucceeds(setDoc(doc(db('newdriver'), 'vehicles/v_newdriver'), v));
     await assertFails(setDoc(doc(db('newdriver'), 'vehicles/otro'), v));

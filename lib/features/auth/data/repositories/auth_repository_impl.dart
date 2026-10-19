@@ -117,7 +117,8 @@ class AuthRepositoryImpl implements AuthRepository {
         // are granted by an admin.
         role: role,
         createdAt: DateTime.now(),
-        isVerified: true,
+        // Se verifica con el correo; las reglas rechazan un "true" falso.
+        isVerified: false,
         isActive: true,
         fcmTokens: const [],
       );

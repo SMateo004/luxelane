@@ -385,7 +385,8 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       ));
 
       add(DriverBookingsWatched(driverId: event.userId));
-      add(const DriverPendingBookingsWatched());
+      // Las solicitudes pendientes solo las ve un chófer verificado.
+      if (profile.documentsVerified) add(const DriverPendingBookingsWatched());
       add(DriverProfileWatched(driverId: event.userId));
       if (profile.isAvailable) {
         add(DriverLocationTrackingStarted(userId: event.userId));
@@ -437,8 +438,13 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       _userRepo.watchDriverProfile(event.driverId),
       onData: (profile) {
         if (state is! DriverLoaded || profile == null) return state;
-        return (state as DriverLoaded)
-            .copyWith(profile: profile, isAvailable: profile.isAvailable);
+        final prev = state as DriverLoaded;
+        // Luxelane acaba de verificar sus documentos: ya ve solicitudes.
+        if (profile.documentsVerified && !prev.profile.documentsVerified) {
+          add(const DriverPendingBookingsWatched());
+        }
+        return prev.copyWith(
+            profile: profile, isAvailable: profile.isAvailable);
       },
       onError: (_, __) => state,
     );
@@ -473,6 +479,14 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
         (state as DriverLoaded).activeBooking != null) {
       emit((state as DriverLoaded)
           .copyWith(notice: 'Termina tu viaje actual antes de conectarte.'));
+      return;
+    }
+    if (state is DriverLoaded &&
+        event.isAvailable &&
+        !(state as DriverLoaded).profile.documentsVerified) {
+      emit((state as DriverLoaded).copyWith(
+          notice: 'Podrás conectarte cuando Luxelane verifique tus '
+              'documentos.'));
       return;
     }
     final result = await _userRepo.setDriverAvailability(
