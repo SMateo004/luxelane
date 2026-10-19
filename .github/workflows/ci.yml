@@ -87,6 +87,12 @@ jobs:
         run: |
           npm ci
           npm run test:rules
+      # Handlers reales de onBookingCreated y closeOpenRequest contra el
+      # emulador de Firestore.
+      - name: Trigger integration tests (emulator)
+        run: |
+          npm --prefix functions ci
+          npm --prefix tools/rules-tests run test:integration
 
   # ---------------------------------------------------------------------------
   build_web_rider:

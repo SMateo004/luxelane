@@ -4,6 +4,7 @@
   "description": "Atajos de la raíz; las dependencias viven en functions/ y tools/rules-tests/.",
   "scripts": {
     "emulators": "npm --prefix tools/rules-tests run emulators",
-    "test:rules": "npm --prefix tools/rules-tests run test:rules"
+    "test:rules": "npm --prefix tools/rules-tests run test:rules",
+    "test:integration": "npm --prefix tools/rules-tests run test:integration"
   }
 }

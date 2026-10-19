@@ -13,9 +13,13 @@ Todo usa el proyecto ficticio `demo-luxelane`; no toca ningún proyecto real.
 (cd tools/rules-tests && npm ci)                         # herramientas de reglas
 npm run emulators     # Firestore (8080) y Auth (9099) locales
 npm run test:rules    # tests de las reglas de Firestore en el emulador
+npm run test:integration   # triggers de reservas contra el emulador de Firestore
 ```
 
-Los dos últimos se ejecutan desde la raíz o desde `tools/rules-tests`.
+Se ejecutan desde la raíz o desde `tools/rules-tests`. Las pruebas de
+integración invocan los handlers reales (`onBookingCreated`,
+`closeOpenRequest`) contra el emulador de Firestore; no usan el emulador de
+Functions, que detrás de un proxy HTTPS no logra registrar los triggers.
 
 App:
 
