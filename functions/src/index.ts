@@ -4,6 +4,7 @@ import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebas
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { defineSecret } from 'firebase-functions/params';
 import * as bookingService from './booking_service';
+import { reconcileOpenRequests } from './reconcile';
 import * as stripe from './stripe_service';
 import { logger } from './logger';
 import * as err from './errors';
@@ -605,7 +606,10 @@ export const ensureStripeCustomer = onCall(withStripe, async (req) => {
 // onBookingCreated  (onCreate /bookings/{bookingId})
 // ---------------------------------------------------------------------------
 
-export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async (event) => {
+// Con reintento: si falla, la plataforma lo repite. Por eso todo es
+// idempotente: la revisión de tarifa escribe lo mismo y el aviso a los
+// chóferes se envía como mucho una vez (marca driversNotifiedAt).
+export const onBookingCreated = onDocumentCreated({ document: 'bookings/{bookingId}', retry: true }, async (event) => {
   const booking = event.data?.data() as BookingDoc | undefined;
   if (!booking) return;
   const vehicleClass = booking.class ?? booking.vehicleClass ?? 'business';
@@ -634,6 +638,14 @@ export const onBookingCreated = onDocumentCreated('bookings/{bookingId}', async 
 
   // La solicitud abierta la crea createBooking en la misma transacción que
   // la reserva; este trigger solo avisa a los chóferes.
+
+  const firstNotice = await db.runTransaction(async (tx) => {
+    const fresh = await tx.get(event.data!.ref);
+    if (fresh.data()?.driversNotifiedAt) return false;
+    tx.update(event.data!.ref, { driversNotifiedAt: admin.firestore.Timestamp.now() });
+    return true;
+  });
+  if (!firstNotice) return;
 
   logger.info('onBookingCreated', 'notifying drivers', {
     bookingId: event.params.bookingId,
@@ -715,11 +727,21 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
 
 // Al dejar de estar pendiente (aceptada, asignada o cancelada) la solicitud
 // desaparece para los demás chóferes.
-export const closeOpenRequest = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+export const closeOpenRequest = onDocumentUpdated({ document: 'bookings/{bookingId}', retry: true }, async (event) => {
   const before = event.data?.before.data() as BookingDoc | undefined;
   const after = event.data?.after.data() as BookingDoc | undefined;
   if (!before || !after || before.status !== 'pending' || after.status === 'pending') return;
+  // Borrar es idempotente: un reintento no cambia nada.
   await db.collection('openRequests').doc(event.params.bookingId).delete();
+});
+
+// Red de seguridad de openRequests: crea las que faltan, borra las
+// huérfanas y avisa al admin en adminAlerts.
+export const reconcileOpenRequestsJob = onSchedule('every 15 minutes', async () => {
+  const result = await reconcileOpenRequests(db);
+  if (result.created.length || result.deleted.length) {
+    logger.error('reconcileOpenRequests', 'fixed', { ...result });
+  }
 });
 
 export const publishDriverInfo = onDocumentUpdated('bookings/{bookingId}', async (event) => {
