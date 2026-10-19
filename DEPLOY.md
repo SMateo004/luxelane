@@ -172,6 +172,41 @@ flutter run --dart-define=ENV=dev --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
 
 ---
 
+## Orden de despliegue de createBooking (D2)
+
+Las reservas pasan a crearse solo en el servidor (`createBooking`), que
+calcula el precio. Las reglas nuevas (`bookings: allow create: if false`)
+dejan sin poder reservar a cualquier app antigua, así que el orden es:
+
+1. **Configuración** en el proyecto (ver «Configuración de precios» abajo) y
+   el secreto `MAPS_SERVER_KEY`:
+   `firebase functions:secrets:set MAPS_SERVER_KEY --project <alias>`.
+2. **Functions** (`quoteBooking`, `createBooking`, `onBookingCreated` nuevo):
+   `firebase deploy --only functions --project <alias>`. Las apps antiguas
+   siguen reservando (aún con las reglas viejas).
+3. **App nueva** en web (hosting) y en las tiendas; esperar a que la
+   mayoría de pasajeros actualice.
+4. **Reglas** al final: `firebase deploy --only firestore:rules --project <alias>`.
+
+**Riesgo:** hoy la app no tiene forma de forzar una versión mínima (no hay
+comprobación de versión ni `config/global.minAppVersion`). Quien no
+actualice la app móvil no podrá reservar tras el paso 4 y solo verá un
+error genérico. La web se actualiza sola con el despliegue de hosting.
+
+### Configuración de precios (Firestore)
+
+- `pricingRules/{clase}_{servicio}` para cada combinación que se venda:
+  `basePriceUsd`, `pricePerKmUsd`, `pricePerHourUsd`, `minimumPriceUsd`
+  (números, en **bolivianos** aunque el nombre diga Usd) e `isActive`.
+  Si falta, `createBooking` no reserva esa clase (no usa tarifas de fábrica).
+- `config/pricing.routeFactor` (número ≥ 1): distancia de respaldo cuando la
+  ruta por calles falla. Sin él y sin ruta, no se reserva.
+- Opcionales, apagados si no existen: `config/pricing.nightSurchargePct`,
+  `nightStartHour`, `nightEndHour` y `fixedAirportFares`
+  (`"VVI|Santa Cruz de la Sierra|business": importe`).
+
+---
+
 ## Migración de reservas existentes (D5/F4)
 
 `functions/scripts/migrate-booking-pii.js` mueve los datos del invitado que
