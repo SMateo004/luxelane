@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
+import 'core/config/firebase_env.dart';
+
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
 /// Example:
@@ -15,7 +17,24 @@ import 'package:flutter/foundation.dart'
 /// );
 /// ```
 class DefaultFirebaseOptions {
-  static FirebaseOptions get currentPlatform {
+  /// Opciones del proyecto elegido con FIREBASE_ENV (staging por omisión).
+  static FirebaseOptions get currentPlatform => switch (FirebaseEnv.current) {
+        FirebaseEnv.production => _forPlatform(web, android, ios),
+        FirebaseEnv.staging => _staging,
+      };
+
+  static FirebaseOptions get _staging {
+    if (_stagingProjectId == _stagingPlaceholder) {
+      throw UnsupportedError(
+        'El proyecto de staging aún no está configurado (DEPLOY.md). '
+        'Para producción compila con --dart-define=FIREBASE_ENV=production.',
+      );
+    }
+    return _forPlatform(stagingWeb, stagingAndroid, stagingIos);
+  }
+
+  static FirebaseOptions _forPlatform(
+      FirebaseOptions web, FirebaseOptions android, FirebaseOptions ios) {
     if (kIsWeb) {
       return web;
     }
@@ -70,9 +89,9 @@ class DefaultFirebaseOptions {
     measurementId: 'G-363NE1J1QR',
   );
 
-  // Native apps (Android/iOS) — registered in the same Firebase project
-  // (luxelane-4e7ae). IDs come from the Firebase console → Project settings
-  // → Your apps, and are passed at build time so no file must be committed.
+  // Native apps (Android/iOS). IDs come from the Firebase console → Project
+  // settings → Your apps of the project being built (FIREBASE_ENV), and are
+  // passed at build time so no file must be committed.
   static const _androidAppId =
       String.fromEnvironment('FIREBASE_ANDROID_APP_ID');
   static const _androidApiKey = String.fromEnvironment(
@@ -99,6 +118,43 @@ class DefaultFirebaseOptions {
     messagingSenderId: '51157842817',
     projectId: 'luxelane-4e7ae',
     storageBucket: 'luxelane-4e7ae.firebasestorage.app',
+    iosClientId: String.fromEnvironment('GOOGLE_IOS_CLIENT_ID'),
+  );
+
+  // ---------------------------------------------------------------------------
+  // Staging. Valores de la app web del proyecto de staging (Firebase console
+  // → Project settings → Your apps). Mientras projectId sea el marcador, una
+  // compilación de staging no arranca Firebase.
+  // ---------------------------------------------------------------------------
+
+  static const _stagingPlaceholder = 'REEMPLAZAR_PROYECTO_STAGING';
+  static const _stagingProjectId = _stagingPlaceholder;
+  static const _stagingApiKey = 'REEMPLAZAR_API_KEY_STAGING';
+  static const _stagingSenderId = 'REEMPLAZAR_SENDER_ID_STAGING';
+
+  static const FirebaseOptions stagingWeb = FirebaseOptions(
+    apiKey: _stagingApiKey,
+    appId: 'REEMPLAZAR_WEB_APP_ID_STAGING',
+    messagingSenderId: _stagingSenderId,
+    projectId: _stagingProjectId,
+    authDomain: '$_stagingProjectId.firebaseapp.com',
+    storageBucket: '$_stagingProjectId.firebasestorage.app',
+  );
+
+  static const FirebaseOptions stagingAndroid = FirebaseOptions(
+    apiKey: _stagingApiKey,
+    appId: _androidAppId,
+    messagingSenderId: _stagingSenderId,
+    projectId: _stagingProjectId,
+    storageBucket: '$_stagingProjectId.firebasestorage.app',
+  );
+
+  static const FirebaseOptions stagingIos = FirebaseOptions(
+    apiKey: _stagingApiKey,
+    appId: _iosAppId,
+    messagingSenderId: _stagingSenderId,
+    projectId: _stagingProjectId,
+    storageBucket: '$_stagingProjectId.firebasestorage.app',
     iosClientId: String.fromEnvironment('GOOGLE_IOS_CLIENT_ID'),
   );
 }
