@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/enums/enums.dart';
+import '../../features/business/presentation/pages/business_landing_page.dart';
+import '../../features/business/presentation/pages/company_dashboard_page.dart';
+import '../../features/special/domain/special_models.dart';
+import '../../features/special/presentation/pages/my_special_requests_page.dart';
+import '../../features/special/presentation/pages/special_request_page.dart';
 import '../../features/admin/presentation/pages/admin_dashboard_page.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
@@ -52,6 +57,11 @@ abstract class LuxRoutes {
   static const driverEarnings = '/driver/earnings';
   static const driverProfile = '/driver/profile';
   static const driverActiveRide = '/driver/active-ride/:bookingId';
+
+  // Programa para empresas y servicios especiales
+  static const businessSignup = '/empresas/registro';
+  static const company = '/empresa';
+  static const special = '/especiales';
 }
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -132,7 +142,9 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
                 path.startsWith('/ride-type') ||
                 path.startsWith('/booking') ||
                 path.startsWith('/legal') ||
-                path == '/empresas';
+                path == '/empresas' ||
+                path == LuxRoutes.businessSignup ||
+                path.startsWith('${LuxRoutes.special}/');
             return common || (kIsWeb && path.startsWith('/servicios'));
           }
 
@@ -184,6 +196,27 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: '/empresas',
           pageBuilder: (c, s) => _fade(const BusinessPage(), s),
+        ),
+        GoRoute(
+          path: LuxRoutes.businessSignup,
+          pageBuilder: (c, s) => _fade(const BusinessLandingPage(), s),
+        ),
+        GoRoute(
+          path: LuxRoutes.company,
+          pageBuilder: (c, s) => _fade(const CompanyDashboardPage(), s),
+        ),
+        GoRoute(
+          path: LuxRoutes.special,
+          pageBuilder: (c, s) => _fade(const MySpecialRequestsPage(), s),
+        ),
+        GoRoute(
+          path: '${LuxRoutes.special}/:kind',
+          redirect: (c, s) =>
+              SpecialKindX.parse(s.pathParameters['kind']) == null ? '/' : null,
+          pageBuilder: (c, s) => _fade(
+              SpecialRequestPage(
+                  kind: SpecialKindX.parse(s.pathParameters['kind'])!),
+              s),
         ),
         GoRoute(
           path: '/legal/terminos',

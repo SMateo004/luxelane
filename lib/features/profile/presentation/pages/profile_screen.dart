@@ -8,6 +8,8 @@ import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../business/data/business_repository.dart';
+import '../../../business/presentation/widgets/business_widgets.dart';
 import '../bloc/profile_bloc.dart';
 
 // ---------------------------------------------------------------------------
@@ -178,6 +180,27 @@ class _ProfileBody extends StatelessWidget {
               onTap: () => context.push('/payment'),
             ),
         ])),
+        if (rider) ...[
+          const SizedBox(height: LuxSpacing.xl),
+          item(const SectionHeader(title: 'Empresa')),
+          const SizedBox(height: LuxSpacing.sm),
+          if (user.companyId == null)
+            CompanyInvitesCard(
+                email: user.email,
+                emailVerified: sl<BusinessRepository>().emailVerified),
+          item(LuxGroup(children: [
+            LuxListRow(
+              icon: Icons.apartment_outlined,
+              title:
+                  user.companyId != null ? 'Mi empresa' : 'Cuenta de empresa',
+              subtitle: user.companyId != null
+                  ? null
+                  : 'Viajes de tu equipo con un solo extracto mensual',
+              onTap: () => context
+                  .push(user.companyId != null ? '/empresa' : '/empresas'),
+            ),
+          ])),
+        ],
         const SizedBox(height: LuxSpacing.xl),
         item(const SectionHeader(title: 'Legal')),
         const SizedBox(height: LuxSpacing.sm),

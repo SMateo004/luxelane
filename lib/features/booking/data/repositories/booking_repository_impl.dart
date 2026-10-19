@@ -19,6 +19,16 @@ class BookingRepositoryImpl implements BookingRepository {
   @override
   Future<Either<Failure, Booking>> createBooking(Booking booking) async {
     try {
+      // Respaldo por si el catálogo aún no vio el mantenimiento: las reglas
+      // rechazan la reserva y el pasajero recibe el mismo aviso claro.
+      try {
+        final global = await _db.collection('config').doc('global').get();
+        if (global.data()?['isMaintenanceMode'] == true) {
+          return const Left(
+              ServerFailure('Las reservas están en pausa por mantenimiento. '
+                  'Vuelve a intentarlo en unos minutos.'));
+        }
+      } catch (_) {/* sin conexión: lo decide la escritura */}
       final id = _uuid.v4();
       final data = booking.toJson()..['id'] = id;
       // El chófer no lee perfiles ajenos: el estilo de viaje del pasajero

@@ -19,6 +19,10 @@ abstract class LuxFormat {
 
   static String _two(int v) => v.toString().padLeft(2, '0');
 
+  /// Importe en bolivianos: "Bs 120" o, con [decimals], "Bs 120.50".
+  static String bs(num amount, {bool decimals = false}) =>
+      'Bs ${amount.toStringAsFixed(decimals ? 2 : 0)}';
+
   static String time(DateTime d) => '${_two(d.hour)}:${_two(d.minute)}';
 
   /// "Hoy · 18:30", "Mañana · 09:15" or "vie 14 nov · 18:30".

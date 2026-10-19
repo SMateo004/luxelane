@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_info_page.dart';
+import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../data/business_lead_repository.dart';
 
@@ -71,7 +74,17 @@ class _BusinessPageState extends State<BusinessPage> {
         lead: 'Chóferes privados para tu equipo y tus invitados, con '
             'facturación centralizada y un gerente de cuenta. Cuéntanos qué '
             'necesitas y te contactamos en menos de un día hábil.',
-        child: _sent ? _thanks() : _formView(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const _OpenAccountCard(),
+            const SizedBox(height: LuxSpacing.lg),
+            const Text('¿Prefieres que te contactemos?',
+                style: LuxTypography.titleMedium),
+            const SizedBox(height: LuxSpacing.sm),
+            _sent ? _thanks() : _formView(),
+          ],
+        ),
       );
 
   Widget _thanks() => LuxCard(
@@ -154,4 +167,41 @@ class _BusinessPageState extends State<BusinessPage> {
           ],
         ),
       );
+}
+
+/// Alta directa de la cuenta de empresa (equipo, límites y extracto
+/// mensual). Si el usuario ya pertenece a una empresa, lleva a su panel.
+class _OpenAccountCard extends StatelessWidget {
+  const _OpenAccountCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final auth = context.watch<AuthBloc>().state;
+    final hasCompany = auth is AuthAuthenticated && auth.user.companyId != null;
+    return LuxCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+              hasCompany ? 'Tu cuenta de empresa' : 'Abre tu cuenta de empresa',
+              style: LuxTypography.titleMedium),
+          const SizedBox(height: 6),
+          Text(
+            hasCompany
+                ? 'Gestiona tu equipo, los límites y los extractos mensuales.'
+                : 'Registra la empresa, invita a tu equipo con límites por '
+                    'persona y recibe un solo extracto al mes con cada viaje.',
+            style: LuxTypography.bodyMedium
+                .copyWith(color: LuxColors.inkSecondary),
+          ),
+          const SizedBox(height: LuxSpacing.md),
+          LuxButton(
+            label: hasCompany ? 'Ir a mi empresa' : 'Abrir cuenta de empresa',
+            onPressed: () =>
+                context.go(hasCompany ? '/empresa' : '/empresas/registro'),
+          ),
+        ],
+      ),
+    );
+  }
 }

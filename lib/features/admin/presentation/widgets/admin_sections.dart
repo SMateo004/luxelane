@@ -207,11 +207,12 @@ enum AdminSection {
   dashboard,
   operations,
   finance,
+  companies,
+  special,
   pricing,
   drivers,
   vehicles,
   users,
-  business,
   audit,
   settings,
 }

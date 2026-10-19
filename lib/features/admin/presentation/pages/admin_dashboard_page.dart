@@ -9,6 +9,8 @@ import '../../domain/admin_finance.dart';
 import '../bloc/admin_bloc.dart';
 import '../widgets/admin_finance_tab.dart';
 import '../widgets/admin_pricing_tab.dart';
+import '../widgets/admin_companies_tab.dart';
+import '../widgets/admin_special_tab.dart';
 import '../widgets/admin_sections.dart';
 import '../widgets/admin_shared_widgets.dart';
 
@@ -26,11 +28,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.dashboard: 'Panel',
     AdminSection.operations: 'Operaciones',
     AdminSection.finance: 'Finanzas',
+    AdminSection.companies: 'Empresas',
+    AdminSection.special: 'Especiales',
     AdminSection.pricing: 'Tarifas',
     AdminSection.drivers: 'Chóferes',
     AdminSection.vehicles: 'Vehículos',
     AdminSection.users: 'Usuarios',
-    AdminSection.business: 'Empresas',
     AdminSection.audit: 'Auditoría',
     AdminSection.settings: 'Configuración',
   };
@@ -38,11 +41,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.dashboard: Icons.dashboard_outlined,
     AdminSection.operations: Icons.confirmation_number_outlined,
     AdminSection.finance: Icons.account_balance_outlined,
+    AdminSection.companies: Icons.apartment_outlined,
+    AdminSection.special: Icons.flight_outlined,
     AdminSection.pricing: Icons.sell_outlined,
     AdminSection.drivers: Icons.badge_outlined,
     AdminSection.vehicles: Icons.directions_car_outlined,
     AdminSection.users: Icons.people_outline,
-    AdminSection.business: Icons.business_outlined,
     AdminSection.audit: Icons.history_rounded,
     AdminSection.settings: Icons.settings_outlined,
   };
@@ -63,7 +67,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       [
         AdminSection.finance,
         AdminSection.pricing,
-        AdminSection.business,
+        AdminSection.companies,
+        AdminSection.special,
         AdminSection.users,
       ]
     ),
@@ -79,7 +84,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.drivers: 'Verificación y disponibilidad de chóferes.',
     AdminSection.vehicles: 'La flota y su estado.',
     AdminSection.users: 'Cuentas, roles y accesos.',
-    AdminSection.business: 'Solicitudes de empresas.',
+    AdminSection.companies: 'Cuentas de empresa, extractos y contactos.',
+    AdminSection.special: 'Aerotaxi y paseos por cotizar.',
     AdminSection.audit: 'Cada acción del panel, con su autor.',
     AdminSection.settings: 'Ajustes generales de la plataforma.',
   };
@@ -332,10 +338,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         AdminSection.dashboard => DashboardTab(onNavigate: _go),
         AdminSection.operations => const BookingsTab(),
         AdminSection.finance => const FinanceTab(),
+        AdminSection.companies => const CompaniesTab(),
+        AdminSection.special => const SpecialRequestsTab(),
         AdminSection.pricing => const PricingTab(),
         AdminSection.drivers => const DriversTab(),
         AdminSection.vehicles => const VehiclesTab(),
-        AdminSection.business => const BusinessLeadsTab(),
         AdminSection.users => const UsersTab(),
         AdminSection.audit => const AuditTab(),
         AdminSection.settings => const SettingsTab(),
