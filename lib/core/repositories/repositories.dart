@@ -102,7 +102,14 @@ abstract class VehicleRepository {
 // ---------------------------------------------------------------------------
 
 abstract class BookingRepository {
-  Future<Either<Failure, Booking>> createBooking(Booking booking);
+  /// Crea la reserva en el servidor (createBooking), que calcula el precio.
+  /// Con [quotedPrice] (el que vio el pasajero), si el del servidor es
+  /// mayor devuelve [PriceChangedFailure] y no crea nada.
+  Future<Either<Failure, Booking>> createBooking(Booking booking,
+      {double? quotedPrice});
+
+  /// Precio del servidor para el viaje de [trip], sin crear nada.
+  Future<Either<Failure, BookingQuote>> quoteBooking(Booking trip);
   Future<Either<Failure, Booking>> getBookingById(String bookingId);
   Future<Either<Failure, List<Booking>>> getBookingsByRider(String riderId);
 

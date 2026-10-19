@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../../../core/enums/enums.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
@@ -35,6 +36,7 @@ class BookingCreateRequested extends BookingEvent {
     this.flightType,
     this.pickupAirport,
     this.hours,
+    this.quotedPrice,
   });
   final Place origin;
   final Place destination;
@@ -51,9 +53,35 @@ class BookingCreateRequested extends BookingEvent {
   final String? flightType;
   final String? pickupAirport;
   final int? hours;
+
+  /// Precio que vio el pasajero (de quoteBooking). Si el del servidor es
+  /// mayor, no se reserva y se emite [BookingPriceChanged].
+  final double? quotedPrice;
+
+  /// La misma solicitud con el precio nuevo, tras confirmarlo el pasajero.
+  BookingCreateRequested withQuotedPrice(double price) =>
+      BookingCreateRequested(
+        origin: origin,
+        destination: destination,
+        vehicleClass: vehicleClass,
+        serviceType: serviceType,
+        scheduledAt: scheduledAt,
+        riderId: riderId,
+        estimatedPrice: price,
+        notes: notes,
+        guest: guest,
+        passengerCount: passengerCount,
+        luggageCount: luggageCount,
+        flightNumber: flightNumber,
+        flightType: flightType,
+        pickupAirport: pickupAirport,
+        hours: hours,
+        quotedPrice: price,
+      );
+
   @override
   List<Object?> get props =>
-      [riderId, vehicleClass, scheduledAt, estimatedPrice];
+      [riderId, vehicleClass, scheduledAt, estimatedPrice, quotedPrice];
 }
 
 class BookingStatusWatched extends BookingEvent {
@@ -158,6 +186,21 @@ class BookingTripsLoaded extends BookingState {
   List<Object?> get props => [bookings];
 }
 
+/// El servidor cotizó más de lo que vio el pasajero: no se reservó. La
+/// pantalla pide confirmar [newPrice] y reenvía [request] con él.
+class BookingPriceChanged extends BookingState {
+  const BookingPriceChanged({
+    required this.previousPrice,
+    required this.newPrice,
+    required this.request,
+  });
+  final double previousPrice;
+  final double newPrice;
+  final BookingCreateRequested request;
+  @override
+  List<Object?> get props => [previousPrice, newPrice];
+}
+
 class BookingError extends BookingState {
   const BookingError(this.message);
   final String message;
@@ -213,9 +256,16 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       pickupAirport: event.pickupAirport,
       hours: event.hours,
     );
-    final result = await _repo.createBooking(booking);
+    final result =
+        await _repo.createBooking(booking, quotedPrice: event.quotedPrice);
     result.fold(
-      (f) => emit(BookingError(f.message)),
+      (f) => emit(f is PriceChangedFailure
+          ? BookingPriceChanged(
+              previousPrice: event.quotedPrice ?? event.estimatedPrice,
+              newPrice: f.price,
+              request: event,
+            )
+          : BookingError(f.message)),
       (b) => emit(BookingCreated(b)),
     );
   }

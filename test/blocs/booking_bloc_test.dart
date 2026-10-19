@@ -53,7 +53,8 @@ void main() {
     blocTest<BookingBloc, BookingState>(
       'emits [BookingLoading, BookingCreated] on BookingCreateRequested success',
       build: () {
-        when(() => repo.createBooking(any()))
+        when(() => repo.createBooking(any(),
+                quotedPrice: any(named: 'quotedPrice')))
             .thenAnswer((_) async => Right(_makeBooking()));
         return BookingBloc(bookingRepository: repo);
       },
@@ -75,8 +76,10 @@ void main() {
     blocTest<BookingBloc, BookingState>(
       'emits [BookingLoading, BookingError] on BookingCreateRequested failure',
       build: () {
-        when(() => repo.createBooking(any())).thenAnswer(
-            (_) async => const Left(ServerFailure('Network error')));
+        when(() => repo.createBooking(any(),
+                quotedPrice: any(named: 'quotedPrice')))
+            .thenAnswer(
+                (_) async => const Left(ServerFailure('Network error')));
         return BookingBloc(bookingRepository: repo);
       },
       act: (bloc) => bloc.add(BookingCreateRequested(
@@ -183,7 +186,8 @@ void main() {
     blocTest<BookingBloc, BookingState>(
       'una reserva para otra persona guarda el invitado aparte de las notas',
       build: () {
-        when(() => repo.createBooking(any()))
+        when(() => repo.createBooking(any(),
+                quotedPrice: any(named: 'quotedPrice')))
             .thenAnswer((_) async => Right(_makeBooking()));
         return BookingBloc(bookingRepository: repo);
       },
@@ -200,13 +204,42 @@ void main() {
             title: 'Sra.', firstName: 'Carla', phone: '+59170000001'),
       )),
       verify: (_) {
-        final sent = verify(() => repo.createBooking(captureAny()))
-            .captured
-            .single as Booking;
+        final sent = verify(() => repo.createBooking(captureAny(),
+            quotedPrice: any(named: 'quotedPrice'))).captured.single as Booking;
         expect(sent.notes, 'Llevar agua');
         expect(sent.guest?.fullName, 'Sra. Carla');
         expect(sent.guest?.phone, '+59170000001');
       },
+    );
+
+    blocTest<BookingBloc, BookingState>(
+      'si el servidor cotiza más que lo mostrado, pide confirmar el precio nuevo',
+      build: () {
+        when(() => repo.createBooking(any(),
+                quotedPrice: any(named: 'quotedPrice')))
+            .thenAnswer((_) async => const Left(PriceChangedFailure(120)));
+        return BookingBloc(bookingRepository: repo);
+      },
+      act: (bloc) => bloc.add(BookingCreateRequested(
+        origin: _origin,
+        destination: _destination,
+        vehicleClass: VehicleClass.business,
+        serviceType: ServiceType.oneWay,
+        scheduledAt: _now,
+        riderId: 'rider-1',
+        estimatedPrice: 90,
+        quotedPrice: 90,
+      )),
+      expect: () => [
+        const BookingLoading(),
+        isA<BookingPriceChanged>()
+            .having((s) => s.previousPrice, 'previousPrice', 90)
+            .having((s) => s.newPrice, 'newPrice', 120)
+            .having((s) => s.request.withQuotedPrice(120).quotedPrice,
+                'reenvío', 120),
+      ],
+      verify: (_) =>
+          verify(() => repo.createBooking(any(), quotedPrice: 90)).called(1),
     );
   });
 }

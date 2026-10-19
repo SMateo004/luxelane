@@ -1,40 +1,55 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
-import 'package:uuid/uuid.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
-import '../../../../core/utils/service_area.dart';
 
 class BookingRepositoryImpl implements BookingRepository {
-  BookingRepositoryImpl({required FirebaseFirestore firestore})
-      : _db = firestore;
+  BookingRepositoryImpl({
+    required FirebaseFirestore firestore,
+    FirebaseFunctions? functions,
+  })  : _db = firestore,
+        _functionsOverride = functions;
 
   final FirebaseFirestore _db;
-  final _uuid = const Uuid();
+  final FirebaseFunctions? _functionsOverride;
+
+  FirebaseFunctions get _functions =>
+      _functionsOverride ?? FirebaseFunctions.instance;
 
   CollectionReference<Map<String, dynamic>> get _col =>
       _db.collection('bookings');
 
   @override
-  Future<Either<Failure, Booking>> createBooking(Booking booking) async {
+  Future<Either<Failure, Booking>> createBooking(Booking booking,
+      {double? quotedPrice}) async {
     try {
-      final id = _uuid.v4();
-      final data = bookingCreateData(booking)..['id'] = id;
-      // El chófer no lee perfiles ajenos: el estilo de viaje del pasajero
-      // viaja con la reserva. Si no se puede leer, se reserva igual.
-      try {
-        final profile =
-            await _db.collection('users').doc(booking.riderId).get();
-        final prefs =
-            RidePreferences.fromJson(profile.data()?['ridePreferences']);
-        if (!prefs.isEmpty) data['riderPreferences'] = prefs.toJson();
-      } catch (_) {}
-      await _col.doc(id).set(data);
-      return Right(Booking.fromJson(data));
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      final res = await _functions
+          .httpsCallable('createBooking')
+          .call<Map<String, dynamic>>(
+              bookingRequestData(booking, quotedPrice: quotedPrice));
+      final id = res.data['bookingId'] as String;
+      return getBookingById(id);
+    } on FirebaseFunctionsException catch (e) {
+      return Left(bookingFailureFor(e.code, e.details));
+    } catch (_) {
+      return const Left(ServerFailure(_kConnectionError));
+    }
+  }
+
+  @override
+  Future<Either<Failure, BookingQuote>> quoteBooking(Booking trip) async {
+    try {
+      final res = await _functions
+          .httpsCallable('quoteBooking')
+          .call<Map<String, dynamic>>(bookingRequestData(trip, quote: true));
+      return Right(BookingQuote.fromJson(res.data));
+    } on FirebaseFunctionsException catch (e) {
+      return Left(bookingFailureFor(e.code, e.details));
+    } catch (_) {
+      return const Left(ServerFailure(_kConnectionError));
     }
   }
 
@@ -246,18 +261,62 @@ class BookingRepositoryImpl implements BookingRepository {
       .map((s) => Booking.fromJson({'id': s.id, ...s.data()!}));
 }
 
-/// Lo que se guarda al crear una reserva: además de la reserva, la zona de
-/// recogida y destino (ciudad o aeropuerto) que el servidor copia en la
-/// solicitud abierta en lugar de la dirección exacta.
-Map<String, dynamic> bookingCreateData(Booking booking) {
-  final data = booking.toJson();
-  final pickup = ServiceArea.areaLabel(booking.origin);
-  final dropoff = booking.serviceType == ServiceType.byTheHour
-      ? null
-      : ServiceArea.areaLabel(booking.destination);
-  if (pickup != null) data['pickupArea'] = pickup;
-  if (dropoff != null) data['dropoffArea'] = dropoff;
-  return data;
+const _kConnectionError =
+    'No pudimos conectar. Revisa tu conexión e inténtalo de nuevo.';
+
+/// Solo los datos del viaje que aceptan quoteBooking y createBooking: el
+/// precio, el estado y la zona los pone el servidor.
+Map<String, dynamic> bookingRequestData(Booking b,
+    {double? quotedPrice, bool quote = false}) {
+  Map<String, dynamic> place(Place p) =>
+      {'name': p.name, 'address': p.address, 'lat': p.lat, 'lng': p.lng};
+  final hourly = b.serviceType == ServiceType.byTheHour;
+  return {
+    'origin': place(b.origin),
+    // Por horas sin destino fijo, el servidor usa la recogida.
+    if (!hourly) 'destination': place(b.destination),
+    'scheduledAt': b.scheduledAt.millisecondsSinceEpoch,
+    'vehicleClass': b.vehicleClass.name,
+    'serviceType': b.serviceType.name,
+    if (hourly) 'hours': b.hours ?? 2,
+    if (!quote) ...{
+      'passengerCount': b.passengerCount,
+      'luggageCount': b.luggageCount,
+      if (b.flightNumber?.isNotEmpty == true) 'flightNumber': b.flightNumber,
+      if (b.flightType != null) 'flightType': b.flightType,
+      if (b.notes?.trim().isNotEmpty == true) 'notes': b.notes!.trim(),
+      if (b.guest != null) 'guest': b.guest!.toJson()..remove('email'),
+      if (quotedPrice != null) 'quotedPrice': quotedPrice,
+    },
+  };
+}
+
+/// Error del servidor (details.reason) convertido en un mensaje para el
+/// pasajero, sin texto técnico.
+Failure bookingFailureFor(String code, Object? details) {
+  final d = details is Map ? details : const {};
+  final reason = d['reason'] as String?;
+  if (reason == 'price_changed' && d['price'] is num) {
+    return PriceChangedFailure((d['price'] as num).toDouble());
+  }
+  return ServerFailure(switch (reason) {
+    'pricing_unavailable' => 'No pudimos calcular el precio de este viaje '
+        'ahora. Inténtalo de nuevo en unos minutos.',
+    'out_of_area' => 'Por ahora solo hacemos viajes dentro de la misma '
+        'ciudad de la recogida.',
+    'class_unavailable' => 'Esta clase de vehículo no está disponible en '
+        'este momento. Elige otra.',
+    'service_unavailable' => 'Las reservas están en pausa por '
+        'mantenimiento. Vuelve a intentarlo en unos minutos.',
+    'invalid_hours' => 'Elige un número entero de horas.',
+    'past_pickup' => 'La hora de recogida ya pasó. Elige una nueva hora.',
+    'inactive_user' => 'Tu cuenta no puede hacer reservas en este momento.',
+    'unauthenticated' => 'Inicia sesión para reservar.',
+    _ => code == 'unavailable' || code == 'deadline-exceeded'
+        ? _kConnectionError
+        : 'No pudimos procesar tu reserva. Revisa los datos del viaje e '
+            'inténtalo de nuevo.',
+  });
 }
 
 class _AcceptError implements Exception {

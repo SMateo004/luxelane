@@ -9,8 +9,10 @@ import '../models/models.dart';
 /// Fuente única de tarifas y estado operativo para toda la app.
 ///
 /// Escucha `/pricingRules` (tarifas que guarda el admin) y `/config/global`
-/// (modo mantenimiento). Cualquier precio mostrado o enviado al reservar sale
-/// de aquí, así lo que el admin configura es exactamente lo que se cobra.
+/// (modo mantenimiento). SOLO VISUAL: precios orientativos de las tarjetas de
+/// vehículo, el "desde" de la web y el simulador del panel admin, y el aviso
+/// de servicio apagado antes de reservar. El precio que se cobra lo calcula
+/// el servidor (quoteBooking / createBooking).
 /// Mientras no hay datos (sin conexión, sin Firebase) usa las tarifas de
 /// fábrica de [DefaultPricing].
 class PricingCatalog extends ChangeNotifier {

@@ -755,6 +755,25 @@ class Booking {
 }
 
 // ---------------------------------------------------------------------------
+// BookingQuote
+// ---------------------------------------------------------------------------
+
+/// Precio de un viaje calculado por el servidor (quoteBooking): es el que se
+/// cobra. [approximateDistance] indica que la ruta por calles no estuvo
+/// disponible y se usó la línea recta con el factor de ruta del admin.
+class BookingQuote {
+  const BookingQuote({required this.price, this.approximateDistance = false});
+
+  final double price;
+  final bool approximateDistance;
+
+  factory BookingQuote.fromJson(Map<String, dynamic> j) => BookingQuote(
+        price: (j['price'] as num).toDouble(),
+        approximateDistance: j['distanceSource'] == 'fallback',
+      );
+}
+
+// ---------------------------------------------------------------------------
 // OpenRequest
 // ---------------------------------------------------------------------------
 

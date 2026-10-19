@@ -393,14 +393,9 @@ class MapsService {
       return webGetRoute(origin: origin, destination: destination);
     }
 
-    // Mobile: HTTP REST API (with mock fallback when no key)
-    if (_key.isEmpty) {
-      return RouteInfo(
-        distanceKm: 25.0,
-        durationMin: 30,
-        polylinePoints: [origin.latLng, destination.latLng],
-      );
-    }
+    // Mobile: HTTP REST API. Sin clave no hay ruta: nunca se inventa una
+    // distancia (el precio lo calcula el servidor).
+    if (_key.isEmpty) return null;
     try {
       final uri = Uri.https(_base, '/maps/api/directions/json', {
         'origin': '${origin.lat},${origin.lng}',

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -96,13 +97,137 @@ class _BookingScreenState extends State<BookingScreen> {
 
   final ScrollController _cardsCtrl = ScrollController();
 
+  /// Distancia por calles ya conocida, o 0 si no la hay: nunca se inventa.
   double get _km =>
       _formData?.routeDistanceKm != null && _formData!.routeDistanceKm > 0
           ? _formData!.routeDistanceKm
-          : 25.0;
+          : 0;
 
-  double get _price => PricingCatalog.instance
-      .estimate(_selected, _service, km: _km, hours: _hours);
+  /// Sin ruta, un traslado solo puede mostrar el precio mínimo ("desde").
+  bool get _priceIsFrom => _service == ServiceType.oneWay && _km == 0;
+
+  /// Precio orientativo (solo visual) de las tarjetas: con la tarifa local
+  /// de PricingCatalog. El que se cobra lo calcula el servidor.
+  double _cardPrice(VehicleClass vc) =>
+      PricingCatalog.instance.estimate(vc, _service, km: _km, hours: _hours);
+
+  // ── Precio del servidor (quoteBooking) ─────────────────────────────────
+  // Se pide al llegar al resumen (en web el resumen siempre está a la
+  // vista), con espera para no llamar a cada cambio.
+  BookingQuote? _quote;
+  String? _quoteKey;
+  String? _requestedQuoteKey;
+  String? _quoteError;
+  Timer? _quoteTimer;
+
+  String get _currentQuoteKey => [
+        _selected.name,
+        _service.name,
+        _hours,
+        _formData?.origin.lat,
+        _formData?.origin.lng,
+        _formData?.destination?.lat,
+        _formData?.destination?.lng,
+        _formData?.scheduledAt.millisecondsSinceEpoch,
+      ].join('|');
+
+  /// Cotización vigente para la selección actual, o null.
+  BookingQuote? get _freshQuote =>
+      _quoteKey == _currentQuoteKey ? _quote : null;
+
+  /// Lo que se muestra y se envía como quotedPrice: el precio del servidor
+  /// si ya llegó; si no (p. ej. sin sesión), la estimación local, que el
+  /// servidor confirma al reservar.
+  double get _price => _freshQuote?.price ?? _cardPrice(_selected);
+
+  void _maybeQuote() {
+    final auth = context.read<AuthBloc>().state;
+    final onSummary = isWeb(context) || _step == 2;
+    if (_formData == null || !onSummary || auth is! AuthAuthenticated) return;
+    final key = _currentQuoteKey;
+    if (key == _requestedQuoteKey) return;
+    _requestedQuoteKey = key;
+    _quoteTimer?.cancel();
+    _quoteTimer =
+        Timer(const Duration(milliseconds: 600), () => _fetchQuote(key));
+  }
+
+  Future<void> _fetchQuote(String key) async {
+    final trip = _tripFor(_selected);
+    if (trip == null) return;
+    final result = await sl<BookingRepository>().quoteBooking(trip);
+    if (!mounted || key != _currentQuoteKey) return;
+    setState(() => result.fold(
+          (f) {
+            _quoteError = f.message;
+            _quote = null;
+            _quoteKey = null;
+          },
+          (q) {
+            _quoteError = null;
+            _quote = q;
+            _quoteKey = key;
+          },
+        ));
+  }
+
+  /// El viaje tal como se cotiza y se reserva (sin datos personales).
+  Booking? _tripFor(VehicleClass vc) {
+    final data = _formData;
+    if (data == null) return null;
+    final now = DateTime.now();
+    return Booking(
+      id: '',
+      riderId: '',
+      origin: data.origin,
+      destination: data.destination ?? data.origin,
+      scheduledAt: data.scheduledAt,
+      vehicleClass: vc,
+      serviceType: _service,
+      status: BookingStatus.pending,
+      estimatedPrice: 0,
+      createdAt: now,
+      updatedAt: now,
+      hours: _service == ServiceType.byTheHour ? _hours : null,
+    );
+  }
+
+  Future<void> _confirmNewPrice(BookingPriceChanged state) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('El precio cambió'),
+        content: Text(
+          'El precio de este viaje es ahora '
+          'Bs ${state.newPrice.toStringAsFixed(0)} '
+          '(antes Bs ${state.previousPrice.toStringAsFixed(0)}). '
+          '¿Quieres reservar con el precio nuevo?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('No reservar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Reservar'),
+          ),
+        ],
+      ),
+    );
+    if (!mounted) return;
+    setState(() {
+      _quote = BookingQuote(price: state.newPrice);
+      _quoteKey = _currentQuoteKey;
+      _loading = ok == true;
+    });
+    if (ok == true) {
+      context
+          .read<BookingBloc>()
+          .add(state.request.withQuotedPrice(state.newPrice));
+    }
+  }
 
   void _onPricingChanged() {
     if (mounted) setState(() {});
@@ -143,6 +268,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   @override
   void dispose() {
+    _quoteTimer?.cancel();
     PricingCatalog.instance.removeListener(_onPricingChanged);
     _leftScrollCtrl.dispose();
     _cardsCtrl.dispose();
@@ -387,6 +513,7 @@ class _BookingScreenState extends State<BookingScreen> {
           scheduledAt: scheduledAt,
           riderId: authState.user.id,
           estimatedPrice: _price,
+          quotedPrice: _price,
           notes: _notes.isNotEmpty ? _notes : null,
           guest: guest,
           passengerCount: _passengers,
@@ -442,6 +569,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _maybeQuote();
     return MultiBlocListener(
       listeners: [
         BlocListener<BookingBloc, BookingState>(listener: (ctx, state) {
@@ -452,6 +580,10 @@ class _BookingScreenState extends State<BookingScreen> {
             }
             setState(() => _loading = false);
             _celebrate(state.booking.id);
+          }
+          if (state is BookingPriceChanged) {
+            setState(() => _loading = false);
+            _confirmNewPrice(state);
           }
           if (state is BookingError) {
             setState(() => _loading = false);
@@ -657,9 +789,8 @@ class _BookingScreenState extends State<BookingScreen> {
                             final vc = _kVehicleClasses[i];
                             return _VehicleCard(
                               vehicleClass: vc,
-                              price: PricingCatalog.instance.estimate(
-                                  vc, _service,
-                                  km: _km, hours: _hours),
+                              price: _cardPrice(vc),
+                              fromPrice: _priceIsFrom,
                               selected: _selected == vc,
                               onTap: () => _selectVehicle(vc),
                               serviceType: _service,
@@ -799,9 +930,6 @@ class _BookingScreenState extends State<BookingScreen> {
   // ── Price breakdown ────────────────────────────────────────────────────────
 
   Widget _webPriceBreakdown({bool compact = false}) {
-    final base = _price * 0.9185;
-    final tax = _price * 0.0815;
-
     // Dotted line row
     Widget priceLine(String label, double amount) => Padding(
           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -902,12 +1030,15 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           const SizedBox(height: 20),
 
-          // Base fare
-          priceLine('Tarifa base', base),
-          const Divider(color: _kDivider, height: 1),
-
-          // Tax
-          priceLine('Impuesto estimado', tax),
+          // Total: el precio del servidor, sin desglose fiscal (no hay
+          // una cifra de impuesto definida).
+          priceLine('Total', _price),
+          if (_quoteError != null) ...[
+            Text(_quoteError!,
+                style: const TextStyle(
+                    fontFamily: kSans, fontSize: 13, color: LuxColors.error)),
+            const SizedBox(height: 8),
+          ],
           const Divider(color: _kBorder, height: 1, thickness: 1.2),
           const SizedBox(height: 22),
 
@@ -1281,8 +1412,8 @@ class _BookingScreenState extends State<BookingScreen> {
                 final vc = _kVehicleClasses[i];
                 return _VehicleCard(
                   vehicleClass: vc,
-                  price: PricingCatalog.instance
-                      .estimate(vc, _service, km: _km, hours: _hours),
+                  price: _cardPrice(vc),
+                  fromPrice: _priceIsFrom,
                   selected: _selected == vc,
                   onTap: () => _selectVehicle(vc),
                   serviceType: _service,
@@ -1551,7 +1682,7 @@ class _WebTopBar extends StatelessWidget {
     this.showStickySelector = false,
     this.selectedVehicle,
     this.onVehicleChanged,
-    this.km = 25.0,
+    this.km = 0,
   });
 
   final BookingFormData? formData;
@@ -1563,6 +1694,8 @@ class _WebTopBar extends StatelessWidget {
   final bool showStickySelector;
   final VehicleClass? selectedVehicle;
   final ValueChanged<VehicleClass>? onVehicleChanged;
+
+  /// Distancia por calles conocida; 0 = sin ruta (se muestra "desde").
   final double km;
 
   @override
@@ -1672,6 +1805,7 @@ class _WebTopBar extends StatelessWidget {
                                           ),
                                           const SizedBox(width: 8),
                                           Text(
+                                            '${service == ServiceType.oneWay && km == 0 ? 'desde ' : ''}'
                                             'Bs ${price.toStringAsFixed(0)}',
                                             style: TextStyle(
                                               fontFamily: kSans,
@@ -1773,6 +1907,7 @@ class _VehicleCard extends StatefulWidget {
     required this.price,
     required this.selected,
     required this.onTap,
+    this.fromPrice = false,
     this.serviceType = ServiceType.oneWay,
     this.hours,
     this.width,
@@ -1780,7 +1915,11 @@ class _VehicleCard extends StatefulWidget {
   });
 
   final VehicleClass vehicleClass;
+
+  /// Precio orientativo; con [fromPrice] es el mínimo ("desde"), porque aún
+  /// no se conoce la ruta.
   final double price;
+  final bool fromPrice;
   final bool selected;
   final VoidCallback onTap;
   final ServiceType serviceType;
@@ -1812,8 +1951,8 @@ class _VehicleCardState extends State<_VehicleCard> {
     return Semantics(
       button: true,
       selected: sel,
-      label:
-          '${widget.vehicleClass.label}, Bs ${widget.price.toStringAsFixed(0)}',
+      label: '${widget.vehicleClass.label}, ${widget.fromPrice ? 'desde ' : ''}'
+          'Bs ${widget.price.toStringAsFixed(0)}',
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         onEnter: (_) => setState(() => _hover = true),
@@ -1952,6 +2091,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                         children: [
                           Flexible(
                             child: Text(
+                              '${widget.fromPrice ? 'desde ' : ''}'
                               'Bs ${widget.price.toStringAsFixed(0)}',
                               style: const TextStyle(
                                 fontFamily: kSerif,

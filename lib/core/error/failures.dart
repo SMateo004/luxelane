@@ -32,6 +32,14 @@ class PermissionFailure extends Failure {
   const PermissionFailure([super.message = 'Permission denied']);
 }
 
+/// El servidor calculó un precio mayor que el que vio el pasajero: la
+/// reserva no se creó y hay que confirmar [price].
+class PriceChangedFailure extends Failure {
+  const PriceChangedFailure(this.price)
+      : super('El precio de este viaje cambió.');
+  final double price;
+}
+
 class ValidationFailure extends Failure {
   const ValidationFailure([super.message = 'Validation error']);
 }
