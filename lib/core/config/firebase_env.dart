@@ -17,3 +17,17 @@ enum FirebaseEnv {
             raw, 'FIREBASE_ENV', 'Debe ser "staging" o "production"'),
       };
 }
+
+/// El proyecto de staging aún tiene los valores de marcador de
+/// `lib/firebase_options.dart`.
+class StagingNotConfiguredError implements Exception {
+  const StagingNotConfiguredError();
+
+  String get message =>
+      'Falta configurar el proyecto de staging: reemplaza los valores '
+      'REEMPLAZAR_* de lib/firebase_options.dart y .firebaserc (DEPLOY.md), '
+      'o compila con --dart-define=FIREBASE_ENV=production.';
+
+  @override
+  String toString() => message;
+}

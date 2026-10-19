@@ -25,10 +25,7 @@ class DefaultFirebaseOptions {
 
   static FirebaseOptions get _staging {
     if (_stagingProjectId == _stagingPlaceholder) {
-      throw UnsupportedError(
-        'El proyecto de staging aún no está configurado (DEPLOY.md). '
-        'Para producción compila con --dart-define=FIREBASE_ENV=production.',
-      );
+      throw const StagingNotConfiguredError();
     }
     return _forPlatform(stagingWeb, stagingAndroid, stagingIos);
   }

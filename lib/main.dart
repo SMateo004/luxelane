@@ -8,6 +8,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app/app.dart';
 import 'core/config/env.dart';
+import 'core/config/firebase_startup.dart';
 import 'core/config/remote_flags.dart';
 import 'core/di/injection.dart';
 import 'core/services/crash_service.dart';
@@ -41,16 +42,16 @@ void main() async {
     ]),
   ]);
 
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+  final firebase = await startFirebase(() => Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      ));
+  if (firebase is FirebaseFatal) {
+    runApp(appForStartup(firebase, const LuxelaneApp()));
+    return;
+  }
+  if (firebase is FirebaseReady) {
     // Admin-controlled switches (e.g. First Class availability).
     RemoteFlags.instance.listen(FirebaseFirestore.instance);
-  } catch (e) {
-    if (AppConfig.enableLogs) {
-      debugPrint('[Luxelane] Firebase init skipped: $e');
-    }
   }
 
   // Google Maps JS API — load dynamically so the dart-define key is used
@@ -104,5 +105,5 @@ void main() async {
     }
   }
 
-  runApp(const LuxelaneApp());
+  runApp(appForStartup(firebase, const LuxelaneApp()));
 }
