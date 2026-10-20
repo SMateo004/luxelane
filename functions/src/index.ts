@@ -10,7 +10,7 @@ import { isTransient, withRetryPolicy } from './retry_policy';
 import * as stripe from './stripe_service';
 import { logger } from './logger';
 import * as err from './errors';
-import { checkBookingPrice, DEFAULT_FARES, fareId, FareRule } from './pricing';
+import { checkBookingPrice, fareId, FareRule } from './pricing';
 import { computeSettlement, planBackfill, Settlement } from './settlement';
 import { rankCandidates } from './assignment';
 import { fromCents, toCents } from './money';
@@ -626,7 +626,8 @@ async function notifyNewBooking(
   // Red de seguridad: createBooking ya calculó el precio con la tarifa vigente.
   const id = fareId(vehicleClass, booking.serviceType ?? 'oneWay');
   const ruleSnap = await db.collection('pricingRules').doc(id).get();
-  const rule = ruleSnap.exists ? (ruleSnap.data() as FareRule) : DEFAULT_FARES[id];
+  // Sin tarifa en Firestore no hay con qué comparar: unknown_fare.
+  const rule = ruleSnap.exists ? (ruleSnap.data() as FareRule) : undefined;
   const global = (await db.collection('config').doc('global').get()).data() ?? {};
   // Apps antiguas o escrituras directas pueden saltarse los interruptores
   // del panel: se marcan para revisión igual que una tarifa fuera de rango.

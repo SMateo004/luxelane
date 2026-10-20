@@ -10,11 +10,10 @@ import '../models/models.dart';
 ///
 /// Escucha `/pricingRules` (tarifas que guarda el admin) y `/config/global`
 /// (modo mantenimiento). SOLO VISUAL: precios orientativos de las tarjetas de
-/// vehículo, el "desde" de la web y el simulador del panel admin, y el aviso
-/// de servicio apagado antes de reservar. El precio que se cobra lo calcula
-/// el servidor (quoteBooking / createBooking).
-/// Mientras no hay datos (sin conexión, sin Firebase) usa las tarifas de
-/// fábrica de [DefaultPricing].
+/// vehículo y el "desde" de la web, y el aviso de servicio apagado antes de
+/// reservar. El precio que se cobra lo calcula el servidor (quoteBooking /
+/// createBooking). Sin tarifa en Firestore no hay cifra: la interfaz muestra
+/// «Cotiza al reservar» (no hay tarifas de fábrica en el código).
 class PricingCatalog extends ChangeNotifier {
   PricingCatalog._();
 
@@ -91,20 +90,23 @@ class PricingCatalog extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Tarifa vigente: la guardada por el admin o, si no existe, la de fábrica.
-  PricingRule ruleFor(VehicleClass vc, ServiceType st) =>
-      _rules[PricingRule.idFor(vc, st)] ?? PricingRule.fallback(vc, st);
+  /// Tarifa guardada por el admin, o null si esa combinación no tiene.
+  PricingRule? ruleFor(VehicleClass vc, ServiceType st) =>
+      _rules[PricingRule.idFor(vc, st)];
 
-  double estimate(VehicleClass vc, ServiceType st,
+  /// Precio orientativo, o null sin tarifa configurada.
+  double? estimate(VehicleClass vc, ServiceType st,
           {double km = 0, int hours = 2}) =>
-      ruleFor(vc, st).estimate(km: km, hours: hours);
+      ruleFor(vc, st)?.estimate(km: km, hours: hours);
 
-  /// Precio "desde" que se anuncia en la web (el mínimo de la tarifa).
-  double startingPrice(VehicleClass vc, ServiceType st) =>
-      ruleFor(vc, st).minimumPriceUsd;
+  /// Precio "desde" que se anuncia en la web (el mínimo de la tarifa), o
+  /// null sin tarifa configurada.
+  double? startingPrice(VehicleClass vc, ServiceType st) =>
+      ruleFor(vc, st)?.minimumPriceUsd;
 
+  /// Sin tarifa no se bloquea aquí: decide el servidor al cotizar.
   bool isAvailable(VehicleClass vc, ServiceType st) =>
-      !_maintenance && ruleFor(vc, st).isActive;
+      !_maintenance && (ruleFor(vc, st)?.isActive ?? true);
 
   /// Motivo legible por el que no se puede reservar, o null si se puede.
   String? unavailableReason(VehicleClass vc, ServiceType st) {
@@ -115,7 +117,7 @@ class PricingCatalog extends ChangeNotifier {
       return 'Las reservas están en pausa por mantenimiento. '
           'Vuelve a intentarlo en unos minutos.';
     }
-    if (!ruleFor(vc, st).isActive) {
+    if (ruleFor(vc, st)?.isActive == false) {
       return '${vc.label} no está disponible para "${st.label}" '
           'en este momento.';
     }

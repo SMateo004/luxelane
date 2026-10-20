@@ -1069,19 +1069,19 @@ class PricingRule {
   static String idFor(VehicleClass vc, ServiceType st) =>
       '${vc.name}_${st.name}';
 
-  /// Tarifa de fábrica, usada mientras el admin no haya guardado otra.
-  factory PricingRule.fallback(VehicleClass vc, ServiceType st) {
-    final r = DefaultPricing.rules[vc]![st]!;
-    return PricingRule(
-      id: idFor(vc, st),
-      vehicleClass: vc,
-      serviceType: st,
-      basePriceUsd: r['base']!,
-      pricePerKmUsd: r['perKm']!,
-      pricePerHourUsd: r['perHour']!,
-      minimumPriceUsd: r['min']!,
-    );
-  }
+  /// Combinación sin tarifa en Firestore: en blanco, para que el admin la
+  /// complete. No hay tarifas de fábrica: sin tarifa no se muestra precio y
+  /// el servidor no reserva.
+  factory PricingRule.unconfigured(VehicleClass vc, ServiceType st) =>
+      PricingRule(
+        id: idFor(vc, st),
+        vehicleClass: vc,
+        serviceType: st,
+        basePriceUsd: 0,
+        pricePerKmUsd: 0,
+        pricePerHourUsd: 0,
+        minimumPriceUsd: 0,
+      );
 
   static double _num(Object? v) => (v as num?)?.toDouble() ?? 0.0;
 
@@ -1232,58 +1232,6 @@ class AuditLog {
         'details': details,
         'createdAt': Timestamp.fromDate(createdAt),
       };
-}
-
-// ---------------------------------------------------------------------------
-// Default pricing (fallback when Firestore unavailable)
-// ---------------------------------------------------------------------------
-
-abstract class DefaultPricing {
-  static const Map<VehicleClass, Map<ServiceType, Map<String, double>>> rules =
-      {
-    VehicleClass.business: {
-      ServiceType.oneWay: {'base': 50, 'perKm': 3.0, 'perHour': 0, 'min': 50},
-      ServiceType.byTheHour: {'base': 0, 'perKm': 0, 'perHour': 80, 'min': 160},
-    },
-    VehicleClass.firstClass: {
-      ServiceType.oneWay: {'base': 80, 'perKm': 4.0, 'perHour': 0, 'min': 80},
-      ServiceType.byTheHour: {
-        'base': 0,
-        'perKm': 0,
-        'perHour': 120,
-        'min': 240
-      },
-    },
-    // Between Business Class and Business Van.
-    VehicleClass.businessSuv: {
-      ServiceType.oneWay: {'base': 70, 'perKm': 4.0, 'perHour': 0, 'min': 70},
-      ServiceType.byTheHour: {
-        'base': 0,
-        'perKm': 0,
-        'perHour': 115,
-        'min': 230
-      },
-    },
-    VehicleClass.businessVan: {
-      ServiceType.oneWay: {'base': 90, 'perKm': 5.0, 'perHour': 0, 'min': 90},
-      ServiceType.byTheHour: {
-        'base': 0,
-        'perKm': 0,
-        'perHour': 150,
-        'min': 300
-      },
-    },
-    VehicleClass.electric: {
-      ServiceType.oneWay: {'base': 60, 'perKm': 3.5, 'perHour': 0, 'min': 60},
-      ServiceType.byTheHour: {'base': 0, 'perKm': 0, 'perHour': 90, 'min': 180},
-    },
-  };
-
-  /// Precio con las tarifas de fábrica. La app usa `PricingCatalog`, que
-  /// aplica las tarifas que el admin haya guardado en Firestore.
-  static double estimate(VehicleClass vc, ServiceType st,
-          {double km = 0, int hours = 2}) =>
-      PricingRule.fallback(vc, st).estimate(km: km, hours: hours);
 }
 
 // ---------------------------------------------------------------------------

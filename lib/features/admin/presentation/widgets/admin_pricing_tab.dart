@@ -47,7 +47,7 @@ class PricingTab extends StatelessWidget {
               children: [
                 AdminTag('$custom personalizadas', color: LuxColors.sapphire),
                 AdminTag(
-                    '${VehicleClass.values.length * ServiceType.values.length - custom} de fábrica',
+                    '${VehicleClass.values.length * ServiceType.values.length - custom} sin configurar',
                     color: LuxColors.inkTertiary),
                 if (disabled > 0)
                   AdminTag('$disabled desactivadas', color: LuxColors.warning),
@@ -204,10 +204,11 @@ class _PricingCardState extends State<_PricingCard> {
   Future<void> _reset() async {
     final ok = await confirmAdminAction(
       context,
-      title: 'Restablecer tarifa',
-      message: 'Se eliminará la tarifa personalizada y se volverá a la de '
-          'fábrica: ${_summary(PricingRule.fallback(widget.rule.vehicleClass, widget.rule.serviceType))}.',
-      confirmLabel: 'Restablecer',
+      title: 'Quitar tarifa',
+      message: 'Se eliminará esta tarifa y la combinación quedará sin '
+          'configurar: la web y la app no mostrarán precio y no se podrá '
+          'reservar hasta volver a configurarla.',
+      confirmLabel: 'Quitar',
       destructive: true,
     );
     if (ok == null || !mounted) return;
@@ -260,8 +261,8 @@ class _PricingCardState extends State<_PricingCard> {
                             const AdminTag('Personalizada',
                                 color: LuxColors.sapphire)
                           else
-                            const AdminTag('De fábrica',
-                                color: LuxColors.inkTertiary),
+                            const AdminTag('Sin configurar',
+                                color: LuxColors.warning),
                           if (!r.isActive)
                             const AdminTag('Desactivada',
                                 color: LuxColors.warning),
@@ -393,7 +394,7 @@ class _PricingCardState extends State<_PricingCard> {
               children: [
                 if (widget.isCustom)
                   AdminActionButton(
-                    label: 'Restablecer a fábrica',
+                    label: 'Quitar tarifa',
                     icon: Icons.restart_alt_rounded,
                     color: LuxColors.warning,
                     onTap: _reset,

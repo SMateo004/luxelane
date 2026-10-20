@@ -263,7 +263,7 @@ class AdminRepositoryImpl implements AdminRepository {
       batch.delete(_db.collection('pricingRules').doc(id));
       _log(batch, 'reset_pricing', id, 'pricing',
           details: '${rule.vehicleClass.label} · ${rule.serviceType.label} '
-              'vuelve a la tarifa de fábrica');
+              'queda sin configurar');
     });
   }
 

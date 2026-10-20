@@ -47,6 +47,14 @@ const _kTextTertiary = LD.ink3; // #637490
 const _kDivider = LD.border; // #DDE4F0
 const _kPanelAccent = LD.sph; // #1B4F8A sapphire
 
+/// Precio para mostrar, o «Cotiza al reservar» si no hay tarifa
+/// configurada: nunca una cifra inventada.
+String formatPriceOrQuote(double? price,
+        {int decimals = 0, bool from = false}) =>
+    price == null
+        ? 'Cotiza al reservar'
+        : '${from ? 'desde ' : ''}Bs ${price.toStringAsFixed(decimals)}';
+
 class BookingScreen extends StatefulWidget {
   const BookingScreen({super.key});
   @override
@@ -111,7 +119,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   /// Precio orientativo (solo visual) de las tarjetas: con la tarifa local
   /// de PricingCatalog. El que se cobra lo calcula el servidor.
-  double _cardPrice(VehicleClass vc) =>
+  double? _cardPrice(VehicleClass vc) =>
       PricingCatalog.instance.estimate(vc, _service, km: _km, hours: _hours);
 
   // ── Precio del servidor (quoteBooking) ─────────────────────────────────
@@ -141,7 +149,7 @@ class _BookingScreenState extends State<BookingScreen> {
   /// Lo que se muestra y se envía como quotedPrice: el precio del servidor
   /// si ya llegó; si no (p. ej. sin sesión), la estimación local, que el
   /// servidor confirma al reservar.
-  double get _price => _freshQuote?.price ?? _cardPrice(_selected);
+  double? get _price => _freshQuote?.price ?? _cardPrice(_selected);
 
   void _maybeQuote() {
     final auth = context.read<AuthBloc>().state;
@@ -407,6 +415,24 @@ class _BookingScreenState extends State<BookingScreen> {
       context.go('/');
       return;
     }
+    // Nunca se reserva sin que el pasajero haya visto el precio del
+    // servidor (p. ej. quien inició sesión al reservar, o sin tarifa local).
+    if (_freshQuote == null) {
+      setState(() => _loading = true);
+      await _fetchQuote(_currentQuoteKey);
+      if (!mounted) return;
+      setState(() => _loading = false);
+      final quote = _freshQuote;
+      showLuxSnackbar(
+          context,
+          quote == null
+              ? (_quoteError ??
+                  'No pudimos calcular el precio. Inténtalo de nuevo.')
+              : 'El precio de tu viaje es Bs ${quote.price.toStringAsFixed(0)}. '
+                  'Pulsa Reservar para confirmar.',
+          isError: quote == null);
+      return;
+    }
     // La reserva se crea primero y la tarjeta se autoriza contra ella: si la
     // tarjeta falla, se cancela la reserva y no queda ninguna retención.
     _payByCard = _cardsSupported && _selectedCardId != null;
@@ -534,8 +560,8 @@ class _BookingScreenState extends State<BookingScreen> {
           serviceType: _service,
           scheduledAt: scheduledAt,
           riderId: authState.user.id,
-          estimatedPrice: _price,
-          quotedPrice: _price,
+          estimatedPrice: _freshQuote!.price,
+          quotedPrice: _freshQuote!.price,
           requestId: _attemptId,
           notes: _notes.isNotEmpty ? _notes : null,
           guest: guest,
@@ -959,7 +985,7 @@ class _BookingScreenState extends State<BookingScreen> {
 
   Widget _webPriceBreakdown({bool compact = false}) {
     // Dotted line row
-    Widget priceLine(String label, double amount) => Padding(
+    Widget priceLine(String label, double? amount) => Padding(
           padding: const EdgeInsets.symmetric(vertical: 14),
           child: Row(
             children: [
@@ -991,7 +1017,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
               const SizedBox(width: 10),
               Text(
-                'Bs ${amount.toStringAsFixed(2)}',
+                formatPriceOrQuote(amount, decimals: 2),
                 style: const TextStyle(
                   fontFamily: kSans,
                   fontSize: 15,
@@ -1212,7 +1238,7 @@ class _BookingScreenState extends State<BookingScreen> {
             ),
             const SizedBox(width: 12),
             Text(
-              'Bs ${_price.toStringAsFixed(0)}',
+              formatPriceOrQuote(_price),
               style: const TextStyle(
                 fontFamily: kSerif,
                 fontSize: 32,
@@ -1608,7 +1634,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         color: _kTextTertiary,
                         letterSpacing: 1.8)),
                 const Spacer(),
-                Text('Bs ${_price.toStringAsFixed(2)}',
+                Text(formatPriceOrQuote(_price, decimals: 2),
                     style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 18,
@@ -1833,8 +1859,10 @@ class _WebTopBar extends StatelessWidget {
                                           ),
                                           const SizedBox(width: 8),
                                           Text(
-                                            '${service == ServiceType.oneWay && km == 0 ? 'desde ' : ''}'
-                                            'Bs ${price.toStringAsFixed(0)}',
+                                            formatPriceOrQuote(price,
+                                                from: service ==
+                                                        ServiceType.oneWay &&
+                                                    km == 0),
                                             style: TextStyle(
                                               fontFamily: kSans,
                                               fontSize: 12,
@@ -1945,8 +1973,8 @@ class _VehicleCard extends StatefulWidget {
   final VehicleClass vehicleClass;
 
   /// Precio orientativo; con [fromPrice] es el mínimo ("desde"), porque aún
-  /// no se conoce la ruta.
-  final double price;
+  /// no se conoce la ruta. Null sin tarifa configurada.
+  final double? price;
   final bool fromPrice;
   final bool selected;
   final VoidCallback onTap;
@@ -1979,8 +2007,8 @@ class _VehicleCardState extends State<_VehicleCard> {
     return Semantics(
       button: true,
       selected: sel,
-      label: '${widget.vehicleClass.label}, ${widget.fromPrice ? 'desde ' : ''}'
-          'Bs ${widget.price.toStringAsFixed(0)}',
+      label: '${widget.vehicleClass.label}, '
+          '${formatPriceOrQuote(widget.price, from: widget.fromPrice)}',
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         onEnter: (_) => setState(() => _hover = true),
@@ -2119,8 +2147,8 @@ class _VehicleCardState extends State<_VehicleCard> {
                         children: [
                           Flexible(
                             child: Text(
-                              '${widget.fromPrice ? 'desde ' : ''}'
-                              'Bs ${widget.price.toStringAsFixed(0)}',
+                              formatPriceOrQuote(widget.price,
+                                  from: widget.fromPrice),
                               style: const TextStyle(
                                 fontFamily: kSerif,
                                 fontSize: 24,
@@ -2805,7 +2833,7 @@ class _LightPriceBar extends StatelessWidget {
     this.loading = false,
     this.label = 'Confirmar reserva',
   });
-  final double price;
+  final double? price;
   final VoidCallback onConfirm;
   final bool loading;
   final String label;
@@ -2833,7 +2861,7 @@ class _LightPriceBar extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             color: _kTextTertiary,
                             letterSpacing: 1.5)),
-                    Text('Bs ${price.toStringAsFixed(0)}',
+                    Text(formatPriceOrQuote(price),
                         style: const TextStyle(
                             fontFamily: kSans,
                             fontSize: 22,

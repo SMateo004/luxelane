@@ -246,13 +246,14 @@ class AdminState extends Equatable {
 
   Payment? paymentFor(Booking b) => FinancialSummary.paymentIndex(payments)(b);
 
-  /// Tarifa vigente (Firestore o, si no existe, la de fábrica).
+  /// Tarifa vigente (Firestore) o, si no existe, una en blanco por
+  /// configurar.
   PricingRule effectiveRule(VehicleClass vc, ServiceType st) {
     final id = PricingRule.idFor(vc, st);
     for (final r in pricingRules) {
       if (r.id == id) return r;
     }
-    return PricingRule.fallback(vc, st);
+    return PricingRule.unconfigured(vc, st);
   }
 
   bool hasCustomRule(VehicleClass vc, ServiceType st) {
@@ -355,8 +356,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         _repo.updatePricingRule(e.rule),
         'Tarifa ${e.rule.vehicleClass.label} · ${e.rule.serviceType.label} '
         'guardada'));
-    on<AdminResetPricingRequested>((e, emit) => _perform(emit,
-        _repo.resetPricingRule(e.rule), 'Tarifa restablecida a la de fábrica'));
+    on<AdminResetPricingRequested>((e, emit) => _perform(
+        emit,
+        _repo.resetPricingRule(e.rule),
+        'Tarifa eliminada: esa combinación queda sin configurar'));
     on<AdminChangeBookingStatusRequested>((e, emit) => _perform(
         emit,
         _repo.changeBookingStatus(e.booking, e.status, reason: e.reason),

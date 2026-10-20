@@ -97,8 +97,12 @@ AdminRepository _repo() {
         ),
       ]));
   when(r.watchPricingRules).thenAnswer((_) => Stream.value([
-        PricingRule.fallback(VehicleClass.business, ServiceType.oneWay)
-            .copyWith(basePriceUsd: 55, isActive: false),
+        PricingRule.unconfigured(VehicleClass.business, ServiceType.oneWay)
+            .copyWith(
+                basePriceUsd: 55,
+                pricePerKmUsd: 3,
+                minimumPriceUsd: 60,
+                isActive: false),
       ]));
   when(r.watchAllVehicles).thenAnswer((_) => Stream.value(const []));
   when(r.watchAuditLogs).thenAnswer((_) => Stream.value([
@@ -165,7 +169,7 @@ Future<void> _pump(WidgetTester tester, Widget tab, Size size) async {
 
 void main() {
   setUpAll(() => registerFallbackValue(
-      PricingRule.fallback(VehicleClass.business, ServiceType.oneWay)));
+      PricingRule.unconfigured(VehicleClass.business, ServiceType.oneWay)));
 
   const tabs = <String, Widget>{
     'panel': DashboardTab(),
@@ -200,9 +204,9 @@ void main() {
     await _pump(tester, const PricingTab(), const Size(1280, 4000));
     expect(find.text('Personalizada'), findsOneWidget);
     expect(find.text('Desactivada'), findsOneWidget);
-    // Every class × service except the one customised rule above.
+    // Todas las combinaciones salvo la personalizada: sin cifras de fábrica.
     expect(
-        find.text('De fábrica'),
+        find.text('Sin configurar'),
         findsNWidgets(
             VehicleClass.values.length * ServiceType.values.length - 1));
   });

@@ -691,7 +691,10 @@ class _ClassCard extends StatefulWidget {
   });
   final VehicleClass vc;
   final String image;
-  final double from;
+
+  /// Mínimo de la tarifa configurada, o null sin tarifa: no se anuncia
+  /// ninguna cifra.
+  final double? from;
   final bool perHour;
   final bool featured;
   final VoidCallback onChoose;
@@ -774,14 +777,18 @@ class _ClassCardState extends State<_ClassCard> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('DESDE',
-                            style:
-                                uiLabel(size: 9, color: LD.ink3, spacing: 1.8)),
-                        const SizedBox(height: 2),
+                        if (widget.from != null) ...[
+                          Text('DESDE',
+                              style: uiLabel(
+                                  size: 9, color: LD.ink3, spacing: 1.8)),
+                          const SizedBox(height: 2),
+                        ],
                         Text(
-                          widget.perHour
-                              ? 'Bs ${widget.from.toStringAsFixed(0)} · 2 h'
-                              : 'Bs ${widget.from.toStringAsFixed(0)}',
+                          widget.from == null
+                              ? 'Cotiza al reservar'
+                              : widget.perHour
+                                  ? 'Bs ${widget.from!.toStringAsFixed(0)} · 2 h'
+                                  : 'Bs ${widget.from!.toStringAsFixed(0)}',
                           style: const TextStyle(
                               fontFamily: kSans,
                               fontSize: 18,
