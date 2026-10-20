@@ -40,6 +40,8 @@ const trip = {
   serviceType: z.enum(SERVICE_TYPES),
   // La tarifa valida que sean enteras (error invalid_hours).
   hours: z.number().positive().max(24).optional(),
+  /** Versión de la app (x.y.z); la comprueba app_version.ts. */
+  appVersion: z.string().max(40).optional(),
 };
 
 const needsDestination = (d: { serviceType: string; destination?: unknown }) =>

@@ -187,14 +187,21 @@ dejan sin poder reservar a cualquier app antigua, así que el orden es:
 2. **Functions** (`quoteBooking`, `createBooking`, `onBookingCreated` nuevo):
    `firebase deploy --only functions --project <alias>`. Las apps antiguas
    siguen reservando (aún con las reglas viejas).
-3. **App nueva** en web (hosting) y en las tiendas; esperar a que la
-   mayoría de pasajeros actualice.
-4. **Reglas** al final: `firebase deploy --only firestore:rules --project <alias>`.
+3. **App nueva** en web (hosting) y en las tiendas. Esperar a que la
+   versión nueva esté **publicada y visible** en Google Play y en la App
+   Store (no solo enviada a revisión).
+4. **Versión mínima**: en `config/global` poner `minAppVersion` = la
+   versión publicada (`x.y.z`, la de `version:` en `pubspec.yaml`, sin el
+   `+build`) y, si existen, `androidStoreUrl` e `iosStoreUrl` (https).
+   Desde ese momento una app más vieja recibe «Actualiza la app para
+   reservar» en lugar de un error. Nunca subir `minAppVersion` antes de que
+   la versión esté en las tiendas y en la web: bloquearía a todos.
+5. **Reglas** al final: `firebase deploy --only firestore:rules --project <alias>`.
 
-**Riesgo:** hoy la app no tiene forma de forzar una versión mínima (no hay
-comprobación de versión ni `config/global.minAppVersion`). Quien no
-actualice la app móvil no podrá reservar tras el paso 4 y solo verá un
-error genérico. La web se actualiza sola con el despliegue de hosting.
+Las apps que ya existían antes de esta versión no envían `appVersion` ni
+llaman a `createBooking`: tras el paso 5 no pueden reservar y verán un
+error genérico, no el aviso (no saben mostrarlo). El aviso protege a partir
+de esta versión. La web se actualiza sola con el despliegue de hosting.
 
 ### Configuración de precios (Firestore)
 

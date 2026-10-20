@@ -11,6 +11,7 @@ import { tripDistance, DistanceSource } from './distance';
 import { computeFare, FareBreakdown, fixedFareKey, PricingConfig } from './fare';
 import type { FareRule } from './pricing';
 import { buildOpenRequest } from './open_requests';
+import { updateRequired } from './app_version';
 import { airportFor, areaLabel, cityOf, destinationOk, originOk, PlaceIn } from './service_area';
 
 export interface BookingDeps {
@@ -126,6 +127,14 @@ function parse<T>(schema: { safeParse: (d: unknown) => { success: true; data: T 
   return r.data;
 }
 
+/** Corta antes de cotizar o reservar si la app es más vieja que el mínimo. */
+async function requireSupportedApp(db: admin.firestore.Firestore, data: unknown): Promise<void> {
+  const global = (await db.collection('config').doc('global').get()).data() ?? {};
+  const appVersion = data && typeof data === 'object' ? (data as Record<string, unknown>).appVersion : undefined;
+  const update = updateRequired(global, appVersion);
+  if (update) throw bookingError('failed-precondition', 'app_update_required', update);
+}
+
 async function requireActiveRider(db: admin.firestore.Firestore, uid: string | undefined) {
   if (!uid) throw bookingError('unauthenticated', 'unauthenticated');
   const user = (await db.collection('users').doc(uid).get()).data();
@@ -137,6 +146,7 @@ async function requireActiveRider(db: admin.firestore.Firestore, uid: string | u
 
 export async function quoteBooking(deps: BookingDeps, uid: string | undefined, data: unknown) {
   await requireActiveRider(deps.db, uid);
+  await requireSupportedApp(deps.db, data);
   const trip = parse<QuoteInput>(quoteSchema, data);
   const priced = await priceTrip(deps, trip);
   return { price: priced.price, breakdown: priced.breakdown, distanceSource: priced.distanceSource };
@@ -166,6 +176,7 @@ function existingResponse(snap: admin.firestore.DocumentSnapshot, uid: string) {
 
 export async function createBooking(deps: BookingDeps, uid: string | undefined, data: unknown) {
   const user = await requireActiveRider(deps.db, uid);
+  await requireSupportedApp(deps.db, data);
   const input = parse<CreateInput>(createSchema, data);
   const ref = deps.db.collection('bookings').doc(bookingIdFor(input.requestId));
   // Reintento de una solicitud que ya se creó (p. ej. se perdió la

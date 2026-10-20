@@ -252,6 +252,32 @@ describe('createBooking: idempotencia por requestId', () => {
   });
 });
 
+describe('versión mínima de la app (config/global.minAppVersion)', () => {
+  beforeEach(async () => {
+    await db.doc('config/global').set({ minAppVersion: '1.2.0', androidStoreUrl: 'https://play.example/luxelane' });
+  });
+
+  it('versión menor: app_update_required al cotizar y al reservar, sin crear nada', async () => {
+    const { guest: _g, notes: _n, passengerCount: _p, luggageCount: _l, requestId: _r, ...q } = trip();
+    const quote = await reason(quoteBooking(deps(), 'ana', { ...q, appVersion: '1.1.9' }));
+    expect(quote).toMatchObject({ code: 'failed-precondition', reason: 'app_update_required' });
+    expect(await reason(createBooking(deps(), 'ana', trip({ appVersion: '1.1.9' }))))
+      .toMatchObject({ reason: 'app_update_required' });
+    expect(await count('bookings')).toBe(0);
+  });
+
+  it('sin versión con el mínimo activo: app_update_required', async () => {
+    expect(await reason(createBooking(deps(), 'ana', trip())))
+      .toMatchObject({ reason: 'app_update_required' });
+  });
+
+  it('versión igual o mayor: reserva normal', async () => {
+    await createBooking(deps(), 'ana', trip({ appVersion: '1.2.0' }));
+    await createBooking(deps(), 'ana', trip({ appVersion: '1.3.0+12' }));
+    expect(await count('bookings')).toBe(2);
+  });
+});
+
 describe('quoteBooking', () => {
   it('devuelve precio y desglose sin crear nada', async () => {
     const { guest: _g, notes: _n, passengerCount: _p, luggageCount: _l, requestId: _r, ...q } = trip();

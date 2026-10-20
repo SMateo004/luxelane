@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
@@ -10,11 +11,24 @@ class BookingRepositoryImpl implements BookingRepository {
   BookingRepositoryImpl({
     required FirebaseFirestore firestore,
     FirebaseFunctions? functions,
+    Future<String?> Function()? appVersion,
   })  : _db = firestore,
-        _functionsOverride = functions;
+        _functionsOverride = functions,
+        _appVersion = appVersion ?? _installedVersion;
 
   final FirebaseFirestore _db;
   final FirebaseFunctions? _functionsOverride;
+
+  /// Versión instalada (x.y.z) que el servidor compara con minAppVersion.
+  final Future<String?> Function() _appVersion;
+
+  static Future<String?> _installedVersion() async {
+    try {
+      return (await PackageInfo.fromPlatform()).version;
+    } catch (_) {
+      return null;
+    }
+  }
 
   FirebaseFunctions get _functions =>
       _functionsOverride ?? FirebaseFunctions.instance;
@@ -29,7 +43,9 @@ class BookingRepositoryImpl implements BookingRepository {
       final res = await _functions
           .httpsCallable('createBooking')
           .call<Map<String, dynamic>>(bookingRequestData(booking,
-              quotedPrice: quotedPrice, requestId: requestId));
+              quotedPrice: quotedPrice,
+              requestId: requestId,
+              appVersion: await _appVersion()));
       final id = res.data['bookingId'] as String;
       return getBookingById(id);
     } on FirebaseFunctionsException catch (e) {
@@ -44,7 +60,8 @@ class BookingRepositoryImpl implements BookingRepository {
     try {
       final res = await _functions
           .httpsCallable('quoteBooking')
-          .call<Map<String, dynamic>>(bookingRequestData(trip, quote: true));
+          .call<Map<String, dynamic>>(bookingRequestData(trip,
+              quote: true, appVersion: await _appVersion()));
       return Right(BookingQuote.fromJson(res.data));
     } on FirebaseFunctionsException catch (e) {
       return Left(bookingFailureFor(e.code, e.details));
@@ -267,7 +284,10 @@ const _kConnectionError =
 /// Solo los datos del viaje que aceptan quoteBooking y createBooking: el
 /// precio, el estado y la zona los pone el servidor.
 Map<String, dynamic> bookingRequestData(Booking b,
-    {double? quotedPrice, String? requestId, bool quote = false}) {
+    {double? quotedPrice,
+    String? requestId,
+    String? appVersion,
+    bool quote = false}) {
   Map<String, dynamic> place(Place p) =>
       {'name': p.name, 'address': p.address, 'lat': p.lat, 'lng': p.lng};
   final hourly = b.serviceType == ServiceType.byTheHour;
@@ -279,6 +299,7 @@ Map<String, dynamic> bookingRequestData(Booking b,
     'vehicleClass': b.vehicleClass.name,
     'serviceType': b.serviceType.name,
     if (hourly) 'hours': b.hours ?? 2,
+    if (appVersion != null) 'appVersion': appVersion,
     if (!quote) ...{
       'passengerCount': b.passengerCount,
       'luggageCount': b.luggageCount,
@@ -299,6 +320,12 @@ Failure bookingFailureFor(String code, Object? details) {
   final reason = d['reason'] as String?;
   if (reason == 'price_changed' && d['price'] is num) {
     return PriceChangedFailure((d['price'] as num).toDouble());
+  }
+  if (reason == 'app_update_required') {
+    return AppUpdateRequiredFailure(
+      androidStoreUrl: d['androidStoreUrl'] as String?,
+      iosStoreUrl: d['iosStoreUrl'] as String?,
+    );
   }
   return ServerFailure(switch (reason) {
     'pricing_unavailable' => 'No pudimos calcular el precio de este viaje '

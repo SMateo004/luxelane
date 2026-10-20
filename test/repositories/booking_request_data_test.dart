@@ -71,7 +71,28 @@ void main() {
     });
   });
 
+  test('manda la versión de la app al cotizar y al reservar', () {
+    expect(
+        bookingRequestData(_booking(),
+            quote: true, appVersion: '1.2.0')['appVersion'],
+        '1.2.0');
+    expect(
+        bookingRequestData(_booking(),
+            requestId: 'r', appVersion: '1.2.0')['appVersion'],
+        '1.2.0');
+  });
+
   group('bookingFailureFor', () {
+    test('app_update_required trae los enlaces de las tiendas', () {
+      final f = bookingFailureFor('failed-precondition', {
+        'reason': 'app_update_required',
+        'androidStoreUrl': 'https://play.example/luxelane',
+      });
+      expect(f, isA<AppUpdateRequiredFailure>());
+      expect((f as AppUpdateRequiredFailure).androidStoreUrl,
+          'https://play.example/luxelane');
+    });
+
     test('price_changed trae el precio nuevo', () {
       final f = bookingFailureFor(
           'failed-precondition', {'reason': 'price_changed', 'price': 120});

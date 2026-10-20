@@ -206,6 +206,12 @@ class BookingPriceChanged extends BookingState {
   List<Object?> get props => [previousPrice, newPrice];
 }
 
+/// La app es más vieja que la versión mínima: no se puede reservar.
+class BookingUpdateRequired extends BookingState {
+  const BookingUpdateRequired(this.failure);
+  final AppUpdateRequiredFailure failure;
+}
+
 class BookingError extends BookingState {
   const BookingError(this.message);
   final String message;
@@ -264,13 +270,15 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     final result = await _repo.createBooking(booking,
         quotedPrice: event.quotedPrice, requestId: event.requestId);
     result.fold(
-      (f) => emit(f is PriceChangedFailure
-          ? BookingPriceChanged(
-              previousPrice: event.quotedPrice ?? event.estimatedPrice,
-              newPrice: f.price,
-              request: event,
-            )
-          : BookingError(f.message)),
+      (f) => emit(switch (f) {
+        PriceChangedFailure() => BookingPriceChanged(
+            previousPrice: event.quotedPrice ?? event.estimatedPrice,
+            newPrice: f.price,
+            request: event,
+          ),
+        AppUpdateRequiredFailure() => BookingUpdateRequired(f),
+        _ => BookingError(f.message),
+      }),
       (b) => emit(BookingCreated(b)),
     );
   }

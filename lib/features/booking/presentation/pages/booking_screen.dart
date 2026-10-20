@@ -13,6 +13,7 @@ import '../../../../core/config/remote_flags.dart';
 import '../../../../core/design/lux_promise.dart';
 import '../../../../core/design/vehicle_catalog.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/models/booking_form_data.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
@@ -20,6 +21,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/services/maps_service.dart';
 import '../../../../core/services/pricing_catalog.dart';
 import '../../../../core/utils/service_area.dart';
+import '../../../../core/widgets/app_update_dialog.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/lux_raised.dart';
@@ -163,6 +165,10 @@ class _BookingScreenState extends State<BookingScreen> {
             _quoteError = f.message;
             _quote = null;
             _quoteKey = null;
+            if (f is AppUpdateRequiredFailure) {
+              WidgetsBinding.instance.addPostFrameCallback(
+                  (_) => mounted ? AppUpdateDialog.show(context, f) : null);
+            }
           },
           (q) {
             _quoteError = null;
@@ -598,6 +604,10 @@ class _BookingScreenState extends State<BookingScreen> {
             }
             setState(() => _loading = false);
             _celebrate(state.booking.id);
+          }
+          if (state is BookingUpdateRequired) {
+            setState(() => _loading = false);
+            AppUpdateDialog.show(ctx, state.failure);
           }
           if (state is BookingPriceChanged) {
             setState(() => _loading = false);

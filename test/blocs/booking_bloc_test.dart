@@ -253,5 +253,27 @@ void main() {
               repo.createBooking(any(), quotedPrice: 90, requestId: 'req-1'))
           .called(1),
     );
+
+    blocTest<BookingBloc, BookingState>(
+      'con una app más vieja que la versión mínima pide actualizar',
+      build: () {
+        when(() => repo.createBooking(any(),
+                quotedPrice: any(named: 'quotedPrice'),
+                requestId: any(named: 'requestId')))
+            .thenAnswer((_) async => const Left(AppUpdateRequiredFailure()));
+        return BookingBloc(bookingRepository: repo);
+      },
+      act: (bloc) => bloc.add(BookingCreateRequested(
+        requestId: 'req-1',
+        origin: _origin,
+        destination: _destination,
+        vehicleClass: VehicleClass.business,
+        serviceType: ServiceType.oneWay,
+        scheduledAt: _now,
+        riderId: 'rider-1',
+        estimatedPrice: 90,
+      )),
+      expect: () => [const BookingLoading(), isA<BookingUpdateRequired>()],
+    );
   });
 }

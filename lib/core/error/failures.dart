@@ -40,6 +40,15 @@ class PriceChangedFailure extends Failure {
   final double price;
 }
 
+/// La app es más vieja que config/global.minAppVersion: hay que actualizar
+/// para cotizar o reservar. Los enlaces a las tiendas, si el admin los puso.
+class AppUpdateRequiredFailure extends Failure {
+  const AppUpdateRequiredFailure({this.androidStoreUrl, this.iosStoreUrl})
+      : super('Actualiza la app para reservar.');
+  final String? androidStoreUrl;
+  final String? iosStoreUrl;
+}
+
 class ValidationFailure extends Failure {
   const ValidationFailure([super.message = 'Validation error']);
 }
