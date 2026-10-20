@@ -755,6 +755,42 @@ class Booking {
 }
 
 // ---------------------------------------------------------------------------
+// AdminAlert
+// ---------------------------------------------------------------------------
+
+/// Aviso del servidor para el admin (adminAlerts): precio con distancia
+/// aproximada, solicitudes reconciliadas… Solo lectura en la app; se marca
+/// revisado con la callable resolveAlert.
+class AdminAlert {
+  const AdminAlert({
+    required this.id,
+    required this.type,
+    required this.createdAt,
+    this.bookingId,
+    this.message = '',
+    this.resolved = false,
+  });
+
+  final String id;
+  final String type;
+  final DateTime createdAt;
+  final String? bookingId;
+  final String message;
+  final bool resolved;
+
+  factory AdminAlert.fromJson(Map<String, dynamic> j) => AdminAlert(
+        id: j['id'] as String,
+        type: j['type'] as String? ?? '',
+        createdAt: j['createdAt'] is Timestamp
+            ? (j['createdAt'] as Timestamp).toDate()
+            : DateTime.now(),
+        bookingId: j['bookingId'] as String?,
+        message: j['message'] as String? ?? '',
+        resolved: j['resolved'] == true,
+      );
+}
+
+// ---------------------------------------------------------------------------
 // BookingQuote
 // ---------------------------------------------------------------------------
 

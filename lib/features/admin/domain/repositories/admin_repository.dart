@@ -11,6 +11,13 @@ abstract class AdminRepository {
   Stream<List<PricingRule>> watchPricingRules();
   Stream<List<Vehicle>> watchAllVehicles();
   Stream<List<AuditLog>> watchAuditLogs();
+
+  /// Avisos del servidor, los más recientes primero.
+  Stream<List<AdminAlert>> watchAdminAlerts();
+
+  /// Marca una alerta como revisada (callable resolveAlert, auditada en el
+  /// servidor).
+  Future<Either<Failure, void>> resolveAlert(String alertId, {String note});
   Stream<Map<String, dynamic>> watchGlobalSettings();
   Stream<Map<String, dynamic>> watchFinanceSettings();
 

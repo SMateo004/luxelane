@@ -213,6 +213,7 @@ enum AdminSection {
   users,
   business,
   audit,
+  alerts,
   settings,
 }
 

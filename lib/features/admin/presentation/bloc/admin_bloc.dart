@@ -92,6 +92,14 @@ class AdminUpdateFinanceSettingsRequested extends AdminEvent {
   List<Object?> get props => [fields];
 }
 
+class AdminResolveAlertRequested extends AdminEvent {
+  final String alertId;
+  final String note;
+  const AdminResolveAlertRequested(this.alertId, {this.note = ''});
+  @override
+  List<Object?> get props => [alertId, note];
+}
+
 class AdminVerifyDriverRequested extends AdminEvent {
   final String driverId;
   const AdminVerifyDriverRequested(this.driverId);
@@ -150,6 +158,7 @@ class AdminState extends Equatable {
     this.pricingRules = const [],
     this.vehicles = const [],
     this.auditLogs = const [],
+    this.alerts = const [],
     this.globalSettings = const {},
     this.financeSettings = const {},
     this.bookingsLimit = 1000,
@@ -167,6 +176,9 @@ class AdminState extends Equatable {
   final List<PricingRule> pricingRules;
   final List<Vehicle> vehicles;
   final List<AuditLog> auditLogs;
+
+  /// Avisos del servidor (adminAlerts), los más recientes primero.
+  final List<AdminAlert> alerts;
   final Map<String, dynamic> globalSettings;
   final Map<String, dynamic> financeSettings;
   final int bookingsLimit;
@@ -255,6 +267,8 @@ class AdminState extends Equatable {
   int get activeRidesCount =>
       bookings.where((b) => b.status == BookingStatus.inProgress).length;
 
+  int get openAlertsCount => alerts.where((a) => !a.resolved).length;
+
   int get pendingRidesCount =>
       bookings.where((b) => b.status == BookingStatus.pending).length;
 
@@ -266,6 +280,7 @@ class AdminState extends Equatable {
     List<PricingRule>? pricingRules,
     List<Vehicle>? vehicles,
     List<AuditLog>? auditLogs,
+    List<AdminAlert>? alerts,
     Map<String, dynamic>? globalSettings,
     Map<String, dynamic>? financeSettings,
     int? bookingsLimit,
@@ -284,6 +299,7 @@ class AdminState extends Equatable {
       pricingRules: pricingRules ?? this.pricingRules,
       vehicles: vehicles ?? this.vehicles,
       auditLogs: auditLogs ?? this.auditLogs,
+      alerts: alerts ?? this.alerts,
       globalSettings: globalSettings ?? this.globalSettings,
       financeSettings: financeSettings ?? this.financeSettings,
       bookingsLimit: bookingsLimit ?? this.bookingsLimit,
@@ -304,6 +320,7 @@ class AdminState extends Equatable {
         pricingRules,
         vehicles,
         auditLogs,
+        alerts,
         globalSettings,
         financeSettings,
         bookingsLimit,
@@ -367,6 +384,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         emit,
         _repo.updateFinanceSettings(e.fields),
         'Configuración financiera guardada'));
+    on<AdminResolveAlertRequested>((e, emit) => _perform(
+        emit, _repo.resolveAlert(e.alertId, note: e.note), 'Alerta revisada'));
     on<AdminVerifyDriverRequested>((e, emit) =>
         _perform(emit, _repo.verifyDriver(e.driverId), 'Chófer verificado'));
     on<AdminToggleUserStatusRequested>((e, emit) => _perform(
@@ -435,6 +454,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         (s, d) => s.copyWith(vehicles: d));
     _listen(_repo.watchAuditLogs(), 'la auditoría',
         (s, d) => s.copyWith(auditLogs: d));
+    _listen(_repo.watchAdminAlerts(), 'las alertas',
+        (s, d) => s.copyWith(alerts: d));
     _listen(_repo.watchGlobalSettings(), 'la configuración',
         (s, d) => s.copyWith(globalSettings: d));
     _listen(_repo.watchFinanceSettings(), 'la configuración financiera',

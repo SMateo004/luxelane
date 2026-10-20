@@ -5,6 +5,7 @@ import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { defineSecret } from 'firebase-functions/params';
 import * as bookingService from './booking_service';
 import { reconcileOpenRequests } from './reconcile';
+import { resolveAdminAlert } from './alerts';
 import * as stripe from './stripe_service';
 import { logger } from './logger';
 import * as err from './errors';
@@ -733,6 +734,12 @@ export const closeOpenRequest = onDocumentUpdated({ document: 'bookings/{booking
   if (!before || !after || before.status !== 'pending' || after.status === 'pending') return;
   // Borrar es idempotente: un reintento no cambia nada.
   await db.collection('openRequests').doc(event.params.bookingId).delete();
+});
+
+/** El admin marca una alerta como revisada (auditado en el servidor). */
+export const resolveAlert = onCall(async (req) => {
+  const adminId = await requireAdmin(req);
+  return resolveAdminAlert(db, { adminId, adminEmail: (req.auth?.token.email as string | undefined) ?? null }, req.data);
 });
 
 // Red de seguridad de openRequests: crea las que faltan, borra las

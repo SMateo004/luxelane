@@ -7,6 +7,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../domain/admin_finance.dart';
 import '../bloc/admin_bloc.dart';
+import '../widgets/admin_alerts_tab.dart';
 import '../widgets/admin_finance_tab.dart';
 import '../widgets/admin_pricing_tab.dart';
 import '../widgets/admin_sections.dart';
@@ -32,6 +33,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.users: 'Usuarios',
     AdminSection.business: 'Empresas',
     AdminSection.audit: 'Auditoría',
+    AdminSection.alerts: 'Alertas',
     AdminSection.settings: 'Configuración',
   };
   static const _icons = {
@@ -44,6 +46,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.users: Icons.people_outline,
     AdminSection.business: Icons.business_outlined,
     AdminSection.audit: Icons.history_rounded,
+    AdminSection.alerts: Icons.notification_important_outlined,
     AdminSection.settings: Icons.settings_outlined,
   };
 
@@ -67,7 +70,10 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         AdminSection.users,
       ]
     ),
-    ('Sistema', [AdminSection.audit, AdminSection.settings]),
+    (
+      'Sistema',
+      [AdminSection.alerts, AdminSection.audit, AdminSection.settings]
+    ),
   ];
 
   /// Una línea de contexto bajo el título de cada sección.
@@ -81,6 +87,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
     AdminSection.users: 'Cuentas, roles y accesos.',
     AdminSection.business: 'Solicitudes de empresas.',
     AdminSection.audit: 'Cada acción del panel, con su autor.',
+    AdminSection.alerts: 'Avisos del servidor que piden revisión.',
     AdminSection.settings: 'Ajustes generales de la plataforma.',
   };
 
@@ -96,6 +103,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           state.finance(FinancePeriod.all).receivablesCount,
         AdminSection.drivers =>
           state.drivers.where((d) => !d.documentsVerified).length,
+        AdminSection.alerts => state.openAlertsCount,
         _ => null,
       };
 
@@ -338,6 +346,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         AdminSection.business => const BusinessLeadsTab(),
         AdminSection.users => const UsersTab(),
         AdminSection.audit => const AuditTab(),
+        AdminSection.alerts => const AlertsTab(),
         AdminSection.settings => const SettingsTab(),
       };
 }

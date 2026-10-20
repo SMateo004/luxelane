@@ -9,6 +9,7 @@ import 'package:luxelane/core/error/failures.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/features/admin/domain/repositories/admin_repository.dart';
 import 'package:luxelane/features/admin/presentation/bloc/admin_bloc.dart';
+import 'package:luxelane/features/admin/presentation/widgets/admin_alerts_tab.dart';
 import 'package:luxelane/features/admin/presentation/widgets/admin_finance_tab.dart';
 import 'package:luxelane/features/admin/presentation/widgets/admin_pricing_tab.dart';
 import 'package:luxelane/features/admin/presentation/widgets/admin_sections.dart';
@@ -112,6 +113,23 @@ AdminRepository _repo() {
           createdAt: _now,
         ),
       ]));
+  when(r.watchAdminAlerts).thenAnswer((_) => Stream.value([
+        AdminAlert(
+          id: 'al1',
+          type: 'distance_fallback',
+          bookingId: 'booking-pending',
+          message: 'Precio calculado con línea recta.',
+          createdAt: _now,
+        ),
+        AdminAlert(
+          id: 'al2',
+          type: 'open_requests_reconciled',
+          createdAt: _now.subtract(const Duration(hours: 1)),
+          resolved: true,
+        ),
+      ]));
+  when(() => r.resolveAlert(any(), note: any(named: 'note')))
+      .thenAnswer((_) async => const Right<Failure, void>(null));
   when(r.watchGlobalSettings)
       .thenAnswer((_) => Stream.value({'isMaintenanceMode': true}));
   when(r.watchFinanceSettings)
@@ -125,11 +143,14 @@ AdminRepository _repo() {
   return r;
 }
 
+late AdminRepository _lastRepo;
+
 Future<void> _pump(WidgetTester tester, Widget tab, Size size) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  final bloc = AdminBloc(adminRepository: _repo())..add(AdminDataRequested());
+  _lastRepo = _repo();
+  final bloc = AdminBloc(adminRepository: _lastRepo)..add(AdminDataRequested());
   addTearDown(bloc.close);
   await tester.pumpWidget(MaterialApp(
     theme: ThemeData.dark(),
@@ -153,6 +174,7 @@ void main() {
     'vehículos': VehiclesTab(),
     'usuarios': UsersTab(),
     'auditoría': AuditTab(),
+    'alertas': AlertsTab(),
     'configuración': SettingsTab(),
   };
 
@@ -181,6 +203,26 @@ void main() {
         find.text('De fábrica'),
         findsNWidgets(
             VehicleClass.values.length * ServiceType.values.length - 1));
+  });
+
+  testWidgets('alertas: lista por fecha, estado y marcar revisada',
+      (tester) async {
+    await _pump(tester, const AlertsTab(), const Size(1280, 900));
+    expect(
+        find.text('Precio con distancia aproximada  Reserva #BOOKIN',
+            findRichText: true),
+        findsOneWidget);
+    expect(find.text('Pendiente'), findsOneWidget);
+    expect(find.text('Revisada'), findsOneWidget);
+    // Solo la pendiente se puede marcar.
+    expect(find.text('Marcar revisada'), findsOneWidget);
+    await tester.tap(find.text('Marcar revisada'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Revisado con el chófer');
+    await tester.tap(find.widgetWithText(FilledButton, 'Marcar revisada'));
+    await tester.pumpAndSettle();
+    verify(() => _lastRepo.resolveAlert('al1', note: 'Revisado con el chófer'))
+        .called(1);
   });
 
   testWidgets('el panel alerta de lo que requiere atención', (tester) async {

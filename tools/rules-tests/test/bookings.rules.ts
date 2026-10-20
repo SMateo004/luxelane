@@ -142,6 +142,14 @@ describe('/adminAlerts', () => {
     await assertFails(getDoc(doc(db('asig'), 'adminAlerts', 'a1')));
     await assertFails(setDoc(doc(db('admin'), 'adminAlerts', 'a2'), { type: 'x' }));
   });
+
+  test('ni el admin marca una alerta como revisada desde la app (solo resolveAlert)', async () => {
+    await env.withSecurityRulesDisabled((ctx) =>
+      setDoc(doc(ctx.firestore(), 'adminAlerts', 'a1'), { type: 'distance_fallback', resolved: false }));
+    await assertFails(updateDoc(doc(db('admin'), 'adminAlerts', 'a1'), { resolved: true }));
+    await assertFails(getDoc(doc(db('libre'), 'adminAlerts', 'a1')));
+    await assertFails(getDoc(doc(db(null), 'adminAlerts', 'a1')));
+  });
 });
 
 describe('reglas de /users', () => {

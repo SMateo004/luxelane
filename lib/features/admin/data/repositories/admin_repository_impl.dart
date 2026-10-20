@@ -90,6 +90,31 @@ class AdminRepositoryImpl implements AdminRepository {
       AuditLog.fromJson);
 
   @override
+  Stream<List<AdminAlert>> watchAdminAlerts() => _watch(
+      _db
+          .collection('adminAlerts')
+          .orderBy('createdAt', descending: true)
+          .limit(200),
+      AdminAlert.fromJson);
+
+  @override
+  Future<Either<Failure, void>> resolveAlert(String alertId,
+      {String note = ''}) async {
+    try {
+      await _functions.httpsCallable('resolveAlert').call({
+        'alertId': alertId,
+        if (note.trim().isNotEmpty) 'note': note.trim(),
+      });
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      return Left(ServerFailure(_fnError(e)));
+    } catch (_) {
+      return const Left(
+          ServerFailure('No se pudo marcar la alerta. Revisa tu conexión.'));
+    }
+  }
+
+  @override
   Stream<Map<String, dynamic>> watchGlobalSettings() => _db
       .collection('config')
       .doc('global')
