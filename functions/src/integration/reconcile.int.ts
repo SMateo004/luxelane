@@ -91,3 +91,50 @@ describe('onBookingCreated con reintento', () => {
     expect((await ref.get()).data()?.driversNotifiedAt).toBeDefined();
   });
 });
+
+describe('reintentos: errores transitorios frente a permanentes', () => {
+  const run = (event: unknown) => (onBookingCreated as unknown as Runnable).run(event);
+
+  beforeEach(async () => {
+    await db.doc('users/luis').set({ role: 'driver', fcmTokens: ['token-luis'] });
+    await db.doc('driverProfiles/luis').set({ isAvailable: true, documentsVerified: true });
+  });
+
+  it('FCM caído (transitorio): falla para reintentar y el reintento sí avisa', async () => {
+    const ref = db.doc('bookings/t1');
+    await ref.set(booking('pending'));
+    const event = { data: await ref.get(), params: { bookingId: 't1' } };
+    sendEachForMulticast.mockRejectedValueOnce(Object.assign(new Error('fcm'), { code: 'messaging/server-unavailable' }));
+    await expect(run(event)).rejects.toThrow();
+    expect((await ref.get()).data()?.driversNotifiedAt).toBeUndefined();
+    await run(event); // reintento de la plataforma
+    expect(sendEachForMulticast).toHaveBeenCalledTimes(2);
+    expect((await ref.get()).data()?.driversNotifiedAt).toBeDefined();
+  });
+
+  it('argumento de FCM inválido (permanente): no relanza ni se repite', async () => {
+    const ref = db.doc('bookings/p1');
+    await ref.set(booking('pending'));
+    const event = { data: await ref.get(), params: { bookingId: 'p1' } };
+    sendEachForMulticast.mockRejectedValueOnce(Object.assign(new Error('fcm'), { code: 'messaging/invalid-argument' }));
+    await expect(run(event)).resolves.toBeUndefined();
+    await run(event);
+    expect(sendEachForMulticast).toHaveBeenCalledTimes(1);
+  });
+
+  it('reserva borrada antes de procesarla (NOT_FOUND, permanente): no relanza', async () => {
+    const ref = db.doc('bookings/borrada');
+    await ref.set({ ...booking('pending'), estimatedPrice: 10 }); // fuerza escribir pricingReview
+    const event = { data: await ref.get(), params: { bookingId: 'borrada' } };
+    await ref.delete();
+    await expect(run(event)).resolves.toBeUndefined();
+    expect(sendEachForMulticast).not.toHaveBeenCalled();
+  });
+
+  it('reserva que no está pendiente (datos que no sirven): no avisa ni falla', async () => {
+    const ref = db.doc('bookings/conf');
+    await ref.set(booking('confirmed'));
+    await expect(run({ data: await ref.get(), params: { bookingId: 'conf' } })).resolves.toBeUndefined();
+    expect(sendEachForMulticast).not.toHaveBeenCalled();
+  });
+});

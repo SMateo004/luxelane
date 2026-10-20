@@ -6,6 +6,7 @@ import { defineSecret } from 'firebase-functions/params';
 import * as bookingService from './booking_service';
 import { reconcileOpenRequests } from './reconcile';
 import { resolveAdminAlert } from './alerts';
+import { isTransient, withRetryPolicy } from './retry_policy';
 import * as stripe from './stripe_service';
 import { logger } from './logger';
 import * as err from './errors';
@@ -607,12 +608,19 @@ export const ensureStripeCustomer = onCall(withStripe, async (req) => {
 // onBookingCreated  (onCreate /bookings/{bookingId})
 // ---------------------------------------------------------------------------
 
-// Con reintento: si falla, la plataforma lo repite. Por eso todo es
+// Con reintento: si falla por un error transitorio, la plataforma lo repite
+// (retry_policy.ts); un error permanente se registra y no se repite. Todo es
 // idempotente: la revisión de tarifa escribe lo mismo y el aviso a los
-// chóferes se envía como mucho una vez (marca driversNotifiedAt).
-export const onBookingCreated = onDocumentCreated({ document: 'bookings/{bookingId}', retry: true }, async (event) => {
+// chóferes se envía una vez (marca driversNotifiedAt).
+export const onBookingCreated = onDocumentCreated({ document: 'bookings/{bookingId}', retry: true }, (event) =>
+  withRetryPolicy('onBookingCreated', { bookingId: event.params.bookingId }, () => notifyNewBooking(event)));
+
+async function notifyNewBooking(
+  event: Parameters<Parameters<typeof onDocumentCreated>[1]>[0],
+): Promise<void> {
   const booking = event.data?.data() as BookingDoc | undefined;
-  if (!booking) return;
+  // Datos que nunca serán válidos: nada que avisar ni reintentar.
+  if (!booking || booking.status !== 'pending') return;
   const vehicleClass = booking.class ?? booking.vehicleClass ?? 'business';
 
   // Red de seguridad: createBooking ya calculó el precio con la tarifa vigente.
@@ -642,7 +650,8 @@ export const onBookingCreated = onDocumentCreated({ document: 'bookings/{booking
 
   const firstNotice = await db.runTransaction(async (tx) => {
     const fresh = await tx.get(event.data!.ref);
-    if (fresh.data()?.driversNotifiedAt) return false;
+    // Borrada o ya avisada: no hay nada que hacer.
+    if (!fresh.exists || fresh.data()?.driversNotifiedAt) return false;
     tx.update(event.data!.ref, { driversNotifiedAt: admin.firestore.Timestamp.now() });
     return true;
   });
@@ -666,12 +675,21 @@ export const onBookingCreated = onDocumentCreated({ document: 'bookings/{booking
     tokens.push(...driverTokens);
   }
 
-  await sendPush(
-    tokens,
-    'Nuevo viaje disponible',
-    `${vehicleClassLabel(vehicleClass)} · Bs ${Math.round(booking.estimatedPrice)}`,
-  );
-});
+  try {
+    await sendPush(
+      tokens,
+      'Nuevo viaje disponible',
+      `${vehicleClassLabel(vehicleClass)} · Bs ${Math.round(booking.estimatedPrice)}`,
+    );
+  } catch (e) {
+    // Si el envío puede salir bien en el reintento, se quita la marca para
+    // que el reintento avise; si no, queda marcada y no se repite.
+    if (isTransient(e)) {
+      await event.data!.ref.update({ driversNotifiedAt: admin.firestore.FieldValue.delete() }).catch(() => undefined);
+    }
+    throw e;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // onBookingStatusChanged  (onUpdate /bookings/{bookingId})
@@ -732,8 +750,10 @@ export const closeOpenRequest = onDocumentUpdated({ document: 'bookings/{booking
   const before = event.data?.before.data() as BookingDoc | undefined;
   const after = event.data?.after.data() as BookingDoc | undefined;
   if (!before || !after || before.status !== 'pending' || after.status === 'pending') return;
-  // Borrar es idempotente: un reintento no cambia nada.
-  await db.collection('openRequests').doc(event.params.bookingId).delete();
+  // Borrar es idempotente: un reintento no cambia nada. Solo se reintentan
+  // los errores transitorios (retry_policy.ts).
+  await withRetryPolicy('closeOpenRequest', { bookingId: event.params.bookingId }, () =>
+    db.collection('openRequests').doc(event.params.bookingId).delete().then(() => undefined));
 });
 
 /** El admin marca una alerta como revisada (auditado en el servidor). */
