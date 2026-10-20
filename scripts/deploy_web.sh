@@ -1,7 +1,12 @@
 #!/bin/bash
 set -e
 echo "▶ Building Flutter web..."
-flutter build web --release --dart-define=GOOGLE_MAPS_KEY=placeholder
+# Keys come from env.local.json (see env.example.json); no key is built in.
+if [ ! -f env.local.json ]; then
+  echo "✗ Missing env.local.json (copy env.example.json and add the web Maps key)." >&2
+  exit 1
+fi
+flutter build web --release --dart-define-from-file=env.local.json
 
 echo "▶ Syncing build/web → hosting/public..."
 cp -r build/web/. hosting/public/

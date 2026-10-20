@@ -145,6 +145,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
 			buildPhases = (
+				4C1A5E0F2E8B4D7A00A1B2C3 /* Check Google Maps key */,
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
@@ -252,6 +253,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+		};
+		4C1A5E0F2E8B4D7A00A1B2C3 /* Check Google Maps key */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Google Maps key";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"$CONFIGURATION\" = \"Release\" ] && [ -z \"$GOOGLE_MAPS_API_KEY\" ]; then\n  echo \"error: Release build without a Google Maps key. Set GOOGLE_MAPS_API_KEY in ios/Flutter/Secrets.xcconfig (see DEPLOY.md, Claves de Google Maps).\"\n  exit 1\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

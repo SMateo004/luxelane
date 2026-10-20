@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../app/theme/app_theme.dart';
+import '../config/env.dart';
 import '../di/injection.dart';
 import '../models/place_model.dart';
 import '../services/maps_service.dart';
+import 'lux_map.dart' show MapsKeyMissing;
 
 /// Shows a full-screen map dialog where the user can drag the map
 /// to select an exact pickup or destination point.
@@ -106,19 +108,22 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
           child: Stack(
             children: [
               // ── Map ────────────────────────────────────────────────────
-              GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  target: _center,
-                  zoom: 15,
+              if (!AppConfig.hasMapsKey)
+                const Positioned.fill(child: MapsKeyMissing())
+              else
+                GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: _center,
+                    zoom: 15,
+                  ),
+                  onMapCreated: (c) => _ctrl = c,
+                  onCameraMove: _onCameraMove,
+                  onCameraIdle: _onCameraIdle,
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                  mapToolbarEnabled: false,
+                  compassEnabled: false,
                 ),
-                onMapCreated: (c) => _ctrl = c,
-                onCameraMove: _onCameraMove,
-                onCameraIdle: _onCameraIdle,
-                myLocationButtonEnabled: false,
-                zoomControlsEnabled: false,
-                mapToolbarEnabled: false,
-                compassEnabled: false,
-              ),
 
               // ── Center pin (stays fixed, map moves under it) ────────
               const Center(child: _CenterPin()),

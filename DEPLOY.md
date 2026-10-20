@@ -94,9 +94,8 @@ Con eso **la web ya funciona**; no requiere más configuración.
 
 > Google Maps en Android: la clave va en el manifiesto vía
 > `android/app/build.gradle.kts` (variable de entorno `GOOGLE_MAPS_API_KEY`,
-> que el CI toma del secret del mismo nombre). En Google Cloud Console →
-> Credentials, si la clave está restringida, añade la app Android
-> `com.luxelane.app` con su SHA-1 y habilita *Maps SDK for Android*.
+> que el CI toma del secreto `GOOGLE_MAPS_ANDROID_API_KEY`). Ver «Claves de
+> Google Maps».
 
 > Nota: la app de pasajeros y la de chóferes comparten hoy el mismo
 > `applicationId` (`com.luxelane.app`). Para publicarlas como dos apps
@@ -111,6 +110,8 @@ Con eso **la web ya funciona**; no requiere más configuración.
    - `GOOGLE_IOS_CLIENT_ID` → `CLIENT_ID` del plist.
    - `GOOGLE_REVERSED_CLIENT_ID` → `REVERSED_CLIENT_ID` del plist.
    No son secretos (viajan dentro de la app); se pueden commitear.
+   La clave de Maps de iOS no va aquí sino en `ios/Flutter/Secrets.xcconfig`
+   (ver «Claves de Google Maps»).
 3. GitHub → Secrets → `FIREBASE_IOS_APP_ID` → `GOOGLE_APP_ID` del plist
    (`1:51157842817:ios:...`). En local:
    `flutter run --dart-define=FIREBASE_IOS_APP_ID=...`
@@ -145,29 +146,31 @@ Antes de desplegar, el CI comprueba que existan los secretos de GitHub y
 ### Flutter Android (prod)
 The native Maps SDK reads its key from the manifest, which Gradle fills from
 the `GOOGLE_MAPS_API_KEY` env var (or `MAPS_API_KEY=...` in
-`android/local.properties` for local builds). Without it the map renders blank.
+`android/local.properties` for local builds). Without it the release build
+stops. Requires `android/key.properties` (see «Firma de Android»).
 ```
-GOOGLE_MAPS_API_KEY=YOUR_KEY flutter build appbundle --release \
+GOOGLE_MAPS_API_KEY=ANDROID_SDK_KEY flutter build appbundle --release \
   --dart-define=ENV=prod \
   --dart-define=FIREBASE_ENV=production \
-  --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY \
+  --dart-define=GOOGLE_MAPS_KEY=MOBILE_REST_KEY \
   --obfuscate \
   --split-debug-info=build/debug-info
 ```
 
 ### Flutter iOS (prod)
+Requires `ios/Flutter/Secrets.xcconfig` with the iOS SDK key.
 ```
 flutter build ios --release \
   --dart-define=ENV=prod \
   --dart-define=FIREBASE_ENV=production \
-  --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
+  --dart-define=GOOGLE_MAPS_KEY=MOBILE_REST_KEY
 open ios/Runner.xcworkspace   # archive from Xcode
 ```
 
 ### Flutter Android (dev)
 ```
-# android/local.properties must contain MAPS_API_KEY=YOUR_KEY
-flutter run --dart-define=ENV=dev --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY
+# android/local.properties may contain MAPS_API_KEY=ANDROID_SDK_KEY
+flutter run --dart-define-from-file=env.local.json
 ```
 
 ---
@@ -207,6 +210,122 @@ error genérico. La web se actualiza sola con el despliegue de hosting.
 
 ---
 
+## Claves de Google Maps
+
+No hay ninguna clave en el repositorio. Cada plataforma usa la suya y una
+build de release sin clave se detiene con un mensaje (Android: Gradle; iOS:
+fase *Check Google Maps key*). En debug sin clave la app arranca y los mapas
+muestran «Mapa no disponible».
+
+| Dónde se usa | Cómo llega | Secreto de GitHub |
+|---|---|---|
+| SDK nativo de Android (manifiesto) | env `GOOGLE_MAPS_API_KEY` o `MAPS_API_KEY` en `android/local.properties` | `GOOGLE_MAPS_ANDROID_API_KEY` |
+| SDK nativo de iOS (`Info.plist` → `GMSApiKey`) | `ios/Flutter/Secrets.xcconfig` (ver `Secrets.xcconfig.example`) | `GOOGLE_MAPS_IOS_API_KEY` |
+| Web (Maps JavaScript y Places en el navegador) | `--dart-define=GOOGLE_MAPS_KEY=...` en la build web | `GOOGLE_MAPS_WEB_API_KEY` |
+| Llamadas REST desde Android/iOS (Places, Geocoding, Directions) | `--dart-define=GOOGLE_MAPS_KEY=...` en la build móvil | `GOOGLE_MAPS_API_KEY` |
+
+En local, las claves de Dart van en un archivo que git ignora:
+
+```
+cp env.example.json env.local.json      # completar los valores
+flutter run --dart-define-from-file=env.local.json
+flutter build web --release --dart-define-from-file=env.local.json
+```
+
+`env.local.json`, `android/local.properties`, `android/key.properties` e
+`ios/Flutter/Secrets.xcconfig` están en `.gitignore`.
+
+> La `apiKey` de Firebase web (`lib/firebase_options.dart`,
+> `web/firebase-messaging-sw.js`) es pública por diseño: identifica el
+> proyecto, no da acceso. Lo que protege los datos son las reglas de
+> Firestore/Storage y App Check.
+
+---
+
+## Firma de Android
+
+La build de release se firma con la **clave de subida** (upload key) que
+indica `android/key.properties`; sin ese archivo `flutter build appbundle
+--release` se detiene con un mensaje. Las builds de debug no lo necesitan.
+
+1. Generar el keystore **una sola vez, en tu equipo, fuera del repositorio**:
+   ```
+   mkdir -p ~/luxelane-keys
+   keytool -genkeypair -v -keystore ~/luxelane-keys/luxelane-upload.jks \
+     -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+   ```
+   Guarda una copia del `.jks` y de sus contraseñas fuera del equipo (gestor
+   de contraseñas o almacenamiento cifrado). Con Play App Signing, perder la
+   clave de subida obliga a pedir a Google un restablecimiento; sin Play App
+   Signing, perderla impide publicar actualizaciones de la app.
+2. `cp android/key.properties.example android/key.properties` y completar las
+   rutas y contraseñas. `storeFile` es relativo a `android/` (o una ruta
+   absoluta). `key.properties`, `*.jks` y `*.keystore` están en
+   `android/.gitignore`.
+3. Play Console → la app → **Configuración → Integridad de la app → Firma de
+   apps de Google Play**: aceptar Play App Signing (por defecto en apps
+   nuevas). Google guarda la clave de firma de la app y tú subes los AAB con
+   la clave de subida. Ahí mismo copia los certificados SHA-1/SHA-256 de la
+   *clave de firma de la app* y de la *clave de subida* para Firebase y para
+   la restricción de la clave de Maps.
+4. CI (jobs *Build Android*): secretos del repositorio
+   ```
+   ANDROID_KEYSTORE_BASE64   → base64 -w0 ~/luxelane-keys/luxelane-upload.jks
+   ANDROID_KEYSTORE_PASSWORD → contraseña del keystore
+   ANDROID_KEY_ALIAS         → upload
+   ANDROID_KEY_PASSWORD      → contraseña de la clave
+   ```
+   (en macOS: `base64 -i ~/luxelane-keys/luxelane-upload.jks | pbcopy`).
+   El job escribe el keystore en `$RUNNER_TEMP` y genera
+   `android/key.properties` antes de compilar.
+
+---
+
+## Cabeceras de seguridad del hosting (CSP)
+
+`firebase.json` añade a los dos sitios (`rider` y `driver`): `X-Content-Type-Options:
+nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy:
+strict-origin-when-cross-origin`, `Permissions-Policy` (solo geolocalización
+propia; cámara, micrófono, pagos y USB desactivados: la web no los usa),
+`Strict-Transport-Security: max-age=31536000` y la CSP.
+
+La CSP va como **`Content-Security-Policy-Report-Only`**: no bloquea nada, solo
+avisa en la consola del navegador. Se construyó con lo que la build carga de
+verdad (Chromium headless contra `flutter build web --release`, pasajeros y
+chóferes: 0 violaciones). Excepciones y por qué:
+
+| Directiva | Valor | Motivo |
+|---|---|---|
+| `script-src` | `'wasm-unsafe-eval'` | CanvasKit es WebAssembly; sin esto no se compila. No permite `eval` de JavaScript. |
+| `script-src` | 12 hashes `sha256-…` | FlutterFire inyecta un script en línea por librería de Firebase (`window.ff_trigger_<lib>`, que importa el SDK desde `www.gstatic.com/firebasejs/<versión>/`). Hay 2 variantes por librería (con y sin Trusted Types). Cambian al actualizar `firebase_*` o la versión del SDK web. |
+| `script-src` | `https://www.gstatic.com` | CanvasKit (`flutter-canvaskit/`, no está local) y el SDK de Firebase. |
+| `script-src` | `https://*.googleapis.com`, `https://maps.gstatic.com` | Maps JavaScript API. |
+| `script-src`, `frame-src` | `https://apis.google.com`, `https://accounts.google.com`, `https://*.firebaseapp.com` | Inicio de sesión con Google (Firebase Auth y Google Identity Services). |
+| `style-src` | `'unsafe-inline'` | Flutter web y Maps escriben estilos en línea; no hay forma de evitarlo hoy. Es de bajo riesgo comparado con scripts. |
+| `connect-src` | `*.googleapis.com`, `*.cloudfunctions.net`, `*.run.app`, `*.google.com`, `*.firebaseapp.com`, `fonts.*` | Firestore, Auth, Functions, mensajería, Places/Geocoding/Directions y fuentes. |
+| `img-src` | `data:`, `blob:`, `*.googleapis.com`, `*.gstatic.com`, `*.google.com`, `*.googleusercontent.com` | Teselas e íconos de Maps, fotos de perfil de Google. |
+
+Librerías de Firebase cuyos scripts tienen hash hoy: `firebase_core`, `firebase_firestore`, `firebase_functions`, `firebase_auth`, `firebase_messaging`, `firebase_performance` (SDK web 11.9.1).
+
+**Pasar a obligatoria (enforcement)**:
+1. Publicar con Report-Only y usar la web unos días (pasajeros, chóferes, admin,
+   login con Google, mapas con la clave real, reservas).
+2. Revisar violaciones: consola del navegador (`[Report Only] Refused to…`).
+   Chrome muestra el hash exacto si falta uno (`'sha256-…'`). Opcional: añadir
+   un endpoint de informes (`report-to`) para recogerlas en un servidor.
+3. Ajustar la lista y, cuando una semana pase sin violaciones legítimas,
+   renombrar la clave a `Content-Security-Policy` en los dos sitios de
+   `firebase.json`. Mantener la Report-Only en paralelo con la siguiente
+   versión de la política es buena práctica.
+4. Al actualizar `firebase_*`/FlutterFire, volver a revisar los hashes (si
+   cambian, Chrome lo reporta).
+
+`includeSubDomains` y `preload` en HSTS no están activados: es una decisión del
+responsable (afecta a todos los subdominios del dominio propio y el preload
+es difícil de revertir).
+
+---
+
 ## Migración de reservas existentes (D5/F4)
 
 `functions/scripts/migrate-booking-pii.js` mueve los datos del invitado que
@@ -240,12 +359,17 @@ GCP_SA_KEY              → JSON de la cuenta de servicio que despliega
 Secretos del repositorio (Settings → Secrets and variables → Actions), que
 usan los builds:
 ```
-GOOGLE_MAPS_API_KEY     → Google Cloud Console
+GOOGLE_MAPS_API_KEY         → Maps: llamadas REST de las apps móviles (ver «Claves de Google Maps»)
+GOOGLE_MAPS_WEB_API_KEY     → Maps: web
+GOOGLE_MAPS_ANDROID_API_KEY → Maps: SDK de Android
+GOOGLE_MAPS_IOS_API_KEY     → Maps: SDK de iOS
 FCM_VAPID_KEY           → Firebase → Cloud Messaging → Web Push certificates
 FIREBASE_ANDROID_APP_ID → Firebase → Project settings → app Android
 FIREBASE_IOS_APP_ID     → GoogleService-Info.plist → GOOGLE_APP_ID
 GOOGLE_SERVER_CLIENT_ID → OAuth "Web client" del proyecto (Google Sign-In en Android)
 GOOGLE_IOS_CLIENT_ID    → GoogleService-Info.plist → CLIENT_ID
+ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
+ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD → ver «Firma de Android»
 ```
 `STRIPE_SECRET_KEY` no va en GitHub: vive en Secret Manager (paso 3).
 

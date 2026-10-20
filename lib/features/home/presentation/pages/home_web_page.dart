@@ -13,6 +13,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart'
         Marker,
         MarkerId;
 import 'package:video_player/video_player.dart';
+import '../../../../core/config/env.dart';
 import '../../../../core/config/remote_flags.dart';
 import '../../../../core/design/lux_promise.dart';
 import '../../../../core/design/vehicle_catalog.dart';
@@ -21,6 +22,7 @@ import '../../../../core/models/place_model.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/place_autocomplete_field.dart';
 import '../../../../core/widgets/lux_site_chrome.dart';
+import '../../../../core/widgets/lux_map.dart' show MapsKeyMissing;
 import '../../../booking/presentation/widgets/vehicle_visuals.dart';
 import 'home_design.dart';
 
@@ -841,26 +843,29 @@ class _InlineMapPanelState extends State<_InlineMapPanel> {
       child: Stack(
         children: [
           // ── Grayscale map ─────────────────────────────────────────
-          GoogleMap(
-            initialCameraPosition: CameraPosition(
-              target: widget.place.latLng,
-              zoom: 15,
-            ),
-            onMapCreated: (ctrl) {
-              _ctrl = ctrl;
-              ctrl.setMapStyle(_kDarkMapStyle);
-            },
-            markers: {
-              Marker(
-                markerId: const MarkerId('pin'),
-                position: widget.place.latLng,
+          if (!AppConfig.hasMapsKey)
+            const Positioned.fill(child: MapsKeyMissing())
+          else
+            GoogleMap(
+              initialCameraPosition: CameraPosition(
+                target: widget.place.latLng,
+                zoom: 15,
               ),
-            },
-            zoomControlsEnabled: false,
-            mapToolbarEnabled: false,
-            myLocationButtonEnabled: false,
-            liteModeEnabled: !kIsWeb,
-          ),
+              onMapCreated: (ctrl) {
+                _ctrl = ctrl;
+                ctrl.setMapStyle(_kDarkMapStyle);
+              },
+              markers: {
+                Marker(
+                  markerId: const MarkerId('pin'),
+                  position: widget.place.latLng,
+                ),
+              },
+              zoomControlsEnabled: false,
+              mapToolbarEnabled: false,
+              myLocationButtonEnabled: false,
+              liteModeEnabled: !kIsWeb,
+            ),
 
           // ── "Cambiar ubicación" button — bottom-left ──────────────
           Positioned(
