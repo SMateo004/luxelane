@@ -52,8 +52,41 @@ D13 MEDIO. Faltan cabeceras de seguridad en firebase.json (CSP, frame-ancestors)
 D14 MEDIO. npm audit de producción en functions: 10 vulnerabilidades (8 moderadas, 2 altas: firebase-admin y node-forge).
 D15 MEDIO. web/index.html:7 con maximum-scale=1.0 (bloquea el zoom); Stripe.js bloqueante; importa firebase-app.js sin usarlo.
 D16 ALTO. Teléfono personal del chofer expuesto: publishDriverInfo lo copiaba en driverInfo, legible por el pasajero desde la confirmación y para siempre en el historial. RESUELTO PARCIALMENTE (rama cierre/piloto): el teléfono va en bookings/{id}/driverContact/phone, escrito solo por el servidor y legible por el pasajero solo de driver_arriving a in_progress; el botón «Llamar a tu chófer» solo aparece en esa ventana. PENDIENTE: sustituirlo por llamada enmascarada para que el pasajero nunca vea el número real; migrar reservas existentes (script de migración, modo DRY-RUN por defecto).
+D17 ALTO. Notificaciones push de iOS sin entitlements: no existe ios/Runner/*.entitlements ni aps-environment, aunque Info.plist declara UIBackgroundModes remote-notification. Las push no llegarán en iOS.
+D18 ALTO. Pasajero y chófer comparten el identificador com.luxelane.app (android/app/build.gradle.kts:57,71; PRODUCT_BUNDLE_IDENTIFIER en el proyecto de iOS) y la app de pasajeros declara ubicación en segundo plano (Info.plist UIBackgroundModes location y NSLocationAlwaysAndWhenInUseUsageDescription; FOREGROUND_SERVICE_LOCATION en AndroidManifest.xml), que solo necesita el chófer: riesgo de rechazo en tiendas y de pedir un permiso que el pasajero no usa.
+D19 MEDIO. La clave REST de Maps (Places, Geocoding y Directions desde Android/iOS, --dart-define=GOOGLE_MAPS_KEY) viaja dentro de la app y una clave REST no se puede restringir por aplicación (solo por API); cualquiera puede extraerla y gastar la cuota.
+D20 ALTO. Los precios por defecto del código (DefaultPricing en la app, DEFAULT_FARES en functions) no coinciden con el plan de negocio: p. ej. 98 Bs por 16 km en business frente a un ticket ilustrativo de 55 USD del plan [Especulando sobre la cifra del plan]. No deben mostrarse al público.
+D21 MEDIO. Desde que bookings tiene allow create: if false y createBooking solo acepta pasajeros, ni el administrador ni un operador pueden crear una reserva en nombre de un cliente (reserva asistida por WhatsApp o teléfono, cuentas corporativas).
 Positivos: los roles no se pueden auto-asignar; el importe de Stripe se calcula en servidor al crear el PaymentIntent; el reembolso es solo admin con log en servidor; no se guardan números de tarjeta; no hay secretos privados en el árbol actual (solo placeholders sk_live_XXX, pk_live_XXX).
 No verificado: historial git previo (un solo commit), restricciones de las claves en Google Cloud, copias de seguridad en la consola, enumeración de correos, campos que serializa Booking.toJson.
+
+## I. Estado de los hallazgos (rama cierre/integracion, 2026-10-20)
+
+CERRADO = corregido en la rama con prueba automática; nada está desplegado todavía. PARCIAL = lo indicado en «Falta». ABIERTO = sin trabajo.
+
+| Id | Estado | Hecho (commit / prueba) | Falta |
+|---|---|---|---|
+| D1 | ABIERTO | — | Verificación por código al iniciar/terminar y SOS. |
+| D2 | PARCIAL | 697057a createBooking/quoteBooking con precio del servidor; e3109a5 `allow create: if false`; pruebas: functions/src/integration/bookings.int.ts, tools/rules-tests/test/bookings.rules.ts | Idempotencia (requestId), versión mínima de la app, configurar pricingRules/config.pricing y desplegar en el orden de DEPLOY.md. |
+| D3 | ABIERTO | — | App Check y límites de tasa en las callables. |
+| D4 | CERRADO | 364c8b5; tools/rules-tests/test/driverProfiles.rules.ts | Desplegar. |
+| D5 | CERRADO | e12d049 openRequests sin PII; 2bc8069 reconciliación; openRequests.rules.ts, reconcile.int.ts | Desplegar y ejecutar la migración (DEPLOY.md). |
+| D6 | ABIERTO | — | Verificación de identidad, 2FA, custom claims, revocar tokens al bloquear. |
+| D7 | ABIERTO | — | Webhook de Stripe, idempotency keys, comparar el intent de capturePayment con el de la reserva. |
+| D8 | PARCIAL | 4724d4f entorno production, concurrencia y acciones por SHA; ccbe8b8 selector FIREBASE_ENV; 3297d33 job de reglas | Crear el proyecto de staging y el entorno de GitHub con revisores. |
+| D9 | PARCIAL | 452a5a5 firma de release con key.properties; test/security/build_config_test.dart | Generar el keystore de subida y cargar sus secretos en GitHub; Play App Signing. |
+| D10 | ABIERTO | — | Escrituras del admin (pagos, finalPrice, roles, comisión) por callables con auditoría en servidor. Ajustes finales de finalPrice: se tratarán con cancelación y auditoría. |
+| D11 | PARCIAL | 4b58919 STRIPE_SECRET_KEY con defineSecret; functions/src/stripe_secret.test.ts | Errores de Stripe aún llegan crudos al cliente (paymentFailed(String(e))). |
+| D12 | PARCIAL | 130afd2 claves de Maps fuera del código, la release falla sin ellas; build_config_test.dart | Rotar la clave antigua (sigue en el historial de git) y restringir las nuevas. Las claves de Firebase de Android/iOS siguen usando por defecto la apiKey web (lib/firebase_options.dart). |
+| D13 | PARCIAL | 0cbc55f cabeceras y CSP Report-Only (hosting_headers_test.dart); validación zod en createBooking | CSP obligatoria; validar el resto de callables; deleteAccount sigue dejando direcciones y driverInfo en las reservas. |
+| D14 | ABIERTO | db0553f quitó herramientas de functions (total 58→44), producción sigue con 10 | Actualizar firebase-admin (mayor) y revisar firebase-functions. |
+| D15 | CERRADO | 4749171; test/security/web_index_test.dart | Desplegar hosting. |
+| D16 | PARCIAL | cd2d215 teléfono en driverContact; 6231792 migración; driverContact.rules.ts | Llamada enmascarada; ejecutar la migración. |
+| D17 | ABIERTO | — | Entitlements de push (aps-environment) y capacidad Push Notifications en Xcode. |
+| D18 | ABIERTO | — | Identificador propio para la app del chófer (flavors) y ubicación en segundo plano solo en ella. |
+| D19 | ABIERTO | — | Mover Places/Directions al servidor (como la distancia de createBooking) o a un proxy. |
+| D20 | ABIERTO | — | Ocultar cifras de los valores por defecto y cargar las tarifas reales en Firestore. |
+| D21 | ABIERTO | — | Diseño de reserva asistida (adminCreateBooking). |
 
 ## E. UX/UI
 Bueno: paleta marfil + zafiro con tokens (lib/app/theme/app_theme.dart:12-40), Cormorant Garamond + Montserrat, catálogo de movimiento (lux_motion.dart), tres transiciones de ruta, barra de progreso de viaje, slide-to-confirm con háptica, estados vacíos y de éxito bien cuidados.
