@@ -205,6 +205,22 @@ de esta versión. La web se actualiza sola con el despliegue de hosting.
 
 ### Configuración de precios (Firestore)
 
+No hay tarifas en el código (D20): sin `pricingRules` la web y la app
+muestran «Cotiza al reservar» y el servidor no reserva esa clase. Para
+cargarlas en staging:
+
+```
+cp tools/pricing/pricing.seed.example.json ~/luxelane-tarifas/staging.json   # fuera del repo
+# completar cada "REEMPLAZAR" (importes en Bs)
+npm run pricing:check -- --file ~/luxelane-tarifas/staging.json
+npm run pricing:seed  -- --file ~/luxelane-tarifas/staging.json --project <ID_STAGING>           # dry-run
+npm run pricing:seed  -- --file ~/luxelane-tarifas/staging.json --project <ID_STAGING> --apply   # escribe
+```
+`pricing:seed` se niega a escribir en `luxelane-4e7ae`: en producción las
+tarifas se cargan desde el panel admin (Tarifas). `routeFactor` se calibra
+con `node tools/pricing/calibrar_ruta.mjs <trayectos.csv>` (ver
+`tools/pricing/ejemplo_rutas.csv`, datos ficticios).
+
 - `pricingRules/{clase}_{servicio}` para cada combinación que se venda:
   `basePriceUsd`, `pricePerKmUsd`, `pricePerHourUsd`, `minimumPriceUsd`
   (números, en **bolivianos** aunque el nombre diga Usd) e `isActive`.

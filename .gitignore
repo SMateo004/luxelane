@@ -66,3 +66,7 @@ app.*.map.json
 
 # Tests de reglas (tools/rules-tests)
 tools/rules-tests/node_modules/
+
+# Herramientas de tarifas (tools/pricing): nunca versionar valores reales
+tools/pricing/node_modules/
+tools/pricing/*.local.json

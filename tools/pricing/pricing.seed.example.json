@@ -1,0 +1,116 @@
+{
+  "_leeme": [
+    "Plantilla de tarifas para Firestore. Copiar a un archivo FUERA del repositorio (p. ej. ~/luxelane-tarifas/staging.json), reemplazar cada \"REEMPLAZAR\" y validar con: npm run pricing:check -- --file <archivo>.",
+    "Importes en BOLIVIANOS (Bs), con decimales si hace falta, aunque los campos se llamen *Usd (se renombrarán con migración más adelante).",
+    "isActive: true para vender la combinación, false para ocultarla. Las combinaciones que no se vendan pueden borrarse del archivo: sin tarifa, la web dice «Cotiza al reservar» y el servidor no reserva esa clase.",
+    "config_pricing.routeFactor: número >= 1. Distancia por calles ≈ línea recta × routeFactor, solo cuando la ruta de Google no está disponible. Calcularlo con tools/pricing/calibrar_ruta.mjs.",
+    "Opcionales y apagados en el piloto (no añadir sin decisión de negocio): config_pricing.nightSurchargePct, nightStartHour, nightEndHour, fixedAirportFares.",
+    "Nunca subir a git un archivo con valores reales."
+  ],
+  "pricingRules": {
+    "business_oneWay": {
+      "_comentario": "Traslado (solo ida): base + km × por km, nunca menos que el mínimo. pricePerHourUsd no se usa (poner 0 si no aplica).",
+      "vehicleClass": "business",
+      "serviceType": "oneWay",
+      "basePriceUsd": "REEMPLAZAR",
+      "pricePerKmUsd": "REEMPLAZAR",
+      "pricePerHourUsd": "REEMPLAZAR",
+      "minimumPriceUsd": "REEMPLAZAR",
+      "isActive": "REEMPLAZAR"
+    },
+    "business_byTheHour": {
+      "_comentario": "Por horas: base + horas × por hora, nunca menos que el mínimo. pricePerKmUsd no se usa (poner 0 si no aplica).",
+      "vehicleClass": "business",
+      "serviceType": "byTheHour",
+      "basePriceUsd": "REEMPLAZAR",
+      "pricePerKmUsd": "REEMPLAZAR",
+      "pricePerHourUsd": "REEMPLAZAR",
+      "minimumPriceUsd": "REEMPLAZAR",
+      "isActive": "REEMPLAZAR"
+    },
+    "firstClass_oneWay": {
+      "_comentario": "Traslado (solo ida): base + km × por km, nunca menos que el mínimo. pricePerHourUsd no se usa (poner 0 si no aplica).",
+      "vehicleClass": "firstClass",
+      "serviceType": "oneWay",
+      "basePriceUsd": "REEMPLAZAR",
+      "pricePerKmUsd": "REEMPLAZAR",
+      "pricePerHourUsd": "REEMPLAZAR",
+      "minimumPriceUsd": "REEMPLAZAR",
+      "isActive": "REEMPLAZAR"
+    },
+    "firstClass_byTheHour": {
+      "_comentario": "Por horas: base + horas × por hora, nunca menos que el mínimo. pricePerKmUsd no se usa (poner 0 si no aplica).",
+      "vehicleClass": "firstClass",
+      "serviceType": "byTheHour",
+      "basePriceUsd": "REEMPLAZAR",
+      "pricePerKmUsd": "REEMPLAZAR",
+      "pricePerHourUsd": "REEMPLAZAR",
+      "minimumPriceUsd": "REEMPLAZAR",
+      "isActive": "REEMPLAZAR"
+    },
+    "businessVan_oneWay": {
+      "_comentario": "Traslado (solo ida): base + km × por km, nunca menos que el mínimo. pricePerHourUsd no se usa (poner 0 si no aplica).",
+      "vehicleClass": "businessVan",
+      "serviceType": "oneWay",
+      "basePriceUsd": "REEMPLAZAR",
+      "pricePerKmUsd": "REEMPLAZAR",
+      "pricePerHourUsd": "REEMPLAZAR",
+      "minimumPriceUsd": "REEMPLAZAR",
+      "isActive": "REEMPLAZAR"
+    },
+    "businessVan_byTheHour": {
+      "_comentario": "Por horas: base + horas × por hora, nunca menos que el mínimo. pricePerKmUsd no se usa (poner 0 si no aplica).",
+      "vehicleClass": "businessVan",
+      "serviceType": "byTheHour",
+      "basePriceUsd": "REEMPLAZAR",
+      "pricePerKmUsd": "REEMPLAZAR",
+      "pricePerHourUsd": "REEMPLAZAR",
+      "minimumPriceUsd": "REEMPLAZAR",
+      "isActive": "REEMPLAZAR"
+    },
+    "electric_oneWay": {
+      "_comentario": "Traslado (solo ida): base + km × por km, nunca menos que el mínimo. pricePerHourUsd no se usa (poner 0 si no aplica).",
+      "vehicleClass": "electric",
+      "serviceType": "oneWay",
+      "basePriceUsd": "REEMPLAZAR",
+      "pricePerKmUsd": "REEMPLAZAR",
+      "pricePerHourUsd": "REEMPLAZAR",
+      "minimumPriceUsd": "REEMPLAZAR",
+      "isActive": "REEMPLAZAR"
+    },
+    "electric_byTheHour": {
+      "_comentario": "Por horas: base + horas × por hora, nunca menos que el mínimo. pricePerKmUsd no se usa (poner 0 si no aplica).",
+      "vehicleClass": "electric",
+      "serviceType": "byTheHour",
+      "basePriceUsd": "REEMPLAZAR",
+      "pricePerKmUsd": "REEMPLAZAR",
+      "pricePerHourUsd": "REEMPLAZAR",
+      "minimumPriceUsd": "REEMPLAZAR",
+      "isActive": "REEMPLAZAR"
+    },
+    "businessSuv_oneWay": {
+      "_comentario": "Traslado (solo ida): base + km × por km, nunca menos que el mínimo. pricePerHourUsd no se usa (poner 0 si no aplica).",
+      "vehicleClass": "businessSuv",
+      "serviceType": "oneWay",
+      "basePriceUsd": "REEMPLAZAR",
+      "pricePerKmUsd": "REEMPLAZAR",
+      "pricePerHourUsd": "REEMPLAZAR",
+      "minimumPriceUsd": "REEMPLAZAR",
+      "isActive": "REEMPLAZAR"
+    },
+    "businessSuv_byTheHour": {
+      "_comentario": "Por horas: base + horas × por hora, nunca menos que el mínimo. pricePerKmUsd no se usa (poner 0 si no aplica).",
+      "vehicleClass": "businessSuv",
+      "serviceType": "byTheHour",
+      "basePriceUsd": "REEMPLAZAR",
+      "pricePerKmUsd": "REEMPLAZAR",
+      "pricePerHourUsd": "REEMPLAZAR",
+      "minimumPriceUsd": "REEMPLAZAR",
+      "isActive": "REEMPLAZAR"
+    }
+  },
+  "config_pricing": {
+    "_comentario": "Documento config/pricing.",
+    "routeFactor": "REEMPLAZAR"
+  }
+}

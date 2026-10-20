@@ -1,0 +1,18 @@
+{
+  "name": "luxelane-pricing-tools",
+  "private": true,
+  "type": "module",
+  "description": "Plantilla, validación y carga de tarifas; calibración de routeFactor. Sin valores reales.",
+  "scripts": {
+    "pricing:check": "node check.mjs",
+    "pricing:seed": "node seed.mjs",
+    "calibrar": "node calibrar_ruta.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "firebase-admin": "12.7.0"
+  },
+  "engines": {
+    "node": "22"
+  }
+}

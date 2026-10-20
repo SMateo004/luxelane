@@ -93,6 +93,11 @@ jobs:
         run: |
           npm --prefix functions ci
           npm --prefix tools/rules-tests run test:integration
+      # Plantilla, validación y calibración de tarifas (sin valores reales).
+      - name: Pricing tools tests
+        run: |
+          npm --prefix tools/pricing ci
+          npm --prefix tools/pricing test
 
   # ---------------------------------------------------------------------------
   build_web_rider:
