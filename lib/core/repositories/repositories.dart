@@ -105,8 +105,10 @@ abstract class BookingRepository {
   /// Crea la reserva en el servidor (createBooking), que calcula el precio.
   /// Con [quotedPrice] (el que vio el pasajero), si el del servidor es
   /// mayor devuelve [PriceChangedFailure] y no crea nada.
+  /// [requestId] (UUID v4) identifica el intento: reenviarlo tras un error
+  /// de red o un cambio de precio nunca crea una segunda reserva.
   Future<Either<Failure, Booking>> createBooking(Booking booking,
-      {double? quotedPrice});
+      {double? quotedPrice, required String requestId});
 
   /// Precio del servidor para el viaje de [trip], sin crear nada.
   Future<Either<Failure, BookingQuote>> quoteBooking(Booking trip);

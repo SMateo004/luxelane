@@ -24,12 +24,12 @@ class BookingRepositoryImpl implements BookingRepository {
 
   @override
   Future<Either<Failure, Booking>> createBooking(Booking booking,
-      {double? quotedPrice}) async {
+      {double? quotedPrice, required String requestId}) async {
     try {
       final res = await _functions
           .httpsCallable('createBooking')
-          .call<Map<String, dynamic>>(
-              bookingRequestData(booking, quotedPrice: quotedPrice));
+          .call<Map<String, dynamic>>(bookingRequestData(booking,
+              quotedPrice: quotedPrice, requestId: requestId));
       final id = res.data['bookingId'] as String;
       return getBookingById(id);
     } on FirebaseFunctionsException catch (e) {
@@ -267,7 +267,7 @@ const _kConnectionError =
 /// Solo los datos del viaje que aceptan quoteBooking y createBooking: el
 /// precio, el estado y la zona los pone el servidor.
 Map<String, dynamic> bookingRequestData(Booking b,
-    {double? quotedPrice, bool quote = false}) {
+    {double? quotedPrice, String? requestId, bool quote = false}) {
   Map<String, dynamic> place(Place p) =>
       {'name': p.name, 'address': p.address, 'lat': p.lat, 'lng': p.lng};
   final hourly = b.serviceType == ServiceType.byTheHour;
@@ -287,6 +287,7 @@ Map<String, dynamic> bookingRequestData(Booking b,
       if (b.notes?.trim().isNotEmpty == true) 'notes': b.notes!.trim(),
       if (b.guest != null) 'guest': b.guest!.toJson()..remove('email'),
       if (quotedPrice != null) 'quotedPrice': quotedPrice,
+      if (requestId != null) 'requestId': requestId,
     },
   };
 }

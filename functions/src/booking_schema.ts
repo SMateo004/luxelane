@@ -57,6 +57,12 @@ export const createSchema = z.strictObject({
   notes: z.string().max(1000).optional(),
   guest: guestSchema.optional(),
   quotedPrice: z.number().positive().optional(),
+  /**
+   * Un UUID v4 por intento de reserva, reutilizado en los reintentos: la
+   * misma solicitud nunca crea dos reservas. Obligatorio (solo la app nueva
+   * llama a createBooking).
+   */
+  requestId: z.uuidv4(),
 })
   .refine(needsDestination, { message: 'destination required', path: ['destination'] })
   .refine((d) => d.passengerCount <= CAPACITY[d.vehicleClass].passengers,

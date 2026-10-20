@@ -37,6 +37,7 @@ class BookingCreateRequested extends BookingEvent {
     this.pickupAirport,
     this.hours,
     this.quotedPrice,
+    required this.requestId,
   });
   final Place origin;
   final Place destination;
@@ -58,6 +59,10 @@ class BookingCreateRequested extends BookingEvent {
   /// mayor, no se reserva y se emite [BookingPriceChanged].
   final double? quotedPrice;
 
+  /// UUID v4 del intento de reserva; se conserva al reenviar con el precio
+  /// nuevo, así el servidor nunca crea dos reservas.
+  final String requestId;
+
   /// La misma solicitud con el precio nuevo, tras confirmarlo el pasajero.
   BookingCreateRequested withQuotedPrice(double price) =>
       BookingCreateRequested(
@@ -77,11 +82,11 @@ class BookingCreateRequested extends BookingEvent {
         pickupAirport: pickupAirport,
         hours: hours,
         quotedPrice: price,
+        requestId: requestId,
       );
 
   @override
-  List<Object?> get props =>
-      [riderId, vehicleClass, scheduledAt, estimatedPrice, quotedPrice];
+  List<Object?> get props => [requestId, quotedPrice];
 }
 
 class BookingStatusWatched extends BookingEvent {
@@ -256,8 +261,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       pickupAirport: event.pickupAirport,
       hours: event.hours,
     );
-    final result =
-        await _repo.createBooking(booking, quotedPrice: event.quotedPrice);
+    final result = await _repo.createBooking(booking,
+        quotedPrice: event.quotedPrice, requestId: event.requestId);
     result.fold(
       (f) => emit(f is PriceChangedFailure
           ? BookingPriceChanged(

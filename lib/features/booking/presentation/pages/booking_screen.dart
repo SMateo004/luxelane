@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/config/remote_flags.dart';
@@ -190,6 +191,21 @@ class _BookingScreenState extends State<BookingScreen> {
       updatedAt: now,
       hours: _service == ServiceType.byTheHour ? _hours : null,
     );
+  }
+
+  // Identificador del intento de reserva (requestId): se reutiliza en los
+  // reintentos tras un error o un cambio de precio, y se renueva tras
+  // reservar o si cambia el viaje.
+  String? _requestId;
+  String? _requestIdKey;
+
+  String get _attemptId {
+    final key = _currentQuoteKey;
+    if (_requestId == null || _requestIdKey != key) {
+      _requestId = const Uuid().v4();
+      _requestIdKey = key;
+    }
+    return _requestId!;
   }
 
   Future<void> _confirmNewPrice(BookingPriceChanged state) async {
@@ -514,6 +530,7 @@ class _BookingScreenState extends State<BookingScreen> {
           riderId: authState.user.id,
           estimatedPrice: _price,
           quotedPrice: _price,
+          requestId: _attemptId,
           notes: _notes.isNotEmpty ? _notes : null,
           guest: guest,
           passengerCount: _passengers,
@@ -574,6 +591,7 @@ class _BookingScreenState extends State<BookingScreen> {
       listeners: [
         BlocListener<BookingBloc, BookingState>(listener: (ctx, state) {
           if (state is BookingCreated) {
+            _requestId = null;
             if (_payByCard) {
               _authorizeCard(state.booking);
               return;

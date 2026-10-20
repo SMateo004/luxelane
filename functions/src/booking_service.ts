@@ -3,6 +3,7 @@
  * datos del viaje; el precio lo calcula el servidor con pricingRules y
  * config/pricing. createBooking es la única forma de crear una reserva.
  */
+import { createHash } from 'crypto';
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { CreateInput, createSchema, QuoteInput, quoteSchema } from './booking_schema';
@@ -147,9 +148,31 @@ const geo = (p: PlaceIn & { name?: string; address?: string }) => ({
   coordinates: new admin.firestore.GeoPoint(p.lat, p.lng),
 });
 
+/** ID de la reserva derivado del requestId: el mismo intento, el mismo documento. */
+export const bookingIdFor = (requestId: string): string =>
+  createHash('sha256').update(`booking:${requestId.toLowerCase()}`).digest('hex').slice(0, 40);
+
+// Un requestId que ya usó otro pasajero: se rechaza igual que un formato
+// inválido, sin decir que la reserva existe.
+const foreignRequest = () => bookingError('invalid-argument', 'invalid_request', { fields: ['requestId'] });
+
+/** Reserva ya creada con este requestId, si es del mismo pasajero. */
+function existingResponse(snap: admin.firestore.DocumentSnapshot, uid: string) {
+  const d = snap.data();
+  if (!d) return null;
+  if (d.riderId !== uid) throw foreignRequest();
+  return { bookingId: snap.id, price: d.estimatedPrice as number };
+}
+
 export async function createBooking(deps: BookingDeps, uid: string | undefined, data: unknown) {
   const user = await requireActiveRider(deps.db, uid);
   const input = parse<CreateInput>(createSchema, data);
+  const ref = deps.db.collection('bookings').doc(bookingIdFor(input.requestId));
+  // Reintento de una solicitud que ya se creó (p. ej. se perdió la
+  // respuesta): misma respuesta, sin recalcular ni duplicar.
+  const already = existingResponse(await ref.get(), uid!);
+  if (already) return already;
+
   const priced = await priceTrip(deps, input);
   // El pasajero vio un precio menor: no se cobra más sin que lo confirme.
   if (input.quotedPrice !== undefined && priced.price > input.quotedPrice) {
@@ -157,7 +180,6 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
   }
 
   const db = deps.db;
-  const ref = db.collection('bookings').doc();
   const now = admin.firestore.Timestamp.fromMillis(deps.now?.() ?? Date.now());
   const pickupAirport = input.serviceType === 'oneWay' ? airportFor(input.origin)?.iata ?? null : null;
   const prefs = user.ridePreferences;
@@ -196,8 +218,12 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
     },
   };
 
-  // Reserva y solicitud abierta juntas: nunca una sin la otra.
-  await db.runTransaction(async (tx) => {
+  // Reserva y solicitud abierta juntas: nunca una sin la otra. Si dos
+  // envíos simultáneos llegan aquí, la transacción del segundo ve la
+  // reserva del primero y devuelve esa.
+  const result = await db.runTransaction(async (tx) => {
+    const current = existingResponse(await tx.get(ref), uid!);
+    if (current) return current;
     tx.set(ref, booking);
     tx.set(db.collection('openRequests').doc(ref.id), buildOpenRequest(booking));
     if (priced.distanceSource === 'fallback') {
@@ -209,6 +235,7 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
         resolved: false,
       });
     }
+    return { bookingId: ref.id, price: priced.price };
   });
-  return { bookingId: ref.id, price: priced.price };
+  return result;
 }

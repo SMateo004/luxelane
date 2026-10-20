@@ -12,6 +12,7 @@ jest.mock('../stripe_service', () => ({
   createIntent: (p: { amount: number }) => createIntent(p),
 }));
 
+import { randomUUID } from 'crypto';
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { closeOpenRequest, createBooking as createBookingFn, createPaymentIntent, onBookingCreated } from '../index';
@@ -46,6 +47,7 @@ const trip = (over: Record<string, unknown> = {}) => ({
   luggageCount: 1,
   notes: 'Toque el timbre',
   guest: { title: 'Sra.', firstName: 'Carla', phone: '+59170000001', language: 'Español' },
+  requestId: randomUUID(),
   ...over,
 });
 
@@ -196,18 +198,63 @@ describe('createBooking', () => {
     }
   });
 
-  it('doble envío rápido de la misma solicitud: hoy crea dos reservas', async () => {
+});
+
+describe('createBooking: idempotencia por requestId', () => {
+  it('doble envío simultáneo de la misma solicitud: una sola reserva, misma respuesta', async () => {
     const same = trip();
-    await Promise.all([createBooking(deps(), 'ana', same), createBooking(deps(), 'ana', same)]);
-    // Riesgo documentado: sin clave de idempotencia hay dos reservas y dos solicitudes.
-    expect(await count('bookings')).toBe(2);
-    expect(await count('openRequests')).toBe(2);
+    const [a, b] = await Promise.all([createBooking(deps(), 'ana', same), createBooking(deps(), 'ana', same)]);
+    expect(a).toEqual(b);
+    expect(await count('bookings')).toBe(1);
+    expect(await count('openRequests')).toBe(1);
+  });
+
+  it('reintento tras perder la respuesta: devuelve la reserva ya creada sin recalcular', async () => {
+    const same = trip();
+    const first = await createBooking(deps(), 'ana', same);
+    // Aunque ahora la ruta falle, el reintento no vuelve a calcular nada.
+    const retry = await createBooking(deps({ fetchFn: routesDown }), 'ana', same);
+    expect(retry).toEqual(first);
+    expect(await count('bookings')).toBe(1);
+  });
+
+  it('reintento tras un fallo: el primer intento no dejó nada y el segundo crea una reserva', async () => {
+    const same = trip();
+    expect(await reason(createBooking(deps({ fetchFn: routesDown }), 'ana', same)))
+      .toMatchObject({ reason: 'pricing_unavailable' });
+    await createBooking(deps(), 'ana', same);
+    expect(await count('bookings')).toBe(1);
+  });
+
+  it('price_changed y reintento con el mismo requestId y el precio nuevo', async () => {
+    const same = trip({ quotedPrice: 40 });
+    expect(await reason(createBooking(deps(), 'ana', same))).toMatchObject({ reason: 'price_changed', price: 86 });
+    const { price } = await createBooking(deps(), 'ana', { ...same, quotedPrice: 86 });
+    expect(price).toBe(86);
+    expect(await count('bookings')).toBe(1);
+  });
+
+  it('requestId de otro pasajero: se rechaza sin revelar la reserva', async () => {
+    const same = trip();
+    await createBooking(deps(), 'ana', same);
+    await db.doc('users/beto').set({ role: 'rider', isActive: true });
+    const err = await reason(createBooking(deps(), 'beto', same));
+    expect(err).toEqual({ code: 'invalid-argument', reason: 'invalid_request', price: undefined });
+    expect(await count('bookings')).toBe(1);
+  });
+
+  it('formato inválido o ausente: se rechaza', async () => {
+    for (const requestId of ['no-es-un-uuid', '3f2b1c9e-8d7a-1b6c-9e5f-1a2b3c4d5e6f', '', undefined]) {
+      expect(await reason(createBooking(deps(), 'ana', trip({ requestId }))))
+        .toMatchObject({ code: 'invalid-argument', reason: 'invalid_request' });
+    }
+    expect(await count('bookings')).toBe(0);
   });
 });
 
 describe('quoteBooking', () => {
   it('devuelve precio y desglose sin crear nada', async () => {
-    const { guest: _g, notes: _n, passengerCount: _p, luggageCount: _l, ...q } = trip();
+    const { guest: _g, notes: _n, passengerCount: _p, luggageCount: _l, requestId: _r, ...q } = trip();
     const quote = await quoteBooking(deps(), 'ana', q);
     expect(quote).toMatchObject({ price: 86, distanceSource: 'routes', breakdown: { km: 12, perKm: 3, minimumApplied: false } });
     expect(await count('bookings')).toBe(0);

@@ -34,11 +34,13 @@ Booking _booking({ServiceType service = ServiceType.oneWay}) => Booking(
 void main() {
   group('bookingRequestData', () {
     test('solo datos del viaje: nunca precio, estado ni ids', () {
-      final data = bookingRequestData(_booking(), quotedPrice: 86);
+      final data = bookingRequestData(_booking(),
+          quotedPrice: 86, requestId: '3f2b1c9e-8d7a-4b6c-9e5f-1a2b3c4d5e6f');
       for (final k in ['estimatedPrice', 'status', 'riderId', 'pickupArea']) {
         expect(data.containsKey(k), isFalse, reason: k);
       }
       expect(data['quotedPrice'], 86);
+      expect(data['requestId'], '3f2b1c9e-8d7a-4b6c-9e5f-1a2b3c4d5e6f');
       expect(data['scheduledAt'],
           DateTime.utc(2026, 11, 1, 14).millisecondsSinceEpoch);
       expect(data['origin'], {

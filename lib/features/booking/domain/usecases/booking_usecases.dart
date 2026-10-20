@@ -28,7 +28,8 @@ class CreateBookingUseCase implements UseCase<Booking, CreateBookingParams> {
       notes: params.notes,
       guest: params.guest,
     );
-    return _repo.createBooking(booking);
+    return _repo.createBooking(booking,
+        quotedPrice: params.quotedPrice, requestId: params.requestId);
   }
 }
 
@@ -43,6 +44,8 @@ class CreateBookingParams {
     required this.estimatedPrice,
     this.notes,
     this.guest,
+    this.quotedPrice,
+    required this.requestId,
   });
   final Place origin;
   final Place destination;
@@ -53,6 +56,8 @@ class CreateBookingParams {
   final double estimatedPrice;
   final String? notes;
   final BookingGuest? guest;
+  final double? quotedPrice;
+  final String requestId;
 }
 
 // ---------------------------------------------------------------------------
