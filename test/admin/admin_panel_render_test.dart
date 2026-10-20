@@ -138,7 +138,9 @@ AdminRepository _repo() {
       .thenAnswer((_) async => const Right<Failure, int>(2));
   when(() => r.updatePricingRule(any()))
       .thenAnswer((_) async => const Right<Failure, void>(null));
-  when(() => r.verifyDriver(any()))
+  when(() => r.verifyDriver(any(),
+          vehicleReviewed: any(named: 'vehicleReviewed'),
+          vehicleNote: any(named: 'vehicleNote')))
       .thenAnswer((_) async => const Right<Failure, void>(null));
   return r;
 }
@@ -223,6 +225,38 @@ void main() {
     await tester.pumpAndSettle();
     verify(() => _lastRepo.resolveAlert('al1', note: 'Revisado con el chófer'))
         .called(1);
+  });
+
+  group('verificar chófer', () {
+    Future<void> openDialog(WidgetTester tester) async {
+      await _pump(tester, const DriversTab(), const Size(1280, 900));
+      await tester.tap(find.text('Verificar'));
+      await tester.pumpAndSettle();
+      expect(find.text('Vehículo revisado'), findsOneWidget);
+    }
+
+    testWidgets('sin la casilla verifica pero no activa el vehículo',
+        (tester) async {
+      await openDialog(tester);
+      await tester.tap(find.widgetWithText(FilledButton, 'Verificar'));
+      await tester.pumpAndSettle();
+      verify(() => _lastRepo.verifyDriver('u-driver',
+          vehicleReviewed: false,
+          vehicleNote: any(named: 'vehicleNote'))).called(1);
+    });
+
+    testWidgets('con la casilla y una nota, verifica y activa', (tester) async {
+      await openDialog(tester);
+      await tester.tap(find.byType(Checkbox));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextField), 'Sin golpes, ITV al día');
+      await tester
+          .tap(find.widgetWithText(FilledButton, 'Verificar y activar'));
+      await tester.pumpAndSettle();
+      verify(() => _lastRepo.verifyDriver('u-driver',
+          vehicleReviewed: true,
+          vehicleNote: 'Sin golpes, ITV al día')).called(1);
+    });
   });
 
   testWidgets('el panel alerta de lo que requiere atención', (tester) async {

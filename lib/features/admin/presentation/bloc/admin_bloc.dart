@@ -102,9 +102,14 @@ class AdminResolveAlertRequested extends AdminEvent {
 
 class AdminVerifyDriverRequested extends AdminEvent {
   final String driverId;
-  const AdminVerifyDriverRequested(this.driverId);
+
+  /// El admin revisó la condición del vehículo: solo así se activa.
+  final bool vehicleReviewed;
+  final String vehicleNote;
+  const AdminVerifyDriverRequested(this.driverId,
+      {this.vehicleReviewed = false, this.vehicleNote = ''});
   @override
-  List<Object?> get props => [driverId];
+  List<Object?> get props => [driverId, vehicleReviewed, vehicleNote];
 }
 
 class AdminToggleUserStatusRequested extends AdminEvent {
@@ -386,8 +391,13 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         'Configuración financiera guardada'));
     on<AdminResolveAlertRequested>((e, emit) => _perform(
         emit, _repo.resolveAlert(e.alertId, note: e.note), 'Alerta revisada'));
-    on<AdminVerifyDriverRequested>((e, emit) =>
-        _perform(emit, _repo.verifyDriver(e.driverId), 'Chófer verificado'));
+    on<AdminVerifyDriverRequested>((e, emit) => _perform(
+        emit,
+        _repo.verifyDriver(e.driverId,
+            vehicleReviewed: e.vehicleReviewed, vehicleNote: e.vehicleNote),
+        e.vehicleReviewed
+            ? 'Chófer verificado y vehículo activado'
+            : 'Chófer verificado; el vehículo sigue inactivo'));
     on<AdminToggleUserStatusRequested>((e, emit) => _perform(
         emit,
         _repo.toggleUserStatus(e.userId, e.active),

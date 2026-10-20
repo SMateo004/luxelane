@@ -779,17 +779,16 @@ class _DriverTile extends StatelessWidget {
               label: 'Verificar',
               icon: Icons.verified_outlined,
               onTap: () async {
-                final ok = await confirmAdminAction(
-                  context,
-                  title: 'Verificar chófer',
-                  message: 'Confirma que revisaste la licencia y los '
-                      'documentos de $name. Podrá recibir reservas.',
-                  confirmLabel: 'Verificar',
+                final review = await showDialog<_VehicleReview>(
+                  context: context,
+                  builder: (_) => _VerifyDriverDialog(name: name),
                 );
-                if (ok == null || !context.mounted) return;
-                context
-                    .read<AdminBloc>()
-                    .add(AdminVerifyDriverRequested(driver.userId));
+                if (review == null || !context.mounted) return;
+                context.read<AdminBloc>().add(AdminVerifyDriverRequested(
+                      driver.userId,
+                      vehicleReviewed: review.reviewed,
+                      vehicleNote: review.note,
+                    ));
               },
             )
           else
@@ -1138,6 +1137,8 @@ const _auditLabels = {
   'unblock_user': 'Usuario reactivado',
   'update_role': 'Cambio de rol',
   'enable_vehicle': 'Vehículo activado',
+  'review_vehicle': 'Vehículo revisado',
+  'resolve_alert': 'Alerta revisada',
   'disable_vehicle': 'Vehículo desactivado',
   'enable_maintenance': 'Mantenimiento activado',
   'disable_maintenance': 'Mantenimiento desactivado',
@@ -1704,5 +1705,68 @@ class BusinessLeadsTab extends StatelessWidget {
             },
           );
         },
+      );
+}
+
+typedef _VehicleReview = ({bool reviewed, String note});
+
+/// Verificación del chófer con la revisión del vehículo explícita: sin la
+/// casilla, se verifican los documentos pero el vehículo sigue inactivo.
+class _VerifyDriverDialog extends StatefulWidget {
+  const _VerifyDriverDialog({required this.name});
+  final String name;
+
+  @override
+  State<_VerifyDriverDialog> createState() => _VerifyDriverDialogState();
+}
+
+class _VerifyDriverDialogState extends State<_VerifyDriverDialog> {
+  bool _reviewed = false;
+  final _note = TextEditingController();
+
+  @override
+  void dispose() {
+    _note.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        title: const Text('Verificar chófer'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Confirma que revisaste la licencia y los documentos de '
+                '${widget.name}.'),
+            const SizedBox(height: LuxSpacing.sm),
+            CheckboxListTile(
+              value: _reviewed,
+              onChanged: (v) => setState(() => _reviewed = v ?? false),
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              title: const Text('Vehículo revisado'),
+              subtitle: const Text('Condición del vehículo comprobada. Sin '
+                  'esta casilla el vehículo sigue inactivo y no recibe '
+                  'solicitudes.'),
+            ),
+            TextField(
+              controller: _note,
+              maxLength: 300,
+              decoration:
+                  adminInputDecoration(hint: 'Nota de la revisión (opcional)'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar')),
+          FilledButton(
+            onPressed: () => Navigator.of(context)
+                .pop((reviewed: _reviewed, note: _note.text)),
+            child: Text(_reviewed ? 'Verificar y activar' : 'Verificar'),
+          ),
+        ],
       );
 }

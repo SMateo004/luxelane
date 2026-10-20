@@ -484,17 +484,21 @@ class AdminRepositoryImpl implements AdminRepository {
   // ---------------------------------------------------------------------------
 
   @override
-  Future<Either<Failure, void>> verifyDriver(String driverId) =>
+  Future<Either<Failure, void>> verifyDriver(String driverId,
+          {required bool vehicleReviewed, String vehicleNote = ''}) =>
       _run((batch) async {
         batch.update(_driver(driverId), {'documentsVerified': true});
         _log(batch, 'verify_driver', driverId, 'driver');
-        // El chófer registra su vehículo inactivo: verificarlo lo activa,
-        // para que empiece a recibir solicitudes sin un segundo paso.
+        // El vehículo (registrado inactivo) solo se activa si el admin
+        // revisó su condición; si no, queda inactivo hasta activarlo a mano.
+        if (!vehicleReviewed) return;
         final vehicles = await _db
             .collection('vehicles')
             .where('driverId', isEqualTo: driverId)
             .get();
         for (final v in vehicles.docs) {
+          _log(batch, 'review_vehicle', v.id, 'vehicle',
+              details: vehicleNote.trim());
           if (v.data()['isActive'] == true) continue;
           batch.update(v.reference, {'isActive': true});
           _log(batch, 'enable_vehicle', v.id, 'vehicle');

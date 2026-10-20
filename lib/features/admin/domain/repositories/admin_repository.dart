@@ -48,7 +48,10 @@ abstract class AdminRepository {
       Map<String, dynamic> fields);
 
   // ── Personas, flota y sistema ────────────────────────────────────────────
-  Future<Either<Failure, void>> verifyDriver(String driverId);
+  /// Verifica los documentos del chófer. Su vehículo solo se activa si el
+  /// admin marcó [vehicleReviewed] (revisión de condición del vehículo).
+  Future<Either<Failure, void>> verifyDriver(String driverId,
+      {required bool vehicleReviewed, String vehicleNote = ''});
   Future<Either<Failure, void>> toggleUserStatus(String userId, bool active);
   Future<Either<Failure, void>> toggleVehicleStatus(
       String vehicleId, bool active);
