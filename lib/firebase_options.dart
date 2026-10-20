@@ -37,23 +37,16 @@ class DefaultFirebaseOptions {
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        if (_androidAppId.isEmpty) {
-          throw UnsupportedError(
-            'Firebase Android app not configured: pass '
-            '--dart-define=FIREBASE_ANDROID_APP_ID=... (see DEPLOY.md) or '
-            'run the FlutterFire CLI again.',
-          );
-        }
-        return android;
       case TargetPlatform.iOS:
-        if (_iosAppId.isEmpty) {
+        final missing = missingNativeDefines(defaultTargetPlatform);
+        if (missing.isNotEmpty) {
           throw UnsupportedError(
-            'Firebase iOS app not configured: pass '
-            '--dart-define=FIREBASE_IOS_APP_ID=... (see DEPLOY.md) or '
-            'run the FlutterFire CLI again.',
+            'Firebase no está configurado para esta plataforma: falta '
+            '${missing.map((m) => '--dart-define=$m').join(', ')} '
+            '(ver DEPLOY.md, «Claves de Firebase de las apps nativas»).',
           );
         }
-        return ios;
+        return defaultTargetPlatform == TargetPlatform.android ? android : ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -91,15 +84,24 @@ class DefaultFirebaseOptions {
   // passed at build time so no file must be committed.
   static const _androidAppId =
       String.fromEnvironment('FIREBASE_ANDROID_APP_ID');
-  static const _androidApiKey = String.fromEnvironment(
-    'FIREBASE_ANDROID_API_KEY',
-    defaultValue: 'AIzaSyBkEwrqa7umZjRv91CR3YKaHLAkdBjNvoM',
-  );
+  // Sin valor por defecto: cada app nativa usa la clave de su app en Firebase
+  // (no la web). La release de Android/iOS no compila sin ellas.
+  static const _androidApiKey =
+      String.fromEnvironment('FIREBASE_ANDROID_API_KEY');
   static const _iosAppId = String.fromEnvironment('FIREBASE_IOS_APP_ID');
-  static const _iosApiKey = String.fromEnvironment(
-    'FIREBASE_IOS_API_KEY',
-    defaultValue: 'AIzaSyBkEwrqa7umZjRv91CR3YKaHLAkdBjNvoM',
-  );
+  static const _iosApiKey = String.fromEnvironment('FIREBASE_IOS_API_KEY');
+
+  /// Nombres de los --dart-define que faltan para la plataforma.
+  static List<String> missingNativeDefines(TargetPlatform platform) => [
+        if (platform == TargetPlatform.android) ...[
+          if (_androidAppId.isEmpty) 'FIREBASE_ANDROID_APP_ID',
+          if (_androidApiKey.isEmpty) 'FIREBASE_ANDROID_API_KEY',
+        ],
+        if (platform == TargetPlatform.iOS) ...[
+          if (_iosAppId.isEmpty) 'FIREBASE_IOS_APP_ID',
+          if (_iosApiKey.isEmpty) 'FIREBASE_IOS_API_KEY',
+        ],
+      ];
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: _androidApiKey,
@@ -139,7 +141,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions stagingAndroid = FirebaseOptions(
-    apiKey: _stagingApiKey,
+    apiKey: _androidApiKey,
     appId: _androidAppId,
     messagingSenderId: _stagingSenderId,
     projectId: _stagingProjectId,
@@ -147,7 +149,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions stagingIos = FirebaseOptions(
-    apiKey: _stagingApiKey,
+    apiKey: _iosApiKey,
     appId: _iosAppId,
     messagingSenderId: _stagingSenderId,
     projectId: _stagingProjectId,

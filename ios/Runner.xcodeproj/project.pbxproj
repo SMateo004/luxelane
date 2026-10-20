@@ -145,7 +145,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
 			buildPhases = (
-				4C1A5E0F2E8B4D7A00A1B2C3 /* Check Google Maps key */,
+				4C1A5E0F2E8B4D7A00A1B2C3 /* Check Google Maps and Firebase keys */,
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
@@ -254,7 +254,7 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
 		};
-		4C1A5E0F2E8B4D7A00A1B2C3 /* Check Google Maps key */ = {
+		4C1A5E0F2E8B4D7A00A1B2C3 /* Check Google Maps and Firebase keys */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
@@ -262,12 +262,12 @@
 			);
 			inputPaths = (
 			);
-			name = "Check Google Maps key";
+			name = "Check Google Maps and Firebase keys";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"$CONFIGURATION\" = \"Release\" ] && [ -z \"$GOOGLE_MAPS_API_KEY\" ]; then\n  echo \"error: Release build without a Google Maps key. Set GOOGLE_MAPS_API_KEY in ios/Flutter/Secrets.xcconfig (see DEPLOY.md, Claves de Google Maps).\"\n  exit 1\nfi\n";
+			shellScript = "if [ \"$CONFIGURATION\" = \"Release\" ] && [ -z \"$GOOGLE_MAPS_API_KEY\" ]; then\n  echo \"error: Release build without a Google Maps key. Set GOOGLE_MAPS_API_KEY in ios/Flutter/Secrets.xcconfig (see DEPLOY.md, Claves de Google Maps).\"\n  exit 1\nfi\n# Firebase app of this build: no default key in the code. Names only, never values.\nif [ \"$CONFIGURATION\" = \"Release\" ]; then\n  defines=$(echo \"$DART_DEFINES\" | tr ',' '\\n' | while read -r d; do [ -n \"$d\" ] && { echo \"$d\" | base64 --decode 2>/dev/null || echo \"$d\" | base64 -D 2>/dev/null; }; echo; done)\n  missing=\"\"\n  for k in FIREBASE_IOS_APP_ID FIREBASE_IOS_API_KEY; do\n    echo \"$defines\" | grep -q \"^$k=.\" || missing=\"$missing --dart-define=$k=...\"\n  done\n  if [ -n \"$missing\" ]; then\n    echo \"error: Release build without Firebase iOS config: pass$missing (see DEPLOY.md, Claves de Firebase de las apps nativas).\"\n    exit 1\n  fi\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -1,4 +1,5 @@
-// Configuración de build sensible: firma de release y claves de Google Maps.
+// Configuración de build sensible: firma de release, claves de Google Maps y
+// claves de Firebase de las apps nativas.
 // Leen los archivos del repositorio, así que fallan si alguien vuelve a
 // firmar la release con la clave de debug o a embeber una clave de Maps.
 import 'dart:io';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:luxelane/core/config/env.dart';
 import 'package:luxelane/core/widgets/lux_map.dart';
+import 'package:luxelane/firebase_options.dart';
 
 final _googleApiKey = RegExp(r'AIza[0-9A-Za-z_\-]{35}');
 
@@ -72,6 +74,73 @@ void main() {
           .pumpWidget(const MaterialApp(home: Scaffold(body: LuxMap())));
       expect(find.byType(MapsKeyMissing), findsOneWidget);
       expect(find.text('Mapa no disponible'), findsOneWidget);
+    });
+  });
+
+  group('Claves de Firebase de las apps nativas (B8)', () {
+    final options = _read('lib/firebase_options.dart');
+
+    test('firebase_options.dart no trae claves nativas por defecto', () {
+      for (final name in ['FIREBASE_ANDROID_API_KEY', 'FIREBASE_IOS_API_KEY']) {
+        final decl = RegExp("String\\.fromEnvironment\\(\\s*'$name'([^)]*)\\)")
+            .firstMatch(options);
+        expect(decl, isNotNull, reason: '$name debe leerse de --dart-define');
+        expect(decl!.group(1), isNot(contains('defaultValue')), reason: name);
+      }
+    });
+
+    test('las opciones nativas usan la clave de su plataforma', () {
+      expect(options,
+          isNot(contains('apiKey: _stagingApiKey,\n    appId: _androidAppId')));
+      expect(options,
+          isNot(contains('apiKey: _stagingApiKey,\n    appId: _iosAppId')));
+      expect(
+          RegExp(r'apiKey: _androidApiKey,\s+appId: _androidAppId')
+              .allMatches(options)
+              .length,
+          2);
+      expect(
+          RegExp(r'apiKey: _iosApiKey,\s+appId: _iosAppId')
+              .allMatches(options)
+              .length,
+          2);
+    });
+
+    test('sin --dart-define faltan el app ID y la clave de cada plataforma',
+        () {
+      expect(
+          DefaultFirebaseOptions.missingNativeDefines(TargetPlatform.android),
+          ['FIREBASE_ANDROID_APP_ID', 'FIREBASE_ANDROID_API_KEY']);
+      expect(DefaultFirebaseOptions.missingNativeDefines(TargetPlatform.iOS),
+          ['FIREBASE_IOS_APP_ID', 'FIREBASE_IOS_API_KEY']);
+    });
+
+    test('la release de Android falla sin la configuración de Firebase', () {
+      final gradle = _read('android/app/build.gradle.kts');
+      expect(gradle, contains('Release build without Firebase Android config'));
+      expect(gradle,
+          contains('"FIREBASE_ANDROID_APP_ID", "FIREBASE_ANDROID_API_KEY"'));
+    });
+
+    test('la release de iOS falla sin la configuración de Firebase', () {
+      final pbx = _read('ios/Runner.xcodeproj/project.pbxproj');
+      expect(pbx, contains('Release build without Firebase iOS config'));
+      expect(pbx, contains('FIREBASE_IOS_APP_ID FIREBASE_IOS_API_KEY'));
+    });
+
+    test('el CI pasa cada clave desde su secreto, sin imprimirla', () {
+      final ci = _read('.github/workflows/ci.yml');
+      expect(
+          RegExp(r'--dart-define=FIREBASE_ANDROID_API_KEY=\$\{\{ secrets\.FIREBASE_ANDROID_API_KEY \}\}')
+              .allMatches(ci)
+              .length,
+          2,
+          reason: 'builds de Android del pasajero y del chófer');
+      expect(
+          ci,
+          contains(
+              r'--dart-define=FIREBASE_IOS_API_KEY=${{ secrets.FIREBASE_IOS_API_KEY }}'));
+      expect(_googleApiKey.hasMatch(ci), isFalse);
     });
   });
 }

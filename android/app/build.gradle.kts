@@ -25,6 +25,18 @@ val mapsApiKey: String =
         ?: localProperties.getProperty("MAPS_API_KEY")?.takeIf { it.isNotBlank() }
         ?: ""
 
+// --dart-define values Flutter hands to Gradle (base64 KEY=VALUE, comma
+// separated). Only the names are checked; values are never printed.
+val dartDefines: Map<String, String> =
+    (project.findProperty("dart-defines") as String?)
+        ?.split(",")
+        ?.mapNotNull { encoded ->
+            runCatching { String(java.util.Base64.getDecoder().decode(encoded)) }.getOrNull()
+        }
+        ?.mapNotNull { pair -> pair.split("=", limit = 2).takeIf { it.size == 2 }?.let { it[0] to it[1] } }
+        ?.toMap()
+        ?: emptyMap()
+
 // Upload key for Play. android/key.properties (never committed, see
 // key.properties.example) points to the keystore; CI writes it from secrets.
 val keystorePropertiesFile = rootProject.file("key.properties")
@@ -49,6 +61,16 @@ if (gradle.buildsRelease()) {
         throw GradleException(
             "Release build without a Google Maps key. Set the GOOGLE_MAPS_API_KEY env var " +
                 "or MAPS_API_KEY in android/local.properties (see DEPLOY.md, \"Claves de Google Maps\")."
+        )
+    }
+    // Firebase app of this build: no default key in the code (B8).
+    val missingFirebase = listOf("FIREBASE_ANDROID_APP_ID", "FIREBASE_ANDROID_API_KEY")
+        .filter { dartDefines[it].isNullOrBlank() }
+    if (missingFirebase.isNotEmpty()) {
+        throw GradleException(
+            "Release build without Firebase Android config: pass " +
+                missingFirebase.joinToString { "--dart-define=$it=..." } +
+                " (see DEPLOY.md, \"Claves de Firebase de las apps nativas\")."
         )
     }
 }

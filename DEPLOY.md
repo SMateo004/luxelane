@@ -78,17 +78,20 @@ Con eso **la web ya funciona**; no requiere más configuración.
 2. Añadir las huellas **SHA-1 y SHA-256** de cada firma que usarás:
    - debug: `cd android && ./gradlew signingReport`
    - release/Play: Play Console → Integridad de la app → certificado de firma.
-3. Copiar el **App ID** (`1:51157842817:android:...`).
+3. Copiar el **App ID** (`1:51157842817:android:...`) y la **clave de API
+   de la app Android** (ver «Claves de Firebase de las apps nativas»).
 4. Google Cloud Console → APIs & Services → Credentials → copiar el
    **Client ID** de "Web client (auto created by Google Service)".
 5. GitHub → Settings → Secrets → Actions:
    ```
    FIREBASE_ANDROID_APP_ID   → App ID del paso 3
+   FIREBASE_ANDROID_API_KEY  → clave de API de la app Android del paso 3
    GOOGLE_SERVER_CLIENT_ID   → Client ID web del paso 4
    ```
    En local:
    ```
    flutter run --dart-define=FIREBASE_ANDROID_APP_ID=... \
+               --dart-define=FIREBASE_ANDROID_API_KEY=... \
                --dart-define=GOOGLE_SERVER_CLIENT_ID=...
    ```
 
@@ -113,8 +116,9 @@ Con eso **la web ya funciona**; no requiere más configuración.
    La clave de Maps de iOS no va aquí sino en `ios/Flutter/Secrets.xcconfig`
    (ver «Claves de Google Maps»).
 3. GitHub → Secrets → `FIREBASE_IOS_APP_ID` → `GOOGLE_APP_ID` del plist
-   (`1:51157842817:ios:...`). En local:
-   `flutter run --dart-define=FIREBASE_IOS_APP_ID=...`
+   (`1:51157842817:ios:...`) y `FIREBASE_IOS_API_KEY` → `API_KEY` del plist.
+   En local:
+   `flutter run --dart-define=FIREBASE_IOS_APP_ID=... --dart-define=FIREBASE_IOS_API_KEY=...`
 4. Compilar/firmar: en una Mac con Xcode, `open ios/Runner.xcworkspace`,
    elegir el Team en *Signing & Capabilities* y, para notificaciones push,
    añadir la capability **Push Notifications** y la clave APNs en Firebase
@@ -153,6 +157,8 @@ GOOGLE_MAPS_API_KEY=ANDROID_SDK_KEY flutter build appbundle --release \
   --dart-define=ENV=prod \
   --dart-define=FIREBASE_ENV=production \
   --dart-define=GOOGLE_MAPS_KEY=MOBILE_REST_KEY \
+  --dart-define=FIREBASE_ANDROID_APP_ID=... \
+  --dart-define=FIREBASE_ANDROID_API_KEY=... \
   --obfuscate \
   --split-debug-info=build/debug-info
 ```
@@ -163,7 +169,9 @@ Requires `ios/Flutter/Secrets.xcconfig` with the iOS SDK key.
 flutter build ios --release \
   --dart-define=ENV=prod \
   --dart-define=FIREBASE_ENV=production \
-  --dart-define=GOOGLE_MAPS_KEY=MOBILE_REST_KEY
+  --dart-define=GOOGLE_MAPS_KEY=MOBILE_REST_KEY \
+  --dart-define=FIREBASE_IOS_APP_ID=... \
+  --dart-define=FIREBASE_IOS_API_KEY=...
 open ios/Runner.xcworkspace   # archive from Xcode
 ```
 
@@ -261,7 +269,95 @@ flutter build web --release --dart-define-from-file=env.local.json
 > La `apiKey` de Firebase web (`lib/firebase_options.dart`,
 > `web/firebase-messaging-sw.js`) es pública por diseño: identifica el
 > proyecto, no da acceso. Lo que protege los datos son las reglas de
-> Firestore/Storage y App Check.
+> Firestore/Storage y App Check. Las apps nativas ya no la usan: ver la
+> sección siguiente.
+
+---
+
+## Claves de Firebase de las apps nativas
+
+Cada app nativa usa la clave de API de **su** app registrada en Firebase.
+`lib/firebase_options.dart` no trae ningún valor por defecto: las cuatro
+variables llegan con `--dart-define`. Sin ellas:
+
+- la release de Android se detiene en Gradle con
+  `Release build without Firebase Android config: pass --dart-define=...`;
+- la release de iOS se detiene en la fase *Check Google Maps and Firebase
+  keys* con `Release build without Firebase iOS config: pass --dart-define=...`;
+- en debug la app arranca, pero `Firebase.initializeApp` lanza un error que
+  nombra los `--dart-define` que faltan.
+
+Los mensajes solo nombran las variables; nunca imprimen sus valores.
+
+| Plataforma | `--dart-define` | Secreto de GitHub | De dónde sale |
+|---|---|---|---|
+| Android | `FIREBASE_ANDROID_APP_ID` | `FIREBASE_ANDROID_APP_ID` | `google-services.json` → `client[].client_info.mobilesdk_app_id` |
+| Android | `FIREBASE_ANDROID_API_KEY` | `FIREBASE_ANDROID_API_KEY` | `google-services.json` → `client[].api_key[0].current_key` |
+| iOS | `FIREBASE_IOS_APP_ID` | `FIREBASE_IOS_APP_ID` | `GoogleService-Info.plist` → `GOOGLE_APP_ID` |
+| iOS | `FIREBASE_IOS_API_KEY` | `FIREBASE_IOS_API_KEY` | `GoogleService-Info.plist` → `API_KEY` |
+
+### Obtener la clave de la app Android
+1. Firebase Console → proyecto (staging o producción) → ⚙ Project settings
+   → **General** → *Your apps* → app Android `com.luxelane.app`. Si no
+   existe, registrarla (ver «Inicio de sesión con Google» → Android).
+2. Pulsar **google-services.json** para descargarlo. No se añade al
+   repositorio (el proyecto no usa el plugin de Gradle de Google Services).
+3. En el JSON, dentro del objeto `client` cuyo
+   `client_info.android_client_info.package_name` es `com.luxelane.app`:
+   - `client_info.mobilesdk_app_id` → `FIREBASE_ANDROID_APP_ID`;
+   - `api_key[0].current_key` → `FIREBASE_ANDROID_API_KEY`.
+4. GitHub → Settings → Secrets and variables → Actions → *New repository
+   secret* con esos dos nombres. Borrar el JSON descargado.
+
+### Obtener la clave de la app iOS
+1. Firebase Console → ⚙ Project settings → **General** → *Your apps* → app
+   iOS `com.luxelane.app` (si no existe, ver «Inicio de sesión con Google»
+   → iOS).
+2. Descargar **GoogleService-Info.plist** (no se añade al proyecto).
+3. Copiar `GOOGLE_APP_ID` → `FIREBASE_IOS_APP_ID` y `API_KEY` →
+   `FIREBASE_IOS_API_KEY` en los secretos de GitHub. Borrar el plist.
+
+Cada proyecto (staging y producción) tiene sus propias apps y claves; en
+staging se pasan igual, con los valores de las apps de staging.
+
+### Restringir las claves (Google Cloud Console)
+APIs & Services → Credentials → cada clave «(auto created by Firebase)»:
+
+- **Clave de Android**: *Application restrictions* → *Android apps* →
+  paquete `com.luxelane.app` + SHA-1 de cada firma (debug, upload y la de
+  Play App Signing).
+- **Clave de iOS**: *Application restrictions* → *iOS apps* → bundle
+  `com.luxelane.app`.
+- En las tres claves, *API restrictions* con solo las APIs de Firebase que
+  usa la app (Identity Toolkit, Token Service, Cloud Firestore, Firebase
+  Installations, FCM Registration, Cloud Functions). **[Probable]**: la
+  lista exacta hay que confirmarla en la consola (APIs & Services → Metrics,
+  filtrando por credencial) antes de aplicarla.
+
+### Cuándo restringir la clave web por referentes HTTP
+Las peticiones de una app nativa no envían cabecera `Referer`, así que una
+clave restringida por referentes HTTP las rechaza. Hasta este cambio las
+builds nativas usaban, por defecto, la misma clave que la web. Por eso la
+clave web solo se puede restringir por referentes cuando **ninguna versión
+nativa en uso dependa de ella**:
+
+1. Publicar en las tiendas la versión compilada con `FIREBASE_ANDROID_API_KEY`
+   y `FIREBASE_IOS_API_KEY`.
+2. Subir `minAppVersion` en `config/global` a esa versión (ver «Orden de
+   despliegue de createBooking»). Las versiones antiguas ya no pueden
+   reservar y ven el aviso de actualización.
+3. Esperar a que el tráfico de la clave web desde apps nativas sea cero:
+   APIs & Services → Metrics → filtrar por la credencial web. Una app
+   antigua con la clave restringida no llega ni a iniciar sesión, así que no
+   vería el aviso de actualización: por eso se espera.
+4. Restringir la clave web a *Websites* con los dominios de Hosting
+   (`luxelane-4e7ae.web.app`, `luxelane-4e7ae.firebaseapp.com`,
+   `luxelane-driver.web.app`, `luxelane-driver.firebaseapp.com`, los
+   dominios propios) y `localhost` solo en la clave de staging.
+
+Si alguna build nativa se publicó alguna vez sin estas variables, la clave
+web estaba embebida en ella: además de restringirla conviene rotarla cuando
+el paso 3 se cumpla.
 
 ---
 
@@ -387,8 +483,10 @@ GOOGLE_MAPS_WEB_API_KEY     → Maps: web
 GOOGLE_MAPS_ANDROID_API_KEY → Maps: SDK de Android
 GOOGLE_MAPS_IOS_API_KEY     → Maps: SDK de iOS
 FCM_VAPID_KEY           → Firebase → Cloud Messaging → Web Push certificates
-FIREBASE_ANDROID_APP_ID → Firebase → Project settings → app Android
-FIREBASE_IOS_APP_ID     → GoogleService-Info.plist → GOOGLE_APP_ID
+FIREBASE_ANDROID_APP_ID  → google-services.json → mobilesdk_app_id (ver «Claves de Firebase de las apps nativas»)
+FIREBASE_ANDROID_API_KEY → google-services.json → api_key[0].current_key
+FIREBASE_IOS_APP_ID      → GoogleService-Info.plist → GOOGLE_APP_ID
+FIREBASE_IOS_API_KEY     → GoogleService-Info.plist → API_KEY
 GOOGLE_SERVER_CLIENT_ID → OAuth "Web client" del proyecto (Google Sign-In en Android)
 GOOGLE_IOS_CLIENT_ID    → GoogleService-Info.plist → CLIENT_ID
 ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
