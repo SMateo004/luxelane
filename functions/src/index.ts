@@ -743,7 +743,10 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
   const statusMessages: Partial<Record<BookingStatus, [string, string, string]>> = {
     confirmed: ['Chófer asignado', 'Tu chófer ha sido asignado.', 'booking_confirmed'],
     driver_arriving: ['El chófer está en camino', 'Tu chófer va hacia el punto de recogida.', 'driver_arriving'],
-    driver_arrived: ['El chófer ha llegado', 'Tu chófer te espera en el punto de recogida.', 'driver_arrived'],
+    // Sin el código del pasajero el viaje no empieza: el aviso lo recuerda
+    // (el código no va en el aviso; solo se ve en la app).
+    driver_arrived: ['El chófer ha llegado', 'Tu chófer te espera. Abre la app y dale tu código de recogida.', 'driver_arrived'],
+    // verified no avisa: el pasajero está junto al chófer.
     in_progress: ['Viaje iniciado', 'Tu trayecto ha comenzado.', 'ride_started'],
     completed: ['Viaje completado', 'Has llegado. Gracias por viajar con Luxelane.', 'ride_completed'],
     cancelled: ['Reserva cancelada', 'Tu reserva ha sido cancelada.', 'booking_cancelled'],
