@@ -376,6 +376,8 @@ class _RideProgressBarState extends State<RideProgressBar>
         BookingStatus.confirmed => 1,
         BookingStatus.driverArriving => 2,
         BookingStatus.driverArrived => 3,
+        // Verificada: sigue en la recogida, a punto de salir.
+        BookingStatus.verified => 3,
         BookingStatus.inProgress => 4,
         BookingStatus.completed => 5,
         BookingStatus.cancelled => 0,

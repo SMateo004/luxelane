@@ -77,6 +77,7 @@ class RiderInsights {
       BookingStatus.confirmed,
       BookingStatus.driverArriving,
       BookingStatus.driverArrived,
+      BookingStatus.verified,
       BookingStatus.inProgress,
     };
     final upcoming = bookings

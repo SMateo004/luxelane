@@ -4,7 +4,8 @@ import 'package:luxelane/features/ride/presentation/pages/ride_screen.dart';
 
 void main() {
   group('«Llamar a tu chófer» (D16)', () {
-    test('solo aparece de driver_arriving a in_progress', () {
+    test('solo aparece de driver_arriving a in_progress (verified incluido)',
+        () {
       for (final s in BookingStatus.values) {
         expect(
             showCallDriver(s, '+59170000555'), kDriverLiveStatuses.contains(s),
@@ -13,6 +14,7 @@ void main() {
       expect(kDriverLiveStatuses, {
         BookingStatus.driverArriving,
         BookingStatus.driverArrived,
+        BookingStatus.verified,
         BookingStatus.inProgress,
       });
     });

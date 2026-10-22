@@ -150,6 +150,7 @@ class _TripCard extends StatelessWidget {
       case BookingStatus.confirmed:
       case BookingStatus.driverArriving:
       case BookingStatus.driverArrived:
+      case BookingStatus.verified:
       case BookingStatus.inProgress:
         return 'Seguir en el mapa';
       case BookingStatus.completed:

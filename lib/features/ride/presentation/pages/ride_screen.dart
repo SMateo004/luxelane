@@ -19,6 +19,7 @@ import 'package:url_launcher/url_launcher.dart';
 const kDriverLiveStatuses = {
   BookingStatus.driverArriving,
   BookingStatus.driverArrived,
+  BookingStatus.verified,
   BookingStatus.inProgress,
 };
 
@@ -127,6 +128,8 @@ class _RideScreenState extends State<RideScreen> {
         return 'Tu chófer va de camino al punto de recogida.';
       case BookingStatus.driverArrived:
         return 'Tu chófer ha llegado y te espera. Tómate tu tiempo.';
+      case BookingStatus.verified:
+        return 'Código verificado. Tu viaje empieza en un momento.';
       case BookingStatus.inProgress:
         return 'Disfruta del trayecto. Llegarás a tu destino en breve.';
       case BookingStatus.completed:

@@ -618,6 +618,7 @@ class Booking {
     switch (status) {
       case BookingStatus.driverArriving:
       case BookingStatus.driverArrived:
+      case BookingStatus.verified:
       case BookingStatus.inProgress:
         return true;
       case BookingStatus.confirmed:

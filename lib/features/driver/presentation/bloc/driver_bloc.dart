@@ -239,6 +239,7 @@ class DriverLoaded extends DriverState {
     for (final b in bookings) {
       if (b.status == BookingStatus.driverArriving ||
           b.status == BookingStatus.driverArrived ||
+          b.status == BookingStatus.verified ||
           b.status == BookingStatus.inProgress) {
         return b;
       }
