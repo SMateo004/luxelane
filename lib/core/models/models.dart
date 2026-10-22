@@ -566,6 +566,7 @@ class Booking {
     this.cardPayment = false,
     this.cardPaymentFailed = false,
     this.riderPreferences = RidePreferences.none,
+    this.pickupLocked = false,
   });
 
   final String id;
@@ -624,6 +625,10 @@ class Booking {
 
   /// El cobro automático con tarjeta falló; se cobra a mano.
   final bool cardPaymentFailed;
+
+  /// Cinco códigos de recogida incorrectos: la verificación quedó
+  /// bloqueada y solo central puede forzarla. Lo fija el servidor.
+  final bool pickupLocked;
 
   /// Cobro con tarjeta aún por resolver por el servidor: no se registra a
   /// mano para no cobrar dos veces.
@@ -704,6 +709,7 @@ class Booking {
             j['stripePaymentMethodId'] != null,
         cardPaymentFailed: j['cardPaymentFailed'] == true,
         riderPreferences: RidePreferences.fromJson(j['riderPreferences']),
+        pickupLocked: j['pickupLocked'] == true,
       );
 
   Map<String, dynamic> toJson() => {

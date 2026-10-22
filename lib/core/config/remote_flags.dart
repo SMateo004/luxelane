@@ -15,6 +15,10 @@ class RemoteFlags {
   /// First Class is not on the market yet: hidden until an admin enables it.
   final firstClassEnabled = ValueNotifier<bool>(false);
 
+  /// Teléfono de central para el chófer (config/global.dispatchPhone). Sin
+  /// él no se muestra «Llamar a central»: el número lo fija el responsable.
+  final dispatchPhone = ValueNotifier<String?>(null);
+
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? _sub;
 
   void listen(FirebaseFirestore db) {
@@ -23,9 +27,16 @@ class RemoteFlags {
       (doc) {
         final data = doc.data() ?? const {};
         firstClassEnabled.value = data['firstClassEnabled'] == true;
+        dispatchPhone.value = dispatchPhoneFrom(data);
       },
       // Offline / no permission: keep the safe defaults.
       onError: (_) {},
     );
   }
+}
+
+/// El teléfono de central si está configurado (texto no vacío).
+String? dispatchPhoneFrom(Map<String, dynamic> global) {
+  final v = global['dispatchPhone'];
+  return v is String && v.trim().isNotEmpty ? v.trim() : null;
 }

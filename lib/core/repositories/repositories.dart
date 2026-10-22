@@ -165,6 +165,21 @@ abstract class TripFlowRepository {
   /// Código de recogida de la reserva del pasajero, mientras el chófer
   /// espera (driver_arrived). Nunca se guarda en disco.
   Future<Either<Failure, PickupCode>> getPickupCode(String bookingId);
+
+  /// Paso del chófer asignado (advanceBooking): en camino, llegué, iniciar
+  /// y completar. Repetirlo tras un corte no duplica nada en el servidor.
+  Future<Either<Failure, void>> advance({
+    required String bookingId,
+    required BookingStatus to,
+    ({double lat, double lng})? location,
+  });
+
+  /// El chófer escribe el código que le da el pasajero (verifyPickup).
+  Future<Either<Failure, void>> verifyPickup({
+    required String bookingId,
+    required String code,
+    ({double lat, double lng})? location,
+  });
 }
 
 // ---------------------------------------------------------------------------

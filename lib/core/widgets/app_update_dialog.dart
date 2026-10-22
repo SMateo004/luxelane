@@ -33,7 +33,9 @@ class AppUpdateDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final url = storeUrlFor(failure, defaultTargetPlatform, web: web);
     return AlertDialog(
-      title: const Text('Actualiza la app para reservar'),
+      title: Text(failure.forDriver
+          ? 'Actualiza la app para seguir'
+          : 'Actualiza la app para reservar'),
       content: Text(web
           ? 'Hay una versión nueva de la web. Recarga la página para '
               'seguir reservando.'

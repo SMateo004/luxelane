@@ -1,6 +1,8 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
@@ -8,10 +10,25 @@ import '../../../../core/repositories/repositories.dart';
 /// Pasos del viaje desde la recogida: todo pasa por callables del servidor,
 /// que valida el grafo, quién lo pide y deja el registro de eventos.
 class TripFlowRepositoryImpl implements TripFlowRepository {
-  TripFlowRepositoryImpl({FirebaseFunctions? functions})
-      : _functionsOverride = functions;
+  TripFlowRepositoryImpl({
+    FirebaseFunctions? functions,
+    Future<String?> Function()? appVersion,
+  })  : _functionsOverride = functions,
+        _appVersion = appVersion ?? _installedVersion;
 
   final FirebaseFunctions? _functionsOverride;
+
+  /// Versión instalada (x.y.z) que el servidor compara con
+  /// minDriverAppVersion.
+  final Future<String?> Function() _appVersion;
+
+  static Future<String?> _installedVersion() async {
+    try {
+      return (await PackageInfo.fromPlatform()).version;
+    } catch (_) {
+      return null;
+    }
+  }
 
   FirebaseFunctions get _functions =>
       _functionsOverride ?? FirebaseFunctions.instance;
@@ -29,6 +46,49 @@ class TripFlowRepositoryImpl implements TripFlowRepository {
       return const Left(TripFailure(TripIssue.network, _kNetwork));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> advance({
+    required String bookingId,
+    required BookingStatus to,
+    ({double lat, double lng})? location,
+  }) =>
+      _call('advanceBooking', {
+        'bookingId': bookingId,
+        'to': to.label,
+        if (location != null) 'location': _loc(location),
+      });
+
+  @override
+  Future<Either<Failure, void>> verifyPickup({
+    required String bookingId,
+    required String code,
+    ({double lat, double lng})? location,
+  }) =>
+      _call('verifyPickup', {
+        'bookingId': bookingId,
+        'code': code,
+        if (location != null) 'location': _loc(location),
+      });
+
+  static Map<String, double> _loc(({double lat, double lng}) l) =>
+      {'lat': l.lat, 'lng': l.lng};
+
+  Future<Either<Failure, void>> _call(
+      String name, Map<String, dynamic> data) async {
+    try {
+      final version = await _appVersion();
+      await _functions.httpsCallable(name).call<Map<String, dynamic>>({
+        ...data,
+        if (version != null) 'appVersion': version,
+      });
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      return Left(tripFailureFor(e.code, e.details));
+    } catch (_) {
+      return const Left(TripFailure(TripIssue.network, _kNetwork));
+    }
+  }
 }
 
 const _kNetwork = 'Sin conexión. Revisa tu red e inténtalo de nuevo.';
@@ -39,6 +99,14 @@ Failure tripFailureFor(String code, Object? details) {
   final d = details is Map ? details : const {};
   final reason = d['reason'] as String?;
   switch (reason) {
+    case 'app_update_required':
+      String? url(Object? v) =>
+          v is String && v.startsWith('https://') ? v : null;
+      return AppUpdateRequiredFailure(
+        androidStoreUrl: url(d['androidStoreUrl']),
+        iosStoreUrl: url(d['iosStoreUrl']),
+        forDriver: true,
+      );
     case 'not_at_pickup':
       return const TripFailure(TripIssue.notAtPickup,
           'El código aparece cuando tu chófer llega a la recogida.');

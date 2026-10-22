@@ -145,6 +145,7 @@ void _registerBlocs() {
   sl.registerFactory(() => NotificationBloc(notificationRepository: sl()));
   sl.registerFactory(() => DriverBloc(
         bookingRepository: sl(),
+        tripFlowRepository: sl(),
         userRepository: sl(),
         vehicleRepository: sl(),
         mapsService: sl(),

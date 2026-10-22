@@ -17,6 +17,7 @@ import '../../../../core/widgets/lux_map.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../notifications/presentation/widgets/notification_bell.dart';
 import '../bloc/driver_bloc.dart';
+import '../widgets/driver_step_action.dart';
 import '../widgets/flight_info_card.dart';
 
 class DriverHomeScreen extends StatefulWidget {
@@ -70,82 +71,88 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<DriverBloc, DriverState>(
-      listenWhen: (prev, curr) {
-        if (curr is DriverOnboardingRequired) return true;
-        if (curr is! DriverLoaded) return false;
-        final prevId = prev is DriverLoaded ? prev.currentRequest?.id : null;
-        final currId = curr.currentRequest?.id;
-        final prevAvail = prev is DriverLoaded ? prev.isAvailable : false;
-        final prevSeq = prev is DriverLoaded ? prev.noticeSeq : 0;
-        return prevId != currId ||
-            curr.isAvailable != prevAvail ||
-            curr.noticeSeq != prevSeq;
-      },
-      listener: (context, state) {
-        if (state is DriverOnboardingRequired) {
-          context.go('/driver/onboarding');
-          return;
-        }
-        if (state is DriverLoaded && state.notice != null) {
-          showLuxSnackbar(context, state.notice!);
-        }
-        if (state is DriverLoaded) {
-          final req = state.currentRequest;
-          if (req != null && state.isAvailable) {
-            _maybeShowRequest(context, req);
-          } else if (_activeSheetId != null) {
-            // The request disappeared or driver went offline
-            if (mounted) Navigator.of(context, rootNavigator: true).pop();
-            _activeSheetId = null;
+    // Avisos de actualizar la app (los mensajes los muestra el listener
+    // de abajo).
+    return DriverFeedbackListener(
+      showNotices: false,
+      child: BlocConsumer<DriverBloc, DriverState>(
+        listenWhen: (prev, curr) {
+          if (curr is DriverOnboardingRequired) return true;
+          if (curr is! DriverLoaded) return false;
+          final prevId = prev is DriverLoaded ? prev.currentRequest?.id : null;
+          final currId = curr.currentRequest?.id;
+          final prevAvail = prev is DriverLoaded ? prev.isAvailable : false;
+          final prevSeq = prev is DriverLoaded ? prev.noticeSeq : 0;
+          return prevId != currId ||
+              curr.isAvailable != prevAvail ||
+              curr.noticeSeq != prevSeq;
+        },
+        listener: (context, state) {
+          if (state is DriverOnboardingRequired) {
+            context.go('/driver/onboarding');
+            return;
           }
-        }
-      },
-      builder: (context, state) {
-        final authState = context.read<AuthBloc>().state;
-        final isAuthedDriver = authState is AuthAuthenticated &&
-            authState.user.role == UserRole.driver;
+          if (state is DriverLoaded && state.notice != null) {
+            showLuxSnackbar(context, state.notice!);
+          }
+          if (state is DriverLoaded) {
+            final req = state.currentRequest;
+            if (req != null && state.isAvailable) {
+              _maybeShowRequest(context, req);
+            } else if (_activeSheetId != null) {
+              // The request disappeared or driver went offline
+              if (mounted) Navigator.of(context, rootNavigator: true).pop();
+              _activeSheetId = null;
+            }
+          }
+        },
+        builder: (context, state) {
+          final authState = context.read<AuthBloc>().state;
+          final isAuthedDriver = authState is AuthAuthenticated &&
+              authState.user.role == UserRole.driver;
 
-        if (state is DriverError) {
+          if (state is DriverError) {
+            return Scaffold(
+              body: EmptyState(
+                icon: Icons.wifi_off_rounded,
+                message: 'No pudimos abrir tu panel.',
+                actionLabel: 'Reintentar',
+                onAction: () {
+                  final auth = context.read<AuthBloc>().state;
+                  if (auth is AuthAuthenticated) {
+                    context
+                        .read<DriverBloc>()
+                        .add(DriverStarted(userId: auth.user.id));
+                  }
+                },
+              ),
+            );
+          }
+
+          if (state is! DriverLoaded) {
+            return Scaffold(
+              body: isAuthedDriver
+                  ? const SafeArea(child: LuxSkeletonList(count: 3))
+                  : const SizedBox.shrink(),
+            );
+          }
+          final active = state.activeBooking;
           return Scaffold(
-            body: EmptyState(
-              icon: Icons.wifi_off_rounded,
-              message: 'No pudimos abrir tu panel.',
-              actionLabel: 'Reintentar',
-              onAction: () {
-                final auth = context.read<AuthBloc>().state;
-                if (auth is AuthAuthenticated) {
-                  context
-                      .read<DriverBloc>()
-                      .add(DriverStarted(userId: auth.user.id));
-                }
-              },
+            body: SafeArea(
+              bottom: false,
+              child: AnimatedSwitcher(
+                duration: LuxMotion.of(context, LuxMotion.slow),
+                switchInCurve: LuxMotion.decelerate,
+                switchOutCurve: LuxMotion.accelerate,
+                child: active != null
+                    ? _ActiveRidePanel(
+                        key: ValueKey(active.id), booking: active)
+                    : _IdlePanel(key: const ValueKey('idle'), state: state),
+              ),
             ),
           );
-        }
-
-        if (state is! DriverLoaded) {
-          return Scaffold(
-            body: isAuthedDriver
-                ? const SafeArea(child: LuxSkeletonList(count: 3))
-                : const SizedBox.shrink(),
-          );
-        }
-        final active = state.activeBooking;
-        return Scaffold(
-          body: SafeArea(
-            bottom: false,
-            child: AnimatedSwitcher(
-              duration: LuxMotion.of(context, LuxMotion.slow),
-              switchInCurve: LuxMotion.decelerate,
-              switchOutCurve: LuxMotion.accelerate,
-              child: active != null
-                  ? _ActiveRidePanel(key: ValueKey(active.id), booking: active)
-                  : _IdlePanel(key: const ValueKey('idle'), state: state),
-            ),
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 }
@@ -519,38 +526,6 @@ class _ActiveRidePanel extends StatelessWidget {
   const _ActiveRidePanel({super.key, required this.booking});
   final Booking booking;
 
-  String get _title => switch (booking.status) {
-        BookingStatus.confirmed => 'Dirígete a la recogida.',
-        BookingStatus.driverArriving => 'En camino a la recogida.',
-        BookingStatus.driverArrived => 'Esperando al pasajero.',
-        BookingStatus.inProgress => 'Rumbo al destino.',
-        _ => 'Viaje activo.',
-      };
-
-  String get _actionLabel => switch (booking.status) {
-        BookingStatus.confirmed => 'Salir hacia la recogida',
-        BookingStatus.driverArriving => 'He llegado',
-        BookingStatus.driverArrived => 'Iniciar viaje',
-        BookingStatus.inProgress => 'Completar viaje',
-        _ => '',
-      };
-
-  void _advance(BuildContext context) {
-    final bloc = context.read<DriverBloc>();
-    switch (booking.status) {
-      case BookingStatus.confirmed:
-        bloc.add(DriverBookingAccepted(bookingId: booking.id));
-      case BookingStatus.driverArriving:
-        bloc.add(DriverArrivedAtPickup(bookingId: booking.id));
-      case BookingStatus.driverArrived:
-        bloc.add(DriverTripStarted(bookingId: booking.id));
-      case BookingStatus.inProgress:
-        bloc.add(DriverTripCompleted(bookingId: booking.id));
-      default:
-        break;
-    }
-  }
-
   Future<void> _openMaps(BuildContext context, Place target) async {
     try {
       if (kIsWeb) {
@@ -650,7 +625,7 @@ class _ActiveRidePanel extends StatelessWidget {
                       duration: LuxMotion.of(context, LuxMotion.base),
                       layoutBuilder: _topLeft,
                       child: Text(
-                        _title,
+                        DriverStepAction.message(booking),
                         key: ValueKey(booking.status),
                         style: LuxTypography.displayMedium.copyWith(
                             fontSize: 30, fontWeight: FontWeight.w400),
@@ -733,11 +708,7 @@ class _ActiveRidePanel extends StatelessWidget {
                 onPressed: () => _openMaps(context, target),
               ),
               const SizedBox(height: LuxSpacing.sm),
-              if (_actionLabel.isNotEmpty)
-                LuxSlideToConfirm(
-                  label: _actionLabel,
-                  onConfirmed: () => _advance(context),
-                ),
+              DriverStepAction(booking: booking),
             ],
           ),
         ),
