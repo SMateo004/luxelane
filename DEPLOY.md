@@ -39,6 +39,18 @@ staging; nunca para producción por omisión.**
    Si el secreto falta, las funciones de pago fallan con un error claro y el
    CI no despliega.
 
+4. Secreto del código de recogida (D1), distinto en cada proyecto. Generar
+   un valor aleatorio y pegarlo cuando la CLI lo pida (no se guarda en
+   ningún archivo ni se imprime en otro sitio):
+   ```
+   openssl rand -hex 32          # copiar el valor
+   firebase functions:secrets:set PICKUP_CODE_SECRET --project staging
+   firebase functions:secrets:set PICKUP_CODE_SECRET --project production
+   ```
+   Sin él, `getPickupCode` y `verifyPickup` fallan cerrado
+   (`pickup_unavailable`) y el CI no despliega. Cambiarlo cambia el código
+   de los viajes en «Chófer llegó»: rotarlo solo sin viajes en ese estado.
+
 4. Enable in Firebase Console (both projects):
    - Authentication → Email/Password + Phone + **Google** (see below)
    - Firestore → create database (production mode)
@@ -134,7 +146,9 @@ Siempre **staging primero**; producción solo después, con aprobación.
 ```
 (cd functions && npm ci && npm run build && npm test)
 (cd tools/rules-tests && npm ci) && npm run test:rules
-firebase deploy --only functions,firestore --project staging
+firebase deploy --only functions,firestore:indexes --project staging
+# … apps publicadas y versiones mínimas puestas (ver los «Orden de despliegue») …
+firebase deploy --only firestore:rules --project staging    # siempre al final
 ```
 Hosting de staging: compilar la web con `--dart-define=FIREBASE_ENV=staging`
 y configurar sus sitios como `target` de staging en `.firebaserc` antes de
@@ -142,10 +156,16 @@ y configurar sus sitios como `target` de staging en `.firebaserc` antes de
 
 ### 2. Producción (CI con aprobación)
 Cada push a `main` ejecuta lint, tests y builds. Los jobs *Deploy Functions*
-(functions + reglas) y *Deploy Hosting* usan el entorno de GitHub
-`production`: esperan la aprobación de un revisor y nunca corren dos a la vez.
-Antes de desplegar, el CI comprueba que existan los secretos de GitHub y
-`STRIPE_SECRET_KEY` en Secret Manager.
+(solo functions) y *Deploy Hosting* usan el entorno de GitHub `production`:
+esperan la aprobación de un revisor y nunca corren dos a la vez. Antes de
+desplegar, el CI comprueba que existan los secretos de GitHub y
+`STRIPE_SECRET_KEY` y `PICKUP_CODE_SECRET` en Secret Manager.
+
+Las **reglas** no se despliegan con cada push: van al final, a mano, cuando
+las apps nuevas están publicadas y las versiones mínimas puestas. GitHub →
+Actions → *Luxelane CI/CD* → *Run workflow* (rama `main`) → marcar
+`deploy_rules` → el job *Deploy Firestore rules* espera la aprobación de
+`production`.
 
 ### Flutter Android (prod)
 The native Maps SDK reads its key from the manifest, which Gradle fills from
@@ -210,6 +230,89 @@ Las apps que ya existían antes de esta versión no envían `appVersion` ni
 llaman a `createBooking`: tras el paso 5 no pueden reservar y verán un
 error genérico, no el aviso (no saben mostrarlo). El aviso protege a partir
 de esta versión. La web se actualiza sola con el despliegue de hosting.
+
+## Verificación en recogida (D1): orden de despliegue y viajes en curso
+
+Desde esta versión el chófer no escribe el estado del viaje: «Salir hacia
+la recogida», «He llegado», «Iniciar viaje» y «Completar» pasan por la
+callable `advanceBooking`, y entre «Chófer llegó» y «En progreso» hay un
+estado nuevo, **Verificada**, al que solo se llega con el código de 4
+dígitos del pasajero (`verifyPickup`) o con «Forzar verificación» del admin
+(`adminOverrideVerify`, con motivo). Las reglas nuevas niegan a cualquier
+cliente escribir esos estados.
+
+### Pasos manuales previos (decisiones del responsable)
+1. `PICKUP_CODE_SECRET` en cada proyecto (ver «First-time Setup», paso 4).
+2. `config/global.arrivalRadiusMeters` (número, metros): distancia a partir
+   de la cual «He llegado» se marca lejos del punto de recogida y crea una
+   alerta. No bloquea al chófer. Sin el campo no se compara y el evento lo
+   anota (`no_radius`). **El valor lo decide el responsable.**
+3. `config/global.dispatchPhone` (texto): teléfono de central. Sin él no
+   aparece «Llamar a central» en la app del chófer. **El número lo decide el
+   responsable**; el código no trae ninguno.
+4. `config/global.minDriverAppVersion` (`x.y.z`): se pone en el paso 4 de
+   abajo, nunca antes.
+
+### Orden
+1. Secreto y configuración (arriba).
+2. **Functions** (push a `main` → *Deploy Functions*; staging:
+   `firebase deploy --only functions --project staging`). Las apps nuevas
+   ya funcionan con el servidor. Las antiguas siguen escribiendo el estado
+   porque las reglas aún son las viejas: es el **periodo de gracia**, y
+   esos viajes no piden código ni dejan eventos.
+3. **Apps nuevas publicadas**: la del pasajero (muestra el código) y la del
+   chófer (lo pide). Esperar a que estén visibles en Google Play y en la
+   App Store; la web se actualiza con *Deploy Hosting*.
+4. **Versiones mínimas** en `config/global`: `minAppVersion` (pasajero) y
+   `minDriverAppVersion` (chófer) = las versiones publicadas. Las apps del
+   chófer anteriores a esta versión no llaman a `advanceBooking`, así que
+   `minDriverAppVersion` no las frena: solo las frenan las reglas (paso 6).
+   El aviso de actualizar protege a partir de esta versión.
+5. **Ventana sin viajes de la app antigua**: avisar a los chóferes de que
+   actualicen y elegir una hora de poco movimiento. Comprobar que ningún
+   viaje activo depende de la app antigua (los que avanzan con la nueva
+   tienen «Registro del viaje»; los de la antigua, no):
+   - Staging o emulador (solo lee; termina con código 2 si hay alguno):
+     ```
+     cd functions && npm ci
+     gcloud auth application-default login
+     npm run trips:in-flight -- --project <ID_STAGING>
+     ```
+     El script se niega a ejecutarse contra `luxelane-4e7ae`.
+   - Producción: panel → Operaciones → filtrar «En camino», «Chófer llegó» y
+     «En progreso» y abrir cada reserva: si «Registro del viaje» está vacío,
+     va con la app antigua.
+6. **Reglas** al final: staging
+   `firebase deploy --only firestore:rules --project staging`; producción
+   con el job manual *Deploy Firestore rules* (ver «Producción»).
+
+### Qué le pasa a un viaje en curso con la app antigua tras las reglas
+La app antigua intenta escribir el estado y las reglas lo rechazan: el
+chófer ve «No se pudo actualizar el viaje» y el viaje se queda en su paso
+(no se pierde nada; el estado no cambia).
+
+| Estado al desplegar | Con la app antigua del chófer | Salida |
+|---|---|---|
+| Confirmado | «Ir a la recogida» falla | Actualizar la app: sigue desde el mismo paso |
+| En camino | «He llegado» falla | Actualizar la app |
+| Chófer llegó | «Iniciar viaje» falla | Actualizar la app y pedir el código; si el pasajero tiene la app antigua y no lo ve, «Forzar verificación» en el panel |
+| En progreso | «Completar» falla y no se cobra | Actualizar la app para completar, o el admin «Marcar "Completado"» (el panel lo sigue permitiendo) |
+
+El pasajero con la app antigua ve una reserva «Verificada» como
+«Pendiente» (no conoce el estado) y no puede cancelarla (las reglas no lo
+dejan desde Verificada). Se corrige al actualizar.
+
+**Alternativa descartada:** desplegar unas reglas de transición que
+acepten también los pasos antiguos durante unos días. Mantendría abierto
+justo el hueco de D1 (pasar de «llegó» a «en progreso» sin código y
+completar —y cobrar— desde el cliente). Si alguna vez hiciera falta, que
+sean horas, no días, y vigilando el paso 5.
+
+**Vuelta atrás:** antes del paso 6 no hay nada que deshacer (las reglas
+viejas siguen y la app antigua funciona). Después, volver a las reglas
+anteriores reabre D1: solo como emergencia, con
+`git show <commit_anterior>:firestore.rules > firestore.rules` y el job
+manual de reglas.
 
 ### Configuración de precios (Firestore)
 
@@ -492,7 +595,8 @@ GOOGLE_IOS_CLIENT_ID    → GoogleService-Info.plist → CLIENT_ID
 ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
 ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD → ver «Firma de Android»
 ```
-`STRIPE_SECRET_KEY` no va en GitHub: vive en Secret Manager (paso 3).
+`STRIPE_SECRET_KEY` y `PICKUP_CODE_SECRET` no van en GitHub: viven en
+Secret Manager (First-time Setup, pasos 3 y 4).
 
 ---
 
