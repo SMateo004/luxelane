@@ -100,6 +100,15 @@ class AdminResolveAlertRequested extends AdminEvent {
   List<Object?> get props => [alertId, note];
 }
 
+/// «Forzar verificación» con motivo obligatorio (adminOverrideVerify).
+class AdminForceVerifyRequested extends AdminEvent {
+  final String bookingId;
+  final String reason;
+  const AdminForceVerifyRequested(this.bookingId, this.reason);
+  @override
+  List<Object?> get props => [bookingId, reason];
+}
+
 class AdminVerifyDriverRequested extends AdminEvent {
   final String driverId;
 
@@ -344,6 +353,10 @@ class AdminState extends Equatable {
 
 class AdminBloc extends Bloc<AdminEvent, AdminState> {
   final AdminRepository _repo;
+
+  /// Registro de pasos de una reserva (detalle de la reserva).
+  Stream<List<BookingEvent>> bookingEvents(String bookingId) =>
+      _repo.watchBookingEvents(bookingId);
   final List<StreamSubscription<dynamic>> _subs = [];
 
   AdminBloc({required AdminRepository adminRepository})
@@ -394,6 +407,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         'Configuración financiera guardada'));
     on<AdminResolveAlertRequested>((e, emit) => _perform(
         emit, _repo.resolveAlert(e.alertId, note: e.note), 'Alerta revisada'));
+    on<AdminForceVerifyRequested>((e, emit) => _perform(
+        emit,
+        _repo.forceVerify(e.bookingId, e.reason),
+        'Verificación forzada; quedó registrada con tu motivo'));
     on<AdminVerifyDriverRequested>((e, emit) => _perform(
         emit,
         _repo.verifyDriver(e.driverId,

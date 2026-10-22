@@ -115,6 +115,44 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
+  Stream<List<BookingEvent>> watchBookingEvents(String bookingId) {
+    final ref = _db.collection('bookings').doc(bookingId);
+    return ref
+        .collection('events')
+        .orderBy('at')
+        .snapshots()
+        .asyncMap((events) async {
+      final locations = await ref.collection('eventLocations').get();
+      final byId = {for (final d in locations.docs) d.id: d.data()};
+      return events.docs
+          .map((d) => BookingEvent.fromJson(d.id, d.data(), byId[d.id]))
+          .toList();
+    });
+  }
+
+  @override
+  Future<Either<Failure, void>> forceVerify(
+      String bookingId, String reason) async {
+    try {
+      await _functions.httpsCallable('adminOverrideVerify').call({
+        'bookingId': bookingId,
+        'reason': reason.trim(),
+      });
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      final why = (e.details is Map ? e.details as Map : const {})['reason'];
+      return Left(ServerFailure(why == 'not_at_pickup'
+          ? 'Solo se fuerza con el chófer en la recogida.'
+          : why == 'invalid_request'
+              ? 'Escribe un motivo de al menos 5 caracteres.'
+              : _fnError(e)));
+    } catch (_) {
+      return const Left(ServerFailure(
+          'No se pudo forzar la verificación. Revisa tu conexión.'));
+    }
+  }
+
+  @override
   Stream<Map<String, dynamic>> watchGlobalSettings() => _db
       .collection('config')
       .doc('global')

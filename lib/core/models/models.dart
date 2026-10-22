@@ -817,6 +817,88 @@ class AdminAlert {
 }
 
 // ---------------------------------------------------------------------------
+// BookingEvent — registro de transiciones (bookings/{id}/events)
+// ---------------------------------------------------------------------------
+
+/// Un paso del viaje que registró el servidor. La ubicación del chófer
+/// viene de eventLocations, que solo lee el admin.
+class BookingEvent {
+  const BookingEvent({
+    required this.id,
+    required this.type,
+    required this.from,
+    required this.to,
+    required this.actorUid,
+    required this.actorRole,
+    required this.source,
+    this.at,
+    this.appVersion,
+    this.farFromPickup = false,
+    this.arrivalCheck,
+    this.reason,
+    this.method,
+    this.failedAttempts,
+    this.lat,
+    this.lng,
+    this.distanceMeters,
+  });
+
+  final String id;
+
+  /// 'transition' o 'pickup_locked'.
+  final String type;
+  final BookingStatus from;
+  final BookingStatus to;
+  final String actorUid;
+  final String actorRole;
+
+  /// driver_app, admin o system.
+  final String source;
+  final DateTime? at;
+  final String? appVersion;
+  final bool farFromPickup;
+
+  /// compared, no_radius, no_location o no_pickup (solo en la llegada).
+  final String? arrivalCheck;
+
+  /// Motivo del admin al forzar la verificación.
+  final String? reason;
+
+  /// pickup_code o admin_override (en la verificación).
+  final String? method;
+  final int? failedAttempts;
+  final double? lat;
+  final double? lng;
+  final int? distanceMeters;
+
+  bool get hasLocation => lat != null && lng != null;
+
+  factory BookingEvent.fromJson(String id, Map<String, dynamic> j,
+      [Map<String, dynamic>? location]) {
+    final actor = j['actor'] is Map ? j['actor'] as Map : const {};
+    return BookingEvent(
+      id: id,
+      type: j['type'] as String? ?? 'transition',
+      from: BookingStatusX.fromString(j['from'] as String? ?? ''),
+      to: BookingStatusX.fromString(j['to'] as String? ?? ''),
+      actorUid: actor['uid'] as String? ?? '',
+      actorRole: actor['role'] as String? ?? '',
+      source: j['source'] as String? ?? '',
+      at: j['at'] is Timestamp ? (j['at'] as Timestamp).toDate() : null,
+      appVersion: j['appVersion'] as String?,
+      farFromPickup: j['farFromPickup'] == true,
+      arrivalCheck: j['arrivalCheck'] as String?,
+      reason: j['reason'] as String?,
+      method: j['method'] as String?,
+      failedAttempts: (j['failedAttempts'] as num?)?.toInt(),
+      lat: (location?['lat'] as num?)?.toDouble(),
+      lng: (location?['lng'] as num?)?.toDouble(),
+      distanceMeters: (location?['distanceMeters'] as num?)?.toInt(),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // BookingQuote
 // ---------------------------------------------------------------------------
 

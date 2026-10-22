@@ -11,6 +11,7 @@ import '../../../business/data/business_lead_repository.dart';
 import '../../domain/admin_finance.dart';
 import '../../domain/admin_operations.dart';
 import '../bloc/admin_bloc.dart';
+import 'admin_booking_events.dart';
 import 'admin_finance_tab.dart';
 import 'admin_shared_widgets.dart';
 
@@ -513,6 +514,11 @@ class _BookingDetail extends StatelessWidget {
             if (booking.notes?.isNotEmpty == true)
               AdminInfoRow(label: 'Notas', value: booking.notes!),
             AdminInfoRow(label: 'Creada', value: adminDate(booking.createdAt)),
+            if (booking.pickupLocked)
+              const AdminInfoRow(
+                  label: 'Verificación',
+                  value: 'Bloqueada: 5 códigos incorrectos',
+                  valueColor: LuxColors.error),
             const SizedBox(height: LuxSpacing.sm),
             const LuxDivider(),
             const SizedBox(height: LuxSpacing.sm),
@@ -555,6 +561,13 @@ class _BookingDetail extends StatelessWidget {
               spacing: LuxSpacing.sm,
               runSpacing: LuxSpacing.sm,
               children: [
+                if (AdminOperations.canForceVerify(booking))
+                  AdminActionButton(
+                    icon: Icons.verified_user_outlined,
+                    label: 'Forzar verificación',
+                    color: LuxColors.warning,
+                    onTap: () => _forceVerify(context, booking),
+                  ),
                 if (AdminOperations.canAssignDriver(booking))
                   AdminActionButton(
                     icon: Icons.person_add_alt_1_outlined,
@@ -591,9 +604,33 @@ class _BookingDetail extends StatelessWidget {
                   ),
               ],
             ),
+            const SizedBox(height: LuxSpacing.md),
+            const LuxDivider(),
+            const SizedBox(height: LuxSpacing.sm),
+            const Text('Registro del viaje', style: LuxTypography.titleMedium),
+            const SizedBox(height: LuxSpacing.xs),
+            BookingEventsList(
+              events: context.read<AdminBloc>().bookingEvents(booking.id),
+              userName: state.userName,
+            ),
           ],
         );
       });
+
+  Future<void> _forceVerify(BuildContext context, Booking b) async {
+    final reason = await confirmAdminAction(
+      context,
+      title: 'Forzar verificación',
+      message: 'Úsalo solo si el pasajero no puede dar el código o el chófer '
+          'no tiene red. La reserva #${shortId(b.id)} pasará a «Verificada»; '
+          'queda en el registro con tu motivo y se crea una alerta.',
+      confirmLabel: 'Forzar verificación',
+      reasonLabel: 'Motivo (mínimo 5 caracteres)',
+      minReasonLength: 5,
+    );
+    if (reason == null || !context.mounted) return;
+    context.read<AdminBloc>().add(AdminForceVerifyRequested(b.id, reason));
+  }
 
   Future<void> _changeStatus(
       BuildContext context, Booking b, BookingStatus s) async {
