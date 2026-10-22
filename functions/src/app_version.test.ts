@@ -45,3 +45,12 @@ describe('updateRequired', () => {
       .toBeUndefined();
   });
 });
+
+describe('minDriverAppVersion', () => {
+  it('la app del chófer usa su propio mínimo, independiente del del pasajero', () => {
+    const global = { minAppVersion: '9.0.0', minDriverAppVersion: '2.0.0' };
+    expect(updateRequired(global, '2.0.0', 'minDriverAppVersion')).toBeNull();
+    expect(updateRequired(global, '1.9.9', 'minDriverAppVersion')).toMatchObject({ minAppVersion: '2.0.0' });
+    expect(updateRequired({ minAppVersion: '9.0.0' }, '1.0.0', 'minDriverAppVersion')).toBeNull();
+  });
+});
