@@ -158,6 +158,16 @@ abstract class BookingRepository {
 }
 
 // ---------------------------------------------------------------------------
+// TripFlowRepository — pasos del viaje desde la recogida (servidor, D1)
+// ---------------------------------------------------------------------------
+
+abstract class TripFlowRepository {
+  /// Código de recogida de la reserva del pasajero, mientras el chófer
+  /// espera (driver_arrived). Nunca se guarda en disco.
+  Future<Either<Failure, PickupCode>> getPickupCode(String bookingId);
+}
+
+// ---------------------------------------------------------------------------
 // RideRepository
 // ---------------------------------------------------------------------------
 

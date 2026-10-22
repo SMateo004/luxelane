@@ -419,6 +419,7 @@ class DriverInfo {
     required this.name,
     this.photoUrl,
     this.vehicle,
+    this.plate = '',
     this.rating,
   });
 
@@ -429,8 +430,11 @@ class DriverInfo {
   /// Valoración media del chófer al asignarlo (copiada por el servidor).
   final double? rating;
 
-  /// "Toyota Camry · Negro · 1234ABC", o null si no hay vehículo.
+  /// "Toyota Camry · Negro", o null si no hay vehículo.
   final String? vehicle;
+
+  /// Placa, aparte para que el pasajero la reconozca de un vistazo.
+  final String plate;
 
   static DriverInfo? fromJson(Object? j) {
     if (j is! Map) return null;
@@ -440,7 +444,6 @@ class DriverInfo {
       final parts = [
         '${v['make'] ?? ''} ${v['model'] ?? ''}'.trim(),
         (v['color'] as String?) ?? '',
-        (v['plate'] as String?) ?? '',
       ].where((p) => p.isNotEmpty);
       vehicle = parts.isEmpty ? null : parts.join(' · ');
     }
@@ -448,9 +451,25 @@ class DriverInfo {
       name: (j['name'] as String?) ?? '',
       photoUrl: j['photoUrl'] as String?,
       vehicle: vehicle,
+      plate: v is Map ? (v['plate'] as String?) ?? '' : '',
       rating: (j['rating'] as num?)?.toDouble(),
     );
   }
+}
+
+/// Código de recogida que el pasajero da al chófer. Solo vive en memoria:
+/// nunca se guarda en el dispositivo.
+class PickupCode {
+  const PickupCode({required this.code, required this.expiresAt});
+
+  final String code;
+  final DateTime expiresAt;
+
+  factory PickupCode.fromJson(Map<String, dynamic> j) => PickupCode(
+        code: j['code'] as String,
+        expiresAt: DateTime.fromMillisecondsSinceEpoch(
+            (j['expiresAt'] as num).toInt()),
+      );
 }
 
 // ---------------------------------------------------------------------------

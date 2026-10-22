@@ -13,6 +13,7 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../widgets/pickup_code_card.dart';
 
 /// Estados en que el chófer va, espera o lleva al pasajero: solo entonces
 /// se ven su ubicación y su teléfono.
@@ -286,7 +287,25 @@ class _RideScreenState extends State<RideScreen> {
       rating: d.rating ?? 5.0,
       vehicle: d.vehicle ??
           '${b.vehicleClass.label} · ${b.vehicleClass.description}',
+      plate: d.plate,
       photoUrl: d.photoUrl,
+    );
+  }
+
+  /// Mientras el chófer espera, el código que el pasajero (o su invitado)
+  /// le da al subir. Al verificarse, la tarjeta desaparece.
+  Widget _pickupSection() {
+    if (_status != BookingStatus.driverArrived || widget.rideId.isEmpty) {
+      return const SizedBox.shrink();
+    }
+    final guest = _booking?.guest;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: LuxSpacing.md),
+      child: PickupCodeCard(
+        key: ValueKey('pickup-${widget.rideId}'),
+        bookingId: widget.rideId,
+        guestName: guest?.fullName,
+      ),
     );
   }
 
@@ -304,6 +323,7 @@ class _RideScreenState extends State<RideScreen> {
                 _BottomPanel(
                   status: _status ?? BookingStatus.pending,
                   message: _statusMessage,
+                  pickup: _pickupSection(),
                   driver: _driverSection(),
                   actions: _actions(),
                   preferences:
@@ -339,6 +359,7 @@ class _RideScreenState extends State<RideScreen> {
                         children: [
                           Text(_statusMessage, style: LuxTypography.bodyMedium),
                           const SizedBox(height: LuxSpacing.lg),
+                          _pickupSection(),
                           _driverSection(),
                           const Spacer(),
                           _actions(),
@@ -409,11 +430,13 @@ class _BottomPanel extends StatelessWidget {
     required this.message,
     required this.driver,
     required this.actions,
+    this.pickup = const SizedBox.shrink(),
     this.preferences = RidePreferences.none,
   });
 
   final BookingStatus status;
   final String message;
+  final Widget pickup;
   final Widget driver;
   final Widget actions;
   final RidePreferences preferences;
@@ -493,6 +516,7 @@ class _BottomPanel extends StatelessWidget {
               ),
             ],
             const SizedBox(height: LuxSpacing.lg),
+            pickup,
             driver,
             const SizedBox(height: LuxSpacing.md),
             actions,

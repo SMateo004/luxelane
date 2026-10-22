@@ -49,6 +49,28 @@ class AppUpdateRequiredFailure extends Failure {
   final String? iosStoreUrl;
 }
 
+/// Qué salió mal en un paso del viaje (código de recogida, avanzar,
+/// verificar). La pantalla decide qué mostrar según [issue].
+enum TripIssue {
+  network,
+  notAtPickup,
+  wrongCode,
+  locked,
+  expired,
+  unavailable,
+  notAllowed,
+  invalidTransition,
+  other,
+}
+
+class TripFailure extends Failure {
+  const TripFailure(this.issue, super.message, {this.attemptsLeft});
+  final TripIssue issue;
+
+  /// Con [TripIssue.wrongCode], intentos que quedan antes del bloqueo.
+  final int? attemptsLeft;
+}
+
 class ValidationFailure extends Failure {
   const ValidationFailure([super.message = 'Validation error']);
 }
