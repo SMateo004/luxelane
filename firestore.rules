@@ -141,7 +141,11 @@ service cloud.firestore {
         !request.resource.data.diff(resource.data).affectedKeys()
           .hasAny(serverTripFields()) &&
         !(statusChanges() &&
-          request.resource.data.status in ['verified', 'in_progress']);
+          request.resource.data.status in ['verified', 'in_progress']) &&
+        // Completar dispara el cobro: solo desde un viaje en curso, también
+        // para el admin.
+        !(statusChanges() && request.resource.data.status == 'completed' &&
+          resource.data.status != 'in_progress');
     }
 
     // La reserva completa (direcciones, notas, preferencias, datos del

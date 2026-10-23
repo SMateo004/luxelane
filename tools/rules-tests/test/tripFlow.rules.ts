@@ -68,6 +68,13 @@ describe('el cliente no escribe los pasos del viaje (solo advanceBooking)', () =
     await assertFails(setStatus('admin', 'verif', 'in_progress'));
   });
 
+  test('el admin solo completa (y cobra) un viaje en curso', async () => {
+    for (const id of ['conf', 'activa', 'llego', 'verif', 'pend']) {
+      await assertFails(setStatus('admin', id, 'completed'));
+    }
+    await assertSucceeds(setStatus('admin', 'curso', 'completed'));
+  });
+
   test('el panel conserva sus otras transiciones por ahora', async () => {
     await assertSucceeds(setStatus('admin', 'activa', 'driver_arrived'));
     await assertSucceeds(setStatus('admin', 'curso', 'completed'));
