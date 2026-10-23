@@ -70,23 +70,22 @@ class _SosButtonState extends State<SosButton>
   Future<void> _confirm() async {
     final ok = await showDialog<bool>(
       context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: const Text('¿Avisar a central?'),
-            content: const Text(
-              'Central recibirá tu aviso y tu ubicación mientras dure.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Cancelar'),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Avisar a central'),
-              ),
-            ],
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿Avisar a central?'),
+        content: const Text(
+          'Central recibirá tu aviso y tu ubicación mientras dure.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
           ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Avisar a central'),
+          ),
+        ],
+      ),
     );
     if (ok == true && mounted) widget.onActivated();
   }
@@ -99,8 +98,7 @@ class _SosButtonState extends State<SosButton>
     return Semantics(
       button: true,
       label: '${widget.label} SOS',
-      hint:
-          'Mantén pulsado dos segundos para avisar a central. Con lector '
+      hint: 'Mantén pulsado dos segundos para avisar a central. Con lector '
           'de pantalla, toca dos veces y confirma.',
       onTap: _confirm,
       excludeSemantics: true,
@@ -132,13 +130,12 @@ class _SosButtonState extends State<SosButton>
                     ),
                     AnimatedBuilder(
                       animation: _hold,
-                      builder:
-                          (_, __) => CircularProgressIndicator(
-                            value: _hold.value,
-                            strokeWidth: 3,
-                            backgroundColor: Colors.transparent,
-                            color: LuxColors.error,
-                          ),
+                      builder: (_, __) => CircularProgressIndicator(
+                        value: _hold.value,
+                        strokeWidth: 3,
+                        backgroundColor: Colors.transparent,
+                        color: LuxColors.error,
+                      ),
                     ),
                     Center(
                       child: Text(

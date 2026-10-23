@@ -190,10 +190,9 @@ class MapsService {
     if (input.length < 2) return [];
     if (_key.isEmpty) return [];
 
-    final center =
-        restrictTo != null
-            ? (lat: restrictTo.lat, lng: restrictTo.lng)
-            : await _searchCenter();
+    final center = restrictTo != null
+        ? (lat: restrictTo.lat, lng: restrictTo.lng)
+        : await _searchCenter();
     final radius = restrictTo?.radiusMeters ?? _cityRadiusMeters;
     final circle = {
       'circle': {
@@ -212,8 +211,7 @@ class MapsService {
         headers: {
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': _key,
-          'X-Goog-FieldMask':
-              'suggestions.placePrediction.placeId,'
+          'X-Goog-FieldMask': 'suggestions.placePrediction.placeId,'
               'suggestions.placePrediction.structuredFormat,'
               'suggestions.placePrediction.text',
         },
@@ -239,25 +237,22 @@ class MapsService {
         final suggestions = data['suggestions'] as List? ?? [];
         final results = <PlaceSuggestion>[];
         for (final s in suggestions) {
-          final pred =
-              (s as Map<String, dynamic>)['placePrediction']
+          final pred = (s as Map<String, dynamic>)['placePrediction']
                   as Map<String, dynamic>? ??
               {};
           final placeId = pred['placeId'] as String? ?? '';
           if (placeId.isEmpty) continue;
           final structured =
               pred['structuredFormat'] as Map<String, dynamic>? ?? {};
-          final mainText =
-              ((structured['mainText'] as Map<String, dynamic>?)?['text']
-                  as String?) ??
+          final mainText = ((structured['mainText']
+                  as Map<String, dynamic>?)?['text'] as String?) ??
               '';
-          final secText =
-              ((structured['secondaryText'] as Map<String, dynamic>?)?['text']
-                  as String?) ??
+          final secText = ((structured['secondaryText']
+                  as Map<String, dynamic>?)?['text'] as String?) ??
               '';
           final fullText =
               ((pred['text'] as Map<String, dynamic>?)?['text'] as String?) ??
-              '';
+                  '';
           results.add(
             PlaceSuggestion(
               placeId: placeId,
@@ -359,9 +354,8 @@ class MapsService {
         final data = json.decode(res.body) as Map<String, dynamic>;
         final loc = data['location'] as Map<String, dynamic>?;
         if (loc != null) {
-          final displayName =
-              (data['displayName'] as Map<String, dynamic>?)?['text']
-                  as String?;
+          final displayName = (data['displayName']
+              as Map<String, dynamic>?)?['text'] as String?;
           return Place(
             name: displayName ?? address?.split(',').first ?? '',
             address: data['formattedAddress'] as String? ?? address ?? '',

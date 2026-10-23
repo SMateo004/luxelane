@@ -10,8 +10,8 @@ class PaymentRepositoryImpl implements PaymentRepository {
   PaymentRepositoryImpl({
     required FirebaseFirestore firestore,
     required FirebaseFunctions functions,
-  }) : _db = firestore,
-       _fn = functions;
+  })  : _db = firestore,
+        _fn = functions;
 
   final FirebaseFirestore _db;
   final FirebaseFunctions _fn;
@@ -67,8 +67,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
           bookingId: bookingId,
           riderId: riderId,
           stripePaymentIntentId: stripePaymentIntentId,
-          amount:
-              (data['amount'] as num?)?.toDouble() ??
+          amount: (data['amount'] as num?)?.toDouble() ??
               Payment.toCents(amount).toDouble(),
           currency: data['currency'] as String? ?? currency,
           status: PaymentStatusX.fromString(data['status'] as String? ?? ''),
@@ -98,11 +97,10 @@ class PaymentRepositoryImpl implements PaymentRepository {
     String riderId,
   ) async {
     try {
-      final snap =
-          await _col
-              .where('riderId', isEqualTo: riderId)
-              .orderBy('createdAt', descending: true)
-              .get();
+      final snap = await _col
+          .where('riderId', isEqualTo: riderId)
+          .orderBy('createdAt', descending: true)
+          .get();
       return Right(
         snap.docs
             .map((d) => Payment.fromJson({'id': d.id, ...d.data()}))
@@ -133,10 +131,9 @@ class PaymentRepositoryImpl implements PaymentRepository {
         'customerId': stripeCustomerId,
       });
       // En móvil llegan como Map<Object?, Object?>: se copian una a una.
-      final cards =
-          ((result.data['cards'] as List?) ?? const [])
-              .map((c) => Map<String, dynamic>.from(c as Map))
-              .toList();
+      final cards = ((result.data['cards'] as List?) ?? const [])
+          .map((c) => Map<String, dynamic>.from(c as Map))
+          .toList();
       return Right(cards);
     } catch (e) {
       return Left(PaymentFailure(e.toString()));

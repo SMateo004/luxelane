@@ -29,20 +29,21 @@ Booking _b(
   String? paymentId,
   String? review,
   bool pickupLocked = false,
-}) => Booking.fromJson({
-  'pickupLocked': pickupLocked,
-  'id': id,
-  'riderId': 'u-rider',
-  'driverId': s == BookingStatus.pending ? null : 'u-driver',
-  'origin': _place.toJson(),
-  'destination': _place.toJson(),
-  'class': 'business',
-  'serviceType': 'oneWay',
-  'status': s.label,
-  'estimatedPrice': 125.5,
-  'paymentId': paymentId,
-  if (review != null) 'pricingReview': {'reason': review},
-});
+}) =>
+    Booking.fromJson({
+      'pickupLocked': pickupLocked,
+      'id': id,
+      'riderId': 'u-rider',
+      'driverId': s == BookingStatus.pending ? null : 'u-driver',
+      'origin': _place.toJson(),
+      'destination': _place.toJson(),
+      'class': 'business',
+      'serviceType': 'oneWay',
+      'status': s.label,
+      'estimatedPrice': 125.5,
+      'paymentId': paymentId,
+      if (review != null) 'pricingReview': {'reason': review},
+    });
 
 late _MockRepo _last;
 
@@ -392,9 +393,9 @@ void main() {
     await tester.tap(find.text('Guardar').last);
     await tester.pumpAndSettle();
 
-    final saved =
-        verify(() => _last.updatePricingRule(captureAny())).captured.single
-            as PricingRule;
+    final saved = verify(() => _last.updatePricingRule(captureAny()))
+        .captured
+        .single as PricingRule;
     expect(saved.pricePerKmUsd, 4);
     expect(saved.basePriceUsd, 55);
     expect(saved.isActive, isFalse);
@@ -422,11 +423,10 @@ void main() {
       await _pump(
         tester,
         Builder(
-          builder:
-              (context) => TextButton(
-                onPressed: () => showBookingDetail(context, id),
-                child: const Text('abrir'),
-              ),
+          builder: (context) => TextButton(
+            onPressed: () => showBookingDetail(context, id),
+            child: const Text('abrir'),
+          ),
         ),
         const Size(1280, 2000),
       );
@@ -525,10 +525,9 @@ void main() {
           ),
         ),
         const Size(1280, 1600),
-        setup:
-            (r) => when(
-              r.watchOpenIncidents,
-            ).thenAnswer((_) => Stream.value(incidents)),
+        setup: (r) => when(
+          r.watchOpenIncidents,
+        ).thenAnswer((_) => Stream.value(incidents)),
       );
       return (opened: opened, beeps: beeps);
     }
@@ -628,16 +627,16 @@ void main() {
     ) async {
       final opened = <Uri>[];
       User user(String id, String phone, UserRole role) => User(
-        id: id,
-        email: '$id@example.com',
-        phone: phone,
-        displayName: id,
-        role: role,
-        createdAt: _now,
-        isVerified: true,
-        isActive: true,
-        fcmTokens: const [],
-      );
+            id: id,
+            email: '$id@example.com',
+            phone: phone,
+            displayName: id,
+            role: role,
+            createdAt: _now,
+            isVerified: true,
+            isActive: true,
+            fcmTokens: const [],
+          );
       await _pump(
         tester,
         SingleChildScrollView(
@@ -672,6 +671,27 @@ void main() {
         'tel:+0002',
         'tel:+0003',
       ]);
+    });
+
+    testWidgets(
+        'cancelado por el usuario: «verificar por llamada», sin reconocer y suena',
+        (tester) async {
+      final cancelled = Incident(
+        id: 'inc-cancel',
+        bookingId: 'booking-progress',
+        reporterId: 'u-rider',
+        reporterRole: 'rider',
+        status: IncidentStatus.cancelRequested,
+        cancelledByReporter: true,
+        createdAt: _now,
+      );
+      final r = await pumpStrip(tester, [acked, cancelled]);
+      expect(find.text('CANCELADO POR EL USUARIO: VERIFICAR POR LLAMADA'),
+          findsOneWidget);
+      expect(find.text('1 incidente sin reconocer'), findsOneWidget);
+      expect(find.text('Reconocer'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 6));
+      expect(r.beeps, isNotEmpty);
     });
 
     test('tiempo sin reconocer legible', () {

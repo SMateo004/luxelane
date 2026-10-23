@@ -30,7 +30,9 @@ beforeEach(async () => {
     await setDoc(doc(db, 'incidents', 'deAsig'), { ...base, reporterId: 'asig', reporterRole: 'driver', status: 'open' });
     await setDoc(doc(db, 'incidents', 'reconocido'), { ...base, reporterId: 'ana', reporterRole: 'rider', status: 'acknowledged' });
     await setDoc(doc(db, 'incidents', 'cerrado'), { ...base, reporterId: 'ana', reporterRole: 'rider', status: 'closed' });
-    await setDoc(doc(db, 'incidents', 'cancelado'), { ...base, reporterId: 'ana', reporterRole: 'rider', status: 'cancelled_by_reporter' });
+    await setDoc(doc(db, 'incidents', 'cancelado'), { ...base, reporterId: 'ana', reporterRole: 'rider', status: 'cancel_requested', cancelledByReporter: true });
+    await setDoc(doc(db, 'incidents', 'canceladoReconocido'),
+      { ...base, reporterId: 'ana', reporterRole: 'rider', status: 'acknowledged', cancelledByReporter: true });
     await setDoc(doc(db, 'incidents', 'deAna', 'events', 'e1'), { type: 'raised' });
     await setDoc(doc(db, 'bookings', 'activa', 'adminOnly', 'incident'), { incidentOpen: true, activeIncidentId: 'deAna' });
   });
@@ -121,6 +123,10 @@ describe('ubicación en vivo del incidente', () => {
   test('cerrado o cancelado: no admite más ubicaciones', async () => {
     await assertFails(loc('ana', 'cerrado'));
     await assertFails(loc('ana', 'cancelado'));
+  });
+
+  test('cancelado por quien lo disparó y luego reconocido: sigue sin admitir ubicaciones', async () => {
+    await assertFails(loc('ana', 'canceladoReconocido'));
   });
 
   test('campos acotados: solo lat, lng y la hora del servidor', async () => {

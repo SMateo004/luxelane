@@ -125,8 +125,8 @@ class RideError extends RideState {
 
 class RideBloc extends Bloc<RideEvent, RideState> {
   RideBloc({required RideRepository rideRepository})
-    : _repo = rideRepository,
-      super(const RideInitial()) {
+      : _repo = rideRepository,
+        super(const RideInitial()) {
     on<RideStarted>(_onStart);
     on<RideWatched>(_onWatch);
     on<RideLocationAppended>(_onLocation);
@@ -153,11 +153,9 @@ class RideBloc extends Bloc<RideEvent, RideState> {
   Future<void> _onWatch(RideWatched event, Emitter<RideState> emit) async {
     await emit.forEach<Ride>(
       _repo.watchRide(event.rideId),
-      onData:
-          (r) =>
-              r.completedAt != null
-                  ? RideCompletedState(r)
-                  : RideLocationUpdated(r),
+      onData: (r) => r.completedAt != null
+          ? RideCompletedState(r)
+          : RideLocationUpdated(r),
       onError: (e, _) => RideError(e.toString()),
     );
   }

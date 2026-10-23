@@ -77,8 +77,8 @@ class _LoginPageState extends State<LoginPage> {
   void _submit() {
     if (!_form.currentState!.validate()) return;
     context.read<AuthBloc>().add(
-      LoginRequested(email: _email.text.trim(), password: _pass.text),
-    );
+          LoginRequested(email: _email.text.trim(), password: _pass.text),
+        );
   }
 
   @override
@@ -113,181 +113,178 @@ class _LoginPageState extends State<LoginPage> {
   // ── Web: two-column split ──────────────────────────────────────────────────
 
   Widget _webLayout() => Row(
-    children: [
-      // Left — brand panel
-      const Expanded(child: AuthBrandPanel()),
-      // Right — form panel
-      Expanded(
-        child: Container(
-          color: _panel,
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 440),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 48,
-                  vertical: 64,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Iniciar sesión',
-                      style: TextStyle(
-                        fontFamily: _kSerif,
-                        fontSize: 42,
-                        fontWeight: FontWeight.w500,
-                        color: _ink,
-                        height: 1.1,
-                      ),
+        children: [
+          // Left — brand panel
+          const Expanded(child: AuthBrandPanel()),
+          // Right — form panel
+          Expanded(
+            child: Container(
+              color: _panel,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 440),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 48,
+                      vertical: 64,
                     ),
-                    const SizedBox(height: 6),
-                    const Text(
-                      'Bienvenido de nuevo a Luxelane.',
-                      style: TextStyle(
-                        fontFamily: _kSans,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w400,
-                        color: LuxColors.inkTertiary,
-                      ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Iniciar sesión',
+                          style: TextStyle(
+                            fontFamily: _kSerif,
+                            fontSize: 42,
+                            fontWeight: FontWeight.w500,
+                            color: _ink,
+                            height: 1.1,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Bienvenido de nuevo a Luxelane.',
+                          style: TextStyle(
+                            fontFamily: _kSans,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w400,
+                            color: LuxColors.inkTertiary,
+                          ),
+                        ),
+                        const SizedBox(height: 40),
+                        _formContent(),
+                      ],
                     ),
-                    const SizedBox(height: 40),
-                    _formContent(),
-                  ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
-    ],
-  );
+        ],
+      );
 
   // ── Mobile layout ──────────────────────────────────────────────────────────
 
   Widget _mobileLayout() => SafeArea(
-    child: SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          GestureDetector(
-            onTap: () => context.go('/'),
-            child: const LuxelaneWordmark(size: 11),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              GestureDetector(
+                onTap: () => context.go('/'),
+                child: const LuxelaneWordmark(size: 11),
+              ),
+              const SizedBox(height: 28),
+              const _AuthHeroPhoto(),
+              const SizedBox(height: 32),
+              Text(
+                'BIENVENIDO',
+                style: LuxTypography.caption.copyWith(
+                  color: _sph,
+                  letterSpacing: 3,
+                  fontSize: 10,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Tu chófer,\ncomo lo recuerdas.',
+                style: TextStyle(
+                  fontFamily: _kSerif,
+                  fontSize: 38,
+                  fontWeight: FontWeight.w500,
+                  color: _ink,
+                  height: 1.08,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Inicia sesión para reservar y seguir tus trayectos.',
+                style: TextStyle(
+                  fontFamily: _kSans,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: LuxColors.inkTertiary,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 32),
+              _formContent(),
+            ],
           ),
-          const SizedBox(height: 28),
-          const _AuthHeroPhoto(),
-          const SizedBox(height: 32),
-          Text(
-            'BIENVENIDO',
-            style: LuxTypography.caption.copyWith(
-              color: _sph,
-              letterSpacing: 3,
-              fontSize: 10,
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Tu chófer,\ncomo lo recuerdas.',
-            style: TextStyle(
-              fontFamily: _kSerif,
-              fontSize: 38,
-              fontWeight: FontWeight.w500,
-              color: _ink,
-              height: 1.08,
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Inicia sesión para reservar y seguir tus trayectos.',
-            style: TextStyle(
-              fontFamily: _kSans,
-              fontSize: 13,
-              fontWeight: FontWeight.w400,
-              color: LuxColors.inkTertiary,
-              height: 1.5,
-            ),
-          ),
-          const SizedBox(height: 32),
-          _formContent(),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 
   // ── Shared form ────────────────────────────────────────────────────────────
 
   Widget _formContent() => BlocBuilder<AuthBloc, AuthState>(
-    builder: (context, state) {
-      final loading = state is AuthLoading;
-      return Form(
-        key: _form,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const GoogleSignInButton(),
-            const SizedBox(height: 24),
-            const AuthOrDivider(),
-            const SizedBox(height: 24),
-            _AuthField(
-              label: 'Correo electrónico',
-              controller: _email,
-              keyboardType: TextInputType.emailAddress,
-              icon: Icons.email_outlined,
-              validator:
-                  (v) =>
-                      v == null || !v.contains('@')
-                          ? 'Ingresa un correo válido'
-                          : null,
-            ),
-            const SizedBox(height: 14),
-            _AuthField(
-              label: 'Contraseña',
-              controller: _pass,
-              obscureText: true,
-              icon: Icons.lock_outline,
-              validator:
-                  (v) =>
-                      v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
-            ),
-            const SizedBox(height: 6),
-            Align(
-              alignment: Alignment.centerRight,
-              child: _TextLink(
-                label: '¿Olvidaste tu contraseña?',
-                onTap: _resetPassword,
-              ),
-            ),
-            const SizedBox(height: 28),
-            _AuthButton(
-              label: 'Iniciar sesión',
-              loading: loading,
-              onTap: loading ? null : _submit,
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+        builder: (context, state) {
+          final loading = state is AuthLoading;
+          return Form(
+            key: _form,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  '¿No tienes cuenta? ',
-                  style: TextStyle(
-                    fontFamily: _kSans,
-                    fontSize: 12,
-                    color: LuxColors.inkTertiary,
+                const GoogleSignInButton(),
+                const SizedBox(height: 24),
+                const AuthOrDivider(),
+                const SizedBox(height: 24),
+                _AuthField(
+                  label: 'Correo electrónico',
+                  controller: _email,
+                  keyboardType: TextInputType.emailAddress,
+                  icon: Icons.email_outlined,
+                  validator: (v) => v == null || !v.contains('@')
+                      ? 'Ingresa un correo válido'
+                      : null,
+                ),
+                const SizedBox(height: 14),
+                _AuthField(
+                  label: 'Contraseña',
+                  controller: _pass,
+                  obscureText: true,
+                  icon: Icons.lock_outline,
+                  validator: (v) =>
+                      v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
+                ),
+                const SizedBox(height: 6),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: _TextLink(
+                    label: '¿Olvidaste tu contraseña?',
+                    onTap: _resetPassword,
                   ),
                 ),
-                _TextLink(
-                  label: 'Crear una',
-                  onTap: () => context.go('/register'),
+                const SizedBox(height: 28),
+                _AuthButton(
+                  label: 'Iniciar sesión',
+                  loading: loading,
+                  onTap: loading ? null : _submit,
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      '¿No tienes cuenta? ',
+                      style: TextStyle(
+                        fontFamily: _kSans,
+                        fontSize: 12,
+                        color: LuxColors.inkTertiary,
+                      ),
+                    ),
+                    _TextLink(
+                      label: 'Crear una',
+                      onTap: () => context.go('/register'),
+                    ),
+                  ],
                 ),
               ],
             ),
-          ],
-        ),
+          );
+        },
       );
-    },
-  );
 }
 
 // ── Brand panel (left side on web) ────────────────────────────────────────────
@@ -304,107 +301,112 @@ class AuthBrandPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Stack(
-    fit: StackFit.expand,
-    children: [
-      // Ivory base
-      const ColoredBox(color: LuxColors.surfaceMuted),
-      // Editorial photo — the promise of the experience, not a form.
-      Image.asset(
-        'assets/images/home/promise_photo.jpg',
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => CustomPaint(painter: _DotGridPainter()),
-      ),
-      // Ivory veil so ink text stays legible over the photo.
-      DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [_bg.withAlpha(60), _bg.withAlpha(215), _bg.withAlpha(250)],
-            stops: const [0.0, 0.4, 0.75],
+        fit: StackFit.expand,
+        children: [
+          // Ivory base
+          const ColoredBox(color: LuxColors.surfaceMuted),
+          // Editorial photo — the promise of the experience, not a form.
+          Image.asset(
+            'assets/images/home/promise_photo.jpg',
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) =>
+                CustomPaint(painter: _DotGridPainter()),
           ),
-        ),
-      ),
-      // Left accent line
-      Positioned(
-        left: 0,
-        top: 0,
-        bottom: 0,
-        child: Container(width: 1, color: _border),
-      ),
-      // Content
-      Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 56),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () => context.go('/'),
-                  child: const LuxelaneWordmark(color: _ink),
-                ),
+          // Ivory veil so ink text stays legible over the photo.
+          DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  _bg.withAlpha(60),
+                  _bg.withAlpha(215),
+                  _bg.withAlpha(250)
+                ],
+                stops: const [0.0, 0.4, 0.75],
               ),
-              const SizedBox(height: 40),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontFamily: _kSerif,
-                  fontSize: 52,
-                  fontWeight: FontWeight.w400,
-                  color: _ink,
-                  height: 1.1,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  fontFamily: _kSans,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w400,
-                  color: LuxColors.inkSecondary,
-                  height: 1.6,
-                ),
-              ),
-              const SizedBox(height: 40),
-              // Sapphire divider
-              Container(width: 40, height: 1, color: _sph),
-              const SizedBox(height: 32),
-              for (final line in const [
-                'Reserva en menos de 2 minutos',
-                'Todos tus viajes en un solo lugar',
-                'Seguimiento de tu chófer en tiempo real',
-              ])
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 14),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.check_rounded,
-                        size: 14,
-                        color: LuxColors.sapphire,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        line,
-                        style: const TextStyle(
-                          fontFamily: _kSans,
-                          fontSize: 12.5,
-                          color: LuxColors.inkSecondary,
-                        ),
-                      ),
-                    ],
+            ),
+          ),
+          // Left accent line
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: Container(width: 1, color: _border),
+          ),
+          // Content
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 56),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: () => context.go('/'),
+                      child: const LuxelaneWordmark(color: _ink),
+                    ),
                   ),
-                ),
-            ],
+                  const SizedBox(height: 40),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontFamily: _kSerif,
+                      fontSize: 52,
+                      fontWeight: FontWeight.w400,
+                      color: _ink,
+                      height: 1.1,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      fontFamily: _kSans,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w400,
+                      color: LuxColors.inkSecondary,
+                      height: 1.6,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  // Sapphire divider
+                  Container(width: 40, height: 1, color: _sph),
+                  const SizedBox(height: 32),
+                  for (final line in const [
+                    'Reserva en menos de 2 minutos',
+                    'Todos tus viajes en un solo lugar',
+                    'Seguimiento de tu chófer en tiempo real',
+                  ])
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 14),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.check_rounded,
+                            size: 14,
+                            color: LuxColors.sapphire,
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            line,
+                            style: const TextStyle(
+                              fontFamily: _kSans,
+                              fontSize: 12.5,
+                              color: LuxColors.inkSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-    ],
-  );
+        ],
+      );
 }
 
 // ── Input field styled for the auth pages ─────────────────────────────────────
@@ -428,47 +430,48 @@ class _AuthField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => TextFormField(
-    controller: controller,
-    obscureText: obscureText,
-    keyboardType: keyboardType,
-    validator: validator,
-    style: const TextStyle(fontFamily: _kSans, fontSize: 14, color: _ink),
-    decoration: InputDecoration(
-      labelText: label,
-      labelStyle: const TextStyle(
-        fontFamily: _kSans,
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        color: LuxColors.inkTertiary,
-      ),
-      floatingLabelStyle: const TextStyle(
-        fontFamily: _kSans,
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: _sph,
-      ),
-      prefixIcon: Icon(icon, size: 18, color: LuxColors.inkTertiary),
-      filled: true,
-      fillColor: _panel,
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: _border),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: _sph, width: 1.5),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: LuxColors.error),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: LuxColors.error, width: 1.5),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    ),
-  );
+        controller: controller,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        validator: validator,
+        style: const TextStyle(fontFamily: _kSans, fontSize: 14, color: _ink),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(
+            fontFamily: _kSans,
+            fontSize: 12,
+            fontWeight: FontWeight.w400,
+            color: LuxColors.inkTertiary,
+          ),
+          floatingLabelStyle: const TextStyle(
+            fontFamily: _kSans,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: _sph,
+          ),
+          prefixIcon: Icon(icon, size: 18, color: LuxColors.inkTertiary),
+          filled: true,
+          fillColor: _panel,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: _border),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: _sph, width: 1.5),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: LuxColors.error),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: const BorderSide(color: LuxColors.error, width: 1.5),
+          ),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        ),
+      );
 }
 
 // ── Primary action button ──────────────────────────────────────────────────────
@@ -505,24 +508,25 @@ class _TextLinkState extends State<_TextLink> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-    onEnter: (_) => setState(() => _hover = true),
-    onExit: (_) => setState(() => _hover = false),
-    cursor: SystemMouseCursors.click,
-    child: GestureDetector(
-      onTap: widget.onTap,
-      child: Text(
-        widget.label,
-        style: TextStyle(
-          fontFamily: _kSans,
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-          color: _hover ? _sphLt : _sph.withAlpha(220),
-          decoration: _hover ? TextDecoration.underline : TextDecoration.none,
-          decorationColor: _sphLt,
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: Text(
+            widget.label,
+            style: TextStyle(
+              fontFamily: _kSans,
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: _hover ? _sphLt : _sph.withAlpha(220),
+              decoration:
+                  _hover ? TextDecoration.underline : TextDecoration.none,
+              decorationColor: _sphLt,
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 // ── Dot grid (same as hero) ───────────────────────────────────────────────────
@@ -548,32 +552,32 @@ class _AuthHeroPhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ClipRRect(
-    borderRadius: BorderRadius.circular(LuxRadius.xl),
-    child: SizedBox(
-      height: 180,
-      width: double.infinity,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          const ColoredBox(color: LuxColors.surfaceMuted),
-          Image.asset(
-            'assets/images/home/promise_photo.jpg',
-            fit: BoxFit.cover,
-            errorBuilder:
-                (_, __, ___) => CustomPaint(painter: _DotGridPainter()),
-          ),
-          // Soft ivory fade into the page below.
-          DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [_bg.withAlpha(0), _bg.withAlpha(90)],
+        borderRadius: BorderRadius.circular(LuxRadius.xl),
+        child: SizedBox(
+          height: 180,
+          width: double.infinity,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              const ColoredBox(color: LuxColors.surfaceMuted),
+              Image.asset(
+                'assets/images/home/promise_photo.jpg',
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) =>
+                    CustomPaint(painter: _DotGridPainter()),
               ),
-            ),
+              // Soft ivory fade into the page below.
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [_bg.withAlpha(0), _bg.withAlpha(90)],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }

@@ -76,8 +76,8 @@ class NotificationBell extends StatelessWidget {
     // Mark all as read when opening
     if (userId != null) {
       context.read<NotificationBloc>().add(
-        NotificationAllMarkedRead(userId: userId),
-      );
+            NotificationAllMarkedRead(userId: userId),
+          );
     }
 
     showModalBottomSheet<void>(
@@ -87,11 +87,10 @@ class NotificationBell extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
       ),
-      builder:
-          (_) => BlocProvider.value(
-            value: context.read<NotificationBloc>(),
-            child: const _NotificationSheet(),
-          ),
+      builder: (_) => BlocProvider.value(
+        value: context.read<NotificationBloc>(),
+        child: const _NotificationSheet(),
+      ),
     );
   }
 }
@@ -140,17 +139,15 @@ class _NotificationSheet extends StatelessWidget {
                           state is NotificationLoaded && state.unreadCount > 0;
                       if (!hasUnread) return const SizedBox.shrink();
                       final authState = context.read<AuthBloc>().state;
-                      final userId =
-                          authState is AuthAuthenticated
-                              ? authState.user.id
-                              : null;
+                      final userId = authState is AuthAuthenticated
+                          ? authState.user.id
+                          : null;
                       return TextButton(
-                        onPressed:
-                            userId != null
-                                ? () => context.read<NotificationBloc>().add(
+                        onPressed: userId != null
+                            ? () => context.read<NotificationBloc>().add(
                                   NotificationAllMarkedRead(userId: userId),
                                 )
-                                : null,
+                            : null,
                         child: Text(
                           'Marcar todo como leído',
                           style: LuxTypography.caption.copyWith(
@@ -170,10 +167,9 @@ class _NotificationSheet extends StatelessWidget {
                   if (state is NotificationInitial) {
                     return const Center(child: CircularProgressIndicator());
                   }
-                  final notifications =
-                      state is NotificationLoaded
-                          ? state.notifications
-                          : <AppNotification>[];
+                  final notifications = state is NotificationLoaded
+                      ? state.notifications
+                      : <AppNotification>[];
 
                   if (notifications.isEmpty) {
                     return const Center(
@@ -201,24 +197,22 @@ class _NotificationSheet extends StatelessWidget {
                       vertical: LuxSpacing.sm,
                     ),
                     itemCount: notifications.length,
-                    separatorBuilder:
-                        (_, __) => const Divider(
-                          color: LuxColors.border,
-                          height: 1,
-                          indent: LuxSpacing.lg,
-                        ),
+                    separatorBuilder: (_, __) => const Divider(
+                      color: LuxColors.border,
+                      height: 1,
+                      indent: LuxSpacing.lg,
+                    ),
                     itemBuilder: (context, i) {
                       final n = notifications[i];
                       final id = n.bookingId;
                       // Cada aviso de una reserva abre esa reserva.
                       return InkWell(
-                        onTap:
-                            id == null || id.isEmpty
-                                ? null
-                                : () {
-                                  Navigator.of(context).pop();
-                                  GoRouter.of(context).go('/ride/$id');
-                                },
+                        onTap: id == null || id.isEmpty
+                            ? null
+                            : () {
+                                Navigator.of(context).pop();
+                                GoRouter.of(context).go('/ride/$id');
+                              },
                         child: _NotificationTile(notification: n),
                       );
                     },
@@ -269,10 +263,9 @@ class _NotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color:
-          notification.isRead
-              ? Colors.transparent
-              : LuxColors.sapphire.withAlpha(13),
+      color: notification.isRead
+          ? Colors.transparent
+          : LuxColors.sapphire.withAlpha(13),
       padding: const EdgeInsets.symmetric(
         horizontal: LuxSpacing.lg,
         vertical: LuxSpacing.md,
@@ -300,10 +293,9 @@ class _NotificationTile extends StatelessWidget {
                       child: Text(
                         notification.title,
                         style: LuxTypography.bodyMedium.copyWith(
-                          fontWeight:
-                              notification.isRead
-                                  ? FontWeight.w400
-                                  : FontWeight.w600,
+                          fontWeight: notification.isRead
+                              ? FontWeight.w400
+                              : FontWeight.w600,
                         ),
                       ),
                     ),

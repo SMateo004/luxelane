@@ -56,10 +56,9 @@ class _RideScreenState extends State<RideScreen> {
   @override
   void initState() {
     super.initState();
-    _bookingStream =
-        widget.rideId.isEmpty
-            ? const Stream<Booking>.empty()
-            : sl<BookingRepository>().watchBooking(widget.rideId);
+    _bookingStream = widget.rideId.isEmpty
+        ? const Stream<Booking>.empty()
+        : sl<BookingRepository>().watchBooking(widget.rideId);
     _sub = _bookingStream.listen(
       (b) {
         if (!mounted) return;
@@ -96,11 +95,10 @@ class _RideScreenState extends State<RideScreen> {
   void _syncDriverPhone() {
     final live = _driverLive && widget.rideId.isNotEmpty;
     if (live && _phoneSub == null) {
-      _phoneSub = sl<BookingRepository>()
-          .watchDriverPhone(widget.rideId)
-          .listen((p) {
-            if (mounted) setState(() => _driverPhone = p);
-          }, onError: (_) {});
+      _phoneSub =
+          sl<BookingRepository>().watchDriverPhone(widget.rideId).listen((p) {
+        if (mounted) setState(() => _driverPhone = p);
+      }, onError: (_) {});
     } else if (!live && _phoneSub != null) {
       _phoneSub!.cancel();
       _phoneSub = null;
@@ -163,32 +161,31 @@ class _RideScreenState extends State<RideScreen> {
   Future<void> _cancel() async {
     final ok = await showDialog<bool>(
       context: context,
-      builder:
-          (ctx) => AlertDialog(
-            backgroundColor: LuxColors.surface,
-            title: const Text(
-              'Cancelar reserva',
-              style: LuxTypography.titleMedium,
-            ),
-            content: const Text(
-              'Tu chófer quedará libre y, si pagaste con tarjeta, se liberará '
-              'la retención. ¿Quieres cancelar?',
-              style: LuxTypography.bodyMedium,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Volver'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text(
-                  'Cancelar reserva',
-                  style: TextStyle(color: LuxColors.error),
-                ),
-              ),
-            ],
+      builder: (ctx) => AlertDialog(
+        backgroundColor: LuxColors.surface,
+        title: const Text(
+          'Cancelar reserva',
+          style: LuxTypography.titleMedium,
+        ),
+        content: const Text(
+          'Tu chófer quedará libre y, si pagaste con tarjeta, se liberará '
+          'la retención. ¿Quieres cancelar?',
+          style: LuxTypography.bodyMedium,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Volver'),
           ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text(
+              'Cancelar reserva',
+              style: TextStyle(color: LuxColors.error),
+            ),
+          ),
+        ],
+      ),
     );
     if (ok != true || !mounted) return;
     setState(() => _cancelling = true);
@@ -205,23 +202,22 @@ class _RideScreenState extends State<RideScreen> {
     if (!mounted) return;
     showDialog<void>(
       context: context,
-      builder:
-          (ctx) => _RatingDialog(
-            driverName:
-                _driver?.name.isNotEmpty == true ? _driver!.name : 'tu chófer',
-            onSubmit: (rating) async {
-              final result = await sl<BookingRepository>().rateBooking(
-                bookingId: widget.rideId,
-                rating: rating.round(),
-              );
-              if (!mounted || !ctx.mounted) return;
-              Navigator.of(ctx).pop();
-              result.fold(
-                (f) => showLuxSnackbar(context, f.message, isError: true),
-                (_) => showLuxSnackbar(context, '¡Gracias por tu valoración!'),
-              );
-            },
-          ),
+      builder: (ctx) => _RatingDialog(
+        driverName:
+            _driver?.name.isNotEmpty == true ? _driver!.name : 'tu chófer',
+        onSubmit: (rating) async {
+          final result = await sl<BookingRepository>().rateBooking(
+            bookingId: widget.rideId,
+            rating: rating.round(),
+          );
+          if (!mounted || !ctx.mounted) return;
+          Navigator.of(ctx).pop();
+          result.fold(
+            (f) => showLuxSnackbar(context, f.message, isError: true),
+            (_) => showLuxSnackbar(context, '¡Gracias por tu valoración!'),
+          );
+        },
+      ),
     );
   }
 
@@ -238,12 +234,11 @@ class _RideScreenState extends State<RideScreen> {
     final live = _driverLive && widget.rideId.isNotEmpty;
     if (live != _locationLive) {
       _locationLive = live;
-      _locationStream =
-          live
-              ? sl<BookingRepository>()
-                  .watchDriverLocation(widget.rideId)
-                  .handleError((_) {})
-              : null;
+      _locationStream = live
+          ? sl<BookingRepository>()
+              .watchDriverLocation(widget.rideId)
+              .handleError((_) {})
+          : null;
     }
     return _locationStream;
   }
@@ -253,17 +248,16 @@ class _RideScreenState extends State<RideScreen> {
     final location = _driverLocation;
     return location != null
         ? StreamBuilder<GeoPoint?>(
-          stream: location,
-          builder: (context, snap) => _buildScaffold(snap.data),
-        )
+            stream: location,
+            builder: (context, snap) => _buildScaffold(snap.data),
+          )
         : _buildScaffold(null);
   }
 
   Widget _buildScaffold(GeoPoint? driverGeo) {
-    final driverLatLng =
-        driverGeo != null
-            ? LatLng(driverGeo.latitude, driverGeo.longitude)
-            : null;
+    final driverLatLng = driverGeo != null
+        ? LatLng(driverGeo.latitude, driverGeo.longitude)
+        : null;
     final web = isWeb(context);
     return Scaffold(
       body: web ? _webLayout(driverLatLng) : _mobileLayout(driverLatLng),
@@ -308,8 +302,7 @@ class _RideScreenState extends State<RideScreen> {
     return DriverCard(
       name: d.name.isNotEmpty ? d.name : 'Tu chófer',
       rating: d.rating ?? 5.0,
-      vehicle:
-          d.vehicle ??
+      vehicle: d.vehicle ??
           '${b.vehicleClass.label} · ${b.vehicleClass.description}',
       plate: d.plate,
       photoUrl: d.photoUrl,
@@ -334,65 +327,66 @@ class _RideScreenState extends State<RideScreen> {
   }
 
   Widget _mobileLayout(LatLng? driverLatLng) => Stack(
-    children: [
-      _MapArea(booking: _booking, driverLocation: driverLatLng),
-      SafeArea(
-        child: Column(
-          children: [
-            _TopBar(trailing: _sos()),
-            const Spacer(),
-            _BottomPanel(
-              status: _status ?? BookingStatus.pending,
-              message: _statusMessage,
-              pickup: _pickupSection(),
-              driver: _driverSection(),
-              actions: _actions(),
-              preferences: _booking?.riderPreferences ?? RidePreferences.none,
+        children: [
+          _MapArea(booking: _booking, driverLocation: driverLatLng),
+          SafeArea(
+            child: Column(
+              children: [
+                _TopBar(trailing: _sos()),
+                const Spacer(),
+                _BottomPanel(
+                  status: _status ?? BookingStatus.pending,
+                  message: _statusMessage,
+                  pickup: _pickupSection(),
+                  driver: _driverSection(),
+                  actions: _actions(),
+                  preferences:
+                      _booking?.riderPreferences ?? RidePreferences.none,
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    ],
-  );
+          ),
+        ],
+      );
 
   Widget _webLayout(LatLng? driverLatLng) => Row(
-    children: [
-      Expanded(
-        child: _MapArea(booking: _booking, driverLocation: driverLatLng),
-      ),
-      SizedBox(
-        width: 400,
-        child: Container(
-          color: LuxColors.surface,
-          child: Column(
-            children: [
-              _WebRideHeader(
-                status: _status ?? BookingStatus.pending,
-                trailing: _sos(),
-              ),
-              const LuxDivider(),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(LuxSpacing.lg),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(_statusMessage, style: LuxTypography.bodyMedium),
-                      const SizedBox(height: LuxSpacing.lg),
-                      _pickupSection(),
-                      _driverSection(),
-                      const Spacer(),
-                      _actions(),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+        children: [
+          Expanded(
+            child: _MapArea(booking: _booking, driverLocation: driverLatLng),
           ),
-        ),
-      ),
-    ],
-  );
+          SizedBox(
+            width: 400,
+            child: Container(
+              color: LuxColors.surface,
+              child: Column(
+                children: [
+                  _WebRideHeader(
+                    status: _status ?? BookingStatus.pending,
+                    trailing: _sos(),
+                  ),
+                  const LuxDivider(),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(LuxSpacing.lg),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(_statusMessage, style: LuxTypography.bodyMedium),
+                          const SizedBox(height: LuxSpacing.lg),
+                          _pickupSection(),
+                          _driverSection(),
+                          const Spacer(),
+                          _actions(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -422,32 +416,32 @@ class _TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(LuxSpacing.md),
-    child: Row(
-      children: [
-        GestureDetector(
-          onTap: () => context.go('/'),
-          child: Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: LuxColors.surface,
-              shape: BoxShape.circle,
-              border: Border.all(color: LuxColors.border),
-              boxShadow: luxSoftShadow,
+        padding: const EdgeInsets.all(LuxSpacing.md),
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () => context.go('/'),
+              child: Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: LuxColors.surface,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: LuxColors.border),
+                  boxShadow: luxSoftShadow,
+                ),
+                child: const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: LuxColors.ink,
+                ),
+              ),
             ),
-            child: const Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: LuxColors.ink,
-            ),
-          ),
+            const SizedBox(width: LuxSpacing.md),
+            const LuxelaneWordmark(),
+            if (trailing != null) ...[const Spacer(), trailing!],
+          ],
         ),
-        const SizedBox(width: LuxSpacing.md),
-        const LuxelaneWordmark(),
-        if (trailing != null) ...[const Spacer(), trailing!],
-      ],
-    ),
-  );
+      );
 }
 
 class _BottomPanel extends StatelessWidget {
@@ -510,11 +504,10 @@ class _BottomPanel extends StatelessWidget {
               duration: duration,
               switchInCurve: LuxMotion.decelerate,
               switchOutCurve: LuxMotion.accelerate,
-              layoutBuilder:
-                  (current, previous) => Stack(
-                    alignment: Alignment.topLeft,
-                    children: [...previous, if (current != null) current],
-                  ),
+              layoutBuilder: (current, previous) => Stack(
+                alignment: Alignment.topLeft,
+                children: [...previous, if (current != null) current],
+              ),
               child: Column(
                 key: ValueKey(status),
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -571,34 +564,34 @@ class _AssigningCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LuxCard(
-    child: Row(
-      children: [
-        const SizedBox(
-          width: 32,
-          child: LuxLoadingDots(color: LuxColors.sapphire, size: 5),
-        ),
-        const SizedBox(width: LuxSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'Asignando a tu chófer',
-                style: LuxTypography.titleMedium,
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 32,
+              child: LuxLoadingDots(color: LuxColors.sapphire, size: 5),
+            ),
+            const SizedBox(width: LuxSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Asignando a tu chófer',
+                    style: LuxTypography.titleMedium,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Verás su nombre, vehículo y valoración aquí.',
+                    style: LuxTypography.caption.copyWith(
+                      color: LuxColors.inkSecondary,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 2),
-              Text(
-                'Verás su nombre, vehículo y valoración aquí.',
-                style: LuxTypography.caption.copyWith(
-                  color: LuxColors.inkSecondary,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 }
 
 class _WebRideHeader extends StatelessWidget {
@@ -608,19 +601,19 @@ class _WebRideHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.all(LuxSpacing.md),
-    child: Row(
-      children: [
-        const LuxelaneWordmark(),
-        const Spacer(),
-        if (trailing != null) ...[
-          trailing!,
-          const SizedBox(width: LuxSpacing.sm),
-        ],
-        BookingStatusChip(status: status),
-      ],
-    ),
-  );
+        padding: const EdgeInsets.all(LuxSpacing.md),
+        child: Row(
+          children: [
+            const LuxelaneWordmark(),
+            const Spacer(),
+            if (trailing != null) ...[
+              trailing!,
+              const SizedBox(width: LuxSpacing.sm),
+            ],
+            BookingStatusChip(status: status),
+          ],
+        ),
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -642,79 +635,79 @@ class _RatingDialogState extends State<_RatingDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    backgroundColor: LuxColors.surface,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(LuxRadius.lg),
-      side: const BorderSide(color: LuxColors.border),
-    ),
-    title: const Text(
-      'Califica tu viaje',
-      style: LuxTypography.titleMedium,
-      textAlign: TextAlign.center,
-    ),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          widget.driverName,
-          style: LuxTypography.bodyMedium.copyWith(
-            color: LuxColors.inkTertiary,
-          ),
+        backgroundColor: LuxColors.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(LuxRadius.lg),
+          side: const BorderSide(color: LuxColors.border),
         ),
-        const SizedBox(height: LuxSpacing.lg),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(5, (i) {
-            final star = i + 1;
-            return GestureDetector(
-              onTap: () => setState(() => _rating = star.toDouble()),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: LuxSpacing.xs),
-                child: Icon(
-                  star <= _rating
-                      ? Icons.star_rounded
-                      : Icons.star_outline_rounded,
-                  color: LuxColors.sapphire,
-                  size: 36,
-                ),
+        title: const Text(
+          'Califica tu viaje',
+          style: LuxTypography.titleMedium,
+          textAlign: TextAlign.center,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              widget.driverName,
+              style: LuxTypography.bodyMedium.copyWith(
+                color: LuxColors.inkTertiary,
               ),
-            );
-          }),
+            ),
+            const SizedBox(height: LuxSpacing.lg),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(5, (i) {
+                final star = i + 1;
+                return GestureDetector(
+                  onTap: () => setState(() => _rating = star.toDouble()),
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: LuxSpacing.xs),
+                    child: Icon(
+                      star <= _rating
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
+                      color: LuxColors.sapphire,
+                      size: 36,
+                    ),
+                  ),
+                );
+              }),
+            ),
+            const SizedBox(height: LuxSpacing.md),
+            Text(
+              _ratingLabel(_rating),
+              style: LuxTypography.caption.copyWith(color: LuxColors.sapphire),
+            ),
+          ],
         ),
-        const SizedBox(height: LuxSpacing.md),
-        Text(
-          _ratingLabel(_rating),
-          style: LuxTypography.caption.copyWith(color: LuxColors.sapphire),
-        ),
-      ],
-    ),
-    actions: [
-      TextButton(
-        onPressed: _sending ? null : () => Navigator.of(context).pop(),
-        child: const Text('Ahora no'),
-      ),
-      LuxButton(
-        label: 'Enviar',
-        width: 160,
-        loading: _sending,
-        onPressed:
-            _sending
+        actions: [
+          TextButton(
+            onPressed: _sending ? null : () => Navigator.of(context).pop(),
+            child: const Text('Ahora no'),
+          ),
+          LuxButton(
+            label: 'Enviar',
+            width: 160,
+            loading: _sending,
+            onPressed: _sending
                 ? null
                 : () async {
-                  setState(() => _sending = true);
-                  await widget.onSubmit(_rating);
-                  if (mounted) setState(() => _sending = false);
-                },
-      ),
-    ],
-    actionsAlignment: MainAxisAlignment.center,
-    actionsPadding: const EdgeInsets.fromLTRB(
-      LuxSpacing.md,
-      0,
-      LuxSpacing.md,
-      LuxSpacing.md,
-    ),
-  );
+                    setState(() => _sending = true);
+                    await widget.onSubmit(_rating);
+                    if (mounted) setState(() => _sending = false);
+                  },
+          ),
+        ],
+        actionsAlignment: MainAxisAlignment.center,
+        actionsPadding: const EdgeInsets.fromLTRB(
+          LuxSpacing.md,
+          0,
+          LuxSpacing.md,
+          LuxSpacing.md,
+        ),
+      );
 
   String _ratingLabel(double r) {
     if (r >= 5) return 'Excelente';

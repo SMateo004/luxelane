@@ -113,18 +113,18 @@ class ProfileLoaded extends ProfileState {
 
   @override
   List<Object?> get props => [
-    user.id,
-    user.displayName,
-    user.phone,
-    user.photoUrl,
-    user.ridePreferences,
-    driverProfile?.userId,
-    totalRides,
-    rating,
-    message,
-    isError,
-    messageSeq,
-  ];
+        user.id,
+        user.displayName,
+        user.phone,
+        user.photoUrl,
+        user.ridePreferences,
+        driverProfile?.userId,
+        totalRides,
+        rating,
+        message,
+        isError,
+        messageSeq,
+      ];
 }
 
 class ProfileUpdated extends ProfileState {
@@ -149,9 +149,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc({
     required UserRepository userRepository,
     required BookingRepository bookingRepository,
-  }) : _repo = userRepository,
-       _bookingRepo = bookingRepository,
-       super(const ProfileInitial()) {
+  })  : _repo = userRepository,
+        _bookingRepo = bookingRepository,
+        super(const ProfileInitial()) {
     on<ProfileLoadRequested>(_onLoad);
     on<ProfileUpdateRequested>(_onUpdate);
     on<DriverProfileUpdateRequested>(_onDriverUpdate);

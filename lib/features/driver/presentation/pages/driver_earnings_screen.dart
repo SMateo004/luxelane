@@ -122,19 +122,20 @@ class _Line extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Row(
-      children: [
-        Expanded(
-          child: Text(
-            label,
-            style: LuxTypography.bodyMedium.copyWith(fontSize: 13),
-          ),
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                label,
+                style: LuxTypography.bodyMedium.copyWith(fontSize: 13),
+              ),
+            ),
+            Text(value,
+                style: LuxTypography.titleMedium.copyWith(fontSize: 13)),
+          ],
         ),
-        Text(value, style: LuxTypography.titleMedium.copyWith(fontSize: 13)),
-      ],
-    ),
-  );
+      );
 }
 
 class _EarningsCard extends StatelessWidget {
@@ -205,10 +206,10 @@ class _EmptyEarnings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const SizedBox(
-    height: 260,
-    child: EmptyState(
-      icon: Icons.account_balance_wallet_outlined,
-      message: 'Tu primer viaje\naparecerá aquí.',
-    ),
-  );
+        height: 260,
+        child: EmptyState(
+          icon: Icons.account_balance_wallet_outlined,
+          message: 'Tu primer viaje\naparecerá aquí.',
+        ),
+      );
 }

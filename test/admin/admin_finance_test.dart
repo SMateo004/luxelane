@@ -16,23 +16,24 @@ Booking _b(
   String? paymentId,
   VehicleClass vc = VehicleClass.business,
   BookingSettlement? settlement,
-}) => Booking(
-  id: id,
-  riderId: 'rider-1',
-  driverId: driverId,
-  origin: _place,
-  destination: _place,
-  scheduledAt: at ?? _now,
-  vehicleClass: vc,
-  serviceType: ServiceType.oneWay,
-  status: status,
-  estimatedPrice: price,
-  finalPrice: finalPrice,
-  paymentId: paymentId,
-  createdAt: at ?? _now,
-  updatedAt: at ?? _now,
-  settlement: settlement,
-);
+}) =>
+    Booking(
+      id: id,
+      riderId: 'rider-1',
+      driverId: driverId,
+      origin: _place,
+      destination: _place,
+      scheduledAt: at ?? _now,
+      vehicleClass: vc,
+      serviceType: ServiceType.oneWay,
+      status: status,
+      estimatedPrice: price,
+      finalPrice: finalPrice,
+      paymentId: paymentId,
+      createdAt: at ?? _now,
+      updatedAt: at ?? _now,
+      settlement: settlement,
+    );
 
 Payment _p(String id, String bookingId, PaymentStatus status, {DateTime? at}) =>
     Payment(

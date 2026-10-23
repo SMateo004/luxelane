@@ -30,111 +30,113 @@ final _rootKey = GlobalKey<NavigatorState>();
 GoRouter buildDriverRouter(
   AuthBloc authBloc,
   DriverBloc driverBloc,
-) => GoRouter(
-  navigatorKey: _rootKey,
-  initialLocation: DriverRoutes.home,
-  redirect: (context, state) {
-    final authState = authBloc.state;
-    final isAuth = authState is AuthAuthenticated;
-    final going = state.matchedLocation;
+) =>
+    GoRouter(
+      navigatorKey: _rootKey,
+      initialLocation: DriverRoutes.home,
+      redirect: (context, state) {
+        final authState = authBloc.state;
+        final isAuth = authState is AuthAuthenticated;
+        final going = state.matchedLocation;
 
-    // While checking initial auth, hold on
-    if (authState is AuthInitial || authState is AuthLoading) return null;
+        // While checking initial auth, hold on
+        if (authState is AuthInitial || authState is AuthLoading) return null;
 
-    // If not authenticated, go to login
-    if (!isAuth && going != DriverRoutes.login) {
-      return DriverRoutes.login;
-    }
+        // If not authenticated, go to login
+        if (!isAuth && going != DriverRoutes.login) {
+          return DriverRoutes.login;
+        }
 
-    // If authenticated and on login page, go to home
-    if (isAuth && going == DriverRoutes.login) {
-      return DriverRoutes.home;
-    }
+        // If authenticated and on login page, go to home
+        if (isAuth && going == DriverRoutes.login) {
+          return DriverRoutes.home;
+        }
 
-    // If driver hasn't completed onboarding, redirect there
-    if (isAuth &&
-        driverBloc.state is DriverOnboardingRequired &&
-        going != DriverRoutes.onboarding) {
-      return DriverRoutes.onboarding;
-    }
+        // If driver hasn't completed onboarding, redirect there
+        if (isAuth &&
+            driverBloc.state is DriverOnboardingRequired &&
+            going != DriverRoutes.onboarding) {
+          return DriverRoutes.onboarding;
+        }
 
-    // Once onboarding is done, don't let them revisit it
-    if (isAuth &&
-        driverBloc.state is! DriverOnboardingRequired &&
-        going == DriverRoutes.onboarding) {
-      return DriverRoutes.home;
-    }
+        // Once onboarding is done, don't let them revisit it
+        if (isAuth &&
+            driverBloc.state is! DriverOnboardingRequired &&
+            going == DriverRoutes.onboarding) {
+          return DriverRoutes.home;
+        }
 
-    return null;
-  },
-  refreshListenable: _DriverBlocListenable(authBloc, driverBloc),
-  routes: [
-    GoRoute(
-      path: DriverRoutes.login,
-      pageBuilder: (c, s) => _fade(const LoginPage(), s),
-    ),
-    GoRoute(
-      path: DriverRoutes.onboarding,
-      pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),
-    ),
-    GoRoute(
-      path: '/legal/terminos',
-      pageBuilder: (c, s) => _fade(const LegalPage(doc: LegalDoc.terms), s),
-    ),
-    GoRoute(
-      path: '/legal/privacidad',
-      pageBuilder: (c, s) => _fade(const LegalPage(doc: LegalDoc.privacy), s),
-    ),
-    GoRoute(
-      path: '/driver/active-ride/:bookingId',
-      pageBuilder:
-          (c, s) => _slide(
+        return null;
+      },
+      refreshListenable: _DriverBlocListenable(authBloc, driverBloc),
+      routes: [
+        GoRoute(
+          path: DriverRoutes.login,
+          pageBuilder: (c, s) => _fade(const LoginPage(), s),
+        ),
+        GoRoute(
+          path: DriverRoutes.onboarding,
+          pageBuilder: (c, s) => _fade(const DriverOnboardingScreen(), s),
+        ),
+        GoRoute(
+          path: '/legal/terminos',
+          pageBuilder: (c, s) => _fade(const LegalPage(doc: LegalDoc.terms), s),
+        ),
+        GoRoute(
+          path: '/legal/privacidad',
+          pageBuilder: (c, s) =>
+              _fade(const LegalPage(doc: LegalDoc.privacy), s),
+        ),
+        GoRoute(
+          path: '/driver/active-ride/:bookingId',
+          pageBuilder: (c, s) => _slide(
             DriverActiveRideScreen(
               bookingId: s.pathParameters['bookingId'] ?? '',
             ),
             s,
           ),
-    ),
-    StatefulShellRoute.indexedStack(
-      builder: (context, state, shell) => DriverShell(navigationShell: shell),
-      branches: [
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: DriverRoutes.home,
-              pageBuilder: (c, s) => _fade(const DriverHomeScreen(), s),
-            ),
-          ],
         ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: DriverRoutes.queue,
-              pageBuilder: (c, s) => _fade(const DriverQueueScreen(), s),
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, shell) =>
+              DriverShell(navigationShell: shell),
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: DriverRoutes.home,
+                  pageBuilder: (c, s) => _fade(const DriverHomeScreen(), s),
+                ),
+              ],
             ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: DriverRoutes.earnings,
-              pageBuilder: (c, s) => _fade(const DriverEarningsScreen(), s),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: DriverRoutes.queue,
+                  pageBuilder: (c, s) => _fade(const DriverQueueScreen(), s),
+                ),
+              ],
             ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
-              path: DriverRoutes.profile,
-              pageBuilder: (c, s) => _fade(const ProfileScreen(), s),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: DriverRoutes.earnings,
+                  pageBuilder: (c, s) => _fade(const DriverEarningsScreen(), s),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: DriverRoutes.profile,
+                  pageBuilder: (c, s) => _fade(const ProfileScreen(), s),
+                ),
+              ],
             ),
           ],
         ),
       ],
-    ),
-  ],
-  errorPageBuilder: (context, state) => _fade(const _NotFoundPage(), state),
-);
+      errorPageBuilder: (context, state) => _fade(const _NotFoundPage(), state),
+    );
 
 class _DriverBlocListenable extends ChangeNotifier {
   _DriverBlocListenable(this._authBloc, this._driverBloc) {
@@ -155,8 +157,9 @@ class _NotFoundPage extends StatelessWidget {
   const _NotFoundPage();
   @override
   Widget build(BuildContext context) => const Scaffold(
-    body: Center(
-      child: Text('404', style: TextStyle(color: LuxColors.ink, fontSize: 64)),
-    ),
-  );
+        body: Center(
+          child:
+              Text('404', style: TextStyle(color: LuxColors.ink, fontSize: 64)),
+        ),
+      );
 }

@@ -12,7 +12,8 @@ bool shouldRegisterPushToken({
   required bool web,
   required UserRole role,
   required String vapidKey,
-}) => !web || (role == UserRole.admin && vapidKey.isNotEmpty);
+}) =>
+    !web || (role == UserRole.admin && vapidKey.isNotEmpty);
 
 /// Mensajes push con la app cerrada: el sistema muestra la notificación. Tiene
 /// que ser una función de nivel superior (Android la invoca en su propio
@@ -22,7 +23,7 @@ Future<void> firebaseBackgroundHandler(RemoteMessage message) async {}
 
 class NotificationService {
   NotificationService({required UserRepository userRepository})
-    : _userRepo = userRepository;
+      : _userRepo = userRepository;
 
   final UserRepository _userRepo;
   final _messaging = FirebaseMessaging.instance;
@@ -48,10 +49,9 @@ class NotificationService {
     await _messaging.requestPermission();
 
     try {
-      final token =
-          kIsWeb
-              ? await _messaging.getToken(vapidKey: AppConfig.fcmVapidKey)
-              : await _messaging.getToken();
+      final token = kIsWeb
+          ? await _messaging.getToken(vapidKey: AppConfig.fcmVapidKey)
+          : await _messaging.getToken();
 
       if (token != null && token.isNotEmpty) {
         await _userRepo.updateFcmToken(userId: userId, token: token);

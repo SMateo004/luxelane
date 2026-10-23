@@ -42,14 +42,14 @@ class BookingFormData {
 
   /// La misma reserva con el recorrido real por calles.
   BookingFormData withRoute(RouteInfo route) => BookingFormData(
-    origin: origin,
-    destination: destination,
-    serviceType: serviceType,
-    scheduledAt: scheduledAt,
-    hours: hours,
-    routeDistanceKm: route.distanceKm,
-    routeDurationMin: route.durationMin,
-    polylinePoints: route.polylinePoints,
-    preferredClass: preferredClass,
-  );
+        origin: origin,
+        destination: destination,
+        serviceType: serviceType,
+        scheduledAt: scheduledAt,
+        hours: hours,
+        routeDistanceKm: route.distanceKm,
+        routeDurationMin: route.durationMin,
+        polylinePoints: route.polylinePoints,
+        preferredClass: preferredClass,
+      );
 }

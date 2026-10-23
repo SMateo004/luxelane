@@ -120,12 +120,11 @@ void main() {
         await _pump(
           tester,
           PickupCodeEntry(
-            onVerify:
-                (_) async => Left(
-                  tripFailureFor('failed-precondition', {
-                    'reason': 'pickup_locked',
-                  }),
-                ),
+            onVerify: (_) async => Left(
+              tripFailureFor('failed-precondition', {
+                'reason': 'pickup_locked',
+              }),
+            ),
           ),
         );
         await _type(tester, '1111');
@@ -158,12 +157,11 @@ void main() {
       await _pump(
         tester,
         PickupCodeEntry(
-          onVerify:
-              (_) async => Left(
-                tripFailureFor('failed-precondition', {
-                  'reason': 'code_expired',
-                }),
-              ),
+          onVerify: (_) async => Left(
+            tripFailureFor('failed-precondition', {
+              'reason': 'code_expired',
+            }),
+          ),
         ),
       );
       await _type(tester, '1234');

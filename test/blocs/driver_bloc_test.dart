@@ -62,33 +62,35 @@ Booking _makeBooking(
   BookingStatus status, {
   BookingSettlement? settlement,
   bool refunded = false,
-}) => Booking(
-  id: 'booking-1',
-  riderId: 'rider-1',
-  driverId: 'driver-1',
-  origin: const Place(address: 'Origin', lat: 0, lng: 0),
-  destination: const Place(address: 'Dest', lat: 1, lng: 1),
-  scheduledAt: _now,
-  vehicleClass: VehicleClass.business,
-  serviceType: ServiceType.oneWay,
-  status: status,
-  estimatedPrice: 75,
-  createdAt: _now,
-  updatedAt: _now,
-  settlement: settlement,
-  refunded: refunded,
-);
+}) =>
+    Booking(
+      id: 'booking-1',
+      riderId: 'rider-1',
+      driverId: 'driver-1',
+      origin: const Place(address: 'Origin', lat: 0, lng: 0),
+      destination: const Place(address: 'Dest', lat: 1, lng: 1),
+      scheduledAt: _now,
+      vehicleClass: VehicleClass.business,
+      serviceType: ServiceType.oneWay,
+      status: status,
+      estimatedPrice: 75,
+      createdAt: _now,
+      updatedAt: _now,
+      settlement: settlement,
+      refunded: refunded,
+    );
 
 OpenRequest _request(
   String id, {
   VehicleClass vehicleClass = VehicleClass.business,
-}) => OpenRequest(
-  id: id,
-  vehicleClass: vehicleClass,
-  serviceType: ServiceType.oneWay,
-  scheduledAt: _now,
-  estimatedPrice: 75,
-);
+}) =>
+    OpenRequest(
+      id: id,
+      vehicleClass: vehicleClass,
+      serviceType: ServiceType.oneWay,
+      scheduledAt: _now,
+      estimatedPrice: 75,
+    );
 
 void main() {
   late MockBookingRepository bookingRepo;
@@ -141,28 +143,27 @@ void main() {
   });
 
   DriverBloc bloc() => DriverBloc(
-    bookingRepository: bookingRepo,
-    tripFlowRepository: tripFlow,
-    userRepository: userRepo,
-    vehicleRepository: vehicleRepo,
-    mapsService: mapsService,
-  );
+        bookingRepository: bookingRepo,
+        tripFlowRepository: tripFlow,
+        userRepository: userRepo,
+        vehicleRepository: vehicleRepo,
+        mapsService: mapsService,
+      );
 
   group('DriverBloc', () {
     blocTest<DriverBloc, DriverState>(
       'emits DriverLoaded on DriverStarted',
       build: bloc,
       act: (bloc) => bloc.add(const DriverStarted(userId: 'driver-1')),
-      expect:
-          () => [
-            isA<DriverLoaded>()
-                .having((s) => s.isAvailable, 'isAvailable', false)
-                .having(
-                  (s) => s.vehicleClass,
-                  'vehicleClass',
-                  VehicleClass.business,
-                ),
-          ],
+      expect: () => [
+        isA<DriverLoaded>()
+            .having((s) => s.isAvailable, 'isAvailable', false)
+            .having(
+              (s) => s.vehicleClass,
+              'vehicleClass',
+              VehicleClass.business,
+            ),
+      ],
       verify: (_) {
         verify(() => userRepo.getDriverProfile('driver-1')).called(1);
       },
@@ -177,31 +178,30 @@ void main() {
             isAvailable: any(named: 'isAvailable'),
           ),
         ).thenAnswer((_) async => const Right(null));
-        return bloc()..emit(
-          DriverLoaded(
-            user: _driverUser,
-            profile: _driverProfile,
-            isAvailable: false,
-            bookings: const [],
-          ),
-        );
+        return bloc()
+          ..emit(
+            DriverLoaded(
+              user: _driverUser,
+              profile: _driverProfile,
+              isAvailable: false,
+              bookings: const [],
+            ),
+          );
       },
-      act:
-          (bloc) => bloc.add(
-            const DriverAvailabilityToggled(
-              userId: 'driver-1',
-              isAvailable: true,
-            ),
-          ),
-      expect:
-          () => [
-            isA<DriverLoaded>().having(
-              (s) => s.isAvailable,
-              'isAvailable',
-              true,
-            ),
-            isA<DriverLoaded>().having((s) => s.isTracking, 'isTracking', true),
-          ],
+      act: (bloc) => bloc.add(
+        const DriverAvailabilityToggled(
+          userId: 'driver-1',
+          isAvailable: true,
+        ),
+      ),
+      expect: () => [
+        isA<DriverLoaded>().having(
+          (s) => s.isAvailable,
+          'isAvailable',
+          true,
+        ),
+        isA<DriverLoaded>().having((s) => s.isTracking, 'isTracking', true),
+      ],
       verify: (_) {
         verify(
           () => userRepo.setDriverAvailability(
@@ -215,9 +215,8 @@ void main() {
     blocTest<DriverBloc, DriverState>(
       'DriverBookingAccepted pide al servidor driver_arriving (advanceBooking)',
       build: bloc,
-      act:
-          (bloc) =>
-              bloc.add(const DriverBookingAccepted(bookingId: 'booking-1')),
+      act: (bloc) =>
+          bloc.add(const DriverBookingAccepted(bookingId: 'booking-1')),
       verify: (_) {
         verify(
           () => tripFlow.advance(
@@ -238,12 +237,10 @@ void main() {
     blocTest<DriverBloc, DriverState>(
       'llegué, iniciar y completar van al servidor; nunca se escribe status',
       build: bloc,
-      act:
-          (bloc) =>
-              bloc
-                ..add(const DriverArrivedAtPickup(bookingId: 'booking-1'))
-                ..add(const DriverTripStarted(bookingId: 'booking-1'))
-                ..add(const DriverTripCompleted(bookingId: 'booking-1')),
+      act: (bloc) => bloc
+        ..add(const DriverArrivedAtPickup(bookingId: 'booking-1'))
+        ..add(const DriverTripStarted(bookingId: 'booking-1'))
+        ..add(const DriverTripCompleted(bookingId: 'booking-1')),
       verify: (_) {
         for (final to in [
           BookingStatus.driverArrived,
@@ -282,20 +279,17 @@ void main() {
         });
         return bloc();
       },
-      act:
-          (bloc) =>
-              bloc
-                ..add(const DriverTripCompleted(bookingId: 'booking-1'))
-                ..add(const DriverTripCompleted(bookingId: 'booking-1')),
+      act: (bloc) => bloc
+        ..add(const DriverTripCompleted(bookingId: 'booking-1'))
+        ..add(const DriverTripCompleted(bookingId: 'booking-1')),
       wait: const Duration(milliseconds: 120),
-      verify:
-          (_) => verify(
-            () => tripFlow.advance(
-              bookingId: 'booking-1',
-              to: BookingStatus.completed,
-              location: any(named: 'location'),
-            ),
-          ).called(1),
+      verify: (_) => verify(
+        () => tripFlow.advance(
+          bookingId: 'booking-1',
+          to: BookingStatus.completed,
+          location: any(named: 'location'),
+        ),
+      ).called(1),
     );
 
     blocTest<DriverBloc, DriverState>(
@@ -311,24 +305,24 @@ void main() {
           (_) async =>
               const Left(TripFailure(TripIssue.network, 'Sin conexión.')),
         );
-        return bloc()..emit(
-          DriverLoaded(
-            user: _driverUser,
-            profile: _driverProfile,
-            isAvailable: true,
-            bookings: const [],
-          ),
-        );
+        return bloc()
+          ..emit(
+            DriverLoaded(
+              user: _driverUser,
+              profile: _driverProfile,
+              isAvailable: true,
+              bookings: const [],
+            ),
+          );
       },
       act: (bloc) => bloc.add(const DriverTripStarted(bookingId: 'booking-1')),
-      expect:
-          () => [
-            isA<DriverLoaded>().having(
-              (s) => s.notice,
-              'notice',
-              contains('no se duplicará'),
-            ),
-          ],
+      expect: () => [
+        isA<DriverLoaded>().having(
+          (s) => s.notice,
+          'notice',
+          contains('no se duplicará'),
+        ),
+      ],
     );
 
     blocTest<DriverBloc, DriverState>(
@@ -343,22 +337,22 @@ void main() {
         ).thenAnswer(
           (_) async => const Left(AppUpdateRequiredFailure(forDriver: true)),
         );
-        return bloc()..emit(
-          DriverLoaded(
-            user: _driverUser,
-            profile: _driverProfile,
-            isAvailable: true,
-            bookings: const [],
-          ),
-        );
+        return bloc()
+          ..emit(
+            DriverLoaded(
+              user: _driverUser,
+              profile: _driverProfile,
+              isAvailable: true,
+              bookings: const [],
+            ),
+          );
       },
       act: (bloc) => bloc.add(const DriverTripStarted(bookingId: 'booking-1')),
-      expect:
-          () => [
-            isA<DriverLoaded>()
-                .having((s) => s.updateRequired?.forDriver, 'forDriver', isTrue)
-                .having((s) => s.updateSeq, 'updateSeq', 1),
-          ],
+      expect: () => [
+        isA<DriverLoaded>()
+            .having((s) => s.updateRequired?.forDriver, 'forDriver', isTrue)
+            .having((s) => s.updateSeq, 'updateSeq', 1),
+      ],
     );
 
     test('activeBooking returns correct booking from state', () {
@@ -439,39 +433,37 @@ void main() {
             ValidationFailure('Otro chófer ya aceptó este viaje.'),
           ),
         );
-        return bloc()..emit(
-          DriverLoaded(
-            user: _driverUser,
-            profile: _driverProfile,
-            isAvailable: true,
-            bookings: const [],
-          ),
-        );
+        return bloc()
+          ..emit(
+            DriverLoaded(
+              user: _driverUser,
+              profile: _driverProfile,
+              isAvailable: true,
+              bookings: const [],
+            ),
+          );
       },
-      act:
-          (bloc) => bloc.add(
-            const DriverRequestAccepted(
-              bookingId: 'booking-1',
-              driverId: 'driver-1',
-            ),
-          ),
-      expect:
-          () => [
-            isA<DriverLoaded>()
-                .having(
-                  (s) => s.notice,
-                  'notice',
-                  'Otro chófer ya aceptó este viaje.',
-                )
-                .having((s) => s.declinedIds, 'declinedIds', ['booking-1']),
-          ],
-      verify:
-          (_) => verifyNever(
-            () => bookingRepo.updateBookingStatus(
-              bookingId: any(named: 'bookingId'),
-              status: any(named: 'status'),
-            ),
-          ),
+      act: (bloc) => bloc.add(
+        const DriverRequestAccepted(
+          bookingId: 'booking-1',
+          driverId: 'driver-1',
+        ),
+      ),
+      expect: () => [
+        isA<DriverLoaded>()
+            .having(
+          (s) => s.notice,
+          'notice',
+          'Otro chófer ya aceptó este viaje.',
+        )
+            .having((s) => s.declinedIds, 'declinedIds', ['booking-1']),
+      ],
+      verify: (_) => verifyNever(
+        () => bookingRepo.updateBookingStatus(
+          bookingId: any(named: 'bookingId'),
+          status: any(named: 'status'),
+        ),
+      ),
     );
 
     test('solo ofrece solicitudes de su clase y si puede aceptarlas', () {
@@ -490,9 +482,8 @@ void main() {
       // Desconectado o con un viaje en curso: no se le ofrece nada.
       expect(base.copyWith(isAvailable: false).currentRequest, isNull);
       expect(
-        base
-            .copyWith(bookings: [_makeBooking(BookingStatus.inProgress)])
-            .currentRequest,
+        base.copyWith(
+            bookings: [_makeBooking(BookingStatus.inProgress)]).currentRequest,
         isNull,
       );
     });
@@ -540,11 +531,11 @@ void main() {
       'solo comparte ubicación en la reserva mientras el viaje está activo',
       () {
         DriverLoaded withStatus(BookingStatus s) => DriverLoaded(
-          user: _driverUser,
-          profile: _driverProfile,
-          isAvailable: true,
-          bookings: [_makeBooking(s)],
-        );
+              user: _driverUser,
+              profile: _driverProfile,
+              isAvailable: true,
+              bookings: [_makeBooking(s)],
+            );
         for (final s in [
           BookingStatus.driverArriving,
           BookingStatus.driverArrived,

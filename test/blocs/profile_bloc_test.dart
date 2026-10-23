@@ -62,13 +62,12 @@ void main() {
       );
     },
     skip: 2,
-    expect:
-        () => [
-          isA<ProfileLoaded>()
-              .having((s) => s.user.displayName, 'nombre', 'Ana María')
-              .having((s) => s.isError, 'error', false)
-              .having((s) => s.messageSeq, 'seq', 1),
-        ],
+    expect: () => [
+      isA<ProfileLoaded>()
+          .having((s) => s.user.displayName, 'nombre', 'Ana María')
+          .having((s) => s.isError, 'error', false)
+          .having((s) => s.messageSeq, 'seq', 1),
+    ],
   );
 
   blocTest<ProfileBloc, ProfileState>(
@@ -87,11 +86,10 @@ void main() {
       );
     },
     skip: 2,
-    expect:
-        () => [
-          isA<ProfileLoaded>()
-              .having((s) => s.user.displayName, 'nombre', 'Ana')
-              .having((s) => s.isError, 'error', true),
-        ],
+    expect: () => [
+      isA<ProfileLoaded>()
+          .having((s) => s.user.displayName, 'nombre', 'Ana')
+          .having((s) => s.isError, 'error', true),
+    ],
   );
 }

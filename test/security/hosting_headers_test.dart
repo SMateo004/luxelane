@@ -14,9 +14,8 @@ Map<String, String> _headersForAll(Map<String, dynamic> site) {
 }
 
 void main() {
-  final config =
-      jsonDecode(File('firebase.json').readAsStringSync())
-          as Map<String, dynamic>;
+  final config = jsonDecode(File('firebase.json').readAsStringSync())
+      as Map<String, dynamic>;
   final sites = (config['hosting'] as List).cast<Map<String, dynamic>>();
 
   test('hay dos sitios: rider y driver', () {

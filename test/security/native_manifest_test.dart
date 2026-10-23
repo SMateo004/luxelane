@@ -16,10 +16,9 @@ void main() {
       manifest,
       contains('android:dataExtractionRules="@xml/data_extraction_rules"'),
     );
-    final rules =
-        File(
-          'android/app/src/main/res/xml/data_extraction_rules.xml',
-        ).readAsStringSync();
+    final rules = File(
+      'android/app/src/main/res/xml/data_extraction_rules.xml',
+    ).readAsStringSync();
     expect(rules, contains('<cloud-backup>'));
     expect(rules, contains('<device-transfer>'));
     expect(rules, contains('domain="sharedpref"'));

@@ -123,10 +123,10 @@ class _WebHomePageState extends State<WebHomePage> {
   }
 
   void _scrollToTop() => _scroll.animateTo(
-    0,
-    duration: const Duration(milliseconds: 900),
-    curve: const Cubic(0.16, 1, 0.3, 1),
-  );
+        0,
+        duration: const Duration(milliseconds: 900),
+        curve: const Cubic(0.16, 1, 0.3, 1),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -322,9 +322,9 @@ class _HeroSectionState extends State<_HeroSection>
   }
 
   Animation<double> _fade(double from, double to) => CurvedAnimation(
-    parent: _intro,
-    curve: Interval(from, to, curve: Curves.easeOut),
-  );
+        parent: _intro,
+        curve: Interval(from, to, curve: Curves.easeOut),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -448,31 +448,30 @@ class _HeroSectionState extends State<_HeroSection>
                               color: Colors.white.withAlpha(55),
                             ),
                           ),
-                          child:
-                              narrow
-                                  // ── Mobile: stacked fields ──────────────
-                                  ? Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      _BarField(
-                                        label: 'RECOGIDA',
-                                        icon: Icons.radio_button_checked,
-                                        child: PlaceAutocompleteField(
-                                          label: '¿Dónde estás?',
-                                          hint: '¿Dónde estás?',
-                                          initialValue: widget.origin,
-                                          onPlaceSelected:
-                                              widget.onOriginSelected,
-                                          onMapPick: widget.onOriginMapPick,
-                                          glass: true,
-                                        ),
+                          child: narrow
+                              // ── Mobile: stacked fields ──────────────
+                              ? Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    _BarField(
+                                      label: 'RECOGIDA',
+                                      icon: Icons.radio_button_checked,
+                                      child: PlaceAutocompleteField(
+                                        label: '¿Dónde estás?',
+                                        hint: '¿Dónde estás?',
+                                        initialValue: widget.origin,
+                                        onPlaceSelected:
+                                            widget.onOriginSelected,
+                                        onMapPick: widget.onOriginMapPick,
+                                        glass: true,
                                       ),
-                                      Container(
-                                        height: 1,
-                                        color: Colors.white.withAlpha(30),
-                                      ),
-                                      isOneWay
-                                          ? _BarField(
+                                    ),
+                                    Container(
+                                      height: 1,
+                                      color: Colors.white.withAlpha(30),
+                                    ),
+                                    isOneWay
+                                        ? _BarField(
                                             label: 'DESTINO',
                                             icon: Icons.south,
                                             child: PlaceAutocompleteField(
@@ -486,7 +485,7 @@ class _HeroSectionState extends State<_HeroSection>
                                               glass: true,
                                             ),
                                           )
-                                          : _BarField(
+                                        : _BarField(
                                             label: 'DURACIÓN',
                                             icon: Icons.schedule_outlined,
                                             child: _HoursPicker(
@@ -494,104 +493,99 @@ class _HeroSectionState extends State<_HeroSection>
                                               onChanged: widget.onHoursChanged,
                                             ),
                                           ),
-                                      Container(
-                                        height: 1,
-                                        color: Colors.white.withAlpha(30),
+                                    Container(
+                                      height: 1,
+                                      color: Colors.white.withAlpha(30),
+                                    ),
+                                    _BarField(
+                                      label: 'FECHA Y HORA',
+                                      icon: Icons.calendar_today_outlined,
+                                      child: _DateDisplayTrigger(
+                                        date: widget.date,
+                                        isOpen: _dateOpen,
+                                        onTap: () => setState(
+                                          () => _dateOpen = !_dateOpen,
+                                        ),
                                       ),
-                                      _BarField(
+                                    ),
+                                    ClipRRect(
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(13),
+                                        bottomRight: Radius.circular(13),
+                                      ),
+                                      child: _BarCta(
+                                        onTap: widget.onSearch,
+                                        stacked: true,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              // ── Desktop: horizontal row ──────────────
+                              : Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: _BarField(
+                                        label: 'RECOGIDA',
+                                        icon: Icons.radio_button_checked,
+                                        child: PlaceAutocompleteField(
+                                          label: '¿Dónde estás?',
+                                          hint: '¿Dónde estás?',
+                                          initialValue: widget.origin,
+                                          onPlaceSelected:
+                                              widget.onOriginSelected,
+                                          onMapPick: widget.onOriginMapPick,
+                                          glass: true,
+                                        ),
+                                      ),
+                                    ),
+                                    const _BarSeparator(),
+                                    Expanded(
+                                      flex: 3,
+                                      child: isOneWay
+                                          ? _BarField(
+                                              label: 'DESTINO',
+                                              icon: Icons.south,
+                                              child: PlaceAutocompleteField(
+                                                label: '¿A dónde vas?',
+                                                initialValue:
+                                                    widget.destination,
+                                                sameCityAs: widget.origin,
+                                                onPlaceSelected: widget
+                                                    .onDestinationSelected,
+                                                onMapPick:
+                                                    widget.onDestinationMapPick,
+                                                glass: true,
+                                              ),
+                                            )
+                                          : _BarField(
+                                              label: 'DURACIÓN',
+                                              icon: Icons.schedule_outlined,
+                                              child: _HoursPicker(
+                                                hours: widget.hours,
+                                                onChanged:
+                                                    widget.onHoursChanged,
+                                              ),
+                                            ),
+                                    ),
+                                    const _BarSeparator(),
+                                    Expanded(
+                                      flex: 2,
+                                      child: _BarField(
                                         label: 'FECHA Y HORA',
                                         icon: Icons.calendar_today_outlined,
                                         child: _DateDisplayTrigger(
                                           date: widget.date,
                                           isOpen: _dateOpen,
-                                          onTap:
-                                              () => setState(
-                                                () => _dateOpen = !_dateOpen,
-                                              ),
-                                        ),
-                                      ),
-                                      ClipRRect(
-                                        borderRadius: const BorderRadius.only(
-                                          bottomLeft: Radius.circular(13),
-                                          bottomRight: Radius.circular(13),
-                                        ),
-                                        child: _BarCta(
-                                          onTap: widget.onSearch,
-                                          stacked: true,
-                                        ),
-                                      ),
-                                    ],
-                                  )
-                                  // ── Desktop: horizontal row ──────────────
-                                  : Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 3,
-                                        child: _BarField(
-                                          label: 'RECOGIDA',
-                                          icon: Icons.radio_button_checked,
-                                          child: PlaceAutocompleteField(
-                                            label: '¿Dónde estás?',
-                                            hint: '¿Dónde estás?',
-                                            initialValue: widget.origin,
-                                            onPlaceSelected:
-                                                widget.onOriginSelected,
-                                            onMapPick: widget.onOriginMapPick,
-                                            glass: true,
+                                          onTap: () => setState(
+                                            () => _dateOpen = !_dateOpen,
                                           ),
                                         ),
                                       ),
-                                      const _BarSeparator(),
-                                      Expanded(
-                                        flex: 3,
-                                        child:
-                                            isOneWay
-                                                ? _BarField(
-                                                  label: 'DESTINO',
-                                                  icon: Icons.south,
-                                                  child: PlaceAutocompleteField(
-                                                    label: '¿A dónde vas?',
-                                                    initialValue:
-                                                        widget.destination,
-                                                    sameCityAs: widget.origin,
-                                                    onPlaceSelected:
-                                                        widget
-                                                            .onDestinationSelected,
-                                                    onMapPick:
-                                                        widget
-                                                            .onDestinationMapPick,
-                                                    glass: true,
-                                                  ),
-                                                )
-                                                : _BarField(
-                                                  label: 'DURACIÓN',
-                                                  icon: Icons.schedule_outlined,
-                                                  child: _HoursPicker(
-                                                    hours: widget.hours,
-                                                    onChanged:
-                                                        widget.onHoursChanged,
-                                                  ),
-                                                ),
-                                      ),
-                                      const _BarSeparator(),
-                                      Expanded(
-                                        flex: 2,
-                                        child: _BarField(
-                                          label: 'FECHA Y HORA',
-                                          icon: Icons.calendar_today_outlined,
-                                          child: _DateDisplayTrigger(
-                                            date: widget.date,
-                                            isOpen: _dateOpen,
-                                            onTap:
-                                                () => setState(
-                                                  () => _dateOpen = !_dateOpen,
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                      _BarCta(onTap: widget.onSearch),
-                                    ],
-                                  ),
+                                    ),
+                                    _BarCta(onTap: widget.onSearch),
+                                  ],
+                                ),
                         ),
                       ),
                     ),
@@ -611,21 +605,19 @@ class _HeroSectionState extends State<_HeroSection>
                             child: AnimatedSize(
                               duration: const Duration(milliseconds: 420),
                               curve: Curves.easeInOut,
-                              child:
-                                  _originMapOpen &&
-                                          _originMapPlace != null &&
-                                          (_originMapPlace!.lat != 0.0 ||
-                                              _originMapPlace!.lng != 0.0)
-                                      ? _InlineMapPanel(
-                                        place: _originMapPlace!,
-                                        label: 'RECOGIDA',
-                                        onChangeTap: widget.onOriginMapPick,
-                                        onClose:
-                                            () => setState(
-                                              () => _originMapOpen = false,
-                                            ),
-                                      )
-                                      : const SizedBox.shrink(),
+                              child: _originMapOpen &&
+                                      _originMapPlace != null &&
+                                      (_originMapPlace!.lat != 0.0 ||
+                                          _originMapPlace!.lng != 0.0)
+                                  ? _InlineMapPanel(
+                                      place: _originMapPlace!,
+                                      label: 'RECOGIDA',
+                                      onChangeTap: widget.onOriginMapPick,
+                                      onClose: () => setState(
+                                        () => _originMapOpen = false,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
                             ),
                           ),
                           const SizedBox(width: 1),
@@ -635,22 +627,19 @@ class _HeroSectionState extends State<_HeroSection>
                             child: AnimatedSize(
                               duration: const Duration(milliseconds: 420),
                               curve: Curves.easeInOut,
-                              child:
-                                  _destMapOpen &&
-                                          _destMapPlace != null &&
-                                          (_destMapPlace!.lat != 0.0 ||
-                                              _destMapPlace!.lng != 0.0)
-                                      ? _InlineMapPanel(
-                                        place: _destMapPlace!,
-                                        label: 'DESTINO',
-                                        onChangeTap:
-                                            widget.onDestinationMapPick,
-                                        onClose:
-                                            () => setState(
-                                              () => _destMapOpen = false,
-                                            ),
-                                      )
-                                      : const SizedBox.shrink(),
+                              child: _destMapOpen &&
+                                      _destMapPlace != null &&
+                                      (_destMapPlace!.lat != 0.0 ||
+                                          _destMapPlace!.lng != 0.0)
+                                  ? _InlineMapPanel(
+                                      place: _destMapPlace!,
+                                      label: 'DESTINO',
+                                      onChangeTap: widget.onDestinationMapPick,
+                                      onClose: () => setState(
+                                        () => _destMapOpen = false,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
                             ),
                           ),
                           const SizedBox(width: 1),
@@ -660,20 +649,18 @@ class _HeroSectionState extends State<_HeroSection>
                             child: AnimatedSize(
                               duration: const Duration(milliseconds: 420),
                               curve: Curves.easeInOut,
-                              child:
-                                  _dateOpen
-                                      ? _InlineDatePanel(
-                                        date: widget.date,
-                                        onChanged: (d) {
-                                          widget.onDateChanged(d);
-                                          setState(() => _dateOpen = false);
-                                        },
-                                        onClose:
-                                            () => setState(
-                                              () => _dateOpen = false,
-                                            ),
-                                      )
-                                      : const SizedBox.shrink(),
+                              child: _dateOpen
+                                  ? _InlineDatePanel(
+                                      date: widget.date,
+                                      onChanged: (d) {
+                                        widget.onDateChanged(d);
+                                        setState(() => _dateOpen = false);
+                                      },
+                                      onClose: () => setState(
+                                        () => _dateOpen = false,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
                             ),
                           ),
                           const SizedBox(width: 180), // matches _BarCta
@@ -710,27 +697,32 @@ class _HeroBg extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Stack(
-    fit: StackFit.expand,
-    children: [
-      const DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF060C16), Color(0xFF0D1B2E), Color(0xFF091525)],
+        fit: StackFit.expand,
+        children: [
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Color(0xFF060C16),
+                  Color(0xFF0D1B2E),
+                  Color(0xFF091525)
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
-      CustomPaint(painter: _DotGridPainter(), child: const SizedBox.expand()),
-      Image.asset(
-        _asset,
-        fit: BoxFit.cover,
-        width: double.infinity,
-        height: double.infinity,
-        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-      ),
-    ],
-  );
+          CustomPaint(
+              painter: _DotGridPainter(), child: const SizedBox.expand()),
+          Image.asset(
+            _asset,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            height: double.infinity,
+            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+          ),
+        ],
+      );
 }
 
 class _DotGridPainter extends CustomPainter {
@@ -962,28 +954,28 @@ class _ServicePillToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    decoration: BoxDecoration(
-      color: Colors.white.withAlpha(20),
-      borderRadius: BorderRadius.circular(32),
-      border: Border.all(color: Colors.white.withAlpha(40)),
-    ),
-    padding: const EdgeInsets.all(3),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _Pill(
-          label: 'Solo ida',
-          selected: isOneWay,
-          onTap: () => onChanged(ServiceType.oneWay),
+        decoration: BoxDecoration(
+          color: Colors.white.withAlpha(20),
+          borderRadius: BorderRadius.circular(32),
+          border: Border.all(color: Colors.white.withAlpha(40)),
         ),
-        _Pill(
-          label: 'Por horas',
-          selected: !isOneWay,
-          onTap: () => onChanged(ServiceType.byTheHour),
+        padding: const EdgeInsets.all(3),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _Pill(
+              label: 'Solo ida',
+              selected: isOneWay,
+              onTap: () => onChanged(ServiceType.oneWay),
+            ),
+            _Pill(
+              label: 'Por horas',
+              selected: !isOneWay,
+              onTap: () => onChanged(ServiceType.byTheHour),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 }
 
 class _Pill extends StatelessWidget {
@@ -998,27 +990,27 @@ class _Pill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap,
-    child: AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
-      decoration: BoxDecoration(
-        color: selected ? Colors.white : Colors.transparent,
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontFamily: kSans,
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-          letterSpacing: 0.3,
-          color: selected ? LD.ink : Colors.white.withAlpha(170),
-          decoration: TextDecoration.none,
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
+          decoration: BoxDecoration(
+            color: selected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(28),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontFamily: kSans,
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.3,
+              color: selected ? LD.ink : Colors.white.withAlpha(170),
+              decoration: TextDecoration.none,
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 class _BarField extends StatelessWidget {
@@ -1033,33 +1025,33 @@ class _BarField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 22),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+        padding: const EdgeInsets.symmetric(horizontal: 22),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, size: 11, color: Colors.white.withAlpha(160)),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: kSans,
-                fontSize: 9.5,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 1.8,
-                color: Colors.white.withAlpha(160),
-                decoration: TextDecoration.none,
-              ),
+            Row(
+              children: [
+                Icon(icon, size: 11, color: Colors.white.withAlpha(160)),
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1.8,
+                    color: Colors.white.withAlpha(160),
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ],
             ),
+            const SizedBox(height: 5),
+            child,
           ],
         ),
-        const SizedBox(height: 5),
-        child,
-      ],
-    ),
-  );
+      );
 }
 
 class _BarSeparator extends StatelessWidget {
@@ -1088,54 +1080,52 @@ class _BarCtaState extends State<_BarCta> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-    onEnter: (_) => setState(() => _hover = true),
-    onExit: (_) => setState(() => _hover = false),
-    cursor: SystemMouseCursors.click,
-    child: GestureDetector(
-      onTap: widget.onTap,
-      child: ClipRRect(
-        borderRadius:
-            widget.stacked
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: ClipRRect(
+            borderRadius: widget.stacked
                 ? BorderRadius.zero
                 : const BorderRadius.only(
-                  topRight: Radius.circular(13),
-                  bottomRight: Radius.circular(13),
-                ),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: widget.stacked ? double.infinity : 180,
-          height: widget.stacked ? 54 : double.infinity,
-          decoration: BoxDecoration(
-            // Same soft relief as every Luxelane button.
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors:
-                  _hover
+                    topRight: Radius.circular(13),
+                    bottomRight: Radius.circular(13),
+                  ),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: widget.stacked ? double.infinity : 180,
+              height: widget.stacked ? 54 : double.infinity,
+              decoration: BoxDecoration(
+                // Same soft relief as every Luxelane button.
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: _hover
                       ? const [Color(0xFF3270B5), Color(0xFF1B4F8A)]
                       : const [Color(0xFF2A62A3), Color(0xFF17457A)],
+                ),
+                border: Border(
+                  left: BorderSide(color: Colors.white.withAlpha(40)),
+                  top: BorderSide(color: Colors.white.withAlpha(30)),
+                ),
+              ),
+              alignment: Alignment.center,
+              child: const Text(
+                'VER PRECIOS',
+                style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 2.2,
+                  color: Colors.white,
+                  decoration: TextDecoration.none,
+                ),
+              ),
             ),
-            border: Border(
-              left: BorderSide(color: Colors.white.withAlpha(40)),
-              top: BorderSide(color: Colors.white.withAlpha(30)),
-            ),
-          ),
-          alignment: Alignment.center,
-          child: const Text(
-            'VER PRECIOS',
-            style: TextStyle(
-              fontFamily: kSans,
-              fontSize: 10.5,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 2.2,
-              color: Colors.white,
-              decoration: TextDecoration.none,
-            ),
-          ),
+          ), // ClipRRect
         ),
-      ), // ClipRRect
-    ),
-  );
+      );
 }
 
 // ── Shared button widgets ─────────────────────────────────────
@@ -1159,32 +1149,31 @@ class _SolidBtnState extends State<_SolidBtn> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-    onEnter: (_) => setState(() => _h = true),
-    onExit: (_) => setState(() => _h = false),
-    cursor: SystemMouseCursors.click,
-    child: GestureDetector(
-      onTap: widget.onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
-        color:
-            widget.white
+        onEnter: (_) => setState(() => _h = true),
+        onExit: (_) => setState(() => _h = false),
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
+            color: widget.white
                 ? (_h ? const Color(0xFFE8EDF7) : Colors.white)
                 : (_h ? LD.sphLt : LD.sph),
-        child: Text(
-          widget.label.toUpperCase(),
-          style: TextStyle(
-            fontFamily: kSans,
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 2.0,
-            color: widget.white ? LD.ink : Colors.white,
-            decoration: TextDecoration.none,
+            child: Text(
+              widget.label.toUpperCase(),
+              style: TextStyle(
+                fontFamily: kSans,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 2.0,
+                color: widget.white ? LD.ink : Colors.white,
+                decoration: TextDecoration.none,
+              ),
+            ),
           ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 class _GhostBtn extends StatefulWidget {
@@ -1206,43 +1195,40 @@ class _GhostBtnState extends State<_GhostBtn> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-    onEnter: (_) => setState(() => _h = true),
-    onExit: (_) => setState(() => _h = false),
-    cursor: SystemMouseCursors.click,
-    child: GestureDetector(
-      onTap: widget.onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color:
-                _h
+        onEnter: (_) => setState(() => _h = true),
+        onExit: (_) => setState(() => _h = false),
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: _h
                     ? (widget.light ? Colors.white : LD.ink)
                     : (widget.light ? Colors.white.withAlpha(90) : LD.border),
-          ),
-          color:
-              _h
+              ),
+              color: _h
                   ? (widget.light ? Colors.white.withAlpha(20) : LD.bg3)
                   : Colors.transparent,
-        ),
-        child: Text(
-          widget.label.toUpperCase(),
-          style: TextStyle(
-            fontFamily: kSans,
-            fontSize: 10,
-            fontWeight: FontWeight.w500,
-            letterSpacing: 1.8,
-            color:
-                widget.light
+            ),
+            child: Text(
+              widget.label.toUpperCase(),
+              style: TextStyle(
+                fontFamily: kSans,
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 1.8,
+                color: widget.light
                     ? (_h ? Colors.white : Colors.white.withAlpha(166))
                     : LD.ink,
-            decoration: TextDecoration.none,
+                decoration: TextDecoration.none,
+              ),
+            ),
           ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 // ── Date / Hours pickers ──────────────────────────────────────
@@ -1264,34 +1250,34 @@ class _DateDisplayTrigger extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap,
-    child: MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: Row(
-        children: [
-          Text(
-            _fmt(date),
-            style: const TextStyle(
-              fontFamily: kSans,
-              fontSize: 13,
-              color: Colors.white,
-              decoration: TextDecoration.none,
-            ),
+        onTap: onTap,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: Row(
+            children: [
+              Text(
+                _fmt(date),
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 13,
+                  color: Colors.white,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+              const Spacer(),
+              AnimatedRotation(
+                turns: isOpen ? 0.5 : 0.0,
+                duration: const Duration(milliseconds: 250),
+                child: Icon(
+                  Icons.expand_more,
+                  size: 16,
+                  color: Colors.white.withAlpha(160),
+                ),
+              ),
+            ],
           ),
-          const Spacer(),
-          AnimatedRotation(
-            turns: isOpen ? 0.5 : 0.0,
-            duration: const Duration(milliseconds: 250),
-            child: Icon(
-              Icons.expand_more,
-              size: 16,
-              color: Colors.white.withAlpha(160),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }
 
 // ── Inline date + time panel ──────────────────────────────────────────────────
@@ -1343,36 +1329,33 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
       setState(() => _month = DateTime(_month.year, _month.month + 1));
 
   void _pickDay(int day) => setState(
-    () =>
-        _selected = DateTime(
+        () => _selected = DateTime(
           _month.year,
           _month.month,
           day,
           _selected.hour,
           _selected.minute,
         ),
-  );
+      );
 
   void _setHour(int h) => setState(
-    () =>
-        _selected = DateTime(
+        () => _selected = DateTime(
           _selected.year,
           _selected.month,
           _selected.day,
           h,
           _selected.minute,
         ),
-  );
+      );
   void _setMinute(int m) => setState(
-    () =>
-        _selected = DateTime(
+        () => _selected = DateTime(
           _selected.year,
           _selected.month,
           _selected.day,
           _selected.hour,
           m,
         ),
-  );
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -1422,25 +1405,24 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
-              children:
-                  _dayLabels
-                      .map(
-                        (d) => Expanded(
-                          child: Center(
-                            child: Text(
-                              d,
-                              style: const TextStyle(
-                                fontFamily: kSans,
-                                fontSize: 9,
-                                fontWeight: FontWeight.w600,
-                                color: white30,
-                                decoration: TextDecoration.none,
-                              ),
-                            ),
+              children: _dayLabels
+                  .map(
+                    (d) => Expanded(
+                      child: Center(
+                        child: Text(
+                          d,
+                          style: const TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: white30,
+                            decoration: TextDecoration.none,
                           ),
                         ),
-                      )
-                      .toList(),
+                      ),
+                    ),
+                  )
+                  .toList(),
             ),
           ),
           const SizedBox(height: 4),
@@ -1464,8 +1446,7 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                     builder: (_) {
                       final cellDate = DateTime(_month.year, _month.month, d);
                       final isPast = cellDate.isBefore(today);
-                      final isSel =
-                          _selected.year == _month.year &&
+                      final isSel = _selected.year == _month.year &&
                           _selected.month == _month.month &&
                           _selected.day == d;
                       return GestureDetector(
@@ -1483,10 +1464,9 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                               fontSize: 10.5,
                               fontWeight:
                                   isSel ? FontWeight.w600 : FontWeight.w400,
-                              color:
-                                  isPast
-                                      ? white30
-                                      : isSel
+                              color: isPast
+                                  ? white30
+                                  : isSel
                                       ? Colors.white
                                       : white60,
                               decoration: TextDecoration.none,
@@ -1578,15 +1558,15 @@ class _ChevBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap,
-    child: MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: Icon(icon, size: 16, color: const Color(0x80FFFFFF)),
-      ),
-    ),
-  );
+        onTap: onTap,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: Padding(
+            padding: const EdgeInsets.all(6),
+            child: Icon(icon, size: 16, color: const Color(0x80FFFFFF)),
+          ),
+        ),
+      );
 }
 
 // Hour / minute stepper column  (▲  value  ▼)
@@ -1602,42 +1582,42 @@ class _TimeStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      GestureDetector(
-        onTap: onInc,
-        child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: const Icon(
-            Icons.keyboard_arrow_up,
-            size: 18,
-            color: Color(0x80FFFFFF),
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: onInc,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: const Icon(
+                Icons.keyboard_arrow_up,
+                size: 18,
+                color: Color(0x80FFFFFF),
+              ),
+            ),
           ),
-        ),
-      ),
-      Text(
-        value.toString().padLeft(2, '0'),
-        style: const TextStyle(
-          fontFamily: kSans,
-          fontSize: 26,
-          fontWeight: FontWeight.w200,
-          color: Colors.white,
-          decoration: TextDecoration.none,
-        ),
-      ),
-      GestureDetector(
-        onTap: onDec,
-        child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: const Icon(
-            Icons.keyboard_arrow_down,
-            size: 18,
-            color: Color(0x80FFFFFF),
+          Text(
+            value.toString().padLeft(2, '0'),
+            style: const TextStyle(
+              fontFamily: kSans,
+              fontSize: 26,
+              fontWeight: FontWeight.w200,
+              color: Colors.white,
+              decoration: TextDecoration.none,
+            ),
           ),
-        ),
-      ),
-    ],
-  );
+          GestureDetector(
+            onTap: onDec,
+            child: MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: const Icon(
+                Icons.keyboard_arrow_down,
+                size: 18,
+                color: Color(0x80FFFFFF),
+              ),
+            ),
+          ),
+        ],
+      );
 }
 
 class _HoursPicker extends StatelessWidget {
@@ -1647,33 +1627,34 @@ class _HoursPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-    children: [
-      Text(
-        '$hours hora${hours > 1 ? 's' : ''}',
-        style: const TextStyle(
-          fontFamily: kSans,
-          fontSize: 13,
-          color: Colors.white,
-          decoration: TextDecoration.none,
-        ),
-      ),
-      const Spacer(),
-      IconButton(
-        icon: Icon(Icons.remove, size: 16, color: Colors.white.withAlpha(160)),
-        // Mínimo 2 h, como en móvil y en la tarifa.
-        onPressed: hours > 2 ? () => onChanged(hours - 1) : null,
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(),
-      ),
-      const SizedBox(width: 8),
-      IconButton(
-        icon: Icon(Icons.add, size: 16, color: Colors.white.withAlpha(160)),
-        onPressed: hours < 12 ? () => onChanged(hours + 1) : null,
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(),
-      ),
-    ],
-  );
+        children: [
+          Text(
+            '$hours hora${hours > 1 ? 's' : ''}',
+            style: const TextStyle(
+              fontFamily: kSans,
+              fontSize: 13,
+              color: Colors.white,
+              decoration: TextDecoration.none,
+            ),
+          ),
+          const Spacer(),
+          IconButton(
+            icon: Icon(Icons.remove,
+                size: 16, color: Colors.white.withAlpha(160)),
+            // Mínimo 2 h, como en móvil y en la tarifa.
+            onPressed: hours > 2 ? () => onChanged(hours - 1) : null,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            icon: Icon(Icons.add, size: 16, color: Colors.white.withAlpha(160)),
+            onPressed: hours < 12 ? () => onChanged(hours + 1) : null,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ],
+      );
 }
 
 /// Forces light theme on PlaceAutocompleteField inside the white booking bar.
@@ -1723,13 +1704,12 @@ class _MarqueeBarState extends State<_MarqueeBar>
 
   @override
   Widget build(BuildContext context) => Container(
-    height: 40,
-    color: LD.dark,
-    child: ClipRect(
-      child: AnimatedBuilder(
-        animation: _ctrl,
-        builder:
-            (_, __) => OverflowBox(
+        height: 40,
+        color: LD.dark,
+        child: ClipRect(
+          child: AnimatedBuilder(
+            animation: _ctrl,
+            builder: (_, __) => OverflowBox(
               maxWidth: double.infinity,
               alignment: Alignment.centerLeft,
               child: Transform.translate(
@@ -1765,9 +1745,9 @@ class _MarqueeBarState extends State<_MarqueeBar>
                 ),
               ),
             ),
-      ),
-    ),
-  );
+          ),
+        ),
+      );
 }
 
 // ============================================================
@@ -1790,22 +1770,22 @@ class _FleetSection extends StatelessWidget {
   // Same classes clients can book — First Class only when the admin enables
   // it. We describe what the client gets, never a make or model.
   static List<_FleetItem> get _vehicles => [
-    for (final vc in VehicleCatalog.bookable(
-      firstClassEnabled: RemoteFlags.instance.firstClassEnabled.value,
-    ))
-      _FleetItem(
-        vc: vc,
-        cls: vc.label,
-        model: vc.description,
-        asset: VehicleCatalog.carImage(vc),
-        tags: [
-          '${vc.capacity} pasajeros',
-          '${vc.luggageCapacity} maletas',
-          LuxPromise.fixedPrice,
-        ],
-        accent: LD.sph,
-      ),
-  ];
+        for (final vc in VehicleCatalog.bookable(
+          firstClassEnabled: RemoteFlags.instance.firstClassEnabled.value,
+        ))
+          _FleetItem(
+            vc: vc,
+            cls: vc.label,
+            model: vc.description,
+            asset: VehicleCatalog.carImage(vc),
+            tags: [
+              '${vc.capacity} pasajeros',
+              '${vc.luggageCapacity} maletas',
+              LuxPromise.fixedPrice,
+            ],
+            accent: LD.sph,
+          ),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -1869,11 +1849,10 @@ class _FleetSection extends StatelessWidget {
               padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 0),
               itemCount: _vehicles.length,
               separatorBuilder: (_, __) => const SizedBox(width: 2),
-              itemBuilder:
-                  (_, i) => _FleetCard(
-                    item: _vehicles[i],
-                    onBook: () => onBook(_vehicles[i].vc),
-                  ),
+              itemBuilder: (_, i) => _FleetCard(
+                item: _vehicles[i],
+                onBook: () => onBook(_vehicles[i].vc),
+              ),
             ),
           ),
           const SizedBox(height: 72),
@@ -1915,103 +1894,101 @@ class _FleetCardState extends State<_FleetCard> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-    onEnter: (_) => setState(() => _hover = true),
-    onExit: (_) => setState(() => _hover = false),
-    cursor: SystemMouseCursors.click,
-    child: GestureDetector(
-      onTap: widget.onBook,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 280),
-        width: 340,
-        decoration: BoxDecoration(
-          color: const Color(0xFF0D1B2E),
-          border: Border.all(
-            color:
-                _hover
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onBook,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 280),
+            width: 340,
+            decoration: BoxDecoration(
+              color: const Color(0xFF0D1B2E),
+              border: Border.all(
+                color: _hover
                     ? widget.item.accent.withAlpha(180)
                     : Colors.white.withAlpha(18),
-          ),
-        ),
-        child: Stack(
-          children: [
-            // Accent gradient wash
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      widget.item.accent.withAlpha(_hover ? 45 : 20),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
               ),
             ),
-            // Car image
-            Positioned(
-              bottom: 110,
-              left: 0,
-              right: 0,
-              height: 220,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: VehicleImage(widget.item.vc),
-              ),
-            ),
-            // Bottom info bar
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                padding: const EdgeInsets.fromLTRB(28, 22, 28, 28),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [
-                      const Color(0xFF070E18).withAlpha(242),
-                      Colors.transparent,
-                    ],
+            child: Stack(
+              children: [
+                // Accent gradient wash
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          widget.item.accent.withAlpha(_hover ? 45 : 20),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Class name — 22px serif
-                    Text(
-                      widget.item.cls,
-                      style: const TextStyle(
-                        fontFamily: kSerif,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white,
-                        height: 1.1,
-                        decoration: TextDecoration.none,
+                // Car image
+                Positioned(
+                  bottom: 110,
+                  left: 0,
+                  right: 0,
+                  height: 220,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: VehicleImage(widget.item.vc),
+                  ),
+                ),
+                // Bottom info bar
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(28, 22, 28, 28),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          const Color(0xFF070E18).withAlpha(242),
+                          Colors.transparent,
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    // Model — 12px dim
-                    Text(
-                      widget.item.model,
-                      style: TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white.withAlpha(115),
-                        height: 1.5,
-                        decoration: TextDecoration.none,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    // Tags
-                    Wrap(
-                      spacing: 6,
-                      runSpacing: 6,
-                      children:
-                          widget.item.tags
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Class name — 22px serif
+                        Text(
+                          widget.item.cls,
+                          style: const TextStyle(
+                            fontFamily: kSerif,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                            height: 1.1,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        // Model — 12px dim
+                        Text(
+                          widget.item.model,
+                          style: TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.white.withAlpha(115),
+                            height: 1.5,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Tags
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 6,
+                          children: widget.item.tags
                               .map(
                                 (t) => Container(
                                   padding: const EdgeInsets.symmetric(
@@ -2037,16 +2014,16 @@ class _FleetCardState extends State<_FleetCard> {
                                 ),
                               )
                               .toList(),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 // ============================================================
@@ -2212,26 +2189,25 @@ class _BusinessSection extends StatelessWidget {
   ];
 
   Widget _perksPanel(double hPad, double vPad) => Stack(
-    children: [
-      Positioned.fill(child: _VideoBackground(assetPath: _videoAsset)),
-      Positioned.fill(
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerRight,
-              end: Alignment.centerLeft,
-              colors: const [Color(0xCC070E18), Color(0xE8070E18)],
+        children: [
+          Positioned.fill(child: _VideoBackground(assetPath: _videoAsset)),
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerRight,
+                  end: Alignment.centerLeft,
+                  colors: const [Color(0xCC070E18), Color(0xE8070E18)],
+                ),
+              ),
             ),
           ),
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, vPad),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children:
-              _perks.asMap().entries.map((e) {
+          Padding(
+            padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, vPad),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: _perks.asMap().entries.map((e) {
                 final i = e.key;
                 return RevealOnScroll(
                   delay: Duration(milliseconds: i * 70),
@@ -2277,10 +2253,10 @@ class _BusinessSection extends StatelessWidget {
                   ),
                 );
               }).toList(),
-        ),
-      ),
-    ],
-  );
+            ),
+          ),
+        ],
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -2329,23 +2305,22 @@ class _BusinessSection extends StatelessWidget {
     return Container(
       key: sectionKey,
       color: LD.dark,
-      child:
-          narrow
-              ? Column(
+      child: narrow
+          ? Column(
+              children: [
+                headlinePanel,
+                SizedBox(height: 320, child: _perksPanel(hPad, 32)),
+              ],
+            )
+          : IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  headlinePanel,
-                  SizedBox(height: 320, child: _perksPanel(hPad, 32)),
+                  Expanded(child: headlinePanel),
+                  Expanded(child: _perksPanel(hPad, vPad)),
                 ],
-              )
-              : IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(child: headlinePanel),
-                    Expanded(child: _perksPanel(hPad, vPad)),
-                  ],
-                ),
               ),
+            ),
     );
   }
 }
@@ -2364,104 +2339,104 @@ class _CtaSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Stack(
-    children: [
-      // Video background (looping, muted, full-bleed)
-      Positioned.fill(child: _VideoBackground(assetPath: _videoAsset)),
-      // Dark overlay — video stays cinematic, text is bright
-      const Positioned.fill(child: ColoredBox(color: Color(0x85050A12))),
-      // Content
-      Padding(
-        padding: const EdgeInsets.fromLTRB(64, 80, 64, 80),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 900),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                RevealOnScroll(
-                  dx: -100,
-                  threshold: 0.9,
-                  child: const Text(
-                    'CUANDO QUIERAS. DONDE QUIERAS.',
-                    style: TextStyle(
-                      fontFamily: kSans,
-                      fontSize: 9,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 4.0,
-                      color: Color(0xE0FFFFFF),
-                      decoration: TextDecoration.none,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 24),
-                RevealOnScroll(
-                  delay: const Duration(milliseconds: 80),
-                  dx: -100,
-                  threshold: 0.9,
-                  child: Text(
-                    'Tu próximo viaje,',
-                    style: displayText(size: 96, color: Colors.white),
-                  ),
-                ),
-                RevealOnScroll(
-                  delay: const Duration(milliseconds: 120),
-                  dx: -100,
-                  threshold: 0.9,
-                  child: Text(
-                    'en tus términos.',
-                    style: displayText(
-                      size: 96,
-                      color: Colors.white,
-                      style: FontStyle.italic,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 48),
-                RevealOnScroll(
-                  delay: const Duration(milliseconds: 160),
-                  dx: -80,
-                  threshold: 0.9,
-                  child: const Text(
-                    'Precio fijo  ·  Chóferes profesionales  ·  En todo el mundo',
-                    style: TextStyle(
-                      fontFamily: kSans,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                      letterSpacing: 2.8,
-                      color: Color(0xCCFFFFFF),
-                      decoration: TextDecoration.none,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 52),
-                RevealOnScroll(
-                  delay: const Duration(milliseconds: 220),
-                  dx: -80,
-                  threshold: 0.9,
-                  child: Row(
-                    children: [
-                      _SolidBtn(
-                        label: 'Reservar un viaje',
-                        white: true,
-                        onTap: onBook,
+        children: [
+          // Video background (looping, muted, full-bleed)
+          Positioned.fill(child: _VideoBackground(assetPath: _videoAsset)),
+          // Dark overlay — video stays cinematic, text is bright
+          const Positioned.fill(child: ColoredBox(color: Color(0x85050A12))),
+          // Content
+          Padding(
+            padding: const EdgeInsets.fromLTRB(64, 80, 64, 80),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 900),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    RevealOnScroll(
+                      dx: -100,
+                      threshold: 0.9,
+                      child: const Text(
+                        'CUANDO QUIERAS. DONDE QUIERAS.',
+                        style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 4.0,
+                          color: Color(0xE0FFFFFF),
+                          decoration: TextDecoration.none,
+                        ),
                       ),
-                      const SizedBox(width: 20),
-                      _GhostBtn(
-                        label: 'Ver flota',
-                        light: true,
-                        onTap: onViewFleet,
+                    ),
+                    const SizedBox(height: 24),
+                    RevealOnScroll(
+                      delay: const Duration(milliseconds: 80),
+                      dx: -100,
+                      threshold: 0.9,
+                      child: Text(
+                        'Tu próximo viaje,',
+                        style: displayText(size: 96, color: Colors.white),
                       ),
-                    ],
-                  ),
+                    ),
+                    RevealOnScroll(
+                      delay: const Duration(milliseconds: 120),
+                      dx: -100,
+                      threshold: 0.9,
+                      child: Text(
+                        'en tus términos.',
+                        style: displayText(
+                          size: 96,
+                          color: Colors.white,
+                          style: FontStyle.italic,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 48),
+                    RevealOnScroll(
+                      delay: const Duration(milliseconds: 160),
+                      dx: -80,
+                      threshold: 0.9,
+                      child: const Text(
+                        'Precio fijo  ·  Chóferes profesionales  ·  En todo el mundo',
+                        style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w400,
+                          letterSpacing: 2.8,
+                          color: Color(0xCCFFFFFF),
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 52),
+                    RevealOnScroll(
+                      delay: const Duration(milliseconds: 220),
+                      dx: -80,
+                      threshold: 0.9,
+                      child: Row(
+                        children: [
+                          _SolidBtn(
+                            label: 'Reservar un viaje',
+                            white: true,
+                            onTap: onBook,
+                          ),
+                          const SizedBox(width: 20),
+                          _GhostBtn(
+                            label: 'Ver flota',
+                            light: true,
+                            onTap: onViewFleet,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-    ],
-  );
+        ],
+      );
 }
 
 // ============================================================
@@ -2649,7 +2624,7 @@ class _BookSection extends StatefulWidget {
 class _BookSectionState extends State<_BookSection> {
   final _sectionKey = GlobalKey();
   double?
-  _absoluteTop; // measured once, then all math is pure scroll arithmetic
+      _absoluteTop; // measured once, then all math is pure scroll arithmetic
   static const _numPages = 4;
 
   @override
@@ -2942,23 +2917,21 @@ class _BookWidget extends StatelessWidget {
               width: bookW / 2,
               child: Transform(
                 alignment: Alignment.centerLeft,
-                transform:
-                    Matrix4.identity()
-                      ..setEntry(3, 2, 0.001)
-                      ..rotateY(-flipAngle),
+                transform: Matrix4.identity()
+                  ..setEntry(3, 2, 0.001)
+                  ..rotateY(-flipAngle),
                 child: ClipRect(
-                  child:
-                      leafFront
-                          ? _BookRightPanel(data: current, isMobile: isMobile)
-                          : Transform(
-                            alignment: Alignment.center,
-                            transform: Matrix4.rotationY(math.pi),
-                            child: _BookLeftPanel(
-                              data: next,
-                              height: bookH,
-                              isMobile: isMobile,
-                            ),
+                  child: leafFront
+                      ? _BookRightPanel(data: current, isMobile: isMobile)
+                      : Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.rotationY(math.pi),
+                          child: _BookLeftPanel(
+                            data: next,
+                            height: bookH,
+                            isMobile: isMobile,
                           ),
+                        ),
                 ),
               ),
             ),
@@ -2973,10 +2946,9 @@ class _BookWidget extends StatelessWidget {
               child: IgnorePointer(
                 child: Transform(
                   alignment: Alignment.centerLeft,
-                  transform:
-                      Matrix4.identity()
-                        ..setEntry(3, 2, 0.001)
-                        ..rotateY(-flipAngle),
+                  transform: Matrix4.identity()
+                    ..setEntry(3, 2, 0.001)
+                    ..rotateY(-flipAngle),
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -3053,27 +3025,25 @@ class _BookLeftPanel extends StatelessWidget {
     return ClipRect(
       child: Container(
         decoration: BoxDecoration(
-          gradient:
-              data.photoPath == null
-                  ? const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFF060E1A),
-                      Color(0xFF0D2040),
-                      Color(0xFF060E1A),
-                    ],
-                    stops: [0, 0.55, 1],
-                  )
-                  : null,
-          image:
-              data.photoPath != null
-                  ? DecorationImage(
-                    image: AssetImage(data.photoPath!),
-                    fit: BoxFit.cover,
-                    onError: (_, __) {},
-                  )
-                  : null,
+          gradient: data.photoPath == null
+              ? const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF060E1A),
+                    Color(0xFF0D2040),
+                    Color(0xFF060E1A),
+                  ],
+                  stops: [0, 0.55, 1],
+                )
+              : null,
+          image: data.photoPath != null
+              ? DecorationImage(
+                  image: AssetImage(data.photoPath!),
+                  fit: BoxFit.cover,
+                  onError: (_, __) {},
+                )
+              : null,
         ),
         child: Stack(
           children: [

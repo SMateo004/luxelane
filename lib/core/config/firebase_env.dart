@@ -11,15 +11,14 @@ enum FirebaseEnv {
   static FirebaseEnv get current => parse(_raw);
 
   static FirebaseEnv parse(String raw) => switch (raw) {
-    '' || 'staging' => FirebaseEnv.staging,
-    'production' => FirebaseEnv.production,
-    _ =>
-      throw ArgumentError.value(
-        raw,
-        'FIREBASE_ENV',
-        'Debe ser "staging" o "production"',
-      ),
-  };
+        '' || 'staging' => FirebaseEnv.staging,
+        'production' => FirebaseEnv.production,
+        _ => throw ArgumentError.value(
+            raw,
+            'FIREBASE_ENV',
+            'Debe ser "staging" o "production"',
+          ),
+      };
 }
 
 /// El proyecto de staging aún tiene los valores de marcador de

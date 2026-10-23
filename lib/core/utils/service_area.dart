@@ -152,8 +152,7 @@ abstract final class ServiceArea {
     double rad(double d) => d * math.pi / 180;
     final dLat = rad(lat2 - lat1);
     final dLng = rad(lng2 - lng1);
-    final a =
-        math.pow(math.sin(dLat / 2), 2) +
+    final a = math.pow(math.sin(dLat / 2), 2) +
         math.cos(rad(lat1)) *
             math.cos(rad(lat2)) *
             math.pow(math.sin(dLng / 2), 2);
@@ -230,15 +229,14 @@ abstract final class ServiceArea {
     r'^(av|avda|avenida|calle|c|pasaje|psje|carretera|camino|barrio|b|urb|urbanizacion|zona|villa)\b',
   );
 
-  static String _fold(String s) =>
-      s
-          .toLowerCase()
-          .replaceAll(RegExp('[áàä]'), 'a')
-          .replaceAll(RegExp('[éèë]'), 'e')
-          .replaceAll(RegExp('[íìï]'), 'i')
-          .replaceAll(RegExp('[óòö]'), 'o')
-          .replaceAll(RegExp('[úùü]'), 'u')
-          .trim();
+  static String _fold(String s) => s
+      .toLowerCase()
+      .replaceAll(RegExp('[áàä]'), 'a')
+      .replaceAll(RegExp('[éèë]'), 'e')
+      .replaceAll(RegExp('[íìï]'), 'i')
+      .replaceAll(RegExp('[óòö]'), 'o')
+      .replaceAll(RegExp('[úùü]'), 'u')
+      .trim();
 
   /// The airport [p] is at, matched by its coordinates.
   static ServiceAirport? airportAt(Place p) {

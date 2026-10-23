@@ -31,10 +31,9 @@ class AppShell extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) =>
-      isWeb(context)
-          ? _WebShell(shell: navigationShell, tabs: _tabs)
-          : _MobileShell(shell: navigationShell, tabs: _tabs);
+  Widget build(BuildContext context) => isWeb(context)
+      ? _WebShell(shell: navigationShell, tabs: _tabs)
+      : _MobileShell(shell: navigationShell, tabs: _tabs);
 }
 
 // ---------------------------------------------------------------------------
@@ -48,43 +47,42 @@ class _MobileShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: shell,
-    bottomNavigationBar: DecoratedBox(
-      decoration: const BoxDecoration(
-        color: LuxColors.surface,
-        border: Border(top: BorderSide(color: LuxColors.border)),
-        boxShadow: [
-          BoxShadow(
-            color: LuxColors.shadow,
-            blurRadius: 20,
-            offset: Offset(0, -4),
+        body: shell,
+        bottomNavigationBar: DecoratedBox(
+          decoration: const BoxDecoration(
+            color: LuxColors.surface,
+            border: Border(top: BorderSide(color: LuxColors.border)),
+            boxShadow: [
+              BoxShadow(
+                color: LuxColors.shadow,
+                blurRadius: 20,
+                offset: Offset(0, -4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
-          height: 64,
-          child: Row(
-            children: [
-              for (var i = 0; i < tabs.length; i++)
-                Expanded(
-                  child: _MobileTabItem(
-                    tab: tabs[i],
-                    active: shell.currentIndex == i,
-                    onTap:
-                        () => shell.goBranch(
+          child: SafeArea(
+            top: false,
+            child: SizedBox(
+              height: 64,
+              child: Row(
+                children: [
+                  for (var i = 0; i < tabs.length; i++)
+                    Expanded(
+                      child: _MobileTabItem(
+                        tab: tabs[i],
+                        active: shell.currentIndex == i,
+                        onTap: () => shell.goBranch(
                           i,
                           initialLocation: i == shell.currentIndex,
                         ),
-                  ),
-                ),
-            ],
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 class _MobileTabItem extends StatelessWidget {
@@ -99,44 +97,44 @@ class _MobileTabItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-    selected: active,
-    button: true,
-    label: tab.label,
-    child: InkResponse(
-      onTap: onTap,
-      radius: 40,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Hairline indicator: quiet, precise — no loud pills.
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 250),
-            curve: Curves.easeOutCubic,
-            width: active ? 18 : 0,
-            height: 1.5,
-            margin: const EdgeInsets.only(bottom: 8),
-            color: LuxColors.sapphire,
+        selected: active,
+        button: true,
+        label: tab.label,
+        child: InkResponse(
+          onTap: onTap,
+          radius: 40,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Hairline indicator: quiet, precise — no loud pills.
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutCubic,
+                width: active ? 18 : 0,
+                height: 1.5,
+                margin: const EdgeInsets.only(bottom: 8),
+                color: LuxColors.sapphire,
+              ),
+              Icon(
+                active ? tab.activeIcon : tab.icon,
+                size: 22,
+                color: active ? LuxColors.sapphire : LuxColors.inkTertiary,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                tab.label.toUpperCase(),
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 9,
+                  letterSpacing: 1.2,
+                  fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                  color: active ? LuxColors.sapphire : LuxColors.inkTertiary,
+                ),
+              ),
+            ],
           ),
-          Icon(
-            active ? tab.activeIcon : tab.icon,
-            size: 22,
-            color: active ? LuxColors.sapphire : LuxColors.inkTertiary,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            tab.label.toUpperCase(),
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 9,
-              letterSpacing: 1.2,
-              fontWeight: active ? FontWeight.w600 : FontWeight.w400,
-              color: active ? LuxColors.sapphire : LuxColors.inkTertiary,
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -150,20 +148,20 @@ class _WebShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<AuthBloc, AuthState>(
-    builder: (context, auth) {
-      return Scaffold(
-        // Home page (index 0) has its own full-bleed nav overlay —
-        // don't add a second header above it.
-        body: Column(
-          children: [
-            if (shell.currentIndex != 0)
-              _WebNav(auth: auth, shell: shell, tabs: tabs),
-            Expanded(child: shell),
-          ],
-        ),
+        builder: (context, auth) {
+          return Scaffold(
+            // Home page (index 0) has its own full-bleed nav overlay —
+            // don't add a second header above it.
+            body: Column(
+              children: [
+                if (shell.currentIndex != 0)
+                  _WebNav(auth: auth, shell: shell, tabs: tabs),
+                Expanded(child: shell),
+              ],
+            ),
+          );
+        },
       );
-    },
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -242,35 +240,35 @@ class _ShellLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-    cursor: SystemMouseCursors.click,
-    child: GestureDetector(
-      onTap: onTap,
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Text(
-            label.toUpperCase(),
-            style: TextStyle(
-              fontFamily: 'Montserrat',
-              fontSize: 11,
-              letterSpacing: 1.2,
-              color: active ? Colors.white : Colors.white.withAlpha(150),
-            ),
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Text(
+                label.toUpperCase(),
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontSize: 11,
+                  letterSpacing: 1.2,
+                  color: active ? Colors.white : Colors.white.withAlpha(150),
+                ),
+              ),
+              Positioned(
+                left: 0,
+                bottom: -6,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  height: 1,
+                  width: active ? 18 : 0,
+                  color: const Color(0xFF8CB2E3),
+                ),
+              ),
+            ],
           ),
-          Positioned(
-            left: 0,
-            bottom: -6,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              height: 1,
-              width: active ? 18 : 0,
-              color: const Color(0xFF8CB2E3),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }
 
 class _AvatarBtn extends StatelessWidget {

@@ -5,7 +5,7 @@ import '../repositories/repositories.dart';
 
 class NotificationRepositoryImpl implements NotificationRepository {
   NotificationRepositoryImpl({required FirebaseFirestore firestore})
-    : _db = firestore;
+      : _db = firestore;
 
   final FirebaseFirestore _db;
 
@@ -19,12 +19,11 @@ class NotificationRepositoryImpl implements NotificationRepository {
         .limit(50)
         .snapshots()
         .map(
-          (snap) =>
-              snap.docs
-                  .map(
-                    (d) => AppNotification.fromJson({...d.data(), 'id': d.id}),
-                  )
-                  .toList(),
+          (snap) => snap.docs
+              .map(
+                (d) => AppNotification.fromJson({...d.data(), 'id': d.id}),
+              )
+              .toList(),
         );
   }
 

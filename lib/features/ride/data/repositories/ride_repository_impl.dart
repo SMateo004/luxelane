@@ -52,11 +52,10 @@ class RideRepositoryImpl implements RideRepository {
   @override
   Future<Either<Failure, List<Ride>>> getRidesByRider(String riderId) async {
     try {
-      final snap =
-          await _col
-              .where('riderId', isEqualTo: riderId)
-              .orderBy('startedAt', descending: true)
-              .get();
+      final snap = await _col
+          .where('riderId', isEqualTo: riderId)
+          .orderBy('startedAt', descending: true)
+          .get();
       return Right(
         snap.docs.map((d) => Ride.fromJson({'id': d.id, ...d.data()})).toList(),
       );
@@ -68,11 +67,10 @@ class RideRepositoryImpl implements RideRepository {
   @override
   Future<Either<Failure, List<Ride>>> getRidesByDriver(String driverId) async {
     try {
-      final snap =
-          await _col
-              .where('driverId', isEqualTo: driverId)
-              .orderBy('startedAt', descending: true)
-              .get();
+      final snap = await _col
+          .where('driverId', isEqualTo: driverId)
+          .orderBy('startedAt', descending: true)
+          .get();
       return Right(
         snap.docs.map((d) => Ride.fromJson({'id': d.id, ...d.data()})).toList(),
       );

@@ -19,71 +19,70 @@ class PricingTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<AdminBloc, AdminState>(
-    builder: (context, state) {
-      final custom =
-          VehicleClass.values
+        builder: (context, state) {
+          final custom = VehicleClass.values
               .expand((vc) => ServiceType.values.map((st) => (vc, st)))
               .where((p) => state.hasCustomRule(p.$1, p.$2))
               .length;
-      final disabled =
-          VehicleClass.values
+          final disabled = VehicleClass.values
               .expand((vc) => ServiceType.values.map((st) => (vc, st)))
               .where((p) => !state.effectiveRule(p.$1, p.$2).isActive)
               .length;
-      return ListView(
-        padding: const EdgeInsets.all(LuxSpacing.lg),
-        children: [
-          const SectionHeader(title: 'Tarifas por servicio'),
-          const SizedBox(height: LuxSpacing.sm),
-          const Text(
-            'Cada combinación de servicio y clase tiene su propia tarifa. '
-            'Los cambios se aplican al instante en la web y la app: precios '
-            'mostrados e importe de las nuevas reservas. Las reservas ya '
-            'creadas conservan su precio.',
-            style: LuxTypography.caption,
-          ),
-          const SizedBox(height: LuxSpacing.md),
-          Wrap(
-            spacing: LuxSpacing.sm,
-            runSpacing: LuxSpacing.sm,
+          return ListView(
+            padding: const EdgeInsets.all(LuxSpacing.lg),
             children: [
-              AdminTag('$custom personalizadas', color: LuxColors.sapphire),
-              AdminTag(
-                '${VehicleClass.values.length * ServiceType.values.length - custom} sin configurar',
-                color: LuxColors.inkTertiary,
+              const SectionHeader(title: 'Tarifas por servicio'),
+              const SizedBox(height: LuxSpacing.sm),
+              const Text(
+                'Cada combinación de servicio y clase tiene su propia tarifa. '
+                'Los cambios se aplican al instante en la web y la app: precios '
+                'mostrados e importe de las nuevas reservas. Las reservas ya '
+                'creadas conservan su precio.',
+                style: LuxTypography.caption,
               ),
-              if (disabled > 0)
-                AdminTag('$disabled desactivadas', color: LuxColors.warning),
-              if (state.isMaintenanceMode)
-                const AdminTag(
-                  'Reservas en pausa (mantenimiento)',
-                  color: LuxColors.error,
-                ),
+              const SizedBox(height: LuxSpacing.md),
+              Wrap(
+                spacing: LuxSpacing.sm,
+                runSpacing: LuxSpacing.sm,
+                children: [
+                  AdminTag('$custom personalizadas', color: LuxColors.sapphire),
+                  AdminTag(
+                    '${VehicleClass.values.length * ServiceType.values.length - custom} sin configurar',
+                    color: LuxColors.inkTertiary,
+                  ),
+                  if (disabled > 0)
+                    AdminTag('$disabled desactivadas',
+                        color: LuxColors.warning),
+                  if (state.isMaintenanceMode)
+                    const AdminTag(
+                      'Reservas en pausa (mantenimiento)',
+                      color: LuxColors.error,
+                    ),
+                ],
+              ),
+              for (final st in ServiceType.values) ...[
+                const SizedBox(height: LuxSpacing.xl),
+                Text(st.label, style: LuxTypography.titleLarge),
+                Text(st.description, style: LuxTypography.caption),
+                const SizedBox(height: LuxSpacing.md),
+                for (final vc in VehicleClass.values)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: LuxSpacing.sm),
+                    child: _PricingCard(
+                      key: ValueKey(PricingRule.idFor(vc, st)),
+                      rule: state.effectiveRule(vc, st),
+                      isCustom: state.hasCustomRule(vc, st),
+                      updatedBy: () {
+                        final by = state.effectiveRule(vc, st).updatedBy;
+                        return by == null ? null : state.userName(by);
+                      }(),
+                    ),
+                  ),
+              ],
             ],
-          ),
-          for (final st in ServiceType.values) ...[
-            const SizedBox(height: LuxSpacing.xl),
-            Text(st.label, style: LuxTypography.titleLarge),
-            Text(st.description, style: LuxTypography.caption),
-            const SizedBox(height: LuxSpacing.md),
-            for (final vc in VehicleClass.values)
-              Padding(
-                padding: const EdgeInsets.only(bottom: LuxSpacing.sm),
-                child: _PricingCard(
-                  key: ValueKey(PricingRule.idFor(vc, st)),
-                  rule: state.effectiveRule(vc, st),
-                  isCustom: state.hasCustomRule(vc, st),
-                  updatedBy: () {
-                    final by = state.effectiveRule(vc, st).updatedBy;
-                    return by == null ? null : state.userName(by);
-                  }(),
-                ),
-              ),
-          ],
-        ],
+          );
+        },
       );
-    },
-  );
 }
 
 class _PricingCard extends StatefulWidget {
@@ -179,12 +178,11 @@ class _PricingCardState extends State<_PricingCard> {
     super.dispose();
   }
 
-  String _summary(PricingRule r) =>
-      _hourly
-          ? '${r.basePriceUsd > 0 ? '${bs(r.basePriceUsd, short: true)} + ' : ''}'
-              '${bs(r.pricePerHourUsd, short: true)}/h · mín. ${bs(r.minimumPriceUsd, short: true)}'
-          : '${bs(r.basePriceUsd, short: true)} + ${bs(r.pricePerKmUsd)}/km · '
-              'mín. ${bs(r.minimumPriceUsd, short: true)}';
+  String _summary(PricingRule r) => _hourly
+      ? '${r.basePriceUsd > 0 ? '${bs(r.basePriceUsd, short: true)} + ' : ''}'
+          '${bs(r.pricePerHourUsd, short: true)}/h · mín. ${bs(r.minimumPriceUsd, short: true)}'
+      : '${bs(r.basePriceUsd, short: true)} + ${bs(r.pricePerKmUsd)}/km · '
+          'mín. ${bs(r.minimumPriceUsd, short: true)}';
 
   Future<void> _save() async {
     final draft = _draft;
@@ -198,8 +196,7 @@ class _PricingCardState extends State<_PricingCard> {
     final ok = await confirmAdminAction(
       context,
       title: 'Guardar tarifa',
-      message:
-          '${old.vehicleClass.label} · ${old.serviceType.label}\n\n'
+      message: '${old.vehicleClass.label} · ${old.serviceType.label}\n\n'
           'Antes: ${_summary(old)}${old.isActive ? '' : ' (desactivada)'}\n'
           'Ahora: ${_summary(draft)}${draft.isActive ? '' : ' (desactivada)'}\n\n'
           'Se aplica de inmediato a las nuevas reservas.',
@@ -213,8 +210,7 @@ class _PricingCardState extends State<_PricingCard> {
     final ok = await confirmAdminAction(
       context,
       title: 'Quitar tarifa',
-      message:
-          'Se eliminará esta tarifa y la combinación quedará sin '
+      message: 'Se eliminará esta tarifa y la combinación quedará sin '
           'configurar: la web y la app no mostrarán precio y no se podrá '
           'reservar hasta volver a configurarla.',
       confirmLabel: 'Quitar',
@@ -241,10 +237,9 @@ class _PricingCardState extends State<_PricingCard> {
 
     final simValue =
         _hourly ? int.tryParse(_simHours.text) ?? 0 : _parse(_simKm.text) ?? 0;
-    final simPrice =
-        draft == null
-            ? null
-            : _hourly
+    final simPrice = draft == null
+        ? null
+        : _hourly
             ? draft.estimate(hours: simValue.toInt())
             : draft.estimate(km: simValue.toDouble());
 
@@ -445,10 +440,9 @@ class _PricingCardState extends State<_PricingCard> {
                   label: 'Guardar tarifa',
                   icon: Icons.save_outlined,
                   filled: true,
-                  onTap:
-                      _dirty && draft != null && draft.validate().isEmpty
-                          ? _save
-                          : null,
+                  onTap: _dirty && draft != null && draft.validate().isEmpty
+                      ? _save
+                      : null,
                 ),
               ],
             ),
@@ -473,20 +467,20 @@ class _PriceField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(label, style: LuxTypography.caption),
-      const SizedBox(height: 4),
-      TextField(
-        controller: controller,
-        onChanged: onChanged,
-        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: LuxTypography.caption),
+          const SizedBox(height: 4),
+          TextField(
+            controller: controller,
+            onChanged: onChanged,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+            ],
+            style: LuxTypography.bodyMedium,
+            decoration: adminInputDecoration(prefixText: 'Bs '),
+          ),
         ],
-        style: LuxTypography.bodyMedium,
-        decoration: adminInputDecoration(prefixText: 'Bs '),
-      ),
-    ],
-  );
+      );
 }

@@ -79,10 +79,9 @@ class ServicePageContent {
   final String closingTitle;
   final String closingBody;
 
-  ServiceType get serviceType =>
-      mode == LuxBookingMode.hourly
-          ? ServiceType.byTheHour
-          : ServiceType.oneWay;
+  ServiceType get serviceType => mode == LuxBookingMode.hourly
+      ? ServiceType.byTheHour
+      : ServiceType.oneWay;
 }
 
 class ServicePageTemplate extends StatefulWidget {
@@ -121,10 +120,10 @@ class _ServicePageTemplateState extends State<ServicePageTemplate> {
   }
 
   void _toTop() => _scroll.animateTo(
-    0,
-    duration: const Duration(milliseconds: 900),
-    curve: const Cubic(0.16, 1, 0.3, 1),
-  );
+        0,
+        duration: const Duration(milliseconds: 900),
+        curve: const Cubic(0.16, 1, 0.3, 1),
+      );
 
   void _toFleet() {
     final ctx = _fleetKey.currentContext;
@@ -201,20 +200,19 @@ class _Photo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Image.asset(
-    path,
-    fit: BoxFit.cover,
-    width: double.infinity,
-    height: double.infinity,
-    errorBuilder:
-        (_, __, ___) => Image.asset(
+        path,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (_, __, ___) => Image.asset(
           fallback,
           fit: BoxFit.cover,
           width: double.infinity,
           height: double.infinity,
-          errorBuilder:
-              (_, __, ___) => const ColoredBox(color: Color(0xFF0D1928)),
+          errorBuilder: (_, __, ___) =>
+              const ColoredBox(color: Color(0xFF0D1928)),
         ),
-  );
+      );
 }
 
 class _Bounded extends StatelessWidget {
@@ -224,11 +222,11 @@ class _Bounded extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: maxWidth),
-      child: child,
-    ),
-  );
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: child,
+        ),
+      );
 }
 
 // ── 1. Hero ─────────────────────────────────────────────────────────────────
@@ -275,9 +273,8 @@ class _Hero extends StatelessWidget {
       constraints: const BoxConstraints(maxWidth: 440),
       child: ValueListenableBuilder<VehicleClass?>(
         valueListenable: chosenClass,
-        builder:
-            (_, vc, __) =>
-                LuxServiceBookingCard(mode: content.mode, preferredClass: vc),
+        builder: (_, vc, __) =>
+            LuxServiceBookingCard(mode: content.mode, preferredClass: vc),
       ),
     );
 
@@ -352,31 +349,30 @@ class _HeroScrim extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
-    decoration: BoxDecoration(
-      gradient:
-          horizontal
+        decoration: BoxDecoration(
+          gradient: horizontal
               ? const LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Color(0xEB070E18),
-                  Color(0x99070E18),
-                  Color(0x66070E18),
-                ],
-                stops: [0.0, 0.55, 1.0],
-              )
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  colors: [
+                    Color(0xEB070E18),
+                    Color(0x99070E18),
+                    Color(0x66070E18),
+                  ],
+                  stops: [0.0, 0.55, 1.0],
+                )
               : const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0xA6070E18),
-                  Color(0x8C070E18),
-                  Color(0xF5070E18),
-                ],
-                stops: [0.0, 0.45, 1.0],
-              ),
-    ),
-  );
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xA6070E18),
+                    Color(0x8C070E18),
+                    Color(0xF5070E18),
+                  ],
+                  stops: [0.0, 0.45, 1.0],
+                ),
+        ),
+      );
 }
 
 // ── 2. Assurances ───────────────────────────────────────────────────────────
@@ -447,34 +443,34 @@ class _AssuranceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Container(
-        width: 44,
-        height: 44,
-        decoration: BoxDecoration(border: Border.all(color: LD.border)),
-        child: Icon(item.icon, size: 20, color: LD.sph),
-      ),
-      const SizedBox(height: 20),
-      Text(
-        item.title,
-        style: const TextStyle(
-          fontFamily: kSans,
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-          color: LD.ink,
-          height: 1.4,
-        ),
-      ),
-      if (item.detail != null) ...[
-        const SizedBox(height: 8),
-        Text(
-          item.detail!,
-          style: bodyText(size: 13, color: LD.ink3).copyWith(height: 1.6),
-        ),
-      ],
-    ],
-  );
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(border: Border.all(color: LD.border)),
+            child: Icon(item.icon, size: 20, color: LD.sph),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            item.title,
+            style: const TextStyle(
+              fontFamily: kSans,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: LD.ink,
+              height: 1.4,
+            ),
+          ),
+          if (item.detail != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              item.detail!,
+              style: bodyText(size: 13, color: LD.ink3).copyWith(height: 1.6),
+            ),
+          ],
+        ],
+      );
 }
 
 // ── 3. Steps ────────────────────────────────────────────────────────────────
@@ -488,36 +484,36 @@ class _StepsSection extends StatelessWidget {
     final narrow = _narrow(context);
     final pad = _hPad(context);
     Widget step(int i) => RevealOnScroll(
-      delay: Duration(milliseconds: 100 * i),
-      dy: 40,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '0${i + 1}',
-            style: displayText(
-              size: 56,
-              color: LD.sph,
-              weight: FontWeight.w300,
-            ),
+          delay: Duration(milliseconds: 100 * i),
+          dy: 40,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '0${i + 1}',
+                style: displayText(
+                  size: 56,
+                  color: LD.sph,
+                  weight: FontWeight.w300,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(width: 32, height: 1, color: LD.ink.withAlpha(60)),
+              const SizedBox(height: 20),
+              Text(
+                steps[i].title,
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: LD.ink,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(steps[i].body, style: bodyText(size: 14, color: LD.ink3)),
+            ],
           ),
-          const SizedBox(height: 16),
-          Container(width: 32, height: 1, color: LD.ink.withAlpha(60)),
-          const SizedBox(height: 20),
-          Text(
-            steps[i].title,
-            style: const TextStyle(
-              fontFamily: kSans,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: LD.ink,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(steps[i].body, style: bodyText(size: 14, color: LD.ink3)),
-        ],
-      ),
-    );
+        );
 
     return Container(
       color: LD.bg2,
@@ -645,32 +641,31 @@ class _StorySection extends StatelessWidget {
     return ColoredBox(
       color: LD.dark,
       child: LayoutBuilder(
-        builder:
-            (context, cons) => Stack(
+        builder: (context, cons) => Stack(
+          children: [
+            Positioned(
+              left: 0,
+              top: 0,
+              bottom: 0,
+              width: cons.maxWidth / 2,
+              child: photo,
+            ),
+            Row(
               children: [
-                Positioned(
-                  left: 0,
-                  top: 0,
-                  bottom: 0,
-                  width: cons.maxWidth / 2,
-                  child: photo,
-                ),
-                Row(
-                  children: [
-                    const Spacer(),
-                    Expanded(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(minHeight: 600),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: text,
-                        ),
-                      ),
+                const Spacer(),
+                Expanded(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(minHeight: 600),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: text,
                     ),
-                  ],
+                  ),
                 ),
               ],
             ),
+          ],
+        ),
       ),
     );
   }
@@ -689,18 +684,18 @@ class _ClassesSection extends StatelessWidget {
   final ValueChanged<VehicleClass> onChoose;
 
   static List<(VehicleClass, String)> get _classes => [
-    for (final vc in VehicleCatalog.bookable(
-      firstClassEnabled: RemoteFlags.instance.firstClassEnabled.value,
-    ))
-      (vc, VehicleCatalog.carImage(vc)),
-  ];
+        for (final vc in VehicleCatalog.bookable(
+          firstClassEnabled: RemoteFlags.instance.firstClassEnabled.value,
+        ))
+          (vc, VehicleCatalog.carImage(vc)),
+      ];
 
   // Se reconstruye cuando el admin cambia las tarifas.
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: PricingCatalog.instance,
-    builder: (context, _) => _content(context),
-  );
+        listenable: PricingCatalog.instance,
+        builder: (context, _) => _content(context),
+      );
 
   Widget _content(BuildContext context) {
     final narrow = _narrow(context);
@@ -801,131 +796,134 @@ class _ClassCardState extends State<_ClassCard> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-    onEnter: (_) => setState(() => _hover = true),
-    onExit: (_) => setState(() => _hover = false),
-    cursor: SystemMouseCursors.click,
-    child: GestureDetector(
-      onTap: widget.onChoose,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutCubic,
-        transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
-        padding: const EdgeInsets.all(28),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(
-            color:
-                _hover || widget.featured ? LD.sph.withAlpha(120) : LD.border,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: LD.ink.withAlpha(_hover ? 22 : 8),
-              blurRadius: _hover ? 40 : 16,
-              offset: Offset(0, _hover ? 20 : 8),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  widget.vc.label.toUpperCase(),
-                  style: uiLabel(
-                    size: 10.5,
-                    color: LD.ink,
-                    spacing: 2.4,
-                  ).copyWith(fontWeight: FontWeight.w600),
-                ),
-                const Spacer(),
-                if (widget.featured)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    color: LD.sphTint,
-                    child: Text(
-                      'LA MÁS ELEGIDA',
-                      style: uiLabel(size: 8.5, color: LD.sph, spacing: 1.4),
-                    ),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(
-              widget.vc.description,
-              style: bodyText(size: 13, color: LD.ink3),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 120,
-              child: Center(child: VehicleImage(widget.vc)),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                const Icon(
-                  Icons.person_outline_rounded,
-                  size: 15,
-                  color: LD.ink3,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  'Hasta ${widget.vc.capacity} pasajeros',
-                  style: uiLabel(size: 12, color: LD.ink2, spacing: 0.4),
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onChoose,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOutCubic,
+            transform: Matrix4.translationValues(0, _hover ? -6 : 0, 0),
+            padding: const EdgeInsets.all(28),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(
+                color: _hover || widget.featured
+                    ? LD.sph.withAlpha(120)
+                    : LD.border,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: LD.ink.withAlpha(_hover ? 22 : 8),
+                  blurRadius: _hover ? 40 : 16,
+                  offset: Offset(0, _hover ? 20 : 8),
                 ),
               ],
             ),
-            const SizedBox(height: 18),
-            Container(height: 1, color: LD.border),
-            const SizedBox(height: 16),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                Row(
                   children: [
-                    if (widget.from != null) ...[
-                      Text(
-                        'DESDE',
-                        style: uiLabel(size: 9, color: LD.ink3, spacing: 1.8),
-                      ),
-                      const SizedBox(height: 2),
-                    ],
                     Text(
-                      widget.from == null
-                          ? 'Cotiza al reservar'
-                          : widget.perHour
-                          ? 'Bs ${widget.from!.toStringAsFixed(0)} · 2 h'
-                          : 'Bs ${widget.from!.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                      widget.vc.label.toUpperCase(),
+                      style: uiLabel(
+                        size: 10.5,
                         color: LD.ink,
+                        spacing: 2.4,
+                      ).copyWith(fontWeight: FontWeight.w600),
+                    ),
+                    const Spacer(),
+                    if (widget.featured)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        color: LD.sphTint,
+                        child: Text(
+                          'LA MÁS ELEGIDA',
+                          style:
+                              uiLabel(size: 8.5, color: LD.sph, spacing: 1.4),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  widget.vc.description,
+                  style: bodyText(size: 13, color: LD.ink3),
+                ),
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 120,
+                  child: Center(child: VehicleImage(widget.vc)),
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.person_outline_rounded,
+                      size: 15,
+                      color: LD.ink3,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Hasta ${widget.vc.capacity} pasajeros',
+                      style: uiLabel(size: 12, color: LD.ink2, spacing: 0.4),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+                Container(height: 1, color: LD.border),
+                const SizedBox(height: 16),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (widget.from != null) ...[
+                          Text(
+                            'DESDE',
+                            style:
+                                uiLabel(size: 9, color: LD.ink3, spacing: 1.8),
+                          ),
+                          const SizedBox(height: 2),
+                        ],
+                        Text(
+                          widget.from == null
+                              ? 'Cotiza al reservar'
+                              : widget.perHour
+                                  ? 'Bs ${widget.from!.toStringAsFixed(0)} · 2 h'
+                                  : 'Bs ${widget.from!.toStringAsFixed(0)}',
+                          style: const TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: LD.ink,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    AnimatedSlide(
+                      duration: const Duration(milliseconds: 250),
+                      offset: Offset(_hover ? 0.1 : 0, 0),
+                      child: const Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 18,
+                        color: LD.sph,
                       ),
                     ),
                   ],
                 ),
-                const Spacer(),
-                AnimatedSlide(
-                  duration: const Duration(milliseconds: 250),
-                  offset: Offset(_hover ? 0.1 : 0, 0),
-                  child: const Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 18,
-                    color: LD.sph,
-                  ),
-                ),
               ],
             ),
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 // ── 6. FAQ ──────────────────────────────────────────────────────────────────
@@ -967,20 +965,19 @@ class _FaqSection extends StatelessWidget {
         vertical: narrow ? 64 : 104,
       ),
       child: _Bounded(
-        child:
-            narrow
-                ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [heading, const SizedBox(height: 32), list],
-                )
-                : Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(flex: 2, child: heading),
-                    const SizedBox(width: 64),
-                    Expanded(flex: 3, child: list),
-                  ],
-                ),
+        child: narrow
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [heading, const SizedBox(height: 32), list],
+              )
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(flex: 2, child: heading),
+                  const SizedBox(width: 64),
+                  Expanded(flex: 3, child: list),
+                ],
+              ),
       ),
     );
   }
@@ -999,66 +996,65 @@ class _FaqTileState extends State<_FaqTile> {
 
   @override
   Widget build(BuildContext context) => Container(
-    decoration: const BoxDecoration(
-      border: Border(bottom: BorderSide(color: LD.border)),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Semantics(
-          button: true,
-          expanded: _open,
-          child: InkWell(
-            onTap: () => setState(() => _open = !_open),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 22),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      widget.faq.question,
-                      style: const TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                        color: LD.ink,
-                        height: 1.4,
+        decoration: const BoxDecoration(
+          border: Border(bottom: BorderSide(color: LD.border)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Semantics(
+              button: true,
+              expanded: _open,
+              child: InkWell(
+                onTap: () => setState(() => _open = !_open),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 22),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget.faq.question,
+                          style: const TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: LD.ink,
+                            height: 1.4,
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 16),
+                      AnimatedRotation(
+                        turns: _open ? 0.125 : 0,
+                        duration: const Duration(milliseconds: 250),
+                        child: const Icon(
+                          Icons.add_rounded,
+                          size: 20,
+                          color: LD.sph,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  AnimatedRotation(
-                    turns: _open ? 0.125 : 0,
-                    duration: const Duration(milliseconds: 250),
-                    child: const Icon(
-                      Icons.add_rounded,
-                      size: 20,
-                      color: LD.sph,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
-        AnimatedSize(
-          duration: const Duration(milliseconds: 280),
-          curve: Curves.easeOutCubic,
-          alignment: Alignment.topCenter,
-          child:
-              _open
+            AnimatedSize(
+              duration: const Duration(milliseconds: 280),
+              curve: Curves.easeOutCubic,
+              alignment: Alignment.topCenter,
+              child: _open
                   ? Padding(
-                    padding: const EdgeInsets.only(bottom: 24, right: 36),
-                    child: Text(
-                      widget.faq.answer,
-                      style: bodyText(size: 14, color: LD.ink2),
-                    ),
-                  )
+                      padding: const EdgeInsets.only(bottom: 24, right: 36),
+                      child: Text(
+                        widget.faq.answer,
+                        style: bodyText(size: 14, color: LD.ink2),
+                      ),
+                    )
                   : const SizedBox(width: double.infinity),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 }
 
 // ── 7. Closing CTA ──────────────────────────────────────────────────────────

@@ -111,12 +111,12 @@ void main() {
 }
 
 Booking _booking(BookingStatus status) => Booking.fromJson({
-  'id': 'b1',
-  'riderId': 'ana',
-  'origin': {'address': 'A', 'coordinates': const GeoPoint(-17.78, -63.18)},
-  'destination': {
-    'address': 'B',
-    'coordinates': const GeoPoint(-17.64, -63.13),
-  },
-  'status': status.label,
-});
+      'id': 'b1',
+      'riderId': 'ana',
+      'origin': {'address': 'A', 'coordinates': const GeoPoint(-17.78, -63.18)},
+      'destination': {
+        'address': 'B',
+        'coordinates': const GeoPoint(-17.64, -63.13),
+      },
+      'status': status.label,
+    });

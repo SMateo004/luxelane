@@ -20,14 +20,16 @@ class _Repo extends Mock implements IncidentRepository {}
 
 const _offline = IncidentFailure(IncidentIssue.offline, 'Sin conexión.');
 
-Incident _incident(IncidentStatus s, {int count = 1}) => Incident(
-  id: 'inc1',
-  bookingId: 'abcdef123',
-  reporterId: 'ana',
-  reporterRole: 'rider',
-  status: s,
-  count: count,
-);
+Incident _incident(IncidentStatus s, {int count = 1, bool cancelled = false}) =>
+    Incident(
+      cancelledByReporter: cancelled,
+      id: 'inc1',
+      bookingId: 'abcdef123',
+      reporterId: 'ana',
+      reporterRole: 'rider',
+      status: s,
+      count: count,
+    );
 
 Future<void> _pump(
   WidgetTester tester,
@@ -66,12 +68,12 @@ void main() {
   tearDown(() => mine.close());
 
   IncidentBloc bloc({Future<LatLngLite?> Function()? where}) => IncidentBloc(
-    repository: repo,
-    bookingId: 'abcdef123',
-    uid: 'ana',
-    currentLocation: where ?? () async => (lat: -17.78, lng: -63.18),
-    publishEvery: const Duration(milliseconds: 30),
-  );
+        repository: repo,
+        bookingId: 'abcdef123',
+        uid: 'ana',
+        currentLocation: where ?? () async => (lat: -17.78, lng: -63.18),
+        publishEvery: const Duration(milliseconds: 30),
+      );
 
   group('IncidentBloc', () {
     blocTest<IncidentBloc, IncidentState>(
@@ -147,8 +149,8 @@ void main() {
         clearInteractions(repo);
         await Future<void>.delayed(const Duration(milliseconds: 80));
       },
-      verify:
-          (_) => verifyNever(() => repo.publishLocation(any(), any(), any())),
+      verify: (_) =>
+          verifyNever(() => repo.publishLocation(any(), any(), any())),
     );
 
     blocTest<IncidentBloc, IncidentState>(
@@ -160,10 +162,9 @@ void main() {
         mine.add(_incident(IncidentStatus.open));
         await Future<void>.delayed(const Duration(milliseconds: 50));
       },
-      verify:
-          (_) => verify(
-            () => repo.publishLocation('inc1', -17.78, -63.18),
-          ).called(greaterThanOrEqualTo(1)),
+      verify: (_) => verify(
+        () => repo.publishLocation('inc1', -17.78, -63.18),
+      ).called(greaterThanOrEqualTo(1)),
     );
 
     blocTest<IncidentBloc, IncidentState>(
@@ -178,6 +179,43 @@ void main() {
       act: (b) => b.add(const IncidentCancelled()),
       verify: (_) => verify(() => repo.cancel('inc1')).called(1),
     );
+  });
+
+  group('cancelación (cancel_requested)', () {
+    blocTest<IncidentBloc, IncidentState>(
+      'cancelado por el usuario: deja de publicar su ubicación aunque central lo reconozca',
+      build: bloc,
+      act: (b) async {
+        b.add(const IncidentWatched());
+        await Future<void>.delayed(Duration.zero);
+        mine.add(_incident(IncidentStatus.cancelRequested, cancelled: true));
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        mine.add(_incident(IncidentStatus.acknowledged, cancelled: true));
+        await Future<void>.delayed(const Duration(milliseconds: 80));
+      },
+      verify: (b) {
+        verifyNever(() => repo.publishLocation(any(), any(), any()));
+        expect(b.state.live, isFalse);
+      },
+    );
+
+    testWidgets('la pantalla dice que central llamará para verificar',
+        (tester) async {
+      final b = bloc()
+        ..emit(IncidentState(
+            incident:
+                _incident(IncidentStatus.cancelRequested, cancelled: true)));
+      await tester.pumpWidget(MaterialApp(
+          home: Scaffold(
+              body: SingleChildScrollView(
+                  child: BlocProvider.value(
+                      value: b,
+                      child: const IncidentHelpSheet(bookingId: 'b'))))));
+      expect(find.text('Aviso cancelado'), findsOneWidget);
+      expect(find.textContaining('Central te llamará para verificar'),
+          findsOneWidget);
+      expect(find.text('Fue una falsa alarma'), findsNothing);
+    });
   });
 
   group('SosButton', () {
@@ -255,24 +293,25 @@ void main() {
       String? phone,
       Map<String, String> numbers = const {},
       List<Uri>? opened,
-    }) => BlocProvider.value(
-      value: b,
-      child: IncidentHelpSheet(
-        bookingId: 'abcdef123',
-        dispatchPhone: phone,
-        emergencyNumbers: numbers,
-        launch: (u) async => opened?.add(u),
-      ),
-    );
+    }) =>
+        BlocProvider.value(
+          value: b,
+          child: IncidentHelpSheet(
+            bookingId: 'abcdef123',
+            dispatchPhone: phone,
+            emergencyNumbers: numbers,
+            launch: (u) async => opened?.add(u),
+          ),
+        );
 
     testWidgets('sin red: llamar y SMS prellenado a central', (tester) async {
-      final b =
-          bloc()..emit(
-            const IncidentState(
-              failure: _offline,
-              lastLocation: (lat: -17.7, lng: -63.1),
-            ),
-          );
+      final b = bloc()
+        ..emit(
+          const IncidentState(
+            failure: _offline,
+            lastLocation: (lat: -17.7, lng: -63.1),
+          ),
+        );
       final opened = <Uri>[];
       await _pump(tester, sheet(b, phone: '+000', opened: opened));
       expect(find.text('No pudimos avisar a central'), findsOneWidget);
@@ -299,8 +338,8 @@ void main() {
     );
 
     testWidgets('con números de emergencia: botón por número', (tester) async {
-      final b =
-          bloc()..emit(IncidentState(incident: _incident(IncidentStatus.open)));
+      final b = bloc()
+        ..emit(IncidentState(incident: _incident(IncidentStatus.open)));
       final opened = <Uri>[];
       await _pump(
         tester,
@@ -314,10 +353,10 @@ void main() {
     testWidgets('estados: avisamos, reconocida, cerrada; repetición visible', (
       tester,
     ) async {
-      final b =
-          bloc()..emit(
-            IncidentState(incident: _incident(IncidentStatus.open, count: 3)),
-          );
+      final b = bloc()
+        ..emit(
+          IncidentState(incident: _incident(IncidentStatus.open, count: 3)),
+        );
       await _pump(tester, sheet(b));
       expect(find.text('Avisamos a central'), findsOneWidget);
       expect(find.text('Aviso enviado 3 veces.'), findsOneWidget);
@@ -334,8 +373,8 @@ void main() {
       when(
         () => repo.cancel('inc1'),
       ).thenAnswer((_) async => const Right(null));
-      final b =
-          bloc()..emit(IncidentState(incident: _incident(IncidentStatus.open)));
+      final b = bloc()
+        ..emit(IncidentState(incident: _incident(IncidentStatus.open)));
       await _pump(tester, sheet(b));
       await tester.ensureVisible(find.text('Fue una falsa alarma'));
       await tester.tap(find.text('Fue una falsa alarma'));

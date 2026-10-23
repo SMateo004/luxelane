@@ -46,30 +46,29 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
       isDismissible: false,
       enableDrag: false,
       backgroundColor: Colors.transparent,
-      builder:
-          (_) => _IncomingRequestSheet(
-            request: request,
-            onAccept: () {
-              final auth = context.read<AuthBloc>().state;
-              if (auth is AuthAuthenticated) {
-                context.read<DriverBloc>().add(
+      builder: (_) => _IncomingRequestSheet(
+        request: request,
+        onAccept: () {
+          final auth = context.read<AuthBloc>().state;
+          if (auth is AuthAuthenticated) {
+            context.read<DriverBloc>().add(
                   DriverRequestAccepted(
                     bookingId: request.id,
                     driverId: auth.user.id,
                   ),
                 );
-              }
-              if (mounted) Navigator.of(context, rootNavigator: true).pop();
-              _activeSheetId = null;
-            },
-            onDecline: () {
-              context.read<DriverBloc>().add(
+          }
+          if (mounted) Navigator.of(context, rootNavigator: true).pop();
+          _activeSheetId = null;
+        },
+        onDecline: () {
+          context.read<DriverBloc>().add(
                 DriverRequestDeclined(bookingId: request.id),
               );
-              if (mounted) Navigator.of(context, rootNavigator: true).pop();
-              _activeSheetId = null;
-            },
-          ),
+          if (mounted) Navigator.of(context, rootNavigator: true).pop();
+          _activeSheetId = null;
+        },
+      ),
     ).then((_) => _activeSheetId = null);
   }
 
@@ -112,8 +111,7 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         },
         builder: (context, state) {
           final authState = context.read<AuthBloc>().state;
-          final isAuthedDriver =
-              authState is AuthAuthenticated &&
+          final isAuthedDriver = authState is AuthAuthenticated &&
               authState.user.role == UserRole.driver;
 
           if (state is DriverError) {
@@ -126,8 +124,8 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                   final auth = context.read<AuthBloc>().state;
                   if (auth is AuthAuthenticated) {
                     context.read<DriverBloc>().add(
-                      DriverStarted(userId: auth.user.id),
-                    );
+                          DriverStarted(userId: auth.user.id),
+                        );
                   }
                 },
               ),
@@ -136,10 +134,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 
           if (state is! DriverLoaded) {
             return Scaffold(
-              body:
-                  isAuthedDriver
-                      ? const SafeArea(child: LuxSkeletonList(count: 3))
-                      : const SizedBox.shrink(),
+              body: isAuthedDriver
+                  ? const SafeArea(child: LuxSkeletonList(count: 3))
+                  : const SizedBox.shrink(),
             );
           }
           final active = state.activeBooking;
@@ -150,13 +147,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 duration: LuxMotion.of(context, LuxMotion.slow),
                 switchInCurve: LuxMotion.decelerate,
                 switchOutCurve: LuxMotion.accelerate,
-                child:
-                    active != null
-                        ? _ActiveRidePanel(
-                          key: ValueKey(active.id),
-                          booking: active,
-                        )
-                        : _IdlePanel(key: const ValueKey('idle'), state: state),
+                child: active != null
+                    ? _ActiveRidePanel(
+                        key: ValueKey(active.id),
+                        booking: active,
+                      )
+                    : _IdlePanel(key: const ValueKey('idle'), state: state),
               ),
             ),
           );
@@ -167,9 +163,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
 }
 
 Widget _topLeft(Widget? current, List<Widget> previous) => Stack(
-  alignment: Alignment.topLeft,
-  children: [...previous, if (current != null) current],
-);
+      alignment: Alignment.topLeft,
+      children: [...previous, if (current != null) current],
+    );
 
 // ── Cabecera ───────────────────────────────────────────────────────────────
 
@@ -227,23 +223,21 @@ class _IdlePanel extends StatelessWidget {
     final s = context.read<AuthBloc>().state;
     if (s is! AuthAuthenticated) return;
     context.read<DriverBloc>().add(
-      DriverAvailabilityToggled(userId: s.user.id, isAvailable: online),
-    );
+          DriverAvailabilityToggled(userId: s.user.id, isAvailable: online),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     final online = state.isAvailable;
     final now = DateTime.now();
-    final upcoming =
-        state.bookings
-            .where(
-              (b) =>
-                  b.status == BookingStatus.confirmed &&
-                  b.scheduledAt.isAfter(now),
-            )
-            .toList()
-          ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
+    final upcoming = state.bookings
+        .where(
+          (b) =>
+              b.status == BookingStatus.confirmed && b.scheduledAt.isAfter(now),
+        )
+        .toList()
+      ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
     final rating = state.profile.rating;
     var i = 0;
     Widget item(Widget w) => LuxFadeIn(index: i++, child: w);
@@ -329,10 +323,9 @@ class _IdlePanel extends StatelessWidget {
                 for (final b in upcoming.take(3))
                   LuxListRow(
                     icon: Icons.schedule_rounded,
-                    title:
-                        b.serviceType == ServiceType.byTheHour
-                            ? '${b.hours ?? 2} h desde ${b.origin.displayName}'
-                            : b.destination.displayName,
+                    title: b.serviceType == ServiceType.byTheHour
+                        ? '${b.hours ?? 2} h desde ${b.origin.displayName}'
+                        : b.destination.displayName,
                     subtitle:
                         '${LuxFormat.dateTime(b.scheduledAt)} · ${b.vehicleClass.label}',
                     onTap: () => context.push('/driver/active-ride/${b.id}'),
@@ -421,31 +414,30 @@ class _GoControlState extends State<_GoControl>
                 if (online)
                   AnimatedBuilder(
                     animation: _waves,
-                    builder:
-                        (_, __) => Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            for (final offset in const [0.0, 0.5])
-                              Builder(
-                                builder: (_) {
-                                  final t = (_waves.value + offset) % 1.0;
-                                  return Container(
-                                    width: size * (1 + 0.7 * t),
-                                    height: size * (1 + 0.7 * t),
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: LuxColors.sapphire.withValues(
-                                          alpha: 0.35 * (1 - t),
-                                        ),
-                                        width: 1.5,
-                                      ),
+                    builder: (_, __) => Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        for (final offset in const [0.0, 0.5])
+                          Builder(
+                            builder: (_) {
+                              final t = (_waves.value + offset) % 1.0;
+                              return Container(
+                                width: size * (1 + 0.7 * t),
+                                height: size * (1 + 0.7 * t),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: LuxColors.sapphire.withValues(
+                                      alpha: 0.35 * (1 - t),
                                     ),
-                                  );
-                                },
-                              ),
-                          ],
-                        ),
+                                    width: 1.5,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                      ],
+                    ),
                   ),
                 LuxPressable(
                   onTap: () => widget.onChanged(!online),
@@ -478,10 +470,9 @@ class _GoControlState extends State<_GoControl>
                           online ? 'En línea' : 'Conectarse',
                           style: LuxTypography.button.copyWith(
                             fontSize: 14,
-                            color:
-                                online
-                                    ? LuxColors.sapphire
-                                    : LuxColors.onAccent,
+                            color: online
+                                ? LuxColors.sapphire
+                                : LuxColors.onAccent,
                           ),
                         ),
                       ],
@@ -520,25 +511,25 @@ class _Metric extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Expanded(
-    flex: big ? 4 : 3,
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text(
-            value,
-            style: LuxTypography.headlineLarge.copyWith(
-              fontSize: big ? 28 : 24,
-              color: LuxColors.ink,
+        flex: big ? 4 : 3,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: LuxTypography.headlineLarge.copyWith(
+                  fontSize: big ? 28 : 24,
+                  color: LuxColors.ink,
+                ),
+              ),
             ),
-          ),
+            const SizedBox(height: 2),
+            Text(label, style: LuxTypography.caption),
+          ],
         ),
-        const SizedBox(height: 2),
-        Text(label, style: LuxTypography.caption),
-      ],
-    ),
-  );
+      );
 }
 
 class _Notice extends StatelessWidget {
@@ -547,31 +538,32 @@ class _Notice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: LuxSpacing.md),
-    child: Container(
-      padding: const EdgeInsets.all(LuxSpacing.md),
-      decoration: BoxDecoration(
-        color: LuxColors.warning.withValues(alpha: 0.07),
-        borderRadius: BorderRadius.circular(LuxRadius.lg),
-      ),
-      child: Row(
-        children: [
-          const Icon(
-            Icons.info_outline_rounded,
-            color: LuxColors.warning,
-            size: 20,
+        padding: const EdgeInsets.only(top: LuxSpacing.md),
+        child: Container(
+          padding: const EdgeInsets.all(LuxSpacing.md),
+          decoration: BoxDecoration(
+            color: LuxColors.warning.withValues(alpha: 0.07),
+            borderRadius: BorderRadius.circular(LuxRadius.lg),
           ),
-          const SizedBox(width: LuxSpacing.sm + 4),
-          Expanded(
-            child: Text(
-              text,
-              style: LuxTypography.bodyMedium.copyWith(color: LuxColors.ink),
-            ),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.info_outline_rounded,
+                color: LuxColors.warning,
+                size: 20,
+              ),
+              const SizedBox(width: LuxSpacing.sm + 4),
+              Expanded(
+                child: Text(
+                  text,
+                  style:
+                      LuxTypography.bodyMedium.copyWith(color: LuxColors.ink),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }
 
 // ── Viaje activo ───────────────────────────────────────────────────────────
@@ -670,8 +662,7 @@ class _ActiveRidePanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final goingToPickup =
-        booking.status == BookingStatus.confirmed ||
+    final goingToPickup = booking.status == BookingStatus.confirmed ||
         booking.status == BookingStatus.driverArriving ||
         booking.status == BookingStatus.driverArrived;
     final target = goingToPickup ? booking.origin : booking.destination;
@@ -749,10 +740,9 @@ class _ActiveRidePanel extends StatelessWidget {
                     LuxListRow(
                       icon: Icons.person_outline_rounded,
                       title: 'Pasajero: ${booking.guest!.fullName}',
-                      subtitle:
-                          booking.guest!.contactLine.isEmpty
-                              ? null
-                              : booking.guest!.contactLine,
+                      subtitle: booking.guest!.contactLine.isEmpty
+                          ? null
+                          : booking.guest!.contactLine,
                     ),
                   ],
                 ),
@@ -795,10 +785,9 @@ class _ActiveRidePanel extends StatelessWidget {
           child: Column(
             children: [
               LuxOutlinedButton(
-                label:
-                    goingToPickup
-                        ? 'Navegar a la recogida'
-                        : 'Navegar al destino',
+                label: goingToPickup
+                    ? 'Navegar a la recogida'
+                    : 'Navegar al destino',
                 icon: Icons.navigation_outlined,
                 onPressed: () => _openMaps(context, target),
               ),
@@ -827,66 +816,66 @@ class _Stop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 20,
-          height: 20,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              if (current) const _PulseIndicator(color: LuxColors.sapphire),
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: last ? LuxColors.ink : LuxColors.surface,
-                  shape: last ? BoxShape.rectangle : BoxShape.circle,
-                  borderRadius: last ? BorderRadius.circular(2) : null,
-                  border:
-                      last
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (current) const _PulseIndicator(color: LuxColors.sapphire),
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: last ? LuxColors.ink : LuxColors.surface,
+                      shape: last ? BoxShape.rectangle : BoxShape.circle,
+                      borderRadius: last ? BorderRadius.circular(2) : null,
+                      border: last
                           ? null
                           : Border.all(color: LuxColors.sapphire, width: 3.5),
-                ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label.toUpperCase(),
+                    style: LuxTypography.eyebrow.copyWith(
+                      fontSize: 9,
+                      color:
+                          current ? LuxColors.sapphire : LuxColors.inkTertiary,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    place.displayName,
+                    style: LuxTypography.titleMedium.copyWith(
+                      fontSize: 15,
+                      fontWeight: current ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                  ),
+                  if (place.name.isNotEmpty && place.address != place.name)
+                    Text(
+                      place.address,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.caption.copyWith(fontSize: 12),
+                    ),
+                ],
+              ),
+            ),
+          ],
         ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label.toUpperCase(),
-                style: LuxTypography.eyebrow.copyWith(
-                  fontSize: 9,
-                  color: current ? LuxColors.sapphire : LuxColors.inkTertiary,
-                ),
-              ),
-              const SizedBox(height: 3),
-              Text(
-                place.displayName,
-                style: LuxTypography.titleMedium.copyWith(
-                  fontSize: 15,
-                  fontWeight: current ? FontWeight.w600 : FontWeight.w500,
-                ),
-              ),
-              if (place.name.isNotEmpty && place.address != place.name)
-                Text(
-                  place.address,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: LuxTypography.caption.copyWith(fontSize: 12),
-                ),
-            ],
-          ),
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 class _PulseIndicator extends StatefulWidget {
@@ -911,16 +900,17 @@ class _PulseIndicatorState extends State<_PulseIndicator>
 
   @override
   Widget build(BuildContext context) => ScaleTransition(
-    scale: Tween(begin: 1.0, end: 1.9).animate(_ctrl),
-    child: FadeTransition(
-      opacity: Tween(begin: 0.45, end: 0.0).animate(_ctrl),
-      child: Container(
-        width: 14,
-        height: 14,
-        decoration: BoxDecoration(color: widget.color, shape: BoxShape.circle),
-      ),
-    ),
-  );
+        scale: Tween(begin: 1.0, end: 1.9).animate(_ctrl),
+        child: FadeTransition(
+          opacity: Tween(begin: 0.45, end: 0.0).animate(_ctrl),
+          child: Container(
+            width: 14,
+            height: 14,
+            decoration:
+                BoxDecoration(color: widget.color, shape: BoxShape.circle),
+          ),
+        ),
+      );
 }
 
 // ── Incoming request sheet ─────────────────────────────────────────────────
@@ -968,14 +958,12 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
     final b = widget.request;
     final hourly = b.serviceType == ServiceType.byTheHour;
     final mins = b.scheduledAt.difference(DateTime.now()).inMinutes;
-    final when =
-        mins <= 45
-            ? (mins <= 1 ? 'Ahora' : 'En $mins min')
-            : LuxFormat.dateTime(b.scheduledAt);
-    final trip =
-        _route != null
-            ? '~${_route!.distanceKm.toStringAsFixed(0)} km · ${_route!.durationMin} min'
-            : b.tripKm != null
+    final when = mins <= 45
+        ? (mins <= 1 ? 'Ahora' : 'En $mins min')
+        : LuxFormat.dateTime(b.scheduledAt);
+    final trip = _route != null
+        ? '~${_route!.distanceKm.toStringAsFixed(0)} km · ${_route!.durationMin} min'
+        : b.tripKm != null
             ? '~${b.tripKm!.toStringAsFixed(0)} km'
             : null;
     return Container(
@@ -1116,33 +1104,33 @@ class _RouteItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-    child: Row(
-      children: [
-        Icon(icon, color: color, size: 18),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: LuxTypography.eyebrow.copyWith(
-                  fontSize: 9,
-                  color: LuxColors.inkTertiary,
-                ),
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 18),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: LuxTypography.eyebrow.copyWith(
+                      fontSize: 9,
+                      color: LuxColors.inkTertiary,
+                    ),
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    address,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: LuxTypography.titleMedium.copyWith(fontSize: 15),
+                  ),
+                ],
               ),
-              const SizedBox(height: 3),
-              Text(
-                address,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: LuxTypography.titleMedium.copyWith(fontSize: 15),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 }

@@ -12,8 +12,7 @@ class AirportTransferPage extends StatelessWidget {
     mode: LuxBookingMode.airport,
     eyebrow: 'Traslado al aeropuerto',
     title: 'Aterriza.\nNosotros nos\nocupamos del resto.',
-    lead:
-        'Tu chófer sigue tu vuelo, te espera en llegadas con tu nombre '
+    lead: 'Tu chófer sigue tu vuelo, te espera en llegadas con tu nombre '
         'y se encarga del equipaje. Tú solo sales por la puerta.',
     heroImage: 'assets/images/services/aeropuerto/hero.jpg',
     heroFallback: 'assets/images/home/immersive_bg.jpg',
@@ -39,8 +38,7 @@ class AirportTransferPage extends StatelessWidget {
     ],
     storyEyebrow: 'La llegada',
     storyTitle: 'El primer momento\nde tu viaje, resuelto.',
-    storyBody:
-        'Después de un vuelo largo, lo último que quieres son colas, '
+    storyBody: 'Después de un vuelo largo, lo último que quieres son colas, '
         'negociaciones o incertidumbre. Un chófer de Luxelane convierte la '
         'llegada en una transición tranquila hacia tu hotel, tu reunión o tu casa.',
     storyPoints: [

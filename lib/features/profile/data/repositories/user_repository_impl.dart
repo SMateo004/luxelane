@@ -71,10 +71,12 @@ class UserRepositoryImpl implements UserRepository {
     DriverProfile profile,
   ) async {
     try {
-      await _db.collection('driverProfiles').doc(profile.userId)
-      // Solo los datos que el chófer declara. Verificación, valoración,
-      // viajes y disponibilidad los fijan el admin y el servidor.
-      .set({
+      await _db
+          .collection('driverProfiles')
+          .doc(profile.userId)
+          // Solo los datos que el chófer declara. Verificación, valoración,
+          // viajes y disponibilidad los fijan el admin y el servidor.
+          .set({
         'userId': profile.userId,
         'licenseNumber': profile.licenseNumber,
         'licenseExpiry': Timestamp.fromDate(profile.licenseExpiry),
@@ -128,14 +130,10 @@ class UserRepositoryImpl implements UserRepository {
       .update({'isAvailable': false});
 
   @override
-  Stream<DriverProfile?> watchDriverProfile(String driverId) => _db
-      .collection('driverProfiles')
-      .doc(driverId)
-      .snapshots()
-      .map(
-        (s) =>
-            s.exists
+  Stream<DriverProfile?> watchDriverProfile(String driverId) =>
+      _db.collection('driverProfiles').doc(driverId).snapshots().map(
+            (s) => s.exists
                 ? DriverProfile.fromJson({...s.data()!, 'userId': s.id})
                 : null,
-      );
+          );
 }

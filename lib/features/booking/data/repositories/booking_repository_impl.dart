@@ -12,9 +12,9 @@ class BookingRepositoryImpl implements BookingRepository {
     required FirebaseFirestore firestore,
     FirebaseFunctions? functions,
     Future<String?> Function()? appVersion,
-  }) : _db = firestore,
-       _functionsOverride = functions,
-       _appVersion = appVersion ?? _installedVersion;
+  })  : _db = firestore,
+        _functionsOverride = functions,
+        _appVersion = appVersion ?? _installedVersion;
 
   final FirebaseFirestore _db;
   final FirebaseFunctions? _functionsOverride;
@@ -94,16 +94,13 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
-  Stream<List<Booking>> watchBookingsByRider(String riderId) => _col
-      .where('riderId', isEqualTo: riderId)
-      .snapshots()
-      .map(
-        (snap) =>
-            snap.docs
+  Stream<List<Booking>> watchBookingsByRider(String riderId) =>
+      _col.where('riderId', isEqualTo: riderId).snapshots().map(
+            (snap) => snap.docs
                 .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
                 .toList()
               ..sort((a, b) => b.createdAt.compareTo(a.createdAt)),
-      );
+          );
 
   @override
   Future<Either<Failure, List<Booking>>> getBookingsByRider(
@@ -111,10 +108,9 @@ class BookingRepositoryImpl implements BookingRepository {
   ) async {
     try {
       final snap = await _col.where('riderId', isEqualTo: riderId).get();
-      final list =
-          snap.docs
-              .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-              .toList();
+      final list = snap.docs
+          .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
+          .toList();
 
       // Manual sort to avoid index requirement
       list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -139,10 +135,9 @@ class BookingRepositoryImpl implements BookingRepository {
   @override
   Stream<List<Booking>> watchDriverBookings(String driverId) =>
       _col.where('driverId', isEqualTo: driverId).snapshots().map((snap) {
-        final list =
-            snap.docs
-                .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-                .toList();
+        final list = snap.docs
+            .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
+            .toList();
         // Manual sort by updatedAt descending
         list.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
         return list;
@@ -150,11 +145,11 @@ class BookingRepositoryImpl implements BookingRepository {
 
   @override
   Stream<GeoPoint?> watchDriverLocation(String bookingId) => _col
-      .doc(bookingId)
-      .collection('tracking')
-      .doc('driver')
-      .snapshots()
-      .map((s) {
+          .doc(bookingId)
+          .collection('tracking')
+          .doc('driver')
+          .snapshots()
+          .map((s) {
         final d = s.data();
         final lat = d?['lat'], lng = d?['lng'];
         return lat is num && lng is num
@@ -175,11 +170,12 @@ class BookingRepositoryImpl implements BookingRepository {
     required String bookingId,
     required double latitude,
     required double longitude,
-  }) => _col.doc(bookingId).collection('tracking').doc('driver').set({
-    'lat': latitude,
-    'lng': longitude,
-    'updatedAt': FieldValue.serverTimestamp(),
-  });
+  }) =>
+      _col.doc(bookingId).collection('tracking').doc('driver').set({
+        'lat': latitude,
+        'lng': longitude,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
 
   @override
   Future<Either<Failure, void>> updateBookingStatus({
@@ -318,11 +314,11 @@ Map<String, dynamic> bookingRequestData(
   bool quote = false,
 }) {
   Map<String, dynamic> place(Place p) => {
-    'name': p.name,
-    'address': p.address,
-    'lat': p.lat,
-    'lng': p.lng,
-  };
+        'name': p.name,
+        'address': p.address,
+        'lat': p.lat,
+        'lng': p.lng,
+      };
   final hourly = b.serviceType == ServiceType.byTheHour;
   return {
     'origin': place(b.origin),
@@ -361,27 +357,22 @@ Failure bookingFailureFor(String code, Object? details) {
     );
   }
   return ServerFailure(switch (reason) {
-    'pricing_unavailable' =>
-      'No pudimos calcular el precio de este viaje '
-          'ahora. Inténtalo de nuevo en unos minutos.',
-    'out_of_area' =>
-      'Por ahora solo hacemos viajes dentro de la misma '
-          'ciudad de la recogida.',
-    'class_unavailable' =>
-      'Esta clase de vehículo no está disponible en '
-          'este momento. Elige otra.',
-    'service_unavailable' =>
-      'Las reservas están en pausa por '
-          'mantenimiento. Vuelve a intentarlo en unos minutos.',
+    'pricing_unavailable' => 'No pudimos calcular el precio de este viaje '
+        'ahora. Inténtalo de nuevo en unos minutos.',
+    'out_of_area' => 'Por ahora solo hacemos viajes dentro de la misma '
+        'ciudad de la recogida.',
+    'class_unavailable' => 'Esta clase de vehículo no está disponible en '
+        'este momento. Elige otra.',
+    'service_unavailable' => 'Las reservas están en pausa por '
+        'mantenimiento. Vuelve a intentarlo en unos minutos.',
     'invalid_hours' => 'Elige un número entero de horas.',
     'past_pickup' => 'La hora de recogida ya pasó. Elige una nueva hora.',
     'inactive_user' => 'Tu cuenta no puede hacer reservas en este momento.',
     'unauthenticated' => 'Inicia sesión para reservar.',
-    _ =>
-      code == 'unavailable' || code == 'deadline-exceeded'
-          ? _kConnectionError
-          : 'No pudimos procesar tu reserva. Revisa los datos del viaje e '
-              'inténtalo de nuevo.',
+    _ => code == 'unavailable' || code == 'deadline-exceeded'
+        ? _kConnectionError
+        : 'No pudimos procesar tu reserva. Revisa los datos del viaje e '
+            'inténtalo de nuevo.',
   });
 }
 

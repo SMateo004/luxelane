@@ -26,29 +26,28 @@ class AlertsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<AdminBloc, AdminState>(
-    builder: (context, state) {
-      if (state.isLoading && state.alerts.isEmpty) {
-        return const LuxSkeletonList();
-      }
-      final alerts = [...state.alerts]
-        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-      if (alerts.isEmpty) {
-        return const AdminEmpty(
-          icon: Icons.notification_important_outlined,
-          title: 'Sin alertas',
-          subtitle:
-              'Aquí aparecen los avisos del servidor que piden '
-              'revisión, como un precio calculado con distancia aproximada.',
-        );
-      }
-      return ListView.separated(
-        padding: const EdgeInsets.all(LuxSpacing.lg),
-        itemCount: alerts.length,
-        separatorBuilder: (_, __) => const LuxDivider(),
-        itemBuilder: (_, i) => _AlertTile(alert: alerts[i]),
+        builder: (context, state) {
+          if (state.isLoading && state.alerts.isEmpty) {
+            return const LuxSkeletonList();
+          }
+          final alerts = [...state.alerts]
+            ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          if (alerts.isEmpty) {
+            return const AdminEmpty(
+              icon: Icons.notification_important_outlined,
+              title: 'Sin alertas',
+              subtitle: 'Aquí aparecen los avisos del servidor que piden '
+                  'revisión, como un precio calculado con distancia aproximada.',
+            );
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.all(LuxSpacing.lg),
+            itemCount: alerts.length,
+            separatorBuilder: (_, __) => const LuxDivider(),
+            itemBuilder: (_, i) => _AlertTile(alert: alerts[i]),
+          );
+        },
       );
-    },
-  );
 }
 
 class _AlertTile extends StatelessWidget {
@@ -62,8 +61,8 @@ class _AlertTile extends StatelessWidget {
     );
     if (note != null && context.mounted) {
       context.read<AdminBloc>().add(
-        AdminResolveAlertRequested(alert.id, note: note),
-      );
+            AdminResolveAlertRequested(alert.id, note: note),
+          );
     }
   }
 
@@ -160,21 +159,21 @@ class _ResolveDialogState extends State<_ResolveDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('Marcar como revisada'),
-    content: TextField(
-      controller: _note,
-      maxLength: 500,
-      decoration: adminInputDecoration(hint: 'Nota (opcional)'),
-    ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.of(context).pop(),
-        child: const Text('Cancelar'),
-      ),
-      FilledButton(
-        onPressed: () => Navigator.of(context).pop(_note.text),
-        child: const Text('Marcar revisada'),
-      ),
-    ],
-  );
+        title: const Text('Marcar como revisada'),
+        content: TextField(
+          controller: _note,
+          maxLength: 500,
+          decoration: adminInputDecoration(hint: 'Nota (opcional)'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(_note.text),
+            child: const Text('Marcar revisada'),
+          ),
+        ],
+      );
 }

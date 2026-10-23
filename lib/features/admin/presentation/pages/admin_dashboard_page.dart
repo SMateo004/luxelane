@@ -99,13 +99,14 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   /// Elementos que requieren acción en cada sección.
   int? _badge(AdminSection s, AdminState state) => switch (s) {
-    AdminSection.operations => state.pendingRidesCount,
-    AdminSection.finance => state.finance(FinancePeriod.all).receivablesCount,
-    AdminSection.drivers =>
-      state.drivers.where((d) => !d.documentsVerified).length,
-    AdminSection.alerts => state.openAlertsCount,
-    _ => null,
-  };
+        AdminSection.operations => state.pendingRidesCount,
+        AdminSection.finance =>
+          state.finance(FinancePeriod.all).receivablesCount,
+        AdminSection.drivers =>
+          state.drivers.where((d) => !d.documentsVerified).length,
+        AdminSection.alerts => state.openAlertsCount,
+        _ => null,
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -133,48 +134,46 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   void _confirmSignOut(BuildContext context) {
     showDialog(
       context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: const Text('¿Cerrar sesión?'),
-            content: const Text(
-              '¿Seguro que quieres cerrar sesión del panel de administración?',
-              style: LuxTypography.bodyMedium,
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Cancelar'),
-              ),
-              FilledButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  context.read<AuthBloc>().add(const LogoutRequested());
-                },
-                child: const Text('Cerrar sesión'),
-              ),
-            ],
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿Cerrar sesión?'),
+        content: const Text(
+          '¿Seguro que quieres cerrar sesión del panel de administración?',
+          style: LuxTypography.bodyMedium,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
           ),
+          FilledButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              context.read<AuthBloc>().add(const LogoutRequested());
+            },
+            child: const Text('Cerrar sesión'),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _mobileLayout() => Scaffold(
-    appBar: AppBar(
-      // El admin siempre vuelve al panel (router), así que no hay "atrás".
-      automaticallyImplyLeading: false,
-      title: Text(_labels[_section]!),
-      actions: [
-        IconButton(
-          tooltip: 'Cerrar sesión',
-          icon: const Icon(Icons.logout_rounded, size: 20),
-          onPressed: () => _confirmSignOut(context),
+        appBar: AppBar(
+          // El admin siempre vuelve al panel (router), así que no hay "atrás".
+          automaticallyImplyLeading: false,
+          title: Text(_labels[_section]!),
+          actions: [
+            IconButton(
+              tooltip: 'Cerrar sesión',
+              icon: const Icon(Icons.logout_rounded, size: 20),
+              onPressed: () => _confirmSignOut(context),
+            ),
+          ],
         ),
-      ],
-    ),
-    body: Column(
-      children: [
-        BlocBuilder<AdminBloc, AdminState>(
-          builder:
-              (context, state) => SingleChildScrollView(
+        body: Column(
+          children: [
+            BlocBuilder<AdminBloc, AdminState>(
+              builder: (context, state) => SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.all(LuxSpacing.md),
                 child: Row(
@@ -183,10 +182,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                       Padding(
                         padding: const EdgeInsets.only(right: LuxSpacing.sm),
                         child: SectionChip(
-                          label:
-                              (_badge(s, state) ?? 0) > 0
-                                  ? '${_labels[s]} · ${_badge(s, state)}'
-                                  : _labels[s]!,
+                          label: (_badge(s, state) ?? 0) > 0
+                              ? '${_labels[s]} · ${_badge(s, state)}'
+                              : _labels[s]!,
                           selected: _section == s,
                           onTap: () => _go(s),
                         ),
@@ -194,29 +192,28 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                   ],
                 ),
               ),
+            ),
+            Expanded(child: _withLoadError(_sectionBody())),
+          ],
         ),
-        Expanded(child: _withLoadError(_sectionBody())),
-      ],
-    ),
-  );
+      );
 
   Widget _webLayout() => Row(
-    children: [
-      SizedBox(
-        width: 252,
-        child: Container(
-          color: LuxColors.surface,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.fromLTRB(24, 28, 24, 8),
-                child: LuxelaneWordmark(size: 11),
-              ),
-              Expanded(
-                child: BlocBuilder<AdminBloc, AdminState>(
-                  builder:
-                      (context, state) => ListView(
+        children: [
+          SizedBox(
+            width: 252,
+            child: Container(
+              color: LuxColors.surface,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(24, 28, 24, 8),
+                    child: LuxelaneWordmark(size: 11),
+                  ),
+                  Expanded(
+                    child: BlocBuilder<AdminBloc, AdminState>(
+                      builder: (context, state) => ListView(
                         padding: const EdgeInsets.only(bottom: 12),
                         children: [
                           for (final (label, sections) in _groups) ...[
@@ -232,101 +229,99 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                           ],
                         ],
                       ),
-                ),
-              ),
-              const LuxDivider(),
-              BlocBuilder<AuthBloc, AuthState>(
-                builder: (context, auth) {
-                  final name =
-                      auth is AuthAuthenticated
+                    ),
+                  ),
+                  const LuxDivider(),
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, auth) {
+                      final name = auth is AuthAuthenticated
                           ? auth.user.displayName
                           : 'Administración';
-                  return Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 12, 8, 16),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 16,
-                          backgroundColor: LuxColors.sapphireTint,
-                          child: Text(
-                            name.isEmpty ? 'A' : name[0].toUpperCase(),
-                            style: const TextStyle(
-                              fontFamily: 'Cormorant Garamond',
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: LuxColors.sapphire,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: LuxTypography.titleMedium.copyWith(
-                                  fontSize: 13,
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 12, 8, 16),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 16,
+                              backgroundColor: LuxColors.sapphireTint,
+                              child: Text(
+                                name.isEmpty ? 'A' : name[0].toUpperCase(),
+                                style: const TextStyle(
+                                  fontFamily: 'Cormorant Garamond',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: LuxColors.sapphire,
                                 ),
                               ),
-                              const Text(
-                                'Administración',
-                                style: LuxTypography.caption,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: LuxTypography.titleMedium.copyWith(
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  const Text(
+                                    'Administración',
+                                    style: LuxTypography.caption,
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+                            IconButton(
+                              tooltip: 'Cerrar sesión',
+                              onPressed: () => _confirmSignOut(context),
+                              icon: const Icon(
+                                Icons.logout_rounded,
+                                size: 18,
+                                color: LuxColors.inkTertiary,
+                              ),
+                            ),
+                          ],
                         ),
-                        IconButton(
-                          tooltip: 'Cerrar sesión',
-                          onPressed: () => _confirmSignOut(context),
-                          icon: const Icon(
-                            Icons.logout_rounded,
-                            size: 18,
-                            color: LuxColors.inkTertiary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                      );
+                    },
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-      const LuxDivider(vertical: true),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AdminPageHeader(
-              title: _labels[_section]!,
-              subtitle: _subtitles[_section],
-            ),
-            Expanded(
-              child: AnimatedSwitcher(
-                duration: LuxMotion.of(context, LuxMotion.base),
-                switchInCurve: LuxMotion.decelerate,
-                child: KeyedSubtree(
-                  key: ValueKey(_section),
-                  child: _withLoadError(_sectionBody()),
+          const LuxDivider(vertical: true),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AdminPageHeader(
+                  title: _labels[_section]!,
+                  subtitle: _subtitles[_section],
                 ),
-              ),
+                Expanded(
+                  child: AnimatedSwitcher(
+                    duration: LuxMotion.of(context, LuxMotion.base),
+                    switchInCurve: LuxMotion.decelerate,
+                    child: KeyedSubtree(
+                      key: ValueKey(_section),
+                      child: _withLoadError(_sectionBody()),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    ],
-  );
+          ),
+        ],
+      );
 
   /// Si alguna lista no cargó, se dice arriba en vez de mostrar la sección
   /// como si estuviera vacía.
   Widget _withLoadError(Widget body) => BlocBuilder<AdminBloc, AdminState>(
-    buildWhen: (a, b) => a.loadError != b.loadError,
-    builder:
-        (context, state) => Column(
+        buildWhen: (a, b) => a.loadError != b.loadError,
+        builder: (context, state) => Column(
           children: [
             // SOS: siempre arriba, en cualquier sección.
             const AdminIncidentsStrip(),
@@ -344,9 +339,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 ),
                 actions: [
                   TextButton(
-                    onPressed:
-                        () =>
-                            context.read<AdminBloc>().add(AdminDataRequested()),
+                    onPressed: () =>
+                        context.read<AdminBloc>().add(AdminDataRequested()),
                     child: const Text('Reintentar'),
                   ),
                 ],
@@ -354,19 +348,19 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             Expanded(child: body),
           ],
         ),
-  );
+      );
 
   Widget _sectionBody() => switch (_section) {
-    AdminSection.dashboard => DashboardTab(onNavigate: _go),
-    AdminSection.operations => const BookingsTab(),
-    AdminSection.finance => const FinanceTab(),
-    AdminSection.pricing => const PricingTab(),
-    AdminSection.drivers => const DriversTab(),
-    AdminSection.vehicles => const VehiclesTab(),
-    AdminSection.business => const BusinessLeadsTab(),
-    AdminSection.users => const UsersTab(),
-    AdminSection.audit => const AuditTab(),
-    AdminSection.alerts => const AlertsTab(),
-    AdminSection.settings => const SettingsTab(),
-  };
+        AdminSection.dashboard => DashboardTab(onNavigate: _go),
+        AdminSection.operations => const BookingsTab(),
+        AdminSection.finance => const FinanceTab(),
+        AdminSection.pricing => const PricingTab(),
+        AdminSection.drivers => const DriversTab(),
+        AdminSection.vehicles => const VehiclesTab(),
+        AdminSection.business => const BusinessLeadsTab(),
+        AdminSection.users => const UsersTab(),
+        AdminSection.audit => const AuditTab(),
+        AdminSection.alerts => const AlertsTab(),
+        AdminSection.settings => const SettingsTab(),
+      };
 }

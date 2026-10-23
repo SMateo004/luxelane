@@ -18,10 +18,10 @@ class AuthRepositoryImpl implements AuthRepository {
     required FirebaseFirestore firestore,
     FirebaseFunctions? functions,
     GoogleSignIn? googleSignIn,
-  }) : _auth = firebaseAuth,
-       _db = firestore,
-       _functionsOverride = functions,
-       _googleOverride = googleSignIn;
+  })  : _auth = firebaseAuth,
+        _db = firestore,
+        _functionsOverride = functions,
+        _googleOverride = googleSignIn;
 
   final fb.FirebaseAuth _auth;
   final FirebaseFirestore _db;
@@ -32,18 +32,15 @@ class AuthRepositoryImpl implements AuthRepository {
 
   // Native Google account picker (Android/iOS). Created lazily: on web the
   // Firebase popup is used instead and this is never touched.
-  late final GoogleSignIn _google =
-      _googleOverride ??
+  late final GoogleSignIn _google = _googleOverride ??
       GoogleSignIn(
         scopes: const ['email', 'profile'],
-        clientId:
-            AppConfig.googleIosClientId.isEmpty
-                ? null
-                : AppConfig.googleIosClientId,
-        serverClientId:
-            AppConfig.googleServerClientId.isEmpty
-                ? null
-                : AppConfig.googleServerClientId,
+        clientId: AppConfig.googleIosClientId.isEmpty
+            ? null
+            : AppConfig.googleIosClientId,
+        serverClientId: AppConfig.googleServerClientId.isEmpty
+            ? null
+            : AppConfig.googleServerClientId,
       );
 
   @override
@@ -68,14 +65,12 @@ class AuthRepositoryImpl implements AuthRepository {
       });
 
   @override
-  Stream<User?> watchUser(String uid) => _db
-      .collection('users')
-      .doc(uid)
-      .snapshots()
-      .map(
-        (doc) =>
-            doc.exists ? User.fromJson({'id': doc.id, ...doc.data()!}) : null,
-      );
+  Stream<User?> watchUser(String uid) =>
+      _db.collection('users').doc(uid).snapshots().map(
+            (doc) => doc.exists
+                ? User.fromJson({'id': doc.id, ...doc.data()!})
+                : null,
+          );
 
   /// Raw Firebase sign-in flag — no Firestore involved, so it never
   /// produces a false-negative that would accidentally sign the user out.
@@ -142,10 +137,9 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final fb.UserCredential cred;
       if (kIsWeb) {
-        final provider =
-            fb.GoogleAuthProvider()
-              ..addScope('email')
-              ..setCustomParameters({'prompt': 'select_account'});
+        final provider = fb.GoogleAuthProvider()
+          ..addScope('email')
+          ..setCustomParameters({'prompt': 'select_account'});
         cred = await _auth.signInWithPopup(provider);
       } else {
         final account = await _google.signIn();

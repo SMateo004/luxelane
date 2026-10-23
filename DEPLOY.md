@@ -323,6 +323,12 @@ nadie lo reconoce, `escalateIncidentsJob` (cada minuto) reenvía alerta y
 push. **Sin una persona atendiendo el panel (o el push) el botón no protege
 a nadie** (auditoría, D23).
 
+Si quien lo disparó lo cancela, puede ser bajo coacción: el incidente pasa a
+`cancel_requested`, central recibe «Cancelado por el usuario: verificar por
+llamada» con prioridad alta y **la escalada sigue** hasta que un admin lo
+reconozca y lo cierre con nota. Deja de publicarse la ubicación del usuario
+(respeta su decisión); el seguimiento del chófer sigue visible en el panel.
+
 ### Pasos manuales previos (decisiones del responsable)
 1. `config/global.dispatchPhone` (texto): teléfono de central. Sin él, la
    app no ofrece llamar ni enviar SMS a central si falla la red, y el panel

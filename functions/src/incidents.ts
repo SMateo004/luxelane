@@ -4,7 +4,11 @@
  * curso. Lo ve quien lo disparó y el admin; la contraparte, nunca.
  *
  *   open → acknowledged → closed           (admin, cierre con nota)
- *   open/acknowledged → cancelled_by_reporter → closed
+ *   open/acknowledged → cancel_requested → acknowledged → closed
+ *
+ * Una cancelación de quien lo disparó puede ser bajo coacción: no detiene
+ * la escalada (sigue hasta que un admin la reconozca y cierre con nota) y
+ * sí detiene la publicación de su ubicación.
  *
  * Los tiempos de escalada son de operación (config/global), con valores
  * por defecto documentados en DEPLOY.md; no son valores de negocio.
@@ -27,6 +31,8 @@ export interface IncidentDeps {
 export const INCIDENT_WINDOW = ['driver_arriving', 'driver_arrived', 'verified', 'in_progress'];
 /** Comparte ubicación y escala mientras esté en uno de estos. */
 const LIVE = ['open', 'acknowledged'];
+/** Esperan a que un admin los reconozca: escalan. */
+export const NEEDS_ACK = ['open', 'cancel_requested'];
 export const RATE_LIMIT = 5;
 export const RATE_WINDOW_MS = 60 * 60 * 1000;
 /**
@@ -156,6 +162,20 @@ export async function raiseIncident(deps: IncidentDeps, uid: string | undefined,
     if (openId) {
       const ref = db.collection('incidents').doc(openId);
       const inc = await tx.get(ref);
+      if (inc.exists && inc.data()!.status === 'cancel_requested') {
+        // Pulsar de nuevo tras cancelar: se reabre y se avisa otra vez.
+        const count = Number(inc.data()!.count ?? 1) + 1;
+        tx.update(ref, { status: 'open', cancelledByReporter: false, count, lastRaisedAt: ts(at), updatedAt: ts(at) });
+        event(tx, ref, 'reopened_by_reporter', { uid, role }, { count });
+        highAlert(tx, db, at, {
+          type: 'incident',
+          bookingId: bookingRef.id,
+          incidentId: openId,
+          message: `SOS reactivado tras una cancelación (reserva #${shortId(bookingRef.id)}).`,
+        });
+        tx.set(rateRef, { recent: [...recent, at] });
+        return { incidentId: openId, status: 'open', count, alreadyOpen: true, rateLimited: false, created: true };
+      }
       if (inc.exists && LIVE.includes(inc.data()!.status)) {
         // Repetir no crea otro incidente ni envía push: suma al contador.
         if (recent.length >= RATE_LIMIT) {
@@ -225,33 +245,35 @@ export async function cancelIncident(deps: IncidentDeps, uid: string | undefined
   const db = deps.db;
   const at = nowMs(deps);
   const ref = db.collection('incidents').doc(incidentId);
-  const retention = await retentionFields(db, at);
 
   const outcome = await db.runTransaction(async (tx) => {
     const inc = await tx.get(ref);
     // Igual para uno ajeno que para uno inexistente.
     if (!inc.exists || inc.data()!.reporterId !== uid) throw incidentError('permission-denied', 'not_reporter');
     const d = inc.data()!;
-    if (d.status === 'cancelled_by_reporter') return { status: d.status, alreadyCancelled: true, bookingId: d.bookingId as string };
-    if (!LIVE.includes(d.status)) throw incidentError('failed-precondition', 'already_closed');
-    const state = await tx.get(stateRef(db, d.bookingId));
-    tx.update(ref, { status: 'cancelled_by_reporter', cancelledByReporter: true, cancelledAt: ts(at), updatedAt: ts(at), ...retention });
-    event(tx, ref, 'cancelled_by_reporter', { uid, role: d.reporterRole });
-    releaseState(tx, db, state, d.bookingId, uid, incidentId);
-    // El admin recibe igual el aviso: una cancelación también se revisa.
+    if (d.status === 'closed') throw incidentError('failed-precondition', 'already_closed');
+    if (d.status === 'cancel_requested') return { status: d.status, alreadyCancelled: true, bookingId: d.bookingId as string };
+    // Puede ser bajo coacción: vuelve a necesitar que un admin lo reconozca
+    // (la escalada sigue) y deja de compartirse la ubicación de quien lo
+    // disparó. El incidente sigue abierto para la reserva hasta el cierre.
+    tx.update(ref, {
+      status: 'cancel_requested', cancelledByReporter: true, cancelRequestedAt: ts(at), updatedAt: ts(at),
+    });
+    event(tx, ref, 'cancel_requested', { uid, role: d.reporterRole }, { from: d.status });
     highAlert(tx, db, at, {
-      type: 'incident_cancelled',
+      type: 'incident_cancel_requested',
       bookingId: d.bookingId,
       incidentId,
-      message: `SOS cancelado por quien lo disparó (reserva #${shortId(d.bookingId)}). Revisar igualmente.`,
+      message: `Cancelado por el usuario: verificar por llamada (reserva #${shortId(d.bookingId)}).`,
     });
-    return { status: 'cancelled_by_reporter', alreadyCancelled: false, bookingId: d.bookingId as string };
+    return { status: 'cancel_requested', alreadyCancelled: false, bookingId: d.bookingId as string };
   });
 
   logger.info('cancelIncident', 'result', { incidentId, already: outcome.alreadyCancelled });
   if (!outcome.alreadyCancelled) {
-    await pushToAdmins(deps, 'SOS cancelado', `Reserva #${shortId(outcome.bookingId)}: quien lo disparó lo canceló. Revísalo.`,
-      { incidentId, bookingId: outcome.bookingId, type: 'incident_cancelled' });
+    await pushToAdmins(deps, 'SOS cancelado: verificar por llamada',
+      `Reserva #${shortId(outcome.bookingId)}: el usuario canceló el aviso. Llama para verificar que está bien.`,
+      { incidentId, bookingId: outcome.bookingId, type: 'incident_cancel_requested' });
   }
   return { status: outcome.status, alreadyCancelled: outcome.alreadyCancelled };
 }
@@ -285,7 +307,7 @@ export async function acknowledgeIncident(deps: IncidentDeps, actor: AdminActor,
     if (!inc.exists) throw incidentError('not-found', 'incident_not_found');
     const d = inc.data()!;
     if (d.status === 'acknowledged') return { status: d.status, alreadyAcknowledged: true };
-    if (d.status !== 'open') throw incidentError('failed-precondition', 'not_open');
+    if (!NEEDS_ACK.includes(d.status)) throw incidentError('failed-precondition', 'not_open');
     const waited = Math.round((at - (d.createdAt as admin.firestore.Timestamp).toMillis()) / 1000);
     tx.update(ref, { status: 'acknowledged', acknowledgedAt: ts(at), acknowledgedBy: actor.adminId, updatedAt: ts(at) });
     event(tx, ref, 'acknowledged', { uid: actor.adminId, role: 'admin' }, { secondsToAck: waited });
@@ -308,8 +330,7 @@ export async function closeIncident(deps: IncidentDeps, actor: AdminActor, data:
     const state = await tx.get(stateRef(db, d.bookingId));
     tx.update(ref, {
       status: 'closed', closedAt: ts(at), closedBy: actor.adminId, closeNote: note, updatedAt: ts(at),
-      // Una cancelación del reporter ya fijó su retención.
-      ...(d.status === 'cancelled_by_reporter' ? {} : retention),
+      ...retention,
     });
     event(tx, ref, 'closed', { uid: actor.adminId, role: 'admin' }, { note, from: d.status });
     releaseState(tx, db, state, d.bookingId, d.reporterId, incidentId);
@@ -333,13 +354,13 @@ export async function escalateIncidents(deps: IncidentDeps): Promise<string[]> {
   const global = (await db.collection('config').doc('global').get()).data() ?? {};
   const ackMs = seconds(global[INCIDENT_CONFIG_KEYS.ackSeconds], DEFAULT_ACK_SECONDS) * 1000;
   const everyMs = seconds(global[INCIDENT_CONFIG_KEYS.escalateEverySeconds], DEFAULT_ESCALATE_EVERY_SECONDS) * 1000;
-  const open = await db.collection('incidents').where('status', '==', 'open').get();
+  const open = await db.collection('incidents').where('status', 'in', NEEDS_ACK).get();
   const escalated: string[] = [];
   for (const doc of open.docs) {
     const done = await db.runTransaction(async (tx) => {
       const inc = await tx.get(doc.ref);
       const d = inc.data();
-      if (!d || d.status !== 'open') return null;
+      if (!d || !NEEDS_ACK.includes(d.status)) return null;
       const created = (d.createdAt as admin.firestore.Timestamp).toMillis();
       const last = (d.escalation?.lastAt as admin.firestore.Timestamp | null | undefined)?.toMillis();
       const due = last === undefined ? at - created >= ackMs : at - last >= everyMs;
@@ -351,7 +372,9 @@ export async function escalateIncidents(deps: IncidentDeps): Promise<string[]> {
         type: 'incident_escalated',
         bookingId: d.bookingId,
         incidentId: doc.id,
-        message: `SOS sin reconocer desde hace ${Math.round((at - created) / 1000)} s (reserva #${shortId(d.bookingId)}).`,
+        message: d.status === 'cancel_requested'
+          ? `Cancelado por el usuario: verificar por llamada. Sin reconocer desde hace ${Math.round((at - created) / 1000)} s (reserva #${shortId(d.bookingId)}).`
+          : `SOS sin reconocer desde hace ${Math.round((at - created) / 1000)} s (reserva #${shortId(d.bookingId)}).`,
       });
       return d.bookingId as string;
     });

@@ -35,8 +35,8 @@ import '../widgets/vehicle_visuals.dart';
 
 // Classes offered right now (First Class only when the admin enables it).
 List<VehicleClass> get _kVehicleClasses => VehicleCatalog.bookable(
-  firstClassEnabled: RemoteFlags.instance.firstClassEnabled.value,
-);
+      firstClassEnabled: RemoteFlags.instance.firstClassEnabled.value,
+    );
 
 // ── Luxelane design tokens (mirrors home_design.dart LD class) ─────────────────
 const _kBg = LD.bg; // #FAFBFE
@@ -136,15 +136,15 @@ class _BookingScreenState extends State<BookingScreen> {
   Timer? _quoteTimer;
 
   String get _currentQuoteKey => [
-    _selected.name,
-    _service.name,
-    _hours,
-    _formData?.origin.lat,
-    _formData?.origin.lng,
-    _formData?.destination?.lat,
-    _formData?.destination?.lng,
-    _formData?.scheduledAt.millisecondsSinceEpoch,
-  ].join('|');
+        _selected.name,
+        _service.name,
+        _hours,
+        _formData?.origin.lat,
+        _formData?.origin.lng,
+        _formData?.destination?.lat,
+        _formData?.destination?.lng,
+        _formData?.scheduledAt.millisecondsSinceEpoch,
+      ].join('|');
 
   /// Cotización vigente para la selección actual, o null.
   BookingQuote? get _freshQuote =>
@@ -235,26 +235,25 @@ class _BookingScreenState extends State<BookingScreen> {
     final ok = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder:
-          (ctx) => AlertDialog(
-            title: const Text('El precio cambió'),
-            content: Text(
-              'El precio de este viaje es ahora '
-              'Bs ${state.newPrice.toStringAsFixed(0)} '
-              '(antes Bs ${state.previousPrice.toStringAsFixed(0)}). '
-              '¿Quieres reservar con el precio nuevo?',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text('No reservar'),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text('Reservar'),
-              ),
-            ],
+      builder: (ctx) => AlertDialog(
+        title: const Text('El precio cambió'),
+        content: Text(
+          'El precio de este viaje es ahora '
+          'Bs ${state.newPrice.toStringAsFixed(0)} '
+          '(antes Bs ${state.previousPrice.toStringAsFixed(0)}). '
+          '¿Quieres reservar con el precio nuevo?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('No reservar'),
           ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Reservar'),
+          ),
+        ],
+      ),
     );
     if (!mounted) return;
     setState(() {
@@ -264,8 +263,8 @@ class _BookingScreenState extends State<BookingScreen> {
     });
     if (ok == true) {
       context.read<BookingBloc>().add(
-        state.request.withQuotedPrice(state.newPrice),
-      );
+            state.request.withQuotedPrice(state.newPrice),
+          );
     }
   }
 
@@ -282,10 +281,9 @@ class _BookingScreenState extends State<BookingScreen> {
     return FlightNumber.error(_flight);
   }
 
-  String? get _flightTypeError =>
-      _airportPickup && _flightType == null
-          ? 'Indica si tu vuelo es nacional o internacional.'
-          : null;
+  String? get _flightTypeError => _airportPickup && _flightType == null
+      ? 'Indica si tu vuelo es nacional o internacional.'
+      : null;
 
   bool _checkFlight() {
     final error = _flightError ?? _flightTypeError;
@@ -378,8 +376,9 @@ class _BookingScreenState extends State<BookingScreen> {
         authState.user.stripeCustomerId != null &&
         authState.user.stripeCustomerId!.isNotEmpty) {
       context.read<PaymentBloc>().add(
-        CardsLoadRequested(stripeCustomerId: authState.user.stripeCustomerId!),
-      );
+            CardsLoadRequested(
+                stripeCustomerId: authState.user.stripeCustomerId!),
+          );
     }
   }
 
@@ -394,11 +393,10 @@ class _BookingScreenState extends State<BookingScreen> {
       final ok = await showDialog<bool>(
         context: context,
         barrierDismissible: false,
-        builder:
-            (_) => BlocProvider.value(
-              value: context.read<AuthBloc>(),
-              child: const _AuthGateDialog(),
-            ),
+        builder: (_) => BlocProvider.value(
+          value: context.read<AuthBloc>(),
+          child: const _AuthGateDialog(),
+        ),
       );
       if (ok != true || !mounted) return;
       final freshAuth = context.read<AuthBloc>().state;
@@ -467,11 +465,11 @@ class _BookingScreenState extends State<BookingScreen> {
     _pendingBookingId = booking.id;
     setState(() => _awaitingPaymentIntent = true);
     context.read<PaymentBloc>().add(
-      PaymentIntentRequested(
-        bookingId: booking.id,
-        paymentMethodId: _selectedCardId!,
-      ),
-    );
+          PaymentIntentRequested(
+            bookingId: booking.id,
+            paymentMethodId: _selectedCardId!,
+          ),
+        );
   }
 
   /// La tarjeta no se pudo autorizar: la reserva se cancela para no dejarla
@@ -531,14 +529,13 @@ class _BookingScreenState extends State<BookingScreen> {
     final result = await showDialog<Map<String, String>>(
       context: context,
       barrierColor: Colors.black38,
-      builder:
-          (_) => _AddGuestDialog(
-            initialTitle: _guestTitle,
-            initialFirstName: _guestFirstName,
-            initialLastName: _guestLastName,
-            initialPhone: _guestPhone,
-            initialLanguage: _guestLanguage,
-          ),
+      builder: (_) => _AddGuestDialog(
+        initialTitle: _guestTitle,
+        initialFirstName: _guestFirstName,
+        initialLastName: _guestLastName,
+        initialPhone: _guestPhone,
+        initialLanguage: _guestLanguage,
+      ),
     );
     if (result != null && mounted) {
       setState(() {
@@ -558,8 +555,7 @@ class _BookingScreenState extends State<BookingScreen> {
     final origin = _formData!.origin;
     // Por horas sin destino fijo: se guarda la recogida como referencia (con
     // coordenadas reales) en lugar de un lugar inventado en (0,0).
-    final destination =
-        _formData!.destination ??
+    final destination = _formData!.destination ??
         Place(
           name: 'Servicio por horas',
           address: origin.address,
@@ -571,42 +567,40 @@ class _BookingScreenState extends State<BookingScreen> {
 
     // Los datos del invitado van en su propio campo, separados de las notas
     // del solicitante; ningún chófer los ve antes de aceptar.
-    final guest =
-        !_bookForSelf && _guestFirstName.isNotEmpty
-            ? BookingGuest(
-              title: _guestTitle,
-              firstName: _guestFirstName,
-              lastName: _guestLastName,
-              phone: _guestPhone,
-              language: _guestLanguage,
-            )
-            : null;
+    final guest = !_bookForSelf && _guestFirstName.isNotEmpty
+        ? BookingGuest(
+            title: _guestTitle,
+            firstName: _guestFirstName,
+            lastName: _guestLastName,
+            phone: _guestPhone,
+            language: _guestLanguage,
+          )
+        : null;
 
     context.read<BookingBloc>().add(
-      BookingCreateRequested(
-        origin: origin,
-        destination: destination,
-        vehicleClass: _selected,
-        serviceType: _service,
-        scheduledAt: scheduledAt,
-        riderId: authState.user.id,
-        estimatedPrice: _freshQuote!.price,
-        quotedPrice: _freshQuote!.price,
-        requestId: _attemptId,
-        notes: _notes.isNotEmpty ? _notes : null,
-        guest: guest,
-        passengerCount: _passengers,
-        luggageCount: _luggage,
-        flightNumber:
-            _flight.trim().isEmpty ? null : FlightNumber.normalize(_flight),
-        flightType: _airportPickup ? _flightType?.name : null,
-        pickupAirport:
-            _airportPickup
+          BookingCreateRequested(
+            origin: origin,
+            destination: destination,
+            vehicleClass: _selected,
+            serviceType: _service,
+            scheduledAt: scheduledAt,
+            riderId: authState.user.id,
+            estimatedPrice: _freshQuote!.price,
+            quotedPrice: _freshQuote!.price,
+            requestId: _attemptId,
+            notes: _notes.isNotEmpty ? _notes : null,
+            guest: guest,
+            passengerCount: _passengers,
+            luggageCount: _luggage,
+            flightNumber:
+                _flight.trim().isEmpty ? null : FlightNumber.normalize(_flight),
+            flightType: _airportPickup ? _flightType?.name : null,
+            pickupAirport: _airportPickup
                 ? ServiceArea.airportFor(_formData!.origin)?.iata
                 : null,
-        hours: _service == ServiceType.byTheHour ? _hours : null,
-      ),
-    );
+            hours: _service == ServiceType.byTheHour ? _hours : null,
+          ),
+        );
   }
 
   void _selectVehicle(VehicleClass vc) {
@@ -733,57 +727,57 @@ class _BookingScreenState extends State<BookingScreen> {
   // ── WEB LAYOUT ──────────────────────────────────────────────────────────────
 
   Widget _webLayout() => Scaffold(
-    backgroundColor: _kBg,
-    body: Column(
-      children: [
-        _WebTopBar(
-          formData: _formData,
-          service: _service,
-          hours: _hours,
-          onBack: () => context.pop(),
-          onServiceChanged: (t) => setState(() => _service = t),
-          onHoursChanged: (h) => setState(() => _hours = h),
-          showStickySelector: _showStickySelector,
-          selectedVehicle: _selected,
-          onVehicleChanged: _selectVehicle,
-          km: _km,
+        backgroundColor: _kBg,
+        body: Column(
+          children: [
+            _WebTopBar(
+              formData: _formData,
+              service: _service,
+              hours: _hours,
+              onBack: () => context.pop(),
+              onServiceChanged: (t) => setState(() => _service = t),
+              onHoursChanged: (h) => setState(() => _hours = h),
+              showStickySelector: _showStickySelector,
+              selectedVehicle: _selected,
+              onVehicleChanged: _selectVehicle,
+              km: _km,
+            ),
+            const Divider(color: _kDivider, height: 1),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, c) {
+                  // Content and summary card travel together as one centred
+                  // block; the card floats over the page beside the content.
+                  final w = c.maxWidth;
+                  final cardW = w >= 1440 ? 400.0 : 360.0;
+                  const cardGap = 32.0;
+                  final outer = w >= 1400 ? 48.0 : 28.0;
+                  final blockW = math.min(
+                    w - 2 * outer,
+                    _kContentMax + cardGap + cardW,
+                  );
+                  final blockLeft = (w - blockW) / 2;
+                  final contentRight = blockLeft + cardW + cardGap;
+                  return Stack(
+                    children: [
+                      Positioned.fill(
+                        child: _webLeft(left: blockLeft, right: contentRight),
+                      ),
+                      Positioned(
+                        top: 24,
+                        bottom: 24,
+                        right: blockLeft,
+                        width: cardW,
+                        child: _webRight(),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ],
         ),
-        const Divider(color: _kDivider, height: 1),
-        Expanded(
-          child: LayoutBuilder(
-            builder: (context, c) {
-              // Content and summary card travel together as one centred
-              // block; the card floats over the page beside the content.
-              final w = c.maxWidth;
-              final cardW = w >= 1440 ? 400.0 : 360.0;
-              const cardGap = 32.0;
-              final outer = w >= 1400 ? 48.0 : 28.0;
-              final blockW = math.min(
-                w - 2 * outer,
-                _kContentMax + cardGap + cardW,
-              );
-              final blockLeft = (w - blockW) / 2;
-              final contentRight = blockLeft + cardW + cardGap;
-              return Stack(
-                children: [
-                  Positioned.fill(
-                    child: _webLeft(left: blockLeft, right: contentRight),
-                  ),
-                  Positioned(
-                    top: 24,
-                    bottom: 24,
-                    right: blockLeft,
-                    width: cardW,
-                    child: _webRight(),
-                  ),
-                ],
-              );
-            },
-          ),
-        ),
-      ],
-    ),
-  );
+      );
 
   /// An hourly booking has no route to draw, so it gets no map.
   bool get _showRouteMap =>
@@ -801,151 +795,151 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _webLeft({
     required double left,
     required double right,
-  }) => SingleChildScrollView(
-    controller: _leftScrollCtrl,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // ── Hero: tinted with the selected class ─────────────────────
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 600),
-          curve: Curves.easeInOut,
-          color: _tone.wash,
-          padding: EdgeInsets.fromLTRB(left, 36, right, 40),
-          child: SizedBox(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 350),
-                  child: Text(
-                    _selected.label.toUpperCase(),
-                    key: ValueKey(_selected),
-                    style: TextStyle(
-                      fontFamily: kSans,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 3.5,
-                      color: _tone.accent,
-                      decoration: TextDecoration.none,
+  }) =>
+      SingleChildScrollView(
+        controller: _leftScrollCtrl,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // ── Hero: tinted with the selected class ─────────────────────
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeInOut,
+              color: _tone.wash,
+              padding: EdgeInsets.fromLTRB(left, 36, right, 40),
+              child: SizedBox(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 350),
+                      child: Text(
+                        _selected.label.toUpperCase(),
+                        key: ValueKey(_selected),
+                        style: TextStyle(
+                          fontFamily: kSans,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 3.5,
+                          color: _tone.accent,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Elige tu experiencia',
-                  style: TextStyle(
-                    fontFamily: kSerif,
-                    fontSize: 40,
-                    fontWeight: FontWeight.w400,
-                    color: _kTextPrimary,
-                    letterSpacing: -0.3,
-                    height: 1.05,
-                    decoration: TextDecoration.none,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  '${LuxPromise.fixedPrice}  ·  ${LuxPromise.freeCancel}  ·  ${LuxPromise.chauffeurs}',
-                  style: TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 11,
-                    color: _kTextTertiary,
-                    letterSpacing: 1.2,
-                    decoration: TextDecoration.none,
-                  ),
-                ),
-                const SizedBox(height: 24),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Elige tu experiencia',
+                      style: TextStyle(
+                        fontFamily: kSerif,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w400,
+                        color: _kTextPrimary,
+                        letterSpacing: -0.3,
+                        height: 1.05,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      '${LuxPromise.fixedPrice}  ·  ${LuxPromise.freeCancel}  ·  ${LuxPromise.chauffeurs}',
+                      style: TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 11,
+                        color: _kTextTertiary,
+                        letterSpacing: 1.2,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
 
-                // Narrow cards tease the front of each car; the chosen
-                // one opens up to reveal it whole.
-                SizedBox(
-                  height: 450,
-                  child: LayoutBuilder(
-                    builder: (context, c) {
-                      // Fit the row to the column: the open card up to
-                      // 500px, the teasers share what is left (140–210px)
-                      // so nothing slides under the summary card.
-                      const gap = 14.0;
-                      final n = _kVehicleClasses.length;
-                      final selW = math.min(
-                        500.0,
-                        c.maxWidth - (n - 1) * (140 + gap),
-                      );
-                      final teaserW =
-                          n > 1
+                    // Narrow cards tease the front of each car; the chosen
+                    // one opens up to reveal it whole.
+                    SizedBox(
+                      height: 450,
+                      child: LayoutBuilder(
+                        builder: (context, c) {
+                          // Fit the row to the column: the open card up to
+                          // 500px, the teasers share what is left (140–210px)
+                          // so nothing slides under the summary card.
+                          const gap = 14.0;
+                          final n = _kVehicleClasses.length;
+                          final selW = math.min(
+                            500.0,
+                            c.maxWidth - (n - 1) * (140 + gap),
+                          );
+                          final teaserW = n > 1
                               ? ((c.maxWidth - selW - (n - 1) * gap) / (n - 1))
                                   .clamp(140.0, 210.0)
                               : selW;
-                      return ListView.separated(
-                        controller: _cardsCtrl,
-                        scrollDirection: Axis.horizontal,
-                        clipBehavior: Clip.none,
-                        padding: EdgeInsets.zero,
-                        itemCount: n,
-                        separatorBuilder: (_, __) => const SizedBox(width: gap),
-                        itemBuilder: (_, i) {
-                          final vc = _kVehicleClasses[i];
-                          return _VehicleCard(
-                            vehicleClass: vc,
-                            price: _cardPrice(vc),
-                            fromPrice: _priceIsFrom,
-                            selected: _selected == vc,
-                            onTap: () => _selectVehicle(vc),
-                            serviceType: _service,
-                            hours:
-                                _service == ServiceType.byTheHour
+                          return ListView.separated(
+                            controller: _cardsCtrl,
+                            scrollDirection: Axis.horizontal,
+                            clipBehavior: Clip.none,
+                            padding: EdgeInsets.zero,
+                            itemCount: n,
+                            separatorBuilder: (_, __) =>
+                                const SizedBox(width: gap),
+                            itemBuilder: (_, i) {
+                              final vc = _kVehicleClasses[i];
+                              return _VehicleCard(
+                                vehicleClass: vc,
+                                price: _cardPrice(vc),
+                                fromPrice: _priceIsFrom,
+                                selected: _selected == vc,
+                                onTap: () => _selectVehicle(vc),
+                                serviceType: _service,
+                                hours: _service == ServiceType.byTheHour
                                     ? _hours
                                     : null,
-                            width: teaserW,
-                            carWidth: selW - 20,
+                                width: teaserW,
+                                carWidth: selW - 20,
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
 
-        // ── Everything about the selected class ───────────────────────
-        Padding(
-          padding: EdgeInsets.fromLTRB(left, 40, right, 48),
-          child: SizedBox(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                VehicleDetailsGallery(vehicleClass: _selected),
-                const SizedBox(height: 40),
-                const Divider(color: _kDivider, height: 1),
-                const SizedBox(height: 36),
-                _webWhatsIncluded(),
-                const SizedBox(height: 40),
-                const Divider(color: _kDivider, height: 1),
-                const SizedBox(height: 36),
-                _capacitySection(),
-                const SizedBox(height: 40),
-                _webPriceBreakdown(),
-              ],
+            // ── Everything about the selected class ───────────────────────
+            Padding(
+              padding: EdgeInsets.fromLTRB(left, 40, right, 48),
+              child: SizedBox(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    VehicleDetailsGallery(vehicleClass: _selected),
+                    const SizedBox(height: 40),
+                    const Divider(color: _kDivider, height: 1),
+                    const SizedBox(height: 36),
+                    _webWhatsIncluded(),
+                    const SizedBox(height: 40),
+                    const Divider(color: _kDivider, height: 1),
+                    const SizedBox(height: 36),
+                    _capacitySection(),
+                    const SizedBox(height: 40),
+                    _webPriceBreakdown(),
+                  ],
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 
   Widget _capacitySection({bool compact = false}) => CapacitySection(
-    vehicleClass: _selected,
-    tab: _capacityTab,
-    luggageIndex: _luggageOption,
-    seatingIndex: _seatingOption,
-    onTab: (t) => setState(() => _capacityTab = t),
-    onLuggage: (i) => setState(() => _luggageOption = i),
-    onSeating: (i) => setState(() => _seatingOption = i),
-    compact: compact,
-  );
+        vehicleClass: _selected,
+        tab: _capacityTab,
+        luggageIndex: _luggageOption,
+        seatingIndex: _seatingOption,
+        onTab: (t) => setState(() => _capacityTab = t),
+        onLuggage: (i) => setState(() => _luggageOption = i),
+        onSeating: (i) => setState(() => _seatingOption = i),
+        compact: compact,
+      );
 
   // ── What's Included ────────────────────────────────────────────────────────
 
@@ -963,35 +957,35 @@ class _BookingScreenState extends State<BookingScreen> {
     ];
 
     Widget item(IconData icon, String label) => Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 500),
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: _tone.wash,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Icon(icon, size: 18, color: _tone.accent),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 2),
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontFamily: kSans,
-                fontSize: 13.5,
-                height: 1.45,
-                color: LD.ink2,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 500),
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: _tone.wash,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(icon, size: 18, color: _tone.accent),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 2),
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 13.5,
+                    height: 1.45,
+                    color: LD.ink2,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ],
-    );
+          ],
+        );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1012,10 +1006,9 @@ class _BookingScreenState extends State<BookingScreen> {
         LayoutBuilder(
           builder: (context, c) {
             // Phones list the perks in one column so each line stays readable.
-            final cols =
-                c.maxWidth >= 720
-                    ? 3
-                    : c.maxWidth >= 480
+            final cols = c.maxWidth >= 720
+                ? 3
+                : c.maxWidth >= 480
                     ? 2
                     : 1;
             const gap = 24.0;
@@ -1039,86 +1032,86 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _webPriceBreakdown({bool compact = false}) {
     // Dotted line row
     Widget priceLine(String label, double? amount) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      child: Row(
-        children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: kSans,
-              fontSize: 15,
-              fontWeight: FontWeight.w400,
-              color: _kTextPrimary,
-            ),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          child: Row(
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                  color: _kTextPrimary,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (_, c) {
+                    const dW = 4.0, gap = 5.0;
+                    final count = (c.maxWidth / (dW + gap)).floor();
+                    return Row(
+                      children: List.generate(
+                        count,
+                        (_) => Container(
+                          width: dW,
+                          height: 1,
+                          margin: const EdgeInsets.only(right: gap),
+                          color: _kBorder,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                formatPriceOrQuote(amount, decimals: 2),
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: _kTextPrimary,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: LayoutBuilder(
-              builder: (_, c) {
-                const dW = 4.0, gap = 5.0;
-                final count = (c.maxWidth / (dW + gap)).floor();
-                return Row(
-                  children: List.generate(
-                    count,
-                    (_) => Container(
-                      width: dW,
-                      height: 1,
-                      margin: const EdgeInsets.only(right: gap),
-                      color: _kBorder,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            formatPriceOrQuote(amount, decimals: 2),
-            style: const TextStyle(
-              fontFamily: kSans,
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: _kTextPrimary,
-            ),
-          ),
-        ],
-      ),
-    );
+        );
 
     // Note row with info icon
     Widget note(String text) => Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 22,
-            height: 22,
-            decoration: const BoxDecoration(
-              color: LD.sphTint,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.info_outline,
-              size: 13,
-              color: _kPanelAccent,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontFamily: kSans,
-                fontSize: 12,
-                color: _kTextSub,
-                height: 1.6,
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 22,
+                height: 22,
+                decoration: const BoxDecoration(
+                  color: LD.sphTint,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.info_outline,
+                  size: 13,
+                  color: _kPanelAccent,
+                ),
               ),
-            ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  text,
+                  style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 12,
+                    color: _kTextSub,
+                    height: 1.6,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
 
     return Container(
       padding: EdgeInsets.all(compact ? 20 : 30),
@@ -1193,75 +1186,73 @@ class _BookingScreenState extends State<BookingScreen> {
   /// Summary card: rounded, lifted off the page with a soft shadow, sitting
   /// beside the content it summarises.
   Widget _webRight() => DecoratedBox(
-    decoration: BoxDecoration(
-      color: _kCardBg,
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: LD.border),
-      boxShadow: [
-        BoxShadow(
-          color: LD.ink.withValues(alpha: 0.05),
-          blurRadius: 3,
-          offset: const Offset(0, 1),
-        ),
-        BoxShadow(
-          color: LD.ink.withValues(alpha: 0.10),
-          blurRadius: 40,
-          spreadRadius: -12,
-          offset: const Offset(0, 24),
-        ),
-      ],
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // ── Route map: only when there is a route (not for hourly) ────
-          AnimatedSize(
-            duration: const Duration(milliseconds: 320),
-            curve: Curves.easeInOut,
-            alignment: Alignment.topCenter,
-            child:
-                _showRouteMap
-                    ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Container(
-                          height:
-                              MediaQuery.sizeOf(context).width >= 1440
-                                  ? 260
-                                  : 210,
-                          color: LD.bg3,
-                          child: LuxMap(
-                            origin: _formData!.origin,
-                            destination: _formData!.destination,
-                            routeInfo: _routeInfo,
-                          ),
-                        ),
-                        const Divider(color: _kDivider, height: 1),
-                      ],
-                    )
-                    : const SizedBox(width: double.infinity),
-          ),
-
-          // ── Booking summary ───────────────────────────────────────────
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 22, 24, 8),
-              child: _webSummaryContent(),
+        decoration: BoxDecoration(
+          color: _kCardBg,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: LD.border),
+          boxShadow: [
+            BoxShadow(
+              color: LD.ink.withValues(alpha: 0.05),
+              blurRadius: 3,
+              offset: const Offset(0, 1),
             ),
-          ),
+            BoxShadow(
+              color: LD.ink.withValues(alpha: 0.10),
+              blurRadius: 40,
+              spreadRadius: -12,
+              offset: const Offset(0, 24),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // ── Route map: only when there is a route (not for hourly) ────
+              AnimatedSize(
+                duration: const Duration(milliseconds: 320),
+                curve: Curves.easeInOut,
+                alignment: Alignment.topCenter,
+                child: _showRouteMap
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            height: MediaQuery.sizeOf(context).width >= 1440
+                                ? 260
+                                : 210,
+                            color: LD.bg3,
+                            child: LuxMap(
+                              origin: _formData!.origin,
+                              destination: _formData!.destination,
+                              routeInfo: _routeInfo,
+                            ),
+                          ),
+                          const Divider(color: _kDivider, height: 1),
+                        ],
+                      )
+                    : const SizedBox(width: double.infinity),
+              ),
 
-          // ── Reserve button — pinned bottom ────────────────────────────
-          _ReserveBar(
-            selected: _selected,
-            loading: _loading,
-            onReserve: _confirm,
+              // ── Booking summary ───────────────────────────────────────────
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(24, 22, 24, 8),
+                  child: _webSummaryContent(),
+                ),
+              ),
+
+              // ── Reserve button — pinned bottom ────────────────────────────
+              _ReserveBar(
+                selected: _selected,
+                loading: _loading,
+                onReserve: _confirm,
+              ),
+            ],
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 
   Widget _webSummaryContent() {
     return Column(
@@ -1327,15 +1318,15 @@ class _BookingScreenState extends State<BookingScreen> {
         const SizedBox(height: 12),
         _service == ServiceType.byTheHour
             ? _SummaryAddressRow(
-              icon: Icons.schedule_rounded,
-              label: 'Duración',
-              value: '$_hours horas a tu disposición',
-            )
+                icon: Icons.schedule_rounded,
+                label: 'Duración',
+                value: '$_hours horas a tu disposición',
+              )
             : _SummaryAddressRow(
-              icon: Icons.flag_outlined,
-              label: 'Destino',
-              value: _formData?.destination?.displayName ?? '—',
-            ),
+                icon: Icons.flag_outlined,
+                label: 'Destino',
+                value: _formData?.destination?.displayName ?? '—',
+              ),
         if (_airportPickup) ...[
           const SizedBox(height: 20),
           const _FlightNote(),
@@ -1366,10 +1357,9 @@ class _BookingScreenState extends State<BookingScreen> {
           iconBg: !_bookForSelf ? LD.sphTint : LD.bg2,
           iconColor: !_bookForSelf ? _kPanelAccent : _kTextSub,
           title: 'Reservar para un invitado',
-          subtitle:
-              (!_bookForSelf && _guestFirstName.isNotEmpty)
-                  ? '$_guestTitle $_guestFirstName $_guestLastName'
-                  : 'Seleccionar o añadir un invitado',
+          subtitle: (!_bookForSelf && _guestFirstName.isNotEmpty)
+              ? '$_guestTitle $_guestFirstName $_guestLastName'
+              : 'Seleccionar o añadir un invitado',
           selected: !_bookForSelf,
           onTap: _showAddGuestDialog,
           trailing: Icon(
@@ -1409,84 +1399,83 @@ class _BookingScreenState extends State<BookingScreen> {
 
   // The vehicle step wears the selected class colour, like the web hero.
   Widget _mobileLayout() => AnimatedContainer(
-    duration: const Duration(milliseconds: 600),
-    curve: Curves.easeInOut,
-    color: _step == 0 ? _tone.wash : _kBg,
-    child: Theme(
-      data: Theme.of(context).copyWith(
-        scaffoldBackgroundColor: Colors.transparent,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.transparent,
-          foregroundColor: _kTextPrimary,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          centerTitle: true,
-          iconTheme: IconThemeData(color: _kTextPrimary),
-          titleTextStyle: TextStyle(
-            fontFamily: kSans,
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: _kTextSub,
-            letterSpacing: 1.4,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOut,
+        color: _step == 0 ? _tone.wash : _kBg,
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            scaffoldBackgroundColor: Colors.transparent,
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.transparent,
+              foregroundColor: _kTextPrimary,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              centerTitle: true,
+              iconTheme: IconThemeData(color: _kTextPrimary),
+              titleTextStyle: TextStyle(
+                fontFamily: kSans,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: _kTextSub,
+                letterSpacing: 1.4,
+              ),
+            ),
           ),
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
-            onPressed:
-                () => _step > 0 ? setState(() => _step--) : context.pop(),
-          ),
-          title: Text('PASO ${_step + 1} DE 3'),
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(48),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 760),
-                  child: _LightStepIndicator(
-                    steps: const ['Vehículo', 'Detalles', 'Confirmar'],
-                    currentStep: _step,
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+                onPressed: () =>
+                    _step > 0 ? setState(() => _step--) : context.pop(),
+              ),
+              title: Text('PASO ${_step + 1} DE 3'),
+              bottom: PreferredSize(
+                preferredSize: const Size.fromHeight(48),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 760),
+                      child: _LightStepIndicator(
+                        steps: const ['Vehículo', 'Detalles', 'Confirmar'],
+                        currentStep: _step,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
-                // Tablets keep a comfortable reading width.
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 760),
-                    child: _mobileStepContent(),
+            body: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(20),
+                    // Tablets keep a comfortable reading width.
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 760),
+                        child: _mobileStepContent(),
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            _LightPriceBar(
-              price: _price,
-              label: _step < 2 ? 'Continuar' : 'Reservar',
-              loading: _loading,
-              onConfirm:
-                  _step < 2
+                _LightPriceBar(
+                  price: _price,
+                  label: _step < 2 ? 'Continuar' : 'Reservar',
+                  loading: _loading,
+                  onConfirm: _step < 2
                       ? () {
-                        if (_step == 1 && !_checkFlight()) return;
-                        setState(() => _step++);
-                      }
+                          if (_step == 1 && !_checkFlight()) return;
+                          setState(() => _step++);
+                        }
                       : _confirm,
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 
   Widget _mobileStepContent() {
     switch (_step) {
@@ -1502,136 +1491,139 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   Widget _mobileVehicleStep() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        'Elige tu experiencia',
-        style: TextStyle(
-          fontFamily: kSerif,
-          fontSize: 28,
-          fontWeight: FontWeight.w600,
-          color: _kTextPrimary,
-        ),
-      ),
-      const SizedBox(height: 16),
-      _LightServiceTypeTab(
-        selected: _service,
-        onChanged: (t) => setState(() => _service = t),
-      ),
-      if (_service == ServiceType.byTheHour) ...[
-        const SizedBox(height: 12),
-        _LightHourRow(
-          hours: _hours,
-          onChanged: (h) => setState(() => _hours = h),
-        ),
-      ],
-      const SizedBox(height: 20),
-      SizedBox(
-        height: _mobileCardWidth > 168 ? 400 : 340,
-        child: ListView.separated(
-          controller: _cardsCtrl,
-          scrollDirection: Axis.horizontal,
-          clipBehavior: Clip.none,
-          padding: EdgeInsets.zero,
-          itemCount: _kVehicleClasses.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 12),
-          itemBuilder: (_, i) {
-            final vc = _kVehicleClasses[i];
-            return _VehicleCard(
-              vehicleClass: vc,
-              price: _cardPrice(vc),
-              fromPrice: _priceIsFrom,
-              selected: _selected == vc,
-              onTap: () => _selectVehicle(vc),
-              serviceType: _service,
-              hours: _service == ServiceType.byTheHour ? _hours : null,
-              width: _mobileCardWidth,
-              carWidth: _mobileCardWidth > 168 ? 360 : 270,
-            );
-          },
-        ),
-      ),
-      const SizedBox(height: 14),
-      const _MobilePromises(),
-      const SizedBox(height: 32),
-      VehicleDetailsGallery(vehicleClass: _selected, compact: true),
-      const SizedBox(height: 36),
-      _capacitySection(compact: true),
-      const SizedBox(height: 36),
-      _webWhatsIncluded(compact: true),
-      const SizedBox(height: 32),
-      _webPriceBreakdown(compact: true),
-      const SizedBox(height: 8),
-    ],
-  );
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Elige tu experiencia',
+            style: TextStyle(
+              fontFamily: kSerif,
+              fontSize: 28,
+              fontWeight: FontWeight.w600,
+              color: _kTextPrimary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          _LightServiceTypeTab(
+            selected: _service,
+            onChanged: (t) => setState(() => _service = t),
+          ),
+          if (_service == ServiceType.byTheHour) ...[
+            const SizedBox(height: 12),
+            _LightHourRow(
+              hours: _hours,
+              onChanged: (h) => setState(() => _hours = h),
+            ),
+          ],
+          const SizedBox(height: 20),
+          SizedBox(
+            height: _mobileCardWidth > 168 ? 400 : 340,
+            child: ListView.separated(
+              controller: _cardsCtrl,
+              scrollDirection: Axis.horizontal,
+              clipBehavior: Clip.none,
+              padding: EdgeInsets.zero,
+              itemCount: _kVehicleClasses.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 12),
+              itemBuilder: (_, i) {
+                final vc = _kVehicleClasses[i];
+                return _VehicleCard(
+                  vehicleClass: vc,
+                  price: _cardPrice(vc),
+                  fromPrice: _priceIsFrom,
+                  selected: _selected == vc,
+                  onTap: () => _selectVehicle(vc),
+                  serviceType: _service,
+                  hours: _service == ServiceType.byTheHour ? _hours : null,
+                  width: _mobileCardWidth,
+                  carWidth: _mobileCardWidth > 168 ? 360 : 270,
+                );
+              },
+            ),
+          ),
+          const SizedBox(height: 14),
+          const _MobilePromises(),
+          const SizedBox(height: 32),
+          VehicleDetailsGallery(vehicleClass: _selected, compact: true),
+          const SizedBox(height: 36),
+          _capacitySection(compact: true),
+          const SizedBox(height: 36),
+          _webWhatsIncluded(compact: true),
+          const SizedBox(height: 32),
+          _webPriceBreakdown(compact: true),
+          const SizedBox(height: 8),
+        ],
+      );
 
   Widget _detailsStep() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        'DETALLES DEL VIAJE',
-        style: TextStyle(
-          fontFamily: kSans,
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-          color: _kTextTertiary,
-          letterSpacing: 2.0,
-        ),
-      ),
-      const SizedBox(height: 20),
-      _LightCounterRow(
-        label: 'Pasajeros',
-        icon: Icons.person_outline,
-        value: _passengers,
-        min: 1,
-        max: _selected.capacity,
-        onChanged: (v) => setState(() => _passengers = v),
-      ),
-      const SizedBox(height: 10),
-      _LightCounterRow(
-        label: 'Equipaje',
-        icon: Icons.luggage_outlined,
-        value: _luggage,
-        min: 0,
-        max: _selected.luggageCapacity,
-        onChanged: (v) => setState(() => _luggage = v),
-      ),
-      const SizedBox(height: 20),
-      if (_airportPickup) ...[const _FlightNote(), const SizedBox(height: 10)],
-      _flightField(),
-      const SizedBox(height: 12),
-      _LightTextField(
-        label: 'Solicitudes especiales',
-        hint: 'Asiento infantil, letrero de bienvenida…',
-        icon: Icons.chat_bubble_outline_rounded,
-        maxLines: 3,
-        onChanged: (v) => _notes = v,
-      ),
-    ],
-  );
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'DETALLES DEL VIAJE',
+            style: TextStyle(
+              fontFamily: kSans,
+              fontSize: 10,
+              fontWeight: FontWeight.w700,
+              color: _kTextTertiary,
+              letterSpacing: 2.0,
+            ),
+          ),
+          const SizedBox(height: 20),
+          _LightCounterRow(
+            label: 'Pasajeros',
+            icon: Icons.person_outline,
+            value: _passengers,
+            min: 1,
+            max: _selected.capacity,
+            onChanged: (v) => setState(() => _passengers = v),
+          ),
+          const SizedBox(height: 10),
+          _LightCounterRow(
+            label: 'Equipaje',
+            icon: Icons.luggage_outlined,
+            value: _luggage,
+            min: 0,
+            max: _selected.luggageCapacity,
+            onChanged: (v) => setState(() => _luggage = v),
+          ),
+          const SizedBox(height: 20),
+          if (_airportPickup) ...[
+            const _FlightNote(),
+            const SizedBox(height: 10)
+          ],
+          _flightField(),
+          const SizedBox(height: 12),
+          _LightTextField(
+            label: 'Solicitudes especiales',
+            hint: 'Asiento infantil, letrero de bienvenida…',
+            icon: Icons.chat_bubble_outline_rounded,
+            maxLines: 3,
+            onChanged: (v) => _notes = v,
+          ),
+        ],
+      );
 
   Widget _flightField() => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      _LightTextField(
-        label: _airportPickup ? 'Número de vuelo *' : 'Número de vuelo',
-        hint: _airportPickup ? 'ej. OB 760' : 'ej. OB 760 (opcional)',
-        icon: Icons.flight_outlined,
-        initialValue: _flight,
-        errorText: _flightAttempted ? _flightError : null,
-        textCapitalization: TextCapitalization.characters,
-        onChanged: (v) => setState(() => _flight = v),
-      ),
-      if (_airportPickup) ...[
-        const SizedBox(height: 12),
-        _FlightTypeSelector(
-          value: _flightType,
-          errorText: _flightAttempted ? _flightTypeError : null,
-          onChanged: (t) => setState(() => _flightType = t),
-        ),
-      ],
-    ],
-  );
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _LightTextField(
+            label: _airportPickup ? 'Número de vuelo *' : 'Número de vuelo',
+            hint: _airportPickup ? 'ej. OB 760' : 'ej. OB 760 (opcional)',
+            icon: Icons.flight_outlined,
+            initialValue: _flight,
+            errorText: _flightAttempted ? _flightError : null,
+            textCapitalization: TextCapitalization.characters,
+            onChanged: (v) => setState(() => _flight = v),
+          ),
+          if (_airportPickup) ...[
+            const SizedBox(height: 12),
+            _FlightTypeSelector(
+              value: _flightType,
+              errorText: _flightAttempted ? _flightTypeError : null,
+              onChanged: (t) => setState(() => _flightType = t),
+            ),
+          ],
+        ],
+      );
 
   Widget _confirmStep() {
     final hasRoute = _showRouteMap;
@@ -1682,8 +1674,8 @@ class _BookingScreenState extends State<BookingScreen> {
                 _service == ServiceType.byTheHour
                     ? '$_hours horas'
                     : _km > 0
-                    ? '${_km.toStringAsFixed(1)} km'
-                    : '—',
+                        ? '${_km.toStringAsFixed(1)} km'
+                        : '—',
               ),
               if (_formData?.routeDurationMin != null &&
                   _formData!.routeDurationMin > 0)
@@ -1872,240 +1864,230 @@ class _WebTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    height: 72,
-    decoration: const BoxDecoration(
-      color: _kBg,
-      border: Border(bottom: BorderSide(color: _kBorder, width: 1)),
-    ),
-    padding: EdgeInsets.symmetric(
-      horizontal: MediaQuery.sizeOf(context).width >= 1400 ? 56 : 36,
-    ),
-    child: Row(
-      children: [
-        // ── Luxelane logo mark ───────────────────────────────────────
-        MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: GestureDetector(
-            onTap: () => context.go('/'),
-            child: const LuxelaneWordmark(color: _kTextPrimary),
-          ),
+        height: 72,
+        decoration: const BoxDecoration(
+          color: _kBg,
+          border: Border(bottom: BorderSide(color: _kBorder, width: 1)),
         ),
-        const SizedBox(width: 40),
-        // ── Back button ──────────────────────────────────────────────
-        MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: GestureDetector(
-            onTap: onBack,
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  Icons.arrow_back_ios_new_rounded,
-                  size: 12,
-                  color: _kTextSub,
-                ),
-                SizedBox(width: 5),
-                Text(
-                  'Volver',
-                  style: TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w400,
-                    letterSpacing: 0.8,
-                    color: _kTextSub,
-                  ),
-                ),
-              ],
+        padding: EdgeInsets.symmetric(
+          horizontal: MediaQuery.sizeOf(context).width >= 1400 ? 56 : 36,
+        ),
+        child: Row(
+          children: [
+            // ── Luxelane logo mark ───────────────────────────────────────
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () => context.go('/'),
+                child: const LuxelaneWordmark(color: _kTextPrimary),
+              ),
             ),
-          ),
-        ),
+            const SizedBox(width: 40),
+            // ── Back button ──────────────────────────────────────────────
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: onBack,
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.arrow_back_ios_new_rounded,
+                      size: 12,
+                      color: _kTextSub,
+                    ),
+                    SizedBox(width: 5),
+                    Text(
+                      'Volver',
+                      style: TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 0.8,
+                        color: _kTextSub,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
 
-        // ── Sticky vehicle selector (appears after scrolling past cards) ─
-        AnimatedSize(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeInOut,
-          child:
-              showStickySelector && selectedVehicle != null
+            // ── Sticky vehicle selector (appears after scrolling past cards) ─
+            AnimatedSize(
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeInOut,
+              child: showStickySelector && selectedVehicle != null
                   ? Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: AnimatedOpacity(
-                      duration: const Duration(milliseconds: 200),
-                      opacity: showStickySelector ? 1.0 : 0.0,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children:
-                              _kVehicleClasses.map((vc) {
-                                final price = PricingCatalog.instance.estimate(
-                                  vc,
-                                  service,
-                                  km: km,
-                                  hours: hours,
-                                );
-                                final isActive = selectedVehicle == vc;
-                                final tone = VehicleCatalog.tone(vc);
-                                return Padding(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: MouseRegion(
-                                    cursor: SystemMouseCursors.click,
-                                    child: GestureDetector(
-                                      onTap: () => onVehicleChanged?.call(vc),
-                                      child: AnimatedContainer(
-                                        duration: const Duration(
-                                          milliseconds: 180,
-                                        ),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 18,
-                                          vertical: 10,
-                                        ),
-                                        decoration: BoxDecoration(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: AnimatedOpacity(
+                        duration: const Duration(milliseconds: 200),
+                        opacity: showStickySelector ? 1.0 : 0.0,
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: _kVehicleClasses.map((vc) {
+                              final price = PricingCatalog.instance.estimate(
+                                vc,
+                                service,
+                                km: km,
+                                hours: hours,
+                              );
+                              final isActive = selectedVehicle == vc;
+                              final tone = VehicleCatalog.tone(vc);
+                              return Padding(
+                                padding: const EdgeInsets.only(right: 10),
+                                child: MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  child: GestureDetector(
+                                    onTap: () => onVehicleChanged?.call(vc),
+                                    child: AnimatedContainer(
+                                      duration: const Duration(
+                                        milliseconds: 180,
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 18,
+                                        vertical: 10,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            isActive ? tone.wash : Colors.white,
+                                        borderRadius: BorderRadius.zero,
+                                        border: Border.all(
                                           color:
-                                              isActive
-                                                  ? tone.wash
-                                                  : Colors.white,
-                                          borderRadius: BorderRadius.zero,
-                                          border: Border.all(
-                                            color:
-                                                isActive
-                                                    ? tone.accent
-                                                    : _kBorder,
-                                            width: isActive ? 2.0 : 1.0,
+                                              isActive ? tone.accent : _kBorder,
+                                          width: isActive ? 2.0 : 1.0,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            vc.label,
+                                            style: TextStyle(
+                                              fontFamily: kSans,
+                                              fontSize: 13,
+                                              fontWeight: isActive
+                                                  ? FontWeight.w600
+                                                  : FontWeight.w400,
+                                              color: isActive
+                                                  ? tone.accent
+                                                  : _kTextPrimary,
+                                            ),
                                           ),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              vc.label,
-                                              style: TextStyle(
-                                                fontFamily: kSans,
-                                                fontSize: 13,
-                                                fontWeight:
-                                                    isActive
-                                                        ? FontWeight.w600
-                                                        : FontWeight.w400,
-                                                color:
-                                                    isActive
-                                                        ? tone.accent
-                                                        : _kTextPrimary,
-                                              ),
+                                          const SizedBox(width: 8),
+                                          Container(
+                                            width: 1,
+                                            height: 12,
+                                            color: isActive
+                                                ? tone.accent.withValues(
+                                                    alpha: 0.3,
+                                                  )
+                                                : _kBorder,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            formatPriceOrQuote(
+                                              price,
+                                              from: service ==
+                                                      ServiceType.oneWay &&
+                                                  km == 0,
                                             ),
-                                            const SizedBox(width: 8),
-                                            Container(
-                                              width: 1,
-                                              height: 12,
-                                              color:
-                                                  isActive
-                                                      ? tone.accent.withValues(
-                                                        alpha: 0.3,
-                                                      )
-                                                      : _kBorder,
+                                            style: TextStyle(
+                                              fontFamily: kSans,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: isActive
+                                                  ? tone.accent
+                                                  : _kTextSub,
                                             ),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              formatPriceOrQuote(
-                                                price,
-                                                from:
-                                                    service ==
-                                                        ServiceType.oneWay &&
-                                                    km == 0,
-                                              ),
-                                              style: TextStyle(
-                                                fontFamily: kSans,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color:
-                                                    isActive
-                                                        ? tone.accent
-                                                        : _kTextSub,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
-                                );
-                              }).toList(),
+                                ),
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
-                    ),
-                  )
+                    )
                   : const SizedBox.shrink(),
-        ),
-
-        const Spacer(),
-
-        // ── Route summary pill (only where it fits beside the rest) ──
-        if (formData?.origin != null &&
-            MediaQuery.sizeOf(context).width >= 1280)
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 320),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: _kCardBg,
-                borderRadius: BorderRadius.zero,
-                border: Border.all(color: _kBorder),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    child: Text(
-                      formData!.origin.displayName,
-                      style: const TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: _kTextPrimary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    child: Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 14,
-                      color: _kTextSub,
-                    ),
-                  ),
-                  Flexible(
-                    child: Text(
-                      formData!.destination?.displayName ?? '—',
-                      style: const TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: _kTextPrimary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
             ),
-          ),
 
-        const SizedBox(width: 16),
+            const Spacer(),
 
-        _LightServiceTypeTab(
-          selected: service,
-          onChanged: onServiceChanged,
-          compact: true,
+            // ── Route summary pill (only where it fits beside the rest) ──
+            if (formData?.origin != null &&
+                MediaQuery.sizeOf(context).width >= 1280)
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 320),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: _kCardBg,
+                    borderRadius: BorderRadius.zero,
+                    border: Border.all(color: _kBorder),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          formData!.origin.displayName,
+                          style: const TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: _kTextPrimary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Icon(
+                          Icons.arrow_forward_rounded,
+                          size: 14,
+                          color: _kTextSub,
+                        ),
+                      ),
+                      Flexible(
+                        child: Text(
+                          formData!.destination?.displayName ?? '—',
+                          style: const TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: _kTextPrimary,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+            const SizedBox(width: 16),
+
+            _LightServiceTypeTab(
+              selected: service,
+              onChanged: onServiceChanged,
+              compact: true,
+            ),
+
+            if (service == ServiceType.byTheHour) ...[
+              const SizedBox(width: 12),
+              _CompactHourPicker(hours: hours, onChanged: onHoursChanged),
+            ],
+          ],
         ),
-
-        if (service == ServiceType.byTheHour) ...[
-          const SizedBox(width: 12),
-          _CompactHourPicker(hours: hours, onChanged: onHoursChanged),
-        ],
-      ],
-    ),
-  );
+      );
 }
 
 // ── VEHICLE CARD ──────────────────────────────────────────────────────────────
@@ -2160,8 +2142,7 @@ class _VehicleCardState extends State<_VehicleCard> {
     return Semantics(
       button: true,
       selected: sel,
-      label:
-          '${widget.vehicleClass.label}, '
+      label: '${widget.vehicleClass.label}, '
           '${formatPriceOrQuote(widget.price, from: widget.fromPrice)}',
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
@@ -2356,29 +2337,29 @@ class _CapChip extends StatelessWidget {
   final int value;
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-    decoration: BoxDecoration(
-      color: LD.bg2,
-      borderRadius: BorderRadius.circular(3),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 12, color: _kTextSub),
-        const SizedBox(width: 3),
-        Text(
-          '$value',
-          style: const TextStyle(
-            fontFamily: kSans,
-            fontSize: 10.5,
-            fontWeight: FontWeight.w600,
-            color: _kTextSub,
-            decoration: TextDecoration.none,
-          ),
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        decoration: BoxDecoration(
+          color: LD.bg2,
+          borderRadius: BorderRadius.circular(3),
         ),
-      ],
-    ),
-  );
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 12, color: _kTextSub),
+            const SizedBox(width: 3),
+            Text(
+              '$value',
+              style: const TextStyle(
+                fontFamily: kSans,
+                fontSize: 10.5,
+                fontWeight: FontWeight.w600,
+                color: _kTextSub,
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ],
+        ),
+      );
 }
 
 // ── BOOK OPTION CARD (Blacklane "Book for myself / guest" style) ───────────────
@@ -2406,58 +2387,59 @@ class _BookOptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap,
-    child: AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.zero,
-        border: Border.all(
-          color: selected ? _kPanelAccent : _kBorder,
-          width: selected ? 1.8 : 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
-            child: Icon(icon, size: 22, color: iconColor),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: _kTextPrimary,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 12,
-                    color: _kTextSub,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ],
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 160),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.zero,
+            border: Border.all(
+              color: selected ? _kPanelAccent : _kBorder,
+              width: selected ? 1.8 : 1,
             ),
           ),
-          if (trailing != null) trailing!,
-        ],
-      ),
-    ),
-  );
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration:
+                    BoxDecoration(color: iconBg, shape: BoxShape.circle),
+                child: Icon(icon, size: 22, color: iconColor),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: _kTextPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 12,
+                        color: _kTextSub,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if (trailing != null) trailing!,
+            ],
+          ),
+        ),
+      );
 }
 
 // ── RESERVE BAR (web, pinned bottom of right panel) ───────────────────────────
@@ -2475,21 +2457,21 @@ class _ReserveBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-    decoration: const BoxDecoration(
-      color: _kCardBg,
-      border: Border(top: BorderSide(color: _kBorder)),
-    ),
-    child: LuxRaisedButton(
-      label: 'Reservar ${selected.label}',
-      loading: loading,
-      onPressed: onReserve,
-      uppercase: false,
-      fontSize: 15,
-      radius: LuxRadius.md,
-      height: 54,
-    ),
-  );
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+        decoration: const BoxDecoration(
+          color: _kCardBg,
+          border: Border(top: BorderSide(color: _kBorder)),
+        ),
+        child: LuxRaisedButton(
+          label: 'Reservar ${selected.label}',
+          loading: loading,
+          onPressed: onReserve,
+          uppercase: false,
+          fontSize: 15,
+          radius: LuxRadius.md,
+          height: 54,
+        ),
+      );
 }
 
 class _Btn extends StatelessWidget {
@@ -2500,42 +2482,42 @@ class _Btn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-    onTap: enabled ? onTap : null,
-    child: Container(
-      width: 28,
-      height: 28,
-      decoration: BoxDecoration(
-        color: enabled ? LD.bg2 : LD.bg,
-        border: Border.all(color: LD.border),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Icon(
-        icon,
-        size: 14,
-        color: enabled ? _kTextPrimary : _kTextTertiary,
-      ),
-    ),
-  );
+        onTap: enabled ? onTap : null,
+        child: Container(
+          width: 28,
+          height: 28,
+          decoration: BoxDecoration(
+            color: enabled ? LD.bg2 : LD.bg,
+            border: Border.all(color: LD.border),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Icon(
+            icon,
+            size: 14,
+            color: enabled ? _kTextPrimary : _kTextTertiary,
+          ),
+        ),
+      );
 }
 
 // ── GUARANTEE ROW ─────────────────────────────────────────────────────────────
 
 Widget _GuaranteeRow(IconData icon, String text) => Row(
-  children: [
-    Icon(icon, size: 15, color: _kTextSub),
-    const SizedBox(width: 8),
-    Expanded(
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontFamily: kSans,
-          fontSize: 11,
-          color: _kTextSub,
+      children: [
+        Icon(icon, size: 15, color: _kTextSub),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              fontFamily: kSans,
+              fontSize: 11,
+              color: _kTextSub,
+            ),
+          ),
         ),
-      ),
-    ),
-  ],
-);
+      ],
+    );
 
 // ── MOBILE VEHICLE DETAIL ─────────────────────────────────────────────────────
 
@@ -2546,21 +2528,22 @@ class _MobilePromises extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: 0.7),
-      borderRadius: BorderRadius.circular(_kMobileRadius),
-      border: Border.all(color: _kDivider),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _GuaranteeRow(Icons.price_check_outlined, LuxPromise.fixedPrice),
-        const SizedBox(height: 6),
-        _GuaranteeRow(Icons.event_available_outlined, LuxPromise.freeCancel),
-      ],
-    ),
-  );
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.7),
+          borderRadius: BorderRadius.circular(_kMobileRadius),
+          border: Border.all(color: _kDivider),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _GuaranteeRow(Icons.price_check_outlined, LuxPromise.fixedPrice),
+            const SizedBox(height: 6),
+            _GuaranteeRow(
+                Icons.event_available_outlined, LuxPromise.freeCancel),
+          ],
+        ),
+      );
 }
 
 // ── SUMMARY ROW (confirm step) ────────────────────────────────────────────────
@@ -2573,38 +2556,38 @@ class _SummaryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-    children: [
-      if (!isFirst) const Divider(color: _kDivider, height: 1),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontFamily: kSans,
-                fontSize: 12,
-                color: _kTextSub,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Flexible(
-              child: Text(
-                value,
-                textAlign: TextAlign.end,
-                style: const TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: _kTextPrimary,
+        children: [
+          if (!isFirst) const Divider(color: _kDivider, height: 1),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 12,
+                    color: _kTextSub,
+                  ),
                 ),
-              ),
+                const SizedBox(width: 16),
+                Flexible(
+                  child: Text(
+                    value,
+                    textAlign: TextAlign.end,
+                    style: const TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: _kTextPrimary,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    ],
-  );
+          ),
+        ],
+      );
 }
 
 // ── SERVICE TYPE TAB ──────────────────────────────────────────────────────────
@@ -2638,20 +2621,19 @@ class _LightServiceTypeTab extends StatelessWidget {
               duration: const Duration(milliseconds: 160),
               margin: const EdgeInsets.all(3),
               padding: EdgeInsets.symmetric(horizontal: compact ? 16 : 0),
-              decoration:
-                  active
-                      ? BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x140D1B2E),
-                            blurRadius: 6,
-                            offset: Offset(0, 1),
-                          ),
-                        ],
-                      )
-                      : const BoxDecoration(color: Colors.transparent),
+              decoration: active
+                  ? BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x140D1B2E),
+                          blurRadius: 6,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
+                    )
+                  : const BoxDecoration(color: Colors.transparent),
               alignment: Alignment.center,
               child: Text(
                 t.label,
@@ -2695,42 +2677,42 @@ class _CompactHourPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    height: 38,
-    padding: const EdgeInsets.symmetric(horizontal: 12),
-    decoration: BoxDecoration(
-      color: _kCardBg,
-      borderRadius: BorderRadius.zero,
-      border: Border.all(color: _kBorder),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _Btn(
-          icon: Icons.remove,
-          enabled: hours > 2,
-          onTap: () => onChanged(hours - 1),
+        height: 38,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: _kCardBg,
+          borderRadius: BorderRadius.zero,
+          border: Border.all(color: _kBorder),
         ),
-        SizedBox(
-          width: 40,
-          child: Text(
-            '${hours}h',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontFamily: kSans,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: _kTextPrimary,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _Btn(
+              icon: Icons.remove,
+              enabled: hours > 2,
+              onTap: () => onChanged(hours - 1),
             ),
-          ),
+            SizedBox(
+              width: 40,
+              child: Text(
+                '${hours}h',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: _kTextPrimary,
+                ),
+              ),
+            ),
+            _Btn(
+              icon: Icons.add,
+              enabled: hours < 12,
+              onTap: () => onChanged(hours + 1),
+            ),
+          ],
         ),
-        _Btn(
-          icon: Icons.add,
-          enabled: hours < 12,
-          onTap: () => onChanged(hours + 1),
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 // ── LIGHT HOUR ROW (mobile) ───────────────────────────────────────────────────
@@ -2742,50 +2724,50 @@ class _LightHourRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-    decoration: BoxDecoration(
-      color: _kCardBg,
-      borderRadius: BorderRadius.circular(_kMobileRadius),
-      border: Border.all(color: _kBorder),
-    ),
-    child: Row(
-      children: [
-        const Text(
-          'Duración',
-          style: TextStyle(
-            fontFamily: kSans,
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-            color: _kTextPrimary,
-          ),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: _kCardBg,
+          borderRadius: BorderRadius.circular(_kMobileRadius),
+          border: Border.all(color: _kBorder),
         ),
-        const Spacer(),
-        _Btn(
-          icon: Icons.remove,
-          enabled: hours > 2,
-          onTap: () => onChanged(hours - 1),
-        ),
-        SizedBox(
-          width: 48,
-          child: Text(
-            '${hours}h',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontFamily: kSans,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: _kTextPrimary,
+        child: Row(
+          children: [
+            const Text(
+              'Duración',
+              style: TextStyle(
+                fontFamily: kSans,
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: _kTextPrimary,
+              ),
             ),
-          ),
+            const Spacer(),
+            _Btn(
+              icon: Icons.remove,
+              enabled: hours > 2,
+              onTap: () => onChanged(hours - 1),
+            ),
+            SizedBox(
+              width: 48,
+              child: Text(
+                '${hours}h',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: _kTextPrimary,
+                ),
+              ),
+            ),
+            _Btn(
+              icon: Icons.add,
+              enabled: hours < 12,
+              onTap: () => onChanged(hours + 1),
+            ),
+          ],
         ),
-        _Btn(
-          icon: Icons.add,
-          enabled: hours < 12,
-          onTap: () => onChanged(hours + 1),
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 // ── LIGHT COUNTER ROW (mobile) ────────────────────────────────────────────────
@@ -2806,53 +2788,53 @@ class _LightCounterRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-    decoration: BoxDecoration(
-      color: _kCardBg,
-      borderRadius: BorderRadius.circular(_kMobileRadius),
-      border: Border.all(color: _kBorder),
-    ),
-    child: Row(
-      children: [
-        Icon(icon, size: 18, color: _kTextSub),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontFamily: kSans,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-              color: _kTextPrimary,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(
+          color: _kCardBg,
+          borderRadius: BorderRadius.circular(_kMobileRadius),
+          border: Border.all(color: _kBorder),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: _kTextSub),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                label,
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: _kTextPrimary,
+                ),
+              ),
             ),
-          ),
-        ),
-        _Btn(
-          icon: Icons.remove,
-          enabled: value > min,
-          onTap: () => onChanged(value - 1),
-        ),
-        SizedBox(
-          width: 40,
-          child: Text(
-            '$value',
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontFamily: kSans,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: _kTextPrimary,
+            _Btn(
+              icon: Icons.remove,
+              enabled: value > min,
+              onTap: () => onChanged(value - 1),
             ),
-          ),
+            SizedBox(
+              width: 40,
+              child: Text(
+                '$value',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: _kTextPrimary,
+                ),
+              ),
+            ),
+            _Btn(
+              icon: Icons.add,
+              enabled: value < max,
+              onTap: () => onChanged(value + 1),
+            ),
+          ],
         ),
-        _Btn(
-          icon: Icons.add,
-          enabled: value < max,
-          onTap: () => onChanged(value + 1),
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 // ── LIGHT TEXT FIELD ──────────────────────────────────────────────────────────
@@ -2879,49 +2861,50 @@ class _LightTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => TextFormField(
-    initialValue: initialValue,
-    onChanged: onChanged,
-    maxLines: maxLines,
-    textCapitalization: textCapitalization,
-    style: const TextStyle(
-      fontFamily: kSans,
-      fontSize: 13,
-      color: _kTextPrimary,
-    ),
-    decoration: InputDecoration(
-      labelText: label,
-      hintText: hint,
-      errorText: errorText,
-      hintStyle: const TextStyle(
-        fontFamily: kSans,
-        fontSize: 13,
-        color: _kTextTertiary,
-        fontWeight: FontWeight.w300,
-      ),
-      labelStyle: const TextStyle(
-        fontFamily: kSans,
-        fontSize: 12,
-        color: _kTextSub,
-        fontWeight: FontWeight.w500,
-      ),
-      prefixIcon: Icon(icon, size: 18, color: _kTextSub),
-      filled: true,
-      fillColor: _kCardBg,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-      border: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(_kMobileRadius)),
-        borderSide: BorderSide(color: _kBorder),
-      ),
-      enabledBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(_kMobileRadius)),
-        borderSide: BorderSide(color: _kBorder),
-      ),
-      focusedBorder: const OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(_kMobileRadius)),
-        borderSide: BorderSide(color: _kTextPrimary, width: 1.5),
-      ),
-    ),
-  );
+        initialValue: initialValue,
+        onChanged: onChanged,
+        maxLines: maxLines,
+        textCapitalization: textCapitalization,
+        style: const TextStyle(
+          fontFamily: kSans,
+          fontSize: 13,
+          color: _kTextPrimary,
+        ),
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          errorText: errorText,
+          hintStyle: const TextStyle(
+            fontFamily: kSans,
+            fontSize: 13,
+            color: _kTextTertiary,
+            fontWeight: FontWeight.w300,
+          ),
+          labelStyle: const TextStyle(
+            fontFamily: kSans,
+            fontSize: 12,
+            color: _kTextSub,
+            fontWeight: FontWeight.w500,
+          ),
+          prefixIcon: Icon(icon, size: 18, color: _kTextSub),
+          filled: true,
+          fillColor: _kCardBg,
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          border: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(_kMobileRadius)),
+            borderSide: BorderSide(color: _kBorder),
+          ),
+          enabledBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(_kMobileRadius)),
+            borderSide: BorderSide(color: _kBorder),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(_kMobileRadius)),
+            borderSide: BorderSide(color: _kTextPrimary, width: 1.5),
+          ),
+        ),
+      );
 }
 
 // ── FLIGHT NOTE (airport pickups) ─────────────────────────────────────────────
@@ -2931,24 +2914,24 @@ class _FlightNote extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Icon(Icons.flight_land_rounded, size: 16, color: _kPanelAccent),
-      SizedBox(width: 8),
-      Expanded(
-        child: Text(
-          'Recogida en aeropuerto: indica tu número de vuelo. '
-          '${LuxPromise.flightTrackingLong}',
-          style: TextStyle(
-            fontFamily: kSans,
-            fontSize: 12,
-            height: 1.4,
-            color: _kTextSub,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.flight_land_rounded, size: 16, color: _kPanelAccent),
+          SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Recogida en aeropuerto: indica tu número de vuelo. '
+              '${LuxPromise.flightTrackingLong}',
+              style: TextStyle(
+                fontFamily: kSans,
+                fontSize: 12,
+                height: 1.4,
+                color: _kTextSub,
+              ),
+            ),
           ),
-        ),
-      ),
-    ],
-  );
+        ],
+      );
 }
 
 // ── FLIGHT TYPE (airport pickups) ─────────────────────────────────────────────
@@ -2966,84 +2949,83 @@ class _FlightTypeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        'Tipo de vuelo *',
-        style: TextStyle(
-          fontFamily: kSans,
-          fontSize: 12,
-          color: _kTextSub,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      const SizedBox(height: 8),
-      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          for (final t in FlightType.values) ...[
-            if (t != FlightType.values.first) const SizedBox(width: 8),
-            Expanded(
-              child: GestureDetector(
-                onTap: () {
-                  LuxHaptics.tap();
-                  onChanged(t);
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 13),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: value == t ? _kPanelAccent : _kCardBg,
-                    borderRadius: BorderRadius.circular(_kMobileRadius),
-                    border: Border.all(
-                      color:
-                          value == t
+          const Text(
+            'Tipo de vuelo *',
+            style: TextStyle(
+              fontFamily: kSans,
+              fontSize: 12,
+              color: _kTextSub,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              for (final t in FlightType.values) ...[
+                if (t != FlightType.values.first) const SizedBox(width: 8),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      LuxHaptics.tap();
+                      onChanged(t);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: value == t ? _kPanelAccent : _kCardBg,
+                        borderRadius: BorderRadius.circular(_kMobileRadius),
+                        border: Border.all(
+                          color: value == t
                               ? _kPanelAccent
                               : errorText != null
-                              ? Colors.red.shade700
-                              : _kBorder,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        t == FlightType.domestic
-                            ? Icons.flight_land_rounded
-                            : Icons.public_rounded,
-                        size: 16,
-                        color: value == t ? Colors.white : _kTextSub,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        t.label,
-                        style: TextStyle(
-                          fontFamily: kSans,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: value == t ? Colors.white : _kTextPrimary,
+                                  ? Colors.red.shade700
+                                  : _kBorder,
                         ),
                       ),
-                    ],
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            t == FlightType.domestic
+                                ? Icons.flight_land_rounded
+                                : Icons.public_rounded,
+                            size: 16,
+                            color: value == t ? Colors.white : _kTextSub,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            t.label,
+                            style: TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: value == t ? Colors.white : _kTextPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
+              ],
+            ],
+          ),
+          if (errorText != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              errorText!,
+              style: TextStyle(
+                fontFamily: kSans,
+                fontSize: 12,
+                color: Colors.red.shade700,
               ),
             ),
           ],
         ],
-      ),
-      if (errorText != null) ...[
-        const SizedBox(height: 6),
-        Text(
-          errorText!,
-          style: TextStyle(
-            fontFamily: kSans,
-            fontSize: 12,
-            color: Colors.red.shade700,
-          ),
-        ),
-      ],
-    ],
-  );
+      );
 }
 
 // ── OUTLINED ACTION BTN ───────────────────────────────────────────────────────
@@ -3060,33 +3042,33 @@ class _OutlinedBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-    onTap: onPressed,
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
-        color: _kCardBg,
-        borderRadius: BorderRadius.circular(_kMobileRadius),
-        border: Border.all(color: _kBorder),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 18, color: _kTextSub),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: const TextStyle(
-              fontFamily: kSans,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: _kTextPrimary,
-              letterSpacing: 0.2,
-            ),
+        onTap: onPressed,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            color: _kCardBg,
+            borderRadius: BorderRadius.circular(_kMobileRadius),
+            border: Border.all(color: _kBorder),
           ),
-        ],
-      ),
-    ),
-  );
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 18, color: _kTextSub),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: _kTextPrimary,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
 }
 
 // ── MOBILE PRICE BAR ──────────────────────────────────────────────────────────
@@ -3105,65 +3087,65 @@ class _LightPriceBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: EdgeInsets.fromLTRB(
-      20,
-      12,
-      20,
-      14 + MediaQuery.paddingOf(context).bottom,
-    ),
-    decoration: const BoxDecoration(
-      color: Colors.white,
-      border: Border(top: BorderSide(color: _kBorder)),
-    ),
-    child: Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 760),
-        child: Row(
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+        padding: EdgeInsets.fromLTRB(
+          20,
+          12,
+          20,
+          14 + MediaQuery.paddingOf(context).bottom,
+        ),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(top: BorderSide(color: _kBorder)),
+        ),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 760),
+            child: Row(
               children: [
-                const Text(
-                  'PRECIO FINAL',
-                  style: TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 9,
-                    fontWeight: FontWeight.w700,
-                    color: _kTextTertiary,
-                    letterSpacing: 1.5,
-                  ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'PRECIO FINAL',
+                      style: TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                        color: _kTextTertiary,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    Text(
+                      formatPriceOrQuote(price),
+                      style: const TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: _kTextPrimary,
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  formatPriceOrQuote(price),
-                  style: const TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: _kTextPrimary,
-                    letterSpacing: -0.5,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: LuxRaisedButton(
+                    label: label,
+                    height: 52,
+                    loading: loading,
+                    onPressed: onConfirm,
+                    uppercase: false,
+                    fontSize: 15,
+                    radius: LuxRadius.md,
+                    trailingIcon: Icons.arrow_forward_rounded,
                   ),
                 ),
               ],
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: LuxRaisedButton(
-                label: label,
-                height: 52,
-                loading: loading,
-                onPressed: onConfirm,
-                uppercase: false,
-                fontSize: 15,
-                radius: LuxRadius.md,
-                trailingIcon: Icons.arrow_forward_rounded,
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 // ── MOBILE STEP INDICATOR ─────────────────────────────────────────────────────
@@ -3175,61 +3157,60 @@ class _LightStepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-    children: List.generate(steps.length * 2 - 1, (i) {
-      if (i.isOdd) {
-        return Expanded(
-          child: Container(
-            height: 1,
-            color: i ~/ 2 < currentStep ? LD.sph : _kBorder,
-          ),
-        );
-      }
-      final idx = i ~/ 2;
-      final done = idx < currentStep;
-      final active = idx == currentStep;
-      return Column(
-        children: [
-          Container(
-            width: 22,
-            height: 22,
-            decoration: BoxDecoration(
-              color: done ? LD.sph : Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: done || active ? LD.sph : _kBorder,
-                width: active ? 1.5 : 1,
+        children: List.generate(steps.length * 2 - 1, (i) {
+          if (i.isOdd) {
+            return Expanded(
+              child: Container(
+                height: 1,
+                color: i ~/ 2 < currentStep ? LD.sph : _kBorder,
               ),
-            ),
-            child: Center(
-              child:
-                  done
+            );
+          }
+          final idx = i ~/ 2;
+          final done = idx < currentStep;
+          final active = idx == currentStep;
+          return Column(
+            children: [
+              Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  color: done ? LD.sph : Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: done || active ? LD.sph : _kBorder,
+                    width: active ? 1.5 : 1,
+                  ),
+                ),
+                child: Center(
+                  child: done
                       ? const Icon(Icons.check, size: 11, color: Colors.white)
                       : Text(
-                        '${idx + 1}',
-                        style: TextStyle(
-                          fontFamily: kSans,
-                          fontSize: 9,
-                          fontWeight: FontWeight.w600,
-                          color: active ? LD.sph : _kTextTertiary,
+                          '${idx + 1}',
+                          style: TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w600,
+                            color: active ? LD.sph : _kTextTertiary,
+                          ),
                         ),
-                      ),
-            ),
-          ),
-          const SizedBox(height: 3),
-          Text(
-            steps[idx],
-            style: TextStyle(
-              fontFamily: kSans,
-              fontSize: 9,
-              fontWeight: active ? FontWeight.w600 : FontWeight.w400,
-              color: active ? _kTextPrimary : _kTextTertiary,
-              letterSpacing: 0.3,
-            ),
-          ),
-        ],
+                ),
+              ),
+              const SizedBox(height: 3),
+              Text(
+                steps[idx],
+                style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 9,
+                  fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                  color: active ? _kTextPrimary : _kTextTertiary,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
+          );
+        }),
       );
-    }),
-  );
 }
 
 // ── AUTH GATE DIALOG ──────────────────────────────────────────────────────
@@ -3263,173 +3244,175 @@ class _AuthGateDialogState extends State<_AuthGateDialog> {
     setState(() => _loading = true);
     if (_showRegister) {
       context.read<AuthBloc>().add(
-        RegisterRequested(
-          email: email,
-          password: pass,
-          displayName:
-              _nameCtrl.text.trim().isNotEmpty
+            RegisterRequested(
+              email: email,
+              password: pass,
+              displayName: _nameCtrl.text.trim().isNotEmpty
                   ? _nameCtrl.text.trim()
                   : email.split('@').first,
-          phone: '',
-          role: UserRole.rider,
-        ),
-      );
+              phone: '',
+              role: UserRole.rider,
+            ),
+          );
     } else {
       context.read<AuthBloc>().add(
-        LoginRequested(email: email, password: pass),
-      );
+            LoginRequested(email: email, password: pass),
+          );
     }
   }
 
   @override
   Widget build(BuildContext context) => BlocListener<AuthBloc, AuthState>(
-    listener: (ctx, state) {
-      if (state is AuthAuthenticated) Navigator.of(ctx).pop(true);
-      if (state is AuthError) {
-        setState(() => _loading = false);
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          SnackBar(
-            content: Text(
-              state.message,
-              style: const TextStyle(color: LuxColors.onAccent),
-            ),
-            backgroundColor: LuxColors.error,
+        listener: (ctx, state) {
+          if (state is AuthAuthenticated) Navigator.of(ctx).pop(true);
+          if (state is AuthError) {
+            setState(() => _loading = false);
+            ScaffoldMessenger.of(ctx).showSnackBar(
+              SnackBar(
+                content: Text(
+                  state.message,
+                  style: const TextStyle(color: LuxColors.onAccent),
+                ),
+                backgroundColor: LuxColors.error,
+              ),
+            );
+          }
+        },
+        child: Dialog(
+          backgroundColor: LuxColors.surface,
+          insetPadding: const EdgeInsets.all(LuxSpacing.md),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(LuxRadius.lg),
+            side: const BorderSide(color: LuxColors.border),
           ),
-        );
-      }
-    },
-    child: Dialog(
-      backgroundColor: LuxColors.surface,
-      insetPadding: const EdgeInsets.all(LuxSpacing.md),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(LuxRadius.lg),
-        side: const BorderSide(color: LuxColors.border),
-      ),
-      child: SizedBox(
-        width: 420,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(
-            isWeb(context) ? LuxSpacing.xxl : LuxSpacing.lg,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
+          child: SizedBox(
+            width: 420,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(
+                isWeb(context) ? LuxSpacing.xxl : LuxSpacing.lg,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Expanded(
-                    child: Text(
-                      _showRegister
-                          ? 'Crear una cuenta'
-                          : 'Inicia sesión para continuar',
-                      style: LuxTypography.headlineLarge.copyWith(fontSize: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          _showRegister
+                              ? 'Crear una cuenta'
+                              : 'Inicia sesión para continuar',
+                          style: LuxTypography.headlineLarge
+                              .copyWith(fontSize: 24),
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(false),
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          color: LuxColors.inkTertiary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: LuxSpacing.sm),
+                  Text(
+                    _showRegister
+                        ? 'Crea tu cuenta de Luxelane para completar la reserva.'
+                        : 'Inicia sesión para confirmar tu reserva.',
+                    style: LuxTypography.bodyMedium,
+                  ),
+                  const SizedBox(height: LuxSpacing.xl),
+                  const GoogleSignInButton(),
+                  const SizedBox(height: LuxSpacing.lg),
+                  const AuthOrDivider(),
+                  const SizedBox(height: LuxSpacing.lg),
+                  if (_showRegister) ...[
+                    LuxTextField(
+                      label: 'Nombre completo',
+                      hint: 'Tu nombre',
+                      prefixIcon: Icons.person_outline,
+                      controller: _nameCtrl,
+                      onChanged: (_) {},
+                    ),
+                    const SizedBox(height: LuxSpacing.md),
+                  ],
+                  LuxTextField(
+                    label: 'Correo electrónico',
+                    hint: 'tu@ejemplo.com',
+                    prefixIcon: Icons.email_outlined,
+                    controller: _emailCtrl,
+                    keyboardType: TextInputType.emailAddress,
+                    onChanged: (_) {},
+                  ),
+                  const SizedBox(height: LuxSpacing.md),
+                  LuxTextField(
+                    label: 'Contraseña',
+                    hint: '••••••••',
+                    prefixIcon: Icons.lock_outline,
+                    controller: _passCtrl,
+                    obscureText: _obscure,
+                    onChanged: (_) {},
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscure
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: LuxColors.inkTertiary,
+                        size: 20,
+                      ),
+                      onPressed: () => setState(() => _obscure = !_obscure),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(false),
-                    icon: const Icon(
-                      Icons.close_rounded,
-                      color: LuxColors.inkTertiary,
+                  const SizedBox(height: LuxSpacing.xl),
+                  LuxButton(
+                    label: _showRegister ? 'Crear cuenta' : 'Iniciar sesión',
+                    loading: _loading,
+                    onPressed: _loading ? null : _submit,
+                  ),
+                  const SizedBox(height: LuxSpacing.md),
+                  TextButton(
+                    onPressed: () =>
+                        setState(() => _showRegister = !_showRegister),
+                    child: Text(
+                      _showRegister
+                          ? '¿Ya tienes cuenta? Inicia sesión'
+                          : '¿No tienes cuenta? Crear una',
+                      style: LuxTypography.bodyMedium.copyWith(
+                        color: LuxColors.sapphire,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: LuxSpacing.sm),
-              Text(
-                _showRegister
-                    ? 'Crea tu cuenta de Luxelane para completar la reserva.'
-                    : 'Inicia sesión para confirmar tu reserva.',
-                style: LuxTypography.bodyMedium,
-              ),
-              const SizedBox(height: LuxSpacing.xl),
-              const GoogleSignInButton(),
-              const SizedBox(height: LuxSpacing.lg),
-              const AuthOrDivider(),
-              const SizedBox(height: LuxSpacing.lg),
-              if (_showRegister) ...[
-                LuxTextField(
-                  label: 'Nombre completo',
-                  hint: 'Tu nombre',
-                  prefixIcon: Icons.person_outline,
-                  controller: _nameCtrl,
-                  onChanged: (_) {},
-                ),
-                const SizedBox(height: LuxSpacing.md),
-              ],
-              LuxTextField(
-                label: 'Correo electrónico',
-                hint: 'tu@ejemplo.com',
-                prefixIcon: Icons.email_outlined,
-                controller: _emailCtrl,
-                keyboardType: TextInputType.emailAddress,
-                onChanged: (_) {},
-              ),
-              const SizedBox(height: LuxSpacing.md),
-              LuxTextField(
-                label: 'Contraseña',
-                hint: '••••••••',
-                prefixIcon: Icons.lock_outline,
-                controller: _passCtrl,
-                obscureText: _obscure,
-                onChanged: (_) {},
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscure
-                        ? Icons.visibility_off_outlined
-                        : Icons.visibility_outlined,
-                    color: LuxColors.inkTertiary,
-                    size: 20,
-                  ),
-                  onPressed: () => setState(() => _obscure = !_obscure),
-                ),
-              ),
-              const SizedBox(height: LuxSpacing.xl),
-              LuxButton(
-                label: _showRegister ? 'Crear cuenta' : 'Iniciar sesión',
-                loading: _loading,
-                onPressed: _loading ? null : _submit,
-              ),
-              const SizedBox(height: LuxSpacing.md),
-              TextButton(
-                onPressed: () => setState(() => _showRegister = !_showRegister),
-                child: Text(
-                  _showRegister
-                      ? '¿Ya tienes cuenta? Inicia sesión'
-                      : '¿No tienes cuenta? Crear una',
-                  style: LuxTypography.bodyMedium.copyWith(
-                    color: LuxColors.sapphire,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 // ── ADD GUEST DIALOG ──────────────────────────────────────────────────────────
 
 InputDecoration _guestFieldDecor(String hint) => InputDecoration(
-  hintText: hint,
-  hintStyle: const TextStyle(
-    fontFamily: kSans,
-    fontSize: 15,
-    color: _kTextTertiary,
-    fontWeight: FontWeight.w400,
-  ),
-  border: const UnderlineInputBorder(borderSide: BorderSide(color: _kBorder)),
-  enabledBorder: const UnderlineInputBorder(
-    borderSide: BorderSide(color: _kBorder),
-  ),
-  focusedBorder: const UnderlineInputBorder(
-    borderSide: BorderSide(color: _kTextPrimary, width: 1.5),
-  ),
-  contentPadding: const EdgeInsets.symmetric(vertical: 10),
-  filled: false,
-  isDense: false,
-);
+      hintText: hint,
+      hintStyle: const TextStyle(
+        fontFamily: kSans,
+        fontSize: 15,
+        color: _kTextTertiary,
+        fontWeight: FontWeight.w400,
+      ),
+      border:
+          const UnderlineInputBorder(borderSide: BorderSide(color: _kBorder)),
+      enabledBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: _kBorder),
+      ),
+      focusedBorder: const UnderlineInputBorder(
+        borderSide: BorderSide(color: _kTextPrimary, width: 1.5),
+      ),
+      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+      filled: false,
+      isDense: false,
+    );
 
 const _kGuestValueStyle = TextStyle(
   fontFamily: kSans,
@@ -3439,17 +3422,17 @@ const _kGuestValueStyle = TextStyle(
 );
 
 Widget _guestFieldLabel(String text) => Padding(
-  padding: const EdgeInsets.only(bottom: 4),
-  child: Text(
-    text,
-    style: const TextStyle(
-      fontFamily: kSans,
-      fontSize: 13,
-      fontWeight: FontWeight.w600,
-      color: _kTextPrimary,
-    ),
-  ),
-);
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Text(
+        text,
+        style: const TextStyle(
+          fontFamily: kSans,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: _kTextPrimary,
+        ),
+      ),
+    );
 
 class _AddGuestDialog extends StatefulWidget {
   const _AddGuestDialog({
@@ -3602,15 +3585,14 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                   color: _kTextSub,
                   size: 22,
                 ),
-                items:
-                    _kTitles
-                        .map(
-                          (t) => DropdownMenuItem(
-                            value: t,
-                            child: Text(t, style: _kGuestValueStyle),
-                          ),
-                        )
-                        .toList(),
+                items: _kTitles
+                    .map(
+                      (t) => DropdownMenuItem(
+                        value: t,
+                        child: Text(t, style: _kGuestValueStyle),
+                      ),
+                    )
+                    .toList(),
                 onChanged: (v) => setState(() => _title = v!),
               ),
 

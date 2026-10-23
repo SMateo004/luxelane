@@ -13,8 +13,8 @@ class TripFlowRepositoryImpl implements TripFlowRepository {
   TripFlowRepositoryImpl({
     FirebaseFunctions? functions,
     Future<String?> Function()? appVersion,
-  }) : _functionsOverride = functions,
-       _appVersion = appVersion ?? _installedVersion;
+  })  : _functionsOverride = functions,
+        _appVersion = appVersion ?? _installedVersion;
 
   final FirebaseFunctions? _functionsOverride;
 
@@ -52,27 +52,29 @@ class TripFlowRepositoryImpl implements TripFlowRepository {
     required String bookingId,
     required BookingStatus to,
     ({double lat, double lng})? location,
-  }) => _call('advanceBooking', {
-    'bookingId': bookingId,
-    'to': to.label,
-    if (location != null) 'location': _loc(location),
-  });
+  }) =>
+      _call('advanceBooking', {
+        'bookingId': bookingId,
+        'to': to.label,
+        if (location != null) 'location': _loc(location),
+      });
 
   @override
   Future<Either<Failure, void>> verifyPickup({
     required String bookingId,
     required String code,
     ({double lat, double lng})? location,
-  }) => _call('verifyPickup', {
-    'bookingId': bookingId,
-    'code': code,
-    if (location != null) 'location': _loc(location),
-  });
+  }) =>
+      _call('verifyPickup', {
+        'bookingId': bookingId,
+        'code': code,
+        if (location != null) 'location': _loc(location),
+      });
 
   static Map<String, double> _loc(({double lat, double lng}) l) => {
-    'lat': l.lat,
-    'lng': l.lng,
-  };
+        'lat': l.lat,
+        'lng': l.lng,
+      };
 
   Future<Either<Failure, void>> _call(
     String name,
@@ -121,8 +123,8 @@ Failure tripFailureFor(String code, Object? details) {
         left == null
             ? 'Código incorrecto.'
             : left == 1
-            ? 'Código incorrecto. Te queda 1 intento.'
-            : 'Código incorrecto. Te quedan $left intentos.',
+                ? 'Código incorrecto. Te queda 1 intento.'
+                : 'Código incorrecto. Te quedan $left intentos.',
         attemptsLeft: left,
       );
     case 'pickup_locked':

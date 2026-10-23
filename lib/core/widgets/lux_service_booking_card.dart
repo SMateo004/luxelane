@@ -62,10 +62,9 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
   @override
   void initState() {
     super.initState();
-    _service =
-        widget.mode == LuxBookingMode.hourly
-            ? ServiceType.byTheHour
-            : ServiceType.oneWay;
+    _service = widget.mode == LuxBookingMode.hourly
+        ? ServiceType.byTheHour
+        : ServiceType.oneWay;
     _asap = widget.mode == LuxBookingMode.immediate;
     _date = _defaultDate();
   }
@@ -79,10 +78,9 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
     final current = origin ? _origin : _destination ?? _origin;
     final picked = await showMapPickerDialog(
       context,
-      initial:
-          current != null && ServiceArea.hasCoords(current)
-              ? LatLng(current.lat, current.lng)
-              : _santaCruz,
+      initial: current != null && ServiceArea.hasCoords(current)
+          ? LatLng(current.lat, current.lng)
+          : _santaCruz,
       title: origin ? 'Seleccionar lugar de recogida' : 'Seleccionar destino',
     );
     if (!mounted || picked == null) return;
@@ -96,11 +94,10 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
     setState(() {
       _origin = p;
       if (stale) _destination = null;
-      _error =
-          stale
-              ? 'El destino estaba en otra ciudad. Elige uno en la ciudad de '
-                  'recogida.'
-              : null;
+      _error = stale
+          ? 'El destino estaba en otra ciudad. Elige uno en la ciudad de '
+              'recogida.'
+          : null;
     });
   }
 
@@ -158,8 +155,7 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
     if (later != null) {
       setState(() {
         _date = later;
-        _error =
-            'Esa hora ya no da tiempo: la movimos a '
+        _error = 'Esa hora ya no da tiempo: la movimos a '
             '${_formatDate(later)}. Revísala y continúa.';
       });
       return;
@@ -170,10 +166,9 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
       );
       return;
     }
-    final cityError =
-        _destination == null
-            ? null
-            : ServiceArea.destinationError(_origin!, _destination!);
+    final cityError = _destination == null
+        ? null
+        : ServiceArea.destinationError(_origin!, _destination!);
     if (cityError != null) {
       setState(() => _error = cityError);
       return;
@@ -217,14 +212,12 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
   @override
   Widget build(BuildContext context) {
     final airport = widget.mode == LuxBookingMode.airport;
-    final originHint =
-        airport
-            ? 'Recogida — aeropuerto, hotel o dirección'
-            : 'Recogida — dirección, hotel o lugar';
-    final destHint =
-        airport
-            ? 'Destino — aeropuerto, hotel o dirección'
-            : _service == ServiceType.byTheHour
+    final originHint = airport
+        ? 'Recogida — aeropuerto, hotel o dirección'
+        : 'Recogida — dirección, hotel o lugar';
+    final destHint = airport
+        ? 'Destino — aeropuerto, hotel o dirección'
+        : _service == ServiceType.byTheHour
             ? 'Destino (opcional)'
             : 'Destino — dirección, hotel o lugar';
 
@@ -258,12 +251,11 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
               _Segmented(
                 options: const ['Solo ida', 'Por horas'],
                 index: _service == ServiceType.oneWay ? 0 : 1,
-                onChanged:
-                    (i) => setState(() {
-                      _service =
-                          i == 0 ? ServiceType.oneWay : ServiceType.byTheHour;
-                      _error = null;
-                    }),
+                onChanged: (i) => setState(() {
+                  _service =
+                      i == 0 ? ServiceType.oneWay : ServiceType.byTheHour;
+                  _error = null;
+                }),
               ),
               const SizedBox(height: 16),
             ],
@@ -323,32 +315,31 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
 
             AnimatedSize(
               duration: const Duration(milliseconds: 200),
-              child:
-                  _error == null
-                      ? const SizedBox(width: double.infinity)
-                      : Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.info_outline_rounded,
-                              size: 14,
-                              color: Color(0xFFB83A3A),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                _error!,
-                                style: uiLabel(
-                                  size: 12,
-                                  color: const Color(0xFFB83A3A),
-                                  spacing: 0.2,
-                                ),
+              child: _error == null
+                  ? const SizedBox(width: double.infinity)
+                  : Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.info_outline_rounded,
+                            size: 14,
+                            color: Color(0xFFB83A3A),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              _error!,
+                              style: uiLabel(
+                                size: 12,
+                                color: const Color(0xFFB83A3A),
+                                spacing: 0.2,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
+                    ),
             ),
 
             const SizedBox(height: 4),
@@ -356,32 +347,31 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
               height: 54,
               child: ElevatedButton(
                 onPressed: _submitting ? null : _submit,
-                child:
-                    _submitting
-                        ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 1.5,
-                            color: Colors.white,
-                          ),
-                        )
-                        : const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'VER VEHÍCULOS Y PRECIOS',
-                              style: TextStyle(
-                                fontFamily: kSans,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.8,
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Icon(Icons.arrow_forward_rounded, size: 16),
-                          ],
+                child: _submitting
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1.5,
+                          color: Colors.white,
                         ),
+                      )
+                    : const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'VER VEHÍCULOS Y PRECIOS',
+                            style: TextStyle(
+                              fontFamily: kSans,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.8,
+                            ),
+                          ),
+                          SizedBox(width: 10),
+                          Icon(Icons.arrow_forward_rounded, size: 16),
+                        ],
+                      ),
               ),
             ),
             const SizedBox(height: 12),
@@ -422,48 +412,48 @@ class _Segmented extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    height: 42,
-    padding: const EdgeInsets.all(3),
-    decoration: BoxDecoration(
-      color: LD.bg2,
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(color: LD.border),
-    ),
-    child: Row(
-      children: [
-        for (var i = 0; i < options.length; i++)
-          Expanded(
-            child: Semantics(
-              selected: i == index,
-              button: true,
-              child: GestureDetector(
-                onTap: () => onChanged(i),
-                child: MouseRegion(
-                  cursor: SystemMouseCursors.click,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 220),
-                    curve: Curves.easeOutCubic,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: i == index ? LD.sph : Colors.transparent,
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    child: Text(
-                      options[i].toUpperCase(),
-                      style: uiLabel(
-                        size: 10,
-                        spacing: 1.6,
-                        color: i == index ? Colors.white : LD.ink3,
-                      ).copyWith(fontWeight: FontWeight.w500),
+        height: 42,
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: LD.bg2,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: LD.border),
+        ),
+        child: Row(
+          children: [
+            for (var i = 0; i < options.length; i++)
+              Expanded(
+                child: Semantics(
+                  selected: i == index,
+                  button: true,
+                  child: GestureDetector(
+                    onTap: () => onChanged(i),
+                    child: MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 220),
+                        curve: Curves.easeOutCubic,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          color: i == index ? LD.sph : Colors.transparent,
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: Text(
+                          options[i].toUpperCase(),
+                          style: uiLabel(
+                            size: 10,
+                            spacing: 1.6,
+                            color: i == index ? Colors.white : LD.ink3,
+                          ).copyWith(fontWeight: FontWeight.w500),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
-      ],
-    ),
-  );
+          ],
+        ),
+      );
 }
 
 class _MapLink extends StatelessWidget {
@@ -472,22 +462,22 @@ class _MapLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Align(
-    alignment: Alignment.centerRight,
-    child: TextButton.icon(
-      onPressed: onTap,
-      style: TextButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
-        minimumSize: Size.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        foregroundColor: LD.sph,
-      ),
-      icon: const Icon(Icons.map_outlined, size: 13),
-      label: Text(
-        'Elegir en el mapa',
-        style: uiLabel(size: 10.5, color: LD.sph, spacing: 0.3),
-      ),
-    ),
-  );
+        alignment: Alignment.centerRight,
+        child: TextButton.icon(
+          onPressed: onTap,
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+            foregroundColor: LD.sph,
+          ),
+          icon: const Icon(Icons.map_outlined, size: 13),
+          label: Text(
+            'Elegir en el mapa',
+            style: uiLabel(size: 10.5, color: LD.sph, spacing: 0.3),
+          ),
+        ),
+      );
 }
 
 class _FieldTile extends StatelessWidget {
@@ -504,37 +494,37 @@ class _FieldTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-    onTap: onTap,
-    child: Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: LD.border),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 16, color: LD.ink3),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontFamily: kSans,
-                fontSize: 13,
-                color: LD.ink,
-              ),
-            ),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(color: LD.border),
+            borderRadius: BorderRadius.circular(10),
           ),
-          if (trailing != null)
-            Text(
-              trailing!.toUpperCase(),
-              style: uiLabel(size: 9.5, color: LD.sph, spacing: 1.4),
-            ),
-        ],
-      ),
-    ),
-  );
+          child: Row(
+            children: [
+              Icon(icon, size: 16, color: LD.ink3),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 13,
+                    color: LD.ink,
+                  ),
+                ),
+              ),
+              if (trailing != null)
+                Text(
+                  trailing!.toUpperCase(),
+                  style: uiLabel(size: 9.5, color: LD.sph, spacing: 1.4),
+                ),
+            ],
+          ),
+        ),
+      );
 }
 
 class _HoursStepper extends StatelessWidget {
@@ -545,12 +535,12 @@ class _HoursStepper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget btn(IconData i, VoidCallback? f, String tip) => IconButton(
-      tooltip: tip,
-      onPressed: f,
-      icon: Icon(i, size: 16),
-      color: LD.sph,
-      disabledColor: LD.border,
-    );
+          tooltip: tip,
+          onPressed: f,
+          icon: Icon(i, size: 16),
+          color: LD.sph,
+          disabledColor: LD.border,
+        );
     return Container(
       padding: const EdgeInsets.only(left: 12),
       decoration: BoxDecoration(
@@ -603,18 +593,18 @@ class _Assurance extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(bottom: 10),
-    child: Row(
-      children: [
-        const Icon(Icons.check_rounded, size: 14, color: LD.sph),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            text,
-            style: uiLabel(size: 11.5, color: LD.ink2, spacing: 0.2),
-          ),
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Row(
+          children: [
+            const Icon(Icons.check_rounded, size: 14, color: LD.sph),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                text,
+                style: uiLabel(size: 11.5, color: LD.ink2, spacing: 0.2),
+              ),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 }

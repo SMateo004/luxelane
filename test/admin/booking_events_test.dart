@@ -49,11 +49,11 @@ void main() {
 
   test('llegada sin radio o sin ubicación queda anotada', () {
     BookingEvent arrival(String check) => BookingEvent.fromJson('e', {
-      'from': 'driver_arriving',
-      'to': 'driver_arrived',
-      'actor': {'uid': 'chofer', 'role': 'driver'},
-      'arrivalCheck': check,
-    });
+          'from': 'driver_arriving',
+          'to': 'driver_arrived',
+          'actor': {'uid': 'chofer', 'role': 'driver'},
+          'arrivalCheck': check,
+        });
     expect(
       bookingEventDetails(arrival('no_radius'), name),
       contains(startsWith('Sin radio de llegada')),

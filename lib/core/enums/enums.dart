@@ -165,9 +165,9 @@ extension BookingStatusX on BookingStatus {
   }
 
   static BookingStatus fromString(String v) => BookingStatus.values.firstWhere(
-    (e) => e.label == v,
-    orElse: () => BookingStatus.pending,
-  );
+        (e) => e.label == v,
+        orElse: () => BookingStatus.pending,
+      );
 }
 
 // Keep backward-compatible alias
@@ -190,9 +190,9 @@ extension PaymentStatusX on PaymentStatus {
   }
 
   static PaymentStatus fromString(String v) => PaymentStatus.values.firstWhere(
-    (e) => e.label == v,
-    orElse: () => PaymentStatus.pending,
-  );
+        (e) => e.label == v,
+        orElse: () => PaymentStatus.pending,
+      );
 }
 
 // Keep backward-compatible alias

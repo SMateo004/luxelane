@@ -58,8 +58,8 @@ class _AddCardScreenState extends State<AddCardScreen> {
       if (!mounted) return;
 
       context.read<PaymentBloc>().add(
-        CardAdded(stripeCustomerId: customerId, paymentMethodId: pm.id),
-      );
+            CardAdded(stripeCustomerId: customerId, paymentMethodId: pm.id),
+          );
     } catch (e) {
       if (mounted) {
         setState(() => _loading = false);

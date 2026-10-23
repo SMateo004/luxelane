@@ -200,16 +200,15 @@ class DriverLoaded extends DriverState {
   /// sin descartar.
   /// Una que el chófer acaba de aceptar ya está en [bookings] aunque el
   /// servidor aún no la haya retirado.
-  List<OpenRequest> get matchingRequests =>
-      pendingRequests
-          .where(
-            (r) =>
-                !declinedIds.contains(r.id) &&
-                !bookings.any((b) => b.id == r.id) &&
-                vehicleClass != null &&
-                r.vehicleClass == vehicleClass,
-          )
-          .toList();
+  List<OpenRequest> get matchingRequests => pendingRequests
+      .where(
+        (r) =>
+            !declinedIds.contains(r.id) &&
+            !bookings.any((b) => b.id == r.id) &&
+            vehicleClass != null &&
+            r.vehicleClass == vehicleClass,
+      )
+      .toList();
 
   /// Puede aceptar viajes: conectado, verificado y sin otro viaje en curso.
   bool get canAccept =>
@@ -271,15 +270,14 @@ class DriverLoaded extends DriverState {
   /// Reparto de un viaje: el fijado por el servidor al completarlo o, si aún
   /// no existe, uno provisional con la comisión por defecto.
   /// Un viaje reembolsado no deja ganancias.
-  BookingSettlement earningsOf(Booking b) =>
-      b.refunded
-          ? const BookingSettlement(
-            amount: 0,
-            commissionPct: 0,
-            platformCommission: 0,
-            driverPayout: 0,
-          )
-          : b.settlementOr(kDefaultCommissionPct);
+  BookingSettlement earningsOf(Booking b) => b.refunded
+      ? const BookingSettlement(
+          amount: 0,
+          commissionPct: 0,
+          platformCommission: 0,
+          driverPayout: 0,
+        )
+      : b.settlementOr(kDefaultCommissionPct);
 
   /// Ganancias netas del chófer (tarifa menos comisión de la plataforma).
   double get totalEarnings => _sum((s) => s.driverPayout);
@@ -300,18 +298,18 @@ class DriverLoaded extends DriverState {
 
   @override
   List<Object?> get props => [
-    user,
-    profile,
-    isAvailable,
-    bookings,
-    isTracking,
-    pendingRequests,
-    declinedIds,
-    vehicleClass,
-    notice,
-    noticeSeq,
-    updateSeq,
-  ];
+        user,
+        profile,
+        isAvailable,
+        bookings,
+        isTracking,
+        pendingRequests,
+        declinedIds,
+        vehicleClass,
+        notice,
+        noticeSeq,
+        updateSeq,
+      ];
 
   DriverLoaded copyWith({
     User? user,
@@ -323,20 +321,21 @@ class DriverLoaded extends DriverState {
     List<String>? declinedIds,
     String? notice,
     AppUpdateRequiredFailure? updateRequired,
-  }) => DriverLoaded(
-    user: user ?? this.user,
-    profile: profile ?? this.profile,
-    isAvailable: isAvailable ?? this.isAvailable,
-    bookings: bookings ?? this.bookings,
-    isTracking: isTracking ?? this.isTracking,
-    pendingRequests: pendingRequests ?? this.pendingRequests,
-    declinedIds: declinedIds ?? this.declinedIds,
-    vehicleClass: vehicleClass,
-    notice: notice,
-    noticeSeq: notice != null ? noticeSeq + 1 : noticeSeq,
-    updateRequired: updateRequired ?? this.updateRequired,
-    updateSeq: updateRequired != null ? updateSeq + 1 : updateSeq,
-  );
+  }) =>
+      DriverLoaded(
+        user: user ?? this.user,
+        profile: profile ?? this.profile,
+        isAvailable: isAvailable ?? this.isAvailable,
+        bookings: bookings ?? this.bookings,
+        isTracking: isTracking ?? this.isTracking,
+        pendingRequests: pendingRequests ?? this.pendingRequests,
+        declinedIds: declinedIds ?? this.declinedIds,
+        vehicleClass: vehicleClass,
+        notice: notice,
+        noticeSeq: notice != null ? noticeSeq + 1 : noticeSeq,
+        updateRequired: updateRequired ?? this.updateRequired,
+        updateSeq: updateRequired != null ? updateSeq + 1 : updateSeq,
+      );
 }
 
 class DriverOnboardingRequired extends DriverState {
@@ -361,12 +360,12 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     required UserRepository userRepository,
     required VehicleRepository vehicleRepository,
     required MapsService mapsService,
-  }) : _bookingRepo = bookingRepository,
-       _tripFlow = tripFlowRepository,
-       _userRepo = userRepository,
-       _vehicleRepo = vehicleRepository,
-       _mapsService = mapsService,
-       super(const DriverInitial()) {
+  })  : _bookingRepo = bookingRepository,
+        _tripFlow = tripFlowRepository,
+        _userRepo = userRepository,
+        _vehicleRepo = vehicleRepository,
+        _mapsService = mapsService,
+        super(const DriverInitial()) {
     on<DriverStarted>(_onStart);
     on<DriverBookingsWatched>(_onWatchBookings, transformer: _latest());
     on<DriverPendingBookingsWatched>(_onWatchPending, transformer: _latest());
@@ -434,7 +433,8 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
 
       final vehicle = (await _vehicleRepo.getVehicleByDriver(
         event.userId,
-      )).fold((_) => null, (v) => v);
+      ))
+          .fold((_) => null, (v) => v);
 
       emit(
         DriverLoaded(
@@ -492,13 +492,11 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
         return next;
       },
       // Tras cerrar sesión el listener falla por permisos: se ignora.
-      onError:
-          (e, _) =>
-              state is DriverLoaded
-                  ? (state as DriverLoaded).copyWith(
-                    notice: 'No se pudieron cargar tus viajes.',
-                  )
-                  : state,
+      onError: (e, _) => state is DriverLoaded
+          ? (state as DriverLoaded).copyWith(
+              notice: 'No se pudieron cargar tus viajes.',
+            )
+          : state,
     );
   }
 
@@ -534,13 +532,11 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
         if (state is! DriverLoaded) return state;
         return (state as DriverLoaded).copyWith(pendingRequests: pending);
       },
-      onError:
-          (_, __) =>
-              state is DriverLoaded
-                  ? (state as DriverLoaded).copyWith(
-                    notice: 'No se pudieron cargar las solicitudes de viaje.',
-                  )
-                  : state,
+      onError: (_, __) => state is DriverLoaded
+          ? (state as DriverLoaded).copyWith(
+              notice: 'No se pudieron cargar las solicitudes de viaje.',
+            )
+          : state,
     );
   }
 
@@ -662,8 +658,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       emit(
         (state as DriverLoaded).copyWith(
           isTracking: false,
-          notice:
-              'Activa la ubicación para recibir viajes y que el pasajero '
+          notice: 'Activa la ubicación para recibir viajes y que el pasajero '
               'vea dónde estás.',
         ),
       );
@@ -730,8 +725,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       } else if (failure is TripFailure && failure.issue == TripIssue.network) {
         emit(
           cur.copyWith(
-            notice:
-                'Sin conexión: no se guardó el paso. Vuelve a '
+            notice: 'Sin conexión: no se guardó el paso. Vuelve a '
                 'intentarlo; no se duplicará.',
           ),
         );

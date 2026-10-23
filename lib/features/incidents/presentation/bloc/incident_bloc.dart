@@ -83,24 +83,25 @@ class IncidentState extends Equatable {
     bool clearFailure = false,
     LatLngLite? lastLocation,
     int? presses,
-  }) => IncidentState(
-    incident: clearIncident ? null : incident ?? this.incident,
-    sending: sending ?? this.sending,
-    failure: clearFailure ? null : failure ?? this.failure,
-    lastLocation: lastLocation ?? this.lastLocation,
-    presses: presses ?? this.presses,
-  );
+  }) =>
+      IncidentState(
+        incident: clearIncident ? null : incident ?? this.incident,
+        sending: sending ?? this.sending,
+        failure: clearFailure ? null : failure ?? this.failure,
+        lastLocation: lastLocation ?? this.lastLocation,
+        presses: presses ?? this.presses,
+      );
 
   @override
   List<Object?> get props => [
-    incident?.id,
-    incident?.status,
-    incident?.count,
-    sending,
-    failure?.issue,
-    lastLocation,
-    presses,
-  ];
+        incident?.id,
+        incident?.status,
+        incident?.count,
+        sending,
+        failure?.issue,
+        lastLocation,
+        presses,
+      ];
 }
 
 // ---------------------------------------------------------------------------
@@ -114,9 +115,9 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
     required this.uid,
     Future<LatLngLite?> Function()? currentLocation,
     this.publishEvery = const Duration(seconds: 10),
-  }) : _repo = repository,
-       _currentLocation = currentLocation ?? (() async => null),
-       super(const IncidentState()) {
+  })  : _repo = repository,
+        _currentLocation = currentLocation ?? (() async => null),
+        super(const IncidentState()) {
     on<IncidentWatched>(_onWatched);
     on<IncidentRaised>(_onRaised);
     on<IncidentCancelled>(_onCancelled);
@@ -172,10 +173,9 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
       (f) => emit(
         state.copyWith(
           sending: false,
-          failure:
-              f is IncidentFailure
-                  ? f
-                  : IncidentFailure(IncidentIssue.other, f.message),
+          failure: f is IncidentFailure
+              ? f
+              : IncidentFailure(IncidentIssue.other, f.message),
         ),
       ),
       (_) => emit(state.copyWith(sending: false, clearFailure: true)),
@@ -192,10 +192,9 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
     result.fold(
       (f) => emit(
         state.copyWith(
-          failure:
-              f is IncidentFailure
-                  ? f
-                  : IncidentFailure(IncidentIssue.other, f.message),
+          failure: f is IncidentFailure
+              ? f
+              : IncidentFailure(IncidentIssue.other, f.message),
         ),
       ),
       (_) => emit(state.copyWith(clearFailure: true)),

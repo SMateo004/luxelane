@@ -43,24 +43,35 @@ class IncidentHelpSheet extends StatelessWidget {
     final f = s.failure;
     if (f != null) return ('No pudimos avisar a central', f.message);
     final i = s.incident;
+    // Cancelado por el usuario (aunque central ya lo haya reconocido).
+    if (i != null &&
+        i.cancelledByReporter &&
+        i.status != IncidentStatus.closed) {
+      return (
+        'Aviso cancelado',
+        'Central te llamará para verificar que estás bien. Ya no compartimos '
+            'tu ubicación.',
+      );
+    }
     return switch (i?.status) {
       IncidentStatus.open => (
-        'Avisamos a central',
-        'Te contactarán en breve. Compartimos tu ubicación mientras dure '
-            'el aviso.',
-      ),
+          'Avisamos a central',
+          'Te contactarán en breve. Compartimos tu ubicación mientras dure '
+              'el aviso.',
+        ),
       IncidentStatus.acknowledged => (
-        'Central recibió tu aviso',
-        'Una persona de central lo está atendiendo.',
-      ),
+          'Central recibió tu aviso',
+          'Una persona de central lo está atendiendo.',
+        ),
       IncidentStatus.closed => (
-        'Aviso cerrado',
-        'Central cerró el aviso. Ya no compartimos tu ubicación.',
-      ),
-      IncidentStatus.cancelledByReporter => (
-        'Aviso cancelado',
-        'Central lo revisará igualmente. Ya no compartimos tu ubicación.',
-      ),
+          'Aviso cerrado',
+          'Central cerró el aviso. Ya no compartimos tu ubicación.',
+        ),
+      IncidentStatus.cancelRequested => (
+          'Aviso cancelado',
+          'Central te llamará para verificar que estás bien. Ya no compartimos '
+              'tu ubicación.',
+        ),
       null => ('Ayuda', 'Mantén pulsado SOS para avisar a central.'),
     };
   }
@@ -69,24 +80,23 @@ class IncidentHelpSheet extends StatelessWidget {
     final bloc = context.read<IncidentBloc>();
     final ok = await showDialog<bool>(
       context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: const Text('¿Fue una falsa alarma?'),
-            content: const Text(
-              'Cancelaremos el aviso. Central lo verá igualmente y queda '
-              'registrado.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(ctx, false),
-                child: const Text('Volver'),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.pop(ctx, true),
-                child: const Text('Cancelar aviso'),
-              ),
-            ],
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿Fue una falsa alarma?'),
+        content: const Text(
+          'Cancelaremos el aviso. Central lo verá igualmente y queda '
+          'registrado.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Volver'),
           ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Cancelar aviso'),
+          ),
+        ],
+      ),
     );
     if (ok == true) bloc.add(const IncidentCancelled());
   }
@@ -144,15 +154,14 @@ class IncidentHelpSheet extends StatelessWidget {
                   LuxOutlinedButton(
                     label: 'Enviar SMS a central',
                     icon: Icons.sms_outlined,
-                    onPressed:
-                        () => _open(
-                          incidentSmsUri(
-                            phone,
-                            bookingShortId(bookingId),
-                            lat: loc?.lat,
-                            lng: loc?.lng,
-                          ),
-                        ),
+                    onPressed: () => _open(
+                      incidentSmsUri(
+                        phone,
+                        bookingShortId(bookingId),
+                        lat: loc?.lat,
+                        lng: loc?.lng,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: LuxSpacing.sm),
                 ] else if (phone != null) ...[
@@ -166,10 +175,9 @@ class IncidentHelpSheet extends StatelessWidget {
                 if (s.failure != null)
                   LuxButton.ghost(
                     label: 'Reintentar el aviso',
-                    onPressed:
-                        s.sending
-                            ? null
-                            : () => context.read<IncidentBloc>().add(
+                    onPressed: s.sending
+                        ? null
+                        : () => context.read<IncidentBloc>().add(
                               const IncidentRaised(),
                             ),
                   ),
@@ -193,8 +201,7 @@ class IncidentHelpSheet extends StatelessWidget {
                       children: [
                         SosButton(
                           label: 'Avisar de nuevo',
-                          onActivated:
-                              () => context.read<IncidentBloc>().add(
+                          onActivated: () => context.read<IncidentBloc>().add(
                                 const IncidentRaised(),
                               ),
                         ),

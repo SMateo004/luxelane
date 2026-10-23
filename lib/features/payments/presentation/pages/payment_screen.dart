@@ -35,8 +35,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
       if (customerId.isEmpty) return;
     }
     context.read<PaymentBloc>().add(
-      CardsLoadRequested(stripeCustomerId: customerId),
-    );
+          CardsLoadRequested(stripeCustomerId: customerId),
+        );
   }
 
   /// Stripe solo está configurado en la app móvil.
@@ -57,33 +57,32 @@ class _PaymentScreenState extends State<PaymentScreen> {
     if (authState.user.stripeCustomerId == null) return;
     final ok = await showDialog<bool>(
       context: context,
-      builder:
-          (ctx) => AlertDialog(
-            title: const Text('¿Quitar esta tarjeta?'),
-            content: const Text(
-              'Dejará de estar disponible para tus próximas reservas.',
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text('Cancelar'),
-              ),
-              FilledButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                style: FilledButton.styleFrom(backgroundColor: LuxColors.error),
-                child: const Text('Quitar'),
-              ),
-            ],
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿Quitar esta tarjeta?'),
+        content: const Text(
+          'Dejará de estar disponible para tus próximas reservas.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancelar'),
           ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: FilledButton.styleFrom(backgroundColor: LuxColors.error),
+            child: const Text('Quitar'),
+          ),
+        ],
+      ),
     );
     if (ok != true || !mounted) return;
 
     context.read<PaymentBloc>().add(
-      CardRemoved(
-        stripeCustomerId: authState.user.stripeCustomerId!,
-        paymentMethodId: paymentMethodId,
-      ),
-    );
+          CardRemoved(
+            stripeCustomerId: authState.user.stripeCustomerId!,
+            paymentMethodId: paymentMethodId,
+          ),
+        );
   }
 
   @override
@@ -152,8 +151,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   _CardTile(
                     card: card,
                     isDefault: card['isDefault'] == true,
-                    onSetDefault:
-                        () => context.read<PaymentBloc>().add(
+                    onSetDefault: () => context.read<PaymentBloc>().add(
                           DefaultCardSet(paymentMethodId: card['id'] as String),
                         ),
                     onRemove: () => _removeCard(card['id'] as String),
@@ -195,11 +193,11 @@ class _EmptyCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => EmptyState(
-    icon: Icons.credit_card_outlined,
-    message: 'Paga sin pensarlo.',
-    actionLabel: 'Agregar tarjeta',
-    onAction: onAdd,
-  );
+        icon: Icons.credit_card_outlined,
+        message: 'Paga sin pensarlo.',
+        actionLabel: 'Agregar tarjeta',
+        onAction: onAdd,
+      );
 }
 
 class _CardTile extends StatelessWidget {
@@ -216,12 +214,12 @@ class _CardTile extends StatelessWidget {
   final VoidCallback onRemove;
 
   static String _brand(String? b) => switch (b) {
-    'visa' => 'Visa',
-    'mastercard' => 'Mastercard',
-    'amex' => 'American Express',
-    null || '' => 'Tarjeta',
-    _ => '${b[0].toUpperCase()}${b.substring(1)}',
-  };
+        'visa' => 'Visa',
+        'mastercard' => 'Mastercard',
+        'amex' => 'American Express',
+        null || '' => 'Tarjeta',
+        _ => '${b[0].toUpperCase()}${b.substring(1)}',
+      };
 
   @override
   Widget build(BuildContext context) {
@@ -230,13 +228,12 @@ class _CardTile extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap:
-            isDefault
-                ? null
-                : () {
-                  LuxHaptics.tap();
-                  onSetDefault();
-                },
+        onTap: isDefault
+            ? null
+            : () {
+                LuxHaptics.tap();
+                onSetDefault();
+              },
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 4, 12),
           child: Row(
@@ -270,10 +267,9 @@ class _CardTile extends StatelessWidget {
                       isDefault ? 'Predeterminada · vence $exp' : 'Vence $exp',
                       style: LuxTypography.caption.copyWith(
                         fontSize: 12,
-                        color:
-                            isDefault
-                                ? LuxColors.sapphire
-                                : LuxColors.inkTertiary,
+                        color: isDefault
+                            ? LuxColors.sapphire
+                            : LuxColors.inkTertiary,
                       ),
                     ),
                   ],
@@ -281,18 +277,17 @@ class _CardTile extends StatelessWidget {
               ),
               AnimatedSwitcher(
                 duration: LuxMotion.of(context, LuxMotion.base),
-                child:
-                    isDefault
-                        ? const Padding(
-                          key: ValueKey('on'),
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Icon(
-                            Icons.check_circle_rounded,
-                            color: LuxColors.sapphire,
-                            size: 22,
-                          ),
-                        )
-                        : const SizedBox(key: ValueKey('off'), width: 38),
+                child: isDefault
+                    ? const Padding(
+                        key: ValueKey('on'),
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Icon(
+                          Icons.check_circle_rounded,
+                          color: LuxColors.sapphire,
+                          size: 22,
+                        ),
+                      )
+                    : const SizedBox(key: ValueKey('off'), width: 38),
               ),
               IconButton(
                 tooltip: 'Quitar tarjeta',

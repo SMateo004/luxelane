@@ -32,8 +32,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final authState = context.read<AuthBloc>().state;
     if (authState is AuthAuthenticated) {
       context.read<ProfileBloc>().add(
-        ProfileLoadRequested(userId: authState.user.id),
-      );
+            ProfileLoadRequested(userId: authState.user.id),
+          );
     }
   }
 
@@ -45,82 +45,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
       ),
-      builder:
-          (_) => BlocProvider.value(
-            value: context.read<ProfileBloc>(),
-            child: _EditProfileSheet(user: user),
-          ),
+      builder: (_) => BlocProvider.value(
+        value: context.read<ProfileBloc>(),
+        child: _EditProfileSheet(user: user),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('Perfil'),
-      actions: [
-        BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, state) {
-            final user =
-                state is ProfileLoaded
+        appBar: AppBar(
+          title: const Text('Perfil'),
+          actions: [
+            BlocBuilder<ProfileBloc, ProfileState>(
+              builder: (context, state) {
+                final user = state is ProfileLoaded
                     ? state.user
                     : state is ProfileUpdated
-                    ? state.user
-                    : null;
-            return TextButton(
-              onPressed: user != null ? () => _showEditSheet(user) : null,
-              child: const Text('Editar'),
-            );
-          },
+                        ? state.user
+                        : null;
+                return TextButton(
+                  onPressed: user != null ? () => _showEditSheet(user) : null,
+                  child: const Text('Editar'),
+                );
+              },
+            ),
+          ],
         ),
-      ],
-    ),
-    body: BlocConsumer<ProfileBloc, ProfileState>(
-      listenWhen:
-          (prev, next) =>
+        body: BlocConsumer<ProfileBloc, ProfileState>(
+          listenWhen: (prev, next) =>
               next is ProfileLoaded &&
               next.message != null &&
               (prev is! ProfileLoaded || prev.messageSeq != next.messageSeq),
-      listener: (context, state) {
-        final s = state as ProfileLoaded;
-        showLuxSnackbar(context, s.message!, isError: s.isError);
-      },
-      builder: (context, state) {
-        if (state is ProfileLoading || state is ProfileInitial) {
-          return const LuxSkeletonList(count: 5, itemHeight: 64);
-        }
-        if (state is ProfileError) {
-          return Center(
-            child: Text(state.message, style: LuxTypography.bodyMedium),
-          );
-        }
-        final User user;
-        int totalRides = 0;
-        double? rating;
-        if (state is ProfileLoaded) {
-          user = state.user;
-          totalRides = state.totalRides;
-          rating = state.rating;
-        } else if (state is ProfileUpdated) {
-          user = state.user;
-        } else {
-          return const SizedBox();
-        }
-        return _ProfileBody(
-          user: user,
-          totalRides: totalRides,
-          rating: rating,
-          onEdit: () => _showEditSheet(user),
-          onPreferences:
-              (p) => context.read<ProfileBloc>().add(
-                ProfileUpdateRequested(
-                  user: user.copyWith(ridePreferences: p),
-                  silent: true,
-                ),
-              ),
-        );
-      },
-    ),
-  );
+          listener: (context, state) {
+            final s = state as ProfileLoaded;
+            showLuxSnackbar(context, s.message!, isError: s.isError);
+          },
+          builder: (context, state) {
+            if (state is ProfileLoading || state is ProfileInitial) {
+              return const LuxSkeletonList(count: 5, itemHeight: 64);
+            }
+            if (state is ProfileError) {
+              return Center(
+                child: Text(state.message, style: LuxTypography.bodyMedium),
+              );
+            }
+            final User user;
+            int totalRides = 0;
+            double? rating;
+            if (state is ProfileLoaded) {
+              user = state.user;
+              totalRides = state.totalRides;
+              rating = state.rating;
+            } else if (state is ProfileUpdated) {
+              user = state.user;
+            } else {
+              return const SizedBox();
+            }
+            return _ProfileBody(
+              user: user,
+              totalRides: totalRides,
+              rating: rating,
+              onEdit: () => _showEditSheet(user),
+              onPreferences: (p) => context.read<ProfileBloc>().add(
+                    ProfileUpdateRequested(
+                      user: user.copyWith(ridePreferences: p),
+                      silent: true,
+                    ),
+                  ),
+            );
+          },
+        ),
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -184,10 +180,9 @@ class _ProfileBody extends StatelessWidget {
               LuxListRow(
                 icon: Icons.phone_outlined,
                 title: 'Teléfono',
-                subtitle:
-                    user.phone.isNotEmpty
-                        ? user.phone
-                        : 'Añádelo para tu chófer',
+                subtitle: user.phone.isNotEmpty
+                    ? user.phone
+                    : 'Añádelo para tu chófer',
                 onTap: onEdit,
               ),
               if (rider)
@@ -222,8 +217,8 @@ class _ProfileBody extends StatelessWidget {
         item(
           LuxOutlinedButton(
             label: 'Cerrar sesión',
-            onPressed:
-                () => context.read<AuthBloc>().add(const LogoutRequested()),
+            onPressed: () =>
+                context.read<AuthBloc>().add(const LogoutRequested()),
           ),
         ),
         const SizedBox(height: LuxSpacing.xs),
@@ -251,72 +246,70 @@ class _RidePreferencesGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LuxGroup(
-    footer:
-        'Tu chófer lo sabrá antes de recogerte. Se aplica a tus '
-        'próximas reservas.',
-    children: [
-      LuxSwitchRow(
-        icon: Icons.volume_off_outlined,
-        title: 'Viaje en silencio',
-        subtitle: 'Sin conversación, salvo lo necesario',
-        value: prefs.quiet,
-        onChanged: (v) => onChanged(prefs.copyWith(quiet: v)),
-      ),
-      LuxSwitchRow(
-        icon: Icons.music_note_outlined,
-        title: 'Música suave',
-        value: prefs.music,
-        onChanged: (v) => onChanged(prefs.copyWith(music: v)),
-      ),
-      Padding(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+        footer: 'Tu chófer lo sabrá antes de recogerte. Se aplica a tus '
+            'próximas reservas.',
+        children: [
+          LuxSwitchRow(
+            icon: Icons.volume_off_outlined,
+            title: 'Viaje en silencio',
+            subtitle: 'Sin conversación, salvo lo necesario',
+            value: prefs.quiet,
+            onChanged: (v) => onChanged(prefs.copyWith(quiet: v)),
+          ),
+          LuxSwitchRow(
+            icon: Icons.music_note_outlined,
+            title: 'Música suave',
+            value: prefs.music,
+            onChanged: (v) => onChanged(prefs.copyWith(music: v)),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(
-                  Icons.thermostat_outlined,
-                  size: 20,
-                  color: LuxColors.inkSecondary,
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.thermostat_outlined,
+                      size: 20,
+                      color: LuxColors.inkSecondary,
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      'Temperatura',
+                      style: LuxTypography.bodyLarge.copyWith(fontSize: 15),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 16),
-                Text(
-                  'Temperatura',
-                  style: LuxTypography.bodyLarge.copyWith(fontSize: 15),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            LuxSegmented<CabinTemperature?>(
-              values: const [null, ...CabinTemperature.values],
-              selected: prefs.temperature,
-              labelOf: (t) => t?.label ?? 'Indistinta',
-              height: 40,
-              onChanged:
-                  (t) => onChanged(
+                const SizedBox(height: 10),
+                LuxSegmented<CabinTemperature?>(
+                  values: const [null, ...CabinTemperature.values],
+                  selected: prefs.temperature,
+                  labelOf: (t) => t?.label ?? 'Indistinta',
+                  height: 40,
+                  onChanged: (t) => onChanged(
                     t == null
                         ? prefs.copyWith(clearTemperature: true)
                         : prefs.copyWith(temperature: t),
                   ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-      LuxSwitchRow(
-        icon: Icons.luggage_outlined,
-        title: 'Ayuda con el equipaje',
-        value: prefs.luggageHelp,
-        onChanged: (v) => onChanged(prefs.copyWith(luggageHelp: v)),
-      ),
-      LuxSwitchRow(
-        icon: Icons.door_front_door_outlined,
-        title: 'Abrirme la puerta',
-        value: prefs.openDoor,
-        onChanged: (v) => onChanged(prefs.copyWith(openDoor: v)),
-      ),
-    ],
-  );
+          ),
+          LuxSwitchRow(
+            icon: Icons.luggage_outlined,
+            title: 'Ayuda con el equipaje',
+            value: prefs.luggageHelp,
+            onChanged: (v) => onChanged(prefs.copyWith(luggageHelp: v)),
+          ),
+          LuxSwitchRow(
+            icon: Icons.door_front_door_outlined,
+            title: 'Abrirme la puerta',
+            value: prefs.openDoor,
+            onChanged: (v) => onChanged(prefs.copyWith(openDoor: v)),
+          ),
+        ],
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -363,49 +356,49 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    icon: const Icon(Icons.delete_outline, color: LuxColors.error),
-    title: const Text('¿Eliminar tu cuenta?'),
-    content: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Borraremos tu perfil, tus tarjetas guardadas y tus avisos, y '
-          'no podrás volver a entrar con esta cuenta. Conservamos el '
-          'registro de viajes y pagos que exige la ley.\n\n'
-          'Esta acción no se puede deshacer.',
+        icon: const Icon(Icons.delete_outline, color: LuxColors.error),
+        title: const Text('¿Eliminar tu cuenta?'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Borraremos tu perfil, tus tarjetas guardadas y tus avisos, y '
+              'no podrás volver a entrar con esta cuenta. Conservamos el '
+              'registro de viajes y pagos que exige la ley.\n\n'
+              'Esta acción no se puede deshacer.',
+            ),
+            if (_error != null) ...[
+              const SizedBox(height: LuxSpacing.md),
+              Text(
+                _error!,
+                style:
+                    LuxTypography.bodyMedium.copyWith(color: LuxColors.error),
+              ),
+            ],
+          ],
         ),
-        if (_error != null) ...[
-          const SizedBox(height: LuxSpacing.md),
-          Text(
-            _error!,
-            style: LuxTypography.bodyMedium.copyWith(color: LuxColors.error),
+        actions: [
+          TextButton(
+            onPressed: _busy ? null : () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: _busy ? null : _delete,
+            style: FilledButton.styleFrom(backgroundColor: LuxColors.error),
+            child: _busy
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Text('Eliminar'),
           ),
         ],
-      ],
-    ),
-    actions: [
-      TextButton(
-        onPressed: _busy ? null : () => Navigator.of(context).pop(false),
-        child: const Text('Cancelar'),
-      ),
-      FilledButton(
-        onPressed: _busy ? null : _delete,
-        style: FilledButton.styleFrom(backgroundColor: LuxColors.error),
-        child:
-            _busy
-                ? const SizedBox(
-                  width: 16,
-                  height: 16,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white,
-                  ),
-                )
-                : const Text('Eliminar'),
-      ),
-    ],
-  );
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -484,8 +477,8 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               label: 'Nombre',
               controller: _name,
               prefixIcon: Icons.person_outline_rounded,
-              validator:
-                  (v) => v == null || v.trim().isEmpty ? 'Requerido' : null,
+              validator: (v) =>
+                  v == null || v.trim().isEmpty ? 'Requerido' : null,
             ),
             const SizedBox(height: LuxSpacing.md),
             LuxTextField(
@@ -493,11 +486,9 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
               controller: _phone,
               keyboardType: TextInputType.phone,
               prefixIcon: Icons.phone_outlined,
-              validator:
-                  (v) =>
-                      v == null || v.trim().length < 6
-                          ? 'Tu chófer lo necesita para contactarte'
-                          : null,
+              validator: (v) => v == null || v.trim().length < 6
+                  ? 'Tu chófer lo necesita para contactarte'
+                  : null,
             ),
             const SizedBox(height: LuxSpacing.lg),
             LuxButton(label: 'Guardar cambios', onPressed: _save),
@@ -533,68 +524,68 @@ class _ProfileHeader extends StatelessWidget {
   }
 
   String get _role => switch (user.role) {
-    UserRole.admin => 'Administración',
-    UserRole.driver => 'Chófer Luxelane',
-    UserRole.rider => 'Miembro desde ${user.createdAt.year}',
-  };
+        UserRole.admin => 'Administración',
+        UserRole.driver => 'Chófer Luxelane',
+        UserRole.rider => 'Miembro desde ${user.createdAt.year}',
+      };
 
   @override
   Widget build(BuildContext context) => LuxPressable(
-    onTap: onEdit,
-    semanticLabel: 'Editar perfil',
-    scale: 0.99,
-    child: Padding(
-      padding: const EdgeInsets.symmetric(vertical: LuxSpacing.md),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 32,
-            backgroundColor: LuxColors.sapphireTint,
-            backgroundImage:
-                user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
-            child:
-                user.photoUrl == null
+        onTap: onEdit,
+        semanticLabel: 'Editar perfil',
+        scale: 0.99,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: LuxSpacing.md),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 32,
+                backgroundColor: LuxColors.sapphireTint,
+                backgroundImage:
+                    user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
+                child: user.photoUrl == null
                     ? Text(
-                      _initials,
-                      style: const TextStyle(
-                        fontFamily: 'Cormorant Garamond',
-                        fontSize: 26,
-                        fontWeight: FontWeight.w600,
-                        color: LuxColors.sapphire,
-                      ),
-                    )
+                        _initials,
+                        style: const TextStyle(
+                          fontFamily: 'Cormorant Garamond',
+                          fontSize: 26,
+                          fontWeight: FontWeight.w600,
+                          color: LuxColors.sapphire,
+                        ),
+                      )
                     : null,
-          ),
-          const SizedBox(width: LuxSpacing.md),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user.displayName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: LuxTypography.headlineLarge.copyWith(
-                    fontSize: 28,
-                    height: 1.1,
-                  ),
+              ),
+              const SizedBox(width: LuxSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.displayName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.headlineLarge.copyWith(
+                        fontSize: 28,
+                        height: 1.1,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      [
+                        _role,
+                        if (totalRides > 0)
+                          '$totalRides ${totalRides == 1 ? 'viaje' : 'viajes'}',
+                        if (rating != null) '★ ${rating!.toStringAsFixed(1)}',
+                      ].join(' · '),
+                      style: LuxTypography.caption.copyWith(fontSize: 12),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  [
-                    _role,
-                    if (totalRides > 0)
-                      '$totalRides ${totalRides == 1 ? 'viaje' : 'viajes'}',
-                    if (rating != null) '★ ${rating!.toStringAsFixed(1)}',
-                  ].join(' · '),
-                  style: LuxTypography.caption.copyWith(fontSize: 12),
-                ),
-              ],
-            ),
+              ),
+              const Icon(Icons.chevron_right_rounded,
+                  color: LuxColors.inkTertiary),
+            ],
           ),
-          const Icon(Icons.chevron_right_rounded, color: LuxColors.inkTertiary),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }

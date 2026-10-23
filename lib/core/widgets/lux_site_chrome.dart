@@ -152,42 +152,42 @@ class _LuxNavLinkState extends State<LuxNavLink> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-    onEnter: (_) => setState(() => _hover = true),
-    onExit: (_) => setState(() => _hover = false),
-    cursor: SystemMouseCursors.click,
-    child: GestureDetector(
-      onTap: widget.onTap,
-      // Underline is overlaid so it never shifts the label's baseline.
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Text(
-            widget.label.toUpperCase(),
-            style: TextStyle(
-              fontFamily: kSans,
-              fontSize: 11,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 1.2,
-              color: _hover ? Colors.white : Colors.white.withAlpha(170),
-              decoration: TextDecoration.none,
-            ),
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onTap,
+          // Underline is overlaid so it never shifts the label's baseline.
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Text(
+                widget.label.toUpperCase(),
+                style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 1.2,
+                  color: _hover ? Colors.white : Colors.white.withAlpha(170),
+                  decoration: TextDecoration.none,
+                ),
+              ),
+              // Hairline underline grows on hover — quiet, precise feedback.
+              Positioned(
+                left: 0,
+                bottom: -6,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeOutCubic,
+                  height: 1,
+                  width: _hover ? 18 : 0,
+                  color: Colors.white.withAlpha(180),
+                ),
+              ),
+            ],
           ),
-          // Hairline underline grows on hover — quiet, precise feedback.
-          Positioned(
-            left: 0,
-            bottom: -6,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeOutCubic,
-              height: 1,
-              width: _hover ? 18 : 0,
-              color: Colors.white.withAlpha(180),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }
 
 /// "Servicios" link with hover dropdown.
@@ -219,85 +219,85 @@ class _LuxServicesMenuState extends State<LuxServicesMenu> {
 
   @override
   Widget build(BuildContext context) => OverlayPortal(
-    controller: _portal,
-    overlayChildBuilder: (_) {
-      final box = _key.currentContext?.findRenderObject() as RenderBox?;
-      if (box == null) return const SizedBox.shrink();
-      final offset = box.localToGlobal(Offset.zero);
-      return Positioned(
-        left: offset.dx - 20,
-        top: offset.dy + box.size.height + 10,
-        child: MouseRegion(
-          onEnter: (_) => setState(() => _dropHover = true),
-          onExit: (_) {
-            setState(() => _dropHover = false);
-            _hide();
-          },
-          child: Container(
-            width: 280,
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF0A1220),
-              border: Border.all(color: const Color(0xFF1A2B40)),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x66000000),
-                  blurRadius: 32,
-                  offset: Offset(0, 16),
+        controller: _portal,
+        overlayChildBuilder: (_) {
+          final box = _key.currentContext?.findRenderObject() as RenderBox?;
+          if (box == null) return const SizedBox.shrink();
+          final offset = box.localToGlobal(Offset.zero);
+          return Positioned(
+            left: offset.dx - 20,
+            top: offset.dy + box.size.height + 10,
+            child: MouseRegion(
+              onEnter: (_) => setState(() => _dropHover = true),
+              onExit: (_) {
+                setState(() => _dropHover = false);
+                _hide();
+              },
+              child: Container(
+                width: 280,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF0A1220),
+                  border: Border.all(color: const Color(0xFF1A2B40)),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x66000000),
+                      blurRadius: 32,
+                      offset: Offset(0, 16),
+                    ),
+                  ],
                 ),
-              ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (final s in LuxServiceRoutes.all)
+                      _DropItem(
+                        label: s.$1,
+                        icon: s.$3,
+                        onTap: () {
+                          _portal.hide();
+                          context.go(s.$2);
+                        },
+                      ),
+                  ],
+                ),
+              ),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (final s in LuxServiceRoutes.all)
-                  _DropItem(
-                    label: s.$1,
-                    icon: s.$3,
-                    onTap: () {
-                      _portal.hide();
-                      context.go(s.$2);
-                    },
-                  ),
-              ],
-            ),
+          );
+        },
+        child: MouseRegion(
+          key: _key,
+          onEnter: (_) => _show(),
+          onExit: (_) => _hide(),
+          cursor: SystemMouseCursors.click,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'SERVICIOS',
+                style: TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w400,
+                  letterSpacing: 1.2,
+                  color: _hover ? Colors.white : Colors.white.withAlpha(170),
+                  decoration: TextDecoration.none,
+                ),
+              ),
+              const SizedBox(width: 4),
+              AnimatedRotation(
+                turns: _hover ? 0.5 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  size: 14,
+                  color: _hover ? Colors.white : Colors.white.withAlpha(170),
+                ),
+              ),
+            ],
           ),
         ),
       );
-    },
-    child: MouseRegion(
-      key: _key,
-      onEnter: (_) => _show(),
-      onExit: (_) => _hide(),
-      cursor: SystemMouseCursors.click,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'SERVICIOS',
-            style: TextStyle(
-              fontFamily: kSans,
-              fontSize: 11,
-              fontWeight: FontWeight.w400,
-              letterSpacing: 1.2,
-              color: _hover ? Colors.white : Colors.white.withAlpha(170),
-              decoration: TextDecoration.none,
-            ),
-          ),
-          const SizedBox(width: 4),
-          AnimatedRotation(
-            turns: _hover ? 0.5 : 0,
-            duration: const Duration(milliseconds: 200),
-            child: Icon(
-              Icons.keyboard_arrow_down_rounded,
-              size: 14,
-              color: _hover ? Colors.white : Colors.white.withAlpha(170),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
 }
 
 class _DropItem extends StatefulWidget {
@@ -319,50 +319,51 @@ class _DropItemState extends State<_DropItem> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-    onEnter: (_) => setState(() => _hover = true),
-    onExit: (_) => setState(() => _hover = false),
-    cursor: SystemMouseCursors.click,
-    child: GestureDetector(
-      onTap: widget.onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        color: _hover ? LD.sph.withAlpha(40) : Colors.transparent,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        child: Row(
-          children: [
-            Icon(
-              widget.icon,
-              size: 16,
-              color: _hover ? Colors.white : const Color(0xFF8CB2E3),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Text(
-                widget.label,
-                style: TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 0.3,
-                  color: _hover ? Colors.white : Colors.white.withAlpha(190),
-                  decoration: TextDecoration.none,
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 150),
+            color: _hover ? LD.sph.withAlpha(40) : Colors.transparent,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            child: Row(
+              children: [
+                Icon(
+                  widget.icon,
+                  size: 16,
+                  color: _hover ? Colors.white : const Color(0xFF8CB2E3),
                 ),
-              ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    widget.label,
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 0.3,
+                      color:
+                          _hover ? Colors.white : Colors.white.withAlpha(190),
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ),
+                AnimatedOpacity(
+                  opacity: _hover ? 1 : 0,
+                  duration: const Duration(milliseconds: 150),
+                  child: const Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 14,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
-            AnimatedOpacity(
-              opacity: _hover ? 1 : 0,
-              duration: const Duration(milliseconds: 150),
-              child: const Icon(
-                Icons.arrow_forward_rounded,
-                size: 14,
-                color: Colors.white,
-              ),
-            ),
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 /// Solid sapphire primary CTA used in the nav.
@@ -380,33 +381,33 @@ class _LuxNavCtaState extends State<LuxNavCta> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-    onEnter: (_) => setState(() => _hover = true),
-    onExit: (_) => setState(() => _hover = false),
-    cursor: SystemMouseCursors.click,
-    child: GestureDetector(
-      onTap: widget.onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(
-          horizontal: widget.compact ? 16 : 22,
-          vertical: 11,
-        ),
-        transform: Matrix4.translationValues(0, _hover ? -1 : 0, 0),
-        decoration: luxRaisedDecoration(radius: 3),
-        child: Text(
-          widget.compact ? 'RESERVAR' : 'RESERVAR UN VIAJE',
-          style: const TextStyle(
-            fontFamily: kSans,
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 1.8,
-            color: Colors.white,
-            decoration: TextDecoration.none,
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            padding: EdgeInsets.symmetric(
+              horizontal: widget.compact ? 16 : 22,
+              vertical: 11,
+            ),
+            transform: Matrix4.translationValues(0, _hover ? -1 : 0, 0),
+            decoration: luxRaisedDecoration(radius: 3),
+            child: Text(
+              widget.compact ? 'RESERVAR' : 'RESERVAR UN VIAJE',
+              style: const TextStyle(
+                fontFamily: kSans,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.8,
+                color: Colors.white,
+                decoration: TextDecoration.none,
+              ),
+            ),
           ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 class _AvatarDot extends StatelessWidget {
@@ -416,35 +417,35 @@ class _AvatarDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-    button: true,
-    label: 'Mi perfil',
-    child: GestureDetector(
-      onTap: onTap,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: Container(
-          width: 34,
-          height: 34,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white.withAlpha(90)),
-          ),
-          child: Center(
-            child: Text(
-              name.isNotEmpty ? name[0].toUpperCase() : 'L',
-              style: const TextStyle(
-                fontFamily: kSerif,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: Colors.white,
-                decoration: TextDecoration.none,
+        button: true,
+        label: 'Mi perfil',
+        child: GestureDetector(
+          onTap: onTap,
+          child: MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: Container(
+              width: 34,
+              height: 34,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white.withAlpha(90)),
+              ),
+              child: Center(
+                child: Text(
+                  name.isNotEmpty ? name[0].toUpperCase() : 'L',
+                  style: const TextStyle(
+                    fontFamily: kSerif,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
               ),
             ),
           ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 // ── Mobile full-screen menu ─────────────────────────────────────────────────
@@ -457,36 +458,33 @@ class _MenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => IconButton(
-    tooltip: 'Menú',
-    icon: const Icon(Icons.menu_rounded, color: Colors.white, size: 22),
-    onPressed:
-        () => showGeneralDialog(
+        tooltip: 'Menú',
+        icon: const Icon(Icons.menu_rounded, color: Colors.white, size: 22),
+        onPressed: () => showGeneralDialog(
           context: context,
           barrierDismissible: true,
           barrierLabel: 'Cerrar menú',
           barrierColor: Colors.black54,
           transitionDuration: const Duration(milliseconds: 320),
-          pageBuilder:
-              (ctx, _, __) => _MobileMenu(
-                onBook: onBook,
-                onFleet: onFleet,
-                onBusiness: onBusiness,
+          pageBuilder: (ctx, _, __) => _MobileMenu(
+            onBook: onBook,
+            onFleet: onFleet,
+            onBusiness: onBusiness,
+          ),
+          transitionBuilder: (_, a, __, child) => FadeTransition(
+            opacity: CurvedAnimation(parent: a, curve: Curves.easeOut),
+            child: SlideTransition(
+              position: Tween(
+                begin: const Offset(0, -0.03),
+                end: Offset.zero,
+              ).animate(
+                CurvedAnimation(parent: a, curve: Curves.easeOutCubic),
               ),
-          transitionBuilder:
-              (_, a, __, child) => FadeTransition(
-                opacity: CurvedAnimation(parent: a, curve: Curves.easeOut),
-                child: SlideTransition(
-                  position: Tween(
-                    begin: const Offset(0, -0.03),
-                    end: Offset.zero,
-                  ).animate(
-                    CurvedAnimation(parent: a, curve: Curves.easeOutCubic),
-                  ),
-                  child: child,
-                ),
-              ),
+              child: child,
+            ),
+          ),
         ),
-  );
+      );
 }
 
 class _MobileMenu extends StatelessWidget {
@@ -503,34 +501,34 @@ class _MobileMenu extends StatelessWidget {
     }
 
     Widget item(String label, VoidCallback onTap, {IconData? icon}) => InkWell(
-      onTap: () => go(onTap),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Row(
-          children: [
-            if (icon != null) ...[
-              Icon(icon, size: 18, color: const Color(0xFF8CB2E3)),
-              const SizedBox(width: 14),
-            ],
-            Expanded(
-              child: Text(
-                label,
-                style: displayText(
-                  size: 26,
-                  color: Colors.white,
-                  weight: FontWeight.w400,
-                ).copyWith(height: 1.2, letterSpacing: 0),
-              ),
+          onTap: () => go(onTap),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Row(
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: 18, color: const Color(0xFF8CB2E3)),
+                  const SizedBox(width: 14),
+                ],
+                Expanded(
+                  child: Text(
+                    label,
+                    style: displayText(
+                      size: 26,
+                      color: Colors.white,
+                      weight: FontWeight.w400,
+                    ).copyWith(height: 1.2, letterSpacing: 0),
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_rounded,
+                  size: 16,
+                  color: Colors.white.withAlpha(110),
+                ),
+              ],
             ),
-            Icon(
-              Icons.arrow_forward_rounded,
-              size: 16,
-              color: Colors.white.withAlpha(110),
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        );
 
     return Material(
       color: const Color(0xFF070E18),
@@ -714,34 +712,33 @@ class _FooterCol extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Text(
-        title.toUpperCase(),
-        style: uiLabel(
-          size: 10,
-          color: Colors.white.withAlpha(110),
-          spacing: 2.4,
-        ),
-      ),
-      const SizedBox(height: 18),
-      for (final l in links)
-        Padding(
-          padding: const EdgeInsets.only(bottom: 12),
-          child:
-              l.$2 == null
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            title.toUpperCase(),
+            style: uiLabel(
+              size: 10,
+              color: Colors.white.withAlpha(110),
+              spacing: 2.4,
+            ),
+          ),
+          const SizedBox(height: 18),
+          for (final l in links)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: l.$2 == null
                   ? Text(
-                    l.$1,
-                    style: bodyText(
-                      size: 13,
-                      color: Colors.white.withAlpha(150),
-                    ).copyWith(height: 1.4),
-                  )
+                      l.$1,
+                      style: bodyText(
+                        size: 13,
+                        color: Colors.white.withAlpha(150),
+                      ).copyWith(height: 1.4),
+                    )
                   : _FooterLink(l.$1, l.$2!),
-        ),
-    ],
-  );
+            ),
+        ],
+      );
 }
 
 class _FooterLink extends StatefulWidget {
@@ -758,18 +755,18 @@ class _FooterLinkState extends State<_FooterLink> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-    cursor: SystemMouseCursors.click,
-    onEnter: (_) => setState(() => _hover = true),
-    onExit: (_) => setState(() => _hover = false),
-    child: GestureDetector(
-      onTap: widget.onTap,
-      child: Text(
-        widget.label,
-        style: bodyText(
-          size: 13,
-          color: _hover ? Colors.white : Colors.white.withAlpha(150),
-        ).copyWith(height: 1.4),
-      ),
-    ),
-  );
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hover = true),
+        onExit: (_) => setState(() => _hover = false),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: Text(
+            widget.label,
+            style: bodyText(
+              size: 13,
+              color: _hover ? Colors.white : Colors.white.withAlpha(150),
+            ).copyWith(height: 1.4),
+          ),
+        ),
+      );
 }

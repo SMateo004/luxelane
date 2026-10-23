@@ -19,9 +19,9 @@ import 'core/config/firebase_env.dart';
 class DefaultFirebaseOptions {
   /// Opciones del proyecto elegido con FIREBASE_ENV (staging por omisión).
   static FirebaseOptions get currentPlatform => switch (FirebaseEnv.current) {
-    FirebaseEnv.production => _forPlatform(web, android, ios),
-    FirebaseEnv.staging => _staging,
-  };
+        FirebaseEnv.production => _forPlatform(web, android, ios),
+        FirebaseEnv.staging => _staging,
+      };
 
   static FirebaseOptions get _staging {
     if (_stagingProjectId == _stagingPlaceholder) {
@@ -98,15 +98,15 @@ class DefaultFirebaseOptions {
 
   /// Nombres de los --dart-define que faltan para la plataforma.
   static List<String> missingNativeDefines(TargetPlatform platform) => [
-    if (platform == TargetPlatform.android) ...[
-      if (_androidAppId.isEmpty) 'FIREBASE_ANDROID_APP_ID',
-      if (_androidApiKey.isEmpty) 'FIREBASE_ANDROID_API_KEY',
-    ],
-    if (platform == TargetPlatform.iOS) ...[
-      if (_iosAppId.isEmpty) 'FIREBASE_IOS_APP_ID',
-      if (_iosApiKey.isEmpty) 'FIREBASE_IOS_API_KEY',
-    ],
-  ];
+        if (platform == TargetPlatform.android) ...[
+          if (_androidAppId.isEmpty) 'FIREBASE_ANDROID_APP_ID',
+          if (_androidApiKey.isEmpty) 'FIREBASE_ANDROID_API_KEY',
+        ],
+        if (platform == TargetPlatform.iOS) ...[
+          if (_iosAppId.isEmpty) 'FIREBASE_IOS_APP_ID',
+          if (_iosApiKey.isEmpty) 'FIREBASE_IOS_API_KEY',
+        ],
+      ];
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: _androidApiKey,

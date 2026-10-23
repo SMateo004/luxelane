@@ -248,15 +248,14 @@ class AdminState extends Equatable {
 
   /// Viajes completados sin reparto confirmado por el servidor (anteriores a
   /// settleBooking, o con un precio ajustado aún sin recalcular).
-  int get unsettledCount =>
-      bookings
-          .where(
-            (b) =>
-                b.status == BookingStatus.completed &&
-                (b.settlement == null ||
-                    (b.settlement!.amount - b.chargedAmount).abs() >= 0.005),
-          )
-          .length;
+  int get unsettledCount => bookings
+      .where(
+        (b) =>
+            b.status == BookingStatus.completed &&
+            (b.settlement == null ||
+                (b.settlement!.amount - b.chargedAmount).abs() >= 0.005),
+      )
+      .length;
 
   /// True si se cargó el máximo de reservas: las cifras pueden estar
   /// incompletas para periodos largos.
@@ -316,8 +315,7 @@ class AdminState extends Equatable {
   int get openAlertsCount => alerts.where((a) => !a.resolved).length;
 
   /// Incidentes que nadie ha reconocido todavía.
-  int get unacknowledgedIncidents =>
-      incidents.where((i) => i.status == IncidentStatus.open).length;
+  int get unacknowledgedIncidents => incidents.where((i) => i.needsAck).length;
 
   int get pendingRidesCount =>
       bookings.where((b) => b.status == BookingStatus.pending).length;
@@ -365,24 +363,24 @@ class AdminState extends Equatable {
 
   @override
   List<Object?> get props => [
-    bookings,
-    payments,
-    users,
-    drivers,
-    pricingRules,
-    vehicles,
-    auditLogs,
-    alerts,
-    incidents,
-    globalSettings,
-    financeSettings,
-    bookingsLimit,
-    isLoading,
-    error,
-    successMessage,
-    messageSeq,
-    loadError,
-  ];
+        bookings,
+        payments,
+        users,
+        drivers,
+        pricingRules,
+        vehicles,
+        auditLogs,
+        alerts,
+        incidents,
+        globalSettings,
+        financeSettings,
+        bookingsLimit,
+        isLoading,
+        error,
+        successMessage,
+        messageSeq,
+        loadError,
+      ];
 }
 
 // ---------------------------------------------------------------------------
@@ -405,8 +403,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   final List<StreamSubscription<dynamic>> _subs = [];
 
   AdminBloc({required AdminRepository adminRepository})
-    : _repo = adminRepository,
-      super(const AdminState()) {
+      : _repo = adminRepository,
+        super(const AdminState()) {
     on<AdminDataRequested>(_onDataRequested);
 
     on<AdminUpdatePricingRequested>(
@@ -467,10 +465,9 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         (f) => emit(state.copyWith(error: f.message)),
         (n) => emit(
           state.copyWith(
-            successMessage:
-                n == 0
-                    ? 'No había viajes pendientes de repartir'
-                    : '$n viajes repartidos',
+            successMessage: n == 0
+                ? 'No había viajes pendientes de repartir'
+                : '$n viajes repartidos',
           ),
         ),
       );
@@ -561,10 +558,9 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
 
     on<_AdminStreamUpdated>((e, emit) => emit(e.apply(state)));
     on<_AdminStreamFailed>((e, emit) {
-      final msg =
-          e.error.contains('permission-denied')
-              ? 'No se pudo cargar ${e.what}: permiso denegado.'
-              : 'No se pudo cargar ${e.what}.';
+      final msg = e.error.contains('permission-denied')
+          ? 'No se pudo cargar ${e.what}: permiso denegado.'
+          : 'No se pudo cargar ${e.what}.';
       emit(state.copyWith(isLoading: false, error: msg, loadError: msg));
     });
   }

@@ -54,19 +54,17 @@ void main() {
         when(() => repo.logout()).thenAnswer((_) async => const Right(null));
         return AuthBloc(authRepository: repo);
       },
-      act:
-          (bloc) => bloc.add(
-            const LoginRequested(
-              email: 'test@luxelane.com',
-              password: 'secret',
-            ),
-          ),
-      expect:
-          () => [
-            const AuthLoading(),
-            AuthAuthenticated(_mockUser),
-            const AuthError(kBlockedAccountMessage),
-          ],
+      act: (bloc) => bloc.add(
+        const LoginRequested(
+          email: 'test@luxelane.com',
+          password: 'secret',
+        ),
+      ),
+      expect: () => [
+        const AuthLoading(),
+        AuthAuthenticated(_mockUser),
+        const AuthError(kBlockedAccountMessage),
+      ],
       verify: (_) => verify(() => repo.logout()).called(1),
     );
 
@@ -79,8 +77,8 @@ void main() {
         return AuthBloc(authRepository: repo);
       },
       act: (bloc) => bloc.add(const AuthStarted()),
-      expect:
-          () => [const AuthLoading(), const AuthError(kBlockedAccountMessage)],
+      expect: () =>
+          [const AuthLoading(), const AuthError(kBlockedAccountMessage)],
     );
 
     blocTest<AuthBloc, AuthState>(
@@ -94,13 +92,12 @@ void main() {
         ).thenAnswer((_) async => Right(_mockUser));
         return AuthBloc(authRepository: repo);
       },
-      act:
-          (bloc) => bloc.add(
-            const LoginRequested(
-              email: 'test@luxelane.com',
-              password: 'secret',
-            ),
-          ),
+      act: (bloc) => bloc.add(
+        const LoginRequested(
+          email: 'test@luxelane.com',
+          password: 'secret',
+        ),
+      ),
       expect: () => [const AuthLoading(), AuthAuthenticated(_mockUser)],
     );
 
@@ -115,10 +112,9 @@ void main() {
         ).thenAnswer((_) async => const Left(AuthFailure('Wrong credentials')));
         return AuthBloc(authRepository: repo);
       },
-      act:
-          (bloc) => bloc.add(
-            const LoginRequested(email: 'x@x.com', password: 'wrong'),
-          ),
+      act: (bloc) => bloc.add(
+        const LoginRequested(email: 'x@x.com', password: 'wrong'),
+      ),
       expect: () => [const AuthLoading(), const AuthError('Wrong credentials')],
     );
 
@@ -155,8 +151,8 @@ void main() {
         return AuthBloc(authRepository: repo);
       },
       act: (bloc) => bloc.add(const GoogleSignInRequested()),
-      expect:
-          () => [const AuthLoading(), const AuthError('Google no disponible')],
+      expect: () =>
+          [const AuthLoading(), const AuthError('Google no disponible')],
     );
 
     blocTest<AuthBloc, AuthState>(
@@ -183,16 +179,15 @@ void main() {
         ).thenAnswer((_) async => Right(_mockUser));
         return AuthBloc(authRepository: repo);
       },
-      act:
-          (bloc) => bloc.add(
-            const RegisterRequested(
-              email: 'test@luxelane.com',
-              password: 'secret',
-              phone: '+1555000000',
-              displayName: 'Test User',
-              role: UserRole.rider,
-            ),
-          ),
+      act: (bloc) => bloc.add(
+        const RegisterRequested(
+          email: 'test@luxelane.com',
+          password: 'secret',
+          phone: '+1555000000',
+          displayName: 'Test User',
+          role: UserRole.rider,
+        ),
+      ),
       expect: () => [const AuthLoading(), AuthAuthenticated(_mockUser)],
     );
   });

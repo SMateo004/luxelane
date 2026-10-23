@@ -304,6 +304,9 @@ service cloud.firestore {
         allow create: if isAuthenticated() &&
           liveIncident(incidentId).reporterId == request.auth.uid &&
           liveIncident(incidentId).status in ['open', 'acknowledged'] &&
+          // Si quien lo disparó lo canceló, deja de compartir su ubicación
+          // aunque el admin lo reconozca después (la escalada sigue).
+          liveIncident(incidentId).get('cancelledByReporter', false) == false &&
           isCurrentLocationSlot(slot) &&
           request.resource.data.keys().hasOnly(['lat', 'lng', 'at']) &&
           request.resource.data.lat is number &&

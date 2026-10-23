@@ -54,7 +54,8 @@ void main() {
   });
 
   group('PaymentRepositoryImpl', () {
-    test('createPaymentIntent solo envía la reserva (el importe lo fija el '
+    test(
+        'createPaymentIntent solo envía la reserva (el importe lo fija el '
         'servidor)', () async {
       stubCall('createPaymentIntent', {'clientSecret': 'secret'});
       final r = await repo.createPaymentIntent(
@@ -62,9 +63,9 @@ void main() {
         paymentMethodId: 'pm',
       );
       expect(r.getOrElse(() => ''), 'secret');
-      final sent =
-          verify(() => callable.call<dynamic>(captureAny())).captured.single
-              as Map;
+      final sent = verify(() => callable.call<dynamic>(captureAny()))
+          .captured
+          .single as Map;
       expect(sent, {'bookingId': 'b1', 'paymentMethodId': 'pm'});
     });
 
@@ -94,9 +95,9 @@ void main() {
           amount: 999,
           currency: 'bob',
         );
-        final sent =
-            verify(() => callable.call<dynamic>(captureAny())).captured.single
-                as Map;
+        final sent = verify(() => callable.call<dynamic>(captureAny()))
+            .captured
+            .single as Map;
         expect(sent, {'bookingId': 'b-1', 'stripePaymentIntentId': 'pi_1'});
         final payment = r.getOrElse(() => throw StateError('falló'));
         expect(payment.id, 'pay-1');

@@ -12,8 +12,7 @@ class ImmediatePickupPage extends StatelessWidget {
     mode: LuxBookingMode.immediate,
     eyebrow: 'Recogida inmediata',
     title: 'Cuando lo\nnecesites.\nEn minutos.',
-    lead:
-        'Un chófer profesional en camino en cuanto confirmas. '
+    lead: 'Un chófer profesional en camino en cuanto confirmas. '
         'La misma excelencia de una reserva anticipada, sin planificar.',
     heroImage: 'assets/images/services/recogida/hero.jpg',
     heroFallback: 'assets/images/home/hero_bg.png',
@@ -47,8 +46,7 @@ class ImmediatePickupPage extends StatelessWidget {
     ],
     storyEyebrow: 'Sin planificar',
     storyTitle: 'Lo imprevisto,\ncon la misma elegancia.',
-    storyBody:
-        'Una reunión que se alarga, un cambio de planes, una cena que '
+    storyBody: 'Una reunión que se alarga, un cambio de planes, una cena que '
         'merece un final a la altura. La recogida inmediata pone un vehículo '
         'premium y un chófer profesional a tu alcance, en minutos.',
     storyPoints: [

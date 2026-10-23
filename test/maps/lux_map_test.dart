@@ -10,16 +10,16 @@ const _pickup = Place(address: 'Colinas del Urubó', lat: -17.755, lng: -63.205)
 const _dropoff = Place(address: 'Clara Chuchío', lat: -17.70, lng: -63.17);
 
 RouteInfo _road(int n) => RouteInfo(
-  distanceKm: 9.4,
-  durationMin: 18,
-  polylinePoints: [
-    for (var i = 0; i < n; i++)
-      LatLng(
-        _pickup.lat + (_dropoff.lat - _pickup.lat) * i / (n - 1),
-        _pickup.lng + (_dropoff.lng - _pickup.lng) * i / (n - 1) + 0.01,
-      ),
-  ],
-);
+      distanceKm: 9.4,
+      durationMin: 18,
+      polylinePoints: [
+        for (var i = 0; i < n; i++)
+          LatLng(
+            _pickup.lat + (_dropoff.lat - _pickup.lat) * i / (n - 1),
+            _pickup.lng + (_dropoff.lng - _pickup.lng) * i / (n - 1) + 0.01,
+          ),
+      ],
+    );
 
 void main() {
   group('route_geometry', () {
@@ -44,12 +44,11 @@ void main() {
     });
 
     test('el encuadre incluye el recorrido aunque se salga de los puntos', () {
-      final b =
-          boundsOf([
-            _pickup.latLng,
-            _dropoff.latLng,
-            const LatLng(-17.72, -63.10),
-          ])!;
+      final b = boundsOf([
+        _pickup.latLng,
+        _dropoff.latLng,
+        const LatLng(-17.72, -63.10),
+      ])!;
       expect(b.northeast.longitude, -63.10);
       expect(b.southwest.latitude, _pickup.lat);
       expect(boundsOf(const []), isNull);

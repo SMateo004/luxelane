@@ -63,21 +63,21 @@ class LuxButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    width: width,
-    child: LuxRaisedButton(
-      label: label,
-      onPressed: onPressed,
-      loading: loading,
-      icon: icon,
-      trailingIcon: trailingIcon,
-      variant: variant,
-      height: height,
-      expand: width == double.infinity,
-      radius: LuxRadius.md,
-      uppercase: false,
-      fontSize: 15,
-    ),
-  );
+        width: width,
+        child: LuxRaisedButton(
+          label: label,
+          onPressed: onPressed,
+          loading: loading,
+          icon: icon,
+          trailingIcon: trailingIcon,
+          variant: variant,
+          height: height,
+          expand: width == double.infinity,
+          radius: LuxRadius.md,
+          uppercase: false,
+          fontSize: 15,
+        ),
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -104,20 +104,20 @@ class LuxOutlinedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    width: width,
-    child: LuxRaisedButton(
-      label: label,
-      onPressed: onPressed,
-      loading: loading,
-      icon: icon,
-      variant: LuxRaisedVariant.secondary,
-      height: height,
-      expand: width == double.infinity,
-      radius: LuxRadius.md,
-      uppercase: false,
-      fontSize: 15,
-    ),
-  );
+        width: width,
+        child: LuxRaisedButton(
+          label: label,
+          onPressed: onPressed,
+          loading: loading,
+          icon: icon,
+          variant: LuxRaisedVariant.secondary,
+          height: height,
+          expand: width == double.infinity,
+          radius: LuxRadius.md,
+          uppercase: false,
+          fontSize: 15,
+        ),
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -222,27 +222,26 @@ class LuxTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => TextFormField(
-    controller: controller,
-    onChanged: onChanged,
-    obscureText: obscureText,
-    keyboardType: keyboardType,
-    readOnly: readOnly,
-    onTap: onTap,
-    validator: validator,
-    maxLines: maxLines,
-    autofocus: autofocus,
-    inputFormatters: inputFormatters,
-    style: LuxTypography.bodyLarge,
-    decoration: InputDecoration(
-      labelText: label,
-      hintText: hint,
-      prefixIcon:
-          prefixIcon != null
+        controller: controller,
+        onChanged: onChanged,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        readOnly: readOnly,
+        onTap: onTap,
+        validator: validator,
+        maxLines: maxLines,
+        autofocus: autofocus,
+        inputFormatters: inputFormatters,
+        style: LuxTypography.bodyLarge,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          prefixIcon: prefixIcon != null
               ? Icon(prefixIcon, color: LuxColors.inkTertiary, size: 20)
               : null,
-      suffixIcon: suffixIcon,
-    ),
-  );
+          suffixIcon: suffixIcon,
+        ),
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -267,27 +266,27 @@ class LuxCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: margin,
-    child: LuxPressable(
-      onTap: onTap,
-      scale: 0.985,
-      child: AnimatedContainer(
-        duration: LuxMotion.of(context, LuxMotion.base),
-        curve: LuxMotion.emphasized,
-        padding: padding,
-        decoration: BoxDecoration(
-          color: selected ? LuxColors.sapphireTint : LuxColors.surface,
-          borderRadius: BorderRadius.circular(LuxRadius.lg),
-          border: Border.all(
-            color: selected ? LuxColors.sapphire : LuxColors.border,
-            width: selected ? 1.5 : 1,
+        padding: margin,
+        child: LuxPressable(
+          onTap: onTap,
+          scale: 0.985,
+          child: AnimatedContainer(
+            duration: LuxMotion.of(context, LuxMotion.base),
+            curve: LuxMotion.emphasized,
+            padding: padding,
+            decoration: BoxDecoration(
+              color: selected ? LuxColors.sapphireTint : LuxColors.surface,
+              borderRadius: BorderRadius.circular(LuxRadius.lg),
+              border: Border.all(
+                color: selected ? LuxColors.sapphire : LuxColors.border,
+                width: selected ? 1.5 : 1,
+              ),
+              boxShadow: selected ? LuxElevation.mid : LuxElevation.low,
+            ),
+            child: child,
           ),
-          boxShadow: selected ? LuxElevation.mid : LuxElevation.low,
         ),
-        child: child,
-      ),
-    ),
-  );
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -314,57 +313,57 @@ class VehicleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LuxCard(
-    selected: selected,
-    onTap: onTap,
-    child: Row(
-      children: [
-        _VehicleIcon(vehicleClass: vehicleClass, selected: selected),
-        const SizedBox(width: LuxSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(vehicleClass.label, style: LuxTypography.titleLarge),
-              const SizedBox(height: 2),
-              Text(vehicleClass.description, style: LuxTypography.caption),
-              const SizedBox(height: 4),
-              Row(
+        selected: selected,
+        onTap: onTap,
+        child: Row(
+          children: [
+            _VehicleIcon(vehicleClass: vehicleClass, selected: selected),
+            const SizedBox(width: LuxSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
-                    Icons.person_outline,
-                    size: 14,
-                    color: LuxColors.inkTertiary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Hasta ${vehicleClass.capacity}',
-                    style: LuxTypography.caption,
+                  Text(vehicleClass.label, style: LuxTypography.titleLarge),
+                  const SizedBox(height: 2),
+                  Text(vehicleClass.description, style: LuxTypography.caption),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.person_outline,
+                        size: 14,
+                        color: LuxColors.inkTertiary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Hasta ${vehicleClass.capacity}',
+                        style: LuxTypography.caption,
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Text(
-              'Bs${price.toStringAsFixed(0)}',
-              style: LuxTypography.headlineMedium.copyWith(
-                color: selected ? LuxColors.sapphire : LuxColors.ink,
-              ),
             ),
-            Text(
-              serviceType == ServiceType.byTheHour
-                  ? '${hours ?? 2}h en total'
-                  : 'precio fijo',
-              style: LuxTypography.caption,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'Bs${price.toStringAsFixed(0)}',
+                  style: LuxTypography.headlineMedium.copyWith(
+                    color: selected ? LuxColors.sapphire : LuxColors.ink,
+                  ),
+                ),
+                Text(
+                  serviceType == ServiceType.byTheHour
+                      ? '${hours ?? 2}h en total'
+                      : 'precio fijo',
+                  style: LuxTypography.caption,
+                ),
+              ],
             ),
           ],
         ),
-      ],
-    ),
-  );
+      );
 }
 
 class _VehicleIcon extends StatelessWidget {
@@ -389,14 +388,14 @@ class _VehicleIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    width: 52,
-    height: 52,
-    decoration: BoxDecoration(
-      color: selected ? LuxColors.surface : LuxColors.sapphireTint,
-      borderRadius: BorderRadius.circular(LuxRadius.md),
-    ),
-    child: Icon(_icon, color: LuxColors.sapphire, size: 26),
-  );
+        width: 52,
+        height: 52,
+        decoration: BoxDecoration(
+          color: selected ? LuxColors.surface : LuxColors.sapphireTint,
+          borderRadius: BorderRadius.circular(LuxRadius.md),
+        ),
+        child: Icon(_icon, color: LuxColors.sapphire, size: 26),
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -415,11 +414,11 @@ class ServiceTypeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LuxSegmented<ServiceType>(
-    values: ServiceType.values,
-    selected: selected,
-    labelOf: (t) => t.label,
-    onChanged: onChanged,
-  );
+        values: ServiceType.values,
+        selected: selected,
+        labelOf: (t) => t.label,
+        onChanged: onChanged,
+      );
 }
 
 /// Control segmentado: una pastilla blanca se desliza sobre un riel gris
@@ -496,14 +495,12 @@ class LuxSegmented<T> extends StatelessWidget {
                               duration: duration,
                               style: LuxTypography.titleMedium.copyWith(
                                 fontSize: 13,
-                                color:
-                                    v == selected
-                                        ? LuxColors.ink
-                                        : LuxColors.inkTertiary,
-                                fontWeight:
-                                    v == selected
-                                        ? FontWeight.w600
-                                        : FontWeight.w500,
+                                color: v == selected
+                                    ? LuxColors.ink
+                                    : LuxColors.inkTertiary,
+                                fontWeight: v == selected
+                                    ? FontWeight.w600
+                                    : FontWeight.w500,
                               ),
                               child: Text(labelOf(v)),
                             ),
@@ -552,31 +549,31 @@ class BookingStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.fromLTRB(8, 4, 10, 4),
-    decoration: BoxDecoration(
-      color: _color.withValues(alpha: 0.08),
-      borderRadius: BorderRadius.circular(LuxRadius.xl),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 6,
-          height: 6,
-          decoration: BoxDecoration(color: _color, shape: BoxShape.circle),
+        padding: const EdgeInsets.fromLTRB(8, 4, 10, 4),
+        decoration: BoxDecoration(
+          color: _color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(LuxRadius.xl),
         ),
-        const SizedBox(width: 6),
-        Text(
-          status.displayLabel,
-          style: LuxTypography.caption.copyWith(
-            color: _color,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.2,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(color: _color, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              status.displayLabel,
+              style: LuxTypography.caption.copyWith(
+                color: _color,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.2,
+              ),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -589,20 +586,20 @@ class LoadingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ColoredBox(
-    color: LuxColors.bg.withValues(alpha: 0.92),
-    child: Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const LuxLoadingDots(color: LuxColors.sapphire, size: 8),
-          if (message != null) ...[
-            const SizedBox(height: LuxSpacing.md),
-            Text(message!, style: LuxTypography.bodyMedium),
-          ],
-        ],
-      ),
-    ),
-  );
+        color: LuxColors.bg.withValues(alpha: 0.92),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const LuxLoadingDots(color: LuxColors.sapphire, size: 8),
+              if (message != null) ...[
+                const SizedBox(height: LuxSpacing.md),
+                Text(message!, style: LuxTypography.bodyMedium),
+              ],
+            ],
+          ),
+        ),
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -625,39 +622,40 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(LuxSpacing.xl),
-      child: LuxFadeIn(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: LuxColors.border),
-              ),
-              child: Icon(icon, color: LuxColors.sapphire, size: 26),
+        child: Padding(
+          padding: const EdgeInsets.all(LuxSpacing.xl),
+          child: LuxFadeIn(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: LuxColors.border),
+                  ),
+                  child: Icon(icon, color: LuxColors.sapphire, size: 26),
+                ),
+                const SizedBox(height: LuxSpacing.lg),
+                Text(
+                  message,
+                  style: LuxTypography.headlineLarge.copyWith(
+                    color: LuxColors.ink,
+                    height: 1.2,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                if (actionLabel != null) ...[
+                  const SizedBox(height: LuxSpacing.lg),
+                  LuxButton(
+                      label: actionLabel!, onPressed: onAction, width: 220),
+                ],
+              ],
             ),
-            const SizedBox(height: LuxSpacing.lg),
-            Text(
-              message,
-              style: LuxTypography.headlineLarge.copyWith(
-                color: LuxColors.ink,
-                height: 1.2,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            if (actionLabel != null) ...[
-              const SizedBox(height: LuxSpacing.lg),
-              LuxButton(label: actionLabel!, onPressed: onAction, width: 220),
-            ],
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -673,19 +671,20 @@ class SectionHeader extends StatelessWidget {
   /// terciaria. Ordena sin competir con el contenido.
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(left: 4),
-    child: Row(
-      children: [
-        Expanded(
-          child: Text(
-            title.toUpperCase(),
-            style: LuxTypography.eyebrow.copyWith(color: LuxColors.inkTertiary),
-          ),
+        padding: const EdgeInsets.only(left: 4),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title.toUpperCase(),
+                style: LuxTypography.eyebrow
+                    .copyWith(color: LuxColors.inkTertiary),
+              ),
+            ),
+            if (trailing != null) trailing!,
+          ],
         ),
-        if (trailing != null) trailing!,
-      ],
-    ),
-  );
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -702,35 +701,35 @@ class LuxGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Container(
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          color: LuxColors.surface,
-          borderRadius: BorderRadius.circular(LuxRadius.lg),
-          border: Border.all(color: LuxColors.border),
-        ),
-        child: Column(
-          children: [
-            for (var i = 0; i < children.length; i++) ...[
-              if (i > 0)
-                const Padding(
-                  padding: EdgeInsets.only(left: 52),
-                  child: LuxDivider(),
-                ),
-              children[i],
-            ],
-          ],
-        ),
-      ),
-      if (footer != null)
-        Padding(
-          padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
-          child: Text(footer!, style: LuxTypography.caption),
-        ),
-    ],
-  );
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              color: LuxColors.surface,
+              borderRadius: BorderRadius.circular(LuxRadius.lg),
+              border: Border.all(color: LuxColors.border),
+            ),
+            child: Column(
+              children: [
+                for (var i = 0; i < children.length; i++) ...[
+                  if (i > 0)
+                    const Padding(
+                      padding: EdgeInsets.only(left: 52),
+                      child: LuxDivider(),
+                    ),
+                  children[i],
+                ],
+              ],
+            ),
+          ),
+          if (footer != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
+              child: Text(footer!, style: LuxTypography.caption),
+            ),
+        ],
+      );
 }
 
 class LuxListRow extends StatelessWidget {
@@ -829,20 +828,20 @@ class LuxSwitchRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MergeSemantics(
-    child: LuxListRow(
-      icon: icon,
-      title: title,
-      subtitle: subtitle,
-      onTap: () => onChanged(!value),
-      trailing: Switch.adaptive(
-        value: value,
-        onChanged: (v) {
-          LuxHaptics.tap();
-          onChanged(v);
-        },
-      ),
-    ),
-  );
+        child: LuxListRow(
+          icon: icon,
+          title: title,
+          subtitle: subtitle,
+          onTap: () => onChanged(!value),
+          trailing: Switch.adaptive(
+            value: value,
+            onChanged: (v) {
+              LuxHaptics.tap();
+              onChanged(v);
+            },
+          ),
+        ),
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -926,44 +925,47 @@ class DriverCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LuxCard(
-    child: Row(
-      children: [
-        CircleAvatar(
-          radius: 28,
-          backgroundColor: LuxColors.sapphireTint,
-          backgroundImage: photoUrl != null ? NetworkImage(photoUrl!) : null,
-          child:
-              photoUrl == null
-                  ? Text(
-                    name.isNotEmpty ? name[0].toUpperCase() : '?',
-                    style: LuxTypography.headlineMedium.copyWith(
-                      color: LuxColors.sapphire,
-                    ),
-                  )
-                  : null,
-        ),
-        const SizedBox(width: LuxSpacing.md),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(name, style: LuxTypography.titleLarge),
-              const SizedBox(height: 2),
-              Text(vehicle, style: LuxTypography.bodyMedium),
-              if (plate.isNotEmpty) Text(plate, style: LuxTypography.caption),
-            ],
-          ),
-        ),
-        Column(
+        child: Row(
           children: [
-            const Icon(Icons.star_rounded, color: LuxColors.sapphire, size: 18),
-            const SizedBox(height: 2),
-            Text(rating.toStringAsFixed(1), style: LuxTypography.titleLarge),
+            CircleAvatar(
+              radius: 28,
+              backgroundColor: LuxColors.sapphireTint,
+              backgroundImage:
+                  photoUrl != null ? NetworkImage(photoUrl!) : null,
+              child: photoUrl == null
+                  ? Text(
+                      name.isNotEmpty ? name[0].toUpperCase() : '?',
+                      style: LuxTypography.headlineMedium.copyWith(
+                        color: LuxColors.sapphire,
+                      ),
+                    )
+                  : null,
+            ),
+            const SizedBox(width: LuxSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(name, style: LuxTypography.titleLarge),
+                  const SizedBox(height: 2),
+                  Text(vehicle, style: LuxTypography.bodyMedium),
+                  if (plate.isNotEmpty)
+                    Text(plate, style: LuxTypography.caption),
+                ],
+              ),
+            ),
+            Column(
+              children: [
+                const Icon(Icons.star_rounded,
+                    color: LuxColors.sapphire, size: 18),
+                const SizedBox(height: 2),
+                Text(rating.toStringAsFixed(1),
+                    style: LuxTypography.titleLarge),
+              ],
+            ),
           ],
         ),
-      ],
-    ),
-  );
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -986,43 +988,43 @@ class PriceEstimateBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.fromLTRB(
-      LuxSpacing.md,
-      LuxSpacing.sm,
-      LuxSpacing.md,
-      LuxSpacing.lg,
-    ),
-    decoration: const BoxDecoration(
-      color: LuxColors.surface,
-      border: Border(top: BorderSide(color: LuxColors.border)),
-      boxShadow: luxSoftShadow,
-    ),
-    child: Row(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
+        padding: const EdgeInsets.fromLTRB(
+          LuxSpacing.md,
+          LuxSpacing.sm,
+          LuxSpacing.md,
+          LuxSpacing.lg,
+        ),
+        decoration: const BoxDecoration(
+          color: LuxColors.surface,
+          border: Border(top: BorderSide(color: LuxColors.border)),
+          boxShadow: luxSoftShadow,
+        ),
+        child: Row(
           children: [
-            const Text('PRECIO FIJO', style: LuxTypography.caption),
-            Text(
-              'Bs${price.toStringAsFixed(0)}',
-              style: LuxTypography.displayMedium.copyWith(
-                color: LuxColors.sapphire,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('PRECIO FIJO', style: LuxTypography.caption),
+                Text(
+                  'Bs${price.toStringAsFixed(0)}',
+                  style: LuxTypography.displayMedium.copyWith(
+                    color: LuxColors.sapphire,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(width: LuxSpacing.lg),
+            Expanded(
+              child: LuxButton(
+                label: label,
+                onPressed: onConfirm,
+                loading: loading,
               ),
             ),
           ],
         ),
-        const SizedBox(width: LuxSpacing.lg),
-        Expanded(
-          child: LuxButton(
-            label: label,
-            onPressed: onConfirm,
-            loading: loading,
-          ),
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -1047,10 +1049,9 @@ void showLuxSnackbar(
             width: 28,
             height: 28,
             decoration: BoxDecoration(
-              color:
-                  isError
-                      ? LuxColors.error.withValues(alpha: 0.1)
-                      : LuxColors.sapphireTint,
+              color: isError
+                  ? LuxColors.error.withValues(alpha: 0.1)
+                  : LuxColors.sapphireTint,
               shape: BoxShape.circle,
             ),
             child: Icon(
@@ -1100,10 +1101,9 @@ class LuxDivider extends StatelessWidget {
   final bool vertical;
 
   @override
-  Widget build(BuildContext context) =>
-      vertical
-          ? Container(width: 1, color: LuxColors.border)
-          : Container(height: 1, color: LuxColors.border);
+  Widget build(BuildContext context) => vertical
+      ? Container(width: 1, color: LuxColors.border)
+      : Container(height: 1, color: LuxColors.border);
 }
 
 // ---------------------------------------------------------------------------
@@ -1122,66 +1122,66 @@ class StepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-    children: List.generate(steps.length * 2 - 1, (i) {
-      if (i.isOdd) {
-        return Expanded(
-          child: Container(
-            height: 1,
-            color: i ~/ 2 < currentStep ? LuxColors.sapphire : LuxColors.border,
-          ),
-        );
-      }
-      final idx = i ~/ 2;
-      final done = idx < currentStep;
-      final active = idx == currentStep;
-      return Column(
-        children: [
-          Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
-              color:
-                  done
+        children: List.generate(steps.length * 2 - 1, (i) {
+          if (i.isOdd) {
+            return Expanded(
+              child: Container(
+                height: 1,
+                color: i ~/ 2 < currentStep
+                    ? LuxColors.sapphire
+                    : LuxColors.border,
+              ),
+            );
+          }
+          final idx = i ~/ 2;
+          final done = idx < currentStep;
+          final active = idx == currentStep;
+          return Column(
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: done
                       ? LuxColors.sapphire
                       : active
-                      ? LuxColors.sapphireTint
-                      : LuxColors.surface,
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: active || done ? LuxColors.sapphire : LuxColors.border,
-              ),
-            ),
-            child: Center(
-              child:
-                  done
+                          ? LuxColors.sapphireTint
+                          : LuxColors.surface,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color:
+                        active || done ? LuxColors.sapphire : LuxColors.border,
+                  ),
+                ),
+                child: Center(
+                  child: done
                       ? const Icon(
-                        Icons.check,
-                        size: 14,
-                        color: LuxColors.onAccent,
-                      )
+                          Icons.check,
+                          size: 14,
+                          color: LuxColors.onAccent,
+                        )
                       : Text(
-                        '${idx + 1}',
-                        style: LuxTypography.caption.copyWith(
-                          color:
-                              active
-                                  ? LuxColors.sapphire
-                                  : LuxColors.inkTertiary,
-                          fontWeight: FontWeight.w600,
+                          '${idx + 1}',
+                          style: LuxTypography.caption.copyWith(
+                            color: active
+                                ? LuxColors.sapphire
+                                : LuxColors.inkTertiary,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            steps[idx],
-            style: LuxTypography.caption.copyWith(
-              color: active ? LuxColors.sapphire : LuxColors.inkTertiary,
-            ),
-          ),
-        ],
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                steps[idx],
+                style: LuxTypography.caption.copyWith(
+                  color: active ? LuxColors.sapphire : LuxColors.inkTertiary,
+                ),
+              ),
+            ],
+          );
+        }),
       );
-    }),
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -1205,8 +1205,7 @@ class LuxelaneWordmark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final c =
-        color ??
+    final c = color ??
         (Theme.of(context).brightness == Brightness.dark
             ? Colors.white
             : LuxColors.ink);

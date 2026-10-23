@@ -16,18 +16,18 @@ const _origin = Place(address: '123 Main St', lat: 40.7128, lng: -74.0060);
 const _destination = Place(address: 'JFK Airport', lat: 40.6413, lng: -73.7781);
 
 Booking _makeBooking({BookingStatus status = BookingStatus.pending}) => Booking(
-  id: 'booking-1',
-  riderId: 'rider-1',
-  origin: _origin,
-  destination: _destination,
-  scheduledAt: _now,
-  vehicleClass: VehicleClass.business,
-  serviceType: ServiceType.oneWay,
-  status: status,
-  estimatedPrice: 75.0,
-  createdAt: _now,
-  updatedAt: _now,
-);
+      id: 'booking-1',
+      riderId: 'rider-1',
+      origin: _origin,
+      destination: _destination,
+      scheduledAt: _now,
+      vehicleClass: VehicleClass.business,
+      serviceType: ServiceType.oneWay,
+      status: status,
+      estimatedPrice: 75.0,
+      createdAt: _now,
+      updatedAt: _now,
+    );
 
 void main() {
   late MockBookingRepository repo;
@@ -54,19 +54,18 @@ void main() {
         ).thenAnswer((_) async => Right(_makeBooking()));
         return BookingBloc(bookingRepository: repo);
       },
-      act:
-          (bloc) => bloc.add(
-            BookingCreateRequested(
-              requestId: 'req-1',
-              origin: _origin,
-              destination: _destination,
-              vehicleClass: VehicleClass.business,
-              serviceType: ServiceType.oneWay,
-              scheduledAt: _now,
-              riderId: 'rider-1',
-              estimatedPrice: 75.0,
-            ),
-          ),
+      act: (bloc) => bloc.add(
+        BookingCreateRequested(
+          requestId: 'req-1',
+          origin: _origin,
+          destination: _destination,
+          vehicleClass: VehicleClass.business,
+          serviceType: ServiceType.oneWay,
+          scheduledAt: _now,
+          riderId: 'rider-1',
+          estimatedPrice: 75.0,
+        ),
+      ),
       expect: () => [const BookingLoading(), isA<BookingCreated>()],
     );
 
@@ -82,21 +81,20 @@ void main() {
         ).thenAnswer((_) async => const Left(ServerFailure('Network error')));
         return BookingBloc(bookingRepository: repo);
       },
-      act:
-          (bloc) => bloc.add(
-            BookingCreateRequested(
-              requestId: 'req-1',
-              origin: _origin,
-              destination: _destination,
-              vehicleClass: VehicleClass.business,
-              serviceType: ServiceType.oneWay,
-              scheduledAt: _now,
-              riderId: 'rider-1',
-              estimatedPrice: 75.0,
-            ),
-          ),
-      expect:
-          () => [const BookingLoading(), const BookingError('Network error')],
+      act: (bloc) => bloc.add(
+        BookingCreateRequested(
+          requestId: 'req-1',
+          origin: _origin,
+          destination: _destination,
+          vehicleClass: VehicleClass.business,
+          serviceType: ServiceType.oneWay,
+          scheduledAt: _now,
+          riderId: 'rider-1',
+          estimatedPrice: 75.0,
+        ),
+      ),
+      expect: () =>
+          [const BookingLoading(), const BookingError('Network error')],
     );
 
     blocTest<BookingBloc, BookingState>(
@@ -107,9 +105,8 @@ void main() {
         ).thenAnswer((_) async => const Right(null));
         return BookingBloc(bookingRepository: repo);
       },
-      act:
-          (bloc) =>
-              bloc.add(const BookingCancelRequested(bookingId: 'booking-1')),
+      act: (bloc) =>
+          bloc.add(const BookingCancelRequested(bookingId: 'booking-1')),
       expect: () => [const BookingLoading(), const BookingCancelled()],
     );
 
@@ -124,23 +121,21 @@ void main() {
         );
         return BookingBloc(bookingRepository: repo);
       },
-      act:
-          (bloc) =>
-              bloc.add(const BookingRiderTripsWatched(riderId: 'rider-1')),
-      expect:
-          () => [
-            const BookingLoading(),
-            isA<BookingTripsLoaded>().having(
-              (s) => s.bookings.length,
-              'length',
-              1,
-            ),
-            isA<BookingTripsLoaded>().having(
-              (s) => s.bookings.length,
-              'length',
-              2,
-            ),
-          ],
+      act: (bloc) =>
+          bloc.add(const BookingRiderTripsWatched(riderId: 'rider-1')),
+      expect: () => [
+        const BookingLoading(),
+        isA<BookingTripsLoaded>().having(
+          (s) => s.bookings.length,
+          'length',
+          1,
+        ),
+        isA<BookingTripsLoaded>().having(
+          (s) => s.bookings.length,
+          'length',
+          2,
+        ),
+      ],
     );
 
     blocTest<BookingBloc, BookingState>(
@@ -151,37 +146,33 @@ void main() {
         ).thenAnswer((_) async => Right([_makeBooking()]));
         return BookingBloc(bookingRepository: repo);
       },
-      act:
-          (bloc) =>
-              bloc.add(const BookingRiderTripsRequested(riderId: 'rider-1')),
-      expect:
-          () => [
-            const BookingLoading(),
-            isA<BookingTripsLoaded>().having(
-              (s) => s.bookings.length,
-              'length',
-              1,
-            ),
-          ],
+      act: (bloc) =>
+          bloc.add(const BookingRiderTripsRequested(riderId: 'rider-1')),
+      expect: () => [
+        const BookingLoading(),
+        isA<BookingTripsLoaded>().having(
+          (s) => s.bookings.length,
+          'length',
+          1,
+        ),
+      ],
     );
 
     blocTest<BookingBloc, BookingState>(
       'emits BookingStatusUpdated on BookingStatusChanged',
       build: () => BookingBloc(bookingRepository: repo),
-      act:
-          (bloc) => bloc.add(
-            BookingStatusChanged(
-              booking: _makeBooking(status: BookingStatus.confirmed),
-            ),
-          ),
-      expect:
-          () => [
-            isA<BookingStatusUpdated>().having(
-              (s) => s.booking.status,
-              'status',
-              BookingStatus.confirmed,
-            ),
-          ],
+      act: (bloc) => bloc.add(
+        BookingStatusChanged(
+          booking: _makeBooking(status: BookingStatus.confirmed),
+        ),
+      ),
+      expect: () => [
+        isA<BookingStatusUpdated>().having(
+          (s) => s.booking.status,
+          'status',
+          BookingStatus.confirmed,
+        ),
+      ],
     );
 
     blocTest<BookingBloc, BookingState>(
@@ -195,13 +186,12 @@ void main() {
         ).thenAnswer((_) async => const Right(null));
         return BookingBloc(bookingRepository: repo);
       },
-      act:
-          (bloc) => bloc.add(
-            const BookingUpdateStatusRequested(
-              bookingId: 'booking-1',
-              status: BookingStatus.driverArriving,
-            ),
-          ),
+      act: (bloc) => bloc.add(
+        const BookingUpdateStatusRequested(
+          bookingId: 'booking-1',
+          status: BookingStatus.driverArriving,
+        ),
+      ),
       verify: (_) {
         verify(
           () => repo.updateBookingStatus(
@@ -224,35 +214,32 @@ void main() {
         ).thenAnswer((_) async => Right(_makeBooking()));
         return BookingBloc(bookingRepository: repo);
       },
-      act:
-          (bloc) => bloc.add(
-            BookingCreateRequested(
-              requestId: 'req-1',
-              origin: _origin,
-              destination: _destination,
-              vehicleClass: VehicleClass.business,
-              serviceType: ServiceType.oneWay,
-              scheduledAt: _now,
-              riderId: 'rider-1',
-              estimatedPrice: 75.0,
-              notes: 'Llevar agua',
-              guest: const BookingGuest(
-                title: 'Sra.',
-                firstName: 'Carla',
-                phone: '+59170000001',
-              ),
-            ),
+      act: (bloc) => bloc.add(
+        BookingCreateRequested(
+          requestId: 'req-1',
+          origin: _origin,
+          destination: _destination,
+          vehicleClass: VehicleClass.business,
+          serviceType: ServiceType.oneWay,
+          scheduledAt: _now,
+          riderId: 'rider-1',
+          estimatedPrice: 75.0,
+          notes: 'Llevar agua',
+          guest: const BookingGuest(
+            title: 'Sra.',
+            firstName: 'Carla',
+            phone: '+59170000001',
           ),
+        ),
+      ),
       verify: (_) {
-        final sent =
-            verify(
-                  () => repo.createBooking(
-                    captureAny(),
-                    quotedPrice: any(named: 'quotedPrice'),
-                    requestId: any(named: 'requestId'),
-                  ),
-                ).captured.single
-                as Booking;
+        final sent = verify(
+          () => repo.createBooking(
+            captureAny(),
+            quotedPrice: any(named: 'quotedPrice'),
+            requestId: any(named: 'requestId'),
+          ),
+        ).captured.single as Booking;
         expect(sent.notes, 'Llevar agua');
         expect(sent.guest?.fullName, 'Sra. Carla');
         expect(sent.guest?.phone, '+59170000001');
@@ -271,42 +258,38 @@ void main() {
         ).thenAnswer((_) async => const Left(PriceChangedFailure(120)));
         return BookingBloc(bookingRepository: repo);
       },
-      act:
-          (bloc) => bloc.add(
-            BookingCreateRequested(
-              requestId: 'req-1',
-              origin: _origin,
-              destination: _destination,
-              vehicleClass: VehicleClass.business,
-              serviceType: ServiceType.oneWay,
-              scheduledAt: _now,
-              riderId: 'rider-1',
-              estimatedPrice: 90,
-              quotedPrice: 90,
+      act: (bloc) => bloc.add(
+        BookingCreateRequested(
+          requestId: 'req-1',
+          origin: _origin,
+          destination: _destination,
+          vehicleClass: VehicleClass.business,
+          serviceType: ServiceType.oneWay,
+          scheduledAt: _now,
+          riderId: 'rider-1',
+          estimatedPrice: 90,
+          quotedPrice: 90,
+        ),
+      ),
+      expect: () => [
+        const BookingLoading(),
+        isA<BookingPriceChanged>()
+            .having((s) => s.previousPrice, 'previousPrice', 90)
+            .having((s) => s.newPrice, 'newPrice', 120)
+            .having(
+              (s) => s.request.withQuotedPrice(120).quotedPrice,
+              'reenvío',
+              120,
+            )
+            .having(
+              (s) => s.request.withQuotedPrice(120).requestId,
+              'mismo intento',
+              'req-1',
             ),
-          ),
-      expect:
-          () => [
-            const BookingLoading(),
-            isA<BookingPriceChanged>()
-                .having((s) => s.previousPrice, 'previousPrice', 90)
-                .having((s) => s.newPrice, 'newPrice', 120)
-                .having(
-                  (s) => s.request.withQuotedPrice(120).quotedPrice,
-                  'reenvío',
-                  120,
-                )
-                .having(
-                  (s) => s.request.withQuotedPrice(120).requestId,
-                  'mismo intento',
-                  'req-1',
-                ),
-          ],
-      verify:
-          (_) => verify(
-            () =>
-                repo.createBooking(any(), quotedPrice: 90, requestId: 'req-1'),
-          ).called(1),
+      ],
+      verify: (_) => verify(
+        () => repo.createBooking(any(), quotedPrice: 90, requestId: 'req-1'),
+      ).called(1),
     );
 
     blocTest<BookingBloc, BookingState>(
@@ -321,19 +304,18 @@ void main() {
         ).thenAnswer((_) async => const Left(AppUpdateRequiredFailure()));
         return BookingBloc(bookingRepository: repo);
       },
-      act:
-          (bloc) => bloc.add(
-            BookingCreateRequested(
-              requestId: 'req-1',
-              origin: _origin,
-              destination: _destination,
-              vehicleClass: VehicleClass.business,
-              serviceType: ServiceType.oneWay,
-              scheduledAt: _now,
-              riderId: 'rider-1',
-              estimatedPrice: 90,
-            ),
-          ),
+      act: (bloc) => bloc.add(
+        BookingCreateRequested(
+          requestId: 'req-1',
+          origin: _origin,
+          destination: _destination,
+          vehicleClass: VehicleClass.business,
+          serviceType: ServiceType.oneWay,
+          scheduledAt: _now,
+          riderId: 'rider-1',
+          estimatedPrice: 90,
+        ),
+      ),
       expect: () => [const BookingLoading(), isA<BookingUpdateRequired>()],
     );
   });

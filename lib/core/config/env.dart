@@ -16,10 +16,9 @@ abstract class AppConfig {
   static bool get isDev => env == Env.dev;
   static bool get isProd => env == Env.prod;
 
-  static String get stripePublishableKey =>
-      isProd
-          ? 'pk_live_XXXXXXXXXXXXXXXXXXXXXXXX'
-          : 'pk_test_51...'; // Add real keys here or via --dart-define
+  static String get stripePublishableKey => isProd
+      ? 'pk_live_XXXXXXXXXXXXXXXXXXXXXXXX'
+      : 'pk_test_51...'; // Add real keys here or via --dart-define
 
   static bool get enableLogs => isDev;
 

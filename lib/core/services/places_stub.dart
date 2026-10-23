@@ -8,7 +8,8 @@ Future<List<PlaceSuggestion>> webAutocomplete(
   double lng = -63.1821,
   double radiusMeters = 30000,
   bool strict = false,
-}) async => [];
+}) async =>
+    [];
 
 Future<Place?> webPlaceDetails(String placeId, {String? address}) async => null;
 
@@ -17,4 +18,5 @@ Future<Place?> webReverseGeocode(double lat, double lng) async => null;
 Future<RouteInfo?> webGetRoute({
   required Place origin,
   required Place destination,
-}) async => null;
+}) async =>
+    null;

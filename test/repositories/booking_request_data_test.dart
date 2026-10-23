@@ -5,38 +5,38 @@ import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/features/booking/data/repositories/booking_repository_impl.dart';
 
 Booking _booking({ServiceType service = ServiceType.oneWay}) => Booking(
-  id: '',
-  riderId: 'ana',
-  origin: const Place(
-    name: 'Viru Viru',
-    address: 'Aeropuerto Internacional Viru Viru',
-    lat: -17.6447,
-    lng: -63.1353,
-  ),
-  destination: const Place(
-    address: 'Calle Exacta 123',
-    lat: -17.7833,
-    lng: -63.1821,
-  ),
-  scheduledAt: DateTime.utc(2026, 11, 1, 14),
-  vehicleClass: VehicleClass.business,
-  serviceType: service,
-  status: BookingStatus.pending,
-  estimatedPrice: 999,
-  createdAt: DateTime(2026),
-  updatedAt: DateTime(2026),
-  hours: service == ServiceType.byTheHour ? 3 : null,
-  notes: 'Llevar agua',
-  flightNumber: 'OB760',
-  flightType: 'domestic',
-  passengerCount: 2,
-  luggageCount: 1,
-  guest: const BookingGuest(
-    firstName: 'Carla',
-    phone: '+59170000001',
-    email: 'viejo@x.com',
-  ),
-);
+      id: '',
+      riderId: 'ana',
+      origin: const Place(
+        name: 'Viru Viru',
+        address: 'Aeropuerto Internacional Viru Viru',
+        lat: -17.6447,
+        lng: -63.1353,
+      ),
+      destination: const Place(
+        address: 'Calle Exacta 123',
+        lat: -17.7833,
+        lng: -63.1821,
+      ),
+      scheduledAt: DateTime.utc(2026, 11, 1, 14),
+      vehicleClass: VehicleClass.business,
+      serviceType: service,
+      status: BookingStatus.pending,
+      estimatedPrice: 999,
+      createdAt: DateTime(2026),
+      updatedAt: DateTime(2026),
+      hours: service == ServiceType.byTheHour ? 3 : null,
+      notes: 'Llevar agua',
+      flightNumber: 'OB760',
+      flightType: 'domestic',
+      passengerCount: 2,
+      luggageCount: 1,
+      guest: const BookingGuest(
+        firstName: 'Carla',
+        phone: '+59170000001',
+        email: 'viejo@x.com',
+      ),
+    );
 
 void main() {
   group('bookingRequestData', () {

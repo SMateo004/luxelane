@@ -277,22 +277,21 @@ class FinancialSummary {
 
   /// Completados sin cobro capturado (pendiente o fallido): cuentas por cobrar.
   double get receivables => _sum(
-    entries.where(
-      (e) =>
-          e.status == ChargeStatus.pendingCollection ||
-          e.status == ChargeStatus.failed,
-    ),
-    (e) => e.amount,
-  );
+        entries.where(
+          (e) =>
+              e.status == ChargeStatus.pendingCollection ||
+              e.status == ChargeStatus.failed,
+        ),
+        (e) => e.amount,
+      );
 
-  int get receivablesCount =>
-      entries
-          .where(
-            (e) =>
-                e.status == ChargeStatus.pendingCollection ||
-                e.status == ChargeStatus.failed,
-          )
-          .length;
+  int get receivablesCount => entries
+      .where(
+        (e) =>
+            e.status == ChargeStatus.pendingCollection ||
+            e.status == ChargeStatus.failed,
+      )
+      .length;
 
   double get failed => _sum(_where(ChargeStatus.failed), (e) => e.amount);
 

@@ -34,25 +34,25 @@ class DriverShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: navigationShell,
-    bottomNavigationBar: DecoratedBox(
-      decoration: const BoxDecoration(
-        border: Border(top: BorderSide(color: LuxColors.border)),
-      ),
-      child: NavigationBar(
-        selectedIndex: navigationShell.currentIndex,
-        height: 68,
-        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        animationDuration: LuxMotion.base,
-        onDestinationSelected: (i) {
-          if (i != navigationShell.currentIndex) LuxHaptics.tap();
-          navigationShell.goBranch(
-            i,
-            initialLocation: i == navigationShell.currentIndex,
-          );
-        },
-        destinations: _items,
-      ),
-    ),
-  );
+        body: navigationShell,
+        bottomNavigationBar: DecoratedBox(
+          decoration: const BoxDecoration(
+            border: Border(top: BorderSide(color: LuxColors.border)),
+          ),
+          child: NavigationBar(
+            selectedIndex: navigationShell.currentIndex,
+            height: 68,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+            animationDuration: LuxMotion.base,
+            onDestinationSelected: (i) {
+              if (i != navigationShell.currentIndex) LuxHaptics.tap();
+              navigationShell.goBranch(
+                i,
+                initialLocation: i == navigationShell.currentIndex,
+              );
+            },
+            destinations: _items,
+          ),
+        ),
+      );
 }

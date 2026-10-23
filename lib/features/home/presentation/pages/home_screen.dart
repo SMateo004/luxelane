@@ -85,10 +85,9 @@ class _HomeScreenState extends State<HomeScreen> {
   /// Repite un viaje anterior: mismos lugares, nueva hora.
   void _repeat(Booking b) {
     setState(() {
-      _serviceType =
-          b.serviceType == ServiceType.byTheHour
-              ? ServiceType.byTheHour
-              : ServiceType.oneWay;
+      _serviceType = b.serviceType == ServiceType.byTheHour
+          ? ServiceType.byTheHour
+          : ServiceType.oneWay;
       _origin = b.origin;
       _destination =
           b.serviceType == ServiceType.byTheHour ? null : b.destination;
@@ -140,10 +139,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _pickOriginFromMap() async {
     final picked = await showMapPickerDialog(
       context,
-      initial:
-          _origin != null
-              ? LatLng(_origin!.lat, _origin!.lng)
-              : const LatLng(-17.7833, -63.1821),
+      initial: _origin != null
+          ? LatLng(_origin!.lat, _origin!.lng)
+          : const LatLng(-17.7833, -63.1821),
       title: 'Seleccionar lugar de recogida',
     );
     if (!mounted || picked == null) return;
@@ -153,10 +151,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _pickDestinationFromMap() async {
     final picked = await showMapPickerDialog(
       context,
-      initial:
-          _destination != null
-              ? LatLng(_destination!.lat, _destination!.lng)
-              : _origin != null && ServiceArea.hasCoords(_origin!)
+      initial: _destination != null
+          ? LatLng(_destination!.lat, _destination!.lng)
+          : _origin != null && ServiceArea.hasCoords(_origin!)
               ? LatLng(_origin!.lat, _origin!.lng)
               : const LatLng(-17.7833, -63.1821),
       title: 'Seleccionar destino',
@@ -238,10 +235,9 @@ class _HomeScreenState extends State<HomeScreen> {
       showLuxSnackbar(context, 'Ingresa un destino', isError: true);
       return;
     }
-    final cityError =
-        _destination == null
-            ? null
-            : ServiceArea.destinationError(_origin!, _destination!);
+    final cityError = _destination == null
+        ? null
+        : ServiceArea.destinationError(_origin!, _destination!);
     if (cityError != null) {
       showLuxSnackbar(context, cityError, isError: true);
       return;
@@ -275,75 +271,77 @@ class _HomeScreenState extends State<HomeScreen> {
   // ---------------------------------------------------------------------------
 
   Widget _mobileLayout() => BlocListener<AuthBloc, AuthState>(
-    listener: (_, state) => _watchRider(state),
-    child: Scaffold(
-      backgroundColor: LuxColors.bg,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: LuxMap(
-              origin: _origin,
-              destination: _destination,
-              routeInfo: _routeInfo,
-            ),
-          ),
-          SafeArea(
-            child: Column(
-              children: [
-                _MobileTopBar(onLocate: _detectLocation, locating: _locating),
-                const Spacer(),
-                _MobileBottomPanel(
-                  serviceType: _serviceType,
-                  onServiceTypeChanged: (t) => setState(() => _serviceType = t),
+        listener: (_, state) => _watchRider(state),
+        child: Scaffold(
+          backgroundColor: LuxColors.bg,
+          body: Stack(
+            children: [
+              Positioned.fill(
+                child: LuxMap(
                   origin: _origin,
                   destination: _destination,
-                  date: _date,
-                  hours: _hours,
-                  onDateChanged: (d) => setState(() => _date = d),
-                  onHoursChanged: (h) => setState(() => _hours = h),
-                  onOriginSelected: _onOriginSelected,
-                  onDestinationSelected: _onDestinationSelected,
-                  onSearch: _search,
-                  onLocate: _detectLocation,
-                  onOriginMapPick: _pickOriginFromMap,
-                  onDestinationMapPick: _pickDestinationFromMap,
                   routeInfo: _routeInfo,
-                  insights: _insights,
-                  preferredClass: _preferredClass,
-                  onPlaceChip: _usePlace,
-                  onRepeat: _repeat,
                 ),
-              ],
-            ),
+              ),
+              SafeArea(
+                child: Column(
+                  children: [
+                    _MobileTopBar(
+                        onLocate: _detectLocation, locating: _locating),
+                    const Spacer(),
+                    _MobileBottomPanel(
+                      serviceType: _serviceType,
+                      onServiceTypeChanged: (t) =>
+                          setState(() => _serviceType = t),
+                      origin: _origin,
+                      destination: _destination,
+                      date: _date,
+                      hours: _hours,
+                      onDateChanged: (d) => setState(() => _date = d),
+                      onHoursChanged: (h) => setState(() => _hours = h),
+                      onOriginSelected: _onOriginSelected,
+                      onDestinationSelected: _onDestinationSelected,
+                      onSearch: _search,
+                      onLocate: _detectLocation,
+                      onOriginMapPick: _pickOriginFromMap,
+                      onDestinationMapPick: _pickDestinationFromMap,
+                      routeInfo: _routeInfo,
+                      insights: _insights,
+                      preferredClass: _preferredClass,
+                      onPlaceChip: _usePlace,
+                      onRepeat: _repeat,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 
   // ---------------------------------------------------------------------------
   // Web — New editorial landing page
   // ---------------------------------------------------------------------------
 
   Widget _webLayout() => WebHomePage(
-    serviceType: _serviceType,
-    origin: _origin,
-    destination: _destination,
-    date: _date,
-    hours: _hours,
-    locating: _locating,
-    routeInfo: _routeInfo,
-    onServiceTypeChanged: (t) => setState(() => _serviceType = t),
-    onOriginSelected: _onOriginSelected,
-    onDestinationSelected: _onDestinationSelected,
-    onDateChanged: (d) => setState(() => _date = d),
-    onHoursChanged: (h) => setState(() => _hours = h),
-    onLocate: _detectLocation,
-    onSearch: _search,
-    onOriginMapPick: _pickOriginFromMap,
-    onDestinationMapPick: _pickDestinationFromMap,
-    onChooseClass: (vc) => setState(() => _preferredClass = vc),
-  );
+        serviceType: _serviceType,
+        origin: _origin,
+        destination: _destination,
+        date: _date,
+        hours: _hours,
+        locating: _locating,
+        routeInfo: _routeInfo,
+        onServiceTypeChanged: (t) => setState(() => _serviceType = t),
+        onOriginSelected: _onOriginSelected,
+        onDestinationSelected: _onDestinationSelected,
+        onDateChanged: (d) => setState(() => _date = d),
+        onHoursChanged: (h) => setState(() => _hours = h),
+        onLocate: _detectLocation,
+        onSearch: _search,
+        onOriginMapPick: _pickOriginFromMap,
+        onDestinationMapPick: _pickDestinationFromMap,
+        onChooseClass: (vc) => setState(() => _preferredClass = vc),
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -357,74 +355,73 @@ class _MobileTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => DecoratedBox(
-    // Ivory scrim so the brand mark stays legible over any map tile.
-    decoration: const BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [Color(0xF2FAFBFE), Color(0x00FAFBFE)],
-      ),
-    ),
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(
-        LuxSpacing.md + 4,
-        LuxSpacing.sm,
-        LuxSpacing.md,
-        LuxSpacing.lg,
-      ),
-      child: Row(
-        children: [
-          const LuxelaneWordmark(size: 11),
-          const Spacer(),
-          const NotificationBell(),
-          const SizedBox(width: LuxSpacing.sm),
-          BlocBuilder<AuthBloc, AuthState>(
-            builder: (context, state) {
-              final name =
-                  state is AuthAuthenticated ? state.user.displayName : '';
-              return Semantics(
-                button: true,
-                label: 'Mi perfil',
-                child: GestureDetector(
-                  onTap:
-                      () => context.go(
+        // Ivory scrim so the brand mark stays legible over any map tile.
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xF2FAFBFE), Color(0x00FAFBFE)],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            LuxSpacing.md + 4,
+            LuxSpacing.sm,
+            LuxSpacing.md,
+            LuxSpacing.lg,
+          ),
+          child: Row(
+            children: [
+              const LuxelaneWordmark(size: 11),
+              const Spacer(),
+              const NotificationBell(),
+              const SizedBox(width: LuxSpacing.sm),
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, state) {
+                  final name =
+                      state is AuthAuthenticated ? state.user.displayName : '';
+                  return Semantics(
+                    button: true,
+                    label: 'Mi perfil',
+                    child: GestureDetector(
+                      onTap: () => context.go(
                         state is AuthAuthenticated ? '/profile' : '/login',
                       ),
-                  child: Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: LuxColors.sapphire,
-                      border: Border.all(color: LuxColors.surface, width: 2),
-                      boxShadow: luxSoftShadow,
-                    ),
-                    alignment: Alignment.center,
-                    child:
-                        name.isNotEmpty
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: LuxColors.sapphire,
+                          border:
+                              Border.all(color: LuxColors.surface, width: 2),
+                          boxShadow: luxSoftShadow,
+                        ),
+                        alignment: Alignment.center,
+                        child: name.isNotEmpty
                             ? Text(
-                              name[0].toUpperCase(),
-                              style: const TextStyle(
-                                fontFamily: 'Cormorant Garamond',
-                                color: LuxColors.onAccent,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 17,
-                              ),
-                            )
+                                name[0].toUpperCase(),
+                                style: const TextStyle(
+                                  fontFamily: 'Cormorant Garamond',
+                                  color: LuxColors.onAccent,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 17,
+                                ),
+                              )
                             : const Icon(
-                              Icons.person_outline_rounded,
-                              size: 18,
-                              color: LuxColors.onAccent,
-                            ),
-                  ),
-                ),
-              );
-            },
+                                Icons.person_outline_rounded,
+                                size: 18,
+                                color: LuxColors.onAccent,
+                              ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-    ),
-  );
+        ),
+      );
 }
 
 class _MobileBottomPanel extends StatelessWidget {
@@ -475,15 +472,14 @@ class _MobileBottomPanel extends StatelessWidget {
     final next = insights.nextTrip;
     final last = insights.lastTrip;
     // Los lugares que ya están elegidos no se vuelven a sugerir.
-    final chips =
-        insights.recentPlaces
-            .where(
-              (p) =>
-                  p.displayName != origin?.displayName &&
-                  p.displayName != destination?.displayName,
-            )
-            .take(3)
-            .toList();
+    final chips = insights.recentPlaces
+        .where(
+          (p) =>
+              p.displayName != origin?.displayName &&
+              p.displayName != destination?.displayName,
+        )
+        .take(3)
+        .toList();
     return Container(
       constraints: BoxConstraints(
         maxHeight: MediaQuery.sizeOf(context).height * 0.82,
@@ -572,16 +568,15 @@ class _MobileBottomPanel extends StatelessWidget {
             AnimatedSize(
               duration: LuxMotion.of(context, LuxMotion.base),
               curve: LuxMotion.emphasized,
-              child:
-                  routeInfo == null
-                      ? const SizedBox(width: double.infinity)
-                      : Padding(
-                        padding: const EdgeInsets.only(top: LuxSpacing.sm + 4),
-                        child: _RouteInfoBadge(
-                          route: routeInfo!,
-                          preferredClass: preferredClass,
-                        ),
+              child: routeInfo == null
+                  ? const SizedBox(width: double.infinity)
+                  : Padding(
+                      padding: const EdgeInsets.only(top: LuxSpacing.sm + 4),
+                      child: _RouteInfoBadge(
+                        route: routeInfo!,
+                        preferredClass: preferredClass,
                       ),
+                    ),
             ),
             const SizedBox(height: LuxSpacing.md + 4),
             LuxFadeIn(
@@ -630,34 +625,34 @@ class _Greeting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<AuthBloc, AuthState>(
-    builder: (context, state) {
-      final full =
-          state is AuthAuthenticated ? state.user.displayName.trim() : '';
-      final first = full.isEmpty ? '' : full.split(' ').first;
-      final now = DateTime.now();
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            (first.isEmpty
-                    ? LuxFormat.greeting(now)
-                    : '${LuxFormat.greeting(now)}, $first')
-                .toUpperCase(),
-            style: LuxTypography.eyebrow,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            contextualPrompt(now, nextTrip: nextTrip),
-            style: LuxTypography.displayMedium.copyWith(
-              fontSize: 30,
-              fontWeight: FontWeight.w400,
-              height: 1.1,
-            ),
-          ),
-        ],
+        builder: (context, state) {
+          final full =
+              state is AuthAuthenticated ? state.user.displayName.trim() : '';
+          final first = full.isEmpty ? '' : full.split(' ').first;
+          final now = DateTime.now();
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                (first.isEmpty
+                        ? LuxFormat.greeting(now)
+                        : '${LuxFormat.greeting(now)}, $first')
+                    .toUpperCase(),
+                style: LuxTypography.eyebrow,
+              ),
+              const SizedBox(height: 6),
+              Text(
+                contextualPrompt(now, nextTrip: nextTrip),
+                style: LuxTypography.displayMedium.copyWith(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w400,
+                  height: 1.1,
+                ),
+              ),
+            ],
+          );
+        },
       );
-    },
-  );
 }
 
 /// El viaje que viene, siempre a mano: hora, destino y estado.
@@ -668,10 +663,9 @@ class _NextTripCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hourly = booking.serviceType == ServiceType.byTheHour;
-    final where =
-        hourly
-            ? '${booking.hours ?? 2} h desde ${booking.origin.displayName}'
-            : booking.destination.displayName;
+    final where = hourly
+        ? '${booking.hours ?? 2} h desde ${booking.origin.displayName}'
+        : booking.destination.displayName;
     return LuxPressable(
       onTap: () => context.go('/ride/${booking.id}'),
       semanticLabel: 'Ver tu próximo trayecto',
@@ -863,15 +857,16 @@ class _RouteDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-    width: 12,
-    height: 12,
-    decoration: BoxDecoration(
-      color: square ? LuxColors.ink : LuxColors.surface,
-      shape: square ? BoxShape.rectangle : BoxShape.circle,
-      borderRadius: square ? BorderRadius.circular(2) : null,
-      border: square ? null : Border.all(color: LuxColors.sapphire, width: 3.5),
-    ),
-  );
+        width: 12,
+        height: 12,
+        decoration: BoxDecoration(
+          color: square ? LuxColors.ink : LuxColors.surface,
+          shape: square ? BoxShape.rectangle : BoxShape.circle,
+          borderRadius: square ? BorderRadius.circular(2) : null,
+          border:
+              square ? null : Border.all(color: LuxColors.sapphire, width: 3.5),
+        ),
+      );
 }
 
 /// Atajos personales: sus lugares de siempre y repetir el último viaje.
@@ -890,26 +885,26 @@ class _PlaceChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-    height: 38,
-    child: ListView(
-      scrollDirection: Axis.horizontal,
-      children: [
-        if (last != null)
-          _Chip(
-            icon: Icons.replay_rounded,
-            label: 'Repetir último',
-            emphasized: true,
-            onTap: () => onRepeat(last!),
-          ),
-        for (final p in places)
-          _Chip(
-            icon: Icons.history_rounded,
-            label: p.displayName,
-            onTap: () => onPlace(p),
-          ),
-      ],
-    ),
-  );
+        height: 38,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: [
+            if (last != null)
+              _Chip(
+                icon: Icons.replay_rounded,
+                label: 'Repetir último',
+                emphasized: true,
+                onTap: () => onRepeat(last!),
+              ),
+            for (final p in places)
+              _Chip(
+                icon: Icons.history_rounded,
+                label: p.displayName,
+                onTap: () => onPlace(p),
+              ),
+          ],
+        ),
+      );
 }
 
 class _Chip extends StatelessWidget {
@@ -927,46 +922,47 @@ class _Chip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(right: LuxSpacing.sm),
-    child: LuxPressable(
-      onTap: onTap,
-      semanticLabel: label,
-      child: Container(
-        constraints: const BoxConstraints(maxWidth: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 14),
-        decoration: BoxDecoration(
-          color: emphasized ? LuxColors.sapphireTint : LuxColors.surface,
-          borderRadius: BorderRadius.circular(LuxRadius.xl),
-          border: Border.all(
-            color: emphasized ? Colors.transparent : LuxColors.border,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 15,
-              color: emphasized ? LuxColors.sapphire : LuxColors.inkTertiary,
-            ),
-            const SizedBox(width: 6),
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: LuxTypography.caption.copyWith(
-                  fontSize: 12,
-                  color: emphasized ? LuxColors.sapphire : LuxColors.ink,
-                  fontWeight: FontWeight.w500,
-                ),
+        padding: const EdgeInsets.only(right: LuxSpacing.sm),
+        child: LuxPressable(
+          onTap: onTap,
+          semanticLabel: label,
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 200),
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            decoration: BoxDecoration(
+              color: emphasized ? LuxColors.sapphireTint : LuxColors.surface,
+              borderRadius: BorderRadius.circular(LuxRadius.xl),
+              border: Border.all(
+                color: emphasized ? Colors.transparent : LuxColors.border,
               ),
             ),
-          ],
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 15,
+                  color:
+                      emphasized ? LuxColors.sapphire : LuxColors.inkTertiary,
+                ),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: LuxTypography.caption.copyWith(
+                      fontSize: 12,
+                      color: emphasized ? LuxColors.sapphire : LuxColors.ink,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 class _RouteInfoBadge extends StatelessWidget {
@@ -976,31 +972,32 @@ class _RouteInfoBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-    children: [
-      const Icon(Icons.route_outlined, size: 16, color: LuxColors.inkTertiary),
-      const SizedBox(width: 6),
-      Text(
-        '${route.distanceKm.toStringAsFixed(1)} km · ${route.durationMin} min',
-        style: LuxTypography.caption.copyWith(
-          color: LuxColors.ink,
-          fontSize: 12,
-        ),
-      ),
-      if (preferredClass != null) ...[
-        const Spacer(),
-        Flexible(
-          child: Text(
-            'Tu ${preferredClass!.label}',
-            overflow: TextOverflow.ellipsis,
+        children: [
+          const Icon(Icons.route_outlined,
+              size: 16, color: LuxColors.inkTertiary),
+          const SizedBox(width: 6),
+          Text(
+            '${route.distanceKm.toStringAsFixed(1)} km · ${route.durationMin} min',
             style: LuxTypography.caption.copyWith(
-              color: LuxColors.sapphire,
+              color: LuxColors.ink,
               fontSize: 12,
             ),
           ),
-        ),
-      ],
-    ],
-  );
+          if (preferredClass != null) ...[
+            const Spacer(),
+            Flexible(
+              child: Text(
+                'Tu ${preferredClass!.label}',
+                overflow: TextOverflow.ellipsis,
+                style: LuxTypography.caption.copyWith(
+                  color: LuxColors.sapphire,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
+        ],
+      );
 }
 
 class _DateTimeTile extends StatelessWidget {
@@ -1094,47 +1091,48 @@ class _HourSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(14, 2, 6, 2),
-    child: Row(
-      children: [
-        const Icon(
-          Icons.schedule_outlined,
-          size: 18,
-          color: LuxColors.inkTertiary,
-        ),
-        const SizedBox(width: LuxSpacing.md - 2),
-        Text(
-          'Duración',
-          style: LuxTypography.titleMedium.copyWith(
-            fontWeight: FontWeight.w500,
-            fontSize: 14,
-          ),
-        ),
-        const Spacer(),
-        _StepButton(
-          icon: Icons.remove_rounded,
-          onTap: hours > 2 ? () => onChanged(hours - 1) : null,
-        ),
-        SizedBox(
-          width: 48,
-          child: AnimatedSwitcher(
-            duration: LuxMotion.of(context, LuxMotion.fast),
-            transitionBuilder: (c, a) => FadeTransition(opacity: a, child: c),
-            child: Text(
-              '${hours}h',
-              key: ValueKey(hours),
-              textAlign: TextAlign.center,
-              style: LuxTypography.titleLarge,
+        padding: const EdgeInsets.fromLTRB(14, 2, 6, 2),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.schedule_outlined,
+              size: 18,
+              color: LuxColors.inkTertiary,
             ),
-          ),
+            const SizedBox(width: LuxSpacing.md - 2),
+            Text(
+              'Duración',
+              style: LuxTypography.titleMedium.copyWith(
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+            ),
+            const Spacer(),
+            _StepButton(
+              icon: Icons.remove_rounded,
+              onTap: hours > 2 ? () => onChanged(hours - 1) : null,
+            ),
+            SizedBox(
+              width: 48,
+              child: AnimatedSwitcher(
+                duration: LuxMotion.of(context, LuxMotion.fast),
+                transitionBuilder: (c, a) =>
+                    FadeTransition(opacity: a, child: c),
+                child: Text(
+                  '${hours}h',
+                  key: ValueKey(hours),
+                  textAlign: TextAlign.center,
+                  style: LuxTypography.titleLarge,
+                ),
+              ),
+            ),
+            _StepButton(
+              icon: Icons.add_rounded,
+              onTap: hours < 24 ? () => onChanged(hours + 1) : null,
+            ),
+          ],
         ),
-        _StepButton(
-          icon: Icons.add_rounded,
-          onTap: hours < 24 ? () => onChanged(hours + 1) : null,
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 class _StepButton extends StatelessWidget {
@@ -1144,21 +1142,21 @@ class _StepButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LuxPressable(
-    onTap: onTap,
-    scale: 0.9,
-    child: Container(
-      width: 36,
-      height: 36,
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: LuxColors.border),
-      ),
-      child: Icon(
-        icon,
-        size: 18,
-        color: onTap == null ? LuxColors.border : LuxColors.ink,
-      ),
-    ),
-  );
+        onTap: onTap,
+        scale: 0.9,
+        child: Container(
+          width: 36,
+          height: 36,
+          margin: const EdgeInsets.symmetric(vertical: 6),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: LuxColors.border),
+          ),
+          child: Icon(
+            icon,
+            size: 18,
+            color: onTap == null ? LuxColors.border : LuxColors.ink,
+          ),
+        ),
+      );
 }

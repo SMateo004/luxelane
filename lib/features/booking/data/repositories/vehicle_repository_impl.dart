@@ -7,7 +7,7 @@ import '../../../../core/repositories/repositories.dart';
 
 class VehicleRepositoryImpl implements VehicleRepository {
   VehicleRepositoryImpl({required FirebaseFirestore firestore})
-    : _db = firestore;
+      : _db = firestore;
 
   final FirebaseFirestore _db;
 
@@ -43,11 +43,10 @@ class VehicleRepositoryImpl implements VehicleRepository {
     VehicleClass vehicleClass,
   ) async {
     try {
-      final snap =
-          await _col
-              .where('vehicleClass', isEqualTo: vehicleClass.name)
-              .where('isAvailable', isEqualTo: true)
-              .get();
+      final snap = await _col
+          .where('vehicleClass', isEqualTo: vehicleClass.name)
+          .where('isAvailable', isEqualTo: true)
+          .get();
       return Right(
         snap.docs
             .map((d) => Vehicle.fromJson({'id': d.id, ...d.data()}))

@@ -10,31 +10,31 @@ import '../theme/lux_motion.dart';
 CustomTransitionPage<void> luxFadeThroughPage(
   Widget child,
   GoRouterState state,
-) => CustomTransitionPage<void>(
-  key: state.pageKey,
-  child: child,
-  transitionDuration: LuxMotion.page,
-  reverseTransitionDuration: LuxMotion.base,
-  transitionsBuilder: (context, animation, secondary, child) {
-    if (LuxMotion.reduced(context)) return child;
-    final enter = CurvedAnimation(
-      parent: animation,
-      curve: LuxMotion.decelerate,
-    );
-    return FadeTransition(
-      opacity: enter,
-      child: AnimatedBuilder(
-        animation: enter,
-        builder:
-            (_, c) => Transform.translate(
+) =>
+    CustomTransitionPage<void>(
+      key: state.pageKey,
+      child: child,
+      transitionDuration: LuxMotion.page,
+      reverseTransitionDuration: LuxMotion.base,
+      transitionsBuilder: (context, animation, secondary, child) {
+        if (LuxMotion.reduced(context)) return child;
+        final enter = CurvedAnimation(
+          parent: animation,
+          curve: LuxMotion.decelerate,
+        );
+        return FadeTransition(
+          opacity: enter,
+          child: AnimatedBuilder(
+            animation: enter,
+            builder: (_, c) => Transform.translate(
               offset: Offset(0, 12 * (1 - enter.value)),
               child: c,
             ),
-        child: child,
-      ),
+            child: child,
+          ),
+        );
+      },
     );
-  },
-);
 
 /// Avanzar en un flujo (reservar, pagar): entra desde la derecha mientras la
 /// anterior se desplaza un poco y se atenúa, como en iOS.

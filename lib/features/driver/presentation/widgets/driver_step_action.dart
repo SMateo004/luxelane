@@ -27,25 +27,24 @@ class DriverStepAction extends StatelessWidget {
   final Future<void> Function(BuildContext, Booking) openCodeEntry;
 
   static String? slideLabel(BookingStatus s) => switch (s) {
-    BookingStatus.confirmed => 'Salir hacia la recogida',
-    BookingStatus.driverArriving => 'He llegado',
-    BookingStatus.verified => 'Iniciar viaje',
-    BookingStatus.inProgress => 'Completar viaje',
-    _ => null,
-  };
+        BookingStatus.confirmed => 'Salir hacia la recogida',
+        BookingStatus.driverArriving => 'He llegado',
+        BookingStatus.verified => 'Iniciar viaje',
+        BookingStatus.inProgress => 'Completar viaje',
+        _ => null,
+      };
 
   /// Texto del estado para el chófer.
   static String message(Booking b) => switch (b.status) {
-    BookingStatus.confirmed => 'Dirígete a la recogida.',
-    BookingStatus.driverArriving => 'En camino a la recogida.',
-    BookingStatus.driverArrived =>
-      b.pickupLocked
-          ? 'Verificación bloqueada. Contacta con central.'
-          : 'Pide al pasajero su código de recogida.',
-    BookingStatus.verified => 'Pasajero verificado. Desliza para iniciar.',
-    BookingStatus.inProgress => 'Viaje en curso · rumbo al destino.',
-    _ => 'Viaje activo.',
-  };
+        BookingStatus.confirmed => 'Dirígete a la recogida.',
+        BookingStatus.driverArriving => 'En camino a la recogida.',
+        BookingStatus.driverArrived => b.pickupLocked
+            ? 'Verificación bloqueada. Contacta con central.'
+            : 'Pide al pasajero su código de recogida.',
+        BookingStatus.verified => 'Pasajero verificado. Desliza para iniciar.',
+        BookingStatus.inProgress => 'Viaje en curso · rumbo al destino.',
+        _ => 'Viaje activo.',
+      };
 
   void _advance(BuildContext context) {
     final bloc = context.read<DriverBloc>();
@@ -70,19 +69,18 @@ class DriverStepAction extends StatelessWidget {
       if (booking.pickupLocked) {
         return ValueListenableBuilder<String?>(
           valueListenable: RemoteFlags.instance.dispatchPhone,
-          builder:
-              (_, phone, __) => Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'Cinco códigos incorrectos: central debe verificar este '
-                    'viaje.',
-                    style: LuxTypography.bodyMedium,
-                  ),
-                  const SizedBox(height: LuxSpacing.sm),
-                  CallDispatchButton(phone: phone),
-                ],
+          builder: (_, phone, __) => Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'Cinco códigos incorrectos: central debe verificar este '
+                'viaje.',
+                style: LuxTypography.bodyMedium,
               ),
+              const SizedBox(height: LuxSpacing.sm),
+              CallDispatchButton(phone: phone),
+            ],
+          ),
         );
       }
       return LuxButton(
@@ -121,31 +119,29 @@ class DriverFeedbackListener extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MultiBlocListener(
-    listeners: [
-      BlocListener<DriverBloc, DriverState>(
-        listenWhen:
-            (prev, curr) =>
+        listeners: [
+          BlocListener<DriverBloc, DriverState>(
+            listenWhen: (prev, curr) =>
                 curr is DriverLoaded &&
                 _seq(curr, (s) => s.updateSeq) !=
                     _seq(prev, (s) => s.updateSeq),
-        listener: (context, state) {
-          final update = (state as DriverLoaded).updateRequired;
-          if (update != null) AppUpdateDialog.show(context, update);
-        },
-      ),
-      if (showNotices)
-        BlocListener<DriverBloc, DriverState>(
-          listenWhen:
-              (prev, curr) =>
+            listener: (context, state) {
+              final update = (state as DriverLoaded).updateRequired;
+              if (update != null) AppUpdateDialog.show(context, update);
+            },
+          ),
+          if (showNotices)
+            BlocListener<DriverBloc, DriverState>(
+              listenWhen: (prev, curr) =>
                   curr is DriverLoaded &&
                   _seq(curr, (s) => s.noticeSeq) !=
                       _seq(prev, (s) => s.noticeSeq),
-          listener: (context, state) {
-            final notice = (state as DriverLoaded).notice;
-            if (notice != null) showLuxSnackbar(context, notice);
-          },
-        ),
-    ],
-    child: child,
-  );
+              listener: (context, state) {
+                final notice = (state as DriverLoaded).notice;
+                if (notice != null) showLuxSnackbar(context, notice);
+              },
+            ),
+        ],
+        child: child,
+      );
 }

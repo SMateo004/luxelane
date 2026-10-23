@@ -12,8 +12,7 @@ class HourlyCharterPage extends StatelessWidget {
     mode: LuxBookingMode.hourly,
     eyebrow: 'Chófer por horas',
     title: 'Tu agenda.\nTu ritmo.\nTu chófer.',
-    lead:
-        'Un chófer y un vehículo exclusivamente para ti, de 2 a 24 horas. '
+    lead: 'Un chófer y un vehículo exclusivamente para ti, de 2 a 24 horas. '
         'Cambia de planes cuantas veces quieras: él se adapta.',
     heroImage: 'assets/images/services/por-horas/hero.jpg',
     heroFallback: 'assets/images/home/business_photo.jpg',

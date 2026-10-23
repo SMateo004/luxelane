@@ -36,14 +36,12 @@ Future<void> initMapsForWeb(String apiKey) async {
     if (!completer.isCompleted) completer.complete();
   });
 
-  final script =
-      html.ScriptElement()
-        ..async = true
-        ..src =
-            'https://maps.googleapis.com/maps/api/js'
-            '?key=$apiKey'
-            '&libraries=places'
-            '&callback=_luxelaneMapsReady';
+  final script = html.ScriptElement()
+    ..async = true
+    ..src = 'https://maps.googleapis.com/maps/api/js'
+        '?key=$apiKey'
+        '&libraries=places'
+        '&callback=_luxelaneMapsReady';
 
   html.document.head!.append(script);
 

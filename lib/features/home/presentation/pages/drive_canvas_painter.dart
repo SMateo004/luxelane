@@ -60,15 +60,14 @@ class _DriveCanvasAnimState extends State<DriveCanvasAnim>
       onHover: (e) => setState(() => _mouseX = e.localPosition.dx),
       child: AnimatedBuilder(
         animation: _ctrl,
-        builder:
-            (_, __) => CustomPaint(
-              size: Size.infinite,
-              painter: DrivePainter(
-                progress: _ctrl.value * 10,
-                mx: _mouseX - (MediaQuery.sizeOf(context).width / 2),
-                particles: _particles,
-              ),
-            ),
+        builder: (_, __) => CustomPaint(
+          size: Size.infinite,
+          painter: DrivePainter(
+            progress: _ctrl.value * 10,
+            mx: _mouseX - (MediaQuery.sizeOf(context).width / 2),
+            particles: _particles,
+          ),
+        ),
       ),
     );
   }
@@ -103,22 +102,20 @@ class DrivePainter extends CustomPainter {
     final H = size.height;
 
     // Background Sky
-    final skyPaint =
-        Paint()
-          ..shader = ui.Gradient.linear(Offset.zero, Offset(0, H * 0.5), [
-            const Color(0xFFF2F5FB),
-            const Color(0xFFE8EDF7),
-            const Color(0xFFDDE4F0),
-          ]);
+    final skyPaint = Paint()
+      ..shader = ui.Gradient.linear(Offset.zero, Offset(0, H * 0.5), [
+        const Color(0xFFF2F5FB),
+        const Color(0xFFE8EDF7),
+        const Color(0xFFDDE4F0),
+      ]);
     canvas.drawRect(Rect.fromLTWH(0, 0, W, H * 0.5), skyPaint);
 
-    final hgPaint =
-        Paint()
-          ..shader = ui.Gradient.radial(Offset(W * 0.5, H * 0.44), W * 0.5, [
-            const Color(0x33C8AA64),
-            const Color(0x0FC8AA64),
-            const Color(0x00C8AA64),
-          ]);
+    final hgPaint = Paint()
+      ..shader = ui.Gradient.radial(Offset(W * 0.5, H * 0.44), W * 0.5, [
+        const Color(0x33C8AA64),
+        const Color(0x0FC8AA64),
+        const Color(0x00C8AA64),
+      ]);
     canvas.drawRect(Rect.fromLTWH(0, 0, W, H * 0.7), hgPaint);
 
     // City
@@ -202,12 +199,11 @@ class DrivePainter extends CustomPainter {
     final vpY = H * 0.44;
     final rW = W * 2.2;
 
-    final rPath =
-        Path()
-          ..moveTo(vpX, vpY)
-          ..lineTo(vpX - rW / 2, H + 100)
-          ..lineTo(vpX + rW / 2, H + 100)
-          ..close();
+    final rPath = Path()
+      ..moveTo(vpX, vpY)
+      ..lineTo(vpX - rW / 2, H + 100)
+      ..lineTo(vpX + rW / 2, H + 100)
+      ..close();
     canvas.drawPath(
       rPath,
       Paint()
@@ -270,16 +266,15 @@ class DrivePainter extends CustomPainter {
     canvas.scale(scaleX, scaleX);
     const bw = 100.0;
 
-    final body =
-        Path()
-          ..moveTo(-bw, 12)
-          ..lineTo(-bw, 0)
-          ..quadraticBezierTo(-bw * 0.92, -8, -bw * 0.7, -18)
-          ..lineTo(-bw * 0.18, -26)
-          ..lineTo(bw * 0.28, -24)
-          ..quadraticBezierTo(bw * 0.82, -22, bw, -8)
-          ..lineTo(bw, 12)
-          ..close();
+    final body = Path()
+      ..moveTo(-bw, 12)
+      ..lineTo(-bw, 0)
+      ..quadraticBezierTo(-bw * 0.92, -8, -bw * 0.7, -18)
+      ..lineTo(-bw * 0.18, -26)
+      ..lineTo(bw * 0.28, -24)
+      ..quadraticBezierTo(bw * 0.82, -22, bw, -8)
+      ..lineTo(bw, 12)
+      ..close();
     canvas.drawPath(
       body,
       Paint()

@@ -143,12 +143,10 @@ void main() {
     });
 
     test('código incorrecto con intentos restantes', () {
-      final f =
-          tripFailureFor('failed-precondition', {
-                'reason': 'wrong_code',
-                'attemptsLeft': 1,
-              })
-              as TripFailure;
+      final f = tripFailureFor('failed-precondition', {
+        'reason': 'wrong_code',
+        'attemptsLeft': 1,
+      }) as TripFailure;
       expect(f.issue, TripIssue.wrongCode);
       expect(f.attemptsLeft, 1);
       expect(f.message, 'Código incorrecto. Te queda 1 intento.');

@@ -21,19 +21,20 @@ Booking _b(
   VehicleClass vc = VehicleClass.business,
   Duration ago = const Duration(days: 1),
   DateTime? at,
-}) => Booking(
-  id: id,
-  riderId: 'u1',
-  origin: _hotel,
-  destination: Place(name: dest, address: dest, lat: lat, lng: lng),
-  scheduledAt: at ?? _now.subtract(ago),
-  vehicleClass: vc,
-  serviceType: ServiceType.oneWay,
-  status: status,
-  estimatedPrice: 100,
-  createdAt: (at ?? _now.subtract(ago)).subtract(const Duration(hours: 1)),
-  updatedAt: _now,
-);
+}) =>
+    Booking(
+      id: id,
+      riderId: 'u1',
+      origin: _hotel,
+      destination: Place(name: dest, address: dest, lat: lat, lng: lng),
+      scheduledAt: at ?? _now.subtract(ago),
+      vehicleClass: vc,
+      serviceType: ServiceType.oneWay,
+      status: status,
+      estimatedPrice: 100,
+      createdAt: (at ?? _now.subtract(ago)).subtract(const Duration(hours: 1)),
+      updatedAt: _now,
+    );
 
 void main() {
   group('RiderInsights', () {
@@ -83,7 +84,8 @@ void main() {
       expect(
         RiderInsights.from([
           _b('1', 'A', vc: VehicleClass.firstClass),
-        ], now: _now).favoriteClass,
+        ], now: _now)
+            .favoriteClass,
         isNull,
       );
       final i = RiderInsights.from([

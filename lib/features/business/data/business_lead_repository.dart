@@ -55,25 +55,24 @@ class BusinessLeadRepository {
     required String phone,
     required String travellers,
     required String message,
-  }) => _col.add({
-    'company': company.trim(),
-    'contactName': contactName.trim(),
-    'email': email.trim(),
-    'phone': phone.trim(),
-    'travellers': travellers,
-    'message': message.trim(),
-    'handled': false,
-    'createdAt': FieldValue.serverTimestamp(),
-  });
+  }) =>
+      _col.add({
+        'company': company.trim(),
+        'contactName': contactName.trim(),
+        'email': email.trim(),
+        'phone': phone.trim(),
+        'travellers': travellers,
+        'message': message.trim(),
+        'handled': false,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
 
-  Stream<List<BusinessLead>> watchAll() => _col
-      .orderBy('createdAt', descending: true)
-      .limit(200)
-      .snapshots()
-      .map(
-        (s) =>
-            s.docs.map((d) => BusinessLead.fromJson(d.id, d.data())).toList(),
-      );
+  Stream<List<BusinessLead>> watchAll() =>
+      _col.orderBy('createdAt', descending: true).limit(200).snapshots().map(
+            (s) => s.docs
+                .map((d) => BusinessLead.fromJson(d.id, d.data()))
+                .toList(),
+          );
 
   Future<void> setHandled(String id, bool handled) =>
       _col.doc(id).update({'handled': handled});

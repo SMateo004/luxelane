@@ -225,8 +225,8 @@ class BookingError extends BookingState {
 
 class BookingBloc extends Bloc<BookingEvent, BookingState> {
   BookingBloc({required BookingRepository bookingRepository})
-    : _repo = bookingRepository,
-      super(const BookingInitial()) {
+      : _repo = bookingRepository,
+        super(const BookingInitial()) {
     on<BookingCreateRequested>(_onCreate);
     on<BookingStatusWatched>(_onWatch);
     on<BookingDriverAssigned>(_onAssignDriver);
@@ -277,10 +277,10 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     result.fold(
       (f) => emit(switch (f) {
         PriceChangedFailure() => BookingPriceChanged(
-          previousPrice: event.quotedPrice ?? event.estimatedPrice,
-          newPrice: f.price,
-          request: event,
-        ),
+            previousPrice: event.quotedPrice ?? event.estimatedPrice,
+            newPrice: f.price,
+            request: event,
+          ),
         AppUpdateRequiredFailure() => BookingUpdateRequired(f),
         _ => BookingError(f.message),
       }),
@@ -359,9 +359,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     await emit.forEach<List<Booking>>(
       _repo.watchBookingsByRider(event.riderId),
       onData: BookingTripsLoaded.new,
-      onError:
-          (_, __) =>
-              const BookingError('No pudimos cargar tus viajes. Reintenta.'),
+      onError: (_, __) =>
+          const BookingError('No pudimos cargar tus viajes. Reintenta.'),
     );
   }
 }

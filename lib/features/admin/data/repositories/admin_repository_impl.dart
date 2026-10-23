@@ -13,8 +13,8 @@ class AdminRepositoryImpl implements AdminRepository {
     this._db, {
     fb.FirebaseAuth? auth,
     FirebaseFunctions? functions,
-  }) : _authOverride = auth,
-       _functionsOverride = functions;
+  })  : _authOverride = auth,
+        _functionsOverride = functions;
 
   final FirebaseFirestore _db;
   final fb.FirebaseAuth? _authOverride;
@@ -35,38 +35,38 @@ class AdminRepositoryImpl implements AdminRepository {
     Query<Map<String, dynamic>> query,
     T Function(Map<String, dynamic>) parse, {
     String idField = 'id',
-  }) => query.snapshots().map(
-    (snap) =>
-        snap.docs
-            .map((doc) {
-              try {
-                return parse({...doc.data(), idField: doc.id});
-              } catch (_) {
-                // Un documento mal formado no debe tumbar todo el panel.
-                return null;
-              }
-            })
-            .whereType<T>()
-            .toList(),
-  );
+  }) =>
+      query.snapshots().map(
+            (snap) => snap.docs
+                .map((doc) {
+                  try {
+                    return parse({...doc.data(), idField: doc.id});
+                  } catch (_) {
+                    // Un documento mal formado no debe tumbar todo el panel.
+                    return null;
+                  }
+                })
+                .whereType<T>()
+                .toList(),
+          );
 
   @override
   Stream<List<Booking>> watchAllBookings() => _watch(
-    _db
-        .collection('bookings')
-        .orderBy('createdAt', descending: true)
-        .limit(bookingsLimit),
-    Booking.fromJson,
-  );
+        _db
+            .collection('bookings')
+            .orderBy('createdAt', descending: true)
+            .limit(bookingsLimit),
+        Booking.fromJson,
+      );
 
   @override
   Stream<List<Payment>> watchAllPayments() => _watch(
-    _db
-        .collection('payments')
-        .orderBy('createdAt', descending: true)
-        .limit(bookingsLimit * 2),
-    Payment.fromJson,
-  );
+        _db
+            .collection('payments')
+            .orderBy('createdAt', descending: true)
+            .limit(bookingsLimit * 2),
+        Payment.fromJson,
+      );
 
   @override
   Stream<List<User>> watchAllUsers() =>
@@ -74,10 +74,10 @@ class AdminRepositoryImpl implements AdminRepository {
 
   @override
   Stream<List<DriverProfile>> watchAllDrivers() => _watch(
-    _db.collection('driverProfiles'),
-    DriverProfile.fromJson,
-    idField: 'userId',
-  );
+        _db.collection('driverProfiles'),
+        DriverProfile.fromJson,
+        idField: 'userId',
+      );
 
   @override
   Stream<List<PricingRule>> watchPricingRules() =>
@@ -89,21 +89,21 @@ class AdminRepositoryImpl implements AdminRepository {
 
   @override
   Stream<List<AuditLog>> watchAuditLogs() => _watch(
-    _db
-        .collection('admin_logs')
-        .orderBy('createdAt', descending: true)
-        .limit(250),
-    AuditLog.fromJson,
-  );
+        _db
+            .collection('admin_logs')
+            .orderBy('createdAt', descending: true)
+            .limit(250),
+        AuditLog.fromJson,
+      );
 
   @override
   Stream<List<AdminAlert>> watchAdminAlerts() => _watch(
-    _db
-        .collection('adminAlerts')
-        .orderBy('createdAt', descending: true)
-        .limit(200),
-    AdminAlert.fromJson,
-  );
+        _db
+            .collection('adminAlerts')
+            .orderBy('createdAt', descending: true)
+            .limit(200),
+        AdminAlert.fromJson,
+      );
 
   @override
   Future<Either<Failure, void>> resolveAlert(
@@ -157,8 +157,8 @@ class AdminRepositoryImpl implements AdminRepository {
           why == 'not_at_pickup'
               ? 'Solo se fuerza con el chófer en la recogida.'
               : why == 'invalid_request'
-              ? 'Escribe un motivo de al menos 5 caracteres.'
-              : _fnError(e),
+                  ? 'Escribe un motivo de al menos 5 caracteres.'
+                  : _fnError(e),
         ),
       );
     } catch (_) {
@@ -173,7 +173,7 @@ class AdminRepositoryImpl implements AdminRepository {
       .collection('incidents')
       .where(
         'status',
-        whereIn: ['open', 'acknowledged', 'cancelled_by_reporter'],
+        whereIn: ['open', 'acknowledged', 'cancel_requested'],
       )
       .orderBy('createdAt', descending: true)
       .limit(50)
@@ -202,14 +202,15 @@ class AdminRepositoryImpl implements AdminRepository {
   @override
   Stream<({double lat, double lng})?> watchIncidentLocation(
     String incidentId,
-  ) => _db
-      .collection('incidents')
-      .doc(incidentId)
-      .collection('locations')
-      .orderBy('at', descending: true)
-      .limit(1)
-      .snapshots()
-      .map((s) => s.docs.isEmpty ? null : _latLng(s.docs.first.data()));
+  ) =>
+      _db
+          .collection('incidents')
+          .doc(incidentId)
+          .collection('locations')
+          .orderBy('at', descending: true)
+          .limit(1)
+          .snapshots()
+          .map((s) => s.docs.isEmpty ? null : _latLng(s.docs.first.data()));
 
   @override
   Stream<({double lat, double lng})?> watchDriverTracking(String bookingId) =>
@@ -414,8 +415,7 @@ class AdminRepositoryImpl implements AdminRepository {
         'update_pricing',
         id,
         'pricing',
-        details:
-            '${rule.vehicleClass.label} · ${rule.serviceType.label}: '
+        details: '${rule.vehicleClass.label} · ${rule.serviceType.label}: '
             'base ${_money(rule.basePriceUsd)}, '
             '${_money(rule.pricePerKmUsd)}/km, '
             '${_money(rule.pricePerHourUsd)}/h, '
@@ -435,8 +435,7 @@ class AdminRepositoryImpl implements AdminRepository {
         'reset_pricing',
         id,
         'pricing',
-        details:
-            '${rule.vehicleClass.label} · ${rule.serviceType.label} '
+        details: '${rule.vehicleClass.label} · ${rule.serviceType.label} '
             'queda sin configurar',
       );
     });
@@ -485,8 +484,7 @@ class AdminRepositoryImpl implements AdminRepository {
         status == BookingStatus.cancelled ? 'cancel_booking' : 'update_status',
         booking.id,
         'booking',
-        details:
-            '${current.displayLabel} → ${status.displayLabel}'
+        details: '${current.displayLabel} → ${status.displayLabel}'
             '${reason.isNotEmpty ? ' · $reason' : ''}',
       );
     });
@@ -533,10 +531,9 @@ class AdminRepositoryImpl implements AdminRepository {
         previous == null ? 'assign_driver' : 'reassign_driver',
         booking.id,
         'booking',
-        details:
-            previous == null
-                ? 'Chófer $driverId'
-                : 'Chófer $previous → $driverId',
+        details: previous == null
+            ? 'Chófer $driverId'
+            : 'Chófer $previous → $driverId',
       );
     });
   }
@@ -564,8 +561,7 @@ class AdminRepositoryImpl implements AdminRepository {
         'adjust_price',
         booking.id,
         'booking',
-        details:
-            '${_money(booking.finalPrice ?? booking.estimatedPrice)} → '
+        details: '${_money(booking.finalPrice ?? booking.estimatedPrice)} → '
             '${_money(finalPrice)}${reason.isNotEmpty ? ' · $reason' : ''}',
       );
     });
@@ -624,8 +620,7 @@ class AdminRepositoryImpl implements AdminRepository {
       if (data['status'] != BookingStatus.completed.label) {
         throw _AdminRuleViolation('Solo se cobran viajes completados');
       }
-      final card =
-          data['stripePaymentIntentId'] != null ||
+      final card = data['stripePaymentIntentId'] != null ||
           data['stripePaymentMethodId'] != null;
       if (card && data['cardPaymentFailed'] != true) {
         throw _AdminRuleViolation(
@@ -667,8 +662,7 @@ class AdminRepositoryImpl implements AdminRepository {
         'record_payment',
         booking.id,
         'payment',
-        details:
-            '${_money(amount)} · $method'
+        details: '${_money(amount)} · $method'
             '${reference.isNotEmpty ? ' · ref. $reference' : ''}',
       );
     });
@@ -685,10 +679,13 @@ class AdminRepositoryImpl implements AdminRepository {
       );
     }
     return _run((batch) async {
-      batch.set(_db.collection('config').doc('finance'), {
-        ...fields,
-        'updatedAt': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+      batch.set(
+          _db.collection('config').doc('finance'),
+          {
+            ...fields,
+            'updatedAt': FieldValue.serverTimestamp(),
+          },
+          SetOptions(merge: true));
       _log(
         batch,
         'update_finance_settings',
@@ -708,30 +705,30 @@ class AdminRepositoryImpl implements AdminRepository {
     String driverId, {
     required bool vehicleReviewed,
     String vehicleNote = '',
-  }) => _run((batch) async {
-    batch.update(_driver(driverId), {'documentsVerified': true});
-    _log(batch, 'verify_driver', driverId, 'driver');
-    // El vehículo (registrado inactivo) solo se activa si el admin
-    // revisó su condición; si no, queda inactivo hasta activarlo a mano.
-    if (!vehicleReviewed) return;
-    final vehicles =
-        await _db
+  }) =>
+      _run((batch) async {
+        batch.update(_driver(driverId), {'documentsVerified': true});
+        _log(batch, 'verify_driver', driverId, 'driver');
+        // El vehículo (registrado inactivo) solo se activa si el admin
+        // revisó su condición; si no, queda inactivo hasta activarlo a mano.
+        if (!vehicleReviewed) return;
+        final vehicles = await _db
             .collection('vehicles')
             .where('driverId', isEqualTo: driverId)
             .get();
-    for (final v in vehicles.docs) {
-      _log(
-        batch,
-        'review_vehicle',
-        v.id,
-        'vehicle',
-        details: vehicleNote.trim(),
-      );
-      if (v.data()['isActive'] == true) continue;
-      batch.update(v.reference, {'isActive': true});
-      _log(batch, 'enable_vehicle', v.id, 'vehicle');
-    }
-  });
+        for (final v in vehicles.docs) {
+          _log(
+            batch,
+            'review_vehicle',
+            v.id,
+            'vehicle',
+            details: vehicleNote.trim(),
+          );
+          if (v.data()['isActive'] == true) continue;
+          batch.update(v.reference, {'isActive': true});
+          _log(batch, 'enable_vehicle', v.id, 'vehicle');
+        }
+      });
 
   @override
   Future<Either<Failure, void>> toggleUserStatus(String userId, bool active) {
@@ -750,25 +747,29 @@ class AdminRepositoryImpl implements AdminRepository {
   Future<Either<Failure, void>> toggleVehicleStatus(
     String vehicleId,
     bool active,
-  ) => _run((batch) async {
-    batch.update(_db.collection('vehicles').doc(vehicleId), {
-      'isActive': active,
-    });
-    _log(
-      batch,
-      active ? 'enable_vehicle' : 'disable_vehicle',
-      vehicleId,
-      'vehicle',
-    );
-  });
+  ) =>
+      _run((batch) async {
+        batch.update(_db.collection('vehicles').doc(vehicleId), {
+          'isActive': active,
+        });
+        _log(
+          batch,
+          active ? 'enable_vehicle' : 'disable_vehicle',
+          vehicleId,
+          'vehicle',
+        );
+      });
 
   @override
   Future<Either<Failure, void>> toggleMaintenanceMode(bool active) =>
       _run((batch) async {
-        batch.set(_db.collection('config').doc('global'), {
-          'isMaintenanceMode': active,
-          'updatedAt': FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
+        batch.set(
+            _db.collection('config').doc('global'),
+            {
+              'isMaintenanceMode': active,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(merge: true));
         _log(
           batch,
           active ? 'enable_maintenance' : 'disable_maintenance',
@@ -780,19 +781,23 @@ class AdminRepositoryImpl implements AdminRepository {
   @override
   Future<Either<Failure, void>> updateGlobalSettings(
     Map<String, dynamic> fields,
-  ) => _run((batch) async {
-    batch.set(_db.collection('config').doc('global'), {
-      ...fields,
-      'updatedAt': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
-    _log(
-      batch,
-      'update_settings',
-      'global',
-      'global_config',
-      details: fields.entries.map((e) => '${e.key}: ${e.value}').join(', '),
-    );
-  });
+  ) =>
+      _run((batch) async {
+        batch.set(
+            _db.collection('config').doc('global'),
+            {
+              ...fields,
+              'updatedAt': FieldValue.serverTimestamp(),
+            },
+            SetOptions(merge: true));
+        _log(
+          batch,
+          'update_settings',
+          'global',
+          'global_config',
+          details: fields.entries.map((e) => '${e.key}: ${e.value}').join(', '),
+        );
+      });
 
   @override
   Future<Either<Failure, void>> updateUserRole(String userId, UserRole role) {

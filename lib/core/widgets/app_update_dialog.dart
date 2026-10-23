@@ -13,10 +13,10 @@ String? storeUrlFor(
     web
         ? null
         : switch (platform) {
-          TargetPlatform.android => f.androidStoreUrl,
-          TargetPlatform.iOS => f.iosStoreUrl,
-          _ => null,
-        };
+            TargetPlatform.android => f.androidStoreUrl,
+            TargetPlatform.iOS => f.iosStoreUrl,
+            _ => null,
+          };
 
 /// Aviso sobrio cuando la versión instalada ya no puede reservar.
 class AppUpdateDialog extends StatelessWidget {
@@ -28,10 +28,11 @@ class AppUpdateDialog extends StatelessWidget {
   static Future<void> show(
     BuildContext context,
     AppUpdateRequiredFailure failure,
-  ) => showDialog<void>(
-    context: context,
-    builder: (_) => AppUpdateDialog(failure: failure),
-  );
+  ) =>
+      showDialog<void>(
+        context: context,
+        builder: (_) => AppUpdateDialog(failure: failure),
+      );
 
   @override
   Widget build(BuildContext context) {

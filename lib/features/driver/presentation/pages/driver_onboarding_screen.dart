@@ -80,7 +80,8 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
       final vehicles = sl<VehicleRepository>();
       final existing = (await vehicles.getVehicleByDriver(
         driverId,
-      )).fold((_) => null, (v) => v);
+      ))
+          .fold((_) => null, (v) => v);
       // Un vehículo ya registrado solo lo cambia Luxelane.
       if (existing == null) {
         final created = await vehicles.createVehicle(vehicle);
@@ -151,8 +152,8 @@ class _DriverOnboardingScreenState extends State<DriverOnboardingScreen> {
         title: const LuxelaneWordmark(),
         actions: [
           TextButton(
-            onPressed:
-                () => context.read<AuthBloc>().add(const LogoutRequested()),
+            onPressed: () =>
+                context.read<AuthBloc>().add(const LogoutRequested()),
             child: Text(
               'Cerrar sesión',
               style: LuxTypography.caption.copyWith(
@@ -284,21 +285,21 @@ class _StepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-    children: List.generate(totalSteps, (i) {
-      final active = i == currentStep;
-      final done = i < currentStep;
-      return Expanded(
-        child: Container(
-          margin: EdgeInsets.only(right: i < totalSteps - 1 ? 6 : 0),
-          height: 3,
-          decoration: BoxDecoration(
-            color: done || active ? LuxColors.sapphire : LuxColors.border,
-            borderRadius: BorderRadius.circular(2),
-          ),
-        ),
+        children: List.generate(totalSteps, (i) {
+          final active = i == currentStep;
+          final done = i < currentStep;
+          return Expanded(
+            child: Container(
+              margin: EdgeInsets.only(right: i < totalSteps - 1 ? 6 : 0),
+              height: 3,
+              decoration: BoxDecoration(
+                color: done || active ? LuxColors.sapphire : LuxColors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          );
+        }),
       );
-    }),
-  );
 }
 
 // ---------------------------------------------------------------------------
@@ -330,18 +331,17 @@ class _VehicleForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Form(
-    key: formKey,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Vehicle class selector
-        const Text('Categoría del vehículo', style: LuxTypography.caption),
-        const SizedBox(height: LuxSpacing.sm),
-        Wrap(
-          spacing: LuxSpacing.sm,
-          runSpacing: LuxSpacing.sm,
-          children:
-              _classes.map((vc) {
+        key: formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Vehicle class selector
+            const Text('Categoría del vehículo', style: LuxTypography.caption),
+            const SizedBox(height: LuxSpacing.sm),
+            Wrap(
+              spacing: LuxSpacing.sm,
+              runSpacing: LuxSpacing.sm,
+              children: _classes.map((vc) {
                 final sel = vc == vehicleClass;
                 return GestureDetector(
                   onTap: () => onClassChanged(vc),
@@ -351,10 +351,9 @@ class _VehicleForm extends StatelessWidget {
                       vertical: LuxSpacing.sm,
                     ),
                     decoration: BoxDecoration(
-                      color:
-                          sel
-                              ? LuxColors.sapphire.withOpacity(0.15)
-                              : LuxColors.surfaceMuted,
+                      color: sel
+                          ? LuxColors.sapphire.withOpacity(0.15)
+                          : LuxColors.surfaceMuted,
                       borderRadius: BorderRadius.circular(LuxRadius.md),
                       border: Border.all(
                         color: sel ? LuxColors.sapphire : LuxColors.border,
@@ -369,75 +368,76 @@ class _VehicleForm extends StatelessWidget {
                   ),
                 );
               }).toList(),
-        ),
-        const SizedBox(height: LuxSpacing.lg),
-        Row(
-          children: [
-            Expanded(
-              child: LuxTextField(
-                label: 'Marca',
-                controller: make,
-                prefixIcon: Icons.directions_car_outlined,
-                validator:
-                    (v) => v == null || v.trim().isEmpty ? 'Requerido' : null,
-              ),
             ),
-            const SizedBox(width: LuxSpacing.md),
-            Expanded(
-              child: LuxTextField(
-                label: 'Modelo',
-                controller: model,
-                prefixIcon: Icons.car_repair_outlined,
-                validator:
-                    (v) => v == null || v.trim().isEmpty ? 'Requerido' : null,
-              ),
+            const SizedBox(height: LuxSpacing.lg),
+            Row(
+              children: [
+                Expanded(
+                  child: LuxTextField(
+                    label: 'Marca',
+                    controller: make,
+                    prefixIcon: Icons.directions_car_outlined,
+                    validator: (v) =>
+                        v == null || v.trim().isEmpty ? 'Requerido' : null,
+                  ),
+                ),
+                const SizedBox(width: LuxSpacing.md),
+                Expanded(
+                  child: LuxTextField(
+                    label: 'Modelo',
+                    controller: model,
+                    prefixIcon: Icons.car_repair_outlined,
+                    validator: (v) =>
+                        v == null || v.trim().isEmpty ? 'Requerido' : null,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: LuxSpacing.md),
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: LuxTextField(
+                    label: 'Placa',
+                    controller: plate,
+                    prefixIcon: Icons.credit_card_outlined,
+                    validator: (v) =>
+                        v == null || v.trim().isEmpty ? 'Requerido' : null,
+                  ),
+                ),
+                const SizedBox(width: LuxSpacing.md),
+                Expanded(
+                  child: LuxTextField(
+                    label: 'Año',
+                    controller: year,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(4),
+                    ],
+                    validator: (v) {
+                      final y = int.tryParse(v ?? '');
+                      if (y == null || y < 2000 || y > 2030) {
+                        return 'Inválido';
+                      }
+                      return null;
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: LuxSpacing.md),
+            LuxTextField(
+              label: 'Color',
+              controller: color,
+              prefixIcon: Icons.palette_outlined,
+              validator: (v) =>
+                  v == null || v.trim().isEmpty ? 'Requerido' : null,
             ),
           ],
         ),
-        const SizedBox(height: LuxSpacing.md),
-        Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: LuxTextField(
-                label: 'Placa',
-                controller: plate,
-                prefixIcon: Icons.credit_card_outlined,
-                validator:
-                    (v) => v == null || v.trim().isEmpty ? 'Requerido' : null,
-              ),
-            ),
-            const SizedBox(width: LuxSpacing.md),
-            Expanded(
-              child: LuxTextField(
-                label: 'Año',
-                controller: year,
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(4),
-                ],
-                validator: (v) {
-                  final y = int.tryParse(v ?? '');
-                  if (y == null || y < 2000 || y > 2030) {
-                    return 'Inválido';
-                  }
-                  return null;
-                },
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: LuxSpacing.md),
-        LuxTextField(
-          label: 'Color',
-          controller: color,
-          prefixIcon: Icons.palette_outlined,
-          validator: (v) => v == null || v.trim().isEmpty ? 'Requerido' : null,
-        ),
-      ],
-    ),
-  );
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -457,39 +457,40 @@ class _LicenseForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Form(
-    key: formKey,
-    child: Column(
-      children: [
-        LuxTextField(
-          label: 'Número de licencia',
-          controller: licenseNumber,
-          prefixIcon: Icons.badge_outlined,
-          validator: (v) => v == null || v.trim().isEmpty ? 'Requerido' : null,
-        ),
-        const SizedBox(height: LuxSpacing.md),
-        LuxTextField(
-          label: 'Fecha de vencimiento (MM/AAAA)',
-          controller: licenseExpiry,
-          keyboardType: TextInputType.number,
-          prefixIcon: Icons.calendar_today_outlined,
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[\d/]')),
-            LengthLimitingTextInputFormatter(7),
+        key: formKey,
+        child: Column(
+          children: [
+            LuxTextField(
+              label: 'Número de licencia',
+              controller: licenseNumber,
+              prefixIcon: Icons.badge_outlined,
+              validator: (v) =>
+                  v == null || v.trim().isEmpty ? 'Requerido' : null,
+            ),
+            const SizedBox(height: LuxSpacing.md),
+            LuxTextField(
+              label: 'Fecha de vencimiento (MM/AAAA)',
+              controller: licenseExpiry,
+              keyboardType: TextInputType.number,
+              prefixIcon: Icons.calendar_today_outlined,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'[\d/]')),
+                LengthLimitingTextInputFormatter(7),
+              ],
+              validator: (v) {
+                if (v == null || v.trim().isEmpty) return 'Requerido';
+                final parts = v.split('/');
+                if (parts.length != 2) return 'Usa MM/AAAA';
+                final m = int.tryParse(parts[0]);
+                final y = int.tryParse(parts[1]);
+                if (m == null || m < 1 || m > 12) return 'Mes inválido';
+                if (y == null || y < 2024) return 'Licencia vencida';
+                return null;
+              },
+            ),
           ],
-          validator: (v) {
-            if (v == null || v.trim().isEmpty) return 'Requerido';
-            final parts = v.split('/');
-            if (parts.length != 2) return 'Usa MM/AAAA';
-            final m = int.tryParse(parts[0]);
-            final y = int.tryParse(parts[1]);
-            if (m == null || m < 1 || m > 12) return 'Mes inválido';
-            if (y == null || y < 2024) return 'Licencia vencida';
-            return null;
-          },
         ),
-      ],
-    ),
-  );
+      );
 }
 
 class _OnboardingError implements Exception {

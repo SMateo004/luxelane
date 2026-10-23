@@ -93,7 +93,7 @@ Criterio estricto de "lista para piloto": F2, F5 (con código), F7 (pago real) y
 | Registro del incidente | incidents/{id}/events | Solo el admin | Nunca se borra |
 | Banderas incidentOpen y activeIncidentId | bookings/{id}/adminOnly/incident (no en la reserva, que lee la contraparte) | Solo el admin | Se actualizan al cerrar |
 | Horas de los últimos disparos (límite 5 por hora) | incidentRateLimits/{uid} | Solo el servidor | Se sobrescribe con la última hora |
-| Alertas (incident, incident_escalated, incident_cancelled, pickup_*, far_from_pickup, arrival_without_location) | adminAlerts | Solo el admin | Sin borrado |
+| Alertas (incident, incident_escalated, incident_cancel_requested, pickup_*, far_from_pickup, arrival_without_location) | adminAlerts | Solo el admin | Sin borrado |
 | Notas de reconocer y cerrar | admin_logs | Solo el admin | Inmutable |
 | Push a los admin | FCM | Dispositivos de admin con token | Solo «Reserva #ABC123»; sin nombres ni ubicación |
 

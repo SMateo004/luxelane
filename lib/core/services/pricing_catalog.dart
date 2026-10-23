@@ -38,35 +38,28 @@ class PricingCatalog extends ChangeNotifier {
     _started = true;
     _rulesSub?.cancel();
     _configSub?.cancel();
-    _rulesSub = db
-        .collection('pricingRules')
-        .snapshots()
-        .listen(
-          (snap) => setRules(
-            snap.docs.map((d) {
-              try {
-                return PricingRule.fromJson({...d.data(), 'id': d.id});
-              } catch (_) {
-                return null;
-              }
-            }).whereType<PricingRule>(),
-          ),
-          onError: (Object e) {
-            debugPrint('[PricingCatalog] reglas: $e');
-            _retry(db);
-          },
-        );
-    _configSub = db
-        .collection('config')
-        .doc('global')
-        .snapshots()
-        .listen(
-          (doc) => setMaintenanceMode(doc.data()?['isMaintenanceMode'] == true),
-          onError: (Object e) {
-            debugPrint('[PricingCatalog] config: $e');
-            _retry(db);
-          },
-        );
+    _rulesSub = db.collection('pricingRules').snapshots().listen(
+      (snap) => setRules(
+        snap.docs.map((d) {
+          try {
+            return PricingRule.fromJson({...d.data(), 'id': d.id});
+          } catch (_) {
+            return null;
+          }
+        }).whereType<PricingRule>(),
+      ),
+      onError: (Object e) {
+        debugPrint('[PricingCatalog] reglas: $e');
+        _retry(db);
+      },
+    );
+    _configSub = db.collection('config').doc('global').snapshots().listen(
+      (doc) => setMaintenanceMode(doc.data()?['isMaintenanceMode'] == true),
+      onError: (Object e) {
+        debugPrint('[PricingCatalog] config: $e');
+        _retry(db);
+      },
+    );
   }
 
   Timer? _retryTimer;
@@ -112,7 +105,8 @@ class PricingCatalog extends ChangeNotifier {
     ServiceType st, {
     double km = 0,
     int hours = 2,
-  }) => ruleFor(vc, st)?.estimate(km: km, hours: hours);
+  }) =>
+      ruleFor(vc, st)?.estimate(km: km, hours: hours);
 
   /// Precio "desde" que se anuncia en la web (el mínimo de la tarifa), o
   /// null sin tarifa configurada.

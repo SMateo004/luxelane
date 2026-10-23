@@ -51,33 +51,33 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
     }
     return [
       (arrow) => _RoundedStage(
-        arrow: arrow,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 28),
-            child: AspectRatio(
-              aspectRatio: 2,
-              child: VehicleImage(vc, fit: BoxFit.cover),
+            arrow: arrow,
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 28),
+                child: AspectRatio(
+                  aspectRatio: 2,
+                  child: VehicleImage(vc, fit: BoxFit.cover),
+                ),
+              ),
             ),
           ),
-        ),
-      ),
       (arrow) => _RoundedPhoto(
-        VehicleCatalog.seatingPhoto(vc, 0),
-        arrow: arrow,
-        fallback: CabinSchematic(
-          vehicleClass: vc,
-          option: VehicleCatalog.seating(vc).first,
-        ),
-      ),
+            VehicleCatalog.seatingPhoto(vc, 0),
+            arrow: arrow,
+            fallback: CabinSchematic(
+              vehicleClass: vc,
+              option: VehicleCatalog.seating(vc).first,
+            ),
+          ),
       (arrow) => _RoundedPhoto(
-        VehicleCatalog.luggagePhoto(vc, 1),
-        arrow: arrow,
-        fallback: TrunkSchematic(
-          vehicleClass: vc,
-          option: VehicleCatalog.luggage(vc)[1],
-        ),
-      ),
+            VehicleCatalog.luggagePhoto(vc, 1),
+            arrow: arrow,
+            fallback: TrunkSchematic(
+              vehicleClass: vc,
+              option: VehicleCatalog.luggage(vc)[1],
+            ),
+          ),
     ];
   }
 
@@ -178,33 +178,32 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
 
     return _Tone(
       tone: tone,
-      child:
-          widget.compact
-              ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  heading,
-                  const SizedBox(height: 18),
-                  stage,
-                  const SizedBox(height: 18),
-                  facts,
-                ],
-              )
-              // Photo and story side by side: the heading sits with the facts
-              // so the section reads as one block.
-              : Row(
-                children: [
-                  Expanded(flex: 3, child: stage),
-                  const SizedBox(width: 40),
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [heading, const SizedBox(height: 22), facts],
-                    ),
+      child: widget.compact
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                heading,
+                const SizedBox(height: 18),
+                stage,
+                const SizedBox(height: 18),
+                facts,
+              ],
+            )
+          // Photo and story side by side: the heading sits with the facts
+          // so the section reads as one block.
+          : Row(
+              children: [
+                Expanded(flex: 3, child: stage),
+                const SizedBox(width: 40),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [heading, const SizedBox(height: 22), facts],
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
     );
   }
 }
@@ -253,17 +252,15 @@ class CapacitySection extends StatelessWidget {
       count: count,
       index: index,
       onIndex: isLuggage ? onLuggage : onSeating,
-      slide:
-          (arrow) => _RoundedPhoto(
-            isLuggage
-                ? VehicleCatalog.luggagePhoto(vc, li)
-                : VehicleCatalog.seatingPhoto(vc, si),
-            arrow: arrow,
-            fallback:
-                isLuggage
-                    ? TrunkSchematic(vehicleClass: vc, option: luggage[li])
-                    : CabinSchematic(vehicleClass: vc, option: seating[si]),
-          ),
+      slide: (arrow) => _RoundedPhoto(
+        isLuggage
+            ? VehicleCatalog.luggagePhoto(vc, li)
+            : VehicleCatalog.seatingPhoto(vc, si),
+        arrow: arrow,
+        fallback: isLuggage
+            ? TrunkSchematic(vehicleClass: vc, option: luggage[li])
+            : CabinSchematic(vehicleClass: vc, option: seating[si]),
+      ),
     );
 
     // The caption follows the photo: it changes with it.
@@ -361,41 +358,40 @@ class CapacitySection extends StatelessWidget {
 
     return _Tone(
       tone: VehicleCatalog.tone(vc),
-      child:
-          compact
-              ? Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  heading,
-                  const SizedBox(height: 18),
-                  carousel,
-                  const SizedBox(height: 14),
-                  caption,
-                  const SizedBox(height: 12),
-                  note,
-                ],
-              )
-              // Same rhythm as Detalles: the photo on one side, what it shows
-              // on the other.
-              : Row(
-                children: [
-                  Expanded(flex: 3, child: carousel),
-                  const SizedBox(width: 40),
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        heading,
-                        const SizedBox(height: 20),
-                        caption,
-                        const SizedBox(height: 14),
-                        note,
-                      ],
-                    ),
+      child: compact
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                heading,
+                const SizedBox(height: 18),
+                carousel,
+                const SizedBox(height: 14),
+                caption,
+                const SizedBox(height: 12),
+                note,
+              ],
+            )
+          // Same rhythm as Detalles: the photo on one side, what it shows
+          // on the other.
+          : Row(
+              children: [
+                Expanded(flex: 3, child: carousel),
+                const SizedBox(width: 40),
+                Expanded(
+                  flex: 2,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      heading,
+                      const SizedBox(height: 20),
+                      caption,
+                      const SizedBox(height: 14),
+                      note,
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
     );
   }
 }
@@ -430,24 +426,22 @@ class _Carousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final arrow =
-        count < 2
-            ? null
-            : _RoundNav(
-              icon: Icons.arrow_forward_rounded,
-              tooltip: 'Siguiente',
-              onTap: () => _go(1),
-            );
+    final arrow = count < 2
+        ? null
+        : _RoundNav(
+            icon: Icons.arrow_forward_rounded,
+            tooltip: 'Siguiente',
+            onTap: () => _go(1),
+          );
     return Column(
       children: [
         GestureDetector(
-          onHorizontalDragEnd:
-              count < 2
-                  ? null
-                  : (d) {
-                    final v = d.primaryVelocity ?? 0;
-                    if (v.abs() > 200) _go(v < 0 ? 1 : -1);
-                  },
+          onHorizontalDragEnd: count < 2
+              ? null
+              : (d) {
+                  final v = d.primaryVelocity ?? 0;
+                  if (v.abs() > 200) _go(v < 0 ? 1 : -1);
+                },
           child: AspectRatio(
             aspectRatio: aspectRatio,
             child: AnimatedSwitcher(
@@ -470,10 +464,9 @@ class _Carousel extends StatelessWidget {
                     width: i == index ? 22 : 7,
                     height: 7,
                     decoration: BoxDecoration(
-                      color:
-                          i == index
-                              ? (_Tone.of(context)?.accent ?? LD.sph)
-                              : LD.border,
+                      color: i == index
+                          ? (_Tone.of(context)?.accent ?? LD.sph)
+                          : LD.border,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -491,23 +484,22 @@ const _arrowOverhang = 24.0;
 
 /// Pins [arrow] half over the right edge of [child], vertically centred. The
 /// extra right padding keeps the whole arrow inside the hit-testable area.
-Widget _withArrow(Widget child, Widget? arrow) =>
-    arrow == null
-        ? child
-        : Stack(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(right: _arrowOverhang),
-              child: child,
-            ),
-            Positioned(
-              right: 0,
-              top: 0,
-              bottom: 0,
-              child: Center(child: arrow),
-            ),
-          ],
-        );
+Widget _withArrow(Widget child, Widget? arrow) => arrow == null
+    ? child
+    : Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: _arrowOverhang),
+            child: child,
+          ),
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: Center(child: arrow),
+          ),
+        ],
+      );
 
 /// Every photo in the same rounded frame: the whole image, never cropped,
 /// over a soft blurred copy of itself that fills the rest of the frame, so
@@ -521,44 +513,42 @@ class _RoundedPhoto extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _withArrow(
-    ClipRRect(
-      borderRadius: BorderRadius.circular(_photoRadius),
-      child: Image.asset(
-        asset,
-        fit: BoxFit.contain,
-        filterQuality: FilterQuality.high,
-        width: double.infinity,
-        height: double.infinity,
-        frameBuilder: (_, image, frame, sync) {
-          if (frame == null && !sync) {
-            return const _RoundedStage(child: SizedBox());
-          }
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              ImageFiltered(
-                imageFilter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
-                child: Image.asset(asset, fit: BoxFit.cover),
-              ),
-              ColoredBox(color: Colors.black.withValues(alpha: 0.08)),
-              image,
-            ],
-          );
-        },
-        errorBuilder:
-            (_, __, ___) => _RoundedStage(
-              child:
-                  fallback == null
-                      ? const SizedBox()
-                      : Padding(
-                        padding: const EdgeInsets.all(18),
-                        child: fallback,
-                      ),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(_photoRadius),
+          child: Image.asset(
+            asset,
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.high,
+            width: double.infinity,
+            height: double.infinity,
+            frameBuilder: (_, image, frame, sync) {
+              if (frame == null && !sync) {
+                return const _RoundedStage(child: SizedBox());
+              }
+              return Stack(
+                fit: StackFit.expand,
+                children: [
+                  ImageFiltered(
+                    imageFilter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
+                    child: Image.asset(asset, fit: BoxFit.cover),
+                  ),
+                  ColoredBox(color: Colors.black.withValues(alpha: 0.08)),
+                  image,
+                ],
+              );
+            },
+            errorBuilder: (_, __, ___) => _RoundedStage(
+              child: fallback == null
+                  ? const SizedBox()
+                  : Padding(
+                      padding: const EdgeInsets.all(18),
+                      child: fallback,
+                    ),
             ),
-      ),
-    ),
-    arrow,
-  );
+          ),
+        ),
+        arrow,
+      );
 }
 
 /// Soft rounded backdrop for cut-out cars and illustrations; fills its slot.
@@ -569,22 +559,21 @@ class _RoundedStage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _withArrow(
-    AnimatedContainer(
-      duration: const Duration(milliseconds: 500),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(_photoRadius),
-        gradient:
-            _Tone.of(context)?.stageGradient ??
-            const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Colors.white, LD.bg2],
-            ),
-      ),
-      child: SizedBox.expand(child: child),
-    ),
-    arrow,
-  );
+        AnimatedContainer(
+          duration: const Duration(milliseconds: 500),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(_photoRadius),
+            gradient: _Tone.of(context)?.stageGradient ??
+                const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.white, LD.bg2],
+                ),
+          ),
+          child: SizedBox.expand(child: child),
+        ),
+        arrow,
+      );
 }
 
 class _UnderlineTab extends StatelessWidget {
@@ -599,40 +588,40 @@ class _UnderlineTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-    button: true,
-    selected: active,
-    child: MouseRegion(
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTap: onTap,
-        behavior: HitTestBehavior.opaque,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 14,
-                  fontWeight: active ? FontWeight.w600 : FontWeight.w400,
-                  color: active ? LD.ink : LD.ink3,
+        button: true,
+        selected: active,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: onTap,
+            behavior: HitTestBehavior.opaque,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 14,
+                      fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                      color: active ? LD.ink : LD.ink3,
+                    ),
+                  ),
                 ),
-              ),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  height: 2,
+                  width: active ? 40 : 0,
+                  color: _Tone.of(context)?.accent ?? LD.sph,
+                ),
+              ],
             ),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              height: 2,
-              width: active ? 40 : 0,
-              color: _Tone.of(context)?.accent ?? LD.sph,
-            ),
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 class _RoundNav extends StatefulWidget {
@@ -653,34 +642,34 @@ class _RoundNavState extends State<_RoundNav> {
   bool _down = false;
   @override
   Widget build(BuildContext context) => Tooltip(
-    message: widget.tooltip,
-    child: Semantics(
-      button: true,
-      label: widget.tooltip,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTapDown: (_) => setState(() => _down = true),
-          onTapCancel: () => setState(() => _down = false),
-          onTapUp: (_) {
-            setState(() => _down = false);
-            widget.onTap();
-          },
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 120),
-            width: 48,
-            height: 48,
-            decoration: luxRaisedDecoration(
-              variant: LuxRaisedVariant.secondary,
-              pressed: _down,
-              radius: 24,
+        message: widget.tooltip,
+        child: Semantics(
+          button: true,
+          label: widget.tooltip,
+          child: MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTapDown: (_) => setState(() => _down = true),
+              onTapCancel: () => setState(() => _down = false),
+              onTapUp: (_) {
+                setState(() => _down = false);
+                widget.onTap();
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 120),
+                width: 48,
+                height: 48,
+                decoration: luxRaisedDecoration(
+                  variant: LuxRaisedVariant.secondary,
+                  pressed: _down,
+                  radius: 24,
+                ),
+                child: Icon(widget.icon, size: 20, color: LD.ink),
+              ),
             ),
-            child: Icon(widget.icon, size: 20, color: LD.ink),
           ),
         ),
-      ),
-    ),
-  );
+      );
 }
 
 class _Spec extends StatelessWidget {
@@ -689,21 +678,21 @@ class _Spec extends StatelessWidget {
   final String text;
   @override
   Widget build(BuildContext context) => Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Icon(icon, size: 16, color: LD.ink3),
-      const SizedBox(width: 6),
-      Text(
-        text,
-        style: const TextStyle(
-          fontFamily: kSans,
-          fontSize: 12.5,
-          fontWeight: FontWeight.w500,
-          color: LD.ink2,
-        ),
-      ),
-    ],
-  );
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: LD.ink3),
+          const SizedBox(width: 6),
+          Text(
+            text,
+            style: const TextStyle(
+              fontFamily: kSans,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w500,
+              color: LD.ink2,
+            ),
+          ),
+        ],
+      );
 }
 
 /// The selected class colours, for the pieces deep inside a section.

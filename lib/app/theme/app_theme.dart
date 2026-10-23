@@ -195,15 +195,15 @@ ThemeData get luxTheme {
       FontWeight? fontWeight,
       double? letterSpacing,
       double? height,
-    })
-    font,
-  ) => font(
-    color: t.color,
-    fontSize: t.fontSize,
-    fontWeight: t.fontWeight,
-    letterSpacing: t.letterSpacing,
-    height: t.height,
-  );
+    }) font,
+  ) =>
+      font(
+        color: t.color,
+        fontSize: t.fontSize,
+        fontWeight: t.fontWeight,
+        letterSpacing: t.letterSpacing,
+        height: t.height,
+      );
 
   final textTheme = TextTheme(
     displayLarge: gf(LuxTypography.displayLarge, serif),
@@ -278,16 +278,15 @@ ThemeData get luxTheme {
         textStyle: LuxTypography.button.copyWith(color: LuxColors.onAccent),
         elevation: 0,
       ).copyWith(
-        backgroundBuilder:
-            (context, states, child) => AnimatedContainer(
-              duration: const Duration(milliseconds: 140),
-              decoration: luxRaisedDecoration(
-                pressed: states.contains(WidgetState.pressed),
-                enabled: !states.contains(WidgetState.disabled),
-                radius: LuxRadius.md,
-              ),
-              child: child,
-            ),
+        backgroundBuilder: (context, states, child) => AnimatedContainer(
+          duration: const Duration(milliseconds: 140),
+          decoration: luxRaisedDecoration(
+            pressed: states.contains(WidgetState.pressed),
+            enabled: !states.contains(WidgetState.disabled),
+            radius: LuxRadius.md,
+          ),
+          child: child,
+        ),
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
@@ -404,22 +403,19 @@ ThemeData get luxTheme {
       labelTextStyle: WidgetStateProperty.resolveWith(
         (s) => LuxTypography.caption.copyWith(
           fontSize: 11,
-          color:
-              s.contains(WidgetState.selected)
-                  ? LuxColors.ink
-                  : LuxColors.inkTertiary,
-          fontWeight:
-              s.contains(WidgetState.selected)
-                  ? FontWeight.w600
-                  : FontWeight.w500,
+          color: s.contains(WidgetState.selected)
+              ? LuxColors.ink
+              : LuxColors.inkTertiary,
+          fontWeight: s.contains(WidgetState.selected)
+              ? FontWeight.w600
+              : FontWeight.w500,
         ),
       ),
       iconTheme: WidgetStateProperty.resolveWith(
         (s) => IconThemeData(
-          color:
-              s.contains(WidgetState.selected)
-                  ? LuxColors.sapphire
-                  : LuxColors.inkTertiary,
+          color: s.contains(WidgetState.selected)
+              ? LuxColors.sapphire
+              : LuxColors.inkTertiary,
         ),
       ),
     ),
@@ -437,10 +433,9 @@ ThemeData get luxTheme {
     ),
     checkboxTheme: CheckboxThemeData(
       fillColor: WidgetStateProperty.resolveWith(
-        (s) =>
-            s.contains(WidgetState.selected)
-                ? LuxColors.sapphire
-                : LuxColors.surface,
+        (s) => s.contains(WidgetState.selected)
+            ? LuxColors.sapphire
+            : LuxColors.surface,
       ),
       checkColor: WidgetStateProperty.all(LuxColors.onAccent),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
@@ -448,30 +443,26 @@ ThemeData get luxTheme {
     ),
     radioTheme: RadioThemeData(
       fillColor: WidgetStateProperty.resolveWith(
-        (s) =>
-            s.contains(WidgetState.selected)
-                ? LuxColors.sapphire
-                : LuxColors.inkTertiary,
+        (s) => s.contains(WidgetState.selected)
+            ? LuxColors.sapphire
+            : LuxColors.inkTertiary,
       ),
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith(
-        (s) =>
-            s.contains(WidgetState.selected)
-                ? LuxColors.onAccent
-                : LuxColors.inkTertiary,
+        (s) => s.contains(WidgetState.selected)
+            ? LuxColors.onAccent
+            : LuxColors.inkTertiary,
       ),
       trackColor: WidgetStateProperty.resolveWith(
-        (s) =>
-            s.contains(WidgetState.selected)
-                ? LuxColors.sapphire
-                : LuxColors.surfaceMuted,
+        (s) => s.contains(WidgetState.selected)
+            ? LuxColors.sapphire
+            : LuxColors.surfaceMuted,
       ),
       trackOutlineColor: WidgetStateProperty.resolveWith(
-        (s) =>
-            s.contains(WidgetState.selected)
-                ? LuxColors.sapphire
-                : LuxColors.border,
+        (s) => s.contains(WidgetState.selected)
+            ? LuxColors.sapphire
+            : LuxColors.border,
       ),
     ),
     popupMenuTheme: PopupMenuThemeData(
@@ -520,18 +511,16 @@ ThemeData get luxTheme {
         borderRadius: BorderRadius.circular(LuxRadius.lg),
       ),
       dayForegroundColor: WidgetStateProperty.resolveWith(
-        (s) =>
-            s.contains(WidgetState.selected)
-                ? LuxColors.onAccent
-                : s.contains(WidgetState.disabled)
+        (s) => s.contains(WidgetState.selected)
+            ? LuxColors.onAccent
+            : s.contains(WidgetState.disabled)
                 ? LuxColors.inkTertiary.withOpacity(0.5)
                 : LuxColors.ink,
       ),
       dayBackgroundColor: WidgetStateProperty.resolveWith(
-        (s) =>
-            s.contains(WidgetState.selected)
-                ? LuxColors.sapphire
-                : Colors.transparent,
+        (s) => s.contains(WidgetState.selected)
+            ? LuxColors.sapphire
+            : Colors.transparent,
       ),
       todayBorder: const BorderSide(color: LuxColors.sapphire),
     ),

@@ -14,20 +14,21 @@ class _MockDriverBloc extends MockBloc<DriverEvent, DriverState>
 final _now = DateTime(2026, 10, 10, 12);
 
 Booking _b(String id, {BookingSettlement? settlement}) => Booking(
-  id: id,
-  riderId: 'r',
-  driverId: 'd',
-  origin: const Place(address: 'Aeropuerto El Alto', lat: 0, lng: 0),
-  destination: const Place(address: 'Av. Ballivián, Calacoto', lat: 0, lng: 0),
-  scheduledAt: _now,
-  vehicleClass: VehicleClass.business,
-  serviceType: ServiceType.oneWay,
-  status: BookingStatus.completed,
-  estimatedPrice: 100,
-  createdAt: _now,
-  updatedAt: _now,
-  settlement: settlement,
-);
+      id: id,
+      riderId: 'r',
+      driverId: 'd',
+      origin: const Place(address: 'Aeropuerto El Alto', lat: 0, lng: 0),
+      destination:
+          const Place(address: 'Av. Ballivián, Calacoto', lat: 0, lng: 0),
+      scheduledAt: _now,
+      vehicleClass: VehicleClass.business,
+      serviceType: ServiceType.oneWay,
+      status: BookingStatus.completed,
+      estimatedPrice: 100,
+      createdAt: _now,
+      updatedAt: _now,
+      settlement: settlement,
+    );
 
 void main() {
   testWidgets('muestra ganancias netas, comisión y viajes provisionales', (
