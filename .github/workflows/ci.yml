@@ -121,12 +121,20 @@ jobs:
           cache: true
       - run: flutter pub get
       - name: Build rider web
+        env:
+          RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
         run: |
+          # App Check en la web (reCAPTCHA v3): sin clave la release no sale.
+          if [ -z "$RECAPTCHA_SITE_KEY" ]; then
+            echo "::error::Release web build without App Check: missing repository secret RECAPTCHA_SITE_KEY (see DEPLOY.md, App Check)."
+            exit 1
+          fi
           flutter build web --release \
             --dart-define=ENV=prod \
             --dart-define=FIREBASE_ENV=production \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_WEB_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
+            --dart-define=RECAPTCHA_SITE_KEY="$RECAPTCHA_SITE_KEY" \
             --pwa-strategy=none \
             --output=build/web_rider
           # Flutter writes an empty worker with --pwa-strategy=none; ours also
@@ -151,13 +159,21 @@ jobs:
           cache: true
       - run: flutter pub get
       - name: Build driver web
+        env:
+          RECAPTCHA_SITE_KEY: ${{ secrets.RECAPTCHA_SITE_KEY }}
         run: |
+          # App Check en la web (reCAPTCHA v3): sin clave la release no sale.
+          if [ -z "$RECAPTCHA_SITE_KEY" ]; then
+            echo "::error::Release web build without App Check: missing repository secret RECAPTCHA_SITE_KEY (see DEPLOY.md, App Check)."
+            exit 1
+          fi
           flutter build web --release \
             -t lib/main_driver.dart \
             --dart-define=ENV=prod \
             --dart-define=FIREBASE_ENV=production \
             --dart-define=GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_MAPS_WEB_API_KEY }} \
             --dart-define=FCM_VAPID_KEY=${{ secrets.FCM_VAPID_KEY }} \
+            --dart-define=RECAPTCHA_SITE_KEY="$RECAPTCHA_SITE_KEY" \
             --pwa-strategy=none \
             --output=build/web_driver
           # Flutter writes an empty worker with --pwa-strategy=none; ours also

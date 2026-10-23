@@ -204,4 +204,42 @@ void main() {
       expect(ci, contains('functions:secrets:get PICKUP_CODE_SECRET'));
     });
   });
+
+  group('App Check (T1)', () {
+    test('firebase_app_check con versión fija', () {
+      expect(_read('pubspec.yaml'),
+          matches(RegExp(r'\n  firebase_app_check: \d+\.\d+\.\d+(\+\d+)?\n')));
+    });
+
+    test(
+        'las builds web reciben RECAPTCHA_SITE_KEY del secreto y fallan sin ella',
+        () {
+      final ci = _read('.github/workflows/ci.yml');
+      expect(
+          RegExp(r'RECAPTCHA_SITE_KEY: \$\{\{ secrets\.RECAPTCHA_SITE_KEY \}\}')
+              .allMatches(ci)
+              .length,
+          2);
+      expect(
+          RegExp(r'--dart-define=RECAPTCHA_SITE_KEY="\$RECAPTCHA_SITE_KEY"')
+              .allMatches(ci)
+              .length,
+          2);
+      expect('Release web build without App Check'.allMatches(ci).length, 2);
+    });
+
+    test('ninguna clave de sitio de reCAPTCHA en el código', () {
+      final setup = _read('lib/core/config/app_check_setup.dart');
+      expect(setup, contains("String.fromEnvironment('RECAPTCHA_SITE_KEY')"));
+      expect(setup, isNot(contains('defaultValue')));
+      // Las claves de sitio de reCAPTCHA empiezan por 6L y tienen 40 caracteres.
+      expect(RegExp(r'6L[0-9A-Za-z_-]{38}').hasMatch(setup), isFalse);
+    });
+
+    test('las dos apps activan App Check al arrancar', () {
+      for (final f in ['lib/main.dart', 'lib/main_driver.dart']) {
+        expect(_read(f), contains('await activateAppCheck();'), reason: f);
+      }
+    });
+  });
 }

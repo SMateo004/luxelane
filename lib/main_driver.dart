@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app/driver_app.dart';
+import 'core/config/app_check_setup.dart';
 import 'core/config/env.dart';
 import 'core/config/firebase_startup.dart';
 import 'core/di/injection.dart';
@@ -22,6 +23,11 @@ void main() async {
   if (firebase is FirebaseFatal) {
     runApp(appForStartup(firebase, const DriverApp()));
     return;
+  }
+  if (firebase is FirebaseReady) {
+    // App Check antes de cualquier llamada a Functions; si falla, la app
+    // arranca igual.
+    await activateAppCheck();
   }
 
   if (!kIsWeb) {
