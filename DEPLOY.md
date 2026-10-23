@@ -329,6 +329,13 @@ llamada» con prioridad alta y **la escalada sigue** hasta que un admin lo
 reconozca y lo cierre con nota. Deja de publicarse la ubicación del usuario
 (respeta su decisión); el seguimiento del chófer sigue visible en el panel.
 
+**Limitación de la ubicación del SOS:** la app solo publica la ubicación de
+quien pidió ayuda **mientras está en primer plano** (permiso «mientras se usa
+la app»). La app de pasajeros no pide ubicación en segundo plano por el SOS
+(riesgo de rechazo en tiendas, D18): si la persona bloquea el teléfono o
+cambia de app, central ve la última ubicación publicada y el seguimiento del
+chófer, que sí sigue en segundo plano.
+
 ### Pasos manuales previos (decisiones del responsable)
 1. `config/global.dispatchPhone` (texto): teléfono de central. Sin él, la
    app no ofrece llamar ni enviar SMS a central si falla la red, y el panel

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/error/failures.dart';
@@ -114,9 +115,11 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
     required this.bookingId,
     required this.uid,
     Future<LatLngLite?> Function()? currentLocation,
+    bool Function()? isForeground,
     this.publishEvery = const Duration(seconds: 10),
   })  : _repo = repository,
         _currentLocation = currentLocation ?? (() async => null),
+        _isForeground = isForeground ?? _appInForeground,
         super(const IncidentState()) {
     on<IncidentWatched>(_onWatched);
     on<IncidentRaised>(_onRaised);
@@ -129,6 +132,16 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
   final String bookingId;
   final String uid;
   final Future<LatLngLite?> Function() _currentLocation;
+
+  /// La ubicación del SOS solo se publica con la app en primer plano: la app
+  /// del pasajero no pide permiso de ubicación en segundo plano por el SOS
+  /// (riesgo de rechazo en las tiendas, D18).
+  final bool Function() _isForeground;
+
+  static bool _appInForeground() {
+    final s = WidgetsBinding.instance.lifecycleState;
+    return s == null || s == AppLifecycleState.resumed;
+  }
 
   /// Igual que el tramo que exigen las reglas: una ubicación cada 10 s.
   final Duration publishEvery;
@@ -227,7 +240,7 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
     Emitter<IncidentState> emit,
   ) async {
     final incident = state.incident;
-    if (incident == null || !incident.isLive) return;
+    if (incident == null || !incident.isLive || !_isForeground()) return;
     final location = await _locate();
     if (location == null) return;
     emit(state.copyWith(lastLocation: location));

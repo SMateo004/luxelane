@@ -67,11 +67,15 @@ void main() {
   });
   tearDown(() => mine.close());
 
-  IncidentBloc bloc({Future<LatLngLite?> Function()? where}) => IncidentBloc(
+  IncidentBloc bloc(
+          {Future<LatLngLite?> Function()? where,
+          bool Function()? foreground}) =>
+      IncidentBloc(
         repository: repo,
         bookingId: 'abcdef123',
         uid: 'ana',
         currentLocation: where ?? () async => (lat: -17.78, lng: -63.18),
+        isForeground: foreground ?? () => true,
         publishEvery: const Duration(milliseconds: 30),
       );
 
@@ -178,6 +182,28 @@ void main() {
       seed: () => IncidentState(incident: _incident(IncidentStatus.open)),
       act: (b) => b.add(const IncidentCancelled()),
       verify: (_) => verify(() => repo.cancel('inc1')).called(1),
+    );
+  });
+
+  group('ubicación solo en primer plano', () {
+    blocTest<IncidentBloc, IncidentState>(
+      'con la app en segundo plano no publica; al volver, sí',
+      build: () {
+        var fg = false;
+        final b = bloc(foreground: () => fg);
+        Future<void>.delayed(const Duration(milliseconds: 60), () => fg = true);
+        return b;
+      },
+      act: (b) async {
+        b.add(const IncidentWatched());
+        await Future<void>.delayed(Duration.zero);
+        mine.add(_incident(IncidentStatus.open));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        verifyNever(() => repo.publishLocation(any(), any(), any()));
+        await Future<void>.delayed(const Duration(milliseconds: 80));
+      },
+      verify: (_) => verify(() => repo.publishLocation('inc1', -17.78, -63.18))
+          .called(greaterThanOrEqualTo(1)),
     );
   });
 
