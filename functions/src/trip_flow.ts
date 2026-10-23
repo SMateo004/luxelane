@@ -11,6 +11,7 @@
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
+import { docId } from './schemas';
 import { updateRequired } from './app_version';
 import { codesMatch, MAX_PICKUP_ATTEMPTS, newPickupSalt, pickupCode, pickupExpired, PICKUP_CODE_TTL_MS } from './pickup_code';
 import { distanceKm } from './service_area';
@@ -45,7 +46,7 @@ const tripError = (
   extra: Record<string, unknown> = {},
 ) => new HttpsError(code, reason, { reason, ...extra });
 
-const bookingId = z.string().trim().min(1).max(128);
+const bookingId = docId;
 const location = z.strictObject({
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),

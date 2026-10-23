@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import { CallableRequest } from 'firebase-functions/v2/https';
 import { secureCallable } from './callable';
+import { callableSchemas as schema, parseInput } from './schemas';
 import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { defineSecret } from 'firebase-functions/params';
@@ -232,8 +233,7 @@ const HOLD_WINDOW_MS = 6 * 24 * 60 * 60 * 1000;
 
 export const createPaymentIntent = secureCallable('createPaymentIntent', withStripe, async (req) => {
   const uid = requireAuth(req);
-  const { bookingId, paymentMethodId } = req.data as { bookingId: string; paymentMethodId?: string };
-  if (!bookingId) throw err.invalidArgument('bookingId required');
+  const { bookingId, paymentMethodId } = parseInput(schema.createPaymentIntent, req.data);
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const bookingSnap = await bookingRef.get();
@@ -289,12 +289,7 @@ export const createPaymentIntent = secureCallable('createPaymentIntent', withStr
 export const capturePayment = secureCallable('capturePayment', withStripe, async (req) => {
   const uid = requireAuth(req);
   // El importe y el pasajero salen de la reserva, nunca del cliente.
-  const { bookingId, stripePaymentIntentId } = req.data as {
-    bookingId: string;
-    stripePaymentIntentId: string;
-  };
-
-  if (!bookingId || !stripePaymentIntentId) throw err.invalidArgument('bookingId and stripePaymentIntentId required');
+  const { bookingId, stripePaymentIntentId } = parseInput(schema.capturePayment, req.data);
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const bookingSnap = await bookingRef.get();
@@ -302,6 +297,10 @@ export const capturePayment = secureCallable('capturePayment', withStripe, async
 
   const booking = bookingSnap.data() as BookingDoc;
   if (booking.riderId !== uid) await requireAdmin(req);
+  // Solo se cobra el intent de esta reserva: nunca uno que mande el cliente.
+  if (!booking.stripePaymentIntentId || booking.stripePaymentIntentId !== stripePaymentIntentId) {
+    throw err.permissionDenied('Payment does not belong to this booking');
+  }
   if (booking.status !== 'completed') throw err.failedPrecondition('Ride must be completed before capture');
 
   if (booking.paymentId) {
@@ -424,9 +423,7 @@ export const captureOnCompletion = onDocumentUpdated({ document: 'bookings/{book
 export const refundPayment = secureCallable('refundPayment', withStripe, async (req) => {
   // Solo un admin puede reembolsar: mueve dinero y altera las finanzas.
   const adminId = await requireAdmin(req);
-  const { paymentId, reason } = req.data as { paymentId: string; reason?: string };
-
-  if (!paymentId) throw err.invalidArgument('paymentId required');
+  const { paymentId, reason } = parseInput(schema.refundPayment, req.data);
 
   const paymentRef = db.collection('payments').doc(paymentId);
   const snap = await paymentRef.get();
@@ -486,8 +483,7 @@ async function requireOwnCustomer(uid: string, customerId: string): Promise<void
 
 export const listPaymentMethods = secureCallable('listPaymentMethods', withStripe, async (req) => {
   const uid = requireAuth(req);
-  const { customerId } = req.data as { customerId: string };
-  if (!customerId) throw err.invalidArgument('customerId required');
+  const { customerId } = parseInput(schema.listPaymentMethods, req.data);
   await requireOwnCustomer(uid, customerId);
 
   const [methods, defaultId] = await Promise.all([
@@ -513,8 +509,7 @@ export const listPaymentMethods = secureCallable('listPaymentMethods', withStrip
 
 export const setDefaultPaymentMethod = secureCallable('setDefaultPaymentMethod', withStripe, async (req) => {
   const uid = requireAuth(req);
-  const { paymentMethodId } = req.data as { paymentMethodId: string };
-  if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+  const { paymentMethodId } = parseInput(schema.setDefaultPaymentMethod, req.data);
   const owner = await stripe.paymentMethodCustomer(paymentMethodId);
   if (!owner) throw err.permissionDenied('Not your payment method');
   await requireOwnCustomer(uid, owner);
@@ -529,11 +524,7 @@ export const setDefaultPaymentMethod = secureCallable('setDefaultPaymentMethod',
 
 export const attachPaymentMethod = secureCallable('attachPaymentMethod', withStripe, async (req) => {
   const uid = requireAuth(req);
-  const { customerId, paymentMethodId } = req.data as {
-    customerId: string;
-    paymentMethodId: string;
-  };
-  if (!customerId || !paymentMethodId) throw err.invalidArgument('customerId and paymentMethodId required');
+  const { customerId, paymentMethodId } = parseInput(schema.attachPaymentMethod, req.data);
   await requireOwnCustomer(uid, customerId);
 
   await stripe.attachPaymentMethod(customerId, paymentMethodId);
@@ -546,8 +537,7 @@ export const attachPaymentMethod = secureCallable('attachPaymentMethod', withStr
 
 export const detachPaymentMethod = secureCallable('detachPaymentMethod', withStripe, async (req) => {
   const uid = requireAuth(req);
-  const { paymentMethodId } = req.data as { paymentMethodId: string };
-  if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+  const { paymentMethodId } = parseInput(schema.detachPaymentMethod, req.data);
   const owner = await stripe.paymentMethodCustomer(paymentMethodId);
   if (!owner) throw err.permissionDenied('Not your payment method');
   await requireOwnCustomer(uid, owner);
@@ -575,6 +565,7 @@ export const detachPaymentMethod = secureCallable('detachPaymentMethod', withStr
 // solo guardan el uid, que deja de apuntar a datos personales.
 export const deleteAccount = secureCallable('deleteAccount', withStripe, async (req) => {
   const uid = requireAuth(req);
+  parseInput(schema.deleteAccount, req.data);
   const userRef = db.collection('users').doc(uid);
   const user = (await userRef.get()).data();
   if (user?.role === 'admin') {
@@ -677,6 +668,7 @@ export const createStripeCustomer = onDocumentCreated({ document: 'users/{uid}',
 // Perfil de pagos bajo demanda (pantalla de tarjetas y alta de tarjeta).
 export const ensureStripeCustomer = secureCallable('ensureStripeCustomer', withStripe, async (req) => {
   const uid = requireAuth(req);
+  parseInput(schema.ensureStripeCustomer, req.data);
   return { customerId: await ensureStripeCustomerFor(uid) };
 });
 
@@ -979,6 +971,7 @@ export const settleBooking = onDocumentUpdated('bookings/{bookingId}', async (ev
 
 export const backfillSettlements = secureCallable('backfillSettlements', { timeoutSeconds: 540 }, async (req) => {
   const adminId = await requireAdmin(req);
+  parseInput(schema.backfillSettlements, req.data);
   const finance = await db.collection('config').doc('finance').get();
   const pct = finance.data()?.platformCommissionPct;
 
@@ -1049,8 +1042,7 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
 
 export const assignNearestDriver = secureCallable('assignNearestDriver', {}, async (req) => {
   const uid = requireAuth(req);
-  const { bookingId } = req.data as { bookingId: string };
-  if (!bookingId) throw err.invalidArgument('bookingId required');
+  const { bookingId } = parseInput(schema.assignNearestDriver, req.data);
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const bookingSnap = await bookingRef.get();
@@ -1132,8 +1124,7 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
 
 export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => {
   const driverId = requireAuth(req);
-  const { bookingId } = req.data as { bookingId: string };
-  if (!bookingId) throw err.invalidArgument('bookingId required');
+  const { bookingId } = parseInput(schema.acceptBooking, req.data);
 
   // Solo un chófer activo (no bloqueado desde el panel) acepta viajes.
   const me = (await db.collection('users').doc(driverId).get()).data();

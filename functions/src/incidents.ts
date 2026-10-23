@@ -16,6 +16,7 @@
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
+import { docId } from './schemas';
 import { logger } from './logger';
 
 export type PushFn = (tokens: string[], title: string, body: string, data: Record<string, string>) => Promise<void>;
@@ -59,13 +60,13 @@ const location = z.strictObject({
   lng: z.number().min(-180).max(180),
 });
 export const raiseSchema = z.strictObject({
-  bookingId: z.string().trim().min(1).max(128),
+  bookingId: docId,
   location: location.optional(),
   appVersion: z.string().max(40).optional(),
 });
-export const incidentIdSchema = z.strictObject({ incidentId: z.string().trim().min(1).max(128) });
+export const incidentIdSchema = z.strictObject({ incidentId: docId });
 export const closeSchema = z.strictObject({
-  incidentId: z.string().trim().min(1).max(128),
+  incidentId: docId,
   note: z.string().trim().min(10).max(1000),
 });
 
