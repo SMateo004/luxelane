@@ -413,6 +413,96 @@ con `node tools/pricing/calibrar_ruta.mjs <trayectos.csv>` (ver
 
 ---
 
+## Endurecimiento: App Check, límites de tasa y errores (D3, D11, D13)
+
+Todas las callables pasan por `secureCallable` (`functions/src/callable.ts`):
+App Check, límite de tasa por usuario y traducción de errores. Los triggers
+y las funciones programadas no cambian. El emulador **no simula App Check**:
+los tests prueban la puerta con peticiones con y sin token
+(`callable_security.test.ts`).
+
+### Pasos manuales previos (consola; decisiones del responsable)
+1. **Registrar las apps en App Check** (consola de Firebase → App Check →
+   Apps), en staging y luego en producción:
+   - Android: proveedor **Play Integrity**. Requiere la huella SHA-256 del
+     certificado de firma de la app (la de Play App Signing, ver «Firma de
+     Android») en la configuración del proyecto, y la app vinculada en Play
+     Console.
+   - iOS: **App Attest** (con DeviceCheck de respaldo). En Xcode, añadir la
+     capacidad *App Attest* (entitlement
+     `com.apple.developer.devicecheck.appattest-environment` = `production`);
+     el repositorio no tiene archivo de entitlements, hay que crearlo
+     (NO VERIFICADO en un dispositivo).
+   - Web (panel y web del pasajero): **reCAPTCHA v3**. Crear la clave del
+     sitio para los dominios del hosting en la consola de reCAPTCHA,
+     registrar su clave secreta en App Check y guardar la clave del sitio en
+     el secreto de GitHub `RECAPTCHA_SITE_KEY`. Sin ese secreto el build web
+     de release falla con un mensaje claro. (Las notas oficiales sobre qué
+     proveedor web recomiendan hoy no se pudieron consultar: NO VERIFICADO.)
+2. **Tokens de depuración** (solo builds de depuración): generar un token en
+   App Check → Apps → *Administrar tokens de depuración* y pasarlo con
+   `--dart-define=APP_CHECK_DEBUG_TOKEN=<token>`. Nunca en un build de
+   release (el código lo ignora fuera de depuración) ni en el repositorio.
+3. **TTL de `rateLimits`**: consola de Google Cloud → Firestore →
+   *Time-to-live (TTL)* → *Create policy*: grupo de colecciones `rateLimits`,
+   campo `expireAt`. O bien:
+   `gcloud firestore fields ttls update expireAt --collection-group=rateLimits --enable-ttl --project=<proyecto>`.
+   El borrado ocurre en algún momento después de `expireAt` (puede tardar
+   horas) **[Probable]**. Sin la política los límites funcionan igual; los
+   documentos (uno por usuario y callable) se acumulan.
+
+### Fase 1: medir sin imponer
+1. **Functions** con `APP_CHECK_ENFORCE=false` (valor por defecto del
+   parámetro; se fija en `functions/.env.<proyecto>` o lo pide el CLI al
+   desplegar **[Probable]**). Con `false`, cada llamada registra solo el nombre de la
+   función y si llegó un token válido, sin datos personales:
+   Logs Explorer → `jsonPayload.fn="appCheck"` y
+   `jsonPayload.data.appCheck="missing"`. (las líneas JSON del log llegan como
+   `jsonPayload` **[Probable]**).
+2. **Apps y hosting** con App Check (pasajero, chófer, panel y web).
+3. **Mirar las métricas** (Logs Explorer y App Check → métricas de cada
+   servicio) hasta que las llamadas sin token sean solo de versiones
+   antiguas. Entonces subir `minAppVersion` y `minDriverAppVersion` a las
+   primeras versiones con App Check (ver «Versión mínima» más arriba).
+
+### Fase 2: imponer
+1. **Callables**: `APP_CHECK_ENFORCE=true` y volver a desplegar functions.
+   Sin token válido la callable responde `unauthenticated` con motivo
+   `app_check_required` y la app muestra «No se pudo verificar la app».
+   Vuelta atrás: `false` y desplegar.
+2. **Firestore** (consola → App Check → APIs → Cloud Firestore →
+   *Enforce*): es otro interruptor, solo en la consola. **Rompe todas las
+   lecturas y escrituras de las apps sin App Check**: hacerlo solo cuando
+   `minAppVersion` y `minDriverAppVersion` ya exijan versiones con App
+   Check y las métricas de Firestore muestren casi todo verificado. Mitiga
+   también el envío masivo del formulario de empresas (matriz, H5).
+
+### Límites de tasa
+Tabla y justificación en `functions/src/rate_limit.ts` (`RATE_LIMITS`).
+Ventana fija por usuario y callable, contada en una transacción en
+`rateLimits/{callable}__{uid}` (solo el servidor). Si el contador falla,
+la callable se rechaza (`resource_exhausted`), salvo `raiseIncident`: un
+SOS nunca se pierde por el contador.
+
+### Errores
+El cliente solo recibe `invalid_request`, `unauthenticated`,
+`permission_denied`, `failed_precondition`, `resource_exhausted`,
+`not_found` o `internal`, con un motivo corto en `details.reason`; nunca
+texto de Stripe, Firestore o zod. El log del servidor tacha correos,
+teléfonos, tokens, claves, tarjetas, códigos de recogida y coordenadas.
+**Apps antiguas:** leían «card-in-use» y «active-bookings» del mensaje;
+con las functions nuevas muestran el texto genérico de error (quitar
+tarjeta, eliminar cuenta). Nada se rompe, pero conviene que
+`minAppVersion` alcance la versión nueva (decisión del responsable).
+
+### Reglas (matriz de acceso)
+Ver `docs/MATRIZ_ACCESO.md`. Con el job *Deploy Firestore rules*:
+`isVerified` pasa a ser campo privilegiado y los avisos de
+`users/{uid}/notifications` solo los crea el servidor. Ninguna pantalla
+actual escribe ninguno de los dos: no hace falta subir versiones mínimas.
+
+---
+
 ## Claves de Google Maps
 
 No hay ninguna clave en el repositorio. Cada plataforma usa la suya y una
@@ -655,6 +745,7 @@ GOOGLE_MAPS_WEB_API_KEY     → Maps: web
 GOOGLE_MAPS_ANDROID_API_KEY → Maps: SDK de Android
 GOOGLE_MAPS_IOS_API_KEY     → Maps: SDK de iOS
 FCM_VAPID_KEY           → Firebase → Cloud Messaging → Web Push certificates
+RECAPTCHA_SITE_KEY      → clave del sitio de reCAPTCHA v3 para App Check en la web (ver «Endurecimiento»)
 FIREBASE_ANDROID_APP_ID  → google-services.json → mobilesdk_app_id (ver «Claves de Firebase de las apps nativas»)
 FIREBASE_ANDROID_API_KEY → google-services.json → api_key[0].current_key
 FIREBASE_IOS_APP_ID      → GoogleService-Info.plist → GOOGLE_APP_ID
