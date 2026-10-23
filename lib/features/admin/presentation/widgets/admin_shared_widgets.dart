@@ -504,56 +504,98 @@ Future<String?> confirmAdminAction(
   required String confirmLabel,
   String? reasonLabel,
   bool destructive = false,
-}) {
-  final ctrl = TextEditingController();
-  return showDialog<String>(
-    context: context,
-    builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setState) {
-        final canConfirm = reasonLabel == null || ctrl.text.trim().length >= 3;
-        return AlertDialog(
-          title: Text(title,
-              style: LuxTypography.headlineLarge.copyWith(fontSize: 24)),
-          content: SizedBox(
-            width: 420,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(message, style: LuxTypography.bodyMedium),
-                if (reasonLabel != null) ...[
-                  const SizedBox(height: LuxSpacing.md),
-                  Text(reasonLabel, style: LuxTypography.caption),
-                  const SizedBox(height: 4),
-                  TextField(
-                    controller: ctrl,
-                    autofocus: true,
-                    maxLines: 2,
-                    style: LuxTypography.bodyMedium,
-                    onChanged: (_) => setState(() {}),
-                    decoration:
-                        adminInputDecoration(hint: 'Obligatorio (auditoría)'),
-                  ),
-                ],
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Cancelar')),
-            FilledButton(
-              onPressed: canConfirm
-                  ? () => Navigator.pop(ctx, ctrl.text.trim())
-                  : null,
-              style: FilledButton.styleFrom(
-                  backgroundColor:
-                      destructive ? LuxColors.error : LuxColors.sapphire),
-              child: Text(confirmLabel),
-            ),
+  int minReasonLength = 3,
+}) =>
+    showDialog<String>(
+      context: context,
+      builder: (_) => _ConfirmAdminDialog(
+        title: title,
+        message: message,
+        confirmLabel: confirmLabel,
+        reasonLabel: reasonLabel,
+        destructive: destructive,
+        minReasonLength: minReasonLength,
+      ),
+    );
+
+/// El diálogo es dueño de su campo de texto: se libera al desmontarse, no
+/// al cerrarse (la animación de salida aún lo usa).
+class _ConfirmAdminDialog extends StatefulWidget {
+  const _ConfirmAdminDialog({
+    required this.title,
+    required this.message,
+    required this.confirmLabel,
+    required this.reasonLabel,
+    required this.destructive,
+    required this.minReasonLength,
+  });
+
+  final String title;
+  final String message;
+  final String confirmLabel;
+  final String? reasonLabel;
+  final bool destructive;
+  final int minReasonLength;
+
+  @override
+  State<_ConfirmAdminDialog> createState() => _ConfirmAdminDialogState();
+}
+
+class _ConfirmAdminDialogState extends State<_ConfirmAdminDialog> {
+  final _ctrl = TextEditingController();
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reasonLabel = widget.reasonLabel;
+    final canConfirm = reasonLabel == null ||
+        _ctrl.text.trim().length >= widget.minReasonLength;
+    return AlertDialog(
+      title: Text(widget.title,
+          style: LuxTypography.headlineLarge.copyWith(fontSize: 24)),
+      content: SizedBox(
+        width: 420,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(widget.message, style: LuxTypography.bodyMedium),
+            if (reasonLabel != null) ...[
+              const SizedBox(height: LuxSpacing.md),
+              Text(reasonLabel, style: LuxTypography.caption),
+              const SizedBox(height: 4),
+              TextField(
+                controller: _ctrl,
+                autofocus: true,
+                maxLines: 2,
+                style: LuxTypography.bodyMedium,
+                onChanged: (_) => setState(() {}),
+                decoration:
+                    adminInputDecoration(hint: 'Obligatorio (auditoría)'),
+              ),
+            ],
           ],
-        );
-      },
-    ),
-  ).whenComplete(ctrl.dispose);
+        ),
+      ),
+      actions: [
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar')),
+        FilledButton(
+          onPressed: canConfirm
+              ? () => Navigator.pop(context, _ctrl.text.trim())
+              : null,
+          style: FilledButton.styleFrom(
+              backgroundColor:
+                  widget.destructive ? LuxColors.error : LuxColors.sapphire),
+          child: Text(widget.confirmLabel),
+        ),
+      ],
+    );
+  }
 }

@@ -10,6 +10,10 @@ enum BookingStatus {
   confirmed,
   driverArriving,
   driverArrived,
+
+  /// El chófer comprobó el código de recogida del pasajero (verifyPickup) o
+  /// el admin lo forzó (adminOverrideVerify). Solo desde aquí empieza el viaje.
+  verified,
   inProgress,
   completed,
   cancelled,
@@ -128,6 +132,8 @@ extension BookingStatusX on BookingStatus {
         return 'driver_arriving';
       case BookingStatus.driverArrived:
         return 'driver_arrived';
+      case BookingStatus.verified:
+        return 'verified';
       case BookingStatus.inProgress:
         return 'in_progress';
       case BookingStatus.completed:
@@ -147,6 +153,8 @@ extension BookingStatusX on BookingStatus {
         return 'En camino';
       case BookingStatus.driverArrived:
         return 'Chófer llegó';
+      case BookingStatus.verified:
+        return 'Verificada';
       case BookingStatus.inProgress:
         return 'En progreso';
       case BookingStatus.completed:

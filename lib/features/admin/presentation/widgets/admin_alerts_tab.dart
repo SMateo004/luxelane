@@ -11,6 +11,9 @@ import 'admin_shared_widgets.dart';
 const _alertLabels = {
   'distance_fallback': 'Precio con distancia aproximada',
   'open_requests_reconciled': 'Solicitudes abiertas corregidas',
+  'pickup_locked': 'Verificación bloqueada (5 códigos incorrectos)',
+  'pickup_override': 'Verificación forzada por un admin',
+  'far_from_pickup': '«Llegué» lejos del punto de recogida',
 };
 
 String alertLabel(String type) => _alertLabels[type] ?? type;

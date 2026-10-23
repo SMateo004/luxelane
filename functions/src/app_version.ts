@@ -25,8 +25,10 @@ export function compareVersions(a: string, b: string): number | null {
 export function updateRequired(
   global: Record<string, unknown>,
   appVersion: unknown,
+  // La app del chófer tiene su propio mínimo (minDriverAppVersion).
+  key: 'minAppVersion' | 'minDriverAppVersion' = 'minAppVersion',
 ): { minAppVersion: string; androidStoreUrl?: string; iosStoreUrl?: string } | null {
-  const min = global.minAppVersion;
+  const min = global[key];
   if (typeof min !== 'string' || compareVersions(min, min) === null) return null;
   const cmp = typeof appVersion === 'string' ? compareVersions(appVersion, min) : null;
   if (cmp !== null && cmp >= 0) return null;

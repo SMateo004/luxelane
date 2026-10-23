@@ -57,6 +57,7 @@ D18 ALTO. Pasajero y chófer comparten el identificador com.luxelane.app (androi
 D19 MEDIO. La clave REST de Maps (Places, Geocoding y Directions desde Android/iOS, --dart-define=GOOGLE_MAPS_KEY) viaja dentro de la app y una clave REST no se puede restringir por aplicación (solo por API); cualquiera puede extraerla y gastar la cuota.
 D20 ALTO. Los precios por defecto del código (DefaultPricing en la app, DEFAULT_FARES en functions) no coinciden con el plan de negocio: p. ej. 98 Bs por 16 km en business frente a un ticket ilustrativo de 55 USD del plan [Especulando sobre la cifra del plan]. No deben mostrarse al público.
 D21 MEDIO. Desde que bookings tiene allow create: if false y createBooking solo acepta pasajeros, ni el administrador ni un operador pueden crear una reserva en nombre de un cliente (reserva asistida por WhatsApp o teléfono, cuentas corporativas).
+D22 ALTO. «Forzar verificación» (adminOverrideVerify, functions/src/trip_flow.ts) deja una reserva verificada sin el código del pasajero con solo el rol admin; hoy el admin no tiene segundo factor (D6). Una cuenta de admin robada puede iniciar viajes sin el pasajero. Mitigación actual: motivo obligatorio, evento en bookings/{id}/events, alerta pickup_override y entrada en admin_logs, todo escrito por el servidor.
 Positivos: los roles no se pueden auto-asignar; el importe de Stripe se calcula en servidor al crear el PaymentIntent; el reembolso es solo admin con log en servidor; no se guardan números de tarjeta; no hay secretos privados en el árbol actual (solo placeholders sk_live_XXX, pk_live_XXX).
 No verificado: historial git previo (un solo commit), restricciones de las claves en Google Cloud, copias de seguridad en la consola, enumeración de correos, campos que serializa Booking.toJson.
 
@@ -78,13 +79,13 @@ Orden sugerido: #4, #3, #1, #2, #5, #6, #7, #8, #9, #10, #11, en paralelo con #1
 
 Criterio estricto de "lista para piloto": F2, F5 (con código), F7 (pago real) y F9 (SOS) funcionan de punta a punta; cero hallazgos CRÍTICOS abiertos; autorización por objeto probada con tests; build y tests pasan; despliegue a producción protegido por aprobación.
 
-## I. Estado de los hallazgos (rama cierre/integracion, 2026-10-20)
+## I. Estado de los hallazgos (rama cierre/verificacion, 2026-10-22)
 
 CERRADO = corregido en la rama con prueba automática; nada está desplegado todavía. PARCIAL = lo indicado en «Falta». ABIERTO = sin trabajo.
 
 | Id | Estado | Hecho (commit / prueba) | Falta |
 |---|---|---|---|
-| D1 | ABIERTO | — | Verificación por código al iniciar/terminar y SOS. |
+| D1 | PARCIAL | Verificación hecha: 39ac9fe estado verified; 3c5e148 advanceBooking, getPickupCode, verifyPickup y adminOverrideVerify con código HMAC (PICKUP_CODE_SECRET), 5 intentos, vencimiento a 4 h y registro de eventos; onRideCompleted ya no completa reservas; 95f61c2 reglas: ningún cliente escribe los pasos del viaje; f8d406c código en la app del pasajero; ce4f118 app del chófer; 99c4239 panel; 3ff9262 avisos; f40606c despliegue. Pruebas: functions/src/integration/trip_flow.int.ts, trip_notifications.int.ts, functions/src/pickup_code.test.ts, tools/rules-tests/test/tripFlow.rules.ts (10 de 28 fallan con las reglas anteriores), test/driver/pickup_code_entry_test.dart, test/ride/pickup_code_card_test.dart | SOS. Detección de cierre sospechoso (solo diseño). Desplegar en el orden de DEPLOY.md («Verificación en recogida»). |
 | D2 | PARCIAL | 697057a createBooking/quoteBooking con precio del servidor; e3109a5 `allow create: if false`; pruebas: functions/src/integration/bookings.int.ts, tools/rules-tests/test/bookings.rules.ts | Idempotencia (requestId), versión mínima de la app, configurar pricingRules/config.pricing y desplegar en el orden de DEPLOY.md. |
 | D3 | ABIERTO | — | App Check y límites de tasa en las callables. |
 | D4 | CERRADO | 364c8b5; tools/rules-tests/test/driverProfiles.rules.ts | Desplegar. |
@@ -93,9 +94,9 @@ CERRADO = corregido en la rama con prueba automática; nada está desplegado tod
 | D7 | ABIERTO | — | Webhook de Stripe, idempotency keys, comparar el intent de capturePayment con el de la reserva. |
 | D8 | PARCIAL | 4724d4f entorno production, concurrencia y acciones por SHA; ccbe8b8 selector FIREBASE_ENV; 3297d33 job de reglas | Crear el proyecto de staging y el entorno de GitHub con revisores. |
 | D9 | PARCIAL | 452a5a5 firma de release con key.properties; test/security/build_config_test.dart | Generar el keystore de subida y cargar sus secretos en GitHub; Play App Signing. |
-| D10 | ABIERTO | — | Escrituras del admin (pagos, finalPrice, roles, comisión) por callables con auditoría en servidor. Ajustes finales de finalPrice: se tratarán con cancelación y auditoría. |
+| D10 | PARCIAL | Transiciones del chófer migradas al servidor (advanceBooking, verifyPickup; 3c5e148, 95f61c2), con evento por paso; el admin ya no fija verified ni in_progress desde la app (solo adminOverrideVerify, auditado en servidor). | Resto de transiciones del panel (siguen escritas desde el cliente, sin evento en bookings/{id}/events) y escrituras del admin (pagos, finalPrice, roles, comisión) por callables con auditoría en servidor. Ajustes finales de finalPrice: se tratarán con cancelación y auditoría. |
 | D11 | PARCIAL | 4b58919 STRIPE_SECRET_KEY con defineSecret; functions/src/stripe_secret.test.ts | Errores de Stripe aún llegan crudos al cliente (paymentFailed(String(e))). |
-| D12 | PARCIAL | 130afd2 claves de Maps fuera del código, la release falla sin ellas; build_config_test.dart | Rotar la clave antigua (sigue en el historial de git) y restringir las nuevas. Las claves de Firebase de Android/iOS siguen usando por defecto la apiKey web (lib/firebase_options.dart). |
+| D12 | PARCIAL | 130afd2 claves de Maps fuera del código, la release falla sin ellas; build_config_test.dart | Rotar la clave antigua (sigue en el historial de git) y restringir las nuevas. Claves de Firebase de Android/iOS sin valor por defecto desde a446377 (B8). |
 | D13 | PARCIAL | 0cbc55f cabeceras y CSP Report-Only (hosting_headers_test.dart); validación zod en createBooking | CSP obligatoria; validar el resto de callables; deleteAccount sigue dejando direcciones y driverInfo en las reservas. |
 | D14 | ABIERTO | db0553f quitó herramientas de functions (total 58→44), producción sigue con 10 | Actualizar firebase-admin (mayor) y revisar firebase-functions. |
 | D15 | CERRADO | 4749171; test/security/web_index_test.dart | Desplegar hosting. |
@@ -105,3 +106,4 @@ CERRADO = corregido en la rama con prueba automática; nada está desplegado tod
 | D19 | ABIERTO | — | Mover Places/Directions al servidor (como la distancia de createBooking) o a un proxy. |
 | D20 | ABIERTO | — | Ocultar cifras de los valores por defecto y cargar las tarifas reales en Firestore. |
 | D21 | ABIERTO | — | Diseño de reserva asistida (adminCreateBooking). |
+| D22 | ABIERTO | Motivo obligatorio, evento, alerta y admin_logs en el servidor (3c5e148) | Segundo factor para el admin (D6) antes de confiar en «Forzar verificación»; se hará en otro prompt. |

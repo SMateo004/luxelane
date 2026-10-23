@@ -18,6 +18,14 @@ abstract class AdminRepository {
   /// Marca una alerta como revisada (callable resolveAlert, auditada en el
   /// servidor).
   Future<Either<Failure, void>> resolveAlert(String alertId, {String note});
+
+  /// Pasos registrados por el servidor para una reserva, con la ubicación
+  /// del chófer (solo el admin la lee).
+  Stream<List<BookingEvent>> watchBookingEvents(String bookingId);
+
+  /// Excepción operativa (adminOverrideVerify): deja la reserva verificada
+  /// con [reason], que queda en el registro y crea una alerta.
+  Future<Either<Failure, void>> forceVerify(String bookingId, String reason);
   Stream<Map<String, dynamic>> watchGlobalSettings();
   Stream<Map<String, dynamic>> watchFinanceSettings();
 

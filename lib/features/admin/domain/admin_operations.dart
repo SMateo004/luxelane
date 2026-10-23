@@ -5,6 +5,10 @@ import '../../../core/models/models.dart';
 ///
 /// Un único mapa de transiciones evita estados imposibles (p. ej. volver a
 /// "pendiente" una reserva ya cobrada) y mantiene coherentes las finanzas.
+///
+/// `verified` e `in_progress` no se fijan desde el panel: verificar es del
+/// chófer con el código del pasajero (o «Forzar verificación», con motivo,
+/// por adminOverrideVerify) e iniciar el viaje es del chófer.
 abstract class AdminOperations {
   static const Map<BookingStatus, List<BookingStatus>> _transitions = {
     BookingStatus.pending: [BookingStatus.cancelled],
@@ -16,10 +20,8 @@ abstract class AdminOperations {
       BookingStatus.driverArrived,
       BookingStatus.cancelled,
     ],
-    BookingStatus.driverArrived: [
-      BookingStatus.inProgress,
-      BookingStatus.cancelled,
-    ],
+    BookingStatus.driverArrived: [BookingStatus.cancelled],
+    BookingStatus.verified: [BookingStatus.cancelled],
     BookingStatus.inProgress: [BookingStatus.completed],
     BookingStatus.completed: [],
     BookingStatus.cancelled: [],
@@ -37,10 +39,16 @@ abstract class AdminOperations {
     BookingStatus.confirmed,
     BookingStatus.driverArriving,
     BookingStatus.driverArrived,
+    BookingStatus.verified,
     BookingStatus.inProgress,
   };
 
   static bool isActive(BookingStatus s) => activeStatuses.contains(s);
+
+  /// Se puede forzar la verificación (adminOverrideVerify): el chófer está
+  /// en la recogida y el pasajero aún no dio el código.
+  static bool canForceVerify(Booking b) =>
+      b.status == BookingStatus.driverArrived;
 
   static bool isClosed(BookingStatus s) =>
       s == BookingStatus.completed || s == BookingStatus.cancelled;

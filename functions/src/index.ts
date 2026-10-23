@@ -6,6 +6,7 @@ import { defineSecret } from 'firebase-functions/params';
 import * as bookingService from './booking_service';
 import { reconcileOpenRequests } from './reconcile';
 import { resolveAdminAlert } from './alerts';
+import * as tripFlow from './trip_flow';
 import { isTransient, withRetryPolicy } from './retry_policy';
 import * as stripe from './stripe_service';
 import { logger } from './logger';
@@ -39,6 +40,36 @@ export const createBooking = onCall({ secrets: [MAPS_SERVER_KEY] }, (req) =>
   bookingService.createBooking(bookingDeps(), req.auth?.uid, req.data));
 
 // ---------------------------------------------------------------------------
+// Pasos del viaje desde la recogida (D1): solo el servidor cambia el estado
+// ---------------------------------------------------------------------------
+
+// Secreto del código de recogida (HMAC). Sin él no hay códigos: falla cerrado.
+const PICKUP_CODE_SECRET = defineSecret('PICKUP_CODE_SECRET');
+
+const tripDeps = (): tripFlow.TripDeps => ({ db, pickupSecret: PICKUP_CODE_SECRET.value() });
+
+/** Único camino del chófer: en camino, llegué, iniciar y completar. */
+export const advanceBooking = onCall((req) =>
+  tripFlow.advanceBooking({ db }, req.auth?.uid, req.data));
+
+/** El pasajero de la reserva ve su código mientras el chófer espera. */
+export const getPickupCode = onCall({ secrets: [PICKUP_CODE_SECRET] }, (req) =>
+  tripFlow.getPickupCode(tripDeps(), req.auth?.uid, req.data));
+
+/** El chófer asignado comprueba el código: driver_arrived → verified. */
+export const verifyPickup = onCall({ secrets: [PICKUP_CODE_SECRET] }, (req) =>
+  tripFlow.verifyPickup(tripDeps(), req.auth?.uid, req.data));
+
+/** Excepción del admin, con motivo: deja la reserva verificada y avisa. */
+export const adminOverrideVerify = onCall(async (req) => {
+  const adminId = await requireAdmin(req);
+  return tripFlow.adminOverrideVerify({ db }, {
+    adminId,
+    adminEmail: (req.auth?.token.email as string | undefined) ?? null,
+  }, req.data);
+});
+
+// ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
 
@@ -47,6 +78,7 @@ type BookingStatus =
   | 'confirmed'
   | 'driver_arriving'
   | 'driver_arrived'
+  | 'verified'
   | 'in_progress'
   | 'completed'
   | 'cancelled';
@@ -99,7 +131,7 @@ interface PaymentDoc {
 // ---------------------------------------------------------------------------
 
 /** Reservas que siguen en curso o pendientes de realizarse. */
-const ACTIVE_BOOKING_STATUSES = ['pending', 'confirmed', 'driver_arriving', 'driver_arrived', 'in_progress'];
+const ACTIVE_BOOKING_STATUSES = ['pending', 'confirmed', 'driver_arriving', 'driver_arrived', 'verified', 'in_progress'];
 
 function requireAuth(req: CallableRequest): string {
   if (!req.auth?.uid) throw err.unauthenticated();
@@ -711,7 +743,10 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
   const statusMessages: Partial<Record<BookingStatus, [string, string, string]>> = {
     confirmed: ['Chófer asignado', 'Tu chófer ha sido asignado.', 'booking_confirmed'],
     driver_arriving: ['El chófer está en camino', 'Tu chófer va hacia el punto de recogida.', 'driver_arriving'],
-    driver_arrived: ['El chófer ha llegado', 'Tu chófer te espera en el punto de recogida.', 'driver_arrived'],
+    // Sin el código del pasajero el viaje no empieza: el aviso lo recuerda
+    // (el código no va en el aviso; solo se ve en la app).
+    driver_arrived: ['El chófer ha llegado', 'Tu chófer te espera. Abre la app y dale tu código de recogida.', 'driver_arrived'],
+    // verified no avisa: el pasajero está junto al chófer.
     in_progress: ['Viaje iniciado', 'Tu trayecto ha comenzado.', 'ride_started'],
     completed: ['Viaje completado', 'Has llegado. Gracias por viajar con Luxelane.', 'ride_completed'],
     cancelled: ['Reserva cancelada', 'Tu reserva ha sido cancelada.', 'booking_cancelled'],
@@ -959,17 +994,9 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
   if (!before || !after) return;
   if (before.completedAt || !after.completedAt) return;
 
-  logger.info('onRideCompleted', 'ride completed', { rideId: event.params.rideId });
-
-  // Solo cierra reservas abiertas: una cancelada no se reabre. Liberar al
-  // chófer y contar el viaje lo hace releaseDriver al completarse la reserva.
-  const bookingRef = db.collection('bookings').doc(after.bookingId);
-  await db.runTransaction(async (tx) => {
-    const bookingSnap = await tx.get(bookingRef);
-    const status = (bookingSnap.data() as BookingDoc | undefined)?.status;
-    if (!status || status === 'completed' || status === 'cancelled') return;
-    tx.update(bookingRef, { status: 'completed' as BookingStatus, updatedAt: admin.firestore.Timestamp.now() });
-  });
+  // La reserva solo se completa desde in_progress con advanceBooking (D1):
+  // cerrar el viaje en /rides ya no la completa ni dispara el cobro.
+  logger.info('onRideCompleted', 'ride closed; booking untouched', { rideId: event.params.rideId, bookingId: after.bookingId });
 });
 
 // ---------------------------------------------------------------------------

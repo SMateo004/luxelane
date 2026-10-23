@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart' show Timestamp;
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,8 +22,10 @@ class _MockRepo extends Mock implements AdminRepository {}
 final _now = DateTime.now();
 const _place = Place(address: 'Av. Arce 2631, La Paz', lat: 0, lng: 0);
 
-Booking _b(String id, BookingStatus s, {String? paymentId, String? review}) =>
+Booking _b(String id, BookingStatus s,
+        {String? paymentId, String? review, bool pickupLocked = false}) =>
     Booking.fromJson({
+      'pickupLocked': pickupLocked,
       'id': id,
       'riderId': 'u-rider',
       'driverId': s == BookingStatus.pending ? null : 'u-driver',
@@ -70,7 +74,35 @@ AdminRepository _repo() {
         _b('booking-pending', BookingStatus.pending, review: 'below_fare'),
         _b('booking-progress', BookingStatus.inProgress),
         _b('booking-cancelled', BookingStatus.cancelled),
+        _b('booking-arrived', BookingStatus.driverArrived, pickupLocked: true),
       ]));
+  when(() => r.watchBookingEvents(any())).thenAnswer((_) => Stream.value([
+        BookingEvent.fromJson('e1', {
+          'type': 'transition',
+          'from': 'driver_arriving',
+          'to': 'driver_arrived',
+          'actor': {'uid': 'u-driver', 'role': 'driver'},
+          'source': 'driver_app',
+          'at': Timestamp.fromDate(_now),
+          'appVersion': '2.0.0',
+          'farFromPickup': true,
+          'arrivalCheck': 'compared',
+        }, {
+          'lat': -17.64481,
+          'lng': -63.13532,
+          'distanceMeters': 850,
+        }),
+        BookingEvent.fromJson('e2', {
+          'type': 'pickup_locked',
+          'from': 'driver_arrived',
+          'to': 'driver_arrived',
+          'actor': {'uid': 'u-driver', 'role': 'driver'},
+          'source': 'driver_app',
+          'failedAttempts': 5,
+        }),
+      ]));
+  when(() => r.forceVerify(any(), any()))
+      .thenAnswer((_) async => const Right<Failure, void>(null));
   when(r.watchAllPayments).thenAnswer((_) => Stream.value([
         Payment(
           id: 'p1',
@@ -305,5 +337,67 @@ void main() {
     await tester.pumpAndSettle();
     verify(_last.backfillSettlements).called(1);
     expect(tester.takeException(), isNull);
+  });
+
+  group('verificación en recogida (T6)', () {
+    Future<void> open(WidgetTester tester, String id) async {
+      await _pump(
+        tester,
+        Builder(
+          builder: (context) => TextButton(
+            onPressed: () => showBookingDetail(context, id),
+            child: const Text('abrir'),
+          ),
+        ),
+        const Size(1280, 2000),
+      );
+      await tester.tap(find.text('abrir'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('ficha: bloqueo, registro con ubicación y lejanía',
+        (tester) async {
+      await open(tester, 'booking-arrived');
+      expect(find.text('Bloqueada: 5 códigos incorrectos'), findsOneWidget);
+      // El registro va al final de la ficha.
+      await tester.scrollUntilVisible(
+          find.text('Verificación bloqueada tras 5 códigos incorrectos'), 200,
+          scrollable: find.byType(Scrollable).last);
+      expect(find.text('Registro del viaje'), findsOneWidget);
+      expect(find.text('En camino → Chófer llegó'), findsOneWidget);
+      expect(find.text('Lejos del punto de recogida (850 m)'), findsOneWidget);
+      expect(find.text('Ubicación del chófer: -17.64481, -63.13532'),
+          findsOneWidget);
+      expect(find.text('Verificación bloqueada tras 5 códigos incorrectos'),
+          findsOneWidget);
+      // Desde el panel ya no se marca «En progreso» ni «Verificada».
+      expect(find.textContaining('Marcar "En progreso"'), findsNothing);
+      expect(find.textContaining('Marcar "Verificada"'), findsNothing);
+    });
+
+    testWidgets('«Forzar verificación» exige motivo y llama al servidor',
+        (tester) async {
+      await open(tester, 'booking-arrived');
+      await tester.tap(find.text('Forzar verificación'));
+      await tester.pumpAndSettle();
+      final confirm = find.widgetWithText(FilledButton, 'Forzar verificación');
+      expect(tester.widget<FilledButton>(confirm).onPressed, isNull);
+      await tester.enterText(find.byType(TextField).last, 'abc');
+      await tester.pump();
+      expect(tester.widget<FilledButton>(confirm).onPressed, isNull);
+      await tester.enterText(
+          find.byType(TextField).last, 'Pasajero sin batería');
+      await tester.pump();
+      await tester.tap(confirm);
+      await tester.pumpAndSettle();
+      verify(() =>
+              _lastRepo.forceVerify('booking-arrived', 'Pasajero sin batería'))
+          .called(1);
+    });
+
+    testWidgets('solo con el chófer en la recogida', (tester) async {
+      await open(tester, 'booking-progress');
+      expect(find.text('Forzar verificación'), findsNothing);
+    });
   });
 }

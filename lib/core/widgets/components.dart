@@ -530,6 +530,8 @@ class BookingStatusChip extends StatelessWidget {
         return LuxColors.sapphireLight;
       case BookingStatus.driverArrived:
         return LuxColors.sapphireLight;
+      case BookingStatus.verified:
+        return LuxColors.sapphire;
       case BookingStatus.inProgress:
         return LuxColors.success;
       case BookingStatus.completed:

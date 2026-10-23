@@ -23,6 +23,7 @@ import '../../features/profile/data/repositories/user_repository_impl.dart';
 import '../../features/profile/domain/usecases/profile_usecases.dart';
 import '../../features/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/ride/data/repositories/ride_repository_impl.dart';
+import '../../features/ride/data/repositories/trip_flow_repository_impl.dart';
 import '../../features/ride/domain/usecases/ride_usecases.dart';
 import '../../features/ride/presentation/bloc/ride_bloc.dart';
 import '../data/notification_repository_impl.dart';
@@ -70,6 +71,10 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<BookingRepository>(
     () => BookingRepositoryImpl(firestore: sl()),
+  );
+
+  sl.registerLazySingleton<TripFlowRepository>(
+    () => TripFlowRepositoryImpl(functions: sl()),
   );
 
   sl.registerLazySingleton<VehicleRepository>(
@@ -140,6 +145,7 @@ void _registerBlocs() {
   sl.registerFactory(() => NotificationBloc(notificationRepository: sl()));
   sl.registerFactory(() => DriverBloc(
         bookingRepository: sl(),
+        tripFlowRepository: sl(),
         userRepository: sl(),
         vehicleRepository: sl(),
         mapsService: sl(),

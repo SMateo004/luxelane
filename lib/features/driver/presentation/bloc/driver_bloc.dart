@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart' show Position;
 import 'package:rxdart/rxdart.dart';
 
 import '../../../../core/enums/enums.dart';
+import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/services/maps_service.dart';
@@ -162,6 +163,8 @@ class DriverLoaded extends DriverState {
     this.vehicleClass,
     this.notice,
     this.noticeSeq = 0,
+    this.updateRequired,
+    this.updateSeq = 0,
   });
 
   final User user;
@@ -184,6 +187,11 @@ class DriverLoaded extends DriverState {
   /// [noticeSeq] sube con cada aviso para que se muestre aunque se repita.
   final String? notice;
   final int noticeSeq;
+
+  /// El servidor pidió actualizar la app (minDriverAppVersion) al avanzar
+  /// un viaje; [updateSeq] sube con cada aviso.
+  final AppUpdateRequiredFailure? updateRequired;
+  final int updateSeq;
 
   /// Solicitudes que este chófer puede atender: de su clase de vehículo y
   /// sin descartar.
@@ -239,6 +247,7 @@ class DriverLoaded extends DriverState {
     for (final b in bookings) {
       if (b.status == BookingStatus.driverArriving ||
           b.status == BookingStatus.driverArrived ||
+          b.status == BookingStatus.verified ||
           b.status == BookingStatus.inProgress) {
         return b;
       }
@@ -286,6 +295,7 @@ class DriverLoaded extends DriverState {
         vehicleClass,
         notice,
         noticeSeq,
+        updateSeq,
       ];
 
   DriverLoaded copyWith({
@@ -297,6 +307,7 @@ class DriverLoaded extends DriverState {
     List<OpenRequest>? pendingRequests,
     List<String>? declinedIds,
     String? notice,
+    AppUpdateRequiredFailure? updateRequired,
   }) =>
       DriverLoaded(
         user: user ?? this.user,
@@ -309,6 +320,8 @@ class DriverLoaded extends DriverState {
         vehicleClass: vehicleClass,
         notice: notice,
         noticeSeq: notice != null ? noticeSeq + 1 : noticeSeq,
+        updateRequired: updateRequired ?? this.updateRequired,
+        updateSeq: updateRequired != null ? updateSeq + 1 : updateSeq,
       );
 }
 
@@ -330,10 +343,12 @@ class DriverError extends DriverState {
 class DriverBloc extends Bloc<DriverEvent, DriverState> {
   DriverBloc({
     required BookingRepository bookingRepository,
+    required TripFlowRepository tripFlowRepository,
     required UserRepository userRepository,
     required VehicleRepository vehicleRepository,
     required MapsService mapsService,
   })  : _bookingRepo = bookingRepository,
+        _tripFlow = tripFlowRepository,
         _userRepo = userRepository,
         _vehicleRepo = vehicleRepository,
         _mapsService = mapsService,
@@ -361,10 +376,20 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       (events, mapper) => events.switchMap(mapper);
 
   final BookingRepository _bookingRepo;
+  final TripFlowRepository _tripFlow;
   final UserRepository _userRepo;
   final VehicleRepository _vehicleRepo;
   final MapsService _mapsService;
   StreamSubscription<Position>? _positionSub;
+
+  /// Última posición del chófer: el servidor la guarda al llegar,
+  /// verificar y completar.
+  ({double lat, double lng})? _lastLocation;
+  ({double lat, double lng})? get lastLocation => _lastLocation;
+
+  /// Pasos en vuelo: un segundo deslizar mientras el primero espera
+  /// respuesta no envía nada.
+  final _inFlight = <String>{};
 
   // ── Startup ───────────────────────────────────────────────────────────────
 
@@ -567,6 +592,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     _DriverLocationTick event,
     Emitter<DriverState> emit,
   ) async {
+    _lastLocation = (lat: event.lat, lng: event.lng);
     await _userRepo.updateDriverLocation(
       userId: event.userId,
       latitude: event.lat,
@@ -635,14 +661,29 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     await _advance(emit, event.bookingId, BookingStatus.completed);
   }
 
+  /// Todos los pasos pasan por el servidor (advanceBooking). Repetirlo
+  /// tras un corte es seguro: el servidor no duplica el cambio ni el evento.
   Future<void> _advance(
       Emitter<DriverState> emit, String bookingId, BookingStatus to) async {
-    final result = await _bookingRepo.updateBookingStatus(
-        bookingId: bookingId, status: to);
-    if (result.isLeft() && state is DriverLoaded) {
-      emit((state as DriverLoaded).copyWith(
-          notice: 'No se pudo actualizar el viaje. Puede que lo haya '
-              'cancelado el pasajero; revisa tu conexión.'));
+    final key = '$bookingId:${to.label}';
+    if (!_inFlight.add(key)) return;
+    try {
+      final result = await _tripFlow.advance(
+          bookingId: bookingId, to: to, location: _lastLocation);
+      final failure = result.fold((f) => f, (_) => null);
+      if (failure == null || state is! DriverLoaded) return;
+      final cur = state as DriverLoaded;
+      if (failure is AppUpdateRequiredFailure) {
+        emit(cur.copyWith(updateRequired: failure));
+      } else if (failure is TripFailure && failure.issue == TripIssue.network) {
+        emit(cur.copyWith(
+            notice: 'Sin conexión: no se guardó el paso. Vuelve a '
+                'intentarlo; no se duplicará.'));
+      } else {
+        emit(cur.copyWith(notice: failure.message));
+      }
+    } finally {
+      _inFlight.remove(key);
     }
   }
 

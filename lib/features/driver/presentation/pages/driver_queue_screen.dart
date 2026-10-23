@@ -7,6 +7,7 @@ import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
+import '../widgets/driver_step_action.dart';
 import '../widgets/flight_info_card.dart';
 
 class DriverQueueScreen extends StatelessWidget {
@@ -27,7 +28,8 @@ class DriverQueueScreen extends StatelessWidget {
           final upcoming = state.bookings.where((b) {
             return b.status == BookingStatus.confirmed ||
                 b.status == BookingStatus.driverArriving ||
-                b.status == BookingStatus.driverArrived;
+                b.status == BookingStatus.driverArrived ||
+                b.status == BookingStatus.verified;
           }).toList()
             ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
 
@@ -208,7 +210,7 @@ class _JobCard extends StatelessWidget {
             FlightInfoCard(booking: booking),
           ],
           const SizedBox(height: LuxSpacing.md),
-          _JobActions(bookingId: booking.id, status: booking.status),
+          _JobActions(bookingId: booking.id, booking: booking),
         ],
       ),
     );
@@ -218,11 +220,13 @@ class _JobCard extends StatelessWidget {
 class _JobActions extends StatelessWidget {
   const _JobActions({
     required this.bookingId,
-    this.status,
+    this.booking,
     this.isPending = false,
   });
   final String bookingId;
-  final BookingStatus? status;
+
+  /// Reserva aceptada: su siguiente paso. Las pendientes no la tienen.
+  final Booking? booking;
   final bool isPending;
 
   @override
@@ -255,29 +259,7 @@ class _JobActions extends StatelessWidget {
       );
     }
 
-    switch (status) {
-      case BookingStatus.confirmed:
-        return LuxButton(
-          label: 'Ir a la recogida',
-          icon: Icons.navigation_rounded,
-          onPressed: () =>
-              bloc.add(DriverBookingAccepted(bookingId: bookingId)),
-        );
-      case BookingStatus.driverArriving:
-        return LuxButton(
-          label: 'He llegado',
-          icon: Icons.where_to_vote_rounded,
-          onPressed: () =>
-              bloc.add(DriverArrivedAtPickup(bookingId: bookingId)),
-        );
-      case BookingStatus.driverArrived:
-        return LuxButton(
-          label: 'Iniciar viaje',
-          icon: Icons.play_arrow_rounded,
-          onPressed: () => bloc.add(DriverTripStarted(bookingId: bookingId)),
-        );
-      default:
-        return const SizedBox.shrink();
-    }
+    final b = booking;
+    return b == null ? const SizedBox.shrink() : DriverStepAction(booking: b);
   }
 }

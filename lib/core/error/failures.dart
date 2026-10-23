@@ -40,13 +40,44 @@ class PriceChangedFailure extends Failure {
   final double price;
 }
 
-/// La app es más vieja que config/global.minAppVersion: hay que actualizar
-/// para cotizar o reservar. Los enlaces a las tiendas, si el admin los puso.
+/// La app es más vieja que config/global.minAppVersion (o, la del chófer,
+/// que minDriverAppVersion): hay que actualizar para cotizar, reservar o
+/// avanzar un viaje. Los enlaces a las tiendas, si el admin los puso.
 class AppUpdateRequiredFailure extends Failure {
-  const AppUpdateRequiredFailure({this.androidStoreUrl, this.iosStoreUrl})
-      : super('Actualiza la app para reservar.');
+  const AppUpdateRequiredFailure({
+    this.androidStoreUrl,
+    this.iosStoreUrl,
+    this.forDriver = false,
+  }) : super(forDriver
+            ? 'Actualiza la app para seguir con tus viajes.'
+            : 'Actualiza la app para reservar.');
   final String? androidStoreUrl;
   final String? iosStoreUrl;
+
+  /// Lo pide el servidor a la app del chófer (minDriverAppVersion).
+  final bool forDriver;
+}
+
+/// Qué salió mal en un paso del viaje (código de recogida, avanzar,
+/// verificar). La pantalla decide qué mostrar según [issue].
+enum TripIssue {
+  network,
+  notAtPickup,
+  wrongCode,
+  locked,
+  expired,
+  unavailable,
+  notAllowed,
+  invalidTransition,
+  other,
+}
+
+class TripFailure extends Failure {
+  const TripFailure(this.issue, super.message, {this.attemptsLeft});
+  final TripIssue issue;
+
+  /// Con [TripIssue.wrongCode], intentos que quedan antes del bloqueo.
+  final int? attemptsLeft;
 }
 
 class ValidationFailure extends Failure {

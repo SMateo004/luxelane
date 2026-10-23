@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
-import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../bloc/driver_bloc.dart';
+import '../widgets/driver_step_action.dart';
 import '../widgets/flight_info_card.dart';
 
 class DriverActiveRideScreen extends StatelessWidget {
@@ -34,10 +34,12 @@ class DriverActiveRideScreen extends StatelessWidget {
         }
 
         final web = isWeb(context);
-        return Scaffold(
-          body: web
-              ? _webLayout(context, booking, state)
-              : _mobileLayout(context, booking, state),
+        return DriverFeedbackListener(
+          child: Scaffold(
+            body: web
+                ? _webLayout(context, booking, state)
+                : _mobileLayout(context, booking, state),
+          ),
         );
       },
     );
@@ -168,57 +170,6 @@ class _DriverSidePanel extends StatelessWidget {
   const _DriverSidePanel({required this.booking});
   final Booking booking;
 
-  String get _message {
-    switch (booking.status) {
-      case BookingStatus.confirmed:
-        return 'Dirígete al punto de recogida';
-      case BookingStatus.driverArriving:
-        return 'En camino a la recogida · llegando pronto';
-      case BookingStatus.driverArrived:
-        return 'Esperando al pasajero';
-      case BookingStatus.inProgress:
-        return 'Viaje en curso · ve al destino';
-      default:
-        return '';
-    }
-  }
-
-  String get _actionLabel {
-    switch (booking.status) {
-      case BookingStatus.confirmed:
-        return 'Ir a la recogida';
-      case BookingStatus.driverArriving:
-        return 'He llegado';
-      case BookingStatus.driverArrived:
-        return 'Iniciar viaje';
-      case BookingStatus.inProgress:
-        return 'Completar viaje';
-      default:
-        return '';
-    }
-  }
-
-  void _advance(BuildContext context) {
-    final bloc = context.read<DriverBloc>();
-    switch (booking.status) {
-      case BookingStatus.confirmed:
-        bloc.add(DriverBookingAccepted(bookingId: booking.id));
-        break;
-      case BookingStatus.driverArriving:
-        bloc.add(DriverArrivedAtPickup(bookingId: booking.id));
-        break;
-      case BookingStatus.driverArrived:
-        bloc.add(DriverTripStarted(bookingId: booking.id));
-        break;
-      case BookingStatus.inProgress:
-        bloc.add(DriverTripCompleted(bookingId: booking.id));
-        context.go('/driver');
-        break;
-      default:
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) => Column(
         mainAxisSize: MainAxisSize.min,
@@ -231,7 +182,8 @@ class _DriverSidePanel extends StatelessWidget {
               BookingStatusChip(status: booking.status),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
-                child: Text(_message, style: LuxTypography.bodyMedium),
+                child: Text(DriverStepAction.message(booking),
+                    style: LuxTypography.bodyMedium),
               ),
             ],
           ),
@@ -240,12 +192,10 @@ class _DriverSidePanel extends StatelessWidget {
           const SizedBox(height: LuxSpacing.md),
           _RideInfoRow(booking: booking),
           const SizedBox(height: LuxSpacing.md),
-          // Deslizar evita completar un paso con un toque accidental.
-          if (_actionLabel.isNotEmpty)
-            LuxSlideToConfirm(
-              label: _actionLabel,
-              onConfirmed: () => _advance(context),
-            ),
+          DriverStepAction(
+            booking: booking,
+            onCompleted: () => context.go('/driver'),
+          ),
         ],
       );
 }

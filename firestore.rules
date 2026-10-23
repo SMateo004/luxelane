@@ -116,14 +116,32 @@ service cloud.firestore {
     // /bookings/{bookingId}
     // -------------------------------------------------------------------------
 
-    // Pasos que un chófer puede dar sobre su reserva (igual que
-    // AdminOperations en la app). Repetir el estado actual solo toca updatedAt.
-    function isDriverStep(from, to) {
-      return to == from ||
-        (from == 'confirmed' && to == 'driver_arriving') ||
-        (from == 'driver_arriving' && to == 'driver_arrived') ||
-        (from == 'driver_arrived' && to == 'in_progress') ||
-        (from == 'in_progress' && to == 'completed');
+    // Los pasos del viaje desde la recogida los escribe solo el servidor
+    // (advanceBooking, verifyPickup, adminOverrideVerify), con su registro en
+    // events (D1). Ningún cliente cambia status a estos estados.
+    function serverOnlyStatus() {
+      return ['driver_arriving', 'driver_arrived', 'verified', 'in_progress', 'completed'];
+    }
+
+    // Campos del viaje que fija el servidor: nadie los toca desde la app.
+    function serverTripFields() {
+      return ['pickupLocked', 'arrivedAt', 'verifiedAt', 'verifiedBy',
+        'startedAt', 'completedAt'];
+    }
+
+    function statusChanges() {
+      return request.resource.data.status != resource.data.status;
+    }
+
+    // El panel mantiene sus transiciones por ahora (se migran en la
+    // auditoría), salvo verified e in_progress: verificar es del chófer con
+    // el código o de adminOverrideVerify, con motivo.
+    function isAdminBookingUpdate() {
+      return isAdmin() &&
+        !request.resource.data.diff(resource.data).affectedKeys()
+          .hasAny(serverTripFields()) &&
+        !(statusChanges() &&
+          request.resource.data.status in ['verified', 'in_progress']);
     }
 
     // La reserva completa (direcciones, notas, preferencias, datos del
@@ -140,7 +158,7 @@ service cloud.firestore {
       // escribe la reserva y su solicitud abierta en una transacción (D2).
       allow create: if false;
 
-      allow update: if isAdmin() ||
+      allow update: if isAdminBookingUpdate() ||
         // Driver accepts a pending booking (self-assign)
         (isDriver() && isActiveUser() &&
           get(/databases/$(database)/documents/driverProfiles/$(request.auth.uid))
@@ -149,11 +167,6 @@ service cloud.firestore {
           request.resource.data.driverId == request.auth.uid &&
           request.resource.data.status == 'confirmed' &&
           onlyUpdating(['driverId', 'status', 'updatedAt'])) ||
-        // Driver progresses their assigned booking, one step at a time
-        (isDriver() &&
-          resource.data.driverId == request.auth.uid &&
-          onlyUpdating(['status', 'updatedAt']) &&
-          isDriverStep(resource.data.status, request.resource.data.status)) ||
         // Rider cancels their own booking before the trip starts
         (isAuthenticated() &&
           resource.data.riderId == request.auth.uid &&
@@ -180,7 +193,8 @@ service cloud.firestore {
           return get(/databases/$(database)/documents/bookings/$(bookingId)).data;
         }
         function isLive(status) {
-          return status in ['driver_arriving', 'driver_arrived', 'in_progress'];
+          return status in
+            ['driver_arriving', 'driver_arrived', 'verified', 'in_progress'];
         }
 
         allow read: if isAuthenticated() && (
@@ -210,11 +224,39 @@ service cloud.firestore {
         allow read: if isAuthenticated() && (
           (contactBooking().riderId == request.auth.uid &&
             contactBooking().status in
-              ['driver_arriving', 'driver_arrived', 'in_progress']) ||
+              ['driver_arriving', 'driver_arrived', 'verified', 'in_progress']) ||
           contactBooking().get('driverId', null) == request.auth.uid ||
           isAdmin()
         );
         allow write: if false;
+      }
+
+      // Sal del código de recogida e intentos fallidos: solo el servidor.
+      // Ni el pasajero ni el chófer (que podría deducir el código) la leen.
+      match /private/{docId} {
+        allow read, write: if false;
+      }
+
+      // Registro de transiciones (solo anexado): lo escribe el servidor y
+      // nadie lo edita ni lo borra. Lo leen el pasajero, el chófer asignado
+      // y el admin.
+      match /events/{eventId} {
+        function eventsBooking() {
+          return get(/databases/$(database)/documents/bookings/$(bookingId)).data;
+        }
+
+        allow read: if isAuthenticated() && (
+          eventsBooking().riderId == request.auth.uid ||
+          eventsBooking().get('driverId', null) == request.auth.uid ||
+          isAdmin()
+        );
+        allow create, update, delete: if false;
+      }
+
+      // Ubicación del chófer en cada evento: solo el admin.
+      match /eventLocations/{eventId} {
+        allow read: if isAdmin();
+        allow create, update, delete: if false;
       }
     }
 

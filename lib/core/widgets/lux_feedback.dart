@@ -376,6 +376,8 @@ class _RideProgressBarState extends State<RideProgressBar>
         BookingStatus.confirmed => 1,
         BookingStatus.driverArriving => 2,
         BookingStatus.driverArrived => 3,
+        // Verificada: sigue en la recogida, a punto de salir.
+        BookingStatus.verified => 3,
         BookingStatus.inProgress => 4,
         BookingStatus.completed => 5,
         BookingStatus.cancelled => 0,
@@ -461,10 +463,17 @@ class _LuxSlideToConfirmState extends State<LuxSlideToConfirm>
     with SingleTickerProviderStateMixin {
   double _drag = 0;
   bool _done = false;
-  late final AnimationController _back =
-      AnimationController(vsync: this, duration: LuxMotion.base)
-        ..addListener(() => setState(() => _drag = _from * (1 - _back.value)));
+  // Se crea al montar: creado al primer uso, un control que desaparece
+  // sin haberse deslizado (el viaje cambió de paso) lo crearía en dispose().
+  late final AnimationController _back;
   double _from = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _back = AnimationController(vsync: this, duration: LuxMotion.base)
+      ..addListener(() => setState(() => _drag = _from * (1 - _back.value)));
+  }
 
   @override
   void didUpdateWidget(LuxSlideToConfirm old) {

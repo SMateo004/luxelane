@@ -143,4 +143,27 @@ void main() {
       expect(_googleApiKey.hasMatch(ci), isFalse);
     });
   });
+
+  group('Orden de despliegue: reglas al final y a mano (D1/T8)', () {
+    final ci = _read('.github/workflows/ci.yml');
+
+    test('el despliegue de functions no lleva las reglas', () {
+      expect(ci, isNot(contains('deploy --only functions,firestore:rules')));
+      expect(ci, contains('args: deploy --only functions\n'));
+    });
+
+    test('las reglas solo se despliegan a mano, desde main y con aprobación',
+        () {
+      final job = ci.substring(ci.indexOf('  deploy_rules:'));
+      expect(job, contains("github.event_name == 'workflow_dispatch'"));
+      expect(job, contains('inputs.deploy_rules'));
+      expect(job, contains("github.ref == 'refs/heads/main'"));
+      expect(job, contains('environment: production'));
+      expect(job, contains('args: deploy --only firestore:rules'));
+    });
+
+    test('no se despliega sin PICKUP_CODE_SECRET en Secret Manager', () {
+      expect(ci, contains('functions:secrets:get PICKUP_CODE_SECRET'));
+    });
+  });
 }

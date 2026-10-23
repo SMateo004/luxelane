@@ -121,7 +121,8 @@ void main() {
       'vehicle': {'make': 'Toyota', 'model': 'Camry', 'plate': '1234ABC'},
     })!;
     expect(info.rating, 4.8);
-    expect(info.vehicle, 'Toyota Camry · 1234ABC');
+    expect(info.vehicle, 'Toyota Camry');
+    expect(info.plate, '1234ABC');
     expect(DriverInfo.fromJson({'name': 'Luis'})!.rating, isNull);
   });
 

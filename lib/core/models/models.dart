@@ -419,6 +419,7 @@ class DriverInfo {
     required this.name,
     this.photoUrl,
     this.vehicle,
+    this.plate = '',
     this.rating,
   });
 
@@ -429,8 +430,11 @@ class DriverInfo {
   /// Valoración media del chófer al asignarlo (copiada por el servidor).
   final double? rating;
 
-  /// "Toyota Camry · Negro · 1234ABC", o null si no hay vehículo.
+  /// "Toyota Camry · Negro", o null si no hay vehículo.
   final String? vehicle;
+
+  /// Placa, aparte para que el pasajero la reconozca de un vistazo.
+  final String plate;
 
   static DriverInfo? fromJson(Object? j) {
     if (j is! Map) return null;
@@ -440,7 +444,6 @@ class DriverInfo {
       final parts = [
         '${v['make'] ?? ''} ${v['model'] ?? ''}'.trim(),
         (v['color'] as String?) ?? '',
-        (v['plate'] as String?) ?? '',
       ].where((p) => p.isNotEmpty);
       vehicle = parts.isEmpty ? null : parts.join(' · ');
     }
@@ -448,9 +451,25 @@ class DriverInfo {
       name: (j['name'] as String?) ?? '',
       photoUrl: j['photoUrl'] as String?,
       vehicle: vehicle,
+      plate: v is Map ? (v['plate'] as String?) ?? '' : '',
       rating: (j['rating'] as num?)?.toDouble(),
     );
   }
+}
+
+/// Código de recogida que el pasajero da al chófer. Solo vive en memoria:
+/// nunca se guarda en el dispositivo.
+class PickupCode {
+  const PickupCode({required this.code, required this.expiresAt});
+
+  final String code;
+  final DateTime expiresAt;
+
+  factory PickupCode.fromJson(Map<String, dynamic> j) => PickupCode(
+        code: j['code'] as String,
+        expiresAt: DateTime.fromMillisecondsSinceEpoch(
+            (j['expiresAt'] as num).toInt()),
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -547,6 +566,7 @@ class Booking {
     this.cardPayment = false,
     this.cardPaymentFailed = false,
     this.riderPreferences = RidePreferences.none,
+    this.pickupLocked = false,
   });
 
   final String id;
@@ -606,6 +626,10 @@ class Booking {
   /// El cobro automático con tarjeta falló; se cobra a mano.
   final bool cardPaymentFailed;
 
+  /// Cinco códigos de recogida incorrectos: la verificación quedó
+  /// bloqueada y solo central puede forzarla. Lo fija el servidor.
+  final bool pickupLocked;
+
   /// Cobro con tarjeta aún por resolver por el servidor: no se registra a
   /// mano para no cobrar dos veces.
   bool get cardPaymentPending =>
@@ -618,6 +642,7 @@ class Booking {
     switch (status) {
       case BookingStatus.driverArriving:
       case BookingStatus.driverArrived:
+      case BookingStatus.verified:
       case BookingStatus.inProgress:
         return true;
       case BookingStatus.confirmed:
@@ -684,6 +709,7 @@ class Booking {
             j['stripePaymentMethodId'] != null,
         cardPaymentFailed: j['cardPaymentFailed'] == true,
         riderPreferences: RidePreferences.fromJson(j['riderPreferences']),
+        pickupLocked: j['pickupLocked'] == true,
       );
 
   Map<String, dynamic> toJson() => {
@@ -788,6 +814,88 @@ class AdminAlert {
         message: j['message'] as String? ?? '',
         resolved: j['resolved'] == true,
       );
+}
+
+// ---------------------------------------------------------------------------
+// BookingEvent — registro de transiciones (bookings/{id}/events)
+// ---------------------------------------------------------------------------
+
+/// Un paso del viaje que registró el servidor. La ubicación del chófer
+/// viene de eventLocations, que solo lee el admin.
+class BookingEvent {
+  const BookingEvent({
+    required this.id,
+    required this.type,
+    required this.from,
+    required this.to,
+    required this.actorUid,
+    required this.actorRole,
+    required this.source,
+    this.at,
+    this.appVersion,
+    this.farFromPickup = false,
+    this.arrivalCheck,
+    this.reason,
+    this.method,
+    this.failedAttempts,
+    this.lat,
+    this.lng,
+    this.distanceMeters,
+  });
+
+  final String id;
+
+  /// 'transition' o 'pickup_locked'.
+  final String type;
+  final BookingStatus from;
+  final BookingStatus to;
+  final String actorUid;
+  final String actorRole;
+
+  /// driver_app, admin o system.
+  final String source;
+  final DateTime? at;
+  final String? appVersion;
+  final bool farFromPickup;
+
+  /// compared, no_radius, no_location o no_pickup (solo en la llegada).
+  final String? arrivalCheck;
+
+  /// Motivo del admin al forzar la verificación.
+  final String? reason;
+
+  /// pickup_code o admin_override (en la verificación).
+  final String? method;
+  final int? failedAttempts;
+  final double? lat;
+  final double? lng;
+  final int? distanceMeters;
+
+  bool get hasLocation => lat != null && lng != null;
+
+  factory BookingEvent.fromJson(String id, Map<String, dynamic> j,
+      [Map<String, dynamic>? location]) {
+    final actor = j['actor'] is Map ? j['actor'] as Map : const {};
+    return BookingEvent(
+      id: id,
+      type: j['type'] as String? ?? 'transition',
+      from: BookingStatusX.fromString(j['from'] as String? ?? ''),
+      to: BookingStatusX.fromString(j['to'] as String? ?? ''),
+      actorUid: actor['uid'] as String? ?? '',
+      actorRole: actor['role'] as String? ?? '',
+      source: j['source'] as String? ?? '',
+      at: j['at'] is Timestamp ? (j['at'] as Timestamp).toDate() : null,
+      appVersion: j['appVersion'] as String?,
+      farFromPickup: j['farFromPickup'] == true,
+      arrivalCheck: j['arrivalCheck'] as String?,
+      reason: j['reason'] as String?,
+      method: j['method'] as String?,
+      failedAttempts: (j['failedAttempts'] as num?)?.toInt(),
+      lat: (location?['lat'] as num?)?.toDouble(),
+      lng: (location?['lng'] as num?)?.toDouble(),
+      distanceMeters: (location?['distanceMeters'] as num?)?.toInt(),
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------

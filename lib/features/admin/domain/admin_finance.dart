@@ -205,6 +205,7 @@ class FinancialSummary {
         case BookingStatus.confirmed:
         case BookingStatus.driverArriving:
         case BookingStatus.driverArrived:
+        case BookingStatus.verified:
         case BookingStatus.inProgress:
           if (!inPeriod(b.createdAt)) continue;
           pipelineCount++;
