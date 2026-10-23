@@ -7,6 +7,7 @@ import * as bookingService from './booking_service';
 import { reconcileOpenRequests } from './reconcile';
 import { resolveAdminAlert } from './alerts';
 import * as tripFlow from './trip_flow';
+import * as incidents from './incidents';
 import { isTransient, withRetryPolicy } from './retry_policy';
 import * as stripe from './stripe_service';
 import { logger } from './logger';
@@ -67,6 +68,48 @@ export const adminOverrideVerify = onCall(async (req) => {
     adminId,
     adminEmail: (req.auth?.token.email as string | undefined) ?? null,
   }, req.data);
+});
+
+// ---------------------------------------------------------------------------
+// SOS e incidentes (D1, F9)
+// ---------------------------------------------------------------------------
+
+// El push del SOS no depende del interruptor «Notificaciones push» del panel:
+// es un aviso de seguridad.
+const incidentDeps = (): incidents.IncidentDeps => ({
+  db,
+  push: async (tokens, title, body, data) => {
+    await admin.messaging().sendEachForMulticast({ tokens, notification: { title, body }, data });
+  },
+});
+
+const adminActor = async (req: CallableRequest): Promise<incidents.AdminActor> => ({
+  adminId: await requireAdmin(req),
+  adminEmail: (req.auth?.token.email as string | undefined) ?? null,
+});
+
+/** Pasajero o chófer de la reserva: avisa a central (idempotente, con límite). */
+export const raiseIncident = onCall((req) => incidents.raiseIncident(incidentDeps(), req.auth?.uid, req.data));
+
+/** Falsa alarma: solo quien lo disparó; el admin recibe igual el aviso. */
+export const cancelIncident = onCall((req) => incidents.cancelIncident(incidentDeps(), req.auth?.uid, req.data));
+
+export const acknowledgeIncident = onCall(async (req) =>
+  incidents.acknowledgeIncident(incidentDeps(), await adminActor(req), req.data));
+
+/** Cierre con nota obligatoria (mínimo 10 caracteres). */
+export const closeIncident = onCall(async (req) =>
+  incidents.closeIncident(incidentDeps(), await adminActor(req), req.data));
+
+/** Reenvía alerta y push de los incidentes sin reconocer (config/global). */
+export const escalateIncidentsJob = onSchedule('every 1 minutes', async () => {
+  await incidents.escalateIncidents(incidentDeps());
+});
+
+/** Borra las ubicaciones de incidentes cuya retención venció, si se configuró. */
+export const purgeIncidentLocationsJob = onSchedule('every 24 hours', async () => {
+  const purged = await incidents.purgeIncidentLocations(incidentDeps());
+  if (purged.length) logger.info('purgeIncidentLocations', 'purged', { incidents: purged });
 });
 
 // ---------------------------------------------------------------------------
