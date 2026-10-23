@@ -347,10 +347,11 @@ jobs:
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
           PROJECT_ID: luxelane-4e7ae  # alias `production` de .firebaserc
-      # Solo functions: las reglas van al final, con su propio job manual.
+      # Functions e índices (los índices no cambian permisos y las consultas
+      # nuevas los necesitan); las reglas van al final, con su job manual.
       - uses: w9jds/firebase-action@35d0fd9b92b2c66dcd13f1b72dacc588e89e7567 # v15.32.1
         with:
-          args: deploy --only functions
+          args: deploy --only functions,firestore:indexes
         env:
           # Service-account JSON (or base64 of it); replaces deprecated CI tokens.
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}

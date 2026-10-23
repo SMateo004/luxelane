@@ -314,6 +314,60 @@ anteriores reabre D1: solo como emergencia, con
 `git show <commit_anterior>:firestore.rules > firestore.rules` y el job
 manual de reglas.
 
+## SOS e incidentes (D1, F9): orden de despliegue
+
+El botón SOS crea un incidente (`raiseIncident`) que avisa a central:
+documento en `incidents`, alerta de severidad alta en `adminAlerts`, push a
+los dispositivos de admin con token y franja con sonido arriba del panel. Si
+nadie lo reconoce, `escalateIncidentsJob` (cada minuto) reenvía alerta y
+push. **Sin una persona atendiendo el panel (o el push) el botón no protege
+a nadie** (auditoría, D23).
+
+### Pasos manuales previos (decisiones del responsable)
+1. `config/global.dispatchPhone` (texto): teléfono de central. Sin él, la
+   app no ofrece llamar ni enviar SMS a central si falla la red, y el panel
+   no muestra «Llamar a central».
+2. `config/global.emergencyNumbers` (mapa nombre → número, p. ej. en la
+   consola de Firestore: tipo *map*). Sin él, la pantalla de ayuda dice
+   «Contacta con las autoridades locales». **El código no trae ningún
+   número, ni de emergencias.**
+3. Quién recibe el push: los usuarios con `role: admin` que tengan
+   `fcmTokens`. Hoy solo se registra el token en la **app móvil**
+   (`NotificationService.init` no lo hace en web), así que un admin que solo
+   usa el panel web no recibe push: ver en la entrega la propuesta.
+4. `config/global.incidentLocationRetentionDays` (número de días): cuánto se
+   guardan las ubicaciones de un incidente cerrado. Sin el valor no se borra
+   nada y el panel lo indica.
+5. Tiempos de operación (opcionales, con su valor por defecto):
+   `incidentAckSeconds` = 120 (escalar si nadie reconoce) e
+   `incidentEscalateEverySeconds` = 120 (repetir la escalada).
+
+### Orden
+1. **Functions e índices** (push a `main` → *Deploy Functions*, que ya
+   despliega `functions,firestore:indexes`; staging:
+   `firebase deploy --only functions,firestore:indexes --project staging`).
+   Incluye `raiseIncident`, `cancelIncident`, `acknowledgeIncident`,
+   `closeIncident` y las funciones programadas `escalateIncidentsJob` (cada
+   minuto) y `purgeIncidentLocationsJob` (diaria). Las programadas
+   necesitan Cloud Scheduler habilitado en el proyecto **[Probable]**.
+   Esperar a que los índices de `incidents` terminen de crearse (consola →
+   Firestore → Índices).
+2. **Apps nuevas publicadas** (pasajero y chófer con el botón) y **panel**
+   (*Deploy Hosting*).
+3. **Simulacro en staging**: con una reserva de prueba en curso, mantener
+   SOS 2 s, comprobar la franja y el sonido del panel, el push en el móvil de
+   un admin, la escalada a los 2 minutos sin reconocer, reconocer y cerrar
+   con nota.
+4. **Reglas al final** (job manual *Deploy Firestore rules*): añaden
+   `incidents` y sus ubicaciones, impiden a cualquier cliente tocar
+   `incidentOpen`/`activeIncidentId` y que el admin complete una reserva
+   que no esté en curso.
+
+### Apps antiguas
+No tienen botón SOS; todo lo demás sigue funcionando igual (el incidente no
+es un estado de la reserva y las reglas nuevas no cambian nada que la app
+antigua escriba). No hace falta subir la versión mínima por el SOS.
+
 ### Configuración de precios (Firestore)
 
 No hay tarifas en el código (D20): sin `pricingRules` la web y la app

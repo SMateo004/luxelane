@@ -149,7 +149,9 @@ void main() {
 
     test('el despliegue de functions no lleva las reglas', () {
       expect(ci, isNot(contains('deploy --only functions,firestore:rules')));
-      expect(ci, contains('args: deploy --only functions\n'));
+      expect(ci, contains('args: deploy --only functions,firestore:indexes\n'));
+      expect(
+          ci, isNot(contains('functions,firestore:indexes,firestore:rules')));
     });
 
     test('las reglas solo se despliegan a mano, desde main y con aprobación',
@@ -160,6 +162,14 @@ void main() {
       expect(job, contains("github.ref == 'refs/heads/main'"));
       expect(job, contains('environment: production'));
       expect(job, contains('args: deploy --only firestore:rules'));
+    });
+
+    test('los índices compuestos de incidents se despliegan con functions', () {
+      final indexes = _read('firestore.indexes.json');
+      for (final f in ['status', 'reporterId', 'locationsPurged']) {
+        expect(indexes, contains('"fieldPath": "$f"'));
+      }
+      expect(indexes, contains('"collectionGroup": "incidents"'));
     });
 
     test('no se despliega sin PICKUP_CODE_SECRET en Secret Manager', () {
