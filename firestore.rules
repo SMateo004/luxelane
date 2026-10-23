@@ -329,6 +329,11 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
+    // Contadores de límites de tasa de las callables: solo el servidor.
+    match /rateLimits/{counterId} {
+      allow read, write: if false;
+    }
+
     // -------------------------------------------------------------------------
     // /openRequests/{bookingId} — lo que un chófer ve antes de aceptar: clase,
     // hora, precio, zona aproximada. La escribe y borra el servidor.

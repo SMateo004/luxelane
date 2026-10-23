@@ -9,6 +9,7 @@ import { readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 import * as index from './index';
 import { appCheckGate, secureCallable, SECURED_MARK } from './callable';
+import { RATE_LIMITS } from './rate_limit';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exported = Record<string, any>;
@@ -24,6 +25,17 @@ describe('cobertura de App Check en las callables', () => {
   it.each(callables.map(([name]) => [name]))('%s pasa por secureCallable', (name) => {
     const fn = (index as Exported)[name];
     expect(fn[SECURED_MARK]).toEqual(expect.objectContaining({ name }));
+  });
+
+  it.each(callables.map(([name]) => [name]))('%s tiene límite de tasa', (name) => {
+    expect(RATE_LIMITS[name]).toEqual(expect.objectContaining({
+      limit: expect.any(Number), windowSeconds: expect.any(Number),
+    }));
+  });
+
+  it('solo el SOS deja pasar si el contador falla', () => {
+    const failOpen = Object.entries(RATE_LIMITS).filter(([, r]) => r.failOpen).map(([n]) => n);
+    expect(failOpen).toEqual(['raiseIncident']);
   });
 
   it('ningún archivo de src define una callable con onCall directamente', () => {

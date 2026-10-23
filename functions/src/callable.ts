@@ -4,9 +4,11 @@
  * estático (callable_security.test.ts) falla si alguna callable exportada
  * no pasa por aquí.
  */
+import * as admin from 'firebase-admin';
 import { CallableOptions, CallableRequest, HttpsError, onCall } from 'firebase-functions/v2/https';
 import { defineBoolean } from 'firebase-functions/params';
 import { logger } from './logger';
+import { enforceRateLimit, RATE_LIMITS } from './rate_limit';
 
 /**
  * false: se registra si llegó un token válido de App Check (para ver las
@@ -51,6 +53,9 @@ export function secureCallable<T>(
 ) {
   const fn = onCall(opts, async (req) => {
     appCheckGate(name, req, enforcing());
+    // Sin sesión no hay a quién contar: el handler responde unauthenticated.
+    const rule = RATE_LIMITS[name];
+    if (rule && req.auth?.uid) await enforceRateLimit(admin.firestore(), name, req.auth.uid, rule);
     return handler(req);
   });
   Object.defineProperty(fn, SECURED_MARK, { value: { name } satisfies SecureMeta });
