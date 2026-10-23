@@ -29,6 +29,17 @@ export const INCIDENT_WINDOW = ['driver_arriving', 'driver_arrived', 'verified',
 const LIVE = ['open', 'acknowledged'];
 export const RATE_LIMIT = 5;
 export const RATE_WINDOW_MS = 60 * 60 * 1000;
+/**
+ * Claves de config/global del SOS. Una clave mal escrita en el código haría
+ * que la configuración del responsable no tuviera efecto, sin aviso: por eso
+ * hay un test que las compara con DEPLOY.md.
+ */
+export const INCIDENT_CONFIG_KEYS = {
+  ackSeconds: 'incidentAckSeconds',
+  escalateEverySeconds: 'incidentEscalateEverySeconds',
+  locationRetentionDays: 'incidentLocationRetentionDays',
+} as const;
+
 export const DEFAULT_ACK_SECONDS = 120;
 export const DEFAULT_ESCALATE_EVERY_SECONDS = 120;
 
@@ -95,7 +106,7 @@ function releaseState(tx: admin.firestore.Transaction, db: admin.firestore.Fires
 
 /** Retención de las ubicaciones al dejar de compartirse (config/global). */
 async function retentionFields(db: admin.firestore.Firestore, at: number): Promise<Record<string, unknown>> {
-  const days = (await db.collection('config').doc('global').get()).data()?.incidentLocationRetentionDays;
+  const days = (await db.collection('config').doc('global').get()).data()?.[INCIDENT_CONFIG_KEYS.locationRetentionDays];
   if (typeof days === 'number' && days > 0) {
     return { locationRetentionDays: days, deleteLocationsAfter: ts(at + days * 86400000), locationsPurged: false };
   }
@@ -320,8 +331,8 @@ export async function escalateIncidents(deps: IncidentDeps): Promise<string[]> {
   const db = deps.db;
   const at = nowMs(deps);
   const global = (await db.collection('config').doc('global').get()).data() ?? {};
-  const ackMs = seconds(global.incidentAckSeconds, DEFAULT_ACK_SECONDS) * 1000;
-  const everyMs = seconds(global.incidentEscalateEverySeconds, DEFAULT_ESCALATE_EVERY_SECONDS) * 1000;
+  const ackMs = seconds(global[INCIDENT_CONFIG_KEYS.ackSeconds], DEFAULT_ACK_SECONDS) * 1000;
+  const everyMs = seconds(global[INCIDENT_CONFIG_KEYS.escalateEverySeconds], DEFAULT_ESCALATE_EVERY_SECONDS) * 1000;
   const open = await db.collection('incidents').where('status', '==', 'open').get();
   const escalated: string[] = [];
   for (const doc of open.docs) {
