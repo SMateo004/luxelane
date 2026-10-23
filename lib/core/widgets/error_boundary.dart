@@ -27,47 +27,47 @@ class LuxErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: LuxColors.bg,
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(LuxSpacing.lg),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.warning_amber_rounded,
-                  color: LuxColors.sapphire,
-                  size: 56,
-                ),
-                const SizedBox(height: LuxSpacing.md),
-                const Text(
-                  'Algo salió mal',
-                  style: TextStyle(
-                    color: LuxColors.ink,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: LuxSpacing.sm),
-                const Text(
-                  'Hemos sido notificados y estamos trabajando en una solución.',
-                  style: TextStyle(color: LuxColors.inkTertiary),
-                  textAlign: TextAlign.center,
-                ),
-                if (onRetry != null) ...[
-                  const SizedBox(height: LuxSpacing.xl),
-                  TextButton(
-                    onPressed: onRetry,
-                    child: const Text(
-                      'Intentar de nuevo',
-                      style: TextStyle(color: LuxColors.sapphire),
-                    ),
-                  ),
-                ],
-              ],
+    backgroundColor: LuxColors.bg,
+    body: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(LuxSpacing.lg),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.warning_amber_rounded,
+              color: LuxColors.sapphire,
+              size: 56,
             ),
-          ),
+            const SizedBox(height: LuxSpacing.md),
+            const Text(
+              'Algo salió mal',
+              style: TextStyle(
+                color: LuxColors.ink,
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: LuxSpacing.sm),
+            const Text(
+              'Hemos sido notificados y estamos trabajando en una solución.',
+              style: TextStyle(color: LuxColors.inkTertiary),
+              textAlign: TextAlign.center,
+            ),
+            if (onRetry != null) ...[
+              const SizedBox(height: LuxSpacing.xl),
+              TextButton(
+                onPressed: onRetry,
+                child: const Text(
+                  'Intentar de nuevo',
+                  style: TextStyle(color: LuxColors.sapphire),
+                ),
+              ),
+            ],
+          ],
         ),
-      );
+      ),
+    ),
+  );
 }

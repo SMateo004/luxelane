@@ -41,9 +41,10 @@ Future<FirebaseStartup> startFirebase(
       log('[Luxelane] Firebase no se pudo iniciar: $e');
       return FirebaseFatal(e);
     }
-    final message = e is StagingNotConfiguredError
-        ? e.message
-        : 'Firebase no se pudo iniciar: $e';
+    final message =
+        e is StagingNotConfiguredError
+            ? e.message
+            : 'Firebase no se pudo iniciar: $e';
     log('[Luxelane] AVISO: $message');
     return FirebaseDegraded(message);
   }
@@ -52,11 +53,13 @@ Future<FirebaseStartup> startFirebase(
 /// Envuelve la app según el resultado: pantalla de error si es fatal, aviso
 /// en pantalla si falta configuración, o la app tal cual.
 Widget appForStartup(FirebaseStartup startup, Widget app) => switch (startup) {
-      FirebaseReady() => app,
-      FirebaseFatal() => const FirebaseStartupErrorApp(),
-      FirebaseDegraded(:final message) =>
-        FirebaseSetupWarning(message: message, child: app),
-    };
+  FirebaseReady() => app,
+  FirebaseFatal() => const FirebaseStartupErrorApp(),
+  FirebaseDegraded(:final message) => FirebaseSetupWarning(
+    message: message,
+    child: app,
+  ),
+};
 
 /// Pantalla sobria que sustituye a la app cuando Firebase no arranca.
 class FirebaseStartupErrorApp extends StatelessWidget {
@@ -75,8 +78,11 @@ class FirebaseStartupErrorApp extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.cloud_off_rounded,
-                      size: 40, color: LuxColors.inkTertiary),
+                  Icon(
+                    Icons.cloud_off_rounded,
+                    size: 40,
+                    color: LuxColors.inkTertiary,
+                  ),
                   SizedBox(height: LuxSpacing.md),
                   Text(
                     'No pudimos iniciar la app',
@@ -127,11 +133,15 @@ class FirebaseSetupWarning extends StatelessWidget {
                 top: false,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: LuxSpacing.md, vertical: LuxSpacing.sm),
+                    horizontal: LuxSpacing.md,
+                    vertical: LuxSpacing.sm,
+                  ),
                   child: Text(
                     message,
                     style: const TextStyle(
-                        color: LuxColors.onAccent, fontSize: 12),
+                      color: LuxColors.onAccent,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ),

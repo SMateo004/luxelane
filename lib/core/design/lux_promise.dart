@@ -32,28 +32,44 @@ class LuxAssurance {
   final String title;
   final String? detail;
 
-  static const fixedPrice = LuxAssurance(Icons.lock_outline_rounded,
-      LuxPromise.fixedPrice, LuxPromise.fixedPriceLong);
-  static const freeCancel = LuxAssurance(Icons.event_available_outlined,
-      LuxPromise.freeCancel, LuxPromise.freeCancelLong);
+  static const fixedPrice = LuxAssurance(
+    Icons.lock_outline_rounded,
+    LuxPromise.fixedPrice,
+    LuxPromise.fixedPriceLong,
+  );
+  static const freeCancel = LuxAssurance(
+    Icons.event_available_outlined,
+    LuxPromise.freeCancel,
+    LuxPromise.freeCancelLong,
+  );
   static const waitAirport = LuxAssurance(
-      Icons.hourglass_bottom_rounded,
-      LuxPromise.waitAirport,
-      'Tu chófer te espera en llegadas con un cartel con tu nombre.');
+    Icons.hourglass_bottom_rounded,
+    LuxPromise.waitAirport,
+    'Tu chófer te espera en llegadas con un cartel con tu nombre.',
+  );
   static const waitStandard = LuxAssurance(
-      Icons.hourglass_bottom_rounded,
-      LuxPromise.waitStandard,
-      'Sin prisas: el tiempo de cortesía está incluido en el precio.');
-  static const flightTracking = LuxAssurance(Icons.flight_land_rounded,
-      LuxPromise.flightTracking, LuxPromise.flightTrackingLong);
-  static const chauffeurs = LuxAssurance(Icons.verified_user_outlined,
-      LuxPromise.chauffeurs, LuxPromise.chauffeursLong);
+    Icons.hourglass_bottom_rounded,
+    LuxPromise.waitStandard,
+    'Sin prisas: el tiempo de cortesía está incluido en el precio.',
+  );
+  static const flightTracking = LuxAssurance(
+    Icons.flight_land_rounded,
+    LuxPromise.flightTracking,
+    LuxPromise.flightTrackingLong,
+  );
+  static const chauffeurs = LuxAssurance(
+    Icons.verified_user_outlined,
+    LuxPromise.chauffeurs,
+    LuxPromise.chauffeursLong,
+  );
   static const support = LuxAssurance(
-      Icons.support_agent_outlined,
-      LuxPromise.support,
-      'Una persona real, a cualquier hora, antes, durante y después del viaje.');
+    Icons.support_agent_outlined,
+    LuxPromise.support,
+    'Una persona real, a cualquier hora, antes, durante y después del viaje.',
+  );
   static const privacy = LuxAssurance(
-      Icons.shield_moon_outlined,
-      LuxPromise.privacy,
-      'Tus datos, tus rutas y tus conversaciones permanecen confidenciales.');
+    Icons.shield_moon_outlined,
+    LuxPromise.privacy,
+    'Tus datos, tus rutas y tus conversaciones permanecen confidenciales.',
+  );
 }

@@ -31,7 +31,9 @@ void main() {
   }
 
   test('la lista incluye los archivos del SOS', () {
-    expect(files.where((f) => f.contains('incidents')).length,
-        greaterThanOrEqualTo(5));
+    expect(
+      files.where((f) => f.contains('incidents')).length,
+      greaterThanOrEqualTo(5),
+    );
   });
 }

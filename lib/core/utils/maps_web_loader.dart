@@ -23,8 +23,9 @@ Future<void> initMapsForWeb(String apiKey) async {
   }
 
   // Remove stale script tags that might carry a placeholder key.
-  final existing =
-      html.document.querySelectorAll('script[src*="maps.googleapis.com"]');
+  final existing = html.document.querySelectorAll(
+    'script[src*="maps.googleapis.com"]',
+  );
   for (final el in existing) {
     el.remove();
   }
@@ -35,17 +36,16 @@ Future<void> initMapsForWeb(String apiKey) async {
     if (!completer.isCompleted) completer.complete();
   });
 
-  final script = html.ScriptElement()
-    ..async = true
-    ..src = 'https://maps.googleapis.com/maps/api/js'
-        '?key=$apiKey'
-        '&libraries=places'
-        '&callback=_luxelaneMapsReady';
+  final script =
+      html.ScriptElement()
+        ..async = true
+        ..src =
+            'https://maps.googleapis.com/maps/api/js'
+            '?key=$apiKey'
+            '&libraries=places'
+            '&callback=_luxelaneMapsReady';
 
   html.document.head!.append(script);
 
-  await completer.future.timeout(
-    const Duration(seconds: 10),
-    onTimeout: () {},
-  );
+  await completer.future.timeout(const Duration(seconds: 10), onTimeout: () {});
 }

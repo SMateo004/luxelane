@@ -19,10 +19,12 @@ Future<Place?> showMapPickerDialog(
   return showDialog<Place>(
     context: context,
     barrierColor: LuxColors.ink.withOpacity(0.35),
-    builder: (_) => _MapPickerDialog(
-      initial: initial ?? const LatLng(-17.7833, -63.1821), // Santa Cruz center
-      title: title,
-    ),
+    builder:
+        (_) => _MapPickerDialog(
+          initial:
+              initial ?? const LatLng(-17.7833, -63.1821), // Santa Cruz center
+          title: title,
+        ),
   );
 }
 
@@ -64,7 +66,8 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
     final place = await _maps.reverseGeocode(pos.latitude, pos.longitude);
     if (!mounted) return;
     setState(() {
-      _address = place?.address ??
+      _address =
+          place?.address ??
           '${pos.latitude.toStringAsFixed(5)}, ${pos.longitude.toStringAsFixed(5)}';
       _loading = false;
     });
@@ -154,8 +157,11 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                       const SizedBox(width: 8),
                       IconButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        icon:
-                            const Icon(Icons.close, color: subColor, size: 20),
+                        icon: const Icon(
+                          Icons.close,
+                          color: subColor,
+                          size: 20,
+                        ),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -227,8 +233,8 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                             padding: const EdgeInsets.symmetric(horizontal: 28),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(LuxRadius.md)),
+                              borderRadius: BorderRadius.circular(LuxRadius.md),
+                            ),
                             textStyle: const TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 11,
@@ -260,39 +266,35 @@ class _CenterPin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 14,
-            height: 14,
-            decoration: BoxDecoration(
-              color: LuxColors.sapphire,
-              shape: BoxShape.circle,
-              border: Border.all(color: LuxColors.surface, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: LuxColors.ink.withOpacity(0.25),
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Container(
+        width: 14,
+        height: 14,
+        decoration: BoxDecoration(
+          color: LuxColors.sapphire,
+          shape: BoxShape.circle,
+          border: Border.all(color: LuxColors.surface, width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: LuxColors.ink.withOpacity(0.25),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
             ),
-          ),
-          Container(
-            width: 1.5,
-            height: 20,
-            color: LuxColors.sapphire,
-          ),
-          Container(
-            width: 8,
-            height: 4,
-            decoration: BoxDecoration(
-              color: LuxColors.ink.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        ],
-      );
+          ],
+        ),
+      ),
+      Container(width: 1.5, height: 20, color: LuxColors.sapphire),
+      Container(
+        width: 8,
+        height: 4,
+        decoration: BoxDecoration(
+          color: LuxColors.ink.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+    ],
+  );
 }
 
 // ---------------------------------------------------------------------------

@@ -32,7 +32,7 @@ Booking _booking(BookingStatus status, {bool locked = false}) =>
       'origin': {'address': 'A', 'coordinates': const GeoPoint(-17.6, -63.1)},
       'destination': {
         'address': 'B',
-        'coordinates': const GeoPoint(-17.7, -63.2)
+        'coordinates': const GeoPoint(-17.7, -63.2),
       },
       'status': status.label,
       'pickupLocked': locked,
@@ -40,8 +40,9 @@ Booking _booking(BookingStatus status, {bool locked = false}) =>
 
 void main() {
   group('PickupCodeEntry', () {
-    testWidgets('teclado numérico: 4 dígitos se envían y verifican',
-        (tester) async {
+    testWidgets('teclado numérico: 4 dígitos se envían y verifican', (
+      tester,
+    ) async {
       String? sent;
       var verified = false;
       await _pump(
@@ -66,10 +67,15 @@ void main() {
 
     testWidgets('«Borrar» corrige antes de completar', (tester) async {
       String? sent;
-      await _pump(tester, PickupCodeEntry(onVerify: (c) async {
-        sent = c;
-        return const Right(null);
-      }));
+      await _pump(
+        tester,
+        PickupCodeEntry(
+          onVerify: (c) async {
+            sent = c;
+            return const Right(null);
+          },
+        ),
+      );
       await _type(tester, '12');
       await tester.tap(find.byKey(const ValueKey('key-⌫')));
       await tester.pump();
@@ -78,21 +84,30 @@ void main() {
       await tester.pump(const Duration(seconds: 2));
     });
 
-    testWidgets('incorrecto: aviso con intentos y vuelve a pedir el código',
-        (tester) async {
+    testWidgets('incorrecto: aviso con intentos y vuelve a pedir el código', (
+      tester,
+    ) async {
       final calls = <String>[];
       await _pump(
         tester,
-        PickupCodeEntry(onVerify: (c) async {
-          calls.add(c);
-          return Left(tripFailureFor('failed-precondition',
-              {'reason': 'wrong_code', 'attemptsLeft': 3}));
-        }),
+        PickupCodeEntry(
+          onVerify: (c) async {
+            calls.add(c);
+            return Left(
+              tripFailureFor('failed-precondition', {
+                'reason': 'wrong_code',
+                'attemptsLeft': 3,
+              }),
+            );
+          },
+        ),
       );
       await _type(tester, '1111');
       await tester.pumpAndSettle();
-      expect(find.text('Código incorrecto. Te quedan 3 intentos.'),
-          findsOneWidget);
+      expect(
+        find.text('Código incorrecto. Te quedan 3 intentos.'),
+        findsOneWidget,
+      );
       expect(find.text('1'), findsOneWidget); // solo la tecla, no los cuadros
       await _type(tester, '2222');
       await tester.pumpAndSettle();
@@ -100,24 +115,30 @@ void main() {
     });
 
     testWidgets(
-        'bloqueado: «Contacta con central» y sin teclado; sin número no hay botón',
-        (tester) async {
-      await _pump(
-        tester,
-        PickupCodeEntry(
-          onVerify: (_) async => Left(tripFailureFor(
-              'failed-precondition', {'reason': 'pickup_locked'})),
-        ),
-      );
-      await _type(tester, '1111');
-      await tester.pumpAndSettle();
-      expect(find.text('Contacta con central'), findsOneWidget);
-      expect(find.byKey(const ValueKey('key-1')), findsNothing);
-      expect(find.text('Llamar a central'), findsNothing);
-    });
+      'bloqueado: «Contacta con central» y sin teclado; sin número no hay botón',
+      (tester) async {
+        await _pump(
+          tester,
+          PickupCodeEntry(
+            onVerify:
+                (_) async => Left(
+                  tripFailureFor('failed-precondition', {
+                    'reason': 'pickup_locked',
+                  }),
+                ),
+          ),
+        );
+        await _type(tester, '1111');
+        await tester.pumpAndSettle();
+        expect(find.text('Contacta con central'), findsOneWidget);
+        expect(find.byKey(const ValueKey('key-1')), findsNothing);
+        expect(find.text('Llamar a central'), findsNothing);
+      },
+    );
 
-    testWidgets('con dispatchPhone configurado se ofrece llamar a central',
-        (tester) async {
+    testWidgets('con dispatchPhone configurado se ofrece llamar a central', (
+      tester,
+    ) async {
       String? called;
       await _pump(
         tester,
@@ -137,8 +158,12 @@ void main() {
       await _pump(
         tester,
         PickupCodeEntry(
-          onVerify: (_) async => Left(tripFailureFor(
-              'failed-precondition', {'reason': 'code_expired'})),
+          onVerify:
+              (_) async => Left(
+                tripFailureFor('failed-precondition', {
+                  'reason': 'code_expired',
+                }),
+              ),
         ),
       );
       await _type(tester, '1234');
@@ -147,17 +172,20 @@ void main() {
       expect(find.textContaining('venció'), findsOneWidget);
     });
 
-    testWidgets('sin red: conserva el código y «Reintentar» lo reenvía',
-        (tester) async {
+    testWidgets('sin red: conserva el código y «Reintentar» lo reenvía', (
+      tester,
+    ) async {
       final calls = <String>[];
       await _pump(
         tester,
-        PickupCodeEntry(onVerify: (c) async {
-          calls.add(c);
-          return calls.length == 1
-              ? const Left(TripFailure(TripIssue.network, 'Sin conexión.'))
-              : const Right(null);
-        }),
+        PickupCodeEntry(
+          onVerify: (c) async {
+            calls.add(c);
+            return calls.length == 1
+                ? const Left(TripFailure(TripIssue.network, 'Sin conexión.'))
+                : const Right(null);
+          },
+        ),
       );
       await _type(tester, '5678');
       await tester.pumpAndSettle();
@@ -171,8 +199,9 @@ void main() {
   });
 
   group('DriverStepAction', () {
-    testWidgets('llegó: se pide el código; no hay deslizar para iniciar',
-        (tester) async {
+    testWidgets('llegó: se pide el código; no hay deslizar para iniciar', (
+      tester,
+    ) async {
       Booking? opened;
       await _pump(
         tester,
@@ -186,21 +215,27 @@ void main() {
       expect(opened?.id, 'b1');
     });
 
-    testWidgets('verificada: aparece «Iniciar viaje» para deslizar',
-        (tester) async {
+    testWidgets('verificada: aparece «Iniciar viaje» para deslizar', (
+      tester,
+    ) async {
       await _pump(
-          tester, DriverStepAction(booking: _booking(BookingStatus.verified)));
+        tester,
+        DriverStepAction(booking: _booking(BookingStatus.verified)),
+      );
       expect(find.text('Iniciar viaje'), findsOneWidget);
       expect(find.text('Ingresar código del pasajero'), findsNothing);
     });
 
-    testWidgets('bloqueada: sin código ni inicio; central solo con número',
-        (tester) async {
+    testWidgets('bloqueada: sin código ni inicio; central solo con número', (
+      tester,
+    ) async {
       RemoteFlags.instance.dispatchPhone.value = null;
       await _pump(
-          tester,
-          DriverStepAction(
-              booking: _booking(BookingStatus.driverArrived, locked: true)));
+        tester,
+        DriverStepAction(
+          booking: _booking(BookingStatus.driverArrived, locked: true),
+        ),
+      );
       expect(find.text('Ingresar código del pasajero'), findsNothing);
       expect(find.text('Llamar a central'), findsNothing);
       RemoteFlags.instance.dispatchPhone.value = '+00000000';
@@ -212,11 +247,17 @@ void main() {
     test('los pasos y sus textos', () {
       expect(DriverStepAction.slideLabel(BookingStatus.driverArrived), isNull);
       expect(
-          DriverStepAction.slideLabel(BookingStatus.verified), 'Iniciar viaje');
-      expect(DriverStepAction.slideLabel(BookingStatus.inProgress),
-          'Completar viaje');
-      expect(DriverStepAction.message(_booking(BookingStatus.inProgress)),
-          contains('Viaje en curso'));
+        DriverStepAction.slideLabel(BookingStatus.verified),
+        'Iniciar viaje',
+      );
+      expect(
+        DriverStepAction.slideLabel(BookingStatus.inProgress),
+        'Completar viaje',
+      );
+      expect(
+        DriverStepAction.message(_booking(BookingStatus.inProgress)),
+        contains('Viaje en curso'),
+      );
     });
   });
 

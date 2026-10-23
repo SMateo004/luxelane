@@ -225,16 +225,18 @@ class BookingError extends BookingState {
 
 class BookingBloc extends Bloc<BookingEvent, BookingState> {
   BookingBloc({required BookingRepository bookingRepository})
-      : _repo = bookingRepository,
-        super(const BookingInitial()) {
+    : _repo = bookingRepository,
+      super(const BookingInitial()) {
     on<BookingCreateRequested>(_onCreate);
     on<BookingStatusWatched>(_onWatch);
     on<BookingDriverAssigned>(_onAssignDriver);
     on<BookingCancelRequested>(_onCancel);
     on<BookingStatusChanged>(_onStatusChanged);
     on<BookingRiderTripsRequested>(_onLoadTrips);
-    on<BookingRiderTripsWatched>(_onWatchTrips,
-        transformer: (events, mapper) => events.switchMap(mapper));
+    on<BookingRiderTripsWatched>(
+      _onWatchTrips,
+      transformer: (events, mapper) => events.switchMap(mapper),
+    );
     on<BookingUpdateStatusRequested>(_onUpdateStatus);
   }
 
@@ -267,15 +269,18 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       pickupAirport: event.pickupAirport,
       hours: event.hours,
     );
-    final result = await _repo.createBooking(booking,
-        quotedPrice: event.quotedPrice, requestId: event.requestId);
+    final result = await _repo.createBooking(
+      booking,
+      quotedPrice: event.quotedPrice,
+      requestId: event.requestId,
+    );
     result.fold(
       (f) => emit(switch (f) {
         PriceChangedFailure() => BookingPriceChanged(
-            previousPrice: event.quotedPrice ?? event.estimatedPrice,
-            newPrice: f.price,
-            request: event,
-          ),
+          previousPrice: event.quotedPrice ?? event.estimatedPrice,
+          newPrice: f.price,
+          request: event,
+        ),
         AppUpdateRequiredFailure() => BookingUpdateRequired(f),
         _ => BookingError(f.message),
       }),
@@ -302,10 +307,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       bookingId: event.bookingId,
       driverId: event.driverId,
     );
-    result.fold(
-      (f) => emit(BookingError(f.message)),
-      (_) {},
-    );
+    result.fold((f) => emit(BookingError(f.message)), (_) {});
   }
 
   Future<void> _onCancel(
@@ -357,8 +359,9 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     await emit.forEach<List<Booking>>(
       _repo.watchBookingsByRider(event.riderId),
       onData: BookingTripsLoaded.new,
-      onError: (_, __) =>
-          const BookingError('No pudimos cargar tus viajes. Reintenta.'),
+      onError:
+          (_, __) =>
+              const BookingError('No pudimos cargar tus viajes. Reintenta.'),
     );
   }
 }

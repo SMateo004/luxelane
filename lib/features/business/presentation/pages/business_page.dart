@@ -53,8 +53,10 @@ class _BusinessPageState extends State<BusinessPage> {
     } catch (_) {
       if (mounted) {
         showLuxSnackbar(
-            context, 'No pudimos enviar tu solicitud. Inténtalo de nuevo.',
-            isError: true);
+          context,
+          'No pudimos enviar tu solicitud. Inténtalo de nuevo.',
+          isError: true,
+        );
       }
     } finally {
       if (mounted) setState(() => _sending = false);
@@ -66,92 +68,110 @@ class _BusinessPageState extends State<BusinessPage> {
 
   @override
   Widget build(BuildContext context) => LuxInfoPage(
-        eyebrow: 'Para Empresas',
-        title: 'Viajes corporativos, redefinidos.',
-        lead: 'Chóferes privados para tu equipo y tus invitados, con '
-            'facturación centralizada y un gerente de cuenta. Cuéntanos qué '
-            'necesitas y te contactamos en menos de un día hábil.',
-        child: _sent ? _thanks() : _formView(),
-      );
+    eyebrow: 'Para Empresas',
+    title: 'Viajes corporativos, redefinidos.',
+    lead:
+        'Chóferes privados para tu equipo y tus invitados, con '
+        'facturación centralizada y un gerente de cuenta. Cuéntanos qué '
+        'necesitas y te contactamos en menos de un día hábil.',
+    child: _sent ? _thanks() : _formView(),
+  );
 
   Widget _thanks() => LuxCard(
-        child: Row(children: [
-          const Icon(Icons.check_circle_outline_rounded,
-              color: LuxColors.success, size: 32),
-          const SizedBox(width: LuxSpacing.md),
-          Expanded(
-            child: Text(
-                'Gracias, ${_name.text.trim().split(' ').first}. Recibimos tu '
-                'solicitud y te escribiremos a ${_email.text.trim()}.',
-                style: LuxTypography.bodyLarge),
+    child: Row(
+      children: [
+        const Icon(
+          Icons.check_circle_outline_rounded,
+          color: LuxColors.success,
+          size: 32,
+        ),
+        const SizedBox(width: LuxSpacing.md),
+        Expanded(
+          child: Text(
+            'Gracias, ${_name.text.trim().split(' ').first}. Recibimos tu '
+            'solicitud y te escribiremos a ${_email.text.trim()}.',
+            style: LuxTypography.bodyLarge,
           ),
-        ]),
-      );
+        ),
+      ],
+    ),
+  );
 
   Widget _formView() => Form(
-        key: _form,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            for (final b in const [
-              'Facturación mensual centralizada para tu empresa',
-              'Gerente de cuenta dedicado',
-              'Reservas prioritarias para ejecutivos e invitados',
-            ])
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(children: [
-                  const Icon(Icons.check_rounded, size: 18, color: LD.sph),
-                  const SizedBox(width: 10),
-                  Expanded(child: Text(b, style: bodyText(size: 14.5))),
-                ]),
-              ),
-            const SizedBox(height: 24),
-            LuxTextField(
-                label: 'Empresa', controller: _company, validator: _required),
-            const SizedBox(height: 14),
-            LuxTextField(
-                label: 'Tu nombre', controller: _name, validator: _required),
-            const SizedBox(height: 14),
-            LuxTextField(
-              label: 'Correo de trabajo',
-              controller: _email,
-              keyboardType: TextInputType.emailAddress,
-              validator: (v) {
-                final e = v?.trim() ?? '';
-                return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(e)
-                    ? null
-                    : 'Escribe un correo válido';
-              },
-            ),
-            const SizedBox(height: 14),
-            LuxTextField(
-                label: 'Teléfono',
-                controller: _phone,
-                keyboardType: TextInputType.phone,
-                validator: _required),
-            const SizedBox(height: 14),
-            DropdownButtonFormField<String>(
-              value: _travellers,
-              decoration: const InputDecoration(
-                  labelText: '¿Cuántas personas viajarían?'),
-              items: [
-                for (final r in _ranges)
-                  DropdownMenuItem(value: r, child: Text(r)),
+    key: _form,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (final b in const [
+          'Facturación mensual centralizada para tu empresa',
+          'Gerente de cuenta dedicado',
+          'Reservas prioritarias para ejecutivos e invitados',
+        ])
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              children: [
+                const Icon(Icons.check_rounded, size: 18, color: LD.sph),
+                const SizedBox(width: 10),
+                Expanded(child: Text(b, style: bodyText(size: 14.5))),
               ],
-              onChanged: (v) => setState(() => _travellers = v ?? _travellers),
             ),
-            const SizedBox(height: 14),
-            LuxTextField(
-                label: 'Cuéntanos qué necesitas (opcional)',
-                controller: _message,
-                maxLines: 4),
-            const SizedBox(height: 24),
-            LuxButton(
-                label: 'Enviar solicitud',
-                loading: _sending,
-                onPressed: _sending ? null : _submit),
-          ],
+          ),
+        const SizedBox(height: 24),
+        LuxTextField(
+          label: 'Empresa',
+          controller: _company,
+          validator: _required,
         ),
-      );
+        const SizedBox(height: 14),
+        LuxTextField(
+          label: 'Tu nombre',
+          controller: _name,
+          validator: _required,
+        ),
+        const SizedBox(height: 14),
+        LuxTextField(
+          label: 'Correo de trabajo',
+          controller: _email,
+          keyboardType: TextInputType.emailAddress,
+          validator: (v) {
+            final e = v?.trim() ?? '';
+            return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(e)
+                ? null
+                : 'Escribe un correo válido';
+          },
+        ),
+        const SizedBox(height: 14),
+        LuxTextField(
+          label: 'Teléfono',
+          controller: _phone,
+          keyboardType: TextInputType.phone,
+          validator: _required,
+        ),
+        const SizedBox(height: 14),
+        DropdownButtonFormField<String>(
+          value: _travellers,
+          decoration: const InputDecoration(
+            labelText: '¿Cuántas personas viajarían?',
+          ),
+          items: [
+            for (final r in _ranges) DropdownMenuItem(value: r, child: Text(r)),
+          ],
+          onChanged: (v) => setState(() => _travellers = v ?? _travellers),
+        ),
+        const SizedBox(height: 14),
+        LuxTextField(
+          label: 'Cuéntanos qué necesitas (opcional)',
+          controller: _message,
+          maxLines: 4,
+        ),
+        const SizedBox(height: 24),
+        LuxButton(
+          label: 'Enviar solicitud',
+          loading: _sending,
+          onPressed: _sending ? null : _submit,
+        ),
+      ],
+    ),
+  );
 }

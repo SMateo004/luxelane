@@ -21,26 +21,34 @@ class _Repo extends Mock implements IncidentRepository {}
 const _offline = IncidentFailure(IncidentIssue.offline, 'Sin conexión.');
 
 Incident _incident(IncidentStatus s, {int count = 1}) => Incident(
-      id: 'inc1',
-      bookingId: 'abcdef123',
-      reporterId: 'ana',
-      reporterRole: 'rider',
-      status: s,
-      count: count,
-    );
+  id: 'inc1',
+  bookingId: 'abcdef123',
+  reporterId: 'ana',
+  reporterRole: 'rider',
+  status: s,
+  count: count,
+);
 
-Future<void> _pump(WidgetTester tester, Widget child,
-    {bool screenReader = false, bool reduceMotion = false}) async {
+Future<void> _pump(
+  WidgetTester tester,
+  Widget child, {
+  bool screenReader = false,
+  bool reduceMotion = false,
+}) async {
   tester.view.physicalSize = const Size(900, 1800);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  await tester.pumpWidget(MaterialApp(
-    home: MediaQuery(
-      data: MediaQueryData(
-          accessibleNavigation: screenReader, disableAnimations: reduceMotion),
-      child: Scaffold(body: SingleChildScrollView(child: child)),
+  await tester.pumpWidget(
+    MaterialApp(
+      home: MediaQuery(
+        data: MediaQueryData(
+          accessibleNavigation: screenReader,
+          disableAnimations: reduceMotion,
+        ),
+        child: Scaffold(body: SingleChildScrollView(child: child)),
+      ),
     ),
-  ));
+  );
 }
 
 void main() {
@@ -51,33 +59,36 @@ void main() {
     repo = _Repo();
     mine = StreamController<Incident?>.broadcast();
     when(() => repo.watchMine(any(), any())).thenAnswer((_) => mine.stream);
-    when(() => repo.publishLocation(any(), any(), any()))
-        .thenAnswer((_) async {});
+    when(
+      () => repo.publishLocation(any(), any(), any()),
+    ).thenAnswer((_) async {});
   });
   tearDown(() => mine.close());
 
   IncidentBloc bloc({Future<LatLngLite?> Function()? where}) => IncidentBloc(
-        repository: repo,
-        bookingId: 'abcdef123',
-        uid: 'ana',
-        currentLocation: where ?? () async => (lat: -17.78, lng: -63.18),
-        publishEvery: const Duration(milliseconds: 30),
-      );
+    repository: repo,
+    bookingId: 'abcdef123',
+    uid: 'ana',
+    currentLocation: where ?? () async => (lat: -17.78, lng: -63.18),
+    publishEvery: const Duration(milliseconds: 30),
+  );
 
   group('IncidentBloc', () {
     blocTest<IncidentBloc, IncidentState>(
       'SOS con red: envía con la ubicación y queda sin error',
       build: () {
-        when(() => repo.raise('abcdef123', location: any(named: 'location')))
-            .thenAnswer(
-                (_) async => const Right(IncidentRaise(incidentId: 'inc1')));
+        when(
+          () => repo.raise('abcdef123', location: any(named: 'location')),
+        ).thenAnswer(
+          (_) async => const Right(IncidentRaise(incidentId: 'inc1')),
+        );
         return bloc();
       },
       act: (b) => b.add(const IncidentRaised()),
       verify: (b) {
-        verify(() =>
-                repo.raise('abcdef123', location: (lat: -17.78, lng: -63.18)))
-            .called(1);
+        verify(
+          () => repo.raise('abcdef123', location: (lat: -17.78, lng: -63.18)),
+        ).called(1);
         expect(b.state.sending, isFalse);
         expect(b.state.failure, isNull);
       },
@@ -86,8 +97,9 @@ void main() {
     blocTest<IncidentBloc, IncidentState>(
       'sin red: falla offline y guarda la última ubicación para el SMS',
       build: () {
-        when(() => repo.raise(any(), location: any(named: 'location')))
-            .thenAnswer((_) async => const Left(_offline));
+        when(
+          () => repo.raise(any(), location: any(named: 'location')),
+        ).thenAnswer((_) async => const Left(_offline));
         return bloc();
       },
       act: (b) => b.add(const IncidentRaised()),
@@ -100,9 +112,12 @@ void main() {
     blocTest<IncidentBloc, IncidentState>(
       'repetición: cada pulsación llega al servidor (que suma el contador)',
       build: () {
-        when(() => repo.raise(any(), location: any(named: 'location')))
-            .thenAnswer((_) async => const Right(
-                IncidentRaise(incidentId: 'inc1', alreadyOpen: true)));
+        when(
+          () => repo.raise(any(), location: any(named: 'location')),
+        ).thenAnswer(
+          (_) async =>
+              const Right(IncidentRaise(incidentId: 'inc1', alreadyOpen: true)),
+        );
         return bloc();
       },
       act: (b) async {
@@ -112,8 +127,9 @@ void main() {
       },
       wait: const Duration(milliseconds: 20),
       verify: (b) {
-        verify(() => repo.raise(any(), location: any(named: 'location')))
-            .called(2);
+        verify(
+          () => repo.raise(any(), location: any(named: 'location')),
+        ).called(2);
         expect(b.state.presses, 2);
       },
     );
@@ -131,8 +147,8 @@ void main() {
         clearInteractions(repo);
         await Future<void>.delayed(const Duration(milliseconds: 80));
       },
-      verify: (_) =>
-          verifyNever(() => repo.publishLocation(any(), any(), any())),
+      verify:
+          (_) => verifyNever(() => repo.publishLocation(any(), any(), any())),
     );
 
     blocTest<IncidentBloc, IncidentState>(
@@ -144,15 +160,18 @@ void main() {
         mine.add(_incident(IncidentStatus.open));
         await Future<void>.delayed(const Duration(milliseconds: 50));
       },
-      verify: (_) => verify(() => repo.publishLocation('inc1', -17.78, -63.18))
-          .called(greaterThanOrEqualTo(1)),
+      verify:
+          (_) => verify(
+            () => repo.publishLocation('inc1', -17.78, -63.18),
+          ).called(greaterThanOrEqualTo(1)),
     );
 
     blocTest<IncidentBloc, IncidentState>(
       'falsa alarma: cancela el incidente propio',
       build: () {
-        when(() => repo.cancel('inc1'))
-            .thenAnswer((_) async => const Right(null));
+        when(
+          () => repo.cancel('inc1'),
+        ).thenAnswer((_) async => const Right(null));
         return bloc();
       },
       seed: () => IncidentState(incident: _incident(IncidentStatus.open)),
@@ -166,14 +185,16 @@ void main() {
       var hits = 0;
       await _pump(tester, SosButton(onActivated: () => hits++));
       final g = await tester.startGesture(
-          tester.getCenter(find.byKey(const ValueKey('sos-button'))));
+        tester.getCenter(find.byKey(const ValueKey('sos-button'))),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1500));
       await g.up();
       await tester.pumpAndSettle();
       expect(hits, 0);
       final g2 = await tester.startGesture(
-          tester.getCenter(find.byKey(const ValueKey('sos-button'))));
+        tester.getCenter(find.byKey(const ValueKey('sos-button'))),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 1000));
       await tester.pump(const Duration(milliseconds: 1100));
@@ -192,8 +213,11 @@ void main() {
 
     testWidgets('con lector de pantalla: toque + confirmación', (tester) async {
       var hits = 0;
-      await _pump(tester, SosButton(onActivated: () => hits++),
-          screenReader: true);
+      await _pump(
+        tester,
+        SosButton(onActivated: () => hits++),
+        screenReader: true,
+      );
       await tester.tap(find.byKey(const ValueKey('sos-button')));
       await tester.pumpAndSettle();
       expect(find.text('¿Avisar a central?'), findsOneWidget);
@@ -209,10 +233,14 @@ void main() {
 
     testWidgets('con «reducir movimiento» funciona igual', (tester) async {
       var hits = 0;
-      await _pump(tester, SosButton(onActivated: () => hits++),
-          reduceMotion: true);
+      await _pump(
+        tester,
+        SosButton(onActivated: () => hits++),
+        reduceMotion: true,
+      );
       final g = await tester.startGesture(
-          tester.getCenter(find.byKey(const ValueKey('sos-button'))));
+        tester.getCenter(find.byKey(const ValueKey('sos-button'))),
+      );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 2100));
       await g.up();
@@ -222,24 +250,29 @@ void main() {
   });
 
   group('IncidentHelpSheet', () {
-    Widget sheet(IncidentBloc b,
-            {String? phone,
-            Map<String, String> numbers = const {},
-            List<Uri>? opened}) =>
-        BlocProvider.value(
-          value: b,
-          child: IncidentHelpSheet(
-            bookingId: 'abcdef123',
-            dispatchPhone: phone,
-            emergencyNumbers: numbers,
-            launch: (u) async => opened?.add(u),
-          ),
-        );
+    Widget sheet(
+      IncidentBloc b, {
+      String? phone,
+      Map<String, String> numbers = const {},
+      List<Uri>? opened,
+    }) => BlocProvider.value(
+      value: b,
+      child: IncidentHelpSheet(
+        bookingId: 'abcdef123',
+        dispatchPhone: phone,
+        emergencyNumbers: numbers,
+        launch: (u) async => opened?.add(u),
+      ),
+    );
 
     testWidgets('sin red: llamar y SMS prellenado a central', (tester) async {
-      final b = bloc()
-        ..emit(const IncidentState(
-            failure: _offline, lastLocation: (lat: -17.7, lng: -63.1)));
+      final b =
+          bloc()..emit(
+            const IncidentState(
+              failure: _offline,
+              lastLocation: (lat: -17.7, lng: -63.1),
+            ),
+          );
       final opened = <Uri>[];
       await _pump(tester, sheet(b, phone: '+000', opened: opened));
       expect(find.text('No pudimos avisar a central'), findsOneWidget);
@@ -247,37 +280,44 @@ void main() {
       await tester.tap(find.text('Enviar SMS a central'));
       expect(opened.first.toString(), 'tel:+000');
       expect(
-          Uri.decodeComponent(opened.last.toString()),
-          contains(
-              'Reserva #ABCDEF. Ubicación: https://maps.google.com/?q=-17.700000,-63.100000'));
+        Uri.decodeComponent(opened.last.toString()),
+        contains(
+          'Reserva #ABCDEF. Ubicación: https://maps.google.com/?q=-17.700000,-63.100000',
+        ),
+      );
       expect(find.text('Reintentar el aviso'), findsOneWidget);
     });
 
     testWidgets(
-        'sin números configurados: «Contacta con las autoridades locales»',
-        (tester) async {
-      final b = bloc()..emit(const IncidentState(failure: _offline));
-      await _pump(tester, sheet(b));
-      expect(find.text(kNoNumbersHelp), findsOneWidget);
-      expect(find.text('Llamar a central'), findsNothing);
-    });
+      'sin números configurados: «Contacta con las autoridades locales»',
+      (tester) async {
+        final b = bloc()..emit(const IncidentState(failure: _offline));
+        await _pump(tester, sheet(b));
+        expect(find.text(kNoNumbersHelp), findsOneWidget);
+        expect(find.text('Llamar a central'), findsNothing);
+      },
+    );
 
     testWidgets('con números de emergencia: botón por número', (tester) async {
-      final b = bloc()
-        ..emit(IncidentState(incident: _incident(IncidentStatus.open)));
+      final b =
+          bloc()..emit(IncidentState(incident: _incident(IncidentStatus.open)));
       final opened = <Uri>[];
-      await _pump(tester,
-          sheet(b, numbers: {'Línea de prueba': '000'}, opened: opened));
+      await _pump(
+        tester,
+        sheet(b, numbers: {'Línea de prueba': '000'}, opened: opened),
+      );
       await tester.tap(find.text('Línea de prueba'));
       expect(opened.single.toString(), 'tel:000');
       expect(find.text(kNoNumbersHelp), findsNothing);
     });
 
-    testWidgets('estados: avisamos, reconocida, cerrada; repetición visible',
-        (tester) async {
-      final b = bloc()
-        ..emit(
-            IncidentState(incident: _incident(IncidentStatus.open, count: 3)));
+    testWidgets('estados: avisamos, reconocida, cerrada; repetición visible', (
+      tester,
+    ) async {
+      final b =
+          bloc()..emit(
+            IncidentState(incident: _incident(IncidentStatus.open, count: 3)),
+          );
       await _pump(tester, sheet(b));
       expect(find.text('Avisamos a central'), findsOneWidget);
       expect(find.text('Aviso enviado 3 veces.'), findsOneWidget);
@@ -291,10 +331,11 @@ void main() {
     });
 
     testWidgets('falsa alarma pide confirmación', (tester) async {
-      when(() => repo.cancel('inc1'))
-          .thenAnswer((_) async => const Right(null));
-      final b = bloc()
-        ..emit(IncidentState(incident: _incident(IncidentStatus.open)));
+      when(
+        () => repo.cancel('inc1'),
+      ).thenAnswer((_) async => const Right(null));
+      final b =
+          bloc()..emit(IncidentState(incident: _incident(IncidentStatus.open)));
       await _pump(tester, sheet(b));
       await tester.ensureVisible(find.text('Fue una falsa alarma'));
       await tester.tap(find.text('Fue una falsa alarma'));
@@ -318,26 +359,31 @@ void main() {
 
     testWidgets('fuera de la ventana no hay botón', (tester) async {
       await _pump(
-          tester,
-          SosEntry(
-              bookingId: 'b',
-              uid: 'ana',
-              status: BookingStatus.confirmed,
-              repository: repo));
+        tester,
+        SosEntry(
+          bookingId: 'b',
+          uid: 'ana',
+          status: BookingStatus.confirmed,
+          repository: repo,
+        ),
+      );
       await tester.pump();
       expect(find.byType(SosButton), findsNothing);
     });
 
-    testWidgets('en la ventana: botón; con aviso abierto, «Ayuda en curso»',
-        (tester) async {
+    testWidgets('en la ventana: botón; con aviso abierto, «Ayuda en curso»', (
+      tester,
+    ) async {
       await _pump(
-          tester,
-          SosEntry(
-              bookingId: 'b',
-              uid: 'ana',
-              status: BookingStatus.inProgress,
-              repository: repo,
-              openHelp: (_, __) async {}));
+        tester,
+        SosEntry(
+          bookingId: 'b',
+          uid: 'ana',
+          status: BookingStatus.inProgress,
+          repository: repo,
+          openHelp: (_, __) async {},
+        ),
+      );
       await tester.pump();
       expect(find.byType(SosButton), findsOneWidget);
       mine.add(_incident(IncidentStatus.open));

@@ -18,10 +18,10 @@ class AuthRepositoryImpl implements AuthRepository {
     required FirebaseFirestore firestore,
     FirebaseFunctions? functions,
     GoogleSignIn? googleSignIn,
-  })  : _auth = firebaseAuth,
-        _db = firestore,
-        _functionsOverride = functions,
-        _googleOverride = googleSignIn;
+  }) : _auth = firebaseAuth,
+       _db = firestore,
+       _functionsOverride = functions,
+       _googleOverride = googleSignIn;
 
   final fb.FirebaseAuth _auth;
   final FirebaseFirestore _db;
@@ -32,43 +32,50 @@ class AuthRepositoryImpl implements AuthRepository {
 
   // Native Google account picker (Android/iOS). Created lazily: on web the
   // Firebase popup is used instead and this is never touched.
-  late final GoogleSignIn _google = _googleOverride ??
+  late final GoogleSignIn _google =
+      _googleOverride ??
       GoogleSignIn(
         scopes: const ['email', 'profile'],
-        clientId: AppConfig.googleIosClientId.isEmpty
-            ? null
-            : AppConfig.googleIosClientId,
-        serverClientId: AppConfig.googleServerClientId.isEmpty
-            ? null
-            : AppConfig.googleServerClientId,
+        clientId:
+            AppConfig.googleIosClientId.isEmpty
+                ? null
+                : AppConfig.googleIosClientId,
+        serverClientId:
+            AppConfig.googleServerClientId.isEmpty
+                ? null
+                : AppConfig.googleServerClientId,
       );
 
   @override
-  Stream<User?> get authStateChanges => _auth.authStateChanges().asyncMap(
-        (fbUser) async {
-          if (fbUser == null) return null;
-          try {
-            final doc = await _db.collection('users').doc(fbUser.uid).get();
-            if (!doc.exists) return null;
-            final user = User.fromJson({'id': doc.id, ...doc.data()!});
-            // Una cuenta bloqueada por el admin pierde la sesión abierta.
-            if (!user.isActive) {
-              await _auth.signOut();
-              throw const AuthFailure(kBlockedAccountMessage);
-            }
-            return user;
-          } on AuthFailure {
-            rethrow;
-          } catch (_) {
-            return null;
+  Stream<User?> get authStateChanges =>
+      _auth.authStateChanges().asyncMap((fbUser) async {
+        if (fbUser == null) return null;
+        try {
+          final doc = await _db.collection('users').doc(fbUser.uid).get();
+          if (!doc.exists) return null;
+          final user = User.fromJson({'id': doc.id, ...doc.data()!});
+          // Una cuenta bloqueada por el admin pierde la sesión abierta.
+          if (!user.isActive) {
+            await _auth.signOut();
+            throw const AuthFailure(kBlockedAccountMessage);
           }
-        },
-      );
+          return user;
+        } on AuthFailure {
+          rethrow;
+        } catch (_) {
+          return null;
+        }
+      });
 
   @override
-  Stream<User?> watchUser(String uid) =>
-      _db.collection('users').doc(uid).snapshots().map((doc) =>
-          doc.exists ? User.fromJson({'id': doc.id, ...doc.data()!}) : null);
+  Stream<User?> watchUser(String uid) => _db
+      .collection('users')
+      .doc(uid)
+      .snapshots()
+      .map(
+        (doc) =>
+            doc.exists ? User.fromJson({'id': doc.id, ...doc.data()!}) : null,
+      );
 
   /// Raw Firebase sign-in flag — no Firestore involved, so it never
   /// produces a false-negative that would accidentally sign the user out.
@@ -135,9 +142,10 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final fb.UserCredential cred;
       if (kIsWeb) {
-        final provider = fb.GoogleAuthProvider()
-          ..addScope('email')
-          ..setCustomParameters({'prompt': 'select_account'});
+        final provider =
+            fb.GoogleAuthProvider()
+              ..addScope('email')
+              ..setCustomParameters({'prompt': 'select_account'});
         cred = await _auth.signInWithPopup(provider);
       } else {
         final account = await _google.signIn();
@@ -165,9 +173,13 @@ class AuthRepositoryImpl implements AuthRepository {
       if (e.code == GoogleSignIn.kSignInCanceledError) {
         return const Left(AuthCancelledFailure());
       }
-      return Left(AuthFailure(e.code == GoogleSignIn.kNetworkError
-          ? 'Sin conexión. Revisa tu internet e inténtalo de nuevo.'
-          : _googleGenericError));
+      return Left(
+        AuthFailure(
+          e.code == GoogleSignIn.kNetworkError
+              ? 'Sin conexión. Revisa tu internet e inténtalo de nuevo.'
+              : _googleGenericError,
+        ),
+      );
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -215,7 +227,9 @@ class AuthRepositoryImpl implements AuthRepository {
             'fcmTokens': FieldValue.arrayRemove([token]),
           });
         }
-      } catch (_) {/* sin token o sin conexión */}
+      } catch (_) {
+        /* sin token o sin conexión */
+      }
     }
     try {
       final ref = _db.collection('driverProfiles').doc(uid);
@@ -288,7 +302,9 @@ class AuthRepositoryImpl implements AuthRepository {
       if (!kIsWeb) {
         try {
           if (await _google.isSignedIn()) await _google.signOut();
-        } catch (_) {/* not signed in with Google */}
+        } catch (_) {
+          /* not signed in with Google */
+        }
       }
       await _beforeSignOut();
       await _auth.signOut();
@@ -305,18 +321,23 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Right(null);
     } on FirebaseFunctionsException catch (e) {
       if (e.message == 'active-bookings') {
-        return const Left(ServerFailure(
+        return const Left(
+          ServerFailure(
             'Tienes viajes activos o reservados. Cancélalos o espera a que '
-            'terminen antes de eliminar tu cuenta.'));
+            'terminen antes de eliminar tu cuenta.',
+          ),
+        );
       }
       if (e.code == 'failed-precondition' && e.message != null) {
         return Left(ServerFailure(e.message!));
       }
       return const Left(
-          ServerFailure('No pudimos eliminar tu cuenta. Inténtalo de nuevo.'));
+        ServerFailure('No pudimos eliminar tu cuenta. Inténtalo de nuevo.'),
+      );
     } catch (_) {
       return const Left(
-          ServerFailure('No pudimos eliminar tu cuenta. Revisa tu conexión.'));
+        ServerFailure('No pudimos eliminar tu cuenta. Revisa tu conexión.'),
+      );
     }
   }
 
@@ -341,18 +362,21 @@ class AuthRepositoryImpl implements AuthRepository {
       await _auth.sendPasswordResetEmail(email: email);
       return const Right(null);
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(switch (e.code) {
-        'invalid-email' => 'Ese correo no es válido. Revísalo.',
-        'user-not-found' => 'No hay ninguna cuenta con ese correo.',
-        'too-many-requests' =>
-          'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
-        'network-request-failed' =>
-          'Sin conexión. Revisa tu internet e inténtalo de nuevo.',
-        _ => 'No pudimos enviar el enlace. Inténtalo de nuevo.',
-      }));
+      return Left(
+        AuthFailure(switch (e.code) {
+          'invalid-email' => 'Ese correo no es válido. Revísalo.',
+          'user-not-found' => 'No hay ninguna cuenta con ese correo.',
+          'too-many-requests' =>
+            'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
+          'network-request-failed' =>
+            'Sin conexión. Revisa tu internet e inténtalo de nuevo.',
+          _ => 'No pudimos enviar el enlace. Inténtalo de nuevo.',
+        }),
+      );
     } catch (_) {
       return const Left(
-          ServerFailure('No pudimos enviar el enlace. Inténtalo de nuevo.'));
+        ServerFailure('No pudimos enviar el enlace. Inténtalo de nuevo.'),
+      );
     }
   }
 

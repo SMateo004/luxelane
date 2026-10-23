@@ -36,7 +36,7 @@ class PermissionFailure extends Failure {
 /// reserva no se creó y hay que confirmar [price].
 class PriceChangedFailure extends Failure {
   const PriceChangedFailure(this.price)
-      : super('El precio de este viaje cambió.');
+    : super('El precio de este viaje cambió.');
   final double price;
 }
 
@@ -48,9 +48,11 @@ class AppUpdateRequiredFailure extends Failure {
     this.androidStoreUrl,
     this.iosStoreUrl,
     this.forDriver = false,
-  }) : super(forDriver
-            ? 'Actualiza la app para seguir con tus viajes.'
-            : 'Actualiza la app para reservar.');
+  }) : super(
+         forDriver
+             ? 'Actualiza la app para seguir con tus viajes.'
+             : 'Actualiza la app para reservar.',
+       );
   final String? androidStoreUrl;
   final String? iosStoreUrl;
 

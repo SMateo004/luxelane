@@ -83,25 +83,24 @@ class IncidentState extends Equatable {
     bool clearFailure = false,
     LatLngLite? lastLocation,
     int? presses,
-  }) =>
-      IncidentState(
-        incident: clearIncident ? null : incident ?? this.incident,
-        sending: sending ?? this.sending,
-        failure: clearFailure ? null : failure ?? this.failure,
-        lastLocation: lastLocation ?? this.lastLocation,
-        presses: presses ?? this.presses,
-      );
+  }) => IncidentState(
+    incident: clearIncident ? null : incident ?? this.incident,
+    sending: sending ?? this.sending,
+    failure: clearFailure ? null : failure ?? this.failure,
+    lastLocation: lastLocation ?? this.lastLocation,
+    presses: presses ?? this.presses,
+  );
 
   @override
   List<Object?> get props => [
-        incident?.id,
-        incident?.status,
-        incident?.count,
-        sending,
-        failure?.issue,
-        lastLocation,
-        presses,
-      ];
+    incident?.id,
+    incident?.status,
+    incident?.count,
+    sending,
+    failure?.issue,
+    lastLocation,
+    presses,
+  ];
 }
 
 // ---------------------------------------------------------------------------
@@ -115,9 +114,9 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
     required this.uid,
     Future<LatLngLite?> Function()? currentLocation,
     this.publishEvery = const Duration(seconds: 10),
-  })  : _repo = repository,
-        _currentLocation = currentLocation ?? (() async => null),
-        super(const IncidentState()) {
+  }) : _repo = repository,
+       _currentLocation = currentLocation ?? (() async => null),
+       super(const IncidentState()) {
     on<IncidentWatched>(_onWatched);
     on<IncidentRaised>(_onRaised);
     on<IncidentCancelled>(_onCancelled);
@@ -137,12 +136,13 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
   Timer? _timer;
 
   Future<void> _onWatched(
-      IncidentWatched event, Emitter<IncidentState> emit) async {
+    IncidentWatched event,
+    Emitter<IncidentState> emit,
+  ) async {
     await _sub?.cancel();
-    _sub = _repo.watchMine(bookingId, uid).listen(
-          (i) => add(_IncidentChanged(i)),
-          onError: (_) {},
-        );
+    _sub = _repo
+        .watchMine(bookingId, uid)
+        .listen((i) => add(_IncidentChanged(i)), onError: (_) {});
   }
 
   Future<LatLngLite?> _locate() async {
@@ -154,47 +154,67 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
   }
 
   Future<void> _onRaised(
-      IncidentRaised event, Emitter<IncidentState> emit) async {
+    IncidentRaised event,
+    Emitter<IncidentState> emit,
+  ) async {
     if (state.sending) return;
-    emit(state.copyWith(
-        sending: true, clearFailure: true, presses: state.presses + 1));
+    emit(
+      state.copyWith(
+        sending: true,
+        clearFailure: true,
+        presses: state.presses + 1,
+      ),
+    );
     final location = await _locate();
     if (location != null) emit(state.copyWith(lastLocation: location));
     final result = await _repo.raise(bookingId, location: location);
     result.fold(
-      (f) => emit(state.copyWith(
-        sending: false,
-        failure: f is IncidentFailure
-            ? f
-            : IncidentFailure(IncidentIssue.other, f.message),
-      )),
+      (f) => emit(
+        state.copyWith(
+          sending: false,
+          failure:
+              f is IncidentFailure
+                  ? f
+                  : IncidentFailure(IncidentIssue.other, f.message),
+        ),
+      ),
       (_) => emit(state.copyWith(sending: false, clearFailure: true)),
     );
   }
 
   Future<void> _onCancelled(
-      IncidentCancelled event, Emitter<IncidentState> emit) async {
+    IncidentCancelled event,
+    Emitter<IncidentState> emit,
+  ) async {
     final id = state.incident?.id;
     if (id == null) return;
     final result = await _repo.cancel(id);
     result.fold(
-      (f) => emit(state.copyWith(
-          failure: f is IncidentFailure
-              ? f
-              : IncidentFailure(IncidentIssue.other, f.message))),
+      (f) => emit(
+        state.copyWith(
+          failure:
+              f is IncidentFailure
+                  ? f
+                  : IncidentFailure(IncidentIssue.other, f.message),
+        ),
+      ),
       (_) => emit(state.copyWith(clearFailure: true)),
     );
   }
 
   void _onChanged(_IncidentChanged event, Emitter<IncidentState> emit) {
-    emit(event.incident == null
-        ? state.copyWith(clearIncident: true)
-        : state.copyWith(incident: event.incident));
+    emit(
+      event.incident == null
+          ? state.copyWith(clearIncident: true)
+          : state.copyWith(incident: event.incident),
+    );
     // Ubicación en vivo solo mientras esté abierto o reconocido.
     if (state.live) {
       if (_timer == null) {
         _timer = Timer.periodic(
-            publishEvery, (_) => add(const _IncidentLocationTick()));
+          publishEvery,
+          (_) => add(const _IncidentLocationTick()),
+        );
         add(const _IncidentLocationTick());
       }
     } else {
@@ -204,7 +224,9 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
   }
 
   Future<void> _onTick(
-      _IncidentLocationTick event, Emitter<IncidentState> emit) async {
+    _IncidentLocationTick event,
+    Emitter<IncidentState> emit,
+  ) async {
     final incident = state.incident;
     if (incident == null || !incident.isLive) return;
     final location = await _locate();

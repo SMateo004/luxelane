@@ -24,14 +24,15 @@ class VehicleImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Image.asset(
-        VehicleCatalog.carImage(vehicleClass),
-        fit: fit,
-        filterQuality: FilterQuality.high,
-        errorBuilder: (_, __, ___) => AspectRatio(
+    VehicleCatalog.carImage(vehicleClass),
+    fit: fit,
+    filterQuality: FilterQuality.high,
+    errorBuilder:
+        (_, __, ___) => AspectRatio(
           aspectRatio: 1,
           child: CustomPaint(painter: _SuvSidePainter()),
         ),
-      );
+  );
 }
 
 /// Side profile of an executive SUV.
@@ -44,7 +45,9 @@ class _SuvSidePainter extends CustomPainter {
     canvas.save();
     // Mirrored so the nose points left, like every vehicle photo.
     canvas.translate(
-        (size.width + w * s) / 2, (size.height - h * s) / 2 + 6 * s);
+      (size.width + w * s) / 2,
+      (size.height - h * s) / 2 + 6 * s,
+    );
     canvas.scale(-s, s);
 
     // Ground shadow
@@ -57,28 +60,35 @@ class _SuvSidePainter extends CustomPainter {
 
     const rearX = 230.0, frontX = 770.0, axleY = 330.0, archR = 70.0;
 
-    final body = Path()
-      ..moveTo(62, 318)
-      ..lineTo(58, 236)
-      ..quadraticBezierTo(60, 196, 96, 180)
-      ..lineTo(150, 102)
-      ..quadraticBezierTo(162, 86, 190, 84)
-      ..lineTo(600, 82)
-      ..quadraticBezierTo(632, 82, 652, 100)
-      ..lineTo(742, 182)
-      ..lineTo(900, 204)
-      ..quadraticBezierTo(944, 212, 950, 246)
-      ..lineTo(954, 300)
-      ..quadraticBezierTo(954, 322, 932, 324)
-      ..lineTo(frontX + archR + 8, 324)
-      ..arcToPoint(Offset(frontX - archR - 8, 324),
-          radius: const Radius.circular(archR + 8), clockwise: false)
-      ..lineTo(rearX + archR + 8, 324)
-      ..arcToPoint(Offset(rearX - archR - 8, 324),
-          radius: const Radius.circular(archR + 8), clockwise: false)
-      ..lineTo(80, 324)
-      ..quadraticBezierTo(62, 324, 62, 318)
-      ..close();
+    final body =
+        Path()
+          ..moveTo(62, 318)
+          ..lineTo(58, 236)
+          ..quadraticBezierTo(60, 196, 96, 180)
+          ..lineTo(150, 102)
+          ..quadraticBezierTo(162, 86, 190, 84)
+          ..lineTo(600, 82)
+          ..quadraticBezierTo(632, 82, 652, 100)
+          ..lineTo(742, 182)
+          ..lineTo(900, 204)
+          ..quadraticBezierTo(944, 212, 950, 246)
+          ..lineTo(954, 300)
+          ..quadraticBezierTo(954, 322, 932, 324)
+          ..lineTo(frontX + archR + 8, 324)
+          ..arcToPoint(
+            Offset(frontX - archR - 8, 324),
+            radius: const Radius.circular(archR + 8),
+            clockwise: false,
+          )
+          ..lineTo(rearX + archR + 8, 324)
+          ..arcToPoint(
+            Offset(rearX - archR - 8, 324),
+            radius: const Radius.circular(archR + 8),
+            clockwise: false,
+          )
+          ..lineTo(80, 324)
+          ..quadraticBezierTo(62, 324, 62, 318)
+          ..close();
 
     canvas.drawPath(
       body,
@@ -104,14 +114,15 @@ class _SuvSidePainter extends CustomPainter {
     );
 
     // Glasshouse
-    final glass = Path()
-      ..moveTo(170, 110)
-      ..quadraticBezierTo(178, 98, 198, 98)
-      ..lineTo(594, 96)
-      ..quadraticBezierTo(618, 96, 634, 110)
-      ..lineTo(714, 182)
-      ..lineTo(150, 184)
-      ..close();
+    final glass =
+        Path()
+          ..moveTo(170, 110)
+          ..quadraticBezierTo(178, 98, 198, 98)
+          ..lineTo(594, 96)
+          ..quadraticBezierTo(618, 96, 634, 110)
+          ..lineTo(714, 182)
+          ..lineTo(150, 184)
+          ..close();
     canvas.drawPath(
       glass,
       Paint()
@@ -130,31 +141,42 @@ class _SuvSidePainter extends CustomPainter {
     canvas.drawRect(const Rect.fromLTWH(540, 96, 12, 90), pillar);
 
     // Door lines + handles
-    final line = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.4
-      ..color = Colors.black.withValues(alpha: 0.35);
+    final line =
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.4
+          ..color = Colors.black.withValues(alpha: 0.35);
     canvas.drawLine(const Offset(358, 188), const Offset(362, 312), line);
     canvas.drawLine(const Offset(546, 188), const Offset(552, 312), line);
     final handle = Paint()..color = Colors.white.withValues(alpha: 0.30);
     canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            const Rect.fromLTWH(300, 214, 40, 6), const Radius.circular(3)),
-        handle);
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(300, 214, 40, 6),
+        const Radius.circular(3),
+      ),
+      handle,
+    );
     canvas.drawRRect(
-        RRect.fromRectAndRadius(
-            const Rect.fromLTWH(488, 214, 40, 6), const Radius.circular(3)),
-        handle);
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(488, 214, 40, 6),
+        const Radius.circular(3),
+      ),
+      handle,
+    );
 
     // Lights
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-          const Rect.fromLTWH(888, 214, 54, 12), const Radius.circular(6)),
+        const Rect.fromLTWH(888, 214, 54, 12),
+        const Radius.circular(6),
+      ),
       Paint()..color = const Color(0xFFE8F0FB),
     );
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-          const Rect.fromLTWH(60, 204, 26, 30), const Radius.circular(5)),
+        const Rect.fromLTWH(60, 204, 26, 30),
+        const Radius.circular(5),
+      ),
       Paint()..color = const Color(0xFFB4504F),
     );
 
@@ -175,14 +197,18 @@ class _SuvSidePainter extends CustomPainter {
           colors: [Color(0xFFDCE3EE), Color(0xFF8D9AAE)],
         ).createShader(Rect.fromCircle(center: o, radius: r * 0.62)),
     );
-    final spoke = Paint()
-      ..color = const Color(0xFF55657C)
-      ..strokeWidth = 4
-      ..strokeCap = StrokeCap.round;
+    final spoke =
+        Paint()
+          ..color = const Color(0xFF55657C)
+          ..strokeWidth = 4
+          ..strokeCap = StrokeCap.round;
     for (var i = 0; i < 5; i++) {
       final a = i * 2 * math.pi / 5 - math.pi / 2;
-      c.drawLine(o + Offset(math.cos(a), math.sin(a)) * r * 0.16,
-          o + Offset(math.cos(a), math.sin(a)) * r * 0.56, spoke);
+      c.drawLine(
+        o + Offset(math.cos(a), math.sin(a)) * r * 0.16,
+        o + Offset(math.cos(a), math.sin(a)) * r * 0.56,
+        spoke,
+      );
     }
     c.drawCircle(o, r * 0.12, Paint()..color = const Color(0xFF3B4A60));
   }
@@ -206,9 +232,9 @@ class CabinSchematic extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CustomPaint(
-        painter: _CabinPainter(vehicleClass, option),
-        child: const SizedBox.expand(),
-      );
+    painter: _CabinPainter(vehicleClass, option),
+    child: const SizedBox.expand(),
+  );
 }
 
 class _CabinPainter extends CustomPainter {
@@ -217,9 +243,9 @@ class _CabinPainter extends CustomPainter {
   final SeatingOption option;
 
   List<int> get _rows => switch (vc) {
-        VehicleClass.businessVan => const [2, 2, 3],
-        _ => const [2, 3],
-      };
+    VehicleClass.businessVan => const [2, 2, 3],
+    _ => const [2, 3],
+  };
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -230,12 +256,17 @@ class _CabinPainter extends CustomPainter {
     final bodyLen = size.width * 0.86;
     final bodyW = math.min(size.height * 0.62, bodyLen * (isVan ? 0.44 : 0.4));
     final body = Rect.fromCenter(
-        center: size.center(Offset.zero), width: bodyLen, height: bodyW);
+      center: size.center(Offset.zero),
+      width: bodyLen,
+      height: bodyW,
+    );
 
     // Shadow + body
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-          body.shift(const Offset(0, 10)), Radius.circular(bodyW * 0.32)),
+        body.shift(const Offset(0, 10)),
+        Radius.circular(bodyW * 0.32),
+      ),
       Paint()
         ..color = _ink.withValues(alpha: 0.10)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18),
@@ -259,15 +290,23 @@ class _CabinPainter extends CustomPainter {
     // Cabin area between hood and trunk
     final hood = body.width * (isVan ? 0.14 : 0.22);
     final trunk = body.width * (isVan ? 0.06 : (isSuv ? 0.10 : 0.16));
-    final cabin = Rect.fromLTRB(body.left + trunk, body.top + bodyW * 0.1,
-        body.right - hood, body.bottom - bodyW * 0.1);
+    final cabin = Rect.fromLTRB(
+      body.left + trunk,
+      body.top + bodyW * 0.1,
+      body.right - hood,
+      body.bottom - bodyW * 0.1,
+    );
     // Windshield hint
-    final ws = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2
-      ..color = _seatLine;
-    canvas.drawLine(Offset(cabin.right + 4, cabin.top + 6),
-        Offset(cabin.right + 4, cabin.bottom - 6), ws);
+    final ws =
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 1.2
+          ..color = _seatLine;
+    canvas.drawLine(
+      Offset(cabin.right + 4, cabin.top + 6),
+      Offset(cabin.right + 4, cabin.bottom - 6),
+      ws,
+    );
 
     // Seat assignment: rear rows first (outer seats before the middle one),
     // front passenger last; the driver's seat is never offered.
@@ -276,8 +315,8 @@ class _CabinPainter extends CustomPainter {
         ...(r == 0
             ? [(0, 1)]
             : rows[r] == 3
-                ? [(r, 0), (r, 2), (r, 1)]
-                : [(r, 0), (r, 1)]),
+            ? [(r, 0), (r, 2), (r, 1)]
+            : [(r, 0), (r, 1)]),
     ];
     final occupied = order.take(option.passengers).toSet();
     // The child seat goes on an outer rear seat.
@@ -291,11 +330,15 @@ class _CabinPainter extends CustomPainter {
       final seatH = cabin.height / 3.2;
       final seatW = math.min(rowGap * 0.62, seatH * 1.05);
       for (var i = 0; i < seats; i++) {
-        final cy = seats == 2
-            ? cabin.top + cabin.height * (i == 0 ? 0.27 : 0.73)
-            : cabin.top + cabin.height * (0.18 + i * 0.32);
+        final cy =
+            seats == 2
+                ? cabin.top + cabin.height * (i == 0 ? 0.27 : 0.73)
+                : cabin.top + cabin.height * (0.18 + i * 0.32);
         final rect = Rect.fromCenter(
-            center: Offset(cx, cy), width: seatW, height: seatH);
+          center: Offset(cx, cy),
+          width: seatW,
+          height: seatH,
+        );
         final isDriver = r == 0 && i == 0;
         final isChild = childSeat == (r, i);
         final isOn = occupied.contains((r, i)) || isChild;
@@ -304,12 +347,18 @@ class _CabinPainter extends CustomPainter {
     }
   }
 
-  void _seat(Canvas c, Rect r,
-      {required bool isDriver, required bool on, required bool child}) {
+  void _seat(
+    Canvas c,
+    Rect r, {
+    required bool isDriver,
+    required bool on,
+    required bool child,
+  }) {
     final rr = RRect.fromRectAndRadius(r, Radius.circular(r.width * 0.22));
-    final fill = isDriver
-        ? const Color(0xFFCFD8E6)
-        : on
+    final fill =
+        isDriver
+            ? const Color(0xFFCFD8E6)
+            : on
             ? LD.sph
             : _seatFree;
     if (on && !isDriver) {
@@ -327,13 +376,15 @@ class _CabinPainter extends CustomPainter {
       Radius.circular(r.width * 0.12),
     );
     c.drawRRect(
-        back,
-        Paint()
-          ..color = isDriver
-              ? const Color(0xFFB7C3D5)
-              : on
-                  ? const Color(0xFF123C6B)
-                  : _seatLine.withValues(alpha: 0.7));
+      back,
+      Paint()
+        ..color =
+            isDriver
+                ? const Color(0xFFB7C3D5)
+                : on
+                ? const Color(0xFF123C6B)
+                : _seatLine.withValues(alpha: 0.7),
+    );
     if (isDriver) {
       // Steering wheel
       c.drawCircle(
@@ -348,12 +399,14 @@ class _CabinPainter extends CustomPainter {
     if (child) {
       // Child seat: a smaller shell inside the seat.
       final inner = Rect.fromCenter(
-          center: r.center.translate(r.width * 0.06, 0),
-          width: r.width * 0.5,
-          height: r.height * 0.62);
+        center: r.center.translate(r.width * 0.06, 0),
+        width: r.width * 0.5,
+        height: r.height * 0.62,
+      );
       c.drawRRect(
-          RRect.fromRectAndRadius(inner, Radius.circular(inner.width * 0.4)),
-          Paint()..color = Colors.white);
+        RRect.fromRectAndRadius(inner, Radius.circular(inner.width * 0.4)),
+        Paint()..color = Colors.white,
+      );
       c.drawCircle(inner.center, inner.width * 0.16, Paint()..color = LD.sph);
     }
   }
@@ -378,9 +431,9 @@ class TrunkSchematic extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CustomPaint(
-        painter: _TrunkPainter(vehicleClass, option),
-        child: const SizedBox.expand(),
-      );
+    painter: _TrunkPainter(vehicleClass, option),
+    child: const SizedBox.expand(),
+  );
 }
 
 class _TrunkPainter extends CustomPainter {
@@ -394,17 +447,19 @@ class _TrunkPainter extends CustomPainter {
     final isSuv = vc == VehicleClass.businessSuv;
     final w = size.width * (isVan ? 0.66 : 0.72);
     final h = math.min(
-        size.height * 0.8,
-        w *
-            (isVan
-                ? 0.86
-                : isSuv
-                    ? 0.7
-                    : 0.5));
+      size.height * 0.8,
+      w *
+          (isVan
+              ? 0.86
+              : isSuv
+              ? 0.7
+              : 0.5),
+    );
     final frame = Rect.fromCenter(
-        center: size.center(Offset.zero).translate(0, h * 0.04),
-        width: w,
-        height: h);
+      center: size.center(Offset.zero).translate(0, h * 0.04),
+      width: w,
+      height: h,
+    );
 
     // Body around the opening
     final outer = RRect.fromRectAndCorners(
@@ -450,9 +505,10 @@ class _TrunkPainter extends CustomPainter {
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromCenter(
-            center: Offset(frame.center.dx, frame.top + h * 0.05),
-            width: w * 0.5,
-            height: 3),
+          center: Offset(frame.center.dx, frame.top + h * 0.05),
+          width: w * 0.5,
+          height: 3,
+        ),
         const Radius.circular(2),
       ),
       Paint()..color = const Color(0xFFE9F0FA).withValues(alpha: 0.8),
@@ -513,21 +569,26 @@ class _TrunkPainter extends CustomPainter {
           colors: [Color(0xFFF4F7FB), Color(0xFFB7C2D2)],
         ).createShader(r),
     );
-    final rib = Paint()
-      ..color = const Color(0xFF8E9BB0).withValues(alpha: 0.7)
-      ..strokeWidth = math.max(1, r.width * 0.025);
+    final rib =
+        Paint()
+          ..color = const Color(0xFF8E9BB0).withValues(alpha: 0.7)
+          ..strokeWidth = math.max(1, r.width * 0.025);
     for (final f in [0.3, 0.5, 0.7]) {
       final x = r.left + r.width * f;
-      c.drawLine(Offset(x, r.top + r.height * 0.08),
-          Offset(x, r.bottom - r.height * 0.08), rib);
+      c.drawLine(
+        Offset(x, r.top + r.height * 0.08),
+        Offset(x, r.bottom - r.height * 0.08),
+        rib,
+      );
     }
     // Handle
     c.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromCenter(
-            center: Offset(r.center.dx, r.top - r.height * 0.03),
-            width: r.width * 0.36,
-            height: r.height * 0.06),
+          center: Offset(r.center.dx, r.top - r.height * 0.03),
+          width: r.width * 0.36,
+          height: r.height * 0.06,
+        ),
         Radius.circular(r.height * 0.03),
       ),
       Paint()..color = const Color(0xFF9AA7BA),

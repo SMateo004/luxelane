@@ -63,8 +63,9 @@ class _PickupCodeCardState extends State<PickupCodeCard> {
     setState(() {
       _loading = false;
       result.fold(
-        (f) => _error =
-            f is TripFailure ? f : TripFailure(TripIssue.other, f.message),
+        (f) =>
+            _error =
+                f is TripFailure ? f : TripFailure(TripIssue.other, f.message),
         (c) => _code = c,
       );
     });
@@ -86,23 +87,25 @@ class _PickupCodeCardState extends State<PickupCodeCard> {
           duration: duration,
           switchInCurve: LuxMotion.decelerate,
           switchOutCurve: LuxMotion.accelerate,
-          child: _loading
-              ? const _Loading(key: ValueKey('loading'))
-              : _error != null
+          child:
+              _loading
+                  ? const _Loading(key: ValueKey('loading'))
+                  : _error != null
                   ? _ErrorBody(
-                      key: ValueKey(_error!.issue),
-                      failure: _error!,
-                      onRetry: _error!.issue == TripIssue.network ||
-                              _error!.issue == TripIssue.other
-                          ? _load
-                          : null,
-                    )
+                    key: ValueKey(_error!.issue),
+                    failure: _error!,
+                    onRetry:
+                        _error!.issue == TripIssue.network ||
+                                _error!.issue == TripIssue.other
+                            ? _load
+                            : null,
+                  )
                   : _CodeBody(
-                      key: const ValueKey('code'),
-                      code: _code!.code,
-                      guestName: widget.guestName,
-                      onShare: widget.guestName == null ? null : _share,
-                    ),
+                    key: const ValueKey('code'),
+                    code: _code!.code,
+                    guestName: widget.guestName,
+                    onShare: widget.guestName == null ? null : _share,
+                  ),
         ),
       ),
     );
@@ -114,16 +117,16 @@ class _Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'Cargando tu código de recogida',
-        child: const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            LuxSkeletonBox(width: 160, height: 14),
-            SizedBox(height: LuxSpacing.md),
-            LuxSkeletonBox(width: 200, height: 44),
-          ],
-        ),
-      );
+    label: 'Cargando tu código de recogida',
+    child: const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        LuxSkeletonBox(width: 160, height: 14),
+        SizedBox(height: LuxSpacing.md),
+        LuxSkeletonBox(width: 200, height: 44),
+      ],
+    ),
+  );
 }
 
 class _CodeBody extends StatelessWidget {
@@ -140,43 +143,46 @@ class _CodeBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('CÓDIGO DE RECOGIDA',
-              style: LuxTypography.caption
-                  .copyWith(letterSpacing: 1.4, color: LuxColors.inkSecondary)),
-          const SizedBox(height: LuxSpacing.sm),
-          Semantics(
-            label: 'Código de recogida ${code.split('').join(' ')}',
-            excludeSemantics: true,
-            child: Row(
-              children: [
-                for (final digit in code.split('')) ...[
-                  _Digit(digit),
-                  const SizedBox(width: LuxSpacing.sm),
-                ],
-              ],
-            ),
-          ),
-          const SizedBox(height: LuxSpacing.sm),
-          Text(
-            guestName == null
-                ? 'Dáselo a tu chófer al subir. Sin él no puede iniciar el viaje.'
-                : 'Compártelo con $guestName: se lo dará al chófer al subir.',
-            style:
-                LuxTypography.caption.copyWith(color: LuxColors.inkSecondary),
-          ),
-          if (onShare != null) ...[
-            const SizedBox(height: LuxSpacing.md),
-            LuxOutlinedButton(
-              label: 'Compartir código',
-              icon: Icons.ios_share_rounded,
-              height: 46,
-              onPressed: onShare,
-            ),
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'CÓDIGO DE RECOGIDA',
+        style: LuxTypography.caption.copyWith(
+          letterSpacing: 1.4,
+          color: LuxColors.inkSecondary,
+        ),
+      ),
+      const SizedBox(height: LuxSpacing.sm),
+      Semantics(
+        label: 'Código de recogida ${code.split('').join(' ')}',
+        excludeSemantics: true,
+        child: Row(
+          children: [
+            for (final digit in code.split('')) ...[
+              _Digit(digit),
+              const SizedBox(width: LuxSpacing.sm),
+            ],
           ],
-        ],
-      );
+        ),
+      ),
+      const SizedBox(height: LuxSpacing.sm),
+      Text(
+        guestName == null
+            ? 'Dáselo a tu chófer al subir. Sin él no puede iniciar el viaje.'
+            : 'Compártelo con $guestName: se lo dará al chófer al subir.',
+        style: LuxTypography.caption.copyWith(color: LuxColors.inkSecondary),
+      ),
+      if (onShare != null) ...[
+        const SizedBox(height: LuxSpacing.md),
+        LuxOutlinedButton(
+          label: 'Compartir código',
+          icon: Icons.ios_share_rounded,
+          height: 46,
+          onPressed: onShare,
+        ),
+      ],
+    ],
+  );
 }
 
 class _Digit extends StatelessWidget {
@@ -185,21 +191,21 @@ class _Digit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        width: 48,
-        height: 56,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: LuxColors.sapphireTint,
-          borderRadius: BorderRadius.circular(LuxRadius.sm),
-        ),
-        child: Text(
-          digit,
-          style: LuxTypography.headlineLarge.copyWith(
-            color: LuxColors.sapphire,
-            fontFeatures: const [FontFeature.tabularFigures()],
-          ),
-        ),
-      );
+    width: 48,
+    height: 56,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: LuxColors.sapphireTint,
+      borderRadius: BorderRadius.circular(LuxRadius.sm),
+    ),
+    child: Text(
+      digit,
+      style: LuxTypography.headlineLarge.copyWith(
+        color: LuxColors.sapphire,
+        fontFeatures: const [FontFeature.tabularFigures()],
+      ),
+    ),
+  );
 }
 
 class _ErrorBody extends StatelessWidget {
@@ -209,35 +215,35 @@ class _ErrorBody extends StatelessWidget {
   final VoidCallback? onRetry;
 
   IconData get _icon => switch (failure.issue) {
-        TripIssue.network => Icons.wifi_off_rounded,
-        TripIssue.locked => Icons.lock_outline_rounded,
-        TripIssue.expired => Icons.schedule_rounded,
-        _ => Icons.info_outline_rounded,
-      };
+    TripIssue.network => Icons.wifi_off_rounded,
+    TripIssue.locked => Icons.lock_outline_rounded,
+    TripIssue.expired => Icons.schedule_rounded,
+    _ => Icons.info_outline_rounded,
+  };
 
   @override
   Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(_icon, size: 20, color: LuxColors.inkSecondary),
-              const SizedBox(width: LuxSpacing.sm),
-              Expanded(
-                child: Text(failure.message, style: LuxTypography.bodyMedium),
-              ),
-            ],
+          Icon(_icon, size: 20, color: LuxColors.inkSecondary),
+          const SizedBox(width: LuxSpacing.sm),
+          Expanded(
+            child: Text(failure.message, style: LuxTypography.bodyMedium),
           ),
-          if (onRetry != null) ...[
-            const SizedBox(height: LuxSpacing.md),
-            LuxOutlinedButton(
-              label: 'Reintentar',
-              icon: Icons.refresh_rounded,
-              height: 46,
-              onPressed: onRetry,
-            ),
-          ],
         ],
-      );
+      ),
+      if (onRetry != null) ...[
+        const SizedBox(height: LuxSpacing.md),
+        LuxOutlinedButton(
+          label: 'Reintentar',
+          icon: Icons.refresh_rounded,
+          height: 46,
+          onPressed: onRetry,
+        ),
+      ],
+    ],
+  );
 }

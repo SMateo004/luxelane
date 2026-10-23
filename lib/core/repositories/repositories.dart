@@ -92,7 +92,8 @@ abstract class VehicleRepository {
   Future<Either<Failure, Vehicle>> getVehicleById(String vehicleId);
   Future<Either<Failure, Vehicle>> getVehicleByDriver(String driverId);
   Future<Either<Failure, List<Vehicle>>> getAvailableVehicles(
-      VehicleClass vehicleClass);
+    VehicleClass vehicleClass,
+  );
   Future<Either<Failure, void>> createVehicle(Vehicle vehicle);
   Future<Either<Failure, void>> updateVehicle(Vehicle vehicle);
 }
@@ -107,8 +108,11 @@ abstract class BookingRepository {
   /// mayor devuelve [PriceChangedFailure] y no crea nada.
   /// [requestId] (UUID v4) identifica el intento: reenviarlo tras un error
   /// de red o un cambio de precio nunca crea una segunda reserva.
-  Future<Either<Failure, Booking>> createBooking(Booking booking,
-      {double? quotedPrice, required String requestId});
+  Future<Either<Failure, Booking>> createBooking(
+    Booking booking, {
+    double? quotedPrice,
+    required String requestId,
+  });
 
   /// Precio del servidor para el viaje de [trip], sin crear nada.
   Future<Either<Failure, BookingQuote>> quoteBooking(Booking trip);
@@ -255,7 +259,8 @@ abstract class PaymentRepository {
   Future<Either<Failure, List<Payment>>> getPaymentsByRider(String riderId);
   Future<Either<Failure, void>> refundPayment(String paymentId);
   Future<Either<Failure, List<Map<String, dynamic>>>> getSavedCards(
-      String stripeCustomerId);
+    String stripeCustomerId,
+  );
   Future<Either<Failure, void>> addCard({
     required String stripeCustomerId,
     required String paymentMethodId,

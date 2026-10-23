@@ -34,8 +34,8 @@ const _kIvoryMapStyle = '''
 ''';
 
 /// Calcula el recorrido entre dos lugares. Se puede sustituir en tests.
-typedef RouteLoader = Future<RouteInfo?> Function(
-    Place origin, Place destination);
+typedef RouteLoader =
+    Future<RouteInfo?> Function(Place origin, Place destination);
 
 class LuxMap extends StatefulWidget {
   const LuxMap({
@@ -59,8 +59,9 @@ class LuxMap extends StatefulWidget {
 
   /// Cómo se calcula el recorrido cuando [routeInfo] no lo trae.
   @visibleForTesting
-  static RouteLoader routeLoader = (origin, destination) =>
-      MapsService().getRoute(origin: origin, destination: destination);
+  static RouteLoader routeLoader =
+      (origin, destination) =>
+          MapsService().getRoute(origin: origin, destination: destination);
 
   /// Recorridos ya calculados, para no repetir la consulta al reconstruir.
   static final Map<String, RouteInfo> _routeCache = {};
@@ -150,36 +151,46 @@ class LuxMapState extends State<LuxMap> {
     // Inner color
     final Paint colorPaint = Paint()..color = color;
     canvas.drawCircle(
-        const Offset(size / 2, size / 2), size / 2 - 2, colorPaint);
+      const Offset(size / 2, size / 2),
+      size / 2 - 2,
+      colorPaint,
+    );
 
     final ui.Image image = await pictureRecorder.endRecording().toImage(
-          size.toInt(),
-          size.toInt(),
-        );
-    final ByteData? byteData =
-        await image.toByteData(format: ui.ImageByteFormat.png);
+      size.toInt(),
+      size.toInt(),
+    );
+    final ByteData? byteData = await image.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
     return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
   }
 
   Set<Marker> get _markers {
     final Set<Marker> m = {};
     if (widget.origin != null) {
-      m.add(Marker(
-        markerId: const MarkerId('origin'),
-        position: widget.origin!.latLng,
-        icon: _originIcon ??
-            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
-        infoWindow: InfoWindow(title: widget.origin!.displayName),
-      ));
+      m.add(
+        Marker(
+          markerId: const MarkerId('origin'),
+          position: widget.origin!.latLng,
+          icon:
+              _originIcon ??
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
+          infoWindow: InfoWindow(title: widget.origin!.displayName),
+        ),
+      );
     }
     if (widget.destination != null) {
-      m.add(Marker(
-        markerId: const MarkerId('destination'),
-        position: widget.destination!.latLng,
-        icon: _destIcon ??
-            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-        infoWindow: InfoWindow(title: widget.destination!.displayName),
-      ));
+      m.add(
+        Marker(
+          markerId: const MarkerId('destination'),
+          position: widget.destination!.latLng,
+          icon:
+              _destIcon ??
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          infoWindow: InfoWindow(title: widget.destination!.displayName),
+        ),
+      );
     }
     return m;
   }
@@ -209,10 +220,10 @@ class LuxMapState extends State<LuxMap> {
   /// Puntos que la cámara debe encuadrar: marcadores y recorrido.
   @visibleForTesting
   List<LatLng> get framePoints => [
-        if (widget.origin != null) widget.origin!.latLng,
-        if (widget.destination != null) widget.destination!.latLng,
-        ...?route?.polylinePoints,
-      ];
+    if (widget.origin != null) widget.origin!.latLng,
+    if (widget.destination != null) widget.destination!.latLng,
+    ...?route?.polylinePoints,
+  ];
 
   void _fitBounds([int attempt = 0]) {
     final c = _controller;
@@ -223,8 +234,10 @@ class LuxMapState extends State<LuxMap> {
     // En web el mapa puede no tener tamaño aún justo al crearse: reintenta.
     void retry(Object _) {
       if (attempt < 3 && mounted) {
-        Future.delayed(const Duration(milliseconds: 300),
-            () => mounted ? _fitBounds(attempt + 1) : null);
+        Future.delayed(
+          const Duration(milliseconds: 300),
+          () => mounted ? _fitBounds(attempt + 1) : null,
+        );
       }
     }
 
@@ -239,9 +252,7 @@ class LuxMapState extends State<LuxMap> {
 
   void _animateToDriver() {
     if (_controller == null || widget.driverLocation == null) return;
-    _controller!.animateCamera(
-      CameraUpdate.newLatLng(widget.driverLocation!),
-    );
+    _controller!.animateCamera(CameraUpdate.newLatLng(widget.driverLocation!));
   }
 
   @override
@@ -268,8 +279,10 @@ class LuxMapState extends State<LuxMap> {
     if (!AppConfig.hasMapsKey) return const MapsKeyMissing();
 
     return GoogleMap(
-      initialCameraPosition:
-          CameraPosition(target: initialCenter, zoom: kCityZoom),
+      initialCameraPosition: CameraPosition(
+        target: initialCenter,
+        zoom: kCityZoom,
+      ),
       markers: _markers,
       polylines: _polylines,
       style: widget.lightStyle ? null : _kIvoryMapStyle,
@@ -299,28 +312,28 @@ class MapsKeyMissing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        color: LuxColors.surfaceMuted,
-        padding: const EdgeInsets.all(LuxSpacing.md),
-        child: const Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.map_outlined, color: LuxColors.inkTertiary, size: 40),
-              SizedBox(height: LuxSpacing.sm),
-              Text(
-                'Mapa no disponible',
-                style: LuxTypography.titleMedium,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: LuxSpacing.xs),
-              Text(
-                'Esta versión se compiló sin la clave de Google Maps '
-                '(GOOGLE_MAPS_KEY).',
-                style: LuxTypography.caption,
-                textAlign: TextAlign.center,
-              ),
-            ],
+    color: LuxColors.surfaceMuted,
+    padding: const EdgeInsets.all(LuxSpacing.md),
+    child: const Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.map_outlined, color: LuxColors.inkTertiary, size: 40),
+          SizedBox(height: LuxSpacing.sm),
+          Text(
+            'Mapa no disponible',
+            style: LuxTypography.titleMedium,
+            textAlign: TextAlign.center,
           ),
-        ),
-      );
+          SizedBox(height: LuxSpacing.xs),
+          Text(
+            'Esta versión se compiló sin la clave de Google Maps '
+            '(GOOGLE_MAPS_KEY).',
+            style: LuxTypography.caption,
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ),
+  );
 }

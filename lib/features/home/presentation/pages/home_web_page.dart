@@ -110,8 +110,10 @@ class _WebHomePageState extends State<WebHomePage> {
       final box = ctx.findRenderObject() as RenderBox?;
       if (box == null) return;
       final dy = box.localToGlobal(Offset.zero).dy;
-      final target = (_scroll.offset + dy - 72)
-          .clamp(0.0, _scroll.position.maxScrollExtent);
+      final target = (_scroll.offset + dy - 72).clamp(
+        0.0,
+        _scroll.position.maxScrollExtent,
+      );
       _scroll.animateTo(
         target,
         duration: const Duration(milliseconds: 700),
@@ -121,10 +123,10 @@ class _WebHomePageState extends State<WebHomePage> {
   }
 
   void _scrollToTop() => _scroll.animateTo(
-        0,
-        duration: const Duration(milliseconds: 900),
-        curve: const Cubic(0.16, 1, 0.3, 1),
-      );
+    0,
+    duration: const Duration(milliseconds: 900),
+    curve: const Cubic(0.16, 1, 0.3, 1),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -280,8 +282,9 @@ class _HeroSectionState extends State<_HeroSection>
   void initState() {
     super.initState();
     _intro = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 1600))
-      ..forward();
+      vsync: this,
+      duration: const Duration(milliseconds: 1600),
+    )..forward();
   }
 
   @override
@@ -319,9 +322,9 @@ class _HeroSectionState extends State<_HeroSection>
   }
 
   Animation<double> _fade(double from, double to) => CurvedAnimation(
-        parent: _intro,
-        curve: Interval(from, to, curve: Curves.easeOut),
-      );
+    parent: _intro,
+    curve: Interval(from, to, curve: Curves.easeOut),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -384,7 +387,11 @@ class _HeroSectionState extends State<_HeroSection>
               opacity: _fade(0.35, 1.0),
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
-                    narrow ? 20 : 56, 0, narrow ? 20 : 56, narrow ? 28 : 48),
+                  narrow ? 20 : 56,
+                  0,
+                  narrow ? 20 : 56,
+                  narrow ? 28 : 48,
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -400,8 +407,9 @@ class _HeroSectionState extends State<_HeroSection>
                               TextSpan(
                                 text: 'Tu chófer ',
                                 style: displayText(
-                                    size: narrow ? 52 : 100,
-                                    color: Colors.white),
+                                  size: narrow ? 52 : 100,
+                                  color: Colors.white,
+                                ),
                               ),
                               TextSpan(
                                 text: 'te espera.',
@@ -440,29 +448,31 @@ class _HeroSectionState extends State<_HeroSection>
                               color: Colors.white.withAlpha(55),
                             ),
                           ),
-                          child: narrow
-                              // ── Mobile: stacked fields ──────────────
-                              ? Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    _BarField(
-                                      label: 'RECOGIDA',
-                                      icon: Icons.radio_button_checked,
-                                      child: PlaceAutocompleteField(
-                                        label: '¿Dónde estás?',
-                                        hint: '¿Dónde estás?',
-                                        initialValue: widget.origin,
-                                        onPlaceSelected:
-                                            widget.onOriginSelected,
-                                        onMapPick: widget.onOriginMapPick,
-                                        glass: true,
+                          child:
+                              narrow
+                                  // ── Mobile: stacked fields ──────────────
+                                  ? Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _BarField(
+                                        label: 'RECOGIDA',
+                                        icon: Icons.radio_button_checked,
+                                        child: PlaceAutocompleteField(
+                                          label: '¿Dónde estás?',
+                                          hint: '¿Dónde estás?',
+                                          initialValue: widget.origin,
+                                          onPlaceSelected:
+                                              widget.onOriginSelected,
+                                          onMapPick: widget.onOriginMapPick,
+                                          glass: true,
+                                        ),
                                       ),
-                                    ),
-                                    Container(
+                                      Container(
                                         height: 1,
-                                        color: Colors.white.withAlpha(30)),
-                                    isOneWay
-                                        ? _BarField(
+                                        color: Colors.white.withAlpha(30),
+                                      ),
+                                      isOneWay
+                                          ? _BarField(
                                             label: 'DESTINO',
                                             icon: Icons.south,
                                             child: PlaceAutocompleteField(
@@ -476,7 +486,7 @@ class _HeroSectionState extends State<_HeroSection>
                                               glass: true,
                                             ),
                                           )
-                                        : _BarField(
+                                          : _BarField(
                                             label: 'DURACIÓN',
                                             icon: Icons.schedule_outlined,
                                             child: _HoursPicker(
@@ -484,95 +494,104 @@ class _HeroSectionState extends State<_HeroSection>
                                               onChanged: widget.onHoursChanged,
                                             ),
                                           ),
-                                    Container(
+                                      Container(
                                         height: 1,
-                                        color: Colors.white.withAlpha(30)),
-                                    _BarField(
-                                      label: 'FECHA Y HORA',
-                                      icon: Icons.calendar_today_outlined,
-                                      child: _DateDisplayTrigger(
-                                        date: widget.date,
-                                        isOpen: _dateOpen,
-                                        onTap: () => setState(
-                                            () => _dateOpen = !_dateOpen),
+                                        color: Colors.white.withAlpha(30),
                                       ),
-                                    ),
-                                    ClipRRect(
-                                      borderRadius: const BorderRadius.only(
-                                        bottomLeft: Radius.circular(13),
-                                        bottomRight: Radius.circular(13),
-                                      ),
-                                      child: _BarCta(
-                                          onTap: widget.onSearch,
-                                          stacked: true),
-                                    ),
-                                  ],
-                                )
-                              // ── Desktop: horizontal row ──────────────
-                              : Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: _BarField(
-                                        label: 'RECOGIDA',
-                                        icon: Icons.radio_button_checked,
-                                        child: PlaceAutocompleteField(
-                                          label: '¿Dónde estás?',
-                                          hint: '¿Dónde estás?',
-                                          initialValue: widget.origin,
-                                          onPlaceSelected:
-                                              widget.onOriginSelected,
-                                          onMapPick: widget.onOriginMapPick,
-                                          glass: true,
-                                        ),
-                                      ),
-                                    ),
-                                    const _BarSeparator(),
-                                    Expanded(
-                                      flex: 3,
-                                      child: isOneWay
-                                          ? _BarField(
-                                              label: 'DESTINO',
-                                              icon: Icons.south,
-                                              child: PlaceAutocompleteField(
-                                                label: '¿A dónde vas?',
-                                                initialValue:
-                                                    widget.destination,
-                                                sameCityAs: widget.origin,
-                                                onPlaceSelected: widget
-                                                    .onDestinationSelected,
-                                                onMapPick:
-                                                    widget.onDestinationMapPick,
-                                                glass: true,
-                                              ),
-                                            )
-                                          : _BarField(
-                                              label: 'DURACIÓN',
-                                              icon: Icons.schedule_outlined,
-                                              child: _HoursPicker(
-                                                hours: widget.hours,
-                                                onChanged:
-                                                    widget.onHoursChanged,
-                                              ),
-                                            ),
-                                    ),
-                                    const _BarSeparator(),
-                                    Expanded(
-                                      flex: 2,
-                                      child: _BarField(
+                                      _BarField(
                                         label: 'FECHA Y HORA',
                                         icon: Icons.calendar_today_outlined,
                                         child: _DateDisplayTrigger(
                                           date: widget.date,
                                           isOpen: _dateOpen,
-                                          onTap: () => setState(
-                                              () => _dateOpen = !_dateOpen),
+                                          onTap:
+                                              () => setState(
+                                                () => _dateOpen = !_dateOpen,
+                                              ),
                                         ),
                                       ),
-                                    ),
-                                    _BarCta(onTap: widget.onSearch),
-                                  ],
-                                ),
+                                      ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          bottomLeft: Radius.circular(13),
+                                          bottomRight: Radius.circular(13),
+                                        ),
+                                        child: _BarCta(
+                                          onTap: widget.onSearch,
+                                          stacked: true,
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                  // ── Desktop: horizontal row ──────────────
+                                  : Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: _BarField(
+                                          label: 'RECOGIDA',
+                                          icon: Icons.radio_button_checked,
+                                          child: PlaceAutocompleteField(
+                                            label: '¿Dónde estás?',
+                                            hint: '¿Dónde estás?',
+                                            initialValue: widget.origin,
+                                            onPlaceSelected:
+                                                widget.onOriginSelected,
+                                            onMapPick: widget.onOriginMapPick,
+                                            glass: true,
+                                          ),
+                                        ),
+                                      ),
+                                      const _BarSeparator(),
+                                      Expanded(
+                                        flex: 3,
+                                        child:
+                                            isOneWay
+                                                ? _BarField(
+                                                  label: 'DESTINO',
+                                                  icon: Icons.south,
+                                                  child: PlaceAutocompleteField(
+                                                    label: '¿A dónde vas?',
+                                                    initialValue:
+                                                        widget.destination,
+                                                    sameCityAs: widget.origin,
+                                                    onPlaceSelected:
+                                                        widget
+                                                            .onDestinationSelected,
+                                                    onMapPick:
+                                                        widget
+                                                            .onDestinationMapPick,
+                                                    glass: true,
+                                                  ),
+                                                )
+                                                : _BarField(
+                                                  label: 'DURACIÓN',
+                                                  icon: Icons.schedule_outlined,
+                                                  child: _HoursPicker(
+                                                    hours: widget.hours,
+                                                    onChanged:
+                                                        widget.onHoursChanged,
+                                                  ),
+                                                ),
+                                      ),
+                                      const _BarSeparator(),
+                                      Expanded(
+                                        flex: 2,
+                                        child: _BarField(
+                                          label: 'FECHA Y HORA',
+                                          icon: Icons.calendar_today_outlined,
+                                          child: _DateDisplayTrigger(
+                                            date: widget.date,
+                                            isOpen: _dateOpen,
+                                            onTap:
+                                                () => setState(
+                                                  () => _dateOpen = !_dateOpen,
+                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                      _BarCta(onTap: widget.onSearch),
+                                    ],
+                                  ),
                         ),
                       ),
                     ),
@@ -592,18 +611,21 @@ class _HeroSectionState extends State<_HeroSection>
                             child: AnimatedSize(
                               duration: const Duration(milliseconds: 420),
                               curve: Curves.easeInOut,
-                              child: _originMapOpen &&
-                                      _originMapPlace != null &&
-                                      (_originMapPlace!.lat != 0.0 ||
-                                          _originMapPlace!.lng != 0.0)
-                                  ? _InlineMapPanel(
-                                      place: _originMapPlace!,
-                                      label: 'RECOGIDA',
-                                      onChangeTap: widget.onOriginMapPick,
-                                      onClose: () => setState(
-                                          () => _originMapOpen = false),
-                                    )
-                                  : const SizedBox.shrink(),
+                              child:
+                                  _originMapOpen &&
+                                          _originMapPlace != null &&
+                                          (_originMapPlace!.lat != 0.0 ||
+                                              _originMapPlace!.lng != 0.0)
+                                      ? _InlineMapPanel(
+                                        place: _originMapPlace!,
+                                        label: 'RECOGIDA',
+                                        onChangeTap: widget.onOriginMapPick,
+                                        onClose:
+                                            () => setState(
+                                              () => _originMapOpen = false,
+                                            ),
+                                      )
+                                      : const SizedBox.shrink(),
                             ),
                           ),
                           const SizedBox(width: 1),
@@ -613,18 +635,22 @@ class _HeroSectionState extends State<_HeroSection>
                             child: AnimatedSize(
                               duration: const Duration(milliseconds: 420),
                               curve: Curves.easeInOut,
-                              child: _destMapOpen &&
-                                      _destMapPlace != null &&
-                                      (_destMapPlace!.lat != 0.0 ||
-                                          _destMapPlace!.lng != 0.0)
-                                  ? _InlineMapPanel(
-                                      place: _destMapPlace!,
-                                      label: 'DESTINO',
-                                      onChangeTap: widget.onDestinationMapPick,
-                                      onClose: () =>
-                                          setState(() => _destMapOpen = false),
-                                    )
-                                  : const SizedBox.shrink(),
+                              child:
+                                  _destMapOpen &&
+                                          _destMapPlace != null &&
+                                          (_destMapPlace!.lat != 0.0 ||
+                                              _destMapPlace!.lng != 0.0)
+                                      ? _InlineMapPanel(
+                                        place: _destMapPlace!,
+                                        label: 'DESTINO',
+                                        onChangeTap:
+                                            widget.onDestinationMapPick,
+                                        onClose:
+                                            () => setState(
+                                              () => _destMapOpen = false,
+                                            ),
+                                      )
+                                      : const SizedBox.shrink(),
                             ),
                           ),
                           const SizedBox(width: 1),
@@ -634,17 +660,20 @@ class _HeroSectionState extends State<_HeroSection>
                             child: AnimatedSize(
                               duration: const Duration(milliseconds: 420),
                               curve: Curves.easeInOut,
-                              child: _dateOpen
-                                  ? _InlineDatePanel(
-                                      date: widget.date,
-                                      onChanged: (d) {
-                                        widget.onDateChanged(d);
-                                        setState(() => _dateOpen = false);
-                                      },
-                                      onClose: () =>
-                                          setState(() => _dateOpen = false),
-                                    )
-                                  : const SizedBox.shrink(),
+                              child:
+                                  _dateOpen
+                                      ? _InlineDatePanel(
+                                        date: widget.date,
+                                        onChanged: (d) {
+                                          widget.onDateChanged(d);
+                                          setState(() => _dateOpen = false);
+                                        },
+                                        onClose:
+                                            () => setState(
+                                              () => _dateOpen = false,
+                                            ),
+                                      )
+                                      : const SizedBox.shrink(),
                             ),
                           ),
                           const SizedBox(width: 180), // matches _BarCta
@@ -658,9 +687,10 @@ class _HeroSectionState extends State<_HeroSection>
                         '${LuxPromise.fixedPrice}   ·   ${LuxPromise.freeCancel}   ·   ${LuxPromise.chauffeurs}',
                         textAlign: TextAlign.center,
                         style: uiLabel(
-                            size: 10.5,
-                            color: Colors.white.withAlpha(150),
-                            spacing: 0.8),
+                          size: 10.5,
+                          color: Colors.white.withAlpha(150),
+                          spacing: 0.8,
+                        ),
                       ),
                     ),
                   ],
@@ -680,32 +710,27 @@ class _HeroBg extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Stack(
-        fit: StackFit.expand,
-        children: [
-          const DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF060C16),
-                  Color(0xFF0D1B2E),
-                  Color(0xFF091525)
-                ],
-              ),
-            ),
+    fit: StackFit.expand,
+    children: [
+      const DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF060C16), Color(0xFF0D1B2E), Color(0xFF091525)],
           ),
-          CustomPaint(
-              painter: _DotGridPainter(), child: const SizedBox.expand()),
-          Image.asset(
-            _asset,
-            fit: BoxFit.cover,
-            width: double.infinity,
-            height: double.infinity,
-            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
-          ),
-        ],
-      );
+        ),
+      ),
+      CustomPaint(painter: _DotGridPainter(), child: const SizedBox.expand()),
+      Image.asset(
+        _asset,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+      ),
+    ],
+  );
 }
 
 class _DotGridPainter extends CustomPainter {
@@ -740,9 +765,12 @@ class _ClipRevealState extends State<_ClipReveal>
   void initState() {
     super.initState();
     _ctrl = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 950));
+      vsync: this,
+      duration: const Duration(milliseconds: 950),
+    );
     _slide = Tween<Offset>(begin: const Offset(0, 1), end: Offset.zero).animate(
-        CurvedAnimation(parent: _ctrl, curve: const Cubic(0.16, 1, 0.3, 1)));
+      CurvedAnimation(parent: _ctrl, curve: const Cubic(0.16, 1, 0.3, 1)),
+    );
     Future.delayed(widget.delay, () {
       if (mounted) _ctrl.forward();
     });
@@ -755,9 +783,8 @@ class _ClipRevealState extends State<_ClipReveal>
   }
 
   @override
-  Widget build(BuildContext context) => ClipRect(
-        child: SlideTransition(position: _slide, child: widget.child),
-      );
+  Widget build(BuildContext context) =>
+      ClipRect(child: SlideTransition(position: _slide, child: widget.child));
 }
 
 // ============================================================
@@ -821,9 +848,7 @@ class _InlineMapPanelState extends State<_InlineMapPanel> {
     super.didUpdateWidget(old);
     // Animate camera when the selected place changes
     if (widget.place != old.place) {
-      _ctrl?.animateCamera(
-        CameraUpdate.newLatLng(widget.place.latLng),
-      );
+      _ctrl?.animateCamera(CameraUpdate.newLatLng(widget.place.latLng));
     }
   }
 
@@ -876,14 +901,19 @@ class _InlineMapPanelState extends State<_InlineMapPanel> {
               child: MouseRegion(
                 cursor: SystemMouseCursors.click,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 7,
+                  ),
                   color: const Color(0xEE060C16),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.edit_location_alt_outlined,
-                          size: 12, color: Colors.white),
+                      const Icon(
+                        Icons.edit_location_alt_outlined,
+                        size: 12,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         'CAMBIAR UBICACIÓN',
@@ -932,92 +962,104 @@ class _ServicePillToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withAlpha(20),
-          borderRadius: BorderRadius.circular(32),
-          border: Border.all(color: Colors.white.withAlpha(40)),
+    decoration: BoxDecoration(
+      color: Colors.white.withAlpha(20),
+      borderRadius: BorderRadius.circular(32),
+      border: Border.all(color: Colors.white.withAlpha(40)),
+    ),
+    padding: const EdgeInsets.all(3),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _Pill(
+          label: 'Solo ida',
+          selected: isOneWay,
+          onTap: () => onChanged(ServiceType.oneWay),
         ),
-        padding: const EdgeInsets.all(3),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _Pill(
-                label: 'Solo ida',
-                selected: isOneWay,
-                onTap: () => onChanged(ServiceType.oneWay)),
-            _Pill(
-                label: 'Por horas',
-                selected: !isOneWay,
-                onTap: () => onChanged(ServiceType.byTheHour)),
-          ],
+        _Pill(
+          label: 'Por horas',
+          selected: !isOneWay,
+          onTap: () => onChanged(ServiceType.byTheHour),
         ),
-      );
+      ],
+    ),
+  );
 }
 
 class _Pill extends StatelessWidget {
-  const _Pill(
-      {required this.label, required this.selected, required this.onTap});
+  const _Pill({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
   final String label;
   final bool selected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
-          decoration: BoxDecoration(
-            color: selected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(28),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontFamily: kSans,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-              letterSpacing: 0.3,
-              color: selected ? LD.ink : Colors.white.withAlpha(170),
-              decoration: TextDecoration.none,
-            ),
-          ),
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 7),
+      decoration: BoxDecoration(
+        color: selected ? Colors.white : Colors.transparent,
+        borderRadius: BorderRadius.circular(28),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontFamily: kSans,
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.3,
+          color: selected ? LD.ink : Colors.white.withAlpha(170),
+          decoration: TextDecoration.none,
         ),
-      );
+      ),
+    ),
+  );
 }
 
 class _BarField extends StatelessWidget {
-  const _BarField(
-      {required this.label, required this.icon, required this.child});
+  const _BarField({
+    required this.label,
+    required this.icon,
+    required this.child,
+  });
   final String label;
   final IconData icon;
   final Widget child;
 
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+    padding: const EdgeInsets.symmetric(horizontal: 22),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
           children: [
-            Row(children: [
-              Icon(icon, size: 11, color: Colors.white.withAlpha(160)),
-              const SizedBox(width: 6),
-              Text(label,
-                  style: TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 9.5,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.8,
-                    color: Colors.white.withAlpha(160),
-                    decoration: TextDecoration.none,
-                  )),
-            ]),
-            const SizedBox(height: 5),
-            child,
+            Icon(icon, size: 11, color: Colors.white.withAlpha(160)),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontFamily: kSans,
+                fontSize: 9.5,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.8,
+                color: Colors.white.withAlpha(160),
+                decoration: TextDecoration.none,
+              ),
+            ),
           ],
         ),
-      );
+        const SizedBox(height: 5),
+        child,
+      ],
+    ),
+  );
 }
 
 class _BarSeparator extends StatelessWidget {
@@ -1046,59 +1088,64 @@ class _BarCtaState extends State<_BarCta> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) => setState(() => _hover = true),
-        onExit: (_) => setState(() => _hover = false),
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: ClipRRect(
-            borderRadius: widget.stacked
+    onEnter: (_) => setState(() => _hover = true),
+    onExit: (_) => setState(() => _hover = false),
+    cursor: SystemMouseCursors.click,
+    child: GestureDetector(
+      onTap: widget.onTap,
+      child: ClipRRect(
+        borderRadius:
+            widget.stacked
                 ? BorderRadius.zero
                 : const BorderRadius.only(
-                    topRight: Radius.circular(13),
-                    bottomRight: Radius.circular(13),
-                  ),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: widget.stacked ? double.infinity : 180,
-              height: widget.stacked ? 54 : double.infinity,
-              decoration: BoxDecoration(
-                // Same soft relief as every Luxelane button.
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: _hover
+                  topRight: Radius.circular(13),
+                  bottomRight: Radius.circular(13),
+                ),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: widget.stacked ? double.infinity : 180,
+          height: widget.stacked ? 54 : double.infinity,
+          decoration: BoxDecoration(
+            // Same soft relief as every Luxelane button.
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors:
+                  _hover
                       ? const [Color(0xFF3270B5), Color(0xFF1B4F8A)]
                       : const [Color(0xFF2A62A3), Color(0xFF17457A)],
-                ),
-                border: Border(
-                  left: BorderSide(color: Colors.white.withAlpha(40)),
-                  top: BorderSide(color: Colors.white.withAlpha(30)),
-                ),
-              ),
-              alignment: Alignment.center,
-              child: const Text(
-                'VER PRECIOS',
-                style: TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 10.5,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2.2,
-                  color: Colors.white,
-                  decoration: TextDecoration.none,
-                ),
-              ),
             ),
-          ), // ClipRRect
+            border: Border(
+              left: BorderSide(color: Colors.white.withAlpha(40)),
+              top: BorderSide(color: Colors.white.withAlpha(30)),
+            ),
+          ),
+          alignment: Alignment.center,
+          child: const Text(
+            'VER PRECIOS',
+            style: TextStyle(
+              fontFamily: kSans,
+              fontSize: 10.5,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 2.2,
+              color: Colors.white,
+              decoration: TextDecoration.none,
+            ),
+          ),
         ),
-      );
+      ), // ClipRRect
+    ),
+  );
 }
 
 // ── Shared button widgets ─────────────────────────────────────
 
 class _SolidBtn extends StatefulWidget {
-  const _SolidBtn(
-      {required this.label, required this.onTap, this.white = false});
+  const _SolidBtn({
+    required this.label,
+    required this.onTap,
+    this.white = false,
+  });
   final String label;
   final VoidCallback onTap;
   final bool white;
@@ -1112,36 +1159,40 @@ class _SolidBtnState extends State<_SolidBtn> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) => setState(() => _h = true),
-        onExit: (_) => setState(() => _h = false),
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
-            color: widget.white
+    onEnter: (_) => setState(() => _h = true),
+    onExit: (_) => setState(() => _h = false),
+    cursor: SystemMouseCursors.click,
+    child: GestureDetector(
+      onTap: widget.onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 16),
+        color:
+            widget.white
                 ? (_h ? const Color(0xFFE8EDF7) : Colors.white)
                 : (_h ? LD.sphLt : LD.sph),
-            child: Text(
-              widget.label.toUpperCase(),
-              style: TextStyle(
-                fontFamily: kSans,
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 2.0,
-                color: widget.white ? LD.ink : Colors.white,
-                decoration: TextDecoration.none,
-              ),
-            ),
+        child: Text(
+          widget.label.toUpperCase(),
+          style: TextStyle(
+            fontFamily: kSans,
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 2.0,
+            color: widget.white ? LD.ink : Colors.white,
+            decoration: TextDecoration.none,
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 class _GhostBtn extends StatefulWidget {
-  const _GhostBtn(
-      {required this.label, required this.onTap, this.light = false});
+  const _GhostBtn({
+    required this.label,
+    required this.onTap,
+    this.light = false,
+  });
   final String label;
   final VoidCallback onTap;
   final bool light;
@@ -1155,40 +1206,43 @@ class _GhostBtnState extends State<_GhostBtn> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) => setState(() => _h = true),
-        onExit: (_) => setState(() => _h = false),
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: _h
+    onEnter: (_) => setState(() => _h = true),
+    onExit: (_) => setState(() => _h = false),
+    cursor: SystemMouseCursors.click,
+    child: GestureDetector(
+      onTap: widget.onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 12),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color:
+                _h
                     ? (widget.light ? Colors.white : LD.ink)
                     : (widget.light ? Colors.white.withAlpha(90) : LD.border),
-              ),
-              color: _h
+          ),
+          color:
+              _h
                   ? (widget.light ? Colors.white.withAlpha(20) : LD.bg3)
                   : Colors.transparent,
-            ),
-            child: Text(
-              widget.label.toUpperCase(),
-              style: TextStyle(
-                fontFamily: kSans,
-                fontSize: 10,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 1.8,
-                color: widget.light
+        ),
+        child: Text(
+          widget.label.toUpperCase(),
+          style: TextStyle(
+            fontFamily: kSans,
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 1.8,
+            color:
+                widget.light
                     ? (_h ? Colors.white : Colors.white.withAlpha(166))
                     : LD.ink,
-                decoration: TextDecoration.none,
-              ),
-            ),
+            decoration: TextDecoration.none,
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 // ── Date / Hours pickers ──────────────────────────────────────
@@ -1210,27 +1264,34 @@ class _DateDisplayTrigger extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: Row(children: [
-            Text(_fmt(date),
-                style: const TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 13,
-                  color: Colors.white,
-                  decoration: TextDecoration.none,
-                )),
-            const Spacer(),
-            AnimatedRotation(
-              turns: isOpen ? 0.5 : 0.0,
-              duration: const Duration(milliseconds: 250),
-              child: Icon(Icons.expand_more,
-                  size: 16, color: Colors.white.withAlpha(160)),
+    onTap: onTap,
+    child: MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: Row(
+        children: [
+          Text(
+            _fmt(date),
+            style: const TextStyle(
+              fontFamily: kSans,
+              fontSize: 13,
+              color: Colors.white,
+              decoration: TextDecoration.none,
             ),
-          ]),
-        ),
-      );
+          ),
+          const Spacer(),
+          AnimatedRotation(
+            turns: isOpen ? 0.5 : 0.0,
+            duration: const Duration(milliseconds: 250),
+            child: Icon(
+              Icons.expand_more,
+              size: 16,
+              color: Colors.white.withAlpha(160),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 // ── Inline date + time panel ──────────────────────────────────────────────────
@@ -1281,13 +1342,37 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
   void _nextMonth() =>
       setState(() => _month = DateTime(_month.year, _month.month + 1));
 
-  void _pickDay(int day) => setState(() => _selected = DateTime(
-      _month.year, _month.month, day, _selected.hour, _selected.minute));
+  void _pickDay(int day) => setState(
+    () =>
+        _selected = DateTime(
+          _month.year,
+          _month.month,
+          day,
+          _selected.hour,
+          _selected.minute,
+        ),
+  );
 
-  void _setHour(int h) => setState(() => _selected = DateTime(
-      _selected.year, _selected.month, _selected.day, h, _selected.minute));
-  void _setMinute(int m) => setState(() => _selected = DateTime(
-      _selected.year, _selected.month, _selected.day, _selected.hour, m));
+  void _setHour(int h) => setState(
+    () =>
+        _selected = DateTime(
+          _selected.year,
+          _selected.month,
+          _selected.day,
+          h,
+          _selected.minute,
+        ),
+  );
+  void _setMinute(int m) => setState(
+    () =>
+        _selected = DateTime(
+          _selected.year,
+          _selected.month,
+          _selected.day,
+          _selected.hour,
+          m,
+        ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -1311,44 +1396,51 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
           // ── Month nav ──────────────────────────────────────────
           Padding(
             padding: const EdgeInsets.fromLTRB(6, 10, 6, 4),
-            child: Row(children: [
-              _ChevBtn(icon: Icons.chevron_left, onTap: _prevMonth),
-              Expanded(
-                child: Text(
-                  '${_monthNames[_month.month - 1]} ${_month.year}',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 10.5,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 1.4,
-                    color: Colors.white,
-                    decoration: TextDecoration.none,
+            child: Row(
+              children: [
+                _ChevBtn(icon: Icons.chevron_left, onTap: _prevMonth),
+                Expanded(
+                  child: Text(
+                    '${_monthNames[_month.month - 1]} ${_month.year}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1.4,
+                      color: Colors.white,
+                      decoration: TextDecoration.none,
+                    ),
                   ),
                 ),
-              ),
-              _ChevBtn(icon: Icons.chevron_right, onTap: _nextMonth),
-            ]),
+                _ChevBtn(icon: Icons.chevron_right, onTap: _nextMonth),
+              ],
+            ),
           ),
 
           // ── Weekday header row ─────────────────────────────────
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: Row(
-              children: _dayLabels
-                  .map((d) => Expanded(
-                        child: Center(
-                          child: Text(d,
+              children:
+                  _dayLabels
+                      .map(
+                        (d) => Expanded(
+                          child: Center(
+                            child: Text(
+                              d,
                               style: const TextStyle(
                                 fontFamily: kSans,
                                 fontSize: 9,
                                 fontWeight: FontWeight.w600,
                                 color: white30,
                                 decoration: TextDecoration.none,
-                              )),
+                              ),
+                            ),
+                          ),
                         ),
-                      ))
-                  .toList(),
+                      )
+                      .toList(),
             ),
           ),
           const SizedBox(height: 4),
@@ -1368,36 +1460,42 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                 for (int i = 0; i < startOffset; i++) const SizedBox.shrink(),
                 // Day cells
                 for (int d = 1; d <= daysInMonth; d++) ...[
-                  Builder(builder: (_) {
-                    final cellDate = DateTime(_month.year, _month.month, d);
-                    final isPast = cellDate.isBefore(today);
-                    final isSel = _selected.year == _month.year &&
-                        _selected.month == _month.month &&
-                        _selected.day == d;
-                    return GestureDetector(
-                      onTap: isPast ? null : () => _pickDay(d),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 180),
-                        decoration: BoxDecoration(
-                          color: isSel ? LD.sph : Colors.transparent,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text('$d',
+                  Builder(
+                    builder: (_) {
+                      final cellDate = DateTime(_month.year, _month.month, d);
+                      final isPast = cellDate.isBefore(today);
+                      final isSel =
+                          _selected.year == _month.year &&
+                          _selected.month == _month.month &&
+                          _selected.day == d;
+                      return GestureDetector(
+                        onTap: isPast ? null : () => _pickDay(d),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          decoration: BoxDecoration(
+                            color: isSel ? LD.sph : Colors.transparent,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            '$d',
                             style: TextStyle(
                               fontFamily: kSans,
                               fontSize: 10.5,
                               fontWeight:
                                   isSel ? FontWeight.w600 : FontWeight.w400,
-                              color: isPast
-                                  ? white30
-                                  : isSel
+                              color:
+                                  isPast
+                                      ? white30
+                                      : isSel
                                       ? Colors.white
                                       : white60,
                               decoration: TextDecoration.none,
-                            )),
-                      ),
-                    );
-                  }),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ],
             ),
@@ -1419,14 +1517,16 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                 ),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 6),
-                  child: Text(':',
-                      style: TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w200,
-                        color: Colors.white,
-                        decoration: TextDecoration.none,
-                      )),
+                  child: Text(
+                    ':',
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w200,
+                      color: Colors.white,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
                 ),
                 _TimeStep(
                   value: _selected.minute,
@@ -1450,15 +1550,17 @@ class _InlineDatePanelState extends State<_InlineDatePanel> {
                 color: LD.sph,
                 padding: const EdgeInsets.symmetric(vertical: 13),
                 alignment: Alignment.center,
-                child: const Text('CONFIRMAR',
-                    style: TextStyle(
-                      fontFamily: kSans,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.0,
-                      color: Colors.white,
-                      decoration: TextDecoration.none,
-                    )),
+                child: const Text(
+                  'CONFIRMAR',
+                  style: TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 2.0,
+                    color: Colors.white,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
               ),
             ),
           ),
@@ -1476,15 +1578,15 @@ class _ChevBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: onTap,
-        child: MouseRegion(
-          cursor: SystemMouseCursors.click,
-          child: Padding(
-            padding: const EdgeInsets.all(6),
-            child: Icon(icon, size: 16, color: const Color(0x80FFFFFF)),
-          ),
-        ),
-      );
+    onTap: onTap,
+    child: MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: Padding(
+        padding: const EdgeInsets.all(6),
+        child: Icon(icon, size: 16, color: const Color(0x80FFFFFF)),
+      ),
+    ),
+  );
 }
 
 // Hour / minute stepper column  (▲  value  ▼)
@@ -1500,36 +1602,42 @@ class _TimeStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: onInc,
-            child: MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: const Icon(Icons.keyboard_arrow_up,
-                  size: 18, color: Color(0x80FFFFFF)),
-            ),
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      GestureDetector(
+        onTap: onInc,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: const Icon(
+            Icons.keyboard_arrow_up,
+            size: 18,
+            color: Color(0x80FFFFFF),
           ),
-          Text(
-            value.toString().padLeft(2, '0'),
-            style: const TextStyle(
-              fontFamily: kSans,
-              fontSize: 26,
-              fontWeight: FontWeight.w200,
-              color: Colors.white,
-              decoration: TextDecoration.none,
-            ),
+        ),
+      ),
+      Text(
+        value.toString().padLeft(2, '0'),
+        style: const TextStyle(
+          fontFamily: kSans,
+          fontSize: 26,
+          fontWeight: FontWeight.w200,
+          color: Colors.white,
+          decoration: TextDecoration.none,
+        ),
+      ),
+      GestureDetector(
+        onTap: onDec,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: const Icon(
+            Icons.keyboard_arrow_down,
+            size: 18,
+            color: Color(0x80FFFFFF),
           ),
-          GestureDetector(
-            onTap: onDec,
-            child: MouseRegion(
-              cursor: SystemMouseCursors.click,
-              child: const Icon(Icons.keyboard_arrow_down,
-                  size: 18, color: Color(0x80FFFFFF)),
-            ),
-          ),
-        ],
-      );
+        ),
+      ),
+    ],
+  );
 }
 
 class _HoursPicker extends StatelessWidget {
@@ -1538,31 +1646,34 @@ class _HoursPicker extends StatelessWidget {
   final ValueChanged<int> onChanged;
 
   @override
-  Widget build(BuildContext context) => Row(children: [
-        Text('$hours hora${hours > 1 ? 's' : ''}',
-            style: const TextStyle(
-              fontFamily: kSans,
-              fontSize: 13,
-              color: Colors.white,
-              decoration: TextDecoration.none,
-            )),
-        const Spacer(),
-        IconButton(
-          icon:
-              Icon(Icons.remove, size: 16, color: Colors.white.withAlpha(160)),
-          // Mínimo 2 h, como en móvil y en la tarifa.
-          onPressed: hours > 2 ? () => onChanged(hours - 1) : null,
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(),
+  Widget build(BuildContext context) => Row(
+    children: [
+      Text(
+        '$hours hora${hours > 1 ? 's' : ''}',
+        style: const TextStyle(
+          fontFamily: kSans,
+          fontSize: 13,
+          color: Colors.white,
+          decoration: TextDecoration.none,
         ),
-        const SizedBox(width: 8),
-        IconButton(
-          icon: Icon(Icons.add, size: 16, color: Colors.white.withAlpha(160)),
-          onPressed: hours < 12 ? () => onChanged(hours + 1) : null,
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(),
-        ),
-      ]);
+      ),
+      const Spacer(),
+      IconButton(
+        icon: Icon(Icons.remove, size: 16, color: Colors.white.withAlpha(160)),
+        // Mínimo 2 h, como en móvil y en la tarifa.
+        onPressed: hours > 2 ? () => onChanged(hours - 1) : null,
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+      ),
+      const SizedBox(width: 8),
+      IconButton(
+        icon: Icon(Icons.add, size: 16, color: Colors.white.withAlpha(160)),
+        onPressed: hours < 12 ? () => onChanged(hours + 1) : null,
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+      ),
+    ],
+  );
 }
 
 /// Forces light theme on PlaceAutocompleteField inside the white booking bar.
@@ -1598,9 +1709,10 @@ class _MarqueeBarState extends State<_MarqueeBar>
   @override
   void initState() {
     super.initState();
-    _ctrl =
-        AnimationController(vsync: this, duration: const Duration(seconds: 36))
-          ..repeat();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 36),
+    )..repeat();
   }
 
   @override
@@ -1611,12 +1723,13 @@ class _MarqueeBarState extends State<_MarqueeBar>
 
   @override
   Widget build(BuildContext context) => Container(
-        height: 40,
-        color: LD.dark,
-        child: ClipRect(
-          child: AnimatedBuilder(
-            animation: _ctrl,
-            builder: (_, __) => OverflowBox(
+    height: 40,
+    color: LD.dark,
+    child: ClipRect(
+      child: AnimatedBuilder(
+        animation: _ctrl,
+        builder:
+            (_, __) => OverflowBox(
               maxWidth: double.infinity,
               alignment: Alignment.centerLeft,
               child: Transform.translate(
@@ -1642,7 +1755,9 @@ class _MarqueeBarState extends State<_MarqueeBar>
                           width: 3,
                           height: 3,
                           decoration: const BoxDecoration(
-                              color: LD.sph, shape: BoxShape.circle),
+                            color: LD.sph,
+                            shape: BoxShape.circle,
+                          ),
                         ),
                         const SizedBox(width: 24),
                       ],
@@ -1650,9 +1765,9 @@ class _MarqueeBarState extends State<_MarqueeBar>
                 ),
               ),
             ),
-          ),
-        ),
-      );
+      ),
+    ),
+  );
 }
 
 // ============================================================
@@ -1675,21 +1790,22 @@ class _FleetSection extends StatelessWidget {
   // Same classes clients can book — First Class only when the admin enables
   // it. We describe what the client gets, never a make or model.
   static List<_FleetItem> get _vehicles => [
-        for (final vc in VehicleCatalog.bookable(
-            firstClassEnabled: RemoteFlags.instance.firstClassEnabled.value))
-          _FleetItem(
-            vc: vc,
-            cls: vc.label,
-            model: vc.description,
-            asset: VehicleCatalog.carImage(vc),
-            tags: [
-              '${vc.capacity} pasajeros',
-              '${vc.luggageCapacity} maletas',
-              LuxPromise.fixedPrice,
-            ],
-            accent: LD.sph,
-          ),
-      ];
+    for (final vc in VehicleCatalog.bookable(
+      firstClassEnabled: RemoteFlags.instance.firstClassEnabled.value,
+    ))
+      _FleetItem(
+        vc: vc,
+        cls: vc.label,
+        model: vc.description,
+        asset: VehicleCatalog.carImage(vc),
+        tags: [
+          '${vc.capacity} pasajeros',
+          '${vc.luggageCapacity} maletas',
+          LuxPromise.fixedPrice,
+        ],
+        accent: LD.sph,
+      ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -1700,53 +1816,69 @@ class _FleetSection extends StatelessWidget {
     return Container(
       key: sectionKey,
       color: LD.dark,
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // Header row
-        Padding(
-          padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, narrow ? 28 : 56),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
-            Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RevealOnScroll(child: const LuxEyebrow('Nuestra Flota')),
-                    const SizedBox(height: 20),
-                    RevealOnScroll(
-                      delay: const Duration(milliseconds: 80),
-                      child: Text('Vehículos premium,\nsin excepciones.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header row
+          Padding(
+            padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, narrow ? 28 : 56),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RevealOnScroll(child: const LuxEyebrow('Nuestra Flota')),
+                      const SizedBox(height: 20),
+                      RevealOnScroll(
+                        delay: const Duration(milliseconds: 80),
+                        child: Text(
+                          'Vehículos premium,\nsin excepciones.',
                           style: displayText(
-                              size: narrow ? 36 : 52, color: Colors.white)),
+                            size: narrow ? 36 : 52,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                if (!narrow)
+                  RevealOnScroll(
+                    delay: const Duration(milliseconds: 160),
+                    child: Text(
+                      'DESLIZA PARA EXPLORAR →',
+                      style: TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 9,
+                        letterSpacing: 2.4,
+                        color: Colors.white.withAlpha(60),
+                        decoration: TextDecoration.none,
+                      ),
                     ),
-                  ]),
+                  ),
+              ],
             ),
-            if (!narrow)
-              RevealOnScroll(
-                delay: const Duration(milliseconds: 160),
-                child: Text('DESLIZA PARA EXPLORAR →',
-                    style: TextStyle(
-                      fontFamily: kSans,
-                      fontSize: 9,
-                      letterSpacing: 2.4,
-                      color: Colors.white.withAlpha(60),
-                      decoration: TextDecoration.none,
-                    )),
-              ),
-          ]),
-        ),
-        // Horizontal card list
-        SizedBox(
-          height: narrow ? 360 : 460,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 0),
-            itemCount: _vehicles.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 2),
-            itemBuilder: (_, i) => _FleetCard(
-                item: _vehicles[i], onBook: () => onBook(_vehicles[i].vc)),
           ),
-        ),
-        const SizedBox(height: 72),
-      ]),
+          // Horizontal card list
+          SizedBox(
+            height: narrow ? 360 : 460,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: EdgeInsets.fromLTRB(hPad, 0, hPad, 0),
+              itemCount: _vehicles.length,
+              separatorBuilder: (_, __) => const SizedBox(width: 2),
+              itemBuilder:
+                  (_, i) => _FleetCard(
+                    item: _vehicles[i],
+                    onBook: () => onBook(_vehicles[i].vc),
+                  ),
+            ),
+          ),
+          const SizedBox(height: 72),
+        ],
+      ),
     );
   }
 }
@@ -1783,121 +1915,138 @@ class _FleetCardState extends State<_FleetCard> {
 
   @override
   Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) => setState(() => _hover = true),
-        onExit: (_) => setState(() => _hover = false),
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: widget.onBook,
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 280),
-            width: 340,
-            decoration: BoxDecoration(
-              color: const Color(0xFF0D1B2E),
-              border: Border.all(
-                color: _hover
+    onEnter: (_) => setState(() => _hover = true),
+    onExit: (_) => setState(() => _hover = false),
+    cursor: SystemMouseCursors.click,
+    child: GestureDetector(
+      onTap: widget.onBook,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 280),
+        width: 340,
+        decoration: BoxDecoration(
+          color: const Color(0xFF0D1B2E),
+          border: Border.all(
+            color:
+                _hover
                     ? widget.item.accent.withAlpha(180)
                     : Colors.white.withAlpha(18),
-              ),
-            ),
-            child: Stack(children: [
-              // Accent gradient wash
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        widget.item.accent.withAlpha(_hover ? 45 : 20),
-                        Colors.transparent
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              // Car image
-              Positioned(
-                bottom: 110,
-                left: 0,
-                right: 0,
-                height: 220,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: VehicleImage(widget.item.vc),
-                ),
-              ),
-              // Bottom info bar
-              Positioned(
-                bottom: 0,
-                left: 0,
-                right: 0,
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(28, 22, 28, 28),
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      colors: [
-                        const Color(0xFF070E18).withAlpha(242),
-                        Colors.transparent
-                      ],
-                    ),
-                  ),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Class name — 22px serif
-                        Text(widget.item.cls,
-                            style: const TextStyle(
-                              fontFamily: kSerif,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.white,
-                              height: 1.1,
-                              decoration: TextDecoration.none,
-                            )),
-                        const SizedBox(height: 4),
-                        // Model — 12px dim
-                        Text(widget.item.model,
-                            style: TextStyle(
-                              fontFamily: kSans,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w300,
-                              color: Colors.white.withAlpha(115),
-                              height: 1.5,
-                              decoration: TextDecoration.none,
-                            )),
-                        const SizedBox(height: 16),
-                        // Tags
-                        Wrap(
-                            spacing: 6,
-                            runSpacing: 6,
-                            children: widget.item.tags
-                                .map((t) => Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 9, vertical: 3),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.white.withAlpha(36)),
-                                      ),
-                                      child: Text(t,
-                                          style: TextStyle(
-                                            fontFamily: kSans,
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w500,
-                                            letterSpacing: 1.5,
-                                            color: Colors.white.withAlpha(128),
-                                            decoration: TextDecoration.none,
-                                          )),
-                                    ))
-                                .toList()),
-                      ]),
-                ),
-              ),
-            ]),
           ),
         ),
-      );
+        child: Stack(
+          children: [
+            // Accent gradient wash
+            Positioned.fill(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      widget.item.accent.withAlpha(_hover ? 45 : 20),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Car image
+            Positioned(
+              bottom: 110,
+              left: 0,
+              right: 0,
+              height: 220,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: VehicleImage(widget.item.vc),
+              ),
+            ),
+            // Bottom info bar
+            Positioned(
+              bottom: 0,
+              left: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(28, 22, 28, 28),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                    colors: [
+                      const Color(0xFF070E18).withAlpha(242),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Class name — 22px serif
+                    Text(
+                      widget.item.cls,
+                      style: const TextStyle(
+                        fontFamily: kSerif,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white,
+                        height: 1.1,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    // Model — 12px dim
+                    Text(
+                      widget.item.model,
+                      style: TextStyle(
+                        fontFamily: kSans,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w300,
+                        color: Colors.white.withAlpha(115),
+                        height: 1.5,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    // Tags
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children:
+                          widget.item.tags
+                              .map(
+                                (t) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 9,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.white.withAlpha(36),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    t,
+                                    style: TextStyle(
+                                      fontFamily: kSans,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w500,
+                                      letterSpacing: 1.5,
+                                      color: Colors.white.withAlpha(128),
+                                      decoration: TextDecoration.none,
+                                    ),
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
 
 // ============================================================
@@ -1927,19 +2076,19 @@ class _TestimonialsSectionState extends State<_TestimonialsSection> {
       quote:
           'Absolutamente impecable de principio a fin. El chófer llegó antes de tiempo y el auto estaba inmaculado. No usaré a nadie más.',
       name: 'Alexandra M.',
-      location: 'Londres, Reino Unido'
+      location: 'Londres, Reino Unido',
     ),
     (
       quote:
           'Los precios fijos y los chóferes confiables hacen de Luxelane el único servicio en el que confío para todos mis viajes de negocios.',
       name: 'Marcus T.',
-      location: 'Nueva York, EE. UU.'
+      location: 'Nueva York, EE. UU.',
     ),
     (
       quote:
           'Del aeropuerto al hotel, cada detalle fue manejado a la perfección. Así es como debería sentirse el viaje de lujo.',
       name: 'Isabelle R.',
-      location: 'París, Francia'
+      location: 'París, Francia',
     ),
   ];
 
@@ -1949,10 +2098,12 @@ class _TestimonialsSectionState extends State<_TestimonialsSection> {
     return Container(
       color: const Color(0xFFF2F5FB),
       padding: const EdgeInsets.symmetric(vertical: 120, horizontal: 140),
-      child: Column(children: [
-        // Decorative large quote mark
-        RevealOnScroll(
-          child: Text('"',
+      child: Column(
+        children: [
+          // Decorative large quote mark
+          RevealOnScroll(
+            child: Text(
+              '"',
               style: TextStyle(
                 fontFamily: kSerif,
                 fontSize: 180,
@@ -1960,13 +2111,15 @@ class _TestimonialsSectionState extends State<_TestimonialsSection> {
                 color: LD.sph.withAlpha(23),
                 height: 0.6,
                 decoration: TextDecoration.none,
-              )),
-        ),
-        const SizedBox(height: 12),
-        // Rotating quote
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 500),
-          child: Text(r.quote,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          // Rotating quote
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 500),
+            child: Text(
+              r.quote,
               key: ValueKey(_current),
               textAlign: TextAlign.center,
               style: const TextStyle(
@@ -1977,53 +2130,62 @@ class _TestimonialsSectionState extends State<_TestimonialsSection> {
                 color: LD.ink,
                 height: 1.6,
                 decoration: TextDecoration.none,
-              )),
-        ),
-        const SizedBox(height: 44),
-        // Author
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 400),
-          child: Column(key: ValueKey('a$_current'), children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(
-                  5,
-                  (_) =>
-                      const Icon(Icons.star_rounded, size: 12, color: LD.sph)),
+              ),
             ),
-            const SizedBox(height: 12),
-            Text('${r.name} · ${r.location}'.toUpperCase(),
-                style: const TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w400,
-                  letterSpacing: 2.0,
-                  color: LD.ink3,
-                  decoration: TextDecoration.none,
-                )),
-          ]),
-        ),
-        const SizedBox(height: 48),
-        // Dot navigation
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: List.generate(
+          ),
+          const SizedBox(height: 44),
+          // Author
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 400),
+            child: Column(
+              key: ValueKey('a$_current'),
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(
+                    5,
+                    (_) =>
+                        const Icon(Icons.star_rounded, size: 12, color: LD.sph),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  '${r.name} · ${r.location}'.toUpperCase(),
+                  style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w400,
+                    letterSpacing: 2.0,
+                    color: LD.ink3,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 48),
+          // Dot navigation
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: List.generate(
               _reviews.length,
               (i) => GestureDetector(
-                    onTap: () => setState(() => _current = i),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 250),
-                      width: i == _current ? 28 : 6,
-                      height: 6,
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      decoration: BoxDecoration(
-                        color: i == _current ? LD.sph : LD.border,
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                    ),
-                  )),
-        ),
-      ]),
+                onTap: () => setState(() => _current = i),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 250),
+                  width: i == _current ? 28 : 6,
+                  height: 6,
+                  margin: const EdgeInsets.symmetric(horizontal: 3),
+                  decoration: BoxDecoration(
+                    color: i == _current ? LD.sph : LD.border,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -2050,25 +2212,26 @@ class _BusinessSection extends StatelessWidget {
   ];
 
   Widget _perksPanel(double hPad, double vPad) => Stack(
-        children: [
-          Positioned.fill(child: _VideoBackground(assetPath: _videoAsset)),
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerRight,
-                  end: Alignment.centerLeft,
-                  colors: const [Color(0xCC070E18), Color(0xE8070E18)],
-                ),
-              ),
+    children: [
+      Positioned.fill(child: _VideoBackground(assetPath: _videoAsset)),
+      Positioned.fill(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerRight,
+              end: Alignment.centerLeft,
+              colors: const [Color(0xCC070E18), Color(0xE8070E18)],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, vPad),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: _perks.asMap().entries.map((e) {
+        ),
+      ),
+      Padding(
+        padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, vPad),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children:
+              _perks.asMap().entries.map((e) {
                 final i = e.key;
                 return RevealOnScroll(
                   delay: Duration(milliseconds: i * 70),
@@ -2077,24 +2240,28 @@ class _BusinessSection extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 22),
                     decoration: BoxDecoration(
                       border: Border(
-                          bottom:
-                              BorderSide(color: Colors.white.withAlpha(20))),
+                        bottom: BorderSide(color: Colors.white.withAlpha(20)),
+                      ),
                     ),
-                    child: Row(children: [
-                      SizedBox(
-                        width: 36,
-                        child: Text('0${i + 1}',
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 36,
+                          child: Text(
+                            '0${i + 1}',
                             style: TextStyle(
                               fontFamily: kSerif,
                               fontSize: 28,
                               fontWeight: FontWeight.w300,
                               color: LD.sph.withAlpha(180),
                               decoration: TextDecoration.none,
-                            )),
-                      ),
-                      const SizedBox(width: 20),
-                      Expanded(
-                        child: Text(e.value,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: Text(
+                            e.value,
                             style: const TextStyle(
                               fontFamily: kSans,
                               fontSize: 13,
@@ -2102,16 +2269,18 @@ class _BusinessSection extends StatelessWidget {
                               color: Color(0xE6FFFFFF),
                               letterSpacing: 0.2,
                               decoration: TextDecoration.none,
-                            )),
-                      ),
-                    ]),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 );
               }).toList(),
-            ),
-          ),
-        ],
-      );
+        ),
+      ),
+    ],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -2121,50 +2290,62 @@ class _BusinessSection extends StatelessWidget {
 
     final headlinePanel = Padding(
       padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, vPad),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        RevealOnScroll(dx: -160, child: const LuxEyebrow('Para Empresas')),
-        const SizedBox(height: 28),
-        RevealOnScroll(
-          delay: const Duration(milliseconds: 80),
-          dx: -160,
-          child: Text('Viajes corporativos,\nredefinidos.',
-              style: displayText(size: narrow ? 36 : 52, color: Colors.white)),
-        ),
-        const SizedBox(height: 28),
-        RevealOnScroll(
-          delay: const Duration(milliseconds: 160),
-          dx: -120,
-          child: Text(
-            'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.',
-            style: bodyText(size: 14, color: const Color(0xCCFFFFFF)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RevealOnScroll(dx: -160, child: const LuxEyebrow('Para Empresas')),
+          const SizedBox(height: 28),
+          RevealOnScroll(
+            delay: const Duration(milliseconds: 80),
+            dx: -160,
+            child: Text(
+              'Viajes corporativos,\nredefinidos.',
+              style: displayText(size: narrow ? 36 : 52, color: Colors.white),
+            ),
           ),
-        ),
-        const SizedBox(height: 44),
-        RevealOnScroll(
-          delay: const Duration(milliseconds: 220),
-          dx: -120,
-          child: _GhostBtn(
-              label: 'Más información', light: true, onTap: onLearnMore),
-        ),
-      ]),
+          const SizedBox(height: 28),
+          RevealOnScroll(
+            delay: const Duration(milliseconds: 160),
+            dx: -120,
+            child: Text(
+              'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.',
+              style: bodyText(size: 14, color: const Color(0xCCFFFFFF)),
+            ),
+          ),
+          const SizedBox(height: 44),
+          RevealOnScroll(
+            delay: const Duration(milliseconds: 220),
+            dx: -120,
+            child: _GhostBtn(
+              label: 'Más información',
+              light: true,
+              onTap: onLearnMore,
+            ),
+          ),
+        ],
+      ),
     );
 
     return Container(
       key: sectionKey,
       color: LD.dark,
-      child: narrow
-          ? Column(children: [
-              headlinePanel,
-              SizedBox(height: 320, child: _perksPanel(hPad, 32)),
-            ])
-          : IntrinsicHeight(
-              child: Row(
+      child:
+          narrow
+              ? Column(
+                children: [
+                  headlinePanel,
+                  SizedBox(height: 320, child: _perksPanel(hPad, 32)),
+                ],
+              )
+              : IntrinsicHeight(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(child: headlinePanel),
                     Expanded(child: _perksPanel(hPad, vPad)),
-                  ]),
-            ),
+                  ],
+                ),
+              ),
     );
   }
 }
@@ -2183,97 +2364,104 @@ class _CtaSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Stack(
-        children: [
-          // Video background (looping, muted, full-bleed)
-          Positioned.fill(
-            child: _VideoBackground(assetPath: _videoAsset),
-          ),
-          // Dark overlay — video stays cinematic, text is bright
-          const Positioned.fill(
-            child: ColoredBox(color: Color(0x85050A12)),
-          ),
-          // Content
-          Padding(
-            padding: const EdgeInsets.fromLTRB(64, 80, 64, 80),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 900),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    RevealOnScroll(
-                      dx: -100,
-                      threshold: 0.9,
-                      child: const Text('CUANDO QUIERAS. DONDE QUIERAS.',
-                          style: TextStyle(
-                            fontFamily: kSans,
-                            fontSize: 9,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 4.0,
-                            color: Color(0xE0FFFFFF),
-                            decoration: TextDecoration.none,
-                          )),
+    children: [
+      // Video background (looping, muted, full-bleed)
+      Positioned.fill(child: _VideoBackground(assetPath: _videoAsset)),
+      // Dark overlay — video stays cinematic, text is bright
+      const Positioned.fill(child: ColoredBox(color: Color(0x85050A12))),
+      // Content
+      Padding(
+        padding: const EdgeInsets.fromLTRB(64, 80, 64, 80),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 900),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                RevealOnScroll(
+                  dx: -100,
+                  threshold: 0.9,
+                  child: const Text(
+                    'CUANDO QUIERAS. DONDE QUIERAS.',
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 4.0,
+                      color: Color(0xE0FFFFFF),
+                      decoration: TextDecoration.none,
                     ),
-                    const SizedBox(height: 24),
-                    RevealOnScroll(
-                      delay: const Duration(milliseconds: 80),
-                      dx: -100,
-                      threshold: 0.9,
-                      child: Text('Tu próximo viaje,',
-                          style: displayText(size: 96, color: Colors.white)),
-                    ),
-                    RevealOnScroll(
-                      delay: const Duration(milliseconds: 120),
-                      dx: -100,
-                      threshold: 0.9,
-                      child: Text('en tus términos.',
-                          style: displayText(
-                              size: 96,
-                              color: Colors.white,
-                              style: FontStyle.italic)),
-                    ),
-                    const SizedBox(height: 48),
-                    RevealOnScroll(
-                      delay: const Duration(milliseconds: 160),
-                      dx: -80,
-                      threshold: 0.9,
-                      child: const Text(
-                          'Precio fijo  ·  Chóferes profesionales  ·  En todo el mundo',
-                          style: TextStyle(
-                            fontFamily: kSans,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w400,
-                            letterSpacing: 2.8,
-                            color: Color(0xCCFFFFFF),
-                            decoration: TextDecoration.none,
-                          )),
-                    ),
-                    const SizedBox(height: 52),
-                    RevealOnScroll(
-                      delay: const Duration(milliseconds: 220),
-                      dx: -80,
-                      threshold: 0.9,
-                      child: Row(children: [
-                        _SolidBtn(
-                          label: 'Reservar un viaje',
-                          white: true,
-                          onTap: onBook,
-                        ),
-                        const SizedBox(width: 20),
-                        _GhostBtn(
-                            label: 'Ver flota',
-                            light: true,
-                            onTap: onViewFleet),
-                      ]),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
+                const SizedBox(height: 24),
+                RevealOnScroll(
+                  delay: const Duration(milliseconds: 80),
+                  dx: -100,
+                  threshold: 0.9,
+                  child: Text(
+                    'Tu próximo viaje,',
+                    style: displayText(size: 96, color: Colors.white),
+                  ),
+                ),
+                RevealOnScroll(
+                  delay: const Duration(milliseconds: 120),
+                  dx: -100,
+                  threshold: 0.9,
+                  child: Text(
+                    'en tus términos.',
+                    style: displayText(
+                      size: 96,
+                      color: Colors.white,
+                      style: FontStyle.italic,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 48),
+                RevealOnScroll(
+                  delay: const Duration(milliseconds: 160),
+                  dx: -80,
+                  threshold: 0.9,
+                  child: const Text(
+                    'Precio fijo  ·  Chóferes profesionales  ·  En todo el mundo',
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: 2.8,
+                      color: Color(0xCCFFFFFF),
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 52),
+                RevealOnScroll(
+                  delay: const Duration(milliseconds: 220),
+                  dx: -80,
+                  threshold: 0.9,
+                  child: Row(
+                    children: [
+                      _SolidBtn(
+                        label: 'Reservar un viaje',
+                        white: true,
+                        onTap: onBook,
+                      ),
+                      const SizedBox(width: 20),
+                      _GhostBtn(
+                        label: 'Ver flota',
+                        light: true,
+                        onTap: onViewFleet,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
-      );
+        ),
+      ),
+    ],
+  );
 }
 
 // ============================================================
@@ -2402,7 +2590,7 @@ const List<_BookPageData> _kBookPages = [
       'Chóferes verificados',
       'Precio fijo, siempre',
       'Cobertura global — más de 50 ciudades',
-      'A toda hora, 24/7'
+      'A toda hora, 24/7',
     ],
   ),
   // Index 2: La Experiencia (content page 02)
@@ -2419,7 +2607,7 @@ const List<_BookPageData> _kBookPages = [
       'Interiores de cuero premium',
       'Wi-Fi y carga inalámbrica',
       'Servicio de champán disponible',
-      'Control de clima ambiental'
+      'Control de clima ambiental',
     ],
   ),
   // Index 3: Para Empresas (content page 03)
@@ -2436,7 +2624,7 @@ const List<_BookPageData> _kBookPages = [
       'Facturación centralizada',
       'Gerente de cuenta dedicado',
       'Cumplimiento de política de viajes',
-      'Reservas prioritarias para ejecutivos'
+      'Reservas prioritarias para ejecutivos',
     ],
   ),
   // Index 4: Back to cover (cierre del libro)
@@ -2461,14 +2649,15 @@ class _BookSection extends StatefulWidget {
 class _BookSectionState extends State<_BookSection> {
   final _sectionKey = GlobalKey();
   double?
-      _absoluteTop; // measured once, then all math is pure scroll arithmetic
+  _absoluteTop; // measured once, then all math is pure scroll arithmetic
   static const _numPages = 4;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     LuxScrollProvider.of(
-        context); // register dependency for scroll-driven rebuilds
+      context,
+    ); // register dependency for scroll-driven rebuilds
     // Measure absolute top only once (before sticky kicks in)
     if (_absoluteTop == null) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _measureOnce());
@@ -2502,8 +2691,10 @@ class _BookSectionState extends State<_BookSection> {
     } else {
       final raw = (scrollY - _absoluteTop!) / screenH;
       progress = raw.clamp(0.0, _numPages.toDouble());
-      stickyOffset =
-          (scrollY - _absoluteTop!).clamp(0.0, (_numPages - 1) * screenH);
+      stickyOffset = (scrollY - _absoluteTop!).clamp(
+        0.0,
+        (_numPages - 1) * screenH,
+      );
     }
 
     final pageIdx = progress.floor().clamp(0, _numPages - 1);
@@ -2515,115 +2706,133 @@ class _BookSectionState extends State<_BookSection> {
     return SizedBox(
       key: _sectionKey,
       height: screenH * _numPages,
-      child: Stack(clipBehavior: Clip.none, children: [
-        Transform.translate(
-          offset: Offset(0, stickyOffset),
-          child: SizedBox(
-            height: screenH,
-            child: Container(
-              color: LD.dark,
-              child: Stack(children: [
-                // Radial sapphire glow
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        center: const Alignment(0, 0.3),
-                        radius: 0.85,
-                        colors: [LD.sph.withAlpha(70), Colors.transparent],
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Transform.translate(
+            offset: Offset(0, stickyOffset),
+            child: SizedBox(
+              height: screenH,
+              child: Container(
+                color: LD.dark,
+                child: Stack(
+                  children: [
+                    // Radial sapphire glow
+                    Positioned.fill(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: RadialGradient(
+                            center: const Alignment(0, 0.3),
+                            radius: 0.85,
+                            colors: [LD.sph.withAlpha(70), Colors.transparent],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
 
-                // Eyebrow
-                Positioned(
-                    top: 44,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                        child: Text('OUR SIGNATURE EXPERIENCE',
-                            style: GoogleFonts.montserrat(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 4.0,
-                                color: LD.sph.withAlpha(200),
-                                decoration: TextDecoration.none)))),
-
-                // Book
-                Center(
-                  child: _BookWidget(
-                    pages: _kBookPages,
-                    currentPage: pageIdx,
-                    flipAngle: flipAngle,
-                    isMobile: isMobile,
-                  ),
-                ),
-
-                // Page dots — only show content pages (1, 2, 3)
-                Positioned(
-                    bottom: 30,
-                    left: 0,
-                    right: 0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(3, (i) {
-                        final contentPageIdx =
-                            i + 1; // content pages are at indices 1, 2, 3
-                        final active = pageIdx == contentPageIdx;
-                        return AnimatedContainer(
-                          duration: const Duration(milliseconds: 350),
-                          margin: const EdgeInsets.symmetric(horizontal: 6),
-                          width: active ? 7.5 : 5,
-                          height: active ? 7.5 : 5,
-                          decoration: BoxDecoration(
-                            color: active ? LD.sph : LD.sph.withAlpha(70),
-                            shape: BoxShape.circle,
+                    // Eyebrow
+                    Positioned(
+                      top: 44,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: Text(
+                          'OUR SIGNATURE EXPERIENCE',
+                          style: GoogleFonts.montserrat(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w500,
+                            letterSpacing: 4.0,
+                            color: LD.sph.withAlpha(200),
+                            decoration: TextDecoration.none,
                           ),
-                        );
-                      }),
-                    )),
-
-                // Scroll cue
-                Positioned(
-                    right: 44,
-                    top: 0,
-                    bottom: 0,
-                    child: Center(
-                      child: AnimatedOpacity(
-                        opacity: progress < 0.2 ? 0.4 : 0.0,
-                        duration: const Duration(milliseconds: 600),
-                        child:
-                            Column(mainAxisSize: MainAxisSize.min, children: [
-                          Container(
-                            width: 1,
-                            height: 56,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [LD.sph, Colors.transparent],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          RotatedBox(
-                              quarterTurns: 1,
-                              child: Text('SCROLL',
-                                  style: GoogleFonts.montserrat(
-                                      fontSize: 7.5,
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 3.5,
-                                      color: LD.sph,
-                                      decoration: TextDecoration.none))),
-                        ]),
+                        ),
                       ),
-                    )),
-              ]),
+                    ),
+
+                    // Book
+                    Center(
+                      child: _BookWidget(
+                        pages: _kBookPages,
+                        currentPage: pageIdx,
+                        flipAngle: flipAngle,
+                        isMobile: isMobile,
+                      ),
+                    ),
+
+                    // Page dots — only show content pages (1, 2, 3)
+                    Positioned(
+                      bottom: 30,
+                      left: 0,
+                      right: 0,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(3, (i) {
+                          final contentPageIdx =
+                              i + 1; // content pages are at indices 1, 2, 3
+                          final active = pageIdx == contentPageIdx;
+                          return AnimatedContainer(
+                            duration: const Duration(milliseconds: 350),
+                            margin: const EdgeInsets.symmetric(horizontal: 6),
+                            width: active ? 7.5 : 5,
+                            height: active ? 7.5 : 5,
+                            decoration: BoxDecoration(
+                              color: active ? LD.sph : LD.sph.withAlpha(70),
+                              shape: BoxShape.circle,
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+
+                    // Scroll cue
+                    Positioned(
+                      right: 44,
+                      top: 0,
+                      bottom: 0,
+                      child: Center(
+                        child: AnimatedOpacity(
+                          opacity: progress < 0.2 ? 0.4 : 0.0,
+                          duration: const Duration(milliseconds: 600),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 1,
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [LD.sph, Colors.transparent],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              RotatedBox(
+                                quarterTurns: 1,
+                                child: Text(
+                                  'SCROLL',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 7.5,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 3.5,
+                                    color: LD.sph,
+                                    decoration: TextDecoration.none,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-        ),
-      ]),
+        ],
+      ),
     );
   }
 }
@@ -2655,91 +2864,108 @@ class _BookWidget extends StatelessWidget {
     return SizedBox(
       width: bookW,
       height: bookH,
-      child: Stack(children: [
-        // Left panel
-        Positioned(
+      child: Stack(
+        children: [
+          // Left panel
+          Positioned(
             left: 0,
             top: 0,
             bottom: 0,
             width: bookW / 2,
             child: _BookLeftPanel(
-                data: current, height: bookH, isMobile: isMobile)),
+              data: current,
+              height: bookH,
+              isMobile: isMobile,
+            ),
+          ),
 
-        // Right panel
-        Positioned(
+          // Right panel
+          Positioned(
             right: 0,
             top: 0,
             bottom: 0,
             width: bookW / 2,
             child: _BookRightPanel(
-                data: leafFront ? current : next, isMobile: isMobile)),
+              data: leafFront ? current : next,
+              isMobile: isMobile,
+            ),
+          ),
 
-        // Spine (10px, matches .book-spine)
-        Positioned(
+          // Spine (10px, matches .book-spine)
+          Positioned(
             left: bookW / 2 - 5,
             top: 0,
             bottom: 0,
             width: 10,
-            child: Stack(children: [
-              Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color(0xFF040A12),
-                      Color(0xFF1B3050),
-                      Color(0xFF040A12)
-                    ],
+            child: Stack(
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color(0xFF040A12),
+                        Color(0xFF1B3050),
+                        Color(0xFF040A12),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Center(
-                child: FractionallySizedBox(
-                  heightFactor: 0.64,
-                  child: Container(
-                    width: 1,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.transparent,
-                          LD.sph.withAlpha(180),
-                          Colors.transparent
-                        ],
+                Center(
+                  child: FractionallySizedBox(
+                    heightFactor: 0.64,
+                    child: Container(
+                      width: 1,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            LD.sph.withAlpha(180),
+                            Colors.transparent,
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ])),
+              ],
+            ),
+          ),
 
-        // Flipping leaf
-        if (showLeaf)
-          Positioned(
+          // Flipping leaf
+          if (showLeaf)
+            Positioned(
               right: 0,
               top: 0,
               bottom: 0,
               width: bookW / 2,
               child: Transform(
                 alignment: Alignment.centerLeft,
-                transform: Matrix4.identity()
-                  ..setEntry(3, 2, 0.001)
-                  ..rotateY(-flipAngle),
+                transform:
+                    Matrix4.identity()
+                      ..setEntry(3, 2, 0.001)
+                      ..rotateY(-flipAngle),
                 child: ClipRect(
-                  child: leafFront
-                      ? _BookRightPanel(data: current, isMobile: isMobile)
-                      : Transform(
-                          alignment: Alignment.center,
-                          transform: Matrix4.rotationY(math.pi),
-                          child: _BookLeftPanel(
-                              data: next, height: bookH, isMobile: isMobile),
-                        ),
+                  child:
+                      leafFront
+                          ? _BookRightPanel(data: current, isMobile: isMobile)
+                          : Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.rotationY(math.pi),
+                            child: _BookLeftPanel(
+                              data: next,
+                              height: bookH,
+                              isMobile: isMobile,
+                            ),
+                          ),
                 ),
-              )),
+              ),
+            ),
 
-        // Gloss sheen
-        if (showLeaf)
-          Positioned(
+          // Gloss sheen
+          if (showLeaf)
+            Positioned(
               right: 0,
               top: 0,
               bottom: 0,
@@ -2747,9 +2973,10 @@ class _BookWidget extends StatelessWidget {
               child: IgnorePointer(
                 child: Transform(
                   alignment: Alignment.centerLeft,
-                  transform: Matrix4.identity()
-                    ..setEntry(3, 2, 0.001)
-                    ..rotateY(-flipAngle),
+                  transform:
+                      Matrix4.identity()
+                        ..setEntry(3, 2, 0.001)
+                        ..rotateY(-flipAngle),
                   child: Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -2757,22 +2984,28 @@ class _BookWidget extends StatelessWidget {
                         end: Alignment.bottomRight,
                         colors: [
                           Colors.white.withAlpha(
-                              (math.sin(flipAngle.abs()) * 55).round()),
+                            (math.sin(flipAngle.abs()) * 55).round(),
+                          ),
                           Colors.transparent,
                         ],
                       ),
                     ),
                   ),
                 ),
-              )),
-      ]),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
 
 class _BookLeftPanel extends StatelessWidget {
-  const _BookLeftPanel(
-      {required this.data, required this.height, required this.isMobile});
+  const _BookLeftPanel({
+    required this.data,
+    required this.height,
+    required this.isMobile,
+  });
   final _BookPageData data;
   final double height;
   final bool isMobile;
@@ -2785,107 +3018,131 @@ class _BookLeftPanel extends StatelessWidget {
       return ClipRect(
         child: Container(
           color: const Color(0xFF04090F),
-          child: Stack(children: [
-            Positioned(
+          child: Stack(
+            children: [
+              Positioned(
                 bottom: 40,
                 left: 0,
                 right: 0,
                 child: Center(
-                    child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: LD.sph.withAlpha(60), width: 1),
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: LD.sph.withAlpha(60), width: 1),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'L',
+                        style: GoogleFonts.cormorantGaramond(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w400,
+                          color: LD.sph.withAlpha(80),
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    ),
                   ),
-                  child: Center(
-                      child: Text('L',
-                          style: GoogleFonts.cormorantGaramond(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w400,
-                            color: LD.sph.withAlpha(80),
-                            decoration: TextDecoration.none,
-                          ))),
-                ))),
-          ]),
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
     return ClipRect(
       child: Container(
         decoration: BoxDecoration(
-          gradient: data.photoPath == null
-              ? const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
+          gradient:
+              data.photoPath == null
+                  ? const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
                       Color(0xFF060E1A),
                       Color(0xFF0D2040),
-                      Color(0xFF060E1A)
+                      Color(0xFF060E1A),
                     ],
-                  stops: [
-                      0,
-                      0.55,
-                      1
-                    ])
-              : null,
-          image: data.photoPath != null
-              ? DecorationImage(
-                  image: AssetImage(data.photoPath!),
-                  fit: BoxFit.cover,
-                  onError: (_, __) {})
-              : null,
+                    stops: [0, 0.55, 1],
+                  )
+                  : null,
+          image:
+              data.photoPath != null
+                  ? DecorationImage(
+                    image: AssetImage(data.photoPath!),
+                    fit: BoxFit.cover,
+                    onError: (_, __) {},
+                  )
+                  : null,
         ),
-        child: Stack(children: [
-          // Photo dark overlay
-          if (data.photoPath != null)
-            Positioned.fill(
+        child: Stack(
+          children: [
+            // Photo dark overlay
+            if (data.photoPath != null)
+              Positioned.fill(
                 child: DecoratedBox(
-              decoration:
-                  BoxDecoration(color: const Color(0xFF070E18).withAlpha(122)),
-            )),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF070E18).withAlpha(122),
+                  ),
+                ),
+              ),
 
-          // Ghost page number
-          Positioned(
+            // Ghost page number
+            Positioned(
               bottom: -10,
               right: -6,
-              child: Text(data.num,
-                  style: GoogleFonts.cormorantGaramond(
-                      fontSize: isMobile ? 100 : 180,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white.withAlpha(6),
-                      height: 1,
-                      decoration: TextDecoration.none))),
+              child: Text(
+                data.num,
+                style: GoogleFonts.cormorantGaramond(
+                  fontSize: isMobile ? 100 : 180,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withAlpha(6),
+                  height: 1,
+                  decoration: TextDecoration.none,
+                ),
+              ),
+            ),
 
-          // Car PNG (page 0)
-          if (data.carPath != null)
-            Positioned(
+            // Car PNG (page 0)
+            if (data.carPath != null)
+              Positioned(
                 bottom: 48,
                 left: 0,
                 right: 0,
                 height: isMobile ? 100 : 180,
-                child: Image.asset(data.carPath!,
-                    fit: BoxFit.contain,
-                    alignment: Alignment.bottomCenter,
-                    errorBuilder: (_, __, ___) => const SizedBox.shrink())),
+                child: Image.asset(
+                  data.carPath!,
+                  fit: BoxFit.contain,
+                  alignment: Alignment.bottomCenter,
+                  errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+                ),
+              ),
 
-          // Deco label top-left
-          Positioned(
+            // Deco label top-left
+            Positioned(
               top: pad,
               left: pad,
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Container(width: 24, height: 1, color: LD.sph.withAlpha(180)),
-                const SizedBox(width: 10),
-                Text(data.label.toUpperCase(),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(width: 24, height: 1, color: LD.sph.withAlpha(180)),
+                  const SizedBox(width: 10),
+                  Text(
+                    data.label.toUpperCase(),
                     style: GoogleFonts.montserrat(
-                        fontSize: 8,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 3.0,
-                        color: LD.sph.withAlpha(200),
-                        decoration: TextDecoration.none)),
-              ])),
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                      letterSpacing: 3.0,
+                      color: LD.sph.withAlpha(200),
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-          // Caption strip
-          Positioned(
+            // Caption strip
+            Positioned(
               bottom: 0,
               left: 0,
               right: 0,
@@ -2897,32 +3154,41 @@ class _BookLeftPanel extends StatelessWidget {
                     end: Alignment.topCenter,
                     colors: [
                       const Color(0xFF040A12).withAlpha(230),
-                      Colors.transparent
+                      Colors.transparent,
                     ],
                   ),
                 ),
                 child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text('— ${data.num}',
-                          style: GoogleFonts.cormorantGaramond(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w400,
-                              letterSpacing: 3.0,
-                              color: LD.sph,
-                              decoration: TextDecoration.none)),
-                      const SizedBox(height: 5),
-                      Text(data.sub,
-                          style: GoogleFonts.cormorantGaramond(
-                              fontSize: isMobile ? 11 : 13,
-                              fontWeight: FontWeight.w300,
-                              fontStyle: FontStyle.italic,
-                              color: Colors.white.withAlpha(140),
-                              decoration: TextDecoration.none)),
-                    ]),
-              )),
-        ]),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '— ${data.num}',
+                      style: GoogleFonts.cormorantGaramond(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: 3.0,
+                        color: LD.sph,
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      data.sub,
+                      style: GoogleFonts.cormorantGaramond(
+                        fontSize: isMobile ? 11 : 13,
+                        fontWeight: FontWeight.w300,
+                        fontStyle: FontStyle.italic,
+                        color: Colors.white.withAlpha(140),
+                        decoration: TextDecoration.none,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -2952,32 +3218,39 @@ class _BookRightPanel extends StatelessWidget {
                   border: Border.all(color: LD.ink, width: 1.5),
                 ),
                 child: Center(
-                    child: Text('L',
-                        style: GoogleFonts.cormorantGaramond(
-                          fontSize: 36,
-                          fontWeight: FontWeight.w400,
-                          color: LD.ink,
-                          decoration: TextDecoration.none,
-                        ))),
+                  child: Text(
+                    'L',
+                    style: GoogleFonts.cormorantGaramond(
+                      fontSize: 36,
+                      fontWeight: FontWeight.w400,
+                      color: LD.ink,
+                      decoration: TextDecoration.none,
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 20),
-              Text('LUXELANE',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 5.0,
-                    color: LD.ink,
-                    decoration: TextDecoration.none,
-                  )),
+              Text(
+                'LUXELANE',
+                style: GoogleFonts.montserrat(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 5.0,
+                  color: LD.ink,
+                  decoration: TextDecoration.none,
+                ),
+              ),
               const SizedBox(height: 10),
-              Text('Servicio de Chófer Premium',
-                  style: GoogleFonts.cormorantGaramond(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w300,
-                    fontStyle: FontStyle.italic,
-                    color: LD.ink3,
-                    decoration: TextDecoration.none,
-                  )),
+              Text(
+                'Servicio de Chófer Premium',
+                style: GoogleFonts.cormorantGaramond(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w300,
+                  fontStyle: FontStyle.italic,
+                  color: LD.ink3,
+                  decoration: TextDecoration.none,
+                ),
+              ),
             ],
           ),
         ),
@@ -2985,75 +3258,98 @@ class _BookRightPanel extends StatelessWidget {
     }
     return Container(
       color: const Color(0xFFF2F5FB),
-      child: Stack(children: [
-        // Ghost number
-        Positioned(
+      child: Stack(
+        children: [
+          // Ghost number
+          Positioned(
             bottom: -12,
             right: -8,
-            child: Text(data.num,
-                style: GoogleFonts.cormorantGaramond(
-                    fontSize: isMobile ? 100 : 180,
-                    fontWeight: FontWeight.w600,
-                    color: LD.sph.withAlpha(10),
-                    height: 1,
-                    decoration: TextDecoration.none))),
+            child: Text(
+              data.num,
+              style: GoogleFonts.cormorantGaramond(
+                fontSize: isMobile ? 100 : 180,
+                fontWeight: FontWeight.w600,
+                color: LD.sph.withAlpha(10),
+                height: 1,
+                decoration: TextDecoration.none,
+              ),
+            ),
+          ),
 
-        // Content
-        Padding(
-          padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, vPad),
-          child: Column(
+          // Content
+          Padding(
+            padding: EdgeInsets.fromLTRB(hPad, vPad, hPad, vPad),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(data.tag,
-                    style: GoogleFonts.montserrat(
-                        fontSize: 9,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 3.5,
-                        color: LD.sph,
-                        decoration: TextDecoration.none)),
+                Text(
+                  data.tag,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 9,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 3.5,
+                    color: LD.sph,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
                 const SizedBox(height: 22),
-                Text(data.headline,
-                    style: GoogleFonts.cormorantGaramond(
-                        fontSize: isMobile ? 26 : 42,
-                        fontWeight: FontWeight.w300,
-                        height: 1.06,
-                        color: LD.ink,
-                        letterSpacing: -0.01 * (isMobile ? 26 : 42),
-                        decoration: TextDecoration.none)),
+                Text(
+                  data.headline,
+                  style: GoogleFonts.cormorantGaramond(
+                    fontSize: isMobile ? 26 : 42,
+                    fontWeight: FontWeight.w300,
+                    height: 1.06,
+                    color: LD.ink,
+                    letterSpacing: -0.01 * (isMobile ? 26 : 42),
+                    decoration: TextDecoration.none,
+                  ),
+                ),
                 const SizedBox(height: 20),
-                Text(data.body,
-                    style: GoogleFonts.montserrat(
-                        fontSize: isMobile ? 12 : 12.5,
-                        fontWeight: FontWeight.w300,
-                        height: 1.9,
-                        color: LD.ink2,
-                        decoration: TextDecoration.none)),
+                Text(
+                  data.body,
+                  style: GoogleFonts.montserrat(
+                    fontSize: isMobile ? 12 : 12.5,
+                    fontWeight: FontWeight.w300,
+                    height: 1.9,
+                    color: LD.ink2,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
                 const SizedBox(height: 24),
-                ...data.bullets.map((b) => Padding(
-                      padding: const EdgeInsets.only(bottom: 9),
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                                width: 18,
-                                height: 1,
-                                color: LD.sph,
-                                margin: const EdgeInsets.only(right: 14)),
-                            Expanded(
-                                child: Text(b,
-                                    style: GoogleFonts.montserrat(
-                                        fontSize: isMobile ? 11 : 11.5,
-                                        fontWeight: FontWeight.w400,
-                                        letterSpacing:
-                                            0.02 * (isMobile ? 11 : 11.5),
-                                        color: LD.ink2,
-                                        decoration: TextDecoration.none))),
-                          ]),
-                    )),
-              ]),
-        ),
-      ]),
+                ...data.bullets.map(
+                  (b) => Padding(
+                    padding: const EdgeInsets.only(bottom: 9),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 18,
+                          height: 1,
+                          color: LD.sph,
+                          margin: const EdgeInsets.only(right: 14),
+                        ),
+                        Expanded(
+                          child: Text(
+                            b,
+                            style: GoogleFonts.montserrat(
+                              fontSize: isMobile ? 11 : 11.5,
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: 0.02 * (isMobile ? 11 : 11.5),
+                              color: LD.ink2,
+                              decoration: TextDecoration.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

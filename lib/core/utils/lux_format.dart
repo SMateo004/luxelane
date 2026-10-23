@@ -14,7 +14,7 @@ abstract class LuxFormat {
     'sep',
     'oct',
     'nov',
-    'dic'
+    'dic',
   ];
 
   static String _two(int v) => v.toString().padLeft(2, '0');
@@ -37,8 +37,10 @@ abstract class LuxFormat {
 
   /// Default pickup: at least [ahead] from now, rounded up to the next quarter
   /// hour ("16:30", never "16:22") — small detail, calmer first impression.
-  static DateTime nextQuarter(
-      {Duration ahead = const Duration(hours: 2), DateTime? from}) {
+  static DateTime nextQuarter({
+    Duration ahead = const Duration(hours: 2),
+    DateTime? from,
+  }) {
     final t = (from ?? DateTime.now()).add(ahead);
     final m = ((t.minute + 14) ~/ 15) * 15;
     return DateTime(t.year, t.month, t.day, t.hour).add(Duration(minutes: m));

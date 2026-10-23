@@ -131,9 +131,11 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
 
   Future<void> _search(String q) async {
     setState(() => _loading = true);
-    final res = await _maps.autocomplete(q,
-        sessionToken: _token,
-        restrictTo: ServiceArea.destinationAreaFor(widget.sameCityAs));
+    final res = await _maps.autocomplete(
+      q,
+      sessionToken: _token,
+      restrictTo: ServiceArea.destinationAreaFor(widget.sameCityAs),
+    );
     _dbg('autocomplete("$q") → ${res.length} results');
     if (!mounted) return;
     setState(() {
@@ -172,9 +174,11 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
       if (place == null) {
         _dbg('Place details failed for: ${s.description}');
         _ctrl.text = widget.initialValue?.displayName ?? '';
-        showLuxSnackbar(context,
-            'No pudimos ubicar esa dirección. Prueba con otra o elígela en el mapa.',
-            isError: true);
+        showLuxSnackbar(
+          context,
+          'No pudimos ubicar esa dirección. Prueba con otra o elígela en el mapa.',
+          isError: true,
+        );
         return;
       }
       final picked = place;
@@ -204,10 +208,10 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
 
   @override
   Widget build(BuildContext context) => OverlayPortal(
-        controller: _portalController,
-        overlayChildBuilder: _buildOverlayDropdown,
-        child: _buildField(),
-      );
+    controller: _portalController,
+    overlayChildBuilder: _buildOverlayDropdown,
+    child: _buildField(),
+  );
 
   Widget _buildOverlayDropdown(BuildContext ctx) {
     final renderBox =
@@ -263,11 +267,16 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                       color: Colors.transparent,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 11),
+                          horizontal: 14,
+                          vertical: 11,
+                        ),
                         child: Row(
                           children: [
-                            Icon(Icons.location_on_outlined,
-                                size: 16, color: iconCol),
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 16,
+                              color: iconCol,
+                            ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Column(
@@ -315,76 +324,78 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   }
 
   Widget _buildField() => Container(
-        key: _fieldKey,
-        decoration: BoxDecoration(
-          color: _fieldBg,
-          // glass mode: larger radius so it looks rounded inside the glass bar
-          borderRadius: BorderRadius.circular(widget.glass ? 10 : LuxRadius.md),
-          border: Border.all(
-            color: _focus.hasFocus ? _focusBorder : _borderColor,
+    key: _fieldKey,
+    decoration: BoxDecoration(
+      color: _fieldBg,
+      // glass mode: larger radius so it looks rounded inside the glass bar
+      borderRadius: BorderRadius.circular(widget.glass ? 10 : LuxRadius.md),
+      border: Border.all(color: _focus.hasFocus ? _focusBorder : _borderColor),
+    ),
+    child: Row(
+      children: [
+        if (widget.prefixIcon != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: Icon(widget.prefixIcon, size: 16, color: _iconColor),
           ),
-        ),
-        child: Row(
-          children: [
-            if (widget.prefixIcon != null)
-              Padding(
-                padding: const EdgeInsets.only(left: 12),
-                child: Icon(widget.prefixIcon, size: 16, color: _iconColor),
+        Expanded(
+          child: TextField(
+            controller: _ctrl,
+            focusNode: _focus,
+            onChanged: _onChanged,
+            style: TextStyle(
+              color: _textColor,
+              fontSize: widget.bare ? 15 : 13,
+              fontFamily: 'Montserrat',
+              fontWeight: widget.bare ? FontWeight.w500 : FontWeight.w400,
+            ),
+            decoration: InputDecoration(
+              hintText: widget.hint ?? widget.label,
+              hintStyle: TextStyle(
+                color: _hintColor,
+                fontSize: widget.bare ? 15 : 13,
+                fontFamily: 'Montserrat',
+                fontWeight: FontWeight.w300,
               ),
-            Expanded(
-              child: TextField(
-                controller: _ctrl,
-                focusNode: _focus,
-                onChanged: _onChanged,
-                style: TextStyle(
-                  color: _textColor,
-                  fontSize: widget.bare ? 15 : 13,
-                  fontFamily: 'Montserrat',
-                  fontWeight: widget.bare ? FontWeight.w500 : FontWeight.w400,
-                ),
-                decoration: InputDecoration(
-                  hintText: widget.hint ?? widget.label,
-                  hintStyle: TextStyle(
-                    color: _hintColor,
-                    fontSize: widget.bare ? 15 : 13,
-                    fontFamily: 'Montserrat',
-                    fontWeight: FontWeight.w300,
-                  ),
-                  // glass mode: explicitly clear any theme-injected fill
-                  filled: _plain ? true : null,
-                  fillColor: _plain ? Colors.transparent : null,
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                ),
+              // glass mode: explicitly clear any theme-injected fill
+              filled: _plain ? true : null,
+              fillColor: _plain ? Colors.transparent : null,
+              border: InputBorder.none,
+              enabledBorder: InputBorder.none,
+              focusedBorder: InputBorder.none,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 14,
               ),
             ),
-            if (_loading)
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(
-                      strokeWidth: 1.2, color: _iconColor),
-                ),
-              )
-            else if (_ctrl.text.isNotEmpty)
-              Listener(
-                behavior: HitTestBehavior.opaque,
-                onPointerUp: (_) {
-                  _ctrl.clear();
-                  setState(() => _suggestions = []);
-                  _hideDropdown();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Icon(Icons.close, size: 14, color: _iconColor),
-                ),
-              ),
-          ],
+          ),
         ),
-      );
+        if (_loading)
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: SizedBox(
+              width: 14,
+              height: 14,
+              child: CircularProgressIndicator(
+                strokeWidth: 1.2,
+                color: _iconColor,
+              ),
+            ),
+          )
+        else if (_ctrl.text.isNotEmpty)
+          Listener(
+            behavior: HitTestBehavior.opaque,
+            onPointerUp: (_) {
+              _ctrl.clear();
+              setState(() => _suggestions = []);
+              _hideDropdown();
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Icon(Icons.close, size: 14, color: _iconColor),
+            ),
+          ),
+      ],
+    ),
+  );
 }

@@ -28,12 +28,12 @@ class RegisterUseCase implements UseCase<User, RegisterParams> {
 
   @override
   Future<Either<Failure, User>> call(RegisterParams params) => _repo.register(
-        email: params.email,
-        password: params.password,
-        phone: params.phone,
-        displayName: params.displayName,
-        role: params.role,
-      );
+    email: params.email,
+    password: params.password,
+    phone: params.phone,
+    displayName: params.displayName,
+    role: params.role,
+  );
 }
 
 class RegisterParams {

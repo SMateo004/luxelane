@@ -13,14 +13,19 @@ class _Repo extends Mock implements TripFlowRepository {}
 
 final _code = PickupCode(code: '4207', expiresAt: DateTime(2026, 10, 20, 19));
 
-Future<void> _pump(WidgetTester tester, Widget card,
-    {bool reduceMotion = false}) async {
-  await tester.pumpWidget(MaterialApp(
-    home: MediaQuery(
-      data: MediaQueryData(disableAnimations: reduceMotion),
-      child: Scaffold(body: SingleChildScrollView(child: card)),
+Future<void> _pump(
+  WidgetTester tester,
+  Widget card, {
+  bool reduceMotion = false,
+}) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      home: MediaQuery(
+        data: MediaQueryData(disableAnimations: reduceMotion),
+        child: Scaffold(body: SingleChildScrollView(child: card)),
+      ),
     ),
-  ));
+  );
   await tester.pumpAndSettle();
 }
 
@@ -31,8 +36,9 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  testWidgets('muestra los 4 dígitos con su etiqueta accesible',
-      (tester) async {
+  testWidgets('muestra los 4 dígitos con su etiqueta accesible', (
+    tester,
+  ) async {
     when(() => repo.getPickupCode('b1')).thenAnswer((_) async => Right(_code));
     await _pump(tester, PickupCodeCard(bookingId: 'b1', repository: repo));
     for (final d in ['4', '2', '0', '7']) {
@@ -43,8 +49,9 @@ void main() {
     expect(find.text('Compartir código'), findsNothing);
   });
 
-  testWidgets('reserva con invitado: «Compartir código» abre el menú',
-      (tester) async {
+  testWidgets('reserva con invitado: «Compartir código» abre el menú', (
+    tester,
+  ) async {
     when(() => repo.getPickupCode('b1')).thenAnswer((_) async => Right(_code));
     String? shared;
     await _pump(
@@ -82,8 +89,9 @@ void main() {
     tripFailureFor('failed-precondition', {'reason': 'code_expired'}),
     tripFailureFor('failed-precondition', {'reason': 'pickup_locked'}),
   ]) {
-    testWidgets('${(f as TripFailure).issue}: mensaje claro y sin reintento',
-        (tester) async {
+    testWidgets('${(f as TripFailure).issue}: mensaje claro y sin reintento', (
+      tester,
+    ) async {
       when(() => repo.getPickupCode('b1')).thenAnswer((_) async => Left(f));
       await _pump(tester, PickupCodeCard(bookingId: 'b1', repository: repo));
       expect(find.text(f.message), findsOneWidget);
@@ -94,19 +102,22 @@ void main() {
 
   testWidgets('con «reducir movimiento» aparece sin animar', (tester) async {
     when(() => repo.getPickupCode('b1')).thenAnswer((_) async => Right(_code));
-    await tester.pumpWidget(MaterialApp(
-      home: MediaQuery(
-        data: const MediaQueryData(disableAnimations: true),
-        child:
-            Scaffold(body: PickupCodeCard(bookingId: 'b1', repository: repo)),
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MediaQuery(
+          data: const MediaQueryData(disableAnimations: true),
+          child: Scaffold(
+            body: PickupCodeCard(bookingId: 'b1', repository: repo),
+          ),
+        ),
       ),
-    ));
+    );
     // Un solo fotograma tras la respuesta: ya visible y opaco.
     await tester.pump();
     await tester.pump();
-    final opacity = tester.widget<Opacity>(find
-        .ancestor(of: find.text('4'), matching: find.byType(Opacity))
-        .first);
+    final opacity = tester.widget<Opacity>(
+      find.ancestor(of: find.text('4'), matching: find.byType(Opacity)).first,
+    );
     expect(opacity.opacity, 1);
   });
 
@@ -132,16 +143,22 @@ void main() {
     });
 
     test('código incorrecto con intentos restantes', () {
-      final f = tripFailureFor('failed-precondition',
-          {'reason': 'wrong_code', 'attemptsLeft': 1}) as TripFailure;
+      final f =
+          tripFailureFor('failed-precondition', {
+                'reason': 'wrong_code',
+                'attemptsLeft': 1,
+              })
+              as TripFailure;
       expect(f.issue, TripIssue.wrongCode);
       expect(f.attemptsLeft, 1);
       expect(f.message, 'Código incorrecto. Te queda 1 intento.');
     });
 
     test('sin red', () {
-      expect((tripFailureFor('unavailable', null) as TripFailure).issue,
-          TripIssue.network);
+      expect(
+        (tripFailureFor('unavailable', null) as TripFailure).issue,
+        TripIssue.network,
+      );
     });
   });
 }

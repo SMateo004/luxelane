@@ -38,13 +38,16 @@ void main() async {
       GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w500),
       GoogleFonts.cormorantGaramond(fontStyle: FontStyle.italic),
       GoogleFonts.cormorantGaramond(
-          fontWeight: FontWeight.w300, fontStyle: FontStyle.italic),
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ),
     ]),
   ]);
 
-  final firebase = await startFirebase(() => Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      ));
+  final firebase = await startFirebase(
+    () =>
+        Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+  );
   if (firebase is FirebaseFatal) {
     runApp(appForStartup(firebase, const LuxelaneApp()));
     return;
@@ -101,7 +104,8 @@ void main() async {
     debugPrint('[Luxelane] env=${AppConfig.env.name} web=$kIsWeb');
     if (kIsWeb && AppConfig.googleMapsKey.isEmpty) {
       debugPrint(
-          '[Luxelane] WARNING: GOOGLE_MAPS_KEY is empty. Autocomplete will NOT work. Run with --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY');
+        '[Luxelane] WARNING: GOOGLE_MAPS_KEY is empty. Autocomplete will NOT work. Run with --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY',
+      );
     }
   }
 

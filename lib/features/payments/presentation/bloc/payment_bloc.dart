@@ -158,8 +158,8 @@ class CardOperationSuccess extends PaymentState {
 
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   PaymentBloc({required PaymentRepository paymentRepository})
-      : _repo = paymentRepository,
-        super(const PaymentInitial()) {
+    : _repo = paymentRepository,
+      super(const PaymentInitial()) {
     on<PaymentIntentRequested>(_onIntent);
     on<PaymentCaptureRequested>(_onCapture);
     on<PaymentRefundRequested>(_onRefund);

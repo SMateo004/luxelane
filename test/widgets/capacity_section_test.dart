@@ -17,20 +17,20 @@ class _HostState extends State<_Host> {
   int tab = 0, li = 0, si = 0;
   @override
   Widget build(BuildContext context) => MaterialApp(
-        home: Scaffold(
-          body: SingleChildScrollView(
-            child: CapacitySection(
-              vehicleClass: widget.vc,
-              tab: tab,
-              luggageIndex: li,
-              seatingIndex: si,
-              onTab: (t) => setState(() => tab = t),
-              onLuggage: (i) => setState(() => li = i),
-              onSeating: (i) => setState(() => si = i),
-            ),
-          ),
+    home: Scaffold(
+      body: SingleChildScrollView(
+        child: CapacitySection(
+          vehicleClass: widget.vc,
+          tab: tab,
+          luggageIndex: li,
+          seatingIndex: si,
+          onTab: (t) => setState(() => tab = t),
+          onLuggage: (i) => setState(() => li = i),
+          onSeating: (i) => setState(() => si = i),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 void main() {
@@ -55,8 +55,9 @@ void main() {
     expect(VehicleClass.business.assetKey, 'business_class');
   });
 
-  testWidgets('the caption follows the photo when the arrow is tapped',
-      (tester) async {
+  testWidgets('the caption follows the photo when the arrow is tapped', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 2400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);

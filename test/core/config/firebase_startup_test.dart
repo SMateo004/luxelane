@@ -15,8 +15,11 @@ void main() {
         const StagingNotConfiguredError(),
         StateError('sin red'),
       ]) {
-        final r = await startFirebase(() => failsWith(error),
-            release: true, log: logs.add);
+        final r = await startFirebase(
+          () => failsWith(error),
+          release: true,
+          log: logs.add,
+        );
         expect(r, isA<FirebaseFatal>());
       }
     });
@@ -27,10 +30,14 @@ void main() {
       expect(logs, isEmpty);
     });
 
-    testWidgets('muestra la pantalla de error en lugar de la app',
-        (tester) async {
-      final r = await startFirebase(() => failsWith(StateError('x')),
-          release: true, log: logs.add);
+    testWidgets('muestra la pantalla de error en lugar de la app', (
+      tester,
+    ) async {
+      final r = await startFirebase(
+        () => failsWith(StateError('x')),
+        release: true,
+        log: logs.add,
+      );
       await tester.pumpWidget(appForStartup(r, const Text('APP')));
       expect(find.text('APP'), findsNothing);
       expect(find.text('No pudimos iniciar la app'), findsOneWidget);
@@ -41,23 +48,32 @@ void main() {
   group('startFirebase en debug con staging sin configurar', () {
     test('avisa en consola qué falta configurar', () async {
       final r = await startFirebase(
-          () => failsWith(const StagingNotConfiguredError()),
-          log: logs.add);
+        () => failsWith(const StagingNotConfiguredError()),
+        log: logs.add,
+      );
       expect(r, isA<FirebaseDegraded>());
       expect(logs.single, contains('Falta configurar el proyecto de staging'));
     });
 
     testWidgets('muestra el aviso en pantalla sobre la app', (tester) async {
       final r = await startFirebase(
-          () => failsWith(const StagingNotConfiguredError()),
-          log: logs.add);
-      await tester.pumpWidget(appForStartup(
+        () => failsWith(const StagingNotConfiguredError()),
+        log: logs.add,
+      );
+      await tester.pumpWidget(
+        appForStartup(
           r,
           const Directionality(
-              textDirection: TextDirection.ltr, child: Text('APP'))));
+            textDirection: TextDirection.ltr,
+            child: Text('APP'),
+          ),
+        ),
+      );
       expect(find.text('APP'), findsOneWidget);
-      expect(find.textContaining('Falta configurar el proyecto de staging'),
-          findsOneWidget);
+      expect(
+        find.textContaining('Falta configurar el proyecto de staging'),
+        findsOneWidget,
+      );
     });
   });
 }

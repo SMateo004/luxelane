@@ -23,18 +23,18 @@ enum LuxRaisedVariant {
 const _danger = Color(0xFFB83A3A);
 
 Color _fill(LuxRaisedVariant v, bool pressed) => switch (v) {
-      LuxRaisedVariant.primary => pressed ? LD.sphDim : LD.sph,
-      LuxRaisedVariant.secondary => pressed ? LD.bg2 : Colors.white,
-      LuxRaisedVariant.ghost => pressed ? LD.sphTint : Colors.transparent,
-      LuxRaisedVariant.danger => pressed ? const Color(0xFF962E2E) : _danger,
-    };
+  LuxRaisedVariant.primary => pressed ? LD.sphDim : LD.sph,
+  LuxRaisedVariant.secondary => pressed ? LD.bg2 : Colors.white,
+  LuxRaisedVariant.ghost => pressed ? LD.sphTint : Colors.transparent,
+  LuxRaisedVariant.danger => pressed ? const Color(0xFF962E2E) : _danger,
+};
 
 /// Color del texto e iconos sobre cada variante.
 Color luxButtonForeground(LuxRaisedVariant v) => switch (v) {
-      LuxRaisedVariant.primary || LuxRaisedVariant.danger => Colors.white,
-      LuxRaisedVariant.secondary => LD.ink,
-      LuxRaisedVariant.ghost => LD.sph,
-    };
+  LuxRaisedVariant.primary || LuxRaisedVariant.danger => Colors.white,
+  LuxRaisedVariant.secondary => LD.ink,
+  LuxRaisedVariant.ghost => LD.sph,
+};
 
 /// Decoración común a botones y superficies seleccionadas.
 BoxDecoration luxRaisedDecoration({
@@ -49,20 +49,23 @@ BoxDecoration luxRaisedDecoration({
   return BoxDecoration(
     borderRadius: BorderRadius.circular(radius),
     color: enabled ? fill : fill.withValues(alpha: solid ? 0.38 : 0.6),
-    border: variant == LuxRaisedVariant.secondary
-        ? Border.all(color: pressed ? LD.ink3 : LD.border)
-        : null,
-    boxShadow: !enabled || pressed || variant == LuxRaisedVariant.ghost
-        ? const []
-        : [
-            BoxShadow(
-              color: (solid ? fill : LD.ink)
-                  .withValues(alpha: solid ? 0.24 : 0.06),
-              blurRadius: solid ? 20 : 12,
-              spreadRadius: -6,
-              offset: const Offset(0, 8),
-            ),
-          ],
+    border:
+        variant == LuxRaisedVariant.secondary
+            ? Border.all(color: pressed ? LD.ink3 : LD.border)
+            : null,
+    boxShadow:
+        !enabled || pressed || variant == LuxRaisedVariant.ghost
+            ? const []
+            : [
+              BoxShadow(
+                color: (solid ? fill : LD.ink).withValues(
+                  alpha: solid ? 0.24 : 0.06,
+                ),
+                blurRadius: solid ? 20 : 12,
+                spreadRadius: -6,
+                offset: const Offset(0, 8),
+              ),
+            ],
   );
 }
 
@@ -153,25 +156,27 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
       child: MouseRegion(
         cursor: _enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
         onEnter: (_) => setState(() => _hover = true),
-        onExit: (_) => setState(() {
-          _hover = false;
-          _pressed = false;
-        }),
+        onExit:
+            (_) => setState(() {
+              _hover = false;
+              _pressed = false;
+            }),
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTapDown: _enabled ? (_) => _setPressed(true) : null,
           onTapCancel: () => _setPressed(false),
-          onTapUp: _enabled
-              ? (_) {
-                  _setPressed(false);
-                  if (widget.variant == LuxRaisedVariant.primary) {
-                    LuxHaptics.confirm();
-                  } else {
-                    LuxHaptics.tap();
+          onTapUp:
+              _enabled
+                  ? (_) {
+                    _setPressed(false);
+                    if (widget.variant == LuxRaisedVariant.primary) {
+                      LuxHaptics.confirm();
+                    } else {
+                      LuxHaptics.tap();
+                    }
+                    widget.onPressed!();
                   }
-                  widget.onPressed!();
-                }
-              : null,
+                  : null,
           child: AnimatedScale(
             scale: _pressed ? LuxMotion.pressedScale : 1,
             duration: duration,
@@ -183,7 +188,10 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
               width: widget.expand ? double.infinity : null,
               padding: const EdgeInsets.symmetric(horizontal: 24),
               transform: Matrix4.translationValues(
-                  0, _hover && _enabled && !_pressed ? -1 : 0, 0),
+                0,
+                _hover && _enabled && !_pressed ? -1 : 0,
+                0,
+              ),
               decoration: luxRaisedDecoration(
                 variant: widget.variant,
                 pressed: _pressed,
@@ -196,10 +204,13 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
                   duration: LuxMotion.of(context, LuxMotion.base),
                   switchInCurve: LuxMotion.decelerate,
                   switchOutCurve: LuxMotion.accelerate,
-                  child: widget.loading
-                      ? LuxLoadingDots(
-                          key: const ValueKey('loading'), color: fg)
-                      : label,
+                  child:
+                      widget.loading
+                          ? LuxLoadingDots(
+                            key: const ValueKey('loading'),
+                            color: fg,
+                          )
+                          : label,
                 ),
               ),
             ),
@@ -236,10 +247,11 @@ class _LuxLoadingDotsState extends State<LuxLoadingDots>
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'Cargando',
-        child: AnimatedBuilder(
-          animation: _c,
-          builder: (_, __) => Row(
+    label: 'Cargando',
+    child: AnimatedBuilder(
+      animation: _c,
+      builder:
+          (_, __) => Row(
             mainAxisSize: MainAxisSize.min,
             children: List.generate(3, (i) {
               // Cada punto se enciende con un pequeño desfase.
@@ -257,6 +269,6 @@ class _LuxLoadingDotsState extends State<LuxLoadingDots>
               );
             }),
           ),
-        ),
-      );
+    ),
+  );
 }

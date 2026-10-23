@@ -5,8 +5,9 @@ class CrashService {
   static Future<void> init() async {
     if (kIsWeb) return; // Crashlytics not supported on web
 
-    await FirebaseCrashlytics.instance
-        .setCrashlyticsCollectionEnabled(!kDebugMode);
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(
+      !kDebugMode,
+    );
 
     FlutterError.onError = (details) {
       FlutterError.presentError(details);

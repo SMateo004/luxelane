@@ -3,20 +3,41 @@ import 'package:luxelane/core/models/place_model.dart';
 import 'package:luxelane/core/utils/service_area.dart';
 
 const _scz = Place(
-    name: 'Plaza 24 de Septiembre', address: '', lat: -17.7836, lng: -63.1822);
-const _equipetrol =
-    Place(name: 'Equipetrol', address: '', lat: -17.7650, lng: -63.1960);
+  name: 'Plaza 24 de Septiembre',
+  address: '',
+  lat: -17.7836,
+  lng: -63.1822,
+);
+const _equipetrol = Place(
+  name: 'Equipetrol',
+  address: '',
+  lat: -17.7650,
+  lng: -63.1960,
+);
 const _viruViru = Place(
-    name: 'Aeropuerto Internacional Viru Viru',
-    address: '',
-    lat: -17.6447,
-    lng: -63.1353);
-const _laPaz =
-    Place(name: 'San Jorge', address: '', lat: -16.5100, lng: -68.1250);
-const _elAltoAirport =
-    Place(name: '', address: 'El Alto', lat: -16.5125, lng: -68.1915);
+  name: 'Aeropuerto Internacional Viru Viru',
+  address: '',
+  lat: -17.6447,
+  lng: -63.1353,
+);
+const _laPaz = Place(
+  name: 'San Jorge',
+  address: '',
+  lat: -16.5100,
+  lng: -68.1250,
+);
+const _elAltoAirport = Place(
+  name: '',
+  address: 'El Alto',
+  lat: -16.5125,
+  lng: -68.1915,
+);
 const _cochabamba = Place(
-    name: 'Plaza 14 de Septiembre', address: '', lat: -17.3936, lng: -66.1570);
+  name: 'Plaza 14 de Septiembre',
+  address: '',
+  lat: -17.3936,
+  lng: -66.1570,
+);
 
 void main() {
   group('ServiceArea.cityOf', () {
@@ -28,8 +49,10 @@ void main() {
     });
 
     test('unknown coordinates have no city', () {
-      expect(ServiceArea.cityOf(const Place(address: 'x', lat: 0, lng: 0)),
-          isNull);
+      expect(
+        ServiceArea.cityOf(const Place(address: 'x', lat: 0, lng: 0)),
+        isNull,
+      );
     });
   });
 
@@ -41,14 +64,19 @@ void main() {
     });
 
     test('rejects a destination in another city', () {
-      expect(ServiceArea.destinationError(_scz, _cochabamba),
-          contains('Santa Cruz de la Sierra'));
+      expect(
+        ServiceArea.destinationError(_scz, _cochabamba),
+        contains('Santa Cruz de la Sierra'),
+      );
       expect(ServiceArea.destinationError(_laPaz, _scz), contains('La Paz'));
     });
 
     test('outside known cities, limits the distance from the pickup', () {
-      const samaipata =
-          Place(address: 'Samaipata', lat: -18.1790, lng: -63.8750);
+      const samaipata = Place(
+        address: 'Samaipata',
+        lat: -18.1790,
+        lng: -63.8750,
+      );
       const near = Place(address: 'Cerca', lat: -18.1900, lng: -63.8500);
       expect(ServiceArea.destinationError(samaipata, near), isNull);
       expect(ServiceArea.destinationError(samaipata, _scz), isNotNull);
@@ -74,19 +102,30 @@ void main() {
 
     test('by name', () {
       expect(
-          ServiceArea.isAirport(const Place(
-              name: 'Aeropuerto Jorge Wilstermann',
-              address: '',
-              lat: 0,
-              lng: 0)),
-          isTrue);
+        ServiceArea.isAirport(
+          const Place(
+            name: 'Aeropuerto Jorge Wilstermann',
+            address: '',
+            lat: 0,
+            lng: 0,
+          ),
+        ),
+        isTrue,
+      );
     });
 
     test('not for streets named after an airport or regular places', () {
       expect(
-          ServiceArea.isAirport(const Place(
-              name: 'Av. Aeropuerto', address: '', lat: -17.70, lng: -63.16)),
-          isFalse);
+        ServiceArea.isAirport(
+          const Place(
+            name: 'Av. Aeropuerto',
+            address: '',
+            lat: -17.70,
+            lng: -63.16,
+          ),
+        ),
+        isFalse,
+      );
       expect(ServiceArea.isAirport(_scz), isFalse);
     });
   });
@@ -111,10 +150,11 @@ void main() {
   group('airports for flight pickups', () {
     test('airportFor matches by name within a few km of the airport', () {
       const named = Place(
-          name: 'Aeropuerto Internacional Viru Viru',
-          address: '',
-          lat: -17.6550,
-          lng: -63.1400);
+        name: 'Aeropuerto Internacional Viru Viru',
+        address: '',
+        lat: -17.6550,
+        lng: -63.1400,
+      );
       expect(ServiceArea.airportAt(named), isNull);
       expect(ServiceArea.airportFor(named)?.iata, 'VVI');
       expect(ServiceArea.airportFor(_scz), isNull);
@@ -125,7 +165,9 @@ void main() {
       expect(lpb.cityName, 'La Paz');
       expect(lpb.exitFor(FlightType.domestic), contains('nacionales'));
       expect(
-          lpb.exitFor(FlightType.international), contains('internacionales'));
+        lpb.exitFor(FlightType.international),
+        contains('internacionales'),
+      );
       expect(FlightType.fromName('international'), FlightType.international);
       expect(FlightType.fromName(null), isNull);
     });

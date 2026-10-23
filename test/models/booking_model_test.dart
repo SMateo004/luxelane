@@ -91,7 +91,9 @@ void main() {
       expect(BookingStatusX.fromString('pending'), BookingStatus.pending);
       expect(BookingStatusX.fromString('confirmed'), BookingStatus.confirmed);
       expect(
-          BookingStatusX.fromString('in_progress'), BookingStatus.inProgress);
+        BookingStatusX.fromString('in_progress'),
+        BookingStatus.inProgress,
+      );
       expect(BookingStatusX.fromString('completed'), BookingStatus.completed);
       expect(BookingStatusX.fromString('cancelled'), BookingStatus.cancelled);
     });
@@ -115,11 +117,12 @@ void main() {
   });
 
   test('DriverInfo lee la valoración que copia el servidor', () {
-    final info = DriverInfo.fromJson({
-      'name': 'Luis',
-      'rating': 4.8,
-      'vehicle': {'make': 'Toyota', 'model': 'Camry', 'plate': '1234ABC'},
-    })!;
+    final info =
+        DriverInfo.fromJson({
+          'name': 'Luis',
+          'rating': 4.8,
+          'vehicle': {'make': 'Toyota', 'model': 'Camry', 'plate': '1234ABC'},
+        })!;
     expect(info.rating, 4.8);
     expect(info.vehicle, 'Toyota Camry');
     expect(info.plate, '1234ABC');

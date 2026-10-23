@@ -78,12 +78,14 @@ class NotificationLoaded extends NotificationState {
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc({required NotificationRepository notificationRepository})
-      : _repo = notificationRepository,
-        super(const NotificationInitial()) {
+    : _repo = notificationRepository,
+      super(const NotificationInitial()) {
     // Las apps lo piden una vez por sesión; al volver a entrar (aunque sea
     // el mismo usuario) se reemplaza el listener que cortó el cierre.
-    on<NotificationWatchStarted>(_onWatch,
-        transformer: (events, mapper) => events.switchMap(mapper));
+    on<NotificationWatchStarted>(
+      _onWatch,
+      transformer: (events, mapper) => events.switchMap(mapper),
+    );
     on<NotificationCreated>(_onCreate);
     on<NotificationMarkedRead>(_onMarkRead);
     on<NotificationAllMarkedRead>(_onMarkAllRead);
@@ -97,14 +99,14 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   ) async {
     await emit.forEach<List<AppNotification>>(
       _repo.watchNotifications(event.userId),
-      onData: (notifications) => NotificationLoaded(
-        notifications: notifications,
-        unreadCount: notifications.where((n) => !n.isRead).length,
-      ),
-      onError: (_, __) => const NotificationLoaded(
-        notifications: [],
-        unreadCount: 0,
-      ),
+      onData:
+          (notifications) => NotificationLoaded(
+            notifications: notifications,
+            unreadCount: notifications.where((n) => !n.isRead).length,
+          ),
+      onError:
+          (_, __) =>
+              const NotificationLoaded(notifications: [], unreadCount: 0),
     );
   }
 

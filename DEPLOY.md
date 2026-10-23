@@ -332,9 +332,11 @@ a nadie** (auditoría, D23).
    «Contacta con las autoridades locales». **El código no trae ningún
    número, ni de emergencias.**
 3. Quién recibe el push: los usuarios con `role: admin` que tengan
-   `fcmTokens`. Hoy solo se registra el token en la **app móvil**
-   (`NotificationService.init` no lo hace en web), así que un admin que solo
-   usa el panel web no recibe push: ver en la entrega la propuesta.
+   `fcmTokens`. Se registran desde la **app móvil** (cualquier rol) y desde el
+   **panel web solo para admins**, con `FCM_VAPID_KEY` (sin esa clave la web
+   no registra nada). El push del navegador **no es fiable con el navegador
+   cerrado** (y el sistema puede silenciarlo): la guardia debe tener la app
+   móvil con su cuenta de admin. El panel abierto suena igualmente.
 4. `config/global.incidentLocationRetentionDays` (número de días): cuánto se
    guardan las ubicaciones de un incidente cerrado. Sin el valor no se borra
    nada y el panel lo indica.

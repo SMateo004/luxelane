@@ -19,9 +19,9 @@ import 'core/config/firebase_env.dart';
 class DefaultFirebaseOptions {
   /// Opciones del proyecto elegido con FIREBASE_ENV (staging por omisión).
   static FirebaseOptions get currentPlatform => switch (FirebaseEnv.current) {
-        FirebaseEnv.production => _forPlatform(web, android, ios),
-        FirebaseEnv.staging => _staging,
-      };
+    FirebaseEnv.production => _forPlatform(web, android, ios),
+    FirebaseEnv.staging => _staging,
+  };
 
   static FirebaseOptions get _staging {
     if (_stagingProjectId == _stagingPlaceholder) {
@@ -31,7 +31,10 @@ class DefaultFirebaseOptions {
   }
 
   static FirebaseOptions _forPlatform(
-      FirebaseOptions web, FirebaseOptions android, FirebaseOptions ios) {
+    FirebaseOptions web,
+    FirebaseOptions android,
+    FirebaseOptions ios,
+  ) {
     if (kIsWeb) {
       return web;
     }
@@ -82,26 +85,28 @@ class DefaultFirebaseOptions {
   // Native apps (Android/iOS). IDs come from the Firebase console → Project
   // settings → Your apps of the project being built (FIREBASE_ENV), and are
   // passed at build time so no file must be committed.
-  static const _androidAppId =
-      String.fromEnvironment('FIREBASE_ANDROID_APP_ID');
+  static const _androidAppId = String.fromEnvironment(
+    'FIREBASE_ANDROID_APP_ID',
+  );
   // Sin valor por defecto: cada app nativa usa la clave de su app en Firebase
   // (no la web). La release de Android/iOS no compila sin ellas.
-  static const _androidApiKey =
-      String.fromEnvironment('FIREBASE_ANDROID_API_KEY');
+  static const _androidApiKey = String.fromEnvironment(
+    'FIREBASE_ANDROID_API_KEY',
+  );
   static const _iosAppId = String.fromEnvironment('FIREBASE_IOS_APP_ID');
   static const _iosApiKey = String.fromEnvironment('FIREBASE_IOS_API_KEY');
 
   /// Nombres de los --dart-define que faltan para la plataforma.
   static List<String> missingNativeDefines(TargetPlatform platform) => [
-        if (platform == TargetPlatform.android) ...[
-          if (_androidAppId.isEmpty) 'FIREBASE_ANDROID_APP_ID',
-          if (_androidApiKey.isEmpty) 'FIREBASE_ANDROID_API_KEY',
-        ],
-        if (platform == TargetPlatform.iOS) ...[
-          if (_iosAppId.isEmpty) 'FIREBASE_IOS_APP_ID',
-          if (_iosApiKey.isEmpty) 'FIREBASE_IOS_API_KEY',
-        ],
-      ];
+    if (platform == TargetPlatform.android) ...[
+      if (_androidAppId.isEmpty) 'FIREBASE_ANDROID_APP_ID',
+      if (_androidApiKey.isEmpty) 'FIREBASE_ANDROID_API_KEY',
+    ],
+    if (platform == TargetPlatform.iOS) ...[
+      if (_iosAppId.isEmpty) 'FIREBASE_IOS_APP_ID',
+      if (_iosApiKey.isEmpty) 'FIREBASE_IOS_API_KEY',
+    ],
+  ];
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: _androidApiKey,

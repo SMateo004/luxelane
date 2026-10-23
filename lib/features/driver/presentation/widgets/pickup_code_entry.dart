@@ -27,21 +27,24 @@ Future<void> showPickupCodeEntry(BuildContext context, Booking booking) {
     useSafeArea: true,
     backgroundColor: LuxColors.surface,
     shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(LuxRadius.xl))),
-    builder: (sheet) => ValueListenableBuilder<String?>(
-      valueListenable: RemoteFlags.instance.dispatchPhone,
-      builder: (_, phone, __) => PickupCodeEntry(
-        locked: booking.pickupLocked,
-        dispatchPhone: phone,
-        onVerify: (code) => repo.verifyPickup(
-          bookingId: booking.id,
-          code: code,
-          location: bloc.lastLocation,
-        ),
-        onVerified: () => Navigator.of(sheet).pop(),
-      ),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
     ),
+    builder:
+        (sheet) => ValueListenableBuilder<String?>(
+          valueListenable: RemoteFlags.instance.dispatchPhone,
+          builder:
+              (_, phone, __) => PickupCodeEntry(
+                locked: booking.pickupLocked,
+                dispatchPhone: phone,
+                onVerify:
+                    (code) => repo.verifyPickup(
+                      bookingId: booking.id,
+                      code: code,
+                      location: bloc.lastLocation,
+                    ),
+                onVerified: () => Navigator.of(sheet).pop(),
+              ),
+        ),
   );
 }
 
@@ -60,8 +63,11 @@ class CallDispatchButton extends StatelessWidget {
     return LuxOutlinedButton(
       label: 'Llamar a central',
       icon: Icons.support_agent_rounded,
-      onPressed: () =>
-          onCall != null ? onCall!(p) : launchUrl(Uri(scheme: 'tel', path: p)),
+      onPressed:
+          () =>
+              onCall != null
+                  ? onCall!(p)
+                  : launchUrl(Uri(scheme: 'tel', path: p)),
     );
   }
 }
@@ -98,10 +104,13 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
   bool _busy = false;
   bool _verified = false;
   TripFailure? _error;
-  late TripFailure? _blocked = widget.locked
-      ? const TripFailure(TripIssue.locked,
-          'Por seguridad, la verificación quedó bloqueada. Contacta con central.')
-      : null;
+  late TripFailure? _blocked =
+      widget.locked
+          ? const TripFailure(
+            TripIssue.locked,
+            'Por seguridad, la verificación quedó bloqueada. Contacta con central.',
+          )
+          : null;
 
   // Se crea al montar: si se creara al primer uso, cerrar la hoja sin
   // haber fallado lo crearía en dispose().
@@ -111,7 +120,9 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
   void initState() {
     super.initState();
     _shake = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 360));
+      vsync: this,
+      duration: const Duration(milliseconds: 360),
+    );
   }
 
   @override
@@ -148,18 +159,20 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
         _verified = true;
       });
       // Un instante para ver el visto bueno antes de volver al viaje.
-      final pause = LuxMotion.reduced(context)
-          ? const Duration(milliseconds: 400)
-          : const Duration(milliseconds: 1100);
+      final pause =
+          LuxMotion.reduced(context)
+              ? const Duration(milliseconds: 400)
+              : const Duration(milliseconds: 1100);
       Timer(pause, () {
         if (mounted) widget.onVerified?.call();
       });
       return;
     }
     LuxHaptics.warning();
-    final f = failure is TripFailure
-        ? failure
-        : TripFailure(TripIssue.other, failure.message);
+    final f =
+        failure is TripFailure
+            ? failure
+            : TripFailure(TripIssue.other, failure.message);
     setState(() {
       _busy = false;
       switch (f.issue) {
@@ -186,91 +199,103 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
     final duration = LuxMotion.of(context, LuxMotion.base);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-          LuxSpacing.lg, LuxSpacing.lg, LuxSpacing.lg, LuxSpacing.xl),
+        LuxSpacing.lg,
+        LuxSpacing.lg,
+        LuxSpacing.lg,
+        LuxSpacing.xl,
+      ),
       child: AnimatedSwitcher(
         duration: duration,
         switchInCurve: LuxMotion.decelerate,
         switchOutCurve: LuxMotion.accelerate,
-        child: _verified
-            ? const _Verified(key: ValueKey('ok'))
-            : _blocked != null
+        child:
+            _verified
+                ? const _Verified(key: ValueKey('ok'))
+                : _blocked != null
                 ? _Blocked(
-                    key: const ValueKey('blocked'),
-                    failure: _blocked!,
-                    dispatchPhone: widget.dispatchPhone,
-                    onCallDispatch: widget.onCallDispatch,
-                  )
+                  key: const ValueKey('blocked'),
+                  failure: _blocked!,
+                  dispatchPhone: widget.dispatchPhone,
+                  onCallDispatch: widget.onCallDispatch,
+                )
                 : _entry(context),
       ),
     );
   }
 
   Widget _entry(BuildContext context) => Column(
-        key: const ValueKey('entry'),
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Text('Pide el código al pasajero',
-              style: LuxTypography.titleLarge, textAlign: TextAlign.center),
-          const SizedBox(height: LuxSpacing.xs),
-          Text('Lo ve en su app. Sin él no se puede iniciar el viaje.',
-              textAlign: TextAlign.center,
-              style: LuxTypography.caption
-                  .copyWith(color: LuxColors.inkSecondary)),
-          const SizedBox(height: LuxSpacing.lg),
-          AnimatedBuilder(
-            animation: _shake,
-            builder: (_, child) => Transform.translate(
+    key: const ValueKey('entry'),
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      const Text(
+        'Pide el código al pasajero',
+        style: LuxTypography.titleLarge,
+        textAlign: TextAlign.center,
+      ),
+      const SizedBox(height: LuxSpacing.xs),
+      Text(
+        'Lo ve en su app. Sin él no se puede iniciar el viaje.',
+        textAlign: TextAlign.center,
+        style: LuxTypography.caption.copyWith(color: LuxColors.inkSecondary),
+      ),
+      const SizedBox(height: LuxSpacing.lg),
+      AnimatedBuilder(
+        animation: _shake,
+        builder:
+            (_, child) => Transform.translate(
               offset: Offset(
-                  math.sin(_shake.value * math.pi * 4) * 8 * (1 - _shake.value),
-                  0),
+                math.sin(_shake.value * math.pi * 4) * 8 * (1 - _shake.value),
+                0,
+              ),
               child: child,
             ),
-            child: Semantics(
-              label: 'Código, ${_digits.length} de $_length dígitos',
-              excludeSemantics: true,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var i = 0; i < _length; i++)
-                    _Slot(
-                      digit: i < _digits.length ? _digits[i] : null,
-                      active: i == _digits.length && !_busy,
-                      error: _error?.issue == TripIssue.wrongCode,
-                    ),
-                ],
-              ),
-            ),
+        child: Semantics(
+          label: 'Código, ${_digits.length} de $_length dígitos',
+          excludeSemantics: true,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              for (var i = 0; i < _length; i++)
+                _Slot(
+                  digit: i < _digits.length ? _digits[i] : null,
+                  active: i == _digits.length && !_busy,
+                  error: _error?.issue == TripIssue.wrongCode,
+                ),
+            ],
           ),
-          const SizedBox(height: LuxSpacing.md),
-          SizedBox(
-            height: 40,
-            child: Center(
-              child: _busy
+        ),
+      ),
+      const SizedBox(height: LuxSpacing.md),
+      SizedBox(
+        height: 40,
+        child: Center(
+          child:
+              _busy
                   ? const LuxLoadingDots(color: LuxColors.sapphire)
                   : _error != null
-                      ? Text(
-                          _error!.message,
-                          textAlign: TextAlign.center,
-                          style: LuxTypography.bodyMedium
-                              .copyWith(color: LuxColors.error),
-                        )
-                      : const SizedBox.shrink(),
-            ),
-          ),
-          if (_error?.issue == TripIssue.network &&
-              _digits.length == _length) ...[
-            LuxOutlinedButton(
-              label: 'Reintentar',
-              icon: Icons.refresh_rounded,
-              height: 46,
-              onPressed: _busy ? null : _submit,
-            ),
-            const SizedBox(height: LuxSpacing.sm),
-          ],
-          _Keypad(onKey: _press, enabled: !_busy),
-        ],
-      );
+                  ? Text(
+                    _error!.message,
+                    textAlign: TextAlign.center,
+                    style: LuxTypography.bodyMedium.copyWith(
+                      color: LuxColors.error,
+                    ),
+                  )
+                  : const SizedBox.shrink(),
+        ),
+      ),
+      if (_error?.issue == TripIssue.network && _digits.length == _length) ...[
+        LuxOutlinedButton(
+          label: 'Reintentar',
+          icon: Icons.refresh_rounded,
+          height: 46,
+          onPressed: _busy ? null : _submit,
+        ),
+        const SizedBox(height: LuxSpacing.sm),
+      ],
+      _Keypad(onKey: _press, enabled: !_busy),
+    ],
+  );
 }
 
 class _Slot extends StatelessWidget {
@@ -281,28 +306,31 @@ class _Slot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AnimatedContainer(
-        duration: LuxMotion.of(context, LuxMotion.fast),
-        width: 56,
-        height: 64,
-        margin: const EdgeInsets.symmetric(horizontal: 6),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: LuxColors.surfaceMuted,
-          borderRadius: BorderRadius.circular(LuxRadius.sm),
-          border: Border.all(
-            width: active || error ? 2 : 1,
-            color: error
+    duration: LuxMotion.of(context, LuxMotion.fast),
+    width: 56,
+    height: 64,
+    margin: const EdgeInsets.symmetric(horizontal: 6),
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: LuxColors.surfaceMuted,
+      borderRadius: BorderRadius.circular(LuxRadius.sm),
+      border: Border.all(
+        width: active || error ? 2 : 1,
+        color:
+            error
                 ? LuxColors.error
                 : active
-                    ? LuxColors.sapphire
-                    : LuxColors.border,
-          ),
-        ),
-        child: Text(digit ?? '',
-            style: LuxTypography.headlineLarge.copyWith(
-              fontFeatures: const [FontFeature.tabularFigures()],
-            )),
-      );
+                ? LuxColors.sapphire
+                : LuxColors.border,
+      ),
+    ),
+    child: Text(
+      digit ?? '',
+      style: LuxTypography.headlineLarge.copyWith(
+        fontFeatures: const [FontFeature.tabularFigures()],
+      ),
+    ),
+  );
 }
 
 class _Keypad extends StatelessWidget {
@@ -319,38 +347,41 @@ class _Keypad extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GridView.count(
-        crossAxisCount: 3,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        childAspectRatio: 2,
-        mainAxisSpacing: LuxSpacing.sm,
-        crossAxisSpacing: LuxSpacing.sm,
-        children: [
-          for (final k in _keys)
-            k.isEmpty
-                ? const SizedBox.shrink()
-                : Semantics(
-                    button: true,
-                    label: k == '⌫' ? 'Borrar' : k,
-                    excludeSemantics: true,
-                    child: Material(
-                      color: LuxColors.surfaceMuted,
-                      borderRadius: BorderRadius.circular(LuxRadius.sm),
-                      child: InkWell(
-                        key: ValueKey('key-$k'),
-                        borderRadius: BorderRadius.circular(LuxRadius.sm),
-                        onTap: enabled ? () => onKey(k) : null,
-                        child: Center(
-                          child: k == '⌫'
-                              ? const Icon(Icons.backspace_outlined,
-                                  color: LuxColors.ink)
-                              : Text(k, style: LuxTypography.headlineMedium),
-                        ),
-                      ),
-                    ),
+    crossAxisCount: 3,
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    childAspectRatio: 2,
+    mainAxisSpacing: LuxSpacing.sm,
+    crossAxisSpacing: LuxSpacing.sm,
+    children: [
+      for (final k in _keys)
+        k.isEmpty
+            ? const SizedBox.shrink()
+            : Semantics(
+              button: true,
+              label: k == '⌫' ? 'Borrar' : k,
+              excludeSemantics: true,
+              child: Material(
+                color: LuxColors.surfaceMuted,
+                borderRadius: BorderRadius.circular(LuxRadius.sm),
+                child: InkWell(
+                  key: ValueKey('key-$k'),
+                  borderRadius: BorderRadius.circular(LuxRadius.sm),
+                  onTap: enabled ? () => onKey(k) : null,
+                  child: Center(
+                    child:
+                        k == '⌫'
+                            ? const Icon(
+                              Icons.backspace_outlined,
+                              color: LuxColors.ink,
+                            )
+                            : Text(k, style: LuxTypography.headlineMedium),
                   ),
-        ],
-      );
+                ),
+              ),
+            ),
+    ],
+  );
 }
 
 class _Verified extends StatelessWidget {
@@ -358,18 +389,20 @@ class _Verified extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(height: LuxSpacing.lg),
-          LuxSuccessMark(),
-          SizedBox(height: LuxSpacing.md),
-          Text('Pasajero verificado', style: LuxTypography.titleLarge),
-          SizedBox(height: LuxSpacing.xs),
-          Text('Desliza «Iniciar viaje» cuando estéis listos.',
-              style: LuxTypography.caption),
-          SizedBox(height: LuxSpacing.lg),
-        ],
-      );
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      SizedBox(height: LuxSpacing.lg),
+      LuxSuccessMark(),
+      SizedBox(height: LuxSpacing.md),
+      Text('Pasajero verificado', style: LuxTypography.titleLarge),
+      SizedBox(height: LuxSpacing.xs),
+      Text(
+        'Desliza «Iniciar viaje» cuando estéis listos.',
+        style: LuxTypography.caption,
+      ),
+      SizedBox(height: LuxSpacing.lg),
+    ],
+  );
 }
 
 class _Blocked extends StatelessWidget {
@@ -386,24 +419,30 @@ class _Blocked extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Icon(
-            failure.issue == TripIssue.expired
-                ? Icons.schedule_rounded
-                : Icons.lock_outline_rounded,
-            size: 40,
-            color: LuxColors.inkSecondary,
-          ),
-          const SizedBox(height: LuxSpacing.md),
-          const Text('Contacta con central',
-              textAlign: TextAlign.center, style: LuxTypography.titleLarge),
-          const SizedBox(height: LuxSpacing.xs),
-          Text(failure.message,
-              textAlign: TextAlign.center, style: LuxTypography.bodyMedium),
-          const SizedBox(height: LuxSpacing.lg),
-          CallDispatchButton(phone: dispatchPhone, onCall: onCallDispatch),
-        ],
-      );
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Icon(
+        failure.issue == TripIssue.expired
+            ? Icons.schedule_rounded
+            : Icons.lock_outline_rounded,
+        size: 40,
+        color: LuxColors.inkSecondary,
+      ),
+      const SizedBox(height: LuxSpacing.md),
+      const Text(
+        'Contacta con central',
+        textAlign: TextAlign.center,
+        style: LuxTypography.titleLarge,
+      ),
+      const SizedBox(height: LuxSpacing.xs),
+      Text(
+        failure.message,
+        textAlign: TextAlign.center,
+        style: LuxTypography.bodyMedium,
+      ),
+      const SizedBox(height: LuxSpacing.lg),
+      CallDispatchButton(phone: dispatchPhone, onCall: onCallDispatch),
+    ],
+  );
 }

@@ -30,38 +30,39 @@ const kSerif = 'Cormorant Garamond';
 const kSans = 'Montserrat';
 
 TextStyle eyebrow({Color color = LD.sph}) => GoogleFonts.montserrat(
-      fontSize: 10,
-      fontWeight: FontWeight.w400,
-      letterSpacing: 3.2,
-      color: color,
-      decoration: TextDecoration.none,
-    );
+  fontSize: 10,
+  fontWeight: FontWeight.w400,
+  letterSpacing: 3.2,
+  color: color,
+  decoration: TextDecoration.none,
+);
 
-TextStyle uiLabel(
-        {double size = 10, Color color = LD.ink3, double spacing = 2.4}) =>
-    GoogleFonts.montserrat(
-      fontSize: size,
-      fontWeight: FontWeight.w400,
-      letterSpacing: spacing,
-      color: color,
-      decoration: TextDecoration.none,
-    );
+TextStyle uiLabel({
+  double size = 10,
+  Color color = LD.ink3,
+  double spacing = 2.4,
+}) => GoogleFonts.montserrat(
+  fontSize: size,
+  fontWeight: FontWeight.w400,
+  letterSpacing: spacing,
+  color: color,
+  decoration: TextDecoration.none,
+);
 
 TextStyle displayText({
   double size = 80,
   Color color = LD.ink,
   FontStyle style = FontStyle.normal,
   FontWeight weight = FontWeight.w300,
-}) =>
-    GoogleFonts.cormorantGaramond(
-      fontSize: size,
-      fontWeight: weight,
-      fontStyle: style,
-      color: color,
-      height: 0.95,
-      letterSpacing: -0.02 * size,
-      decoration: TextDecoration.none,
-    );
+}) => GoogleFonts.cormorantGaramond(
+  fontSize: size,
+  fontWeight: weight,
+  fontStyle: style,
+  color: color,
+  height: 0.95,
+  letterSpacing: -0.02 * size,
+  decoration: TextDecoration.none,
+);
 
 TextStyle bodyText({double size = 15, Color color = LD.ink2}) =>
     GoogleFonts.montserrat(
@@ -77,17 +78,21 @@ TextStyle bodyText({double size = 15, Color color = LD.ink2}) =>
 // ============================================================
 
 class LuxEyebrow extends StatelessWidget {
-  const LuxEyebrow(this.text,
-      {super.key, this.color = LD.sph, this.dark = false});
+  const LuxEyebrow(
+    this.text, {
+    super.key,
+    this.color = LD.sph,
+    this.dark = false,
+  });
   final String text;
   final Color color;
   final bool dark;
 
   @override
   Widget build(BuildContext context) => Text(
-        text.toUpperCase(),
-        style: eyebrow(color: dark ? const Color(0x7EFFFFFF) : color),
-      );
+    text.toUpperCase(),
+    style: eyebrow(color: dark ? const Color(0x7EFFFFFF) : color),
+  );
 }
 
 // ============================================================
@@ -340,16 +345,16 @@ class _AnimatedCounterState extends State<AnimatedCounter>
 
   @override
   Widget build(BuildContext context) => VisibilityDetectorWrapper(
-        onVisible: start,
-        child: AnimatedBuilder(
-          animation: _ctrl,
-          builder: (_, __) {
-            final val = (_quarticEase(_ctrl.value) * widget.target).round();
-            return Text(
-              widget.format(val),
-              style: widget.style ?? displayText(size: 72, color: Colors.white),
-            );
-          },
-        ),
-      );
+    onVisible: start,
+    child: AnimatedBuilder(
+      animation: _ctrl,
+      builder: (_, __) {
+        final val = (_quarticEase(_ctrl.value) * widget.target).round();
+        return Text(
+          widget.format(val),
+          style: widget.style ?? displayText(size: 72, color: Colors.white),
+        );
+      },
+    ),
+  );
 }

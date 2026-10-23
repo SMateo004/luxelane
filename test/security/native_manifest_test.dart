@@ -12,10 +12,14 @@ void main() {
   });
 
   test('Android 12+: sin copia en la nube ni transferencia entre equipos', () {
-    expect(manifest,
-        contains('android:dataExtractionRules="@xml/data_extraction_rules"'));
-    final rules = File('android/app/src/main/res/xml/data_extraction_rules.xml')
-        .readAsStringSync();
+    expect(
+      manifest,
+      contains('android:dataExtractionRules="@xml/data_extraction_rules"'),
+    );
+    final rules =
+        File(
+          'android/app/src/main/res/xml/data_extraction_rules.xml',
+        ).readAsStringSync();
     expect(rules, contains('<cloud-backup>'));
     expect(rules, contains('<device-transfer>'));
     expect(rules, contains('domain="sharedpref"'));

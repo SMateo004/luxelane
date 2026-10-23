@@ -43,44 +43,45 @@ class User {
   final RidePreferences ridePreferences;
 
   factory User.fromJson(Map<String, dynamic> j) => User(
-        id: j['id'] as String,
-        email: j['email'] as String,
-        phone: j['phone'] as String? ?? '',
-        displayName: j['displayName'] as String,
-        photoUrl: j['photoUrl'] as String?,
-        role: UserRole.values.firstWhere(
-          (e) => e.name == j['role'],
-          orElse: () => UserRole.rider,
-        ),
-        vehicleClass: j['class'] != null || j['vehicleClass'] != null
+    id: j['id'] as String,
+    email: j['email'] as String,
+    phone: j['phone'] as String? ?? '',
+    displayName: j['displayName'] as String,
+    photoUrl: j['photoUrl'] as String?,
+    role: UserRole.values.firstWhere(
+      (e) => e.name == j['role'],
+      orElse: () => UserRole.rider,
+    ),
+    vehicleClass:
+        j['class'] != null || j['vehicleClass'] != null
             ? VehicleClass.values.firstWhere(
-                (e) => e.name == (j['class'] ?? j['vehicleClass']),
-                orElse: () => VehicleClass.business,
-              )
+              (e) => e.name == (j['class'] ?? j['vehicleClass']),
+              orElse: () => VehicleClass.business,
+            )
             : null,
-        createdAt: (j['createdAt'] as Timestamp).toDate(),
-        isVerified: j['isVerified'] as bool? ?? false,
-        isActive: j['isActive'] as bool? ?? true,
-        stripeCustomerId: j['stripeCustomerId'] as String?,
-        fcmTokens: List<String>.from(j['fcmTokens'] ?? []),
-        ridePreferences: RidePreferences.fromJson(j['ridePreferences']),
-      );
+    createdAt: (j['createdAt'] as Timestamp).toDate(),
+    isVerified: j['isVerified'] as bool? ?? false,
+    isActive: j['isActive'] as bool? ?? true,
+    stripeCustomerId: j['stripeCustomerId'] as String?,
+    fcmTokens: List<String>.from(j['fcmTokens'] ?? []),
+    ridePreferences: RidePreferences.fromJson(j['ridePreferences']),
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'email': email,
-        'phone': phone,
-        'displayName': displayName,
-        'photoUrl': photoUrl,
-        'role': role.name,
-        'class': vehicleClass?.name,
-        'createdAt': Timestamp.fromDate(createdAt),
-        'isVerified': isVerified,
-        'isActive': isActive,
-        'stripeCustomerId': stripeCustomerId,
-        'fcmTokens': fcmTokens,
-        'ridePreferences': ridePreferences.toJson(),
-      };
+    'id': id,
+    'email': email,
+    'phone': phone,
+    'displayName': displayName,
+    'photoUrl': photoUrl,
+    'role': role.name,
+    'class': vehicleClass?.name,
+    'createdAt': Timestamp.fromDate(createdAt),
+    'isVerified': isVerified,
+    'isActive': isActive,
+    'stripeCustomerId': stripeCustomerId,
+    'fcmTokens': fcmTokens,
+    'ridePreferences': ridePreferences.toJson(),
+  };
 
   User copyWith({
     String? phone,
@@ -93,22 +94,21 @@ class User {
     String? stripeCustomerId,
     List<String>? fcmTokens,
     RidePreferences? ridePreferences,
-  }) =>
-      User(
-        id: id,
-        email: email,
-        phone: phone ?? this.phone,
-        displayName: displayName ?? this.displayName,
-        photoUrl: photoUrl ?? this.photoUrl,
-        role: role ?? this.role,
-        vehicleClass: vehicleClass ?? this.vehicleClass,
-        createdAt: createdAt,
-        isVerified: isVerified ?? this.isVerified,
-        isActive: isActive ?? this.isActive,
-        stripeCustomerId: stripeCustomerId ?? this.stripeCustomerId,
-        fcmTokens: fcmTokens ?? this.fcmTokens,
-        ridePreferences: ridePreferences ?? this.ridePreferences,
-      );
+  }) => User(
+    id: id,
+    email: email,
+    phone: phone ?? this.phone,
+    displayName: displayName ?? this.displayName,
+    photoUrl: photoUrl ?? this.photoUrl,
+    role: role ?? this.role,
+    vehicleClass: vehicleClass ?? this.vehicleClass,
+    createdAt: createdAt,
+    isVerified: isVerified ?? this.isVerified,
+    isActive: isActive ?? this.isActive,
+    stripeCustomerId: stripeCustomerId ?? this.stripeCustomerId,
+    fcmTokens: fcmTokens ?? this.fcmTokens,
+    ridePreferences: ridePreferences ?? this.ridePreferences,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -157,13 +157,13 @@ class RidePreferences {
 
   /// Indicaciones breves para el chófer, en el orden en que las aplicará.
   List<String> get driverNotes => [
-        if (openDoor) 'Abrir la puerta',
-        if (luggageHelp) 'Ayuda con el equipaje',
-        if (temperature != null)
-          'Cabina ${temperature!.label.toLowerCase()} (${temperature!.hint})',
-        if (quiet) 'Viaje en silencio',
-        if (!music) 'Sin música',
-      ];
+    if (openDoor) 'Abrir la puerta',
+    if (luggageHelp) 'Ayuda con el equipaje',
+    if (temperature != null)
+      'Cabina ${temperature!.label.toLowerCase()} (${temperature!.hint})',
+    if (quiet) 'Viaje en silencio',
+    if (!music) 'Sin música',
+  ];
 
   factory RidePreferences.fromJson(Object? raw) {
     if (raw is! Map) return none;
@@ -179,12 +179,12 @@ class RidePreferences {
   }
 
   Map<String, dynamic> toJson() => {
-        'quiet': quiet,
-        'temperature': temperature?.name,
-        'music': music,
-        'luggageHelp': luggageHelp,
-        'openDoor': openDoor,
-      };
+    'quiet': quiet,
+    'temperature': temperature?.name,
+    'music': music,
+    'luggageHelp': luggageHelp,
+    'openDoor': openDoor,
+  };
 
   RidePreferences copyWith({
     bool? quiet,
@@ -193,15 +193,13 @@ class RidePreferences {
     bool? music,
     bool? luggageHelp,
     bool? openDoor,
-  }) =>
-      RidePreferences(
-        quiet: quiet ?? this.quiet,
-        temperature:
-            clearTemperature ? null : (temperature ?? this.temperature),
-        music: music ?? this.music,
-        luggageHelp: luggageHelp ?? this.luggageHelp,
-        openDoor: openDoor ?? this.openDoor,
-      );
+  }) => RidePreferences(
+    quiet: quiet ?? this.quiet,
+    temperature: clearTemperature ? null : (temperature ?? this.temperature),
+    music: music ?? this.music,
+    luggageHelp: luggageHelp ?? this.luggageHelp,
+    openDoor: openDoor ?? this.openDoor,
+  );
 
   @override
   bool operator ==(Object other) =>
@@ -245,48 +243,48 @@ class DriverProfile {
   final GeoPoint? currentLocation;
 
   factory DriverProfile.fromJson(Map<String, dynamic> j) => DriverProfile(
-        userId: j['userId'] as String,
-        licenseNumber: j['licenseNumber'] as String? ?? '',
-        licenseExpiry: j['licenseExpiry'] != null
+    userId: j['userId'] as String,
+    licenseNumber: j['licenseNumber'] as String? ?? '',
+    licenseExpiry:
+        j['licenseExpiry'] != null
             ? (j['licenseExpiry'] as Timestamp).toDate()
             : DateTime.now().add(const Duration(days: 365)),
-        vehicleId: j['vehicleId'] as String? ?? '',
-        documentsVerified: j['documentsVerified'] as bool? ?? false,
-        rating: (j['rating'] as num?)?.toDouble() ?? 5.0,
-        totalRides: j['totalRides'] as int? ?? 0,
-        isAvailable: j['isAvailable'] as bool? ?? false,
-        currentLocation: j['currentLocation'] as GeoPoint?,
-      );
+    vehicleId: j['vehicleId'] as String? ?? '',
+    documentsVerified: j['documentsVerified'] as bool? ?? false,
+    rating: (j['rating'] as num?)?.toDouble() ?? 5.0,
+    totalRides: j['totalRides'] as int? ?? 0,
+    isAvailable: j['isAvailable'] as bool? ?? false,
+    currentLocation: j['currentLocation'] as GeoPoint?,
+  );
 
   Map<String, dynamic> toJson() => {
-        'userId': userId,
-        'licenseNumber': licenseNumber,
-        'licenseExpiry': Timestamp.fromDate(licenseExpiry),
-        'vehicleId': vehicleId,
-        'documentsVerified': documentsVerified,
-        'rating': rating,
-        'totalRides': totalRides,
-        'isAvailable': isAvailable,
-        'currentLocation': currentLocation,
-      };
+    'userId': userId,
+    'licenseNumber': licenseNumber,
+    'licenseExpiry': Timestamp.fromDate(licenseExpiry),
+    'vehicleId': vehicleId,
+    'documentsVerified': documentsVerified,
+    'rating': rating,
+    'totalRides': totalRides,
+    'isAvailable': isAvailable,
+    'currentLocation': currentLocation,
+  };
 
   DriverProfile copyWith({
     bool? isAvailable,
     GeoPoint? currentLocation,
     double? rating,
     int? totalRides,
-  }) =>
-      DriverProfile(
-        userId: userId,
-        licenseNumber: licenseNumber,
-        licenseExpiry: licenseExpiry,
-        vehicleId: vehicleId,
-        documentsVerified: documentsVerified,
-        rating: rating ?? this.rating,
-        totalRides: totalRides ?? this.totalRides,
-        isAvailable: isAvailable ?? this.isAvailable,
-        currentLocation: currentLocation ?? this.currentLocation,
-      );
+  }) => DriverProfile(
+    userId: userId,
+    licenseNumber: licenseNumber,
+    licenseExpiry: licenseExpiry,
+    vehicleId: vehicleId,
+    documentsVerified: documentsVerified,
+    rating: rating ?? this.rating,
+    totalRides: totalRides ?? this.totalRides,
+    isAvailable: isAvailable ?? this.isAvailable,
+    currentLocation: currentLocation ?? this.currentLocation,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -321,35 +319,35 @@ class Vehicle {
   final bool isActive;
 
   factory Vehicle.fromJson(Map<String, dynamic> j) => Vehicle(
-        id: j['id'] as String,
-        driverId: j['driverId'] as String,
-        make: j['make'] as String? ?? '',
-        model: j['model'] as String? ?? '',
-        year: j['year'] as int? ?? 2024,
-        plate: j['plate'] as String? ?? '',
-        vehicleClass: VehicleClass.values.firstWhere(
-          (e) => e.name == j['class'],
-          orElse: () => VehicleClass.business,
-        ),
-        color: j['color'] as String? ?? 'Black',
-        photoUrl: j['photoUrl'] as String?,
-        capacity: j['capacity'] as int? ?? 3,
-        isActive: j['isActive'] as bool? ?? true,
-      );
+    id: j['id'] as String,
+    driverId: j['driverId'] as String,
+    make: j['make'] as String? ?? '',
+    model: j['model'] as String? ?? '',
+    year: j['year'] as int? ?? 2024,
+    plate: j['plate'] as String? ?? '',
+    vehicleClass: VehicleClass.values.firstWhere(
+      (e) => e.name == j['class'],
+      orElse: () => VehicleClass.business,
+    ),
+    color: j['color'] as String? ?? 'Black',
+    photoUrl: j['photoUrl'] as String?,
+    capacity: j['capacity'] as int? ?? 3,
+    isActive: j['isActive'] as bool? ?? true,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'driverId': driverId,
-        'make': make,
-        'model': model,
-        'year': year,
-        'plate': plate,
-        'class': vehicleClass.name,
-        'color': color,
-        'photoUrl': photoUrl,
-        'capacity': capacity,
-        'isActive': isActive,
-      };
+    'id': id,
+    'driverId': driverId,
+    'make': make,
+    'model': model,
+    'year': year,
+    'plate': plate,
+    'class': vehicleClass.name,
+    'color': color,
+    'photoUrl': photoUrl,
+    'capacity': capacity,
+    'isActive': isActive,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -394,8 +392,10 @@ class BookingSettlement {
 
   /// Reparto provisional con [commissionPct], para viajes que el servidor aún
   /// no ha repartido.
-  factory BookingSettlement.estimate(double amount,
-      {double commissionPct = kDefaultCommissionPct}) {
+  factory BookingSettlement.estimate(
+    double amount, {
+    double commissionPct = kDefaultCommissionPct,
+  }) {
     double round(double v) => (v * 100).roundToDouble() / 100;
     final pct = commissionPct.clamp(0, 100).toDouble();
     final commission = round(amount * pct / 100);
@@ -466,10 +466,11 @@ class PickupCode {
   final DateTime expiresAt;
 
   factory PickupCode.fromJson(Map<String, dynamic> j) => PickupCode(
-        code: j['code'] as String,
-        expiresAt: DateTime.fromMillisecondsSinceEpoch(
-            (j['expiresAt'] as num).toInt()),
-      );
+    code: j['code'] as String,
+    expiresAt: DateTime.fromMillisecondsSinceEpoch(
+      (j['expiresAt'] as num).toInt(),
+    ),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -521,13 +522,13 @@ class BookingGuest {
   }
 
   Map<String, dynamic> toJson() => {
-        if (title.isNotEmpty) 'title': title,
-        'firstName': firstName,
-        if (lastName.isNotEmpty) 'lastName': lastName,
-        if (phone.isNotEmpty) 'phone': phone,
-        if (email.isNotEmpty) 'email': email,
-        if (language.isNotEmpty) 'language': language,
-      };
+    if (title.isNotEmpty) 'title': title,
+    'firstName': firstName,
+    if (lastName.isNotEmpty) 'lastName': lastName,
+    if (phone.isNotEmpty) 'phone': phone,
+    if (email.isNotEmpty) 'email': email,
+    if (language.isNotEmpty) 'language': language,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -660,84 +661,91 @@ class Booking {
   BookingSettlement settlementOr(double commissionPct) {
     final s = settlement;
     if (s != null && (s.amount - chargedAmount).abs() < 0.005) return s;
-    return BookingSettlement.estimate(chargedAmount,
-        commissionPct: s?.commissionPct ?? commissionPct);
+    return BookingSettlement.estimate(
+      chargedAmount,
+      commissionPct: s?.commissionPct ?? commissionPct,
+    );
   }
 
   factory Booking.fromJson(Map<String, dynamic> j) => Booking(
-        id: j['id'] as String? ?? '',
-        riderId: j['riderId'] as String? ?? '',
-        driverId: j['driverId'] as String?,
-        origin: Place.fromJson(j['origin'] as Map<String, dynamic>? ?? {}),
-        destination:
-            Place.fromJson(j['destination'] as Map<String, dynamic>? ?? {}),
-        scheduledAt: j['scheduledAt'] != null
+    id: j['id'] as String? ?? '',
+    riderId: j['riderId'] as String? ?? '',
+    driverId: j['driverId'] as String?,
+    origin: Place.fromJson(j['origin'] as Map<String, dynamic>? ?? {}),
+    destination: Place.fromJson(
+      j['destination'] as Map<String, dynamic>? ?? {},
+    ),
+    scheduledAt:
+        j['scheduledAt'] != null
             ? (j['scheduledAt'] as Timestamp).toDate()
             : DateTime.now(),
-        vehicleClass: VehicleClass.values.firstWhere(
-          (e) => e.name == (j['class'] ?? j['vehicleClass'] ?? 'business'),
-          orElse: () => VehicleClass.business,
-        ),
-        serviceType: ServiceType.values.firstWhere(
-          (e) => e.name == (j['serviceType'] ?? 'oneWay'),
-          orElse: () => ServiceType.oneWay,
-        ),
-        status: BookingStatusX.fromString(j['status'] as String? ?? 'pending'),
-        estimatedPrice: (j['estimatedPrice'] as num?)?.toDouble() ?? 0.0,
-        finalPrice: (j['finalPrice'] as num?)?.toDouble(),
-        paymentId: j['paymentId'] as String?,
-        createdAt: j['createdAt'] != null
+    vehicleClass: VehicleClass.values.firstWhere(
+      (e) => e.name == (j['class'] ?? j['vehicleClass'] ?? 'business'),
+      orElse: () => VehicleClass.business,
+    ),
+    serviceType: ServiceType.values.firstWhere(
+      (e) => e.name == (j['serviceType'] ?? 'oneWay'),
+      orElse: () => ServiceType.oneWay,
+    ),
+    status: BookingStatusX.fromString(j['status'] as String? ?? 'pending'),
+    estimatedPrice: (j['estimatedPrice'] as num?)?.toDouble() ?? 0.0,
+    finalPrice: (j['finalPrice'] as num?)?.toDouble(),
+    paymentId: j['paymentId'] as String?,
+    createdAt:
+        j['createdAt'] != null
             ? (j['createdAt'] as Timestamp).toDate()
             : DateTime.now(),
-        updatedAt: j['updatedAt'] != null
+    updatedAt:
+        j['updatedAt'] != null
             ? (j['updatedAt'] as Timestamp).toDate()
             : DateTime.now(),
-        notes: j['notes'] as String?,
-        guest: BookingGuest.fromJson(j['guest']),
-        flightNumber: j['flightNumber'] as String?,
-        flightType: j['flightType'] as String?,
-        pickupAirport: j['pickupAirport'] as String?,
-        hours: j['hours'] as int?,
-        passengerCount: j['passengerCount'] as int? ?? 1,
-        luggageCount: j['luggageCount'] as int? ?? 0,
-        pricingReviewReason: (j['pricingReview'] as Map?)?['reason'] as String?,
-        settlement: BookingSettlement.fromJson(j['settlement']),
-        refunded: j['refunded'] == true,
-        driverInfo: DriverInfo.fromJson(j['driverInfo']),
-        riderRating: (j['riderRating'] as num?)?.toInt(),
-        cardPayment: j['stripePaymentIntentId'] != null ||
-            j['stripePaymentMethodId'] != null,
-        cardPaymentFailed: j['cardPaymentFailed'] == true,
-        riderPreferences: RidePreferences.fromJson(j['riderPreferences']),
-        pickupLocked: j['pickupLocked'] == true,
-      );
+    notes: j['notes'] as String?,
+    guest: BookingGuest.fromJson(j['guest']),
+    flightNumber: j['flightNumber'] as String?,
+    flightType: j['flightType'] as String?,
+    pickupAirport: j['pickupAirport'] as String?,
+    hours: j['hours'] as int?,
+    passengerCount: j['passengerCount'] as int? ?? 1,
+    luggageCount: j['luggageCount'] as int? ?? 0,
+    pricingReviewReason: (j['pricingReview'] as Map?)?['reason'] as String?,
+    settlement: BookingSettlement.fromJson(j['settlement']),
+    refunded: j['refunded'] == true,
+    driverInfo: DriverInfo.fromJson(j['driverInfo']),
+    riderRating: (j['riderRating'] as num?)?.toInt(),
+    cardPayment:
+        j['stripePaymentIntentId'] != null ||
+        j['stripePaymentMethodId'] != null,
+    cardPaymentFailed: j['cardPaymentFailed'] == true,
+    riderPreferences: RidePreferences.fromJson(j['riderPreferences']),
+    pickupLocked: j['pickupLocked'] == true,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'riderId': riderId,
-        'driverId': driverId,
-        'origin': origin.toJson(),
-        'destination': destination.toJson(),
-        'scheduledAt': Timestamp.fromDate(scheduledAt),
-        'class': vehicleClass.name,
-        // Cloud Functions read `vehicleClass`; keep both keys in sync.
-        'vehicleClass': vehicleClass.name,
-        'serviceType': serviceType.name,
-        'status': status.label,
-        'estimatedPrice': estimatedPrice,
-        'finalPrice': finalPrice,
-        'paymentId': paymentId,
-        'createdAt': Timestamp.fromDate(createdAt),
-        'updatedAt': Timestamp.fromDate(updatedAt),
-        'notes': notes,
-        if (guest != null) 'guest': guest!.toJson(),
-        'flightNumber': flightNumber,
-        'flightType': flightType,
-        'pickupAirport': pickupAirport,
-        'hours': hours,
-        'passengerCount': passengerCount,
-        'luggageCount': luggageCount,
-      };
+    'id': id,
+    'riderId': riderId,
+    'driverId': driverId,
+    'origin': origin.toJson(),
+    'destination': destination.toJson(),
+    'scheduledAt': Timestamp.fromDate(scheduledAt),
+    'class': vehicleClass.name,
+    // Cloud Functions read `vehicleClass`; keep both keys in sync.
+    'vehicleClass': vehicleClass.name,
+    'serviceType': serviceType.name,
+    'status': status.label,
+    'estimatedPrice': estimatedPrice,
+    'finalPrice': finalPrice,
+    'paymentId': paymentId,
+    'createdAt': Timestamp.fromDate(createdAt),
+    'updatedAt': Timestamp.fromDate(updatedAt),
+    'notes': notes,
+    if (guest != null) 'guest': guest!.toJson(),
+    'flightNumber': flightNumber,
+    'flightType': flightType,
+    'pickupAirport': pickupAirport,
+    'hours': hours,
+    'passengerCount': passengerCount,
+    'luggageCount': luggageCount,
+  };
 
   Booking copyWith({
     String? driverId,
@@ -745,39 +753,38 @@ class Booking {
     double? finalPrice,
     String? paymentId,
     DateTime? updatedAt,
-  }) =>
-      Booking(
-        id: id,
-        riderId: riderId,
-        driverId: driverId ?? this.driverId,
-        origin: origin,
-        destination: destination,
-        scheduledAt: scheduledAt,
-        vehicleClass: vehicleClass,
-        serviceType: serviceType,
-        status: status ?? this.status,
-        estimatedPrice: estimatedPrice,
-        finalPrice: finalPrice ?? this.finalPrice,
-        paymentId: paymentId ?? this.paymentId,
-        createdAt: createdAt,
-        updatedAt: updatedAt ?? this.updatedAt,
-        notes: notes,
-        guest: guest,
-        flightNumber: flightNumber,
-        flightType: flightType,
-        pickupAirport: pickupAirport,
-        hours: hours,
-        passengerCount: passengerCount,
-        luggageCount: luggageCount,
-        pricingReviewReason: pricingReviewReason,
-        settlement: settlement,
-        refunded: refunded,
-        driverInfo: driverInfo,
-        riderRating: riderRating,
-        cardPayment: cardPayment,
-        cardPaymentFailed: cardPaymentFailed,
-        riderPreferences: riderPreferences,
-      );
+  }) => Booking(
+    id: id,
+    riderId: riderId,
+    driverId: driverId ?? this.driverId,
+    origin: origin,
+    destination: destination,
+    scheduledAt: scheduledAt,
+    vehicleClass: vehicleClass,
+    serviceType: serviceType,
+    status: status ?? this.status,
+    estimatedPrice: estimatedPrice,
+    finalPrice: finalPrice ?? this.finalPrice,
+    paymentId: paymentId ?? this.paymentId,
+    createdAt: createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    notes: notes,
+    guest: guest,
+    flightNumber: flightNumber,
+    flightType: flightType,
+    pickupAirport: pickupAirport,
+    hours: hours,
+    passengerCount: passengerCount,
+    luggageCount: luggageCount,
+    pricingReviewReason: pricingReviewReason,
+    settlement: settlement,
+    refunded: refunded,
+    driverInfo: driverInfo,
+    riderRating: riderRating,
+    cardPayment: cardPayment,
+    cardPaymentFailed: cardPaymentFailed,
+    riderPreferences: riderPreferences,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -805,15 +812,16 @@ class AdminAlert {
   final bool resolved;
 
   factory AdminAlert.fromJson(Map<String, dynamic> j) => AdminAlert(
-        id: j['id'] as String,
-        type: j['type'] as String? ?? '',
-        createdAt: j['createdAt'] is Timestamp
+    id: j['id'] as String,
+    type: j['type'] as String? ?? '',
+    createdAt:
+        j['createdAt'] is Timestamp
             ? (j['createdAt'] as Timestamp).toDate()
             : DateTime.now(),
-        bookingId: j['bookingId'] as String?,
-        message: j['message'] as String? ?? '',
-        resolved: j['resolved'] == true,
-      );
+    bookingId: j['bookingId'] as String?,
+    message: j['message'] as String? ?? '',
+    resolved: j['resolved'] == true,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -873,8 +881,11 @@ class BookingEvent {
 
   bool get hasLocation => lat != null && lng != null;
 
-  factory BookingEvent.fromJson(String id, Map<String, dynamic> j,
-      [Map<String, dynamic>? location]) {
+  factory BookingEvent.fromJson(
+    String id,
+    Map<String, dynamic> j, [
+    Map<String, dynamic>? location,
+  ]) {
     final actor = j['actor'] is Map ? j['actor'] as Map : const {};
     return BookingEvent(
       id: id,
@@ -905,11 +916,11 @@ class BookingEvent {
 enum IncidentStatus { open, acknowledged, closed, cancelledByReporter }
 
 IncidentStatus incidentStatusFrom(String? s) => switch (s) {
-      'acknowledged' => IncidentStatus.acknowledged,
-      'closed' => IncidentStatus.closed,
-      'cancelled_by_reporter' => IncidentStatus.cancelledByReporter,
-      _ => IncidentStatus.open,
-    };
+  'acknowledged' => IncidentStatus.acknowledged,
+  'closed' => IncidentStatus.closed,
+  'cancelled_by_reporter' => IncidentStatus.cancelledByReporter,
+  _ => IncidentStatus.open,
+};
 
 class Incident {
   const Incident({
@@ -993,12 +1004,12 @@ class IncidentLogEntry {
   final int? count;
 
   factory IncidentLogEntry.fromJson(Map<String, dynamic> j) => IncidentLogEntry(
-        type: j['type'] as String? ?? '',
-        at: j['at'] is Timestamp ? (j['at'] as Timestamp).toDate() : null,
-        actorRole: (j['actor'] as Map?)?['role'] as String? ?? '',
-        note: j['note'] as String?,
-        count: (j['count'] as num?)?.toInt(),
-      );
+    type: j['type'] as String? ?? '',
+    at: j['at'] is Timestamp ? (j['at'] as Timestamp).toDate() : null,
+    actorRole: (j['actor'] as Map?)?['role'] as String? ?? '',
+    note: j['note'] as String?,
+    count: (j['count'] as num?)?.toInt(),
+  );
 }
 
 /// Resultado de pulsar SOS.
@@ -1027,9 +1038,9 @@ class BookingQuote {
   final bool approximateDistance;
 
   factory BookingQuote.fromJson(Map<String, dynamic> j) => BookingQuote(
-        price: (j['price'] as num).toDouble(),
-        approximateDistance: j['distanceSource'] == 'fallback',
-      );
+    price: (j['price'] as num).toDouble(),
+    approximateDistance: j['distanceSource'] == 'fallback',
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -1089,7 +1100,11 @@ class OpenRequest {
     final lat = j['lat'], lng = j['lng'];
     if (lat is! num || lng is! num) return null;
     return Place(
-        name: label, address: label, lat: lat.toDouble(), lng: lng.toDouble());
+      name: label,
+      address: label,
+      lat: lat.toDouble(),
+      lng: lng.toDouble(),
+    );
   }
 
   factory OpenRequest.fromJson(String id, Map<String, dynamic> j) {
@@ -1105,9 +1120,10 @@ class OpenRequest {
         (e) => e.name == j['serviceType'],
         orElse: () => ServiceType.oneWay,
       ),
-      scheduledAt: j['scheduledAt'] is Timestamp
-          ? (j['scheduledAt'] as Timestamp).toDate()
-          : DateTime.now(),
+      scheduledAt:
+          j['scheduledAt'] is Timestamp
+              ? (j['scheduledAt'] as Timestamp).toDate()
+              : DateTime.now(),
       estimatedPrice: (j['estimatedPrice'] as num?)?.toDouble() ?? 0,
       hours: (j['hours'] as num?)?.toInt(),
       passengerCount: (j['passengerCount'] as num?)?.toInt() ?? 1,
@@ -1116,10 +1132,14 @@ class OpenRequest {
       flightType: j['flightType'] as String?,
       pickupArea: pickupArea,
       dropoffArea: dropoffArea,
-      pickupApprox:
-          _approx(j['pickupApprox'], pickupArea ?? 'Zona de recogida'),
-      dropoffApprox:
-          _approx(j['dropoffApprox'], dropoffArea ?? 'Zona de destino'),
+      pickupApprox: _approx(
+        j['pickupApprox'],
+        pickupArea ?? 'Zona de recogida',
+      ),
+      dropoffApprox: _approx(
+        j['dropoffApprox'],
+        dropoffArea ?? 'Zona de destino',
+      ),
       tripKm: (j['tripKm'] as num?)?.toDouble(),
     );
   }
@@ -1157,37 +1177,38 @@ class Ride {
   final double? driverRating;
 
   factory Ride.fromJson(Map<String, dynamic> j) => Ride(
-        id: j['id'] as String,
-        bookingId: j['bookingId'] as String,
-        riderId: j['riderId'] as String,
-        driverId: j['driverId'] as String,
-        startedAt: (j['startedAt'] as Timestamp).toDate(),
-        completedAt: j['completedAt'] != null
+    id: j['id'] as String,
+    bookingId: j['bookingId'] as String,
+    riderId: j['riderId'] as String,
+    driverId: j['driverId'] as String,
+    startedAt: (j['startedAt'] as Timestamp).toDate(),
+    completedAt:
+        j['completedAt'] != null
             ? (j['completedAt'] as Timestamp).toDate()
             : null,
-        driverRoute: List<GeoPoint>.from(
-          (j['driverRoute'] as List? ?? []).map((e) => e as GeoPoint),
-        ),
-        distanceKm: (j['distanceKm'] as num?)?.toDouble(),
-        durationMin: j['durationMin'] as int?,
-        riderRating: (j['riderRating'] as num?)?.toDouble(),
-        driverRating: (j['driverRating'] as num?)?.toDouble(),
-      );
+    driverRoute: List<GeoPoint>.from(
+      (j['driverRoute'] as List? ?? []).map((e) => e as GeoPoint),
+    ),
+    distanceKm: (j['distanceKm'] as num?)?.toDouble(),
+    durationMin: j['durationMin'] as int?,
+    riderRating: (j['riderRating'] as num?)?.toDouble(),
+    driverRating: (j['driverRating'] as num?)?.toDouble(),
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'bookingId': bookingId,
-        'riderId': riderId,
-        'driverId': driverId,
-        'startedAt': Timestamp.fromDate(startedAt),
-        'completedAt':
-            completedAt != null ? Timestamp.fromDate(completedAt!) : null,
-        'driverRoute': driverRoute,
-        'distanceKm': distanceKm,
-        'durationMin': durationMin,
-        'riderRating': riderRating,
-        'driverRating': driverRating,
-      };
+    'id': id,
+    'bookingId': bookingId,
+    'riderId': riderId,
+    'driverId': driverId,
+    'startedAt': Timestamp.fromDate(startedAt),
+    'completedAt':
+        completedAt != null ? Timestamp.fromDate(completedAt!) : null,
+    'driverRoute': driverRoute,
+    'distanceKm': distanceKm,
+    'durationMin': durationMin,
+    'riderRating': riderRating,
+    'driverRating': driverRating,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -1227,30 +1248,31 @@ class Payment {
   static int toCents(double bs) => (bs * 100).round();
 
   factory Payment.fromJson(Map<String, dynamic> j) => Payment(
-        id: j['id'] as String,
-        bookingId: j['bookingId'] as String? ?? '',
-        riderId: j['riderId'] as String? ?? '',
-        stripePaymentIntentId: j['stripePaymentIntentId'] as String? ?? '',
-        amount: (j['amount'] as num?)?.toDouble() ?? 0.0,
-        currency: j['currency'] as String? ?? 'bob',
-        status: PaymentStatusX.fromString(j['status'] as String? ?? 'pending'),
-        createdAt: j['createdAt'] is Timestamp
+    id: j['id'] as String,
+    bookingId: j['bookingId'] as String? ?? '',
+    riderId: j['riderId'] as String? ?? '',
+    stripePaymentIntentId: j['stripePaymentIntentId'] as String? ?? '',
+    amount: (j['amount'] as num?)?.toDouble() ?? 0.0,
+    currency: j['currency'] as String? ?? 'bob',
+    status: PaymentStatusX.fromString(j['status'] as String? ?? 'pending'),
+    createdAt:
+        j['createdAt'] is Timestamp
             ? (j['createdAt'] as Timestamp).toDate()
             : DateTime.now(),
-        receiptUrl: j['receiptUrl'] as String?,
-      );
+    receiptUrl: j['receiptUrl'] as String?,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'bookingId': bookingId,
-        'riderId': riderId,
-        'stripePaymentIntentId': stripePaymentIntentId,
-        'amount': amount,
-        'currency': currency,
-        'status': status.label,
-        'createdAt': Timestamp.fromDate(createdAt),
-        'receiptUrl': receiptUrl,
-      };
+    'id': id,
+    'bookingId': bookingId,
+    'riderId': riderId,
+    'stripePaymentIntentId': stripePaymentIntentId,
+    'amount': amount,
+    'currency': currency,
+    'status': status.label,
+    'createdAt': Timestamp.fromDate(createdAt),
+    'receiptUrl': receiptUrl,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -1309,36 +1331,37 @@ class PricingRule {
   static double _num(Object? v) => (v as num?)?.toDouble() ?? 0.0;
 
   factory PricingRule.fromJson(Map<String, dynamic> j) => PricingRule(
-        id: j['id'] as String,
-        vehicleClass: VehicleClass.values.firstWhere(
-          (e) => e.name == j['vehicleClass'],
-          orElse: () => VehicleClass.business,
-        ),
-        serviceType: ServiceType.values.firstWhere(
-          (e) => e.name == j['serviceType'],
-          orElse: () => ServiceType.oneWay,
-        ),
-        basePriceUsd: _num(j['basePriceUsd']),
-        pricePerKmUsd: _num(j['pricePerKmUsd']),
-        pricePerHourUsd: _num(j['pricePerHourUsd']),
-        minimumPriceUsd: _num(j['minimumPriceUsd']),
-        isActive: j['isActive'] as bool? ?? true,
-        updatedAt: j['updatedAt'] is Timestamp
+    id: j['id'] as String,
+    vehicleClass: VehicleClass.values.firstWhere(
+      (e) => e.name == j['vehicleClass'],
+      orElse: () => VehicleClass.business,
+    ),
+    serviceType: ServiceType.values.firstWhere(
+      (e) => e.name == j['serviceType'],
+      orElse: () => ServiceType.oneWay,
+    ),
+    basePriceUsd: _num(j['basePriceUsd']),
+    pricePerKmUsd: _num(j['pricePerKmUsd']),
+    pricePerHourUsd: _num(j['pricePerHourUsd']),
+    minimumPriceUsd: _num(j['minimumPriceUsd']),
+    isActive: j['isActive'] as bool? ?? true,
+    updatedAt:
+        j['updatedAt'] is Timestamp
             ? (j['updatedAt'] as Timestamp).toDate()
             : null,
-        updatedBy: j['updatedBy'] as String?,
-      );
+    updatedBy: j['updatedBy'] as String?,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'vehicleClass': vehicleClass.name,
-        'serviceType': serviceType.name,
-        'basePriceUsd': basePriceUsd,
-        'pricePerKmUsd': pricePerKmUsd,
-        'pricePerHourUsd': pricePerHourUsd,
-        'minimumPriceUsd': minimumPriceUsd,
-        'isActive': isActive,
-      };
+    'id': id,
+    'vehicleClass': vehicleClass.name,
+    'serviceType': serviceType.name,
+    'basePriceUsd': basePriceUsd,
+    'pricePerKmUsd': pricePerKmUsd,
+    'pricePerHourUsd': pricePerHourUsd,
+    'minimumPriceUsd': minimumPriceUsd,
+    'isActive': isActive,
+  };
 
   PricingRule copyWith({
     double? basePriceUsd,
@@ -1346,19 +1369,18 @@ class PricingRule {
     double? pricePerHourUsd,
     double? minimumPriceUsd,
     bool? isActive,
-  }) =>
-      PricingRule(
-        id: id,
-        vehicleClass: vehicleClass,
-        serviceType: serviceType,
-        basePriceUsd: basePriceUsd ?? this.basePriceUsd,
-        pricePerKmUsd: pricePerKmUsd ?? this.pricePerKmUsd,
-        pricePerHourUsd: pricePerHourUsd ?? this.pricePerHourUsd,
-        minimumPriceUsd: minimumPriceUsd ?? this.minimumPriceUsd,
-        isActive: isActive ?? this.isActive,
-        updatedAt: updatedAt,
-        updatedBy: updatedBy,
-      );
+  }) => PricingRule(
+    id: id,
+    vehicleClass: vehicleClass,
+    serviceType: serviceType,
+    basePriceUsd: basePriceUsd ?? this.basePriceUsd,
+    pricePerKmUsd: pricePerKmUsd ?? this.pricePerKmUsd,
+    pricePerHourUsd: pricePerHourUsd ?? this.pricePerHourUsd,
+    minimumPriceUsd: minimumPriceUsd ?? this.minimumPriceUsd,
+    isActive: isActive ?? this.isActive,
+    updatedAt: updatedAt,
+    updatedBy: updatedBy,
+  );
 
   /// Mismos importes que [other] (ignora metadatos).
   bool sameFareAs(PricingRule other) =>
@@ -1395,9 +1417,10 @@ class PricingRule {
   /// Precio de un servicio: base + distancia (solo ida) o base + horas
   /// (por horas), nunca por debajo del mínimo.
   double estimate({double km = 0, int hours = 2}) {
-    final raw = serviceType == ServiceType.byTheHour
-        ? basePriceUsd + hours * pricePerHourUsd
-        : basePriceUsd + km * pricePerKmUsd;
+    final raw =
+        serviceType == ServiceType.byTheHour
+            ? basePriceUsd + hours * pricePerHourUsd
+            : basePriceUsd + km * pricePerKmUsd;
     return raw < minimumPriceUsd ? minimumPriceUsd : raw;
   }
 
@@ -1432,29 +1455,30 @@ class AuditLog {
   final DateTime createdAt;
 
   factory AuditLog.fromJson(Map<String, dynamic> j) => AuditLog(
-        id: j['id'] as String,
-        adminId: j['adminId'] as String? ?? '',
-        adminEmail: j['adminEmail'] as String?,
-        action: j['action'] as String? ?? '',
-        targetId: j['targetId'] as String? ?? '',
-        targetType: j['targetType'] as String? ?? '',
-        details: j['details'] as String? ?? '',
-        // serverTimestamp() llega como null en la escritura local pendiente.
-        createdAt: j['createdAt'] is Timestamp
+    id: j['id'] as String,
+    adminId: j['adminId'] as String? ?? '',
+    adminEmail: j['adminEmail'] as String?,
+    action: j['action'] as String? ?? '',
+    targetId: j['targetId'] as String? ?? '',
+    targetType: j['targetType'] as String? ?? '',
+    details: j['details'] as String? ?? '',
+    // serverTimestamp() llega como null en la escritura local pendiente.
+    createdAt:
+        j['createdAt'] is Timestamp
             ? (j['createdAt'] as Timestamp).toDate()
             : DateTime.now(),
-      );
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'adminId': adminId,
-        'adminEmail': adminEmail,
-        'action': action,
-        'targetId': targetId,
-        'targetType': targetType,
-        'details': details,
-        'createdAt': Timestamp.fromDate(createdAt),
-      };
+    'id': id,
+    'adminId': adminId,
+    'adminEmail': adminEmail,
+    'action': action,
+    'targetId': targetId,
+    'targetType': targetType,
+    'details': details,
+    'createdAt': Timestamp.fromDate(createdAt),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -1478,43 +1502,44 @@ class AppNotification {
   final String title;
   final String body;
   final String
-      type; // booking_confirmed, driver_arriving, driver_arrived, ride_started, ride_completed, etc.
+  type; // booking_confirmed, driver_arriving, driver_arrived, ride_started, ride_completed, etc.
   final bool isRead;
   final DateTime createdAt;
   final String? bookingId;
 
   factory AppNotification.fromJson(Map<String, dynamic> j) => AppNotification(
-        id: j['id'] as String,
-        userId: j['userId'] as String,
-        title: j['title'] as String,
-        body: j['body'] as String,
-        type: j['type'] as String? ?? 'general',
-        isRead: j['isRead'] as bool? ?? false,
-        createdAt: j['createdAt'] != null
+    id: j['id'] as String,
+    userId: j['userId'] as String,
+    title: j['title'] as String,
+    body: j['body'] as String,
+    type: j['type'] as String? ?? 'general',
+    isRead: j['isRead'] as bool? ?? false,
+    createdAt:
+        j['createdAt'] != null
             ? (j['createdAt'] as Timestamp).toDate()
             : DateTime.now(),
-        bookingId: j['bookingId'] as String?,
-      );
+    bookingId: j['bookingId'] as String?,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'userId': userId,
-        'title': title,
-        'body': body,
-        'type': type,
-        'isRead': isRead,
-        'createdAt': Timestamp.fromDate(createdAt),
-        'bookingId': bookingId,
-      };
+    'id': id,
+    'userId': userId,
+    'title': title,
+    'body': body,
+    'type': type,
+    'isRead': isRead,
+    'createdAt': Timestamp.fromDate(createdAt),
+    'bookingId': bookingId,
+  };
 
   AppNotification copyWith({bool? isRead}) => AppNotification(
-        id: id,
-        userId: userId,
-        title: title,
-        body: body,
-        type: type,
-        isRead: isRead ?? this.isRead,
-        createdAt: createdAt,
-        bookingId: bookingId,
-      );
+    id: id,
+    userId: userId,
+    title: title,
+    body: body,
+    type: type,
+    isRead: isRead ?? this.isRead,
+    createdAt: createdAt,
+    bookingId: bookingId,
+  );
 }

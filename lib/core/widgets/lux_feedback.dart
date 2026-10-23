@@ -32,10 +32,14 @@ class LuxFadeIn extends StatefulWidget {
 
 class _LuxFadeInState extends State<LuxFadeIn>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _c =
-      AnimationController(vsync: this, duration: LuxMotion.slow);
-  late final Animation<double> _t =
-      CurvedAnimation(parent: _c, curve: LuxMotion.decelerate);
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: LuxMotion.slow,
+  );
+  late final Animation<double> _t = CurvedAnimation(
+    parent: _c,
+    curve: LuxMotion.decelerate,
+  );
   Timer? _timer;
 
   @override
@@ -62,16 +66,17 @@ class _LuxFadeInState extends State<LuxFadeIn>
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-        animation: _t,
-        builder: (_, child) => Opacity(
+    animation: _t,
+    builder:
+        (_, child) => Opacity(
           opacity: _t.value,
           child: Transform.translate(
             offset: Offset(0, widget.offset * (1 - _t.value)),
             child: child,
           ),
         ),
-        child: widget.child,
-      );
+    child: widget.child,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -105,23 +110,24 @@ class _LuxShimmerState extends State<LuxShimmer>
     if (LuxMotion.reduced(context)) return widget.child;
     return AnimatedBuilder(
       animation: _c,
-      builder: (_, child) => ShaderMask(
-        blendMode: BlendMode.srcATop,
-        shaderCallback: (rect) {
-          final x = -1.0 + 3.0 * _c.value;
-          return LinearGradient(
-            begin: Alignment(x - 1, 0),
-            end: Alignment(x, 0),
-            colors: const [
-              LuxColors.surfaceMuted,
-              Color(0xFFFBFCFE),
-              LuxColors.surfaceMuted,
-            ],
-            stops: const [0.0, 0.5, 1.0],
-          ).createShader(rect);
-        },
-        child: child,
-      ),
+      builder:
+          (_, child) => ShaderMask(
+            blendMode: BlendMode.srcATop,
+            shaderCallback: (rect) {
+              final x = -1.0 + 3.0 * _c.value;
+              return LinearGradient(
+                begin: Alignment(x - 1, 0),
+                end: Alignment(x, 0),
+                colors: const [
+                  LuxColors.surfaceMuted,
+                  Color(0xFFFBFCFE),
+                  LuxColors.surfaceMuted,
+                ],
+                stops: const [0.0, 0.5, 1.0],
+              ).createShader(rect);
+            },
+            child: child,
+          ),
       child: widget.child,
     );
   }
@@ -142,13 +148,13 @@ class LuxSkeletonBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          color: LuxColors.surfaceMuted,
-          borderRadius: BorderRadius.circular(radius),
-        ),
-      );
+    width: width,
+    height: height,
+    decoration: BoxDecoration(
+      color: LuxColors.surfaceMuted,
+      borderRadius: BorderRadius.circular(radius),
+    ),
+  );
 }
 
 /// Lista de tarjetas en esqueleto, para pantallas que cargan una lista.
@@ -159,14 +165,15 @@ class LuxSkeletonList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'Cargando',
-        child: LuxShimmer(
-          child: ListView.separated(
-            physics: const NeverScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(LuxSpacing.md),
-            itemCount: count,
-            separatorBuilder: (_, __) => const SizedBox(height: LuxSpacing.sm),
-            itemBuilder: (_, __) => Container(
+    label: 'Cargando',
+    child: LuxShimmer(
+      child: ListView.separated(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.all(LuxSpacing.md),
+        itemCount: count,
+        separatorBuilder: (_, __) => const SizedBox(height: LuxSpacing.sm),
+        itemBuilder:
+            (_, __) => Container(
               height: itemHeight,
               padding: const EdgeInsets.all(LuxSpacing.md),
               decoration: BoxDecoration(
@@ -193,9 +200,9 @@ class LuxSkeletonList extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ),
-      );
+      ),
+    ),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -237,15 +244,16 @@ class _LuxSuccessMarkState extends State<LuxSuccessMark>
 
   @override
   Widget build(BuildContext context) => Semantics(
-        label: 'Listo',
-        child: AnimatedBuilder(
-          animation: _c,
-          builder: (_, __) => CustomPaint(
+    label: 'Listo',
+    child: AnimatedBuilder(
+      animation: _c,
+      builder:
+          (_, __) => CustomPaint(
             size: Size.square(widget.size),
             painter: _SuccessPainter(_c.value),
           ),
-        ),
-      );
+    ),
+  );
 }
 
 class _SuccessPainter extends CustomPainter {
@@ -258,8 +266,9 @@ class _SuccessPainter extends CustomPainter {
     final r = size.width / 2;
     // 0–0.55: el círculo se rellena; 0.45–1: el visto se dibuja.
     final ring = LuxMotion.decelerate.transform((t / 0.55).clamp(0, 1));
-    final tick =
-        LuxMotion.emphasized.transform(((t - 0.45) / 0.55).clamp(0, 1));
+    final tick = LuxMotion.emphasized.transform(
+      ((t - 0.45) / 0.55).clamp(0, 1),
+    );
 
     canvas.drawCircle(
       c,
@@ -268,10 +277,11 @@ class _SuccessPainter extends CustomPainter {
     );
 
     if (tick <= 0) return;
-    final path = Path()
-      ..moveTo(c.dx - r * 0.34, c.dy + r * 0.02)
-      ..lineTo(c.dx - r * 0.08, c.dy + r * 0.27)
-      ..lineTo(c.dx + r * 0.36, c.dy - r * 0.24);
+    final path =
+        Path()
+          ..moveTo(c.dx - r * 0.34, c.dy + r * 0.02)
+          ..lineTo(c.dx - r * 0.08, c.dy + r * 0.27)
+          ..lineTo(c.dx + r * 0.36, c.dy - r * 0.24);
     final metric = path.computeMetrics().first;
     canvas.drawPath(
       metric.extractPath(0, metric.length * tick),
@@ -343,10 +353,11 @@ Future<void> showLuxSuccess(
         ),
       );
     },
-    transitionBuilder: (_, a, __, child) => FadeTransition(
-      opacity: CurvedAnimation(parent: a, curve: LuxMotion.decelerate),
-      child: child,
-    ),
+    transitionBuilder:
+        (_, a, __, child) => FadeTransition(
+          opacity: CurvedAnimation(parent: a, curve: LuxMotion.decelerate),
+          child: child,
+        ),
   );
 }
 
@@ -372,16 +383,16 @@ class _RideProgressBarState extends State<RideProgressBar>
   )..repeat(reverse: true);
 
   int get _step => switch (widget.status) {
-        BookingStatus.pending => 0,
-        BookingStatus.confirmed => 1,
-        BookingStatus.driverArriving => 2,
-        BookingStatus.driverArrived => 3,
-        // Verificada: sigue en la recogida, a punto de salir.
-        BookingStatus.verified => 3,
-        BookingStatus.inProgress => 4,
-        BookingStatus.completed => 5,
-        BookingStatus.cancelled => 0,
-      };
+    BookingStatus.pending => 0,
+    BookingStatus.confirmed => 1,
+    BookingStatus.driverArriving => 2,
+    BookingStatus.driverArrived => 3,
+    // Verificada: sigue en la recogida, a punto de salir.
+    BookingStatus.verified => 3,
+    BookingStatus.inProgress => 4,
+    BookingStatus.completed => 5,
+    BookingStatus.cancelled => 0,
+  };
 
   @override
   void dispose() {
@@ -414,14 +425,18 @@ class _RideProgressBarState extends State<RideProgressBar>
                         curve: LuxMotion.emphasized,
                         alignment: Alignment.centerLeft,
                         widthFactor: i < step ? 1 : 0,
-                        child: i == step - 1 && step < 5 && !calm
-                            ? FadeTransition(
-                                opacity: Tween(begin: 0.45, end: 1.0)
-                                    .animate(_pulse),
-                                child:
-                                    const ColoredBox(color: LuxColors.sapphire),
-                              )
-                            : const ColoredBox(color: LuxColors.sapphire),
+                        child:
+                            i == step - 1 && step < 5 && !calm
+                                ? FadeTransition(
+                                  opacity: Tween(
+                                    begin: 0.45,
+                                    end: 1.0,
+                                  ).animate(_pulse),
+                                  child: const ColoredBox(
+                                    color: LuxColors.sapphire,
+                                  ),
+                                )
+                                : const ColoredBox(color: LuxColors.sapphire),
                       ),
                     ],
                   ),
@@ -492,56 +507,64 @@ class _LuxSlideToConfirmState extends State<LuxSlideToConfirm>
   }
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(builder: (context, c) {
-        final knob = widget.height - 8;
-        final max = c.maxWidth - knob - 8;
-        final t = max <= 0 ? 0.0 : (_drag / max).clamp(0.0, 1.0);
-        return Semantics(
-          button: true,
-          label: widget.label,
-          hint: 'Desliza para confirmar',
-          onTap: widget.enabled && !_done
-              ? () {
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, c) {
+      final knob = widget.height - 8;
+      final max = c.maxWidth - knob - 8;
+      final t = max <= 0 ? 0.0 : (_drag / max).clamp(0.0, 1.0);
+      return Semantics(
+        button: true,
+        label: widget.label,
+        hint: 'Desliza para confirmar',
+        onTap:
+            widget.enabled && !_done
+                ? () {
                   // Lectores de pantalla: un toque basta.
                   setState(() => _done = true);
                   widget.onConfirmed();
                 }
-              : null,
-          child: Container(
-            height: widget.height,
-            decoration: BoxDecoration(
-              color: widget.enabled
-                  ? LuxColors.sapphire
-                  : LuxColors.sapphire.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(widget.height / 2),
-              boxShadow: widget.enabled ? LuxElevation.mid : null,
-            ),
-            child: Stack(
-              alignment: Alignment.centerLeft,
-              children: [
-                Center(
-                  child: Opacity(
-                    opacity: 1 - t,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: knob * 0.6),
-                      child: Text(
-                        widget.label,
-                        style: LuxTypography.button
-                            .copyWith(color: LuxColors.onAccent, fontSize: 16),
+                : null,
+        child: Container(
+          height: widget.height,
+          decoration: BoxDecoration(
+            color:
+                widget.enabled
+                    ? LuxColors.sapphire
+                    : LuxColors.sapphire.withValues(alpha: 0.4),
+            borderRadius: BorderRadius.circular(widget.height / 2),
+            boxShadow: widget.enabled ? LuxElevation.mid : null,
+          ),
+          child: Stack(
+            alignment: Alignment.centerLeft,
+            children: [
+              Center(
+                child: Opacity(
+                  opacity: 1 - t,
+                  child: Padding(
+                    padding: EdgeInsets.only(left: knob * 0.6),
+                    child: Text(
+                      widget.label,
+                      style: LuxTypography.button.copyWith(
+                        color: LuxColors.onAccent,
+                        fontSize: 16,
                       ),
                     ),
                   ),
                 ),
-                Positioned(
-                  left: 4 + _drag.clamp(0.0, max < 0 ? 0.0 : max),
-                  child: GestureDetector(
-                    onHorizontalDragUpdate: !widget.enabled || _done
-                        ? null
-                        : (d) => setState(
-                            () => _drag = (_drag + d.delta.dx).clamp(0, max)),
-                    onHorizontalDragEnd: !widget.enabled || _done
-                        ? null
-                        : (_) {
+              ),
+              Positioned(
+                left: 4 + _drag.clamp(0.0, max < 0 ? 0.0 : max),
+                child: GestureDetector(
+                  onHorizontalDragUpdate:
+                      !widget.enabled || _done
+                          ? null
+                          : (d) => setState(
+                            () => _drag = (_drag + d.delta.dx).clamp(0, max),
+                          ),
+                  onHorizontalDragEnd:
+                      !widget.enabled || _done
+                          ? null
+                          : (_) {
                             if (t > 0.85) {
                               setState(() {
                                 _done = true;
@@ -554,25 +577,24 @@ class _LuxSlideToConfirmState extends State<LuxSlideToConfirm>
                               _back.forward(from: 0);
                             }
                           },
-                    child: Container(
-                      width: knob,
-                      height: knob,
-                      decoration: const BoxDecoration(
-                        color: LuxColors.surface,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        _done
-                            ? Icons.check_rounded
-                            : Icons.arrow_forward_rounded,
-                        color: LuxColors.sapphire,
-                      ),
+                  child: Container(
+                    width: knob,
+                    height: knob,
+                    decoration: const BoxDecoration(
+                      color: LuxColors.surface,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      _done ? Icons.check_rounded : Icons.arrow_forward_rounded,
+                      color: LuxColors.sapphire,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        );
-      });
+        ),
+      );
+    },
+  );
 }

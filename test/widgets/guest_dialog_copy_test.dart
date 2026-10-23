@@ -6,8 +6,9 @@ import 'package:flutter_test/flutter_test.dart';
 /// existan: solo dice que el chófer asignado recibe sus datos.
 void main() {
   final source =
-      File('lib/features/booking/presentation/pages/booking_screen.dart')
-          .readAsStringSync();
+      File(
+        'lib/features/booking/presentation/pages/booking_screen.dart',
+      ).readAsStringSync();
 
   test('no promete notificaciones al invitado', () {
     expect(source, isNot(contains('recibirá las notificaciones')));
@@ -16,10 +17,14 @@ void main() {
 
   test('dice con quién se comparten los datos del invitado', () {
     expect(
-        source, contains('con el chófer asignado para coordinar la recogida'));
+      source,
+      contains('con el chófer asignado para coordinar la recogida'),
+    );
     expect(
-        source,
-        contains(
-            'El chófer asignado usará este número para coordinar la recogida.'));
+      source,
+      contains(
+        'El chófer asignado usará este número para coordinar la recogida.',
+      ),
+    );
   });
 }

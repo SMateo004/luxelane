@@ -12,37 +12,47 @@ void main() {
     });
 
     test('una hora pasada pasa al cuarto de hora tras 30 min', () {
-      expect(adjustedPickup(DateTime(2026, 10, 17, 8), now: now),
-          DateTime(2026, 10, 17, 14, 45));
+      expect(
+        adjustedPickup(DateTime(2026, 10, 17, 8), now: now),
+        DateTime(2026, 10, 17, 14, 45),
+      );
     });
 
     test('menos de 15 min de antelación también se ajusta', () {
       expect(
-          adjustedPickup(DateTime(2026, 10, 17, 14, 15), now: now), isNotNull);
+        adjustedPickup(DateTime(2026, 10, 17, 14, 15), now: now),
+        isNotNull,
+      );
     });
   });
 
   group('ServiceArea.originError', () {
     test('acepta una recogida en Santa Cruz', () {
       expect(
-          ServiceArea.originError(
-              const Place(address: 'Equipetrol', lat: -17.765, lng: -63.196)),
-          isNull);
+        ServiceArea.originError(
+          const Place(address: 'Equipetrol', lat: -17.765, lng: -63.196),
+        ),
+        isNull,
+      );
     });
 
     test('rechaza una recogida sin coordenadas', () {
       expect(
-          ServiceArea.originError(
-              const Place(address: 'Sin ubicar', lat: 0, lng: 0)),
-          isNotNull);
+        ServiceArea.originError(
+          const Place(address: 'Sin ubicar', lat: 0, lng: 0),
+        ),
+        isNotNull,
+      );
     });
 
     test('rechaza una recogida fuera de las ciudades de servicio', () {
       // Uyuni (sin ciudad de servicio; su aeropuerto está a unos km).
       expect(
-          ServiceArea.originError(
-              const Place(address: 'Centro', lat: -20.20, lng: -66.30)),
-          isNotNull);
+        ServiceArea.originError(
+          const Place(address: 'Centro', lat: -20.20, lng: -66.30),
+        ),
+        isNotNull,
+      );
     });
   });
 }

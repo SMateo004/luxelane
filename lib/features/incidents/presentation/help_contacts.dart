@@ -6,12 +6,12 @@ String mapLink(double lat, double lng) =>
 
 /// Texto del SMS que la persona solo tiene que enviar a central.
 String incidentSmsBody(String bookingShortId, {double? lat, double? lng}) => [
-      'SOS. Reserva #$bookingShortId.',
-      if (lat != null && lng != null)
-        'Ubicación: ${mapLink(lat, lng)}'
-      else
-        'Ubicación no disponible.',
-    ].join(' ');
+  'SOS. Reserva #$bookingShortId.',
+  if (lat != null && lng != null)
+    'Ubicación: ${mapLink(lat, lng)}'
+  else
+    'Ubicación no disponible.',
+].join(' ');
 
 /// `sms:` prellenado a central. iOS separa el cuerpo con `&`, Android con
 /// `?`.
@@ -22,8 +22,9 @@ Uri incidentSmsUri(
   double? lng,
   TargetPlatform? platform,
 }) {
-  final body =
-      Uri.encodeComponent(incidentSmsBody(bookingShortId, lat: lat, lng: lng));
+  final body = Uri.encodeComponent(
+    incidentSmsBody(bookingShortId, lat: lat, lng: lng),
+  );
   final sep =
       (platform ?? defaultTargetPlatform) == TargetPlatform.iOS ? '&' : '?';
   return Uri.parse('sms:${phone.replaceAll(' ', '')}${sep}body=$body');

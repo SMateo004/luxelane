@@ -10,8 +10,8 @@ class PaymentRepositoryImpl implements PaymentRepository {
   PaymentRepositoryImpl({
     required FirebaseFirestore firestore,
     required FirebaseFunctions functions,
-  })  : _db = firestore,
-        _fn = functions;
+  }) : _db = firestore,
+       _fn = functions;
 
   final FirebaseFirestore _db;
   final FirebaseFunctions _fn;
@@ -25,15 +25,20 @@ class PaymentRepositoryImpl implements PaymentRepository {
     required String paymentMethodId,
   }) async {
     try {
-      final result = await _fn
-          .httpsCallable('createPaymentIntent')
-          .call({'bookingId': bookingId, 'paymentMethodId': paymentMethodId});
+      final result = await _fn.httpsCallable('createPaymentIntent').call({
+        'bookingId': bookingId,
+        'paymentMethodId': paymentMethodId,
+      });
       if (result.data['deferred'] == true) return const Right(null);
       return Right(result.data['clientSecret'] as String);
     } on FirebaseFunctionsException catch (e) {
-      return Left(PaymentFailure(e.code == 'failed-precondition'
-          ? 'tu cuenta aún no tiene pagos habilitados'
-          : 'no se pudo contactar con el servidor de pagos'));
+      return Left(
+        PaymentFailure(
+          e.code == 'failed-precondition'
+              ? 'tu cuenta aún no tiene pagos habilitados'
+              : 'no se pudo contactar con el servidor de pagos',
+        ),
+      );
     } catch (e) {
       return Left(PaymentFailure(e.toString()));
     }
@@ -56,26 +61,27 @@ class PaymentRepositoryImpl implements PaymentRepository {
         'stripePaymentIntentId': stripePaymentIntentId,
       });
       final data = Map<String, dynamic>.from(result.data as Map);
-      return Right(Payment(
-        id: data['paymentId'] as String,
-        bookingId: bookingId,
-        riderId: riderId,
-        stripePaymentIntentId: stripePaymentIntentId,
-        amount: (data['amount'] as num?)?.toDouble() ??
-            Payment.toCents(amount).toDouble(),
-        currency: data['currency'] as String? ?? currency,
-        status: PaymentStatusX.fromString(data['status'] as String? ?? ''),
-        createdAt: DateTime.now(),
-      ));
+      return Right(
+        Payment(
+          id: data['paymentId'] as String,
+          bookingId: bookingId,
+          riderId: riderId,
+          stripePaymentIntentId: stripePaymentIntentId,
+          amount:
+              (data['amount'] as num?)?.toDouble() ??
+              Payment.toCents(amount).toDouble(),
+          currency: data['currency'] as String? ?? currency,
+          status: PaymentStatusX.fromString(data['status'] as String? ?? ''),
+          createdAt: DateTime.now(),
+        ),
+      );
     } catch (e) {
       return Left(PaymentFailure(e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, Payment>> getPaymentByBooking(
-    String bookingId,
-  ) async {
+  Future<Either<Failure, Payment>> getPaymentByBooking(String bookingId) async {
     try {
       final snap =
           await _col.where('bookingId', isEqualTo: bookingId).limit(1).get();
@@ -92,13 +98,16 @@ class PaymentRepositoryImpl implements PaymentRepository {
     String riderId,
   ) async {
     try {
-      final snap = await _col
-          .where('riderId', isEqualTo: riderId)
-          .orderBy('createdAt', descending: true)
-          .get();
-      return Right(snap.docs
-          .map((d) => Payment.fromJson({'id': d.id, ...d.data()}))
-          .toList());
+      final snap =
+          await _col
+              .where('riderId', isEqualTo: riderId)
+              .orderBy('createdAt', descending: true)
+              .get();
+      return Right(
+        snap.docs
+            .map((d) => Payment.fromJson({'id': d.id, ...d.data()}))
+            .toList(),
+      );
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -124,9 +133,10 @@ class PaymentRepositoryImpl implements PaymentRepository {
         'customerId': stripeCustomerId,
       });
       // En móvil llegan como Map<Object?, Object?>: se copian una a una.
-      final cards = ((result.data['cards'] as List?) ?? const [])
-          .map((c) => Map<String, dynamic>.from(c as Map))
-          .toList();
+      final cards =
+          ((result.data['cards'] as List?) ?? const [])
+              .map((c) => Map<String, dynamic>.from(c as Map))
+              .toList();
       return Right(cards);
     } catch (e) {
       return Left(PaymentFailure(e.toString()));
@@ -161,12 +171,16 @@ class PaymentRepositoryImpl implements PaymentRepository {
       return const Right(null);
     } on FirebaseFunctionsException catch (e) {
       if (e.message == 'card-in-use') {
-        return const Left(PaymentFailure(
+        return const Left(
+          PaymentFailure(
             'Esta tarjeta paga una reserva pendiente. Cancélala o espera a '
-            'que termine antes de quitar la tarjeta.'));
+            'que termine antes de quitar la tarjeta.',
+          ),
+        );
       }
       return const Left(
-          PaymentFailure('No pudimos quitar la tarjeta. Inténtalo de nuevo.'));
+        PaymentFailure('No pudimos quitar la tarjeta. Inténtalo de nuevo.'),
+      );
     } catch (e) {
       return Left(PaymentFailure(e.toString()));
     }
@@ -180,8 +194,11 @@ class PaymentRepositoryImpl implements PaymentRepository {
       });
       return const Right(null);
     } catch (_) {
-      return const Left(PaymentFailure(
-          'No pudimos cambiar la tarjeta predeterminada. Inténtalo de nuevo.'));
+      return const Left(
+        PaymentFailure(
+          'No pudimos cambiar la tarjeta predeterminada. Inténtalo de nuevo.',
+        ),
+      );
     }
   }
 
@@ -192,8 +209,11 @@ class PaymentRepositoryImpl implements PaymentRepository {
           await _fn.httpsCallable('ensureStripeCustomer').call<dynamic>();
       return Right((result.data as Map)['customerId'] as String);
     } catch (_) {
-      return const Left(PaymentFailure(
-          'No pudimos preparar tu perfil de pagos. Inténtalo de nuevo.'));
+      return const Left(
+        PaymentFailure(
+          'No pudimos preparar tu perfil de pagos. Inténtalo de nuevo.',
+        ),
+      );
     }
   }
 }

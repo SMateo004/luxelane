@@ -10,7 +10,8 @@ import '../../../incidents/presentation/help_contacts.dart';
 import '../bloc/admin_bloc.dart';
 import 'admin_shared_widgets.dart';
 import 'incident_beep_io.dart'
-    if (dart.library.js_interop) 'incident_beep_web.dart' as beep;
+    if (dart.library.js_interop) 'incident_beep_web.dart'
+    as beep;
 
 /// Tiempo sin reconocer, legible para el admin.
 String incidentWaitLabel(Duration d) {
@@ -21,11 +22,11 @@ String incidentWaitLabel(Duration d) {
 }
 
 String incidentStatusLabel(Incident i) => switch (i.status) {
-      IncidentStatus.open => 'SIN RECONOCER',
-      IncidentStatus.acknowledged => 'Reconocido',
-      IncidentStatus.cancelledByReporter => 'Cancelado por quien lo disparó',
-      IncidentStatus.closed => 'Cerrado',
-    };
+  IncidentStatus.open => 'SIN RECONOCER',
+  IncidentStatus.acknowledged => 'Reconocido',
+  IncidentStatus.cancelledByReporter => 'Cancelado por quien lo disparó',
+  IncidentStatus.closed => 'Cerrado',
+};
 
 const _logLabels = {
   'raised': 'SOS disparado',
@@ -97,74 +98,83 @@ class _AdminIncidentsStripState extends State<AdminIncidentsStrip> {
 
   @override
   Widget build(BuildContext context) => BlocBuilder<AdminBloc, AdminState>(
-        buildWhen: (a, b) =>
+    buildWhen:
+        (a, b) =>
             a.incidents != b.incidents ||
             a.users != b.users ||
             a.bookings != b.bookings ||
             a.globalSettings != b.globalSettings,
-        builder: (context, s) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) _sync(s);
-          });
-          if (s.incidents.isEmpty) return const SizedBox.shrink();
-          final list = [...s.incidents]..sort((a, b) {
-              int rank(Incident i) => switch (i.status) {
-                    IncidentStatus.open => 0,
-                    IncidentStatus.acknowledged => 1,
-                    _ => 2,
-                  };
-              final r = rank(a).compareTo(rank(b));
-              if (r != 0) return r;
-              return (a.createdAt ?? DateTime(0))
-                  .compareTo(b.createdAt ?? DateTime(0));
-            });
-          final unack = s.unacknowledgedIncidents;
-          return Container(
-            key: const ValueKey('incidents-strip'),
-            width: double.infinity,
-            color: unack > 0
+    builder: (context, s) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _sync(s);
+      });
+      if (s.incidents.isEmpty) return const SizedBox.shrink();
+      final list = [...s.incidents]..sort((a, b) {
+        int rank(Incident i) => switch (i.status) {
+          IncidentStatus.open => 0,
+          IncidentStatus.acknowledged => 1,
+          _ => 2,
+        };
+        final r = rank(a).compareTo(rank(b));
+        if (r != 0) return r;
+        return (a.createdAt ?? DateTime(0)).compareTo(
+          b.createdAt ?? DateTime(0),
+        );
+      });
+      final unack = s.unacknowledgedIncidents;
+      return Container(
+        key: const ValueKey('incidents-strip'),
+        width: double.infinity,
+        color:
+            unack > 0
                 ? LuxColors.error.withValues(alpha: 0.08)
                 : LuxColors.warning.withValues(alpha: 0.06),
-            padding: const EdgeInsets.fromLTRB(
-                LuxSpacing.md, LuxSpacing.sm, LuxSpacing.md, LuxSpacing.sm),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.fromLTRB(
+          LuxSpacing.md,
+          LuxSpacing.sm,
+          LuxSpacing.md,
+          LuxSpacing.sm,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    const Icon(Icons.sos_rounded, color: LuxColors.error),
-                    const SizedBox(width: LuxSpacing.sm),
-                    Expanded(
-                      child: Semantics(
-                        liveRegion: true,
-                        child: Text(
-                          unack > 0
-                              ? '$unack ${unack == 1 ? 'incidente sin reconocer' : 'incidentes sin reconocer'}'
-                              : 'Incidentes en curso',
-                          style: LuxTypography.titleMedium
-                              .copyWith(color: LuxColors.error),
-                        ),
+                const Icon(Icons.sos_rounded, color: LuxColors.error),
+                const SizedBox(width: LuxSpacing.sm),
+                Expanded(
+                  child: Semantics(
+                    liveRegion: true,
+                    child: Text(
+                      unack > 0
+                          ? '$unack ${unack == 1 ? 'incidente sin reconocer' : 'incidentes sin reconocer'}'
+                          : 'Incidentes en curso',
+                      style: LuxTypography.titleMedium.copyWith(
+                        color: LuxColors.error,
                       ),
                     ),
-                    TextButton.icon(
-                      onPressed: () => setState(() {
+                  ),
+                ),
+                TextButton.icon(
+                  onPressed:
+                      () => setState(() {
                         _muted = !_muted;
                         _sync(s);
                       }),
-                      icon: Icon(_muted
-                          ? Icons.volume_off_rounded
-                          : Icons.volume_up_rounded),
-                      label: Text(_muted ? 'Activar sonido' : 'Silenciar'),
-                    ),
-                  ],
+                  icon: Icon(
+                    _muted ? Icons.volume_off_rounded : Icons.volume_up_rounded,
+                  ),
+                  label: Text(_muted ? 'Activar sonido' : 'Silenciar'),
                 ),
-                for (final i in list)
-                  _IncidentCard(incident: i, state: s, open: _open),
               ],
             ),
-          );
-        },
+            for (final i in list)
+              _IncidentCard(incident: i, state: s, open: _open),
+          ],
+        ),
       );
+    },
+  );
 }
 
 class _IncidentCard extends StatelessWidget {
@@ -204,9 +214,9 @@ class _IncidentCard extends StatelessWidget {
       minReasonLength: 10,
     );
     if (note == null || !context.mounted) return;
-    context
-        .read<AdminBloc>()
-        .add(AdminCloseIncidentRequested(incident.id, note));
+    context.read<AdminBloc>().add(
+      AdminCloseIncidentRequested(incident.id, note),
+    );
   }
 
   @override
@@ -215,9 +225,10 @@ class _IncidentCard extends StatelessWidget {
     final b = _booking;
     final reporter = state.userName(incident.reporterId);
     final role = incident.reporterRole == 'driver' ? 'chófer' : 'pasajero';
-    final since = incident.createdAt == null
-        ? null
-        : DateTime.now().difference(incident.createdAt!);
+    final since =
+        incident.createdAt == null
+            ? null
+            : DateTime.now().difference(incident.createdAt!);
     final riderPhone = _phone(b?.riderId);
     final driverPhone = _phone(b?.driverId);
     final dispatch = state.globalSettings['dispatchPhone'];
@@ -229,8 +240,9 @@ class _IncidentCard extends StatelessWidget {
         color: LuxColors.surface,
         borderRadius: BorderRadius.circular(LuxRadius.sm),
         border: Border.all(
-            color: open0 ? LuxColors.error : LuxColors.border,
-            width: open0 ? 2 : 1),
+          color: open0 ? LuxColors.error : LuxColors.border,
+          width: open0 ? 2 : 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,22 +251,32 @@ class _IncidentCard extends StatelessWidget {
             spacing: LuxSpacing.sm,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              AdminTag(incidentStatusLabel(incident),
-                  color: open0 ? LuxColors.error : LuxColors.warning),
+              AdminTag(
+                incidentStatusLabel(incident),
+                color: open0 ? LuxColors.error : LuxColors.warning,
+              ),
               Text(
-                  'Reserva #${bookingShortId(incident.bookingId)} · SOS del '
-                  '$role $reporter',
-                  style: LuxTypography.titleMedium),
+                'Reserva #${bookingShortId(incident.bookingId)} · SOS del '
+                '$role $reporter',
+                style: LuxTypography.titleMedium,
+              ),
               if (since != null && open0)
-                Text('Sin reconocer: ${incidentWaitLabel(since)}',
-                    style: LuxTypography.bodyMedium
-                        .copyWith(color: LuxColors.error)),
+                Text(
+                  'Sin reconocer: ${incidentWaitLabel(since)}',
+                  style: LuxTypography.bodyMedium.copyWith(
+                    color: LuxColors.error,
+                  ),
+                ),
               if (incident.count > 1)
-                Text('Pulsado ${incident.count} veces',
-                    style: LuxTypography.caption),
+                Text(
+                  'Pulsado ${incident.count} veces',
+                  style: LuxTypography.caption,
+                ),
               if (incident.escalationCount > 0)
-                Text('Escalado ${incident.escalationCount}×',
-                    style: LuxTypography.caption),
+                Text(
+                  'Escalado ${incident.escalationCount}×',
+                  style: LuxTypography.caption,
+                ),
             ],
           ),
           const SizedBox(height: LuxSpacing.xs),
@@ -264,27 +286,41 @@ class _IncidentCard extends StatelessWidget {
             children: [
               StreamBuilder<({double lat, double lng})?>(
                 stream: bloc.incidentLocation(incident.id),
-                builder: (_, snap) => snap.data == null
-                    ? const AdminTag('Sin ubicación del aviso',
-                        color: LuxColors.inkTertiary)
-                    : AdminActionButton(
-                        icon: Icons.location_on_outlined,
-                        label: 'Ubicación del aviso',
-                        onTap: () => open(
-                            Uri.parse(mapLink(snap.data!.lat, snap.data!.lng))),
-                      ),
+                builder:
+                    (_, snap) =>
+                        snap.data == null
+                            ? const AdminTag(
+                              'Sin ubicación del aviso',
+                              color: LuxColors.inkTertiary,
+                            )
+                            : AdminActionButton(
+                              icon: Icons.location_on_outlined,
+                              label: 'Ubicación del aviso',
+                              onTap:
+                                  () => open(
+                                    Uri.parse(
+                                      mapLink(snap.data!.lat, snap.data!.lng),
+                                    ),
+                                  ),
+                            ),
               ),
               if (b != null)
                 StreamBuilder<({double lat, double lng})?>(
                   stream: bloc.driverTracking(b.id),
-                  builder: (_, snap) => snap.data == null
-                      ? const SizedBox.shrink()
-                      : AdminActionButton(
-                          icon: Icons.directions_car_outlined,
-                          label: 'Ubicación del chófer',
-                          onTap: () => open(Uri.parse(
-                              mapLink(snap.data!.lat, snap.data!.lng))),
-                        ),
+                  builder:
+                      (_, snap) =>
+                          snap.data == null
+                              ? const SizedBox.shrink()
+                              : AdminActionButton(
+                                icon: Icons.directions_car_outlined,
+                                label: 'Ubicación del chófer',
+                                onTap:
+                                    () => open(
+                                      Uri.parse(
+                                        mapLink(snap.data!.lat, snap.data!.lng),
+                                      ),
+                                    ),
+                              ),
                 ),
               if (riderPhone != null)
                 AdminActionButton(
@@ -309,8 +345,10 @@ class _IncidentCard extends StatelessWidget {
                   icon: Icons.check_circle_outline_rounded,
                   label: 'Reconocer',
                   color: LuxColors.error,
-                  onTap: () =>
-                      bloc.add(AdminAcknowledgeIncidentRequested(incident.id)),
+                  onTap:
+                      () => bloc.add(
+                        AdminAcknowledgeIncidentRequested(incident.id),
+                      ),
                 ),
               AdminActionButton(
                 icon: Icons.task_alt_rounded,
@@ -327,18 +365,20 @@ class _IncidentCard extends StatelessWidget {
               children: [
                 StreamBuilder<List<IncidentLogEntry>>(
                   stream: bloc.incidentLog(incident.id),
-                  builder: (_, snap) => Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for (final e in snap.data ?? const <IncidentLogEntry>[])
-                        Text(
-                          '${e.at == null ? '—' : adminDate(e.at!)} · '
-                          '${_logLabels[e.type] ?? e.type}'
-                          '${e.note != null ? ': ${e.note}' : ''}',
-                          style: LuxTypography.caption,
-                        ),
-                    ],
-                  ),
+                  builder:
+                      (_, snap) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (final e
+                              in snap.data ?? const <IncidentLogEntry>[])
+                            Text(
+                              '${e.at == null ? '—' : adminDate(e.at!)} · '
+                              '${_logLabels[e.type] ?? e.type}'
+                              '${e.note != null ? ': ${e.note}' : ''}',
+                              style: LuxTypography.caption,
+                            ),
+                        ],
+                      ),
                 ),
               ],
             ),

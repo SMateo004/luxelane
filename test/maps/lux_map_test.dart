@@ -10,14 +10,16 @@ const _pickup = Place(address: 'Colinas del Urubó', lat: -17.755, lng: -63.205)
 const _dropoff = Place(address: 'Clara Chuchío', lat: -17.70, lng: -63.17);
 
 RouteInfo _road(int n) => RouteInfo(
-      distanceKm: 9.4,
-      durationMin: 18,
-      polylinePoints: [
-        for (var i = 0; i < n; i++)
-          LatLng(_pickup.lat + (_dropoff.lat - _pickup.lat) * i / (n - 1),
-              _pickup.lng + (_dropoff.lng - _pickup.lng) * i / (n - 1) + 0.01),
-      ],
-    );
+  distanceKm: 9.4,
+  durationMin: 18,
+  polylinePoints: [
+    for (var i = 0; i < n; i++)
+      LatLng(
+        _pickup.lat + (_dropoff.lat - _pickup.lat) * i / (n - 1),
+        _pickup.lng + (_dropoff.lng - _pickup.lng) * i / (n - 1) + 0.01,
+      ),
+  ],
+);
 
 void main() {
   group('route_geometry', () {
@@ -29,17 +31,25 @@ void main() {
     test('solo cuenta como recorrido real si sigue las calles', () {
       expect(hasRoadPath(null), isFalse);
       expect(
-          hasRoadPath(RouteInfo(
-              distanceKm: 1,
-              durationMin: 1,
-              polylinePoints: [_pickup.latLng, _dropoff.latLng])),
-          isFalse);
+        hasRoadPath(
+          RouteInfo(
+            distanceKm: 1,
+            durationMin: 1,
+            polylinePoints: [_pickup.latLng, _dropoff.latLng],
+          ),
+        ),
+        isFalse,
+      );
       expect(hasRoadPath(_road(20)), isTrue);
     });
 
     test('el encuadre incluye el recorrido aunque se salga de los puntos', () {
-      final b = boundsOf(
-          [_pickup.latLng, _dropoff.latLng, const LatLng(-17.72, -63.10)])!;
+      final b =
+          boundsOf([
+            _pickup.latLng,
+            _dropoff.latLng,
+            const LatLng(-17.72, -63.10),
+          ])!;
       expect(b.northeast.longitude, -63.10);
       expect(b.southwest.latitude, _pickup.lat);
       expect(boundsOf(const []), isNull);
@@ -62,7 +72,8 @@ void main() {
 
     Future<LuxMapState> pump(WidgetTester t, Widget map) async {
       await t.pumpWidget(
-          MaterialApp(home: SizedBox(width: 400, height: 300, child: map)));
+        MaterialApp(home: SizedBox(width: 400, height: 300, child: map)),
+      );
       await t.pump();
       return t.state<LuxMapState>(find.byType(LuxMap));
     }
@@ -73,31 +84,40 @@ void main() {
       expect(calls, isEmpty);
     });
 
-    testWidgets('calcula y dibuja el recorrido real si no se lo pasan',
-        (t) async {
-      final s =
-          await pump(t, const LuxMap(origin: _pickup, destination: _dropoff));
+    testWidgets('calcula y dibuja el recorrido real si no se lo pasan', (
+      t,
+    ) async {
+      final s = await pump(
+        t,
+        const LuxMap(origin: _pickup, destination: _dropoff),
+      );
       expect(calls, hasLength(1));
       expect(s.route?.polylinePoints, hasLength(30));
       // La cámara encuadra el recorrido entero, no solo los dos marcadores.
       expect(s.framePoints, hasLength(32));
     });
 
-    testWidgets('si recibe solo la línea recta, pide el recorrido real',
-        (t) async {
+    testWidgets('si recibe solo la línea recta, pide el recorrido real', (
+      t,
+    ) async {
       final straight = RouteInfo(
-          distanceKm: 0,
-          durationMin: 0,
-          polylinePoints: [_pickup.latLng, _dropoff.latLng]);
-      final s = await pump(t,
-          LuxMap(origin: _pickup, destination: _dropoff, routeInfo: straight));
+        distanceKm: 0,
+        durationMin: 0,
+        polylinePoints: [_pickup.latLng, _dropoff.latLng],
+      );
+      final s = await pump(
+        t,
+        LuxMap(origin: _pickup, destination: _dropoff, routeInfo: straight),
+      );
       expect(calls, hasLength(1));
       expect(s.route?.polylinePoints, hasLength(30));
     });
 
     testWidgets('usa el recorrido recibido sin volver a pedirlo', (t) async {
-      final s = await pump(t,
-          LuxMap(origin: _pickup, destination: _dropoff, routeInfo: _road(12)));
+      final s = await pump(
+        t,
+        LuxMap(origin: _pickup, destination: _dropoff, routeInfo: _road(12)),
+      );
       expect(calls, isEmpty);
       expect(s.route?.polylinePoints, hasLength(12));
     });
@@ -111,8 +131,10 @@ void main() {
 
     testWidgets('si Google no devuelve ruta no inventa una línea', (t) async {
       LuxMap.routeLoader = (o, d) async => null;
-      final s =
-          await pump(t, const LuxMap(origin: _pickup, destination: _dropoff));
+      final s = await pump(
+        t,
+        const LuxMap(origin: _pickup, destination: _dropoff),
+      );
       expect(s.route, isNull);
     });
   });

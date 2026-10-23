@@ -18,9 +18,10 @@ class _DriveCanvasAnimState extends State<DriveCanvasAnim>
   @override
   void initState() {
     super.initState();
-    _ctrl =
-        AnimationController(vsync: this, duration: const Duration(seconds: 10))
-          ..repeat();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
+    )..repeat();
     _ctrl.addListener(_updateParticles);
   }
 
@@ -28,14 +29,16 @@ class _DriveCanvasAnimState extends State<DriveCanvasAnim>
     if (math.Random().nextDouble() > 0.7) {
       final w = MediaQuery.sizeOf(context).width;
       final h = MediaQuery.sizeOf(context).height;
-      _particles.add(_Particle(
-        x: w * 0.55 + math.Random().nextDouble() * w * 0.35,
-        y: h * 0.42 + math.Random().nextDouble() * h * 0.08,
-        vx: -math.Random().nextDouble() * 2 - 1,
-        vy: math.Random().nextDouble() * 0.5 - 0.25,
-        life: 1.0,
-        size: math.Random().nextDouble() * 1.5 + 0.5,
-      ));
+      _particles.add(
+        _Particle(
+          x: w * 0.55 + math.Random().nextDouble() * w * 0.35,
+          y: h * 0.42 + math.Random().nextDouble() * h * 0.08,
+          vx: -math.Random().nextDouble() * 2 - 1,
+          vy: math.Random().nextDouble() * 0.5 - 0.25,
+          life: 1.0,
+          size: math.Random().nextDouble() * 1.5 + 0.5,
+        ),
+      );
     }
     for (int i = _particles.length - 1; i >= 0; i--) {
       _particles[i].x += _particles[i].vx;
@@ -57,14 +60,15 @@ class _DriveCanvasAnimState extends State<DriveCanvasAnim>
       onHover: (e) => setState(() => _mouseX = e.localPosition.dx),
       child: AnimatedBuilder(
         animation: _ctrl,
-        builder: (_, __) => CustomPaint(
-          size: Size.infinite,
-          painter: DrivePainter(
-            progress: _ctrl.value * 10,
-            mx: _mouseX - (MediaQuery.sizeOf(context).width / 2),
-            particles: _particles,
-          ),
-        ),
+        builder:
+            (_, __) => CustomPaint(
+              size: Size.infinite,
+              painter: DrivePainter(
+                progress: _ctrl.value * 10,
+                mx: _mouseX - (MediaQuery.sizeOf(context).width / 2),
+                particles: _particles,
+              ),
+            ),
       ),
     );
   }
@@ -72,13 +76,14 @@ class _DriveCanvasAnimState extends State<DriveCanvasAnim>
 
 class _Particle {
   double x, y, vx, vy, life, size;
-  _Particle(
-      {required this.x,
-      required this.y,
-      required this.vx,
-      required this.vy,
-      required this.life,
-      required this.size});
+  _Particle({
+    required this.x,
+    required this.y,
+    required this.vx,
+    required this.vy,
+    required this.life,
+    required this.size,
+  });
 }
 
 class DrivePainter extends CustomPainter {
@@ -86,8 +91,11 @@ class DrivePainter extends CustomPainter {
   final double mx;
   final List<_Particle> particles;
 
-  DrivePainter(
-      {required this.progress, required this.mx, required this.particles});
+  DrivePainter({
+    required this.progress,
+    required this.mx,
+    required this.particles,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -95,20 +103,22 @@ class DrivePainter extends CustomPainter {
     final H = size.height;
 
     // Background Sky
-    final skyPaint = Paint()
-      ..shader = ui.Gradient.linear(Offset.zero, Offset(0, H * 0.5), [
-        const Color(0xFFF2F5FB),
-        const Color(0xFFE8EDF7),
-        const Color(0xFFDDE4F0),
-      ]);
+    final skyPaint =
+        Paint()
+          ..shader = ui.Gradient.linear(Offset.zero, Offset(0, H * 0.5), [
+            const Color(0xFFF2F5FB),
+            const Color(0xFFE8EDF7),
+            const Color(0xFFDDE4F0),
+          ]);
     canvas.drawRect(Rect.fromLTWH(0, 0, W, H * 0.5), skyPaint);
 
-    final hgPaint = Paint()
-      ..shader = ui.Gradient.radial(Offset(W * 0.5, H * 0.44), W * 0.5, [
-        const Color(0x33C8AA64),
-        const Color(0x0FC8AA64),
-        const Color(0x00C8AA64),
-      ]);
+    final hgPaint =
+        Paint()
+          ..shader = ui.Gradient.radial(Offset(W * 0.5, H * 0.44), W * 0.5, [
+            const Color(0x33C8AA64),
+            const Color(0x0FC8AA64),
+            const Color(0x00C8AA64),
+          ]);
     canvas.drawRect(Rect.fromLTWH(0, 0, W, H * 0.7), hgPaint);
 
     // City
@@ -118,10 +128,11 @@ class DrivePainter extends CustomPainter {
     // Particles
     for (var p in particles) {
       canvas.drawCircle(
-          Offset(p.x, p.y),
-          p.size,
-          Paint()
-            ..color = const Color(0xFFB4965A).withValues(alpha: p.life * 0.3));
+        Offset(p.x, p.y),
+        p.size,
+        Paint()
+          ..color = const Color(0xFFB4965A).withValues(alpha: p.life * 0.3),
+      );
     }
     // Car
     _drawCar(canvas, W, H);
@@ -156,12 +167,14 @@ class DrivePainter extends CustomPainter {
 
     canvas.save();
     canvas.drawRect(
-        Rect.fromLTWH(0, hor - H * 0.2, W, H * 0.2),
-        Paint()
-          ..shader = ui.Gradient.linear(
-              Offset(0, hor - H * 0.18),
-              Offset(0, hor),
-              [const Color(0x00C8AF82), const Color(0x0DC8AF82)]));
+      Rect.fromLTWH(0, hor - H * 0.2, W, H * 0.2),
+      Paint()
+        ..shader = ui.Gradient.linear(
+          Offset(0, hor - H * 0.18),
+          Offset(0, hor),
+          [const Color(0x00C8AF82), const Color(0x0DC8AF82)],
+        ),
+    );
 
     final rng = math.Random(42);
     for (var b in buildings) {
@@ -170,13 +183,16 @@ class DrivePainter extends CustomPainter {
         for (int j = 0; j < bw ~/ 10; j++) {
           if (rng.nextDouble() > 0.4) {
             canvas.drawRect(
-                Rect.fromLTWH(bx + j * 10 + 2, hor - bh + i * 14 + 2, 5, 8),
-                Paint()..color = const Color(0x14B4965A));
+              Rect.fromLTWH(bx + j * 10 + 2, hor - bh + i * 14 + 2, 5, 8),
+              Paint()..color = const Color(0x14B4965A),
+            );
           }
         }
       }
-      canvas.drawRect(Rect.fromLTWH(bx, hor - bh, bw, bh),
-          Paint()..color = const Color(0x2E19140C));
+      canvas.drawRect(
+        Rect.fromLTWH(bx, hor - bh, bw, bh),
+        Paint()..color = const Color(0x2E19140C),
+      );
     }
     canvas.restore();
   }
@@ -186,27 +202,30 @@ class DrivePainter extends CustomPainter {
     final vpY = H * 0.44;
     final rW = W * 2.2;
 
-    final rPath = Path()
-      ..moveTo(vpX, vpY)
-      ..lineTo(vpX - rW / 2, H + 100)
-      ..lineTo(vpX + rW / 2, H + 100)
-      ..close();
+    final rPath =
+        Path()
+          ..moveTo(vpX, vpY)
+          ..lineTo(vpX - rW / 2, H + 100)
+          ..lineTo(vpX + rW / 2, H + 100)
+          ..close();
     canvas.drawPath(
-        rPath,
-        Paint()
-          ..shader = ui.Gradient.linear(Offset(0, vpY), Offset(0, H), [
-            const Color(0xF2BEAF9B),
-            const Color(0xF7AFA28E),
-            const Color(0xFC9B8E7A)
-          ]));
+      rPath,
+      Paint()
+        ..shader = ui.Gradient.linear(Offset(0, vpY), Offset(0, H), [
+          const Color(0xF2BEAF9B),
+          const Color(0xF7AFA28E),
+          const Color(0xFC9B8E7A),
+        ]),
+    );
 
     for (var side in [-0.38, 0.38]) {
       canvas.drawLine(
-          Offset(vpX, vpY),
-          Offset(vpX + side * rW * 0.55, H + 100),
-          Paint()
-            ..color = const Color(0x80A08246)
-            ..strokeWidth = 1.5);
+        Offset(vpX, vpY),
+        Offset(vpX + side * rW * 0.55, H + 100),
+        Paint()
+          ..color = const Color(0x80A08246)
+          ..strokeWidth = 1.5,
+      );
     }
 
     const dashCount = 16;
@@ -216,8 +235,10 @@ class DrivePainter extends CustomPainter {
       final y = vpY + (H + 100 - vpY) * t;
       final w = (rW * 0.015) * t;
       final len = 50 * t;
-      canvas.drawRect(Rect.fromLTWH(vpX - w / 2, y - len / 2, w, len),
-          Paint()..color = const Color(0xFFC8B99B).withValues(alpha: 0.7 * t));
+      canvas.drawRect(
+        Rect.fromLTWH(vpX - w / 2, y - len / 2, w, len),
+        Paint()..color = const Color(0xFFC8B99B).withValues(alpha: 0.7 * t),
+      );
     }
   }
 
@@ -237,62 +258,84 @@ class DrivePainter extends CustomPainter {
     canvas.save();
     canvas.scale(1, 0.15);
     canvas.drawOval(
-        Rect.fromCenter(
-            center: Offset(0, carH * 3.5),
-            width: carW * 1.1,
-            height: carH * 2.4),
-        Paint()..color = const Color(0x33140F05));
+      Rect.fromCenter(
+        center: Offset(0, carH * 3.5),
+        width: carW * 1.1,
+        height: carH * 2.4,
+      ),
+      Paint()..color = const Color(0x33140F05),
+    );
     canvas.restore();
 
     canvas.scale(scaleX, scaleX);
     const bw = 100.0;
 
-    final body = Path()
-      ..moveTo(-bw, 12)
-      ..lineTo(-bw, 0)
-      ..quadraticBezierTo(-bw * 0.92, -8, -bw * 0.7, -18)
-      ..lineTo(-bw * 0.18, -26)
-      ..lineTo(bw * 0.28, -24)
-      ..quadraticBezierTo(bw * 0.82, -22, bw, -8)
-      ..lineTo(bw, 12)
-      ..close();
+    final body =
+        Path()
+          ..moveTo(-bw, 12)
+          ..lineTo(-bw, 0)
+          ..quadraticBezierTo(-bw * 0.92, -8, -bw * 0.7, -18)
+          ..lineTo(-bw * 0.18, -26)
+          ..lineTo(bw * 0.28, -24)
+          ..quadraticBezierTo(bw * 0.82, -22, bw, -8)
+          ..lineTo(bw, 12)
+          ..close();
     canvas.drawPath(
-        body,
-        Paint()
-          ..shader = ui.Gradient.linear(
-              const Offset(0, -26),
-              const Offset(0, 12),
-              [const Color(0xFF1E3350), const Color(0xFF0D1B2E)]));
+      body,
+      Paint()
+        ..shader = ui.Gradient.linear(
+          const Offset(0, -26),
+          const Offset(0, 12),
+          [const Color(0xFF1E3350), const Color(0xFF0D1B2E)],
+        ),
+    );
 
     for (var wx in [-bw * 0.62, bw * 0.6]) {
       canvas.drawCircle(
-          Offset(wx, 14), 16, Paint()..color = const Color(0xFF181410));
+        Offset(wx, 14),
+        16,
+        Paint()..color = const Color(0xFF181410),
+      );
       canvas.drawCircle(
-          Offset(wx, 14), 10, Paint()..color = const Color(0xD9AA8C50));
+        Offset(wx, 14),
+        10,
+        Paint()..color = const Color(0xD9AA8C50),
+      );
       for (int a = 0; a < 5; a++) {
         final ang = (a / 5) * math.pi * 2 + progress * math.pi * 2;
         canvas.drawLine(
-            Offset(wx + math.cos(ang) * 2, 14 + math.sin(ang) * 2),
-            Offset(wx + math.cos(ang) * 9, 14 + math.sin(ang) * 9),
-            Paint()
-              ..color = const Color(0x801E160A)
-              ..strokeWidth = 1.5);
+          Offset(wx + math.cos(ang) * 2, 14 + math.sin(ang) * 2),
+          Offset(wx + math.cos(ang) * 9, 14 + math.sin(ang) * 9),
+          Paint()
+            ..color = const Color(0x801E160A)
+            ..strokeWidth = 1.5,
+        );
       }
       canvas.drawCircle(
-          Offset(wx, 14), 3, Paint()..color = const Color(0xFF0D1B2E));
+        Offset(wx, 14),
+        3,
+        Paint()..color = const Color(0xFF0D1B2E),
+      );
     }
 
     // Headlight
-    canvas.drawRect(const Rect.fromLTWH(bw - 2, -6, 6, 4),
-        Paint()..color = const Color(0xF2F0E1BE));
     canvas.drawRect(
-        const Rect.fromLTWH(bw - 5, -14, 30, 20),
-        Paint()
-          ..shader = ui.Gradient.radial(const Offset(bw + 8, -4), 20,
-              [const Color(0x40F0E1BE), const Color(0x00F0E1BE)]));
+      const Rect.fromLTWH(bw - 2, -6, 6, 4),
+      Paint()..color = const Color(0xF2F0E1BE),
+    );
+    canvas.drawRect(
+      const Rect.fromLTWH(bw - 5, -14, 30, 20),
+      Paint()
+        ..shader = ui.Gradient.radial(const Offset(bw + 8, -4), 20, [
+          const Color(0x40F0E1BE),
+          const Color(0x00F0E1BE),
+        ]),
+    );
     // Taillight
-    canvas.drawRect(const Rect.fromLTWH(-bw - 4, -6, 5, 4),
-        Paint()..color = const Color(0xE6B41E14));
+    canvas.drawRect(
+      const Rect.fromLTWH(-bw - 4, -6, 5, 4),
+      Paint()..color = const Color(0xE6B41E14),
+    );
 
     canvas.restore();
   }

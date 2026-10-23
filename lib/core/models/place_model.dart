@@ -30,10 +30,10 @@ class Place {
   }
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'address': address,
-        'coordinates': GeoPoint(lat, lng),
-      };
+    'name': name,
+    'address': address,
+    'coordinates': GeoPoint(lat, lng),
+  };
 
   @override
   bool operator ==(Object other) =>

@@ -52,9 +52,7 @@ void _registerServices() {
 void _registerFirebase() {
   sl.registerLazySingleton<fb.FirebaseAuth>(() => fb.FirebaseAuth.instance);
   sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
-  sl.registerLazySingleton<FirebaseFunctions>(
-    () => FirebaseFunctions.instance,
-  );
+  sl.registerLazySingleton<FirebaseFunctions>(() => FirebaseFunctions.instance);
 }
 
 void _registerRepositories() {
@@ -145,14 +143,17 @@ void _registerBlocs() {
   sl.registerFactory(() => RideBloc(rideRepository: sl()));
   sl.registerFactory(() => PaymentBloc(paymentRepository: sl()));
   sl.registerFactory(
-      () => ProfileBloc(userRepository: sl(), bookingRepository: sl()));
+    () => ProfileBloc(userRepository: sl(), bookingRepository: sl()),
+  );
   sl.registerFactory(() => AdminBloc(adminRepository: sl()));
   sl.registerFactory(() => NotificationBloc(notificationRepository: sl()));
-  sl.registerFactory(() => DriverBloc(
-        bookingRepository: sl(),
-        tripFlowRepository: sl(),
-        userRepository: sl(),
-        vehicleRepository: sl(),
-        mapsService: sl(),
-      ));
+  sl.registerFactory(
+    () => DriverBloc(
+      bookingRepository: sl(),
+      tripFlowRepository: sl(),
+      userRepository: sl(),
+      vehicleRepository: sl(),
+      mapsService: sl(),
+    ),
+  );
 }

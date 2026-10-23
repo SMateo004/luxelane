@@ -15,9 +15,10 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final firebase = await startFirebase(() => Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      ));
+  final firebase = await startFirebase(
+    () =>
+        Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+  );
   if (firebase is FirebaseFatal) {
     runApp(appForStartup(firebase, const DriverApp()));
     return;
