@@ -166,8 +166,9 @@ function arrivalCheck(
   loc: z.infer<typeof location> | undefined,
   radius: unknown,
 ): { extra: Record<string, unknown>; distanceMeters?: number; far: boolean } {
-  if (typeof radius !== 'number' || !(radius > 0)) return { extra: { arrivalCheck: 'no_radius' }, far: false };
+  // Sin ubicación no hay nada que comparar (y se avisa, ver advanceBooking).
   if (!loc) return { extra: { arrivalCheck: 'no_location' }, far: false };
+  if (typeof radius !== 'number' || !(radius > 0)) return { extra: { arrivalCheck: 'no_radius' }, far: false };
   const pickup = (booking.origin as { coordinates?: admin.firestore.GeoPoint } | undefined)?.coordinates;
   if (!pickup) return { extra: { arrivalCheck: 'no_pickup' }, far: false };
   const distanceMeters = Math.round(distanceKm(loc.lat, loc.lng, pickup.latitude, pickup.longitude) * 1000);
@@ -216,6 +217,15 @@ export async function advanceBooking(deps: TripDeps, uid: string | undefined, da
           driverId,
           distanceMeters: check.distanceMeters,
           message: 'El chófer marcó «Llegué» lejos del punto de recogida.',
+        });
+      }
+      if (!input.location) {
+        alert(tx, db, {
+          type: 'arrival_without_location',
+          severity: 'low',
+          bookingId: ref.id,
+          driverId,
+          message: 'El chófer marcó «Llegué» sin enviar su ubicación.',
         });
       }
     } else if (input.to === 'in_progress') {

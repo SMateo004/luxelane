@@ -230,10 +230,20 @@ describe('llegada: distancia al punto de recogida', () => {
     expect(await alerts()).toEqual([]);
   });
 
-  it('sin ubicación del chófer lo anota', async () => {
+  it('sin ubicación del chófer lo anota y avisa (severidad baja)', async () => {
     await booking('b1', 'driver_arriving');
     await advanceBooking(deps(), 'chofer', { bookingId: 'b1', to: 'driver_arrived' });
     expect((await events('b1'))[0]).toMatchObject({ arrivalCheck: 'no_location', hasLocation: false });
+    expect(await alerts()).toEqual([expect.objectContaining({
+      type: 'arrival_without_location', severity: 'low', bookingId: 'b1', resolved: false,
+    })]);
+  });
+
+  it('sin ubicación avisa aunque no haya radio configurado', async () => {
+    await db.doc('config/global').set({});
+    await booking('b1', 'driver_arriving');
+    await advanceBooking(deps(), 'chofer', { bookingId: 'b1', to: 'driver_arrived' });
+    expect((await alerts()).map((a) => a.type)).toEqual(['arrival_without_location']);
   });
 });
 
