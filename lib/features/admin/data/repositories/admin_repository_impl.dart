@@ -153,6 +153,82 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
+  Stream<List<Incident>> watchOpenIncidents() => _db
+      .collection('incidents')
+      .where('status',
+          whereIn: ['open', 'acknowledged', 'cancelled_by_reporter'])
+      .orderBy('createdAt', descending: true)
+      .limit(50)
+      .snapshots()
+      .map(
+          (s) => s.docs.map((d) => Incident.fromJson(d.id, d.data())).toList());
+
+  @override
+  Stream<List<IncidentLogEntry>> watchIncidentLog(String incidentId) => _db
+      .collection('incidents')
+      .doc(incidentId)
+      .collection('events')
+      .orderBy('at')
+      .snapshots()
+      .map((s) =>
+          s.docs.map((d) => IncidentLogEntry.fromJson(d.data())).toList());
+
+  ({double lat, double lng})? _latLng(Map<String, dynamic>? d) {
+    final lat = (d?['lat'] as num?)?.toDouble();
+    final lng = (d?['lng'] as num?)?.toDouble();
+    return lat == null || lng == null ? null : (lat: lat, lng: lng);
+  }
+
+  @override
+  Stream<({double lat, double lng})?> watchIncidentLocation(
+          String incidentId) =>
+      _db
+          .collection('incidents')
+          .doc(incidentId)
+          .collection('locations')
+          .orderBy('at', descending: true)
+          .limit(1)
+          .snapshots()
+          .map((s) => s.docs.isEmpty ? null : _latLng(s.docs.first.data()));
+
+  @override
+  Stream<({double lat, double lng})?> watchDriverTracking(String bookingId) =>
+      _db
+          .collection('bookings')
+          .doc(bookingId)
+          .collection('tracking')
+          .doc('driver')
+          .snapshots()
+          .map((s) => _latLng(s.data()));
+
+  Future<Either<Failure, void>> _incidentCall(
+      String name, Map<String, dynamic> data) async {
+    try {
+      await _functions.httpsCallable(name).call(data);
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      final why = (e.details is Map ? e.details as Map : const {})['reason'];
+      return Left(ServerFailure(switch (why) {
+        'invalid_request' => 'Escribe una nota de al menos 10 caracteres.',
+        'not_open' => 'Este incidente ya no está abierto.',
+        _ => _fnError(e),
+      }));
+    } catch (_) {
+      return const Left(ServerFailure(
+          'No se pudo actualizar el incidente. Revisa tu conexión.'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> acknowledgeIncident(String incidentId) =>
+      _incidentCall('acknowledgeIncident', {'incidentId': incidentId});
+
+  @override
+  Future<Either<Failure, void>> closeIncident(String incidentId, String note) =>
+      _incidentCall(
+          'closeIncident', {'incidentId': incidentId, 'note': note.trim()});
+
+  @override
   Stream<Map<String, dynamic>> watchGlobalSettings() => _db
       .collection('config')
       .doc('global')

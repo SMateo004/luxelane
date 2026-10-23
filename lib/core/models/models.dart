@@ -974,6 +974,33 @@ class Incident {
   }
 }
 
+/// Paso del registro de un incidente (incidents/{id}/events, solo admin).
+class IncidentLogEntry {
+  const IncidentLogEntry({
+    required this.type,
+    this.at,
+    this.actorRole = '',
+    this.note,
+    this.count,
+  });
+
+  /// raised, repeated, escalated, acknowledged, closed,
+  /// cancelled_by_reporter.
+  final String type;
+  final DateTime? at;
+  final String actorRole;
+  final String? note;
+  final int? count;
+
+  factory IncidentLogEntry.fromJson(Map<String, dynamic> j) => IncidentLogEntry(
+        type: j['type'] as String? ?? '',
+        at: j['at'] is Timestamp ? (j['at'] as Timestamp).toDate() : null,
+        actorRole: (j['actor'] as Map?)?['role'] as String? ?? '',
+        note: j['note'] as String?,
+        count: (j['count'] as num?)?.toInt(),
+      );
+}
+
 /// Resultado de pulsar SOS.
 class IncidentRaise {
   const IncidentRaise({

@@ -26,6 +26,21 @@ abstract class AdminRepository {
   /// Excepción operativa (adminOverrideVerify): deja la reserva verificada
   /// con [reason], que queda en el registro y crea una alerta.
   Future<Either<Failure, void>> forceVerify(String bookingId, String reason);
+
+  /// Incidentes SOS sin cerrar (abiertos, reconocidos o cancelados por
+  /// quien los disparó), los más recientes primero.
+  Stream<List<Incident>> watchOpenIncidents();
+  Stream<List<IncidentLogEntry>> watchIncidentLog(String incidentId);
+
+  /// Última ubicación publicada por quien disparó el incidente.
+  Stream<({double lat, double lng})?> watchIncidentLocation(String incidentId);
+
+  /// Ubicación en vivo del chófer de la reserva (tracking/driver).
+  Stream<({double lat, double lng})?> watchDriverTracking(String bookingId);
+  Future<Either<Failure, void>> acknowledgeIncident(String incidentId);
+
+  /// Cierre con nota obligatoria (mínimo 10 caracteres).
+  Future<Either<Failure, void>> closeIncident(String incidentId, String note);
   Stream<Map<String, dynamic>> watchGlobalSettings();
   Stream<Map<String, dynamic>> watchFinanceSettings();
 
