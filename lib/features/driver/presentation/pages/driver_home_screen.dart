@@ -15,6 +15,7 @@ import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../incidents/presentation/widgets/sos_entry.dart';
 import '../../../notifications/presentation/widgets/notification_bell.dart';
 import '../bloc/driver_bloc.dart';
 import '../widgets/driver_step_action.dart';
@@ -632,6 +633,13 @@ class _ActiveRidePanel extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (booking.driverId != null) ...[
+                    SosEntry(
+                        bookingId: booking.id,
+                        uid: booking.driverId!,
+                        status: booking.status),
+                    const SizedBox(width: LuxSpacing.sm),
+                  ],
                   const NotificationBell(color: LuxColors.ink),
                 ],
               ),

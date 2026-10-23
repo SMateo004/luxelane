@@ -5,6 +5,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
+import '../../../incidents/presentation/widgets/sos_entry.dart';
 import '../bloc/driver_bloc.dart';
 import '../widgets/driver_step_action.dart';
 import '../widgets/flight_info_card.dart';
@@ -59,7 +60,7 @@ class DriverActiveRideScreen extends StatelessWidget {
           SafeArea(
             child: Column(
               children: [
-                _DriverTopBar(),
+                _DriverTopBar(booking: booking),
                 const Spacer(),
                 _DriverBottomPanel(booking: booking),
               ],
@@ -100,7 +101,15 @@ class DriverActiveRideScreen extends StatelessWidget {
       );
 }
 
+/// SOS del chófer (solo lo ve él; el pasajero nunca se entera).
+Widget _driverSos(Booking b) => b.driverId == null
+    ? const SizedBox.shrink()
+    : SosEntry(bookingId: b.id, uid: b.driverId!, status: b.status);
+
 class _DriverTopBar extends StatelessWidget {
+  const _DriverTopBar({required this.booking});
+  final Booking booking;
+
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.all(LuxSpacing.md),
@@ -122,6 +131,8 @@ class _DriverTopBar extends StatelessWidget {
             ),
             const SizedBox(width: LuxSpacing.md),
             const LuxelaneWordmark(),
+            const Spacer(),
+            _driverSos(booking),
           ],
         ),
       );
@@ -142,6 +153,8 @@ class _DriverWebHeader extends StatelessWidget {
             ),
             const LuxelaneWordmark(),
             const Spacer(),
+            _driverSos(booking),
+            const SizedBox(width: LuxSpacing.sm),
             BookingStatusChip(status: booking.status),
           ],
         ),
