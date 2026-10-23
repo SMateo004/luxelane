@@ -320,6 +320,39 @@ describe('código de recogida', () => {
   });
 });
 
+describe('servicio por horas y reservas para un tercero: nadie queda varado', () => {
+  async function fullTrip(id: string) {
+    await advanceBooking(deps(), 'chofer', { bookingId: id, to: 'driver_arriving' });
+    await advanceBooking(deps(), 'chofer', { bookingId: id, to: 'driver_arrived', location: NEAR });
+    // El titular (ana) recibe el código y lo comparte; el chófer lo escribe.
+    const code = await codeFor(id);
+    await verifyPickup(deps(), 'chofer', { bookingId: id, code, location: NEAR });
+    await advanceBooking(deps(), 'chofer', { bookingId: id, to: 'in_progress' });
+    await advanceBooking(deps(), 'chofer', { bookingId: id, to: 'completed', location: NEAR });
+    return status(id);
+  }
+
+  it('por horas (sin destino): mismo grafo hasta completed', async () => {
+    await booking('horas', 'confirmed', { serviceType: 'byTheHour', hours: 3 });
+    expect(await fullTrip('horas')).toBe('completed');
+  });
+
+  it('para un tercero: el código lo recibe el titular y el viaje se completa', async () => {
+    await booking('tercero', 'confirmed', { guest: { firstName: 'Carla', lastName: 'Tercero', phone: '+000' } });
+    expect(await fullTrip('tercero')).toBe('completed');
+  });
+
+  it('para un tercero sin el titular a mano: el admin fuerza la verificación y el viaje sigue', async () => {
+    await booking('tercero2', 'driver_arrived', { guest: { firstName: 'Carla' } });
+    await adminOverrideVerify(deps(), { adminId: 'jefa', adminEmail: null }, {
+      bookingId: 'tercero2', reason: 'El titular no responde; invitada identificada por central',
+    });
+    await advanceBooking(deps(), 'chofer', { bookingId: 'tercero2', to: 'in_progress' });
+    await advanceBooking(deps(), 'chofer', { bookingId: 'tercero2', to: 'completed' });
+    expect(await status('tercero2')).toBe('completed');
+  });
+});
+
 describe('falta del secreto PICKUP_CODE_SECRET (falla cerrado)', () => {
   it('sin secreto no hay código ni verificación', async () => {
     await booking('b1', 'driver_arrived');
