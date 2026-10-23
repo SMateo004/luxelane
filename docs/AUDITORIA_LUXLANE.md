@@ -99,7 +99,12 @@ Criterio estricto de "lista para piloto": F2, F5 (con código), F7 (pago real) y
 
 Logs de las funciones: ni el código de recogida ni ninguna coordenada se registran (prueba functions/src/integration/logs_privacy.int.ts, que falla si se añade un log con ellos; test/security/no_sensitive_logs_test.dart para las pantallas y repositorios de la app).
 
-Pendiente (decisión del responsable y texto legal): retención de eventLocations, events y de las ubicaciones del SOS (incidentLocationRetentionDays); mencionar en la política de privacidad la ubicación en vivo durante un SOS y quién la ve.
+Retención: **no está fijada** (decisión del responsable). Preguntas para el abogado y la aseguradora:
+1. ¿Cuánto tiempo debemos conservar las ubicaciones de un SOS cerrado (prueba ante un reclamo o una denuncia) y cuánto como máximo (minimización de datos)?
+2. ¿Cuánto tiempo los eventos de la reserva (quién verificó, desde dónde, a qué hora) y la ubicación del chófer en esos eventos?
+3. ¿Hay que borrar o anonimizar antes si la persona pide eliminar su cuenta, o prevalece la conservación por un incidente abierto o un reclamo?
+4. ¿Qué exige la póliza (si la hay) sobre conservar pruebas de incidentes?
+Propuesta [Especulando]: ubicaciones del SOS 90 días tras el cierre (configurable con incidentLocationRetentionDays, ya implementado); eventos de la reserva y eventLocations 12 meses (no implementado: necesita una tarea de borrado). Hasta que se decida no se borra nada. Mencionar en la política de privacidad la ubicación en vivo durante un SOS y quién la ve.
 
 ## I. Estado de los hallazgos (rama cierre/sos, 2026-10-23)
 
