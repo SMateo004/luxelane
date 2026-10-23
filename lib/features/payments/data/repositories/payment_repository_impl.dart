@@ -3,6 +3,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
@@ -34,9 +35,10 @@ class PaymentRepositoryImpl implements PaymentRepository {
     } on FirebaseFunctionsException catch (e) {
       return Left(
         PaymentFailure(
-          e.code == 'failed-precondition'
-              ? 'tu cuenta aún no tiene pagos habilitados'
-              : 'no se pudo contactar con el servidor de pagos',
+          commonFunctionError(e.code, e.details) ??
+              (e.code == 'failed-precondition'
+                  ? 'tu cuenta aún no tiene pagos habilitados'
+                  : 'no se pudo contactar con el servidor de pagos'),
         ),
       );
     } catch (e) {
@@ -167,7 +169,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
       });
       return const Right(null);
     } on FirebaseFunctionsException catch (e) {
-      if (e.message == 'card-in-use') {
+      if (functionErrorReason(e.details) == 'card-in-use') {
         return const Left(
           PaymentFailure(
             'Esta tarjeta paga una reserva pendiente. Cancélala o espera a '

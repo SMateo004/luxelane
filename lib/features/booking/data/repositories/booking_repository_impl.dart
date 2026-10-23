@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
@@ -371,8 +372,9 @@ Failure bookingFailureFor(String code, Object? details) {
     'unauthenticated' => 'Inicia sesión para reservar.',
     _ => code == 'unavailable' || code == 'deadline-exceeded'
         ? _kConnectionError
-        : 'No pudimos procesar tu reserva. Revisa los datos del viaje e '
-            'inténtalo de nuevo.',
+        : commonFunctionError(code, details) ??
+            'No pudimos procesar tu reserva. Revisa los datos del viaje e '
+                'inténtalo de nuevo.',
   });
 }
 

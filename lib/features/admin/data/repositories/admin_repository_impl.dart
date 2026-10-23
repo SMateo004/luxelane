@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../domain/admin_operations.dart';
 import '../../domain/repositories/admin_repository.dart';
@@ -364,24 +365,18 @@ class AdminRepositoryImpl implements AdminRepository {
     return e.message ?? e.code;
   }
 
-  /// Los errores de las Cloud Functions llegan en inglés: se traducen por
-  /// código.
+  /// Las Cloud Functions solo mandan código y motivo corto: se traducen
+  /// aquí.
   static String _fnError(FirebaseFunctionsException e) {
-    switch (e.code) {
-      case 'permission-denied':
-        return 'Permiso denegado: se necesita rol de administrador';
-      case 'unauthenticated':
-        return 'Tu sesión expiró; vuelve a iniciar sesión';
-      case 'not-found':
-        return 'No se encontró el registro';
-      case 'failed-precondition':
-        return 'Solo se pueden reembolsar pagos cobrados';
-      case 'unavailable':
-      case 'deadline-exceeded':
-        return 'Sin conexión con el servidor; inténtalo de nuevo';
-      default:
-        return 'No se pudo completar la operación (${e.code})';
-    }
+    final common = commonFunctionError(e.code, e.details);
+    if (common != null) return common;
+    return switch (functionErrorReason(e.details)) {
+      'not_captured' => 'Solo se pueden reembolsar pagos cobrados',
+      'payment_failed' => 'El procesador de pagos rechazó la operación',
+      _ => e.code == 'permission-denied'
+          ? 'Permiso denegado: se necesita rol de administrador'
+          : functionErrorMessage(e.code, e.details),
+    };
   }
 
   static String _money(double v) => 'Bs${v.toStringAsFixed(2)}';

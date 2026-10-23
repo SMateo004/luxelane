@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
@@ -158,6 +159,8 @@ Failure tripFailureFor(String code, Object? details) {
   if (code == 'unavailable' || code == 'deadline-exceeded') {
     return const TripFailure(TripIssue.network, _kNetwork);
   }
+  final common = commonFunctionError(code, details);
+  if (common != null) return TripFailure(TripIssue.other, common);
   return const TripFailure(
     TripIssue.other,
     'No se pudo completar. Inténtalo de nuevo.',

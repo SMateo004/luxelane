@@ -5,6 +5,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../core/error/failures.dart';
+import '../../../core/error/function_errors.dart';
 import '../../../core/models/models.dart';
 import '../../../core/repositories/repositories.dart';
 
@@ -115,9 +116,10 @@ Failure incidentFailureFor(String code, Object? details) {
       ),
     _ => code == 'unavailable' || code == 'deadline-exceeded'
         ? const IncidentFailure(IncidentIssue.offline, _kOffline)
-        : const IncidentFailure(
+        : IncidentFailure(
             IncidentIssue.other,
-            'No pudimos avisar a central.',
+            commonFunctionError(code, details) ??
+                'No pudimos avisar a central.',
           ),
   };
 }

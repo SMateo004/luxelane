@@ -9,6 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
@@ -314,20 +315,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await _functions.httpsCallable('deleteAccount').call();
       return const Right(null);
     } on FirebaseFunctionsException catch (e) {
-      if (e.message == 'active-bookings') {
-        return const Left(
-          ServerFailure(
-            'Tienes viajes activos o reservados. Cancélalos o espera a que '
-            'terminen antes de eliminar tu cuenta.',
-          ),
-        );
-      }
-      if (e.code == 'failed-precondition' && e.message != null) {
-        return Left(ServerFailure(e.message!));
-      }
-      return const Left(
-        ServerFailure('No pudimos eliminar tu cuenta. Inténtalo de nuevo.'),
-      );
+      return Left(ServerFailure(deleteAccountErrorMessage(e.code, e.details)));
     } catch (_) {
       return const Left(
         ServerFailure('No pudimos eliminar tu cuenta. Revisa tu conexión.'),

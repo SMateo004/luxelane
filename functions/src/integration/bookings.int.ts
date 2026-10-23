@@ -219,6 +219,35 @@ describe('capturePayment', () => {
       .toBe('invalid_request');
     expect(captureIntent).not.toHaveBeenCalled();
   });
+
+  it('si Stripe falla, ni la respuesta ni el log llevan la clave, el correo o las coordenadas', async () => {
+    const leaky = 'Invalid API Key provided: sk_test_51FalsaClave000 (pasajera.prueba@example.com, -17.7834, -63.1821)';
+    captureIntent.mockRejectedValueOnce(new Error(leaky));
+    await db.doc('bookings/b-fallo').set({
+      riderId: 'ana', status: 'completed', estimatedPrice: 86, stripePaymentIntentId: 'pi_propio',
+    });
+    const lines: string[] = [];
+    for (const m of ['log', 'warn', 'error'] as const) {
+      jest.spyOn(console, m).mockImplementation((...a: unknown[]) => { lines.push(a.map(String).join(' ')); });
+    }
+    let caught: HttpsError | undefined;
+    try {
+      await (capturePayment as unknown as Runnable)
+        .run({ auth: { uid: 'ana' }, data: { bookingId: 'b-fallo', stripePaymentIntentId: 'pi_propio' } });
+    } catch (e) {
+      caught = e as HttpsError;
+    } finally {
+      jest.restoreAllMocks();
+    }
+    expect(captureIntent).toHaveBeenCalledTimes(1);
+    expect(caught?.code).toBe('internal');
+    expect(caught?.details).toEqual({ code: 'internal', reason: 'payment_failed' });
+    const seen = JSON.stringify({ message: caught?.message, details: caught?.details }) + '\n' + lines.join('\n');
+    for (const s of ['sk_test_51FalsaClave000', 'pasajera.prueba@example.com', '-17.7834', '-63.1821']) {
+      expect(seen).not.toContain(s);
+    }
+    expect(lines.join('\n')).toContain('[stripe-key]');
+  });
 });
 
 describe('createBooking: idempotencia por requestId', () => {

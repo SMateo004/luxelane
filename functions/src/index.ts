@@ -198,7 +198,7 @@ function vehicleClassLabel(vehicleClass: string | undefined): string {
 async function requireAdmin(req: CallableRequest): Promise<string> {
   const uid = requireAuth(req);
   const user = await db.collection('users').doc(uid).get();
-  if (user.data()?.role !== 'admin') throw err.permissionDenied('Admin role required');
+  if (user.data()?.role !== 'admin') throw err.permissionDenied('admin_required');
   return uid;
 }
 
@@ -237,15 +237,15 @@ export const createPaymentIntent = secureCallable('createPaymentIntent', withStr
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const bookingSnap = await bookingRef.get();
-  if (!bookingSnap.exists) throw err.notFound('Booking not found');
+  if (!bookingSnap.exists) throw err.notFound('booking_not_found');
   const booking = bookingSnap.data() as BookingDoc;
-  if (booking.riderId !== uid) throw err.permissionDenied('Not your booking');
+  if (booking.riderId !== uid) throw err.permissionDenied('not_your_booking');
   // Un chófer puede aceptar en los segundos entre crear y autorizar.
   if (booking.status !== 'pending' && booking.status !== 'confirmed') {
-    throw err.failedPrecondition('Booking is not open');
+    throw err.failedPrecondition('booking_not_open');
   }
   if (booking.stripePaymentIntentId || booking.stripePaymentMethodId) {
-    throw err.failedPrecondition('Booking already has a payment');
+    throw err.failedPrecondition('already_has_payment');
   }
   const customerId = await ensureStripeCustomerFor(uid);
 
@@ -254,16 +254,16 @@ export const createPaymentIntent = secureCallable('createPaymentIntent', withStr
   // presente, con la tarjeta que ya autorizó al guardarla).
   const scheduledMs = booking.scheduledAt?.toMillis() ?? Date.now();
   if (scheduledMs - Date.now() > HOLD_WINDOW_MS) {
-    if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+    if (!paymentMethodId) throw err.invalidArgument('payment_method_required');
     const owner = await stripe.paymentMethodCustomer(paymentMethodId);
-    if (owner !== customerId) throw err.permissionDenied('Not your payment method');
+    if (owner !== customerId) throw err.permissionDenied('not_your_payment_method');
     await bookingRef.update({ stripePaymentMethodId: paymentMethodId });
     logger.info('createPaymentIntent', 'deferred', { uid, bookingId });
     return { deferred: true };
   }
 
   const amount = toCents(booking.estimatedPrice);
-  if (amount <= 0) throw err.invalidArgument('amount must be positive');
+  if (amount <= 0) throw err.invalidArgument('invalid_amount');
   logger.info('createPaymentIntent', 'start', { uid, bookingId, amount });
 
   try {
@@ -278,7 +278,7 @@ export const createPaymentIntent = secureCallable('createPaymentIntent', withStr
     return { clientSecret };
   } catch (e) {
     logger.error('createPaymentIntent', 'stripe error', { error: String(e) });
-    throw err.paymentFailed(String(e));
+    throw err.paymentFailed();
   }
 });
 
@@ -293,26 +293,26 @@ export const capturePayment = secureCallable('capturePayment', withStripe, async
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const bookingSnap = await bookingRef.get();
-  if (!bookingSnap.exists) throw err.notFound('Booking not found');
+  if (!bookingSnap.exists) throw err.notFound('booking_not_found');
 
   const booking = bookingSnap.data() as BookingDoc;
   if (booking.riderId !== uid) await requireAdmin(req);
   // Solo se cobra el intent de esta reserva: nunca uno que mande el cliente.
   if (!booking.stripePaymentIntentId || booking.stripePaymentIntentId !== stripePaymentIntentId) {
-    throw err.permissionDenied('Payment does not belong to this booking');
+    throw err.permissionDenied('payment_mismatch');
   }
-  if (booking.status !== 'completed') throw err.failedPrecondition('Ride must be completed before capture');
+  if (booking.status !== 'completed') throw err.failedPrecondition('ride_not_completed');
 
   if (booking.paymentId) {
     const existing = await db.collection('payments').doc(booking.paymentId).get();
-    if (existing.data()?.status === 'captured') throw err.failedPrecondition('Booking already paid');
+    if (existing.data()?.status === 'captured') throw err.failedPrecondition('already_paid');
   }
 
   try {
     return await captureBookingPayment(bookingRef, booking, stripePaymentIntentId);
   } catch (e) {
     logger.error('capturePayment', 'stripe error', { error: String(e) });
-    throw err.paymentFailed(String(e));
+    throw err.paymentFailed();
   }
 });
 
@@ -427,10 +427,10 @@ export const refundPayment = secureCallable('refundPayment', withStripe, async (
 
   const paymentRef = db.collection('payments').doc(paymentId);
   const snap = await paymentRef.get();
-  if (!snap.exists) throw err.notFound('Payment not found');
+  if (!snap.exists) throw err.notFound('payment_not_found');
 
   const payment = snap.data() as PaymentDoc;
-  if (payment.status !== 'captured') throw err.failedPrecondition('Only captured payments can be refunded');
+  if (payment.status !== 'captured') throw err.failedPrecondition('not_captured');
 
   logger.info('refundPayment', 'start', { paymentId, adminId });
 
@@ -465,7 +465,7 @@ export const refundPayment = secureCallable('refundPayment', withStripe, async (
     return { status: 'refunded' };
   } catch (e) {
     logger.error('refundPayment', 'stripe error', { error: String(e) });
-    throw err.paymentFailed(String(e));
+    throw err.paymentFailed();
   }
 });
 
@@ -477,7 +477,7 @@ export const refundPayment = secureCallable('refundPayment', withStripe, async (
 async function requireOwnCustomer(uid: string, customerId: string): Promise<void> {
   const user = await db.collection('users').doc(uid).get();
   if (user.data()?.stripeCustomerId !== customerId) {
-    throw err.permissionDenied('Not your payment profile');
+    throw err.permissionDenied('not_your_payment_profile');
   }
 }
 
@@ -511,7 +511,7 @@ export const setDefaultPaymentMethod = secureCallable('setDefaultPaymentMethod',
   const uid = requireAuth(req);
   const { paymentMethodId } = parseInput(schema.setDefaultPaymentMethod, req.data);
   const owner = await stripe.paymentMethodCustomer(paymentMethodId);
-  if (!owner) throw err.permissionDenied('Not your payment method');
+  if (!owner) throw err.permissionDenied('not_your_payment_method');
   await requireOwnCustomer(uid, owner);
 
   await stripe.setDefaultPaymentMethod(owner, paymentMethodId);
@@ -539,7 +539,7 @@ export const detachPaymentMethod = secureCallable('detachPaymentMethod', withStr
   const uid = requireAuth(req);
   const { paymentMethodId } = parseInput(schema.detachPaymentMethod, req.data);
   const owner = await stripe.paymentMethodCustomer(paymentMethodId);
-  if (!owner) throw err.permissionDenied('Not your payment method');
+  if (!owner) throw err.permissionDenied('not_your_payment_method');
   await requireOwnCustomer(uid, owner);
 
   // Una reserva futura se cobra fuera de sesión con esta tarjeta: quitarla
@@ -569,7 +569,7 @@ export const deleteAccount = secureCallable('deleteAccount', withStripe, async (
   const userRef = db.collection('users').doc(uid);
   const user = (await userRef.get()).data();
   if (user?.role === 'admin') {
-    throw err.failedPrecondition('Las cuentas de administración se eliminan desde la consola.');
+    throw err.failedPrecondition('admin_account');
   }
 
   const [asRider, asDriver] = await Promise.all([
@@ -634,7 +634,7 @@ async function ensureStripeCustomerFor(uid: string): Promise<string> {
   const ref = db.collection('users').doc(uid);
   const snap = await ref.get();
   const data = snap.data();
-  if (!data) throw err.failedPrecondition('No payment profile');
+  if (!data) throw err.failedPrecondition('no_payment_profile');
   if (data.stripeCustomerId) return data.stripeCustomerId as string;
 
   const created = await stripe.createCustomer(data.email, data.displayName);
@@ -1046,11 +1046,11 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const bookingSnap = await bookingRef.get();
-  if (!bookingSnap.exists) throw err.notFound('Booking not found');
+  if (!bookingSnap.exists) throw err.notFound('booking_not_found');
 
   const booking = bookingSnap.data() as BookingDoc;
   if (booking.riderId !== uid) await requireAdmin(req);
-  if (booking.status !== 'pending') throw err.failedPrecondition('Booking must be pending');
+  if (booking.status !== 'pending') throw err.failedPrecondition('booking_not_pending');
 
   const vehicleClass = booking.class ?? booking.vehicleClass ?? 'business';
   logger.info('assignNearestDriver', 'searching', { bookingId, vehicleClass });
@@ -1128,7 +1128,7 @@ export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => 
 
   // Solo un chófer activo (no bloqueado desde el panel) acepta viajes.
   const me = (await db.collection('users').doc(driverId).get()).data();
-  if (me?.role !== 'driver' || me?.isActive === false) throw err.permissionDenied('Active driver required');
+  if (me?.role !== 'driver' || me?.isActive === false) throw err.permissionDenied('inactive_driver');
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const driverRef  = db.collection('driverProfiles').doc(driverId);
@@ -1142,12 +1142,12 @@ export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => 
         tx.get(driverRef),
       ]);
 
-      if (!bookingSnap.exists) throw err.notFound('Booking not found');
+      if (!bookingSnap.exists) throw err.notFound('booking_not_found');
       const booking = bookingSnap.data() as BookingDoc;
       if (booking.status !== 'pending') throw new Error('ALREADY_TAKEN');
 
-      if (!driverSnap.exists) throw err.notFound('Driver profile not found');
-      if (driverSnap.data()?.documentsVerified !== true) throw err.permissionDenied('Driver not verified');
+      if (!driverSnap.exists) throw err.notFound('driver_not_found');
+      if (driverSnap.data()?.documentsVerified !== true) throw err.permissionDenied('driver_not_verified');
       if (!driverSnap.data()?.isAvailable) throw new Error('DRIVER_BUSY');
 
       riderId = booking.riderId;
