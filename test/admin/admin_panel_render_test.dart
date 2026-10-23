@@ -13,6 +13,7 @@ import 'package:luxelane/features/admin/domain/repositories/admin_repository.dar
 import 'package:luxelane/features/admin/presentation/bloc/admin_bloc.dart';
 import 'package:luxelane/features/admin/presentation/widgets/admin_alerts_tab.dart';
 import 'package:luxelane/features/admin/presentation/widgets/admin_finance_tab.dart';
+import 'package:luxelane/features/admin/presentation/widgets/admin_incidents_strip.dart';
 import 'package:luxelane/features/admin/presentation/widgets/admin_pricing_tab.dart';
 import 'package:luxelane/features/admin/presentation/widgets/admin_sections.dart';
 import 'package:mocktail/mocktail.dart';
@@ -103,6 +104,19 @@ AdminRepository _repo() {
       ]));
   when(() => r.forceVerify(any(), any()))
       .thenAnswer((_) async => const Right<Failure, void>(null));
+  when(r.watchOpenIncidents).thenAnswer((_) => Stream.value(const []));
+  when(() => r.watchIncidentLog(any())).thenAnswer((_) => Stream.value([
+        IncidentLogEntry(type: 'raised', at: _now, actorRole: 'rider'),
+        IncidentLogEntry(type: 'escalated', at: _now, actorRole: 'system'),
+      ]));
+  when(() => r.watchIncidentLocation(any()))
+      .thenAnswer((_) => Stream.value((lat: -17.7, lng: -63.1)));
+  when(() => r.watchDriverTracking(any()))
+      .thenAnswer((_) => Stream.value(null));
+  when(() => r.acknowledgeIncident(any()))
+      .thenAnswer((_) async => const Right<Failure, void>(null));
+  when(() => r.closeIncident(any(), any()))
+      .thenAnswer((_) async => const Right<Failure, void>(null));
   when(r.watchAllPayments).thenAnswer((_) => Stream.value([
         Payment(
           id: 'p1',
@@ -183,11 +197,13 @@ AdminRepository _repo() {
 
 late AdminRepository _lastRepo;
 
-Future<void> _pump(WidgetTester tester, Widget tab, Size size) async {
+Future<void> _pump(WidgetTester tester, Widget tab, Size size,
+    {void Function(_MockRepo r)? setup}) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   _lastRepo = _repo();
+  setup?.call(_last);
   final bloc = AdminBloc(adminRepository: _lastRepo)..add(AdminDataRequested());
   addTearDown(bloc.close);
   await tester.pumpWidget(MaterialApp(
@@ -398,6 +414,171 @@ void main() {
     testWidgets('solo con el chófer en la recogida', (tester) async {
       await open(tester, 'booking-progress');
       expect(find.text('Forzar verificación'), findsNothing);
+    });
+  });
+
+  group('incidentes SOS (franja del panel)', () {
+    final open = Incident(
+      id: 'inc-open',
+      bookingId: 'booking-progress',
+      reporterId: 'u-rider',
+      reporterRole: 'rider',
+      status: IncidentStatus.open,
+      count: 2,
+      escalationCount: 1,
+      createdAt: _now.subtract(const Duration(seconds: 150)),
+    );
+    final acked = Incident(
+      id: 'inc-ack',
+      bookingId: 'booking-progress',
+      reporterId: 'u-driver',
+      reporterRole: 'driver',
+      status: IncidentStatus.acknowledged,
+      createdAt: _now,
+    );
+
+    Future<({List<Uri> opened, List<int> beeps})> pumpStrip(
+        WidgetTester tester, List<Incident> incidents) async {
+      final opened = <Uri>[];
+      final beeps = <int>[];
+      await _pump(
+        tester,
+        SingleChildScrollView(
+          child: AdminIncidentsStrip(
+            onBeep: () => beeps.add(1),
+            launch: (u) async => opened.add(u),
+          ),
+        ),
+        const Size(1280, 1600),
+        setup: (r) => when(r.watchOpenIncidents)
+            .thenAnswer((_) => Stream.value(incidents)),
+      );
+      return (opened: opened, beeps: beeps);
+    }
+
+    testWidgets('sin incidentes no hay franja ni sonido', (tester) async {
+      final r = await pumpStrip(tester, const []);
+      expect(find.byKey(const ValueKey('incidents-strip')), findsNothing);
+      await tester.pump(const Duration(seconds: 6));
+      expect(r.beeps, isEmpty);
+    });
+
+    testWidgets('prioridad, tiempo sin reconocer, ubicación y registro',
+        (tester) async {
+      final r = await pumpStrip(tester, [acked, open]);
+      expect(find.text('1 incidente sin reconocer'), findsOneWidget);
+      expect(find.text('SIN RECONOCER'), findsOneWidget);
+      expect(find.text('Reconocido'), findsOneWidget);
+      expect(find.textContaining('Sin reconocer: 2min'), findsOneWidget);
+      expect(find.text('Pulsado 2 veces'), findsOneWidget);
+      expect(find.text('Escalado 1×'), findsOneWidget);
+      // El abierto va primero.
+      expect(
+          tester.getTopLeft(find.text('SIN RECONOCER')).dy <
+              tester.getTopLeft(find.text('Reconocido')).dy,
+          isTrue);
+      await tester.tap(find.text('Ubicación del aviso').first);
+      expect(r.opened.single.toString(),
+          'https://maps.google.com/?q=-17.700000,-63.100000');
+      await tester.tap(find.text('Registro').first);
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Escalado (sin reconocer)'), findsOneWidget);
+    });
+
+    testWidgets('suena mientras haya uno sin reconocer; silenciar lo para',
+        (tester) async {
+      final r = await pumpStrip(tester, [open]);
+      await tester.pump(const Duration(seconds: 11));
+      expect(r.beeps.length, greaterThanOrEqualTo(2));
+      await tester.tap(find.text('Silenciar'));
+      await tester.pump();
+      final before = r.beeps.length;
+      await tester.pump(const Duration(seconds: 11));
+      expect(r.beeps.length, before);
+      expect(find.text('Activar sonido'), findsOneWidget);
+    });
+
+    testWidgets('solo reconocidos: no suena', (tester) async {
+      final r = await pumpStrip(tester, [acked]);
+      await tester.pump(const Duration(seconds: 11));
+      expect(r.beeps, isEmpty);
+      expect(find.text('Reconocer'), findsNothing);
+    });
+
+    testWidgets('reconocer y cerrar con nota (mínimo 10 caracteres)',
+        (tester) async {
+      await pumpStrip(tester, [open]);
+      await tester.tap(find.text('Reconocer'));
+      await tester.pump();
+      verify(() => _lastRepo.acknowledgeIncident('inc-open')).called(1);
+      await tester.tap(find.text('Cerrar con nota'));
+      await tester.pumpAndSettle();
+      final confirm = find.widgetWithText(FilledButton, 'Cerrar incidente');
+      await tester.enterText(find.byType(TextField).last, 'corta');
+      await tester.pump();
+      expect(tester.widget<FilledButton>(confirm).onPressed, isNull);
+      await tester.enterText(
+          find.byType(TextField).last, 'Pasajero contactado, todo bien');
+      await tester.pump();
+      await tester.tap(confirm);
+      await tester.pumpAndSettle();
+      verify(() => _lastRepo.closeIncident(
+          'inc-open', 'Pasajero contactado, todo bien')).called(1);
+    });
+
+    testWidgets('sin teléfonos ni dispatchPhone no hay botones tel',
+        (tester) async {
+      await pumpStrip(tester, [open]);
+      expect(find.text('Llamar al pasajero'), findsNothing);
+      expect(find.text('Llamar a central'), findsNothing);
+    });
+
+    testWidgets('botones tel: al pasajero, al chófer y a central',
+        (tester) async {
+      final opened = <Uri>[];
+      User user(String id, String phone, UserRole role) => User(
+            id: id,
+            email: '$id@example.com',
+            phone: phone,
+            displayName: id,
+            role: role,
+            createdAt: _now,
+            isVerified: true,
+            isActive: true,
+            fcmTokens: const [],
+          );
+      await _pump(
+        tester,
+        SingleChildScrollView(
+          child: AdminIncidentsStrip(
+              onBeep: () {}, launch: (u) async => opened.add(u)),
+        ),
+        const Size(1280, 1600),
+        setup: (r) {
+          when(r.watchOpenIncidents).thenAnswer((_) => Stream.value([open]));
+          when(r.watchAllUsers).thenAnswer((_) => Stream.value([
+                user('u-rider', '+000 1', UserRole.rider),
+                user('u-driver', '+000 2', UserRole.driver),
+              ]));
+          when(r.watchGlobalSettings)
+              .thenAnswer((_) => Stream.value({'dispatchPhone': '+000 3'}));
+        },
+      );
+      for (final label in [
+        'Llamar al pasajero',
+        'Llamar al chófer',
+        'Llamar a central'
+      ]) {
+        await tester.tap(find.text(label));
+      }
+      expect(opened.map((u) => u.toString()),
+          ['tel:+0001', 'tel:+0002', 'tel:+0003']);
+    });
+
+    test('tiempo sin reconocer legible', () {
+      expect(incidentWaitLabel(const Duration(seconds: 42)), '42s');
+      expect(incidentWaitLabel(const Duration(seconds: 150)), '2min 30s');
+      expect(incidentWaitLabel(const Duration(minutes: 75)), '1h 15min');
     });
   });
 }

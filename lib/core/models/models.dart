@@ -899,6 +899,121 @@ class BookingEvent {
 }
 
 // ---------------------------------------------------------------------------
+// Incident — SOS (incidents/{id}); lo leen quien lo disparó y el admin
+// ---------------------------------------------------------------------------
+
+enum IncidentStatus { open, acknowledged, closed, cancelledByReporter }
+
+IncidentStatus incidentStatusFrom(String? s) => switch (s) {
+      'acknowledged' => IncidentStatus.acknowledged,
+      'closed' => IncidentStatus.closed,
+      'cancelled_by_reporter' => IncidentStatus.cancelledByReporter,
+      _ => IncidentStatus.open,
+    };
+
+class Incident {
+  const Incident({
+    required this.id,
+    required this.bookingId,
+    required this.reporterId,
+    required this.reporterRole,
+    required this.status,
+    this.count = 1,
+    this.createdAt,
+    this.acknowledgedAt,
+    this.closedAt,
+    this.closeNote,
+    this.cancelledByReporter = false,
+    this.escalationCount = 0,
+    this.locationRetentionDays,
+  });
+
+  final String id;
+  final String bookingId;
+  final String reporterId;
+
+  /// 'rider' o 'driver'.
+  final String reporterRole;
+  final IncidentStatus status;
+
+  /// Veces que se pulsó (los repetidos no crean otro incidente).
+  final int count;
+  final DateTime? createdAt;
+  final DateTime? acknowledgedAt;
+  final DateTime? closedAt;
+  final String? closeNote;
+  final bool cancelledByReporter;
+  final int escalationCount;
+
+  /// Días que se guardan las ubicaciones al cerrarse; null = sin configurar
+  /// (no se borra nada).
+  final int? locationRetentionDays;
+
+  /// Abierto o reconocido: se comparte la ubicación y central lo atiende.
+  bool get isLive =>
+      status == IncidentStatus.open || status == IncidentStatus.acknowledged;
+
+  factory Incident.fromJson(String id, Map<String, dynamic> j) {
+    DateTime? t(Object? v) => v is Timestamp ? v.toDate() : null;
+    return Incident(
+      id: id,
+      bookingId: j['bookingId'] as String? ?? '',
+      reporterId: j['reporterId'] as String? ?? '',
+      reporterRole: j['reporterRole'] as String? ?? '',
+      status: incidentStatusFrom(j['status'] as String?),
+      count: (j['count'] as num?)?.toInt() ?? 1,
+      createdAt: t(j['createdAt']),
+      acknowledgedAt: t(j['acknowledgedAt']),
+      closedAt: t(j['closedAt']),
+      closeNote: j['closeNote'] as String?,
+      cancelledByReporter: j['cancelledByReporter'] == true,
+      escalationCount:
+          ((j['escalation'] as Map?)?['count'] as num?)?.toInt() ?? 0,
+      locationRetentionDays: (j['locationRetentionDays'] as num?)?.toInt(),
+    );
+  }
+}
+
+/// Paso del registro de un incidente (incidents/{id}/events, solo admin).
+class IncidentLogEntry {
+  const IncidentLogEntry({
+    required this.type,
+    this.at,
+    this.actorRole = '',
+    this.note,
+    this.count,
+  });
+
+  /// raised, repeated, escalated, acknowledged, closed,
+  /// cancelled_by_reporter.
+  final String type;
+  final DateTime? at;
+  final String actorRole;
+  final String? note;
+  final int? count;
+
+  factory IncidentLogEntry.fromJson(Map<String, dynamic> j) => IncidentLogEntry(
+        type: j['type'] as String? ?? '',
+        at: j['at'] is Timestamp ? (j['at'] as Timestamp).toDate() : null,
+        actorRole: (j['actor'] as Map?)?['role'] as String? ?? '',
+        note: j['note'] as String?,
+        count: (j['count'] as num?)?.toInt(),
+      );
+}
+
+/// Resultado de pulsar SOS.
+class IncidentRaise {
+  const IncidentRaise({
+    required this.incidentId,
+    this.alreadyOpen = false,
+    this.count = 1,
+  });
+  final String incidentId;
+  final bool alreadyOpen;
+  final int count;
+}
+
+// ---------------------------------------------------------------------------
 // BookingQuote
 // ---------------------------------------------------------------------------
 

@@ -13,6 +13,7 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../incidents/presentation/widgets/sos_entry.dart';
 import '../widgets/pickup_code_card.dart';
 
 /// Estados en que el chófer va, espera o lleva al pasajero: solo entonces
@@ -105,6 +106,13 @@ class _RideScreenState extends State<RideScreen> {
   }
 
   DriverInfo? get _driver => _booking?.driverInfo;
+
+  /// SOS del pasajero (solo lo ve él; el chófer nunca se entera).
+  Widget? _sos() {
+    final b = _booking;
+    if (b == null || widget.rideId.isEmpty) return null;
+    return SosEntry(bookingId: b.id, uid: b.riderId, status: b.status);
+  }
 
   Future<void> _callDriver() async {
     final phone = _driverPhone ?? '';
@@ -318,7 +326,7 @@ class _RideScreenState extends State<RideScreen> {
           SafeArea(
             child: Column(
               children: [
-                _TopBar(),
+                _TopBar(trailing: _sos()),
                 const Spacer(),
                 _BottomPanel(
                   status: _status ?? BookingStatus.pending,
@@ -349,7 +357,9 @@ class _RideScreenState extends State<RideScreen> {
               color: LuxColors.surface,
               child: Column(
                 children: [
-                  _WebRideHeader(status: _status ?? BookingStatus.pending),
+                  _WebRideHeader(
+                      status: _status ?? BookingStatus.pending,
+                      trailing: _sos()),
                   const LuxDivider(),
                   Expanded(
                     child: Padding(
@@ -397,6 +407,9 @@ class _MapArea extends StatelessWidget {
 }
 
 class _TopBar extends StatelessWidget {
+  const _TopBar({this.trailing});
+  final Widget? trailing;
+
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.all(LuxSpacing.md),
@@ -419,6 +432,7 @@ class _TopBar extends StatelessWidget {
             ),
             const SizedBox(width: LuxSpacing.md),
             const LuxelaneWordmark(),
+            if (trailing != null) ...[const Spacer(), trailing!],
           ],
         ),
       );
@@ -559,8 +573,9 @@ class _AssigningCard extends StatelessWidget {
 }
 
 class _WebRideHeader extends StatelessWidget {
-  const _WebRideHeader({required this.status});
+  const _WebRideHeader({required this.status, this.trailing});
   final BookingStatus status;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -569,6 +584,10 @@ class _WebRideHeader extends StatelessWidget {
           children: [
             const LuxelaneWordmark(),
             const Spacer(),
+            if (trailing != null) ...[
+              trailing!,
+              const SizedBox(width: LuxSpacing.sm),
+            ],
             BookingStatusChip(status: status),
           ],
         ),

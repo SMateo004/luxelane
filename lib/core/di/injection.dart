@@ -15,6 +15,7 @@ import '../../features/booking/data/repositories/vehicle_repository_impl.dart';
 import '../../features/booking/domain/usecases/booking_usecases.dart';
 import '../../features/booking/presentation/bloc/booking_bloc.dart';
 import '../../features/driver/presentation/bloc/driver_bloc.dart';
+import '../../features/incidents/data/incident_repository_impl.dart';
 import '../../features/notifications/presentation/bloc/notification_bloc.dart';
 import '../../features/payments/data/repositories/payment_repository_impl.dart';
 import '../../features/payments/domain/usecases/payment_usecases.dart';
@@ -71,6 +72,10 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<BookingRepository>(
     () => BookingRepositoryImpl(firestore: sl()),
+  );
+
+  sl.registerLazySingleton<IncidentRepository>(
+    () => IncidentRepositoryImpl(firestore: sl(), functions: sl()),
   );
 
   sl.registerLazySingleton<TripFlowRepository>(

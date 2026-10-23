@@ -9,6 +9,7 @@ import '../../domain/admin_finance.dart';
 import '../bloc/admin_bloc.dart';
 import '../widgets/admin_alerts_tab.dart';
 import '../widgets/admin_finance_tab.dart';
+import '../widgets/admin_incidents_strip.dart';
 import '../widgets/admin_pricing_tab.dart';
 import '../widgets/admin_sections.dart';
 import '../widgets/admin_shared_widgets.dart';
@@ -314,6 +315,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         buildWhen: (a, b) => a.loadError != b.loadError,
         builder: (context, state) => Column(
           children: [
+            // SOS: siempre arriba, en cualquier sección.
+            const AdminIncidentsStrip(),
             if (state.loadError != null)
               MaterialBanner(
                 backgroundColor: LuxColors.error.withValues(alpha: 0.08),

@@ -126,7 +126,7 @@ service cloud.firestore {
     // Campos del viaje que fija el servidor: nadie los toca desde la app.
     function serverTripFields() {
       return ['pickupLocked', 'arrivedAt', 'verifiedAt', 'verifiedBy',
-        'startedAt', 'completedAt'];
+        'startedAt', 'completedAt', 'incidentOpen', 'activeIncidentId'];
     }
 
     function statusChanges() {
@@ -141,7 +141,11 @@ service cloud.firestore {
         !request.resource.data.diff(resource.data).affectedKeys()
           .hasAny(serverTripFields()) &&
         !(statusChanges() &&
-          request.resource.data.status in ['verified', 'in_progress']);
+          request.resource.data.status in ['verified', 'in_progress']) &&
+        // Completar dispara el cobro: solo desde un viaje en curso, también
+        // para el admin.
+        !(statusChanges() && request.resource.data.status == 'completed' &&
+          resource.data.status != 'in_progress');
     }
 
     // La reserva completa (direcciones, notas, preferencias, datos del
@@ -258,6 +262,68 @@ service cloud.firestore {
         allow read: if isAdmin();
         allow create, update, delete: if false;
       }
+
+      // Estado de incidentes de la reserva (incidentOpen, activeIncidentId):
+      // fuera del documento de la reserva, que lee también la contraparte.
+      // Solo el servidor escribe; solo el admin lee.
+      match /adminOnly/{docId} {
+        allow read: if isAdmin();
+        allow write: if false;
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // /incidents/{incidentId} — SOS (D1, F9). Los crea y cambia solo el
+    // servidor (raiseIncident y compañía). Los lee quien lo disparó y el
+    // admin; la contraparte del viaje, nunca.
+    // -------------------------------------------------------------------------
+
+    function liveIncident(incidentId) {
+      return get(/databases/$(database)/documents/incidents/$(incidentId)).data;
+    }
+
+    // Una ubicación por tramo de 10 s: el ID del documento es el tramo
+    // (milisegundos / 10000) y solo se crea, nunca se reescribe.
+    function isCurrentLocationSlot(slot) {
+      let now = math.floor(request.time.toMillis() / 10000);
+      return slot.matches('^[0-9]{1,15}$') &&
+        int(slot) >= now - 1 && int(slot) <= now + 1;
+    }
+
+    match /incidents/{incidentId} {
+      allow read: if isAuthenticated() && (
+        resource.data.reporterId == request.auth.uid || isAdmin()
+      );
+      allow write: if false;
+
+      // Ubicación en vivo de quien lo disparó, mientras siga abierto.
+      match /locations/{slot} {
+        allow read: if isAuthenticated() && (
+          liveIncident(incidentId).reporterId == request.auth.uid || isAdmin()
+        );
+        allow create: if isAuthenticated() &&
+          liveIncident(incidentId).reporterId == request.auth.uid &&
+          liveIncident(incidentId).status in ['open', 'acknowledged'] &&
+          isCurrentLocationSlot(slot) &&
+          request.resource.data.keys().hasOnly(['lat', 'lng', 'at']) &&
+          request.resource.data.lat is number &&
+          request.resource.data.lat >= -90 && request.resource.data.lat <= 90 &&
+          request.resource.data.lng is number &&
+          request.resource.data.lng >= -180 && request.resource.data.lng <= 180 &&
+          request.resource.data.at == request.time;
+        allow update, delete: if false;
+      }
+
+      // Registro del incidente: solo el servidor lo escribe; solo el admin.
+      match /events/{eventId} {
+        allow read: if isAdmin();
+        allow write: if false;
+      }
+    }
+
+    // Límite de disparos por usuario: solo el servidor.
+    match /incidentRateLimits/{uid} {
+      allow read, write: if false;
     }
 
     // -------------------------------------------------------------------------

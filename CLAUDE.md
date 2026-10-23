@@ -20,6 +20,10 @@ tareas #1–#17 que se mencionan en las sesiones salen de ese archivo.
   real (no un resumen inventado):
   - App: `flutter analyze`, `dart format --output=none --set-exit-if-changed lib/ test/`, `flutter test`.
   - Functions: `npm run build` y `npm test` dentro de `functions/`.
+- En la ENTREGA FINAL incluir siempre, en texto plano dentro del mensaje,
+  una tabla con una fila por comando: comando, resultado (pasa/falla),
+  número de tests pasados/total y código de salida. Además de las salidas
+  literales (los adjuntos pierden las salidas de los comandos).
 
 ## Seguridad
 

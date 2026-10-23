@@ -14,6 +14,7 @@ const _alertLabels = {
   'pickup_locked': 'Verificación bloqueada (5 códigos incorrectos)',
   'pickup_override': 'Verificación forzada por un admin',
   'far_from_pickup': '«Llegué» lejos del punto de recogida',
+  'arrival_without_location': '«Llegué» sin ubicación del chófer',
 };
 
 String alertLabel(String type) => _alertLabels[type] ?? type;

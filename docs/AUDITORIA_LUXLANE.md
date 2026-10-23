@@ -58,6 +58,7 @@ D19 MEDIO. La clave REST de Maps (Places, Geocoding y Directions desde Android/i
 D20 ALTO. Los precios por defecto del código (DefaultPricing en la app, DEFAULT_FARES en functions) no coinciden con el plan de negocio: p. ej. 98 Bs por 16 km en business frente a un ticket ilustrativo de 55 USD del plan [Especulando sobre la cifra del plan]. No deben mostrarse al público.
 D21 MEDIO. Desde que bookings tiene allow create: if false y createBooking solo acepta pasajeros, ni el administrador ni un operador pueden crear una reserva en nombre de un cliente (reserva asistida por WhatsApp o teléfono, cuentas corporativas).
 D22 ALTO. «Forzar verificación» (adminOverrideVerify, functions/src/trip_flow.ts) deja una reserva verificada sin el código del pasajero con solo el rol admin; hoy el admin no tiene segundo factor (D6). Una cuenta de admin robada puede iniciar viajes sin el pasajero. Mitigación actual: motivo obligatorio, evento en bookings/{id}/events, alerta pickup_override y entrada en admin_logs, todo escrito por el servidor.
+D23 ALTO. Respuesta operativa a incidentes: el SOS avisa a central (panel con sonido, push a admins con token, escalada cada 2 minutos), pero no hay definido quién atiende, en qué horario ni con qué protocolo (turnos, tiempo máximo de respuesta, cuándo llamar a las autoridades, a quién avisar si nadie reconoce). Sin eso, un incidente puede quedar sin atender.
 Positivos: los roles no se pueden auto-asignar; el importe de Stripe se calcula en servidor al crear el PaymentIntent; el reembolso es solo admin con log en servidor; no se guardan números de tarjeta; no hay secretos privados en el árbol actual (solo placeholders sk_live_XXX, pk_live_XXX).
 No verificado: historial git previo (un solo commit), restricciones de las claves en Google Cloud, copias de seguridad en la consola, enumeración de correos, campos que serializa Booking.toJson.
 
@@ -79,13 +80,34 @@ Orden sugerido: #4, #3, #1, #2, #5, #6, #7, #8, #9, #10, #11, en paralelo con #1
 
 Criterio estricto de "lista para piloto": F2, F5 (con código), F7 (pago real) y F9 (SOS) funcionan de punta a punta; cero hallazgos CRÍTICOS abiertos; autorización por objeto probada con tests; build y tests pasan; despliegue a producción protegido por aprobación.
 
-## I. Estado de los hallazgos (rama cierre/verificacion, 2026-10-22)
+## J. Datos y privacidad de la verificación en recogida y del SOS
+
+| Dato | Dónde | Quién lo lee | Retención |
+|---|---|---|---|
+| Sal del código de recogida e intentos fallidos | bookings/{id}/private/pickup | Solo el servidor | Sin borrado (pendiente) |
+| Código de recogida | No se guarda: se recalcula con HMAC | El pasajero de la reserva (getPickupCode) | — |
+| Pasos del viaje (quién, versión de app, motivo del admin) | bookings/{id}/events | Pasajero, chófer asignado y admin | Sin borrado (pendiente) |
+| Ubicación del chófer al llegar, verificar y completar | bookings/{id}/eventLocations | Solo el admin | Sin borrado (pendiente) |
+| Incidente SOS (reserva, quién lo disparó y su rol, estado, veces, horas, escaladas, quién reconoció y cerró, nota de cierre) | incidents/{id} | Quien lo disparó y el admin; nunca la contraparte | Nunca se borra |
+| Ubicación en vivo de quien disparó el SOS (lat, lng y hora del servidor, como mucho una cada 10 s, solo con el incidente abierto o reconocido) | incidents/{id}/locations | Quien lo disparó y el admin | config/global.incidentLocationRetentionDays; sin el valor no se borra nada y el panel lo indica |
+| Registro del incidente | incidents/{id}/events | Solo el admin | Nunca se borra |
+| Banderas incidentOpen y activeIncidentId | bookings/{id}/adminOnly/incident (no en la reserva, que lee la contraparte) | Solo el admin | Se actualizan al cerrar |
+| Horas de los últimos disparos (límite 5 por hora) | incidentRateLimits/{uid} | Solo el servidor | Se sobrescribe con la última hora |
+| Alertas (incident, incident_escalated, incident_cancelled, pickup_*, far_from_pickup, arrival_without_location) | adminAlerts | Solo el admin | Sin borrado |
+| Notas de reconocer y cerrar | admin_logs | Solo el admin | Inmutable |
+| Push a los admin | FCM | Dispositivos de admin con token | Solo «Reserva #ABC123»; sin nombres ni ubicación |
+
+Logs de las funciones: ni el código de recogida ni ninguna coordenada se registran (prueba functions/src/integration/logs_privacy.int.ts, que falla si se añade un log con ellos; test/security/no_sensitive_logs_test.dart para las pantallas y repositorios de la app).
+
+Pendiente (decisión del responsable y texto legal): retención de eventLocations, events y de las ubicaciones del SOS (incidentLocationRetentionDays); mencionar en la política de privacidad la ubicación en vivo durante un SOS y quién la ve.
+
+## I. Estado de los hallazgos (rama cierre/sos, 2026-10-23)
 
 CERRADO = corregido en la rama con prueba automática; nada está desplegado todavía. PARCIAL = lo indicado en «Falta». ABIERTO = sin trabajo.
 
 | Id | Estado | Hecho (commit / prueba) | Falta |
 |---|---|---|---|
-| D1 | PARCIAL | Verificación hecha: 39ac9fe estado verified; 3c5e148 advanceBooking, getPickupCode, verifyPickup y adminOverrideVerify con código HMAC (PICKUP_CODE_SECRET), 5 intentos, vencimiento a 4 h y registro de eventos; onRideCompleted ya no completa reservas; 95f61c2 reglas: ningún cliente escribe los pasos del viaje; f8d406c código en la app del pasajero; ce4f118 app del chófer; 99c4239 panel; 3ff9262 avisos; f40606c despliegue. Pruebas: functions/src/integration/trip_flow.int.ts, trip_notifications.int.ts, functions/src/pickup_code.test.ts, tools/rules-tests/test/tripFlow.rules.ts (10 de 28 fallan con las reglas anteriores), test/driver/pickup_code_entry_test.dart, test/ride/pickup_code_card_test.dart | SOS. Detección de cierre sospechoso (solo diseño). Desplegar en el orden de DEPLOY.md («Verificación en recogida»). |
+| D1 | CERRADO (en código) | Verificación en recogida: 39ac9fe…f40606c (ver cierre/verificacion), 965094a el admin solo completa desde in_progress, 53c7138 llegada sin ubicación. SOS: da3c4bc reglas (incidents.rules.ts, 5 de 18 fallan con las reglas anteriores), b450f10 callables y escalada (incidents.int.ts), 9f4fdf7 aviso sin red, 746509d botón en las apps, 5d94f01 panel, 3818119 privacidad (logs_privacy.int.ts), 7410c0c despliegue. | **Sin una persona atendiendo el panel (o recibiendo el push) el botón no protege a nadie**: ver D23. Cierre sospechoso: en el piloto solo se captura el dato (ubicación y hora de inicio y fin en los eventos) y no se retiene el cobro; los umbrales se calibrarán con las dos primeras semanas de datos reales y no se pedirá al pasajero confirmar la llegada por ahora. Push a admins en web no registrado (solo app móvil). Retención de ubicaciones y eventos sin decidir. Desplegar en el orden de DEPLOY.md («Verificación en recogida» y «SOS e incidentes»). |
 | D2 | PARCIAL | 697057a createBooking/quoteBooking con precio del servidor; e3109a5 `allow create: if false`; pruebas: functions/src/integration/bookings.int.ts, tools/rules-tests/test/bookings.rules.ts | Idempotencia (requestId), versión mínima de la app, configurar pricingRules/config.pricing y desplegar en el orden de DEPLOY.md. |
 | D3 | ABIERTO | — | App Check y límites de tasa en las callables. |
 | D4 | CERRADO | 364c8b5; tools/rules-tests/test/driverProfiles.rules.ts | Desplegar. |
@@ -94,7 +116,7 @@ CERRADO = corregido en la rama con prueba automática; nada está desplegado tod
 | D7 | ABIERTO | — | Webhook de Stripe, idempotency keys, comparar el intent de capturePayment con el de la reserva. |
 | D8 | PARCIAL | 4724d4f entorno production, concurrencia y acciones por SHA; ccbe8b8 selector FIREBASE_ENV; 3297d33 job de reglas | Crear el proyecto de staging y el entorno de GitHub con revisores. |
 | D9 | PARCIAL | 452a5a5 firma de release con key.properties; test/security/build_config_test.dart | Generar el keystore de subida y cargar sus secretos en GitHub; Play App Signing. |
-| D10 | PARCIAL | Transiciones del chófer migradas al servidor (advanceBooking, verifyPickup; 3c5e148, 95f61c2), con evento por paso; el admin ya no fija verified ni in_progress desde la app (solo adminOverrideVerify, auditado en servidor). | Resto de transiciones del panel (siguen escritas desde el cliente, sin evento en bookings/{id}/events) y escrituras del admin (pagos, finalPrice, roles, comisión) por callables con auditoría en servidor. Ajustes finales de finalPrice: se tratarán con cancelación y auditoría. |
+| D10 | PARCIAL | Transiciones del chófer migradas al servidor (advanceBooking, verifyPickup; 3c5e148, 95f61c2), con evento por paso; el admin ya no fija verified ni in_progress desde la app (solo adminOverrideVerify, auditado en servidor). | Resto de transiciones del panel (siguen escritas desde el cliente, sin evento en bookings/{id}/events; entre ellas la cancelación del admin desde «Verificada», permitida por decisión del responsable y sin evento hasta el prompt de auditoría). Completar desde el panel ya solo se acepta desde «En progreso» (reglas) y escrituras del admin (pagos, finalPrice, roles, comisión) por callables con auditoría en servidor. Ajustes finales de finalPrice: se tratarán con cancelación y auditoría. |
 | D11 | PARCIAL | 4b58919 STRIPE_SECRET_KEY con defineSecret; functions/src/stripe_secret.test.ts | Errores de Stripe aún llegan crudos al cliente (paymentFailed(String(e))). |
 | D12 | PARCIAL | 130afd2 claves de Maps fuera del código, la release falla sin ellas; build_config_test.dart | Rotar la clave antigua (sigue en el historial de git) y restringir las nuevas. Claves de Firebase de Android/iOS sin valor por defecto desde a446377 (B8). |
 | D13 | PARCIAL | 0cbc55f cabeceras y CSP Report-Only (hosting_headers_test.dart); validación zod en createBooking | CSP obligatoria; validar el resto de callables; deleteAccount sigue dejando direcciones y driverInfo en las reservas. |
@@ -107,3 +129,4 @@ CERRADO = corregido en la rama con prueba automática; nada está desplegado tod
 | D20 | ABIERTO | — | Ocultar cifras de los valores por defecto y cargar las tarifas reales en Firestore. |
 | D21 | ABIERTO | — | Diseño de reserva asistida (adminCreateBooking). |
 | D22 | ABIERTO | Motivo obligatorio, evento, alerta y admin_logs en el servidor (3c5e148) | Segundo factor para el admin (D6) antes de confiar en «Forzar verificación»; se hará en otro prompt. |
+| D23 | ABIERTO | — | Definir quién atiende los incidentes y con qué turnos y protocolo (tiempo de respuesta, cuándo llamar a las autoridades, a quién escalar si nadie reconoce); que los admin de guardia reciban push (hoy solo desde la app móvil). Decisión y operación del responsable. |

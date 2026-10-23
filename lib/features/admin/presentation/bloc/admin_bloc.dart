@@ -100,6 +100,21 @@ class AdminResolveAlertRequested extends AdminEvent {
   List<Object?> get props => [alertId, note];
 }
 
+class AdminAcknowledgeIncidentRequested extends AdminEvent {
+  final String incidentId;
+  const AdminAcknowledgeIncidentRequested(this.incidentId);
+  @override
+  List<Object?> get props => [incidentId];
+}
+
+class AdminCloseIncidentRequested extends AdminEvent {
+  final String incidentId;
+  final String note;
+  const AdminCloseIncidentRequested(this.incidentId, this.note);
+  @override
+  List<Object?> get props => [incidentId, note];
+}
+
 /// «Forzar verificación» con motivo obligatorio (adminOverrideVerify).
 class AdminForceVerifyRequested extends AdminEvent {
   final String bookingId;
@@ -173,6 +188,7 @@ class AdminState extends Equatable {
     this.vehicles = const [],
     this.auditLogs = const [],
     this.alerts = const [],
+    this.incidents = const [],
     this.globalSettings = const {},
     this.financeSettings = const {},
     this.bookingsLimit = 1000,
@@ -193,6 +209,9 @@ class AdminState extends Equatable {
 
   /// Avisos del servidor (adminAlerts), los más recientes primero.
   final List<AdminAlert> alerts;
+
+  /// Incidentes SOS sin cerrar.
+  final List<Incident> incidents;
   final Map<String, dynamic> globalSettings;
   final Map<String, dynamic> financeSettings;
   final int bookingsLimit;
@@ -284,6 +303,10 @@ class AdminState extends Equatable {
 
   int get openAlertsCount => alerts.where((a) => !a.resolved).length;
 
+  /// Incidentes que nadie ha reconocido todavía.
+  int get unacknowledgedIncidents =>
+      incidents.where((i) => i.status == IncidentStatus.open).length;
+
   int get pendingRidesCount =>
       bookings.where((b) => b.status == BookingStatus.pending).length;
 
@@ -296,6 +319,7 @@ class AdminState extends Equatable {
     List<Vehicle>? vehicles,
     List<AuditLog>? auditLogs,
     List<AdminAlert>? alerts,
+    List<Incident>? incidents,
     Map<String, dynamic>? globalSettings,
     Map<String, dynamic>? financeSettings,
     int? bookingsLimit,
@@ -315,6 +339,7 @@ class AdminState extends Equatable {
       vehicles: vehicles ?? this.vehicles,
       auditLogs: auditLogs ?? this.auditLogs,
       alerts: alerts ?? this.alerts,
+      incidents: incidents ?? this.incidents,
       globalSettings: globalSettings ?? this.globalSettings,
       financeSettings: financeSettings ?? this.financeSettings,
       bookingsLimit: bookingsLimit ?? this.bookingsLimit,
@@ -336,6 +361,7 @@ class AdminState extends Equatable {
         vehicles,
         auditLogs,
         alerts,
+        incidents,
         globalSettings,
         financeSettings,
         bookingsLimit,
@@ -357,6 +383,13 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   /// Registro de pasos de una reserva (detalle de la reserva).
   Stream<List<BookingEvent>> bookingEvents(String bookingId) =>
       _repo.watchBookingEvents(bookingId);
+
+  Stream<List<IncidentLogEntry>> incidentLog(String incidentId) =>
+      _repo.watchIncidentLog(incidentId);
+  Stream<({double lat, double lng})?> incidentLocation(String incidentId) =>
+      _repo.watchIncidentLocation(incidentId);
+  Stream<({double lat, double lng})?> driverTracking(String bookingId) =>
+      _repo.watchDriverTracking(bookingId);
   final List<StreamSubscription<dynamic>> _subs = [];
 
   AdminBloc({required AdminRepository adminRepository})
@@ -407,6 +440,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         'Configuración financiera guardada'));
     on<AdminResolveAlertRequested>((e, emit) => _perform(
         emit, _repo.resolveAlert(e.alertId, note: e.note), 'Alerta revisada'));
+    on<AdminAcknowledgeIncidentRequested>((e, emit) => _perform(
+        emit, _repo.acknowledgeIncident(e.incidentId), 'Incidente reconocido'));
+    on<AdminCloseIncidentRequested>((e, emit) => _perform(
+        emit, _repo.closeIncident(e.incidentId, e.note), 'Incidente cerrado'));
     on<AdminForceVerifyRequested>((e, emit) => _perform(
         emit,
         _repo.forceVerify(e.bookingId, e.reason),
@@ -486,6 +523,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         (s, d) => s.copyWith(auditLogs: d));
     _listen(_repo.watchAdminAlerts(), 'las alertas',
         (s, d) => s.copyWith(alerts: d));
+    _listen(_repo.watchOpenIncidents(), 'los incidentes',
+        (s, d) => s.copyWith(incidents: d));
     _listen(_repo.watchGlobalSettings(), 'la configuración',
         (s, d) => s.copyWith(globalSettings: d));
     _listen(_repo.watchFinanceSettings(), 'la configuración financiera',

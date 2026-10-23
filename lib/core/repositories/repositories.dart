@@ -183,6 +183,29 @@ abstract class TripFlowRepository {
 }
 
 // ---------------------------------------------------------------------------
+// IncidentRepository — SOS (D1, F9)
+// ---------------------------------------------------------------------------
+
+abstract class IncidentRepository {
+  /// Avisa a central (raiseIncident). Si no responde en 5 s o no hay red,
+  /// devuelve [IncidentIssue.offline] para ofrecer llamada o SMS.
+  Future<Either<Failure, IncidentRaise>> raise(
+    String bookingId, {
+    ({double lat, double lng})? location,
+  });
+
+  /// Falsa alarma: solo quien lo disparó (central recibe el aviso igual).
+  Future<Either<Failure, void>> cancel(String incidentId);
+
+  /// El incidente más reciente de [uid] en la reserva (solo lo lee él).
+  Stream<Incident?> watchMine(String bookingId, String uid);
+
+  /// Ubicación en vivo mientras el incidente siga abierto (las reglas
+  /// limitan la frecuencia y los campos).
+  Future<void> publishLocation(String incidentId, double lat, double lng);
+}
+
+// ---------------------------------------------------------------------------
 // RideRepository
 // ---------------------------------------------------------------------------
 

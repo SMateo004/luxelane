@@ -80,6 +80,14 @@ class TripFailure extends Failure {
   final int? attemptsLeft;
 }
 
+/// Por qué no se pudo avisar a central del SOS.
+enum IncidentIssue { offline, outsideWindow, rateLimited, notAllowed, other }
+
+class IncidentFailure extends Failure {
+  const IncidentFailure(this.issue, super.message);
+  final IncidentIssue issue;
+}
+
 class ValidationFailure extends Failure {
   const ValidationFailure([super.message = 'Validation error']);
 }
