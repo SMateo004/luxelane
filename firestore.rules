@@ -490,9 +490,14 @@ service cloud.firestore {
     // finance: comisión y parámetros internos, solo para el admin.
     // -------------------------------------------------------------------------
 
+    // config/ops (tiempos del SOS, retención, radio de llegada): la lee el
+    // admin, la escribe solo la consola. config/security (segundo factor,
+    // sesión de admin): ningún cliente. El servidor las lee con el Admin
+    // SDK (A8.9).
     match /config/{docId} {
-      allow read:  if docId == 'global' || isAdmin();
-      allow create, update: if isAdmin() && (
+      allow read:  if docId == 'global' ||
+        (isAdmin() && docId != 'security');
+      allow create, update: if isAdmin() && !(docId in ['ops', 'security']) && (
         docId != 'finance' ||
         !('platformCommissionPct' in request.resource.data) || (
           request.resource.data.platformCommissionPct is number &&

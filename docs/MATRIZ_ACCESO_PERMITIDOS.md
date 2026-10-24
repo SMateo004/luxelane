@@ -11,7 +11,7 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-146 celdas permitidas, 13 con ⚠.
+145 celdas permitidas, 13 con ⚠.
 
 ## `users/{uid}`
 
@@ -344,7 +344,7 @@ Ninguna celda permitida.
 
 **anónimo**
 
-- ⚠ leer: estado operativo que la app lee antes de iniciar sesión (mantenimiento, versión mínima, teléfonos de central). **todo lo que se guarde en config/global es público, también sin sesión: no guardar ahí nada interno (hoy también lleva los tiempos de escalada del SOS y la retención).**
+- ⚠ leer: estado operativo que la app lee antes de iniciar sesión (mantenimiento, versión mínima, teléfonos de central). **todo lo que se guarde en config/global es público, también sin sesión: no guardar ahí nada interno (los tiempos del SOS, la retención y el radio de llegada pasaron a config/ops; el segundo factor irá en config/security).**
 
 **pasajero dueño**
 
@@ -373,7 +373,6 @@ Ninguna celda permitida.
 **admin**
 
 - leer: ajustes del panel.
-- listar: ajustes del panel.
 - crear: crear un documento de configuración.
 - ⚠ actualizar: cambiar ajustes. **el panel aún escribe esto directo desde el cliente (D10); pasa a callables con auditoría en el servidor en la Parte B o después.**
 
@@ -382,9 +381,18 @@ Ninguna celda permitida.
 **admin**
 
 - leer: comisión de la plataforma.
-- listar: ajustes del panel.
 - crear: crear un documento de configuración (comisión entre 0 y 100).
 - ⚠ actualizar: cambiar la comisión (entre 0 y 100). **el panel aún escribe esto directo desde el cliente (D10); pasa a callables con auditoría en el servidor en la Parte B o después.**
+
+## `config/ops`
+
+**admin**
+
+- leer: ver los tiempos del SOS, la retención y el radio de llegada (se editan en la consola).
+
+## `config/security`
+
+Ninguna celda permitida.
 
 ## `businessLeads/{id}`
 

@@ -111,7 +111,7 @@ export const acknowledgeIncident = secureCallable('acknowledgeIncident', {}, asy
 export const closeIncident = secureCallable('closeIncident', {}, async (req) =>
   incidents.closeIncident(incidentDeps(), await adminActor(req), req.data));
 
-/** Reenvía alerta y push de los incidentes sin reconocer (config/global). */
+/** Reenvía alerta y push de los incidentes sin reconocer (config/ops). */
 export const escalateIncidentsJob = onSchedule('every 1 minutes', async () => {
   await incidents.escalateIncidents(incidentDeps());
 });

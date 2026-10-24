@@ -87,7 +87,7 @@ beforeEach(async () => {
   await db.doc('users/chofer').set({ role: 'driver', isActive: true });
   await db.doc('users/otro').set({ role: 'driver', isActive: true });
   await db.doc('users/jefa').set({ role: 'admin' });
-  await db.doc('config/global').set({ arrivalRadiusMeters: 300 });
+  await db.doc('config/ops').set({ arrivalRadiusMeters: 300 });
 });
 afterAll(async () => { await clear(); await admin.app().delete(); });
 
@@ -229,7 +229,7 @@ describe('llegada: distancia al punto de recogida', () => {
   });
 
   it('sin arrivalRadiusMeters no compara y lo anota', async () => {
-    await db.doc('config/global').set({});
+    await db.doc('config/ops').set({});
     await booking('b1', 'driver_arriving');
     await advanceBooking(deps(), 'chofer', { bookingId: 'b1', to: 'driver_arrived', location: FAR });
     const [e] = await events('b1');
@@ -249,7 +249,7 @@ describe('llegada: distancia al punto de recogida', () => {
   });
 
   it('sin ubicación avisa aunque no haya radio configurado', async () => {
-    await db.doc('config/global').set({});
+    await db.doc('config/ops').set({});
     await booking('b1', 'driver_arriving');
     await advanceBooking(deps(), 'chofer', { bookingId: 'b1', to: 'driver_arrived' });
     expect((await alerts()).map((a) => a.type)).toEqual(['arrival_without_location']);

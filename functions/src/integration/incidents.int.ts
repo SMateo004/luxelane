@@ -262,7 +262,7 @@ describe('acknowledgeIncident y closeIncident (admin)', () => {
   });
 
   it('cerrado: deja de admitir ubicaciones y se anota la retención configurada', async () => {
-    await db.doc('config/global').set({ incidentLocationRetentionDays: 30 });
+    await db.doc('config/ops').set({ incidentLocationRetentionDays: 30 });
     const { incidentId } = await raiseIncident(deps(), 'ana', { bookingId: 'b1', location: { lat: -17.7, lng: -63.1 } });
     await closeIncident(deps(), jefa, { incidentId, note: 'Resuelto con el pasajero.' });
     const inc = await incident(incidentId);
@@ -295,8 +295,8 @@ describe('escalada (reloj simulado)', () => {
     expect((await alertTypes()).filter((t) => t === 'incident_escalated')).toHaveLength(2);
   });
 
-  it('con los tiempos de config/global', async () => {
-    await db.doc('config/global').set({ incidentAckSeconds: 30, incidentEscalateEverySeconds: 10 });
+  it('con los tiempos de config/ops', async () => {
+    await db.doc('config/ops').set({ incidentAckSeconds: 30, incidentEscalateEverySeconds: 10 });
     const { incidentId } = await raiseIncident(deps(), 'ana', { bookingId: 'b1' });
     clock += 30 * 1000;
     expect(await escalateIncidents(deps())).toEqual([incidentId]);

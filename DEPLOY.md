@@ -254,7 +254,8 @@ cliente escribir esos estados.
 
 ### Pasos manuales previos (decisiones del responsable)
 1. `PICKUP_CODE_SECRET` en cada proyecto (ver «First-time Setup», paso 4).
-2. `config/global.arrivalRadiusMeters` (número, metros): distancia a partir
+2. `config/ops.arrivalRadiusMeters` (número, metros; ver «config/ops y
+   config/security»): distancia a partir
    de la cual «He llegado» se marca lejos del punto de recogida y crea una
    alerta. No bloquea al chófer. Sin el campo no se compara y el evento lo
    anota (`no_radius`). **El valor lo decide el responsable.**
@@ -361,10 +362,10 @@ chófer, que sí sigue en segundo plano.
    no registra nada). El push del navegador **no es fiable con el navegador
    cerrado** (y el sistema puede silenciarlo): la guardia debe tener la app
    móvil con su cuenta de admin. El panel abierto suena igualmente.
-4. `config/global.incidentLocationRetentionDays` (número de días): cuánto se
+4. `config/ops.incidentLocationRetentionDays` (número de días): cuánto se
    guardan las ubicaciones de un incidente cerrado. Sin el valor no se borra
    nada y el panel lo indica.
-5. Tiempos de operación (opcionales, con su valor por defecto):
+5. Tiempos de operación en `config/ops` (opcionales, con su valor por defecto):
    `incidentAckSeconds` = 120 (escalar si nadie reconoce) e
    `incidentEscalateEverySeconds` = 120 (repetir la escalada).
 
@@ -539,6 +540,27 @@ npm run migrate:event-details -- --project staging           # dry-run
 npm run migrate:event-details -- --project staging --apply
 ```
 El panel nuevo lee ambos sitios, así que el orden no rompe nada.
+
+### config/ops y config/security (A8.9)
+`config/global` es público (lo leen las apps sin sesión) y el panel lo
+escribe. Lo que solo usa el servidor va aparte; el servidor lo lee con el
+Admin SDK:
+- `config/ops`: `incidentAckSeconds`, `incidentEscalateEverySeconds`,
+  `incidentLocationRetentionDays` y `arrivalRadiusMeters`. La lee el admin;
+  ningún cliente la escribe. Ninguna app ni el panel leían o editaban estas
+  claves en `config/global` [seguro].
+- `config/security` (Parte B: `mfaEnforced`, `adminSessionMaxHours`):
+  ningún cliente la lee ni la escribe, ni el admin.
+
+Las dos se editan solo en la consola de Firebase (Firestore → Datos →
+colección `config` → documento `ops` o `security` → editar campo).
+Traslado en un proyecto ya configurado, después de desplegar functions:
+1. Crear `config/ops` con los valores que tenga hoy `config/global` para
+   esas cuatro claves (mismo nombre y tipo número).
+2. Comprobar en Logs Explorer que deja de aparecer
+   `opsConfig … keys still in config/global` (mientras falte una clave en
+   ops, el servidor usa la de global y lo avisa).
+3. Borrar esas cuatro claves de `config/global` en la consola.
 
 ### Funciones retiradas
 El job *Deploy Functions* (`.github/workflows/ci.yml`, paso

@@ -16,6 +16,7 @@ import { updateRequired } from './app_version';
 import { codesMatch, MAX_PICKUP_ATTEMPTS, newPickupSalt, pickupCode, pickupExpired, PICKUP_CODE_TTL_MS } from './pickup_code';
 import { distanceKm } from './service_area';
 import { logger } from './logger';
+import { opsConfig } from './ops_config';
 
 export interface TripDeps {
   db: admin.firestore.Firestore;
@@ -217,7 +218,7 @@ export async function advanceBooking(deps: TripDeps, uid: string | undefined, da
     if (input.to === 'driver_arrived') {
       update.arrivedAt = at;
       tx.set(pickupRef(db, ref.id), { salt: newPickupSalt(), arrivedAt: at, failedAttempts: 0 });
-      const check = arrivalCheck(b, input.location, global.arrivalRadiusMeters);
+      const check = arrivalCheck(b, input.location, (await opsConfig(db)).arrivalRadiusMeters);
       adminDetail = check.extra;
       if (check.distanceMeters !== undefined) locationExtra = { distanceMeters: check.distanceMeters };
       if (check.far) {

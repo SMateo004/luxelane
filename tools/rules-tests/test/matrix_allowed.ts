@@ -192,12 +192,11 @@ export const ALLOWED: Record<string, Cells> = {
     ...Object.fromEntries((['anon', 'ana', 'beto', 'asig', 'libre', 'nover', 'bloq'] as Role[]).map((r) => [r, {
       leer: {
         why: 'estado operativo que la app lee antes de iniciar sesión (mantenimiento, versión mínima, teléfonos de central)',
-        ...(r === 'anon' ? { warn: 'todo lo que se guarde en config/global es público, también sin sesión: no guardar ahí nada interno (hoy también lleva los tiempos de escalada del SOS y la retención).' } : {}),
+        ...(r === 'anon' ? { warn: 'todo lo que se guarde en config/global es público, también sin sesión: no guardar ahí nada interno (los tiempos del SOS, la retención y el radio de llegada pasaron a config/ops; el segundo factor irá en config/security).' } : {}),
       },
     }])),
     admin: {
       leer: { why: 'ajustes del panel' },
-      listar: { why: 'ajustes del panel' },
       crear: { why: 'crear un documento de configuración' },
       actualizar: { why: 'cambiar ajustes', warn: D10 },
     },
@@ -205,10 +204,12 @@ export const ALLOWED: Record<string, Cells> = {
   'config/finance': {
     admin: {
       leer: { why: 'comisión de la plataforma' },
-      listar: { why: 'ajustes del panel' },
       crear: { why: 'crear un documento de configuración (comisión entre 0 y 100)' },
       actualizar: { why: 'cambiar la comisión (entre 0 y 100)', warn: D10 },
     },
+  },
+  'config/ops': {
+    admin: { leer: { why: 'ver los tiempos del SOS, la retención y el radio de llegada (se editan en la consola)' } },
   },
   'businessLeads/{id}': {
     admin: {

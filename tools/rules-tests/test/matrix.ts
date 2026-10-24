@@ -313,8 +313,8 @@ export const SPECS: Spec[] = [
     list: (db) => query(collection(db, 'config')),
     create: () => ({ path: 'config/nuevo', data: { x: 1 } }),
     update: () => ({ isMaintenanceMode: false }),
-    expect: { ...allRoles('SNNNN'), admin: 'SSSSN' },
-    note: 'Estado operativo público. Listar la colección incluye finance: solo el admin. Nadie la borra (H9).',
+    expect: { ...allRoles('SNNNN'), admin: 'SNSSN' },
+    note: 'Estado operativo público. Listar la colección incluye config/security: nadie (A8.9). Nadie la borra (H9).',
   },
   {
     name: 'config/finance',
@@ -323,9 +323,29 @@ export const SPECS: Spec[] = [
     list: (db) => query(collection(db, 'config')),
     create: () => ({ path: 'config/otro', data: { platformCommissionPct: 10 } }),
     update: () => ({ platformCommissionPct: 12 }),
-    expect: { ...allRoles(none), admin: 'SSSSN' },
+    expect: { ...allRoles(none), admin: 'SNSSN' },
     note: 'Comisión y parámetros internos: solo el admin. Borrarla se deniega también al admin ' +
       '(la regla valida el documento resultante).',
+  },
+  {
+    name: 'config/ops',
+    covered: false,
+    target: () => 'config/ops',
+    list: (db) => query(collection(db, 'config')),
+    create: () => ({ path: 'config/ops', data: { arrivalRadiusMeters: 1 } }),
+    update: () => ({ arrivalRadiusMeters: 1 }),
+    expect: { ...allRoles(none), admin: 'SNNNN' },
+    note: 'Tiempos del SOS, retención y radio de llegada: el admin la lee; se edita en la consola (A8.9).',
+  },
+  {
+    name: 'config/security',
+    covered: false,
+    target: () => 'config/security',
+    list: (db) => query(collection(db, 'config')),
+    create: () => ({ path: 'config/security', data: { mfaEnforced: false } }),
+    update: () => ({ mfaEnforced: false }),
+    expect: allRoles(none),
+    note: 'Segundo factor y sesión máxima de admin: ningún cliente, ni el admin; solo la consola y el servidor (A8.9).',
   },
   {
     name: 'businessLeads/{id}',
@@ -399,6 +419,8 @@ export async function seedMatrix(db: Firestore): Promise<void> {
   });
   await put('config/global', { isMaintenanceMode: false });
   await put('config/finance', { platformCommissionPct: 10 });
+  await put('config/ops', { arrivalRadiusMeters: 300 });
+  await put('config/security', { mfaEnforced: false });
   await put('businessLeads/l1', { company: 'Empresa', email: 'contacto@example.com', handled: false });
   await put('adminAlerts/a1', { type: 'x', resolved: false });
   await put('admin_logs/log1', { adminId: 'admin', action: 'x' });
