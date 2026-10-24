@@ -76,4 +76,23 @@ class VehicleRepositoryImpl implements VehicleRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> updateVehicleAppearance(
+    String vehicleId, {
+    String? color,
+    String? photoUrl,
+  }) async {
+    try {
+      await _col.doc(vehicleId).update({
+        if (color != null) 'color': color,
+        if (photoUrl != null) 'photoUrl': photoUrl,
+      });
+      return const Right(null);
+    } catch (_) {
+      return const Left(
+        ServerFailure('No pudimos guardar el cambio. Inténtalo de nuevo.'),
+      );
+    }
+  }
 }

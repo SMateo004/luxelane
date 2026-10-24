@@ -105,13 +105,23 @@ service cloud.firestore {
     // Licencia, documentos y verificación solo los ven el propio chófer y
     // el admin. El pasajero ve al chófer por `driverInfo` en su reserva y
     // por `bookings/{id}/tracking/driver`.
+    // Datos que el admin revisó al verificar: después solo los cambia el
+    // admin (el chófer contacta con central). Matriz, H4. Misma lista que
+    // kLockedDriverProfileFields en lib/core/config/driver_documents.dart.
+    function driverLockedFields() {
+      return ['licenseNumber', 'licenseExpiry', 'vehicleId'];
+    }
+
     match /driverProfiles/{uid} {
       allow read:   if isOwner(uid) || isAdmin();
       allow create: if isOwner(uid) && isDriver() &&
         !request.resource.data.keys().hasAny(driverManagedFields());
       allow update: if isAdmin() || (isOwner(uid) && isDriver() &&
         !request.resource.data.diff(resource.data).affectedKeys()
-          .hasAny(driverManagedFields()));
+          .hasAny(driverManagedFields()) &&
+        !(resource.data.get('documentsVerified', false) == true &&
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(driverLockedFields())));
       allow delete: if false;
     }
 
@@ -408,7 +418,9 @@ service cloud.firestore {
       allow create: if isAdmin() ||
         (isDriver() && isOwner(request.resource.data.driverId) &&
           request.resource.data.isActive == false);
-      // Activar o desactivar un vehículo es decisión del admin.
+      // Activar o desactivar un vehículo es decisión del admin. Placa,
+      // clase, marca, modelo y año los cambia solo el admin (H4): el chófer,
+      // color y foto (kEditableVehicleFields en driver_documents.dart).
       allow update: if isAdmin() || (
         isDriver() &&
         resource.data.driverId == request.auth.uid &&

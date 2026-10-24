@@ -125,3 +125,48 @@ extension UserRoleLabel on UserRole {
     }
   }
 }
+
+/// Cambio de licencia o vehículo que hace un admin cuando el chófer lo pide
+/// a central (tras verificar, el chófer no puede: matriz, H4). Solo viajan
+/// los campos que cambian, con sus nombres reales en Firestore.
+class DriverDocumentsEdit {
+  const DriverDocumentsEdit({
+    this.licenseNumber,
+    this.licenseExpiry,
+    this.plate,
+    this.vehicleClass,
+    this.make,
+    this.model,
+    this.year,
+  });
+
+  final String? licenseNumber;
+  final DateTime? licenseExpiry;
+  final String? plate;
+  final VehicleClass? vehicleClass;
+  final String? make;
+  final String? model;
+  final int? year;
+
+  /// driverProfiles/{uid}: licenseNumber, licenseExpiry.
+  Map<String, Object> profileChanges(DriverProfile p) => {
+        if (licenseNumber != null && licenseNumber != p.licenseNumber)
+          'licenseNumber': licenseNumber!,
+        if (licenseExpiry != null && licenseExpiry != p.licenseExpiry)
+          'licenseExpiry': licenseExpiry!,
+      };
+
+  /// vehicles/{id}: plate, class (con su capacidad), make, model, year.
+  Map<String, Object> vehicleChanges(Vehicle? v) => v == null
+      ? const {}
+      : {
+          if (plate != null && plate != v.plate) 'plate': plate!,
+          if (vehicleClass != null && vehicleClass != v.vehicleClass) ...{
+            'class': vehicleClass!.name,
+            'capacity': vehicleClass!.capacity,
+          },
+          if (make != null && make != v.make) 'make': make!,
+          if (model != null && model != v.model) 'model': model!,
+          if (year != null && year != v.year) 'year': year!,
+        };
+}

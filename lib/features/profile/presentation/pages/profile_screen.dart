@@ -9,6 +9,7 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/profile_bloc.dart';
+import '../widgets/driver_documents_group.dart';
 
 // ---------------------------------------------------------------------------
 // ProfileScreen
@@ -93,10 +94,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             final User user;
             int totalRides = 0;
             double? rating;
+            DriverProfile? driverProfile;
             if (state is ProfileLoaded) {
               user = state.user;
               totalRides = state.totalRides;
               rating = state.rating;
+              driverProfile = state.driverProfile;
             } else if (state is ProfileUpdated) {
               user = state.user;
             } else {
@@ -106,6 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               user: user,
               totalRides: totalRides,
               rating: rating,
+              driverProfile: driverProfile,
               onEdit: () => _showEditSheet(user),
               onPreferences: (p) => context.read<ProfileBloc>().add(
                     ProfileUpdateRequested(
@@ -130,9 +134,11 @@ class _ProfileBody extends StatelessWidget {
     required this.onEdit,
     required this.onPreferences,
     this.rating,
+    this.driverProfile,
   });
 
   final User user;
+  final DriverProfile? driverProfile;
   final int totalRides;
   final double? rating;
   final VoidCallback onEdit;
@@ -165,6 +171,12 @@ class _ProfileBody extends StatelessWidget {
           item(const SectionHeader(title: 'Tu estilo de viaje')),
           const SizedBox(height: LuxSpacing.sm),
           item(_RidePreferencesGroup(prefs: prefs, onChanged: onPreferences)),
+        ],
+        if (driverProfile != null) ...[
+          const SizedBox(height: LuxSpacing.xl),
+          item(const SectionHeader(title: 'Licencia y vehículo')),
+          const SizedBox(height: LuxSpacing.sm),
+          item(_DriverDocumentsSection(profile: driverProfile!)),
         ],
         const SizedBox(height: LuxSpacing.xl),
         item(const SectionHeader(title: 'Cuenta')),
@@ -587,5 +599,76 @@ class _ProfileHeader extends StatelessWidget {
             ],
           ),
         ),
+      );
+}
+
+/// Carga el vehículo del chófer y permite cambiar su color (lo único que
+/// edita; el resto lo cambia central).
+class _DriverDocumentsSection extends StatefulWidget {
+  const _DriverDocumentsSection({required this.profile});
+  final DriverProfile profile;
+
+  @override
+  State<_DriverDocumentsSection> createState() =>
+      _DriverDocumentsSectionState();
+}
+
+class _DriverDocumentsSectionState extends State<_DriverDocumentsSection> {
+  final _vehicles = sl<VehicleRepository>();
+  Vehicle? _vehicle;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    final r = await _vehicles.getVehicleByDriver(widget.profile.userId);
+    if (!mounted) return;
+    setState(() => _vehicle = r.fold((_) => null, (v) => v));
+  }
+
+  Future<void> _editColor() async {
+    final v = _vehicle;
+    if (v == null) return;
+    final controller = TextEditingController(text: v.color);
+    final color = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Color del vehículo'),
+        content: TextField(
+          controller: controller,
+          maxLength: 40,
+          autofocus: true,
+          decoration: const InputDecoration(labelText: 'Color'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, controller.text.trim()),
+            child: const Text('Guardar'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (color == null || color.isEmpty || !mounted) return;
+    final r = await _vehicles.updateVehicleAppearance(v.id, color: color);
+    if (!mounted) return;
+    r.fold(
+      (f) => showLuxSnackbar(context, f.message, isError: true),
+      (_) => _load(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => DriverDocumentsGroup(
+        profile: widget.profile,
+        vehicle: _vehicle,
+        onEditColor: _vehicle == null ? null : _editColor,
       );
 }

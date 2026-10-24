@@ -106,6 +106,13 @@ abstract class VehicleRepository {
   );
   Future<Either<Failure, void>> createVehicle(Vehicle vehicle);
   Future<Either<Failure, void>> updateVehicle(Vehicle vehicle);
+
+  /// Lo único que el chófer cambia de su vehículo: color y foto.
+  Future<Either<Failure, void>> updateVehicleAppearance(
+    String vehicleId, {
+    String? color,
+    String? photoUrl,
+  });
 }
 
 // ---------------------------------------------------------------------------

@@ -739,6 +739,41 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 
   @override
+  Future<Either<Failure, void>> updateDriverDocuments(
+    DriverProfile profile,
+    Vehicle? vehicle,
+    DriverDocumentsEdit edit,
+    String reason,
+  ) {
+    final profileChanges = edit.profileChanges(profile);
+    final vehicleChanges = edit.vehicleChanges(vehicle);
+    if (profileChanges.isEmpty && vehicleChanges.isEmpty) {
+      return Future.value(const Left(ValidationFailure('No hay cambios.')));
+    }
+    return _run((batch) async {
+      if (profileChanges.isNotEmpty) {
+        batch.update(_driver(profile.userId), profileChanges);
+      }
+      if (vehicleChanges.isNotEmpty) {
+        batch.update(
+          _db.collection('vehicles').doc(vehicle!.id),
+          vehicleChanges,
+        );
+      }
+      // Qué campos cambiaron y por qué; los valores quedan en los documentos.
+      _log(
+        batch,
+        'update_driver_documents',
+        profile.userId,
+        'driver',
+        details: 'Campos: '
+            '${[...profileChanges.keys, ...vehicleChanges.keys].join(', ')}'
+            ' · Motivo: ${reason.trim()}',
+      );
+    });
+  }
+
+  @override
   Future<Either<Failure, void>> toggleVehicleStatus(
     String vehicleId,
     bool active,
