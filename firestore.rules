@@ -321,6 +321,13 @@ service cloud.firestore {
         allow create, update, delete: if false;
       }
 
+      // Lo que de cada evento solo ve central: motivo del admin al forzar
+      // la verificación y control de llegada (farFromPickup). A8.7.
+      match /eventDetails/{eventId} {
+        allow read: if isAdmin();
+        allow create, update, delete: if false;
+      }
+
       // Estado de incidentes de la reserva (incidentOpen, activeIncidentId):
       // fuera del documento de la reserva, que lee también la contraparte.
       // Solo el servidor escribe; solo el admin lee.

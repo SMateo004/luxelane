@@ -125,11 +125,14 @@ interface EventInput {
   location?: z.infer<typeof location>;
   extra?: Record<string, unknown>;
   locationExtra?: Record<string, unknown>;
+  /** Solo para el admin (eventDetails): motivo del admin, control de llegada. */
+  adminDetail?: Record<string, unknown>;
 }
 
 /**
- * Anexa un evento. La ubicación del chófer va aparte (eventLocations, solo
- * para el admin), con el mismo ID que el evento.
+ * Anexa un evento, que leen el pasajero y el chófer asignado. La ubicación
+ * del chófer (eventLocations) y lo que solo es para central (eventDetails:
+ * motivo del admin, llegada lejos del punto) van aparte, con el mismo ID.
  */
 function appendEvent(tx: admin.firestore.Transaction, db: admin.firestore.Firestore, id: string, e: EventInput): void {
   const ref = bookingRef(db, id).collection('events').doc();
@@ -144,6 +147,12 @@ function appendEvent(tx: admin.firestore.Transaction, db: admin.firestore.Firest
     hasLocation: e.location !== undefined,
     ...(e.extra ?? {}),
   });
+  if (e.adminDetail && Object.keys(e.adminDetail).length > 0) {
+    tx.set(bookingRef(db, id).collection('eventDetails').doc(ref.id), {
+      ...e.adminDetail,
+      at: admin.firestore.FieldValue.serverTimestamp(),
+    });
+  }
   if (e.location) {
     tx.set(bookingRef(db, id).collection('eventLocations').doc(ref.id), {
       ...e.location,
@@ -203,13 +212,13 @@ export async function advanceBooking(deps: TripDeps, uid: string | undefined, da
     }
 
     const update: Record<string, unknown> = { status: input.to, updatedAt: at };
-    let extra: Record<string, unknown> = {};
+    let adminDetail: Record<string, unknown> = {};
     let locationExtra: Record<string, unknown> = {};
     if (input.to === 'driver_arrived') {
       update.arrivedAt = at;
       tx.set(pickupRef(db, ref.id), { salt: newPickupSalt(), arrivedAt: at, failedAttempts: 0 });
       const check = arrivalCheck(b, input.location, global.arrivalRadiusMeters);
-      extra = check.extra;
+      adminDetail = check.extra;
       if (check.distanceMeters !== undefined) locationExtra = { distanceMeters: check.distanceMeters };
       if (check.far) {
         alert(tx, db, {
@@ -243,7 +252,7 @@ export async function advanceBooking(deps: TripDeps, uid: string | undefined, da
       appVersion: input.appVersion,
       // La ubicación se guarda en llegada, verificación y fin.
       location: input.to === 'driver_arrived' || input.to === 'completed' ? input.location : undefined,
-      extra,
+      adminDetail,
       locationExtra,
     });
     return { status: input.to, alreadyApplied: false };
@@ -411,7 +420,8 @@ export async function adminOverrideVerify(
       to: 'verified',
       actor: { uid: actor.adminId, role: 'admin' },
       source: 'admin',
-      extra: { method: 'admin_override', reason: input.reason },
+      extra: { method: 'admin_override' },
+      adminDetail: { reason: input.reason },
     });
     alert(tx, db, {
       type: 'pickup_override',

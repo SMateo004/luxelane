@@ -40,6 +40,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `bookings/{id}/private` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
 | `bookings/{id}/events` | sí | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/eventLocations` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/eventDetails` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/adminOnly` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `incidents/{id}` | sí | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · | L Li · · · |
 | `incidents/{id}/locations` | sí | · · · · · | L Li C · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li C · · | L Li · · · |
@@ -66,6 +67,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `bookings/{id}/private`: Sal del código de recogida: nadie desde el cliente, ni el admin.
 - `bookings/{id}/events`: Registro de transiciones de activa (bloqueado: de activaBloq). Solo anexa el servidor.
 - `bookings/{id}/eventLocations`: Ubicación del chófer en cada evento: solo la lee el admin.
+- `bookings/{id}/eventDetails`: Motivo del admin al forzar la verificación y control de llegada (farFromPickup): solo el admin (A8.7).
 - `bookings/{id}/adminOnly`: Estado de incidentes de la reserva: solo lo lee el admin.
 - `incidents/{id}`: Aviso SOS de ana en activa (bloqueado: el suyo en activaBloq). La contraparte (asig) no lo ve.
 - `incidents/{id}/locations`: Ubicación de quien pidió ayuda (tramo de 10 s). Un bloqueado también puede pedir ayuda.

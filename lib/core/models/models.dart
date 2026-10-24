@@ -827,7 +827,8 @@ class AdminAlert {
 // ---------------------------------------------------------------------------
 
 /// Un paso del viaje que registró el servidor. La ubicación del chófer
-/// viene de eventLocations, que solo lee el admin.
+/// viene de eventLocations y el motivo del admin y el control de llegada de
+/// eventDetails; las dos solo las lee el admin.
 class BookingEvent {
   const BookingEvent({
     required this.id,
@@ -883,8 +884,11 @@ class BookingEvent {
     String id,
     Map<String, dynamic> j, [
     Map<String, dynamic>? location,
+    Map<String, dynamic>? detail,
   ]) {
     final actor = j['actor'] is Map ? j['actor'] as Map : const {};
+    // Eventos anteriores a eventDetails llevan estos campos en el evento.
+    final d = {...j, ...?detail};
     return BookingEvent(
       id: id,
       type: j['type'] as String? ?? 'transition',
@@ -895,9 +899,9 @@ class BookingEvent {
       source: j['source'] as String? ?? '',
       at: j['at'] is Timestamp ? (j['at'] as Timestamp).toDate() : null,
       appVersion: j['appVersion'] as String?,
-      farFromPickup: j['farFromPickup'] == true,
-      arrivalCheck: j['arrivalCheck'] as String?,
-      reason: j['reason'] as String?,
+      farFromPickup: d['farFromPickup'] == true,
+      arrivalCheck: d['arrivalCheck'] as String?,
+      reason: d['reason'] as String?,
       method: j['method'] as String?,
       failedAttempts: (j['failedAttempts'] as num?)?.toInt(),
       lat: (location?['lat'] as num?)?.toDouble(),

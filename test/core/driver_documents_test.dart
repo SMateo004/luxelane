@@ -56,7 +56,8 @@ void main() {
 
   test('las reglas dejan al chófer los mismos campos de su perfil', () {
     expect(
-      _rulesList(rules, r'function driverOwnerFields\(\) \{\s*return \[([^\]]*)\]'),
+      _rulesList(
+          rules, r'function driverOwnerFields\(\) \{\s*return \[([^\]]*)\]'),
       kDriverOwnerFields,
     );
   });

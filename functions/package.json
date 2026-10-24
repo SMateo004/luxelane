@@ -6,6 +6,7 @@
     "serve": "npm run build && firebase emulators:start --only functions",
     "deploy": "firebase deploy --only functions",
     "migrate:booking-pii": "npm run build && node scripts/migrate-booking-pii.js",
+    "migrate:event-details": "npm run build && node scripts/migrate-event-details.js",
     "trips:in-flight": "npm run build && node scripts/trips-in-flight.js"
   },
   "main": "lib/index.js",

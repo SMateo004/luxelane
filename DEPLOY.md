@@ -527,6 +527,19 @@ H9). Orden:
    leer sus viajes en el acto: reasignarlos antes de bloquearlo (el panel
    lo avisa).
 
+### Eventos: datos solo para central (A8.7)
+El motivo del admin al forzar la verificación y el control de llegada
+(`farFromPickup`, `arrivalCheck`) se escriben ahora en
+`bookings/{id}/eventDetails`, que solo lee el admin. Los eventos ya
+escritos los llevan dentro (visibles para pasajero y chófer). Tras desplegar
+functions y reglas, migrarlos (primero dry-run, primero staging):
+```
+cd functions
+npm run migrate:event-details -- --project staging           # dry-run
+npm run migrate:event-details -- --project staging --apply
+```
+El panel nuevo lee ambos sitios, así que el orden no rompe nada.
+
 ### Funciones retiradas
 El job *Deploy Functions* (`.github/workflows/ci.yml`, paso
 `deploy --only functions,firestore:indexes`) corre sin terminal y sin

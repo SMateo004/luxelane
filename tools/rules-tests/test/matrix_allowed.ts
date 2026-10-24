@@ -108,6 +108,9 @@ export const ALLOWED: Record<string, Cells> = {
   'bookings/{id}/eventLocations': {
     admin: { leer: { why: 'ubicación del chófer en cada paso, para reclamos' }, listar: { why: 'igual que leer' } },
   },
+  'bookings/{id}/eventDetails': {
+    admin: { leer: { why: 'motivo de una verificación forzada y llegada lejos del punto' }, listar: { why: 'igual que leer' } },
+  },
   'bookings/{id}/adminOnly': {
     admin: { leer: { why: 'estado de incidentes de la reserva' }, listar: { why: 'igual que leer' } },
   },

@@ -173,6 +173,16 @@ export const SPECS: Spec[] = [
     note: 'Ubicación del chófer en cada evento: solo la lee el admin.',
   },
   {
+    name: 'bookings/{id}/eventDetails',
+    covered: false,
+    target: () => 'bookings/activa/eventDetails/e1',
+    list: (db) => query(collection(db, 'bookings', 'activa', 'eventDetails')),
+    create: () => ({ path: 'bookings/activa/eventDetails/nuevo', data: { reason: 'x' } }),
+    update: () => ({ reason: 'y' }),
+    expect: { ...allRoles(none), admin: 'SSNNN' },
+    note: 'Motivo del admin al forzar la verificación y control de llegada (farFromPickup): solo el admin (A8.7).',
+  },
+  {
     name: 'bookings/{id}/adminOnly',
     covered: true,
     target: () => 'bookings/activa/adminOnly/incidents',
@@ -368,6 +378,7 @@ export async function seedMatrix(db: Firestore): Promise<void> {
   await put('bookings/activaBloq/driverContact/phone', { phone: '+59170000556' });
   await put('bookings/activa/private/pickup', { salt: 'sal', attempts: 0 });
   await put('bookings/activa/eventLocations/e1', { lat: -17.7, lng: -63.1 });
+  await put('bookings/activa/eventDetails/e1', { reason: 'Motivo del admin', farFromPickup: true });
   await put('bookings/activa/adminOnly/incidents', { incidentOpen: true });
   const inc = { status: 'open', cancelledByReporter: false, createdAt: Timestamp.now() };
   await put('incidents/inc1', { ...inc, reporterId: 'ana', bookingId: 'activa' });

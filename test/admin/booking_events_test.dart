@@ -47,6 +47,25 @@ void main() {
     expect(d, contains('Motivo: Pasajero sin batería'));
   });
 
+  test('el motivo y la llegada lejos vienen de eventDetails (solo admin)', () {
+    final e = BookingEvent.fromJson(
+      'e3',
+      {
+        'from': 'driver_arrived',
+        'to': 'verified',
+        'actor': {'uid': 'jefa', 'role': 'admin'},
+        'source': 'admin',
+        'method': 'admin_override',
+      },
+      null,
+      {'reason': 'Pasajero sin batería', 'farFromPickup': true},
+    );
+    expect(e.reason, 'Pasajero sin batería');
+    expect(e.farFromPickup, isTrue);
+    expect(
+        bookingEventDetails(e, name), contains('Motivo: Pasajero sin batería'));
+  });
+
   test('llegada sin radio o sin ubicación queda anotada', () {
     BookingEvent arrival(String check) => BookingEvent.fromJson('e', {
           'from': 'driver_arriving',

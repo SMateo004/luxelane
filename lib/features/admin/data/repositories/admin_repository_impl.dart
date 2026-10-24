@@ -133,9 +133,18 @@ class AdminRepositoryImpl implements AdminRepository {
       events,
     ) async {
       final locations = await ref.collection('eventLocations').get();
+      final details = await ref.collection('eventDetails').get();
       final byId = {for (final d in locations.docs) d.id: d.data()};
+      final detailById = {for (final d in details.docs) d.id: d.data()};
       return events.docs
-          .map((d) => BookingEvent.fromJson(d.id, d.data(), byId[d.id]))
+          .map(
+            (d) => BookingEvent.fromJson(
+              d.id,
+              d.data(),
+              byId[d.id],
+              detailById[d.id],
+            ),
+          )
           .toList();
     });
   }
