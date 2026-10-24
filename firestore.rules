@@ -165,6 +165,16 @@ service cloud.firestore {
         'startedAt', 'completedAt', 'incidentOpen', 'activeIncidentId'];
     }
 
+    // updatedAt que manda la app (hora del dispositivo): una marca de tiempo
+    // cercana a la del servidor, o ninguna.
+    function validClientUpdatedAt() {
+      return !('updatedAt' in request.resource.data) ||
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['updatedAt']) || (
+          request.resource.data.updatedAt is timestamp &&
+          request.resource.data.updatedAt > request.time - duration.value(15, 'm') &&
+          request.resource.data.updatedAt < request.time + duration.value(15, 'm'));
+    }
+
     function statusChanges() {
       return request.resource.data.status != resource.data.status;
     }
@@ -210,22 +220,29 @@ service cloud.firestore {
           request.resource.data.driverId == request.auth.uid &&
           request.resource.data.status == 'confirmed' &&
           onlyUpdating(['driverId', 'status', 'updatedAt'])) ||
-        // Rider cancels their own booking before the trip starts
+        // El pasajero cancela su reserva antes de que empiece el viaje:
+        // solo status (a cancelled) y updatedAt (A8.6).
         (isAuthenticated() &&
           resource.data.riderId == request.auth.uid &&
           onlyUpdating(['status', 'updatedAt']) &&
+          validClientUpdatedAt() &&
           resource.data.status in
             ['pending', 'confirmed', 'driver_arriving', 'driver_arrived'] &&
           request.resource.data.status == 'cancelled') ||
-        // Rider rates a completed trip, once
+        // El pasajero valora un viaje terminado, una vez: nota entera de 1
+        // a 5 y comentario de texto acotado (A8.6).
         (isAuthenticated() &&
           resource.data.riderId == request.auth.uid &&
           resource.data.status == 'completed' &&
           !('riderRating' in resource.data) &&
           onlyUpdating(['riderRating', 'riderComment', 'updatedAt']) &&
+          validClientUpdatedAt() &&
           request.resource.data.riderRating is int &&
           request.resource.data.riderRating >= 1 &&
-          request.resource.data.riderRating <= 5);
+          request.resource.data.riderRating <= 5 &&
+          (!('riderComment' in request.resource.data) ||
+            (request.resource.data.riderComment is string &&
+              request.resource.data.riderComment.size() <= 1000)));
 
       allow delete: if false;
 
