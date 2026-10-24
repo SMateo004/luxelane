@@ -72,7 +72,9 @@ service cloud.firestore {
 
     match /users/{uid} {
       allow read:   if isOwner(uid) || isAdmin();
-      allow create: if isAdmin() || (isOwner(uid) && isValidSelfSignup(uid));
+      // Solo el alta propia: el panel no crea perfiles de otros y los
+      // scripts usan el Admin SDK (A8.2).
+      allow create: if isOwner(uid) && isValidSelfSignup(uid);
       allow update: if isAdmin() || (
         isOwner(uid) &&
         !request.resource.data.diff(resource.data).affectedKeys()
@@ -86,7 +88,9 @@ service cloud.firestore {
     // (matriz, H3).
     match /users/{uid}/notifications/{notificationId} {
       allow read:   if isOwner(uid) || isAdmin();
-      allow create: if isAdmin();
+      // Los crea solo el servidor (Admin SDK): ni el dueño ni el admin
+      // desde el cliente (H3, A8.2).
+      allow create: if false;
       allow update: if (isOwner(uid) &&
         onlyUpdating(['isRead'])) || isAdmin();
       allow delete: if isOwner(uid) || isAdmin();
@@ -409,8 +413,8 @@ service cloud.firestore {
       allow read:   if isAdmin() ||
         (isAuthenticated() && resource.data.driverId == request.auth.uid);
       // Un chófer bloqueado no registra vehículos (matriz, H8).
-      allow create: if isAdmin() ||
-        (isDriver() && isActiveUser() &&
+      // Lo registra el chófer en su alta; el panel no crea vehículos (A8.2).
+      allow create: if (isDriver() && isActiveUser() &&
           isOwner(request.resource.data.driverId) &&
           request.resource.data.isActive == false);
       // Activar o desactivar un vehículo es decisión del admin. Placa,

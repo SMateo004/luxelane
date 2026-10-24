@@ -25,10 +25,6 @@ export const ALLOWED: Record<string, Cells> = {
     admin: {
       leer: { why: 'el panel muestra los usuarios' },
       listar: { why: 'el panel lista los usuarios' },
-      crear: {
-        why: 'la regla deja al admin crear cualquier perfil',
-        warn: 'ninguna pantalla crea perfiles de otros; el alta la hace cada persona o promote_admin. Podría cerrarse.',
-      },
       actualizar: { why: 'el admin cambia rol e isActive desde el panel', warn: D10 },
     },
   },
@@ -48,10 +44,6 @@ export const ALLOWED: Record<string, Cells> = {
     admin: {
       leer: { why: 'soporte' },
       listar: { why: 'soporte' },
-      crear: {
-        why: 'la regla deja al admin crear avisos',
-        warn: 'el panel no crea avisos (los crea el servidor); el admin podría escribir avisos con apariencia de sistema en cualquier bandeja. Podría cerrarse.',
-      },
       actualizar: { why: 'soporte' },
       borrar: { why: 'soporte' },
     },
@@ -177,7 +169,6 @@ export const ALLOWED: Record<string, Cells> = {
     admin: {
       leer: { why: 'flota' },
       listar: { why: 'flota' },
-      crear: { why: 'la regla deja al admin dar de alta vehículos', warn: 'ninguna pantalla del panel crea vehículos (los registra el chófer); podría cerrarse.' },
       actualizar: { why: 'activar, desactivar y corregir datos a petición del chófer', warn: D10 },
     },
   },
