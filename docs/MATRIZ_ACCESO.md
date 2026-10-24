@@ -92,20 +92,26 @@ Informativa.
 
 | # | Celdas | Severidad | Estado |
 |---|---|---|---|
-| H1 | `bookings`, `tracking`, `driverContact`, `events`, `rides` × usuario bloqueado × leer/listar | Media | **Pendiente de decisión.** Un chófer bloqueado sigue leyendo la reserva que tenía asignada, con los datos del pasajero (nombre, teléfono, direcciones y notas), y su registro de eventos. Arreglarlo (exigir `isActiveUser()` al chófer) cambia lo que ve la app del chófer bloqueado: se pregunta antes. Mitigación hoy: al bloquear, el admin reasigna la reserva. |
-| H2 | `users` × dueño (y bloqueado) × actualizar `isVerified` | Baja | **Corregido.** `isVerified` pasa a campo privilegiado. Hoy ninguna regla ni función depende de él, por eso Baja. Test: «H2: el dueño no se marca isVerified a sí mismo» (falla con las reglas anteriores). |
-| H3 | `users/{uid}/notifications` × dueño (y bloqueado) × crear | Baja | **Corregido.** El dueño podía escribirse avisos con apariencia de sistema en su propia bandeja. Ninguna pantalla los crea (los crea el servidor). Celdas `crear` de dueño y bloqueado (fallan con las reglas anteriores). |
-| H4 | `driverProfiles` × chófer verificado × actualizar | Media | **Pendiente de decisión.** Un chófer ya verificado puede cambiar `licenseNumber`, `licenseExpiry` o `vehicleId` sin perder `documentsVerified`. Corregirlo (bloquear esos campos tras verificar, o devolver `documentsVerified` a false al cambiarlos) cambia el alta del chófer: se pregunta antes. |
-| H5 | `businessLeads` × cualquiera (también anónimo) × crear | Media | **Mitigación en despliegue.** El formulario de empresas es público por diseño; sin límite, se puede llenar de basura. Las reglas no pueden limitar la frecuencia: la mitigación es activar App Check para Firestore (DEPLOY.md, fase 2). |
-| H6 | `users` × alta propia con `isVerified: true` y campos arbitrarios | Baja | **Pendiente de decisión.** La app de correo crea el perfil con `isVerified: true` antes de verificar el correo. Exigir `isVerified == false` (o `== request.auth.token.email_verified`) en el alta cambia el registro: se pregunta antes. |
-| H7 | `rides` × chófer (también bloqueado) × actualizar | Baja | **Pendiente de decisión.** Colección heredada que ninguna pantalla crea; el chófer puede escribir `riderRating`. Propuesta: cerrar la escritura del cliente o retirar la colección. |
-| H8 | `vehicles` × usuario bloqueado × crear/actualizar | Informativa | Un chófer bloqueado puede registrar un vehículo inactivo o cambiar el color del suyo. Sin efecto: activar un vehículo es del admin. |
-| H9 | `config/global` × admin × borrar | Informativa | El admin puede borrar `config/global` desde el cliente (el panel no lo hace). Con el documento borrado, las funciones usan sus valores por defecto. |
+| H1 | `bookings`, `tracking`, `driverContact`, `events`, `rides` × usuario bloqueado × leer/listar | Media | **Corregido** (a32305f). La lectura del chófer asignado exige `isActiveUser()`. La app del chófer muestra «Cuenta suspendida. Contacta con central.»; el panel avisa al bloquear a un chófer con viajes activos y permite reasignarlos. Tests: `blockedDriver.rules.ts` (bloqueado no lee, reactivado sí), matriz, `auth_bloc_test`, `block_driver_test`. |
+| H2 | `users` × dueño (y bloqueado) × actualizar `isVerified` | Baja | **Corregido** (58eb92a). `isVerified` es campo privilegiado. |
+| H3 | `users/{uid}/notifications` × dueño (y bloqueado) × crear | Baja | **Corregido** (58eb92a). Los avisos los crea el servidor. |
+| H4 | `driverProfiles` × chófer verificado × actualizar | Media | **Corregido** (140bac6). Tras verificar, el chófer no cambia `licenseNumber`, `licenseExpiry` ni `vehicleId`; del vehículo ya solo editaba `color` y `photoUrl` (`plate`, `class`, `make`, `model`, `year`: solo admin). El perfil del chófer muestra los campos bloqueados; el admin los cambia desde el panel con motivo en `admin_logs`. Tests: `driverDocuments.rules.ts`, `driver_documents_test.dart`. |
+| H5 | `businessLeads` × cualquiera (también anónimo) × crear | Media | **Corregido** (100d36c). El formulario usa la callable `submitBusinessLead` (esquema estricto, campo trampa, límite por IP seudonimizada con HMAC y por correo, App Check); las reglas niegan crear desde el cliente. Tests: `business_leads.int.ts`, matriz. |
+| H6 | `users` × alta propia con `isVerified: true` y campos arbitrarios | Baja | **Pendiente: Parte B (B1).** |
+| H7 | `rides` × chófer (también bloqueado) × actualizar | Baja | **Corregido** (e926aec). Sin usos vivos: se eliminó el código (modelo, repositorio, bloc, trigger). Lectura solo admin, escritura denegada; los documentos existentes no se tocan. |
+| H8 | `vehicles` × usuario bloqueado × crear | Informativa | **Corregido** (a37d7b2). Crear un vehículo exige `isActive`. Cambiar color o foto del propio sigue permitido (⚠ en MATRIZ_ACCESO_PERMITIDOS.md). |
+| H9 | `config/*` × admin × borrar | Informativa | **Corregido** (a37d7b2). Ningún cliente borra `config/*`; se actualiza. |
+| H10 | `driverProfiles` × usuario bloqueado × actualizar `isAvailable`, y `assignNearestDriver` | Media | **Pendiente de decisión.** Hallado en la revisión de celdas permitidas: un chófer bloqueado aún puede ponerse disponible y `assignNearestDriver` no comprueba `users.isActive` (solo `isAvailable` y `documentsVerified`): podría recibir una reserva que ya no puede leer. Propuesta: exigir `isActive` en la regla del dueño y filtrar bloqueados en la asignación. |
 
-Sin hallazgos: `payments` (solo el pasajero dueño lee; escribe el admin),
-`pricingRules` (lectura pública a propósito), `config/finance`, `openRequests`,
-`incidents` y sus subcolecciones, `private`, `eventLocations`, `adminOnly`,
-`incidentRateLimits`, `rateLimits`, `adminAlerts`, `admin_logs`.
+La revisión de todas las celdas permitidas, con ⚠ en las que parecen más
+amplias de lo necesario, está en
+[MATRIZ_ACCESO_PERMITIDOS.md](MATRIZ_ACCESO_PERMITIDOS.md).
+
+Sin hallazgos de la primera revisión: `payments` (solo el pasajero dueño
+lee; escribe el admin), `pricingRules` (lectura pública a propósito),
+`config/finance`, `openRequests`, `incidents` y sus subcolecciones,
+`private`, `eventLocations`, `adminOnly`, `incidentRateLimits`,
+`rateLimits`, `adminAlerts`, `admin_logs`.
 
 ## Casos fuera de la tabla
 

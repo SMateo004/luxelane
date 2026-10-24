@@ -51,6 +51,17 @@ staging; nunca para producción por omisión.**
    (`pickup_unavailable`) y el CI no despliega. Cambiarlo cambia el código
    de los viajes en «Chófer llegó»: rotarlo solo sin viajes en ese estado.
 
+5. Sal de los límites del formulario de empresas (`submitBusinessLead`),
+   distinta en cada proyecto, con el mismo procedimiento:
+   ```
+   openssl rand -hex 32          # copiar el valor
+   firebase functions:secrets:set RATE_LIMIT_SALT --project staging
+   firebase functions:secrets:set RATE_LIMIT_SALT --project production
+   ```
+   La IP del formulario solo se guarda como HMAC con esta sal. Sin ella la
+   callable rechaza todo envío (falla cerrado) y, como la función la
+   declara, el despliegue no termina **[Probable]**.
+
 4. Enable in Firebase Console (both projects):
    - Authentication → Email/Password + Phone + **Google** (see below)
    - Firestore → create database (production mode)
@@ -500,6 +511,21 @@ Ver `docs/MATRIZ_ACCESO.md`. Con el job *Deploy Firestore rules*:
 `isVerified` pasa a ser campo privilegiado y los avisos de
 `users/{uid}/notifications` solo los crea el servidor. Ninguna pantalla
 actual escribe ninguno de los dos: no hace falta subir versiones mínimas.
+
+Hallazgos de la matriz corregidos en cierre/identidad (H1, H4, H5, H7, H8,
+H9). Orden:
+1. `RATE_LIMIT_SALT` creado (First-time Setup, paso 5).
+2. **Functions**: añade `submitBusinessLead` y retira `onRideCompleted`
+   (al desplegar, la CLI pregunta si borra la función que ya no está en el
+   código: responder que sí; los documentos de `rides` no se tocan).
+3. **Hosting y apps**: la web envía el formulario de empresas por la
+   callable; el panel trae la advertencia al bloquear y «Editar datos» del
+   chófer; la app del chófer, «Cuenta suspendida» y los campos bloqueados.
+4. **Reglas al final**: niegan crear `businessLeads` desde el cliente. Una
+   web antigua (que escribía directo) deja de poder enviar el formulario:
+   desplegar el hosting antes que las reglas. Un chófer bloqueado deja de
+   leer sus viajes en el acto: reasignarlos antes de bloquearlo (el panel
+   lo avisa).
 
 ---
 
