@@ -113,6 +113,27 @@ lee; escribe el admin), `pricingRules` (lectura pública a propósito),
 `private`, `eventLocations`, `adminOnly`, `incidentRateLimits`,
 `rateLimits`, `adminAlerts`, `admin_logs`.
 
+## Campos de `driverProfiles/{uid}` (A8.5)
+
+Quién escribe cada campo [seguro: modelo `DriverProfile`, alta del chófer,
+repositorios de la app, panel y `functions/src/index.ts`]. «Dueño» exige
+cuenta activa salvo apagar la disponibilidad. Ningún otro campo lo escribe
+el dueño (lista blanca `driverOwnerFields`): un campo nuevo de documentos,
+fotos de identidad o datos de pago queda bloqueado para él desde el primer
+día. Hoy no existe ninguno de esos tres tipos de campo.
+
+| Campo | Antes de verificar | Después de verificar |
+|---|---|---|
+| `userId` | dueño (solo al crear, igual a su uid), admin | admin |
+| `licenseNumber`, `licenseExpiry`, `vehicleId` | dueño, admin | admin (a petición del chófer, con `admin_logs`) |
+| `isAvailable` | dueño, servidor (asignar, aceptar, liberar), chófer al aceptar (transacción en la app) | igual |
+| `online` | dueño, servidor (lo lee al liberar) | igual |
+| `currentLocation` | dueño | dueño |
+| `documentsVerified` | admin | admin |
+| `rating`, `ratingCount` | servidor (valoración del viaje) | servidor |
+| `totalRides` | servidor (al completar) | servidor |
+| cualquier otro | admin, servidor | admin, servidor |
+
 ## Casos fuera de la tabla
 
 - Alta propia: un usuario nuevo crea su perfil como pasajero activo; como

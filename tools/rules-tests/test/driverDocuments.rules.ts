@@ -2,7 +2,7 @@
 // sensibles del vehículo (placa, clase, marca, modelo, año); color y foto,
 // sí. Los cambia un admin.
 import { assertFails, assertSucceeds, RulesTestEnvironment } from '@firebase/rules-unit-testing';
-import { doc, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
+import { deleteDoc, doc, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { seed, startEnv } from './setup';
 
 let env: RulesTestEnvironment;
@@ -70,3 +70,45 @@ describe('datos sensibles del vehículo (H4)', () => {
     await assertSucceeds(updateDoc(vehicle('asig', 'v_asig'), { photoUrl: 'https://example.com/a.jpg' }));
   });
 });
+
+// A8.5: el dueño solo escribe su lista de campos; los demás (documentos,
+// fotos, datos de pago, verificación, valoración) no, antes ni después.
+describe('campos del perfil del chófer (A8.5)', () => {
+  const OTHER: [string, Record<string, unknown>][] = [
+    ['una foto de documento', { documentPhotoUrl: 'https://example.com/dni.jpg' }],
+    ['datos de pago', { bankAccount: 'ES00 0000' }],
+    ['la valoración', { rating: 5 }],
+    ['el contador de viajes', { totalRides: 999 }],
+    ['su userId', { userId: 'otro' }],
+  ];
+
+  test.each(OTHER)('el chófer verificado no escribe %s', async (_w, change) => {
+    await assertFails(updateDoc(profile('asig', 'asig'), change));
+  });
+
+  test.each(OTHER)('el chófer sin verificar tampoco escribe %s', async (_w, change) => {
+    await assertFails(updateDoc(profile('nover', 'nover'), change));
+  });
+
+  test('nadie se cambia la verificación: ni desverificarse ni verificarse', async () => {
+    await assertFails(updateDoc(profile('asig', 'asig'), { documentsVerified: false }));
+    await assertFails(updateDoc(profile('nover', 'nover'), { documentsVerified: true }));
+  });
+
+  test('el alta solo admite sus campos y su propio userId', async () => {
+    await env.withSecurityRulesDisabled((ctx) => deleteDoc(doc(ctx.firestore(), 'driverProfiles', 'nover')));
+    const base = { userId: 'nover', licenseNumber: 'LIC', licenseExpiry: Timestamp.fromDate(new Date(2030, 0, 1)), vehicleId: 'v_nover' };
+    await assertFails(setDoc(profile('nover', 'nover'), { ...base, documentPhotoUrl: 'x' }));
+    await assertFails(setDoc(profile('nover', 'nover'), { ...base, userId: 'asig' }));
+    await assertSucceeds(setDoc(profile('nover', 'nover'), base));
+  });
+
+  test('el chófer verificado sigue publicando disponibilidad y ubicación', async () => {
+    await assertSucceeds(updateDoc(profile('asig', 'asig'), { isAvailable: true, online: true, currentLocation: { lat: 1, lng: 1 } }));
+  });
+
+  test('el admin sí escribe los demás campos', async () => {
+    await assertSucceeds(updateDoc(profile('admin', 'asig'), { documentPhotoUrl: 'https://example.com/dni.jpg' }));
+  });
+});
+

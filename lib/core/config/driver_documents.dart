@@ -4,6 +4,19 @@
 /// comprueba que coinciden.
 library;
 
+/// Todo lo que el chófer escribe en driverProfiles/{uid}; el resto
+/// (documentsVerified, rating, ratingCount, totalRides…) es del admin o del
+/// servidor.
+const kDriverOwnerFields = [
+  'userId',
+  'licenseNumber',
+  'licenseExpiry',
+  'vehicleId',
+  'isAvailable',
+  'online',
+  'currentLocation',
+];
+
 /// Campos de driverProfiles/{uid} bloqueados tras la verificación.
 const kLockedDriverProfileFields = [
   'licenseNumber',

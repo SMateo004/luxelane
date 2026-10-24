@@ -54,6 +54,13 @@ void main() {
     );
   });
 
+  test('las reglas dejan al chófer los mismos campos de su perfil', () {
+    expect(
+      _rulesList(rules, r'function driverOwnerFields\(\) \{\s*return \[([^\]]*)\]'),
+      kDriverOwnerFields,
+    );
+  });
+
   test('el chófer solo edita color y foto del vehículo en las reglas', () {
     final vehicles =
         rules.substring(rules.indexOf('match /vehicles/{vehicleId}'));

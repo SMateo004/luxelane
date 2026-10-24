@@ -100,12 +100,6 @@ service cloud.firestore {
     // /driverProfiles/{uid}
     // -------------------------------------------------------------------------
 
-    // Verificación, valoración y contador de viajes los fijan el admin y el
-    // servidor; el chófer no puede darse de alta ya verificado.
-    function driverManagedFields() {
-      return ['documentsVerified', 'rating', 'ratingCount', 'totalRides'];
-    }
-
     // Licencia, documentos y verificación solo los ven el propio chófer y
     // el admin. El pasajero ve al chófer por `driverInfo` en su reserva y
     // por `bookings/{id}/tracking/driver`.
@@ -114,6 +108,13 @@ service cloud.firestore {
     // kLockedDriverProfileFields en lib/core/config/driver_documents.dart.
     function driverLockedFields() {
       return ['licenseNumber', 'licenseExpiry', 'vehicleId'];
+    }
+
+    // Todo lo que el chófer escribe en su perfil (kDriverOwnerFields en
+    // driver_documents.dart). userId solo al crear y siempre su uid.
+    function driverOwnerFields() {
+      return ['userId', 'licenseNumber', 'licenseExpiry', 'vehicleId',
+        'isAvailable', 'online', 'currentLocation'];
     }
 
     // Dejar de estar disponible siempre se permite: al cerrar sesión o al
@@ -128,13 +129,19 @@ service cloud.firestore {
     match /driverProfiles/{uid} {
       allow read:   if isOwner(uid) || isAdmin();
       // El dueño escribe solo con la cuenta activa (H10).
+      // Lista blanca (A8.5): el dueño solo escribe estos campos; cualquier
+      // otro (verificación, valoración, documentos, fotos, datos de pago
+      // que se añadan) es del admin o del servidor.
       allow create: if isOwner(uid) && isDriver() && isActiveUser() &&
-        !request.resource.data.keys().hasAny(driverManagedFields());
+        request.resource.data.keys().hasOnly(driverOwnerFields()) &&
+        request.resource.data.get('userId', uid) == uid;
       allow update: if isAdmin() || (isOwner(uid) && isDriver() && (
         onlyGoingOffline() || (
           isActiveUser() &&
+          request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(driverOwnerFields()) &&
           !request.resource.data.diff(resource.data).affectedKeys()
-            .hasAny(driverManagedFields()) &&
+            .hasAny(['userId']) &&
           !(resource.data.get('documentsVerified', false) == true &&
             request.resource.data.diff(resource.data).affectedKeys()
               .hasAny(driverLockedFields())))));
