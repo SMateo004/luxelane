@@ -1205,7 +1205,27 @@ class _UserTile extends StatelessWidget {
                 value: user.isActive,
                 activeColor: LuxColors.sapphire,
                 onChanged: (val) async {
-                  if (!val) {
+                  final trips = user.role == UserRole.driver
+                      ? AdminOperations.activeTripsOf(
+                          context.read<AdminBloc>().state.bookings,
+                          user.id,
+                        )
+                      : const <Booking>[];
+                  if (!val && trips.isNotEmpty) {
+                    final choice = await showDialog<BlockDriverChoice>(
+                      context: context,
+                      builder: (_) => BlockDriverWarningDialog(
+                        driverName: user.displayName,
+                        trips: trips,
+                      ),
+                    );
+                    if (!context.mounted) return;
+                    if (choice is ReassignTrip) {
+                      await showBookingDetail(context, choice.bookingId);
+                      return;
+                    }
+                    if (choice is! ConfirmBlock) return;
+                  } else if (!val) {
                     final ok = await confirmAdminAction(
                       context,
                       title: 'Bloquear usuario',
@@ -2004,6 +2024,97 @@ class _VerifyDriverDialogState extends State<_VerifyDriverDialog> {
               context,
             ).pop((reviewed: _reviewed, note: _note.text)),
             child: Text(_reviewed ? 'Verificar y activar' : 'Verificar'),
+          ),
+        ],
+      );
+}
+
+/// Lo que eligió el admin en [BlockDriverWarningDialog].
+sealed class BlockDriverChoice {
+  const BlockDriverChoice();
+}
+
+/// Bloquear igualmente: el chófer deja de ver esos viajes.
+class ConfirmBlock extends BlockDriverChoice {
+  const ConfirmBlock();
+}
+
+/// Abrir el viaje para reasignarlo (no bloquea todavía).
+class ReassignTrip extends BlockDriverChoice {
+  const ReassignTrip(this.bookingId);
+  final String bookingId;
+}
+
+/// Advertencia al bloquear a un chófer con viajes confirmados o en curso:
+/// al bloquearlo deja de ver esos viajes, así que hay que reasignarlos.
+class BlockDriverWarningDialog extends StatelessWidget {
+  const BlockDriverWarningDialog({
+    super.key,
+    required this.driverName,
+    required this.trips,
+  });
+
+  final String driverName;
+  final List<Booking> trips;
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        backgroundColor: LuxColors.surfaceMuted,
+        title: const Text(
+          'Este chófer tiene viajes activos',
+          style: LuxTypography.titleLarge,
+        ),
+        content: SizedBox(
+          width: 440,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Al bloquear a $driverName deja de ver estos viajes en el '
+                'acto. Reasígnalos antes de bloquearlo.',
+                style: LuxTypography.bodyMedium,
+              ),
+              const SizedBox(height: LuxSpacing.sm),
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    for (final b in trips)
+                      ListTile(
+                        key: ValueKey('trip-${b.id}'),
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          '${shortId(b.id)} · ${b.status.displayLabel}',
+                          style: LuxTypography.bodyMedium,
+                        ),
+                        subtitle: Text(
+                          adminDate(b.scheduledAt),
+                          style: LuxTypography.caption,
+                        ),
+                        trailing: TextButton(
+                          onPressed: () =>
+                              Navigator.pop(context, ReassignTrip(b.id)),
+                          child: const Text('Reasignar'),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, const ConfirmBlock()),
+            child: const Text(
+              'Bloquear igualmente',
+              style: TextStyle(color: LuxColors.error),
+            ),
           ),
         ],
       );

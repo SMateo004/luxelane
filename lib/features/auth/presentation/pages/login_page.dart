@@ -39,7 +39,7 @@ class _LoginPageState extends State<LoginPage> {
     // Un bloqueo detectado antes de llegar aquí (al abrir la app o con la
     // sesión abierta) no pasa por el listener: se muestra al entrar.
     final s = context.read<AuthBloc>().state;
-    if (s is AuthError && s.message == kBlockedAccountMessage) {
+    if (s is AuthError && isBlockedAccountMessage(s.message)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) showLuxSnackbar(context, s.message, isError: true);
       });

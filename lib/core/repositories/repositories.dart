@@ -13,6 +13,16 @@ import '../models/models.dart';
 const kBlockedAccountMessage =
     'Tu cuenta está bloqueada. Escríbenos a soporte si crees que es un error.';
 
+/// El chófer bloqueado: sin texto técnico, con a quién acudir.
+const kDriverSuspendedMessage = 'Cuenta suspendida. Contacta con central.';
+
+/// El mensaje de bloqueo según el rol de la cuenta.
+String blockedAccountMessage(UserRole role) =>
+    role == UserRole.driver ? kDriverSuspendedMessage : kBlockedAccountMessage;
+
+bool isBlockedAccountMessage(String message) =>
+    message == kBlockedAccountMessage || message == kDriverSuspendedMessage;
+
 abstract class AuthRepository {
   Future<Either<Failure, User>> login({
     required String email,

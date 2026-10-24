@@ -55,7 +55,7 @@ class AuthRepositoryImpl implements AuthRepository {
           // Una cuenta bloqueada por el admin pierde la sesión abierta.
           if (!user.isActive) {
             await _auth.signOut();
-            throw const AuthFailure(kBlockedAccountMessage);
+            throw AuthFailure(blockedAccountMessage(user.role));
           }
           return user;
         } on AuthFailure {
@@ -240,7 +240,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, User>> _activeOrBlocked(User user) async {
     if (user.isActive) return Right(user);
     await _auth.signOut();
-    return const Left(AuthFailure(kBlockedAccountMessage));
+    return Left(AuthFailure(blockedAccountMessage(user.role)));
   }
 
   static String _emailErrorMessage(String code) {

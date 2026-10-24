@@ -108,7 +108,7 @@ export const SPECS: Spec[] = [
       : query(collection(db, 'bookings'), where('riderId', '==', 'ana'))),
     create: () => ({ path: 'bookings/nueva', data: { riderId: 'ana', status: 'pending', estimatedPrice: 1 } }),
     update: () => ({ status: 'cancelled', updatedAt: Timestamp.now() }),
-    expect: { ...allRoles(none), ana: 'SSNSN', asig: 'SNNNN', bloq: 'SSNNN', admin: 'SSNSN' },
+    expect: { ...allRoles(none), ana: 'SSNSN', asig: 'SNNNN', admin: 'SSNSN' },
     note: 'Objetivo bookings/activa (de ana, asignada a asig, en camino); bloqueado: activaBloq, ' +
       'asignada a él. Listar = reservas de ana (bloqueado: las suyas). Actualizar = cancelar.',
   },
@@ -123,7 +123,7 @@ export const SPECS: Spec[] = [
       data: { lat: -17.7, lng: -63.1, updatedAt: serverTimestamp() },
     }),
     update: () => ({ lat: -17.71, lng: -63.11, updatedAt: serverTimestamp() }),
-    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSSSN', bloq: 'SSNNN', admin: 'SSNNN' },
+    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSSSN', admin: 'SSNNN' },
     note: 'Ubicación del chófer de activa (bloqueado: de activaBloq).',
   },
   {
@@ -136,7 +136,7 @@ export const SPECS: Spec[] = [
       data: { phone: '+59170000999' },
     }),
     update: () => ({ phone: '+59170000999' }),
-    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSNNN', bloq: 'SSNNN', admin: 'SSNNN' },
+    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSNNN', admin: 'SSNNN' },
     note: 'Teléfono del chófer de activa (bloqueado: de activaBloq). Lo escribe el servidor.',
   },
   {
@@ -159,7 +159,7 @@ export const SPECS: Spec[] = [
       data: { from: 'confirmed', to: 'driver_arriving' },
     }),
     update: () => ({ to: 'completed' }),
-    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSNNN', bloq: 'SSNNN', admin: 'SSNNN' },
+    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSNNN', admin: 'SSNNN' },
     note: 'Registro de transiciones de activa (bloqueado: de activaBloq). Solo anexa el servidor.',
   },
   {
@@ -254,7 +254,7 @@ export const SPECS: Spec[] = [
       : query(collection(db, 'rides'), where('riderId', '==', 'ana'))),
     create: () => ({ path: 'rides/nuevo', data: { riderId: 'ana', driverId: 'asig', bookingId: 'activa' } }),
     update: () => ({ distanceKm: 5 }),
-    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SNNSN', bloq: 'SSNSN', admin: 'SSSSN' },
+    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SNNSN', bloq: 'NNNSN', admin: 'SSSSN' },
     note: 'Colección heredada (ninguna pantalla la crea). r1: de ana con asig; bloqueado: rBloq, la suya. ' +
       'Listar = viajes de ana (bloqueado: los suyos por driverId).',
   },

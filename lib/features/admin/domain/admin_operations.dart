@@ -45,6 +45,17 @@ abstract class AdminOperations {
 
   static bool isActive(BookingStatus s) => activeStatuses.contains(s);
 
+  /// Viajes de [driverId] confirmados o en curso, por hora de recogida: los
+  /// que hay que reasignar antes de bloquearlo (al bloquearlo deja de verlos).
+  static List<Booking> activeTripsOf(
+    Iterable<Booking> bookings,
+    String driverId,
+  ) =>
+      bookings
+          .where((b) => b.driverId == driverId && isActive(b.status))
+          .toList()
+        ..sort((a, c) => a.scheduledAt.compareTo(c.scheduledAt));
+
   /// Se puede forzar la verificación (adminOverrideVerify): el chófer está
   /// en la recogida y el pasajero aún no dio el código.
   static bool canForceVerify(Booking b) =>

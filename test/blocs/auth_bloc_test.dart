@@ -38,6 +38,39 @@ void main() {
 
   group('AuthBloc', () {
     blocTest<AuthBloc, AuthState>(
+      'chófer bloqueado con la app abierta: «Cuenta suspendida», sin texto técnico',
+      build: () {
+        final driver = User.fromJson(
+            {..._mockUser.toJson(), 'role': UserRole.driver.name});
+        when(
+          () => repo.login(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => Right(driver));
+        when(() => repo.watchUser('uid-1')).thenAnswer(
+          (_) => Stream.value(
+            User.fromJson({...driver.toJson(), 'isActive': false}),
+          ),
+        );
+        when(() => repo.logout()).thenAnswer((_) async => const Right(null));
+        return AuthBloc(authRepository: repo);
+      },
+      act: (bloc) => bloc.add(
+        const LoginRequested(email: 'test@luxelane.com', password: 'secret'),
+      ),
+      skip: 2,
+      expect: () => [const AuthError(kDriverSuspendedMessage)],
+    );
+
+    test('mensaje de bloqueo por rol', () {
+      expect(blockedAccountMessage(UserRole.driver),
+          'Cuenta suspendida. Contacta con central.');
+      expect(blockedAccountMessage(UserRole.rider), kBlockedAccountMessage);
+      expect(isBlockedAccountMessage(kDriverSuspendedMessage), isTrue);
+    });
+
+    blocTest<AuthBloc, AuthState>(
       'cierra la sesión si el admin bloquea la cuenta con la app abierta',
       build: () {
         when(

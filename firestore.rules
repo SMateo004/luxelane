@@ -155,9 +155,12 @@ service cloud.firestore {
     // pasajero) solo la leen el pasajero, el chófer asignado y el admin. Los
     // chóferes ven las pendientes en /openRequests, sin datos personales.
     match /bookings/{bookingId} {
+      // El chófer asignado solo con la cuenta activa: uno bloqueado deja de
+      // ver los datos del pasajero en el acto (matriz, H1).
       allow read: if isAuthenticated() && (
         resource.data.riderId == request.auth.uid ||
-        resource.data.get('driverId', null) == request.auth.uid ||
+        (resource.data.get('driverId', null) == request.auth.uid &&
+          isActiveUser()) ||
         isAdmin()
       );
 
@@ -206,7 +209,7 @@ service cloud.firestore {
 
         allow read: if isAuthenticated() && (
           (booking().riderId == request.auth.uid && isLive(booking().status)) ||
-          booking().get('driverId', null) == request.auth.uid ||
+          (booking().get('driverId', null) == request.auth.uid && isActiveUser()) ||
           isAdmin()
         );
         allow create, update: if docId == 'driver' &&
@@ -232,7 +235,8 @@ service cloud.firestore {
           (contactBooking().riderId == request.auth.uid &&
             contactBooking().status in
               ['driver_arriving', 'driver_arrived', 'verified', 'in_progress']) ||
-          contactBooking().get('driverId', null) == request.auth.uid ||
+          (contactBooking().get('driverId', null) == request.auth.uid &&
+            isActiveUser()) ||
           isAdmin()
         );
         allow write: if false;
@@ -254,7 +258,8 @@ service cloud.firestore {
 
         allow read: if isAuthenticated() && (
           eventsBooking().riderId == request.auth.uid ||
-          eventsBooking().get('driverId', null) == request.auth.uid ||
+          (eventsBooking().get('driverId', null) == request.auth.uid &&
+            isActiveUser()) ||
           isAdmin()
         );
         allow create, update, delete: if false;
@@ -354,7 +359,7 @@ service cloud.firestore {
     match /rides/{rideId} {
       allow read: if isAuthenticated() && (
         resource.data.riderId == request.auth.uid ||
-        resource.data.driverId == request.auth.uid ||
+        (resource.data.driverId == request.auth.uid && isActiveUser()) ||
         isAdmin()
       );
 
