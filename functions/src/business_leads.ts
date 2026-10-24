@@ -30,9 +30,11 @@ export const leadSchema = z.strictObject({
 });
 
 /** Valores de operación (frenar envíos masivos), no de negocio. */
-export const LEAD_LIMITS: { perIp: RateRule; perEmail: RateRule } = {
+export const LEAD_LIMITS: { perIp: RateRule; perEmail: RateRule; global: RateRule } = {
   perIp: { limit: 5, windowSeconds: 3600 },
   perEmail: { limit: 3, windowSeconds: 24 * 3600 },
+  // Respaldo si alguien rota IP y correo: un único contador para todos.
+  global: { limit: 100, windowSeconds: 3600 },
 };
 
 export interface LeadDeps {
@@ -40,6 +42,8 @@ export interface LeadDeps {
   /** RATE_LIMIT_SALT. Vacía = no se aceptan solicitudes (falla cerrado). */
   salt: string;
   now?: () => number;
+  /** Solo para pruebas: límites más bajos. */
+  limits?: Partial<typeof LEAD_LIMITS>;
 }
 
 export interface LeadRequest {
@@ -47,11 +51,18 @@ export interface LeadRequest {
   rawRequest?: { ip?: string; headers?: Record<string, string | string[] | undefined> };
 }
 
-/** IP del cliente: la primera de x-forwarded-for (la pone el balanceador). */
+/**
+ * IP del cliente: el ÚLTIMO elemento de x-forwarded-for. Los primeros los
+ * puede escribir el propio cliente (el proxy de Google conserva lo que llega
+ * y añade al final la IP que vio). NO VERIFICADO: que en Cloud Functions
+ * (2.ª gen., sobre Cloud Run) el último sea siempre el del cliente y no otro
+ * salto de Google; por eso hay además un tope global.
+ */
 export function clientIp(req: LeadRequest): string {
   const fwd = req.rawRequest?.headers?.['x-forwarded-for'];
-  const first = (Array.isArray(fwd) ? fwd[0] : fwd)?.split(',')[0]?.trim();
-  return first || req.rawRequest?.ip || 'desconocida';
+  const parts = (Array.isArray(fwd) ? fwd.join(',') : fwd ?? '')
+    .split(',').map((p) => p.trim()).filter(Boolean);
+  return parts[parts.length - 1] || req.rawRequest?.ip || 'desconocida';
 }
 
 export const pseudonym = (salt: string, kind: string, value: string) =>
@@ -69,11 +80,13 @@ export async function submitBusinessLead(deps: LeadDeps, req: LeadRequest): Prom
     throw new HttpsError('internal', 'internal', { reason: 'internal' });
   }
   const now = deps.now?.() ?? Date.now();
+  const limits = { ...LEAD_LIMITS, ...deps.limits };
   const email = input.email.toLowerCase();
   await enforceRateLimit(deps.db, 'submitBusinessLead_ip',
-    pseudonym(deps.salt, 'ip', clientIp(req)), LEAD_LIMITS.perIp, now);
+    pseudonym(deps.salt, 'ip', clientIp(req)), limits.perIp, now);
   await enforceRateLimit(deps.db, 'submitBusinessLead_email',
-    pseudonym(deps.salt, 'email', email), LEAD_LIMITS.perEmail, now);
+    pseudonym(deps.salt, 'email', email), limits.perEmail, now);
+  await enforceRateLimit(deps.db, 'submitBusinessLead_global', 'todos', limits.global, now);
 
   await deps.db.collection('businessLeads').add({
     company: input.company,

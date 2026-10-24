@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach, afterEach, afterAll } from '@jest/globals';
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
-import { LEAD_LIMITS, LeadRequest, pseudonym, submitBusinessLead } from '../business_leads';
+import { clientIp, LEAD_LIMITS, LeadRequest, pseudonym, submitBusinessLead } from '../business_leads';
 import { rateLimiter } from '../rate_limit';
 import { submitBusinessLead as submitBusinessLeadFn } from '../index';
 
@@ -22,7 +22,8 @@ const lead = (over: Record<string, unknown> = {}) => ({
   phone: '+59170000000', travellers: '11–50', message: 'Queremos cotizar', ...over,
 });
 const req = (data: unknown, ip = IP): LeadRequest => ({
-  data, rawRequest: { ip: '10.0.0.1', headers: { 'x-forwarded-for': `${ip}, 10.0.0.1` } },
+  // Lo que escribe el cliente va delante; el proxy añade al final la IP real.
+  data, rawRequest: { ip: '10.0.0.1', headers: { 'x-forwarded-for': `1.2.3.4, ${ip}` } },
 });
 const send = (data: unknown, ip?: string, salt = SALT) => submitBusinessLead({ db, salt }, req(data, ip));
 
@@ -112,4 +113,34 @@ describe('submitBusinessLead', () => {
     expect((await failure(send(lead(), IP, ''))).code).toBe('internal');
     expect((await db.collection('businessLeads').get()).size).toBe(0);
   });
+
+  it('usa la última IP de x-forwarded-for: la primera la puede inventar el cliente', () => {
+    expect(clientIp(req({}, '198.51.100.20'))).toBe('198.51.100.20');
+    expect(clientIp({ data: {}, rawRequest: { headers: { 'x-forwarded-for': 'falsa, 203.0.113.9' } } })).toBe('203.0.113.9');
+    expect(clientIp({ data: {}, rawRequest: { ip: '192.0.2.1', headers: {} } })).toBe('192.0.2.1');
+  });
+
+  it('rotar la IP inventada no salta el límite por IP', async () => {
+    for (let i = 0; i < LEAD_LIMITS.perIp.limit; i++) {
+      await submitBusinessLead({ db, salt: SALT }, {
+        data: lead({ email: `r${i}@example.com` }),
+        rawRequest: { headers: { 'x-forwarded-for': `10.9.9.${i}, ${IP}` } },
+      });
+    }
+    expect((await failure(submitBusinessLead({ db, salt: SALT }, {
+      data: lead({ email: 'otra@example.com' }),
+      rawRequest: { headers: { 'x-forwarded-for': `10.9.9.99, ${IP}` } },
+    }))).reason).toBe('rate_limited');
+  });
+
+  it('tope global: rechaza aunque cambien IP y correo', async () => {
+    const deps = { db, salt: SALT, limits: { global: { limit: 3, windowSeconds: 3600 } } };
+    for (let i = 0; i < 3; i++) {
+      await submitBusinessLead(deps, req(lead({ email: `g${i}@example.com` }), `198.51.100.${i}`));
+    }
+    expect((await failure(submitBusinessLead(deps, req(lead({ email: 'g9@example.com' }), '198.51.100.9')))).reason)
+      .toBe('rate_limited');
+    expect((await db.collection('businessLeads').get()).size).toBe(3);
+  });
 });
+
