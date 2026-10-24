@@ -94,7 +94,7 @@ export const SPECS: Spec[] = [
     }),
     update: () => ({ isAvailable: false }),
     expect: {
-      ...allRoles(none), asig: 'SNSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SNSSN', admin: 'SSNSN',
+      ...allRoles(none), asig: 'SNSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SNNSN', admin: 'SSNSN',
     },
     note: 'Objetivo driverProfiles/asig (bloqueado: el suyo). Crear = el alta propia del chófer ' +
       '(los pasajeros intentan la suya; anónimo y admin, driverProfiles/nuevo).',

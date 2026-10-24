@@ -112,16 +112,28 @@ service cloud.firestore {
       return ['licenseNumber', 'licenseExpiry', 'vehicleId'];
     }
 
+    // Dejar de estar disponible siempre se permite: al cerrar sesión o al
+    // ser bloqueado, la app lo apaga (matriz, H10).
+    function onlyGoingOffline() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['isAvailable', 'online']) &&
+        request.resource.data.get('isAvailable', false) == false &&
+        request.resource.data.get('online', false) == false;
+    }
+
     match /driverProfiles/{uid} {
       allow read:   if isOwner(uid) || isAdmin();
-      allow create: if isOwner(uid) && isDriver() &&
+      // El dueño escribe solo con la cuenta activa (H10).
+      allow create: if isOwner(uid) && isDriver() && isActiveUser() &&
         !request.resource.data.keys().hasAny(driverManagedFields());
-      allow update: if isAdmin() || (isOwner(uid) && isDriver() &&
-        !request.resource.data.diff(resource.data).affectedKeys()
-          .hasAny(driverManagedFields()) &&
-        !(resource.data.get('documentsVerified', false) == true &&
-          request.resource.data.diff(resource.data).affectedKeys()
-            .hasAny(driverLockedFields())));
+      allow update: if isAdmin() || (isOwner(uid) && isDriver() && (
+        onlyGoingOffline() || (
+          isActiveUser() &&
+          !request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(driverManagedFields()) &&
+          !(resource.data.get('documentsVerified', false) == true &&
+            request.resource.data.diff(resource.data).affectedKeys()
+              .hasAny(driverLockedFields())))));
       allow delete: if false;
     }
 

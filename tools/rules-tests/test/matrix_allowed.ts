@@ -66,11 +66,7 @@ export const ALLOWED: Record<string, Cells> = {
     nover: { crear: { why: 'alta del chófer: crea su propio perfil' } },
     bloq: {
       leer: { why: 'el chófer lee su perfil' },
-      crear: { why: 'la regla de alta no mira isActive (solo alcanzable si nunca tuvo perfil; no queda verificado)' },
-      actualizar: {
-        why: 'la regla del dueño no mira isActive',
-        warn: 'un chófer bloqueado puede ponerse isAvailable: true, y assignNearestDriver no comprueba users.isActive [seguro, leído en index.ts]: podría recibir una reserva que ya no puede leer (A1). Propuesta: exigir isActive aquí y filtrar bloqueados en assignNearestDriver.',
-      },
+      actualizar: { why: 'con la cuenta bloqueada solo puede dejar de estar disponible (isAvailable y online en false), H10' },
     },
     admin: {
       leer: { why: 'el panel muestra los chóferes' },

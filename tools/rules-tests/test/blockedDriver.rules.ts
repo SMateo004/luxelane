@@ -2,7 +2,7 @@
 // true, no ve solicitudes, no publica su ubicación y no acepta viajes. Cada
 // caso tiene su control: el mismo chófer reactivado sí puede.
 import { assertFails, assertSucceeds, RulesTestEnvironment } from '@firebase/rules-unit-testing';
-import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, Timestamp, updateDoc, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, query, serverTimestamp, setDoc, Timestamp, updateDoc, where } from 'firebase/firestore';
 import { seed, startEnv } from './setup';
 
 let env: RulesTestEnvironment;
@@ -70,6 +70,35 @@ describe('chófer verificado con isActive == false', () => {
       await assertFails(read());
       await reactivate();
       await assertSucceeds(read());
+    });
+  });
+
+  // H10: con la cuenta bloqueada solo puede dejar de estar disponible.
+  describe('su perfil (H10)', () => {
+    const profile = () => doc(db(), 'driverProfiles', 'bloq');
+
+    test('no se pone disponible; reactivado, sí', async () => {
+      await env.withSecurityRulesDisabled((ctx) =>
+        updateDoc(doc(ctx.firestore(), 'driverProfiles', 'bloq'), { isAvailable: false, online: false }));
+      await assertFails(updateDoc(profile(), { isAvailable: true, online: true }));
+      await reactivate();
+      await assertSucceeds(updateDoc(profile(), { isAvailable: true, online: true }));
+    });
+
+    test('siempre puede dejar de estar disponible', async () => {
+      await assertSucceeds(updateDoc(profile(), { isAvailable: false, online: false }));
+      await assertSucceeds(updateDoc(profile(), { isAvailable: false }));
+    });
+
+    test('no publica su ubicación en el perfil', async () => {
+      await assertFails(updateDoc(profile(), { currentLocation: { lat: 1, lng: 1 } }));
+    });
+
+    test('no crea un perfil nuevo', async () => {
+      await env.withSecurityRulesDisabled((ctx) => deleteDoc(doc(ctx.firestore(), 'driverProfiles', 'bloq')));
+      await assertFails(setDoc(profile(), { userId: 'bloq', licenseNumber: 'X', isAvailable: false }));
+      await reactivate();
+      await assertSucceeds(setDoc(profile(), { userId: 'bloq', licenseNumber: 'X', isAvailable: false }));
     });
   });
 });

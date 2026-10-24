@@ -33,7 +33,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 |---|---|---|---|---|---|---|---|---|---|
 | `users/{uid}` | sí | · · · · · | L · · A · | · · · · · | · · · · · | · · · · · | · · · · · | L · · A · | L Li C A · |
 | `users/{uid}/notifications` | nueva | · · · · · | L Li · A B | · · · · · | · · · · · | · · · · · | · · · · · | L Li · A B | L Li C A B |
-| `driverProfiles/{uid}` | sí | · · · · · | · · · · · | · · · · · | L · C A · | · · C · · | · · C · · | L · C A · | L Li · A · |
+| `driverProfiles/{uid}` | sí | · · · · · | · · · · · | · · · · · | L · C A · | · · C · · | · · C · · | L · · A · | L Li · A · |
 | `bookings/{id}` | sí | · · · · · | L Li · A · | · · · · · | L · · · · | · · · · · | · · · · · | · · · · · | L Li · A · |
 | `bookings/{id}/tracking` | sí | · · · · · | L Li · · · | · · · · · | L Li C A · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/driverContact` | sí | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
@@ -101,7 +101,7 @@ Informativa.
 | H7 | `rides` × chófer (también bloqueado) × actualizar | Baja | **Corregido** (e926aec). Sin usos vivos: se eliminó el código (modelo, repositorio, bloc, trigger). Lectura solo admin, escritura denegada; los documentos existentes no se tocan. |
 | H8 | `vehicles` × usuario bloqueado × crear | Informativa | **Corregido** (a37d7b2). Crear un vehículo exige `isActive`. Cambiar color o foto del propio sigue permitido (⚠ en MATRIZ_ACCESO_PERMITIDOS.md). |
 | H9 | `config/*` × admin × borrar | Informativa | **Corregido** (a37d7b2). Ningún cliente borra `config/*`; se actualiza. |
-| H10 | `driverProfiles` × usuario bloqueado × actualizar `isAvailable`, y `assignNearestDriver` | Media | **Pendiente de decisión.** Hallado en la revisión de celdas permitidas: un chófer bloqueado aún puede ponerse disponible y `assignNearestDriver` no comprueba `users.isActive` (solo `isAvailable` y `documentsVerified`): podría recibir una reserva que ya no puede leer. Propuesta: exigir `isActive` en la regla del dueño y filtrar bloqueados en la asignación. |
+| H10 | `driverProfiles` × usuario bloqueado × crear/actualizar, y `assignNearestDriver` | Media | **Corregido** (A8.1). El dueño escribe su perfil solo con la cuenta activa (dejar de estar disponible siempre se permite); `assignNearestDriver` descarta a los chóferes con `users.isActive == false`, también dentro de la transacción. Tests: `blockedDriver.rules.ts`, `assignment.int.ts`, `assignment.test.ts`. |
 
 La revisión de todas las celdas permitidas, con ⚠ en las que parecen más
 amplias de lo necesario, está en

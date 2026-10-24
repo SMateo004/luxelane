@@ -1054,7 +1054,12 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
     return { assigned: false, reason: 'no_drivers_available' };
   }
 
-  const profiles = await db.getAll(...driverIds.map((id) => db.collection('driverProfiles').doc(id)));
+  const [profiles, users] = await Promise.all([
+    db.getAll(...driverIds.map((id) => db.collection('driverProfiles').doc(id))),
+    db.getAll(...driverIds.map((id) => db.collection('users').doc(id))),
+  ]);
+  // Un chófer bloqueado no se asigna aunque su perfil diga disponible (H10).
+  const active = new Set(users.filter((u) => u.exists && u.data()?.isActive !== false).map((u) => u.id));
   const ranked = rankCandidates(
     profiles
       .filter((p) => p.exists)
@@ -1065,6 +1070,7 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
           driverId: p.id,
           isAvailable: d.isAvailable === true,
           documentsVerified: d.documentsVerified === true,
+          isActive: active.has(p.id),
           location: gp ? { lat: gp.latitude, lng: gp.longitude } : null,
         };
       }),
@@ -1078,9 +1084,11 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
   for (const driverId of ranked) {
     const driverRef = db.collection('driverProfiles').doc(driverId);
     const outcome = await db.runTransaction(async (tx) => {
-      const [b, d] = await Promise.all([tx.get(bookingRef), tx.get(driverRef)]);
+      const [b, d, u] = await Promise.all([
+        tx.get(bookingRef), tx.get(driverRef), tx.get(db.collection('users').doc(driverId)),
+      ]);
       if ((b.data() as BookingDoc | undefined)?.status !== 'pending') return 'taken';
-      if (!d.data()?.isAvailable) return 'busy';
+      if (!d.data()?.isAvailable || u.data()?.isActive === false) return 'busy';
       tx.update(bookingRef, {
         driverId,
         status: 'confirmed' as BookingStatus,

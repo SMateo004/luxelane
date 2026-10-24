@@ -11,7 +11,7 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-148 celdas permitidas, 17 con ⚠.
+147 celdas permitidas, 16 con ⚠.
 
 ## `users/{uid}`
 
@@ -75,8 +75,7 @@ el documento que usa cada fila están en MATRIZ_ACCESO.md.
 **usuario bloqueado**
 
 - leer: el chófer lee su perfil.
-- crear: la regla de alta no mira isActive (solo alcanzable si nunca tuvo perfil; no queda verificado).
-- ⚠ actualizar: la regla del dueño no mira isActive. **un chófer bloqueado puede ponerse isAvailable: true, y assignNearestDriver no comprueba users.isActive [seguro, leído en index.ts]: podría recibir una reserva que ya no puede leer (A1). Propuesta: exigir isActive aquí y filtrar bloqueados en assignNearestDriver.**
+- actualizar: con la cuenta bloqueada solo puede dejar de estar disponible (isAvailable y online en false), H10.
 
 **admin**
 
