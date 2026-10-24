@@ -396,8 +396,10 @@ service cloud.firestore {
     match /vehicles/{vehicleId} {
       allow read:   if isAdmin() ||
         (isAuthenticated() && resource.data.driverId == request.auth.uid);
+      // Un chófer bloqueado no registra vehículos (matriz, H8).
       allow create: if isAdmin() ||
-        (isDriver() && isOwner(request.resource.data.driverId) &&
+        (isDriver() && isActiveUser() &&
+          isOwner(request.resource.data.driverId) &&
           request.resource.data.isActive == false);
       // Activar o desactivar un vehículo es decisión del admin. Placa,
       // clase, marca, modelo y año los cambia solo el admin (H4): el chófer,
@@ -438,7 +440,7 @@ service cloud.firestore {
 
     match /config/{docId} {
       allow read:  if docId == 'global' || isAdmin();
-      allow write: if isAdmin() && (
+      allow create, update: if isAdmin() && (
         docId != 'finance' ||
         !('platformCommissionPct' in request.resource.data) || (
           request.resource.data.platformCommissionPct is number &&
@@ -446,6 +448,9 @@ service cloud.firestore {
           request.resource.data.platformCommissionPct <= 100
         )
       );
+      // La configuración se actualiza, no se borra: sin config/global las
+      // funciones y las apps caen a sus valores por defecto (matriz, H9).
+      allow delete: if false;
     }
 
     // -------------------------------------------------------------------------

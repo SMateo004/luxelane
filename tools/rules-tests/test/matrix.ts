@@ -279,9 +279,9 @@ export const SPECS: Spec[] = [
     }),
     update: () => ({ color: 'Negro' }),
     expect: {
-      ...allRoles(none), asig: 'SSSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SSSSN', admin: 'SSSSN',
+      ...allRoles(none), asig: 'SSSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SSNSN', admin: 'SSSSN',
     },
-    note: 'Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo.',
+    note: 'Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8).',
   },
   {
     name: 'pricingRules/{id}',
@@ -303,8 +303,8 @@ export const SPECS: Spec[] = [
     list: (db) => query(collection(db, 'config')),
     create: () => ({ path: 'config/nuevo', data: { x: 1 } }),
     update: () => ({ isMaintenanceMode: false }),
-    expect: { ...allRoles('SNNNN'), admin: 'SSSSS' },
-    note: 'Estado operativo público. Listar la colección incluye finance: solo el admin.',
+    expect: { ...allRoles('SNNNN'), admin: 'SSSSN' },
+    note: 'Estado operativo público. Listar la colección incluye finance: solo el admin. Nadie la borra (H9).',
   },
   {
     name: 'config/finance',
