@@ -515,9 +515,9 @@ actual escribe ninguno de los dos: no hace falta subir versiones mínimas.
 Hallazgos de la matriz corregidos en cierre/identidad (H1, H4, H5, H7, H8,
 H9). Orden:
 1. `RATE_LIMIT_SALT` creado (First-time Setup, paso 5).
-2. **Functions**: añade `submitBusinessLead` y retira `onRideCompleted`
-   (al desplegar, la CLI pregunta si borra la función que ya no está en el
-   código: responder que sí; los documentos de `rides` no se tocan).
+2. **Functions**: añade `submitBusinessLead` y retira `onRideCompleted`.
+   Antes, borrarla a mano (ver «Funciones retiradas»); los documentos de
+   `rides` no se tocan.
 3. **Hosting y apps**: la web envía el formulario de empresas por la
    callable; el panel trae la advertencia al bloquear y «Editar datos» del
    chófer; la app del chófer, «Cuenta suspendida» y los campos bloqueados.
@@ -526,6 +526,22 @@ H9). Orden:
    desplegar el hosting antes que las reglas. Un chófer bloqueado deja de
    leer sus viajes en el acto: reasignarlos antes de bloquearlo (el panel
    lo avisa).
+
+### Funciones retiradas
+El job *Deploy Functions* (`.github/workflows/ci.yml`, paso
+`deploy --only functions,firestore:indexes`) corre sin terminal y sin
+`--force`: si una función sigue en el proyecto pero ya no está en el
+código, la CLI no puede preguntar y el despliegue se detiene
+**[Probable]**. No se añade `--force` porque borraría sin preguntar
+cualquier función que faltara por error. Antes del despliegue, desde la
+máquina de un responsable (primero staging):
+```
+firebase functions:delete onRideCompleted --region us-central1 --project staging --force
+firebase functions:delete onRideCompleted --region us-central1 --project production --force
+```
+La región es la por defecto (el código no fija otra) **[Probable]**: si la
+CLI no la encuentra, `firebase functions:list --project <proyecto>` la
+muestra.
 
 ---
 
