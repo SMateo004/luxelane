@@ -56,6 +56,9 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   // Recorre todas las reservas completadas: costosa.
   backfillSettlements: perHour(3),
   assignNearestDriver: per10min(20),
+  // Con sesión; sin ella cuentan la IP seudonimizada y el correo
+  // (LEAD_LIMITS en business_leads.ts).
+  submitBusinessLead: perHour(5),
   acceptBooking: per10min(30),
 };
 

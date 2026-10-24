@@ -9,6 +9,7 @@ import * as bookingService from './booking_service';
 import { reconcileOpenRequests } from './reconcile';
 import { resolveAdminAlert } from './alerts';
 import * as tripFlow from './trip_flow';
+import * as businessLeads from './business_leads';
 import * as incidents from './incidents';
 import { isTransient, withRetryPolicy } from './retry_policy';
 import * as stripe from './stripe_service';
@@ -48,6 +49,13 @@ export const createBooking = secureCallable('createBooking', { secrets: [MAPS_SE
 
 // Secreto del código de recogida (HMAC). Sin él no hay códigos: falla cerrado.
 const PICKUP_CODE_SECRET = defineSecret('PICKUP_CODE_SECRET');
+// Sal del HMAC con que se seudonimiza la IP del formulario de empresas.
+const RATE_LIMIT_SALT = defineSecret('RATE_LIMIT_SALT');
+
+/** Formulario de empresas, también sin sesión (H5). */
+export const submitBusinessLead = secureCallable('submitBusinessLead', { secrets: [RATE_LIMIT_SALT] }, (req) =>
+  businessLeads.submitBusinessLead({ db, salt: RATE_LIMIT_SALT.value() }, req as unknown as businessLeads.LeadRequest));
+
 
 const tripDeps = (): tripFlow.TripDeps => ({ db, pickupSecret: PICKUP_CODE_SECRET.value() });
 

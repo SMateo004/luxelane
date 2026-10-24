@@ -53,7 +53,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `pricingRules/{id}` | nueva | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li C A B |
 | `config/global` | nueva | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L Li C A B |
 | `config/finance` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li C A · |
-| `businessLeads/{id}` | nueva | · · C · · | · · C · · | · · C · · | · · C · · | · · C · · | · · C · · | · · C · · | L Li C A · |
+| `businessLeads/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · A · |
 | `adminAlerts/{id}` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `admin_logs/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li C · · |
 
@@ -79,7 +79,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `pricingRules/{id}`: Tarifas públicas (la web las muestra sin sesión); solo el admin las edita.
 - `config/global`: Estado operativo público. Listar la colección incluye finance: solo el admin.
 - `config/finance`: Comisión y parámetros internos: solo el admin. Borrarla se deniega también al admin (la regla valida el documento resultante).
-- `businessLeads/{id}`: Formulario de empresas: cualquiera lo envía (también sin sesión); solo el admin lo lee.
+- `businessLeads/{id}`: Formulario de empresas: se envía con la callable submitBusinessLead (H5); ningún cliente escribe directo. El admin lo lee y lo marca atendido.
 - `adminAlerts/{id}`: Avisos del servidor: el admin los marca con resolveAlert, no escribiendo.
 - `admin_logs/{id}`: Auditoría inmutable: el admin anexa a su nombre.
 <!-- matriz:fin -->

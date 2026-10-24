@@ -9,6 +9,7 @@ import { quoteSchema, createSchema } from './booking_schema';
 import { advanceSchema, pickupCodeSchema, verifySchema, overrideSchema } from './trip_flow';
 import { raiseSchema, incidentIdSchema, closeSchema } from './incidents';
 import { resolveSchema } from './alerts';
+import { leadSchema } from './business_leads';
 import { callableSchemas as c } from './schemas';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,7 +32,18 @@ interface Case {
   extreme: unknown[];
 }
 
+const lead = {
+  company: 'Empresa SA', contactName: 'Laura', email: 'laura@example.com',
+  phone: '+59170000000', travellers: '11–50', message: 'Hola',
+};
+
 const CASES: Record<string, Case> = {
+  submitBusinessLead: {
+    schema: leadSchema, valid: lead,
+    wrongType: { ...lead, travellers: 20 },
+    extreme: [{ ...lead, company: 'x'.repeat(121) }, { ...lead, message: 'x'.repeat(2001) },
+      { ...lead, email: 'no-es-correo' }, { ...lead, travellers: '1-10000' }, { ...lead, website: 'x'.repeat(201) }],
+  },
   quoteBooking: {
     schema: quoteSchema, valid: trip,
     wrongType: { ...trip, scheduledAt: '2030-01-01' },

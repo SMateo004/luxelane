@@ -1,7 +1,9 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_info_page.dart';
 import '../../../home/presentation/pages/home_design.dart';
@@ -23,6 +25,8 @@ class _BusinessPageState extends State<BusinessPage> {
   final _email = TextEditingController();
   final _phone = TextEditingController();
   final _message = TextEditingController();
+  // Campo trampa: fuera de la pantalla y del lector; un bot lo rellena.
+  final _website = TextEditingController();
   String _travellers = '1–10';
   bool _sending = false;
   bool _sent = false;
@@ -31,7 +35,7 @@ class _BusinessPageState extends State<BusinessPage> {
 
   @override
   void dispose() {
-    for (final c in [_company, _name, _email, _phone, _message]) {
+    for (final c in [_company, _name, _email, _phone, _message, _website]) {
       c.dispose();
     }
     super.dispose();
@@ -48,8 +52,17 @@ class _BusinessPageState extends State<BusinessPage> {
         phone: _phone.text,
         travellers: _travellers,
         message: _message.text,
+        website: _website.text,
       );
       if (mounted) setState(() => _sent = true);
+    } on FirebaseFunctionsException catch (e) {
+      if (mounted) {
+        showLuxSnackbar(
+          context,
+          businessLeadErrorMessage(e.code, e.details),
+          isError: true,
+        );
+      }
     } catch (_) {
       if (mounted) {
         showLuxSnackbar(
@@ -164,6 +177,15 @@ class _BusinessPageState extends State<BusinessPage> {
               label: 'Cuéntanos qué necesitas (opcional)',
               controller: _message,
               maxLines: 4,
+            ),
+            Offstage(
+              child: ExcludeSemantics(
+                child: TextField(
+                  key: const ValueKey('lead-website'),
+                  controller: _website,
+                  enableInteractiveSelection: false,
+                ),
+              ),
             ),
             const SizedBox(height: 24),
             LuxButton(

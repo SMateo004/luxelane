@@ -120,7 +120,7 @@ void _registerUseCases() {
   sl.registerLazySingleton(() => UpdateUserUseCase(sl()));
   sl.registerLazySingleton(() => UpdateDriverLocationUseCase(sl()));
   sl.registerLazySingleton(() => SetDriverAvailabilityUseCase(sl()));
-  sl.registerLazySingleton(() => BusinessLeadRepository(sl()));
+  sl.registerLazySingleton(() => BusinessLeadRepository(sl(), sl()));
 }
 
 void _registerBlocs() {

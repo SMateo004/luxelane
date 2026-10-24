@@ -330,8 +330,9 @@ export const SPECS: Spec[] = [
       },
     }),
     update: () => ({ handled: true }),
-    expect: { ...allRoles('NNSNN'), admin: 'SSSSN' },
-    note: 'Formulario de empresas: cualquiera lo envía (también sin sesión); solo el admin lo lee.',
+    expect: { ...allRoles(none), admin: 'SSNSN' },
+    note: 'Formulario de empresas: se envía con la callable submitBusinessLead (H5); ningún cliente ' +
+      'escribe directo. El admin lo lee y lo marca atendido.',
   },
   {
     name: 'adminAlerts/{id}',

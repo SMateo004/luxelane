@@ -58,3 +58,13 @@ String deleteAccountErrorMessage(String code, Object? details) =>
       _ => commonFunctionError(code, details) ??
           'No pudimos eliminar tu cuenta. Inténtalo de nuevo.',
     };
+
+/// Formulario de empresas (submitBusinessLead).
+String businessLeadErrorMessage(String code, Object? details) => switch (code) {
+      'resource-exhausted' =>
+        'Ya recibimos varias solicitudes desde aquí. Inténtalo más tarde '
+            'o escríbenos.',
+      'invalid-argument' => 'Revisa los datos del formulario.',
+      _ => commonFunctionError(code, details) ??
+          'No pudimos enviar tu solicitud. Inténtalo de nuevo.',
+    };

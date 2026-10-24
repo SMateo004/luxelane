@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 
 /// Solicitud de una empresa interesada en Luxelane para Empresas.
 class BusinessLead {
@@ -41,9 +42,12 @@ class BusinessLead {
 }
 
 /// Las empresas dejan su solicitud (sin cuenta) y el admin las atiende.
+/// El envío pasa por la callable submitBusinessLead: las reglas no dejan
+/// escribir businessLeads desde el cliente.
 class BusinessLeadRepository {
-  BusinessLeadRepository(this._db);
+  BusinessLeadRepository(this._db, this._functions);
   final FirebaseFirestore _db;
+  final FirebaseFunctions _functions;
 
   CollectionReference<Map<String, dynamic>> get _col =>
       _db.collection('businessLeads');
@@ -55,16 +59,17 @@ class BusinessLeadRepository {
     required String phone,
     required String travellers,
     required String message,
+    String website = '',
   }) =>
-      _col.add({
+      _functions.httpsCallable('submitBusinessLead').call<void>({
         'company': company.trim(),
         'contactName': contactName.trim(),
         'email': email.trim(),
         'phone': phone.trim(),
         'travellers': travellers,
         'message': message.trim(),
-        'handled': false,
-        'createdAt': FieldValue.serverTimestamp(),
+        // Campo trampa: una persona nunca lo ve ni lo rellena.
+        if (website.isNotEmpty) 'website': website,
       });
 
   Stream<List<BusinessLead>> watchAll() =>
