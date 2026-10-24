@@ -366,30 +366,11 @@ service cloud.firestore {
     // /rides/{rideId}
     // -------------------------------------------------------------------------
 
+    // Colección heredada: ninguna app ni función la usa (matriz, H7). Los
+    // documentos existentes se conservan; solo el admin los lee.
     match /rides/{rideId} {
-      allow read: if isAuthenticated() && (
-        resource.data.riderId == request.auth.uid ||
-        (resource.data.driverId == request.auth.uid && isActiveUser()) ||
-        isAdmin()
-      );
-
-      allow create: if isAdmin();
-
-      allow update: if isAdmin() || (
-        isAuthenticated() &&
-        isDriver() &&
-        resource.data.driverId == request.auth.uid &&
-        onlyUpdating([
-          'driverRoute',
-          'completedAt',
-          'distanceKm',
-          'durationMin',
-          'riderRating',
-          'driverRating'
-        ])
-      );
-
-      allow delete: if false;
+      allow read: if isAdmin();
+      allow write: if false;
     }
 
     // -------------------------------------------------------------------------

@@ -47,7 +47,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `incidentRateLimits/{uid}` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
 | `rateLimits/{id}` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
 | `openRequests/{id}` | sí | · · · · · | · · · · · | · · · · · | L Li · · · | L Li · · · | · · · · · | · · · · · | L Li · · · |
-| `rides/{id}` | nueva | · · · · · | L Li · · · | · · · · · | L · · A · | · · · · · | · · · · · | · · · A · | L Li C A · |
+| `rides/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `payments/{id}` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li C A · |
 | `vehicles/{id}` | sí | · · · · · | · · · · · | · · · · · | L Li C A · | · · C · · | · · C · · | L Li C A · | L Li C A · |
 | `pricingRules/{id}` | nueva | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li C A B |
@@ -73,7 +73,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `incidentRateLimits/{uid}`: Contador del SOS: solo el servidor.
 - `rateLimits/{id}`: Contadores de límites de las callables: solo el servidor.
 - `openRequests/{id}`: Solicitudes sin datos personales: chóferes verificados y activos, y el admin.
-- `rides/{id}`: Colección heredada (ninguna pantalla la crea). r1: de ana con asig; bloqueado: rBloq, la suya. Listar = viajes de ana (bloqueado: los suyos por driverId).
+- `rides/{id}`: Colección heredada sin uso (H7): solo el admin lee los documentos que queden; nadie escribe. r1: de ana con asig; bloqueado: rBloq.
 - `payments/{id}`: Pago de ana (reserva fin). Cobros y reembolsos los hace el servidor; el admin registra cobros manuales.
 - `vehicles/{id}`: Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo.
 - `pricingRules/{id}`: Tarifas públicas (la web las muestra sin sesión); solo el admin las edita.

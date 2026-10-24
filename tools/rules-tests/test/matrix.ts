@@ -254,9 +254,9 @@ export const SPECS: Spec[] = [
       : query(collection(db, 'rides'), where('riderId', '==', 'ana'))),
     create: () => ({ path: 'rides/nuevo', data: { riderId: 'ana', driverId: 'asig', bookingId: 'activa' } }),
     update: () => ({ distanceKm: 5 }),
-    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SNNSN', bloq: 'NNNSN', admin: 'SSSSN' },
-    note: 'Colección heredada (ninguna pantalla la crea). r1: de ana con asig; bloqueado: rBloq, la suya. ' +
-      'Listar = viajes de ana (bloqueado: los suyos por driverId).',
+    expect: { ...allRoles(none), admin: 'SSNNN' },
+    note: 'Colección heredada sin uso (H7): solo el admin lee los documentos que queden; nadie escribe. ' +
+      'r1: de ana con asig; bloqueado: rBloq.',
   },
   {
     name: 'payments/{id}',

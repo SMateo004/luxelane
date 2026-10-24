@@ -56,7 +56,6 @@ describe('chófer verificado con isActive == false', () => {
         await setDoc(doc(f, 'bookings', 'activaBloq', 'events', 'e1'), { to: 'driver_arriving' });
         await setDoc(doc(f, 'bookings', 'activaBloq', 'tracking', 'driver'), { lat: 1, lng: 1, updatedAt: Timestamp.now() });
         await setDoc(doc(f, 'bookings', 'activaBloq', 'driverContact', 'phone'), { phone: '+59170000556' });
-        await setDoc(doc(f, 'rides', 'rBloq'), { riderId: 'ana', driverId: 'bloq', bookingId: 'activaBloq' });
       });
     });
 
@@ -66,7 +65,6 @@ describe('chófer verificado con isActive == false', () => {
       ['los eventos', () => getDocs(collection(db(), 'bookings', 'activaBloq', 'events'))],
       ['el seguimiento', () => getDoc(doc(db(), 'bookings', 'activaBloq', 'tracking', 'driver'))],
       ['el contacto', () => getDoc(doc(db(), 'bookings', 'activaBloq', 'driverContact', 'phone'))],
-      ['rides', () => getDoc(doc(db(), 'rides', 'rBloq'))],
     ];
     test.each(reads)('no lee %s; reactivado, sí', async (_what, read) => {
       await assertFails(read());

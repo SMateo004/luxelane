@@ -150,14 +150,6 @@ interface BookingDoc {
   settlement?: Settlement;
 }
 
-interface RideDoc {
-  bookingId: string;
-  riderId: string;
-  driverId: string;
-  completedAt?: admin.firestore.Timestamp;
-  distanceKm?: number;
-  durationMin?: number;
-}
 
 interface PaymentDoc {
   bookingId: string;
@@ -908,7 +900,7 @@ export const applyRiderRating = onDocumentUpdated('bookings/{bookingId}', async 
 // ---------------------------------------------------------------------------
 // releaseDriver  (onUpdate /bookings/{bookingId})
 // Único punto que libera al chófer al cerrarse un viaje, lo cierre quien lo
-// cierre (chófer, pasajero, admin o el viaje en /rides), y que suma el viaje
+// cierre (chófer, pasajero o admin), y que suma el viaje
 // a su contador. Si el pasajero cancela, avisa al chófer.
 // ---------------------------------------------------------------------------
 
@@ -1018,22 +1010,6 @@ export const backfillSettlements = secureCallable('backfillSettlements', { timeo
   });
   logger.info('backfillSettlements', 'done', { scanned, settled });
   return { scanned, settled };
-});
-
-// ---------------------------------------------------------------------------
-// onRideCompleted  (onUpdate /rides/{rideId})
-// ---------------------------------------------------------------------------
-
-export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event) => {
-  const before = event.data?.before.data() as RideDoc | undefined;
-  const after = event.data?.after.data() as RideDoc | undefined;
-
-  if (!before || !after) return;
-  if (before.completedAt || !after.completedAt) return;
-
-  // La reserva solo se completa desde in_progress con advanceBooking (D1):
-  // cerrar el viaje en /rides ya no la completa ni dispara el cobro.
-  logger.info('onRideCompleted', 'ride closed; booking untouched', { rideId: event.params.rideId, bookingId: after.bookingId });
 });
 
 // ---------------------------------------------------------------------------

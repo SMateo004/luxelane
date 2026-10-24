@@ -18,7 +18,6 @@ import {
   advanceBooking as advanceBookingFn,
   adminOverrideVerify as adminOverrideVerifyFn,
   getPickupCode as getPickupCodeFn,
-  onRideCompleted,
 } from '../index';
 
 const db = admin.firestore();
@@ -432,15 +431,3 @@ describe('adminOverrideVerify', () => {
   });
 });
 
-describe('cerrar el viaje en /rides ya no completa la reserva', () => {
-  it('onRideCompleted no toca la reserva: completed solo por advanceBooking', async () => {
-    await booking('b1', 'driver_arrived');
-    const ride = db.doc('rides/r1');
-    await ride.set({ bookingId: 'b1', riderId: 'ana', driverId: 'chofer' });
-    const before = await ride.get();
-    await ride.update({ completedAt: admin.firestore.Timestamp.now() });
-    await (onRideCompleted as unknown as Runnable).run({ data: { before, after: await ride.get() }, params: { rideId: 'r1' } });
-    expect(await status('b1')).toBe('driver_arrived');
-    await ride.delete();
-  });
-});

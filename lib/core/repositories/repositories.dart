@@ -227,34 +227,6 @@ abstract class IncidentRepository {
 }
 
 // ---------------------------------------------------------------------------
-// RideRepository
-// ---------------------------------------------------------------------------
-
-abstract class RideRepository {
-  Future<Either<Failure, Ride>> createRide(Ride ride);
-  Future<Either<Failure, Ride>> getRideById(String rideId);
-  Future<Either<Failure, Ride>> getRideByBooking(String bookingId);
-  Future<Either<Failure, List<Ride>>> getRidesByRider(String riderId);
-  Future<Either<Failure, List<Ride>>> getRidesByDriver(String driverId);
-  Future<Either<Failure, void>> appendRoutePoint({
-    required String rideId,
-    required double latitude,
-    required double longitude,
-  });
-  Future<Either<Failure, void>> completeRide({
-    required String rideId,
-    required double distanceKm,
-    required int durationMin,
-  });
-  Future<Either<Failure, void>> submitRating({
-    required String rideId,
-    required double rating,
-    required bool isRiderRating,
-  });
-  Stream<Ride> watchRide(String rideId);
-}
-
-// ---------------------------------------------------------------------------
 // PaymentRepository
 // ---------------------------------------------------------------------------
 
