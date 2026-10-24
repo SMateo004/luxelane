@@ -109,6 +109,18 @@ Informativa.
 | H9 | `config/*` × admin × borrar | Informativa | **Corregido** (a37d7b2). Ningún cliente borra `config/*`; se actualiza. |
 | H10 | `driverProfiles` × usuario bloqueado × crear/actualizar, y `assignNearestDriver` | Media | **Corregido** (A8.1). El dueño escribe su perfil solo con la cuenta activa (dejar de estar disponible siempre se permite); `assignNearestDriver` descarta a los chóferes con `users.isActive == false`, también dentro de la transacción. Tests: `blockedDriver.rules.ts`, `assignment.int.ts`, `assignment.test.ts`. |
 
+Revisión A8 (rama cierre/identidad):
+
+| # | Qué | Estado |
+|---|---|---|
+| A8.2 | `users`, `users/{uid}/notifications`, `vehicles` × admin × crear | **Cerrado.** Ninguna pantalla ni script lo usaba (los scripts usan el Admin SDK). |
+| A8.3 | `submitBusinessLead`: IP de `x-forwarded-for` | **Corregido.** Usaba el primer elemento (lo puede inventar el cliente); ahora el último, más un tope global de 100/h. Que el último sea siempre el cliente: NO VERIFICADO. |
+| A8.5 | `driverProfiles` × dueño × campos nuevos | **Cerrado.** Lista blanca de campos del dueño (tabla abajo). |
+| A8.6 | `bookings` × dueño × cancelar/valorar | Campo por campo ya cerrado; se acotan `updatedAt` (hora cercana a la del servidor) y `riderComment` (texto ≤ 1000). |
+| A8.7 | `bookings/{id}/events` × pasajero y chófer × leer | **Corregido.** El motivo del admin y `farFromPickup`/`arrivalCheck` pasan a `eventDetails` (solo admin); migración para los eventos ya escritos. |
+| A8.8 | `pricingRules` × público × leer | Sin campos internos; lista blanca de campos. Queda `updatedBy` (uid del admin, público): **pendiente de decisión** porque el panel lo muestra. |
+| A8.9 | `config/global` × público × leer | **Corregido.** Las claves de operación pasan a `config/ops` (solo admin lee) y la seguridad irá en `config/security` (nadie). |
+
 La revisión de todas las celdas permitidas, con ⚠ en las que parecen más
 amplias de lo necesario, está en
 [MATRIZ_ACCESO_PERMITIDOS.md](MATRIZ_ACCESO_PERMITIDOS.md).
