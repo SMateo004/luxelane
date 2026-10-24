@@ -465,8 +465,13 @@ service cloud.firestore {
     // edita, con importes numéricos no negativos.
     // -------------------------------------------------------------------------
 
+    // Solo campos públicos: nada interno (margen, pago al chófer, comisión,
+    // que viven en config/finance y config/pricing, solo admin). A8.8.
     function validFare(d) {
-      return d.basePriceUsd is number && d.basePriceUsd >= 0 &&
+      return d.keys().hasOnly(['id', 'vehicleClass', 'serviceType',
+          'basePriceUsd', 'pricePerKmUsd', 'pricePerHourUsd',
+          'minimumPriceUsd', 'isActive', 'updatedAt', 'updatedBy']) &&
+        d.basePriceUsd is number && d.basePriceUsd >= 0 &&
         d.pricePerKmUsd is number && d.pricePerKmUsd >= 0 &&
         d.pricePerHourUsd is number && d.pricePerHourUsd >= 0 &&
         d.minimumPriceUsd is number && d.minimumPriceUsd >= 0 &&
