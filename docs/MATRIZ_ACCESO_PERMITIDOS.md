@@ -11,7 +11,7 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-148 celdas permitidas, 16 con ⚠.
+148 celdas permitidas, 17 con ⚠.
 
 ## `users/{uid}`
 
@@ -289,7 +289,7 @@ Ninguna celda permitida.
 
 - leer: flota.
 - listar: flota.
-- crear: alta de vehículos desde el panel.
+- ⚠ crear: la regla deja al admin dar de alta vehículos. **ninguna pantalla del panel crea vehículos (los registra el chófer); podría cerrarse.**
 - ⚠ actualizar: activar, desactivar y corregir datos a petición del chófer. **el panel aún escribe esto directo desde el cliente (D10); pasa a callables con auditoría en el servidor en la Parte B o después.**
 
 ## `pricingRules/{id}`

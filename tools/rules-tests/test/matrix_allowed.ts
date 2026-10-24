@@ -181,7 +181,7 @@ export const ALLOWED: Record<string, Cells> = {
     admin: {
       leer: { why: 'flota' },
       listar: { why: 'flota' },
-      crear: { why: 'alta de vehículos desde el panel' },
+      crear: { why: 'la regla deja al admin dar de alta vehículos', warn: 'ninguna pantalla del panel crea vehículos (los registra el chófer); podría cerrarse.' },
       actualizar: { why: 'activar, desactivar y corregir datos a petición del chófer', warn: D10 },
     },
   },
