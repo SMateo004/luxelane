@@ -4,8 +4,9 @@ import 'package:flutter/foundation.dart';
 class PerformanceService {
   static Future<void> init() async {
     if (kIsWeb) return;
-    await FirebasePerformance.instance
-        .setPerformanceCollectionEnabled(!kDebugMode);
+    await FirebasePerformance.instance.setPerformanceCollectionEnabled(
+      !kDebugMode,
+    );
   }
 
   static Trace? startTrace(String name) {

@@ -8,7 +8,9 @@ import '../theme/lux_motion.dart';
 /// Cambio de sección: la nueva vista aparece y sube apenas 12 px, como una
 /// hoja que se asienta. La anterior se desvanece debajo.
 CustomTransitionPage<void> luxFadeThroughPage(
-        Widget child, GoRouterState state) =>
+  Widget child,
+  GoRouterState state,
+) =>
     CustomTransitionPage<void>(
       key: state.pageKey,
       child: child,
@@ -16,8 +18,10 @@ CustomTransitionPage<void> luxFadeThroughPage(
       reverseTransitionDuration: LuxMotion.base,
       transitionsBuilder: (context, animation, secondary, child) {
         if (LuxMotion.reduced(context)) return child;
-        final enter =
-            CurvedAnimation(parent: animation, curve: LuxMotion.decelerate);
+        final enter = CurvedAnimation(
+          parent: animation,
+          curve: LuxMotion.decelerate,
+        );
         return FadeTransition(
           opacity: enter,
           child: AnimatedBuilder(
@@ -44,19 +48,26 @@ CustomTransitionPage<void> luxPushPage(Widget child, GoRouterState state) =>
       transitionsBuilder: (context, animation, secondary, child) {
         if (LuxMotion.reduced(context)) return child;
         final enter = CurvedAnimation(
-            parent: animation,
-            curve: LuxMotion.emphasized,
-            reverseCurve: LuxMotion.accelerate);
-        final leave =
-            CurvedAnimation(parent: secondary, curve: LuxMotion.emphasized);
+          parent: animation,
+          curve: LuxMotion.emphasized,
+          reverseCurve: LuxMotion.accelerate,
+        );
+        final leave = CurvedAnimation(
+          parent: secondary,
+          curve: LuxMotion.emphasized,
+        );
         return SlideTransition(
-          position: Tween(begin: const Offset(-0.25, 0), end: Offset.zero)
-              .animate(ReverseAnimation(leave)),
+          position: Tween(
+            begin: const Offset(-0.25, 0),
+            end: Offset.zero,
+          ).animate(ReverseAnimation(leave)),
           child: FadeTransition(
             opacity: Tween(begin: 1.0, end: 0.6).animate(leave),
             child: SlideTransition(
-              position: Tween(begin: const Offset(1, 0), end: Offset.zero)
-                  .animate(enter),
+              position: Tween(
+                begin: const Offset(1, 0),
+                end: Offset.zero,
+              ).animate(enter),
               child: child,
             ),
           ),
@@ -74,12 +85,15 @@ CustomTransitionPage<void> luxModalPage(Widget child, GoRouterState state) =>
       transitionsBuilder: (context, animation, secondary, child) {
         if (LuxMotion.reduced(context)) return child;
         final enter = CurvedAnimation(
-            parent: animation,
-            curve: LuxMotion.emphasized,
-            reverseCurve: LuxMotion.accelerate);
+          parent: animation,
+          curve: LuxMotion.emphasized,
+          reverseCurve: LuxMotion.accelerate,
+        );
         return SlideTransition(
-          position:
-              Tween(begin: const Offset(0, 1), end: Offset.zero).animate(enter),
+          position: Tween(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(enter),
           child: child,
         );
       },

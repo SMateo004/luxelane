@@ -108,7 +108,9 @@ class MapsService {
     final LocationSettings settings;
     if (kIsWeb) {
       settings = const LocationSettings(
-          accuracy: LocationAccuracy.high, distanceFilter: 25);
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 25,
+      );
     } else if (defaultTargetPlatform == TargetPlatform.android) {
       settings = AndroidSettings(
         accuracy: LocationAccuracy.high,
@@ -135,7 +137,9 @@ class MapsService {
       );
     } else {
       settings = const LocationSettings(
-          accuracy: LocationAccuracy.high, distanceFilter: 25);
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 25,
+      );
     }
     yield* Geolocator.getPositionStream(locationSettings: settings);
   }
@@ -199,8 +203,9 @@ class MapsService {
 
     try {
       // ── Places API (New) ─────────────────────────────────────────────────────
-      final uri =
-          Uri.parse('https://places.googleapis.com/v1/places:autocomplete');
+      final uri = Uri.parse(
+        'https://places.googleapis.com/v1/places:autocomplete',
+      );
       final res = await http.post(
         uri,
         headers: {
@@ -224,7 +229,8 @@ class MapsService {
       );
 
       debugPrint(
-          '[Maps] Places v1 status=${res.statusCode} body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
+        '[Maps] Places v1 status=${res.statusCode} body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}',
+      );
 
       if (res.statusCode == 200) {
         final data = json.decode(res.body) as Map<String, dynamic>;
@@ -247,12 +253,14 @@ class MapsService {
           final fullText =
               ((pred['text'] as Map<String, dynamic>?)?['text'] as String?) ??
                   '';
-          results.add(PlaceSuggestion(
-            placeId: placeId,
-            description: fullText,
-            mainText: mainText.isNotEmpty ? mainText : fullText,
-            secondaryText: secText,
-          ));
+          results.add(
+            PlaceSuggestion(
+              placeId: placeId,
+              description: fullText,
+              mainText: mainText.isNotEmpty ? mainText : fullText,
+              secondaryText: secText,
+            ),
+          );
         }
         if (results.isNotEmpty) return results;
       }
@@ -277,7 +285,8 @@ class MapsService {
       debugPrint('[Maps] Classic status=${res.statusCode}');
       if (res.statusCode != 200) {
         debugPrint(
-            '[Maps] Classic body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}');
+          '[Maps] Classic body=${res.body.length > 200 ? res.body.substring(0, 200) : res.body}',
+        );
       } else {
         final data = json.decode(res.body) as Map<String, dynamic>;
         final predictions = data['predictions'] as List? ?? [];
@@ -297,11 +306,13 @@ class MapsService {
     // API which is already loaded in the browser and bypasses all that.
     if (kIsWeb) {
       try {
-        final jsResults = await webAutocomplete(input,
-            lat: center.lat,
-            lng: center.lng,
-            radiusMeters: radius,
-            strict: restrictTo != null);
+        final jsResults = await webAutocomplete(
+          input,
+          lat: center.lat,
+          lng: center.lng,
+          radiusMeters: radius,
+          strict: restrictTo != null,
+        );
         debugPrint('[Maps] JS API results=${jsResults.length}');
         return jsResults;
       } catch (e) {
@@ -331,10 +342,13 @@ class MapsService {
     try {
       // ── Places API (New) ───────────────────────────────────────────────────
       final uri = Uri.parse('https://places.googleapis.com/v1/places/$placeId');
-      final res = await http.get(uri, headers: {
-        'X-Goog-Api-Key': _key,
-        'X-Goog-FieldMask': 'id,location,displayName,formattedAddress',
-      });
+      final res = await http.get(
+        uri,
+        headers: {
+          'X-Goog-Api-Key': _key,
+          'X-Goog-FieldMask': 'id,location,displayName,formattedAddress',
+        },
+      );
 
       if (res.statusCode == 200) {
         final data = json.decode(res.body) as Map<String, dynamic>;

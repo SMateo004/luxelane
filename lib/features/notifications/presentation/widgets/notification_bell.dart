@@ -20,8 +20,9 @@ class NotificationBell extends StatelessWidget {
   Widget build(BuildContext context) {
     // Sin sesión no hay notificaciones: la campana solo daría una carga
     // infinita.
-    final signedIn =
-        context.select<AuthBloc, bool>((b) => b.state is AuthAuthenticated);
+    final signedIn = context.select<AuthBloc, bool>(
+      (b) => b.state is AuthAuthenticated,
+    );
     if (!signedIn) return const SizedBox.shrink();
     return BlocBuilder<NotificationBloc, NotificationState>(
       builder: (context, state) {
@@ -149,8 +150,9 @@ class _NotificationSheet extends StatelessWidget {
                             : null,
                         child: Text(
                           'Marcar todo como leído',
-                          style: LuxTypography.caption
-                              .copyWith(color: LuxColors.sapphire),
+                          style: LuxTypography.caption.copyWith(
+                            color: LuxColors.sapphire,
+                          ),
                         ),
                       );
                     },
@@ -174,11 +176,16 @@ class _NotificationSheet extends StatelessWidget {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.notifications_none_rounded,
-                              color: LuxColors.inkTertiary, size: 48),
+                          Icon(
+                            Icons.notifications_none_rounded,
+                            color: LuxColors.inkTertiary,
+                            size: 48,
+                          ),
                           SizedBox(height: LuxSpacing.md),
-                          Text('Aún no hay notificaciones',
-                              style: LuxTypography.bodyMedium),
+                          Text(
+                            'Aún no hay notificaciones',
+                            style: LuxTypography.bodyMedium,
+                          ),
                         ],
                       ),
                     );
@@ -186,8 +193,9 @@ class _NotificationSheet extends StatelessWidget {
 
                   return ListView.separated(
                     controller: scrollController,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: LuxSpacing.sm),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: LuxSpacing.sm,
+                    ),
                     itemCount: notifications.length,
                     separatorBuilder: (_, __) => const Divider(
                       color: LuxColors.border,
@@ -301,8 +309,9 @@ class _NotificationTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   notification.body,
-                  style: LuxTypography.caption
-                      .copyWith(color: LuxColors.inkTertiary),
+                  style: LuxTypography.caption.copyWith(
+                    color: LuxColors.inkTertiary,
+                  ),
                 ),
               ],
             ),

@@ -55,8 +55,9 @@ void main() {
     expect(VehicleClass.business.assetKey, 'business_class');
   });
 
-  testWidgets('the caption follows the photo when the arrow is tapped',
-      (tester) async {
+  testWidgets('the caption follows the photo when the arrow is tapped', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(1200, 2400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);

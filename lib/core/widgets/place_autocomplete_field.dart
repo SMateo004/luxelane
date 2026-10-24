@@ -131,9 +131,11 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
 
   Future<void> _search(String q) async {
     setState(() => _loading = true);
-    final res = await _maps.autocomplete(q,
-        sessionToken: _token,
-        restrictTo: ServiceArea.destinationAreaFor(widget.sameCityAs));
+    final res = await _maps.autocomplete(
+      q,
+      sessionToken: _token,
+      restrictTo: ServiceArea.destinationAreaFor(widget.sameCityAs),
+    );
     _dbg('autocomplete("$q") → ${res.length} results');
     if (!mounted) return;
     setState(() {
@@ -172,9 +174,11 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
       if (place == null) {
         _dbg('Place details failed for: ${s.description}');
         _ctrl.text = widget.initialValue?.displayName ?? '';
-        showLuxSnackbar(context,
-            'No pudimos ubicar esa dirección. Prueba con otra o elígela en el mapa.',
-            isError: true);
+        showLuxSnackbar(
+          context,
+          'No pudimos ubicar esa dirección. Prueba con otra o elígela en el mapa.',
+          isError: true,
+        );
         return;
       }
       final picked = place;
@@ -263,11 +267,16 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                       color: Colors.transparent,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 11),
+                          horizontal: 14,
+                          vertical: 11,
+                        ),
                         child: Row(
                           children: [
-                            Icon(Icons.location_on_outlined,
-                                size: 16, color: iconCol),
+                            Icon(
+                              Icons.location_on_outlined,
+                              size: 16,
+                              color: iconCol,
+                            ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Column(
@@ -320,9 +329,8 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
           color: _fieldBg,
           // glass mode: larger radius so it looks rounded inside the glass bar
           borderRadius: BorderRadius.circular(widget.glass ? 10 : LuxRadius.md),
-          border: Border.all(
-            color: _focus.hasFocus ? _focusBorder : _borderColor,
-          ),
+          border:
+              Border.all(color: _focus.hasFocus ? _focusBorder : _borderColor),
         ),
         child: Row(
           children: [
@@ -356,8 +364,10 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 14,
+                  ),
                 ),
               ),
             ),
@@ -368,7 +378,9 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                   width: 14,
                   height: 14,
                   child: CircularProgressIndicator(
-                      strokeWidth: 1.2, color: _iconColor),
+                    strokeWidth: 1.2,
+                    color: _iconColor,
+                  ),
                 ),
               )
             else if (_ctrl.text.isNotEmpty)

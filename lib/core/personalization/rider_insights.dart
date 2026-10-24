@@ -81,9 +81,11 @@ class RiderInsights {
       BookingStatus.inProgress,
     };
     final upcoming = bookings
-        .where((b) =>
-            open.contains(b.status) &&
-            b.scheduledAt.isAfter(t.subtract(const Duration(hours: 3))))
+        .where(
+          (b) =>
+              open.contains(b.status) &&
+              b.scheduledAt.isAfter(t.subtract(const Duration(hours: 3))),
+        )
         .toList()
       ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
 

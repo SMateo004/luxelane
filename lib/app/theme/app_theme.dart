@@ -188,14 +188,15 @@ ThemeData get luxTheme {
   const sans = GoogleFonts.montserrat;
 
   TextStyle gf(
-          TextStyle t,
-          TextStyle Function({
-            Color? color,
-            double? fontSize,
-            FontWeight? fontWeight,
-            double? letterSpacing,
-            double? height,
-          }) font) =>
+    TextStyle t,
+    TextStyle Function({
+      Color? color,
+      double? fontSize,
+      FontWeight? fontWeight,
+      double? letterSpacing,
+      double? height,
+    }) font,
+  ) =>
       font(
         color: t.color,
         fontSize: t.fontSize,
@@ -248,8 +249,9 @@ ThemeData get luxTheme {
     ),
     textTheme: textTheme,
     iconTheme: const IconThemeData(color: LuxColors.ink),
-    progressIndicatorTheme:
-        const ProgressIndicatorThemeData(color: LuxColors.sapphire),
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
+      color: LuxColors.sapphire,
+    ),
     appBarTheme: const AppBarTheme(
       backgroundColor: LuxColors.bg,
       foregroundColor: LuxColors.ink,
@@ -271,7 +273,8 @@ ThemeData get luxTheme {
         disabledForegroundColor: LuxColors.onAccent.withValues(alpha: 0.7),
         minimumSize: const Size(double.infinity, 54),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(LuxRadius.md)),
+          borderRadius: BorderRadius.circular(LuxRadius.md),
+        ),
         textStyle: LuxTypography.button.copyWith(color: LuxColors.onAccent),
         elevation: 0,
       ).copyWith(
@@ -294,7 +297,8 @@ ThemeData get luxTheme {
         minimumSize: const Size(64, 46),
         textStyle: LuxTypography.button.copyWith(fontSize: 14),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(LuxRadius.md)),
+          borderRadius: BorderRadius.circular(LuxRadius.md),
+        ),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -304,7 +308,8 @@ ThemeData get luxTheme {
         minimumSize: const Size(double.infinity, 54),
         side: const BorderSide(color: LuxColors.border),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(LuxRadius.md)),
+          borderRadius: BorderRadius.circular(LuxRadius.md),
+        ),
         textStyle: LuxTypography.button,
       ),
     ),
@@ -313,7 +318,8 @@ ThemeData get luxTheme {
         foregroundColor: LuxColors.sapphire,
         textStyle: LuxTypography.button.copyWith(fontSize: 14),
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(LuxRadius.sm)),
+          borderRadius: BorderRadius.circular(LuxRadius.sm),
+        ),
       ),
     ),
     iconButtonTheme: IconButtonThemeData(
@@ -322,11 +328,14 @@ ThemeData get luxTheme {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: LuxColors.surface,
-      hintStyle:
-          LuxTypography.bodyMedium.copyWith(color: LuxColors.inkTertiary),
+      hintStyle: LuxTypography.bodyMedium.copyWith(
+        color: LuxColors.inkTertiary,
+      ),
       labelStyle: LuxTypography.bodyMedium,
-      floatingLabelStyle: LuxTypography.caption
-          .copyWith(color: LuxColors.sapphire, letterSpacing: 0.6),
+      floatingLabelStyle: LuxTypography.caption.copyWith(
+        color: LuxColors.sapphire,
+        letterSpacing: 0.6,
+      ),
       prefixIconColor: LuxColors.inkTertiary,
       suffixIconColor: LuxColors.inkTertiary,
       border: OutlineInputBorder(
@@ -376,7 +385,8 @@ ThemeData get luxTheme {
       side: const BorderSide(color: LuxColors.border),
       labelStyle: LuxTypography.caption.copyWith(color: LuxColors.ink),
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(LuxRadius.xl)),
+        borderRadius: BorderRadius.circular(LuxRadius.xl),
+      ),
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: LuxColors.surface,
@@ -472,7 +482,8 @@ ThemeData get luxTheme {
       elevation: 0,
       barrierColor: const Color(0x660D1B2E),
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(LuxRadius.xl)),
+        borderRadius: BorderRadius.circular(LuxRadius.xl),
+      ),
       titleTextStyle: LuxTypography.headlineLarge,
       contentTextStyle: LuxTypography.bodyMedium,
       actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -483,10 +494,12 @@ ThemeData get luxTheme {
       behavior: SnackBarBehavior.floating,
       elevation: 0,
     ),
-    pageTransitionsTheme: const PageTransitionsTheme(builders: {
-      TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-      TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-    }),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+      },
+    ),
     splashFactory: InkSparkle.splashFactory,
     highlightColor: Colors.transparent,
     datePickerTheme: DatePickerThemeData(
@@ -495,7 +508,8 @@ ThemeData get luxTheme {
       headerForegroundColor: LuxColors.ink,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(LuxRadius.lg)),
+        borderRadius: BorderRadius.circular(LuxRadius.lg),
+      ),
       dayForegroundColor: WidgetStateProperty.resolveWith(
         (s) => s.contains(WidgetState.selected)
             ? LuxColors.onAccent
@@ -519,7 +533,8 @@ ThemeData get luxTheme {
       dialTextColor: LuxColors.ink,
       entryModeIconColor: LuxColors.inkTertiary,
       shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(LuxRadius.lg)),
+        borderRadius: BorderRadius.circular(LuxRadius.lg),
+      ),
     ),
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: LuxColors.surface,

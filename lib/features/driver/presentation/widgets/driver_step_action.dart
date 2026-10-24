@@ -73,9 +73,10 @@ class DriverStepAction extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Text(
-                  'Cinco códigos incorrectos: central debe verificar este '
-                  'viaje.',
-                  style: LuxTypography.bodyMedium),
+                'Cinco códigos incorrectos: central debe verificar este '
+                'viaje.',
+                style: LuxTypography.bodyMedium,
+              ),
               const SizedBox(height: LuxSpacing.sm),
               CallDispatchButton(phone: phone),
             ],

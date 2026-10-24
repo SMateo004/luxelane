@@ -87,7 +87,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
             if (state is ProfileError) {
               return Center(
-                  child: Text(state.message, style: LuxTypography.bodyMedium));
+                child: Text(state.message, style: LuxTypography.bodyMedium),
+              );
             }
             final User user;
             int totalRides = 0;
@@ -107,8 +108,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               rating: rating,
               onEdit: () => _showEditSheet(user),
               onPreferences: (p) => context.read<ProfileBloc>().add(
-                  ProfileUpdateRequested(
-                      user: user.copyWith(ridePreferences: p), silent: true)),
+                    ProfileUpdateRequested(
+                      user: user.copyWith(ridePreferences: p),
+                      silent: true,
+                    ),
+                  ),
             );
           },
         ),
@@ -142,14 +146,20 @@ class _ProfileBody extends StatelessWidget {
     Widget item(Widget w) => LuxFadeIn(index: i++, child: w);
     return ListView(
       padding: const EdgeInsets.fromLTRB(
-          LuxSpacing.md, LuxSpacing.sm, LuxSpacing.md, LuxSpacing.xxl),
+        LuxSpacing.md,
+        LuxSpacing.sm,
+        LuxSpacing.md,
+        LuxSpacing.xxl,
+      ),
       children: [
-        item(_ProfileHeader(
-          user: user,
-          totalRides: totalRides,
-          rating: rating,
-          onEdit: onEdit,
-        )),
+        item(
+          _ProfileHeader(
+            user: user,
+            totalRides: totalRides,
+            rating: rating,
+            onEdit: onEdit,
+          ),
+        ),
         if (rider) ...[
           const SizedBox(height: LuxSpacing.xl),
           item(const SectionHeader(title: 'Tu estilo de viaje')),
@@ -159,54 +169,69 @@ class _ProfileBody extends StatelessWidget {
         const SizedBox(height: LuxSpacing.xl),
         item(const SectionHeader(title: 'Cuenta')),
         const SizedBox(height: LuxSpacing.sm),
-        item(LuxGroup(children: [
-          LuxListRow(
-              icon: Icons.mail_outline_rounded,
-              title: 'Correo',
-              subtitle: user.email),
-          LuxListRow(
-            icon: Icons.phone_outlined,
-            title: 'Teléfono',
-            subtitle:
-                user.phone.isNotEmpty ? user.phone : 'Añádelo para tu chófer',
-            onTap: onEdit,
+        item(
+          LuxGroup(
+            children: [
+              LuxListRow(
+                icon: Icons.mail_outline_rounded,
+                title: 'Correo',
+                subtitle: user.email,
+              ),
+              LuxListRow(
+                icon: Icons.phone_outlined,
+                title: 'Teléfono',
+                subtitle: user.phone.isNotEmpty
+                    ? user.phone
+                    : 'Añádelo para tu chófer',
+                onTap: onEdit,
+              ),
+              if (rider)
+                LuxListRow(
+                  icon: Icons.credit_card_outlined,
+                  title: 'Métodos de pago',
+                  onTap: () => context.push('/payment'),
+                ),
+            ],
           ),
-          if (rider)
-            LuxListRow(
-              icon: Icons.credit_card_outlined,
-              title: 'Métodos de pago',
-              onTap: () => context.push('/payment'),
-            ),
-        ])),
+        ),
         const SizedBox(height: LuxSpacing.xl),
         item(const SectionHeader(title: 'Legal')),
         const SizedBox(height: LuxSpacing.sm),
-        item(LuxGroup(children: [
-          LuxListRow(
-            icon: Icons.description_outlined,
-            title: 'Términos y condiciones',
-            onTap: () => context.push('/legal/terminos'),
+        item(
+          LuxGroup(
+            children: [
+              LuxListRow(
+                icon: Icons.description_outlined,
+                title: 'Términos y condiciones',
+                onTap: () => context.push('/legal/terminos'),
+              ),
+              LuxListRow(
+                icon: Icons.shield_outlined,
+                title: 'Privacidad',
+                onTap: () => context.push('/legal/privacidad'),
+              ),
+            ],
           ),
-          LuxListRow(
-            icon: Icons.shield_outlined,
-            title: 'Privacidad',
-            onTap: () => context.push('/legal/privacidad'),
-          ),
-        ])),
+        ),
         const SizedBox(height: LuxSpacing.xl),
-        item(LuxOutlinedButton(
-          label: 'Cerrar sesión',
-          onPressed: () =>
-              context.read<AuthBloc>().add(const LogoutRequested()),
-        )),
+        item(
+          LuxOutlinedButton(
+            label: 'Cerrar sesión',
+            onPressed: () =>
+                context.read<AuthBloc>().add(const LogoutRequested()),
+          ),
+        ),
         const SizedBox(height: LuxSpacing.xs),
-        item(LuxButton.ghost(
-          label: 'Eliminar cuenta',
-          onPressed: () => _confirmDeleteAccount(context),
-        )),
+        item(
+          LuxButton.ghost(
+            label: 'Eliminar cuenta',
+            onPressed: () => _confirmDeleteAccount(context),
+          ),
+        ),
         const SizedBox(height: LuxSpacing.md),
         const Center(
-            child: Text('Luxelane · v1.0.0', style: LuxTypography.caption)),
+          child: Text('Luxelane · v1.0.0', style: LuxTypography.caption),
+        ),
       ],
     );
   }
@@ -244,11 +269,16 @@ class _RidePreferencesGroup extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.thermostat_outlined,
-                        size: 20, color: LuxColors.inkSecondary),
+                    const Icon(
+                      Icons.thermostat_outlined,
+                      size: 20,
+                      color: LuxColors.inkSecondary,
+                    ),
                     const SizedBox(width: 16),
-                    Text('Temperatura',
-                        style: LuxTypography.bodyLarge.copyWith(fontSize: 15)),
+                    Text(
+                      'Temperatura',
+                      style: LuxTypography.bodyLarge.copyWith(fontSize: 15),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),
@@ -257,9 +287,11 @@ class _RidePreferencesGroup extends StatelessWidget {
                   selected: prefs.temperature,
                   labelOf: (t) => t?.label ?? 'Indistinta',
                   height: 40,
-                  onChanged: (t) => onChanged(t == null
-                      ? prefs.copyWith(clearTemperature: true)
-                      : prefs.copyWith(temperature: t)),
+                  onChanged: (t) => onChanged(
+                    t == null
+                        ? prefs.copyWith(clearTemperature: true)
+                        : prefs.copyWith(temperature: t),
+                  ),
                 ),
               ],
             ),
@@ -338,9 +370,11 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
             ),
             if (_error != null) ...[
               const SizedBox(height: LuxSpacing.md),
-              Text(_error!,
-                  style: LuxTypography.bodyMedium
-                      .copyWith(color: LuxColors.error)),
+              Text(
+                _error!,
+                style:
+                    LuxTypography.bodyMedium.copyWith(color: LuxColors.error),
+              ),
             ],
           ],
         ),
@@ -357,7 +391,10 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                     width: 16,
                     height: 16,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white))
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
                 : const Text('Eliminar'),
           ),
         ],
@@ -411,7 +448,11 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
     final bottom = MediaQuery.of(context).viewInsets.bottom;
     return Padding(
       padding: EdgeInsets.fromLTRB(
-          LuxSpacing.lg, LuxSpacing.lg, LuxSpacing.lg, LuxSpacing.lg + bottom),
+        LuxSpacing.lg,
+        LuxSpacing.lg,
+        LuxSpacing.lg,
+        LuxSpacing.lg + bottom,
+      ),
       child: Form(
         key: _form,
         child: Column(
@@ -424,8 +465,10 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
                 const Spacer(),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close_rounded,
-                      color: LuxColors.inkTertiary),
+                  icon: const Icon(
+                    Icons.close_rounded,
+                    color: LuxColors.inkTertiary,
+                  ),
                 ),
               ],
             ),
@@ -501,13 +544,15 @@ class _ProfileHeader extends StatelessWidget {
                 backgroundImage:
                     user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
                 child: user.photoUrl == null
-                    ? Text(_initials,
+                    ? Text(
+                        _initials,
                         style: const TextStyle(
                           fontFamily: 'Cormorant Garamond',
                           fontSize: 26,
                           fontWeight: FontWeight.w600,
                           color: LuxColors.sapphire,
-                        ))
+                        ),
+                      )
                     : null,
               ),
               const SizedBox(width: LuxSpacing.md),
@@ -515,11 +560,15 @@ class _ProfileHeader extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(user.displayName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: LuxTypography.headlineLarge
-                            .copyWith(fontSize: 28, height: 1.1)),
+                    Text(
+                      user.displayName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.headlineLarge.copyWith(
+                        fontSize: 28,
+                        height: 1.1,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       [

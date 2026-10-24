@@ -56,8 +56,9 @@ service cloud.firestore {
     // Privileged fields: only an admin (or the Admin SDK in Cloud Functions,
     // which bypasses these rules) may set or change them. Nobody can make
     // themselves admin or driver from the client.
+    // isVerified: la verificación no se la da uno mismo (matriz, H2).
     function privilegedUserFields() {
-      return ['role', 'isActive', 'stripeCustomerId'];
+      return ['role', 'isActive', 'stripeCustomerId', 'isVerified'];
     }
 
     // A self-created profile is always an active rider with no Stripe link.
@@ -80,10 +81,12 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // In-app notifications: each user reads and marks their own as read.
+    // Avisos en la app: cada usuario lee y marca los suyos. Los crea el
+    // servidor; el dueño no se escribe avisos que parezcan del sistema
+    // (matriz, H3).
     match /users/{uid}/notifications/{notificationId} {
       allow read:   if isOwner(uid) || isAdmin();
-      allow create: if isOwner(uid) || isAdmin();
+      allow create: if isAdmin();
       allow update: if (isOwner(uid) &&
         onlyUpdating(['isRead'])) || isAdmin();
       allow delete: if isOwner(uid) || isAdmin();
@@ -304,6 +307,9 @@ service cloud.firestore {
         allow create: if isAuthenticated() &&
           liveIncident(incidentId).reporterId == request.auth.uid &&
           liveIncident(incidentId).status in ['open', 'acknowledged'] &&
+          // Si quien lo disparó lo canceló, deja de compartir su ubicación
+          // aunque el admin lo reconozca después (la escalada sigue).
+          liveIncident(incidentId).get('cancelledByReporter', false) == false &&
           isCurrentLocationSlot(slot) &&
           request.resource.data.keys().hasOnly(['lat', 'lng', 'at']) &&
           request.resource.data.lat is number &&
@@ -323,6 +329,11 @@ service cloud.firestore {
 
     // Límite de disparos por usuario: solo el servidor.
     match /incidentRateLimits/{uid} {
+      allow read, write: if false;
+    }
+
+    // Contadores de límites de tasa de las callables: solo el servidor.
+    match /rateLimits/{counterId} {
       allow read, write: if false;
     }
 

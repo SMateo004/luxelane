@@ -218,7 +218,8 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
           path: LuxRoutes.driverActiveRide,
           pageBuilder: (c, s) => _slide(
             DriverActiveRideScreen(
-                bookingId: s.pathParameters['bookingId'] ?? ''),
+              bookingId: s.pathParameters['bookingId'] ?? '',
+            ),
             s,
           ),
         ),
@@ -359,7 +360,9 @@ class _SplashPage extends StatelessWidget {
             builder: (_, t, child) => Opacity(
               opacity: t,
               child: Transform.translate(
-                  offset: Offset(0, 8 * (1 - t)), child: child),
+                offset: Offset(0, 8 * (1 - t)),
+                child: child,
+              ),
             ),
             child: const Column(
               mainAxisSize: MainAxisSize.min,
@@ -394,14 +397,19 @@ class _NotFoundPage extends StatelessWidget {
               children: [
                 const LuxelaneWordmark(),
                 const SizedBox(height: 48),
-                Text('Este camino no existe.',
-                    textAlign: TextAlign.center,
-                    style: LuxTypography.displayMedium
-                        .copyWith(fontWeight: FontWeight.w400)),
+                Text(
+                  'Este camino no existe.',
+                  textAlign: TextAlign.center,
+                  style: LuxTypography.displayMedium.copyWith(
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
                 const SizedBox(height: 12),
-                const Text('Te llevamos de vuelta al inicio.',
-                    textAlign: TextAlign.center,
-                    style: LuxTypography.bodyMedium),
+                const Text(
+                  'Te llevamos de vuelta al inicio.',
+                  textAlign: TextAlign.center,
+                  style: LuxTypography.bodyMedium,
+                ),
                 const SizedBox(height: 32),
                 SizedBox(
                   width: 240,

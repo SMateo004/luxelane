@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
@@ -37,15 +38,22 @@ class BookingRepositoryImpl implements BookingRepository {
       _db.collection('bookings');
 
   @override
-  Future<Either<Failure, Booking>> createBooking(Booking booking,
-      {double? quotedPrice, required String requestId}) async {
+  Future<Either<Failure, Booking>> createBooking(
+    Booking booking, {
+    double? quotedPrice,
+    required String requestId,
+  }) async {
     try {
       final res = await _functions
           .httpsCallable('createBooking')
-          .call<Map<String, dynamic>>(bookingRequestData(booking,
+          .call<Map<String, dynamic>>(
+            bookingRequestData(
+              booking,
               quotedPrice: quotedPrice,
               requestId: requestId,
-              appVersion: await _appVersion()));
+              appVersion: await _appVersion(),
+            ),
+          );
       final id = res.data['bookingId'] as String;
       return getBookingById(id);
     } on FirebaseFunctionsException catch (e) {
@@ -60,8 +68,13 @@ class BookingRepositoryImpl implements BookingRepository {
     try {
       final res = await _functions
           .httpsCallable('quoteBooking')
-          .call<Map<String, dynamic>>(bookingRequestData(trip,
-              quote: true, appVersion: await _appVersion()));
+          .call<Map<String, dynamic>>(
+            bookingRequestData(
+              trip,
+              quote: true,
+              appVersion: await _appVersion(),
+            ),
+          );
       return Right(BookingQuote.fromJson(res.data));
     } on FirebaseFunctionsException catch (e) {
       return Left(bookingFailureFor(e.code, e.details));
@@ -82,13 +95,13 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
-  Stream<List<Booking>> watchBookingsByRider(String riderId) => _col
-      .where('riderId', isEqualTo: riderId)
-      .snapshots()
-      .map((snap) => snap.docs
-          .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
-          .toList()
-        ..sort((a, b) => b.createdAt.compareTo(a.createdAt)));
+  Stream<List<Booking>> watchBookingsByRider(String riderId) =>
+      _col.where('riderId', isEqualTo: riderId).snapshots().map(
+            (snap) => snap.docs
+                .map((d) => Booking.fromJson({'id': d.id, ...d.data()}))
+                .toList()
+              ..sort((a, b) => b.createdAt.compareTo(a.createdAt)),
+          );
 
   @override
   Future<Either<Failure, List<Booking>>> getBookingsByRider(
@@ -195,8 +208,9 @@ class BookingRepositoryImpl implements BookingRepository {
       });
       return const Right(null);
     } catch (e) {
-      return const Left(ServerFailure(
-          'No se pudo guardar tu valoración. Inténtalo de nuevo.'));
+      return const Left(
+        ServerFailure('No se pudo guardar tu valoración. Inténtalo de nuevo.'),
+      );
     }
   }
 
@@ -220,11 +234,13 @@ class BookingRepositoryImpl implements BookingRepository {
         }
         if (driver.data()?['documentsVerified'] != true) {
           throw const _AcceptError(
-              'Tus documentos aún no están verificados por Luxelane.');
+            'Tus documentos aún no están verificados por Luxelane.',
+          );
         }
         if (driver.data()?['isAvailable'] != true) {
           throw const _AcceptError(
-              'Conéctate y termina tu viaje actual antes de aceptar otro.');
+            'Conéctate y termina tu viaje actual antes de aceptar otro.',
+          );
         }
         transaction.update(docRef, {
           'driverId': driverId,
@@ -244,9 +260,13 @@ class BookingRepositoryImpl implements BookingRepository {
     } on FirebaseException catch (e) {
       // Verificación y disponibilidad ya se comprobaron: un rechazo aquí es
       // casi siempre que otro chófer la tomó antes.
-      return Left(ServerFailure(e.code == 'permission-denied'
-          ? 'Este viaje ya no está disponible.'
-          : 'No se pudo aceptar el viaje. Revisa tu conexión.'));
+      return Left(
+        ServerFailure(
+          e.code == 'permission-denied'
+              ? 'Este viaje ya no está disponible.'
+              : 'No se pudo aceptar el viaje. Revisa tu conexión.',
+        ),
+      );
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -261,10 +281,14 @@ class BookingRepositoryImpl implements BookingRepository {
       });
       return const Right(null);
     } on FirebaseException catch (e) {
-      return Left(ServerFailure(e.code == 'permission-denied'
-          ? 'Esta reserva ya no se puede cancelar: el viaje está en curso o '
-              'terminó.'
-          : 'No se pudo cancelar. Revisa tu conexión e inténtalo de nuevo.'));
+      return Left(
+        ServerFailure(
+          e.code == 'permission-denied'
+              ? 'Esta reserva ya no se puede cancelar: el viaje está en curso o '
+                  'terminó.'
+              : 'No se pudo cancelar. Revisa tu conexión e inténtalo de nuevo.',
+        ),
+      );
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -283,13 +307,19 @@ const _kConnectionError =
 
 /// Solo los datos del viaje que aceptan quoteBooking y createBooking: el
 /// precio, el estado y la zona los pone el servidor.
-Map<String, dynamic> bookingRequestData(Booking b,
-    {double? quotedPrice,
-    String? requestId,
-    String? appVersion,
-    bool quote = false}) {
-  Map<String, dynamic> place(Place p) =>
-      {'name': p.name, 'address': p.address, 'lat': p.lat, 'lng': p.lng};
+Map<String, dynamic> bookingRequestData(
+  Booking b, {
+  double? quotedPrice,
+  String? requestId,
+  String? appVersion,
+  bool quote = false,
+}) {
+  Map<String, dynamic> place(Place p) => {
+        'name': p.name,
+        'address': p.address,
+        'lat': p.lat,
+        'lng': p.lng,
+      };
   final hourly = b.serviceType == ServiceType.byTheHour;
   return {
     'origin': place(b.origin),
@@ -342,8 +372,9 @@ Failure bookingFailureFor(String code, Object? details) {
     'unauthenticated' => 'Inicia sesión para reservar.',
     _ => code == 'unavailable' || code == 'deadline-exceeded'
         ? _kConnectionError
-        : 'No pudimos procesar tu reserva. Revisa los datos del viaje e '
-            'inténtalo de nuevo.',
+        : commonFunctionError(code, details) ??
+            'No pudimos procesar tu reserva. Revisa los datos del viaje e '
+                'inténtalo de nuevo.',
   });
 }
 

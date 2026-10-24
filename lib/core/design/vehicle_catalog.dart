@@ -97,12 +97,17 @@ abstract class VehicleCatalog {
     final max = vc.capacity;
     return [
       SeatingOption(max, title: '$max pasajeros', detail: 'Capacidad máxima'),
-      SeatingOption(max - 1,
-          title: '${max - 1} pasajeros', detail: 'Más espacio para cada uno'),
-      SeatingOption(max - 1,
-          childSeat: true,
-          title: 'Con asiento infantil',
-          detail: 'Bajo solicitud previa'),
+      SeatingOption(
+        max - 1,
+        title: '${max - 1} pasajeros',
+        detail: 'Más espacio para cada uno',
+      ),
+      SeatingOption(
+        max - 1,
+        childSeat: true,
+        title: 'Con asiento infantil',
+        detail: 'Bajo solicitud previa',
+      ),
     ];
   }
 

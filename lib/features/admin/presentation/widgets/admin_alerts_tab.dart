@@ -25,28 +25,29 @@ class AlertsTab extends StatelessWidget {
   const AlertsTab({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      BlocBuilder<AdminBloc, AdminState>(builder: (context, state) {
-        if (state.isLoading && state.alerts.isEmpty) {
-          return const LuxSkeletonList();
-        }
-        final alerts = [...state.alerts]
-          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-        if (alerts.isEmpty) {
-          return const AdminEmpty(
-            icon: Icons.notification_important_outlined,
-            title: 'Sin alertas',
-            subtitle: 'Aquí aparecen los avisos del servidor que piden '
-                'revisión, como un precio calculado con distancia aproximada.',
+  Widget build(BuildContext context) => BlocBuilder<AdminBloc, AdminState>(
+        builder: (context, state) {
+          if (state.isLoading && state.alerts.isEmpty) {
+            return const LuxSkeletonList();
+          }
+          final alerts = [...state.alerts]
+            ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          if (alerts.isEmpty) {
+            return const AdminEmpty(
+              icon: Icons.notification_important_outlined,
+              title: 'Sin alertas',
+              subtitle: 'Aquí aparecen los avisos del servidor que piden '
+                  'revisión, como un precio calculado con distancia aproximada.',
+            );
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.all(LuxSpacing.lg),
+            itemCount: alerts.length,
+            separatorBuilder: (_, __) => const LuxDivider(),
+            itemBuilder: (_, i) => _AlertTile(alert: alerts[i]),
           );
-        }
-        return ListView.separated(
-          padding: const EdgeInsets.all(LuxSpacing.lg),
-          itemCount: alerts.length,
-          separatorBuilder: (_, __) => const LuxDivider(),
-          itemBuilder: (_, i) => _AlertTile(alert: alerts[i]),
-        );
-      });
+        },
+      );
 }
 
 class _AlertTile extends StatelessWidget {
@@ -59,9 +60,9 @@ class _AlertTile extends StatelessWidget {
       builder: (_) => const _ResolveDialog(),
     );
     if (note != null && context.mounted) {
-      context
-          .read<AdminBloc>()
-          .add(AdminResolveAlertRequested(alert.id, note: note));
+      context.read<AdminBloc>().add(
+            AdminResolveAlertRequested(alert.id, note: note),
+          );
     }
   }
 
@@ -79,42 +80,53 @@ class _AlertTile extends StatelessWidget {
               color: LuxColors.surfaceMuted,
               borderRadius: BorderRadius.circular(LuxRadius.sm),
             ),
-            child: Icon(Icons.notification_important_outlined,
-                color: color, size: 16),
+            child: Icon(
+              Icons.notification_important_outlined,
+              color: color,
+              size: 16,
+            ),
           ),
           const SizedBox(width: LuxSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text.rich(TextSpan(
-                  style: LuxTypography.bodyMedium,
-                  children: [
-                    TextSpan(
-                      text: alertLabel(alert.type),
-                      style:
-                          TextStyle(fontWeight: FontWeight.w700, color: color),
-                    ),
-                    if (alert.bookingId != null)
+                Text.rich(
+                  TextSpan(
+                    style: LuxTypography.bodyMedium,
+                    children: [
                       TextSpan(
+                        text: alertLabel(alert.type),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          color: color,
+                        ),
+                      ),
+                      if (alert.bookingId != null)
+                        TextSpan(
                           text: '  Reserva #${shortId(alert.bookingId!)}',
-                          style: LuxTypography.caption),
-                  ],
-                )),
+                          style: LuxTypography.caption,
+                        ),
+                    ],
+                  ),
+                ),
                 if (alert.message.isNotEmpty)
                   Text(alert.message, style: LuxTypography.caption),
                 const SizedBox(height: LuxSpacing.xs),
-                AdminTag(alert.resolved ? 'Revisada' : 'Pendiente',
-                    color:
-                        alert.resolved ? LuxColors.success : LuxColors.warning),
+                AdminTag(
+                  alert.resolved ? 'Revisada' : 'Pendiente',
+                  color: alert.resolved ? LuxColors.success : LuxColors.warning,
+                ),
               ],
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(DateFormat('dd/MM HH:mm').format(alert.createdAt),
-                  style: LuxTypography.caption),
+              Text(
+                DateFormat('dd/MM HH:mm').format(alert.createdAt),
+                style: LuxTypography.caption,
+              ),
               if (!alert.resolved)
                 TextButton(
                   onPressed: () => _resolve(context),
@@ -155,11 +167,13 @@ class _ResolveDialogState extends State<_ResolveDialog> {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Cancelar')),
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancelar'),
+          ),
           FilledButton(
-              onPressed: () => Navigator.of(context).pop(_note.text),
-              child: const Text('Marcar revisada')),
+            onPressed: () => Navigator.of(context).pop(_note.text),
+            child: const Text('Marcar revisada'),
+          ),
         ],
       );
 }

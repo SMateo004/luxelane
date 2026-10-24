@@ -72,8 +72,9 @@ class _RideScreenState extends State<RideScreen> {
             b.riderRating == null &&
             !_ratingPrompted) {
           _ratingPrompted = true;
-          WidgetsBinding.instance
-              .addPostFrameCallback((_) => _showRatingDialog());
+          WidgetsBinding.instance.addPostFrameCallback(
+            (_) => _showRatingDialog(),
+          );
         }
       },
       onError: (_) {
@@ -162,19 +163,27 @@ class _RideScreenState extends State<RideScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: LuxColors.surface,
-        title: const Text('Cancelar reserva', style: LuxTypography.titleMedium),
+        title: const Text(
+          'Cancelar reserva',
+          style: LuxTypography.titleMedium,
+        ),
         content: const Text(
-            'Tu chófer quedará libre y, si pagaste con tarjeta, se liberará '
-            'la retención. ¿Quieres cancelar?',
-            style: LuxTypography.bodyMedium),
+          'Tu chófer quedará libre y, si pagaste con tarjeta, se liberará '
+          'la retención. ¿Quieres cancelar?',
+          style: LuxTypography.bodyMedium,
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Volver')),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Volver'),
+          ),
           TextButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Cancelar reserva',
-                  style: TextStyle(color: LuxColors.error))),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text(
+              'Cancelar reserva',
+              style: TextStyle(color: LuxColors.error),
+            ),
+          ),
         ],
       ),
     );
@@ -319,10 +328,7 @@ class _RideScreenState extends State<RideScreen> {
 
   Widget _mobileLayout(LatLng? driverLatLng) => Stack(
         children: [
-          _MapArea(
-            booking: _booking,
-            driverLocation: driverLatLng,
-          ),
+          _MapArea(booking: _booking, driverLocation: driverLatLng),
           SafeArea(
             child: Column(
               children: [
@@ -346,10 +352,7 @@ class _RideScreenState extends State<RideScreen> {
   Widget _webLayout(LatLng? driverLatLng) => Row(
         children: [
           Expanded(
-            child: _MapArea(
-              booking: _booking,
-              driverLocation: driverLatLng,
-            ),
+            child: _MapArea(booking: _booking, driverLocation: driverLatLng),
           ),
           SizedBox(
             width: 400,
@@ -358,8 +361,9 @@ class _RideScreenState extends State<RideScreen> {
               child: Column(
                 children: [
                   _WebRideHeader(
-                      status: _status ?? BookingStatus.pending,
-                      trailing: _sos()),
+                    status: _status ?? BookingStatus.pending,
+                    trailing: _sos(),
+                  ),
                   const LuxDivider(),
                   Expanded(
                     child: Padding(
@@ -426,8 +430,10 @@ class _TopBar extends StatelessWidget {
                   border: Border.all(color: LuxColors.border),
                   boxShadow: luxSoftShadow,
                 ),
-                child: const Icon(Icons.keyboard_arrow_down_rounded,
-                    color: LuxColors.ink),
+                child: const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: LuxColors.ink,
+                ),
               ),
             ),
             const SizedBox(width: LuxSpacing.md),
@@ -464,11 +470,15 @@ class _BottomPanel extends StatelessWidget {
     return Container(
       decoration: const BoxDecoration(
         color: LuxColors.surface,
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(LuxRadius.xl + 4)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(LuxRadius.xl + 4),
+        ),
         boxShadow: [
           BoxShadow(
-              color: LuxColors.shadow, blurRadius: 32, offset: Offset(0, -8)),
+            color: LuxColors.shadow,
+            blurRadius: 32,
+            offset: Offset(0, -8),
+          ),
         ],
       ),
       padding: const EdgeInsets.fromLTRB(
@@ -504,9 +514,13 @@ class _BottomPanel extends StatelessWidget {
                 children: [
                   BookingStatusChip(status: status),
                   const SizedBox(height: LuxSpacing.sm + 2),
-                  Text(message,
-                      style: LuxTypography.headlineLarge
-                          .copyWith(fontSize: 26, height: 1.15)),
+                  Text(
+                    message,
+                    style: LuxTypography.headlineLarge.copyWith(
+                      fontSize: 26,
+                      height: 1.15,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -514,8 +528,11 @@ class _BottomPanel extends StatelessWidget {
               const SizedBox(height: LuxSpacing.sm),
               Row(
                 children: [
-                  const Icon(Icons.verified_outlined,
-                      size: 14, color: LuxColors.sapphire),
+                  const Icon(
+                    Icons.verified_outlined,
+                    size: 14,
+                    color: LuxColors.sapphire,
+                  ),
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
@@ -558,12 +575,17 @@ class _AssigningCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Asignando a tu chófer',
-                      style: LuxTypography.titleMedium),
+                  const Text(
+                    'Asignando a tu chófer',
+                    style: LuxTypography.titleMedium,
+                  ),
                   const SizedBox(height: 2),
-                  Text('Verás su nombre, vehículo y valoración aquí.',
-                      style: LuxTypography.caption
-                          .copyWith(color: LuxColors.inkSecondary)),
+                  Text(
+                    'Verás su nombre, vehículo y valoración aquí.',
+                    style: LuxTypography.caption.copyWith(
+                      color: LuxColors.inkSecondary,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -599,10 +621,7 @@ class _WebRideHeader extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class _RatingDialog extends StatefulWidget {
-  const _RatingDialog({
-    required this.driverName,
-    required this.onSubmit,
-  });
+  const _RatingDialog({required this.driverName, required this.onSubmit});
   final String driverName;
   final Future<void> Function(double rating) onSubmit;
 
@@ -621,14 +640,20 @@ class _RatingDialogState extends State<_RatingDialog> {
           borderRadius: BorderRadius.circular(LuxRadius.lg),
           side: const BorderSide(color: LuxColors.border),
         ),
-        title: const Text('Califica tu viaje',
-            style: LuxTypography.titleMedium, textAlign: TextAlign.center),
+        title: const Text(
+          'Califica tu viaje',
+          style: LuxTypography.titleMedium,
+          textAlign: TextAlign.center,
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(widget.driverName,
-                style: LuxTypography.bodyMedium
-                    .copyWith(color: LuxColors.inkTertiary)),
+            Text(
+              widget.driverName,
+              style: LuxTypography.bodyMedium.copyWith(
+                color: LuxColors.inkTertiary,
+              ),
+            ),
             const SizedBox(height: LuxSpacing.lg),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -677,7 +702,11 @@ class _RatingDialogState extends State<_RatingDialog> {
         ],
         actionsAlignment: MainAxisAlignment.center,
         actionsPadding: const EdgeInsets.fromLTRB(
-            LuxSpacing.md, 0, LuxSpacing.md, LuxSpacing.md),
+          LuxSpacing.md,
+          0,
+          LuxSpacing.md,
+          LuxSpacing.md,
+        ),
       );
 
   String _ratingLabel(double r) {

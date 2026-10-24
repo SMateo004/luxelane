@@ -54,8 +54,10 @@ Future<FirebaseStartup> startFirebase(
 Widget appForStartup(FirebaseStartup startup, Widget app) => switch (startup) {
       FirebaseReady() => app,
       FirebaseFatal() => const FirebaseStartupErrorApp(),
-      FirebaseDegraded(:final message) =>
-        FirebaseSetupWarning(message: message, child: app),
+      FirebaseDegraded(:final message) => FirebaseSetupWarning(
+          message: message,
+          child: app,
+        ),
     };
 
 /// Pantalla sobria que sustituye a la app cuando Firebase no arranca.
@@ -75,8 +77,11 @@ class FirebaseStartupErrorApp extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.cloud_off_rounded,
-                      size: 40, color: LuxColors.inkTertiary),
+                  Icon(
+                    Icons.cloud_off_rounded,
+                    size: 40,
+                    color: LuxColors.inkTertiary,
+                  ),
                   SizedBox(height: LuxSpacing.md),
                   Text(
                     'No pudimos iniciar la app',
@@ -127,11 +132,15 @@ class FirebaseSetupWarning extends StatelessWidget {
                 top: false,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: LuxSpacing.md, vertical: LuxSpacing.sm),
+                    horizontal: LuxSpacing.md,
+                    vertical: LuxSpacing.sm,
+                  ),
                   child: Text(
                     message,
                     style: const TextStyle(
-                        color: LuxColors.onAccent, fontSize: 12),
+                      color: LuxColors.onAccent,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ),

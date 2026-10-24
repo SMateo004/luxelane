@@ -329,8 +329,11 @@ class VehicleCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.person_outline,
-                          size: 14, color: LuxColors.inkTertiary),
+                      const Icon(
+                        Icons.person_outline,
+                        size: 14,
+                        color: LuxColors.inkTertiary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         'Hasta ${vehicleClass.capacity}',
@@ -447,67 +450,70 @@ class LuxSegmented<T> extends StatelessWidget {
         color: LuxColors.surfaceMuted,
         borderRadius: BorderRadius.circular(LuxRadius.md),
       ),
-      child: LayoutBuilder(builder: (context, c) {
-        final w = c.maxWidth / values.length;
-        return Stack(
-          children: [
-            AnimatedPositioned(
-              duration: duration,
-              curve: LuxMotion.emphasized,
-              left: w * index,
-              top: 0,
-              bottom: 0,
-              width: w,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: LuxColors.surface,
-                  borderRadius: BorderRadius.circular(LuxRadius.sm),
-                  boxShadow: const [
-                    BoxShadow(
+      child: LayoutBuilder(
+        builder: (context, c) {
+          final w = c.maxWidth / values.length;
+          return Stack(
+            children: [
+              AnimatedPositioned(
+                duration: duration,
+                curve: LuxMotion.emphasized,
+                left: w * index,
+                top: 0,
+                bottom: 0,
+                width: w,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: LuxColors.surface,
+                    borderRadius: BorderRadius.circular(LuxRadius.sm),
+                    boxShadow: const [
+                      BoxShadow(
                         color: Color(0x140D1B2E),
                         blurRadius: 6,
-                        offset: Offset(0, 1)),
-                  ],
+                        offset: Offset(0, 1),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            Row(
-              children: [
-                for (final v in values)
-                  Expanded(
-                    child: Semantics(
-                      button: true,
-                      selected: v == selected,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () {
-                          if (v == selected) return;
-                          LuxHaptics.tap();
-                          onChanged(v);
-                        },
-                        child: Center(
-                          child: AnimatedDefaultTextStyle(
-                            duration: duration,
-                            style: LuxTypography.titleMedium.copyWith(
-                              fontSize: 13,
-                              color: v == selected
-                                  ? LuxColors.ink
-                                  : LuxColors.inkTertiary,
-                              fontWeight: v == selected
-                                  ? FontWeight.w600
-                                  : FontWeight.w500,
+              Row(
+                children: [
+                  for (final v in values)
+                    Expanded(
+                      child: Semantics(
+                        button: true,
+                        selected: v == selected,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            if (v == selected) return;
+                            LuxHaptics.tap();
+                            onChanged(v);
+                          },
+                          child: Center(
+                            child: AnimatedDefaultTextStyle(
+                              duration: duration,
+                              style: LuxTypography.titleMedium.copyWith(
+                                fontSize: 13,
+                                color: v == selected
+                                    ? LuxColors.ink
+                                    : LuxColors.inkTertiary,
+                                fontWeight: v == selected
+                                    ? FontWeight.w600
+                                    : FontWeight.w500,
+                              ),
+                              child: Text(labelOf(v)),
                             ),
-                            child: Text(labelOf(v)),
                           ),
                         ),
                       ),
                     ),
-                  ),
-              ],
-            ),
-          ],
-        );
-      }),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
@@ -643,10 +649,7 @@ class EmptyState extends StatelessWidget {
                 if (actionLabel != null) ...[
                   const SizedBox(height: LuxSpacing.lg),
                   LuxButton(
-                    label: actionLabel!,
-                    onPressed: onAction,
-                    width: 220,
-                  ),
+                      label: actionLabel!, onPressed: onAction, width: 220),
                 ],
               ],
             ),
@@ -754,21 +757,29 @@ class LuxListRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
       child: Row(
         children: [
-          Icon(icon,
-              size: 20,
-              color: destructive ? LuxColors.error : LuxColors.inkSecondary),
+          Icon(
+            icon,
+            size: 20,
+            color: destructive ? LuxColors.error : LuxColors.inkSecondary,
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: LuxTypography.bodyLarge
-                        .copyWith(color: color, fontSize: 15)),
+                Text(
+                  title,
+                  style: LuxTypography.bodyLarge.copyWith(
+                    color: color,
+                    fontSize: 15,
+                  ),
+                ),
                 if (subtitle != null) ...[
                   const SizedBox(height: 2),
-                  Text(subtitle!,
-                      style: LuxTypography.caption.copyWith(fontSize: 12)),
+                  Text(
+                    subtitle!,
+                    style: LuxTypography.caption.copyWith(fontSize: 12),
+                  ),
                 ],
               ],
             ),
@@ -776,8 +787,11 @@ class LuxListRow extends StatelessWidget {
           if (trailing != null)
             trailing!
           else if (onTap != null)
-            const Icon(Icons.chevron_right_rounded,
-                size: 20, color: LuxColors.inkTertiary),
+            const Icon(
+              Icons.chevron_right_rounded,
+              size: 20,
+              color: LuxColors.inkTertiary,
+            ),
         ],
       ),
     );
@@ -853,8 +867,10 @@ class RiderPreferencesNote extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('ESTILO DEL PASAJERO',
-              style: LuxTypography.eyebrow.copyWith(fontSize: 9)),
+          Text(
+            'ESTILO DEL PASAJERO',
+            style: LuxTypography.eyebrow.copyWith(fontSize: 9),
+          ),
           const SizedBox(height: 8),
           Wrap(
             spacing: 6,
@@ -862,17 +878,22 @@ class RiderPreferencesNote extends StatelessWidget {
             children: [
               for (final n in notes)
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: LuxColors.surface,
                     borderRadius: BorderRadius.circular(LuxRadius.xl),
                   ),
-                  child: Text(n,
-                      style: LuxTypography.caption.copyWith(
-                          color: LuxColors.ink,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500)),
+                  child: Text(
+                    n,
+                    style: LuxTypography.caption.copyWith(
+                      color: LuxColors.ink,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -914,8 +935,9 @@ class DriverCard extends StatelessWidget {
               child: photoUrl == null
                   ? Text(
                       name.isNotEmpty ? name[0].toUpperCase() : '?',
-                      style: LuxTypography.headlineMedium
-                          .copyWith(color: LuxColors.sapphire),
+                      style: LuxTypography.headlineMedium.copyWith(
+                        color: LuxColors.sapphire,
+                      ),
                     )
                   : null,
             ),
@@ -986,8 +1008,9 @@ class PriceEstimateBar extends StatelessWidget {
                 const Text('PRECIO FIJO', style: LuxTypography.caption),
                 Text(
                   'Bs${price.toStringAsFixed(0)}',
-                  style: LuxTypography.displayMedium
-                      .copyWith(color: LuxColors.sapphire),
+                  style: LuxTypography.displayMedium.copyWith(
+                    color: LuxColors.sapphire,
+                  ),
                 ),
               ],
             ),
@@ -1008,8 +1031,11 @@ class PriceEstimateBar extends StatelessWidget {
 // LuxSnackbar
 // ---------------------------------------------------------------------------
 
-void showLuxSnackbar(BuildContext context, String message,
-    {bool isError = false}) {
+void showLuxSnackbar(
+  BuildContext context,
+  String message, {
+  bool isError = false,
+}) {
   if (isError) {
     LuxHaptics.warning();
   }
@@ -1038,8 +1064,10 @@ void showLuxSnackbar(BuildContext context, String message,
           Expanded(
             child: Text(
               message,
-              style: LuxTypography.bodyMedium
-                  .copyWith(color: LuxColors.ink, height: 1.35),
+              style: LuxTypography.bodyMedium.copyWith(
+                color: LuxColors.ink,
+                height: 1.35,
+              ),
             ),
           ),
         ],
@@ -1054,7 +1082,11 @@ void showLuxSnackbar(BuildContext context, String message,
         side: const BorderSide(color: LuxColors.border),
       ),
       margin: const EdgeInsets.fromLTRB(
-          LuxSpacing.md, 0, LuxSpacing.md, LuxSpacing.md),
+        LuxSpacing.md,
+        0,
+        LuxSpacing.md,
+        LuxSpacing.md,
+      ),
       dismissDirection: DismissDirection.down,
     ),
   );
@@ -1123,8 +1155,11 @@ class StepIndicator extends StatelessWidget {
                 ),
                 child: Center(
                   child: done
-                      ? const Icon(Icons.check,
-                          size: 14, color: LuxColors.onAccent)
+                      ? const Icon(
+                          Icons.check,
+                          size: 14,
+                          color: LuxColors.onAccent,
+                        )
                       : Text(
                           '${idx + 1}',
                           style: LuxTypography.caption.copyWith(
@@ -1156,8 +1191,12 @@ class StepIndicator extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class LuxelaneWordmark extends StatelessWidget {
-  const LuxelaneWordmark(
-      {super.key, this.size = 12, this.color, this.showMonogram = true});
+  const LuxelaneWordmark({
+    super.key,
+    this.size = 12,
+    this.color,
+    this.showMonogram = true,
+  });
 
   /// Font size of the logotype; the monogram scales with it.
   final double size;

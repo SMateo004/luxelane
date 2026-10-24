@@ -52,8 +52,10 @@ class DriverQueueScreen extends StatelessWidget {
                 for (final b in pending)
                   Padding(
                     padding: const EdgeInsets.only(bottom: LuxSpacing.md),
-                    child:
-                        LuxFadeIn(index: i++, child: _RequestCard(request: b)),
+                    child: LuxFadeIn(
+                      index: i++,
+                      child: _RequestCard(request: b),
+                    ),
                   ),
                 const SizedBox(height: LuxSpacing.md),
               ],
@@ -197,8 +199,10 @@ class _JobCard extends StatelessWidget {
             children: [
               BookingStatusChip(status: booking.status),
               const SizedBox(width: LuxSpacing.sm),
-              Text(booking.vehicleClass.label,
-                  style: LuxTypography.caption.copyWith(fontSize: 12)),
+              Text(
+                booking.vehicleClass.label,
+                style: LuxTypography.caption.copyWith(fontSize: 12),
+              ),
             ],
           ),
           if (!booking.riderPreferences.isEmpty) ...[
@@ -252,10 +256,12 @@ class _JobActions extends StatelessWidget {
         icon: Icons.check_circle_outline_rounded,
         onPressed: blocker != null
             ? null
-            : () => bloc.add(DriverRequestAccepted(
-                  bookingId: bookingId,
-                  driverId: driverId,
-                )),
+            : () => bloc.add(
+                  DriverRequestAccepted(
+                    bookingId: bookingId,
+                    driverId: driverId,
+                  ),
+                ),
       );
     }
 

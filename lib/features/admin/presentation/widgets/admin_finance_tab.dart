@@ -37,133 +37,139 @@ class _FinanceTabState extends State<FinanceTab> {
   ChargeStatus? _filter;
 
   @override
-  Widget build(BuildContext context) =>
-      BlocBuilder<AdminBloc, AdminState>(builder: (context, state) {
-        if (state.isLoading && state.bookings.isEmpty) {
-          return const LuxSkeletonList();
-        }
-        final f = state.finance(_period);
-        final rows = _filter == null
-            ? f.entries
-            : f.entries.where((e) => e.status == _filter).toList();
+  Widget build(BuildContext context) => BlocBuilder<AdminBloc, AdminState>(
+        builder: (context, state) {
+          if (state.isLoading && state.bookings.isEmpty) {
+            return const LuxSkeletonList();
+          }
+          final f = state.finance(_period);
+          final rows = _filter == null
+              ? f.entries
+              : f.entries.where((e) => e.status == _filter).toList();
 
-        return ListView(
-          padding: const EdgeInsets.all(LuxSpacing.lg),
-          children: [
-            Row(
-              children: [
-                const Expanded(child: SectionHeader(title: 'Finanzas')),
-                TextButton.icon(
-                  onPressed: f.entries.isEmpty
-                      ? null
-                      : () {
-                          Clipboard.setData(
-                              ClipboardData(text: f.toCsv(state.userName)));
-                          showLuxSnackbar(context,
-                              'Libro de ${_period.label.toLowerCase()} copiado como CSV');
-                        },
-                  icon: const Icon(Icons.download_rounded, size: 18),
-                  label: const Text('Exportar CSV'),
+          return ListView(
+            padding: const EdgeInsets.all(LuxSpacing.lg),
+            children: [
+              Row(
+                children: [
+                  const Expanded(child: SectionHeader(title: 'Finanzas')),
+                  TextButton.icon(
+                    onPressed: f.entries.isEmpty
+                        ? null
+                        : () {
+                            Clipboard.setData(
+                              ClipboardData(text: f.toCsv(state.userName)),
+                            );
+                            showLuxSnackbar(
+                              context,
+                              'Libro de ${_period.label.toLowerCase()} copiado como CSV',
+                            );
+                          },
+                    icon: const Icon(Icons.download_rounded, size: 18),
+                    label: const Text('Exportar CSV'),
+                  ),
+                ],
+              ),
+              const SizedBox(height: LuxSpacing.sm),
+              Wrap(
+                spacing: LuxSpacing.sm,
+                runSpacing: LuxSpacing.sm,
+                children: [
+                  for (final p in FinancePeriod.values)
+                    AdminFilterChip(
+                      label: p.label,
+                      selected: _period == p,
+                      onTap: () => setState(() => _period = p),
+                    ),
+                ],
+              ),
+              if (state.bookingsTruncated) ...[
+                const SizedBox(height: LuxSpacing.md),
+                _Notice(
+                  'Se cargaron las ${state.bookingsLimit} reservas más recientes. '
+                  'Los totales de periodos largos pueden estar incompletos.',
                 ),
               ],
-            ),
-            const SizedBox(height: LuxSpacing.sm),
-            Wrap(
-              spacing: LuxSpacing.sm,
-              runSpacing: LuxSpacing.sm,
-              children: [
-                for (final p in FinancePeriod.values)
-                  AdminFilterChip(
-                    label: p.label,
-                    selected: _period == p,
-                    onTap: () => setState(() => _period = p),
-                  ),
-              ],
-            ),
-            if (state.bookingsTruncated) ...[
+              const SizedBox(height: LuxSpacing.lg),
+              FinanceKpis(summary: f),
+              const SizedBox(height: LuxSpacing.xl),
+              const SectionHeader(title: 'Facturación diaria'),
               const SizedBox(height: LuxSpacing.md),
-              _Notice(
-                'Se cargaron las ${state.bookingsLimit} reservas más recientes. '
-                'Los totales de periodos largos pueden estar incompletos.',
-              ),
-            ],
-            const SizedBox(height: LuxSpacing.lg),
-            FinanceKpis(summary: f),
-            const SizedBox(height: LuxSpacing.xl),
-            const SectionHeader(title: 'Facturación diaria'),
-            const SizedBox(height: LuxSpacing.md),
-            LuxCard(
-              padding: const EdgeInsets.all(LuxSpacing.lg),
-              child: SizedBox(height: 220, child: DailyRevenueChart(f.daily)),
-            ),
-            const SizedBox(height: LuxSpacing.xl),
-            const SectionHeader(title: 'Conciliación de cobros'),
-            const SizedBox(height: LuxSpacing.sm),
-            const Text(
-              'Viajes completados y su estado de cobro. Registra cobros en '
-              'efectivo/QR/transferencia, ajusta precios antes de cobrar o '
-              'reembolsa pagos capturados.',
-              style: LuxTypography.caption,
-            ),
-            const SizedBox(height: LuxSpacing.md),
-            Wrap(
-              spacing: LuxSpacing.sm,
-              runSpacing: LuxSpacing.sm,
-              children: [
-                AdminFilterChip(
-                  label: 'Todos',
-                  count: f.entries.length,
-                  selected: _filter == null,
-                  onTap: () => setState(() => _filter = null),
-                ),
-                for (final s in ChargeStatus.values)
-                  AdminFilterChip(
-                    label: s.label,
-                    count: f.entries.where((e) => e.status == s).length,
-                    selected: _filter == s,
-                    onTap: () =>
-                        setState(() => _filter = _filter == s ? null : s),
-                  ),
-              ],
-            ),
-            const SizedBox(height: LuxSpacing.md),
-            if (rows.isEmpty)
-              const AdminEmpty(
-                icon: Icons.receipt_long_outlined,
-                title: 'Sin movimientos en este periodo',
-              )
-            else
               LuxCard(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: LuxSpacing.md, vertical: LuxSpacing.xs),
-                child: Column(
-                  children: [
-                    for (var i = 0; i < rows.length; i++) ...[
-                      if (i > 0) const LuxDivider(),
-                      _LedgerTile(entry: rows[i], state: state),
-                    ],
-                  ],
-                ),
+                padding: const EdgeInsets.all(LuxSpacing.lg),
+                child: SizedBox(height: 220, child: DailyRevenueChart(f.daily)),
               ),
-            const SizedBox(height: LuxSpacing.xl),
-            const SectionHeader(title: 'Liquidación a chóferes'),
-            const SizedBox(height: LuxSpacing.sm),
-            Text(
-              'Cada viaje se reparte con la comisión vigente al completarse '
-              '(ahora ${f.commissionPct.toStringAsFixed(f.commissionPct % 1 == 0 ? 0 : 1)} %); '
-              'el chófer ve las mismas cifras en su app. "Liquidable" es su '
-              'parte en viajes ya cobrados.',
-              style: LuxTypography.caption,
-            ),
-            const SizedBox(height: LuxSpacing.md),
-            _DriverPayouts(summary: f, state: state),
-            const SizedBox(height: LuxSpacing.xl),
-            const SectionHeader(title: 'Por clase y servicio'),
-            const SizedBox(height: LuxSpacing.md),
-            _Segments(summary: f),
-          ],
-        );
-      });
+              const SizedBox(height: LuxSpacing.xl),
+              const SectionHeader(title: 'Conciliación de cobros'),
+              const SizedBox(height: LuxSpacing.sm),
+              const Text(
+                'Viajes completados y su estado de cobro. Registra cobros en '
+                'efectivo/QR/transferencia, ajusta precios antes de cobrar o '
+                'reembolsa pagos capturados.',
+                style: LuxTypography.caption,
+              ),
+              const SizedBox(height: LuxSpacing.md),
+              Wrap(
+                spacing: LuxSpacing.sm,
+                runSpacing: LuxSpacing.sm,
+                children: [
+                  AdminFilterChip(
+                    label: 'Todos',
+                    count: f.entries.length,
+                    selected: _filter == null,
+                    onTap: () => setState(() => _filter = null),
+                  ),
+                  for (final s in ChargeStatus.values)
+                    AdminFilterChip(
+                      label: s.label,
+                      count: f.entries.where((e) => e.status == s).length,
+                      selected: _filter == s,
+                      onTap: () =>
+                          setState(() => _filter = _filter == s ? null : s),
+                    ),
+                ],
+              ),
+              const SizedBox(height: LuxSpacing.md),
+              if (rows.isEmpty)
+                const AdminEmpty(
+                  icon: Icons.receipt_long_outlined,
+                  title: 'Sin movimientos en este periodo',
+                )
+              else
+                LuxCard(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: LuxSpacing.md,
+                    vertical: LuxSpacing.xs,
+                  ),
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < rows.length; i++) ...[
+                        if (i > 0) const LuxDivider(),
+                        _LedgerTile(entry: rows[i], state: state),
+                      ],
+                    ],
+                  ),
+                ),
+              const SizedBox(height: LuxSpacing.xl),
+              const SectionHeader(title: 'Liquidación a chóferes'),
+              const SizedBox(height: LuxSpacing.sm),
+              Text(
+                'Cada viaje se reparte con la comisión vigente al completarse '
+                '(ahora ${f.commissionPct.toStringAsFixed(f.commissionPct % 1 == 0 ? 0 : 1)} %); '
+                'el chófer ve las mismas cifras en su app. "Liquidable" es su '
+                'parte en viajes ya cobrados.',
+                style: LuxTypography.caption,
+              ),
+              const SizedBox(height: LuxSpacing.md),
+              _DriverPayouts(summary: f, state: state),
+              const SizedBox(height: LuxSpacing.xl),
+              const SectionHeader(title: 'Por clase y servicio'),
+              const SizedBox(height: LuxSpacing.md),
+              _Segments(summary: f),
+            ],
+          );
+        },
+      );
 }
 
 class _Notice extends StatelessWidget {
@@ -180,13 +186,18 @@ class _Notice extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const Icon(Icons.info_outline_rounded,
-                color: LuxColors.warning, size: 18),
+            const Icon(
+              Icons.info_outline_rounded,
+              color: LuxColors.warning,
+              size: 18,
+            ),
             const SizedBox(width: LuxSpacing.sm),
             Expanded(
-                child: Text(text,
-                    style: LuxTypography.caption
-                        .copyWith(color: LuxColors.warning))),
+              child: Text(
+                text,
+                style: LuxTypography.caption.copyWith(color: LuxColors.warning),
+              ),
+            ),
           ],
         ),
       );
@@ -262,29 +273,31 @@ class FinanceKpis extends StatelessWidget {
         ),
       ],
     ];
-    return LayoutBuilder(builder: (context, c) {
-      final cols = c.maxWidth >= 920
-          ? 4
-          : c.maxWidth >= 300
-              ? 2
-              : 1;
-      final w = (c.maxWidth - (cols - 1) * LuxSpacing.md) / cols;
-      return Wrap(
-        spacing: LuxSpacing.md,
-        runSpacing: LuxSpacing.md,
-        children: [
-          for (final t in tiles)
-            AdminKpiTile(
-              label: t.label,
-              value: t.value,
-              icon: t.icon,
-              sub: t.sub,
-              color: t.color,
-              width: w,
-            ),
-        ],
-      );
-    });
+    return LayoutBuilder(
+      builder: (context, c) {
+        final cols = c.maxWidth >= 920
+            ? 4
+            : c.maxWidth >= 300
+                ? 2
+                : 1;
+        final w = (c.maxWidth - (cols - 1) * LuxSpacing.md) / cols;
+        return Wrap(
+          spacing: LuxSpacing.md,
+          runSpacing: LuxSpacing.md,
+          children: [
+            for (final t in tiles)
+              AdminKpiTile(
+                label: t.label,
+                value: t.value,
+                icon: t.icon,
+                sub: t.sub,
+                color: t.color,
+                width: w,
+              ),
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -305,8 +318,10 @@ class DailyRevenueChart extends StatelessWidget {
         maxY: maxY == 0 ? 100 : maxY * 1.15,
         gridData: FlGridData(
           drawVerticalLine: false,
-          getDrawingHorizontalLine: (_) =>
-              FlLine(color: LuxColors.ink.withOpacity(0.05), strokeWidth: 1),
+          getDrawingHorizontalLine: (_) => FlLine(
+            color: LuxColors.ink.withOpacity(0.05),
+            strokeWidth: 1,
+          ),
         ),
         borderData: FlBorderData(show: false),
         barTouchData: BarTouchData(
@@ -330,8 +345,10 @@ class DailyRevenueChart extends StatelessWidget {
               reservedSize: 56,
               getTitlesWidget: (value, meta) => value == meta.max
                   ? const SizedBox.shrink()
-                  : Text(bs(value, short: true),
-                      style: LuxTypography.caption.copyWith(fontSize: 9)),
+                  : Text(
+                      bs(value, short: true),
+                      style: LuxTypography.caption.copyWith(fontSize: 9),
+                    ),
             ),
           ),
           bottomTitles: AxisTitles(
@@ -346,10 +363,11 @@ class DailyRevenueChart extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.only(top: 6),
                   child: Text(
-                      days.length <= 7
-                          ? '${_days[d.weekday - 1]} ${d.day}'
-                          : '${d.day}/${d.month}',
-                      style: LuxTypography.caption.copyWith(fontSize: 10)),
+                    days.length <= 7
+                        ? '${_days[d.weekday - 1]} ${d.day}'
+                        : '${d.day}/${d.month}',
+                    style: LuxTypography.caption.copyWith(fontSize: 10),
+                  ),
                 );
               },
             ),
@@ -357,14 +375,17 @@ class DailyRevenueChart extends StatelessWidget {
         ),
         barGroups: [
           for (var i = 0; i < values.length; i++)
-            BarChartGroupData(x: i, barRods: [
-              BarChartRodData(
-                toY: values[i],
-                width: days.length <= 7 ? 18 : 6,
-                color: LuxColors.sapphire,
-                borderRadius: BorderRadius.circular(3),
-              ),
-            ]),
+            BarChartGroupData(
+              x: i,
+              barRods: [
+                BarChartRodData(
+                  toY: values[i],
+                  width: days.length <= 7 ? 18 : 6,
+                  color: LuxColors.sapphire,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ],
+            ),
         ],
       ),
     );
@@ -394,8 +415,10 @@ class _LedgerTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('#${shortId(b.id)} · ${state.userName(b.riderId)}',
-                    style: LuxTypography.titleMedium),
+                Text(
+                  '#${shortId(b.id)} · ${state.userName(b.riderId)}',
+                  style: LuxTypography.titleMedium,
+                ),
                 Text(
                   '${adminDate(entry.date)} · ${b.vehicleClass.label} · '
                   '${b.serviceType.label}'
@@ -403,24 +426,29 @@ class _LedgerTile extends StatelessWidget {
                   style: LuxTypography.caption,
                 ),
                 if (b.finalPrice != null && b.finalPrice != b.estimatedPrice)
-                  Text('Estimado ${bs(b.estimatedPrice)}',
-                      style: LuxTypography.caption
-                          .copyWith(color: LuxColors.inkTertiary)),
+                  Text(
+                    'Estimado ${bs(b.estimatedPrice)}',
+                    style: LuxTypography.caption.copyWith(
+                      color: LuxColors.inkTertiary,
+                    ),
+                  ),
               ],
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(bs(entry.amount),
-                  style: LuxTypography.titleMedium.copyWith(
-                    color: entry.status == ChargeStatus.refunded
-                        ? LuxColors.inkTertiary
-                        : LuxColors.ink,
-                    decoration: entry.status == ChargeStatus.refunded
-                        ? TextDecoration.lineThrough
-                        : null,
-                  )),
+              Text(
+                bs(entry.amount),
+                style: LuxTypography.titleMedium.copyWith(
+                  color: entry.status == ChargeStatus.refunded
+                      ? LuxColors.inkTertiary
+                      : LuxColors.ink,
+                  decoration: entry.status == ChargeStatus.refunded
+                      ? TextDecoration.lineThrough
+                      : null,
+                ),
+              ),
               const SizedBox(height: 4),
               AdminTag(entry.status.label, color: color),
             ],
@@ -428,8 +456,10 @@ class _LedgerTile extends StatelessWidget {
           PopupMenuButton<String>(
             tooltip: 'Acciones',
             color: LuxColors.surfaceMuted,
-            icon: const Icon(Icons.more_vert_rounded,
-                color: LuxColors.inkTertiary),
+            icon: const Icon(
+              Icons.more_vert_rounded,
+              color: LuxColors.inkTertiary,
+            ),
             enabled: canCollect || canRefund || canAdjust,
             onSelected: (v) {
               switch (v) {
@@ -444,15 +474,22 @@ class _LedgerTile extends StatelessWidget {
             itemBuilder: (_) => [
               if (canCollect)
                 const PopupMenuItem(
-                    value: 'collect', child: Text('Registrar cobro')),
+                  value: 'collect',
+                  child: Text('Registrar cobro'),
+                ),
               if (canAdjust)
                 const PopupMenuItem(
-                    value: 'adjust', child: Text('Ajustar precio final')),
+                  value: 'adjust',
+                  child: Text('Ajustar precio final'),
+                ),
               if (canRefund)
                 const PopupMenuItem(
-                    value: 'refund',
-                    child: Text('Reembolsar',
-                        style: TextStyle(color: LuxColors.error))),
+                  value: 'refund',
+                  child: Text(
+                    'Reembolsar',
+                    style: TextStyle(color: LuxColors.error),
+                  ),
+                ),
             ],
           ),
         ],
@@ -471,9 +508,9 @@ class _LedgerTile extends StatelessWidget {
       destructive: true,
     );
     if (reason == null || !context.mounted) return;
-    context
-        .read<AdminBloc>()
-        .add(AdminRefundPaymentRequested(e.payment!, reason));
+    context.read<AdminBloc>().add(
+          AdminRefundPaymentRequested(e.payment!, reason),
+        );
   }
 }
 
@@ -494,15 +531,20 @@ Future<void> recordPaymentDialog(BuildContext context, Booking b) async {
     builder: (ctx) => StatefulBuilder(
       builder: (ctx, setState) => AlertDialog(
         backgroundColor: LuxColors.surfaceMuted,
-        title: Text('Registrar cobro de ${bs(amount)}',
-            style: LuxTypography.titleLarge),
+        title: Text(
+          'Registrar cobro de ${bs(amount)}',
+          style: LuxTypography.titleLarge,
+        ),
         content: SizedBox(
           width: 420,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Reserva #${shortId(b.id)}', style: LuxTypography.caption),
+              Text(
+                'Reserva #${shortId(b.id)}',
+                style: LuxTypography.caption,
+              ),
               const SizedBox(height: LuxSpacing.md),
               Wrap(
                 spacing: LuxSpacing.sm,
@@ -521,24 +563,31 @@ Future<void> recordPaymentDialog(BuildContext context, Booking b) async {
                 controller: ref,
                 style: LuxTypography.bodyMedium,
                 decoration: adminInputDecoration(
-                    hint: 'Referencia / nº de comprobante (opcional)'),
+                  hint: 'Referencia / nº de comprobante (opcional)',
+                ),
               ),
               const SizedBox(height: LuxSpacing.sm),
               const Text(
-                  'Si el importe no es correcto, ajusta primero el precio final.',
-                  style: LuxTypography.caption),
+                'Si el importe no es correcto, ajusta primero el precio final.',
+                style: LuxTypography.caption,
+              ),
             ],
           ),
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancelar')),
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancelar'),
+          ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Registrar cobro',
-                style: TextStyle(
-                    color: LuxColors.success, fontWeight: FontWeight.w600)),
+            child: const Text(
+              'Registrar cobro',
+              style: TextStyle(
+                color: LuxColors.success,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ),
         ],
       ),
@@ -553,60 +602,69 @@ Future<void> recordPaymentDialog(BuildContext context, Booking b) async {
 
 Future<void> adjustPriceDialog(BuildContext context, Booking b) async {
   final ctrl = TextEditingController(
-      text: (b.finalPrice ?? b.estimatedPrice).toStringAsFixed(2));
+    text: (b.finalPrice ?? b.estimatedPrice).toStringAsFixed(2),
+  );
   final reason = TextEditingController();
   final bloc = context.read<AdminBloc>();
   final result = await showDialog<double>(
     context: context,
-    builder: (ctx) => StatefulBuilder(builder: (ctx, setState) {
-      final value = double.tryParse(ctrl.text.replaceAll(',', '.'));
-      final valid =
-          value != null && value >= 0 && reason.text.trim().length >= 3;
-      return AlertDialog(
-        backgroundColor: LuxColors.surfaceMuted,
-        title:
-            const Text('Ajustar precio final', style: LuxTypography.titleLarge),
-        content: SizedBox(
-          width: 420,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, setState) {
+        final value = double.tryParse(ctrl.text.replaceAll(',', '.'));
+        final valid =
+            value != null && value >= 0 && reason.text.trim().length >= 3;
+        return AlertDialog(
+          backgroundColor: LuxColors.surfaceMuted,
+          title: const Text(
+            'Ajustar precio final',
+            style: LuxTypography.titleLarge,
+          ),
+          content: SizedBox(
+            width: 420,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   'Reserva #${shortId(b.id)} · estimado ${bs(b.estimatedPrice)}',
-                  style: LuxTypography.caption),
-              const SizedBox(height: LuxSpacing.md),
-              TextField(
-                controller: ctrl,
-                autofocus: true,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
-                style: LuxTypography.bodyMedium,
-                onChanged: (_) => setState(() {}),
-                decoration: adminInputDecoration(prefixText: 'Bs '),
-              ),
-              const SizedBox(height: LuxSpacing.sm),
-              TextField(
-                controller: reason,
-                style: LuxTypography.bodyMedium,
-                onChanged: (_) => setState(() {}),
-                decoration: adminInputDecoration(
-                    hint: 'Motivo (peajes, espera, descuento…)'),
-              ),
-            ],
+                  style: LuxTypography.caption,
+                ),
+                const SizedBox(height: LuxSpacing.md),
+                TextField(
+                  controller: ctrl,
+                  autofocus: true,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  style: LuxTypography.bodyMedium,
+                  onChanged: (_) => setState(() {}),
+                  decoration: adminInputDecoration(prefixText: 'Bs '),
+                ),
+                const SizedBox(height: LuxSpacing.sm),
+                TextField(
+                  controller: reason,
+                  style: LuxTypography.bodyMedium,
+                  onChanged: (_) => setState(() {}),
+                  decoration: adminInputDecoration(
+                    hint: 'Motivo (peajes, espera, descuento…)',
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        actions: [
-          TextButton(
+          actions: [
+            TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancelar')),
-          TextButton(
-            onPressed: valid ? () => Navigator.pop(ctx, value) : null,
-            child: const Text('Guardar'),
-          ),
-        ],
-      );
-    }),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: valid ? () => Navigator.pop(ctx, value) : null,
+              child: const Text('Guardar'),
+            ),
+          ],
+        );
+      },
+    ),
   );
   final why = reason.text.trim();
   ctrl.dispose();
@@ -627,14 +685,17 @@ class _DriverPayouts extends StatelessWidget {
       ..sort((a, b) => b.billed.compareTo(a.billed));
     if (rows.isEmpty) {
       return const AdminEmpty(
-          icon: Icons.badge_outlined, title: 'Sin viajes de chóferes');
+        icon: Icons.badge_outlined,
+        title: 'Sin viajes de chóferes',
+      );
     }
     return LuxCard(
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
-          headingTextStyle:
-              LuxTypography.caption.copyWith(color: LuxColors.inkSecondary),
+          headingTextStyle: LuxTypography.caption.copyWith(
+            color: LuxColors.inkSecondary,
+          ),
           dataTextStyle: LuxTypography.bodyMedium,
           columnSpacing: LuxSpacing.lg,
           columns: const [
@@ -647,15 +708,21 @@ class _DriverPayouts extends StatelessWidget {
           ],
           rows: [
             for (final d in rows)
-              DataRow(cells: [
-                DataCell(Text(state.userName(d.driverId))),
-                DataCell(Text('${d.rides}')),
-                DataCell(Text(bs(d.billed))),
-                DataCell(Text(bs(d.commission))),
-                DataCell(Text(bs(d.payout))),
-                DataCell(Text(bs(d.collectedPayout),
-                    style: const TextStyle(color: LuxColors.success))),
-              ]),
+              DataRow(
+                cells: [
+                  DataCell(Text(state.userName(d.driverId))),
+                  DataCell(Text('${d.rides}')),
+                  DataCell(Text(bs(d.billed))),
+                  DataCell(Text(bs(d.commission))),
+                  DataCell(Text(bs(d.payout))),
+                  DataCell(
+                    Text(
+                      bs(d.collectedPayout),
+                      style: const TextStyle(color: LuxColors.success),
+                    ),
+                  ),
+                ],
+              ),
           ],
         ),
       ),
@@ -684,8 +751,11 @@ class _Segments extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                      child: Text('${e.key} · ${e.value.rides}',
-                          style: LuxTypography.bodyMedium)),
+                    child: Text(
+                      '${e.key} · ${e.value.rides}',
+                      style: LuxTypography.bodyMedium,
+                    ),
+                  ),
                   Text(bs(e.value.billed), style: LuxTypography.bodyMedium),
                 ],
               ),
@@ -711,20 +781,22 @@ class _Segments extends StatelessWidget {
     final byService = {
       for (final e in summary.byService.entries) e.key.label: e.value,
     };
-    return LayoutBuilder(builder: (context, c) {
-      final wide = c.maxWidth >= 640;
-      final a = block('Por clase de vehículo', byClass);
-      final b = block('Por tipo de servicio', byService);
-      return wide
-          ? Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(child: a),
-                const SizedBox(width: LuxSpacing.md),
-                Expanded(child: b),
-              ],
-            )
-          : Column(children: [a, const SizedBox(height: LuxSpacing.md), b]);
-    });
+    return LayoutBuilder(
+      builder: (context, c) {
+        final wide = c.maxWidth >= 640;
+        final a = block('Por clase de vehículo', byClass);
+        final b = block('Por tipo de servicio', byService);
+        return wide
+            ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: a),
+                  const SizedBox(width: LuxSpacing.md),
+                  Expanded(child: b),
+                ],
+              )
+            : Column(children: [a, const SizedBox(height: LuxSpacing.md), b]);
+      },
+    );
   }
 }

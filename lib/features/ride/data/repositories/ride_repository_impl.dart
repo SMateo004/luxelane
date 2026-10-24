@@ -56,9 +56,9 @@ class RideRepositoryImpl implements RideRepository {
           .where('riderId', isEqualTo: riderId)
           .orderBy('startedAt', descending: true)
           .get();
-      return Right(snap.docs
-          .map((d) => Ride.fromJson({'id': d.id, ...d.data()}))
-          .toList());
+      return Right(
+        snap.docs.map((d) => Ride.fromJson({'id': d.id, ...d.data()})).toList(),
+      );
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -71,9 +71,9 @@ class RideRepositoryImpl implements RideRepository {
           .where('driverId', isEqualTo: driverId)
           .orderBy('startedAt', descending: true)
           .get();
-      return Right(snap.docs
-          .map((d) => Ride.fromJson({'id': d.id, ...d.data()}))
-          .toList());
+      return Right(
+        snap.docs.map((d) => Ride.fromJson({'id': d.id, ...d.data()})).toList(),
+      );
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }

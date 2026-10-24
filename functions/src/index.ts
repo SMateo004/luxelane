@@ -1,5 +1,7 @@
 import * as admin from 'firebase-admin';
-import { onCall, CallableRequest } from 'firebase-functions/v2/https';
+import { CallableRequest } from 'firebase-functions/v2/https';
+import { secureCallable } from './callable';
+import { callableSchemas as schema, parseInput } from './schemas';
 import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { defineSecret } from 'firebase-functions/params';
@@ -33,11 +35,11 @@ const MAPS_SERVER_KEY = defineSecret('MAPS_SERVER_KEY');
 const bookingDeps = (): bookingService.BookingDeps => ({ db, mapsKey: MAPS_SERVER_KEY.value() });
 
 /** Precio y desglose de un viaje, sin crear nada. */
-export const quoteBooking = onCall({ secrets: [MAPS_SERVER_KEY] }, (req) =>
+export const quoteBooking = secureCallable('quoteBooking', { secrets: [MAPS_SERVER_KEY] }, (req) =>
   bookingService.quoteBooking(bookingDeps(), req.auth?.uid, req.data));
 
 /** Única forma de crear una reserva: con precio del servidor y su solicitud abierta. */
-export const createBooking = onCall({ secrets: [MAPS_SERVER_KEY] }, (req) =>
+export const createBooking = secureCallable('createBooking', { secrets: [MAPS_SERVER_KEY] }, (req) =>
   bookingService.createBooking(bookingDeps(), req.auth?.uid, req.data));
 
 // ---------------------------------------------------------------------------
@@ -50,19 +52,19 @@ const PICKUP_CODE_SECRET = defineSecret('PICKUP_CODE_SECRET');
 const tripDeps = (): tripFlow.TripDeps => ({ db, pickupSecret: PICKUP_CODE_SECRET.value() });
 
 /** Único camino del chófer: en camino, llegué, iniciar y completar. */
-export const advanceBooking = onCall((req) =>
+export const advanceBooking = secureCallable('advanceBooking', {}, (req) =>
   tripFlow.advanceBooking({ db }, req.auth?.uid, req.data));
 
 /** El pasajero de la reserva ve su código mientras el chófer espera. */
-export const getPickupCode = onCall({ secrets: [PICKUP_CODE_SECRET] }, (req) =>
+export const getPickupCode = secureCallable('getPickupCode', { secrets: [PICKUP_CODE_SECRET] }, (req) =>
   tripFlow.getPickupCode(tripDeps(), req.auth?.uid, req.data));
 
 /** El chófer asignado comprueba el código: driver_arrived → verified. */
-export const verifyPickup = onCall({ secrets: [PICKUP_CODE_SECRET] }, (req) =>
+export const verifyPickup = secureCallable('verifyPickup', { secrets: [PICKUP_CODE_SECRET] }, (req) =>
   tripFlow.verifyPickup(tripDeps(), req.auth?.uid, req.data));
 
 /** Excepción del admin, con motivo: deja la reserva verificada y avisa. */
-export const adminOverrideVerify = onCall(async (req) => {
+export const adminOverrideVerify = secureCallable('adminOverrideVerify', {}, async (req) => {
   const adminId = await requireAdmin(req);
   return tripFlow.adminOverrideVerify({ db }, {
     adminId,
@@ -89,16 +91,16 @@ const adminActor = async (req: CallableRequest): Promise<incidents.AdminActor> =
 });
 
 /** Pasajero o chófer de la reserva: avisa a central (idempotente, con límite). */
-export const raiseIncident = onCall((req) => incidents.raiseIncident(incidentDeps(), req.auth?.uid, req.data));
+export const raiseIncident = secureCallable('raiseIncident', {}, (req) => incidents.raiseIncident(incidentDeps(), req.auth?.uid, req.data));
 
 /** Falsa alarma: solo quien lo disparó; el admin recibe igual el aviso. */
-export const cancelIncident = onCall((req) => incidents.cancelIncident(incidentDeps(), req.auth?.uid, req.data));
+export const cancelIncident = secureCallable('cancelIncident', {}, (req) => incidents.cancelIncident(incidentDeps(), req.auth?.uid, req.data));
 
-export const acknowledgeIncident = onCall(async (req) =>
+export const acknowledgeIncident = secureCallable('acknowledgeIncident', {}, async (req) =>
   incidents.acknowledgeIncident(incidentDeps(), await adminActor(req), req.data));
 
 /** Cierre con nota obligatoria (mínimo 10 caracteres). */
-export const closeIncident = onCall(async (req) =>
+export const closeIncident = secureCallable('closeIncident', {}, async (req) =>
   incidents.closeIncident(incidentDeps(), await adminActor(req), req.data));
 
 /** Reenvía alerta y push de los incidentes sin reconocer (config/global). */
@@ -196,7 +198,7 @@ function vehicleClassLabel(vehicleClass: string | undefined): string {
 async function requireAdmin(req: CallableRequest): Promise<string> {
   const uid = requireAuth(req);
   const user = await db.collection('users').doc(uid).get();
-  if (user.data()?.role !== 'admin') throw err.permissionDenied('Admin role required');
+  if (user.data()?.role !== 'admin') throw err.permissionDenied('admin_required');
   return uid;
 }
 
@@ -229,22 +231,21 @@ async function getUserTokens(userId: string): Promise<string[]> {
 /** Margen bajo los 7 días que Stripe mantiene una autorización. */
 const HOLD_WINDOW_MS = 6 * 24 * 60 * 60 * 1000;
 
-export const createPaymentIntent = onCall(withStripe, async (req) => {
+export const createPaymentIntent = secureCallable('createPaymentIntent', withStripe, async (req) => {
   const uid = requireAuth(req);
-  const { bookingId, paymentMethodId } = req.data as { bookingId: string; paymentMethodId?: string };
-  if (!bookingId) throw err.invalidArgument('bookingId required');
+  const { bookingId, paymentMethodId } = parseInput(schema.createPaymentIntent, req.data);
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const bookingSnap = await bookingRef.get();
-  if (!bookingSnap.exists) throw err.notFound('Booking not found');
+  if (!bookingSnap.exists) throw err.notFound('booking_not_found');
   const booking = bookingSnap.data() as BookingDoc;
-  if (booking.riderId !== uid) throw err.permissionDenied('Not your booking');
+  if (booking.riderId !== uid) throw err.permissionDenied('not_your_booking');
   // Un chófer puede aceptar en los segundos entre crear y autorizar.
   if (booking.status !== 'pending' && booking.status !== 'confirmed') {
-    throw err.failedPrecondition('Booking is not open');
+    throw err.failedPrecondition('booking_not_open');
   }
   if (booking.stripePaymentIntentId || booking.stripePaymentMethodId) {
-    throw err.failedPrecondition('Booking already has a payment');
+    throw err.failedPrecondition('already_has_payment');
   }
   const customerId = await ensureStripeCustomerFor(uid);
 
@@ -253,16 +254,16 @@ export const createPaymentIntent = onCall(withStripe, async (req) => {
   // presente, con la tarjeta que ya autorizó al guardarla).
   const scheduledMs = booking.scheduledAt?.toMillis() ?? Date.now();
   if (scheduledMs - Date.now() > HOLD_WINDOW_MS) {
-    if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+    if (!paymentMethodId) throw err.invalidArgument('payment_method_required');
     const owner = await stripe.paymentMethodCustomer(paymentMethodId);
-    if (owner !== customerId) throw err.permissionDenied('Not your payment method');
+    if (owner !== customerId) throw err.permissionDenied('not_your_payment_method');
     await bookingRef.update({ stripePaymentMethodId: paymentMethodId });
     logger.info('createPaymentIntent', 'deferred', { uid, bookingId });
     return { deferred: true };
   }
 
   const amount = toCents(booking.estimatedPrice);
-  if (amount <= 0) throw err.invalidArgument('amount must be positive');
+  if (amount <= 0) throw err.invalidArgument('invalid_amount');
   logger.info('createPaymentIntent', 'start', { uid, bookingId, amount });
 
   try {
@@ -277,7 +278,7 @@ export const createPaymentIntent = onCall(withStripe, async (req) => {
     return { clientSecret };
   } catch (e) {
     logger.error('createPaymentIntent', 'stripe error', { error: String(e) });
-    throw err.paymentFailed(String(e));
+    throw err.paymentFailed();
   }
 });
 
@@ -285,34 +286,33 @@ export const createPaymentIntent = onCall(withStripe, async (req) => {
 // capturePayment
 // ---------------------------------------------------------------------------
 
-export const capturePayment = onCall(withStripe, async (req) => {
+export const capturePayment = secureCallable('capturePayment', withStripe, async (req) => {
   const uid = requireAuth(req);
   // El importe y el pasajero salen de la reserva, nunca del cliente.
-  const { bookingId, stripePaymentIntentId } = req.data as {
-    bookingId: string;
-    stripePaymentIntentId: string;
-  };
-
-  if (!bookingId || !stripePaymentIntentId) throw err.invalidArgument('bookingId and stripePaymentIntentId required');
+  const { bookingId, stripePaymentIntentId } = parseInput(schema.capturePayment, req.data);
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const bookingSnap = await bookingRef.get();
-  if (!bookingSnap.exists) throw err.notFound('Booking not found');
+  if (!bookingSnap.exists) throw err.notFound('booking_not_found');
 
   const booking = bookingSnap.data() as BookingDoc;
   if (booking.riderId !== uid) await requireAdmin(req);
-  if (booking.status !== 'completed') throw err.failedPrecondition('Ride must be completed before capture');
+  // Solo se cobra el intent de esta reserva: nunca uno que mande el cliente.
+  if (!booking.stripePaymentIntentId || booking.stripePaymentIntentId !== stripePaymentIntentId) {
+    throw err.permissionDenied('payment_mismatch');
+  }
+  if (booking.status !== 'completed') throw err.failedPrecondition('ride_not_completed');
 
   if (booking.paymentId) {
     const existing = await db.collection('payments').doc(booking.paymentId).get();
-    if (existing.data()?.status === 'captured') throw err.failedPrecondition('Booking already paid');
+    if (existing.data()?.status === 'captured') throw err.failedPrecondition('already_paid');
   }
 
   try {
     return await captureBookingPayment(bookingRef, booking, stripePaymentIntentId);
   } catch (e) {
     logger.error('capturePayment', 'stripe error', { error: String(e) });
-    throw err.paymentFailed(String(e));
+    throw err.paymentFailed();
   }
 });
 
@@ -420,19 +420,17 @@ export const captureOnCompletion = onDocumentUpdated({ document: 'bookings/{book
 // refundPayment
 // ---------------------------------------------------------------------------
 
-export const refundPayment = onCall(withStripe, async (req) => {
+export const refundPayment = secureCallable('refundPayment', withStripe, async (req) => {
   // Solo un admin puede reembolsar: mueve dinero y altera las finanzas.
   const adminId = await requireAdmin(req);
-  const { paymentId, reason } = req.data as { paymentId: string; reason?: string };
-
-  if (!paymentId) throw err.invalidArgument('paymentId required');
+  const { paymentId, reason } = parseInput(schema.refundPayment, req.data);
 
   const paymentRef = db.collection('payments').doc(paymentId);
   const snap = await paymentRef.get();
-  if (!snap.exists) throw err.notFound('Payment not found');
+  if (!snap.exists) throw err.notFound('payment_not_found');
 
   const payment = snap.data() as PaymentDoc;
-  if (payment.status !== 'captured') throw err.failedPrecondition('Only captured payments can be refunded');
+  if (payment.status !== 'captured') throw err.failedPrecondition('not_captured');
 
   logger.info('refundPayment', 'start', { paymentId, adminId });
 
@@ -467,7 +465,7 @@ export const refundPayment = onCall(withStripe, async (req) => {
     return { status: 'refunded' };
   } catch (e) {
     logger.error('refundPayment', 'stripe error', { error: String(e) });
-    throw err.paymentFailed(String(e));
+    throw err.paymentFailed();
   }
 });
 
@@ -479,14 +477,13 @@ export const refundPayment = onCall(withStripe, async (req) => {
 async function requireOwnCustomer(uid: string, customerId: string): Promise<void> {
   const user = await db.collection('users').doc(uid).get();
   if (user.data()?.stripeCustomerId !== customerId) {
-    throw err.permissionDenied('Not your payment profile');
+    throw err.permissionDenied('not_your_payment_profile');
   }
 }
 
-export const listPaymentMethods = onCall(withStripe, async (req) => {
+export const listPaymentMethods = secureCallable('listPaymentMethods', withStripe, async (req) => {
   const uid = requireAuth(req);
-  const { customerId } = req.data as { customerId: string };
-  if (!customerId) throw err.invalidArgument('customerId required');
+  const { customerId } = parseInput(schema.listPaymentMethods, req.data);
   await requireOwnCustomer(uid, customerId);
 
   const [methods, defaultId] = await Promise.all([
@@ -510,12 +507,11 @@ export const listPaymentMethods = onCall(withStripe, async (req) => {
 // setDefaultPaymentMethod
 // ---------------------------------------------------------------------------
 
-export const setDefaultPaymentMethod = onCall(withStripe, async (req) => {
+export const setDefaultPaymentMethod = secureCallable('setDefaultPaymentMethod', withStripe, async (req) => {
   const uid = requireAuth(req);
-  const { paymentMethodId } = req.data as { paymentMethodId: string };
-  if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+  const { paymentMethodId } = parseInput(schema.setDefaultPaymentMethod, req.data);
   const owner = await stripe.paymentMethodCustomer(paymentMethodId);
-  if (!owner) throw err.permissionDenied('Not your payment method');
+  if (!owner) throw err.permissionDenied('not_your_payment_method');
   await requireOwnCustomer(uid, owner);
 
   await stripe.setDefaultPaymentMethod(owner, paymentMethodId);
@@ -526,13 +522,9 @@ export const setDefaultPaymentMethod = onCall(withStripe, async (req) => {
 // attachPaymentMethod
 // ---------------------------------------------------------------------------
 
-export const attachPaymentMethod = onCall(withStripe, async (req) => {
+export const attachPaymentMethod = secureCallable('attachPaymentMethod', withStripe, async (req) => {
   const uid = requireAuth(req);
-  const { customerId, paymentMethodId } = req.data as {
-    customerId: string;
-    paymentMethodId: string;
-  };
-  if (!customerId || !paymentMethodId) throw err.invalidArgument('customerId and paymentMethodId required');
+  const { customerId, paymentMethodId } = parseInput(schema.attachPaymentMethod, req.data);
   await requireOwnCustomer(uid, customerId);
 
   await stripe.attachPaymentMethod(customerId, paymentMethodId);
@@ -543,12 +535,11 @@ export const attachPaymentMethod = onCall(withStripe, async (req) => {
 // detachPaymentMethod
 // ---------------------------------------------------------------------------
 
-export const detachPaymentMethod = onCall(withStripe, async (req) => {
+export const detachPaymentMethod = secureCallable('detachPaymentMethod', withStripe, async (req) => {
   const uid = requireAuth(req);
-  const { paymentMethodId } = req.data as { paymentMethodId: string };
-  if (!paymentMethodId) throw err.invalidArgument('paymentMethodId required');
+  const { paymentMethodId } = parseInput(schema.detachPaymentMethod, req.data);
   const owner = await stripe.paymentMethodCustomer(paymentMethodId);
-  if (!owner) throw err.permissionDenied('Not your payment method');
+  if (!owner) throw err.permissionDenied('not_your_payment_method');
   await requireOwnCustomer(uid, owner);
 
   // Una reserva futura se cobra fuera de sesión con esta tarjeta: quitarla
@@ -572,12 +563,13 @@ export const detachPaymentMethod = onCall(withStripe, async (req) => {
 // Se borran el perfil, los avisos, el perfil de chófer, el cliente de Stripe
 // y el acceso; las reservas y pagos se conservan por obligación contable y
 // solo guardan el uid, que deja de apuntar a datos personales.
-export const deleteAccount = onCall(withStripe, async (req) => {
+export const deleteAccount = secureCallable('deleteAccount', withStripe, async (req) => {
   const uid = requireAuth(req);
+  parseInput(schema.deleteAccount, req.data);
   const userRef = db.collection('users').doc(uid);
   const user = (await userRef.get()).data();
   if (user?.role === 'admin') {
-    throw err.failedPrecondition('Las cuentas de administración se eliminan desde la consola.');
+    throw err.failedPrecondition('admin_account');
   }
 
   const [asRider, asDriver] = await Promise.all([
@@ -642,7 +634,7 @@ async function ensureStripeCustomerFor(uid: string): Promise<string> {
   const ref = db.collection('users').doc(uid);
   const snap = await ref.get();
   const data = snap.data();
-  if (!data) throw err.failedPrecondition('No payment profile');
+  if (!data) throw err.failedPrecondition('no_payment_profile');
   if (data.stripeCustomerId) return data.stripeCustomerId as string;
 
   const created = await stripe.createCustomer(data.email, data.displayName);
@@ -674,8 +666,9 @@ export const createStripeCustomer = onDocumentCreated({ document: 'users/{uid}',
 });
 
 // Perfil de pagos bajo demanda (pantalla de tarjetas y alta de tarjeta).
-export const ensureStripeCustomer = onCall(withStripe, async (req) => {
+export const ensureStripeCustomer = secureCallable('ensureStripeCustomer', withStripe, async (req) => {
   const uid = requireAuth(req);
+  parseInput(schema.ensureStripeCustomer, req.data);
   return { customerId: await ensureStripeCustomerFor(uid) };
 });
 
@@ -836,7 +829,7 @@ export const closeOpenRequest = onDocumentUpdated({ document: 'bookings/{booking
 });
 
 /** El admin marca una alerta como revisada (auditado en el servidor). */
-export const resolveAlert = onCall(async (req) => {
+export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
   const adminId = await requireAdmin(req);
   return resolveAdminAlert(db, { adminId, adminEmail: (req.auth?.token.email as string | undefined) ?? null }, req.data);
 });
@@ -976,8 +969,9 @@ export const settleBooking = onDocumentUpdated('bookings/{bookingId}', async (ev
 // los viajes ya repartidos.
 // ---------------------------------------------------------------------------
 
-export const backfillSettlements = onCall({ timeoutSeconds: 540 }, async (req) => {
+export const backfillSettlements = secureCallable('backfillSettlements', { timeoutSeconds: 540 }, async (req) => {
   const adminId = await requireAdmin(req);
+  parseInput(schema.backfillSettlements, req.data);
   const finance = await db.collection('config').doc('finance').get();
   const pct = finance.data()?.platformCommissionPct;
 
@@ -1046,18 +1040,17 @@ export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event)
 // assignNearestDriver  (HTTPS Callable)
 // ---------------------------------------------------------------------------
 
-export const assignNearestDriver = onCall(async (req) => {
+export const assignNearestDriver = secureCallable('assignNearestDriver', {}, async (req) => {
   const uid = requireAuth(req);
-  const { bookingId } = req.data as { bookingId: string };
-  if (!bookingId) throw err.invalidArgument('bookingId required');
+  const { bookingId } = parseInput(schema.assignNearestDriver, req.data);
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const bookingSnap = await bookingRef.get();
-  if (!bookingSnap.exists) throw err.notFound('Booking not found');
+  if (!bookingSnap.exists) throw err.notFound('booking_not_found');
 
   const booking = bookingSnap.data() as BookingDoc;
   if (booking.riderId !== uid) await requireAdmin(req);
-  if (booking.status !== 'pending') throw err.failedPrecondition('Booking must be pending');
+  if (booking.status !== 'pending') throw err.failedPrecondition('booking_not_pending');
 
   const vehicleClass = booking.class ?? booking.vehicleClass ?? 'business';
   logger.info('assignNearestDriver', 'searching', { bookingId, vehicleClass });
@@ -1129,14 +1122,13 @@ export const assignNearestDriver = onCall(async (req) => {
 // Prevents two drivers from accepting the same booking simultaneously.
 // ---------------------------------------------------------------------------
 
-export const acceptBooking = onCall(async (req) => {
+export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => {
   const driverId = requireAuth(req);
-  const { bookingId } = req.data as { bookingId: string };
-  if (!bookingId) throw err.invalidArgument('bookingId required');
+  const { bookingId } = parseInput(schema.acceptBooking, req.data);
 
   // Solo un chófer activo (no bloqueado desde el panel) acepta viajes.
   const me = (await db.collection('users').doc(driverId).get()).data();
-  if (me?.role !== 'driver' || me?.isActive === false) throw err.permissionDenied('Active driver required');
+  if (me?.role !== 'driver' || me?.isActive === false) throw err.permissionDenied('inactive_driver');
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const driverRef  = db.collection('driverProfiles').doc(driverId);
@@ -1150,12 +1142,12 @@ export const acceptBooking = onCall(async (req) => {
         tx.get(driverRef),
       ]);
 
-      if (!bookingSnap.exists) throw err.notFound('Booking not found');
+      if (!bookingSnap.exists) throw err.notFound('booking_not_found');
       const booking = bookingSnap.data() as BookingDoc;
       if (booking.status !== 'pending') throw new Error('ALREADY_TAKEN');
 
-      if (!driverSnap.exists) throw err.notFound('Driver profile not found');
-      if (driverSnap.data()?.documentsVerified !== true) throw err.permissionDenied('Driver not verified');
+      if (!driverSnap.exists) throw err.notFound('driver_not_found');
+      if (driverSnap.data()?.documentsVerified !== true) throw err.permissionDenied('driver_not_verified');
       if (!driverSnap.data()?.isAvailable) throw new Error('DRIVER_BUSY');
 
       riderId = booking.riderId;

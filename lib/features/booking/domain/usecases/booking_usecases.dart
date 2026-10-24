@@ -28,8 +28,11 @@ class CreateBookingUseCase implements UseCase<Booking, CreateBookingParams> {
       notes: params.notes,
       guest: params.guest,
     );
-    return _repo.createBooking(booking,
-        quotedPrice: params.quotedPrice, requestId: params.requestId);
+    return _repo.createBooking(
+      booking,
+      quotedPrice: params.quotedPrice,
+      requestId: params.requestId,
+    );
   }
 }
 
@@ -79,11 +82,8 @@ class UpdateBookingStatusUseCase
   final BookingRepository _repo;
 
   @override
-  Future<Either<Failure, void>> call(UpdateBookingStatusParams params) =>
-      _repo.updateBookingStatus(
-        bookingId: params.bookingId,
-        status: params.status,
-      );
+  Future<Either<Failure, void>> call(UpdateBookingStatusParams params) => _repo
+      .updateBookingStatus(bookingId: params.bookingId, status: params.status);
 }
 
 class UpdateBookingStatusParams {

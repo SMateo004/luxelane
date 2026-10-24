@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
@@ -71,11 +72,15 @@ class TripFlowRepositoryImpl implements TripFlowRepository {
         if (location != null) 'location': _loc(location),
       });
 
-  static Map<String, double> _loc(({double lat, double lng}) l) =>
-      {'lat': l.lat, 'lng': l.lng};
+  static Map<String, double> _loc(({double lat, double lng}) l) => {
+        'lat': l.lat,
+        'lng': l.lng,
+      };
 
   Future<Either<Failure, void>> _call(
-      String name, Map<String, dynamic> data) async {
+    String name,
+    Map<String, dynamic> data,
+  ) async {
     try {
       final version = await _appVersion();
       await _functions.httpsCallable(name).call<Map<String, dynamic>>({
@@ -108,8 +113,10 @@ Failure tripFailureFor(String code, Object? details) {
         forDriver: true,
       );
     case 'not_at_pickup':
-      return const TripFailure(TripIssue.notAtPickup,
-          'El código aparece cuando tu chófer llega a la recogida.');
+      return const TripFailure(
+        TripIssue.notAtPickup,
+        'El código aparece cuando tu chófer llega a la recogida.',
+      );
     case 'wrong_code':
       final left = (d['attemptsLeft'] as num?)?.toInt();
       return TripFailure(
@@ -122,26 +129,40 @@ Failure tripFailureFor(String code, Object? details) {
         attemptsLeft: left,
       );
     case 'pickup_locked':
-      return const TripFailure(TripIssue.locked,
-          'Por seguridad, la verificación quedó bloqueada. Contacta con central.');
+      return const TripFailure(
+        TripIssue.locked,
+        'Por seguridad, la verificación quedó bloqueada. Contacta con central.',
+      );
     case 'code_expired':
-      return const TripFailure(TripIssue.expired,
-          'El código venció. Contacta con central para continuar.');
+      return const TripFailure(
+        TripIssue.expired,
+        'El código venció. Contacta con central para continuar.',
+      );
     case 'pickup_unavailable':
-      return const TripFailure(TripIssue.unavailable,
-          'El código no está disponible ahora. Contacta con central.');
+      return const TripFailure(
+        TripIssue.unavailable,
+        'El código no está disponible ahora. Contacta con central.',
+      );
     case 'not_your_booking':
     case 'not_assigned':
     case 'inactive_driver':
       return const TripFailure(
-          TripIssue.notAllowed, 'Este viaje ya no está a tu cargo.');
+        TripIssue.notAllowed,
+        'Este viaje ya no está a tu cargo.',
+      );
     case 'invalid_transition':
-      return const TripFailure(TripIssue.invalidTransition,
-          'El viaje cambió de estado. Actualizamos la pantalla.');
+      return const TripFailure(
+        TripIssue.invalidTransition,
+        'El viaje cambió de estado. Actualizamos la pantalla.',
+      );
   }
   if (code == 'unavailable' || code == 'deadline-exceeded') {
     return const TripFailure(TripIssue.network, _kNetwork);
   }
+  final common = commonFunctionError(code, details);
+  if (common != null) return TripFailure(TripIssue.other, common);
   return const TripFailure(
-      TripIssue.other, 'No se pudo completar. Inténtalo de nuevo.');
+    TripIssue.other,
+    'No se pudo completar. Inténtalo de nuevo.',
+  );
 }

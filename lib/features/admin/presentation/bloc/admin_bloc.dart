@@ -40,8 +40,11 @@ class AdminChangeBookingStatusRequested extends AdminEvent {
   final Booking booking;
   final BookingStatus status;
   final String reason;
-  const AdminChangeBookingStatusRequested(this.booking, this.status,
-      {this.reason = ''});
+  const AdminChangeBookingStatusRequested(
+    this.booking,
+    this.status, {
+    this.reason = '',
+  });
   @override
   List<Object?> get props => [booking.id, status, reason];
 }
@@ -59,7 +62,10 @@ class AdminAdjustFinalPriceRequested extends AdminEvent {
   final double finalPrice;
   final String reason;
   const AdminAdjustFinalPriceRequested(
-      this.booking, this.finalPrice, this.reason);
+    this.booking,
+    this.finalPrice,
+    this.reason,
+  );
   @override
   List<Object?> get props => [booking.id, finalPrice, reason];
 }
@@ -130,8 +136,11 @@ class AdminVerifyDriverRequested extends AdminEvent {
   /// El admin revisó la condición del vehículo: solo así se activa.
   final bool vehicleReviewed;
   final String vehicleNote;
-  const AdminVerifyDriverRequested(this.driverId,
-      {this.vehicleReviewed = false, this.vehicleNote = ''});
+  const AdminVerifyDriverRequested(
+    this.driverId, {
+    this.vehicleReviewed = false,
+    this.vehicleNote = '',
+  });
   @override
   List<Object?> get props => [driverId, vehicleReviewed, vehicleNote];
 }
@@ -240,10 +249,12 @@ class AdminState extends Equatable {
   /// Viajes completados sin reparto confirmado por el servidor (anteriores a
   /// settleBooking, o con un precio ajustado aún sin recalcular).
   int get unsettledCount => bookings
-      .where((b) =>
-          b.status == BookingStatus.completed &&
-          (b.settlement == null ||
-              (b.settlement!.amount - b.chargedAmount).abs() >= 0.005))
+      .where(
+        (b) =>
+            b.status == BookingStatus.completed &&
+            (b.settlement == null ||
+                (b.settlement!.amount - b.chargedAmount).abs() >= 0.005),
+      )
       .length;
 
   /// True si se cargó el máximo de reservas: las cifras pueden estar
@@ -304,8 +315,7 @@ class AdminState extends Equatable {
   int get openAlertsCount => alerts.where((a) => !a.resolved).length;
 
   /// Incidentes que nadie ha reconocido todavía.
-  int get unacknowledgedIncidents =>
-      incidents.where((i) => i.status == IncidentStatus.open).length;
+  int get unacknowledgedIncidents => incidents.where((i) => i.needsAck).length;
 
   int get pendingRidesCount =>
       bookings.where((b) => b.status == BookingStatus.pending).length;
@@ -397,80 +407,154 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         super(const AdminState()) {
     on<AdminDataRequested>(_onDataRequested);
 
-    on<AdminUpdatePricingRequested>((e, emit) => _perform(
+    on<AdminUpdatePricingRequested>(
+      (e, emit) => _perform(
         emit,
         _repo.updatePricingRule(e.rule),
         'Tarifa ${e.rule.vehicleClass.label} · ${e.rule.serviceType.label} '
-        'guardada'));
-    on<AdminResetPricingRequested>((e, emit) => _perform(
+        'guardada',
+      ),
+    );
+    on<AdminResetPricingRequested>(
+      (e, emit) => _perform(
         emit,
         _repo.resetPricingRule(e.rule),
-        'Tarifa eliminada: esa combinación queda sin configurar'));
-    on<AdminChangeBookingStatusRequested>((e, emit) => _perform(
+        'Tarifa eliminada: esa combinación queda sin configurar',
+      ),
+    );
+    on<AdminChangeBookingStatusRequested>(
+      (e, emit) => _perform(
         emit,
         _repo.changeBookingStatus(e.booking, e.status, reason: e.reason),
         e.status == BookingStatus.cancelled
             ? 'Reserva cancelada'
-            : 'Reserva marcada como "${e.status.displayLabel}"'));
-    on<AdminAssignDriverRequested>((e, emit) => _perform(
-        emit, _repo.assignDriver(e.booking, e.driverId), 'Chófer asignado'));
-    on<AdminAdjustFinalPriceRequested>((e, emit) => _perform(
+            : 'Reserva marcada como "${e.status.displayLabel}"',
+      ),
+    );
+    on<AdminAssignDriverRequested>(
+      (e, emit) => _perform(
+        emit,
+        _repo.assignDriver(e.booking, e.driverId),
+        'Chófer asignado',
+      ),
+    );
+    on<AdminAdjustFinalPriceRequested>(
+      (e, emit) => _perform(
         emit,
         _repo.adjustFinalPrice(e.booking, e.finalPrice, e.reason),
-        'Precio final actualizado'));
-    on<AdminRefundPaymentRequested>((e, emit) => _perform(
-        emit, _repo.refundPayment(e.payment, e.reason), 'Pago reembolsado'));
-    on<AdminRecordPaymentRequested>((e, emit) => _perform(
+        'Precio final actualizado',
+      ),
+    );
+    on<AdminRefundPaymentRequested>(
+      (e, emit) => _perform(
+        emit,
+        _repo.refundPayment(e.payment, e.reason),
+        'Pago reembolsado',
+      ),
+    );
+    on<AdminRecordPaymentRequested>(
+      (e, emit) => _perform(
         emit,
         _repo.markPaymentCollected(e.booking, e.method, e.reference),
-        'Cobro registrado'));
+        'Cobro registrado',
+      ),
+    );
     on<AdminBackfillSettlementsRequested>((e, emit) async {
       final result = await _repo.backfillSettlements();
       result.fold(
         (f) => emit(state.copyWith(error: f.message)),
-        (n) => emit(state.copyWith(
+        (n) => emit(
+          state.copyWith(
             successMessage: n == 0
                 ? 'No había viajes pendientes de repartir'
-                : '$n viajes repartidos')),
+                : '$n viajes repartidos',
+          ),
+        ),
       );
     });
-    on<AdminUpdateFinanceSettingsRequested>((e, emit) => _perform(
+    on<AdminUpdateFinanceSettingsRequested>(
+      (e, emit) => _perform(
         emit,
         _repo.updateFinanceSettings(e.fields),
-        'Configuración financiera guardada'));
-    on<AdminResolveAlertRequested>((e, emit) => _perform(
-        emit, _repo.resolveAlert(e.alertId, note: e.note), 'Alerta revisada'));
-    on<AdminAcknowledgeIncidentRequested>((e, emit) => _perform(
-        emit, _repo.acknowledgeIncident(e.incidentId), 'Incidente reconocido'));
-    on<AdminCloseIncidentRequested>((e, emit) => _perform(
-        emit, _repo.closeIncident(e.incidentId, e.note), 'Incidente cerrado'));
-    on<AdminForceVerifyRequested>((e, emit) => _perform(
+        'Configuración financiera guardada',
+      ),
+    );
+    on<AdminResolveAlertRequested>(
+      (e, emit) => _perform(
+        emit,
+        _repo.resolveAlert(e.alertId, note: e.note),
+        'Alerta revisada',
+      ),
+    );
+    on<AdminAcknowledgeIncidentRequested>(
+      (e, emit) => _perform(
+        emit,
+        _repo.acknowledgeIncident(e.incidentId),
+        'Incidente reconocido',
+      ),
+    );
+    on<AdminCloseIncidentRequested>(
+      (e, emit) => _perform(
+        emit,
+        _repo.closeIncident(e.incidentId, e.note),
+        'Incidente cerrado',
+      ),
+    );
+    on<AdminForceVerifyRequested>(
+      (e, emit) => _perform(
         emit,
         _repo.forceVerify(e.bookingId, e.reason),
-        'Verificación forzada; quedó registrada con tu motivo'));
-    on<AdminVerifyDriverRequested>((e, emit) => _perform(
+        'Verificación forzada; quedó registrada con tu motivo',
+      ),
+    );
+    on<AdminVerifyDriverRequested>(
+      (e, emit) => _perform(
         emit,
-        _repo.verifyDriver(e.driverId,
-            vehicleReviewed: e.vehicleReviewed, vehicleNote: e.vehicleNote),
+        _repo.verifyDriver(
+          e.driverId,
+          vehicleReviewed: e.vehicleReviewed,
+          vehicleNote: e.vehicleNote,
+        ),
         e.vehicleReviewed
             ? 'Chófer verificado y vehículo activado'
-            : 'Chófer verificado; el vehículo sigue inactivo'));
-    on<AdminToggleUserStatusRequested>((e, emit) => _perform(
+            : 'Chófer verificado; el vehículo sigue inactivo',
+      ),
+    );
+    on<AdminToggleUserStatusRequested>(
+      (e, emit) => _perform(
         emit,
         _repo.toggleUserStatus(e.userId, e.active),
-        e.active ? 'Usuario reactivado' : 'Usuario bloqueado'));
-    on<AdminToggleVehicleStatusRequested>((e, emit) => _perform(
+        e.active ? 'Usuario reactivado' : 'Usuario bloqueado',
+      ),
+    );
+    on<AdminToggleVehicleStatusRequested>(
+      (e, emit) => _perform(
         emit,
         _repo.toggleVehicleStatus(e.vehicleId, e.active),
-        e.active ? 'Vehículo activado' : 'Vehículo desactivado'));
-    on<AdminToggleMaintenanceModeRequested>((e, emit) => _perform(
+        e.active ? 'Vehículo activado' : 'Vehículo desactivado',
+      ),
+    );
+    on<AdminToggleMaintenanceModeRequested>(
+      (e, emit) => _perform(
         emit,
         _repo.toggleMaintenanceMode(e.active),
-        e.active ? 'Modo mantenimiento activado' : 'Reservas reanudadas'));
-    on<AdminUpdateGlobalSettingsRequested>((e, emit) => _perform(
-        emit, _repo.updateGlobalSettings(e.fields), 'Configuración guardada'));
-    on<AdminUpdateUserRoleRequested>((e, emit) => _perform(
-        emit, _repo.updateUserRole(e.userId, e.role), 'Rol actualizado'));
+        e.active ? 'Modo mantenimiento activado' : 'Reservas reanudadas',
+      ),
+    );
+    on<AdminUpdateGlobalSettingsRequested>(
+      (e, emit) => _perform(
+        emit,
+        _repo.updateGlobalSettings(e.fields),
+        'Configuración guardada',
+      ),
+    );
+    on<AdminUpdateUserRoleRequested>(
+      (e, emit) => _perform(
+        emit,
+        _repo.updateUserRole(e.userId, e.role),
+        'Rol actualizado',
+      ),
+    );
 
     on<_AdminStreamUpdated>((e, emit) => emit(e.apply(state)));
     on<_AdminStreamFailed>((e, emit) {
@@ -481,8 +565,11 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     });
   }
 
-  Future<void> _perform(Emitter<AdminState> emit,
-      Future<Either<Failure, void>> action, String success) async {
+  Future<void> _perform(
+    Emitter<AdminState> emit,
+    Future<Either<Failure, void>> action,
+    String success,
+  ) async {
     final result = await action;
     result.fold(
       (f) => emit(state.copyWith(error: f.message)),
@@ -491,44 +578,88 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   }
 
   void _listen<T>(
-      Stream<T> stream, String what, AdminState Function(AdminState, T) apply) {
-    _subs.add(stream.listen(
-      (data) => add(_AdminStreamUpdated(
-          (s) => apply(s, data).copyWith(isLoading: false))),
-      onError: (Object e) => add(_AdminStreamFailed(what, e.toString())),
-    ));
+    Stream<T> stream,
+    String what,
+    AdminState Function(AdminState, T) apply,
+  ) {
+    _subs.add(
+      stream.listen(
+        (data) => add(
+          _AdminStreamUpdated((s) => apply(s, data).copyWith(isLoading: false)),
+        ),
+        onError: (Object e) => add(_AdminStreamFailed(what, e.toString())),
+      ),
+    );
   }
 
   Future<void> _onDataRequested(
-      AdminDataRequested event, Emitter<AdminState> emit) async {
-    emit(state.copyWith(
+    AdminDataRequested event,
+    Emitter<AdminState> emit,
+  ) async {
+    emit(
+      state.copyWith(
         isLoading: true,
         bookingsLimit: _repo.bookingsLimit,
-        clearLoadError: true));
+        clearLoadError: true,
+      ),
+    );
     await _cancelSubs();
 
-    _listen(_repo.watchAllBookings(), 'las reservas',
-        (s, d) => s.copyWith(bookings: d));
-    _listen(_repo.watchAllPayments(), 'los pagos',
-        (s, d) => s.copyWith(payments: d));
     _listen(
-        _repo.watchAllUsers(), 'los usuarios', (s, d) => s.copyWith(users: d));
-    _listen(_repo.watchAllDrivers(), 'los chóferes',
-        (s, d) => s.copyWith(drivers: d));
-    _listen(_repo.watchPricingRules(), 'las tarifas',
-        (s, d) => s.copyWith(pricingRules: d));
-    _listen(_repo.watchAllVehicles(), 'los vehículos',
-        (s, d) => s.copyWith(vehicles: d));
-    _listen(_repo.watchAuditLogs(), 'la auditoría',
-        (s, d) => s.copyWith(auditLogs: d));
-    _listen(_repo.watchAdminAlerts(), 'las alertas',
-        (s, d) => s.copyWith(alerts: d));
-    _listen(_repo.watchOpenIncidents(), 'los incidentes',
-        (s, d) => s.copyWith(incidents: d));
-    _listen(_repo.watchGlobalSettings(), 'la configuración',
-        (s, d) => s.copyWith(globalSettings: d));
-    _listen(_repo.watchFinanceSettings(), 'la configuración financiera',
-        (s, d) => s.copyWith(financeSettings: d));
+      _repo.watchAllBookings(),
+      'las reservas',
+      (s, d) => s.copyWith(bookings: d),
+    );
+    _listen(
+      _repo.watchAllPayments(),
+      'los pagos',
+      (s, d) => s.copyWith(payments: d),
+    );
+    _listen(
+      _repo.watchAllUsers(),
+      'los usuarios',
+      (s, d) => s.copyWith(users: d),
+    );
+    _listen(
+      _repo.watchAllDrivers(),
+      'los chóferes',
+      (s, d) => s.copyWith(drivers: d),
+    );
+    _listen(
+      _repo.watchPricingRules(),
+      'las tarifas',
+      (s, d) => s.copyWith(pricingRules: d),
+    );
+    _listen(
+      _repo.watchAllVehicles(),
+      'los vehículos',
+      (s, d) => s.copyWith(vehicles: d),
+    );
+    _listen(
+      _repo.watchAuditLogs(),
+      'la auditoría',
+      (s, d) => s.copyWith(auditLogs: d),
+    );
+    _listen(
+      _repo.watchAdminAlerts(),
+      'las alertas',
+      (s, d) => s.copyWith(alerts: d),
+    );
+    _listen(
+      _repo.watchOpenIncidents(),
+      'los incidentes',
+      (s, d) => s.copyWith(incidents: d),
+    );
+    _listen(
+      _repo.watchGlobalSettings(),
+      'la configuración',
+      (s, d) => s.copyWith(globalSettings: d),
+    );
+    _listen(
+      _repo.watchFinanceSettings(),
+      'la configuración financiera',
+      (s, d) => s.copyWith(financeSettings: d),
+    );
   }
 
   Future<void> _cancelSubs() async {

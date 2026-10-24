@@ -12,10 +12,8 @@ import 'package:mocktail/mocktail.dart';
 class _MockAuthBloc extends MockBloc<AuthEvent, AuthState>
     implements AuthBloc {}
 
-Widget _themed(Widget child) => MaterialApp(
-      theme: luxTheme,
-      home: Scaffold(body: child),
-    );
+Widget _themed(Widget child) =>
+    MaterialApp(theme: luxTheme, home: Scaffold(body: child));
 
 void main() {
   // ---------------------------------------------------------------------------
@@ -23,17 +21,17 @@ void main() {
   // ---------------------------------------------------------------------------
   group('LuxButton', () {
     testWidgets('renders label in sentence case', (tester) async {
-      await tester.pumpWidget(_themed(
-        LuxButton(label: 'Confirmar reserva', onPressed: () {}),
-      ));
+      await tester.pumpWidget(
+        _themed(LuxButton(label: 'Confirmar reserva', onPressed: () {})),
+      );
       expect(find.text('Confirmar reserva'), findsOneWidget);
     });
 
     testWidgets('calls onPressed when tapped', (tester) async {
       var tapped = false;
-      await tester.pumpWidget(_themed(
-        LuxButton(label: 'Go', onPressed: () => tapped = true),
-      ));
+      await tester.pumpWidget(
+        _themed(LuxButton(label: 'Go', onPressed: () => tapped = true)),
+      );
       await tester.tap(find.text('Go'));
       await tester.pumpAndSettle();
       expect(tapped, isTrue);
@@ -41,10 +39,15 @@ void main() {
 
     testWidgets('does nothing while loading', (tester) async {
       var tapped = false;
-      await tester.pumpWidget(_themed(
-        LuxButton(
-            label: 'Loading', onPressed: () => tapped = true, loading: true),
-      ));
+      await tester.pumpWidget(
+        _themed(
+          LuxButton(
+            label: 'Loading',
+            onPressed: () => tapped = true,
+            loading: true,
+          ),
+        ),
+      );
       await tester.pump(const Duration(milliseconds: 300));
       expect(find.byType(LuxLoadingDots), findsOneWidget);
       expect(find.text('Loading'), findsNothing);
@@ -58,20 +61,18 @@ void main() {
   // ---------------------------------------------------------------------------
   group('LuxOutlinedButton', () {
     testWidgets('renders label', (tester) async {
-      await tester.pumpWidget(_themed(
-        LuxOutlinedButton(label: 'Cancel', onPressed: () {}),
-      ));
+      await tester.pumpWidget(
+        _themed(LuxOutlinedButton(label: 'Cancel', onPressed: () {})),
+      );
       expect(find.text('Cancel'), findsOneWidget);
     });
 
     testWidgets('renders icon when provided', (tester) async {
-      await tester.pumpWidget(_themed(
-        LuxOutlinedButton(
-          label: 'Add',
-          onPressed: () {},
-          icon: Icons.add,
+      await tester.pumpWidget(
+        _themed(
+          LuxOutlinedButton(label: 'Add', onPressed: () {}, icon: Icons.add),
         ),
-      ));
+      );
       expect(find.byIcon(Icons.add), findsOneWidget);
     });
   });
@@ -93,9 +94,9 @@ void main() {
   // ---------------------------------------------------------------------------
   group('LuxCard', () {
     testWidgets('renders child content', (tester) async {
-      await tester.pumpWidget(_themed(
-        const LuxCard(child: Text('Card Content')),
-      ));
+      await tester.pumpWidget(
+        _themed(const LuxCard(child: Text('Card Content'))),
+      );
       expect(find.text('Card Content'), findsOneWidget);
     });
   });
@@ -116,12 +117,19 @@ void main() {
   group('GoogleSignInButton', () {
     testWidgets('dispatches GoogleSignInRequested when tapped', (tester) async {
       final bloc = _MockAuthBloc();
-      whenListen(bloc, const Stream<AuthState>.empty(),
-          initialState: const AuthUnauthenticated());
-      await tester.pumpWidget(_themed(BlocProvider<AuthBloc>.value(
-        value: bloc,
-        child: const GoogleSignInButton(),
-      )));
+      whenListen(
+        bloc,
+        const Stream<AuthState>.empty(),
+        initialState: const AuthUnauthenticated(),
+      );
+      await tester.pumpWidget(
+        _themed(
+          BlocProvider<AuthBloc>.value(
+            value: bloc,
+            child: const GoogleSignInButton(),
+          ),
+        ),
+      );
       expect(find.text('Continuar con Google'), findsOneWidget);
       await tester.tap(find.byType(OutlinedButton));
       verify(() => bloc.add(const GoogleSignInRequested())).called(1);
@@ -129,12 +137,19 @@ void main() {
 
     testWidgets('is disabled while auth is loading', (tester) async {
       final bloc = _MockAuthBloc();
-      whenListen(bloc, const Stream<AuthState>.empty(),
-          initialState: const AuthLoading());
-      await tester.pumpWidget(_themed(BlocProvider<AuthBloc>.value(
-        value: bloc,
-        child: const GoogleSignInButton(),
-      )));
+      whenListen(
+        bloc,
+        const Stream<AuthState>.empty(),
+        initialState: const AuthLoading(),
+      );
+      await tester.pumpWidget(
+        _themed(
+          BlocProvider<AuthBloc>.value(
+            value: bloc,
+            child: const GoogleSignInButton(),
+          ),
+        ),
+      );
       final btn = tester.widget<OutlinedButton>(find.byType(OutlinedButton));
       expect(btn.onPressed, isNull);
     });

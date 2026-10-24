@@ -36,8 +36,9 @@ void main() {
 
       test('HSTS de al menos un año', () {
         final h = _headersForAll(site);
-        final m = RegExp(r'max-age=(\d+)')
-            .firstMatch(h['Strict-Transport-Security'] ?? '');
+        final m = RegExp(
+          r'max-age=(\d+)',
+        ).firstMatch(h['Strict-Transport-Security'] ?? '');
         expect(m, isNotNull);
         expect(int.parse(m!.group(1)!), greaterThanOrEqualTo(31536000));
       });
@@ -57,8 +58,10 @@ void main() {
 
       test('mantiene el Cache-Control existente', () {
         final rules = (site['headers'] as List).cast<Map<String, dynamic>>();
-        expect(rules.map((r) => r['source']),
-            containsAll(['**/*.@(js|css|json|html)', '/', 'canvaskit/**']));
+        expect(
+          rules.map((r) => r['source']),
+          containsAll(['**/*.@(js|css|json|html)', '/', 'canvaskit/**']),
+        );
       });
     });
   }

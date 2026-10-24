@@ -93,13 +93,27 @@ Future<List<PlaceSuggestion>> webAutocomplete(
     if (newApiClass != null) {
       _dbg('Using new AutocompleteSuggestion API');
       return await _newAutocomplete(
-          input, lat, lng, radiusMeters, strict, maps, newApiClass);
+        input,
+        lat,
+        lng,
+        radiusMeters,
+        strict,
+        maps,
+        newApiClass,
+      );
     }
 
     // ── Legacy fallback (AutocompleteService) — only for older API keys ──
     _dbg('Falling back to legacy AutocompleteService');
     return await _legacyAutocomplete(
-        input, lat, lng, radiusMeters, strict, maps, places);
+      input,
+      lat,
+      lng,
+      radiusMeters,
+      strict,
+      maps,
+      places,
+    );
   } catch (e) {
     _dbg('webAutocomplete top error: $e');
     return [];
@@ -166,12 +180,14 @@ Future<List<PlaceSuggestion>> _newAutocomplete(
 
       if (placeId.isEmpty && description.isEmpty) continue;
 
-      results.add(PlaceSuggestion(
-        placeId: placeId,
-        description: description,
-        mainText: mainText.isNotEmpty ? mainText : description,
-        secondaryText: secondaryText,
-      ));
+      results.add(
+        PlaceSuggestion(
+          placeId: placeId,
+          description: description,
+          mainText: mainText.isNotEmpty ? mainText : description,
+          secondaryText: secondaryText,
+        ),
+      );
     }
 
     _dbg('New API returned ${results.length} suggestions');
@@ -217,13 +233,16 @@ Future<List<PlaceSuggestion>> _legacyAutocomplete(
             for (int i = 0; i < list.length; i++) {
               final jsP = js.JsObject.fromBrowserObject(list[i] as Object);
               final sf = js.JsObject.fromBrowserObject(
-                  jsP['structured_formatting'] as Object);
-              results.add(PlaceSuggestion(
-                placeId: jsP['place_id'] as String? ?? '',
-                description: jsP['description'] as String? ?? '',
-                mainText: sf['main_text'] as String? ?? '',
-                secondaryText: sf['secondary_text'] as String? ?? '',
-              ));
+                jsP['structured_formatting'] as Object,
+              );
+              results.add(
+                PlaceSuggestion(
+                  placeId: jsP['place_id'] as String? ?? '',
+                  description: jsP['description'] as String? ?? '',
+                  mainText: sf['main_text'] as String? ?? '',
+                  secondaryText: sf['secondary_text'] as String? ?? '',
+                ),
+              );
             }
             completer.complete(results);
           } catch (e) {
@@ -236,8 +255,10 @@ Future<List<PlaceSuggestion>> _legacyAutocomplete(
       }),
     ]);
 
-    return completer.future
-        .timeout(const Duration(seconds: 5), onTimeout: () => []);
+    return completer.future.timeout(
+      const Duration(seconds: 5),
+      onTimeout: () => [],
+    );
   } catch (e) {
     _dbg('_legacyAutocomplete error: $e');
     return [];
@@ -260,21 +281,21 @@ Future<Place?> webPlaceDetails(String placeId, {String? address}) async {
     final geocoder = js.JsObject(maps['Geocoder'] as js.JsFunction);
 
     geocoder.callMethod('geocode', [
-      js.JsObject.jsify({
-        'placeId': placeId,
-      }),
+      js.JsObject.jsify({'placeId': placeId}),
       js.allowInterop((dynamic results, dynamic status) {
         if (status == 'OK' && results != null && (results as List).isNotEmpty) {
           final res = js.JsObject.fromBrowserObject((results)[0] as Object);
           final geom = js.JsObject.fromBrowserObject(res['geometry'] as Object);
           final loc = js.JsObject.fromBrowserObject(geom['location'] as Object);
 
-          completer.complete(Place(
-            name: address?.split(',').first ?? '',
-            address: res['formatted_address'] as String? ?? address ?? '',
-            lat: (loc.callMethod('lat') as num).toDouble(),
-            lng: (loc.callMethod('lng') as num).toDouble(),
-          ));
+          completer.complete(
+            Place(
+              name: address?.split(',').first ?? '',
+              address: res['formatted_address'] as String? ?? address ?? '',
+              lat: (loc.callMethod('lat') as num).toDouble(),
+              lng: (loc.callMethod('lng') as num).toDouble(),
+            ),
+          );
         } else {
           // If PlaceId geocoding fails, try address string geocoding if provided
           if (address != null && address.isNotEmpty) {
@@ -285,19 +306,24 @@ Future<Place?> webPlaceDetails(String placeId, {String? address}) async {
                 if (status2 == 'OK' &&
                     results2 != null &&
                     (results2 as List).isNotEmpty) {
-                  final res2 =
-                      js.JsObject.fromBrowserObject((results2)[0] as Object);
-                  final geom2 =
-                      js.JsObject.fromBrowserObject(res2['geometry'] as Object);
+                  final res2 = js.JsObject.fromBrowserObject(
+                    (results2)[0] as Object,
+                  );
+                  final geom2 = js.JsObject.fromBrowserObject(
+                    res2['geometry'] as Object,
+                  );
                   final loc2 = js.JsObject.fromBrowserObject(
-                      geom2['location'] as Object);
+                    geom2['location'] as Object,
+                  );
 
-                  completer.complete(Place(
-                    name: address.split(',').first,
-                    address: res2['formatted_address'] as String? ?? address,
-                    lat: (loc2.callMethod('lat') as num).toDouble(),
-                    lng: (loc2.callMethod('lng') as num).toDouble(),
-                  ));
+                  completer.complete(
+                    Place(
+                      name: address.split(',').first,
+                      address: res2['formatted_address'] as String? ?? address,
+                      lat: (loc2.callMethod('lat') as num).toDouble(),
+                      lng: (loc2.callMethod('lng') as num).toDouble(),
+                    ),
+                  );
                 } else {
                   completer.complete(null);
                 }
@@ -310,8 +336,10 @@ Future<Place?> webPlaceDetails(String placeId, {String? address}) async {
       }),
     ]);
 
-    return completer.future
-        .timeout(const Duration(seconds: 8), onTimeout: () => null);
+    return completer.future.timeout(
+      const Duration(seconds: 8),
+      onTimeout: () => null,
+    );
   } catch (e) {
     _dbg('webPlaceDetails top error: $e');
     return null;
@@ -332,7 +360,7 @@ Future<Place?> webReverseGeocode(double lat, double lng) async {
 
     geocoder.callMethod('geocode', [
       js.JsObject.jsify({
-        'location': {'lat': lat, 'lng': lng}
+        'location': {'lat': lat, 'lng': lng},
       }),
       js.allowInterop((dynamic results, dynamic status) {
         if (status == 'OK' && results != null) {
@@ -351,8 +379,10 @@ Future<Place?> webReverseGeocode(double lat, double lng) async {
       }),
     ]);
 
-    return completer.future
-        .timeout(const Duration(seconds: 5), onTimeout: () => null);
+    return completer.future.timeout(
+      const Duration(seconds: 5),
+      onTimeout: () => null,
+    );
   } catch (_) {
     return null;
   }
@@ -400,16 +430,20 @@ Future<RouteInfo?> webGetRoute({
             final points = <LatLng>[];
             for (int i = 0; i < path.length; i++) {
               final pt = path[i] as js.JsObject;
-              points.add(LatLng(
-                (pt.callMethod('lat') as num).toDouble(),
-                (pt.callMethod('lng') as num).toDouble(),
-              ));
+              points.add(
+                LatLng(
+                  (pt.callMethod('lat') as num).toDouble(),
+                  (pt.callMethod('lng') as num).toDouble(),
+                ),
+              );
             }
-            completer.complete(RouteInfo(
-              distanceKm: distM / 1000,
-              durationMin: durS ~/ 60,
-              polylinePoints: points,
-            ));
+            completer.complete(
+              RouteInfo(
+                distanceKm: distM / 1000,
+                durationMin: durS ~/ 60,
+                polylinePoints: points,
+              ),
+            );
           } catch (_) {
             completer.complete(null);
           }
@@ -419,8 +453,10 @@ Future<RouteInfo?> webGetRoute({
       }),
     ]);
 
-    return completer.future
-        .timeout(const Duration(seconds: 8), onTimeout: () => null);
+    return completer.future.timeout(
+      const Duration(seconds: 8),
+      onTimeout: () => null,
+    );
   } catch (_) {
     return null;
   }

@@ -150,36 +150,44 @@ class LuxMapState extends State<LuxMap> {
     // Inner color
     final Paint colorPaint = Paint()..color = color;
     canvas.drawCircle(
-        const Offset(size / 2, size / 2), size / 2 - 2, colorPaint);
+      const Offset(size / 2, size / 2),
+      size / 2 - 2,
+      colorPaint,
+    );
 
     final ui.Image image = await pictureRecorder.endRecording().toImage(
           size.toInt(),
           size.toInt(),
         );
-    final ByteData? byteData =
-        await image.toByteData(format: ui.ImageByteFormat.png);
+    final ByteData? byteData = await image.toByteData(
+      format: ui.ImageByteFormat.png,
+    );
     return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
   }
 
   Set<Marker> get _markers {
     final Set<Marker> m = {};
     if (widget.origin != null) {
-      m.add(Marker(
-        markerId: const MarkerId('origin'),
-        position: widget.origin!.latLng,
-        icon: _originIcon ??
-            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
-        infoWindow: InfoWindow(title: widget.origin!.displayName),
-      ));
+      m.add(
+        Marker(
+          markerId: const MarkerId('origin'),
+          position: widget.origin!.latLng,
+          icon: _originIcon ??
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueCyan),
+          infoWindow: InfoWindow(title: widget.origin!.displayName),
+        ),
+      );
     }
     if (widget.destination != null) {
-      m.add(Marker(
-        markerId: const MarkerId('destination'),
-        position: widget.destination!.latLng,
-        icon: _destIcon ??
-            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-        infoWindow: InfoWindow(title: widget.destination!.displayName),
-      ));
+      m.add(
+        Marker(
+          markerId: const MarkerId('destination'),
+          position: widget.destination!.latLng,
+          icon: _destIcon ??
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          infoWindow: InfoWindow(title: widget.destination!.displayName),
+        ),
+      );
     }
     return m;
   }
@@ -223,8 +231,10 @@ class LuxMapState extends State<LuxMap> {
     // En web el mapa puede no tener tamaño aún justo al crearse: reintenta.
     void retry(Object _) {
       if (attempt < 3 && mounted) {
-        Future.delayed(const Duration(milliseconds: 300),
-            () => mounted ? _fitBounds(attempt + 1) : null);
+        Future.delayed(
+          const Duration(milliseconds: 300),
+          () => mounted ? _fitBounds(attempt + 1) : null,
+        );
       }
     }
 
@@ -239,9 +249,7 @@ class LuxMapState extends State<LuxMap> {
 
   void _animateToDriver() {
     if (_controller == null || widget.driverLocation == null) return;
-    _controller!.animateCamera(
-      CameraUpdate.newLatLng(widget.driverLocation!),
-    );
+    _controller!.animateCamera(CameraUpdate.newLatLng(widget.driverLocation!));
   }
 
   @override
@@ -268,8 +276,10 @@ class LuxMapState extends State<LuxMap> {
     if (!AppConfig.hasMapsKey) return const MapsKeyMissing();
 
     return GoogleMap(
-      initialCameraPosition:
-          CameraPosition(target: initialCenter, zoom: kCityZoom),
+      initialCameraPosition: CameraPosition(
+        target: initialCenter,
+        zoom: kCityZoom,
+      ),
       markers: _markers,
       polylines: _polylines,
       style: widget.lightStyle ? null : _kIvoryMapStyle,

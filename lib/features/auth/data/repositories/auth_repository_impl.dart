@@ -9,6 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
@@ -44,31 +45,33 @@ class AuthRepositoryImpl implements AuthRepository {
       );
 
   @override
-  Stream<User?> get authStateChanges => _auth.authStateChanges().asyncMap(
-        (fbUser) async {
-          if (fbUser == null) return null;
-          try {
-            final doc = await _db.collection('users').doc(fbUser.uid).get();
-            if (!doc.exists) return null;
-            final user = User.fromJson({'id': doc.id, ...doc.data()!});
-            // Una cuenta bloqueada por el admin pierde la sesión abierta.
-            if (!user.isActive) {
-              await _auth.signOut();
-              throw const AuthFailure(kBlockedAccountMessage);
-            }
-            return user;
-          } on AuthFailure {
-            rethrow;
-          } catch (_) {
-            return null;
+  Stream<User?> get authStateChanges =>
+      _auth.authStateChanges().asyncMap((fbUser) async {
+        if (fbUser == null) return null;
+        try {
+          final doc = await _db.collection('users').doc(fbUser.uid).get();
+          if (!doc.exists) return null;
+          final user = User.fromJson({'id': doc.id, ...doc.data()!});
+          // Una cuenta bloqueada por el admin pierde la sesión abierta.
+          if (!user.isActive) {
+            await _auth.signOut();
+            throw const AuthFailure(kBlockedAccountMessage);
           }
-        },
-      );
+          return user;
+        } on AuthFailure {
+          rethrow;
+        } catch (_) {
+          return null;
+        }
+      });
 
   @override
   Stream<User?> watchUser(String uid) =>
-      _db.collection('users').doc(uid).snapshots().map((doc) =>
-          doc.exists ? User.fromJson({'id': doc.id, ...doc.data()!}) : null);
+      _db.collection('users').doc(uid).snapshots().map(
+            (doc) => doc.exists
+                ? User.fromJson({'id': doc.id, ...doc.data()!})
+                : null,
+          );
 
   /// Raw Firebase sign-in flag — no Firestore involved, so it never
   /// produces a false-negative that would accidentally sign the user out.
@@ -165,9 +168,13 @@ class AuthRepositoryImpl implements AuthRepository {
       if (e.code == GoogleSignIn.kSignInCanceledError) {
         return const Left(AuthCancelledFailure());
       }
-      return Left(AuthFailure(e.code == GoogleSignIn.kNetworkError
-          ? 'Sin conexión. Revisa tu internet e inténtalo de nuevo.'
-          : _googleGenericError));
+      return Left(
+        AuthFailure(
+          e.code == GoogleSignIn.kNetworkError
+              ? 'Sin conexión. Revisa tu internet e inténtalo de nuevo.'
+              : _googleGenericError,
+        ),
+      );
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -215,7 +222,9 @@ class AuthRepositoryImpl implements AuthRepository {
             'fcmTokens': FieldValue.arrayRemove([token]),
           });
         }
-      } catch (_) {/* sin token o sin conexión */}
+      } catch (_) {
+        /* sin token o sin conexión */
+      }
     }
     try {
       final ref = _db.collection('driverProfiles').doc(uid);
@@ -288,7 +297,9 @@ class AuthRepositoryImpl implements AuthRepository {
       if (!kIsWeb) {
         try {
           if (await _google.isSignedIn()) await _google.signOut();
-        } catch (_) {/* not signed in with Google */}
+        } catch (_) {
+          /* not signed in with Google */
+        }
       }
       await _beforeSignOut();
       await _auth.signOut();
@@ -304,19 +315,11 @@ class AuthRepositoryImpl implements AuthRepository {
       await _functions.httpsCallable('deleteAccount').call();
       return const Right(null);
     } on FirebaseFunctionsException catch (e) {
-      if (e.message == 'active-bookings') {
-        return const Left(ServerFailure(
-            'Tienes viajes activos o reservados. Cancélalos o espera a que '
-            'terminen antes de eliminar tu cuenta.'));
-      }
-      if (e.code == 'failed-precondition' && e.message != null) {
-        return Left(ServerFailure(e.message!));
-      }
-      return const Left(
-          ServerFailure('No pudimos eliminar tu cuenta. Inténtalo de nuevo.'));
+      return Left(ServerFailure(deleteAccountErrorMessage(e.code, e.details)));
     } catch (_) {
       return const Left(
-          ServerFailure('No pudimos eliminar tu cuenta. Revisa tu conexión.'));
+        ServerFailure('No pudimos eliminar tu cuenta. Revisa tu conexión.'),
+      );
     }
   }
 
@@ -341,18 +344,21 @@ class AuthRepositoryImpl implements AuthRepository {
       await _auth.sendPasswordResetEmail(email: email);
       return const Right(null);
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(switch (e.code) {
-        'invalid-email' => 'Ese correo no es válido. Revísalo.',
-        'user-not-found' => 'No hay ninguna cuenta con ese correo.',
-        'too-many-requests' =>
-          'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
-        'network-request-failed' =>
-          'Sin conexión. Revisa tu internet e inténtalo de nuevo.',
-        _ => 'No pudimos enviar el enlace. Inténtalo de nuevo.',
-      }));
+      return Left(
+        AuthFailure(switch (e.code) {
+          'invalid-email' => 'Ese correo no es válido. Revísalo.',
+          'user-not-found' => 'No hay ninguna cuenta con ese correo.',
+          'too-many-requests' =>
+            'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
+          'network-request-failed' =>
+            'Sin conexión. Revisa tu internet e inténtalo de nuevo.',
+          _ => 'No pudimos enviar el enlace. Inténtalo de nuevo.',
+        }),
+      );
     } catch (_) {
       return const Left(
-          ServerFailure('No pudimos enviar el enlace. Inténtalo de nuevo.'));
+        ServerFailure('No pudimos enviar el enlace. Inténtalo de nuevo.'),
+      );
     }
   }
 

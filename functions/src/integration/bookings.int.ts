@@ -7,15 +7,17 @@ import { describe, it, expect, beforeEach, afterAll, jest } from '@jest/globals'
 
 // Stripe falso: se comprueba qué importe pediría cobrar createPaymentIntent.
 const createIntent = jest.fn(async (_p: { amount: number }) => ({ id: 'pi_test', clientSecret: 'secret' }));
+const captureIntent = jest.fn(async (_id: string, _amount: number) => ({ status: 'succeeded', amount_received: 0 }));
 jest.mock('../stripe_service', () => ({
   STRIPE_SECRET_KEY: { value: () => 'sk_test_falsa' },
   createIntent: (p: { amount: number }) => createIntent(p),
+  captureIntent: (id: string, amount: number) => captureIntent(id, amount),
 }));
 
 import { randomUUID } from 'crypto';
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
-import { closeOpenRequest, createBooking as createBookingFn, createPaymentIntent, onBookingCreated } from '../index';
+import { capturePayment, closeOpenRequest, createBooking as createBookingFn, createPaymentIntent, onBookingCreated } from '../index';
 import { BookingDeps, createBooking, quoteBooking } from '../booking_service';
 
 const db = admin.firestore();
@@ -74,6 +76,7 @@ async function clear(): Promise<void> {
 beforeEach(async () => {
   await clear();
   createIntent.mockClear();
+  captureIntent.mockClear();
   await db.doc('users/ana').set({ role: 'rider', isActive: true, stripeCustomerId: 'cus_ana', ridePreferences: { music: 'jazz' } });
   await db.doc('users/ina').set({ role: 'rider', isActive: false });
   await db.doc('users/carlos').set({ role: 'driver', isActive: true });
@@ -110,8 +113,12 @@ describe('createBooking', () => {
   it('quotedPrice mayor se acepta y se guarda el precio del servidor, que es el que se cobra', async () => {
     const { bookingId } = await createBooking(deps(), 'ana', trip({ quotedPrice: 500 }));
     expect((await db.doc(`bookings/${bookingId}`).get()).data()!.estimatedPrice).toBe(86);
-    // createPaymentIntent ignora cualquier importe que mande el cliente.
-    await (createPaymentIntent as unknown as Runnable).run({ auth: { uid: 'ana' }, data: { bookingId, amount: 1, estimatedPrice: 1 } });
+    // createPaymentIntent no acepta importes del cliente (campo desconocido)
+    // y cobra el precio del servidor.
+    expect((await reason((createPaymentIntent as unknown as Runnable)
+      .run({ auth: { uid: 'ana' }, data: { bookingId, amount: 1, estimatedPrice: 1 } }))).reason).toBe('invalid_request');
+    expect(createIntent).not.toHaveBeenCalled();
+    await (createPaymentIntent as unknown as Runnable).run({ auth: { uid: 'ana' }, data: { bookingId } });
     expect(createIntent).toHaveBeenCalledTimes(1);
     expect(createIntent.mock.calls[0][0]).toMatchObject({ amount: 8600, currency: 'bob' });
   });
@@ -198,6 +205,49 @@ describe('createBooking', () => {
     }
   });
 
+});
+
+describe('capturePayment', () => {
+  it('rechaza un intent que no es el de la reserva y no llama a Stripe', async () => {
+    await db.doc('bookings/b-captura').set({
+      riderId: 'ana', status: 'completed', estimatedPrice: 86, stripePaymentIntentId: 'pi_propio',
+    });
+    const run = (data: unknown) => (capturePayment as unknown as Runnable).run({ auth: { uid: 'ana' }, data });
+    expect((await reason(run({ bookingId: 'b-captura', stripePaymentIntentId: 'pi_ajeno' }))).code)
+      .toBe('permission-denied');
+    expect((await reason(run({ bookingId: 'b-captura', stripePaymentIntentId: 'pi_propio', amount: 1 }))).reason)
+      .toBe('invalid_request');
+    expect(captureIntent).not.toHaveBeenCalled();
+  });
+
+  it('si Stripe falla, ni la respuesta ni el log llevan la clave, el correo o las coordenadas', async () => {
+    const leaky = 'Invalid API Key provided: sk_test_51FalsaClave000 (pasajera.prueba@example.com, -17.7834, -63.1821)';
+    captureIntent.mockRejectedValueOnce(new Error(leaky));
+    await db.doc('bookings/b-fallo').set({
+      riderId: 'ana', status: 'completed', estimatedPrice: 86, stripePaymentIntentId: 'pi_propio',
+    });
+    const lines: string[] = [];
+    for (const m of ['log', 'warn', 'error'] as const) {
+      jest.spyOn(console, m).mockImplementation((...a: unknown[]) => { lines.push(a.map(String).join(' ')); });
+    }
+    let caught: HttpsError | undefined;
+    try {
+      await (capturePayment as unknown as Runnable)
+        .run({ auth: { uid: 'ana' }, data: { bookingId: 'b-fallo', stripePaymentIntentId: 'pi_propio' } });
+    } catch (e) {
+      caught = e as HttpsError;
+    } finally {
+      jest.restoreAllMocks();
+    }
+    expect(captureIntent).toHaveBeenCalledTimes(1);
+    expect(caught?.code).toBe('internal');
+    expect(caught?.details).toEqual({ code: 'internal', reason: 'payment_failed' });
+    const seen = JSON.stringify({ message: caught?.message, details: caught?.details }) + '\n' + lines.join('\n');
+    for (const s of ['sk_test_51FalsaClave000', 'pasajera.prueba@example.com', '-17.7834', '-63.1821']) {
+      expect(seen).not.toContain(s);
+    }
+    expect(lines.join('\n')).toContain('[stripe-key]');
+  });
 });
 
 describe('createBooking: idempotencia por requestId', () => {

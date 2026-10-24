@@ -53,10 +53,7 @@ class DriverActiveRideScreen extends StatelessWidget {
   ) =>
       Stack(
         children: [
-          LuxMap(
-            origin: booking.origin,
-            destination: booking.destination,
-          ),
+          LuxMap(origin: booking.origin, destination: booking.destination),
           SafeArea(
             child: Column(
               children: [
@@ -78,9 +75,7 @@ class DriverActiveRideScreen extends StatelessWidget {
         children: [
           Expanded(
             child: LuxMap(
-              origin: booking.origin,
-              destination: booking.destination,
-            ),
+                origin: booking.origin, destination: booking.destination),
           ),
           SizedBox(
             width: 400,
@@ -90,9 +85,7 @@ class DriverActiveRideScreen extends StatelessWidget {
                 children: [
                   _DriverWebHeader(booking: booking),
                   const LuxDivider(),
-                  Expanded(
-                    child: _DriverSidePanel(booking: booking),
-                  ),
+                  Expanded(child: _DriverSidePanel(booking: booking)),
                 ],
               ),
             ),
@@ -125,8 +118,10 @@ class _DriverTopBar extends StatelessWidget {
                   borderRadius: BorderRadius.circular(LuxRadius.sm),
                   border: Border.all(color: LuxColors.border),
                 ),
-                child: const Icon(Icons.keyboard_arrow_down_rounded,
-                    color: LuxColors.ink),
+                child: const Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: LuxColors.ink,
+                ),
               ),
             ),
             const SizedBox(width: LuxSpacing.md),
@@ -174,7 +169,11 @@ class _DriverBottomPanel extends StatelessWidget {
           border: Border(top: BorderSide(color: LuxColors.border)),
         ),
         padding: const EdgeInsets.fromLTRB(
-            LuxSpacing.md, LuxSpacing.md, LuxSpacing.md, LuxSpacing.xxl),
+          LuxSpacing.md,
+          LuxSpacing.md,
+          LuxSpacing.md,
+          LuxSpacing.xxl,
+        ),
         child: _DriverSidePanel(booking: booking),
       );
 }
@@ -195,8 +194,10 @@ class _DriverSidePanel extends StatelessWidget {
               BookingStatusChip(status: booking.status),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
-                child: Text(DriverStepAction.message(booking),
-                    style: LuxTypography.bodyMedium),
+                child: Text(
+                  DriverStepAction.message(booking),
+                  style: LuxTypography.bodyMedium,
+                ),
               ),
             ],
           ),
@@ -222,8 +223,11 @@ class _RideInfoRow extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.radio_button_checked,
-                  color: LuxColors.sapphire, size: 16),
+              const Icon(
+                Icons.radio_button_checked,
+                color: LuxColors.sapphire,
+                size: 16,
+              ),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                 child: Text(
@@ -238,8 +242,11 @@ class _RideInfoRow extends StatelessWidget {
           const SizedBox(height: LuxSpacing.sm),
           Row(
             children: [
-              const Icon(Icons.location_on_rounded,
-                  color: LuxColors.error, size: 16),
+              const Icon(
+                Icons.location_on_rounded,
+                color: LuxColors.error,
+                size: 16,
+              ),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                 child: Text(
@@ -253,15 +260,17 @@ class _RideInfoRow extends StatelessWidget {
           ),
           if (booking.guest != null) ...[
             const SizedBox(height: LuxSpacing.md),
-            LuxGroup(children: [
-              LuxListRow(
-                icon: Icons.person_outline_rounded,
-                title: 'Pasajero: ${booking.guest!.fullName}',
-                subtitle: booking.guest!.contactLine.isEmpty
-                    ? null
-                    : booking.guest!.contactLine,
-              ),
-            ]),
+            LuxGroup(
+              children: [
+                LuxListRow(
+                  icon: Icons.person_outline_rounded,
+                  title: 'Pasajero: ${booking.guest!.fullName}',
+                  subtitle: booking.guest!.contactLine.isEmpty
+                      ? null
+                      : booking.guest!.contactLine,
+                ),
+              ],
+            ),
           ],
           if (!booking.riderPreferences.isEmpty) ...[
             const SizedBox(height: LuxSpacing.md),
@@ -284,8 +293,9 @@ class _RideInfoRow extends StatelessWidget {
                 const Text('Tarifa estimada', style: LuxTypography.caption),
                 Text(
                   'Bs${booking.estimatedPrice.toStringAsFixed(2)}',
-                  style: LuxTypography.bodyLarge
-                      .copyWith(color: LuxColors.sapphire),
+                  style: LuxTypography.bodyLarge.copyWith(
+                    color: LuxColors.sapphire,
+                  ),
                 ),
               ],
             ),

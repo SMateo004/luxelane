@@ -73,14 +73,17 @@ class _SosButtonState extends State<SosButton>
       builder: (ctx) => AlertDialog(
         title: const Text('¿Avisar a central?'),
         content: const Text(
-            'Central recibirá tu aviso y tu ubicación mientras dure.'),
+          'Central recibirá tu aviso y tu ubicación mientras dure.',
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Cancelar')),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancelar'),
+          ),
           FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Avisar a central')),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Avisar a central'),
+          ),
         ],
       ),
     );
@@ -135,9 +138,13 @@ class _SosButtonState extends State<SosButton>
                       ),
                     ),
                     Center(
-                      child: Text('SOS',
-                          style: LuxTypography.titleMedium.copyWith(
-                              color: LuxColors.error, letterSpacing: 1.2)),
+                      child: Text(
+                        'SOS',
+                        style: LuxTypography.titleMedium.copyWith(
+                          color: LuxColors.error,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
                     ),
                   ],
                 ),

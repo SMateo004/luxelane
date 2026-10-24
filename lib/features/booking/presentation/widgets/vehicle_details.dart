@@ -13,10 +13,9 @@ import 'vehicle_visuals.dart';
 
 /// Asset paths bundled with the app, loaded once, so the carousel shows only
 /// the gallery photos that really exist.
-final Future<Set<String>> _bundledAssets =
-    AssetManifest.loadFromAssetBundle(rootBundle)
-        .then((m) => m.listAssets().toSet())
-        .catchError((Object _) => <String>{});
+final Future<Set<String>> _bundledAssets = AssetManifest.loadFromAssetBundle(
+  rootBundle,
+).then((m) => m.listAssets().toSet()).catchError((Object _) => <String>{});
 
 class VehicleDetailsGallery extends StatefulWidget {
   const VehicleDetailsGallery({
@@ -67,13 +66,17 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
             VehicleCatalog.seatingPhoto(vc, 0),
             arrow: arrow,
             fallback: CabinSchematic(
-                vehicleClass: vc, option: VehicleCatalog.seating(vc).first),
+              vehicleClass: vc,
+              option: VehicleCatalog.seating(vc).first,
+            ),
           ),
       (arrow) => _RoundedPhoto(
             VehicleCatalog.luggagePhoto(vc, 1),
             arrow: arrow,
             fallback: TrunkSchematic(
-                vehicleClass: vc, option: VehicleCatalog.luggage(vc)[1]),
+              vehicleClass: vc,
+              option: VehicleCatalog.luggage(vc)[1],
+            ),
           ),
     ];
   }
@@ -114,27 +117,35 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 2),
-                  child:
-                      Icon(Icons.check_rounded, size: 16, color: tone.accent),
+                  child: Icon(
+                    Icons.check_rounded,
+                    size: 16,
+                    color: tone.accent,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: Text(h,
-                      style: const TextStyle(
-                          fontFamily: kSans,
-                          fontSize: 14,
-                          height: 1.5,
-                          color: LD.ink2)),
+                  child: Text(
+                    h,
+                    style: const TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 14,
+                      height: 1.5,
+                      color: LD.ink2,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
         const SizedBox(height: 4),
-        Row(children: [
-          _Spec(Icons.person_outline_rounded, '${vc.capacity} pasajeros'),
-          const SizedBox(width: 20),
-          _Spec(Icons.luggage_outlined, '${vc.luggageCapacity} maletas'),
-        ]),
+        Row(
+          children: [
+            _Spec(Icons.person_outline_rounded, '${vc.capacity} pasajeros'),
+            const SizedBox(width: 20),
+            _Spec(Icons.luggage_outlined, '${vc.luggageCapacity} maletas'),
+          ],
+        ),
       ],
     );
 
@@ -154,9 +165,14 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
           ),
         ),
         const SizedBox(height: 4),
-        Text(vc.description,
-            style: const TextStyle(
-                fontFamily: kSans, fontSize: 14, color: LD.ink3)),
+        Text(
+          vc.description,
+          style: const TextStyle(
+            fontFamily: kSans,
+            fontSize: 14,
+            color: LD.ink3,
+          ),
+        ),
       ],
     );
 
@@ -183,11 +199,7 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
                   flex: 2,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      heading,
-                      const SizedBox(height: 22),
-                      facts,
-                    ],
+                    children: [heading, const SizedBox(height: 22), facts],
                   ),
                 ),
               ],
@@ -259,18 +271,26 @@ class CapacitySection extends StatelessWidget {
         crossAxisAlignment:
             compact ? CrossAxisAlignment.center : CrossAxisAlignment.start,
         children: [
-          Text(title,
-              textAlign: compact ? TextAlign.center : TextAlign.start,
-              style: const TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: LD.ink)),
+          Text(
+            title,
+            textAlign: compact ? TextAlign.center : TextAlign.start,
+            style: const TextStyle(
+              fontFamily: kSans,
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: LD.ink,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text(detail,
-              textAlign: compact ? TextAlign.center : TextAlign.start,
-              style: const TextStyle(
-                  fontFamily: kSans, fontSize: 13, color: LD.ink3)),
+          Text(
+            detail,
+            textAlign: compact ? TextAlign.center : TextAlign.start,
+            style: const TextStyle(
+              fontFamily: kSans,
+              fontSize: 13,
+              color: LD.ink3,
+            ),
+          ),
         ],
       ),
     );
@@ -285,7 +305,11 @@ class CapacitySection extends StatelessWidget {
               'recogida.',
       textAlign: compact ? TextAlign.center : TextAlign.start,
       style: const TextStyle(
-          fontFamily: kSans, fontSize: 12.5, height: 1.6, color: LD.ink3),
+        fontFamily: kSans,
+        fontSize: 12.5,
+        height: 1.6,
+        color: LD.ink3,
+      ),
     );
 
     final heading = Column(
@@ -306,17 +330,28 @@ class CapacitySection extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           'Hasta ${vc.capacity} pasajeros y ${vc.luggageCapacity} maletas facturadas',
-          style:
-              const TextStyle(fontFamily: kSans, fontSize: 14, color: LD.ink3),
+          style: const TextStyle(
+            fontFamily: kSans,
+            fontSize: 14,
+            color: LD.ink3,
+          ),
         ),
         const SizedBox(height: 18),
-        Row(children: [
-          _UnderlineTab(
-              label: 'Equipaje', active: isLuggage, onTap: () => onTab(0)),
-          const SizedBox(width: 28),
-          _UnderlineTab(
-              label: 'Asientos', active: !isLuggage, onTap: () => onTab(1)),
-        ]),
+        Row(
+          children: [
+            _UnderlineTab(
+              label: 'Equipaje',
+              active: isLuggage,
+              onTap: () => onTab(0),
+            ),
+            const SizedBox(width: 28),
+            _UnderlineTab(
+              label: 'Asientos',
+              active: !isLuggage,
+              onTap: () => onTab(1),
+            ),
+          ],
+        ),
         const Divider(color: LD.border, height: 1),
       ],
     );
@@ -505,7 +540,10 @@ class _RoundedPhoto extends StatelessWidget {
             errorBuilder: (_, __, ___) => _RoundedStage(
               child: fallback == null
                   ? const SizedBox()
-                  : Padding(padding: const EdgeInsets.all(18), child: fallback),
+                  : Padding(
+                      padding: const EdgeInsets.all(18),
+                      child: fallback,
+                    ),
             ),
           ),
         ),
@@ -563,13 +601,15 @@ class _UnderlineTab extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
-                  child: Text(label,
-                      style: TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 14,
-                        fontWeight: active ? FontWeight.w600 : FontWeight.w400,
-                        color: active ? LD.ink : LD.ink3,
-                      )),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontFamily: kSans,
+                      fontSize: 14,
+                      fontWeight: active ? FontWeight.w600 : FontWeight.w400,
+                      color: active ? LD.ink : LD.ink3,
+                    ),
+                  ),
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 180),
@@ -585,8 +625,11 @@ class _UnderlineTab extends StatelessWidget {
 }
 
 class _RoundNav extends StatefulWidget {
-  const _RoundNav(
-      {required this.icon, required this.onTap, required this.tooltip});
+  const _RoundNav({
+    required this.icon,
+    required this.onTap,
+    required this.tooltip,
+  });
   final IconData icon;
   final VoidCallback onTap;
   final String tooltip;
@@ -639,12 +682,15 @@ class _Spec extends StatelessWidget {
         children: [
           Icon(icon, size: 16, color: LD.ink3),
           const SizedBox(width: 6),
-          Text(text,
-              style: const TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w500,
-                  color: LD.ink2)),
+          Text(
+            text,
+            style: const TextStyle(
+              fontFamily: kSans,
+              fontSize: 12.5,
+              fontWeight: FontWeight.w500,
+              color: LD.ink2,
+            ),
+          ),
         ],
       );
 }

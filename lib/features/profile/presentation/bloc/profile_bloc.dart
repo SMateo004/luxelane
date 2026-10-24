@@ -169,37 +169,35 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     emit(const ProfileLoading());
     final userResult = await _repo.getUserById(event.userId);
-    await userResult.fold(
-      (f) async => emit(ProfileError(f.message)),
-      (user) async {
-        if (user.role == UserRole.driver) {
-          final dpResult = await _repo.getDriverProfile(event.userId);
-          dpResult.fold(
-            (f) => emit(ProfileLoaded(user: user)),
-            (dp) => emit(ProfileLoaded(
+    await userResult.fold((f) async => emit(ProfileError(f.message)), (
+      user,
+    ) async {
+      if (user.role == UserRole.driver) {
+        final dpResult = await _repo.getDriverProfile(event.userId);
+        dpResult.fold(
+          (f) => emit(ProfileLoaded(user: user)),
+          (dp) => emit(
+            ProfileLoaded(
               user: user,
               driverProfile: dp,
               totalRides: dp.totalRides,
               rating: dp.rating > 0 ? dp.rating : null,
-            )),
-          );
-        } else {
-          // For riders, count completed bookings
-          int completedCount = 0;
-          final bookingsResult =
-              await _bookingRepo.getBookingsByRider(event.userId);
-          bookingsResult.fold(
-            (_) {},
-            (bookings) {
-              completedCount = bookings
-                  .where((b) => b.status == BookingStatus.completed)
-                  .length;
-            },
-          );
-          emit(ProfileLoaded(user: user, totalRides: completedCount));
-        }
-      },
-    );
+            ),
+          ),
+        );
+      } else {
+        // For riders, count completed bookings
+        int completedCount = 0;
+        final bookingsResult = await _bookingRepo.getBookingsByRider(
+          event.userId,
+        );
+        bookingsResult.fold((_) {}, (bookings) {
+          completedCount =
+              bookings.where((b) => b.status == BookingStatus.completed).length;
+        });
+        emit(ProfileLoaded(user: user, totalRides: completedCount));
+      }
+    });
   }
 
   Future<void> _onUpdate(
@@ -208,42 +206,50 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     final prev = state;
     if (event.silent && prev is ProfileLoaded) {
-      emit(ProfileLoaded(
-        user: event.user,
-        driverProfile: prev.driverProfile,
-        totalRides: prev.totalRides,
-        rating: prev.rating,
-        messageSeq: prev.messageSeq,
-      ));
+      emit(
+        ProfileLoaded(
+          user: event.user,
+          driverProfile: prev.driverProfile,
+          totalRides: prev.totalRides,
+          rating: prev.rating,
+          messageSeq: prev.messageSeq,
+        ),
+      );
     }
     final result = await _repo.updateUser(event.user);
     if (prev is! ProfileLoaded) {
-      result.fold((f) => emit(ProfileError(f.message)),
-          (_) => emit(ProfileUpdated(event.user)));
+      result.fold(
+        (f) => emit(ProfileError(f.message)),
+        (_) => emit(ProfileUpdated(event.user)),
+      );
       return;
     }
     // Se conservan los viajes y la valoración ya cargados; si falla, el
     // perfil sigue a la vista con los datos anteriores.
     result.fold(
-      (f) => emit(ProfileLoaded(
-        user: prev.user,
-        driverProfile: prev.driverProfile,
-        totalRides: prev.totalRides,
-        rating: prev.rating,
-        message: 'No pudimos guardar los cambios. Inténtalo de nuevo.',
-        isError: true,
-        messageSeq: prev.messageSeq + 1,
-      )),
-      (_) {
-        if (event.silent) return;
-        emit(ProfileLoaded(
-          user: event.user,
+      (f) => emit(
+        ProfileLoaded(
+          user: prev.user,
           driverProfile: prev.driverProfile,
           totalRides: prev.totalRides,
           rating: prev.rating,
-          message: 'Perfil actualizado',
+          message: 'No pudimos guardar los cambios. Inténtalo de nuevo.',
+          isError: true,
           messageSeq: prev.messageSeq + 1,
-        ));
+        ),
+      ),
+      (_) {
+        if (event.silent) return;
+        emit(
+          ProfileLoaded(
+            user: event.user,
+            driverProfile: prev.driverProfile,
+            totalRides: prev.totalRides,
+            rating: prev.rating,
+            message: 'Perfil actualizado',
+            messageSeq: prev.messageSeq + 1,
+          ),
+        );
       },
     );
   }

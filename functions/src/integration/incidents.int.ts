@@ -112,7 +112,11 @@ describe('raiseIncident', () => {
     for (let i = 1; i < RATE_LIMIT; i++) await raiseIncident(deps(), 'ana', { bookingId: 'b1' });
     const over = await raiseIncident(deps(), 'ana', { bookingId: 'b1' });
     expect(over).toMatchObject({ incidentId: first.incidentId, rateLimited: true, count: RATE_LIMIT });
+    // Tras cancelar, volver a pulsar reabre el mismo incidente aunque se
+    // haya superado el límite: nunca se bloquea una petición de ayuda real.
     await cancelIncident(deps(), 'ana', { incidentId: first.incidentId });
+    expect((await raiseIncident(deps(), 'ana', { bookingId: 'b1' })).status).toBe('open');
+    await closeIncident(deps(), jefa, { incidentId: first.incidentId, note: 'Verificado por teléfono.' });
     expect(await failure(raiseIncident(deps(), 'ana', { bookingId: 'b1' })))
       .toEqual({ code: 'resource-exhausted', reason: 'rate_limited' });
     clock += 60 * 60 * 1000 + 1;
@@ -160,18 +164,40 @@ describe('raiseIncident', () => {
   });
 });
 
-describe('cancelIncident (falsa alarma)', () => {
-  it('quien lo disparó lo cancela; queda registrado y el admin recibe el aviso', async () => {
+describe('cancelIncident (falsa alarma o coacción)', () => {
+  it('pasa a cancel_requested: aviso alto «verificar por llamada», push y el incidente sigue abierto', async () => {
     const { incidentId } = await raiseIncident(deps(), 'ana', { bookingId: 'b1' });
-    expect(await cancelIncident(deps(), 'ana', { incidentId })).toEqual({ status: 'cancelled_by_reporter', alreadyCancelled: false });
+    expect(await cancelIncident(deps(), 'ana', { incidentId })).toEqual({ status: 'cancel_requested', alreadyCancelled: false });
     const inc = await incident(incidentId);
-    expect(inc).toMatchObject({ status: 'cancelled_by_reporter', cancelledByReporter: true, locationRetention: 'not_configured' });
-    expect(await alertTypes()).toEqual(['incident', 'incident_cancelled']);
+    expect(inc).toMatchObject({ status: 'cancel_requested', cancelledByReporter: true });
+    const alerts = (await db.collection('adminAlerts').get()).docs.map((d) => d.data());
+    expect(alerts).toEqual(expect.arrayContaining([expect.objectContaining({
+      type: 'incident_cancel_requested', severity: 'high',
+      message: expect.stringContaining('Cancelado por el usuario: verificar por llamada'),
+    })]));
     expect(push).toHaveBeenCalledTimes(2);
-    expect(await state('b1')).toMatchObject({ incidentOpen: false, activeIncidentId: null });
+    expect(push.mock.calls[1][1]).toBe('SOS cancelado: verificar por llamada');
+    // La reserva sigue con el incidente abierto hasta que un admin lo cierre.
+    expect(await state('b1')).toMatchObject({ incidentOpen: true, activeIncidentId: incidentId });
     // Repetirlo no duplica nada.
     expect((await cancelIncident(deps(), 'ana', { incidentId })).alreadyCancelled).toBe(true);
     expect(push).toHaveBeenCalledTimes(2);
+  });
+
+  it('cancelar tras el reconocimiento vuelve a pedir reconocimiento', async () => {
+    const { incidentId } = await raiseIncident(deps(), 'ana', { bookingId: 'b1' });
+    await acknowledgeIncident(deps(), jefa, { incidentId });
+    await cancelIncident(deps(), 'ana', { incidentId });
+    expect((await incident(incidentId)).status).toBe('cancel_requested');
+  });
+
+  it('pulsar SOS de nuevo tras cancelar lo reabre y avisa', async () => {
+    const { incidentId } = await raiseIncident(deps(), 'ana', { bookingId: 'b1' });
+    await cancelIncident(deps(), 'ana', { incidentId });
+    const again = await raiseIncident(deps(), 'ana', { bookingId: 'b1' });
+    expect(again).toMatchObject({ incidentId, status: 'open', count: 2 });
+    expect(await incident(incidentId)).toMatchObject({ status: 'open', cancelledByReporter: false });
+    expect(push).toHaveBeenCalledTimes(3);
   });
 
   it('ni la contraparte ni un tercero lo cancelan', async () => {
@@ -180,6 +206,12 @@ describe('cancelIncident (falsa alarma)', () => {
       expect(await failure(cancelIncident(deps(), uid, { incidentId }))).toEqual({ code: 'permission-denied', reason: 'not_reporter' });
     }
     expect((await incident(incidentId)).status).toBe('open');
+  });
+
+  it('cerrado no se cancela', async () => {
+    const { incidentId } = await raiseIncident(deps(), 'ana', { bookingId: 'b1' });
+    await closeIncident(deps(), jefa, { incidentId, note: 'Resuelto por teléfono.' });
+    expect((await failure(cancelIncident(deps(), 'ana', { incidentId }))).reason).toBe('already_closed');
   });
 });
 
@@ -205,12 +237,13 @@ describe('acknowledgeIncident y closeIncident (admin)', () => {
     expect((await incident(incidentId)).status).toBe('open');
   });
 
-  it('un incidente cancelado por quien lo disparó también se cierra con nota', async () => {
+  it('cancelado por el usuario: un admin lo reconoce y lo cierra con nota', async () => {
     const { incidentId } = await raiseIncident(deps(), 'ana', { bookingId: 'b1' });
     await cancelIncident(deps(), 'ana', { incidentId });
-    expect((await failure(acknowledgeIncident(deps(), jefa, { incidentId }))).reason).toBe('not_open');
-    await closeIncident(deps(), jefa, { incidentId, note: 'Confirmado por teléfono: falsa alarma.' });
+    expect(await acknowledgeIncident(deps(), jefa, { incidentId })).toEqual({ status: 'acknowledged', alreadyAcknowledged: false });
+    await closeIncident(deps(), jefa, { incidentId, note: 'Llamé: estaba bien, falsa alarma.' });
     expect(await incident(incidentId)).toMatchObject({ status: 'closed', cancelledByReporter: true });
+    expect(await state('b1')).toMatchObject({ incidentOpen: false });
   });
 
   it('solo un admin: las callables desplegadas rechazan a pasajero y chófer', async () => {
@@ -279,9 +312,18 @@ describe('escalada (reloj simulado)', () => {
     expect((await incident(incidentId)).escalation.count).toBe(0);
   });
 
-  it('cancelado por quien lo disparó: no escala', async () => {
+  it('cancelado por el usuario: la escalada sigue hasta que un admin lo reconozca', async () => {
     const { incidentId } = await raiseIncident(deps(), 'ana', { bookingId: 'b1' });
     await cancelIncident(deps(), 'ana', { incidentId });
+    push.mockClear();
+    clock += 120 * 1000;
+    expect(await escalateIncidents(deps())).toEqual([incidentId]);
+    const msgs = (await db.collection('adminAlerts').where('type', '==', 'incident_escalated').get()).docs.map((d) => d.data().message);
+    expect(msgs[0]).toContain('Cancelado por el usuario: verificar por llamada');
+    clock += 120 * 1000;
+    expect(await escalateIncidents(deps())).toEqual([incidentId]);
+    expect(push).toHaveBeenCalledTimes(2);
+    await acknowledgeIncident(deps(), jefa, { incidentId });
     clock += 10 * 60 * 1000;
     expect(await escalateIncidents(deps())).toEqual([]);
   });

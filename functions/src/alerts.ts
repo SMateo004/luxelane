@@ -5,9 +5,10 @@
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
+import { docId } from './schemas';
 
-const resolveSchema = z.strictObject({
-  alertId: z.string().trim().min(1).max(128),
+export const resolveSchema = z.strictObject({
+  alertId: docId,
   note: z.string().trim().max(500).optional(),
 });
 

@@ -147,10 +147,7 @@ class RideBloc extends Bloc<RideEvent, RideState> {
       driverRoute: const [],
     );
     final result = await _repo.createRide(ride);
-    result.fold(
-      (f) => emit(RideError(f.message)),
-      (r) => emit(RideActive(r)),
-    );
+    result.fold((f) => emit(RideError(f.message)), (r) => emit(RideActive(r)));
   }
 
   Future<void> _onWatch(RideWatched event, Emitter<RideState> emit) async {
@@ -183,10 +180,7 @@ class RideBloc extends Bloc<RideEvent, RideState> {
       distanceKm: event.distanceKm,
       durationMin: event.durationMin,
     );
-    result.fold(
-      (f) => emit(RideError(f.message)),
-      (_) {},
-    );
+    result.fold((f) => emit(RideError(f.message)), (_) {});
   }
 
   Future<void> _onRating(

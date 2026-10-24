@@ -142,9 +142,13 @@ class _CodeBody extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('CÓDIGO DE RECOGIDA',
-              style: LuxTypography.caption
-                  .copyWith(letterSpacing: 1.4, color: LuxColors.inkSecondary)),
+          Text(
+            'CÓDIGO DE RECOGIDA',
+            style: LuxTypography.caption.copyWith(
+              letterSpacing: 1.4,
+              color: LuxColors.inkSecondary,
+            ),
+          ),
           const SizedBox(height: LuxSpacing.sm),
           Semantics(
             label: 'Código de recogida ${code.split('').join(' ')}',

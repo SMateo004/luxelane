@@ -31,7 +31,10 @@ class DefaultFirebaseOptions {
   }
 
   static FirebaseOptions _forPlatform(
-      FirebaseOptions web, FirebaseOptions android, FirebaseOptions ios) {
+    FirebaseOptions web,
+    FirebaseOptions android,
+    FirebaseOptions ios,
+  ) {
     if (kIsWeb) {
       return web;
     }
@@ -82,12 +85,14 @@ class DefaultFirebaseOptions {
   // Native apps (Android/iOS). IDs come from the Firebase console → Project
   // settings → Your apps of the project being built (FIREBASE_ENV), and are
   // passed at build time so no file must be committed.
-  static const _androidAppId =
-      String.fromEnvironment('FIREBASE_ANDROID_APP_ID');
+  static const _androidAppId = String.fromEnvironment(
+    'FIREBASE_ANDROID_APP_ID',
+  );
   // Sin valor por defecto: cada app nativa usa la clave de su app en Firebase
   // (no la web). La release de Android/iOS no compila sin ellas.
-  static const _androidApiKey =
-      String.fromEnvironment('FIREBASE_ANDROID_API_KEY');
+  static const _androidApiKey = String.fromEnvironment(
+    'FIREBASE_ANDROID_API_KEY',
+  );
   static const _iosAppId = String.fromEnvironment('FIREBASE_IOS_APP_ID');
   static const _iosApiKey = String.fromEnvironment('FIREBASE_IOS_API_KEY');
 

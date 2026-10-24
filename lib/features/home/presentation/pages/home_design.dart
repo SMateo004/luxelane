@@ -37,8 +37,11 @@ TextStyle eyebrow({Color color = LD.sph}) => GoogleFonts.montserrat(
       decoration: TextDecoration.none,
     );
 
-TextStyle uiLabel(
-        {double size = 10, Color color = LD.ink3, double spacing = 2.4}) =>
+TextStyle uiLabel({
+  double size = 10,
+  Color color = LD.ink3,
+  double spacing = 2.4,
+}) =>
     GoogleFonts.montserrat(
       fontSize: size,
       fontWeight: FontWeight.w400,
@@ -77,8 +80,12 @@ TextStyle bodyText({double size = 15, Color color = LD.ink2}) =>
 // ============================================================
 
 class LuxEyebrow extends StatelessWidget {
-  const LuxEyebrow(this.text,
-      {super.key, this.color = LD.sph, this.dark = false});
+  const LuxEyebrow(
+    this.text, {
+    super.key,
+    this.color = LD.sph,
+    this.dark = false,
+  });
   final String text;
   final Color color;
   final bool dark;

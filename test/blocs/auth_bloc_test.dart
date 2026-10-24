@@ -40,16 +40,25 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'cierra la sesión si el admin bloquea la cuenta con la app abierta',
       build: () {
-        when(() => repo.login(
-                email: any(named: 'email'), password: any(named: 'password')))
-            .thenAnswer((_) async => Right(_mockUser));
-        when(() => repo.watchUser('uid-1')).thenAnswer((_) => Stream.value(
-            User.fromJson({..._mockUser.toJson(), 'isActive': false})));
+        when(
+          () => repo.login(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => Right(_mockUser));
+        when(() => repo.watchUser('uid-1')).thenAnswer(
+          (_) => Stream.value(
+            User.fromJson({..._mockUser.toJson(), 'isActive': false}),
+          ),
+        );
         when(() => repo.logout()).thenAnswer((_) async => const Right(null));
         return AuthBloc(authRepository: repo);
       },
       act: (bloc) => bloc.add(
-        const LoginRequested(email: 'test@luxelane.com', password: 'secret'),
+        const LoginRequested(
+          email: 'test@luxelane.com',
+          password: 'secret',
+        ),
       ),
       expect: () => [
         const AuthLoading(),
@@ -63,91 +72,87 @@ void main() {
       'al abrir la app con la cuenta bloqueada explica el motivo',
       build: () {
         when(() => repo.authStateChanges).thenAnswer(
-            (_) => Stream.error(const AuthFailure(kBlockedAccountMessage)));
+          (_) => Stream.error(const AuthFailure(kBlockedAccountMessage)),
+        );
         return AuthBloc(authRepository: repo);
       },
       act: (bloc) => bloc.add(const AuthStarted()),
-      expect: () => [
-        const AuthLoading(),
-        const AuthError(kBlockedAccountMessage),
-      ],
+      expect: () =>
+          [const AuthLoading(), const AuthError(kBlockedAccountMessage)],
     );
 
     blocTest<AuthBloc, AuthState>(
       'emits [AuthLoading, AuthAuthenticated] on LoginRequested success',
       build: () {
-        when(() => repo.login(
-                email: any(named: 'email'), password: any(named: 'password')))
-            .thenAnswer((_) async => Right(_mockUser));
+        when(
+          () => repo.login(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => Right(_mockUser));
         return AuthBloc(authRepository: repo);
       },
       act: (bloc) => bloc.add(
-        const LoginRequested(email: 'test@luxelane.com', password: 'secret'),
+        const LoginRequested(
+          email: 'test@luxelane.com',
+          password: 'secret',
+        ),
       ),
-      expect: () => [
-        const AuthLoading(),
-        AuthAuthenticated(_mockUser),
-      ],
+      expect: () => [const AuthLoading(), AuthAuthenticated(_mockUser)],
     );
 
     blocTest<AuthBloc, AuthState>(
       'emits [AuthLoading, AuthError] on LoginRequested failure',
       build: () {
-        when(() => repo.login(
-                email: any(named: 'email'), password: any(named: 'password')))
-            .thenAnswer(
-                (_) async => const Left(AuthFailure('Wrong credentials')));
+        when(
+          () => repo.login(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => const Left(AuthFailure('Wrong credentials')));
         return AuthBloc(authRepository: repo);
       },
       act: (bloc) => bloc.add(
         const LoginRequested(email: 'x@x.com', password: 'wrong'),
       ),
-      expect: () => [
-        const AuthLoading(),
-        const AuthError('Wrong credentials'),
-      ],
+      expect: () => [const AuthLoading(), const AuthError('Wrong credentials')],
     );
 
     blocTest<AuthBloc, AuthState>(
       'emits [AuthLoading, AuthAuthenticated] on GoogleSignInRequested success',
       build: () {
-        when(() => repo.signInWithGoogle())
-            .thenAnswer((_) async => Right(_mockUser));
+        when(
+          () => repo.signInWithGoogle(),
+        ).thenAnswer((_) async => Right(_mockUser));
         return AuthBloc(authRepository: repo);
       },
       act: (bloc) => bloc.add(const GoogleSignInRequested()),
-      expect: () => [
-        const AuthLoading(),
-        AuthAuthenticated(_mockUser),
-      ],
+      expect: () => [const AuthLoading(), AuthAuthenticated(_mockUser)],
     );
 
     blocTest<AuthBloc, AuthState>(
       'returns to AuthUnauthenticated without error when Google is cancelled',
       build: () {
-        when(() => repo.signInWithGoogle())
-            .thenAnswer((_) async => const Left(AuthCancelledFailure()));
+        when(
+          () => repo.signInWithGoogle(),
+        ).thenAnswer((_) async => const Left(AuthCancelledFailure()));
         return AuthBloc(authRepository: repo);
       },
       act: (bloc) => bloc.add(const GoogleSignInRequested()),
-      expect: () => [
-        const AuthLoading(),
-        const AuthUnauthenticated(),
-      ],
+      expect: () => [const AuthLoading(), const AuthUnauthenticated()],
     );
 
     blocTest<AuthBloc, AuthState>(
       'emits [AuthLoading, AuthError] on GoogleSignInRequested failure',
       build: () {
         when(() => repo.signInWithGoogle()).thenAnswer(
-            (_) async => const Left(AuthFailure('Google no disponible')));
+          (_) async => const Left(AuthFailure('Google no disponible')),
+        );
         return AuthBloc(authRepository: repo);
       },
       act: (bloc) => bloc.add(const GoogleSignInRequested()),
-      expect: () => [
-        const AuthLoading(),
-        const AuthError('Google no disponible'),
-      ],
+      expect: () =>
+          [const AuthLoading(), const AuthError('Google no disponible')],
     );
 
     blocTest<AuthBloc, AuthState>(
@@ -163,26 +168,27 @@ void main() {
     blocTest<AuthBloc, AuthState>(
       'emits [AuthLoading, AuthAuthenticated] on RegisterRequested success',
       build: () {
-        when(() => repo.register(
-              email: any(named: 'email'),
-              password: any(named: 'password'),
-              phone: any(named: 'phone'),
-              displayName: any(named: 'displayName'),
-              role: any(named: 'role'),
-            )).thenAnswer((_) async => Right(_mockUser));
+        when(
+          () => repo.register(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+            phone: any(named: 'phone'),
+            displayName: any(named: 'displayName'),
+            role: any(named: 'role'),
+          ),
+        ).thenAnswer((_) async => Right(_mockUser));
         return AuthBloc(authRepository: repo);
       },
-      act: (bloc) => bloc.add(const RegisterRequested(
-        email: 'test@luxelane.com',
-        password: 'secret',
-        phone: '+1555000000',
-        displayName: 'Test User',
-        role: UserRole.rider,
-      )),
-      expect: () => [
-        const AuthLoading(),
-        AuthAuthenticated(_mockUser),
-      ],
+      act: (bloc) => bloc.add(
+        const RegisterRequested(
+          email: 'test@luxelane.com',
+          password: 'secret',
+          phone: '+1555000000',
+          displayName: 'Test User',
+          role: UserRole.rider,
+        ),
+      ),
+      expect: () => [const AuthLoading(), AuthAuthenticated(_mockUser)],
     );
   });
 }

@@ -27,8 +27,8 @@ Future<void> showIncidentHelp(BuildContext context, IncidentBloc bloc) =>
       useSafeArea: true,
       backgroundColor: LuxColors.surface,
       shape: const RoundedRectangleBorder(
-          borderRadius:
-              BorderRadius.vertical(top: Radius.circular(LuxRadius.xl))),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
+      ),
       builder: (_) => BlocProvider.value(
         value: bloc,
         child: SingleChildScrollView(
@@ -85,8 +85,11 @@ class SosEntry extends StatelessWidget {
               // Aviso en curso: acceso directo a la pantalla de ayuda.
               return ActionChip(
                 key: const ValueKey('sos-live'),
-                avatar: const Icon(Icons.support_agent_rounded,
-                    size: 18, color: LuxColors.error),
+                avatar: const Icon(
+                  Icons.support_agent_rounded,
+                  size: 18,
+                  color: LuxColors.error,
+                ),
                 label: const Text('Ayuda en curso'),
                 onPressed: () => openHelp(context, bloc),
               );

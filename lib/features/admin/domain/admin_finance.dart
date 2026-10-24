@@ -167,18 +167,22 @@ class FinancialSummary {
           final split = b.settlementOr(commissionPct);
           final commission = refunded ? 0.0 : split.platformCommission;
           final payout = refunded ? 0.0 : split.driverPayout;
-          entries.add(LedgerEntry(
-            booking: b,
-            payment: p,
-            amount: amount,
-            status: status,
-            commission: commission,
-            driverPayout: payout,
-          ));
+          entries.add(
+            LedgerEntry(
+              booking: b,
+              payment: p,
+              amount: amount,
+              status: status,
+              commission: commission,
+              driverPayout: payout,
+            ),
+          );
           if (!refunded) {
             if (b.driverId != null) {
               final d = byDriver.putIfAbsent(
-                  b.driverId!, () => DriverFinance(b.driverId!));
+                b.driverId!,
+                () => DriverFinance(b.driverId!),
+              );
               d.rides++;
               d.billed += amount;
               d.payout += payout;
@@ -273,15 +277,20 @@ class FinancialSummary {
 
   /// Completados sin cobro capturado (pendiente o fallido): cuentas por cobrar.
   double get receivables => _sum(
-      entries.where((e) =>
-          e.status == ChargeStatus.pendingCollection ||
-          e.status == ChargeStatus.failed),
-      (e) => e.amount);
+        entries.where(
+          (e) =>
+              e.status == ChargeStatus.pendingCollection ||
+              e.status == ChargeStatus.failed,
+        ),
+        (e) => e.amount,
+      );
 
   int get receivablesCount => entries
-      .where((e) =>
-          e.status == ChargeStatus.pendingCollection ||
-          e.status == ChargeStatus.failed)
+      .where(
+        (e) =>
+            e.status == ChargeStatus.pendingCollection ||
+            e.status == ChargeStatus.failed,
+      )
       .length;
 
   double get failed => _sum(_where(ChargeStatus.failed), (e) => e.amount);
@@ -312,23 +321,26 @@ class FinancialSummary {
         v.contains(RegExp('[",\n;]')) ? '"${v.replaceAll('"', '""')}"' : v;
     String money(double v) => v.toStringAsFixed(2);
     final buf = StringBuffer(
-        'fecha,reserva,pasajero,chofer,clase,servicio,importe_bs,estado_cobro,'
-        'comision_bs,pago_chofer_bs,id_pago\n');
+      'fecha,reserva,pasajero,chofer,clase,servicio,importe_bs,estado_cobro,'
+      'comision_bs,pago_chofer_bs,id_pago\n',
+    );
     for (final e in entries) {
       final b = e.booking;
-      buf.writeln([
-        e.date.toIso8601String(),
-        b.id,
-        esc(nameOf(b.riderId)),
-        esc(b.driverId == null ? '' : nameOf(b.driverId!)),
-        b.vehicleClass.label,
-        b.serviceType.label,
-        money(e.amount),
-        e.status.label,
-        money(e.commission),
-        money(e.driverPayout),
-        e.payment?.id ?? '',
-      ].join(','));
+      buf.writeln(
+        [
+          e.date.toIso8601String(),
+          b.id,
+          esc(nameOf(b.riderId)),
+          esc(b.driverId == null ? '' : nameOf(b.driverId!)),
+          b.vehicleClass.label,
+          b.serviceType.label,
+          money(e.amount),
+          e.status.label,
+          money(e.commission),
+          money(e.driverPayout),
+          e.payment?.id ?? '',
+        ].join(','),
+      );
     }
     return buf.toString();
   }

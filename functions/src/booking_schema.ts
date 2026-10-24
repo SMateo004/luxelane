@@ -15,6 +15,9 @@ export const CAPACITY: Record<string, { passengers: number; luggage: number }> =
   businessSuv: { passengers: 4, luggage: 4 },
 };
 
+// 1 de enero de 2100 (UTC): ninguna reserva legítima va más allá.
+const MAX_EPOCH_MS = 4_102_444_800_000;
+
 const place = z.strictObject({
   name: z.string().max(200).default(''),
   address: z.string().trim().min(1).max(300),
@@ -35,7 +38,7 @@ const trip = {
   origin: place,
   destination: place.optional(),
   /** Hora de recogida en milisegundos desde 1970 (UTC). */
-  scheduledAt: z.number().int().positive(),
+  scheduledAt: z.number().int().positive().max(MAX_EPOCH_MS),
   vehicleClass: z.enum(VEHICLE_CLASSES),
   serviceType: z.enum(SERVICE_TYPES),
   // La tarifa valida que sean enteras (error invalid_hours).
@@ -52,13 +55,13 @@ export const quoteSchema = z.strictObject(trip)
 
 export const createSchema = z.strictObject({
   ...trip,
-  passengerCount: z.number().int().min(1),
-  luggageCount: z.number().int().min(0),
+  passengerCount: z.number().int().min(1).max(20),
+  luggageCount: z.number().int().min(0).max(20),
   flightNumber: z.string().regex(/^([A-Z]{2}|[A-Z][0-9]|[0-9][A-Z]|[A-Z]{3})([0-9]{1,4})[A-Z]?$/).optional(),
   flightType: z.enum(['domestic', 'international']).optional(),
   notes: z.string().max(1000).optional(),
   guest: guestSchema.optional(),
-  quotedPrice: z.number().positive().optional(),
+  quotedPrice: z.number().positive().max(1_000_000).optional(),
   /**
    * Un UUID v4 por intento de reserva, reutilizado en los reintentos: la
    * misma solicitud nunca crea dos reservas. Obligatorio (solo la app nueva

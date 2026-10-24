@@ -54,8 +54,10 @@ class _RegisterPageState extends State<RegisterPage> {
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message,
-                  style: const TextStyle(color: LuxColors.onAccent)),
+              content: Text(
+                state.message,
+                style: const TextStyle(color: LuxColors.onAccent),
+              ),
               backgroundColor: LuxColors.error,
             ),
           );
@@ -79,18 +81,27 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: const LuxelaneWordmark(size: 11),
               ),
               const SizedBox(height: 48),
-              Text('CREAR CUENTA',
-                  style: LuxTypography.caption.copyWith(
-                      color: LuxColors.sapphire,
-                      letterSpacing: 3,
-                      fontSize: 10)),
+              Text(
+                'CREAR CUENTA',
+                style: LuxTypography.caption.copyWith(
+                  color: LuxColors.sapphire,
+                  letterSpacing: 3,
+                  fontSize: 10,
+                ),
+              ),
               const SizedBox(height: 10),
-              Text('Bienvenido\na Luxelane.',
-                  style: LuxTypography.displayMedium
-                      .copyWith(fontSize: 40, height: 1.15)),
+              Text(
+                'Bienvenido\na Luxelane.',
+                style: LuxTypography.displayMedium.copyWith(
+                  fontSize: 40,
+                  height: 1.15,
+                ),
+              ),
               const SizedBox(height: 8),
-              const Text('Crea tu cuenta en menos de un minuto.',
-                  style: LuxTypography.bodyMedium),
+              const Text(
+                'Crea tu cuenta en menos de un minuto.',
+                style: LuxTypography.bodyMedium,
+              ),
               const SizedBox(height: 40),
               _formContent(),
             ],
@@ -116,18 +127,24 @@ class _RegisterPageState extends State<RegisterPage> {
                     constraints: const BoxConstraints(maxWidth: 440),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 48, vertical: 64),
+                        horizontal: 48,
+                        vertical: 64,
+                      ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Crear cuenta',
-                              style: LuxTypography.displayMedium
-                                  .copyWith(fontSize: 42)),
+                          Text(
+                            'Crear cuenta',
+                            style: LuxTypography.displayMedium.copyWith(
+                              fontSize: 42,
+                            ),
+                          ),
                           const SizedBox(height: 6),
                           const Text(
-                              'Solo te pediremos lo necesario para tu chófer.',
-                              style: LuxTypography.bodyMedium),
+                            'Solo te pediremos lo necesario para tu chófer.',
+                            style: LuxTypography.bodyMedium,
+                          ),
                           const SizedBox(height: 40),
                           _formContent(),
                         ],
@@ -199,45 +216,63 @@ class _RegisterPageState extends State<RegisterPage> {
                 Text(
                   'Tu nombre y teléfono permiten a tu chófer recibirte y contactarte.',
                   textAlign: TextAlign.center,
-                  style: LuxTypography.caption
-                      .copyWith(color: LuxColors.inkSecondary),
+                  style: LuxTypography.caption.copyWith(
+                    color: LuxColors.inkSecondary,
+                  ),
                 ),
                 const SizedBox(height: LuxSpacing.xs),
                 Wrap(
                   alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Text('Al crear tu cuenta aceptas los ',
-                        style: LuxTypography.caption
-                            .copyWith(color: LuxColors.inkSecondary)),
+                    Text(
+                      'Al crear tu cuenta aceptas los ',
+                      style: LuxTypography.caption.copyWith(
+                        color: LuxColors.inkSecondary,
+                      ),
+                    ),
                     GestureDetector(
                       onTap: () => context.push('/legal/terminos'),
-                      child: Text('Términos',
-                          style: LuxTypography.caption.copyWith(
-                              color: LuxColors.sapphire,
-                              decoration: TextDecoration.underline)),
+                      child: Text(
+                        'Términos',
+                        style: LuxTypography.caption.copyWith(
+                          color: LuxColors.sapphire,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
                     ),
-                    Text(' y la ',
-                        style: LuxTypography.caption
-                            .copyWith(color: LuxColors.inkSecondary)),
+                    Text(
+                      ' y la ',
+                      style: LuxTypography.caption.copyWith(
+                        color: LuxColors.inkSecondary,
+                      ),
+                    ),
                     GestureDetector(
                       onTap: () => context.push('/legal/privacidad'),
-                      child: Text('Política de privacidad',
-                          style: LuxTypography.caption.copyWith(
-                              color: LuxColors.sapphire,
-                              decoration: TextDecoration.underline)),
+                      child: Text(
+                        'Política de privacidad',
+                        style: LuxTypography.caption.copyWith(
+                          color: LuxColors.sapphire,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
                     ),
-                    Text('.',
-                        style: LuxTypography.caption
-                            .copyWith(color: LuxColors.inkSecondary)),
+                    Text(
+                      '.',
+                      style: LuxTypography.caption.copyWith(
+                        color: LuxColors.inkSecondary,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: LuxSpacing.sm),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('¿Ya tienes cuenta? ',
-                        style: LuxTypography.bodyMedium),
+                    const Text(
+                      '¿Ya tienes cuenta? ',
+                      style: LuxTypography.bodyMedium,
+                    ),
                     TextButton(
                       onPressed: () => context.go('/login'),
                       child: const Text('Inicia sesión'),

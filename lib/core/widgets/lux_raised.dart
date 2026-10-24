@@ -56,8 +56,9 @@ BoxDecoration luxRaisedDecoration({
         ? const []
         : [
             BoxShadow(
-              color: (solid ? fill : LD.ink)
-                  .withValues(alpha: solid ? 0.24 : 0.06),
+              color: (solid ? fill : LD.ink).withValues(
+                alpha: solid ? 0.24 : 0.06,
+              ),
               blurRadius: solid ? 20 : 12,
               spreadRadius: -6,
               offset: const Offset(0, 8),
@@ -183,7 +184,10 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
               width: widget.expand ? double.infinity : null,
               padding: const EdgeInsets.symmetric(horizontal: 24),
               transform: Matrix4.translationValues(
-                  0, _hover && _enabled && !_pressed ? -1 : 0, 0),
+                0,
+                _hover && _enabled && !_pressed ? -1 : 0,
+                0,
+              ),
               decoration: luxRaisedDecoration(
                 variant: widget.variant,
                 pressed: _pressed,
@@ -198,7 +202,9 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
                   switchOutCurve: LuxMotion.accelerate,
                   child: widget.loading
                       ? LuxLoadingDots(
-                          key: const ValueKey('loading'), color: fg)
+                          key: const ValueKey('loading'),
+                          color: fg,
+                        )
                       : label,
                 ),
               ),

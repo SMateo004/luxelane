@@ -37,29 +37,40 @@ class IncidentHelpSheet extends StatelessWidget {
     if (s.offline) {
       return (
         'No pudimos avisar a central',
-        'No hay conexión. Llama o envía el mensaje ya preparado.'
+        'No hay conexión. Llama o envía el mensaje ya preparado.',
       );
     }
     final f = s.failure;
     if (f != null) return ('No pudimos avisar a central', f.message);
     final i = s.incident;
+    // Cancelado por el usuario (aunque central ya lo haya reconocido).
+    if (i != null &&
+        i.cancelledByReporter &&
+        i.status != IncidentStatus.closed) {
+      return (
+        'Aviso cancelado',
+        'Central te llamará para verificar que estás bien. Ya no compartimos '
+            'tu ubicación.',
+      );
+    }
     return switch (i?.status) {
       IncidentStatus.open => (
           'Avisamos a central',
           'Te contactarán en breve. Compartimos tu ubicación mientras dure '
-              'el aviso.'
+              'el aviso.',
         ),
       IncidentStatus.acknowledged => (
           'Central recibió tu aviso',
-          'Una persona de central lo está atendiendo.'
+          'Una persona de central lo está atendiendo.',
         ),
       IncidentStatus.closed => (
           'Aviso cerrado',
-          'Central cerró el aviso. Ya no compartimos tu ubicación.'
+          'Central cerró el aviso. Ya no compartimos tu ubicación.',
         ),
-      IncidentStatus.cancelledByReporter => (
+      IncidentStatus.cancelRequested => (
           'Aviso cancelado',
-          'Central lo revisará igualmente. Ya no compartimos tu ubicación.'
+          'Central te llamará para verificar que estás bien. Ya no compartimos '
+              'tu ubicación.',
         ),
       null => ('Ayuda', 'Mantén pulsado SOS para avisar a central.'),
     };
@@ -72,15 +83,18 @@ class IncidentHelpSheet extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         title: const Text('¿Fue una falsa alarma?'),
         content: const Text(
-            'Cancelaremos el aviso. Central lo verá igualmente y queda '
-            'registrado.'),
+          'Cancelaremos el aviso. Central lo verá igualmente y queda '
+          'registrado.',
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: const Text('Volver')),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Volver'),
+          ),
           FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: const Text('Cancelar aviso')),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Cancelar aviso'),
+          ),
         ],
       ),
     );
@@ -89,110 +103,125 @@ class IncidentHelpSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      BlocBuilder<IncidentBloc, IncidentState>(builder: (context, s) {
-        final (title, body) = texts(s);
-        final phone = dispatchPhone;
-        final loc = s.lastLocation;
-        final count = s.incident?.count ?? 0;
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(
-              LuxSpacing.lg, LuxSpacing.lg, LuxSpacing.lg, LuxSpacing.xl),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AnimatedSwitcher(
-                duration: LuxMotion.of(context, LuxMotion.base),
-                child: Column(
-                  key: ValueKey(title),
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Semantics(
-                      liveRegion: true,
-                      child: Text(title, style: LuxTypography.titleLarge),
-                    ),
-                    const SizedBox(height: LuxSpacing.xs),
-                    Text(body, style: LuxTypography.bodyMedium),
-                    if (count > 1 && s.live)
-                      Padding(
-                        padding: const EdgeInsets.only(top: LuxSpacing.xs),
-                        child: Text('Aviso enviado $count veces.',
-                            style: LuxTypography.caption),
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: LuxSpacing.lg),
-              if (s.offline && phone != null) ...[
-                LuxButton(
-                  label: 'Llamar a central',
-                  icon: Icons.call_rounded,
-                  onPressed: () => _open(telUri(phone)),
-                ),
-                const SizedBox(height: LuxSpacing.sm),
-                LuxOutlinedButton(
-                  label: 'Enviar SMS a central',
-                  icon: Icons.sms_outlined,
-                  onPressed: () => _open(incidentSmsUri(
-                      phone, bookingShortId(bookingId),
-                      lat: loc?.lat, lng: loc?.lng)),
-                ),
-                const SizedBox(height: LuxSpacing.sm),
-              ] else if (phone != null) ...[
-                LuxOutlinedButton(
-                  label: 'Llamar a central',
-                  icon: Icons.call_outlined,
-                  onPressed: () => _open(telUri(phone)),
-                ),
-                const SizedBox(height: LuxSpacing.sm),
-              ],
-              if (s.failure != null)
-                LuxButton.ghost(
-                  label: 'Reintentar el aviso',
-                  onPressed: s.sending
-                      ? null
-                      : () => context
-                          .read<IncidentBloc>()
-                          .add(const IncidentRaised()),
-                ),
-              const SizedBox(height: LuxSpacing.md),
-              const LuxDivider(),
-              const SizedBox(height: LuxSpacing.sm),
-              if (emergencyNumbers.isEmpty)
-                const Text(kNoNumbersHelp, style: LuxTypography.bodyMedium)
-              else
-                for (final e in emergencyNumbers.entries)
-                  LuxListRow(
-                    icon: Icons.local_phone_outlined,
-                    title: e.key,
-                    subtitle: e.value,
-                    onTap: () => _open(telUri(e.value)),
-                  ),
-              if (s.live) ...[
-                const SizedBox(height: LuxSpacing.lg),
-                Center(
+      BlocBuilder<IncidentBloc, IncidentState>(
+        builder: (context, s) {
+          final (title, body) = texts(s);
+          final phone = dispatchPhone;
+          final loc = s.lastLocation;
+          final count = s.incident?.count ?? 0;
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(
+              LuxSpacing.lg,
+              LuxSpacing.lg,
+              LuxSpacing.lg,
+              LuxSpacing.xl,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AnimatedSwitcher(
+                  duration: LuxMotion.of(context, LuxMotion.base),
                   child: Column(
+                    key: ValueKey(title),
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SosButton(
-                        label: 'Avisar de nuevo',
-                        onActivated: () => context
-                            .read<IncidentBloc>()
-                            .add(const IncidentRaised()),
+                      Semantics(
+                        liveRegion: true,
+                        child: Text(title, style: LuxTypography.titleLarge),
                       ),
                       const SizedBox(height: LuxSpacing.xs),
-                      const Text('Mantén pulsado para avisar de nuevo',
-                          style: LuxTypography.caption),
+                      Text(body, style: LuxTypography.bodyMedium),
+                      if (count > 1 && s.live)
+                        Padding(
+                          padding: const EdgeInsets.only(top: LuxSpacing.xs),
+                          child: Text(
+                            'Aviso enviado $count veces.',
+                            style: LuxTypography.caption,
+                          ),
+                        ),
                     ],
                   ),
                 ),
+                const SizedBox(height: LuxSpacing.lg),
+                if (s.offline && phone != null) ...[
+                  LuxButton(
+                    label: 'Llamar a central',
+                    icon: Icons.call_rounded,
+                    onPressed: () => _open(telUri(phone)),
+                  ),
+                  const SizedBox(height: LuxSpacing.sm),
+                  LuxOutlinedButton(
+                    label: 'Enviar SMS a central',
+                    icon: Icons.sms_outlined,
+                    onPressed: () => _open(
+                      incidentSmsUri(
+                        phone,
+                        bookingShortId(bookingId),
+                        lat: loc?.lat,
+                        lng: loc?.lng,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: LuxSpacing.sm),
+                ] else if (phone != null) ...[
+                  LuxOutlinedButton(
+                    label: 'Llamar a central',
+                    icon: Icons.call_outlined,
+                    onPressed: () => _open(telUri(phone)),
+                  ),
+                  const SizedBox(height: LuxSpacing.sm),
+                ],
+                if (s.failure != null)
+                  LuxButton.ghost(
+                    label: 'Reintentar el aviso',
+                    onPressed: s.sending
+                        ? null
+                        : () => context.read<IncidentBloc>().add(
+                              const IncidentRaised(),
+                            ),
+                  ),
+                const SizedBox(height: LuxSpacing.md),
+                const LuxDivider(),
                 const SizedBox(height: LuxSpacing.sm),
-                LuxButton.ghost(
-                  label: 'Fue una falsa alarma',
-                  onPressed: () => _confirmCancel(context),
-                ),
+                if (emergencyNumbers.isEmpty)
+                  const Text(kNoNumbersHelp, style: LuxTypography.bodyMedium)
+                else
+                  for (final e in emergencyNumbers.entries)
+                    LuxListRow(
+                      icon: Icons.local_phone_outlined,
+                      title: e.key,
+                      subtitle: e.value,
+                      onTap: () => _open(telUri(e.value)),
+                    ),
+                if (s.live) ...[
+                  const SizedBox(height: LuxSpacing.lg),
+                  Center(
+                    child: Column(
+                      children: [
+                        SosButton(
+                          label: 'Avisar de nuevo',
+                          onActivated: () => context.read<IncidentBloc>().add(
+                                const IncidentRaised(),
+                              ),
+                        ),
+                        const SizedBox(height: LuxSpacing.xs),
+                        const Text(
+                          'Mantén pulsado para avisar de nuevo',
+                          style: LuxTypography.caption,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: LuxSpacing.sm),
+                  LuxButton.ghost(
+                    label: 'Fue una falsa alarma',
+                    onPressed: () => _confirmCancel(context),
+                  ),
+                ],
               ],
-            ],
-          ),
-        );
-      });
+            ),
+          );
+        },
+      );
 }

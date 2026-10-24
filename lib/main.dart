@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app/app.dart';
+import 'core/config/app_check_setup.dart';
 import 'core/config/env.dart';
 import 'core/config/firebase_startup.dart';
 import 'core/config/remote_flags.dart';
@@ -38,18 +39,24 @@ void main() async {
       GoogleFonts.cormorantGaramond(fontWeight: FontWeight.w500),
       GoogleFonts.cormorantGaramond(fontStyle: FontStyle.italic),
       GoogleFonts.cormorantGaramond(
-          fontWeight: FontWeight.w300, fontStyle: FontStyle.italic),
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ),
     ]),
   ]);
 
-  final firebase = await startFirebase(() => Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      ));
+  final firebase = await startFirebase(
+    () =>
+        Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+  );
   if (firebase is FirebaseFatal) {
     runApp(appForStartup(firebase, const LuxelaneApp()));
     return;
   }
   if (firebase is FirebaseReady) {
+    // App Check antes de cualquier llamada a Functions. Si falla, la app
+    // arranca igual (las llamadas lo dirán con un mensaje claro).
+    await activateAppCheck();
     // Admin-controlled switches (e.g. First Class availability).
     RemoteFlags.instance.listen(FirebaseFirestore.instance);
   }
@@ -101,7 +108,8 @@ void main() async {
     debugPrint('[Luxelane] env=${AppConfig.env.name} web=$kIsWeb');
     if (kIsWeb && AppConfig.googleMapsKey.isEmpty) {
       debugPrint(
-          '[Luxelane] WARNING: GOOGLE_MAPS_KEY is empty. Autocomplete will NOT work. Run with --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY');
+        '[Luxelane] WARNING: GOOGLE_MAPS_KEY is empty. Autocomplete will NOT work. Run with --dart-define=GOOGLE_MAPS_KEY=YOUR_KEY',
+      );
     }
   }
 

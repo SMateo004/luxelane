@@ -40,11 +40,12 @@ class _DriverAppState extends State<DriverApp> {
         if (state.user.id == sessionUid) return;
         sessionUid = state.user.id;
         _driverBloc.add(DriverStarted(userId: state.user.id));
-        _notificationBloc.add(
-          NotificationWatchStarted(userId: state.user.id),
-        );
+        _notificationBloc.add(NotificationWatchStarted(userId: state.user.id));
         // Sin token FCM el chófer no recibe los avisos de viajes nuevos.
-        sl<NotificationService>().init(userId: state.user.id);
+        sl<NotificationService>().init(
+          userId: state.user.id,
+          role: state.user.role,
+        );
       } else if (state is AuthUnauthenticated || state is AuthError) {
         // Cerrar sesión o un bloqueo en vivo: se detiene el rastreo.
         if (sessionUid != null) _driverBloc.add(const DriverStopped());

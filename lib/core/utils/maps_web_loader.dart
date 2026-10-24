@@ -23,8 +23,9 @@ Future<void> initMapsForWeb(String apiKey) async {
   }
 
   // Remove stale script tags that might carry a placeholder key.
-  final existing =
-      html.document.querySelectorAll('script[src*="maps.googleapis.com"]');
+  final existing = html.document.querySelectorAll(
+    'script[src*="maps.googleapis.com"]',
+  );
   for (final el in existing) {
     el.remove();
   }
@@ -44,8 +45,5 @@ Future<void> initMapsForWeb(String apiKey) async {
 
   html.document.head!.append(script);
 
-  await completer.future.timeout(
-    const Duration(seconds: 10),
-    onTimeout: () {},
-  );
+  await completer.future.timeout(const Duration(seconds: 10), onTimeout: () {});
 }

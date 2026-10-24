@@ -91,7 +91,9 @@ void main() {
       expect(BookingStatusX.fromString('pending'), BookingStatus.pending);
       expect(BookingStatusX.fromString('confirmed'), BookingStatus.confirmed);
       expect(
-          BookingStatusX.fromString('in_progress'), BookingStatus.inProgress);
+        BookingStatusX.fromString('in_progress'),
+        BookingStatus.inProgress,
+      );
       expect(BookingStatusX.fromString('completed'), BookingStatus.completed);
       expect(BookingStatusX.fromString('cancelled'), BookingStatus.cancelled);
     });

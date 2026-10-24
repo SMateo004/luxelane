@@ -23,7 +23,9 @@ void main() {
     functions = _MockFunctions();
     callable = _MockCallable();
     repo = PaymentRepositoryImpl(
-        firestore: _MockFirestore(), functions: functions);
+      firestore: _MockFirestore(),
+      functions: functions,
+    );
   });
 
   void stubCall(String name, Object? data) {
@@ -57,7 +59,9 @@ void main() {
         'servidor)', () async {
       stubCall('createPaymentIntent', {'clientSecret': 'secret'});
       final r = await repo.createPaymentIntent(
-          bookingId: 'b1', paymentMethodId: 'pm');
+        bookingId: 'b1',
+        paymentMethodId: 'pm',
+      );
       expect(r.getOrElse(() => ''), 'secret');
       final sent = verify(() => callable.call<dynamic>(captureAny()))
           .captured
@@ -68,35 +72,39 @@ void main() {
     test('createPaymentIntent devuelve null si el cobro se difiere', () async {
       stubCall('createPaymentIntent', {'deferred': true});
       final r = await repo.createPaymentIntent(
-          bookingId: 'b1', paymentMethodId: 'pm');
+        bookingId: 'b1',
+        paymentMethodId: 'pm',
+      );
       expect(r.isRight(), isTrue);
       expect(r.getOrElse(() => 'x'), isNull);
     });
 
-    test('capturePayment delega en la Cloud Function sin enviar el importe',
-        () async {
-      stubCall('capturePayment', {
-        'paymentId': 'pay-1',
-        'status': 'captured',
-        'amount': 12550,
-        'currency': 'bob',
-      });
-      final r = await repo.capturePayment(
-        bookingId: 'b-1',
-        riderId: 'r-1',
-        stripePaymentIntentId: 'pi_1',
-        amount: 999,
-        currency: 'bob',
-      );
-      final sent = verify(() => callable.call<dynamic>(captureAny()))
-          .captured
-          .single as Map;
-      expect(sent, {'bookingId': 'b-1', 'stripePaymentIntentId': 'pi_1'});
-      final payment = r.getOrElse(() => throw StateError('falló'));
-      expect(payment.id, 'pay-1');
-      expect(payment.amount, 12550);
-      expect(payment.amountBs, 125.5);
-      expect(payment.status, PaymentStatus.captured);
-    });
+    test(
+      'capturePayment delega en la Cloud Function sin enviar el importe',
+      () async {
+        stubCall('capturePayment', {
+          'paymentId': 'pay-1',
+          'status': 'captured',
+          'amount': 12550,
+          'currency': 'bob',
+        });
+        final r = await repo.capturePayment(
+          bookingId: 'b-1',
+          riderId: 'r-1',
+          stripePaymentIntentId: 'pi_1',
+          amount: 999,
+          currency: 'bob',
+        );
+        final sent = verify(() => callable.call<dynamic>(captureAny()))
+            .captured
+            .single as Map;
+        expect(sent, {'bookingId': 'b-1', 'stripePaymentIntentId': 'pi_1'});
+        final payment = r.getOrElse(() => throw StateError('falló'));
+        expect(payment.id, 'pay-1');
+        expect(payment.amount, 12550);
+        expect(payment.amountBs, 125.5);
+        expect(payment.status, PaymentStatus.captured);
+      },
+    );
   });
 }

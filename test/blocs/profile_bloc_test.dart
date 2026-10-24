@@ -35,10 +35,12 @@ void main() {
   setUp(() {
     users = MockUserRepository();
     bookings = MockBookingRepository();
-    when(() => users.getUserById('uid-1'))
-        .thenAnswer((_) async => Right(_user));
-    when(() => bookings.getBookingsByRider('uid-1'))
-        .thenAnswer((_) async => const Right([]));
+    when(
+      () => users.getUserById('uid-1'),
+    ).thenAnswer((_) async => Right(_user));
+    when(
+      () => bookings.getBookingsByRider('uid-1'),
+    ).thenAnswer((_) async => const Right([]));
   });
 
   ProfileBloc build() =>
@@ -47,15 +49,17 @@ void main() {
   blocTest<ProfileBloc, ProfileState>(
     'al guardar se ve el nombre nuevo y el aviso de guardado',
     build: () {
-      when(() => users.updateUser(any()))
-          .thenAnswer((_) async => const Right(null));
+      when(
+        () => users.updateUser(any()),
+      ).thenAnswer((_) async => const Right(null));
       return build();
     },
     act: (bloc) async {
       bloc.add(const ProfileLoadRequested(userId: 'uid-1'));
       await Future<void>.delayed(Duration.zero);
-      bloc.add(ProfileUpdateRequested(
-          user: _user.copyWith(displayName: 'Ana María')));
+      bloc.add(
+        ProfileUpdateRequested(user: _user.copyWith(displayName: 'Ana María')),
+      );
     },
     skip: 2,
     expect: () => [
@@ -69,15 +73,17 @@ void main() {
   blocTest<ProfileBloc, ProfileState>(
     'si el guardado falla el perfil sigue a la vista con un aviso de error',
     build: () {
-      when(() => users.updateUser(any()))
-          .thenAnswer((_) async => const Left(ServerFailure('x')));
+      when(
+        () => users.updateUser(any()),
+      ).thenAnswer((_) async => const Left(ServerFailure('x')));
       return build();
     },
     act: (bloc) async {
       bloc.add(const ProfileLoadRequested(userId: 'uid-1'));
       await Future<void>.delayed(Duration.zero);
-      bloc.add(ProfileUpdateRequested(
-          user: _user.copyWith(displayName: 'Ana María')));
+      bloc.add(
+        ProfileUpdateRequested(user: _user.copyWith(displayName: 'Ana María')),
+      );
     },
     skip: 2,
     expect: () => [

@@ -18,9 +18,13 @@ class NotificationRepositoryImpl implements NotificationRepository {
         .orderBy('createdAt', descending: true)
         .limit(50)
         .snapshots()
-        .map((snap) => snap.docs
-            .map((d) => AppNotification.fromJson({...d.data(), 'id': d.id}))
-            .toList());
+        .map(
+          (snap) => snap.docs
+              .map(
+                (d) => AppNotification.fromJson({...d.data(), 'id': d.id}),
+              )
+              .toList(),
+        );
   }
 
   @override

@@ -34,16 +34,18 @@ class _PaymentScreenState extends State<PaymentScreen> {
       customerId = result.fold((_) => '', (id) => id);
       if (customerId.isEmpty) return;
     }
-    context
-        .read<PaymentBloc>()
-        .add(CardsLoadRequested(stripeCustomerId: customerId));
+    context.read<PaymentBloc>().add(
+          CardsLoadRequested(stripeCustomerId: customerId),
+        );
   }
 
   /// Stripe solo está configurado en la app móvil.
   void _addCard() {
     if (kIsWeb) {
-      showLuxSnackbar(context,
-          'Agrega tus tarjetas desde la app de Luxelane en tu teléfono.');
+      showLuxSnackbar(
+        context,
+        'Agrega tus tarjetas desde la app de Luxelane en tu teléfono.',
+      );
       return;
     }
     context.push('/payment/add');
@@ -58,7 +60,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
       builder: (ctx) => AlertDialog(
         title: const Text('¿Quitar esta tarjeta?'),
         content: const Text(
-            'Dejará de estar disponible para tus próximas reservas.'),
+          'Dejará de estar disponible para tus próximas reservas.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -149,7 +152,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     card: card,
                     isDefault: card['isDefault'] == true,
                     onSetDefault: () => context.read<PaymentBloc>().add(
-                        DefaultCardSet(paymentMethodId: card['id'] as String)),
+                          DefaultCardSet(paymentMethodId: card['id'] as String),
+                        ),
                     onRemove: () => _removeCard(card['id'] as String),
                   ),
               ],
@@ -164,11 +168,16 @@ class _PaymentScreenState extends State<PaymentScreen> {
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.lock_outline,
-                    size: 14, color: LuxColors.inkTertiary),
+                Icon(
+                  Icons.lock_outline,
+                  size: 14,
+                  color: LuxColors.inkTertiary,
+                ),
                 SizedBox(width: LuxSpacing.xs),
-                Text('Pagos cifrados y protegidos por Stripe',
-                    style: LuxTypography.caption),
+                Text(
+                  'Pagos cifrados y protegidos por Stripe',
+                  style: LuxTypography.caption,
+                ),
               ],
             ),
           ],
@@ -236,9 +245,11 @@ class _CardTile extends StatelessWidget {
                   color: isDefault ? LuxColors.ink : LuxColors.surfaceMuted,
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: Icon(Icons.credit_card_rounded,
-                    size: 15,
-                    color: isDefault ? Colors.white : LuxColors.inkSecondary),
+                child: Icon(
+                  Icons.credit_card_rounded,
+                  size: 15,
+                  color: isDefault ? Colors.white : LuxColors.inkSecondary,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -246,10 +257,11 @@ class _CardTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                        '${_brand(card['brand'] as String?)} ·· ${card['last4'] ?? '····'}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: LuxTypography.bodyLarge.copyWith(fontSize: 15)),
+                      '${_brand(card['brand'] as String?)} ·· ${card['last4'] ?? '····'}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.bodyLarge.copyWith(fontSize: 15),
+                    ),
                     const SizedBox(height: 2),
                     Text(
                       isDefault ? 'Predeterminada · vence $exp' : 'Vence $exp',
@@ -269,16 +281,22 @@ class _CardTile extends StatelessWidget {
                     ? const Padding(
                         key: ValueKey('on'),
                         padding: EdgeInsets.symmetric(horizontal: 8),
-                        child: Icon(Icons.check_circle_rounded,
-                            color: LuxColors.sapphire, size: 22),
+                        child: Icon(
+                          Icons.check_circle_rounded,
+                          color: LuxColors.sapphire,
+                          size: 22,
+                        ),
                       )
                     : const SizedBox(key: ValueKey('off'), width: 38),
               ),
               IconButton(
                 tooltip: 'Quitar tarjeta',
                 onPressed: onRemove,
-                icon: const Icon(Icons.delete_outline_rounded,
-                    size: 20, color: LuxColors.inkTertiary),
+                icon: const Icon(
+                  Icons.delete_outline_rounded,
+                  size: 20,
+                  color: LuxColors.inkTertiary,
+                ),
               ),
             ],
           ),

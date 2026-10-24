@@ -161,16 +161,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (!signedIn && !isClosed) add(const _AuthSignedOut());
     });
     _profileSub?.cancel();
-    _profileSub = _repo.watchUser(uid).listen(
-      (u) {
-        if (!isClosed) add(_AuthProfileChanged(u));
-      },
-      onError: (_) {},
-    );
+    _profileSub = _repo.watchUser(uid).listen((u) {
+      if (!isClosed) add(_AuthProfileChanged(u));
+    }, onError: (_) {});
   }
 
   Future<void> _onProfileChanged(
-      _AuthProfileChanged event, Emitter<AuthState> emit) async {
+    _AuthProfileChanged event,
+    Emitter<AuthState> emit,
+  ) async {
     final current = state;
     if (current is! AuthAuthenticated) return;
     final u = event.user;
@@ -226,20 +225,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   // ── _onLogin ───────────────────────────────────────────────────────────────
   Future<void> _onLogin(LoginRequested event, Emitter<AuthState> emit) async {
     emit(const AuthLoading());
-    final result =
-        await _repo.login(email: event.email, password: event.password);
-    result.fold(
-      (f) => emit(AuthError(f.message)),
-      (user) {
-        emit(AuthAuthenticated(user));
-        _watchSession(user.id);
-      },
+    final result = await _repo.login(
+      email: event.email,
+      password: event.password,
     );
+    result.fold((f) => emit(AuthError(f.message)), (user) {
+      emit(AuthAuthenticated(user));
+      _watchSession(user.id);
+    });
   }
 
   // ── _onRegister ────────────────────────────────────────────────────────────
   Future<void> _onRegister(
-      RegisterRequested event, Emitter<AuthState> emit) async {
+    RegisterRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(const AuthLoading());
     final result = await _repo.register(
       email: event.email,
@@ -248,25 +248,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       displayName: event.displayName,
       role: event.role,
     );
-    result.fold(
-      (f) => emit(AuthError(f.message)),
-      (user) {
-        emit(AuthAuthenticated(user));
-        _watchSession(user.id);
-      },
-    );
+    result.fold((f) => emit(AuthError(f.message)), (user) {
+      emit(AuthAuthenticated(user));
+      _watchSession(user.id);
+    });
   }
 
   // ── _onGoogleSignIn ────────────────────────────────────────────────────────
   Future<void> _onGoogleSignIn(
-      GoogleSignInRequested event, Emitter<AuthState> emit) async {
+    GoogleSignInRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(const AuthLoading());
     final result = await _repo.signInWithGoogle();
     result.fold(
       // Closing the Google sheet is a choice, not an error: no message.
-      (f) => emit(f is AuthCancelledFailure
-          ? const AuthUnauthenticated()
-          : AuthError(f.message)),
+      (f) => emit(
+        f is AuthCancelledFailure
+            ? const AuthUnauthenticated()
+            : AuthError(f.message),
+      ),
       (user) {
         emit(AuthAuthenticated(user));
         _watchSession(user.id);

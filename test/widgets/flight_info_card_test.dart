@@ -30,9 +30,8 @@ Booking _booking({String? flight, String? type, String? airport}) {
   });
 }
 
-Widget _wrap(Booking b) => MaterialApp(
-      home: Scaffold(body: FlightInfoCard(booking: b)),
-    );
+Widget _wrap(Booking b) =>
+    MaterialApp(home: Scaffold(body: FlightInfoCard(booking: b)));
 
 void main() {
   testWidgets('renders nothing without a flight', (tester) async {
@@ -41,26 +40,31 @@ void main() {
   });
 
   testWidgets('shows the arrivals exit for the flight type', (tester) async {
-    await tester.pumpWidget(_wrap(
-        _booking(flight: 'OB760', type: 'international', airport: 'VVI')));
+    await tester.pumpWidget(
+      _wrap(_booking(flight: 'OB760', type: 'international', airport: 'VVI')),
+    );
     expect(find.text('Aeropuerto Internacional Viru Viru'), findsOneWidget);
     expect(find.text('INTERNACIONAL'), findsOneWidget);
     expect(find.text('Salida de llegadas internacionales'), findsOneWidget);
     expect(find.text('Vuelo OB760'), findsOneWidget);
   });
 
-  testWidgets('tapping the flight warns to switch airport first',
-      (tester) async {
+  testWidgets('tapping the flight warns to switch airport first', (
+    tester,
+  ) async {
     await tester.pumpWidget(
-        _wrap(_booking(flight: 'OB760', type: 'domestic', airport: 'VVI')));
+      _wrap(_booking(flight: 'OB760', type: 'domestic', airport: 'VVI')),
+    );
     await tester.tap(find.text('Vuelo OB760'));
     await tester.pumpAndSettle();
 
     expect(find.text('Primero cambia de aeropuerto'), findsOneWidget);
     expect(
-        find.textContaining(
-            'Aeropuerto Internacional Viru Viru (Santa Cruz de la Sierra)'),
-        findsOneWidget);
+      find.textContaining(
+        'Aeropuerto Internacional Viru Viru (Santa Cruz de la Sierra)',
+      ),
+      findsOneWidget,
+    );
 
     await tester.tap(find.text('Cancelar'));
     await tester.pumpAndSettle();

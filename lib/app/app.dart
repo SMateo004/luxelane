@@ -72,12 +72,13 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
             _driverBloc.state is DriverInitial) {
           _driverBloc.add(DriverStarted(userId: state.user.id));
         }
-        _notificationBloc.add(
-          NotificationWatchStarted(userId: state.user.id),
-        );
+        _notificationBloc.add(NotificationWatchStarted(userId: state.user.id));
         // Registra el dispositivo para los avisos de la reserva aunque el
         // pasajero no abra la pantalla del viaje.
-        sl<NotificationService>().init(userId: state.user.id);
+        sl<NotificationService>().init(
+          userId: state.user.id,
+          role: state.user.role,
+        );
       }
     });
   }

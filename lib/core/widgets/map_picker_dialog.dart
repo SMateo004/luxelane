@@ -154,8 +154,11 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                       const SizedBox(width: 8),
                       IconButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        icon:
-                            const Icon(Icons.close, color: subColor, size: 20),
+                        icon: const Icon(
+                          Icons.close,
+                          color: subColor,
+                          size: 20,
+                        ),
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                       ),
@@ -227,8 +230,8 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                             padding: const EdgeInsets.symmetric(horizontal: 28),
                             elevation: 0,
                             shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(LuxRadius.md)),
+                              borderRadius: BorderRadius.circular(LuxRadius.md),
+                            ),
                             textStyle: const TextStyle(
                               fontFamily: 'Montserrat',
                               fontSize: 11,
@@ -278,11 +281,7 @@ class _CenterPin extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            width: 1.5,
-            height: 20,
-            color: LuxColors.sapphire,
-          ),
+          Container(width: 1.5, height: 20, color: LuxColors.sapphire),
           Container(
             width: 8,
             height: 4,

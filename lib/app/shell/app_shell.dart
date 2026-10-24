@@ -14,17 +14,20 @@ class AppShell extends StatelessWidget {
 
   static const _tabs = [
     _Tab(
-        icon: Icons.near_me_outlined,
-        activeIcon: Icons.near_me_rounded,
-        label: 'Reservar'),
+      icon: Icons.near_me_outlined,
+      activeIcon: Icons.near_me_rounded,
+      label: 'Reservar',
+    ),
     _Tab(
-        icon: Icons.event_note_outlined,
-        activeIcon: Icons.event_note_rounded,
-        label: 'Mis viajes'),
+      icon: Icons.event_note_outlined,
+      activeIcon: Icons.event_note_rounded,
+      label: 'Mis viajes',
+    ),
     _Tab(
-        icon: Icons.person_outline,
-        activeIcon: Icons.person_rounded,
-        label: 'Perfil'),
+      icon: Icons.person_outline,
+      activeIcon: Icons.person_rounded,
+      label: 'Perfil',
+    ),
   ];
 
   @override
@@ -51,9 +54,10 @@ class _MobileShell extends StatelessWidget {
             border: Border(top: BorderSide(color: LuxColors.border)),
             boxShadow: [
               BoxShadow(
-                  color: LuxColors.shadow,
-                  blurRadius: 20,
-                  offset: Offset(0, -4)),
+                color: LuxColors.shadow,
+                blurRadius: 20,
+                offset: Offset(0, -4),
+              ),
             ],
           ),
           child: SafeArea(
@@ -67,8 +71,10 @@ class _MobileShell extends StatelessWidget {
                       child: _MobileTabItem(
                         tab: tabs[i],
                         active: shell.currentIndex == i,
-                        onTap: () => shell.goBranch(i,
-                            initialLocation: i == shell.currentIndex),
+                        onTap: () => shell.goBranch(
+                          i,
+                          initialLocation: i == shell.currentIndex,
+                        ),
                       ),
                     ),
                 ],
@@ -80,8 +86,11 @@ class _MobileShell extends StatelessWidget {
 }
 
 class _MobileTabItem extends StatelessWidget {
-  const _MobileTabItem(
-      {required this.tab, required this.active, required this.onTap});
+  const _MobileTabItem({
+    required this.tab,
+    required this.active,
+    required this.onTap,
+  });
   final _Tab tab;
   final bool active;
   final VoidCallback onTap;
@@ -106,9 +115,11 @@ class _MobileTabItem extends StatelessWidget {
                 margin: const EdgeInsets.only(bottom: 8),
                 color: LuxColors.sapphire,
               ),
-              Icon(active ? tab.activeIcon : tab.icon,
-                  size: 22,
-                  color: active ? LuxColors.sapphire : LuxColors.inkTertiary),
+              Icon(
+                active ? tab.activeIcon : tab.icon,
+                size: 22,
+                color: active ? LuxColors.sapphire : LuxColors.inkTertiary,
+              ),
               const SizedBox(height: 4),
               Text(
                 tab.label.toUpperCase(),
@@ -136,20 +147,21 @@ class _WebShell extends StatelessWidget {
   final List<_Tab> tabs;
 
   @override
-  Widget build(BuildContext context) =>
-      BlocBuilder<AuthBloc, AuthState>(builder: (context, auth) {
-        return Scaffold(
-          // Home page (index 0) has its own full-bleed nav overlay —
-          // don't add a second header above it.
-          body: Column(
-            children: [
-              if (shell.currentIndex != 0)
-                _WebNav(auth: auth, shell: shell, tabs: tabs),
-              Expanded(child: shell),
-            ],
-          ),
-        );
-      });
+  Widget build(BuildContext context) => BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, auth) {
+          return Scaffold(
+            // Home page (index 0) has its own full-bleed nav overlay —
+            // don't add a second header above it.
+            body: Column(
+              children: [
+                if (shell.currentIndex != 0)
+                  _WebNav(auth: auth, shell: shell, tabs: tabs),
+                Expanded(child: shell),
+              ],
+            ),
+          );
+        },
+      );
 }
 
 // ---------------------------------------------------------------------------
@@ -217,8 +229,11 @@ class _WebNav extends StatelessWidget {
 }
 
 class _ShellLink extends StatelessWidget {
-  const _ShellLink(
-      {required this.label, required this.active, required this.onTap});
+  const _ShellLink({
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
   final String label;
   final bool active;
   final VoidCallback onTap;
@@ -298,8 +313,11 @@ class _AvatarBtn extends StatelessWidget {
 }
 
 class _Tab {
-  const _Tab(
-      {required this.icon, required this.activeIcon, required this.label});
+  const _Tab({
+    required this.icon,
+    required this.activeIcon,
+    required this.label,
+  });
   final IconData icon;
   final IconData activeIcon;
   final String label;

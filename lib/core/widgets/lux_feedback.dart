@@ -32,10 +32,14 @@ class LuxFadeIn extends StatefulWidget {
 
 class _LuxFadeInState extends State<LuxFadeIn>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _c =
-      AnimationController(vsync: this, duration: LuxMotion.slow);
-  late final Animation<double> _t =
-      CurvedAnimation(parent: _c, curve: LuxMotion.decelerate);
+  late final AnimationController _c = AnimationController(
+    vsync: this,
+    duration: LuxMotion.slow,
+  );
+  late final Animation<double> _t = CurvedAnimation(
+    parent: _c,
+    curve: LuxMotion.decelerate,
+  );
   Timer? _timer;
 
   @override
@@ -258,8 +262,9 @@ class _SuccessPainter extends CustomPainter {
     final r = size.width / 2;
     // 0–0.55: el círculo se rellena; 0.45–1: el visto se dibuja.
     final ring = LuxMotion.decelerate.transform((t / 0.55).clamp(0, 1));
-    final tick =
-        LuxMotion.emphasized.transform(((t - 0.45) / 0.55).clamp(0, 1));
+    final tick = LuxMotion.emphasized.transform(
+      ((t - 0.45) / 0.55).clamp(0, 1),
+    );
 
     canvas.drawCircle(
       c,
@@ -416,10 +421,13 @@ class _RideProgressBarState extends State<RideProgressBar>
                         widthFactor: i < step ? 1 : 0,
                         child: i == step - 1 && step < 5 && !calm
                             ? FadeTransition(
-                                opacity: Tween(begin: 0.45, end: 1.0)
-                                    .animate(_pulse),
-                                child:
-                                    const ColoredBox(color: LuxColors.sapphire),
+                                opacity: Tween(
+                                  begin: 0.45,
+                                  end: 1.0,
+                                ).animate(_pulse),
+                                child: const ColoredBox(
+                                  color: LuxColors.sapphire,
+                                ),
                               )
                             : const ColoredBox(color: LuxColors.sapphire),
                       ),
@@ -492,87 +500,93 @@ class _LuxSlideToConfirmState extends State<LuxSlideToConfirm>
   }
 
   @override
-  Widget build(BuildContext context) => LayoutBuilder(builder: (context, c) {
-        final knob = widget.height - 8;
-        final max = c.maxWidth - knob - 8;
-        final t = max <= 0 ? 0.0 : (_drag / max).clamp(0.0, 1.0);
-        return Semantics(
-          button: true,
-          label: widget.label,
-          hint: 'Desliza para confirmar',
-          onTap: widget.enabled && !_done
-              ? () {
-                  // Lectores de pantalla: un toque basta.
-                  setState(() => _done = true);
-                  widget.onConfirmed();
-                }
-              : null,
-          child: Container(
-            height: widget.height,
-            decoration: BoxDecoration(
-              color: widget.enabled
-                  ? LuxColors.sapphire
-                  : LuxColors.sapphire.withValues(alpha: 0.4),
-              borderRadius: BorderRadius.circular(widget.height / 2),
-              boxShadow: widget.enabled ? LuxElevation.mid : null,
-            ),
-            child: Stack(
-              alignment: Alignment.centerLeft,
-              children: [
-                Center(
-                  child: Opacity(
-                    opacity: 1 - t,
-                    child: Padding(
-                      padding: EdgeInsets.only(left: knob * 0.6),
-                      child: Text(
-                        widget.label,
-                        style: LuxTypography.button
-                            .copyWith(color: LuxColors.onAccent, fontSize: 16),
+  Widget build(BuildContext context) => LayoutBuilder(
+        builder: (context, c) {
+          final knob = widget.height - 8;
+          final max = c.maxWidth - knob - 8;
+          final t = max <= 0 ? 0.0 : (_drag / max).clamp(0.0, 1.0);
+          return Semantics(
+            button: true,
+            label: widget.label,
+            hint: 'Desliza para confirmar',
+            onTap: widget.enabled && !_done
+                ? () {
+                    // Lectores de pantalla: un toque basta.
+                    setState(() => _done = true);
+                    widget.onConfirmed();
+                  }
+                : null,
+            child: Container(
+              height: widget.height,
+              decoration: BoxDecoration(
+                color: widget.enabled
+                    ? LuxColors.sapphire
+                    : LuxColors.sapphire.withValues(alpha: 0.4),
+                borderRadius: BorderRadius.circular(widget.height / 2),
+                boxShadow: widget.enabled ? LuxElevation.mid : null,
+              ),
+              child: Stack(
+                alignment: Alignment.centerLeft,
+                children: [
+                  Center(
+                    child: Opacity(
+                      opacity: 1 - t,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: knob * 0.6),
+                        child: Text(
+                          widget.label,
+                          style: LuxTypography.button.copyWith(
+                            color: LuxColors.onAccent,
+                            fontSize: 16,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Positioned(
-                  left: 4 + _drag.clamp(0.0, max < 0 ? 0.0 : max),
-                  child: GestureDetector(
-                    onHorizontalDragUpdate: !widget.enabled || _done
-                        ? null
-                        : (d) => setState(
-                            () => _drag = (_drag + d.delta.dx).clamp(0, max)),
-                    onHorizontalDragEnd: !widget.enabled || _done
-                        ? null
-                        : (_) {
-                            if (t > 0.85) {
-                              setState(() {
-                                _done = true;
-                                _drag = max;
-                              });
-                              LuxHaptics.confirm();
-                              widget.onConfirmed();
-                            } else {
-                              _from = _drag;
-                              _back.forward(from: 0);
-                            }
-                          },
-                    child: Container(
-                      width: knob,
-                      height: knob,
-                      decoration: const BoxDecoration(
-                        color: LuxColors.surface,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        _done
-                            ? Icons.check_rounded
-                            : Icons.arrow_forward_rounded,
-                        color: LuxColors.sapphire,
+                  Positioned(
+                    left: 4 + _drag.clamp(0.0, max < 0 ? 0.0 : max),
+                    child: GestureDetector(
+                      onHorizontalDragUpdate: !widget.enabled || _done
+                          ? null
+                          : (d) => setState(
+                                () =>
+                                    _drag = (_drag + d.delta.dx).clamp(0, max),
+                              ),
+                      onHorizontalDragEnd: !widget.enabled || _done
+                          ? null
+                          : (_) {
+                              if (t > 0.85) {
+                                setState(() {
+                                  _done = true;
+                                  _drag = max;
+                                });
+                                LuxHaptics.confirm();
+                                widget.onConfirmed();
+                              } else {
+                                _from = _drag;
+                                _back.forward(from: 0);
+                              }
+                            },
+                      child: Container(
+                        width: knob,
+                        height: knob,
+                        decoration: const BoxDecoration(
+                          color: LuxColors.surface,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          _done
+                              ? Icons.check_rounded
+                              : Icons.arrow_forward_rounded,
+                          color: LuxColors.sapphire,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        );
-      });
+          );
+        },
+      );
 }

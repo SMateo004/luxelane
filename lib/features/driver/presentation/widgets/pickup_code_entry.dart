@@ -27,8 +27,8 @@ Future<void> showPickupCodeEntry(BuildContext context, Booking booking) {
     useSafeArea: true,
     backgroundColor: LuxColors.surface,
     shape: const RoundedRectangleBorder(
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(LuxRadius.xl))),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(LuxRadius.xl)),
+    ),
     builder: (sheet) => ValueListenableBuilder<String?>(
       valueListenable: RemoteFlags.instance.dispatchPhone,
       builder: (_, phone, __) => PickupCodeEntry(
@@ -99,8 +99,10 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
   bool _verified = false;
   TripFailure? _error;
   late TripFailure? _blocked = widget.locked
-      ? const TripFailure(TripIssue.locked,
-          'Por seguridad, la verificación quedó bloqueada. Contacta con central.')
+      ? const TripFailure(
+          TripIssue.locked,
+          'Por seguridad, la verificación quedó bloqueada. Contacta con central.',
+        )
       : null;
 
   // Se crea al montar: si se creara al primer uso, cerrar la hoja sin
@@ -111,7 +113,9 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
   void initState() {
     super.initState();
     _shake = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 360));
+      vsync: this,
+      duration: const Duration(milliseconds: 360),
+    );
   }
 
   @override
@@ -186,7 +190,11 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
     final duration = LuxMotion.of(context, LuxMotion.base);
     return Padding(
       padding: const EdgeInsets.fromLTRB(
-          LuxSpacing.lg, LuxSpacing.lg, LuxSpacing.lg, LuxSpacing.xl),
+        LuxSpacing.lg,
+        LuxSpacing.lg,
+        LuxSpacing.lg,
+        LuxSpacing.xl,
+      ),
       child: AnimatedSwitcher(
         duration: duration,
         switchInCurve: LuxMotion.decelerate,
@@ -210,20 +218,26 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Pide el código al pasajero',
-              style: LuxTypography.titleLarge, textAlign: TextAlign.center),
+          const Text(
+            'Pide el código al pasajero',
+            style: LuxTypography.titleLarge,
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: LuxSpacing.xs),
-          Text('Lo ve en su app. Sin él no se puede iniciar el viaje.',
-              textAlign: TextAlign.center,
-              style: LuxTypography.caption
-                  .copyWith(color: LuxColors.inkSecondary)),
+          Text(
+            'Lo ve en su app. Sin él no se puede iniciar el viaje.',
+            textAlign: TextAlign.center,
+            style:
+                LuxTypography.caption.copyWith(color: LuxColors.inkSecondary),
+          ),
           const SizedBox(height: LuxSpacing.lg),
           AnimatedBuilder(
             animation: _shake,
             builder: (_, child) => Transform.translate(
               offset: Offset(
-                  math.sin(_shake.value * math.pi * 4) * 8 * (1 - _shake.value),
-                  0),
+                math.sin(_shake.value * math.pi * 4) * 8 * (1 - _shake.value),
+                0,
+              ),
               child: child,
             ),
             child: Semantics(
@@ -252,8 +266,9 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
                       ? Text(
                           _error!.message,
                           textAlign: TextAlign.center,
-                          style: LuxTypography.bodyMedium
-                              .copyWith(color: LuxColors.error),
+                          style: LuxTypography.bodyMedium.copyWith(
+                            color: LuxColors.error,
+                          ),
                         )
                       : const SizedBox.shrink(),
             ),
@@ -298,10 +313,12 @@ class _Slot extends StatelessWidget {
                     : LuxColors.border,
           ),
         ),
-        child: Text(digit ?? '',
-            style: LuxTypography.headlineLarge.copyWith(
-              fontFeatures: const [FontFeature.tabularFigures()],
-            )),
+        child: Text(
+          digit ?? '',
+          style: LuxTypography.headlineLarge.copyWith(
+            fontFeatures: const [FontFeature.tabularFigures()],
+          ),
+        ),
       );
 }
 
@@ -342,8 +359,10 @@ class _Keypad extends StatelessWidget {
                         onTap: enabled ? () => onKey(k) : null,
                         child: Center(
                           child: k == '⌫'
-                              ? const Icon(Icons.backspace_outlined,
-                                  color: LuxColors.ink)
+                              ? const Icon(
+                                  Icons.backspace_outlined,
+                                  color: LuxColors.ink,
+                                )
                               : Text(k, style: LuxTypography.headlineMedium),
                         ),
                       ),
@@ -365,8 +384,10 @@ class _Verified extends StatelessWidget {
           SizedBox(height: LuxSpacing.md),
           Text('Pasajero verificado', style: LuxTypography.titleLarge),
           SizedBox(height: LuxSpacing.xs),
-          Text('Desliza «Iniciar viaje» cuando estéis listos.',
-              style: LuxTypography.caption),
+          Text(
+            'Desliza «Iniciar viaje» cuando estéis listos.',
+            style: LuxTypography.caption,
+          ),
           SizedBox(height: LuxSpacing.lg),
         ],
       );
@@ -397,11 +418,17 @@ class _Blocked extends StatelessWidget {
             color: LuxColors.inkSecondary,
           ),
           const SizedBox(height: LuxSpacing.md),
-          const Text('Contacta con central',
-              textAlign: TextAlign.center, style: LuxTypography.titleLarge),
+          const Text(
+            'Contacta con central',
+            textAlign: TextAlign.center,
+            style: LuxTypography.titleLarge,
+          ),
           const SizedBox(height: LuxSpacing.xs),
-          Text(failure.message,
-              textAlign: TextAlign.center, style: LuxTypography.bodyMedium),
+          Text(
+            failure.message,
+            textAlign: TextAlign.center,
+            style: LuxTypography.bodyMedium,
+          ),
           const SizedBox(height: LuxSpacing.lg),
           CallDispatchButton(phone: dispatchPhone, onCall: onCallDispatch),
         ],

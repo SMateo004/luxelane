@@ -81,22 +81,54 @@ abstract final class ServiceArea {
 
   static const airports = <ServiceAirport>[
     ServiceAirport(
-        'VVI', 'Aeropuerto Internacional Viru Viru', -17.6447, -63.1353),
+      'VVI',
+      'Aeropuerto Internacional Viru Viru',
+      -17.6447,
+      -63.1353,
+    ),
     ServiceAirport('SRZ', 'Aeropuerto El Trompillo', -17.8117, -63.1717),
     ServiceAirport(
-        'LPB', 'Aeropuerto Internacional El Alto', -16.5131, -68.1922),
-    ServiceAirport('CBB', 'Aeropuerto Internacional Jorge Wilstermann',
-        -17.4211, -66.1769),
+      'LPB',
+      'Aeropuerto Internacional El Alto',
+      -16.5131,
+      -68.1922,
+    ),
     ServiceAirport(
-        'SRE', 'Aeropuerto Internacional Alcantarí', -19.2467, -65.1494),
+      'CBB',
+      'Aeropuerto Internacional Jorge Wilstermann',
+      -17.4211,
+      -66.1769,
+    ),
     ServiceAirport(
-        'TJA', 'Aeropuerto Capitán Oriel Lea Plaza', -21.5558, -64.7014),
+      'SRE',
+      'Aeropuerto Internacional Alcantarí',
+      -19.2467,
+      -65.1494,
+    ),
     ServiceAirport(
-        'ORU', 'Aeropuerto Internacional Juan Mendoza', -17.9625, -67.0761),
+      'TJA',
+      'Aeropuerto Capitán Oriel Lea Plaza',
+      -21.5558,
+      -64.7014,
+    ),
     ServiceAirport(
-        'POI', 'Aeropuerto Capitán Nicolás Rojas', -19.5433, -65.7236),
+      'ORU',
+      'Aeropuerto Internacional Juan Mendoza',
+      -17.9625,
+      -67.0761,
+    ),
     ServiceAirport(
-        'TDD', 'Aeropuerto Teniente Jorge Henrich', -14.8186, -64.9181),
+      'POI',
+      'Aeropuerto Capitán Nicolás Rojas',
+      -19.5433,
+      -65.7236,
+    ),
+    ServiceAirport(
+      'TDD',
+      'Aeropuerto Teniente Jorge Henrich',
+      -14.8186,
+      -64.9181,
+    ),
     ServiceAirport('CIJ', 'Aeropuerto Capitán Aníbal Arab', -11.0403, -68.7825),
     ServiceAirport('UYU', 'Aeropuerto Joya Andina', -20.4464, -66.8486),
   ];
@@ -177,19 +209,25 @@ abstract final class ServiceArea {
       return 'El destino debe estar en ${city.name}, la misma ciudad de la '
           'recogida.';
     }
-    final km =
-        distanceKm(origin.lat, origin.lng, destination.lat, destination.lng);
+    final km = distanceKm(
+      origin.lat,
+      origin.lng,
+      destination.lat,
+      destination.lng,
+    );
     if (km <= fallbackRadiusKm) return null;
     return 'El destino debe estar en la misma ciudad que la recogida.';
   }
 
   // ── Airports ────────────────────────────────────────────────────────────
 
-  static final _airportWord =
-      RegExp(r'\b(aeropuerto|airport|aerodromo|terminal aerea)\b');
+  static final _airportWord = RegExp(
+    r'\b(aeropuerto|airport|aerodromo|terminal aerea)\b',
+  );
   // Streets and neighbourhoods named after an airport ("Av. Aeropuerto").
   static final _streetPrefix = RegExp(
-      r'^(av|avda|avenida|calle|c|pasaje|psje|carretera|camino|barrio|b|urb|urbanizacion|zona|villa)\b');
+    r'^(av|avda|avenida|calle|c|pasaje|psje|carretera|camino|barrio|b|urb|urbanizacion|zona|villa)\b',
+  );
 
   static String _fold(String s) => s
       .toLowerCase()
@@ -252,8 +290,9 @@ abstract final class ServiceArea {
 /// ICAO (3 letters) airline code followed by 1–4 digits, e.g. "OB 760",
 /// "Z8-315", "LA8810", "BOV760".
 abstract final class FlightNumber {
-  static final _pattern =
-      RegExp(r'^([A-Z]{2}|[A-Z][0-9]|[0-9][A-Z]|[A-Z]{3})([0-9]{1,4})[A-Z]?$');
+  static final _pattern = RegExp(
+    r'^([A-Z]{2}|[A-Z][0-9]|[0-9][A-Z]|[A-Z]{3})([0-9]{1,4})[A-Z]?$',
+  );
 
   /// Upper-cased with spaces and dashes removed.
   static String normalize(String input) =>

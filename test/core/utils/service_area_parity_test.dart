@@ -10,8 +10,8 @@ import 'package:luxelane/core/utils/service_area.dart';
 /// guardada en test/fixtures/service_area_expected.json.
 Map<String, dynamic> serviceAreaOutputs() {
   final inputs = jsonDecode(
-          File('test/fixtures/service_area_inputs.json').readAsStringSync())
-      as Map<String, dynamic>;
+    File('test/fixtures/service_area_inputs.json').readAsStringSync(),
+  ) as Map<String, dynamic>;
   final places = {
     for (final p in inputs['places'] as List)
       (p as Map)['id'] as String: Place(
@@ -47,7 +47,8 @@ Map<String, dynamic> serviceAreaOutputs() {
 void main() {
   test('ServiceArea da la misma salida que el servidor', () {
     final expected = jsonDecode(
-        File('test/fixtures/service_area_expected.json').readAsStringSync());
+      File('test/fixtures/service_area_expected.json').readAsStringSync(),
+    );
     expect(serviceAreaOutputs(), expected);
   });
 }

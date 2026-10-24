@@ -57,16 +57,20 @@ class _LoginPageState extends State<LoginPage> {
     final email = _email.text.trim();
     if (!email.contains('@')) {
       showLuxSnackbar(
-          context, 'Escribe tu correo arriba y te enviaremos un enlace.',
-          isError: true);
+        context,
+        'Escribe tu correo arriba y te enviaremos un enlace.',
+        isError: true,
+      );
       return;
     }
     final result = await sl<AuthRepository>().resetPassword(email);
     if (!mounted) return;
     result.fold(
       (f) => showLuxSnackbar(context, f.message, isError: true),
-      (_) => showLuxSnackbar(context,
-          'Te enviamos un enlace a $email para restablecer tu contraseña.'),
+      (_) => showLuxSnackbar(
+        context,
+        'Te enviamos un enlace a $email para restablecer tu contraseña.',
+      ),
     );
   }
 
@@ -90,8 +94,10 @@ class _LoginPageState extends State<LoginPage> {
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message,
-                  style: const TextStyle(fontFamily: _kSans, color: _onSph)),
+              content: Text(
+                state.message,
+                style: const TextStyle(fontFamily: _kSans, color: _onSph),
+              ),
               backgroundColor: LuxColors.error,
             ),
           );
@@ -119,7 +125,9 @@ class _LoginPageState extends State<LoginPage> {
                   constraints: const BoxConstraints(maxWidth: 440),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 48, vertical: 64),
+                      horizontal: 48,
+                      vertical: 64,
+                    ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,9 +179,14 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 28),
               const _AuthHeroPhoto(),
               const SizedBox(height: 32),
-              Text('BIENVENIDO',
-                  style: LuxTypography.caption
-                      .copyWith(color: _sph, letterSpacing: 3, fontSize: 10)),
+              Text(
+                'BIENVENIDO',
+                style: LuxTypography.caption.copyWith(
+                  color: _sph,
+                  letterSpacing: 3,
+                  fontSize: 10,
+                ),
+              ),
               const SizedBox(height: 10),
               const Text(
                 'Tu chófer,\ncomo lo recuerdas.',
@@ -308,7 +321,7 @@ class AuthBrandPanel extends StatelessWidget {
                 colors: [
                   _bg.withAlpha(60),
                   _bg.withAlpha(215),
-                  _bg.withAlpha(250),
+                  _bg.withAlpha(250)
                 ],
                 stops: const [0.0, 0.4, 0.75],
               ),
@@ -369,16 +382,24 @@ class AuthBrandPanel extends StatelessWidget {
                   ])
                     Padding(
                       padding: const EdgeInsets.only(bottom: 14),
-                      child: Row(children: [
-                        const Icon(Icons.check_rounded,
-                            size: 14, color: LuxColors.sapphire),
-                        const SizedBox(width: 12),
-                        Text(line,
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.check_rounded,
+                            size: 14,
+                            color: LuxColors.sapphire,
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            line,
                             style: const TextStyle(
-                                fontFamily: _kSans,
-                                fontSize: 12.5,
-                                color: LuxColors.inkSecondary)),
-                      ]),
+                              fontFamily: _kSans,
+                              fontSize: 12.5,
+                              color: LuxColors.inkSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                 ],
               ),
@@ -413,11 +434,7 @@ class _AuthField extends StatelessWidget {
         obscureText: obscureText,
         keyboardType: keyboardType,
         validator: validator,
-        style: const TextStyle(
-          fontFamily: _kSans,
-          fontSize: 14,
-          color: _ink,
-        ),
+        style: const TextStyle(fontFamily: _kSans, fontSize: 14, color: _ink),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: const TextStyle(

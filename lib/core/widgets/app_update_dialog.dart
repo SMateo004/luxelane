@@ -5,8 +5,11 @@ import 'package:url_launcher/url_launcher.dart';
 import '../error/failures.dart';
 
 /// Enlace a la tienda de la plataforma actual, si el admin lo configuró.
-String? storeUrlFor(AppUpdateRequiredFailure f, TargetPlatform platform,
-        {bool web = kIsWeb}) =>
+String? storeUrlFor(
+  AppUpdateRequiredFailure f,
+  TargetPlatform platform, {
+  bool web = kIsWeb,
+}) =>
     web
         ? null
         : switch (platform) {
@@ -23,7 +26,9 @@ class AppUpdateDialog extends StatelessWidget {
   final bool web;
 
   static Future<void> show(
-          BuildContext context, AppUpdateRequiredFailure failure) =>
+    BuildContext context,
+    AppUpdateRequiredFailure failure,
+  ) =>
       showDialog<void>(
         context: context,
         builder: (_) => AppUpdateDialog(failure: failure),
@@ -33,14 +38,18 @@ class AppUpdateDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final url = storeUrlFor(failure, defaultTargetPlatform, web: web);
     return AlertDialog(
-      title: Text(failure.forDriver
-          ? 'Actualiza la app para seguir'
-          : 'Actualiza la app para reservar'),
-      content: Text(web
-          ? 'Hay una versión nueva de la web. Recarga la página para '
-              'seguir reservando.'
-          : 'Hay una versión nueva de la app. Actualízala para seguir '
-              'reservando.'),
+      title: Text(
+        failure.forDriver
+            ? 'Actualiza la app para seguir'
+            : 'Actualiza la app para reservar',
+      ),
+      content: Text(
+        web
+            ? 'Hay una versión nueva de la web. Recarga la página para '
+                'seguir reservando.'
+            : 'Hay una versión nueva de la app. Actualízala para seguir '
+                'reservando.',
+      ),
       actions: [
         if (url != null)
           FilledButton(

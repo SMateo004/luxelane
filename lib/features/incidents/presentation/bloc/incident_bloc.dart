@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/error/failures.dart';
@@ -114,9 +115,11 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
     required this.bookingId,
     required this.uid,
     Future<LatLngLite?> Function()? currentLocation,
+    bool Function()? isForeground,
     this.publishEvery = const Duration(seconds: 10),
   })  : _repo = repository,
         _currentLocation = currentLocation ?? (() async => null),
+        _isForeground = isForeground ?? _appInForeground,
         super(const IncidentState()) {
     on<IncidentWatched>(_onWatched);
     on<IncidentRaised>(_onRaised);
@@ -130,6 +133,16 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
   final String uid;
   final Future<LatLngLite?> Function() _currentLocation;
 
+  /// La ubicación del SOS solo se publica con la app en primer plano: la app
+  /// del pasajero no pide permiso de ubicación en segundo plano por el SOS
+  /// (riesgo de rechazo en las tiendas, D18).
+  final bool Function() _isForeground;
+
+  static bool _appInForeground() {
+    final s = WidgetsBinding.instance.lifecycleState;
+    return s == null || s == AppLifecycleState.resumed;
+  }
+
   /// Igual que el tramo que exigen las reglas: una ubicación cada 10 s.
   final Duration publishEvery;
 
@@ -137,12 +150,13 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
   Timer? _timer;
 
   Future<void> _onWatched(
-      IncidentWatched event, Emitter<IncidentState> emit) async {
+    IncidentWatched event,
+    Emitter<IncidentState> emit,
+  ) async {
     await _sub?.cancel();
-    _sub = _repo.watchMine(bookingId, uid).listen(
-          (i) => add(_IncidentChanged(i)),
-          onError: (_) {},
-        );
+    _sub = _repo
+        .watchMine(bookingId, uid)
+        .listen((i) => add(_IncidentChanged(i)), onError: (_) {});
   }
 
   Future<LatLngLite?> _locate() async {
@@ -154,47 +168,65 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
   }
 
   Future<void> _onRaised(
-      IncidentRaised event, Emitter<IncidentState> emit) async {
+    IncidentRaised event,
+    Emitter<IncidentState> emit,
+  ) async {
     if (state.sending) return;
-    emit(state.copyWith(
-        sending: true, clearFailure: true, presses: state.presses + 1));
+    emit(
+      state.copyWith(
+        sending: true,
+        clearFailure: true,
+        presses: state.presses + 1,
+      ),
+    );
     final location = await _locate();
     if (location != null) emit(state.copyWith(lastLocation: location));
     final result = await _repo.raise(bookingId, location: location);
     result.fold(
-      (f) => emit(state.copyWith(
-        sending: false,
-        failure: f is IncidentFailure
-            ? f
-            : IncidentFailure(IncidentIssue.other, f.message),
-      )),
+      (f) => emit(
+        state.copyWith(
+          sending: false,
+          failure: f is IncidentFailure
+              ? f
+              : IncidentFailure(IncidentIssue.other, f.message),
+        ),
+      ),
       (_) => emit(state.copyWith(sending: false, clearFailure: true)),
     );
   }
 
   Future<void> _onCancelled(
-      IncidentCancelled event, Emitter<IncidentState> emit) async {
+    IncidentCancelled event,
+    Emitter<IncidentState> emit,
+  ) async {
     final id = state.incident?.id;
     if (id == null) return;
     final result = await _repo.cancel(id);
     result.fold(
-      (f) => emit(state.copyWith(
+      (f) => emit(
+        state.copyWith(
           failure: f is IncidentFailure
               ? f
-              : IncidentFailure(IncidentIssue.other, f.message))),
+              : IncidentFailure(IncidentIssue.other, f.message),
+        ),
+      ),
       (_) => emit(state.copyWith(clearFailure: true)),
     );
   }
 
   void _onChanged(_IncidentChanged event, Emitter<IncidentState> emit) {
-    emit(event.incident == null
-        ? state.copyWith(clearIncident: true)
-        : state.copyWith(incident: event.incident));
+    emit(
+      event.incident == null
+          ? state.copyWith(clearIncident: true)
+          : state.copyWith(incident: event.incident),
+    );
     // Ubicación en vivo solo mientras esté abierto o reconocido.
     if (state.live) {
       if (_timer == null) {
         _timer = Timer.periodic(
-            publishEvery, (_) => add(const _IncidentLocationTick()));
+          publishEvery,
+          (_) => add(const _IncidentLocationTick()),
+        );
         add(const _IncidentLocationTick());
       }
     } else {
@@ -204,9 +236,11 @@ class IncidentBloc extends Bloc<IncidentEvent, IncidentState> {
   }
 
   Future<void> _onTick(
-      _IncidentLocationTick event, Emitter<IncidentState> emit) async {
+    _IncidentLocationTick event,
+    Emitter<IncidentState> emit,
+  ) async {
     final incident = state.incident;
-    if (incident == null || !incident.isLive) return;
+    if (incident == null || !incident.isLive || !_isForeground()) return;
     final location = await _locate();
     if (location == null) return;
     emit(state.copyWith(lastLocation: location));

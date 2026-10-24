@@ -27,7 +27,10 @@ abstract class DriverRoutes {
 
 final _rootKey = GlobalKey<NavigatorState>();
 
-GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) =>
+GoRouter buildDriverRouter(
+  AuthBloc authBloc,
+  DriverBloc driverBloc,
+) =>
     GoRouter(
       navigatorKey: _rootKey,
       initialLocation: DriverRoutes.home,
@@ -132,10 +135,7 @@ GoRouter buildDriverRouter(AuthBloc authBloc, DriverBloc driverBloc) =>
           ],
         ),
       ],
-      errorPageBuilder: (context, state) => _fade(
-        const _NotFoundPage(),
-        state,
-      ),
+      errorPageBuilder: (context, state) => _fade(const _NotFoundPage(), state),
     );
 
 class _DriverBlocListenable extends ChangeNotifier {

@@ -51,10 +51,12 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
         onAccept: () {
           final auth = context.read<AuthBloc>().state;
           if (auth is AuthAuthenticated) {
-            context.read<DriverBloc>().add(DriverRequestAccepted(
-                  bookingId: request.id,
-                  driverId: auth.user.id,
-                ));
+            context.read<DriverBloc>().add(
+                  DriverRequestAccepted(
+                    bookingId: request.id,
+                    driverId: auth.user.id,
+                  ),
+                );
           }
           if (mounted) Navigator.of(context, rootNavigator: true).pop();
           _activeSheetId = null;
@@ -121,9 +123,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 onAction: () {
                   final auth = context.read<AuthBloc>().state;
                   if (auth is AuthAuthenticated) {
-                    context
-                        .read<DriverBloc>()
-                        .add(DriverStarted(userId: auth.user.id));
+                    context.read<DriverBloc>().add(
+                          DriverStarted(userId: auth.user.id),
+                        );
                   }
                 },
               ),
@@ -147,7 +149,9 @@ class _DriverHomeScreenState extends State<DriverHomeScreen> {
                 switchOutCurve: LuxMotion.accelerate,
                 child: active != null
                     ? _ActiveRidePanel(
-                        key: ValueKey(active.id), booking: active)
+                        key: ValueKey(active.id),
+                        booking: active,
+                      )
                     : _IdlePanel(key: const ValueKey('idle'), state: state),
               ),
             ),
@@ -194,8 +198,10 @@ class _Header extends StatelessWidget {
                 child: Text(
                   title,
                   key: ValueKey(title),
-                  style: LuxTypography.displayMedium
-                      .copyWith(fontSize: 30, fontWeight: FontWeight.w400),
+                  style: LuxTypography.displayMedium.copyWith(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
             ],
@@ -216,9 +222,9 @@ class _IdlePanel extends StatelessWidget {
   void _toggle(BuildContext context, bool online) {
     final s = context.read<AuthBloc>().state;
     if (s is! AuthAuthenticated) return;
-    context
-        .read<DriverBloc>()
-        .add(DriverAvailabilityToggled(userId: s.user.id, isAvailable: online));
+    context.read<DriverBloc>().add(
+          DriverAvailabilityToggled(userId: s.user.id, isAvailable: online),
+        );
   }
 
   @override
@@ -226,8 +232,10 @@ class _IdlePanel extends StatelessWidget {
     final online = state.isAvailable;
     final now = DateTime.now();
     final upcoming = state.bookings
-        .where((b) =>
-            b.status == BookingStatus.confirmed && b.scheduledAt.isAfter(now))
+        .where(
+          (b) =>
+              b.status == BookingStatus.confirmed && b.scheduledAt.isAfter(now),
+        )
         .toList()
       ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
     final rating = state.profile.rating;
@@ -236,70 +244,95 @@ class _IdlePanel extends StatelessWidget {
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(
-          LuxSpacing.md + 4, LuxSpacing.md, LuxSpacing.md + 4, LuxSpacing.xl),
+        LuxSpacing.md + 4,
+        LuxSpacing.md,
+        LuxSpacing.md + 4,
+        LuxSpacing.xl,
+      ),
       children: [
-        item(_Header(
-          name: state.user.displayName,
-          title: online ? 'Estás en línea.' : 'Estás desconectado.',
-        )),
+        item(
+          _Header(
+            name: state.user.displayName,
+            title: online ? 'Estás en línea.' : 'Estás desconectado.',
+          ),
+        ),
         const SizedBox(height: LuxSpacing.lg),
-        item(_GoControl(
-          online: online,
-          classLabel: state.vehicleClass?.label,
-          onChanged: (v) => _toggle(context, v),
-        )),
+        item(
+          _GoControl(
+            online: online,
+            classLabel: state.vehicleClass?.label,
+            onChanged: (v) => _toggle(context, v),
+          ),
+        ),
         // Lo que impide recibir viajes, dicho claramente.
         if (!state.profile.documentsVerified)
-          item(const _Notice(
+          item(
+            const _Notice(
               'Tus documentos están en revisión. Podrás aceptar viajes '
-              'cuando Luxelane los verifique.'))
+              'cuando Luxelane los verifique.',
+            ),
+          )
         else if (state.vehicleClass == null)
-          item(const _Notice('No tienes un vehículo activo registrado. Pide a '
-              'Luxelane que lo active para recibir solicitudes.')),
+          item(
+            const _Notice(
+              'No tienes un vehículo activo registrado. Pide a '
+              'Luxelane que lo active para recibir solicitudes.',
+            ),
+          ),
         const SizedBox(height: LuxSpacing.xl),
         item(const SectionHeader(title: 'Hoy')),
         const SizedBox(height: LuxSpacing.sm),
-        item(Container(
-          padding: const EdgeInsets.symmetric(vertical: LuxSpacing.md),
-          decoration: BoxDecoration(
-            color: LuxColors.surface,
-            borderRadius: BorderRadius.circular(LuxRadius.lg),
-            border: Border.all(color: LuxColors.border),
-          ),
-          child: IntrinsicHeight(
-            child: Row(
-              children: [
-                _Metric(
+        item(
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: LuxSpacing.md),
+            decoration: BoxDecoration(
+              color: LuxColors.surface,
+              borderRadius: BorderRadius.circular(LuxRadius.lg),
+              border: Border.all(color: LuxColors.border),
+            ),
+            child: IntrinsicHeight(
+              child: Row(
+                children: [
+                  _Metric(
                     value: 'Bs ${state.todayEarnings.toStringAsFixed(0)}',
                     label: 'Ganancias netas',
-                    big: true),
-                const LuxDivider(vertical: true),
-                _Metric(
-                    value: '${state.completedToday.length}', label: 'Viajes'),
-                const LuxDivider(vertical: true),
-                _Metric(
+                    big: true,
+                  ),
+                  const LuxDivider(vertical: true),
+                  _Metric(
+                    value: '${state.completedToday.length}',
+                    label: 'Viajes',
+                  ),
+                  const LuxDivider(vertical: true),
+                  _Metric(
                     value: rating > 0 ? '★ ${rating.toStringAsFixed(1)}' : '—',
-                    label: 'Valoración'),
-              ],
+                    label: 'Valoración',
+                  ),
+                ],
+              ),
             ),
           ),
-        )),
+        ),
         if (upcoming.isNotEmpty) ...[
           const SizedBox(height: LuxSpacing.xl),
           item(const SectionHeader(title: 'Tus próximas reservas')),
           const SizedBox(height: LuxSpacing.sm),
-          item(LuxGroup(children: [
-            for (final b in upcoming.take(3))
-              LuxListRow(
-                icon: Icons.schedule_rounded,
-                title: b.serviceType == ServiceType.byTheHour
-                    ? '${b.hours ?? 2} h desde ${b.origin.displayName}'
-                    : b.destination.displayName,
-                subtitle:
-                    '${LuxFormat.dateTime(b.scheduledAt)} · ${b.vehicleClass.label}',
-                onTap: () => context.push('/driver/active-ride/${b.id}'),
-              ),
-          ])),
+          item(
+            LuxGroup(
+              children: [
+                for (final b in upcoming.take(3))
+                  LuxListRow(
+                    icon: Icons.schedule_rounded,
+                    title: b.serviceType == ServiceType.byTheHour
+                        ? '${b.hours ?? 2} h desde ${b.origin.displayName}'
+                        : b.destination.displayName,
+                    subtitle:
+                        '${LuxFormat.dateTime(b.scheduledAt)} · ${b.vehicleClass.label}',
+                    onTap: () => context.push('/driver/active-ride/${b.id}'),
+                  ),
+              ],
+            ),
+          ),
         ],
       ],
     );
@@ -366,8 +399,9 @@ class _GoControlState extends State<_GoControl>
       decoration: BoxDecoration(
         color: online ? LuxColors.sapphireTint : LuxColors.surface,
         borderRadius: BorderRadius.circular(LuxRadius.xl),
-        border:
-            Border.all(color: online ? Colors.transparent : LuxColors.border),
+        border: Border.all(
+          color: online ? Colors.transparent : LuxColors.border,
+        ),
       ),
       child: Column(
         children: [
@@ -384,21 +418,24 @@ class _GoControlState extends State<_GoControl>
                       alignment: Alignment.center,
                       children: [
                         for (final offset in const [0.0, 0.5])
-                          Builder(builder: (_) {
-                            final t = (_waves.value + offset) % 1.0;
-                            return Container(
-                              width: size * (1 + 0.7 * t),
-                              height: size * (1 + 0.7 * t),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: LuxColors.sapphire
-                                      .withValues(alpha: 0.35 * (1 - t)),
-                                  width: 1.5,
+                          Builder(
+                            builder: (_) {
+                              final t = (_waves.value + offset) % 1.0;
+                              return Container(
+                                width: size * (1 + 0.7 * t),
+                                height: size * (1 + 0.7 * t),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: LuxColors.sapphire.withValues(
+                                      alpha: 0.35 * (1 - t),
+                                    ),
+                                    width: 1.5,
+                                  ),
                                 ),
-                              ),
-                            );
-                          }),
+                              );
+                            },
+                          ),
                       ],
                     ),
                   ),
@@ -508,15 +545,23 @@ class _Notice extends StatelessWidget {
             color: LuxColors.warning.withValues(alpha: 0.07),
             borderRadius: BorderRadius.circular(LuxRadius.lg),
           ),
-          child: Row(children: [
-            const Icon(Icons.info_outline_rounded,
-                color: LuxColors.warning, size: 20),
-            const SizedBox(width: LuxSpacing.sm + 4),
-            Expanded(
-                child: Text(text,
-                    style: LuxTypography.bodyMedium
-                        .copyWith(color: LuxColors.ink))),
-          ]),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.info_outline_rounded,
+                color: LuxColors.warning,
+                size: 20,
+              ),
+              const SizedBox(width: LuxSpacing.sm + 4),
+              Expanded(
+                child: Text(
+                  text,
+                  style:
+                      LuxTypography.bodyMedium.copyWith(color: LuxColors.ink),
+                ),
+              ),
+            ],
+          ),
         ),
       );
 }
@@ -531,7 +576,8 @@ class _ActiveRidePanel extends StatelessWidget {
     try {
       if (kIsWeb) {
         final url = Uri.parse(
-            'https://www.google.com/maps/dir/?api=1&destination=${target.lat},${target.lng}');
+          'https://www.google.com/maps/dir/?api=1&destination=${target.lat},${target.lng}',
+        );
         if (await canLaunchUrl(url)) {
           await launchUrl(url);
         } else {
@@ -544,8 +590,11 @@ class _ActiveRidePanel extends StatelessWidget {
       if (!context.mounted) return;
 
       if (availableMaps.isEmpty) {
-        showLuxSnackbar(context, 'No hay aplicaciones de mapas disponibles',
-            isError: true);
+        showLuxSnackbar(
+          context,
+          'No hay aplicaciones de mapas disponibles',
+          isError: true,
+        );
         return;
       }
 
@@ -558,10 +607,12 @@ class _ActiveRidePanel extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(LuxSpacing.md),
-                  child: Text('Navegar hacia ${target.address}',
-                      style: LuxTypography.titleMedium,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis),
+                  child: Text(
+                    'Navegar hacia ${target.address}',
+                    style: LuxTypography.titleMedium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
                 Flexible(
                   child: ListView.builder(
@@ -572,11 +623,16 @@ class _ActiveRidePanel extends StatelessWidget {
                       return ListTile(
                         leading: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: const Icon(Icons.map_outlined,
-                              color: LuxColors.sapphire, size: 24),
+                          child: const Icon(
+                            Icons.map_outlined,
+                            color: LuxColors.sapphire,
+                            size: 24,
+                          ),
                         ),
-                        title:
-                            Text(map.mapName, style: LuxTypography.bodyLarge),
+                        title: Text(
+                          map.mapName,
+                          style: LuxTypography.bodyLarge,
+                        ),
                         onTap: () {
                           map.showMarker(
                             coords: ml.Coords(target.lat, target.lng),
@@ -595,8 +651,11 @@ class _ActiveRidePanel extends StatelessWidget {
       );
     } catch (e) {
       if (context.mounted) {
-        showLuxSnackbar(context, 'No se pudieron abrir los mapas',
-            isError: true);
+        showLuxSnackbar(
+          context,
+          'No se pudieron abrir los mapas',
+          isError: true,
+        );
       }
     }
   }
@@ -613,8 +672,12 @@ class _ActiveRidePanel extends StatelessWidget {
       children: [
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.fromLTRB(LuxSpacing.md + 4, LuxSpacing.md,
-                LuxSpacing.md + 4, LuxSpacing.md),
+            padding: const EdgeInsets.fromLTRB(
+              LuxSpacing.md + 4,
+              LuxSpacing.md,
+              LuxSpacing.md + 4,
+              LuxSpacing.md,
+            ),
             children: [
               RideProgressBar(status: booking.status),
               const SizedBox(height: LuxSpacing.lg),
@@ -629,15 +692,18 @@ class _ActiveRidePanel extends StatelessWidget {
                         DriverStepAction.message(booking),
                         key: ValueKey(booking.status),
                         style: LuxTypography.displayMedium.copyWith(
-                            fontSize: 30, fontWeight: FontWeight.w400),
+                          fontSize: 30,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
                     ),
                   ),
                   if (booking.driverId != null) ...[
                     SosEntry(
-                        bookingId: booking.id,
-                        uid: booking.driverId!,
-                        status: booking.status),
+                      bookingId: booking.id,
+                      uid: booking.driverId!,
+                      status: booking.status,
+                    ),
                     const SizedBox(width: LuxSpacing.sm),
                   ],
                   const NotificationBell(color: LuxColors.ink),
@@ -651,31 +717,35 @@ class _ActiveRidePanel extends StatelessWidget {
                 style: LuxTypography.caption.copyWith(fontSize: 12),
               ),
               const SizedBox(height: LuxSpacing.lg),
-              LuxGroup(children: [
-                _Stop(
-                  label: 'Recogida',
-                  place: booking.origin,
-                  current: goingToPickup,
-                ),
-                if (!hourly)
+              LuxGroup(
+                children: [
                   _Stop(
-                    label: 'Destino',
-                    place: booking.destination,
-                    current: !goingToPickup,
-                    last: true,
+                    label: 'Recogida',
+                    place: booking.origin,
+                    current: goingToPickup,
                   ),
-              ]),
+                  if (!hourly)
+                    _Stop(
+                      label: 'Destino',
+                      place: booking.destination,
+                      current: !goingToPickup,
+                      last: true,
+                    ),
+                ],
+              ),
               if (booking.guest != null) ...[
                 const SizedBox(height: LuxSpacing.md),
-                LuxGroup(children: [
-                  LuxListRow(
-                    icon: Icons.person_outline_rounded,
-                    title: 'Pasajero: ${booking.guest!.fullName}',
-                    subtitle: booking.guest!.contactLine.isEmpty
-                        ? null
-                        : booking.guest!.contactLine,
-                  ),
-                ]),
+                LuxGroup(
+                  children: [
+                    LuxListRow(
+                      icon: Icons.person_outline_rounded,
+                      title: 'Pasajero: ${booking.guest!.fullName}',
+                      subtitle: booking.guest!.contactLine.isEmpty
+                          ? null
+                          : booking.guest!.contactLine,
+                    ),
+                  ],
+                ),
               ],
               if (!booking.riderPreferences.isEmpty) ...[
                 const SizedBox(height: LuxSpacing.md),
@@ -687,21 +757,27 @@ class _ActiveRidePanel extends StatelessWidget {
               ],
               if (booking.notes?.isNotEmpty == true) ...[
                 const SizedBox(height: LuxSpacing.md),
-                LuxGroup(children: [
-                  LuxListRow(
-                    icon: Icons.notes_rounded,
-                    title: 'Nota del pasajero',
-                    subtitle: booking.notes,
-                  ),
-                ]),
+                LuxGroup(
+                  children: [
+                    LuxListRow(
+                      icon: Icons.notes_rounded,
+                      title: 'Nota del pasajero',
+                      subtitle: booking.notes,
+                    ),
+                  ],
+                ),
               ],
             ],
           ),
         ),
         // Acciones fijas abajo, al alcance del pulgar.
         Container(
-          padding: const EdgeInsets.fromLTRB(LuxSpacing.md + 4, LuxSpacing.sm,
-              LuxSpacing.md + 4, LuxSpacing.md),
+          padding: const EdgeInsets.fromLTRB(
+            LuxSpacing.md + 4,
+            LuxSpacing.sm,
+            LuxSpacing.md + 4,
+            LuxSpacing.md,
+          ),
           decoration: const BoxDecoration(
             color: LuxColors.surface,
             border: Border(top: BorderSide(color: LuxColors.border)),
@@ -771,23 +847,29 @@ class _Stop extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label.toUpperCase(),
-                      style: LuxTypography.eyebrow.copyWith(
-                          fontSize: 9,
-                          color: current
-                              ? LuxColors.sapphire
-                              : LuxColors.inkTertiary)),
+                  Text(
+                    label.toUpperCase(),
+                    style: LuxTypography.eyebrow.copyWith(
+                      fontSize: 9,
+                      color:
+                          current ? LuxColors.sapphire : LuxColors.inkTertiary,
+                    ),
+                  ),
                   const SizedBox(height: 3),
-                  Text(place.displayName,
-                      style: LuxTypography.titleMedium.copyWith(
-                          fontSize: 15,
-                          fontWeight:
-                              current ? FontWeight.w600 : FontWeight.w500)),
+                  Text(
+                    place.displayName,
+                    style: LuxTypography.titleMedium.copyWith(
+                      fontSize: 15,
+                      fontWeight: current ? FontWeight.w600 : FontWeight.w500,
+                    ),
+                  ),
                   if (place.name.isNotEmpty && place.address != place.name)
-                    Text(place.address,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: LuxTypography.caption.copyWith(fontSize: 12)),
+                    Text(
+                      place.address,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.caption.copyWith(fontSize: 12),
+                    ),
                 ],
               ),
             ),
@@ -805,9 +887,10 @@ class _PulseIndicator extends StatefulWidget {
 
 class _PulseIndicatorState extends State<_PulseIndicator>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _ctrl =
-      AnimationController(vsync: this, duration: const Duration(seconds: 2))
-        ..repeat();
+  late final AnimationController _ctrl = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 2),
+  )..repeat();
 
   @override
   void dispose() {
@@ -886,8 +969,9 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
     return Container(
       decoration: const BoxDecoration(
         color: LuxColors.surface,
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(LuxRadius.xl + 4)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(LuxRadius.xl + 4),
+        ),
         boxShadow: LuxElevation.high,
       ),
       child: SafeArea(
@@ -913,22 +997,26 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                 child: Column(
                   children: [
                     Text(
-                        'NUEVA SOLICITUD · ${b.vehicleClass.label.toUpperCase()}',
-                        textAlign: TextAlign.center,
-                        style: LuxTypography.eyebrow),
+                      'NUEVA SOLICITUD · ${b.vehicleClass.label.toUpperCase()}',
+                      textAlign: TextAlign.center,
+                      style: LuxTypography.eyebrow,
+                    ),
                     const SizedBox(height: 8),
                     Text(
                       'Bs ${b.estimatedPrice.toStringAsFixed(0)}',
                       textAlign: TextAlign.center,
-                      style: LuxTypography.displayLarge
-                          .copyWith(fontSize: 52, height: 1),
+                      style: LuxTypography.displayLarge.copyWith(
+                        fontSize: 52,
+                        height: 1,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       [when, if (trip != null) trip].join(' · '),
                       textAlign: TextAlign.center,
-                      style: LuxTypography.bodyMedium
-                          .copyWith(color: LuxColors.ink),
+                      style: LuxTypography.bodyMedium.copyWith(
+                        color: LuxColors.ink,
+                      ),
                     ),
                   ],
                 ),
@@ -953,28 +1041,30 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
               const SizedBox(height: 12),
               LuxFadeIn(
                 index: 2,
-                child: LuxGroup(children: [
-                  _RouteItem(
-                    icon: Icons.radio_button_checked,
-                    color: LuxColors.sapphire,
-                    label: 'ZONA DE RECOGIDA',
-                    address: b.pickupLabel,
-                  ),
-                  if (!hourly)
+                child: LuxGroup(
+                  children: [
                     _RouteItem(
-                      icon: Icons.stop_rounded,
-                      color: LuxColors.ink,
-                      label: 'ZONA DE DESTINO',
-                      address: b.dropoffLabel,
-                    )
-                  else
-                    _RouteItem(
-                      icon: Icons.schedule_rounded,
-                      color: LuxColors.ink,
-                      label: 'POR HORAS',
-                      address: '${b.hours ?? 2} h a disposición',
+                      icon: Icons.radio_button_checked,
+                      color: LuxColors.sapphire,
+                      label: 'ZONA DE RECOGIDA',
+                      address: b.pickupLabel,
                     ),
-                ]),
+                    if (!hourly)
+                      _RouteItem(
+                        icon: Icons.stop_rounded,
+                        color: LuxColors.ink,
+                        label: 'ZONA DE DESTINO',
+                        address: b.dropoffLabel,
+                      )
+                    else
+                      _RouteItem(
+                        icon: Icons.schedule_rounded,
+                        color: LuxColors.ink,
+                        label: 'POR HORAS',
+                        address: '${b.hours ?? 2} h a disposición',
+                      ),
+                  ],
+                ),
               ),
               const SizedBox(height: 12),
               Text(
@@ -1023,14 +1113,20 @@ class _RouteItem extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label,
-                      style: LuxTypography.eyebrow
-                          .copyWith(fontSize: 9, color: LuxColors.inkTertiary)),
+                  Text(
+                    label,
+                    style: LuxTypography.eyebrow.copyWith(
+                      fontSize: 9,
+                      color: LuxColors.inkTertiary,
+                    ),
+                  ),
                   const SizedBox(height: 3),
-                  Text(address,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: LuxTypography.titleMedium.copyWith(fontSize: 15)),
+                  Text(
+                    address,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: LuxTypography.titleMedium.copyWith(fontSize: 15),
+                  ),
                 ],
               ),
             ),

@@ -23,7 +23,8 @@ String incidentWaitLabel(Duration d) {
 String incidentStatusLabel(Incident i) => switch (i.status) {
       IncidentStatus.open => 'SIN RECONOCER',
       IncidentStatus.acknowledged => 'Reconocido',
-      IncidentStatus.cancelledByReporter => 'Cancelado por quien lo disparó',
+      IncidentStatus.cancelRequested =>
+        'CANCELADO POR EL USUARIO: VERIFICAR POR LLAMADA',
       IncidentStatus.closed => 'Cerrado',
     };
 
@@ -33,7 +34,8 @@ const _logLabels = {
   'escalated': 'Escalado (sin reconocer)',
   'acknowledged': 'Reconocido',
   'closed': 'Cerrado',
-  'cancelled_by_reporter': 'Cancelado por quien lo disparó',
+  'cancel_requested': 'Cancelado por el usuario: verificar por llamada',
+  'reopened_by_reporter': 'Reactivado por el usuario',
 };
 
 /// Incidentes SOS sin cerrar, arriba de todo en cualquier sección del
@@ -109,14 +111,15 @@ class _AdminIncidentsStripState extends State<AdminIncidentsStrip> {
           if (s.incidents.isEmpty) return const SizedBox.shrink();
           final list = [...s.incidents]..sort((a, b) {
               int rank(Incident i) => switch (i.status) {
-                    IncidentStatus.open => 0,
+                    IncidentStatus.open || IncidentStatus.cancelRequested => 0,
                     IncidentStatus.acknowledged => 1,
                     _ => 2,
                   };
               final r = rank(a).compareTo(rank(b));
               if (r != 0) return r;
-              return (a.createdAt ?? DateTime(0))
-                  .compareTo(b.createdAt ?? DateTime(0));
+              return (a.createdAt ?? DateTime(0)).compareTo(
+                b.createdAt ?? DateTime(0),
+              );
             });
           final unack = s.unacknowledgedIncidents;
           return Container(
@@ -126,7 +129,11 @@ class _AdminIncidentsStripState extends State<AdminIncidentsStrip> {
                 ? LuxColors.error.withValues(alpha: 0.08)
                 : LuxColors.warning.withValues(alpha: 0.06),
             padding: const EdgeInsets.fromLTRB(
-                LuxSpacing.md, LuxSpacing.sm, LuxSpacing.md, LuxSpacing.sm),
+              LuxSpacing.md,
+              LuxSpacing.sm,
+              LuxSpacing.md,
+              LuxSpacing.sm,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -141,8 +148,9 @@ class _AdminIncidentsStripState extends State<AdminIncidentsStrip> {
                           unack > 0
                               ? '$unack ${unack == 1 ? 'incidente sin reconocer' : 'incidentes sin reconocer'}'
                               : 'Incidentes en curso',
-                          style: LuxTypography.titleMedium
-                              .copyWith(color: LuxColors.error),
+                          style: LuxTypography.titleMedium.copyWith(
+                            color: LuxColors.error,
+                          ),
                         ),
                       ),
                     ),
@@ -151,9 +159,11 @@ class _AdminIncidentsStripState extends State<AdminIncidentsStrip> {
                         _muted = !_muted;
                         _sync(s);
                       }),
-                      icon: Icon(_muted
-                          ? Icons.volume_off_rounded
-                          : Icons.volume_up_rounded),
+                      icon: Icon(
+                        _muted
+                            ? Icons.volume_off_rounded
+                            : Icons.volume_up_rounded,
+                      ),
                       label: Text(_muted ? 'Activar sonido' : 'Silenciar'),
                     ),
                   ],
@@ -204,9 +214,9 @@ class _IncidentCard extends StatelessWidget {
       minReasonLength: 10,
     );
     if (note == null || !context.mounted) return;
-    context
-        .read<AdminBloc>()
-        .add(AdminCloseIncidentRequested(incident.id, note));
+    context.read<AdminBloc>().add(
+          AdminCloseIncidentRequested(incident.id, note),
+        );
   }
 
   @override
@@ -221,7 +231,7 @@ class _IncidentCard extends StatelessWidget {
     final riderPhone = _phone(b?.riderId);
     final driverPhone = _phone(b?.driverId);
     final dispatch = state.globalSettings['dispatchPhone'];
-    final open0 = incident.status == IncidentStatus.open;
+    final open0 = incident.needsAck;
     return Container(
       margin: const EdgeInsets.only(top: LuxSpacing.sm),
       padding: const EdgeInsets.all(LuxSpacing.sm),
@@ -229,8 +239,9 @@ class _IncidentCard extends StatelessWidget {
         color: LuxColors.surface,
         borderRadius: BorderRadius.circular(LuxRadius.sm),
         border: Border.all(
-            color: open0 ? LuxColors.error : LuxColors.border,
-            width: open0 ? 2 : 1),
+          color: open0 ? LuxColors.error : LuxColors.border,
+          width: open0 ? 2 : 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,22 +250,32 @@ class _IncidentCard extends StatelessWidget {
             spacing: LuxSpacing.sm,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              AdminTag(incidentStatusLabel(incident),
-                  color: open0 ? LuxColors.error : LuxColors.warning),
+              AdminTag(
+                incidentStatusLabel(incident),
+                color: open0 ? LuxColors.error : LuxColors.warning,
+              ),
               Text(
-                  'Reserva #${bookingShortId(incident.bookingId)} · SOS del '
-                  '$role $reporter',
-                  style: LuxTypography.titleMedium),
+                'Reserva #${bookingShortId(incident.bookingId)} · SOS del '
+                '$role $reporter',
+                style: LuxTypography.titleMedium,
+              ),
               if (since != null && open0)
-                Text('Sin reconocer: ${incidentWaitLabel(since)}',
-                    style: LuxTypography.bodyMedium
-                        .copyWith(color: LuxColors.error)),
+                Text(
+                  'Sin reconocer: ${incidentWaitLabel(since)}',
+                  style: LuxTypography.bodyMedium.copyWith(
+                    color: LuxColors.error,
+                  ),
+                ),
               if (incident.count > 1)
-                Text('Pulsado ${incident.count} veces',
-                    style: LuxTypography.caption),
+                Text(
+                  'Pulsado ${incident.count} veces',
+                  style: LuxTypography.caption,
+                ),
               if (incident.escalationCount > 0)
-                Text('Escalado ${incident.escalationCount}×',
-                    style: LuxTypography.caption),
+                Text(
+                  'Escalado ${incident.escalationCount}×',
+                  style: LuxTypography.caption,
+                ),
             ],
           ),
           const SizedBox(height: LuxSpacing.xs),
@@ -265,13 +286,18 @@ class _IncidentCard extends StatelessWidget {
               StreamBuilder<({double lat, double lng})?>(
                 stream: bloc.incidentLocation(incident.id),
                 builder: (_, snap) => snap.data == null
-                    ? const AdminTag('Sin ubicación del aviso',
-                        color: LuxColors.inkTertiary)
+                    ? const AdminTag(
+                        'Sin ubicación del aviso',
+                        color: LuxColors.inkTertiary,
+                      )
                     : AdminActionButton(
                         icon: Icons.location_on_outlined,
                         label: 'Ubicación del aviso',
                         onTap: () => open(
-                            Uri.parse(mapLink(snap.data!.lat, snap.data!.lng))),
+                          Uri.parse(
+                            mapLink(snap.data!.lat, snap.data!.lng),
+                          ),
+                        ),
                       ),
               ),
               if (b != null)
@@ -282,8 +308,11 @@ class _IncidentCard extends StatelessWidget {
                       : AdminActionButton(
                           icon: Icons.directions_car_outlined,
                           label: 'Ubicación del chófer',
-                          onTap: () => open(Uri.parse(
-                              mapLink(snap.data!.lat, snap.data!.lng))),
+                          onTap: () => open(
+                            Uri.parse(
+                              mapLink(snap.data!.lat, snap.data!.lng),
+                            ),
+                          ),
                         ),
                 ),
               if (riderPhone != null)
@@ -309,8 +338,9 @@ class _IncidentCard extends StatelessWidget {
                   icon: Icons.check_circle_outline_rounded,
                   label: 'Reconocer',
                   color: LuxColors.error,
-                  onTap: () =>
-                      bloc.add(AdminAcknowledgeIncidentRequested(incident.id)),
+                  onTap: () => bloc.add(
+                    AdminAcknowledgeIncidentRequested(incident.id),
+                  ),
                 ),
               AdminActionButton(
                 icon: Icons.task_alt_rounded,

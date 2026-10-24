@@ -59,7 +59,9 @@ abstract class LuxHaptics {
     if (kIsWeb) return;
     HapticFeedback.lightImpact();
     Future<void>.delayed(
-        const Duration(milliseconds: 90), HapticFeedback.lightImpact);
+      const Duration(milliseconds: 90),
+      HapticFeedback.lightImpact,
+    );
   }
 
   /// Algo requiere atención.

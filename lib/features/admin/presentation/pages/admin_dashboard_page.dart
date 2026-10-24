@@ -60,7 +60,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         AdminSection.operations,
         AdminSection.drivers,
         AdminSection.vehicles,
-      ]
+      ],
     ),
     (
       'Negocio',
@@ -69,11 +69,11 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         AdminSection.pricing,
         AdminSection.business,
         AdminSection.users,
-      ]
+      ],
     ),
     (
       'Sistema',
-      [AdminSection.alerts, AdminSection.audit, AdminSection.settings]
+      [AdminSection.alerts, AdminSection.audit, AdminSection.settings],
     ),
   ];
 
@@ -259,21 +259,29 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: LuxTypography.titleMedium
-                                          .copyWith(fontSize: 13)),
-                                  const Text('Administración',
-                                      style: LuxTypography.caption),
+                                  Text(
+                                    name,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: LuxTypography.titleMedium.copyWith(
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  const Text(
+                                    'Administración',
+                                    style: LuxTypography.caption,
+                                  ),
                                 ],
                               ),
                             ),
                             IconButton(
                               tooltip: 'Cerrar sesión',
                               onPressed: () => _confirmSignOut(context),
-                              icon: const Icon(Icons.logout_rounded,
-                                  size: 18, color: LuxColors.inkTertiary),
+                              icon: const Icon(
+                                Icons.logout_rounded,
+                                size: 18,
+                                color: LuxColors.inkTertiary,
+                              ),
                             ),
                           ],
                         ),
@@ -320,12 +328,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             if (state.loadError != null)
               MaterialBanner(
                 backgroundColor: LuxColors.error.withValues(alpha: 0.08),
-                leading:
-                    const Icon(Icons.cloud_off_rounded, color: LuxColors.error),
+                leading: const Icon(
+                  Icons.cloud_off_rounded,
+                  color: LuxColors.error,
+                ),
                 content: Text(
-                    '${state.loadError} Los datos de esta pantalla pueden '
-                    'estar incompletos.',
-                    style: LuxTypography.bodyMedium),
+                  '${state.loadError} Los datos de esta pantalla pueden '
+                  'estar incompletos.',
+                  style: LuxTypography.bodyMedium,
+                ),
                 actions: [
                   TextButton(
                     onPressed: () =>

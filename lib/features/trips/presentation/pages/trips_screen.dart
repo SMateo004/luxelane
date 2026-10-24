@@ -88,8 +88,12 @@ class _TripsScreenState extends State<_TripsView> {
                 backgroundColor: LuxColors.surface,
                 onRefresh: () async => _loadTrips(),
                 child: ListView(
-                  padding: const EdgeInsets.fromLTRB(LuxSpacing.md,
-                      LuxSpacing.md, LuxSpacing.md, LuxSpacing.xxl),
+                  padding: const EdgeInsets.fromLTRB(
+                    LuxSpacing.md,
+                    LuxSpacing.md,
+                    LuxSpacing.md,
+                    LuxSpacing.xxl,
+                  ),
                   children: [
                     if (upcoming.isNotEmpty) ...[
                       const SectionHeader(title: 'Próximos'),
@@ -105,8 +109,9 @@ class _TripsScreenState extends State<_TripsView> {
                       const SizedBox(height: LuxSpacing.sm + 2),
                       for (final (i, b) in past.indexed) ...[
                         LuxFadeIn(
-                            index: upcoming.length + i,
-                            child: _TripCard(booking: b)),
+                          index: upcoming.length + i,
+                          child: _TripCard(booking: b),
+                        ),
                         const SizedBox(height: LuxSpacing.sm),
                       ],
                     ],
@@ -188,10 +193,12 @@ class _TripCard extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 3),
-                    Text(_from,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: LuxTypography.caption.copyWith(fontSize: 12)),
+                    Text(
+                      _from,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.caption.copyWith(fontSize: 12),
+                    ),
                   ],
                 ),
               ),
@@ -219,13 +226,19 @@ class _TripCard extends StatelessWidget {
                 ),
               ),
               if (_cta != null) ...[
-                Text(_cta!,
-                    style: LuxTypography.caption.copyWith(
-                        color: LuxColors.sapphire,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12)),
-                const Icon(Icons.chevron_right_rounded,
-                    size: 16, color: LuxColors.sapphire),
+                Text(
+                  _cta!,
+                  style: LuxTypography.caption.copyWith(
+                    color: LuxColors.sapphire,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                  ),
+                ),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  size: 16,
+                  color: LuxColors.sapphire,
+                ),
               ],
             ],
           ),

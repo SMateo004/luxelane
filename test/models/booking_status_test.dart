@@ -5,10 +5,14 @@ void main() {
   group('BookingStatus.verified', () {
     test('va entre «llegó» e «en curso»', () {
       const order = BookingStatus.values;
-      expect(order.indexOf(BookingStatus.verified),
-          order.indexOf(BookingStatus.driverArrived) + 1);
-      expect(order.indexOf(BookingStatus.inProgress),
-          order.indexOf(BookingStatus.verified) + 1);
+      expect(
+        order.indexOf(BookingStatus.verified),
+        order.indexOf(BookingStatus.driverArrived) + 1,
+      );
+      expect(
+        order.indexOf(BookingStatus.inProgress),
+        order.indexOf(BookingStatus.verified) + 1,
+      );
     });
 
     test('se guarda como "verified" y se lee igual', () {

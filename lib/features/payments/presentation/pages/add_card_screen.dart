@@ -21,8 +21,11 @@ class _AddCardScreenState extends State<AddCardScreen> {
 
   Future<void> _submit() async {
     if (_cardDetails == null || !(_cardDetails!.complete)) {
-      showLuxSnackbar(context, 'Ingresa los datos completos de la tarjeta',
-          isError: true);
+      showLuxSnackbar(
+        context,
+        'Ingresa los datos completos de la tarjeta',
+        isError: true,
+      );
       return;
     }
 
@@ -55,10 +58,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
       if (!mounted) return;
 
       context.read<PaymentBloc>().add(
-            CardAdded(
-              stripeCustomerId: customerId,
-              paymentMethodId: pm.id,
-            ),
+            CardAdded(stripeCustomerId: customerId, paymentMethodId: pm.id),
           );
     } catch (e) {
       if (mounted) {
@@ -116,8 +116,11 @@ class _AddCardScreenState extends State<AddCardScreen> {
               const SizedBox(height: LuxSpacing.lg),
               const Row(
                 children: [
-                  Icon(Icons.lock_outline,
-                      size: 14, color: LuxColors.inkTertiary),
+                  Icon(
+                    Icons.lock_outline,
+                    size: 14,
+                    color: LuxColors.inkTertiary,
+                  ),
                   SizedBox(width: LuxSpacing.xs),
                   Text(
                     'Protegido por Stripe · Cumplimiento PCI DSS',

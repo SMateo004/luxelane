@@ -8,25 +8,28 @@ void main() {
   String name(String uid) => uid == 'jefa' ? 'Jefa' : 'Luis';
 
   test('lee el evento del servidor y su ubicación (solo admin)', () {
-    final e = BookingEvent.fromJson('e1', {
-      'type': 'transition',
-      'from': 'driver_arrived',
-      'to': 'verified',
-      'actor': {'uid': 'chofer', 'role': 'driver'},
-      'source': 'driver_app',
-      'at': Timestamp.fromDate(DateTime(2026, 10, 20, 15)),
-      'appVersion': '2.0.0',
-      'method': 'pickup_code',
-    }, {
-      'lat': -17.6,
-      'lng': -63.1,
-    });
+    final e = BookingEvent.fromJson(
+      'e1',
+      {
+        'type': 'transition',
+        'from': 'driver_arrived',
+        'to': 'verified',
+        'actor': {'uid': 'chofer', 'role': 'driver'},
+        'source': 'driver_app',
+        'at': Timestamp.fromDate(DateTime(2026, 10, 20, 15)),
+        'appVersion': '2.0.0',
+        'method': 'pickup_code',
+      },
+      {'lat': -17.6, 'lng': -63.1},
+    );
     expect(e.from, BookingStatus.driverArrived);
     expect(e.to, BookingStatus.verified);
     expect(e.hasLocation, isTrue);
     expect(bookingEventTitle(e), 'Chófer llegó → Verificada');
-    expect(bookingEventDetails(e, name).first,
-        'Chófer Luis · app 2.0.0 · con el código del pasajero');
+    expect(
+      bookingEventDetails(e, name).first,
+      'Chófer Luis · app 2.0.0 · con el código del pasajero',
+    );
   });
 
   test('override del admin: muestra quién y el motivo', () {
@@ -51,9 +54,13 @@ void main() {
           'actor': {'uid': 'chofer', 'role': 'driver'},
           'arrivalCheck': check,
         });
-    expect(bookingEventDetails(arrival('no_radius'), name),
-        contains(startsWith('Sin radio de llegada')));
-    expect(bookingEventDetails(arrival('no_location'), name),
-        contains('El chófer no envió su ubicación al llegar'));
+    expect(
+      bookingEventDetails(arrival('no_radius'), name),
+      contains(startsWith('Sin radio de llegada')),
+    );
+    expect(
+      bookingEventDetails(arrival('no_location'), name),
+      contains('El chófer no envió su ubicación al llegar'),
+    );
   });
 }

@@ -394,8 +394,10 @@ class BookingSettlement {
 
   /// Reparto provisional con [commissionPct], para viajes que el servidor aún
   /// no ha repartido.
-  factory BookingSettlement.estimate(double amount,
-      {double commissionPct = kDefaultCommissionPct}) {
+  factory BookingSettlement.estimate(
+    double amount, {
+    double commissionPct = kDefaultCommissionPct,
+  }) {
     double round(double v) => (v * 100).roundToDouble() / 100;
     final pct = commissionPct.clamp(0, 100).toDouble();
     final commission = round(amount * pct / 100);
@@ -468,7 +470,8 @@ class PickupCode {
   factory PickupCode.fromJson(Map<String, dynamic> j) => PickupCode(
         code: j['code'] as String,
         expiresAt: DateTime.fromMillisecondsSinceEpoch(
-            (j['expiresAt'] as num).toInt()),
+          (j['expiresAt'] as num).toInt(),
+        ),
       );
 }
 
@@ -660,8 +663,10 @@ class Booking {
   BookingSettlement settlementOr(double commissionPct) {
     final s = settlement;
     if (s != null && (s.amount - chargedAmount).abs() < 0.005) return s;
-    return BookingSettlement.estimate(chargedAmount,
-        commissionPct: s?.commissionPct ?? commissionPct);
+    return BookingSettlement.estimate(
+      chargedAmount,
+      commissionPct: s?.commissionPct ?? commissionPct,
+    );
   }
 
   factory Booking.fromJson(Map<String, dynamic> j) => Booking(
@@ -669,8 +674,9 @@ class Booking {
         riderId: j['riderId'] as String? ?? '',
         driverId: j['driverId'] as String?,
         origin: Place.fromJson(j['origin'] as Map<String, dynamic>? ?? {}),
-        destination:
-            Place.fromJson(j['destination'] as Map<String, dynamic>? ?? {}),
+        destination: Place.fromJson(
+          j['destination'] as Map<String, dynamic>? ?? {},
+        ),
         scheduledAt: j['scheduledAt'] != null
             ? (j['scheduledAt'] as Timestamp).toDate()
             : DateTime.now(),
@@ -873,8 +879,11 @@ class BookingEvent {
 
   bool get hasLocation => lat != null && lng != null;
 
-  factory BookingEvent.fromJson(String id, Map<String, dynamic> j,
-      [Map<String, dynamic>? location]) {
+  factory BookingEvent.fromJson(
+    String id,
+    Map<String, dynamic> j, [
+    Map<String, dynamic>? location,
+  ]) {
     final actor = j['actor'] is Map ? j['actor'] as Map : const {};
     return BookingEvent(
       id: id,
@@ -902,12 +911,14 @@ class BookingEvent {
 // Incident — SOS (incidents/{id}); lo leen quien lo disparó y el admin
 // ---------------------------------------------------------------------------
 
-enum IncidentStatus { open, acknowledged, closed, cancelledByReporter }
+/// cancelRequested: quien lo disparó lo canceló (quizá bajo coacción);
+/// central debe verificar por llamada y reconocerlo.
+enum IncidentStatus { open, acknowledged, closed, cancelRequested }
 
 IncidentStatus incidentStatusFrom(String? s) => switch (s) {
       'acknowledged' => IncidentStatus.acknowledged,
       'closed' => IncidentStatus.closed,
-      'cancelled_by_reporter' => IncidentStatus.cancelledByReporter,
+      'cancel_requested' => IncidentStatus.cancelRequested,
       _ => IncidentStatus.open,
     };
 
@@ -951,7 +962,12 @@ class Incident {
 
   /// Abierto o reconocido: se comparte la ubicación y central lo atiende.
   bool get isLive =>
-      status == IncidentStatus.open || status == IncidentStatus.acknowledged;
+      !cancelledByReporter &&
+      (status == IncidentStatus.open || status == IncidentStatus.acknowledged);
+
+  /// Central aún no lo ha reconocido (abierto o cancelado sin verificar).
+  bool get needsAck =>
+      status == IncidentStatus.open || status == IncidentStatus.cancelRequested;
 
   factory Incident.fromJson(String id, Map<String, dynamic> j) {
     DateTime? t(Object? v) => v is Timestamp ? v.toDate() : null;
@@ -985,7 +1001,7 @@ class IncidentLogEntry {
   });
 
   /// raised, repeated, escalated, acknowledged, closed,
-  /// cancelled_by_reporter.
+  /// cancel_requested, reopened_by_reporter.
   final String type;
   final DateTime? at;
   final String actorRole;
@@ -1089,7 +1105,11 @@ class OpenRequest {
     final lat = j['lat'], lng = j['lng'];
     if (lat is! num || lng is! num) return null;
     return Place(
-        name: label, address: label, lat: lat.toDouble(), lng: lng.toDouble());
+      name: label,
+      address: label,
+      lat: lat.toDouble(),
+      lng: lng.toDouble(),
+    );
   }
 
   factory OpenRequest.fromJson(String id, Map<String, dynamic> j) {
@@ -1116,10 +1136,14 @@ class OpenRequest {
       flightType: j['flightType'] as String?,
       pickupArea: pickupArea,
       dropoffArea: dropoffArea,
-      pickupApprox:
-          _approx(j['pickupApprox'], pickupArea ?? 'Zona de recogida'),
-      dropoffApprox:
-          _approx(j['dropoffApprox'], dropoffArea ?? 'Zona de destino'),
+      pickupApprox: _approx(
+        j['pickupApprox'],
+        pickupArea ?? 'Zona de recogida',
+      ),
+      dropoffApprox: _approx(
+        j['dropoffApprox'],
+        dropoffArea ?? 'Zona de destino',
+      ),
       tripKm: (j['tripKm'] as num?)?.toDouble(),
     );
   }

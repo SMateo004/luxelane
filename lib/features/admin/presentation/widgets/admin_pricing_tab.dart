@@ -18,66 +18,71 @@ class PricingTab extends StatelessWidget {
   const PricingTab({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      BlocBuilder<AdminBloc, AdminState>(builder: (context, state) {
-        final custom = VehicleClass.values
-            .expand((vc) => ServiceType.values.map((st) => (vc, st)))
-            .where((p) => state.hasCustomRule(p.$1, p.$2))
-            .length;
-        final disabled = VehicleClass.values
-            .expand((vc) => ServiceType.values.map((st) => (vc, st)))
-            .where((p) => !state.effectiveRule(p.$1, p.$2).isActive)
-            .length;
-        return ListView(
-          padding: const EdgeInsets.all(LuxSpacing.lg),
-          children: [
-            const SectionHeader(title: 'Tarifas por servicio'),
-            const SizedBox(height: LuxSpacing.sm),
-            const Text(
-              'Cada combinación de servicio y clase tiene su propia tarifa. '
-              'Los cambios se aplican al instante en la web y la app: precios '
-              'mostrados e importe de las nuevas reservas. Las reservas ya '
-              'creadas conservan su precio.',
-              style: LuxTypography.caption,
-            ),
-            const SizedBox(height: LuxSpacing.md),
-            Wrap(
-              spacing: LuxSpacing.sm,
-              runSpacing: LuxSpacing.sm,
-              children: [
-                AdminTag('$custom personalizadas', color: LuxColors.sapphire),
-                AdminTag(
-                    '${VehicleClass.values.length * ServiceType.values.length - custom} sin configurar',
-                    color: LuxColors.inkTertiary),
-                if (disabled > 0)
-                  AdminTag('$disabled desactivadas', color: LuxColors.warning),
-                if (state.isMaintenanceMode)
-                  const AdminTag('Reservas en pausa (mantenimiento)',
-                      color: LuxColors.error),
-              ],
-            ),
-            for (final st in ServiceType.values) ...[
-              const SizedBox(height: LuxSpacing.xl),
-              Text(st.label, style: LuxTypography.titleLarge),
-              Text(st.description, style: LuxTypography.caption),
+  Widget build(BuildContext context) => BlocBuilder<AdminBloc, AdminState>(
+        builder: (context, state) {
+          final custom = VehicleClass.values
+              .expand((vc) => ServiceType.values.map((st) => (vc, st)))
+              .where((p) => state.hasCustomRule(p.$1, p.$2))
+              .length;
+          final disabled = VehicleClass.values
+              .expand((vc) => ServiceType.values.map((st) => (vc, st)))
+              .where((p) => !state.effectiveRule(p.$1, p.$2).isActive)
+              .length;
+          return ListView(
+            padding: const EdgeInsets.all(LuxSpacing.lg),
+            children: [
+              const SectionHeader(title: 'Tarifas por servicio'),
+              const SizedBox(height: LuxSpacing.sm),
+              const Text(
+                'Cada combinación de servicio y clase tiene su propia tarifa. '
+                'Los cambios se aplican al instante en la web y la app: precios '
+                'mostrados e importe de las nuevas reservas. Las reservas ya '
+                'creadas conservan su precio.',
+                style: LuxTypography.caption,
+              ),
               const SizedBox(height: LuxSpacing.md),
-              for (final vc in VehicleClass.values)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: LuxSpacing.sm),
-                  child: _PricingCard(
-                    key: ValueKey(PricingRule.idFor(vc, st)),
-                    rule: state.effectiveRule(vc, st),
-                    isCustom: state.hasCustomRule(vc, st),
-                    updatedBy: () {
-                      final by = state.effectiveRule(vc, st).updatedBy;
-                      return by == null ? null : state.userName(by);
-                    }(),
+              Wrap(
+                spacing: LuxSpacing.sm,
+                runSpacing: LuxSpacing.sm,
+                children: [
+                  AdminTag('$custom personalizadas', color: LuxColors.sapphire),
+                  AdminTag(
+                    '${VehicleClass.values.length * ServiceType.values.length - custom} sin configurar',
+                    color: LuxColors.inkTertiary,
                   ),
-                ),
+                  if (disabled > 0)
+                    AdminTag('$disabled desactivadas',
+                        color: LuxColors.warning),
+                  if (state.isMaintenanceMode)
+                    const AdminTag(
+                      'Reservas en pausa (mantenimiento)',
+                      color: LuxColors.error,
+                    ),
+                ],
+              ),
+              for (final st in ServiceType.values) ...[
+                const SizedBox(height: LuxSpacing.xl),
+                Text(st.label, style: LuxTypography.titleLarge),
+                Text(st.description, style: LuxTypography.caption),
+                const SizedBox(height: LuxSpacing.md),
+                for (final vc in VehicleClass.values)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: LuxSpacing.sm),
+                    child: _PricingCard(
+                      key: ValueKey(PricingRule.idFor(vc, st)),
+                      rule: state.effectiveRule(vc, st),
+                      isCustom: state.hasCustomRule(vc, st),
+                      updatedBy: () {
+                        final by = state.effectiveRule(vc, st).updatedBy;
+                        return by == null ? null : state.userName(by);
+                      }(),
+                    ),
+                  ),
+              ],
             ],
-          ],
-        );
-      });
+          );
+        },
+      );
 }
 
 class _PricingCard extends StatefulWidget {
@@ -255,23 +260,34 @@ class _PricingCardState extends State<_PricingCard> {
                         runSpacing: 4,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Text(r.vehicleClass.label,
-                              style: LuxTypography.titleMedium),
+                          Text(
+                            r.vehicleClass.label,
+                            style: LuxTypography.titleMedium,
+                          ),
                           if (widget.isCustom)
-                            const AdminTag('Personalizada',
-                                color: LuxColors.sapphire)
+                            const AdminTag(
+                              'Personalizada',
+                              color: LuxColors.sapphire,
+                            )
                           else
-                            const AdminTag('Sin configurar',
-                                color: LuxColors.warning),
+                            const AdminTag(
+                              'Sin configurar',
+                              color: LuxColors.warning,
+                            ),
                           if (!r.isActive)
-                            const AdminTag('Desactivada',
-                                color: LuxColors.warning),
+                            const AdminTag(
+                              'Desactivada',
+                              color: LuxColors.warning,
+                            ),
                         ],
                       ),
                       const SizedBox(height: 4),
-                      Text(_summary(r),
-                          style: LuxTypography.bodyMedium
-                              .copyWith(color: LuxColors.inkSecondary)),
+                      Text(
+                        _summary(r),
+                        style: LuxTypography.bodyMedium.copyWith(
+                          color: LuxColors.inkSecondary,
+                        ),
+                      ),
                       if (widget.isCustom && r.updatedAt != null)
                         Text(
                           'Actualizada ${adminDate(r.updatedAt!)}'
@@ -298,12 +314,15 @@ class _PricingCardState extends State<_PricingCard> {
               contentPadding: EdgeInsets.zero,
               value: _active,
               activeColor: LuxColors.sapphire,
-              title: const Text('Disponible para reservar',
-                  style: LuxTypography.bodyMedium),
+              title: const Text(
+                'Disponible para reservar',
+                style: LuxTypography.bodyMedium,
+              ),
               subtitle: const Text(
-                  'Si se desactiva, los pasajeros no pueden reservar esta clase '
-                  'con este servicio.',
-                  style: LuxTypography.caption),
+                'Si se desactiva, los pasajeros no pueden reservar esta clase '
+                'con este servicio.',
+                style: LuxTypography.caption,
+              ),
               onChanged: (v) => setState(() => _active = v),
             ),
             const SizedBox(height: LuxSpacing.sm),
@@ -329,15 +348,17 @@ class _PricingCardState extends State<_PricingCard> {
               ),
             if (draft != null && draft.validate().isNotEmpty) ...[
               const SizedBox(height: LuxSpacing.sm),
-              Text(draft.validate().join('. '),
-                  style:
-                      LuxTypography.caption.copyWith(color: LuxColors.error)),
+              Text(
+                draft.validate().join('. '),
+                style: LuxTypography.caption.copyWith(color: LuxColors.error),
+              ),
             ],
             if (draft == null) ...[
               const SizedBox(height: LuxSpacing.sm),
-              Text('Revisa los importes: solo números',
-                  style:
-                      LuxTypography.caption.copyWith(color: LuxColors.error)),
+              Text(
+                'Revisa los importes: solo números',
+                style: LuxTypography.caption.copyWith(color: LuxColors.error),
+              ),
             ],
             const SizedBox(height: LuxSpacing.md),
             // ── Simulador ──────────────────────────────────────────────────
@@ -350,25 +371,32 @@ class _PricingCardState extends State<_PricingCard> {
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.calculate_outlined,
-                      size: 18, color: LuxColors.inkTertiary),
+                  const Icon(
+                    Icons.calculate_outlined,
+                    size: 18,
+                    color: LuxColors.inkTertiary,
+                  ),
                   const SizedBox(width: LuxSpacing.sm),
                   const Flexible(
-                    child: Text('Simular',
-                        overflow: TextOverflow.ellipsis,
-                        style: LuxTypography.caption),
+                    child: Text(
+                      'Simular',
+                      overflow: TextOverflow.ellipsis,
+                      style: LuxTypography.caption,
+                    ),
                   ),
                   const SizedBox(width: LuxSpacing.sm),
                   SizedBox(
                     width: 100,
                     child: TextField(
                       controller: _hourly ? _simHours : _simKm,
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
                       style: LuxTypography.bodyMedium,
                       onChanged: (_) => setState(() {}),
                       decoration: adminInputDecoration(
-                          suffixText: _hourly ? 'h' : 'km'),
+                        suffixText: _hourly ? 'h' : 'km',
+                      ),
                     ),
                   ),
                   const SizedBox(width: LuxSpacing.md),
@@ -377,9 +405,12 @@ class _PricingCardState extends State<_PricingCard> {
                       alignment: Alignment.centerRight,
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
-                        child: Text(simPrice == null ? '—' : bs(simPrice),
-                            style: LuxTypography.titleMedium
-                                .copyWith(color: LuxColors.sapphire)),
+                        child: Text(
+                          simPrice == null ? '—' : bs(simPrice),
+                          style: LuxTypography.titleMedium.copyWith(
+                            color: LuxColors.sapphire,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -425,8 +456,11 @@ class _PricingCardState extends State<_PricingCard> {
 }
 
 class _PriceField extends StatelessWidget {
-  const _PriceField(
-      {required this.label, required this.controller, required this.onChanged});
+  const _PriceField({
+    required this.label,
+    required this.controller,
+    required this.onChanged,
+  });
   final String label;
   final TextEditingController controller;
   final ValueChanged<String> onChanged;

@@ -56,9 +56,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<Either<Failure, DriverProfile>> getDriverProfile(
-    String userId,
-  ) async {
+  Future<Either<Failure, DriverProfile>> getDriverProfile(String userId) async {
     try {
       final doc = await _db.collection('driverProfiles').doc(userId).get();
       if (!doc.exists) return const Left(NotFoundFailure('Profile not found'));
@@ -132,11 +130,10 @@ class UserRepositoryImpl implements UserRepository {
       .update({'isAvailable': false});
 
   @override
-  Stream<DriverProfile?> watchDriverProfile(String driverId) => _db
-      .collection('driverProfiles')
-      .doc(driverId)
-      .snapshots()
-      .map((s) => s.exists
-          ? DriverProfile.fromJson({...s.data()!, 'userId': s.id})
-          : null);
+  Stream<DriverProfile?> watchDriverProfile(String driverId) =>
+      _db.collection('driverProfiles').doc(driverId).snapshots().map(
+            (s) => s.exists
+                ? DriverProfile.fromJson({...s.data()!, 'userId': s.id})
+                : null,
+          );
 }

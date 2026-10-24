@@ -82,10 +82,11 @@ void main() {
 
     test('usa el reparto fijado por el servidor (mismo que ve el chófer)', () {
       const locked = BookingSettlement(
-          amount: 100,
-          commissionPct: 10,
-          platformCommission: 10,
-          driverPayout: 90);
+        amount: 100,
+        commissionPct: 10,
+        platformCommission: 10,
+        driverPayout: 90,
+      );
       final s = FinancialSummary.compute(
         bookings: [
           _b('a', price: 100, settlement: locked),
@@ -115,8 +116,12 @@ void main() {
       final s = FinancialSummary.compute(
         bookings: [_b('a', paymentId: 'p1')],
         payments: [
-          _p('p1', 'a', PaymentStatus.captured,
-              at: _now.subtract(const Duration(days: 1))),
+          _p(
+            'p1',
+            'a',
+            PaymentStatus.captured,
+            at: _now.subtract(const Duration(days: 1)),
+          ),
           _p('p2', 'a', PaymentStatus.failed),
         ],
         now: _now,
@@ -128,21 +133,23 @@ void main() {
       final old = _now.subtract(const Duration(days: 40));
       final bookings = [_b('a'), _b('b', at: old)];
       expect(
-          FinancialSummary.compute(
-                  bookings: bookings,
-                  payments: const [],
-                  period: FinancePeriod.last30,
-                  now: _now)
-              .completedCount,
-          1);
+        FinancialSummary.compute(
+          bookings: bookings,
+          payments: const [],
+          period: FinancePeriod.last30,
+          now: _now,
+        ).completedCount,
+        1,
+      );
       expect(
-          FinancialSummary.compute(
-                  bookings: bookings,
-                  payments: const [],
-                  period: FinancePeriod.all,
-                  now: _now)
-              .completedCount,
-          2);
+        FinancialSummary.compute(
+          bookings: bookings,
+          payments: const [],
+          period: FinancePeriod.all,
+          now: _now,
+        ).completedCount,
+        2,
+      );
     });
 
     test('cuenta canceladas y reservas en curso aparte de la facturación', () {

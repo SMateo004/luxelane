@@ -233,8 +233,10 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     on<BookingCancelRequested>(_onCancel);
     on<BookingStatusChanged>(_onStatusChanged);
     on<BookingRiderTripsRequested>(_onLoadTrips);
-    on<BookingRiderTripsWatched>(_onWatchTrips,
-        transformer: (events, mapper) => events.switchMap(mapper));
+    on<BookingRiderTripsWatched>(
+      _onWatchTrips,
+      transformer: (events, mapper) => events.switchMap(mapper),
+    );
     on<BookingUpdateStatusRequested>(_onUpdateStatus);
   }
 
@@ -267,8 +269,11 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       pickupAirport: event.pickupAirport,
       hours: event.hours,
     );
-    final result = await _repo.createBooking(booking,
-        quotedPrice: event.quotedPrice, requestId: event.requestId);
+    final result = await _repo.createBooking(
+      booking,
+      quotedPrice: event.quotedPrice,
+      requestId: event.requestId,
+    );
     result.fold(
       (f) => emit(switch (f) {
         PriceChangedFailure() => BookingPriceChanged(
@@ -302,10 +307,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       bookingId: event.bookingId,
       driverId: event.driverId,
     );
-    result.fold(
-      (f) => emit(BookingError(f.message)),
-      (_) {},
-    );
+    result.fold((f) => emit(BookingError(f.message)), (_) {});
   }
 
   Future<void> _onCancel(

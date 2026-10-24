@@ -63,8 +63,9 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() => _insights = RiderInsights.empty);
       return;
     }
-    _bookingsSub =
-        sl<BookingRepository>().watchBookingsByRider(uid).listen((list) {
+    _bookingsSub = sl<BookingRepository>().watchBookingsByRider(uid).listen((
+      list,
+    ) {
       if (!mounted) return;
       final insights = RiderInsights.from(list);
       setState(() {
@@ -182,9 +183,11 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
     if (stale) {
-      showLuxSnackbar(context,
-          'El destino estaba en otra ciudad. Elige uno en la ciudad de recogida.',
-          isError: true);
+      showLuxSnackbar(
+        context,
+        'El destino estaba en otra ciudad. Elige uno en la ciudad de recogida.',
+        isError: true,
+      );
     } else if (_destination != null) {
       _fetchRoute();
     }
@@ -221,10 +224,11 @@ class _HomeScreenState extends State<HomeScreen> {
     if (later != null) {
       setState(() => _date = later);
       showLuxSnackbar(
-          context,
-          'Esa hora ya no da tiempo: la movimos a '
-          '${LuxFormat.dateTime(later)}. Revísala y continúa.',
-          isError: true);
+        context,
+        'Esa hora ya no da tiempo: la movimos a '
+        '${LuxFormat.dateTime(later)}. Revísala y continúa.',
+        isError: true,
+      );
       return;
     }
     if (_serviceType == ServiceType.oneWay && _destination == null) {
@@ -283,9 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   children: [
                     _MobileTopBar(
-                      onLocate: _detectLocation,
-                      locating: _locating,
-                    ),
+                        onLocate: _detectLocation, locating: _locating),
                     const Spacer(),
                     _MobileBottomPanel(
                       serviceType: _serviceType,
@@ -363,7 +365,11 @@ class _MobileTopBar extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
-              LuxSpacing.md + 4, LuxSpacing.sm, LuxSpacing.md, LuxSpacing.lg),
+            LuxSpacing.md + 4,
+            LuxSpacing.sm,
+            LuxSpacing.md,
+            LuxSpacing.lg,
+          ),
           child: Row(
             children: [
               const LuxelaneWordmark(size: 11),
@@ -379,7 +385,8 @@ class _MobileTopBar extends StatelessWidget {
                     label: 'Mi perfil',
                     child: GestureDetector(
                       onTap: () => context.go(
-                          state is AuthAuthenticated ? '/profile' : '/login'),
+                        state is AuthAuthenticated ? '/profile' : '/login',
+                      ),
                       child: Container(
                         width: 36,
                         height: 36,
@@ -401,8 +408,11 @@ class _MobileTopBar extends StatelessWidget {
                                   fontSize: 17,
                                 ),
                               )
-                            : const Icon(Icons.person_outline_rounded,
-                                size: 18, color: LuxColors.onAccent),
+                            : const Icon(
+                                Icons.person_outline_rounded,
+                                size: 18,
+                                color: LuxColors.onAccent,
+                              ),
                       ),
                     ),
                   );
@@ -463,26 +473,37 @@ class _MobileBottomPanel extends StatelessWidget {
     final last = insights.lastTrip;
     // Los lugares que ya están elegidos no se vuelven a sugerir.
     final chips = insights.recentPlaces
-        .where((p) =>
-            p.displayName != origin?.displayName &&
-            p.displayName != destination?.displayName)
+        .where(
+          (p) =>
+              p.displayName != origin?.displayName &&
+              p.displayName != destination?.displayName,
+        )
         .take(3)
         .toList();
     return Container(
-      constraints:
-          BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.82),
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.82,
+      ),
       decoration: const BoxDecoration(
         color: LuxColors.surface,
-        borderRadius:
-            BorderRadius.vertical(top: Radius.circular(LuxRadius.xl + 4)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(LuxRadius.xl + 4),
+        ),
         boxShadow: [
           BoxShadow(
-              color: LuxColors.shadow, blurRadius: 32, offset: Offset(0, -8)),
+            color: LuxColors.shadow,
+            blurRadius: 32,
+            offset: Offset(0, -8),
+          ),
         ],
       ),
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(
-            LuxSpacing.md + 4, LuxSpacing.sm, LuxSpacing.md + 4, LuxSpacing.lg),
+          LuxSpacing.md + 4,
+          LuxSpacing.sm,
+          LuxSpacing.md + 4,
+          LuxSpacing.lg,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -507,7 +528,9 @@ class _MobileBottomPanel extends StatelessWidget {
             LuxFadeIn(
               index: 2,
               child: ServiceTypeTab(
-                  selected: serviceType, onChanged: onServiceTypeChanged),
+                selected: serviceType,
+                onChanged: onServiceTypeChanged,
+              ),
             ),
             const SizedBox(height: LuxSpacing.sm + 4),
             LuxFadeIn(
@@ -539,8 +562,9 @@ class _MobileBottomPanel extends StatelessWidget {
             ],
             const SizedBox(height: LuxSpacing.sm + 4),
             LuxFadeIn(
-                index: 5,
-                child: _DateTimeTile(date: date, onChanged: onDateChanged)),
+              index: 5,
+              child: _DateTimeTile(date: date, onChanged: onDateChanged),
+            ),
             AnimatedSize(
               duration: LuxMotion.of(context, LuxMotion.base),
               curve: LuxMotion.emphasized,
@@ -549,7 +573,9 @@ class _MobileBottomPanel extends StatelessWidget {
                   : Padding(
                       padding: const EdgeInsets.only(top: LuxSpacing.sm + 4),
                       child: _RouteInfoBadge(
-                          route: routeInfo!, preferredClass: preferredClass),
+                        route: routeInfo!,
+                        preferredClass: preferredClass,
+                      ),
                     ),
             ),
             const SizedBox(height: LuxSpacing.md + 4),
@@ -569,13 +595,16 @@ class _MobileBottomPanel extends StatelessWidget {
               children: [
                 for (final p in const [
                   LuxPromise.fixedPrice,
-                  LuxPromise.freeCancel
+                  LuxPromise.freeCancel,
                 ])
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.check_rounded,
-                          size: 12, color: LuxColors.inkTertiary),
+                      const Icon(
+                        Icons.check_rounded,
+                        size: 12,
+                        color: LuxColors.inkTertiary,
+                      ),
                       const SizedBox(width: 4),
                       Text(p, style: LuxTypography.caption),
                     ],
@@ -660,7 +689,9 @@ class _NextTripCard extends StatelessWidget {
               child: Text(
                 LuxFormat.time(booking.scheduledAt),
                 style: LuxTypography.caption.copyWith(
-                    color: LuxColors.sapphire, fontWeight: FontWeight.w700),
+                  color: LuxColors.sapphire,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
             const SizedBox(width: LuxSpacing.md - 4),
@@ -668,8 +699,10 @@ class _NextTripCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('TU PRÓXIMO TRAYECTO',
-                      style: LuxTypography.eyebrow.copyWith(fontSize: 9)),
+                  Text(
+                    'TU PRÓXIMO TRAYECTO',
+                    style: LuxTypography.eyebrow.copyWith(fontSize: 9),
+                  ),
                   const SizedBox(height: 3),
                   Text(
                     where,
@@ -765,8 +798,11 @@ class _RouteCard extends StatelessWidget {
                       LuxHaptics.tap();
                       onLocate();
                     },
-                    icon: const Icon(Icons.near_me_outlined,
-                        size: 20, color: LuxColors.sapphire),
+                    icon: const Icon(
+                      Icons.near_me_outlined,
+                      size: 20,
+                      color: LuxColors.sapphire,
+                    ),
                   ),
                 ],
               ),
@@ -797,8 +833,11 @@ class _RouteCard extends StatelessWidget {
                           LuxHaptics.tap();
                           onDestinationMapPick!();
                         },
-                        icon: const Icon(Icons.map_outlined,
-                            size: 20, color: LuxColors.inkTertiary),
+                        icon: const Icon(
+                          Icons.map_outlined,
+                          size: 20,
+                          color: LuxColors.inkTertiary,
+                        ),
                       ),
                   ],
                 )
@@ -894,16 +933,18 @@ class _Chip extends StatelessWidget {
               color: emphasized ? LuxColors.sapphireTint : LuxColors.surface,
               borderRadius: BorderRadius.circular(LuxRadius.xl),
               border: Border.all(
-                  color: emphasized ? Colors.transparent : LuxColors.border),
+                color: emphasized ? Colors.transparent : LuxColors.border,
+              ),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon,
-                    size: 15,
-                    color: emphasized
-                        ? LuxColors.sapphire
-                        : LuxColors.inkTertiary),
+                Icon(
+                  icon,
+                  size: 15,
+                  color:
+                      emphasized ? LuxColors.sapphire : LuxColors.inkTertiary,
+                ),
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text(
@@ -937,8 +978,10 @@ class _RouteInfoBadge extends StatelessWidget {
           const SizedBox(width: 6),
           Text(
             '${route.distanceKm.toStringAsFixed(1)} km · ${route.durationMin} min',
-            style: LuxTypography.caption
-                .copyWith(color: LuxColors.ink, fontSize: 12),
+            style: LuxTypography.caption.copyWith(
+              color: LuxColors.ink,
+              fontSize: 12,
+            ),
           ),
           if (preferredClass != null) ...[
             const Spacer(),
@@ -946,8 +989,10 @@ class _RouteInfoBadge extends StatelessWidget {
               child: Text(
                 'Tu ${preferredClass!.label}',
                 overflow: TextOverflow.ellipsis,
-                style: LuxTypography.caption
-                    .copyWith(color: LuxColors.sapphire, fontSize: 12),
+                style: LuxTypography.caption.copyWith(
+                  color: LuxColors.sapphire,
+                  fontSize: 12,
+                ),
               ),
             ),
           ],
@@ -1001,26 +1046,37 @@ class _DateTimeTile extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(soon ? Icons.bolt_rounded : Icons.event_outlined,
-                size: 18, color: LuxColors.ink),
+            Icon(
+              soon ? Icons.bolt_rounded : Icons.event_outlined,
+              size: 18,
+              color: LuxColors.ink,
+            ),
             const SizedBox(width: LuxSpacing.md - 4),
             Expanded(
               child: Text(
                 soon
                     ? 'Lo antes posible · ${LuxFormat.time(date)}'
                     : LuxFormat.dateTime(date),
-                style: LuxTypography.titleMedium
-                    .copyWith(fontWeight: FontWeight.w500, fontSize: 14),
+                style: LuxTypography.titleMedium.copyWith(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                ),
               ),
             ),
-            Text('Programar',
-                style: LuxTypography.caption.copyWith(
-                    color: LuxColors.sapphire,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12)),
+            Text(
+              'Programar',
+              style: LuxTypography.caption.copyWith(
+                color: LuxColors.sapphire,
+                fontWeight: FontWeight.w600,
+                fontSize: 12,
+              ),
+            ),
             const SizedBox(width: 2),
-            const Icon(Icons.chevron_right_rounded,
-                size: 18, color: LuxColors.sapphire),
+            const Icon(
+              Icons.chevron_right_rounded,
+              size: 18,
+              color: LuxColors.sapphire,
+            ),
           ],
         ),
       ),
@@ -1038,12 +1094,19 @@ class _HourSelector extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(14, 2, 6, 2),
         child: Row(
           children: [
-            const Icon(Icons.schedule_outlined,
-                size: 18, color: LuxColors.inkTertiary),
+            const Icon(
+              Icons.schedule_outlined,
+              size: 18,
+              color: LuxColors.inkTertiary,
+            ),
             const SizedBox(width: LuxSpacing.md - 2),
-            Text('Duración',
-                style: LuxTypography.titleMedium
-                    .copyWith(fontWeight: FontWeight.w500, fontSize: 14)),
+            Text(
+              'Duración',
+              style: LuxTypography.titleMedium.copyWith(
+                fontWeight: FontWeight.w500,
+                fontSize: 14,
+              ),
+            ),
             const Spacer(),
             _StepButton(
               icon: Icons.remove_rounded,
@@ -1055,10 +1118,12 @@ class _HourSelector extends StatelessWidget {
                 duration: LuxMotion.of(context, LuxMotion.fast),
                 transitionBuilder: (c, a) =>
                     FadeTransition(opacity: a, child: c),
-                child: Text('${hours}h',
-                    key: ValueKey(hours),
-                    textAlign: TextAlign.center,
-                    style: LuxTypography.titleLarge),
+                child: Text(
+                  '${hours}h',
+                  key: ValueKey(hours),
+                  textAlign: TextAlign.center,
+                  style: LuxTypography.titleLarge,
+                ),
               ),
             ),
             _StepButton(
@@ -1087,9 +1152,11 @@ class _StepButton extends StatelessWidget {
             shape: BoxShape.circle,
             border: Border.all(color: LuxColors.border),
           ),
-          child: Icon(icon,
-              size: 18,
-              color: onTap == null ? LuxColors.border : LuxColors.ink),
+          child: Icon(
+            icon,
+            size: 18,
+            color: onTap == null ? LuxColors.border : LuxColors.ink,
+          ),
         ),
       );
 }

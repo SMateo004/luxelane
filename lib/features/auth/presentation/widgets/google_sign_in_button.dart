@@ -27,16 +27,17 @@ class GoogleSignInButton extends StatelessWidget {
               child: OutlinedButton(
                 onPressed: loading
                     ? null
-                    : () => context
-                        .read<AuthBloc>()
-                        .add(const GoogleSignInRequested()),
+                    : () => context.read<AuthBloc>().add(
+                          const GoogleSignInRequested(),
+                        ),
                 style: OutlinedButton.styleFrom(
                   backgroundColor: LuxColors.surface,
                   foregroundColor: LuxColors.ink,
                   disabledForegroundColor: LuxColors.inkTertiary,
                   side: const BorderSide(color: LuxColors.border),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -79,8 +80,10 @@ class AuthOrDivider extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14),
             child: Text(
               label.toUpperCase(),
-              style: LuxTypography.caption
-                  .copyWith(letterSpacing: 1.6, fontSize: 10),
+              style: LuxTypography.caption.copyWith(
+                letterSpacing: 1.6,
+                fontSize: 10,
+              ),
             ),
           ),
           const Expanded(child: Divider(color: LuxColors.border)),
@@ -118,8 +121,12 @@ class _GoogleMarkPainter extends CustomPainter {
     canvas.drawArc(rect, deg(35), deg(-35), false, arc(_blue));
     // Crossbar of the G.
     canvas.drawRect(
-      Rect.fromLTWH(size.width / 2, size.height / 2 - stroke / 2,
-          rect.right - size.width / 2 + stroke / 2, stroke),
+      Rect.fromLTWH(
+        size.width / 2,
+        size.height / 2 - stroke / 2,
+        rect.right - size.width / 2 + stroke / 2,
+        stroke,
+      ),
       Paint()..color = _blue,
     );
   }

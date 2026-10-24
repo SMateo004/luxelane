@@ -16,7 +16,9 @@ String bookingEventTitle(BookingEvent e) {
 
 /// Detalles del paso: quién, desde dónde y lo que el servidor anotó.
 List<String> bookingEventDetails(
-    BookingEvent e, String Function(String uid) userName) {
+  BookingEvent e,
+  String Function(String uid) userName,
+) {
   final who = switch (e.actorRole) {
     'driver' => 'Chófer ${userName(e.actorUid)}',
     'admin' => 'Admin ${userName(e.actorUid)}',
@@ -61,8 +63,10 @@ class BookingEventsList extends StatelessWidget {
         stream: events,
         builder: (context, snap) {
           if (snap.hasError) {
-            return const Text('No se pudo cargar el registro.',
-                style: LuxTypography.caption);
+            return const Text(
+              'No se pudo cargar el registro.',
+              style: LuxTypography.caption,
+            );
           }
           final list = snap.data;
           if (list == null) {
@@ -70,9 +74,10 @@ class BookingEventsList extends StatelessWidget {
           }
           if (list.isEmpty) {
             return const Text(
-                'Sin pasos registrados (reserva anterior al registro o aún '
-                'sin chófer en camino).',
-                style: LuxTypography.caption);
+              'Sin pasos registrados (reserva anterior al registro o aún '
+              'sin chófer en camino).',
+              style: LuxTypography.caption,
+            );
           }
           final time = DateFormat('dd/MM HH:mm:ss');
           return Column(
@@ -86,8 +91,10 @@ class BookingEventsList extends StatelessWidget {
                     children: [
                       SizedBox(
                         width: 110,
-                        child: Text(e.at == null ? '—' : time.format(e.at!),
-                            style: LuxTypography.caption),
+                        child: Text(
+                          e.at == null ? '—' : time.format(e.at!),
+                          style: LuxTypography.caption,
+                        ),
                       ),
                       Expanded(
                         child: Column(

@@ -22,8 +22,9 @@ Uri incidentSmsUri(
   double? lng,
   TargetPlatform? platform,
 }) {
-  final body =
-      Uri.encodeComponent(incidentSmsBody(bookingShortId, lat: lat, lng: lng));
+  final body = Uri.encodeComponent(
+    incidentSmsBody(bookingShortId, lat: lat, lng: lng),
+  );
   final sep =
       (platform ?? defaultTargetPlatform) == TargetPlatform.iOS ? '&' : '?';
   return Uri.parse('sms:${phone.replaceAll(' ', '')}${sep}body=$body');

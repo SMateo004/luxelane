@@ -38,10 +38,12 @@ class DriverEarningsScreen extends StatelessWidget {
               else
                 LuxFadeIn(
                   index: 1,
-                  child: LuxGroup(children: [
-                    for (final b in completed)
-                      _EarningsCard(booking: b, split: state.earningsOf(b)),
-                  ]),
+                  child: LuxGroup(
+                    children: [
+                      for (final b in completed)
+                        _EarningsCard(booking: b, split: state.earningsOf(b)),
+                    ],
+                  ),
                 ),
             ],
           );
@@ -60,7 +62,11 @@ class _EarningsSummary extends StatelessWidget {
     final rides = state.completedBookings.length;
     return Container(
       padding: const EdgeInsets.fromLTRB(
-          LuxSpacing.lg, LuxSpacing.lg, LuxSpacing.lg, LuxSpacing.md),
+        LuxSpacing.lg,
+        LuxSpacing.lg,
+        LuxSpacing.lg,
+        LuxSpacing.md,
+      ),
       decoration: BoxDecoration(
         color: LuxColors.surface,
         borderRadius: BorderRadius.circular(LuxRadius.xl),
@@ -88,10 +94,13 @@ class _EarningsSummary extends StatelessWidget {
           const LuxDivider(),
           const SizedBox(height: LuxSpacing.sm),
           _Line(
-              label: 'Tarifas de tus viajes', value: _bs(state.grossEarnings)),
+            label: 'Tarifas de tus viajes',
+            value: _bs(state.grossEarnings),
+          ),
           _Line(
-              label: 'Comisión Luxelane',
-              value: '− ${_bs(state.totalCommission)}'),
+            label: 'Comisión Luxelane',
+            value: '− ${_bs(state.totalCommission)}',
+          ),
           if (state.hasProvisionalEarnings) ...[
             const SizedBox(height: LuxSpacing.sm),
             Text(
@@ -117,8 +126,11 @@ class _Line extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-                child: Text(label,
-                    style: LuxTypography.bodyMedium.copyWith(fontSize: 13))),
+              child: Text(
+                label,
+                style: LuxTypography.bodyMedium.copyWith(fontSize: 13),
+              ),
+            ),
             Text(value,
                 style: LuxTypography.titleMedium.copyWith(fontSize: 13)),
           ],
@@ -169,12 +181,18 @@ class _EarningsCard extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(_bs(split.driverPayout),
-                  style: LuxTypography.titleMedium.copyWith(fontSize: 15)),
+              Text(
+                _bs(split.driverPayout),
+                style: LuxTypography.titleMedium.copyWith(fontSize: 15),
+              ),
               if (provisional)
-                Text('Provisional',
-                    style: LuxTypography.caption
-                        .copyWith(color: LuxColors.warning, fontSize: 11)),
+                Text(
+                  'Provisional',
+                  style: LuxTypography.caption.copyWith(
+                    color: LuxColors.warning,
+                    fontSize: 11,
+                  ),
+                ),
             ],
           ),
         ],

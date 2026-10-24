@@ -34,7 +34,11 @@ class LuxInfoPage extends StatelessWidget {
                 Container(
                   color: LD.dark,
                   padding: EdgeInsets.fromLTRB(
-                      pad, kSiteNavHeight + (narrow ? 40 : 72), pad, 48),
+                    pad,
+                    kSiteNavHeight + (narrow ? 40 : 72),
+                    pad,
+                    48,
+                  ),
                   child: Center(
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 820),
@@ -43,15 +47,22 @@ class LuxInfoPage extends StatelessWidget {
                         children: [
                           LuxEyebrow(eyebrow, color: const Color(0xFF8CB2E3)),
                           const SizedBox(height: 16),
-                          Text(title,
-                              style: displayText(
-                                  size: narrow ? 38 : 56, color: Colors.white)),
+                          Text(
+                            title,
+                            style: displayText(
+                              size: narrow ? 38 : 56,
+                              color: Colors.white,
+                            ),
+                          ),
                           if (lead != null) ...[
                             const SizedBox(height: 18),
-                            Text(lead!,
-                                style: bodyText(
-                                    size: 15,
-                                    color: Colors.white.withAlpha(190))),
+                            Text(
+                              lead!,
+                              style: bodyText(
+                                size: 15,
+                                color: Colors.white.withAlpha(190),
+                              ),
+                            ),
                           ],
                         ],
                       ),

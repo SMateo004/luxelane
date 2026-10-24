@@ -14,7 +14,10 @@ enum FirebaseEnv {
         '' || 'staging' => FirebaseEnv.staging,
         'production' => FirebaseEnv.production,
         _ => throw ArgumentError.value(
-            raw, 'FIREBASE_ENV', 'Debe ser "staging" o "production"'),
+            raw,
+            'FIREBASE_ENV',
+            'Debe ser "staging" o "production"',
+          ),
       };
 }
 
