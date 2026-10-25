@@ -70,6 +70,9 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   adminRecordPayment: per10min(30),
   adminUpdateConfig: per10min(20),
   adminUpdatePricingRule: per10min(40),
+  adminVerifyDriver: per10min(30),
+  adminUpdateDriverSensitive: per10min(30),
+  adminSetVehicleActive: per10min(30),
   // Panel: cambios de rol y bloqueos.
   setUserRole: per10min(30),
   setUserBlocked: per10min(30),

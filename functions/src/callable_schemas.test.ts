@@ -13,7 +13,7 @@ import { leadSchema } from './business_leads';
 import { deviceSchema } from './driver_devices';
 import {
   bookingSchema as adminBookingSchema, configSchema as adminConfigSchema, paymentSchema as adminPaymentSchema,
-  pricingSchema as adminPricingSchema,
+  pricingSchema as adminPricingSchema, verifyDriverSchema, driverSensitiveSchema, vehicleActiveSchema,
 } from './admin_ops';
 import { callableSchemas as c } from './schemas';
 
@@ -136,6 +136,24 @@ const CASES: Record<string, Case> = {
       { action: 'upsert', vehicleClass: 'business', serviceType: 'oneWay', basePriceUsd: -1, pricePerKmUsd: 1,
         pricePerHourUsd: 0, minimumPriceUsd: 1, isActive: true, reason: 'Tarifa nueva del piloto' },
       { action: 'delete', vehicleClass: 'business', serviceType: 'oneWay', reason: 'Fuera de servicio' }],
+  },
+  adminVerifyDriver: {
+    schema: verifyDriverSchema, valid: { driverId: ID, vehicleReviewed: true, reason: 'Documentos revisados en persona' },
+    wrongType: { driverId: ID, vehicleReviewed: 'sí', reason: 'Documentos revisados en persona' },
+    extreme: [{ driverId: ID, vehicleReviewed: true, vehicleNote: 'x'.repeat(501), reason: 'Documentos revisados en persona' },
+      { driverId: LONG_ID, vehicleReviewed: false, reason: 'Documentos revisados en persona' }],
+  },
+  adminUpdateDriverSensitive: {
+    schema: driverSensitiveSchema, valid: { driverId: ID, profile: { licenseNumber: 'A-1' }, reason: 'Renovó la licencia' },
+    wrongType: { driverId: ID, profile: { licenseExpiry: '2030' }, reason: 'Renovó la licencia' },
+    extreme: [{ driverId: ID, vehicle: { vehicleId: ID, year: 1800 }, reason: 'Cambio de vehículo' },
+      { driverId: ID, vehicle: { vehicleId: ID, vehicleClass: 'limo' }, reason: 'Cambio de vehículo' },
+      { driverId: ID, profile: { rating: 5 }, reason: 'Renovó la licencia' }],
+  },
+  adminSetVehicleActive: {
+    schema: vehicleActiveSchema, valid: { vehicleId: ID, active: false, reason: 'Vehículo en el taller' },
+    wrongType: { vehicleId: ID, active: 'no', reason: 'Vehículo en el taller' },
+    extreme: [{ vehicleId: ID, active: true, reason: 'ok' }],
   },
   registerDriverDevice: {
     schema: deviceSchema, valid: { installationId: 'a'.repeat(8) + '-' + 'b'.repeat(27), platform: 'android', appVersion: '1.0.0' },

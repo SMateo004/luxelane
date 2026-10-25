@@ -12,6 +12,7 @@ import { opsConfig } from './ops_config';
 import { docId, parseInput } from './schemas';
 import { appendEvent, Status } from './trip_flow';
 import { SERVICE_TYPES, VEHICLE_CLASSES } from './fare';
+import { CAPACITY } from './booking_schema';
 
 export interface AdminDeps { db: admin.firestore.Firestore; now?: () => number }
 
@@ -376,5 +377,141 @@ export async function adminUpdatePricingRule(deps: AdminDeps, actor: AdminActor,
         `${money(fare.pricePerHourUsd)}/h, mín. ${money(fare.minimumPriceUsd)}${fare.isActive ? '' : ' · DESACTIVADA'}`,
     });
     return { id, isActive: fare.isActive };
+  });
+}
+
+// ---------------------------------------------------------------------------
+// A5. Chóferes y vehículos: verificar documentos, cambiar licencia o
+// vehículo a petición del chófer (tras verificar él ya no puede: H4) y
+// activar o desactivar vehículos.
+// ---------------------------------------------------------------------------
+
+export const verifyDriverSchema = z.strictObject({
+  driverId: docId,
+  vehicleReviewed: z.boolean(),
+  vehicleNote: z.string().trim().max(500).default(''),
+  reason: reasonSchema,
+});
+
+export async function adminVerifyDriver(deps: AdminDeps, actor: AdminActor, data: unknown) {
+  const input = parseInput(verifyDriverSchema, data);
+  const db = deps.db;
+  const ref = db.collection('driverProfiles').doc(input.driverId);
+  const vehiclesQuery = db.collection('vehicles').where('driverId', '==', input.driverId);
+  return db.runTransaction(async (tx) => {
+    const [snap, vehicles] = await Promise.all([tx.get(ref), tx.get(vehiclesQuery)]);
+    if (!snap.exists) throw opError('not-found', 'driver_not_found');
+    const verifiedBefore = snap.data()?.documentsVerified === true;
+    if (verifiedBefore && !input.vehicleReviewed) throw opError('failed-precondition', 'no_change');
+    if (!verifiedBefore) {
+      tx.update(ref, { documentsVerified: true });
+      writeAudit(tx, db, {
+        actor, operation: 'verify_driver', collection: 'driverProfiles', docId: input.driverId, targetType: 'driver',
+        changes: changedFields(snap.data(), { documentsVerified: true }), reason: input.reason, details: 'Documentos verificados',
+      });
+    }
+    // El vehículo (registrado inactivo) solo se activa si el admin revisó
+    // su condición; si no, queda inactivo hasta activarlo a mano.
+    let activated = 0;
+    if (input.vehicleReviewed) {
+      for (const v of vehicles.docs) {
+        const active = v.data().isActive === true;
+        if (!active) { tx.update(v.ref, { isActive: true }); activated++; }
+        writeAudit(tx, db, {
+          actor, operation: active ? 'review_vehicle' : 'enable_vehicle', collection: 'vehicles', docId: v.id,
+          targetType: 'vehicle', changes: active ? {} : changedFields(v.data(), { isActive: true }),
+          reason: input.reason, details: input.vehicleNote ? `Revisado: ${input.vehicleNote}` : 'Revisado',
+        });
+      }
+    }
+    return { driverId: input.driverId, verified: true, vehiclesActivated: activated };
+  });
+}
+
+export const driverSensitiveSchema = z.strictObject({
+  driverId: docId,
+  profile: z.strictObject({
+    licenseNumber: z.string().trim().min(1).max(60).optional(),
+    /** Vencimiento en milisegundos desde 1970 (UTC). */
+    licenseExpiry: z.number().int().min(0).max(4_102_444_800_000).optional(),
+  }).optional(),
+  vehicle: z.strictObject({
+    vehicleId: docId,
+    plate: z.string().trim().min(1).max(20).optional(),
+    vehicleClass: z.enum(VEHICLE_CLASSES).optional(),
+    make: z.string().trim().min(1).max(60).optional(),
+    model: z.string().trim().min(1).max(60).optional(),
+    year: z.number().int().min(1950).max(2100).optional(),
+  }).optional(),
+  reason: reasonSchema,
+});
+
+export async function adminUpdateDriverSensitive(deps: AdminDeps, actor: AdminActor, data: unknown) {
+  const input = parseInput(driverSensitiveSchema, data);
+  const db = deps.db;
+  const profileRef = db.collection('driverProfiles').doc(input.driverId);
+  const vehicleRef = input.vehicle ? db.collection('vehicles').doc(input.vehicle.vehicleId) : null;
+  return db.runTransaction(async (tx) => {
+    const [profile, vehicle] = await Promise.all([tx.get(profileRef), vehicleRef ? tx.get(vehicleRef) : Promise.resolve(null)]);
+    if (!profile.exists) throw opError('not-found', 'driver_not_found');
+    if (vehicle && (!vehicle.exists || vehicle.data()?.driverId !== input.driverId)) {
+      throw opError('not-found', 'vehicle_not_found');
+    }
+    const p = input.profile ?? {};
+    const profileAfter: Record<string, unknown> = {
+      ...(p.licenseNumber !== undefined ? { licenseNumber: p.licenseNumber } : {}),
+      ...(p.licenseExpiry !== undefined ? { licenseExpiry: admin.firestore.Timestamp.fromMillis(p.licenseExpiry) } : {}),
+    };
+    const v = input.vehicle;
+    const vehicleAfter: Record<string, unknown> = v ? {
+      ...(v.plate !== undefined ? { plate: v.plate } : {}),
+      // La clase arrastra su capacidad, como hacía el panel.
+      ...(v.vehicleClass !== undefined ? { class: v.vehicleClass, capacity: CAPACITY[v.vehicleClass].passengers } : {}),
+      ...(v.make !== undefined ? { make: v.make } : {}),
+      ...(v.model !== undefined ? { model: v.model } : {}),
+      ...(v.year !== undefined ? { year: v.year } : {}),
+    } : {};
+    const profileChanges = changedFields(profile.data(), profileAfter);
+    const vehicleChanges = vehicle ? changedFields(vehicle.data(), vehicleAfter) : {};
+    if (!Object.keys(profileChanges).length && !Object.keys(vehicleChanges).length) {
+      throw opError('failed-precondition', 'no_change');
+    }
+    if (Object.keys(profileChanges).length) {
+      tx.update(profileRef, profileAfter);
+      writeAudit(tx, db, {
+        actor, operation: 'update_driver_documents', collection: 'driverProfiles', docId: input.driverId,
+        targetType: 'driver', changes: profileChanges, reason: input.reason,
+        details: `Campos: ${Object.keys(profileChanges).join(', ')}`,
+      });
+    }
+    if (vehicle && Object.keys(vehicleChanges).length) {
+      tx.update(vehicleRef!, vehicleAfter);
+      writeAudit(tx, db, {
+        actor, operation: 'update_vehicle_documents', collection: 'vehicles', docId: vehicle.id, targetType: 'vehicle',
+        changes: vehicleChanges, reason: input.reason, details: `Campos: ${Object.keys(vehicleChanges).join(', ')}`,
+        context: { driverId: input.driverId },
+      });
+    }
+    return { profile: Object.keys(profileChanges), vehicle: Object.keys(vehicleChanges) };
+  });
+}
+
+export const vehicleActiveSchema = z.strictObject({ vehicleId: docId, active: z.boolean(), reason: reasonSchema });
+
+export async function adminSetVehicleActive(deps: AdminDeps, actor: AdminActor, data: unknown) {
+  const input = parseInput(vehicleActiveSchema, data);
+  const db = deps.db;
+  const ref = db.collection('vehicles').doc(input.vehicleId);
+  return db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw opError('not-found', 'vehicle_not_found');
+    if ((snap.data()?.isActive === true) === input.active) throw opError('failed-precondition', 'no_change');
+    tx.update(ref, { isActive: input.active });
+    writeAudit(tx, db, {
+      actor, operation: input.active ? 'enable_vehicle' : 'disable_vehicle', collection: 'vehicles', docId: ref.id,
+      targetType: 'vehicle', changes: changedFields(snap.data(), { isActive: input.active }), reason: input.reason,
+      details: input.active ? 'Vehículo activado' : 'Vehículo desactivado',
+    });
+    return { vehicleId: ref.id, isActive: input.active };
   });
 }

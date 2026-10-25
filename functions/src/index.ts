@@ -902,6 +902,18 @@ export const adminUpdateConfig = secureCallable('adminUpdateConfig', {}, async (
 export const adminUpdatePricingRule = secureCallable('adminUpdatePricingRule', {}, async (req) =>
   adminOps.adminUpdatePricingRule({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
 
+/** Verificar los documentos del chófer (y activar su vehículo revisado). */
+export const adminVerifyDriver = secureCallable('adminVerifyDriver', {}, async (req) =>
+  adminOps.adminVerifyDriver({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Licencia o vehículo a petición del chófer (tras verificar él no puede). */
+export const adminUpdateDriverSensitive = secureCallable('adminUpdateDriverSensitive', {}, async (req) =>
+  adminOps.adminUpdateDriverSensitive({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Activar o desactivar un vehículo. */
+export const adminSetVehicleActive = secureCallable('adminSetVehicleActive', {}, async (req) =>
+  adminOps.adminSetVehicleActive({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
 /** El admin marca una alerta como revisada (auditado en el servidor). */
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
   const adminId = await requireAdmin(req);
