@@ -582,6 +582,110 @@ muestra.
 
 ## Identidad (Parte B)
 
+Qué cambia (rama cierre/identidad, B1–B9): reservar exige el correo
+verificado (`email_not_verified`) y, si `config/global.legalVersion`
+existe, los términos vigentes aceptados (`terms_required`); el rol sale
+del custom claim `role` (con respaldo en `users/{uid}.role` durante la
+transición); bloquear deshabilita la cuenta en Auth y revoca sus
+sesiones; los chóferes y admins pueden activar TOTP y, con
+`config/security.mfaEnforced`, quedan obligados; borrar la cuenta y
+cambiar o quitar tarjetas exigen un inicio de sesión de menos de 5
+minutos y las callables de admin una sesión de menos de
+`adminSessionMaxHours` (12 por defecto), ambos con `reauth_required`; el
+chófer registra su dispositivo (`registerDriverDevice`, sin bloqueo).
+
+### Pasos manuales previos (consola; decisiones del responsable)
+
+1. **Actualizar a Firebase Authentication with Identity Platform** (cada
+   proyecto). Consola de Firebase → Authentication → Settings → «Upgrade».
+   TOTP solo existe con Identity Platform. **Coste: NO VERIFICADO**; [Probable]
+   Identity Platform cobra por usuario activo al mes por encima de un
+   tramo gratuito y los SMS aparte (aquí no se usan SMS). Revisar la página
+   de precios de Identity Platform antes de actualizar: es una decisión del
+   responsable.
+2. **Activar TOTP** (no hay interruptor en la consola; [Probable]). Con el
+   Admin SDK (firebase-admin ≥ 11.6.0; functions usa 12.7.0) y credenciales
+   del proyecto, desde la máquina de un responsable:
+
+   ```js
+   await admin.auth().projectConfigManager().updateProjectConfig({
+     multiFactorConfig: {
+       providerConfigs: [{ state: 'ENABLED', totpProviderConfig: { adjacentIntervals: 5 } }],
+     },
+   });
+   ```
+
+   `adjacentIntervals` admite 0–10 (5 por defecto): ventanas de 30 s
+   aceptadas a cada lado. El segundo factor exige el correo verificado.
+3. **Protección contra la enumeración de correos**: ver el apartado de
+   abajo (B8).
+4. **`config/security`** (solo consola; ningún cliente lo lee ni escribe):
+   crear con `mfaEnforced: false` y, si se quiere otro valor que 12,
+   `adminSessionMaxHours: <número>`.
+5. **`config/global.legalVersion`**: dejarlo SIN crear hasta tener los
+   textos revisados por un abogado. Al publicarlos, poner la versión
+   (texto corto, p. ej. una fecha) y todos los pasajeros tendrán que
+   aceptarla para reservar. Los textos de /legal no se tocaron.
+
+### Orden
+
+1. **Functions** (incluye las callables nuevas: syncEmailVerification,
+   setUserRole, setUserBlocked, acceptTerms, registerDriverDevice; y los
+   cambios de createBooking y de las de admin y pagos).
+2. **Backfill de claims, DRY-RUN**: `cd functions && npm run
+   backfill:role-claims -- --project <id>`. Revisar la lista.
+3. **Backfill real**: lo mismo con `--apply` (en producción, además
+   `--i-understand-this-writes-to-production-luxelane-4e7ae`). El claim
+   llega con el siguiente token (como mucho en una hora). Las reglas y el
+   servidor aceptan mientras el rol de Firestore; cuando el responsable
+   confirme el backfill, poner `CLAIM_ONLY = true` en
+   functions/src/identity.ts y quitar el respaldo de `getUserRole()` en
+   firestore.rules (tarea aparte, con su prueba).
+4. **Reglas de Firestore** (ya con el respaldo de la transición).
+5. **Apps** (pasajero, chófer y panel). Ver «Apps antiguas».
+6. **Alta del segundo factor**: cada chófer y admin entra en Perfil →
+   «Verificación en dos pasos» y escanea el QR. La portada del chófer y
+   el panel muestran el aviso mientras no lo tengan.
+7. **Procedimiento de emergencia escrito y probado** (abajo) y **al menos
+   dos admins con TOTP activado**.
+8. **`config/security.mfaEnforced: true`** desde la consola. Desde ese
+   momento las callables de admin y del viaje del chófer (acceptBooking,
+   advanceBooking, verifyPickup) y las escrituras de admin en las reglas
+   exigen el segundo factor (`mfa_required`).
+
+### Procedimiento de emergencia (antes de activar mfaEnforced)
+
+- **Requisito**: al menos dos admins con TOTP activado y probado (que
+  hayan entrado con el código), y un responsable con acceso de
+  propietario al proyecto en la consola de Google Cloud / Firebase.
+- **Un admin pierde su teléfono**: otro admin no puede quitarle el
+  factor desde el panel. Desde la consola: Authentication → Users → la
+  cuenta → quitar el segundo factor ([Probable]; NO VERIFICADO el menú
+  exacto), o con el Admin SDK
+  `admin.auth().updateUser(uid, { multiFactor: { enrolledFactors: [] } })`.
+  Después, que vuelva a entrar y lo active de nuevo.
+- **Nadie puede entrar al panel** (todos los admins sin factor): en la
+  consola de Firestore, poner `config/security.mfaEnforced: false`; el
+  servidor lo lee en cada llamada y las reglas en cada escritura. Volver a
+  `true` en cuanto haya dos admins con factor.
+- **Hace falta un admin nuevo**: `node scripts/promote_admin.mjs
+  --project <id> --email <correo> --reason "<motivo>" --operator "<quién>"`
+  (DRY-RUN), y luego con `--apply`. Deja la entrada en admin_logs y revoca
+  las sesiones de esa cuenta.
+- **Sesión de admin vencida** (`reauth_required` tras 12 h): no es una
+  emergencia; el panel pide confirmar la identidad.
+
+### Apps antiguas
+
+- Una app sin esta versión no sabe mostrar `reauth_required`,
+  `mfa_required`, `email_not_verified` ni `terms_required`: verá un
+  error genérico. Subir `minAppVersion` / `minDriverAppVersion` cuando las
+  apps nuevas estén publicadas (decisión del responsable; no se sube
+  ahora).
+- Un admin con el panel anterior no puede cambiar roles ni bloquear: las
+  reglas ya no le dejan escribir `role` ni `isActive`; necesita el panel
+  nuevo (usa setUserRole y setUserBlocked).
+
 ### Protección contra la enumeración de correos (B8)
 
 La app ya no dice si un correo tiene cuenta: entrar con un correo que no
