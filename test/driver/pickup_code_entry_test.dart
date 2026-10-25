@@ -1,20 +1,37 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:luxelane/core/config/remote_flags.dart';
 import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/error/failures.dart';
 import 'package:luxelane/core/models/models.dart';
+import 'package:luxelane/features/driver/presentation/bloc/driver_bloc.dart';
 import 'package:luxelane/features/driver/presentation/widgets/driver_step_action.dart';
 import 'package:luxelane/features/driver/presentation/widgets/pickup_code_entry.dart';
 import 'package:luxelane/features/ride/data/repositories/trip_flow_repository_impl.dart';
 
+class _MockDriverBloc extends MockBloc<DriverEvent, DriverState>
+    implements DriverBloc {}
+
+/// DriverStepAction lee el DriverBloc (avisos para reiniciar el deslizador,
+/// E3), como en la app del chófer.
 Future<void> _pump(WidgetTester tester, Widget child) async {
   tester.view.physicalSize = const Size(900, 1800);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  await tester.pumpWidget(MaterialApp(home: Scaffold(body: child)));
+  final bloc = _MockDriverBloc();
+  whenListen(bloc, const Stream<DriverState>.empty(),
+      initialState: const DriverInitial());
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: BlocProvider<DriverBloc>.value(value: bloc, child: child),
+      ),
+    ),
+  );
 }
 
 Future<void> _type(WidgetTester tester, String code) async {
