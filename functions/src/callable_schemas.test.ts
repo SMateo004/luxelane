@@ -14,6 +14,7 @@ import { deviceSchema } from './driver_devices';
 import {
   bookingSchema as adminBookingSchema, configSchema as adminConfigSchema, paymentSchema as adminPaymentSchema,
   pricingSchema as adminPricingSchema, verifyDriverSchema, driverSensitiveSchema, vehicleActiveSchema,
+  leadHandledSchema,
 } from './admin_ops';
 import { callableSchemas as c } from './schemas';
 
@@ -154,6 +155,10 @@ const CASES: Record<string, Case> = {
     schema: vehicleActiveSchema, valid: { vehicleId: ID, active: false, reason: 'Vehículo en el taller' },
     wrongType: { vehicleId: ID, active: 'no', reason: 'Vehículo en el taller' },
     extreme: [{ vehicleId: ID, active: true, reason: 'ok' }],
+  },
+  adminSetLeadHandled: {
+    schema: leadHandledSchema, valid: { leadId: ID, handled: true },
+    wrongType: { leadId: ID, handled: 'sí' }, extreme: [{ leadId: ID, handled: true, reason: 'x'.repeat(501) }],
   },
   registerDriverDevice: {
     schema: deviceSchema, valid: { installationId: 'a'.repeat(8) + '-' + 'b'.repeat(27), platform: 'android', appVersion: '1.0.0' },

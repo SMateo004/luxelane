@@ -914,6 +914,10 @@ export const adminUpdateDriverSensitive = secureCallable('adminUpdateDriverSensi
 export const adminSetVehicleActive = secureCallable('adminSetVehicleActive', {}, async (req) =>
   adminOps.adminSetVehicleActive({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
 
+/** Marcar una solicitud de empresa como atendida o pendiente. */
+export const adminSetLeadHandled = secureCallable('adminSetLeadHandled', {}, async (req) =>
+  adminOps.adminSetLeadHandled({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
 /** El admin marca una alerta como revisada (auditado en el servidor). */
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
   const adminId = await requireAdmin(req);

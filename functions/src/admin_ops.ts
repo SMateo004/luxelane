@@ -515,3 +515,30 @@ export async function adminSetVehicleActive(deps: AdminDeps, actor: AdminActor, 
     return { vehicleId: ref.id, isActive: input.active };
   });
 }
+
+// ---------------------------------------------------------------------------
+// Solicitudes de empresas: marcar atendida o pendiente. No es sensible: el
+// motivo es opcional.
+// ---------------------------------------------------------------------------
+
+export const leadHandledSchema = z.strictObject({
+  leadId: docId, handled: z.boolean(), reason: z.string().trim().max(500).optional(),
+});
+
+export async function adminSetLeadHandled(deps: AdminDeps, actor: AdminActor, data: unknown) {
+  const input = parseInput(leadHandledSchema, data);
+  const db = deps.db;
+  const ref = db.collection('businessLeads').doc(input.leadId);
+  return db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw opError('not-found', 'lead_not_found');
+    if ((snap.data()?.handled === true) === input.handled) throw opError('failed-precondition', 'no_change');
+    tx.update(ref, { handled: input.handled });
+    writeAudit(tx, db, {
+      actor, operation: input.handled ? 'lead_handled' : 'lead_reopened', collection: 'businessLeads', docId: ref.id,
+      targetType: 'lead', changes: changedFields(snap.data(), { handled: input.handled }), reason: input.reason || null,
+      details: input.handled ? 'Solicitud atendida' : 'Solicitud pendiente',
+    });
+    return { leadId: ref.id, handled: input.handled };
+  });
+}
