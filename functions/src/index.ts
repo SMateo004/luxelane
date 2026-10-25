@@ -85,7 +85,7 @@ const tripDeps = (): tripFlow.TripDeps => ({ db, pickupSecret: PICKUP_CODE_SECRE
 
 /** Único camino del chófer: en camino, llegué, iniciar y completar. */
 export const advanceBooking = secureCallable('advanceBooking', {}, (req) =>
-  tripFlow.advanceBooking({ db }, req.auth?.uid, req.data));
+  tripFlow.advanceBooking({ db }, req.auth?.uid, req.data), { requireMfa: true });
 
 /** El pasajero de la reserva ve su código mientras el chófer espera. */
 export const getPickupCode = secureCallable('getPickupCode', { secrets: [PICKUP_CODE_SECRET] }, (req) =>
@@ -93,7 +93,7 @@ export const getPickupCode = secureCallable('getPickupCode', { secrets: [PICKUP_
 
 /** El chófer asignado comprueba el código: driver_arrived → verified. */
 export const verifyPickup = secureCallable('verifyPickup', { secrets: [PICKUP_CODE_SECRET] }, (req) =>
-  tripFlow.verifyPickup(tripDeps(), req.auth?.uid, req.data));
+  tripFlow.verifyPickup(tripDeps(), req.auth?.uid, req.data), { requireMfa: true });
 
 /** Excepción del admin, con motivo: deja la reserva verificada y avisa. */
 export const adminOverrideVerify = secureCallable('adminOverrideVerify', {}, async (req) => {
@@ -1193,7 +1193,7 @@ export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => 
     logger.error('acceptBooking', 'error', { error: String(e) });
     throw e;
   }
-});
+}, { requireMfa: true });
 
 // ---------------------------------------------------------------------------
 // scheduledCleanup  (daily)

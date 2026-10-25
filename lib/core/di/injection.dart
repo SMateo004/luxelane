@@ -24,6 +24,7 @@ import '../../features/profile/data/repositories/user_repository_impl.dart';
 import '../../features/profile/domain/usecases/profile_usecases.dart';
 import '../../features/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/ride/data/repositories/trip_flow_repository_impl.dart';
+import '../auth/mfa.dart';
 import '../data/notification_repository_impl.dart';
 import '../repositories/repositories.dart';
 import '../services/maps_service.dart';
@@ -48,6 +49,7 @@ void _registerServices() {
 
 void _registerFirebase() {
   sl.registerLazySingleton<fb.FirebaseAuth>(() => fb.FirebaseAuth.instance);
+  sl.registerLazySingleton<MfaService>(() => FirebaseMfaService(sl()));
   sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
   sl.registerLazySingleton<FirebaseFunctions>(() => FirebaseFunctions.instance);
 }

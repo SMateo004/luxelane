@@ -12,6 +12,10 @@ import '../config/app_check_setup.dart';
 const kTooManyAttemptsMessage =
     'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
 const kSessionExpiredMessage = 'Tu sesión expiró. Vuelve a iniciar sesión.';
+const kMfaRequiredMessage = 'Activa la verificación en dos pasos (Perfil) y '
+    'vuelve a iniciar sesión para continuar.';
+const kReauthRequiredMessage =
+    'Por seguridad, vuelve a iniciar sesión para continuar.';
 const kNoConnectionMessage =
     'Sin conexión con el servidor. Revisa tu red e inténtalo de nuevo.';
 
@@ -25,9 +29,10 @@ String? functionErrorReason(Object? details) {
 /// Check, límite de intentos, sesión, red). null si la pantalla debe usar
 /// el suyo.
 String? commonFunctionError(String code, Object? details) {
-  if (functionErrorReason(details) == 'app_check_required') {
-    return kAppCheckFailedMessage;
-  }
+  final reason = functionErrorReason(details);
+  if (reason == 'app_check_required') return kAppCheckFailedMessage;
+  if (reason == 'mfa_required') return kMfaRequiredMessage;
+  if (reason == 'reauth_required') return kReauthRequiredMessage;
   return switch (code) {
     'resource-exhausted' => kTooManyAttemptsMessage,
     'unauthenticated' => kSessionExpiredMessage,

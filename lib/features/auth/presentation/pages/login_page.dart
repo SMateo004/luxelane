@@ -8,6 +8,7 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
 import '../widgets/google_sign_in_button.dart';
+import 'mfa_sign_in_page.dart';
 
 // ── Design tokens (aligned with home_web_page / LD) ─────────────────────────
 const _bg = LuxColors.bg;
@@ -90,6 +91,25 @@ class _LoginPageState extends State<LoginPage> {
           // back to the link that asked for sign-in.
           final from = GoRouterState.of(context).uri.queryParameters['from'];
           context.go(from != null && from.startsWith('/') ? from : '/');
+        }
+        if (state is AuthMfaRequired) {
+          final bloc = context.read<AuthBloc>();
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              fullscreenDialog: true,
+              builder: (ctx) => MfaSignInPage(
+                challenge: state.challenge,
+                onSignedIn: (user) {
+                  Navigator.of(ctx).pop();
+                  bloc.add(MfaSignInCompleted(user));
+                },
+                onCancel: () {
+                  Navigator.of(ctx).pop();
+                  bloc.add(const LogoutRequested());
+                },
+              ),
+            ),
+          );
         }
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(

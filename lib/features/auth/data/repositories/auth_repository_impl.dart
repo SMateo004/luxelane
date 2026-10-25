@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:google_sign_in/google_sign_in.dart';
+import '../../../../core/auth/mfa.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
@@ -91,6 +92,8 @@ class AuthRepositoryImpl implements AuthRepository {
       // Si el registro creó la cuenta pero no llegó a guardar el perfil, se
       // crea ahora en vez de dejar la cuenta inservible.
       return _activeOrBlocked(await _ensureProfile(cred.user!));
+    } on fb.FirebaseAuthMultiFactorException catch (e) {
+      return Left(MfaRequiredFailure(_challenge(e)));
     } on fb.FirebaseAuthException catch (e) {
       return Left(AuthFailure(_emailErrorMessage(e.code)));
     } catch (e) {
@@ -166,6 +169,8 @@ class AuthRepositoryImpl implements AuthRepository {
       final fbUser = cred.user;
       if (fbUser == null) return const Left(AuthFailure(_googleGenericError));
       return _activeOrBlocked(await _ensureProfile(fbUser));
+    } on fb.FirebaseAuthMultiFactorException catch (e) {
+      return Left(MfaRequiredFailure(_challenge(e)));
     } on fb.FirebaseAuthException catch (e) {
       if (e.code == 'popup-closed-by-user' ||
           e.code == 'cancelled-popup-request' ||
@@ -246,6 +251,13 @@ class AuthRepositoryImpl implements AuthRepository {
       // Pasajeros (sin perfil de chófer) o sin conexión: no bloquea la salida.
     }
   }
+
+  /// Segundo paso (TOTP): al resolverlo, igual que un inicio de sesión.
+  MfaChallenge _challenge(fb.FirebaseAuthMultiFactorException e) =>
+      FirebaseTotpChallenge(
+        e.resolver,
+        (user) async => _activeOrBlocked(await _ensureProfile(user)),
+      );
 
   /// Las cuentas bloqueadas desde el panel admin no pueden entrar.
   Future<Either<Failure, User>> _activeOrBlocked(User user) async {

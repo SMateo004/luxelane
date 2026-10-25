@@ -15,6 +15,7 @@ import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/widgets/mfa_reminder_banner.dart';
 import '../../../incidents/presentation/widgets/sos_entry.dart';
 import '../../../notifications/presentation/widgets/notification_bell.dart';
 import '../bloc/driver_bloc.dart';
@@ -250,6 +251,8 @@ class _IdlePanel extends StatelessWidget {
         LuxSpacing.xl,
       ),
       children: [
+        // Fase 1 del segundo factor: aviso hasta que lo dé de alta.
+        MfaReminderBanner(accountName: state.user.email),
         item(
           _Header(
             name: state.user.displayName,

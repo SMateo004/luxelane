@@ -10,6 +10,7 @@ import { defineBoolean } from 'firebase-functions/params';
 import { toClientError } from './errors';
 import { logger } from './logger';
 import { requireRole, Role } from './identity';
+import { securityConfig } from './ops_config';
 import { enforceRateLimit, RATE_LIMITS } from './rate_limit';
 
 /**
@@ -25,6 +26,7 @@ export const APP_CHECK_ENFORCE = defineBoolean('APP_CHECK_ENFORCE', { default: f
 export interface SecureMeta {
   name: string;
   role?: Role;
+  requireMfa?: boolean;
 }
 
 /** Marca de las callables que pasan por secureCallable (la mira el test). */
@@ -53,6 +55,27 @@ function enforcing(): boolean {
 export interface SecurityOptions {
   /** Rol exigido: del claim (o de Firestore en la transición), con isActive. */
   role?: Role;
+  /**
+   * Exige el segundo factor cuando config/security.mfaEnforced es true
+   * (decisión 3). Las callables de admin lo exigen siempre que haya role
+   * 'admin'.
+   */
+  requireMfa?: boolean;
+}
+
+/** El token se obtuvo con segundo factor (Firebase lo anota en firebase.sign_in_second_factor). */
+export function hasSecondFactor(token: Record<string, unknown> | undefined): boolean {
+  const fb = token?.firebase as Record<string, unknown> | undefined;
+  return typeof fb?.sign_in_second_factor === 'string' && fb.sign_in_second_factor.length > 0;
+}
+
+/** Con la imposición activa, sin segundo factor: unauthenticated mfa_required. */
+export async function mfaGate(db: admin.firestore.Firestore, token: Record<string, unknown> | undefined): Promise<void> {
+  const sec = await securityConfig(db);
+  if (sec.mfaEnforced !== true) return;
+  if (!hasSecondFactor(token)) {
+    throw new HttpsError('unauthenticated', 'mfa_required', { reason: 'mfa_required' });
+  }
 }
 
 export function secureCallable<T>(
@@ -69,6 +92,9 @@ export function secureCallable<T>(
       if (rule && req.auth?.uid) await enforceRateLimit(admin.firestore(), name, req.auth.uid, rule);
       if (security.role) {
         await requireRole(admin.firestore(), req.auth as { uid: string; token: Record<string, unknown> } | undefined, security.role);
+      }
+      if (security.requireMfa || security.role === 'admin') {
+        await mfaGate(admin.firestore(), req.auth?.token as Record<string, unknown> | undefined);
       }
       return await handler(req);
     } catch (e) {

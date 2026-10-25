@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/auth/mfa.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
@@ -53,6 +54,14 @@ class GoogleSignInRequested extends AuthEvent {
 
 class LogoutRequested extends AuthEvent {
   const LogoutRequested();
+}
+
+/// El segundo paso (TOTP) terminó bien.
+class MfaSignInCompleted extends AuthEvent {
+  const MfaSignInCompleted(this.user);
+  final User user;
+  @override
+  List<Object?> get props => [user.id];
 }
 
 class VerificationEmailSent extends AuthEvent {
@@ -114,6 +123,12 @@ class AuthAuthenticated extends AuthState {
       ];
 }
 
+/// El inicio de sesión pide el código de la app autenticadora.
+class AuthMfaRequired extends AuthState {
+  const AuthMfaRequired(this.challenge);
+  final MfaChallenge challenge;
+}
+
 class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated();
 }
@@ -136,6 +151,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthStarted>(_onStarted);
     on<LoginRequested>(_onLogin);
     on<RegisterRequested>(_onRegister);
+    on<MfaSignInCompleted>(_onMfaCompleted);
     on<GoogleSignInRequested>(_onGoogleSignIn);
     on<LogoutRequested>(_onLogout);
     on<_AuthSignedOut>(_onSignedOut);
@@ -220,10 +236,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       email: event.email,
       password: event.password,
     );
-    result.fold((f) => emit(AuthError(f.message)), (user) {
-      emit(AuthAuthenticated(user));
-      _watchSession(user.id);
-    });
+    result.fold(
+      (f) => emit(
+        f is MfaRequiredFailure
+            ? AuthMfaRequired(f.challenge)
+            : AuthError(f.message),
+      ),
+      (user) {
+        emit(AuthAuthenticated(user));
+        _watchSession(user.id);
+      },
+    );
+  }
+
+  void _onMfaCompleted(MfaSignInCompleted event, Emitter<AuthState> emit) {
+    emit(AuthAuthenticated(event.user));
+    _watchSession(event.user.id);
   }
 
   // ── _onRegister ────────────────────────────────────────────────────────────
@@ -257,7 +285,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (f) => emit(
         f is AuthCancelledFailure
             ? const AuthUnauthenticated()
-            : AuthError(f.message),
+            : f is MfaRequiredFailure
+                ? AuthMfaRequired(f.challenge)
+                : AuthError(f.message),
       ),
       (user) {
         emit(AuthAuthenticated(user));

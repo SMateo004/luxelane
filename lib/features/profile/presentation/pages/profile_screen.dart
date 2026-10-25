@@ -8,6 +8,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/pages/mfa_enroll_page.dart';
 import '../bloc/profile_bloc.dart';
 import '../widgets/driver_documents_group.dart';
 
@@ -202,6 +203,18 @@ class _ProfileBody extends StatelessWidget {
                   icon: Icons.credit_card_outlined,
                   title: 'Métodos de pago',
                   onTap: () => context.push('/payment'),
+                ),
+              // Obligatoria para chóferes y administradores (decisión 2).
+              if (!rider)
+                LuxListRow(
+                  icon: Icons.shield_outlined,
+                  title: 'Verificación en dos pasos',
+                  subtitle: 'App autenticadora',
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => MfaEnrollPage(accountName: user.email),
+                    ),
+                  ),
                 ),
             ],
           ),

@@ -41,6 +41,11 @@ describe('cobertura de App Check en las callables', () => {
     expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ role: 'admin' }));
   });
 
+  // Segundo factor (decisión 3): admin siempre (por el rol) y las del chófer.
+  it.each([['advanceBooking'], ['verifyPickup'], ['acceptBooking']])('%s exige segundo factor si se impone', (name) => {
+    expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ requireMfa: true }));
+  });
+
   it('solo el SOS deja pasar si el contador falla', () => {
     const failOpen = Object.entries(RATE_LIMITS).filter(([, r]) => r.failOpen).map(([n]) => n);
     expect(failOpen).toEqual(['raiseIncident']);
