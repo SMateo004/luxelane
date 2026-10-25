@@ -11,6 +11,7 @@ import { raiseSchema, incidentIdSchema, closeSchema } from './incidents';
 import { resolveSchema } from './alerts';
 import { leadSchema } from './business_leads';
 import { deviceSchema } from './driver_devices';
+import { cancelSchema } from './cancellation';
 import {
   bookingSchema as adminBookingSchema, configSchema as adminConfigSchema, paymentSchema as adminPaymentSchema,
   pricingSchema as adminPricingSchema, verifyDriverSchema, driverSensitiveSchema, vehicleActiveSchema,
@@ -159,6 +160,11 @@ const CASES: Record<string, Case> = {
   adminSetLeadHandled: {
     schema: leadHandledSchema, valid: { leadId: ID, handled: true },
     wrongType: { leadId: ID, handled: 'sí' }, extreme: [{ leadId: ID, handled: true, reason: 'x'.repeat(501) }],
+  },
+  cancelBooking: {
+    schema: cancelSchema, valid: { bookingId: ID, reason: 'changed_plans' },
+    wrongType: { bookingId: ID, dryRun: 'sí' },
+    extreme: [{ bookingId: ID, reason: 'me_aburri' }, { bookingId: ID, acceptedFee: -1 }, { bookingId: ID, status: 'cancelled' }],
   },
   registerDriverDevice: {
     schema: deviceSchema, valid: { installationId: 'a'.repeat(8) + '-' + 'b'.repeat(27), platform: 'android', appVersion: '1.0.0' },

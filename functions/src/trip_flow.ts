@@ -39,7 +39,7 @@ export const DRIVER_STEPS: Readonly<Partial<Record<Status, Status>>> = {
 /** Ya pasó por la verificación (para responder igual a un reintento). */
 const PAST_VERIFIED: readonly Status[] = ['verified', 'in_progress', 'completed'];
 
-export type Source = 'driver_app' | 'admin' | 'system';
+export type Source = 'driver_app' | 'rider_app' | 'admin' | 'system';
 
 const tripError = (
   code: 'invalid-argument' | 'failed-precondition' | 'permission-denied' | 'unauthenticated' | 'not-found',

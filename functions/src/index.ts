@@ -12,6 +12,7 @@ import * as tripFlow from './trip_flow';
 import * as businessLeads from './business_leads';
 import * as identity from './identity';
 import * as adminOps from './admin_ops';
+import * as cancellation from './cancellation';
 import * as incidents from './incidents';
 import { deviceSchema, registerDriverDevice as registerDriverDeviceService } from './driver_devices';
 import { isTransient, withRetryPolicy } from './retry_policy';
@@ -149,6 +150,10 @@ const adminActor = async (req: CallableRequest): Promise<incidents.AdminActor> =
   adminId: await requireAdmin(req),
   adminEmail: (req.auth?.token.email as string | undefined) ?? null,
 });
+
+/** El pasajero cancela su reserva (o pide el recargo antes de confirmar). */
+export const cancelBooking = secureCallable('cancelBooking', {}, (req) =>
+  cancellation.cancelBooking({ db }, req.auth?.uid, req.data));
 
 /** Pasajero o chófer de la reserva: avisa a central (idempotente, con límite). */
 export const raiseIncident = secureCallable('raiseIncident', {}, (req) => incidents.raiseIncident(incidentDeps(), req.auth?.uid, req.data));

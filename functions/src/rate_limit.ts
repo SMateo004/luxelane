@@ -67,6 +67,8 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   registerDriverDevice: per10min(20),
   // Escrituras de admin (Parte A).
   adminUpdateBooking: per10min(60),
+  // Parte B: el pasajero consulta el recargo y cancela.
+  cancelBooking: per10min(20),
   adminRecordPayment: per10min(30),
   adminUpdateConfig: per10min(20),
   adminUpdatePricingRule: per10min(40),
