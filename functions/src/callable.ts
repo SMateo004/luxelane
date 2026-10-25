@@ -9,6 +9,7 @@ import { CallableOptions, CallableRequest, HttpsError, onCall } from 'firebase-f
 import { defineBoolean } from 'firebase-functions/params';
 import { toClientError } from './errors';
 import { logger } from './logger';
+import { requireRole, Role } from './identity';
 import { enforceRateLimit, RATE_LIMITS } from './rate_limit';
 
 /**
@@ -23,6 +24,7 @@ export const APP_CHECK_ENFORCE = defineBoolean('APP_CHECK_ENFORCE', { default: f
 
 export interface SecureMeta {
   name: string;
+  role?: Role;
 }
 
 /** Marca de las callables que pasan por secureCallable (la mira el test). */
@@ -47,10 +49,17 @@ function enforcing(): boolean {
   }
 }
 
+/** Exigencias de identidad de una callable (Parte B). */
+export interface SecurityOptions {
+  /** Rol exigido: del claim (o de Firestore en la transición), con isActive. */
+  role?: Role;
+}
+
 export function secureCallable<T>(
   name: string,
   opts: CallableOptions,
   handler: (req: CallableRequest) => T | Promise<T>,
+  security: SecurityOptions = {},
 ) {
   const fn = onCall(opts, async (req) => {
     try {
@@ -58,12 +67,15 @@ export function secureCallable<T>(
       // Sin sesión no hay a quién contar: el handler responde unauthenticated.
       const rule = RATE_LIMITS[name];
       if (rule && req.auth?.uid) await enforceRateLimit(admin.firestore(), name, req.auth.uid, rule);
+      if (security.role) {
+        await requireRole(admin.firestore(), req.auth as { uid: string; token: Record<string, unknown> } | undefined, security.role);
+      }
       return await handler(req);
     } catch (e) {
       // Al cliente solo un código permitido y un motivo corto.
       throw toClientError(name, e);
     }
   });
-  Object.defineProperty(fn, SECURED_MARK, { value: { name } satisfies SecureMeta });
+  Object.defineProperty(fn, SECURED_MARK, { value: { name, ...security } satisfies SecureMeta });
   return fn;
 }

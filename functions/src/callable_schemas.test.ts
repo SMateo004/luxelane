@@ -136,6 +136,10 @@ const CASES: Record<string, Case> = {
   },
   deleteAccount: { schema: c.deleteAccount, valid: null, wrongType: 'borrar', extreme: [[]] },
   syncEmailVerification: { schema: c.syncEmailVerification, valid: null, wrongType: 'sí', extreme: [[]] },
+  setUserRole: {
+    schema: c.setUserRole, valid: { uid: ID, role: 'driver' },
+    wrongType: { uid: ID, role: 1 }, extreme: [{ uid: ID, role: 'superadmin' }, { uid: LONG_ID, role: 'rider' }],
+  },
   ensureStripeCustomer: { schema: c.ensureStripeCustomer, valid: {}, wrongType: 1, extreme: [[]] },
   backfillSettlements: { schema: c.backfillSettlements, valid: undefined, wrongType: true, extreme: [[]] },
   assignNearestDriver: {

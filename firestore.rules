@@ -7,12 +7,20 @@ service cloud.firestore {
     // Helpers — role is stored in /users/{uid}.role in Firestore
     // -------------------------------------------------------------------------
 
+    // Rol: el custom claim `role`, que fija solo el servidor (setUserRole,
+    // backfill). Transición (decisión 4): sin claim, el rol de Firestore;
+    // se quita la segunda vía cuando el responsable confirme el backfill.
+    // isActive se sigue leyendo de Firestore (isActiveUser).
     function getUserRole() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+      return request.auth.token.get('role', null) != null
+        ? request.auth.token.role
+        : get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
     }
 
+    // Admin con la cuenta activa: un admin bloqueado deja de serlo en el acto
+    // aunque su token aún lleve el claim (decisión 4).
     function isAdmin() {
-      return request.auth != null && getUserRole() == 'admin';
+      return request.auth != null && getUserRole() == 'admin' && isActiveUser();
     }
 
     function isDriver() {

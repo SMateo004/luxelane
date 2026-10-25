@@ -30,6 +30,7 @@ export const callableSchemas = {
   ensureStripeCustomer: noInput,
   backfillSettlements: noInput,
   syncEmailVerification: noInput,
+  setUserRole: z.strictObject({ uid: docId, role: z.enum(['rider', 'driver', 'admin']) }),
   assignNearestDriver: z.strictObject({ bookingId: docId }),
   acceptBooking: z.strictObject({ bookingId: docId }),
 } as const;

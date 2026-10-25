@@ -49,6 +49,12 @@ export const createBooking = secureCallable('createBooking', { secrets: [MAPS_SE
 
 const identityDeps = (): identity.IdentityDeps => ({ db, auth: identity.realAuth() });
 
+/** Cambia el rol de un usuario: claim, documento, sesiones revocadas y auditoría. */
+export const setUserRole = secureCallable('setUserRole', {}, async (req) => {
+  const input = parseInput(schema.setUserRole, req.data);
+  return identity.setUserRole(identityDeps(), await adminActor(req), input);
+}, { role: 'admin' });
+
 /** La app la llama tras verificar el correo: el servidor lo comprueba en Auth. */
 export const syncEmailVerification = secureCallable('syncEmailVerification', {}, (req) => {
   parseInput(schema.syncEmailVerification, req.data);
@@ -90,7 +96,7 @@ export const adminOverrideVerify = secureCallable('adminOverrideVerify', {}, asy
     adminId,
     adminEmail: (req.auth?.token.email as string | undefined) ?? null,
   }, req.data);
-});
+}, { role: 'admin' });
 
 // ---------------------------------------------------------------------------
 // SOS e incidentes (D1, F9)
@@ -117,11 +123,11 @@ export const raiseIncident = secureCallable('raiseIncident', {}, (req) => incide
 export const cancelIncident = secureCallable('cancelIncident', {}, (req) => incidents.cancelIncident(incidentDeps(), req.auth?.uid, req.data));
 
 export const acknowledgeIncident = secureCallable('acknowledgeIncident', {}, async (req) =>
-  incidents.acknowledgeIncident(incidentDeps(), await adminActor(req), req.data));
+  incidents.acknowledgeIncident(incidentDeps(), await adminActor(req), req.data), { role: 'admin' });
 
 /** Cierre con nota obligatoria (mínimo 10 caracteres). */
 export const closeIncident = secureCallable('closeIncident', {}, async (req) =>
-  incidents.closeIncident(incidentDeps(), await adminActor(req), req.data));
+  incidents.closeIncident(incidentDeps(), await adminActor(req), req.data), { role: 'admin' });
 
 /** Reenvía alerta y push de los incidentes sin reconocer (config/ops). */
 export const escalateIncidentsJob = onSchedule('every 1 minutes', async () => {
@@ -207,11 +213,10 @@ function vehicleClassLabel(vehicleClass: string | undefined): string {
   return (vehicleClass && VEHICLE_CLASS_LABELS[vehicleClass]) || 'Luxelane';
 }
 
+/** Admin por el claim `role` (o Firestore en la transición) y con la cuenta activa. */
 async function requireAdmin(req: CallableRequest): Promise<string> {
-  const uid = requireAuth(req);
-  const user = await db.collection('users').doc(uid).get();
-  if (user.data()?.role !== 'admin') throw err.permissionDenied('admin_required');
-  return uid;
+  requireAuth(req);
+  return identity.requireRole(db, req.auth as unknown as { uid: string; token: Record<string, unknown> }, 'admin');
 }
 
 async function sendPush(
@@ -479,7 +484,7 @@ export const refundPayment = secureCallable('refundPayment', withStripe, async (
     logger.error('refundPayment', 'stripe error', { error: String(e) });
     throw err.paymentFailed();
   }
-});
+}, { role: 'admin' });
 
 // ---------------------------------------------------------------------------
 // listPaymentMethods
@@ -844,7 +849,7 @@ export const closeOpenRequest = onDocumentUpdated({ document: 'bookings/{booking
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
   const adminId = await requireAdmin(req);
   return resolveAdminAlert(db, { adminId, adminEmail: (req.auth?.token.email as string | undefined) ?? null }, req.data);
-});
+}, { role: 'admin' });
 
 // Red de seguridad de openRequests: crea las que faltan, borra las
 // huérfanas y avisa al admin en adminAlerts.
@@ -1030,7 +1035,7 @@ export const backfillSettlements = secureCallable('backfillSettlements', { timeo
   });
   logger.info('backfillSettlements', 'done', { scanned, settled });
   return { scanned, settled };
-});
+}, { role: 'admin' });
 
 // ---------------------------------------------------------------------------
 // assignNearestDriver  (HTTPS Callable)

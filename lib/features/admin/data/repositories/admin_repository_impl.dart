@@ -382,6 +382,9 @@ class AdminRepositoryImpl implements AdminRepository {
     return switch (functionErrorReason(e.details)) {
       'not_captured' => 'Solo se pueden reembolsar pagos cobrados',
       'payment_failed' => 'El procesador de pagos rechazó la operación',
+      'cannot_change_own_role' => 'No puedes cambiar tu propio rol',
+      'cannot_block_self' => 'No puedes bloquear tu propia cuenta',
+      'user_not_found' => 'No se encontró el usuario',
       _ => e.code == 'permission-denied'
           ? 'Permiso denegado: se necesita rol de administrador'
           : functionErrorMessage(e.code, e.details),
@@ -849,16 +852,26 @@ class AdminRepositoryImpl implements AdminRepository {
         ),
       );
     }
-    return _run((batch) async {
-      batch.update(_db.collection('users').doc(userId), {'role': role.name});
-      _log(
-        batch,
-        'update_role',
-        userId,
-        'user',
-        details: 'Rol → ${role.displayLabel}',
+    // El servidor fija el claim, el documento, revoca las sesiones del
+    // afectado y deja la auditoría (B2).
+    return _call('setUserRole', {'uid': userId, 'role': role.name});
+  }
+
+  /// Llama a una callable de administración y traduce su error.
+  Future<Either<Failure, void>> _call(
+    String name,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      await _functions.httpsCallable(name).call<void>(data);
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      return Left(ServerFailure(_fnError(e)));
+    } catch (_) {
+      return const Left(
+        ServerFailure('Sin conexión con el servidor; inténtalo de nuevo'),
       );
-    });
+    }
   }
 }
 
