@@ -575,6 +575,7 @@ class _BookingDetail extends StatelessWidget {
                   value: 'Bloqueada: 5 códigos incorrectos',
                   valueColor: LuxColors.error,
                 ),
+              ...cancellationRows(booking),
               const SizedBox(height: LuxSpacing.sm),
               const LuxDivider(),
               const SizedBox(height: LuxSpacing.sm),
@@ -656,7 +657,14 @@ class _BookingDetail extends StatelessWidget {
                       label: 'Ajustar precio final',
                       onTap: () => adjustPriceDialog(context, booking),
                     ),
-                  if (canCancel)
+                  if (canCancel && booking.status == BookingStatus.noShow)
+                    AdminActionButton(
+                      icon: Icons.gavel_outlined,
+                      label: 'Decidir «no se presentó»',
+                      color: LuxColors.warning,
+                      onTap: () => noShowDecisionDialog(context, booking),
+                    )
+                  else if (canCancel)
                     AdminActionButton(
                       icon: Icons.cancel_outlined,
                       label: 'Cancelar reserva',
@@ -2393,4 +2401,47 @@ class _DriverDocumentsDialogState extends State<DriverDocumentsDialog> {
       ],
     );
   }
+}
+
+/// Cancelación, recargo y liberación en el detalle de la reserva (Parte B).
+/// El recargo se muestra solo si es mayor que cero.
+List<Widget> cancellationRows(Booking b) {
+  const who = {'rider': 'Pasajero', 'admin': 'Central'};
+  final reasons = {...kRiderCancelReasons, 'payment_failed': 'Falló el pago'};
+  return [
+    if (b.status == BookingStatus.noShow)
+      const AdminInfoRow(
+        label: 'No se presentó',
+        value: 'El chófer esperó y avisó. Pendiente de tu decisión.',
+        valueColor: LuxColors.warning,
+      ),
+    if (b.status == BookingStatus.cancelled) ...[
+      AdminInfoRow(
+        label: 'Cancelada por',
+        value: who[b.cancelledBy] ?? 'Sistema',
+      ),
+      if (b.cancellationReason != null)
+        AdminInfoRow(
+          label: 'Motivo',
+          value: reasons[b.cancellationReason] ?? b.cancellationReason!,
+        ),
+      if (b.hasCancellationFee)
+        AdminInfoRow(
+          label: 'Recargo (anotado, no cobrado)',
+          value: bs(b.cancellationFee!),
+          valueColor: LuxColors.warning,
+        ),
+      if (b.cancellationFeeBasis != null)
+        AdminInfoRow(
+          label: 'Base del recargo',
+          value: cancellationBasisLabel(b.cancellationFeeBasis),
+        ),
+    ],
+    if (b.lastReleaseReason != null)
+      AdminInfoRow(
+        label: 'Liberada por un chófer',
+        value:
+            kDriverReleaseReasons[b.lastReleaseReason] ?? b.lastReleaseReason!,
+      ),
+  ];
 }

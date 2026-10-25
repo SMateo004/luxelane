@@ -1027,3 +1027,109 @@ class _Segments extends StatelessWidget {
     );
   }
 }
+
+/// Tras un «no aparece» (B4), central cancela y fija el recargo (0 = sin
+/// recargo), con tope en el precio. Se anota en la reserva; no se cobra.
+Future<void> noShowDecisionDialog(BuildContext context, Booking b) async {
+  final bloc = context.read<AdminBloc>();
+  final r = await showDialog<({double fee, String reason})>(
+    context: context,
+    builder: (_) => NoShowDecisionDialog(booking: b),
+  );
+  if (r != null) bloc.add(AdminNoShowDecided(b, r.fee, r.reason));
+}
+
+class NoShowDecisionDialog extends StatefulWidget {
+  const NoShowDecisionDialog({super.key, required this.booking});
+  final Booking booking;
+
+  @override
+  State<NoShowDecisionDialog> createState() => _NoShowDecisionDialogState();
+}
+
+class _NoShowDecisionDialogState extends State<NoShowDecisionDialog> {
+  final _fee = TextEditingController(text: '0');
+  final _why = TextEditingController();
+
+  @override
+  void dispose() {
+    _fee.dispose();
+    _why.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final b = widget.booking;
+    final fee = double.tryParse(_fee.text.replaceAll(',', '.'));
+    final feeOk = fee != null && fee >= 0 && fee <= b.estimatedPrice;
+    final valid = feeOk && _reasonOk(_why);
+    return AlertDialog(
+      backgroundColor: LuxColors.surfaceMuted,
+      title: const Text(
+        'Decidir «no se presentó»',
+        style: LuxTypography.titleLarge,
+      ),
+      content: SizedBox(
+        width: 420,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Reserva #${shortId(b.id)} · precio ${bs(b.estimatedPrice)}. '
+                'Revisa el registro del viaje (espera y ubicación del chófer) '
+                'antes de decidir.',
+                style: LuxTypography.caption,
+              ),
+              const SizedBox(height: LuxSpacing.md),
+              TextField(
+                key: const Key('no-show-fee'),
+                controller: _fee,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                style: LuxTypography.bodyMedium,
+                onChanged: (_) => setState(() {}),
+                decoration: adminInputDecoration(prefixText: 'Bs ').copyWith(
+                  labelText: 'Recargo (0 = sin recargo)',
+                  errorText: feeOk
+                      ? null
+                      : 'Entre 0 y ${b.estimatedPrice.toStringAsFixed(2)}',
+                ),
+              ),
+              const SizedBox(height: LuxSpacing.sm),
+              _ReasonField(
+                fieldKey: const Key('no-show-reason'),
+                controller: _why,
+                onChanged: () => setState(() {}),
+              ),
+              const Text(
+                'El recargo queda anotado en la reserva; no se cobra '
+                'automáticamente.',
+                style: LuxTypography.caption,
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Volver'),
+        ),
+        TextButton(
+          key: const Key('no-show-confirm'),
+          onPressed: valid
+              ? () => Navigator.pop(
+                    context,
+                    (fee: fee, reason: _why.text.trim()),
+                  )
+              : null,
+          child: const Text('Cancelar reserva'),
+        ),
+      ],
+    );
+  }
+}

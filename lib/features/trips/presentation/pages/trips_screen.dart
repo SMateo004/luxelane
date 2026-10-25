@@ -163,7 +163,8 @@ class _TripCard extends StatelessWidget {
       case BookingStatus.pending:
         return 'Ver reserva';
       case BookingStatus.cancelled:
-        return null;
+      case BookingStatus.noShow:
+        return 'Ver reserva';
     }
   }
 

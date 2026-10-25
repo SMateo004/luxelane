@@ -14,6 +14,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../incidents/presentation/widgets/sos_entry.dart';
+import '../widgets/cancel_booking_dialog.dart';
 import '../widgets/pickup_code_card.dart';
 
 /// Estados en que el chófer va, espera o lleva al pasajero: solo entonces
@@ -145,12 +146,19 @@ class _RideScreenState extends State<RideScreen> {
       case BookingStatus.completed:
         return 'Has llegado. Gracias por viajar con Luxelane.';
       case BookingStatus.cancelled:
-        return 'Esta reserva fue cancelada.';
+        final b = _booking!;
+        return b.hasCancellationFee
+            ? 'Esta reserva fue cancelada. Recargo por cancelación: '
+                'Bs ${b.cancellationFee!.toStringAsFixed(2)}.'
+            : 'Esta reserva fue cancelada.';
+      case BookingStatus.noShow:
+        return 'Tu chófer no te encontró en el punto de recogida. Central '
+            'revisará tu reserva y te contactará.';
     }
   }
 
-  /// Estados en los que el pasajero aún puede cancelar (igual que las
-  /// reglas de Firestore).
+  /// Estados en los que el pasajero aún puede cancelar (igual que
+  /// RIDER_CANCELLABLE en functions/src/cancellation.ts).
   static const _cancellable = {
     BookingStatus.pending,
     BookingStatus.confirmed,
@@ -158,44 +166,16 @@ class _RideScreenState extends State<RideScreen> {
     BookingStatus.driverArrived,
   };
 
+  /// Recargo y motivo pasan por el servidor (cancelBooking); el diálogo
+  /// muestra el recargo solo si es mayor que cero.
   Future<void> _cancel() async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: LuxColors.surface,
-        title: const Text(
-          'Cancelar reserva',
-          style: LuxTypography.titleMedium,
-        ),
-        content: const Text(
-          'Tu chófer quedará libre y, si pagaste con tarjeta, se liberará '
-          'la retención. ¿Quieres cancelar?',
-          style: LuxTypography.bodyMedium,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Volver'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Cancelar reserva',
-              style: TextStyle(color: LuxColors.error),
-            ),
-          ),
-        ],
-      ),
-    );
-    if (ok != true || !mounted) return;
     setState(() => _cancelling = true);
-    final result = await sl<BookingRepository>().cancelBooking(widget.rideId);
-    if (!mounted) return;
-    setState(() => _cancelling = false);
-    result.fold(
-      (f) => showLuxSnackbar(context, f.message, isError: true),
-      (_) => showLuxSnackbar(context, 'Reserva cancelada'),
+    await runCancelBookingFlow(
+      context,
+      sl<BookingRepository>(),
+      widget.rideId,
     );
+    if (mounted) setState(() => _cancelling = false);
   }
 
   void _showRatingDialog() {

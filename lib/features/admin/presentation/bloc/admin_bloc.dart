@@ -56,6 +56,16 @@ class AdminChangeBookingStatusRequested extends AdminEvent {
   List<Object?> get props => [booking.id, status, reason];
 }
 
+/// Central decide tras un «no aparece»: cancelar con o sin recargo.
+class AdminNoShowDecided extends AdminEvent {
+  final Booking booking;
+  final double fee;
+  final String reason;
+  const AdminNoShowDecided(this.booking, this.fee, this.reason);
+  @override
+  List<Object?> get props => [booking.id, fee, reason];
+}
+
 class AdminAssignDriverRequested extends AdminEvent {
   final Booking booking;
   final String driverId;
@@ -494,6 +504,15 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         e.status == BookingStatus.cancelled
             ? 'Reserva cancelada'
             : 'Reserva marcada como "${e.status.displayLabel}"',
+      ),
+    );
+    on<AdminNoShowDecided>(
+      (e, emit) => _perform(
+        emit,
+        _repo.decideNoShow(e.booking, e.fee, e.reason),
+        e.fee > 0
+            ? 'Reserva cancelada con recargo de ${e.fee.toStringAsFixed(2)} Bs'
+            : 'Reserva cancelada sin recargo',
       ),
     );
     on<AdminAssignDriverRequested>(

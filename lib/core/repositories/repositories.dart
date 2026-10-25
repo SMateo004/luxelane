@@ -203,7 +203,22 @@ abstract class BookingRepository {
     required String bookingId,
     required String driverId,
   });
-  Future<Either<Failure, void>> cancelBooking(String bookingId);
+
+  /// Lo que costaría cancelar ahora (cancelBooking con dryRun): la app lo
+  /// muestra antes de confirmar.
+  Future<Either<Failure, CancellationQuote>> previewCancellation(
+    String bookingId, {
+    String reason = 'other',
+  });
+
+  /// Cancela en el servidor (cancelBooking). [acceptedFee] es el recargo que
+  /// vio el pasajero; si ahora es mayor, devuelve
+  /// [CancellationFeeChangedFailure] sin cancelar.
+  Future<Either<Failure, void>> cancelBooking(
+    String bookingId, {
+    String reason = 'other',
+    double acceptedFee = 0,
+  });
   Stream<Booking> watchBooking(String bookingId);
 }
 
@@ -221,6 +236,14 @@ abstract class TripFlowRepository {
   Future<Either<Failure, void>> advance({
     required String bookingId,
     required BookingStatus to,
+    ({double lat, double lng})? location,
+  });
+
+  /// El chófer devuelve la reserva antes de llegar (releaseBooking), con un
+  /// motivo de [kDriverReleaseReasons].
+  Future<Either<Failure, void>> release({
+    required String bookingId,
+    required String reason,
     ({double lat, double lng})? location,
   });
 

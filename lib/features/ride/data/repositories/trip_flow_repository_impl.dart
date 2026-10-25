@@ -61,6 +61,18 @@ class TripFlowRepositoryImpl implements TripFlowRepository {
       });
 
   @override
+  Future<Either<Failure, void>> release({
+    required String bookingId,
+    required String reason,
+    ({double lat, double lng})? location,
+  }) =>
+      _call('releaseBooking', {
+        'bookingId': bookingId,
+        'reason': reason,
+        if (location != null) 'location': _loc(location),
+      });
+
+  @override
   Future<Either<Failure, void>> verifyPickup({
     required String bookingId,
     required String code,
@@ -149,6 +161,26 @@ Failure tripFailureFor(String code, Object? details) {
       return const TripFailure(
         TripIssue.notAllowed,
         'Este viaje ya no está a tu cargo.',
+      );
+    case 'no_show_too_early':
+      return const TripFailure(
+        TripIssue.tooEarly,
+        'Aún no terminó el tiempo de espera. Espera un poco más.',
+      );
+    case 'no_show_disabled':
+      return const TripFailure(
+        TripIssue.notAllowed,
+        'Esta opción no está disponible. Contacta con central.',
+      );
+    case 'location_required':
+      return const TripFailure(
+        TripIssue.locationRequired,
+        'Activa la ubicación: central necesita saber dónde esperaste.',
+      );
+    case 'not_releasable':
+      return const TripFailure(
+        TripIssue.invalidTransition,
+        'Ya no puedes liberar este viaje. Contacta con central.',
       );
     case 'invalid_transition':
       return const TripFailure(

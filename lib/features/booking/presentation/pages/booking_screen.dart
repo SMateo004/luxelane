@@ -480,7 +480,10 @@ class _BookingScreenState extends State<BookingScreen> {
     final id = _pendingBookingId;
     _pendingBookingId = null;
     _payByCard = false;
-    if (id != null) await sl<BookingRepository>().cancelBooking(id);
+    // Sin retención no hay recargo (basis payment_failed en el servidor).
+    if (id != null) {
+      await sl<BookingRepository>().cancelBooking(id, reason: 'payment_failed');
+    }
     if (!mounted) return;
     setState(() {
       _loading = false;

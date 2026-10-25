@@ -99,6 +99,24 @@ class DriverTripStarted extends DriverEvent {
   List<Object?> get props => [bookingId];
 }
 
+/// «El pasajero no aparece» (advanceBooking a no_show): solo con política y
+/// pasado el tiempo de espera; el servidor lo comprueba y avisa a central.
+class DriverRiderNoShow extends DriverEvent {
+  const DriverRiderNoShow({required this.bookingId});
+  final String bookingId;
+  @override
+  List<Object?> get props => [bookingId];
+}
+
+/// El chófer devuelve la reserva antes de llegar (releaseBooking).
+class DriverBookingReleased extends DriverEvent {
+  const DriverBookingReleased({required this.bookingId, required this.reason});
+  final String bookingId;
+  final String reason;
+  @override
+  List<Object?> get props => [bookingId, reason];
+}
+
 class DriverTripCompleted extends DriverEvent {
   const DriverTripCompleted({required this.bookingId});
   final String bookingId;
@@ -378,6 +396,8 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     on<DriverArrivedAtPickup>(_onArrived);
     on<DriverTripStarted>(_onStartTrip);
     on<DriverTripCompleted>(_onCompleteTrip);
+    on<DriverRiderNoShow>(_onNoShow);
+    on<DriverBookingReleased>(_onRelease);
     on<DriverRequestAccepted>(_onAcceptRequest);
     on<DriverRequestDeclined>(_onDeclineRequest);
     on<DriverProfileWatched>(_onWatchProfile, transformer: _latest());
@@ -702,15 +722,69 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
     await _advance(emit, event.bookingId, BookingStatus.completed);
   }
 
+  Future<void> _onNoShow(
+    DriverRiderNoShow event,
+    Emitter<DriverState> emit,
+  ) async {
+    // Central necesita saber dónde esperó: sin ubicación ni se intenta.
+    if (_lastLocation == null) {
+      _notice(
+        emit,
+        'Activa la ubicación: central necesita saber dónde esperaste.',
+      );
+      return;
+    }
+    final ok = await _advance(emit, event.bookingId, BookingStatus.noShow);
+    if (ok) {
+      _notice(emit, 'Avisamos a central. Ya estás libre para otros viajes.');
+    }
+  }
+
+  Future<void> _onRelease(
+    DriverBookingReleased event,
+    Emitter<DriverState> emit,
+  ) async {
+    final key = '${event.bookingId}:release';
+    if (!_inFlight.add(key)) return;
+    try {
+      final result = await _tripFlow.release(
+        bookingId: event.bookingId,
+        reason: event.reason,
+        location: _lastLocation,
+      );
+      result.fold(
+        (f) => _notice(
+          emit,
+          f is TripFailure && f.issue == TripIssue.network
+              ? 'Sin conexión: no se liberó el viaje. Vuelve a intentarlo.'
+              : f.message,
+        ),
+        (_) => _notice(
+          emit,
+          'Liberaste el viaje. Central buscará otro chófer.',
+        ),
+      );
+    } finally {
+      _inFlight.remove(key);
+    }
+  }
+
+  void _notice(Emitter<DriverState> emit, String message) {
+    if (state is DriverLoaded) {
+      emit((state as DriverLoaded).copyWith(notice: message));
+    }
+  }
+
   /// Todos los pasos pasan por el servidor (advanceBooking). Repetirlo
   /// tras un corte es seguro: el servidor no duplica el cambio ni el evento.
-  Future<void> _advance(
+  /// true si el servidor lo aceptó.
+  Future<bool> _advance(
     Emitter<DriverState> emit,
     String bookingId,
     BookingStatus to,
   ) async {
     final key = '$bookingId:${to.label}';
-    if (!_inFlight.add(key)) return;
+    if (!_inFlight.add(key)) return false;
     try {
       final result = await _tripFlow.advance(
         bookingId: bookingId,
@@ -718,7 +792,8 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
         location: _lastLocation,
       );
       final failure = result.fold((f) => f, (_) => null);
-      if (failure == null || state is! DriverLoaded) return;
+      if (failure == null) return true;
+      if (state is! DriverLoaded) return false;
       final cur = state as DriverLoaded;
       if (failure is AppUpdateRequiredFailure) {
         emit(cur.copyWith(updateRequired: failure));
@@ -732,6 +807,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       } else {
         emit(cur.copyWith(notice: failure.message));
       }
+      return false;
     } finally {
       _inFlight.remove(key);
     }

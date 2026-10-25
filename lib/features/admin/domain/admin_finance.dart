@@ -211,6 +211,8 @@ class FinancialSummary {
         case BookingStatus.driverArrived:
         case BookingStatus.verified:
         case BookingStatus.inProgress:
+        // No se presentó: en curso hasta que central decida.
+        case BookingStatus.noShow:
           if (!inPeriod(b.createdAt)) continue;
           pipelineCount++;
           pipelineValue += b.estimatedPrice;

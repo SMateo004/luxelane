@@ -347,6 +347,19 @@ class AdminRepositoryImpl implements AdminRepository {
       });
 
   @override
+  Future<Either<Failure, void>> decideNoShow(
+    Booking booking,
+    double cancellationFee,
+    String reason,
+  ) =>
+      _call('adminUpdateBooking', {
+        'bookingId': booking.id,
+        'action': 'cancel',
+        'cancellationFee': cancellationFee,
+        'reason': reason.trim(),
+      });
+
+  @override
   Future<Either<Failure, void>> assignDriver(
     Booking booking,
     String driverId,
@@ -627,6 +640,9 @@ String adminErrorMessage(String code, Object? details) {
     'driver_busy' => 'Ese chófer está ocupado o desconectado; elige otro',
     'not_assignable' => 'A esta reserva ya no se le puede asignar chófer',
     'not_cancellable' => 'Esta reserva ya no se puede cancelar',
+    'fee_only_after_no_show' =>
+      'El recargo solo se fija tras un «no se presentó»',
+    'fee_above_price' => 'El recargo no puede superar el precio del viaje',
     'invalid_transition' => 'La reserva ya no está en ese paso; recarga',
     'price_locked' => 'El importe solo se ajusta antes de completar el viaje',
     'price_adjustment_disabled' =>

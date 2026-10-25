@@ -70,6 +70,14 @@ abstract class AdminRepository {
     BookingStatus status,
     String reason,
   );
+
+  /// Decisión de central tras un «no aparece» (B4): cancela con
+  /// [cancellationFee] (0 = sin recargo). Se anota, no se cobra.
+  Future<Either<Failure, void>> decideNoShow(
+    Booking booking,
+    double cancellationFee,
+    String reason,
+  );
   Future<Either<Failure, void>> assignDriver(
     Booking booking,
     String driverId,

@@ -17,6 +17,10 @@ enum BookingStatus {
   inProgress,
   completed,
   cancelled,
+
+  /// El chófer esperó el tiempo de la política y el pasajero no apareció
+  /// (Parte B, B4). Central revisa y decide; no hay cobro automático.
+  noShow,
 }
 
 enum PaymentStatus { pending, captured, refunded, failed }
@@ -140,6 +144,8 @@ extension BookingStatusX on BookingStatus {
         return 'completed';
       case BookingStatus.cancelled:
         return 'cancelled';
+      case BookingStatus.noShow:
+        return 'no_show';
     }
   }
 
@@ -161,6 +167,8 @@ extension BookingStatusX on BookingStatus {
         return 'Completado';
       case BookingStatus.cancelled:
         return 'Cancelado';
+      case BookingStatus.noShow:
+        return 'No se presentó';
     }
   }
 

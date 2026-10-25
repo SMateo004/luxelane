@@ -23,6 +23,7 @@ List<String> bookingEventDetails(
     'driver' => 'Chófer ${userName(e.actorUid)}',
     'admin' => 'Admin ${userName(e.actorUid)}',
     'system' => 'Sistema',
+    'rider' => 'Pasajero ${userName(e.actorUid)}',
     _ => e.actorUid,
   };
   return [
@@ -31,6 +32,11 @@ List<String> bookingEventDetails(
       if (e.appVersion != null) 'app ${e.appVersion}',
       if (e.method == 'pickup_code') 'con el código del pasajero',
       if (e.method == 'admin_override') 'forzada por el admin',
+      if (e.method == 'rider_cancel') 'cancelada desde la app',
+      if (e.method == 'driver_no_show') 'el pasajero no apareció',
+      if (e.method == 'driver_release') 'el chófer liberó el viaje',
+      if (e.method == 'admin_no_show_decision')
+        'decisión tras «no se presentó»',
     ].join(' · '),
     if (e.reason != null) 'Motivo: ${e.reason}',
     if (e.farFromPickup)

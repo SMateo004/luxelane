@@ -25,6 +25,9 @@ abstract class AdminOperations {
     BookingStatus.inProgress: [BookingStatus.completed],
     BookingStatus.completed: [],
     BookingStatus.cancelled: [],
+    // B4: central revisa el «no aparece» y decide (cancelar, con o sin
+    // recargo).
+    BookingStatus.noShow: [BookingStatus.cancelled],
   };
 
   /// Estados a los que el admin puede mover una reserva.
