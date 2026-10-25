@@ -16,6 +16,7 @@ const _alertLabels = {
   'far_from_pickup': '«Llegué» lejos del punto de recogida',
   'arrival_without_location': '«Llegué» sin ubicación del chófer',
   'new_driver_device': 'Chófer en un dispositivo nuevo',
+  'ops_config_in_global': 'Configuración por mover a config/ops',
 };
 
 String alertLabel(String type) => _alertLabels[type] ?? type;

@@ -564,9 +564,12 @@ colección `config` → documento `ops` o `security` → editar campo).
 Traslado en un proyecto ya configurado, después de desplegar functions:
 1. Crear `config/ops` con los valores que tenga hoy `config/global` para
    esas cuatro claves (mismo nombre y tipo número).
-2. Comprobar en Logs Explorer que deja de aparecer
-   `opsConfig … keys still in config/global` (mientras falte una clave en
-   ops, el servidor usa la de global y lo avisa).
+2. Comprobar que deja de aparecer la alerta «Configuración por mover a
+   config/ops» en el panel (Alertas) y, en Logs Explorer,
+   `opsConfig … keys still in config/global`. Mientras falte una clave en
+   ops, el servidor usa la de global, lo anota en el log y deja esa alerta
+   de severidad baja, como mucho una por día (0.3); la alerta dice qué
+   claves faltan. Paso manual: mover esas claves y resolver la alerta.
 3. Borrar esas cuatro claves de `config/global` en la consola.
 
 ### Funciones retiradas
