@@ -28,6 +28,7 @@ export interface SecureMeta {
   role?: Role;
   requireMfa?: boolean;
   recentAuthSeconds?: number;
+  skipAdminSessionLimit?: boolean;
 }
 
 /** Marca de las callables que pasan por secureCallable (la mira el test). */
@@ -67,6 +68,12 @@ export interface SecurityOptions {
    * segundos (auth_time del token). Si no, reauth_required (decisión 6).
    */
   recentAuthSeconds?: number;
+  /**
+   * Solo admin: no aplica adminSessionMaxHours (C1). Para atender un SOS o
+   * una alerta sin esperar a volver a entrar; el rol y, con mfaEnforced,
+   * el segundo factor se siguen exigiendo.
+   */
+  skipAdminSessionLimit?: boolean;
 }
 
 /** Sesión máxima de admin si config/security.adminSessionMaxHours no está. */
@@ -125,7 +132,9 @@ export function secureCallable<T>(
       }
       const token = req.auth?.token as Record<string, unknown> | undefined;
       if (security.requireMfa || security.role === 'admin') await mfaGate(admin.firestore(), token);
-      if (security.role === 'admin') await adminSessionGate(admin.firestore(), token);
+      if (security.role === 'admin' && !security.skipAdminSessionLimit) {
+        await adminSessionGate(admin.firestore(), token);
+      }
       if (security.recentAuthSeconds) recentAuthGate(token, security.recentAuthSeconds);
       return await handler(req);
     } catch (e) {

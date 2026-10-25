@@ -51,6 +51,16 @@ describe('cobertura de App Check en las callables', () => {
     expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ recentAuthSeconds: 300 }));
   });
 
+  // C1: atender un SOS o una alerta no espera a volver a entrar; el resto
+  // de las de admin sí tienen la sesión máxima.
+  it('solo incidentes y alertas quedan fuera de adminSessionMaxHours', () => {
+    const skipped = Object.entries(index as Exported)
+      .filter(([, f]) => f?.[SECURED_MARK]?.skipAdminSessionLimit === true)
+      .map(([n]) => n).sort();
+    expect(skipped).toEqual(['acknowledgeIncident', 'closeIncident', 'resolveAlert']);
+    for (const n of skipped) expect((index as Exported)[n][SECURED_MARK].role).toBe('admin');
+  });
+
   it('solo el SOS deja pasar si el contador falla', () => {
     const failOpen = Object.entries(RATE_LIMITS).filter(([, r]) => r.failOpen).map(([n]) => n);
     expect(failOpen).toEqual(['raiseIncident']);

@@ -149,11 +149,13 @@ export const raiseIncident = secureCallable('raiseIncident', {}, (req) => incide
 export const cancelIncident = secureCallable('cancelIncident', {}, (req) => incidents.cancelIncident(incidentDeps(), req.auth?.uid, req.data));
 
 export const acknowledgeIncident = secureCallable('acknowledgeIncident', {}, async (req) =>
-  incidents.acknowledgeIncident(incidentDeps(), await adminActor(req), req.data), { role: 'admin' });
+  incidents.acknowledgeIncident(incidentDeps(), await adminActor(req), req.data),
+{ role: 'admin', skipAdminSessionLimit: true });
 
 /** Cierre con nota obligatoria (mínimo 10 caracteres). */
 export const closeIncident = secureCallable('closeIncident', {}, async (req) =>
-  incidents.closeIncident(incidentDeps(), await adminActor(req), req.data), { role: 'admin' });
+  incidents.closeIncident(incidentDeps(), await adminActor(req), req.data),
+{ role: 'admin', skipAdminSessionLimit: true });
 
 /** Reenvía alerta y push de los incidentes sin reconocer (config/ops). */
 export const escalateIncidentsJob = onSchedule('every 1 minutes', async () => {
@@ -875,7 +877,7 @@ export const closeOpenRequest = onDocumentUpdated({ document: 'bookings/{booking
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
   const adminId = await requireAdmin(req);
   return resolveAdminAlert(db, { adminId, adminEmail: (req.auth?.token.email as string | undefined) ?? null }, req.data);
-}, { role: 'admin' });
+}, { role: 'admin', skipAdminSessionLimit: true });
 
 // Red de seguridad de openRequests: crea las que faltan, borra las
 // huérfanas y avisa al admin en adminAlerts.

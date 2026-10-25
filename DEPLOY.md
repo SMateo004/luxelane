@@ -591,7 +591,10 @@ sesiones; los chóferes y admins pueden activar TOTP y, con
 `config/security.mfaEnforced`, quedan obligados; borrar la cuenta y
 cambiar o quitar tarjetas exigen un inicio de sesión de menos de 5
 minutos y las callables de admin una sesión de menos de
-`adminSessionMaxHours` (12 por defecto), ambos con `reauth_required`; el
+`adminSessionMaxHours` (12 por defecto), ambos con `reauth_required`
+(salvo acknowledgeIncident, closeIncident y resolveAlert, para atender un
+SOS o una alerta sin esperar; siguen exigiendo rol admin y, con
+`mfaEnforced`, segundo factor); el
 chófer registra su dispositivo (`registerDriverDevice`, sin bloqueo).
 
 ### Pasos manuales previos (consola; decisiones del responsable)

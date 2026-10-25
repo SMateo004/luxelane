@@ -6,7 +6,10 @@
 import { describe, it, expect, beforeEach, afterAll } from '@jest/globals';
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
-import { deleteAccount as deleteAccountFn, resolveAlert as resolveAlertFn } from '../index';
+import {
+  acknowledgeIncident as ackFn, adminOverrideVerify as overrideFn, closeIncident as closeFn,
+  deleteAccount as deleteAccountFn, resolveAlert as resolveAlertFn,
+} from '../index';
 import { recentAuthGate } from '../callable';
 
 const db = admin.firestore();
@@ -34,27 +37,65 @@ afterAll(async () => {
   await admin.app().delete();
 });
 
-const resolve = (authTime?: number) => (resolveAlertFn as unknown as Runnable).run({
-  auth: { uid: 'jefa', token: authTime === undefined ? {} : { auth_time: authTime } }, app: {}, data: { alertId: 'a1' },
+const token = (authTime?: number, extra: Record<string, unknown> = {}) =>
+  ({ ...(authTime === undefined ? {} : { auth_time: authTime }), ...extra });
+// Una de admin con sesión máxima: llegar a booking_not_found es haber
+// pasado los candados.
+const override = (authTime?: number) => (overrideFn as unknown as Runnable).run({
+  auth: { uid: 'jefa', token: token(authTime) }, app: {}, data: { bookingId: 'no-existe', reason: 'prueba' },
 });
+const resolve = (uid: string, t: Record<string, unknown>) => (resolveAlertFn as unknown as Runnable).run({
+  auth: { uid, token: t }, app: {}, data: { alertId: 'a1' },
+});
+const ack = (t: Record<string, unknown>) => (ackFn as unknown as Runnable).run({
+  auth: { uid: 'jefa', token: t }, app: {}, data: { incidentId: 'no-existe' },
+});
+const close = (t: Record<string, unknown>) => (closeFn as unknown as Runnable).run({
+  auth: { uid: 'jefa', token: t }, app: {}, data: { incidentId: 'no-existe', note: 'nota de cierre de prueba' },
+});
+const PASSED = 'booking_not_found';
 
 describe('sesión máxima de admin', () => {
   it('sesión de hace 1 hora: pasa', async () => {
-    expect(await reason(resolve(nowS() - 3600))).toBe('ok');
+    expect(await reason(override(nowS() - 3600))).toBe(PASSED);
   });
 
   it('sesión de hace 13 horas: reauth_required', async () => {
-    expect(await reason(resolve(nowS() - 13 * 3600))).toBe('reauth_required');
+    expect(await reason(override(nowS() - 13 * 3600))).toBe('reauth_required');
   });
 
   it('sin auth_time: reauth_required', async () => {
-    expect(await reason(resolve())).toBe('reauth_required');
+    expect(await reason(override())).toBe('reauth_required');
   });
 
   it('adminSessionMaxHours en config/security manda', async () => {
     await db.doc('config/security').set({ adminSessionMaxHours: 1 });
-    expect(await reason(resolve(nowS() - 2 * 3600))).toBe('reauth_required');
-    expect(await reason(resolve(nowS() - 600))).toBe('ok');
+    expect(await reason(override(nowS() - 2 * 3600))).toBe('reauth_required');
+    expect(await reason(override(nowS() - 600))).toBe(PASSED);
+  });
+});
+
+describe('incidentes y alertas: sin sesión máxima (C1)', () => {
+  const old = () => token(nowS() - 13 * 3600);
+
+  it('sesión de hace 13 horas: resolveAlert, acknowledgeIncident y closeIncident no piden volver a entrar', async () => {
+    expect(await reason(resolve('jefa', old()))).toBe('ok');
+    expect(await reason(ack(old()))).not.toBe('reauth_required');
+    expect(await reason(close(old()))).not.toBe('reauth_required');
+    expect(await reason(resolve('jefa', {}))).toBe('ok');
+  });
+
+  it('siguen exigiendo el rol admin', async () => {
+    expect(await reason(resolve('ana', old()))).toBe('admin_required');
+  });
+
+  it('con mfaEnforced siguen exigiendo el segundo factor', async () => {
+    await db.doc('config/security').set({ mfaEnforced: true });
+    expect(await reason(resolve('jefa', old()))).toBe('mfa_required');
+    expect(await reason(ack(old()))).toBe('mfa_required');
+    expect(await reason(close(old()))).toBe('mfa_required');
+    const totp = token(nowS() - 13 * 3600, { firebase: { sign_in_second_factor: 'totp' } });
+    expect(await reason(resolve('jefa', totp))).toBe('ok');
   });
 });
 
