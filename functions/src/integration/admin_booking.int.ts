@@ -7,7 +7,7 @@ import { describe, it, expect, beforeEach, afterAll, afterEach, jest } from '@je
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
 import * as audit from '../admin_audit';
-import { adminUpdateBooking } from '../admin_ops';
+import { ADMIN_TRANSITIONS, adminUpdateBooking } from '../admin_ops';
 import { adminUpdateBooking as adminUpdateBookingFn } from '../index';
 
 const db = admin.firestore();
@@ -144,6 +144,43 @@ describe('mover el estado', () => {
     await run({ action: 'status', bookingId: 'b', to: 'completed', reason: REASON });
     expect((await doc('bookings/a'))?.status).toBe('driver_arriving');
     expect(await doc('bookings/b')).toMatchObject({ status: 'completed', finalPrice: 100 });
+  });
+});
+
+describe('acción status: transiciones exactas (D2)', () => {
+  const ALL = ['pending', 'confirmed', 'driver_arriving', 'driver_arrived', 'verified', 'in_progress', 'completed', 'cancelled'];
+
+  it('la tabla del servidor: solo tres pasos por esta acción', () => {
+    const viaStatus = Object.entries(ADMIN_TRANSITIONS)
+      .flatMap(([from, tos]) => (tos ?? []).filter((t) => t !== 'cancelled').map((t) => `${from}→${t}`)).sort();
+    expect(viaStatus).toEqual(['confirmed→driver_arriving', 'driver_arriving→driver_arrived', 'in_progress→completed']);
+  });
+
+  it('completed solo desde in_progress', async () => {
+    for (const from of ALL) {
+      await booking(`c_${from}`, from);
+      const r = await reason(run({ action: 'status', bookingId: `c_${from}`, to: 'completed', reason: REASON }));
+      expect([from, r]).toEqual([from, from === 'in_progress' ? 'ok' : 'invalid_transition']);
+    }
+  });
+
+  it('verified e in_progress no se alcanzan por esta acción (solo adminOverrideVerify y advanceBooking)', async () => {
+    for (const from of ALL) {
+      await booking(`v_${from}`, from);
+      for (const to of ['verified', 'in_progress', 'cancelled', 'pending', 'confirmed']) {
+        expect(await reason(run({ action: 'status', bookingId: `v_${from}`, to, reason: REASON }))).toBe('invalid_request');
+      }
+      expect((await doc(`bookings/v_${from}`))?.status).toBe(from);
+    }
+  });
+
+  it('una transición inválida no deja evento ni auditoría', async () => {
+    await booking('b1', 'driver_arrived');
+    expect(await reason(run({ action: 'status', bookingId: 'b1', to: 'completed', reason: REASON }))).toBe('invalid_transition');
+    expect(await reason(run({ action: 'status', bookingId: 'b1', to: 'driver_arriving', reason: REASON }))).toBe('invalid_transition');
+    expect((await doc('bookings/b1'))?.status).toBe('driver_arrived');
+    expect(await events('b1')).toHaveLength(0);
+    expect(await logs()).toHaveLength(0);
   });
 });
 
