@@ -625,10 +625,8 @@ chófer registra su dispositivo (`registerDriverDevice`, sin bloqueo).
 4. **`config/security`** (solo consola; ningún cliente lo lee ni escribe):
    crear con `mfaEnforced: false` y, si se quiere otro valor que 12,
    `adminSessionMaxHours: <número>`.
-5. **`config/global.legalVersion`**: dejarlo SIN crear hasta tener los
-   textos revisados por un abogado. Al publicarlos, poner la versión
-   (texto corto, p. ej. una fecha) y todos los pasajeros tendrán que
-   aceptarla para reservar. Los textos de /legal no se tocaron.
+5. **`config/global.legalVersion`**: dejarlo SIN crear por ahora (ver
+   «Orden de legalVersion»). Los textos de /legal no se tocaron.
 
 ### Orden
 
@@ -649,12 +647,79 @@ chófer registra su dispositivo (`registerDriverDevice`, sin bloqueo).
 6. **Alta del segundo factor**: cada chófer y admin entra en Perfil →
    «Verificación en dos pasos» y escanea el QR. La portada del chófer y
    el panel muestran el aviso mientras no lo tengan.
-7. **Procedimiento de emergencia escrito y probado** (abajo) y **al menos
-   dos admins con TOTP activado**.
+7. **Procedimiento de emergencia escrito y probado** (abajo), **al menos
+   dos admins con TOTP activado** y **las pruebas en dispositivos reales
+   hechas** (lista de abajo, todas en staging).
 8. **`config/security.mfaEnforced: true`** desde la consola. Desde ese
    momento las callables de admin y del viaje del chófer (acceptBooking,
    advanceBooking, verifyPickup) y las escrituras de admin en las reglas
    exigen el segundo factor (`mfa_required`).
+
+### Orden de legalVersion
+
+`config/global.legalVersion` es lo que obliga a aceptar los términos para
+reservar. Crearlo antes de tiempo deja sin reservar a quien tenga una app
+que no sabe pedir la aceptación, o hace aceptar textos sin revisar. Solo
+cuando se cumplan las dos condiciones, en este orden:
+
+1. **Apps publicadas** con la aceptación (casilla en el registro y diálogo
+   «Acepta los términos para reservar») en las tiendas y en la web, y
+   `minAppVersion` subido a esa versión (decisión del responsable): una
+   app anterior no sabe mostrar `terms_required`.
+2. **Textos revisados por el abogado** y publicados en /legal/terminos y
+   /legal/privacidad.
+3. Entonces, crear `config/global.legalVersion` con un texto corto que
+   identifique esa versión (p. ej. la fecha de publicación). Desde ese
+   momento, cada pasajero acepta una vez al registrarse o en su siguiente
+   reserva; las cuentas quedan con `terms.version`, la hora del servidor y
+   la versión de la app.
+4. Al cambiar los textos más adelante: publicar los nuevos y después
+   cambiar `legalVersion`; todos vuelven a aceptar.
+
+### Pruebas en dispositivos reales antes de activar mfaEnforced
+
+Ninguna de estas se puede hacer con los emuladores ni con las pruebas
+automáticas (el SDK nativo y la app autenticadora son reales). Hacerlas en
+**staging**, con un Android, un iPhone y un navegador de escritorio, y una
+app autenticadora real (cualquiera compatible con TOTP), y anotar el
+resultado de cada una:
+
+1. **Alta de TOTP en el móvil**: chófer y admin, Perfil → «Verificación en
+   dos pasos»; escanear el QR o usar «Abrir en la app autenticadora»;
+   escribir el código; el aviso de la portada desaparece.
+2. **Alta de TOTP en la web**: admin en el panel web; QR en pantalla y
+   clave para escribirla a mano (en web no se abre la app); código
+   aceptado.
+3. **Segundo paso al iniciar sesión**: cerrar sesión y entrar con
+   contraseña en móvil y en web: pide el código; un código incorrecto da
+   un mensaje claro; el correcto entra. Repetir con «Continuar con
+   Google» en una cuenta con TOTP.
+4. **Hora del teléfono**: con la hora automática, el código entra al
+   primer intento; anotar si falla con unos segundos de desfase.
+5. **Reautenticación con contraseña**: en una cuenta de pasajero, quitar
+   una tarjeta más de 5 minutos después de entrar: aparece «Confirma que
+   eres tú», y tras la contraseña se puede repetir.
+6. **Reautenticación con Google**: lo mismo con una cuenta de Google en
+   Android, iPhone y web (en web, ventana emergente).
+7. **Reautenticación con TOTP**: admin con TOTP y sesión de más de
+   `adminSessionMaxHours` (bajar el valor a 1 en staging para probar):
+   una acción del panel pide la contraseña y después el código; atender un
+   SOS o resolver una alerta no lo pide.
+8. **Eliminar la cuenta** con una sesión de más de 5 minutos: pide
+   confirmar y luego elimina.
+9. **Bloqueo y desbloqueo**: bloquear un chófer conectado desde el panel:
+   su app sale en menos de una hora (al renovar el token) o al instante si
+   intenta escribir; no puede volver a entrar («cuenta bloqueada»);
+   desbloquear y comprobar que entra.
+10. **Recuperación con reset_mfa**: en una cuenta de prueba con TOTP,
+    borrar la entrada de la app autenticadora (simula el teléfono
+    perdido), ejecutar `reset_mfa` en DRY-RUN y con `--apply`, comprobar
+    que la sesión abierta se cierra, que entra solo con la contraseña, que
+    puede dar de alta TOTP de nuevo y que admin_logs tiene `reset_mfa`.
+11. **Imposición en staging**: con `mfaEnforced: true`, un admin sin TOTP
+    recibe el aviso al usar el panel y un chófer sin TOTP no puede
+    aceptar viajes; con TOTP, todo funciona. Volver a `false` y comprobar
+    que se levanta.
 
 ### pricingRules sin `updatedBy` (C3)
 

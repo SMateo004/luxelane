@@ -18,6 +18,40 @@ const src = readdirSync(__dirname)
 /** Funciones retiradas del código que aún pueden existir en los proyectos. */
 const RETIRED = ['onRideCompleted'];
 
+// C5: legalVersion solo tras publicar las apps y revisar los textos, y la
+// lista de pruebas en dispositivos reales antes de imponer el segundo factor.
+describe('DEPLOY.md: identidad', () => {
+  const section = (title: string) => {
+    const i = deploy.indexOf(`### ${title}`);
+    expect(i).toBeGreaterThanOrEqual(0);
+    const rest = deploy.slice(i + 4);
+    const j = rest.search(/\n##+ /);
+    return j < 0 ? rest : rest.slice(0, j);
+  };
+
+  it('legalVersion: después de publicar las apps y de la revisión del abogado', () => {
+    const s = section('Orden de legalVersion');
+    const apps = s.indexOf('**Apps publicadas**');
+    const lawyer = s.indexOf('**Textos revisados por el abogado**');
+    const create = s.indexOf('crear `config/global.legalVersion`');
+    expect(apps).toBeGreaterThanOrEqual(0);
+    expect(lawyer).toBeGreaterThan(apps);
+    expect(create).toBeGreaterThan(lawyer);
+  });
+
+  it.each([
+    ['Alta de TOTP en el móvil'], ['Alta de TOTP en la web'], ['Segundo paso al iniciar sesión'],
+    ['Reautenticación con Google'], ['Reautenticación con TOTP'], ['Bloqueo y desbloqueo'],
+    ['Recuperación con reset_mfa'],
+  ])('pruebas en dispositivos reales: %s', (item) => {
+    expect(section('Pruebas en dispositivos reales antes de activar mfaEnforced')).toContain(`**${item}**`);
+  });
+
+  it('mfaEnforced se activa después de las pruebas', () => {
+    expect(deploy).toMatch(/las pruebas en dispositivos reales\s+hechas\*\*/);
+  });
+});
+
 describe('despliegue de functions', () => {
   const secrets = [...src.matchAll(/defineSecret\('([A-Z_]+)'\)/g)].map((m) => m[1]);
 
