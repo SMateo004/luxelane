@@ -13,6 +13,7 @@ import { HttpsError } from 'firebase-functions/v2/https';
 export interface AuthAdmin {
   getUser(uid: string): Promise<{ uid: string; email?: string; emailVerified: boolean; disabled: boolean;
     customClaims?: Record<string, unknown> }>;
+  getUserByEmail(email: string): Promise<{ uid: string }>;
   setCustomUserClaims(uid: string, claims: Record<string, unknown> | null): Promise<void>;
   revokeRefreshTokens(uid: string): Promise<void>;
   updateUser(uid: string, props: { disabled?: boolean }): Promise<unknown>;
