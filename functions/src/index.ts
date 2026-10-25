@@ -11,6 +11,7 @@ import { resolveAdminAlert } from './alerts';
 import * as tripFlow from './trip_flow';
 import * as businessLeads from './business_leads';
 import * as identity from './identity';
+import * as adminOps from './admin_ops';
 import * as incidents from './incidents';
 import { deviceSchema, registerDriverDevice as registerDriverDeviceService } from './driver_devices';
 import { isTransient, withRetryPolicy } from './retry_policy';
@@ -879,6 +880,15 @@ export const closeOpenRequest = onDocumentUpdated({ document: 'bookings/{booking
   await withRetryPolicy('closeOpenRequest', { bookingId: event.params.bookingId }, () =>
     db.collection('openRequests').doc(event.params.bookingId).delete().then(() => undefined));
 });
+
+// ---------------------------------------------------------------------------
+// Escrituras de admin (Parte A): cada una con su auditoría en la misma
+// transacción. Rol admin por claim y, con mfaEnforced, segundo factor.
+// ---------------------------------------------------------------------------
+
+/** Asignar o reasignar chófer, cancelar, mover el estado o ajustar el importe. */
+export const adminUpdateBooking = secureCallable('adminUpdateBooking', {}, async (req) =>
+  adminOps.adminUpdateBooking({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
 
 /** El admin marca una alerta como revisada (auditado en el servidor). */
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {

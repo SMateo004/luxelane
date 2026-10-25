@@ -65,6 +65,8 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   acceptTerms: per10min(10),
   // Al abrir la app del chófer.
   registerDriverDevice: per10min(20),
+  // Escrituras de admin (Parte A).
+  adminUpdateBooking: per10min(60),
   // Panel: cambios de rol y bloqueos.
   setUserRole: per10min(30),
   setUserBlocked: per10min(30),

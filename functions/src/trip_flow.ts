@@ -25,7 +25,7 @@ export interface TripDeps {
   now?: () => number;
 }
 
-type Status = 'pending' | 'confirmed' | 'driver_arriving' | 'driver_arrived' | 'verified'
+export type Status = 'pending' | 'confirmed' | 'driver_arriving' | 'driver_arrived' | 'verified'
   | 'in_progress' | 'completed' | 'cancelled';
 
 /** Pasos que el chófer asignado da con advanceBooking. */
@@ -39,7 +39,7 @@ export const DRIVER_STEPS: Readonly<Partial<Record<Status, Status>>> = {
 /** Ya pasó por la verificación (para responder igual a un reintento). */
 const PAST_VERIFIED: readonly Status[] = ['verified', 'in_progress', 'completed'];
 
-type Source = 'driver_app' | 'admin' | 'system';
+export type Source = 'driver_app' | 'admin' | 'system';
 
 const tripError = (
   code: 'invalid-argument' | 'failed-precondition' | 'permission-denied' | 'unauthenticated' | 'not-found',
@@ -116,7 +116,7 @@ const bookingRef = (db: admin.firestore.Firestore, id: string) => db.collection(
 const pickupRef = (db: admin.firestore.Firestore, id: string) =>
   bookingRef(db, id).collection('private').doc('pickup');
 
-interface EventInput {
+export interface EventInput {
   type?: 'transition' | 'pickup_locked';
   from: Status;
   to: Status;
@@ -135,7 +135,7 @@ interface EventInput {
  * del chófer (eventLocations) y lo que solo es para central (eventDetails:
  * motivo del admin, llegada lejos del punto) van aparte, con el mismo ID.
  */
-function appendEvent(tx: admin.firestore.Transaction, db: admin.firestore.Firestore, id: string, e: EventInput): void {
+export function appendEvent(tx: admin.firestore.Transaction, db: admin.firestore.Firestore, id: string, e: EventInput): void {
   const ref = bookingRef(db, id).collection('events').doc();
   // El pasajero y el chófer no ven qué admin actuó (0.2): en el evento solo
   // el rol; el uid va a eventDetails, que solo lee el admin.

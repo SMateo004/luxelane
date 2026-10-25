@@ -11,6 +11,7 @@ import { raiseSchema, incidentIdSchema, closeSchema } from './incidents';
 import { resolveSchema } from './alerts';
 import { leadSchema } from './business_leads';
 import { deviceSchema } from './driver_devices';
+import { bookingSchema as adminBookingSchema } from './admin_ops';
 import { callableSchemas as c } from './schemas';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -99,6 +100,14 @@ const CASES: Record<string, Case> = {
     schema: closeSchema, valid: { incidentId: ID, note: 'Llamada hecha, todo bien' },
     wrongType: { incidentId: ID, note: 10 },
     extreme: [{ incidentId: ID, note: 'x'.repeat(1001) }, { incidentId: ID, note: 'corta' }],
+  },
+  adminUpdateBooking: {
+    schema: adminBookingSchema, valid: { action: 'cancel', bookingId: ID, reason: 'Pedido por el pasajero' },
+    wrongType: { action: 'adjust_price', bookingId: ID, finalPrice: '100', reason: 'Pedido por el pasajero' },
+    extreme: [{ action: 'cancel', bookingId: ID, reason: 'corto' },
+      { action: 'status', bookingId: ID, to: 'verified', reason: 'Pedido por el pasajero' },
+      { action: 'adjust_price', bookingId: ID, finalPrice: -1, reason: 'Pedido por el pasajero' },
+      { action: 'borrar', bookingId: ID, reason: 'Pedido por el pasajero' }],
   },
   registerDriverDevice: {
     schema: deviceSchema, valid: { installationId: 'a'.repeat(8) + '-' + 'b'.repeat(27), platform: 'android', appVersion: '1.0.0' },
