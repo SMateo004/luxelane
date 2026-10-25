@@ -744,10 +744,9 @@ class AdminRepositoryImpl implements AdminRepository {
         const Left(ValidationFailure('No puedes bloquear tu propia cuenta')),
       );
     }
-    return _run((batch) async {
-      batch.update(_db.collection('users').doc(userId), {'isActive': active});
-      _log(batch, active ? 'unblock_user' : 'block_user', userId, 'user');
-    });
+    // El servidor deshabilita la cuenta en Auth, revoca sus sesiones, marca
+    // isActive y audita (B3).
+    return _call('setUserBlocked', {'uid': userId, 'blocked': !active});
   }
 
   @override

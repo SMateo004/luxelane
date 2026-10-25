@@ -55,6 +55,12 @@ export const setUserRole = secureCallable('setUserRole', {}, async (req) => {
   return identity.setUserRole(identityDeps(), await adminActor(req), input);
 }, { role: 'admin' });
 
+/** Bloquea o desbloquea: Auth deshabilitado, sesiones revocadas, isActive y auditoría. */
+export const setUserBlocked = secureCallable('setUserBlocked', {}, async (req) => {
+  const input = parseInput(schema.setUserBlocked, req.data);
+  return identity.setUserBlocked(identityDeps(), await adminActor(req), input);
+}, { role: 'admin' });
+
 /** La app la llama tras verificar el correo: el servidor lo comprueba en Auth. */
 export const syncEmailVerification = secureCallable('syncEmailVerification', {}, (req) => {
   parseInput(schema.syncEmailVerification, req.data);

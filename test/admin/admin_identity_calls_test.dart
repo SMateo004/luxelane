@@ -60,4 +60,15 @@ void main() {
     expect(
         r.fold((f) => f.message, (_) => ''), 'No puedes cambiar tu propio rol');
   });
+
+  test('bloquear y desbloquear llaman a setUserBlocked', () async {
+    expect((await repo.toggleUserStatus('luis', false)).isRight(), isTrue);
+    verify(() => callable.call<void>({'uid': 'luis', 'blocked': true}))
+        .called(1);
+    expect((await repo.toggleUserStatus('luis', true)).isRight(), isTrue);
+    verify(() => callable.call<void>({'uid': 'luis', 'blocked': false}))
+        .called(1);
+    verify(() => functions.httpsCallable('setUserBlocked')).called(2);
+    verifyZeroInteractions(db);
+  });
 }

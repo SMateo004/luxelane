@@ -136,6 +136,10 @@ const CASES: Record<string, Case> = {
   },
   deleteAccount: { schema: c.deleteAccount, valid: null, wrongType: 'borrar', extreme: [[]] },
   syncEmailVerification: { schema: c.syncEmailVerification, valid: null, wrongType: 'sí', extreme: [[]] },
+  setUserBlocked: {
+    schema: c.setUserBlocked, valid: { uid: ID, blocked: true, reason: 'Reclamo grave' },
+    wrongType: { uid: ID, blocked: 'sí' }, extreme: [{ uid: ID, blocked: true, reason: 'x'.repeat(501) }, { uid: LONG_ID, blocked: false }],
+  },
   setUserRole: {
     schema: c.setUserRole, valid: { uid: ID, role: 'driver' },
     wrongType: { uid: ID, role: 1 }, extreme: [{ uid: ID, role: 'superadmin' }, { uid: LONG_ID, role: 'rider' }],

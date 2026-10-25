@@ -63,6 +63,7 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   syncEmailVerification: per10min(20),
   // Panel: cambios de rol y bloqueos.
   setUserRole: per10min(30),
+  setUserBlocked: per10min(30),
   acceptBooking: per10min(30),
 };
 

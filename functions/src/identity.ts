@@ -125,3 +125,28 @@ export async function setUserRole(deps: IdentityDeps, actor: AdminActor, input: 
   await deps.auth.revokeRefreshTokens(input.uid);
   return { uid: input.uid, role: input.role, previous };
 }
+
+/**
+ * Bloquea o desbloquea (B3): deshabilita la cuenta en Auth, revoca las
+ * sesiones, marca isActive en Firestore (el bloqueo inmediato en las reglas)
+ * y audita en el servidor. Un chófer bloqueado deja de estar disponible.
+ */
+export async function setUserBlocked(deps: IdentityDeps, actor: AdminActor,
+  input: { uid: string; blocked: boolean; reason?: string }) {
+  if (input.uid === actor.adminId) throw idError('failed-precondition', 'cannot_block_self');
+  const ref = deps.db.collection('users').doc(input.uid);
+  const snap = await ref.get();
+  if (!snap.exists) throw idError('not-found', 'user_not_found');
+  // Firestore primero: el bloqueo vale en las reglas aunque Auth tarde.
+  const batch = deps.db.batch();
+  batch.update(ref, { isActive: !input.blocked, blockedAt: input.blocked ? admin.firestore.FieldValue.serverTimestamp() : null });
+  if (input.blocked) {
+    const profile = deps.db.collection('driverProfiles').doc(input.uid);
+    if ((await profile.get()).exists) batch.update(profile, { isAvailable: false, online: false });
+  }
+  audit(batch, deps.db, actor, input.blocked ? 'block_user' : 'unblock_user', input.uid, input.reason?.trim() ?? '');
+  await batch.commit();
+  await deps.auth.updateUser(input.uid, { disabled: input.blocked });
+  if (input.blocked) await deps.auth.revokeRefreshTokens(input.uid);
+  return { uid: input.uid, blocked: input.blocked };
+}

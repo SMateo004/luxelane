@@ -72,6 +72,10 @@ service cloud.firestore {
         'phoneVerified', 'emailVerifiedAt'];
     }
 
+    function serverOnlyUserFields() {
+      return ['role', 'isActive', 'roleUpdatedAt', 'blockedAt', 'emailVerifiedAt'];
+    }
+
     // A self-created profile is always an active rider with no Stripe link,
     // sin correo ni teléfono verificados: eso lo escribe el servidor (H6).
     function isValidSelfSignup(uid) {
@@ -90,7 +94,11 @@ service cloud.firestore {
       // Solo el alta propia: el panel no crea perfiles de otros y los
       // scripts usan el Admin SDK (A8.2).
       allow create: if isOwner(uid) && isValidSelfSignup(uid);
-      allow update: if isAdmin() || (
+      // Rol, bloqueo y sus marcas los escribe solo el servidor (setUserRole,
+      // setUserBlocked), también para el admin: B3, parte de D10.
+      allow update: if (isAdmin() &&
+          !request.resource.data.diff(resource.data).affectedKeys()
+            .hasAny(serverOnlyUserFields())) || (
         isOwner(uid) &&
         !request.resource.data.diff(resource.data).affectedKeys()
           .hasAny(privilegedUserFields())
