@@ -2,8 +2,9 @@
  * Dispositivos del chófer (decisión 5). En el piloto no se bloquea nada:
  * la app manda un identificador de instalación (aleatorio, guardado en el
  * almacenamiento seguro del teléfono) y el servidor lo anota. Un
- * dispositivo nuevo deja un evento y, si el chófer ya tenía otro, una
- * alerta de severidad baja para el admin.
+ * dispositivo nuevo deja un evento y una alerta de severidad baja para el
+ * admin, salvo el primero de un chófer aún sin verificar: es su alta (C2).
+ * Un chófer ya verificado que aparece por primera vez sí avisa.
  *
  * driverDevices/{uid}/devices/{installationId} y .../events: solo el
  * servidor escribe; solo el admin lee (firestore.rules).
@@ -30,6 +31,7 @@ export async function registerDriverDevice(db: admin.firestore.Firestore, uid: s
       return { isNew: false };
     }
     const first = (await tx.get(devices.limit(1))).empty;
+    const verified = (await tx.get(db.collection('driverProfiles').doc(uid))).data()?.documentsVerified === true;
     tx.set(ref, { ...input, firstSeenAt: now, lastSeenAt: now });
     tx.set(root, { driverId: uid, updatedAt: now, deviceCount: admin.firestore.FieldValue.increment(1) }, { merge: true });
     tx.set(root.collection('events').doc(), {
@@ -39,13 +41,14 @@ export async function registerDriverDevice(db: admin.firestore.Firestore, uid: s
       appVersion: input.appVersion,
       createdAt: now,
     });
-    // El primer dispositivo es el alta normal: no avisa. Los siguientes, sí.
-    if (!first) {
+    // El primero de un chófer sin verificar es el alta normal: no avisa.
+    if (!first || verified) {
       tx.set(db.collection('adminAlerts').doc(), {
         type: 'new_driver_device',
         severity: 'low',
         driverId: uid,
         platform: input.platform,
+        firstDevice: first,
         message: 'El chófer entró desde un dispositivo nuevo.',
         createdAt: now,
         resolved: false,

@@ -25,7 +25,7 @@ async function reason(p: Promise<unknown>): Promise<string | undefined> {
 }
 
 async function clear(): Promise<void> {
-  for (const col of ['users', 'rateLimits', 'adminAlerts']) {
+  for (const col of ['users', 'rateLimits', 'adminAlerts', 'driverProfiles']) {
     const snap = await db.collection(col).get();
     await Promise.all(snap.docs.map((d) => d.ref.delete()));
   }
@@ -45,13 +45,29 @@ beforeEach(async () => {
 afterAll(async () => { await clear(); await admin.app().delete(); });
 
 describe('registerDriverDevice', () => {
-  it('primer dispositivo: lo anota con un evento y sin alerta', async () => {
+  it('primer dispositivo de un chófer sin verificar: evento y sin alerta', async () => {
+    await db.doc('driverProfiles/luis').set({ userId: 'luis', documentsVerified: false });
     await expect(register('luis', PHONE_A)).resolves.toEqual({ isNew: true });
     const d = (await db.doc(`driverDevices/luis/devices/${PHONE_A}`).get()).data()!;
     expect(d).toMatchObject({ platform: 'android', appVersion: '1.4.0' });
     expect(d.firstSeenAt).toBeInstanceOf(admin.firestore.Timestamp);
     expect(await events('luis')).toEqual(['first_device']);
     expect(await alerts()).toHaveLength(0);
+  });
+
+  it('primer dispositivo sin perfil de chófer todavía: sin alerta', async () => {
+    await register('luis', PHONE_A);
+    expect(await alerts()).toHaveLength(0);
+  });
+
+  it('primer dispositivo de un chófer ya verificado: alerta de severidad baja (C2)', async () => {
+    await db.doc('driverProfiles/luis').set({ userId: 'luis', documentsVerified: true });
+    await expect(register('luis', PHONE_A)).resolves.toEqual({ isNew: true });
+    expect(await events('luis')).toEqual(['first_device']);
+    const a = await alerts();
+    expect(a).toHaveLength(1);
+    expect(a[0]).toMatchObject({ severity: 'low', driverId: 'luis', firstDevice: true, resolved: false });
+    expect(JSON.stringify(a[0])).not.toContain(PHONE_A);
   });
 
   it('el mismo dispositivo otra vez: solo actualiza lastSeenAt', async () => {
