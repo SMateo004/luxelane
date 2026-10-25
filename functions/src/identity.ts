@@ -12,11 +12,12 @@ import { HttpsError } from 'firebase-functions/v2/https';
 /** Lo que usamos de admin.auth(). */
 export interface AuthAdmin {
   getUser(uid: string): Promise<{ uid: string; email?: string; emailVerified: boolean; disabled: boolean;
-    customClaims?: Record<string, unknown> }>;
+    customClaims?: Record<string, unknown>;
+    multiFactor?: { enrolledFactors: { uid: string; factorId: string }[] } }>;
   getUserByEmail(email: string): Promise<{ uid: string }>;
   setCustomUserClaims(uid: string, claims: Record<string, unknown> | null): Promise<void>;
   revokeRefreshTokens(uid: string): Promise<void>;
-  updateUser(uid: string, props: { disabled?: boolean }): Promise<unknown>;
+  updateUser(uid: string, props: { disabled?: boolean; multiFactor?: { enrolledFactors: null } }): Promise<unknown>;
 }
 
 export interface IdentityDeps {

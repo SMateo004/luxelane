@@ -672,25 +672,80 @@ que el orden importa:
 
 ### Procedimiento de emergencia (antes de activar mfaEnforced)
 
-- **Requisito**: al menos dos admins con TOTP activado y probado (que
-  hayan entrado con el código), y un responsable con acceso de
-  propietario al proyecto en la consola de Google Cloud / Firebase.
-- **Un admin pierde su teléfono**: otro admin no puede quitarle el
-  factor desde el panel. Desde la consola: Authentication → Users → la
-  cuenta → quitar el segundo factor ([Probable]; NO VERIFICADO el menú
-  exacto), o con el Admin SDK
-  `admin.auth().updateUser(uid, { multiFactor: { enrolledFactors: [] } })`.
-  Después, que vuelva a entrar y lo active de nuevo.
-- **Nadie puede entrar al panel** (todos los admins sin factor): en la
-  consola de Firestore, poner `config/security.mfaEnforced: false`; el
-  servidor lo lee en cada llamada y las reglas en cada escritura. Volver a
-  `true` en cuanto haya dos admins con factor.
+Importante: una cuenta con el segundo factor dado de alta lo necesita para
+**entrar**, esté `mfaEnforced` como esté (lo pide Firebase al iniciar
+sesión; [Probable]). Poner `mfaEnforced: false` solo ayuda a quien aún no
+dio de alta su factor; a quien perdió el teléfono solo lo saca
+`scripts/reset_mfa.mjs` (o la consola).
+
+**Requisitos antes de activar mfaEnforced**
+
+- Al menos dos admins con TOTP activado y probado (que hayan entrado con el
+  código).
+- Un responsable con acceso de propietario al proyecto (Google Cloud IAM)
+  y credenciales en su máquina (`gcloud auth application-default login`):
+  es quien ejecuta `reset_mfa` y `promote_admin`. No depende del panel.
+- Decidir cómo se confirma la identidad de quien pide el reinicio (por
+  ejemplo, llamada al número registrado o en persona). **Decisión del
+  responsable; no está definida.** El método usado se escribe en
+  `--reason` y queda en admin_logs.
+
+**Un admin pierde el teléfono**
+
+1. Otro admin (o el responsable) confirma su identidad por el método
+   acordado.
+2. El responsable ejecuta, desde su máquina:
+   `node scripts/reset_mfa.mjs --project <id> --email <correo>
+   --reason "perdió el teléfono; identidad confirmada por <método>"
+   --operator "<quién>"` (DRY-RUN) y, si la salida es la esperada, lo
+   mismo con `--apply` (en producción, además
+   `--i-understand-this-writes-to-production-luxelane-4e7ae`).
+3. El script quita los factores, revoca sus sesiones (también la del
+   teléfono perdido) y deja `reset_mfa` en admin_logs.
+4. El admin entra con su contraseña y da de alta TOTP de nuevo (Perfil →
+   «Verificación en dos pasos»). Mientras no lo haga, con `mfaEnforced`
+   las acciones de admin le responden `mfa_required`.
+5. Si se sospecha que el teléfono está en manos de otra persona: además,
+   cambiar su contraseña desde la consola (Authentication → Users).
+
+**Los dos admins pierden el teléfono**
+
+1. Nadie puede entrar al panel. El responsable con acceso al proyecto
+   ejecuta `reset_mfa` para uno de ellos (pasos 2–4 de arriba).
+2. Sin credenciales en ninguna máquina: en la consola de Firebase →
+   Authentication → Users → la cuenta → quitar el segundo factor
+   (NO VERIFICADO el menú exacto) y anotar a mano en admin_logs lo hecho.
+3. Ese admin entra, da de alta TOTP de nuevo y repite con el segundo
+   admin (o con `promote_admin` si hace falta otro).
+4. Mientras tanto, los incidentes (SOS) no tienen quién los atienda desde
+   el panel: avisar a quien esté de guardia por teléfono (D23).
+
+**Un chófer pierde el teléfono**
+
+1. Central confirma su identidad por el método acordado. Si el teléfono
+   puede estar en manos de otra persona, bloquear la cuenta primero
+   (panel → usuarios → bloquear): deshabilita la cuenta, revoca sesiones y
+   lo saca de disponibles.
+2. El responsable ejecuta `reset_mfa` con su correo (como arriba).
+3. Si se bloqueó, desbloquearlo desde el panel.
+4. El chófer entra en su teléfono nuevo con su contraseña y da de alta
+   TOTP de nuevo. Su dispositivo nuevo llegará como alerta «Chófer en un
+   dispositivo nuevo»: es lo esperado; resolverla con una nota.
+5. Hoy no hay botón en el panel para esto: lo hace el responsable con el
+   script. Si los reinicios son frecuentes, una callable de admin con
+   auditoría sería el siguiente paso (no hecho).
+
+**Otros casos**
+
 - **Hace falta un admin nuevo**: `node scripts/promote_admin.mjs
   --project <id> --email <correo> --reason "<motivo>" --operator "<quién>"`
-  (DRY-RUN), y luego con `--apply`. Deja la entrada en admin_logs y revoca
-  las sesiones de esa cuenta.
-- **Sesión de admin vencida** (`reauth_required` tras 12 h): no es una
-  emergencia; el panel pide confirmar la identidad.
+  (DRY-RUN), y luego con `--apply`.
+- **Sesión de admin vencida** (`reauth_required` tras
+  `adminSessionMaxHours`): no es una emergencia; el panel pide confirmar
+  la identidad. Atender SOS y alertas no lo pide (C1).
+- **Volver atrás con la imposición**: `config/security.mfaEnforced: false`
+  en la consola de Firestore (el servidor lo lee en cada llamada y las
+  reglas en cada escritura). No quita factores a nadie.
 
 ### Apps antiguas
 

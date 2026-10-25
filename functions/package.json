@@ -10,6 +10,7 @@
     "migrate:pricing-updated-by": "npm run build && node scripts/migrate-pricing-updated-by.js",
     "backfill:role-claims": "npm run build && node scripts/backfill-role-claims.js",
     "promote:admin": "npm run build && node ../scripts/promote_admin.mjs",
+    "reset:mfa": "npm run build && node ../scripts/reset_mfa.mjs",
     "trips:in-flight": "npm run build && node scripts/trips-in-flight.js"
   },
   "main": "lib/index.js",
