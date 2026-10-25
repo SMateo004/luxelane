@@ -108,9 +108,10 @@ export const SPECS: Spec[] = [
       : query(collection(db, 'bookings'), where('riderId', '==', 'ana'))),
     create: () => ({ path: 'bookings/nueva', data: { riderId: 'ana', status: 'pending', estimatedPrice: 1 } }),
     update: () => ({ status: 'cancelled', updatedAt: Timestamp.now() }),
-    expect: { ...allRoles(none), ana: 'SSNSN', asig: 'SNNNN', admin: 'SSNNN' },
+    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SNNNN', admin: 'SSNNN' },
     note: 'Objetivo bookings/activa (de ana, asignada a asig, en camino); bloqueado: activaBloq, ' +
-      'asignada a él. Listar = reservas de ana (bloqueado: las suyas). Actualizar = cancelar.',
+      'asignada a él. Listar = reservas de ana (bloqueado: las suyas). Actualizar = cancelar, ' +
+      'que solo hace el servidor (cancelBooking, B7).',
   },
   {
     name: 'bookings/{id}/tracking',

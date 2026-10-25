@@ -654,6 +654,73 @@ mismos campos que leía el panel (`adminId`, `action`, `targetId`,
 `targetType`, `details`) más los nuevos (`operation`, `actor`, `docPath`,
 `changes`, `reason`). El panel lee las dos formas sin cambios.
 
+## Cancelación, liberar y «no aparece» (auditoría, Parte B)
+
+Qué cambia (rama cierre/auditoria, B2–B7): solo el servidor cancela.
+El pasajero usa `cancelBooking` (motivo de lista cerrada, recargo
+calculado con `config/ops.cancellationPolicy`, evento); el chófer
+devuelve un viaje antes de llegar con `releaseBooking` (vuelve a buscar
+chófer, alerta a central, contador en `driverProfiles`) y marca
+«el pasajero no aparece» (`advanceBooking` a `no_show`) pasado el tiempo
+de espera; central decide con `adminUpdateBooking` (cancelar con o sin
+recargo). **El recargo se anota en la reserva y en el evento; no se
+cobra** (`cancellationFeeCharged: false`). Las reglas dejan de permitir
+que la app escriba `status: cancelled`.
+
+### Orden
+
+1. **Functions** (`cancelBooking`, `releaseBooking`, `no_show` en
+   `advanceBooking`, decisión en `adminUpdateBooking`, aviso «Buscamos
+   otro chófer»). Las apps anteriores siguen cancelando como antes: las
+   reglas viejas aún lo permiten.
+2. **Apps** nuevas (pasajero, chófer) y **panel** (hosting).
+3. **Subir `minAppVersion` y `minDriverAppVersion`** a la versión de esas
+   apps, cuando estén publicadas en las tiendas.
+4. **Reglas** al final.
+5. **Política** (`config/ops.cancellationPolicy`) solo después del paso 3:
+   sin ella no hay recargo (`no_policy`) ni botón «no aparece». Es una
+   decisión del responsable (ver abajo); no se fija ningún valor aquí.
+
+### Qué ven las apps antiguas
+
+- Tras el paso 4, **cancelar desde una app del pasajero anterior falla**
+  con «Esta reserva ya no se puede cancelar: el viaje está en curso o
+  terminó» (el mensaje que esa app muestra ante un permiso denegado),
+  aunque la reserva aún se pueda cancelar. La app no comprueba su versión
+  al abrirse: `minAppVersion` solo la frena al cotizar o reservar
+  (`app_update_required`). Con el paso 3 las reservas nuevas ya salen de
+  apps actualizadas, pero quien reservó antes con una app vieja puede
+  toparse con este error: por eso el aviso del piloto (abajo) va antes
+  del paso 4, y central puede cancelar desde el panel.
+- Una reserva en `no_show` se ve en una app anterior como **«Pendiente»**
+  (esas apps leen como pendiente cualquier estado que no conocen). Por eso
+  la política, que es lo que habilita `no_show`, va después del paso 3.
+- Una app del chófer anterior no tiene «No puedo hacer este viaje» ni
+  «El pasajero no aparece»: sigue llamando a central como hasta ahora.
+- Un panel anterior no muestra el recargo, el motivo ni el estado
+  «No se presentó»: recargar la página.
+
+### Aviso a los usuarios del piloto
+
+Antes del paso 4, avisar por el canal habitual del piloto (mensaje
+directo o correo; texto a decidir por el responsable) de que:
+hay que actualizar la app para cancelar; al cancelar se verá si hay
+recargo antes de confirmar; si el chófer no puede hacer el viaje, la app
+busca otro y avisa. No mencionar importes ni plazos hasta que la política
+esté decidida.
+
+### Pasos manuales (decisiones del responsable)
+
+- `config/ops.cancellationPolicy`: `freeWithinMinutesOfBooking`,
+  `freeBeforePickupMinutes`, `chargeWhenNoDriver`, `feeType`
+  (`fixed`|`percent`), `feeValue`, `noShowWaitMinutes`. Sin ella: sin
+  recargo y sin «no aparece». Con un valor inválido: sin recargo
+  (`policy_invalid`) y el panel lo valida al guardarla.
+- Cobrar o no el recargo con el método retenido: **no implementado**. Hoy
+  se anota; el cobro sería un cambio aparte.
+- Qué hacer con `driverProfiles.releasedBookingsCount`: el servidor solo
+  cuenta; no hay sanción automática.
+
 ## Identidad (Parte B)
 
 Qué cambia (rama cierre/identidad, B1–B9): reservar exige el correo

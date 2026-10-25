@@ -65,7 +65,6 @@ export const ALLOWED: Record<string, Cells> = {
     ana: {
       leer: { why: 'el pasajero dueño lee su reserva' },
       listar: { why: 'el pasajero lista sus reservas' },
-      actualizar: { why: 'cancela su reserva antes de que empiece el viaje (o la valora al terminar)' },
     },
     asig: { leer: { why: 'el chófer asignado y activo lee la reserva que atiende' } },
     admin: {

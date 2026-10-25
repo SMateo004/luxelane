@@ -81,8 +81,10 @@ describe('el cliente no escribe los pasos del viaje (solo advanceBooking)', () =
     await assertFails(setStatus('admin', 'conf', 'cancelled'));
   });
 
-  test('la pasajera cancela hasta driver_arrived, no después de verificar', async () => {
-    await assertSucceeds(setStatus('ana', 'llego', 'cancelled'));
+  // B7: ni siquiera antes de verificar; cancelar va por cancelBooking (el
+  // servidor aplica la misma ventana: RIDER_CANCELLABLE).
+  test('la pasajera no cancela escribiendo la reserva, en ningún paso', async () => {
+    await assertFails(setStatus('ana', 'llego', 'cancelled'));
     await assertFails(setStatus('ana', 'verif', 'cancelled'));
     await assertFails(setStatus('ana', 'curso', 'cancelled'));
     await assertFails(setStatus('ana', 'fin', 'cancelled'));

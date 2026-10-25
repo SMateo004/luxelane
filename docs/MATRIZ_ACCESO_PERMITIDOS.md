@@ -11,7 +11,7 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-130 celdas permitidas, 4 con ⚠.
+129 celdas permitidas, 4 con ⚠.
 
 ## `users/{uid}`
 
@@ -83,7 +83,6 @@ el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 - leer: el pasajero dueño lee su reserva.
 - listar: el pasajero lista sus reservas.
-- actualizar: cancela su reserva antes de que empiece el viaje (o la valora al terminar).
 
 **chófer verif. asignado**
 

@@ -51,7 +51,7 @@ describe('escrituras del admin desde el cliente (Parte A)', () => {
 
   test('no afecta a pasajeros ni chóferes en las reglas', async () => {
     await enforce(true);
-    await assertSucceeds(updateDoc(doc(env.authenticatedContext('ana').firestore(), 'bookings', 'pend'),
-      { status: 'cancelled', updatedAt: new Date() }));
+    // El pasajero ya no cancela desde las reglas (B7): edita su perfil.
+    await assertSucceeds(updateDoc(doc(env.authenticatedContext('ana').firestore(), 'users', 'ana'), { name: 'Ana' }));
   });
 });

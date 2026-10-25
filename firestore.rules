@@ -219,15 +219,8 @@ service cloud.firestore {
           request.resource.data.driverId == request.auth.uid &&
           request.resource.data.status == 'confirmed' &&
           onlyUpdating(['driverId', 'status', 'updatedAt'])) ||
-        // El pasajero cancela su reserva antes de que empiece el viaje:
-        // solo status (a cancelled) y updatedAt (A8.6).
-        (isAuthenticated() &&
-          resource.data.riderId == request.auth.uid &&
-          onlyUpdating(['status', 'updatedAt']) &&
-          validClientUpdatedAt() &&
-          resource.data.status in
-            ['pending', 'confirmed', 'driver_arriving', 'driver_arrived'] &&
-          request.resource.data.status == 'cancelled') ||
+        // Cancelar ya no se escribe desde la app: el pasajero usa
+        // cancelBooking, que deja motivo, recargo y evento (Parte B, B2/B7).
         // El pasajero valora un viaje terminado, una vez: nota entera de 1
         // a 5 y comentario de texto acotado (A8.6).
         (isAuthenticated() &&
