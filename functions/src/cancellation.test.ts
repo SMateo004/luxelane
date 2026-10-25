@@ -1,6 +1,6 @@
 import { describe, it, expect } from '@jest/globals';
 import * as admin from 'firebase-admin';
-import { cancellationFee, CancellationPolicy, readPolicy } from './cancellation';
+import { cancellationFee, CancellationPolicy, readPolicy } from './cancellation_policy';
 
 const NOW = Date.UTC(2026, 9, 25, 12);
 const ts = (offsetMin: number) => admin.firestore.Timestamp.fromMillis(NOW + offsetMin * 60_000);

@@ -193,7 +193,8 @@ type BookingStatus =
   | 'verified'
   | 'in_progress'
   | 'completed'
-  | 'cancelled';
+  | 'cancelled'
+  | 'no_show';
 
 type PaymentStatus = 'pending' | 'captured' | 'refunded' | 'failed';
 
@@ -844,6 +845,7 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
     in_progress: ['Viaje iniciado', 'Tu trayecto ha comenzado.', 'ride_started'],
     completed: ['Viaje completado', 'Has llegado. Gracias por viajar con Luxelane.', 'ride_completed'],
     cancelled: ['Reserva cancelada', 'Tu reserva ha sido cancelada.', 'booking_cancelled'],
+    no_show: ['No te encontramos', 'Tu chófer no te encontró en el punto de recogida. Central revisará tu reserva.', 'rider_no_show'],
   };
 
   const entry = statusMessages[after.status];

@@ -17,6 +17,7 @@ import { codesMatch, MAX_PICKUP_ATTEMPTS, newPickupSalt, pickupCode, pickupExpir
 import { distanceKm } from './service_area';
 import { logger } from './logger';
 import { opsConfig } from './ops_config';
+import { noShowAvailableAt, readPolicy } from './cancellation_policy';
 
 export interface TripDeps {
   db: admin.firestore.Firestore;
@@ -26,7 +27,9 @@ export interface TripDeps {
 }
 
 export type Status = 'pending' | 'confirmed' | 'driver_arriving' | 'driver_arrived' | 'verified'
-  | 'in_progress' | 'completed' | 'cancelled';
+  | 'in_progress' | 'completed' | 'cancelled'
+  /** El chófer esperó y el pasajero no apareció (B4): central decide. */
+  | 'no_show';
 
 /** Pasos que el chófer asignado da con advanceBooking. */
 export const DRIVER_STEPS: Readonly<Partial<Record<Status, Status>>> = {
@@ -57,7 +60,7 @@ const appVersion = z.string().max(40).optional();
 
 export const advanceSchema = z.strictObject({
   bookingId,
-  to: z.enum(['driver_arriving', 'driver_arrived', 'in_progress', 'completed']),
+  to: z.enum(['driver_arriving', 'driver_arrived', 'in_progress', 'completed', 'no_show']),
   location: location.optional(),
   appVersion,
 });
@@ -212,6 +215,7 @@ export async function advanceBooking(deps: TripDeps, uid: string | undefined, da
     const from = b.status as Status;
     // Doble envío o reintento tras perder la respuesta: ya está hecho.
     if (from === input.to) return { status: from, alreadyApplied: true };
+    if (input.to === 'no_show') return markNoShow(tx, db, ref, b, from, driverId, input, at, now(deps));
     if (DRIVER_STEPS[from] !== input.to) {
       throw tripError('failed-precondition', 'invalid_transition', { from, to: input.to });
     }
@@ -222,7 +226,12 @@ export async function advanceBooking(deps: TripDeps, uid: string | undefined, da
     if (input.to === 'driver_arrived') {
       update.arrivedAt = at;
       tx.set(pickupRef(db, ref.id), { salt: newPickupSalt(), arrivedAt: at, failedAttempts: 0 });
-      const check = arrivalCheck(b, input.location, (await opsConfig(db)).arrivalRadiusMeters);
+      const ops = await opsConfig(db);
+      // Con política, la app del chófer sabe desde cuándo puede marcar «no
+      // aparece» (B4); sin ella el botón no aparece.
+      const availableAt = noShowAvailableAt(readPolicy(ops).policy, at.toMillis());
+      if (availableAt !== null) update.noShowAvailableAt = admin.firestore.Timestamp.fromMillis(availableAt);
+      const check = arrivalCheck(b, input.location, ops.arrivalRadiusMeters);
       adminDetail = check.extra;
       if (check.distanceMeters !== undefined) locationExtra = { distanceMeters: check.distanceMeters };
       if (check.far) {
@@ -262,6 +271,38 @@ export async function advanceBooking(deps: TripDeps, uid: string | undefined, da
     });
     return { status: input.to, alreadyApplied: false };
   });
+}
+
+/**
+ * B4: el pasajero no aparece. Solo desde driver_arrived, con política de
+ * cancelación (si no, no_show_disabled), pasado el tiempo de espera y con la
+ * ubicación del chófer. Libera al chófer, deja evento y alerta a central;
+ * NO cobra nada: el admin decide con adminUpdateBooking.
+ */
+async function markNoShow(tx: admin.firestore.Transaction, db: admin.firestore.Firestore,
+  ref: admin.firestore.DocumentReference, b: admin.firestore.DocumentData, from: Status, driverId: string,
+  input: z.infer<typeof advanceSchema>, at: admin.firestore.Timestamp, nowMs: number) {
+  if (from !== 'driver_arrived') throw tripError('failed-precondition', 'invalid_transition', { from, to: 'no_show' });
+  const { policy } = readPolicy(await opsConfig(db));
+  if (!policy) throw tripError('failed-precondition', 'no_show_disabled');
+  if (!input.location) throw tripError('invalid-argument', 'location_required');
+  const arrivedMs = (b.arrivedAt as admin.firestore.Timestamp | undefined)?.toMillis() ?? nowMs;
+  const availableAt = noShowAvailableAt(policy, arrivedMs)!;
+  if (nowMs < availableAt) throw tripError('failed-precondition', 'no_show_too_early', { availableAt });
+  const driverRef = db.collection('driverProfiles').doc(driverId);
+  const driver = await tx.get(driverRef);
+  tx.update(ref, { status: 'no_show', noShowAt: at, updatedAt: at });
+  if (driver.exists) tx.update(driverRef, { isAvailable: driver.data()?.online !== false });
+  appendEvent(tx, db, ref.id, {
+    from, to: 'no_show', actor: { uid: driverId, role: 'driver' }, source: 'driver_app',
+    appVersion: input.appVersion, location: input.location,
+    extra: { method: 'driver_no_show', waitedMinutes: Math.round((nowMs - arrivedMs) / 60_000) },
+  });
+  alert(tx, db, {
+    type: 'rider_no_show', severity: 'medium', bookingId: ref.id, driverId,
+    message: 'El chófer marcó que el pasajero no apareció. Revisa la reserva y decide.',
+  });
+  return { status: 'no_show' as Status, alreadyApplied: false };
 }
 
 /**

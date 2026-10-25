@@ -14,7 +14,7 @@ import { appendEvent, Status } from './trip_flow';
 import { SERVICE_TYPES, VEHICLE_CLASSES } from './fare';
 import { CAPACITY } from './booking_schema';
 import { computeSettlement, Settlement } from './settlement';
-import { policySchema } from './cancellation';
+import { policySchema } from './cancellation_policy';
 
 export interface AdminDeps { db: admin.firestore.Firestore; now?: () => number }
 
@@ -37,6 +37,8 @@ export const ADMIN_TRANSITIONS: Readonly<Partial<Record<Status, readonly Status[
   driver_arrived: ['cancelled'],
   verified: ['cancelled'],
   in_progress: ['completed'],
+  // B4: el admin revisa el «no aparece» y decide (cancelar, con o sin recargo).
+  no_show: ['cancelled'],
 };
 
 /** Se asigna o reasigna chófer antes de que llegue a la recogida. */
@@ -47,7 +49,11 @@ export const BUSY_LEAD_MS = 60 * 60 * 1000;
 
 export const bookingSchema = z.discriminatedUnion('action', [
   z.strictObject({ action: z.literal('assign'), bookingId: docId, driverId: docId, reason: reasonSchema }),
-  z.strictObject({ action: z.literal('cancel'), bookingId: docId, reason: reasonSchema }),
+  z.strictObject({
+    action: z.literal('cancel'), bookingId: docId, reason: reasonSchema,
+    /** Solo desde no_show: recargo que decide el admin (se anota, no se cobra). */
+    cancellationFee: z.number().finite().min(0).max(1_000_000).optional(),
+  }),
   z.strictObject({
     action: z.literal('status'), bookingId: docId,
     to: z.enum(['driver_arriving', 'driver_arrived', 'completed']), reason: reasonSchema,
@@ -122,9 +128,21 @@ export async function adminUpdateBooking(deps: AdminDeps, actor: AdminActor, dat
       if (!ADMIN_TRANSITIONS[status]?.includes('cancelled')) throw opError('failed-precondition', 'not_cancellable', { status });
       // El motivo del admin no va en la reserva (la leen pasajero y chófer):
       // va en eventDetails y en admin_logs.
-      const after = { status: 'cancelled', cancelledBy: 'admin' };
+      if (input.cancellationFee !== undefined && status !== 'no_show') {
+        throw opError('failed-precondition', 'fee_only_after_no_show');
+      }
+      if (input.cancellationFee !== undefined && input.cancellationFee > Number(b.estimatedPrice ?? 0)) {
+        throw opError('invalid-argument', 'fee_above_price');
+      }
+      const after: Record<string, unknown> = {
+        status: 'cancelled', cancelledBy: 'admin',
+        ...(input.cancellationFee !== undefined ? {
+          cancellationFee: input.cancellationFee, cancellationFeeBasis: 'no_show_admin', cancellationFeeCharged: false,
+        } : {}),
+      };
       tx.update(ref, { ...after, cancelledAt: now, updatedAt: now });
-      event('cancelled', 'admin_cancel');
+      event('cancelled', status === 'no_show' ? 'admin_no_show_decision' : 'admin_cancel',
+        input.cancellationFee !== undefined ? { cancellationFee: input.cancellationFee } : {});
       writeAudit(tx, db, {
         actor, operation: 'cancel_booking', collection: 'bookings', docId: ref.id, targetType: 'booking',
         changes: changedFields(b, after), reason: input.reason, details: `${status} → cancelled`,
