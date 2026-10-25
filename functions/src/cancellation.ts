@@ -9,7 +9,8 @@ import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
 import { docId, parseInput } from './schemas';
-import { appendEvent, Status } from './trip_flow';
+import { alert, appendEvent, location, Status } from './trip_flow';
+import { buildOpenRequest, BookingForRequest } from './open_requests';
 import { opsConfig } from './ops_config';
 import { cancellationFee, readPolicy } from './cancellation_policy';
 
@@ -93,5 +94,73 @@ export async function cancelBooking(deps: CancelDeps, uid: string | undefined, d
       extra: { method: 'rider_cancel', cancellationReason: input.reason, cancellationFee: fee, feeBasis: basis },
     });
     return { status: 'cancelled' as Status, cancellationFee: fee, feeBasis: basis };
+  });
+}
+
+/** Motivos del chófer para liberar una reserva (lista cerrada). */
+export const DRIVER_RELEASE_REASONS = ['vehicle_issue', 'personal_emergency', 'unsafe_conditions', 'schedule_conflict', 'other'] as const;
+
+/** Antes de llegar a la recogida; después, el camino es no_show o central. */
+export const DRIVER_RELEASABLE: readonly Status[] = ['confirmed', 'driver_arriving'];
+
+export const releaseSchema = z.strictObject({
+  bookingId: docId,
+  reason: z.enum(DRIVER_RELEASE_REASONS),
+  location: location.optional(),
+  appVersion: z.string().max(40).optional(),
+});
+
+/**
+ * B5: el chófer asignado devuelve la reserva antes de llegar. Vuelve a
+ * pending sin chófer, reaparece en openRequests, central recibe una alerta y
+ * el contador del chófer (driverProfiles.releasedBookingsCount, solo lo
+ * escribe el servidor) sube. No hay sanción automática.
+ */
+export async function releaseBooking(deps: CancelDeps, uid: string | undefined, data: unknown) {
+  if (!uid) throw cancelError('unauthenticated', 'unauthenticated');
+  const input = parseInput(releaseSchema, data);
+  const db = deps.db;
+  const ref = db.collection('bookings').doc(input.bookingId);
+  const driverRef = db.collection('driverProfiles').doc(uid);
+  const at = admin.firestore.Timestamp.fromMillis(nowMs(deps));
+
+  return db.runTransaction(async (tx) => {
+    const [snap, driver] = await Promise.all([tx.get(ref), tx.get(driverRef)]);
+    if (!snap.exists) throw cancelError('not-found', 'booking_not_found');
+    const b = snap.data()!;
+    const status = b.status as Status;
+    // Reintento tras liberarla: ya no es suya, pero la última liberación sí.
+    if (b.driverId !== uid) {
+      if (b.lastRelease?.driverId === uid) return { status, alreadyReleased: true };
+      throw cancelError('permission-denied', 'not_assigned');
+    }
+    if (!DRIVER_RELEASABLE.includes(status)) throw cancelError('failed-precondition', 'not_releasable', { status });
+
+    tx.update(ref, {
+      status: 'pending', driverId: admin.firestore.FieldValue.delete(),
+      lastRelease: { driverId: uid, reason: input.reason, at, from: status },
+      updatedAt: at,
+    });
+    // La ubicación del chófer que se va no debe verla el siguiente.
+    tx.delete(ref.collection('tracking').doc('driver'));
+    tx.set(db.collection('openRequests').doc(ref.id), buildOpenRequest(b as BookingForRequest));
+    if (driver.exists) {
+      tx.update(driverRef, {
+        isAvailable: driver.data()?.online !== false,
+        releasedBookingsCount: admin.firestore.FieldValue.increment(1),
+        lastReleasedAt: at,
+      });
+    }
+    appendEvent(tx, db, ref.id, {
+      from: status, to: 'pending', actor: { uid, role: 'driver' }, source: 'driver_app',
+      appVersion: input.appVersion, location: input.location,
+      extra: { method: 'driver_release', releaseReason: input.reason },
+    });
+    alert(tx, db, {
+      type: 'driver_released_booking', severity: 'high', bookingId: ref.id, driverId: uid,
+      reason: input.reason,
+      message: 'El chófer liberó la reserva. Vuelve a estar buscando chófer; revisa si hay que asignarla.',
+    });
+    return { status: 'pending' as Status, alreadyReleased: false };
   });
 }

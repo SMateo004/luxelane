@@ -51,7 +51,7 @@ const tripError = (
 ) => new HttpsError(code, reason, { reason, ...extra });
 
 const bookingId = docId;
-const location = z.strictObject({
+export const location = z.strictObject({
   lat: z.number().min(-90).max(90),
   lng: z.number().min(-180).max(180),
   accuracy: z.number().min(0).max(100000).optional(),
@@ -170,7 +170,7 @@ export function appendEvent(tx: admin.firestore.Transaction, db: admin.firestore
   }
 }
 
-function alert(tx: admin.firestore.Transaction, db: admin.firestore.Firestore, data: Record<string, unknown>): void {
+export function alert(tx: admin.firestore.Transaction, db: admin.firestore.Firestore, data: Record<string, unknown>): void {
   tx.set(db.collection('adminAlerts').doc(), {
     ...data,
     createdAt: admin.firestore.Timestamp.now(),

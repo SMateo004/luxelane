@@ -155,6 +155,10 @@ const adminActor = async (req: CallableRequest): Promise<incidents.AdminActor> =
 export const cancelBooking = secureCallable('cancelBooking', {}, (req) =>
   cancellation.cancelBooking({ db }, req.auth?.uid, req.data));
 
+/** El chófer devuelve una reserva antes de llegar (motivo de lista cerrada). */
+export const releaseBooking = secureCallable('releaseBooking', {}, (req) =>
+  cancellation.releaseBooking({ db }, req.auth?.uid, req.data), { requireMfa: true });
+
 /** Pasajero o chófer de la reserva: avisa a central (idempotente, con límite). */
 export const raiseIncident = secureCallable('raiseIncident', {}, (req) => incidents.raiseIncident(incidentDeps(), req.auth?.uid, req.data));
 
@@ -845,6 +849,8 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
     in_progress: ['Viaje iniciado', 'Tu trayecto ha comenzado.', 'ride_started'],
     completed: ['Viaje completado', 'Has llegado. Gracias por viajar con Luxelane.', 'ride_completed'],
     cancelled: ['Reserva cancelada', 'Tu reserva ha sido cancelada.', 'booking_cancelled'],
+    // B5: el chófer liberó la reserva; se busca otro.
+    pending: ['Buscamos otro chófer', 'Tu chófer tuvo un imprevisto. Estamos buscando otro chófer para tu reserva.', 'booking_driver_released'],
     no_show: ['No te encontramos', 'Tu chófer no te encontró en el punto de recogida. Central revisará tu reserva.', 'rider_no_show'],
   };
 
