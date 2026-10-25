@@ -580,6 +580,27 @@ muestra.
 
 ---
 
+## Identidad (Parte B)
+
+### Protección contra la enumeración de correos (B8)
+
+La app ya no dice si un correo tiene cuenta: entrar con un correo que no
+existe y con una contraseña incorrecta da el mismo mensaje, recuperar la
+contraseña responde igual haya cuenta o no, y el registro no confirma que
+el correo esté en uso. Para que la API de Firebase tampoco lo revele, hay
+que activar su protección (en cada proyecto: staging y producción):
+
+1. Consola de Firebase → Authentication → Settings → User actions.
+2. Activar «Email enumeration protection».
+3. Guardar.
+
+NO VERIFICADO: el nombre exacto de la opción en la consola actual, y si
+con la protección activa `createUserWithEmailAndPassword` sigue
+devolviendo `email-already-in-use` (la app ya lo muestra con un texto
+neutro). También NO VERIFICADO si Auth responde `user-disabled` antes de
+comprobar la contraseña (una cuenta bloqueada se distinguiría de una
+inexistente); la app muestra en ese caso el mensaje de cuenta bloqueada.
+
 ## Claves de Google Maps
 
 No hay ninguna clave en el repositorio. Cada plataforma usa la suya y una

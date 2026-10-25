@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/error/auth_errors.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
@@ -70,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
       (f) => showLuxSnackbar(context, f.message, isError: true),
       (_) => showLuxSnackbar(
         context,
-        'Te enviamos un enlace a $email para restablecer tu contraseña.',
+        passwordResetSentMessage(email),
       ),
     );
   }

@@ -10,6 +10,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/auth/mfa.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/error/auth_errors.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
@@ -96,7 +97,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on fb.FirebaseAuthMultiFactorException catch (e) {
       return Left(MfaRequiredFailure(_challenge(e)));
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(_emailErrorMessage(e.code)));
+      return Left(AuthFailure(loginErrorMessage(e.code)));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -144,7 +145,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await acceptTerms();
       return Right(user);
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(_emailErrorMessage(e.code)));
+      return Left(AuthFailure(registerErrorMessage(e.code)));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -270,28 +271,6 @@ class AuthRepositoryImpl implements AuthRepository {
     return Left(AuthFailure(blockedAccountMessage(user.role)));
   }
 
-  static String _emailErrorMessage(String code) {
-    switch (code) {
-      case 'invalid-credential':
-      case 'wrong-password':
-      case 'user-not-found':
-      case 'invalid-email':
-        return 'Correo o contraseña incorrectos.';
-      case 'email-already-in-use':
-        return 'Ya existe una cuenta con este correo. Inicia sesión.';
-      case 'weak-password':
-        return 'La contraseña es muy débil: usa al menos 6 caracteres.';
-      case 'user-disabled':
-        return 'Esta cuenta está desactivada.';
-      case 'too-many-requests':
-        return 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
-      case 'network-request-failed':
-        return 'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
-      default:
-        return 'No pudimos iniciar sesión. Inténtalo de nuevo.';
-    }
-  }
-
   static const _googleGenericError =
       'No pudimos iniciar sesión con Google. Inténtalo de nuevo.';
 
@@ -309,7 +288,7 @@ class AuthRepositoryImpl implements AuthRepository {
       case 'operation-not-allowed':
         return 'El inicio de sesión con Google no está habilitado.';
       case 'user-disabled':
-        return 'Esta cuenta está desactivada.';
+        return kBlockedAccountMessage;
       case 'network-request-failed':
         return 'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
       default:
@@ -487,17 +466,8 @@ class AuthRepositoryImpl implements AuthRepository {
       await _auth.sendPasswordResetEmail(email: email);
       return const Right(null);
     } on fb.FirebaseAuthException catch (e) {
-      return Left(
-        AuthFailure(switch (e.code) {
-          'invalid-email' => 'Ese correo no es válido. Revísalo.',
-          'user-not-found' => 'No hay ninguna cuenta con ese correo.',
-          'too-many-requests' =>
-            'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
-          'network-request-failed' =>
-            'Sin conexión. Revisa tu internet e inténtalo de nuevo.',
-          _ => 'No pudimos enviar el enlace. Inténtalo de nuevo.',
-        }),
-      );
+      final message = passwordResetErrorMessage(e.code);
+      return message == null ? const Right(null) : Left(AuthFailure(message));
     } catch (_) {
       return const Left(
         ServerFailure('No pudimos enviar el enlace. Inténtalo de nuevo.'),
