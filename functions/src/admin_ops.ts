@@ -361,7 +361,7 @@ export async function adminUpdatePricingRule(deps: AdminDeps, actor: AdminActor,
     }
     const problems = fareProblems(input);
     if (problems.length) throw opError('invalid-argument', 'invalid_fare', { problems });
-    // Los mismos campos que admite validFare en firestore.rules; sin updatedBy (C3).
+    // Solo los campos públicos de la tarifa (A8.8); sin updatedBy (C3).
     const fare = {
       id, vehicleClass: input.vehicleClass, serviceType: input.serviceType,
       basePriceUsd: input.basePriceUsd, pricePerKmUsd: input.pricePerKmUsd,

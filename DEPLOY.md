@@ -616,6 +616,44 @@ muestra.
 
 ---
 
+## Escrituras de admin por el servidor (auditoría, Parte A)
+
+El panel ya no escribe Firestore: cada cambio va a una callable
+(`adminUpdateBooking`, `adminRecordPayment`, `adminUpdateConfig`,
+`adminUpdatePricingRule`, `adminVerifyDriver`,
+`adminUpdateDriverSensitive`, `adminSetVehicleActive`,
+`adminSetLeadHandled`) que exige rol admin, segundo factor con
+`mfaEnforced`, un motivo de al menos 10 caracteres y escribe la auditoría
+en la misma transacción. Las reglas dejan al admin solo lectura y
+`admin_logs` solo lo escribe el servidor.
+
+### Orden
+
+1. **Functions** (las callables nuevas). El panel anterior sigue
+   funcionando: aún escribe directo y las reglas viejas lo permiten.
+2. **Panel** nuevo (hosting). Desde aquí todo pasa por las callables.
+3. **Reglas** al final. Un panel anterior que siga abierto verá
+   «Permiso denegado» en cada cambio: recargar la página.
+
+### Pasos manuales (decisiones del responsable)
+
+- `config/ops.maxPriceAdjustmentPercent`: **sin él se rechaza todo ajuste
+  de importe** (`price_adjustment_disabled`). Si se quiere permitir
+  ajustes, fijar el porcentaje máximo (0–100) en la consola o con
+  `adminUpdateConfig`. El valor es decisión del responsable.
+- El ajuste de importe ahora solo se hace **antes de completar** el viaje
+  (antes el panel lo hacía después). Tras completar, se corrige el cobro
+  manual («Corregir cobro») o se reembolsa.
+- «Quitar tarifa» pasa a «Desactivar tarifa»: la tarifa queda con
+  `isActive: false` en vez de borrarse.
+
+### Auditoría anterior
+
+No hace falta migrar `admin_logs` (A9): las entradas nuevas llevan los
+mismos campos que leía el panel (`adminId`, `action`, `targetId`,
+`targetType`, `details`) más los nuevos (`operation`, `actor`, `docPath`,
+`changes`, `reason`). El panel lee las dos formas sin cambios.
+
 ## Identidad (Parte B)
 
 Qué cambia (rama cierre/identidad, B1–B9): reservar exige el correo

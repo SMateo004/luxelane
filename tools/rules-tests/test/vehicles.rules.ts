@@ -54,8 +54,9 @@ describe('alta y activación de /vehicles', () => {
     await assertSucceeds(setDoc(doc(db('nover'), 'vehicles', 'nuevo-nover'), vehicle('nover', false)));
   });
 
-  test('un chófer no activa su vehículo; el admin sí', async () => {
+  // Parte A: el admin lo activa con adminSetVehicleActive.
+  test('ni el chófer ni el admin activan el vehículo desde el cliente', async () => {
     await assertFails(updateDoc(doc(db('asig'), 'vehicles', 'v-asig'), { isActive: false }));
-    await assertSucceeds(updateDoc(doc(db('admin'), 'vehicles', 'v-asig'), { isActive: false }));
+    await assertFails(updateDoc(doc(db('admin'), 'vehicles', 'v-asig'), { isActive: false }));
   });
 });

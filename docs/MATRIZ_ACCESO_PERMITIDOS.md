@@ -11,7 +11,7 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-147 celdas permitidas, 13 con ⚠.
+130 celdas permitidas, 4 con ⚠.
 
 ## `users/{uid}`
 
@@ -29,7 +29,6 @@ el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 - leer: el panel muestra los usuarios.
 - listar: el panel lista los usuarios.
-- ⚠ actualizar: el admin cambia rol e isActive desde el panel. **el panel aún escribe esto directo desde el cliente (D10); pasa a callables con auditoría en el servidor en la Parte B o después.**
 
 ## `users/{uid}/notifications`
 
@@ -51,8 +50,6 @@ el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 - leer: soporte.
 - listar: soporte.
-- actualizar: soporte.
-- borrar: soporte.
 
 ## `driverProfiles/{uid}`
 
@@ -79,7 +76,6 @@ el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 - leer: el panel muestra los chóferes.
 - listar: el panel lista los chóferes.
-- ⚠ actualizar: verificar documentos y cambiar licencia a petición del chófer (con registro en admin_logs). **el panel aún escribe esto directo desde el cliente (D10); pasa a callables con auditoría en el servidor en la Parte B o después.**
 
 ## `bookings/{id}`
 
@@ -97,7 +93,6 @@ el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 - leer: operación.
 - listar: operación.
-- ⚠ actualizar: cancelar, asignar, ajustar precio desde el panel (no verificar ni completar fuera de in_progress). **el panel aún escribe esto directo desde el cliente (D10); pasa a callables con auditoría en el servidor en la Parte B o después.**
 
 ## `bookings/{id}/tracking`
 
@@ -263,8 +258,6 @@ Ninguna celda permitida.
 
 - leer: finanzas.
 - listar: finanzas.
-- ⚠ crear: registrar un cobro manual (efectivo, QR). **el panel aún escribe esto directo desde el cliente (D10); pasa a callables con auditoría en el servidor en la Parte B o después.**
-- ⚠ actualizar: corregir un cobro manual. **el panel aún escribe esto directo desde el cliente (D10); pasa a callables con auditoría en el servidor en la Parte B o después.**
 
 ## `vehicles/{id}`
 
@@ -293,7 +286,6 @@ Ninguna celda permitida.
 
 - leer: flota.
 - listar: flota.
-- ⚠ actualizar: activar, desactivar y corregir datos a petición del chófer. **el panel aún escribe esto directo desde el cliente (D10); pasa a callables con auditoría en el servidor en la Parte B o después.**
 
 ## `pricingRules/{id}`
 
@@ -336,9 +328,6 @@ Ninguna celda permitida.
 
 - leer: editar tarifas.
 - listar: editar tarifas.
-- crear: nueva tarifa con importes válidos.
-- actualizar: cambiar una tarifa con importes válidos.
-- borrar: quitar una tarifa (la clase deja de reservarse).
 
 ## `config/global`
 
@@ -373,22 +362,18 @@ Ninguna celda permitida.
 **admin**
 
 - leer: ajustes del panel.
-- crear: crear un documento de configuración.
-- ⚠ actualizar: cambiar ajustes. **el panel aún escribe esto directo desde el cliente (D10); pasa a callables con auditoría en el servidor en la Parte B o después.**
 
 ## `config/finance`
 
 **admin**
 
 - leer: comisión de la plataforma.
-- crear: crear un documento de configuración (comisión entre 0 y 100).
-- ⚠ actualizar: cambiar la comisión (entre 0 y 100). **el panel aún escribe esto directo desde el cliente (D10); pasa a callables con auditoría en el servidor en la Parte B o después.**
 
 ## `config/ops`
 
 **admin**
 
-- leer: ver los tiempos del SOS, la retención y el radio de llegada (se editan en la consola).
+- leer: ver los tiempos del SOS, la retención, el radio de llegada y el límite de ajuste (se editan con adminUpdateConfig o en la consola).
 
 ## `config/security`
 
@@ -400,7 +385,6 @@ Ninguna celda permitida.
 
 - leer: atender solicitudes de empresas.
 - listar: bandeja de empresas.
-- actualizar: marcar como atendida (solo handled).
 
 ## `adminAlerts/{id}`
 
@@ -422,5 +406,4 @@ Ninguna celda permitida.
 
 - leer: auditoría.
 - listar: auditoría.
-- ⚠ crear: el panel anexa su propia auditoría (adminId = quien escribe). **una auditoría escrita por el cliente se puede omitir o falsear en el detalle; la definitiva debe escribirla el servidor (D10).**
 <!-- permitidos:fin -->

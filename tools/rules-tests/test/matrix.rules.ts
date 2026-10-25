@@ -67,7 +67,8 @@ describe('casos fuera de la tabla', () => {
     dirty = true;
     expect(await attempt(() => updateDoc(doc(dbOf('ana'), 'users', 'ana'), { isVerified: true }))).toBe(false);
     expect(await attempt(() => updateDoc(doc(dbOf('bloq'), 'users', 'bloq'), { isVerified: true }))).toBe(false);
-    expect(await attempt(() => updateDoc(doc(dbOf('admin'), 'users', 'ana'), { isVerified: true }))).toBe(true);
+    // Parte A: tampoco el admin desde el cliente (lo marca el servidor).
+    expect(await attempt(() => updateDoc(doc(dbOf('admin'), 'users', 'ana'), { isVerified: true }))).toBe(false);
   });
 });
 

@@ -42,8 +42,9 @@ describe('licencia tras la verificación (H4)', () => {
     await assertFails(updateDoc(profile('asig', 'asig'), change));
   });
 
-  test.each(LICENSE_CHANGES)('el admin sí cambia %s', async (_f, change) => {
-    await assertSucceeds(updateDoc(profile('admin', 'asig'), change));
+  // Parte A: el admin lo cambia con adminUpdateDriverSensitive.
+  test.each(LICENSE_CHANGES)('el admin tampoco cambia %s desde el cliente', async (_f, change) => {
+    await assertFails(updateDoc(profile('admin', 'asig'), change));
   });
 
   test.each(LICENSE_CHANGES)('antes de verificar, el chófer aún corrige %s', async (_f, change) => {
@@ -61,8 +62,8 @@ describe('datos sensibles del vehículo (H4)', () => {
     await assertFails(updateDoc(vehicle('nover', 'v_nover'), change));
   });
 
-  test.each(VEHICLE_CHANGES)('el admin sí cambia %s', async (_f, change) => {
-    await assertSucceeds(updateDoc(vehicle('admin', 'v_asig'), change));
+  test.each(VEHICLE_CHANGES)('el admin tampoco cambia %s desde el cliente', async (_f, change) => {
+    await assertFails(updateDoc(vehicle('admin', 'v_asig'), change));
   });
 
   test('el chófer cambia color y foto', async () => {
@@ -107,8 +108,9 @@ describe('campos del perfil del chófer (A8.5)', () => {
     await assertSucceeds(updateDoc(profile('asig', 'asig'), { isAvailable: true, online: true, currentLocation: { lat: 1, lng: 1 } }));
   });
 
-  test('el admin sí escribe los demás campos', async () => {
-    await assertSucceeds(updateDoc(profile('admin', 'asig'), { documentPhotoUrl: 'https://example.com/dni.jpg' }));
+  test('el admin no escribe el perfil desde el cliente (adminVerifyDriver, adminUpdateDriverSensitive)', async () => {
+    await assertFails(updateDoc(profile('admin', 'asig'), { documentPhotoUrl: 'https://example.com/dni.jpg' }));
+    await assertFails(updateDoc(profile('admin', 'nover'), { documentsVerified: true }));
   });
 });
 
