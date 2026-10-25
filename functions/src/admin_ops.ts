@@ -164,3 +164,91 @@ export async function adminUpdateBooking(deps: AdminDeps, actor: AdminActor, dat
     return { finalPrice: input.finalPrice };
   });
 }
+
+// ---------------------------------------------------------------------------
+// A2. adminRecordPayment: registrar y corregir un cobro manual (efectivo, QR,
+// transferencia). El pago lo lee el pasajero: no lleva el uid del admin.
+// ---------------------------------------------------------------------------
+
+/** Los métodos que ofrece el panel (admin_finance_tab.dart). */
+export const MANUAL_METHODS = ['cash', 'qr', 'transfer'] as const;
+
+export const paymentSchema = z.discriminatedUnion('action', [
+  z.strictObject({
+    action: z.literal('record'), bookingId: docId, method: z.enum(MANUAL_METHODS),
+    reference: z.string().trim().max(120).default(''), reason: reasonSchema,
+  }),
+  z.strictObject({
+    action: z.literal('correct'), paymentId: docId,
+    amountBs: z.number().finite().min(0).max(1_000_000).optional(),
+    method: z.enum(MANUAL_METHODS).optional(),
+    reference: z.string().trim().max(120).optional(),
+    reason: reasonSchema,
+  }),
+]);
+
+const toCents = (bs: number) => Math.round(bs * 100);
+
+export async function adminRecordPayment(deps: AdminDeps, actor: AdminActor, data: unknown) {
+  const input = parseInput(paymentSchema, data);
+  const db = deps.db;
+  return db.runTransaction(async (tx) => {
+    const now = admin.firestore.Timestamp.fromMillis(nowMs(deps));
+    if (input.action === 'record') {
+      const bookingRef = db.collection('bookings').doc(input.bookingId);
+      const snap = await tx.get(bookingRef);
+      if (!snap.exists) throw opError('not-found', 'booking_not_found');
+      const b = snap.data()!;
+      if (b.status !== 'completed') throw opError('failed-precondition', 'not_completed');
+      const card = b.stripePaymentIntentId != null || b.stripePaymentMethodId != null;
+      if (card && b.cardPaymentFailed !== true) throw opError('failed-precondition', 'card_payment');
+      if (typeof b.paymentId === 'string' && b.paymentId) {
+        const existing = await tx.get(db.collection('payments').doc(b.paymentId));
+        if (['captured', 'refunded'].includes(existing.data()?.status)) throw opError('failed-precondition', 'already_paid');
+      }
+      const amountBs = Number(b.finalPrice ?? b.estimatedPrice ?? 0);
+      const ref = db.collection('payments').doc();
+      const payment = {
+        bookingId: input.bookingId, riderId: b.riderId ?? null, stripePaymentIntentId: '',
+        amount: toCents(amountBs), currency: 'bob', status: 'captured', method: input.method,
+        reference: input.reference, manual: true, recordedByRole: 'admin', createdAt: now,
+      };
+      tx.set(ref, payment);
+      tx.update(bookingRef, { paymentId: ref.id, finalPrice: amountBs });
+      writeAudit(tx, db, {
+        actor, operation: 'record_payment', collection: 'payments', docId: ref.id, targetType: 'payment',
+        changes: changedFields({}, { amount: payment.amount, method: payment.method, reference: payment.reference }),
+        reason: input.reason,
+        details: `Reserva #${input.bookingId.slice(0, 6)} · ${money(amountBs)} · ${input.method}`,
+        context: { bookingId: input.bookingId },
+      });
+      return { paymentId: ref.id, amount: payment.amount };
+    }
+
+    // correct: solo cobros manuales y cobrados; el valor anterior queda en
+    // la auditoría.
+    const ref = db.collection('payments').doc(input.paymentId);
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw opError('not-found', 'payment_not_found');
+    const p = snap.data()!;
+    if (p.manual !== true && p.stripePaymentIntentId !== '') throw opError('failed-precondition', 'not_manual');
+    if (p.status !== 'captured') throw opError('failed-precondition', 'not_captured');
+    const after: Record<string, unknown> = {
+      ...(input.amountBs !== undefined ? { amount: toCents(input.amountBs) } : {}),
+      ...(input.method !== undefined ? { method: input.method } : {}),
+      ...(input.reference !== undefined ? { reference: input.reference } : {}),
+    };
+    const changes = changedFields(p, after);
+    if (Object.keys(changes).length === 0) throw opError('failed-precondition', 'no_change');
+    const bookingRef = typeof p.bookingId === 'string' && p.bookingId ? db.collection('bookings').doc(p.bookingId) : null;
+    const booking = bookingRef ? await tx.get(bookingRef) : null;
+    tx.update(ref, { ...after, correctedAt: now, corrections: admin.firestore.FieldValue.increment(1) });
+    if (changes.amount && booking?.exists) tx.update(bookingRef!, { finalPrice: input.amountBs });
+    writeAudit(tx, db, {
+      actor, operation: 'correct_payment', collection: 'payments', docId: ref.id, targetType: 'payment',
+      changes, reason: input.reason, details: `Corrección: ${Object.keys(changes).join(', ')}`,
+      context: { bookingId: p.bookingId ?? null },
+    });
+    return { paymentId: ref.id };
+  });
+}

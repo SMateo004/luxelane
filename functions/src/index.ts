@@ -890,6 +890,10 @@ export const closeOpenRequest = onDocumentUpdated({ document: 'bookings/{booking
 export const adminUpdateBooking = secureCallable('adminUpdateBooking', {}, async (req) =>
   adminOps.adminUpdateBooking({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
 
+/** Registrar o corregir un cobro manual (efectivo, QR, transferencia). */
+export const adminRecordPayment = secureCallable('adminRecordPayment', {}, async (req) =>
+  adminOps.adminRecordPayment({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
 /** El admin marca una alerta como revisada (auditado en el servidor). */
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
   const adminId = await requireAdmin(req);

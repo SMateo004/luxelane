@@ -11,7 +11,7 @@ import { raiseSchema, incidentIdSchema, closeSchema } from './incidents';
 import { resolveSchema } from './alerts';
 import { leadSchema } from './business_leads';
 import { deviceSchema } from './driver_devices';
-import { bookingSchema as adminBookingSchema } from './admin_ops';
+import { bookingSchema as adminBookingSchema, paymentSchema as adminPaymentSchema } from './admin_ops';
 import { callableSchemas as c } from './schemas';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -108,6 +108,13 @@ const CASES: Record<string, Case> = {
       { action: 'status', bookingId: ID, to: 'verified', reason: 'Pedido por el pasajero' },
       { action: 'adjust_price', bookingId: ID, finalPrice: -1, reason: 'Pedido por el pasajero' },
       { action: 'borrar', bookingId: ID, reason: 'Pedido por el pasajero' }],
+  },
+  adminRecordPayment: {
+    schema: adminPaymentSchema, valid: { action: 'record', bookingId: ID, method: 'cash', reason: 'Cobrado en efectivo al llegar' },
+    wrongType: { action: 'correct', paymentId: ID, amountBs: '10', reason: 'Importe mal anotado' },
+    extreme: [{ action: 'record', bookingId: ID, method: 'card', reason: 'Cobrado en efectivo al llegar' },
+      { action: 'correct', paymentId: ID, amountBs: -5, reason: 'Importe mal anotado' },
+      { action: 'record', bookingId: ID, method: 'cash', reason: 'x' }],
   },
   registerDriverDevice: {
     schema: deviceSchema, valid: { installationId: 'a'.repeat(8) + '-' + 'b'.repeat(27), platform: 'android', appVersion: '1.0.0' },

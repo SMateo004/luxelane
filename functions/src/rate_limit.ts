@@ -67,6 +67,7 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   registerDriverDevice: per10min(20),
   // Escrituras de admin (Parte A).
   adminUpdateBooking: per10min(60),
+  adminRecordPayment: per10min(30),
   // Panel: cambios de rol y bloqueos.
   setUserRole: per10min(30),
   setUserBlocked: per10min(30),
