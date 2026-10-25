@@ -15,6 +15,7 @@ const _alertLabels = {
   'pickup_override': 'Verificación forzada por un admin',
   'far_from_pickup': '«Llegué» lejos del punto de recogida',
   'arrival_without_location': '«Llegué» sin ubicación del chófer',
+  'new_driver_device': 'Chófer en un dispositivo nuevo',
 };
 
 String alertLabel(String type) => _alertLabels[type] ?? type;
@@ -105,6 +106,11 @@ class _AlertTile extends StatelessWidget {
                       if (alert.bookingId != null)
                         TextSpan(
                           text: '  Reserva #${shortId(alert.bookingId!)}',
+                          style: LuxTypography.caption,
+                        ),
+                      if (alert.driverId != null)
+                        TextSpan(
+                          text: '  Chófer #${shortId(alert.driverId!)}',
                           style: LuxTypography.caption,
                         ),
                     ],

@@ -577,6 +577,16 @@ service cloud.firestore {
     }
 
     // -------------------------------------------------------------------------
+    // /driverDevices/{uid}/** — dispositivos del chófer y sus eventos
+    // (decisión 5). Los escribe registerDriverDevice; solo el admin los ve.
+    // -------------------------------------------------------------------------
+
+    match /driverDevices/{uid}/{document=**} {
+      allow read:  if isAdmin();
+      allow write: if false;
+    }
+
+    // -------------------------------------------------------------------------
     // /admin_logs/{logId}  — auditoría inmutable
     // -------------------------------------------------------------------------
 

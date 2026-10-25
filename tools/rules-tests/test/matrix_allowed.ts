@@ -221,6 +221,9 @@ export const ALLOWED: Record<string, Cells> = {
   'adminAlerts/{id}': {
     admin: { leer: { why: 'avisos del servidor' }, listar: { why: 'avisos del servidor' } },
   },
+  'driverDevices/{uid}/devices/{id}': {
+    admin: { leer: { why: 'revisar dispositivos nuevos' }, listar: { why: 'dispositivos del chófer' } },
+  },
   'admin_logs/{id}': {
     admin: {
       leer: { why: 'auditoría' },

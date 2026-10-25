@@ -375,6 +375,17 @@ export const SPECS: Spec[] = [
     note: 'Avisos del servidor: el admin los marca con resolveAlert, no escribiendo.',
   },
   {
+    name: 'driverDevices/{uid}/devices/{id}',
+    covered: true,
+    target: () => 'driverDevices/asig/devices/d1',
+    list: (db) => query(collection(db, 'driverDevices/asig/devices')),
+    create: () => ({ path: 'driverDevices/asig/devices/nuevo', data: { platform: 'android' } }),
+    update: () => ({ platform: 'ios' }),
+    expect: { ...allRoles(none), admin: 'SSNNN' },
+    note: 'Dispositivos del chófer (B7): los anota registerDriverDevice; solo el admin los ve, ' +
+      'ni el propio chófer.',
+  },
+  {
     name: 'admin_logs/{id}',
     covered: false,
     target: () => 'admin_logs/log1',
@@ -424,6 +435,7 @@ export async function seedMatrix(db: Firestore): Promise<void> {
   await put('businessLeads/l1', { company: 'Empresa', email: 'contacto@example.com', handled: false });
   await put('adminAlerts/a1', { type: 'x', resolved: false });
   await put('admin_logs/log1', { adminId: 'admin', action: 'x' });
+  await put('driverDevices/asig/devices/d1', { platform: 'android' });
 }
 
 /** La operación de una celda contra el Firestore de ese rol. */

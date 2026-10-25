@@ -10,6 +10,7 @@ import { advanceSchema, pickupCodeSchema, verifySchema, overrideSchema } from '.
 import { raiseSchema, incidentIdSchema, closeSchema } from './incidents';
 import { resolveSchema } from './alerts';
 import { leadSchema } from './business_leads';
+import { deviceSchema } from './driver_devices';
 import { callableSchemas as c } from './schemas';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -98,6 +99,13 @@ const CASES: Record<string, Case> = {
     schema: closeSchema, valid: { incidentId: ID, note: 'Llamada hecha, todo bien' },
     wrongType: { incidentId: ID, note: 10 },
     extreme: [{ incidentId: ID, note: 'x'.repeat(1001) }, { incidentId: ID, note: 'corta' }],
+  },
+  registerDriverDevice: {
+    schema: deviceSchema, valid: { installationId: 'a'.repeat(8) + '-' + 'b'.repeat(27), platform: 'android', appVersion: '1.0.0' },
+    wrongType: { installationId: 1, platform: 'android', appVersion: '1' },
+    extreme: [{ installationId: 'corto', platform: 'android', appVersion: '1' },
+      { installationId: 'x'.repeat(65), platform: 'android', appVersion: '1' },
+      { installationId: 'a'.repeat(36), platform: 'windows', appVersion: '1' }],
   },
   resolveAlert: {
     schema: resolveSchema, valid: { alertId: ID },

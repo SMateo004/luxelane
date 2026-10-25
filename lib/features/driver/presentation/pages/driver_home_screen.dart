@@ -8,6 +8,7 @@ import 'package:map_launcher/map_launcher.dart' as ml;
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
+import '../../../../core/auth/driver_device.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/services/maps_service.dart';
@@ -32,6 +33,16 @@ class DriverHomeScreen extends StatefulWidget {
 class _DriverHomeScreenState extends State<DriverHomeScreen> {
   /// Tracks which booking ID we're currently showing a sheet for — avoids duplicates.
   String? _activeSheetId;
+
+  @override
+  void initState() {
+    super.initState();
+    // Anota este dispositivo (decisión 5); no bloquea ni espera.
+    final getIt = GetIt.instance;
+    if (getIt.isRegistered<DriverDeviceRegistrar>()) {
+      unawaited(getIt<DriverDeviceRegistrar>().register());
+    }
+  }
 
   void _maybeShowRequest(BuildContext context, OpenRequest request) {
     if (_activeSheetId == request.id) return;

@@ -12,6 +12,7 @@ import * as tripFlow from './trip_flow';
 import * as businessLeads from './business_leads';
 import * as identity from './identity';
 import * as incidents from './incidents';
+import { deviceSchema, registerDriverDevice as registerDriverDeviceService } from './driver_devices';
 import { isTransient, withRetryPolicy } from './retry_policy';
 import * as stripe from './stripe_service';
 import { logger } from './logger';
@@ -73,6 +74,12 @@ export const syncEmailVerification = secureCallable('syncEmailVerification', {},
   parseInput(schema.syncEmailVerification, req.data);
   return identity.syncEmailVerification(identityDeps(), requireAuth(req));
 });
+
+/** El chófer anota su dispositivo (decisión 5): sin bloqueo, con aviso al admin. */
+export const registerDriverDevice = secureCallable('registerDriverDevice', {}, (req) => {
+  const input = parseInput(deviceSchema, req.data);
+  return registerDriverDeviceService(db, requireAuth(req), input);
+}, { role: 'driver' });
 
 /** Aceptación de los términos: versión vigente, hora del servidor y versión de la app. */
 export const acceptTerms = secureCallable('acceptTerms', {}, (req) => {

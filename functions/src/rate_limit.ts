@@ -63,6 +63,8 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   syncEmailVerification: per10min(20),
   // Al registrarse o al publicarse una versión nueva de los términos.
   acceptTerms: per10min(10),
+  // Al abrir la app del chófer.
+  registerDriverDevice: per10min(20),
   // Panel: cambios de rol y bloqueos.
   setUserRole: per10min(30),
   setUserBlocked: per10min(30),

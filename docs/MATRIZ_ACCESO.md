@@ -58,6 +58,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `config/security` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
 | `businessLeads/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · A · |
 | `adminAlerts/{id}` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `driverDevices/{uid}/devices/{id}` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `admin_logs/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li C · · |
 
 - `users/{uid}`: Objetivo users/ana (bloqueado: users/bloq, el suyo). Crear = perfil de otro (users/nuevo); el alta propia está en «Casos fuera de la tabla». Actualizar = displayName.
@@ -87,6 +88,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `config/security`: Segundo factor y sesión máxima de admin: ningún cliente, ni el admin; solo la consola y el servidor (A8.9).
 - `businessLeads/{id}`: Formulario de empresas: se envía con la callable submitBusinessLead (H5); ningún cliente escribe directo. El admin lo lee y lo marca atendido.
 - `adminAlerts/{id}`: Avisos del servidor: el admin los marca con resolveAlert, no escribiendo.
+- `driverDevices/{uid}/devices/{id}`: Dispositivos del chófer (B7): los anota registerDriverDevice; solo el admin los ve, ni el propio chófer.
 - `admin_logs/{id}`: Auditoría inmutable: el admin anexa a su nombre.
 <!-- matriz:fin -->
 

@@ -11,7 +11,7 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-145 celdas permitidas, 13 con ⚠.
+147 celdas permitidas, 13 con ⚠.
 
 ## `users/{uid}`
 
@@ -408,6 +408,13 @@ Ninguna celda permitida.
 
 - leer: avisos del servidor.
 - listar: avisos del servidor.
+
+## `driverDevices/{uid}/devices/{id}`
+
+**admin**
+
+- leer: revisar dispositivos nuevos.
+- listar: dispositivos del chófer.
 
 ## `admin_logs/{id}`
 

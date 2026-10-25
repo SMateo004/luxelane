@@ -799,6 +799,7 @@ class AdminAlert {
     required this.type,
     required this.createdAt,
     this.bookingId,
+    this.driverId,
     this.message = '',
     this.resolved = false,
   });
@@ -807,6 +808,7 @@ class AdminAlert {
   final String type;
   final DateTime createdAt;
   final String? bookingId;
+  final String? driverId;
   final String message;
   final bool resolved;
 
@@ -817,6 +819,7 @@ class AdminAlert {
             ? (j['createdAt'] as Timestamp).toDate()
             : DateTime.now(),
         bookingId: j['bookingId'] as String?,
+        driverId: j['driverId'] as String?,
         message: j['message'] as String? ?? '',
         resolved: j['resolved'] == true,
       );
