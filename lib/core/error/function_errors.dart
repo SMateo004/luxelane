@@ -19,6 +19,19 @@ const kReauthRequiredMessage =
 const kNoConnectionMessage =
     'Sin conexión con el servidor. Revisa tu red e inténtalo de nuevo.';
 
+/// Volver a identificarse (reauth_required). Aquí la cuenta ya es conocida:
+/// decir que la contraseña no coincide no revela nada.
+String reauthErrorMessage(String code) => switch (code) {
+      'wrong-password' ||
+      'invalid-credential' ||
+      'INVALID_LOGIN_CREDENTIALS' =>
+        'La contraseña no coincide.',
+      'user-mismatch' => 'Usa la misma cuenta con la que entraste.',
+      'too-many-requests' => kTooManyAttemptsMessage,
+      'network-request-failed' || 'network_error' => kNoConnectionMessage,
+      _ => 'No pudimos confirmar tu identidad. Inténtalo de nuevo.',
+    };
+
 /// El motivo corto del error, si lo hay.
 String? functionErrorReason(Object? details) {
   final r = (details is Map ? details : const {})['reason'];

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:luxelane/core/enums/enums.dart';
+import 'package:luxelane/core/error/function_errors.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/features/payments/data/repositories/payment_repository_impl.dart';
 import 'package:mocktail/mocktail.dart';
@@ -106,5 +107,26 @@ void main() {
         expect(payment.status, PaymentStatus.captured);
       },
     );
+
+    test(
+        'quitar o cambiar la tarjeta con sesión antigua pide volver a '
+        'entrar (reauth_required)', () async {
+      when(() => functions.httpsCallable(any())).thenReturn(callable);
+      when(() => callable.call<dynamic>(any())).thenThrow(
+        FirebaseFunctionsException(
+          code: 'unauthenticated',
+          message: 'reauth_required',
+          details: const {'reason': 'reauth_required'},
+        ),
+      );
+      final removed = await repo.removeCard(
+        stripeCustomerId: 'cus',
+        paymentMethodId: 'pm',
+      );
+      final changed = await repo.setDefaultCard('pm');
+      for (final r in [removed, changed]) {
+        expect(r.fold((f) => f.message, (_) => null), kReauthRequiredMessage);
+      }
+    });
   });
 }

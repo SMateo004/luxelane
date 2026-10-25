@@ -53,7 +53,7 @@ void main() {
       FirebaseFunctionsException(
         code: 'failed-precondition',
         message: 'failed_precondition',
-        details: {'reason': 'cannot_change_own_role'},
+        details: const {'reason': 'cannot_change_own_role'},
       ),
     );
     final r = await repo.updateUserRole('otra', UserRole.rider);

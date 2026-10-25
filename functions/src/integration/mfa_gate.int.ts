@@ -13,8 +13,9 @@ const db = admin.firestore();
 type Runnable = { run: (r: any) => Promise<any> };
 const run = (token: Record<string, unknown>) =>
   (resolveAlertFn as unknown as Runnable).run({ auth: { uid: 'jefa', token }, app: {}, data: { alertId: 'a1' } });
-const TOTP = { role: 'admin', firebase: { sign_in_provider: 'password', sign_in_second_factor: 'totp' } };
-const NO_2FA = { role: 'admin', firebase: { sign_in_provider: 'password' } };
+const NOW_S = Math.floor(Date.now() / 1000);
+const TOTP = { role: 'admin', auth_time: NOW_S, firebase: { sign_in_provider: 'password', sign_in_second_factor: 'totp' } };
+const NO_2FA = { role: 'admin', auth_time: NOW_S, firebase: { sign_in_provider: 'password' } };
 
 async function reason(p: Promise<unknown>): Promise<string | undefined> {
   try { await p; } catch (e) { return ((e as HttpsError).details as { reason?: string } | undefined)?.reason; }
@@ -29,7 +30,11 @@ beforeEach(async () => {
   await db.doc('users/jefa').set({ role: 'admin', isActive: true });
   await db.doc('adminAlerts/a1').set({ type: 'x', resolved: false });
 });
-afterAll(async () => { await admin.app().delete(); });
+afterAll(async () => {
+  // Sin dejar config/security para otras suites.
+  await db.doc('config/security').delete();
+  await admin.app().delete();
+});
 
 describe('segundo factor en las callables de admin', () => {
   it('fase 1 (sin config/security): no se exige', async () => {

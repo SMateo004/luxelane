@@ -333,6 +333,67 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  ReauthMethod get reauthMethod {
+    final ids = {
+      for (final p in _auth.currentUser?.providerData ?? const <fb.UserInfo>[])
+        p.providerId,
+    };
+    if (ids.contains('password')) return ReauthMethod.password;
+    if (ids.contains('google.com')) return ReauthMethod.google;
+    return ReauthMethod.none;
+  }
+
+  @override
+  Future<Either<Failure, void>> reauthenticate({String? password}) async {
+    final u = _auth.currentUser;
+    if (u == null) return const Left(AuthFailure(kSessionExpiredMessage));
+    try {
+      if (password != null) {
+        await u.reauthenticateWithCredential(
+          fb.EmailAuthProvider.credential(
+            email: u.email ?? '',
+            password: password,
+          ),
+        );
+      } else if (kIsWeb) {
+        await u.reauthenticateWithPopup(
+          fb.GoogleAuthProvider()
+            ..setCustomParameters({'prompt': 'select_account'}),
+        );
+      } else {
+        final account = await _google.signIn();
+        if (account == null) return const Left(AuthCancelledFailure());
+        final tokens = await account.authentication;
+        await u.reauthenticateWithCredential(
+          fb.GoogleAuthProvider.credential(
+            idToken: tokens.idToken,
+            accessToken: tokens.accessToken,
+          ),
+        );
+      }
+      // El token nuevo lleva auth_time reciente.
+      await u.getIdToken(true);
+      return const Right(null);
+    } on fb.FirebaseAuthMultiFactorException catch (e) {
+      return Left(MfaRequiredFailure(_challenge(e)));
+    } on fb.FirebaseAuthException catch (e) {
+      if (e.code == 'popup-closed-by-user' ||
+          e.code == 'cancelled-popup-request' ||
+          e.code == 'web-context-cancelled') {
+        return const Left(AuthCancelledFailure());
+      }
+      return Left(AuthFailure(reauthErrorMessage(e.code)));
+    } on PlatformException catch (e) {
+      if (e.code == GoogleSignIn.kSignInCanceledError) {
+        return const Left(AuthCancelledFailure());
+      }
+      return Left(AuthFailure(reauthErrorMessage(e.code)));
+    } catch (_) {
+      return Left(AuthFailure(reauthErrorMessage('')));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> deleteAccount() async {
     try {
       await _functions.httpsCallable('deleteAccount').call();

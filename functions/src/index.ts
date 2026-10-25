@@ -49,6 +49,9 @@ export const createBooking = secureCallable('createBooking', { secrets: [MAPS_SE
 
 const identityDeps = (): identity.IdentityDeps => ({ db, auth: identity.realAuth() });
 
+/** Operaciones sensibles: inicio de sesión de hace menos de 5 minutos (decisión 6). */
+const RECENT_AUTH_SECONDS = 5 * 60;
+
 /** Cambia el rol de un usuario: claim, documento, sesiones revocadas y auditoría. */
 export const setUserRole = secureCallable('setUserRole', {}, async (req) => {
   const input = parseInput(schema.setUserRole, req.data);
@@ -539,7 +542,7 @@ export const setDefaultPaymentMethod = secureCallable('setDefaultPaymentMethod',
 
   await stripe.setDefaultPaymentMethod(owner, paymentMethodId);
   return { success: true };
-});
+}, { recentAuthSeconds: RECENT_AUTH_SECONDS });
 
 // ---------------------------------------------------------------------------
 // attachPaymentMethod
@@ -576,7 +579,7 @@ export const detachPaymentMethod = secureCallable('detachPaymentMethod', withStr
 
   await stripe.detachPaymentMethod(paymentMethodId);
   return { success: true };
-});
+}, { recentAuthSeconds: RECENT_AUTH_SECONDS });
 
 // ---------------------------------------------------------------------------
 // deleteAccount
@@ -642,7 +645,7 @@ export const deleteAccount = secureCallable('deleteAccount', withStripe, async (
   await admin.auth().deleteUser(uid);
   logger.info('deleteAccount', 'success', { uid });
   return { success: true };
-});
+}, { recentAuthSeconds: RECENT_AUTH_SECONDS });
 
 // ---------------------------------------------------------------------------
 // createStripeCustomer  (onCreate /users/{uid})

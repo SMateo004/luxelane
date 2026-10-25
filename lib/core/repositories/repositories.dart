@@ -23,6 +23,9 @@ String blockedAccountMessage(UserRole role) =>
 bool isBlockedAccountMessage(String message) =>
     message == kBlockedAccountMessage || message == kDriverSuspendedMessage;
 
+/// Cómo puede volver a identificarse la cuenta actual (decisión 6).
+enum ReauthMethod { password, google, none }
+
 abstract class AuthRepository {
   Future<Either<Failure, User>> login({
     required String email,
@@ -46,6 +49,15 @@ abstract class AuthRepository {
   /// Elimina la cuenta en el servidor (perfil, tarjetas y acceso). Falla si
   /// quedan viajes activos o reservados.
   Future<Either<Failure, void>> deleteAccount();
+
+  /// Proveedor con el que la cuenta actual puede volver a identificarse.
+  ReauthMethod get reauthMethod;
+
+  /// Vuelve a identificar a la cuenta actual ([password] o, sin ella,
+  /// Google) y renueva el token, para que el servidor vea un inicio de
+  /// sesión reciente (reauth_required). Si la cuenta tiene segundo factor,
+  /// devuelve MfaRequiredFailure con el reto.
+  Future<Either<Failure, void>> reauthenticate({String? password});
 
   /// Perfil en vivo de [uid] (null si no existe), para reflejar cambios del
   /// admin o del servidor (bloqueo, cliente de pagos…) sin reiniciar.

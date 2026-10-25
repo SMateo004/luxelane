@@ -4,11 +4,13 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/pages/mfa_enroll_page.dart';
+import '../../../auth/presentation/widgets/reauth_dialog.dart';
 import '../bloc/profile_bloc.dart';
 import '../widgets/driver_documents_group.dart';
 
@@ -363,20 +365,27 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
   bool _busy = false;
   String? _error;
 
-  Future<void> _delete() async {
+  Future<void> _delete({bool retried = false}) async {
     setState(() {
       _busy = true;
       _error = null;
     });
     final result = await sl<AuthRepository>().deleteAccount();
     if (!mounted) return;
-    result.fold(
-      (f) => setState(() {
-        _busy = false;
-        _error = f.message;
-      }),
-      (_) => Navigator.of(context).pop(true),
-    );
+    final failure = result.fold((f) => f, (_) => null);
+    if (failure == null) return Navigator.of(context).pop(true);
+    // Sesión antigua (más de 5 minutos): se confirma la identidad y se
+    // repite una sola vez.
+    if (!retried && failure.message == kReauthRequiredMessage) {
+      if (await ReauthDialog.show(context) && mounted) {
+        return _delete(retried: true);
+      }
+      if (!mounted) return;
+    }
+    setState(() {
+      _busy = false;
+      _error = failure.message;
+    });
   }
 
   @override

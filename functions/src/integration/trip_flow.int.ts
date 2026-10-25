@@ -416,7 +416,7 @@ describe('adminOverrideVerify', () => {
   it('la callable solo la usa un admin', async () => {
     await booking('b1', 'driver_arrived');
     const run = (uid: string) => (adminOverrideVerifyFn as unknown as Runnable)
-      .run({ auth: { uid, token: {} }, data: { bookingId: 'b1', reason: 'Motivo suficiente' } });
+      .run({ auth: { uid, token: { auth_time: Math.floor(Date.now() / 1000) } }, data: { bookingId: 'b1', reason: 'Motivo suficiente' } });
     expect((await failure(run('chofer'))).code).toBe('permission-denied');
     expect((await failure(run('ana'))).code).toBe('permission-denied');
     expect(await status('b1')).toBe('driver_arrived');

@@ -20,7 +20,7 @@ async function reason(p: Promise<unknown>): Promise<string | undefined> {
 }
 
 beforeEach(async () => {
-  for (const col of ['users', 'admin_logs', 'adminAlerts', 'rateLimits']) {
+  for (const col of ['users', 'admin_logs', 'adminAlerts', 'rateLimits', 'config']) {
     const snap = await db.collection(col).get();
     await Promise.all(snap.docs.map((d) => d.ref.delete()));
   }
@@ -68,7 +68,9 @@ describe('rol por claim (transición)', () => {
   it('una callable de admin rechaza a un pasajero con el claim rider aunque Firestore diga admin', async () => {
     await db.doc('adminAlerts/a1').set({ type: 'x', resolved: false });
     const run = (uid: string, token: Record<string, unknown>) =>
-      (resolveAlertFn as unknown as Runnable).run({ auth: { uid, token }, app: {}, data: { alertId: 'a1' } });
+      (resolveAlertFn as unknown as Runnable).run({
+        auth: { uid, token: { ...token, auth_time: Math.floor(Date.now() / 1000) } }, app: {}, data: { alertId: 'a1' },
+      });
     expect(await reason(run('jefa', { role: 'rider' }))).toBe('admin_required');
     expect(await reason(run('ana', { role: 'admin' }))).toBe('ok');
   });

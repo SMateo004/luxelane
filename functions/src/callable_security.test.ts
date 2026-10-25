@@ -46,6 +46,11 @@ describe('cobertura de App Check en las callables', () => {
     expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ requireMfa: true }));
   });
 
+  // Reautenticación reciente (decisión 6).
+  it.each([['deleteAccount'], ['setDefaultPaymentMethod'], ['detachPaymentMethod']])('%s exige sesión reciente', (name) => {
+    expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ recentAuthSeconds: 300 }));
+  });
+
   it('solo el SOS deja pasar si el contador falla', () => {
     const failOpen = Object.entries(RATE_LIMITS).filter(([, r]) => r.failOpen).map(([n]) => n);
     expect(failOpen).toEqual(['raiseIncident']);

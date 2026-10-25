@@ -5,9 +5,11 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/widgets/reauth_dialog.dart';
 import '../bloc/payment_bloc.dart';
 
 class PaymentScreen extends StatefulWidget {
@@ -90,7 +92,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
     return BlocConsumer<PaymentBloc, PaymentState>(
       listener: (context, state) {
         if (state is CardOperationSuccess) _loadCards();
-        if (state is PaymentError) {
+        if (state is PaymentError && state.message == kReauthRequiredMessage) {
+          confirmIdentityThenRetry(context).then((_) => _loadCards());
+        } else if (state is PaymentError) {
           showLuxSnackbar(context, state.message, isError: true);
           // Tras un fallo se vuelve a mostrar la lista en vez de vaciarla.
           _loadCards();
