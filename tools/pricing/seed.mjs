@@ -40,7 +40,7 @@ try {
   const batch = db.batch();
   const now = admin.firestore.Timestamp.now();
   for (const w of plan) {
-    const data = w.path.startsWith('pricingRules/') ? { ...w.data, updatedAt: now, updatedBy: 'pricing-seed' } : w.data;
+    const data = w.path.startsWith('pricingRules/') ? { ...w.data, updatedAt: now } : w.data;
     batch.set(db.doc(w.path), data, { merge: Boolean(w.merge) });
   }
   await batch.commit();

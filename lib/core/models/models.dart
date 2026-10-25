@@ -1238,7 +1238,6 @@ class PricingRule {
     required this.minimumPriceUsd,
     this.isActive = true,
     this.updatedAt,
-    this.updatedBy,
   });
 
   final String id;
@@ -1252,7 +1251,6 @@ class PricingRule {
   /// Si es false, la combinación clase + servicio no se puede reservar.
   final bool isActive;
   final DateTime? updatedAt;
-  final String? updatedBy;
 
   /// Id de documento canónico en /pricingRules: `business_oneWay`, etc.
   static String idFor(VehicleClass vc, ServiceType st) =>
@@ -1292,7 +1290,6 @@ class PricingRule {
         updatedAt: j['updatedAt'] is Timestamp
             ? (j['updatedAt'] as Timestamp).toDate()
             : null,
-        updatedBy: j['updatedBy'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -1323,7 +1320,6 @@ class PricingRule {
         minimumPriceUsd: minimumPriceUsd ?? this.minimumPriceUsd,
         isActive: isActive ?? this.isActive,
         updatedAt: updatedAt,
-        updatedBy: updatedBy,
       );
 
   /// Mismos importes que [other] (ignora metadatos).

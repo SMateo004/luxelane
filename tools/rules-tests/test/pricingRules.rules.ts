@@ -21,8 +21,14 @@ function rule(extra: Record<string, unknown> = {}) {
 const ref = () => doc(env.authenticatedContext('admin').firestore(), 'pricingRules', 'business_oneWay');
 
 describe('campos de pricingRules (A8.8)', () => {
-  test('el admin guarda la tarifa como el panel (con updatedAt y updatedBy)', async () => {
-    await assertSucceeds(setDoc(ref(), rule({ updatedAt: serverTimestamp(), updatedBy: 'admin' })));
+  test('el admin guarda la tarifa como el panel (con updatedAt)', async () => {
+    await assertSucceeds(setDoc(ref(), rule({ updatedAt: serverTimestamp() })));
+  });
+
+  // C3: el documento es público; quién la cambió va solo en admin_logs.
+  test('rechaza updatedBy (uid del admin a la vista de todos)', async () => {
+    await assertFails(setDoc(ref(), rule({ updatedAt: serverTimestamp(), updatedBy: 'admin' })));
+    await assertFails(updateDoc(ref(), { updatedBy: 'admin' }));
   });
 
   test.each([

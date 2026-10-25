@@ -81,7 +81,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `rides/{id}`: Colección heredada sin uso (H7): solo el admin lee los documentos que queden; nadie escribe. r1: de ana con asig; bloqueado: rBloq.
 - `payments/{id}`: Pago de ana (reserva fin). Cobros y reembolsos los hace el servidor; el admin registra cobros manuales.
 - `vehicles/{id}`: Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8).
-- `pricingRules/{id}`: Tarifas públicas (la web las muestra sin sesión); solo el admin las edita.
+- `pricingRules/{id}`: Tarifas públicas (la web las muestra sin sesión); solo el admin las edita. Sin campos internos ni `updatedBy`: quién la cambió va solo en admin_logs (C3).
 - `config/global`: Estado operativo público. Listar la colección incluye config/security: nadie (A8.9). Nadie la borra (H9).
 - `config/finance`: Comisión y parámetros internos: solo el admin. Borrarla se deniega también al admin (la regla valida el documento resultante).
 - `config/ops`: Tiempos del SOS, retención y radio de llegada: el admin la lee; se edita en la consola (A8.9).
@@ -120,7 +120,7 @@ Revisión A8 (rama cierre/identidad):
 | A8.5 | `driverProfiles` × dueño × campos nuevos | **Cerrado.** Lista blanca de campos del dueño (tabla abajo). |
 | A8.6 | `bookings` × dueño × cancelar/valorar | Campo por campo ya cerrado; se acotan `updatedAt` (hora cercana a la del servidor) y `riderComment` (texto ≤ 1000). |
 | A8.7 | `bookings/{id}/events` × pasajero y chófer × leer | **Corregido.** El motivo del admin y `farFromPickup`/`arrivalCheck` pasan a `eventDetails` (solo admin); migración para los eventos ya escritos. |
-| A8.8 | `pricingRules` × público × leer | Sin campos internos; lista blanca de campos. Queda `updatedBy` (uid del admin, público): **pendiente de decisión** porque el panel lo muestra. |
+| A8.8 | `pricingRules` × público × leer | Sin campos internos; lista blanca de campos. `updatedBy` (uid del admin, público) retirado en C3: las reglas lo rechazan, el panel ya no lo escribe ni lo muestra (quién cambió la tarifa está en admin_logs) y `npm run migrate:pricing-updated-by` lo borra de los documentos existentes. Tests: `pricingRules.rules.ts`, `pricing_updated_by.int.ts`. |
 | A8.9 | `config/global` × público × leer | **Corregido.** Las claves de operación pasan a `config/ops` (solo admin lee) y la seguridad irá en `config/security` (nadie). |
 
 La revisión de todas las celdas permitidas, con ⚠ en las que parecen más

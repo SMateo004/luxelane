@@ -304,7 +304,8 @@ export const SPECS: Spec[] = [
     }),
     update: () => ({ basePriceUsd: 2 }),
     expect: { ...allRoles('SSNNN'), admin: 'SSSSS' },
-    note: 'Tarifas públicas (la web las muestra sin sesión); solo el admin las edita.',
+    note: 'Tarifas públicas (la web las muestra sin sesión); solo el admin las edita. Sin campos internos ni ' +
+      '`updatedBy`: quién la cambió va solo en admin_logs (C3).',
   },
   {
     name: 'config/global',

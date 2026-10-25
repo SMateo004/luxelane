@@ -415,7 +415,7 @@ class AdminRepositoryImpl implements AdminRepository {
         ...rule.toJson(),
         'id': id,
         'updatedAt': FieldValue.serverTimestamp(),
-        'updatedBy': _auth.currentUser?.uid,
+        // Quién la cambió va solo en admin_logs (el documento es público).
       });
       _log(
         batch,

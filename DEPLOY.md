@@ -656,6 +656,20 @@ chófer registra su dispositivo (`registerDriverDevice`, sin bloqueo).
    advanceBooking, verifyPickup) y las escrituras de admin en las reglas
    exigen el segundo factor (`mfa_required`).
 
+### pricingRules sin `updatedBy` (C3)
+
+Las reglas nuevas rechazan `updatedBy` en pricingRules (era el uid del
+admin, a la vista de cualquiera). El panel anterior lo sigue enviando, así
+que el orden importa:
+
+1. Publicar el panel nuevo (ya no lo escribe).
+2. Desplegar las reglas.
+3. `cd functions && npm run migrate:pricing-updated-by -- --project <id>
+   --operator "<quién>"` (DRY-RUN); revisar la lista y repetir con
+   `--apply` (en producción, además
+   `--i-understand-this-writes-to-production-luxelane-4e7ae`). Deja una
+   entrada en admin_logs por documento, con el uid anterior.
+
 ### Procedimiento de emergencia (antes de activar mfaEnforced)
 
 - **Requisito**: al menos dos admins con TOTP activado y probado (que

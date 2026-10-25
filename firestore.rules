@@ -511,7 +511,7 @@ service cloud.firestore {
     function validFare(d) {
       return d.keys().hasOnly(['id', 'vehicleClass', 'serviceType',
           'basePriceUsd', 'pricePerKmUsd', 'pricePerHourUsd',
-          'minimumPriceUsd', 'isActive', 'updatedAt', 'updatedBy']) &&
+          'minimumPriceUsd', 'isActive', 'updatedAt']) &&
         d.basePriceUsd is number && d.basePriceUsd >= 0 &&
         d.pricePerKmUsd is number && d.pricePerKmUsd >= 0 &&
         d.pricePerHourUsd is number && d.pricePerHourUsd >= 0 &&
