@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
+import '../admin_operations.dart';
 
 abstract class AdminRepository {
   Stream<List<Booking>> watchAllBookings();
@@ -88,6 +89,15 @@ abstract class AdminRepository {
     String vehicleNote = '',
   });
   Future<Either<Failure, void>> toggleUserStatus(String userId, bool active);
+
+  /// Cambia licencia o datos sensibles del vehículo a petición del chófer,
+  /// con su motivo en admin_logs.
+  Future<Either<Failure, void>> updateDriverDocuments(
+    DriverProfile profile,
+    Vehicle? vehicle,
+    DriverDocumentsEdit edit,
+    String reason,
+  );
   Future<Either<Failure, void>> toggleVehicleStatus(
     String vehicleId,
     bool active,

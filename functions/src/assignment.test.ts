@@ -16,6 +16,15 @@ describe('rankCandidates', () => {
     ).toEqual(['c']);
   });
 
+  it('descarta chóferes con la cuenta bloqueada (H10)', () => {
+    expect(
+      rankCandidates([
+        { driverId: 'bloq', isAvailable: true, documentsVerified: true, isActive: false },
+        { driverId: 'ok', isAvailable: true, documentsVerified: true, isActive: true },
+      ]),
+    ).toEqual(['ok']);
+  });
+
   it('ordena por cercanía a la recogida; sin ubicación al final', () => {
     expect(
       rankCandidates(

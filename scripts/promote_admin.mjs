@@ -1,47 +1,40 @@
-const { initializeApp } = require('firebase-admin/app');
-const { getFirestore } = require('firebase-admin/firestore');
-const { getAuth } = require('firebase-admin/auth');
+#!/usr/bin/env node
+/*
+ * Nombra administrador a una cuenta existente (B9): custom claim `role`,
+ * users/{uid}.role, sesiones revocadas y entrada en admin_logs.
+ *
+ * DRY-RUN por defecto: solo escribe con --apply. Exige --project (no hay
+ * proyecto por defecto) y se niega a tocar luxelane-4e7ae salvo con
+ * --i-understand-this-writes-to-production-luxelane-4e7ae.
+ *
+ *   cd functions && npm run build && cd ..
+ *   node scripts/promote_admin.mjs --project staging --email persona@ejemplo.com \
+ *     --reason "primer admin del piloto" --operator "Nombre Apellido"          # dry-run
+ *   node scripts/promote_admin.mjs … --apply                                    # escribe
+ *
+ * Con FIRESTORE_EMULATOR_HOST y FIREBASE_AUTH_EMULATOR_HOST trabaja contra
+ * los emuladores. Credenciales: las de Application Default Credentials.
+ */
+import { createRequire } from 'node:module';
 
-// Initialize with default credentials (uses GOOGLE_APPLICATION_CREDENTIALS or ADC)
-const app = initializeApp({ projectId: 'luxelane-4e7ae' });
-const db = getFirestore(app);
-const auth = getAuth(app);
+// firebase-admin y el código compilado viven en functions/.
+const require = createRequire(new URL('../functions/package.json', import.meta.url));
+const admin = require('firebase-admin');
+const { checkTarget } = require('./lib/migrations/production_guard.js');
+const { parsePromoteArgs, promoteAdmin } = require('./lib/migrations/promote_admin.js');
 
-async function promoteAdmin() {
-  const email = 'admin@luxelane.com';
-  
-  try {
-    console.log(`Looking up user: ${email}`);
-    const userRecord = await auth.getUserByEmail(email);
-    const uid = userRecord.uid;
-    console.log(`Found user UID: ${uid}`);
-    
-    const docRef = db.collection('users').doc(uid);
-    const doc = await docRef.get();
-    
-    if (!doc.exists) {
-      console.error('User document NOT found in Firestore users collection!');
-      console.log('The user exists in Firebase Auth but has no Firestore profile.');
-      process.exit(1);
-    }
-    
-    const data = doc.data();
-    console.log(`Current role: ${data.role}`);
-    
-    await docRef.update({ role: 'admin', isVerified: true });
-    console.log('✅ Successfully updated role to "admin" and verified the account!');
-    
-    const updated = await docRef.get();
-    console.log(`New role: ${updated.data().role}`);
-    
-  } catch (err) {
-    if (err.code === 'auth/user-not-found') {
-      console.error('User not found in Firebase Auth. Have you registered with this email?');
-    } else {
-      console.error('Error:', err.message);
-    }
-    process.exit(1);
-  }
+async function main() {
+  const argv = process.argv.slice(2);
+  const { project, apply, production } = checkTarget(argv, process.env.FIRESTORE_EMULATOR_HOST);
+  const args = parsePromoteArgs(argv);
+  console.log(`Proyecto: ${project}${production ? ' (PRODUCCIÓN)' : ''}`);
+  console.log(`Modo: ${apply ? 'APLICAR (escribe)' : 'DRY-RUN (no escribe nada)'}`);
+  admin.initializeApp({ projectId: project });
+  const plan = await promoteAdmin({ db: admin.firestore(), auth: admin.auth() }, args, apply);
+  console.log(`Cuenta ${plan.uid}: rol ${plan.fromRole ?? '(ninguno)'}, claim ${plan.fromClaim ?? '(ninguno)'} → admin`);
+  if (!plan.changes) console.log('Ya es admin: no hay nada que cambiar.');
+  else console.log(apply ? 'Hecho: claim, documento, sesiones revocadas y auditoría.'
+    : 'DRY-RUN: no se escribió nada. Repite con --apply para aplicar.');
 }
 
-promoteAdmin().then(() => process.exit(0));
+main().then(() => process.exit(0)).catch((e) => { console.error(`Error: ${e.message}`); process.exit(1); });

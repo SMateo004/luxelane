@@ -3,8 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
+import '../../../auth/presentation/widgets/mfa_reminder_banner.dart';
+import '../../../auth/presentation/widgets/reauth_dialog.dart';
 import '../../domain/admin_finance.dart';
 import '../bloc/admin_bloc.dart';
 import '../widgets/admin_alerts_tab.dart';
@@ -117,7 +120,9 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
         // Un único punto de avisos para todas las secciones.
         listenWhen: (a, b) => a.messageSeq != b.messageSeq,
         listener: (context, state) {
-          if (state.error != null) {
+          if (state.error == kReauthRequiredMessage) {
+            confirmIdentityThenRetry(context);
+          } else if (state.error != null) {
             showLuxSnackbar(context, state.error!, isError: true);
           } else if (state.successMessage != null) {
             showLuxSnackbar(context, state.successMessage!);
@@ -325,6 +330,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           children: [
             // SOS: siempre arriba, en cualquier sección.
             const AdminIncidentsStrip(),
+            // Fase 1 del segundo factor: aviso hasta darlo de alta.
+            BlocBuilder<AuthBloc, AuthState>(
+              builder: (context, auth) => auth is AuthAuthenticated
+                  ? MfaReminderBanner(accountName: auth.user.email)
+                  : const SizedBox.shrink(),
+            ),
             if (state.loadError != null)
               MaterialBanner(
                 backgroundColor: LuxColors.error.withValues(alpha: 0.08),

@@ -351,6 +351,8 @@ Failure bookingFailureFor(String code, Object? details) {
   if (reason == 'price_changed' && d['price'] is num) {
     return PriceChangedFailure((d['price'] as num).toDouble());
   }
+  if (reason == 'email_not_verified') return const EmailNotVerifiedFailure();
+  if (reason == 'terms_required') return const TermsRequiredFailure();
   if (reason == 'app_update_required') {
     return AppUpdateRequiredFailure(
       androidStoreUrl: d['androidStoreUrl'] as String?,

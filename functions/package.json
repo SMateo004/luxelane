@@ -6,6 +6,11 @@
     "serve": "npm run build && firebase emulators:start --only functions",
     "deploy": "firebase deploy --only functions",
     "migrate:booking-pii": "npm run build && node scripts/migrate-booking-pii.js",
+    "migrate:event-details": "npm run build && node scripts/migrate-event-details.js",
+    "migrate:pricing-updated-by": "npm run build && node scripts/migrate-pricing-updated-by.js",
+    "backfill:role-claims": "npm run build && node scripts/backfill-role-claims.js",
+    "promote:admin": "npm run build && node ../scripts/promote_admin.mjs",
+    "reset:mfa": "npm run build && node ../scripts/reset_mfa.mjs",
     "trips:in-flight": "npm run build && node scripts/trips-in-flight.js"
   },
   "main": "lib/index.js",

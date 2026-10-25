@@ -10,7 +10,7 @@
  * la escalada (sigue hasta que un admin la reconozca y cierre con nota) y
  * sí detiene la publicación de su ubicación.
  *
- * Los tiempos de escalada son de operación (config/global), con valores
+ * Los tiempos de escalada son de operación (config/ops), con valores
  * por defecto documentados en DEPLOY.md; no son valores de negocio.
  */
 import * as admin from 'firebase-admin';
@@ -18,6 +18,7 @@ import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
 import { docId } from './schemas';
 import { logger } from './logger';
+import { opsConfig } from './ops_config';
 
 export type PushFn = (tokens: string[], title: string, body: string, data: Record<string, string>) => Promise<void>;
 
@@ -37,7 +38,7 @@ export const NEEDS_ACK = ['open', 'cancel_requested'];
 export const RATE_LIMIT = 5;
 export const RATE_WINDOW_MS = 60 * 60 * 1000;
 /**
- * Claves de config/global del SOS. Una clave mal escrita en el código haría
+ * Claves de config/ops del SOS (antes en config/global). Una clave mal escrita en el código haría
  * que la configuración del responsable no tuviera efecto, sin aviso: por eso
  * hay un test que las compara con DEPLOY.md.
  */
@@ -111,9 +112,9 @@ function releaseState(tx: admin.firestore.Transaction, db: admin.firestore.Fires
   });
 }
 
-/** Retención de las ubicaciones al dejar de compartirse (config/global). */
+/** Retención de las ubicaciones al dejar de compartirse (config/ops). */
 async function retentionFields(db: admin.firestore.Firestore, at: number): Promise<Record<string, unknown>> {
-  const days = (await db.collection('config').doc('global').get()).data()?.[INCIDENT_CONFIG_KEYS.locationRetentionDays];
+  const days = (await opsConfig(db))[INCIDENT_CONFIG_KEYS.locationRetentionDays];
   if (typeof days === 'number' && days > 0) {
     return { locationRetentionDays: days, deleteLocationsAfter: ts(at + days * 86400000), locationsPurged: false };
   }
@@ -352,9 +353,9 @@ function seconds(v: unknown, fallback: number): number {
 export async function escalateIncidents(deps: IncidentDeps): Promise<string[]> {
   const db = deps.db;
   const at = nowMs(deps);
-  const global = (await db.collection('config').doc('global').get()).data() ?? {};
-  const ackMs = seconds(global[INCIDENT_CONFIG_KEYS.ackSeconds], DEFAULT_ACK_SECONDS) * 1000;
-  const everyMs = seconds(global[INCIDENT_CONFIG_KEYS.escalateEverySeconds], DEFAULT_ESCALATE_EVERY_SECONDS) * 1000;
+  const ops = await opsConfig(db);
+  const ackMs = seconds(ops[INCIDENT_CONFIG_KEYS.ackSeconds], DEFAULT_ACK_SECONDS) * 1000;
+  const everyMs = seconds(ops[INCIDENT_CONFIG_KEYS.escalateEverySeconds], DEFAULT_ESCALATE_EVERY_SECONDS) * 1000;
   const open = await db.collection('incidents').where('status', 'in', NEEDS_ACK).get();
   const escalated: string[] = [];
   for (const doc of open.docs) {

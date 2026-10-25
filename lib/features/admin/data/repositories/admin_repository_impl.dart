@@ -133,9 +133,18 @@ class AdminRepositoryImpl implements AdminRepository {
       events,
     ) async {
       final locations = await ref.collection('eventLocations').get();
+      final details = await ref.collection('eventDetails').get();
       final byId = {for (final d in locations.docs) d.id: d.data()};
+      final detailById = {for (final d in details.docs) d.id: d.data()};
       return events.docs
-          .map((d) => BookingEvent.fromJson(d.id, d.data(), byId[d.id]))
+          .map(
+            (d) => BookingEvent.fromJson(
+              d.id,
+              d.data(),
+              byId[d.id],
+              detailById[d.id],
+            ),
+          )
           .toList();
     });
   }
@@ -373,6 +382,9 @@ class AdminRepositoryImpl implements AdminRepository {
     return switch (functionErrorReason(e.details)) {
       'not_captured' => 'Solo se pueden reembolsar pagos cobrados',
       'payment_failed' => 'El procesador de pagos rechazó la operación',
+      'cannot_change_own_role' => 'No puedes cambiar tu propio rol',
+      'cannot_block_self' => 'No puedes bloquear tu propia cuenta',
+      'user_not_found' => 'No se encontró el usuario',
       _ => e.code == 'permission-denied'
           ? 'Permiso denegado: se necesita rol de administrador'
           : functionErrorMessage(e.code, e.details),
@@ -403,7 +415,7 @@ class AdminRepositoryImpl implements AdminRepository {
         ...rule.toJson(),
         'id': id,
         'updatedAt': FieldValue.serverTimestamp(),
-        'updatedBy': _auth.currentUser?.uid,
+        // Quién la cambió va solo en admin_logs (el documento es público).
       });
       _log(
         batch,
@@ -732,9 +744,43 @@ class AdminRepositoryImpl implements AdminRepository {
         const Left(ValidationFailure('No puedes bloquear tu propia cuenta')),
       );
     }
+    // El servidor deshabilita la cuenta en Auth, revoca sus sesiones, marca
+    // isActive y audita (B3).
+    return _call('setUserBlocked', {'uid': userId, 'blocked': !active});
+  }
+
+  @override
+  Future<Either<Failure, void>> updateDriverDocuments(
+    DriverProfile profile,
+    Vehicle? vehicle,
+    DriverDocumentsEdit edit,
+    String reason,
+  ) {
+    final profileChanges = edit.profileChanges(profile);
+    final vehicleChanges = edit.vehicleChanges(vehicle);
+    if (profileChanges.isEmpty && vehicleChanges.isEmpty) {
+      return Future.value(const Left(ValidationFailure('No hay cambios.')));
+    }
     return _run((batch) async {
-      batch.update(_db.collection('users').doc(userId), {'isActive': active});
-      _log(batch, active ? 'unblock_user' : 'block_user', userId, 'user');
+      if (profileChanges.isNotEmpty) {
+        batch.update(_driver(profile.userId), profileChanges);
+      }
+      if (vehicleChanges.isNotEmpty) {
+        batch.update(
+          _db.collection('vehicles').doc(vehicle!.id),
+          vehicleChanges,
+        );
+      }
+      // Qué campos cambiaron y por qué; los valores quedan en los documentos.
+      _log(
+        batch,
+        'update_driver_documents',
+        profile.userId,
+        'driver',
+        details: 'Campos: '
+            '${[...profileChanges.keys, ...vehicleChanges.keys].join(', ')}'
+            ' · Motivo: ${reason.trim()}',
+      );
     });
   }
 
@@ -805,16 +851,26 @@ class AdminRepositoryImpl implements AdminRepository {
         ),
       );
     }
-    return _run((batch) async {
-      batch.update(_db.collection('users').doc(userId), {'role': role.name});
-      _log(
-        batch,
-        'update_role',
-        userId,
-        'user',
-        details: 'Rol → ${role.displayLabel}',
+    // El servidor fija el claim, el documento, revoca las sesiones del
+    // afectado y deja la auditoría (B2).
+    return _call('setUserRole', {'uid': userId, 'role': role.name});
+  }
+
+  /// Llama a una callable de administración y traduce su error.
+  Future<Either<Failure, void>> _call(
+    String name,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      await _functions.httpsCallable(name).call<void>(data);
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      return Left(ServerFailure(_fnError(e)));
+    } catch (_) {
+      return const Left(
+        ServerFailure('Sin conexión con el servidor; inténtalo de nuevo'),
       );
-    });
+    }
   }
 }
 

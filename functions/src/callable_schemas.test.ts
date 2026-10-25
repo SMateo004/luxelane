@@ -9,6 +9,8 @@ import { quoteSchema, createSchema } from './booking_schema';
 import { advanceSchema, pickupCodeSchema, verifySchema, overrideSchema } from './trip_flow';
 import { raiseSchema, incidentIdSchema, closeSchema } from './incidents';
 import { resolveSchema } from './alerts';
+import { leadSchema } from './business_leads';
+import { deviceSchema } from './driver_devices';
 import { callableSchemas as c } from './schemas';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,7 +33,18 @@ interface Case {
   extreme: unknown[];
 }
 
+const lead = {
+  company: 'Empresa SA', contactName: 'Laura', email: 'laura@example.com',
+  phone: '+59170000000', travellers: '11–50', message: 'Hola',
+};
+
 const CASES: Record<string, Case> = {
+  submitBusinessLead: {
+    schema: leadSchema, valid: lead,
+    wrongType: { ...lead, travellers: 20 },
+    extreme: [{ ...lead, company: 'x'.repeat(121) }, { ...lead, message: 'x'.repeat(2001) },
+      { ...lead, email: 'no-es-correo' }, { ...lead, travellers: '1-10000' }, { ...lead, website: 'x'.repeat(201) }],
+  },
   quoteBooking: {
     schema: quoteSchema, valid: trip,
     wrongType: { ...trip, scheduledAt: '2030-01-01' },
@@ -87,6 +100,13 @@ const CASES: Record<string, Case> = {
     wrongType: { incidentId: ID, note: 10 },
     extreme: [{ incidentId: ID, note: 'x'.repeat(1001) }, { incidentId: ID, note: 'corta' }],
   },
+  registerDriverDevice: {
+    schema: deviceSchema, valid: { installationId: 'a'.repeat(8) + '-' + 'b'.repeat(27), platform: 'android', appVersion: '1.0.0' },
+    wrongType: { installationId: 1, platform: 'android', appVersion: '1' },
+    extreme: [{ installationId: 'corto', platform: 'android', appVersion: '1' },
+      { installationId: 'x'.repeat(65), platform: 'android', appVersion: '1' },
+      { installationId: 'a'.repeat(36), platform: 'windows', appVersion: '1' }],
+  },
   resolveAlert: {
     schema: resolveSchema, valid: { alertId: ID },
     wrongType: { alertId: ID, note: {} }, extreme: [{ alertId: ID, note: 'x'.repeat(501) }, { alertId: LONG_ID }],
@@ -123,6 +143,19 @@ const CASES: Record<string, Case> = {
     wrongType: { paymentMethodId: 1 }, extreme: [{ paymentMethodId: 'card_1' }],
   },
   deleteAccount: { schema: c.deleteAccount, valid: null, wrongType: 'borrar', extreme: [[]] },
+  syncEmailVerification: { schema: c.syncEmailVerification, valid: null, wrongType: 'sí', extreme: [[]] },
+  acceptTerms: {
+    schema: c.acceptTerms, valid: { version: '2026-10', appVersion: '1.0.0' },
+    wrongType: { appVersion: 1 }, extreme: [{ appVersion: 'x'.repeat(41) }, { version: '', appVersion: '1.0.0' }],
+  },
+  setUserBlocked: {
+    schema: c.setUserBlocked, valid: { uid: ID, blocked: true, reason: 'Reclamo grave' },
+    wrongType: { uid: ID, blocked: 'sí' }, extreme: [{ uid: ID, blocked: true, reason: 'x'.repeat(501) }, { uid: LONG_ID, blocked: false }],
+  },
+  setUserRole: {
+    schema: c.setUserRole, valid: { uid: ID, role: 'driver' },
+    wrongType: { uid: ID, role: 1 }, extreme: [{ uid: ID, role: 'superadmin' }, { uid: LONG_ID, role: 'rider' }],
+  },
   ensureStripeCustomer: { schema: c.ensureStripeCustomer, valid: {}, wrongType: 1, extreme: [[]] },
   backfillSettlements: { schema: c.backfillSettlements, valid: undefined, wrongType: true, extreme: [[]] },
   assignNearestDriver: {

@@ -206,6 +206,16 @@ class BookingPriceChanged extends BookingState {
   List<Object?> get props => [previousPrice, newPrice];
 }
 
+/// Reservar exige el correo verificado.
+class BookingEmailNotVerified extends BookingState {
+  const BookingEmailNotVerified();
+}
+
+/// Reservar exige aceptar los términos vigentes.
+class BookingTermsRequired extends BookingState {
+  const BookingTermsRequired();
+}
+
 /// La app es más vieja que la versión mínima: no se puede reservar.
 class BookingUpdateRequired extends BookingState {
   const BookingUpdateRequired(this.failure);
@@ -282,6 +292,8 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
             request: event,
           ),
         AppUpdateRequiredFailure() => BookingUpdateRequired(f),
+        EmailNotVerifiedFailure() => const BookingEmailNotVerified(),
+        TermsRequiredFailure() => const BookingTermsRequired(),
         _ => BookingError(f.message),
       }),
       (b) => emit(BookingCreated(b)),

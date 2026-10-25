@@ -23,10 +23,12 @@ import '../../../../core/services/pricing_catalog.dart';
 import '../../../../core/utils/service_area.dart';
 import '../../../../core/widgets/app_update_dialog.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../core/widgets/email_not_verified_dialog.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/lux_raised.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/google_sign_in_button.dart';
+import '../../../auth/presentation/widgets/terms_required_dialog.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../../payments/presentation/bloc/payment_bloc.dart';
 import '../bloc/booking_bloc.dart';
@@ -552,6 +554,12 @@ class _BookingScreenState extends State<BookingScreen> {
   void _createBooking() {
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) return;
+    // Sin el correo verificado el servidor no reserva: se avisa antes.
+    if (sl<AuthRepository>().needsEmailVerification) {
+      setState(() => _loading = false);
+      EmailNotVerifiedDialog.show(context);
+      return;
+    }
     final origin = _formData!.origin;
     // Por horas sin destino fijo: se guarda la recogida como referencia (con
     // coordenadas reales) en lugar de un lugar inventado en (0,0).
@@ -661,6 +669,14 @@ class _BookingScreenState extends State<BookingScreen> {
             if (state is BookingUpdateRequired) {
               setState(() => _loading = false);
               AppUpdateDialog.show(ctx, state.failure);
+            }
+            if (state is BookingEmailNotVerified) {
+              setState(() => _loading = false);
+              EmailNotVerifiedDialog.show(ctx);
+            }
+            if (state is BookingTermsRequired) {
+              setState(() => _loading = false);
+              TermsRequiredDialog.show(ctx);
             }
             if (state is BookingPriceChanged) {
               setState(() => _loading = false);

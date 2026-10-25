@@ -9,7 +9,10 @@ import * as bookingService from './booking_service';
 import { reconcileOpenRequests } from './reconcile';
 import { resolveAdminAlert } from './alerts';
 import * as tripFlow from './trip_flow';
+import * as businessLeads from './business_leads';
+import * as identity from './identity';
 import * as incidents from './incidents';
+import { deviceSchema, registerDriverDevice as registerDriverDeviceService } from './driver_devices';
 import { isTransient, withRetryPolicy } from './retry_policy';
 import * as stripe from './stripe_service';
 import { logger } from './logger';
@@ -39,8 +42,50 @@ export const quoteBooking = secureCallable('quoteBooking', { secrets: [MAPS_SERV
   bookingService.quoteBooking(bookingDeps(), req.auth?.uid, req.data));
 
 /** Única forma de crear una reserva: con precio del servidor y su solicitud abierta. */
-export const createBooking = secureCallable('createBooking', { secrets: [MAPS_SERVER_KEY] }, (req) =>
-  bookingService.createBooking(bookingDeps(), req.auth?.uid, req.data));
+export const createBooking = secureCallable('createBooking', { secrets: [MAPS_SERVER_KEY] }, async (req) => {
+  // Con sesión, reservar exige el correo verificado (decisión 1, H6) y los
+  // términos vigentes aceptados (decisión 7).
+  if (req.auth) {
+    identity.requireVerifiedEmail(req.auth.token as unknown as Record<string, unknown>);
+    await identity.requireCurrentTerms(db, req.auth.uid);
+  }
+  return bookingService.createBooking(bookingDeps(), req.auth?.uid, req.data);
+});
+
+const identityDeps = (): identity.IdentityDeps => ({ db, auth: identity.realAuth() });
+
+/** Operaciones sensibles: inicio de sesión de hace menos de 5 minutos (decisión 6). */
+const RECENT_AUTH_SECONDS = 5 * 60;
+
+/** Cambia el rol de un usuario: claim, documento, sesiones revocadas y auditoría. */
+export const setUserRole = secureCallable('setUserRole', {}, async (req) => {
+  const input = parseInput(schema.setUserRole, req.data);
+  return identity.setUserRole(identityDeps(), await adminActor(req), input);
+}, { role: 'admin' });
+
+/** Bloquea o desbloquea: Auth deshabilitado, sesiones revocadas, isActive y auditoría. */
+export const setUserBlocked = secureCallable('setUserBlocked', {}, async (req) => {
+  const input = parseInput(schema.setUserBlocked, req.data);
+  return identity.setUserBlocked(identityDeps(), await adminActor(req), input);
+}, { role: 'admin' });
+
+/** La app la llama tras verificar el correo: el servidor lo comprueba en Auth. */
+export const syncEmailVerification = secureCallable('syncEmailVerification', {}, (req) => {
+  parseInput(schema.syncEmailVerification, req.data);
+  return identity.syncEmailVerification(identityDeps(), requireAuth(req));
+});
+
+/** El chófer anota su dispositivo (decisión 5): sin bloqueo, con aviso al admin. */
+export const registerDriverDevice = secureCallable('registerDriverDevice', {}, (req) => {
+  const input = parseInput(deviceSchema, req.data);
+  return registerDriverDeviceService(db, requireAuth(req), input);
+}, { role: 'driver' });
+
+/** Aceptación de los términos: versión vigente, hora del servidor y versión de la app. */
+export const acceptTerms = secureCallable('acceptTerms', {}, (req) => {
+  const input = parseInput(schema.acceptTerms, req.data);
+  return identity.acceptTerms(db, requireAuth(req), input);
+});
 
 // ---------------------------------------------------------------------------
 // Pasos del viaje desde la recogida (D1): solo el servidor cambia el estado
@@ -48,12 +93,19 @@ export const createBooking = secureCallable('createBooking', { secrets: [MAPS_SE
 
 // Secreto del código de recogida (HMAC). Sin él no hay códigos: falla cerrado.
 const PICKUP_CODE_SECRET = defineSecret('PICKUP_CODE_SECRET');
+// Sal del HMAC con que se seudonimiza la IP del formulario de empresas.
+const RATE_LIMIT_SALT = defineSecret('RATE_LIMIT_SALT');
+
+/** Formulario de empresas, también sin sesión (H5). */
+export const submitBusinessLead = secureCallable('submitBusinessLead', { secrets: [RATE_LIMIT_SALT] }, (req) =>
+  businessLeads.submitBusinessLead({ db, salt: RATE_LIMIT_SALT.value() }, req as unknown as businessLeads.LeadRequest));
+
 
 const tripDeps = (): tripFlow.TripDeps => ({ db, pickupSecret: PICKUP_CODE_SECRET.value() });
 
 /** Único camino del chófer: en camino, llegué, iniciar y completar. */
 export const advanceBooking = secureCallable('advanceBooking', {}, (req) =>
-  tripFlow.advanceBooking({ db }, req.auth?.uid, req.data));
+  tripFlow.advanceBooking({ db }, req.auth?.uid, req.data), { requireMfa: true });
 
 /** El pasajero de la reserva ve su código mientras el chófer espera. */
 export const getPickupCode = secureCallable('getPickupCode', { secrets: [PICKUP_CODE_SECRET] }, (req) =>
@@ -61,7 +113,7 @@ export const getPickupCode = secureCallable('getPickupCode', { secrets: [PICKUP_
 
 /** El chófer asignado comprueba el código: driver_arrived → verified. */
 export const verifyPickup = secureCallable('verifyPickup', { secrets: [PICKUP_CODE_SECRET] }, (req) =>
-  tripFlow.verifyPickup(tripDeps(), req.auth?.uid, req.data));
+  tripFlow.verifyPickup(tripDeps(), req.auth?.uid, req.data), { requireMfa: true });
 
 /** Excepción del admin, con motivo: deja la reserva verificada y avisa. */
 export const adminOverrideVerify = secureCallable('adminOverrideVerify', {}, async (req) => {
@@ -70,7 +122,7 @@ export const adminOverrideVerify = secureCallable('adminOverrideVerify', {}, asy
     adminId,
     adminEmail: (req.auth?.token.email as string | undefined) ?? null,
   }, req.data);
-});
+}, { role: 'admin' });
 
 // ---------------------------------------------------------------------------
 // SOS e incidentes (D1, F9)
@@ -97,13 +149,15 @@ export const raiseIncident = secureCallable('raiseIncident', {}, (req) => incide
 export const cancelIncident = secureCallable('cancelIncident', {}, (req) => incidents.cancelIncident(incidentDeps(), req.auth?.uid, req.data));
 
 export const acknowledgeIncident = secureCallable('acknowledgeIncident', {}, async (req) =>
-  incidents.acknowledgeIncident(incidentDeps(), await adminActor(req), req.data));
+  incidents.acknowledgeIncident(incidentDeps(), await adminActor(req), req.data),
+{ role: 'admin', skipAdminSessionLimit: true });
 
 /** Cierre con nota obligatoria (mínimo 10 caracteres). */
 export const closeIncident = secureCallable('closeIncident', {}, async (req) =>
-  incidents.closeIncident(incidentDeps(), await adminActor(req), req.data));
+  incidents.closeIncident(incidentDeps(), await adminActor(req), req.data),
+{ role: 'admin', skipAdminSessionLimit: true });
 
-/** Reenvía alerta y push de los incidentes sin reconocer (config/global). */
+/** Reenvía alerta y push de los incidentes sin reconocer (config/ops). */
 export const escalateIncidentsJob = onSchedule('every 1 minutes', async () => {
   await incidents.escalateIncidents(incidentDeps());
 });
@@ -150,14 +204,6 @@ interface BookingDoc {
   settlement?: Settlement;
 }
 
-interface RideDoc {
-  bookingId: string;
-  riderId: string;
-  driverId: string;
-  completedAt?: admin.firestore.Timestamp;
-  distanceKm?: number;
-  durationMin?: number;
-}
 
 interface PaymentDoc {
   bookingId: string;
@@ -195,11 +241,10 @@ function vehicleClassLabel(vehicleClass: string | undefined): string {
   return (vehicleClass && VEHICLE_CLASS_LABELS[vehicleClass]) || 'Luxelane';
 }
 
+/** Admin por el claim `role` (o Firestore en la transición) y con la cuenta activa. */
 async function requireAdmin(req: CallableRequest): Promise<string> {
-  const uid = requireAuth(req);
-  const user = await db.collection('users').doc(uid).get();
-  if (user.data()?.role !== 'admin') throw err.permissionDenied('admin_required');
-  return uid;
+  requireAuth(req);
+  return identity.requireRole(db, req.auth as unknown as { uid: string; token: Record<string, unknown> }, 'admin');
 }
 
 async function sendPush(
@@ -467,7 +512,7 @@ export const refundPayment = secureCallable('refundPayment', withStripe, async (
     logger.error('refundPayment', 'stripe error', { error: String(e) });
     throw err.paymentFailed();
   }
-});
+}, { role: 'admin' });
 
 // ---------------------------------------------------------------------------
 // listPaymentMethods
@@ -516,7 +561,7 @@ export const setDefaultPaymentMethod = secureCallable('setDefaultPaymentMethod',
 
   await stripe.setDefaultPaymentMethod(owner, paymentMethodId);
   return { success: true };
-});
+}, { recentAuthSeconds: RECENT_AUTH_SECONDS });
 
 // ---------------------------------------------------------------------------
 // attachPaymentMethod
@@ -553,7 +598,7 @@ export const detachPaymentMethod = secureCallable('detachPaymentMethod', withStr
 
   await stripe.detachPaymentMethod(paymentMethodId);
   return { success: true };
-});
+}, { recentAuthSeconds: RECENT_AUTH_SECONDS });
 
 // ---------------------------------------------------------------------------
 // deleteAccount
@@ -619,7 +664,7 @@ export const deleteAccount = secureCallable('deleteAccount', withStripe, async (
   await admin.auth().deleteUser(uid);
   logger.info('deleteAccount', 'success', { uid });
   return { success: true };
-});
+}, { recentAuthSeconds: RECENT_AUTH_SECONDS });
 
 // ---------------------------------------------------------------------------
 // createStripeCustomer  (onCreate /users/{uid})
@@ -832,7 +877,7 @@ export const closeOpenRequest = onDocumentUpdated({ document: 'bookings/{booking
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
   const adminId = await requireAdmin(req);
   return resolveAdminAlert(db, { adminId, adminEmail: (req.auth?.token.email as string | undefined) ?? null }, req.data);
-});
+}, { role: 'admin', skipAdminSessionLimit: true });
 
 // Red de seguridad de openRequests: crea las que faltan, borra las
 // huérfanas y avisa al admin en adminAlerts.
@@ -908,7 +953,7 @@ export const applyRiderRating = onDocumentUpdated('bookings/{bookingId}', async 
 // ---------------------------------------------------------------------------
 // releaseDriver  (onUpdate /bookings/{bookingId})
 // Único punto que libera al chófer al cerrarse un viaje, lo cierre quien lo
-// cierre (chófer, pasajero, admin o el viaje en /rides), y que suma el viaje
+// cierre (chófer, pasajero o admin), y que suma el viaje
 // a su contador. Si el pasajero cancela, avisa al chófer.
 // ---------------------------------------------------------------------------
 
@@ -1018,23 +1063,7 @@ export const backfillSettlements = secureCallable('backfillSettlements', { timeo
   });
   logger.info('backfillSettlements', 'done', { scanned, settled });
   return { scanned, settled };
-});
-
-// ---------------------------------------------------------------------------
-// onRideCompleted  (onUpdate /rides/{rideId})
-// ---------------------------------------------------------------------------
-
-export const onRideCompleted = onDocumentUpdated('rides/{rideId}', async (event) => {
-  const before = event.data?.before.data() as RideDoc | undefined;
-  const after = event.data?.after.data() as RideDoc | undefined;
-
-  if (!before || !after) return;
-  if (before.completedAt || !after.completedAt) return;
-
-  // La reserva solo se completa desde in_progress con advanceBooking (D1):
-  // cerrar el viaje en /rides ya no la completa ni dispara el cobro.
-  logger.info('onRideCompleted', 'ride closed; booking untouched', { rideId: event.params.rideId, bookingId: after.bookingId });
-});
+}, { role: 'admin' });
 
 // ---------------------------------------------------------------------------
 // assignNearestDriver  (HTTPS Callable)
@@ -1070,7 +1099,12 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
     return { assigned: false, reason: 'no_drivers_available' };
   }
 
-  const profiles = await db.getAll(...driverIds.map((id) => db.collection('driverProfiles').doc(id)));
+  const [profiles, users] = await Promise.all([
+    db.getAll(...driverIds.map((id) => db.collection('driverProfiles').doc(id))),
+    db.getAll(...driverIds.map((id) => db.collection('users').doc(id))),
+  ]);
+  // Un chófer bloqueado no se asigna aunque su perfil diga disponible (H10).
+  const active = new Set(users.filter((u) => u.exists && u.data()?.isActive !== false).map((u) => u.id));
   const ranked = rankCandidates(
     profiles
       .filter((p) => p.exists)
@@ -1081,6 +1115,7 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
           driverId: p.id,
           isAvailable: d.isAvailable === true,
           documentsVerified: d.documentsVerified === true,
+          isActive: active.has(p.id),
           location: gp ? { lat: gp.latitude, lng: gp.longitude } : null,
         };
       }),
@@ -1094,9 +1129,11 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
   for (const driverId of ranked) {
     const driverRef = db.collection('driverProfiles').doc(driverId);
     const outcome = await db.runTransaction(async (tx) => {
-      const [b, d] = await Promise.all([tx.get(bookingRef), tx.get(driverRef)]);
+      const [b, d, u] = await Promise.all([
+        tx.get(bookingRef), tx.get(driverRef), tx.get(db.collection('users').doc(driverId)),
+      ]);
       if ((b.data() as BookingDoc | undefined)?.status !== 'pending') return 'taken';
-      if (!d.data()?.isAvailable) return 'busy';
+      if (!d.data()?.isAvailable || u.data()?.isActive === false) return 'busy';
       tx.update(bookingRef, {
         driverId,
         status: 'confirmed' as BookingStatus,
@@ -1178,7 +1215,7 @@ export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => 
     logger.error('acceptBooking', 'error', { error: String(e) });
     throw e;
   }
-});
+}, { requireMfa: true });
 
 // ---------------------------------------------------------------------------
 // scheduledCleanup  (daily)

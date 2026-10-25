@@ -13,6 +13,19 @@ import '../models/models.dart';
 const kBlockedAccountMessage =
     'Tu cuenta está bloqueada. Escríbenos a soporte si crees que es un error.';
 
+/// El chófer bloqueado: sin texto técnico, con a quién acudir.
+const kDriverSuspendedMessage = 'Cuenta suspendida. Contacta con central.';
+
+/// El mensaje de bloqueo según el rol de la cuenta.
+String blockedAccountMessage(UserRole role) =>
+    role == UserRole.driver ? kDriverSuspendedMessage : kBlockedAccountMessage;
+
+bool isBlockedAccountMessage(String message) =>
+    message == kBlockedAccountMessage || message == kDriverSuspendedMessage;
+
+/// Cómo puede volver a identificarse la cuenta actual (decisión 6).
+enum ReauthMethod { password, google, none }
+
 abstract class AuthRepository {
   Future<Either<Failure, User>> login({
     required String email,
@@ -37,11 +50,37 @@ abstract class AuthRepository {
   /// quedan viajes activos o reservados.
   Future<Either<Failure, void>> deleteAccount();
 
+  /// Anota en el servidor que la cuenta acepta los términos vigentes
+  /// (config/global.legalVersion), con la hora del servidor y la versión de
+  /// la app (decisión 7).
+  Future<Either<Failure, void>> acceptTerms();
+
+  /// Proveedor con el que la cuenta actual puede volver a identificarse.
+  ReauthMethod get reauthMethod;
+
+  /// Vuelve a identificar a la cuenta actual ([password] o, sin ella,
+  /// Google) y renueva el token, para que el servidor vea un inicio de
+  /// sesión reciente (reauth_required). Si la cuenta tiene segundo factor,
+  /// devuelve MfaRequiredFailure con el reto.
+  Future<Either<Failure, void>> reauthenticate({String? password});
+
   /// Perfil en vivo de [uid] (null si no existe), para reflejar cambios del
   /// admin o del servidor (bloqueo, cliente de pagos…) sin reiniciar.
   Stream<User?> watchUser(String uid);
+
+  /// Envía (o reenvía) el enlace de verificación del correo. Los errores
+  /// llegan como [EmailVerificationFailure].
   Future<Either<Failure, void>> sendVerificationEmail();
-  Future<Either<Failure, void>> sendPhoneVerification(String phone);
+
+  /// Recarga la cuenta y, si Auth da el correo por verificado, pide al
+  /// servidor que lo anote (syncEmailVerification). true si ya está.
+  Future<Either<Failure, bool>> refreshEmailVerification();
+
+  /// La cuenta actual entra con correo y contraseña y aún no lo verificó.
+  bool get needsEmailVerification;
+
+  // El teléfono se recoge pero NO se verifica: en el piloto no hay
+  // proveedor de SMS (decisión 1). No hay método de verificación.
   Future<Either<Failure, void>> resetPassword(String email);
   Future<Either<Failure, User>> getCurrentUser();
 
@@ -96,6 +135,13 @@ abstract class VehicleRepository {
   );
   Future<Either<Failure, void>> createVehicle(Vehicle vehicle);
   Future<Either<Failure, void>> updateVehicle(Vehicle vehicle);
+
+  /// Lo único que el chófer cambia de su vehículo: color y foto.
+  Future<Either<Failure, void>> updateVehicleAppearance(
+    String vehicleId, {
+    String? color,
+    String? photoUrl,
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -207,34 +253,6 @@ abstract class IncidentRepository {
   /// Ubicación en vivo mientras el incidente siga abierto (las reglas
   /// limitan la frecuencia y los campos).
   Future<void> publishLocation(String incidentId, double lat, double lng);
-}
-
-// ---------------------------------------------------------------------------
-// RideRepository
-// ---------------------------------------------------------------------------
-
-abstract class RideRepository {
-  Future<Either<Failure, Ride>> createRide(Ride ride);
-  Future<Either<Failure, Ride>> getRideById(String rideId);
-  Future<Either<Failure, Ride>> getRideByBooking(String bookingId);
-  Future<Either<Failure, List<Ride>>> getRidesByRider(String riderId);
-  Future<Either<Failure, List<Ride>>> getRidesByDriver(String driverId);
-  Future<Either<Failure, void>> appendRoutePoint({
-    required String rideId,
-    required double latitude,
-    required double longitude,
-  });
-  Future<Either<Failure, void>> completeRide({
-    required String rideId,
-    required double distanceKm,
-    required int durationMin,
-  });
-  Future<Either<Failure, void>> submitRating({
-    required String rideId,
-    required double rating,
-    required bool isRiderRating,
-  });
-  Stream<Ride> watchRide(String rideId);
 }
 
 // ---------------------------------------------------------------------------

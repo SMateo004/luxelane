@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/auth/mfa.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
@@ -55,15 +56,16 @@ class LogoutRequested extends AuthEvent {
   const LogoutRequested();
 }
 
-class VerificationEmailSent extends AuthEvent {
-  const VerificationEmailSent();
+/// El segundo paso (TOTP) terminó bien.
+class MfaSignInCompleted extends AuthEvent {
+  const MfaSignInCompleted(this.user);
+  final User user;
+  @override
+  List<Object?> get props => [user.id];
 }
 
-class PhoneVerificationRequested extends AuthEvent {
-  const PhoneVerificationRequested({required this.phone});
-  final String phone;
-  @override
-  List<Object?> get props => [phone];
+class VerificationEmailSent extends AuthEvent {
+  const VerificationEmailSent();
 }
 
 class PasswordResetRequested extends AuthEvent {
@@ -121,6 +123,12 @@ class AuthAuthenticated extends AuthState {
       ];
 }
 
+/// El inicio de sesión pide el código de la app autenticadora.
+class AuthMfaRequired extends AuthState {
+  const AuthMfaRequired(this.challenge);
+  final MfaChallenge challenge;
+}
+
 class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated();
 }
@@ -143,11 +151,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthStarted>(_onStarted);
     on<LoginRequested>(_onLogin);
     on<RegisterRequested>(_onRegister);
+    on<MfaSignInCompleted>(_onMfaCompleted);
     on<GoogleSignInRequested>(_onGoogleSignIn);
     on<LogoutRequested>(_onLogout);
     on<_AuthSignedOut>(_onSignedOut);
     on<VerificationEmailSent>(_onVerificationEmail);
-    on<PhoneVerificationRequested>(_onPhoneVerification);
     on<PasswordResetRequested>(_onPasswordReset);
     on<_AuthProfileChanged>(_onProfileChanged);
   }
@@ -179,7 +187,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _profileSub?.cancel();
       await _signOutSub?.cancel();
       await _repo.logout();
-      emit(const AuthError(kBlockedAccountMessage));
+      emit(AuthError(blockedAccountMessage(u.role)));
       return;
     }
     emit(AuthAuthenticated(u));
@@ -204,10 +212,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       onData: (user) =>
           user != null ? AuthAuthenticated(user) : const AuthUnauthenticated(),
       // Cuenta bloqueada al abrir la app: el login muestra el motivo.
-      onError: (e, __) =>
-          e is AuthFailure && e.message == kBlockedAccountMessage
-              ? const AuthError(kBlockedAccountMessage)
-              : const AuthUnauthenticated(),
+      onError: (e, __) => e is AuthFailure && isBlockedAccountMessage(e.message)
+          ? AuthError(e.message)
+          : const AuthUnauthenticated(),
     );
 
     final s = state;
@@ -229,10 +236,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       email: event.email,
       password: event.password,
     );
-    result.fold((f) => emit(AuthError(f.message)), (user) {
-      emit(AuthAuthenticated(user));
-      _watchSession(user.id);
-    });
+    result.fold(
+      (f) => emit(
+        f is MfaRequiredFailure
+            ? AuthMfaRequired(f.challenge)
+            : AuthError(f.message),
+      ),
+      (user) {
+        emit(AuthAuthenticated(user));
+        _watchSession(user.id);
+      },
+    );
+  }
+
+  void _onMfaCompleted(MfaSignInCompleted event, Emitter<AuthState> emit) {
+    emit(AuthAuthenticated(event.user));
+    _watchSession(event.user.id);
   }
 
   // ── _onRegister ────────────────────────────────────────────────────────────
@@ -266,7 +285,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (f) => emit(
         f is AuthCancelledFailure
             ? const AuthUnauthenticated()
-            : AuthError(f.message),
+            : f is MfaRequiredFailure
+                ? AuthMfaRequired(f.challenge)
+                : AuthError(f.message),
       ),
       (user) {
         emit(AuthAuthenticated(user));
@@ -299,13 +320,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     await _repo.sendVerificationEmail();
-  }
-
-  Future<void> _onPhoneVerification(
-    PhoneVerificationRequested event,
-    Emitter<AuthState> emit,
-  ) async {
-    await _repo.sendPhoneVerification(event.phone);
   }
 
   Future<void> _onPasswordReset(

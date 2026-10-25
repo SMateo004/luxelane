@@ -6,6 +6,7 @@ import { RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { deleteDoc, doc, Firestore, setDoc, updateDoc } from 'firebase/firestore';
 import { seed, startEnv } from './setup';
 import { allowed, operation, OPS, Role, ROLES, renderMatrix, seedMatrix, SPECS } from './matrix';
+import { allowedProblems, renderAllowed } from './matrix_allowed';
 
 let env: RulesTestEnvironment;
 // Tras una escritura que pasó (o una preparación), se vuelve a sembrar.
@@ -85,3 +86,24 @@ describe('docs/MATRIZ_ACCESO.md', () => {
     expect(text).toContain(expected);
   });
 });
+
+describe('docs/MATRIZ_ACCESO_PERMITIDOS.md', () => {
+  const file = resolve(__dirname, '../../../docs/MATRIZ_ACCESO_PERMITIDOS.md');
+  const START = '<!-- permitidos:inicio -->';
+  const END = '<!-- permitidos:fin -->';
+
+  test('cada celda permitida tiene su razón, y ninguna denegada la tiene', () => {
+    expect(allowedProblems()).toEqual([]);
+  });
+
+  test('el documento es la lista de matrix.ts', () => {
+    const text = readFileSync(file, 'utf8');
+    const expected = `${START}\n${renderAllowed()}\n${END}`;
+    if (process.env.UPDATE_MATRIX === '1') {
+      writeFileSync(file, text.replace(new RegExp(`${START}[\\s\\S]*${END}`), expected));
+      return;
+    }
+    expect(text).toContain(expected);
+  });
+});
+

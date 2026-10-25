@@ -363,8 +363,28 @@ jobs:
         env:
           GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
           PROJECT_ID: luxelane-4e7ae  # alias `production` de .firebaserc
+      # Distancia por calles de quoteBooking y createBooking (D2).
+      - name: Check MAPS_SERVER_KEY
+        uses: w9jds/firebase-action@35d0fd9b92b2c66dcd13f1b72dacc588e89e7567 # v15.32.1
+        with:
+          args: functions:secrets:get MAPS_SERVER_KEY
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          PROJECT_ID: luxelane-4e7ae  # alias `production` de .firebaserc
+      # Sal del límite por IP del formulario de empresas: sin ella la callable
+      # rechaza todo envío.
+      - name: Check RATE_LIMIT_SALT
+        uses: w9jds/firebase-action@35d0fd9b92b2c66dcd13f1b72dacc588e89e7567 # v15.32.1
+        with:
+          args: functions:secrets:get RATE_LIMIT_SALT
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          PROJECT_ID: luxelane-4e7ae  # alias `production` de .firebaserc
       # Functions e índices (los índices no cambian permisos y las consultas
       # nuevas los necesitan); las reglas van al final, con su job manual.
+      # Sin --force a propósito: si se retira una función del código, el
+      # despliegue no interactivo se detiene en vez de borrarla; se borra a
+      # mano antes (DEPLOY.md, «Funciones retiradas»).
       - uses: w9jds/firebase-action@35d0fd9b92b2c66dcd13f1b72dacc588e89e7567 # v15.32.1
         with:
           args: deploy --only functions,firestore:indexes

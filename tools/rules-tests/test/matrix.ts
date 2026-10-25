@@ -64,7 +64,7 @@ export const SPECS: Spec[] = [
     list: (db) => query(collection(db, 'users')),
     create: () => ({ path: 'users/nuevo', data: { id: 'nuevo', role: 'rider', isActive: true } }),
     update: () => ({ displayName: 'Nombre nuevo' }),
-    expect: { ...allRoles(none), ana: 'SNNSN', bloq: 'SNNSN', admin: 'SSSSN' },
+    expect: { ...allRoles(none), ana: 'SNNSN', bloq: 'SNNSN', admin: 'SSNSN' },
     note: 'Objetivo users/ana (bloqueado: users/bloq, el suyo). Crear = perfil de otro (users/nuevo); ' +
       'el alta propia está en «Casos fuera de la tabla». Actualizar = displayName.',
   },
@@ -78,7 +78,7 @@ export const SPECS: Spec[] = [
       data: { userId: own(r, 'ana'), title: 'Aviso', body: 'Texto', isRead: false },
     }),
     update: () => ({ isRead: true }),
-    expect: { ...allRoles(none), ana: 'SSNSS', bloq: 'SSNSS', admin: 'SSSSS' },
+    expect: { ...allRoles(none), ana: 'SSNSS', bloq: 'SSNSS', admin: 'SSNSS' },
     note: 'Objetivo users/ana/notifications (bloqueado: las suyas). Las crea el servidor.',
   },
   {
@@ -94,7 +94,7 @@ export const SPECS: Spec[] = [
     }),
     update: () => ({ isAvailable: false }),
     expect: {
-      ...allRoles(none), asig: 'SNSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SNSSN', admin: 'SSNSN',
+      ...allRoles(none), asig: 'SNSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SNNSN', admin: 'SSNSN',
     },
     note: 'Objetivo driverProfiles/asig (bloqueado: el suyo). Crear = el alta propia del chófer ' +
       '(los pasajeros intentan la suya; anónimo y admin, driverProfiles/nuevo).',
@@ -108,7 +108,7 @@ export const SPECS: Spec[] = [
       : query(collection(db, 'bookings'), where('riderId', '==', 'ana'))),
     create: () => ({ path: 'bookings/nueva', data: { riderId: 'ana', status: 'pending', estimatedPrice: 1 } }),
     update: () => ({ status: 'cancelled', updatedAt: Timestamp.now() }),
-    expect: { ...allRoles(none), ana: 'SSNSN', asig: 'SNNNN', bloq: 'SSNNN', admin: 'SSNSN' },
+    expect: { ...allRoles(none), ana: 'SSNSN', asig: 'SNNNN', admin: 'SSNSN' },
     note: 'Objetivo bookings/activa (de ana, asignada a asig, en camino); bloqueado: activaBloq, ' +
       'asignada a él. Listar = reservas de ana (bloqueado: las suyas). Actualizar = cancelar.',
   },
@@ -123,7 +123,7 @@ export const SPECS: Spec[] = [
       data: { lat: -17.7, lng: -63.1, updatedAt: serverTimestamp() },
     }),
     update: () => ({ lat: -17.71, lng: -63.11, updatedAt: serverTimestamp() }),
-    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSSSN', bloq: 'SSNNN', admin: 'SSNNN' },
+    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSSSN', admin: 'SSNNN' },
     note: 'Ubicación del chófer de activa (bloqueado: de activaBloq).',
   },
   {
@@ -136,7 +136,7 @@ export const SPECS: Spec[] = [
       data: { phone: '+59170000999' },
     }),
     update: () => ({ phone: '+59170000999' }),
-    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSNNN', bloq: 'SSNNN', admin: 'SSNNN' },
+    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSNNN', admin: 'SSNNN' },
     note: 'Teléfono del chófer de activa (bloqueado: de activaBloq). Lo escribe el servidor.',
   },
   {
@@ -159,7 +159,7 @@ export const SPECS: Spec[] = [
       data: { from: 'confirmed', to: 'driver_arriving' },
     }),
     update: () => ({ to: 'completed' }),
-    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSNNN', bloq: 'SSNNN', admin: 'SSNNN' },
+    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSNNN', admin: 'SSNNN' },
     note: 'Registro de transiciones de activa (bloqueado: de activaBloq). Solo anexa el servidor.',
   },
   {
@@ -171,6 +171,16 @@ export const SPECS: Spec[] = [
     update: () => ({ lat: 1 }),
     expect: { ...allRoles(none), admin: 'SSNNN' },
     note: 'Ubicación del chófer en cada evento: solo la lee el admin.',
+  },
+  {
+    name: 'bookings/{id}/eventDetails',
+    covered: false,
+    target: () => 'bookings/activa/eventDetails/e1',
+    list: (db) => query(collection(db, 'bookings', 'activa', 'eventDetails')),
+    create: () => ({ path: 'bookings/activa/eventDetails/nuevo', data: { reason: 'x' } }),
+    update: () => ({ reason: 'y' }),
+    expect: { ...allRoles(none), admin: 'SSNNN' },
+    note: 'Motivo del admin al forzar la verificación y control de llegada (farFromPickup): solo el admin (A8.7).',
   },
   {
     name: 'bookings/{id}/adminOnly',
@@ -254,9 +264,9 @@ export const SPECS: Spec[] = [
       : query(collection(db, 'rides'), where('riderId', '==', 'ana'))),
     create: () => ({ path: 'rides/nuevo', data: { riderId: 'ana', driverId: 'asig', bookingId: 'activa' } }),
     update: () => ({ distanceKm: 5 }),
-    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SNNSN', bloq: 'SSNSN', admin: 'SSSSN' },
-    note: 'Colección heredada (ninguna pantalla la crea). r1: de ana con asig; bloqueado: rBloq, la suya. ' +
-      'Listar = viajes de ana (bloqueado: los suyos por driverId).',
+    expect: { ...allRoles(none), admin: 'SSNNN' },
+    note: 'Colección heredada sin uso (H7): solo el admin lee los documentos que queden; nadie escribe. ' +
+      'r1: de ana con asig; bloqueado: rBloq.',
   },
   {
     name: 'payments/{id}',
@@ -279,9 +289,9 @@ export const SPECS: Spec[] = [
     }),
     update: () => ({ color: 'Negro' }),
     expect: {
-      ...allRoles(none), asig: 'SSSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SSSSN', admin: 'SSSSN',
+      ...allRoles(none), asig: 'SSSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SSNSN', admin: 'SSNSN',
     },
-    note: 'Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo.',
+    note: 'Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8).',
   },
   {
     name: 'pricingRules/{id}',
@@ -294,7 +304,8 @@ export const SPECS: Spec[] = [
     }),
     update: () => ({ basePriceUsd: 2 }),
     expect: { ...allRoles('SSNNN'), admin: 'SSSSS' },
-    note: 'Tarifas públicas (la web las muestra sin sesión); solo el admin las edita.',
+    note: 'Tarifas públicas (la web las muestra sin sesión); solo el admin las edita. Sin campos internos ni ' +
+      '`updatedBy`: quién la cambió va solo en admin_logs (C3).',
   },
   {
     name: 'config/global',
@@ -303,8 +314,8 @@ export const SPECS: Spec[] = [
     list: (db) => query(collection(db, 'config')),
     create: () => ({ path: 'config/nuevo', data: { x: 1 } }),
     update: () => ({ isMaintenanceMode: false }),
-    expect: { ...allRoles('SNNNN'), admin: 'SSSSS' },
-    note: 'Estado operativo público. Listar la colección incluye finance: solo el admin.',
+    expect: { ...allRoles('SNNNN'), admin: 'SNSSN' },
+    note: 'Estado operativo público. Listar la colección incluye config/security: nadie (A8.9). Nadie la borra (H9).',
   },
   {
     name: 'config/finance',
@@ -313,9 +324,29 @@ export const SPECS: Spec[] = [
     list: (db) => query(collection(db, 'config')),
     create: () => ({ path: 'config/otro', data: { platformCommissionPct: 10 } }),
     update: () => ({ platformCommissionPct: 12 }),
-    expect: { ...allRoles(none), admin: 'SSSSN' },
+    expect: { ...allRoles(none), admin: 'SNSSN' },
     note: 'Comisión y parámetros internos: solo el admin. Borrarla se deniega también al admin ' +
       '(la regla valida el documento resultante).',
+  },
+  {
+    name: 'config/ops',
+    covered: false,
+    target: () => 'config/ops',
+    list: (db) => query(collection(db, 'config')),
+    create: () => ({ path: 'config/ops', data: { arrivalRadiusMeters: 1 } }),
+    update: () => ({ arrivalRadiusMeters: 1 }),
+    expect: { ...allRoles(none), admin: 'SNNNN' },
+    note: 'Tiempos del SOS, retención y radio de llegada: el admin la lee; se edita en la consola (A8.9).',
+  },
+  {
+    name: 'config/security',
+    covered: false,
+    target: () => 'config/security',
+    list: (db) => query(collection(db, 'config')),
+    create: () => ({ path: 'config/security', data: { mfaEnforced: false } }),
+    update: () => ({ mfaEnforced: false }),
+    expect: allRoles(none),
+    note: 'Segundo factor y sesión máxima de admin: ningún cliente, ni el admin; solo la consola y el servidor (A8.9).',
   },
   {
     name: 'businessLeads/{id}',
@@ -330,8 +361,9 @@ export const SPECS: Spec[] = [
       },
     }),
     update: () => ({ handled: true }),
-    expect: { ...allRoles('NNSNN'), admin: 'SSSSN' },
-    note: 'Formulario de empresas: cualquiera lo envía (también sin sesión); solo el admin lo lee.',
+    expect: { ...allRoles(none), admin: 'SSNSN' },
+    note: 'Formulario de empresas: se envía con la callable submitBusinessLead (H5); ningún cliente ' +
+      'escribe directo. El admin lo lee y lo marca atendido.',
   },
   {
     name: 'adminAlerts/{id}',
@@ -344,6 +376,17 @@ export const SPECS: Spec[] = [
     note: 'Avisos del servidor: el admin los marca con resolveAlert, no escribiendo.',
   },
   {
+    name: 'driverDevices/{uid}/devices/{id}',
+    covered: true,
+    target: () => 'driverDevices/asig/devices/d1',
+    list: (db) => query(collection(db, 'driverDevices/asig/devices')),
+    create: () => ({ path: 'driverDevices/asig/devices/nuevo', data: { platform: 'android' } }),
+    update: () => ({ platform: 'ios' }),
+    expect: { ...allRoles(none), admin: 'SSNNN' },
+    note: 'Dispositivos del chófer (B7): los anota registerDriverDevice; solo el admin los ve, ' +
+      'ni el propio chófer. Alerta baja por dispositivo nuevo, y por el primero si ya está verificado (C2).',
+  },
+  {
     name: 'admin_logs/{id}',
     covered: false,
     target: () => 'admin_logs/log1',
@@ -351,7 +394,8 @@ export const SPECS: Spec[] = [
     create: (r) => ({ path: `admin_logs/nuevo-${r}`, data: { adminId: uidOf(r) ?? 'nadie', action: 'x' } }),
     update: () => ({ action: 'y' }),
     expect: { ...allRoles(none), admin: 'SSSNN' },
-    note: 'Auditoría inmutable: el admin anexa a su nombre.',
+    note: 'Auditoría inmutable: el admin anexa a su nombre. El servidor y los scripts (promote_admin, ' +
+      'reset_mfa, migraciones) escriben con el Admin SDK, con source server o script (C4, C6).',
   },
 ];
 
@@ -367,6 +411,7 @@ export async function seedMatrix(db: Firestore): Promise<void> {
   await put('bookings/activaBloq/driverContact/phone', { phone: '+59170000556' });
   await put('bookings/activa/private/pickup', { salt: 'sal', attempts: 0 });
   await put('bookings/activa/eventLocations/e1', { lat: -17.7, lng: -63.1 });
+  await put('bookings/activa/eventDetails/e1', { reason: 'Motivo del admin', farFromPickup: true });
   await put('bookings/activa/adminOnly/incidents', { incidentOpen: true });
   const inc = { status: 'open', cancelledByReporter: false, createdAt: Timestamp.now() };
   await put('incidents/inc1', { ...inc, reporterId: 'ana', bookingId: 'activa' });
@@ -387,9 +432,12 @@ export async function seedMatrix(db: Firestore): Promise<void> {
   });
   await put('config/global', { isMaintenanceMode: false });
   await put('config/finance', { platformCommissionPct: 10 });
+  await put('config/ops', { arrivalRadiusMeters: 300 });
+  await put('config/security', { mfaEnforced: false });
   await put('businessLeads/l1', { company: 'Empresa', email: 'contacto@example.com', handled: false });
   await put('adminAlerts/a1', { type: 'x', resolved: false });
   await put('admin_logs/log1', { adminId: 'admin', action: 'x' });
+  await put('driverDevices/asig/devices/d1', { platform: 'android' });
 }
 
 /** La operación de una celda contra el Firestore de ese rol. */

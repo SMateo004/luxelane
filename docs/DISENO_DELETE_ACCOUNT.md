@@ -102,3 +102,12 @@ función programada al vencer el plazo.
 - **N1.** ¿Borrado inmediato o con plazo de gracia para arrepentirse?
 - **N2.** ¿El admin puede borrar cuentas a petición (por correo o
   teléfono), con el mismo proceso?
+
+## 4. Propuestas del responsable (2026-10-24, no implementadas)
+
+No se implementa nada hasta tener las respuestas del contador y del abogado.
+
+- **N1** [Especulando]: periodo de gracia de 14 días durante el cual la
+  cuenta queda deshabilitada y se puede revertir.
+- **N2**: sí, el admin puede borrar a petición de la persona, con auditoría
+  en el servidor y verificación de identidad.

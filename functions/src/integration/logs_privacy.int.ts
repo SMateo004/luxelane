@@ -42,7 +42,7 @@ describe('logs sin código de recogida ni ubicaciones', () => {
     await db.doc('users/ana').set({ role: 'rider', fcmTokens: ['t1'] });
     await db.doc('users/chofer').set({ role: 'driver', isActive: true });
     await db.doc('users/jefa').set({ role: 'admin', fcmTokens: ['t2'] });
-    await db.doc('config/global').set({ arrivalRadiusMeters: 50 });
+    await db.doc('config/ops').set({ arrivalRadiusMeters: 50 });
     const ref = db.doc('bookings/viaje');
     await ref.set({
       riderId: 'ana', driverId: 'chofer', status: 'confirmed', estimatedPrice: 100,

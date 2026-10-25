@@ -51,6 +51,17 @@ staging; nunca para producción por omisión.**
    (`pickup_unavailable`) y el CI no despliega. Cambiarlo cambia el código
    de los viajes en «Chófer llegó»: rotarlo solo sin viajes en ese estado.
 
+5. Sal de los límites del formulario de empresas (`submitBusinessLead`),
+   distinta en cada proyecto, con el mismo procedimiento:
+   ```
+   openssl rand -hex 32          # copiar el valor
+   firebase functions:secrets:set RATE_LIMIT_SALT --project staging
+   firebase functions:secrets:set RATE_LIMIT_SALT --project production
+   ```
+   La IP del formulario solo se guarda como HMAC con esta sal. Sin ella la
+   callable rechaza todo envío (falla cerrado) y, como la función la
+   declara, el despliegue no termina **[Probable]**.
+
 4. Enable in Firebase Console (both projects):
    - Authentication → Email/Password + Phone + **Google** (see below)
    - Firestore → create database (production mode)
@@ -243,7 +254,8 @@ cliente escribir esos estados.
 
 ### Pasos manuales previos (decisiones del responsable)
 1. `PICKUP_CODE_SECRET` en cada proyecto (ver «First-time Setup», paso 4).
-2. `config/global.arrivalRadiusMeters` (número, metros): distancia a partir
+2. `config/ops.arrivalRadiusMeters` (número, metros; ver «config/ops y
+   config/security»): distancia a partir
    de la cual «He llegado» se marca lejos del punto de recogida y crea una
    alerta. No bloquea al chófer. Sin el campo no se compara y el evento lo
    anota (`no_radius`). **El valor lo decide el responsable.**
@@ -350,10 +362,10 @@ chófer, que sí sigue en segundo plano.
    no registra nada). El push del navegador **no es fiable con el navegador
    cerrado** (y el sistema puede silenciarlo): la guardia debe tener la app
    móvil con su cuenta de admin. El panel abierto suena igualmente.
-4. `config/global.incidentLocationRetentionDays` (número de días): cuánto se
+4. `config/ops.incidentLocationRetentionDays` (número de días): cuánto se
    guardan las ubicaciones de un incidente cerrado. Sin el valor no se borra
    nada y el panel lo indica.
-5. Tiempos de operación (opcionales, con su valor por defecto):
+5. Tiempos de operación en `config/ops` (opcionales, con su valor por defecto):
    `incidentAckSeconds` = 120 (escalar si nadie reconoce) e
    `incidentEscalateEverySeconds` = 120 (repetir la escalada).
 
@@ -501,7 +513,334 @@ Ver `docs/MATRIZ_ACCESO.md`. Con el job *Deploy Firestore rules*:
 `users/{uid}/notifications` solo los crea el servidor. Ninguna pantalla
 actual escribe ninguno de los dos: no hace falta subir versiones mínimas.
 
+Hallazgos de la matriz corregidos en cierre/identidad (H1, H4, H5, H7, H8,
+H9). Orden:
+1. `RATE_LIMIT_SALT` creado (First-time Setup, paso 5).
+2. **Functions**: añade `submitBusinessLead` y retira `onRideCompleted`.
+   Antes, borrarla a mano (ver «Funciones retiradas»); los documentos de
+   `rides` no se tocan.
+3. **Hosting y apps**: la web envía el formulario de empresas por la
+   callable; el panel trae la advertencia al bloquear y «Editar datos» del
+   chófer; la app del chófer, «Cuenta suspendida» y los campos bloqueados.
+4. **Reglas al final**: niegan crear `businessLeads` desde el cliente. Una
+   web antigua (que escribía directo) deja de poder enviar el formulario:
+   desplegar el hosting antes que las reglas. Un chófer bloqueado deja de
+   leer sus viajes en el acto: reasignarlos antes de bloquearlo (el panel
+   lo avisa).
+
+### Eventos: datos solo para central (A8.7)
+El motivo del admin al forzar la verificación y el control de llegada
+(`farFromPickup`, `arrivalCheck`) se escriben ahora en
+`bookings/{id}/eventDetails`, que solo lee el admin. Los eventos ya
+escritos los llevan dentro (visibles para pasajero y chófer). Tras desplegar
+functions y reglas, migrarlos (primero dry-run, primero staging):
+```
+cd functions
+npm run migrate:event-details -- --project staging           # dry-run
+npm run migrate:event-details -- --project staging --apply
+```
+El panel nuevo lee ambos sitios, así que el orden no rompe nada.
+
+### config/ops y config/security (A8.9)
+`config/global` es público (lo leen las apps sin sesión) y el panel lo
+escribe. Lo que solo usa el servidor va aparte; el servidor lo lee con el
+Admin SDK:
+- `config/ops`: `incidentAckSeconds`, `incidentEscalateEverySeconds`,
+  `incidentLocationRetentionDays` y `arrivalRadiusMeters`. La lee el admin;
+  ningún cliente la escribe. Ninguna app ni el panel leían o editaban estas
+  claves en `config/global` [seguro].
+- `config/security` (Parte B: `mfaEnforced`, `adminSessionMaxHours`):
+  ningún cliente la lee ni la escribe, ni el admin.
+
+Las dos se editan solo en la consola de Firebase (Firestore → Datos →
+colección `config` → documento `ops` o `security` → editar campo).
+Traslado en un proyecto ya configurado, después de desplegar functions:
+1. Crear `config/ops` con los valores que tenga hoy `config/global` para
+   esas cuatro claves (mismo nombre y tipo número).
+2. Comprobar en Logs Explorer que deja de aparecer
+   `opsConfig … keys still in config/global` (mientras falte una clave en
+   ops, el servidor usa la de global y lo avisa).
+3. Borrar esas cuatro claves de `config/global` en la consola.
+
+### Funciones retiradas
+El job *Deploy Functions* (`.github/workflows/ci.yml`, paso
+`deploy --only functions,firestore:indexes`) corre sin terminal y sin
+`--force`: si una función sigue en el proyecto pero ya no está en el
+código, la CLI no puede preguntar y el despliegue se detiene
+**[Probable]**. No se añade `--force` porque borraría sin preguntar
+cualquier función que faltara por error. Antes del despliegue, desde la
+máquina de un responsable (primero staging):
+```
+firebase functions:delete onRideCompleted --region us-central1 --project staging --force
+firebase functions:delete onRideCompleted --region us-central1 --project production --force
+```
+La región es la por defecto (el código no fija otra) **[Probable]**: si la
+CLI no la encuentra, `firebase functions:list --project <proyecto>` la
+muestra.
+
 ---
+
+## Identidad (Parte B)
+
+Qué cambia (rama cierre/identidad, B1–B9): reservar exige el correo
+verificado (`email_not_verified`) y, si `config/global.legalVersion`
+existe, los términos vigentes aceptados (`terms_required`); el rol sale
+del custom claim `role` (con respaldo en `users/{uid}.role` durante la
+transición); bloquear deshabilita la cuenta en Auth y revoca sus
+sesiones; los chóferes y admins pueden activar TOTP y, con
+`config/security.mfaEnforced`, quedan obligados; borrar la cuenta y
+cambiar o quitar tarjetas exigen un inicio de sesión de menos de 5
+minutos y las callables de admin una sesión de menos de
+`adminSessionMaxHours` (12 por defecto), ambos con `reauth_required`
+(salvo acknowledgeIncident, closeIncident y resolveAlert, para atender un
+SOS o una alerta sin esperar; siguen exigiendo rol admin y, con
+`mfaEnforced`, segundo factor); el
+chófer registra su dispositivo (`registerDriverDevice`, sin bloqueo).
+
+### Pasos manuales previos (consola; decisiones del responsable)
+
+1. **Actualizar a Firebase Authentication with Identity Platform** (cada
+   proyecto). Consola de Firebase → Authentication → Settings → «Upgrade».
+   TOTP solo existe con Identity Platform. **Coste: NO VERIFICADO**; [Probable]
+   Identity Platform cobra por usuario activo al mes por encima de un
+   tramo gratuito y los SMS aparte (aquí no se usan SMS). Revisar la página
+   de precios de Identity Platform antes de actualizar: es una decisión del
+   responsable.
+2. **Activar TOTP** (no hay interruptor en la consola; [Probable]). Con el
+   Admin SDK (firebase-admin ≥ 11.6.0; functions usa 12.7.0) y credenciales
+   del proyecto, desde la máquina de un responsable:
+
+   ```js
+   await admin.auth().projectConfigManager().updateProjectConfig({
+     multiFactorConfig: {
+       providerConfigs: [{ state: 'ENABLED', totpProviderConfig: { adjacentIntervals: 5 } }],
+     },
+   });
+   ```
+
+   `adjacentIntervals` admite 0–10 (5 por defecto): ventanas de 30 s
+   aceptadas a cada lado. El segundo factor exige el correo verificado.
+3. **Protección contra la enumeración de correos**: ver el apartado de
+   abajo (B8).
+4. **`config/security`** (solo consola; ningún cliente lo lee ni escribe):
+   crear con `mfaEnforced: false` y, si se quiere otro valor que 12,
+   `adminSessionMaxHours: <número>`.
+5. **`config/global.legalVersion`**: dejarlo SIN crear por ahora (ver
+   «Orden de legalVersion»). Los textos de /legal no se tocaron.
+
+### Orden
+
+1. **Functions** (incluye las callables nuevas: syncEmailVerification,
+   setUserRole, setUserBlocked, acceptTerms, registerDriverDevice; y los
+   cambios de createBooking y de las de admin y pagos).
+2. **Backfill de claims, DRY-RUN**: `cd functions && npm run
+   backfill:role-claims -- --project <id>`. Revisar la lista.
+3. **Backfill real**: lo mismo con `--apply` (en producción, además
+   `--i-understand-this-writes-to-production-luxelane-4e7ae`). El claim
+   llega con el siguiente token (como mucho en una hora). Las reglas y el
+   servidor aceptan mientras el rol de Firestore; cuando el responsable
+   confirme el backfill, poner `CLAIM_ONLY = true` en
+   functions/src/identity.ts y quitar el respaldo de `getUserRole()` en
+   firestore.rules (tarea aparte, con su prueba).
+4. **Reglas de Firestore** (ya con el respaldo de la transición).
+5. **Apps** (pasajero, chófer y panel). Ver «Apps antiguas».
+6. **Alta del segundo factor**: cada chófer y admin entra en Perfil →
+   «Verificación en dos pasos» y escanea el QR. La portada del chófer y
+   el panel muestran el aviso mientras no lo tengan.
+7. **Procedimiento de emergencia escrito y probado** (abajo), **al menos
+   dos admins con TOTP activado** y **las pruebas en dispositivos reales
+   hechas** (lista de abajo, todas en staging).
+8. **`config/security.mfaEnforced: true`** desde la consola. Desde ese
+   momento las callables de admin y del viaje del chófer (acceptBooking,
+   advanceBooking, verifyPickup) y las escrituras de admin en las reglas
+   exigen el segundo factor (`mfa_required`).
+
+### Orden de legalVersion
+
+`config/global.legalVersion` es lo que obliga a aceptar los términos para
+reservar. Crearlo antes de tiempo deja sin reservar a quien tenga una app
+que no sabe pedir la aceptación, o hace aceptar textos sin revisar. Solo
+cuando se cumplan las dos condiciones, en este orden:
+
+1. **Apps publicadas** con la aceptación (casilla en el registro y diálogo
+   «Acepta los términos para reservar») en las tiendas y en la web, y
+   `minAppVersion` subido a esa versión (decisión del responsable): una
+   app anterior no sabe mostrar `terms_required`.
+2. **Textos revisados por el abogado** y publicados en /legal/terminos y
+   /legal/privacidad.
+3. Entonces, crear `config/global.legalVersion` con un texto corto que
+   identifique esa versión (p. ej. la fecha de publicación). Desde ese
+   momento, cada pasajero acepta una vez al registrarse o en su siguiente
+   reserva; las cuentas quedan con `terms.version`, la hora del servidor y
+   la versión de la app.
+4. Al cambiar los textos más adelante: publicar los nuevos y después
+   cambiar `legalVersion`; todos vuelven a aceptar.
+
+### Pruebas en dispositivos reales antes de activar mfaEnforced
+
+Ninguna de estas se puede hacer con los emuladores ni con las pruebas
+automáticas (el SDK nativo y la app autenticadora son reales). Hacerlas en
+**staging**, con un Android, un iPhone y un navegador de escritorio, y una
+app autenticadora real (cualquiera compatible con TOTP), y anotar el
+resultado de cada una:
+
+1. **Alta de TOTP en el móvil**: chófer y admin, Perfil → «Verificación en
+   dos pasos»; escanear el QR o usar «Abrir en la app autenticadora»;
+   escribir el código; el aviso de la portada desaparece.
+2. **Alta de TOTP en la web**: admin en el panel web; QR en pantalla y
+   clave para escribirla a mano (en web no se abre la app); código
+   aceptado.
+3. **Segundo paso al iniciar sesión**: cerrar sesión y entrar con
+   contraseña en móvil y en web: pide el código; un código incorrecto da
+   un mensaje claro; el correcto entra. Repetir con «Continuar con
+   Google» en una cuenta con TOTP.
+4. **Hora del teléfono**: con la hora automática, el código entra al
+   primer intento; anotar si falla con unos segundos de desfase.
+5. **Reautenticación con contraseña**: en una cuenta de pasajero, quitar
+   una tarjeta más de 5 minutos después de entrar: aparece «Confirma que
+   eres tú», y tras la contraseña se puede repetir.
+6. **Reautenticación con Google**: lo mismo con una cuenta de Google en
+   Android, iPhone y web (en web, ventana emergente).
+7. **Reautenticación con TOTP**: admin con TOTP y sesión de más de
+   `adminSessionMaxHours` (bajar el valor a 1 en staging para probar):
+   una acción del panel pide la contraseña y después el código; atender un
+   SOS o resolver una alerta no lo pide.
+8. **Eliminar la cuenta** con una sesión de más de 5 minutos: pide
+   confirmar y luego elimina.
+9. **Bloqueo y desbloqueo**: bloquear un chófer conectado desde el panel:
+   su app sale en menos de una hora (al renovar el token) o al instante si
+   intenta escribir; no puede volver a entrar («cuenta bloqueada»);
+   desbloquear y comprobar que entra.
+10. **Recuperación con reset_mfa**: en una cuenta de prueba con TOTP,
+    borrar la entrada de la app autenticadora (simula el teléfono
+    perdido), ejecutar `reset_mfa` en DRY-RUN y con `--apply`, comprobar
+    que la sesión abierta se cierra, que entra solo con la contraseña, que
+    puede dar de alta TOTP de nuevo y que admin_logs tiene `reset_mfa`.
+11. **Imposición en staging**: con `mfaEnforced: true`, un admin sin TOTP
+    recibe el aviso al usar el panel y un chófer sin TOTP no puede
+    aceptar viajes; con TOTP, todo funciona. Volver a `false` y comprobar
+    que se levanta.
+
+### pricingRules sin `updatedBy` (C3)
+
+Las reglas nuevas rechazan `updatedBy` en pricingRules (era el uid del
+admin, a la vista de cualquiera). El panel anterior lo sigue enviando, así
+que el orden importa:
+
+1. Publicar el panel nuevo (ya no lo escribe).
+2. Desplegar las reglas.
+3. `cd functions && npm run migrate:pricing-updated-by -- --project <id>
+   --operator "<quién>"` (DRY-RUN); revisar la lista y repetir con
+   `--apply` (en producción, además
+   `--i-understand-this-writes-to-production-luxelane-4e7ae`). Deja una
+   entrada en admin_logs por documento, con el uid anterior.
+
+### Procedimiento de emergencia (antes de activar mfaEnforced)
+
+Importante: una cuenta con el segundo factor dado de alta lo necesita para
+**entrar**, esté `mfaEnforced` como esté (lo pide Firebase al iniciar
+sesión; [Probable]). Poner `mfaEnforced: false` solo ayuda a quien aún no
+dio de alta su factor; a quien perdió el teléfono solo lo saca
+`scripts/reset_mfa.mjs` (o la consola).
+
+**Requisitos antes de activar mfaEnforced**
+
+- Al menos dos admins con TOTP activado y probado (que hayan entrado con el
+  código).
+- Un responsable con acceso de propietario al proyecto (Google Cloud IAM)
+  y credenciales en su máquina (`gcloud auth application-default login`):
+  es quien ejecuta `reset_mfa` y `promote_admin`. No depende del panel.
+- Decidir cómo se confirma la identidad de quien pide el reinicio (por
+  ejemplo, llamada al número registrado o en persona). **Decisión del
+  responsable; no está definida.** El método usado se escribe en
+  `--reason` y queda en admin_logs.
+
+**Un admin pierde el teléfono**
+
+1. Otro admin (o el responsable) confirma su identidad por el método
+   acordado.
+2. El responsable ejecuta, desde su máquina:
+   `node scripts/reset_mfa.mjs --project <id> --email <correo>
+   --reason "perdió el teléfono; identidad confirmada por <método>"
+   --operator "<quién>"` (DRY-RUN) y, si la salida es la esperada, lo
+   mismo con `--apply` (en producción, además
+   `--i-understand-this-writes-to-production-luxelane-4e7ae`).
+3. El script quita los factores, revoca sus sesiones (también la del
+   teléfono perdido) y deja `reset_mfa` en admin_logs.
+4. El admin entra con su contraseña y da de alta TOTP de nuevo (Perfil →
+   «Verificación en dos pasos»). Mientras no lo haga, con `mfaEnforced`
+   las acciones de admin le responden `mfa_required`.
+5. Si se sospecha que el teléfono está en manos de otra persona: además,
+   cambiar su contraseña desde la consola (Authentication → Users).
+
+**Los dos admins pierden el teléfono**
+
+1. Nadie puede entrar al panel. El responsable con acceso al proyecto
+   ejecuta `reset_mfa` para uno de ellos (pasos 2–4 de arriba).
+2. Sin credenciales en ninguna máquina: en la consola de Firebase →
+   Authentication → Users → la cuenta → quitar el segundo factor
+   (NO VERIFICADO el menú exacto) y anotar a mano en admin_logs lo hecho.
+3. Ese admin entra, da de alta TOTP de nuevo y repite con el segundo
+   admin (o con `promote_admin` si hace falta otro).
+4. Mientras tanto, los incidentes (SOS) no tienen quién los atienda desde
+   el panel: avisar a quien esté de guardia por teléfono (D23).
+
+**Un chófer pierde el teléfono**
+
+1. Central confirma su identidad por el método acordado. Si el teléfono
+   puede estar en manos de otra persona, bloquear la cuenta primero
+   (panel → usuarios → bloquear): deshabilita la cuenta, revoca sesiones y
+   lo saca de disponibles.
+2. El responsable ejecuta `reset_mfa` con su correo (como arriba).
+3. Si se bloqueó, desbloquearlo desde el panel.
+4. El chófer entra en su teléfono nuevo con su contraseña y da de alta
+   TOTP de nuevo. Su dispositivo nuevo llegará como alerta «Chófer en un
+   dispositivo nuevo»: es lo esperado; resolverla con una nota.
+5. Hoy no hay botón en el panel para esto: lo hace el responsable con el
+   script. Si los reinicios son frecuentes, una callable de admin con
+   auditoría sería el siguiente paso (no hecho).
+
+**Otros casos**
+
+- **Hace falta un admin nuevo**: `node scripts/promote_admin.mjs
+  --project <id> --email <correo> --reason "<motivo>" --operator "<quién>"`
+  (DRY-RUN), y luego con `--apply`.
+- **Sesión de admin vencida** (`reauth_required` tras
+  `adminSessionMaxHours`): no es una emergencia; el panel pide confirmar
+  la identidad. Atender SOS y alertas no lo pide (C1).
+- **Volver atrás con la imposición**: `config/security.mfaEnforced: false`
+  en la consola de Firestore (el servidor lo lee en cada llamada y las
+  reglas en cada escritura). No quita factores a nadie.
+
+### Apps antiguas
+
+- Una app sin esta versión no sabe mostrar `reauth_required`,
+  `mfa_required`, `email_not_verified` ni `terms_required`: verá un
+  error genérico. Subir `minAppVersion` / `minDriverAppVersion` cuando las
+  apps nuevas estén publicadas (decisión del responsable; no se sube
+  ahora).
+- Un admin con el panel anterior no puede cambiar roles ni bloquear: las
+  reglas ya no le dejan escribir `role` ni `isActive`; necesita el panel
+  nuevo (usa setUserRole y setUserBlocked).
+
+### Protección contra la enumeración de correos (B8)
+
+La app ya no dice si un correo tiene cuenta: entrar con un correo que no
+existe y con una contraseña incorrecta da el mismo mensaje, recuperar la
+contraseña responde igual haya cuenta o no, y el registro no confirma que
+el correo esté en uso. Para que la API de Firebase tampoco lo revele, hay
+que activar su protección (en cada proyecto: staging y producción):
+
+1. Consola de Firebase → Authentication → Settings → User actions.
+2. Activar «Email enumeration protection».
+3. Guardar.
+
+NO VERIFICADO: el nombre exacto de la opción en la consola actual, y si
+con la protección activa `createUserWithEmailAndPassword` sigue
+devolviendo `email-already-in-use` (la app ya lo muestra con un texto
+neutro). También NO VERIFICADO si Auth responde `user-disabled` antes de
+comprobar la contraseña (una cuenta bloqueada se distinguiría de una
+inexistente); la app muestra en ese caso el mensaje de cuenta bloqueada.
 
 ## Claves de Google Maps
 

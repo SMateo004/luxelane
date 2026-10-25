@@ -56,6 +56,18 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   // Recorre todas las reservas completadas: costosa.
   backfillSettlements: perHour(3),
   assignNearestDriver: per10min(20),
+  // Con sesión; sin ella cuentan la IP seudonimizada y el correo
+  // (LEAD_LIMITS en business_leads.ts).
+  submitBusinessLead: perHour(5),
+  // La app la llama al volver de verificar el correo.
+  syncEmailVerification: per10min(20),
+  // Al registrarse o al publicarse una versión nueva de los términos.
+  acceptTerms: per10min(10),
+  // Al abrir la app del chófer.
+  registerDriverDevice: per10min(20),
+  // Panel: cambios de rol y bloqueos.
+  setUserRole: per10min(30),
+  setUserBlocked: per10min(30),
   acceptBooking: per10min(30),
 };
 

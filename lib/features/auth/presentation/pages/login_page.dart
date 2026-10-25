@@ -4,10 +4,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/error/auth_errors.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../bloc/auth_bloc.dart';
 import '../widgets/google_sign_in_button.dart';
+import 'mfa_sign_in_page.dart';
 
 // ── Design tokens (aligned with home_web_page / LD) ─────────────────────────
 const _bg = LuxColors.bg;
@@ -39,7 +41,7 @@ class _LoginPageState extends State<LoginPage> {
     // Un bloqueo detectado antes de llegar aquí (al abrir la app o con la
     // sesión abierta) no pasa por el listener: se muestra al entrar.
     final s = context.read<AuthBloc>().state;
-    if (s is AuthError && s.message == kBlockedAccountMessage) {
+    if (s is AuthError && isBlockedAccountMessage(s.message)) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) showLuxSnackbar(context, s.message, isError: true);
       });
@@ -69,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
       (f) => showLuxSnackbar(context, f.message, isError: true),
       (_) => showLuxSnackbar(
         context,
-        'Te enviamos un enlace a $email para restablecer tu contraseña.',
+        passwordResetSentMessage(email),
       ),
     );
   }
@@ -90,6 +92,25 @@ class _LoginPageState extends State<LoginPage> {
           // back to the link that asked for sign-in.
           final from = GoRouterState.of(context).uri.queryParameters['from'];
           context.go(from != null && from.startsWith('/') ? from : '/');
+        }
+        if (state is AuthMfaRequired) {
+          final bloc = context.read<AuthBloc>();
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              fullscreenDialog: true,
+              builder: (ctx) => MfaSignInPage(
+                challenge: state.challenge,
+                onSignedIn: (user) {
+                  Navigator.of(ctx).pop();
+                  bloc.add(MfaSignInCompleted(user));
+                },
+                onCancel: () {
+                  Navigator.of(ctx).pop();
+                  bloc.add(const LogoutRequested());
+                },
+              ),
+            ),
+          );
         }
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(

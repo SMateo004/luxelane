@@ -23,10 +23,9 @@ import '../../features/payments/presentation/bloc/payment_bloc.dart';
 import '../../features/profile/data/repositories/user_repository_impl.dart';
 import '../../features/profile/domain/usecases/profile_usecases.dart';
 import '../../features/profile/presentation/bloc/profile_bloc.dart';
-import '../../features/ride/data/repositories/ride_repository_impl.dart';
 import '../../features/ride/data/repositories/trip_flow_repository_impl.dart';
-import '../../features/ride/domain/usecases/ride_usecases.dart';
-import '../../features/ride/presentation/bloc/ride_bloc.dart';
+import '../auth/driver_device.dart';
+import '../auth/mfa.dart';
 import '../data/notification_repository_impl.dart';
 import '../repositories/repositories.dart';
 import '../services/maps_service.dart';
@@ -51,6 +50,10 @@ void _registerServices() {
 
 void _registerFirebase() {
   sl.registerLazySingleton<fb.FirebaseAuth>(() => fb.FirebaseAuth.instance);
+  sl.registerLazySingleton<MfaService>(() => FirebaseMfaService(sl()));
+  sl.registerLazySingleton<DriverDeviceRegistrar>(
+    () => DriverDeviceRegistrar(store: SecureInstallationIdStore()),
+  );
   sl.registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance);
   sl.registerLazySingleton<FirebaseFunctions>(() => FirebaseFunctions.instance);
 }
@@ -84,10 +87,6 @@ void _registerRepositories() {
     () => VehicleRepositoryImpl(firestore: sl()),
   );
 
-  sl.registerLazySingleton<RideRepository>(
-    () => RideRepositoryImpl(firestore: sl()),
-  );
-
   sl.registerLazySingleton<PaymentRepository>(
     () => PaymentRepositoryImpl(firestore: sl(), functions: sl()),
   );
@@ -116,13 +115,6 @@ void _registerUseCases() {
   sl.registerLazySingleton(() => CancelBookingUseCase(sl()));
   sl.registerLazySingleton(() => GetRiderBookingsUseCase(sl()));
 
-  // Ride
-  sl.registerLazySingleton(() => StartRideUseCase(sl()));
-  sl.registerLazySingleton(() => WatchRideUseCase(sl()));
-  sl.registerLazySingleton(() => CompleteRideUseCase(sl()));
-  sl.registerLazySingleton(() => SubmitRatingUseCase(sl()));
-  sl.registerLazySingleton(() => AppendRoutePointUseCase(sl()));
-
   // Payment
   sl.registerLazySingleton(() => CreatePaymentIntentUseCase(sl()));
   sl.registerLazySingleton(() => CapturePaymentUseCase(sl()));
@@ -134,13 +126,12 @@ void _registerUseCases() {
   sl.registerLazySingleton(() => UpdateUserUseCase(sl()));
   sl.registerLazySingleton(() => UpdateDriverLocationUseCase(sl()));
   sl.registerLazySingleton(() => SetDriverAvailabilityUseCase(sl()));
-  sl.registerLazySingleton(() => BusinessLeadRepository(sl()));
+  sl.registerLazySingleton(() => BusinessLeadRepository(sl(), sl()));
 }
 
 void _registerBlocs() {
   sl.registerFactory(() => AuthBloc(authRepository: sl()));
   sl.registerFactory(() => BookingBloc(bookingRepository: sl()));
-  sl.registerFactory(() => RideBloc(rideRepository: sl()));
   sl.registerFactory(() => PaymentBloc(paymentRepository: sl()));
   sl.registerFactory(
     () => ProfileBloc(userRepository: sl(), bookingRepository: sl()),

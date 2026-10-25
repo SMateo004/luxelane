@@ -1,6 +1,7 @@
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:luxelane/core/auth/mfa.dart';
 import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/error/failures.dart';
 import 'package:luxelane/core/models/models.dart';
@@ -37,6 +38,62 @@ void main() {
   });
 
   group('AuthBloc', () {
+    blocTest<AuthBloc, AuthState>(
+      'segundo factor: pide el código y, al resolverlo, entra',
+      build: () {
+        when(
+          () => repo.login(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => Left(MfaRequiredFailure(_FakeChallenge())));
+        return AuthBloc(authRepository: repo);
+      },
+      act: (bloc) async {
+        bloc.add(const LoginRequested(email: 'a@b.com', password: 'x'));
+        await Future<void>.delayed(Duration.zero);
+        bloc.add(MfaSignInCompleted(_mockUser));
+      },
+      expect: () => [
+        const AuthLoading(),
+        isA<AuthMfaRequired>(),
+        AuthAuthenticated(_mockUser),
+      ],
+    );
+
+    blocTest<AuthBloc, AuthState>(
+      'chófer bloqueado con la app abierta: «Cuenta suspendida», sin texto técnico',
+      build: () {
+        final driver = User.fromJson(
+            {..._mockUser.toJson(), 'role': UserRole.driver.name});
+        when(
+          () => repo.login(
+            email: any(named: 'email'),
+            password: any(named: 'password'),
+          ),
+        ).thenAnswer((_) async => Right(driver));
+        when(() => repo.watchUser('uid-1')).thenAnswer(
+          (_) => Stream.value(
+            User.fromJson({...driver.toJson(), 'isActive': false}),
+          ),
+        );
+        when(() => repo.logout()).thenAnswer((_) async => const Right(null));
+        return AuthBloc(authRepository: repo);
+      },
+      act: (bloc) => bloc.add(
+        const LoginRequested(email: 'test@luxelane.com', password: 'secret'),
+      ),
+      skip: 2,
+      expect: () => [const AuthError(kDriverSuspendedMessage)],
+    );
+
+    test('mensaje de bloqueo por rol', () {
+      expect(blockedAccountMessage(UserRole.driver),
+          'Cuenta suspendida. Contacta con central.');
+      expect(blockedAccountMessage(UserRole.rider), kBlockedAccountMessage);
+      expect(isBlockedAccountMessage(kDriverSuspendedMessage), isTrue);
+    });
+
     blocTest<AuthBloc, AuthState>(
       'cierra la sesión si el admin bloquea la cuenta con la app abierta',
       build: () {
@@ -191,4 +248,11 @@ void main() {
       expect: () => [const AuthLoading(), AuthAuthenticated(_mockUser)],
     );
   });
+}
+
+class _FakeChallenge implements MfaChallenge {
+  @override
+  bool get hasTotp => true;
+  @override
+  Future<Either<Failure, User>> resolve(String code) async => Right(_mockUser);
 }

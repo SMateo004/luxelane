@@ -799,6 +799,7 @@ class AdminAlert {
     required this.type,
     required this.createdAt,
     this.bookingId,
+    this.driverId,
     this.message = '',
     this.resolved = false,
   });
@@ -807,6 +808,7 @@ class AdminAlert {
   final String type;
   final DateTime createdAt;
   final String? bookingId;
+  final String? driverId;
   final String message;
   final bool resolved;
 
@@ -817,6 +819,7 @@ class AdminAlert {
             ? (j['createdAt'] as Timestamp).toDate()
             : DateTime.now(),
         bookingId: j['bookingId'] as String?,
+        driverId: j['driverId'] as String?,
         message: j['message'] as String? ?? '',
         resolved: j['resolved'] == true,
       );
@@ -827,7 +830,8 @@ class AdminAlert {
 // ---------------------------------------------------------------------------
 
 /// Un paso del viaje que registró el servidor. La ubicación del chófer
-/// viene de eventLocations, que solo lee el admin.
+/// viene de eventLocations y el motivo del admin y el control de llegada de
+/// eventDetails; las dos solo las lee el admin.
 class BookingEvent {
   const BookingEvent({
     required this.id,
@@ -883,8 +887,11 @@ class BookingEvent {
     String id,
     Map<String, dynamic> j, [
     Map<String, dynamic>? location,
+    Map<String, dynamic>? detail,
   ]) {
     final actor = j['actor'] is Map ? j['actor'] as Map : const {};
+    // Eventos anteriores a eventDetails llevan estos campos en el evento.
+    final d = {...j, ...?detail};
     return BookingEvent(
       id: id,
       type: j['type'] as String? ?? 'transition',
@@ -895,9 +902,9 @@ class BookingEvent {
       source: j['source'] as String? ?? '',
       at: j['at'] is Timestamp ? (j['at'] as Timestamp).toDate() : null,
       appVersion: j['appVersion'] as String?,
-      farFromPickup: j['farFromPickup'] == true,
-      arrivalCheck: j['arrivalCheck'] as String?,
-      reason: j['reason'] as String?,
+      farFromPickup: d['farFromPickup'] == true,
+      arrivalCheck: d['arrivalCheck'] as String?,
+      reason: d['reason'] as String?,
       method: j['method'] as String?,
       failedAttempts: (j['failedAttempts'] as num?)?.toInt(),
       lat: (location?['lat'] as num?)?.toDouble(),
@@ -1150,71 +1157,6 @@ class OpenRequest {
 }
 
 // ---------------------------------------------------------------------------
-// Ride
-// ---------------------------------------------------------------------------
-
-class Ride {
-  const Ride({
-    required this.id,
-    required this.bookingId,
-    required this.riderId,
-    required this.driverId,
-    required this.startedAt,
-    this.completedAt,
-    required this.driverRoute,
-    this.distanceKm,
-    this.durationMin,
-    this.riderRating,
-    this.driverRating,
-  });
-
-  final String id;
-  final String bookingId;
-  final String riderId;
-  final String driverId;
-  final DateTime startedAt;
-  final DateTime? completedAt;
-  final List<GeoPoint> driverRoute;
-  final double? distanceKm;
-  final int? durationMin;
-  final double? riderRating;
-  final double? driverRating;
-
-  factory Ride.fromJson(Map<String, dynamic> j) => Ride(
-        id: j['id'] as String,
-        bookingId: j['bookingId'] as String,
-        riderId: j['riderId'] as String,
-        driverId: j['driverId'] as String,
-        startedAt: (j['startedAt'] as Timestamp).toDate(),
-        completedAt: j['completedAt'] != null
-            ? (j['completedAt'] as Timestamp).toDate()
-            : null,
-        driverRoute: List<GeoPoint>.from(
-          (j['driverRoute'] as List? ?? []).map((e) => e as GeoPoint),
-        ),
-        distanceKm: (j['distanceKm'] as num?)?.toDouble(),
-        durationMin: j['durationMin'] as int?,
-        riderRating: (j['riderRating'] as num?)?.toDouble(),
-        driverRating: (j['driverRating'] as num?)?.toDouble(),
-      );
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'bookingId': bookingId,
-        'riderId': riderId,
-        'driverId': driverId,
-        'startedAt': Timestamp.fromDate(startedAt),
-        'completedAt':
-            completedAt != null ? Timestamp.fromDate(completedAt!) : null,
-        'driverRoute': driverRoute,
-        'distanceKm': distanceKm,
-        'durationMin': durationMin,
-        'riderRating': riderRating,
-        'driverRating': driverRating,
-      };
-}
-
-// ---------------------------------------------------------------------------
 // Payment
 // ---------------------------------------------------------------------------
 
@@ -1296,7 +1238,6 @@ class PricingRule {
     required this.minimumPriceUsd,
     this.isActive = true,
     this.updatedAt,
-    this.updatedBy,
   });
 
   final String id;
@@ -1310,7 +1251,6 @@ class PricingRule {
   /// Si es false, la combinación clase + servicio no se puede reservar.
   final bool isActive;
   final DateTime? updatedAt;
-  final String? updatedBy;
 
   /// Id de documento canónico en /pricingRules: `business_oneWay`, etc.
   static String idFor(VehicleClass vc, ServiceType st) =>
@@ -1350,7 +1290,6 @@ class PricingRule {
         updatedAt: j['updatedAt'] is Timestamp
             ? (j['updatedAt'] as Timestamp).toDate()
             : null,
-        updatedBy: j['updatedBy'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -1381,7 +1320,6 @@ class PricingRule {
         minimumPriceUsd: minimumPriceUsd ?? this.minimumPriceUsd,
         isActive: isActive ?? this.isActive,
         updatedAt: updatedAt,
-        updatedBy: updatedBy,
       );
 
   /// Mismos importes que [other] (ignora metadatos).

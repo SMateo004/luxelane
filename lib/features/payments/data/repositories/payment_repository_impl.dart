@@ -177,13 +177,19 @@ class PaymentRepositoryImpl implements PaymentRepository {
           ),
         );
       }
-      return const Left(
-        PaymentFailure('No pudimos quitar la tarjeta. Inténtalo de nuevo.'),
+      return Left(
+        PaymentFailure(
+          commonFunctionError(e.code, e.details) ??
+              'No pudimos quitar la tarjeta. Inténtalo de nuevo.',
+        ),
       );
     } catch (e) {
       return Left(PaymentFailure(e.toString()));
     }
   }
+
+  static const _setDefaultError =
+      'No pudimos cambiar la tarjeta predeterminada. Inténtalo de nuevo.';
 
   @override
   Future<Either<Failure, void>> setDefaultCard(String paymentMethodId) async {
@@ -192,12 +198,14 @@ class PaymentRepositoryImpl implements PaymentRepository {
         'paymentMethodId': paymentMethodId,
       });
       return const Right(null);
-    } catch (_) {
-      return const Left(
+    } on FirebaseFunctionsException catch (e) {
+      return Left(
         PaymentFailure(
-          'No pudimos cambiar la tarjeta predeterminada. Inténtalo de nuevo.',
+          commonFunctionError(e.code, e.details) ?? _setDefaultError,
         ),
       );
+    } catch (_) {
+      return const Left(PaymentFailure(_setDefaultError));
     }
   }
 

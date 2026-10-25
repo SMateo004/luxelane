@@ -902,6 +902,32 @@ class _DriverTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: LuxSpacing.md),
+          IconButton(
+            tooltip: 'Editar licencia y vehículo',
+            icon: const Icon(Icons.edit_note_rounded, size: 20),
+            color: LuxColors.inkSecondary,
+            visualDensity: VisualDensity.compact,
+            onPressed: () async {
+              final bloc = context.read<AdminBloc>();
+              final vehicle = bloc.state.vehicles
+                  .where((v) => v.driverId == driver.userId)
+                  .firstOrNull;
+              final result = await showDialog<DriverDocumentsResult>(
+                context: context,
+                builder: (_) =>
+                    DriverDocumentsDialog(profile: driver, vehicle: vehicle),
+              );
+              if (result == null) return;
+              bloc.add(
+                AdminDriverDocumentsUpdateRequested(
+                  driver,
+                  vehicle,
+                  result.edit,
+                  result.reason,
+                ),
+              );
+            },
+          ),
           if (!driver.documentsVerified)
             AdminActionButton(
               label: 'Verificar',
@@ -1205,7 +1231,27 @@ class _UserTile extends StatelessWidget {
                 value: user.isActive,
                 activeColor: LuxColors.sapphire,
                 onChanged: (val) async {
-                  if (!val) {
+                  final trips = user.role == UserRole.driver
+                      ? AdminOperations.activeTripsOf(
+                          context.read<AdminBloc>().state.bookings,
+                          user.id,
+                        )
+                      : const <Booking>[];
+                  if (!val && trips.isNotEmpty) {
+                    final choice = await showDialog<BlockDriverChoice>(
+                      context: context,
+                      builder: (_) => BlockDriverWarningDialog(
+                        driverName: user.displayName,
+                        trips: trips,
+                      ),
+                    );
+                    if (!context.mounted) return;
+                    if (choice is ReassignTrip) {
+                      await showBookingDetail(context, choice.bookingId);
+                      return;
+                    }
+                    if (choice is! ConfirmBlock) return;
+                  } else if (!val) {
                     final ok = await confirmAdminAction(
                       context,
                       title: 'Bloquear usuario',
@@ -1295,6 +1341,7 @@ const _auditLabels = {
   'cancel_booking': 'Reserva cancelada',
   'assign_driver': 'Chófer asignado',
   'reassign_driver': 'Chófer reasignado',
+  'update_driver_documents': 'Licencia o vehículo cambiados',
   'adjust_price': 'Precio ajustado',
   'record_payment': 'Cobro registrado',
   'refund_payment': 'Reembolso',
@@ -2007,4 +2054,249 @@ class _VerifyDriverDialogState extends State<_VerifyDriverDialog> {
           ),
         ],
       );
+}
+
+/// Lo que eligió el admin en [BlockDriverWarningDialog].
+sealed class BlockDriverChoice {
+  const BlockDriverChoice();
+}
+
+/// Bloquear igualmente: el chófer deja de ver esos viajes.
+class ConfirmBlock extends BlockDriverChoice {
+  const ConfirmBlock();
+}
+
+/// Abrir el viaje para reasignarlo (no bloquea todavía).
+class ReassignTrip extends BlockDriverChoice {
+  const ReassignTrip(this.bookingId);
+  final String bookingId;
+}
+
+/// Advertencia al bloquear a un chófer con viajes confirmados o en curso:
+/// al bloquearlo deja de ver esos viajes, así que hay que reasignarlos.
+class BlockDriverWarningDialog extends StatelessWidget {
+  const BlockDriverWarningDialog({
+    super.key,
+    required this.driverName,
+    required this.trips,
+  });
+
+  final String driverName;
+  final List<Booking> trips;
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        backgroundColor: LuxColors.surfaceMuted,
+        title: const Text(
+          'Este chófer tiene viajes activos',
+          style: LuxTypography.titleLarge,
+        ),
+        content: SizedBox(
+          width: 440,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Al bloquear a $driverName deja de ver estos viajes en el '
+                'acto. Reasígnalos antes de bloquearlo.',
+                style: LuxTypography.bodyMedium,
+              ),
+              const SizedBox(height: LuxSpacing.sm),
+              Flexible(
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    for (final b in trips)
+                      ListTile(
+                        key: ValueKey('trip-${b.id}'),
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          '${shortId(b.id)} · ${b.status.displayLabel}',
+                          style: LuxTypography.bodyMedium,
+                        ),
+                        subtitle: Text(
+                          adminDate(b.scheduledAt),
+                          style: LuxTypography.caption,
+                        ),
+                        trailing: TextButton(
+                          onPressed: () =>
+                              Navigator.pop(context, ReassignTrip(b.id)),
+                          child: const Text('Reasignar'),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, const ConfirmBlock()),
+            child: const Text(
+              'Bloquear igualmente',
+              style: TextStyle(color: LuxColors.error),
+            ),
+          ),
+        ],
+      );
+}
+
+/// Lo que devuelve [DriverDocumentsDialog].
+class DriverDocumentsResult {
+  const DriverDocumentsResult(this.edit, this.reason);
+  final DriverDocumentsEdit edit;
+  final String reason;
+}
+
+/// El admin cambia licencia y datos sensibles del vehículo a petición del
+/// chófer (H4), con un motivo que queda en la auditoría.
+class DriverDocumentsDialog extends StatefulWidget {
+  const DriverDocumentsDialog({super.key, required this.profile, this.vehicle});
+  final DriverProfile profile;
+  final Vehicle? vehicle;
+
+  @override
+  State<DriverDocumentsDialog> createState() => _DriverDocumentsDialogState();
+}
+
+class _DriverDocumentsDialogState extends State<DriverDocumentsDialog> {
+  late final _license =
+      TextEditingController(text: widget.profile.licenseNumber);
+  late final _expiry = TextEditingController(
+    text: DateFormat('MM/yyyy').format(widget.profile.licenseExpiry),
+  );
+  late final _plate = TextEditingController(text: widget.vehicle?.plate);
+  late final _make = TextEditingController(text: widget.vehicle?.make);
+  late final _model = TextEditingController(text: widget.vehicle?.model);
+  late final _year =
+      TextEditingController(text: widget.vehicle?.year.toString());
+  late VehicleClass? _class = widget.vehicle?.vehicleClass;
+  final _reason = TextEditingController();
+  String? _error;
+
+  @override
+  void dispose() {
+    for (final c in [
+      _license,
+      _expiry,
+      _plate,
+      _make,
+      _model,
+      _year,
+      _reason
+    ]) {
+      c.dispose();
+    }
+    super.dispose();
+  }
+
+  DateTime? _parseExpiry() {
+    final m = RegExp(r'^(\d{1,2})/(\d{4})$').firstMatch(_expiry.text.trim());
+    if (m == null) return null;
+    final month = int.parse(m.group(1)!);
+    if (month < 1 || month > 12) return null;
+    return DateTime(int.parse(m.group(2)!), month);
+  }
+
+  void _save() {
+    final expiry = _parseExpiry();
+    final year = int.tryParse(_year.text.trim());
+    if (expiry == null) {
+      setState(() => _error = 'Vencimiento con formato MM/AAAA.');
+      return;
+    }
+    if (widget.vehicle != null && (year == null || year < 1980)) {
+      setState(() => _error = 'Año del vehículo no válido.');
+      return;
+    }
+    if (_reason.text.trim().length < 5) {
+      setState(() => _error = 'Escribe el motivo (al menos 5 caracteres).');
+      return;
+    }
+    // La fecha guardada es el mes de vencimiento: si no cambió, no viaja.
+    final sameMonth = expiry.year == widget.profile.licenseExpiry.year &&
+        expiry.month == widget.profile.licenseExpiry.month;
+    Navigator.pop(
+      context,
+      DriverDocumentsResult(
+        DriverDocumentsEdit(
+          licenseNumber: _license.text.trim(),
+          licenseExpiry: sameMonth ? null : expiry,
+          plate:
+              widget.vehicle == null ? null : _plate.text.trim().toUpperCase(),
+          vehicleClass: _class,
+          make: widget.vehicle == null ? null : _make.text.trim(),
+          model: widget.vehicle == null ? null : _model.text.trim(),
+          year: widget.vehicle == null ? null : year,
+        ),
+        _reason.text.trim(),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget field(String label, TextEditingController c, {Key? key}) => Padding(
+          padding: const EdgeInsets.only(bottom: LuxSpacing.sm),
+          child: TextField(
+            key: key,
+            controller: c,
+            decoration: InputDecoration(labelText: label),
+          ),
+        );
+    return AlertDialog(
+      backgroundColor: LuxColors.surfaceMuted,
+      title: const Text('Licencia y vehículo', style: LuxTypography.titleLarge),
+      content: SizedBox(
+        width: 420,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              field('Número de licencia', _license,
+                  key: const ValueKey('doc-license')),
+              field('Vencimiento (MM/AAAA)', _expiry,
+                  key: const ValueKey('doc-expiry')),
+              if (widget.vehicle != null) ...[
+                field('Placa', _plate, key: const ValueKey('doc-plate')),
+                DropdownButtonFormField<VehicleClass>(
+                  value: _class,
+                  decoration: const InputDecoration(labelText: 'Clase'),
+                  items: [
+                    for (final c in VehicleClass.values)
+                      DropdownMenuItem(value: c, child: Text(c.label)),
+                  ],
+                  onChanged: (c) => setState(() => _class = c),
+                ),
+                const SizedBox(height: LuxSpacing.sm),
+                field('Marca', _make),
+                field('Modelo', _model),
+                field('Año', _year),
+              ],
+              field('Motivo (queda en la auditoría)', _reason,
+                  key: const ValueKey('doc-reason')),
+              if (_error != null)
+                Text(
+                  _error!,
+                  style: LuxTypography.caption.copyWith(color: LuxColors.error),
+                ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        TextButton(onPressed: _save, child: const Text('Guardar')),
+      ],
+    );
+  }
 }

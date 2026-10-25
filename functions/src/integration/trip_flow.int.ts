@@ -18,7 +18,6 @@ import {
   advanceBooking as advanceBookingFn,
   adminOverrideVerify as adminOverrideVerifyFn,
   getPickupCode as getPickupCodeFn,
-  onRideCompleted,
 } from '../index';
 
 const db = admin.firestore();
@@ -69,6 +68,11 @@ const events = async (id: string) =>
   (await db.collection(`bookings/${id}/events`).orderBy('at').get()).docs
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((d) => ({ id: d.id, ...d.data() }) as Record<string, any>);
+/** Lo que solo ve el admin de un evento (eventDetails). */
+const detail = async (bookingId: string, eventId: string) =>
+  (await db.doc(`bookings/${bookingId}/eventDetails/${eventId}`).get()).data() ?? {};
+/** Campos que pasajero y chófer no deben ver en los eventos (A8.7). */
+const ADMIN_ONLY = ['reason', 'farFromPickup', 'arrivalCheck'];
 const alerts = async () => (await db.collection('adminAlerts').get()).docs.map((d) => d.data());
 
 /** Código que ve el pasajero (por la callable, como en la app). */
@@ -83,7 +87,7 @@ beforeEach(async () => {
   await db.doc('users/chofer').set({ role: 'driver', isActive: true });
   await db.doc('users/otro').set({ role: 'driver', isActive: true });
   await db.doc('users/jefa').set({ role: 'admin' });
-  await db.doc('config/global').set({ arrivalRadiusMeters: 300 });
+  await db.doc('config/ops').set({ arrivalRadiusMeters: 300 });
 });
 afterAll(async () => { await clear(); await admin.app().delete(); });
 
@@ -117,7 +121,8 @@ describe('grafo completo', () => {
     const locs = await db.collection('bookings/b1/eventLocations').get();
     expect(locs.size).toBe(3);
     expect(evs.every((e) => !('lat' in e))).toBe(true);
-    expect(evs[1]).toMatchObject({ arrivalCheck: 'compared', farFromPickup: false });
+    expect(await detail('b1', evs[1].id)).toMatchObject({ arrivalCheck: 'compared', farFromPickup: false });
+    for (const e of evs) for (const k of ADMIN_ONLY) expect(e).not.toHaveProperty(k);
   });
 
   it('el código nunca se guarda: ni en la reserva, ni en los eventos, ni en la sal', async () => {
@@ -216,31 +221,35 @@ describe('llegada: distancia al punto de recogida', () => {
     await advanceBooking(deps(), 'chofer', { bookingId: 'b1', to: 'driver_arrived', location: FAR });
     expect(await status('b1')).toBe('driver_arrived');
     const [e] = await events('b1');
-    expect(e).toMatchObject({ farFromPickup: true, arrivalCheck: 'compared' });
+    expect(await detail('b1', e.id)).toMatchObject({ farFromPickup: true, arrivalCheck: 'compared' });
+    for (const k of ADMIN_ONLY) expect(e).not.toHaveProperty(k);
     const loc = (await db.doc(`bookings/b1/eventLocations/${e.id}`).get()).data()!;
     expect(loc.distanceMeters).toBeGreaterThan(300);
     expect(await alerts()).toEqual([expect.objectContaining({ type: 'far_from_pickup', bookingId: 'b1', resolved: false })]);
   });
 
   it('sin arrivalRadiusMeters no compara y lo anota', async () => {
-    await db.doc('config/global').set({});
+    await db.doc('config/ops').set({});
     await booking('b1', 'driver_arriving');
     await advanceBooking(deps(), 'chofer', { bookingId: 'b1', to: 'driver_arrived', location: FAR });
-    expect((await events('b1'))[0]).toMatchObject({ arrivalCheck: 'no_radius' });
+    const [e] = await events('b1');
+    expect(await detail('b1', e.id)).toMatchObject({ arrivalCheck: 'no_radius' });
     expect(await alerts()).toEqual([]);
   });
 
   it('sin ubicación del chófer lo anota y avisa (severidad baja)', async () => {
     await booking('b1', 'driver_arriving');
     await advanceBooking(deps(), 'chofer', { bookingId: 'b1', to: 'driver_arrived' });
-    expect((await events('b1'))[0]).toMatchObject({ arrivalCheck: 'no_location', hasLocation: false });
+    const [e] = await events('b1');
+    expect(e).toMatchObject({ hasLocation: false });
+    expect(await detail('b1', e.id)).toMatchObject({ arrivalCheck: 'no_location' });
     expect(await alerts()).toEqual([expect.objectContaining({
       type: 'arrival_without_location', severity: 'low', bookingId: 'b1', resolved: false,
     })]);
   });
 
   it('sin ubicación avisa aunque no haya radio configurado', async () => {
-    await db.doc('config/global').set({});
+    await db.doc('config/ops').set({});
     await booking('b1', 'driver_arriving');
     await advanceBooking(deps(), 'chofer', { bookingId: 'b1', to: 'driver_arrived' });
     expect((await alerts()).map((a) => a.type)).toEqual(['arrival_without_location']);
@@ -388,10 +397,14 @@ describe('adminOverrideVerify', () => {
     await booking('b1', 'driver_arrived', { pickupLocked: true });
     await adminOverrideVerify(deps(), actor, { bookingId: 'b1', reason: 'Pasajero sin batería, confirmado por teléfono' });
     expect(await status('b1')).toBe('verified');
-    expect((await events('b1'))[0]).toMatchObject({
-      from: 'driver_arrived', to: 'verified', source: 'admin',
-      actor: { uid: 'jefa', role: 'admin' }, reason: 'Pasajero sin batería, confirmado por teléfono',
+    const [e] = await events('b1');
+    expect(e).toMatchObject({
+      from: 'driver_arrived', to: 'verified', source: 'admin', method: 'admin_override',
+      actor: { uid: 'jefa', role: 'admin' },
     });
+    // El motivo solo lo ve central: no está en el evento que leen pasajero y chófer.
+    expect(e).not.toHaveProperty('reason');
+    expect(await detail('b1', e.id)).toMatchObject({ reason: 'Pasajero sin batería, confirmado por teléfono' });
     expect(await alerts()).toEqual([expect.objectContaining({ type: 'pickup_override', bookingId: 'b1' })]);
     const logs = (await db.collection('admin_logs').get()).docs.map((d) => d.data());
     expect(logs).toEqual([expect.objectContaining({ adminId: 'jefa', action: 'override_verify', targetId: 'b1' })]);
@@ -403,7 +416,7 @@ describe('adminOverrideVerify', () => {
   it('la callable solo la usa un admin', async () => {
     await booking('b1', 'driver_arrived');
     const run = (uid: string) => (adminOverrideVerifyFn as unknown as Runnable)
-      .run({ auth: { uid, token: {} }, data: { bookingId: 'b1', reason: 'Motivo suficiente' } });
+      .run({ auth: { uid, token: { auth_time: Math.floor(Date.now() / 1000) } }, data: { bookingId: 'b1', reason: 'Motivo suficiente' } });
     expect((await failure(run('chofer'))).code).toBe('permission-denied');
     expect((await failure(run('ana'))).code).toBe('permission-denied');
     expect(await status('b1')).toBe('driver_arrived');
@@ -432,15 +445,3 @@ describe('adminOverrideVerify', () => {
   });
 });
 
-describe('cerrar el viaje en /rides ya no completa la reserva', () => {
-  it('onRideCompleted no toca la reserva: completed solo por advanceBooking', async () => {
-    await booking('b1', 'driver_arrived');
-    const ride = db.doc('rides/r1');
-    await ride.set({ bookingId: 'b1', riderId: 'ana', driverId: 'chofer' });
-    const before = await ride.get();
-    await ride.update({ completedAt: admin.firestore.Timestamp.now() });
-    await (onRideCompleted as unknown as Runnable).run({ data: { before, after: await ride.get() }, params: { rideId: 'r1' } });
-    expect(await status('b1')).toBe('driver_arrived');
-    await ride.delete();
-  });
-});

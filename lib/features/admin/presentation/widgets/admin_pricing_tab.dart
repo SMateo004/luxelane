@@ -72,10 +72,6 @@ class PricingTab extends StatelessWidget {
                       key: ValueKey(PricingRule.idFor(vc, st)),
                       rule: state.effectiveRule(vc, st),
                       isCustom: state.hasCustomRule(vc, st),
-                      updatedBy: () {
-                        final by = state.effectiveRule(vc, st).updatedBy;
-                        return by == null ? null : state.userName(by);
-                      }(),
                     ),
                   ),
               ],
@@ -90,11 +86,9 @@ class _PricingCard extends StatefulWidget {
     super.key,
     required this.rule,
     required this.isCustom,
-    this.updatedBy,
   });
   final PricingRule rule;
   final bool isCustom;
-  final String? updatedBy;
 
   @override
   State<_PricingCard> createState() => _PricingCardState();
@@ -290,8 +284,8 @@ class _PricingCardState extends State<_PricingCard> {
                       ),
                       if (widget.isCustom && r.updatedAt != null)
                         Text(
-                          'Actualizada ${adminDate(r.updatedAt!)}'
-                          '${widget.updatedBy != null ? ' por ${widget.updatedBy}' : ''}',
+                          // Quién: en Auditoría (admin_logs).
+                          'Actualizada ${adminDate(r.updatedAt!)}',
                           style: LuxTypography.caption,
                         ),
                     ],

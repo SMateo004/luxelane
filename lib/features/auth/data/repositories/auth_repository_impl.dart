@@ -6,8 +6,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import '../../../../core/auth/mfa.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/error/auth_errors.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
@@ -55,7 +58,7 @@ class AuthRepositoryImpl implements AuthRepository {
           // Una cuenta bloqueada por el admin pierde la sesión abierta.
           if (!user.isActive) {
             await _auth.signOut();
-            throw const AuthFailure(kBlockedAccountMessage);
+            throw AuthFailure(blockedAccountMessage(user.role));
           }
           return user;
         } on AuthFailure {
@@ -91,8 +94,10 @@ class AuthRepositoryImpl implements AuthRepository {
       // Si el registro creó la cuenta pero no llegó a guardar el perfil, se
       // crea ahora en vez de dejar la cuenta inservible.
       return _activeOrBlocked(await _ensureProfile(cred.user!));
+    } on fb.FirebaseAuthMultiFactorException catch (e) {
+      return Left(MfaRequiredFailure(_challenge(e)));
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(_emailErrorMessage(e.code)));
+      return Left(AuthFailure(loginErrorMessage(e.code)));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -120,14 +125,27 @@ class AuthRepositoryImpl implements AuthRepository {
         // are granted by an admin.
         role: role,
         createdAt: DateTime.now(),
-        isVerified: true,
+        // Lo marca el servidor al comprobar el correo en Auth (H6).
+        isVerified: false,
         isActive: true,
         fcmTokens: const [],
       );
-      await _db.collection('users').doc(user.id).set(user.toJson());
+      await _db.collection('users').doc(user.id).set({
+        ...user.toJson(),
+        // Sin proveedor de SMS: el teléfono no está verificado.
+        'phoneVerified': false,
+      });
+      try {
+        await cred.user!.sendEmailVerification();
+      } catch (_) {
+        // Sin red o límite: la pantalla de verificación permite reenviarlo.
+      }
+      // Marcó la casilla al registrarse. Si no llega al servidor, reservar
+      // lo vuelve a pedir (terms_required).
+      await acceptTerms();
       return Right(user);
     } on fb.FirebaseAuthException catch (e) {
-      return Left(AuthFailure(_emailErrorMessage(e.code)));
+      return Left(AuthFailure(registerErrorMessage(e.code)));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -156,6 +174,8 @@ class AuthRepositoryImpl implements AuthRepository {
       final fbUser = cred.user;
       if (fbUser == null) return const Left(AuthFailure(_googleGenericError));
       return _activeOrBlocked(await _ensureProfile(fbUser));
+    } on fb.FirebaseAuthMultiFactorException catch (e) {
+      return Left(MfaRequiredFailure(_challenge(e)));
     } on fb.FirebaseAuthException catch (e) {
       if (e.code == 'popup-closed-by-user' ||
           e.code == 'cancelled-popup-request' ||
@@ -198,12 +218,13 @@ class AuthRepositoryImpl implements AuthRepository {
       // Roles are granted server-side only (see firestore.rules).
       role: UserRole.rider,
       createdAt: DateTime.now(),
-      // Google has already verified the address.
-      isVerified: fbUser.emailVerified,
+      // Aunque Google ya lo verificó, isVerified lo escribe el servidor
+      // (syncEmailVerification); el token ya lleva email_verified.
+      isVerified: false,
       isActive: true,
       fcmTokens: const [],
     );
-    await ref.set(user.toJson());
+    await ref.set({...user.toJson(), 'phoneVerified': false});
     return user;
   }
 
@@ -236,33 +257,18 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  /// Segundo paso (TOTP): al resolverlo, igual que un inicio de sesión.
+  MfaChallenge _challenge(fb.FirebaseAuthMultiFactorException e) =>
+      FirebaseTotpChallenge(
+        e.resolver,
+        (user) async => _activeOrBlocked(await _ensureProfile(user)),
+      );
+
   /// Las cuentas bloqueadas desde el panel admin no pueden entrar.
   Future<Either<Failure, User>> _activeOrBlocked(User user) async {
     if (user.isActive) return Right(user);
     await _auth.signOut();
-    return const Left(AuthFailure(kBlockedAccountMessage));
-  }
-
-  static String _emailErrorMessage(String code) {
-    switch (code) {
-      case 'invalid-credential':
-      case 'wrong-password':
-      case 'user-not-found':
-      case 'invalid-email':
-        return 'Correo o contraseña incorrectos.';
-      case 'email-already-in-use':
-        return 'Ya existe una cuenta con este correo. Inicia sesión.';
-      case 'weak-password':
-        return 'La contraseña es muy débil: usa al menos 6 caracteres.';
-      case 'user-disabled':
-        return 'Esta cuenta está desactivada.';
-      case 'too-many-requests':
-        return 'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.';
-      case 'network-request-failed':
-        return 'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
-      default:
-        return 'No pudimos iniciar sesión. Inténtalo de nuevo.';
-    }
+    return Left(AuthFailure(blockedAccountMessage(user.role)));
   }
 
   static const _googleGenericError =
@@ -282,7 +288,7 @@ class AuthRepositoryImpl implements AuthRepository {
       case 'operation-not-allowed':
         return 'El inicio de sesión con Google no está habilitado.';
       case 'user-disabled':
-        return 'Esta cuenta está desactivada.';
+        return kBlockedAccountMessage;
       case 'network-request-failed':
         return 'Sin conexión. Revisa tu internet e inténtalo de nuevo.';
       default:
@@ -310,6 +316,90 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, void>> acceptTerms() async {
+    try {
+      final v = (await _db.collection('config').doc('global').get())
+          .data()?['legalVersion'];
+      String? app;
+      try {
+        app = (await PackageInfo.fromPlatform()).version;
+      } catch (_) {
+        /* sin datos del paquete (pruebas) */
+      }
+      await _functions.httpsCallable('acceptTerms').call({
+        if (v is String && v.isNotEmpty) 'version': v,
+        'appVersion': app == null || app.isEmpty ? 'desconocida' : app,
+      });
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      return Left(ServerFailure(acceptTermsErrorMessage(e.code, e.details)));
+    } catch (_) {
+      return Left(ServerFailure(acceptTermsErrorMessage('', null)));
+    }
+  }
+
+  @override
+  ReauthMethod get reauthMethod {
+    final ids = {
+      for (final p in _auth.currentUser?.providerData ?? const <fb.UserInfo>[])
+        p.providerId,
+    };
+    if (ids.contains('password')) return ReauthMethod.password;
+    if (ids.contains('google.com')) return ReauthMethod.google;
+    return ReauthMethod.none;
+  }
+
+  @override
+  Future<Either<Failure, void>> reauthenticate({String? password}) async {
+    final u = _auth.currentUser;
+    if (u == null) return const Left(AuthFailure(kSessionExpiredMessage));
+    try {
+      if (password != null) {
+        await u.reauthenticateWithCredential(
+          fb.EmailAuthProvider.credential(
+            email: u.email ?? '',
+            password: password,
+          ),
+        );
+      } else if (kIsWeb) {
+        await u.reauthenticateWithPopup(
+          fb.GoogleAuthProvider()
+            ..setCustomParameters({'prompt': 'select_account'}),
+        );
+      } else {
+        final account = await _google.signIn();
+        if (account == null) return const Left(AuthCancelledFailure());
+        final tokens = await account.authentication;
+        await u.reauthenticateWithCredential(
+          fb.GoogleAuthProvider.credential(
+            idToken: tokens.idToken,
+            accessToken: tokens.accessToken,
+          ),
+        );
+      }
+      // El token nuevo lleva auth_time reciente.
+      await u.getIdToken(true);
+      return const Right(null);
+    } on fb.FirebaseAuthMultiFactorException catch (e) {
+      return Left(MfaRequiredFailure(_challenge(e)));
+    } on fb.FirebaseAuthException catch (e) {
+      if (e.code == 'popup-closed-by-user' ||
+          e.code == 'cancelled-popup-request' ||
+          e.code == 'web-context-cancelled') {
+        return const Left(AuthCancelledFailure());
+      }
+      return Left(AuthFailure(reauthErrorMessage(e.code)));
+    } on PlatformException catch (e) {
+      if (e.code == GoogleSignIn.kSignInCanceledError) {
+        return const Left(AuthCancelledFailure());
+      }
+      return Left(AuthFailure(reauthErrorMessage(e.code)));
+    } catch (_) {
+      return Left(AuthFailure(reauthErrorMessage('')));
+    }
+  }
+
+  @override
   Future<Either<Failure, void>> deleteAccount() async {
     try {
       await _functions.httpsCallable('deleteAccount').call();
@@ -328,14 +418,46 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await _auth.currentUser?.sendEmailVerification();
       return const Right(null);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on fb.FirebaseAuthException catch (e) {
+      return Left(emailVerificationFailureFor(e.code));
+    } catch (_) {
+      return Left(emailVerificationFailureFor(''));
     }
   }
 
   @override
-  Future<Either<Failure, void>> sendPhoneVerification(String phone) async {
-    return const Right(null);
+  bool get needsEmailVerification {
+    final u = _auth.currentUser;
+    if (u == null || u.emailVerified) return false;
+    return u.providerData.any((p) => p.providerId == 'password');
+  }
+
+  @override
+  Future<Either<Failure, bool>> refreshEmailVerification() async {
+    try {
+      final u = _auth.currentUser;
+      if (u == null) return const Right(false);
+      await u.reload();
+      final fresh = _auth.currentUser;
+      if (fresh == null || !fresh.emailVerified) return const Right(false);
+      // Token nuevo con email_verified para que createBooking lo vea.
+      await fresh.getIdToken(true);
+      await _functions.httpsCallable('syncEmailVerification').call<void>();
+      return const Right(true);
+    } on fb.FirebaseAuthException catch (e) {
+      return Left(emailVerificationFailureFor(e.code));
+    } on FirebaseFunctionsException catch (e) {
+      return Left(
+        EmailVerificationFailure(
+          e.code == 'unavailable' || e.code == 'deadline-exceeded'
+              ? EmailVerificationIssue.network
+              : EmailVerificationIssue.other,
+          functionErrorMessage(e.code, e.details),
+        ),
+      );
+    } catch (_) {
+      return Left(emailVerificationFailureFor(''));
+    }
   }
 
   @override
@@ -344,17 +466,8 @@ class AuthRepositoryImpl implements AuthRepository {
       await _auth.sendPasswordResetEmail(email: email);
       return const Right(null);
     } on fb.FirebaseAuthException catch (e) {
-      return Left(
-        AuthFailure(switch (e.code) {
-          'invalid-email' => 'Ese correo no es válido. Revísalo.',
-          'user-not-found' => 'No hay ninguna cuenta con ese correo.',
-          'too-many-requests' =>
-            'Demasiados intentos. Espera unos minutos e inténtalo de nuevo.',
-          'network-request-failed' =>
-            'Sin conexión. Revisa tu internet e inténtalo de nuevo.',
-          _ => 'No pudimos enviar el enlace. Inténtalo de nuevo.',
-        }),
-      );
+      final message = passwordResetErrorMessage(e.code);
+      return message == null ? const Right(null) : Left(AuthFailure(message));
     } catch (_) {
       return const Left(
         ServerFailure('No pudimos enviar el enlace. Inténtalo de nuevo.'),
@@ -375,3 +488,21 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 }
+
+/// Errores de Auth al enviar o comprobar la verificación del correo.
+EmailVerificationFailure emailVerificationFailureFor(String code) =>
+    switch (code) {
+      'too-many-requests' => const EmailVerificationFailure(
+          EmailVerificationIssue.tooManyRequests,
+          'Enviamos varios enlaces seguidos. Espera unos minutos antes de '
+          'pedir otro.',
+        ),
+      'network-request-failed' => const EmailVerificationFailure(
+          EmailVerificationIssue.network,
+          'Sin conexión. Revisa tu red e inténtalo de nuevo.',
+        ),
+      _ => const EmailVerificationFailure(
+          EmailVerificationIssue.other,
+          'No pudimos completar la verificación. Inténtalo de nuevo.',
+        ),
+    };

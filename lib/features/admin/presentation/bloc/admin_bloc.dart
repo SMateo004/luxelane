@@ -8,6 +8,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../domain/admin_finance.dart';
+import '../../domain/admin_operations.dart';
 import '../../domain/repositories/admin_repository.dart';
 
 // ---------------------------------------------------------------------------
@@ -151,6 +152,21 @@ class AdminToggleUserStatusRequested extends AdminEvent {
   const AdminToggleUserStatusRequested(this.userId, this.active);
   @override
   List<Object?> get props => [userId, active];
+}
+
+class AdminDriverDocumentsUpdateRequested extends AdminEvent {
+  final DriverProfile profile;
+  final Vehicle? vehicle;
+  final DriverDocumentsEdit edit;
+  final String reason;
+  const AdminDriverDocumentsUpdateRequested(
+    this.profile,
+    this.vehicle,
+    this.edit,
+    this.reason,
+  );
+  @override
+  List<Object?> get props => [profile.userId, vehicle?.id, edit, reason];
 }
 
 class AdminToggleVehicleStatusRequested extends AdminEvent {
@@ -525,6 +541,13 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         emit,
         _repo.toggleUserStatus(e.userId, e.active),
         e.active ? 'Usuario reactivado' : 'Usuario bloqueado',
+      ),
+    );
+    on<AdminDriverDocumentsUpdateRequested>(
+      (e, emit) => _perform(
+        emit,
+        _repo.updateDriverDocuments(e.profile, e.vehicle, e.edit, e.reason),
+        'Datos del chófer actualizados',
       ),
     );
     on<AdminToggleVehicleStatusRequested>(

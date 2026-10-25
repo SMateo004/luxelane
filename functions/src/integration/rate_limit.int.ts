@@ -99,7 +99,7 @@ describe('cableado en secureCallable', () => {
     const saved = RATE_LIMITS.resolveAlert;
     RATE_LIMITS.resolveAlert = { limit: 2, windowSeconds: 600 };
     try {
-      const run = () => (resolveAlertFn as unknown as Runnable).run({ auth: { uid: 'jefa', token: {} }, data: { alertId: 'nada' } });
+      const run = () => (resolveAlertFn as unknown as Runnable).run({ auth: { uid: 'jefa', token: { auth_time: Math.floor(Date.now() / 1000) } }, data: { alertId: 'nada' } });
       expect((await failure(run())).code).toBe('not-found');
       expect((await failure(run())).code).toBe('not-found');
       expect(await failure(run())).toEqual({ code: 'resource-exhausted', reason: 'rate_limited' });
