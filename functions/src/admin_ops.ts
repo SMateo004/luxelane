@@ -13,6 +13,7 @@ import { docId, parseInput } from './schemas';
 import { appendEvent, Status } from './trip_flow';
 import { SERVICE_TYPES, VEHICLE_CLASSES } from './fare';
 import { CAPACITY } from './booking_schema';
+import { computeSettlement, Settlement } from './settlement';
 
 export interface AdminDeps { db: admin.firestore.Firestore; now?: () => number }
 
@@ -194,7 +195,7 @@ const toCents = (bs: number) => Math.round(bs * 100);
 export async function adminRecordPayment(deps: AdminDeps, actor: AdminActor, data: unknown) {
   const input = parseInput(paymentSchema, data);
   const db = deps.db;
-  return db.runTransaction(async (tx) => {
+  const result = await db.runTransaction(async (tx): Promise<{ paymentId: string; amount?: number } | { rejected: string }> => {
     const now = admin.firestore.Timestamp.fromMillis(nowMs(deps));
     if (input.action === 'record') {
       const bookingRef = db.collection('bookings').doc(input.bookingId);
@@ -244,15 +245,47 @@ export async function adminRecordPayment(deps: AdminDeps, actor: AdminActor, dat
     if (Object.keys(changes).length === 0) throw opError('failed-precondition', 'no_change');
     const bookingRef = typeof p.bookingId === 'string' && p.bookingId ? db.collection('bookings').doc(p.bookingId) : null;
     const booking = bookingRef ? await tx.get(bookingRef) : null;
+
+    // D3: si cambia el importe, el reparto plataforma/chófer se recalcula con
+    // la comisión que la reserva guardó al completarse (settlement
+    // .commissionPct, la fija settleBooking), nunca con la vigente. Sin ella
+    // no se corrige el importe. No existe un marcador de «chófer ya
+    // liquidado»: esa comprobación queda pendiente de que exista.
+    let settlement: { before: Settlement | null; after: Settlement } | null = null;
+    if (changes.amount) {
+      const b = booking?.exists ? booking.data()! : null;
+      const prev = (b?.settlement ?? null) as Settlement | null;
+      if (!b || typeof prev?.commissionPct !== 'number') {
+        writeAudit(tx, db, {
+          actor, operation: 'correct_payment_rejected', collection: 'payments', docId: ref.id, targetType: 'payment',
+          changes: {}, reason: input.reason,
+          details: 'Corrección rechazada: la reserva no guarda la comisión con la que se completó',
+          context: { bookingId: p.bookingId ?? null, requested: changes, rejected: 'settlement_commission_missing' },
+        });
+        return { rejected: 'settlement_commission_missing' as const };
+      }
+      const next = computeSettlement({ ...b, status: 'completed', finalPrice: input.amountBs }, prev.commissionPct);
+      settlement = { before: prev, after: next ?? prev };
+    }
+
     tx.update(ref, { ...after, correctedAt: now, corrections: admin.firestore.FieldValue.increment(1) });
-    if (changes.amount && booking?.exists) tx.update(bookingRef!, { finalPrice: input.amountBs });
+    if (settlement && bookingRef) {
+      tx.update(bookingRef, { finalPrice: input.amountBs, settlement: settlement.after });
+    }
     writeAudit(tx, db, {
       actor, operation: 'correct_payment', collection: 'payments', docId: ref.id, targetType: 'payment',
       changes, reason: input.reason, details: `Corrección: ${Object.keys(changes).join(', ')}`,
-      context: { bookingId: p.bookingId ?? null },
+      context: {
+        bookingId: p.bookingId ?? null,
+        ...(settlement ? { settlement } : {}),
+      },
     });
     return { paymentId: ref.id };
   });
+  if ('rejected' in result) {
+    throw opError('failed-precondition', result.rejected);
+  }
+  return result;
 }
 
 // ---------------------------------------------------------------------------

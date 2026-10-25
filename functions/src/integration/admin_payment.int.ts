@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, afterAll } from '@jest/globals';
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { adminRecordPayment } from '../admin_ops';
+import { computeSettlement } from '../settlement';
 import { adminRecordPayment as adminRecordPaymentFn } from '../index';
 
 const db = admin.firestore();
@@ -17,7 +18,7 @@ async function reason(p: Promise<unknown>): Promise<string | undefined> {
   return 'ok';
 }
 async function clear(): Promise<void> {
-  for (const col of ['users', 'payments', 'admin_logs', 'rateLimits']) {
+  for (const col of ['users', 'payments', 'admin_logs', 'rateLimits', 'config']) {
     const snap = await db.collection(col).get();
     await Promise.all(snap.docs.map((d) => d.ref.delete()));
   }
@@ -30,7 +31,11 @@ beforeEach(async () => {
   await clear();
   await db.doc('users/jefa').set({ role: 'admin', isActive: true });
   await db.doc('users/ana').set({ role: 'rider', isActive: true });
-  await db.doc('bookings/b1').set({ riderId: 'ana', status: 'completed', estimatedPrice: 120.5, finalPrice: null });
+  // Reparto que fijó settleBooking al completarse (comisión 15 %).
+  await db.doc('bookings/b1').set({
+    riderId: 'ana', driverId: 'luis', status: 'completed', estimatedPrice: 120.5, finalPrice: null,
+    settlement: { amount: 120.5, commissionPct: 15, platformCommission: 18.08, driverPayout: 102.42 },
+  });
 });
 afterAll(async () => { await clear(); await admin.app().delete(); });
 
@@ -65,6 +70,37 @@ describe('métodos del panel', () => {
 
   it('rechaza un método que el panel no ofrece', async () => {
     expect(await reason(run({ action: 'record', bookingId: 'b1', method: 'card', reason: REASON }))).toBe('invalid_request');
+  });
+});
+
+describe('corregir el importe: reparto con la comisión guardada (D3)', () => {
+  it('recalcula con la comisión de la reserva, no con la vigente', async () => {
+    await db.doc('config/finance').set({ platformCommissionPct: 30 });
+    const { paymentId } = await run({ action: 'record', bookingId: 'b1', method: 'cash', reason: REASON });
+    await run({ action: 'correct', paymentId, amountBs: 110, reason: 'Importe mal anotado al cerrar' });
+    const b = (await doc('bookings/b1'))!;
+    expect(b.finalPrice).toBe(110);
+    expect(b.settlement).toEqual({ amount: 110, commissionPct: 15, platformCommission: 16.5, driverPayout: 93.5 });
+    expect((await doc(`payments/${paymentId}`))?.amount).toBe(11000);
+    // settleBooking no lo vuelve a tocar: el reparto ya es el del importe.
+    expect(computeSettlement(b, 30)).toBeNull();
+    const c = (await logs()).find((l) => l.operation === 'correct_payment')!;
+    expect(c.context.settlement.before).toMatchObject({ amount: 120.5, commissionPct: 15 });
+    expect(c.context.settlement.after).toMatchObject({ amount: 110, commissionPct: 15 });
+  });
+
+  it('sin comisión guardada: rechaza con motivo claro, no cambia nada y deja auditoría', async () => {
+    await db.doc('bookings/b2').set({ riderId: 'ana', status: 'completed', estimatedPrice: 50, finalPrice: null });
+    const { paymentId } = await run({ action: 'record', bookingId: 'b2', method: 'cash', reason: REASON });
+    expect(await reason(run({ action: 'correct', paymentId, amountBs: 40, reason: 'Importe mal anotado al cerrar' })))
+      .toBe('settlement_commission_missing');
+    expect((await doc(`payments/${paymentId}`))?.amount).toBe(5000);
+    expect((await doc('bookings/b2'))?.finalPrice).toBe(50);
+    const r = (await logs()).find((l) => l.operation === 'correct_payment_rejected')!;
+    expect(r).toMatchObject({ reason: 'Importe mal anotado al cerrar', context: { rejected: 'settlement_commission_missing' } });
+    // Sin tocar el importe (método o referencia) sí se corrige.
+    await run({ action: 'correct', paymentId, method: 'qr', reason: 'Método mal anotado al cerrar' });
+    expect((await doc(`payments/${paymentId}`))?.method).toBe('qr');
   });
 });
 

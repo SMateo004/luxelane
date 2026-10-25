@@ -641,6 +641,10 @@ String adminErrorMessage(String code, Object? details) {
         'automático; solo se registra a mano si ese cobro falla.',
     'already_paid' => 'Este viaje ya tiene un cobro registrado',
     'not_manual' => 'Solo se corrigen cobros registrados a mano',
+    'settlement_commission_missing' =>
+      'No se puede corregir el importe: el viaje no tiene guardada la '
+          'comisión con la que se completó. Asigna primero los repartos '
+          'pendientes (Configuración) y vuelve a intentarlo.',
     'invalid_fare' => 'La tarifa no es válida: revisa los importes',
     _ => code == 'permission-denied'
         ? 'Permiso denegado: se necesita rol de administrador'

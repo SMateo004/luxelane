@@ -207,4 +207,50 @@ void main() {
       expect(lines[1], contains('Por cobrar'));
     });
   });
+
+  // D3: tras corregir el importe de un cobro manual, el servidor deja
+  // finalPrice y el reparto (con la comisión guardada) coherentes; las
+  // vistas de finanzas los leen sin recalcular con la comisión vigente.
+  group('corrección de un cobro manual (D3)', () {
+    const corrected = BookingSettlement(
+      amount: 110,
+      commissionPct: 15,
+      platformCommission: 16.5,
+      driverPayout: 93.5,
+    );
+
+    test('libro, repartos por chófer y viaje usan el reparto corregido', () {
+      final b = _b('a', price: 120.5, finalPrice: 110, settlement: corrected);
+      final s = FinancialSummary.compute(
+        bookings: [b],
+        payments: const [],
+        commissionPct: 30,
+        now: _now,
+      );
+      final e = s.entries.single;
+      expect(e.amount, 110);
+      expect(e.commission, 16.5);
+      expect(e.driverPayout, 93.5);
+      expect(s.driverPayouts, 93.5);
+      // Detalle del viaje y app del chófer: el reparto del servidor tal cual.
+      expect(b.settlementOr(30), same(corrected));
+    });
+
+    test('un importe corregido sin reparto nuevo saldría provisional', () {
+      // Lo que quedaba antes de D3: finalPrice nuevo y reparto del importe
+      // anterior. El panel lo trataría como pendiente de repartir.
+      final stale = _b(
+        'a',
+        price: 120.5,
+        finalPrice: 110,
+        settlement: const BookingSettlement(
+          amount: 120.5,
+          commissionPct: 15,
+          platformCommission: 18.08,
+          driverPayout: 102.42,
+        ),
+      );
+      expect(identical(stale.settlementOr(30), stale.settlement), isFalse);
+    });
+  });
 }
