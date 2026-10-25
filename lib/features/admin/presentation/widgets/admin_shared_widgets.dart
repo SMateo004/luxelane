@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/widgets/components.dart';
+import '../../domain/repositories/admin_repository.dart'
+    show kAdminReasonMinLength;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Formato
@@ -568,7 +570,7 @@ Future<String?> confirmAdminAction(
   required String confirmLabel,
   String? reasonLabel,
   bool destructive = false,
-  int minReasonLength = 3,
+  int minReasonLength = kAdminReasonMinLength,
 }) =>
     showDialog<String>(
       context: context,
@@ -580,6 +582,24 @@ Future<String?> confirmAdminAction(
         destructive: destructive,
         minReasonLength: minReasonLength,
       ),
+    );
+
+/// Pide el motivo de una escritura de admin (queda en la auditoría del
+/// servidor). null si se canceló.
+Future<String?> askAdminReason(
+  BuildContext context, {
+  required String title,
+  required String message,
+  required String confirmLabel,
+  bool destructive = false,
+}) =>
+    confirmAdminAction(
+      context,
+      title: title,
+      message: message,
+      confirmLabel: confirmLabel,
+      reasonLabel: 'Motivo',
+      destructive: destructive,
     );
 
 /// El diálogo es dueño de su campo de texto: se libera al desmontarse, no
@@ -642,7 +662,8 @@ class _ConfirmAdminDialogState extends State<_ConfirmAdminDialog> {
                 style: LuxTypography.bodyMedium,
                 onChanged: (_) => setState(() {}),
                 decoration: adminInputDecoration(
-                  hint: 'Obligatorio (auditoría)',
+                  hint: 'Obligatorio, mínimo ${widget.minReasonLength} '
+                      'caracteres (queda en la auditoría)',
                 ),
               ),
             ],

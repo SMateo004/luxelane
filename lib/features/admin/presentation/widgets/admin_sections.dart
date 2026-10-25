@@ -10,6 +10,8 @@ import '../../../../core/widgets/components.dart';
 import '../../../business/data/business_lead_repository.dart';
 import '../../domain/admin_finance.dart';
 import '../../domain/admin_operations.dart';
+import '../../domain/repositories/admin_repository.dart'
+    show kAdminReasonMinLength;
 import '../bloc/admin_bloc.dart';
 import 'admin_booking_events.dart';
 import 'admin_finance_tab.dart';
@@ -54,9 +56,15 @@ class DashboardTab extends StatelessWidget {
               text: 'Modo mantenimiento activo: los pasajeros no pueden '
                   'reservar.',
               action: 'Reanudar',
-              onTap: () => context.read<AdminBloc>().add(
-                    const AdminToggleMaintenanceModeRequested(false),
-                  ),
+              onTap: () => setGlobalSetting(
+                context,
+                title: 'Reanudar reservas',
+                message: 'Se desactiva el modo mantenimiento y los pasajeros '
+                    'vuelven a poder reservar.',
+                confirmLabel: 'Reanudar',
+                event: (reason) =>
+                    AdminToggleMaintenanceModeRequested(false, reason),
+              ),
             ),
           if (unassigned > 0)
             _AlertRow(
@@ -642,7 +650,7 @@ class _BookingDetail extends StatelessWidget {
                       label: 'Registrar cobro',
                       onTap: () => recordPaymentDialog(context, booking),
                     ),
-                  if (AdminOperations.canAdjustFinalPrice(booking, payment))
+                  if (AdminOperations.canAdjustFinalPrice(booking))
                     AdminActionButton(
                       icon: Icons.edit_outlined,
                       label: 'Ajustar precio final',
@@ -692,7 +700,7 @@ class _BookingDetail extends StatelessWidget {
     Booking b,
     BookingStatus s,
   ) async {
-    final ok = await confirmAdminAction(
+    final reason = await askAdminReason(
       context,
       title: 'Cambiar estado',
       message: 'La reserva #${shortId(b.id)} pasará de '
@@ -700,8 +708,10 @@ class _BookingDetail extends StatelessWidget {
           '${s == BookingStatus.completed ? '\n\nQuedará facturada por ${bs(b.finalPrice ?? b.estimatedPrice)} y el chófer volverá a estar disponible.' : ''}',
       confirmLabel: 'Confirmar',
     );
-    if (ok == null || !context.mounted) return;
-    context.read<AdminBloc>().add(AdminChangeBookingStatusRequested(b, s));
+    if (reason == null || !context.mounted) return;
+    context
+        .read<AdminBloc>()
+        .add(AdminChangeBookingStatusRequested(b, s, reason));
   }
 
   Future<void> _cancel(BuildContext context, Booking b) async {
@@ -711,7 +721,7 @@ class _BookingDetail extends StatelessWidget {
       message: 'La reserva #${shortId(b.id)} quedará cancelada y se '
           'conservará en el historial. El chófer asignado quedará libre.',
       confirmLabel: 'Cancelar reserva',
-      reasonLabel: 'Motivo de la cancelación',
+      reasonLabel: 'Motivo de la cancelación (solo lo ve central)',
       destructive: true,
     );
     if (reason == null || !context.mounted) return;
@@ -719,7 +729,7 @@ class _BookingDetail extends StatelessWidget {
           AdminChangeBookingStatusRequested(
             b,
             BookingStatus.cancelled,
-            reason: reason,
+            reason,
           ),
         );
   }
@@ -801,7 +811,16 @@ class _BookingDetail extends StatelessWidget {
         ],
       ),
     );
-    if (chosen != null) bloc.add(AdminAssignDriverRequested(b, chosen));
+    if (chosen == null || !context.mounted) return;
+    final reason = await askAdminReason(
+      context,
+      title: b.driverId == null ? 'Asignar chófer' : 'Reasignar chófer',
+      message: '${state.userName(chosen)} quedará a cargo de la reserva '
+          '#${shortId(b.id)}.',
+      confirmLabel: 'Asignar',
+    );
+    if (reason == null) return;
+    bloc.add(AdminAssignDriverRequested(b, chosen, reason));
   }
 }
 
@@ -943,6 +962,7 @@ class _DriverTile extends StatelessWidget {
                         driver.userId,
                         vehicleReviewed: review.reviewed,
                         vehicleNote: review.note,
+                        reason: review.reason,
                       ),
                     );
               },
@@ -1056,9 +1076,24 @@ class _VehicleTile extends StatelessWidget {
             Switch.adaptive(
               value: vehicle.isActive,
               activeColor: LuxColors.sapphire,
-              onChanged: (val) => context.read<AdminBloc>().add(
-                    AdminToggleVehicleStatusRequested(vehicle.id, val),
-                  ),
+              onChanged: (val) async {
+                final reason = await askAdminReason(
+                  context,
+                  title: val ? 'Activar vehículo' : 'Desactivar vehículo',
+                  message: val
+                      ? 'Placa ${vehicle.plate}: volverá a recibir '
+                          'solicitudes.'
+                      : 'Placa ${vehicle.plate}: dejará de recibir '
+                          'solicitudes.',
+                  confirmLabel: val ? 'Activar' : 'Desactivar',
+                  destructive: !val,
+                );
+                if (reason == null || !context.mounted) return;
+                context.read<AdminBloc>().add(
+                      AdminToggleVehicleStatusRequested(
+                          vehicle.id, val, reason),
+                    );
+              },
             ),
           ],
         ),
@@ -1567,20 +1602,20 @@ class SettingsTab extends StatelessWidget {
                           'app. Los viajes en curso no se ven afectados.',
                       value: state.isMaintenanceMode,
                       onChanged: (val) async {
-                        if (val) {
-                          final ok = await confirmAdminAction(
-                            context,
-                            title: 'Activar mantenimiento',
-                            message: 'Los pasajeros no podrán reservar hasta '
-                                'que lo desactives.',
-                            confirmLabel: 'Activar',
-                            destructive: true,
-                          );
-                          if (ok == null || !context.mounted) return;
-                        }
-                        context.read<AdminBloc>().add(
-                              AdminToggleMaintenanceModeRequested(val),
-                            );
+                        await setGlobalSetting(
+                          context,
+                          title: val
+                              ? 'Activar mantenimiento'
+                              : 'Reanudar reservas',
+                          message: val
+                              ? 'Los pasajeros no podrán reservar hasta que '
+                                  'lo desactives.'
+                              : 'Los pasajeros vuelven a poder reservar.',
+                          confirmLabel: val ? 'Activar' : 'Reanudar',
+                          destructive: val,
+                          event: (reason) =>
+                              AdminToggleMaintenanceModeRequested(val, reason),
+                        );
                       },
                     ),
                     const LuxDivider(),
@@ -1589,11 +1624,22 @@ class SettingsTab extends StatelessWidget {
                       title: 'Notificaciones push',
                       subtitle: 'Avisos push a pasajeros y chóferes.',
                       value: state.pushNotificationsEnabled,
-                      onChanged: (val) => context.read<AdminBloc>().add(
-                            AdminUpdateGlobalSettingsRequested({
-                              'pushNotificationsEnabled': val,
-                            }),
-                          ),
+                      onChanged: (val) => setGlobalSetting(
+                        context,
+                        title: val
+                            ? 'Activar notificaciones push'
+                            : 'Desactivar notificaciones push',
+                        message: val
+                            ? 'Pasajeros y chóferes volverán a recibir avisos.'
+                            : 'Pasajeros y chóferes dejarán de recibir avisos '
+                                'push.',
+                        confirmLabel: 'Confirmar',
+                        destructive: !val,
+                        event: (reason) => AdminUpdateGlobalSettingsRequested(
+                          {'pushNotificationsEnabled': val},
+                          reason,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -1609,11 +1655,19 @@ class SettingsTab extends StatelessWidget {
                       ? 'Visible para los clientes en la web y la app.'
                       : 'Oculta: los clientes no ven ni pueden reservar First Class.',
                   value: state.firstClassEnabled,
-                  onChanged: (val) => context.read<AdminBloc>().add(
-                        AdminUpdateGlobalSettingsRequested({
-                          'firstClassEnabled': val,
-                        }),
-                      ),
+                  onChanged: (val) => setGlobalSetting(
+                    context,
+                    title: val ? 'Mostrar First Class' : 'Ocultar First Class',
+                    message: val
+                        ? 'Los clientes podrán ver y reservar First Class.'
+                        : 'Los clientes dejarán de ver y reservar First Class.',
+                    confirmLabel: 'Confirmar',
+                    destructive: !val,
+                    event: (reason) => AdminUpdateGlobalSettingsRequested(
+                      {'firstClassEnabled': val},
+                      reason,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: LuxSpacing.xl),
@@ -1751,7 +1805,7 @@ class _CommissionCardState extends State<_CommissionCard> {
           TextButton(
             onPressed: dirty
                 ? () async {
-                    final ok = await confirmAdminAction(
+                    final reason = await askAdminReason(
                       context,
                       title: 'Cambiar comisión',
                       message: '${_fmt(widget.current)} % → ${_fmt(value)} %. '
@@ -1759,11 +1813,12 @@ class _CommissionCardState extends State<_CommissionCard> {
                           'ahora; los ya completados conservan su reparto.',
                       confirmLabel: 'Guardar',
                     );
-                    if (ok == null || !context.mounted) return;
+                    if (reason == null || !context.mounted) return;
                     context.read<AdminBloc>().add(
-                          AdminUpdateFinanceSettingsRequested({
-                            'platformCommissionPct': value,
-                          }),
+                          AdminUpdateFinanceSettingsRequested(
+                            {'platformCommissionPct': value},
+                            reason,
+                          ),
                         );
                   }
                 : null,
@@ -1966,11 +2021,9 @@ class BusinessLeadsTab extends StatelessWidget {
                         ),
                         const Spacer(),
                         TextButton(
-                          onPressed: () =>
-                              sl<BusinessLeadRepository>().setHandled(
-                            l.id,
-                            !l.handled,
-                          ),
+                          onPressed: () => context.read<AdminBloc>().add(
+                                AdminSetLeadHandledRequested(l.id, !l.handled),
+                              ),
                           child: Text(
                             l.handled ? 'Marcar pendiente' : 'Marcar atendida',
                           ),
@@ -1986,7 +2039,27 @@ class BusinessLeadsTab extends StatelessWidget {
       );
 }
 
-typedef _VehicleReview = ({bool reviewed, String note});
+typedef _VehicleReview = ({bool reviewed, String note, String reason});
+
+/// Pide el motivo y, si se confirma, envía el cambio de configuración.
+Future<void> setGlobalSetting(
+  BuildContext context, {
+  required String title,
+  required String message,
+  required String confirmLabel,
+  required AdminEvent Function(String reason) event,
+  bool destructive = false,
+}) async {
+  final bloc = context.read<AdminBloc>();
+  final reason = await askAdminReason(
+    context,
+    title: title,
+    message: message,
+    confirmLabel: confirmLabel,
+    destructive: destructive,
+  );
+  if (reason != null) bloc.add(event(reason));
+}
 
 /// Verificación del chófer con la revisión del vehículo explícita: sin la
 /// casilla, se verifican los documentos pero el vehículo sigue inactivo.
@@ -2001,10 +2074,12 @@ class _VerifyDriverDialog extends StatefulWidget {
 class _VerifyDriverDialogState extends State<_VerifyDriverDialog> {
   bool _reviewed = false;
   final _note = TextEditingController();
+  final _reason = TextEditingController();
 
   @override
   void dispose() {
     _note.dispose();
+    _reason.dispose();
     super.dispose();
   }
 
@@ -2039,6 +2114,16 @@ class _VerifyDriverDialogState extends State<_VerifyDriverDialog> {
                 hint: 'Nota de la revisión (opcional)',
               ),
             ),
+            TextField(
+              key: const Key('verify-reason'),
+              controller: _reason,
+              maxLength: 500,
+              onChanged: (_) => setState(() {}),
+              decoration: adminInputDecoration(
+                hint: 'Motivo, mínimo $kAdminReasonMinLength caracteres '
+                    '(queda en la auditoría)',
+              ),
+            ),
           ],
         ),
         actions: [
@@ -2047,9 +2132,15 @@ class _VerifyDriverDialogState extends State<_VerifyDriverDialog> {
             child: const Text('Cancelar'),
           ),
           FilledButton(
-            onPressed: () => Navigator.of(
-              context,
-            ).pop((reviewed: _reviewed, note: _note.text)),
+            onPressed: _reason.text.trim().length < kAdminReasonMinLength
+                ? null
+                : () => Navigator.of(context).pop(
+                      (
+                        reviewed: _reviewed,
+                        note: _note.text,
+                        reason: _reason.text.trim(),
+                      ),
+                    ),
             child: Text(_reviewed ? 'Verificar y activar' : 'Verificar'),
           ),
         ],
@@ -2215,8 +2306,11 @@ class _DriverDocumentsDialogState extends State<DriverDocumentsDialog> {
       setState(() => _error = 'Año del vehículo no válido.');
       return;
     }
-    if (_reason.text.trim().length < 5) {
-      setState(() => _error = 'Escribe el motivo (al menos 5 caracteres).');
+    if (_reason.text.trim().length < kAdminReasonMinLength) {
+      setState(
+        () => _error =
+            'Escribe el motivo (al menos $kAdminReasonMinLength caracteres).',
+      );
       return;
     }
     // La fecha guardada es el mes de vencimiento: si no cambió, no viaja.

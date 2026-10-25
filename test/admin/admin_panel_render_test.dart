@@ -220,13 +220,14 @@ AdminRepository _repo() {
     r.backfillSettlements,
   ).thenAnswer((_) async => const Right<Failure, int>(2));
   when(
-    () => r.updatePricingRule(any()),
+    () => r.updatePricingRule(any(), any()),
   ).thenAnswer((_) async => const Right<Failure, void>(null));
   when(
     () => r.verifyDriver(
       any(),
       vehicleReviewed: any(named: 'vehicleReviewed'),
       vehicleNote: any(named: 'vehicleNote'),
+      reason: any(named: 'reason'),
     ),
   ).thenAnswer((_) async => const Right<Failure, void>(null));
   return r;
@@ -341,13 +342,22 @@ void main() {
       tester,
     ) async {
       await openDialog(tester);
-      await tester.tap(find.widgetWithText(FilledButton, 'Verificar'));
+      // Sin motivo no se puede confirmar (Parte A: queda en la auditoría).
+      final button = find.widgetWithText(FilledButton, 'Verificar');
+      expect(tester.widget<FilledButton>(button).onPressed, isNull);
+      await tester.enterText(
+        find.byKey(const Key('verify-reason')),
+        'Licencia revisada en persona',
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(button);
       await tester.pumpAndSettle();
       verify(
         () => _lastRepo.verifyDriver(
           'u-driver',
           vehicleReviewed: false,
           vehicleNote: any(named: 'vehicleNote'),
+          reason: 'Licencia revisada en persona',
         ),
       ).called(1);
     });
@@ -356,7 +366,15 @@ void main() {
       await openDialog(tester);
       await tester.tap(find.byType(Checkbox));
       await tester.pumpAndSettle();
-      await tester.enterText(find.byType(TextField), 'Sin golpes, ITV al día');
+      await tester.enterText(
+        find.byType(TextField).first,
+        'Sin golpes, ITV al día',
+      );
+      await tester.enterText(
+        find.byKey(const Key('verify-reason')),
+        'Vehículo revisado en el taller',
+      );
+      await tester.pumpAndSettle();
       await tester.tap(
         find.widgetWithText(FilledButton, 'Verificar y activar'),
       );
@@ -366,6 +384,7 @@ void main() {
           'u-driver',
           vehicleReviewed: true,
           vehicleNote: 'Sin golpes, ITV al día',
+          reason: 'Vehículo revisado en el taller',
         ),
       ).called(1);
     });
@@ -390,12 +409,23 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Guardar tarifa'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Guardar').last);
+    // El motivo es obligatorio: sin él, «Guardar» no hace nada.
+    final save = find.widgetWithText(FilledButton, 'Guardar');
+    expect(tester.widget<FilledButton>(save).onPressed, isNull);
+    await tester.enterText(
+      find.descendant(
+          of: find.byType(AlertDialog), matching: find.byType(TextField)),
+      'Ajuste de tarifa del piloto',
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(save);
     await tester.pumpAndSettle();
 
-    final saved = verify(() => _last.updatePricingRule(captureAny()))
-        .captured
-        .single as PricingRule;
+    final captured =
+        verify(() => _last.updatePricingRule(captureAny(), captureAny()))
+            .captured;
+    final saved = captured.first as PricingRule;
+    expect(captured.last, 'Ajuste de tarifa del piloto');
     expect(saved.pricePerKmUsd, 4);
     expect(saved.basePriceUsd, 55);
     expect(saved.isActive, isFalse);

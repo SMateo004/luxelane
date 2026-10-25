@@ -48,17 +48,35 @@ abstract class AdminRepository {
   /// Máximo de reservas que se cargan; las cifras avisan si se alcanza.
   int get bookingsLimit;
 
+  // Todas las escrituras pasan por callables con auditoría en el servidor
+  // (Parte A). [reason]: motivo de al menos [kAdminReasonMinLength]
+  // caracteres, que queda en admin_logs.
+
   // ── Tarifas ──────────────────────────────────────────────────────────────
-  Future<Either<Failure, void>> updatePricingRule(PricingRule rule);
-  Future<Either<Failure, void>> resetPricingRule(PricingRule rule);
+  Future<Either<Failure, void>> updatePricingRule(
+    PricingRule rule,
+    String reason,
+  );
+
+  /// Borrar una tarifa pasa a desactivarla (isActive false).
+  Future<Either<Failure, void>> deactivatePricingRule(
+    PricingRule rule,
+    String reason,
+  );
 
   // ── Operaciones ──────────────────────────────────────────────────────────
   Future<Either<Failure, void>> changeBookingStatus(
     Booking booking,
-    BookingStatus status, {
-    String reason = '',
-  });
-  Future<Either<Failure, void>> assignDriver(Booking booking, String driverId);
+    BookingStatus status,
+    String reason,
+  );
+  Future<Either<Failure, void>> assignDriver(
+    Booking booking,
+    String driverId,
+    String reason,
+  );
+
+  /// Solo antes de completar y dentro de config/ops.maxPriceAdjustmentPercent.
   Future<Either<Failure, void>> adjustFinalPrice(
     Booking booking,
     double finalPrice,
@@ -71,13 +89,24 @@ abstract class AdminRepository {
     Booking booking,
     String method,
     String reference,
+    String reason,
   );
+
+  /// Corrige un cobro manual; el valor anterior queda en la auditoría.
+  Future<Either<Failure, void>> correctPayment(
+    Payment payment, {
+    double? amountBs,
+    String? method,
+    String? reference,
+    required String reason,
+  });
 
   /// Asigna el reparto plataforma / chófer a los viajes completados que aún
   /// no lo tienen. Devuelve cuántos se repartieron.
   Future<Either<Failure, int>> backfillSettlements();
   Future<Either<Failure, void>> updateFinanceSettings(
     Map<String, dynamic> fields,
+    String reason,
   );
 
   // ── Personas, flota y sistema ────────────────────────────────────────────
@@ -87,6 +116,7 @@ abstract class AdminRepository {
     String driverId, {
     required bool vehicleReviewed,
     String vehicleNote = '',
+    required String reason,
   });
   Future<Either<Failure, void>> toggleUserStatus(String userId, bool active);
 
@@ -101,10 +131,20 @@ abstract class AdminRepository {
   Future<Either<Failure, void>> toggleVehicleStatus(
     String vehicleId,
     bool active,
+    String reason,
   );
-  Future<Either<Failure, void>> toggleMaintenanceMode(bool active);
+  Future<Either<Failure, void>> toggleMaintenanceMode(
+    bool active,
+    String reason,
+  );
   Future<Either<Failure, void>> updateGlobalSettings(
     Map<String, dynamic> fields,
+    String reason,
   );
+  Future<Either<Failure, void>> setLeadHandled(String leadId, bool handled);
   Future<Either<Failure, void>> updateUserRole(String userId, UserRole role);
 }
+
+/// Mínimo del motivo de las operaciones sensibles (igual que reasonSchema en
+/// functions/src/admin_audit.ts).
+const kAdminReasonMinLength = 10;

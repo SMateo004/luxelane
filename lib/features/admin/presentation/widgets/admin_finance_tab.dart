@@ -9,6 +9,8 @@ import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../domain/admin_finance.dart';
 import '../../domain/admin_operations.dart';
+import '../../domain/repositories/admin_repository.dart'
+    show kAdminReasonMinLength;
 import '../bloc/admin_bloc.dart';
 import 'admin_shared_widgets.dart';
 
@@ -405,7 +407,9 @@ class _LedgerTile extends StatelessWidget {
         entry.status == ChargeStatus.failed;
     final canRefund =
         entry.status == ChargeStatus.collected && entry.payment != null;
-    final canAdjust = AdminOperations.canAdjustFinalPrice(b, entry.payment);
+    // Un cobro registrado a mano se corrige (queda el valor anterior en la
+    // auditoría); el importe del viaje solo se ajusta antes de completar.
+    final canCorrect = AdminOperations.canCorrectPayment(entry.payment);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: LuxSpacing.sm),
@@ -460,13 +464,13 @@ class _LedgerTile extends StatelessWidget {
               Icons.more_vert_rounded,
               color: LuxColors.inkTertiary,
             ),
-            enabled: canCollect || canRefund || canAdjust,
+            enabled: canCollect || canRefund || canCorrect,
             onSelected: (v) {
               switch (v) {
                 case 'collect':
                   recordPaymentDialog(context, b);
-                case 'adjust':
-                  adjustPriceDialog(context, b);
+                case 'correct':
+                  correctPaymentDialog(context, entry.payment!);
                 case 'refund':
                   _refund(context, entry);
               }
@@ -477,10 +481,10 @@ class _LedgerTile extends StatelessWidget {
                   value: 'collect',
                   child: Text('Registrar cobro'),
                 ),
-              if (canAdjust)
+              if (canCorrect)
                 const PopupMenuItem(
-                  value: 'adjust',
-                  child: Text('Ajustar precio final'),
+                  value: 'correct',
+                  child: Text('Corregir cobro'),
                 ),
               if (canRefund)
                 const PopupMenuItem(
@@ -514,163 +518,386 @@ class _LedgerTile extends StatelessWidget {
   }
 }
 
+/// Métodos de cobro manual; los mismos que admite adminRecordPayment (una
+/// prueba de functions compara las dos listas).
+const kManualPaymentMethods = {
+  'cash': 'Efectivo',
+  'qr': 'QR',
+  'transfer': 'Transferencia',
+  'card_terminal': 'Tarjeta (POS)',
+};
+
 /// Registrar un cobro hecho fuera de la app (efectivo, QR, transferencia…).
 Future<void> recordPaymentDialog(BuildContext context, Booking b) async {
-  const methods = {
-    'cash': 'Efectivo',
-    'qr': 'QR',
-    'transfer': 'Transferencia',
-    'card_terminal': 'Tarjeta (POS)',
-  };
-  var method = 'cash';
-  final ref = TextEditingController();
   final bloc = context.read<AdminBloc>();
-  final amount = b.finalPrice ?? b.estimatedPrice;
-  final ok = await showDialog<bool>(
+  final r =
+      await showDialog<({String method, String reference, String reason})>(
     context: context,
-    builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setState) => AlertDialog(
-        backgroundColor: LuxColors.surfaceMuted,
-        title: Text(
-          'Registrar cobro de ${bs(amount)}',
-          style: LuxTypography.titleLarge,
+    builder: (_) => _RecordPaymentDialog(booking: b),
+  );
+  if (r != null) {
+    bloc.add(AdminRecordPaymentRequested(b, r.method, r.reference, r.reason));
+  }
+}
+
+Future<void> adjustPriceDialog(BuildContext context, Booking b) async {
+  final bloc = context.read<AdminBloc>();
+  final r = await showDialog<({double price, String reason})>(
+    context: context,
+    builder: (_) => _AdjustPriceDialog(booking: b),
+  );
+  if (r != null) bloc.add(AdminAdjustFinalPriceRequested(b, r.price, r.reason));
+}
+
+/// Corrige un cobro registrado a mano: importe, método o referencia. El
+/// valor anterior queda en la auditoría del servidor.
+Future<void> correctPaymentDialog(BuildContext context, Payment p) async {
+  final bloc = context.read<AdminBloc>();
+  final r = await showDialog<
+      ({double? amount, String? method, String? reference, String reason})>(
+    context: context,
+    builder: (_) => _CorrectPaymentDialog(payment: p),
+  );
+  if (r == null) return;
+  bloc.add(
+    AdminCorrectPaymentRequested(
+      p,
+      amountBs: r.amount,
+      method: r.method,
+      reference: r.reference,
+      reason: r.reason,
+    ),
+  );
+}
+
+/// Campo del motivo: obligatorio, queda en la auditoría del servidor.
+class _ReasonField extends StatelessWidget {
+  const _ReasonField({
+    required this.fieldKey,
+    required this.controller,
+    required this.onChanged,
+  });
+  final Key fieldKey;
+  final TextEditingController controller;
+  final VoidCallback onChanged;
+
+  @override
+  Widget build(BuildContext context) => TextField(
+        key: fieldKey,
+        controller: controller,
+        maxLength: 500,
+        style: LuxTypography.bodyMedium,
+        onChanged: (_) => onChanged(),
+        decoration: adminInputDecoration(
+          hint: 'Motivo, mínimo $kAdminReasonMinLength caracteres '
+              '(queda en la auditoría)',
         ),
-        content: SizedBox(
-          width: 420,
+      );
+}
+
+bool _reasonOk(TextEditingController c) =>
+    c.text.trim().length >= kAdminReasonMinLength;
+
+// Los diálogos son dueños de sus campos de texto: se liberan al desmontarse,
+// no al cerrarse (la animación de salida aún los usa).
+
+class _RecordPaymentDialog extends StatefulWidget {
+  const _RecordPaymentDialog({required this.booking});
+  final Booking booking;
+
+  @override
+  State<_RecordPaymentDialog> createState() => _RecordPaymentDialogState();
+}
+
+class _RecordPaymentDialogState extends State<_RecordPaymentDialog> {
+  var _method = 'cash';
+  final _ref = TextEditingController();
+  final _why = TextEditingController();
+
+  @override
+  void dispose() {
+    _ref.dispose();
+    _why.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final b = widget.booking;
+    final amount = b.finalPrice ?? b.estimatedPrice;
+    return AlertDialog(
+      backgroundColor: LuxColors.surfaceMuted,
+      title: Text(
+        'Registrar cobro de ${bs(amount)}',
+        style: LuxTypography.titleLarge,
+      ),
+      content: SizedBox(
+        width: 420,
+        child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Reserva #${shortId(b.id)}',
-                style: LuxTypography.caption,
-              ),
+              Text('Reserva #${shortId(b.id)}', style: LuxTypography.caption),
               const SizedBox(height: LuxSpacing.md),
               Wrap(
                 spacing: LuxSpacing.sm,
                 runSpacing: LuxSpacing.sm,
                 children: [
-                  for (final m in methods.entries)
+                  for (final m in kManualPaymentMethods.entries)
                     AdminFilterChip(
                       label: m.value,
-                      selected: method == m.key,
-                      onTap: () => setState(() => method = m.key),
+                      selected: _method == m.key,
+                      onTap: () => setState(() => _method = m.key),
                     ),
                 ],
               ),
               const SizedBox(height: LuxSpacing.md),
               TextField(
-                controller: ref,
+                controller: _ref,
                 style: LuxTypography.bodyMedium,
                 decoration: adminInputDecoration(
                   hint: 'Referencia / nº de comprobante (opcional)',
                 ),
               ),
               const SizedBox(height: LuxSpacing.sm),
+              _ReasonField(
+                fieldKey: const Key('record-reason'),
+                controller: _why,
+                onChanged: () => setState(() {}),
+              ),
               const Text(
-                'Si el importe no es correcto, ajusta primero el precio final.',
+                'Si después el importe no es correcto, corrige el cobro.',
                 style: LuxTypography.caption,
               ),
             ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Registrar cobro',
-              style: TextStyle(
-                color: LuxColors.success,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
       ),
-    ),
-  );
-  final reference = ref.text.trim();
-  ref.dispose();
-  if (ok == true) {
-    bloc.add(AdminRecordPaymentRequested(b, methods[method]!, reference));
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        TextButton(
+          onPressed: !_reasonOk(_why)
+              ? null
+              : () => Navigator.pop(
+                    context,
+                    (
+                      method: _method,
+                      reference: _ref.text.trim(),
+                      reason: _why.text.trim(),
+                    ),
+                  ),
+          child: const Text(
+            'Registrar cobro',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ),
+      ],
+    );
   }
 }
 
-Future<void> adjustPriceDialog(BuildContext context, Booking b) async {
-  final ctrl = TextEditingController(
-    text: (b.finalPrice ?? b.estimatedPrice).toStringAsFixed(2),
+class _AdjustPriceDialog extends StatefulWidget {
+  const _AdjustPriceDialog({required this.booking});
+  final Booking booking;
+
+  @override
+  State<_AdjustPriceDialog> createState() => _AdjustPriceDialogState();
+}
+
+class _AdjustPriceDialogState extends State<_AdjustPriceDialog> {
+  late final _price = TextEditingController(
+    text: (widget.booking.finalPrice ?? widget.booking.estimatedPrice)
+        .toStringAsFixed(2),
   );
-  final reason = TextEditingController();
-  final bloc = context.read<AdminBloc>();
-  final result = await showDialog<double>(
-    context: context,
-    builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setState) {
-        final value = double.tryParse(ctrl.text.replaceAll(',', '.'));
-        final valid =
-            value != null && value >= 0 && reason.text.trim().length >= 3;
-        return AlertDialog(
-          backgroundColor: LuxColors.surfaceMuted,
-          title: const Text(
-            'Ajustar precio final',
-            style: LuxTypography.titleLarge,
+  final _why = TextEditingController();
+
+  @override
+  void dispose() {
+    _price.dispose();
+    _why.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final b = widget.booking;
+    final value = double.tryParse(_price.text.replaceAll(',', '.'));
+    final valid = value != null && value >= 0 && _reasonOk(_why);
+    return AlertDialog(
+      backgroundColor: LuxColors.surfaceMuted,
+      title:
+          const Text('Ajustar precio final', style: LuxTypography.titleLarge),
+      content: SizedBox(
+        width: 420,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Reserva #${shortId(b.id)} · estimado ${bs(b.estimatedPrice)}',
+                style: LuxTypography.caption,
+              ),
+              const SizedBox(height: LuxSpacing.md),
+              TextField(
+                key: const Key('adjust-price'),
+                controller: _price,
+                autofocus: true,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                style: LuxTypography.bodyMedium,
+                onChanged: (_) => setState(() {}),
+                decoration: adminInputDecoration(prefixText: 'Bs '),
+              ),
+              const SizedBox(height: LuxSpacing.sm),
+              _ReasonField(
+                fieldKey: const Key('adjust-reason'),
+                controller: _why,
+                onChanged: () => setState(() {}),
+              ),
+              const Text(
+                'Solo antes de completar el viaje y dentro del límite de la '
+                'configuración de operación.',
+                style: LuxTypography.caption,
+              ),
+            ],
           ),
-          content: SizedBox(
-            width: 420,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Reserva #${shortId(b.id)} · estimado ${bs(b.estimatedPrice)}',
-                  style: LuxTypography.caption,
-                ),
-                const SizedBox(height: LuxSpacing.md),
-                TextField(
-                  controller: ctrl,
-                  autofocus: true,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  style: LuxTypography.bodyMedium,
-                  onChanged: (_) => setState(() {}),
-                  decoration: adminInputDecoration(prefixText: 'Bs '),
-                ),
-                const SizedBox(height: LuxSpacing.sm),
-                TextField(
-                  controller: reason,
-                  style: LuxTypography.bodyMedium,
-                  onChanged: (_) => setState(() {}),
-                  decoration: adminInputDecoration(
-                    hint: 'Motivo (peajes, espera, descuento…)',
-                  ),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: valid ? () => Navigator.pop(ctx, value) : null,
-              child: const Text('Guardar'),
-            ),
-          ],
-        );
-      },
-    ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        TextButton(
+          onPressed: valid
+              ? () => Navigator.pop(
+                    context,
+                    (price: value, reason: _why.text.trim()),
+                  )
+              : null,
+          child: const Text('Guardar'),
+        ),
+      ],
+    );
+  }
+}
+
+class _CorrectPaymentDialog extends StatefulWidget {
+  const _CorrectPaymentDialog({required this.payment});
+  final Payment payment;
+
+  @override
+  State<_CorrectPaymentDialog> createState() => _CorrectPaymentDialogState();
+}
+
+class _CorrectPaymentDialogState extends State<_CorrectPaymentDialog> {
+  late final _amount = TextEditingController(
+    text: widget.payment.amountBs.toStringAsFixed(2),
   );
-  final why = reason.text.trim();
-  ctrl.dispose();
-  reason.dispose();
-  if (result != null) {
-    bloc.add(AdminAdjustFinalPriceRequested(b, result, why));
+  final _ref = TextEditingController();
+  final _why = TextEditingController();
+  String? _method;
+
+  @override
+  void dispose() {
+    _amount.dispose();
+    _ref.dispose();
+    _why.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = widget.payment;
+    final value = double.tryParse(_amount.text.replaceAll(',', '.'));
+    final valid = value != null && value >= 0 && _reasonOk(_why);
+    return AlertDialog(
+      backgroundColor: LuxColors.surfaceMuted,
+      title: const Text('Corregir cobro', style: LuxTypography.titleLarge),
+      content: SizedBox(
+        width: 420,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Reserva #${shortId(p.bookingId)} · registrado '
+                '${bs(p.amountBs)}',
+                style: LuxTypography.caption,
+              ),
+              const SizedBox(height: LuxSpacing.md),
+              TextField(
+                key: const Key('correct-amount'),
+                controller: _amount,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                style: LuxTypography.bodyMedium,
+                onChanged: (_) => setState(() {}),
+                decoration: adminInputDecoration(prefixText: 'Bs '),
+              ),
+              const SizedBox(height: LuxSpacing.sm),
+              Wrap(
+                spacing: LuxSpacing.sm,
+                runSpacing: LuxSpacing.sm,
+                children: [
+                  for (final m in kManualPaymentMethods.entries)
+                    AdminFilterChip(
+                      label: m.value,
+                      selected: _method == m.key,
+                      onTap: () => setState(
+                        () => _method = _method == m.key ? null : m.key,
+                      ),
+                    ),
+                ],
+              ),
+              const SizedBox(height: LuxSpacing.sm),
+              TextField(
+                controller: _ref,
+                style: LuxTypography.bodyMedium,
+                decoration: adminInputDecoration(
+                  hint: 'Referencia nueva (opcional)',
+                ),
+              ),
+              const SizedBox(height: LuxSpacing.sm),
+              _ReasonField(
+                fieldKey: const Key('correct-reason'),
+                controller: _why,
+                onChanged: () => setState(() {}),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        TextButton(
+          onPressed: valid
+              ? () => Navigator.pop(
+                    context,
+                    (
+                      amount: value != p.amountBs ? value : null,
+                      method: _method,
+                      reference:
+                          _ref.text.trim().isEmpty ? null : _ref.text.trim(),
+                      reason: _why.text.trim(),
+                    ),
+                  )
+              : null,
+          child: const Text('Guardar corrección'),
+        ),
+      ],
+    );
   }
 }
 

@@ -70,13 +70,18 @@ abstract class AdminOperations {
       b.status == BookingStatus.confirmed ||
       b.status == BookingStatus.driverArriving;
 
-  /// El precio final solo se ajusta en viajes completados sin cobro capturado
-  /// ni reembolsado (después hay que reembolsar, no reescribir el importe).
-  static bool canAdjustFinalPrice(Booking b, Payment? payment) =>
-      b.status == BookingStatus.completed &&
-      (payment == null ||
-          payment.status == PaymentStatus.pending ||
-          payment.status == PaymentStatus.failed);
+  /// El importe final solo se ajusta antes de completar el viaje (y dentro
+  /// del límite de config/ops, que comprueba el servidor). Después se
+  /// corrige el cobro manual o se reembolsa.
+  static bool canAdjustFinalPrice(Booking b) =>
+      b.status != BookingStatus.completed &&
+      b.status != BookingStatus.cancelled;
+
+  /// Solo los cobros registrados a mano y cobrados se corrigen.
+  static bool canCorrectPayment(Payment? p) =>
+      p != null &&
+      p.stripePaymentIntentId.isEmpty &&
+      p.status == PaymentStatus.captured;
 }
 
 /// Texto del aviso que pone el servidor cuando una reserva no respeta la
