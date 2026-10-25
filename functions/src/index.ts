@@ -4,7 +4,7 @@ import { secureCallable } from './callable';
 import { callableSchemas as schema, parseInput } from './schemas';
 import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { defineSecret } from 'firebase-functions/params';
+import { defineBoolean, defineSecret } from 'firebase-functions/params';
 import * as bookingService from './booking_service';
 import { reconcileOpenRequests } from './reconcile';
 import { resolveAdminAlert } from './alerts';
@@ -97,8 +97,15 @@ const PICKUP_CODE_SECRET = defineSecret('PICKUP_CODE_SECRET');
 const RATE_LIMIT_SALT = defineSecret('RATE_LIMIT_SALT');
 
 /** Formulario de empresas, también sin sesión (H5). */
+// Diagnóstico temporal de x-forwarded-for (0.4): apagado por defecto.
+// Encender y apagar: DEPLOY.md, «Diagnóstico de x-forwarded-for».
+const XFF_DIAGNOSTIC = defineBoolean('XFF_DIAGNOSTIC', { default: false });
+
 export const submitBusinessLead = secureCallable('submitBusinessLead', { secrets: [RATE_LIMIT_SALT] }, (req) =>
-  businessLeads.submitBusinessLead({ db, salt: RATE_LIMIT_SALT.value() }, req as unknown as businessLeads.LeadRequest));
+  businessLeads.submitBusinessLead(
+    { db, salt: RATE_LIMIT_SALT.value(), xffDiagnostic: XFF_DIAGNOSTIC.value() },
+    req as unknown as businessLeads.LeadRequest,
+  ));
 
 
 const tripDeps = (): tripFlow.TripDeps => ({ db, pickupSecret: PICKUP_CODE_SECRET.value() });

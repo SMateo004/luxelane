@@ -496,6 +496,32 @@ Ventana fija por usuario y callable, contada en una transacción en
 la callable se rechaza (`resource_exhausted`), salvo `raiseIncident`: un
 SOS nunca se pierde por el contador.
 
+### Diagnóstico de x-forwarded-for (0.4)
+
+`submitBusinessLead` cuenta los envíos por IP tomando el **último**
+elemento de `x-forwarded-for`. Que en Cloud Functions (2.ª gen.) ese sea
+siempre el cliente y no un salto de Google está NO VERIFICADO. Para
+contrastarlo en **staging** hay un modo de diagnóstico temporal, apagado
+por defecto (parámetro `XFF_DIAGNOSTIC`):
+
+1. **Encender**: en `functions/.env.<proyecto-de-staging>` poner
+   `XFF_DIAGNOSTIC=true` y desplegar functions en staging (o responder
+   `true` cuando el CLI pregunte por el parámetro **[Probable]**).
+2. **Probar desde dos redes distintas** (por ejemplo, el wifi de la
+   oficina y los datos del móvil): enviar el formulario de empresas una vez
+   desde cada una.
+3. **Leer**: Logs Explorer → `jsonPayload.fn="submitBusinessLead"` y
+   `jsonPayload.message="xff_diagnostic"`. Cada envío deja
+   `chosenHash` (hash con la sal del elemento elegido; nunca la IP) y
+   `headerElements` (cuántos elementos traía el encabezado).
+   - Hashes **distintos** entre las dos redes: el elemento elegido es el
+     cliente. Lo esperado.
+   - Hashes **iguales**: el elegido es un salto de Google y el límite por
+     IP no sirve (queda el tope global). Avisar antes de producción.
+   - `usedFallback: true`: no llegó el encabezado y se usó `rawRequest.ip`.
+4. **Apagar**: `XFF_DIAGNOSTIC=false` (o quitar la línea) y volver a
+   desplegar functions. No dejarlo encendido en producción.
+
 ### Errores
 El cliente solo recibe `invalid_request`, `unauthenticated`,
 `permission_denied`, `failed_precondition`, `resource_exhausted`,

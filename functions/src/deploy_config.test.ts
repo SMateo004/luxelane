@@ -73,6 +73,26 @@ describe('docs/AUDITORIA_LUXLANE.md', () => {
   });
 });
 
+// 0.4: el diagnóstico de x-forwarded-for está apagado por defecto y
+// documentado (encender, leer, apagar).
+describe('diagnóstico de x-forwarded-for', () => {
+  const index = readFileSync(join(__dirname, 'index.ts'), 'utf8');
+
+  it('XFF_DIAGNOSTIC existe y por defecto está apagado', () => {
+    expect(index).toContain("defineBoolean('XFF_DIAGNOSTIC', { default: false })");
+    expect(index).toContain('xffDiagnostic: XFF_DIAGNOSTIC.value()');
+  });
+
+  it('DEPLOY.md explica cómo encenderlo, leerlo y apagarlo', () => {
+    const i = deploy.indexOf('### Diagnóstico de x-forwarded-for');
+    expect(i).toBeGreaterThanOrEqual(0);
+    const s = deploy.slice(i, i + 3000);
+    for (const t of ['XFF_DIAGNOSTIC=true', 'xff_diagnostic', 'chosenHash', 'headerElements', '**Apagar**']) {
+      expect(s).toContain(t);
+    }
+  });
+});
+
 describe('despliegue de functions', () => {
   const secrets = [...src.matchAll(/defineSecret\('([A-Z_]+)'\)/g)].map((m) => m[1]);
 
