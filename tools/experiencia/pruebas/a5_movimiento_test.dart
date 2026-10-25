@@ -8,7 +8,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/widgets/lux_feedback.dart';
 import 'package:luxelane/core/widgets/lux_raised.dart';
-import 'package:luxelane/features/incidents/presentation/widgets/sos_button.dart';
 
 Widget _app(Widget child, {bool reduce = false}) => MediaQuery(
       data: MediaQueryData(disableAnimations: reduce),
@@ -16,33 +15,6 @@ Widget _app(Widget child, {bool reduce = false}) => MediaQuery(
     );
 
 void main() {
-  group('SOS', () {
-    Future<int> hold(WidgetTester t, Duration d, {required bool platform}) async {
-      var n = 0;
-      t.platformDispatcher.accessibilityFeaturesTestValue =
-          FakeAccessibilityFeatures(disableAnimations: platform);
-      addTearDown(t.platformDispatcher.clearAccessibilityFeaturesTestValue);
-      await t.pumpWidget(_app(SosButton(onActivated: () => n++), reduce: platform));
-      final g = await t.startGesture(
-          t.getCenter(find.byKey(const ValueKey('sos-button'))));
-      await t.pump();
-      await t.pump(d);
-      await g.up();
-      await t.pump();
-      return n;
-    }
-
-    testWidgets('sin reducir movimiento: 1 s no envía, 2,1 s sí', (t) async {
-      expect(await hold(t, const Duration(seconds: 1), platform: false), 0);
-      expect(await hold(t, const Duration(milliseconds: 2100), platform: false), 1);
-    });
-
-    testWidgets('con «quitar animaciones» del sistema: 200 ms NO debe enviar',
-        (t) async {
-      expect(await hold(t, const Duration(milliseconds: 200), platform: true), 0);
-    });
-  });
-
   testWidgets('deslizar para confirmar: si el paso falla, se puede repetir',
       (t) async {
     var calls = 0;

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -7,6 +9,10 @@ import '../../../../app/theme/lux_motion.dart';
 /// Botón de ayuda: se activa manteniéndolo pulsado [holdDuration] (con un
 /// anillo que se llena y vibración) para evitar toques accidentales. Con
 /// lector de pantalla, un doble toque abre una confirmación.
+///
+/// La duración la mide un temporizador real, no la animación: «quitar
+/// animaciones» del sistema acorta los AnimationController al 5 % (2 s
+/// pasarían a 100 ms) y timeDilation los alarga. El anillo solo lo dibuja.
 class SosButton extends StatefulWidget {
   const SosButton({
     super.key,
@@ -27,24 +33,27 @@ class SosButton extends StatefulWidget {
 
 class _SosButtonState extends State<SosButton>
     with SingleTickerProviderStateMixin {
+  /// Solo el anillo (visual).
   late final AnimationController _hold;
+
+  /// Lo que de verdad cuenta los [SosButton.holdDuration].
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    _hold = AnimationController(vsync: this, duration: widget.holdDuration)
-      ..addStatusListener((s) {
-        if (s == AnimationStatus.completed) _activate();
-      });
+    _hold = AnimationController(vsync: this, duration: widget.holdDuration);
   }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _hold.dispose();
     super.dispose();
   }
 
   void _activate() {
+    _timer = null;
     HapticFeedback.heavyImpact();
     _hold.value = 0;
     widget.onActivated();
@@ -52,13 +61,19 @@ class _SosButtonState extends State<SosButton>
 
   void _start() {
     HapticFeedback.selectionClick();
+    _timer?.cancel();
+    _timer = Timer(widget.holdDuration, () {
+      if (mounted) _activate();
+    });
     _hold.forward(from: 0);
   }
 
   void _release() {
     // Soltar antes de tiempo no envía nada (aunque aún no haya avanzado
     // ningún fotograma); el anillo vuelve a vacío.
-    if (_hold.isCompleted || _hold.isDismissed) return;
+    if (_timer == null) return;
+    _timer!.cancel();
+    _timer = null;
     _hold.stop();
     if (LuxMotion.reduced(context)) {
       _hold.value = 0;

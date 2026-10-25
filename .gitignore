@@ -77,3 +77,4 @@ tools/experiencia/node_modules/
 # Capturas de la revisión de experiencia: pesan más de 25 MB; se regeneran con
 # tools/experiencia/capturas.cjs (se suben las hojas de contacto y los JSON).
 docs/capturas/**/*.png
+!docs/capturas/antes-despues/**/*.png
