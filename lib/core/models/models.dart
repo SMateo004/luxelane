@@ -570,6 +570,12 @@ class Booking {
     this.cardPaymentFailed = false,
     this.riderPreferences = RidePreferences.none,
     this.pickupLocked = false,
+    this.cancelledBy,
+    this.cancellationReason,
+    this.cancellationFee,
+    this.cancellationFeeBasis,
+    this.noShowAvailableAt,
+    this.lastReleaseReason,
   });
 
   final String id;
@@ -632,6 +638,30 @@ class Booking {
   /// Cinco códigos de recogida incorrectos: la verificación quedó
   /// bloqueada y solo central puede forzarla. Lo fija el servidor.
   final bool pickupLocked;
+
+  // ── Cancelación (Parte B). Todo lo escribe el servidor. ──────────────────
+
+  /// rider, admin o, si lo canceló la limpieza automática, null.
+  final String? cancelledBy;
+
+  /// Motivo elegido de una lista cerrada (cancelBooking).
+  final String? cancellationReason;
+
+  /// Recargo calculado según la política (no se cobra automáticamente).
+  final double? cancellationFee;
+
+  /// Por qué ese recargo: no_policy, grace, early, late, no_show_admin…
+  final String? cancellationFeeBasis;
+
+  /// Desde cuándo el chófer puede marcar «el pasajero no aparece». Solo
+  /// existe si hay política de cancelación.
+  final DateTime? noShowAvailableAt;
+
+  /// Motivo con el que el último chófer liberó la reserva (releaseBooking).
+  final String? lastReleaseReason;
+
+  /// Recargo a mostrar: solo si es mayor que cero.
+  bool get hasCancellationFee => (cancellationFee ?? 0) > 0;
 
   /// Cobro con tarjeta aún por resolver por el servidor: no se registra a
   /// mano para no cobrar dos veces.
@@ -716,6 +746,14 @@ class Booking {
         cardPaymentFailed: j['cardPaymentFailed'] == true,
         riderPreferences: RidePreferences.fromJson(j['riderPreferences']),
         pickupLocked: j['pickupLocked'] == true,
+        cancelledBy: j['cancelledBy'] as String?,
+        cancellationReason: j['cancellationReason'] as String?,
+        cancellationFee: (j['cancellationFee'] as num?)?.toDouble(),
+        cancellationFeeBasis: j['cancellationFeeBasis'] as String?,
+        noShowAvailableAt: j['noShowAvailableAt'] is Timestamp
+            ? (j['noShowAvailableAt'] as Timestamp).toDate()
+            : null,
+        lastReleaseReason: (j['lastRelease'] as Map?)?['reason'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -783,6 +821,13 @@ class Booking {
         cardPayment: cardPayment,
         cardPaymentFailed: cardPaymentFailed,
         riderPreferences: riderPreferences,
+        pickupLocked: pickupLocked,
+        cancelledBy: cancelledBy,
+        cancellationReason: cancellationReason,
+        cancellationFee: cancellationFee,
+        cancellationFeeBasis: cancellationFeeBasis,
+        noShowAvailableAt: noShowAvailableAt,
+        lastReleaseReason: lastReleaseReason,
       );
 }
 
@@ -897,7 +942,8 @@ class BookingEvent {
       type: j['type'] as String? ?? 'transition',
       from: BookingStatusX.fromString(j['from'] as String? ?? ''),
       to: BookingStatusX.fromString(j['to'] as String? ?? ''),
-      actorUid: actor['uid'] as String? ?? '',
+      // Con actor admin, el uid está en eventDetails (0.2).
+      actorUid: actor['uid'] as String? ?? d['actorUid'] as String? ?? '',
       actorRole: actor['role'] as String? ?? '',
       source: j['source'] as String? ?? '',
       at: j['at'] is Timestamp ? (j['at'] as Timestamp).toDate() : null,
@@ -1039,6 +1085,53 @@ class IncidentRaise {
 // ---------------------------------------------------------------------------
 // BookingQuote
 // ---------------------------------------------------------------------------
+
+/// Recargo que tendría cancelar ahora, calculado por el servidor con la
+/// política de config/ops. Si no hay política, siempre 0.
+class CancellationQuote {
+  const CancellationQuote({required this.fee, required this.basis});
+
+  factory CancellationQuote.fromJson(Map<String, dynamic> j) =>
+      CancellationQuote(
+        fee: (j['cancellationFee'] as num?)?.toDouble() ?? 0,
+        basis: j['feeBasis'] as String? ?? 'no_policy',
+      );
+
+  final double fee;
+  final String basis;
+  bool get hasFee => fee > 0;
+}
+
+/// Motivos del pasajero para cancelar (cancellation.ts, RIDER_CANCEL_REASONS).
+const kRiderCancelReasons = <String, String>{
+  'changed_plans': 'Cambié de planes',
+  'other_transport': 'Encontré otro transporte',
+  'driver_late': 'El chófer tarda demasiado',
+  'other': 'Otro motivo',
+};
+
+/// Motivos del chófer para liberar (cancellation.ts, DRIVER_RELEASE_REASONS).
+const kDriverReleaseReasons = <String, String>{
+  'vehicle_issue': 'Problema con el vehículo',
+  'personal_emergency': 'Emergencia personal',
+  'unsafe_conditions': 'Condiciones inseguras',
+  'schedule_conflict': 'Conflicto de horario',
+  'other': 'Otro motivo',
+};
+
+/// Texto del panel para el porqué del recargo (cancellationFeeBasis).
+String cancellationBasisLabel(String? basis) => switch (basis) {
+      'no_policy' => 'Sin política de cancelación',
+      'policy_invalid' => 'Política inválida (sin recargo)',
+      'payment_failed' => 'Falló el pago',
+      'no_driver' => 'Sin chófer asignado',
+      'grace' => 'Dentro del plazo tras reservar',
+      'early' => 'Con antelación suficiente',
+      'late' => 'Tarde (aplica recargo)',
+      'no_show_admin' => 'No se presentó (decisión de central)',
+      null => '—',
+      _ => basis,
+    };
 
 /// Precio de un viaje calculado por el servidor (quoteBooking): es el que se
 /// cobra. [approximateDistance] indica que la ruta por calles no estuvo

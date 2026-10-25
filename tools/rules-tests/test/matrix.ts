@@ -64,7 +64,7 @@ export const SPECS: Spec[] = [
     list: (db) => query(collection(db, 'users')),
     create: () => ({ path: 'users/nuevo', data: { id: 'nuevo', role: 'rider', isActive: true } }),
     update: () => ({ displayName: 'Nombre nuevo' }),
-    expect: { ...allRoles(none), ana: 'SNNSN', bloq: 'SNNSN', admin: 'SSNSN' },
+    expect: { ...allRoles(none), ana: 'SNNSN', bloq: 'SNNSN', admin: 'SSNNN' },
     note: 'Objetivo users/ana (bloqueado: users/bloq, el suyo). Crear = perfil de otro (users/nuevo); ' +
       'el alta propia está en «Casos fuera de la tabla». Actualizar = displayName.',
   },
@@ -78,7 +78,7 @@ export const SPECS: Spec[] = [
       data: { userId: own(r, 'ana'), title: 'Aviso', body: 'Texto', isRead: false },
     }),
     update: () => ({ isRead: true }),
-    expect: { ...allRoles(none), ana: 'SSNSS', bloq: 'SSNSS', admin: 'SSNSS' },
+    expect: { ...allRoles(none), ana: 'SSNSS', bloq: 'SSNSS', admin: 'SSNNN' },
     note: 'Objetivo users/ana/notifications (bloqueado: las suyas). Las crea el servidor.',
   },
   {
@@ -94,7 +94,7 @@ export const SPECS: Spec[] = [
     }),
     update: () => ({ isAvailable: false }),
     expect: {
-      ...allRoles(none), asig: 'SNSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SNNSN', admin: 'SSNSN',
+      ...allRoles(none), asig: 'SNSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SNNSN', admin: 'SSNNN',
     },
     note: 'Objetivo driverProfiles/asig (bloqueado: el suyo). Crear = el alta propia del chófer ' +
       '(los pasajeros intentan la suya; anónimo y admin, driverProfiles/nuevo).',
@@ -108,9 +108,10 @@ export const SPECS: Spec[] = [
       : query(collection(db, 'bookings'), where('riderId', '==', 'ana'))),
     create: () => ({ path: 'bookings/nueva', data: { riderId: 'ana', status: 'pending', estimatedPrice: 1 } }),
     update: () => ({ status: 'cancelled', updatedAt: Timestamp.now() }),
-    expect: { ...allRoles(none), ana: 'SSNSN', asig: 'SNNNN', admin: 'SSNSN' },
+    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SNNNN', admin: 'SSNNN' },
     note: 'Objetivo bookings/activa (de ana, asignada a asig, en camino); bloqueado: activaBloq, ' +
-      'asignada a él. Listar = reservas de ana (bloqueado: las suyas). Actualizar = cancelar.',
+      'asignada a él. Listar = reservas de ana (bloqueado: las suyas). Actualizar = cancelar, ' +
+      'que solo hace el servidor (cancelBooking, B7).',
   },
   {
     name: 'bookings/{id}/tracking',
@@ -275,8 +276,8 @@ export const SPECS: Spec[] = [
     list: (db) => query(collection(db, 'payments'), where('riderId', '==', 'ana')),
     create: () => ({ path: 'payments/nuevo', data: { riderId: 'ana', bookingId: 'fin', status: 'captured' } }),
     update: () => ({ status: 'refunded' }),
-    expect: { ...allRoles(none), ana: 'SSNNN', admin: 'SSSSN' },
-    note: 'Pago de ana (reserva fin). Cobros y reembolsos los hace el servidor; el admin registra cobros manuales.',
+    expect: { ...allRoles(none), ana: 'SSNNN', admin: 'SSNNN' },
+    note: 'Pago de ana (reserva fin). Cobros y reembolsos los hace el servidor; los manuales, adminRecordPayment (Parte A).',
   },
   {
     name: 'vehicles/{id}',
@@ -289,7 +290,7 @@ export const SPECS: Spec[] = [
     }),
     update: () => ({ color: 'Negro' }),
     expect: {
-      ...allRoles(none), asig: 'SSSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SSNSN', admin: 'SSNSN',
+      ...allRoles(none), asig: 'SSSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SSNSN', admin: 'SSNNN',
     },
     note: 'Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8).',
   },
@@ -303,9 +304,9 @@ export const SPECS: Spec[] = [
       data: { basePriceUsd: 1, pricePerKmUsd: 1, pricePerHourUsd: 0, minimumPriceUsd: 1, isActive: true },
     }),
     update: () => ({ basePriceUsd: 2 }),
-    expect: { ...allRoles('SSNNN'), admin: 'SSSSS' },
-    note: 'Tarifas públicas (la web las muestra sin sesión); solo el admin las edita. Sin campos internos ni ' +
-      '`updatedBy`: quién la cambió va solo en admin_logs (C3).',
+    expect: { ...allRoles('SSNNN'), admin: 'SSNNN' },
+    note: 'Tarifas públicas (la web las muestra sin sesión). Las escribe adminUpdatePricingRule (Parte A), sin ' +
+      'campos internos ni `updatedBy`: quién la cambió va solo en admin_logs (C3).',
   },
   {
     name: 'config/global',
@@ -314,8 +315,9 @@ export const SPECS: Spec[] = [
     list: (db) => query(collection(db, 'config')),
     create: () => ({ path: 'config/nuevo', data: { x: 1 } }),
     update: () => ({ isMaintenanceMode: false }),
-    expect: { ...allRoles('SNNNN'), admin: 'SNSSN' },
-    note: 'Estado operativo público. Listar la colección incluye config/security: nadie (A8.9). Nadie la borra (H9).',
+    expect: { ...allRoles('SNNNN'), admin: 'SNNNN' },
+    note: 'Estado operativo público. Listar la colección incluye config/security: nadie (A8.9). Los ajustes del ' +
+      'panel van por adminUpdateConfig (Parte A). Nadie la borra (H9).',
   },
   {
     name: 'config/finance',
@@ -324,9 +326,9 @@ export const SPECS: Spec[] = [
     list: (db) => query(collection(db, 'config')),
     create: () => ({ path: 'config/otro', data: { platformCommissionPct: 10 } }),
     update: () => ({ platformCommissionPct: 12 }),
-    expect: { ...allRoles(none), admin: 'SNSSN' },
-    note: 'Comisión y parámetros internos: solo el admin. Borrarla se deniega también al admin ' +
-      '(la regla valida el documento resultante).',
+    expect: { ...allRoles(none), admin: 'SNNNN' },
+    note: 'Comisión y parámetros internos: el admin la lee; la comisión se cambia con adminUpdateConfig ' +
+      '(entre 0 y 100, Parte A). Nadie la borra.',
   },
   {
     name: 'config/ops',
@@ -336,7 +338,8 @@ export const SPECS: Spec[] = [
     create: () => ({ path: 'config/ops', data: { arrivalRadiusMeters: 1 } }),
     update: () => ({ arrivalRadiusMeters: 1 }),
     expect: { ...allRoles(none), admin: 'SNNNN' },
-    note: 'Tiempos del SOS, retención y radio de llegada: el admin la lee; se edita en la consola (A8.9).',
+    note: 'Tiempos del SOS, retención, radio de llegada y límite de ajuste: el admin la lee; se edita con ' +
+      'adminUpdateConfig o en la consola (A8.9, Parte A).',
   },
   {
     name: 'config/security',
@@ -361,9 +364,9 @@ export const SPECS: Spec[] = [
       },
     }),
     update: () => ({ handled: true }),
-    expect: { ...allRoles(none), admin: 'SSNSN' },
+    expect: { ...allRoles(none), admin: 'SSNNN' },
     note: 'Formulario de empresas: se envía con la callable submitBusinessLead (H5); ningún cliente ' +
-      'escribe directo. El admin lo lee y lo marca atendido.',
+      'escribe directo. El admin lo lee; lo marca atendido con adminSetLeadHandled (Parte A).',
   },
   {
     name: 'adminAlerts/{id}',
@@ -393,9 +396,9 @@ export const SPECS: Spec[] = [
     list: (db) => query(collection(db, 'admin_logs')),
     create: (r) => ({ path: `admin_logs/nuevo-${r}`, data: { adminId: uidOf(r) ?? 'nadie', action: 'x' } }),
     update: () => ({ action: 'y' }),
-    expect: { ...allRoles(none), admin: 'SSSNN' },
-    note: 'Auditoría inmutable: el admin anexa a su nombre. El servidor y los scripts (promote_admin, ' +
-      'reset_mfa, migraciones) escriben con el Admin SDK, con source server o script (C4, C6).',
+    expect: { ...allRoles(none), admin: 'SSNNN' },
+    note: 'Auditoría inmutable: la escribe solo el servidor, en la transacción de cada cambio (Parte A), y los ' +
+      'scripts (promote_admin, reset_mfa, migraciones) con el Admin SDK. Ningún cliente, ni el admin.',
   },
 ];
 

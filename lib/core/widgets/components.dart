@@ -544,6 +544,9 @@ class BookingStatusChip extends StatelessWidget {
         return LuxColors.success;
       case BookingStatus.cancelled:
         return LuxColors.error;
+      // Pendiente de la decisión de central.
+      case BookingStatus.noShow:
+        return LuxColors.warning;
     }
   }
 

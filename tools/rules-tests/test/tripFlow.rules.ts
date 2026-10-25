@@ -68,20 +68,23 @@ describe('el cliente no escribe los pasos del viaje (solo advanceBooking)', () =
     await assertFails(setStatus('admin', 'verif', 'in_progress'));
   });
 
-  test('el admin solo completa (y cobra) un viaje en curso', async () => {
-    for (const id of ['conf', 'activa', 'llego', 'verif', 'pend']) {
+  // Parte A: completar y las demás transiciones del panel van por
+  // adminUpdateBooking (admin_booking.int.ts).
+  test('el admin no completa desde el cliente, tampoco un viaje en curso', async () => {
+    for (const id of ['conf', 'activa', 'llego', 'verif', 'pend', 'curso']) {
       await assertFails(setStatus('admin', id, 'completed'));
     }
-    await assertSucceeds(setStatus('admin', 'curso', 'completed'));
   });
 
-  test('el panel conserva sus otras transiciones por ahora', async () => {
-    await assertSucceeds(setStatus('admin', 'activa', 'driver_arrived'));
-    await assertSucceeds(setStatus('admin', 'curso', 'completed'));
+  test('el panel ya no escribe transiciones ni cancela desde el cliente', async () => {
+    await assertFails(setStatus('admin', 'activa', 'driver_arrived'));
+    await assertFails(setStatus('admin', 'conf', 'cancelled'));
   });
 
-  test('la pasajera cancela hasta driver_arrived, no después de verificar', async () => {
-    await assertSucceeds(setStatus('ana', 'llego', 'cancelled'));
+  // B7: ni siquiera antes de verificar; cancelar va por cancelBooking (el
+  // servidor aplica la misma ventana: RIDER_CANCELLABLE).
+  test('la pasajera no cancela escribiendo la reserva, en ningún paso', async () => {
+    await assertFails(setStatus('ana', 'llego', 'cancelled'));
     await assertFails(setStatus('ana', 'verif', 'cancelled'));
     await assertFails(setStatus('ana', 'curso', 'cancelled'));
     await assertFails(setStatus('ana', 'fin', 'cancelled'));

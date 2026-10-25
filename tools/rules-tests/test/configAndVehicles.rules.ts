@@ -23,8 +23,9 @@ describe('config/* no se borra (H9)', () => {
     await assertFails(deleteDoc(doc(db('admin'), 'config', id)));
   });
 
-  test.each(['global', 'pricing'])('el admin sí actualiza config/%s', async (id) => {
-    await assertSucceeds(updateDoc(doc(db('admin'), 'config', id), { x: 2 }));
+  // Parte A: los ajustes van por adminUpdateConfig.
+  test.each(['global', 'finance', 'pricing'])('el admin tampoco la actualiza desde el cliente: config/%s', async (id) => {
+    await assertFails(updateDoc(doc(db('admin'), 'config', id), { x: 2 }));
   });
 
   test('nadie más la borra', async () => {

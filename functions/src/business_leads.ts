@@ -44,6 +44,12 @@ export interface LeadDeps {
   now?: () => number;
   /** Solo para pruebas: límites más bajos. */
   limits?: Partial<typeof LEAD_LIMITS>;
+  /**
+   * Diagnóstico temporal de x-forwarded-for (0.4, parámetro XFF_DIAGNOSTIC,
+   * apagado por defecto): registra el hash del elemento elegido y cuántos
+   * elementos trae el encabezado. Nunca la IP.
+   */
+  xffDiagnostic?: boolean;
 }
 
 export interface LeadRequest {
@@ -59,10 +65,29 @@ export interface LeadRequest {
  * salto de Google; por eso hay además un tope global.
  */
 export function clientIp(req: LeadRequest): string {
-  const fwd = req.rawRequest?.headers?.['x-forwarded-for'];
-  const parts = (Array.isArray(fwd) ? fwd.join(',') : fwd ?? '')
-    .split(',').map((p) => p.trim()).filter(Boolean);
+  const parts = forwardedFor(req);
   return parts[parts.length - 1] || req.rawRequest?.ip || 'desconocida';
+}
+
+function forwardedFor(req: LeadRequest): string[] {
+  const fwd = req.rawRequest?.headers?.['x-forwarded-for'];
+  return (Array.isArray(fwd) ? fwd.join(',') : fwd ?? '')
+    .split(',').map((p) => p.trim()).filter(Boolean);
+}
+
+/**
+ * Lo que registra el diagnóstico (0.4): el hash (con la sal, distinto del
+ * del contador) del elemento elegido y el número de elementos. Desde dos
+ * redes distintas, hashes distintos = el elegido es el cliente; iguales =
+ * es un salto de Google.
+ */
+export function xffDiagnostic(salt: string, req: LeadRequest): { chosenHash: string; headerElements: number; usedFallback: boolean } {
+  const parts = forwardedFor(req);
+  return {
+    chosenHash: pseudonym(salt, 'xff-diagnostic', clientIp(req)).slice(0, 16),
+    headerElements: parts.length,
+    usedFallback: parts.length === 0,
+  };
 }
 
 export const pseudonym = (salt: string, kind: string, value: string) =>
@@ -79,6 +104,7 @@ export async function submitBusinessLead(deps: LeadDeps, req: LeadRequest): Prom
     logger.error('submitBusinessLead', 'RATE_LIMIT_SALT missing', {});
     throw new HttpsError('internal', 'internal', { reason: 'internal' });
   }
+  if (deps.xffDiagnostic) logger.info('submitBusinessLead', 'xff_diagnostic', xffDiagnostic(deps.salt, req));
   const now = deps.now?.() ?? Date.now();
   const limits = { ...LEAD_LIMITS, ...deps.limits };
   const email = input.email.toLowerCase();

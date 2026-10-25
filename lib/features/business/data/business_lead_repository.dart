@@ -78,7 +78,4 @@ class BusinessLeadRepository {
                 .map((d) => BusinessLead.fromJson(d.id, d.data()))
                 .toList(),
           );
-
-  Future<void> setHandled(String id, bool handled) =>
-      _col.doc(id).update({'handled': handled});
 }

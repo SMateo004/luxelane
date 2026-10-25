@@ -36,7 +36,9 @@ describe('cobertura de App Check en las callables', () => {
   // Las callables de admin exigen el rol en secureCallable (claim o, en la
   // transición, Firestore) además de su comprobación interna.
   const ADMIN_ONLY = ['adminOverrideVerify', 'acknowledgeIncident', 'closeIncident', 'resolveAlert',
-    'refundPayment', 'backfillSettlements', 'setUserRole', 'setUserBlocked'];
+    'refundPayment', 'backfillSettlements', 'setUserRole', 'setUserBlocked', 'adminUpdateBooking',
+    'adminRecordPayment', 'adminUpdateConfig', 'adminUpdatePricingRule', 'adminVerifyDriver',
+    'adminUpdateDriverSensitive', 'adminSetVehicleActive', 'adminSetLeadHandled'];
   it.each(ADMIN_ONLY.map((n) => [n]))('%s exige rol admin', (name) => {
     expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ role: 'admin' }));
   });

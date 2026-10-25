@@ -386,6 +386,7 @@ class _RideProgressBarState extends State<RideProgressBar>
         BookingStatus.inProgress => 4,
         BookingStatus.completed => 5,
         BookingStatus.cancelled => 0,
+        BookingStatus.noShow => 3,
       };
 
   @override

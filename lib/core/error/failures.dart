@@ -61,6 +61,14 @@ class PriceChangedFailure extends Failure {
   final double price;
 }
 
+/// Al confirmar la cancelación el recargo ya no es el que vio el pasajero
+/// (pasó el plazo gratuito mientras decidía): se le vuelve a mostrar.
+class CancellationFeeChangedFailure extends Failure {
+  const CancellationFeeChangedFailure(this.fee)
+      : super('El recargo por cancelar cambió.');
+  final double fee;
+}
+
 /// La app es más vieja que config/global.minAppVersion (o, la del chófer,
 /// que minDriverAppVersion): hay que actualizar para cotizar, reservar o
 /// avanzar un viaje. Los enlaces a las tiendas, si el admin los puso.
@@ -92,6 +100,12 @@ enum TripIssue {
   unavailable,
   notAllowed,
   invalidTransition,
+
+  /// «El pasajero no aparece» antes del tiempo de espera de la política.
+  tooEarly,
+
+  /// El paso necesita la ubicación del chófer.
+  locationRequired,
   other,
 }
 

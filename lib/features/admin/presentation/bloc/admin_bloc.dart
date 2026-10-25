@@ -23,18 +23,24 @@ abstract class AdminEvent extends Equatable {
 
 class AdminDataRequested extends AdminEvent {}
 
+// Toda escritura lleva el motivo que queda en la auditoría del servidor
+// (Parte A).
+
 class AdminUpdatePricingRequested extends AdminEvent {
   final PricingRule rule;
-  const AdminUpdatePricingRequested(this.rule);
+  final String reason;
+  const AdminUpdatePricingRequested(this.rule, this.reason);
   @override
-  List<Object?> get props => [rule];
+  List<Object?> get props => [rule, reason];
 }
 
-class AdminResetPricingRequested extends AdminEvent {
+/// Borrar una tarifa pasa a desactivarla.
+class AdminDeactivatePricingRequested extends AdminEvent {
   final PricingRule rule;
-  const AdminResetPricingRequested(this.rule);
+  final String reason;
+  const AdminDeactivatePricingRequested(this.rule, this.reason);
   @override
-  List<Object?> get props => [rule];
+  List<Object?> get props => [rule, reason];
 }
 
 class AdminChangeBookingStatusRequested extends AdminEvent {
@@ -43,19 +49,30 @@ class AdminChangeBookingStatusRequested extends AdminEvent {
   final String reason;
   const AdminChangeBookingStatusRequested(
     this.booking,
-    this.status, {
-    this.reason = '',
-  });
+    this.status,
+    this.reason,
+  );
   @override
   List<Object?> get props => [booking.id, status, reason];
+}
+
+/// Central decide tras un «no aparece»: cancelar con o sin recargo.
+class AdminNoShowDecided extends AdminEvent {
+  final Booking booking;
+  final double fee;
+  final String reason;
+  const AdminNoShowDecided(this.booking, this.fee, this.reason);
+  @override
+  List<Object?> get props => [booking.id, fee, reason];
 }
 
 class AdminAssignDriverRequested extends AdminEvent {
   final Booking booking;
   final String driverId;
-  const AdminAssignDriverRequested(this.booking, this.driverId);
+  final String reason;
+  const AdminAssignDriverRequested(this.booking, this.driverId, this.reason);
   @override
-  List<Object?> get props => [booking.id, driverId];
+  List<Object?> get props => [booking.id, driverId, reason];
 }
 
 class AdminAdjustFinalPriceRequested extends AdminEvent {
@@ -83,9 +100,33 @@ class AdminRecordPaymentRequested extends AdminEvent {
   final Booking booking;
   final String method;
   final String reference;
-  const AdminRecordPaymentRequested(this.booking, this.method, this.reference);
+  final String reason;
+  const AdminRecordPaymentRequested(
+    this.booking,
+    this.method,
+    this.reference,
+    this.reason,
+  );
   @override
-  List<Object?> get props => [booking.id, method, reference];
+  List<Object?> get props => [booking.id, method, reference, reason];
+}
+
+/// Corrige un cobro registrado a mano; el valor anterior queda auditado.
+class AdminCorrectPaymentRequested extends AdminEvent {
+  final Payment payment;
+  final double? amountBs;
+  final String? method;
+  final String? reference;
+  final String reason;
+  const AdminCorrectPaymentRequested(
+    this.payment, {
+    this.amountBs,
+    this.method,
+    this.reference,
+    required this.reason,
+  });
+  @override
+  List<Object?> get props => [payment.id, amountBs, method, reference, reason];
 }
 
 class AdminBackfillSettlementsRequested extends AdminEvent {
@@ -94,9 +135,10 @@ class AdminBackfillSettlementsRequested extends AdminEvent {
 
 class AdminUpdateFinanceSettingsRequested extends AdminEvent {
   final Map<String, dynamic> fields;
-  const AdminUpdateFinanceSettingsRequested(this.fields);
+  final String reason;
+  const AdminUpdateFinanceSettingsRequested(this.fields, this.reason);
   @override
-  List<Object?> get props => [fields];
+  List<Object?> get props => [fields, reason];
 }
 
 class AdminResolveAlertRequested extends AdminEvent {
@@ -137,13 +179,15 @@ class AdminVerifyDriverRequested extends AdminEvent {
   /// El admin revisó la condición del vehículo: solo así se activa.
   final bool vehicleReviewed;
   final String vehicleNote;
+  final String reason;
   const AdminVerifyDriverRequested(
     this.driverId, {
     this.vehicleReviewed = false,
     this.vehicleNote = '',
+    required this.reason,
   });
   @override
-  List<Object?> get props => [driverId, vehicleReviewed, vehicleNote];
+  List<Object?> get props => [driverId, vehicleReviewed, vehicleNote, reason];
 }
 
 class AdminToggleUserStatusRequested extends AdminEvent {
@@ -172,23 +216,38 @@ class AdminDriverDocumentsUpdateRequested extends AdminEvent {
 class AdminToggleVehicleStatusRequested extends AdminEvent {
   final String vehicleId;
   final bool active;
-  const AdminToggleVehicleStatusRequested(this.vehicleId, this.active);
+  final String reason;
+  const AdminToggleVehicleStatusRequested(
+    this.vehicleId,
+    this.active,
+    this.reason,
+  );
   @override
-  List<Object?> get props => [vehicleId, active];
+  List<Object?> get props => [vehicleId, active, reason];
 }
 
 class AdminToggleMaintenanceModeRequested extends AdminEvent {
   final bool active;
-  const AdminToggleMaintenanceModeRequested(this.active);
+  final String reason;
+  const AdminToggleMaintenanceModeRequested(this.active, this.reason);
   @override
-  List<Object?> get props => [active];
+  List<Object?> get props => [active, reason];
 }
 
 class AdminUpdateGlobalSettingsRequested extends AdminEvent {
   final Map<String, dynamic> fields;
-  const AdminUpdateGlobalSettingsRequested(this.fields);
+  final String reason;
+  const AdminUpdateGlobalSettingsRequested(this.fields, this.reason);
   @override
-  List<Object?> get props => [fields];
+  List<Object?> get props => [fields, reason];
+}
+
+class AdminSetLeadHandledRequested extends AdminEvent {
+  final String leadId;
+  final bool handled;
+  const AdminSetLeadHandledRequested(this.leadId, this.handled);
+  @override
+  List<Object?> get props => [leadId, handled];
 }
 
 class AdminUpdateUserRoleRequested extends AdminEvent {
@@ -426,31 +485,40 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<AdminUpdatePricingRequested>(
       (e, emit) => _perform(
         emit,
-        _repo.updatePricingRule(e.rule),
+        _repo.updatePricingRule(e.rule, e.reason),
         'Tarifa ${e.rule.vehicleClass.label} · ${e.rule.serviceType.label} '
         'guardada',
       ),
     );
-    on<AdminResetPricingRequested>(
+    on<AdminDeactivatePricingRequested>(
       (e, emit) => _perform(
         emit,
-        _repo.resetPricingRule(e.rule),
-        'Tarifa eliminada: esa combinación queda sin configurar',
+        _repo.deactivatePricingRule(e.rule, e.reason),
+        'Tarifa desactivada: esa combinación no se puede reservar',
       ),
     );
     on<AdminChangeBookingStatusRequested>(
       (e, emit) => _perform(
         emit,
-        _repo.changeBookingStatus(e.booking, e.status, reason: e.reason),
+        _repo.changeBookingStatus(e.booking, e.status, e.reason),
         e.status == BookingStatus.cancelled
             ? 'Reserva cancelada'
             : 'Reserva marcada como "${e.status.displayLabel}"',
       ),
     );
+    on<AdminNoShowDecided>(
+      (e, emit) => _perform(
+        emit,
+        _repo.decideNoShow(e.booking, e.fee, e.reason),
+        e.fee > 0
+            ? 'Reserva cancelada con recargo de ${e.fee.toStringAsFixed(2)} Bs'
+            : 'Reserva cancelada sin recargo',
+      ),
+    );
     on<AdminAssignDriverRequested>(
       (e, emit) => _perform(
         emit,
-        _repo.assignDriver(e.booking, e.driverId),
+        _repo.assignDriver(e.booking, e.driverId, e.reason),
         'Chófer asignado',
       ),
     );
@@ -471,8 +539,21 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<AdminRecordPaymentRequested>(
       (e, emit) => _perform(
         emit,
-        _repo.markPaymentCollected(e.booking, e.method, e.reference),
+        _repo.markPaymentCollected(e.booking, e.method, e.reference, e.reason),
         'Cobro registrado',
+      ),
+    );
+    on<AdminCorrectPaymentRequested>(
+      (e, emit) => _perform(
+        emit,
+        _repo.correctPayment(
+          e.payment,
+          amountBs: e.amountBs,
+          method: e.method,
+          reference: e.reference,
+          reason: e.reason,
+        ),
+        'Cobro corregido',
       ),
     );
     on<AdminBackfillSettlementsRequested>((e, emit) async {
@@ -491,7 +572,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<AdminUpdateFinanceSettingsRequested>(
       (e, emit) => _perform(
         emit,
-        _repo.updateFinanceSettings(e.fields),
+        _repo.updateFinanceSettings(e.fields, e.reason),
         'Configuración financiera guardada',
       ),
     );
@@ -530,6 +611,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
           e.driverId,
           vehicleReviewed: e.vehicleReviewed,
           vehicleNote: e.vehicleNote,
+          reason: e.reason,
         ),
         e.vehicleReviewed
             ? 'Chófer verificado y vehículo activado'
@@ -553,22 +635,29 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<AdminToggleVehicleStatusRequested>(
       (e, emit) => _perform(
         emit,
-        _repo.toggleVehicleStatus(e.vehicleId, e.active),
+        _repo.toggleVehicleStatus(e.vehicleId, e.active, e.reason),
         e.active ? 'Vehículo activado' : 'Vehículo desactivado',
       ),
     );
     on<AdminToggleMaintenanceModeRequested>(
       (e, emit) => _perform(
         emit,
-        _repo.toggleMaintenanceMode(e.active),
+        _repo.toggleMaintenanceMode(e.active, e.reason),
         e.active ? 'Modo mantenimiento activado' : 'Reservas reanudadas',
       ),
     );
     on<AdminUpdateGlobalSettingsRequested>(
       (e, emit) => _perform(
         emit,
-        _repo.updateGlobalSettings(e.fields),
+        _repo.updateGlobalSettings(e.fields, e.reason),
         'Configuración guardada',
+      ),
+    );
+    on<AdminSetLeadHandledRequested>(
+      (e, emit) => _perform(
+        emit,
+        _repo.setLeadHandled(e.leadId, e.handled),
+        e.handled ? 'Solicitud atendida' : 'Solicitud pendiente',
       ),
     );
     on<AdminUpdateUserRoleRequested>(

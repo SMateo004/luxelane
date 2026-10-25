@@ -4,13 +4,15 @@ import { secureCallable } from './callable';
 import { callableSchemas as schema, parseInput } from './schemas';
 import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
-import { defineSecret } from 'firebase-functions/params';
+import { defineBoolean, defineSecret } from 'firebase-functions/params';
 import * as bookingService from './booking_service';
 import { reconcileOpenRequests } from './reconcile';
 import { resolveAdminAlert } from './alerts';
 import * as tripFlow from './trip_flow';
 import * as businessLeads from './business_leads';
 import * as identity from './identity';
+import * as adminOps from './admin_ops';
+import * as cancellation from './cancellation';
 import * as incidents from './incidents';
 import { deviceSchema, registerDriverDevice as registerDriverDeviceService } from './driver_devices';
 import { isTransient, withRetryPolicy } from './retry_policy';
@@ -97,8 +99,15 @@ const PICKUP_CODE_SECRET = defineSecret('PICKUP_CODE_SECRET');
 const RATE_LIMIT_SALT = defineSecret('RATE_LIMIT_SALT');
 
 /** Formulario de empresas, también sin sesión (H5). */
+// Diagnóstico temporal de x-forwarded-for (0.4): apagado por defecto.
+// Encender y apagar: DEPLOY.md, «Diagnóstico de x-forwarded-for».
+const XFF_DIAGNOSTIC = defineBoolean('XFF_DIAGNOSTIC', { default: false });
+
 export const submitBusinessLead = secureCallable('submitBusinessLead', { secrets: [RATE_LIMIT_SALT] }, (req) =>
-  businessLeads.submitBusinessLead({ db, salt: RATE_LIMIT_SALT.value() }, req as unknown as businessLeads.LeadRequest));
+  businessLeads.submitBusinessLead(
+    { db, salt: RATE_LIMIT_SALT.value(), xffDiagnostic: XFF_DIAGNOSTIC.value() },
+    req as unknown as businessLeads.LeadRequest,
+  ));
 
 
 const tripDeps = (): tripFlow.TripDeps => ({ db, pickupSecret: PICKUP_CODE_SECRET.value() });
@@ -142,6 +151,14 @@ const adminActor = async (req: CallableRequest): Promise<incidents.AdminActor> =
   adminEmail: (req.auth?.token.email as string | undefined) ?? null,
 });
 
+/** El pasajero cancela su reserva (o pide el recargo antes de confirmar). */
+export const cancelBooking = secureCallable('cancelBooking', {}, (req) =>
+  cancellation.cancelBooking({ db }, req.auth?.uid, req.data));
+
+/** El chófer devuelve una reserva antes de llegar (motivo de lista cerrada). */
+export const releaseBooking = secureCallable('releaseBooking', {}, (req) =>
+  cancellation.releaseBooking({ db }, req.auth?.uid, req.data), { requireMfa: true });
+
 /** Pasajero o chófer de la reserva: avisa a central (idempotente, con límite). */
 export const raiseIncident = secureCallable('raiseIncident', {}, (req) => incidents.raiseIncident(incidentDeps(), req.auth?.uid, req.data));
 
@@ -180,7 +197,8 @@ type BookingStatus =
   | 'verified'
   | 'in_progress'
   | 'completed'
-  | 'cancelled';
+  | 'cancelled'
+  | 'no_show';
 
 type PaymentStatus = 'pending' | 'captured' | 'refunded' | 'failed';
 
@@ -831,6 +849,9 @@ export const onBookingStatusChanged = onDocumentUpdated('bookings/{bookingId}', 
     in_progress: ['Viaje iniciado', 'Tu trayecto ha comenzado.', 'ride_started'],
     completed: ['Viaje completado', 'Has llegado. Gracias por viajar con Luxelane.', 'ride_completed'],
     cancelled: ['Reserva cancelada', 'Tu reserva ha sido cancelada.', 'booking_cancelled'],
+    // B5: el chófer liberó la reserva; se busca otro.
+    pending: ['Buscamos otro chófer', 'Tu chófer tuvo un imprevisto. Estamos buscando otro chófer para tu reserva.', 'booking_driver_released'],
+    no_show: ['No te encontramos', 'Tu chófer no te encontró en el punto de recogida. Central revisará tu reserva.', 'rider_no_show'],
   };
 
   const entry = statusMessages[after.status];
@@ -872,6 +893,43 @@ export const closeOpenRequest = onDocumentUpdated({ document: 'bookings/{booking
   await withRetryPolicy('closeOpenRequest', { bookingId: event.params.bookingId }, () =>
     db.collection('openRequests').doc(event.params.bookingId).delete().then(() => undefined));
 });
+
+// ---------------------------------------------------------------------------
+// Escrituras de admin (Parte A): cada una con su auditoría en la misma
+// transacción. Rol admin por claim y, con mfaEnforced, segundo factor.
+// ---------------------------------------------------------------------------
+
+/** Asignar o reasignar chófer, cancelar, mover el estado o ajustar el importe. */
+export const adminUpdateBooking = secureCallable('adminUpdateBooking', {}, async (req) =>
+  adminOps.adminUpdateBooking({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Registrar o corregir un cobro manual (efectivo, QR, transferencia). */
+export const adminRecordPayment = secureCallable('adminRecordPayment', {}, async (req) =>
+  adminOps.adminRecordPayment({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Ajustes de config/global (lista blanca), config/finance y config/ops; nunca config/security. */
+export const adminUpdateConfig = secureCallable('adminUpdateConfig', {}, async (req) =>
+  adminOps.adminUpdateConfig({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Crear, cambiar o desactivar una tarifa (borrar = desactivar). */
+export const adminUpdatePricingRule = secureCallable('adminUpdatePricingRule', {}, async (req) =>
+  adminOps.adminUpdatePricingRule({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Verificar los documentos del chófer (y activar su vehículo revisado). */
+export const adminVerifyDriver = secureCallable('adminVerifyDriver', {}, async (req) =>
+  adminOps.adminVerifyDriver({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Licencia o vehículo a petición del chófer (tras verificar él no puede). */
+export const adminUpdateDriverSensitive = secureCallable('adminUpdateDriverSensitive', {}, async (req) =>
+  adminOps.adminUpdateDriverSensitive({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Activar o desactivar un vehículo. */
+export const adminSetVehicleActive = secureCallable('adminSetVehicleActive', {}, async (req) =>
+  adminOps.adminSetVehicleActive({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Marcar una solicitud de empresa como atendida o pendiente. */
+export const adminSetLeadHandled = secureCallable('adminSetLeadHandled', {}, async (req) =>
+  adminOps.adminSetLeadHandled({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
 
 /** El admin marca una alerta como revisada (auditado en el servidor). */
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {

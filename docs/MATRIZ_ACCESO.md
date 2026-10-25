@@ -31,10 +31,10 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 <!-- matriz:inicio -->
 | Colección | Cubierta antes | anónimo | pasajero dueño | otro pasajero | chófer verif. asignado | chófer verif. no asignado | chófer no verificado | usuario bloqueado | admin |
 |---|---|---|---|---|---|---|---|---|---|
-| `users/{uid}` | sí | · · · · · | L · · A · | · · · · · | · · · · · | · · · · · | · · · · · | L · · A · | L Li · A · |
-| `users/{uid}/notifications` | nueva | · · · · · | L Li · A B | · · · · · | · · · · · | · · · · · | · · · · · | L Li · A B | L Li · A B |
-| `driverProfiles/{uid}` | sí | · · · · · | · · · · · | · · · · · | L · C A · | · · C · · | · · C · · | L · · A · | L Li · A · |
-| `bookings/{id}` | sí | · · · · · | L Li · A · | · · · · · | L · · · · | · · · · · | · · · · · | · · · · · | L Li · A · |
+| `users/{uid}` | sí | · · · · · | L · · A · | · · · · · | · · · · · | · · · · · | · · · · · | L · · A · | L Li · · · |
+| `users/{uid}/notifications` | nueva | · · · · · | L Li · A B | · · · · · | · · · · · | · · · · · | · · · · · | L Li · A B | L Li · · · |
+| `driverProfiles/{uid}` | sí | · · · · · | · · · · · | · · · · · | L · C A · | · · C · · | · · C · · | L · · A · | L Li · · · |
+| `bookings/{id}` | sí | · · · · · | L Li · · · | · · · · · | L · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/tracking` | sí | · · · · · | L Li · · · | · · · · · | L Li C A · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/driverContact` | sí | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/private` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
@@ -49,22 +49,22 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `rateLimits/{id}` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
 | `openRequests/{id}` | sí | · · · · · | · · · · · | · · · · · | L Li · · · | L Li · · · | · · · · · | · · · · · | L Li · · · |
 | `rides/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
-| `payments/{id}` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li C A · |
-| `vehicles/{id}` | sí | · · · · · | · · · · · | · · · · · | L Li C A · | · · C · · | · · C · · | L Li · A · | L Li · A · |
-| `pricingRules/{id}` | nueva | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li C A B |
-| `config/global` | nueva | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · C A · |
-| `config/finance` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L · C A · |
+| `payments/{id}` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `vehicles/{id}` | sí | · · · · · | · · · · · | · · · · · | L Li C A · | · · C · · | · · C · · | L Li · A · | L Li · · · |
+| `pricingRules/{id}` | nueva | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · |
+| `config/global` | nueva | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · |
+| `config/finance` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L · · · · |
 | `config/ops` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L · · · · |
 | `config/security` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
-| `businessLeads/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · A · |
+| `businessLeads/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `adminAlerts/{id}` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `driverDevices/{uid}/devices/{id}` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
-| `admin_logs/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li C · · |
+| `admin_logs/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 
 - `users/{uid}`: Objetivo users/ana (bloqueado: users/bloq, el suyo). Crear = perfil de otro (users/nuevo); el alta propia está en «Casos fuera de la tabla». Actualizar = displayName.
 - `users/{uid}/notifications`: Objetivo users/ana/notifications (bloqueado: las suyas). Las crea el servidor.
 - `driverProfiles/{uid}`: Objetivo driverProfiles/asig (bloqueado: el suyo). Crear = el alta propia del chófer (los pasajeros intentan la suya; anónimo y admin, driverProfiles/nuevo).
-- `bookings/{id}`: Objetivo bookings/activa (de ana, asignada a asig, en camino); bloqueado: activaBloq, asignada a él. Listar = reservas de ana (bloqueado: las suyas). Actualizar = cancelar.
+- `bookings/{id}`: Objetivo bookings/activa (de ana, asignada a asig, en camino); bloqueado: activaBloq, asignada a él. Listar = reservas de ana (bloqueado: las suyas). Actualizar = cancelar, que solo hace el servidor (cancelBooking, B7).
 - `bookings/{id}/tracking`: Ubicación del chófer de activa (bloqueado: de activaBloq).
 - `bookings/{id}/driverContact`: Teléfono del chófer de activa (bloqueado: de activaBloq). Lo escribe el servidor.
 - `bookings/{id}/private`: Sal del código de recogida: nadie desde el cliente, ni el admin.
@@ -79,17 +79,17 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `rateLimits/{id}`: Contadores de límites de las callables: solo el servidor.
 - `openRequests/{id}`: Solicitudes sin datos personales: chóferes verificados y activos, y el admin.
 - `rides/{id}`: Colección heredada sin uso (H7): solo el admin lee los documentos que queden; nadie escribe. r1: de ana con asig; bloqueado: rBloq.
-- `payments/{id}`: Pago de ana (reserva fin). Cobros y reembolsos los hace el servidor; el admin registra cobros manuales.
+- `payments/{id}`: Pago de ana (reserva fin). Cobros y reembolsos los hace el servidor; los manuales, adminRecordPayment (Parte A).
 - `vehicles/{id}`: Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8).
-- `pricingRules/{id}`: Tarifas públicas (la web las muestra sin sesión); solo el admin las edita. Sin campos internos ni `updatedBy`: quién la cambió va solo en admin_logs (C3).
-- `config/global`: Estado operativo público. Listar la colección incluye config/security: nadie (A8.9). Nadie la borra (H9).
-- `config/finance`: Comisión y parámetros internos: solo el admin. Borrarla se deniega también al admin (la regla valida el documento resultante).
-- `config/ops`: Tiempos del SOS, retención y radio de llegada: el admin la lee; se edita en la consola (A8.9).
+- `pricingRules/{id}`: Tarifas públicas (la web las muestra sin sesión). Las escribe adminUpdatePricingRule (Parte A), sin campos internos ni `updatedBy`: quién la cambió va solo en admin_logs (C3).
+- `config/global`: Estado operativo público. Listar la colección incluye config/security: nadie (A8.9). Los ajustes del panel van por adminUpdateConfig (Parte A). Nadie la borra (H9).
+- `config/finance`: Comisión y parámetros internos: el admin la lee; la comisión se cambia con adminUpdateConfig (entre 0 y 100, Parte A). Nadie la borra.
+- `config/ops`: Tiempos del SOS, retención, radio de llegada y límite de ajuste: el admin la lee; se edita con adminUpdateConfig o en la consola (A8.9, Parte A).
 - `config/security`: Segundo factor y sesión máxima de admin: ningún cliente, ni el admin; solo la consola y el servidor (A8.9).
-- `businessLeads/{id}`: Formulario de empresas: se envía con la callable submitBusinessLead (H5); ningún cliente escribe directo. El admin lo lee y lo marca atendido.
+- `businessLeads/{id}`: Formulario de empresas: se envía con la callable submitBusinessLead (H5); ningún cliente escribe directo. El admin lo lee; lo marca atendido con adminSetLeadHandled (Parte A).
 - `adminAlerts/{id}`: Avisos del servidor: el admin los marca con resolveAlert, no escribiendo.
 - `driverDevices/{uid}/devices/{id}`: Dispositivos del chófer (B7): los anota registerDriverDevice; solo el admin los ve, ni el propio chófer. Alerta baja por dispositivo nuevo, y por el primero si ya está verificado (C2).
-- `admin_logs/{id}`: Auditoría inmutable: el admin anexa a su nombre. El servidor y los scripts (promote_admin, reset_mfa, migraciones) escriben con el Admin SDK, con source server o script (C4, C6).
+- `admin_logs/{id}`: Auditoría inmutable: la escribe solo el servidor, en la transacción de cada cambio (Parte A), y los scripts (promote_admin, reset_mfa, migraciones) con el Admin SDK. Ningún cliente, ni el admin.
 <!-- matriz:fin -->
 
 
@@ -122,6 +122,27 @@ Revisión A8 (rama cierre/identidad):
 | A8.7 | `bookings/{id}/events` × pasajero y chófer × leer | **Corregido.** El motivo del admin y `farFromPickup`/`arrivalCheck` pasan a `eventDetails` (solo admin); migración para los eventos ya escritos. |
 | A8.8 | `pricingRules` × público × leer | **Cerrado (C3).** Sin campos internos; lista blanca de campos. `updatedBy` (uid del admin, público) retirado en C3: las reglas lo rechazan, el panel ya no lo escribe ni lo muestra (quién cambió la tarifa está en admin_logs) y `npm run migrate:pricing-updated-by` lo borra de los documentos existentes. Tests: `pricingRules.rules.ts`, `pricing_updated_by.int.ts`. |
 | A8.9 | `config/global` × público × leer | **Corregido.** Las claves de operación pasan a `config/ops` (solo admin lee) y la seguridad irá en `config/security` (nadie). |
+
+Parte A de la auditoría (rama cierre/auditoria): el admin solo lee. Cada
+escritura suya pasa a una callable con rol admin, segundo factor (con
+`mfaEnforced`), esquema estricto, motivo y auditoría en la misma
+transacción. Se cierran 17 celdas (de 147 permitidas a 130; de 13 ⚠ a 4).
+Con las reglas anteriores, los tests nuevos dan `38 failed, 1397 passed,
+1435 total`.
+
+| Celda cerrada (admin) | ⚠ antes | La sustituye |
+|---|---|---|
+| `users/{uid}` × actualizar | sí | `setUserRole`, `setUserBlocked` (B2, B3) |
+| `users/{uid}/notifications` × actualizar, borrar | no | — (el panel no los usaba) |
+| `driverProfiles/{uid}` × actualizar | sí | `adminVerifyDriver`, `adminUpdateDriverSensitive` |
+| `bookings/{id}` × actualizar | sí | `adminUpdateBooking` |
+| `payments/{id}` × crear, actualizar | sí (las dos) | `adminRecordPayment` |
+| `vehicles/{id}` × actualizar | sí | `adminSetVehicleActive`, `adminUpdateDriverSensitive` |
+| `pricingRules/{id}` × crear, actualizar, borrar | no | `adminUpdatePricingRule` (borrar = desactivar) |
+| `config/global` × crear, actualizar | actualizar | `adminUpdateConfig` (lista blanca) |
+| `config/finance` × crear, actualizar | actualizar | `adminUpdateConfig` |
+| `businessLeads/{id}` × actualizar | no | `adminSetLeadHandled` |
+| `admin_logs/{id}` × crear | sí | el servidor, en la transacción de cada cambio |
 
 Correcciones tras la revisión de la Parte B (rama cierre/identidad):
 

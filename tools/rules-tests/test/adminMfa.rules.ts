@@ -1,5 +1,6 @@
-// B4 (decisión 3): con config/security.mfaEnforced true, las escrituras
-// directas del admin exigen un token con segundo factor. Las lecturas no.
+// B4 (decisión 3) y Parte A: el admin ya no escribe desde el cliente, con o
+// sin segundo factor; sus cambios van por callables, que exigen el segundo
+// factor con mfaEnforced (mfa_gate.int.ts). Las lecturas no lo exigen.
 import { assertFails, assertSucceeds, RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { seed, startEnv } from './setup';
@@ -20,14 +21,15 @@ const write = (claims?: Record<string, unknown>) => updateDoc(doc(db(claims), 'c
 const cancel = (claims?: Record<string, unknown>) =>
   updateDoc(doc(db(claims), 'bookings', 'pend'), { status: 'cancelled', updatedAt: new Date() });
 
-describe('segundo factor en escrituras del admin', () => {
-  test('fase 1 (sin config/security): basta con ser admin', async () => {
-    await assertSucceeds(write());
+describe('escrituras del admin desde el cliente (Parte A)', () => {
+  test('sin config/security: no escribe', async () => {
+    await assertFails(write());
+    await assertFails(cancel());
   });
 
-  test('mfaEnforced false: basta con ser admin', async () => {
+  test('mfaEnforced false: no escribe', async () => {
     await enforce(false);
-    await assertSucceeds(write());
+    await assertFails(write());
   });
 
   test('mfaEnforced true: sin segundo factor no escribe', async () => {
@@ -36,10 +38,10 @@ describe('segundo factor en escrituras del admin', () => {
     await assertFails(cancel());
   });
 
-  test('mfaEnforced true: con TOTP sí escribe', async () => {
+  test('mfaEnforced true: con TOTP tampoco (va por callables)', async () => {
     await enforce(true);
-    await assertSucceeds(write(TOTP));
-    await assertSucceeds(cancel(TOTP));
+    await assertFails(write(TOTP));
+    await assertFails(cancel(TOTP));
   });
 
   test('las lecturas del admin no lo exigen', async () => {
@@ -49,7 +51,7 @@ describe('segundo factor en escrituras del admin', () => {
 
   test('no afecta a pasajeros ni chóferes en las reglas', async () => {
     await enforce(true);
-    await assertSucceeds(updateDoc(doc(env.authenticatedContext('ana').firestore(), 'bookings', 'pend'),
-      { status: 'cancelled', updatedAt: new Date() }));
+    // El pasajero ya no cancela desde las reglas (B7): edita su perfil.
+    await assertSucceeds(updateDoc(doc(env.authenticatedContext('ana').firestore(), 'users', 'ana'), { name: 'Ana' }));
   });
 });

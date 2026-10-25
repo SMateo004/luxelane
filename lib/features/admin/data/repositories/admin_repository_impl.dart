@@ -282,268 +282,95 @@ class AdminRepositoryImpl implements AdminRepository {
       .snapshots()
       .map((doc) => doc.data() ?? {});
 
-  // ---------------------------------------------------------------------------
-  // Auditoría: cada cambio se escribe en el mismo batch que su registro, así
-  // no puede existir una acción sin rastro ni un rastro sin acción.
-  // ---------------------------------------------------------------------------
-
-  Map<String, dynamic> _logEntry(
-    String action,
-    String targetId,
-    String targetType,
-    String details,
-  ) {
-    final user = _auth.currentUser;
-    return {
-      'adminId': user?.uid ?? 'unknown',
-      'adminEmail': user?.email,
-      'action': action,
-      'targetId': targetId,
-      'targetType': targetType,
-      'details': details,
-      'createdAt': FieldValue.serverTimestamp(),
-    };
-  }
-
-  void _log(
-    WriteBatch batch,
-    String action,
-    String targetId,
-    String targetType, {
-    String details = '',
-  }) {
-    batch.set(
-      _db.collection('admin_logs').doc(),
-      _logEntry(action, targetId, targetType, details),
-    );
-  }
-
-  /// Como [_run], pero en una transacción: para cambios que dependen del
-  /// estado actual y pueden chocar con otro escritor (un chófer aceptando,
-  /// un cobro de Stripe…).
-  Future<Either<Failure, void>> _runTx(
-    Future<void> Function(Transaction tx) build,
-  ) async {
-    try {
-      await _db.runTransaction(build);
-      return const Right(null);
-    } on FirebaseException catch (e) {
-      return Left(ServerFailure(_friendly(e)));
-    } on _AdminRuleViolation catch (e) {
-      return Left(ValidationFailure(e.message));
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
-    }
-  }
-
-  void _logTx(
-    Transaction tx,
-    String action,
-    String targetId,
-    String targetType, {
-    String details = '',
-  }) {
-    tx.set(
-      _db.collection('admin_logs').doc(),
-      _logEntry(action, targetId, targetType, details),
-    );
-  }
-
-  Future<Either<Failure, void>> _run(
-    Future<void> Function(WriteBatch batch) build,
-  ) async {
-    try {
-      final batch = _db.batch();
-      await build(batch);
-      await batch.commit();
-      return const Right(null);
-    } on FirebaseException catch (e) {
-      return Left(ServerFailure(_friendly(e)));
-    } on _AdminRuleViolation catch (e) {
-      return Left(ValidationFailure(e.message));
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
-    }
-  }
-
-  static String _friendly(FirebaseException e) {
-    if (e.code == 'permission-denied') {
-      return 'Permiso denegado: tu cuenta no tiene rol de administrador '
-          'o las reglas de Firestore no están desplegadas.';
-    }
-    return e.message ?? e.code;
-  }
-
-  /// Las Cloud Functions solo mandan código y motivo corto: se traducen
-  /// aquí.
-  static String _fnError(FirebaseFunctionsException e) {
-    final common = commonFunctionError(e.code, e.details);
-    if (common != null) return common;
-    return switch (functionErrorReason(e.details)) {
-      'not_captured' => 'Solo se pueden reembolsar pagos cobrados',
-      'payment_failed' => 'El procesador de pagos rechazó la operación',
-      'cannot_change_own_role' => 'No puedes cambiar tu propio rol',
-      'cannot_block_self' => 'No puedes bloquear tu propia cuenta',
-      'user_not_found' => 'No se encontró el usuario',
-      _ => e.code == 'permission-denied'
-          ? 'Permiso denegado: se necesita rol de administrador'
-          : functionErrorMessage(e.code, e.details),
-    };
-  }
-
-  static String _money(double v) => 'Bs${v.toStringAsFixed(2)}';
-
-  DocumentReference<Map<String, dynamic>> _booking(String id) =>
-      _db.collection('bookings').doc(id);
-
-  DocumentReference<Map<String, dynamic>> _driver(String id) =>
-      _db.collection('driverProfiles').doc(id);
+  static String _fnError(FirebaseFunctionsException e) =>
+      adminErrorMessage(e.code, e.details);
 
   // ---------------------------------------------------------------------------
-  // Tarifas
+  // Tarifas. Todas las escrituras de admin pasan por callables que validan
+  // contra el estado actual y escriben la auditoría en la misma transacción
+  // (Parte A); las reglas ya no dejan al admin escribir directo.
   // ---------------------------------------------------------------------------
 
   @override
-  Future<Either<Failure, void>> updatePricingRule(PricingRule rule) {
+  Future<Either<Failure, void>> updatePricingRule(
+    PricingRule rule,
+    String reason,
+  ) {
     final errors = rule.validate();
     if (errors.isNotEmpty) {
       return Future.value(Left(ValidationFailure(errors.join('. '))));
     }
-    final id = PricingRule.idFor(rule.vehicleClass, rule.serviceType);
-    return _run((batch) async {
-      batch.set(_db.collection('pricingRules').doc(id), {
-        ...rule.toJson(),
-        'id': id,
-        'updatedAt': FieldValue.serverTimestamp(),
-        // Quién la cambió va solo en admin_logs (el documento es público).
-      });
-      _log(
-        batch,
-        'update_pricing',
-        id,
-        'pricing',
-        details: '${rule.vehicleClass.label} · ${rule.serviceType.label}: '
-            'base ${_money(rule.basePriceUsd)}, '
-            '${_money(rule.pricePerKmUsd)}/km, '
-            '${_money(rule.pricePerHourUsd)}/h, '
-            'mín. ${_money(rule.minimumPriceUsd)}'
-            '${rule.isActive ? '' : ' · DESACTIVADA'}',
-      );
+    return _call('adminUpdatePricingRule', {
+      'action': 'upsert',
+      'vehicleClass': rule.vehicleClass.name,
+      'serviceType': rule.serviceType.name,
+      'basePriceUsd': rule.basePriceUsd,
+      'pricePerKmUsd': rule.pricePerKmUsd,
+      'pricePerHourUsd': rule.pricePerHourUsd,
+      'minimumPriceUsd': rule.minimumPriceUsd,
+      'isActive': rule.isActive,
+      'reason': reason.trim(),
     });
   }
 
   @override
-  Future<Either<Failure, void>> resetPricingRule(PricingRule rule) {
-    final id = PricingRule.idFor(rule.vehicleClass, rule.serviceType);
-    return _run((batch) async {
-      batch.delete(_db.collection('pricingRules').doc(id));
-      _log(
-        batch,
-        'reset_pricing',
-        id,
-        'pricing',
-        details: '${rule.vehicleClass.label} · ${rule.serviceType.label} '
-            'queda sin configurar',
-      );
-    });
-  }
+  Future<Either<Failure, void>> deactivatePricingRule(
+    PricingRule rule,
+    String reason,
+  ) =>
+      _call('adminUpdatePricingRule', {
+        'action': 'deactivate',
+        'vehicleClass': rule.vehicleClass.name,
+        'serviceType': rule.serviceType.name,
+        'reason': reason.trim(),
+      });
 
   // ---------------------------------------------------------------------------
-  // Operaciones sobre reservas
+  // Operaciones sobre reservas (adminUpdateBooking)
   // ---------------------------------------------------------------------------
 
   @override
   Future<Either<Failure, void>> changeBookingStatus(
     Booking booking,
-    BookingStatus status, {
-    String reason = '',
-  }) {
-    return _run((batch) async {
-      // Se valida contra el estado actual en servidor, no el de la pantalla.
-      final snap = await _booking(booking.id).get();
-      final current = BookingStatusX.fromString(
-        snap.data()?['status'] as String? ?? '',
-      );
-      if (!AdminOperations.canTransition(current, status)) {
-        throw _AdminRuleViolation(
-          'No se puede pasar de "${current.displayLabel}" a '
-          '"${status.displayLabel}"',
-        );
-      }
-      final update = <String, dynamic>{
-        'status': status.label,
-        'updatedAt': FieldValue.serverTimestamp(),
-      };
-      if (status == BookingStatus.cancelled) {
-        update['cancelledBy'] = 'admin';
-        update['cancellationReason'] = reason;
-      }
-      if (status == BookingStatus.completed &&
-          snap.data()?['finalPrice'] == null) {
-        update['finalPrice'] = booking.estimatedPrice;
-      }
-      batch.update(_booking(booking.id), update);
-
-      // Liberar al chófer y contar el viaje lo hace el servidor
-      // (releaseDriver) para cualquier cierre, también este.
-      _log(
-        batch,
-        status == BookingStatus.cancelled ? 'cancel_booking' : 'update_status',
-        booking.id,
-        'booking',
-        details: '${current.displayLabel} → ${status.displayLabel}'
-            '${reason.isNotEmpty ? ' · $reason' : ''}',
-      );
-    });
-  }
+    BookingStatus status,
+    String reason,
+  ) =>
+      _call('adminUpdateBooking', {
+        'bookingId': booking.id,
+        if (status == BookingStatus.cancelled)
+          'action': 'cancel'
+        else ...{
+          'action': 'status',
+          'to': status.label,
+        },
+        'reason': reason.trim(),
+      });
 
   @override
-  Future<Either<Failure, void>> assignDriver(Booking booking, String driverId) {
-    // En transacción: si un chófer acepta la reserva a la vez, una de las dos
-    // escrituras se repite con el estado nuevo en vez de pisar a la otra.
-    return _runTx((tx) async {
-      final snap = await tx.get(_booking(booking.id));
-      final fresh = Booking.fromJson({...?snap.data(), 'id': booking.id});
-      if (!AdminOperations.canAssignDriver(fresh)) {
-        throw _AdminRuleViolation(
-          'No se puede asignar chófer a una reserva '
-          '"${fresh.status.displayLabel}"',
-        );
-      }
-      final previous = fresh.driverId;
-      if (previous != driverId) {
-        final driver = await tx.get(_driver(driverId));
-        if (driver.data()?['isAvailable'] != true) {
-          throw _AdminRuleViolation(
-            'Ese chófer está ocupado o desconectado; elige otro',
-          );
-        }
-      }
-      tx.update(_booking(booking.id), {
-        'driverId': driverId,
-        if (fresh.status == BookingStatus.pending)
-          'status': BookingStatus.confirmed.label,
-        'updatedAt': FieldValue.serverTimestamp(),
+  Future<Either<Failure, void>> decideNoShow(
+    Booking booking,
+    double cancellationFee,
+    String reason,
+  ) =>
+      _call('adminUpdateBooking', {
+        'bookingId': booking.id,
+        'action': 'cancel',
+        'cancellationFee': cancellationFee,
+        'reason': reason.trim(),
       });
-      if (fresh.status != BookingStatus.confirmed &&
-              fresh.status != BookingStatus.pending ||
-          fresh.scheduledAt.isBefore(DateTime.now().add(kBusyLead))) {
-        tx.update(_driver(driverId), {'isAvailable': false});
-      }
-      if (previous != null && previous != driverId) {
-        tx.update(_driver(previous), {'isAvailable': true});
-      }
-      _logTx(
-        tx,
-        previous == null ? 'assign_driver' : 'reassign_driver',
-        booking.id,
-        'booking',
-        details: previous == null
-            ? 'Chófer $driverId'
-            : 'Chófer $previous → $driverId',
-      );
-    });
-  }
+
+  @override
+  Future<Either<Failure, void>> assignDriver(
+    Booking booking,
+    String driverId,
+    String reason,
+  ) =>
+      _call('adminUpdateBooking', {
+        'action': 'assign',
+        'bookingId': booking.id,
+        'driverId': driverId,
+        'reason': reason.trim(),
+      });
 
   @override
   Future<Either<Failure, void>> adjustFinalPrice(
@@ -556,21 +383,11 @@ class AdminRepositoryImpl implements AdminRepository {
         const Left(ValidationFailure('El precio final no es válido')),
       );
     }
-    return _run((batch) async {
-      // Sin tocar updatedAt: las finanzas fechan el viaje por él y un ajuste
-      // no debe moverlo al periodo actual.
-      batch.update(_booking(booking.id), {
-        'finalPrice': finalPrice,
-        'priceAdjustmentReason': reason,
-      });
-      _log(
-        batch,
-        'adjust_price',
-        booking.id,
-        'booking',
-        details: '${_money(booking.finalPrice ?? booking.estimatedPrice)} → '
-            '${_money(finalPrice)}${reason.isNotEmpty ? ' · $reason' : ''}',
-      );
+    return _call('adminUpdateBooking', {
+      'action': 'adjust_price',
+      'bookingId': booking.id,
+      'finalPrice': finalPrice,
+      'reason': reason.trim(),
     });
   }
 
@@ -617,67 +434,39 @@ class AdminRepositoryImpl implements AdminRepository {
     Booking booking,
     String method,
     String reference,
-  ) {
-    final amount = booking.finalPrice ?? booking.estimatedPrice;
-    // En transacción: un doble clic o un cobro de Stripe simultáneo no deben
-    // dejar dos pagos cobrados para el mismo viaje.
-    return _runTx((tx) async {
-      final snap = await tx.get(_booking(booking.id));
-      final data = snap.data() ?? const <String, dynamic>{};
-      if (data['status'] != BookingStatus.completed.label) {
-        throw _AdminRuleViolation('Solo se cobran viajes completados');
-      }
-      final card = data['stripePaymentIntentId'] != null ||
-          data['stripePaymentMethodId'] != null;
-      if (card && data['cardPaymentFailed'] != true) {
-        throw _AdminRuleViolation(
-          'Este viaje se paga con tarjeta y el cobro '
-          'es automático; solo se registra a mano si ese cobro falla.',
-        );
-      }
-      final existingId = data['paymentId'] as String?;
-      if (existingId != null && existingId.isNotEmpty) {
-        final existing = await tx.get(
-          _db.collection('payments').doc(existingId),
-        );
-        final st = existing.data()?['status'];
-        if (st == PaymentStatus.captured.label ||
-            st == PaymentStatus.refunded.label) {
-          throw _AdminRuleViolation('Este viaje ya tiene un cobro registrado');
-        }
-      }
-      final ref = _db.collection('payments').doc();
-      tx.set(ref, {
+    String reason,
+  ) =>
+      // El servidor comprueba en una transacción que el viaje esté
+      // completado y sin otro cobro, y fija el importe.
+      _call('adminRecordPayment', {
+        'action': 'record',
         'bookingId': booking.id,
-        'riderId': booking.riderId,
-        'stripePaymentIntentId': '',
-        // Pagos en centavos, como Stripe y capturePayment.
-        'amount': Payment.toCents(amount),
-        'currency': 'bob',
-        'status': PaymentStatus.captured.label,
         'method': method,
-        'reference': reference,
-        'recordedBy': _auth.currentUser?.uid,
-        'createdAt': FieldValue.serverTimestamp(),
+        'reference': reference.trim(),
+        'reason': reason.trim(),
       });
-      tx.update(_booking(booking.id), {
-        'paymentId': ref.id,
-        'finalPrice': amount,
+
+  @override
+  Future<Either<Failure, void>> correctPayment(
+    Payment payment, {
+    double? amountBs,
+    String? method,
+    String? reference,
+    required String reason,
+  }) =>
+      _call('adminRecordPayment', {
+        'action': 'correct',
+        'paymentId': payment.id,
+        if (amountBs != null) 'amountBs': amountBs,
+        if (method != null) 'method': method,
+        if (reference != null) 'reference': reference.trim(),
+        'reason': reason.trim(),
       });
-      _logTx(
-        tx,
-        'record_payment',
-        booking.id,
-        'payment',
-        details: '${_money(amount)} · $method'
-            '${reference.isNotEmpty ? ' · ref. $reference' : ''}',
-      );
-    });
-  }
 
   @override
   Future<Either<Failure, void>> updateFinanceSettings(
     Map<String, dynamic> fields,
+    String reason,
   ) {
     final pct = fields['platformCommissionPct'];
     if (pct is num && (pct < 0 || pct > 100)) {
@@ -685,21 +474,10 @@ class AdminRepositoryImpl implements AdminRepository {
         const Left(ValidationFailure('La comisión debe estar entre 0 y 100 %')),
       );
     }
-    return _run((batch) async {
-      batch.set(
-          _db.collection('config').doc('finance'),
-          {
-            ...fields,
-            'updatedAt': FieldValue.serverTimestamp(),
-          },
-          SetOptions(merge: true));
-      _log(
-        batch,
-        'update_finance_settings',
-        'finance',
-        'global_config',
-        details: fields.entries.map((e) => '${e.key}: ${e.value}').join(', '),
-      );
+    return _call('adminUpdateConfig', {
+      'doc': 'finance',
+      'changes': fields,
+      'reason': reason.trim(),
     });
   }
 
@@ -712,29 +490,13 @@ class AdminRepositoryImpl implements AdminRepository {
     String driverId, {
     required bool vehicleReviewed,
     String vehicleNote = '',
+    required String reason,
   }) =>
-      _run((batch) async {
-        batch.update(_driver(driverId), {'documentsVerified': true});
-        _log(batch, 'verify_driver', driverId, 'driver');
-        // El vehículo (registrado inactivo) solo se activa si el admin
-        // revisó su condición; si no, queda inactivo hasta activarlo a mano.
-        if (!vehicleReviewed) return;
-        final vehicles = await _db
-            .collection('vehicles')
-            .where('driverId', isEqualTo: driverId)
-            .get();
-        for (final v in vehicles.docs) {
-          _log(
-            batch,
-            'review_vehicle',
-            v.id,
-            'vehicle',
-            details: vehicleNote.trim(),
-          );
-          if (v.data()['isActive'] == true) continue;
-          batch.update(v.reference, {'isActive': true});
-          _log(batch, 'enable_vehicle', v.id, 'vehicle');
-        }
+      _call('adminVerifyDriver', {
+        'driverId': driverId,
+        'vehicleReviewed': vehicleReviewed,
+        'vehicleNote': vehicleNote.trim(),
+        'reason': reason.trim(),
       });
 
   @override
@@ -761,26 +523,26 @@ class AdminRepositoryImpl implements AdminRepository {
     if (profileChanges.isEmpty && vehicleChanges.isEmpty) {
       return Future.value(const Left(ValidationFailure('No hay cambios.')));
     }
-    return _run((batch) async {
-      if (profileChanges.isNotEmpty) {
-        batch.update(_driver(profile.userId), profileChanges);
-      }
-      if (vehicleChanges.isNotEmpty) {
-        batch.update(
-          _db.collection('vehicles').doc(vehicle!.id),
-          vehicleChanges,
-        );
-      }
-      // Qué campos cambiaron y por qué; los valores quedan en los documentos.
-      _log(
-        batch,
-        'update_driver_documents',
-        profile.userId,
-        'driver',
-        details: 'Campos: '
-            '${[...profileChanges.keys, ...vehicleChanges.keys].join(', ')}'
-            ' · Motivo: ${reason.trim()}',
-      );
+    final expiry = profileChanges['licenseExpiry'];
+    return _call('adminUpdateDriverSensitive', {
+      'driverId': profile.userId,
+      if (profileChanges.isNotEmpty)
+        'profile': {
+          if (profileChanges['licenseNumber'] != null)
+            'licenseNumber': profileChanges['licenseNumber'],
+          if (expiry is DateTime)
+            'licenseExpiry': expiry.millisecondsSinceEpoch,
+        },
+      if (vehicleChanges.isNotEmpty)
+        'vehicle': {
+          'vehicleId': vehicle!.id,
+          for (final k in ['plate', 'make', 'model', 'year'])
+            if (vehicleChanges[k] != null) k: vehicleChanges[k],
+          // La capacidad la pone el servidor según la clase.
+          if (vehicleChanges['class'] != null)
+            'vehicleClass': vehicleChanges['class'],
+        },
+      'reason': reason.trim(),
     });
   }
 
@@ -788,57 +550,35 @@ class AdminRepositoryImpl implements AdminRepository {
   Future<Either<Failure, void>> toggleVehicleStatus(
     String vehicleId,
     bool active,
+    String reason,
   ) =>
-      _run((batch) async {
-        batch.update(_db.collection('vehicles').doc(vehicleId), {
-          'isActive': active,
-        });
-        _log(
-          batch,
-          active ? 'enable_vehicle' : 'disable_vehicle',
-          vehicleId,
-          'vehicle',
-        );
+      _call('adminSetVehicleActive', {
+        'vehicleId': vehicleId,
+        'active': active,
+        'reason': reason.trim(),
       });
 
   @override
-  Future<Either<Failure, void>> toggleMaintenanceMode(bool active) =>
-      _run((batch) async {
-        batch.set(
-            _db.collection('config').doc('global'),
-            {
-              'isMaintenanceMode': active,
-              'updatedAt': FieldValue.serverTimestamp(),
-            },
-            SetOptions(merge: true));
-        _log(
-          batch,
-          active ? 'enable_maintenance' : 'disable_maintenance',
-          'app',
-          'global_config',
-        );
-      });
+  Future<Either<Failure, void>> toggleMaintenanceMode(
+    bool active,
+    String reason,
+  ) =>
+      updateGlobalSettings({'isMaintenanceMode': active}, reason);
 
   @override
   Future<Either<Failure, void>> updateGlobalSettings(
     Map<String, dynamic> fields,
+    String reason,
   ) =>
-      _run((batch) async {
-        batch.set(
-            _db.collection('config').doc('global'),
-            {
-              ...fields,
-              'updatedAt': FieldValue.serverTimestamp(),
-            },
-            SetOptions(merge: true));
-        _log(
-          batch,
-          'update_settings',
-          'global',
-          'global_config',
-          details: fields.entries.map((e) => '${e.key}: ${e.value}').join(', '),
-        );
+      _call('adminUpdateConfig', {
+        'doc': 'global',
+        'changes': fields,
+        'reason': reason.trim(),
       });
+
+  @override
+  Future<Either<Failure, void>> setLeadHandled(String leadId, bool handled) =>
+      _call('adminSetLeadHandled', {'leadId': leadId, 'handled': handled});
 
   @override
   Future<Either<Failure, void>> updateUserRole(String userId, UserRole role) {
@@ -874,7 +614,56 @@ class AdminRepositoryImpl implements AdminRepository {
   }
 }
 
-class _AdminRuleViolation implements Exception {
-  _AdminRuleViolation(this.message);
-  final String message;
+/// Las Cloud Functions solo mandan código y motivo corto: se traducen aquí,
+/// sin texto técnico.
+String adminErrorMessage(String code, Object? details) {
+  final common = commonFunctionError(code, details);
+  if (common != null) return common;
+  final d = details is Map ? details : const {};
+  return switch (functionErrorReason(details)) {
+    'invalid_request' => 'Revisa los datos. El motivo necesita al menos '
+        '$kAdminReasonMinLength caracteres.',
+    'no_change' => 'No hay nada que cambiar.',
+    'not_captured' => 'Solo se pueden reembolsar o corregir pagos cobrados',
+    'payment_failed' => 'El procesador de pagos rechazó la operación',
+    'cannot_change_own_role' => 'No puedes cambiar tu propio rol',
+    'cannot_block_self' => 'No puedes bloquear tu propia cuenta',
+    'user_not_found' => 'No se encontró el usuario',
+    'booking_not_found' => 'No se encontró la reserva',
+    'driver_not_found' => 'No se encontró el chófer',
+    'vehicle_not_found' => 'No se encontró el vehículo de este chófer',
+    'payment_not_found' => 'No se encontró el pago',
+    'lead_not_found' => 'No se encontró la solicitud',
+    'fare_not_found' => 'Esa tarifa no está configurada',
+    'driver_not_verified' => 'Ese chófer aún no está verificado',
+    'driver_inactive' => 'Ese chófer está bloqueado',
+    'driver_busy' => 'Ese chófer está ocupado o desconectado; elige otro',
+    'not_assignable' => 'A esta reserva ya no se le puede asignar chófer',
+    'not_cancellable' => 'Esta reserva ya no se puede cancelar',
+    'fee_only_after_no_show' =>
+      'El recargo solo se fija tras un «no se presentó»',
+    'fee_above_price' => 'El recargo no puede superar el precio del viaje',
+    'invalid_transition' => 'La reserva ya no está en ese paso; recarga',
+    'price_locked' => 'El importe solo se ajusta antes de completar el viaje',
+    'price_adjustment_disabled' =>
+      'El ajuste de importe no está habilitado: falta fijar el límite en '
+          'la configuración de operación.',
+    'price_adjustment_too_large' => d['maxPercent'] is num
+        ? 'El ajuste supera el límite permitido '
+            '(${(d['maxPercent'] as num).toStringAsFixed(0)} %).'
+        : 'El ajuste supera el límite permitido.',
+    'not_completed' => 'Solo se cobran viajes completados',
+    'card_payment' => 'Este viaje se paga con tarjeta y el cobro es '
+        'automático; solo se registra a mano si ese cobro falla.',
+    'already_paid' => 'Este viaje ya tiene un cobro registrado',
+    'not_manual' => 'Solo se corrigen cobros registrados a mano',
+    'settlement_commission_missing' =>
+      'No se puede corregir el importe: el viaje no tiene guardada la '
+          'comisión con la que se completó. Asigna primero los repartos '
+          'pendientes (Configuración) y vuelve a intentarlo.',
+    'invalid_fare' => 'La tarifa no es válida: revisa los importes',
+    _ => code == 'permission-denied'
+        ? 'Permiso denegado: se necesita rol de administrador'
+        : functionErrorMessage(code, details),
+  };
 }

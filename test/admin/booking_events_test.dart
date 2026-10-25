@@ -32,6 +32,24 @@ void main() {
     );
   });
 
+  test('evento con actor admin sin uid: el panel lo lee de eventDetails (0.2)',
+      () {
+    final e = BookingEvent.fromJson(
+      'e3',
+      {
+        'from': 'driver_arrived',
+        'to': 'verified',
+        'actor': {'role': 'admin'},
+        'source': 'admin',
+        'method': 'admin_override',
+      },
+      null,
+      {'reason': 'Sin batería', 'actorUid': 'jefa'},
+    );
+    expect(e.actorUid, 'jefa');
+    expect(bookingEventDetails(e, name).first, startsWith('Admin Jefa'));
+  });
+
   test('override del admin: muestra quién y el motivo', () {
     final e = BookingEvent.fromJson('e2', {
       'from': 'driver_arrived',

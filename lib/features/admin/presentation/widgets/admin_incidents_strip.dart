@@ -211,7 +211,6 @@ class _IncidentCard extends StatelessWidget {
           'en la auditoría.',
       confirmLabel: 'Cerrar incidente',
       reasonLabel: 'Nota de cierre (mínimo 10 caracteres)',
-      minReasonLength: 10,
     );
     if (note == null || !context.mounted) return;
     context.read<AdminBloc>().add(

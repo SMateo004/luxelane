@@ -272,25 +272,43 @@ class BookingRepositoryImpl implements BookingRepository {
     }
   }
 
+  // Parte B: solo el servidor cancela (motivo, recargo y evento).
   @override
-  Future<Either<Failure, void>> cancelBooking(String bookingId) async {
+  Future<Either<Failure, CancellationQuote>> previewCancellation(
+    String bookingId, {
+    String reason = 'other',
+  }) async {
     try {
-      await _col.doc(bookingId).update({
-        'status': BookingStatus.cancelled.label,
-        'updatedAt': Timestamp.now(),
-      });
-      return const Right(null);
-    } on FirebaseException catch (e) {
-      return Left(
-        ServerFailure(
-          e.code == 'permission-denied'
-              ? 'Esta reserva ya no se puede cancelar: el viaje está en curso o '
-                  'terminó.'
-              : 'No se pudo cancelar. Revisa tu conexión e inténtalo de nuevo.',
-        ),
+      final res = await _functions
+          .httpsCallable('cancelBooking')
+          .call<Map<String, dynamic>>(
+        {'bookingId': bookingId, 'reason': reason, 'dryRun': true},
       );
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Right(CancellationQuote.fromJson(res.data));
+    } on FirebaseFunctionsException catch (e) {
+      return Left(cancelFailureFor(e.code, e.details));
+    } catch (_) {
+      return const Left(ServerFailure(_kCancelConnectionError));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> cancelBooking(
+    String bookingId, {
+    String reason = 'other',
+    double acceptedFee = 0,
+  }) async {
+    try {
+      await _functions
+          .httpsCallable('cancelBooking')
+          .call<Map<String, dynamic>>(
+        {'bookingId': bookingId, 'reason': reason, 'acceptedFee': acceptedFee},
+      );
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      return Left(cancelFailureFor(e.code, e.details));
+    } catch (_) {
+      return const Left(ServerFailure(_kCancelConnectionError));
     }
   }
 
@@ -383,4 +401,29 @@ Failure bookingFailureFor(String code, Object? details) {
 class _AcceptError implements Exception {
   const _AcceptError(this.message);
   final String message;
+}
+
+const _kCancelConnectionError =
+    'No se pudo cancelar. Revisa tu conexión e inténtalo de nuevo.';
+
+/// Error de cancelBooking (details.reason) a lo que ve el pasajero.
+Failure cancelFailureFor(String code, Object? details) {
+  final d = details is Map ? details : const {};
+  switch (d['reason']) {
+    case 'cancellation_fee_changed':
+      return CancellationFeeChangedFailure(
+        (d['cancellationFee'] as num?)?.toDouble() ?? 0,
+      );
+    case 'not_cancellable':
+      return const ServerFailure(
+        'Esta reserva ya no se puede cancelar: el viaje está en curso o '
+        'terminó.',
+      );
+    case 'not_owner':
+    case 'booking_not_found':
+      return const ServerFailure('No encontramos esta reserva en tu cuenta.');
+  }
+  return ServerFailure(
+    commonFunctionError(code, details) ?? _kCancelConnectionError,
+  );
 }

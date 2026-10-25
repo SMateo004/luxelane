@@ -496,6 +496,32 @@ Ventana fija por usuario y callable, contada en una transacción en
 la callable se rechaza (`resource_exhausted`), salvo `raiseIncident`: un
 SOS nunca se pierde por el contador.
 
+### Diagnóstico de x-forwarded-for (0.4)
+
+`submitBusinessLead` cuenta los envíos por IP tomando el **último**
+elemento de `x-forwarded-for`. Que en Cloud Functions (2.ª gen.) ese sea
+siempre el cliente y no un salto de Google está NO VERIFICADO. Para
+contrastarlo en **staging** hay un modo de diagnóstico temporal, apagado
+por defecto (parámetro `XFF_DIAGNOSTIC`):
+
+1. **Encender**: en `functions/.env.<proyecto-de-staging>` poner
+   `XFF_DIAGNOSTIC=true` y desplegar functions en staging (o responder
+   `true` cuando el CLI pregunte por el parámetro **[Probable]**).
+2. **Probar desde dos redes distintas** (por ejemplo, el wifi de la
+   oficina y los datos del móvil): enviar el formulario de empresas una vez
+   desde cada una.
+3. **Leer**: Logs Explorer → `jsonPayload.fn="submitBusinessLead"` y
+   `jsonPayload.message="xff_diagnostic"`. Cada envío deja
+   `chosenHash` (hash con la sal del elemento elegido; nunca la IP) y
+   `headerElements` (cuántos elementos traía el encabezado).
+   - Hashes **distintos** entre las dos redes: el elemento elegido es el
+     cliente. Lo esperado.
+   - Hashes **iguales**: el elegido es un salto de Google y el límite por
+     IP no sirve (queda el tope global). Avisar antes de producción.
+   - `usedFallback: true`: no llegó el encabezado y se usó `rawRequest.ip`.
+4. **Apagar**: `XFF_DIAGNOSTIC=false` (o quitar la línea) y volver a
+   desplegar functions. No dejarlo encendido en producción.
+
 ### Errores
 El cliente solo recibe `invalid_request`, `unauthenticated`,
 `permission_denied`, `failed_precondition`, `resource_exhausted`,
@@ -541,6 +567,13 @@ npm run migrate:event-details -- --project staging --apply
 ```
 El panel nuevo lee ambos sitios, así que el orden no rompe nada.
 
+Desde 0.2 la misma migración saca también el uid del admin: en los eventos
+de reserva con actor admin queda solo `actor.role = 'admin'` y el uid pasa a
+`eventDetails.actorUid`; en `incidents/{id}` borra `acknowledgedBy` y
+`closedBy` (el documento lo lee quien disparó el SOS; el uid sigue en los
+eventos del incidente y en admin_logs). En producción exige
+`--i-understand-this-writes-to-production-luxelane-4e7ae`.
+
 ### config/ops y config/security (A8.9)
 `config/global` es público (lo leen las apps sin sesión) y el panel lo
 escribe. Lo que solo usa el servidor va aparte; el servidor lo lee con el
@@ -557,9 +590,12 @@ colección `config` → documento `ops` o `security` → editar campo).
 Traslado en un proyecto ya configurado, después de desplegar functions:
 1. Crear `config/ops` con los valores que tenga hoy `config/global` para
    esas cuatro claves (mismo nombre y tipo número).
-2. Comprobar en Logs Explorer que deja de aparecer
-   `opsConfig … keys still in config/global` (mientras falte una clave en
-   ops, el servidor usa la de global y lo avisa).
+2. Comprobar que deja de aparecer la alerta «Configuración por mover a
+   config/ops» en el panel (Alertas) y, en Logs Explorer,
+   `opsConfig … keys still in config/global`. Mientras falte una clave en
+   ops, el servidor usa la de global, lo anota en el log y deja esa alerta
+   de severidad baja, como mucho una por día (0.3); la alerta dice qué
+   claves faltan. Paso manual: mover esas claves y resolver la alerta.
 3. Borrar esas cuatro claves de `config/global` en la consola.
 
 ### Funciones retiradas
@@ -579,6 +615,111 @@ CLI no la encuentra, `firebase functions:list --project <proyecto>` la
 muestra.
 
 ---
+
+## Escrituras de admin por el servidor (auditoría, Parte A)
+
+El panel ya no escribe Firestore: cada cambio va a una callable
+(`adminUpdateBooking`, `adminRecordPayment`, `adminUpdateConfig`,
+`adminUpdatePricingRule`, `adminVerifyDriver`,
+`adminUpdateDriverSensitive`, `adminSetVehicleActive`,
+`adminSetLeadHandled`) que exige rol admin, segundo factor con
+`mfaEnforced`, un motivo de al menos 10 caracteres y escribe la auditoría
+en la misma transacción. Las reglas dejan al admin solo lectura y
+`admin_logs` solo lo escribe el servidor.
+
+### Orden
+
+1. **Functions** (las callables nuevas). El panel anterior sigue
+   funcionando: aún escribe directo y las reglas viejas lo permiten.
+2. **Panel** nuevo (hosting). Desde aquí todo pasa por las callables.
+3. **Reglas** al final. Un panel anterior que siga abierto verá
+   «Permiso denegado» en cada cambio: recargar la página.
+
+### Pasos manuales (decisiones del responsable)
+
+- `config/ops.maxPriceAdjustmentPercent`: **sin él se rechaza todo ajuste
+  de importe** (`price_adjustment_disabled`). Si se quiere permitir
+  ajustes, fijar el porcentaje máximo (0–100) en la consola o con
+  `adminUpdateConfig`. El valor es decisión del responsable.
+- El ajuste de importe ahora solo se hace **antes de completar** el viaje
+  (antes el panel lo hacía después). Tras completar, se corrige el cobro
+  manual («Corregir cobro») o se reembolsa.
+- «Quitar tarifa» pasa a «Desactivar tarifa»: la tarifa queda con
+  `isActive: false` en vez de borrarse.
+
+### Auditoría anterior
+
+No hace falta migrar `admin_logs` (A9): las entradas nuevas llevan los
+mismos campos que leía el panel (`adminId`, `action`, `targetId`,
+`targetType`, `details`) más los nuevos (`operation`, `actor`, `docPath`,
+`changes`, `reason`). El panel lee las dos formas sin cambios.
+
+## Cancelación, liberar y «no aparece» (auditoría, Parte B)
+
+Qué cambia (rama cierre/auditoria, B2–B7): solo el servidor cancela.
+El pasajero usa `cancelBooking` (motivo de lista cerrada, recargo
+calculado con `config/ops.cancellationPolicy`, evento); el chófer
+devuelve un viaje antes de llegar con `releaseBooking` (vuelve a buscar
+chófer, alerta a central, contador en `driverProfiles`) y marca
+«el pasajero no aparece» (`advanceBooking` a `no_show`) pasado el tiempo
+de espera; central decide con `adminUpdateBooking` (cancelar con o sin
+recargo). **El recargo se anota en la reserva y en el evento; no se
+cobra** (`cancellationFeeCharged: false`). Las reglas dejan de permitir
+que la app escriba `status: cancelled`.
+
+### Orden
+
+1. **Functions** (`cancelBooking`, `releaseBooking`, `no_show` en
+   `advanceBooking`, decisión en `adminUpdateBooking`, aviso «Buscamos
+   otro chófer»). Las apps anteriores siguen cancelando como antes: las
+   reglas viejas aún lo permiten.
+2. **Apps** nuevas (pasajero, chófer) y **panel** (hosting).
+3. **Subir `minAppVersion` y `minDriverAppVersion`** a la versión de esas
+   apps, cuando estén publicadas en las tiendas.
+4. **Reglas** al final.
+5. **Política** (`config/ops.cancellationPolicy`) solo después del paso 3:
+   sin ella no hay recargo (`no_policy`) ni botón «no aparece». Es una
+   decisión del responsable (ver abajo); no se fija ningún valor aquí.
+
+### Qué ven las apps antiguas
+
+- Tras el paso 4, **cancelar desde una app del pasajero anterior falla**
+  con «Esta reserva ya no se puede cancelar: el viaje está en curso o
+  terminó» (el mensaje que esa app muestra ante un permiso denegado),
+  aunque la reserva aún se pueda cancelar. La app no comprueba su versión
+  al abrirse: `minAppVersion` solo la frena al cotizar o reservar
+  (`app_update_required`). Con el paso 3 las reservas nuevas ya salen de
+  apps actualizadas, pero quien reservó antes con una app vieja puede
+  toparse con este error: por eso el aviso del piloto (abajo) va antes
+  del paso 4, y central puede cancelar desde el panel.
+- Una reserva en `no_show` se ve en una app anterior como **«Pendiente»**
+  (esas apps leen como pendiente cualquier estado que no conocen). Por eso
+  la política, que es lo que habilita `no_show`, va después del paso 3.
+- Una app del chófer anterior no tiene «No puedo hacer este viaje» ni
+  «El pasajero no aparece»: sigue llamando a central como hasta ahora.
+- Un panel anterior no muestra el recargo, el motivo ni el estado
+  «No se presentó»: recargar la página.
+
+### Aviso a los usuarios del piloto
+
+Antes del paso 4, avisar por el canal habitual del piloto (mensaje
+directo o correo; texto a decidir por el responsable) de que:
+hay que actualizar la app para cancelar; al cancelar se verá si hay
+recargo antes de confirmar; si el chófer no puede hacer el viaje, la app
+busca otro y avisa. No mencionar importes ni plazos hasta que la política
+esté decidida.
+
+### Pasos manuales (decisiones del responsable)
+
+- `config/ops.cancellationPolicy`: `freeWithinMinutesOfBooking`,
+  `freeBeforePickupMinutes`, `chargeWhenNoDriver`, `feeType`
+  (`fixed`|`percent`), `feeValue`, `noShowWaitMinutes`. Sin ella: sin
+  recargo y sin «no aparece». Con un valor inválido: sin recargo
+  (`policy_invalid`) y el panel lo valida al guardarla.
+- Cobrar o no el recargo con el método retenido: **no implementado**. Hoy
+  se anota; el cobro sería un cambio aparte.
+- Qué hacer con `driverProfiles.releasedBookingsCount`: el servidor solo
+  cuenta; no hay sanción automática.
 
 ## Identidad (Parte B)
 

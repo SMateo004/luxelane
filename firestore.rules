@@ -23,20 +23,9 @@ service cloud.firestore {
       return request.auth != null && getUserRole() == 'admin' && isActiveUser();
     }
 
-    // Escrituras directas del admin: con config/security.mfaEnforced true
-    // exigen un token con segundo factor (decisión 3). Sin el documento o en
-    // false (fase 1), basta con ser admin. Las reglas leen config/security
-    // aunque ningún cliente pueda.
-    function adminMfaOk() {
-      let sec = /databases/$(database)/documents/config/security;
-      return !exists(sec) ||
-        get(sec).data.get('mfaEnforced', false) != true ||
-        request.auth.token.firebase.get('sign_in_second_factor', null) != null;
-    }
-
-    function isAdminWrite() {
-      return isAdmin() && adminMfaOk();
-    }
+    // El admin no escribe nada desde el cliente (Parte A): todo pasa por
+    // callables que exigen rol, segundo factor (con mfaEnforced) y motivo, y
+    // escriben su auditoría en la misma transacción. Aquí solo lee.
 
     function isDriver() {
       return request.auth != null && getUserRole() == 'driver';
@@ -87,11 +76,6 @@ service cloud.firestore {
         'phoneVerified', 'emailVerifiedAt', 'terms'];
     }
 
-    function serverOnlyUserFields() {
-      return ['role', 'isActive', 'roleUpdatedAt', 'blockedAt', 'emailVerifiedAt',
-        'terms'];
-    }
-
     // A self-created profile is always an active rider with no Stripe link,
     // sin correo ni teléfono verificados: eso lo escribe el servidor (H6).
     // La aceptación de los términos también (acceptTerms, decisión 7).
@@ -113,14 +97,10 @@ service cloud.firestore {
       // scripts usan el Admin SDK (A8.2).
       allow create: if isOwner(uid) && isValidSelfSignup(uid);
       // Rol, bloqueo y sus marcas los escribe solo el servidor (setUserRole,
-      // setUserBlocked), también para el admin: B3, parte de D10.
-      allow update: if (isAdminWrite() &&
-          !request.resource.data.diff(resource.data).affectedKeys()
-            .hasAny(serverOnlyUserFields())) || (
-        isOwner(uid) &&
+      // setUserBlocked). El admin solo lee (Parte A).
+      allow update: if isOwner(uid) &&
         !request.resource.data.diff(resource.data).affectedKeys()
-          .hasAny(privilegedUserFields())
-      );
+          .hasAny(privilegedUserFields());
       allow delete: if false;
     }
 
@@ -132,9 +112,8 @@ service cloud.firestore {
       // Los crea solo el servidor (Admin SDK): ni el dueño ni el admin
       // desde el cliente (H3, A8.2).
       allow create: if false;
-      allow update: if (isOwner(uid) &&
-        onlyUpdating(['isRead'])) || isAdminWrite();
-      allow delete: if isOwner(uid) || isAdminWrite();
+      allow update: if isOwner(uid) && onlyUpdating(['isRead']);
+      allow delete: if isOwner(uid);
     }
 
     // -------------------------------------------------------------------------
@@ -176,7 +155,9 @@ service cloud.firestore {
       allow create: if isOwner(uid) && isDriver() && isActiveUser() &&
         request.resource.data.keys().hasOnly(driverOwnerFields()) &&
         request.resource.data.get('userId', uid) == uid;
-      allow update: if isAdminWrite() || (isOwner(uid) && isDriver() && (
+      // Verificar y cambiar datos sensibles: adminVerifyDriver y
+      // adminUpdateDriverSensitive (Parte A).
+      allow update: if (isOwner(uid) && isDriver() && (
         onlyGoingOffline() || (
           isActiveUser() &&
           request.resource.data.diff(resource.data).affectedKeys()
@@ -200,12 +181,6 @@ service cloud.firestore {
       return ['driver_arriving', 'driver_arrived', 'verified', 'in_progress', 'completed'];
     }
 
-    // Campos del viaje que fija el servidor: nadie los toca desde la app.
-    function serverTripFields() {
-      return ['pickupLocked', 'arrivedAt', 'verifiedAt', 'verifiedBy',
-        'startedAt', 'completedAt', 'incidentOpen', 'activeIncidentId'];
-    }
-
     // updatedAt que manda la app (hora del dispositivo): una marca de tiempo
     // cercana a la del servidor, o ninguna.
     function validClientUpdatedAt() {
@@ -214,25 +189,6 @@ service cloud.firestore {
           request.resource.data.updatedAt is timestamp &&
           request.resource.data.updatedAt > request.time - duration.value(15, 'm') &&
           request.resource.data.updatedAt < request.time + duration.value(15, 'm'));
-    }
-
-    function statusChanges() {
-      return request.resource.data.status != resource.data.status;
-    }
-
-    // El panel mantiene sus transiciones por ahora (se migran en la
-    // auditoría), salvo verified e in_progress: verificar es del chófer con
-    // el código o de adminOverrideVerify, con motivo.
-    function isAdminBookingUpdate() {
-      return isAdminWrite() &&
-        !request.resource.data.diff(resource.data).affectedKeys()
-          .hasAny(serverTripFields()) &&
-        !(statusChanges() &&
-          request.resource.data.status in ['verified', 'in_progress']) &&
-        // Completar dispara el cobro: solo desde un viaje en curso, también
-        // para el admin.
-        !(statusChanges() && request.resource.data.status == 'completed' &&
-          resource.data.status != 'in_progress');
     }
 
     // La reserva completa (direcciones, notas, preferencias, datos del
@@ -252,7 +208,9 @@ service cloud.firestore {
       // escribe la reserva y su solicitud abierta en una transacción (D2).
       allow create: if false;
 
-      allow update: if isAdminBookingUpdate() ||
+      // El admin asigna, cancela, mueve el estado y ajusta el importe con
+      // adminUpdateBooking (Parte A): desde aquí no escribe.
+      allow update: if
         // Driver accepts a pending booking (self-assign)
         (isDriver() && isActiveUser() &&
           get(/databases/$(database)/documents/driverProfiles/$(request.auth.uid))
@@ -261,15 +219,8 @@ service cloud.firestore {
           request.resource.data.driverId == request.auth.uid &&
           request.resource.data.status == 'confirmed' &&
           onlyUpdating(['driverId', 'status', 'updatedAt'])) ||
-        // El pasajero cancela su reserva antes de que empiece el viaje:
-        // solo status (a cancelled) y updatedAt (A8.6).
-        (isAuthenticated() &&
-          resource.data.riderId == request.auth.uid &&
-          onlyUpdating(['status', 'updatedAt']) &&
-          validClientUpdatedAt() &&
-          resource.data.status in
-            ['pending', 'confirmed', 'driver_arriving', 'driver_arrived'] &&
-          request.resource.data.status == 'cancelled') ||
+        // Cancelar ya no se escribe desde la app: el pasajero usa
+        // cancelBooking, que deja motivo, recargo y evento (Parte B, B2/B7).
         // El pasajero valora un viaje terminado, una vez: nota entera de 1
         // a 5 y comentario de texto acotado (A8.6).
         (isAuthenticated() &&
@@ -469,9 +420,8 @@ service cloud.firestore {
       allow read: if isAuthenticated() && (
         resource.data.riderId == request.auth.uid || isAdmin()
       );
-      allow create: if isAdminWrite();
-      allow update: if isAdminWrite();
-      allow delete: if false;
+      // Cobros manuales: adminRecordPayment (Parte A); con tarjeta, Stripe.
+      allow create, update, delete: if false;
     }
 
     // -------------------------------------------------------------------------
@@ -492,37 +442,24 @@ service cloud.firestore {
       // Activar o desactivar un vehículo es decisión del admin. Placa,
       // clase, marca, modelo y año los cambia solo el admin (H4): el chófer,
       // color y foto (kEditableVehicleFields en driver_documents.dart).
-      allow update: if isAdminWrite() || (
-        isDriver() &&
+      // Activar y corregir datos del admin: adminSetVehicleActive y
+      // adminUpdateDriverSensitive (Parte A).
+      allow update: if isDriver() &&
         resource.data.driverId == request.auth.uid &&
-        onlyUpdating(['color', 'photoUrl'])
-      );
+        onlyUpdating(['color', 'photoUrl']);
       allow delete: if false;
     }
 
     // -------------------------------------------------------------------------
     // /pricingRules/{ruleId}
-    // Tarifas públicas (la web las muestra sin sesión); solo el admin las
-    // edita, con importes numéricos no negativos.
+    // Tarifas públicas (la web las muestra sin sesión). Las escribe solo
+    // adminUpdatePricingRule, con los campos públicos (A8.8, C3).
     // -------------------------------------------------------------------------
-
-    // Solo campos públicos: nada interno (margen, pago al chófer, comisión,
-    // que viven en config/finance y config/pricing, solo admin). A8.8.
-    function validFare(d) {
-      return d.keys().hasOnly(['id', 'vehicleClass', 'serviceType',
-          'basePriceUsd', 'pricePerKmUsd', 'pricePerHourUsd',
-          'minimumPriceUsd', 'isActive', 'updatedAt']) &&
-        d.basePriceUsd is number && d.basePriceUsd >= 0 &&
-        d.pricePerKmUsd is number && d.pricePerKmUsd >= 0 &&
-        d.pricePerHourUsd is number && d.pricePerHourUsd >= 0 &&
-        d.minimumPriceUsd is number && d.minimumPriceUsd >= 0 &&
-        d.isActive is bool;
-    }
 
     match /pricingRules/{ruleId} {
       allow read:   if true;
-      allow create, update: if isAdminWrite() && validFare(request.resource.data);
-      allow delete: if isAdminWrite();
+      // Crear, cambiar y desactivar: adminUpdatePricingRule (Parte A).
+      allow create, update, delete: if false;
     }
 
     // -------------------------------------------------------------------------
@@ -538,14 +475,9 @@ service cloud.firestore {
     match /config/{docId} {
       allow read:  if docId == 'global' ||
         (isAdmin() && docId != 'security');
-      allow create, update: if isAdminWrite() && !(docId in ['ops', 'security']) && (
-        docId != 'finance' ||
-        !('platformCommissionPct' in request.resource.data) || (
-          request.resource.data.platformCommissionPct is number &&
-          request.resource.data.platformCommissionPct >= 0 &&
-          request.resource.data.platformCommissionPct <= 100
-        )
-      );
+      // global (lista blanca), finance y ops: adminUpdateConfig (Parte A);
+      // security, solo la consola.
+      allow create, update: if false;
       // La configuración se actualiza, no se borra: sin config/global las
       // funciones y las apps caen a sus valores por defecto (matriz, H9).
       allow delete: if false;
@@ -561,7 +493,8 @@ service cloud.firestore {
     match /businessLeads/{id} {
       allow create: if false;
       allow read: if isAdmin();
-      allow update: if isAdminWrite() && onlyUpdating(['handled']);
+      // Marcar atendida: adminSetLeadHandled (Parte A).
+      allow update: if false;
       allow delete: if false;
     }
 
@@ -592,8 +525,9 @@ service cloud.firestore {
 
     match /admin_logs/{logId} {
       allow read:   if isAdmin();
-      allow create: if isAdminWrite() &&
-        request.resource.data.adminId == request.auth.uid;
+      // Solo el servidor la escribe, en la transacción de cada cambio
+      // (Parte A): ningún cliente, tampoco el admin.
+      allow create: if false;
       allow update, delete: if false;
     }
   }

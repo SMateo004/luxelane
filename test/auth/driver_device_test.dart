@@ -76,6 +76,10 @@ void main() {
 
   test('la alerta de dispositivo nuevo tiene su etiqueta y el chófer', () {
     expect(alertLabel('new_driver_device'), 'Chófer en un dispositivo nuevo');
+    expect(
+      alertLabel('ops_config_in_global'),
+      'Configuración por mover a config/ops',
+    );
     final a = AdminAlert.fromJson({
       'id': 'al-1',
       'type': 'new_driver_device',

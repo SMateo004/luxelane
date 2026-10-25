@@ -3,10 +3,10 @@
  * sesión, campo trampa, límites por IP y por correo, la IP nunca se guarda
  * en claro y el contador caído rechaza (falla cerrado).
  */
-import { describe, it, expect, beforeEach, afterEach, afterAll } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, afterAll, jest } from '@jest/globals';
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
-import { clientIp, LEAD_LIMITS, LeadRequest, pseudonym, submitBusinessLead } from '../business_leads';
+import { clientIp, LEAD_LIMITS, LeadRequest, pseudonym, submitBusinessLead, xffDiagnostic } from '../business_leads';
 import { rateLimiter } from '../rate_limit';
 import { submitBusinessLead as submitBusinessLeadFn } from '../index';
 
@@ -131,6 +131,39 @@ describe('submitBusinessLead', () => {
       data: lead({ email: 'otra@example.com' }),
       rawRequest: { headers: { 'x-forwarded-for': `10.9.9.99, ${IP}` } },
     }))).reason).toBe('rate_limited');
+  });
+
+  describe('diagnóstico de x-forwarded-for (0.4)', () => {
+    const logged = (spy: { mock: { calls: unknown[][] } }) => spy.mock.calls.map((c) => String(c[0])).join('\n');
+
+    it('apagado (por defecto): no registra nada del encabezado', async () => {
+      const info = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+      await send(lead());
+      expect(logged(info)).not.toContain('xff_diagnostic');
+      info.mockRestore();
+    });
+
+    it('encendido: solo el hash del elegido y el número de elementos, nunca la IP', async () => {
+      const info = jest.spyOn(console, 'log').mockImplementation(() => undefined);
+      await submitBusinessLead({ db, salt: SALT, xffDiagnostic: true }, req(lead()));
+      const out = logged(info);
+      info.mockRestore();
+      expect(out).toContain('xff_diagnostic');
+      expect(out).toContain(pseudonym(SALT, 'xff-diagnostic', IP).slice(0, 16));
+      expect(out).toContain('"headerElements":2');
+      expect(out).not.toContain(IP);
+      expect(out).not.toContain('1.2.3.4');
+      // Distinto del hash del contador por IP: no se cruzan.
+      expect(out).not.toContain(pseudonym(SALT, 'ip', IP));
+    });
+
+    it('dos redes distintas dan hashes distintos; sin encabezado lo dice', () => {
+      const a = xffDiagnostic(SALT, req({}, '198.51.100.1'));
+      const b = xffDiagnostic(SALT, req({}, '198.51.100.2'));
+      expect(a.chosenHash).not.toBe(b.chosenHash);
+      expect(xffDiagnostic(SALT, { data: {}, rawRequest: { ip: '192.0.2.1', headers: {} } }))
+        .toMatchObject({ headerElements: 0, usedFallback: true });
+    });
   });
 
   it('tope global: rechaza aunque cambien IP y correo', async () => {

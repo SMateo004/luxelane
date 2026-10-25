@@ -1,6 +1,7 @@
-// A8.6: al cancelar y al valorar, el pasajero dueño solo cambia status
-// (a cancelled) o la valoración (riderRating, riderComment), más updatedAt.
-// Campo por campo: cualquier otro, junto a un cambio válido, se rechaza.
+// A8.6: al valorar, el pasajero dueño solo cambia la valoración
+// (riderRating, riderComment) y updatedAt. Campo por campo: cualquier otro,
+// junto a un cambio válido, se rechaza. Cancelar ya no se escribe desde la
+// app (Parte B, B7): solo con la callable cancelBooking.
 import { assertFails, assertSucceeds, RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { doc, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { bookingDoc, seed, startEnv } from './setup';
@@ -30,9 +31,15 @@ const OTHER: [string, unknown][] = [
   ['cancelReason', 'x'], ['cancelledBy', 'admin'], ['campoNuevo', 1],
 ];
 
-describe('cancelar (pasajero dueño)', () => {
-  test('control: status a cancelled con updatedAt', async () => {
-    await assertSucceeds(updateDoc(ref('pend'), { status: 'cancelled', updatedAt: now() }));
+describe('cancelar (pasajero dueño): solo por cancelBooking', () => {
+  // B7: antes se permitía; ahora la reserva cancelada sin motivo, recargo
+  // ni evento ya no puede escribirse desde la app.
+  test.each([['pend'], ['activa']])('no pasa %s a cancelled escribiendo la reserva', async (id) => {
+    await assertFails(updateDoc(ref(id), { status: 'cancelled', updatedAt: now() }));
+  });
+
+  test('tampoco puede anotarse un recargo o motivo', async () => {
+    await assertFails(updateDoc(ref('pend'), { cancellationFee: 0, cancellationReason: 'other', updatedAt: now() }));
   });
 
   test.each(OTHER)('no cambia %s al cancelar', async (field, value) => {

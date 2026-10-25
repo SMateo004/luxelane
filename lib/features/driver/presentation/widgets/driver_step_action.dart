@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -18,6 +20,7 @@ class DriverStepAction extends StatelessWidget {
     required this.booking,
     this.onCompleted,
     this.openCodeEntry = showPickupCodeEntry,
+    this.clock = DateTime.now,
   });
 
   final Booking booking;
@@ -25,6 +28,9 @@ class DriverStepAction extends StatelessWidget {
   /// Tras deslizar «Completar viaje» (p. ej. volver al inicio).
   final VoidCallback? onCompleted;
   final Future<void> Function(BuildContext, Booking) openCodeEntry;
+
+  /// Hora actual (inyectable en los tests del «no aparece»).
+  final DateTime Function() clock;
 
   static String? slideLabel(BookingStatus s) => switch (s) {
         BookingStatus.confirmed => 'Salir hacia la recogida',
@@ -43,6 +49,8 @@ class DriverStepAction extends StatelessWidget {
             : 'Pide al pasajero su código de recogida.',
         BookingStatus.verified => 'Pasajero verificado. Desliza para iniciar.',
         BookingStatus.inProgress => 'Viaje en curso · rumbo al destino.',
+        BookingStatus.noShow =>
+          'Avisaste que el pasajero no apareció. Central lo revisa.',
         _ => 'Viaje activo.',
       };
 
@@ -83,19 +91,215 @@ class DriverStepAction extends StatelessWidget {
           ),
         );
       }
-      return LuxButton(
+      final codeButton = LuxButton(
         label: 'Ingresar código del pasajero',
         icon: Icons.pin_outlined,
         onPressed: () => openCodeEntry(context, booking),
+      );
+      // Sin política de cancelación no hay «no aparece» (B4).
+      final availableAt = booking.noShowAvailableAt;
+      if (availableAt == null) return codeButton;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          codeButton,
+          const SizedBox(height: LuxSpacing.sm),
+          NoShowAction(
+              booking: booking, availableAt: availableAt, clock: clock),
+        ],
       );
     }
     final label = slideLabel(booking.status);
     if (label == null) return const SizedBox.shrink();
     // Deslizar evita completar un paso con un toque accidental.
-    return LuxSlideToConfirm(
+    final slide = LuxSlideToConfirm(
       key: ValueKey('slide-${booking.status.label}'),
       label: label,
       onConfirmed: () => _advance(context),
+    );
+    if (booking.status != BookingStatus.confirmed &&
+        booking.status != BookingStatus.driverArriving) {
+      return slide;
+    }
+    // Antes de llegar, el chófer puede devolver el viaje (B5).
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        slide,
+        const SizedBox(height: LuxSpacing.xs),
+        TextButton.icon(
+          key: const Key('release-booking'),
+          onPressed: () => _release(context),
+          icon: const Icon(Icons.undo_outlined, size: 18),
+          label: const Text('No puedo hacer este viaje'),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _release(BuildContext context) async {
+    final bloc = context.read<DriverBloc>();
+    final reason = await showReleaseBookingDialog(context);
+    if (reason == null) return;
+    bloc.add(DriverBookingReleased(bookingId: booking.id, reason: reason));
+  }
+}
+
+/// Motivo para liberar el viaje (lista cerrada). null si se arrepiente.
+Future<String?> showReleaseBookingDialog(BuildContext context) =>
+    showDialog<String>(
+      context: context,
+      builder: (_) => const _ReleaseDialog(),
+    );
+
+class _ReleaseDialog extends StatefulWidget {
+  const _ReleaseDialog();
+
+  @override
+  State<_ReleaseDialog> createState() => _ReleaseDialogState();
+}
+
+class _ReleaseDialogState extends State<_ReleaseDialog> {
+  String? _reason;
+
+  @override
+  Widget build(BuildContext context) => AlertDialog(
+        title: const Text('Liberar este viaje'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'El viaje vuelve a buscar chófer y central recibe un aviso. '
+                'Queda registrado en tu historial.',
+              ),
+              const SizedBox(height: LuxSpacing.sm),
+              for (final e in kDriverReleaseReasons.entries)
+                RadioListTile<String>(
+                  value: e.key,
+                  groupValue: _reason,
+                  onChanged: (v) => setState(() => _reason = v),
+                  title: Text(e.value),
+                  contentPadding: EdgeInsets.zero,
+                ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Volver'),
+          ),
+          FilledButton(
+            onPressed: _reason == null
+                ? null
+                : () => Navigator.of(context).pop(_reason),
+            child: const Text('Liberar viaje'),
+          ),
+        ],
+      );
+}
+
+/// «El pasajero no aparece»: visible solo con política (noShowAvailableAt)
+/// y activo pasado el tiempo de espera. Antes dice desde qué hora.
+class NoShowAction extends StatefulWidget {
+  const NoShowAction({
+    super.key,
+    required this.booking,
+    required this.availableAt,
+    this.clock = DateTime.now,
+  });
+
+  final Booking booking;
+  final DateTime availableAt;
+  final DateTime Function() clock;
+
+  @override
+  State<NoShowAction> createState() => _NoShowActionState();
+}
+
+class _NoShowActionState extends State<NoShowAction> {
+  Timer? _timer;
+
+  bool get _ready => !widget.clock().isBefore(widget.availableAt);
+
+  @override
+  void initState() {
+    super.initState();
+    // Sin animación: solo se vuelve a pintar cuando llega la hora.
+    if (!_ready) {
+      _timer = Timer.periodic(const Duration(seconds: 15), (t) {
+        if (_ready) t.cancel();
+        if (mounted) setState(() {});
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  String get _time {
+    final t = widget.availableAt.toLocal();
+    return '${t.hour.toString().padLeft(2, '0')}:'
+        '${t.minute.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _confirm() async {
+    final bloc = context.read<DriverBloc>();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('¿El pasajero no aparece?'),
+        content: const Text(
+          'Central recibirá un aviso con tu ubicación y revisará la reserva. '
+          'Quedarás libre para otros viajes.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Seguir esperando'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Avisar a central'),
+          ),
+        ],
+      ),
+    );
+    if (ok == true) bloc.add(DriverRiderNoShow(bookingId: widget.booking.id));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ready = _ready;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        OutlinedButton.icon(
+          key: const Key('no-show'),
+          onPressed: ready ? _confirm : null,
+          icon: const Icon(Icons.person_off_outlined),
+          label: const Text('El pasajero no aparece'),
+        ),
+        if (!ready)
+          Padding(
+            padding: const EdgeInsets.only(top: LuxSpacing.xs),
+            child: Semantics(
+              liveRegion: true,
+              child: Text(
+                'Disponible a partir de las $_time.',
+                textAlign: TextAlign.center,
+                style: LuxTypography.caption.copyWith(
+                  color: LuxColors.inkSecondary,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

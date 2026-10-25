@@ -7,7 +7,6 @@ import { OPS, Op, Role, ROLE_LABELS, ROLES, SPECS, allowed } from './matrix';
 export interface Why { why: string; warn?: string }
 type Cells = Partial<Record<Role, Partial<Record<Op, Why>>>>;
 
-const D10 = 'el panel aún escribe esto directo desde el cliente (D10); pasa a callables con auditoría en el servidor en la Parte B o después.';
 
 export const ALLOWED: Record<string, Cells> = {
   'users/{uid}': {
@@ -25,7 +24,6 @@ export const ALLOWED: Record<string, Cells> = {
     admin: {
       leer: { why: 'el panel muestra los usuarios' },
       listar: { why: 'el panel lista los usuarios' },
-      actualizar: { why: 'el admin cambia rol e isActive desde el panel', warn: D10 },
     },
   },
   'users/{uid}/notifications': {
@@ -44,8 +42,6 @@ export const ALLOWED: Record<string, Cells> = {
     admin: {
       leer: { why: 'soporte' },
       listar: { why: 'soporte' },
-      actualizar: { why: 'soporte' },
-      borrar: { why: 'soporte' },
     },
   },
   'driverProfiles/{uid}': {
@@ -63,20 +59,17 @@ export const ALLOWED: Record<string, Cells> = {
     admin: {
       leer: { why: 'el panel muestra los chóferes' },
       listar: { why: 'el panel lista los chóferes' },
-      actualizar: { why: 'verificar documentos y cambiar licencia a petición del chófer (con registro en admin_logs)', warn: D10 },
     },
   },
   'bookings/{id}': {
     ana: {
       leer: { why: 'el pasajero dueño lee su reserva' },
       listar: { why: 'el pasajero lista sus reservas' },
-      actualizar: { why: 'cancela su reserva antes de que empiece el viaje (o la valora al terminar)' },
     },
     asig: { leer: { why: 'el chófer asignado y activo lee la reserva que atiende' } },
     admin: {
       leer: { why: 'operación' },
       listar: { why: 'operación' },
-      actualizar: { why: 'cancelar, asignar, ajustar precio desde el panel (no verificar ni completar fuera de in_progress)', warn: D10 },
     },
   },
   'bookings/{id}/tracking': {
@@ -148,8 +141,6 @@ export const ALLOWED: Record<string, Cells> = {
     admin: {
       leer: { why: 'finanzas' },
       listar: { why: 'finanzas' },
-      crear: { why: 'registrar un cobro manual (efectivo, QR)', warn: D10 },
-      actualizar: { why: 'corregir un cobro manual', warn: D10 },
     },
   },
   'vehicles/{id}': {
@@ -172,7 +163,6 @@ export const ALLOWED: Record<string, Cells> = {
     admin: {
       leer: { why: 'flota' },
       listar: { why: 'flota' },
-      actualizar: { why: 'activar, desactivar y corregir datos a petición del chófer', warn: D10 },
     },
   },
   'pricingRules/{id}': {
@@ -183,9 +173,6 @@ export const ALLOWED: Record<string, Cells> = {
     admin: {
       leer: { why: 'editar tarifas' },
       listar: { why: 'editar tarifas' },
-      crear: { why: 'nueva tarifa con importes válidos' },
-      actualizar: { why: 'cambiar una tarifa con importes válidos' },
-      borrar: { why: 'quitar una tarifa (la clase deja de reservarse)' },
     },
   },
   'config/global': {
@@ -197,25 +184,20 @@ export const ALLOWED: Record<string, Cells> = {
     }])),
     admin: {
       leer: { why: 'ajustes del panel' },
-      crear: { why: 'crear un documento de configuración' },
-      actualizar: { why: 'cambiar ajustes', warn: D10 },
     },
   },
   'config/finance': {
     admin: {
       leer: { why: 'comisión de la plataforma' },
-      crear: { why: 'crear un documento de configuración (comisión entre 0 y 100)' },
-      actualizar: { why: 'cambiar la comisión (entre 0 y 100)', warn: D10 },
     },
   },
   'config/ops': {
-    admin: { leer: { why: 'ver los tiempos del SOS, la retención y el radio de llegada (se editan en la consola)' } },
+    admin: { leer: { why: 'ver los tiempos del SOS, la retención, el radio de llegada y el límite de ajuste (se editan con adminUpdateConfig o en la consola)' } },
   },
   'businessLeads/{id}': {
     admin: {
       leer: { why: 'atender solicitudes de empresas' },
       listar: { why: 'bandeja de empresas' },
-      actualizar: { why: 'marcar como atendida (solo handled)' },
     },
   },
   'adminAlerts/{id}': {
@@ -228,10 +210,6 @@ export const ALLOWED: Record<string, Cells> = {
     admin: {
       leer: { why: 'auditoría' },
       listar: { why: 'auditoría' },
-      crear: {
-        why: 'el panel anexa su propia auditoría (adminId = quien escribe)',
-        warn: 'una auditoría escrita por el cliente se puede omitir o falsear en el detalle; la definitiva debe escribirla el servidor (D10).',
-      },
     },
   },
 };

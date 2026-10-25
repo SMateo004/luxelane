@@ -11,6 +11,12 @@ import { raiseSchema, incidentIdSchema, closeSchema } from './incidents';
 import { resolveSchema } from './alerts';
 import { leadSchema } from './business_leads';
 import { deviceSchema } from './driver_devices';
+import { cancelSchema, releaseSchema } from './cancellation';
+import {
+  bookingSchema as adminBookingSchema, configSchema as adminConfigSchema, paymentSchema as adminPaymentSchema,
+  pricingSchema as adminPricingSchema, verifyDriverSchema, driverSensitiveSchema, vehicleActiveSchema,
+  leadHandledSchema,
+} from './admin_ops';
 import { callableSchemas as c } from './schemas';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -99,6 +105,72 @@ const CASES: Record<string, Case> = {
     schema: closeSchema, valid: { incidentId: ID, note: 'Llamada hecha, todo bien' },
     wrongType: { incidentId: ID, note: 10 },
     extreme: [{ incidentId: ID, note: 'x'.repeat(1001) }, { incidentId: ID, note: 'corta' }],
+  },
+  adminUpdateBooking: {
+    schema: adminBookingSchema, valid: { action: 'cancel', bookingId: ID, reason: 'Pedido por el pasajero' },
+    wrongType: { action: 'adjust_price', bookingId: ID, finalPrice: '100', reason: 'Pedido por el pasajero' },
+    extreme: [{ action: 'cancel', bookingId: ID, reason: 'corto' },
+      { action: 'status', bookingId: ID, to: 'verified', reason: 'Pedido por el pasajero' },
+      { action: 'adjust_price', bookingId: ID, finalPrice: -1, reason: 'Pedido por el pasajero' },
+      { action: 'borrar', bookingId: ID, reason: 'Pedido por el pasajero' }],
+  },
+  adminRecordPayment: {
+    schema: adminPaymentSchema, valid: { action: 'record', bookingId: ID, method: 'cash', reason: 'Cobrado en efectivo al llegar' },
+    wrongType: { action: 'correct', paymentId: ID, amountBs: '10', reason: 'Importe mal anotado' },
+    extreme: [{ action: 'record', bookingId: ID, method: 'card', reason: 'Cobrado en efectivo al llegar' },
+      { action: 'correct', paymentId: ID, amountBs: -5, reason: 'Importe mal anotado' },
+      { action: 'record', bookingId: ID, method: 'cash', reason: 'x' }],
+  },
+  adminUpdateConfig: {
+    schema: adminConfigSchema, valid: { doc: 'finance', changes: { platformCommissionPct: 15 }, reason: 'Acuerdo nuevo con los chóferes' },
+    wrongType: { doc: 'global', changes: { isMaintenanceMode: 'sí' }, reason: 'Mantenimiento programado' },
+    extreme: [{ doc: 'security', changes: { mfaEnforced: false }, reason: 'Quitar el segundo factor' },
+      { doc: 'global', changes: { minAppVersion: '9.9.9' }, reason: 'Subir la versión mínima' },
+      { doc: 'finance', changes: { platformCommissionPct: 101 }, reason: 'Acuerdo nuevo con los chóferes' },
+      { doc: 'ops', changes: {}, reason: 'Ajuste de operación del SOS' }],
+  },
+  adminUpdatePricingRule: {
+    schema: adminPricingSchema,
+    valid: { action: 'upsert', vehicleClass: 'business', serviceType: 'oneWay', basePriceUsd: 1, pricePerKmUsd: 1,
+      pricePerHourUsd: 0, minimumPriceUsd: 1, isActive: true, reason: 'Tarifa nueva del piloto' },
+    wrongType: { action: 'deactivate', vehicleClass: 'business', serviceType: 1, reason: 'Fuera de servicio' },
+    extreme: [{ action: 'deactivate', vehicleClass: 'limo', serviceType: 'oneWay', reason: 'Fuera de servicio' },
+      { action: 'upsert', vehicleClass: 'business', serviceType: 'oneWay', basePriceUsd: -1, pricePerKmUsd: 1,
+        pricePerHourUsd: 0, minimumPriceUsd: 1, isActive: true, reason: 'Tarifa nueva del piloto' },
+      { action: 'delete', vehicleClass: 'business', serviceType: 'oneWay', reason: 'Fuera de servicio' }],
+  },
+  adminVerifyDriver: {
+    schema: verifyDriverSchema, valid: { driverId: ID, vehicleReviewed: true, reason: 'Documentos revisados en persona' },
+    wrongType: { driverId: ID, vehicleReviewed: 'sí', reason: 'Documentos revisados en persona' },
+    extreme: [{ driverId: ID, vehicleReviewed: true, vehicleNote: 'x'.repeat(501), reason: 'Documentos revisados en persona' },
+      { driverId: LONG_ID, vehicleReviewed: false, reason: 'Documentos revisados en persona' }],
+  },
+  adminUpdateDriverSensitive: {
+    schema: driverSensitiveSchema, valid: { driverId: ID, profile: { licenseNumber: 'A-1' }, reason: 'Renovó la licencia' },
+    wrongType: { driverId: ID, profile: { licenseExpiry: '2030' }, reason: 'Renovó la licencia' },
+    extreme: [{ driverId: ID, vehicle: { vehicleId: ID, year: 1800 }, reason: 'Cambio de vehículo' },
+      { driverId: ID, vehicle: { vehicleId: ID, vehicleClass: 'limo' }, reason: 'Cambio de vehículo' },
+      { driverId: ID, profile: { rating: 5 }, reason: 'Renovó la licencia' }],
+  },
+  adminSetVehicleActive: {
+    schema: vehicleActiveSchema, valid: { vehicleId: ID, active: false, reason: 'Vehículo en el taller' },
+    wrongType: { vehicleId: ID, active: 'no', reason: 'Vehículo en el taller' },
+    extreme: [{ vehicleId: ID, active: true, reason: 'ok' }],
+  },
+  adminSetLeadHandled: {
+    schema: leadHandledSchema, valid: { leadId: ID, handled: true },
+    wrongType: { leadId: ID, handled: 'sí' }, extreme: [{ leadId: ID, handled: true, reason: 'x'.repeat(501) }],
+  },
+  cancelBooking: {
+    schema: cancelSchema, valid: { bookingId: ID, reason: 'changed_plans' },
+    wrongType: { bookingId: ID, dryRun: 'sí' },
+    extreme: [{ bookingId: ID, reason: 'me_aburri' }, { bookingId: ID, acceptedFee: -1 }, { bookingId: ID, status: 'cancelled' }],
+  },
+  releaseBooking: {
+    schema: releaseSchema, valid: { bookingId: ID, reason: 'vehicle_issue', location: { lat: -17.6, lng: -63.1 } },
+    wrongType: { bookingId: ID, reason: 1 },
+    extreme: [{ bookingId: ID }, { bookingId: ID, reason: 'me_aburri' }, { bookingId: ID, reason: 'other', status: 'pending' },
+      { bookingId: ID, reason: 'other', location: { lat: 91, lng: 0 } }],
   },
   registerDriverDevice: {
     schema: deviceSchema, valid: { installationId: 'a'.repeat(8) + '-' + 'b'.repeat(27), platform: 'android', appVersion: '1.0.0' },

@@ -400,11 +400,16 @@ describe('adminOverrideVerify', () => {
     const [e] = await events('b1');
     expect(e).toMatchObject({
       from: 'driver_arrived', to: 'verified', source: 'admin', method: 'admin_override',
-      actor: { uid: 'jefa', role: 'admin' },
+      actor: { role: 'admin' },
     });
-    // El motivo solo lo ve central: no está en el evento que leen pasajero y chófer.
+    // El motivo y qué admin actuó solo los ve central (0.2): no están en el
+    // evento que leen pasajero y chófer.
     expect(e).not.toHaveProperty('reason');
-    expect(await detail('b1', e.id)).toMatchObject({ reason: 'Pasajero sin batería, confirmado por teléfono' });
+    expect(e.actor).not.toHaveProperty('uid');
+    expect(JSON.stringify(e)).not.toContain('jefa');
+    expect(await detail('b1', e.id)).toMatchObject({
+      reason: 'Pasajero sin batería, confirmado por teléfono', actorUid: 'jefa',
+    });
     expect(await alerts()).toEqual([expect.objectContaining({ type: 'pickup_override', bookingId: 'b1' })]);
     const logs = (await db.collection('admin_logs').get()).docs.map((d) => d.data());
     expect(logs).toEqual([expect.objectContaining({ adminId: 'jefa', action: 'override_verify', targetId: 'b1' })]);

@@ -1,6 +1,6 @@
 // B3 (parte de D10): rol, bloqueo y sus marcas los escribe solo el servidor;
 // el admin ya no los cambia desde el cliente. El resto, sí.
-import { assertFails, assertSucceeds, RulesTestEnvironment } from '@firebase/rules-unit-testing';
+import { assertFails, RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import { doc, updateDoc } from 'firebase/firestore';
 import { seed, startEnv } from './setup';
 
@@ -22,7 +22,8 @@ describe('escrituras directas del admin en users (B3)', () => {
     await assertFails(updateDoc(asAdmin('ana'), change));
   });
 
-  test('el admin sí corrige otros datos', async () => {
-    await assertSucceeds(updateDoc(asAdmin('ana'), { displayName: 'Ana P.' }));
+  // Parte A: el admin solo lee users; no corrige datos desde el cliente.
+  test('el admin tampoco corrige otros datos desde el cliente', async () => {
+    await assertFails(updateDoc(asAdmin('ana'), { displayName: 'Ana P.' }));
   });
 });

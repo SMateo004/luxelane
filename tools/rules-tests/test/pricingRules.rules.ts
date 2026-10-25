@@ -1,7 +1,7 @@
 // A8.8: pricingRules es público (la web lo lee sin sesión): solo admite los
 // campos de la tarifa; nada interno como margen, pago al chófer o comisión.
-import { assertFails, assertSucceeds, RulesTestEnvironment } from '@firebase/rules-unit-testing';
-import { doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
+import { assertFails, RulesTestEnvironment } from '@firebase/rules-unit-testing';
+import { deleteDoc, doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { seed, startEnv } from './setup';
 
 let env: RulesTestEnvironment;
@@ -21,8 +21,11 @@ function rule(extra: Record<string, unknown> = {}) {
 const ref = () => doc(env.authenticatedContext('admin').firestore(), 'pricingRules', 'business_oneWay');
 
 describe('campos de pricingRules (A8.8)', () => {
-  test('el admin guarda la tarifa como el panel (con updatedAt)', async () => {
-    await assertSucceeds(setDoc(ref(), rule({ updatedAt: serverTimestamp() })));
+  // Parte A: el panel guarda con adminUpdatePricingRule; desde el cliente,
+  // ni siquiera una tarifa válida.
+  test('el admin no guarda tarifas desde el cliente', async () => {
+    await assertFails(setDoc(ref(), rule({ updatedAt: serverTimestamp() })));
+    await assertFails(deleteDoc(ref()));
   });
 
   // C3: el documento es público; quién la cambió va solo en admin_logs.

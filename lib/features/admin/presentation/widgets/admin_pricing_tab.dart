@@ -187,7 +187,7 @@ class _PricingCardState extends State<_PricingCard> {
       return;
     }
     final old = widget.rule;
-    final ok = await confirmAdminAction(
+    final reason = await askAdminReason(
       context,
       title: 'Guardar tarifa',
       message: '${old.vehicleClass.label} · ${old.serviceType.label}\n\n'
@@ -196,22 +196,23 @@ class _PricingCardState extends State<_PricingCard> {
           'Se aplica de inmediato a las nuevas reservas.',
       confirmLabel: 'Guardar',
     );
-    if (ok == null || !mounted) return;
-    context.read<AdminBloc>().add(AdminUpdatePricingRequested(draft));
+    if (reason == null || !mounted) return;
+    context.read<AdminBloc>().add(AdminUpdatePricingRequested(draft, reason));
   }
 
   Future<void> _reset() async {
-    final ok = await confirmAdminAction(
+    final reason = await askAdminReason(
       context,
-      title: 'Quitar tarifa',
-      message: 'Se eliminará esta tarifa y la combinación quedará sin '
-          'configurar: la web y la app no mostrarán precio y no se podrá '
-          'reservar hasta volver a configurarla.',
-      confirmLabel: 'Quitar',
+      title: 'Desactivar tarifa',
+      message: 'La tarifa queda guardada pero desactivada: la web y la app '
+          'no ofrecerán esta combinación hasta volver a activarla.',
+      confirmLabel: 'Desactivar',
       destructive: true,
     );
-    if (ok == null || !mounted) return;
-    context.read<AdminBloc>().add(AdminResetPricingRequested(widget.rule));
+    if (reason == null || !mounted) return;
+    context
+        .read<AdminBloc>()
+        .add(AdminDeactivatePricingRequested(widget.rule, reason));
   }
 
   @override
@@ -419,7 +420,7 @@ class _PricingCardState extends State<_PricingCard> {
               children: [
                 if (widget.isCustom)
                   AdminActionButton(
-                    label: 'Quitar tarifa',
+                    label: 'Desactivar tarifa',
                     icon: Icons.restart_alt_rounded,
                     color: LuxColors.warning,
                     onTap: _reset,
