@@ -898,6 +898,10 @@ export const adminRecordPayment = secureCallable('adminRecordPayment', {}, async
 export const adminUpdateConfig = secureCallable('adminUpdateConfig', {}, async (req) =>
   adminOps.adminUpdateConfig({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
 
+/** Crear, cambiar o desactivar una tarifa (borrar = desactivar). */
+export const adminUpdatePricingRule = secureCallable('adminUpdatePricingRule', {}, async (req) =>
+  adminOps.adminUpdatePricingRule({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
 /** El admin marca una alerta como revisada (auditado en el servidor). */
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
   const adminId = await requireAdmin(req);

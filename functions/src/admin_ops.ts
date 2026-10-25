@@ -11,6 +11,7 @@ import { AdminActor, changedFields, reasonSchema, writeAudit } from './admin_aud
 import { opsConfig } from './ops_config';
 import { docId, parseInput } from './schemas';
 import { appendEvent, Status } from './trip_flow';
+import { SERVICE_TYPES, VEHICLE_CLASSES } from './fare';
 
 export interface AdminDeps { db: admin.firestore.Firestore; now?: () => number }
 
@@ -307,5 +308,73 @@ export async function adminUpdateConfig(deps: AdminDeps, actor: AdminActor, data
       details: Object.entries(changes).map(([k, c]) => `${k}: ${String(c.before)} → ${String(c.after)}`).join(', '),
     });
     return { doc: input.doc, changed: Object.keys(changes) };
+  });
+}
+
+// ---------------------------------------------------------------------------
+// A4. adminUpdatePricingRule: crear, cambiar y desactivar tarifas. Los
+// importes los pone el responsable; aquí solo se comprueba que sean
+// válidos. Borrar una tarifa pasa a desactivarla.
+// ---------------------------------------------------------------------------
+
+const amount = z.number().finite().min(0).max(1_000_000);
+const fareKey = { vehicleClass: z.enum(VEHICLE_CLASSES), serviceType: z.enum(SERVICE_TYPES) };
+
+export const pricingSchema = z.discriminatedUnion('action', [
+  z.strictObject({
+    action: z.literal('upsert'), ...fareKey,
+    basePriceUsd: amount, pricePerKmUsd: amount, pricePerHourUsd: amount, minimumPriceUsd: amount,
+    isActive: z.boolean(), reason: reasonSchema,
+  }),
+  z.strictObject({ action: z.literal('deactivate'), ...fareKey, reason: reasonSchema }),
+]);
+
+/** Igual que PricingRule.validate() en el panel. */
+export function fareProblems(f: { serviceType: string; basePriceUsd: number; pricePerKmUsd: number;
+  pricePerHourUsd: number; minimumPriceUsd: number }): string[] {
+  const out: string[] = [];
+  if (f.serviceType === 'oneWay' && f.basePriceUsd === 0 && f.pricePerKmUsd === 0 && f.minimumPriceUsd === 0) {
+    out.push('zero_one_way');
+  }
+  if (f.serviceType === 'byTheHour' && f.pricePerHourUsd <= 0) out.push('hourly_without_rate');
+  return out;
+}
+
+export async function adminUpdatePricingRule(deps: AdminDeps, actor: AdminActor, data: unknown) {
+  const input = parseInput(pricingSchema, data);
+  const db = deps.db;
+  const id = `${input.vehicleClass}_${input.serviceType}`;
+  const ref = db.collection('pricingRules').doc(id);
+  return db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    const now = admin.firestore.Timestamp.fromMillis(nowMs(deps));
+    if (input.action === 'deactivate') {
+      if (!snap.exists) throw opError('not-found', 'fare_not_found');
+      if (snap.data()?.isActive === false) throw opError('failed-precondition', 'no_change');
+      tx.update(ref, { isActive: false, updatedAt: now });
+      writeAudit(tx, db, {
+        actor, operation: 'deactivate_pricing', collection: 'pricingRules', docId: id, targetType: 'pricing',
+        changes: changedFields(snap.data(), { isActive: false }), reason: input.reason, details: `${id} desactivada`,
+      });
+      return { id, isActive: false };
+    }
+    const problems = fareProblems(input);
+    if (problems.length) throw opError('invalid-argument', 'invalid_fare', { problems });
+    // Los mismos campos que admite validFare en firestore.rules; sin updatedBy (C3).
+    const fare = {
+      id, vehicleClass: input.vehicleClass, serviceType: input.serviceType,
+      basePriceUsd: input.basePriceUsd, pricePerKmUsd: input.pricePerKmUsd,
+      pricePerHourUsd: input.pricePerHourUsd, minimumPriceUsd: input.minimumPriceUsd, isActive: input.isActive,
+    };
+    const changes = changedFields(snap.data(), fare);
+    if (Object.keys(changes).length === 0) throw opError('failed-precondition', 'no_change');
+    tx.set(ref, { ...fare, updatedAt: now });
+    writeAudit(tx, db, {
+      actor, operation: snap.exists ? 'update_pricing' : 'create_pricing', collection: 'pricingRules', docId: id,
+      targetType: 'pricing', changes, reason: input.reason,
+      details: `${id}: base ${money(fare.basePriceUsd)}, ${money(fare.pricePerKmUsd)}/km, ` +
+        `${money(fare.pricePerHourUsd)}/h, mín. ${money(fare.minimumPriceUsd)}${fare.isActive ? '' : ' · DESACTIVADA'}`,
+    });
+    return { id, isActive: fare.isActive };
   });
 }

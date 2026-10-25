@@ -13,6 +13,7 @@ import { leadSchema } from './business_leads';
 import { deviceSchema } from './driver_devices';
 import {
   bookingSchema as adminBookingSchema, configSchema as adminConfigSchema, paymentSchema as adminPaymentSchema,
+  pricingSchema as adminPricingSchema,
 } from './admin_ops';
 import { callableSchemas as c } from './schemas';
 
@@ -125,6 +126,16 @@ const CASES: Record<string, Case> = {
       { doc: 'global', changes: { minAppVersion: '9.9.9' }, reason: 'Subir la versión mínima' },
       { doc: 'finance', changes: { platformCommissionPct: 101 }, reason: 'Acuerdo nuevo con los chóferes' },
       { doc: 'ops', changes: {}, reason: 'Ajuste de operación del SOS' }],
+  },
+  adminUpdatePricingRule: {
+    schema: adminPricingSchema,
+    valid: { action: 'upsert', vehicleClass: 'business', serviceType: 'oneWay', basePriceUsd: 1, pricePerKmUsd: 1,
+      pricePerHourUsd: 0, minimumPriceUsd: 1, isActive: true, reason: 'Tarifa nueva del piloto' },
+    wrongType: { action: 'deactivate', vehicleClass: 'business', serviceType: 1, reason: 'Fuera de servicio' },
+    extreme: [{ action: 'deactivate', vehicleClass: 'limo', serviceType: 'oneWay', reason: 'Fuera de servicio' },
+      { action: 'upsert', vehicleClass: 'business', serviceType: 'oneWay', basePriceUsd: -1, pricePerKmUsd: 1,
+        pricePerHourUsd: 0, minimumPriceUsd: 1, isActive: true, reason: 'Tarifa nueva del piloto' },
+      { action: 'delete', vehicleClass: 'business', serviceType: 'oneWay', reason: 'Fuera de servicio' }],
   },
   registerDriverDevice: {
     schema: deviceSchema, valid: { installationId: 'a'.repeat(8) + '-' + 'b'.repeat(27), platform: 'android', appVersion: '1.0.0' },
