@@ -12,7 +12,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart'
         CameraUpdate,
         Marker,
         MarkerId;
-import 'package:video_player/video_player.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/config/remote_flags.dart';
 import '../../../../core/design/lux_promise.dart';
@@ -693,7 +692,7 @@ class _HeroSectionState extends State<_HeroSection>
 
 class _HeroBg extends StatelessWidget {
   const _HeroBg();
-  static const _asset = 'assets/images/home/hero_bg.png';
+  static const _asset = 'assets/images/home/hero_bg.jpg';
 
   @override
   Widget build(BuildContext context) => Stack(
@@ -2174,9 +2173,6 @@ class _BusinessSection extends StatelessWidget {
   final GlobalKey sectionKey;
   final VoidCallback onLearnMore;
 
-  // 🎬 Place video at: assets/videos/business_bg.mp4
-  static const _videoAsset = 'assets/videos/business_bg.mp4';
-
   static const _perks = [
     'Facturación y cobros centralizados',
     'Gerente de cuenta dedicado',
@@ -2187,7 +2183,7 @@ class _BusinessSection extends StatelessWidget {
 
   Widget _perksPanel(double hPad, double vPad) => Stack(
         children: [
-          Positioned.fill(child: _VideoBackground(assetPath: _videoAsset)),
+          const Positioned.fill(child: _DarkBackdrop()),
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -2331,14 +2327,11 @@ class _CtaSection extends StatelessWidget {
   final VoidCallback onBook;
   final VoidCallback onViewFleet;
 
-  // 🎬 Place your video file at: assets/videos/cta_bg.mp4
-  static const _videoAsset = 'assets/videos/cta_bg.mp4';
-
   @override
   Widget build(BuildContext context) => Stack(
         children: [
           // Video background (looping, muted, full-bleed)
-          Positioned.fill(child: _VideoBackground(assetPath: _videoAsset)),
+          const Positioned.fill(child: _DarkBackdrop()),
           // Dark overlay — video stays cinematic, text is bright
           const Positioned.fill(child: ColoredBox(color: Color(0x85050A12))),
           // Content
@@ -2437,75 +2430,17 @@ class _CtaSection extends StatelessWidget {
 }
 
 // ============================================================
-// Shared looping video background
+// Fondo de las secciones Empresas y CTA
 // ============================================================
 
-// 🎬 VIDEO ASSET LOCATIONS:
-//   Business section  →  assets/videos/business_bg.mp4
-//   CTA section       →  assets/videos/cta_bg.mp4
-// Both are already registered in pubspec.yaml under flutter > assets.
-// Drop the .mp4 files in place and hot-restart to see them.
-
-class _VideoBackground extends StatefulWidget {
-  const _VideoBackground({required this.assetPath});
-  final String assetPath;
+// Antes eran dos vídeos en bucle (122 MB en la build web y en las apps
+// nativas, E5). Queda el fondo oscuro que se veía mientras cargaban.
+class _DarkBackdrop extends StatelessWidget {
+  const _DarkBackdrop();
 
   @override
-  State<_VideoBackground> createState() => _VideoBackgroundState();
-}
-
-class _VideoBackgroundState extends State<_VideoBackground> {
-  VideoPlayerController? _ctrl;
-  bool _ready = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _init();
-  }
-
-  Future<void> _init() async {
-    try {
-      final ctrl = VideoPlayerController.asset(widget.assetPath);
-      await ctrl.initialize();
-      if (!mounted) {
-        ctrl.dispose();
-        return;
-      }
-      await ctrl.setVolume(0);
-      await ctrl.setLooping(true);
-      await ctrl.play();
-      setState(() {
-        _ctrl = ctrl;
-        _ready = true;
-      });
-    } catch (_) {
-      // Asset not present yet — section shows solid dark colour as fallback
-    }
-  }
-
-  @override
-  void dispose() {
-    _ctrl?.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_ready || _ctrl == null) {
-      // Fallback: dark colour while video loads / file not placed yet
-      return const ColoredBox(color: Color(0xFF070E18));
-    }
-    return FittedBox(
-      fit: BoxFit.cover,
-      clipBehavior: Clip.hardEdge,
-      child: SizedBox(
-        width: _ctrl!.value.size.width,
-        height: _ctrl!.value.size.height,
-        child: VideoPlayer(_ctrl!),
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      const ColoredBox(color: Color(0xFF070E18));
 }
 
 // ============================================================

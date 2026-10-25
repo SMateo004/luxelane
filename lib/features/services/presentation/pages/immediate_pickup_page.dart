@@ -15,7 +15,7 @@ class ImmediatePickupPage extends StatelessWidget {
     lead: 'Un chófer profesional en camino en cuanto confirmas. '
         'La misma excelencia de una reserva anticipada, sin planificar.',
     heroImage: 'assets/images/services/recogida/hero.jpg',
-    heroFallback: 'assets/images/home/hero_bg.png',
+    heroFallback: 'assets/images/home/hero_bg.jpg',
     assurances: [
       LuxAssurance(
         Icons.bolt_rounded,

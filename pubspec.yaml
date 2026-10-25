@@ -44,7 +44,6 @@ dependencies:
   http: ^1.2.2
 
   # Video
-  video_player: ^2.9.2
 
   # Utilities
   dartz: ^0.10.1
@@ -91,5 +90,4 @@ flutter:
     - assets/images/services/por-horas/
     - assets/icons/
     - assets/fonts/
-    - assets/videos/
   # fonts are loaded via Google Fonts fallback on web

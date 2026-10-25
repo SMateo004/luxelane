@@ -14,26 +14,26 @@ abstract class VehicleCatalog {
         if (firstClassEnabled) VehicleClass.firstClass,
       ];
 
-  /// Transparent PNG of the vehicle. Classes without a real photo yet
+  /// Transparent WebP of the vehicle. Classes without a real photo yet
   /// (Business SUV) fall back to an illustration when the file is missing,
   /// so dropping the photo into the folder is all it takes to show it.
   static String carImage(VehicleClass vc) =>
-      'assets/images/vehicles/${vc.assetKey}/car.png';
+      'assets/images/vehicles/${vc.assetKey}/car.webp';
 
   /// Up to three photos for the "Detalles" carousel, in order. Only the files
   /// that exist are shown; see [VehicleDetailsGallery].
   static List<String> galleryPhotos(VehicleClass vc) => [
         for (var i = 1; i <= 3; i++)
-          'assets/images/vehicles/${vc.assetKey}/gallery_$i.png',
+          'assets/images/vehicles/${vc.assetKey}/gallery_$i.webp',
       ];
 
   /// Photo of the trunk for a luggage option (illustration if missing).
   static String luggagePhoto(VehicleClass vc, int option) =>
-      'assets/images/booking/luggage/${vc.assetKey}_$option.png';
+      'assets/images/booking/luggage/${vc.assetKey}_$option.webp';
 
   /// Photo of the rear cabin for a seating option (illustration if missing).
   static String seatingPhoto(VehicleClass vc, int option) =>
-      'assets/images/booking/seating/${vc.assetKey}_$option.png';
+      'assets/images/booking/seating/${vc.assetKey}_$option.webp';
 
   /// Signature colours of each class: soft enough for large backgrounds,
   /// distinct enough that the interface changes with the car you pick.

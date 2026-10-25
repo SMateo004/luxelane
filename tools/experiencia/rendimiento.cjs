@@ -20,8 +20,8 @@ const OUT = path.join(__dirname, '../../docs/capturas/A7-rendimiento');
 const SLOW_4G = { offline: false, downloadThroughput: (1.6 * 1024 * 1024) / 8, uploadThroughput: (750 * 1024) / 8, latency: 562.5 };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function coldLoad(b, route, ready, throttle) {
-  const ctx = await L.context(b, { width: 390 });
+async function coldLoad(b, route, ready, throttle, width = 390) {
+  const ctx = await L.context(b, { width });
   const page = await ctx.newPage();
   const cdp = await ctx.newCDPSession(page);
   await cdp.send('Network.enable');
@@ -45,7 +45,7 @@ async function coldLoad(b, route, ready, throttle) {
   const tti = Date.now() - t0;
   await sleep(1500);
   await ctx.close();
-  return { ruta: route, limitada: throttle, fcp_ms: fcp && Math.round(fcp), primer_fotograma_ms: Math.round(ff), interactivo_ms: tti,
+  return { ruta: route, ancho: width, limitada: throttle, fcp_ms: fcp && Math.round(fcp), primer_fotograma_ms: Math.round(ff), interactivo_ms: tti,
     transferido_kb: Math.round(bytes / 1024), peticiones: requests };
 }
 
@@ -102,11 +102,29 @@ async function reads(b, [name, app, route, user]) {
     callables: callables.map((c) => c.split(' ')[0]), callables_repetidas: dup(callables) };
 }
 
+/** Pide una vez cada archivo comprimible para que serve.cjs tenga la
+ * versión comprimida en caché (como un CDN): así no se mide el tiempo de
+ * comprimir en el servidor local. */
+async function warm() {
+  const http = require('http');
+  for (const [dir, port] of [['web-emu', 5050], ['web-emu-driver', 5051]]) {
+    const root = path.join(__dirname, '../../build', dir);
+    const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));
+    for (const f of walk(root).filter((x) => /\.(html|js|mjs|json|css|wasm|svg|otf|ttf)$/.test(x))) {
+      await new Promise((ok) => http.get({ port, path: '/' + path.relative(root, f), headers: { 'Accept-Encoding': 'br, gzip' } },
+        (r) => { r.resume(); r.on('end', ok); }).on('error', ok));
+    }
+  }
+}
+
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
+  await warm();
   const b = await L.browser();
   const carga = [];
   for (const throttle of [false, true]) carga.push(await coldLoad(b, '/', 'Ver vehículos y precios', throttle));
+  // A 1280 px el inicio es la home web (foto de cabecera y, antes, vídeos).
+  for (const throttle of [false, true]) carga.push(await coldLoad(b, '/', /Ver precios/i, throttle, 1280));
   carga.push(await coldLoad(b, '/legal/terminos', 'Quiénes somos', true));
   console.log(JSON.stringify(carga));
   const lecturas = [];
@@ -129,6 +147,6 @@ async function reads(b, [name, app, route, user]) {
       gzip_kb: text ? Math.round(zlib.gzipSync(buf, { level: 9 }).length / 1024) : null };
   });
   const peso = { total_mb: +(all.reduce((s, x) => s + x.b, 0) / 1048576).toFixed(1), archivos: all.length, mayores: big };
-  fs.writeFileSync(path.join(OUT, 'resultado.json'), JSON.stringify({ red_4g_lenta: SLOW_4G, carga, lecturas, peso }, null, 2));
+  fs.writeFileSync(path.join(OUT, process.env.SALIDA || 'resultado.json'), JSON.stringify({ red_4g_lenta: SLOW_4G, carga, lecturas, peso }, null, 2));
   console.log(JSON.stringify(peso));
 })();
