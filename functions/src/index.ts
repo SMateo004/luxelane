@@ -894,6 +894,10 @@ export const adminUpdateBooking = secureCallable('adminUpdateBooking', {}, async
 export const adminRecordPayment = secureCallable('adminRecordPayment', {}, async (req) =>
   adminOps.adminRecordPayment({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
 
+/** Ajustes de config/global (lista blanca), config/finance y config/ops; nunca config/security. */
+export const adminUpdateConfig = secureCallable('adminUpdateConfig', {}, async (req) =>
+  adminOps.adminUpdateConfig({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
 /** El admin marca una alerta como revisada (auditado en el servidor). */
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
   const adminId = await requireAdmin(req);

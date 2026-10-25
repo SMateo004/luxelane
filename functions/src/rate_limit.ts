@@ -68,6 +68,7 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   // Escrituras de admin (Parte A).
   adminUpdateBooking: per10min(60),
   adminRecordPayment: per10min(30),
+  adminUpdateConfig: per10min(20),
   // Panel: cambios de rol y bloqueos.
   setUserRole: per10min(30),
   setUserBlocked: per10min(30),

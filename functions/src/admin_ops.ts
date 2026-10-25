@@ -252,3 +252,60 @@ export async function adminRecordPayment(deps: AdminDeps, actor: AdminActor, dat
     return { paymentId: ref.id };
   });
 }
+
+// ---------------------------------------------------------------------------
+// A3. adminUpdateConfig: config/global (lista blanca), config/finance y
+// config/ops. config/security nunca: solo la consola.
+// ---------------------------------------------------------------------------
+
+const atLeastOne = (o: Record<string, unknown>) => Object.keys(o).length > 0;
+const positiveInt = z.number().int().positive().max(1_000_000_000);
+
+export const configSchema = z.discriminatedUnion('doc', [
+  z.strictObject({
+    doc: z.literal('global'),
+    // Lo que el panel edita de config/global (público). Versiones mínimas,
+    // teléfonos, legalVersion y el resto se editan en la consola.
+    changes: z.strictObject({
+      isMaintenanceMode: z.boolean().optional(),
+      pushNotificationsEnabled: z.boolean().optional(),
+      firstClassEnabled: z.boolean().optional(),
+    }).refine(atLeastOne),
+    reason: reasonSchema,
+  }),
+  z.strictObject({
+    doc: z.literal('finance'),
+    changes: z.strictObject({ platformCommissionPct: z.number().finite().min(0).max(100) }),
+    reason: reasonSchema,
+  }),
+  z.strictObject({
+    doc: z.literal('ops'),
+    // Solo tipos y signo: los valores los decide el responsable.
+    changes: z.strictObject({
+      incidentAckSeconds: positiveInt.optional(),
+      incidentEscalateEverySeconds: positiveInt.optional(),
+      incidentLocationRetentionDays: positiveInt.optional(),
+      arrivalRadiusMeters: z.number().finite().positive().max(1_000_000).optional(),
+      maxPriceAdjustmentPercent: z.number().finite().min(0).max(100).optional(),
+    }).refine(atLeastOne),
+    reason: reasonSchema,
+  }),
+]);
+
+export async function adminUpdateConfig(deps: AdminDeps, actor: AdminActor, data: unknown) {
+  const input = parseInput(configSchema, data);
+  const db = deps.db;
+  const ref = db.collection('config').doc(input.doc);
+  return db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    const changes = changedFields(snap.data(), input.changes);
+    if (Object.keys(changes).length === 0) throw opError('failed-precondition', 'no_change');
+    tx.set(ref, { ...input.changes, updatedAt: admin.firestore.Timestamp.fromMillis(nowMs(deps)) }, { merge: true });
+    writeAudit(tx, db, {
+      actor, operation: `update_config_${input.doc}`, collection: 'config', docId: input.doc, targetType: 'global_config',
+      changes, reason: input.reason,
+      details: Object.entries(changes).map(([k, c]) => `${k}: ${String(c.before)} → ${String(c.after)}`).join(', '),
+    });
+    return { doc: input.doc, changed: Object.keys(changes) };
+  });
+}

@@ -11,7 +11,9 @@ import { raiseSchema, incidentIdSchema, closeSchema } from './incidents';
 import { resolveSchema } from './alerts';
 import { leadSchema } from './business_leads';
 import { deviceSchema } from './driver_devices';
-import { bookingSchema as adminBookingSchema, paymentSchema as adminPaymentSchema } from './admin_ops';
+import {
+  bookingSchema as adminBookingSchema, configSchema as adminConfigSchema, paymentSchema as adminPaymentSchema,
+} from './admin_ops';
 import { callableSchemas as c } from './schemas';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -115,6 +117,14 @@ const CASES: Record<string, Case> = {
     extreme: [{ action: 'record', bookingId: ID, method: 'card', reason: 'Cobrado en efectivo al llegar' },
       { action: 'correct', paymentId: ID, amountBs: -5, reason: 'Importe mal anotado' },
       { action: 'record', bookingId: ID, method: 'cash', reason: 'x' }],
+  },
+  adminUpdateConfig: {
+    schema: adminConfigSchema, valid: { doc: 'finance', changes: { platformCommissionPct: 15 }, reason: 'Acuerdo nuevo con los chóferes' },
+    wrongType: { doc: 'global', changes: { isMaintenanceMode: 'sí' }, reason: 'Mantenimiento programado' },
+    extreme: [{ doc: 'security', changes: { mfaEnforced: false }, reason: 'Quitar el segundo factor' },
+      { doc: 'global', changes: { minAppVersion: '9.9.9' }, reason: 'Subir la versión mínima' },
+      { doc: 'finance', changes: { platformCommissionPct: 101 }, reason: 'Acuerdo nuevo con los chóferes' },
+      { doc: 'ops', changes: {}, reason: 'Ajuste de operación del SOS' }],
   },
   registerDriverDevice: {
     schema: deviceSchema, valid: { installationId: 'a'.repeat(8) + '-' + 'b'.repeat(27), platform: 'android', appVersion: '1.0.0' },
