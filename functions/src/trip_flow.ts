@@ -137,20 +137,24 @@ interface EventInput {
  */
 function appendEvent(tx: admin.firestore.Transaction, db: admin.firestore.Firestore, id: string, e: EventInput): void {
   const ref = bookingRef(db, id).collection('events').doc();
+  // El pasajero y el chófer no ven qué admin actuó (0.2): en el evento solo
+  // el rol; el uid va a eventDetails, que solo lee el admin.
+  const isAdmin = e.actor.role === 'admin';
+  const adminDetail = isAdmin ? { ...(e.adminDetail ?? {}), actorUid: e.actor.uid } : e.adminDetail;
   tx.set(ref, {
     type: e.type ?? 'transition',
     from: e.from,
     to: e.to,
-    actor: e.actor,
+    actor: isAdmin ? { role: 'admin' } : e.actor,
     source: e.source,
     at: admin.firestore.FieldValue.serverTimestamp(),
     appVersion: e.appVersion ?? null,
     hasLocation: e.location !== undefined,
     ...(e.extra ?? {}),
   });
-  if (e.adminDetail && Object.keys(e.adminDetail).length > 0) {
+  if (adminDetail && Object.keys(adminDetail).length > 0) {
     tx.set(bookingRef(db, id).collection('eventDetails').doc(ref.id), {
-      ...e.adminDetail,
+      ...adminDetail,
       at: admin.firestore.FieldValue.serverTimestamp(),
     });
   }

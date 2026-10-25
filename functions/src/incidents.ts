@@ -311,7 +311,9 @@ export async function acknowledgeIncident(deps: IncidentDeps, actor: AdminActor,
     if (d.status === 'acknowledged') return { status: d.status, alreadyAcknowledged: true };
     if (!NEEDS_ACK.includes(d.status)) throw incidentError('failed-precondition', 'not_open');
     const waited = Math.round((at - (d.createdAt as admin.firestore.Timestamp).toMillis()) / 1000);
-    tx.update(ref, { status: 'acknowledged', acknowledgedAt: ts(at), acknowledgedBy: actor.adminId, updatedAt: ts(at) });
+    // Quién reconoció va en los eventos del incidente y en admin_logs (solo
+    // admin), no en el documento, que lee también quien lo disparó (0.2).
+    tx.update(ref, { status: 'acknowledged', acknowledgedAt: ts(at), updatedAt: ts(at) });
     event(tx, ref, 'acknowledged', { uid: actor.adminId, role: 'admin' }, { secondsToAck: waited });
     audit(tx, db, actor, 'acknowledge_incident', incidentId, at, `Reserva #${shortId(d.bookingId)} · ${waited} s sin reconocer`);
     return { status: 'acknowledged', alreadyAcknowledged: false };
@@ -331,7 +333,7 @@ export async function closeIncident(deps: IncidentDeps, actor: AdminActor, data:
     if (d.status === 'closed') return { status: d.status, alreadyClosed: true };
     const state = await tx.get(stateRef(db, d.bookingId));
     tx.update(ref, {
-      status: 'closed', closedAt: ts(at), closedBy: actor.adminId, closeNote: note, updatedAt: ts(at),
+      status: 'closed', closedAt: ts(at), closeNote: note, updatedAt: ts(at),
       ...retention,
     });
     event(tx, ref, 'closed', { uid: actor.adminId, role: 'admin' }, { note, from: d.status });

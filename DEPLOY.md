@@ -541,6 +541,13 @@ npm run migrate:event-details -- --project staging --apply
 ```
 El panel nuevo lee ambos sitios, así que el orden no rompe nada.
 
+Desde 0.2 la misma migración saca también el uid del admin: en los eventos
+de reserva con actor admin queda solo `actor.role = 'admin'` y el uid pasa a
+`eventDetails.actorUid`; en `incidents/{id}` borra `acknowledgedBy` y
+`closedBy` (el documento lo lee quien disparó el SOS; el uid sigue en los
+eventos del incidente y en admin_logs). En producción exige
+`--i-understand-this-writes-to-production-luxelane-4e7ae`.
+
 ### config/ops y config/security (A8.9)
 `config/global` es público (lo leen las apps sin sesión) y el panel lo
 escribe. Lo que solo usa el servidor va aparte; el servidor lo lee con el

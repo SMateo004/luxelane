@@ -897,7 +897,8 @@ class BookingEvent {
       type: j['type'] as String? ?? 'transition',
       from: BookingStatusX.fromString(j['from'] as String? ?? ''),
       to: BookingStatusX.fromString(j['to'] as String? ?? ''),
-      actorUid: actor['uid'] as String? ?? '',
+      // Con actor admin, el uid está en eventDetails (0.2).
+      actorUid: actor['uid'] as String? ?? d['actorUid'] as String? ?? '',
       actorRole: actor['role'] as String? ?? '',
       source: j['source'] as String? ?? '',
       at: j['at'] is Timestamp ? (j['at'] as Timestamp).toDate() : null,

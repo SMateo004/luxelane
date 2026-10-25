@@ -222,7 +222,12 @@ describe('acknowledgeIncident y closeIncident (admin)', () => {
     expect(await acknowledgeIncident(deps(), jefa, { incidentId })).toEqual({ status: 'acknowledged', alreadyAcknowledged: false });
     expect(await acknowledgeIncident(deps(), jefa, { incidentId })).toEqual({ status: 'acknowledged', alreadyAcknowledged: true });
     await closeIncident(deps(), jefa, { incidentId, note: 'Llamé al pasajero: todo en orden.' });
-    expect(await incident(incidentId)).toMatchObject({ status: 'closed', closedBy: 'jefa', closeNote: 'Llamé al pasajero: todo en orden.' });
+    const inc = await incident(incidentId);
+    expect(inc).toMatchObject({ status: 'closed', closeNote: 'Llamé al pasajero: todo en orden.' });
+    // Quien disparó el SOS lee el documento: sin el uid del admin (0.2).
+    expect(inc).not.toHaveProperty('closedBy');
+    expect(inc).not.toHaveProperty('acknowledgedBy');
+    expect(JSON.stringify(inc)).not.toContain('jefa');
     const logs = (await db.collection('admin_logs').get()).docs.map((d) => d.data().action).sort();
     expect(logs).toEqual(['acknowledge_incident', 'close_incident']);
     expect(await incidentEvents(incidentId)).toEqual(['acknowledged', 'closed', 'raised']);
