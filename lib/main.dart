@@ -8,6 +8,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'app/app.dart';
 import 'core/config/app_check_setup.dart';
+import 'core/config/emulator_setup.dart';
 import 'core/config/env.dart';
 import 'core/config/firebase_startup.dart';
 import 'core/config/remote_flags.dart';
@@ -46,9 +47,12 @@ void main() async {
   ]);
 
   final firebase = await startFirebase(
-    () =>
-        Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+    () => Firebase.initializeApp(
+      options: startupOptions(() => DefaultFirebaseOptions.currentPlatform),
+    ),
   );
+  // Revisión local (USE_EMULATORS): todo va a los emuladores de demo.
+  if (kUseEmulators && firebase is FirebaseReady) await connectEmulators();
   if (firebase is FirebaseFatal) {
     runApp(appForStartup(firebase, const LuxelaneApp()));
     return;

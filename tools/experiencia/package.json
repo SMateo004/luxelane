@@ -1,0 +1,11 @@
+{
+  "name": "luxelane-experiencia",
+  "private": true,
+  "description": "Revisión local de la app contra los emuladores de demo-luxelane (capturas, medidas). Playwright y Chromium vienen preinstalados en el entorno.",
+  "scripts": {
+    "capturas": "node capturas.cjs"
+  },
+  "devDependencies": {
+    "firebase": "11.9.1"
+  }
+}
