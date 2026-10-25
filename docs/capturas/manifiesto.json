@@ -1,0 +1,3101 @@
+{
+  "generado": "2026-10-25T20:22:31.683Z",
+  "anchos": [
+    390,
+    768,
+    1280
+  ],
+  "temaOscuro": "la app no tiene tema oscuro",
+  "capturas": [
+    {
+      "flujo": "F1-acceso",
+      "estado": "carga",
+      "ancho": 390,
+      "archivo": "F1-acceso/carga_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 1076
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "login",
+      "ancho": 390,
+      "archivo": "F1-acceso/login_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 3979
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "login-error",
+      "ancho": 390,
+      "archivo": "F1-acceso/login-error_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 8164
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "login-validacion",
+      "ancho": 390,
+      "archivo": "F1-acceso/login-validacion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 4943
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "bloqueado",
+      "ancho": 390,
+      "archivo": "F1-acceso/bloqueado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 8066
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "registro",
+      "ancho": 390,
+      "archivo": "F1-acceso/registro_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 3896
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "registro-validacion",
+      "ancho": 390,
+      "archivo": "F1-acceso/registro-validacion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 4895
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "terminos",
+      "ancho": 390,
+      "archivo": "F1-acceso/terminos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 3903
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "privacidad",
+      "ancho": 390,
+      "archivo": "F1-acceso/privacidad_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 3889
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "verificar-correo",
+      "ancho": 390,
+      "archivo": "F1-acceso/verificar-correo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 13764
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "perfil",
+      "ancho": 390,
+      "archivo": "F1-acceso/perfil_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 13942
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "chofer-alta-dos-pasos",
+      "ancho": 390,
+      "archivo": "F1-acceso/chofer-alta-dos-pasos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16956
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "admin-reto-segundo-factor",
+      "ancho": 390,
+      "archivo": "F1-acceso/admin-reto-segundo-factor_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 8704
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "emulador-apagado",
+      "ancho": 390,
+      "archivo": "F1-acceso/emulador-apagado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 9809
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "inicio-invitado",
+      "ancho": 390,
+      "archivo": "F2-reserva/inicio-invitado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 3926
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "inicio",
+      "ancho": 390,
+      "archivo": "F2-reserva/inicio_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14203
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "sin-permiso-ubicacion",
+      "ancho": 390,
+      "archivo": "F2-reserva/sin-permiso-ubicacion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16752
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "con-ubicacion",
+      "ancho": 390,
+      "archivo": "F2-reserva/con-ubicacion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17374
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "sin-direcciones",
+      "ancho": 390,
+      "archivo": "F2-reserva/sin-direcciones_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16041
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "fecha-hora",
+      "ancho": 390,
+      "archivo": "F2-reserva/fecha-hora_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15704
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "vehiculos",
+      "ancho": 390,
+      "archivo": "F2-reserva/vehiculos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15365
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "confirmar",
+      "ancho": 390,
+      "archivo": "F2-reserva/confirmar_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15899
+    },
+    {
+      "flujo": "F3-por-horas",
+      "estado": "inicio",
+      "ancho": 390,
+      "archivo": "F3-por-horas/inicio_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15554
+    },
+    {
+      "flujo": "F10-empresas",
+      "estado": "formulario",
+      "ancho": 390,
+      "archivo": "F10-empresas/formulario_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 3868
+    },
+    {
+      "flujo": "F10-empresas",
+      "estado": "validacion",
+      "ancho": 390,
+      "archivo": "F10-empresas/validacion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 5572
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "pendiente",
+      "ancho": 390,
+      "archivo": "F5-viaje/pendiente_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15704
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "liberada",
+      "ancho": 390,
+      "archivo": "F5-viaje/liberada_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15661
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "confirmada",
+      "ancho": 390,
+      "archivo": "F5-viaje/confirmada_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15871
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "en-camino",
+      "ancho": 390,
+      "archivo": "F5-viaje/en-camino_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15719
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "llego-codigo",
+      "ancho": 390,
+      "archivo": "F5-viaje/llego-codigo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16143
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "verificada",
+      "ancho": 390,
+      "archivo": "F5-viaje/verificada_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15690
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "en-curso",
+      "ancho": 390,
+      "archivo": "F5-viaje/en-curso_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15648
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "completada",
+      "ancho": 390,
+      "archivo": "F5-viaje/completada_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15770
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "no-se-presento",
+      "ancho": 390,
+      "archivo": "F5-viaje/no-se-presento_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15674
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "cancelada",
+      "ancho": 390,
+      "archivo": "F5-viaje/cancelada_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16137
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "cancelada-con-recargo",
+      "ancho": 390,
+      "archivo": "F5-viaje/cancelada-con-recargo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15562
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "codigo-error-servidor",
+      "ancho": 390,
+      "archivo": "F5-viaje/codigo-error-servidor_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15681
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "codigo-sin-red",
+      "ancho": 390,
+      "archivo": "F5-viaje/codigo-sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15637
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "reserva-inexistente",
+      "ancho": 390,
+      "archivo": "F5-viaje/reserva-inexistente_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15725
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "sin-recargo",
+      "ancho": 390,
+      "archivo": "F6-cancelacion/sin-recargo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16136
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "con-recargo",
+      "ancho": 390,
+      "archivo": "F6-cancelacion/con-recargo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15797
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "error-servidor",
+      "ancho": 390,
+      "archivo": "F6-cancelacion/error-servidor_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17174
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "sin-red",
+      "ancho": 390,
+      "archivo": "F6-cancelacion/sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17353
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "lista",
+      "ancho": 390,
+      "archivo": "F7-viajes/lista_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14783
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "vacio",
+      "ancho": 390,
+      "archivo": "F7-viajes/vacio_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14191
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "pagos",
+      "ancho": 390,
+      "archivo": "F7-viajes/pagos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14354
+    },
+    {
+      "flujo": "F8-valoracion",
+      "estado": "calificar",
+      "ancho": 390,
+      "archivo": "F8-valoracion/calificar_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15764
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "boton",
+      "ancho": 390,
+      "archivo": "F9-sos/boton_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14593
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "pulsando",
+      "ancho": 390,
+      "archivo": "F9-sos/pulsando_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15572
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "abierto",
+      "ancho": 390,
+      "archivo": "F9-sos/abierto_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15778
+    },
+    {
+      "flujo": "F13-alta-chofer",
+      "estado": "login",
+      "ancho": 390,
+      "archivo": "F13-alta-chofer/login_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 3826
+    },
+    {
+      "flujo": "F13-alta-chofer",
+      "estado": "no-verificado",
+      "ancho": 390,
+      "archivo": "F13-alta-chofer/no-verificado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14194
+    },
+    {
+      "flujo": "F13-alta-chofer",
+      "estado": "bloqueado",
+      "ancho": 390,
+      "archivo": "F13-alta-chofer/bloqueado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 8558
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "inicio",
+      "ancho": 390,
+      "archivo": "F14-chofer/inicio_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14399
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "inicio-libre",
+      "ancho": 390,
+      "archivo": "F14-chofer/inicio-libre_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14425
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "conectarse-sin-ubicacion",
+      "ancho": 390,
+      "archivo": "F14-chofer/conectarse-sin-ubicacion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17680
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "solicitudes",
+      "ancho": 390,
+      "archivo": "F14-chofer/solicitudes_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14434
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "ganancias",
+      "ancho": 390,
+      "archivo": "F14-chofer/ganancias_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14218
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "perfil",
+      "ancho": 390,
+      "archivo": "F14-chofer/perfil_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14094
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "viaje-confirmado",
+      "ancho": 390,
+      "archivo": "F14-chofer/viaje-confirmado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14404
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "liberar-motivo",
+      "ancho": 390,
+      "archivo": "F14-chofer/liberar-motivo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15293
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "en-recogida",
+      "ancho": 390,
+      "archivo": "F14-chofer/en-recogida_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14395
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "codigo-pasajero",
+      "ancho": 390,
+      "archivo": "F14-chofer/codigo-pasajero_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16365
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "no-aparece-confirmar",
+      "ancho": 390,
+      "archivo": "F14-chofer/no-aparece-confirmar_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16702
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "verificado",
+      "ancho": 390,
+      "archivo": "F14-chofer/verificado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14600
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "en-curso",
+      "ancho": 390,
+      "archivo": "F14-chofer/en-curso_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15722
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "panel",
+      "ancho": 390,
+      "archivo": "F17-panel/panel_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16150
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "operaciones",
+      "ancho": 390,
+      "archivo": "F17-panel/operaciones_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16430
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "choferes",
+      "ancho": 390,
+      "archivo": "F17-panel/choferes_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16437
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "vehiculos",
+      "ancho": 390,
+      "archivo": "F17-panel/vehiculos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16475
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "finanzas",
+      "ancho": 390,
+      "archivo": "F17-panel/finanzas_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16472
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "tarifas",
+      "ancho": 390,
+      "archivo": "F17-panel/tarifas_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16259
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "empresas",
+      "ancho": 390,
+      "archivo": "F17-panel/empresas_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16410
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "usuarios",
+      "ancho": 390,
+      "archivo": "F17-panel/usuarios_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16423
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "alertas",
+      "ancho": 390,
+      "archivo": "F17-panel/alertas_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16264
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "auditoria",
+      "ancho": 390,
+      "archivo": "F17-panel/auditoria_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16252
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "configuracion",
+      "ancho": 390,
+      "archivo": "F17-panel/configuracion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16228
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "detalle-no-se-presento",
+      "ancho": 390,
+      "archivo": "F17-panel/detalle-no-se-presento_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18306
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "decidir-no-se-presento",
+      "ancho": 390,
+      "archivo": "F17-panel/decidir-no-se-presento_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 19465
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "bloquear-con-viajes",
+      "ancho": 390,
+      "archivo": "F17-panel/bloquear-con-viajes_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20602
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "inicio-backend-caido",
+      "ancho": 390,
+      "archivo": "A8-errores/inicio-backend-caido_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18051
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "inicio-sin-red",
+      "ancho": 390,
+      "archivo": "A8-errores/inicio-sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20858
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "viajes-backend-caido",
+      "ancho": 390,
+      "archivo": "A8-errores/viajes-backend-caido_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17877
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "viajes-sin-red",
+      "ancho": 390,
+      "archivo": "A8-errores/viajes-sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20292
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "viaje-backend-caido",
+      "ancho": 390,
+      "archivo": "A8-errores/viaje-backend-caido_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18107
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "viaje-sin-red",
+      "ancho": 390,
+      "archivo": "A8-errores/viaje-sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20906
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "perfil-backend-caido",
+      "ancho": 390,
+      "archivo": "A8-errores/perfil-backend-caido_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17806
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "perfil-sin-red",
+      "ancho": 390,
+      "archivo": "A8-errores/perfil-sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20282
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-inicio-backend-caido",
+      "ancho": 390,
+      "archivo": "A8-errores/chofer-inicio-backend-caido_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17503
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-inicio-sin-red",
+      "ancho": 390,
+      "archivo": "A8-errores/chofer-inicio-sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20408
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-solicitudes-backend-caido",
+      "ancho": 390,
+      "archivo": "A8-errores/chofer-solicitudes-backend-caido_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17724
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-solicitudes-sin-red",
+      "ancho": 390,
+      "archivo": "A8-errores/chofer-solicitudes-sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20395
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-viaje-backend-caido",
+      "ancho": 390,
+      "archivo": "A8-errores/chofer-viaje-backend-caido_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17824
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-viaje-sin-red",
+      "ancho": 390,
+      "archivo": "A8-errores/chofer-viaje-sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20578
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "panel-backend-caido",
+      "ancho": 390,
+      "archivo": "A8-errores/panel-backend-caido_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17744
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "panel-sin-red",
+      "ancho": 390,
+      "archivo": "A8-errores/panel-sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20178
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-deslizar-sin-red",
+      "ancho": 390,
+      "archivo": "A8-errores/chofer-deslizar-sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18604
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "pasajero-cancelar-error-servidor",
+      "ancho": 390,
+      "archivo": "A8-errores/pasajero-cancelar-error-servidor_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17685
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "reconocido-panel",
+      "ancho": 390,
+      "archivo": "F9-sos/reconocido-panel_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16900
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "reconocido-pasajero",
+      "ancho": 390,
+      "archivo": "F9-sos/reconocido-pasajero_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15893
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "cancelada-por-pasajero",
+      "ancho": 390,
+      "archivo": "F6-cancelacion/cancelada-por-pasajero_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18889
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "liberado",
+      "ancho": 390,
+      "archivo": "F14-chofer/liberado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18967
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "carga",
+      "ancho": 768,
+      "archivo": "F1-acceso/carga_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 1106
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "login",
+      "ancho": 768,
+      "archivo": "F1-acceso/login_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 4148
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "login-error",
+      "ancho": 768,
+      "archivo": "F1-acceso/login-error_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 8697
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "login-validacion",
+      "ancho": 768,
+      "archivo": "F1-acceso/login-validacion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 5082
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "bloqueado",
+      "ancho": 768,
+      "archivo": "F1-acceso/bloqueado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 8572
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "registro",
+      "ancho": 768,
+      "archivo": "F1-acceso/registro_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 4035
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "registro-validacion",
+      "ancho": 768,
+      "archivo": "F1-acceso/registro-validacion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 5081
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "terminos",
+      "ancho": 768,
+      "archivo": "F1-acceso/terminos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 3996
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "privacidad",
+      "ancho": 768,
+      "archivo": "F1-acceso/privacidad_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 3996
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "verificar-correo",
+      "ancho": 768,
+      "archivo": "F1-acceso/verificar-correo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14621
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "perfil",
+      "ancho": 768,
+      "archivo": "F1-acceso/perfil_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14055
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "chofer-alta-dos-pasos",
+      "ancho": 768,
+      "archivo": "F1-acceso/chofer-alta-dos-pasos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17417
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "admin-reto-segundo-factor",
+      "ancho": 768,
+      "archivo": "F1-acceso/admin-reto-segundo-factor_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 9025
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "emulador-apagado",
+      "ancho": 768,
+      "archivo": "F1-acceso/emulador-apagado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 10102
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "inicio-invitado",
+      "ancho": 768,
+      "archivo": "F2-reserva/inicio-invitado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 5622
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "inicio",
+      "ancho": 768,
+      "archivo": "F2-reserva/inicio_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15740
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "sin-permiso-ubicacion",
+      "ancho": 768,
+      "archivo": "F2-reserva/sin-permiso-ubicacion_768.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded.",
+      "erroresJs": [],
+      "ms": 75678
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "con-ubicacion",
+      "ancho": 768,
+      "archivo": "F2-reserva/con-ubicacion_768.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded.",
+      "erroresJs": [],
+      "ms": 76239
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "sin-direcciones",
+      "ancho": 768,
+      "archivo": "F2-reserva/sin-direcciones_768.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded.",
+      "erroresJs": [],
+      "ms": 75753
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "fecha-hora",
+      "ancho": 768,
+      "archivo": "F2-reserva/fecha-hora_768.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded.",
+      "erroresJs": [],
+      "ms": 75914
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "vehiculos",
+      "ancho": 768,
+      "archivo": "F2-reserva/vehiculos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15764
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "confirmar",
+      "ancho": 768,
+      "archivo": "F2-reserva/confirmar_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16665
+    },
+    {
+      "flujo": "F3-por-horas",
+      "estado": "inicio",
+      "ancho": 768,
+      "archivo": "F3-por-horas/inicio_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20084
+    },
+    {
+      "flujo": "F10-empresas",
+      "estado": "formulario",
+      "ancho": 768,
+      "archivo": "F10-empresas/formulario_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 4004
+    },
+    {
+      "flujo": "F10-empresas",
+      "estado": "validacion",
+      "ancho": 768,
+      "archivo": "F10-empresas/validacion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 5421
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "pendiente",
+      "ancho": 768,
+      "archivo": "F5-viaje/pendiente_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16463
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "liberada",
+      "ancho": 768,
+      "archivo": "F5-viaje/liberada_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16426
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "confirmada",
+      "ancho": 768,
+      "archivo": "F5-viaje/confirmada_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16242
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "en-camino",
+      "ancho": 768,
+      "archivo": "F5-viaje/en-camino_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15973
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "llego-codigo",
+      "ancho": 768,
+      "archivo": "F5-viaje/llego-codigo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16106
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "verificada",
+      "ancho": 768,
+      "archivo": "F5-viaje/verificada_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15922
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "en-curso",
+      "ancho": 768,
+      "archivo": "F5-viaje/en-curso_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16259
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "completada",
+      "ancho": 768,
+      "archivo": "F5-viaje/completada_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16074
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "no-se-presento",
+      "ancho": 768,
+      "archivo": "F5-viaje/no-se-presento_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15856
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "cancelada",
+      "ancho": 768,
+      "archivo": "F5-viaje/cancelada_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15922
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "cancelada-con-recargo",
+      "ancho": 768,
+      "archivo": "F5-viaje/cancelada-con-recargo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15833
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "codigo-error-servidor",
+      "ancho": 768,
+      "archivo": "F5-viaje/codigo-error-servidor_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15996
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "codigo-sin-red",
+      "ancho": 768,
+      "archivo": "F5-viaje/codigo-sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16543
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "reserva-inexistente",
+      "ancho": 768,
+      "archivo": "F5-viaje/reserva-inexistente_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16241
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "sin-recargo",
+      "ancho": 768,
+      "archivo": "F6-cancelacion/sin-recargo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16330
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "con-recargo",
+      "ancho": 768,
+      "archivo": "F6-cancelacion/con-recargo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15832
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "error-servidor",
+      "ancho": 768,
+      "archivo": "F6-cancelacion/error-servidor_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17162
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "sin-red",
+      "ancho": 768,
+      "archivo": "F6-cancelacion/sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17066
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "lista",
+      "ancho": 768,
+      "archivo": "F7-viajes/lista_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14456
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "vacio",
+      "ancho": 768,
+      "archivo": "F7-viajes/vacio_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14403
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "pagos",
+      "ancho": 768,
+      "archivo": "F7-viajes/pagos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14763
+    },
+    {
+      "flujo": "F8-valoracion",
+      "estado": "calificar",
+      "ancho": 768,
+      "archivo": "F8-valoracion/calificar_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16115
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "boton",
+      "ancho": 768,
+      "archivo": "F9-sos/boton_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14972
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "pulsando",
+      "ancho": 768,
+      "archivo": "F9-sos/pulsando_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15907
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "abierto",
+      "ancho": 768,
+      "archivo": "F9-sos/abierto_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15825
+    },
+    {
+      "flujo": "F13-alta-chofer",
+      "estado": "login",
+      "ancho": 768,
+      "archivo": "F13-alta-chofer/login_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 3928
+    },
+    {
+      "flujo": "F13-alta-chofer",
+      "estado": "no-verificado",
+      "ancho": 768,
+      "archivo": "F13-alta-chofer/no-verificado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14700
+    },
+    {
+      "flujo": "F13-alta-chofer",
+      "estado": "bloqueado",
+      "ancho": 768,
+      "archivo": "F13-alta-chofer/bloqueado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 8829
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "inicio",
+      "ancho": 768,
+      "archivo": "F14-chofer/inicio_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14775
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "inicio-libre",
+      "ancho": 768,
+      "archivo": "F14-chofer/inicio-libre_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14862
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "conectarse-sin-ubicacion",
+      "ancho": 768,
+      "archivo": "F14-chofer/conectarse-sin-ubicacion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18447
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "solicitudes",
+      "ancho": 768,
+      "archivo": "F14-chofer/solicitudes_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14460
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "ganancias",
+      "ancho": 768,
+      "archivo": "F14-chofer/ganancias_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14599
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "perfil",
+      "ancho": 768,
+      "archivo": "F14-chofer/perfil_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14462
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "viaje-confirmado",
+      "ancho": 768,
+      "archivo": "F14-chofer/viaje-confirmado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14804
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "liberar-motivo",
+      "ancho": 768,
+      "archivo": "F14-chofer/liberar-motivo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15894
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "en-recogida",
+      "ancho": 768,
+      "archivo": "F14-chofer/en-recogida_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14588
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "codigo-pasajero",
+      "ancho": 768,
+      "archivo": "F14-chofer/codigo-pasajero_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16363
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "no-aparece-confirmar",
+      "ancho": 768,
+      "archivo": "F14-chofer/no-aparece-confirmar_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17059
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "verificado",
+      "ancho": 768,
+      "archivo": "F14-chofer/verificado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14710
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "en-curso",
+      "ancho": 768,
+      "archivo": "F14-chofer/en-curso_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14760
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "panel",
+      "ancho": 768,
+      "archivo": "F17-panel/panel_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16662
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "operaciones",
+      "ancho": 768,
+      "archivo": "F17-panel/operaciones_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17212
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "choferes",
+      "ancho": 768,
+      "archivo": "F17-panel/choferes_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17224
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "vehiculos",
+      "ancho": 768,
+      "archivo": "F17-panel/vehiculos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16792
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "finanzas",
+      "ancho": 768,
+      "archivo": "F17-panel/finanzas_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16918
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "tarifas",
+      "ancho": 768,
+      "archivo": "F17-panel/tarifas_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16908
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "empresas",
+      "ancho": 768,
+      "archivo": "F17-panel/empresas_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16799
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "usuarios",
+      "ancho": 768,
+      "archivo": "F17-panel/usuarios_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17307
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "alertas",
+      "ancho": 768,
+      "archivo": "F17-panel/alertas_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16806
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "auditoria",
+      "ancho": 768,
+      "archivo": "F17-panel/auditoria_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16894
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "configuracion",
+      "ancho": 768,
+      "archivo": "F17-panel/configuracion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16689
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "detalle-no-se-presento",
+      "ancho": 768,
+      "archivo": "F17-panel/detalle-no-se-presento_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18584
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "decidir-no-se-presento",
+      "ancho": 768,
+      "archivo": "F17-panel/decidir-no-se-presento_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 19523
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "bloquear-con-viajes",
+      "ancho": 768,
+      "archivo": "F17-panel/bloquear-con-viajes_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20694
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "inicio-backend-caido",
+      "ancho": 768,
+      "archivo": "A8-errores/inicio-backend-caido_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 19212
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "inicio-sin-red",
+      "ancho": 768,
+      "archivo": "A8-errores/inicio-sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 22407
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "viajes-backend-caido",
+      "ancho": 768,
+      "archivo": "A8-errores/viajes-backend-caido_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18151
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "viajes-sin-red",
+      "ancho": 768,
+      "archivo": "A8-errores/viajes-sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20395
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "viaje-backend-caido",
+      "ancho": 768,
+      "archivo": "A8-errores/viaje-backend-caido_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18236
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "viaje-sin-red",
+      "ancho": 768,
+      "archivo": "A8-errores/viaje-sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20667
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "perfil-backend-caido",
+      "ancho": 768,
+      "archivo": "A8-errores/perfil-backend-caido_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18135
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "perfil-sin-red",
+      "ancho": 768,
+      "archivo": "A8-errores/perfil-sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20763
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-inicio-backend-caido",
+      "ancho": 768,
+      "archivo": "A8-errores/chofer-inicio-backend-caido_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18001
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-inicio-sin-red",
+      "ancho": 768,
+      "archivo": "A8-errores/chofer-inicio-sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20701
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-solicitudes-backend-caido",
+      "ancho": 768,
+      "archivo": "A8-errores/chofer-solicitudes-backend-caido_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17913
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-solicitudes-sin-red",
+      "ancho": 768,
+      "archivo": "A8-errores/chofer-solicitudes-sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20613
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-viaje-backend-caido",
+      "ancho": 768,
+      "archivo": "A8-errores/chofer-viaje-backend-caido_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17791
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-viaje-sin-red",
+      "ancho": 768,
+      "archivo": "A8-errores/chofer-viaje-sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20736
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "panel-backend-caido",
+      "ancho": 768,
+      "archivo": "A8-errores/panel-backend-caido_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18040
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "panel-sin-red",
+      "ancho": 768,
+      "archivo": "A8-errores/panel-sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20271
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-deslizar-sin-red",
+      "ancho": 768,
+      "archivo": "A8-errores/chofer-deslizar-sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18915
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "pasajero-cancelar-error-servidor",
+      "ancho": 768,
+      "archivo": "A8-errores/pasajero-cancelar-error-servidor_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17511
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "reconocido-panel",
+      "ancho": 768,
+      "archivo": "F9-sos/reconocido-panel_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17118
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "reconocido-pasajero",
+      "ancho": 768,
+      "archivo": "F9-sos/reconocido-pasajero_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15709
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "cancelada-por-pasajero",
+      "ancho": 768,
+      "archivo": "F6-cancelacion/cancelada-por-pasajero_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18838
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "liberado",
+      "ancho": 768,
+      "archivo": "F14-chofer/liberado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18998
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "carga",
+      "ancho": 1280,
+      "archivo": "F1-acceso/carga_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 1139
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "login",
+      "ancho": 1280,
+      "archivo": "F1-acceso/login_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 4077
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "login-error",
+      "ancho": 1280,
+      "archivo": "F1-acceso/login-error_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 8508
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "login-validacion",
+      "ancho": 1280,
+      "archivo": "F1-acceso/login-validacion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 5096
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "bloqueado",
+      "ancho": 1280,
+      "archivo": "F1-acceso/bloqueado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 8519
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "registro",
+      "ancho": 1280,
+      "archivo": "F1-acceso/registro_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 4146
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "registro-validacion",
+      "ancho": 1280,
+      "archivo": "F1-acceso/registro-validacion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 5112
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "terminos",
+      "ancho": 1280,
+      "archivo": "F1-acceso/terminos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 3982
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "privacidad",
+      "ancho": 1280,
+      "archivo": "F1-acceso/privacidad_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 4002
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "verificar-correo",
+      "ancho": 1280,
+      "archivo": "F1-acceso/verificar-correo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14187
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "perfil",
+      "ancho": 1280,
+      "archivo": "F1-acceso/perfil_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14369
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "chofer-alta-dos-pasos",
+      "ancho": 1280,
+      "archivo": "F1-acceso/chofer-alta-dos-pasos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17103
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "admin-reto-segundo-factor",
+      "ancho": 1280,
+      "archivo": "F1-acceso/admin-reto-segundo-factor_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 9043
+    },
+    {
+      "flujo": "F1-acceso",
+      "estado": "emulador-apagado",
+      "ancho": 1280,
+      "archivo": "F1-acceso/emulador-apagado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 9934
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "inicio-invitado",
+      "ancho": 1280,
+      "archivo": "F2-reserva/inicio-invitado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 8541
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "inicio",
+      "ancho": 1280,
+      "archivo": "F2-reserva/inicio_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17005
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "sin-permiso-ubicacion",
+      "ancho": 1280,
+      "archivo": "F2-reserva/sin-permiso-ubicacion_1280.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded.",
+      "erroresJs": [],
+      "ms": 76696
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "con-ubicacion",
+      "ancho": 1280,
+      "archivo": "F2-reserva/con-ubicacion_1280.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded.",
+      "erroresJs": [],
+      "ms": 76014
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "sin-direcciones",
+      "ancho": 1280,
+      "archivo": "F2-reserva/sin-direcciones_1280.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded.",
+      "erroresJs": [],
+      "ms": 76365
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "fecha-hora",
+      "ancho": 1280,
+      "archivo": "F2-reserva/fecha-hora_1280.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded.",
+      "erroresJs": [],
+      "ms": 76118
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "vehiculos",
+      "ancho": 1280,
+      "archivo": "F2-reserva/vehiculos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15608
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "confirmar",
+      "ancho": 1280,
+      "archivo": "F2-reserva/confirmar_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15992
+    },
+    {
+      "flujo": "F3-por-horas",
+      "estado": "inicio",
+      "ancho": 1280,
+      "archivo": "F3-por-horas/inicio_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20187
+    },
+    {
+      "flujo": "F10-empresas",
+      "estado": "formulario",
+      "ancho": 1280,
+      "archivo": "F10-empresas/formulario_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 4747
+    },
+    {
+      "flujo": "F10-empresas",
+      "estado": "validacion",
+      "ancho": 1280,
+      "archivo": "F10-empresas/validacion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 5669
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "pendiente",
+      "ancho": 1280,
+      "archivo": "F5-viaje/pendiente_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15866
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "liberada",
+      "ancho": 1280,
+      "archivo": "F5-viaje/liberada_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15922
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "confirmada",
+      "ancho": 1280,
+      "archivo": "F5-viaje/confirmada_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15694
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "en-camino",
+      "ancho": 1280,
+      "archivo": "F5-viaje/en-camino_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15592
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "llego-codigo",
+      "ancho": 1280,
+      "archivo": "F5-viaje/llego-codigo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15725
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "verificada",
+      "ancho": 1280,
+      "archivo": "F5-viaje/verificada_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15822
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "en-curso",
+      "ancho": 1280,
+      "archivo": "F5-viaje/en-curso_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15931
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "completada",
+      "ancho": 1280,
+      "archivo": "F5-viaje/completada_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15911
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "no-se-presento",
+      "ancho": 1280,
+      "archivo": "F5-viaje/no-se-presento_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15741
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "cancelada",
+      "ancho": 1280,
+      "archivo": "F5-viaje/cancelada_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15651
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "cancelada-con-recargo",
+      "ancho": 1280,
+      "archivo": "F5-viaje/cancelada-con-recargo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15615
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "codigo-error-servidor",
+      "ancho": 1280,
+      "archivo": "F5-viaje/codigo-error-servidor_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15797
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "codigo-sin-red",
+      "ancho": 1280,
+      "archivo": "F5-viaje/codigo-sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15800
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "reserva-inexistente",
+      "ancho": 1280,
+      "archivo": "F5-viaje/reserva-inexistente_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15901
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "sin-recargo",
+      "ancho": 1280,
+      "archivo": "F6-cancelacion/sin-recargo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16032
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "con-recargo",
+      "ancho": 1280,
+      "archivo": "F6-cancelacion/con-recargo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15679
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "error-servidor",
+      "ancho": 1280,
+      "archivo": "F6-cancelacion/error-servidor_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17173
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "sin-red",
+      "ancho": 1280,
+      "archivo": "F6-cancelacion/sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17389
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "lista",
+      "ancho": 1280,
+      "archivo": "F7-viajes/lista_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14678
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "vacio",
+      "ancho": 1280,
+      "archivo": "F7-viajes/vacio_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14484
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "pagos",
+      "ancho": 1280,
+      "archivo": "F7-viajes/pagos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14682
+    },
+    {
+      "flujo": "F8-valoracion",
+      "estado": "calificar",
+      "ancho": 1280,
+      "archivo": "F8-valoracion/calificar_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15819
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "boton",
+      "ancho": 1280,
+      "archivo": "F9-sos/boton_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15090
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "pulsando",
+      "ancho": 1280,
+      "archivo": "F9-sos/pulsando_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16381
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "abierto",
+      "ancho": 1280,
+      "archivo": "F9-sos/abierto_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15918
+    },
+    {
+      "flujo": "F13-alta-chofer",
+      "estado": "login",
+      "ancho": 1280,
+      "archivo": "F13-alta-chofer/login_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 3954
+    },
+    {
+      "flujo": "F13-alta-chofer",
+      "estado": "no-verificado",
+      "ancho": 1280,
+      "archivo": "F13-alta-chofer/no-verificado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14331
+    },
+    {
+      "flujo": "F13-alta-chofer",
+      "estado": "bloqueado",
+      "ancho": 1280,
+      "archivo": "F13-alta-chofer/bloqueado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 8800
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "inicio",
+      "ancho": 1280,
+      "archivo": "F14-chofer/inicio_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14887
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "inicio-libre",
+      "ancho": 1280,
+      "archivo": "F14-chofer/inicio-libre_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14594
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "conectarse-sin-ubicacion",
+      "ancho": 1280,
+      "archivo": "F14-chofer/conectarse-sin-ubicacion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18495
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "solicitudes",
+      "ancho": 1280,
+      "archivo": "F14-chofer/solicitudes_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14704
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "ganancias",
+      "ancho": 1280,
+      "archivo": "F14-chofer/ganancias_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14639
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "perfil",
+      "ancho": 1280,
+      "archivo": "F14-chofer/perfil_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14329
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "viaje-confirmado",
+      "ancho": 1280,
+      "archivo": "F14-chofer/viaje-confirmado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14584
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "liberar-motivo",
+      "ancho": 1280,
+      "archivo": "F14-chofer/liberar-motivo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15647
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "en-recogida",
+      "ancho": 1280,
+      "archivo": "F14-chofer/en-recogida_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14505
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "codigo-pasajero",
+      "ancho": 1280,
+      "archivo": "F14-chofer/codigo-pasajero_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16566
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "no-aparece-confirmar",
+      "ancho": 1280,
+      "archivo": "F14-chofer/no-aparece-confirmar_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15721
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "verificado",
+      "ancho": 1280,
+      "archivo": "F14-chofer/verificado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14900
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "en-curso",
+      "ancho": 1280,
+      "archivo": "F14-chofer/en-curso_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14926
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "panel",
+      "ancho": 1280,
+      "archivo": "F17-panel/panel_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16805
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "operaciones",
+      "ancho": 1280,
+      "archivo": "F17-panel/operaciones_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16910
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "choferes",
+      "ancho": 1280,
+      "archivo": "F17-panel/choferes_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16722
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "vehiculos",
+      "ancho": 1280,
+      "archivo": "F17-panel/vehiculos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16488
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "finanzas",
+      "ancho": 1280,
+      "archivo": "F17-panel/finanzas_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17151
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "tarifas",
+      "ancho": 1280,
+      "archivo": "F17-panel/tarifas_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16654
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "empresas",
+      "ancho": 1280,
+      "archivo": "F17-panel/empresas_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16705
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "usuarios",
+      "ancho": 1280,
+      "archivo": "F17-panel/usuarios_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16834
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "alertas",
+      "ancho": 1280,
+      "archivo": "F17-panel/alertas_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16891
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "auditoria",
+      "ancho": 1280,
+      "archivo": "F17-panel/auditoria_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16589
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "configuracion",
+      "ancho": 1280,
+      "archivo": "F17-panel/configuracion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16441
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "detalle-no-se-presento",
+      "ancho": 1280,
+      "archivo": "F17-panel/detalle-no-se-presento_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18537
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "decidir-no-se-presento",
+      "ancho": 1280,
+      "archivo": "F17-panel/decidir-no-se-presento_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 19788
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "bloquear-con-viajes",
+      "ancho": 1280,
+      "archivo": "F17-panel/bloquear-con-viajes_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 21246
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "inicio-backend-caido",
+      "ancho": 1280,
+      "archivo": "A8-errores/inicio-backend-caido_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 19504
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "inicio-sin-red",
+      "ancho": 1280,
+      "archivo": "A8-errores/inicio-sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 22204
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "viajes-backend-caido",
+      "ancho": 1280,
+      "archivo": "A8-errores/viajes-backend-caido_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18226
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "viajes-sin-red",
+      "ancho": 1280,
+      "archivo": "A8-errores/viajes-sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20572
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "viaje-backend-caido",
+      "ancho": 1280,
+      "archivo": "A8-errores/viaje-backend-caido_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18325
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "viaje-sin-red",
+      "ancho": 1280,
+      "archivo": "A8-errores/viaje-sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20794
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "perfil-backend-caido",
+      "ancho": 1280,
+      "archivo": "A8-errores/perfil-backend-caido_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18094
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "perfil-sin-red",
+      "ancho": 1280,
+      "archivo": "A8-errores/perfil-sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20917
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-inicio-backend-caido",
+      "ancho": 1280,
+      "archivo": "A8-errores/chofer-inicio-backend-caido_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17980
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-inicio-sin-red",
+      "ancho": 1280,
+      "archivo": "A8-errores/chofer-inicio-sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20997
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-solicitudes-backend-caido",
+      "ancho": 1280,
+      "archivo": "A8-errores/chofer-solicitudes-backend-caido_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18028
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-solicitudes-sin-red",
+      "ancho": 1280,
+      "archivo": "A8-errores/chofer-solicitudes-sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20468
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-viaje-backend-caido",
+      "ancho": 1280,
+      "archivo": "A8-errores/chofer-viaje-backend-caido_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18109
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-viaje-sin-red",
+      "ancho": 1280,
+      "archivo": "A8-errores/chofer-viaje-sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20575
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "panel-backend-caido",
+      "ancho": 1280,
+      "archivo": "A8-errores/panel-backend-caido_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18296
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "panel-sin-red",
+      "ancho": 1280,
+      "archivo": "A8-errores/panel-sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20677
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "chofer-deslizar-sin-red",
+      "ancho": 1280,
+      "archivo": "A8-errores/chofer-deslizar-sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 19292
+    },
+    {
+      "flujo": "A8-errores",
+      "estado": "pasajero-cancelar-error-servidor",
+      "ancho": 1280,
+      "archivo": "A8-errores/pasajero-cancelar-error-servidor_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17500
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "reconocido-panel",
+      "ancho": 1280,
+      "archivo": "F9-sos/reconocido-panel_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18039
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "reconocido-pasajero",
+      "ancho": 1280,
+      "archivo": "F9-sos/reconocido-pasajero_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16183
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "cancelada-por-pasajero",
+      "ancho": 1280,
+      "archivo": "F6-cancelacion/cancelada-por-pasajero_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18659
+    },
+    {
+      "flujo": "F14-chofer",
+      "estado": "liberado",
+      "ancho": 1280,
+      "archivo": "F14-chofer/liberado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 19415
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "ayuda",
+      "ancho": 390,
+      "archivo": "F9-sos/ayuda_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18430
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "ayuda",
+      "ancho": 768,
+      "archivo": "F9-sos/ayuda_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17674
+    },
+    {
+      "flujo": "F9-sos",
+      "estado": "ayuda",
+      "ancho": 1280,
+      "archivo": "F9-sos/ayuda_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18197
+    }
+  ]
+}
