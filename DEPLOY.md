@@ -647,6 +647,22 @@ en la misma transacción. Las reglas dejan al admin solo lectura y
 - «Quitar tarifa» pasa a «Desactivar tarifa»: la tarifa queda con
   `isActive: false` en vez de borrarse.
 
+### Reparto y pago al chófer
+
+`bookings/{id}.settlement` (lo escriben `settleBooking`, `backfillSettlements`
+y la corrección de un cobro) es el **reparto calculado**: importe,
+comisión y parte del chófer. **No registra si al chófer se le pagó**: esa
+marca no existe. El contador «Repartos de viajes» del panel
+(`AdminState.unsettledCount`) cuenta los viajes completados sin reparto o
+con un reparto de otro importe; no cuenta liquidaciones.
+
+Consecuencia: **«Corregir cobro» recalcula y reescribe el reparto (y la
+parte del chófer) aunque ese viaje ya se le haya liquidado al chófer por
+fuera de la app**. No lo comprueba porque no hay de dónde. Hasta que se
+decida cómo registrar los pagos al chófer (decisión del responsable),
+antes de corregir un cobro hay que verificar a mano si ese viaje ya se
+liquidó y, si es así, ajustar la diferencia en la siguiente liquidación.
+
 ### Auditoría anterior
 
 No hace falta migrar `admin_logs` (A9): las entradas nuevas llevan los

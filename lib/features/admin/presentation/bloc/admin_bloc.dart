@@ -322,7 +322,11 @@ class AdminState extends Equatable {
       kDefaultCommissionPct;
 
   /// Viajes completados sin reparto confirmado por el servidor (anteriores a
-  /// settleBooking, o con un precio ajustado aún sin recalcular).
+  /// settleBooking, o con un precio ajustado aún sin recalcular). Sale de
+  /// `bookings/{id}.settlement`: es el reparto calculado (comisión y parte
+  /// del chófer), NO un registro de que al chófer se le pagó. No existe
+  /// marca de «chófer pagado»: corregir un cobro reescribe el reparto aunque
+  /// ya se le haya pagado por fuera (DEPLOY.md, «Reparto y pago al chófer»).
   int get unsettledCount => bookings
       .where(
         (b) =>
