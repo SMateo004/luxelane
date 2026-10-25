@@ -58,6 +58,16 @@ describe('registrar un cobro manual', () => {
   });
 });
 
+describe('métodos del panel', () => {
+  it.each([['cash'], ['qr'], ['transfer'], ['card_terminal']])('acepta %s', async (method) => {
+    await expect(run({ action: 'record', bookingId: 'b1', method, reason: REASON })).resolves.toHaveProperty('paymentId');
+  });
+
+  it('rechaza un método que el panel no ofrece', async () => {
+    expect(await reason(run({ action: 'record', bookingId: 'b1', method: 'card', reason: REASON }))).toBe('invalid_request');
+  });
+});
+
 describe('corregir un cobro manual', () => {
   it('cambia solo lo pedido y conserva el valor anterior en la auditoría', async () => {
     const { paymentId } = await run({ action: 'record', bookingId: 'b1', method: 'cash', reason: REASON });

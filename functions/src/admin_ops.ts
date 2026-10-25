@@ -172,8 +172,8 @@ export async function adminUpdateBooking(deps: AdminDeps, actor: AdminActor, dat
 // transferencia). El pago lo lee el pasajero: no lleva el uid del admin.
 // ---------------------------------------------------------------------------
 
-/** Los métodos que ofrece el panel (admin_finance_tab.dart). */
-export const MANUAL_METHODS = ['cash', 'qr', 'transfer'] as const;
+/** Los métodos que ofrece el panel (recordPaymentDialog en admin_finance_tab.dart). */
+export const MANUAL_METHODS = ['cash', 'qr', 'transfer', 'card_terminal'] as const;
 
 export const paymentSchema = z.discriminatedUnion('action', [
   z.strictObject({
