@@ -48,8 +48,14 @@ class _RegisterPageState extends State<RegisterPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthAuthenticated) {
+          // Primero «Verifica tu correo» (reservar lo exige); luego, a donde
+          // iba.
           final from = GoRouterState.of(context).uri.queryParameters['from'];
-          context.go(from != null && from.startsWith('/') ? from : '/');
+          context.go(
+            from != null && from.startsWith('/')
+                ? '/verify-email?from=${Uri.encodeComponent(from)}'
+                : '/verify-email',
+          );
         }
         if (state is AuthError) {
           ScaffoldMessenger.of(context).showSnackBar(

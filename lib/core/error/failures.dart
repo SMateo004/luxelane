@@ -7,6 +7,20 @@ class ServerFailure extends Failure {
   const ServerFailure([super.message = 'Server error']);
 }
 
+/// Por qué no se pudo enviar o comprobar la verificación del correo.
+enum EmailVerificationIssue { tooManyRequests, network, other }
+
+class EmailVerificationFailure extends Failure {
+  const EmailVerificationFailure(this.issue, super.message);
+  final EmailVerificationIssue issue;
+}
+
+/// Reservar exige el correo verificado (createBooking: email_not_verified).
+class EmailNotVerifiedFailure extends Failure {
+  const EmailNotVerifiedFailure()
+      : super('Verifica tu correo para poder reservar.');
+}
+
 class AuthFailure extends Failure {
   const AuthFailure([super.message = 'Authentication error']);
 }

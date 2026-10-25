@@ -50,8 +50,20 @@ abstract class AuthRepository {
   /// Perfil en vivo de [uid] (null si no existe), para reflejar cambios del
   /// admin o del servidor (bloqueo, cliente de pagos…) sin reiniciar.
   Stream<User?> watchUser(String uid);
+
+  /// Envía (o reenvía) el enlace de verificación del correo. Los errores
+  /// llegan como [EmailVerificationFailure].
   Future<Either<Failure, void>> sendVerificationEmail();
-  Future<Either<Failure, void>> sendPhoneVerification(String phone);
+
+  /// Recarga la cuenta y, si Auth da el correo por verificado, pide al
+  /// servidor que lo anote (syncEmailVerification). true si ya está.
+  Future<Either<Failure, bool>> refreshEmailVerification();
+
+  /// La cuenta actual entra con correo y contraseña y aún no lo verificó.
+  bool get needsEmailVerification;
+
+  // El teléfono se recoge pero NO se verifica: en el piloto no hay
+  // proveedor de SMS (decisión 1). No hay método de verificación.
   Future<Either<Failure, void>> resetPassword(String email);
   Future<Either<Failure, User>> getCurrentUser();
 

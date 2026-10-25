@@ -7,6 +7,7 @@ import '../../features/admin/presentation/pages/admin_dashboard_page.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
+import '../../features/auth/presentation/pages/verify_email_page.dart';
 import '../../features/booking/presentation/pages/booking_screen.dart';
 import '../../features/booking/presentation/pages/ride_type_page.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
@@ -35,6 +36,7 @@ abstract class LuxRoutes {
   static const splash = '/splash';
   static const login = '/login';
   static const register = '/register';
+  static const verifyEmail = '/verify-email';
   static const home = '/';
   static const booking = '/booking';
   static const rideType = '/ride-type';
@@ -209,6 +211,18 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         GoRoute(
           path: LuxRoutes.register,
           pageBuilder: (c, s) => _fade(const RegisterPage(), s),
+        ),
+        GoRoute(
+          path: LuxRoutes.verifyEmail,
+          pageBuilder: (c, s) {
+            final st = authBloc.state;
+            return _slide(
+              VerifyEmailPage(
+                email: st is AuthAuthenticated ? st.user.email : null,
+              ),
+              s,
+            );
+          },
         ),
         GoRoute(
           path: LuxRoutes.admin,

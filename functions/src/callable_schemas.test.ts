@@ -135,6 +135,7 @@ const CASES: Record<string, Case> = {
     wrongType: { paymentMethodId: 1 }, extreme: [{ paymentMethodId: 'card_1' }],
   },
   deleteAccount: { schema: c.deleteAccount, valid: null, wrongType: 'borrar', extreme: [[]] },
+  syncEmailVerification: { schema: c.syncEmailVerification, valid: null, wrongType: 'sí', extreme: [[]] },
   ensureStripeCustomer: { schema: c.ensureStripeCustomer, valid: {}, wrongType: 1, extreme: [[]] },
   backfillSettlements: { schema: c.backfillSettlements, valid: undefined, wrongType: true, extreme: [[]] },
   assignNearestDriver: {

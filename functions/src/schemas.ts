@@ -29,6 +29,7 @@ export const callableSchemas = {
   deleteAccount: noInput,
   ensureStripeCustomer: noInput,
   backfillSettlements: noInput,
+  syncEmailVerification: noInput,
   assignNearestDriver: z.strictObject({ bookingId: docId }),
   acceptBooking: z.strictObject({ bookingId: docId }),
 } as const;

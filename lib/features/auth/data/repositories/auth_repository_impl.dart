@@ -120,11 +120,21 @@ class AuthRepositoryImpl implements AuthRepository {
         // are granted by an admin.
         role: role,
         createdAt: DateTime.now(),
-        isVerified: true,
+        // Lo marca el servidor al comprobar el correo en Auth (H6).
+        isVerified: false,
         isActive: true,
         fcmTokens: const [],
       );
-      await _db.collection('users').doc(user.id).set(user.toJson());
+      await _db.collection('users').doc(user.id).set({
+        ...user.toJson(),
+        // Sin proveedor de SMS: el teléfono no está verificado.
+        'phoneVerified': false,
+      });
+      try {
+        await cred.user!.sendEmailVerification();
+      } catch (_) {
+        // Sin red o límite: la pantalla de verificación permite reenviarlo.
+      }
       return Right(user);
     } on fb.FirebaseAuthException catch (e) {
       return Left(AuthFailure(_emailErrorMessage(e.code)));
@@ -198,12 +208,13 @@ class AuthRepositoryImpl implements AuthRepository {
       // Roles are granted server-side only (see firestore.rules).
       role: UserRole.rider,
       createdAt: DateTime.now(),
-      // Google has already verified the address.
-      isVerified: fbUser.emailVerified,
+      // Aunque Google ya lo verificó, isVerified lo escribe el servidor
+      // (syncEmailVerification); el token ya lleva email_verified.
+      isVerified: false,
       isActive: true,
       fcmTokens: const [],
     );
-    await ref.set(user.toJson());
+    await ref.set({...user.toJson(), 'phoneVerified': false});
     return user;
   }
 
@@ -328,14 +339,46 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await _auth.currentUser?.sendEmailVerification();
       return const Right(null);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
+    } on fb.FirebaseAuthException catch (e) {
+      return Left(emailVerificationFailureFor(e.code));
+    } catch (_) {
+      return Left(emailVerificationFailureFor(''));
     }
   }
 
   @override
-  Future<Either<Failure, void>> sendPhoneVerification(String phone) async {
-    return const Right(null);
+  bool get needsEmailVerification {
+    final u = _auth.currentUser;
+    if (u == null || u.emailVerified) return false;
+    return u.providerData.any((p) => p.providerId == 'password');
+  }
+
+  @override
+  Future<Either<Failure, bool>> refreshEmailVerification() async {
+    try {
+      final u = _auth.currentUser;
+      if (u == null) return const Right(false);
+      await u.reload();
+      final fresh = _auth.currentUser;
+      if (fresh == null || !fresh.emailVerified) return const Right(false);
+      // Token nuevo con email_verified para que createBooking lo vea.
+      await fresh.getIdToken(true);
+      await _functions.httpsCallable('syncEmailVerification').call<void>();
+      return const Right(true);
+    } on fb.FirebaseAuthException catch (e) {
+      return Left(emailVerificationFailureFor(e.code));
+    } on FirebaseFunctionsException catch (e) {
+      return Left(
+        EmailVerificationFailure(
+          e.code == 'unavailable' || e.code == 'deadline-exceeded'
+              ? EmailVerificationIssue.network
+              : EmailVerificationIssue.other,
+          functionErrorMessage(e.code, e.details),
+        ),
+      );
+    } catch (_) {
+      return Left(emailVerificationFailureFor(''));
+    }
   }
 
   @override
@@ -375,3 +418,21 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 }
+
+/// Errores de Auth al enviar o comprobar la verificación del correo.
+EmailVerificationFailure emailVerificationFailureFor(String code) =>
+    switch (code) {
+      'too-many-requests' => const EmailVerificationFailure(
+          EmailVerificationIssue.tooManyRequests,
+          'Enviamos varios enlaces seguidos. Espera unos minutos antes de '
+          'pedir otro.',
+        ),
+      'network-request-failed' => const EmailVerificationFailure(
+          EmailVerificationIssue.network,
+          'Sin conexión. Revisa tu red e inténtalo de nuevo.',
+        ),
+      _ => const EmailVerificationFailure(
+          EmailVerificationIssue.other,
+          'No pudimos completar la verificación. Inténtalo de nuevo.',
+        ),
+    };

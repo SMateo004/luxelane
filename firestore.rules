@@ -57,15 +57,22 @@ service cloud.firestore {
     // which bypasses these rules) may set or change them. Nobody can make
     // themselves admin or driver from the client.
     // isVerified: la verificación no se la da uno mismo (matriz, H2).
+    // phoneVerified: no hay proveedor de SMS; el teléfono no se verifica.
+    // emailVerifiedAt: lo escribe syncEmailVerification (H6).
     function privilegedUserFields() {
-      return ['role', 'isActive', 'stripeCustomerId', 'isVerified'];
+      return ['role', 'isActive', 'stripeCustomerId', 'isVerified',
+        'phoneVerified', 'emailVerifiedAt'];
     }
 
-    // A self-created profile is always an active rider with no Stripe link.
+    // A self-created profile is always an active rider with no Stripe link,
+    // sin correo ni teléfono verificados: eso lo escribe el servidor (H6).
     function isValidSelfSignup(uid) {
       let d = request.resource.data;
       return d.role == 'rider' &&
         d.get('isActive', true) == true &&
+        d.get('isVerified', false) == false &&
+        d.get('phoneVerified', false) == false &&
+        !('emailVerifiedAt' in d) &&
         d.get('stripeCustomerId', null) == null &&
         d.get('id', uid) == uid;
     }

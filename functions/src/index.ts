@@ -10,6 +10,7 @@ import { reconcileOpenRequests } from './reconcile';
 import { resolveAdminAlert } from './alerts';
 import * as tripFlow from './trip_flow';
 import * as businessLeads from './business_leads';
+import * as identity from './identity';
 import * as incidents from './incidents';
 import { isTransient, withRetryPolicy } from './retry_policy';
 import * as stripe from './stripe_service';
@@ -40,8 +41,19 @@ export const quoteBooking = secureCallable('quoteBooking', { secrets: [MAPS_SERV
   bookingService.quoteBooking(bookingDeps(), req.auth?.uid, req.data));
 
 /** Única forma de crear una reserva: con precio del servidor y su solicitud abierta. */
-export const createBooking = secureCallable('createBooking', { secrets: [MAPS_SERVER_KEY] }, (req) =>
-  bookingService.createBooking(bookingDeps(), req.auth?.uid, req.data));
+export const createBooking = secureCallable('createBooking', { secrets: [MAPS_SERVER_KEY] }, (req) => {
+  // Con sesión, reservar exige el correo verificado (decisión 1, H6).
+  if (req.auth) identity.requireVerifiedEmail(req.auth.token as unknown as Record<string, unknown>);
+  return bookingService.createBooking(bookingDeps(), req.auth?.uid, req.data);
+});
+
+const identityDeps = (): identity.IdentityDeps => ({ db, auth: identity.realAuth() });
+
+/** La app la llama tras verificar el correo: el servidor lo comprueba en Auth. */
+export const syncEmailVerification = secureCallable('syncEmailVerification', {}, (req) => {
+  parseInput(schema.syncEmailVerification, req.data);
+  return identity.syncEmailVerification(identityDeps(), requireAuth(req));
+});
 
 // ---------------------------------------------------------------------------
 // Pasos del viaje desde la recogida (D1): solo el servidor cambia el estado

@@ -59,6 +59,8 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   // Con sesión; sin ella cuentan la IP seudonimizada y el correo
   // (LEAD_LIMITS en business_leads.ts).
   submitBusinessLead: perHour(5),
+  // La app la llama al volver de verificar el correo.
+  syncEmailVerification: per10min(20),
   acceptBooking: per10min(30),
 };
 

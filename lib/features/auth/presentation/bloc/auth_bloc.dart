@@ -59,13 +59,6 @@ class VerificationEmailSent extends AuthEvent {
   const VerificationEmailSent();
 }
 
-class PhoneVerificationRequested extends AuthEvent {
-  const PhoneVerificationRequested({required this.phone});
-  final String phone;
-  @override
-  List<Object?> get props => [phone];
-}
-
 class PasswordResetRequested extends AuthEvent {
   const PasswordResetRequested({required this.email});
   final String email;
@@ -147,7 +140,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutRequested>(_onLogout);
     on<_AuthSignedOut>(_onSignedOut);
     on<VerificationEmailSent>(_onVerificationEmail);
-    on<PhoneVerificationRequested>(_onPhoneVerification);
     on<PasswordResetRequested>(_onPasswordReset);
     on<_AuthProfileChanged>(_onProfileChanged);
   }
@@ -298,13 +290,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     await _repo.sendVerificationEmail();
-  }
-
-  Future<void> _onPhoneVerification(
-    PhoneVerificationRequested event,
-    Emitter<AuthState> emit,
-  ) async {
-    await _repo.sendPhoneVerification(event.phone);
   }
 
   Future<void> _onPasswordReset(
