@@ -41,9 +41,13 @@ export const quoteBooking = secureCallable('quoteBooking', { secrets: [MAPS_SERV
   bookingService.quoteBooking(bookingDeps(), req.auth?.uid, req.data));
 
 /** Única forma de crear una reserva: con precio del servidor y su solicitud abierta. */
-export const createBooking = secureCallable('createBooking', { secrets: [MAPS_SERVER_KEY] }, (req) => {
-  // Con sesión, reservar exige el correo verificado (decisión 1, H6).
-  if (req.auth) identity.requireVerifiedEmail(req.auth.token as unknown as Record<string, unknown>);
+export const createBooking = secureCallable('createBooking', { secrets: [MAPS_SERVER_KEY] }, async (req) => {
+  // Con sesión, reservar exige el correo verificado (decisión 1, H6) y los
+  // términos vigentes aceptados (decisión 7).
+  if (req.auth) {
+    identity.requireVerifiedEmail(req.auth.token as unknown as Record<string, unknown>);
+    await identity.requireCurrentTerms(db, req.auth.uid);
+  }
   return bookingService.createBooking(bookingDeps(), req.auth?.uid, req.data);
 });
 
@@ -68,6 +72,12 @@ export const setUserBlocked = secureCallable('setUserBlocked', {}, async (req) =
 export const syncEmailVerification = secureCallable('syncEmailVerification', {}, (req) => {
   parseInput(schema.syncEmailVerification, req.data);
   return identity.syncEmailVerification(identityDeps(), requireAuth(req));
+});
+
+/** Aceptación de los términos: versión vigente, hora del servidor y versión de la app. */
+export const acceptTerms = secureCallable('acceptTerms', {}, (req) => {
+  const input = parseInput(schema.acceptTerms, req.data);
+  return identity.acceptTerms(db, requireAuth(req), input);
 });
 
 // ---------------------------------------------------------------------------

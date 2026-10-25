@@ -84,15 +84,17 @@ service cloud.firestore {
     // emailVerifiedAt: lo escribe syncEmailVerification (H6).
     function privilegedUserFields() {
       return ['role', 'isActive', 'stripeCustomerId', 'isVerified',
-        'phoneVerified', 'emailVerifiedAt'];
+        'phoneVerified', 'emailVerifiedAt', 'terms'];
     }
 
     function serverOnlyUserFields() {
-      return ['role', 'isActive', 'roleUpdatedAt', 'blockedAt', 'emailVerifiedAt'];
+      return ['role', 'isActive', 'roleUpdatedAt', 'blockedAt', 'emailVerifiedAt',
+        'terms'];
     }
 
     // A self-created profile is always an active rider with no Stripe link,
     // sin correo ni teléfono verificados: eso lo escribe el servidor (H6).
+    // La aceptación de los términos también (acceptTerms, decisión 7).
     function isValidSelfSignup(uid) {
       let d = request.resource.data;
       return d.role == 'rider' &&
@@ -100,6 +102,7 @@ service cloud.firestore {
         d.get('isVerified', false) == false &&
         d.get('phoneVerified', false) == false &&
         !('emailVerifiedAt' in d) &&
+        !('terms' in d) &&
         d.get('stripeCustomerId', null) == null &&
         d.get('id', uid) == uid;
     }

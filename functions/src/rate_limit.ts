@@ -61,6 +61,8 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   submitBusinessLead: perHour(5),
   // La app la llama al volver de verificar el correo.
   syncEmailVerification: per10min(20),
+  // Al registrarse o al publicarse una versión nueva de los términos.
+  acceptTerms: per10min(10),
   // Panel: cambios de rol y bloqueos.
   setUserRole: per10min(30),
   setUserBlocked: per10min(30),

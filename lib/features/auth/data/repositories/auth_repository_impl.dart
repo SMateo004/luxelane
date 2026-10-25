@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/auth/mfa.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/enums/enums.dart';
@@ -138,6 +139,9 @@ class AuthRepositoryImpl implements AuthRepository {
       } catch (_) {
         // Sin red o límite: la pantalla de verificación permite reenviarlo.
       }
+      // Marcó la casilla al registrarse. Si no llega al servidor, reservar
+      // lo vuelve a pedir (terms_required).
+      await acceptTerms();
       return Right(user);
     } on fb.FirebaseAuthException catch (e) {
       return Left(AuthFailure(_emailErrorMessage(e.code)));
@@ -329,6 +333,29 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Right(null);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> acceptTerms() async {
+    try {
+      final v = (await _db.collection('config').doc('global').get())
+          .data()?['legalVersion'];
+      String? app;
+      try {
+        app = (await PackageInfo.fromPlatform()).version;
+      } catch (_) {
+        /* sin datos del paquete (pruebas) */
+      }
+      await _functions.httpsCallable('acceptTerms').call({
+        if (v is String && v.isNotEmpty) 'version': v,
+        'appVersion': app == null || app.isEmpty ? 'desconocida' : app,
+      });
+      return const Right(null);
+    } on FirebaseFunctionsException catch (e) {
+      return Left(ServerFailure(acceptTermsErrorMessage(e.code, e.details)));
+    } catch (_) {
+      return Left(ServerFailure(acceptTermsErrorMessage('', null)));
     }
   }
 

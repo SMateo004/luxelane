@@ -50,6 +50,11 @@ abstract class AuthRepository {
   /// quedan viajes activos o reservados.
   Future<Either<Failure, void>> deleteAccount();
 
+  /// Anota en el servidor que la cuenta acepta los términos vigentes
+  /// (config/global.legalVersion), con la hora del servidor y la versión de
+  /// la app (decisión 7).
+  Future<Either<Failure, void>> acceptTerms();
+
   /// Proveedor con el que la cuenta actual puede volver a identificarse.
   ReauthMethod get reauthMethod;
 

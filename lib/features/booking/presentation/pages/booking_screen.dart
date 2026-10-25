@@ -28,6 +28,7 @@ import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/lux_raised.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/google_sign_in_button.dart';
+import '../../../auth/presentation/widgets/terms_required_dialog.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../../payments/presentation/bloc/payment_bloc.dart';
 import '../bloc/booking_bloc.dart';
@@ -672,6 +673,10 @@ class _BookingScreenState extends State<BookingScreen> {
             if (state is BookingEmailNotVerified) {
               setState(() => _loading = false);
               EmailNotVerifiedDialog.show(ctx);
+            }
+            if (state is BookingTermsRequired) {
+              setState(() => _loading = false);
+              TermsRequiredDialog.show(ctx);
             }
             if (state is BookingPriceChanged) {
               setState(() => _loading = false);

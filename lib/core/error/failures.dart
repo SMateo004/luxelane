@@ -21,6 +21,13 @@ class EmailNotVerifiedFailure extends Failure {
       : super('Verifica tu correo para poder reservar.');
 }
 
+/// Reservar exige aceptar los términos vigentes (createBooking:
+/// terms_required).
+class TermsRequiredFailure extends Failure {
+  const TermsRequiredFailure()
+      : super('Acepta los términos vigentes para poder reservar.');
+}
+
 class AuthFailure extends Failure {
   const AuthFailure([super.message = 'Authentication error']);
 }

@@ -212,7 +212,22 @@ class _RegisterPageState extends State<RegisterPage> {
                   validator: (v) =>
                       v == null || v.length < 6 ? 'Mínimo 6 caracteres' : null,
                 ),
-                const SizedBox(height: LuxSpacing.xl),
+                const SizedBox(height: LuxSpacing.md),
+                // Casilla explícita (decisión 7): sin marcarla no se crea la
+                // cuenta. El servidor anota versión y hora (acceptTerms).
+                FormField<bool>(
+                  initialValue: false,
+                  validator: (v) => v == true
+                      ? null
+                      : 'Acepta los Términos y la Política de privacidad '
+                          'para continuar',
+                  builder: (field) => _TermsConsent(
+                    value: field.value ?? false,
+                    error: field.errorText,
+                    onChanged: loading ? null : field.didChange,
+                  ),
+                ),
+                const SizedBox(height: LuxSpacing.lg),
                 LuxButton(
                   label: 'Crear cuenta',
                   onPressed: loading ? null : _submit,
@@ -225,51 +240,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   style: LuxTypography.caption.copyWith(
                     color: LuxColors.inkSecondary,
                   ),
-                ),
-                const SizedBox(height: LuxSpacing.xs),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Text(
-                      'Al crear tu cuenta aceptas los ',
-                      style: LuxTypography.caption.copyWith(
-                        color: LuxColors.inkSecondary,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => context.push('/legal/terminos'),
-                      child: Text(
-                        'Términos',
-                        style: LuxTypography.caption.copyWith(
-                          color: LuxColors.sapphire,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      ' y la ',
-                      style: LuxTypography.caption.copyWith(
-                        color: LuxColors.inkSecondary,
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () => context.push('/legal/privacidad'),
-                      child: Text(
-                        'Política de privacidad',
-                        style: LuxTypography.caption.copyWith(
-                          color: LuxColors.sapphire,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      '.',
-                      style: LuxTypography.caption.copyWith(
-                        color: LuxColors.inkSecondary,
-                      ),
-                    ),
-                  ],
                 ),
                 const SizedBox(height: LuxSpacing.sm),
                 Row(
@@ -290,4 +260,68 @@ class _RegisterPageState extends State<RegisterPage> {
           );
         },
       );
+}
+
+/// «He leído y acepto los Términos y la Política de privacidad», con enlace a
+/// cada texto. Los textos están en /legal/* (pendientes de revisión legal).
+class _TermsConsent extends StatelessWidget {
+  const _TermsConsent({
+    required this.value,
+    required this.onChanged,
+    this.error,
+  });
+
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+  final String? error;
+
+  @override
+  Widget build(BuildContext context) {
+    final plain = LuxTypography.caption.copyWith(color: LuxColors.inkSecondary);
+    final link = LuxTypography.caption.copyWith(
+      color: LuxColors.sapphire,
+      decoration: TextDecoration.underline,
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Checkbox(
+              key: const Key('terms-checkbox'),
+              value: value,
+              onChanged:
+                  onChanged == null ? null : (v) => onChanged!(v ?? false),
+            ),
+            Expanded(
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text('He leído y acepto los ', style: plain),
+                  GestureDetector(
+                    onTap: () => context.push('/legal/terminos'),
+                    child: Text('Términos', style: link),
+                  ),
+                  Text(' y la ', style: plain),
+                  GestureDetector(
+                    onTap: () => context.push('/legal/privacidad'),
+                    child: Text('Política de privacidad', style: link),
+                  ),
+                  Text('.', style: plain),
+                ],
+              ),
+            ),
+          ],
+        ),
+        if (error != null)
+          Padding(
+            padding: const EdgeInsets.only(left: 12),
+            child: Text(
+              error!,
+              style: LuxTypography.caption.copyWith(color: LuxColors.error),
+            ),
+          ),
+      ],
+    );
+  }
 }

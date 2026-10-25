@@ -77,6 +77,15 @@ String deleteAccountErrorMessage(String code, Object? details) =>
           'No pudimos eliminar tu cuenta. Inténtalo de nuevo.',
     };
 
+/// acceptTerms: si cambió la versión mientras se leía, se vuelve a aceptar.
+String acceptTermsErrorMessage(String code, Object? details) =>
+    switch (functionErrorReason(details)) {
+      'terms_outdated' => 'Los términos se acaban de actualizar. Vuelve a '
+          'abrirlos y acéptalos de nuevo.',
+      _ => commonFunctionError(code, details) ??
+          'No pudimos registrar tu aceptación. Inténtalo de nuevo.',
+    };
+
 /// Formulario de empresas (submitBusinessLead).
 String businessLeadErrorMessage(String code, Object? details) => switch (code) {
       'resource-exhausted' =>

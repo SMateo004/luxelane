@@ -150,3 +150,38 @@ export async function setUserBlocked(deps: IdentityDeps, actor: AdminActor,
   if (input.blocked) await deps.auth.revokeRefreshTokens(input.uid);
   return { uid: input.uid, blocked: input.blocked };
 }
+
+// ---------------------------------------------------------------------------
+// Términos (decisión 7). La versión vigente es config/global.legalVersion;
+// la fija el responsable al publicar textos revisados. Sin ella no se exige
+// nada al reservar.
+// ---------------------------------------------------------------------------
+
+export async function currentLegalVersion(db: admin.firestore.Firestore): Promise<string | null> {
+  const v = (await db.doc('config/global').get()).data()?.legalVersion;
+  return typeof v === 'string' && v.trim() !== '' ? v : null;
+}
+
+/**
+ * Anota la aceptación con la hora del servidor. Si hay versión vigente, la
+ * app debe mandar esa misma: quien vio un texto anterior vuelve a aceptar.
+ */
+export async function acceptTerms(db: admin.firestore.Firestore, uid: string,
+  input: { version?: string; appVersion: string }): Promise<{ version: string | null }> {
+  const current = await currentLegalVersion(db);
+  if (current !== null && input.version !== current) throw idError('failed-precondition', 'terms_outdated');
+  const ref = db.collection('users').doc(uid);
+  if (!(await ref.get()).exists) throw idError('not-found', 'profile_not_found');
+  await ref.update({
+    terms: { version: current, acceptedAt: admin.firestore.FieldValue.serverTimestamp(), appVersion: input.appVersion },
+  });
+  return { version: current };
+}
+
+/** Reservar exige haber aceptado la versión vigente, si la hay. */
+export async function requireCurrentTerms(db: admin.firestore.Firestore, uid: string): Promise<void> {
+  const current = await currentLegalVersion(db);
+  if (current === null) return;
+  const accepted = (await db.collection('users').doc(uid).get()).data()?.terms?.version;
+  if (accepted !== current) throw idError('failed-precondition', 'terms_required');
+}
