@@ -159,10 +159,17 @@ export async function releaseBooking(deps: CancelDeps, uid: string | undefined, 
       appVersion: input.appVersion, location: input.location,
       extra: { method: 'driver_release', releaseReason: input.reason },
     });
+    // Cuánto falta para la recogida: central decide si hay que llamar ya al
+    // pasajero (no hay otro aviso hasta que se asigne o se cancele).
+    const pickupMs = (b.scheduledAt as admin.firestore.Timestamp | undefined)?.toMillis();
+    const minutesToPickup = pickupMs === undefined ? null : Math.round((pickupMs - nowMs(deps)) / 60_000);
     alert(tx, db, {
       type: 'driver_released_booking', severity: 'high', bookingId: ref.id, driverId: uid,
-      reason: input.reason,
-      message: 'El chófer liberó la reserva. Vuelve a estar buscando chófer; revisa si hay que asignarla.',
+      reason: input.reason, minutesToPickup,
+      message: minutesToPickup === null
+        ? 'El chófer liberó la reserva. Vuelve a estar buscando chófer; revisa si hay que asignarla.'
+        : `El chófer liberó la reserva y faltan ${minutesToPickup} min para la recogida. ` +
+          'Vuelve a estar buscando chófer; revisa si hay que asignarla o llamar al pasajero.',
     });
     return { status: 'pending' as Status, alreadyReleased: false };
   });

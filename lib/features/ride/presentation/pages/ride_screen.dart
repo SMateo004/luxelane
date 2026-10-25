@@ -4,17 +4,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
+import '../../../../core/config/remote_flags.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../../driver/presentation/widgets/pickup_code_entry.dart'
+    show CallDispatchButton;
 import '../../../incidents/presentation/widgets/sos_entry.dart';
 import '../widgets/cancel_booking_dialog.dart';
+import '../widgets/pending_status.dart';
 import '../widgets/pickup_code_card.dart';
 
 /// Estados en que el chófer va, espera o lleva al pasajero: solo entonces
@@ -132,7 +137,7 @@ class _RideScreenState extends State<RideScreen> {
       case null:
         return 'Cargando tu reserva…';
       case BookingStatus.pending:
-        return 'Estamos asignando a tu chófer. Te avisaremos en cuanto esté confirmado.';
+        return pendingMessage(pendingSituation(_booking!, DateTime.now()));
       case BookingStatus.confirmed:
         return 'Tu reserva está confirmada. Te avisaremos cuando tu chófer salga hacia ti.';
       case BookingStatus.driverArriving:
@@ -277,7 +282,25 @@ class _RideScreenState extends State<RideScreen> {
   Widget _driverSection() {
     final d = _driver;
     if (_status == BookingStatus.cancelled) return const SizedBox.shrink();
-    if (d == null) return const _AssigningCard();
+    if (d == null) {
+      final b = _booking;
+      final needsDispatch = b != null &&
+          b.status == BookingStatus.pending &&
+          pendingNeedsDispatch(pendingSituation(b, DateTime.now()));
+      if (!needsDispatch) return const _AssigningCard();
+      // Liberada o fuera de hora: además de esperar, puede llamar a central.
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const _AssigningCard(),
+          const SizedBox(height: LuxSpacing.sm),
+          ValueListenableBuilder<String?>(
+            valueListenable: RemoteFlags.instance.dispatchPhone,
+            builder: (_, phone, __) => CallDispatchButton(phone: phone),
+          ),
+        ],
+      );
+    }
     final b = _booking!;
     return DriverCard(
       name: d.name.isNotEmpty ? d.name : 'Tu chófer',
