@@ -49,15 +49,14 @@ class IncidentHelpSheet extends StatelessWidget {
         i.status != IncidentStatus.closed) {
       return (
         'Aviso cancelado',
-        'Central te llamará para verificar que estás bien. Ya no compartimos '
-            'tu ubicación.',
+        'Central fue avisada. Ya no compartimos tu ubicación.',
       );
     }
     return switch (i?.status) {
       IncidentStatus.open => (
           'Avisamos a central',
-          'Te contactarán en breve. Compartimos tu ubicación mientras dure '
-              'el aviso.',
+          'Central fue avisada. Compartimos tu ubicación mientras dure el '
+              'aviso.',
         ),
       IncidentStatus.acknowledged => (
           'Central recibió tu aviso',

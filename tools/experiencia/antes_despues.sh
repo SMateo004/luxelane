@@ -14,6 +14,6 @@ for key in "$@"; do
   a="$ANTES/$key.png"; d="$ROOT/docs/capturas/$key.png"
   [ -f "$a" ] && [ -f "$d" ] || { echo "falta $key" >&2; continue; }
   montage -font DejaVu-Sans -pointsize 16 -label 'Antes' "$a" -label 'Después' "$d" \
-    -tile 2x -geometry 'x700+8+8' -background white "$OUT/$name.png"
-  echo "$OUT/$name.png"
+    -tile 2x -geometry 'x640+8+8' -background white -quality 78 "$OUT/$name.jpg"
+  echo "$OUT/$name.jpg"
 done

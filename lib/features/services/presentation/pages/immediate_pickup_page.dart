@@ -51,9 +51,8 @@ class ImmediatePickupPage extends StatelessWidget {
         'premium y un chófer profesional a tu alcance, en minutos.',
     storyPoints: [
       'Vehículos premium, impecables en cada servicio',
-      'Chóferes verificados y formados en atención discreta',
+      'Chóferes con documentos verificados',
       'Precio fijo calculado antes de confirmar, sin tarifas dinámicas',
-      'Atención al cliente 24/7 durante todo el trayecto',
     ],
     storyImage: 'assets/images/services/recogida/story.jpg',
     storyFallback: 'assets/images/home/promise_photo.jpg',
@@ -72,7 +71,7 @@ class ImmediatePickupPage extends StatelessWidget {
       ),
       ServiceFaq(
         '¿Qué pasa si necesito cancelar?',
-        'Puedes cancelar desde la app. Las reservas programadas se cancelan sin coste hasta 1 hora antes de la recogida.',
+        'Puedes cancelar desde la app antes de que empiece el viaje. Si según la política de cancelación corresponde un recargo, lo verás antes de confirmar.',
       ),
     ],
     closingTitle: 'Tu chófer,\na un toque.',

@@ -158,7 +158,7 @@ class _RideScreenState extends State<RideScreen> {
             : 'Esta reserva fue cancelada.';
       case BookingStatus.noShow:
         return 'Tu chófer no te encontró en el punto de recogida. Central '
-            'revisará tu reserva y te contactará.';
+            'fue avisada.';
     }
   }
 

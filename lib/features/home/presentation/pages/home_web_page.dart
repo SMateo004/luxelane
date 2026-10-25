@@ -671,7 +671,7 @@ class _HeroSectionState extends State<_HeroSection>
                     const SizedBox(height: 18),
                     Center(
                       child: Text(
-                        '${LuxPromise.fixedPrice}   ·   ${LuxPromise.freeCancel}   ·   ${LuxPromise.chauffeurs}',
+                        '${LuxPromise.fixedPrice}   ·   ${LuxPromise.chauffeurs}',
                         textAlign: TextAlign.center,
                         style: uiLabel(
                           size: 10.5,
@@ -1676,8 +1676,6 @@ class _MarqueeBarState extends State<_MarqueeBar>
   static const _items = [
     'Precios Fijos',
     'Chóferes Profesionales',
-    'Cobertura Mundial',
-    'Disponibilidad 24/7',
     'Flota Premium',
     'Puntualidad Garantizada',
     'Traslados Aeroportuarios',
@@ -2185,7 +2183,6 @@ class _BusinessSection extends StatelessWidget {
     'Herramientas de cumplimiento de política de viajes',
     'Reservas prioritarias para ejecutivos',
     'Monitoreo de viajes en tiempo real',
-    'Cobertura global en múltiples ciudades',
   ];
 
   Widget _perksPanel(double hPad, double vPad) => Stack(
@@ -2398,7 +2395,7 @@ class _CtaSection extends StatelessWidget {
                       dx: -80,
                       threshold: 0.9,
                       child: const Text(
-                        'Precio fijo  ·  Chóferes profesionales  ·  En todo el mundo',
+                        'Precio fijo  ·  Chóferes profesionales',
                         style: TextStyle(
                           fontFamily: kSans,
                           fontSize: 11,
@@ -2559,13 +2556,10 @@ const List<_BookPageData> _kBookPages = [
     photoPath: 'assets/images/home/promise_photo.jpg',
     tag: 'El Estándar Luxelane',
     headline: 'El estándar que\notros siguen.',
-    body:
-        'Cada chófer supera una rigurosa verificación de antecedentes, inspección del vehículo y programa de capacitación en servicio.',
+    body: LuxPromise.chauffeursLong,
     bullets: [
-      'Chóferes verificados',
-      'Precio fijo, siempre',
-      'Cobertura global — más de 50 ciudades',
-      'A toda hora, 24/7',
+      'Chóferes con documentos verificados',
+      'Precio fijo al reservar',
     ],
   ),
   // Index 2: La Experiencia (content page 02)

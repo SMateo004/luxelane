@@ -945,11 +945,6 @@ class _FaqSection extends StatelessWidget {
           'Todo lo que\nquieres saber.',
           style: displayText(size: narrow ? 36 : 48).copyWith(height: 1.05),
         ),
-        const SizedBox(height: 16),
-        Text(
-          '¿Algo más? Nuestro equipo responde 24/7.',
-          style: bodyText(size: 14, color: LD.ink3),
-        ),
       ],
     );
     final list = Column(
@@ -1123,7 +1118,7 @@ class _ClosingSection extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               Text(
-                '${LuxPromise.fixedPrice}  ·  ${LuxPromise.freeCancel}',
+                '${LuxPromise.fixedPrice}  ·  ${LuxPromise.chauffeurs}',
                 textAlign: TextAlign.center,
                 style: uiLabel(
                   size: 10.5,

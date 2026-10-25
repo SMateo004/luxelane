@@ -595,7 +595,7 @@ class _MobileBottomPanel extends StatelessWidget {
               children: [
                 for (final p in const [
                   LuxPromise.fixedPrice,
-                  LuxPromise.freeCancel,
+                  LuxPromise.chauffeurs,
                 ])
                   Row(
                     mainAxisSize: MainAxisSize.min,

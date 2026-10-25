@@ -860,7 +860,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      '${LuxPromise.fixedPrice}  ·  ${LuxPromise.freeCancel}  ·  ${LuxPromise.chauffeurs}',
+                      '${LuxPromise.fixedPrice}  ·  ${LuxPromise.chauffeurs}',
                       style: TextStyle(
                         fontFamily: kSans,
                         fontSize: 11,
@@ -965,11 +965,6 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _webWhatsIncluded({bool compact = false}) {
     const items = [
       (Icons.badge_outlined, 'Recibimiento personalizado'),
-      (
-        Icons.timer_outlined,
-        'Espera gratis: 60 min en aeropuertos, 15 min en otras recogidas',
-      ),
-      (Icons.event_available_outlined, 'Cancelación gratuita hasta 1 h antes'),
       (Icons.cable_outlined, 'Cargadores iOS y Android a bordo'),
       (Icons.clean_hands_outlined, 'Pañuelos y toallitas de cortesía'),
       (Icons.water_drop_outlined, 'Agua fría de cortesía'),
@@ -1840,11 +1835,6 @@ class _BookingScreenState extends State<BookingScreen> {
           }),
         ],
         const SizedBox(height: 16),
-        _GuaranteeRow(
-          Icons.event_available_outlined,
-          LuxPromise.freeCancelLong,
-        ),
-        const SizedBox(height: 8),
         _GuaranteeRow(Icons.lock_outline_rounded, LuxPromise.fixedPriceLong),
         const SizedBox(height: 8),
       ],
@@ -2558,8 +2548,7 @@ class _MobilePromises extends StatelessWidget {
           children: [
             _GuaranteeRow(Icons.price_check_outlined, LuxPromise.fixedPrice),
             const SizedBox(height: 6),
-            _GuaranteeRow(
-                Icons.event_available_outlined, LuxPromise.freeCancel),
+            _GuaranteeRow(Icons.verified_user_outlined, LuxPromise.chauffeurs),
           ],
         ),
       );
@@ -2939,8 +2928,8 @@ class _FlightNote extends StatelessWidget {
           SizedBox(width: 8),
           Expanded(
             child: Text(
-              'Recogida en aeropuerto: indica tu número de vuelo. '
-              '${LuxPromise.flightTrackingLong}',
+              'Recogida en aeropuerto: indica tu número de vuelo para que '
+              'tu chófer lo tenga.',
               style: TextStyle(
                 fontFamily: kSans,
                 fontSize: 12,
