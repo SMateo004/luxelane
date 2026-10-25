@@ -98,10 +98,20 @@ service cloud.firestore {
       allow create: if isOwner(uid) && isValidSelfSignup(uid);
       // Rol, bloqueo y sus marcas los escribe solo el servidor (setUserRole,
       // setUserBlocked). El admin solo lee (Parte A).
+      // Con la cuenta bloqueada solo puede quitar tokens de push (al cerrar
+      // sesión): ni nombre, ni teléfono, ni tokens nuevos (D1).
       allow update: if isOwner(uid) &&
         !request.resource.data.diff(resource.data).affectedKeys()
-          .hasAny(privilegedUserFields());
+          .hasAny(privilegedUserFields()) &&
+        (resource.data.get('isActive', true) == true || onlyRemovingTokens());
       allow delete: if false;
+    }
+
+    function onlyRemovingTokens() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['fcmTokens']) &&
+        resource.data.get('fcmTokens', [])
+          .hasAll(request.resource.data.get('fcmTokens', []));
     }
 
     // Avisos en la app: cada usuario lee y marca los suyos. Los crea el
@@ -444,7 +454,8 @@ service cloud.firestore {
       // color y foto (kEditableVehicleFields en driver_documents.dart).
       // Activar y corregir datos del admin: adminSetVehicleActive y
       // adminUpdateDriverSensitive (Parte A).
-      allow update: if isDriver() &&
+      // Un chófer bloqueado tampoco cambia color ni foto (D1).
+      allow update: if isDriver() && isActiveUser() &&
         resource.data.driverId == request.auth.uid &&
         onlyUpdating(['color', 'photoUrl']);
       allow delete: if false;

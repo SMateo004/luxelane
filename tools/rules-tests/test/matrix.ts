@@ -64,7 +64,7 @@ export const SPECS: Spec[] = [
     list: (db) => query(collection(db, 'users')),
     create: () => ({ path: 'users/nuevo', data: { id: 'nuevo', role: 'rider', isActive: true } }),
     update: () => ({ displayName: 'Nombre nuevo' }),
-    expect: { ...allRoles(none), ana: 'SNNSN', bloq: 'SNNSN', admin: 'SSNNN' },
+    expect: { ...allRoles(none), ana: 'SNNSN', bloq: 'SNNNN', admin: 'SSNNN' },
     note: 'Objetivo users/ana (bloqueado: users/bloq, el suyo). Crear = perfil de otro (users/nuevo); ' +
       'el alta propia está en «Casos fuera de la tabla». Actualizar = displayName.',
   },
@@ -290,7 +290,7 @@ export const SPECS: Spec[] = [
     }),
     update: () => ({ color: 'Negro' }),
     expect: {
-      ...allRoles(none), asig: 'SSSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SSNSN', admin: 'SSNNN',
+      ...allRoles(none), asig: 'SSSSN', libre: 'NNSNN', nover: 'NNSNN', bloq: 'SSNNN', admin: 'SSNNN',
     },
     note: 'Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8).',
   },

@@ -11,7 +11,7 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-129 celdas permitidas, 4 con ⚠.
+127 celdas permitidas, 2 con ⚠.
 
 ## `users/{uid}`
 
@@ -23,7 +23,6 @@ el documento que usa cada fila están en MATRIZ_ACCESO.md.
 **usuario bloqueado**
 
 - leer: una cuenta bloqueada sigue leyendo su perfil (la app lo usa para detectar el bloqueo y cerrar sesión).
-- ⚠ actualizar: la regla del dueño no mira isActive. **un bloqueado aún puede cambiar su nombre, teléfono o tokens de push. Sin efecto en viajes, pero podría exigirse isActive (salvo quitar tokens al cerrar sesión).**
 
 **admin**
 
@@ -279,7 +278,6 @@ Ninguna celda permitida.
 
 - leer: ve su vehículo.
 - listar: su vehículo por consulta.
-- ⚠ actualizar: la regla de color y foto no mira isActive. **un bloqueado aún cambia color o foto. Sin efecto en viajes.**
 
 **admin**
 
