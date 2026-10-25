@@ -88,8 +88,8 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `config/security`: Segundo factor y sesión máxima de admin: ningún cliente, ni el admin; solo la consola y el servidor (A8.9).
 - `businessLeads/{id}`: Formulario de empresas: se envía con la callable submitBusinessLead (H5); ningún cliente escribe directo. El admin lo lee y lo marca atendido.
 - `adminAlerts/{id}`: Avisos del servidor: el admin los marca con resolveAlert, no escribiendo.
-- `driverDevices/{uid}/devices/{id}`: Dispositivos del chófer (B7): los anota registerDriverDevice; solo el admin los ve, ni el propio chófer.
-- `admin_logs/{id}`: Auditoría inmutable: el admin anexa a su nombre.
+- `driverDevices/{uid}/devices/{id}`: Dispositivos del chófer (B7): los anota registerDriverDevice; solo el admin los ve, ni el propio chófer. Alerta baja por dispositivo nuevo, y por el primero si ya está verificado (C2).
+- `admin_logs/{id}`: Auditoría inmutable: el admin anexa a su nombre. El servidor y los scripts (promote_admin, reset_mfa, migraciones) escriben con el Admin SDK, con source server o script (C4, C6).
 <!-- matriz:fin -->
 
 
@@ -120,8 +120,16 @@ Revisión A8 (rama cierre/identidad):
 | A8.5 | `driverProfiles` × dueño × campos nuevos | **Cerrado.** Lista blanca de campos del dueño (tabla abajo). |
 | A8.6 | `bookings` × dueño × cancelar/valorar | Campo por campo ya cerrado; se acotan `updatedAt` (hora cercana a la del servidor) y `riderComment` (texto ≤ 1000). |
 | A8.7 | `bookings/{id}/events` × pasajero y chófer × leer | **Corregido.** El motivo del admin y `farFromPickup`/`arrivalCheck` pasan a `eventDetails` (solo admin); migración para los eventos ya escritos. |
-| A8.8 | `pricingRules` × público × leer | Sin campos internos; lista blanca de campos. `updatedBy` (uid del admin, público) retirado en C3: las reglas lo rechazan, el panel ya no lo escribe ni lo muestra (quién cambió la tarifa está en admin_logs) y `npm run migrate:pricing-updated-by` lo borra de los documentos existentes. Tests: `pricingRules.rules.ts`, `pricing_updated_by.int.ts`. |
+| A8.8 | `pricingRules` × público × leer | **Cerrado (C3).** Sin campos internos; lista blanca de campos. `updatedBy` (uid del admin, público) retirado en C3: las reglas lo rechazan, el panel ya no lo escribe ni lo muestra (quién cambió la tarifa está en admin_logs) y `npm run migrate:pricing-updated-by` lo borra de los documentos existentes. Tests: `pricingRules.rules.ts`, `pricing_updated_by.int.ts`. |
 | A8.9 | `config/global` × público × leer | **Corregido.** Las claves de operación pasan a `config/ops` (solo admin lee) y la seguridad irá en `config/security` (nadie). |
+
+Correcciones tras la revisión de la Parte B (rama cierre/identidad):
+
+| # | Qué | Estado |
+|---|---|---|
+| C2 | `driverDevices` y `adminAlerts` | Sin cambio de acceso (solo el admin lee, nadie escribe desde el cliente). El primer dispositivo de un chófer ya verificado también deja una alerta baja. Test: `driver_devices.int.ts`. |
+| C3 | `pricingRules` × admin × crear/actualizar | Las reglas rechazan `updatedBy`; el uid de quien cambió la tarifa queda solo en `admin_logs`. Test: `pricingRules.rules.ts`. |
+| C4 | `admin_logs` | Sin cambio de acceso. `reset_mfa`, `promote_admin` y las migraciones escriben con el Admin SDK y `source: 'script'`. |
 
 La revisión de todas las celdas permitidas, con ⚠ en las que parecen más
 amplias de lo necesario, está en

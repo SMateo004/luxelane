@@ -384,7 +384,7 @@ export const SPECS: Spec[] = [
     update: () => ({ platform: 'ios' }),
     expect: { ...allRoles(none), admin: 'SSNNN' },
     note: 'Dispositivos del chófer (B7): los anota registerDriverDevice; solo el admin los ve, ' +
-      'ni el propio chófer.',
+      'ni el propio chófer. Alerta baja por dispositivo nuevo, y por el primero si ya está verificado (C2).',
   },
   {
     name: 'admin_logs/{id}',
@@ -394,7 +394,8 @@ export const SPECS: Spec[] = [
     create: (r) => ({ path: `admin_logs/nuevo-${r}`, data: { adminId: uidOf(r) ?? 'nadie', action: 'x' } }),
     update: () => ({ action: 'y' }),
     expect: { ...allRoles(none), admin: 'SSSNN' },
-    note: 'Auditoría inmutable: el admin anexa a su nombre.',
+    note: 'Auditoría inmutable: el admin anexa a su nombre. El servidor y los scripts (promote_admin, ' +
+      'reset_mfa, migraciones) escriben con el Admin SDK, con source server o script (C4, C6).',
   },
 ];
 

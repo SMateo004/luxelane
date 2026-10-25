@@ -52,6 +52,27 @@ describe('DEPLOY.md: identidad', () => {
   });
 });
 
+// C6: la auditoría refleja las correcciones tras la revisión de la Parte B.
+describe('docs/AUDITORIA_LUXLANE.md', () => {
+  const audit = readFileSync(join(root, 'docs', 'AUDITORIA_LUXLANE.md'), 'utf8');
+  const row = (id: string) => audit.split('\n').find((l) => l.startsWith(`| ${id} |`)) ?? '';
+
+  it('D6 cerrado en código, con las correcciones C1–C5', () => {
+    expect(row('D6')).toContain('CERRADO (en código)');
+    for (const c of ['(C1', '(C2', '(C3)', '(C4', '(C5']) expect(row('D6')).toContain(c);
+    expect(row('D6')).toContain('reset_mfa');
+  });
+
+  it('updatedBy de pricingRules ya no está pendiente de decisión', () => {
+    expect(row('D13')).not.toContain('pendiente de decisión: `updatedBy`');
+    expect(row('D13')).toContain('migrate:pricing-updated-by');
+  });
+
+  it('D22 explica qué callables de admin quedan sin sesión máxima', () => {
+    expect(row('D22')).toContain('acknowledgeIncident, closeIncident y resolveAlert');
+  });
+});
+
 describe('despliegue de functions', () => {
   const secrets = [...src.matchAll(/defineSecret\('([A-Z_]+)'\)/g)].map((m) => m[1]);
 
