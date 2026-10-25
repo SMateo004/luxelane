@@ -47,7 +47,7 @@ describe('cancelBooking (pasajero)', () => {
   it('cancela, deja evento, libera y avisa al chófer, con quién y cuándo', async () => {
     await booking('b1', 'driver_arriving', { driverId: 'luis' });
     await expect(cancel('ana', { bookingId: 'b1', reason: 'changed_plans' }))
-      .resolves.toEqual({ status: 'cancelled', cancellationFee: 0 });
+      .resolves.toEqual({ status: 'cancelled', cancellationFee: 0, feeBasis: 'no_policy' });
     const b = (await doc('bookings/b1'))!;
     expect(b).toMatchObject({ status: 'cancelled', cancelledBy: 'rider', cancellationReason: 'changed_plans' });
     expect((b.cancelledAt as admin.firestore.Timestamp).toMillis()).toBe(NOW);
@@ -87,7 +87,7 @@ describe('cancelBooking (pasajero)', () => {
   it('dryRun: informa sin escribir', async () => {
     await booking('b1', 'confirmed');
     await expect(cancel('ana', { bookingId: 'b1', dryRun: true }))
-      .resolves.toEqual({ status: 'confirmed', dryRun: true, cancellationFee: 0 });
+      .resolves.toEqual({ status: 'confirmed', dryRun: true, cancellationFee: 0, feeBasis: 'no_policy' });
     expect((await doc('bookings/b1'))?.status).toBe('confirmed');
   });
 
@@ -95,5 +95,47 @@ describe('cancelBooking (pasajero)', () => {
     await booking('b1', 'pending');
     const r = await (cancelBookingFn as unknown as Runnable).run({ auth: { uid: 'ana', token: {} }, app: {}, data: { bookingId: 'b1' } });
     expect(r).toMatchObject({ status: 'cancelled' });
+  });
+});
+
+describe('recargo con config/ops.cancellationPolicy (B3)', () => {
+  // Valores de prueba, no de negocio.
+  const policy = {
+    freeWithinMinutesOfBooking: 5, freeBeforePickupMinutes: 120, chargeWhenNoDriver: false,
+    feeType: 'percent', feeValue: 10, noShowWaitMinutes: 15,
+  };
+
+  it('sin política: no hay recargo y el evento lo anota', async () => {
+    await booking('b1', 'confirmed', { driverId: 'luis' });
+    await cancel('ana', { bookingId: 'b1' });
+    expect(await doc('bookings/b1')).toMatchObject({ cancellationFee: 0, cancellationFeeBasis: 'no_policy' });
+    expect((await events('b1'))[0]).toMatchObject({ cancellationFee: 0, feeBasis: 'no_policy' });
+  });
+
+  it('política inválida: igual que sin política (lo más restrictivo)', async () => {
+    await db.doc('config/ops').set({ cancellationPolicy: { feeType: 'percent', feeValue: 10 } });
+    await booking('b1', 'confirmed');
+    await cancel('ana', { bookingId: 'b1' });
+    expect(await doc('bookings/b1')).toMatchObject({ cancellationFee: 0, cancellationFeeBasis: 'policy_invalid' });
+  });
+
+  it('tarde: el servidor calcula el recargo; hay que aceptarlo; se guarda sin cobrar', async () => {
+    await db.doc('config/ops').set({ cancellationPolicy: policy });
+    await booking('b1', 'driver_arriving', { driverId: 'luis' });
+    await expect(cancel('ana', { bookingId: 'b1', dryRun: true }))
+      .resolves.toEqual({ status: 'driver_arriving', dryRun: true, cancellationFee: 10, feeBasis: 'late' });
+    expect(await reason(cancel('ana', { bookingId: 'b1' }))).toBe('cancellation_fee_changed');
+    expect((await doc('bookings/b1'))?.status).toBe('driver_arriving');
+    await cancel('ana', { bookingId: 'b1', acceptedFee: 10 });
+    expect(await doc('bookings/b1')).toMatchObject({
+      status: 'cancelled', cancellationFee: 10, cancellationFeeBasis: 'late', cancellationFeeCharged: false,
+    });
+    expect((await events('b1'))[0]).toMatchObject({ cancellationFee: 10, feeBasis: 'late' });
+  });
+
+  it('con antelación: gratis aunque haya política', async () => {
+    await db.doc('config/ops').set({ cancellationPolicy: policy });
+    await booking('b1', 'confirmed', { scheduledAt: admin.firestore.Timestamp.fromMillis(NOW + 3 * 3600_000) });
+    await expect(cancel('ana', { bookingId: 'b1' })).resolves.toMatchObject({ cancellationFee: 0, feeBasis: 'early' });
   });
 });

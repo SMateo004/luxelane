@@ -14,6 +14,7 @@ import { appendEvent, Status } from './trip_flow';
 import { SERVICE_TYPES, VEHICLE_CLASSES } from './fare';
 import { CAPACITY } from './booking_schema';
 import { computeSettlement, Settlement } from './settlement';
+import { policySchema } from './cancellation';
 
 export interface AdminDeps { db: admin.firestore.Firestore; now?: () => number }
 
@@ -322,6 +323,8 @@ export const configSchema = z.discriminatedUnion('doc', [
       incidentLocationRetentionDays: positiveInt.optional(),
       arrivalRadiusMeters: z.number().finite().positive().max(1_000_000).optional(),
       maxPriceAdjustmentPercent: z.number().finite().min(0).max(100).optional(),
+      // Política de cancelación (Parte B); los valores los decide el responsable.
+      cancellationPolicy: policySchema.optional(),
     }).refine(atLeastOne),
     reason: reasonSchema,
   }),
