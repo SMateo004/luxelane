@@ -189,7 +189,9 @@ void main() {
       ),
       expect: () => [
         isA<DriverLoaded>()
-            .having((s) => s.notice, 'notice', contains('Liberaste el viaje')),
+            .having((s) => s.notice, 'notice', contains('Liberaste el viaje'))
+            // No vuelve a ofrecérsele (el servidor tampoco la deja aceptar).
+            .having((s) => s.declinedIds, 'declinedIds', contains('b1')),
       ],
       verify: (_) => verify(
         () => trip.release(

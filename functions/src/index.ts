@@ -1123,6 +1123,12 @@ export const backfillSettlements = secureCallable('backfillSettlements', { timeo
   return { scanned, settled };
 }, { role: 'admin' });
 
+/** Chóferes que liberaron la reserva (releaseBooking, B5/0.3). */
+function releasedByOf(b: unknown): string[] {
+  const v = (b as { releasedBy?: unknown } | undefined)?.releasedBy;
+  return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
+}
+
 // ---------------------------------------------------------------------------
 // assignNearestDriver  (HTTPS Callable)
 // ---------------------------------------------------------------------------
@@ -1138,6 +1144,8 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
   const booking = bookingSnap.data() as BookingDoc;
   if (booking.riderId !== uid) await requireAdmin(req);
   if (booking.status !== 'pending') throw err.failedPrecondition('booking_not_pending');
+  // Los chóferes que liberaron esta reserva no se vuelven a asignar.
+  const released = new Set(releasedByOf(booking));
 
   const vehicleClass = booking.class ?? booking.vehicleClass ?? 'business';
   logger.info('assignNearestDriver', 'searching', { bookingId, vehicleClass });
@@ -1151,7 +1159,7 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
   );
   const driverIds = [
     ...new Set(vehicleQueries.flatMap((q) => q.docs.map((d) => d.data().driverId as string)).filter(Boolean)),
-  ];
+  ].filter((id) => !released.has(id));
   if (!driverIds.length) {
     logger.warn('assignNearestDriver', 'no vehicles found', { vehicleClass });
     return { assigned: false, reason: 'no_drivers_available' };
@@ -1191,6 +1199,7 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
         tx.get(bookingRef), tx.get(driverRef), tx.get(db.collection('users').doc(driverId)),
       ]);
       if ((b.data() as BookingDoc | undefined)?.status !== 'pending') return 'taken';
+      if (releasedByOf(b.data()).includes(driverId)) return 'busy';
       if (!d.data()?.isAvailable || u.data()?.isActive === false) return 'busy';
       tx.update(bookingRef, {
         driverId,
@@ -1240,6 +1249,7 @@ export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => 
       if (!bookingSnap.exists) throw err.notFound('booking_not_found');
       const booking = bookingSnap.data() as BookingDoc;
       if (booking.status !== 'pending') throw new Error('ALREADY_TAKEN');
+      if (releasedByOf(booking).includes(driverId)) throw new Error('RELEASED_BY_YOU');
 
       if (!driverSnap.exists) throw err.notFound('driver_not_found');
       if (driverSnap.data()?.documentsVerified !== true) throw err.permissionDenied('driver_not_verified');
@@ -1269,6 +1279,9 @@ export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => 
     }
     if (e.message === 'DRIVER_BUSY') {
       return { accepted: false, reason: 'driver_busy' };
+    }
+    if (e.message === 'RELEASED_BY_YOU') {
+      return { accepted: false, reason: 'released_by_you' };
     }
     logger.error('acceptBooking', 'error', { error: String(e) });
     throw e;

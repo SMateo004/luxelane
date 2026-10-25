@@ -46,6 +46,7 @@ describe('releaseBooking', () => {
     expect(b.status).toBe('pending');
     expect(b).not.toHaveProperty('driverId');
     expect(b.lastRelease).toMatchObject({ driverId: 'chofer', reason: 'vehicle_issue', from: 'driver_arriving' });
+    expect(b.releasedBy).toEqual(['chofer']);
     expect(await doc('bookings/b1/tracking/driver')).toBeUndefined();
     // La solicitud abierta no lleva la dirección exacta.
     const req = (await doc('openRequests/b1'))!;

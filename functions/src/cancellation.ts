@@ -139,6 +139,9 @@ export async function releaseBooking(deps: CancelDeps, uid: string | undefined, 
     tx.update(ref, {
       status: 'pending', driverId: admin.firestore.FieldValue.delete(),
       lastRelease: { driverId: uid, reason: input.reason, at, from: status },
+      // Quien la liberó no vuelve a tomarla (assignNearestDriver,
+      // acceptBooking y las reglas lo comprueban).
+      releasedBy: admin.firestore.FieldValue.arrayUnion(uid),
       updatedAt: at,
     });
     // La ubicación del chófer que se va no debe verla el siguiente.

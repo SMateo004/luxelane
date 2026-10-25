@@ -226,6 +226,8 @@ service cloud.firestore {
           get(/databases/$(database)/documents/driverProfiles/$(request.auth.uid))
             .data.get('documentsVerified', false) == true &&
           resource.data.status == 'pending' &&
+          // Quien la liberó no la vuelve a aceptar (0.3).
+          !(request.auth.uid in resource.data.get('releasedBy', [])) &&
           request.resource.data.driverId == request.auth.uid &&
           request.resource.data.status == 'confirmed' &&
           onlyUpdating(['driverId', 'status', 'updatedAt'])) ||
