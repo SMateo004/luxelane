@@ -457,12 +457,17 @@ class LuxSlideToConfirm extends StatefulWidget {
     required this.onConfirmed,
     this.height = 60,
     this.enabled = true,
+    this.resetToken,
   });
 
   final String label;
   final VoidCallback onConfirmed;
   final double height;
   final bool enabled;
+
+  /// Si cambia, el control vuelve a empezar: el paso no se aplicó (sin red,
+  /// error del servidor) y hay que poder repetirlo (E3).
+  final Object? resetToken;
 
   @override
   State<LuxSlideToConfirm> createState() => _LuxSlideToConfirmState();
@@ -487,8 +492,8 @@ class _LuxSlideToConfirmState extends State<LuxSlideToConfirm>
   @override
   void didUpdateWidget(LuxSlideToConfirm old) {
     super.didUpdateWidget(old);
-    // Un nuevo paso del viaje: el control vuelve a empezar.
-    if (old.label != widget.label) {
+    // Un nuevo paso del viaje, o el anterior no se aplicó: vuelve a empezar.
+    if (old.label != widget.label || old.resetToken != widget.resetToken) {
       _done = false;
       _drag = 0;
     }

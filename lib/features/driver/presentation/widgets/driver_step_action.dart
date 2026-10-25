@@ -112,9 +112,15 @@ class DriverStepAction extends StatelessWidget {
     final label = slideLabel(booking.status);
     if (label == null) return const SizedBox.shrink();
     // Deslizar evita completar un paso con un toque accidental.
+    // Cada aviso del bloc (también «sin conexión: no se guardó el paso»)
+    // reinicia el control; si el paso se aplicó, cambia la etiqueta.
+    final noticeSeq = context.select<DriverBloc, int>(
+      (b) => b.state is DriverLoaded ? (b.state as DriverLoaded).noticeSeq : 0,
+    );
     final slide = LuxSlideToConfirm(
       key: ValueKey('slide-${booking.status.label}'),
       label: label,
+      resetToken: noticeSeq,
       onConfirmed: () => _advance(context),
     );
     if (booking.status != BookingStatus.confirmed &&
