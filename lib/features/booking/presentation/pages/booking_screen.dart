@@ -1183,6 +1183,42 @@ class _BookingScreenState extends State<BookingScreen> {
         ),
       );
 
+  /// «Para mí» o «para un invitado»: el mismo diálogo y los mismos datos en
+  /// los dos diseños (E39: antes el asistente móvil no lo tenía). El servidor
+  /// valida al invitado igual (createSchema.guest).
+  List<Widget> _bookForOptions() => [
+        // ── Book for myself ─────────────────────────────────────────────
+        _BookOptionCard(
+          icon: Icons.person_outlined,
+          iconBg: LD.sphTint,
+          iconColor: _kPanelAccent,
+          title: 'Reservar para mí',
+          subtitle: 'Reserva con la información de tu cuenta',
+          selected: _bookForSelf,
+          onTap: () => setState(() => _bookForSelf = true),
+        ),
+
+        const SizedBox(height: 10),
+
+        // ── Book for a guest ────────────────────────────────────────────
+        _BookOptionCard(
+          icon: Icons.group_outlined,
+          iconBg: !_bookForSelf ? LD.sphTint : LD.bg2,
+          iconColor: !_bookForSelf ? _kPanelAccent : _kTextSub,
+          title: 'Reservar para un invitado',
+          subtitle: (!_bookForSelf && _guestFirstName.isNotEmpty)
+              ? '$_guestTitle $_guestFirstName $_guestLastName'
+              : 'Seleccionar o añadir un invitado',
+          selected: !_bookForSelf,
+          onTap: _showAddGuestDialog,
+          trailing: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            size: 20,
+            color: !_bookForSelf ? _kPanelAccent : _kTextSub,
+          ),
+        ),
+      ];
+
   Widget _webSummaryContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1285,36 +1321,7 @@ class _BookingScreenState extends State<BookingScreen> {
         const Divider(color: _kDivider, height: 1),
         const SizedBox(height: 20),
 
-        // ── Book for myself ─────────────────────────────────────────────
-        _BookOptionCard(
-          icon: Icons.person_outlined,
-          iconBg: LD.sphTint,
-          iconColor: _kPanelAccent,
-          title: 'Reservar para mí',
-          subtitle: 'Reserva con la información de tu cuenta',
-          selected: _bookForSelf,
-          onTap: () => setState(() => _bookForSelf = true),
-        ),
-
-        const SizedBox(height: 10),
-
-        // ── Book for a guest ────────────────────────────────────────────
-        _BookOptionCard(
-          icon: Icons.group_outlined,
-          iconBg: !_bookForSelf ? LD.sphTint : LD.bg2,
-          iconColor: !_bookForSelf ? _kPanelAccent : _kTextSub,
-          title: 'Reservar para un invitado',
-          subtitle: (!_bookForSelf && _guestFirstName.isNotEmpty)
-              ? '$_guestTitle $_guestFirstName $_guestLastName'
-              : 'Seleccionar o añadir un invitado',
-          selected: !_bookForSelf,
-          onTap: _showAddGuestDialog,
-          trailing: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            size: 20,
-            color: !_bookForSelf ? _kPanelAccent : _kTextSub,
-          ),
-        ),
+        ..._bookForOptions(),
 
         const SizedBox(height: 20),
         const Divider(color: _kDivider, height: 1),
@@ -1686,6 +1693,8 @@ class _BookingScreenState extends State<BookingScreen> {
           const SizedBox(height: 10),
           _QuoteErrorNote(message: _quoteError!, onRetry: _retryQuote),
         ],
+        const SizedBox(height: 20),
+        ..._bookForOptions(),
         const SizedBox(height: 20),
         if (!_cardsSupported)
           const SizedBox.shrink()
@@ -3003,14 +3012,17 @@ class _OutlinedBtn extends StatelessWidget {
             children: [
               Icon(icon, size: 18, color: _kTextSub),
               const SizedBox(width: LuxSpacing.sm),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: _kTextPrimary,
-                  letterSpacing: 0.2,
+              Flexible(
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: _kTextPrimary,
+                    letterSpacing: 0.2,
+                  ),
                 ),
               ),
             ],

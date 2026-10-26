@@ -179,4 +179,22 @@ void main() {
     expect(find.text('No pudimos calcular el precio (prueba).'), findsNothing);
     expect(find.text('PRECIO FINAL'), findsOneWidget);
   });
+
+  testWidgets('E39: el asistente móvil también reserva para un invitado',
+      (t) async {
+    when(() => repo.quoteBooking(any()))
+        .thenAnswer((_) async => const Right(BookingQuote(price: 53)));
+    await open(t);
+    // Paso 3 (confirmar): vehículo → detalles (sin aeropuerto) → resumen.
+    await t.tap(find.text('Continuar'));
+    await t.pumpAndSettle();
+    await t.tap(find.text('Continuar'));
+    await t.pumpAndSettle();
+    await t.scrollUntilVisible(find.text('Reservar para un invitado'), 200,
+        scrollable: find.byType(Scrollable).first);
+    expect(find.text('Reservar para mí'), findsOneWidget);
+    await t.tap(find.text('Reservar para un invitado'));
+    await t.pumpAndSettle();
+    expect(find.text('Añadir nuevo invitado'), findsOneWidget);
+  });
 }
