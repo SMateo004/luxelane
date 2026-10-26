@@ -96,8 +96,10 @@ add('F2-reserva', 'fecha-hora', { user: 'pasajera', go: async (p) => { await p.g
 add('F2-reserva', 'confirmar', { user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, '/booking')); await L.ready(p, 4000); } });
 // Pantalla de reserva con lugares y rutas FICTICIOS (FakeMapsService, que
 // registra tools/experiencia/main_capturas.dart): sin clave de mapas no se
-// llegaba a ella. Por debajo de 600 px es un asistente de 3 pasos; desde 600,
-// una sola página con el resumen a la vista.
+// llegaba a ella. El inicio cambia a diseño web desde 600 px; la reserva es
+// un asistente de 3 pasos por debajo de _kSplitMinWidth (booking_screen.dart)
+// y una sola página con el resumen a la vista desde ahí.
+const SPLIT = 1100;
 const FIELDS = (w) => (w < 600 ? ['Recogida', 'A dónde vas'] : ['¿Dónde estás?', '¿A dónde vas?']);
 async function pickPlace(p, label, q, text) {
   const f = p.getByRole('textbox', { name: label }).first();
@@ -119,9 +121,9 @@ async function toBooking(p, w, { dest = 'plaza', horas = false } = {}) {
 }
 /** Datos del vuelo (la recogida es en el aeropuerto) y, en móvil, al paso 3. */
 async function toSummary(p, w) {
-  if (w < 600) { await L.tap(p, 'Continuar'); await sleep(2500); }
+  if (w < SPLIT) { await L.tap(p, 'Continuar'); await sleep(2500); }
   await L.type(p, 'Número de vuelo', 'PRB 123'); await L.tap(p, 'Nacional'); await sleep(500);
-  if (w < 600) { await L.tap(p, 'Continuar'); await sleep(5000); } else await sleep(3000);
+  if (w < SPLIT) { await L.tap(p, 'Continuar'); await sleep(5000); } else await sleep(3000);
 }
 const BK = (state, o) => add('F2-reserva', `pantalla-${state}`, o);
 BK('con-ruta', { user: 'pasajera', go: (p, w) => toBooking(p, w) });
@@ -129,16 +131,16 @@ BK('sin-ruta', { user: 'pasajera', go: (p, w) => toBooking(p, w, { dest: 'sinrut
 BK('sin-ruta-resumen', { user: 'pasajera', go: async (p, w) => { await toBooking(p, w, { dest: 'sinruta' }); await toSummary(p, w); } });
 BK('tarifa-por-clase', { user: 'pasajera', go: async (p, w) => { await toBooking(p, w); await L.tap(p, 'Business Van'); await sleep(1500); } });
 BK('por-horas', { user: 'pasajera', go: (p, w) => toBooking(p, w, { horas: true }) });
-BK('detalles', { user: 'pasajera', go: async (p, w) => { await toBooking(p, w); if (w < 600) { await L.tap(p, 'Continuar'); await sleep(2500); } } });
+BK('detalles', { user: 'pasajera', go: async (p, w) => { await toBooking(p, w); if (w < SPLIT) { await L.tap(p, 'Continuar'); await sleep(2500); } } });
 BK('resumen', { user: 'pasajera', go: async (p, w) => { await toBooking(p, w); await toSummary(p, w); } });
 // Botón final: «Reservar» en la barra del móvil, «Reservar <clase>» en web.
-const reservar = async (p, w, ms) => { await L.tap(p, w < 600 ? 'Reservar' : 'Reservar Business'); await sleep(ms); };
+const reservar = async (p, w, ms) => { await L.tap(p, w < SPLIT ? 'Reservar' : 'Reservar Business'); await sleep(ms); };
 BK('error-cotizacion', { user: 'pasajera', go: async (p, w) => { await failCallables(p, 'servidor'); await toBooking(p, w); await toSummary(p, w); } });
 BK('error-cotizacion-reservar', { user: 'pasajera', go: async (p, w) => { await failCallables(p, 'servidor'); await toBooking(p, w); await toSummary(p, w);
   await reservar(p, w, 2500); } });
-// Reservar para un invitado: la opción solo existe en el diseño web.
+// Reservar para un invitado: la opción solo existe en el diseño de una página.
 BK('invitado', { user: 'pasajera', go: async (p, w) => { await toBooking(p, w); await toSummary(p, w);
-  if (w >= 600) { await L.tap(p, 'Reservar para un invitado'); await sleep(1500); } } });
+  if (w >= SPLIT) { await L.tap(p, 'Reservar para un invitado'); await sleep(1500); } } });
 BK('sin-sesion', { go: async (p, w) => { await toBooking(p, w); await toSummary(p, w); } });
 BK('sin-sesion-reservar', { go: async (p, w) => { await toBooking(p, w); await toSummary(p, w); await reservar(p, w, 3000); } });
 // Pago: la tarjeta solo se ofrece en las apps nativas y Stripe no corre en
