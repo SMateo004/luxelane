@@ -4,6 +4,44 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/pagos, Parte B y E34–E39 (commit f38b5e7, 2026-10-26)
+
+```
+Comando                                       Resultado  Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa       121 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa       243 archivos, 0 cambiados       0
+flutter test                                  pasa       604/604                         0
+functions: npm run build                      pasa       —                               0
+functions: npm test                           pasa       502/502                         0
+functions: jest fare.test.ts pickup_code      pasa       33/33                           0
+npm run test:rules (demo-luxelane)            pasa       1567/1567                       0
+npm run test:integration (demo-luxelane)      pasa       366/366                         0
+tools/pricing: npm test                       pasa       pass 10, fail 0                 0
+actionlint ci.yml                             pasa       —                               0
+```
+
+La Parte B no cambia `firestore.rules` ni los tests de reglas: la salida
+de las reglas anteriores con los tests nuevos es la de la Parte A (abajo).
+Las 121 «issues» son avisos informativos (info); en 90f969b eran 117.
+
+### Tests nuevos sin el cambio de su tarea
+
+```
+Tarea                     Archivo de tests                          Sin el cambio
+E34 sugerencias a11y      place_autocomplete_a11y_test.dart         1 de 1 falla
+E35/E36 precio            booking_price_test.dart                   2 de 2 fallan
+E37 error del servidor    booking_request_data_test.dart            falla
+E39 invitado en móvil     booking_price_test.dart                   1 de 3 falla
+E38 servidor (web)        payment_dispatch.int.ts                   1 de 16 falla
+B1 reservar → pagar       booking_price_test.dart                   1 de 4 falla
+B3 asientos pendientes    payment_inbox.int.ts                      1 de 6 falla
+B3 causa al cancelar      panel_no_show_test.dart                   no compila sin el cambio
+B2 chófer sin pagos       driver_sin_pagos_test.dart                falla al añadir un campo de pago
+B4 textos                 textos_pagos_test.dart                    falla con el diálogo anterior
+B1/B3 pantallas nuevas    booking_payment_test, payment_receipt,    no compilan sin el módulo
+                          admin_payments_test
+```
+
 ## cierre/pagos, Parte A (commit 90f969b, 2026-10-26)
 
 ```
