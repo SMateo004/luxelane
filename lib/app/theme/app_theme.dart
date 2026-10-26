@@ -20,7 +20,9 @@ abstract class LuxColors {
   // Ink (text & icons)
   static const ink = Color(0xFF0D1B2E); // LD.ink
   static const inkSecondary = Color(0xFF2C3D55); // LD.ink2
-  static const inkTertiary = Color(0xFF637490); // LD.ink3
+  // AA (4,5:1) también sobre surfaceMuted, surfaceDeep y sapphireTint;
+  // antes 0xFF637490, 4,04–4,34 (E20).
+  static const inkTertiary = Color(0xFF5B6B84); // LD.ink3
   // Accent — sapphire, the only accent
   static const sapphire = Color(0xFF1B4F8A); // LD.sph
   static const sapphireLight = Color(0xFF2E6FBF); // LD.sphLt
@@ -36,7 +38,9 @@ abstract class LuxColors {
   // Semantic — tuned for AA contrast on ivory
   static const error = Color(0xFFB83A3A);
   static const success = Color(0xFF2F7D55);
-  static const warning = Color(0xFFA8741F);
+  // Antes 0xFFA8741F: 3,45–4,05 sobre los fondos claros y con blanco
+  // encima (E20). Mismo tono, más oscuro.
+  static const warning = Color(0xFF8D611A);
 }
 
 /// Shared soft elevation: floating cards over the map and bottom sheets.

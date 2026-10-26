@@ -46,7 +46,7 @@ const _kCardBg = Colors.white;
 const _kBorder = LD.border; // #DDE4F0
 const _kTextPrimary = LD.ink; // #0D1B2E
 const _kTextSub = LD.ink2; // #2C3D55
-const _kTextTertiary = LD.ink3; // #637490
+const _kTextTertiary = LD.ink3; // #5B6B84
 const _kDivider = LD.border; // #DDE4F0
 const _kPanelAccent = LD.sph; // #1B4F8A sapphire
 
