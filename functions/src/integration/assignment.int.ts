@@ -41,6 +41,8 @@ beforeEach(async () => {
     riderId: 'ana', status: 'pending', class: 'business', estimatedPrice: 100,
     origin: { coordinates: new admin.firestore.GeoPoint(-17.78, -63.18) },
   });
+  // Pagada: sin pago confirmado no se ofrece a chóferes (pagos, A3).
+  await db.doc('bookings/b1/payment/state').set({ riderId: 'ana', paymentStatus: 'paid' });
 });
 afterAll(async () => { await clear(); await admin.app().delete(); });
 

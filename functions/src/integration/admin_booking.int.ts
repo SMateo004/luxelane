@@ -37,6 +37,8 @@ async function booking(id: string, status: string, extra: Record<string, unknown
     riderId: 'ana', status, estimatedPrice: 100, finalPrice: null,
     scheduledAt: admin.firestore.Timestamp.fromMillis(NOW + 30 * 60 * 1000), ...extra,
   });
+  // Pagada: sin pago confirmado no se asigna (pagos, A3; ver payment_dispatch.int.ts).
+  await db.doc(`bookings/${id}/payment/state`).set({ riderId: 'ana', paymentStatus: 'paid' });
 }
 async function driver(id: string, over: { verified?: boolean; available?: boolean; active?: boolean } = {}) {
   await db.doc(`users/${id}`).set({ role: 'driver', isActive: over.active ?? true });

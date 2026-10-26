@@ -15,6 +15,7 @@ import { SERVICE_TYPES, VEHICLE_CLASSES } from './fare';
 import { CAPACITY } from './booking_schema';
 import { computeSettlement, Settlement } from './settlement';
 import { policySchema } from './cancellation_policy';
+import { isPaid, readPaymentState } from './payment_booking';
 
 export interface AdminDeps { db: admin.firestore.Firestore; now?: () => number }
 
@@ -99,10 +100,13 @@ export async function adminUpdateBooking(deps: AdminDeps, actor: AdminActor, dat
       if (!ASSIGNABLE.includes(status)) throw opError('failed-precondition', 'not_assignable', { status });
       const previous = (b.driverId as string | undefined) ?? null;
       if (previous === input.driverId) throw opError('failed-precondition', 'no_change');
-      const [user, profile] = await Promise.all([
+      const [user, profile, payment] = await Promise.all([
         tx.get(db.collection('users').doc(input.driverId)),
         tx.get(db.collection('driverProfiles').doc(input.driverId)),
+        readPaymentState(db, ref.id, tx),
       ]);
+      // A3: una reserva que aún espera chófer no se asigna sin pago confirmado.
+      if (status === 'pending' && !isPaid(payment)) throw opError('failed-precondition', 'payment_required');
       if (user.data()?.role !== 'driver' || !profile.exists) throw opError('not-found', 'driver_not_found');
       if (user.data()?.isActive === false) throw opError('failed-precondition', 'driver_inactive');
       if (profile.data()?.documentsVerified !== true) throw opError('failed-precondition', 'driver_not_verified');

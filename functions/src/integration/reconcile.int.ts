@@ -9,7 +9,7 @@ import * as admin from 'firebase-admin';
 const sendEachForMulticast = jest.fn(async () => ({ responses: [] }));
 jest.spyOn(admin, 'messaging').mockReturnValue({ sendEachForMulticast } as unknown as admin.messaging.Messaging);
 
-import { onBookingCreated } from '../index';
+import { notifyDriversOnPaid } from '../index';
 import { reconcileOpenRequests } from '../reconcile';
 
 const db = admin.firestore();
@@ -26,10 +26,23 @@ const booking = (status: string) => ({
 });
 
 async function clear(): Promise<void> {
-  for (const col of ['bookings', 'openRequests', 'adminAlerts', 'driverProfiles', 'users']) {
+  for (const col of ['openRequests', 'adminAlerts', 'driverProfiles', 'users']) {
     const snap = await db.collection(col).get();
     await Promise.all(snap.docs.map((d) => d.ref.delete()));
   }
+  await db.recursiveDelete(db.collection('bookings'));
+}
+
+// Pago confirmado: solo así la reserva cuenta para openRequests (pagos, A3).
+const paid = (id: string) => db.doc(`bookings/${id}/payment/state`).set({ riderId: 'ana', paymentStatus: 'paid' });
+
+/** Evento de notifyDriversOnPaid: el pago de [id] pasa a paid. */
+async function paidEvent(id: string) {
+  const ref = db.doc(`bookings/${id}/payment/state`);
+  await ref.set({ riderId: 'ana', paymentStatus: 'awaiting_payment' });
+  const before = await ref.get();
+  await paid(id);
+  return { data: { before, after: await ref.get() }, params: { bookingId: id, docId: 'state' } };
 }
 
 const ids = async (col: string) => (await db.collection(col).get()).docs.map((d) => d.id).sort();
@@ -44,6 +57,8 @@ describe('reconcileOpenRequests', () => {
   it('crea la que falta, borra las huérfanas y escribe una alerta', async () => {
     await db.doc('bookings/sinSolicitud').set(booking('pending'));
     await db.doc('bookings/conSolicitud').set(booking('pending'));
+    await paid('sinSolicitud');
+    await paid('conSolicitud');
     await db.doc('openRequests/conSolicitud').set({ estimatedPrice: 100 });
     await db.doc('bookings/cancelada').set(booking('cancelled'));
     await db.doc('openRequests/cancelada').set({ estimatedPrice: 100 }); // huérfana (carrera de cancelación)
@@ -63,6 +78,7 @@ describe('reconcileOpenRequests', () => {
 
   it('es idempotente: la segunda pasada no cambia nada ni escribe otra alerta', async () => {
     await db.doc('bookings/sinSolicitud').set(booking('pending'));
+    await paid('sinSolicitud');
     await db.doc('openRequests/huerfana').set({ estimatedPrice: 100 });
     await reconcileOpenRequests(db);
     const second = await reconcileOpenRequests(db);
@@ -72,28 +88,31 @@ describe('reconcileOpenRequests', () => {
 
   it('sin nada que arreglar no escribe alertas', async () => {
     await db.doc('bookings/ok').set(booking('pending'));
+    await paid('ok');
     await db.doc('openRequests/ok').set({ estimatedPrice: 100 });
     expect(await reconcileOpenRequests(db)).toEqual({ created: [], deleted: [] });
     expect((await db.collection('adminAlerts').get()).size).toBe(0);
   });
 });
 
-describe('onBookingCreated con reintento', () => {
+// Desde pagos (A3) el aviso a los chóferes sale al confirmarse el pago
+// (notifyDriversOnPaid), con la misma política de reintentos.
+describe('notifyDriversOnPaid con reintento', () => {
   it('un reintento no avisa dos veces a los chóferes', async () => {
     await db.doc('users/luis').set({ role: 'driver', fcmTokens: ['token-luis'] });
     await db.doc('driverProfiles/luis').set({ isAvailable: true, documentsVerified: true });
     const ref = db.doc('bookings/r1');
     await ref.set(booking('pending'));
-    const event = { data: await ref.get(), params: { bookingId: 'r1' } };
-    await (onBookingCreated as unknown as Runnable).run(event);
-    await (onBookingCreated as unknown as Runnable).run(event); // reintento de la plataforma
+    const event = await paidEvent('r1');
+    await (notifyDriversOnPaid as unknown as Runnable).run(event);
+    await (notifyDriversOnPaid as unknown as Runnable).run(event); // reintento de la plataforma
     expect(sendEachForMulticast).toHaveBeenCalledTimes(1);
     expect((await ref.get()).data()?.driversNotifiedAt).toBeDefined();
   });
 });
 
 describe('reintentos: errores transitorios frente a permanentes', () => {
-  const run = (event: unknown) => (onBookingCreated as unknown as Runnable).run(event);
+  const run = (event: unknown) => (notifyDriversOnPaid as unknown as Runnable).run(event);
 
   beforeEach(async () => {
     await db.doc('users/luis').set({ role: 'driver', fcmTokens: ['token-luis'] });
@@ -103,7 +122,7 @@ describe('reintentos: errores transitorios frente a permanentes', () => {
   it('FCM caído (transitorio): falla para reintentar y el reintento sí avisa', async () => {
     const ref = db.doc('bookings/t1');
     await ref.set(booking('pending'));
-    const event = { data: await ref.get(), params: { bookingId: 't1' } };
+    const event = await paidEvent('t1');
     sendEachForMulticast.mockRejectedValueOnce(Object.assign(new Error('fcm'), { code: 'messaging/server-unavailable' }));
     await expect(run(event)).rejects.toThrow();
     expect((await ref.get()).data()?.driversNotifiedAt).toBeUndefined();
@@ -115,7 +134,7 @@ describe('reintentos: errores transitorios frente a permanentes', () => {
   it('argumento de FCM inválido (permanente): no relanza ni se repite', async () => {
     const ref = db.doc('bookings/p1');
     await ref.set(booking('pending'));
-    const event = { data: await ref.get(), params: { bookingId: 'p1' } };
+    const event = await paidEvent('p1');
     sendEachForMulticast.mockRejectedValueOnce(Object.assign(new Error('fcm'), { code: 'messaging/invalid-argument' }));
     await expect(run(event)).resolves.toBeUndefined();
     await run(event);
@@ -124,8 +143,8 @@ describe('reintentos: errores transitorios frente a permanentes', () => {
 
   it('reserva borrada antes de procesarla (NOT_FOUND, permanente): no relanza', async () => {
     const ref = db.doc('bookings/borrada');
-    await ref.set({ ...booking('pending'), estimatedPrice: 10 }); // fuerza escribir pricingReview
-    const event = { data: await ref.get(), params: { bookingId: 'borrada' } };
+    await ref.set(booking('pending'));
+    const event = await paidEvent('borrada');
     await ref.delete();
     await expect(run(event)).resolves.toBeUndefined();
     expect(sendEachForMulticast).not.toHaveBeenCalled();
@@ -134,7 +153,7 @@ describe('reintentos: errores transitorios frente a permanentes', () => {
   it('reserva que no está pendiente (datos que no sirven): no avisa ni falla', async () => {
     const ref = db.doc('bookings/conf');
     await ref.set(booking('confirmed'));
-    await expect(run({ data: await ref.get(), params: { bookingId: 'conf' } })).resolves.toBeUndefined();
+    await expect(run(await paidEvent('conf'))).resolves.toBeUndefined();
     expect(sendEachForMulticast).not.toHaveBeenCalled();
   });
 });

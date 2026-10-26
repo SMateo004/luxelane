@@ -18,6 +18,7 @@ import { deviceSchema, registerDriverDevice as registerDriverDeviceService } fro
 import { isTransient, withRetryPolicy } from './retry_policy';
 import * as stripe from './stripe_service';
 import { loadPaymentSettings } from './payment_config';
+import { isPaid, readPaymentState } from './payment_booking';
 import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, fareId, FareRule } from './pricing';
@@ -781,22 +782,28 @@ async function notifyNewBooking(
     });
   }
 
-  // La solicitud abierta la crea createBooking en la misma transacción que
-  // la reserva; este trigger solo avisa a los chóferes.
+  // A3: a los chóferes se les avisa cuando el pago queda confirmado
+  // (notifyDriversOnPaid), no al crear la reserva.
+}
 
+/**
+ * Aviso a los chóferes de una reserva pagada, una sola vez (marca
+ * driversNotifiedAt). Lo dispara el paso del pago a paid.
+ */
+async function notifyDriversOfBooking(bookingRef: admin.firestore.DocumentReference): Promise<void> {
+  const booking = (await bookingRef.get()).data() as BookingDoc | undefined;
+  if (!booking || booking.status !== 'pending') return;
+  const vehicleClass = booking.class ?? booking.vehicleClass ?? 'business';
   const firstNotice = await db.runTransaction(async (tx) => {
-    const fresh = await tx.get(event.data!.ref);
+    const fresh = await tx.get(bookingRef);
     // Borrada o ya avisada: no hay nada que hacer.
     if (!fresh.exists || fresh.data()?.driversNotifiedAt) return false;
-    tx.update(event.data!.ref, { driversNotifiedAt: admin.firestore.Timestamp.now() });
+    tx.update(bookingRef, { driversNotifiedAt: admin.firestore.Timestamp.now() });
     return true;
   });
   if (!firstNotice) return;
 
-  logger.info('onBookingCreated', 'notifying drivers', {
-    bookingId: event.params.bookingId,
-    vehicleClass,
-  });
+  logger.info('notifyDrivers', 'notifying drivers', { bookingId: bookingRef.id, vehicleClass });
 
   const driversSnap = await db
     .collection('driverProfiles')
@@ -821,11 +828,22 @@ async function notifyNewBooking(
     // Si el envío puede salir bien en el reintento, se quita la marca para
     // que el reintento avise; si no, queda marcada y no se repite.
     if (isTransient(e)) {
-      await event.data!.ref.update({ driversNotifiedAt: admin.firestore.FieldValue.delete() }).catch(() => undefined);
+      await bookingRef.update({ driversNotifiedAt: admin.firestore.FieldValue.delete() }).catch(() => undefined);
     }
     throw e;
   }
 }
+
+// El pago pasa a paid (confirmación del admin o del proveedor): ahora sí se
+// avisa a los chóferes. Con reintento, como onBookingCreated.
+export const notifyDriversOnPaid = onDocumentWritten(
+  { document: 'bookings/{bookingId}/payment/{docId}', retry: true }, (event) => {
+    const before = event.data?.before.data();
+    const after = event.data?.after.data();
+    if (after?.paymentStatus !== 'paid' || before?.paymentStatus === 'paid') return Promise.resolve();
+    return withRetryPolicy('notifyDriversOnPaid', { bookingId: event.params.bookingId },
+      () => notifyDriversOfBooking(db.collection('bookings').doc(event.params.bookingId)));
+  });
 
 // ---------------------------------------------------------------------------
 // onBookingStatusChanged  (onUpdate /bookings/{bookingId})
@@ -1148,6 +1166,8 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
   const booking = bookingSnap.data() as BookingDoc;
   if (booking.riderId !== uid) await requireAdmin(req);
   if (booking.status !== 'pending') throw err.failedPrecondition('booking_not_pending');
+  // A3: sin pago confirmado no se busca chófer.
+  if (!isPaid(await readPaymentState(db, bookingId))) return { assigned: false, reason: 'not_paid' };
   // Los chóferes que liberaron esta reserva no se vuelven a asignar.
   const released = new Set(releasedByOf(booking));
 
@@ -1199,10 +1219,12 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
   for (const driverId of ranked) {
     const driverRef = db.collection('driverProfiles').doc(driverId);
     const outcome = await db.runTransaction(async (tx) => {
-      const [b, d, u] = await Promise.all([
+      const [b, d, u, pay] = await Promise.all([
         tx.get(bookingRef), tx.get(driverRef), tx.get(db.collection('users').doc(driverId)),
+        readPaymentState(db, bookingId, tx),
       ]);
       if ((b.data() as BookingDoc | undefined)?.status !== 'pending') return 'taken';
+      if (!isPaid(pay)) return 'not_paid';
       if (releasedByOf(b.data()).includes(driverId)) return 'busy';
       if (!d.data()?.isAvailable || u.data()?.isActive === false) return 'busy';
       tx.update(bookingRef, {
@@ -1214,6 +1236,7 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
       return 'assigned';
     });
     if (outcome === 'taken') return { assigned: false, reason: 'already_taken' };
+    if (outcome === 'not_paid') return { assigned: false, reason: 'not_paid' };
     if (outcome === 'busy') continue;
 
     const driverTokens = await getUserTokens(driverId);
@@ -1245,14 +1268,17 @@ export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => 
 
   try {
     await db.runTransaction(async (tx) => {
-      const [bookingSnap, driverSnap] = await Promise.all([
+      const [bookingSnap, driverSnap, paymentSnap] = await Promise.all([
         tx.get(bookingRef),
         tx.get(driverRef),
+        readPaymentState(db, bookingId, tx),
       ]);
 
       if (!bookingSnap.exists) throw err.notFound('booking_not_found');
       const booking = bookingSnap.data() as BookingDoc;
       if (booking.status !== 'pending') throw new Error('ALREADY_TAKEN');
+      // A3: una reserva sin pago confirmado no se ofrece ni se acepta.
+      if (!isPaid(paymentSnap)) throw new Error('NOT_PAID');
       if (releasedByOf(booking).includes(driverId)) throw new Error('RELEASED_BY_YOU');
 
       if (!driverSnap.exists) throw err.notFound('driver_not_found');
@@ -1286,6 +1312,9 @@ export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => 
     }
     if (e.message === 'RELEASED_BY_YOU') {
       return { accepted: false, reason: 'released_by_you' };
+    }
+    if (e.message === 'NOT_PAID') {
+      return { accepted: false, reason: 'not_paid' };
     }
     logger.error('acceptBooking', 'error', { error: String(e) });
     throw e;

@@ -10,7 +10,9 @@ import { CreateInput, createSchema, QuoteInput, quoteSchema } from './booking_sc
 import { tripDistance, DistanceSource } from './distance';
 import { computeFare, FareBreakdown, fixedFareKey, PricingConfig } from './fare';
 import type { FareRule } from './pricing';
-import { buildOpenRequest } from './open_requests';
+import { loadPaymentSettings } from './payment_config';
+import { paymentSummary, reservePaymentRef, writeInitialPayment } from './payment_booking';
+import { paymentStateRef } from './payment_model';
 import { updateRequired } from './app_version';
 import { airportFor, areaLabel, cityOf, destinationOk, originOk, PlaceIn } from './service_area';
 
@@ -167,11 +169,12 @@ export const bookingIdFor = (requestId: string): string =>
 const foreignRequest = () => bookingError('invalid-argument', 'invalid_request', { fields: ['requestId'] });
 
 /** Reserva ya creada con este requestId, si es del mismo pasajero. */
-function existingResponse(snap: admin.firestore.DocumentSnapshot, uid: string) {
+function existingResponse(snap: admin.firestore.DocumentSnapshot, uid: string,
+  payment: admin.firestore.DocumentSnapshot | null) {
   const d = snap.data();
   if (!d) return null;
   if (d.riderId !== uid) throw foreignRequest();
-  return { bookingId: snap.id, price: d.estimatedPrice as number };
+  return { bookingId: snap.id, price: d.estimatedPrice as number, ...paymentSummary(payment?.data()) };
 }
 
 export async function createBooking(deps: BookingDeps, uid: string | undefined, data: unknown) {
@@ -181,7 +184,7 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
   const ref = deps.db.collection('bookings').doc(bookingIdFor(input.requestId));
   // Reintento de una solicitud que ya se creó (p. ej. se perdió la
   // respuesta): misma respuesta, sin recalcular ni duplicar.
-  const already = existingResponse(await ref.get(), uid!);
+  const already = existingResponse(await ref.get(), uid!, await paymentStateRef(deps.db, ref.id).get());
   if (already) return already;
 
   const priced = await priceTrip(deps, input);
@@ -192,6 +195,9 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
 
   const db = deps.db;
   const now = admin.firestore.Timestamp.fromMillis(deps.now?.() ?? Date.now());
+  // Plazo para pagar (A3): sin config/ops.paymentWindowMinutes, sin
+  // vencimiento automático.
+  const { windowMinutes } = await loadPaymentSettings(db);
   const pickupAirport = input.serviceType === 'oneWay' ? airportFor(input.origin)?.iata ?? null : null;
   const prefs = user.ridePreferences;
   const booking = {
@@ -229,14 +235,18 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
     },
   };
 
-  // Reserva y solicitud abierta juntas: nunca una sin la otra. Si dos
-  // envíos simultáneos llegan aquí, la transacción del segundo ve la
-  // reserva del primero y devuelve esa.
+  // Reserva y estado del pago juntos. La solicitud abierta NO se crea aquí:
+  // la reserva no se ofrece a ningún chófer hasta que su pago esté
+  // confirmado (A3). Si dos envíos simultáneos llegan aquí, la transacción
+  // del segundo ve la reserva del primero y devuelve esa.
   const result = await db.runTransaction(async (tx) => {
-    const current = existingResponse(await tx.get(ref), uid!);
+    const current = existingResponse(await tx.get(ref), uid!, await tx.get(paymentStateRef(db, ref.id)));
     if (current) return current;
+    const paymentRef = await reservePaymentRef(tx, db);
     tx.set(ref, booking);
-    tx.set(db.collection('openRequests').doc(ref.id), buildOpenRequest(booking));
+    const payment = writeInitialPayment(tx, db, {
+      bookingId: ref.id, riderId: uid!, price: priced.price, paymentRef, now, windowMinutes,
+    });
     if (priced.distanceSource === 'fallback') {
       tx.set(db.collection('adminAlerts').doc(), {
         type: 'distance_fallback',
@@ -246,7 +256,7 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
         resolved: false,
       });
     }
-    return { bookingId: ref.id, price: priced.price };
+    return { bookingId: ref.id, price: priced.price, ...paymentSummary(payment) };
   });
   return result;
 }

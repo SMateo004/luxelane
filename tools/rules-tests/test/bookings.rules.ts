@@ -4,6 +4,7 @@
 import { assertFails, assertSucceeds, RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import {
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -99,6 +100,20 @@ describe('aceptar una reserva pendiente', () => {
   test('un chófer no verificado o bloqueado no la acepta', async () => {
     await assertFails(accept('nover'));
     await assertFails(accept('bloq'));
+  });
+
+  test('sin pago confirmado nadie la acepta desde el cliente (pagos, A3)', async () => {
+    const setPayment = (data: Record<string, unknown> | null) => env.withSecurityRulesDisabled((ctx) => {
+      const ref = doc(ctx.firestore(), 'bookings', 'pend', 'payment', 'state');
+      return data ? setDoc(ref, data) : deleteDoc(ref);
+    });
+    for (const paymentStatus of ['awaiting_payment', 'failed', 'expired', 'refund_pending']) {
+      await setPayment({ riderId: 'ana', paymentStatus });
+      await assertFails(accept('libre'));
+    }
+    // Reserva antigua sin estado de pago: tampoco.
+    await setPayment(null);
+    await assertFails(accept('libre'));
   });
 });
 

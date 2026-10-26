@@ -228,6 +228,10 @@ service cloud.firestore {
           resource.data.status == 'pending' &&
           // Quien la liberó no la vuelve a aceptar (0.3).
           !(request.auth.uid in resource.data.get('releasedBy', [])) &&
+          // Sin pago confirmado no se ofrece ni se acepta (pagos, A3). Sin
+          // estado de pago (reservas antiguas), get() falla y se deniega.
+          get(/databases/$(database)/documents/bookings/$(bookingId)/payment/state)
+            .data.get('paymentStatus', '') == 'paid' &&
           request.resource.data.driverId == request.auth.uid &&
           request.resource.data.status == 'confirmed' &&
           onlyUpdating(['driverId', 'status', 'updatedAt'])) ||
