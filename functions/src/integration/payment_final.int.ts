@@ -88,3 +88,12 @@ describe('importe final distinto de lo pagado (A9)', () => {
     expect(await all('payments')).toEqual([]);
   });
 });
+
+describe('por horas (A10): se paga la estimación y la diferencia va por A9', () => {
+  it('3 h estimadas y pagadas, 4 h reales: saldo pendiente de la hora extra', async () => {
+    await setup({ serviceType: 'byTheHour', hours: 3, estimatedPrice: 240 });
+    await db.doc('bookings/b1/payment/state').update({ amountDue: 24000, amountPaid: 24000 });
+    await update({ status: 'completed', finalPrice: 320 });
+    expect(await doc('bookings/b1/payment/state')).toMatchObject({ balanceDue: 8000 });
+  });
+});
