@@ -68,12 +68,14 @@ describe('createBooking (A3)', () => {
   it('crea la reserva en awaiting_payment, con importe del servidor y referencia, sin openRequests', async () => {
     const r = await createBooking(deps(), 'ana', trip({ quotedPrice: 500 }));
     // El cliente dijo 500: se ignora; se debe lo que calcula el servidor.
-    expect(r).toMatchObject({ price: 86, paymentStatus: 'awaiting_payment', amountDue: 8600, paymentDeadline: null });
+    expect(r).toMatchObject({
+      price: 86, paymentStatus: 'awaiting_payment', amountDue: 8600, paymentDeadline: null, methodsOffered: ['manual_qr'],
+    });
     expect(isPaymentRef(r.paymentRef!)).toBe(true);
     const state = (await doc(`bookings/${r.bookingId}/payment/state`))!;
     expect(state).toMatchObject({
       riderId: 'ana', paymentStatus: 'awaiting_payment', paymentMethod: null, amountDue: 8600, amountPaid: 0,
-      paymentRef: r.paymentRef, paidAt: null, paymentDeadline: null,
+      paymentRef: r.paymentRef, paidAt: null, paymentDeadline: null, methodsOffered: ['manual_qr'],
     });
     expect(await doc(`paymentRefs/${r.paymentRef}`)).toMatchObject({ bookingId: r.bookingId });
     expect(await exists(`openRequests/${r.bookingId}`)).toBe(false);

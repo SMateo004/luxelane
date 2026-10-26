@@ -55,6 +55,8 @@ export interface PaymentState {
   refundDue?: number;
   /** Diferencia del importe final (A9), en céntimos: lo que debe el pasajero. */
   balanceDue?: number;
+  /** Métodos que se ofrecieron al crear la reserva. */
+  methodsOffered?: PaymentMethod[];
   /** «Ya pagué» del pasajero (A4). */
   riderReportedAt?: admin.firestore.Timestamp | null;
   riderOperationNumber?: string | null;

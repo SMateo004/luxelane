@@ -7,7 +7,7 @@
 import * as admin from 'firebase-admin';
 import { buildOpenRequest, BookingForRequest } from './open_requests';
 import {
-  cents, newPaymentRef, PaymentState, paymentRefDoc, paymentStateRef,
+  cents, newPaymentRef, PaymentMethod, PaymentState, paymentRefDoc, paymentStateRef,
 } from './payment_model';
 
 /** Intentos de referencia nueva antes de rendirse (colisión casi imposible). */
@@ -35,6 +35,8 @@ export interface InitialPayment {
   now: admin.firestore.Timestamp;
   /** config/ops.paymentWindowMinutes; null: sin vencimiento automático. */
   windowMinutes: number | null;
+  /** Métodos activos al crear la reserva (la app los ofrece; startPayment revalida). */
+  methodsOffered: PaymentMethod[];
 }
 
 /** Escribe el estado inicial del pago y reserva la referencia. */
@@ -54,6 +56,7 @@ export function writeInitialPayment(tx: admin.firestore.Transaction, db: admin.f
       : admin.firestore.Timestamp.fromMillis(p.now.toMillis() + p.windowMinutes * 60_000),
     createdAt: p.now,
     updatedAt: p.now,
+    methodsOffered: p.methodsOffered,
   };
   tx.set(paymentStateRef(db, p.bookingId), state);
   tx.create(paymentRefDoc(db, p.paymentRef), { bookingId: p.bookingId, createdAt: p.now });
@@ -67,6 +70,7 @@ export function paymentSummary(s: Partial<PaymentState> | undefined) {
     paymentRef: s?.paymentRef ?? null,
     amountDue: s?.amountDue ?? null,
     paymentDeadline: s?.paymentDeadline ? s.paymentDeadline.toMillis() : null,
+    methodsOffered: s?.methodsOffered ?? [],
   };
 }
 

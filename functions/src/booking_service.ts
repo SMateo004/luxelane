@@ -252,6 +252,7 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
     tx.set(ref, booking);
     const payment = writeInitialPayment(tx, db, {
       bookingId: ref.id, riderId: uid!, price: priced.price, paymentRef, now, windowMinutes,
+      methodsOffered: payments.enabled,
     });
     if (priced.distanceSource === 'fallback') {
       tx.set(db.collection('adminAlerts').doc(), {
