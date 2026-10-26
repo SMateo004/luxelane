@@ -23,6 +23,7 @@ import * as payManual from './payment_manual';
 import * as payCard from './payment_card';
 import * as payRefund from './payment_refund';
 import { reconcileFinalAmount } from './payment_final';
+import * as payInbox from './payment_inbox';
 import { expirePayments } from './payment_expiry';
 import { computeCancelSettle, readForSettle, writeCancelSettle } from './payment_settle';
 import { logger } from './logger';
@@ -999,6 +1000,10 @@ export const refundOnRefundPending = onDocumentWritten(
     await payRefund.onRefundPending({ db }, event.params.bookingId,
       event.data?.before.data(), event.data?.after.data());
   });
+
+/** Bandejas de pagos del panel (A11): pendientes, «ya pagué», devoluciones y saldos. */
+export const adminPaymentInbox = secureCallable('adminPaymentInbox', {}, async (req) =>
+  payInbox.adminPaymentInbox(db, req.data), { role: 'admin', requireMfa: true });
 
 /** El admin marca una alerta como revisada (auditado en el servidor). */
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {

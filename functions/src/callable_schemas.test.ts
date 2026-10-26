@@ -21,6 +21,7 @@ import { callableSchemas as c } from './schemas';
 import { confirmSchema as confirmPaymentSchema, rejectSchema as rejectPaymentSchema, sentSchema } from './payment_manual';
 import { startSchema as startPaymentSchema } from './payment_card';
 import { refundSchema } from './payment_refund';
+import { inboxSchema } from './payment_inbox';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exported = Record<string, any>;
@@ -270,6 +271,10 @@ const CASES: Record<string, Case> = {
     extreme: [{ bookingId: ID, externalRef: 'x'.repeat(61), reason: 'Devuelto por transferencia hoy' },
       { bookingId: ID, externalRef: 'DEV 1', reason: 'Devuelto por transferencia hoy', amount: 1 },
       { bookingId: ID, externalRef: 'DEV<1>', reason: 'Devuelto por transferencia hoy' }],
+  },
+  adminPaymentInbox: {
+    schema: inboxSchema, valid: { kind: 'reported' },
+    wrongType: { kind: 1 }, extreme: [{ kind: 'todo' }, { kind: 'refunds', limit: 1000 }, { kind: 'refunds', limit: 0 }],
   },
   adminRejectPayment: {
     schema: rejectPaymentSchema, valid: { bookingId: ID, reason: 'No hay ingreso en el extracto' },
