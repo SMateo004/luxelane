@@ -58,8 +58,10 @@ export const bookingSchema = z.discriminatedUnion('action', [
      * Quién causa la cancelación (A7). Solo con 'rider' (p. ej. el pasajero
      * llama a central, o no se presentó) se aplica la política de retención;
      * chófer o plataforma: 0 %. El importe lo calcula siempre el servidor.
+     * Sin causa (el panel anterior no la manda): plataforma, 0 %, lo más
+     * favorable al pasajero.
      */
-    cause: z.enum(['rider', 'driver', 'platform']),
+    cause: z.enum(['rider', 'driver', 'platform']).default('platform'),
   }),
   z.strictObject({
     action: z.literal('status'), bookingId: docId,

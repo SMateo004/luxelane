@@ -81,6 +81,15 @@ describe('el chófer libera la reserva', () => {
   });
 });
 
+describe('panel anterior (sin causa): plataforma, 0 %', () => {
+  it('cancela sin retener nada aunque la política diga 100 %', async () => {
+    await booking('b1', 'driver_arrived', 'paid', { driverId: 'luis' });
+    await expect(adminUpdateBooking({ db }, { adminId: 'jefa', adminEmail: null }, {
+      action: 'cancel', bookingId: 'b1', reason: 'Cancelada desde el panel anterior',
+    })).resolves.toMatchObject({ retained: 0, refund: 8000, retentionBasis: 'platform_cause' });
+  });
+});
+
 describe('cancela la plataforma o el chófer (admin)', () => {
   it.each(['platform', 'driver'])('causa %s: 0 % aunque la política diga 100 %', async (cause) => {
     await booking('b1', 'driver_arrived', 'paid', { driverId: 'luis' });
