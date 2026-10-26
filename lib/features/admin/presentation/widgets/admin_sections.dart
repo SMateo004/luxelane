@@ -1269,7 +1269,10 @@ class _UserTile extends StatelessWidget {
             ),
             const SizedBox(width: LuxSpacing.md),
             Tooltip(
-              message: user.isActive ? 'Bloquear' : 'Reactivar',
+              // El nombre en la etiqueta: con lector de pantalla, la lista
+              // de interruptores no decía de quién era cada uno (E7).
+              message: '${user.isActive ? 'Bloquear' : 'Reactivar'} a '
+                  '${user.displayName}',
               child: Switch.adaptive(
                 value: user.isActive,
                 activeColor: LuxColors.sapphire,

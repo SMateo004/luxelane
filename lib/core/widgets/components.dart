@@ -6,9 +6,11 @@ import '../../app/theme/lux_motion.dart';
 import '../enums/enums.dart';
 import '../models/models.dart';
 import 'lux_feedback.dart';
+import 'lux_focus.dart';
 import 'lux_raised.dart';
 
 export 'lux_feedback.dart';
+export 'lux_focus.dart';
 export 'lux_raised.dart' show LuxRaisedVariant, LuxLoadingDots;
 
 // ---------------------------------------------------------------------------
@@ -156,25 +158,32 @@ class _LuxPressableState extends State<LuxPressable> {
   @override
   Widget build(BuildContext context) {
     if (widget.onTap == null) return widget.child;
+    void activate() {
+      if (widget.haptic) LuxHaptics.tap();
+      widget.onTap!();
+    }
+
     return Semantics(
       button: true,
       label: widget.semanticLabel,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapDown: (_) => _set(true),
-          onTapCancel: () => _set(false),
-          onTapUp: (_) {
-            _set(false);
-            if (widget.haptic) LuxHaptics.tap();
-            widget.onTap!();
-          },
-          child: AnimatedScale(
-            scale: _down ? widget.scale : 1,
-            duration: LuxMotion.of(context, LuxMotion.fast),
-            curve: LuxMotion.emphasized,
-            child: widget.child,
+      child: LuxFocusable(
+        onActivate: activate,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapDown: (_) => _set(true),
+            onTapCancel: () => _set(false),
+            onTapUp: (_) {
+              _set(false);
+              activate();
+            },
+            child: AnimatedScale(
+              scale: _down ? widget.scale : 1,
+              duration: LuxMotion.of(context, LuxMotion.fast),
+              curve: LuxMotion.emphasized,
+              child: widget.child,
+            ),
           ),
         ),
       ),

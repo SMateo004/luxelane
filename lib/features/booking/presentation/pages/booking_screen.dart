@@ -1439,6 +1439,7 @@ class _BookingScreenState extends State<BookingScreen> {
             backgroundColor: Colors.transparent,
             appBar: AppBar(
               leading: IconButton(
+                tooltip: 'Volver',
                 icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
                 onPressed: () =>
                     _step > 0 ? setState(() => _step--) : context.pop(),

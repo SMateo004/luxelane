@@ -288,6 +288,14 @@ void main() {
     }
   }
 
+  testWidgets('el interruptor «Bloquear» dice de quién es (E7)', (
+    tester,
+  ) async {
+    await _pump(tester, const UsersTab(), const Size(1280, 900));
+    expect(find.byTooltip('Bloquear a Ana Pérez'), findsOneWidget);
+    expect(find.byTooltip('Bloquear a Luis Mamani'), findsOneWidget);
+  });
+
   testWidgets('finanzas muestra cobrado y por cobrar', (tester) async {
     await _pump(tester, const FinanceTab(), const Size(1280, 2400));
     expect(find.text('Cobrado'), findsWidgets);

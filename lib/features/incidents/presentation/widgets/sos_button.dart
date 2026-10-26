@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 
 import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
+import '../../../../core/widgets/lux_focus.dart';
 
 /// Botón de ayuda: se activa manteniéndolo pulsado [holdDuration] (con un
 /// anillo que se llena y vibración) para evitar toques accidentales. Con
@@ -110,61 +111,68 @@ class _SosButtonState extends State<SosButton>
     // Con lector de pantalla mantener pulsado es incómodo: un toque pide
     // confirmación.
     final screenReader = MediaQuery.accessibleNavigationOf(context);
-    return Semantics(
-      button: true,
-      label: '${widget.label} SOS',
-      hint: 'Mantén pulsado dos segundos para avisar a central. Con lector '
-          'de pantalla, toca dos veces y confirma.',
-      onTap: _confirm,
-      excludeSemantics: true,
-      // Listener y no reconocedores de gestos: un toque largo no compite con
-      // otros gestos ni se cancela a mitad.
-      child: Listener(
-        key: const ValueKey('sos-button'),
-        behavior: HitTestBehavior.opaque,
-        onPointerDown: screenReader ? null : (_) => _start(),
-        onPointerUp: screenReader ? null : (_) => _release(),
-        onPointerCancel: screenReader ? null : (_) => _release(),
-        child: GestureDetector(
-          onTap: screenReader ? _confirm : null,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox.square(
-                dimension: widget.size,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: LuxColors.surface,
-                        border: Border.all(color: LuxColors.border),
-                        boxShadow: luxSoftShadow,
-                      ),
-                    ),
-                    AnimatedBuilder(
-                      animation: _hold,
-                      builder: (_, __) => CircularProgressIndicator(
-                        value: _hold.value,
-                        strokeWidth: 3,
-                        backgroundColor: Colors.transparent,
-                        color: LuxColors.error,
-                      ),
-                    ),
-                    Center(
-                      child: Text(
-                        'SOS',
-                        style: LuxTypography.titleMedium.copyWith(
-                          color: LuxColors.error,
-                          letterSpacing: 1.2,
+    // Con teclado (Tab + Intro) también pide confirmación (E7). Fuera del
+    // Semantics con excludeSemantics: dentro, el nodo de foco se perdía y en
+    // la web Tab no llegaba al SOS.
+    return LuxFocusable(
+      onActivate: _confirm,
+      radius: widget.size / 2,
+      child: Semantics(
+        button: true,
+        label: '${widget.label} SOS',
+        hint: 'Mantén pulsado dos segundos para avisar a central. Con lector '
+            'de pantalla, toca dos veces y confirma.',
+        onTap: _confirm,
+        excludeSemantics: true,
+        // Listener y no reconocedores de gestos: un toque largo no compite con
+        // otros gestos ni se cancela a mitad.
+        child: Listener(
+          key: const ValueKey('sos-button'),
+          behavior: HitTestBehavior.opaque,
+          onPointerDown: screenReader ? null : (_) => _start(),
+          onPointerUp: screenReader ? null : (_) => _release(),
+          onPointerCancel: screenReader ? null : (_) => _release(),
+          child: GestureDetector(
+            onTap: screenReader ? _confirm : null,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox.square(
+                  dimension: widget.size,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      DecoratedBox(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: LuxColors.surface,
+                          border: Border.all(color: LuxColors.border),
+                          boxShadow: luxSoftShadow,
                         ),
                       ),
-                    ),
-                  ],
+                      AnimatedBuilder(
+                        animation: _hold,
+                        builder: (_, __) => CircularProgressIndicator(
+                          value: _hold.value,
+                          strokeWidth: 3,
+                          backgroundColor: Colors.transparent,
+                          color: LuxColors.error,
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          'SOS',
+                          style: LuxTypography.titleMedium.copyWith(
+                            color: LuxColors.error,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

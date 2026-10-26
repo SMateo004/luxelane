@@ -422,7 +422,8 @@ class _TopBar extends StatelessWidget {
         padding: const EdgeInsets.all(LuxSpacing.md),
         child: Row(
           children: [
-            GestureDetector(
+            LuxPressable(
+              semanticLabel: 'Volver al inicio',
               onTap: () => context.go('/'),
               child: Container(
                 width: 40,

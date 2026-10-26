@@ -11,6 +11,7 @@ class RideTypePage extends StatelessWidget {
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
           leading: IconButton(
+            tooltip: 'Volver',
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
             onPressed: () => context.pop(),
           ),

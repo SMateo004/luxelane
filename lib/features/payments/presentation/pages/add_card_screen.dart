@@ -87,6 +87,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
         appBar: AppBar(
           title: const Text('Agregar método de pago'),
           leading: IconButton(
+            tooltip: 'Volver',
             icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
             onPressed: () => context.pop(),
           ),

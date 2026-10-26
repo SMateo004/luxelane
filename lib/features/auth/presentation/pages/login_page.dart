@@ -528,22 +528,28 @@ class _TextLinkState extends State<_TextLink> {
   bool _hover = false;
 
   @override
-  Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) => setState(() => _hover = true),
-        onExit: (_) => setState(() => _hover = false),
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: Text(
-            widget.label,
-            style: TextStyle(
-              fontFamily: _kSans,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: _hover ? _sphLt : _sph.withAlpha(220),
-              decoration:
-                  _hover ? TextDecoration.underline : TextDecoration.none,
-              decorationColor: _sphLt,
+  Widget build(BuildContext context) => Semantics(
+        link: true,
+        child: LuxFocusable(
+          onActivate: widget.onTap,
+          child: MouseRegion(
+            onEnter: (_) => setState(() => _hover = true),
+            onExit: (_) => setState(() => _hover = false),
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: widget.onTap,
+              child: Text(
+                widget.label,
+                style: TextStyle(
+                  fontFamily: _kSans,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: _hover ? _sphLt : _sph.withAlpha(220),
+                  decoration:
+                      _hover ? TextDecoration.underline : TextDecoration.none,
+                  decorationColor: _sphLt,
+                ),
+              ),
             ),
           ),
         ),

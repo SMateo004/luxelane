@@ -287,25 +287,40 @@ class _TermsConsent extends StatelessWidget {
       children: [
         Row(
           children: [
-            Checkbox(
-              key: const Key('terms-checkbox'),
-              value: value,
-              onChanged:
-                  onChanged == null ? null : (v) => onChanged!(v ?? false),
+            Semantics(
+              label: 'Acepto los Términos y la Política de privacidad',
+              child: Checkbox(
+                key: const Key('terms-checkbox'),
+                value: value,
+                onChanged:
+                    onChanged == null ? null : (v) => onChanged!(v ?? false),
+              ),
             ),
             Expanded(
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text('He leído y acepto los ', style: plain),
-                  GestureDetector(
-                    onTap: () => context.push('/legal/terminos'),
-                    child: Text('Términos', style: link),
+                  Semantics(
+                    link: true,
+                    child: LuxFocusable(
+                      onActivate: () => context.push('/legal/terminos'),
+                      child: GestureDetector(
+                        onTap: () => context.push('/legal/terminos'),
+                        child: Text('Términos', style: link),
+                      ),
+                    ),
                   ),
                   Text(' y la ', style: plain),
-                  GestureDetector(
-                    onTap: () => context.push('/legal/privacidad'),
-                    child: Text('Política de privacidad', style: link),
+                  Semantics(
+                    link: true,
+                    child: LuxFocusable(
+                      onActivate: () => context.push('/legal/privacidad'),
+                      child: GestureDetector(
+                        onTap: () => context.push('/legal/privacidad'),
+                        child: Text('Política de privacidad', style: link),
+                      ),
+                    ),
                   ),
                   Text('.', style: plain),
                 ],

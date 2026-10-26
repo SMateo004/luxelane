@@ -108,7 +108,8 @@ class _DriverTopBar extends StatelessWidget {
         padding: const EdgeInsets.all(LuxSpacing.md),
         child: Row(
           children: [
-            GestureDetector(
+            LuxPressable(
+              semanticLabel: 'Volver',
               onTap: () => context.pop(),
               child: Container(
                 width: 40,
@@ -143,6 +144,7 @@ class _DriverWebHeader extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
+              tooltip: 'Volver',
               onPressed: () => context.pop(),
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
             ),
