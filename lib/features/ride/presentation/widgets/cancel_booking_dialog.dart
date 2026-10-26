@@ -11,11 +11,16 @@ import '../../../../core/widgets/components.dart';
 /// política de config/ops; la app lo muestra solo si es mayor que cero y lo
 /// manda como aceptado. Si cambió mientras decidía, se vuelve a mostrar.
 /// Devuelve true si quedó cancelada.
+///
+/// [onConfirmed] se llama al confirmar en el diálogo, justo antes de pedir
+/// la cancelación: hasta entonces la pantalla no debe decir «Cancelando…»
+/// (E29).
 Future<bool> runCancelBookingFlow(
   BuildContext context,
   BookingRepository repository,
-  String bookingId,
-) async {
+  String bookingId, {
+  VoidCallback? onConfirmed,
+}) async {
   final quote = await repository.previewCancellation(bookingId);
   if (!context.mounted) return false;
   var fee = quote.fold((f) {
@@ -31,6 +36,7 @@ Future<bool> runCancelBookingFlow(
       builder: (_) => CancelBookingDialog(fee: fee!, feeChanged: attempt > 0),
     );
     if (reason == null || !context.mounted) return false;
+    onConfirmed?.call();
     final result = await repository.cancelBooking(
       bookingId,
       reason: reason,

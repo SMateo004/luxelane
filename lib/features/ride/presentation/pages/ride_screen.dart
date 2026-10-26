@@ -62,6 +62,7 @@ class _RideScreenState extends State<RideScreen> {
   String? _loadError;
   bool _ratingPrompted = false;
   bool _cancelling = false;
+  bool _cancelFlowOpen = false;
 
   @override
   void initState() {
@@ -188,13 +189,23 @@ class _RideScreenState extends State<RideScreen> {
   /// Recargo y motivo pasan por el servidor (cancelBooking); el diálogo
   /// muestra el recargo solo si es mayor que cero.
   Future<void> _cancel() async {
-    setState(() => _cancelling = true);
+    // Mientras se decide, el botón solo se desactiva; «Cancelando…» llega
+    // al confirmar (antes salía con el diálogo aún abierto, E29).
+    setState(() => _cancelFlowOpen = true);
     await runCancelBookingFlow(
       context,
       sl<BookingRepository>(),
       widget.rideId,
+      onConfirmed: () {
+        if (mounted) setState(() => _cancelling = true);
+      },
     );
-    if (mounted) setState(() => _cancelling = false);
+    if (mounted) {
+      setState(() {
+        _cancelling = false;
+        _cancelFlowOpen = false;
+      });
+    }
   }
 
   void _showRatingDialog() {
@@ -287,7 +298,7 @@ class _RideScreenState extends State<RideScreen> {
         if (canCancel)
           LuxButton.ghost(
             label: _cancelling ? 'Cancelando…' : 'Cancelar reserva',
-            onPressed: _cancelling ? null : _cancel,
+            onPressed: _cancelling || _cancelFlowOpen ? null : _cancel,
           ),
       ],
     );
