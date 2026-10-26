@@ -22,6 +22,7 @@ import { isPaid, readPaymentState } from './payment_booking';
 import * as payManual from './payment_manual';
 import * as payCard from './payment_card';
 import * as payRefund from './payment_refund';
+import { reconcileFinalAmount } from './payment_final';
 import { expirePayments } from './payment_expiry';
 import { computeCancelSettle, readForSettle, writeCancelSettle } from './payment_settle';
 import { logger } from './logger';
@@ -1137,6 +1138,24 @@ export const settleBooking = onDocumentUpdated('bookings/{bookingId}', async (ev
 
   await event.data!.after.ref.update({ settlement });
   logger.info('settleBooking', 'settled', { bookingId: event.params.bookingId, ...settlement });
+});
+
+// ---------------------------------------------------------------------------
+// reconcileFinalPayment  (onUpdate /bookings/{bookingId})  — pagos A9/A10
+// Al completarse (o si cambia el importe final ya completada) compara con lo
+// pagado: saldo o devolución pendiente, con asiento y alerta; nada se cobra
+// ni se devuelve solo.
+// ---------------------------------------------------------------------------
+
+export const reconcileFinalPayment = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const before = event.data?.before.data() as BookingDoc | undefined;
+  const after = event.data?.after.data() as BookingDoc | undefined;
+  if (!before || !after || after.status !== 'completed') return;
+  if (before.status === 'completed' && before.finalPrice === after.finalPrice) return;
+  const r = await reconcileFinalAmount(db, event.params.bookingId);
+  if (r.action !== 'none' && r.action !== 'skipped') {
+    logger.info('reconcileFinalPayment', r.action, { bookingId: event.params.bookingId, diff: r.diff });
+  }
 });
 
 // ---------------------------------------------------------------------------
