@@ -1,3 +1,8 @@
+import 'dart:async';
+
+import 'package:cloud_functions/cloud_functions.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 import '../config/app_check_setup.dart';
 
 /// Los errores de las Cloud Functions llegan solo con un código y un motivo
@@ -62,6 +67,20 @@ String functionErrorMessage(String code, Object? details) =>
       'permission-denied' => 'No tienes permiso para hacer esto.',
       'failed-precondition' => 'Esto no se puede hacer en este momento.',
       'not-found' => 'No encontramos el registro.',
+      _ => 'No se pudo completar. Inténtalo de nuevo.',
+    };
+
+/// Error inesperado (el `catch` final de los repositorios y los streams):
+/// nunca el texto técnico de la excepción, que es lo que se veía antes
+/// («HttpException: Invalid HTTP date…», E6).
+String unexpectedErrorMessage(Object error) => switch (error) {
+      FirebaseFunctionsException(:final code, :final details) =>
+        functionErrorMessage(code, details),
+      FirebaseException(code: 'permission-denied') =>
+        'No tienes permiso para hacer esto.',
+      FirebaseException(code: 'unavailable' || 'deadline-exceeded') ||
+      TimeoutException() =>
+        kNoConnectionMessage,
       _ => 'No se pudo completar. Inténtalo de nuevo.',
     };
 

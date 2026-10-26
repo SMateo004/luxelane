@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
@@ -19,7 +20,7 @@ class UserRepositoryImpl implements UserRepository {
       if (!doc.exists) return const Left(NotFoundFailure('User not found'));
       return Right(User.fromJson({'id': doc.id, ...doc.data()!}));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -36,7 +37,7 @@ class UserRepositoryImpl implements UserRepository {
       });
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -51,7 +52,7 @@ class UserRepositoryImpl implements UserRepository {
       });
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -62,7 +63,7 @@ class UserRepositoryImpl implements UserRepository {
       if (!doc.exists) return const Left(NotFoundFailure('Profile not found'));
       return Right(DriverProfile.fromJson(doc.data()!));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -84,7 +85,7 @@ class UserRepositoryImpl implements UserRepository {
       }, SetOptions(merge: true));
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -100,7 +101,7 @@ class UserRepositoryImpl implements UserRepository {
       });
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -119,7 +120,7 @@ class UserRepositoryImpl implements UserRepository {
       });
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 

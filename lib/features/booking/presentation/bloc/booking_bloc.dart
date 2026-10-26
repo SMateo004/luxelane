@@ -6,6 +6,7 @@ import 'package:rxdart/rxdart.dart';
 
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
@@ -307,7 +308,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
     await emit.forEach<Booking>(
       _repo.watchBooking(event.bookingId),
       onData: (b) => BookingStatusUpdated(b),
-      onError: (e, _) => BookingError(e.toString()),
+      onError: (e, _) => BookingError(unexpectedErrorMessage(e)),
     );
   }
 

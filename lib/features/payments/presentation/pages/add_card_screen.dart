@@ -4,6 +4,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -63,7 +64,7 @@ class _AddCardScreenState extends State<AddCardScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _loading = false);
-        showLuxSnackbar(context, e.toString(), isError: true);
+        showLuxSnackbar(context, unexpectedErrorMessage(e), isError: true);
       }
     }
   }

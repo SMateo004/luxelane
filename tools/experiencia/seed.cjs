@@ -53,13 +53,24 @@ async function main() {
   // Auth: borra y vuelve a crear las cuentas de prueba.
   for (const p of PEOPLE) {
     await auth.deleteUser(p.uid).catch(() => undefined);
-    await auth.createUser({
-      uid: p.uid, email: p.email, password: PASSWORD, displayName: p.name, emailVerified: true,
-      disabled: p.blocked === true,
+    if (p.mfa) {
       // Segundo factor simulado: un teléfono ficticio inscrito (el emulador
-      // muestra el código en su consola; no se envía SMS).
-      ...(p.mfa ? { multiFactor: { enrolledFactors: [{ phoneNumber: '+15555550100', displayName: 'Prueba', factorId: 'phone' }] } } : {}),
-    });
+      // muestra el código en su consola; no se envía SMS). Con importUsers,
+      // porque si el factor entra por createUser el emulador no guarda la
+      // fecha de inscripción (enrolledAt) y el SDK web falla con «Invalid
+      // HTTP date» (E6); el servicio real siempre la guarda.
+      const r = await auth.importUsers([{
+        uid: p.uid, email: p.email, displayName: p.name, emailVerified: true,
+        multiFactor: { enrolledFactors: [{ uid: `${p.uid}-tel`, phoneNumber: '+15555550100', displayName: 'Prueba', factorId: 'phone' }] },
+      }]);
+      if (r.failureCount) throw new Error(JSON.stringify(r.errors));
+      await auth.updateUser(p.uid, { password: PASSWORD });
+    } else {
+      await auth.createUser({
+        uid: p.uid, email: p.email, password: PASSWORD, displayName: p.name, emailVerified: true,
+        disabled: p.blocked === true,
+      });
+    }
     await auth.setCustomUserClaims(p.uid, { role: p.role });
   }
 

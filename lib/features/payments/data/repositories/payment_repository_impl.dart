@@ -42,7 +42,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
         ),
       );
     } catch (e) {
-      return Left(PaymentFailure(e.toString()));
+      return Left(PaymentFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -77,7 +77,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
         ),
       );
     } catch (e) {
-      return Left(PaymentFailure(e.toString()));
+      return Left(PaymentFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -90,7 +90,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
       final d = snap.docs.first;
       return Right(Payment.fromJson({'id': d.id, ...d.data()}));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -109,7 +109,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
             .toList(),
       );
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -120,7 +120,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
       await _fn.httpsCallable('refundPayment').call({'paymentId': paymentId});
       return const Right(null);
     } catch (e) {
-      return Left(PaymentFailure(e.toString()));
+      return Left(PaymentFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -138,7 +138,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
           .toList();
       return Right(cards);
     } catch (e) {
-      return Left(PaymentFailure(e.toString()));
+      return Left(PaymentFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -154,7 +154,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
       });
       return const Right(null);
     } catch (e) {
-      return Left(PaymentFailure(e.toString()));
+      return Left(PaymentFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -184,7 +184,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
         ),
       );
     } catch (e) {
-      return Left(PaymentFailure(e.toString()));
+      return Left(PaymentFailure(unexpectedErrorMessage(e)));
     }
   }
 

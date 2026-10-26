@@ -411,7 +411,7 @@ class AdminRepositoryImpl implements AdminRepository {
     } on FirebaseFunctionsException catch (e) {
       return Left(PaymentFailure(_fnError(e)));
     } catch (e) {
-      return Left(PaymentFailure(e.toString()));
+      return Left(PaymentFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -425,7 +425,7 @@ class AdminRepositoryImpl implements AdminRepository {
     } on FirebaseFunctionsException catch (e) {
       return Left(ServerFailure(_fnError(e)));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 

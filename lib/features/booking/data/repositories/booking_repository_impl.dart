@@ -90,7 +90,7 @@ class BookingRepositoryImpl implements BookingRepository {
       if (!doc.exists) return const Left(NotFoundFailure());
       return Right(Booking.fromJson({'id': doc.id, ...doc.data()!}));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -118,7 +118,7 @@ class BookingRepositoryImpl implements BookingRepository {
 
       return Right(list);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -190,7 +190,7 @@ class BookingRepositoryImpl implements BookingRepository {
       });
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -268,7 +268,7 @@ class BookingRepositoryImpl implements BookingRepository {
         ),
       );
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 

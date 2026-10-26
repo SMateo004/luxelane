@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../domain/admin_finance.dart';
 import '../../domain/admin_operations.dart';
@@ -703,7 +704,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         (data) => add(
           _AdminStreamUpdated((s) => apply(s, data).copyWith(isLoading: false)),
         ),
-        onError: (Object e) => add(_AdminStreamFailed(what, e.toString())),
+        onError: (Object e) =>
+            add(_AdminStreamFailed(what, unexpectedErrorMessage(e))),
       ),
     );
   }
