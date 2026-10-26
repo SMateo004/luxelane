@@ -209,9 +209,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 'Tu chófer,\ncomo lo recuerdas.',
-                style: TextStyle(
+                textScaler: luxDisplayTextScaler(context),
+                style: const TextStyle(
                   fontFamily: _kSerif,
                   fontSize: 38,
                   fontWeight: FontWeight.w500,

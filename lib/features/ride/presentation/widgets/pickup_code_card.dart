@@ -153,13 +153,10 @@ class _CodeBody extends StatelessWidget {
           Semantics(
             label: 'Código de recogida ${code.split('').join(' ')}',
             excludeSemantics: true,
-            child: Row(
-              children: [
-                for (final digit in code.split('')) ...[
-                  _Digit(digit),
-                  const SizedBox(width: LuxSpacing.sm),
-                ],
-              ],
+            child: Wrap(
+              spacing: LuxSpacing.sm,
+              runSpacing: LuxSpacing.sm,
+              children: [for (final digit in code.split('')) _Digit(digit)],
             ),
           ),
           const SizedBox(height: LuxSpacing.sm),
@@ -189,18 +186,24 @@ class _Digit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        width: 48,
-        height: 56,
-        alignment: Alignment.center,
+        // Tamaño mínimo y no fijo: con la letra al 200 % los dígitos se
+        // recortaban (E8).
+        constraints: const BoxConstraints(minWidth: 48, minHeight: 56),
+        padding: const EdgeInsets.symmetric(horizontal: 6),
         decoration: BoxDecoration(
           color: LuxColors.sapphireTint,
           borderRadius: BorderRadius.circular(LuxRadius.sm),
         ),
-        child: Text(
-          digit,
-          style: LuxTypography.headlineLarge.copyWith(
-            color: LuxColors.sapphire,
-            fontFeatures: const [FontFeature.tabularFigures()],
+        // Centrado sin ocupar todo el ancho del Wrap.
+        child: Center(
+          widthFactor: 1,
+          heightFactor: 1,
+          child: Text(
+            digit,
+            style: LuxTypography.headlineLarge.copyWith(
+              color: LuxColors.sapphire,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
           ),
         ),
       );

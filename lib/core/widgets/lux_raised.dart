@@ -138,8 +138,11 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
         Flexible(
           child: Text(
             text,
-            maxLines: 1,
+            // Dos líneas: con la letra al 200 % las acciones del chófer se
+            // cortaban («Navegar a la reco…», E8). El botón crece.
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: kSans,
               fontSize: widget.fontSize,
@@ -189,9 +192,12 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
               child: AnimatedContainer(
                 duration: duration,
                 curve: LuxMotion.emphasized,
-                height: widget.height,
+                constraints: BoxConstraints(minHeight: widget.height),
                 width: widget.expand ? double.infinity : null,
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 6,
+                ),
                 transform: Matrix4.translationValues(
                   0,
                   _hover && _enabled && !_pressed ? -1 : 0,

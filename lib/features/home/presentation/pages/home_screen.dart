@@ -643,6 +643,7 @@ class _Greeting extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 contextualPrompt(now, nextTrip: nextTrip),
+                textScaler: luxDisplayTextScaler(context),
                 style: LuxTypography.displayMedium.copyWith(
                   fontSize: 30,
                   fontWeight: FontWeight.w400,
@@ -686,11 +687,16 @@ class _NextTripCard extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
-              child: Text(
-                LuxFormat.time(booking.scheduledAt),
-                style: LuxTypography.caption.copyWith(
-                  color: LuxColors.sapphire,
-                  fontWeight: FontWeight.w700,
+              padding: const EdgeInsets.all(4),
+              // La hora entera dentro del círculo («14:5 / 0» con la letra
+              // al 200 %, E8); debajo va también en texto.
+              child: FittedBox(
+                child: Text(
+                  LuxFormat.time(booking.scheduledAt),
+                  style: LuxTypography.caption.copyWith(
+                    color: LuxColors.sapphire,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),

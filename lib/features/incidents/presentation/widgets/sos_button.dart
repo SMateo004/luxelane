@@ -159,12 +159,17 @@ class _SosButtonState extends State<SosButton>
                           color: LuxColors.error,
                         ),
                       ),
-                      Center(
-                        child: Text(
-                          'SOS',
-                          style: LuxTypography.titleMedium.copyWith(
-                            color: LuxColors.error,
-                            letterSpacing: 1.2,
+                      // Con la letra grande se reduce dentro del círculo en
+                      // vez de quedar «SO» (E8).
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: FittedBox(
+                          child: Text(
+                            'SOS',
+                            style: LuxTypography.titleMedium.copyWith(
+                              color: LuxColors.error,
+                              letterSpacing: 1.2,
+                            ),
                           ),
                         ),
                       ),

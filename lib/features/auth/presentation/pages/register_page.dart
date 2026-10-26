@@ -98,6 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 10),
               Text(
                 'Bienvenido\na Luxelane.',
+                textScaler: luxDisplayTextScaler(context),
                 style: LuxTypography.displayMedium.copyWith(
                   fontSize: 40,
                   height: 1.15,

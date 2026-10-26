@@ -12,6 +12,7 @@ import 'lux_raised.dart';
 export 'lux_feedback.dart';
 export 'lux_focus.dart';
 export 'lux_raised.dart' show LuxRaisedVariant, LuxLoadingDots;
+export 'lux_text_scale.dart';
 
 // ---------------------------------------------------------------------------
 // LuxButton — acción principal (zafiro sólido). Una por pantalla.
