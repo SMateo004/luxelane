@@ -19,13 +19,28 @@ class Place {
   GeoPoint get geoPoint => GeoPoint(lat, lng);
   LatLng get latLng => LatLng(lat, lng);
 
+  /// Un lugar sin coordenadas (o con otro formato) no tumba la reserva
+  /// entera: queda en (0, 0), que el servidor ya trata como «sin punto»
+  /// (E30; antes lanzaba un error de tipo).
   factory Place.fromJson(Map<String, dynamic> json) {
-    final geo = json['coordinates'] as GeoPoint;
+    final c = json['coordinates'];
+    final (lat, lng) = switch (c) {
+      GeoPoint() => (c.latitude, c.longitude),
+      {'lat': final num la, 'lng': final num lo} => (
+          la.toDouble(),
+          lo.toDouble()
+        ),
+      {'latitude': final num la, 'longitude': final num lo} => (
+          la.toDouble(),
+          lo.toDouble(),
+        ),
+      _ => (0.0, 0.0),
+    };
     return Place(
       name: json['name'] as String? ?? '',
-      address: json['address'] as String,
-      lat: geo.latitude,
-      lng: geo.longitude,
+      address: json['address'] as String? ?? '',
+      lat: lat,
+      lng: lng,
     );
   }
 
