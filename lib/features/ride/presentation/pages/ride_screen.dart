@@ -65,6 +65,8 @@ class _RideScreenState extends State<RideScreen> {
   @override
   void initState() {
     super.initState();
+    // El mensaje de «sin chófer» cambia si llega el número de central.
+    RemoteFlags.instance.dispatchPhone.addListener(_onDispatchPhone);
     _bookingStream = widget.rideId.isEmpty
         ? const Stream<Booking>.empty()
         : sl<BookingRepository>().watchBooking(widget.rideId);
@@ -92,8 +94,13 @@ class _RideScreenState extends State<RideScreen> {
     );
   }
 
+  void _onDispatchPhone() {
+    if (mounted) setState(() {});
+  }
+
   @override
   void dispose() {
+    RemoteFlags.instance.dispatchPhone.removeListener(_onDispatchPhone);
     _sub?.cancel();
     _phoneSub?.cancel();
     super.dispose();
@@ -139,7 +146,11 @@ class _RideScreenState extends State<RideScreen> {
       case null:
         return 'Cargando tu reserva…';
       case BookingStatus.pending:
-        return pendingMessage(pendingSituation(_booking!, DateTime.now()));
+        final phone = RemoteFlags.instance.dispatchPhone.value ?? '';
+        return pendingMessage(
+          pendingSituation(_booking!, DateTime.now()),
+          canCallDispatch: phone.isNotEmpty,
+        );
       case BookingStatus.confirmed:
         return 'Tu reserva está confirmada. Te avisaremos cuando tu chófer salga hacia ti.';
       case BookingStatus.driverArriving:

@@ -45,4 +45,14 @@ void main() {
       expect(pendingNeedsDispatch(s), isTrue);
     }
   });
+
+  test('sin número de central no se pide llamarla (E19)', () {
+    for (final s in [
+      PendingSituation.driverReleased,
+      PendingSituation.pickupPassed,
+    ]) {
+      expect(pendingMessage(s), isNot(contains('lama')));
+      expect(pendingMessage(s, canCallDispatch: true), contains('lama'));
+    }
+  });
 }
