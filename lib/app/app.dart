@@ -1,10 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../core/di/injection.dart';
+import '../core/services/connection_status.dart';
 import '../core/services/notification_service.dart';
 import '../core/enums/enums.dart';
 import '../core/services/crash_service.dart';
+import '../core/widgets/lux_connection_banner.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/booking/presentation/bloc/booking_bloc.dart';
 import '../features/driver/presentation/bloc/driver_bloc.dart';
@@ -110,6 +113,10 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         locale: LuxLocale.locale,
         supportedLocales: LuxLocale.supportedLocales,
         localizationsDelegates: LuxLocale.delegates,
+        builder: (context, child) => LuxConnectionBanner(
+          online: ConnectionStatus.watch(sl<FirebaseFirestore>()),
+          child: child ?? const SizedBox.shrink(),
+        ),
         theme: luxTheme,
         routerConfig: _router,
       ),
