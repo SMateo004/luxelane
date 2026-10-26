@@ -109,6 +109,36 @@ export async function captureIntent(
   return intent;
 }
 
+/**
+ * Cobro inmediato al pedir chófer (A5): captura automática, sin retención
+ * posterior. La clave de idempotencia evita un segundo cargo si se repite.
+ */
+export async function createCharge(params: {
+  amount: number;
+  currency: string;
+  bookingId: string;
+  paymentRef: string;
+  idempotencyKey: string;
+}): Promise<{ id: string; clientSecret: string }> {
+  const intent = await stripeClient().paymentIntents.create({
+    amount: params.amount,
+    currency: params.currency,
+    capture_method: 'automatic',
+    automatic_payment_methods: { enabled: true },
+    metadata: { bookingId: params.bookingId, paymentRef: params.paymentRef },
+  }, { idempotencyKey: params.idempotencyKey });
+  logger.info(FN, 'createCharge', { intentId: intent.id });
+  return { id: intent.id, clientSecret: intent.client_secret! };
+}
+
+/** Reembolso de una parte (céntimos), con clave de idempotencia (A8). */
+export async function refundAmount(paymentIntentId: string, amount: number,
+  idempotencyKey: string): Promise<Stripe.Refund> {
+  const refund = await stripeClient().refunds.create({ payment_intent: paymentIntentId, amount }, { idempotencyKey });
+  logger.info(FN, 'refundAmount', { refundId: refund.id, status: refund.status });
+  return refund;
+}
+
 export async function refundIntent(paymentIntentId: string): Promise<Stripe.Refund> {
   logger.info(FN, 'refundIntent', { paymentIntentId });
 

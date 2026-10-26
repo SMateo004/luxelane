@@ -118,6 +118,8 @@ describe('createBooking', () => {
     expect((await reason((createPaymentIntent as unknown as Runnable)
       .run({ auth: { uid: 'ana' }, data: { bookingId, amount: 1, estimatedPrice: 1 } }))).reason).toBe('invalid_request');
     expect(createIntent).not.toHaveBeenCalled();
+    // Tarjeta activada en config/ops (A2); sin eso, method_disabled.
+    await db.doc('config/ops').set({ paymentMethods: { card: true }, paymentInstructions: { card: { provider: 'stripe' } } });
     await (createPaymentIntent as unknown as Runnable).run({ auth: { uid: 'ana' }, data: { bookingId } });
     expect(createIntent).toHaveBeenCalledTimes(1);
     expect(createIntent.mock.calls[0][0]).toMatchObject({ amount: 8600, currency: 'bob' });

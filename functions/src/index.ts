@@ -17,6 +17,7 @@ import * as incidents from './incidents';
 import { deviceSchema, registerDriverDevice as registerDriverDeviceService } from './driver_devices';
 import { isTransient, withRetryPolicy } from './retry_policy';
 import * as stripe from './stripe_service';
+import { loadPaymentSettings } from './payment_config';
 import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, fareId, FareRule } from './pricing';
@@ -297,6 +298,9 @@ const HOLD_WINDOW_MS = 6 * 24 * 60 * 60 * 1000;
 export const createPaymentIntent = secureCallable('createPaymentIntent', withStripe, async (req) => {
   const uid = requireAuth(req);
   const { bookingId, paymentMethodId } = parseInput(schema.createPaymentIntent, req.data);
+  // Tarjeta desactivada en config/ops.paymentMethods (A2): se rechaza antes
+  // de llamar al proveedor.
+  if (!(await loadPaymentSettings(db)).enabled.includes('card')) throw err.failedPrecondition('method_disabled');
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const bookingSnap = await bookingRef.get();
