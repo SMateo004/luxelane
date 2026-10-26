@@ -222,6 +222,8 @@ class DriverLoaded extends DriverState {
       .where(
         (r) =>
             !declinedIds.contains(r.id) &&
+            // Las que liberó: también al volver a entrar (E18).
+            !r.releasedBy.contains(user.id) &&
             !bookings.any((b) => b.id == r.id) &&
             vehicleClass != null &&
             r.vehicleClass == vehicleClass,

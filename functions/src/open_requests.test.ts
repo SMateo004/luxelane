@@ -62,4 +62,10 @@ describe('buildOpenRequest', () => {
     expect(r.pickupArea).toBeNull();
     expect(r.dropoffArea).toBeNull();
   });
+
+  it('lleva quién la liberó (sin repetir), para no ofrecérsela otra vez (E18)', () => {
+    expect(buildOpenRequest({ ...booking, releasedBy: ['chofer2', 'chofer2', 7] }).releasedBy)
+      .toEqual(['chofer2']);
+    expect(buildOpenRequest(booking).releasedBy).toEqual([]);
+  });
 });

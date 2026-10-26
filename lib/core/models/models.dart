@@ -1172,6 +1172,7 @@ class OpenRequest {
     this.pickupApprox,
     this.dropoffApprox,
     this.tripKm,
+    this.releasedBy = const [],
   });
 
   /// Mismo id que la reserva.
@@ -1196,6 +1197,9 @@ class OpenRequest {
 
   /// Distancia en línea recta entre las zonas, en km.
   final double? tripKm;
+
+  /// Chóferes que la liberaron: a ellos no se les vuelve a ofrecer (E18).
+  final List<String> releasedBy;
 
   String get pickupLabel => pickupArea ?? 'Zona de recogida';
   String get dropoffLabel => dropoffArea ?? 'Zona de destino';
@@ -1245,6 +1249,8 @@ class OpenRequest {
         dropoffArea ?? 'Zona de destino',
       ),
       tripKm: (j['tripKm'] as num?)?.toDouble(),
+      releasedBy:
+          (j['releasedBy'] as List?)?.whereType<String>().toList() ?? const [],
     );
   }
 }

@@ -146,7 +146,10 @@ export async function releaseBooking(deps: CancelDeps, uid: string | undefined, 
     });
     // La ubicación del chófer que se va no debe verla el siguiente.
     tx.delete(ref.collection('tracking').doc('driver'));
-    tx.set(db.collection('openRequests').doc(ref.id), buildOpenRequest(b as BookingForRequest));
+    tx.set(db.collection('openRequests').doc(ref.id), buildOpenRequest({
+      ...(b as BookingForRequest),
+      releasedBy: [...(Array.isArray(b.releasedBy) ? b.releasedBy : []), uid],
+    }));
     if (driver.exists) {
       tx.update(driverRef, {
         isAvailable: driver.data()?.online !== false,

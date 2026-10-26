@@ -152,7 +152,8 @@ async function main() {
     dropoffArea: 'Centro', pickupApprox: { lat: -17.64, lng: -63.14 }, dropoffApprox: { lat: -17.78, lng: -63.18 }, tripKm: 16 });
   set('openRequests/r-released', { vehicleClass: 'business', serviceType: 'oneWay', scheduledAt: at(45), estimatedPrice: 120,
     hours: null, passengerCount: 1, luggageCount: 1, pickupAirport: 'VVI', flightType: null, pickupArea: 'Aeropuerto',
-    dropoffArea: 'Centro', pickupApprox: { lat: -17.64, lng: -63.14 }, dropoffApprox: { lat: -17.78, lng: -63.18 }, tripKm: 16 });
+    dropoffArea: 'Centro', pickupApprox: { lat: -17.64, lng: -63.14 }, dropoffApprox: { lat: -17.78, lng: -63.18 }, tripKm: 16,
+    releasedBy: ['chofer2'] });
 
   // SOS abierto en el viaje en curso y una alerta para central.
   set('incidents/inc-prueba', { bookingId: 'r-progress', bookingShortId: 'R-PROGRE', bookingStatusAtRaise: 'in_progress',
