@@ -92,7 +92,6 @@ add('F2-reserva', 'sin-direcciones', { user: 'pasajera', go: async (p) => { awai
   await L.tap(p, 'Ver vehículos y precios'); await sleep(1500); } });
 add('F2-reserva', 'fecha-hora', { user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, '/')); await L.ready(p);
   await L.tap(p, 'Cambiar fecha y hora'); await sleep(1500); } });
-add('F2-reserva', 'vehiculos', { user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, '/ride-type')); await L.ready(p, 4000); } });
 // Abierta directamente, sin viaje elegido: desde E23 vuelve al inicio.
 add('F2-reserva', 'confirmar', { user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, '/booking')); await L.ready(p, 4000); } });
 add('F3-por-horas', 'inicio', { user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, '/')); await L.ready(p); await L.tap(p, 'Por horas'); await sleep(1200); } });

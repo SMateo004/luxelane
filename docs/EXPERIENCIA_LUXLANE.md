@@ -327,9 +327,11 @@ Notas [seguro]:
 - Nueva dependencia (del SDK de Flutter): `flutter_localizations` (E11).
   Dependencia quitada: `video_player` (E4+E5; los vídeos no tenían uso real
   en nativo: solo eran fondo decorativo de la home web, también en tablets).
-- Código muerto visto y no tocado: `DriveCanvasAnim`/`DrivePainter`
-  (`drive_canvas_painter.dart`, sin usos; además lanza al pintar) y
-  `RideTypePage` (`/ride-type`, sin enlaces internos).
+- Código muerto borrado en F4: `DriveCanvasAnim`/`DrivePainter`
+  (`drive_canvas_painter.dart`, sin usos; además lanzaba al pintar) y
+  `RideTypePage` con la ruta `/ride-type` (sin enlaces internos). Búsqueda
+  en todo el repositorio (`git grep`): solo los propios archivos, el router,
+  la captura `F2-reserva/vehiculos` (quitada) y documentación.
 - Promesas sin respaldo: ver [F2](#f2-promesas-quitadas-para-decidir-cuáles-reponer).
 
 ### Remedición final (A2, A3, A6, A7 repetidos tras la Parte B)

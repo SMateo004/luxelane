@@ -160,9 +160,6 @@
   "lib/features/driver/presentation/widgets/flight_info_card.dart": {
     "sized_box_numero": 2
   },
-  "lib/features/home/presentation/pages/drive_canvas_painter.dart": {
-    "colores": 27
-  },
   "lib/features/home/presentation/pages/home_screen.dart": {
     "colores": 2,
     "font_size": 9,

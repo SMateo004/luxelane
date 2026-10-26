@@ -10,7 +10,6 @@ import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/verify_email_page.dart';
 import '../../features/booking/presentation/pages/booking_screen.dart';
-import '../../features/booking/presentation/pages/ride_type_page.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
 import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
 import '../../features/driver/presentation/pages/driver_home_screen.dart';
@@ -46,7 +45,6 @@ abstract class LuxRoutes {
   static const verifyEmail = '/verify-email';
   static const home = '/';
   static const booking = '/booking';
-  static const rideType = '/ride-type';
   static const ride = '/ride/:rideId';
   static const profile = '/profile';
   static const trips = '/trips';
@@ -138,7 +136,6 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
                 path == LuxRoutes.register ||
                 path == LuxRoutes.home ||
                 path == LuxRoutes.driverLogin ||
-                path.startsWith('/ride-type') ||
                 path.startsWith('/booking') ||
                 path.startsWith('/legal') ||
                 path == '/empresas';
@@ -304,10 +301,6 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
                   path: LuxRoutes.home,
                   pageBuilder: (c, s) => _fade(const HomeScreen(), s),
                   routes: [
-                    GoRoute(
-                      path: 'ride-type',
-                      pageBuilder: (c, s) => _slide(const RideTypePage(), s),
-                    ),
                     GoRoute(
                       path: 'booking',
                       redirect: (c, s) => bookingRouteRedirect(s.extra),
