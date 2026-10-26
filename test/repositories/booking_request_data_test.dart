@@ -76,6 +76,16 @@ void main() {
       });
     });
 
+    test('E38: la reserva dice si viene de la web; la cotización no', () {
+      expect(bookingRequestData(_booking(), web: true)['channel'], 'web');
+      expect(bookingRequestData(_booking(), web: false)['channel'], 'native');
+      expect(
+        bookingRequestData(_booking(), quote: true, web: true)
+            .containsKey('channel'),
+        isFalse,
+      );
+    });
+
     test('por horas manda horas y no destino', () {
       final data = bookingRequestData(_booking(service: ServiceType.byTheHour));
       expect(data['hours'], 3);

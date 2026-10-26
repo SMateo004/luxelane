@@ -20,6 +20,7 @@ import '../../features/services/presentation/pages/hourly_charter_page.dart';
 import '../../features/services/presentation/pages/immediate_pickup_page.dart';
 import '../../features/home/presentation/pages/home_screen.dart';
 import '../../features/payments/presentation/pages/add_card_screen.dart';
+import '../../features/payments/presentation/pages/booking_payment_screen.dart';
 import '../../features/payments/presentation/pages/payment_screen.dart';
 import '../../features/profile/presentation/pages/profile_screen.dart';
 import '../../features/ride/presentation/pages/ride_screen.dart';
@@ -46,6 +47,9 @@ abstract class LuxRoutes {
   static const home = '/';
   static const booking = '/booking';
   static const ride = '/ride/:rideId';
+
+  /// Pago de una reserva (pagos, B1).
+  static String pay(String bookingId) => '/pay/$bookingId';
   static const profile = '/profile';
   static const trips = '/trips';
   static const admin = '/admin';
@@ -305,6 +309,15 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
                       path: 'booking',
                       redirect: (c, s) => bookingRouteRedirect(s.extra),
                       pageBuilder: (c, s) => _slide(const BookingScreen(), s),
+                    ),
+                    GoRoute(
+                      path: 'pay/:bookingId',
+                      pageBuilder: (c, s) => _slide(
+                        BookingPaymentScreen(
+                          bookingId: s.pathParameters['bookingId'] ?? '',
+                        ),
+                        s,
+                      ),
                     ),
                     GoRoute(
                       path: 'ride/:rideId',

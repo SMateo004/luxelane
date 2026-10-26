@@ -17,6 +17,7 @@ import '../../features/booking/presentation/bloc/booking_bloc.dart';
 import '../../features/driver/presentation/bloc/driver_bloc.dart';
 import '../../features/incidents/data/incident_repository_impl.dart';
 import '../../features/notifications/presentation/bloc/notification_bloc.dart';
+import '../../features/payments/data/repositories/booking_payment_repository_impl.dart';
 import '../../features/payments/data/repositories/payment_repository_impl.dart';
 import '../../features/payments/domain/usecases/payment_usecases.dart';
 import '../../features/payments/presentation/bloc/payment_bloc.dart';
@@ -93,6 +94,10 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<PaymentRepository>(
     () => PaymentRepositoryImpl(firestore: sl(), functions: sl()),
+  );
+
+  sl.registerLazySingleton<BookingPaymentRepository>(
+    () => BookingPaymentRepositoryImpl(firestore: sl(), functions: sl()),
   );
 
   sl.registerLazySingleton<AdminRepository>(

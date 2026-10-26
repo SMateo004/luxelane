@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:package_info_plus/package_info_plus.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
@@ -336,6 +337,7 @@ Map<String, dynamic> bookingRequestData(
   String? requestId,
   String? appVersion,
   bool quote = false,
+  bool web = kIsWeb,
 }) {
   Map<String, dynamic> place(Place p) => {
         'name': p.name,
@@ -362,6 +364,9 @@ Map<String, dynamic> bookingRequestData(
       if (b.guest != null) 'guest': b.guest!.toJson()..remove('email'),
       if (quotedPrice != null) 'quotedPrice': quotedPrice,
       if (requestId != null) 'requestId': requestId,
+      // La web solo paga por QR: el servidor no le crea reservas sin ese
+      // método activo (E38).
+      'channel': web ? 'web' : 'native',
     },
   };
 }

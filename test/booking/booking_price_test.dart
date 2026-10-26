@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_test/bloc_test.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
@@ -104,7 +106,10 @@ void main() {
     PricingCatalog.instance.setMaintenanceMode(false);
   });
 
-  Future<void> open(WidgetTester t) async {
+  Future<void> open(
+    WidgetTester t, {
+    Stream<BookingState> bookingStates = const Stream.empty(),
+  }) async {
     t.view.physicalSize = const Size(390, 900);
     t.view.devicePixelRatio = 1;
     addTearDown(t.view.reset);
@@ -112,7 +117,7 @@ void main() {
     whenListen(authBloc, const Stream<AuthState>.empty(),
         initialState: AuthAuthenticated(_user));
     final bookingBloc = _MockBookingBloc();
-    whenListen(bookingBloc, const Stream<BookingState>.empty(),
+    whenListen(bookingBloc, bookingStates,
         initialState: const BookingInitial());
     final paymentBloc = _MockPaymentBloc();
     whenListen(paymentBloc, const Stream<PaymentState>.empty(),
@@ -129,6 +134,10 @@ void main() {
       routes: [
         GoRoute(path: '/booking', builder: (_, __) => const BookingScreen()),
         GoRoute(path: '/', builder: (_, __) => const SizedBox()),
+        GoRoute(
+          path: '/pay/:id',
+          builder: (_, s) => Text('pago ${s.pathParameters['id']}'),
+        ),
       ],
     );
     await t.pumpWidget(
@@ -196,5 +205,32 @@ void main() {
     await t.tap(find.text('Reservar para un invitado'));
     await t.pumpAndSettle();
     expect(find.text('Añadir nuevo invitado'), findsOneWidget);
+  });
+
+  testWidgets('B1/E38: creada la reserva, se pasa a pagarla', (t) async {
+    when(() => repo.quoteBooking(any()))
+        .thenAnswer((_) async => const Right(BookingQuote(price: 53)));
+    final states = StreamController<BookingState>();
+    addTearDown(states.close);
+    await open(t, bookingStates: states.stream);
+    states.add(
+      BookingCreated(
+        Booking(
+          id: 'b-nueva',
+          riderId: 'ana',
+          origin: _origin,
+          destination: _dest,
+          scheduledAt: DateTime(2030),
+          vehicleClass: VehicleClass.business,
+          serviceType: ServiceType.oneWay,
+          status: BookingStatus.pending,
+          estimatedPrice: 53,
+          createdAt: DateTime(2030),
+          updatedAt: DateTime(2030),
+        ),
+      ),
+    );
+    await t.pumpAndSettle();
+    expect(find.text('pago b-nueva'), findsOneWidget);
   });
 }
