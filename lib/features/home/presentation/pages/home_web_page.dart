@@ -12,6 +12,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart'
         CameraUpdate,
         Marker,
         MarkerId;
+import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/config/remote_flags.dart';
 import '../../../../core/design/lux_promise.dart';
@@ -1690,7 +1691,13 @@ class _MarqueeBarState extends State<_MarqueeBar>
     _ctrl = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 36),
-    )..repeat();
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    LuxMotion.repeatUnlessReduced(context, _ctrl);
   }
 
   @override

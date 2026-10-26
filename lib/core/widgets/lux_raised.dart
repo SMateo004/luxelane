@@ -251,7 +251,13 @@ class _LuxLoadingDotsState extends State<LuxLoadingDots>
   late final AnimationController _c = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1100),
-  )..repeat();
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    LuxMotion.repeatUnlessReduced(context, _c, still: 0.5);
+  }
 
   @override
   void dispose() {

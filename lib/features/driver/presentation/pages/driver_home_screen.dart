@@ -904,7 +904,13 @@ class _PulseIndicatorState extends State<_PulseIndicator>
   late final AnimationController _ctrl = AnimationController(
     vsync: this,
     duration: const Duration(seconds: 2),
-  )..repeat();
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    LuxMotion.repeatUnlessReduced(context, _ctrl);
+  }
 
   @override
   void dispose() {

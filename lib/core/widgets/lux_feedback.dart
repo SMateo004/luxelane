@@ -96,7 +96,13 @@ class _LuxShimmerState extends State<LuxShimmer>
   late final AnimationController _c = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1400),
-  )..repeat();
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    LuxMotion.repeatUnlessReduced(context, _c);
+  }
 
   @override
   void dispose() {
@@ -374,7 +380,13 @@ class _RideProgressBarState extends State<RideProgressBar>
   late final AnimationController _pulse = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1600),
-  )..repeat(reverse: true);
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    LuxMotion.repeatUnlessReduced(context, _pulse, reverse: true, still: 1);
+  }
 
   int get _step => switch (widget.status) {
         BookingStatus.pending => 0,

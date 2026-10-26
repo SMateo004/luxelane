@@ -1,6 +1,6 @@
 // Experiencia, A5 y Parte B: «reducir movimiento» y animaciones
 // interrumpidas. Antes estaban en tools/experiencia/pruebas (fallaban: E1,
-// E3, E10); pasan al corregirse.
+// E3, E10); pasan al corregirse y esa carpeta ya no existe.
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/core/widgets/lux_feedback.dart';
+import 'package:luxelane/core/widgets/lux_raised.dart';
 import 'package:luxelane/features/driver/presentation/bloc/driver_bloc.dart';
 import 'package:luxelane/features/driver/presentation/widgets/driver_step_action.dart';
 import 'package:luxelane/features/incidents/presentation/widgets/sos_button.dart';
@@ -194,6 +195,68 @@ void main() {
       await slide(t);
       verify(() => bloc.add(const DriverArrivedAtPickup(bookingId: 'b1')))
           .called(1);
+    });
+  });
+
+  group('reducir movimiento (E10): lo decorativo queda quieto', () {
+    Widget app(Widget child, {bool reduce = false}) => MediaQuery(
+          data: MediaQueryData(disableAnimations: reduce),
+          child: MaterialApp(home: Scaffold(body: Center(child: child))),
+        );
+
+    for (final reduce in [false, true]) {
+      testWidgets(
+          'puntos de carga con reducir movimiento=$reduce: '
+          '${reduce ? 'quietos' : 'animados'}', (t) async {
+        await t.pumpWidget(
+          app(const LuxLoadingDots(color: Colors.black), reduce: reduce),
+        );
+        await t.pump(const Duration(milliseconds: 500));
+        expect(
+          t.binding.hasScheduledFrame,
+          !reduce,
+          reason: reduce ? 'sigue repitiéndose con reducir movimiento' : '',
+        );
+      });
+    }
+
+    testWidgets('barra de progreso del viaje: no pulsa', (t) async {
+      await t.pumpWidget(
+        app(
+          const RideProgressBar(status: BookingStatus.driverArriving),
+          reduce: true,
+        ),
+      );
+      await t.pump(const Duration(milliseconds: 500));
+      expect(
+        t.binding.hasScheduledFrame,
+        isFalse,
+        reason: 'el pulso sigue corriendo',
+      );
+    });
+
+    testWidgets('esqueleto de carga: sin brillo', (t) async {
+      await t.pumpWidget(
+        app(const SizedBox(height: 400, child: LuxSkeletonList()),
+            reduce: true),
+      );
+      await t.pump(const Duration(milliseconds: 500));
+      expect(
+        t.binding.hasScheduledFrame,
+        isFalse,
+        reason: 'el brillo sigue corriendo',
+      );
+    });
+
+    testWidgets('si se activa a mitad, se detiene', (t) async {
+      await t.pumpWidget(app(const LuxLoadingDots(color: Colors.black)));
+      await t.pump(const Duration(milliseconds: 200));
+      expect(t.binding.hasScheduledFrame, isTrue);
+      await t.pumpWidget(
+        app(const LuxLoadingDots(color: Colors.black), reduce: true),
+      );
+      await t.pump(const Duration(milliseconds: 200));
+      expect(t.binding.hasScheduledFrame, isFalse);
     });
   });
 }
