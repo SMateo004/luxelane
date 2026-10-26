@@ -153,10 +153,20 @@ class _BookingScreenState extends State<BookingScreen> {
   /// servidor confirma al reservar.
   double? get _price => _freshQuote?.price ?? _cardPrice(_selected);
 
+  /// El precio a la vista es el del servidor (E35). Mientras no llega (sin
+  /// sesión, cargando o con error) se marca como estimado.
+  bool get _priceIsServer => _freshQuote != null;
+
+  /// Vuelve a pedir la cotización tras un error (E36).
+  void _retryQuote() => setState(() {
+        _quoteError = null;
+        _requestedQuoteKey = null;
+      });
+
   void _maybeQuote() {
     final auth = context.read<AuthBloc>().state;
-    final onSummary = isWeb(context) || _step == 2;
-    if (_formData == null || !onSummary || auth is! AuthAuthenticated) return;
+    // En todos los pasos (E35): el precio de la barra es el del servidor.
+    if (_formData == null || auth is! AuthAuthenticated) return;
     final key = _currentQuoteKey;
     if (key == _requestedQuoteKey) return;
     _requestedQuoteKey = key;
@@ -1067,18 +1077,8 @@ class _BookingScreenState extends State<BookingScreen> {
 
           // Total: el precio del servidor, sin desglose fiscal (no hay
           // una cifra de impuesto definida).
-          priceLine('Total', _price),
-          if (_quoteError != null) ...[
-            Text(
-              _quoteError!,
-              style: const TextStyle(
-                fontFamily: kSans,
-                fontSize: 13,
-                color: LuxColors.error,
-              ),
-            ),
-            const SizedBox(height: LuxSpacing.sm),
-          ],
+          // El error de la cotización va junto al precio (E36), no aquí.
+          priceLine(_priceIsServer ? 'Total' : 'Total estimado', _price),
           const Divider(color: _kBorder, height: 1, thickness: 1.2),
           const SizedBox(height: 22),
 
@@ -1223,19 +1223,37 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
             const SizedBox(width: 12),
-            Text(
-              formatPriceOrQuote(_price),
-              style: const TextStyle(
-                fontFamily: kSerif,
-                fontSize: 32,
-                fontWeight: FontWeight.w300,
-                color: _kTextPrimary,
-                letterSpacing: -0.5,
-                decoration: TextDecoration.none,
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  formatPriceOrQuote(_price),
+                  style: const TextStyle(
+                    fontFamily: kSerif,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w300,
+                    color: _kTextPrimary,
+                    letterSpacing: -0.5,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+                Text(
+                  _priceIsServer ? 'Precio final' : 'Precio estimado',
+                  style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 11,
+                    color: _kTextTertiary,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
+        if (_quoteError != null) ...[
+          const SizedBox(height: 10),
+          _QuoteErrorNote(message: _quoteError!, onRetry: _retryQuote),
+        ],
 
         // ── Selection summary ───────────────────────────────────────────
         const SizedBox(height: 20),
@@ -1392,6 +1410,9 @@ class _BookingScreenState extends State<BookingScreen> {
                 ),
                 _LightPriceBar(
                   price: _price,
+                  estimated: !_priceIsServer,
+                  error: _quoteError,
+                  onRetry: _retryQuote,
                   label: _step < 2 ? 'Continuar' : 'Reservar',
                   loading: _loading,
                   onConfirm: _step < 2
@@ -1634,9 +1655,9 @@ class _BookingScreenState extends State<BookingScreen> {
                 ),
                 child: Row(
                   children: [
-                    const Text(
-                      'TOTAL · PRECIO FIJO',
-                      style: TextStyle(
+                    Text(
+                      _priceIsServer ? 'TOTAL · PRECIO FIJO' : 'TOTAL ESTIMADO',
+                      style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
@@ -1661,6 +1682,10 @@ class _BookingScreenState extends State<BookingScreen> {
             ],
           ),
         ),
+        if (_quoteError != null) ...[
+          const SizedBox(height: 10),
+          _QuoteErrorNote(message: _quoteError!, onRetry: _retryQuote),
+        ],
         const SizedBox(height: 20),
         if (!_cardsSupported)
           const SizedBox.shrink()
@@ -3002,11 +3027,21 @@ class _LightPriceBar extends StatelessWidget {
     required this.onConfirm,
     this.loading = false,
     this.label = 'Confirmar reserva',
+    this.estimated = false,
+    this.error,
+    this.onRetry,
   });
   final double? price;
   final VoidCallback onConfirm;
   final bool loading;
   final String label;
+
+  /// Sin cotización del servidor: el importe es una estimación (E35).
+  final bool estimated;
+
+  /// La cotización falló: se dice junto al precio (E36).
+  final String? error;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -3023,50 +3058,95 @@ class _LightPriceBar extends StatelessWidget {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 760),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                if (error != null) ...[
+                  _QuoteErrorNote(message: error!, onRetry: onRetry),
+                  const SizedBox(height: 10),
+                ],
+                Row(
                   children: [
-                    const Text(
-                      'PRECIO FINAL',
-                      style: TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
-                        color: _kTextTertiary,
-                        letterSpacing: 1.5,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          estimated ? 'PRECIO ESTIMADO' : 'PRECIO FINAL',
+                          style: const TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color: _kTextTertiary,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        Text(
+                          formatPriceOrQuote(price),
+                          style: const TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            color: _kTextPrimary,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      formatPriceOrQuote(price),
-                      style: const TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: _kTextPrimary,
-                        letterSpacing: -0.5,
+                    const SizedBox(width: LuxSpacing.md),
+                    Expanded(
+                      child: LuxRaisedButton(
+                        label: label,
+                        height: 52,
+                        loading: loading,
+                        onPressed: onConfirm,
+                        uppercase: false,
+                        fontSize: 15,
+                        radius: LuxRadius.md,
+                        trailingIcon: Icons.arrow_forward_rounded,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(width: LuxSpacing.md),
-                Expanded(
-                  child: LuxRaisedButton(
-                    label: label,
-                    height: 52,
-                    loading: loading,
-                    onPressed: onConfirm,
-                    uppercase: false,
-                    fontSize: 15,
-                    radius: LuxRadius.md,
-                    trailingIcon: Icons.arrow_forward_rounded,
-                  ),
-                ),
               ],
             ),
           ),
+        ),
+      );
+}
+
+/// Error de la cotización junto al precio, con reintento (E36). Sin texto
+/// técnico: el mensaje ya viene traducido del repositorio.
+class _QuoteErrorNote extends StatelessWidget {
+  const _QuoteErrorNote({required this.message, this.onRetry});
+  final String message;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        liveRegion: true,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline_rounded,
+              size: 18,
+              color: LuxColors.error,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 13,
+                  color: LuxColors.error,
+                ),
+              ),
+            ),
+            if (onRetry != null)
+              TextButton(onPressed: onRetry, child: const Text('Reintentar')),
+          ],
         ),
       );
 }
