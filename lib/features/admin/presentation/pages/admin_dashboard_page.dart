@@ -180,7 +180,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             BlocBuilder<AdminBloc, AdminState>(
               builder: (context, state) => SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(LuxSpacing.md),
+                // Las pestañas miden 48 para el dedo (E9): 4 px menos de
+                // margen arriba y abajo para que la franja casi no crezca.
+                padding: const EdgeInsets.symmetric(
+                  horizontal: LuxSpacing.md,
+                  vertical: LuxSpacing.md - 4,
+                ),
                 child: Row(
                   children: [
                     for (final s in AdminSection.values)

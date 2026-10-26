@@ -71,7 +71,8 @@ class SectionChip extends StatelessWidget {
   Widget build(BuildContext context) => LuxPressable(
         onTap: onTap,
         semanticLabel: label,
-        child: AnimatedContainer(
+        child: LuxTapArea(
+            child: AnimatedContainer(
           duration: LuxMotion.of(context, LuxMotion.base),
           curve: LuxMotion.emphasized,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
@@ -89,7 +90,7 @@ class SectionChip extends StatelessWidget {
               fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
             ),
           ),
-        ),
+        )),
       );
 }
 

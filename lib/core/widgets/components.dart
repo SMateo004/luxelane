@@ -440,7 +440,7 @@ class LuxSegmented<T> extends StatelessWidget {
     required this.selected,
     required this.labelOf,
     required this.onChanged,
-    this.height = 44,
+    this.height = 52,
   });
 
   final List<T> values;
@@ -453,9 +453,10 @@ class LuxSegmented<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final index = values.indexOf(selected).clamp(0, values.length - 1);
     final duration = LuxMotion.of(context, LuxMotion.base);
+    // Cada opción mide height - 4: con 52, 48 px de área táctil (E9).
     return Container(
       height: height,
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
         color: LuxColors.surfaceMuted,
         borderRadius: BorderRadius.circular(LuxRadius.md),

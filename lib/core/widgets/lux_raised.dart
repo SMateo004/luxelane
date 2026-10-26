@@ -192,7 +192,10 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
               child: AnimatedContainer(
                 duration: duration,
                 curve: LuxMotion.emphasized,
-                constraints: BoxConstraints(minHeight: widget.height),
+                // Nunca menos de 48 px de alto (área táctil, E9).
+                constraints: BoxConstraints(
+                  minHeight: widget.height < 48 ? 48 : widget.height,
+                ),
                 width: widget.expand ? double.infinity : null,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,

@@ -425,7 +425,8 @@ class _TopBar extends StatelessWidget {
             LuxPressable(
               semanticLabel: 'Volver al inicio',
               onTap: () => context.go('/'),
-              child: Container(
+              child: LuxTapArea(
+                  child: Container(
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
@@ -438,7 +439,7 @@ class _TopBar extends StatelessWidget {
                   Icons.keyboard_arrow_down_rounded,
                   color: LuxColors.ink,
                 ),
-              ),
+              )),
             ),
             const SizedBox(width: LuxSpacing.md),
             const LuxelaneWordmark(),

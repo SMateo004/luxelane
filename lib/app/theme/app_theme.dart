@@ -223,6 +223,11 @@ ThemeData get luxTheme {
   return ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
+    // Áreas táctiles de 48 px también en la web y el escritorio, donde
+    // Flutter usa por omisión la densidad compacta y shrinkWrap (casillas,
+    // radios y botones de texto de 32–40 px, E9). En móvil ya era así.
+    visualDensity: VisualDensity.standard,
+    materialTapTargetSize: MaterialTapTargetSize.padded,
     scaffoldBackgroundColor: LuxColors.bg,
     canvasColor: LuxColors.bg,
     colorScheme: const ColorScheme.light(
@@ -294,7 +299,7 @@ ThemeData get luxTheme {
         backgroundColor: LuxColors.sapphire,
         foregroundColor: LuxColors.onAccent,
         elevation: 0,
-        minimumSize: const Size(64, 46),
+        minimumSize: const Size(64, 48),
         textStyle: LuxTypography.button.copyWith(fontSize: 14),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(LuxRadius.md),

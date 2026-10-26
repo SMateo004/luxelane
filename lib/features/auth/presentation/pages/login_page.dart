@@ -189,15 +189,19 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _mobileLayout() => SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+          // El logo enlaza al inicio con 48 px de alto para el dedo (E9);
+          // se quitan 12 px arriba y abajo para que no se mueva nada.
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GestureDetector(
+              LuxPressable(
+                semanticLabel: 'Luxelane, ir al inicio',
+                haptic: false,
                 onTap: () => context.go('/'),
-                child: const LuxelaneWordmark(size: 11),
+                child: const LuxTapArea(child: LuxelaneWordmark(size: 11)),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 16),
               const _AuthHeroPhoto(),
               const SizedBox(height: 32),
               Text(

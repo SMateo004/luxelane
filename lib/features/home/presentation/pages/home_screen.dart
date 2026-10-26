@@ -384,10 +384,12 @@ class _MobileTopBar extends StatelessWidget {
                     button: true,
                     label: 'Mi perfil',
                     child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () => context.go(
                         state is AuthAuthenticated ? '/profile' : '/login',
                       ),
-                      child: Container(
+                      child: LuxTapArea(
+                          child: Container(
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
@@ -413,7 +415,7 @@ class _MobileTopBar extends StatelessWidget {
                                 size: 18,
                                 color: LuxColors.onAccent,
                               ),
-                      ),
+                      )),
                     ),
                   );
                 },
@@ -891,7 +893,8 @@ class _PlaceChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: 38,
+        // 48 de alto para el dedo; el chip se ve de 38 (E9).
+        height: 48,
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: [
@@ -932,7 +935,9 @@ class _Chip extends StatelessWidget {
         child: LuxPressable(
           onTap: onTap,
           semanticLabel: label,
-          child: Container(
+          child: Center(
+              child: Container(
+            height: 38,
             constraints: const BoxConstraints(maxWidth: 200),
             padding: const EdgeInsets.symmetric(horizontal: 14),
             decoration: BoxDecoration(
@@ -966,7 +971,7 @@ class _Chip extends StatelessWidget {
                 ),
               ],
             ),
-          ),
+          )),
         ),
       );
 }
@@ -1150,10 +1155,10 @@ class _StepButton extends StatelessWidget {
   Widget build(BuildContext context) => LuxPressable(
         onTap: onTap,
         scale: 0.9,
-        child: Container(
+        child: LuxTapArea(
+            child: Container(
           width: 36,
           height: 36,
-          margin: const EdgeInsets.symmetric(vertical: 6),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: LuxColors.border),
@@ -1163,6 +1168,6 @@ class _StepButton extends StatelessWidget {
             size: 18,
             color: onTap == null ? LuxColors.border : LuxColors.ink,
           ),
-        ),
+        )),
       );
 }

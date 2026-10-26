@@ -71,3 +71,18 @@ class _FocusRingPainter extends CustomPainter {
   @override
   bool shouldRepaint(_FocusRingPainter old) => old.radius != radius;
 }
+
+/// Área táctil de al menos 48×48 alrededor de un control que a la vista es
+/// más pequeño (avatar de 36, círculos de 40): el control se ve igual y el
+/// dedo tiene 48 px (E9). Va dentro del detector de toques, que debe ser
+/// opaco para recibir los toques del margen.
+class LuxTapArea extends StatelessWidget {
+  const LuxTapArea({super.key, required this.child});
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => ConstrainedBox(
+        constraints: const BoxConstraints(minWidth: 48, minHeight: 48),
+        child: Center(widthFactor: 1, heightFactor: 1, child: child),
+      );
+}

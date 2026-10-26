@@ -111,7 +111,8 @@ class _DriverTopBar extends StatelessWidget {
             LuxPressable(
               semanticLabel: 'Volver',
               onTap: () => context.pop(),
-              child: Container(
+              child: LuxTapArea(
+                  child: Container(
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
@@ -123,7 +124,7 @@ class _DriverTopBar extends StatelessWidget {
                   Icons.keyboard_arrow_down_rounded,
                   color: LuxColors.ink,
                 ),
-              ),
+              )),
             ),
             const SizedBox(width: LuxSpacing.md),
             const LuxelaneWordmark(),
