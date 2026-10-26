@@ -550,8 +550,10 @@ void main() {
 
     Future<({List<Uri> opened, List<int> beeps})> pumpStrip(
       WidgetTester tester,
-      List<Incident> incidents,
-    ) async {
+      List<Incident> incidents, {
+      bool summaryOnly = false,
+      VoidCallback? onOpen,
+    }) async {
       final opened = <Uri>[];
       final beeps = <int>[];
       await _pump(
@@ -560,6 +562,8 @@ void main() {
           child: AdminIncidentsStrip(
             onBeep: () => beeps.add(1),
             launch: (u) async => opened.add(u),
+            summaryOnly: summaryOnly,
+            onOpen: onOpen,
           ),
         ),
         const Size(1280, 1600),
@@ -569,6 +573,26 @@ void main() {
       );
       return (opened: opened, beeps: beeps);
     }
+
+    testWidgets('móvil fuera de «Panel»: solo el resumen y «Ver» (E14)', (
+      tester,
+    ) async {
+      var opened = 0;
+      final r = await pumpStrip(
+        tester,
+        [acked, open],
+        summaryOnly: true,
+        onOpen: () => opened++,
+      );
+      expect(find.text('1 incidente sin reconocer'), findsOneWidget);
+      expect(find.text('SIN RECONOCER'), findsNothing);
+      expect(find.text('Reconocer'), findsNothing);
+      await tester.tap(find.text('Ver'));
+      expect(opened, 1);
+      // Sigue sonando aunque las tarjetas no se vean.
+      await tester.pump(const Duration(seconds: 6));
+      expect(r.beeps, isNotEmpty);
+    });
 
     testWidgets('sin incidentes no hay franja ni sonido', (tester) async {
       final r = await pumpStrip(tester, const []);

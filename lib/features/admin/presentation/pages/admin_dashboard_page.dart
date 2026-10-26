@@ -203,7 +203,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                 ),
               ),
             ),
-            Expanded(child: _withLoadError(_sectionBody())),
+            Expanded(child: _withLoadError(_sectionBody(), compact: true)),
           ],
         ),
       );
@@ -329,18 +329,27 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
 
   /// Si alguna lista no cargó, se dice arriba en vez de mostrar la sección
   /// como si estuviera vacía.
-  Widget _withLoadError(Widget body) => BlocBuilder<AdminBloc, AdminState>(
+  ///
+  /// [compact] (móvil): fuera de «Panel», el SOS va como una línea de
+  /// resumen y el aviso del segundo factor no se repite; antes ocupaban más
+  /// de media pantalla en cada pestaña (E14).
+  Widget _withLoadError(Widget body, {bool compact = false}) =>
+      BlocBuilder<AdminBloc, AdminState>(
         buildWhen: (a, b) => a.loadError != b.loadError,
         builder: (context, state) => Column(
           children: [
             // SOS: siempre arriba, en cualquier sección.
-            const AdminIncidentsStrip(),
-            // Fase 1 del segundo factor: aviso hasta darlo de alta.
-            BlocBuilder<AuthBloc, AuthState>(
-              builder: (context, auth) => auth is AuthAuthenticated
-                  ? MfaReminderBanner(accountName: auth.user.email)
-                  : const SizedBox.shrink(),
+            AdminIncidentsStrip(
+              summaryOnly: compact && _section != AdminSection.dashboard,
+              onOpen: () => _go(AdminSection.dashboard),
             ),
+            // Fase 1 del segundo factor: aviso hasta darlo de alta.
+            if (!compact || _section == AdminSection.dashboard)
+              BlocBuilder<AuthBloc, AuthState>(
+                builder: (context, auth) => auth is AuthAuthenticated
+                    ? MfaReminderBanner(accountName: auth.user.email)
+                    : const SizedBox.shrink(),
+              ),
             if (state.loadError != null)
               MaterialBanner(
                 backgroundColor: LuxColors.error.withValues(alpha: 0.08),

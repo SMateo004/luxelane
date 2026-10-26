@@ -47,9 +47,18 @@ class AdminIncidentsStrip extends StatefulWidget {
     this.beepEvery = const Duration(seconds: 5),
     this.onBeep,
     this.launch,
+    this.summaryOnly = false,
+    this.onOpen,
   });
 
   final Duration beepEvery;
+
+  /// Solo la línea de resumen (cuántos, silenciar y «Ver»), sin las
+  /// tarjetas: en el móvil, fuera de la pestaña «Panel» (E14).
+  final bool summaryOnly;
+
+  /// «Ver»: lleva a donde están las tarjetas completas.
+  final VoidCallback? onOpen;
 
   /// Sonido (sustituible en tests).
   final VoidCallback? onBeep;
@@ -166,10 +175,16 @@ class _AdminIncidentsStripState extends State<AdminIncidentsStrip> {
                       ),
                       label: Text(_muted ? 'Activar sonido' : 'Silenciar'),
                     ),
+                    if (widget.summaryOnly && widget.onOpen != null)
+                      TextButton(
+                        onPressed: widget.onOpen,
+                        child: const Text('Ver'),
+                      ),
                   ],
                 ),
-                for (final i in list)
-                  _IncidentCard(incident: i, state: s, open: _open),
+                if (!widget.summaryOnly)
+                  for (final i in list)
+                    _IncidentCard(incident: i, state: s, open: _open),
               ],
             ),
           );
