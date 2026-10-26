@@ -5,185 +5,71 @@
     "sinEtiqueta": [],
     "imagenes": 0,
     "imagenesSinEtiqueta": 0,
-    "pequenos": [
-      {
-        "rol": "button",
-        "etiqueta": "Notificaciones 2",
-        "ancho": 40,
-        "alto": 40
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Mi perfil A",
-        "ancho": 36,
-        "alto": 36
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Solo ida",
-        "ancho": 171,
-        "alto": 36
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Por horas",
-        "ancho": 171,
-        "alto": 36
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Usar mi ubicación",
-        "ancho": 40,
-        "alto": 40
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Elegir en el mapa",
-        "ancho": 40,
-        "alto": 40
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Repetir último Repetir último",
-        "ancho": 138,
-        "alto": 38
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Plaza principal Plaza principal",
-        "ancho": 142,
-        "alto": 38
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Equipetrol Equipetrol",
-        "ancho": 71,
-        "alto": 38
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Aeropuerto Viru Viru Aeropuerto Viru Viru",
-        "ancho": 173,
-        "alto": 38
-      }
-    ],
+    "pequenos": [],
     "foco": [
-      "button: Notificaciones 2 @8",
-      "input: Recogida @423",
-      "button: Usar mi ubicación @427",
-      "input: ¿A dónde vas? @474",
-      "button: Elegir en el mapa @478",
-      "button: Reservar RESERVAR @780",
-      "button: Mis viajes MIS VIAJES @780",
-      "button: Perfil PERFIL @780",
-      "button: Perfil PERFIL @780",
-      "(nada)",
-      "flutter-view: L LUXELANE Notificaciones 2 Mi perfil A  @0",
-      "button: Notificaciones 2 @8"
+      "button: Notificaciones 9+ @8",
+      "button: Ver tu próximo trayecto 02:45 TU PRÓXIMO @235",
+      "input: Recogida @407",
+      "button: Usar mi ubicación @409",
+      "input: ¿A dónde vas? @461",
+      "button: Elegir en el mapa @463",
+      "button: Repetir último Repetir último @526",
+      "button: Plaza principal Plaza principal @526",
+      "button: Equipetrol Equipetrol @526",
+      "button: Aeropuerto Viru Viru Aeropuerto Viru Vir @526",
+      "button: Cambiar fecha y hora de recogida Hoy · 0 @586",
+      "button: Ver vehículos y precios Ver vehículos y  @654"
     ]
   },
   {
     "pantalla": "login",
-    "interactivos": 6,
+    "interactivos": 4,
     "sinEtiqueta": [],
     "imagenes": 1,
     "imagenesSinEtiqueta": 1,
-    "pequenos": [
-      {
-        "rol": "button",
-        "etiqueta": "L LUXELANE",
-        "ancho": 110,
-        "alto": 24
-      },
-      {
-        "rol": "button",
-        "etiqueta": "¿Olvidaste tu contraseña?",
-        "ancho": 140,
-        "alto": 17
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Crear una",
-        "ancho": 52,
-        "alto": 17
-      }
-    ],
+    "pequenos": [],
     "foco": [
+      "button: Luxelane, ir al inicio L LUXELANE @8",
       "button: Continuar con Google @453",
       "input: Correo electrónico @568",
-      "input: Contraseña @630",
+      "input: Contraseña @635",
+      "a: ¿Olvidaste tu contraseña? @694",
+      "button: Iniciar sesión Iniciar sesión @739",
+      "a: Crear una @817",
+      "button: Luxelane, ir al inicio L LUXELANE @8",
       "button: Continuar con Google @453",
       "input: Correo electrónico @568",
-      "input: Contraseña @630",
-      "button: Continuar con Google @453",
-      "input: Correo electrónico @568",
-      "input: Contraseña @630",
-      "button: Continuar con Google @453",
-      "input: Correo electrónico @568",
-      "input: Contraseña @630"
+      "input: Contraseña @635",
+      "a: ¿Olvidaste tu contraseña? @694"
     ]
   },
   {
     "pantalla": "registro",
-    "interactivos": 8,
-    "sinEtiqueta": [
-      {
-        "rol": "checkbox",
-        "caja": [
-          24,
-          648,
-          32,
-          32
-        ]
-      }
-    ],
+    "interactivos": 6,
+    "sinEtiqueta": [],
     "imagenes": 0,
     "imagenesSinEtiqueta": 0,
     "pequenos": [
       {
         "rol": "button",
-        "etiqueta": "L LUXELANE",
-        "ancho": 110,
-        "alto": 24
-      },
-      {
-        "rol": "checkbox",
-        "etiqueta": "",
-        "ancho": 32,
-        "alto": 32
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Términos",
-        "ancho": 48,
-        "alto": 16
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Política de privacidad",
-        "ancho": 111,
-        "alto": 16
-      },
-      {
-        "rol": "button",
         "etiqueta": "Inicia sesión",
         "ancho": 104,
-        "alto": 32
+        "alto": 14
       }
     ],
     "foco": [
+      "button: Luxelane, ir al inicio L LUXELANE @8",
       "button: Registrarte con Google @277",
       "input: Nombre completo @392",
-      "input: Correo electrónico @456",
-      "input: Teléfono (con código de país) @520",
-      "input: Contraseña @584",
-      "checkbox:  @648",
-      "button: Inicia sesión @798",
-      "button: Registrarte con Google @277",
-      "input: Nombre completo @392",
-      "input: Correo electrónico @456",
-      "input: Teléfono (con código de país) @520",
-      "input: Contraseña @584"
+      "input: Correo electrónico @460",
+      "input: Teléfono (con código de país) @528",
+      "input: Contraseña @596",
+      "checkbox: Acepto los Términos y la Política de pri @664",
+      "a: Términos @672",
+      "a: Política de privacidad @688",
+      "button: Crear cuenta Crear cuenta @736",
+      "button: Inicia sesión @800",
+      "button: Luxelane, ir al inicio L LUXELANE @0"
     ]
   },
   {
@@ -194,96 +80,62 @@
     "imagenesSinEtiqueta": 0,
     "pequenos": [],
     "foco": [
-      "group: PRÓXIMOS Plaza principal Hoy · 14:52 · d @56",
-      "button: Reservar RESERVAR @780",
-      "button: Mis viajes MIS VIAJES @780",
-      "button: Perfil PERFIL @780",
-      "button: Perfil PERFIL @780",
-      "(nada)",
-      "flutter-view: Mis viajes PRÓXIMOS Plaza principal Hoy  @0",
-      "group: PRÓXIMOS Plaza principal Hoy · 14:52 · d @56",
-      "button: Reservar RESERVAR @780",
-      "button: Mis viajes MIS VIAJES @780",
-      "button: Perfil PERFIL @780",
-      "button: Perfil PERFIL @780"
+      "button: Plaza principal Hoy · 02:45 · desde Aero @97",
+      "button: Plaza principal Hoy · 02:45 · desde Aero @218",
+      "button: Plaza principal Hoy · 02:45 · desde Aero @339",
+      "button: Equipetrol Hoy · 02:45 · desde Aeropuert @460",
+      "button: Plaza principal Hoy · 02:45 · desde Aero @581",
+      "button: Plaza principal Hoy · 03:00 · desde Aero @667",
+      "button: Plaza principal Hoy · 05:15 · desde Aero @667",
+      "button: Plaza principal Hoy · 06:15 · desde Aero @667",
+      "button: Plaza principal Mañana · 02:15 · desde A @657",
+      "button: Plaza principal Hoy · 01:45 · desde Aero @657",
+      "button: Plaza principal dom 25 oct · 02:15 · des @657",
+      "button: Reservar RESERVAR @780"
     ]
   },
   {
     "pantalla": "viaje-codigo",
     "interactivos": 6,
-    "sinEtiqueta": [
-      {
-        "rol": "button",
-        "caja": [
-          16,
-          22,
-          40,
-          40
-        ]
-      }
-    ],
+    "sinEtiqueta": [],
     "imagenes": 0,
     "imagenesSinEtiqueta": 0,
-    "pequenos": [
-      {
-        "rol": "button",
-        "etiqueta": "",
-        "ancho": 40,
-        "alto": 40
-      }
-    ],
+    "pequenos": [],
     "foco": [
+      "button: Volver al inicio @18",
+      "button: Ayuda SOS Mantén pulsado dos segundos pa @16",
+      "button: Cancelar reserva Cancelar reserva @700",
       "button: Reservar RESERVAR @780",
       "button: Mis viajes MIS VIAJES @780",
       "button: Perfil PERFIL @780",
       "button: Perfil PERFIL @780",
-      "(nada)",
-      "flutter-view: L LUXELANE Ayuda SOS Mantén pulsado dos  @0",
-      "button: Reservar RESERVAR @780",
-      "button: Mis viajes MIS VIAJES @780",
       "button: Perfil PERFIL @780",
       "button: Perfil PERFIL @780",
-      "(nada)",
-      "flutter-view: L LUXELANE Ayuda SOS Mantén pulsado dos  @0"
+      "button: Perfil PERFIL @780",
+      "button: Perfil PERFIL @780",
+      "button: Perfil PERFIL @780"
     ]
   },
   {
     "pantalla": "viaje-sos",
     "interactivos": 5,
-    "sinEtiqueta": [
-      {
-        "rol": "button",
-        "caja": [
-          16,
-          22,
-          40,
-          40
-        ]
-      }
-    ],
+    "sinEtiqueta": [],
     "imagenes": 0,
     "imagenesSinEtiqueta": 0,
-    "pequenos": [
-      {
-        "rol": "button",
-        "etiqueta": "",
-        "ancho": 40,
-        "alto": 40
-      }
-    ],
+    "pequenos": [],
     "foco": [
+      "button: Volver al inicio @18",
+      "button: Ayuda SOS Mantén pulsado dos segundos pa @16",
       "button: Reservar RESERVAR @780",
       "button: Mis viajes MIS VIAJES @780",
       "button: Perfil PERFIL @780",
       "button: Perfil PERFIL @780",
-      "(nada)",
-      "flutter-view: L LUXELANE Ayuda SOS Mantén pulsado dos  @0",
-      "button: Reservar RESERVAR @780",
-      "button: Mis viajes MIS VIAJES @780",
       "button: Perfil PERFIL @780",
       "button: Perfil PERFIL @780",
-      "(nada)",
-      "flutter-view: L LUXELANE Ayuda SOS Mantén pulsado dos  @0"
+      "button: Perfil PERFIL @780",
+      "button: Perfil PERFIL @780",
+      "button: Perfil PERFIL @780",
+      "button: Perfil PERFIL @780"
     ]
   },
   {
@@ -292,57 +144,20 @@
     "sinEtiqueta": [],
     "imagenes": 0,
     "imagenesSinEtiqueta": 0,
-    "pequenos": [
-      {
-        "rol": "radio",
-        "etiqueta": "Cambié de planes",
-        "ancho": 262,
-        "alto": 40
-      },
-      {
-        "rol": "radio",
-        "etiqueta": "Encontré otro transporte",
-        "ancho": 262,
-        "alto": 40
-      },
-      {
-        "rol": "radio",
-        "etiqueta": "El chófer tarda demasiado",
-        "ancho": 262,
-        "alto": 40
-      },
-      {
-        "rol": "radio",
-        "etiqueta": "Otro motivo",
-        "ancho": 262,
-        "alto": 40
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Volver",
-        "ancho": 64,
-        "alto": 32
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Cancelar con recargo",
-        "ancho": 160,
-        "alto": 32
-      }
-    ],
+    "pequenos": [],
     "foco": [
-      "radio: Cambié de planes @414",
-      "radio: Encontré otro transporte @454",
-      "radio: El chófer tarda demasiado @494",
+      "radio: Cambié de planes @390",
+      "radio: Encontré otro transporte @438",
+      "radio: El chófer tarda demasiado @486",
       "radio: Otro motivo @534",
-      "button: Volver @598",
-      "button: Cancelar con recargo @598",
-      "radio: Cambié de planes @414",
-      "radio: Encontré otro transporte @454",
-      "radio: El chófer tarda demasiado @494",
+      "button: Volver @606",
+      "button: Cancelar con recargo @606",
+      "radio: Cambié de planes @390",
+      "radio: Encontré otro transporte @438",
+      "radio: El chófer tarda demasiado @486",
       "radio: Otro motivo @534",
-      "button: Volver @598",
-      "button: Cancelar con recargo @598"
+      "button: Volver @606",
+      "button: Cancelar con recargo @606"
     ]
   },
   {
@@ -351,203 +166,64 @@
     "sinEtiqueta": [],
     "imagenes": 0,
     "imagenesSinEtiqueta": 0,
-    "pequenos": [
-      {
-        "rol": "button",
-        "etiqueta": "Notificaciones",
-        "ancho": 40,
-        "alto": 40
-      },
-      {
-        "rol": "button",
-        "etiqueta": "El pasajero no aparece",
-        "ancho": 350,
-        "alto": 46
-      }
-    ],
+    "pequenos": [],
     "foco": [
-      "button: Notificaciones @43",
-      "button: El pasajero no aparece @714",
-      "button: Conducir Tab 1 of 4 @776",
-      "button: Solicitudes Tab 2 of 4 @776",
-      "button: Ganancias Tab 3 of 4 @776",
-      "button: Perfil Tab 4 of 4 @776",
-      "button: Notificaciones @43",
-      "button: El pasajero no aparece @714",
-      "button: Conducir Tab 1 of 4 @776",
-      "button: Solicitudes Tab 2 of 4 @776",
-      "button: Ganancias Tab 3 of 4 @776",
-      "button: Perfil Tab 4 of 4 @776"
+      "button: Pide al pasajero su código de recogida.  @43",
+      "button: Notificaciones 3 @43",
+      "button: Navegar a la recogida Navegar a la recog @582",
+      "button: Ingresar código del pasajero Ingresar có @644",
+      "button: El pasajero no aparece @706",
+      "button: Conducir Pestaña 1 de 4 @776",
+      "button: Solicitudes Pestaña 2 de 4 @776",
+      "button: Ganancias Pestaña 3 de 4 @776",
+      "button: Perfil Pestaña 4 de 4 @776",
+      "button: Pide al pasajero su código de recogida.  @43",
+      "button: Notificaciones 3 @43",
+      "button: Navegar a la recogida Navegar a la recog @582"
     ]
   },
   {
     "pantalla": "chofer-viaje",
     "interactivos": 4,
-    "sinEtiqueta": [
-      {
-        "rol": "button",
-        "caja": [
-          16,
-          22,
-          40,
-          40
-        ]
-      }
-    ],
+    "sinEtiqueta": [],
     "imagenes": 0,
     "imagenesSinEtiqueta": 0,
-    "pequenos": [
-      {
-        "rol": "button",
-        "etiqueta": "",
-        "ancho": 40,
-        "alto": 40
-      },
-      {
-        "rol": "button",
-        "etiqueta": "El pasajero no aparece",
-        "ancho": 358,
-        "alto": 46
-      }
-    ],
+    "pequenos": [],
     "foco": [
-      "button: El pasajero no aparece @750",
-      "(nada)",
-      "button: El pasajero no aparece @750",
-      "(nada)",
-      "button: El pasajero no aparece @750",
-      "(nada)",
-      "button: El pasajero no aparece @750",
-      "(nada)",
-      "button: El pasajero no aparece @750",
-      "(nada)",
-      "button: El pasajero no aparece @750",
-      "(nada)"
+      "button: Volver @18",
+      "button: Ayuda SOS Mantén pulsado dos segundos pa @16",
+      "button: Ingresar código del pasajero Ingresar có @680",
+      "button: El pasajero no aparece @742",
+      "button: Volver @18",
+      "button: Ayuda SOS Mantén pulsado dos segundos pa @16",
+      "button: Ingresar código del pasajero Ingresar có @680",
+      "button: El pasajero no aparece @742",
+      "button: Volver @18",
+      "button: Ayuda SOS Mantén pulsado dos segundos pa @16",
+      "button: Ingresar código del pasajero Ingresar có @680",
+      "button: El pasajero no aparece @742"
     ]
   },
   {
     "pantalla": "panel",
-    "interactivos": 19,
+    "interactivos": 20,
     "sinEtiqueta": [],
     "imagenes": 0,
     "imagenesSinEtiqueta": 0,
-    "pequenos": [
-      {
-        "rol": "button",
-        "etiqueta": "Cerrar sesión",
-        "ancho": 40,
-        "alto": 40
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Panel Panel",
-        "ancho": 68,
-        "alto": 39
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Operaciones · 2 Operaciones · 2",
-        "ancho": 128,
-        "alto": 39
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Finanzas Finanzas",
-        "ancho": 88,
-        "alto": 39
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Tarifas Tarifas",
-        "ancho": 66,
-        "alto": 39
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Chóferes · 1 Chóferes · 1",
-        "ancho": 107,
-        "alto": 39
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Vehículos Vehículos",
-        "ancho": 93,
-        "alto": 39
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Usuarios Usuarios",
-        "ancho": 87,
-        "alto": 39
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Empresas Empresas",
-        "ancho": 94,
-        "alto": 39
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Auditoría Auditoría",
-        "ancho": 89,
-        "alto": 39
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Alertas · 11 Alertas · 11",
-        "ancho": 103,
-        "alto": 39
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Configuración Configuración",
-        "ancho": 119,
-        "alto": 39
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Silenciar",
-        "ancho": 109,
-        "alto": 32
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Reconocer",
-        "ancho": 110,
-        "alto": 30
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Cerrar con nota",
-        "ancho": 140,
-        "alto": 30
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Ver",
-        "ancho": 56,
-        "alto": 32
-      },
-      {
-        "rol": "button",
-        "etiqueta": "Revisar",
-        "ancho": 71,
-        "alto": 32
-      }
-    ],
+    "pequenos": [],
     "foco": [
-      "button: Cerrar sesión @8",
-      "button: Silenciar @135",
-      "button: Reconocer @251",
-      "button: Cerrar con nota @285",
-      "button: Registro @316",
-      "button: Activa la verificación en dos pasos Pron @383",
-      "button: Ver @539",
-      "button: Revisar @580",
-      "button: Cerrar sesión @8",
-      "button: Silenciar @135",
-      "button: Reconocer @251",
-      "button: Cerrar con nota @285"
+      "button: Cerrar sesión @4",
+      "button: Panel Panel @68",
+      "button: Operaciones · 2 Operaciones · 2 @68",
+      "button: Finanzas Finanzas @68",
+      "button: Tarifas Tarifas @68",
+      "button: Chóferes · 1 Chóferes · 1 @68",
+      "button: Vehículos Vehículos @68",
+      "button: Usuarios Usuarios @68",
+      "button: Empresas Empresas @68",
+      "button: Auditoría Auditoría @68",
+      "button: Alertas · 25 Alertas · 25 @68",
+      "button: Configuración Configuración @68"
     ]
   }
 ]

@@ -1,8 +1,9 @@
 # Experiencia Luxelane — revisión de la app funcionando
 
-Rama `cierre/experiencia` · 2026-10-25 · Parte A (A1–A9). No se cambió código
-de la app salvo el entorno de A1 (modo emuladores). Las correcciones son la
-Parte B y solo las que apruebe el responsable.
+Rama `cierre/experiencia` · 2026-10-25/26 · Parte A (A1–A9) y Parte B
+(correcciones E1–E31 aprobadas, salvo E25, E32 y E33). La Parte A describe
+el estado de partida; el resultado de la Parte B está en
+[Parte B](#parte-b-correcciones) y en `docs/capturas/antes-despues/`.
 
 Etiquetas: **[seguro]** lo leí o lo ejecuté · **[Probable]** · **[Especulando]**
 · **NO VERIFICADO**.
@@ -18,6 +19,7 @@ Etiquetas: **[seguro]** lo leí o lo ejecuté · **[Probable]** · **[Especuland
 7. [Rendimiento y peso (A7)](#a7-rendimiento-y-peso)
 8. [Errores (A8)](#a8-errores)
 9. [Límites de esta revisión](#límites-de-esta-revisión)
+10. [Parte B: correcciones](#parte-b-correcciones)
 
 ---
 
@@ -32,7 +34,7 @@ builds). Se niega a correr con otro proyecto que no sea `demo-luxelane`.
 | `tools/experiencia/seed.cjs` | Siembra Auth y Firestore: pasajera, pasajera sin viajes, chófer verificado (con viajes), chófer verificado libre, chófer no verificado, chófer bloqueado, admin y admin con un segundo factor inscrito; una reserva por estado del grafo (pendiente, liberada, confirmada, en camino, llegó, verificada, en curso, completada, no se presentó, cancelada, cancelada con recargo), un SOS abierto, alertas, un cobro, tarifas y política **ficticias** (`_ficticio: true`). Contraseña común `prueba-123`. Se niega sin `FIRESTORE_EMULATOR_HOST`/`FIREBASE_AUTH_EMULATOR_HOST` o con otro proyecto. |
 | `tools/experiencia/callables.cjs` | Ejecuta las 31 callables y 8 triggers de Firestore con el código compilado real (`functions/lib`). Sustituye al emulador de Functions de firebase-tools, que en este entorno manda por el proxy hasta las llamadas a 127.0.0.1 (`request blocked: no rule allows host "127.0.0.1"`) [seguro]. Lo que llama a Stripe no se ejecuta (clave ficticia). |
 | `tools/experiencia/serve.cjs` | Sirve las builds: pasajero y panel en :5050, chófer en :5051. |
-| `tools/experiencia/capturas.cjs`, `hojas.sh`, `accesibilidad.cjs`, `rendimiento.cjs`, `analisis_tema.py`, `pruebas/a5_movimiento_test.dart` | A2–A7 (ver cada sección). |
+| `tools/experiencia/capturas.cjs`, `hojas.sh`, `accesibilidad.cjs`, `rendimiento.cjs`, `analisis_tema.py`, `antes_despues.sh` | A2–A7 (ver cada sección) y comparaciones de la Parte B. Los tests de A5 pasaron a `test/experiencia/movimiento_test.dart` (E10). |
 
 Notas del entorno [seguro]: las builds del modo emuladores llevan CanvasKit
 local (`--no-web-resources-cdn`) porque `www.gstatic.com` está bloqueado en
@@ -69,7 +71,8 @@ contacto (6,6 MB).
 ## A9. Hallazgos
 
 Ordenados por severidad. «Evidencia» apunta a una captura (en
-`docs/capturas/`, regenerable) o a una medida. Ninguno está corregido.
+`docs/capturas/`, regenerable) o a una medida. Estado de cada uno tras la
+Parte B: ver [Parte B](#parte-b-correcciones).
 
 ### Bloquea piloto
 
@@ -278,3 +281,106 @@ emuladores la sesión no sobrevive a una recarga (ver Límites).
 - **Sin dispositivos reales**: háptica, notificaciones push, permisos nativos, TalkBack/VoiceOver, «quitar animaciones» del sistema en un teléfono real y apps Android/iOS: **NO VERIFICADO** (el SOS se comprobó con el binding de test de Flutter).
 - **TOTP en el emulador**: el reto de segundo factor se vio con un factor de teléfono simulado; el alta de TOTP (pantalla del chófer) se capturó, pero el emulador de Auth no permite completarla [Probable].
 - **Triggers**: corren en el ejecutor local escuchando Firestore; los programados (`scheduledCleanup`, escalado de SOS, reconciliación) no corren.
+
+---
+
+## Parte B: correcciones
+
+Un commit por hallazgo, en el orden pedido. Cada corrección de lógica lleva
+un test que falla sin el cambio (comprobado quitando el cambio y volviendo
+a ejecutar el test). Antes/después en `docs/capturas/antes-despues/<Id>/`
+(JPG, izquierda antes y derecha después). **No se tocan:** E25 (espera las
+hojas comentadas: juicio visual), E32 y E33.
+
+| Id | Qué cambió | Antes → después (dato) | Test |
+|---|---|---|---|
+| E1 | El SOS usa un temporizador real de 2 s; la animación solo dibuja el anillo. | Con «quitar animaciones»: 200 ms enviaban → 1,9 s no envían, 2,1 s sí. [seguro] | `test/experiencia/movimiento_test.dart` |
+| E2+E24 | Fuera de `lux_promise.dart` y de las pantallas: cancelación gratuita, modificar sin coste, esperas gratuitas, seguimiento de vuelo, 24/7, propina incluida, antecedentes. Sin promesas nuevas. «Te contactarán»/«te contactará» → «Central fue avisada.». | 10 frases prohibidas en `lib/` → 0 (salvo `legal_page.dart`). | `test/experiencia/promesas_test.dart` |
+| E3 | `LuxSlideToConfirm` vuelve a empezar con `resetToken` (avisos del `DriverBloc`). | Tras un fallo: 1 intento posible → se repite. | `movimiento_test.dart` |
+| E4+E5 | Fotos re-codificadas, coches/asientos/maletero en WebP, vídeos y `video_player` fuera, pantalla de carga de la marca (HTML+CSS, debajo de Flutter). | `assets/images` 51 MB → 2,6 MB; build web 202 MB → 34 MB. 4G lenta: primer contenido 19,4 s → 1,2 s (pantalla de carga); primer fotograma de Flutter ~19,8 s sin cambio. | `peso_test.dart`, `web_index_test.dart` |
+| E6 | «Invalid HTTP date» era del emulador (createUser no guarda `enrolledAt`; con importUsers sí). Errores inesperados → mensaje humano (`unexpectedErrorMessage`) en 34 `catch`. | Login de admin con 2.º factor: error técnico → pantalla de verificación. | `test/core/error_messages_test.dart` |
+| E7 | `LuxFocusable` (Tab, Intro/Espacio, anillo de foco) en botones, filas, enlaces y SOS; etiquetas de casilla, «Volver», «Bloquear a <nombre>». | Sin etiqueta: 4 → 0. Con Tab: login, registro, SOS y «Cancelar reserva» alcanzables. | `teclado_test.dart`, `admin_panel_render_test.dart` |
+| E8 | SOS y hora en `FittedBox`, dígitos y botones crecen (2 líneas), títulos ≥ 30 px hasta 1,3×. | A 2×: «SO», dígitos cortados, «Bienveni / do» → enteros. | `texto_grande_test.dart` |
+| E9 | Tema con densidad estándar y `padded`; `LuxTapArea` (48×48 sin cambiar lo visible); segmentado de 48. | < 48 px: 47 → 1 (en el borde del área visible). | `tactil_test.dart` |
+| E10 | `LuxMotion.repeatUnlessReduced` en puntos de carga, esqueleto, pulso de la barra y del chófer y marquesina. | 3 tests de A5 fallaban → pasan, en `test/`. | `movimiento_test.dart` |
+| E11 | `flutter_localizations` (del SDK) y `LuxLocale`. | «Sun, Oct 25» → «dom, 25 oct». | `idioma_test.dart` |
+| E12 | `LuxConnectionBanner` + `ConnectionStatus` (metadatos de Firestore). | Sin red: nada → «Sin conexión. Lo que ves puede no estar al día.». | `sin_conexion_test.dart` |
+| E13 | Reserva inexistente: «No encontramos esta reserva en tu cuenta.»; cancelar con error del servidor sin culpar a la red. | — | `errores_conexion_test.dart` |
+| E14 | Panel móvil: SOS en una línea fuera de Panel; aviso de dos pasos solo en Panel. | — | `admin_panel_render_test.dart` |
+| E15 | Auditoría al abrir su pestaña. Paginar reservas/pagos/usuarios queda como decisión (cifras de finanzas en el servidor). | Semilla sin auditoría: panel 87 → 87 documentos. | `admin_panel_render_test.dart` |
+| E16 | **No se reproduce**: Inicio → Mis viajes lee 11 → 0 antes y después (el SDK comparte la consulta). Sin cambios. | — | — |
+| E17 | `DriverTripHeader`: 16 px entre el título y el SOS. | — | `cabecera_chofer_test.dart` |
+| E18 | `releasedBy` en `openRequests` (servidor) y filtro en la app. **Requiere desplegar functions.** | chofer2 veía `r-released` → no. | `open_requests.test.ts`, `release_booking.int.ts`, `driver_bloc_test.dart` |
+| E19 | Sin `dispatchPhone` no se pide «llama a central». | — | `pending_status_test.dart` |
+| E20 | `warning` #A8741F → #8D611A, `inkTertiary` #637490 → #5B6B84. | Mínimo 3,45 → 4,61 (AA). Quedan 2 pares fuera del hallazgo (sapphireLight y success sobre surfaceDeep). | `contraste_test.dart` |
+| E21 | `LuxFormat.money`. | 7 formatos → 1: «Bs 1.234» / «Bs 1.234,50». | `moneda_test.dart` |
+| E22 | Sin dirección: «Punto elegido en el mapa»; sin permiso: aviso en el diálogo. | «-17.78330, -63.18210» → texto. | `ubicacion_test.dart` |
+| E23 | `/booking` sin viaje elegido vuelve al inicio. | — | `reserva_directa_test.dart` |
+| E26 | Manifest y títulos con el título de `index.html` y los colores del tema. | «A new Flutter project.», «Luxelane Driver» → título común. | `titulo_test.dart` |
+| E27 | Mapa sin clave: texto neutro. | — | `mapa_sin_clave_test.dart` |
+| E28 | 49 `SizedBox` numéricos que eran un token → `LuxSpacing` (reserva, chófer, panel). Trinquete por archivo. | Colores 153, Colors.* 145, fontSize 226, TextStyle 164, SizedBox numéricos 302 (no pueden subir). | `tema_trinquete_test.dart` |
+| E29 | «Cancelando…» solo tras confirmar. | — | `rider_cancel_test.dart` |
+| E30 | `Place.fromJson` sin coordenadas: (0, 0). | Lanzaba → no. | `lugar_sin_coordenadas_test.dart` |
+| E31 | Hápticas en llegada, verificación y fin; tarjetas «Código verificado» y «Viaje completado». | — | `momentos_test.dart` |
+
+Notas [seguro]:
+- Nueva dependencia (del SDK de Flutter): `flutter_localizations` (E11).
+  Dependencia quitada: `video_player` (E4+E5; los vídeos no tenían uso real
+  en nativo: solo eran fondo decorativo de la home web, también en tablets).
+- Código muerto visto y no tocado: `DriveCanvasAnim`/`DrivePainter`
+  (`drive_canvas_painter.dart`, sin usos; además lanza al pintar) y
+  `RideTypePage` (`/ride-type`, sin enlaces internos).
+- Promesas sin respaldo que quedan fuera de las categorías pedidas en E2
+  (decisión del responsable): «te espera en llegadas con un cartel con tu
+  nombre», «Recibimiento personalizado», «Agua de cortesía», «Cargadores»,
+  «Pañuelos», «Puntualidad Garantizada», «Chóferes multilingües», «Gerente
+  de cuenta dedicado», «Herramientas de cumplimiento…», «Monitoreo de
+  viajes…», «Discreción y privacidad absolutas».
+
+### Remedición final (A2, A3, A6, A7 repetidos tras la Parte B)
+
+[seguro, ejecutado el 2026-10-26 con las builds de `0d104c3`]
+
+**A2** (`capturas.cjs`, `manifiesto.json`): 309 capturas, 301 correctas, 8
+fallidas, 0 errores de JavaScript; igual que en la Parte A. Las 8 fallidas
+son las mismas que no aplican (botones del inicio móvil que la home web de
+768 y 1280 px no tiene). **A3**: hojas regeneradas en `docs/capturas/hojas/`
+(6,5 MB).
+
+**A6** (`A6-accesibilidad/resultado.json`; la de la Parte A en
+`resultado-parteA.json` y las intermedias en `resultado-despues-E7/E8/E9.json`):
+
+| Medida | Parte A | Final |
+|---|---|---|
+| Controles sin etiqueta | 4 | 0 |
+| Objetivos < 48 px | 47 | 1 («Inicia sesión» del registro, en el borde inferior: el test mide 48) |
+| Imágenes sin etiqueta | 1 (decorativa del login) | 1 (la misma) |
+| Tab llega a «Iniciar sesión», «Crear cuenta», SOS, «Cancelar reserva» | No | Sí |
+
+**A7** (`A7-rendimiento/resultado-final-B.json`; Parte A en `resultado.json`,
+sin comprimir; «antes» comprimido en `resultado-antes-B.json`). Brotli
+simulado en `serve.cjs`; 4G lenta = 1,6 Mbit/s de bajada, 750 kbit/s de
+subida y 562,5 ms de latencia (`SLOW_4G` en `rendimiento.cjs`):
+
+| Ruta / ancho / red | Antes (brotli) primer contenido · primer fotograma · interactiva | Final | Transferido antes → final |
+|---|---|---|---|
+| / 390 sin límite | 1,39 · 1,73 · 2,60 s | 0,68 · 2,01 · 2,96 s | 4,3 → 4,4 MB |
+| / 390 4G lenta | 19,37 · 19,75 · 20,57 s | **1,22** · 20,36 · 21,21 s | 4,3 → 4,4 MB |
+| / 1280 sin límite | 1,49 · 1,85 · 3,58 s | 0,16 · 1,57 · 3,65 s | **11,2 → 5,0 MB** |
+| / 1280 4G lenta | 19,39 · 19,68 · 21,25 s | **1,22** · 20,19 · 21,98 s | 4,2 → 4,6 MB |
+| /legal/terminos 390 4G | 19,36 · 19,59 · 20,17 s | **1,23** · 20,09 · 20,64 s | 4,2 → 4,3 MB |
+
+- Lo que ve la persona con 4G lenta llega a 1,2 s (pantalla de carga de la
+  marca) en vez de 19,4 s en blanco. El primer fotograma de Flutter sigue en
+  ~20 s: lo marcan CanvasKit (1,5–2,1 MB con brotli) y `main.dart.js`, que
+  creció de 911 a 993 KB con brotli por el código de la Parte B y la
+  localización (+0,4–0,7 s de interactiva) [seguro, medido]. Bajar de ahí
+  pide otro renderizador o cargar CanvasKit antes: decisión técnica aparte.
+- Peso de la build: 201 MB → 33,4 MB; `assets/images` 51 → 2,6 MB; sin
+  vídeos.
+- Lecturas de Firestore (documentos): inicio 11 → 11, viajes 11 → 11, viaje
+  13 → 13, perfil 49 → 47, chófer 17/7/17 → 19/9/19, panel 102 → 94.
+  **[Probable]** las diferencias del chófer y del panel vienen de datos que
+  la semilla no borra (alertas e incidentes creados por los triggers en las
+  capturas), no del código: la semilla no tiene registros de auditoría (E15)
+  y E16 no se reproduce.
