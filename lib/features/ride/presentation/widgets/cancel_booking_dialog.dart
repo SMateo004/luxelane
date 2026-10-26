@@ -4,6 +4,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 
 /// Cancelación del pasajero (Parte B): el servidor calcula el recargo con la
@@ -101,7 +102,7 @@ class _CancelBookingDialogState extends State<CancelBookingDialog> {
                   child: Text(
                     '${widget.feeChanged ? 'El recargo cambió. ' : ''}'
                     'Según la política de cancelación, cancelar ahora tiene '
-                    'un recargo de Bs ${widget.fee.toStringAsFixed(2)}.',
+                    'un recargo de ${LuxFormat.money(widget.fee)}.',
                     style: LuxTypography.bodyMedium,
                   ),
                 ),

@@ -20,6 +20,7 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/services/maps_service.dart';
 import '../../../../core/services/pricing_catalog.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/utils/service_area.dart';
 import '../../../../core/widgets/app_update_dialog.dart';
 import '../../../../core/widgets/components.dart';
@@ -52,14 +53,9 @@ const _kPanelAccent = LD.sph; // #1B4F8A sapphire
 
 /// Precio para mostrar, o «Cotiza al reservar» si no hay tarifa
 /// configurada: nunca una cifra inventada.
-String formatPriceOrQuote(
-  double? price, {
-  int decimals = 0,
-  bool from = false,
-}) =>
-    price == null
-        ? 'Cotiza al reservar'
-        : '${from ? 'desde ' : ''}Bs ${price.toStringAsFixed(decimals)}';
+String formatPriceOrQuote(double? price, {bool from = false}) => price == null
+    ? 'Cotiza al reservar'
+    : '${from ? 'desde ' : ''}${LuxFormat.money(price)}';
 
 class BookingScreen extends StatefulWidget {
   const BookingScreen({super.key});
@@ -241,8 +237,8 @@ class _BookingScreenState extends State<BookingScreen> {
         title: const Text('El precio cambió'),
         content: Text(
           'El precio de este viaje es ahora '
-          'Bs ${state.newPrice.toStringAsFixed(0)} '
-          '(antes Bs ${state.previousPrice.toStringAsFixed(0)}). '
+          '${LuxFormat.money(state.newPrice)} '
+          '(antes ${LuxFormat.money(state.previousPrice)}). '
           '¿Quieres reservar con el precio nuevo?',
         ),
         actions: [
@@ -449,7 +445,7 @@ class _BookingScreenState extends State<BookingScreen> {
         quote == null
             ? (_quoteError ??
                 'No pudimos calcular el precio. Inténtalo de nuevo.')
-            : 'El precio de tu viaje es Bs ${quote.price.toStringAsFixed(0)}. '
+            : 'El precio de tu viaje es ${LuxFormat.money(quote.price)}. '
                 'Pulsa Reservar para confirmar.',
         isError: quote == null,
       );
@@ -1080,7 +1076,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
               const SizedBox(width: 10),
               Text(
-                formatPriceOrQuote(amount, decimals: 2),
+                formatPriceOrQuote(amount),
                 style: const TextStyle(
                   fontFamily: kSans,
                   fontSize: 15,
@@ -1733,7 +1729,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                     const Spacer(),
                     Text(
-                      formatPriceOrQuote(_price, decimals: 2),
+                      formatPriceOrQuote(_price),
                       style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 18,

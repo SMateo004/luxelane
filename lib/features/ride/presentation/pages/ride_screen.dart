@@ -13,6 +13,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../driver/presentation/widgets/pickup_code_entry.dart'
@@ -167,7 +168,7 @@ class _RideScreenState extends State<RideScreen> {
         final b = _booking!;
         return b.hasCancellationFee
             ? 'Esta reserva fue cancelada. Recargo por cancelación: '
-                'Bs ${b.cancellationFee!.toStringAsFixed(2)}.'
+                '${LuxFormat.money(b.cancellationFee!)}.'
             : 'Esta reserva fue cancelada.';
       case BookingStatus.noShow:
         return 'Tu chófer no te encontró en el punto de recogida. Central '

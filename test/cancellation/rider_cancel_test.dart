@@ -84,7 +84,7 @@ void main() {
       ).thenAnswer((_) async => const Right(null));
       await open(t);
       expect(find.byKey(const Key('cancel-fee')), findsOneWidget);
-      expect(find.textContaining('Bs 30.00'), findsOneWidget);
+      expect(find.textContaining('Bs\u00A030'), findsOneWidget);
       expect(find.text('Cancelar con recargo'), findsOneWidget);
       await t.tap(find.text('Cambié de planes'));
       await t.pump();
@@ -106,7 +106,7 @@ void main() {
       await t.tap(find.byKey(const Key('confirm-cancel')));
       await t.pumpAndSettle();
       expect(find.textContaining('El recargo cambió'), findsOneWidget);
-      expect(find.textContaining('Bs 45.00'), findsOneWidget);
+      expect(find.textContaining('Bs\u00A045'), findsOneWidget);
       await t.tap(find.byKey(const Key('confirm-cancel')));
       await t.pumpAndSettle();
       expect(result, isTrue);

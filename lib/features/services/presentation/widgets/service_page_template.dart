@@ -6,6 +6,7 @@ import '../../../../core/design/lux_promise.dart';
 import '../../../../core/design/vehicle_catalog.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/services/pricing_catalog.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/lux_service_booking_card.dart';
 import '../../../../core/widgets/lux_site_chrome.dart';
 import '../../../booking/presentation/widgets/vehicle_visuals.dart';
@@ -896,8 +897,8 @@ class _ClassCardState extends State<_ClassCard> {
                           widget.from == null
                               ? 'Cotiza al reservar'
                               : widget.perHour
-                                  ? 'Bs ${widget.from!.toStringAsFixed(0)} · 2 h'
-                                  : 'Bs ${widget.from!.toStringAsFixed(0)}',
+                                  ? '${LuxFormat.money(widget.from!)} · 2 h'
+                                  : LuxFormat.money(widget.from!),
                           style: const TextStyle(
                             fontFamily: kSans,
                             fontSize: 18,

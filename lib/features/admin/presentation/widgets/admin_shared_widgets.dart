@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../domain/repositories/admin_repository.dart'
     show kAdminReasonMinLength;
@@ -10,12 +11,10 @@ import '../../domain/repositories/admin_repository.dart'
 // Formato
 // ─────────────────────────────────────────────────────────────────────────────
 
-final _money = NumberFormat('#,##0.00', 'es');
-final _moneyShort = NumberFormat('#,##0', 'es');
-
-/// Importe en bolivianos con el mismo formato en todo el panel: "Bs 1.234,50".
+/// Importe en bolivianos (LuxFormat.money, el de toda la app); [short]
+/// redondea a bolivianos enteros para las cifras grandes.
 String bs(double v, {bool short = false}) =>
-    'Bs ${(short ? _moneyShort : _money).format(v)}';
+    LuxFormat.money(short ? v.roundToDouble() : v);
 
 String adminDate(DateTime d) => DateFormat('dd/MM/yyyy HH:mm').format(d);
 

@@ -7,7 +7,7 @@ import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../bloc/driver_bloc.dart';
 
-String _bs(double v) => 'Bs${v.toStringAsFixed(2)}';
+String _bs(double v) => LuxFormat.money(v);
 
 String _pct(double v) =>
     v % 1 == 0 ? v.toStringAsFixed(0) : v.toStringAsFixed(1);

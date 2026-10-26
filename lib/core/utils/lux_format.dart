@@ -19,6 +19,22 @@ abstract class LuxFormat {
 
   static String _two(int v) => v.toString().padLeft(2, '0');
 
+  /// Importe en bolivianos, igual en toda la app: «Bs 1.234» si es entero,
+  /// «Bs 1.234,50» si lleva céntimos. Antes convivían siete formas
+  /// («Bs96.00», «Bs 120», «Bs120», «Bs 50.00», «Bs 1.234,50»…, E21).
+  static String money(num amount) {
+    final cents = (amount * 100).round();
+    final abs = cents.abs();
+    final whole = (abs ~/ 100).toString().replaceAllMapped(
+          RegExp(r'\B(?=(\d{3})+(?!\d))'),
+          (_) => '.',
+        );
+    final rest = abs % 100;
+    final decimals = rest == 0 ? '' : ',${_two(rest)}';
+    // Espacio que no se parte: «Bs» y la cifra nunca quedan en dos líneas.
+    return '${cents < 0 ? '-' : ''}Bs\u00A0$whole$decimals';
+  }
+
   static String time(DateTime d) => '${_two(d.hour)}:${_two(d.minute)}';
 
   /// "Hoy · 18:30", "Mañana · 09:15" or "vie 14 nov · 18:30".

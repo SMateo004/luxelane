@@ -8,6 +8,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../domain/admin_finance.dart';
 import '../../domain/admin_operations.dart';
 import '../../domain/repositories/admin_repository.dart';
@@ -537,7 +538,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         emit,
         _repo.decideNoShow(e.booking, e.fee, e.reason),
         e.fee > 0
-            ? 'Reserva cancelada con recargo de ${e.fee.toStringAsFixed(2)} Bs'
+            ? 'Reserva cancelada con recargo de ${LuxFormat.money(e.fee)}'
             : 'Reserva cancelada sin recargo',
       ),
     );

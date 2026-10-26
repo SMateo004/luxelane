@@ -147,7 +147,7 @@ class _TripCard extends StatelessWidget {
       'desde ${booking.origin.displayName}';
 
   String get _price =>
-      'Bs ${(booking.finalPrice ?? booking.estimatedPrice).toStringAsFixed(0)}';
+      LuxFormat.money(booking.finalPrice ?? booking.estimatedPrice);
 
   /// Qué hace el toque: seguir el viaje, valorarlo o ver la reserva.
   String? get _cta {

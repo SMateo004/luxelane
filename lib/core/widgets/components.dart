@@ -5,6 +5,7 @@ import '../../app/theme/app_theme.dart';
 import '../../app/theme/lux_motion.dart';
 import '../enums/enums.dart';
 import '../models/models.dart';
+import '../utils/lux_format.dart';
 import 'lux_feedback.dart';
 import 'lux_focus.dart';
 import 'lux_raised.dart';
@@ -358,7 +359,7 @@ class VehicleCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'Bs${price.toStringAsFixed(0)}',
+                  LuxFormat.money(price),
                   style: LuxTypography.headlineMedium.copyWith(
                     color: selected ? LuxColors.sapphire : LuxColors.ink,
                   ),
@@ -1021,7 +1022,7 @@ class PriceEstimateBar extends StatelessWidget {
               children: [
                 const Text('PRECIO FIJO', style: LuxTypography.caption),
                 Text(
-                  'Bs${price.toStringAsFixed(0)}',
+                  LuxFormat.money(price),
                   style: LuxTypography.displayMedium.copyWith(
                     color: LuxColors.sapphire,
                   ),

@@ -48,7 +48,7 @@ void main() {
       catalog.estimate(VehicleClass.business, ServiceType.oneWay, km: 10),
       70,
     );
-    expect(formatPriceOrQuote(70, from: true), 'desde Bs 70');
+    expect(formatPriceOrQuote(70, from: true), 'desde Bs\u00A070');
     // Las demás combinaciones siguen sin cifra.
     expect(
       catalog.estimate(VehicleClass.firstClass, ServiceType.oneWay),

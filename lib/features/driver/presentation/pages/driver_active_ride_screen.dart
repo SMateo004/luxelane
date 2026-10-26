@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../incidents/presentation/widgets/sos_entry.dart';
@@ -295,7 +296,7 @@ class _RideInfoRow extends StatelessWidget {
               children: [
                 const Text('Tarifa estimada', style: LuxTypography.caption),
                 Text(
-                  'Bs${booking.estimatedPrice.toStringAsFixed(2)}',
+                  LuxFormat.money(booking.estimatedPrice),
                   style: LuxTypography.bodyLarge.copyWith(
                     color: LuxColors.sapphire,
                   ),

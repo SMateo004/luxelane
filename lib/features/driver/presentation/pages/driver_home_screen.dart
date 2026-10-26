@@ -308,7 +308,7 @@ class _IdlePanel extends StatelessWidget {
               child: Row(
                 children: [
                   _Metric(
-                    value: 'Bs ${state.todayEarnings.toStringAsFixed(0)}',
+                    value: LuxFormat.money(state.todayEarnings),
                     label: 'Ganancias netas',
                     big: true,
                   ),
@@ -712,7 +712,7 @@ class _ActiveRidePanel extends StatelessWidget {
               Text(
                 '${LuxFormat.dateTime(booking.scheduledAt)} · '
                 '${booking.vehicleClass.label} · '
-                'Bs ${booking.chargedAmount.toStringAsFixed(0)}',
+                '${LuxFormat.money(booking.chargedAmount)}',
                 style: LuxTypography.caption.copyWith(fontSize: 12),
               ),
               const SizedBox(height: LuxSpacing.lg),
@@ -1008,7 +1008,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Bs ${b.estimatedPrice.toStringAsFixed(0)}',
+                      LuxFormat.money(b.estimatedPrice),
                       textAlign: TextAlign.center,
                       style: LuxTypography.displayLarge.copyWith(
                         fontSize: 52,
