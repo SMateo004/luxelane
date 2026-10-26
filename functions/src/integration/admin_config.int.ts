@@ -58,10 +58,10 @@ describe('adminUpdateConfig', () => {
     expect(await doc('config/ops')).toMatchObject({ incidentAckSeconds: 90, maxPriceAdjustmentPercent: 10 });
   });
 
-  it('ops: política de cancelación validada (B3)', async () => {
-    const policy = { freeWithinMinutesOfBooking: 5, freeBeforePickupMinutes: 60, chargeWhenNoDriver: false,
-      feeType: 'percent', feeValue: 10, noShowWaitMinutes: 15 };
-    expect(await reason(run({ doc: 'ops', changes: { cancellationPolicy: { ...policy, feeValue: 150 } }, reason: REASON })))
+  it('ops: política de cancelación por etapas validada (pagos, A7)', async () => {
+    // Porcentajes de PRUEBA, ficticios.
+    const policy = { stages: [{ fromStatus: 'driver_arriving', percent: 40, graceMinutes: 3 }], noShowWaitMinutes: 15 };
+    expect(await reason(run({ doc: 'ops', changes: { cancellationPolicy: { stages: [{ fromStatus: 'driver_arriving', percent: 150 }] } }, reason: REASON })))
       .toBe('invalid_request');
     expect(await reason(run({ doc: 'ops', changes: { cancellationPolicy: { feeType: 'fixed' } }, reason: REASON })))
       .toBe('invalid_request');

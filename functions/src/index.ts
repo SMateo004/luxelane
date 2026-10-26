@@ -22,6 +22,7 @@ import { isPaid, readPaymentState } from './payment_booking';
 import * as payManual from './payment_manual';
 import * as payCard from './payment_card';
 import { expirePayments } from './payment_expiry';
+import { computeCancelSettle, readForSettle, writeCancelSettle } from './payment_settle';
 import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, fareId, FareRule } from './pricing';
@@ -1376,14 +1377,23 @@ export const scheduledCleanup = onSchedule('every 24 hours', async () => {
     .where('scheduledAt', '<', admin.firestore.Timestamp.fromDate(cutoff))
     .get();
 
-  // Un batch admite 500 escrituras.
+  // Sin chófer a tiempo (A7, decisión 2): si estaba pagada, devolución
+  // entera; si no, el pedido de pago deja de valer. Una transacción por
+  // reserva, revalidada (pudo asignarse mientras).
   const now = admin.firestore.Timestamp.now();
-  for (let i = 0; i < staleSnap.docs.length; i += 500) {
-    const batch = db.batch();
-    staleSnap.docs.slice(i, i + 500).forEach((doc) => {
-      batch.update(doc.ref, { status: 'cancelled' as BookingStatus, updatedAt: now });
+  for (const doc of staleSnap.docs) {
+    await db.runTransaction(async (tx) => {
+      const fresh = await tx.get(doc.ref);
+      if (fresh.data()?.status !== 'pending') return;
+      const read = await readForSettle(tx, db, doc.id, 'pending');
+      const settle = { bookingId: doc.id, status: 'pending', cause: 'system' as const, policy: null,
+        policyState: 'missing' as const, read, at: now };
+      tx.update(doc.ref, {
+        status: 'cancelled' as BookingStatus, cancelledBy: 'system', cancelledAt: now,
+        cancellationReason: 'no_driver_found', updatedAt: now,
+      });
+      writeCancelSettle(tx, db, settle, computeCancelSettle(settle));
     });
-    await batch.commit();
   }
   logger.info('scheduledCleanup', 'done', { cancelled: staleSnap.size });
 });

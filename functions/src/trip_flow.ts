@@ -284,7 +284,8 @@ async function markNoShow(tx: admin.firestore.Transaction, db: admin.firestore.F
   input: z.infer<typeof advanceSchema>, at: admin.firestore.Timestamp, nowMs: number) {
   if (from !== 'driver_arrived') throw tripError('failed-precondition', 'invalid_transition', { from, to: 'no_show' });
   const { policy } = readPolicy(await opsConfig(db));
-  if (!policy) throw tripError('failed-precondition', 'no_show_disabled');
+  // Sin política o sin espera configurada (noShowWaitMinutes) no se marca.
+  if (!policy || policy.noShowWaitMinutes === undefined) throw tripError('failed-precondition', 'no_show_disabled');
   if (!input.location) throw tripError('invalid-argument', 'location_required');
   const arrivedMs = (b.arrivedAt as admin.firestore.Timestamp | undefined)?.toMillis() ?? nowMs;
   const availableAt = noShowAvailableAt(policy, arrivedMs)!;

@@ -109,9 +109,11 @@ const CASES: Record<string, Case> = {
     extreme: [{ incidentId: ID, note: 'x'.repeat(1001) }, { incidentId: ID, note: 'corta' }],
   },
   adminUpdateBooking: {
-    schema: adminBookingSchema, valid: { action: 'cancel', bookingId: ID, reason: 'Pedido por el pasajero' },
+    schema: adminBookingSchema, valid: { action: 'cancel', bookingId: ID, reason: 'Pedido por el pasajero', cause: 'rider' },
     wrongType: { action: 'adjust_price', bookingId: ID, finalPrice: '100', reason: 'Pedido por el pasajero' },
-    extreme: [{ action: 'cancel', bookingId: ID, reason: 'corto' },
+    extreme: [{ action: 'cancel', bookingId: ID, reason: 'corto', cause: 'rider' },
+      { action: 'cancel', bookingId: ID, reason: 'Pedido por el pasajero', cause: 'otro' },
+      { action: 'cancel', bookingId: ID, reason: 'Pedido por el pasajero', cause: 'rider', cancellationFee: 1 },
       { action: 'status', bookingId: ID, to: 'verified', reason: 'Pedido por el pasajero' },
       { action: 'adjust_price', bookingId: ID, finalPrice: -1, reason: 'Pedido por el pasajero' },
       { action: 'borrar', bookingId: ID, reason: 'Pedido por el pasajero' }],

@@ -105,9 +105,10 @@ async function main() {
   set('config/finance', { commissionPct: 20 });
   set('config/security', { mfaEnforced: false });
   set('config/ops', {
+    // Etapas de retención (pagos, A7) con porcentajes FICTICIOS de prueba.
     cancellationPolicy: {
-      freeWithinMinutesOfBooking: 5, freeBeforePickupMinutes: 120, chargeWhenNoDriver: false,
-      feeType: 'fixed', feeValue: 50, noShowWaitMinutes: 10,
+      stages: [{ fromStatus: 'driver_arriving', percent: 10 }, { fromStatus: 'driver_arrived', percent: 20 }],
+      noShowWaitMinutes: 10,
     },
     maxPriceAdjustmentPercent: 20,
   });
