@@ -20,6 +20,7 @@ import '../../../driver/presentation/widgets/pickup_code_entry.dart'
     show CallDispatchButton;
 import '../../../incidents/presentation/widgets/sos_entry.dart';
 import '../ride_load_error.dart';
+import '../ride_moments.dart';
 import '../widgets/cancel_booking_dialog.dart';
 import '../widgets/pending_status.dart';
 import '../widgets/pickup_code_card.dart';
@@ -64,6 +65,10 @@ class _RideScreenState extends State<RideScreen> {
   bool _cancelling = false;
   bool _cancelFlowOpen = false;
 
+  /// El viaje terminó con la pantalla abierta: se muestra el momento de
+  /// éxito (al reabrir un viaje ya terminado, no).
+  bool _justCompleted = false;
+
   @override
   void initState() {
     super.initState();
@@ -75,10 +80,13 @@ class _RideScreenState extends State<RideScreen> {
     _sub = _bookingStream.listen(
       (b) {
         if (!mounted) return;
+        final moment = rideMomentFor(_booking?.status, b.status);
         setState(() {
           _booking = b;
           _loadError = null;
+          if (moment == RideMoment.completed) _justCompleted = true;
         });
+        if (moment != null) playRideMoment(moment);
         _syncDriverPhone();
         // Al completarse, se invita a valorar una sola vez por visita.
         if (b.status == BookingStatus.completed &&
@@ -345,6 +353,21 @@ class _RideScreenState extends State<RideScreen> {
   /// Mientras el chófer espera, el código que el pasajero (o su invitado)
   /// le da al subir. Al verificarse, la tarjeta desaparece.
   Widget _pickupSection() {
+    // Confirmación visible de que el código funcionó y del fin del viaje
+    // (antes la tarjeta solo desaparecía, E31).
+    if (_status == BookingStatus.verified) {
+      return const _MomentCard(
+        key: ValueKey('moment-verified'),
+        title: 'Código verificado',
+        detail: 'Tu chófer ya puede iniciar el viaje.',
+      );
+    }
+    if (_status == BookingStatus.completed && _justCompleted) {
+      return const _MomentCard(
+        key: ValueKey('moment-completed'),
+        title: 'Viaje completado',
+      );
+    }
     if (_status != BookingStatus.driverArrived || widget.rideId.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -755,4 +778,42 @@ class _RatingDialogState extends State<_RatingDialog> {
     if (r >= 2) return 'Malo';
     return 'Muy malo';
   }
+}
+
+/// Momento de éxito dentro del panel: visto animado y una línea.
+class _MomentCard extends StatelessWidget {
+  const _MomentCard({super.key, required this.title, this.detail});
+  final String title;
+  final String? detail;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: LuxSpacing.md),
+        child: Semantics(
+          liveRegion: true,
+          child: LuxCard(
+            child: Row(
+              children: [
+                const LuxSuccessMark(size: 40),
+                const SizedBox(width: LuxSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: LuxTypography.titleMedium),
+                      if (detail != null)
+                        Text(
+                          detail!,
+                          style: LuxTypography.caption.copyWith(
+                            color: LuxColors.inkSecondary,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
 }
