@@ -26,6 +26,8 @@ const deps = (): BookingDeps => ({ db, mapsKey: 'clave-de-prueba', fetchFn: rout
 
 // Tarifa de prueba (no es de negocio): 50 + 3/km, mínimo 60.
 const RULE = { vehicleClass: 'business', serviceType: 'oneWay', basePriceUsd: 50, pricePerKmUsd: 3, pricePerHourUsd: 0, minimumPriceUsd: 60, isActive: true };
+// Un método activo con datos de PRUEBA, ficticios: sin él no se reserva (A12).
+const OPS = { paymentMethods: { manual_qr: true }, paymentInstructions: { manual_qr: { holderName: 'Titular ficticio', accountNumber: '000-ficticia' } } };
 const trip = (over: Record<string, unknown> = {}) => ({
   origin: { name: '', address: 'Calle 1', lat: -17.7834, lng: -63.1821 },
   destination: { name: 'Equipetrol', address: 'Av. 2', lat: -17.765, lng: -63.196 },
@@ -58,6 +60,7 @@ beforeEach(async () => {
     currentLocation: new admin.firestore.GeoPoint(-17.78, -63.18) });
   await db.doc('vehicles/v1').set({ driverId: 'luis', class: 'business', isActive: true });
   await db.doc('pricingRules/business_oneWay').set(RULE);
+  await db.doc('config/ops').set(OPS);
 });
 afterAll(async () => { await clear(); await admin.app().delete(); });
 
@@ -80,7 +83,7 @@ describe('createBooking (A3)', () => {
   });
 
   it('con paymentWindowMinutes, el plazo es la hora del servidor más esos minutos', async () => {
-    await db.doc('config/ops').set({ paymentWindowMinutes: 30 });
+    await db.doc('config/ops').set({ ...OPS, paymentWindowMinutes: 30 });
     const r = await createBooking(deps(), 'ana', trip());
     expect(r.paymentDeadline).toBe(NOW + 30 * 60_000);
   });
@@ -99,6 +102,15 @@ describe('createBooking (A3)', () => {
     await (onBookingCreated as unknown as Runnable).run({ data: await ref.get(), params: { bookingId } });
     expect((await doc(`bookings/${bookingId}`))!.driversNotifiedAt).toBeUndefined();
     expect(sendEachForMulticast).not.toHaveBeenCalled();
+  });
+});
+
+describe('sin ningún método de pago activo no se reserva (A12)', () => {
+  it('payments_unavailable y no se crea nada', async () => {
+    await db.doc('config/ops').set({ paymentMethods: { manual_qr: true } }); // sin datos de cobro
+    expect(await reason(createBooking(deps(), 'ana', trip()))).toBe('payments_unavailable');
+    expect((await db.collection('bookings').get()).size).toBe(0);
+    expect((await db.collection('paymentRefs').get()).size).toBe(0);
   });
 });
 

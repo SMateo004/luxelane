@@ -16,6 +16,7 @@ import { CAPACITY } from './booking_schema';
 import { computeSettlement, Settlement } from './settlement';
 import { policySchema, readPolicy } from './cancellation_policy';
 import { computeCancelSettle, readForSettle, writeCancelSettle } from './payment_settle';
+import { paymentInstructionsSchema, paymentMethodsSchema, paymentWindowSchema } from './payment_config';
 import { isPaid, readPaymentState } from './payment_booking';
 
 export interface AdminDeps { db: admin.firestore.Firestore; now?: () => number }
@@ -349,8 +350,12 @@ export const configSchema = z.discriminatedUnion('doc', [
       incidentLocationRetentionDays: positiveInt.optional(),
       arrivalRadiusMeters: z.number().finite().positive().max(1_000_000).optional(),
       maxPriceAdjustmentPercent: z.number().finite().min(0).max(100).optional(),
-      // Política de cancelación (Parte B); los valores los decide el responsable.
+      // Política de cancelación por etapas (pagos, A7); los valores los decide el responsable.
       cancellationPolicy: policySchema.optional(),
+      // Pagos (A2, A3): métodos activos, datos de cobro y plazo para pagar.
+      paymentMethods: paymentMethodsSchema.optional(),
+      paymentInstructions: paymentInstructionsSchema.optional(),
+      paymentWindowMinutes: paymentWindowSchema.optional(),
     }).refine(atLeastOne),
     reason: reasonSchema,
   }),

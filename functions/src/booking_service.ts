@@ -187,6 +187,12 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
   const already = existingResponse(await ref.get(), uid!, await paymentStateRef(deps.db, ref.id).get());
   if (already) return already;
 
+  // Sin ningún método de pago activo no se crea nada (pagos, A12): la
+  // reserva no se podría pagar y una app sin pantalla de pago la dejaría
+  // colgada en awaiting_payment. Ver DEPLOY.md, «Pagos».
+  const payments = await loadPaymentSettings(deps.db);
+  if (!payments.enabled.length) throw bookingError('failed-precondition', 'payments_unavailable');
+
   const priced = await priceTrip(deps, input);
   // El pasajero vio un precio menor: no se cobra más sin que lo confirme.
   if (input.quotedPrice !== undefined && priced.price > input.quotedPrice) {
@@ -197,7 +203,7 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
   const now = admin.firestore.Timestamp.fromMillis(deps.now?.() ?? Date.now());
   // Plazo para pagar (A3): sin config/ops.paymentWindowMinutes, sin
   // vencimiento automático.
-  const { windowMinutes } = await loadPaymentSettings(db);
+  const { windowMinutes } = payments;
   const pickupAirport = input.serviceType === 'oneWay' ? airportFor(input.origin)?.iata ?? null : null;
   const prefs = user.ridePreferences;
   const booking = {

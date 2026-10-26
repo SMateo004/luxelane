@@ -82,6 +82,8 @@ beforeEach(async () => {
   await db.doc('users/ina').set({ role: 'rider', isActive: false });
   await db.doc('users/carlos').set({ role: 'driver', isActive: true });
   for (const [id, r] of Object.entries(RULES)) await db.doc(`pricingRules/${id}`).set(r);
+  // Un método de pago activo (datos de PRUEBA, ficticios): sin él no se reserva (A12).
+  await db.doc('config/ops').set({ paymentMethods: { manual_qr: true }, paymentInstructions: { manual_qr: { holderName: 'Titular ficticio', accountNumber: '000-ficticia' } } });
 });
 afterAll(async () => { await clear(); await admin.app().delete(); });
 
@@ -119,7 +121,8 @@ describe('createBooking', () => {
       .run({ auth: { uid: 'ana' }, data: { bookingId, amount: 1, estimatedPrice: 1 } }))).reason).toBe('invalid_request');
     expect(createIntent).not.toHaveBeenCalled();
     // Tarjeta activada en config/ops (A2); sin eso, method_disabled.
-    await db.doc('config/ops').set({ paymentMethods: { card: true }, paymentInstructions: { card: { provider: 'stripe' } } });
+    await db.doc('config/ops').set({ paymentMethods: { manual_qr: true, card: true },
+      paymentInstructions: { manual_qr: { holderName: 'Titular ficticio', accountNumber: '000-ficticia' }, card: { provider: 'stripe' } } });
     await (createPaymentIntent as unknown as Runnable).run({ auth: { uid: 'ana' }, data: { bookingId } });
     expect(createIntent).toHaveBeenCalledTimes(1);
     expect(createIntent.mock.calls[0][0]).toMatchObject({ amount: 8600, currency: 'bob' });

@@ -158,12 +158,33 @@ Correcciones tras la revisión de la Parte B (rama cierre/identidad):
 | C3 | `pricingRules` × admin × crear/actualizar | Las reglas rechazan `updatedBy`; el uid de quien cambió la tarifa queda solo en `admin_logs`. Test: `pricingRules.rules.ts`. |
 | C4 | `admin_logs` | Sin cambio de acceso. `reset_mfa`, `promote_admin` y las migraciones escriben con el Admin SDK y `source: 'script'`. |
 
+Pagos (rama cierre/pagos, Parte A). Celdas nuevas, 120 (3 filas × 8 roles
+× 5 operaciones), de las que solo 4 permiten algo:
+
+| Fila | Permitido | Lo escribe |
+|---|---|---|
+| `bookings/{id}/payment` | pasajero dueño y admin × leer, listar | solo el servidor: `createBooking`, `startPayment`, `markPaymentSent`, `adminConfirmPayment`, `adminRejectPayment`, webhook, vencimiento, cancelaciones, `adminRecordRefund`, diferencia final |
+| `paymentRefs/{ref}` | nadie | `createBooking` (unicidad de la referencia) |
+| `paymentOperations/{key}` | nadie | `adminConfirmPayment` (un número de operación, una vez) |
+
+El chófer (asignado o no) no lee ninguna: el estado del pago va fuera de
+la reserva porque el chófer lee la reserva entera. `payments/{id}` no
+cambia de acceso (pasajero dueño y admin leen; nadie escribe); ahora
+también guarda los asientos charge, refund y fee_retained.
+
+Además (fuera de la tabla), la auto-aceptación del chófer en
+`bookings/{id}` exige el pago confirmado (`get` del estado de pago); sin
+estado de pago (reservas anteriores) se deniega. Test:
+`bookings.rules.ts` («sin pago confirmado nadie la acepta desde el
+cliente»). Sin las reglas nuevas, los tests de la matriz dan `6 failed,
+1279 passed, 1285 total` (4 celdas y las 2 comprobaciones del documento).
+
 La revisión de todas las celdas permitidas, con ⚠ en las que parecen más
 amplias de lo necesario, está en
 [MATRIZ_ACCESO_PERMITIDOS.md](MATRIZ_ACCESO_PERMITIDOS.md).
 
 Sin hallazgos de la primera revisión: `payments` (solo el pasajero dueño
-lee; escribe el admin), `pricingRules` (lectura pública a propósito),
+lee; escribe el servidor), `pricingRules` (lectura pública a propósito),
 `config/finance`, `openRequests`, `incidents` y sus subcolecciones,
 `private`, `eventLocations`, `adminOnly`, `incidentRateLimits`,
 `rateLimits`, `adminAlerts`, `admin_logs`.

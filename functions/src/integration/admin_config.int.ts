@@ -69,6 +69,24 @@ describe('adminUpdateConfig', () => {
     expect((await doc('config/ops'))?.cancellationPolicy).toEqual(policy);
   });
 
+  it('ops: claves de pagos validadas (A12); datos de cobro de PRUEBA, ficticios', async () => {
+    const pay = {
+      paymentMethods: { manual_qr: true, card: false },
+      paymentInstructions: { manual_qr: { holderName: 'Titular ficticio', qrImageUrl: 'https://qr.example/ficticio.png' } },
+      paymentWindowMinutes: 30,
+    };
+    for (const bad of [
+      { paymentMethods: { wallet: true } },
+      { paymentInstructions: { manual_qr: { holderName: 'Sin cuenta ni QR' } } },
+      { paymentInstructions: { card: { provider: 'otro' } } },
+      { paymentWindowMinutes: 0 },
+    ]) {
+      expect(await reason(run({ doc: 'ops', changes: bad, reason: REASON }))).toBe('invalid_request');
+    }
+    await run({ doc: 'ops', changes: pay, reason: REASON });
+    expect(await doc('config/ops')).toMatchObject(pay);
+  });
+
   it('config/security: nunca', async () => {
     expect(await reason(run({ doc: 'security', changes: { mfaEnforced: false }, reason: REASON }))).toBe('invalid_request');
     expect(await doc('config/security')).toBeUndefined();

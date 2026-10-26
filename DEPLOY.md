@@ -727,15 +727,124 @@ esté decidida.
 
 ### Pasos manuales (decisiones del responsable)
 
-- `config/ops.cancellationPolicy`: `freeWithinMinutesOfBooking`,
-  `freeBeforePickupMinutes`, `chargeWhenNoDriver`, `feeType`
-  (`fixed`|`percent`), `feeValue`, `noShowWaitMinutes`. Sin ella: sin
-  recargo y sin «no aparece». Con un valor inválido: sin recargo
-  (`policy_invalid`) y el panel lo valida al guardarla.
-- Cobrar o no el recargo con el método retenido: **no implementado**. Hoy
-  se anota; el cobro sería un cambio aparte.
+- `config/ops.cancellationPolicy`: **sustituida en pagos (A7)** por la
+  política por etapas; ver «Pagos: el pago antes de pedir chófer». La
+  forma de B3 (`freeWithinMinutesOfBooking`, `feeType`, …) ya no es
+  válida: con ella la retención es 0 % (`policy_invalid`) y no hay botón
+  «no aparece».
 - Qué hacer con `driverProfiles.releasedBookingsCount`: el servidor solo
   cuenta; no hay sanción automática.
+
+## Pagos: el pago antes de pedir chófer (rama cierre/pagos, Parte A)
+
+Qué cambia (decisiones del responsable 1–6):
+
+- `createBooking` crea la reserva y su estado de pago
+  (`bookings/{id}/payment/state`: `awaiting_payment`, importe en céntimos,
+  referencia corta, plazo). **No crea `openRequests`**: ningún chófer ve,
+  acepta ni recibe aviso de la reserva hasta que su pago esté en `paid`
+  (`acceptBooking`, `assignNearestDriver`, asignación del admin,
+  reconciliación, regla de auto-aceptación y aviso a los chóferes, que
+  pasa a `notifyDriversOnPaid`).
+- **Sin ningún método de pago activo en `config/ops`, `createBooking`
+  responde `payments_unavailable` y no crea nada.**
+- Pago manual (QR o transferencia): `startPayment` da las instrucciones;
+  el pasajero avisa «ya pagué» (`markPaymentSent`, alerta alta) y central
+  confirma (`adminConfirmPayment`: importe exacto, número de operación
+  único) o rechaza (`adminRejectPayment`).
+- Tarjeta: interfaz lista (`startPayment` y `paymentWebhook`), **proveedor
+  sin decidir**. Stripe queda desactivado mientras
+  `config/ops.paymentMethods.card` no sea `true`; su webhook rechaza todo
+  (sin secreto). `createPaymentIntent` responde `method_disabled`.
+- Vencimiento (`expirePaymentsJob`, cada 5 min): solo con
+  `paymentWindowMinutes`.
+- Cancelación con retención por etapas (A7); devoluciones al método
+  original (`adminRecordRefund`; con tarjeta, por el proveedor); diferencia
+  del importe final como saldo o devolución pendiente (A9); bandejas del
+  panel (`adminPaymentInbox`).
+- El código de recogida solo se muestra en la app (decisión 6). No se
+  envía por WhatsApp: ninguna función lo hace (se comprobó con una
+  búsqueda).
+
+### Orden
+
+1. **Índices** (`firebase deploy --only firestore:indexes`): grupo de
+   colecciones `payment` (vencimiento y bandejas). Esperar a que estén
+   listos.
+2. **Functions**. Desde aquí, como **ningún método de pago está activo**,
+   `createBooking` responde `payments_unavailable` a TODAS las apps: no se
+   pueden hacer reservas nuevas hasta el paso 5. Las reservas ya creadas
+   siguen su curso (ver «Reservas existentes»).
+3. **Apps nuevas** (pasajero con la pantalla de pago; Parte B) y
+   **panel** (hosting) con las bandejas.
+4. **`minAppVersion`** en `config/global` = la versión de la app del
+   pasajero con pago, cuando esté publicada en las tiendas.
+5. **Activar el pago** en `config/ops` (pasos manuales, abajo):
+   `paymentInstructions.manual_qr` y luego `paymentMethods.manual_qr: true`.
+   Desde aquí se puede reservar, y solo con apps que muestran el pago.
+6. **Reglas** al final (estado de pago legible por el pasajero dueño y
+   el admin; auto-aceptación del chófer solo con pago confirmado).
+
+### Por qué una app antigua no deja reservas colgadas
+
+Una app anterior no tiene pantalla de pago: una reserva suya quedaría en
+`awaiting_payment` sin que el pasajero supiera pagar. Se evita así:
+
+- Entre los pasos 2 y 5 nadie puede reservar (`payments_unavailable`).
+  La app antigua muestra su error genérico («No pudimos procesar tu
+  reserva…», hallazgo E37): no se crea nada.
+- Desde el paso 4 `minAppVersion` frena a las apps antiguas al cotizar y
+  reservar (`app_update_required`): ven «Actualiza la app».
+- El paso 5 va después del 4: cuando se activa el pago, solo las apps
+  nuevas llegan a reservar.
+- Si aun así quedara una reserva sin pagar, central la ve en la bandeja
+  «Pendientes de pago» y, con `paymentWindowMinutes`, vence sola sin
+  cobrar nada.
+
+Hay una ventana sin reservas (entre los pasos 2 y 5). Para acortarla:
+tener las apps aprobadas en las tiendas antes del paso 2.
+
+### Reservas existentes al desplegar
+
+Las reservas creadas antes no tienen estado de pago. **No se ofrecen a
+chóferes nuevos** (sin `paid`, ni `acceptBooking`, ni la asignación, ni la
+reconciliación). Las que ya tenían chófer siguen su curso: completar no
+compara importes (sin estado de pago, A9 no hace nada), y cancelarlas no
+retiene ni devuelve nada (`no_payment_state`). Antes del paso 2:
+`npm --prefix functions run trips:in-flight` para ver cuántas hay, y
+decidir con cada pasajero (central). Las pendientes sin chófer, o se
+atienden antes del despliegue o se cancelan desde el panel. Desde el paso
+2, el panel solo puede asignar una reserva pendiente con pago confirmado.
+
+### Aviso a los usuarios del piloto
+
+Antes del paso 2, por el canal habitual del piloto (texto a decidir por el
+responsable): durante la actualización no se podrán hacer reservas;
+después hará falta la app nueva; el pago se hace al pedir el chófer y no
+se busca chófer hasta que esté confirmado. No mencionar plazos, importes,
+porcentajes de retención ni datos bancarios hasta que estén decididos y
+en `config/ops`.
+
+### Pasos manuales (decisiones del responsable; nada de esto lo fija el código)
+
+Todas en `config/ops`. Se editan con `adminUpdateConfig` (motivo,
+auditoría) o en la consola. Si faltan, el sistema hace lo más restrictivo:
+
+| Clave | Forma | Si falta o no es válida |
+|---|---|---|
+| `paymentMethods` | `{ manual_qr?: bool, card?: bool }` | Ningún método: no se puede reservar (`payments_unavailable`). |
+| `paymentInstructions.manual_qr` | `{ holderName, bankName?, accountType?, accountNumber?, qrImageUrl? (https), note? }`, con `accountNumber` o `qrImageUrl` | El método manual no se ofrece aunque esté activado. |
+| `paymentInstructions.card` | `{ provider: 'stripe' }` (único con código hoy) | La tarjeta no se ofrece. Elegir otro proveedor exige integrarlo antes. |
+| `paymentWindowMinutes` | entero, 1 a 10080 | Sin vencimiento automático: central ve los impagos en la bandeja. |
+| `cancellationPolicy` | `{ stages: [{ fromStatus: confirmed\|driver_arriving\|driver_arrived\|no_show, percent: 0–100, graceMinutes? }], noShowWaitMinutes? }` | Retención 0 % en todo (`no_policy` / `policy_invalid`); sin `noShowWaitMinutes`, sin botón «no aparece». |
+
+- Datos bancarios y QR: solo los pone el responsable en
+  `paymentInstructions.manual_qr`. El repositorio no contiene ninguno.
+- Proveedor de tarjeta: sin decidir. Para activarlo hace falta integrar su
+  `verifyWebhook` (secreto en Secret Manager), registrar la URL de
+  `paymentWebhook` en el proveedor y poner `paymentMethods.card: true`.
+- `adminRecordPayment` (cobro manual al completar, de antes) sigue para
+  reservas antiguas; las nuevas se cobran antes con `adminConfirmPayment`.
 
 ## Identidad (Parte B)
 
