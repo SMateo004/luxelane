@@ -78,6 +78,8 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   adminRejectPayment: per10min(60),
   // A5: elegir método o reintentar la tarjeta; pocas por reserva.
   startPayment: per10min(20),
+  // A8: devoluciones que anota central.
+  adminRecordRefund: per10min(60),
   adminUpdateConfig: per10min(20),
   adminUpdatePricingRule: per10min(40),
   adminVerifyDriver: per10min(30),

@@ -21,6 +21,7 @@ import { loadPaymentSettings } from './payment_config';
 import { isPaid, readPaymentState } from './payment_booking';
 import * as payManual from './payment_manual';
 import * as payCard from './payment_card';
+import * as payRefund from './payment_refund';
 import { expirePayments } from './payment_expiry';
 import { computeCancelSettle, readForSettle, writeCancelSettle } from './payment_settle';
 import { logger } from './logger';
@@ -986,6 +987,17 @@ export const paymentWebhook = onRequest({ ...withStripe }, async (req, res) => {
   const r = await payCard.handlePaymentWebhook({ db }, req.rawBody, req.get('x-payment-signature') ?? undefined);
   res.status(r.status).json(r.body);
 });
+
+/** Registrar una devolución (manual) o pedirla al proveedor (tarjeta) (A8). */
+export const adminRecordRefund = secureCallable('adminRecordRefund', withStripe, async (req) =>
+  payRefund.adminRecordRefund({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+// Con tarjeta, la devolución se pide al proveedor al pasar a refund_pending (A8).
+export const refundOnRefundPending = onDocumentWritten(
+  { document: 'bookings/{bookingId}/payment/{docId}', ...withStripe }, async (event) => {
+    await payRefund.onRefundPending({ db }, event.params.bookingId,
+      event.data?.before.data(), event.data?.after.data());
+  });
 
 /** El admin marca una alerta como revisada (auditado en el servidor). */
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
