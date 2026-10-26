@@ -31,7 +31,7 @@ class AirportTransferPage extends StatelessWidget {
       ),
       ServiceStep(
         'Sal y relájate',
-        'Te espera en llegadas con un cartel con tu nombre, se ocupa del equipaje y te lleva directo a tu destino.',
+        'Te espera en llegadas, se ocupa del equipaje y te lleva directo a tu destino.',
       ),
     ],
     storyEyebrow: 'La llegada',
@@ -40,9 +40,7 @@ class AirportTransferPage extends StatelessWidget {
         'negociaciones o incertidumbre. Un chófer de Luxelane convierte la '
         'llegada en una transición tranquila hacia tu hotel, tu reunión o tu casa.',
     storyPoints: [
-      'Recibimiento personalizado en la terminal',
       'Ayuda con el equipaje, de la cinta al maletero',
-      'Agua de cortesía y cargadores a bordo',
       'Conexiones entre aeropuertos y hoteles sin complicaciones',
     ],
     storyImage: 'assets/images/services/aeropuerto/arrival.jpg',
@@ -50,7 +48,7 @@ class AirportTransferPage extends StatelessWidget {
     faqs: [
       ServiceFaq(
         '¿Dónde me espera el chófer?',
-        'En la zona de llegadas, con un cartel con tu nombre. Recibirás sus datos de contacto en la app antes de la recogida.',
+        'En la zona de llegadas. Recibirás sus datos de contacto en la app antes de la recogida.',
       ),
       ServiceFaq(
         '¿Puedo cancelar mi reserva?',

@@ -9,7 +9,8 @@ abstract class LuxPromise {
   // Solo hechos que el sistema cumple hoy (Parte B de experiencia, E2): el
   // precio lo calcula el servidor antes de confirmar y Luxelane revisa los
   // documentos de cada chófer. Nada de cancelación gratuita, esperas,
-  // seguimiento de vuelo, atención 24/7 ni propinas: no están respaldados
+  // seguimiento de vuelo, atención 24/7, propinas, puntualidad garantizada
+  // ni «discreción y privacidad absolutas»: no están respaldados
   // (test/experiencia/promesas_test.dart lo vigila).
   static const fixedPrice = 'Precio fijo al reservar';
   static const fixedPriceLong =
@@ -17,7 +18,6 @@ abstract class LuxPromise {
   static const chauffeurs = 'Chóferes con documentos verificados';
   static const chauffeursLong =
       'Luxelane revisa los documentos de cada chófer antes de que reciba viajes.';
-  static const privacy = 'Discreción y privacidad absolutas';
 }
 
 /// A promise rendered as an icon + short line (and optional detail).
@@ -37,10 +37,5 @@ class LuxAssurance {
     Icons.verified_user_outlined,
     LuxPromise.chauffeurs,
     LuxPromise.chauffeursLong,
-  );
-  static const privacy = LuxAssurance(
-    Icons.shield_moon_outlined,
-    LuxPromise.privacy,
-    'Tus datos, tus rutas y tus conversaciones permanecen confidenciales.',
   );
 }

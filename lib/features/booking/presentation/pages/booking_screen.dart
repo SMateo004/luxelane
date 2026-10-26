@@ -930,10 +930,6 @@ class _BookingScreenState extends State<BookingScreen> {
                     const SizedBox(height: 40),
                     const Divider(color: _kDivider, height: 1),
                     const SizedBox(height: 36),
-                    _webWhatsIncluded(),
-                    const SizedBox(height: 40),
-                    const Divider(color: _kDivider, height: 1),
-                    const SizedBox(height: 36),
                     _capacitySection(),
                     const SizedBox(height: 40),
                     _webPriceBreakdown(),
@@ -956,86 +952,9 @@ class _BookingScreenState extends State<BookingScreen> {
         compact: compact,
       );
 
-  // ── What's Included ────────────────────────────────────────────────────────
-
-  Widget _webWhatsIncluded({bool compact = false}) {
-    const items = [
-      (Icons.badge_outlined, 'Recibimiento personalizado'),
-      (Icons.cable_outlined, 'Cargadores iOS y Android a bordo'),
-      (Icons.clean_hands_outlined, 'Pañuelos y toallitas de cortesía'),
-      (Icons.water_drop_outlined, 'Agua fría de cortesía'),
-    ];
-
-    Widget item(IconData icon, String label) => Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 500),
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: _tone.wash,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, size: 18, color: _tone.accent),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 2),
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 13.5,
-                    height: 1.45,
-                    color: LD.ink2,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('INCLUIDO EN CADA VIAJE', style: eyebrow()),
-        const SizedBox(height: 10),
-        Text(
-          'Qué incluye',
-          style: TextStyle(
-            fontFamily: kSerif,
-            fontSize: compact ? 26 : 32,
-            fontWeight: FontWeight.w500,
-            color: _kTextPrimary,
-            height: 1.05,
-          ),
-        ),
-        SizedBox(height: compact ? 18 : 24),
-        LayoutBuilder(
-          builder: (context, c) {
-            // Phones list the perks in one column so each line stays readable.
-            final cols = c.maxWidth >= 720
-                ? 3
-                : c.maxWidth >= 480
-                    ? 2
-                    : 1;
-            const gap = 24.0;
-            final w = (c.maxWidth - gap * (cols - 1)) / cols;
-            return Wrap(
-              spacing: gap,
-              runSpacing: cols == 1 ? 14 : 20,
-              children: [
-                for (final (icon, label) in items)
-                  SizedBox(width: w, child: item(icon, label)),
-              ],
-            );
-          },
-        ),
-      ],
-    );
-  }
+  // «Qué incluye» (recibimiento personalizado, cargadores, pañuelos y agua
+  // de cortesía) se quitó en F2: no está respaldado. La lista para decidir
+  // cuáles reponer está en docs/EXPERIENCIA_LUXLANE.md.
 
   // ── Price breakdown ────────────────────────────────────────────────────────
 
@@ -1558,8 +1477,6 @@ class _BookingScreenState extends State<BookingScreen> {
           const SizedBox(height: 36),
           _capacitySection(compact: true),
           const SizedBox(height: 36),
-          _webWhatsIncluded(compact: true),
-          const SizedBox(height: LuxSpacing.xl),
           _webPriceBreakdown(compact: true),
           const SizedBox(height: LuxSpacing.sm),
         ],

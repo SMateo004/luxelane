@@ -1677,11 +1677,8 @@ class _MarqueeBarState extends State<_MarqueeBar>
     'Precios Fijos',
     'Chóferes Profesionales',
     'Flota Premium',
-    'Puntualidad Garantizada',
     'Traslados Aeroportuarios',
     'Viajes Corporativos',
-    'Privacidad y Discreción',
-    'Chóferes multilingües',
   ];
   static const _oneSetPx = 2200.0;
 
@@ -2182,10 +2179,7 @@ class _BusinessSection extends StatelessWidget {
 
   static const _perks = [
     'Facturación y cobros centralizados',
-    'Gerente de cuenta dedicado',
-    'Herramientas de cumplimiento de política de viajes',
     'Reservas prioritarias para ejecutivos',
-    'Monitoreo de viajes en tiempo real',
   ];
 
   Widget _perksPanel(double hPad, double vPad) => Stack(
@@ -2513,7 +2507,7 @@ const List<_BookPageData> _kBookPages = [
     tag: 'La Experiencia',
     headline: 'Cada detalle,\ncuidado.',
     body:
-        'Desde agua fría y listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.',
+        'Desde listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.',
     bullets: [
       'Interiores de cuero premium',
       'Wi-Fi y carga inalámbrica',
@@ -2533,8 +2527,6 @@ const List<_BookPageData> _kBookPages = [
         'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.',
     bullets: [
       'Facturación centralizada',
-      'Gerente de cuenta dedicado',
-      'Cumplimiento de política de viajes',
       'Reservas prioritarias para ejecutivos',
     ],
   ),

@@ -20,14 +20,33 @@ const _prohibidas = <String, String>{
   'te contactarán': r'te\s+contactar[aá]n?\b|te\s+llamar[aá]\b',
   'cobertura mundial':
       r'en\s+todo\s+el\s+mundo|cobertura\s+(mundial|global)|m[aá]s\s+de\s+50\s+ciudades',
+  // F2: quitadas sin sustituir.
+  'puntualidad garantizada': r'puntualidad\s+garantizada',
+  'gerente de cuenta': r'gerente\s+de\s+cuenta',
+  'cumplimiento de política de viajes':
+      r'cumplimiento\s+de\s+(la\s+)?pol[ií]tica',
+  'monitoreo de viajes': r'monitoreo\s+de\s+viajes',
+  'discreción y privacidad': r'discreci[oó]n',
+  // F2: quitadas por ahora; la lista para reponer está en
+  // docs/EXPERIENCIA_LUXLANE.md (decisión del responsable).
+  'cartel con tu nombre': r'cartel',
+  'recibimiento personalizado': r'recibimiento\s+personalizado',
+  'agua de cortesía': r'\bagua\b',
+  'cargadores a bordo': r'cargador',
+  'pañuelos': r'pa[ñn]uelo|toallita',
+  'chóferes multilingües': r'multiling',
 };
 
 void main() {
-  final files = Directory('lib')
-      .listSync(recursive: true)
-      .whereType<File>()
-      .where((f) => f.path.endsWith('.dart'))
-      .where((f) => !f.path.endsWith('legal_page.dart'));
+  // lib/ (app y web Flutter) y web/ (index.html y manifest).
+  final files = [
+    for (final dir in ['lib', 'web'])
+      ...Directory(dir)
+          .listSync(recursive: true)
+          .whereType<File>()
+          .where((f) => RegExp(r'\.(dart|html|json)$').hasMatch(f.path))
+          .where((f) => !f.path.endsWith('legal_page.dart')),
+  ];
 
   for (final entry in _prohibidas.entries) {
     test('nadie promete «${entry.key}»', () {

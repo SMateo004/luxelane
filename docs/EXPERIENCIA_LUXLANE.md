@@ -330,12 +330,7 @@ Notas [seguro]:
 - Código muerto visto y no tocado: `DriveCanvasAnim`/`DrivePainter`
   (`drive_canvas_painter.dart`, sin usos; además lanza al pintar) y
   `RideTypePage` (`/ride-type`, sin enlaces internos).
-- Promesas sin respaldo que quedan fuera de las categorías pedidas en E2
-  (decisión del responsable): «te espera en llegadas con un cartel con tu
-  nombre», «Recibimiento personalizado», «Agua de cortesía», «Cargadores»,
-  «Pañuelos», «Puntualidad Garantizada», «Chóferes multilingües», «Gerente
-  de cuenta dedicado», «Herramientas de cumplimiento…», «Monitoreo de
-  viajes…», «Discreción y privacidad absolutas».
+- Promesas sin respaldo: ver [F2](#f2-promesas-quitadas-para-decidir-cuáles-reponer).
 
 ### Remedición final (A2, A3, A6, A7 repetidos tras la Parte B)
 
@@ -384,3 +379,39 @@ subida y 562,5 ms de latencia (`SLOW_4G` en `rendimiento.cjs`):
   la semilla no borra (alertas e incidentes creados por los triggers en las
   capturas), no del código: la semilla no tiene registros de auditoría (E15)
   y E16 no se reproduce.
+
+### F2. Promesas quitadas: para decidir cuáles reponer
+
+[seguro] Quitadas de la app y de la web sin sustituirlas (F2). El test
+`test/experiencia/promesas_test.dart` las prohíbe en `lib/` y `web/`;
+reponer una exige quitarla del test.
+
+**Quitadas por decisión del responsable (no se reponen):**
+«Puntualidad Garantizada» (marquesina de la home web), «Gerente de cuenta
+dedicado» (home web, página de empresas), «Herramientas de cumplimiento de
+política de viajes» y «Cumplimiento de política de viajes» (home web),
+«Monitoreo de viajes en tiempo real» (home web), «Discreción y privacidad
+absolutas» y «Privacidad y Discreción» (`LuxPromise.privacy`, servicio por
+horas, marquesina).
+
+**Quitadas por ahora; el responsable dice cuáles reponer:**
+
+| Promesa | Dónde estaba |
+|---|---|
+| Te espera en llegadas con un cartel con tu nombre | Traslado al aeropuerto: pasos y pregunta «¿Dónde me espera el chófer?» |
+| Recibimiento personalizado (en la terminal) | Traslado al aeropuerto; «Qué incluye» de la reserva web |
+| Agua de cortesía / agua fría de cortesía | Traslado al aeropuerto; «Qué incluye»; texto de «La Experiencia» de la home web |
+| Cargadores (iOS y Android) a bordo | Traslado al aeropuerto; «Qué incluye» |
+| Pañuelos y toallitas de cortesía | «Qué incluye» |
+| Chóferes multilingües | Marquesina de la home web |
+
+La sección «Qué incluye» de la reserva solo tenía esas cuatro líneas y se
+quitó entera.
+
+**Otras afirmaciones vistas y no tocadas** (fuera de la lista de F2; decisión
+del responsable): «te contactamos en menos de un día hábil» y «Reservas
+prioritarias para ejecutivos e invitados» (empresas); «Interiores de cuero
+premium», «Wi-Fi y carga inalámbrica», «Servicio de champán disponible»,
+«Control de clima ambiental», «listas de reproducción seleccionadas» y
+«privacidad con cancelación de ruido» (home web, «La Experiencia»);
+«Paradas ilimitadas» (servicio por horas).

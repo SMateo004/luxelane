@@ -84,7 +84,7 @@ class _BusinessPageState extends State<BusinessPage> {
         eyebrow: 'Para Empresas',
         title: 'Viajes corporativos, redefinidos.',
         lead: 'Chóferes privados para tu equipo y tus invitados, con '
-            'facturación centralizada y un gerente de cuenta. Cuéntanos qué '
+            'facturación centralizada. Cuéntanos qué '
             'necesitas y te contactamos en menos de un día hábil.',
         child: _sent ? _thanks() : _formView(),
       );
@@ -116,7 +116,6 @@ class _BusinessPageState extends State<BusinessPage> {
           children: [
             for (final b in const [
               'Facturación mensual centralizada para tu empresa',
-              'Gerente de cuenta dedicado',
               'Reservas prioritarias para ejecutivos e invitados',
             ])
               Padding(
