@@ -6,6 +6,7 @@ import '../../../../core/design/lux_promise.dart';
 import '../../../../core/design/vehicle_catalog.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/services/pricing_catalog.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/lux_service_booking_card.dart';
 import '../../../../core/widgets/lux_site_chrome.dart';
 import '../../../booking/presentation/widgets/vehicle_visuals.dart';
@@ -896,8 +897,8 @@ class _ClassCardState extends State<_ClassCard> {
                           widget.from == null
                               ? 'Cotiza al reservar'
                               : widget.perHour
-                                  ? 'Bs ${widget.from!.toStringAsFixed(0)} · 2 h'
-                                  : 'Bs ${widget.from!.toStringAsFixed(0)}',
+                                  ? '${LuxFormat.money(widget.from!)} · 2 h'
+                                  : LuxFormat.money(widget.from!),
                           style: const TextStyle(
                             fontFamily: kSans,
                             fontSize: 18,
@@ -944,11 +945,6 @@ class _FaqSection extends StatelessWidget {
         Text(
           'Todo lo que\nquieres saber.',
           style: displayText(size: narrow ? 36 : 48).copyWith(height: 1.05),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          '¿Algo más? Nuestro equipo responde 24/7.',
-          style: bodyText(size: 14, color: LD.ink3),
         ),
       ],
     );
@@ -1123,7 +1119,7 @@ class _ClosingSection extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               Text(
-                '${LuxPromise.fixedPrice}  ·  ${LuxPromise.freeCancel}',
+                '${LuxPromise.fixedPrice}  ·  ${LuxPromise.chauffeurs}',
                 textAlign: TextAlign.center,
                 style: uiLabel(
                   size: 10.5,

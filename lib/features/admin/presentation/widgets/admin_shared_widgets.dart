@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../domain/repositories/admin_repository.dart'
     show kAdminReasonMinLength;
@@ -10,12 +11,10 @@ import '../../domain/repositories/admin_repository.dart'
 // Formato
 // ─────────────────────────────────────────────────────────────────────────────
 
-final _money = NumberFormat('#,##0.00', 'es');
-final _moneyShort = NumberFormat('#,##0', 'es');
-
-/// Importe en bolivianos con el mismo formato en todo el panel: "Bs 1.234,50".
+/// Importe en bolivianos (LuxFormat.money, el de toda la app); [short]
+/// redondea a bolivianos enteros para las cifras grandes.
 String bs(double v, {bool short = false}) =>
-    'Bs ${(short ? _moneyShort : _money).format(v)}';
+    LuxFormat.money(short ? v.roundToDouble() : v);
 
 String adminDate(DateTime d) => DateFormat('dd/MM/yyyy HH:mm').format(d);
 
@@ -71,7 +70,8 @@ class SectionChip extends StatelessWidget {
   Widget build(BuildContext context) => LuxPressable(
         onTap: onTap,
         semanticLabel: label,
-        child: AnimatedContainer(
+        child: LuxTapArea(
+            child: AnimatedContainer(
           duration: LuxMotion.of(context, LuxMotion.base),
           curve: LuxMotion.emphasized,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
@@ -89,7 +89,7 @@ class SectionChip extends StatelessWidget {
               fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
             ),
           ),
-        ),
+        )),
       );
 }
 
@@ -226,7 +226,7 @@ class AdminPageHeader extends StatelessWidget {
                     ),
                   ),
                   if (subtitle != null) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: LuxSpacing.xs),
                     Text(
                       subtitle!,
                       style: LuxTypography.bodyMedium.copyWith(fontSize: 13),
@@ -344,7 +344,7 @@ class AdminKpiTile extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: LuxSpacing.xs),
               const SizedBox(height: 2),
               Text(sub, style: LuxTypography.caption),
             ],
@@ -654,7 +654,7 @@ class _ConfirmAdminDialogState extends State<_ConfirmAdminDialog> {
             if (reasonLabel != null) ...[
               const SizedBox(height: LuxSpacing.md),
               Text(reasonLabel, style: LuxTypography.caption),
-              const SizedBox(height: 4),
+              const SizedBox(height: LuxSpacing.xs),
               TextField(
                 controller: _ctrl,
                 autofocus: true,

@@ -1,11 +1,11 @@
 {
-    "name": "luxelane",
-    "short_name": "luxelane",
+    "name": "Luxelane — Servicio de chófer ejecutivo",
+    "short_name": "Luxelane",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FAFBFE",
+    "theme_color": "#1B4F8A",
+    "description": "Luxelane — Servicio de chófer ejecutivo",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

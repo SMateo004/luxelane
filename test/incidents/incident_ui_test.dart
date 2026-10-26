@@ -238,8 +238,7 @@ void main() {
                       value: b,
                       child: const IncidentHelpSheet(bookingId: 'b'))))));
       expect(find.text('Aviso cancelado'), findsOneWidget);
-      expect(find.textContaining('Central te llamará para verificar'),
-          findsOneWidget);
+      expect(find.textContaining('Central fue avisada'), findsOneWidget);
       expect(find.text('Fue una falsa alarma'), findsNothing);
     });
   });

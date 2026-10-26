@@ -1,0 +1,200 @@
+{
+  "red_4g_lenta": {
+    "offline": false,
+    "downloadThroughput": 209715.2,
+    "uploadThroughput": 96000,
+    "latency": 562.5
+  },
+  "carga": [
+    {
+      "ruta": "/",
+      "ancho": 390,
+      "limitada": false,
+      "fcp_ms": 628,
+      "primer_fotograma_ms": 1910,
+      "interactivo_ms": 2756,
+      "transferido_kb": 4330,
+      "peticiones": 31
+    },
+    {
+      "ruta": "/",
+      "ancho": 390,
+      "limitada": true,
+      "fcp_ms": 1236,
+      "primer_fotograma_ms": 19870,
+      "interactivo_ms": 20736,
+      "transferido_kb": 4330,
+      "peticiones": 31
+    },
+    {
+      "ruta": "/",
+      "ancho": 1280,
+      "limitada": false,
+      "fcp_ms": 160,
+      "primer_fotograma_ms": 1650,
+      "interactivo_ms": 3599,
+      "transferido_kb": 4943,
+      "peticiones": 35
+    },
+    {
+      "ruta": "/",
+      "ancho": 1280,
+      "limitada": true,
+      "fcp_ms": 1228,
+      "primer_fotograma_ms": 19833,
+      "interactivo_ms": 21309,
+      "transferido_kb": 4336,
+      "peticiones": 31
+    },
+    {
+      "ruta": "/legal/terminos",
+      "ancho": 390,
+      "limitada": true,
+      "fcp_ms": 1240,
+      "primer_fotograma_ms": 19735,
+      "interactivo_ms": 20361,
+      "transferido_kb": 4265,
+      "peticiones": 30
+    }
+  ],
+  "lecturas": [
+    {
+      "pantalla": "inicio",
+      "desde": "navegación en la app",
+      "documentos_firestore": 11,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "viajes",
+      "desde": "navegación en la app",
+      "documentos_firestore": 11,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "viaje",
+      "desde": "navegación en la app",
+      "documentos_firestore": 12,
+      "callables": [
+        "getPickupCode"
+      ],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "perfil",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 35,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "chofer-inicio",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 14,
+      "callables": [
+        "registerDriverDevice"
+      ],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "chofer-solicitudes",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 7,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "chofer-ganancias",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 14,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "panel",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 56,
+      "callables": [],
+      "callables_repetidas": []
+    }
+  ],
+  "peso": {
+    "total_mb": 32.8,
+    "archivos": 108,
+    "mayores": [
+      {
+        "archivo": "canvaskit/canvaskit.wasm",
+        "kb": 6782,
+        "brotli_kb": 2130,
+        "gzip_kb": 2760
+      },
+      {
+        "archivo": "canvaskit/chromium/canvaskit.wasm",
+        "kb": 5437,
+        "brotli_kb": 1543,
+        "gzip_kb": 2080
+      },
+      {
+        "archivo": "main.dart.js",
+        "kb": 4146,
+        "brotli_kb": 911,
+        "gzip_kb": 1193
+      },
+      {
+        "archivo": "canvaskit/skwasm.wasm",
+        "kb": 3317,
+        "brotli_kb": 1123,
+        "gzip_kb": 1437
+      },
+      {
+        "archivo": "canvaskit/skwasm_st.wasm",
+        "kb": 3304,
+        "brotli_kb": 1117,
+        "gzip_kb": 1431
+      },
+      {
+        "archivo": "assets/NOTICES",
+        "kb": 1818,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "canvaskit/skwasm.js.symbols",
+        "kb": 1398,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "canvaskit/skwasm_st.js.symbols",
+        "kb": 1395,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "canvaskit/canvaskit.js.symbols",
+        "kb": 1299,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "canvaskit/chromium/canvaskit.js.symbols",
+        "kb": 1222,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "assets/assets/images/home/promise_photo.jpg",
+        "kb": 324,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "assets/packages/map_launcher/assets/icons/copilot.svg",
+        "kb": 324,
+        "brotli_kb": null,
+        "gzip_kb": null
+      }
+    ]
+  }
+}

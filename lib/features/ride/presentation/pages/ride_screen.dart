@@ -4,17 +4,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import '../../../../app/theme/app_theme.dart';
 import '../../../../app/theme/lux_motion.dart';
+import '../../../../core/config/remote_flags.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../../driver/presentation/widgets/pickup_code_entry.dart'
+    show CallDispatchButton;
 import '../../../incidents/presentation/widgets/sos_entry.dart';
+import '../ride_load_error.dart';
+import '../ride_moments.dart';
 import '../widgets/cancel_booking_dialog.dart';
+import '../widgets/pending_status.dart';
 import '../widgets/pickup_code_card.dart';
 
 /// Estados en que el chófer va, espera o lleva al pasajero: solo entonces
@@ -50,23 +58,35 @@ class _RideScreenState extends State<RideScreen> {
   /// Teléfono del chófer: solo existe para la pantalla mientras el viaje
   /// está activo (bookings/{id}/driverContact/phone).
   String? _driverPhone;
-  bool _loadError = false;
+
+  /// Mensaje si la reserva no se pudo cargar.
+  String? _loadError;
   bool _ratingPrompted = false;
   bool _cancelling = false;
+  bool _cancelFlowOpen = false;
+
+  /// El viaje terminó con la pantalla abierta: se muestra el momento de
+  /// éxito (al reabrir un viaje ya terminado, no).
+  bool _justCompleted = false;
 
   @override
   void initState() {
     super.initState();
+    // El mensaje de «sin chófer» cambia si llega el número de central.
+    RemoteFlags.instance.dispatchPhone.addListener(_onDispatchPhone);
     _bookingStream = widget.rideId.isEmpty
         ? const Stream<Booking>.empty()
         : sl<BookingRepository>().watchBooking(widget.rideId);
     _sub = _bookingStream.listen(
       (b) {
         if (!mounted) return;
+        final moment = rideMomentFor(_booking?.status, b.status);
         setState(() {
           _booking = b;
-          _loadError = false;
+          _loadError = null;
+          if (moment == RideMoment.completed) _justCompleted = true;
         });
+        if (moment != null) playRideMoment(moment);
         _syncDriverPhone();
         // Al completarse, se invita a valorar una sola vez por visita.
         if (b.status == BookingStatus.completed &&
@@ -78,14 +98,19 @@ class _RideScreenState extends State<RideScreen> {
           );
         }
       },
-      onError: (_) {
-        if (mounted) setState(() => _loadError = true);
+      onError: (Object e) {
+        if (mounted) setState(() => _loadError = rideLoadErrorMessage(e));
       },
     );
   }
 
+  void _onDispatchPhone() {
+    if (mounted) setState(() {});
+  }
+
   @override
   void dispose() {
+    RemoteFlags.instance.dispatchPhone.removeListener(_onDispatchPhone);
     _sub?.cancel();
     _phoneSub?.cancel();
     super.dispose();
@@ -125,14 +150,17 @@ class _RideScreenState extends State<RideScreen> {
   BookingStatus? get _status => _booking?.status;
 
   String get _statusMessage {
-    if (_loadError) {
-      return 'No pudimos cargar tu reserva. Revisa tu conexión.';
-    }
+    final error = _loadError;
+    if (error != null) return error;
     switch (_status) {
       case null:
         return 'Cargando tu reserva…';
       case BookingStatus.pending:
-        return 'Estamos asignando a tu chófer. Te avisaremos en cuanto esté confirmado.';
+        final phone = RemoteFlags.instance.dispatchPhone.value ?? '';
+        return pendingMessage(
+          pendingSituation(_booking!, DateTime.now()),
+          canCallDispatch: phone.isNotEmpty,
+        );
       case BookingStatus.confirmed:
         return 'Tu reserva está confirmada. Te avisaremos cuando tu chófer salga hacia ti.';
       case BookingStatus.driverArriving:
@@ -149,11 +177,11 @@ class _RideScreenState extends State<RideScreen> {
         final b = _booking!;
         return b.hasCancellationFee
             ? 'Esta reserva fue cancelada. Recargo por cancelación: '
-                'Bs ${b.cancellationFee!.toStringAsFixed(2)}.'
+                '${LuxFormat.money(b.cancellationFee!)}.'
             : 'Esta reserva fue cancelada.';
       case BookingStatus.noShow:
         return 'Tu chófer no te encontró en el punto de recogida. Central '
-            'revisará tu reserva y te contactará.';
+            'fue avisada.';
     }
   }
 
@@ -169,13 +197,23 @@ class _RideScreenState extends State<RideScreen> {
   /// Recargo y motivo pasan por el servidor (cancelBooking); el diálogo
   /// muestra el recargo solo si es mayor que cero.
   Future<void> _cancel() async {
-    setState(() => _cancelling = true);
+    // Mientras se decide, el botón solo se desactiva; «Cancelando…» llega
+    // al confirmar (antes salía con el diálogo aún abierto, E29).
+    setState(() => _cancelFlowOpen = true);
     await runCancelBookingFlow(
       context,
       sl<BookingRepository>(),
       widget.rideId,
+      onConfirmed: () {
+        if (mounted) setState(() => _cancelling = true);
+      },
     );
-    if (mounted) setState(() => _cancelling = false);
+    if (mounted) {
+      setState(() {
+        _cancelling = false;
+        _cancelFlowOpen = false;
+      });
+    }
   }
 
   void _showRatingDialog() {
@@ -268,7 +306,7 @@ class _RideScreenState extends State<RideScreen> {
         if (canCancel)
           LuxButton.ghost(
             label: _cancelling ? 'Cancelando…' : 'Cancelar reserva',
-            onPressed: _cancelling ? null : _cancel,
+            onPressed: _cancelling || _cancelFlowOpen ? null : _cancel,
           ),
       ],
     );
@@ -277,7 +315,30 @@ class _RideScreenState extends State<RideScreen> {
   Widget _driverSection() {
     final d = _driver;
     if (_status == BookingStatus.cancelled) return const SizedBox.shrink();
-    if (d == null) return const _AssigningCard();
+    // Sin reserva cargada no hay chófer que asignar (antes «Asignando a tu
+    // chófer» debajo del error, E13).
+    if (_booking == null && _loadError != null) {
+      return const SizedBox.shrink();
+    }
+    if (d == null) {
+      final b = _booking;
+      final needsDispatch = b != null &&
+          b.status == BookingStatus.pending &&
+          pendingNeedsDispatch(pendingSituation(b, DateTime.now()));
+      if (!needsDispatch) return const _AssigningCard();
+      // Liberada o fuera de hora: además de esperar, puede llamar a central.
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const _AssigningCard(),
+          const SizedBox(height: LuxSpacing.sm),
+          ValueListenableBuilder<String?>(
+            valueListenable: RemoteFlags.instance.dispatchPhone,
+            builder: (_, phone, __) => CallDispatchButton(phone: phone),
+          ),
+        ],
+      );
+    }
     final b = _booking!;
     return DriverCard(
       name: d.name.isNotEmpty ? d.name : 'Tu chófer',
@@ -292,6 +353,21 @@ class _RideScreenState extends State<RideScreen> {
   /// Mientras el chófer espera, el código que el pasajero (o su invitado)
   /// le da al subir. Al verificarse, la tarjeta desaparece.
   Widget _pickupSection() {
+    // Confirmación visible de que el código funcionó y del fin del viaje
+    // (antes la tarjeta solo desaparecía, E31).
+    if (_status == BookingStatus.verified) {
+      return const _MomentCard(
+        key: ValueKey('moment-verified'),
+        title: 'Código verificado',
+        detail: 'Tu chófer ya puede iniciar el viaje.',
+      );
+    }
+    if (_status == BookingStatus.completed && _justCompleted) {
+      return const _MomentCard(
+        key: ValueKey('moment-completed'),
+        title: 'Viaje completado',
+      );
+    }
     if (_status != BookingStatus.driverArrived || widget.rideId.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -315,7 +391,7 @@ class _RideScreenState extends State<RideScreen> {
                 _TopBar(trailing: _sos()),
                 const Spacer(),
                 _BottomPanel(
-                  status: _status ?? BookingStatus.pending,
+                  status: _status,
                   message: _statusMessage,
                   pickup: _pickupSection(),
                   driver: _driverSection(),
@@ -341,7 +417,7 @@ class _RideScreenState extends State<RideScreen> {
               child: Column(
                 children: [
                   _WebRideHeader(
-                    status: _status ?? BookingStatus.pending,
+                    status: _status,
                     trailing: _sos(),
                   ),
                   const LuxDivider(),
@@ -399,9 +475,11 @@ class _TopBar extends StatelessWidget {
         padding: const EdgeInsets.all(LuxSpacing.md),
         child: Row(
           children: [
-            GestureDetector(
+            LuxPressable(
+              semanticLabel: 'Volver al inicio',
               onTap: () => context.go('/'),
-              child: Container(
+              child: LuxTapArea(
+                  child: Container(
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
@@ -414,7 +492,7 @@ class _TopBar extends StatelessWidget {
                   Icons.keyboard_arrow_down_rounded,
                   color: LuxColors.ink,
                 ),
-              ),
+              )),
             ),
             const SizedBox(width: LuxSpacing.md),
             const LuxelaneWordmark(),
@@ -434,7 +512,9 @@ class _BottomPanel extends StatelessWidget {
     this.preferences = RidePreferences.none,
   });
 
-  final BookingStatus status;
+  /// null mientras carga o si la reserva no se pudo abrir: sin etiqueta
+  /// de estado (antes decía «Pendiente» de una reserva inexistente, E13).
+  final BookingStatus? status;
   final String message;
   final Widget pickup;
   final Widget driver;
@@ -475,8 +555,8 @@ class _BottomPanel extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (status != BookingStatus.cancelled) ...[
-              RideProgressBar(status: status),
+            if (status case final s? when s != BookingStatus.cancelled) ...[
+              RideProgressBar(status: s),
               const SizedBox(height: LuxSpacing.md),
             ],
             // Cada cambio de estado se anuncia con un fundido, no un salto.
@@ -492,8 +572,10 @@ class _BottomPanel extends StatelessWidget {
                 key: ValueKey(status),
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  BookingStatusChip(status: status),
-                  const SizedBox(height: LuxSpacing.sm + 2),
+                  if (status case final s?) ...[
+                    BookingStatusChip(status: s),
+                    const SizedBox(height: LuxSpacing.sm + 2),
+                  ],
                   Text(
                     message,
                     style: LuxTypography.headlineLarge.copyWith(
@@ -576,7 +658,7 @@ class _AssigningCard extends StatelessWidget {
 
 class _WebRideHeader extends StatelessWidget {
   const _WebRideHeader({required this.status, this.trailing});
-  final BookingStatus status;
+  final BookingStatus? status;
   final Widget? trailing;
 
   @override
@@ -590,7 +672,7 @@ class _WebRideHeader extends StatelessWidget {
               trailing!,
               const SizedBox(width: LuxSpacing.sm),
             ],
-            BookingStatusChip(status: status),
+            if (status case final s?) BookingStatusChip(status: s),
           ],
         ),
       );
@@ -696,4 +778,42 @@ class _RatingDialogState extends State<_RatingDialog> {
     if (r >= 2) return 'Malo';
     return 'Muy malo';
   }
+}
+
+/// Momento de éxito dentro del panel: visto animado y una línea.
+class _MomentCard extends StatelessWidget {
+  const _MomentCard({super.key, required this.title, this.detail});
+  final String title;
+  final String? detail;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(bottom: LuxSpacing.md),
+        child: Semantics(
+          liveRegion: true,
+          child: LuxCard(
+            child: Row(
+              children: [
+                const LuxSuccessMark(size: 40),
+                const SizedBox(width: LuxSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: LuxTypography.titleMedium),
+                      if (detail != null)
+                        Text(
+                          detail!,
+                          style: LuxTypography.caption.copyWith(
+                            color: LuxColors.inkSecondary,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
 }

@@ -105,6 +105,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
           appBar: AppBar(
             title: const Text('Métodos de pago'),
             leading: IconButton(
+              tooltip: 'Volver',
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
               onPressed: () => context.pop(),
             ),

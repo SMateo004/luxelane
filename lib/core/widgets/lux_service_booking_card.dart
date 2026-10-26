@@ -385,10 +385,7 @@ class _LuxServiceBookingCardState extends State<LuxServiceBookingCard> {
             Container(height: 1, color: LD.border),
             const SizedBox(height: 18),
             const _Assurance(LuxPromise.fixedPrice),
-            const _Assurance(LuxPromise.freeCancel),
-            _Assurance(
-              airport ? LuxPromise.waitAirport : LuxPromise.waitStandard,
-            ),
+            const _Assurance(LuxPromise.chauffeurs),
           ],
         ),
       ),

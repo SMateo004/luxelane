@@ -131,6 +131,10 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       initial: initial,
       title: 'Seleccionar lugar de recogida',
+      // Sin permiso o con la ubicación apagada: se explica en el mismo
+      // diálogo en vez de abrir el mapa en otro sitio sin decir por qué
+      // (E22).
+      notice: pos == null ? kLocationUnavailableMessage : null,
     );
     if (!mounted || picked == null) return;
     _onOriginSelected(picked);
@@ -348,6 +352,11 @@ class _HomeScreenState extends State<HomeScreen> {
 // Mobile sub-widgets
 // ---------------------------------------------------------------------------
 
+/// Sin acceso a la ubicación del dispositivo (permiso o servicio).
+const kLocationUnavailableMessage =
+    'No pudimos usar tu ubicación. Permite el acceso a la ubicación en tu '
+    'navegador o en los ajustes del teléfono, o elige el punto en el mapa.';
+
 class _MobileTopBar extends StatelessWidget {
   const _MobileTopBar({required this.onLocate, required this.locating});
   final VoidCallback onLocate;
@@ -384,10 +393,12 @@ class _MobileTopBar extends StatelessWidget {
                     button: true,
                     label: 'Mi perfil',
                     child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () => context.go(
                         state is AuthAuthenticated ? '/profile' : '/login',
                       ),
-                      child: Container(
+                      child: LuxTapArea(
+                          child: Container(
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
@@ -413,7 +424,7 @@ class _MobileTopBar extends StatelessWidget {
                                 size: 18,
                                 color: LuxColors.onAccent,
                               ),
-                      ),
+                      )),
                     ),
                   );
                 },
@@ -595,7 +606,7 @@ class _MobileBottomPanel extends StatelessWidget {
               children: [
                 for (final p in const [
                   LuxPromise.fixedPrice,
-                  LuxPromise.freeCancel,
+                  LuxPromise.chauffeurs,
                 ])
                   Row(
                     mainAxisSize: MainAxisSize.min,
@@ -643,6 +654,7 @@ class _Greeting extends StatelessWidget {
               const SizedBox(height: 6),
               Text(
                 contextualPrompt(now, nextTrip: nextTrip),
+                textScaler: luxDisplayTextScaler(context),
                 style: LuxTypography.displayMedium.copyWith(
                   fontSize: 30,
                   fontWeight: FontWeight.w400,
@@ -686,11 +698,16 @@ class _NextTripCard extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               alignment: Alignment.center,
-              child: Text(
-                LuxFormat.time(booking.scheduledAt),
-                style: LuxTypography.caption.copyWith(
-                  color: LuxColors.sapphire,
-                  fontWeight: FontWeight.w700,
+              padding: const EdgeInsets.all(4),
+              // La hora entera dentro del círculo («14:5 / 0» con la letra
+              // al 200 %, E8); debajo va también en texto.
+              child: FittedBox(
+                child: Text(
+                  LuxFormat.time(booking.scheduledAt),
+                  style: LuxTypography.caption.copyWith(
+                    color: LuxColors.sapphire,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ),
@@ -885,7 +902,8 @@ class _PlaceChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SizedBox(
-        height: 38,
+        // 48 de alto para el dedo; el chip se ve de 38 (E9).
+        height: 48,
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: [
@@ -926,7 +944,9 @@ class _Chip extends StatelessWidget {
         child: LuxPressable(
           onTap: onTap,
           semanticLabel: label,
-          child: Container(
+          child: Center(
+              child: Container(
+            height: 38,
             constraints: const BoxConstraints(maxWidth: 200),
             padding: const EdgeInsets.symmetric(horizontal: 14),
             decoration: BoxDecoration(
@@ -960,7 +980,7 @@ class _Chip extends StatelessWidget {
                 ),
               ],
             ),
-          ),
+          )),
         ),
       );
 }
@@ -1144,10 +1164,10 @@ class _StepButton extends StatelessWidget {
   Widget build(BuildContext context) => LuxPressable(
         onTap: onTap,
         scale: 0.9,
-        child: Container(
+        child: LuxTapArea(
+            child: Container(
           width: 36,
           height: 36,
-          margin: const EdgeInsets.symmetric(vertical: 6),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(color: LuxColors.border),
@@ -1157,6 +1177,6 @@ class _StepButton extends StatelessWidget {
             size: 18,
             color: onTap == null ? LuxColors.border : LuxColors.ink,
           ),
-        ),
+        )),
       );
 }

@@ -304,6 +304,11 @@ class LuxMapState extends State<LuxMap> {
 
 /// Shown instead of a map when the app was built without a Google Maps key
 /// (`GOOGLE_MAPS_KEY`), so a missing key is visible instead of a blank map.
+/// La persona ve un texto neutro; la causa técnica va al registro al
+/// arrancar («GOOGLE_MAPS_KEY is empty», E27).
+const kMapUnavailableDetail =
+    'El mapa no se puede mostrar ahora. Los datos del viaje siguen aquí.';
+
 class MapsKeyMissing extends StatelessWidget {
   const MapsKeyMissing({super.key});
 
@@ -324,8 +329,7 @@ class MapsKeyMissing extends StatelessWidget {
               ),
               SizedBox(height: LuxSpacing.xs),
               Text(
-                'Esta versión se compiló sin la clave de Google Maps '
-                '(GOOGLE_MAPS_KEY).',
+                kMapUnavailableDetail,
                 style: LuxTypography.caption,
                 textAlign: TextAlign.center,
               ),

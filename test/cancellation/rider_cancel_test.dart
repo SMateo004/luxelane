@@ -31,10 +31,12 @@ void main() {
   group('runCancelBookingFlow', () {
     late _Repo repo;
     bool? result;
+    var confirmed = 0;
 
     setUp(() {
       repo = _Repo();
       result = null;
+      confirmed = 0;
     });
 
     void quote(double fee) =>
@@ -47,8 +49,12 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (context) => TextButton(
-                onPressed: () async =>
-                    result = await runCancelBookingFlow(context, repo, 'b1'),
+                onPressed: () async => result = await runCancelBookingFlow(
+                  context,
+                  repo,
+                  'b1',
+                  onConfirmed: () => confirmed++,
+                ),
                 child: const Text('cancelar'),
               ),
             ),
@@ -73,6 +79,19 @@ void main() {
           .called(1);
     });
 
+    testWidgets('«Cancelando…» solo al confirmar, no con el diálogo (E29)', (
+      t,
+    ) async {
+      quote(0);
+      when(() => repo.cancelBooking('b1', reason: 'other', acceptedFee: 0))
+          .thenAnswer((_) async => const Right(null));
+      await open(t);
+      expect(confirmed, 0);
+      await t.tap(find.byKey(const Key('confirm-cancel')));
+      await t.pumpAndSettle();
+      expect(confirmed, 1);
+    });
+
     testWidgets('con recargo: lo muestra y manda el motivo elegido', (t) async {
       quote(30);
       when(
@@ -84,7 +103,7 @@ void main() {
       ).thenAnswer((_) async => const Right(null));
       await open(t);
       expect(find.byKey(const Key('cancel-fee')), findsOneWidget);
-      expect(find.textContaining('Bs 30.00'), findsOneWidget);
+      expect(find.textContaining('Bs\u00A030'), findsOneWidget);
       expect(find.text('Cancelar con recargo'), findsOneWidget);
       await t.tap(find.text('Cambié de planes'));
       await t.pump();
@@ -106,7 +125,7 @@ void main() {
       await t.tap(find.byKey(const Key('confirm-cancel')));
       await t.pumpAndSettle();
       expect(find.textContaining('El recargo cambió'), findsOneWidget);
-      expect(find.textContaining('Bs 45.00'), findsOneWidget);
+      expect(find.textContaining('Bs\u00A045'), findsOneWidget);
       await t.tap(find.byKey(const Key('confirm-cancel')));
       await t.pumpAndSettle();
       expect(result, isTrue);

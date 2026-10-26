@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/theme/lux_motion.dart';
 import '../../features/home/presentation/pages/home_design.dart';
+import 'lux_focus.dart';
 
 /// Botones de Luxelane: superficies planas y silenciosas. Sin degradados ni
 /// brillos; la profundidad la da una sola sombra difusa del color del botón,
@@ -111,6 +112,15 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
     if (_pressed != v) setState(() => _pressed = v);
   }
 
+  void _activate() {
+    if (widget.variant == LuxRaisedVariant.primary) {
+      LuxHaptics.confirm();
+    } else {
+      LuxHaptics.tap();
+    }
+    widget.onPressed!();
+  }
+
   @override
   Widget build(BuildContext context) {
     final fg = luxButtonForeground(widget.variant);
@@ -128,8 +138,11 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
         Flexible(
           child: Text(
             text,
-            maxLines: 1,
+            // Dos líneas: con la letra al 200 % las acciones del chófer se
+            // cortaban («Navegar a la reco…», E8). El botón crece.
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontFamily: kSans,
               fontSize: widget.fontSize,
@@ -151,61 +164,67 @@ class _LuxRaisedButtonState extends State<LuxRaisedButton> {
       button: true,
       enabled: _enabled,
       label: widget.label,
-      child: MouseRegion(
-        cursor: _enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
-        onEnter: (_) => setState(() => _hover = true),
-        onExit: (_) => setState(() {
-          _hover = false;
-          _pressed = false;
-        }),
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapDown: _enabled ? (_) => _setPressed(true) : null,
-          onTapCancel: () => _setPressed(false),
-          onTapUp: _enabled
-              ? (_) {
-                  _setPressed(false);
-                  if (widget.variant == LuxRaisedVariant.primary) {
-                    LuxHaptics.confirm();
-                  } else {
-                    LuxHaptics.tap();
+      child: LuxFocusable(
+        onActivate: _enabled ? _activate : null,
+        radius: widget.radius,
+        child: MouseRegion(
+          cursor:
+              _enabled ? SystemMouseCursors.click : SystemMouseCursors.basic,
+          onEnter: (_) => setState(() => _hover = true),
+          onExit: (_) => setState(() {
+            _hover = false;
+            _pressed = false;
+          }),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapDown: _enabled ? (_) => _setPressed(true) : null,
+            onTapCancel: () => _setPressed(false),
+            onTapUp: _enabled
+                ? (_) {
+                    _setPressed(false);
+                    _activate();
                   }
-                  widget.onPressed!();
-                }
-              : null,
-          child: AnimatedScale(
-            scale: _pressed ? LuxMotion.pressedScale : 1,
-            duration: duration,
-            curve: LuxMotion.emphasized,
-            child: AnimatedContainer(
+                : null,
+            child: AnimatedScale(
+              scale: _pressed ? LuxMotion.pressedScale : 1,
               duration: duration,
               curve: LuxMotion.emphasized,
-              height: widget.height,
-              width: widget.expand ? double.infinity : null,
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              transform: Matrix4.translationValues(
-                0,
-                _hover && _enabled && !_pressed ? -1 : 0,
-                0,
-              ),
-              decoration: luxRaisedDecoration(
-                variant: widget.variant,
-                pressed: _pressed,
-                enabled: _enabled || widget.loading,
-                radius: widget.radius,
-              ),
-              child: Center(
-                widthFactor: widget.expand ? null : 1,
-                child: AnimatedSwitcher(
-                  duration: LuxMotion.of(context, LuxMotion.base),
-                  switchInCurve: LuxMotion.decelerate,
-                  switchOutCurve: LuxMotion.accelerate,
-                  child: widget.loading
-                      ? LuxLoadingDots(
-                          key: const ValueKey('loading'),
-                          color: fg,
-                        )
-                      : label,
+              child: AnimatedContainer(
+                duration: duration,
+                curve: LuxMotion.emphasized,
+                // Nunca menos de 48 px de alto (área táctil, E9).
+                constraints: BoxConstraints(
+                  minHeight: widget.height < 48 ? 48 : widget.height,
+                ),
+                width: widget.expand ? double.infinity : null,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 6,
+                ),
+                transform: Matrix4.translationValues(
+                  0,
+                  _hover && _enabled && !_pressed ? -1 : 0,
+                  0,
+                ),
+                decoration: luxRaisedDecoration(
+                  variant: widget.variant,
+                  pressed: _pressed,
+                  enabled: _enabled || widget.loading,
+                  radius: widget.radius,
+                ),
+                child: Center(
+                  widthFactor: widget.expand ? null : 1,
+                  child: AnimatedSwitcher(
+                    duration: LuxMotion.of(context, LuxMotion.base),
+                    switchInCurve: LuxMotion.decelerate,
+                    switchOutCurve: LuxMotion.accelerate,
+                    child: widget.loading
+                        ? LuxLoadingDots(
+                            key: const ValueKey('loading'),
+                            color: fg,
+                          )
+                        : label,
+                  ),
                 ),
               ),
             ),
@@ -232,7 +251,13 @@ class _LuxLoadingDotsState extends State<LuxLoadingDots>
   late final AnimationController _c = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1100),
-  )..repeat();
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    LuxMotion.repeatUnlessReduced(context, _c, still: 0.5);
+  }
 
   @override
   void dispose() {

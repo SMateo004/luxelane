@@ -13,10 +13,10 @@ abstract class LD {
   // Text
   static const ink = Color(0xFF0D1B2E);
   static const ink2 = Color(0xFF2C3D55);
-  static const ink3 = Color(0xFF637490);
+  static const ink3 = Color(0xFF5B6B84); // = LuxColors.inkTertiary (E20)
   // Sapphire
   static const sph = Color(0xFF1B4F8A);
-  static const sphLt = Color(0xFF2E6FBF);
+  static const sphLt = Color(0xFF2C69B5); // = LuxColors.sapphireLight (F3)
   static const sphDim = Color(0xFF0D3066);
   static const sphTint = Color(0xFFEEF3FA);
   // Border

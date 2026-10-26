@@ -20,6 +20,7 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/services/maps_service.dart';
 import '../../../../core/services/pricing_catalog.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/utils/service_area.dart';
 import '../../../../core/widgets/app_update_dialog.dart';
 import '../../../../core/widgets/components.dart';
@@ -46,20 +47,15 @@ const _kCardBg = Colors.white;
 const _kBorder = LD.border; // #DDE4F0
 const _kTextPrimary = LD.ink; // #0D1B2E
 const _kTextSub = LD.ink2; // #2C3D55
-const _kTextTertiary = LD.ink3; // #637490
+const _kTextTertiary = LD.ink3; // #5B6B84
 const _kDivider = LD.border; // #DDE4F0
 const _kPanelAccent = LD.sph; // #1B4F8A sapphire
 
 /// Precio para mostrar, o «Cotiza al reservar» si no hay tarifa
 /// configurada: nunca una cifra inventada.
-String formatPriceOrQuote(
-  double? price, {
-  int decimals = 0,
-  bool from = false,
-}) =>
-    price == null
-        ? 'Cotiza al reservar'
-        : '${from ? 'desde ' : ''}Bs ${price.toStringAsFixed(decimals)}';
+String formatPriceOrQuote(double? price, {bool from = false}) => price == null
+    ? 'Cotiza al reservar'
+    : '${from ? 'desde ' : ''}${LuxFormat.money(price)}';
 
 class BookingScreen extends StatefulWidget {
   const BookingScreen({super.key});
@@ -241,8 +237,8 @@ class _BookingScreenState extends State<BookingScreen> {
         title: const Text('El precio cambió'),
         content: Text(
           'El precio de este viaje es ahora '
-          'Bs ${state.newPrice.toStringAsFixed(0)} '
-          '(antes Bs ${state.previousPrice.toStringAsFixed(0)}). '
+          '${LuxFormat.money(state.newPrice)} '
+          '(antes ${LuxFormat.money(state.previousPrice)}). '
           '¿Quieres reservar con el precio nuevo?',
         ),
         actions: [
@@ -449,7 +445,7 @@ class _BookingScreenState extends State<BookingScreen> {
         quote == null
             ? (_quoteError ??
                 'No pudimos calcular el precio. Inténtalo de nuevo.')
-            : 'El precio de tu viaje es Bs ${quote.price.toStringAsFixed(0)}. '
+            : 'El precio de tu viaje es ${LuxFormat.money(quote.price)}. '
                 'Pulsa Reservar para confirmar.',
         isError: quote == null,
       );
@@ -858,9 +854,9 @@ class _BookingScreenState extends State<BookingScreen> {
                         decoration: TextDecoration.none,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: LuxSpacing.sm),
                     const Text(
-                      '${LuxPromise.fixedPrice}  ·  ${LuxPromise.freeCancel}  ·  ${LuxPromise.chauffeurs}',
+                      '${LuxPromise.fixedPrice}  ·  ${LuxPromise.chauffeurs}',
                       style: TextStyle(
                         fontFamily: kSans,
                         fontSize: 11,
@@ -869,7 +865,7 @@ class _BookingScreenState extends State<BookingScreen> {
                         decoration: TextDecoration.none,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: LuxSpacing.lg),
 
                     // Narrow cards tease the front of each car; the chosen
                     // one opens up to reveal it whole.
@@ -934,10 +930,6 @@ class _BookingScreenState extends State<BookingScreen> {
                     const SizedBox(height: 40),
                     const Divider(color: _kDivider, height: 1),
                     const SizedBox(height: 36),
-                    _webWhatsIncluded(),
-                    const SizedBox(height: 40),
-                    const Divider(color: _kDivider, height: 1),
-                    const SizedBox(height: 36),
                     _capacitySection(),
                     const SizedBox(height: 40),
                     _webPriceBreakdown(),
@@ -960,91 +952,9 @@ class _BookingScreenState extends State<BookingScreen> {
         compact: compact,
       );
 
-  // ── What's Included ────────────────────────────────────────────────────────
-
-  Widget _webWhatsIncluded({bool compact = false}) {
-    const items = [
-      (Icons.badge_outlined, 'Recibimiento personalizado'),
-      (
-        Icons.timer_outlined,
-        'Espera gratis: 60 min en aeropuertos, 15 min en otras recogidas',
-      ),
-      (Icons.event_available_outlined, 'Cancelación gratuita hasta 1 h antes'),
-      (Icons.cable_outlined, 'Cargadores iOS y Android a bordo'),
-      (Icons.clean_hands_outlined, 'Pañuelos y toallitas de cortesía'),
-      (Icons.water_drop_outlined, 'Agua fría de cortesía'),
-    ];
-
-    Widget item(IconData icon, String label) => Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 500),
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: _tone.wash,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, size: 18, color: _tone.accent),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 2),
-                child: Text(
-                  label,
-                  style: const TextStyle(
-                    fontFamily: kSans,
-                    fontSize: 13.5,
-                    height: 1.45,
-                    color: LD.ink2,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('INCLUIDO EN CADA VIAJE', style: eyebrow()),
-        const SizedBox(height: 10),
-        Text(
-          'Qué incluye',
-          style: TextStyle(
-            fontFamily: kSerif,
-            fontSize: compact ? 26 : 32,
-            fontWeight: FontWeight.w500,
-            color: _kTextPrimary,
-            height: 1.05,
-          ),
-        ),
-        SizedBox(height: compact ? 18 : 24),
-        LayoutBuilder(
-          builder: (context, c) {
-            // Phones list the perks in one column so each line stays readable.
-            final cols = c.maxWidth >= 720
-                ? 3
-                : c.maxWidth >= 480
-                    ? 2
-                    : 1;
-            const gap = 24.0;
-            final w = (c.maxWidth - gap * (cols - 1)) / cols;
-            return Wrap(
-              spacing: gap,
-              runSpacing: cols == 1 ? 14 : 20,
-              children: [
-                for (final (icon, label) in items)
-                  SizedBox(width: w, child: item(icon, label)),
-              ],
-            );
-          },
-        ),
-      ],
-    );
-  }
+  // «Qué incluye» (recibimiento personalizado, cargadores, pañuelos y agua
+  // de cortesía) se quitó en F2: no está respaldado. La lista para decidir
+  // cuáles reponer está en docs/EXPERIENCIA_LUXLANE.md.
 
   // ── Price breakdown ────────────────────────────────────────────────────────
 
@@ -1085,7 +995,7 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
               const SizedBox(width: 10),
               Text(
-                formatPriceOrQuote(amount, decimals: 2),
+                formatPriceOrQuote(amount),
                 style: const TextStyle(
                   fontFamily: kSans,
                   fontSize: 15,
@@ -1167,7 +1077,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 color: LuxColors.error,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: LuxSpacing.sm),
           ],
           const Divider(color: _kBorder, height: 1, thickness: 1.2),
           const SizedBox(height: 22),
@@ -1353,7 +1263,7 @@ class _BookingScreenState extends State<BookingScreen> {
           _flightField(),
         ],
 
-        const SizedBox(height: 24),
+        const SizedBox(height: LuxSpacing.lg),
         const Divider(color: _kDivider, height: 1),
         const SizedBox(height: 20),
 
@@ -1390,13 +1300,13 @@ class _BookingScreenState extends State<BookingScreen> {
 
         const SizedBox(height: 20),
         const Divider(color: _kDivider, height: 1),
-        const SizedBox(height: 16),
+        const SizedBox(height: LuxSpacing.md),
 
         // ── All fees included ───────────────────────────────────────────
         const Row(
           children: [
             Icon(Icons.lock_outline_rounded, size: 14, color: _kTextSub),
-            SizedBox(width: 8),
+            SizedBox(width: LuxSpacing.sm),
             Text(
               LuxPromise.fixedPrice,
               style: TextStyle(
@@ -1409,7 +1319,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ],
         ),
 
-        const SizedBox(height: 16),
+        const SizedBox(height: LuxSpacing.md),
       ],
     );
   }
@@ -1444,6 +1354,7 @@ class _BookingScreenState extends State<BookingScreen> {
             backgroundColor: Colors.transparent,
             appBar: AppBar(
               leading: IconButton(
+                tooltip: 'Volver',
                 icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
                 onPressed: () =>
                     _step > 0 ? setState(() => _step--) : context.pop(),
@@ -1521,7 +1432,7 @@ class _BookingScreenState extends State<BookingScreen> {
               color: _kTextPrimary,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: LuxSpacing.md),
           _LightServiceTypeTab(
             selected: _service,
             onChanged: (t) => setState(() => _service = t),
@@ -1561,15 +1472,13 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           const SizedBox(height: 14),
           const _MobilePromises(),
-          const SizedBox(height: 32),
+          const SizedBox(height: LuxSpacing.xl),
           VehicleDetailsGallery(vehicleClass: _selected, compact: true),
           const SizedBox(height: 36),
           _capacitySection(compact: true),
           const SizedBox(height: 36),
-          _webWhatsIncluded(compact: true),
-          const SizedBox(height: 32),
           _webPriceBreakdown(compact: true),
-          const SizedBox(height: 8),
+          const SizedBox(height: LuxSpacing.sm),
         ],
       );
 
@@ -1737,7 +1646,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     ),
                     const Spacer(),
                     Text(
-                      formatPriceOrQuote(_price, decimals: 2),
+                      formatPriceOrQuote(_price),
                       style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 18,
@@ -1839,14 +1748,9 @@ class _BookingScreenState extends State<BookingScreen> {
             );
           }),
         ],
-        const SizedBox(height: 16),
-        _GuaranteeRow(
-          Icons.event_available_outlined,
-          LuxPromise.freeCancelLong,
-        ),
-        const SizedBox(height: 8),
+        const SizedBox(height: LuxSpacing.md),
         _GuaranteeRow(Icons.lock_outline_rounded, LuxPromise.fixedPriceLong),
-        const SizedBox(height: 8),
+        const SizedBox(height: LuxSpacing.sm),
       ],
     );
   }
@@ -1994,7 +1898,7 @@ class _WebTopBar extends StatelessWidget {
                                                   : _kTextPrimary,
                                             ),
                                           ),
-                                          const SizedBox(width: 8),
+                                          const SizedBox(width: LuxSpacing.sm),
                                           Container(
                                             width: 1,
                                             height: 12,
@@ -2004,7 +1908,7 @@ class _WebTopBar extends StatelessWidget {
                                                   )
                                                 : _kBorder,
                                           ),
-                                          const SizedBox(width: 8),
+                                          const SizedBox(width: LuxSpacing.sm),
                                           Text(
                                             formatPriceOrQuote(
                                               price,
@@ -2092,7 +1996,7 @@ class _WebTopBar extends StatelessWidget {
                 ),
               ),
 
-            const SizedBox(width: 16),
+            const SizedBox(width: LuxSpacing.md),
 
             _LightServiceTypeTab(
               selected: service,
@@ -2325,7 +2229,7 @@ class _VehicleCardState extends State<_VehicleCard> {
                           ),
                           // Narrow teaser cards keep just the price.
                           if (sel || baseW >= 200) ...[
-                            const SizedBox(width: 8),
+                            const SizedBox(width: LuxSpacing.sm),
                             _CapChip(
                               Icons.person_outline_rounded,
                               widget.vehicleClass.capacity,
@@ -2524,7 +2428,7 @@ class _Btn extends StatelessWidget {
 Widget _GuaranteeRow(IconData icon, String text) => Row(
       children: [
         Icon(icon, size: 15, color: _kTextSub),
-        const SizedBox(width: 8),
+        const SizedBox(width: LuxSpacing.sm),
         Expanded(
           child: Text(
             text,
@@ -2558,8 +2462,7 @@ class _MobilePromises extends StatelessWidget {
           children: [
             _GuaranteeRow(Icons.price_check_outlined, LuxPromise.fixedPrice),
             const SizedBox(height: 6),
-            _GuaranteeRow(
-                Icons.event_available_outlined, LuxPromise.freeCancel),
+            _GuaranteeRow(Icons.verified_user_outlined, LuxPromise.chauffeurs),
           ],
         ),
       );
@@ -2589,7 +2492,7 @@ class _SummaryRow extends StatelessWidget {
                     color: _kTextSub,
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: LuxSpacing.md),
                 Flexible(
                   child: Text(
                     value,
@@ -2936,11 +2839,11 @@ class _FlightNote extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(Icons.flight_land_rounded, size: 16, color: _kPanelAccent),
-          SizedBox(width: 8),
+          SizedBox(width: LuxSpacing.sm),
           Expanded(
             child: Text(
-              'Recogida en aeropuerto: indica tu número de vuelo. '
-              '${LuxPromise.flightTrackingLong}',
+              'Recogida en aeropuerto: indica tu número de vuelo para que '
+              'tu chófer lo tenga.',
               style: TextStyle(
                 fontFamily: kSans,
                 fontSize: 12,
@@ -2979,11 +2882,12 @@ class _FlightTypeSelector extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: LuxSpacing.sm),
           Row(
             children: [
               for (final t in FlightType.values) ...[
-                if (t != FlightType.values.first) const SizedBox(width: 8),
+                if (t != FlightType.values.first)
+                  const SizedBox(width: LuxSpacing.sm),
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
@@ -3073,7 +2977,7 @@ class _OutlinedBtn extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon, size: 18, color: _kTextSub),
-              const SizedBox(width: 8),
+              const SizedBox(width: LuxSpacing.sm),
               Text(
                 label,
                 style: const TextStyle(
@@ -3147,7 +3051,7 @@ class _LightPriceBar extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: LuxSpacing.md),
                 Expanded(
                   child: LuxRaisedButton(
                     label: label,
@@ -3634,7 +3538,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 32),
+                  const SizedBox(width: LuxSpacing.xl),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -3676,7 +3580,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                           size: 15,
                           color: _kTextSub,
                         ),
-                        SizedBox(width: 8),
+                        SizedBox(width: LuxSpacing.sm),
                       ],
                     ),
                   ),
@@ -3684,7 +3588,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                 ),
               ),
 
-              const SizedBox(height: 8),
+              const SizedBox(height: LuxSpacing.sm),
 
               const Text(
                 'El chófer asignado usará este número para coordinar la recogida.',

@@ -89,6 +89,13 @@ describe('aceptar una reserva pendiente', () => {
     await assertSucceeds(read('libre', 'pend'));
   });
 
+  test('quien la liberó no la vuelve a aceptar; otro chófer sí (0.3)', async () => {
+    await env.withSecurityRulesDisabled((ctx) =>
+      updateDoc(doc(ctx.firestore(), 'bookings', 'pend'), { releasedBy: ['libre'] }));
+    await assertFails(accept('libre'));
+    await assertSucceeds(accept('asig'));
+  });
+
   test('un chófer no verificado o bloqueado no la acepta', async () => {
     await assertFails(accept('nover'));
     await assertFails(accept('bloq'));

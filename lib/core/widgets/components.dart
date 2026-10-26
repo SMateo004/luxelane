@@ -5,11 +5,15 @@ import '../../app/theme/app_theme.dart';
 import '../../app/theme/lux_motion.dart';
 import '../enums/enums.dart';
 import '../models/models.dart';
+import '../utils/lux_format.dart';
 import 'lux_feedback.dart';
+import 'lux_focus.dart';
 import 'lux_raised.dart';
 
 export 'lux_feedback.dart';
+export 'lux_focus.dart';
 export 'lux_raised.dart' show LuxRaisedVariant, LuxLoadingDots;
+export 'lux_text_scale.dart';
 
 // ---------------------------------------------------------------------------
 // LuxButton — acción principal (zafiro sólido). Una por pantalla.
@@ -156,25 +160,32 @@ class _LuxPressableState extends State<LuxPressable> {
   @override
   Widget build(BuildContext context) {
     if (widget.onTap == null) return widget.child;
+    void activate() {
+      if (widget.haptic) LuxHaptics.tap();
+      widget.onTap!();
+    }
+
     return Semantics(
       button: true,
       label: widget.semanticLabel,
-      child: MouseRegion(
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTapDown: (_) => _set(true),
-          onTapCancel: () => _set(false),
-          onTapUp: (_) {
-            _set(false);
-            if (widget.haptic) LuxHaptics.tap();
-            widget.onTap!();
-          },
-          child: AnimatedScale(
-            scale: _down ? widget.scale : 1,
-            duration: LuxMotion.of(context, LuxMotion.fast),
-            curve: LuxMotion.emphasized,
-            child: widget.child,
+      child: LuxFocusable(
+        onActivate: activate,
+        child: MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapDown: (_) => _set(true),
+            onTapCancel: () => _set(false),
+            onTapUp: (_) {
+              _set(false);
+              activate();
+            },
+            child: AnimatedScale(
+              scale: _down ? widget.scale : 1,
+              duration: LuxMotion.of(context, LuxMotion.fast),
+              curve: LuxMotion.emphasized,
+              child: widget.child,
+            ),
           ),
         ),
       ),
@@ -348,7 +359,7 @@ class VehicleCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'Bs${price.toStringAsFixed(0)}',
+                  LuxFormat.money(price),
                   style: LuxTypography.headlineMedium.copyWith(
                     color: selected ? LuxColors.sapphire : LuxColors.ink,
                   ),
@@ -430,7 +441,7 @@ class LuxSegmented<T> extends StatelessWidget {
     required this.selected,
     required this.labelOf,
     required this.onChanged,
-    this.height = 44,
+    this.height = 52,
   });
 
   final List<T> values;
@@ -443,9 +454,10 @@ class LuxSegmented<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final index = values.indexOf(selected).clamp(0, values.length - 1);
     final duration = LuxMotion.of(context, LuxMotion.base);
+    // Cada opción mide height - 4: con 52, 48 px de área táctil (E9).
     return Container(
       height: height,
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(2),
       decoration: BoxDecoration(
         color: LuxColors.surfaceMuted,
         borderRadius: BorderRadius.circular(LuxRadius.md),
@@ -1010,7 +1022,7 @@ class PriceEstimateBar extends StatelessWidget {
               children: [
                 const Text('PRECIO FIJO', style: LuxTypography.caption),
                 Text(
-                  'Bs${price.toStringAsFixed(0)}',
+                  LuxFormat.money(price),
                   style: LuxTypography.displayMedium.copyWith(
                     color: LuxColors.sapphire,
                   ),

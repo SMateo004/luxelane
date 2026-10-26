@@ -99,7 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on fb.FirebaseAuthException catch (e) {
       return Left(AuthFailure(loginErrorMessage(e.code)));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -147,7 +147,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on fb.FirebaseAuthException catch (e) {
       return Left(AuthFailure(registerErrorMessage(e.code)));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -196,7 +196,7 @@ class AuthRepositoryImpl implements AuthRepository {
         ),
       );
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -311,7 +311,7 @@ class AuthRepositoryImpl implements AuthRepository {
       await _auth.signOut();
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -484,7 +484,7 @@ class AuthRepositoryImpl implements AuthRepository {
       if (!doc.exists) return const Left(NotFoundFailure('User not found'));
       return Right(User.fromJson({'id': doc.id, ...doc.data()!}));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app/driver_app.dart';
 import 'core/config/app_check_setup.dart';
+import 'core/config/emulator_setup.dart';
 import 'core/config/env.dart';
 import 'core/config/firebase_startup.dart';
 import 'core/di/injection.dart';
@@ -17,9 +18,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final firebase = await startFirebase(
-    () =>
-        Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
+    () => Firebase.initializeApp(
+      options: startupOptions(() => DefaultFirebaseOptions.currentPlatform),
+    ),
   );
+  // Revisión local (USE_EMULATORS): todo va a los emuladores de demo.
+  if (kUseEmulators && firebase is FirebaseReady) await connectEmulators();
   if (firebase is FirebaseFatal) {
     runApp(appForStartup(firebase, const DriverApp()));
     return;

@@ -584,7 +584,7 @@ class _MobileMenu extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                '${LuxPromise.fixedPrice}  ·  ${LuxPromise.freeCancel}',
+                '${LuxPromise.fixedPrice}  ·  ${LuxPromise.chauffeurs}',
                 textAlign: TextAlign.center,
                 style: uiLabel(
                   size: 10,
@@ -642,9 +642,7 @@ class LuxSiteFooter extends StatelessWidget {
     ]);
     const promises = _FooterCol('Nuestra promesa', [
       (LuxPromise.fixedPrice, null),
-      (LuxPromise.freeCancel, null),
       (LuxPromise.chauffeurs, null),
-      (LuxPromise.support, null),
     ]);
 
     return Container(

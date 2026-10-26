@@ -12,7 +12,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart'
         CameraUpdate,
         Marker,
         MarkerId;
-import 'package:video_player/video_player.dart';
+import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/config/env.dart';
 import '../../../../core/config/remote_flags.dart';
 import '../../../../core/design/lux_promise.dart';
@@ -671,7 +671,7 @@ class _HeroSectionState extends State<_HeroSection>
                     const SizedBox(height: 18),
                     Center(
                       child: Text(
-                        '${LuxPromise.fixedPrice}   ·   ${LuxPromise.freeCancel}   ·   ${LuxPromise.chauffeurs}',
+                        '${LuxPromise.fixedPrice}   ·   ${LuxPromise.chauffeurs}',
                         textAlign: TextAlign.center,
                         style: uiLabel(
                           size: 10.5,
@@ -693,7 +693,7 @@ class _HeroSectionState extends State<_HeroSection>
 
 class _HeroBg extends StatelessWidget {
   const _HeroBg();
-  static const _asset = 'assets/images/home/hero_bg.png';
+  static const _asset = 'assets/images/home/hero_bg.jpg';
 
   @override
   Widget build(BuildContext context) => Stack(
@@ -1676,14 +1676,9 @@ class _MarqueeBarState extends State<_MarqueeBar>
   static const _items = [
     'Precios Fijos',
     'Chóferes Profesionales',
-    'Cobertura Mundial',
-    'Disponibilidad 24/7',
     'Flota Premium',
-    'Puntualidad Garantizada',
     'Traslados Aeroportuarios',
     'Viajes Corporativos',
-    'Privacidad y Discreción',
-    'Chóferes multilingües',
   ];
   static const _oneSetPx = 2200.0;
 
@@ -1693,7 +1688,13 @@ class _MarqueeBarState extends State<_MarqueeBar>
     _ctrl = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 36),
-    )..repeat();
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    LuxMotion.repeatUnlessReduced(context, _ctrl);
   }
 
   @override
@@ -2176,21 +2177,14 @@ class _BusinessSection extends StatelessWidget {
   final GlobalKey sectionKey;
   final VoidCallback onLearnMore;
 
-  // 🎬 Place video at: assets/videos/business_bg.mp4
-  static const _videoAsset = 'assets/videos/business_bg.mp4';
-
   static const _perks = [
     'Facturación y cobros centralizados',
-    'Gerente de cuenta dedicado',
-    'Herramientas de cumplimiento de política de viajes',
     'Reservas prioritarias para ejecutivos',
-    'Monitoreo de viajes en tiempo real',
-    'Cobertura global en múltiples ciudades',
   ];
 
   Widget _perksPanel(double hPad, double vPad) => Stack(
         children: [
-          Positioned.fill(child: _VideoBackground(assetPath: _videoAsset)),
+          const Positioned.fill(child: _DarkBackdrop()),
           Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
@@ -2334,14 +2328,11 @@ class _CtaSection extends StatelessWidget {
   final VoidCallback onBook;
   final VoidCallback onViewFleet;
 
-  // 🎬 Place your video file at: assets/videos/cta_bg.mp4
-  static const _videoAsset = 'assets/videos/cta_bg.mp4';
-
   @override
   Widget build(BuildContext context) => Stack(
         children: [
           // Video background (looping, muted, full-bleed)
-          Positioned.fill(child: _VideoBackground(assetPath: _videoAsset)),
+          const Positioned.fill(child: _DarkBackdrop()),
           // Dark overlay — video stays cinematic, text is bright
           const Positioned.fill(child: ColoredBox(color: Color(0x85050A12))),
           // Content
@@ -2398,7 +2389,7 @@ class _CtaSection extends StatelessWidget {
                       dx: -80,
                       threshold: 0.9,
                       child: const Text(
-                        'Precio fijo  ·  Chóferes profesionales  ·  En todo el mundo',
+                        'Precio fijo  ·  Chóferes profesionales',
                         style: TextStyle(
                           fontFamily: kSans,
                           fontSize: 11,
@@ -2440,75 +2431,17 @@ class _CtaSection extends StatelessWidget {
 }
 
 // ============================================================
-// Shared looping video background
+// Fondo de las secciones Empresas y CTA
 // ============================================================
 
-// 🎬 VIDEO ASSET LOCATIONS:
-//   Business section  →  assets/videos/business_bg.mp4
-//   CTA section       →  assets/videos/cta_bg.mp4
-// Both are already registered in pubspec.yaml under flutter > assets.
-// Drop the .mp4 files in place and hot-restart to see them.
-
-class _VideoBackground extends StatefulWidget {
-  const _VideoBackground({required this.assetPath});
-  final String assetPath;
+// Antes eran dos vídeos en bucle (122 MB en la build web y en las apps
+// nativas, E5). Queda el fondo oscuro que se veía mientras cargaban.
+class _DarkBackdrop extends StatelessWidget {
+  const _DarkBackdrop();
 
   @override
-  State<_VideoBackground> createState() => _VideoBackgroundState();
-}
-
-class _VideoBackgroundState extends State<_VideoBackground> {
-  VideoPlayerController? _ctrl;
-  bool _ready = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _init();
-  }
-
-  Future<void> _init() async {
-    try {
-      final ctrl = VideoPlayerController.asset(widget.assetPath);
-      await ctrl.initialize();
-      if (!mounted) {
-        ctrl.dispose();
-        return;
-      }
-      await ctrl.setVolume(0);
-      await ctrl.setLooping(true);
-      await ctrl.play();
-      setState(() {
-        _ctrl = ctrl;
-        _ready = true;
-      });
-    } catch (_) {
-      // Asset not present yet — section shows solid dark colour as fallback
-    }
-  }
-
-  @override
-  void dispose() {
-    _ctrl?.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_ready || _ctrl == null) {
-      // Fallback: dark colour while video loads / file not placed yet
-      return const ColoredBox(color: Color(0xFF070E18));
-    }
-    return FittedBox(
-      fit: BoxFit.cover,
-      clipBehavior: Clip.hardEdge,
-      child: SizedBox(
-        width: _ctrl!.value.size.width,
-        height: _ctrl!.value.size.height,
-        child: VideoPlayer(_ctrl!),
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      const ColoredBox(color: Color(0xFF070E18));
 }
 
 // ============================================================
@@ -2559,13 +2492,10 @@ const List<_BookPageData> _kBookPages = [
     photoPath: 'assets/images/home/promise_photo.jpg',
     tag: 'El Estándar Luxelane',
     headline: 'El estándar que\notros siguen.',
-    body:
-        'Cada chófer supera una rigurosa verificación de antecedentes, inspección del vehículo y programa de capacitación en servicio.',
+    body: LuxPromise.chauffeursLong,
     bullets: [
-      'Chóferes verificados',
-      'Precio fijo, siempre',
-      'Cobertura global — más de 50 ciudades',
-      'A toda hora, 24/7',
+      'Chóferes con documentos verificados',
+      'Precio fijo al reservar',
     ],
   ),
   // Index 2: La Experiencia (content page 02)
@@ -2577,7 +2507,7 @@ const List<_BookPageData> _kBookPages = [
     tag: 'La Experiencia',
     headline: 'Cada detalle,\ncuidado.',
     body:
-        'Desde agua fría y listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.',
+        'Desde listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.',
     bullets: [
       'Interiores de cuero premium',
       'Wi-Fi y carga inalámbrica',
@@ -2597,8 +2527,6 @@ const List<_BookPageData> _kBookPages = [
         'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.',
     bullets: [
       'Facturación centralizada',
-      'Gerente de cuenta dedicado',
-      'Cumplimiento de política de viajes',
       'Reservas prioritarias para ejecutivos',
     ],
   ),

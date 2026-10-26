@@ -24,6 +24,7 @@ export interface BookingForRequest {
   dropoffArea?: unknown;
   origin?: { coordinates?: GeoLike };
   destination?: { coordinates?: GeoLike };
+  releasedBy?: unknown;
 }
 
 export interface ApproxPoint {
@@ -46,6 +47,12 @@ export interface OpenRequest {
   pickupApprox: ApproxPoint | null;
   dropoffApprox: ApproxPoint | null;
   tripKm: number | null;
+  /**
+   * Chóferes que la liberaron: el servidor no les deja volver a aceptarla
+   * y la app ya no se la ofrece, tampoco al volver a entrar (E18). Son ids
+   * opacos; los ven solo chóferes verificados.
+   */
+  releasedBy: string[];
 }
 
 /** Dos decimales: unos 1,1 km. Basta para la zona, no para la puerta. */
@@ -93,5 +100,8 @@ export function buildOpenRequest(b: BookingForRequest): OpenRequest {
     tripKm: !hourly && approx(from) && approx(to)
       ? Math.round(distanceKm(from!, to!) * 10) / 10
       : null,
+    releasedBy: Array.isArray(b.releasedBy)
+      ? [...new Set(b.releasedBy.filter((v): v is string => typeof v === 'string'))]
+      : [],
   };
 }

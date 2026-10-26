@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 
@@ -21,7 +22,7 @@ class VehicleRepositoryImpl implements VehicleRepository {
       if (!doc.exists) return const Left(NotFoundFailure());
       return Right(Vehicle.fromJson({'id': doc.id, ...doc.data()!}));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -34,7 +35,7 @@ class VehicleRepositoryImpl implements VehicleRepository {
       final d = snap.docs.first;
       return Right(Vehicle.fromJson({'id': d.id, ...d.data()}));
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -53,7 +54,7 @@ class VehicleRepositoryImpl implements VehicleRepository {
             .toList(),
       );
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -63,7 +64,7 @@ class VehicleRepositoryImpl implements VehicleRepository {
       await _col.doc(vehicle.id).set(vehicle.toJson());
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 
@@ -73,7 +74,7 @@ class VehicleRepositoryImpl implements VehicleRepository {
       await _col.doc(vehicle.id).update(vehicle.toJson());
       return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(e.toString()));
+      return Left(ServerFailure(unexpectedErrorMessage(e)));
     }
   }
 

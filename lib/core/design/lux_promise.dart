@@ -6,22 +6,18 @@ import 'package:flutter/material.dart';
 /// "15 minutes of free waiting" and another says "60", neither is believed.
 /// Every page, card and summary pulls its reassurance copy from here.
 abstract class LuxPromise {
-  static const fixedPrice = 'Precio fijo, todo incluido';
+  // Solo hechos que el sistema cumple hoy (Parte B de experiencia, E2): el
+  // precio lo calcula el servidor antes de confirmar y Luxelane revisa los
+  // documentos de cada chófer. Nada de cancelación gratuita, esperas,
+  // seguimiento de vuelo, atención 24/7, propinas, puntualidad garantizada
+  // ni «discreción y privacidad absolutas»: no están respaldados
+  // (test/experiencia/promesas_test.dart lo vigila).
+  static const fixedPrice = 'Precio fijo al reservar';
   static const fixedPriceLong =
-      'El precio que ves es el precio final: peajes, impuestos y propina incluidos.';
-  static const freeCancel = 'Cancelación gratuita hasta 1 h antes';
-  static const freeCancelLong =
-      'Cancela o modifica sin coste hasta 1 hora antes de la recogida.';
-  static const waitAirport = '60 min de espera gratuita en aeropuertos';
-  static const waitStandard = '15 min de espera gratuita en otras recogidas';
-  static const flightTracking = 'Seguimiento de vuelo en tiempo real';
-  static const flightTrackingLong =
-      'Seguimos tu vuelo y ajustamos la recogida si se adelanta o se retrasa, sin coste.';
-  static const chauffeurs = 'Chóferes profesionales verificados';
+      'El precio que ves al confirmar lo calcula Luxelane para tu trayecto.';
+  static const chauffeurs = 'Chóferes con documentos verificados';
   static const chauffeursLong =
-      'Cada chófer supera verificación de antecedentes, inspección del vehículo y formación en servicio.';
-  static const support = 'Atención al cliente 24/7';
-  static const privacy = 'Discreción y privacidad absolutas';
+      'Luxelane revisa los documentos de cada chófer antes de que reciba viajes.';
 }
 
 /// A promise rendered as an icon + short line (and optional detail).
@@ -37,39 +33,9 @@ class LuxAssurance {
     LuxPromise.fixedPrice,
     LuxPromise.fixedPriceLong,
   );
-  static const freeCancel = LuxAssurance(
-    Icons.event_available_outlined,
-    LuxPromise.freeCancel,
-    LuxPromise.freeCancelLong,
-  );
-  static const waitAirport = LuxAssurance(
-    Icons.hourglass_bottom_rounded,
-    LuxPromise.waitAirport,
-    'Tu chófer te espera en llegadas con un cartel con tu nombre.',
-  );
-  static const waitStandard = LuxAssurance(
-    Icons.hourglass_bottom_rounded,
-    LuxPromise.waitStandard,
-    'Sin prisas: el tiempo de cortesía está incluido en el precio.',
-  );
-  static const flightTracking = LuxAssurance(
-    Icons.flight_land_rounded,
-    LuxPromise.flightTracking,
-    LuxPromise.flightTrackingLong,
-  );
   static const chauffeurs = LuxAssurance(
     Icons.verified_user_outlined,
     LuxPromise.chauffeurs,
     LuxPromise.chauffeursLong,
-  );
-  static const support = LuxAssurance(
-    Icons.support_agent_outlined,
-    LuxPromise.support,
-    'Una persona real, a cualquier hora, antes, durante y después del viaje.',
-  );
-  static const privacy = LuxAssurance(
-    Icons.shield_moon_outlined,
-    LuxPromise.privacy,
-    'Tus datos, tus rutas y tus conversaciones permanecen confidenciales.',
   );
 }

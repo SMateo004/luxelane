@@ -118,7 +118,7 @@ class _RequestCard extends StatelessWidget {
               ),
               const SizedBox(width: LuxSpacing.md),
               Text(
-                'Bs ${r.estimatedPrice.toStringAsFixed(0)}',
+                LuxFormat.money(r.estimatedPrice),
                 style: LuxTypography.headlineLarge.copyWith(fontSize: 24),
               ),
             ],
@@ -189,7 +189,7 @@ class _JobCard extends StatelessWidget {
               ),
               const SizedBox(width: LuxSpacing.md),
               Text(
-                'Bs ${booking.estimatedPrice.toStringAsFixed(0)}',
+                LuxFormat.money(booking.estimatedPrice),
                 style: LuxTypography.headlineLarge.copyWith(fontSize: 24),
               ),
             ],

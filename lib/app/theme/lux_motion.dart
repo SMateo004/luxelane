@@ -40,6 +40,26 @@ abstract class LuxMotion {
   /// [d] o cero si el usuario pidió reducir el movimiento.
   static Duration of(BuildContext context, Duration d) =>
       reduced(context) ? Duration.zero : d;
+
+  /// Animaciones decorativas que se repiten (brillo del esqueleto, puntos
+  /// de carga, pulsos, marquesina): con «reducir movimiento» quedan quietas
+  /// en [still]; si no, se repiten. Se llama desde didChangeDependencies,
+  /// que se vuelve a ejecutar si cambia la preferencia (E10). Los
+  /// indicadores de progreso funcionales no pasan por aquí.
+  static void repeatUnlessReduced(
+    BuildContext context,
+    AnimationController c, {
+    bool reverse = false,
+    double still = 0,
+  }) {
+    if (reduced(context)) {
+      c
+        ..stop()
+        ..value = still;
+    } else if (!c.isAnimating) {
+      c.repeat(reverse: reverse);
+    }
+  }
 }
 
 /// Háptica discreta: confirma sin distraer. En web no hace nada.

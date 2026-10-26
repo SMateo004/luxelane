@@ -1,0 +1,224 @@
+{
+  "lib/app/driver_router/driver_router.dart": {
+    "font_size": 1,
+    "text_style": 1
+  },
+  "lib/app/router/router.dart": {
+    "sized_box_numero": 4
+  },
+  "lib/app/shell/app_shell.dart": {
+    "colores": 2,
+    "colors_material": 5,
+    "font_size": 3,
+    "text_style": 3,
+    "sized_box_numero": 6
+  },
+  "lib/core/config/firebase_startup.dart": {
+    "font_size": 1,
+    "text_style": 1
+  },
+  "lib/core/design/vehicle_catalog.dart": {
+    "colores": 16
+  },
+  "lib/core/widgets/components.dart": {
+    "colores": 1,
+    "colors_material": 1,
+    "font_size": 7,
+    "text_style": 2,
+    "sized_box_numero": 10
+  },
+  "lib/core/widgets/error_boundary.dart": {
+    "font_size": 1,
+    "text_style": 3
+  },
+  "lib/core/widgets/lux_feedback.dart": {
+    "colores": 1,
+    "colors_material": 1,
+    "font_size": 2,
+    "sized_box_numero": 2
+  },
+  "lib/core/widgets/lux_info_page.dart": {
+    "colores": 1,
+    "colors_material": 2,
+    "sized_box_numero": 2
+  },
+  "lib/core/widgets/lux_map.dart": {
+    "colors_material": 2
+  },
+  "lib/core/widgets/lux_raised.dart": {
+    "colores": 2,
+    "colors_material": 3,
+    "text_style": 1,
+    "sized_box_numero": 2
+  },
+  "lib/core/widgets/lux_service_booking_card.dart": {
+    "colores": 3,
+    "colors_material": 4,
+    "font_size": 4,
+    "text_style": 4,
+    "sized_box_numero": 14
+  },
+  "lib/core/widgets/lux_site_chrome.dart": {
+    "colores": 9,
+    "colors_material": 34,
+    "font_size": 6,
+    "text_style": 6,
+    "sized_box_numero": 20
+  },
+  "lib/core/widgets/map_picker_dialog.dart": {
+    "font_size": 4,
+    "text_style": 4,
+    "sized_box_numero": 4
+  },
+  "lib/core/widgets/place_autocomplete_field.dart": {
+    "colores": 2,
+    "colors_material": 1,
+    "font_size": 2,
+    "text_style": 4,
+    "sized_box_numero": 1
+  },
+  "lib/features/admin/presentation/pages/admin_dashboard_page.dart": {
+    "font_size": 2,
+    "text_style": 1,
+    "sized_box_numero": 1
+  },
+  "lib/features/admin/presentation/widgets/admin_alerts_tab.dart": {
+    "text_style": 1
+  },
+  "lib/features/admin/presentation/widgets/admin_finance_tab.dart": {
+    "font_size": 2,
+    "text_style": 3
+  },
+  "lib/features/admin/presentation/widgets/admin_sections.dart": {
+    "text_style": 2,
+    "sized_box_numero": 2
+  },
+  "lib/features/admin/presentation/widgets/admin_shared_widgets.dart": {
+    "font_size": 13,
+    "sized_box_numero": 4
+  },
+  "lib/features/auth/presentation/pages/login_page.dart": {
+    "colores": 1,
+    "font_size": 13,
+    "text_style": 13,
+    "sized_box_numero": 18
+  },
+  "lib/features/auth/presentation/pages/mfa_enroll_page.dart": {
+    "colors_material": 1
+  },
+  "lib/features/auth/presentation/pages/register_page.dart": {
+    "font_size": 3,
+    "text_style": 1,
+    "sized_box_numero": 6
+  },
+  "lib/features/auth/presentation/widgets/google_sign_in_button.dart": {
+    "colores": 4,
+    "font_size": 2,
+    "text_style": 1,
+    "sized_box_numero": 1
+  },
+  "lib/features/auth/presentation/widgets/reauth_dialog.dart": {
+    "text_style": 1,
+    "sized_box_numero": 2
+  },
+  "lib/features/auth/presentation/widgets/terms_required_dialog.dart": {
+    "text_style": 1,
+    "sized_box_numero": 1
+  },
+  "lib/features/booking/presentation/pages/booking_screen.dart": {
+    "colores": 1,
+    "colors_material": 19,
+    "font_size": 65,
+    "text_style": 65,
+    "sized_box_numero": 65
+  },
+  "lib/features/booking/presentation/widgets/vehicle_details.dart": {
+    "colors_material": 2,
+    "font_size": 8,
+    "text_style": 10,
+    "sized_box_numero": 18
+  },
+  "lib/features/booking/presentation/widgets/vehicle_visuals.dart": {
+    "colores": 25,
+    "colors_material": 6
+  },
+  "lib/features/business/presentation/pages/business_page.dart": {
+    "sized_box_numero": 8
+  },
+  "lib/features/driver/presentation/pages/driver_earnings_screen.dart": {
+    "font_size": 8,
+    "sized_box_numero": 1
+  },
+  "lib/features/driver/presentation/pages/driver_home_screen.dart": {
+    "font_size": 11,
+    "sized_box_numero": 11
+  },
+  "lib/features/driver/presentation/pages/driver_queue_screen.dart": {
+    "font_size": 6,
+    "sized_box_numero": 2
+  },
+  "lib/features/driver/presentation/widgets/flight_info_card.dart": {
+    "sized_box_numero": 2
+  },
+  "lib/features/home/presentation/pages/home_screen.dart": {
+    "colores": 2,
+    "font_size": 9,
+    "text_style": 1,
+    "sized_box_numero": 9
+  },
+  "lib/features/home/presentation/pages/home_web_page.dart": {
+    "colores": 43,
+    "colors_material": 52,
+    "font_size": 35,
+    "text_style": 26,
+    "sized_box_numero": 40
+  },
+  "lib/features/legal/presentation/pages/legal_page.dart": {
+    "sized_box_numero": 3
+  },
+  "lib/features/notifications/presentation/widgets/notification_bell.dart": {
+    "colors_material": 1,
+    "font_size": 1,
+    "text_style": 1,
+    "sized_box_numero": 1
+  },
+  "lib/features/payments/presentation/pages/add_card_screen.dart": {
+    "font_size": 1,
+    "text_style": 1
+  },
+  "lib/features/payments/presentation/pages/payment_screen.dart": {
+    "colors_material": 1,
+    "font_size": 2,
+    "sized_box_numero": 2
+  },
+  "lib/features/profile/presentation/pages/profile_screen.dart": {
+    "colors_material": 1,
+    "font_size": 4,
+    "text_style": 1,
+    "sized_box_numero": 3
+  },
+  "lib/features/ride/presentation/pages/ride_screen.dart": {
+    "font_size": 2,
+    "sized_box_numero": 2
+  },
+  "lib/features/ride/presentation/widgets/cancel_booking_dialog.dart": {
+    "text_style": 1
+  },
+  "lib/features/services/presentation/widgets/service_page_template.dart": {
+    "colores": 11,
+    "colors_material": 9,
+    "font_size": 5,
+    "text_style": 5,
+    "sized_box_numero": 34
+  },
+  "lib/features/trips/presentation/pages/trips_screen.dart": {
+    "font_size": 3,
+    "sized_box_numero": 1
+  },
+  "lib/main.dart": {
+    "colores": 1
+  },
+  "lib/main_driver.dart": {
+    "colores": 1
+  }
+}

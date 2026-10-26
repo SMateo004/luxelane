@@ -1,0 +1,198 @@
+{
+  "red_4g_lenta": {
+    "offline": false,
+    "downloadThroughput": 209715.2,
+    "uploadThroughput": 96000,
+    "latency": 562.5
+  },
+  "carga": [
+    {
+      "ruta": "/",
+      "ancho": 390,
+      "limitada": false,
+      "fcp_ms": 1388,
+      "primer_fotograma_ms": 1729,
+      "interactivo_ms": 2600,
+      "transferido_kb": 4296,
+      "peticiones": 29
+    },
+    {
+      "ruta": "/",
+      "ancho": 390,
+      "limitada": true,
+      "fcp_ms": 19372,
+      "primer_fotograma_ms": 19753,
+      "interactivo_ms": 20567,
+      "transferido_kb": 4296,
+      "peticiones": 29
+    },
+    {
+      "ruta": "/",
+      "ancho": 1280,
+      "limitada": false,
+      "fcp_ms": 1488,
+      "primer_fotograma_ms": 1853,
+      "interactivo_ms": 3583,
+      "transferido_kb": 11248,
+      "peticiones": 33
+    },
+    {
+      "ruta": "/",
+      "ancho": 1280,
+      "limitada": true,
+      "fcp_ms": 19388,
+      "primer_fotograma_ms": 19680,
+      "interactivo_ms": 21253,
+      "transferido_kb": 4228,
+      "peticiones": 28
+    },
+    {
+      "ruta": "/legal/terminos",
+      "ancho": 390,
+      "limitada": true,
+      "fcp_ms": 19360,
+      "primer_fotograma_ms": 19589,
+      "interactivo_ms": 20174,
+      "transferido_kb": 4228,
+      "peticiones": 28
+    }
+  ],
+  "lecturas": [
+    {
+      "pantalla": "inicio",
+      "desde": "navegación en la app",
+      "documentos_firestore": 0,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "viajes",
+      "desde": "navegación en la app",
+      "documentos_firestore": 0,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "viaje",
+      "desde": "navegación en la app",
+      "documentos_firestore": 0,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "perfil",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 0,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "chofer-inicio",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 0,
+      "callables": [
+        "registerDriverDevice"
+      ],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "chofer-solicitudes",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 0,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "chofer-ganancias",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 0,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "panel",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 0,
+      "callables": [],
+      "callables_repetidas": []
+    }
+  ],
+  "peso": {
+    "total_mb": 201,
+    "archivos": 111,
+    "mayores": [
+      {
+        "archivo": "assets/assets/videos/business_bg.mp4",
+        "kb": 71636,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "assets/assets/videos/cta_bg.mp4",
+        "kb": 50958,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "canvaskit/canvaskit.wasm",
+        "kb": 6782,
+        "brotli_kb": 2130,
+        "gzip_kb": 2760
+      },
+      {
+        "archivo": "canvaskit/chromium/canvaskit.wasm",
+        "kb": 5437,
+        "brotli_kb": 1543,
+        "gzip_kb": 2080
+      },
+      {
+        "archivo": "main.dart.js",
+        "kb": 4168,
+        "brotli_kb": 915,
+        "gzip_kb": 1199
+      },
+      {
+        "archivo": "canvaskit/skwasm.wasm",
+        "kb": 3317,
+        "brotli_kb": 1123,
+        "gzip_kb": 1437
+      },
+      {
+        "archivo": "canvaskit/skwasm_st.wasm",
+        "kb": 3304,
+        "brotli_kb": 1117,
+        "gzip_kb": 1431
+      },
+      {
+        "archivo": "assets/assets/images/home/hero_bg.png",
+        "kb": 3107,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "assets/assets/images/booking/seating/business_suv_1.png",
+        "kb": 2200,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "assets/assets/images/booking/seating/van_1.png",
+        "kb": 2155,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "assets/assets/images/booking/seating/business_class_0.png",
+        "kb": 2154,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "assets/assets/images/booking/seating/business_suv_2.png",
+        "kb": 2150,
+        "brotli_kb": null,
+        "gzip_kb": null
+      }
+    ]
+  }
+}

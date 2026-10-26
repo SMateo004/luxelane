@@ -90,11 +90,11 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tester.takeException(), isNull);
-    expect(find.text('Bs170.00'), findsOneWidget); // 90 + 80
-    expect(find.text('Bs200.00'), findsOneWidget); // tarifas
-    expect(find.text('− Bs30.00'), findsOneWidget); // 10 + 20
-    expect(find.text('Bs90.00'), findsOneWidget);
-    expect(find.text('Bs80.00'), findsOneWidget);
+    expect(find.text('Bs\u00A0170'), findsOneWidget); // 90 + 80
+    expect(find.text('Bs\u00A0200'), findsOneWidget); // tarifas
+    expect(find.text('− Bs\u00A030'), findsOneWidget); // 10 + 20
+    expect(find.text('Bs\u00A090'), findsOneWidget);
+    expect(find.text('Bs\u00A080'), findsOneWidget);
     expect(find.text('Provisional'), findsOneWidget);
   });
 }

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/enums/enums.dart';
+import '../../core/models/booking_form_data.dart';
 import '../../features/admin/presentation/pages/admin_dashboard_page.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/auth/presentation/pages/verify_email_page.dart';
 import '../../features/booking/presentation/pages/booking_screen.dart';
-import '../../features/booking/presentation/pages/ride_type_page.dart';
 import '../../features/driver/presentation/pages/driver_active_ride_screen.dart';
 import '../../features/driver/presentation/pages/driver_earnings_screen.dart';
 import '../../features/driver/presentation/pages/driver_home_screen.dart';
@@ -32,6 +32,12 @@ import '../shell/app_shell.dart';
 import '../theme/app_theme.dart';
 import 'lux_transitions.dart';
 
+/// /booking solo tiene sentido con el viaje elegido en Inicio (extra).
+/// Abierta directamente (enlace, recarga) mostraba «PRECIO FINAL Bs 20» sin
+/// recorrido (E23): se vuelve al inicio.
+String? bookingRouteRedirect(Object? extra) =>
+    extra is BookingFormData ? null : LuxRoutes.home;
+
 abstract class LuxRoutes {
   static const splash = '/splash';
   static const login = '/login';
@@ -39,7 +45,6 @@ abstract class LuxRoutes {
   static const verifyEmail = '/verify-email';
   static const home = '/';
   static const booking = '/booking';
-  static const rideType = '/ride-type';
   static const ride = '/ride/:rideId';
   static const profile = '/profile';
   static const trips = '/trips';
@@ -131,7 +136,6 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
                 path == LuxRoutes.register ||
                 path == LuxRoutes.home ||
                 path == LuxRoutes.driverLogin ||
-                path.startsWith('/ride-type') ||
                 path.startsWith('/booking') ||
                 path.startsWith('/legal') ||
                 path == '/empresas';
@@ -298,11 +302,8 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
                   pageBuilder: (c, s) => _fade(const HomeScreen(), s),
                   routes: [
                     GoRoute(
-                      path: 'ride-type',
-                      pageBuilder: (c, s) => _slide(const RideTypePage(), s),
-                    ),
-                    GoRoute(
                       path: 'booking',
+                      redirect: (c, s) => bookingRouteRedirect(s.extra),
                       pageBuilder: (c, s) => _slide(const BookingScreen(), s),
                     ),
                     GoRoute(

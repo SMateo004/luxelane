@@ -308,7 +308,7 @@ class _IdlePanel extends StatelessWidget {
               child: Row(
                 children: [
                   _Metric(
-                    value: 'Bs ${state.todayEarnings.toStringAsFixed(0)}',
+                    value: LuxFormat.money(state.todayEarnings),
                     label: 'Ganancias netas',
                     big: true,
                   ),
@@ -695,31 +695,16 @@ class _ActiveRidePanel extends StatelessWidget {
             children: [
               RideProgressBar(status: booking.status),
               const SizedBox(height: LuxSpacing.lg),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: AnimatedSwitcher(
-                      duration: LuxMotion.of(context, LuxMotion.base),
-                      layoutBuilder: _topLeft,
-                      child: Text(
-                        DriverStepAction.message(booking),
-                        key: ValueKey(booking.status),
-                        style: LuxTypography.displayMedium.copyWith(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (booking.driverId != null) ...[
+              DriverTripHeader(
+                message: DriverStepAction.message(booking),
+                messageKey: ValueKey(booking.status),
+                actions: [
+                  if (booking.driverId != null)
                     SosEntry(
                       bookingId: booking.id,
                       uid: booking.driverId!,
                       status: booking.status,
                     ),
-                    const SizedBox(width: LuxSpacing.sm),
-                  ],
                   const NotificationBell(color: LuxColors.ink),
                 ],
               ),
@@ -727,7 +712,7 @@ class _ActiveRidePanel extends StatelessWidget {
               Text(
                 '${LuxFormat.dateTime(booking.scheduledAt)} · '
                 '${booking.vehicleClass.label} · '
-                'Bs ${booking.chargedAmount.toStringAsFixed(0)}',
+                '${LuxFormat.money(booking.chargedAmount)}',
                 style: LuxTypography.caption.copyWith(fontSize: 12),
               ),
               const SizedBox(height: LuxSpacing.lg),
@@ -856,7 +841,7 @@ class _Stop extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: LuxSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -904,7 +889,13 @@ class _PulseIndicatorState extends State<_PulseIndicator>
   late final AnimationController _ctrl = AnimationController(
     vsync: this,
     duration: const Duration(seconds: 2),
-  )..repeat();
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    LuxMotion.repeatUnlessReduced(context, _ctrl);
+  }
 
   @override
   void dispose() {
@@ -1015,16 +1006,16 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                       textAlign: TextAlign.center,
                       style: LuxTypography.eyebrow,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: LuxSpacing.sm),
                     Text(
-                      'Bs ${b.estimatedPrice.toStringAsFixed(0)}',
+                      LuxFormat.money(b.estimatedPrice),
                       textAlign: TextAlign.center,
                       style: LuxTypography.displayLarge.copyWith(
                         fontSize: 52,
                         height: 1,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: LuxSpacing.sm),
                     Text(
                       [when, if (trip != null) trip].join(' · '),
                       textAlign: TextAlign.center,
@@ -1094,7 +1085,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                 icon: Icons.check_rounded,
                 onPressed: widget.onAccept,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: LuxSpacing.xs),
               LuxButton.ghost(label: 'Rechazar', onPressed: widget.onDecline),
             ],
           ),
@@ -1122,7 +1113,7 @@ class _RouteItem extends StatelessWidget {
         child: Row(
           children: [
             Icon(icon, color: color, size: 18),
-            const SizedBox(width: 16),
+            const SizedBox(width: LuxSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1146,5 +1137,48 @@ class _RouteItem extends StatelessWidget {
             ),
           ],
         ),
+      );
+}
+
+/// Cabecera del viaje del chófer: el paso (título grande) y, a la derecha,
+/// SOS y campana. El título se parte antes de llegar a ellos, con un margen
+/// fijo: antes «Pide al pasajero su» quedaba pegado al SOS (E17).
+class DriverTripHeader extends StatelessWidget {
+  const DriverTripHeader({
+    super.key,
+    required this.message,
+    required this.actions,
+    this.messageKey,
+  });
+
+  final String message;
+  final List<Widget> actions;
+  final Key? messageKey;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: LuxMotion.of(context, LuxMotion.base),
+              layoutBuilder: _topLeft,
+              child: Text(
+                message,
+                key: messageKey,
+                textScaler: luxDisplayTextScaler(context),
+                style: LuxTypography.displayMedium.copyWith(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: LuxSpacing.md),
+          for (final (i, a) in actions.indexed) ...[
+            if (i > 0) const SizedBox(width: LuxSpacing.sm),
+            a,
+          ],
+        ],
       );
 }

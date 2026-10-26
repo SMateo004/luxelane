@@ -453,7 +453,7 @@ class _LedgerTile extends StatelessWidget {
                       : null,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: LuxSpacing.xs),
               AdminTag(entry.status.label, color: color),
             ],
           ),
@@ -986,7 +986,7 @@ class _Segments extends StatelessWidget {
                   Text(bs(e.value.billed), style: LuxTypography.bodyMedium),
                 ],
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: LuxSpacing.xs),
               ClipRRect(
                 borderRadius: BorderRadius.circular(2),
                 child: LinearProgressIndicator(

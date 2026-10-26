@@ -1,0 +1,149 @@
+{
+  "red_4g_lenta": {
+    "offline": false,
+    "downloadThroughput": 209715.2,
+    "uploadThroughput": 96000,
+    "latency": 562.5
+  },
+  "carga": [],
+  "lecturas": [
+    {
+      "pantalla": "inicio",
+      "desde": "navegación en la app",
+      "documentos_firestore": 11,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "viajes",
+      "desde": "navegación en la app",
+      "documentos_firestore": 11,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "viaje",
+      "desde": "navegación en la app",
+      "documentos_firestore": 13,
+      "callables": [
+        "getPickupCode"
+      ],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "perfil",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 35,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "chofer-inicio",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 16,
+      "callables": [
+        "registerDriverDevice"
+      ],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "chofer-solicitudes",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 9,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "chofer-ganancias",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 16,
+      "callables": [],
+      "callables_repetidas": []
+    },
+    {
+      "pantalla": "panel",
+      "desde": "inicio de sesión",
+      "documentos_firestore": 87,
+      "callables": [],
+      "callables_repetidas": []
+    }
+  ],
+  "peso": {
+    "total_mb": 33.4,
+    "archivos": 108,
+    "mayores": [
+      {
+        "archivo": "canvaskit/canvaskit.wasm",
+        "kb": 6782,
+        "brotli_kb": 2130,
+        "gzip_kb": 2760
+      },
+      {
+        "archivo": "canvaskit/chromium/canvaskit.wasm",
+        "kb": 5437,
+        "brotli_kb": 1543,
+        "gzip_kb": 2080
+      },
+      {
+        "archivo": "main.dart.js",
+        "kb": 4692,
+        "brotli_kb": 993,
+        "gzip_kb": 1307
+      },
+      {
+        "archivo": "canvaskit/skwasm.wasm",
+        "kb": 3317,
+        "brotli_kb": 1123,
+        "gzip_kb": 1437
+      },
+      {
+        "archivo": "canvaskit/skwasm_st.wasm",
+        "kb": 3304,
+        "brotli_kb": 1117,
+        "gzip_kb": 1431
+      },
+      {
+        "archivo": "assets/NOTICES",
+        "kb": 1818,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "canvaskit/skwasm.js.symbols",
+        "kb": 1398,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "canvaskit/skwasm_st.js.symbols",
+        "kb": 1395,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "canvaskit/canvaskit.js.symbols",
+        "kb": 1299,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "canvaskit/chromium/canvaskit.js.symbols",
+        "kb": 1222,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "assets/assets/images/home/promise_photo.jpg",
+        "kb": 324,
+        "brotli_kb": null,
+        "gzip_kb": null
+      },
+      {
+        "archivo": "assets/packages/map_launcher/assets/icons/copilot.svg",
+        "kb": 324,
+        "brotli_kb": null,
+        "gzip_kb": null
+      }
+    ]
+  }
+}

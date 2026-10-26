@@ -42,7 +42,11 @@ Future<void> configureDependencies() async {
 }
 
 void _registerServices() {
-  sl.registerLazySingleton<MapsService>(() => MapsService());
+  // Si ya hay uno registrado (solo lo hace el entorno de capturas, fuera de
+  // lib/, con lugares ficticios), se respeta.
+  if (!sl.isRegistered<MapsService>()) {
+    sl.registerLazySingleton<MapsService>(() => MapsService());
+  }
   sl.registerLazySingleton<NotificationService>(
     () => NotificationService(userRepository: sl()),
   );

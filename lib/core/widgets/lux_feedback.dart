@@ -96,7 +96,13 @@ class _LuxShimmerState extends State<LuxShimmer>
   late final AnimationController _c = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1400),
-  )..repeat();
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    LuxMotion.repeatUnlessReduced(context, _c);
+  }
 
   @override
   void dispose() {
@@ -374,7 +380,13 @@ class _RideProgressBarState extends State<RideProgressBar>
   late final AnimationController _pulse = AnimationController(
     vsync: this,
     duration: const Duration(milliseconds: 1600),
-  )..repeat(reverse: true);
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    LuxMotion.repeatUnlessReduced(context, _pulse, reverse: true, still: 1);
+  }
 
   int get _step => switch (widget.status) {
         BookingStatus.pending => 0,
@@ -457,12 +469,17 @@ class LuxSlideToConfirm extends StatefulWidget {
     required this.onConfirmed,
     this.height = 60,
     this.enabled = true,
+    this.resetToken,
   });
 
   final String label;
   final VoidCallback onConfirmed;
   final double height;
   final bool enabled;
+
+  /// Si cambia, el control vuelve a empezar: el paso no se aplicó (sin red,
+  /// error del servidor) y hay que poder repetirlo (E3).
+  final Object? resetToken;
 
   @override
   State<LuxSlideToConfirm> createState() => _LuxSlideToConfirmState();
@@ -487,8 +504,8 @@ class _LuxSlideToConfirmState extends State<LuxSlideToConfirm>
   @override
   void didUpdateWidget(LuxSlideToConfirm old) {
     super.didUpdateWidget(old);
-    // Un nuevo paso del viaje: el control vuelve a empezar.
-    if (old.label != widget.label) {
+    // Un nuevo paso del viaje, o el anterior no se aplicó: vuelve a empezar.
+    if (old.label != widget.label || old.resetToken != widget.resetToken) {
       _done = false;
       _drag = 0;
     }

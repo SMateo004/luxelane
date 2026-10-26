@@ -46,11 +46,14 @@ describe('releaseBooking', () => {
     expect(b.status).toBe('pending');
     expect(b).not.toHaveProperty('driverId');
     expect(b.lastRelease).toMatchObject({ driverId: 'chofer', reason: 'vehicle_issue', from: 'driver_arriving' });
+    expect(b.releasedBy).toEqual(['chofer']);
     expect(await doc('bookings/b1/tracking/driver')).toBeUndefined();
     // La solicitud abierta no lleva la dirección exacta.
     const req = (await doc('openRequests/b1'))!;
     expect(req).toMatchObject({ vehicleClass: 'business', estimatedPrice: 100, passengerCount: 2 });
     expect(JSON.stringify(req)).not.toContain('Calle 1');
+    // Quien la liberó viaja en la solicitud: su app ya no se la ofrece (E18).
+    expect(req.releasedBy).toEqual(['chofer']);
     expect(await doc('driverProfiles/chofer')).toMatchObject({ isAvailable: true, releasedBookingsCount: 3 });
     const alerts = (await db.collection('adminAlerts').get()).docs.map((d) => d.data());
     expect(alerts).toEqual([expect.objectContaining({

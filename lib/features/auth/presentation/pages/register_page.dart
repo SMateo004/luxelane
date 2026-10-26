@@ -78,15 +78,19 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Widget _mobileLayout() => SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+          // El logo enlaza al inicio con 48 px de alto para el dedo (E9);
+          // se quitan 12 px arriba y abajo para que no se mueva nada.
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GestureDetector(
+              LuxPressable(
+                semanticLabel: 'Luxelane, ir al inicio',
+                haptic: false,
                 onTap: () => context.go('/'),
-                child: const LuxelaneWordmark(size: 11),
+                child: const LuxTapArea(child: LuxelaneWordmark(size: 11)),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 36),
               Text(
                 'CREAR CUENTA',
                 style: LuxTypography.caption.copyWith(
@@ -98,6 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
               const SizedBox(height: 10),
               Text(
                 'Bienvenido\na Luxelane.',
+                textScaler: luxDisplayTextScaler(context),
                 style: LuxTypography.displayMedium.copyWith(
                   fontSize: 40,
                   height: 1.15,
@@ -287,25 +292,40 @@ class _TermsConsent extends StatelessWidget {
       children: [
         Row(
           children: [
-            Checkbox(
-              key: const Key('terms-checkbox'),
-              value: value,
-              onChanged:
-                  onChanged == null ? null : (v) => onChanged!(v ?? false),
+            Semantics(
+              label: 'Acepto los Términos y la Política de privacidad',
+              child: Checkbox(
+                key: const Key('terms-checkbox'),
+                value: value,
+                onChanged:
+                    onChanged == null ? null : (v) => onChanged!(v ?? false),
+              ),
             ),
             Expanded(
               child: Wrap(
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text('He leído y acepto los ', style: plain),
-                  GestureDetector(
-                    onTap: () => context.push('/legal/terminos'),
-                    child: Text('Términos', style: link),
+                  Semantics(
+                    link: true,
+                    child: LuxFocusable(
+                      onActivate: () => context.push('/legal/terminos'),
+                      child: GestureDetector(
+                        onTap: () => context.push('/legal/terminos'),
+                        child: Text('Términos', style: link),
+                      ),
+                    ),
                   ),
                   Text(' y la ', style: plain),
-                  GestureDetector(
-                    onTap: () => context.push('/legal/privacidad'),
-                    child: Text('Política de privacidad', style: link),
+                  Semantics(
+                    link: true,
+                    child: LuxFocusable(
+                      onActivate: () => context.push('/legal/privacidad'),
+                      child: GestureDetector(
+                        onTap: () => context.push('/legal/privacidad'),
+                        child: Text('Política de privacidad', style: link),
+                      ),
+                    ),
                   ),
                   Text('.', style: plain),
                 ],

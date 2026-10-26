@@ -288,6 +288,34 @@ void main() {
     }
   }
 
+  testWidgets('la auditoría se escucha al abrir su pestaña (E15)', (
+    tester,
+  ) async {
+    // Entrar al panel (pestaña Panel) no la pide.
+    await _pump(tester, const DashboardTab(), const Size(1280, 900));
+    verifyNever(_last.watchAuditLogs);
+    // Abrir la pestaña la pide una vez; volver a abrirla, no otra.
+    final bloc = AdminBloc(adminRepository: _last)..add(AdminDataRequested());
+    addTearDown(bloc.close);
+    for (final tab in const [AuditTab(), DashboardTab(), AuditTab()]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: BlocProvider.value(value: bloc, child: tab)),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+    verify(_last.watchAuditLogs).called(1);
+  });
+
+  testWidgets('el interruptor «Bloquear» dice de quién es (E7)', (
+    tester,
+  ) async {
+    await _pump(tester, const UsersTab(), const Size(1280, 900));
+    expect(find.byTooltip('Bloquear a Ana Pérez'), findsOneWidget);
+    expect(find.byTooltip('Bloquear a Luis Mamani'), findsOneWidget);
+  });
+
   testWidgets('finanzas muestra cobrado y por cobrar', (tester) async {
     await _pump(tester, const FinanceTab(), const Size(1280, 2400));
     expect(find.text('Cobrado'), findsWidgets);
@@ -542,8 +570,10 @@ void main() {
 
     Future<({List<Uri> opened, List<int> beeps})> pumpStrip(
       WidgetTester tester,
-      List<Incident> incidents,
-    ) async {
+      List<Incident> incidents, {
+      bool summaryOnly = false,
+      VoidCallback? onOpen,
+    }) async {
       final opened = <Uri>[];
       final beeps = <int>[];
       await _pump(
@@ -552,6 +582,8 @@ void main() {
           child: AdminIncidentsStrip(
             onBeep: () => beeps.add(1),
             launch: (u) async => opened.add(u),
+            summaryOnly: summaryOnly,
+            onOpen: onOpen,
           ),
         ),
         const Size(1280, 1600),
@@ -561,6 +593,26 @@ void main() {
       );
       return (opened: opened, beeps: beeps);
     }
+
+    testWidgets('móvil fuera de «Panel»: solo el resumen y «Ver» (E14)', (
+      tester,
+    ) async {
+      var opened = 0;
+      final r = await pumpStrip(
+        tester,
+        [acked, open],
+        summaryOnly: true,
+        onOpen: () => opened++,
+      );
+      expect(find.text('1 incidente sin reconocer'), findsOneWidget);
+      expect(find.text('SIN RECONOCER'), findsNothing);
+      expect(find.text('Reconocer'), findsNothing);
+      await tester.tap(find.text('Ver'));
+      expect(opened, 1);
+      // Sigue sonando aunque las tarjetas no se vean.
+      await tester.pump(const Duration(seconds: 6));
+      expect(r.beeps, isNotEmpty);
+    });
 
     testWidgets('sin incidentes no hay franja ni sonido', (tester) async {
       final r = await pumpStrip(tester, const []);

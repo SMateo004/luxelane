@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../incidents/presentation/widgets/sos_entry.dart';
@@ -108,9 +109,11 @@ class _DriverTopBar extends StatelessWidget {
         padding: const EdgeInsets.all(LuxSpacing.md),
         child: Row(
           children: [
-            GestureDetector(
+            LuxPressable(
+              semanticLabel: 'Volver',
               onTap: () => context.pop(),
-              child: Container(
+              child: LuxTapArea(
+                  child: Container(
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
@@ -122,7 +125,7 @@ class _DriverTopBar extends StatelessWidget {
                   Icons.keyboard_arrow_down_rounded,
                   color: LuxColors.ink,
                 ),
-              ),
+              )),
             ),
             const SizedBox(width: LuxSpacing.md),
             const LuxelaneWordmark(),
@@ -143,6 +146,7 @@ class _DriverWebHeader extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
+              tooltip: 'Volver',
               onPressed: () => context.pop(),
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
             ),
@@ -292,7 +296,7 @@ class _RideInfoRow extends StatelessWidget {
               children: [
                 const Text('Tarifa estimada', style: LuxTypography.caption),
                 Text(
-                  'Bs${booking.estimatedPrice.toStringAsFixed(2)}',
+                  LuxFormat.money(booking.estimatedPrice),
                   style: LuxTypography.bodyLarge.copyWith(
                     color: LuxColors.sapphire,
                   ),

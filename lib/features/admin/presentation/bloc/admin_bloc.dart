@@ -6,7 +6,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
+import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../domain/admin_finance.dart';
 import '../../domain/admin_operations.dart';
 import '../../domain/repositories/admin_repository.dart';
@@ -22,6 +24,18 @@ abstract class AdminEvent extends Equatable {
 }
 
 class AdminDataRequested extends AdminEvent {}
+
+/// Listas que solo usa una pestaña: se escuchan al abrirla por primera vez,
+/// no al entrar al panel (E15). Las tarifas no: la app ya escucha la misma
+/// consulta (PricingCatalog) y Firestore la comparte.
+enum AdminLazyData { audit }
+
+class AdminLazyDataNeeded extends AdminEvent {
+  const AdminLazyDataNeeded(this.data);
+  final AdminLazyData data;
+  @override
+  List<Object?> get props => [data];
+}
 
 // Toda escritura lleva el motivo que queda en la auditoría del servidor
 // (Parte A).
@@ -281,6 +295,7 @@ class AdminState extends Equatable {
     this.successMessage,
     this.messageSeq = 0,
     this.loadError,
+    this.lazyLoaded = const {},
   });
 
   final List<Booking> bookings;
@@ -310,6 +325,10 @@ class AdminState extends Equatable {
   /// Una lista en vivo falló al cargar; se mantiene hasta recargar.
   final String? loadError;
 
+  /// Listas de una sola pestaña que ya llegaron (E15): hasta entonces la
+  /// pestaña muestra que carga, no «vacío» ni «sin configurar».
+  final Set<AdminLazyData> lazyLoaded;
+
   bool get isMaintenanceMode => globalSettings['isMaintenanceMode'] ?? false;
   bool get pushNotificationsEnabled =>
       globalSettings['pushNotificationsEnabled'] ?? true;
@@ -322,7 +341,11 @@ class AdminState extends Equatable {
       kDefaultCommissionPct;
 
   /// Viajes completados sin reparto confirmado por el servidor (anteriores a
-  /// settleBooking, o con un precio ajustado aún sin recalcular).
+  /// settleBooking, o con un precio ajustado aún sin recalcular). Sale de
+  /// `bookings/{id}.settlement`: es el reparto calculado (comisión y parte
+  /// del chófer), NO un registro de que al chófer se le pagó. No existe
+  /// marca de «chófer pagado»: corregir un cobro reescribe el reparto aunque
+  /// ya se le haya pagado por fuera (DEPLOY.md, «Reparto y pago al chófer»).
   int get unsettledCount => bookings
       .where(
         (b) =>
@@ -413,6 +436,7 @@ class AdminState extends Equatable {
     String? successMessage,
     String? loadError,
     bool clearLoadError = false,
+    Set<AdminLazyData>? lazyLoaded,
   }) {
     final notice = error != null || successMessage != null;
     return AdminState(
@@ -433,6 +457,7 @@ class AdminState extends Equatable {
       successMessage: successMessage,
       messageSeq: notice ? messageSeq + 1 : messageSeq,
       loadError: clearLoadError ? null : (loadError ?? this.loadError),
+      lazyLoaded: lazyLoaded ?? this.lazyLoaded,
     );
   }
 
@@ -455,6 +480,7 @@ class AdminState extends Equatable {
         successMessage,
         messageSeq,
         loadError,
+        lazyLoaded,
       ];
 }
 
@@ -481,6 +507,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       : _repo = adminRepository,
         super(const AdminState()) {
     on<AdminDataRequested>(_onDataRequested);
+    on<AdminLazyDataNeeded>(_onLazyDataNeeded);
 
     on<AdminUpdatePricingRequested>(
       (e, emit) => _perform(
@@ -511,7 +538,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         emit,
         _repo.decideNoShow(e.booking, e.fee, e.reason),
         e.fee > 0
-            ? 'Reserva cancelada con recargo de ${e.fee.toStringAsFixed(2)} Bs'
+            ? 'Reserva cancelada con recargo de ${LuxFormat.money(e.fee)}'
             : 'Reserva cancelada sin recargo',
       ),
     );
@@ -699,7 +726,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
         (data) => add(
           _AdminStreamUpdated((s) => apply(s, data).copyWith(isLoading: false)),
         ),
-        onError: (Object e) => add(_AdminStreamFailed(what, e.toString())),
+        onError: (Object e) =>
+            add(_AdminStreamFailed(what, unexpectedErrorMessage(e))),
       ),
     );
   }
@@ -748,11 +776,6 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       (s, d) => s.copyWith(vehicles: d),
     );
     _listen(
-      _repo.watchAuditLogs(),
-      'la auditoría',
-      (s, d) => s.copyWith(auditLogs: d),
-    );
-    _listen(
       _repo.watchAdminAlerts(),
       'las alertas',
       (s, d) => s.copyWith(alerts: d),
@@ -772,6 +795,27 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
       'la configuración financiera',
       (s, d) => s.copyWith(financeSettings: d),
     );
+    // Al recargar, las de una pestaña ya abierta vuelven a escucharse.
+    _lazyRequested.forEach(_startLazy);
+  }
+
+  /// Listas de una sola pestaña pedidas hasta ahora.
+  final _lazyRequested = <AdminLazyData>{};
+
+  void _onLazyDataNeeded(AdminLazyDataNeeded e, Emitter<AdminState> emit) {
+    if (_lazyRequested.add(e.data)) _startLazy(e.data);
+  }
+
+  void _startLazy(AdminLazyData data) {
+    Set<AdminLazyData> loaded(AdminState s) => {...s.lazyLoaded, data};
+    switch (data) {
+      case AdminLazyData.audit:
+        _listen(
+          _repo.watchAuditLogs(),
+          'la auditoría',
+          (s, d) => s.copyWith(auditLogs: d, lazyLoaded: loaded(s)),
+        );
+    }
   }
 
   Future<void> _cancelSubs() async {

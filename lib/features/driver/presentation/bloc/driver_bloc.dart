@@ -222,6 +222,8 @@ class DriverLoaded extends DriverState {
       .where(
         (r) =>
             !declinedIds.contains(r.id) &&
+            // Las que liberó: también al volver a entrar (E18).
+            !r.releasedBy.contains(user.id) &&
             !bookings.any((b) => b.id == r.id) &&
             vehicleClass != null &&
             r.vehicleClass == vehicleClass,
@@ -759,10 +761,18 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
               ? 'Sin conexión: no se liberó el viaje. Vuelve a intentarlo.'
               : f.message,
         ),
-        (_) => _notice(
-          emit,
-          'Liberaste el viaje. Central buscará otro chófer.',
-        ),
+        (_) {
+          // El servidor no deja volver a aceptarla: tampoco se ofrece.
+          if (state is DriverLoaded) {
+            final cur = state as DriverLoaded;
+            emit(
+              cur.copyWith(
+                declinedIds: [...cur.declinedIds, event.bookingId],
+                notice: 'Liberaste el viaje. Central buscará otro chófer.',
+              ),
+            );
+          }
+        },
       );
     } finally {
       _inFlight.remove(key);

@@ -24,7 +24,6 @@ class HourlyCharterPage extends StatelessWidget {
       ),
       LuxAssurance.fixedPrice,
       LuxAssurance.chauffeurs,
-      LuxAssurance.privacy,
     ],
     steps: [
       ServiceStep(

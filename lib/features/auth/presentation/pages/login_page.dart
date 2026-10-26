@@ -189,15 +189,19 @@ class _LoginPageState extends State<LoginPage> {
 
   Widget _mobileLayout() => SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 28),
+          // El logo enlaza al inicio con 48 px de alto para el dedo (E9);
+          // se quitan 12 px arriba y abajo para que no se mueva nada.
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GestureDetector(
+              LuxPressable(
+                semanticLabel: 'Luxelane, ir al inicio',
+                haptic: false,
                 onTap: () => context.go('/'),
-                child: const LuxelaneWordmark(size: 11),
+                child: const LuxTapArea(child: LuxelaneWordmark(size: 11)),
               ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 16),
               const _AuthHeroPhoto(),
               const SizedBox(height: 32),
               Text(
@@ -209,9 +213,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 'Tu chófer,\ncomo lo recuerdas.',
-                style: TextStyle(
+                textScaler: luxDisplayTextScaler(context),
+                style: const TextStyle(
                   fontFamily: _kSerif,
                   fontSize: 38,
                   fontWeight: FontWeight.w500,
@@ -528,22 +533,28 @@ class _TextLinkState extends State<_TextLink> {
   bool _hover = false;
 
   @override
-  Widget build(BuildContext context) => MouseRegion(
-        onEnter: (_) => setState(() => _hover = true),
-        onExit: (_) => setState(() => _hover = false),
-        cursor: SystemMouseCursors.click,
-        child: GestureDetector(
-          onTap: widget.onTap,
-          child: Text(
-            widget.label,
-            style: TextStyle(
-              fontFamily: _kSans,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: _hover ? _sphLt : _sph.withAlpha(220),
-              decoration:
-                  _hover ? TextDecoration.underline : TextDecoration.none,
-              decorationColor: _sphLt,
+  Widget build(BuildContext context) => Semantics(
+        link: true,
+        child: LuxFocusable(
+          onActivate: widget.onTap,
+          child: MouseRegion(
+            onEnter: (_) => setState(() => _hover = true),
+            onExit: (_) => setState(() => _hover = false),
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: widget.onTap,
+              child: Text(
+                widget.label,
+                style: TextStyle(
+                  fontFamily: _kSans,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: _hover ? _sphLt : _sph.withAlpha(220),
+                  decoration:
+                      _hover ? TextDecoration.underline : TextDecoration.none,
+                  decorationColor: _sphLt,
+                ),
+              ),
             ),
           ),
         ),

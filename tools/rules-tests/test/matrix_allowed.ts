@@ -16,10 +16,6 @@ export const ALLOWED: Record<string, Cells> = {
     },
     bloq: {
       leer: { why: 'una cuenta bloqueada sigue leyendo su perfil (la app lo usa para detectar el bloqueo y cerrar sesión)' },
-      actualizar: {
-        why: 'la regla del dueño no mira isActive',
-        warn: 'un bloqueado aún puede cambiar su nombre, teléfono o tokens de push. Sin efecto en viajes, pero podría exigirse isActive (salvo quitar tokens al cerrar sesión).',
-      },
     },
     admin: {
       leer: { why: 'el panel muestra los usuarios' },
@@ -158,7 +154,6 @@ export const ALLOWED: Record<string, Cells> = {
     bloq: {
       leer: { why: 've su vehículo' },
       listar: { why: 'su vehículo por consulta' },
-      actualizar: { why: 'la regla de color y foto no mira isActive', warn: 'un bloqueado aún cambia color o foto. Sin efecto en viajes.' },
     },
     admin: {
       leer: { why: 'flota' },

@@ -12,15 +12,13 @@ class AirportTransferPage extends StatelessWidget {
     mode: LuxBookingMode.airport,
     eyebrow: 'Traslado al aeropuerto',
     title: 'Aterriza.\nNosotros nos\nocupamos del resto.',
-    lead: 'Tu chófer sigue tu vuelo, te espera en llegadas con tu nombre '
+    lead: 'Tu chófer te espera en llegadas con tu nombre '
         'y se encarga del equipaje. Tú solo sales por la puerta.',
     heroImage: 'assets/images/services/aeropuerto/hero.jpg',
     heroFallback: 'assets/images/home/immersive_bg.jpg',
     assurances: [
-      LuxAssurance.flightTracking,
-      LuxAssurance.waitAirport,
       LuxAssurance.fixedPrice,
-      LuxAssurance.freeCancel,
+      LuxAssurance.chauffeurs,
     ],
     steps: [
       ServiceStep(
@@ -29,11 +27,11 @@ class AirportTransferPage extends StatelessWidget {
       ),
       ServiceStep(
         'Recibe a tu chófer',
-        'Antes de la recogida tendrás su nombre, vehículo y contacto en la app. Seguimos tu vuelo por ti.',
+        'Antes de la recogida tendrás su nombre, vehículo y contacto en la app.',
       ),
       ServiceStep(
         'Sal y relájate',
-        'Te espera en llegadas con un cartel con tu nombre, se ocupa del equipaje y te lleva directo a tu destino.',
+        'Te espera en llegadas, se ocupa del equipaje y te lleva directo a tu destino.',
       ),
     ],
     storyEyebrow: 'La llegada',
@@ -42,30 +40,19 @@ class AirportTransferPage extends StatelessWidget {
         'negociaciones o incertidumbre. Un chófer de Luxelane convierte la '
         'llegada en una transición tranquila hacia tu hotel, tu reunión o tu casa.',
     storyPoints: [
-      'Recibimiento personalizado en la terminal',
       'Ayuda con el equipaje, de la cinta al maletero',
-      'Agua de cortesía y cargadores a bordo',
       'Conexiones entre aeropuertos y hoteles sin complicaciones',
     ],
     storyImage: 'assets/images/services/aeropuerto/arrival.jpg',
     storyFallback: 'assets/images/home/promise_photo.jpg',
     faqs: [
       ServiceFaq(
-        '¿Qué pasa si mi vuelo se retrasa?',
-        'Nada. Seguimos tu vuelo en tiempo real y ajustamos la hora de recogida automáticamente, sin coste adicional. '
-            'Además, cuentas con 60 minutos de espera gratuita desde el aterrizaje.',
-      ),
-      ServiceFaq(
         '¿Dónde me espera el chófer?',
-        'En la zona de llegadas, con un cartel con tu nombre. Recibirás sus datos de contacto en la app antes de la recogida.',
+        'En la zona de llegadas. Recibirás sus datos de contacto en la app antes de la recogida.',
       ),
       ServiceFaq(
-        '¿El precio incluye peajes y propina?',
-        'Sí. El precio que ves al reservar es el precio final: peajes, impuestos y propina incluidos. Sin sorpresas.',
-      ),
-      ServiceFaq(
-        '¿Puedo cancelar o modificar mi reserva?',
-        'Sí, sin coste hasta 1 hora antes de la recogida, directamente desde la app.',
+        '¿Puedo cancelar mi reserva?',
+        'Sí, desde la app antes de que empiece el viaje. Si según la política de cancelación corresponde un recargo, lo verás antes de confirmar.',
       ),
       ServiceFaq(
         '¿Cuánto equipaje puedo llevar?',
@@ -74,7 +61,7 @@ class AirportTransferPage extends StatelessWidget {
     ],
     closingTitle: 'Tu próximo vuelo\nya tiene chófer.',
     closingBody:
-        'Reserva ahora y olvídate del trayecto. Precio fijo, chófer verificado y seguimiento de vuelo incluidos.',
+        'Reserva ahora. Precio fijo al reservar y chóferes con documentos verificados.',
   );
 
   @override

@@ -443,14 +443,14 @@ class _AdminBookingTile extends StatelessWidget {
                   bs(b.finalPrice ?? b.estimatedPrice),
                   style: LuxTypography.titleMedium,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: LuxSpacing.xs),
                 BookingStatusChip(status: b.status),
                 if (charge != null) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: LuxSpacing.xs),
                   AdminTag(charge.label, color: chargeStatusColor(charge)),
                 ],
                 if (b.pricingReviewReason != null) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: LuxSpacing.xs),
                   const AdminTag('Revisar precio', color: LuxColors.warning),
                 ],
               ],
@@ -1269,7 +1269,10 @@ class _UserTile extends StatelessWidget {
             ),
             const SizedBox(width: LuxSpacing.md),
             Tooltip(
-              message: user.isActive ? 'Bloquear' : 'Reactivar',
+              // El nombre en la etiqueta: con lector de pantalla, la lista
+              // de interruptores no decía de quién era cada uno (E7).
+              message: '${user.isActive ? 'Bloquear' : 'Reactivar'} a '
+                  '${user.displayName}',
               child: Switch.adaptive(
                 value: user.isActive,
                 activeColor: LuxColors.sapphire,
@@ -1415,9 +1418,19 @@ class _AuditTabState extends State<AuditTab> {
   String _search = '';
 
   @override
+  void initState() {
+    super.initState();
+    // La auditoría (hasta 250 registros) se escucha al abrir la pestaña,
+    // no al entrar al panel (E15).
+    context
+        .read<AdminBloc>()
+        .add(const AdminLazyDataNeeded(AdminLazyData.audit));
+  }
+
+  @override
   Widget build(BuildContext context) => BlocBuilder<AdminBloc, AdminState>(
         builder: (context, state) {
-          if (state.isLoading && state.auditLogs.isEmpty) {
+          if (!state.lazyLoaded.contains(AdminLazyData.audit)) {
             return const LuxSkeletonList();
           }
           final q = _search.toLowerCase();
@@ -2003,7 +2016,7 @@ class BusinessLeadsTab extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: LuxSpacing.xs),
                     Text(
                       '${l.contactName} · ${l.email} · ${l.phone}',
                       style: LuxTypography.bodyMedium,

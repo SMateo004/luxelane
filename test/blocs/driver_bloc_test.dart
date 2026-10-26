@@ -565,6 +565,33 @@ void main() {
       expect(state.matchingRequests.map((r) => r.id), ['otra']);
     });
 
+    test('una que liberó no se le ofrece al volver a entrar (E18)', () {
+      final released = OpenRequest(
+        id: 'liberada',
+        vehicleClass: VehicleClass.business,
+        serviceType: ServiceType.oneWay,
+        scheduledAt: _now,
+        estimatedPrice: 75,
+        releasedBy: const ['driver-1'],
+      );
+      // Estado nuevo (sin declinedIds de la sesión anterior).
+      final state = DriverLoaded(
+        user: _driverUser,
+        profile: _driverProfile,
+        isAvailable: true,
+        bookings: const [],
+        pendingRequests: [released, _request('otra')],
+        vehicleClass: VehicleClass.business,
+      );
+      expect(state.matchingRequests.map((r) => r.id), ['otra']);
+      expect(
+        OpenRequest.fromJson('x', {
+          'releasedBy': ['driver-1', 3],
+        }).releasedBy,
+        ['driver-1'],
+      );
+    });
+
     blocTest<DriverBloc, DriverState>(
       'un chófer verificado escucha las solicitudes abiertas',
       build: bloc,

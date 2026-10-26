@@ -27,9 +27,74 @@
       padding: 0;
       overflow: hidden;
     }
+    /* Pantalla de carga de la marca (E4), solo HTML y CSS: la CSP no permite
+       scripts en línea. Colores de LuxColors (bg, ink, sapphire). Queda
+       debajo de Flutter (z-index -1): Flutter la tapa en su primer fotograma.
+       No se oculta al aparecer <flutter-view>, porque ese elemento existe
+       antes del primer fotograma y quedaría la pantalla en blanco. Se retira
+       30 s después solo para dejar de pintar la barra. */
+    #lux-splash {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      background: #FAFBFE;
+      color: #0D1B2E;
+      font-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+    }
+    #lux-splash .lux-mark {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      letter-spacing: 0.32em;
+      font-size: 15px;
+      font-weight: 500;
+    }
+    #lux-splash .lux-mark span {
+      width: 30px;
+      height: 30px;
+      border: 1.5px solid #0D1B2E;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0;
+      font-size: 15px;
+    }
+    #lux-splash .lux-bar {
+      width: 120px;
+      height: 2px;
+      background: #E8EDF7;
+      overflow: hidden;
+      border-radius: 2px;
+    }
+    #lux-splash .lux-bar::after {
+      content: '';
+      display: block;
+      width: 40%;
+      height: 100%;
+      background: #1B4F8A;
+      animation: lux-load 1.4s ease-in-out infinite;
+    }
+    @keyframes lux-load {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(260%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #lux-splash .lux-bar::after { animation: none; width: 100%; opacity: 0.5; }
+    }
+    @keyframes lux-out { to { visibility: hidden; } }
+    body:has(flutter-view) #lux-splash { animation: lux-out 0s 30s forwards; }
   </style>
 </head>
 <body>
+  <div id="lux-splash" aria-hidden="true">
+    <div class="lux-mark"><span>L</span>LUXELANE</div>
+    <div class="lux-bar"></div>
+  </div>
   <!-- External (no inline script, so the CSP needs no 'unsafe-inline' for
        scripts). Hosting serves *.js with Cache-Control: no-cache, and
        flutter_bootstrap.js gives main.dart.js a new URL per build. -->
