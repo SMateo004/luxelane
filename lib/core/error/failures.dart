@@ -128,3 +128,9 @@ class IncidentFailure extends Failure {
 class ValidationFailure extends Failure {
   const ValidationFailure([super.message = 'Validation error']);
 }
+
+/// La reserva que se escucha no existe (o se borró): no es un fallo de red.
+class BookingNotFoundException implements Exception {
+  const BookingNotFoundException(this.bookingId);
+  final String bookingId;
+}

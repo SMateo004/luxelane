@@ -264,7 +264,9 @@ class BookingRepositoryImpl implements BookingRepository {
         ServerFailure(
           e.code == 'permission-denied'
               ? 'Este viaje ya no está disponible.'
-              : 'No se pudo aceptar el viaje. Revisa tu conexión.',
+              : e.code == 'unavailable' || e.code == 'deadline-exceeded'
+                  ? 'No se pudo aceptar el viaje. Revisa tu conexión.'
+                  : 'No se pudo aceptar el viaje. Inténtalo de nuevo.',
         ),
       );
     } catch (e) {
@@ -313,11 +315,14 @@ class BookingRepositoryImpl implements BookingRepository {
   }
 
   @override
-  Stream<Booking> watchBooking(String bookingId) => _col
-      .doc(bookingId)
-      .snapshots()
-      .where((s) => s.exists)
-      .map((s) => Booking.fromJson({'id': s.id, ...s.data()!}));
+
+  /// Si la reserva no existe, error BookingNotFoundException (antes se
+  /// esperaba para siempre o se culpaba a la conexión, E13).
+  Stream<Booking> watchBooking(String bookingId) =>
+      _col.doc(bookingId).snapshots().map((s) {
+        if (!s.exists) throw BookingNotFoundException(bookingId);
+        return Booking.fromJson({'id': s.id, ...s.data()!});
+      });
 }
 
 const _kConnectionError =
@@ -403,8 +408,15 @@ class _AcceptError implements Exception {
   final String message;
 }
 
+/// Sin respuesta de Functions (la llamada no salió): sí es la red.
 const _kCancelConnectionError =
     'No se pudo cancelar. Revisa tu conexión e inténtalo de nuevo.';
+
+/// Fallo del servidor al cancelar (internal, etc.): no es la red (E13).
+/// Sin red, commonFunctionError ya da el mensaje de conexión.
+const _kCancelServerError =
+    'No se pudo cancelar ahora. Inténtalo de nuevo en unos minutos; si '
+    'sigue, contacta con central.';
 
 /// Error de cancelBooking (details.reason) a lo que ve el pasajero.
 Failure cancelFailureFor(String code, Object? details) {
@@ -424,6 +436,6 @@ Failure cancelFailureFor(String code, Object? details) {
       return const ServerFailure('No encontramos esta reserva en tu cuenta.');
   }
   return ServerFailure(
-    commonFunctionError(code, details) ?? _kCancelConnectionError,
+    commonFunctionError(code, details) ?? _kCancelServerError,
   );
 }

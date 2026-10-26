@@ -18,6 +18,7 @@ import '../../../../core/widgets/lux_map.dart';
 import '../../../driver/presentation/widgets/pickup_code_entry.dart'
     show CallDispatchButton;
 import '../../../incidents/presentation/widgets/sos_entry.dart';
+import '../ride_load_error.dart';
 import '../widgets/cancel_booking_dialog.dart';
 import '../widgets/pending_status.dart';
 import '../widgets/pickup_code_card.dart';
@@ -55,7 +56,9 @@ class _RideScreenState extends State<RideScreen> {
   /// Teléfono del chófer: solo existe para la pantalla mientras el viaje
   /// está activo (bookings/{id}/driverContact/phone).
   String? _driverPhone;
-  bool _loadError = false;
+
+  /// Mensaje si la reserva no se pudo cargar.
+  String? _loadError;
   bool _ratingPrompted = false;
   bool _cancelling = false;
 
@@ -70,7 +73,7 @@ class _RideScreenState extends State<RideScreen> {
         if (!mounted) return;
         setState(() {
           _booking = b;
-          _loadError = false;
+          _loadError = null;
         });
         _syncDriverPhone();
         // Al completarse, se invita a valorar una sola vez por visita.
@@ -83,8 +86,8 @@ class _RideScreenState extends State<RideScreen> {
           );
         }
       },
-      onError: (_) {
-        if (mounted) setState(() => _loadError = true);
+      onError: (Object e) {
+        if (mounted) setState(() => _loadError = rideLoadErrorMessage(e));
       },
     );
   }
@@ -130,9 +133,8 @@ class _RideScreenState extends State<RideScreen> {
   BookingStatus? get _status => _booking?.status;
 
   String get _statusMessage {
-    if (_loadError) {
-      return 'No pudimos cargar tu reserva. Revisa tu conexión.';
-    }
+    final error = _loadError;
+    if (error != null) return error;
     switch (_status) {
       case null:
         return 'Cargando tu reserva…';
@@ -282,6 +284,11 @@ class _RideScreenState extends State<RideScreen> {
   Widget _driverSection() {
     final d = _driver;
     if (_status == BookingStatus.cancelled) return const SizedBox.shrink();
+    // Sin reserva cargada no hay chófer que asignar (antes «Asignando a tu
+    // chófer» debajo del error, E13).
+    if (_booking == null && _loadError != null) {
+      return const SizedBox.shrink();
+    }
     if (d == null) {
       final b = _booking;
       final needsDispatch = b != null &&
@@ -338,7 +345,7 @@ class _RideScreenState extends State<RideScreen> {
                 _TopBar(trailing: _sos()),
                 const Spacer(),
                 _BottomPanel(
-                  status: _status ?? BookingStatus.pending,
+                  status: _status,
                   message: _statusMessage,
                   pickup: _pickupSection(),
                   driver: _driverSection(),
@@ -364,7 +371,7 @@ class _RideScreenState extends State<RideScreen> {
               child: Column(
                 children: [
                   _WebRideHeader(
-                    status: _status ?? BookingStatus.pending,
+                    status: _status,
                     trailing: _sos(),
                   ),
                   const LuxDivider(),
@@ -459,7 +466,9 @@ class _BottomPanel extends StatelessWidget {
     this.preferences = RidePreferences.none,
   });
 
-  final BookingStatus status;
+  /// null mientras carga o si la reserva no se pudo abrir: sin etiqueta
+  /// de estado (antes decía «Pendiente» de una reserva inexistente, E13).
+  final BookingStatus? status;
   final String message;
   final Widget pickup;
   final Widget driver;
@@ -500,8 +509,8 @@ class _BottomPanel extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (status != BookingStatus.cancelled) ...[
-              RideProgressBar(status: status),
+            if (status case final s? when s != BookingStatus.cancelled) ...[
+              RideProgressBar(status: s),
               const SizedBox(height: LuxSpacing.md),
             ],
             // Cada cambio de estado se anuncia con un fundido, no un salto.
@@ -517,8 +526,10 @@ class _BottomPanel extends StatelessWidget {
                 key: ValueKey(status),
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  BookingStatusChip(status: status),
-                  const SizedBox(height: LuxSpacing.sm + 2),
+                  if (status case final s?) ...[
+                    BookingStatusChip(status: s),
+                    const SizedBox(height: LuxSpacing.sm + 2),
+                  ],
                   Text(
                     message,
                     style: LuxTypography.headlineLarge.copyWith(
@@ -601,7 +612,7 @@ class _AssigningCard extends StatelessWidget {
 
 class _WebRideHeader extends StatelessWidget {
   const _WebRideHeader({required this.status, this.trailing});
-  final BookingStatus status;
+  final BookingStatus? status;
   final Widget? trailing;
 
   @override
@@ -615,7 +626,7 @@ class _WebRideHeader extends StatelessWidget {
               trailing!,
               const SizedBox(width: LuxSpacing.sm),
             ],
-            BookingStatusChip(status: status),
+            if (status case final s?) BookingStatusChip(status: s),
           ],
         ),
       );
