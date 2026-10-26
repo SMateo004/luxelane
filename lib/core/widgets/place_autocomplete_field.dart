@@ -49,7 +49,12 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   final _focus = FocusNode();
   final _maps = sl<MapsService>();
   final _fieldKey = GlobalKey();
-  final _portalController = OverlayPortalController();
+
+  /// La lista va en una entrada propia del Overlay raíz (E34): con
+  /// OverlayPortal su nodo de accesibilidad quedaba entre los de la página y,
+  /// en web, los chips de recientes lo tapaban (un clic en la sugerencia
+  /// elegía el chip). Una entrada del Overlay va por encima de toda la ruta.
+  OverlayEntry? _dropEntry;
 
   List<PlaceSuggestion> _suggestions = [];
   Timer? _debounce;
@@ -102,6 +107,8 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
 
   @override
   void dispose() {
+    _dropEntry?.remove();
+    _dropEntry = null;
     _ctrl.dispose();
     _focus.dispose();
     _debounce?.cancel();
@@ -112,12 +119,18 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
 
   void _showDropdown() {
     if (!_showDrop) setState(() => _showDrop = true);
-    if (!_portalController.isShowing) _portalController.show();
+    if (_dropEntry == null) {
+      _dropEntry = OverlayEntry(builder: _buildOverlayDropdown);
+      Overlay.of(context, rootOverlay: true).insert(_dropEntry!);
+    } else {
+      _dropEntry!.markNeedsBuild();
+    }
   }
 
   void _hideDropdown() {
-    if (_showDrop) setState(() => _showDrop = false);
-    if (_portalController.isShowing) _portalController.hide();
+    if (_showDrop && mounted) setState(() => _showDrop = false);
+    _dropEntry?.remove();
+    _dropEntry = null;
   }
 
   void _onChanged(String value) {
@@ -207,11 +220,7 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
   // ── build ──────────────────────────────────────────────────────────────────
 
   @override
-  Widget build(BuildContext context) => OverlayPortal(
-        controller: _portalController,
-        overlayChildBuilder: _buildOverlayDropdown,
-        child: _buildField(),
-      );
+  Widget build(BuildContext context) => _buildField();
 
   Widget _buildOverlayDropdown(BuildContext ctx) {
     final renderBox =
@@ -258,58 +267,68 @@ class _PlaceAutocompleteFieldState extends State<PlaceAutocompleteField> {
                   if (i > 0) Divider(height: 1, thickness: 1, color: divider),
                   // Use Listener (lower-level than GestureDetector) for reliable
                   // tap detection inside OverlayPortal on Flutter web.
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTapDown: (_) {
-                      _pick(suggs[i]);
-                    },
-                    child: Material(
-                      color: Colors.transparent,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 11,
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.location_on_outlined,
-                              size: 16,
-                              color: iconCol,
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    suggs[i].mainText,
-                                    style: TextStyle(
-                                      color: primary,
-                                      fontSize: 13,
-                                      fontFamily: 'Montserrat',
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  if (suggs[i].secondaryText.isNotEmpty)
+                  Semantics(
+                    button: true,
+                    label: [
+                      suggs[i].mainText,
+                      if (suggs[i].secondaryText.isNotEmpty)
+                        suggs[i].secondaryText,
+                    ].join(', '),
+                    onTap: () => _pick(suggs[i]),
+                    excludeSemantics: true,
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTapDown: (_) {
+                        _pick(suggs[i]);
+                      },
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 11,
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.location_on_outlined,
+                                size: 16,
+                                color: iconCol,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
                                     Text(
-                                      suggs[i].secondaryText,
+                                      suggs[i].mainText,
                                       style: TextStyle(
-                                        color: secondary,
-                                        fontSize: 11,
+                                        color: primary,
+                                        fontSize: 13,
                                         fontFamily: 'Montserrat',
-                                        fontWeight: FontWeight.w300,
+                                        fontWeight: FontWeight.w400,
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
-                                ],
+                                    if (suggs[i].secondaryText.isNotEmpty)
+                                      Text(
+                                        suggs[i].secondaryText,
+                                        style: TextStyle(
+                                          color: secondary,
+                                          fontSize: 11,
+                                          fontFamily: 'Montserrat',
+                                          fontWeight: FontWeight.w300,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),

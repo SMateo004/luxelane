@@ -104,9 +104,10 @@ const FIELDS = (w) => (w < 600 ? ['Recogida', 'A dónde vas'] : ['¿Dónde está
 async function pickPlace(p, label, q, text) {
   const f = p.getByRole('textbox', { name: label }).first();
   await f.click(); await p.keyboard.press('Control+A'); await p.keyboard.type(q, { delay: 5 }); await sleep(2000);
-  // Clic en el nodo de la sugerencia, no en sus coordenadas: con la capa de
-  // accesibilidad activa, los chips de recientes quedan encima (E34).
-  await p.getByText(text, { exact: false }).last().dispatchEvent('click'); await sleep(1500);
+  // Clic real en las coordenadas de la sugerencia (E34 corregido: la lista
+  // ya queda por encima de los chips de recientes).
+  const box = await p.getByText(text, { exact: false }).last().boundingBox();
+  await p.mouse.click(box.x + box.width / 2, box.y + box.height / 2); await sleep(1500);
 }
 async function toBooking(p, w, { dest = 'plaza', horas = false } = {}) {
   await p.goto(L.url(L.RIDER, '/')); await L.ready(p, 3000);
