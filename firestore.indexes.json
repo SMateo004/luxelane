@@ -104,6 +104,14 @@
         { "fieldPath": "locationsPurged", "order": "ASCENDING" },
         { "fieldPath": "deleteLocationsAfter", "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "payment",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "paymentStatus", "order": "ASCENDING" },
+        { "fieldPath": "paymentDeadline", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

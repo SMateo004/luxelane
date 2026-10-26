@@ -21,6 +21,7 @@ import { loadPaymentSettings } from './payment_config';
 import { isPaid, readPaymentState } from './payment_booking';
 import * as payManual from './payment_manual';
 import * as payCard from './payment_card';
+import { expirePayments } from './payment_expiry';
 import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, fareId, FareRule } from './pricing';
@@ -990,6 +991,12 @@ export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
   const adminId = await requireAdmin(req);
   return resolveAdminAlert(db, { adminId, adminEmail: (req.auth?.token.email as string | undefined) ?? null }, req.data);
 }, { role: 'admin', skipAdminSessionLimit: true });
+
+// Pagos A6: vence el plazo para pagar (solo con paymentWindowMinutes).
+export const expirePaymentsJob = onSchedule('every 5 minutes', async () => {
+  const r = await expirePayments({ db });
+  if (r.expired.length) logger.info('expirePayments', 'expired', { count: r.expired.length });
+});
 
 // Red de seguridad de openRequests: crea las que faltan, borra las
 // huérfanas y avisa al admin en adminAlerts.

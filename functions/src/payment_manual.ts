@@ -25,6 +25,7 @@ import { openForDrivers } from './payment_booking';
 import { addLedger, cents, PaymentMethod, PaymentState, paymentStateRef } from './payment_model';
 import { ProviderOverrides, providerFor } from './payment_provider';
 import { docId, parseInput } from './schemas';
+import { appendEvent } from './trip_flow';
 
 export interface PaymentDeps {
   db: admin.firestore.Firestore;
@@ -101,6 +102,13 @@ export async function markPaymentSent(deps: PaymentDeps, uid: string | undefined
   });
 }
 
+/** Cancelada por vencer el plazo de pago (A6) y con la recogida aún por delante. */
+export const canReactivate = (booking: admin.firestore.DocumentData, at: admin.firestore.Timestamp): boolean => {
+  const pickup = (booking.scheduledAt as admin.firestore.Timestamp | undefined)?.toMillis();
+  return booking.status === 'cancelled' && booking.cancellationReason === 'payment_expired' &&
+    pickup !== undefined && pickup > at.toMillis();
+};
+
 // ---------------------------------------------------------------------------
 // markPaidInTx (común a manual y tarjeta)
 // ---------------------------------------------------------------------------
@@ -137,6 +145,23 @@ export function markPaidInTx(tx: admin.firestore.Transaction, db: admin.firestor
     paymentMethod: p.method, amountPaid: p.amount, paidAt: p.at, updatedAt: p.at,
     riderReportedAt: null, ...(p.late ? { confirmedLate: true } : {}),
   };
+  if (canReactivate(p.booking, p.at)) {
+    // Venció el plazo (A6) pero llegó el pago y la recogida aún no pasó:
+    // la reserva vuelve a buscar chófer y queda anotado.
+    const bookingRef = db.collection('bookings').doc(p.bookingId);
+    tx.update(bookingRef, {
+      status: 'pending', cancelledBy: admin.firestore.FieldValue.delete(),
+      cancelledAt: admin.firestore.FieldValue.delete(), cancellationReason: admin.firestore.FieldValue.delete(),
+      reactivatedAt: p.at, updatedAt: p.at,
+    });
+    appendEvent(tx, db, p.bookingId, {
+      from: 'cancelled', to: 'pending', actor: { uid: 'system', role: 'system' }, source: 'system',
+      extra: { method: 'paid_after_deadline' },
+    });
+    tx.update(stateRef, { ...base, paymentStatus: 'paid' });
+    openForDrivers(tx, db, p.bookingId, { ...p.booking, status: 'pending', driverId: null });
+    return { paymentStatus: 'paid', dispatched: true };
+  }
   if (p.booking.status === 'cancelled') {
     // Pagó una reserva que ya no existe: se devuelve todo y central lo ejecuta.
     addLedger(tx, db, {
