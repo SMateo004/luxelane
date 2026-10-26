@@ -192,6 +192,10 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
   // colgada en awaiting_payment. Ver DEPLOY.md, «Pagos».
   const payments = await loadPaymentSettings(deps.db);
   if (!payments.enabled.length) throw bookingError('failed-precondition', 'payments_unavailable');
+  // La web no tiene pago con tarjeta: sin pago manual activo, tampoco se crea.
+  if (input.channel === 'web' && !payments.enabled.includes('manual_qr')) {
+    throw bookingError('failed-precondition', 'payments_unavailable');
+  }
 
   const priced = await priceTrip(deps, input);
   // El pasajero vio un precio menor: no se cobra más sin que lo confirme.

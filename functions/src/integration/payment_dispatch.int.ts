@@ -116,6 +116,33 @@ describe('sin ningún método de pago activo no se reserva (A12)', () => {
   });
 });
 
+describe('la web solo reserva si puede pagar por QR (E38)', () => {
+  // Solo tarjeta activa (configuración de PRUEBA): la web no tiene tarjeta.
+  const CARD_ONLY = { paymentMethods: { card: true }, paymentInstructions: { card: { provider: 'stripe' } } };
+
+  it('web con solo tarjeta: payments_unavailable y no se crea nada', async () => {
+    await db.doc('config/ops').set(CARD_ONLY);
+    expect(await reason(createBooking(deps(), 'ana', trip({ channel: 'web' })))).toBe('payments_unavailable');
+    expect((await db.collection('bookings').get()).size).toBe(0);
+    expect((await db.collection('paymentRefs').get()).size).toBe(0);
+  });
+
+  it('la app nativa con solo tarjeta sí reserva', async () => {
+    await db.doc('config/ops').set(CARD_ONLY);
+    const r = await createBooking(deps(), 'ana', trip({ channel: 'native' }));
+    expect(r.methodsOffered).toEqual(['card']);
+  });
+
+  it('web con pago manual activo: reserva y se le ofrece el QR', async () => {
+    const r = await createBooking(deps(), 'ana', trip({ channel: 'web' }));
+    expect(r.methodsOffered).toEqual(['manual_qr']);
+  });
+
+  it('un canal desconocido se rechaza', async () => {
+    expect(await reason(createBooking(deps(), 'ana', trip({ channel: 'kiosk' })))).toBe('invalid_request');
+  });
+});
+
 describe('nada se ofrece a chóferes sin pago (A3)', () => {
   let id: string;
   beforeEach(async () => { id = (await createBooking(deps(), 'ana', trip())).bookingId; });
