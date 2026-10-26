@@ -11,10 +11,21 @@ import 'lux_map.dart' show MapsKeyMissing;
 /// Shows a full-screen map dialog where the user can drag the map
 /// to select an exact pickup or destination point.
 /// Returns a [Place] with coordinates, or null if cancelled.
+/// Lo que se muestra del punto elegido: la dirección o, si no se pudo
+/// obtener, un texto legible; nunca coordenadas en crudo («-17.78330,
+/// -63.18210», E22).
+String mapPickerLabel(Place? place) =>
+    (place?.address.trim().isNotEmpty ?? false)
+        ? place!.address
+        : kPointOnMapLabel;
+
+const kPointOnMapLabel = 'Punto elegido en el mapa';
+
 Future<Place?> showMapPickerDialog(
   BuildContext context, {
   LatLng? initial,
   String title = 'Seleccionar ubicación',
+  String? notice,
 }) {
   return showDialog<Place>(
     context: context,
@@ -22,6 +33,7 @@ Future<Place?> showMapPickerDialog(
     builder: (_) => _MapPickerDialog(
       initial: initial ?? const LatLng(-17.7833, -63.1821), // Santa Cruz center
       title: title,
+      notice: notice,
     ),
   );
 }
@@ -29,9 +41,16 @@ Future<Place?> showMapPickerDialog(
 // ---------------------------------------------------------------------------
 
 class _MapPickerDialog extends StatefulWidget {
-  const _MapPickerDialog({required this.initial, required this.title});
+  const _MapPickerDialog({
+    required this.initial,
+    required this.title,
+    this.notice,
+  });
   final LatLng initial;
   final String title;
+
+  /// Aviso dentro del diálogo (p. ej. por qué no se usó la ubicación).
+  final String? notice;
 
   @override
   State<_MapPickerDialog> createState() => _MapPickerDialogState();
@@ -42,7 +61,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
   GoogleMapController? _ctrl;
 
   LatLng _center = const LatLng(-17.7833, -63.1821);
-  String _address = 'Move the map to select a location';
+  String _address = 'Mueve el mapa para elegir el lugar';
   bool _loading = false;
   bool _dragging = false;
 
@@ -64,8 +83,7 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
     final place = await _maps.reverseGeocode(pos.latitude, pos.longitude);
     if (!mounted) return;
     setState(() {
-      _address = place?.address ??
-          '${pos.latitude.toStringAsFixed(5)}, ${pos.longitude.toStringAsFixed(5)}';
+      _address = mapPickerLabel(place);
       _loading = false;
     });
   }
@@ -182,6 +200,18 @@ class _MapPickerDialogState extends State<_MapPickerDialog> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            if (widget.notice != null) ...[
+                              Semantics(
+                                liveRegion: true,
+                                child: Text(
+                                  widget.notice!,
+                                  style: LuxTypography.caption.copyWith(
+                                    color: LuxColors.ink,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                            ],
                             const Text(
                               'UBICACIÓN SELECCIONADA',
                               style: TextStyle(

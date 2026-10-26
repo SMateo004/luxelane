@@ -131,6 +131,10 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       initial: initial,
       title: 'Seleccionar lugar de recogida',
+      // Sin permiso o con la ubicación apagada: se explica en el mismo
+      // diálogo en vez de abrir el mapa en otro sitio sin decir por qué
+      // (E22).
+      notice: pos == null ? kLocationUnavailableMessage : null,
     );
     if (!mounted || picked == null) return;
     _onOriginSelected(picked);
@@ -347,6 +351,11 @@ class _HomeScreenState extends State<HomeScreen> {
 // ---------------------------------------------------------------------------
 // Mobile sub-widgets
 // ---------------------------------------------------------------------------
+
+/// Sin acceso a la ubicación del dispositivo (permiso o servicio).
+const kLocationUnavailableMessage =
+    'No pudimos usar tu ubicación. Permite el acceso a la ubicación en tu '
+    'navegador o en los ajustes del teléfono, o elige el punto en el mapa.';
 
 class _MobileTopBar extends StatelessWidget {
   const _MobileTopBar({required this.onLocate, required this.locating});
