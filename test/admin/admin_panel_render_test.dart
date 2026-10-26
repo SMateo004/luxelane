@@ -288,6 +288,26 @@ void main() {
     }
   }
 
+  testWidgets('la auditoría se escucha al abrir su pestaña (E15)', (
+    tester,
+  ) async {
+    // Entrar al panel (pestaña Panel) no la pide.
+    await _pump(tester, const DashboardTab(), const Size(1280, 900));
+    verifyNever(_last.watchAuditLogs);
+    // Abrir la pestaña la pide una vez; volver a abrirla, no otra.
+    final bloc = AdminBloc(adminRepository: _last)..add(AdminDataRequested());
+    addTearDown(bloc.close);
+    for (final tab in const [AuditTab(), DashboardTab(), AuditTab()]) {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: BlocProvider.value(value: bloc, child: tab)),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+    verify(_last.watchAuditLogs).called(1);
+  });
+
   testWidgets('el interruptor «Bloquear» dice de quién es (E7)', (
     tester,
   ) async {

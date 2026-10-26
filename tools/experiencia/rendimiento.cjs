@@ -122,10 +122,14 @@ async function warm() {
   await warm();
   const b = await L.browser();
   const carga = [];
-  for (const throttle of [false, true]) carga.push(await coldLoad(b, '/', 'Ver vehículos y precios', throttle));
-  // A 1280 px el inicio es la home web (foto de cabecera y, antes, vídeos).
-  for (const throttle of [false, true]) carga.push(await coldLoad(b, '/', /Ver precios/i, throttle, 1280));
-  carga.push(await coldLoad(b, '/legal/terminos', 'Quiénes somos', true));
+  // SOLO_LECTURAS=1: solo las lecturas de Firestore (minutos en vez de la
+  // carga en frío con red lenta).
+  if (!process.env.SOLO_LECTURAS) {
+    for (const throttle of [false, true]) carga.push(await coldLoad(b, '/', 'Ver vehículos y precios', throttle));
+    // A 1280 px el inicio es la home web (foto de cabecera y, antes, vídeos).
+    for (const throttle of [false, true]) carga.push(await coldLoad(b, '/', /Ver precios/i, throttle, 1280));
+    carga.push(await coldLoad(b, '/legal/terminos', 'Quiénes somos', true));
+  }
   console.log(JSON.stringify(carga));
   const lecturas = [];
   for (const s of SCREENS) {
