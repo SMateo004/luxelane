@@ -72,6 +72,10 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   // B5: el chófer devuelve una reserva.
   releaseBooking: per10min(10),
   adminRecordPayment: per10min(30),
+  // Pagos (A4): el pasajero avisa «ya pagué»; central confirma o rechaza.
+  markPaymentSent: perHour(10),
+  adminConfirmPayment: per10min(60),
+  adminRejectPayment: per10min(60),
   adminUpdateConfig: per10min(20),
   adminUpdatePricingRule: per10min(40),
   adminVerifyDriver: per10min(30),

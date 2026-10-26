@@ -19,6 +19,7 @@ import { isTransient, withRetryPolicy } from './retry_policy';
 import * as stripe from './stripe_service';
 import { loadPaymentSettings } from './payment_config';
 import { isPaid, readPaymentState } from './payment_booking';
+import * as payManual from './payment_manual';
 import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, fareId, FareRule } from './pricing';
@@ -952,6 +953,22 @@ export const adminSetVehicleActive = secureCallable('adminSetVehicleActive', {},
 /** Marcar una solicitud de empresa como atendida o pendiente. */
 export const adminSetLeadHandled = secureCallable('adminSetLeadHandled', {}, async (req) =>
   adminOps.adminSetLeadHandled({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+// ---------------------------------------------------------------------------
+// Pagos (A4): pago manual por QR o transferencia.
+// ---------------------------------------------------------------------------
+
+/** El pasajero avisa «ya pagué»: alerta para central, no confirma nada. */
+export const markPaymentSent = secureCallable('markPaymentSent', {}, (req) =>
+  payManual.markPaymentSent({ db }, req.auth?.uid, req.data));
+
+/** Confirmar un pago manual: importe exacto, número de operación único y motivo. */
+export const adminConfirmPayment = secureCallable('adminConfirmPayment', {}, async (req) =>
+  payManual.adminConfirmPayment({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Rechazar un «ya pagué» que no llegó. */
+export const adminRejectPayment = secureCallable('adminRejectPayment', {}, async (req) =>
+  payManual.adminRejectPayment({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
 
 /** El admin marca una alerta como revisada (auditado en el servidor). */
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {

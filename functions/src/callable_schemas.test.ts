@@ -18,6 +18,7 @@ import {
   leadHandledSchema,
 } from './admin_ops';
 import { callableSchemas as c } from './schemas';
+import { confirmSchema as confirmPaymentSchema, rejectSchema as rejectPaymentSchema, sentSchema } from './payment_manual';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exported = Record<string, any>;
@@ -237,6 +238,26 @@ const CASES: Record<string, Case> = {
   acceptBooking: {
     schema: c.acceptBooking, valid: { bookingId: ID },
     wrongType: { bookingId: true }, extreme: [{ bookingId: 'x'.repeat(10000) }],
+  },
+  markPaymentSent: {
+    schema: sentSchema, valid: { bookingId: ID, operationNumber: 'OP 123/45' },
+    wrongType: { bookingId: ID, operationNumber: 123 },
+    extreme: [{ bookingId: ID, operationNumber: 'x'.repeat(41) }, { bookingId: ID, operationNumber: 'OP<1>' },
+      { bookingId: LONG_ID }],
+  },
+  adminConfirmPayment: {
+    schema: confirmPaymentSchema,
+    valid: { bookingId: ID, operationNumber: 'OP 1', amountReceived: 52.5, reason: 'Ingreso visto en el banco' },
+    wrongType: { bookingId: ID, operationNumber: 'OP 1', amountReceived: '52.50', reason: 'Ingreso visto en el banco' },
+    extreme: [
+      { bookingId: ID, operationNumber: 'OP 1', amountReceived: -1, reason: 'Ingreso visto en el banco' },
+      { bookingId: ID, operationNumber: 'OP 1', amountReceived: 1e9, reason: 'Ingreso visto en el banco' },
+      { bookingId: ID, operationNumber: 'OP 1', amountReceived: 52.5, reason: 'corto' },
+    ],
+  },
+  adminRejectPayment: {
+    schema: rejectPaymentSchema, valid: { bookingId: ID, reason: 'No hay ingreso en el extracto' },
+    wrongType: { bookingId: ID, reason: 5 }, extreme: [{ bookingId: ID, reason: 'x'.repeat(501) }],
   },
 };
 
