@@ -134,19 +134,18 @@ BK('tarifa-por-clase', { user: 'pasajera', go: async (p, w) => { await toBooking
 BK('por-horas', { user: 'pasajera', go: (p, w) => toBooking(p, w, { horas: true }) });
 BK('detalles', { user: 'pasajera', go: async (p, w) => { await toBooking(p, w); if (w < SPLIT) { await L.tap(p, 'Continuar'); await sleep(2500); } } });
 BK('resumen', { user: 'pasajera', go: async (p, w) => { await toBooking(p, w); await toSummary(p, w); } });
-// Botón final: «Reservar» en la barra del móvil, «Reservar <clase>» en web.
-const reservar = async (p, w, ms) => { await L.tap(p, w < SPLIT ? 'Reservar' : 'Reservar Business'); await sleep(ms); };
+// Botón final: «Continuar al pago» (pagos, B1) en móvil y en web.
+const reservar = async (p, w, ms) => { await L.tap(p, 'Continuar al pago'); await sleep(ms); };
 BK('error-cotizacion', { user: 'pasajera', go: async (p, w) => { await failCallables(p, 'servidor'); await toBooking(p, w); await toSummary(p, w); } });
 BK('error-cotizacion-reservar', { user: 'pasajera', go: async (p, w) => { await failCallables(p, 'servidor'); await toBooking(p, w); await toSummary(p, w);
   await reservar(p, w, 2500); } });
-// Reservar para un invitado: la opción solo existe en el diseño de una página.
+// Reservar para un invitado: en los dos diseños (E39).
 BK('invitado', { user: 'pasajera', go: async (p, w) => { await toBooking(p, w); await toSummary(p, w);
-  if (w >= SPLIT) { await L.tap(p, 'Reservar para un invitado'); await sleep(1500); } } });
+  await L.tap(p, 'Reservar para un invitado'); await sleep(1500); } });
 BK('sin-sesion', { go: async (p, w) => { await toBooking(p, w); await toSummary(p, w); } });
 BK('sin-sesion-reservar', { go: async (p, w) => { await toBooking(p, w); await toSummary(p, w); await reservar(p, w, 3000); } });
-// Pago: la tarjeta solo se ofrece en las apps nativas y Stripe no corre en
-// local (callables.cjs responde 503); se captura lo que ve la persona al
-// reservar. Crea una reserva: va al final.
+// Pago (B1): tras reservar se pasa a /pay/<id> con el pago manual (la
+// tarjeta solo existe en las apps nativas). Crea una reserva: va al final.
 BK('pago', { mutates: true, user: 'pasajera', go: async (p, w) => { await toBooking(p, w); await toSummary(p, w); await reservar(p, w, 6000); } });
 add('F3-por-horas', 'inicio', { user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, '/')); await L.ready(p); await L.tap(p, 'Por horas'); await sleep(1200); } });
 add('F10-empresas', 'formulario', { go: async (p) => { await p.goto(L.url(L.RIDER, '/empresas')); await L.ready(p); } });
@@ -173,6 +172,26 @@ add('F6-cancelacion', 'error-servidor', { user: 'pasajera', go: async (p) => { a
   await L.tap(p, 'Cancelar reserva'); await sleep(2000); } });
 add('F6-cancelacion', 'sin-red', { user: 'pasajera', go: async (p) => { await failCallables(p, 'red'); await p.goto(L.url(L.RIDER, '/ride/r-pending')); await L.ready(p, 3000);
   await L.tap(p, 'Cancelar reserva'); await sleep(2000); } });
+
+// P pagos (B1, B5): pantalla de pago en cada estado, el pago en el viaje y
+// el comprobante. Datos de cobro y referencias de prueba (seed.cjs).
+const PAY = [['pagar-manual', 'r-unpaid'], ['esperando-confirmacion', 'r-reported'], ['rechazado', 'r-rejected'],
+  ['vencido', 'r-expired'], ['confirmado', 'r-confirmed']];
+for (const [state, id] of PAY) {
+  add('P-pagos', state, { user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, `/pay/${id}`)); await L.ready(p, 4000); } });
+}
+add('P-pagos', 'error-servidor', { user: 'pasajera', go: async (p) => { await failCallables(p, 'servidor');
+  await p.goto(L.url(L.RIDER, '/pay/r-unpaid')); await L.ready(p, 4000); } });
+const PAY_RIDES = [['viaje-pago-pendiente', 'r-unpaid'], ['viaje-esperando', 'r-reported'], ['comprobante-pagado', 'r-confirmed'],
+  ['comprobante-devolucion-pendiente', 'r-cancelled'], ['comprobante-retencion-devuelto', 'r-cancelled-fee'],
+  ['comprobante-saldo', 'r-balance']];
+for (const [state, id] of PAY_RIDES) {
+  add('P-pagos', state, { user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, `/ride/${id}`)); await L.ready(p, 4000); } });
+}
+add('P-pagos', 'cancelar-con-retencion', { user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, '/ride/r-arriving')); await L.ready(p, 3000);
+  await L.tap(p, 'Cancelar reserva'); await waitText(p, 'Motivo'); await sleep(600); } });
+add('P-pagos', 'cancelar-sin-retencion', { user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, '/ride/r-confirmed')); await L.ready(p, 3000);
+  await L.tap(p, 'Cancelar reserva'); await waitText(p, 'Motivo'); await sleep(600); } });
 
 // F7/F8 viajes, pago y valoración
 add('F7-viajes', 'lista', { user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, '/trips')); await L.ready(p, 3000); } });
@@ -214,11 +233,16 @@ add('F14-chofer', 'verificado', { app: 'd', user: 'chofer', go: async (p) => { a
 add('F14-chofer', 'en-curso', { app: 'd', user: 'chofer', go: async (p) => { await p.goto(L.url(L.DRIVER, '/driver/active-ride/r-progress')); await L.ready(p, 3000); } });
 
 // F15/F17 panel
-const TABS = [['panel', 'Panel'], ['operaciones', 'Operaciones'], ['choferes', 'Chóferes'], ['vehiculos', 'Vehículos'], ['finanzas', 'Finanzas'],
+const TABS = [['panel', 'Panel'], ['operaciones', 'Operaciones'], ['pagos', 'Pagos'], ['choferes', 'Chóferes'], ['vehiculos', 'Vehículos'], ['finanzas', 'Finanzas'],
   ['tarifas', 'Tarifas'], ['empresas', 'Empresas'], ['usuarios', 'Usuarios'], ['alertas', 'Alertas'], ['auditoria', 'Auditoría'], ['configuracion', 'Configuración']];
 for (const [state, tab] of TABS) {
   add('F17-panel', state, { user: 'admin', go: async (p) => { await p.goto(L.url(L.RIDER, '/admin')); await L.ready(p, 3000);
     if (tab !== 'Panel') { await openTab(p, tab); } await sleep(2000); } });
+}
+/** Abre una reserva del panel por su código: la busca primero (la lista crece con las reservas que crean otros escenarios). */
+async function openBooking(p, code) {
+  await L.type(p, 'Buscar por código', code); await sleep(1200);
+  await L.tap(p, code); await sleep(1500);
 }
 async function openTab(p, tab) {
   const b = p.getByRole('button', { name: new RegExp(`^${tab}`) }).first();
@@ -229,10 +253,24 @@ async function openTab(p, tab) {
   await p.getByText(tab, { exact: true }).first().click();
 }
 add('F17-panel', 'detalle-no-se-presento', { user: 'admin', go: async (p) => { await p.goto(L.url(L.RIDER, '/admin')); await L.ready(p, 3000);
-  await openTab(p, 'Operaciones'); await sleep(2000); await p.getByText(/R-NOSH/i).first().click(); await sleep(1500); } });
+  await openTab(p, 'Operaciones'); await sleep(2000); await openBooking(p, 'R-NOSH'); } });
 add('F17-panel', 'decidir-no-se-presento', { user: 'admin', go: async (p) => { await p.goto(L.url(L.RIDER, '/admin')); await L.ready(p, 3000);
-  await openTab(p, 'Operaciones'); await sleep(2000); await p.getByText(/R-NOSH/i).first().click(); await sleep(1500);
+  await openTab(p, 'Operaciones'); await sleep(2000); await openBooking(p, 'R-NOSH');
   await L.tap(p, 'Decidir'); await sleep(1200); } });
+// B3: bandejas de pagos y sus diálogos.
+const INBOX = [['por-confirmar', 'Por confirmar'], ['pendientes', 'Pendientes de pago'], ['devoluciones', 'Devoluciones'], ['saldos', 'Saldos']];
+for (const [state, chip] of INBOX) {
+  add('P-panel', state, { user: 'admin', go: async (p) => { await p.goto(L.url(L.RIDER, '/admin')); await L.ready(p, 3000);
+    await openTab(p, 'Pagos'); await sleep(2500); if (chip !== 'Por confirmar') { await L.tap(p, chip); await sleep(2500); } } });
+}
+add('P-panel', 'confirmar-pago', { user: 'admin', go: async (p) => { await p.goto(L.url(L.RIDER, '/admin')); await L.ready(p, 3000);
+  await openTab(p, 'Pagos'); await sleep(2500); await L.tap(p, 'Confirmar pago'); await sleep(1200); } });
+add('P-panel', 'registrar-devolucion', { user: 'admin', go: async (p) => { await p.goto(L.url(L.RIDER, '/admin')); await L.ready(p, 3000);
+  await openTab(p, 'Pagos'); await sleep(2500); await L.tap(p, 'Devoluciones'); await sleep(2500);
+  await p.getByRole('button', { name: /Registrar devolución/ }).first().click(); await sleep(1200); } });
+add('P-panel', 'cancelar-con-causa', { user: 'admin', go: async (p) => { await p.goto(L.url(L.RIDER, '/admin')); await L.ready(p, 3000);
+  await openTab(p, 'Operaciones'); await sleep(2000); await openBooking(p, 'R-CONF');
+  await L.tap(p, 'Cancelar reserva'); await sleep(1200); } });
 add('F17-panel', 'bloquear-con-viajes', { user: 'admin', go: async (p) => { await p.goto(L.url(L.RIDER, '/admin')); await L.ready(p, 3000);
   await openTab(p, 'Usuarios'); await sleep(2000); await L.type(p, 'Buscar por nombre', 'Luis'); await sleep(1500);
   await p.getByRole('switch', { name: 'Bloquear' }).first().click(); await sleep(2000); } });
@@ -262,7 +300,7 @@ add('F9-sos', 'reconocido-panel', { mutates: true, user: 'admin', go: async (p) 
 add('F9-sos', 'reconocido-pasajero', { mutates: true, user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, '/ride/r-progress')); await L.ready(p, 4000); } });
 add('F6-cancelacion', 'cancelada-por-pasajero', { mutates: true, user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, '/ride/r-arriving')); await L.ready(p, 3000);
   await L.tap(p, 'Cancelar reserva'); await waitText(p, 'Motivo'); await sleep(400);
-  await p.getByRole('button', { name: /Cancelar con recargo|Cancelar reserva/ }).last().click(); await sleep(3000); } });
+  await p.getByRole('button', { name: /Cancelar con retención|Cancelar reserva/ }).last().click(); await sleep(3000); } });
 add('F14-chofer', 'liberado', { mutates: true, app: 'd', user: 'chofer', go: async (p) => { await p.goto(L.url(L.DRIVER, '/driver/active-ride/r-confirmed')); await L.ready(p, 3000);
   await L.tap(p, 'No puedo hacer este viaje'); await waitText(p, 'Liberar este viaje');
   await p.getByRole('radio', { name: /Problema con el vehículo/ }).first().click(); await sleep(400);
