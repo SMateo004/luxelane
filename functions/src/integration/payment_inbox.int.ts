@@ -12,7 +12,7 @@ const T = Date.UTC(2026, 9, 26, 12);
 const ts = (ms: number) => admin.firestore.Timestamp.fromMillis(ms);
 
 async function clear(): Promise<void> {
-  for (const col of ['users', 'config', 'rateLimits']) await db.recursiveDelete(db.collection(col));
+  for (const col of ['users', 'config', 'rateLimits', 'payments']) await db.recursiveDelete(db.collection(col));
   await db.recursiveDelete(db.collection('bookings'));
 }
 async function booking(id: string, state: Record<string, unknown>, status = 'pending') {
@@ -52,6 +52,19 @@ describe('adminPaymentInbox', () => {
       .toEqual([expect.objectContaining({ bookingId: 'devol', refundDue: 7500, amountRetained: 2500 })]);
     expect((await adminPaymentInbox(db, { kind: 'balances' })).items)
       .toEqual([expect.objectContaining({ bookingId: 'saldo', balanceDue: 1250 })]);
+  });
+
+  it('devoluciones: con los asientos pendientes que el panel cierra', async () => {
+    await db.doc('payments/refund_devol').set({ bookingId: 'devol', riderId: 'ana', type: 'refund', amount: 7500,
+      method: 'manual_qr', status: 'pending' });
+    await db.doc('payments/refund_viejo').set({ bookingId: 'devol', riderId: 'ana', type: 'refund', amount: 100,
+      method: 'manual_qr', status: 'completed' });
+    await db.doc('payments/charge_devol').set({ bookingId: 'devol', riderId: 'ana', type: 'charge', amount: 10000,
+      method: 'manual_qr', status: 'completed' });
+    const [item] = (await adminPaymentInbox(db, { kind: 'refunds' })).items;
+    expect(item.pendingRefunds).toEqual([{ entryId: 'refund_devol', amount: 7500, method: 'manual_qr' }]);
+    // Las otras bandejas no consultan asientos.
+    expect((await adminPaymentInbox(db, { kind: 'awaiting' })).items[0].pendingRefunds).toEqual([]);
   });
 
   it('sin datos de contacto del pasajero', async () => {

@@ -3,7 +3,8 @@
  *
  * - awaiting: pendientes de pago (sin «ya pagué»), con su plazo.
  * - reported: «ya pagué» por confirmar o rechazar.
- * - refunds: devoluciones pendientes.
+ * - refunds: devoluciones pendientes, con los asientos por cerrar (el de la
+ *   cancelación, refund_{id}, o el de un importe final menor, refund_final_{id}).
  * - balances: saldos pendientes del pasajero (A9).
  *
  * Solo lo que central necesita para actuar: referencia, importes, estado y
@@ -37,6 +38,13 @@ export async function adminPaymentInbox(db: admin.firestore.Firestore, data: unk
   const bookings = states.length
     ? await db.getAll(...states.map((x) => db.collection('bookings').doc(x.bookingId)))
     : [];
+  // Asientos de devolución pendientes de cada reserva: el panel cierra uno
+  // concreto (adminRecordRefund con entryId).
+  const pendingRefunds = kind === 'refunds'
+    ? await Promise.all(states.map(async ({ bookingId }) => (await db.collection('payments')
+      .where('bookingId', '==', bookingId).where('type', '==', 'refund').where('status', '==', 'pending').get())
+      .docs.map((d) => ({ entryId: d.id, amount: Number(d.data().amount ?? 0), method: d.data().method ?? null }))))
+    : [];
   const items = states.map(({ bookingId, s }, i) => {
     const b = bookings[i]?.data() ?? {};
     return {
@@ -52,6 +60,7 @@ export async function adminPaymentInbox(db: admin.firestore.Firestore, data: unk
       paymentDeadline: ms(s.paymentDeadline),
       riderReportedAt: ms(s.riderReportedAt),
       riderOperationNumber: (s.riderOperationNumber as string | null | undefined) ?? null,
+      pendingRefunds: pendingRefunds[i] ?? [],
       booking: {
         status: b.status ?? null,
         scheduledAt: ms(b.scheduledAt),
