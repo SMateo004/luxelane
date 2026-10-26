@@ -12,7 +12,7 @@ const db = admin.firestore();
 type Runnable = { run: (r: any) => Promise<any> };
 
 async function clear(): Promise<void> {
-  for (const col of ['config', 'adminAlerts', 'payments', 'admin_logs']) await db.recursiveDelete(db.collection(col));
+  for (const col of ['users', 'config', 'adminAlerts', 'payments', 'admin_logs']) await db.recursiveDelete(db.collection(col));
   await db.recursiveDelete(db.collection('bookings'));
 }
 const doc = async (p: string) => (await db.doc(p).get()).data();
