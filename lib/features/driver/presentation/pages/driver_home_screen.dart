@@ -695,31 +695,16 @@ class _ActiveRidePanel extends StatelessWidget {
             children: [
               RideProgressBar(status: booking.status),
               const SizedBox(height: LuxSpacing.lg),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: AnimatedSwitcher(
-                      duration: LuxMotion.of(context, LuxMotion.base),
-                      layoutBuilder: _topLeft,
-                      child: Text(
-                        DriverStepAction.message(booking),
-                        key: ValueKey(booking.status),
-                        style: LuxTypography.displayMedium.copyWith(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (booking.driverId != null) ...[
+              DriverTripHeader(
+                message: DriverStepAction.message(booking),
+                messageKey: ValueKey(booking.status),
+                actions: [
+                  if (booking.driverId != null)
                     SosEntry(
                       bookingId: booking.id,
                       uid: booking.driverId!,
                       status: booking.status,
                     ),
-                    const SizedBox(width: LuxSpacing.sm),
-                  ],
                   const NotificationBell(color: LuxColors.ink),
                 ],
               ),
@@ -1152,5 +1137,48 @@ class _RouteItem extends StatelessWidget {
             ),
           ],
         ),
+      );
+}
+
+/// Cabecera del viaje del chófer: el paso (título grande) y, a la derecha,
+/// SOS y campana. El título se parte antes de llegar a ellos, con un margen
+/// fijo: antes «Pide al pasajero su» quedaba pegado al SOS (E17).
+class DriverTripHeader extends StatelessWidget {
+  const DriverTripHeader({
+    super.key,
+    required this.message,
+    required this.actions,
+    this.messageKey,
+  });
+
+  final String message;
+  final List<Widget> actions;
+  final Key? messageKey;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: AnimatedSwitcher(
+              duration: LuxMotion.of(context, LuxMotion.base),
+              layoutBuilder: _topLeft,
+              child: Text(
+                message,
+                key: messageKey,
+                textScaler: luxDisplayTextScaler(context),
+                style: LuxTypography.displayMedium.copyWith(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: LuxSpacing.md),
+          for (final (i, a) in actions.indexed) ...[
+            if (i > 0) const SizedBox(width: LuxSpacing.sm),
+            a,
+          ],
+        ],
       );
 }
