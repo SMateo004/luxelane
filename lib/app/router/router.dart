@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/enums/enums.dart';
+import '../../core/models/booking_form_data.dart';
 import '../../features/admin/presentation/pages/admin_dashboard_page.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
@@ -31,6 +32,12 @@ import '../driver_shell/driver_shell.dart';
 import '../shell/app_shell.dart';
 import '../theme/app_theme.dart';
 import 'lux_transitions.dart';
+
+/// /booking solo tiene sentido con el viaje elegido en Inicio (extra).
+/// Abierta directamente (enlace, recarga) mostraba «PRECIO FINAL Bs 20» sin
+/// recorrido (E23): se vuelve al inicio.
+String? bookingRouteRedirect(Object? extra) =>
+    extra is BookingFormData ? null : LuxRoutes.home;
 
 abstract class LuxRoutes {
   static const splash = '/splash';
@@ -303,6 +310,7 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
                     ),
                     GoRoute(
                       path: 'booking',
+                      redirect: (c, s) => bookingRouteRedirect(s.extra),
                       pageBuilder: (c, s) => _slide(const BookingScreen(), s),
                     ),
                     GoRoute(
