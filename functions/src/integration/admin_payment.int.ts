@@ -63,6 +63,25 @@ describe('registrar un cobro manual', () => {
   });
 });
 
+describe('reservas con estado de pago (pagos, Q2)', () => {
+  it('no admite un segundo cobro: solo se cobran con adminConfirmPayment', async () => {
+    // Pagada antes de pedir chófer (charge_b1) y ya completada.
+    await db.doc('bookings/b1/payment/state').set({
+      bookingId: 'b1', riderId: 'ana', paymentStatus: 'paid', paymentMethod: 'manual_qr', amountDue: 12050, amountPaid: 12050,
+    });
+    await db.doc('payments/charge_b1').set({ type: 'charge', bookingId: 'b1', riderId: 'ana', amount: 12050, status: 'completed' });
+    expect(await reason(run({ action: 'record', bookingId: 'b1', method: 'cash', reason: REASON }))).toBe('use_confirm_payment');
+    const all = (await db.collection('payments').get()).docs.map((d) => d.id);
+    expect(all).toEqual(['charge_b1']);
+    expect(await logs()).toEqual([]);
+  });
+
+  it('tampoco una sin pagar aún (awaiting_payment)', async () => {
+    await db.doc('bookings/b1/payment/state').set({ bookingId: 'b1', riderId: 'ana', paymentStatus: 'awaiting_payment', amountDue: 12050, amountPaid: 0 });
+    expect(await reason(run({ action: 'record', bookingId: 'b1', method: 'qr', reason: REASON }))).toBe('use_confirm_payment');
+  });
+});
+
 describe('métodos del panel', () => {
   it.each([['cash'], ['qr'], ['transfer'], ['card_terminal']])('acepta %s', async (method) => {
     await expect(run({ action: 'record', bookingId: 'b1', method, reason: REASON })).resolves.toHaveProperty('paymentId');

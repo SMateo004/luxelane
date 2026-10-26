@@ -229,8 +229,12 @@ export async function adminRecordPayment(deps: AdminDeps, actor: AdminActor, dat
     const now = admin.firestore.Timestamp.fromMillis(nowMs(deps));
     if (input.action === 'record') {
       const bookingRef = db.collection('bookings').doc(input.bookingId);
-      const snap = await tx.get(bookingRef);
+      const [snap, paymentState] = await Promise.all([tx.get(bookingRef), readPaymentState(db, input.bookingId, tx)]);
       if (!snap.exists) throw opError('not-found', 'booking_not_found');
+      // Pagos (Q2): una reserva con estado de pago solo se cobra con
+      // adminConfirmPayment (antes de pedir chófer); aquí sería un segundo
+      // cobro. Este camino queda para las reservas anteriores a pagos.
+      if (paymentState.exists) throw opError('failed-precondition', 'use_confirm_payment');
       const b = snap.data()!;
       if (b.status !== 'completed') throw opError('failed-precondition', 'not_completed');
       const card = b.stripePaymentIntentId != null || b.stripePaymentMethodId != null;
