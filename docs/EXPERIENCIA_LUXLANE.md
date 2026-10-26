@@ -451,3 +451,96 @@ home web de 768 y 1280 px no tiene). Hojas en `docs/capturas/hojas/`
 también a 768 (el inicio cambia a diseño web desde 600).
 
 Ninguno se corrige en esta entrega: quedan para que el responsable los ordene.
+
+### F6. Portada estática en `/`: diseño (sin implementar)
+
+**Situación actual [seguro]:** el destino `rider` de `firebase.json` sirve
+`hosting/public` con una sola reescritura `** → /index.html` (la app de
+Flutter). La app usa rutas con almohadilla (`/#/trips`): el servidor solo ve
+`/`. La CSP (todavía `Report-Only`) se aplica a `**` y autoriza por hash los
+scripts en línea de `web/index.html`.
+
+**Propuesta:**
+
+1. **Rutas y builds.**
+   - La app pasa a `/app/` con `flutter build web --base-href /app/`.
+     `web/index.html` ya tiene `<base href="$FLUTTER_BASE_HREF">`, así que no
+     cambia.
+   - La build se copia a `hosting/public/app/`: en `scripts/deploy_web.sh` y
+     en el paso «Deploy Hosting» de `.github/workflows/ci.yml` (`path:
+     hosting/public/app`).
+   - La portada es un `hosting/public/index.html` estático, sin Flutter: HTML
+     y CSS propios, sin scripts salvo el del punto 3.
+   - `manifest.json` (`start_url: "."`) y el service worker de Flutter quedan
+     bajo `/app/` por la base.
+   - **[Probable]** `firebase-messaging-sw.js` se busca en la raíz del
+     dominio. Hay que dejar una copia en `/` o registrarlo con la ruta nueva.
+     NO VERIFICADO.
+   - Las rutas de GoRouter no cambian. Sí cambian los enlaces que escriben
+     `/#/...` a mano: hoy no hay ninguno en `lib/` ni en `functions/src`
+     [seguro, búsqueda].
+2. **`firebase.json` (destino `rider`).**
+   - Reescrituras:
+     - `{"source": "/app/**", "destination": "/app/index.html"}`;
+     - sin la regla `** → /index.html`;
+     - una `404.html` estática para el resto.
+   - Cabeceras por zonas:
+     - la CSP actual pasa de `**` a `/app/**`;
+     - la portada (`/`, `/index.html`, sus CSS e imágenes) lleva una propia;
+     - `canvaskit/**` pasa a `/app/canvaskit/**`.
+   - Firebase envía todas las cabeceras cuyo patrón coincide. Si `**` y `/`
+     llevan CSP, el navegador aplica las dos (la intersección). Por eso hay
+     que separarlas y no dejar una CSP en `**`.
+   - El destino `driver` no cambia.
+3. **Enlaces antiguos con almohadilla.** Un enlace guardado como
+   `https://dominio/#/ride/x` llegaría a la portada, porque la almohadilla no
+   viaja al servidor. Un script externo mínimo (`/redirige.js`, sin código en
+   línea) hace `location.replace('/app/' + location.hash)` cuando el hash
+   empieza por `#/`.
+4. **Botón de WhatsApp.**
+   - Enlace `https://wa.me/<NÚMERO>`. No necesita JavaScript ni cambia
+     `connect-src`: es una navegación.
+   - **El número lo decide el responsable**; aquí no se pone ninguno.
+   - Propuesta: un test que falle si la portada lleva el marcador sin
+     sustituir.
+   - El enlace a la app es `/app/`.
+   - Los textos legales siguen en la app (`/app/#/legal/terminos` y
+     `/app/#/legal/privacidad`); copiarlos a la portada es decisión del
+     responsable.
+5. **Efecto en la CSP.**
+   - La portada puede llevar una CSP estricta y aplicada, no `Report-Only`:
+     ```
+     default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self';
+     font-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'
+     ```
+   - Fuentes servidas desde el propio dominio. Si se usan las de Google, hay
+     que añadir `fonts.googleapis.com` y `fonts.gstatic.com`.
+   - La CSP de la app no cambia mientras `web/index.html` no cambie (los hash
+     de los scripts en línea siguen valiendo).
+   - Riesgo: si la portada se sirve con la CSP de la app, funciona igual pero
+     sin el endurecimiento.
+6. **Efecto en el SEO.**
+   - Hoy `/` entrega el armazón de Flutter: título y meta descripción, y el
+     contenido pintado en canvas. Las páginas públicas (`#/empresas`,
+     `#/servicios/...`) no se pueden indexar por la almohadilla.
+   - Con la portada estática, el texto es HTML indexable. Se añaden:
+     - `<html lang="es">`, `title`, `meta description`, `canonical` y Open
+       Graph (la imagen la decide el responsable);
+     - `robots.txt`, con `Disallow: /app/` si no se quiere indexar la app;
+     - `sitemap.xml` con `/`.
+   - Datos estructurados de empresa local (dirección, teléfono): decisión del
+     responsable.
+   - Peso: la portada pesaría decenas de KB frente a los 4,4 MB de `/` en 390
+     px, y sería interactiva al instante. Hoy la app es interactiva a los
+     21 s con 4G lenta [seguro, A7]. El tiempo de carga de la app en `/app/`
+     no cambia.
+   - Para indexar empresas y servicios haría falta convertirlas en páginas
+     estáticas: fuera de este diseño.
+7. **Cómo se probaría (sin desplegar).**
+   - Emulador de Hosting (`firebase emulators:start --only hosting`, puerto
+     5000, proyecto demo).
+   - Playwright comprueba:
+     - `/` no pide `main.dart.js` ni CanvasKit;
+     - `/app/` arranca la app;
+     - `/#/trips` redirige a `/app/#/trips`;
+     - las cabeceras CSP de cada zona.
