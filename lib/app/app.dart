@@ -11,6 +11,7 @@ import '../features/driver/presentation/bloc/driver_bloc.dart';
 import '../features/payments/presentation/bloc/payment_bloc.dart';
 import '../features/profile/presentation/bloc/profile_bloc.dart';
 import '../features/notifications/presentation/bloc/notification_bloc.dart';
+import 'lux_locale.dart';
 import 'router/router.dart';
 import 'theme/app_theme.dart';
 
@@ -106,6 +107,9 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
       child: MaterialApp.router(
         title: 'Luxelane',
         debugShowCheckedModeBanner: false,
+        locale: LuxLocale.locale,
+        supportedLocales: LuxLocale.supportedLocales,
+        localizationsDelegates: LuxLocale.delegates,
         theme: luxTheme,
         routerConfig: _router,
       ),

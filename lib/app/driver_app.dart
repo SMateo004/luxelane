@@ -9,6 +9,7 @@ import '../features/notifications/presentation/bloc/notification_bloc.dart';
 import '../features/payments/presentation/bloc/payment_bloc.dart';
 import '../features/profile/presentation/bloc/profile_bloc.dart';
 import 'driver_router/driver_router.dart';
+import 'lux_locale.dart';
 import 'theme/app_theme.dart';
 
 class DriverApp extends StatefulWidget {
@@ -76,6 +77,9 @@ class _DriverAppState extends State<DriverApp> {
       child: MaterialApp.router(
         title: 'Luxelane Driver',
         debugShowCheckedModeBanner: false,
+        locale: LuxLocale.locale,
+        supportedLocales: LuxLocale.supportedLocales,
+        localizationsDelegates: LuxLocale.delegates,
         theme: luxTheme,
         routerConfig: _router,
       ),

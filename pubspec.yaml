@@ -10,6 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Textos de Material en español (calendario, diálogos). Viene con el SDK.
+  flutter_localizations:
+    sdk: flutter
 
   # State management & DI
   flutter_bloc: ^8.1.6
@@ -42,8 +45,6 @@ dependencies:
 
   # HTTP
   http: ^1.2.2
-
-  # Video
 
   # Utilities
   dartz: ^0.10.1
