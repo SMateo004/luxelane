@@ -443,14 +443,14 @@ class _AdminBookingTile extends StatelessWidget {
                   bs(b.finalPrice ?? b.estimatedPrice),
                   style: LuxTypography.titleMedium,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: LuxSpacing.xs),
                 BookingStatusChip(status: b.status),
                 if (charge != null) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: LuxSpacing.xs),
                   AdminTag(charge.label, color: chargeStatusColor(charge)),
                 ],
                 if (b.pricingReviewReason != null) ...[
-                  const SizedBox(height: 4),
+                  const SizedBox(height: LuxSpacing.xs),
                   const AdminTag('Revisar precio', color: LuxColors.warning),
                 ],
               ],
@@ -2016,7 +2016,7 @@ class BusinessLeadsTab extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: LuxSpacing.xs),
                     Text(
                       '${l.contactName} · ${l.email} · ${l.phone}',
                       style: LuxTypography.bodyMedium,

@@ -226,7 +226,7 @@ class AdminPageHeader extends StatelessWidget {
                     ),
                   ),
                   if (subtitle != null) ...[
-                    const SizedBox(height: 4),
+                    const SizedBox(height: LuxSpacing.xs),
                     Text(
                       subtitle!,
                       style: LuxTypography.bodyMedium.copyWith(fontSize: 13),
@@ -344,7 +344,7 @@ class AdminKpiTile extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: LuxSpacing.xs),
               const SizedBox(height: 2),
               Text(sub, style: LuxTypography.caption),
             ],
@@ -654,7 +654,7 @@ class _ConfirmAdminDialogState extends State<_ConfirmAdminDialog> {
             if (reasonLabel != null) ...[
               const SizedBox(height: LuxSpacing.md),
               Text(reasonLabel, style: LuxTypography.caption),
-              const SizedBox(height: 4),
+              const SizedBox(height: LuxSpacing.xs),
               TextField(
                 controller: _ctrl,
                 autofocus: true,

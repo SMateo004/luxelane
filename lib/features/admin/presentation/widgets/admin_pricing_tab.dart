@@ -276,7 +276,7 @@ class _PricingCardState extends State<_PricingCard> {
                             ),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: LuxSpacing.xs),
                       Text(
                         _summary(r),
                         style: LuxTypography.bodyMedium.copyWith(
@@ -465,7 +465,7 @@ class _PriceField extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(label, style: LuxTypography.caption),
-          const SizedBox(height: 4),
+          const SizedBox(height: LuxSpacing.xs),
           TextField(
             controller: controller,
             onChanged: onChanged,

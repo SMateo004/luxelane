@@ -85,7 +85,7 @@ class _EarningsSummary extends StatelessWidget {
               style: LuxTypography.displayLarge.copyWith(fontSize: 52),
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: LuxSpacing.xs),
           Text(
             '$rides viaje${rides == 1 ? '' : 's'} completado${rides == 1 ? '' : 's'}',
             style: LuxTypography.caption.copyWith(fontSize: 12),

@@ -3,6 +3,7 @@ import 'dart:ui' show ImageFilter;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../../app/theme/app_theme.dart';
 import '../../../../core/design/vehicle_catalog.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/widgets/lux_raised.dart';
@@ -138,7 +139,7 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
               ],
             ),
           ),
-        const SizedBox(height: 4),
+        const SizedBox(height: LuxSpacing.xs),
         Row(
           children: [
             _Spec(Icons.person_outline_rounded, '${vc.capacity} pasajeros'),
@@ -164,7 +165,7 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
             height: 1.05,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: LuxSpacing.xs),
         Text(
           vc.description,
           style: const TextStyle(
@@ -281,7 +282,7 @@ class CapacitySection extends StatelessWidget {
               color: LD.ink,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: LuxSpacing.xs),
           Text(
             detail,
             textAlign: compact ? TextAlign.center : TextAlign.start,
@@ -327,7 +328,7 @@ class CapacitySection extends StatelessWidget {
             height: 1.05,
           ),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: LuxSpacing.xs),
         Text(
           'Hasta ${vc.capacity} pasajeros y ${vc.luggageCapacity} maletas facturadas',
           style: const TextStyle(

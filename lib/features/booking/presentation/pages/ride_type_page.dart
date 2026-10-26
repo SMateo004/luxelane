@@ -75,7 +75,7 @@ class _ServiceCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(serviceType.label, style: LuxTypography.titleLarge),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: LuxSpacing.xs),
                   Text(serviceType.description,
                       style: LuxTypography.bodyMedium),
                 ],

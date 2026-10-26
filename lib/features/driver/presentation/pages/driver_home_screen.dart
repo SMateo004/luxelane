@@ -841,7 +841,7 @@ class _Stop extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: LuxSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1006,7 +1006,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                       textAlign: TextAlign.center,
                       style: LuxTypography.eyebrow,
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: LuxSpacing.sm),
                     Text(
                       LuxFormat.money(b.estimatedPrice),
                       textAlign: TextAlign.center,
@@ -1015,7 +1015,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                         height: 1,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: LuxSpacing.sm),
                     Text(
                       [when, if (trip != null) trip].join(' · '),
                       textAlign: TextAlign.center,
@@ -1085,7 +1085,7 @@ class _IncomingRequestSheetState extends State<_IncomingRequestSheet> {
                 icon: Icons.check_rounded,
                 onPressed: widget.onAccept,
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: LuxSpacing.xs),
               LuxButton.ghost(label: 'Rechazar', onPressed: widget.onDecline),
             ],
           ),
@@ -1113,7 +1113,7 @@ class _RouteItem extends StatelessWidget {
         child: Row(
           children: [
             Icon(icon, color: color, size: 18),
-            const SizedBox(width: 16),
+            const SizedBox(width: LuxSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
