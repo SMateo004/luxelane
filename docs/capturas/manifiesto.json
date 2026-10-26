@@ -1,9 +1,7 @@
 {
-  "generado": "2026-10-26T04:37:52.172Z",
+  "generado": "2026-10-26T16:55:49.819Z",
   "anchos": [
-    390,
-    768,
-    1280
+    768
   ],
   "temaOscuro": "la app no tiene tema oscuro",
   "capturas": [
@@ -15,7 +13,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 28620
+      "ms": 18177
     },
     {
       "flujo": "F1-acceso",
@@ -25,7 +23,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 4165
+      "ms": 4063
     },
     {
       "flujo": "F1-acceso",
@@ -35,7 +33,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 8539
+      "ms": 8317
     },
     {
       "flujo": "F1-acceso",
@@ -45,7 +43,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 4999
+      "ms": 5046
     },
     {
       "flujo": "F1-acceso",
@@ -55,7 +53,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 7949
+      "ms": 8386
     },
     {
       "flujo": "F1-acceso",
@@ -65,7 +63,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 3951
+      "ms": 4045
     },
     {
       "flujo": "F1-acceso",
@@ -75,7 +73,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 4977
+      "ms": 5119
     },
     {
       "flujo": "F1-acceso",
@@ -85,7 +83,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 4032
+      "ms": 4112
     },
     {
       "flujo": "F1-acceso",
@@ -95,7 +93,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 3977
+      "ms": 4031
     },
     {
       "flujo": "F1-acceso",
@@ -105,7 +103,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 13566
+      "ms": 14097
     },
     {
       "flujo": "F1-acceso",
@@ -115,7 +113,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14177
+      "ms": 14712
     },
     {
       "flujo": "F1-acceso",
@@ -125,7 +123,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 40284
+      "ms": 43911
     },
     {
       "flujo": "F1-acceso",
@@ -135,7 +133,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 8349
+      "ms": 8921
     },
     {
       "flujo": "F1-acceso",
@@ -145,7 +143,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 9585
+      "ms": 10201
     },
     {
       "flujo": "F2-reserva",
@@ -155,7 +153,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 4512
+      "ms": 4813
     },
     {
       "flujo": "F2-reserva",
@@ -165,7 +163,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 13808
+      "ms": 13880
     },
     {
       "flujo": "F2-reserva",
@@ -175,7 +173,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16300
+      "ms": 17273
     },
     {
       "flujo": "F2-reserva",
@@ -185,7 +183,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17082
+      "ms": 18190
     },
     {
       "flujo": "F2-reserva",
@@ -195,7 +193,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15122
+      "ms": 16366
     },
     {
       "flujo": "F2-reserva",
@@ -205,17 +203,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15769
-    },
-    {
-      "flujo": "F2-reserva",
-      "estado": "vehiculos",
-      "ancho": 390,
-      "archivo": "F2-reserva/vehiculos_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 15274
+      "ms": 16805
     },
     {
       "flujo": "F2-reserva",
@@ -225,7 +213,127 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15908
+      "ms": 16357
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-con-ruta",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-con-ruta_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 28099
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-sin-ruta",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-sin-ruta_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 28517
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-sin-ruta-resumen",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-sin-ruta-resumen_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 36625
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-tarifa-por-clase",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-tarifa-por-clase_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 29661
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-por-horas",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-por-horas_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 25357
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-detalles",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-detalles_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 30396
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-resumen",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-resumen_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 36400
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-error-cotizacion",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-error-cotizacion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 36676
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-error-cotizacion-reservar",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-error-cotizacion-reservar_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 39958
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-invitado",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-invitado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 37186
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-sin-sesion",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-sin-sesion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 26751
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-sin-sesion-reservar",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-sin-sesion-reservar_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 30211
     },
     {
       "flujo": "F3-por-horas",
@@ -235,7 +343,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15779
+      "ms": 15911
     },
     {
       "flujo": "F10-empresas",
@@ -245,7 +353,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 4588
+      "ms": 4666
     },
     {
       "flujo": "F10-empresas",
@@ -255,7 +363,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 5620
+      "ms": 5659
     },
     {
       "flujo": "F5-viaje",
@@ -265,7 +373,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15446
+      "ms": 16282
     },
     {
       "flujo": "F5-viaje",
@@ -275,7 +383,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15794
+      "ms": 16383
     },
     {
       "flujo": "F5-viaje",
@@ -285,7 +393,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16303
+      "ms": 16163
     },
     {
       "flujo": "F5-viaje",
@@ -295,7 +403,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16027
+      "ms": 16723
     },
     {
       "flujo": "F5-viaje",
@@ -305,7 +413,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15727
+      "ms": 16674
     },
     {
       "flujo": "F5-viaje",
@@ -315,7 +423,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15899
+      "ms": 16350
     },
     {
       "flujo": "F5-viaje",
@@ -325,7 +433,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15613
+      "ms": 16639
     },
     {
       "flujo": "F5-viaje",
@@ -335,7 +443,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15381
+      "ms": 15472
     },
     {
       "flujo": "F5-viaje",
@@ -345,7 +453,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15983
+      "ms": 16713
     },
     {
       "flujo": "F5-viaje",
@@ -355,7 +463,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15636
+      "ms": 16059
     },
     {
       "flujo": "F5-viaje",
@@ -365,7 +473,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15514
+      "ms": 16577
     },
     {
       "flujo": "F5-viaje",
@@ -375,7 +483,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15069
+      "ms": 16648
     },
     {
       "flujo": "F5-viaje",
@@ -385,7 +493,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15630
+      "ms": 16718
     },
     {
       "flujo": "F5-viaje",
@@ -395,7 +503,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15944
+      "ms": 16340
     },
     {
       "flujo": "F6-cancelacion",
@@ -405,7 +513,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15916
+      "ms": 16367
     },
     {
       "flujo": "F6-cancelacion",
@@ -415,7 +523,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15034
+      "ms": 16078
     },
     {
       "flujo": "F6-cancelacion",
@@ -425,7 +533,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16597
+      "ms": 17707
     },
     {
       "flujo": "F6-cancelacion",
@@ -435,7 +543,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16784
+      "ms": 17632
     },
     {
       "flujo": "F7-viajes",
@@ -445,7 +553,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 13936
+      "ms": 15082
     },
     {
       "flujo": "F7-viajes",
@@ -455,7 +563,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14238
+      "ms": 14928
     },
     {
       "flujo": "F7-viajes",
@@ -465,7 +573,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14146
+      "ms": 14854
     },
     {
       "flujo": "F8-valoracion",
@@ -475,7 +583,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15012
+      "ms": 16629
     },
     {
       "flujo": "F9-sos",
@@ -485,7 +593,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15135
+      "ms": 15616
     },
     {
       "flujo": "F9-sos",
@@ -495,7 +603,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16415
+      "ms": 17682
     },
     {
       "flujo": "F9-sos",
@@ -505,7 +613,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15975
+      "ms": 15997
     },
     {
       "flujo": "F9-sos",
@@ -515,7 +623,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17345
+      "ms": 17875
     },
     {
       "flujo": "F13-alta-chofer",
@@ -525,7 +633,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 5081
+      "ms": 4077
     },
     {
       "flujo": "F13-alta-chofer",
@@ -535,7 +643,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 13674
+      "ms": 14280
     },
     {
       "flujo": "F13-alta-chofer",
@@ -545,7 +653,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 8470
+      "ms": 8668
     },
     {
       "flujo": "F14-chofer",
@@ -555,7 +663,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 13519
+      "ms": 14183
     },
     {
       "flujo": "F14-chofer",
@@ -565,7 +673,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15345
+      "ms": 16051
     },
     {
       "flujo": "F14-chofer",
@@ -575,7 +683,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17024
+      "ms": 17659
     },
     {
       "flujo": "F14-chofer",
@@ -585,7 +693,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 13616
+      "ms": 14252
     },
     {
       "flujo": "F14-chofer",
@@ -595,7 +703,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14210
+      "ms": 15487
     },
     {
       "flujo": "F14-chofer",
@@ -605,7 +713,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15023
+      "ms": 15673
     },
     {
       "flujo": "F14-chofer",
@@ -615,7 +723,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 13830
+      "ms": 14226
     },
     {
       "flujo": "F14-chofer",
@@ -625,7 +733,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16215
+      "ms": 16636
     },
     {
       "flujo": "F14-chofer",
@@ -635,7 +743,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 13837
+      "ms": 15367
     },
     {
       "flujo": "F14-chofer",
@@ -645,7 +753,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16278
+      "ms": 17650
     },
     {
       "flujo": "F14-chofer",
@@ -655,7 +763,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15834
+      "ms": 16689
     },
     {
       "flujo": "F14-chofer",
@@ -665,7 +773,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 13988
+      "ms": 15715
     },
     {
       "flujo": "F14-chofer",
@@ -675,7 +783,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14216
+      "ms": 15424
     },
     {
       "flujo": "F17-panel",
@@ -685,7 +793,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16596
+      "ms": 16792
     },
     {
       "flujo": "F17-panel",
@@ -695,7 +803,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16582
+      "ms": 16981
     },
     {
       "flujo": "F17-panel",
@@ -705,7 +813,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16569
+      "ms": 16895
     },
     {
       "flujo": "F17-panel",
@@ -715,7 +823,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15809
+      "ms": 16360
     },
     {
       "flujo": "F17-panel",
@@ -725,7 +833,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16565
+      "ms": 16150
     },
     {
       "flujo": "F17-panel",
@@ -735,7 +843,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15884
+      "ms": 16521
     },
     {
       "flujo": "F17-panel",
@@ -745,7 +853,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16306
+      "ms": 16812
     },
     {
       "flujo": "F17-panel",
@@ -755,7 +863,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15997
+      "ms": 17063
     },
     {
       "flujo": "F17-panel",
@@ -765,7 +873,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16158
+      "ms": 16957
     },
     {
       "flujo": "F17-panel",
@@ -785,7 +893,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16764
+      "ms": 17164
     },
     {
       "flujo": "F17-panel",
@@ -795,7 +903,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17726
+      "ms": 18431
     },
     {
       "flujo": "F17-panel",
@@ -805,7 +913,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19490
+      "ms": 20055
     },
     {
       "flujo": "F17-panel",
@@ -815,7 +923,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20416
+      "ms": 21380
     },
     {
       "flujo": "A8-errores",
@@ -825,7 +933,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18640
+      "ms": 19191
     },
     {
       "flujo": "A8-errores",
@@ -835,7 +943,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20477
+      "ms": 21789
     },
     {
       "flujo": "A8-errores",
@@ -845,7 +953,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18032
+      "ms": 19205
     },
     {
       "flujo": "A8-errores",
@@ -855,7 +963,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20600
+      "ms": 21522
     },
     {
       "flujo": "A8-errores",
@@ -865,7 +973,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17961
+      "ms": 18481
     },
     {
       "flujo": "A8-errores",
@@ -875,7 +983,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 21239
+      "ms": 22405
     },
     {
       "flujo": "A8-errores",
@@ -885,7 +993,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18149
+      "ms": 18300
     },
     {
       "flujo": "A8-errores",
@@ -895,7 +1003,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19922
+      "ms": 21209
     },
     {
       "flujo": "A8-errores",
@@ -905,7 +1013,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17161
+      "ms": 18389
     },
     {
       "flujo": "A8-errores",
@@ -915,7 +1023,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19818
+      "ms": 20758
     },
     {
       "flujo": "A8-errores",
@@ -925,7 +1033,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18520
+      "ms": 19158
     },
     {
       "flujo": "A8-errores",
@@ -935,7 +1043,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19633
+      "ms": 20608
     },
     {
       "flujo": "A8-errores",
@@ -945,7 +1053,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17349
+      "ms": 19357
     },
     {
       "flujo": "A8-errores",
@@ -955,7 +1063,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19640
+      "ms": 20973
     },
     {
       "flujo": "A8-errores",
@@ -965,7 +1073,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17520
+      "ms": 18615
     },
     {
       "flujo": "A8-errores",
@@ -975,7 +1083,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20539
+      "ms": 20903
     },
     {
       "flujo": "A8-errores",
@@ -985,7 +1093,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19283
+      "ms": 20498
     },
     {
       "flujo": "A8-errores",
@@ -995,7 +1103,17 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16754
+      "ms": 18365
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-pago",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-pago_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 43452
     },
     {
       "flujo": "F9-sos",
@@ -1005,7 +1123,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16974
+      "ms": 17841
     },
     {
       "flujo": "F9-sos",
@@ -1015,7 +1133,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15558
+      "ms": 15886
     },
     {
       "flujo": "F6-cancelacion",
@@ -1025,7 +1143,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19315
+      "ms": 19207
     },
     {
       "flujo": "F14-chofer",
@@ -1035,7 +1153,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19588
+      "ms": 19949
     },
     {
       "flujo": "F1-acceso",
@@ -1045,7 +1163,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 1082
+      "ms": 1237
     },
     {
       "flujo": "F1-acceso",
@@ -1055,7 +1173,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 3861
+      "ms": 4018
     },
     {
       "flujo": "F1-acceso",
@@ -1065,7 +1183,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 8186
+      "ms": 8928
     },
     {
       "flujo": "F1-acceso",
@@ -1075,7 +1193,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 4984
+      "ms": 5099
     },
     {
       "flujo": "F1-acceso",
@@ -1085,7 +1203,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 8243
+      "ms": 8824
     },
     {
       "flujo": "F1-acceso",
@@ -1095,7 +1213,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 3918
+      "ms": 4251
     },
     {
       "flujo": "F1-acceso",
@@ -1105,7 +1223,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 5086
+      "ms": 5178
     },
     {
       "flujo": "F1-acceso",
@@ -1115,7 +1233,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 3914
+      "ms": 4012
     },
     {
       "flujo": "F1-acceso",
@@ -1125,7 +1243,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 3886
+      "ms": 3988
     },
     {
       "flujo": "F1-acceso",
@@ -1135,7 +1253,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14179
+      "ms": 14185
     },
     {
       "flujo": "F1-acceso",
@@ -1145,7 +1263,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14420
+      "ms": 14486
     },
     {
       "flujo": "F1-acceso",
@@ -1155,7 +1273,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17177
+      "ms": 18756
     },
     {
       "flujo": "F1-acceso",
@@ -1165,7 +1283,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 8740
+      "ms": 9369
     },
     {
       "flujo": "F1-acceso",
@@ -1175,7 +1293,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 9875
+      "ms": 10436
     },
     {
       "flujo": "F2-reserva",
@@ -1185,7 +1303,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 5346
+      "ms": 5444
     },
     {
       "flujo": "F2-reserva",
@@ -1195,7 +1313,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15178
+      "ms": 16309
     },
     {
       "flujo": "F2-reserva",
@@ -1205,7 +1323,7 @@
       "resultado": "fallo",
       "motivo": "locator.click: Timeout 30000ms exceeded.",
       "erroresJs": [],
-      "ms": 75399
+      "ms": 76372
     },
     {
       "flujo": "F2-reserva",
@@ -1215,7 +1333,7 @@
       "resultado": "fallo",
       "motivo": "locator.click: Timeout 30000ms exceeded.",
       "erroresJs": [],
-      "ms": 75801
+      "ms": 76399
     },
     {
       "flujo": "F2-reserva",
@@ -1225,7 +1343,7 @@
       "resultado": "fallo",
       "motivo": "locator.click: Timeout 30000ms exceeded.",
       "erroresJs": [],
-      "ms": 74786
+      "ms": 76144
     },
     {
       "flujo": "F2-reserva",
@@ -1235,17 +1353,7 @@
       "resultado": "fallo",
       "motivo": "locator.click: Timeout 30000ms exceeded.",
       "erroresJs": [],
-      "ms": 75651
-    },
-    {
-      "flujo": "F2-reserva",
-      "estado": "vehiculos",
-      "ancho": 768,
-      "archivo": "F2-reserva/vehiculos_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16161
+      "ms": 75581
     },
     {
       "flujo": "F2-reserva",
@@ -1255,7 +1363,57 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16634
+      "ms": 17686
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-con-ruta",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-con-ruta_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 34381
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-sin-ruta",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-sin-ruta_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 36093
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-tarifa-por-clase",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-tarifa-por-clase_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 37834
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-por-horas",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-por-horas_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 33176
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-detalles",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-detalles_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 36730
     },
     {
       "flujo": "F3-por-horas",
@@ -1265,7 +1423,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18324
+      "ms": 19518
     },
     {
       "flujo": "F10-empresas",
@@ -1275,7 +1433,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 4141
+      "ms": 4690
     },
     {
       "flujo": "F10-empresas",
@@ -1285,7 +1443,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 5343
+      "ms": 5417
     },
     {
       "flujo": "F5-viaje",
@@ -1295,7 +1453,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15705
+      "ms": 16363
     },
     {
       "flujo": "F5-viaje",
@@ -1305,7 +1463,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16483
+      "ms": 16950
     },
     {
       "flujo": "F5-viaje",
@@ -1315,7 +1473,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16506
+      "ms": 16788
     },
     {
       "flujo": "F5-viaje",
@@ -1325,7 +1483,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15852
+      "ms": 16121
     },
     {
       "flujo": "F5-viaje",
@@ -1335,7 +1493,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15804
+      "ms": 16415
     },
     {
       "flujo": "F5-viaje",
@@ -1345,7 +1503,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16025
+      "ms": 16336
     },
     {
       "flujo": "F5-viaje",
@@ -1355,7 +1513,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16309
+      "ms": 16593
     },
     {
       "flujo": "F5-viaje",
@@ -1365,7 +1523,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15945
+      "ms": 15891
     },
     {
       "flujo": "F5-viaje",
@@ -1375,7 +1533,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16427
+      "ms": 16328
     },
     {
       "flujo": "F5-viaje",
@@ -1385,7 +1543,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15510
+      "ms": 16653
     },
     {
       "flujo": "F5-viaje",
@@ -1395,7 +1553,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15633
+      "ms": 16251
     },
     {
       "flujo": "F5-viaje",
@@ -1405,7 +1563,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16675
+      "ms": 16786
     },
     {
       "flujo": "F5-viaje",
@@ -1415,7 +1573,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15905
+      "ms": 16606
     },
     {
       "flujo": "F5-viaje",
@@ -1425,7 +1583,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16006
+      "ms": 16445
     },
     {
       "flujo": "F6-cancelacion",
@@ -1435,7 +1593,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16495
+      "ms": 17000
     },
     {
       "flujo": "F6-cancelacion",
@@ -1445,7 +1603,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16215
+      "ms": 16425
     },
     {
       "flujo": "F6-cancelacion",
@@ -1455,7 +1613,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17371
+      "ms": 17844
     },
     {
       "flujo": "F6-cancelacion",
@@ -1465,7 +1623,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17243
+      "ms": 18381
     },
     {
       "flujo": "F7-viajes",
@@ -1475,7 +1633,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14913
+      "ms": 14800
     },
     {
       "flujo": "F7-viajes",
@@ -1485,7 +1643,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14512
+      "ms": 15199
     },
     {
       "flujo": "F7-viajes",
@@ -1495,7 +1653,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15152
+      "ms": 14935
     },
     {
       "flujo": "F8-valoracion",
@@ -1505,7 +1663,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15709
+      "ms": 16347
     },
     {
       "flujo": "F9-sos",
@@ -1515,7 +1673,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15130
+      "ms": 15648
     },
     {
       "flujo": "F9-sos",
@@ -1525,7 +1683,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17586
+      "ms": 16850
     },
     {
       "flujo": "F9-sos",
@@ -1535,7 +1693,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15771
+      "ms": 16188
     },
     {
       "flujo": "F9-sos",
@@ -1545,7 +1703,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17699
+      "ms": 18981
     },
     {
       "flujo": "F13-alta-chofer",
@@ -1555,7 +1713,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 5253
+      "ms": 4119
     },
     {
       "flujo": "F13-alta-chofer",
@@ -1565,7 +1723,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14557
+      "ms": 14616
     },
     {
       "flujo": "F13-alta-chofer",
@@ -1575,7 +1733,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 8760
+      "ms": 9438
     },
     {
       "flujo": "F14-chofer",
@@ -1585,7 +1743,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14317
+      "ms": 15140
     },
     {
       "flujo": "F14-chofer",
@@ -1595,7 +1753,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15540
+      "ms": 16244
     },
     {
       "flujo": "F14-chofer",
@@ -1605,7 +1763,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18721
+      "ms": 18327
     },
     {
       "flujo": "F14-chofer",
@@ -1615,7 +1773,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14263
+      "ms": 15055
     },
     {
       "flujo": "F14-chofer",
@@ -1625,7 +1783,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15468
+      "ms": 16156
     },
     {
       "flujo": "F14-chofer",
@@ -1635,7 +1793,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15461
+      "ms": 15946
     },
     {
       "flujo": "F14-chofer",
@@ -1645,7 +1803,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14367
+      "ms": 14994
     },
     {
       "flujo": "F14-chofer",
@@ -1655,7 +1813,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15712
+      "ms": 17454
     },
     {
       "flujo": "F14-chofer",
@@ -1665,7 +1823,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15520
+      "ms": 16411
     },
     {
       "flujo": "F14-chofer",
@@ -1675,7 +1833,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17359
+      "ms": 18391
     },
     {
       "flujo": "F14-chofer",
@@ -1685,7 +1843,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16516
+      "ms": 17960
     },
     {
       "flujo": "F14-chofer",
@@ -1695,7 +1853,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15312
+      "ms": 16182
     },
     {
       "flujo": "F14-chofer",
@@ -1705,7 +1863,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15522
+      "ms": 16520
     },
     {
       "flujo": "F17-panel",
@@ -1715,7 +1873,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16940
+      "ms": 17642
     },
     {
       "flujo": "F17-panel",
@@ -1725,7 +1883,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16672
+      "ms": 17703
     },
     {
       "flujo": "F17-panel",
@@ -1735,7 +1893,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16920
+      "ms": 17788
     },
     {
       "flujo": "F17-panel",
@@ -1745,7 +1903,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16445
+      "ms": 17623
     },
     {
       "flujo": "F17-panel",
@@ -1755,7 +1913,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16414
+      "ms": 17898
     },
     {
       "flujo": "F17-panel",
@@ -1765,7 +1923,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17129
+      "ms": 17881
     },
     {
       "flujo": "F17-panel",
@@ -1775,7 +1933,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17389
+      "ms": 17134
     },
     {
       "flujo": "F17-panel",
@@ -1785,7 +1943,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16468
+      "ms": 18317
     },
     {
       "flujo": "F17-panel",
@@ -1795,7 +1953,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16755
+      "ms": 17553
     },
     {
       "flujo": "F17-panel",
@@ -1805,7 +1963,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16974
+      "ms": 17066
     },
     {
       "flujo": "F17-panel",
@@ -1815,7 +1973,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17477
+      "ms": 17723
     },
     {
       "flujo": "F17-panel",
@@ -1825,7 +1983,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18937
+      "ms": 18848
     },
     {
       "flujo": "F17-panel",
@@ -1835,7 +1993,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20076
+      "ms": 21098
     },
     {
       "flujo": "F17-panel",
@@ -1845,7 +2003,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 21323
+      "ms": 22068
     },
     {
       "flujo": "A8-errores",
@@ -1855,7 +2013,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19455
+      "ms": 20080
     },
     {
       "flujo": "A8-errores",
@@ -1865,7 +2023,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 21927
+      "ms": 22352
     },
     {
       "flujo": "A8-errores",
@@ -1875,7 +2033,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18620
+      "ms": 19603
     },
     {
       "flujo": "A8-errores",
@@ -1885,7 +2043,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 21071
+      "ms": 21639
     },
     {
       "flujo": "A8-errores",
@@ -1895,7 +2053,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18029
+      "ms": 19684
     },
     {
       "flujo": "A8-errores",
@@ -1905,7 +2063,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 21111
+      "ms": 21542
     },
     {
       "flujo": "A8-errores",
@@ -1915,7 +2073,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18915
+      "ms": 19156
     },
     {
       "flujo": "A8-errores",
@@ -1925,7 +2083,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20889
+      "ms": 21223
     },
     {
       "flujo": "A8-errores",
@@ -1935,7 +2093,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18798
+      "ms": 19780
     },
     {
       "flujo": "A8-errores",
@@ -1945,7 +2103,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20697
+      "ms": 20983
     },
     {
       "flujo": "A8-errores",
@@ -1955,7 +2113,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18650
+      "ms": 19650
     },
     {
       "flujo": "A8-errores",
@@ -1965,7 +2123,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20159
+      "ms": 20877
     },
     {
       "flujo": "A8-errores",
@@ -1975,7 +2133,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18875
+      "ms": 19776
     },
     {
       "flujo": "A8-errores",
@@ -1985,7 +2143,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20350
+      "ms": 20861
     },
     {
       "flujo": "A8-errores",
@@ -1995,7 +2153,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18691
+      "ms": 18700
     },
     {
       "flujo": "A8-errores",
@@ -2005,7 +2163,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 21356
+      "ms": 21348
     },
     {
       "flujo": "A8-errores",
@@ -2015,7 +2173,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19280
+      "ms": 20298
     },
     {
       "flujo": "A8-errores",
@@ -2025,7 +2183,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17626
+      "ms": 18117
     },
     {
       "flujo": "F9-sos",
@@ -2035,7 +2193,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17736
+      "ms": 18381
     },
     {
       "flujo": "F9-sos",
@@ -2045,7 +2203,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16117
+      "ms": 16802
     },
     {
       "flujo": "F6-cancelacion",
@@ -2055,7 +2213,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18912
+      "ms": 18637
     },
     {
       "flujo": "F14-chofer",
@@ -2065,7 +2223,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18925
+      "ms": 19313
     },
     {
       "flujo": "F1-acceso",
@@ -2075,7 +2233,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 3610
+      "ms": 1897
     },
     {
       "flujo": "F1-acceso",
@@ -2085,7 +2243,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 4068
+      "ms": 4016
     },
     {
       "flujo": "F1-acceso",
@@ -2095,7 +2253,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 8680
+      "ms": 9181
     },
     {
       "flujo": "F1-acceso",
@@ -2105,7 +2263,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 5027
+      "ms": 5561
     },
     {
       "flujo": "F1-acceso",
@@ -2115,7 +2273,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 8670
+      "ms": 9591
     },
     {
       "flujo": "F1-acceso",
@@ -2125,7 +2283,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 4489
+      "ms": 4259
     },
     {
       "flujo": "F1-acceso",
@@ -2135,7 +2293,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 5161
+      "ms": 5169
     },
     {
       "flujo": "F1-acceso",
@@ -2145,7 +2303,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 3895
+      "ms": 4101
     },
     {
       "flujo": "F1-acceso",
@@ -2155,7 +2313,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 3963
+      "ms": 4022
     },
     {
       "flujo": "F1-acceso",
@@ -2165,7 +2323,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14182
+      "ms": 14737
     },
     {
       "flujo": "F1-acceso",
@@ -2175,7 +2333,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14595
+      "ms": 15651
     },
     {
       "flujo": "F1-acceso",
@@ -2185,7 +2343,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18433
+      "ms": 19218
     },
     {
       "flujo": "F1-acceso",
@@ -2195,7 +2353,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 8614
+      "ms": 9556
     },
     {
       "flujo": "F1-acceso",
@@ -2205,7 +2363,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 10182
+      "ms": 10341
     },
     {
       "flujo": "F2-reserva",
@@ -2225,7 +2383,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14772
+      "ms": 16341
     },
     {
       "flujo": "F2-reserva",
@@ -2235,7 +2393,7 @@
       "resultado": "fallo",
       "motivo": "locator.click: Timeout 30000ms exceeded.",
       "erroresJs": [],
-      "ms": 75230
+      "ms": 76924
     },
     {
       "flujo": "F2-reserva",
@@ -2245,7 +2403,7 @@
       "resultado": "fallo",
       "motivo": "locator.click: Timeout 30000ms exceeded.",
       "erroresJs": [],
-      "ms": 76332
+      "ms": 76405
     },
     {
       "flujo": "F2-reserva",
@@ -2255,7 +2413,7 @@
       "resultado": "fallo",
       "motivo": "locator.click: Timeout 30000ms exceeded.",
       "erroresJs": [],
-      "ms": 75649
+      "ms": 76303
     },
     {
       "flujo": "F2-reserva",
@@ -2265,17 +2423,7 @@
       "resultado": "fallo",
       "motivo": "locator.click: Timeout 30000ms exceeded.",
       "erroresJs": [],
-      "ms": 76147
-    },
-    {
-      "flujo": "F2-reserva",
-      "estado": "vehiculos",
-      "ancho": 1280,
-      "archivo": "F2-reserva/vehiculos_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 15673
+      "ms": 75966
     },
     {
       "flujo": "F2-reserva",
@@ -2285,7 +2433,127 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16996
+      "ms": 17004
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-con-ruta",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-con-ruta_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 36990
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-sin-ruta",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-sin-ruta_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 36993
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-sin-ruta-resumen",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-sin-ruta-resumen_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 41353
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-tarifa-por-clase",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-tarifa-por-clase_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 38485
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-por-horas",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-por-horas_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 33264
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-detalles",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-detalles_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 37482
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-resumen",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-resumen_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 41760
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-error-cotizacion",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-error-cotizacion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 41090
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-error-cotizacion-reservar",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-error-cotizacion-reservar_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 44275
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-invitado",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-invitado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 44721
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-sin-sesion",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-sin-sesion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 31425
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-sin-sesion-reservar",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-sin-sesion-reservar_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 34754
     },
     {
       "flujo": "F3-por-horas",
@@ -2295,7 +2563,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19437
+      "ms": 19111
     },
     {
       "flujo": "F10-empresas",
@@ -2305,7 +2573,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 4582
+      "ms": 4682
     },
     {
       "flujo": "F10-empresas",
@@ -2315,7 +2583,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 5531
+      "ms": 5674
     },
     {
       "flujo": "F5-viaje",
@@ -2325,7 +2593,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15651
+      "ms": 15852
     },
     {
       "flujo": "F5-viaje",
@@ -2335,7 +2603,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16409
+      "ms": 16708
     },
     {
       "flujo": "F5-viaje",
@@ -2345,7 +2613,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15676
+      "ms": 16116
     },
     {
       "flujo": "F5-viaje",
@@ -2355,7 +2623,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16374
+      "ms": 16630
     },
     {
       "flujo": "F5-viaje",
@@ -2365,7 +2633,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16613
+      "ms": 16568
     },
     {
       "flujo": "F5-viaje",
@@ -2375,7 +2643,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16316
+      "ms": 16592
     },
     {
       "flujo": "F5-viaje",
@@ -2385,7 +2653,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16211
+      "ms": 16733
     },
     {
       "flujo": "F5-viaje",
@@ -2395,7 +2663,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16074
+      "ms": 16127
     },
     {
       "flujo": "F5-viaje",
@@ -2405,7 +2673,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16176
+      "ms": 16928
     },
     {
       "flujo": "F5-viaje",
@@ -2415,7 +2683,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16445
+      "ms": 16162
     },
     {
       "flujo": "F5-viaje",
@@ -2425,7 +2693,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16131
+      "ms": 16397
     },
     {
       "flujo": "F5-viaje",
@@ -2435,7 +2703,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15828
+      "ms": 16479
     },
     {
       "flujo": "F5-viaje",
@@ -2445,7 +2713,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15892
+      "ms": 17024
     },
     {
       "flujo": "F5-viaje",
@@ -2455,7 +2723,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16684
+      "ms": 16723
     },
     {
       "flujo": "F6-cancelacion",
@@ -2465,7 +2733,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16010
+      "ms": 16789
     },
     {
       "flujo": "F6-cancelacion",
@@ -2475,7 +2743,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16076
+      "ms": 16749
     },
     {
       "flujo": "F6-cancelacion",
@@ -2485,7 +2753,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17186
+      "ms": 17481
     },
     {
       "flujo": "F6-cancelacion",
@@ -2495,7 +2763,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16973
+      "ms": 18074
     },
     {
       "flujo": "F7-viajes",
@@ -2505,7 +2773,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15348
+      "ms": 15451
     },
     {
       "flujo": "F7-viajes",
@@ -2515,7 +2783,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14671
+      "ms": 15080
     },
     {
       "flujo": "F7-viajes",
@@ -2525,7 +2793,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14841
+      "ms": 15388
     },
     {
       "flujo": "F8-valoracion",
@@ -2535,7 +2803,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15995
+      "ms": 16517
     },
     {
       "flujo": "F9-sos",
@@ -2545,7 +2813,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15035
+      "ms": 15238
     },
     {
       "flujo": "F9-sos",
@@ -2555,7 +2823,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15496
+      "ms": 16660
     },
     {
       "flujo": "F9-sos",
@@ -2565,7 +2833,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16377
+      "ms": 16778
     },
     {
       "flujo": "F9-sos",
@@ -2575,7 +2843,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17907
+      "ms": 18325
     },
     {
       "flujo": "F13-alta-chofer",
@@ -2585,7 +2853,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 5232
+      "ms": 5354
     },
     {
       "flujo": "F13-alta-chofer",
@@ -2595,7 +2863,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14728
+      "ms": 14776
     },
     {
       "flujo": "F13-alta-chofer",
@@ -2605,7 +2873,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 9195
+      "ms": 9457
     },
     {
       "flujo": "F14-chofer",
@@ -2615,7 +2883,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15016
+      "ms": 14979
     },
     {
       "flujo": "F14-chofer",
@@ -2625,7 +2893,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15698
+      "ms": 16095
     },
     {
       "flujo": "F14-chofer",
@@ -2635,7 +2903,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17998
+      "ms": 18239
     },
     {
       "flujo": "F14-chofer",
@@ -2645,7 +2913,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14554
+      "ms": 15062
     },
     {
       "flujo": "F14-chofer",
@@ -2655,7 +2923,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15946
+      "ms": 16292
     },
     {
       "flujo": "F14-chofer",
@@ -2665,7 +2933,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15736
+      "ms": 15992
     },
     {
       "flujo": "F14-chofer",
@@ -2675,7 +2943,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14429
+      "ms": 14919
     },
     {
       "flujo": "F14-chofer",
@@ -2685,7 +2953,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16039
+      "ms": 17605
     },
     {
       "flujo": "F14-chofer",
@@ -2695,7 +2963,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15890
+      "ms": 16121
     },
     {
       "flujo": "F14-chofer",
@@ -2705,7 +2973,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16577
+      "ms": 18253
     },
     {
       "flujo": "F14-chofer",
@@ -2715,7 +2983,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17084
+      "ms": 17175
     },
     {
       "flujo": "F14-chofer",
@@ -2725,7 +2993,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 15379
+      "ms": 16528
     },
     {
       "flujo": "F14-chofer",
@@ -2735,7 +3003,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 14745
+      "ms": 16378
     },
     {
       "flujo": "F17-panel",
@@ -2745,7 +3013,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17066
+      "ms": 17589
     },
     {
       "flujo": "F17-panel",
@@ -2755,7 +3023,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17027
+      "ms": 17813
     },
     {
       "flujo": "F17-panel",
@@ -2765,7 +3033,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17117
+      "ms": 20646
     },
     {
       "flujo": "F17-panel",
@@ -2775,7 +3043,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16752
+      "ms": 17111
     },
     {
       "flujo": "F17-panel",
@@ -2785,7 +3053,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17611
+      "ms": 17244
     },
     {
       "flujo": "F17-panel",
@@ -2795,7 +3063,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16606
+      "ms": 17419
     },
     {
       "flujo": "F17-panel",
@@ -2805,7 +3073,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17054
+      "ms": 18137
     },
     {
       "flujo": "F17-panel",
@@ -2815,7 +3083,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17417
+      "ms": 17822
     },
     {
       "flujo": "F17-panel",
@@ -2825,7 +3093,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16976
+      "ms": 17703
     },
     {
       "flujo": "F17-panel",
@@ -2835,7 +3103,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17445
+      "ms": 17666
     },
     {
       "flujo": "F17-panel",
@@ -2845,7 +3113,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17386
+      "ms": 18589
     },
     {
       "flujo": "F17-panel",
@@ -2855,7 +3123,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18673
+      "ms": 18899
     },
     {
       "flujo": "F17-panel",
@@ -2865,7 +3133,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20311
+      "ms": 20908
     },
     {
       "flujo": "F17-panel",
@@ -2875,7 +3143,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 21083
+      "ms": 21806
     },
     {
       "flujo": "A8-errores",
@@ -2885,7 +3153,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19599
+      "ms": 20657
     },
     {
       "flujo": "A8-errores",
@@ -2895,7 +3163,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 23276
+      "ms": 22829
     },
     {
       "flujo": "A8-errores",
@@ -2905,7 +3173,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18552
+      "ms": 19048
     },
     {
       "flujo": "A8-errores",
@@ -2915,7 +3183,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 21099
+      "ms": 21445
     },
     {
       "flujo": "A8-errores",
@@ -2925,7 +3193,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19026
+      "ms": 18808
     },
     {
       "flujo": "A8-errores",
@@ -2935,7 +3203,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 21062
+      "ms": 22202
     },
     {
       "flujo": "A8-errores",
@@ -2945,7 +3213,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18594
+      "ms": 19650
     },
     {
       "flujo": "A8-errores",
@@ -2955,7 +3223,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20809
+      "ms": 21516
     },
     {
       "flujo": "A8-errores",
@@ -2965,7 +3233,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18497
+      "ms": 21495
     },
     {
       "flujo": "A8-errores",
@@ -2975,7 +3243,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20574
+      "ms": 20776
     },
     {
       "flujo": "A8-errores",
@@ -2985,7 +3253,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18434
+      "ms": 20127
     },
     {
       "flujo": "A8-errores",
@@ -2995,7 +3263,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20522
+      "ms": 20940
     },
     {
       "flujo": "A8-errores",
@@ -3005,7 +3273,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19336
+      "ms": 19919
     },
     {
       "flujo": "A8-errores",
@@ -3015,7 +3283,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20664
+      "ms": 20991
     },
     {
       "flujo": "A8-errores",
@@ -3025,7 +3293,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18360
+      "ms": 19332
     },
     {
       "flujo": "A8-errores",
@@ -3035,7 +3303,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 21468
+      "ms": 21549
     },
     {
       "flujo": "A8-errores",
@@ -3045,7 +3313,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 19725
+      "ms": 20897
     },
     {
       "flujo": "A8-errores",
@@ -3055,7 +3323,17 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18229
+      "ms": 18340
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-pago",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-pago_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 48117
     },
     {
       "flujo": "F9-sos",
@@ -3065,7 +3343,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 17262
+      "ms": 18541
     },
     {
       "flujo": "F9-sos",
@@ -3075,7 +3353,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 16209
+      "ms": 16159
     },
     {
       "flujo": "F6-cancelacion",
@@ -3085,7 +3363,7 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 18965
+      "ms": 19350
     },
     {
       "flujo": "F14-chofer",
@@ -3095,7 +3373,87 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 20419
+      "ms": 20983
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-sin-ruta-resumen",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-sin-ruta-resumen_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 43321
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-resumen",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-resumen_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 45459
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-error-cotizacion",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-error-cotizacion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 44753
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-error-cotizacion-reservar",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-error-cotizacion-reservar_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 48188
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-invitado",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-invitado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 45813
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-sin-sesion",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-sin-sesion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 33852
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-sin-sesion-reservar",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-sin-sesion-reservar_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 37872
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-pago",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-pago_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 51255
     }
   ]
 }

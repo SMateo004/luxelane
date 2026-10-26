@@ -417,3 +417,37 @@ premium», «Wi-Fi y carga inalámbrica», «Servicio de champán disponible»,
 «Control de clima ambiental», «listas de reproducción seleccionadas» y
 «privacidad con cancelación de ruido» (home web, «La Experiencia»);
 «Paradas ilimitadas» (servicio por horas).
+
+### F5. Pantalla de reserva con lugares ficticios: hallazgos nuevos
+
+[seguro] Entorno: `tools/experiencia/fake_maps_service.dart` sustituye a
+`MapsService` (registrado en get_it desde `tools/experiencia/main_capturas.dart`,
+que solo compila `levantar.sh` y no arranca sin `USE_EMULATORS`). Cada lugar
+lleva «(lugar ficticio)»; «Destino sin ruta» no tiene recorrido.
+`test/experiencia/mapas_ficticios_test.dart` falla si `lib/` lo importa o lo
+nombra. Capturas nuevas en `docs/capturas/F2-reserva/pantalla-*`: con ruta,
+sin ruta (y su resumen), tarifa por clase (la semilla tiene ahora un factor
+ficticio por clase), por horas, detalles, resumen, error de cotización (y al
+pulsar Reservar), invitado, sin sesión (y al pulsar Reservar) y pago, a 390,
+768 y 1280 px. El mapa sale como «Mapa no disponible» porque no hay clave de
+mapas: no es un hallazgo.
+
+| Id | Hallazgo | Gravedad | Evidencia |
+|---|---|---|---|
+| E34 | Con la capa de accesibilidad activa, la lista de sugerencias del destino se dibuja encima de los chips de recientes, pero los nodos de accesibilidad de los chips quedan por encima: un clic en la sugerencia elige el chip de debajo. El destino cambia sin aviso («Equipetrol» o «Plaza principal» en vez de «Plaza 24 de Septiembre»). | Molesta | [seguro] reproducido; `document.elementsFromPoint` en la sugerencia devuelve primero el chip. [Probable] afecta a quien usa la web con la accesibilidad activada y puntero (control por voz, interruptores). Con lector de pantalla y doble toque: NO VERIFICADO. |
+| E35 | El precio que se muestra como «PRECIO FINAL» y «TOTAL · PRECIO FIJO» antes de que llegue la cotización del servidor es la estimación local, y no coincide con la del servidor. Con ruta: tarjeta Bs 52 y resumen Bs 53, a la vez en la misma pantalla web. Sin ruta: tarjeta «desde Bs 20» y pie «PRECIO FINAL Bs 20»; luego el resumen dice Bs 56. Sin sesión se ve «PRECIO FINAL Bs 52» y el del servidor solo tras iniciar sesión. | Molesta (choca con «Precio fijo al reservar») | [seguro] capturas `pantalla-con-ruta_1280`, `pantalla-sin-ruta_390`, `pantalla-sin-ruta-resumen_390`. La causa de la diferencia de 1 Bs (distancia o redondeo del servidor): NO VERIFICADO. |
+| E36 | Si la cotización falla, el resumen (paso 3 en móvil, columna derecha en web) sigue mostrando la estimación local como precio fijo y no dice nada. El texto de error está al final del desglose del paso 1 (móvil) o bajo la galería (web), fuera de la vista. Solo al pulsar Reservar sale un aviso. | Molesta | [seguro] `pantalla-error-cotizacion_*`; `booking_screen.dart` (`_quoteError` solo en `_webPriceBreakdown`). |
+| E37 | Un error interno del servidor (500) se muestra como «No pudimos procesar tu reserva. Revisa los datos del viaje e inténtalo de nuevo.»: culpa a los datos de la persona. | Menor | [seguro] `pantalla-error-cotizacion-reservar_*`; `booking_repository_impl.dart`, rama por defecto del mapeo de errores. |
+| E38 | En la web no hay paso ni texto de pago. La tarjeta solo se ofrece en las apps nativas (`_cardsSupported => !kIsWeb`). La reserva se crea («Pendiente · Estamos asignando a tu chófer») sin que la persona sepa cómo ni cuándo paga. | Decisión de negocio (política de pago): no se toca | [seguro] `pantalla-pago_*`. |
+| E39 | «Reservar para un invitado» solo existe en el diseño de una página (1100 px o más, `_kSplitMinWidth`). El asistente de 3 pasos (móvil y tableta, también a 768 px) no tiene forma de reservar para otra persona. | Molesta | [seguro] `pantalla-invitado_390` y `_768` frente a `_1280`; `_BookOptionCard` solo en `_webSummaryContent`. |
+
+**A2 y A3 regenerados con la pantalla de reserva** [seguro, ejecutado el
+2026-10-26 con `95eadbc` más el ajuste de ancho de `capturas.cjs`]: 345
+capturas (antes 309: +39 de la pantalla de reserva, −3 de `vehiculos`, que
+usaba la ruta borrada en F4), 337 correctas, 8 fallidas y 0 errores de
+JavaScript. Las 8 fallidas son las de siempre (botones del inicio móvil que la
+home web de 768 y 1280 px no tiene). Hojas en `docs/capturas/hojas/`
+(7,6 MB). La reserva usa el asistente de 3 pasos por debajo de 1100 px,
+también a 768 (el inicio cambia a diseño web desde 600).
+
+Ninguno se corrige en esta entrega: quedan para que el responsable los ordene.
