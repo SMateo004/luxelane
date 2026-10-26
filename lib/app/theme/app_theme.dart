@@ -25,7 +25,8 @@ abstract class LuxColors {
   static const inkTertiary = Color(0xFF5B6B84); // LD.ink3
   // Accent — sapphire, the only accent
   static const sapphire = Color(0xFF1B4F8A); // LD.sph
-  static const sapphireLight = Color(0xFF2E6FBF); // LD.sphLt
+  // AA (4,5:1) también sobre surfaceDeep; antes 0xFF2E6FBF, 4,32 (F3).
+  static const sapphireLight = Color(0xFF2C69B5); // LD.sphLt
   static const sapphireDark = Color(0xFF0D3066); // LD.sphDim
   static const sapphireTint = Color(0xFFEEF3FA); // LD.sphTint
   static const sapphireSubtle = Color(0x141B4F8A);
@@ -37,7 +38,8 @@ abstract class LuxColors {
   static const shadow = Color(0x1A0D1B2E);
   // Semantic — tuned for AA contrast on ivory
   static const error = Color(0xFFB83A3A);
-  static const success = Color(0xFF2F7D55);
+  // AA también sobre surfaceDeep; antes 0xFF2F7D55, 4,27 (F3).
+  static const success = Color(0xFF2D7751);
   // Antes 0xFFA8741F: 3,45–4,05 sobre los fondos claros y con blanco
   // encima (E20). Mismo tono, más oscuro.
   static const warning = Color(0xFF8D611A);

@@ -24,6 +24,10 @@ void main() {
     ('warning', LuxColors.warning),
     ('inkTertiary', LuxColors.inkTertiary),
     ('LD.ink3', LD.ink3),
+    // F3.
+    ('sapphireLight', LuxColors.sapphireLight),
+    ('LD.sphLt', LD.sphLt),
+    ('success', LuxColors.success),
   ]) {
     test('$nombre llega a AA sobre los fondos claros', () {
       for (final f in fondos.entries) {
