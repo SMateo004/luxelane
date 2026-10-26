@@ -50,6 +50,9 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `openRequests/{id}` | sí | · · · · · | · · · · · | · · · · · | L Li · · · | L Li · · · | · · · · · | · · · · · | L Li · · · |
 | `rides/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `payments/{id}` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/payment` | nueva | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `paymentRefs/{ref}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
+| `paymentOperations/{key}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
 | `vehicles/{id}` | sí | · · · · · | · · · · · | · · · · · | L Li C A · | · · C · · | · · C · · | L Li · · · | L Li · · · |
 | `pricingRules/{id}` | nueva | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · | L Li · · · |
 | `config/global` | nueva | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · | L · · · · |
@@ -79,7 +82,10 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `rateLimits/{id}`: Contadores de límites de las callables: solo el servidor.
 - `openRequests/{id}`: Solicitudes sin datos personales: chóferes verificados y activos, y el admin.
 - `rides/{id}`: Colección heredada sin uso (H7): solo el admin lee los documentos que queden; nadie escribe. r1: de ana con asig; bloqueado: rBloq.
-- `payments/{id}`: Pago de ana (reserva fin). Cobros y reembolsos los hace el servidor; los manuales, adminRecordPayment (Parte A).
+- `payments/{id}`: Pago de ana (reserva fin). Cobros y reembolsos los hace el servidor; los manuales, adminRecordPayment (Parte A). Desde pagos (A1), también los asientos charge, refund y fee_retained.
+- `bookings/{id}/payment`: Estado del pago de activa (A1): lo escribe solo el servidor; lo leen ana y el admin. El chófer asignado (asig) no lo lee: por eso no va en la reserva.
+- `paymentRefs/{ref}`: Unicidad de la referencia del pago (A1): solo el servidor.
+- `paymentOperations/{key}`: Números de operación ya usados en una confirmación (A4): solo el servidor.
 - `vehicles/{id}`: Vehículo de asig (bloqueado: el suyo). Crear = registrar el propio, inactivo; un bloqueado no (H8).
 - `pricingRules/{id}`: Tarifas públicas (la web las muestra sin sesión). Las escribe adminUpdatePricingRule (Parte A), sin campos internos ni `updatedBy`: quién la cambió va solo en admin_logs (C3).
 - `config/global`: Estado operativo público. Listar la colección incluye config/security: nadie (A8.9). Los ajustes del panel van por adminUpdateConfig (Parte A). Nadie la borra (H9).
