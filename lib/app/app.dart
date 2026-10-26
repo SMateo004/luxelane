@@ -108,7 +108,7 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         BlocProvider<NotificationBloc>.value(value: _notificationBloc),
       ],
       child: MaterialApp.router(
-        title: 'Luxelane',
+        title: kAppTitle,
         debugShowCheckedModeBanner: false,
         locale: LuxLocale.locale,
         supportedLocales: LuxLocale.supportedLocales,

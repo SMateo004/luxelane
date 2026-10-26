@@ -78,7 +78,7 @@ class _DriverAppState extends State<DriverApp> {
         BlocProvider<ProfileBloc>(create: (_) => sl<ProfileBloc>()),
       ],
       child: MaterialApp.router(
-        title: 'Luxelane Driver',
+        title: kAppTitle,
         debugShowCheckedModeBanner: false,
         locale: LuxLocale.locale,
         supportedLocales: LuxLocale.supportedLocales,
