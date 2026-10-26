@@ -39,9 +39,9 @@ void main() {
       confirmed = 0;
     });
 
-    void quote(double fee) =>
-        when(() => repo.previewCancellation('b1')).thenAnswer(
-            (_) async => Right(CancellationQuote(fee: fee, basis: 'late')));
+    void quote(double fee, {double refund = 0}) =>
+        when(() => repo.previewCancellation('b1')).thenAnswer((_) async =>
+            Right(CancellationQuote(fee: fee, basis: 'late', refund: refund)));
 
     Future<void> open(WidgetTester t) async {
       await t.pumpWidget(
@@ -71,7 +71,10 @@ void main() {
           .thenAnswer((_) async => const Right(null));
       await open(t);
       expect(find.byKey(const Key('cancel-fee')), findsNothing);
+      expect(find.textContaining('retiene'), findsNothing);
       expect(find.textContaining('recargo'), findsNothing);
+      // Sin pago no hay devolución que mencionar.
+      expect(find.byKey(const Key('cancel-refund')), findsNothing);
       await t.tap(find.byKey(const Key('confirm-cancel')));
       await t.pumpAndSettle();
       expect(result, isTrue);
@@ -104,12 +107,24 @@ void main() {
       await open(t);
       expect(find.byKey(const Key('cancel-fee')), findsOneWidget);
       expect(find.textContaining('Bs\u00A030'), findsOneWidget);
-      expect(find.text('Cancelar con recargo'), findsOneWidget);
+      expect(find.text('Cancelar con retención'), findsOneWidget);
       await t.tap(find.text('Cambié de planes'));
       await t.pump();
       await t.tap(find.byKey(const Key('confirm-cancel')));
       await t.pumpAndSettle();
       expect(result, isTrue);
+    });
+
+    testWidgets(
+        'pagada: dice lo pendiente de devolver, sin plazos ni promesas '
+        'de tarjeta (B1, B4)', (t) async {
+      quote(20, refund: 60);
+      await open(t);
+      expect(find.byKey(const Key('cancel-refund')), findsOneWidget);
+      expect(find.textContaining('Bs\u00A060'), findsOneWidget);
+      for (final w in ['tarjeta', 'inmediat', 'monedero', 'saldo a favor']) {
+        expect(find.textContaining(w), findsNothing, reason: w);
+      }
     });
 
     testWidgets('si el recargo cambió, se vuelve a mostrar el nuevo',
@@ -124,7 +139,7 @@ void main() {
       await open(t);
       await t.tap(find.byKey(const Key('confirm-cancel')));
       await t.pumpAndSettle();
-      expect(find.textContaining('El recargo cambió'), findsOneWidget);
+      expect(find.textContaining('La retención cambió'), findsOneWidget);
       expect(find.textContaining('Bs\u00A045'), findsOneWidget);
       await t.tap(find.byKey(const Key('confirm-cancel')));
       await t.pumpAndSettle();
@@ -237,8 +252,8 @@ void main() {
 
     test('previewCancellation usa dryRun y lee el recargo', () async {
       final res = _Result();
-      when(() => res.data)
-          .thenReturn({'cancellationFee': 30, 'feeBasis': 'late'});
+      when(() => res.data).thenReturn(
+          {'cancellationFee': 30, 'feeBasis': 'late', 'refund': 5000});
       when(() => callable.call<Map<String, dynamic>>(any()))
           .thenAnswer((_) async => res);
       final r = await repo.previewCancellation('b1');
@@ -246,6 +261,8 @@ void main() {
       expect(q.fee, 30);
       expect(q.basis, 'late');
       expect(q.hasFee, isTrue);
+      // La devolución llega en céntimos.
+      expect(q.refund, 50);
       verify(
         () => callable.call<Map<String, dynamic>>(
           {'bookingId': 'b1', 'reason': 'other', 'dryRun': true},

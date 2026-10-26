@@ -11,6 +11,7 @@ import '../../../../app/theme/lux_motion.dart';
 import '../../../../core/config/remote_flags.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/models/booking_payment.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/utils/lux_format.dart';
@@ -19,6 +20,7 @@ import '../../../../core/widgets/lux_map.dart';
 import '../../../driver/presentation/widgets/pickup_code_entry.dart'
     show CallDispatchButton;
 import '../../../incidents/presentation/widgets/sos_entry.dart';
+import '../../../payments/presentation/widgets/payment_receipt.dart';
 import '../ride_load_error.dart';
 import '../ride_moments.dart';
 import '../widgets/cancel_booking_dialog.dart';
@@ -53,7 +55,12 @@ class _RideScreenState extends State<RideScreen> {
   late final Stream<Booking> _bookingStream;
   StreamSubscription<Booking>? _sub;
   StreamSubscription<String?>? _phoneSub;
+  StreamSubscription<BookingPayment?>? _paySub;
   Booking? _booking;
+
+  /// Pago de la reserva (payment/state): solo lo leen el pasajero dueño y
+  /// central. null en reservas anteriores a los pagos.
+  BookingPayment? _payment;
 
   /// Teléfono del chófer: solo existe para la pantalla mientras el viaje
   /// está activo (bookings/{id}/driverContact/phone).
@@ -74,6 +81,7 @@ class _RideScreenState extends State<RideScreen> {
     super.initState();
     // El mensaje de «sin chófer» cambia si llega el número de central.
     RemoteFlags.instance.dispatchPhone.addListener(_onDispatchPhone);
+    _watchPayment();
     _bookingStream = widget.rideId.isEmpty
         ? const Stream<Booking>.empty()
         : sl<BookingRepository>().watchBooking(widget.rideId);
@@ -104,6 +112,15 @@ class _RideScreenState extends State<RideScreen> {
     );
   }
 
+  void _watchPayment() {
+    if (widget.rideId.isEmpty || !sl.isRegistered<BookingPaymentRepository>()) {
+      return;
+    }
+    _paySub = sl<BookingPaymentRepository>().watch(widget.rideId).listen((p) {
+      if (mounted) setState(() => _payment = p);
+    }, onError: (_) {});
+  }
+
   void _onDispatchPhone() {
     if (mounted) setState(() {});
   }
@@ -113,6 +130,7 @@ class _RideScreenState extends State<RideScreen> {
     RemoteFlags.instance.dispatchPhone.removeListener(_onDispatchPhone);
     _sub?.cancel();
     _phoneSub?.cancel();
+    _paySub?.cancel();
     super.dispose();
   }
 
@@ -149,12 +167,39 @@ class _RideScreenState extends State<RideScreen> {
 
   BookingStatus? get _status => _booking?.status;
 
+  /// Reserva sin pago confirmado: no se busca chófer todavía.
+  bool get _awaitingPayment =>
+      _status == BookingStatus.pending && (_payment?.payable ?? false);
+
+  /// Pago pendiente o comprobante, según el estado del pago.
+  Widget _paymentSection() {
+    final p = _payment;
+    if (p == null) return const SizedBox.shrink();
+    if (_awaitingPayment) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: LuxSpacing.md),
+        child: PaymentPendingCard(
+          payment: p,
+          onPay: () => context.go('/pay/${widget.rideId}'),
+        ),
+      );
+    }
+    if (!p.hasReceipt) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: LuxSpacing.md),
+      child: PaymentReceiptCard(payment: p),
+    );
+  }
+
   String get _statusMessage {
     final error = _loadError;
     if (error != null) return error;
     switch (_status) {
       case null:
         return 'Cargando tu reserva…';
+      case BookingStatus.pending when _awaitingPayment:
+        return 'Tu reserva espera el pago. Buscamos chófer cuando esté '
+            'confirmado.';
       case BookingStatus.pending:
         final phone = RemoteFlags.instance.dispatchPhone.value ?? '';
         return pendingMessage(
@@ -174,10 +219,14 @@ class _RideScreenState extends State<RideScreen> {
       case BookingStatus.completed:
         return 'Has llegado. Gracias por viajar con Luxelane.';
       case BookingStatus.cancelled:
-        final b = _booking!;
-        return b.hasCancellationFee
-            ? 'Esta reserva fue cancelada. Recargo por cancelación: '
-                '${LuxFormat.money(b.cancellationFee!)}.'
+        // La retención está en el pago (A7); las reservas antiguas
+        // guardaban el recargo en la propia reserva.
+        final retained = _payment != null
+            ? BookingPayment.bs(_payment!.amountRetained)
+            : (_booking!.cancellationFee ?? 0);
+        return retained > 0
+            ? 'Esta reserva fue cancelada. Retención por cancelación: '
+                '${LuxFormat.money(retained)}.'
             : 'Esta reserva fue cancelada.';
       case BookingStatus.noShow:
         return 'Tu chófer no te encontró en el punto de recogida. Central '
@@ -320,6 +369,7 @@ class _RideScreenState extends State<RideScreen> {
     if (_booking == null && _loadError != null) {
       return const SizedBox.shrink();
     }
+    if (d == null && _awaitingPayment) return const SizedBox.shrink();
     if (d == null) {
       final b = _booking;
       final needsDispatch = b != null &&
@@ -393,7 +443,10 @@ class _RideScreenState extends State<RideScreen> {
                 _BottomPanel(
                   status: _status,
                   message: _statusMessage,
-                  pickup: _pickupSection(),
+                  pickup: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [_pickupSection(), _paymentSection()],
+                  ),
                   driver: _driverSection(),
                   actions: _actions(),
                   preferences:
@@ -430,6 +483,7 @@ class _RideScreenState extends State<RideScreen> {
                           Text(_statusMessage, style: LuxTypography.bodyMedium),
                           const SizedBox(height: LuxSpacing.lg),
                           _pickupSection(),
+                          _paymentSection(),
                           _driverSection(),
                           const Spacer(),
                           _actions(),
@@ -547,73 +601,79 @@ class _BottomPanel extends StatelessWidget {
         LuxSpacing.md + 4,
         LuxSpacing.xl,
       ),
-      child: AnimatedSize(
-        duration: duration,
-        curve: LuxMotion.emphasized,
-        alignment: Alignment.topCenter,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (status case final s? when s != BookingStatus.cancelled) ...[
-              RideProgressBar(status: s),
-              const SizedBox(height: LuxSpacing.md),
-            ],
-            // Cada cambio de estado se anuncia con un fundido, no un salto.
-            AnimatedSwitcher(
-              duration: duration,
-              switchInCurve: LuxMotion.decelerate,
-              switchOutCurve: LuxMotion.accelerate,
-              layoutBuilder: (current, previous) => Stack(
-                alignment: Alignment.topLeft,
-                children: [...previous, if (current != null) current],
-              ),
-              child: Column(
-                key: ValueKey(status),
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (status case final s?) ...[
-                    BookingStatusChip(status: s),
-                    const SizedBox(height: LuxSpacing.sm + 2),
+      // Con el comprobante o la letra grande puede no caber: se desplaza.
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.75,
+      ),
+      child: SingleChildScrollView(
+        child: AnimatedSize(
+          duration: duration,
+          curve: LuxMotion.emphasized,
+          alignment: Alignment.topCenter,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (status case final s? when s != BookingStatus.cancelled) ...[
+                RideProgressBar(status: s),
+                const SizedBox(height: LuxSpacing.md),
+              ],
+              // Cada cambio de estado se anuncia con un fundido, no un salto.
+              AnimatedSwitcher(
+                duration: duration,
+                switchInCurve: LuxMotion.decelerate,
+                switchOutCurve: LuxMotion.accelerate,
+                layoutBuilder: (current, previous) => Stack(
+                  alignment: Alignment.topLeft,
+                  children: [...previous, if (current != null) current],
+                ),
+                child: Column(
+                  key: ValueKey(status),
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (status case final s?) ...[
+                      BookingStatusChip(status: s),
+                      const SizedBox(height: LuxSpacing.sm + 2),
+                    ],
+                    Text(
+                      message,
+                      style: LuxTypography.headlineLarge.copyWith(
+                        fontSize: 26,
+                        height: 1.15,
+                      ),
+                    ),
                   ],
-                  Text(
-                    message,
-                    style: LuxTypography.headlineLarge.copyWith(
-                      fontSize: 26,
-                      height: 1.15,
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
-            if (open && notes.isNotEmpty) ...[
-              const SizedBox(height: LuxSpacing.sm),
-              Row(
-                children: [
-                  const Icon(
-                    Icons.verified_outlined,
-                    size: 14,
-                    color: LuxColors.sapphire,
-                  ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      'Tu chófer conoce tu estilo: '
-                      '${notes.take(3).join(' · ').toLowerCase()}',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: LuxTypography.caption.copyWith(fontSize: 12),
+              if (open && notes.isNotEmpty) ...[
+                const SizedBox(height: LuxSpacing.sm),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.verified_outlined,
+                      size: 14,
+                      color: LuxColors.sapphire,
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        'Tu chófer conoce tu estilo: '
+                        '${notes.take(3).join(' · ').toLowerCase()}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: LuxTypography.caption.copyWith(fontSize: 12),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              const SizedBox(height: LuxSpacing.lg),
+              pickup,
+              driver,
+              const SizedBox(height: LuxSpacing.md),
+              actions,
             ],
-            const SizedBox(height: LuxSpacing.lg),
-            pickup,
-            driver,
-            const SizedBox(height: LuxSpacing.md),
-            actions,
-          ],
+          ),
         ),
       ),
     );
