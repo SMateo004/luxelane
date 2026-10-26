@@ -76,6 +76,8 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   markPaymentSent: perHour(10),
   adminConfirmPayment: per10min(60),
   adminRejectPayment: per10min(60),
+  // A5: elegir método o reintentar la tarjeta; pocas por reserva.
+  startPayment: per10min(20),
   adminUpdateConfig: per10min(20),
   adminUpdatePricingRule: per10min(40),
   adminVerifyDriver: per10min(30),

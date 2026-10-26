@@ -19,6 +19,7 @@ import {
 } from './admin_ops';
 import { callableSchemas as c } from './schemas';
 import { confirmSchema as confirmPaymentSchema, rejectSchema as rejectPaymentSchema, sentSchema } from './payment_manual';
+import { startSchema as startPaymentSchema } from './payment_card';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exported = Record<string, any>;
@@ -254,6 +255,11 @@ const CASES: Record<string, Case> = {
       { bookingId: ID, operationNumber: 'OP 1', amountReceived: 1e9, reason: 'Ingreso visto en el banco' },
       { bookingId: ID, operationNumber: 'OP 1', amountReceived: 52.5, reason: 'corto' },
     ],
+  },
+  startPayment: {
+    schema: startPaymentSchema, valid: { bookingId: ID, method: 'card' },
+    wrongType: { bookingId: ID, method: 1 },
+    extreme: [{ bookingId: ID, method: 'wallet' }, { bookingId: ID, method: 'card', amount: 1 }, { bookingId: LONG_ID, method: 'card' }],
   },
   adminRejectPayment: {
     schema: rejectPaymentSchema, valid: { bookingId: ID, reason: 'No hay ingreso en el extracto' },

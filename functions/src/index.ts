@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin';
-import { CallableRequest } from 'firebase-functions/v2/https';
+import { CallableRequest, onRequest } from 'firebase-functions/v2/https';
 import { secureCallable } from './callable';
 import { callableSchemas as schema, parseInput } from './schemas';
 import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
@@ -20,6 +20,7 @@ import * as stripe from './stripe_service';
 import { loadPaymentSettings } from './payment_config';
 import { isPaid, readPaymentState } from './payment_booking';
 import * as payManual from './payment_manual';
+import * as payCard from './payment_card';
 import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, fareId, FareRule } from './pricing';
@@ -969,6 +970,20 @@ export const adminConfirmPayment = secureCallable('adminConfirmPayment', {}, asy
 /** Rechazar un «ya pagué» que no llegó. */
 export const adminRejectPayment = secureCallable('adminRejectPayment', {}, async (req) =>
   payManual.adminRejectPayment({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Empezar a pagar: instrucciones del pago manual o cobro con tarjeta (A5). */
+export const startPayment = secureCallable('startPayment', withStripe, (req) =>
+  payCard.startPayment({ db }, req.auth?.uid, req.data));
+
+/**
+ * Webhook del proveedor de tarjeta (A5). La firma la verifica el proveedor
+ * activo; sin tarjeta activada responde 404. No es una callable: no lleva
+ * App Check ni sesión, la firma es la única puerta.
+ */
+export const paymentWebhook = onRequest({ ...withStripe }, async (req, res) => {
+  const r = await payCard.handlePaymentWebhook({ db }, req.rawBody, req.get('x-payment-signature') ?? undefined);
+  res.status(r.status).json(r.body);
+});
 
 /** El admin marca una alerta como revisada (auditado en el servidor). */
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
