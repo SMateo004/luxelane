@@ -735,7 +735,7 @@ esté decidida.
 - Qué hacer con `driverProfiles.releasedBookingsCount`: el servidor solo
   cuenta; no hay sanción automática.
 
-## Pagos: el pago antes de pedir chófer (rama cierre/pagos, Parte A)
+## Pagos: el pago antes de pedir chófer (rama cierre/pagos, Partes A y B)
 
 Qué cambia (decisiones del responsable 1–6):
 
@@ -766,6 +766,27 @@ Qué cambia (decisiones del responsable 1–6):
   envía por WhatsApp: ninguna función lo hace (se comprobó con una
   búsqueda).
 
+Parte B (apps y panel):
+
+- Pasajero: reservar lleva a `/pay/<id>` (importe exacto, referencia,
+  plazo si lo hay, datos del pago manual, «Ya pagué» con número de
+  operación opcional, esperando confirmación, rechazado, vencido). El
+  viaje muestra «Pago pendiente» hasta el pago y el comprobante después
+  («no es una factura»). Cancelar muestra la retención solo si es mayor
+  que cero.
+- **Web: solo pago manual.** La web manda `channel: 'web'` y
+  `createBooking` responde `payments_unavailable` si el pago manual no
+  está activo (E38): la web nunca crea una reserva que no pueda pagar.
+- **Tarjeta en la app: interfaz sin proveedor.** La app solo ofrece la
+  tarjeta con un `CardPaymentPresenter` registrado, y hoy no hay ninguno.
+  **No activar `paymentMethods.card` hasta integrar el formulario del
+  proveedor en la app**: con solo tarjeta activa, la app nativa crearía
+  reservas que dice no poder cobrar («Contacta con central»).
+- Panel: sección «Pagos» con las bandejas (por confirmar, pendientes,
+  devoluciones y saldos), confirmar, rechazar y registrar devoluciones,
+  con motivo y 2FA. Cancelar y decidir «no se presentó» piden la causa
+  (pasajero, chófer o plataforma), no un importe.
+
 ### Orden
 
 1. **Índices** (`firebase deploy --only firestore:indexes`): grupo de
@@ -776,7 +797,11 @@ Qué cambia (decisiones del responsable 1–6):
    pueden hacer reservas nuevas hasta el paso 5. Las reservas ya creadas
    siguen su curso (ver «Reservas existentes»).
 3. **Apps nuevas** (pasajero con la pantalla de pago; Parte B) y
-   **panel** (hosting) con las bandejas.
+   **panel** (hosting) con las bandejas. Entre los pasos 2 y 3 el panel
+   anterior no puede decidir un «no se presentó» (mandaba un importe que
+   el servidor ya no acepta: `invalid_request`); cancelar sí funciona y
+   cuenta como causa de la plataforma (0 % de retención). Desplegar el
+   hosting justo después de las functions.
 4. **`minAppVersion`** en `config/global` = la versión de la app del
    pasajero con pago, cuando esté publicada en las tiendas.
 5. **Activar el pago** en `config/ops` (pasos manuales, abajo):
@@ -844,7 +869,18 @@ auditoría) o en la consola. Si faltan, el sistema hace lo más restrictivo:
   `verifyWebhook` (secreto en Secret Manager), registrar la URL de
   `paymentWebhook` en el proveedor y poner `paymentMethods.card: true`.
 - `adminRecordPayment` (cobro manual al completar, de antes) sigue para
-  reservas antiguas; las nuevas se cobran antes con `adminConfirmPayment`.
+  reservas antiguas; con estado de pago responde `use_confirm_payment`
+  (Q2): las nuevas solo se cobran con `adminConfirmPayment`.
+- Saldos pendientes (importe final mayor que lo pagado, A9): el panel los
+  lista pero **no hay forma de cobrarlos en el sistema**. Decidir cómo se
+  cobran y se registran.
+- Textos a revisar antes del paso 5 (decisión del responsable, el código
+  no los cambia): la página legal (`lib/features/legal/presentation/pages/
+  legal_page.dart`) aún describe el flujo anterior (tarjeta autorizada al
+  reservar y cobrada al completar, «la retención se libera», el
+  procesador de tarjetas por su nombre); y la página de recogida
+  inmediata promete «Asignamos un chófer de inmediato», que ya no es así
+  mientras el pago no esté confirmado.
 
 ## Identidad (Parte B)
 

@@ -452,6 +452,18 @@ también a 768 (el inicio cambia a diseño web desde 600).
 
 Ninguno se corrige en esta entrega: quedan para que el responsable los ordene.
 
+**Corregidos en la rama `cierre/pagos` (Prompt 12, Parte B)** [seguro: cada
+test falla sin el cambio, comprobado quitándolo y volviendo a ejecutarlo]:
+
+| Id | Qué cambió | Commit | Test |
+|---|---|---|---|
+| E34 | La lista de sugerencias va en un `OverlayEntry` de la capa raíz y cada sugerencia es un botón accesible con nombre: sus nodos quedan por encima de los chips. Comprobado en el navegador con la capa activa: el clic elige el lugar correcto. | 72e824a | `place_autocomplete_a11y_test.dart` |
+| E35 | Sin cotización del servidor el precio se rotula «PRECIO ESTIMADO» / «TOTAL ESTIMADO»; «PRECIO FINAL» / «PRECIO FIJO» solo con la del servidor, que ahora se pide en todos los pasos. | c9888b8 | `booking_price_test.dart` |
+| E36 | Si la cotización falla, el error se ve junto al precio (región en vivo) con «Reintentar», en móvil y web. | c9888b8 | `booking_price_test.dart` |
+| E37 | Un fallo del servidor dice «No pudimos completar la reserva por un problema nuestro…»; «Revisa los datos» solo con `invalid-argument`. | 339f882 | `booking_request_data_test.dart` |
+| E38 | Tras reservar se pasa a la pantalla de pago (manual por QR o transferencia en la web; tarjeta solo en nativo y con proveedor). La web manda `channel: 'web'` y el servidor no le crea reservas sin pago manual activo. | 2dd2038, d55eabf | `payment_dispatch.int.ts`, `booking_payment_test.dart`, `booking_price_test.dart` |
+| E39 | «Reservar para mí / para un invitado» también en el asistente de 3 pasos, con el mismo diálogo y la misma petición a `createBooking`. | d1aa4b7 | `booking_price_test.dart` |
+
 ### F6. Portada estática en `/`: diseño (sin implementar)
 
 **Situación actual [seguro]:** el destino `rider` de `firebase.json` sirve

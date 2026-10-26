@@ -98,6 +98,12 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `admin_logs/{id}`: Auditoría inmutable: la escribe solo el servidor, en la transacción de cada cambio (Parte A), y los scripts (promote_admin, reset_mfa, migraciones) con el Admin SDK. Ningún cliente, ni el admin.
 <!-- matriz:fin -->
 
+Pagos, Parte B: sin cambios de reglas. Las apps leen
+`bookings/{id}/payment/state` (pasajero dueño) y escriben solo por
+callables; el panel usa `adminPaymentInbox`, `adminConfirmPayment`,
+`adminRejectPayment` y `adminRecordRefund`. La app del chófer no lee pagos
+(`test/driver/driver_sin_pagos_test.dart`).
+
 
 ## Hallazgos
 
