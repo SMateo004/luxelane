@@ -111,11 +111,15 @@ async function main() {
     },
     maxPriceAdjustmentPercent: 20,
   });
+  // Un factor distinto por clase, también ficticio, para que la captura de
+  // «tarifa por clase» muestre precios diferentes.
+  const factor = { business: 1, businessSuv: 1.25, firstClass: 1.75, businessVan: 1.5, electric: 1.1 };
   for (const vc of ['business', 'businessSuv', 'firstClass', 'businessVan', 'electric']) {
     for (const st of ['oneWay', 'byTheHour']) {
+      const f = factor[vc];
       set(`pricingRules/${vc}_${st}`, {
         id: `${vc}_${st}`, vehicleClass: vc, serviceType: st, isActive: true,
-        basePriceUsd: 10, pricePerKmUsd: 2, pricePerHourUsd: 30, minimumPriceUsd: 20, updatedAt: at(0),
+        basePriceUsd: 10 * f, pricePerKmUsd: 2 * f, pricePerHourUsd: 30 * f, minimumPriceUsd: 20 * f, updatedAt: at(0),
       });
     }
   }

@@ -28,7 +28,9 @@ SECRETS
 if [ "${1:-}" != "--sin-build" ]; then
   # CanvasKit local: no depende de www.gstatic.com.
   DEFINES=(--dart-define=USE_EMULATORS=true --dart-define=ENV=dev --no-web-resources-cdn)
-  "$FLUTTER" build web --release -t lib/main.dart "${DEFINES[@]}" -o "$ROOT/build/web-emu"
+  # Pasajero y panel con lugares y rutas ficticios (F5): sin clave de mapas
+  # se llega igual a la pantalla de reserva. Nunca es la build de producción.
+  "$FLUTTER" build web --release -t tools/experiencia/main_capturas.dart "${DEFINES[@]}" -o "$ROOT/build/web-emu"
   "$FLUTTER" build web --release -t lib/main_driver.dart "${DEFINES[@]}" -o "$ROOT/build/web-emu-driver"
 fi
 
