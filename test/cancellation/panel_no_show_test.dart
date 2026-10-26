@@ -10,6 +10,7 @@ import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/features/admin/data/repositories/admin_repository_impl.dart';
 import 'package:luxelane/features/admin/domain/admin_operations.dart';
+import 'package:luxelane/features/admin/domain/admin_payments.dart';
 import 'package:luxelane/features/admin/presentation/bloc/admin_bloc.dart';
 import 'package:luxelane/features/admin/presentation/widgets/admin_finance_tab.dart';
 import 'package:luxelane/features/admin/presentation/widgets/admin_sections.dart';
@@ -136,32 +137,58 @@ void main() {
     TextButton confirm(WidgetTester t) =>
         t.widget<TextButton>(find.byKey(const Key('no-show-confirm')));
 
-    testWidgets('recargo con tope en el precio y motivo obligatorio',
+    testWidgets(
+        'causa (por defecto el pasajero), sin importes y motivo obligatorio',
         (t) async {
       final b = _b({'status': 'no_show'});
       await open(t, b);
+      // Ningún campo de importe: la retención la calcula el servidor.
+      expect(find.byKey(const Key('no-show-fee')), findsNothing);
       expect(confirm(t).onPressed, isNull);
       await t.enterText(
         find.byKey(const Key('no-show-reason')),
         'El pasajero no contestó llamadas',
       );
-      await t.enterText(find.byKey(const Key('no-show-fee')), '150');
-      await t.pump();
-      expect(find.text('Entre 0 y 100.00'), findsOneWidget);
-      expect(confirm(t).onPressed, isNull);
-      await t.enterText(find.byKey(const Key('no-show-fee')), '25');
       await t.pump();
       await t.tap(find.byKey(const Key('no-show-confirm')));
       await t.pumpAndSettle();
       verify(
         () => bloc.add(
-          AdminNoShowDecided(b, 25, 'El pasajero no contestó llamadas'),
+          AdminNoShowDecided(
+            b,
+            AdminCancelCause.rider,
+            'El pasajero no contestó llamadas',
+          ),
+        ),
+      ).called(1);
+    });
+
+    testWidgets('central puede decidir sin retención', (t) async {
+      final b = _b({'status': 'no_show'});
+      await open(t, b);
+      await t.tap(find.byKey(const Key('no-show-cause-platform')));
+      await t.enterText(
+        find.byKey(const Key('no-show-reason')),
+        'El chófer esperó en otra puerta',
+      );
+      await t.pump();
+      await t.tap(find.byKey(const Key('no-show-confirm')));
+      await t.pumpAndSettle();
+      verify(
+        () => bloc.add(
+          AdminNoShowDecided(
+            b,
+            AdminCancelCause.platform,
+            'El chófer esperó en otra puerta',
+          ),
         ),
       ).called(1);
     });
   });
 
-  test('decideNoShow: adminUpdateBooking cancel con el recargo', () async {
+  test(
+      'decideNoShow: adminUpdateBooking cancel con la causa, nunca con un '
+      'importe (el servidor lo rechaza desde pagos A7)', () async {
     final functions = _Functions();
     final callable = _Callable();
     final repo =
@@ -170,7 +197,7 @@ void main() {
     when(() => callable.call<void>(any())).thenAnswer((_) async => _Result());
     final r = await repo.decideNoShow(
       _b({'status': 'no_show'}),
-      25,
+      AdminCancelCause.rider,
       ' Sin respuesta del pasajero ',
     );
     expect(r.isRight(), isTrue);
@@ -179,15 +206,9 @@ void main() {
       () => callable.call<void>({
         'bookingId': 'b1',
         'action': 'cancel',
-        'cancellationFee': 25.0,
+        'cause': 'rider',
         'reason': 'Sin respuesta del pasajero',
       }),
     ).called(1);
-    expect(
-      adminErrorMessage('failed-precondition', {
-        'reason': 'fee_only_after_no_show',
-      }),
-      contains('no se presentó'),
-    );
   });
 }

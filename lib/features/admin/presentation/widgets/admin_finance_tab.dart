@@ -9,6 +9,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/widgets/components.dart';
 import '../../domain/admin_finance.dart';
 import '../../domain/admin_operations.dart';
+import '../../domain/admin_payments.dart';
 import '../../domain/repositories/admin_repository.dart'
     show kAdminReasonMinLength;
 import '../bloc/admin_bloc.dart';
@@ -1032,83 +1033,81 @@ class _Segments extends StatelessWidget {
 /// recargo), con tope en el precio. Se anota en la reserva; no se cobra.
 Future<void> noShowDecisionDialog(BuildContext context, Booking b) async {
   final bloc = context.read<AdminBloc>();
-  final r = await showDialog<({double fee, String reason})>(
+  final r = await showDialog<({AdminCancelCause cause, String reason})>(
     context: context,
-    builder: (_) => NoShowDecisionDialog(booking: b),
+    builder: (_) => CancelCauseDialog(
+      title: 'Decidir «no se presentó»',
+      message: 'Reserva #${shortId(b.id)}. Revisa el registro del viaje '
+          '(espera y ubicación del chófer) antes de decidir.',
+      initial: AdminCancelCause.rider,
+      keyPrefix: 'no-show',
+    ),
   );
-  if (r != null) bloc.add(AdminNoShowDecided(b, r.fee, r.reason));
+  if (r != null) bloc.add(AdminNoShowDecided(b, r.cause, r.reason));
 }
 
-class NoShowDecisionDialog extends StatefulWidget {
-  const NoShowDecisionDialog({super.key, required this.booking});
-  final Booking booking;
+/// Cancelar desde el panel eligiendo quién la causa: decide si se aplica
+/// la política de retención a lo pagado (pagos A7). Sin importes: los
+/// calcula el servidor. Devuelve la causa y el motivo, o null.
+class CancelCauseDialog extends StatefulWidget {
+  const CancelCauseDialog({
+    super.key,
+    required this.title,
+    required this.message,
+    required this.initial,
+    this.keyPrefix = 'cancel',
+  });
+
+  final String title;
+  final String message;
+  final AdminCancelCause initial;
+  final String keyPrefix;
 
   @override
-  State<NoShowDecisionDialog> createState() => _NoShowDecisionDialogState();
+  State<CancelCauseDialog> createState() => _CancelCauseDialogState();
 }
 
-class _NoShowDecisionDialogState extends State<NoShowDecisionDialog> {
-  final _fee = TextEditingController(text: '0');
+class _CancelCauseDialogState extends State<CancelCauseDialog> {
+  late AdminCancelCause _cause = widget.initial;
   final _why = TextEditingController();
 
   @override
   void dispose() {
-    _fee.dispose();
     _why.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final b = widget.booking;
-    final fee = double.tryParse(_fee.text.replaceAll(',', '.'));
-    final feeOk = fee != null && fee >= 0 && fee <= b.estimatedPrice;
-    final valid = feeOk && _reasonOk(_why);
+    final valid = _reasonOk(_why);
     return AlertDialog(
       backgroundColor: LuxColors.surfaceMuted,
-      title: const Text(
-        'Decidir «no se presentó»',
-        style: LuxTypography.titleLarge,
-      ),
+      title: Text(widget.title, style: LuxTypography.titleLarge),
       content: SizedBox(
-        width: 420,
+        width: 440,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Reserva #${shortId(b.id)} · precio ${bs(b.estimatedPrice)}. '
-                'Revisa el registro del viaje (espera y ubicación del chófer) '
-                'antes de decidir.',
-                style: LuxTypography.caption,
-              ),
+              Text(widget.message, style: LuxTypography.caption),
               const SizedBox(height: LuxSpacing.md),
-              TextField(
-                key: const Key('no-show-fee'),
-                controller: _fee,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+              const Text('¿Quién la causa?', style: LuxTypography.labelLarge),
+              for (final c in AdminCancelCause.values)
+                RadioListTile<AdminCancelCause>(
+                  key: Key('${widget.keyPrefix}-cause-${c.wire}'),
+                  value: c,
+                  groupValue: _cause,
+                  onChanged: (v) => setState(() => _cause = v ?? _cause),
+                  title: Text(c.label, style: LuxTypography.bodyMedium),
+                  subtitle: Text(c.effect, style: LuxTypography.caption),
+                  contentPadding: EdgeInsets.zero,
                 ),
-                style: LuxTypography.bodyMedium,
-                onChanged: (_) => setState(() {}),
-                decoration: adminInputDecoration(prefixText: 'Bs ').copyWith(
-                  labelText: 'Recargo (0 = sin recargo)',
-                  errorText: feeOk
-                      ? null
-                      : 'Entre 0 y ${b.estimatedPrice.toStringAsFixed(2)}',
-                ),
-              ),
               const SizedBox(height: LuxSpacing.sm),
               _ReasonField(
-                fieldKey: const Key('no-show-reason'),
+                fieldKey: Key('${widget.keyPrefix}-reason'),
                 controller: _why,
                 onChanged: () => setState(() {}),
-              ),
-              const Text(
-                'El recargo queda anotado en la reserva; no se cobra '
-                'automáticamente.',
-                style: LuxTypography.caption,
               ),
             ],
           ),
@@ -1120,14 +1119,17 @@ class _NoShowDecisionDialogState extends State<NoShowDecisionDialog> {
           child: const Text('Volver'),
         ),
         TextButton(
-          key: const Key('no-show-confirm'),
+          key: Key('${widget.keyPrefix}-confirm'),
           onPressed: valid
               ? () => Navigator.pop(
                     context,
-                    (fee: fee, reason: _why.text.trim()),
+                    (cause: _cause, reason: _why.text.trim()),
                   )
               : null,
-          child: const Text('Cancelar reserva'),
+          child: Text(
+            'Cancelar reserva',
+            style: LuxTypography.labelLarge.copyWith(color: LuxColors.error),
+          ),
         ),
       ],
     );

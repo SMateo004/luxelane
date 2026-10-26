@@ -27,6 +27,8 @@ class _FakeRepo implements BookingPaymentRepository {
   Failure? startFailure;
   Failure? sentFailure;
 
+  Future<void> dispose() => ctrl.close();
+
   @override
   Stream<BookingPayment?> watch(String bookingId) => ctrl.stream;
 
@@ -97,7 +99,7 @@ void main() {
       );
 
   setUp(() => repo = _FakeRepo());
-  tearDown(() => repo.ctrl.close());
+  tearDown(() => repo.dispose());
 
   group('BookingPaymentCubit', () {
     test('con solo el pago manual, pide sus datos sin preguntar', () async {

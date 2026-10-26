@@ -6,6 +6,7 @@ import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/models/models.dart';
 import 'package:luxelane/features/admin/data/repositories/admin_repository_impl.dart';
 import 'package:luxelane/features/admin/domain/admin_operations.dart';
+import 'package:luxelane/features/admin/domain/admin_payments.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _Functions extends Mock implements FirebaseFunctions {}
@@ -77,6 +78,22 @@ void main() {
       ),
       'adminUpdateBooking',
       {'bookingId': 'b1', 'action': 'cancel', 'reason': _why},
+    );
+    // Con la causa elegida en el panel (decide la retención, pagos A7).
+    await expectCall(
+      () => repo.changeBookingStatus(
+        _booking('confirmed'),
+        BookingStatus.cancelled,
+        _why,
+        cause: AdminCancelCause.driver,
+      ),
+      'adminUpdateBooking',
+      {
+        'bookingId': 'b1',
+        'action': 'cancel',
+        'cause': 'driver',
+        'reason': _why
+      },
     );
     await expectCall(
       () => repo.changeBookingStatus(

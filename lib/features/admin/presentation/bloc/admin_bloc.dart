@@ -8,9 +8,9 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
-import '../../../../core/utils/lux_format.dart';
 import '../../domain/admin_finance.dart';
 import '../../domain/admin_operations.dart';
+import '../../domain/admin_payments.dart';
 import '../../domain/repositories/admin_repository.dart';
 
 // ---------------------------------------------------------------------------
@@ -61,23 +61,28 @@ class AdminChangeBookingStatusRequested extends AdminEvent {
   final Booking booking;
   final BookingStatus status;
   final String reason;
+
+  /// Solo al cancelar: quién la causa (decide la retención).
+  final AdminCancelCause? cause;
   const AdminChangeBookingStatusRequested(
     this.booking,
     this.status,
-    this.reason,
-  );
+    this.reason, {
+    this.cause,
+  });
   @override
-  List<Object?> get props => [booking.id, status, reason];
+  List<Object?> get props => [booking.id, status, reason, cause];
 }
 
-/// Central decide tras un «no aparece»: cancelar con o sin recargo.
+/// Central decide tras un «no aparece»: cancelar con la causa que fija la
+/// retención (la calcula el servidor).
 class AdminNoShowDecided extends AdminEvent {
   final Booking booking;
-  final double fee;
+  final AdminCancelCause cause;
   final String reason;
-  const AdminNoShowDecided(this.booking, this.fee, this.reason);
+  const AdminNoShowDecided(this.booking, this.cause, this.reason);
   @override
-  List<Object?> get props => [booking.id, fee, reason];
+  List<Object?> get props => [booking.id, cause, reason];
 }
 
 class AdminAssignDriverRequested extends AdminEvent {
@@ -527,7 +532,12 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<AdminChangeBookingStatusRequested>(
       (e, emit) => _perform(
         emit,
-        _repo.changeBookingStatus(e.booking, e.status, e.reason),
+        _repo.changeBookingStatus(
+          e.booking,
+          e.status,
+          e.reason,
+          cause: e.cause,
+        ),
         e.status == BookingStatus.cancelled
             ? 'Reserva cancelada'
             : 'Reserva marcada como "${e.status.displayLabel}"',
@@ -536,10 +546,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     on<AdminNoShowDecided>(
       (e, emit) => _perform(
         emit,
-        _repo.decideNoShow(e.booking, e.fee, e.reason),
-        e.fee > 0
-            ? 'Reserva cancelada con recargo de ${LuxFormat.money(e.fee)}'
-            : 'Reserva cancelada sin recargo',
+        _repo.decideNoShow(e.booking, e.cause, e.reason),
+        e.cause == AdminCancelCause.rider
+            ? 'Reserva cancelada con la política de cancelación'
+            : 'Reserva cancelada sin retención',
       ),
     );
     on<AdminAssignDriverRequested>(

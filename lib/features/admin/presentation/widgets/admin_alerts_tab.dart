@@ -19,6 +19,13 @@ const _alertLabels = {
   'ops_config_in_global': 'Configuración por mover a config/ops',
   'rider_no_show': 'El pasajero no se presentó (decidir)',
   'driver_released_booking': 'Un chófer liberó una reserva',
+  'payment_reported': 'El pasajero avisa que pagó (confirmar en Pagos)',
+  'refund_pending': 'Devolución por registrar (Pagos)',
+  'refund_failed': 'El proveedor no pudo devolver (Pagos)',
+  'balance_due': 'Saldo pendiente del pasajero (Pagos)',
+  'payment_amount_mismatch': 'Cobro con un importe distinto del debido',
+  'final_amount_changed_after_settlement':
+      'Importe final cambiado tras liquidar al chófer',
 };
 
 String alertLabel(String type) => _alertLabels[type] ?? type;

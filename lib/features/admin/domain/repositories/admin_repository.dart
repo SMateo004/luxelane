@@ -1,8 +1,10 @@
 import 'package:dartz/dartz.dart';
+
 import '../../../../core/enums/enums.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../admin_operations.dart';
+import '../admin_payments.dart';
 
 abstract class AdminRepository {
   Stream<List<Booking>> watchAllBookings();
@@ -68,14 +70,15 @@ abstract class AdminRepository {
   Future<Either<Failure, void>> changeBookingStatus(
     Booking booking,
     BookingStatus status,
-    String reason,
-  );
+    String reason, {
+    AdminCancelCause? cause,
+  });
 
-  /// Decisión de central tras un «no aparece» (B4): cancela con
-  /// [cancellationFee] (0 = sin recargo). Se anota, no se cobra.
+  /// Decisión de central tras un «no aparece»: cancela con la causa que
+  /// decide la retención (el importe lo calcula el servidor, pagos A7).
   Future<Either<Failure, void>> decideNoShow(
     Booking booking,
-    double cancellationFee,
+    AdminCancelCause cause,
     String reason,
   );
   Future<Either<Failure, void>> assignDriver(
