@@ -19,6 +19,9 @@ String adminPaymentErrorMessage(String code, Object? details) {
     'operation_already_used' =>
       'Ese número de operación ya confirmó otro pago.',
     'already_paid' => 'Esta reserva ya tiene el pago confirmado.',
+    'amount_exceeds_balance' =>
+      'El importe supera el saldo pendiente. Registra el saldo o menos.',
+    'no_balance_due' => 'Esta reserva ya no tiene saldo pendiente; recarga.',
     'not_awaiting_payment' => 'Este pago ya no está pendiente; recarga.',
     'method_disabled' => 'El pago manual está desactivado en la configuración.',
     'refund_not_found' => 'No se encontró esa devolución; recarga.',
@@ -117,6 +120,25 @@ class AdminPaymentsRepositoryImpl implements AdminPaymentsRepository {
             'reason': reason.trim(),
             if (externalRef != null && externalRef.trim().isNotEmpty)
               'externalRef': externalRef.trim(),
+          },
+          (_) {});
+
+  @override
+  Future<Either<Failure, void>> collectBalance({
+    required String bookingId,
+    required double amount,
+    required String operationNumber,
+    required String method,
+    required String reason,
+  }) =>
+      _run(
+          'adminCollectBalance',
+          {
+            'bookingId': bookingId,
+            'amount': amount,
+            'operationNumber': operationNumber.trim(),
+            'method': method,
+            'reason': reason.trim(),
           },
           (_) {});
 }

@@ -24,6 +24,7 @@ import * as payCard from './payment_card';
 import * as payRefund from './payment_refund';
 import { reconcileFinalAmount } from './payment_final';
 import * as payInbox from './payment_inbox';
+import * as payBalance from './payment_balance';
 import { expirePayments } from './payment_expiry';
 import { computeCancelSettle, readForSettle, writeCancelSettle } from './payment_settle';
 import { logger } from './logger';
@@ -1000,6 +1001,10 @@ export const refundOnRefundPending = onDocumentWritten(
     await payRefund.onRefundPending({ db }, event.params.bookingId,
       event.data?.before.data(), event.data?.after.data());
   });
+
+/** Cobrar un saldo pendiente (G2): importe ≤ saldo, n.º de operación único y motivo. */
+export const adminCollectBalance = secureCallable('adminCollectBalance', {}, async (req) =>
+  payBalance.adminCollectBalance({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
 
 /** Bandejas de pagos del panel (A11): pendientes, «ya pagué», devoluciones y saldos. */
 export const adminPaymentInbox = secureCallable('adminPaymentInbox', {}, async (req) =>

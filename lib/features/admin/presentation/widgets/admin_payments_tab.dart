@@ -326,12 +326,25 @@ class PaymentInboxTile extends StatelessWidget {
             ),
         ];
       case PaymentInboxKind.balances:
-        // Sin callable para cobrar un saldo: solo se consulta (decisión
-        // pendiente del responsable).
         return [
-          const Text(
-            'El saldo se gestiona con el pasajero fuera de la app.',
-            style: LuxTypography.caption,
+          _Action(
+            label: 'Cobrar saldo',
+            icon: Icons.point_of_sale_outlined,
+            filled: true,
+            onTap: () async {
+              final r = await showDialog<_CollectData>(
+                context: context,
+                builder: (_) => CollectBalanceDialog(item: item),
+              );
+              if (r == null) return;
+              await cubit.collectBalance(
+                item,
+                amount: r.amount,
+                operationNumber: r.operation,
+                method: r.method,
+                reason: r.reason,
+              );
+            },
           ),
         ];
     }
@@ -390,6 +403,12 @@ class _Action extends StatelessWidget {
 
 typedef _ConfirmData = ({double amount, String operation, String reason});
 typedef _RefundData = ({String reason, String? externalRef});
+typedef _CollectData = ({
+  double amount,
+  String operation,
+  String method,
+  String reason,
+});
 
 final _opFormat =
     FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z0-9 ._/-]'));
@@ -611,6 +630,131 @@ class _RecordRefundDialogState extends State<RecordRefundDialog> {
                   ))
               : null,
           child: Text(card ? 'Pedir devolución' : 'Registrar'),
+        ),
+      ],
+    );
+  }
+}
+
+/// Cobrar un saldo pendiente (G2): el pasajero pagó la diferencia fuera
+/// del sistema. Importe igual al saldo o menor (cobro parcial), método,
+/// número de operación (no se puede usar dos veces) y motivo.
+class CollectBalanceDialog extends StatefulWidget {
+  const CollectBalanceDialog({super.key, required this.item});
+  final PaymentInboxItem item;
+
+  @override
+  State<CollectBalanceDialog> createState() => _CollectBalanceDialogState();
+}
+
+class _CollectBalanceDialogState extends State<CollectBalanceDialog> {
+  late final _amount = TextEditingController(
+    text: (widget.item.balanceDue / 100).toStringAsFixed(2),
+  );
+  final _op = TextEditingController();
+  final _why = TextEditingController();
+  String _method = 'manual_qr';
+
+  @override
+  void dispose() {
+    _amount.dispose();
+    _op.dispose();
+    _why.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final amount = double.tryParse(_amount.text.trim().replaceAll(',', '.'));
+    final cents = amount == null ? null : (amount * 100).round();
+    final amountOk =
+        cents != null && cents > 0 && cents <= widget.item.balanceDue;
+    final ok = amountOk &&
+        _op.text.trim().isNotEmpty &&
+        _why.text.trim().length >= kAdminReasonMinLength;
+    return AlertDialog(
+      title: const Text('Cobrar saldo', style: LuxTypography.titleLarge),
+      content: SizedBox(
+        width: 420,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Reserva #${shortId(widget.item.bookingId)} · saldo pendiente '
+                '${_bsCents(widget.item.balanceDue)}. Registra solo lo que '
+                'ya está en la cuenta; si es menos, el resto sigue pendiente.',
+                style: LuxTypography.bodyMedium,
+              ),
+              const SizedBox(height: LuxSpacing.md),
+              TextField(
+                key: const Key('collect-amount'),
+                controller: _amount,
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                onChanged: (_) => setState(() {}),
+                decoration: adminInputDecoration(prefixText: 'Bs ').copyWith(
+                  labelText: 'Importe cobrado',
+                  errorText: amount == null || amountOk
+                      ? null
+                      : 'Entre 0,01 y ${_bsCents(widget.item.balanceDue)}',
+                ),
+              ),
+              const SizedBox(height: LuxSpacing.sm),
+              const Text('Método', style: LuxTypography.labelLarge),
+              for (final m in const ['manual_qr', 'card'])
+                RadioListTile<String>(
+                  key: Key('collect-method-$m'),
+                  value: m,
+                  groupValue: _method,
+                  onChanged: (v) => setState(() => _method = v ?? _method),
+                  title: Text(_methodLabel(m), style: LuxTypography.bodyMedium),
+                  contentPadding: EdgeInsets.zero,
+                ),
+              TextField(
+                key: const Key('collect-operation'),
+                controller: _op,
+                inputFormatters: [
+                  _opFormat,
+                  LengthLimitingTextInputFormatter(40),
+                ],
+                onChanged: (_) => setState(() {}),
+                decoration: adminInputDecoration().copyWith(
+                  labelText: 'N.º de operación o referencia',
+                ),
+              ),
+              const SizedBox(height: LuxSpacing.sm),
+              TextField(
+                key: const Key('collect-reason'),
+                controller: _why,
+                maxLines: 2,
+                onChanged: (_) => setState(() {}),
+                decoration: adminInputDecoration(
+                  hint: 'Obligatorio, mínimo $kAdminReasonMinLength '
+                      'caracteres (queda en la auditoría)',
+                ).copyWith(labelText: 'Motivo'),
+              ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          key: const Key('collect-confirm'),
+          onPressed: ok
+              ? () => Navigator.pop<_CollectData>(context, (
+                    amount: amount!,
+                    operation: _op.text.trim(),
+                    method: _method,
+                    reason: _why.text.trim(),
+                  ))
+              : null,
+          child: const Text('Registrar cobro'),
         ),
       ],
     );

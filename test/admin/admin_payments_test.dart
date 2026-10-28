@@ -125,6 +125,32 @@ void main() {
       ).called(1);
     });
 
+    test('cobrar saldo manda solo lo que pide el servidor', () async {
+      answer({'balanceDue': 0});
+      await repo.collectBalance(
+        bookingId: 'b1',
+        amount: 12.5,
+        operationNumber: ' OP 88 ',
+        method: 'manual_qr',
+        reason: ' $_why ',
+      );
+      verify(() => fn.httpsCallable('adminCollectBalance')).called(1);
+      verify(
+        () => callable.call<Object?>({
+          'bookingId': 'b1',
+          'amount': 12.5,
+          'operationNumber': 'OP 88',
+          'method': 'manual_qr',
+          'reason': _why,
+        }),
+      ).called(1);
+      expect(
+        adminPaymentErrorMessage(
+            'failed-precondition', {'reason': 'amount_exceeds_balance'}),
+        contains('supera el saldo'),
+      );
+    });
+
     test('errores: sin texto técnico; reauth y 2FA con su mensaje', () {
       String m(String code, String reason) =>
           adminPaymentErrorMessage(code, {'reason': reason});
@@ -287,7 +313,17 @@ void main() {
       expect(ok().onPressed, isNotNull);
     });
 
-    testWidgets('saldos: solo consulta, sin acciones', (t) async {
+    testWidgets('saldos (G2): cobrar el saldo o menos, con operación y motivo',
+        (t) async {
+      when(
+        () => repo.collectBalance(
+          bookingId: any(named: 'bookingId'),
+          amount: any(named: 'amount'),
+          operationNumber: any(named: 'operationNumber'),
+          method: any(named: 'method'),
+          reason: any(named: 'reason'),
+        ),
+      ).thenAnswer((_) async => const Right(null));
       await pump(
         t,
         Right([
@@ -296,7 +332,34 @@ void main() {
         kind: PaymentInboxKind.balances,
       );
       expect(find.text('Saldo pendiente'), findsOneWidget);
-      expect(find.byType(FilledButton), findsNothing);
+      await t.tap(find.text('Cobrar saldo'));
+      await t.pumpAndSettle();
+      FilledButton ok() =>
+          t.widget<FilledButton>(find.byKey(const Key('collect-confirm')));
+      await t.enterText(find.byKey(const Key('collect-operation')), 'OP 88');
+      await t.enterText(find.byKey(const Key('collect-reason')), _why);
+      await t.pump();
+      // Prellenado con el saldo exacto: se puede registrar.
+      expect(ok().onPressed, isNotNull);
+      // Más que el saldo: no.
+      await t.enterText(find.byKey(const Key('collect-amount')), '12,51');
+      await t.pump();
+      expect(find.textContaining('Entre 0,01'), findsOneWidget);
+      expect(ok().onPressed, isNull);
+      // Parcial, por QR o transferencia (método por defecto).
+      await t.enterText(find.byKey(const Key('collect-amount')), '5');
+      await t.pump();
+      await t.tap(find.byKey(const Key('collect-confirm')));
+      await t.pumpAndSettle();
+      verify(
+        () => repo.collectBalance(
+          bookingId: 'reserva-aviso',
+          amount: 5,
+          operationNumber: 'OP 88',
+          method: 'manual_qr',
+          reason: _why,
+        ),
+      ).called(1);
     });
 
     testWidgets('vacía y con error: lo dice y deja reintentar', (t) async {

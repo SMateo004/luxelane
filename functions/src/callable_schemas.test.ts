@@ -22,6 +22,7 @@ import { confirmSchema as confirmPaymentSchema, rejectSchema as rejectPaymentSch
 import { startSchema as startPaymentSchema } from './payment_card';
 import { refundSchema } from './payment_refund';
 import { inboxSchema } from './payment_inbox';
+import { collectBalanceSchema } from './payment_balance';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exported = Record<string, any>;
@@ -271,6 +272,17 @@ const CASES: Record<string, Case> = {
     extreme: [{ bookingId: ID, externalRef: 'x'.repeat(61), reason: 'Devuelto por transferencia hoy' },
       { bookingId: ID, externalRef: 'DEV 1', reason: 'Devuelto por transferencia hoy', amount: 1 },
       { bookingId: ID, externalRef: 'DEV<1>', reason: 'Devuelto por transferencia hoy' }],
+  },
+  adminCollectBalance: {
+    schema: collectBalanceSchema,
+    valid: { bookingId: ID, amount: 12.5, operationNumber: 'OP 2', method: 'manual_qr', reason: 'Saldo visto en el banco' },
+    wrongType: { bookingId: ID, amount: '12.50', operationNumber: 'OP 2', method: 'manual_qr', reason: 'Saldo visto en el banco' },
+    extreme: [
+      { bookingId: ID, amount: -1, operationNumber: 'OP 2', method: 'manual_qr', reason: 'Saldo visto en el banco' },
+      { bookingId: ID, amount: 12.5, operationNumber: 'OP 2', method: 'efectivo', reason: 'Saldo visto en el banco' },
+      { bookingId: ID, amount: 12.5, operationNumber: 'OP<2>', method: 'manual_qr', reason: 'Saldo visto en el banco' },
+      { bookingId: ID, amount: 12.5, operationNumber: 'OP 2', method: 'manual_qr', reason: 'corto' },
+    ],
   },
   adminPaymentInbox: {
     schema: inboxSchema, valid: { kind: 'reported' },

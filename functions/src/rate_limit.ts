@@ -80,6 +80,8 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   startPayment: per10min(20),
   // A8: devoluciones que anota central.
   adminRecordRefund: per10min(60),
+  // G2: saldos que cobra central.
+  adminCollectBalance: per10min(60),
   // A11: el panel refresca las bandejas.
   adminPaymentInbox: per10min(120),
   adminUpdateConfig: per10min(20),

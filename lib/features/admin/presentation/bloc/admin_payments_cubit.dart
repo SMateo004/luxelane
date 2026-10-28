@@ -135,4 +135,23 @@ class AdminPaymentsCubit extends Cubit<AdminPaymentsState> {
         ),
         'Devolución registrada. Se avisó al pasajero.',
       );
+
+  Future<bool> collectBalance(
+    PaymentInboxItem item, {
+    required double amount,
+    required String operationNumber,
+    required String method,
+    required String reason,
+  }) =>
+      _act(
+        item.bookingId,
+        () => _repo.collectBalance(
+          bookingId: item.bookingId,
+          amount: amount,
+          operationNumber: operationNumber,
+          method: method,
+          reason: reason,
+        ),
+        'Saldo registrado.',
+      );
 }

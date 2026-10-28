@@ -135,6 +135,16 @@ abstract class AdminPaymentsRepository {
     required String reason,
     String? externalRef,
   });
+
+  /// Cobra un saldo pendiente (adminCollectBalance): [amount] en
+  /// bolivianos, el saldo o menos; [method] `manual_qr` o `card`.
+  Future<Either<Failure, void>> collectBalance({
+    required String bookingId,
+    required double amount,
+    required String operationNumber,
+    required String method,
+    required String reason,
+  });
 }
 
 /// Quién causa una cancelación desde el panel (adminUpdateBooking, pagos

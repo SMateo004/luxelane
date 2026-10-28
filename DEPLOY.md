@@ -871,9 +871,11 @@ auditoría) o en la consola. Si faltan, el sistema hace lo más restrictivo:
 - `adminRecordPayment` (cobro manual al completar, de antes) sigue para
   reservas antiguas; con estado de pago responde `use_confirm_payment`
   (Q2): las nuevas solo se cobran con `adminConfirmPayment`.
-- Saldos pendientes (importe final mayor que lo pagado, A9): el panel los
-  lista pero **no hay forma de cobrarlos en el sistema**. Decidir cómo se
-  cobran y se registran.
+- Saldos pendientes (importe final mayor que lo pagado, A9): el pasajero
+  los paga fuera del sistema y central los registra en Pagos → Saldos
+  («Cobrar saldo», `adminCollectBalance`: importe igual al saldo o menor,
+  método, número de operación único y motivo; 2FA). Cómo se le pide el
+  pago al pasajero es decisión del responsable.
 - Textos a revisar antes del paso 5 (decisión del responsable, el código
   no los cambia): la página legal (`lib/features/legal/presentation/pages/
   legal_page.dart`) aún describe el flujo anterior (tarjeta autorizada al

@@ -101,7 +101,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 Pagos, Parte B: sin cambios de reglas. Las apps leen
 `bookings/{id}/payment/state` (pasajero dueño) y escriben solo por
 callables; el panel usa `adminPaymentInbox`, `adminConfirmPayment`,
-`adminRejectPayment` y `adminRecordRefund`. La app del chófer no lee pagos
+`adminRejectPayment`, `adminRecordRefund` y `adminCollectBalance` (G2). La app del chófer no lee pagos
 (`test/driver/driver_sin_pagos_test.dart`).
 
 
@@ -169,7 +169,7 @@ Pagos (rama cierre/pagos, Parte A). Celdas nuevas, 120 (3 filas × 8 roles
 
 | Fila | Permitido | Lo escribe |
 |---|---|---|
-| `bookings/{id}/payment` | pasajero dueño y admin × leer, listar | solo el servidor: `createBooking`, `startPayment`, `markPaymentSent`, `adminConfirmPayment`, `adminRejectPayment`, webhook, vencimiento, cancelaciones, `adminRecordRefund`, diferencia final |
+| `bookings/{id}/payment` | pasajero dueño y admin × leer, listar | solo el servidor: `createBooking`, `startPayment`, `markPaymentSent`, `adminConfirmPayment`, `adminRejectPayment`, webhook, vencimiento, cancelaciones, `adminRecordRefund`, diferencia final, `adminCollectBalance` |
 | `paymentRefs/{ref}` | nadie | `createBooking` (unicidad de la referencia) |
 | `paymentOperations/{key}` | nadie | `adminConfirmPayment` (un número de operación, una vez) |
 
