@@ -165,6 +165,35 @@ void main() {
     });
   });
 
+  testWidgets('H3: el saldo pendiente, en texto neutro', (t) async {
+    await pump(
+      t,
+      PaymentReceiptCard(payment: _p('paid', {'balanceDue': 1500})),
+    );
+    expect(find.text('Saldo pendiente'), findsOneWidget);
+    expect(find.text('Bs\u00A015'), findsOneWidget);
+    expect(
+      find.text('El importe final del viaje fue mayor que lo pagado.'),
+      findsOneWidget,
+    );
+    final texts = t
+        .widgetList<Text>(find.byType(Text))
+        .map((w) => (w.data ?? '').toLowerCase())
+        .join(' ');
+    for (final w in [
+      'contact',
+      'avisaremos',
+      'llamar',
+      'plazo',
+      'días',
+      'horas',
+      'pronto',
+      'en breve'
+    ]) {
+      expect(texts.contains(w), isFalse, reason: w);
+    }
+  });
+
   group('pago pendiente en el viaje', () {
     testWidgets('lleva a pagar; botón de 48 px con nombre', (t) async {
       var tapped = 0;

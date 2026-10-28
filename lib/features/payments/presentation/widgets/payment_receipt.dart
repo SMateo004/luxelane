@@ -166,12 +166,12 @@ class _PaymentReceiptCardState extends State<PaymentReceiptCard> {
                 'Te devolvemos el dinero al método con el que pagaste.',
               ),
             ],
+            // H3: el saldo se muestra tal cual; lo gestiona central. Sin
+            // promesas de contacto ni plazos.
             if (p.balanceDue > 0) ...[
               _Row('Saldo pendiente', _bs(p.balanceDue)),
               const _Note(
-                'El importe final fue mayor que lo pagado. Contacta con '
-                'central para saldarlo.',
-              ),
+                  'El importe final del viaje fue mayor que lo pagado.'),
             ],
           ],
         ),
