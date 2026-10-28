@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_theme.dart';
 import '../../../../core/di/injection.dart';
 import '../../../../core/enums/enums.dart';
+import '../../../../core/models/booking_payment.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/repositories/repositories.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
@@ -216,7 +218,7 @@ class _TripCard extends StatelessWidget {
           const SizedBox(height: LuxSpacing.sm + 4),
           Row(
             children: [
-              BookingStatusChip(status: booking.status),
+              TripStatusChip(booking: booking),
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                 child: Text(
@@ -245,6 +247,83 @@ class _TripCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Etiqueta de una reserva pendiente según su pago (E41): sin pagar,
+/// «Esperando pago»; pagada y buscando chófer, «Pagada». Sin estado de pago
+/// (reservas anteriores a los pagos) o en otro estado, la de siempre.
+({String label, Color color})? tripPaymentBadge(
+  BookingStatus status,
+  BookingPayment? payment,
+) {
+  if (status != BookingStatus.pending || payment == null) return null;
+  if (payment.payable) {
+    return (label: 'Esperando pago', color: LuxColors.warning);
+  }
+  if (payment.status == BookingPaymentStatus.paid) {
+    return (label: 'Pagada', color: LuxColors.success);
+  }
+  return null;
+}
+
+/// Estado de la reserva en Mis viajes. Solo las pendientes escuchan su pago
+/// (bookings/{id}/payment/state): el historial no abre una escucha por viaje.
+class TripStatusChip extends StatefulWidget {
+  const TripStatusChip({super.key, required this.booking, this.repository});
+
+  final Booking booking;
+
+  /// Para los tests; por defecto el registrado en get_it.
+  final BookingPaymentRepository? repository;
+
+  @override
+  State<TripStatusChip> createState() => _TripStatusChipState();
+}
+
+class _TripStatusChipState extends State<TripStatusChip> {
+  Stream<BookingPayment?>? _payment;
+
+  @override
+  void initState() {
+    super.initState();
+    _subscribe();
+  }
+
+  @override
+  void didUpdateWidget(TripStatusChip old) {
+    super.didUpdateWidget(old);
+    if (old.booking.id != widget.booking.id ||
+        old.booking.status != widget.booking.status) {
+      _subscribe();
+    }
+  }
+
+  void _subscribe() {
+    final repo = widget.repository ??
+        (sl.isRegistered<BookingPaymentRepository>()
+            ? sl<BookingPaymentRepository>()
+            : null);
+    _payment = widget.booking.status == BookingStatus.pending && repo != null
+        ? repo.watch(widget.booking.id)
+        : null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final stream = _payment;
+    if (stream == null) return BookingStatusChip(status: widget.booking.status);
+    return StreamBuilder<BookingPayment?>(
+      stream: stream,
+      builder: (context, snap) {
+        final badge = tripPaymentBadge(widget.booking.status, snap.data);
+        return BookingStatusChip(
+          status: widget.booking.status,
+          label: badge?.label,
+          color: badge?.color,
+        );
+      },
     );
   }
 }
