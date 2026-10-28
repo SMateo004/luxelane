@@ -148,6 +148,12 @@ BK('sin-sesion-reservar', { go: async (p, w) => { await toBooking(p, w); await t
 // tarjeta solo existe en las apps nativas). Crea una reserva: va al final.
 BK('pago', { mutates: true, user: 'pasajera', go: async (p, w) => { await toBooking(p, w); await toSummary(p, w); await reservar(p, w, 6000); } });
 add('F3-por-horas', 'inicio', { user: 'pasajera', go: async (p) => { await p.goto(L.url(L.RIDER, '/')); await L.ready(p); await L.tap(p, 'Por horas'); await sleep(1200); } });
+// G1: la página de recogida inmediata, sin promesa de chófer inmediato.
+add('F11-servicios', 'recogida-inmediata', { go: async (p) => { await p.goto(L.url(L.RIDER, '/servicios/recogida-inmediata')); await L.ready(p, 3000); } });
+add('F11-servicios', 'recogida-inmediata-pasos', { go: async (p) => { await p.goto(L.url(L.RIDER, '/servicios/recogida-inmediata')); await L.ready(p, 3000);
+  // Los pasos están más abajo: se baja con la rueda (no son botones).
+  await p.mouse.move(p.viewportSize().width / 2, p.viewportSize().height / 2);
+  for (let i = 0; i < 5; i++) { await p.mouse.wheel(0, 500); await sleep(300); } await sleep(800); } });
 add('F10-empresas', 'formulario', { go: async (p) => { await p.goto(L.url(L.RIDER, '/empresas')); await L.ready(p); } });
 add('F10-empresas', 'validacion', { go: async (p) => { await p.goto(L.url(L.RIDER, '/empresas')); await L.ready(p);
   const b = p.getByRole('button', { name: /enviar|solicitar/i }).last(); if (await b.count()) { await b.scrollIntoViewIfNeeded(); await b.click(); } await sleep(1200); } });
@@ -268,6 +274,9 @@ add('P-panel', 'confirmar-pago', { user: 'admin', go: async (p) => { await p.got
 add('P-panel', 'registrar-devolucion', { user: 'admin', go: async (p) => { await p.goto(L.url(L.RIDER, '/admin')); await L.ready(p, 3000);
   await openTab(p, 'Pagos'); await sleep(2500); await L.tap(p, 'Devoluciones'); await sleep(2500);
   await p.getByRole('button', { name: /Registrar devolución/ }).first().click(); await sleep(1200); } });
+add('P-panel', 'cobrar-saldo', { user: 'admin', go: async (p) => { await p.goto(L.url(L.RIDER, '/admin')); await L.ready(p, 3000);
+  await openTab(p, 'Pagos'); await sleep(2500); await L.tap(p, 'Saldos'); await sleep(2500);
+  await L.tap(p, 'Cobrar saldo'); await sleep(1200); } });
 add('P-panel', 'cancelar-con-causa', { user: 'admin', go: async (p) => { await p.goto(L.url(L.RIDER, '/admin')); await L.ready(p, 3000);
   await openTab(p, 'Operaciones'); await sleep(2000); await openBooking(p, 'R-CONF');
   await L.tap(p, 'Cancelar reserva'); await sleep(1200); } });
