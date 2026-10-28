@@ -128,3 +128,50 @@ npm run test:integration (demo-luxelane)      pasa       272/272                
 tools/pricing: npm test                       pasa       pass 10, fail 0                 0
 actionlint ci.yml                             pasa       —                               0
 ```
+
+## cierre/integracion tras fusionar cierre/pagos-g (commit a37c6a6, 2026-10-28)
+
+```
+Comando                                       Resultado  Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa       121 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa       243 archivos, 0 cambiados       0
+flutter test                                  pasa       607/607                         0
+functions: npm run build                      pasa       —                               0
+functions: npm test                           pasa       508/508                         0
+functions: jest fare.test.ts pickup_code      pasa       33/33                           0
+npm run test:rules (demo-luxelane)            pasa       1567/1567                       0
+npm run test:integration (demo-luxelane)      pasa       374/374                         0
+tools/pricing: npm test                       pasa       pass 10, fail 0                 0
+actionlint ci.yml                             pasa       —                               0
+```
+
+## cierre/ajustes, H1–H4 (commit eabd29c, 2026-10-28)
+
+```
+Comando                                       Resultado  Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa       121 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa       245 archivos, 0 cambiados       0
+flutter test                                  pasa       617/617                         0
+functions: npm run build                      pasa       —                               0
+functions: npm test                           pasa       508/508 (28 de 28 suites)       0
+functions: jest fare.test.ts pickup_code      pasa       33/33                           0
+npm run test:rules (demo-luxelane)            pasa       1567/1567 (23 de 23 suites)     0
+npm run test:integration (demo-luxelane)      pasa       378/378 (43 de 43 suites)       0
+tools/pricing: npm test                       pasa       pass 10, fail 0                 0
+actionlint ci.yml                             pasa       —                               0
+```
+
+Sin cambios en `firestore.rules` ni en sus tests.
+
+### Tests nuevos sin el cambio de su tarea
+
+```
+Tarea                     Archivo de tests                          Sin el cambio
+H1 channel obligatorio    payment_dispatch.int.ts                   1 de 17 falla
+H2/E40 comprobante        payment_receipt_test.dart                 no compila sin el cambio
+H2/E41 Mis viajes         trip_payment_status_test.dart             no compila sin el cambio
+H2/E42 tarjetas           payment_methods_screen_test.dart          no compila sin el cambio
+H2/E43 titular            payment_receipt_test.dart                 no compila sin el cambio
+H3 saldo neutro           payment_receipt_test.dart                 1 de 12 falla
+H4 solo anexado           payment_ledger.int.ts                     2 de 2 fallan
+```

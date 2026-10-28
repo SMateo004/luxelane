@@ -480,7 +480,15 @@ en `docs/capturas/hojas/` (ahora también P-pagos y P-panel).
 | E42 | Perfil → «Métodos de pago» sigue ofreciendo «Agregar tarjeta» («Paga sin pensarlo.»), aunque la tarjeta no se puede usar para pagar (sin proveedor, decisión 5). | Molesta (promete algo que no existe) | [seguro] `F7-viajes/pagos_390`; `profile_screen.dart:207`. Quitarla o dejarla es decisión del responsable. |
 | E43 | En una reserva cancelada con retención, el titular repite la retención que ya muestra el comprobante. | Menor | [seguro] `F5-viaje/cancelada-con-recargo_390`. |
 
-Ninguno se corrige en esta entrega.
+Corregidos en `cierre/ajustes` (H2) [seguro: tests y capturas a 390 px
+con el entorno de mapas ficticio]:
+
+| Id | Qué cambió | Commit | Test |
+|---|---|---|---|
+| E40 | Con el viaje en curso, el comprobante va debajo del chófer y plegado («Comprobante de pago · Bs 120»); el código y el chófer quedan a la vista. | c735f56 | `payment_receipt_test.dart` |
+| E41 | Mis viajes: «Esperando pago», «Pagada» o «Pendiente» (sin estado de pago). | e08078c | `trip_payment_status_test.dart` |
+| E42 | Sin proveedor de tarjeta registrado, «Métodos de pago» no ofrece agregar tarjetas ni dice «Paga sin pensarlo.». | 79d9f67 | `payment_methods_screen_test.dart` |
+| E43 | El titular de una cancelada con comprobante no repite la retención. | 2fcf3f0 | `payment_receipt_test.dart` |
 
 ### F6. Portada estática en `/`: diseño (sin implementar)
 
