@@ -4,6 +4,35 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/pagos-g, G1–G5 (commit 9b72fc8, 2026-10-28)
+
+```
+Comando                                       Resultado  Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa       121 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa       243 archivos, 0 cambiados       0
+flutter test                                  pasa       607/607                         0
+functions: npm run build                      pasa       —                               0
+functions: npm test                           pasa       508/508                         0
+functions: jest fare.test.ts pickup_code      pasa       33/33                           0
+npm run test:rules (demo-luxelane)            pasa       1567/1567                       0
+npm run test:integration (demo-luxelane)      pasa       374/374                         0
+tools/pricing: npm test                       pasa       pass 10, fail 0                 0
+actionlint ci.yml                             pasa       —                               0
+```
+
+Sin cambios en `firestore.rules` ni en sus tests.
+
+### Tests nuevos sin el cambio de su tarea
+
+```
+Tarea                     Archivo de tests                          Sin el cambio
+G1 chófer inmediato       promesas_test.dart                        2 de 23 fallan (6 líneas)
+G2 cobrar saldo           payment_balance.int.ts (8)                no compila sin el módulo
+G2 panel                  admin_payments_test.dart                  no compila sin el método
+G4 importe en auditoría   payment_manual.int.ts                     1 de 17 falla
+G3, G5                    capturas y documentación                  —
+```
+
 ## cierre/pagos, Parte B y E34–E39 (commit f38b5e7, 2026-10-26)
 
 ```
