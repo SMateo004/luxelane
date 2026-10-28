@@ -41,6 +41,23 @@ const kDriverLiveStatuses = {
 bool receiptBelowDriver(BookingStatus? status) =>
     kDriverLiveStatuses.contains(status);
 
+/// Titular de una reserva cancelada. La retención está en el pago (A7) y
+/// la muestra el comprobante: el titular no la repite (E43). Sin estado de
+/// pago (reservas antiguas), el recargo guardado en la reserva.
+String cancelledMessage(BookingPayment? payment, double? legacyFee) {
+  const base = 'Esta reserva fue cancelada.';
+  if (payment != null) {
+    final retained = BookingPayment.bs(payment.amountRetained);
+    // Sin comprobante (no hubo pago) no hay retención que mostrar.
+    if (payment.hasReceipt || retained <= 0) return base;
+    return '$base Retención por cancelación: ${LuxFormat.money(retained)}.';
+  }
+  final fee = legacyFee ?? 0;
+  return fee > 0
+      ? '$base Retención por cancelación: ${LuxFormat.money(fee)}.'
+      : base;
+}
+
 /// «Llamar a tu chófer» solo dentro de la ventana activa y con teléfono.
 bool showCallDriver(BookingStatus? status, String? phone) =>
     kDriverLiveStatuses.contains(status) && (phone ?? '').isNotEmpty;
@@ -228,15 +245,7 @@ class _RideScreenState extends State<RideScreen> {
       case BookingStatus.completed:
         return 'Has llegado. Gracias por viajar con Luxelane.';
       case BookingStatus.cancelled:
-        // La retención está en el pago (A7); las reservas antiguas
-        // guardaban el recargo en la propia reserva.
-        final retained = _payment != null
-            ? BookingPayment.bs(_payment!.amountRetained)
-            : (_booking!.cancellationFee ?? 0);
-        return retained > 0
-            ? 'Esta reserva fue cancelada. Retención por cancelación: '
-                '${LuxFormat.money(retained)}.'
-            : 'Esta reserva fue cancelada.';
+        return cancelledMessage(_payment, _booking!.cancellationFee);
       case BookingStatus.noShow:
         return 'Tu chófer no te encontró en el punto de recogida. Central '
             'fue avisada.';
