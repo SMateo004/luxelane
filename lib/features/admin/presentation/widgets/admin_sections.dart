@@ -1395,6 +1395,11 @@ const _auditLabels = {
   'adjust_price': 'Precio ajustado',
   'record_payment': 'Cobro registrado',
   'refund_payment': 'Reembolso',
+  // Pagos (conciliación diaria, DEPLOY.md).
+  'confirm_payment': 'Pago confirmado',
+  'reject_payment': 'Pago rechazado',
+  'record_refund': 'Devolución registrada',
+  'collect_balance': 'Saldo cobrado',
   'update_finance_settings': 'Config. financiera',
   'backfill_settlements': 'Repartos asignados',
   'verify_driver': 'Chófer verificado',

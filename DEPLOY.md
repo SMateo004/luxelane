@@ -789,45 +789,95 @@ Parte B (apps y panel):
 
 ### Orden
 
+Este orden es obligatorio (G4): **`config/ops` completo ANTES de publicar
+las apps y ANTES de subir `minAppVersion`**. Una app con pantalla de pago
+sin datos de cobro no puede cobrar; y subir `minAppVersion` obliga a
+actualizar a una app que tiene que poder cobrar desde el primer minuto.
+
 1. **Índices** (`firebase deploy --only firestore:indexes`): grupo de
    colecciones `payment` (vencimiento y bandejas). Esperar a que estén
    listos.
 2. **Functions**. Desde aquí, como **ningún método de pago está activo**,
    `createBooking` responde `payments_unavailable` a TODAS las apps: no se
-   pueden hacer reservas nuevas hasta el paso 5. Las reservas ya creadas
+   pueden hacer reservas nuevas hasta el paso 3. Las reservas ya creadas
    siguen su curso (ver «Reservas existentes»).
-3. **Apps nuevas** (pasajero con la pantalla de pago; Parte B) y
-   **panel** (hosting) con las bandejas. Entre los pasos 2 y 3 el panel
-   anterior no puede decidir un «no se presentó» (mandaba un importe que
-   el servidor ya no acepta: `invalid_request`); cancelar sí funciona y
-   cuenta como causa de la plataforma (0 % de retención). Desplegar el
-   hosting justo después de las functions.
-4. **`minAppVersion`** en `config/global` = la versión de la app del
-   pasajero con pago, cuando esté publicada en las tiendas.
-5. **Activar el pago** en `config/ops` (pasos manuales, abajo):
-   `paymentInstructions.manual_qr` y luego `paymentMethods.manual_qr: true`.
-   Desde aquí se puede reservar, y solo con apps que muestran el pago.
-6. **Reglas** al final (estado de pago legible por el pasajero dueño y
+3. **`config/ops`**, con `adminUpdateConfig` (motivo, auditoría) o la
+   consola, en este orden (valores del responsable; ver «Pasos
+   manuales»):
+   1. `paymentInstructions.manual_qr` (datos de cobro y QR);
+   2. `paymentWindowMinutes`;
+   3. `cancellationPolicy`;
+   4. por último `paymentMethods.manual_qr: true`: es la clave que
+      enciende las reservas. Antes de ponerla, comprobar las otras tres
+      (si una no es válida, el sistema hace lo más restrictivo: sin
+      método, sin vencimiento o sin retención).
+4. **Hosting** (web del pasajero y panel, que van en la misma
+   publicación), en cuanto termine el paso 3: la web nueva ya puede cobrar
+   y central ya tiene la sección «Pagos» para confirmar. Hasta este paso
+   el panel anterior no puede decidir un «no se presentó» (mandaba un
+   importe que el servidor ya no acepta: `invalid_request`); cancelar sí
+   funciona y cuenta como causa de la plataforma (0 % de retención).
+5. **Apps nativas** en las tiendas (pasajero con la pantalla de pago;
+   chófer sin cambios de flujo).
+6. **`minAppVersion`** en `config/global` = la versión de la app del
+   pasajero con pago, cuando esté publicada y disponible en las dos
+   tiendas.
+7. **Reglas** al final (estado de pago legible por el pasajero dueño y
    el admin; auto-aceptación del chófer solo con pago confirmado).
 
-### Por qué una app antigua no deja reservas colgadas
+### Ventana de las apps antiguas (entre los pasos 3 y 6)
 
-Una app anterior no tiene pantalla de pago: una reserva suya quedaría en
-`awaiting_payment` sin que el pasajero supiera pagar. Se evita así:
+Una app anterior no tiene pantalla de pago: una reserva suya queda en
+`awaiting_payment` sin que el pasajero sepa que debe pagar. Con este orden
+eso **puede pasar** entre los pasos 3 y 6 (el pago ya está activo y
+`minAppVersion` aún no frena a las apps antiguas). Cómo se contiene:
 
-- Entre los pasos 2 y 5 nadie puede reservar (`payments_unavailable`).
-  La app antigua muestra su error genérico («No pudimos procesar tu
-  reserva…», hallazgo E37): no se crea nada.
-- Desde el paso 4 `minAppVersion` frena a las apps antiguas al cotizar y
-  reservar (`app_update_required`): ven «Actualiza la app».
-- El paso 5 va después del 4: cuando se activa el pago, solo las apps
-  nuevas llegan a reservar.
-- Si aun así quedara una reserva sin pagar, central la ve en la bandeja
-  «Pendientes de pago» y, con `paymentWindowMinutes`, vence sola sin
-  cobrar nada.
+- Entre los pasos 2 y 3 nadie puede reservar (`payments_unavailable`; la
+  app antigua muestra su error genérico, hallazgo E37): no se crea nada.
+- La web antigua deja de existir en el paso 4 (se sirve la nueva), que va
+  justo después del 3.
+- Desde el paso 6 `minAppVersion` frena a las apps nativas antiguas al
+  cotizar y reservar (`app_update_required`).
+- Lo que se cree en la ventana aparece en Pagos → «Pendientes de pago»
+  (central puede avisar al pasajero) y, con `paymentWindowMinutes`, vence
+  solo sin cobrar nada ni ofrecerse a ningún chófer.
+- Para acortar la ventana: tener las apps aprobadas en las tiendas antes
+  del paso 2 y hacer los pasos 3 a 6 el mismo día.
 
-Hay una ventana sin reservas (entre los pasos 2 y 5). Para acortarla:
-tener las apps aprobadas en las tiendas antes del paso 2.
+Propuesta, **no implementada** (espera aprobación): que `createBooking`
+rechace con `app_update_required` las peticiones sin `channel` (solo las
+apps con pantalla de pago lo mandan, E38). Cerraría la ventana sin
+depender de `minAppVersion`.
+
+### Conciliación diaria de pagos manuales
+
+Cada día (hora y responsable a decidir), quien tenga acceso al extracto
+del banco coteja lo confirmado en el panel contra lo que entró en la
+cuenta del día anterior:
+
+1. Panel → Auditoría: escribir en la búsqueda «Pago confirmado» y luego
+   «Saldo cobrado» (G2). Cada fila dice la referencia del pago, el número
+   de operación del banco, el importe en bolivianos y quién lo registró
+   («Pago PRB… · operación … · 120.00 bob · Motivo: …»). Las devoluciones
+   son «Devolución registrada», con el importe y la referencia de la
+   transferencia de salida.
+2. Extracto del banco del mismo día: cada ingreso debe tener su
+   confirmación con el **mismo número de operación y el mismo importe**,
+   y cada confirmación su ingreso. Cada devolución registrada, su
+   transferencia de salida.
+3. Diferencias:
+   - confirmación sin ingreso: no se borra nada (la auditoría no se
+     edita); se escala al responsable con la reserva y la referencia;
+   - ingreso sin confirmación: buscar la referencia en Pagos → «Por
+     confirmar» o «Pendientes de pago» y confirmarlo con su número de
+     operación (vale aunque la reserva haya vencido: se marca fuera de
+     plazo y, si ya no se puede reactivar, queda la devolución pendiente);
+   - importe distinto: no se confirma (el servidor exige el importe
+     exacto); se contacta con el pasajero.
+4. Revisar también Pagos → «Devoluciones» y «Saldos»: nada debería quedar
+   pendiente más tiempo del que fije el responsable.
+5. Anotar la conciliación (fecha, quién, diferencias y qué se hizo) donde
+   decida el responsable. El sistema no guarda esta nota.
 
 ### Reservas existentes al desplegar
 
@@ -876,7 +926,7 @@ auditoría) o en la consola. Si faltan, el sistema hace lo más restrictivo:
   («Cobrar saldo», `adminCollectBalance`: importe igual al saldo o menor,
   método, número de operación único y motivo; 2FA). Cómo se le pide el
   pago al pasajero es decisión del responsable.
-- Textos a revisar antes del paso 5 (decisión del responsable, el código
+- Textos a revisar antes del paso 3 (decisión del responsable, el código
   no los cambia): la página legal (`lib/features/legal/presentation/pages/
   legal_page.dart`) aún describe el flujo anterior (tarjeta autorizada al
   reservar y cobrada al completar, «la retención se libera», el

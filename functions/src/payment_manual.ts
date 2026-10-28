@@ -22,7 +22,7 @@ import { z } from 'zod';
 import { AdminActor, changedFields, reasonSchema, writeAudit } from './admin_audit';
 import { loadPaymentSettings } from './payment_config';
 import { openForDrivers } from './payment_booking';
-import { addLedger, cents, PaymentMethod, PaymentState, paymentStateRef } from './payment_model';
+import { addLedger, cents, CURRENCY, PaymentMethod, PaymentState, paymentStateRef } from './payment_model';
 import { ProviderOverrides, providerFor } from './payment_provider';
 import { docId, parseInput } from './schemas';
 import { appendEvent } from './trip_flow';
@@ -234,7 +234,10 @@ export async function adminConfirmPayment(deps: PaymentDeps, actor: AdminActor, 
       changes: changedFields({ paymentStatus: s.paymentStatus, amountPaid: s.amountPaid },
         { paymentStatus: result.paymentStatus, amountPaid: amount }),
       reason: input.reason,
-      details: `Pago ${s.paymentRef} · operación ${input.operationNumber}${late ? ' · fuera de plazo' : ''}`,
+      // Importe en el texto: la conciliación diaria lo coteja con el banco
+      // desde la lista de Auditoría del panel (DEPLOY.md, G4).
+      details: `Pago ${s.paymentRef} · operación ${input.operationNumber} · ${(amount / 100).toFixed(2)} ${CURRENCY}`
+        + `${late ? ' · fuera de plazo' : ''}`,
       context: { paymentRef: s.paymentRef, operationNumber: input.operationNumber, amount, late },
     });
     return { paymentStatus: result.paymentStatus, dispatched: result.dispatched, late };

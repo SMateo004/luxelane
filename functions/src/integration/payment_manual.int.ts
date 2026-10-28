@@ -125,6 +125,8 @@ describe('adminConfirmPayment', () => {
     expect((await all('users/ana/notifications'))[0]).toMatchObject({ type: 'payment_confirmed', bookingId: 'b1' });
     expect(await all('admin_logs')).toEqual([expect.objectContaining({
       operation: 'confirm_payment', docPath: 'bookings/b1', reason: REASON,
+      // G4: la conciliación diaria coteja el importe desde la lista del panel.
+      details: expect.stringContaining('operación OP 123 · 100.00 bob'),
       changes: { paymentStatus: { before: 'awaiting_payment', after: 'paid' }, amountPaid: { before: 0, after: 10000 } },
     })]);
   });
