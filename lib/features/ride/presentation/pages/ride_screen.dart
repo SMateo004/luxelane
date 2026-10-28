@@ -36,6 +36,11 @@ const kDriverLiveStatuses = {
   BookingStatus.inProgress,
 };
 
+/// Con el viaje en curso, el comprobante va plegado y debajo del chófer:
+/// no desplaza la tarjeta del chófer ni el código de recogida (E40).
+bool receiptBelowDriver(BookingStatus? status) =>
+    kDriverLiveStatuses.contains(status);
+
 /// «Llamar a tu chófer» solo dentro de la ventana activa y con teléfono.
 bool showCallDriver(BookingStatus? status, String? phone) =>
     kDriverLiveStatuses.contains(status) && (phone ?? '').isNotEmpty;
@@ -185,9 +190,13 @@ class _RideScreenState extends State<RideScreen> {
       );
     }
     if (!p.hasReceipt) return const SizedBox.shrink();
+    final live = receiptBelowDriver(_status);
     return Padding(
-      padding: const EdgeInsets.only(bottom: LuxSpacing.md),
-      child: PaymentReceiptCard(payment: p),
+      padding: EdgeInsets.only(
+        top: live ? LuxSpacing.md : 0,
+        bottom: live ? 0 : LuxSpacing.md,
+      ),
+      child: PaymentReceiptCard(payment: p, collapsed: live),
     );
   }
 
@@ -445,9 +454,18 @@ class _RideScreenState extends State<RideScreen> {
                   message: _statusMessage,
                   pickup: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [_pickupSection(), _paymentSection()],
+                    children: [
+                      _pickupSection(),
+                      if (!receiptBelowDriver(_status)) _paymentSection(),
+                    ],
                   ),
-                  driver: _driverSection(),
+                  driver: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _driverSection(),
+                      if (receiptBelowDriver(_status)) _paymentSection(),
+                    ],
+                  ),
                   actions: _actions(),
                   preferences:
                       _booking?.riderPreferences ?? RidePreferences.none,
@@ -483,8 +501,9 @@ class _RideScreenState extends State<RideScreen> {
                           Text(_statusMessage, style: LuxTypography.bodyMedium),
                           const SizedBox(height: LuxSpacing.lg),
                           _pickupSection(),
-                          _paymentSection(),
+                          if (!receiptBelowDriver(_status)) _paymentSection(),
                           _driverSection(),
+                          if (receiptBelowDriver(_status)) _paymentSection(),
                           const Spacer(),
                           _actions(),
                         ],

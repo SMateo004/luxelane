@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:luxelane/core/enums/enums.dart';
 import 'package:luxelane/core/models/booking_payment.dart';
 import 'package:luxelane/features/payments/presentation/widgets/payment_receipt.dart';
+import 'package:luxelane/features/ride/presentation/pages/ride_screen.dart'
+    show receiptBelowDriver;
 
 /// Importes y referencia de PRUEBA, ficticios (céntimos de boliviano).
 BookingPayment _p(String status, Map<String, dynamic> extra) =>
@@ -99,6 +102,47 @@ void main() {
         scale: 2,
       );
       expect(t.takeException(), isNull);
+    });
+  });
+
+  group('E40: con el viaje en curso', () {
+    test('el comprobante va debajo del chófer solo con el viaje en curso', () {
+      for (final st in BookingStatus.values) {
+        expect(
+          receiptBelowDriver(st),
+          {
+            BookingStatus.driverArriving,
+            BookingStatus.driverArrived,
+            BookingStatus.verified,
+            BookingStatus.inProgress,
+          }.contains(st),
+          reason: st.name,
+        );
+      }
+    });
+
+    testWidgets('plegado: título e importe; se despliega al tocar', (t) async {
+      final h = t.ensureSemantics();
+      await pump(
+        t,
+        PaymentReceiptCard(payment: _p('paid', {}), collapsed: true),
+      );
+      expect(find.text('Comprobante de pago'), findsOneWidget);
+      expect(find.textContaining('120'), findsNothing);
+      expect(find.textContaining('80'), findsOneWidget);
+      expect(find.text('Referencia'), findsNothing);
+      // Plegado ocupa una línea: no empuja al chófer.
+      expect(
+        t.getSize(find.byKey(const ValueKey('payment-receipt'))).height,
+        lessThan(80),
+      );
+      await expectLater(t, meetsGuideline(androidTapTargetGuideline));
+      await expectLater(t, meetsGuideline(labeledTapTargetGuideline));
+      await t.tap(find.byTooltip('Ver comprobante'));
+      await t.pumpAndSettle();
+      expect(find.text('Referencia'), findsOneWidget);
+      expect(find.text('Este comprobante no es una factura.'), findsOneWidget);
+      h.dispose();
     });
   });
 
