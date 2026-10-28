@@ -10,10 +10,17 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/reauth_dialog.dart';
+import '../../domain/card_payment_presenter.dart';
 import '../bloc/payment_bloc.dart';
 
+/// Tarjetas guardadas. Mientras la tarjeta no se pueda usar para pagar
+/// (sin un CardPaymentPresenter registrado: proveedor sin decidir), no se
+/// cargan ni se ofrece agregarlas (E42); vuelve todo al registrarlo.
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({super.key});
+  const PaymentScreen({super.key, this.cardsEnabled});
+
+  /// Para los tests; por defecto, si hay un CardPaymentPresenter registrado.
+  final bool? cardsEnabled;
   @override
   State<PaymentScreen> createState() => _PaymentScreenState();
 }
@@ -22,7 +29,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
   @override
   void initState() {
     super.initState();
-    _loadCards();
+    if (_cardsEnabled) _loadCards();
   }
 
   Future<void> _loadCards() async {
@@ -87,8 +94,27 @@ class _PaymentScreenState extends State<PaymentScreen> {
         );
   }
 
+  bool get _cardsEnabled =>
+      widget.cardsEnabled ?? sl.isRegistered<CardPaymentPresenter>();
+
   @override
   Widget build(BuildContext context) {
+    if (!_cardsEnabled) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Métodos de pago'),
+          leading: IconButton(
+            tooltip: 'Volver',
+            icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
+            onPressed: () => context.pop(),
+          ),
+        ),
+        body: const EmptyState(
+          icon: Icons.payments_outlined,
+          message: 'Cada reserva se paga en su paso de pago.',
+        ),
+      );
+    }
     return BlocConsumer<PaymentBloc, PaymentState>(
       listener: (context, state) {
         if (state is CardOperationSuccess) _loadCards();
