@@ -77,7 +77,7 @@ describe('flujo completo: reservar, pagar, confirmar, aceptar, cancelar y devolv
       origin: { name: '', address: 'Calle 1', lat: -17.7834, lng: -63.1821 },
       destination: { name: '', address: 'Av. 2', lat: -17.765, lng: -63.196 },
       scheduledAt: NOW + 2 * 3600_000, vehicleClass: 'business', serviceType: 'oneWay',
-      passengerCount: 1, luggageCount: 0, requestId: randomUUID(), quotedPrice: 500,
+      passengerCount: 1, luggageCount: 0, requestId: randomUUID(), quotedPrice: 500, channel: 'native',
     });
     const id = r.bookingId;
     expect(r).toMatchObject({ amountDue: 8600, paymentStatus: 'awaiting_payment', paymentDeadline: NOW + 30 * 60_000 });

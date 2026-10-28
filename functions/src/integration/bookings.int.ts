@@ -50,6 +50,7 @@ const trip = (over: Record<string, unknown> = {}) => ({
   notes: 'Toque el timbre',
   guest: { title: 'Sra.', firstName: 'Carla', phone: '+59170000001', language: 'Español' },
   requestId: randomUUID(),
+  channel: 'native',
   ...over,
 });
 
@@ -313,7 +314,7 @@ describe('versión mínima de la app (config/global.minAppVersion)', () => {
   });
 
   it('versión menor: app_update_required al cotizar y al reservar, sin crear nada', async () => {
-    const { guest: _g, notes: _n, passengerCount: _p, luggageCount: _l, requestId: _r, ...q } = trip();
+    const { guest: _g, notes: _n, passengerCount: _p, luggageCount: _l, requestId: _r, channel: _c, ...q } = trip();
     const quote = await reason(quoteBooking(deps(), 'ana', { ...q, appVersion: '1.1.9' }));
     expect(quote).toMatchObject({ code: 'failed-precondition', reason: 'app_update_required' });
     expect(await reason(createBooking(deps(), 'ana', trip({ appVersion: '1.1.9' }))))
@@ -335,7 +336,7 @@ describe('versión mínima de la app (config/global.minAppVersion)', () => {
 
 describe('quoteBooking', () => {
   it('devuelve precio y desglose sin crear nada', async () => {
-    const { guest: _g, notes: _n, passengerCount: _p, luggageCount: _l, requestId: _r, ...q } = trip();
+    const { guest: _g, notes: _n, passengerCount: _p, luggageCount: _l, requestId: _r, channel: _c, ...q } = trip();
     const quote = await quoteBooking(deps(), 'ana', q);
     expect(quote).toMatchObject({ price: 86, distanceSource: 'routes', breakdown: { km: 12, perKm: 3, minimumApplied: false } });
     expect(await count('bookings')).toBe(0);

@@ -71,6 +71,9 @@ export const createSchema = z.strictObject({
   /**
    * Desde dónde se reserva. La web solo paga por QR o transferencia (E38):
    * sin ese método activo, la web no crea reservas que no podría pagar.
+   * createBooking lo exige (H1): sin él responde app_update_required. Es
+   * opcional en el esquema solo para dar ese aviso en vez de
+   * invalid_request.
    */
   channel: z.enum(['web', 'native']).optional(),
 })

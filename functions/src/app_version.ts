@@ -18,6 +18,13 @@ export function compareVersions(a: string, b: string): number | null {
   return 0;
 }
 
+const storeUrl = (v: unknown) => (typeof v === 'string' && v.startsWith('https://') ? v : undefined);
+
+/** Enlaces a las tiendas de config/global, para el aviso «Actualiza la app». */
+export function storeLinks(global: Record<string, unknown>): { androidStoreUrl?: string; iosStoreUrl?: string } {
+  return { androidStoreUrl: storeUrl(global.androidStoreUrl), iosStoreUrl: storeUrl(global.iosStoreUrl) };
+}
+
 /**
  * Si hace falta actualizar, los enlaces a las tiendas (config/global) para
  * que la app los muestre; si no, null. Un mínimo mal escrito no bloquea.
@@ -32,10 +39,5 @@ export function updateRequired(
   if (typeof min !== 'string' || compareVersions(min, min) === null) return null;
   const cmp = typeof appVersion === 'string' ? compareVersions(appVersion, min) : null;
   if (cmp !== null && cmp >= 0) return null;
-  const url = (v: unknown) => (typeof v === 'string' && v.startsWith('https://') ? v : undefined);
-  return {
-    minAppVersion: min,
-    androidStoreUrl: url(global.androidStoreUrl),
-    iosStoreUrl: url(global.iosStoreUrl),
-  };
+  return { minAppVersion: min, ...storeLinks(global) };
 }
