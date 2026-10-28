@@ -7,6 +7,8 @@
  */
 import { describe, it, expect, beforeEach, afterAll } from '@jest/globals';
 import * as admin from 'firebase-admin';
+// Inicializa la app por defecto (como el resto de tests de integración).
+import '../index';
 import { adminCollectBalance } from '../payment_balance';
 import { adminRecordRefund } from '../payment_refund';
 import { reconcileFinalAmount } from '../payment_final';
