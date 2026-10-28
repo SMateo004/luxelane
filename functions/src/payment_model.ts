@@ -55,6 +55,13 @@ export interface PaymentState {
   refundDue?: number;
   /** Diferencia del importe final (A9), en céntimos: lo que debe el pasajero. */
   balanceDue?: number;
+  /** Asiento pendiente vigente de cada serie (H4) y cuántos se crearon. */
+  balanceEntryId?: string | null;
+  balanceSeq?: number;
+  refundFinalEntryId?: string | null;
+  refundFinalSeq?: number;
+  /** Saldo ya cobrado por central (G2), en céntimos. */
+  balanceCollected?: number;
   /** Métodos que se ofrecieron al crear la reserva. */
   methodsOffered?: PaymentMethod[];
   /** «Ya pagué» del pasajero (A4). */
@@ -75,9 +82,18 @@ export interface LedgerEntry {
   /** Referencia externa: número de operación, id del proveedor… */
   externalRef: string | null;
   reason: string;
-  /** pending: aún por ejecutar (reembolso manual, saldo por cobrar). */
-  status: 'completed' | 'pending';
+  /**
+   * pending: aún por ejecutar (reembolso manual, saldo por cobrar).
+   * completed: el propio asiento es el movimiento de dinero.
+   * superseded: lo sustituyen otros asientos (closedBy): un cobro de saldo,
+   * el resto que queda por cobrar o una diferencia final recalculada.
+   */
+  status: 'completed' | 'pending' | 'superseded';
   createdAt: admin.firestore.Timestamp;
+  /** Al cerrar un asiento pendiente (una sola vez). */
+  completedAt?: admin.firestore.Timestamp;
+  closedAt?: admin.firestore.Timestamp;
+  closedBy?: string[];
 }
 
 export const paymentStateRef = (db: admin.firestore.Firestore, bookingId: string) =>
@@ -103,10 +119,37 @@ export const isPaymentRef = (v: string): boolean =>
 /** Céntimos enteros desde bolivianos (los de las tarifas tienen dos decimales). */
 export const cents = (bs: number): number => Math.round(Number(bs) * 100);
 
-/** Asiento nuevo dentro de la transacción; el id se puede fijar para la idempotencia. */
+/**
+ * El libro `payments` es de solo anexado (H4): un asiento se crea una vez
+ * (tx.create: si ya existe, la transacción falla), nunca se borra y su
+ * importe, tipo, método y motivo no cambian. Lo único que se escribe
+ * después es el cierre de un asiento pendiente, una sola vez
+ * (closePending).
+ */
 export function addLedger(tx: admin.firestore.Transaction, db: admin.firestore.Firestore,
   e: Omit<LedgerEntry, 'currency' | 'createdAt'> & { createdAt: admin.firestore.Timestamp }, id?: string) {
   const ref = id ? db.collection('payments').doc(id) : db.collection('payments').doc();
-  tx.set(ref, { currency: CURRENCY, ...e });
+  tx.create(ref, { currency: CURRENCY, ...e });
   return ref;
 }
+
+/**
+ * Cierra un asiento pendiente: completed (el asiento es el movimiento, con
+ * su referencia externa) o superseded (lo sustituyen [closedBy]). Solo
+ * toca el estado y los datos del cierre.
+ */
+export function closePending(tx: admin.firestore.Transaction, ref: admin.firestore.DocumentReference,
+  c: { status: 'completed'; externalRef: string; at: admin.firestore.Timestamp }
+    | { status: 'superseded'; closedBy: string[]; at: admin.firestore.Timestamp }) {
+  tx.update(ref, c.status === 'completed'
+    ? { status: 'completed', externalRef: c.externalRef, completedAt: c.at }
+    : { status: 'superseded', closedBy: c.closedBy, closedAt: c.at });
+}
+
+/**
+ * Id del siguiente asiento de una serie (saldo o devolución por diferencia
+ * final): el primero conserva el id de siempre (balance_{id}); los demás,
+ * balance_{id}_2, _3…
+ */
+export const seriesId = (prefix: string, bookingId: string, n: number) =>
+  n <= 1 ? `${prefix}_${bookingId}` : `${prefix}_${bookingId}_${n}`;

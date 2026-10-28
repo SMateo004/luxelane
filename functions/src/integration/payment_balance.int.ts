@@ -56,9 +56,14 @@ describe('adminCollectBalance', () => {
     await expect(collect()).resolves.toEqual({ alreadyRecorded: false, collected: 1250, balanceDue: 0 });
     expect(await doc('bookings/b1/payment/state')).toMatchObject({ balanceDue: 0, amountPaid: 11250 });
     const entries = await ledger();
-    expect(entries).toEqual([expect.objectContaining({
-      type: 'charge', amount: 1250, status: 'completed', externalRef: 'OP 500', method: 'manual_qr', actor: { role: 'admin' },
-    })]);
+    expect(entries).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        type: 'charge', amount: 1250, status: 'completed', externalRef: 'OP 500', method: 'manual_qr', actor: { role: 'admin' },
+      }),
+      // H4: el pendiente no se borra: queda cerrado por el cobro.
+      expect.objectContaining({ id: 'balance_b1', amount: 1250, status: 'superseded' }),
+    ]));
+    expect(entries).toHaveLength(2);
     const alerts = (await db.collection('adminAlerts').where('type', '==', 'balance_due').get()).docs.map((d) => d.data());
     expect(alerts).toEqual([expect.objectContaining({ resolved: true, resolvedBy: 'jefa' })]);
     const logs = (await db.collection('admin_logs').get()).docs.map((d) => d.data());
@@ -72,12 +77,15 @@ describe('adminCollectBalance', () => {
   it('parcial: queda el resto pendiente y la alerta abierta', async () => {
     await expect(collect({ amount: 5 })).resolves.toMatchObject({ collected: 500, balanceDue: 750 });
     expect(await doc('bookings/b1/payment/state')).toMatchObject({ balanceDue: 750, amountPaid: 10500 });
-    expect(await doc('payments/balance_b1')).toMatchObject({ amount: 750, status: 'pending' });
+    // H4: el pendiente original no cambia de importe; el resto es un asiento nuevo.
+    expect(await doc('payments/balance_b1')).toMatchObject({ amount: 1250, status: 'superseded' });
+    expect(await doc('payments/balance_b1_2')).toMatchObject({ amount: 750, status: 'pending' });
     const alert = (await db.collection('adminAlerts').where('type', '==', 'balance_due').get()).docs[0].data();
     expect(alert.resolved).toBe(false);
     // El resto, con otra operación, lo cierra.
     await expect(collect({ amount: 7.5, operationNumber: 'OP 501' })).resolves.toMatchObject({ balanceDue: 0 });
-    expect((await db.doc('payments/balance_b1').get()).exists).toBe(false);
+    expect(await doc('payments/balance_b1_2')).toMatchObject({ amount: 750, status: 'superseded' });
+    expect((await ledger()).filter((e) => (e as { status?: string }).status === 'pending')).toEqual([]);
     // A9 recalcula igual: sin saldo nuevo.
     await reconcileFinalAmount(db, 'b1');
     expect(await doc('bookings/b1/payment/state')).toMatchObject({ balanceDue: 0, amountPaid: 11250 });
@@ -109,7 +117,9 @@ describe('adminCollectBalance', () => {
     const [a, b] = await Promise.all([collect(), collect()]);
     expect([a.alreadyRecorded, b.alreadyRecorded].sort()).toEqual([false, true]);
     expect(await doc('bookings/b1/payment/state')).toMatchObject({ balanceDue: 0, amountPaid: 11250 });
-    expect((await ledger()).length).toBe(1);
+    // El cobro y el pendiente cerrado: nada duplicado.
+    expect((await ledger()).filter((e) => (e as { status?: string }).status === 'completed')).toHaveLength(1);
+    expect((await ledger()).length).toBe(2);
     expect((await db.collection('admin_logs').get()).size).toBe(1);
     // Y después, otra vez: igual.
     await expect(collect()).resolves.toMatchObject({ alreadyRecorded: true });

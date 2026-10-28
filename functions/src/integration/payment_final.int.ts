@@ -64,14 +64,28 @@ describe('importe final distinto de lo pagado (A9)', () => {
       .resolves.toEqual({ paymentStatus: 'partially_refunded', amount: 2000 });
   });
 
-  it('si el importe final cambia otra vez antes de gestionarlo, se actualiza sin duplicar', async () => {
+  it('si el importe final cambia otra vez antes de gestionarlo: asiento nuevo, el anterior cerrado (H4)', async () => {
     await setup();
     await update({ status: 'completed', finalPrice: 112.5 });
     await update({ finalPrice: 110 });
-    expect(await doc('payments/balance_b1')).toMatchObject({ amount: 1000, status: 'pending' });
+    // El primero no se modifica ni se borra: queda sustituido por el nuevo.
+    expect(await doc('payments/balance_b1')).toMatchObject({ amount: 1250, status: 'superseded', closedBy: ['balance_b1_2'] });
+    expect(await doc('payments/balance_b1_2')).toMatchObject({ amount: 1000, status: 'pending' });
+    expect(await doc('bookings/b1/payment/state')).toMatchObject({ balanceDue: 1000, balanceEntryId: 'balance_b1_2' });
     await update({ finalPrice: 100 });
-    expect((await db.doc('payments/balance_b1').get()).exists).toBe(false);
-    expect(await doc('bookings/b1/payment/state')).toMatchObject({ balanceDue: 0 });
+    expect(await doc('payments/balance_b1_2')).toMatchObject({ amount: 1000, status: 'superseded', closedBy: [] });
+    expect(await doc('bookings/b1/payment/state')).toMatchObject({ balanceDue: 0, balanceEntryId: null });
+    expect((await all('payments')).filter((e) => (e as { status?: string }).status === 'pending')).toEqual([]);
+  });
+
+  it('de pagar de más a deber: la devolución pendiente se cierra y vuelve a paid', async () => {
+    await setup();
+    await update({ status: 'completed', finalPrice: 80 });
+    await update({ finalPrice: 105 });
+    expect(await doc('payments/refund_final_b1')).toMatchObject({ amount: 2000, status: 'superseded' });
+    expect(await doc('bookings/b1/payment/state')).toMatchObject({
+      paymentStatus: 'paid', refundDue: 0, balanceDue: 500, balanceEntryId: 'balance_b1',
+    });
   });
 
   it('el reparto al chófer usa el importe final (settleBooking igual que antes)', async () => {

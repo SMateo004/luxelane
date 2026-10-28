@@ -8,10 +8,11 @@
  * - un número de operación vale una sola vez (compartido con
  *   adminConfirmPayment). El mismo envío repetido (misma reserva e importe)
  *   devuelve lo mismo sin cobrar dos veces;
- * - en la misma transacción: asiento charge completado, estado del pago
- *   (amountPaid sube, balanceDue baja), asiento pendiente balance_{id}
- *   reducido o borrado, alertas balance_due resueltas al saldarlo y
- *   auditoría.
+ * - en la misma transacción: asiento charge completado (el cobro), el
+ *   asiento pendiente del saldo se cierra como superseded y, si queda resto,
+ *   otro pendiente por el resto (el libro es de solo anexado, H4); estado
+ *   del pago (amountPaid y balanceCollected suben, balanceDue baja),
+ *   alertas balance_due resueltas al saldarlo y auditoría.
  *
  * Así, si el importe final cambia después, A9 vuelve a calcular la
  * diferencia contra lo ya cobrado sin contar nada dos veces.
@@ -19,7 +20,9 @@
 import { z } from 'zod';
 import { AdminActor, changedFields, reasonSchema, writeAudit } from './admin_audit';
 import { nowOf, operationKey, payError, PaymentDeps } from './payment_manual';
-import { addLedger, cents, CURRENCY, LedgerEntry, PAYMENT_METHODS, PaymentState, paymentStateRef } from './payment_model';
+import {
+  addLedger, cents, closePending, CURRENCY, LedgerEntry, PAYMENT_METHODS, PaymentState, paymentStateRef, seriesId,
+} from './payment_model';
 import { docId, parseInput } from './schemas';
 
 export const collectBalanceSchema = z.strictObject({
@@ -40,16 +43,17 @@ export async function adminCollectBalance(deps: PaymentDeps, actor: AdminActor, 
   const key = operationKey(input.method, input.operationNumber);
   const stateRef = paymentStateRef(db, input.bookingId);
   const opRef = db.collection('paymentOperations').doc(key);
-  const balanceRef = db.collection('payments').doc(`balance_${input.bookingId}`);
   const entryId = `collect_${key}`;
   return db.runTransaction(async (tx) => {
-    const [stateSnap, op, balance, alerts] = await Promise.all([
-      tx.get(stateRef), tx.get(opRef), tx.get(balanceRef),
+    const [stateSnap, op, alerts] = await Promise.all([
+      tx.get(stateRef), tx.get(opRef),
       tx.get(db.collection('adminAlerts').where('bookingId', '==', input.bookingId)
         .where('type', '==', 'balance_due').where('resolved', '==', false)),
     ]);
     const s = stateSnap.data() as PaymentState | undefined;
     if (!s) throw payError('not-found', 'booking_not_found');
+    const balanceRef = db.collection('payments').doc(s.balanceEntryId ?? seriesId('balance', input.bookingId, 1));
+    const balance = await tx.get(balanceRef);
     if (op.exists) {
       const o = op.data()!;
       // Doble envío: la misma operación ya registró este cobro.
@@ -70,11 +74,27 @@ export async function adminCollectBalance(deps: PaymentDeps, actor: AdminActor, 
       createdAt: at,
     }, entryId);
     const pending = balance.data() as LedgerEntry | undefined;
+    const update: Record<string, unknown> = {
+      amountPaid: s.amountPaid + amount, balanceDue: left,
+      balanceCollected: Number(s.balanceCollected ?? 0) + amount, updatedAt: at,
+    };
     if (pending?.status === 'pending') {
-      if (left > 0) tx.update(balanceRef, { amount: left });
-      else tx.delete(balanceRef);
+      const closedBy = [entryId];
+      if (left > 0) {
+        const n = Number(s.balanceSeq ?? 1) + 1;
+        const restId = seriesId('balance', input.bookingId, n);
+        addLedger(tx, db, {
+          type: 'charge', bookingId: input.bookingId, riderId: s.riderId, amount: left, method: pending.method,
+          actor: { role: 'system' }, externalRef: null, reason: 'balance_remaining', status: 'pending', createdAt: at,
+        }, restId);
+        closedBy.push(restId);
+        Object.assign(update, { balanceEntryId: restId, balanceSeq: n });
+      } else {
+        update.balanceEntryId = null;
+      }
+      closePending(tx, balanceRef, { status: 'superseded', closedBy, at });
     }
-    tx.update(stateRef, { amountPaid: s.amountPaid + amount, balanceDue: left, updatedAt: at });
+    tx.update(stateRef, update);
     if (left === 0) {
       alerts.docs.forEach((a) => tx.update(a.ref, { resolved: true, resolvedAt: at, resolvedBy: actor.adminId }));
     }
