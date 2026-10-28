@@ -25,7 +25,7 @@ async function reason(p: Promise<unknown>): Promise<string | undefined> {
 }
 
 async function clear(): Promise<void> {
-  for (const col of ['users', 'driverProfiles', 'admin_logs', 'config', 'rateLimits']) {
+  for (const col of ['users', 'driverProfiles', 'admin_logs', 'config', 'rateLimits', 'payments']) {
     const snap = await db.collection(col).get();
     await Promise.all(snap.docs.map((d) => d.ref.delete()));
   }

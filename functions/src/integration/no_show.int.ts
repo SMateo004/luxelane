@@ -23,7 +23,7 @@ async function reason(p: Promise<unknown>): Promise<string | undefined> {
   return 'ok';
 }
 async function clear(): Promise<void> {
-  for (const col of ['users', 'driverProfiles', 'config', 'adminAlerts', 'admin_logs']) {
+  for (const col of ['users', 'driverProfiles', 'config', 'adminAlerts', 'admin_logs', 'payments']) {
     await db.recursiveDelete(db.collection(col));
   }
   await db.recursiveDelete(db.collection('bookings'));

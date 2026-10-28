@@ -40,7 +40,7 @@ async function reason(p: Promise<unknown>): Promise<string | undefined> {
   return 'ok';
 }
 async function clear(): Promise<void> {
-  for (const col of ['users', 'driverProfiles', 'vehicles', 'config', 'pricingRules', 'openRequests', 'adminAlerts',
+  for (const col of ['users', 'driverProfiles', 'vehicles', 'config', 'pricingRules', 'openRequests', 'adminAlerts', 'payments',
     'paymentRefs', 'admin_logs', 'rateLimits']) {
     await db.recursiveDelete(db.collection(col));
   }
