@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 
 import '../enums/enums.dart';
 import '../error/failures.dart';
+import '../models/booking_payment.dart';
 import '../models/models.dart';
 
 // ---------------------------------------------------------------------------
@@ -276,6 +277,26 @@ abstract class IncidentRepository {
   /// Ubicación en vivo mientras el incidente siga abierto (las reglas
   /// limitan la frecuencia y los campos).
   Future<void> publishLocation(String incidentId, double lat, double lng);
+}
+
+// ---------------------------------------------------------------------------
+// BookingPaymentRepository — pago de una reserva antes de pedir chófer
+// ---------------------------------------------------------------------------
+
+abstract class BookingPaymentRepository {
+  /// Estado del pago (bookings/{id}/payment/state); null si la reserva no
+  /// tiene (reservas anteriores a los pagos).
+  Stream<BookingPayment?> watch(String bookingId);
+
+  /// Empieza a pagar con [method] (startPayment): instrucciones del pago
+  /// manual o el secreto del cobro con tarjeta. Repetirlo no cobra dos veces.
+  Future<Either<Failure, PaymentStart>> start(String bookingId, String method);
+
+  /// «Ya pagué» (markPaymentSent). No confirma nada: central lo revisa.
+  Future<Either<Failure, void>> markSent(
+    String bookingId, {
+    String? operationNumber,
+  });
 }
 
 // ---------------------------------------------------------------------------

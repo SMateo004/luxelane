@@ -18,6 +18,11 @@ import {
   leadHandledSchema,
 } from './admin_ops';
 import { callableSchemas as c } from './schemas';
+import { confirmSchema as confirmPaymentSchema, rejectSchema as rejectPaymentSchema, sentSchema } from './payment_manual';
+import { startSchema as startPaymentSchema } from './payment_card';
+import { refundSchema } from './payment_refund';
+import { inboxSchema } from './payment_inbox';
+import { collectBalanceSchema } from './payment_balance';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exported = Record<string, any>;
@@ -107,9 +112,11 @@ const CASES: Record<string, Case> = {
     extreme: [{ incidentId: ID, note: 'x'.repeat(1001) }, { incidentId: ID, note: 'corta' }],
   },
   adminUpdateBooking: {
-    schema: adminBookingSchema, valid: { action: 'cancel', bookingId: ID, reason: 'Pedido por el pasajero' },
+    schema: adminBookingSchema, valid: { action: 'cancel', bookingId: ID, reason: 'Pedido por el pasajero', cause: 'rider' },
     wrongType: { action: 'adjust_price', bookingId: ID, finalPrice: '100', reason: 'Pedido por el pasajero' },
-    extreme: [{ action: 'cancel', bookingId: ID, reason: 'corto' },
+    extreme: [{ action: 'cancel', bookingId: ID, reason: 'corto', cause: 'rider' },
+      { action: 'cancel', bookingId: ID, reason: 'Pedido por el pasajero', cause: 'otro' },
+      { action: 'cancel', bookingId: ID, reason: 'Pedido por el pasajero', cause: 'rider', cancellationFee: 1 },
       { action: 'status', bookingId: ID, to: 'verified', reason: 'Pedido por el pasajero' },
       { action: 'adjust_price', bookingId: ID, finalPrice: -1, reason: 'Pedido por el pasajero' },
       { action: 'borrar', bookingId: ID, reason: 'Pedido por el pasajero' }],
@@ -237,6 +244,53 @@ const CASES: Record<string, Case> = {
   acceptBooking: {
     schema: c.acceptBooking, valid: { bookingId: ID },
     wrongType: { bookingId: true }, extreme: [{ bookingId: 'x'.repeat(10000) }],
+  },
+  markPaymentSent: {
+    schema: sentSchema, valid: { bookingId: ID, operationNumber: 'OP 123/45' },
+    wrongType: { bookingId: ID, operationNumber: 123 },
+    extreme: [{ bookingId: ID, operationNumber: 'x'.repeat(41) }, { bookingId: ID, operationNumber: 'OP<1>' },
+      { bookingId: LONG_ID }],
+  },
+  adminConfirmPayment: {
+    schema: confirmPaymentSchema,
+    valid: { bookingId: ID, operationNumber: 'OP 1', amountReceived: 52.5, reason: 'Ingreso visto en el banco' },
+    wrongType: { bookingId: ID, operationNumber: 'OP 1', amountReceived: '52.50', reason: 'Ingreso visto en el banco' },
+    extreme: [
+      { bookingId: ID, operationNumber: 'OP 1', amountReceived: -1, reason: 'Ingreso visto en el banco' },
+      { bookingId: ID, operationNumber: 'OP 1', amountReceived: 1e9, reason: 'Ingreso visto en el banco' },
+      { bookingId: ID, operationNumber: 'OP 1', amountReceived: 52.5, reason: 'corto' },
+    ],
+  },
+  startPayment: {
+    schema: startPaymentSchema, valid: { bookingId: ID, method: 'card' },
+    wrongType: { bookingId: ID, method: 1 },
+    extreme: [{ bookingId: ID, method: 'wallet' }, { bookingId: ID, method: 'card', amount: 1 }, { bookingId: LONG_ID, method: 'card' }],
+  },
+  adminRecordRefund: {
+    schema: refundSchema, valid: { bookingId: ID, externalRef: 'DEV 123', reason: 'Devuelto por transferencia hoy' },
+    wrongType: { bookingId: ID, externalRef: 123, reason: 'Devuelto por transferencia hoy' },
+    extreme: [{ bookingId: ID, externalRef: 'x'.repeat(61), reason: 'Devuelto por transferencia hoy' },
+      { bookingId: ID, externalRef: 'DEV 1', reason: 'Devuelto por transferencia hoy', amount: 1 },
+      { bookingId: ID, externalRef: 'DEV<1>', reason: 'Devuelto por transferencia hoy' }],
+  },
+  adminCollectBalance: {
+    schema: collectBalanceSchema,
+    valid: { bookingId: ID, amount: 12.5, operationNumber: 'OP 2', method: 'manual_qr', reason: 'Saldo visto en el banco' },
+    wrongType: { bookingId: ID, amount: '12.50', operationNumber: 'OP 2', method: 'manual_qr', reason: 'Saldo visto en el banco' },
+    extreme: [
+      { bookingId: ID, amount: -1, operationNumber: 'OP 2', method: 'manual_qr', reason: 'Saldo visto en el banco' },
+      { bookingId: ID, amount: 12.5, operationNumber: 'OP 2', method: 'efectivo', reason: 'Saldo visto en el banco' },
+      { bookingId: ID, amount: 12.5, operationNumber: 'OP<2>', method: 'manual_qr', reason: 'Saldo visto en el banco' },
+      { bookingId: ID, amount: 12.5, operationNumber: 'OP 2', method: 'manual_qr', reason: 'corto' },
+    ],
+  },
+  adminPaymentInbox: {
+    schema: inboxSchema, valid: { kind: 'reported' },
+    wrongType: { kind: 1 }, extreme: [{ kind: 'todo' }, { kind: 'refunds', limit: 1000 }, { kind: 'refunds', limit: 0 }],
+  },
+  adminRejectPayment: {
+    schema: rejectPaymentSchema, valid: { bookingId: ID, reason: 'No hay ingreso en el extracto' },
+    wrongType: { bookingId: ID, reason: 5 }, extreme: [{ bookingId: ID, reason: 'x'.repeat(501) }],
   },
 };
 

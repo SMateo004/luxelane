@@ -58,15 +58,33 @@ describe('adminUpdateConfig', () => {
     expect(await doc('config/ops')).toMatchObject({ incidentAckSeconds: 90, maxPriceAdjustmentPercent: 10 });
   });
 
-  it('ops: política de cancelación validada (B3)', async () => {
-    const policy = { freeWithinMinutesOfBooking: 5, freeBeforePickupMinutes: 60, chargeWhenNoDriver: false,
-      feeType: 'percent', feeValue: 10, noShowWaitMinutes: 15 };
-    expect(await reason(run({ doc: 'ops', changes: { cancellationPolicy: { ...policy, feeValue: 150 } }, reason: REASON })))
+  it('ops: política de cancelación por etapas validada (pagos, A7)', async () => {
+    // Porcentajes de PRUEBA, ficticios.
+    const policy = { stages: [{ fromStatus: 'driver_arriving', percent: 40, graceMinutes: 3 }], noShowWaitMinutes: 15 };
+    expect(await reason(run({ doc: 'ops', changes: { cancellationPolicy: { stages: [{ fromStatus: 'driver_arriving', percent: 150 }] } }, reason: REASON })))
       .toBe('invalid_request');
     expect(await reason(run({ doc: 'ops', changes: { cancellationPolicy: { feeType: 'fixed' } }, reason: REASON })))
       .toBe('invalid_request');
     await run({ doc: 'ops', changes: { cancellationPolicy: policy }, reason: REASON });
     expect((await doc('config/ops'))?.cancellationPolicy).toEqual(policy);
+  });
+
+  it('ops: claves de pagos validadas (A12); datos de cobro de PRUEBA, ficticios', async () => {
+    const pay = {
+      paymentMethods: { manual_qr: true, card: false },
+      paymentInstructions: { manual_qr: { holderName: 'Titular ficticio', qrImageUrl: 'https://qr.example/ficticio.png' } },
+      paymentWindowMinutes: 30,
+    };
+    for (const bad of [
+      { paymentMethods: { wallet: true } },
+      { paymentInstructions: { manual_qr: { holderName: 'Sin cuenta ni QR' } } },
+      { paymentInstructions: { card: { provider: 'otro' } } },
+      { paymentWindowMinutes: 0 },
+    ]) {
+      expect(await reason(run({ doc: 'ops', changes: bad, reason: REASON }))).toBe('invalid_request');
+    }
+    await run({ doc: 'ops', changes: pay, reason: REASON });
+    expect(await doc('config/ops')).toMatchObject(pay);
   });
 
   it('config/security: nunca', async () => {

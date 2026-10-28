@@ -277,7 +277,39 @@ export const SPECS: Spec[] = [
     create: () => ({ path: 'payments/nuevo', data: { riderId: 'ana', bookingId: 'fin', status: 'captured' } }),
     update: () => ({ status: 'refunded' }),
     expect: { ...allRoles(none), ana: 'SSNNN', admin: 'SSNNN' },
-    note: 'Pago de ana (reserva fin). Cobros y reembolsos los hace el servidor; los manuales, adminRecordPayment (Parte A).',
+    note: 'Pago de ana (reserva fin). Cobros y reembolsos los hace el servidor; los manuales, adminRecordPayment (Parte A). ' +
+      'Desde pagos (A1), también los asientos charge, refund y fee_retained.',
+  },
+  {
+    name: 'bookings/{id}/payment',
+    covered: false,
+    target: () => 'bookings/activa/payment/state',
+    list: (db) => query(collection(db, 'bookings', 'activa', 'payment'), where('riderId', '==', 'ana')),
+    create: () => ({ path: 'bookings/activa/payment/otro', data: { riderId: 'ana', paymentStatus: 'paid' } }),
+    update: () => ({ paymentStatus: 'paid', amountPaid: 1 }),
+    expect: { ...allRoles(none), ana: 'SSNNN', admin: 'SSNNN' },
+    note: 'Estado del pago de activa (A1): lo escribe solo el servidor; lo leen ana y el admin. ' +
+      'El chófer asignado (asig) no lo lee: por eso no va en la reserva.',
+  },
+  {
+    name: 'paymentRefs/{ref}',
+    covered: false,
+    target: () => 'paymentRefs/ABCD2345',
+    list: (db) => query(collection(db, 'paymentRefs')),
+    create: () => ({ path: 'paymentRefs/ZZZZ2345', data: { bookingId: 'activa' } }),
+    update: () => ({ bookingId: 'otra' }),
+    expect: allRoles(none),
+    note: 'Unicidad de la referencia del pago (A1): solo el servidor.',
+  },
+  {
+    name: 'paymentOperations/{key}',
+    covered: false,
+    target: () => 'paymentOperations/op1',
+    list: (db) => query(collection(db, 'paymentOperations')),
+    create: () => ({ path: 'paymentOperations/op2', data: { bookingId: 'activa' } }),
+    update: () => ({ bookingId: 'otra' }),
+    expect: allRoles(none),
+    note: 'Números de operación ya usados en una confirmación (A4): solo el servidor.',
   },
   {
     name: 'vehicles/{id}',
@@ -427,6 +459,11 @@ export async function seedMatrix(db: Firestore): Promise<void> {
   await put('rides/r1', { riderId: 'ana', driverId: 'asig', bookingId: 'activa' });
   await put('rides/rBloq', { riderId: 'beto', driverId: 'bloq', bookingId: 'activaBloq' });
   await put('payments/p1', { riderId: 'ana', bookingId: 'fin', status: 'captured' });
+  await put('bookings/activa/payment/state', {
+    riderId: 'ana', bookingId: 'activa', paymentStatus: 'paid', amountDue: 10000, amountPaid: 10000,
+  });
+  await put('paymentRefs/ABCD2345', { bookingId: 'activa' });
+  await put('paymentOperations/op1', { bookingId: 'activa' });
   for (const uid of ['asig', 'bloq']) {
     await put(`vehicles/v-${uid}`, { driverId: uid, make: 'Toyota', model: 'Camry', plate: `P-${uid}`, isActive: true });
   }

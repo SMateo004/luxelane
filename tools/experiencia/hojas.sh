@@ -13,7 +13,7 @@ trap 'rm -rf "$TMP"' EXIT
 mkdir -p "$OUT"
 FONT_ARGS=(-font DejaVu-Sans -pointsize 13)
 
-for dir in "$CAP"/F* "$CAP"/A8-*; do
+for dir in "$CAP"/F* "$CAP"/P-* "$CAP"/A8-*; do
   [ -d "$dir" ] || continue
   flow="$(basename "$dir")"
   rows=()

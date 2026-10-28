@@ -68,6 +68,11 @@ export const createSchema = z.strictObject({
    * llama a createBooking).
    */
   requestId: z.uuidv4(),
+  /**
+   * Desde dónde se reserva. La web solo paga por QR o transferencia (E38):
+   * sin ese método activo, la web no crea reservas que no podría pagar.
+   */
+  channel: z.enum(['web', 'native']).optional(),
 })
   .refine(needsDestination, { message: 'destination required', path: ['destination'] })
   .refine((d) => d.passengerCount <= CAPACITY[d.vehicleClass].passengers,

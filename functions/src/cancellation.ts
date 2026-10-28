@@ -12,9 +12,11 @@ import { docId, parseInput } from './schemas';
 import { alert, appendEvent, location, Status } from './trip_flow';
 import { buildOpenRequest, BookingForRequest } from './open_requests';
 import { opsConfig } from './ops_config';
-import { cancellationFee, readPolicy } from './cancellation_policy';
+import { readPolicy } from './cancellation_policy';
+import { computeCancelSettle, readForSettle, writeCancelSettle } from './payment_settle';
+import { cents, paymentStateRef } from './payment_model';
 
-export { cancellationFee, CancellationPolicy, policySchema, readPolicy } from './cancellation_policy';
+export { CancellationPolicy, policySchema, readPolicy, retentionFor } from './cancellation_policy';
 
 export interface CancelDeps { db: admin.firestore.Firestore; now?: () => number }
 
@@ -34,7 +36,10 @@ export const cancelSchema = z.strictObject({
   reason: z.enum(RIDER_CANCEL_REASONS).default('other'),
   /** Solo calcula lo que pasaría (el aviso de la app antes de confirmar). */
   dryRun: z.boolean().default(false),
-  /** Recargo que el pasajero vio y aceptó; si el del servidor es mayor, se rechaza. */
+  /**
+   * Retención que el pasajero vio y aceptó, en bolivianos; si la del
+   * servidor es mayor, se rechaza. El importe lo calcula siempre el servidor.
+   */
   acceptedFee: z.number().finite().min(0).max(1_000_000).optional(),
 });
 
@@ -61,15 +66,21 @@ export async function cancelBooking(deps: CancelDeps, uid: string | undefined, d
     const status = b.status as Status;
     // Doble toque o reintento: ya está cancelada; misma respuesta.
     if (status === 'cancelled') {
-      return { status, alreadyCancelled: true, cancellationFee: Number(b.cancellationFee ?? 0) };
+      const prev = await tx.get(paymentStateRef(db, ref.id));
+      return { status, alreadyCancelled: true, cancellationFee: Number(prev.data()?.amountRetained ?? 0) / 100 };
     }
     if (!RIDER_CANCELLABLE.includes(status)) throw cancelError('failed-precondition', 'not_cancellable', { status });
 
-    const { fee, basis } = cancellationFee(policy, state, b, nowMs(deps), input.reason);
-    if (input.dryRun) return { status, dryRun: true, cancellationFee: fee, feeBasis: basis };
-    // El pasajero confirma viendo el recargo: si ahora es mayor (pasó el
-    // plazo gratuito mientras decidía), se le vuelve a mostrar.
-    if (fee > (input.acceptedFee ?? 0) + 0.005) {
+    // Retención según la etapa (A7), sobre lo PAGADO; sin pago, 0.
+    const read = await readForSettle(tx, db, ref.id, status);
+    const settle = { bookingId: ref.id, status, cause: 'rider' as const, policy, policyState: state, read, at };
+    const r = computeCancelSettle(settle);
+    const fee = r.retained / 100;
+    const answer = { cancellationFee: fee, feeBasis: r.basis, retained: r.retained, refund: r.refund };
+    if (input.dryRun) return { status, dryRun: true, ...answer };
+    // El pasajero confirma viendo la retención: si ahora es mayor (pasó la
+    // gracia mientras decidía), se le vuelve a mostrar.
+    if (r.retained > cents(input.acceptedFee ?? 0)) {
       throw cancelError('failed-precondition', 'cancellation_fee_changed', { cancellationFee: fee });
     }
 
@@ -77,12 +88,11 @@ export async function cancelBooking(deps: CancelDeps, uid: string | undefined, d
     const driverRef = driverId ? db.collection('driverProfiles').doc(driverId) : null;
     const driver = driverRef ? await tx.get(driverRef) : null;
 
+    // Importes fuera de la reserva y de los eventos: el chófer los lee (A1).
     tx.update(ref, {
-      status: 'cancelled', cancelledBy: 'rider', cancelledAt: at,
-      cancellationReason: input.reason, cancellationFee: fee, cancellationFeeBasis: basis,
-      // Calculado, no cobrado (B3).
-      cancellationFeeCharged: false, updatedAt: at,
+      status: 'cancelled', cancelledBy: 'rider', cancelledAt: at, cancellationReason: input.reason, updatedAt: at,
     });
+    writeCancelSettle(tx, db, settle, r);
     // Libera al chófer: disponible si sigue conectado (como releaseDriver).
     if (driver?.exists) tx.update(driverRef!, { isAvailable: driver.data()?.online !== false });
     if (driverId) {
@@ -91,9 +101,10 @@ export async function cancelBooking(deps: CancelDeps, uid: string | undefined, d
     }
     appendEvent(tx, db, ref.id, {
       from: status, to: 'cancelled', actor: { uid, role: 'rider' }, source: 'rider_app',
-      extra: { method: 'rider_cancel', cancellationReason: input.reason, cancellationFee: fee, feeBasis: basis },
+      extra: { method: 'rider_cancel', cancellationReason: input.reason, retentionBasis: r.basis },
+      adminDetail: { retained: r.retained, refund: r.refund, retentionPercent: r.percent },
     });
-    return { status: 'cancelled' as Status, cancellationFee: fee, feeBasis: basis };
+    return { status: 'cancelled' as Status, ...answer };
   });
 }
 

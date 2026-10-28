@@ -228,6 +228,10 @@ service cloud.firestore {
           resource.data.status == 'pending' &&
           // Quien la liberó no la vuelve a aceptar (0.3).
           !(request.auth.uid in resource.data.get('releasedBy', [])) &&
+          // Sin pago confirmado no se ofrece ni se acepta (pagos, A3). Sin
+          // estado de pago (reservas antiguas), get() falla y se deniega.
+          get(/databases/$(database)/documents/bookings/$(bookingId)/payment/state)
+            .data.get('paymentStatus', '') == 'paid' &&
           request.resource.data.driverId == request.auth.uid &&
           request.resource.data.status == 'confirmed' &&
           onlyUpdating(['driverId', 'status', 'updatedAt'])) ||
@@ -300,6 +304,16 @@ service cloud.firestore {
       // Ni el pasajero ni el chófer (que podría deducir el código) la leen.
       match /private/{docId} {
         allow read, write: if false;
+      }
+
+      // Estado del pago (A1): lo escribe solo el servidor. Lo leen el
+      // pasajero dueño y el admin; el chófer, nunca (ni importes ni
+      // retenciones): por eso no va en la reserva, que el chófer lee entera.
+      match /payment/{docId} {
+        allow read: if isAuthenticated() && (
+          resource.data.riderId == request.auth.uid || isAdmin()
+        );
+        allow write: if false;
       }
 
       // Registro de transiciones (solo anexado): lo escribe el servidor y
@@ -432,8 +446,18 @@ service cloud.firestore {
       allow read: if isAuthenticated() && (
         resource.data.riderId == request.auth.uid || isAdmin()
       );
-      // Cobros manuales: adminRecordPayment (Parte A); con tarjeta, Stripe.
+      // Asientos (charge, refund, fee_retained) y cobros antiguos: solo el
+      // servidor. El chófer no lee ninguno (A1).
       allow create, update, delete: if false;
+    }
+
+    // Unicidad de la referencia del pago y del número de operación (A1, A4):
+    // solo el servidor; nadie los lee desde el cliente.
+    match /paymentRefs/{ref} {
+      allow read, write: if false;
+    }
+    match /paymentOperations/{key} {
+      allow read, write: if false;
     }
 
     // -------------------------------------------------------------------------

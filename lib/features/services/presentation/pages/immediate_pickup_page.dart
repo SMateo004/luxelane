@@ -11,17 +11,11 @@ class ImmediatePickupPage extends StatelessWidget {
   static const content = ServicePageContent(
     mode: LuxBookingMode.immediate,
     eyebrow: 'Recogida inmediata',
-    title: 'Cuando lo\nnecesites.\nEn minutos.',
-    lead: 'Un chófer profesional en camino en cuanto confirmas. '
-        'La misma excelencia de una reserva anticipada, sin planificar.',
+    title: 'Cuando lo\nnecesites.',
+    lead: 'La misma excelencia de una reserva anticipada, sin planificar.',
     heroImage: 'assets/images/services/recogida/hero.jpg',
     heroFallback: 'assets/images/home/hero_bg.jpg',
     assurances: [
-      LuxAssurance(
-        Icons.bolt_rounded,
-        'Chófer en camino al instante',
-        'Asignamos al chófer disponible más cercano en cuanto confirmas.',
-      ),
       LuxAssurance(
         Icons.my_location_rounded,
         'Seguimiento en tiempo real',
@@ -37,7 +31,7 @@ class ImmediatePickupPage extends StatelessWidget {
       ),
       ServiceStep(
         'Confirma con un toque',
-        'Asignamos un chófer de inmediato y te mostramos su nombre, vehículo y hora de llegada.',
+        'Pagas la reserva. Con el pago confirmado buscamos chófer y te mostramos su nombre y vehículo.',
       ),
       ServiceStep(
         'Síguelo en el mapa',
@@ -48,7 +42,7 @@ class ImmediatePickupPage extends StatelessWidget {
     storyTitle: 'Lo imprevisto,\ncon la misma elegancia.',
     storyBody: 'Una reunión que se alarga, un cambio de planes, una cena que '
         'merece un final a la altura. La recogida inmediata pone un vehículo '
-        'premium y un chófer profesional a tu alcance, en minutos.',
+        'premium y un chófer profesional a tu alcance.',
     storyPoints: [
       'Vehículos premium, impecables en cada servicio',
       'Chóferes con documentos verificados',

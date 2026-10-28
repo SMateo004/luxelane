@@ -109,6 +109,9 @@ export async function seed(env: RulesTestEnvironment): Promise<void> {
         phone: '+59170000555',
       });
     }
+    // pend está en openRequests porque su pago está confirmado (pagos, A3).
+    await setDoc(doc(db, 'bookings', 'pend', 'payment', 'state'),
+      { riderId: 'ana', bookingId: 'pend', paymentStatus: 'paid', amountDue: 10000, amountPaid: 10000 });
     await setDoc(doc(db, 'openRequests', 'pend'), {
       vehicleClass: 'business',
       serviceType: 'oneWay',

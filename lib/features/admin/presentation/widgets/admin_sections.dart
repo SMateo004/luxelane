@@ -10,6 +10,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../business/data/business_lead_repository.dart';
 import '../../domain/admin_finance.dart';
 import '../../domain/admin_operations.dart';
+import '../../domain/admin_payments.dart';
 import '../../domain/repositories/admin_repository.dart'
     show kAdminReasonMinLength;
 import '../bloc/admin_bloc.dart';
@@ -227,6 +228,7 @@ class DashboardTab extends StatelessWidget {
 enum AdminSection {
   dashboard,
   operations,
+  payments,
   finance,
   pricing,
   drivers,
@@ -723,21 +725,23 @@ class _BookingDetail extends StatelessWidget {
   }
 
   Future<void> _cancel(BuildContext context, Booking b) async {
-    final reason = await confirmAdminAction(
-      context,
-      title: 'Cancelar reserva',
-      message: 'La reserva #${shortId(b.id)} quedará cancelada y se '
-          'conservará en el historial. El chófer asignado quedará libre.',
-      confirmLabel: 'Cancelar reserva',
-      reasonLabel: 'Motivo de la cancelación (solo lo ve central)',
-      destructive: true,
+    final r = await showDialog<({AdminCancelCause cause, String reason})>(
+      context: context,
+      builder: (_) => CancelCauseDialog(
+        title: 'Cancelar reserva',
+        message: 'La reserva #${shortId(b.id)} quedará cancelada y se '
+            'conservará en el historial. El chófer asignado quedará libre. '
+            'El motivo solo lo ve central.',
+        initial: AdminCancelCause.platform,
+      ),
     );
-    if (reason == null || !context.mounted) return;
+    if (r == null || !context.mounted) return;
     context.read<AdminBloc>().add(
           AdminChangeBookingStatusRequested(
             b,
             BookingStatus.cancelled,
-            reason,
+            r.reason,
+            cause: r.cause,
           ),
         );
   }
@@ -1391,6 +1395,11 @@ const _auditLabels = {
   'adjust_price': 'Precio ajustado',
   'record_payment': 'Cobro registrado',
   'refund_payment': 'Reembolso',
+  // Pagos (conciliación diaria, DEPLOY.md).
+  'confirm_payment': 'Pago confirmado',
+  'reject_payment': 'Pago rechazado',
+  'record_refund': 'Devolución registrada',
+  'collect_balance': 'Saldo cobrado',
   'update_finance_settings': 'Config. financiera',
   'backfill_settlements': 'Repartos asignados',
   'verify_driver': 'Chófer verificado',

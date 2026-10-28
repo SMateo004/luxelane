@@ -35,6 +35,12 @@ const _prohibidas = <String, String>{
   'cargadores a bordo': r'cargador',
   'pañuelos': r'pa[ñn]uelo|toallita',
   'chóferes multilingües': r'multiling',
+  // G1 (pagos): el chófer se busca cuando el pago está confirmado; nada de
+  // asignación inmediata. Quitadas sin sustituir.
+  'chófer de inmediato':
+      r'(ch[oó]fer|asign\w*)[^\n]{0,60}(de\s+inmediato|al\s+instante|en\s+cuanto\s+confirmas)',
+  // (\\n: saltos de línea escritos dentro de las cadenas, como en títulos.)
+  'en minutos': r'(\b|\\n)en\s+minutos\b',
 };
 
 void main() {

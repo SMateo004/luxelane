@@ -1,32 +1,43 @@
 /**
- * Política de cancelación y recargo (Parte B, B3). Sin dependencias de
- * trip_flow ni de cancellation: la usan los dos.
+ * Política de cancelación con retención (pagos, A7). Sustituye a la de B3.
+ * Sin dependencias de trip_flow ni de cancellation: la usan los dos.
+ *
+ * config/ops.cancellationPolicy es una lista de etapas
+ * {fromStatus, percent, graceMinutes?}. Los porcentajes los pone el
+ * responsable; aquí solo se validan (0 a 100).
+ *
+ * - Antes de asignar chófer: siempre 0 % (no es configurable).
+ * - Etapas configurables: chófer asignado (confirmed), en camino
+ *   (driver_arriving), llegado (driver_arrived) y no se presentó (no_show).
+ * - graceMinutes: minutos desde que la reserva entró en esa etapa durante
+ *   los que la retención es 0 %.
+ * - Sin política (o no válida): 0 % en todo y el evento lo anota.
+ * - Cancelaciones por causa del chófer, del sistema o de la plataforma:
+ *   siempre 0 %.
+ *
+ * La retención es porcentaje × importe PAGADO, redondeada a favor del
+ * cliente (hacia abajo, al céntimo) y nunca mayor que lo pagado.
  */
-import * as admin from 'firebase-admin';
 import { z } from 'zod';
-
-// ---------------------------------------------------------------------------
-// B3. Política de cancelación: config/ops.cancellationPolicy. Los valores
-// los decide el responsable. Si falta, o no es válida, no se calcula ni se
-// cobra ningún recargo y el evento lo anota. El recargo se guarda; NO se
-// cobra (depende del proveedor de pagos, aún sin decidir).
-// ---------------------------------------------------------------------------
 
 const minutes = z.number().finite().min(0).max(100_000);
 
+/** Etapas con chófer en las que puede haber retención. */
+export const RETENTION_STAGES = ['confirmed', 'driver_arriving', 'driver_arrived', 'no_show'] as const;
+export type RetentionStage = (typeof RETENTION_STAGES)[number];
+
+export const stageSchema = z.strictObject({
+  fromStatus: z.enum(RETENTION_STAGES),
+  percent: z.number().finite().min(0).max(100),
+  graceMinutes: minutes.optional(),
+});
+
 export const policySchema = z.strictObject({
-  /** Gratis si se cancela dentro de estos minutos desde que se reservó. */
-  freeWithinMinutesOfBooking: minutes,
-  /** Gratis si faltan al menos estos minutos para la hora de recogida. */
-  freeBeforePickupMinutes: minutes,
-  /** Con la reserva aún sin chófer (pending), ¿hay recargo? */
-  chargeWhenNoDriver: z.boolean(),
-  /** fixed: importe en Bs; percent: % del precio estimado (0 a 100). */
-  feeType: z.enum(['fixed', 'percent']),
-  feeValue: z.number().finite().min(0).max(1_000_000),
-  /** Minutos que espera el chófer en la recogida antes de «no aparece» (B4). */
-  noShowWaitMinutes: minutes,
-}).refine((p) => p.feeType !== 'percent' || p.feeValue <= 100, { message: 'percent > 100' });
+  stages: z.array(stageSchema).max(RETENTION_STAGES.length)
+    .refine((s) => new Set(s.map((x) => x.fromStatus)).size === s.length, { message: 'etapa repetida' }),
+  /** Minutos que espera el chófer en la recogida antes de «no se presentó» (B4). */
+  noShowWaitMinutes: minutes.optional(),
+});
 export type CancellationPolicy = z.infer<typeof policySchema>;
 
 export type PolicyState = 'ok' | 'missing' | 'invalid';
@@ -37,30 +48,49 @@ export function readPolicy(ops: Record<string, unknown>): { policy: Cancellation
   return r.success ? { policy: r.data, state: 'ok' } : { policy: null, state: 'invalid' };
 }
 
-export type FeeBasis = 'no_policy' | 'policy_invalid' | 'payment_failed' | 'no_driver' | 'grace' | 'early' | 'late';
+/** Quién causa la cancelación. Solo la del pasajero puede retener. */
+export type CancelCause = 'rider' | 'driver' | 'system' | 'platform';
 
-const round2 = (v: number) => Math.round(v * 100) / 100;
-const ms = (t: unknown) => (t instanceof admin.firestore.Timestamp ? t.toMillis() : null);
+export type RetentionBasis =
+  | 'no_policy' | 'policy_invalid' | 'no_driver' | 'no_stage' | 'grace' | 'stage'
+  | 'driver_cause' | 'system_cause' | 'platform_cause';
 
-/** Recargo de una cancelación del pasajero ahora (función pura). */
-export function cancellationFee(policy: CancellationPolicy | null, state: PolicyState,
-  b: Record<string, unknown>, now: number, reason: string): { fee: number; basis: FeeBasis } {
-  if (!policy) return { fee: 0, basis: state === 'invalid' ? 'policy_invalid' : 'no_policy' };
-  // La app cancela sola si la tarjeta no se pudo autorizar: sin recargo.
-  if (reason === 'payment_failed' && b.status === 'pending' && !b.stripePaymentIntentId) {
-    return { fee: 0, basis: 'payment_failed' };
-  }
-  if (b.status === 'pending' && !policy.chargeWhenNoDriver) return { fee: 0, basis: 'no_driver' };
-  const created = ms(b.createdAt);
-  if (created !== null && now - created <= policy.freeWithinMinutesOfBooking * 60_000) return { fee: 0, basis: 'grace' };
-  const pickup = ms(b.scheduledAt);
-  if (pickup !== null && pickup - now >= policy.freeBeforePickupMinutes * 60_000) return { fee: 0, basis: 'early' };
-  const price = Number(b.estimatedPrice ?? 0);
-  const raw = policy.feeType === 'fixed' ? policy.feeValue : (price * policy.feeValue) / 100;
-  return { fee: round2(Math.min(raw, price > 0 ? price : raw)), basis: 'late' };
+export interface RetentionInput {
+  status: string;
+  cause: CancelCause;
+  /** Cuándo entró la reserva en su estado actual (ms); null si no se sabe. */
+  stageEnteredMs: number | null;
+  now: number;
 }
 
-/** Hora desde la que el chófer puede marcar «no aparece» (B4); null sin política. */
+/** Porcentaje que se retiene y por qué (función pura). */
+export function retentionFor(policy: CancellationPolicy | null, state: PolicyState, i: RetentionInput):
+  { percent: number; basis: RetentionBasis } {
+  if (i.cause !== 'rider') return { percent: 0, basis: `${i.cause}_cause` as RetentionBasis };
+  if (!policy) return { percent: 0, basis: state === 'invalid' ? 'policy_invalid' : 'no_policy' };
+  if (!(RETENTION_STAGES as readonly string[]).includes(i.status)) return { percent: 0, basis: 'no_driver' };
+  const stage = policy.stages.find((s) => s.fromStatus === i.status);
+  if (!stage) return { percent: 0, basis: 'no_stage' };
+  // Sin hora de entrada en la etapa no se puede medir la gracia: a favor del
+  // cliente, se considera dentro de ella.
+  if (stage.graceMinutes !== undefined &&
+    (i.stageEnteredMs === null || i.now - i.stageEnteredMs <= stage.graceMinutes * 60_000)) {
+    return { percent: 0, basis: 'grace' };
+  }
+  return { percent: stage.percent, basis: 'stage' };
+}
+
+/**
+ * Céntimos retenidos: porcentaje del importe pagado, hacia abajo (a favor
+ * del cliente) y nunca más que lo pagado.
+ */
+export function retainedCents(paidCents: number, percent: number): number {
+  const paid = Math.max(0, Math.floor(paidCents));
+  const raw = Math.floor((paid * percent) / 100 + 1e-9);
+  return Math.min(paid, Math.max(0, raw));
+}
+
+/** Hora desde la que el chófer puede marcar «no aparece» (B4); null sin política o sin espera. */
 export function noShowAvailableAt(policy: CancellationPolicy | null, arrivedAtMs: number): number | null {
-  return policy ? arrivedAtMs + policy.noShowWaitMinutes * 60_000 : null;
+  return policy && policy.noShowWaitMinutes !== undefined ? arrivedAtMs + policy.noShowWaitMinutes * 60_000 : null;
 }

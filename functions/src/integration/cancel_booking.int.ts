@@ -47,7 +47,7 @@ describe('cancelBooking (pasajero)', () => {
   it('cancela, deja evento, libera y avisa al chófer, con quién y cuándo', async () => {
     await booking('b1', 'driver_arriving', { driverId: 'luis' });
     await expect(cancel('ana', { bookingId: 'b1', reason: 'changed_plans' }))
-      .resolves.toEqual({ status: 'cancelled', cancellationFee: 0, feeBasis: 'no_policy' });
+      .resolves.toEqual({ status: 'cancelled', cancellationFee: 0, feeBasis: 'no_payment_state', retained: 0, refund: 0 });
     const b = (await doc('bookings/b1'))!;
     expect(b).toMatchObject({ status: 'cancelled', cancelledBy: 'rider', cancellationReason: 'changed_plans' });
     expect((b.cancelledAt as admin.firestore.Timestamp).toMillis()).toBe(NOW);
@@ -87,7 +87,7 @@ describe('cancelBooking (pasajero)', () => {
   it('dryRun: informa sin escribir', async () => {
     await booking('b1', 'confirmed');
     await expect(cancel('ana', { bookingId: 'b1', dryRun: true }))
-      .resolves.toEqual({ status: 'confirmed', dryRun: true, cancellationFee: 0, feeBasis: 'no_policy' });
+      .resolves.toEqual({ status: 'confirmed', dryRun: true, cancellationFee: 0, feeBasis: 'no_payment_state', retained: 0, refund: 0 });
     expect((await doc('bookings/b1'))?.status).toBe('confirmed');
   });
 
@@ -98,44 +98,105 @@ describe('cancelBooking (pasajero)', () => {
   });
 });
 
-describe('recargo con config/ops.cancellationPolicy (B3)', () => {
-  // Valores de prueba, no de negocio.
+describe('retención con config/ops.cancellationPolicy (pagos, A7)', () => {
+  // Porcentajes de PRUEBA, ficticios; los de negocio los pone el responsable.
   const policy = {
-    freeWithinMinutesOfBooking: 5, freeBeforePickupMinutes: 120, chargeWhenNoDriver: false,
-    feeType: 'percent', feeValue: 10, noShowWaitMinutes: 15,
+    stages: [
+      { fromStatus: 'confirmed', percent: 11, graceMinutes: 5 },
+      { fromStatus: 'driver_arriving', percent: 37 },
+      { fromStatus: 'driver_arrived', percent: 73 },
+    ],
+    noShowWaitMinutes: 15,
   };
+  const paid = (id: string, amountPaid = 9999) => db.doc(`bookings/${id}/payment/state`).set({
+    bookingId: id, riderId: 'ana', paymentStatus: 'paid', paymentMethod: 'manual_qr', amountDue: amountPaid, amountPaid,
+  });
+  const state = async (id: string) => (await doc(`bookings/${id}/payment/state`))!;
+  const ledger = async () => (await db.collection('payments').get()).docs.map((d) => ({ id: d.id, ...d.data() }));
 
-  it('sin política: no hay recargo y el evento lo anota', async () => {
-    await booking('b1', 'confirmed', { driverId: 'luis' });
-    await cancel('ana', { bookingId: 'b1' });
-    expect(await doc('bookings/b1')).toMatchObject({ cancellationFee: 0, cancellationFeeBasis: 'no_policy' });
-    expect((await events('b1'))[0]).toMatchObject({ cancellationFee: 0, feeBasis: 'no_policy' });
+  beforeEach(async () => { await db.recursiveDelete(db.collection('payments')); });
+
+  it('sin política: 0 %, devolución entera pendiente y el evento lo anota (no_policy)', async () => {
+    await booking('b1', 'driver_arrived', { driverId: 'luis' });
+    await paid('b1');
+    await expect(cancel('ana', { bookingId: 'b1' })).resolves.toMatchObject({ cancellationFee: 0, feeBasis: 'no_policy', refund: 9999 });
+    expect(await state('b1')).toMatchObject({ paymentStatus: 'refund_pending', amountRetained: 0, refundDue: 9999, retentionBasis: 'no_policy' });
+    expect((await events('b1'))[0]).toMatchObject({ retentionBasis: 'no_policy' });
+    expect(await ledger()).toEqual([expect.objectContaining({ id: 'refund_b1', type: 'refund', amount: 9999, status: 'pending' })]);
   });
 
   it('política inválida: igual que sin política (lo más restrictivo)', async () => {
     await db.doc('config/ops').set({ cancellationPolicy: { feeType: 'percent', feeValue: 10 } });
-    await booking('b1', 'confirmed');
-    await cancel('ana', { bookingId: 'b1' });
-    expect(await doc('bookings/b1')).toMatchObject({ cancellationFee: 0, cancellationFeeBasis: 'policy_invalid' });
+    await booking('b1', 'driver_arrived', { driverId: 'luis' });
+    await paid('b1');
+    await expect(cancel('ana', { bookingId: 'b1' })).resolves.toMatchObject({ cancellationFee: 0, feeBasis: 'policy_invalid' });
   });
 
-  it('tarde: el servidor calcula el recargo; hay que aceptarlo; se guarda sin cobrar', async () => {
+  it.each([
+    ['confirmed', 11, 1099], ['driver_arriving', 37, 3699], ['driver_arrived', 73, 7299],
+  ])('desde %s: %i %% de lo pagado, hacia abajo; el resto se devuelve', async (status, _pct, retained) => {
     await db.doc('config/ops').set({ cancellationPolicy: policy });
-    await booking('b1', 'driver_arriving', { driverId: 'luis' });
+    await booking('b1', status, { driverId: 'luis' });
+    // Entró en la etapa hace 30 min: fuera de cualquier gracia.
+    await db.doc('bookings/b1/events/e0').set({ to: status, at: admin.firestore.Timestamp.fromMillis(NOW - 30 * 60_000) });
+    await paid('b1');
+    const fee = retained / 100;
     await expect(cancel('ana', { bookingId: 'b1', dryRun: true }))
-      .resolves.toEqual({ status: 'driver_arriving', dryRun: true, cancellationFee: 10, feeBasis: 'late' });
+      .resolves.toMatchObject({ dryRun: true, cancellationFee: fee, feeBasis: 'stage', retained, refund: 9999 - retained });
+    // Hay que aceptar la retención que se mostró.
     expect(await reason(cancel('ana', { bookingId: 'b1' }))).toBe('cancellation_fee_changed');
-    expect((await doc('bookings/b1'))?.status).toBe('driver_arriving');
-    await cancel('ana', { bookingId: 'b1', acceptedFee: 10 });
-    expect(await doc('bookings/b1')).toMatchObject({
-      status: 'cancelled', cancellationFee: 10, cancellationFeeBasis: 'late', cancellationFeeCharged: false,
-    });
-    expect((await events('b1'))[0]).toMatchObject({ cancellationFee: 10, feeBasis: 'late' });
+    expect((await doc('bookings/b1'))?.status).toBe(status);
+    await cancel('ana', { bookingId: 'b1', acceptedFee: fee });
+    expect(await state('b1')).toMatchObject({ paymentStatus: 'refund_pending', amountRetained: retained, refundDue: 9999 - retained });
+    expect(await ledger()).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: 'fee_b1', type: 'fee_retained', amount: retained, status: 'completed' }),
+      expect.objectContaining({ id: 'refund_b1', type: 'refund', amount: 9999 - retained, status: 'pending' }),
+    ]));
+    // Ni la reserva ni el evento (los lee el chófer) llevan importes.
+    const b = (await doc('bookings/b1'))!;
+    for (const k of ['cancellationFee', 'amountRetained', 'refundDue']) expect(b).not.toHaveProperty(k);
+    const cancelEvent = (await events('b1')).find((e) => e.to === 'cancelled');
+    expect(JSON.stringify(cancelEvent)).not.toContain(String(retained));
   });
 
-  it('con antelación: gratis aunque haya política', async () => {
+  it('el porcentaje nunca supera lo pagado (100 %): nada que devolver, refunded', async () => {
+    await db.doc('config/ops').set({ cancellationPolicy: { stages: [{ fromStatus: 'driver_arrived', percent: 100 }] } });
+    await booking('b1', 'driver_arrived', { driverId: 'luis' });
+    await paid('b1', 5000);
+    await cancel('ana', { bookingId: 'b1', acceptedFee: 50 });
+    expect(await state('b1')).toMatchObject({ paymentStatus: 'refunded', amountRetained: 5000, refundDue: 0 });
+    expect((await ledger()).map((e) => e.id)).toEqual(['fee_b1']);
+  });
+
+  it('dentro de la gracia de la etapa: 0 %', async () => {
     await db.doc('config/ops').set({ cancellationPolicy: policy });
-    await booking('b1', 'confirmed', { scheduledAt: admin.firestore.Timestamp.fromMillis(NOW + 3 * 3600_000) });
-    await expect(cancel('ana', { bookingId: 'b1' })).resolves.toMatchObject({ cancellationFee: 0, feeBasis: 'early' });
+    await booking('b1', 'confirmed', { driverId: 'luis' });
+    await db.doc('bookings/b1/events/e1').set({ to: 'confirmed', at: admin.firestore.Timestamp.fromMillis(NOW - 2 * 60_000) });
+    await paid('b1');
+    await expect(cancel('ana', { bookingId: 'b1' })).resolves.toMatchObject({ cancellationFee: 0, feeBasis: 'grace', refund: 9999 });
+  });
+
+  it('sin chófer asignado: 0 % aunque haya política', async () => {
+    await db.doc('config/ops').set({ cancellationPolicy: policy });
+    await booking('b1', 'pending');
+    await paid('b1');
+    await expect(cancel('ana', { bookingId: 'b1' })).resolves.toMatchObject({ feeBasis: 'no_driver', refund: 9999 });
+  });
+
+  it('sin pagar: no se retiene ni se devuelve nada; el pedido de pago deja de valer', async () => {
+    await db.doc('config/ops').set({ cancellationPolicy: policy });
+    await booking('b1', 'pending');
+    await db.doc('bookings/b1/payment/state').set({ riderId: 'ana', paymentStatus: 'awaiting_payment', amountDue: 9999, amountPaid: 0 });
+    await expect(cancel('ana', { bookingId: 'b1' })).resolves.toMatchObject({ feeBasis: 'not_paid', retained: 0, refund: 0 });
+    expect(await state('b1')).toMatchObject({ paymentStatus: 'expired', closedReason: 'cancelled_before_payment' });
+    expect(await ledger()).toEqual([]);
+  });
+
+  it('el cliente no puede bajar la retención: el importe lo calcula el servidor', async () => {
+    await db.doc('config/ops').set({ cancellationPolicy: policy });
+    await booking('b1', 'driver_arrived', { driverId: 'luis' });
+    await paid('b1');
+    expect(await reason(cancel('ana', { bookingId: 'b1', acceptedFee: 1 }))).toBe('cancellation_fee_changed');
+    expect(await reason(cancel('ana', { bookingId: 'b1', retained: 0 }))).toBe('invalid_request');
   });
 });

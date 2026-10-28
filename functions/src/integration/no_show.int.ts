@@ -15,11 +15,8 @@ const T0 = Date.UTC(2026, 9, 25, 12);
 let clock = T0;
 const deps = () => ({ db, pickupSecret: 'secreto', now: () => clock });
 const HERE = { lat: -17.6448, lng: -63.1353 };
-// Valores de prueba, no de negocio.
-const POLICY = {
-  freeWithinMinutesOfBooking: 5, freeBeforePickupMinutes: 60, chargeWhenNoDriver: false,
-  feeType: 'fixed', feeValue: 30, noShowWaitMinutes: 15,
-};
+// Valores de PRUEBA, ficticios: los de negocio los pone el responsable.
+const POLICY = { stages: [{ fromStatus: 'no_show', percent: 30 }], noShowWaitMinutes: 15 };
 
 async function reason(p: Promise<unknown>): Promise<string | undefined> {
   try { await p; } catch (e) { return ((e as HttpsError).details as { reason?: string } | undefined)?.reason; }
@@ -95,24 +92,38 @@ describe('no_show con política', () => {
     expect(await reason(noShow())).toBe('invalid_transition');
   });
 
-  it('el admin decide: cancelar con el recargo que fije (anotado, no cobrado)', async () => {
+  it('el admin decide la causa; con causa del pasajero se retiene el % de la etapa no_show sobre lo pagado', async () => {
+    await db.doc('bookings/b1/payment/state').set({
+      bookingId: 'b1', riderId: 'ana', paymentStatus: 'paid', paymentMethod: 'manual_qr', amountDue: 10000, amountPaid: 10000,
+    });
     await arrive();
     clock += 16 * 60_000;
     await noShow();
     const jefa = { adminId: 'jefa', adminEmail: null };
-    await adminUpdateBooking({ db }, jefa, {
-      action: 'cancel', bookingId: 'b1', reason: 'Pasajero no se presentó, confirmado', cancellationFee: 30,
-    });
-    expect(await doc('bookings/b1')).toMatchObject({
-      status: 'cancelled', cancelledBy: 'admin', cancellationFee: 30,
-      cancellationFeeBasis: 'no_show_admin', cancellationFeeCharged: false,
-    });
+    await expect(adminUpdateBooking({ db }, jefa, {
+      action: 'cancel', bookingId: 'b1', reason: 'Pasajero no se presentó, confirmado', cause: 'rider',
+    })).resolves.toMatchObject({ status: 'cancelled', retained: 3000, refund: 7000, retentionBasis: 'stage' });
+    expect(await doc('bookings/b1')).toMatchObject({ status: 'cancelled', cancelledBy: 'admin' });
+    expect(await doc('bookings/b1')).not.toHaveProperty('cancellationFee');
+    expect(await doc('bookings/b1/payment/state')).toMatchObject({ paymentStatus: 'refund_pending', amountRetained: 3000, refundDue: 7000 });
   });
 
-  it('el recargo del admin solo vale tras un no_show', async () => {
+  it('si el admin decide que fue culpa del chófer: 0 %', async () => {
+    await db.doc('bookings/b1/payment/state').set({
+      bookingId: 'b1', riderId: 'ana', paymentStatus: 'paid', paymentMethod: 'manual_qr', amountDue: 10000, amountPaid: 10000,
+    });
+    await arrive();
+    clock += 16 * 60_000;
+    await noShow();
+    await expect(adminUpdateBooking({ db }, { adminId: 'jefa', adminEmail: null }, {
+      action: 'cancel', bookingId: 'b1', reason: 'El chófer esperó en otro punto', cause: 'driver',
+    })).resolves.toMatchObject({ retained: 0, refund: 10000, retentionBasis: 'driver_cause' });
+  });
+
+  it('el admin no puede fijar un importe: el campo antiguo se rechaza', async () => {
     const jefa = { adminId: 'jefa', adminEmail: null };
     expect(await reason(adminUpdateBooking({ db }, jefa, {
-      action: 'cancel', bookingId: 'b1', reason: 'Cancelada por central hoy', cancellationFee: 10,
-    }))).toBe('fee_only_after_no_show');
+      action: 'cancel', bookingId: 'b1', reason: 'Cancelada por central hoy', cause: 'rider', cancellationFee: 10,
+    }))).toBe('invalid_request');
   });
 });

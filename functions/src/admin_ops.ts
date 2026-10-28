@@ -14,7 +14,10 @@ import { appendEvent, Status } from './trip_flow';
 import { SERVICE_TYPES, VEHICLE_CLASSES } from './fare';
 import { CAPACITY } from './booking_schema';
 import { computeSettlement, Settlement } from './settlement';
-import { policySchema } from './cancellation_policy';
+import { policySchema, readPolicy } from './cancellation_policy';
+import { computeCancelSettle, readForSettle, writeCancelSettle } from './payment_settle';
+import { paymentInstructionsSchema, paymentMethodsSchema, paymentWindowSchema } from './payment_config';
+import { isPaid, readPaymentState } from './payment_booking';
 
 export interface AdminDeps { db: admin.firestore.Firestore; now?: () => number }
 
@@ -51,8 +54,14 @@ export const bookingSchema = z.discriminatedUnion('action', [
   z.strictObject({ action: z.literal('assign'), bookingId: docId, driverId: docId, reason: reasonSchema }),
   z.strictObject({
     action: z.literal('cancel'), bookingId: docId, reason: reasonSchema,
-    /** Solo desde no_show: recargo que decide el admin (se anota, no se cobra). */
-    cancellationFee: z.number().finite().min(0).max(1_000_000).optional(),
+    /**
+     * Quién causa la cancelación (A7). Solo con 'rider' (p. ej. el pasajero
+     * llama a central, o no se presentó) se aplica la política de retención;
+     * chófer o plataforma: 0 %. El importe lo calcula siempre el servidor.
+     * Sin causa (el panel anterior no la manda): plataforma, 0 %, lo más
+     * favorable al pasajero.
+     */
+    cause: z.enum(['rider', 'driver', 'platform']).default('platform'),
   }),
   z.strictObject({
     action: z.literal('status'), bookingId: docId,
@@ -78,7 +87,9 @@ export async function adminUpdateBooking(deps: AdminDeps, actor: AdminActor, dat
   const db = deps.db;
   const ref = db.collection('bookings').doc(input.bookingId);
   // Fuera de la transacción: no cambia durante ella y no la alarga.
-  const maxPct = input.action === 'adjust_price' ? maxAdjustmentPercent(await opsConfig(db)) : null;
+  const ops = input.action === 'adjust_price' || input.action === 'cancel' ? await opsConfig(db) : {};
+  const maxPct = input.action === 'adjust_price' ? maxAdjustmentPercent(ops) : null;
+  const cancel = input.action === 'cancel' ? readPolicy(ops) : null;
   if (input.action === 'adjust_price' && maxPct === null) {
     throw opError('failed-precondition', 'price_adjustment_disabled');
   }
@@ -99,10 +110,13 @@ export async function adminUpdateBooking(deps: AdminDeps, actor: AdminActor, dat
       if (!ASSIGNABLE.includes(status)) throw opError('failed-precondition', 'not_assignable', { status });
       const previous = (b.driverId as string | undefined) ?? null;
       if (previous === input.driverId) throw opError('failed-precondition', 'no_change');
-      const [user, profile] = await Promise.all([
+      const [user, profile, payment] = await Promise.all([
         tx.get(db.collection('users').doc(input.driverId)),
         tx.get(db.collection('driverProfiles').doc(input.driverId)),
+        readPaymentState(db, ref.id, tx),
       ]);
+      // A3: una reserva que aún espera chófer no se asigna sin pago confirmado.
+      if (status === 'pending' && !isPaid(payment)) throw opError('failed-precondition', 'payment_required');
       if (user.data()?.role !== 'driver' || !profile.exists) throw opError('not-found', 'driver_not_found');
       if (user.data()?.isActive === false) throw opError('failed-precondition', 'driver_inactive');
       if (profile.data()?.documentsVerified !== true) throw opError('failed-precondition', 'driver_not_verified');
@@ -126,28 +140,25 @@ export async function adminUpdateBooking(deps: AdminDeps, actor: AdminActor, dat
 
     if (input.action === 'cancel') {
       if (!ADMIN_TRANSITIONS[status]?.includes('cancelled')) throw opError('failed-precondition', 'not_cancellable', { status });
+      // Retención y devolución (A7) sobre lo pagado; los importes van al
+      // estado del pago y a eventDetails, no a la reserva ni al evento.
+      const read = await readForSettle(tx, db, ref.id, status);
+      const settle = { bookingId: ref.id, status, cause: input.cause, policy: cancel!.policy,
+        policyState: cancel!.state, read, at: now };
+      const r = computeCancelSettle(settle);
       // El motivo del admin no va en la reserva (la leen pasajero y chófer):
       // va en eventDetails y en admin_logs.
-      if (input.cancellationFee !== undefined && status !== 'no_show') {
-        throw opError('failed-precondition', 'fee_only_after_no_show');
-      }
-      if (input.cancellationFee !== undefined && input.cancellationFee > Number(b.estimatedPrice ?? 0)) {
-        throw opError('invalid-argument', 'fee_above_price');
-      }
-      const after: Record<string, unknown> = {
-        status: 'cancelled', cancelledBy: 'admin',
-        ...(input.cancellationFee !== undefined ? {
-          cancellationFee: input.cancellationFee, cancellationFeeBasis: 'no_show_admin', cancellationFeeCharged: false,
-        } : {}),
-      };
+      const after: Record<string, unknown> = { status: 'cancelled', cancelledBy: 'admin' };
       tx.update(ref, { ...after, cancelledAt: now, updatedAt: now });
+      writeCancelSettle(tx, db, settle, r);
       event('cancelled', status === 'no_show' ? 'admin_no_show_decision' : 'admin_cancel',
-        input.cancellationFee !== undefined ? { cancellationFee: input.cancellationFee } : {});
+        { cause: input.cause, retained: r.retained, refund: r.refund, retentionBasis: r.basis });
       writeAudit(tx, db, {
         actor, operation: 'cancel_booking', collection: 'bookings', docId: ref.id, targetType: 'booking',
         changes: changedFields(b, after), reason: input.reason, details: `${status} → cancelled`,
+        context: { cause: input.cause, retained: r.retained, refund: r.refund, retentionBasis: r.basis },
       });
-      return { status: 'cancelled' as Status };
+      return { status: 'cancelled' as Status, retained: r.retained, refund: r.refund, retentionBasis: r.basis };
     }
 
     if (input.action === 'status') {
@@ -218,8 +229,12 @@ export async function adminRecordPayment(deps: AdminDeps, actor: AdminActor, dat
     const now = admin.firestore.Timestamp.fromMillis(nowMs(deps));
     if (input.action === 'record') {
       const bookingRef = db.collection('bookings').doc(input.bookingId);
-      const snap = await tx.get(bookingRef);
+      const [snap, paymentState] = await Promise.all([tx.get(bookingRef), readPaymentState(db, input.bookingId, tx)]);
       if (!snap.exists) throw opError('not-found', 'booking_not_found');
+      // Pagos (Q2): una reserva con estado de pago solo se cobra con
+      // adminConfirmPayment (antes de pedir chófer); aquí sería un segundo
+      // cobro. Este camino queda para las reservas anteriores a pagos.
+      if (paymentState.exists) throw opError('failed-precondition', 'use_confirm_payment');
       const b = snap.data()!;
       if (b.status !== 'completed') throw opError('failed-precondition', 'not_completed');
       const card = b.stripePaymentIntentId != null || b.stripePaymentMethodId != null;
@@ -341,8 +356,12 @@ export const configSchema = z.discriminatedUnion('doc', [
       incidentLocationRetentionDays: positiveInt.optional(),
       arrivalRadiusMeters: z.number().finite().positive().max(1_000_000).optional(),
       maxPriceAdjustmentPercent: z.number().finite().min(0).max(100).optional(),
-      // Política de cancelación (Parte B); los valores los decide el responsable.
+      // Política de cancelación por etapas (pagos, A7); los valores los decide el responsable.
       cancellationPolicy: policySchema.optional(),
+      // Pagos (A2, A3): métodos activos, datos de cobro y plazo para pagar.
+      paymentMethods: paymentMethodsSchema.optional(),
+      paymentInstructions: paymentInstructionsSchema.optional(),
+      paymentWindowMinutes: paymentWindowSchema.optional(),
     }).refine(atLeastOne),
     reason: reasonSchema,
   }),

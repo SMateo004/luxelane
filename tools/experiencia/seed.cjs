@@ -105,11 +105,20 @@ async function main() {
   set('config/finance', { commissionPct: 20 });
   set('config/security', { mfaEnforced: false });
   set('config/ops', {
+    // Etapas de retención (pagos, A7) con porcentajes FICTICIOS de prueba.
     cancellationPolicy: {
-      freeWithinMinutesOfBooking: 5, freeBeforePickupMinutes: 120, chargeWhenNoDriver: false,
-      feeType: 'fixed', feeValue: 50, noShowWaitMinutes: 10,
+      stages: [{ fromStatus: 'driver_arriving', percent: 10 }, { fromStatus: 'driver_arrived', percent: 20 }],
+      noShowWaitMinutes: 10,
     },
     maxPriceAdjustmentPercent: 20,
+    // Pagos: datos de cobro FICTICIOS, solo para ver las pantallas. No son
+    // cuentas reales ni decisiones de negocio.
+    paymentMethods: { manual_qr: true },
+    paymentInstructions: { manual_qr: {
+      holderName: 'Titular de prueba (ficticio)', bankName: 'Banco de prueba (ficticio)',
+      accountNumber: '000-000-FICTICIA', note: 'Datos de prueba: no transferir.',
+    } },
+    paymentWindowMinutes: 30,
   });
   // Un factor distinto por clase, también ficticio, para que la captura de
   // «tarifa por clase» muestre precios diferentes.
@@ -145,12 +154,63 @@ async function main() {
     'r-completed': base('r-completed', { status: 'completed', scheduledAt: at(-60 * 24), finalPrice: 120, ...assigned,
       settlement: { amount: 120, commissionPct: 20, platformCommission: 24, driverPayout: 96 } }),
     'r-cancelled': base('r-cancelled', { status: 'cancelled', cancelledBy: 'rider', cancellationReason: 'changed_plans',
-      cancellationFee: 0, cancellationFeeBasis: 'early', cancellationFeeCharged: false, scheduledAt: at(60 * 24) }),
+      scheduledAt: at(60 * 24) }),
     'r-cancelled-fee': base('r-cancelled-fee', { status: 'cancelled', cancelledBy: 'rider', cancellationReason: 'other',
-      cancellationFee: 50, cancellationFeeBasis: 'late', cancellationFeeCharged: false, scheduledAt: at(-30) }),
+      scheduledAt: at(-30) }),
     'r-noshow': base('r-noshow', { status: 'no_show', arrivedAt: at(-25), noShowAt: at(-10), ...assigned }),
+    // Pagos: sin pagar, con «ya pagué» y vencida.
+    'r-unpaid': base('r-unpaid', { status: 'pending', scheduledAt: at(120) }),
+    'r-reported': base('r-reported', { status: 'pending', scheduledAt: at(150) }),
+    'r-expired': base('r-expired', { status: 'cancelled', cancelledBy: 'system', cancellationReason: 'payment_expired',
+      scheduledAt: at(90) }),
+    // Central rechazó el «ya pagué»; y un viaje cuyo importe final superó lo pagado.
+    'r-rejected': base('r-rejected', { status: 'pending', scheduledAt: at(200) }),
+    'r-balance': base('r-balance', { status: 'completed', scheduledAt: at(-60 * 30), finalPrice: 135, ...assigned,
+      settlement: { amount: 135, commissionPct: 20, platformCommission: 27, driverPayout: 108 } }),
   };
   for (const [id, b] of Object.entries(bookings)) set(`bookings/${id}`, b);
+
+  // Estado del pago (bookings/{id}/payment/state) y asientos, con
+  // referencias e importes FICTICIOS (120 Bs = 12000 céntimos).
+  const ref = (id) => `PRB${id.replace(/[^a-z]/g, '').toUpperCase()}`.slice(0, 8).padEnd(8, 'X');
+  const pay = (id, extra) => set(`bookings/${id}/payment/state`, {
+    bookingId: id, riderId: 'pasajera', paymentStatus: 'paid', paymentMethod: 'manual_qr', amountDue: 12000,
+    amountPaid: 12000, paymentRef: ref(id), paidAt: at(-100), paymentDeadline: at(-90), methodsOffered: ['manual_qr'],
+    createdAt: at(-120), updatedAt: at(-100), ...extra,
+  });
+  const entry = (id, docId, type, amount, extra = {}) => set(`payments/${docId}`, {
+    type, bookingId: id, riderId: 'pasajera', amount, currency: 'bob', method: 'manual_qr', actor: { role: 'admin' },
+    externalRef: type === 'charge' ? 'OP-PRUEBA' : null, reason: 'dato de prueba', status: 'completed', createdAt: at(-100), ...extra,
+  });
+  for (const id of ['r-pending', 'r-released', 'r-confirmed', 'r-arriving', 'r-arrived', 'r-verified', 'r-progress',
+    'r-completed', 'r-noshow']) {
+    pay(id);
+    entry(id, `charge_${id}`, 'charge', 12000);
+  }
+  pay('r-unpaid', { paymentStatus: 'awaiting_payment', paymentMethod: null, amountPaid: 0, paidAt: null, paymentDeadline: at(25) });
+  pay('r-reported', { paymentStatus: 'awaiting_payment', amountPaid: 0, paidAt: null, paymentDeadline: at(20),
+    riderReportedAt: at(-2), riderOperationNumber: 'OP-PRUEBA-2' });
+  pay('r-expired', { paymentStatus: 'expired', paymentMethod: null, amountPaid: 0, paidAt: null, paymentDeadline: at(-5),
+    expiredAt: at(-5) });
+  pay('r-rejected', { paymentStatus: 'failed', amountPaid: 0, paidAt: null, paymentDeadline: at(28),
+    riderReportedAt: null, rejectedAt: at(-1) });
+  pay('r-balance', { balanceDue: 1500 });
+  entry('r-balance', 'charge_r-balance', 'charge', 12000);
+  entry('r-balance', 'balance_r-balance', 'charge', 1500, { actor: { role: 'system' }, status: 'pending', externalRef: null });
+  // Cancelada sin chófer: devolución entera pendiente.
+  pay('r-cancelled', { paymentStatus: 'refund_pending', amountRetained: 0, refundDue: 12000, amountRefunded: 0,
+    retentionPercent: 0, retentionBasis: 'no_driver', cancelCause: 'rider' });
+  entry('r-cancelled', 'charge_r-cancelled', 'charge', 12000);
+  entry('r-cancelled', 'refund_r-cancelled', 'refund', 12000, { actor: { role: 'system' }, status: 'pending' });
+  // Cancelada en camino con 10 % (ficticio) retenido y el resto ya devuelto.
+  pay('r-cancelled-fee', { paymentStatus: 'partially_refunded', amountRetained: 1200, refundDue: 0, amountRefunded: 10800,
+    retentionPercent: 10, retentionBasis: 'stage', cancelCause: 'rider' });
+  entry('r-cancelled-fee', 'charge_r-cancelled-fee', 'charge', 12000);
+  entry('r-cancelled-fee', 'fee_r-cancelled-fee', 'fee_retained', 1200, { actor: { role: 'system' } });
+  entry('r-cancelled-fee', 'refund_r-cancelled-fee', 'refund', 10800, { externalRef: 'DEV-PRUEBA', completedAt: at(-20) });
+  set('adminAlerts/alerta-pago', { type: 'payment_reported', severity: 'high', bookingId: 'r-reported', paymentRef: ref('r-reported'),
+    amountDue: 12000, operationNumber: 'OP-PRUEBA-2', resolved: false, createdAt: at(-2),
+    message: 'El pasajero avisa que pagó la reserva. (dato de prueba)' });
   set('openRequests/r-pending', { vehicleClass: 'business', serviceType: 'oneWay', scheduledAt: at(180), estimatedPrice: 120,
     hours: null, passengerCount: 1, luggageCount: 1, pickupAirport: 'VVI', flightType: null, pickupArea: 'Aeropuerto',
     dropoffArea: 'Centro', pickupApprox: { lat: -17.64, lng: -63.14 }, dropoffApprox: { lat: -17.78, lng: -63.18 }, tripKm: 16 });
@@ -169,8 +229,6 @@ async function main() {
     message: 'El chófer liberó la reserva y faltan 45 min para la recogida. (dato de prueba)' });
   set('adminAlerts/alerta-noshow', { type: 'rider_no_show', severity: 'medium', bookingId: 'r-noshow', driverId: 'chofer',
     resolved: false, createdAt: at(-10), message: 'El chófer marcó que el pasajero no apareció. (dato de prueba)' });
-  set('payments/p-prueba', { id: 'p-prueba', bookingId: 'r-completed', riderId: 'pasajera', driverId: 'chofer',
-    amount: 120, amountBs: 120, currency: 'BOB', status: 'captured', method: 'cash', manual: true, createdAt: at(-60 * 23) });
 
   await batch.commit();
   console.log(`Sembrado ${PROJECT}: ${PEOPLE.length} cuentas (contraseña «${PASSWORD}»), ${Object.keys(bookings).length} reservas.`);

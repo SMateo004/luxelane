@@ -13,6 +13,7 @@ import '../bloc/admin_bloc.dart';
 import '../widgets/admin_alerts_tab.dart';
 import '../widgets/admin_finance_tab.dart';
 import '../widgets/admin_incidents_strip.dart';
+import '../widgets/admin_payments_tab.dart';
 import '../widgets/admin_pricing_tab.dart';
 import '../widgets/admin_sections.dart';
 import '../widgets/admin_shared_widgets.dart';
@@ -30,6 +31,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   static const _labels = {
     AdminSection.dashboard: 'Panel',
     AdminSection.operations: 'Operaciones',
+    AdminSection.payments: 'Pagos',
     AdminSection.finance: 'Finanzas',
     AdminSection.pricing: 'Tarifas',
     AdminSection.drivers: 'Chóferes',
@@ -43,6 +45,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   static const _icons = {
     AdminSection.dashboard: Icons.dashboard_outlined,
     AdminSection.operations: Icons.confirmation_number_outlined,
+    AdminSection.payments: Icons.payments_outlined,
     AdminSection.finance: Icons.account_balance_outlined,
     AdminSection.pricing: Icons.sell_outlined,
     AdminSection.drivers: Icons.badge_outlined,
@@ -61,6 +64,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
       [
         AdminSection.dashboard,
         AdminSection.operations,
+        AdminSection.payments,
         AdminSection.drivers,
         AdminSection.vehicles,
       ],
@@ -84,6 +88,8 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   static const _subtitles = {
     AdminSection.dashboard: 'Lo que pasa hoy en Luxelane, de un vistazo.',
     AdminSection.operations: 'Reservas, asignaciones y estados en vivo.',
+    AdminSection.payments:
+        'Pagos por confirmar, pendientes, devoluciones y saldos.',
     AdminSection.finance: 'Facturación, cobros y liquidaciones.',
     AdminSection.pricing: 'Tarifas por clase de vehículo y servicio.',
     AdminSection.drivers: 'Verificación y disponibilidad de chóferes.',
@@ -378,6 +384,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
   Widget _sectionBody() => switch (_section) {
         AdminSection.dashboard => DashboardTab(onNavigate: _go),
         AdminSection.operations => const BookingsTab(),
+        AdminSection.payments => const PaymentsTab(),
         AdminSection.finance => const FinanceTab(),
         AdminSection.pricing => const PricingTab(),
         AdminSection.drivers => const DriversTab(),

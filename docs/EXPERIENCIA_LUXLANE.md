@@ -452,6 +452,36 @@ también a 768 (el inicio cambia a diseño web desde 600).
 
 Ninguno se corrige en esta entrega: quedan para que el responsable los ordene.
 
+**Corregidos en la rama `cierre/pagos` (Prompt 12, Parte B)** [seguro: cada
+test falla sin el cambio, comprobado quitándolo y volviendo a ejecutarlo]:
+
+| Id | Qué cambió | Commit | Test |
+|---|---|---|---|
+| E34 | La lista de sugerencias va en un `OverlayEntry` de la capa raíz y cada sugerencia es un botón accesible con nombre: sus nodos quedan por encima de los chips. Comprobado en el navegador con la capa activa: el clic elige el lugar correcto. | 72e824a | `place_autocomplete_a11y_test.dart` |
+| E35 | Sin cotización del servidor el precio se rotula «PRECIO ESTIMADO» / «TOTAL ESTIMADO»; «PRECIO FINAL» / «PRECIO FIJO» solo con la del servidor, que ahora se pide en todos los pasos. | c9888b8 | `booking_price_test.dart` |
+| E36 | Si la cotización falla, el error se ve junto al precio (región en vivo) con «Reintentar», en móvil y web. | c9888b8 | `booking_price_test.dart` |
+| E37 | Un fallo del servidor dice «No pudimos completar la reserva por un problema nuestro…»; «Revisa los datos» solo con `invalid-argument`. | 339f882 | `booking_request_data_test.dart` |
+| E38 | Tras reservar se pasa a la pantalla de pago (manual por QR o transferencia en la web; tarjeta solo en nativo y con proveedor). La web manda `channel: 'web'` y el servidor no le crea reservas sin pago manual activo. | 2dd2038, d55eabf | `payment_dispatch.int.ts`, `booking_payment_test.dart`, `booking_price_test.dart` |
+| E39 | «Reservar para mí / para un invitado» también en el asistente de 3 pasos, con el mismo diálogo y la misma petición a `createBooking`. | d1aa4b7 | `booking_price_test.dart` |
+
+### G3. Capturas repetidas (rama `cierre/pagos-g`)
+
+[seguro, ejecutado el 2026-10-28 con el código de G1 y G2] P-pagos a 768 px;
+F5 (viaje), F7 (Mis viajes), F11 (recogida inmediata, nueva) y P-panel
+«Cobrar saldo» (nueva) a 390, 768 y 1280 px. Manifiesto: 420 capturas, 412
+correctas, 8 fallidas (las de siempre: botones del inicio móvil que la home
+web de 768 y 1280 px no tiene) y 0 errores de JavaScript. Hojas regeneradas
+en `docs/capturas/hojas/` (ahora también P-pagos y P-panel).
+
+| Id | Hallazgo | Gravedad | Evidencia |
+|---|---|---|---|
+| E40 | Con el viaje activo (en camino, chófer llegó, en curso), el comprobante de pago ocupa el sitio principal del panel inferior. A 390 px, con el código de recogida a la vista, empuja la tarjeta del chófer fuera de la pantalla y hay que desplazarse para verla o para cancelar. | Molesta | [seguro] `F5-viaje/llego-codigo_390`, `en-camino_390`. Dónde ponerlo (plegado, solo al terminar…) es juicio visual: espera al responsable. |
+| E41 | Mis viajes no distingue una reserva que espera el pago: sale como «Pendiente», igual que una pagada que busca chófer. Para pagar hay que entrar en el viaje. | Molesta | [seguro] `F7-viajes/lista_*`; `trips_screen.dart` no lee `payment/state`. |
+| E42 | Perfil → «Métodos de pago» sigue ofreciendo «Agregar tarjeta» («Paga sin pensarlo.»), aunque la tarjeta no se puede usar para pagar (sin proveedor, decisión 5). | Molesta (promete algo que no existe) | [seguro] `F7-viajes/pagos_390`; `profile_screen.dart:207`. Quitarla o dejarla es decisión del responsable. |
+| E43 | En una reserva cancelada con retención, el titular repite la retención que ya muestra el comprobante. | Menor | [seguro] `F5-viaje/cancelada-con-recargo_390`. |
+
+Ninguno se corrige en esta entrega.
+
 ### F6. Portada estática en `/`: diseño (sin implementar)
 
 **Situación actual [seguro]:** el destino `rider` de `firebase.json` sirve

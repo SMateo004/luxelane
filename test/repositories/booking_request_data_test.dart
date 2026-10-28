@@ -76,6 +76,16 @@ void main() {
       });
     });
 
+    test('E38: la reserva dice si viene de la web; la cotización no', () {
+      expect(bookingRequestData(_booking(), web: true)['channel'], 'web');
+      expect(bookingRequestData(_booking(), web: false)['channel'], 'native');
+      expect(
+        bookingRequestData(_booking(), quote: true, web: true)
+            .containsKey('channel'),
+        isFalse,
+      );
+    });
+
     test('por horas manda horas y no destino', () {
       final data = bookingRequestData(_booking(service: ServiceType.byTheHour));
       expect(data['hours'], 3);
@@ -144,6 +154,28 @@ void main() {
         }).message,
         contains('No pudimos calcular el precio'),
       );
+    });
+
+    test('E37: un error del servidor no culpa a la persona', () {
+      for (final code in ['internal', 'unknown', 'failed-precondition']) {
+        final msg = bookingFailureFor(code, const {}).message;
+        expect(msg, isNot(contains('Revisa los datos')), reason: code);
+        expect(msg, contains('problema nuestro'), reason: code);
+      }
+      // Solo un dato mal formado pide revisar los datos.
+      expect(
+        bookingFailureFor('invalid-argument', {'reason': 'invalid_request'})
+            .message,
+        contains('Revisa los datos del viaje'),
+      );
+    });
+
+    test('sin método de pago activo: mensaje propio, sin culpar a nadie', () {
+      final msg = bookingFailureFor(
+        'failed-precondition',
+        {'reason': 'payments_unavailable'},
+      ).message;
+      expect(msg, contains('no podemos recibir reservas'));
     });
   });
 }

@@ -4,7 +4,9 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:get_it/get_it.dart';
 
+import '../../features/admin/data/repositories/admin_payments_repository_impl.dart';
 import '../../features/admin/data/repositories/admin_repository_impl.dart';
+import '../../features/admin/domain/admin_payments.dart';
 import '../../features/admin/domain/repositories/admin_repository.dart';
 import '../../features/admin/presentation/bloc/admin_bloc.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
@@ -17,6 +19,7 @@ import '../../features/booking/presentation/bloc/booking_bloc.dart';
 import '../../features/driver/presentation/bloc/driver_bloc.dart';
 import '../../features/incidents/data/incident_repository_impl.dart';
 import '../../features/notifications/presentation/bloc/notification_bloc.dart';
+import '../../features/payments/data/repositories/booking_payment_repository_impl.dart';
 import '../../features/payments/data/repositories/payment_repository_impl.dart';
 import '../../features/payments/domain/usecases/payment_usecases.dart';
 import '../../features/payments/presentation/bloc/payment_bloc.dart';
@@ -93,6 +96,14 @@ void _registerRepositories() {
 
   sl.registerLazySingleton<PaymentRepository>(
     () => PaymentRepositoryImpl(firestore: sl(), functions: sl()),
+  );
+
+  sl.registerLazySingleton<BookingPaymentRepository>(
+    () => BookingPaymentRepositoryImpl(firestore: sl(), functions: sl()),
+  );
+
+  sl.registerLazySingleton<AdminPaymentsRepository>(
+    () => AdminPaymentsRepositoryImpl(functions: sl()),
   );
 
   sl.registerLazySingleton<AdminRepository>(

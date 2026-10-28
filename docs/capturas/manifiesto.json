@@ -1,7 +1,9 @@
 {
-  "generado": "2026-10-26T16:55:49.819Z",
+  "generado": "2026-10-28T21:19:49.545Z",
   "anchos": [
-    768
+    390,
+    768,
+    1280
   ],
   "temaOscuro": "la app no tiene tema oscuro",
   "capturas": [
@@ -277,16 +279,6 @@
     },
     {
       "flujo": "F2-reserva",
-      "estado": "pantalla-resumen",
-      "ancho": 390,
-      "archivo": "F2-reserva/pantalla-resumen_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 36400
-    },
-    {
-      "flujo": "F2-reserva",
       "estado": "pantalla-error-cotizacion",
       "ancho": 390,
       "archivo": "F2-reserva/pantalla-error-cotizacion_390.png",
@@ -294,26 +286,6 @@
       "motivo": "",
       "erroresJs": [],
       "ms": 36676
-    },
-    {
-      "flujo": "F2-reserva",
-      "estado": "pantalla-error-cotizacion-reservar",
-      "ancho": 390,
-      "archivo": "F2-reserva/pantalla-error-cotizacion-reservar_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 39958
-    },
-    {
-      "flujo": "F2-reserva",
-      "estado": "pantalla-invitado",
-      "ancho": 390,
-      "archivo": "F2-reserva/pantalla-invitado_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 37186
     },
     {
       "flujo": "F2-reserva",
@@ -364,216 +336,6 @@
       "motivo": "",
       "erroresJs": [],
       "ms": 5659
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "pendiente",
-      "ancho": 390,
-      "archivo": "F5-viaje/pendiente_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16282
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "liberada",
-      "ancho": 390,
-      "archivo": "F5-viaje/liberada_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16383
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "confirmada",
-      "ancho": 390,
-      "archivo": "F5-viaje/confirmada_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16163
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "en-camino",
-      "ancho": 390,
-      "archivo": "F5-viaje/en-camino_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16723
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "llego-codigo",
-      "ancho": 390,
-      "archivo": "F5-viaje/llego-codigo_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16674
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "verificada",
-      "ancho": 390,
-      "archivo": "F5-viaje/verificada_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16350
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "en-curso",
-      "ancho": 390,
-      "archivo": "F5-viaje/en-curso_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16639
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "completada",
-      "ancho": 390,
-      "archivo": "F5-viaje/completada_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 15472
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "no-se-presento",
-      "ancho": 390,
-      "archivo": "F5-viaje/no-se-presento_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16713
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "cancelada",
-      "ancho": 390,
-      "archivo": "F5-viaje/cancelada_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16059
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "cancelada-con-recargo",
-      "ancho": 390,
-      "archivo": "F5-viaje/cancelada-con-recargo_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16577
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "codigo-error-servidor",
-      "ancho": 390,
-      "archivo": "F5-viaje/codigo-error-servidor_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16648
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "codigo-sin-red",
-      "ancho": 390,
-      "archivo": "F5-viaje/codigo-sin-red_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16718
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "reserva-inexistente",
-      "ancho": 390,
-      "archivo": "F5-viaje/reserva-inexistente_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16340
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "sin-recargo",
-      "ancho": 390,
-      "archivo": "F6-cancelacion/sin-recargo_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16367
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "con-recargo",
-      "ancho": 390,
-      "archivo": "F6-cancelacion/con-recargo_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16078
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "error-servidor",
-      "ancho": 390,
-      "archivo": "F6-cancelacion/error-servidor_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 17707
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "sin-red",
-      "ancho": 390,
-      "archivo": "F6-cancelacion/sin-red_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 17632
-    },
-    {
-      "flujo": "F7-viajes",
-      "estado": "lista",
-      "ancho": 390,
-      "archivo": "F7-viajes/lista_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 15082
-    },
-    {
-      "flujo": "F7-viajes",
-      "estado": "vacio",
-      "ancho": 390,
-      "archivo": "F7-viajes/vacio_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 14928
-    },
-    {
-      "flujo": "F7-viajes",
-      "estado": "pagos",
-      "ancho": 390,
-      "archivo": "F7-viajes/pagos_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 14854
     },
     {
       "flujo": "F8-valoracion",
@@ -897,26 +659,6 @@
     },
     {
       "flujo": "F17-panel",
-      "estado": "detalle-no-se-presento",
-      "ancho": 390,
-      "archivo": "F17-panel/detalle-no-se-presento_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 18431
-    },
-    {
-      "flujo": "F17-panel",
-      "estado": "decidir-no-se-presento",
-      "ancho": 390,
-      "archivo": "F17-panel/decidir-no-se-presento_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 20055
-    },
-    {
-      "flujo": "F17-panel",
       "estado": "bloquear-con-viajes",
       "ancho": 390,
       "archivo": "F17-panel/bloquear-con-viajes_390.png",
@@ -1106,16 +848,6 @@
       "ms": 18365
     },
     {
-      "flujo": "F2-reserva",
-      "estado": "pantalla-pago",
-      "ancho": 390,
-      "archivo": "F2-reserva/pantalla-pago_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 43452
-    },
-    {
       "flujo": "F9-sos",
       "estado": "reconocido-panel",
       "ancho": 390,
@@ -1134,16 +866,6 @@
       "motivo": "",
       "erroresJs": [],
       "ms": 15886
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "cancelada-por-pasajero",
-      "ancho": 390,
-      "archivo": "F6-cancelacion/cancelada-por-pasajero_390.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 19207
     },
     {
       "flujo": "F14-chofer",
@@ -1444,216 +1166,6 @@
       "motivo": "",
       "erroresJs": [],
       "ms": 5417
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "pendiente",
-      "ancho": 768,
-      "archivo": "F5-viaje/pendiente_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16363
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "liberada",
-      "ancho": 768,
-      "archivo": "F5-viaje/liberada_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16950
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "confirmada",
-      "ancho": 768,
-      "archivo": "F5-viaje/confirmada_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16788
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "en-camino",
-      "ancho": 768,
-      "archivo": "F5-viaje/en-camino_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16121
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "llego-codigo",
-      "ancho": 768,
-      "archivo": "F5-viaje/llego-codigo_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16415
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "verificada",
-      "ancho": 768,
-      "archivo": "F5-viaje/verificada_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16336
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "en-curso",
-      "ancho": 768,
-      "archivo": "F5-viaje/en-curso_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16593
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "completada",
-      "ancho": 768,
-      "archivo": "F5-viaje/completada_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 15891
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "no-se-presento",
-      "ancho": 768,
-      "archivo": "F5-viaje/no-se-presento_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16328
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "cancelada",
-      "ancho": 768,
-      "archivo": "F5-viaje/cancelada_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16653
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "cancelada-con-recargo",
-      "ancho": 768,
-      "archivo": "F5-viaje/cancelada-con-recargo_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16251
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "codigo-error-servidor",
-      "ancho": 768,
-      "archivo": "F5-viaje/codigo-error-servidor_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16786
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "codigo-sin-red",
-      "ancho": 768,
-      "archivo": "F5-viaje/codigo-sin-red_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16606
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "reserva-inexistente",
-      "ancho": 768,
-      "archivo": "F5-viaje/reserva-inexistente_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16445
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "sin-recargo",
-      "ancho": 768,
-      "archivo": "F6-cancelacion/sin-recargo_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 17000
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "con-recargo",
-      "ancho": 768,
-      "archivo": "F6-cancelacion/con-recargo_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16425
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "error-servidor",
-      "ancho": 768,
-      "archivo": "F6-cancelacion/error-servidor_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 17844
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "sin-red",
-      "ancho": 768,
-      "archivo": "F6-cancelacion/sin-red_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 18381
-    },
-    {
-      "flujo": "F7-viajes",
-      "estado": "lista",
-      "ancho": 768,
-      "archivo": "F7-viajes/lista_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 14800
-    },
-    {
-      "flujo": "F7-viajes",
-      "estado": "vacio",
-      "ancho": 768,
-      "archivo": "F7-viajes/vacio_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 15199
-    },
-    {
-      "flujo": "F7-viajes",
-      "estado": "pagos",
-      "ancho": 768,
-      "archivo": "F7-viajes/pagos_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 14935
     },
     {
       "flujo": "F8-valoracion",
@@ -1987,16 +1499,6 @@
     },
     {
       "flujo": "F17-panel",
-      "estado": "decidir-no-se-presento",
-      "ancho": 768,
-      "archivo": "F17-panel/decidir-no-se-presento_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 21098
-    },
-    {
-      "flujo": "F17-panel",
       "estado": "bloquear-con-viajes",
       "ancho": 768,
       "archivo": "F17-panel/bloquear-con-viajes_768.png",
@@ -2204,16 +1706,6 @@
       "motivo": "",
       "erroresJs": [],
       "ms": 16802
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "cancelada-por-pasajero",
-      "ancho": 768,
-      "archivo": "F6-cancelacion/cancelada-por-pasajero_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 18637
     },
     {
       "flujo": "F14-chofer",
@@ -2497,16 +1989,6 @@
     },
     {
       "flujo": "F2-reserva",
-      "estado": "pantalla-resumen",
-      "ancho": 1280,
-      "archivo": "F2-reserva/pantalla-resumen_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 41760
-    },
-    {
-      "flujo": "F2-reserva",
       "estado": "pantalla-error-cotizacion",
       "ancho": 1280,
       "archivo": "F2-reserva/pantalla-error-cotizacion_1280.png",
@@ -2514,26 +1996,6 @@
       "motivo": "",
       "erroresJs": [],
       "ms": 41090
-    },
-    {
-      "flujo": "F2-reserva",
-      "estado": "pantalla-error-cotizacion-reservar",
-      "ancho": 1280,
-      "archivo": "F2-reserva/pantalla-error-cotizacion-reservar_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 44275
-    },
-    {
-      "flujo": "F2-reserva",
-      "estado": "pantalla-invitado",
-      "ancho": 1280,
-      "archivo": "F2-reserva/pantalla-invitado_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 44721
     },
     {
       "flujo": "F2-reserva",
@@ -2584,216 +2046,6 @@
       "motivo": "",
       "erroresJs": [],
       "ms": 5674
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "pendiente",
-      "ancho": 1280,
-      "archivo": "F5-viaje/pendiente_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 15852
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "liberada",
-      "ancho": 1280,
-      "archivo": "F5-viaje/liberada_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16708
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "confirmada",
-      "ancho": 1280,
-      "archivo": "F5-viaje/confirmada_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16116
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "en-camino",
-      "ancho": 1280,
-      "archivo": "F5-viaje/en-camino_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16630
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "llego-codigo",
-      "ancho": 1280,
-      "archivo": "F5-viaje/llego-codigo_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16568
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "verificada",
-      "ancho": 1280,
-      "archivo": "F5-viaje/verificada_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16592
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "en-curso",
-      "ancho": 1280,
-      "archivo": "F5-viaje/en-curso_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16733
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "completada",
-      "ancho": 1280,
-      "archivo": "F5-viaje/completada_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16127
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "no-se-presento",
-      "ancho": 1280,
-      "archivo": "F5-viaje/no-se-presento_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16928
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "cancelada",
-      "ancho": 1280,
-      "archivo": "F5-viaje/cancelada_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16162
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "cancelada-con-recargo",
-      "ancho": 1280,
-      "archivo": "F5-viaje/cancelada-con-recargo_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16397
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "codigo-error-servidor",
-      "ancho": 1280,
-      "archivo": "F5-viaje/codigo-error-servidor_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16479
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "codigo-sin-red",
-      "ancho": 1280,
-      "archivo": "F5-viaje/codigo-sin-red_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 17024
-    },
-    {
-      "flujo": "F5-viaje",
-      "estado": "reserva-inexistente",
-      "ancho": 1280,
-      "archivo": "F5-viaje/reserva-inexistente_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16723
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "sin-recargo",
-      "ancho": 1280,
-      "archivo": "F6-cancelacion/sin-recargo_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16789
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "con-recargo",
-      "ancho": 1280,
-      "archivo": "F6-cancelacion/con-recargo_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 16749
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "error-servidor",
-      "ancho": 1280,
-      "archivo": "F6-cancelacion/error-servidor_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 17481
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "sin-red",
-      "ancho": 1280,
-      "archivo": "F6-cancelacion/sin-red_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 18074
-    },
-    {
-      "flujo": "F7-viajes",
-      "estado": "lista",
-      "ancho": 1280,
-      "archivo": "F7-viajes/lista_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 15451
-    },
-    {
-      "flujo": "F7-viajes",
-      "estado": "vacio",
-      "ancho": 1280,
-      "archivo": "F7-viajes/vacio_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 15080
-    },
-    {
-      "flujo": "F7-viajes",
-      "estado": "pagos",
-      "ancho": 1280,
-      "archivo": "F7-viajes/pagos_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 15388
     },
     {
       "flujo": "F8-valoracion",
@@ -3117,26 +2369,6 @@
     },
     {
       "flujo": "F17-panel",
-      "estado": "detalle-no-se-presento",
-      "ancho": 1280,
-      "archivo": "F17-panel/detalle-no-se-presento_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 18899
-    },
-    {
-      "flujo": "F17-panel",
-      "estado": "decidir-no-se-presento",
-      "ancho": 1280,
-      "archivo": "F17-panel/decidir-no-se-presento_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 20908
-    },
-    {
-      "flujo": "F17-panel",
       "estado": "bloquear-con-viajes",
       "ancho": 1280,
       "archivo": "F17-panel/bloquear-con-viajes_1280.png",
@@ -3326,16 +2558,6 @@
       "ms": 18340
     },
     {
-      "flujo": "F2-reserva",
-      "estado": "pantalla-pago",
-      "ancho": 1280,
-      "archivo": "F2-reserva/pantalla-pago_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 48117
-    },
-    {
       "flujo": "F9-sos",
       "estado": "reconocido-panel",
       "ancho": 1280,
@@ -3354,16 +2576,6 @@
       "motivo": "",
       "erroresJs": [],
       "ms": 16159
-    },
-    {
-      "flujo": "F6-cancelacion",
-      "estado": "cancelada-por-pasajero",
-      "ancho": 1280,
-      "archivo": "F6-cancelacion/cancelada-por-pasajero_1280.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 19350
     },
     {
       "flujo": "F14-chofer",
@@ -3387,16 +2599,6 @@
     },
     {
       "flujo": "F2-reserva",
-      "estado": "pantalla-resumen",
-      "ancho": 768,
-      "archivo": "F2-reserva/pantalla-resumen_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 45459
-    },
-    {
-      "flujo": "F2-reserva",
       "estado": "pantalla-error-cotizacion",
       "ancho": 768,
       "archivo": "F2-reserva/pantalla-error-cotizacion_768.png",
@@ -3404,26 +2606,6 @@
       "motivo": "",
       "erroresJs": [],
       "ms": 44753
-    },
-    {
-      "flujo": "F2-reserva",
-      "estado": "pantalla-error-cotizacion-reservar",
-      "ancho": 768,
-      "archivo": "F2-reserva/pantalla-error-cotizacion-reservar_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 48188
-    },
-    {
-      "flujo": "F2-reserva",
-      "estado": "pantalla-invitado",
-      "ancho": 768,
-      "archivo": "F2-reserva/pantalla-invitado_768.png",
-      "resultado": "ok",
-      "motivo": "",
-      "erroresJs": [],
-      "ms": 45813
     },
     {
       "flujo": "F2-reserva",
@@ -3446,6 +2628,606 @@
       "ms": 37872
     },
     {
+      "flujo": "P-pagos",
+      "estado": "pagar-manual",
+      "ancho": 390,
+      "archivo": "P-pagos/pagar-manual_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 33060
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "esperando-confirmacion",
+      "ancho": 390,
+      "archivo": "P-pagos/esperando-confirmacion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16521
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "rechazado",
+      "ancho": 390,
+      "archivo": "P-pagos/rechazado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16297
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "vencido",
+      "ancho": 390,
+      "archivo": "P-pagos/vencido_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16383
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "confirmado",
+      "ancho": 390,
+      "archivo": "P-pagos/confirmado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16438
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "error-servidor",
+      "ancho": 390,
+      "archivo": "P-pagos/error-servidor_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16177
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "viaje-pago-pendiente",
+      "ancho": 390,
+      "archivo": "P-pagos/viaje-pago-pendiente_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16060
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "viaje-esperando",
+      "ancho": 390,
+      "archivo": "P-pagos/viaje-esperando_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16812
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "comprobante-pagado",
+      "ancho": 390,
+      "archivo": "P-pagos/comprobante-pagado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16125
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "comprobante-devolucion-pendiente",
+      "ancho": 390,
+      "archivo": "P-pagos/comprobante-devolucion-pendiente_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15639
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "comprobante-retencion-devuelto",
+      "ancho": 390,
+      "archivo": "P-pagos/comprobante-retencion-devuelto_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16768
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "comprobante-saldo",
+      "ancho": 390,
+      "archivo": "P-pagos/comprobante-saldo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16498
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "cancelar-con-retencion",
+      "ancho": 390,
+      "archivo": "P-pagos/cancelar-con-retencion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17251
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "cancelar-sin-retencion",
+      "ancho": 390,
+      "archivo": "P-pagos/cancelar-sin-retencion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16790
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "pagar-manual",
+      "ancho": 1280,
+      "archivo": "P-pagos/pagar-manual_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17267
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "esperando-confirmacion",
+      "ancho": 1280,
+      "archivo": "P-pagos/esperando-confirmacion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16730
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "rechazado",
+      "ancho": 1280,
+      "archivo": "P-pagos/rechazado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16936
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "vencido",
+      "ancho": 1280,
+      "archivo": "P-pagos/vencido_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16477
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "confirmado",
+      "ancho": 1280,
+      "archivo": "P-pagos/confirmado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16523
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "error-servidor",
+      "ancho": 1280,
+      "archivo": "P-pagos/error-servidor_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16606
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "viaje-pago-pendiente",
+      "ancho": 1280,
+      "archivo": "P-pagos/viaje-pago-pendiente_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16737
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "viaje-esperando",
+      "ancho": 1280,
+      "archivo": "P-pagos/viaje-esperando_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16665
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "comprobante-pagado",
+      "ancho": 1280,
+      "archivo": "P-pagos/comprobante-pagado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16691
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "comprobante-devolucion-pendiente",
+      "ancho": 1280,
+      "archivo": "P-pagos/comprobante-devolucion-pendiente_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16486
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "comprobante-retencion-devuelto",
+      "ancho": 1280,
+      "archivo": "P-pagos/comprobante-retencion-devuelto_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16734
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "comprobante-saldo",
+      "ancho": 1280,
+      "archivo": "P-pagos/comprobante-saldo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16481
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "cancelar-con-retencion",
+      "ancho": 1280,
+      "archivo": "P-pagos/cancelar-con-retencion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16708
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "cancelar-sin-retencion",
+      "ancho": 1280,
+      "archivo": "P-pagos/cancelar-sin-retencion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16360
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-resumen",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-resumen_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 36995
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-error-cotizacion-reservar",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-error-cotizacion-reservar_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 43528
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-invitado",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-invitado_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 39237
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "sin-recargo",
+      "ancho": 390,
+      "archivo": "F6-cancelacion/sin-recargo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16954
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "con-recargo",
+      "ancho": 390,
+      "archivo": "F6-cancelacion/con-recargo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17102
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "error-servidor",
+      "ancho": 390,
+      "archivo": "F6-cancelacion/error-servidor_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18528
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "sin-red",
+      "ancho": 390,
+      "archivo": "F6-cancelacion/sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18222
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "pagos",
+      "ancho": 390,
+      "archivo": "F17-panel/pagos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17133
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "por-confirmar",
+      "ancho": 390,
+      "archivo": "P-panel/por-confirmar_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17479
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "pendientes",
+      "ancho": 390,
+      "archivo": "P-panel/pendientes_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20501
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "devoluciones",
+      "ancho": 390,
+      "archivo": "P-panel/devoluciones_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20274
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "saldos",
+      "ancho": 390,
+      "archivo": "P-panel/saldos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20296
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "confirmar-pago",
+      "ancho": 390,
+      "archivo": "P-panel/confirmar-pago_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18767
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "registrar-devolucion",
+      "ancho": 390,
+      "archivo": "P-panel/registrar-devolucion_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 21394
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-pago",
+      "ancho": 390,
+      "archivo": "F2-reserva/pantalla-pago_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 43535
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "cancelada-por-pasajero",
+      "ancho": 390,
+      "archivo": "F6-cancelacion/cancelada-por-pasajero_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 19856
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-resumen",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-resumen_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 46891
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-error-cotizacion-reservar",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-error-cotizacion-reservar_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 50632
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-invitado",
+      "ancho": 768,
+      "archivo": "F2-reserva/pantalla-invitado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 48185
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "sin-recargo",
+      "ancho": 768,
+      "archivo": "F6-cancelacion/sin-recargo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17272
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "con-recargo",
+      "ancho": 768,
+      "archivo": "F6-cancelacion/con-recargo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16460
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "error-servidor",
+      "ancho": 768,
+      "archivo": "F6-cancelacion/error-servidor_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17861
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "sin-red",
+      "ancho": 768,
+      "archivo": "F6-cancelacion/sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18327
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "pagos",
+      "ancho": 768,
+      "archivo": "F17-panel/pagos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18807
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "decidir-no-se-presento",
+      "ancho": 768,
+      "archivo": "F17-panel/decidir-no-se-presento_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20436
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "por-confirmar",
+      "ancho": 768,
+      "archivo": "P-panel/por-confirmar_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17822
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "pendientes",
+      "ancho": 768,
+      "archivo": "P-panel/pendientes_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 22204
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "devoluciones",
+      "ancho": 768,
+      "archivo": "P-panel/devoluciones_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20828
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "saldos",
+      "ancho": 768,
+      "archivo": "P-panel/saldos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 21057
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "confirmar-pago",
+      "ancho": 768,
+      "archivo": "P-panel/confirmar-pago_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 19614
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "registrar-devolucion",
+      "ancho": 768,
+      "archivo": "P-panel/registrar-devolucion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 22096
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "cancelar-con-causa",
+      "ancho": 768,
+      "archivo": "P-panel/cancelar-con-causa_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20758
+    },
+    {
       "flujo": "F2-reserva",
       "estado": "pantalla-pago",
       "ancho": 768,
@@ -3453,7 +3235,977 @@
       "resultado": "ok",
       "motivo": "",
       "erroresJs": [],
-      "ms": 51255
+      "ms": 53081
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "cancelada-por-pasajero",
+      "ancho": 768,
+      "archivo": "F6-cancelacion/cancelada-por-pasajero_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 19207
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-resumen",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-resumen_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 42988
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-error-cotizacion-reservar",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-error-cotizacion-reservar_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 47510
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-invitado",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-invitado_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 45990
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "sin-recargo",
+      "ancho": 1280,
+      "archivo": "F6-cancelacion/sin-recargo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17129
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "con-recargo",
+      "ancho": 1280,
+      "archivo": "F6-cancelacion/con-recargo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16079
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "error-servidor",
+      "ancho": 1280,
+      "archivo": "F6-cancelacion/error-servidor_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17782
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "sin-red",
+      "ancho": 1280,
+      "archivo": "F6-cancelacion/sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18463
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "pagos",
+      "ancho": 1280,
+      "archivo": "F17-panel/pagos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17480
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "por-confirmar",
+      "ancho": 1280,
+      "archivo": "P-panel/por-confirmar_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 18136
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "pendientes",
+      "ancho": 1280,
+      "archivo": "P-panel/pendientes_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 21227
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "devoluciones",
+      "ancho": 1280,
+      "archivo": "P-panel/devoluciones_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 21086
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "saldos",
+      "ancho": 1280,
+      "archivo": "P-panel/saldos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20875
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "confirmar-pago",
+      "ancho": 1280,
+      "archivo": "P-panel/confirmar-pago_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 19744
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "registrar-devolucion",
+      "ancho": 1280,
+      "archivo": "P-panel/registrar-devolucion_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 22116
+    },
+    {
+      "flujo": "F2-reserva",
+      "estado": "pantalla-pago",
+      "ancho": 1280,
+      "archivo": "F2-reserva/pantalla-pago_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 48541
+    },
+    {
+      "flujo": "F6-cancelacion",
+      "estado": "cancelada-por-pasajero",
+      "ancho": 1280,
+      "archivo": "F6-cancelacion/cancelada-por-pasajero_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 19531
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "detalle-no-se-presento",
+      "ancho": 390,
+      "archivo": "F17-panel/detalle-no-se-presento_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 20276
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "decidir-no-se-presento",
+      "ancho": 390,
+      "archivo": "F17-panel/decidir-no-se-presento_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 21403
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "cancelar-con-causa",
+      "ancho": 390,
+      "archivo": "P-panel/cancelar-con-causa_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 22002
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "detalle-no-se-presento",
+      "ancho": 1280,
+      "archivo": "F17-panel/detalle-no-se-presento_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 21032
+    },
+    {
+      "flujo": "F17-panel",
+      "estado": "decidir-no-se-presento",
+      "ancho": 1280,
+      "archivo": "F17-panel/decidir-no-se-presento_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 22508
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "cancelar-con-causa",
+      "ancho": 1280,
+      "archivo": "P-panel/cancelar-con-causa_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 22187
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "pagar-manual",
+      "ancho": 768,
+      "archivo": "P-pagos/pagar-manual_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 33782
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "esperando-confirmacion",
+      "ancho": 768,
+      "archivo": "P-pagos/esperando-confirmacion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16533
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "rechazado",
+      "ancho": 768,
+      "archivo": "P-pagos/rechazado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16146
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "vencido",
+      "ancho": 768,
+      "archivo": "P-pagos/vencido_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16423
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "confirmado",
+      "ancho": 768,
+      "archivo": "P-pagos/confirmado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17183
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "error-servidor",
+      "ancho": 768,
+      "archivo": "P-pagos/error-servidor_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16538
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "viaje-pago-pendiente",
+      "ancho": 768,
+      "archivo": "P-pagos/viaje-pago-pendiente_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16068
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "viaje-esperando",
+      "ancho": 768,
+      "archivo": "P-pagos/viaje-esperando_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16642
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "comprobante-pagado",
+      "ancho": 768,
+      "archivo": "P-pagos/comprobante-pagado_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16797
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "comprobante-devolucion-pendiente",
+      "ancho": 768,
+      "archivo": "P-pagos/comprobante-devolucion-pendiente_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16578
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "comprobante-retencion-devuelto",
+      "ancho": 768,
+      "archivo": "P-pagos/comprobante-retencion-devuelto_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16168
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "comprobante-saldo",
+      "ancho": 768,
+      "archivo": "P-pagos/comprobante-saldo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15803
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "cancelar-con-retencion",
+      "ancho": 768,
+      "archivo": "P-pagos/cancelar-con-retencion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15763
+    },
+    {
+      "flujo": "P-pagos",
+      "estado": "cancelar-sin-retencion",
+      "ancho": 768,
+      "archivo": "P-pagos/cancelar-sin-retencion_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15725
+    },
+    {
+      "flujo": "F11-servicios",
+      "estado": "recogida-inmediata",
+      "ancho": 390,
+      "archivo": "F11-servicios/recogida-inmediata_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 5231
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "pendiente",
+      "ancho": 390,
+      "archivo": "F5-viaje/pendiente_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16740
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "liberada",
+      "ancho": 390,
+      "archivo": "F5-viaje/liberada_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16816
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "confirmada",
+      "ancho": 390,
+      "archivo": "F5-viaje/confirmada_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16757
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "en-camino",
+      "ancho": 390,
+      "archivo": "F5-viaje/en-camino_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15711
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "llego-codigo",
+      "ancho": 390,
+      "archivo": "F5-viaje/llego-codigo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16131
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "verificada",
+      "ancho": 390,
+      "archivo": "F5-viaje/verificada_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16058
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "en-curso",
+      "ancho": 390,
+      "archivo": "F5-viaje/en-curso_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15575
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "completada",
+      "ancho": 390,
+      "archivo": "F5-viaje/completada_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16625
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "no-se-presento",
+      "ancho": 390,
+      "archivo": "F5-viaje/no-se-presento_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17113
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "cancelada",
+      "ancho": 390,
+      "archivo": "F5-viaje/cancelada_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16902
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "cancelada-con-recargo",
+      "ancho": 390,
+      "archivo": "F5-viaje/cancelada-con-recargo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16621
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "codigo-error-servidor",
+      "ancho": 390,
+      "archivo": "F5-viaje/codigo-error-servidor_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15622
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "codigo-sin-red",
+      "ancho": 390,
+      "archivo": "F5-viaje/codigo-sin-red_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16780
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "reserva-inexistente",
+      "ancho": 390,
+      "archivo": "F5-viaje/reserva-inexistente_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15922
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "lista",
+      "ancho": 390,
+      "archivo": "F7-viajes/lista_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14852
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "vacio",
+      "ancho": 390,
+      "archivo": "F7-viajes/vacio_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14835
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "pagos",
+      "ancho": 390,
+      "archivo": "F7-viajes/pagos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14905
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "cobrar-saldo",
+      "ancho": 390,
+      "archivo": "P-panel/cobrar-saldo_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 21417
+    },
+    {
+      "flujo": "F11-servicios",
+      "estado": "recogida-inmediata",
+      "ancho": 768,
+      "archivo": "F11-servicios/recogida-inmediata_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 5350
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "pendiente",
+      "ancho": 768,
+      "archivo": "F5-viaje/pendiente_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16192
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "liberada",
+      "ancho": 768,
+      "archivo": "F5-viaje/liberada_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15970
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "confirmada",
+      "ancho": 768,
+      "archivo": "F5-viaje/confirmada_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16212
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "en-camino",
+      "ancho": 768,
+      "archivo": "F5-viaje/en-camino_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16423
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "llego-codigo",
+      "ancho": 768,
+      "archivo": "F5-viaje/llego-codigo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15871
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "verificada",
+      "ancho": 768,
+      "archivo": "F5-viaje/verificada_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16456
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "en-curso",
+      "ancho": 768,
+      "archivo": "F5-viaje/en-curso_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16132
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "completada",
+      "ancho": 768,
+      "archivo": "F5-viaje/completada_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16628
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "no-se-presento",
+      "ancho": 768,
+      "archivo": "F5-viaje/no-se-presento_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16248
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "cancelada",
+      "ancho": 768,
+      "archivo": "F5-viaje/cancelada_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16303
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "cancelada-con-recargo",
+      "ancho": 768,
+      "archivo": "F5-viaje/cancelada-con-recargo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16207
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "codigo-error-servidor",
+      "ancho": 768,
+      "archivo": "F5-viaje/codigo-error-servidor_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15485
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "codigo-sin-red",
+      "ancho": 768,
+      "archivo": "F5-viaje/codigo-sin-red_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16288
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "reserva-inexistente",
+      "ancho": 768,
+      "archivo": "F5-viaje/reserva-inexistente_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15694
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "lista",
+      "ancho": 768,
+      "archivo": "F7-viajes/lista_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15373
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "vacio",
+      "ancho": 768,
+      "archivo": "F7-viajes/vacio_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 14580
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "pagos",
+      "ancho": 768,
+      "archivo": "F7-viajes/pagos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15519
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "cobrar-saldo",
+      "ancho": 768,
+      "archivo": "P-panel/cobrar-saldo_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 21498
+    },
+    {
+      "flujo": "F11-servicios",
+      "estado": "recogida-inmediata",
+      "ancho": 1280,
+      "archivo": "F11-servicios/recogida-inmediata_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 5368
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "pendiente",
+      "ancho": 1280,
+      "archivo": "F5-viaje/pendiente_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16634
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "liberada",
+      "ancho": 1280,
+      "archivo": "F5-viaje/liberada_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16930
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "confirmada",
+      "ancho": 1280,
+      "archivo": "F5-viaje/confirmada_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 17052
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "en-camino",
+      "ancho": 1280,
+      "archivo": "F5-viaje/en-camino_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15848
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "llego-codigo",
+      "ancho": 1280,
+      "archivo": "F5-viaje/llego-codigo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16664
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "verificada",
+      "ancho": 1280,
+      "archivo": "F5-viaje/verificada_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16700
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "en-curso",
+      "ancho": 1280,
+      "archivo": "F5-viaje/en-curso_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16584
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "completada",
+      "ancho": 1280,
+      "archivo": "F5-viaje/completada_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16929
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "no-se-presento",
+      "ancho": 1280,
+      "archivo": "F5-viaje/no-se-presento_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16242
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "cancelada",
+      "ancho": 1280,
+      "archivo": "F5-viaje/cancelada_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16727
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "cancelada-con-recargo",
+      "ancho": 1280,
+      "archivo": "F5-viaje/cancelada-con-recargo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16662
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "codigo-error-servidor",
+      "ancho": 1280,
+      "archivo": "F5-viaje/codigo-error-servidor_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16327
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "codigo-sin-red",
+      "ancho": 1280,
+      "archivo": "F5-viaje/codigo-sin-red_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16119
+    },
+    {
+      "flujo": "F5-viaje",
+      "estado": "reserva-inexistente",
+      "ancho": 1280,
+      "archivo": "F5-viaje/reserva-inexistente_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 16569
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "lista",
+      "ancho": 1280,
+      "archivo": "F7-viajes/lista_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15055
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "vacio",
+      "ancho": 1280,
+      "archivo": "F7-viajes/vacio_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15194
+    },
+    {
+      "flujo": "F7-viajes",
+      "estado": "pagos",
+      "ancho": 1280,
+      "archivo": "F7-viajes/pagos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 15225
+    },
+    {
+      "flujo": "P-panel",
+      "estado": "cobrar-saldo",
+      "ancho": 1280,
+      "archivo": "P-panel/cobrar-saldo_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 22030
+    },
+    {
+      "flujo": "F11-servicios",
+      "estado": "recogida-inmediata-pasos",
+      "ancho": 390,
+      "archivo": "F11-servicios/recogida-inmediata-pasos_390.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 7962
+    },
+    {
+      "flujo": "F11-servicios",
+      "estado": "recogida-inmediata-pasos",
+      "ancho": 768,
+      "archivo": "F11-servicios/recogida-inmediata-pasos_768.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 7591
+    },
+    {
+      "flujo": "F11-servicios",
+      "estado": "recogida-inmediata-pasos",
+      "ancho": 1280,
+      "archivo": "F11-servicios/recogida-inmediata-pasos_1280.png",
+      "resultado": "ok",
+      "motivo": "",
+      "erroresJs": [],
+      "ms": 7869
     }
   ]
 }

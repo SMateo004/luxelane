@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin';
-import { CallableRequest } from 'firebase-functions/v2/https';
+import { CallableRequest, onRequest } from 'firebase-functions/v2/https';
 import { secureCallable } from './callable';
 import { callableSchemas as schema, parseInput } from './schemas';
 import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebase-functions/v2/firestore';
@@ -17,6 +17,16 @@ import * as incidents from './incidents';
 import { deviceSchema, registerDriverDevice as registerDriverDeviceService } from './driver_devices';
 import { isTransient, withRetryPolicy } from './retry_policy';
 import * as stripe from './stripe_service';
+import { loadPaymentSettings } from './payment_config';
+import { isPaid, readPaymentState } from './payment_booking';
+import * as payManual from './payment_manual';
+import * as payCard from './payment_card';
+import * as payRefund from './payment_refund';
+import { reconcileFinalAmount } from './payment_final';
+import * as payInbox from './payment_inbox';
+import * as payBalance from './payment_balance';
+import { expirePayments } from './payment_expiry';
+import { computeCancelSettle, readForSettle, writeCancelSettle } from './payment_settle';
 import { logger } from './logger';
 import * as err from './errors';
 import { checkBookingPrice, fareId, FareRule } from './pricing';
@@ -297,6 +307,9 @@ const HOLD_WINDOW_MS = 6 * 24 * 60 * 60 * 1000;
 export const createPaymentIntent = secureCallable('createPaymentIntent', withStripe, async (req) => {
   const uid = requireAuth(req);
   const { bookingId, paymentMethodId } = parseInput(schema.createPaymentIntent, req.data);
+  // Tarjeta desactivada en config/ops.paymentMethods (A2): se rechaza antes
+  // de llamar al proveedor.
+  if (!(await loadPaymentSettings(db)).enabled.includes('card')) throw err.failedPrecondition('method_disabled');
 
   const bookingRef = db.collection('bookings').doc(bookingId);
   const bookingSnap = await bookingRef.get();
@@ -777,22 +790,28 @@ async function notifyNewBooking(
     });
   }
 
-  // La solicitud abierta la crea createBooking en la misma transacción que
-  // la reserva; este trigger solo avisa a los chóferes.
+  // A3: a los chóferes se les avisa cuando el pago queda confirmado
+  // (notifyDriversOnPaid), no al crear la reserva.
+}
 
+/**
+ * Aviso a los chóferes de una reserva pagada, una sola vez (marca
+ * driversNotifiedAt). Lo dispara el paso del pago a paid.
+ */
+async function notifyDriversOfBooking(bookingRef: admin.firestore.DocumentReference): Promise<void> {
+  const booking = (await bookingRef.get()).data() as BookingDoc | undefined;
+  if (!booking || booking.status !== 'pending') return;
+  const vehicleClass = booking.class ?? booking.vehicleClass ?? 'business';
   const firstNotice = await db.runTransaction(async (tx) => {
-    const fresh = await tx.get(event.data!.ref);
+    const fresh = await tx.get(bookingRef);
     // Borrada o ya avisada: no hay nada que hacer.
     if (!fresh.exists || fresh.data()?.driversNotifiedAt) return false;
-    tx.update(event.data!.ref, { driversNotifiedAt: admin.firestore.Timestamp.now() });
+    tx.update(bookingRef, { driversNotifiedAt: admin.firestore.Timestamp.now() });
     return true;
   });
   if (!firstNotice) return;
 
-  logger.info('onBookingCreated', 'notifying drivers', {
-    bookingId: event.params.bookingId,
-    vehicleClass,
-  });
+  logger.info('notifyDrivers', 'notifying drivers', { bookingId: bookingRef.id, vehicleClass });
 
   const driversSnap = await db
     .collection('driverProfiles')
@@ -817,11 +836,22 @@ async function notifyNewBooking(
     // Si el envío puede salir bien en el reintento, se quita la marca para
     // que el reintento avise; si no, queda marcada y no se repite.
     if (isTransient(e)) {
-      await event.data!.ref.update({ driversNotifiedAt: admin.firestore.FieldValue.delete() }).catch(() => undefined);
+      await bookingRef.update({ driversNotifiedAt: admin.firestore.FieldValue.delete() }).catch(() => undefined);
     }
     throw e;
   }
 }
+
+// El pago pasa a paid (confirmación del admin o del proveedor): ahora sí se
+// avisa a los chóferes. Con reintento, como onBookingCreated.
+export const notifyDriversOnPaid = onDocumentWritten(
+  { document: 'bookings/{bookingId}/payment/{docId}', retry: true }, (event) => {
+    const before = event.data?.before.data();
+    const after = event.data?.after.data();
+    if (after?.paymentStatus !== 'paid' || before?.paymentStatus === 'paid') return Promise.resolve();
+    return withRetryPolicy('notifyDriversOnPaid', { bookingId: event.params.bookingId },
+      () => notifyDriversOfBooking(db.collection('bookings').doc(event.params.bookingId)));
+  });
 
 // ---------------------------------------------------------------------------
 // onBookingStatusChanged  (onUpdate /bookings/{bookingId})
@@ -931,11 +961,66 @@ export const adminSetVehicleActive = secureCallable('adminSetVehicleActive', {},
 export const adminSetLeadHandled = secureCallable('adminSetLeadHandled', {}, async (req) =>
   adminOps.adminSetLeadHandled({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
 
+// ---------------------------------------------------------------------------
+// Pagos (A4): pago manual por QR o transferencia.
+// ---------------------------------------------------------------------------
+
+/** El pasajero avisa «ya pagué»: alerta para central, no confirma nada. */
+export const markPaymentSent = secureCallable('markPaymentSent', {}, (req) =>
+  payManual.markPaymentSent({ db }, req.auth?.uid, req.data));
+
+/** Confirmar un pago manual: importe exacto, número de operación único y motivo. */
+export const adminConfirmPayment = secureCallable('adminConfirmPayment', {}, async (req) =>
+  payManual.adminConfirmPayment({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Rechazar un «ya pagué» que no llegó. */
+export const adminRejectPayment = secureCallable('adminRejectPayment', {}, async (req) =>
+  payManual.adminRejectPayment({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Empezar a pagar: instrucciones del pago manual o cobro con tarjeta (A5). */
+export const startPayment = secureCallable('startPayment', withStripe, (req) =>
+  payCard.startPayment({ db }, req.auth?.uid, req.data));
+
+/**
+ * Webhook del proveedor de tarjeta (A5). La firma la verifica el proveedor
+ * activo; sin tarjeta activada responde 404. No es una callable: no lleva
+ * App Check ni sesión, la firma es la única puerta.
+ */
+export const paymentWebhook = onRequest({ ...withStripe }, async (req, res) => {
+  const r = await payCard.handlePaymentWebhook({ db }, req.rawBody, req.get('x-payment-signature') ?? undefined);
+  res.status(r.status).json(r.body);
+});
+
+/** Registrar una devolución (manual) o pedirla al proveedor (tarjeta) (A8). */
+export const adminRecordRefund = secureCallable('adminRecordRefund', withStripe, async (req) =>
+  payRefund.adminRecordRefund({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+// Con tarjeta, la devolución se pide al proveedor al pasar a refund_pending (A8).
+export const refundOnRefundPending = onDocumentWritten(
+  { document: 'bookings/{bookingId}/payment/{docId}', ...withStripe }, async (event) => {
+    await payRefund.onRefundPending({ db }, event.params.bookingId,
+      event.data?.before.data(), event.data?.after.data());
+  });
+
+/** Cobrar un saldo pendiente (G2): importe ≤ saldo, n.º de operación único y motivo. */
+export const adminCollectBalance = secureCallable('adminCollectBalance', {}, async (req) =>
+  payBalance.adminCollectBalance({ db }, await adminActor(req), req.data), { role: 'admin', requireMfa: true });
+
+/** Bandejas de pagos del panel (A11): pendientes, «ya pagué», devoluciones y saldos. */
+export const adminPaymentInbox = secureCallable('adminPaymentInbox', {}, async (req) =>
+  payInbox.adminPaymentInbox(db, req.data), { role: 'admin', requireMfa: true });
+
 /** El admin marca una alerta como revisada (auditado en el servidor). */
 export const resolveAlert = secureCallable('resolveAlert', {}, async (req) => {
   const adminId = await requireAdmin(req);
   return resolveAdminAlert(db, { adminId, adminEmail: (req.auth?.token.email as string | undefined) ?? null }, req.data);
 }, { role: 'admin', skipAdminSessionLimit: true });
+
+// Pagos A6: vence el plazo para pagar (solo con paymentWindowMinutes).
+export const expirePaymentsJob = onSchedule('every 5 minutes', async () => {
+  const r = await expirePayments({ db });
+  if (r.expired.length) logger.info('expirePayments', 'expired', { count: r.expired.length });
+});
 
 // Red de seguridad de openRequests: crea las que faltan, borra las
 // huérfanas y avisa al admin en adminAlerts.
@@ -1066,6 +1151,24 @@ export const settleBooking = onDocumentUpdated('bookings/{bookingId}', async (ev
 });
 
 // ---------------------------------------------------------------------------
+// reconcileFinalPayment  (onUpdate /bookings/{bookingId})  — pagos A9/A10
+// Al completarse (o si cambia el importe final ya completada) compara con lo
+// pagado: saldo o devolución pendiente, con asiento y alerta; nada se cobra
+// ni se devuelve solo.
+// ---------------------------------------------------------------------------
+
+export const reconcileFinalPayment = onDocumentUpdated('bookings/{bookingId}', async (event) => {
+  const before = event.data?.before.data() as BookingDoc | undefined;
+  const after = event.data?.after.data() as BookingDoc | undefined;
+  if (!before || !after || after.status !== 'completed') return;
+  if (before.status === 'completed' && before.finalPrice === after.finalPrice) return;
+  const r = await reconcileFinalAmount(db, event.params.bookingId);
+  if (r.action !== 'none' && r.action !== 'skipped') {
+    logger.info('reconcileFinalPayment', r.action, { bookingId: event.params.bookingId, diff: r.diff });
+  }
+});
+
+// ---------------------------------------------------------------------------
 // backfillSettlements  (HTTPS Callable, solo admin)
 // Asigna el reparto a los viajes completados antes de existir settleBooking,
 // con la comisión vigente. Es idempotente: volver a ejecutarlo no cambia
@@ -1144,6 +1247,8 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
   const booking = bookingSnap.data() as BookingDoc;
   if (booking.riderId !== uid) await requireAdmin(req);
   if (booking.status !== 'pending') throw err.failedPrecondition('booking_not_pending');
+  // A3: sin pago confirmado no se busca chófer.
+  if (!isPaid(await readPaymentState(db, bookingId))) return { assigned: false, reason: 'not_paid' };
   // Los chóferes que liberaron esta reserva no se vuelven a asignar.
   const released = new Set(releasedByOf(booking));
 
@@ -1195,10 +1300,12 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
   for (const driverId of ranked) {
     const driverRef = db.collection('driverProfiles').doc(driverId);
     const outcome = await db.runTransaction(async (tx) => {
-      const [b, d, u] = await Promise.all([
+      const [b, d, u, pay] = await Promise.all([
         tx.get(bookingRef), tx.get(driverRef), tx.get(db.collection('users').doc(driverId)),
+        readPaymentState(db, bookingId, tx),
       ]);
       if ((b.data() as BookingDoc | undefined)?.status !== 'pending') return 'taken';
+      if (!isPaid(pay)) return 'not_paid';
       if (releasedByOf(b.data()).includes(driverId)) return 'busy';
       if (!d.data()?.isAvailable || u.data()?.isActive === false) return 'busy';
       tx.update(bookingRef, {
@@ -1210,6 +1317,7 @@ export const assignNearestDriver = secureCallable('assignNearestDriver', {}, asy
       return 'assigned';
     });
     if (outcome === 'taken') return { assigned: false, reason: 'already_taken' };
+    if (outcome === 'not_paid') return { assigned: false, reason: 'not_paid' };
     if (outcome === 'busy') continue;
 
     const driverTokens = await getUserTokens(driverId);
@@ -1241,14 +1349,17 @@ export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => 
 
   try {
     await db.runTransaction(async (tx) => {
-      const [bookingSnap, driverSnap] = await Promise.all([
+      const [bookingSnap, driverSnap, paymentSnap] = await Promise.all([
         tx.get(bookingRef),
         tx.get(driverRef),
+        readPaymentState(db, bookingId, tx),
       ]);
 
       if (!bookingSnap.exists) throw err.notFound('booking_not_found');
       const booking = bookingSnap.data() as BookingDoc;
       if (booking.status !== 'pending') throw new Error('ALREADY_TAKEN');
+      // A3: una reserva sin pago confirmado no se ofrece ni se acepta.
+      if (!isPaid(paymentSnap)) throw new Error('NOT_PAID');
       if (releasedByOf(booking).includes(driverId)) throw new Error('RELEASED_BY_YOU');
 
       if (!driverSnap.exists) throw err.notFound('driver_not_found');
@@ -1283,6 +1394,9 @@ export const acceptBooking = secureCallable('acceptBooking', {}, async (req) => 
     if (e.message === 'RELEASED_BY_YOU') {
       return { accepted: false, reason: 'released_by_you' };
     }
+    if (e.message === 'NOT_PAID') {
+      return { accepted: false, reason: 'not_paid' };
+    }
     logger.error('acceptBooking', 'error', { error: String(e) });
     throw e;
   }
@@ -1304,14 +1418,23 @@ export const scheduledCleanup = onSchedule('every 24 hours', async () => {
     .where('scheduledAt', '<', admin.firestore.Timestamp.fromDate(cutoff))
     .get();
 
-  // Un batch admite 500 escrituras.
+  // Sin chófer a tiempo (A7, decisión 2): si estaba pagada, devolución
+  // entera; si no, el pedido de pago deja de valer. Una transacción por
+  // reserva, revalidada (pudo asignarse mientras).
   const now = admin.firestore.Timestamp.now();
-  for (let i = 0; i < staleSnap.docs.length; i += 500) {
-    const batch = db.batch();
-    staleSnap.docs.slice(i, i + 500).forEach((doc) => {
-      batch.update(doc.ref, { status: 'cancelled' as BookingStatus, updatedAt: now });
+  for (const doc of staleSnap.docs) {
+    await db.runTransaction(async (tx) => {
+      const fresh = await tx.get(doc.ref);
+      if (fresh.data()?.status !== 'pending') return;
+      const read = await readForSettle(tx, db, doc.id, 'pending');
+      const settle = { bookingId: doc.id, status: 'pending', cause: 'system' as const, policy: null,
+        policyState: 'missing' as const, read, at: now };
+      tx.update(doc.ref, {
+        status: 'cancelled' as BookingStatus, cancelledBy: 'system', cancelledAt: now,
+        cancellationReason: 'no_driver_found', updatedAt: now,
+      });
+      writeCancelSettle(tx, db, settle, computeCancelSettle(settle));
     });
-    await batch.commit();
   }
   logger.info('scheduledCleanup', 'done', { cancelled: staleSnap.size });
 });

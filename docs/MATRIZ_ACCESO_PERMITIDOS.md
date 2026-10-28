@@ -11,7 +11,7 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-127 celdas permitidas, 2 con ⚠.
+131 celdas permitidas, 2 con ⚠.
 
 ## `users/{uid}`
 
@@ -249,13 +249,33 @@ Ninguna celda permitida.
 
 **pasajero dueño**
 
-- leer: el pasajero ve sus pagos.
+- leer: el pasajero ve sus pagos y los asientos de su reserva (cobro, reembolso, retención).
 - listar: historial de pagos.
 
 **admin**
 
 - leer: finanzas.
 - listar: finanzas.
+
+## `bookings/{id}/payment`
+
+**pasajero dueño**
+
+- leer: el pasajero ve el estado del pago de su reserva (importe, referencia, plazo).
+- listar: el mismo documento por consulta (riderId).
+
+**admin**
+
+- leer: bandejas de pagos, confirmación y reembolsos.
+- listar: bandejas de pagos.
+
+## `paymentRefs/{ref}`
+
+Ninguna celda permitida.
+
+## `paymentOperations/{key}`
+
+Ninguna celda permitida.
 
 ## `vehicles/{id}`
 

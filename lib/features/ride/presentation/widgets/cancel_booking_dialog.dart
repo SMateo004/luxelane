@@ -7,9 +7,10 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 
-/// Cancelación del pasajero (Parte B): el servidor calcula el recargo con la
-/// política de config/ops; la app lo muestra solo si es mayor que cero y lo
-/// manda como aceptado. Si cambió mientras decidía, se vuelve a mostrar.
+/// Cancelación del pasajero: el servidor calcula la retención sobre lo
+/// pagado con la política de config/ops; la app la muestra solo si es mayor
+/// que cero y la manda como aceptada. Si cambió mientras decidía, se vuelve
+/// a mostrar. Nada de plazos ni promesas de devolución (pagos, B4).
 /// Devuelve true si quedó cancelada.
 ///
 /// [onConfirmed] se llama al confirmar en el diálogo, justo antes de pedir
@@ -23,17 +24,22 @@ Future<bool> runCancelBookingFlow(
 }) async {
   final quote = await repository.previewCancellation(bookingId);
   if (!context.mounted) return false;
-  var fee = quote.fold((f) {
+  final preview = quote.fold((f) {
     showLuxSnackbar(context, f.message, isError: true);
     return null;
-  }, (q) => q.fee);
-  if (fee == null) return false;
+  }, (q) => q);
+  if (preview == null) return false;
+  double? fee = preview.fee;
 
   // Como mucho dos vueltas: si el recargo vuelve a cambiar, se avisa.
   for (var attempt = 0; attempt < 2; attempt++) {
     final reason = await showDialog<String>(
       context: context,
-      builder: (_) => CancelBookingDialog(fee: fee!, feeChanged: attempt > 0),
+      builder: (_) => CancelBookingDialog(
+        fee: fee!,
+        refund: attempt == 0 ? preview.refund : null,
+        feeChanged: attempt > 0,
+      ),
     );
     if (reason == null || !context.mounted) return false;
     onConfirmed?.call();
@@ -57,23 +63,29 @@ Future<bool> runCancelBookingFlow(
   if (context.mounted) {
     showLuxSnackbar(
       context,
-      'El recargo cambió de nuevo. Inténtalo otra vez.',
+      'La retención cambió de nuevo. Inténtalo otra vez.',
       isError: true,
     );
   }
   return false;
 }
 
-/// Confirma la cancelación con su motivo (lista cerrada) y, si lo hay, el
-/// recargo. Devuelve el motivo elegido o null.
+/// Confirma la cancelación con su motivo (lista cerrada) y, si la hay, la
+/// retención. Devuelve el motivo elegido o null.
 class CancelBookingDialog extends StatefulWidget {
   const CancelBookingDialog({
     super.key,
     required this.fee,
+    this.refund,
     this.feeChanged = false,
   });
 
+  /// Retención en bolivianos (0: no se menciona).
   final double fee;
+
+  /// Lo que quedaría pendiente de devolver; null si no se sabe (tras un
+  /// cambio de la retención).
+  final double? refund;
   final bool feeChanged;
 
   @override
@@ -106,19 +118,23 @@ class _CancelBookingDialogState extends State<CancelBookingDialog> {
                     borderRadius: BorderRadius.circular(LuxRadius.md),
                   ),
                   child: Text(
-                    '${widget.feeChanged ? 'El recargo cambió. ' : ''}'
-                    'Según la política de cancelación, cancelar ahora tiene '
-                    'un recargo de ${LuxFormat.money(widget.fee)}.',
+                    '${widget.feeChanged ? 'La retención cambió. ' : ''}'
+                    'Según la política de cancelación, si cancelas ahora se '
+                    'retienen ${LuxFormat.money(widget.fee)} de lo que '
+                    'pagaste.',
                     style: LuxTypography.bodyMedium,
                   ),
                 ),
               ),
-            const Text(
-              'Tu chófer quedará libre y, si pagaste con tarjeta, se liberará '
-              'la retención.',
-              style: LuxTypography.bodyMedium,
-            ),
-            const SizedBox(height: LuxSpacing.sm),
+            if ((widget.refund ?? 0) > 0) ...[
+              Text(
+                '${LuxFormat.money(widget.refund!)} quedan pendientes de '
+                'devolución. Te avisaremos cuando central la registre.',
+                key: const Key('cancel-refund'),
+                style: LuxTypography.bodyMedium,
+              ),
+              const SizedBox(height: LuxSpacing.sm),
+            ],
             const Text('Motivo', style: LuxTypography.labelLarge),
             for (final e in kRiderCancelReasons.entries)
               RadioListTile<String>(
@@ -141,7 +157,7 @@ class _CancelBookingDialogState extends State<CancelBookingDialog> {
           key: const Key('confirm-cancel'),
           onPressed: () => Navigator.pop(context, _reason),
           child: Text(
-            hasFee ? 'Cancelar con recargo' : 'Cancelar reserva',
+            hasFee ? 'Cancelar con retención' : 'Cancelar reserva',
             style: const TextStyle(color: LuxColors.error),
           ),
         ),

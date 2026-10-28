@@ -1086,19 +1086,28 @@ class IncidentRaise {
 // BookingQuote
 // ---------------------------------------------------------------------------
 
-/// Recargo que tendría cancelar ahora, calculado por el servidor con la
-/// política de config/ops. Si no hay política, siempre 0.
+/// Lo que pasaría al cancelar ahora, calculado por el servidor con la
+/// política de config/ops: la retención sobre lo pagado ([fee]) y lo que
+/// quedaría pendiente de devolver ([refund]), en bolivianos. Sin pago o
+/// sin política, la retención es 0.
 class CancellationQuote {
-  const CancellationQuote({required this.fee, required this.basis});
+  const CancellationQuote({
+    required this.fee,
+    required this.basis,
+    this.refund = 0,
+  });
 
   factory CancellationQuote.fromJson(Map<String, dynamic> j) =>
       CancellationQuote(
         fee: (j['cancellationFee'] as num?)?.toDouble() ?? 0,
         basis: j['feeBasis'] as String? ?? 'no_policy',
+        // El servidor manda la devolución en céntimos.
+        refund: ((j['refund'] as num?) ?? 0) / 100,
       );
 
   final double fee;
   final String basis;
+  final double refund;
   bool get hasFee => fee > 0;
 }
 

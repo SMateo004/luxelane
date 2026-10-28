@@ -7,6 +7,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../domain/admin_operations.dart';
+import '../../domain/admin_payments.dart';
 import '../../domain/repositories/admin_repository.dart';
 
 class AdminRepositoryImpl implements AdminRepository {
@@ -333,13 +334,15 @@ class AdminRepositoryImpl implements AdminRepository {
   Future<Either<Failure, void>> changeBookingStatus(
     Booking booking,
     BookingStatus status,
-    String reason,
-  ) =>
+    String reason, {
+    AdminCancelCause? cause,
+  }) =>
       _call('adminUpdateBooking', {
         'bookingId': booking.id,
-        if (status == BookingStatus.cancelled)
-          'action': 'cancel'
-        else ...{
+        if (status == BookingStatus.cancelled) ...{
+          'action': 'cancel',
+          if (cause != null) 'cause': cause.wire,
+        } else ...{
           'action': 'status',
           'to': status.label,
         },
@@ -349,13 +352,13 @@ class AdminRepositoryImpl implements AdminRepository {
   @override
   Future<Either<Failure, void>> decideNoShow(
     Booking booking,
-    double cancellationFee,
+    AdminCancelCause cause,
     String reason,
   ) =>
       _call('adminUpdateBooking', {
         'bookingId': booking.id,
         'action': 'cancel',
-        'cancellationFee': cancellationFee,
+        'cause': cause.wire,
         'reason': reason.trim(),
       });
 
@@ -656,6 +659,8 @@ String adminErrorMessage(String code, Object? details) {
     'card_payment' => 'Este viaje se paga con tarjeta y el cobro es '
         'automático; solo se registra a mano si ese cobro falla.',
     'already_paid' => 'Este viaje ya tiene un cobro registrado',
+    'use_confirm_payment' =>
+      'Esta reserva se paga antes del viaje: confirma el pago desde Pagos.',
     'not_manual' => 'Solo se corrigen cobros registrados a mano',
     'settlement_commission_missing' =>
       'No se puede corregir el importe: el viaje no tiene guardada la '

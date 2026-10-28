@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../app/theme/app_theme.dart';
@@ -31,7 +29,6 @@ import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/google_sign_in_button.dart';
 import '../../../auth/presentation/widgets/terms_required_dialog.dart';
 import '../../../home/presentation/pages/home_design.dart';
-import '../../../payments/presentation/bloc/payment_bloc.dart';
 import '../bloc/booking_bloc.dart';
 import '../widgets/vehicle_details.dart';
 import '../widgets/vehicle_visuals.dart';
@@ -91,12 +88,6 @@ class _BookingScreenState extends State<BookingScreen> {
   String _guestPhone = '';
   String _guestLanguage = '';
 
-  List<Map<String, dynamic>> _savedCards = [];
-  String? _selectedCardId;
-  bool _awaitingPaymentIntent = false;
-  bool _payByCard = false;
-  String? _pendingBookingId;
-
   // Scroll-based sticky selector
   final ScrollController _leftScrollCtrl = ScrollController();
   bool _showStickySelector = false;
@@ -153,10 +144,20 @@ class _BookingScreenState extends State<BookingScreen> {
   /// servidor confirma al reservar.
   double? get _price => _freshQuote?.price ?? _cardPrice(_selected);
 
+  /// El precio a la vista es el del servidor (E35). Mientras no llega (sin
+  /// sesión, cargando o con error) se marca como estimado.
+  bool get _priceIsServer => _freshQuote != null;
+
+  /// Vuelve a pedir la cotización tras un error (E36).
+  void _retryQuote() => setState(() {
+        _quoteError = null;
+        _requestedQuoteKey = null;
+      });
+
   void _maybeQuote() {
     final auth = context.read<AuthBloc>().state;
-    final onSummary = isWeb(context) || _step == 2;
-    if (_formData == null || !onSummary || auth is! AuthAuthenticated) return;
+    // En todos los pasos (E35): el precio de la barra es el del servidor.
+    if (_formData == null || auth is! AuthAuthenticated) return;
     final key = _currentQuoteKey;
     if (key == _requestedQuoteKey) return;
     _requestedQuoteKey = key;
@@ -327,7 +328,6 @@ class _BookingScreenState extends State<BookingScreen> {
         _hours = extra.hours;
         _ensureRoute();
       }
-      _loadSavedCards();
     }
   }
 
@@ -362,22 +362,6 @@ class _BookingScreenState extends State<BookingScreen> {
       distanceKm: d.routeDistanceKm,
       durationMin: d.routeDurationMin,
     );
-  }
-
-  /// El pago con tarjeta usa el SDK nativo de Stripe, que no existe en web.
-  static bool get _cardsSupported => !kIsWeb;
-
-  void _loadSavedCards() {
-    if (!_cardsSupported) return;
-    final authState = context.read<AuthBloc>().state;
-    if (authState is AuthAuthenticated &&
-        authState.user.stripeCustomerId != null &&
-        authState.user.stripeCustomerId!.isNotEmpty) {
-      context.read<PaymentBloc>().add(
-            CardsLoadRequested(
-                stripeCustomerId: authState.user.stripeCustomerId!),
-          );
-    }
   }
 
   Future<void> _confirm() async {
@@ -446,85 +430,20 @@ class _BookingScreenState extends State<BookingScreen> {
             ? (_quoteError ??
                 'No pudimos calcular el precio. Inténtalo de nuevo.')
             : 'El precio de tu viaje es ${LuxFormat.money(quote.price)}. '
-                'Pulsa Reservar para confirmar.',
+                'Pulsa Continuar al pago para seguir.',
         isError: quote == null,
       );
       return;
     }
-    // La reserva se crea primero y la tarjeta se autoriza contra ella: si la
-    // tarjeta falla, se cancela la reserva y no queda ninguna retención.
-    _payByCard = _cardsSupported && _selectedCardId != null;
+    // La reserva se crea en awaiting_payment y el pago va en la pantalla
+    // siguiente: sin pago confirmado no se busca chófer (pagos, B1).
     setState(() => _loading = true);
     _createBooking();
   }
 
-  /// Autoriza la tarjeta para la reserva recién creada.
-  void _authorizeCard(Booking booking) {
-    _pendingBookingId = booking.id;
-    setState(() => _awaitingPaymentIntent = true);
-    context.read<PaymentBloc>().add(
-          PaymentIntentRequested(
-            bookingId: booking.id,
-            paymentMethodId: _selectedCardId!,
-          ),
-        );
-  }
-
-  /// La tarjeta no se pudo autorizar: la reserva se cancela para no dejarla
-  /// sin pago, y el pasajero puede intentarlo de nuevo.
-  Future<void> _cardFailed(String message) async {
-    final id = _pendingBookingId;
-    _pendingBookingId = null;
-    _payByCard = false;
-    // Sin retención no hay recargo (basis payment_failed en el servidor).
-    if (id != null) {
-      await sl<BookingRepository>().cancelBooking(id, reason: 'payment_failed');
-    }
-    if (!mounted) return;
-    setState(() {
-      _loading = false;
-      _awaitingPaymentIntent = false;
-    });
-    showLuxSnackbar(
-      context,
-      'No se pudo autorizar tu tarjeta ($message). La reserva no se '
-      'confirmó; inténtalo de nuevo o elige otra tarjeta.',
-      isError: true,
-    );
-  }
-
-  /// Cierra la reserva con un momento de certeza antes de seguir el viaje.
-  Future<void> _celebrate(String bookingId) async {
-    await showLuxSuccess(
-      context,
-      title: 'Reserva confirmada',
-      message: 'Te avisaremos en cuanto tu chófer vaya en camino.',
-    );
-    if (mounted) context.go('/ride/$bookingId');
-  }
-
-  Future<void> _handleStripeConfirm(String clientSecret) async {
-    if (_selectedCardId == null) return;
-    try {
-      await Stripe.instance.confirmPayment(
-        paymentIntentClientSecret: clientSecret,
-        data: PaymentMethodParams.cardFromMethodId(
-          paymentMethodData: PaymentMethodDataCardFromMethod(
-            paymentMethodId: _selectedCardId!,
-          ),
-        ),
-      );
-      final id = _pendingBookingId;
-      _pendingBookingId = null;
-      if (!mounted || id == null) return;
-      setState(() => _loading = false);
-      await _celebrate(id);
-    } on StripeException catch (e) {
-      await _cardFailed(e.error.localizedMessage ?? 'pago rechazado');
-    } catch (_) {
-      await _cardFailed('error de conexión');
-    }
-  }
+  /// La reserva ya existe: se pasa a pagarla. Ni en la web ni en la app
+  /// queda una reserva sin su paso de pago (E38).
+  void _goToPayment(String bookingId) => context.go('/pay/$bookingId');
 
   Future<void> _showAddGuestDialog() async {
     final result = await showDialog<Map<String, String>>(
@@ -644,9 +563,6 @@ class _BookingScreenState extends State<BookingScreen> {
   double get _mobileCardWidth =>
       MediaQuery.sizeOf(context).width >= 600 ? 220 : 168;
 
-  static String _cap(String s) =>
-      s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
-
   // ── BUILD ──────────────────────────────────────────────────────────────────
 
   @override
@@ -658,12 +574,8 @@ class _BookingScreenState extends State<BookingScreen> {
           listener: (ctx, state) {
             if (state is BookingCreated) {
               _requestId = null;
-              if (_payByCard) {
-                _authorizeCard(state.booking);
-                return;
-              }
               setState(() => _loading = false);
-              _celebrate(state.booking.id);
+              _goToPayment(state.booking.id);
             }
             if (state is BookingUpdateRequired) {
               setState(() => _loading = false);
@@ -684,40 +596,6 @@ class _BookingScreenState extends State<BookingScreen> {
             if (state is BookingError) {
               setState(() => _loading = false);
               showLuxSnackbar(ctx, state.message, isError: true);
-            }
-          },
-        ),
-        BlocListener<PaymentBloc, PaymentState>(
-          listener: (ctx, state) {
-            if (state is CardsLoaded) {
-              setState(() {
-                _savedCards = state.cards;
-                if (_savedCards.isNotEmpty && _selectedCardId == null) {
-                  _selectedCardId = _savedCards.first['id'] as String?;
-                }
-              });
-            }
-            if (state is PaymentIntentCreated && _awaitingPaymentIntent) {
-              setState(() => _awaitingPaymentIntent = false);
-              final secret = state.clientSecret;
-              if (secret != null) {
-                _handleStripeConfirm(secret);
-              } else {
-                // Viaje lejano: la tarjeta queda guardada en la reserva y se
-                // cobra al completar.
-                final id = _pendingBookingId;
-                _pendingBookingId = null;
-                setState(() => _loading = false);
-                if (id != null) ctx.go('/ride/$id');
-              }
-            }
-            if (state is PaymentError) {
-              if (_awaitingPaymentIntent) {
-                _cardFailed(state.message);
-                return;
-              }
-              // Un fallo al cargar las tarjetas no bloquea reservar.
-              setState(() => _loading = false);
             }
           },
         ),
@@ -1067,18 +945,8 @@ class _BookingScreenState extends State<BookingScreen> {
 
           // Total: el precio del servidor, sin desglose fiscal (no hay
           // una cifra de impuesto definida).
-          priceLine('Total', _price),
-          if (_quoteError != null) ...[
-            Text(
-              _quoteError!,
-              style: const TextStyle(
-                fontFamily: kSans,
-                fontSize: 13,
-                color: LuxColors.error,
-              ),
-            ),
-            const SizedBox(height: LuxSpacing.sm),
-          ],
+          // El error de la cotización va junto al precio (E36), no aquí.
+          priceLine(_priceIsServer ? 'Total' : 'Total estimado', _price),
           const Divider(color: _kBorder, height: 1, thickness: 1.2),
           const SizedBox(height: 22),
 
@@ -1183,6 +1051,42 @@ class _BookingScreenState extends State<BookingScreen> {
         ),
       );
 
+  /// «Para mí» o «para un invitado»: el mismo diálogo y los mismos datos en
+  /// los dos diseños (E39: antes el asistente móvil no lo tenía). El servidor
+  /// valida al invitado igual (createSchema.guest).
+  List<Widget> _bookForOptions() => [
+        // ── Book for myself ─────────────────────────────────────────────
+        _BookOptionCard(
+          icon: Icons.person_outlined,
+          iconBg: LD.sphTint,
+          iconColor: _kPanelAccent,
+          title: 'Reservar para mí',
+          subtitle: 'Reserva con la información de tu cuenta',
+          selected: _bookForSelf,
+          onTap: () => setState(() => _bookForSelf = true),
+        ),
+
+        const SizedBox(height: 10),
+
+        // ── Book for a guest ────────────────────────────────────────────
+        _BookOptionCard(
+          icon: Icons.group_outlined,
+          iconBg: !_bookForSelf ? LD.sphTint : LD.bg2,
+          iconColor: !_bookForSelf ? _kPanelAccent : _kTextSub,
+          title: 'Reservar para un invitado',
+          subtitle: (!_bookForSelf && _guestFirstName.isNotEmpty)
+              ? '$_guestTitle $_guestFirstName $_guestLastName'
+              : 'Seleccionar o añadir un invitado',
+          selected: !_bookForSelf,
+          onTap: _showAddGuestDialog,
+          trailing: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            size: 20,
+            color: !_bookForSelf ? _kPanelAccent : _kTextSub,
+          ),
+        ),
+      ];
+
   Widget _webSummaryContent() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1223,19 +1127,37 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
             const SizedBox(width: 12),
-            Text(
-              formatPriceOrQuote(_price),
-              style: const TextStyle(
-                fontFamily: kSerif,
-                fontSize: 32,
-                fontWeight: FontWeight.w300,
-                color: _kTextPrimary,
-                letterSpacing: -0.5,
-                decoration: TextDecoration.none,
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  formatPriceOrQuote(_price),
+                  style: const TextStyle(
+                    fontFamily: kSerif,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w300,
+                    color: _kTextPrimary,
+                    letterSpacing: -0.5,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+                Text(
+                  _priceIsServer ? 'Precio final' : 'Precio estimado',
+                  style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 11,
+                    color: _kTextTertiary,
+                    decoration: TextDecoration.none,
+                  ),
+                ),
+              ],
             ),
           ],
         ),
+        if (_quoteError != null) ...[
+          const SizedBox(height: 10),
+          _QuoteErrorNote(message: _quoteError!, onRetry: _retryQuote),
+        ],
 
         // ── Selection summary ───────────────────────────────────────────
         const SizedBox(height: 20),
@@ -1267,36 +1189,9 @@ class _BookingScreenState extends State<BookingScreen> {
         const Divider(color: _kDivider, height: 1),
         const SizedBox(height: 20),
 
-        // ── Book for myself ─────────────────────────────────────────────
-        _BookOptionCard(
-          icon: Icons.person_outlined,
-          iconBg: LD.sphTint,
-          iconColor: _kPanelAccent,
-          title: 'Reservar para mí',
-          subtitle: 'Reserva con la información de tu cuenta',
-          selected: _bookForSelf,
-          onTap: () => setState(() => _bookForSelf = true),
-        ),
-
-        const SizedBox(height: 10),
-
-        // ── Book for a guest ────────────────────────────────────────────
-        _BookOptionCard(
-          icon: Icons.group_outlined,
-          iconBg: !_bookForSelf ? LD.sphTint : LD.bg2,
-          iconColor: !_bookForSelf ? _kPanelAccent : _kTextSub,
-          title: 'Reservar para un invitado',
-          subtitle: (!_bookForSelf && _guestFirstName.isNotEmpty)
-              ? '$_guestTitle $_guestFirstName $_guestLastName'
-              : 'Seleccionar o añadir un invitado',
-          selected: !_bookForSelf,
-          onTap: _showAddGuestDialog,
-          trailing: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            size: 20,
-            color: !_bookForSelf ? _kPanelAccent : _kTextSub,
-          ),
-        ),
+        ..._bookForOptions(),
+        const SizedBox(height: LuxSpacing.md),
+        const _PayNextNote(),
 
         const SizedBox(height: 20),
         const Divider(color: _kDivider, height: 1),
@@ -1392,7 +1287,10 @@ class _BookingScreenState extends State<BookingScreen> {
                 ),
                 _LightPriceBar(
                   price: _price,
-                  label: _step < 2 ? 'Continuar' : 'Reservar',
+                  estimated: !_priceIsServer,
+                  error: _quoteError,
+                  onRetry: _retryQuote,
+                  label: _step < 2 ? 'Continuar' : 'Continuar al pago',
                   loading: _loading,
                   onConfirm: _step < 2
                       ? () {
@@ -1634,9 +1532,9 @@ class _BookingScreenState extends State<BookingScreen> {
                 ),
                 child: Row(
                   children: [
-                    const Text(
-                      'TOTAL · PRECIO FIJO',
-                      style: TextStyle(
+                    Text(
+                      _priceIsServer ? 'TOTAL · PRECIO FIJO' : 'TOTAL ESTIMADO',
+                      style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
@@ -1661,93 +1559,14 @@ class _BookingScreenState extends State<BookingScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 20),
-        if (!_cardsSupported)
-          const SizedBox.shrink()
-        else if (_savedCards.isEmpty)
-          _OutlinedBtn(
-            label: 'Agregar método de pago',
-            icon: Icons.add_card_outlined,
-            onPressed: () async {
-              await context.push('/payment/add');
-              if (mounted) _loadSavedCards();
-            },
-          )
-        else ...[
-          const Text(
-            'MÉTODO DE PAGO',
-            style: TextStyle(
-              fontFamily: kSans,
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
-              color: _kTextTertiary,
-              letterSpacing: 2.0,
-            ),
-          ),
-          const SizedBox(height: 12),
-          ..._savedCards.map((card) {
-            final id = card['id'] as String;
-            final brand = _cap(card['brand'] as String? ?? 'Card');
-            final last4 = card['last4'] as String? ?? '****';
-            final isSel = _selectedCardId == id;
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: GestureDetector(
-                onTap: () => setState(() => _selectedCardId = id),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 160),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                  decoration: BoxDecoration(
-                    color: _kCardBg,
-                    borderRadius: BorderRadius.circular(_kMobileRadius),
-                    border: Border.all(
-                      color: isSel ? LuxColors.sapphire : _kBorder,
-                      width: isSel ? 1.5 : 1,
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.credit_card_outlined,
-                        size: 20,
-                        color: isSel ? LuxColors.sapphire : _kTextSub,
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Text(
-                          '$brand •••• $last4',
-                          style: const TextStyle(
-                            fontFamily: kSans,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: _kTextPrimary,
-                          ),
-                        ),
-                      ),
-                      if (isSel)
-                        Container(
-                          width: 18,
-                          height: 18,
-                          decoration: const BoxDecoration(
-                            color: LuxColors.sapphire,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.check,
-                            size: 11,
-                            color: Colors.white,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }),
+        if (_quoteError != null) ...[
+          const SizedBox(height: 10),
+          _QuoteErrorNote(message: _quoteError!, onRetry: _retryQuote),
         ],
+        const SizedBox(height: 20),
+        ..._bookForOptions(),
+        const SizedBox(height: 20),
+        const _PayNextNote(),
         const SizedBox(height: LuxSpacing.md),
         _GuaranteeRow(Icons.lock_outline_rounded, LuxPromise.fixedPriceLong),
         const SizedBox(height: LuxSpacing.sm),
@@ -2386,7 +2205,7 @@ class _ReserveBar extends StatelessWidget {
           border: Border(top: BorderSide(color: _kBorder)),
         ),
         child: LuxRaisedButton(
-          label: 'Reservar ${selected.label}',
+          label: 'Continuar al pago',
           loading: loading,
           onPressed: onReserve,
           uppercase: false,
@@ -2424,6 +2243,35 @@ class _Btn extends StatelessWidget {
 }
 
 // ── GUARANTEE ROW ─────────────────────────────────────────────────────────────
+
+/// El pago va después de reservar: así se dice antes del botón (B1, B4).
+/// Sin plazos ni métodos concretos: dependen de config/ops.
+class _PayNextNote extends StatelessWidget {
+  const _PayNextNote();
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        container: true,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(
+              Icons.payments_outlined,
+              size: 18,
+              color: LuxColors.sapphire,
+            ),
+            const SizedBox(width: LuxSpacing.sm),
+            Expanded(
+              child: Text(
+                'Pagas en el paso siguiente. Buscamos chófer cuando el pago '
+                'está confirmado.',
+                style: LuxTypography.bodyMedium.copyWith(color: _kTextSub),
+              ),
+            ),
+          ],
+        ),
+      );
+}
 
 Widget _GuaranteeRow(IconData icon, String text) => Row(
       children: [
@@ -2951,49 +2799,6 @@ class _FlightTypeSelector extends StatelessWidget {
       );
 }
 
-// ── OUTLINED ACTION BTN ───────────────────────────────────────────────────────
-
-class _OutlinedBtn extends StatelessWidget {
-  const _OutlinedBtn({
-    required this.label,
-    required this.icon,
-    required this.onPressed,
-  });
-  final String label;
-  final IconData icon;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) => GestureDetector(
-        onTap: onPressed,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            color: _kCardBg,
-            borderRadius: BorderRadius.circular(_kMobileRadius),
-            border: Border.all(color: _kBorder),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, size: 18, color: _kTextSub),
-              const SizedBox(width: LuxSpacing.sm),
-              Text(
-                label,
-                style: const TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: _kTextPrimary,
-                  letterSpacing: 0.2,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-}
-
 // ── MOBILE PRICE BAR ──────────────────────────────────────────────────────────
 
 class _LightPriceBar extends StatelessWidget {
@@ -3002,11 +2807,21 @@ class _LightPriceBar extends StatelessWidget {
     required this.onConfirm,
     this.loading = false,
     this.label = 'Confirmar reserva',
+    this.estimated = false,
+    this.error,
+    this.onRetry,
   });
   final double? price;
   final VoidCallback onConfirm;
   final bool loading;
   final String label;
+
+  /// Sin cotización del servidor: el importe es una estimación (E35).
+  final bool estimated;
+
+  /// La cotización falló: se dice junto al precio (E36).
+  final String? error;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) => Container(
@@ -3023,50 +2838,95 @@ class _LightPriceBar extends StatelessWidget {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 760),
-            child: Row(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                if (error != null) ...[
+                  _QuoteErrorNote(message: error!, onRetry: onRetry),
+                  const SizedBox(height: 10),
+                ],
+                Row(
                   children: [
-                    const Text(
-                      'PRECIO FINAL',
-                      style: TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 9,
-                        fontWeight: FontWeight.w700,
-                        color: _kTextTertiary,
-                        letterSpacing: 1.5,
-                      ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          estimated ? 'PRECIO ESTIMADO' : 'PRECIO FINAL',
+                          style: const TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w700,
+                            color: _kTextTertiary,
+                            letterSpacing: 1.5,
+                          ),
+                        ),
+                        Text(
+                          formatPriceOrQuote(price),
+                          style: const TextStyle(
+                            fontFamily: kSans,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w700,
+                            color: _kTextPrimary,
+                            letterSpacing: -0.5,
+                          ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      formatPriceOrQuote(price),
-                      style: const TextStyle(
-                        fontFamily: kSans,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: _kTextPrimary,
-                        letterSpacing: -0.5,
+                    const SizedBox(width: LuxSpacing.md),
+                    Expanded(
+                      child: LuxRaisedButton(
+                        label: label,
+                        height: 52,
+                        loading: loading,
+                        onPressed: onConfirm,
+                        uppercase: false,
+                        fontSize: 15,
+                        radius: LuxRadius.md,
+                        trailingIcon: Icons.arrow_forward_rounded,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(width: LuxSpacing.md),
-                Expanded(
-                  child: LuxRaisedButton(
-                    label: label,
-                    height: 52,
-                    loading: loading,
-                    onPressed: onConfirm,
-                    uppercase: false,
-                    fontSize: 15,
-                    radius: LuxRadius.md,
-                    trailingIcon: Icons.arrow_forward_rounded,
-                  ),
-                ),
               ],
             ),
           ),
+        ),
+      );
+}
+
+/// Error de la cotización junto al precio, con reintento (E36). Sin texto
+/// técnico: el mensaje ya viene traducido del repositorio.
+class _QuoteErrorNote extends StatelessWidget {
+  const _QuoteErrorNote({required this.message, this.onRetry});
+  final String message;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+        liveRegion: true,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.error_outline_rounded,
+              size: 18,
+              color: LuxColors.error,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                message,
+                style: const TextStyle(
+                  fontFamily: kSans,
+                  fontSize: 13,
+                  color: LuxColors.error,
+                ),
+              ),
+            ),
+            if (onRetry != null)
+              TextButton(onPressed: onRetry, child: const Text('Reintentar')),
+          ],
         ),
       );
 }

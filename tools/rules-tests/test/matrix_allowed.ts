@@ -133,10 +133,20 @@ export const ALLOWED: Record<string, Cells> = {
     admin: { leer: { why: 'consultar los documentos heredados que queden' }, listar: { why: 'igual que leer' } },
   },
   'payments/{id}': {
-    ana: { leer: { why: 'el pasajero ve sus pagos' }, listar: { why: 'historial de pagos' } },
+    ana: { leer: { why: 'el pasajero ve sus pagos y los asientos de su reserva (cobro, reembolso, retención)' }, listar: { why: 'historial de pagos' } },
     admin: {
       leer: { why: 'finanzas' },
       listar: { why: 'finanzas' },
+    },
+  },
+  'bookings/{id}/payment': {
+    ana: {
+      leer: { why: 'el pasajero ve el estado del pago de su reserva (importe, referencia, plazo)' },
+      listar: { why: 'el mismo documento por consulta (riderId)' },
+    },
+    admin: {
+      leer: { why: 'bandejas de pagos, confirmación y reembolsos' },
+      listar: { why: 'bandejas de pagos' },
     },
   },
   'vehicles/{id}': {

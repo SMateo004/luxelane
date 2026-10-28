@@ -37,6 +37,8 @@ async function booking(id: string, status: string, extra: Record<string, unknown
     riderId: 'ana', status, estimatedPrice: 100, finalPrice: null,
     scheduledAt: admin.firestore.Timestamp.fromMillis(NOW + 30 * 60 * 1000), ...extra,
   });
+  // Pagada: sin pago confirmado no se asigna (pagos, A3; ver payment_dispatch.int.ts).
+  await db.doc(`bookings/${id}/payment/state`).set({ riderId: 'ana', paymentStatus: 'paid' });
 }
 async function driver(id: string, over: { verified?: boolean; available?: boolean; active?: boolean } = {}) {
   await db.doc(`users/${id}`).set({ role: 'driver', isActive: over.active ?? true });
@@ -109,7 +111,7 @@ describe('asignar y reasignar', () => {
 describe('cancelar', () => {
   it('deja evento (antes no lo había) y el motivo solo para central', async () => {
     await booking('b1', 'confirmed', { driverId: 'luis' });
-    await run({ action: 'cancel', bookingId: 'b1', reason: REASON });
+    await run({ action: 'cancel', bookingId: 'b1', reason: REASON, cause: 'platform' });
     const b = (await doc('bookings/b1'))!;
     expect(b).toMatchObject({ status: 'cancelled', cancelledBy: 'admin' });
     expect(b.cancelledAt).toBeInstanceOf(admin.firestore.Timestamp);
@@ -124,14 +126,14 @@ describe('cancelar', () => {
     await booking('v', 'verified');
     await booking('p', 'in_progress');
     await booking('c', 'completed');
-    expect(await reason(run({ action: 'cancel', bookingId: 'v', reason: REASON }))).toBe('ok');
-    expect(await reason(run({ action: 'cancel', bookingId: 'p', reason: REASON }))).toBe('not_cancellable');
-    expect(await reason(run({ action: 'cancel', bookingId: 'c', reason: REASON }))).toBe('not_cancellable');
+    expect(await reason(run({ action: 'cancel', bookingId: 'v', reason: REASON, cause: 'platform' }))).toBe('ok');
+    expect(await reason(run({ action: 'cancel', bookingId: 'p', reason: REASON, cause: 'platform' }))).toBe('not_cancellable');
+    expect(await reason(run({ action: 'cancel', bookingId: 'c', reason: REASON, cause: 'platform' }))).toBe('not_cancellable');
   });
 
   it('sin motivo suficiente: invalid_request', async () => {
     await booking('b1', 'confirmed');
-    expect(await reason(run({ action: 'cancel', bookingId: 'b1', reason: 'porque sí' }))).toBe('invalid_request');
+    expect(await reason(run({ action: 'cancel', bookingId: 'b1', reason: 'porque sí', cause: 'platform' }))).toBe('invalid_request');
   });
 });
 
@@ -218,7 +220,7 @@ describe('atomicidad y acceso', () => {
   it('si la auditoría falla, el cambio no ocurre', async () => {
     await booking('b1', 'confirmed');
     jest.spyOn(audit, 'writeAudit').mockImplementation(() => { throw new Error('auditoría caída'); });
-    await expect(run({ action: 'cancel', bookingId: 'b1', reason: REASON })).rejects.toThrow('auditoría caída');
+    await expect(run({ action: 'cancel', bookingId: 'b1', reason: REASON, cause: 'platform' })).rejects.toThrow('auditoría caída');
     expect((await doc('bookings/b1'))?.status).toBe('confirmed');
     expect(await events('b1')).toHaveLength(0);
   });
@@ -227,7 +229,7 @@ describe('atomicidad y acceso', () => {
     await booking('b1', 'confirmed');
     const call = (uid: string) => (adminUpdateBookingFn as unknown as Runnable).run({
       auth: { uid, token: { auth_time: Math.floor(Date.now() / 1000) } }, app: {},
-      data: { action: 'cancel', bookingId: 'b1', reason: REASON },
+      data: { action: 'cancel', bookingId: 'b1', reason: REASON, cause: 'platform' },
     });
     expect(await reason(call('ana'))).toBe('admin_required');
     expect(await reason(call('jefa'))).toBe('ok');

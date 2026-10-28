@@ -67,10 +67,11 @@ async function reason(p: Promise<unknown>): Promise<{ code: string; reason: stri
 const count = async (col: string) => (await db.collection(col).get()).size;
 
 async function clear(): Promise<void> {
-  for (const col of ['bookings', 'openRequests', 'adminAlerts', 'users', 'pricingRules', 'config']) {
+  for (const col of ['openRequests', 'adminAlerts', 'users', 'pricingRules', 'config', 'paymentRefs']) {
     const snap = await db.collection(col).get();
     await Promise.all(snap.docs.map((d) => d.ref.delete()));
   }
+  await db.recursiveDelete(db.collection('bookings'));
 }
 
 beforeEach(async () => {
@@ -81,11 +82,13 @@ beforeEach(async () => {
   await db.doc('users/ina').set({ role: 'rider', isActive: false });
   await db.doc('users/carlos').set({ role: 'driver', isActive: true });
   for (const [id, r] of Object.entries(RULES)) await db.doc(`pricingRules/${id}`).set(r);
+  // Un método de pago activo (datos de PRUEBA, ficticios): sin él no se reserva (A12).
+  await db.doc('config/ops').set({ paymentMethods: { manual_qr: true }, paymentInstructions: { manual_qr: { holderName: 'Titular ficticio', accountNumber: '000-ficticia' } } });
 });
 afterAll(async () => { await clear(); await admin.app().delete(); });
 
 describe('createBooking', () => {
-  it('reserva válida: reserva y openRequests juntas, con el precio del servidor', async () => {
+  it('reserva válida: con el precio del servidor; la solicitud abierta espera al pago (A3)', async () => {
     const { bookingId, price } = await createBooking(deps(), 'ana', trip());
     expect(price).toBe(86); // 50 + 12 km × 3
     const booking = (await db.doc(`bookings/${bookingId}`).get()).data()!;
@@ -96,11 +99,10 @@ describe('createBooking', () => {
       pricing: { source: 'server', distanceSource: 'routes' },
     });
     expect(typeof booking.pricing.rulesVersion).toBe('string');
-    const request = (await db.doc(`openRequests/${bookingId}`).get()).data()!;
-    expect(request).toMatchObject({ estimatedPrice: 86, vehicleClass: 'business' });
-    for (const secret of ['ana', 'Exacta', 'timbre', 'Carla', 'jazz', '+5917']) {
-      expect(JSON.stringify(request)).not.toContain(secret);
-    }
+    // Sin pago confirmado no hay solicitud para los chóferes (pagos, A3).
+    expect((await db.doc(`openRequests/${bookingId}`).get()).exists).toBe(false);
+    expect((await db.doc(`bookings/${bookingId}/payment/state`).get()).data())
+      .toMatchObject({ paymentStatus: 'awaiting_payment', amountDue: 8600 });
   });
 
   it('quotedPrice menor que el del servidor (precio manipulado): price_changed y no crea nada', async () => {
@@ -118,6 +120,9 @@ describe('createBooking', () => {
     expect((await reason((createPaymentIntent as unknown as Runnable)
       .run({ auth: { uid: 'ana' }, data: { bookingId, amount: 1, estimatedPrice: 1 } }))).reason).toBe('invalid_request');
     expect(createIntent).not.toHaveBeenCalled();
+    // Tarjeta activada en config/ops (A2); sin eso, method_disabled.
+    await db.doc('config/ops').set({ paymentMethods: { manual_qr: true, card: true },
+      paymentInstructions: { manual_qr: { holderName: 'Titular ficticio', accountNumber: '000-ficticia' }, card: { provider: 'stripe' } } });
     await (createPaymentIntent as unknown as Runnable).run({ auth: { uid: 'ana' }, data: { bookingId } });
     expect(createIntent).toHaveBeenCalledTimes(1);
     expect(createIntent.mock.calls[0][0]).toMatchObject({ amount: 8600, currency: 'bob' });
@@ -256,7 +261,7 @@ describe('createBooking: idempotencia por requestId', () => {
     const [a, b] = await Promise.all([createBooking(deps(), 'ana', same), createBooking(deps(), 'ana', same)]);
     expect(a).toEqual(b);
     expect(await count('bookings')).toBe(1);
-    expect(await count('openRequests')).toBe(1);
+    expect(await count('paymentRefs')).toBe(1);
   });
 
   it('reintento tras perder la respuesta: devuelve la reserva ya creada sin recalcular', async () => {
@@ -348,6 +353,8 @@ describe('triggers', () => {
   for (const status of ['confirmed', 'cancelled']) {
     it(`closeOpenRequest borra la solicitud al pasar a ${status}`, async () => {
       const { bookingId } = await createBooking(deps(), 'ana', trip());
+      // Abierta como lo deja el pago confirmado (A3).
+      await db.doc(`openRequests/${bookingId}`).set({ estimatedPrice: 86 });
       const ref = db.doc(`bookings/${bookingId}`);
       const before = await ref.get();
       await ref.update({ status });
