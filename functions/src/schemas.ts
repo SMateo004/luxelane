@@ -30,6 +30,7 @@ export const callableSchemas = {
   ensureStripeCustomer: noInput,
   backfillSettlements: noInput,
   syncEmailVerification: noInput,
+  getPreferenceOptions: noInput,
   acceptTerms: z.strictObject({
     version: z.string().trim().min(1).max(40).optional(),
     appVersion: z.string().trim().min(1).max(40),

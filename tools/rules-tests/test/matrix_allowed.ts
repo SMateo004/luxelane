@@ -12,7 +12,7 @@ export const ALLOWED: Record<string, Cells> = {
   'users/{uid}': {
     ana: {
       leer: { why: 'el usuario lee su propio perfil' },
-      actualizar: { why: 'el usuario edita su nombre, teléfono, foto, preferencias y tokens de push (no rol, isActive, stripeCustomerId ni isVerified)' },
+      actualizar: { why: 'el usuario edita su nombre, teléfono, foto y tokens de push (no rol, isActive, stripeCustomerId, isVerified ni preferencias: esas, updatePreferences)' },
     },
     bloq: {
       leer: { why: 'una cuenta bloqueada sigue leyendo su perfil (la app lo usa para detectar el bloqueo y cerrar sesión)' },

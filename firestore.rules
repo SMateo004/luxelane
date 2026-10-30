@@ -71,9 +71,14 @@ service cloud.firestore {
     // isVerified: la verificación no se la da uno mismo (matriz, H2).
     // phoneVerified: no hay proveedor de SMS; el teléfono no se verifica.
     // emailVerifiedAt: lo escribe syncEmailVerification (H6).
+    // tripPreferences: solo updatePreferences (listas cerradas y nota
+    // saneada). ridePreferences, de las apps anteriores, ya no se cambia
+    // desde el cliente (el alta la sigue trayendo con los valores por
+    // defecto; el servidor solo lee de ahí valores de la lista cerrada).
     function privilegedUserFields() {
       return ['role', 'isActive', 'stripeCustomerId', 'isVerified',
-        'phoneVerified', 'emailVerifiedAt', 'terms'];
+        'phoneVerified', 'emailVerifiedAt', 'terms', 'tripPreferences',
+        'ridePreferences'];
     }
 
     // A self-created profile is always an active rider with no Stripe link,
@@ -87,6 +92,7 @@ service cloud.firestore {
         d.get('phoneVerified', false) == false &&
         !('emailVerifiedAt' in d) &&
         !('terms' in d) &&
+        !('tripPreferences' in d) &&
         d.get('stripeCustomerId', null) == null &&
         d.get('id', uid) == uid;
     }

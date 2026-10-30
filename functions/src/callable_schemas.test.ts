@@ -23,6 +23,7 @@ import { startSchema as startPaymentSchema } from './payment_card';
 import { refundSchema } from './payment_refund';
 import { inboxSchema } from './payment_inbox';
 import { collectBalanceSchema } from './payment_balance';
+import { preferencesSchema } from './preferences';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exported = Record<string, any>;
@@ -223,6 +224,13 @@ const CASES: Record<string, Case> = {
   },
   deleteAccount: { schema: c.deleteAccount, valid: null, wrongType: 'borrar', extreme: [[]] },
   syncEmailVerification: { schema: c.syncEmailVerification, valid: null, wrongType: 'sí', extreme: [[]] },
+  getPreferenceOptions: { schema: c.getPreferenceOptions, valid: null, wrongType: 'sí', extreme: [[]] },
+  updatePreferences: {
+    schema: preferencesSchema, valid: { preferredDriverLanguages: ['es', 'pt'], conversation: 'quiet', note: 'Hola' },
+    wrongType: { preferredDriverLanguages: 'es' },
+    extreme: [{ note: 'x'.repeat(201) }, { preferredDriverLanguages: ['fr'] }, { musicStyle: 'reggaeton' },
+      { needs: ['child_seat', 'child_seat'] }, { playlistUrl: `https://x.example/${'a'.repeat(300)}` }],
+  },
   acceptTerms: {
     schema: c.acceptTerms, valid: { version: '2026-10', appVersion: '1.0.0' },
     wrongType: { appVersion: 1 }, extreme: [{ appVersion: 'x'.repeat(41) }, { version: '', appVersion: '1.0.0' }],
