@@ -4,6 +4,29 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/integracion tras fusionar cierre/ajustes (commit 2725b7c, 2026-10-30)
+
+Fusión `git merge --no-ff origin/cierre/ajustes` en un worktree limpio, sin
+conflictos. Flutter 3.29.3 (el de ci.yml), Node 22, emuladores con
+`demo-luxelane`.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           121 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           245 archivos, 0 cambiados       0
+flutter test                                  pasa           617/617                         0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           508/508 (28 de 28 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (demo-luxelane)            pasa           1567/1567 (23 de 23 suites)     0
+npm run test:integration (demo-luxelane)      pasa           378/378 (43 de 43 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+actionlint no se ejecutó: la descarga del binario no se permitió en este
+entorno. ci.yml no cambia en esta fusión.
+
 ## cierre/pagos-g, G1–G5 (commit 9b72fc8, 2026-10-28)
 
 ```
