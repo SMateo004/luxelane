@@ -4,6 +4,28 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/integracion tras fusionar cierre/preferencias, Parte A (commit 195ac70, 2026-10-30)
+
+Fusión `git merge --no-ff cierre/preferencias` en un worktree limpio, sin
+conflictos.
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           121 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           245 archivos, 0 cambiados       0
+flutter test                                  pasa           617/617                         0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           542/542 (29 de 29 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (demo-luxelane)            pasa           1626/1626 (24 de 24 suites)     0
+npm run test:integration (demo-luxelane)      pasa           390/390 (44 de 44 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+actionlint: la descarga del binario no se permitió en este entorno; ci.yml
+no cambia.
+
 ## cierre/preferencias, Parte A (A1–A6, commit 5d71ea1, 2026-10-30)
 
 ```
