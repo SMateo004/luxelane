@@ -12,6 +12,9 @@ jest.spyOn(admin, 'messaging').mockReturnValue({ sendEachForMulticast } as unkno
 import { onBookingStatusChanged } from '../index';
 import { advanceBooking, getPickupCode, verifyPickup } from '../trip_flow';
 import { cancelIncident, escalateIncidents, raiseIncident } from '../incidents';
+import { updatePreferences as updatePreferencesFn } from '../index';
+import { createBooking } from '../booking_service';
+import { randomUUID } from 'crypto';
 
 const db = admin.firestore();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -21,7 +24,7 @@ const LNG = -63.1353456;
 const captured: string[] = [];
 
 async function clear(): Promise<void> {
-  for (const col of ['bookings', 'incidents', 'incidentRateLimits', 'adminAlerts', 'users', 'config']) {
+  for (const col of ['bookings', 'incidents', 'incidentRateLimits', 'adminAlerts', 'users', 'config', 'pricingRules', 'paymentRefs', 'rateLimits']) {
     const snap = await db.collection(col).get();
     for (const d of snap.docs) await db.recursiveDelete(d.ref);
   }
@@ -79,5 +82,49 @@ describe('logs sin código de recogida ni ubicaciones', () => {
       expect(all).not.toContain(String(v));
       expect(all).not.toContain(v.toFixed(4));
     }
+  });
+
+  it('A5: preferencias con nota y lista de música, válidas y rechazadas: ni la nota ni la URL en los logs', async () => {
+    captured.length = 0;
+    const NOTE = 'Llevo un carrito de bebé gris';
+    const URL = 'https://music.example.com/lista/privada-123';
+    const BAD_URL = 'https://otro.example.com/lista/privada-456';
+    await db.doc('users/ana').set({ role: 'rider', isActive: true });
+    await db.doc('pricingRules/business_oneWay').set({
+      vehicleClass: 'business', serviceType: 'oneWay', basePriceUsd: 50, pricePerKmUsd: 3,
+      pricePerHourUsd: 0, minimumPriceUsd: 60, isActive: true,
+    });
+    await db.doc('config/ops').set({
+      paymentMethods: { manual_qr: true },
+      paymentInstructions: { manual_qr: { holderName: 'Titular ficticio', accountNumber: '000-ficticia' } },
+      playlistHosts: ['music.example.com'],
+    });
+    const call = (data: unknown) => (updatePreferencesFn as unknown as Runnable)
+      .run({ auth: { uid: 'ana', token: {} }, data }).catch(() => undefined);
+    await call({ note: NOTE, playlistUrl: URL });
+    await call({ note: NOTE, playlistUrl: BAD_URL });
+    await call({ note: `${NOTE} www.algo.test`, playlistUrl: URL, extra: true });
+    // Sin perfil: el update de Firestore falla y el error inesperado va al log.
+    await (updatePreferencesFn as unknown as Runnable)
+      .run({ auth: { uid: 'nadie', token: {} }, data: { note: NOTE, playlistUrl: URL } }).catch(() => undefined);
+    const routesOk = (async () => ({ ok: true, json: async () => ({ routes: [{ distanceMeters: 12000 }] }) })) as unknown as typeof fetch;
+    const trip = {
+      origin: { name: '', address: 'Calle Exacta 123', lat: -17.7834, lng: -63.1821 },
+      destination: { name: '', address: 'Av. Exacta 456', lat: -17.765, lng: -63.196 },
+      scheduledAt: Date.now() + 2 * 60 * 60 * 1000, vehicleClass: 'business', serviceType: 'oneWay',
+      passengerCount: 1, luggageCount: 0, channel: 'native',
+    };
+    await createBooking({ db, mapsKey: 'k', fetchFn: routesOk }, 'ana',
+      { ...trip, requestId: randomUUID(), preferences: { note: NOTE, playlistUrl: URL } });
+    await createBooking({ db, mapsKey: 'k', fetchFn: routesOk }, 'ana',
+      { ...trip, requestId: randomUUID(), preferences: { note: NOTE, playlistUrl: BAD_URL } }).catch(() => undefined);
+
+    const all = captured.join('\n');
+    expect(captured.length).toBeGreaterThan(0);
+    expect(all).not.toContain(NOTE);
+    expect(all).not.toContain('carrito');
+    expect(all).not.toContain('privada-123');
+    expect(all).not.toContain('privada-456');
+    expect(all).not.toContain('music.example.com');
   });
 });

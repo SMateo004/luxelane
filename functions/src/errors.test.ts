@@ -139,6 +139,24 @@ describe('logger: redacción', () => {
     expect(logs).toContain('b123');
   });
 
+  it('A5: ni la nota ni la URL de la lista salen en el log', async () => {
+    const NOTE = 'Llevo un carrito de bebé';
+    const URL = 'https://music.example.com/lista/abc';
+    const logs = await captureLogs(() => logger.warn('prueba', `fallo al guardar ${URL}`, {
+      bookingId: 'b123',
+      note: NOTE,
+      notes: NOTE,
+      playlistUrl: URL,
+      preferences: { note: NOTE, playlistUrl: URL },
+      tripPreferences: { note: NOTE },
+      input: { preferences: { conversation: 'quiet', note: NOTE, playlistUrl: URL } },
+      error: `rechazada ${URL}`,
+    }));
+    expect(logs).not.toContain(NOTE);
+    expect(logs).not.toContain('music.example.com');
+    expect(logs).toContain('b123');
+  });
+
   it('no confunde un número largo cualquiera con una tarjeta', () => {
     expect(redact('timestamp 1700000000000')).toBe('timestamp 1700000000000');
   });
