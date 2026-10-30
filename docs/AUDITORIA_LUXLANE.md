@@ -106,6 +106,41 @@ Retención: **no está fijada** (decisión del responsable). Preguntas para el a
 4. ¿Qué exige la póliza (si la hay) sobre conservar pruebas de incidentes?
 Propuesta [Especulando]: ubicaciones del SOS 90 días tras el cierre (configurable con incidentLocationRetentionDays, ya implementado); eventos de la reserva y eventLocations 12 meses (no implementado: necesita una tarea de borrado). Hasta que se decida no se borra nada. Mencionar en la política de privacidad la ubicación en vivo durante un SOS y quién la ve.
 
+## K. Preferencias del pasajero para su chófer (cierre/preferencias, Parte A)
+
+Son un deseo, no una garantía: no hay emparejamiento por idioma ni por
+preferencias (decisión 6). Listas cerradas salvo la nota.
+
+| Dato | Dónde | Quién lo lee | Quién lo escribe | Retención |
+|---|---|---|---|---|
+| Preferencias del perfil (idiomas del chófer es/en/pt, temperatura, conversación, estilo de música, URL de una lista de música, necesidades prácticas, nota de hasta 200 caracteres) | users/{uid}.tripPreferences | El pasajero y el admin (reglas de users) | Solo updatePreferences (App Check, límite de tasa, sesión de pasajero activo); las reglas lo rechazan desde el cliente | Se borra con el perfil (deleteAccount). Si no, sin borrado: pendiente del abogado |
+| Preferencias antiguas (quiet, temperature, music, luggageHelp, openDoor) | users/{uid}.ridePreferences | El pasajero y el admin | Ya no desde el cliente (solo el alta, con los valores por defecto). createBooking solo lee de ahí valores de la lista cerrada | Igual que el perfil |
+| Copia saneada por reserva (las mismas claves, más bookingId, riderId, source trip/profile, createdAt) | bookings/{id}/driverView/preferences | Pasajero dueño (siempre), admin (siempre) y chófer asignado y activo solo con la reserva entre confirmed e in_progress | Solo createBooking, en la transacción de la reserva | Se conserva con la reserva, también tras deleteAccount: **pendiente del abogado** |
+| Idiomas preferidos (sin datos personales) | bookings/{id}.preferredDriverLanguages y openRequests/{id}.preferredDriverLanguages | Reserva: pasajero, chófer asignado (sin ventana, como el resto de la reserva) y admin. Solicitud abierta: chóferes verificados y admin | createBooking; buildOpenRequest | Como la reserva; la solicitud se borra al asignarse |
+
+- La reserva ya no lleva `riderPreferences` (antes se copiaba sin validar y el
+  chófer asignado la leía siempre, también después del viaje).
+- La URL de la lista solo se acepta https, sin credenciales ni puerto, de un
+  host de config/ops.playlistHosts (lo fija el responsable); sin esa lista
+  el servidor la rechaza y getPreferenceOptions responde playlistEnabled:
+  false. El servidor nunca la abre ni la descarga.
+- La nota se guarda sin caracteres de control ni saltos de línea y se
+  rechaza si lleva un enlace. Nada impide que el pasajero escriba un dato
+  sensible: la app lo advertirá (Parte B).
+- Logs: las claves note/notes/playlistUrl/url/*preferences se tachan por
+  nombre y cualquier http(s):// por patrón (errors.test.ts y
+  logs_privacy.int.ts).
+
+Retención: **no está fijada**; no se inventa un plazo. Preguntas para el abogado:
+1. ¿Cuánto conservar la copia por reserva (driverView) y la nota una vez
+   terminado el viaje? ¿Hay que borrarla o anonimizarla al eliminar la
+   cuenta, aunque la reserva se conserve por obligación contable?
+2. Algunas necesidades (asistencia al subir, silla de ruedas plegable)
+   pueden revelar datos de salud o discapacidad, y la silla infantil, que
+   viaja un menor. ¿Pueden ofrecerse como lista, con qué consentimiento y
+   con qué aviso en la política de privacidad?
+3. ¿Qué decir en la política de privacidad sobre qué ve el chófer y cuándo?
+
 ## I. Estado de los hallazgos (rama cierre/identidad, 2026-10-25, con las correcciones C1–C6)
 
 CERRADO = corregido en la rama con prueba automática; nada está desplegado todavía. PARCIAL = lo indicado en «Falta». ABIERTO = sin trabajo.
@@ -138,3 +173,4 @@ CERRADO = corregido en la rama con prueba automática; nada está desplegado tod
 | D23 | ABIERTO | — | Definir quién atiende los incidentes y con qué turnos y protocolo (tiempo de respuesta, cuándo llamar a las autoridades, a quién escalar si nadie reconoce); que los admin de guardia reciban push (hoy solo desde la app móvil). Decisión y operación del responsable. |
 | Pagos | PARCIAL (servidor, apps y panel, en código) | Rama cierre/pagos, Parte A: el pago es requisito para pedir chófer (A3: nada se ofrece sin `paid`; regla de auto-aceptación con el estado de pago); estado del pago fuera de la reserva, ilegible para el chófer (A1, matriz); pago manual con confirmación del admin (A4); vencimiento (A6); retención por etapas sobre lo pagado (A7); reembolsos al método original (A8); diferencia final (A9, A10); bandejas (A11); Q2 (adminRecordPayment no cobra dos veces). Parte B: pantalla de pago del pasajero (`/pay/<id>`), pago pendiente y comprobante en el viaje, cancelación con la retención solo si > 0, web solo con pago manual (E38), panel «Pagos» (confirmar, rechazar, devoluciones, saldos) y causa al cancelar; el chófer no lee pagos (B2). G2: saldos pendientes cobrados por central con `adminCollectBalance` (payment_balance.int.ts). H4: el libro `payments` es de solo anexado (asientos creados una vez, nunca borrados ni con otro importe; un pendiente solo se cierra, una vez, como completed o superseded; payment_ledger.int.ts). Los cobros antiguos de antes de pagos (sin `type`) aún los modifican `adminRecordPayment` (corrección) y `refundPayment`: deuda menor, solo reservas antiguas. Tests: payment_*.int.ts, cancel_booking.int.ts, matriz, test/payments, test/admin/admin_payments_test.dart, test/driver/driver_sin_pagos_test.dart. | Decisiones de config/ops (DEPLOY.md, «Pagos»); proveedor de tarjeta (app y webhook); textos legales y de recogida inmediata (DEPLOY.md). Capturas en dispositivo real: NO VERIFICADO. |
 | Deuda: campos `*Usd` de `pricingRules` | ABIERTO (deuda, G5: no se renombra) | [seguro] Los importes están en bolivianos (`functions/src/pricing.ts:7`, `fare.ts:64`) aunque los campos se llamen `basePriceUsd`, `pricePerKmUsd`, `pricePerHourUsd` y `minimumPriceUsd`. No hay conversión de moneda en ningún sitio. ~270 usos: servidor (`fare.ts`, `pricing.ts`, esquema estricto de `adminUpdatePricingRule` en `admin_ops.ts`), app (`PricingRule` en `models.dart`, `PricingCatalog`, que lee `/pricingRules` directamente de Firestore, pestaña Tarifas), tests de reglas (`pricingRules.rules.ts`, `matrix.ts`), `tools/pricing` y `seed.cjs`. Riesgo por el que no se hizo: las apps instaladas leen los nombres viejos de Firestore hasta que `minAppVersion` las saque, así que habría un periodo con los dos nombres en cada documento; una edición del panel que escribiera solo uno haría que el precio mostrado y el cobrado se separaran. | Plan si se decide: (1) lectura doble `nuevo ?? viejo` en servidor y app, con tests de paridad; (2) `adminUpdatePricingRule` escribe los dos nombres; (3) script de migración con DRY-RUN por defecto que lista los cambios y solo escribe con `--apply`, contra `demo-luxelane` primero; (4) tras subir `minAppVersion`, dejar de escribir y luego de leer los viejos; (5) reglas al final. Nombres nuevos: decisión del responsable. |
+| Preferencias del pasajero | PARCIAL (servidor y reglas, en código) | Rama cierre/preferencias, Parte A: updatePreferences y esquema cerrado (preferences.ts, preferences.test.ts), copia por reserva en driverView/preferences (preferences.int.ts), reglas con ventana (preferences.rules.ts, matriz), idiomas en openRequests (open_requests.test.ts), logs (errors.test.ts, logs_privacy.int.ts). Sección K. | Retención y necesidades sensibles: abogado. Listas de musicStyle y needs: revisión del responsable. config/ops.playlistHosts: lo fija el responsable. Apps y panel: Parte B. |
