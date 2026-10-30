@@ -50,8 +50,7 @@ export async function expirePayments(deps: PaymentDeps): Promise<{ expired: stri
           extra: { method: 'payment_expired' },
         });
       }
-      notifyRider(tx, db, s.riderId, bookingId, at, 'Reserva cancelada',
-        'El plazo para pagar terminó y la reserva se canceló. No se te cobró nada.', 'payment_expired');
+      await notifyRider(tx, db, s.riderId, bookingId, at, 'payment_expired');
       return true;
     });
     if (done) expired.push(bookingId);

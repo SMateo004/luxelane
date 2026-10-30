@@ -14,6 +14,7 @@
  * por defecto documentados en DEPLOY.md; no son valores de negocio.
  */
 import * as admin from 'firebase-admin';
+import { AppLocale, localeOf, notice, NoticeType } from './i18n';
 import { HttpsError } from 'firebase-functions/v2/https';
 import { z } from 'zod';
 import { docId } from './schemas';
@@ -123,19 +124,29 @@ async function retentionFields(db: admin.firestore.Firestore, at: number): Promi
 }
 
 /** Push a todos los admin con token. Nunca hace fallar el incidente. */
-export async function pushToAdmins(deps: IncidentDeps, title: string, body: string, data: Record<string, string>): Promise<number> {
+export async function pushToAdmins(deps: IncidentDeps, type: NoticeType, params: Record<string, string>,
+  data: Record<string, string>): Promise<number> {
   const admins = await deps.db.collection('users').where('role', '==', 'admin').get();
-  const tokens = admins.docs.flatMap((d) => (d.data().fcmTokens as string[] | undefined) ?? []);
-  if (!tokens.length) {
+  // Un envío por idioma (users/{uid}.locale; el panel sigue en español).
+  const byLocale = new Map<AppLocale, string[]>();
+  for (const d of admins.docs) {
+    const tokens = (d.data().fcmTokens as string[] | undefined) ?? [];
+    if (tokens.length) byLocale.set(localeOf(d.data()), [...(byLocale.get(localeOf(d.data())) ?? []), ...tokens]);
+  }
+  const total = [...byLocale.values()].reduce((n, t) => n + t.length, 0);
+  if (!total) {
     logger.warn('incidents', 'no admin push tokens', { incidentId: data.incidentId });
     return 0;
   }
-  try {
-    await deps.push?.(tokens, title, body, data);
-  } catch (e) {
-    logger.error('incidents', 'admin push failed', { incidentId: data.incidentId, error: String(e) });
+  for (const [locale, tokens] of byLocale) {
+    const n = notice(type, locale, params);
+    try {
+      await deps.push?.(tokens, n.title, n.body, data);
+    } catch (e) {
+      logger.error('incidents', 'admin push failed', { incidentId: data.incidentId, error: String(e) });
+    }
   }
-  return tokens.length;
+  return total;
 }
 
 // ---------------------------------------------------------------------------
@@ -229,7 +240,7 @@ export async function raiseIncident(deps: IncidentDeps, uid: string | undefined,
 
   logger.info('raiseIncident', 'result', { incidentId: result.incidentId, bookingId: input.bookingId, created: result.created });
   if (result.created) {
-    await pushToAdmins(deps, 'SOS en un viaje', `Reserva #${shortId(input.bookingId)}: abre el panel y reconoce el incidente.`,
+    await pushToAdmins(deps, 'incident_raised', { ref: shortId(input.bookingId) },
       { incidentId: result.incidentId, bookingId: input.bookingId, type: 'incident' });
   }
   const { created: _created, ...response } = result;
@@ -273,8 +284,7 @@ export async function cancelIncident(deps: IncidentDeps, uid: string | undefined
 
   logger.info('cancelIncident', 'result', { incidentId, already: outcome.alreadyCancelled });
   if (!outcome.alreadyCancelled) {
-    await pushToAdmins(deps, 'SOS cancelado: verificar por llamada',
-      `Reserva #${shortId(outcome.bookingId)}: el usuario canceló el aviso. Llama para verificar que está bien.`,
+    await pushToAdmins(deps, 'incident_cancel_requested', { ref: shortId(outcome.bookingId) },
       { incidentId, bookingId: outcome.bookingId, type: 'incident_cancel_requested' });
   }
   return { status: outcome.status, alreadyCancelled: outcome.alreadyCancelled };
@@ -384,7 +394,7 @@ export async function escalateIncidents(deps: IncidentDeps): Promise<string[]> {
     });
     if (done) {
       escalated.push(doc.id);
-      await pushToAdmins(deps, 'SOS sin reconocer', `Reserva #${shortId(done)}: nadie ha reconocido el incidente.`,
+      await pushToAdmins(deps, 'incident_unacknowledged', { ref: shortId(done) },
         { incidentId: doc.id, bookingId: done, type: 'incident_escalated' });
     }
   }
