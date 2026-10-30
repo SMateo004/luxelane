@@ -89,6 +89,17 @@ export const ALLOWED: Record<string, Cells> = {
     asig: { leer: { why: 'el chófer ve su propio teléfono' }, listar: { why: 'igual que leer' } },
     admin: { leer: { why: 'soporte' }, listar: { why: 'soporte' } },
   },
+  'bookings/{id}/driverView': {
+    ana: {
+      leer: { why: 'el pasajero dueño ve las preferencias que dejó para ese viaje' },
+      listar: { why: 'igual que leer' },
+    },
+    asig: {
+      leer: { why: 'el chófer asignado y activo ve las preferencias del viaje que atiende, solo entre confirmed e in_progress' },
+      listar: { why: 'igual que leer' },
+    },
+    admin: { leer: { why: 'soporte' }, listar: { why: 'soporte' } },
+  },
   'bookings/{id}/events': {
     ana: { leer: { why: 'el pasajero ve el historial de su viaje' }, listar: { why: 'igual que leer' } },
     asig: { leer: { why: 'el chófer asignado ve el historial del viaje' }, listar: { why: 'igual que leer' } },
