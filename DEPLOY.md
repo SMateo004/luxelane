@@ -214,6 +214,36 @@ flutter run --dart-define-from-file=env.local.json
 
 ---
 
+## Preferencias del pasajero (cierre/preferencias): NO desplegar todavía
+
+**Ni las reglas ni las functions de esta rama se despliegan hasta terminar
+la Parte B** (apps y panel). Solo está hecha la Parte A (servidor, reglas,
+modelo).
+
+Qué pasaría con las apps actuales:
+
+- **Reglas** (`ridePreferences` y `tripPreferences` pasan a campos
+  privilegiados de `users/{uid}`): la app actual del pasajero manda
+  `ridePreferences` en cada guardado del perfil (`updateUser`). Si las
+  cambió, el guardado entero se rechaza (también el nombre y el teléfono).
+- **Functions** (`createBooking` ya no copia `riderPreferences` a la
+  reserva; la copia va a `bookings/{id}/driverView/preferences`): la app
+  actual del chófer deja de ver las preferencias en las reservas nuevas,
+  porque las lee de la reserva. Esto ocurre al desplegar functions, aunque
+  las reglas no se suban.
+
+Lo que tiene que traer la Parte B antes de desplegar (B0):
+
+1. deleteAccount borra las copias `driverView` de las reservas del usuario.
+2. Las apps dejan de enviar `ridePreferences` en `updateUser` y de leerlas
+   de la reserva; el perfil usa `updatePreferences`.
+3. La app del chófer lee `bookings/{id}/driverView/preferences`.
+
+Orden previsto al terminar la Parte B: functions → apps publicadas →
+`minAppVersion` → reglas al final. Paso manual previo: el responsable fija
+`config/ops.playlistHosts` en la consola (lista de hosts permitidos; sin
+ella, el campo de la lista de música no se ofrece y el servidor lo rechaza).
+
 ## Orden de despliegue de createBooking (D2)
 
 Las reservas pasan a crearse solo en el servidor (`createBooking`), que
