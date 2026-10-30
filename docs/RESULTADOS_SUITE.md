@@ -4,6 +4,53 @@ Tablas en texto plano (bloque de código) para que se lean igual en un
 adjunto. Cada fila es la salida real del comando; nada resumido a mano.
 Todo contra los emuladores con el proyecto ficticio `demo-luxelane`.
 
+## cierre/idiomas, Parte A (A1–A7, commit c9e8a1c, 2026-10-30)
+
+```
+Comando                                       Resultado      Tests pasados/total             Código de salida
+flutter analyze --no-fatal-infos              pasa           121 issues (0 errores/avisos)   0
+dart format --set-exit-if-changed lib/ test/  pasa           257 archivos, 0 cambiados       0
+flutter test                                  pasa           639/639                         0
+functions: npm run build                      pasa           —                               0
+functions: npm test                           pasa           555/555 (30 de 30 suites)       0
+functions: jest fare.test.ts pickup_code      pasa           33/33                           0
+npm run test:rules (demo-luxelane)            pasa           1631/1631 (25 de 25 suites)     0
+npm run test:integration (demo-luxelane)      pasa           400/400 (45 de 45 suites)       0
+tools/pricing: npm test                       pasa           pass 10, fail 0                 0
+actionlint ci.yml                             NO EJECUTADO   —                               —
+```
+
+actionlint: la descarga del binario no se permitió en este entorno; ci.yml
+no cambia. Los 121 avisos de analyze son los mismos que en cierre/integracion.
+
+### Reglas anteriores con los tests nuevos
+
+`firestore.rules` de c585305 con los tests de c9e8a1c, código de salida 1:
+
+```
+Test Suites: 1 failed, 24 passed, 25 total
+Tests:       3 failed, 1628 passed, 1631 total
+
+● users/{uid}.locale no se escribe desde el cliente › el alta no trae idioma
+● users/{uid}.locale no se escribe desde el cliente › el chófer tampoco
+● users/{uid}.locale no se escribe desde el cliente › el pasajero no cambia su idioma directo
+```
+
+### Tests nuevos sin el cambio de su tarea
+
+```
+Tarea                     Archivo de tests                          Sin el cambio
+A1 resolución y panel     locale_test.dart                          no compila sin el módulo
+A1 apps con la elección   idioma_test.dart                          1 de 2 falla (app.dart anterior)
+A2 reglas                 locale.rules.ts                           3 de 5 fallan
+A2 callable               preferences.int.ts (idioma)               2 de 4 fallan
+A3 selector               locale_test.dart (selector)               no compila sin el widget
+A4 catálogo               i18n.test.ts                              no compila sin el módulo
+A4 avisos por idioma      i18n.int.ts                               no compila con el servidor anterior
+A5 trinquete              textos_fijos_trinquete_test.dart          prueba nueva (línea base)
+A7 paridad .arb           arb_parity_test.dart                      prueba nueva (casos sintéticos)
+```
+
 ## cierre/integracion tras fusionar cierre/preferencias, Parte A (commit 195ac70, 2026-10-30)
 
 Fusión `git merge --no-ff cierre/preferencias` en un worktree limpio, sin
