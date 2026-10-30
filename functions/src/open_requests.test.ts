@@ -21,6 +21,38 @@ const booking = {
   guest: { firstName: 'Carla', phone: '+59170000001', email: 'c@example.com' },
 };
 
+describe('buildOpenRequest: preferencias (A4)', () => {
+  const withPrefs = {
+    ...booking,
+    preferredDriverLanguages: ['pt', 'es', 'fr', 7],
+    // Aunque la reserva llevara el resto de preferencias, no pasan.
+    cabinTemperature: 'cool', conversation: 'quiet', musicStyle: 'jazz',
+    playlistUrl: 'https://music.example.com/l', needs: ['child_seat'], note: 'Llevo un carrito',
+  };
+
+  it('solo los idiomas, de la lista cerrada y en orden fijo', () => {
+    expect(buildOpenRequest(withPrefs).preferredDriverLanguages).toEqual(['es', 'pt']);
+    expect(buildOpenRequest(booking).preferredDriverLanguages).toEqual([]);
+  });
+
+  it('ningún otro campo de preferencias se cuela', () => {
+    const r = buildOpenRequest(withPrefs) as unknown as Record<string, unknown>;
+    for (const k of ['cabinTemperature', 'conversation', 'musicStyle', 'playlistUrl', 'needs', 'note', 'riderPreferences']) {
+      expect(r).not.toHaveProperty(k);
+    }
+    const text = JSON.stringify(r);
+    for (const v of ['cool', 'quiet', 'jazz', 'music.example.com', 'child_seat', 'carrito']) expect(text).not.toContain(v);
+  });
+
+  it('las claves de la solicitud son exactamente estas', () => {
+    expect(Object.keys(buildOpenRequest(withPrefs)).sort()).toEqual([
+      'dropoffApprox', 'dropoffArea', 'estimatedPrice', 'flightType', 'hours', 'luggageCount', 'passengerCount',
+      'pickupAirport', 'pickupApprox', 'pickupArea', 'preferredDriverLanguages', 'releasedBy', 'scheduledAt',
+      'serviceType', 'tripKm', 'vehicleClass',
+    ]);
+  });
+});
+
 describe('buildOpenRequest', () => {
   it('no copia datos personales ni direcciones exactas', () => {
     const r = buildOpenRequest(booking) as unknown as Record<string, unknown>;
