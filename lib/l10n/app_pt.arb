@@ -1,0 +1,7 @@
+{
+  "@@locale": "pt",
+  "languageTitle": "Idioma",
+  "languageSystem": "Sistema",
+  "languageSystemDetail": "Usa o idioma do celular: {language}",
+  "languageSaveError": "Não foi possível salvar o idioma na sua conta. Ele será usado neste dispositivo."
+}

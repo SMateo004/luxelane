@@ -4,6 +4,7 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:get_it/get_it.dart';
 
+import '../../app/locale_controller.dart';
 import '../../features/admin/data/repositories/admin_payments_repository_impl.dart';
 import '../../features/admin/data/repositories/admin_repository_impl.dart';
 import '../../features/admin/domain/admin_payments.dart';
@@ -53,6 +54,9 @@ void _registerServices() {
   sl.registerLazySingleton<NotificationService>(
     () => NotificationService(userRepository: sl()),
   );
+  if (!sl.isRegistered<LocaleController>()) {
+    sl.registerLazySingleton<LocaleController>(() => LocaleController());
+  }
 }
 
 void _registerFirebase() {

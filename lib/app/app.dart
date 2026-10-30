@@ -14,6 +14,7 @@ import '../features/driver/presentation/bloc/driver_bloc.dart';
 import '../features/payments/presentation/bloc/payment_bloc.dart';
 import '../features/profile/presentation/bloc/profile_bloc.dart';
 import '../features/notifications/presentation/bloc/notification_bloc.dart';
+import 'locale_controller.dart';
 import 'lux_locale.dart';
 import 'router/router.dart';
 import 'theme/app_theme.dart';
@@ -33,6 +34,7 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
   late final ProfileBloc _profileBloc;
   late final DriverBloc _driverBloc;
   late final NotificationBloc _notificationBloc;
+  final LocaleController _locale = sl<LocaleController>();
 
   // ── Routers — created once ─────────────────────────────────────────────
   late final dynamic _router;
@@ -47,6 +49,7 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
     _profileBloc = sl<ProfileBloc>();
     _driverBloc = sl<DriverBloc>();
     _notificationBloc = sl<NotificationBloc>();
+    _locale.load();
 
     _router = buildRouter(_authBloc);
 
@@ -107,18 +110,23 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         BlocProvider<DriverBloc>.value(value: _driverBloc),
         BlocProvider<NotificationBloc>.value(value: _notificationBloc),
       ],
-      child: MaterialApp.router(
-        title: kAppTitle,
-        debugShowCheckedModeBanner: false,
-        locale: LuxLocale.locale,
-        supportedLocales: LuxLocale.supportedLocales,
-        localizationsDelegates: LuxLocale.delegates,
-        builder: (context, child) => LuxConnectionBanner(
-          online: ConnectionStatus.watch(sl<FirebaseFirestore>()),
-          child: child ?? const SizedBox.shrink(),
+      // El idioma cambia al instante al elegirlo en el perfil.
+      child: ValueListenableBuilder<LocaleChoice>(
+        valueListenable: _locale,
+        builder: (context, choice, _) => MaterialApp.router(
+          title: kAppTitle,
+          debugShowCheckedModeBanner: false,
+          locale: choice == LocaleChoice.system ? null : Locale(choice.name),
+          localeListResolutionCallback: LuxLocale.resolveList,
+          supportedLocales: LuxLocale.supportedLocales,
+          localizationsDelegates: LuxLocale.delegates,
+          builder: (context, child) => LuxConnectionBanner(
+            online: ConnectionStatus.watch(sl<FirebaseFirestore>()),
+            child: child ?? const SizedBox.shrink(),
+          ),
+          theme: luxTheme,
+          routerConfig: _router,
         ),
-        theme: luxTheme,
-        routerConfig: _router,
       ),
     );
   }

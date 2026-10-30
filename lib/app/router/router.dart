@@ -29,6 +29,7 @@ import '../../features/business/presentation/pages/business_page.dart';
 import '../../features/legal/presentation/pages/legal_page.dart';
 import '../../core/widgets/components.dart';
 import '../driver_shell/driver_shell.dart';
+import '../lux_locale.dart';
 import '../shell/app_shell.dart';
 import '../theme/app_theme.dart';
 import 'lux_transitions.dart';
@@ -234,7 +235,16 @@ GoRouter buildRouter(AuthBloc authBloc) => GoRouter(
         ),
         GoRoute(
           path: LuxRoutes.admin,
-          pageBuilder: (c, s) => _fade(const AdminDashboardPage(), s),
+          // El panel sigue en español (decisión 3), también sus textos de
+          // Material, aunque la app esté en otro idioma.
+          pageBuilder: (c, s) => _fade(
+            Localizations.override(
+              context: c,
+              locale: LuxLocale.fallback,
+              child: const AdminDashboardPage(),
+            ),
+            s,
+          ),
         ),
         GoRoute(
           path: LuxRoutes.driverActiveRide,

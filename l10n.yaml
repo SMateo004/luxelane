@@ -1,0 +1,12 @@
+# Textos de las apps del pasajero y del chófer (decisión 1 del prompt de
+# idiomas): español (plantilla), inglés y portugués de Brasil (pt). El panel
+# de admin y las páginas legales siguen en español.
+arb-dir: lib/l10n
+template-arb-file: app_es.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+output-dir: lib/l10n/gen
+synthetic-package: false
+nullable-getter: false
+format: true
+required-resource-attributes: true
