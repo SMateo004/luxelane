@@ -7,12 +7,15 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../core/services/locale_sync.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/gen/app_localizations.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/pages/mfa_enroll_page.dart';
 import '../../../auth/presentation/widgets/reauth_dialog.dart';
 import '../bloc/profile_bloc.dart';
 import '../widgets/driver_documents_group.dart';
+import '../widgets/language_selector.dart';
 
 // ---------------------------------------------------------------------------
 // ProfileScreen
@@ -181,6 +184,10 @@ class _ProfileBody extends StatelessWidget {
           const SizedBox(height: LuxSpacing.sm),
           item(_DriverDocumentsSection(profile: driverProfile!)),
         ],
+        const SizedBox(height: LuxSpacing.xl),
+        item(SectionHeader(title: AppLocalizations.of(context).languageTitle)),
+        const SizedBox(height: LuxSpacing.sm),
+        item(LanguageSelector(sync: sl<LocaleSync>())),
         const SizedBox(height: LuxSpacing.xl),
         item(const SectionHeader(title: 'Cuenta')),
         const SizedBox(height: LuxSpacing.sm),

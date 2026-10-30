@@ -1,14 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:luxelane/app/locale_controller.dart';
 import 'package:luxelane/app/lux_locale.dart';
 import 'package:luxelane/core/services/locale_sync.dart';
+import 'package:luxelane/features/profile/presentation/widgets/language_selector.dart';
+import 'package:luxelane/l10n/gen/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Idiomas, A1 y A2: resolución del idioma, sincronización con la cuenta y
-/// el panel de admin, que no cambia.
+/// Idiomas, A1, A3 y A7: resolución del idioma, cambio en caliente desde el
+/// perfil y el panel de admin, que no cambia.
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
@@ -105,6 +108,89 @@ void main() {
       final again = LocaleController();
       await again.load();
       expect(again.value, LocaleChoice.pt);
+    });
+  });
+
+  group('selector del perfil', () {
+    Future<LocaleSync> pump(WidgetTester t, {bool fail = false}) async {
+      // Teléfono en español.
+      t.platformDispatcher.localesTestValue = const [Locale('es', 'BO')];
+      addTearDown(t.platformDispatcher.clearLocalesTestValue);
+      final controller = LocaleController();
+      final sync = LocaleSync(
+        controller: controller,
+        deviceLocales: () => const [Locale('es')],
+        save: (_, __) async {
+          if (fail) throw Exception('sin red');
+          return null;
+        },
+      );
+      await t.pumpWidget(
+        ValueListenableBuilder<LocaleChoice>(
+          valueListenable: controller,
+          builder: (_, choice, __) => MaterialApp(
+            locale: choice == LocaleChoice.system ? null : Locale(choice.name),
+            localeListResolutionCallback: LuxLocale.resolveList,
+            supportedLocales: LuxLocale.supportedLocales,
+            localizationsDelegates: LuxLocale.delegates,
+            home: Scaffold(
+              body: Builder(
+                builder: (c) => Column(
+                  children: [
+                    Text(AppLocalizations.of(c).languageTitle),
+                    LanguageSelector(sync: sync),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      return sync;
+    }
+
+    testWidgets('cambio en caliente: la pantalla cambia de idioma al tocar',
+        (t) async {
+      await pump(t);
+      expect(find.text('Sistema'), findsOneWidget);
+      await t.tap(find.text('English'));
+      await t.pumpAndSettle();
+      expect(find.text('Language'), findsOneWidget);
+      expect(find.text('System'), findsOneWidget);
+      await t.tap(find.text('Português'));
+      await t.pumpAndSettle();
+      expect(find.text('Sistema'), findsOneWidget);
+      expect(find.textContaining('celular'), findsOneWidget);
+      await t.tap(find.text('Español'));
+      await t.pumpAndSettle();
+      expect(find.textContaining('teléfono'), findsOneWidget);
+    });
+
+    testWidgets('si la cuenta no lo guarda, avisa en el idioma nuevo',
+        (t) async {
+      await pump(t, fail: true);
+      await t.tap(find.text('English'));
+      await t.pumpAndSettle();
+      expect(find.textContaining('could not be saved'), findsOneWidget);
+    });
+
+    testWidgets('accesible: opciones con estado, en su idioma y de 48 px',
+        (t) async {
+      final h = t.ensureSemantics();
+      await pump(t);
+      final english = t.getSemantics(find.text('English'));
+      expect(english.label, 'English');
+      expect(english.hasFlag(SemanticsFlag.isInMutuallyExclusiveGroup), isTrue);
+      expect(english.hasFlag(SemanticsFlag.isChecked), isFalse);
+      final system = t.getSemantics(find.text('Sistema'));
+      expect(system.hasFlag(SemanticsFlag.isChecked), isTrue);
+      for (final w in ['Sistema', 'Español', 'English', 'Português']) {
+        final box = t.getSize(find
+            .ancestor(of: find.text(w), matching: find.byType(InkWell))
+            .first);
+        expect(box.height, greaterThanOrEqualTo(48), reason: w);
+      }
+      h.dispose();
     });
   });
 
