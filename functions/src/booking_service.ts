@@ -14,6 +14,7 @@ import { loadPaymentSettings } from './payment_config';
 import { paymentSummary, reservePaymentRef, writeInitialPayment } from './payment_booking';
 import { paymentStateRef } from './payment_model';
 import { storeLinks, updateRequired } from './app_version';
+import { driverViewDoc, driverViewRef, loadPlaylistHosts, sanitizePreferences, profilePreferences } from './preferences';
 import { airportFor, areaLabel, cityOf, destinationOk, originOk, PlaceIn } from './service_area';
 
 export interface BookingDeps {
@@ -218,7 +219,12 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
   // vencimiento automático.
   const { windowMinutes } = payments;
   const pickupAirport = input.serviceType === 'oneWay' ? airportFor(input.origin)?.iata ?? null : null;
-  const prefs = user.ridePreferences;
+  // Copia saneada de las preferencias de este viaje (o, sin ellas, las del
+  // perfil). Cambiar el perfil después no cambia esta reserva.
+  const hosts = await loadPlaylistHosts(db);
+  const tripPrefs = input.preferences !== undefined
+    ? sanitizePreferences(input.preferences, hosts, 'strict')
+    : profilePreferences(user, hosts);
   const booking = {
     id: ref.id,
     riderId: uid!,
@@ -243,7 +249,10 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
     hours: input.serviceType === 'byTheHour' ? input.hours ?? null : null,
     passengerCount: input.passengerCount,
     luggageCount: input.luggageCount,
-    ...(prefs && typeof prefs === 'object' && Object.keys(prefs).length ? { riderPreferences: prefs } : {}),
+    // Lo único de las preferencias que va en la reserva: los idiomas, sin
+    // datos personales, para la solicitud abierta (decisión 3). El resto
+    // solo está en driverView/preferences.
+    preferredDriverLanguages: tripPrefs.preferredDriverLanguages,
     pickupArea: areaLabel(input.origin),
     dropoffArea: input.serviceType === 'byTheHour' ? null : areaLabel(priced.destination),
     pricing: {
@@ -263,6 +272,8 @@ export async function createBooking(deps: BookingDeps, uid: string | undefined, 
     if (current) return current;
     const paymentRef = await reservePaymentRef(tx, db);
     tx.set(ref, booking);
+    tx.set(driverViewRef(db, ref.id), driverViewDoc(ref.id, uid!, tripPrefs,
+      input.preferences !== undefined ? 'trip' : 'profile', now));
     const payment = writeInitialPayment(tx, db, {
       bookingId: ref.id, riderId: uid!, price: priced.price, paymentRef, now, windowMinutes,
       methodsOffered: payments.enabled,

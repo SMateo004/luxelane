@@ -96,10 +96,12 @@ describe('createBooking', () => {
     expect(booking).toMatchObject({
       riderId: 'ana', status: 'pending', estimatedPrice: 86, class: 'business',
       pickupArea: 'Santa Cruz de la Sierra', dropoffArea: 'Santa Cruz de la Sierra',
-      guest: { firstName: 'Carla' }, notes: 'Toque el timbre', riderPreferences: { music: 'jazz' },
+      guest: { firstName: 'Carla' }, notes: 'Toque el timbre', preferredDriverLanguages: [],
       pricing: { source: 'server', distanceSource: 'routes' },
     });
     expect(typeof booking.pricing.rulesVersion).toBe('string');
+    // Las preferencias ya no van en la reserva, que el chófer lee entera.
+    expect(booking.riderPreferences).toBeUndefined();
     // Sin pago confirmado no hay solicitud para los chóferes (pagos, A3).
     expect((await db.doc(`openRequests/${bookingId}`).get()).exists).toBe(false);
     expect((await db.doc(`bookings/${bookingId}/payment/state`).get()).data())

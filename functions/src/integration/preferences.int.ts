@@ -1,19 +1,31 @@
 /**
- * Preferencias del pasajero (A1, A7) contra el emulador: updatePreferences
- * guarda las del perfil.
+ * Preferencias del pasajero (A1, A2, A7) contra el emulador: updatePreferences
+ * guarda las del perfil y createBooking deja una copia saneada por reserva
+ * en bookings/{id}/driverView/preferences, en la misma transacción.
  */
 import { describe, it, expect, beforeEach, afterAll } from '@jest/globals';
+import { randomUUID } from 'crypto';
 import * as admin from 'firebase-admin';
 import { HttpsError } from 'firebase-functions/v2/https';
 // Inicializa Firebase como los demás tests de integración.
 import '../index';
+import { BookingDeps, createBooking } from '../booking_service';
 import { preferenceOptions, updatePreferences } from '../preferences';
 
 const db = admin.firestore();
+const routesOk = (async () => ({ ok: true, json: async () => ({ routes: [{ distanceMeters: 12000 }] }) })) as unknown as typeof fetch;
+const deps = (): BookingDeps => ({ db, mapsKey: 'clave-de-prueba', fetchFn: routesOk });
 
+const SCZ = { name: '', address: 'Calle Exacta 123', lat: -17.7834, lng: -63.1821 };
+const EQUIPETROL = { name: 'Equipetrol', address: 'Av. Exacta 456', lat: -17.765, lng: -63.196 };
 const HOST = 'music.example.com';
 const URL_OK = `https://${HOST}/lista/1`;
 
+const trip = (over: Record<string, unknown> = {}) => ({
+  origin: SCZ, destination: EQUIPETROL, scheduledAt: Date.now() + 2 * 60 * 60 * 1000,
+  vehicleClass: 'business', serviceType: 'oneWay', passengerCount: 1, luggageCount: 1,
+  requestId: randomUUID(), channel: 'native', ...over,
+});
 
 const TRIP_PREFS = {
   preferredDriverLanguages: ['en', 'es'], cabinTemperature: 'cool', conversation: 'quiet',
@@ -31,6 +43,7 @@ async function reason(p: Promise<unknown>): Promise<{ code: string; reason: stri
   throw new Error('se esperaba un error');
 }
 
+const view = async (id: string) => (await db.doc(`bookings/${id}/driverView/preferences`).get()).data();
 
 async function clear(): Promise<void> {
   for (const col of ['openRequests', 'adminAlerts', 'users', 'pricingRules', 'config', 'paymentRefs']) {
@@ -90,4 +103,69 @@ describe('updatePreferences (perfil)', () => {
     await db.doc('config/ops').update({ playlistHosts: [] });
     expect((await reason(updatePreferences({ db }, 'ana', { playlistUrl: URL_OK }))).reason).toBe('playlist_not_allowed');
   });
+});
+
+describe('createBooking: copia por reserva en driverView/preferences', () => {
+  it('con preferencias del viaje: copia saneada; en la reserva solo los idiomas', async () => {
+    const { bookingId } = await createBooking(deps(), 'ana', trip({ preferences: TRIP_PREFS }));
+    expect(await view(bookingId)).toMatchObject({
+      bookingId, riderId: 'ana', source: 'trip',
+      preferredDriverLanguages: ['es', 'en'], cabinTemperature: 'cool', conversation: 'quiet',
+      musicStyle: 'jazz', playlistUrl: URL_OK, needs: ['child_seat'], note: 'Llevo un carrito',
+    });
+    const booking = (await db.doc(`bookings/${bookingId}`).get()).data()!;
+    expect(booking.preferredDriverLanguages).toEqual(['es', 'en']);
+    for (const k of ['riderPreferences', 'cabinTemperature', 'conversation', 'musicStyle', 'playlistUrl', 'needs', 'note']) {
+      expect(booking[k]).toBeUndefined();
+    }
+  });
+
+  it('sin preferencias del viaje: copia las del perfil', async () => {
+    await updatePreferences({ db }, 'ana', { conversation: 'chatty', preferredDriverLanguages: ['pt'] });
+    const { bookingId } = await createBooking(deps(), 'ana', trip());
+    expect(await view(bookingId)).toMatchObject({ source: 'profile', conversation: 'chatty', preferredDriverLanguages: ['pt'] });
+  });
+
+  it('cambiar el perfil después no cambia la reserva ya hecha', async () => {
+    await updatePreferences({ db }, 'ana', { conversation: 'quiet', note: 'Primera' });
+    const { bookingId } = await createBooking(deps(), 'ana', trip());
+    await updatePreferences({ db }, 'ana', { conversation: 'chatty', note: 'Segunda' });
+    expect(await view(bookingId)).toMatchObject({ conversation: 'quiet', note: 'Primera' });
+  });
+
+  it('app anterior (sin el campo preferences, sin tripPreferences): reserva normal', async () => {
+    await db.doc('users/ana').update({ ridePreferences: { quiet: true, music: false, openDoor: true } });
+    const { bookingId, price } = await createBooking(deps(), 'ana', trip());
+    expect(price).toBe(86);
+    expect(await view(bookingId)).toMatchObject({
+      source: 'profile', conversation: 'quiet', musicStyle: 'none', needs: [], note: null, playlistUrl: null,
+    });
+  });
+
+  it('preferencias inválidas: invalid_request y no crea nada', async () => {
+    for (const p of [{ note: 'x'.repeat(201) }, { musicStyle: 'tango_de_marca' }, { conversation: 'quiet', email: 'a@b.c' },
+      { note: 'mira www.algo.test' }]) {
+      expect((await reason(createBooking(deps(), 'ana', trip({ preferences: p })))).reason).toBe('invalid_request');
+    }
+    expect(await reason(createBooking(deps(), 'ana', trip({ preferences: { playlistUrl: 'http://music.example.com/l' } }))))
+      .toMatchObject({ reason: 'playlist_not_allowed' });
+    expect((await db.collection('bookings').get()).size).toBe(0);
+  });
+
+  it('perfil con una URL de un host que se quitó después: la reserva se crea sin la URL', async () => {
+    await updatePreferences({ db }, 'ana', { playlistUrl: URL_OK, conversation: 'quiet' });
+    await db.doc('config/ops').update({ playlistHosts: [] });
+    const { bookingId } = await createBooking(deps(), 'ana', trip());
+    expect(await view(bookingId)).toMatchObject({ playlistUrl: null, conversation: 'quiet' });
+  });
+
+  it('reintento con el mismo requestId y otras preferencias: misma reserva, copia sin tocar', async () => {
+    const requestId = randomUUID();
+    const first = await createBooking(deps(), 'ana', trip({ requestId, preferences: { note: 'Primera' } }));
+    const again = await createBooking(deps(), 'ana', trip({ requestId, preferences: { note: 'Otra' } }));
+    expect(again.bookingId).toBe(first.bookingId);
+    expect((await view(first.bookingId))!.note).toBe('Primera');
+    expect((await db.collection('bookings').get()).size).toBe(1);
+  });
+
 });

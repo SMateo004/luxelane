@@ -4,6 +4,7 @@
  */
 import { z } from 'zod';
 import { SERVICE_TYPES, VEHICLE_CLASSES } from './fare';
+import { preferencesSchema } from './preferences';
 
 // Capacidad de cada clase, igual que VehicleClass.capacity y
 // luggageCapacity en lib/core/enums/enums.dart.
@@ -76,6 +77,12 @@ export const createSchema = z.strictObject({
    * invalid_request.
    */
   channel: z.enum(['web', 'native']).optional(),
+  /**
+   * Preferencias de este viaje para el chófer (mismo esquema que
+   * updatePreferences). Sin ellas, las del perfil. Opcional: las apps
+   * anteriores no lo mandan.
+   */
+  preferences: preferencesSchema.optional(),
 })
   .refine(needsDestination, { message: 'destination required', path: ['destination'] })
   .refine((d) => d.passengerCount <= CAPACITY[d.vehicleClass].passengers,
