@@ -2,10 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:luxelane/app/locale_controller.dart';
 import 'package:luxelane/app/lux_locale.dart';
+import 'package:luxelane/core/services/locale_sync.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-/// Idiomas, A1: resolución del idioma y el panel de admin, que no cambia.
+/// Idiomas, A1 y A2: resolución del idioma, sincronización con la cuenta y
+/// el panel de admin, que no cambia.
 void main() {
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
   group('idioma del sistema', () {
     test('es, en o pt del teléfono se usan; pt-PT y pt-BR dan pt', () {
       expect(
@@ -35,6 +41,70 @@ void main() {
       expect(LuxLocale.choiceOf('en'), LocaleChoice.en);
       expect(LuxLocale.choiceOf('fr'), LocaleChoice.system);
       expect(LuxLocale.choiceOf(null), LocaleChoice.system);
+    });
+  });
+
+  group('LocaleSync', () {
+    late List<List<String>> saved;
+    late LocaleController controller;
+    LocaleSync sync(
+        {bool fail = false, List<Locale> device = const [Locale('pt', 'BR')]}) {
+      saved = [];
+      controller = LocaleController();
+      return LocaleSync(
+        controller: controller,
+        deviceLocales: () => device,
+        save: (l, s) async {
+          if (fail) throw Exception('sin red');
+          saved.add([l, s]);
+          return null;
+        },
+      );
+    }
+
+    test('primer inicio de sesión: guarda el idioma del teléfono', () async {
+      await sync().onSignedIn();
+      expect(saved, [
+        ['pt', 'system'],
+      ]);
+    });
+
+    test('teléfono en un idioma no soportado: guarda español', () async {
+      await sync(device: const [Locale('fr')]).onSignedIn();
+      expect(saved, [
+        ['es', 'system'],
+      ]);
+    });
+
+    test('la cuenta tiene un idioma elegido: este dispositivo lo adopta',
+        () async {
+      final s = sync();
+      await s.onSignedIn(serverLocale: 'en', serverSource: 'user');
+      expect(controller.value, LocaleChoice.en);
+      expect(saved, isEmpty);
+    });
+
+    test('nada que cambiar: no llama al servidor', () async {
+      await sync().onSignedIn(serverLocale: 'pt', serverSource: 'system');
+      expect(saved, isEmpty);
+    });
+
+    test('elegir en el perfil cambia ya y guarda; sin red, avisa con false',
+        () async {
+      final s = sync();
+      expect(await s.choose(LocaleChoice.en, signedIn: true), isTrue);
+      expect(controller.value, LocaleChoice.en);
+      expect(saved.last, ['en', 'user']);
+      final f = sync(fail: true);
+      expect(await f.choose(LocaleChoice.es, signedIn: true), isFalse);
+      expect(controller.value, LocaleChoice.es);
+    });
+
+    test('la elección se recuerda en el dispositivo', () async {
+      await sync().choose(LocaleChoice.pt, signedIn: false);
+      final again = LocaleController();
+      await again.load();
+      expect(again.value, LocaleChoice.pt);
     });
   });
 

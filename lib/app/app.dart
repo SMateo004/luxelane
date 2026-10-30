@@ -7,6 +7,7 @@ import '../core/services/connection_status.dart';
 import '../core/services/notification_service.dart';
 import '../core/enums/enums.dart';
 import '../core/services/crash_service.dart';
+import '../core/services/locale_sync.dart';
 import '../core/widgets/lux_connection_banner.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/booking/presentation/bloc/booking_bloc.dart';
@@ -77,6 +78,11 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
           _driverBloc.add(DriverStarted(userId: state.user.id));
         }
         _notificationBloc.add(NotificationWatchStarted(userId: state.user.id));
+        // Primer inicio de sesión: guarda el idioma del teléfono en la cuenta.
+        sl<LocaleSync>().onSignedIn(
+          serverLocale: state.user.locale,
+          serverSource: state.user.localeSource,
+        );
         // Registra el dispositivo para los avisos de la reserva aunque el
         // pasajero no abra la pantalla del viaje.
         sl<NotificationService>().init(

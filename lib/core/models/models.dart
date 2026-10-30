@@ -24,6 +24,8 @@ class User {
     this.stripeCustomerId,
     required this.fcmTokens,
     this.ridePreferences = RidePreferences.none,
+    this.locale,
+    this.localeSource,
   });
 
   final String id;
@@ -41,6 +43,12 @@ class User {
 
   /// Cómo le gusta viajar (silencio, temperatura…); el chófer lo ve.
   final RidePreferences ridePreferences;
+
+  /// Idioma de la cuenta (es, en, pt) y si viene del teléfono («system») o
+  /// lo eligió el usuario («user»). Solo lo escribe updatePreferences: no va
+  /// en toJson.
+  final String? locale;
+  final String? localeSource;
 
   factory User.fromJson(Map<String, dynamic> j) => User(
         id: j['id'] as String,
@@ -64,6 +72,8 @@ class User {
         stripeCustomerId: j['stripeCustomerId'] as String?,
         fcmTokens: List<String>.from(j['fcmTokens'] ?? []),
         ridePreferences: RidePreferences.fromJson(j['ridePreferences']),
+        locale: j['locale'] as String?,
+        localeSource: j['localeSource'] as String?,
       );
 
   Map<String, dynamic> toJson() => {
@@ -108,6 +118,8 @@ class User {
         stripeCustomerId: stripeCustomerId ?? this.stripeCustomerId,
         fcmTokens: fcmTokens ?? this.fcmTokens,
         ridePreferences: ridePreferences ?? this.ridePreferences,
+        locale: locale,
+        localeSource: localeSource,
       );
 }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../core/di/injection.dart';
 import '../core/services/connection_status.dart';
+import '../core/services/locale_sync.dart';
 import '../core/services/notification_service.dart';
 import '../core/widgets/lux_connection_banner.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
@@ -48,6 +49,11 @@ class _DriverAppState extends State<DriverApp> {
         sessionUid = state.user.id;
         _driverBloc.add(DriverStarted(userId: state.user.id));
         _notificationBloc.add(NotificationWatchStarted(userId: state.user.id));
+        // Primer inicio de sesión: guarda el idioma del teléfono en la cuenta.
+        sl<LocaleSync>().onSignedIn(
+          serverLocale: state.user.locale,
+          serverSource: state.user.localeSource,
+        );
         // Sin token FCM el chófer no recibe los avisos de viajes nuevos.
         sl<NotificationService>().init(
           userId: state.user.id,

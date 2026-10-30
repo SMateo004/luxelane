@@ -23,7 +23,7 @@ import { startSchema as startPaymentSchema } from './payment_card';
 import { refundSchema } from './payment_refund';
 import { inboxSchema } from './payment_inbox';
 import { collectBalanceSchema } from './payment_balance';
-import { preferencesSchema } from './preferences';
+import { updatePreferencesSchema } from './preferences';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Exported = Record<string, any>;
@@ -226,10 +226,13 @@ const CASES: Record<string, Case> = {
   syncEmailVerification: { schema: c.syncEmailVerification, valid: null, wrongType: 'sí', extreme: [[]] },
   getPreferenceOptions: { schema: c.getPreferenceOptions, valid: null, wrongType: 'sí', extreme: [[]] },
   updatePreferences: {
-    schema: preferencesSchema, valid: { preferredDriverLanguages: ['es', 'pt'], conversation: 'quiet', note: 'Hola' },
+    schema: updatePreferencesSchema,
+    valid: { preferredDriverLanguages: ['es', 'pt'], conversation: 'quiet', note: 'Hola', locale: 'pt', localeSource: 'user' },
     wrongType: { preferredDriverLanguages: 'es' },
     extreme: [{ note: 'x'.repeat(201) }, { preferredDriverLanguages: ['fr'] }, { musicStyle: 'reggaeton' },
-      { needs: ['child_seat', 'child_seat'] }, { playlistUrl: `https://x.example/${'a'.repeat(300)}` }],
+      { needs: ['child_seat', 'child_seat'] }, { playlistUrl: `https://x.example/${'a'.repeat(300)}` },
+      { locale: 'fr', localeSource: 'user' }, { locale: 'system', localeSource: 'system' }, { locale: 'es' },
+      { localeSource: 'user' }],
   },
   acceptTerms: {
     schema: c.acceptTerms, valid: { version: '2026-10', appVersion: '1.0.0' },

@@ -18,7 +18,7 @@ el documento que usa cada fila están en MATRIZ_ACCESO.md.
 **pasajero dueño**
 
 - leer: el usuario lee su propio perfil.
-- actualizar: el usuario edita su nombre, teléfono, foto y tokens de push (no rol, isActive, stripeCustomerId, isVerified ni preferencias: esas, updatePreferences).
+- actualizar: el usuario edita su nombre, teléfono, foto y tokens de push (no rol, isActive, stripeCustomerId, isVerified, preferencias ni idioma: esos, updatePreferences).
 
 **usuario bloqueado**
 

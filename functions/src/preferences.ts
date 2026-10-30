@@ -216,22 +216,62 @@ export interface PreferencesDeps {
   now?: () => number;
 }
 
-async function requireActiveRider(db: admin.firestore.Firestore, uid: string | undefined) {
+async function requireActiveUser(db: admin.firestore.Firestore, uid: string | undefined, roles: string[]) {
   if (!uid) throw new HttpsError('unauthenticated', 'unauthenticated', { reason: 'unauthenticated' });
   const user = (await db.collection('users').doc(uid).get()).data();
-  if (!user || user.role !== 'rider' || user.isActive === false) {
+  if (!user || !roles.includes(user.role) || user.isActive === false) {
     throw new HttpsError('permission-denied', 'inactive_user', { reason: 'inactive_user' });
   }
 }
 
-/** updatePreferences: guarda las del perfil. No toca reservas ya creadas. */
+const requireActiveRider = (db: admin.firestore.Firestore, uid: string | undefined) =>
+  requireActiveUser(db, uid, ['rider']);
+
+/** Idiomas de las apps (prompt de idiomas): el servidor escribe en este. */
+export const APP_LOCALES = ['es', 'en', 'pt'] as const;
+export type AppLocale = (typeof APP_LOCALES)[number];
+
+/**
+ * Idioma de la cuenta en updatePreferences: el efectivo (es, en, pt) y si
+ * sale del teléfono («system») o lo eligió el usuario («user»). Van juntos.
+ */
+const localeFields = {
+  locale: z.enum(APP_LOCALES).optional(),
+  localeSource: z.enum(['system', 'user']).optional(),
+};
+
+export const updatePreferencesSchema = preferencesSchema.extend(localeFields)
+  .refine((d) => (d.locale === undefined) === (d.localeSource === undefined),
+    { message: 'locale and localeSource go together', path: ['locale'] });
+
+/**
+ * updatePreferences: guarda las del perfil y, si viene, el idioma. Solo con
+ * el idioma no toca las preferencias. Ninguna de las dos cambia reservas ya
+ * creadas. Pasajeros y chóferes guardan su idioma; las preferencias, solo
+ * el pasajero.
+ */
 export async function updatePreferences(deps: PreferencesDeps, uid: string | undefined, data: unknown) {
-  await requireActiveRider(deps.db, uid);
-  const prefs = parsePreferences(data, await loadPlaylistHosts(deps.db));
-  await deps.db.collection('users').doc(uid!).update({
-    tripPreferences: { ...prefs, updatedAt: admin.firestore.Timestamp.fromMillis(deps.now?.() ?? Date.now()) },
-  });
-  return { preferences: prefs };
+  if (!uid) throw new HttpsError('unauthenticated', 'unauthenticated', { reason: 'unauthenticated' });
+  const r = updatePreferencesSchema.safeParse(data);
+  if (!r.success) {
+    const fields = [...new Set(r.error.issues.map((i) => String(i.path[0] ?? '(raíz)')))];
+    throw new HttpsError('invalid-argument', 'invalid_request', { reason: 'invalid_request', fields });
+  }
+  const { locale, localeSource, ...rest } = r.data;
+  const now = admin.firestore.Timestamp.fromMillis(deps.now?.() ?? Date.now());
+  const onlyLocale = locale !== undefined && Object.keys(rest).length === 0;
+  const update: Record<string, unknown> = {};
+  let prefs: TripPreferences | undefined;
+  if (onlyLocale) {
+    await requireActiveUser(deps.db, uid, ['rider', 'driver']);
+  } else {
+    await requireActiveRider(deps.db, uid);
+    prefs = sanitizePreferences(rest, await loadPlaylistHosts(deps.db), 'strict');
+    update.tripPreferences = { ...prefs, updatedAt: now };
+  }
+  if (locale !== undefined) Object.assign(update, { locale, localeSource, localeUpdatedAt: now });
+  await deps.db.collection('users').doc(uid).update(update);
+  return { ...(prefs ? { preferences: prefs } : {}), ...(locale ? { locale, localeSource } : {}) };
 }
 
 /** Lo que la app necesita para ofrecer los campos: sin la lista de hosts. */

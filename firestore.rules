@@ -75,10 +75,11 @@ service cloud.firestore {
     // saneada). ridePreferences, de las apps anteriores, ya no se cambia
     // desde el cliente (el alta la sigue trayendo con los valores por
     // defecto; el servidor solo lee de ahí valores de la lista cerrada).
+    // locale y localeSource: idioma de la cuenta, solo updatePreferences.
     function privilegedUserFields() {
       return ['role', 'isActive', 'stripeCustomerId', 'isVerified',
         'phoneVerified', 'emailVerifiedAt', 'terms', 'tripPreferences',
-        'ridePreferences'];
+        'ridePreferences', 'locale', 'localeSource', 'localeUpdatedAt'];
     }
 
     // A self-created profile is always an active rider with no Stripe link,
@@ -93,6 +94,7 @@ service cloud.firestore {
         !('emailVerifiedAt' in d) &&
         !('terms' in d) &&
         !('tripPreferences' in d) &&
+        !('locale' in d) && !('localeSource' in d) &&
         d.get('stripeCustomerId', null) == null &&
         d.get('id', uid) == uid;
     }

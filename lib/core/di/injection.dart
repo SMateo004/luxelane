@@ -32,6 +32,7 @@ import '../auth/driver_device.dart';
 import '../auth/mfa.dart';
 import '../data/notification_repository_impl.dart';
 import '../repositories/repositories.dart';
+import '../services/locale_sync.dart';
 import '../services/maps_service.dart';
 import '../services/notification_service.dart';
 
@@ -57,6 +58,14 @@ void _registerServices() {
   if (!sl.isRegistered<LocaleController>()) {
     sl.registerLazySingleton<LocaleController>(() => LocaleController());
   }
+  sl.registerLazySingleton<LocaleSync>(
+    () => LocaleSync(
+      controller: sl(),
+      save: (locale, source) => sl<FirebaseFunctions>()
+          .httpsCallable('updatePreferences')
+          .call({'locale': locale, 'localeSource': source}),
+    ),
+  );
 }
 
 void _registerFirebase() {
