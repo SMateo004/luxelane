@@ -1,0 +1,31 @@
+{
+  "trinquete": {
+    "lib/core/widgets": 111,
+    "lib/features/auth": 135,
+    "lib/features/booking": 158,
+    "lib/features/business": 21,
+    "lib/features/driver": 179,
+    "lib/features/home": 133,
+    "lib/features/incidents": 49,
+    "lib/features/notifications": 9,
+    "lib/features/payments": 126,
+    "lib/features/profile": 61,
+    "lib/features/ride": 83,
+    "lib/features/services": 102,
+    "lib/features/trips": 13
+  },
+  "vigilados": {
+    "lib/app": 22,
+    "lib/core/auth": 13,
+    "lib/core/config": 14,
+    "lib/core/design": 32,
+    "lib/core/enums": 23,
+    "lib/core/error": 52,
+    "lib/core/models": 33,
+    "lib/core/personalization": 9,
+    "lib/core/repositories": 2,
+    "lib/core/services": 26,
+    "lib/core/utils": 51,
+    "lib/main.dart": 1
+  }
+}
