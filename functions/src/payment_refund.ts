@@ -18,7 +18,7 @@ import { z } from 'zod';
 import { AdminActor, changedFields, reasonSchema, writeAudit } from './admin_audit';
 import { loadPaymentSettings } from './payment_config';
 import { notifyRider, nowOf, payError, PaymentDeps } from './payment_manual';
-import { CURRENCY, LedgerEntry, PaymentState, paymentStateRef } from './payment_model';
+import { closePending, CURRENCY, LedgerEntry, PaymentState, paymentStateRef } from './payment_model';
 import { providerFor } from './payment_provider';
 import { docId, parseInput } from './schemas';
 import { logger } from './logger';
@@ -64,7 +64,7 @@ async function closeRefund(deps: PaymentDeps, c: CloseInput) {
     const status = pendingLeft > 0
       ? 'refund_pending'
       : nowRefunded >= s.amountPaid ? 'refunded' : 'partially_refunded';
-    tx.update(entryRef, { status: 'completed', externalRef: c.externalRef, completedAt: at });
+    closePending(tx, entryRef, { status: 'completed', externalRef: c.externalRef, at });
     tx.update(stateRef, { paymentStatus: status, amountRefunded: nowRefunded, refundDue: pendingLeft, updatedAt: at });
     if (pendingLeft === 0) alerts.docs.forEach((a) => tx.update(a.ref, { resolved: true, resolvedAt: at, resolvedBy: c.actor?.adminId ?? 'system' }));
     // Solo ahora, con la devolución registrada, se le dice al pasajero.

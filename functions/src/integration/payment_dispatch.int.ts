@@ -32,7 +32,7 @@ const trip = (over: Record<string, unknown> = {}) => ({
   origin: { name: '', address: 'Calle 1', lat: -17.7834, lng: -63.1821 },
   destination: { name: 'Equipetrol', address: 'Av. 2', lat: -17.765, lng: -63.196 },
   scheduledAt: NOW + 2 * 3600_000, vehicleClass: 'business', serviceType: 'oneWay',
-  passengerCount: 1, luggageCount: 0, requestId: randomUUID(), ...over,
+  passengerCount: 1, luggageCount: 0, requestId: randomUUID(), channel: 'native', ...over,
 });
 
 async function reason(p: Promise<unknown>): Promise<string | undefined> {
@@ -40,7 +40,7 @@ async function reason(p: Promise<unknown>): Promise<string | undefined> {
   return 'ok';
 }
 async function clear(): Promise<void> {
-  for (const col of ['users', 'driverProfiles', 'vehicles', 'config', 'pricingRules', 'openRequests', 'adminAlerts',
+  for (const col of ['users', 'driverProfiles', 'vehicles', 'config', 'pricingRules', 'openRequests', 'adminAlerts', 'payments',
     'paymentRefs', 'admin_logs', 'rateLimits']) {
     await db.recursiveDelete(db.collection(col));
   }
@@ -136,6 +136,20 @@ describe('la web solo reserva si puede pagar por QR (E38)', () => {
   it('web con pago manual activo: reserva y se le ofrece el QR', async () => {
     const r = await createBooking(deps(), 'ana', trip({ channel: 'web' }));
     expect(r.methodsOffered).toEqual(['manual_qr']);
+  });
+
+  it('H1: sin channel (app anterior a los pagos) pide actualizar y no crea nada', async () => {
+    await db.doc('config/global').set({ androidStoreUrl: 'https://tienda.example/android', iosStoreUrl: 'http://no-https' });
+    const { channel: _omit, ...old } = trip();
+    void _omit;
+    let details: Record<string, unknown> | undefined;
+    try { await createBooking(deps(), 'ana', old); } catch (e) { details = (e as HttpsError).details as Record<string, unknown>; }
+    // Mismo motivo que minAppVersion: la app ya muestra «Actualiza la app».
+    expect(details).toMatchObject({ reason: 'app_update_required', missing: 'channel',
+      androidStoreUrl: 'https://tienda.example/android' });
+    expect(details!.iosStoreUrl).toBeUndefined();
+    expect((await db.collection('bookings').get()).size).toBe(0);
+    expect((await db.collection('paymentRefs').get()).size).toBe(0);
   });
 
   it('un canal desconocido se rechaza', async () => {

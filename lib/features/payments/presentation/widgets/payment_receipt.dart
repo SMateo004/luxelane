@@ -59,14 +59,80 @@ class PaymentPendingCard extends StatelessWidget {
 /// Comprobante del pago y de su devolución (B1). No es una factura y así
 /// se dice. La devolución solo se da por hecha cuando el servidor la
 /// registró (B4).
-class PaymentReceiptCard extends StatelessWidget {
-  const PaymentReceiptCard({super.key, required this.payment});
+///
+/// [collapsed]: durante el viaje en curso se muestra plegado (título e
+/// importe) para no desplazar al chófer ni el código de recogida (E40).
+class PaymentReceiptCard extends StatefulWidget {
+  const PaymentReceiptCard({
+    super.key,
+    required this.payment,
+    this.collapsed = false,
+  });
 
   final BookingPayment payment;
+  final bool collapsed;
+
+  @override
+  State<PaymentReceiptCard> createState() => _PaymentReceiptCardState();
+}
+
+class _PaymentReceiptCardState extends State<PaymentReceiptCard> {
+  late bool _open = !widget.collapsed;
+
+  @override
+  void didUpdateWidget(PaymentReceiptCard old) {
+    super.didUpdateWidget(old);
+    if (old.collapsed != widget.collapsed) _open = !widget.collapsed;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final p = payment;
+    final p = widget.payment;
+    final header = Row(
+      children: [
+        Expanded(
+          child: Semantics(
+            header: true,
+            child: const Text(
+              'Comprobante de pago',
+              style: LuxTypography.titleMedium,
+            ),
+          ),
+        ),
+        if (widget.collapsed) ...[
+          Text(
+            _bs(p.amountPaid),
+            style: LuxTypography.bodyMedium.copyWith(
+              color: LuxColors.ink,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          IconButton(
+            key: const ValueKey('payment-receipt-toggle'),
+            tooltip: _open ? 'Ocultar comprobante' : 'Ver comprobante',
+            icon: Icon(
+              _open ? Icons.expand_less_rounded : Icons.expand_more_rounded,
+            ),
+            onPressed: () => setState(() => _open = !_open),
+          ),
+        ],
+      ],
+    );
+    if (!_open) {
+      return Semantics(
+        container: true,
+        child: LuxCard(
+          key: const ValueKey('payment-receipt'),
+          padding: const EdgeInsets.fromLTRB(
+            LuxSpacing.md,
+            LuxSpacing.xs,
+            LuxSpacing.xs,
+            LuxSpacing.xs,
+          ),
+          child: header,
+        ),
+      );
+    }
     return Semantics(
       container: true,
       child: LuxCard(
@@ -74,13 +140,7 @@ class PaymentReceiptCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Semantics(
-              header: true,
-              child: const Text(
-                'Comprobante de pago',
-                style: LuxTypography.titleMedium,
-              ),
-            ),
+            header,
             Text(
               'Este comprobante no es una factura.',
               style:
@@ -106,12 +166,12 @@ class PaymentReceiptCard extends StatelessWidget {
                 'Te devolvemos el dinero al método con el que pagaste.',
               ),
             ],
+            // H3: el saldo se muestra tal cual; lo gestiona central. Sin
+            // promesas de contacto ni plazos.
             if (p.balanceDue > 0) ...[
               _Row('Saldo pendiente', _bs(p.balanceDue)),
               const _Note(
-                'El importe final fue mayor que lo pagado. Contacta con '
-                'central para saldarlo.',
-              ),
+                  'El importe final del viaje fue mayor que lo pagado.'),
             ],
           ],
         ),

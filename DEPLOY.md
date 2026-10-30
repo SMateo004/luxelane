@@ -825,29 +825,31 @@ actualizar a una app que tiene que poder cobrar desde el primer minuto.
 7. **Reglas** al final (estado de pago legible por el pasajero dueño y
    el admin; auto-aceptación del chófer solo con pago confirmado).
 
-### Ventana de las apps antiguas (entre los pasos 3 y 6)
+### Apps antiguas durante el despliegue (H1)
 
-Una app anterior no tiene pantalla de pago: una reserva suya queda en
-`awaiting_payment` sin que el pasajero sepa que debe pagar. Con este orden
-eso **puede pasar** entre los pasos 3 y 6 (el pago ya está activo y
-`minAppVersion` aún no frena a las apps antiguas). Cómo se contiene:
+Una app anterior no tiene pantalla de pago: una reserva suya quedaría en
+`awaiting_payment` sin que el pasajero supiera que debe pagar. **Desde H1
+no pasa**: `createBooking` exige `channel`, que solo mandan las apps con
+pantalla de pago, y sin él responde `app_update_required` (la app antigua
+muestra «Actualiza la app»), aunque `minAppVersion` aún no esté subido.
+Consecuencias:
 
-- Entre los pasos 2 y 3 nadie puede reservar (`payments_unavailable`; la
-  app antigua muestra su error genérico, hallazgo E37): no se crea nada.
+- **Desde el paso 2, las apps nativas antiguas no pueden reservar** y ven
+  «Actualiza la app», aunque la versión nueva aún no esté en las tiendas
+  (paso 5). Por eso las apps nuevas deben estar aprobadas y listas para
+  publicar **antes** del paso 2, y el paso 5 hacerse lo antes posible.
+- Entre los pasos 2 y 3 tampoco reservan las apps nuevas
+  (`payments_unavailable`): no se crea nada.
 - La web antigua deja de existir en el paso 4 (se sirve la nueva), que va
-  justo después del 3.
-- Desde el paso 6 `minAppVersion` frena a las apps nativas antiguas al
-  cotizar y reservar (`app_update_required`).
-- Lo que se cree en la ventana aparece en Pagos → «Pendientes de pago»
-  (central puede avisar al pasajero) y, con `paymentWindowMinutes`, vence
-  solo sin cobrar nada ni ofrecerse a ningún chófer.
-- Para acortar la ventana: tener las apps aprobadas en las tiendas antes
-  del paso 2 y hacer los pasos 3 a 6 el mismo día.
+  justo después del 3; hasta entonces también recibe «Actualiza la app».
+- `minAppVersion` (paso 6) sigue haciendo falta: frena también al
+  cotizar y en el resto de llamadas que lo comprueban.
+- Si aun así quedara una reserva sin pagar, aparece en Pagos →
+  «Pendientes de pago» y, con `paymentWindowMinutes`, vence sola sin
+  cobrar nada ni ofrecerse a ningún chófer.
 
-Propuesta, **no implementada** (espera aprobación): que `createBooking`
-rechace con `app_update_required` las peticiones sin `channel` (solo las
-apps con pantalla de pago lo mandan, E38). Cerraría la ventana sin
-depender de `minAppVersion`.
+Quien cree reservas en el futuro (p. ej. `adminCreateBooking`, D21)
+también tiene que mandar `channel`; sin él, `createBooking` no crea nada.
 
 ### Conciliación diaria de pagos manuales
 

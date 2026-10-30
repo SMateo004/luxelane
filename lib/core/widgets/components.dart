@@ -535,10 +535,20 @@ class LuxSegmented<T> extends StatelessWidget {
 // ---------------------------------------------------------------------------
 
 class BookingStatusChip extends StatelessWidget {
-  const BookingStatusChip({super.key, required this.status});
+  const BookingStatusChip({
+    super.key,
+    required this.status,
+    this.label,
+    this.color,
+  });
   final BookingStatus status;
 
+  /// Texto y color propios (p. ej. el estado del pago en Mis viajes, E41).
+  final String? label;
+  final Color? color;
+
   Color get _color {
+    if (color != null) return color!;
     switch (status) {
       case BookingStatus.pending:
         return LuxColors.inkTertiary;
@@ -579,7 +589,7 @@ class BookingStatusChip extends StatelessWidget {
             ),
             const SizedBox(width: 6),
             Text(
-              status.displayLabel,
+              label ?? status.displayLabel,
               style: LuxTypography.caption.copyWith(
                 color: _color,
                 fontWeight: FontWeight.w600,

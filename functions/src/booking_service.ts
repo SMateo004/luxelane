@@ -13,7 +13,7 @@ import type { FareRule } from './pricing';
 import { loadPaymentSettings } from './payment_config';
 import { paymentSummary, reservePaymentRef, writeInitialPayment } from './payment_booking';
 import { paymentStateRef } from './payment_model';
-import { updateRequired } from './app_version';
+import { storeLinks, updateRequired } from './app_version';
 import { airportFor, areaLabel, cityOf, destinationOk, originOk, PlaceIn } from './service_area';
 
 export interface BookingDeps {
@@ -130,11 +130,12 @@ function parse<T>(schema: { safeParse: (d: unknown) => { success: true; data: T 
 }
 
 /** Corta antes de cotizar o reservar si la app es más vieja que el mínimo. */
-async function requireSupportedApp(db: admin.firestore.Firestore, data: unknown): Promise<void> {
+async function requireSupportedApp(db: admin.firestore.Firestore, data: unknown): Promise<Record<string, unknown>> {
   const global = (await db.collection('config').doc('global').get()).data() ?? {};
   const appVersion = data && typeof data === 'object' ? (data as Record<string, unknown>).appVersion : undefined;
   const update = updateRequired(global, appVersion);
   if (update) throw bookingError('failed-precondition', 'app_update_required', update);
+  return global;
 }
 
 async function requireActiveRider(db: admin.firestore.Firestore, uid: string | undefined) {
@@ -179,8 +180,16 @@ function existingResponse(snap: admin.firestore.DocumentSnapshot, uid: string,
 
 export async function createBooking(deps: BookingDeps, uid: string | undefined, data: unknown) {
   const user = await requireActiveRider(deps.db, uid);
-  await requireSupportedApp(deps.db, data);
+  const global = await requireSupportedApp(deps.db, data);
   const input = parse<CreateInput>(createSchema, data);
+  // H1: solo las apps con pantalla de pago mandan channel (E38). Una app
+  // anterior no la tiene: su reserva quedaría sin pagar. Se le pide
+  // actualizar con el mismo aviso que minAppVersion, sin depender de él.
+  // Quien cree reservas en el futuro (p. ej. adminCreateBooking, D21)
+  // también tiene que mandarlo.
+  if (input.channel === undefined) {
+    throw bookingError('failed-precondition', 'app_update_required', { missing: 'channel', ...storeLinks(global) });
+  }
   const ref = deps.db.collection('bookings').doc(bookingIdFor(input.requestId));
   // Reintento de una solicitud que ya se creó (p. ej. se perdió la
   // respuesta): misma respuesta, sin recalcular ni duplicar.

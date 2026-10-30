@@ -36,6 +36,28 @@ const kDriverLiveStatuses = {
   BookingStatus.inProgress,
 };
 
+/// Con el viaje en curso, el comprobante va plegado y debajo del chófer:
+/// no desplaza la tarjeta del chófer ni el código de recogida (E40).
+bool receiptBelowDriver(BookingStatus? status) =>
+    kDriverLiveStatuses.contains(status);
+
+/// Titular de una reserva cancelada. La retención está en el pago (A7) y
+/// la muestra el comprobante: el titular no la repite (E43). Sin estado de
+/// pago (reservas antiguas), el recargo guardado en la reserva.
+String cancelledMessage(BookingPayment? payment, double? legacyFee) {
+  const base = 'Esta reserva fue cancelada.';
+  if (payment != null) {
+    final retained = BookingPayment.bs(payment.amountRetained);
+    // Sin comprobante (no hubo pago) no hay retención que mostrar.
+    if (payment.hasReceipt || retained <= 0) return base;
+    return '$base Retención por cancelación: ${LuxFormat.money(retained)}.';
+  }
+  final fee = legacyFee ?? 0;
+  return fee > 0
+      ? '$base Retención por cancelación: ${LuxFormat.money(fee)}.'
+      : base;
+}
+
 /// «Llamar a tu chófer» solo dentro de la ventana activa y con teléfono.
 bool showCallDriver(BookingStatus? status, String? phone) =>
     kDriverLiveStatuses.contains(status) && (phone ?? '').isNotEmpty;
@@ -185,9 +207,13 @@ class _RideScreenState extends State<RideScreen> {
       );
     }
     if (!p.hasReceipt) return const SizedBox.shrink();
+    final live = receiptBelowDriver(_status);
     return Padding(
-      padding: const EdgeInsets.only(bottom: LuxSpacing.md),
-      child: PaymentReceiptCard(payment: p),
+      padding: EdgeInsets.only(
+        top: live ? LuxSpacing.md : 0,
+        bottom: live ? 0 : LuxSpacing.md,
+      ),
+      child: PaymentReceiptCard(payment: p, collapsed: live),
     );
   }
 
@@ -219,15 +245,7 @@ class _RideScreenState extends State<RideScreen> {
       case BookingStatus.completed:
         return 'Has llegado. Gracias por viajar con Luxelane.';
       case BookingStatus.cancelled:
-        // La retención está en el pago (A7); las reservas antiguas
-        // guardaban el recargo en la propia reserva.
-        final retained = _payment != null
-            ? BookingPayment.bs(_payment!.amountRetained)
-            : (_booking!.cancellationFee ?? 0);
-        return retained > 0
-            ? 'Esta reserva fue cancelada. Retención por cancelación: '
-                '${LuxFormat.money(retained)}.'
-            : 'Esta reserva fue cancelada.';
+        return cancelledMessage(_payment, _booking!.cancellationFee);
       case BookingStatus.noShow:
         return 'Tu chófer no te encontró en el punto de recogida. Central '
             'fue avisada.';
@@ -445,9 +463,18 @@ class _RideScreenState extends State<RideScreen> {
                   message: _statusMessage,
                   pickup: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [_pickupSection(), _paymentSection()],
+                    children: [
+                      _pickupSection(),
+                      if (!receiptBelowDriver(_status)) _paymentSection(),
+                    ],
                   ),
-                  driver: _driverSection(),
+                  driver: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _driverSection(),
+                      if (receiptBelowDriver(_status)) _paymentSection(),
+                    ],
+                  ),
                   actions: _actions(),
                   preferences:
                       _booking?.riderPreferences ?? RidePreferences.none,
@@ -483,8 +510,9 @@ class _RideScreenState extends State<RideScreen> {
                           Text(_statusMessage, style: LuxTypography.bodyMedium),
                           const SizedBox(height: LuxSpacing.lg),
                           _pickupSection(),
-                          _paymentSection(),
+                          if (!receiptBelowDriver(_status)) _paymentSection(),
                           _driverSection(),
+                          if (receiptBelowDriver(_status)) _paymentSection(),
                           const Spacer(),
                           _actions(),
                         ],
