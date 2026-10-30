@@ -12,13 +12,15 @@ export const REDACTED = '[redacted]';
 
 /**
  * Campos que nunca se registran, por nombre: contacto, credenciales, el
- * código de recogida y la ubicación.
+ * código de recogida, la ubicación y las preferencias del pasajero (nota,
+ * URL de su lista de música).
  */
 const SENSITIVE_KEY = new RegExp(
   '^(e-?mail|phone(number)?|tel|whatsapp|password|secret|client_?secret|' +
   '(fcm|id|access|refresh|app_?check)?_?tokens?|authorization|api_?key|' +
   'code|pickup_?code|lat|lng|lon|latitude|longitude|location|last_?location|' +
-  'coords?|address|card(_?number)?|pan|cvc)$', 'i');
+  'coords?|address|card(_?number)?|pan|cvc|' +
+  'notes?|playlist_?url|url|(trip_?|ride_?|rider_?)?preferences)$', 'i');
 
 /** Algoritmo de Luhn: distingue una tarjeta de un número largo cualquiera. */
 function luhn(digits: string): boolean {
@@ -46,6 +48,8 @@ const PATTERNS: [RegExp, string | ((m: string) => string)][] = [
   [/-?\d{1,3}\.\d{3,}\s*[,;/ ]\s*-?\d{1,3}\.\d{3,}/g, '[coords]'],
   // Tarjetas: 13 a 19 cifras (con espacios o guiones) que pasan Luhn.
   [/\b\d(?:[ -]?\d){12,18}\b/g, (m) => (luhn(m.replace(/\D/g, '')) ? '[card]' : m)],
+  // Enlaces (la lista de música del pasajero y cualquier otro).
+  [/\bhttps?:\/\/[^\s"'<>]+/gi, '[url]'],
   // Teléfonos con prefijo internacional.
   [/\+\d[\d ().-]{6,18}\d/g, '[phone]'],
 ];

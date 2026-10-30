@@ -63,6 +63,9 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   syncEmailVerification: per10min(20),
   // Al registrarse o al publicarse una versión nueva de los términos.
   acceptTerms: per10min(10),
+  // Preferencias del perfil: se guardan al tocar «Guardar».
+  updatePreferences: per10min(20),
+  getPreferenceOptions: per10min(30),
   // Al abrir la app del chófer.
   registerDriverDevice: per10min(20),
   // Escrituras de admin (Parte A).

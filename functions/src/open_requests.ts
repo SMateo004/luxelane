@@ -1,8 +1,11 @@
 /**
  * Solicitudes abiertas que ve un chófer verificado antes de aceptar.
  * Solo lo necesario para decidir: nada de nombres, contactos, direcciones
- * exactas, notas ni preferencias del pasajero.
+ * exactas, notas ni preferencias del pasajero. La única excepción son los
+ * idiomas que prefiere en su chófer (lista cerrada, sin datos personales),
+ * para que el chófer decida si acepta.
  */
+import { DRIVER_LANGUAGES, DriverLanguage } from './preferences';
 
 interface GeoLike {
   latitude: number;
@@ -25,6 +28,7 @@ export interface BookingForRequest {
   origin?: { coordinates?: GeoLike };
   destination?: { coordinates?: GeoLike };
   releasedBy?: unknown;
+  preferredDriverLanguages?: unknown;
 }
 
 export interface ApproxPoint {
@@ -53,6 +57,8 @@ export interface OpenRequest {
    * opacos; los ven solo chóferes verificados.
    */
   releasedBy: string[];
+  /** Idiomas que el pasajero prefiere en su chófer (es, en, pt). */
+  preferredDriverLanguages: DriverLanguage[];
 }
 
 /** Dos decimales: unos 1,1 km. Basta para la zona, no para la puerta. */
@@ -102,6 +108,9 @@ export function buildOpenRequest(b: BookingForRequest): OpenRequest {
       : null,
     releasedBy: Array.isArray(b.releasedBy)
       ? [...new Set(b.releasedBy.filter((v): v is string => typeof v === 'string'))]
+      : [],
+    preferredDriverLanguages: Array.isArray(b.preferredDriverLanguages)
+      ? DRIVER_LANGUAGES.filter((l) => (b.preferredDriverLanguages as unknown[]).includes(l))
       : [],
   };
 }

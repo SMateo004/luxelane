@@ -37,6 +37,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `bookings/{id}` | sí | · · · · · | L Li · · · | · · · · · | L · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/tracking` | sí | · · · · · | L Li · · · | · · · · · | L Li C A · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/driverContact` | sí | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `bookings/{id}/driverView` | nueva | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/private` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · |
 | `bookings/{id}/events` | sí | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/eventLocations` | sí | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
@@ -70,6 +71,7 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `bookings/{id}`: Objetivo bookings/activa (de ana, asignada a asig, en camino); bloqueado: activaBloq, asignada a él. Listar = reservas de ana (bloqueado: las suyas). Actualizar = cancelar, que solo hace el servidor (cancelBooking, B7).
 - `bookings/{id}/tracking`: Ubicación del chófer de activa (bloqueado: de activaBloq).
 - `bookings/{id}/driverContact`: Teléfono del chófer de activa (bloqueado: de activaBloq). Lo escribe el servidor.
+- `bookings/{id}/driverView`: Preferencias del pasajero para el viaje activa (bloqueado: activaBloq). Las escribe createBooking; el chófer asignado las lee entre confirmed e in_progress (ventana en preferences.rules.ts).
 - `bookings/{id}/private`: Sal del código de recogida: nadie desde el cliente, ni el admin.
 - `bookings/{id}/events`: Registro de transiciones de activa (bloqueado: de activaBloq). Solo anexa el servidor.
 - `bookings/{id}/eventLocations`: Ubicación del chófer en cada evento: solo la lee el admin.
@@ -184,6 +186,18 @@ estado de pago (reservas anteriores) se deniega. Test:
 `bookings.rules.ts` («sin pago confirmado nadie la acepta desde el
 cliente»). Sin las reglas nuevas, los tests de la matriz dan `6 failed,
 1279 passed, 1285 total` (4 celdas y las 2 comprobaciones del documento).
+
+Preferencias del pasajero (cierre/preferencias, A3): fila nueva
+`bookings/{id}/driverView` (copia por reserva que escribe createBooking).
+Celdas permitidas: pasajero dueño, chófer verificado asignado y admin, leer
+y listar (6). Con las reglas anteriores (5443ec1) las 6 fallan: no había
+`match` para la subcolección. La ventana del chófer (confirmed a
+in_progress; no antes, ni al completarse, cancelarse o liberarse), el chófer
+ajeno, el bloqueado y que nadie escriba están en `preferences.rules.ts`.
+`users/{uid}`: el dueño ya no escribe `tripPreferences` ni
+`ridePreferences` (solo updatePreferences), ni el alta trae
+`tripPreferences`; con las reglas anteriores esos 3 tests fallan. Total con
+las reglas anteriores: `16 failed, 1610 passed, 1626 total`.
 
 La revisión de todas las celdas permitidas, con ⚠ en las que parecen más
 amplias de lo necesario, está en

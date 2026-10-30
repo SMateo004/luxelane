@@ -141,6 +141,20 @@ export const SPECS: Spec[] = [
     note: 'Teléfono del chófer de activa (bloqueado: de activaBloq). Lo escribe el servidor.',
   },
   {
+    name: 'bookings/{id}/driverView',
+    covered: false,
+    target: (r) => `bookings/${r === 'bloq' ? 'activaBloq' : 'activa'}/driverView/preferences`,
+    list: (db, r) => query(collection(db, 'bookings', r === 'bloq' ? 'activaBloq' : 'activa', 'driverView')),
+    create: (r) => ({
+      path: `bookings/${r === 'bloq' ? 'activaBloq' : 'activa'}/driverView/otro`,
+      data: { conversation: 'quiet' },
+    }),
+    update: () => ({ note: 'Cambiada desde el cliente' }),
+    expect: { ...allRoles(none), ana: 'SSNNN', asig: 'SSNNN', admin: 'SSNNN' },
+    note: 'Preferencias del pasajero para el viaje activa (bloqueado: activaBloq). Las escribe createBooking; ' +
+      'el chófer asignado las lee entre confirmed e in_progress (ventana en preferences.rules.ts).',
+  },
+  {
     name: 'bookings/{id}/private',
     covered: true,
     target: () => 'bookings/activa/private/pickup',
@@ -445,6 +459,11 @@ export async function seedMatrix(db: Firestore): Promise<void> {
   await put('bookings/activaBloq/tracking/driver', { lat: -17.7, lng: -63.1, updatedAt: Timestamp.now() });
   await put('bookings/activaBloq/driverContact/phone', { phone: '+59170000556' });
   await put('bookings/activa/private/pickup', { salt: 'sal', attempts: 0 });
+  for (const b of ['activa', 'activaBloq']) {
+    await put(`bookings/${b}/driverView/preferences`, {
+      riderId: 'ana', conversation: 'quiet', note: 'Nota', preferredDriverLanguages: ['es'],
+    });
+  }
   await put('bookings/activa/eventLocations/e1', { lat: -17.7, lng: -63.1 });
   await put('bookings/activa/eventDetails/e1', { reason: 'Motivo del admin', farFromPickup: true });
   await put('bookings/activa/adminOnly/incidents', { incidentOpen: true });

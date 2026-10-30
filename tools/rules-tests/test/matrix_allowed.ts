@@ -12,7 +12,7 @@ export const ALLOWED: Record<string, Cells> = {
   'users/{uid}': {
     ana: {
       leer: { why: 'el usuario lee su propio perfil' },
-      actualizar: { why: 'el usuario edita su nombre, teléfono, foto, preferencias y tokens de push (no rol, isActive, stripeCustomerId ni isVerified)' },
+      actualizar: { why: 'el usuario edita su nombre, teléfono, foto y tokens de push (no rol, isActive, stripeCustomerId, isVerified ni preferencias: esas, updatePreferences)' },
     },
     bloq: {
       leer: { why: 'una cuenta bloqueada sigue leyendo su perfil (la app lo usa para detectar el bloqueo y cerrar sesión)' },
@@ -87,6 +87,17 @@ export const ALLOWED: Record<string, Cells> = {
       listar: { why: 'igual que leer' },
     },
     asig: { leer: { why: 'el chófer ve su propio teléfono' }, listar: { why: 'igual que leer' } },
+    admin: { leer: { why: 'soporte' }, listar: { why: 'soporte' } },
+  },
+  'bookings/{id}/driverView': {
+    ana: {
+      leer: { why: 'el pasajero dueño ve las preferencias que dejó para ese viaje' },
+      listar: { why: 'igual que leer' },
+    },
+    asig: {
+      leer: { why: 'el chófer asignado y activo ve las preferencias del viaje que atiende, solo entre confirmed e in_progress' },
+      listar: { why: 'igual que leer' },
+    },
     admin: { leer: { why: 'soporte' }, listar: { why: 'soporte' } },
   },
   'bookings/{id}/events': {

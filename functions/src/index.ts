@@ -6,6 +6,7 @@ import { onDocumentCreated, onDocumentUpdated, onDocumentWritten } from 'firebas
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { defineBoolean, defineSecret } from 'firebase-functions/params';
 import * as bookingService from './booking_service';
+import * as preferences from './preferences';
 import { reconcileOpenRequests } from './reconcile';
 import { resolveAdminAlert } from './alerts';
 import * as tripFlow from './trip_flow';
@@ -62,6 +63,16 @@ export const createBooking = secureCallable('createBooking', { secrets: [MAPS_SE
     await identity.requireCurrentTerms(db, req.auth.uid);
   }
   return bookingService.createBooking(bookingDeps(), req.auth?.uid, req.data);
+});
+
+/** Preferencias del perfil para el chófer: solo por aquí, nunca desde el cliente. */
+export const updatePreferences = secureCallable('updatePreferences', {}, (req) =>
+  preferences.updatePreferences({ db }, req.auth?.uid, req.data));
+
+/** Si la app ofrece el campo de la lista de música (config/ops.playlistHosts). */
+export const getPreferenceOptions = secureCallable('getPreferenceOptions', {}, (req) => {
+  parseInput(schema.getPreferenceOptions, req.data);
+  return preferences.preferenceOptions({ db }, req.auth?.uid);
 });
 
 const identityDeps = (): identity.IdentityDeps => ({ db, auth: identity.realAuth() });

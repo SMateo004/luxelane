@@ -11,14 +11,14 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-131 celdas permitidas, 2 con ⚠.
+137 celdas permitidas, 2 con ⚠.
 
 ## `users/{uid}`
 
 **pasajero dueño**
 
 - leer: el usuario lee su propio perfil.
-- actualizar: el usuario edita su nombre, teléfono, foto, preferencias y tokens de push (no rol, isActive, stripeCustomerId ni isVerified).
+- actualizar: el usuario edita su nombre, teléfono, foto y tokens de push (no rol, isActive, stripeCustomerId, isVerified ni preferencias: esas, updatePreferences).
 
 **usuario bloqueado**
 
@@ -121,6 +121,23 @@ el documento que usa cada fila están en MATRIZ_ACCESO.md.
 **chófer verif. asignado**
 
 - leer: el chófer ve su propio teléfono.
+- listar: igual que leer.
+
+**admin**
+
+- leer: soporte.
+- listar: soporte.
+
+## `bookings/{id}/driverView`
+
+**pasajero dueño**
+
+- leer: el pasajero dueño ve las preferencias que dejó para ese viaje.
+- listar: igual que leer.
+
+**chófer verif. asignado**
+
+- leer: el chófer asignado y activo ve las preferencias del viaje que atiende, solo entre confirmed e in_progress.
 - listar: igual que leer.
 
 **admin**

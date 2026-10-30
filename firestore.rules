@@ -71,9 +71,14 @@ service cloud.firestore {
     // isVerified: la verificación no se la da uno mismo (matriz, H2).
     // phoneVerified: no hay proveedor de SMS; el teléfono no se verifica.
     // emailVerifiedAt: lo escribe syncEmailVerification (H6).
+    // tripPreferences: solo updatePreferences (listas cerradas y nota
+    // saneada). ridePreferences, de las apps anteriores, ya no se cambia
+    // desde el cliente (el alta la sigue trayendo con los valores por
+    // defecto; el servidor solo lee de ahí valores de la lista cerrada).
     function privilegedUserFields() {
       return ['role', 'isActive', 'stripeCustomerId', 'isVerified',
-        'phoneVerified', 'emailVerifiedAt', 'terms'];
+        'phoneVerified', 'emailVerifiedAt', 'terms', 'tripPreferences',
+        'ridePreferences'];
     }
 
     // A self-created profile is always an active rider with no Stripe link,
@@ -87,6 +92,7 @@ service cloud.firestore {
         d.get('phoneVerified', false) == false &&
         !('emailVerifiedAt' in d) &&
         !('terms' in d) &&
+        !('tripPreferences' in d) &&
         d.get('stripeCustomerId', null) == null &&
         d.get('id', uid) == uid;
     }
@@ -201,8 +207,9 @@ service cloud.firestore {
           request.resource.data.updatedAt < request.time + duration.value(15, 'm'));
     }
 
-    // La reserva completa (direcciones, notas, preferencias, datos del
-    // pasajero) solo la leen el pasajero, el chófer asignado y el admin. Los
+    // La reserva completa (direcciones, notas, datos del pasajero) solo la
+    // leen el pasajero, el chófer asignado y el admin. Las preferencias para
+    // el chófer no van aquí: están en driverView, con su ventana. Los
     // chóferes ven las pendientes en /openRequests, sin datos personales.
     match /bookings/{bookingId} {
       // El chófer asignado solo con la cuenta activa: uno bloqueado deja de
@@ -295,6 +302,27 @@ service cloud.firestore {
               ['driver_arriving', 'driver_arrived', 'verified', 'in_progress']) ||
           (contactBooking().get('driverId', null) == request.auth.uid &&
             isActiveUser()) ||
+          isAdmin()
+        );
+        allow write: if false;
+      }
+
+      // Preferencias del pasajero para este viaje (copia que guarda
+      // createBooking; cambiar el perfil después no la cambia). Las lee el
+      // pasajero dueño, el admin y el chófer asignado y activo solo desde
+      // que se le asigna hasta que termina el viaje (confirmed a
+      // in_progress): ni antes, ni al completarse, ni tras liberarla.
+      match /driverView/{docId} {
+        function viewBooking() {
+          return get(/databases/$(database)/documents/bookings/$(bookingId)).data;
+        }
+
+        allow read: if isAuthenticated() && (
+          viewBooking().riderId == request.auth.uid ||
+          (isDriver() && isActiveUser() &&
+            viewBooking().get('driverId', null) == request.auth.uid &&
+            viewBooking().status in ['confirmed', 'driver_arriving',
+              'driver_arrived', 'verified', 'in_progress']) ||
           isAdmin()
         );
         allow write: if false;
