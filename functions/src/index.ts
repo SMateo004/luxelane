@@ -560,8 +560,15 @@ export const refundPayment = secureCallable('refundPayment', withStripe, async (
 // ---------------------------------------------------------------------------
 
 /** Cada usuario solo opera sobre su propio cliente de Stripe. */
+// La cuenta de chófer no es la de pasajero (A10): no crea ni usa un perfil
+// de pagos, aunque lo tuviera de cuando era pasajero.
+function rejectDriverAccount(data: Record<string, unknown> | undefined): void {
+  if (data?.role === 'driver') throw err.permissionDenied('driver_account');
+}
+
 async function requireOwnCustomer(uid: string, customerId: string): Promise<void> {
   const user = await db.collection('users').doc(uid).get();
+  rejectDriverAccount(user.data());
   if (user.data()?.stripeCustomerId !== customerId) {
     throw err.permissionDenied('not_your_payment_profile');
   }
@@ -726,6 +733,7 @@ async function ensureStripeCustomerFor(uid: string): Promise<string> {
   const snap = await ref.get();
   const data = snap.data();
   if (!data) throw err.failedPrecondition('no_payment_profile');
+  rejectDriverAccount(data);
   if (data.stripeCustomerId) return data.stripeCustomerId as string;
 
   const created = await stripe.createCustomer(data.email, data.displayName);
@@ -1001,6 +1009,17 @@ const regDeps = (): registration.RegDeps => {
     },
   };
 };
+
+/**
+ * El aspirante (cuenta de pasajero activa, correo verificado, sin reservas)
+ * abre su solicitud y pasa a chófer sin verificar (A10). Sin rol exigido:
+ * quien la llama aún es pasajero.
+ */
+export const startDriverApplication = secureCallable('startDriverApplication', {}, (req) => {
+  parseInput(schema.startDriverApplication, req.data);
+  return registration.startDriverApplication(identityDeps(), req.auth?.uid,
+    req.auth?.token as unknown as Record<string, unknown> | undefined);
+});
 
 /** Guarda un paso del registro (datos personales o vehículo). */
 export const saveDriverStep = secureCallable('saveDriverStep', {}, (req) =>

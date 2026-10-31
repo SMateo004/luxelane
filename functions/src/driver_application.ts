@@ -25,6 +25,7 @@ import { adminSetVehicleActive, adminVerifyDriver } from './admin_ops';
 import { VEHICLE_CLASSES } from './fare';
 import { SNIFF_BYTES, sniffType, SniffedType } from './file_sniff';
 import { AppLocale, localeOf, notice, NoticeType } from './i18n';
+import { AuthAdmin, requireVerifiedEmail } from './identity';
 import { logger } from './logger';
 import { opsConfig } from './ops_config';
 import { docId, parseInput } from './schemas';
@@ -227,6 +228,72 @@ async function requireDriver(db: admin.firestore.Firestore, uid: string | undefi
   const u = (await db.collection('users').doc(uid).get()).data();
   if (!u || u.role !== 'driver' || u.isActive === false) throw regError('permission-denied', 'not_a_driver');
   return uid;
+}
+
+export interface StartDeps {
+  db: admin.firestore.Firestore;
+  auth: AuthAdmin;
+  now?: () => number;
+}
+
+/**
+ * El aspirante abre su solicitud (A10): una cuenta de pasajero activa, con
+ * el correo verificado y sin reservas, pasa a role=driver por el mismo
+ * camino que setUserRole (users/{uid}.role, claim y auditoría) y queda con
+ * driverApplications/{uid} en draft y un perfil sin verificar
+ * (documentsVerified false). Es de un solo sentido: la cuenta de chófer no
+ * es la de pasajero. Idempotente: si ya es chófer, devuelve su solicitud
+ * (y la crea si el admin le dio el rol sin solicitud).
+ *
+ * No revoca las sesiones (setUserRole sí): la app pide un token nuevo
+ * (getIdToken(true)) para llevar el claim nuevo.
+ */
+export async function startDriverApplication(deps: StartDeps, uid: string | undefined,
+  token: Record<string, unknown> | undefined) {
+  if (!uid) throw new HttpsError('unauthenticated', 'unauthenticated', { reason: 'unauthenticated' });
+  requireVerifiedEmail(token);
+  const db = deps.db;
+  const now = ts(deps.now?.() ?? Date.now());
+  const uRef = db.collection('users').doc(uid);
+  const aRef = appRef(db, uid);
+  const profileRef = db.collection('driverProfiles').doc(uid);
+
+  const result = await db.runTransaction(async (tx) => {
+    const [u, app, profile] = await Promise.all([tx.get(uRef), tx.get(aRef), tx.get(profileRef)]);
+    const user = u.data();
+    if (!user) throw regError('not-found', 'profile_not_found');
+    if (user.isActive === false) throw regError('permission-denied', 'inactive_user');
+    if (user.role === 'admin') throw regError('permission-denied', 'admin_account');
+    if (user.role !== 'rider' && user.role !== 'driver') throw regError('permission-denied', 'not_a_rider');
+    if (user.role === 'driver' && app.exists) {
+      return { status: app.data()?.status as AppStatus, created: false, roleChanged: false };
+    }
+    if (user.role === 'rider') {
+      // Sin reservas, de ningún estado: el historial de pasajero no pasa a
+      // una cuenta de chófer.
+      const booked = await tx.get(db.collection('bookings').where('riderId', '==', uid).limit(1));
+      if (!booked.empty) throw regError('failed-precondition', 'has_bookings');
+      tx.update(uRef, { role: 'driver', roleUpdatedAt: now });
+    }
+    tx.create(aRef, { driverId: uid, status: 'draft', step: 'personal', createdAt: now, updatedAt: now });
+    if (!profile.exists) {
+      tx.create(profileRef, { userId: uid, documentsVerified: false, isAvailable: false, online: false });
+    }
+    writeAudit(tx, db, {
+      actor: { adminId: uid, adminEmail: null }, actorRole: user.role as string,
+      operation: 'start_driver_application', collection: 'users', docId: uid, targetType: 'user',
+      changes: user.role === 'rider' ? { role: { before: 'rider', after: 'driver' } } : {},
+      reason: null, details: user.role === 'rider' ? 'rider → driver (solicitud de chófer)' : 'Solicitud de chófer abierta',
+    });
+    return { status: 'draft' as AppStatus, created: true, roleChanged: user.role === 'rider' };
+  });
+
+  // Claim después de Firestore: si falla, al reintentar se vuelve a fijar.
+  const authUser = await deps.auth.getUser(uid);
+  if (authUser.customClaims?.role !== 'driver') {
+    await deps.auth.setCustomUserClaims(uid, { ...(authUser.customClaims ?? {}), role: 'driver' });
+  }
+  return { status: result.status, created: result.created, roleChanged: result.roleChanged, refreshToken: true };
 }
 
 /** Guarda un paso; reanudable: cada paso se puede volver a enviar. */

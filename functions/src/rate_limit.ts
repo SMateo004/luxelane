@@ -67,6 +67,8 @@ export const RATE_LIMITS: Record<string, RateRule> = {
   updatePreferences: per10min(20),
   getPreferenceOptions: per10min(30),
   // Registro de chóferes: pasos y subidas con reintentos; envío, pocas.
+  // Abrir la solicitud cambia el rol: pocas veces.
+  startDriverApplication: perHour(5),
   saveDriverStep: per10min(30),
   getDriverApplication: per10min(60),
   registerDocumentUpload: per10min(60),

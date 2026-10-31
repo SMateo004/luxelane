@@ -33,6 +33,7 @@ export const callableSchemas = {
   getPreferenceOptions: noInput,
   getDriverApplication: noInput,
   submitApplication: noInput,
+  startDriverApplication: noInput,
   acceptTerms: z.strictObject({
     version: z.string().trim().min(1).max(40).optional(),
     appVersion: z.string().trim().min(1).max(40),

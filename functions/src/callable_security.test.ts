@@ -140,6 +140,12 @@ describe('APP_CHECK_ENFORCE (parámetro de despliegue)', () => {
     '%s exige rol chófer', (name) => {
       expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ role: 'driver' }));
     });
+  it('startDriverApplication no exige rol (la llama un pasajero) y tiene límite de tasa', () => {
+    const meta = (index as Exported).startDriverApplication[SECURED_MARK];
+    expect(meta).toEqual(expect.objectContaining({ name: 'startDriverApplication' }));
+    expect(meta.role).toBeUndefined();
+    expect(RATE_LIMITS.startDriverApplication).toBeDefined();
+  });
   it.each(['adminReviewDocument', 'adminDecideApplication', 'adminAllowDriverOnline', 'adminPurgeDriverDocuments']
     .map((n) => [n]))('%s exige inicio de sesión reciente', (name) => {
     expect((index as Exported)[name][SECURED_MARK]).toEqual(expect.objectContaining({ recentAuthSeconds: 300 }));

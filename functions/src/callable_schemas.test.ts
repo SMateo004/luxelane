@@ -230,6 +230,7 @@ const CASES: Record<string, Case> = {
   getPreferenceOptions: { schema: c.getPreferenceOptions, valid: null, wrongType: 'sí', extreme: [[]] },
   getDriverApplication: { schema: c.getDriverApplication, valid: null, wrongType: 'sí', extreme: [[]] },
   submitApplication: { schema: c.submitApplication, valid: null, wrongType: 'sí', extreme: [[]] },
+  startDriverApplication: { schema: c.startDriverApplication, valid: null, wrongType: 'sí', extreme: [[]] },
   saveDriverStep: {
     schema: stepSchema,
     valid: { step: 'vehicle', make: 'Marca', model: 'Modelo', year: 2022, color: 'black', plate: 'abc-1234',
