@@ -344,6 +344,63 @@ class AppLocalizationsEn extends AppLocalizations {
       'We could not complete the verification. Please try again.';
 
   @override
+  String get businessEyebrow => 'For Business';
+
+  @override
+  String get businessTitle => 'Corporate travel, redefined.';
+
+  @override
+  String get businessLead =>
+      'Private chauffeurs for your team and your guests, with centralized billing. Tell us what you need and we will get back to you within one business day.';
+
+  @override
+  String get businessSendError =>
+      'We could not send your request. Please try again.';
+
+  @override
+  String get businessRequired => 'Required field';
+
+  @override
+  String businessThanks(String name, String email) {
+    return 'Thank you, $name. We received your request and will write to you at $email.';
+  }
+
+  @override
+  String get businessPerkBilling =>
+      'Centralized monthly billing for your company';
+
+  @override
+  String get businessPerkPriority =>
+      'Priority bookings for executives and guests';
+
+  @override
+  String get businessCompany => 'Company';
+
+  @override
+  String get businessName => 'Your name';
+
+  @override
+  String get businessEmail => 'Work email';
+
+  @override
+  String get businessEmailInvalid => 'Enter a valid email';
+
+  @override
+  String get businessPhone => 'Phone';
+
+  @override
+  String get businessTravellers => 'How many people would travel?';
+
+  @override
+  String get businessTravellersOver200 => 'More than 200';
+
+  @override
+  String get businessMessage => 'Tell us what you need (optional)';
+
+  @override
+  String get businessSubmit => 'Send request';
+
+  @override
   String get formatToday => 'Today';
 
   @override
@@ -924,6 +981,295 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get driverNavProfile => 'Profile';
+
+  @override
+  String get homePickOriginTitle => 'Select pickup point';
+
+  @override
+  String get homePickDestinationTitle => 'Select destination';
+
+  @override
+  String get homeDestinationOtherCity =>
+      'The destination was in another city. Choose one in the pickup city.';
+
+  @override
+  String get homeEnterPickup => 'Enter a pickup point';
+
+  @override
+  String homePickupMoved(String when) {
+    return 'That time is no longer possible: we moved it to $when. Check it and continue.';
+  }
+
+  @override
+  String get homeEnterDestination => 'Enter a destination';
+
+  @override
+  String get homeLocationUnavailable =>
+      'We could not use your location. Allow location access in your browser or phone settings, or choose the point on the map.';
+
+  @override
+  String get homeMyProfile => 'My profile';
+
+  @override
+  String get homeSeeVehicles => 'See vehicles and prices';
+
+  @override
+  String homeHourlyFrom(int hours, String place) {
+    return '$hours h from $place';
+  }
+
+  @override
+  String get homeNextTripSemantics => 'View your next trip';
+
+  @override
+  String get homeNextTripEyebrow => 'YOUR NEXT TRIP';
+
+  @override
+  String get homePickupLabel => 'Pickup point';
+
+  @override
+  String get homePickupHint => 'Pickup';
+
+  @override
+  String get homeUseMyLocation => 'Use my location';
+
+  @override
+  String get homeDestinationLabel => 'Destination';
+
+  @override
+  String get homeDestinationHint => 'Where are you going?';
+
+  @override
+  String get homeChooseOnMap => 'Choose on the map';
+
+  @override
+  String get homeRepeatLast => 'Repeat last trip';
+
+  @override
+  String homeRouteSummary(String km, int minutes) {
+    return '$km km · $minutes min';
+  }
+
+  @override
+  String homePreferredClass(String vehicleClass) {
+    return 'Your $vehicleClass';
+  }
+
+  @override
+  String get homePickupDateHelp => 'PICKUP DATE';
+
+  @override
+  String get homePickupTimeHelp => 'PICKUP TIME';
+
+  @override
+  String get homePickerCancel => 'Cancel';
+
+  @override
+  String get homePickerNext => 'Next';
+
+  @override
+  String get homePickerDone => 'Done';
+
+  @override
+  String get homeChangePickupTime => 'Change pickup date and time';
+
+  @override
+  String homeAsap(String time) {
+    return 'As soon as possible · $time';
+  }
+
+  @override
+  String get homeSchedule => 'Schedule';
+
+  @override
+  String get homeDuration => 'Duration';
+
+  @override
+  String get homeWebHeadlineStart => 'Your chauffeur ';
+
+  @override
+  String get homeWebHeadlineEnd => 'awaits you.';
+
+  @override
+  String get homeWebPickup => 'PICKUP';
+
+  @override
+  String get homeWebWhereAreYou => 'Where are you?';
+
+  @override
+  String get homeWebDestination => 'DESTINATION';
+
+  @override
+  String get homeWebDuration => 'DURATION';
+
+  @override
+  String get homeWebDateTime => 'DATE AND TIME';
+
+  @override
+  String get homeWebChangeLocation => 'CHANGE LOCATION';
+
+  @override
+  String get homeWebOneWay => 'One way';
+
+  @override
+  String get homeWebHourly => 'By the hour';
+
+  @override
+  String get homeWebSeePrices => 'SEE PRICES';
+
+  @override
+  String get homeWebConfirm => 'CONFIRM';
+
+  @override
+  String homeWebHours(int hours) {
+    String _temp0 = intl.Intl.pluralLogic(
+      hours,
+      locale: localeName,
+      other: '$hours hours',
+      one: '1 hour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get homeWebMarqueeFixedPrices => 'Fixed Prices';
+
+  @override
+  String get homeWebMarqueeChauffeurs => 'Professional Chauffeurs';
+
+  @override
+  String get homeWebMarqueeFleet => 'Premium Fleet';
+
+  @override
+  String get homeWebMarqueeAirport => 'Airport Transfers';
+
+  @override
+  String get homeWebMarqueeCorporate => 'Corporate Travel';
+
+  @override
+  String get homeWebFleetEyebrow => 'Our Fleet';
+
+  @override
+  String get homeWebFleetTitle => 'Premium vehicles,\nwithout exception.';
+
+  @override
+  String get homeWebFleetSwipe => 'SWIPE TO EXPLORE →';
+
+  @override
+  String get homeWebReview1Quote =>
+      'Absolutely impeccable from start to finish. The chauffeur arrived early and the car was spotless. I will not use anyone else.';
+
+  @override
+  String get homeWebReview1Location => 'London, United Kingdom';
+
+  @override
+  String get homeWebReview2Quote =>
+      'Fixed prices and reliable chauffeurs make Luxelane the only service I trust for all my business trips.';
+
+  @override
+  String get homeWebReview2Location => 'New York, USA';
+
+  @override
+  String get homeWebReview3Quote =>
+      'From the airport to the hotel, every detail was handled perfectly. This is how luxury travel should feel.';
+
+  @override
+  String get homeWebReview3Location => 'Paris, France';
+
+  @override
+  String get homeWebBusinessPerkBilling => 'Centralized billing and payments';
+
+  @override
+  String get homeWebBusinessPerkPriority => 'Priority bookings for executives';
+
+  @override
+  String get homeWebBusinessEyebrow => 'For Business';
+
+  @override
+  String get homeWebBusinessTitle => 'Corporate travel,\nredefined.';
+
+  @override
+  String get homeWebBusinessBody =>
+      'Luxelane for Business gives your team access to a premium chauffeur service with the controls and reports your finance team requires.';
+
+  @override
+  String get homeWebLearnMore => 'Learn more';
+
+  @override
+  String get homeWebCtaEyebrow => 'WHENEVER YOU WANT. WHEREVER YOU WANT.';
+
+  @override
+  String get homeWebCtaTitleStart => 'Your next journey,';
+
+  @override
+  String get homeWebCtaTitleEnd => 'on your terms.';
+
+  @override
+  String get homeWebCtaPromise => 'Fixed price  ·  Professional chauffeurs';
+
+  @override
+  String get homeWebCtaBook => 'Book a trip';
+
+  @override
+  String get homeWebCtaFleet => 'View fleet';
+
+  @override
+  String get homeWebBookTagline => 'Premium Chauffeur Service';
+
+  @override
+  String get homeWebBookStandardLabel => 'The Standard';
+
+  @override
+  String get homeWebBookStandardSub => 'The Promise We Keep';
+
+  @override
+  String get homeWebBookStandardTag => 'The Luxelane Standard';
+
+  @override
+  String get homeWebBookStandardHeadline => 'The standard\nothers follow.';
+
+  @override
+  String get homeWebBookStandardBullet1 => 'Chauffeurs with verified documents';
+
+  @override
+  String get homeWebBookStandardBullet2 => 'Fixed price when you book';
+
+  @override
+  String get homeWebBookExperienceLabel => 'The Experience';
+
+  @override
+  String get homeWebBookExperienceSub => 'Every Detail Considered';
+
+  @override
+  String get homeWebBookExperienceHeadline => 'Every detail,\ncared for.';
+
+  @override
+  String get homeWebBookExperienceBody =>
+      'From curated playlists to noise-cancelling privacy — your preferences, remembered.';
+
+  @override
+  String get homeWebBookExperienceBullet1 => 'Premium leather interiors';
+
+  @override
+  String get homeWebBookExperienceBullet2 => 'Wi-Fi and wireless charging';
+
+  @override
+  String get homeWebBookExperienceBullet3 => 'Champagne service available';
+
+  @override
+  String get homeWebBookExperienceBullet4 => 'Climate control';
+
+  @override
+  String get homeWebBookBusinessSub => 'Corporate Travel Redefined';
+
+  @override
+  String get homeWebBookBusinessBullet1 => 'Centralized billing';
+
+  @override
+  String get homeWebBookEyebrow => 'OUR SIGNATURE EXPERIENCE';
+
+  @override
+  String get homeWebBookScroll => 'SCROLL';
 
   @override
   String incidentSmsHeader(String id) {
@@ -1877,6 +2223,342 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get rideErrorGeneric =>
       'This could not be completed. Please try again.';
+
+  @override
+  String get servicesPromiseEyebrow => 'Our promise';
+
+  @override
+  String get servicesPromiseTitle => 'Peace of mind, in writing.';
+
+  @override
+  String get servicesStepsEyebrow => 'How it works';
+
+  @override
+  String get servicesStepsTitle => 'Three steps.\nNothing more.';
+
+  @override
+  String get servicesFleetEyebrow => 'The fleet';
+
+  @override
+  String get servicesFleetTitle => 'Choose how you arrive.';
+
+  @override
+  String get servicesFleetBody =>
+      'High-end vehicles, spotless and prepared before every service.';
+
+  @override
+  String get servicesMostChosen => 'MOST CHOSEN';
+
+  @override
+  String servicesCapacity(int count) {
+    return 'Up to $count passengers';
+  }
+
+  @override
+  String get servicesPriceFrom => 'FROM';
+
+  @override
+  String get servicesQuoteOnBooking => 'Quoted when you book';
+
+  @override
+  String get servicesFaqEyebrow => 'Frequently asked questions';
+
+  @override
+  String get servicesFaqTitle => 'Everything\nyou want to know.';
+
+  @override
+  String get servicesBookNow => 'BOOK NOW';
+
+  @override
+  String get servicesAirportEyebrow => 'Airport transfer';
+
+  @override
+  String get servicesAirportTitle => 'Land.\nWe take care\nof the rest.';
+
+  @override
+  String get servicesAirportLead =>
+      'Your chauffeur waits for you in arrivals with your name and takes care of your luggage. You just walk out the door.';
+
+  @override
+  String get servicesAirportStep1Title => 'Book in 2 minutes';
+
+  @override
+  String get servicesAirportStep1Body =>
+      'Enter the airport, destination and time. Add your flight number and you will see the final price.';
+
+  @override
+  String get servicesAirportStep2Title => 'Meet your chauffeur';
+
+  @override
+  String get servicesAirportStep2Body =>
+      'Before pickup, you will have their name, vehicle and contact details in the app.';
+
+  @override
+  String get servicesAirportStep3Title => 'Walk out and relax';
+
+  @override
+  String get servicesAirportStep3Body =>
+      'They wait for you in arrivals, take care of your luggage and drive you straight to your destination.';
+
+  @override
+  String get servicesAirportStoryEyebrow => 'The arrival';
+
+  @override
+  String get servicesAirportStoryTitle =>
+      'The first moment\nof your journey, taken care of.';
+
+  @override
+  String get servicesAirportStoryBody =>
+      'After a long flight, the last thing you want is queues, negotiations or uncertainty. A Luxelane chauffeur turns your arrival into a calm transition to your hotel, your meeting or your home.';
+
+  @override
+  String get servicesAirportStoryPoint1 =>
+      'Help with your luggage, from the carousel to the trunk';
+
+  @override
+  String get servicesAirportStoryPoint2 =>
+      'Smooth connections between airports and hotels';
+
+  @override
+  String get servicesAirportFaq1Question =>
+      'Where will my chauffeur wait for me?';
+
+  @override
+  String get servicesAirportFaq1Answer =>
+      'In the arrivals area. You will receive their contact details in the app before pickup.';
+
+  @override
+  String get servicesAirportFaq2Question => 'Can I cancel my booking?';
+
+  @override
+  String get servicesAirportFaq2Answer =>
+      'Yes, from the app before the trip starts. If the cancellation policy applies a fee, you will see it before you confirm.';
+
+  @override
+  String get servicesAirportFaq3Question => 'How much luggage can I bring?';
+
+  @override
+  String get servicesAirportFaq3Answer =>
+      'It depends on the vehicle class. If you travel with a lot of luggage or in a group, the Business Van has room for up to 7 passengers.';
+
+  @override
+  String get servicesAirportClosingTitle =>
+      'Your next flight\nalready has a chauffeur.';
+
+  @override
+  String get servicesAirportClosingBody =>
+      'Book now. Fixed price when you book and chauffeurs with verified documents.';
+
+  @override
+  String get servicesHourlyEyebrow => 'Hourly chauffeur';
+
+  @override
+  String get servicesHourlyTitle =>
+      'Your schedule.\nYour pace.\nYour chauffeur.';
+
+  @override
+  String get servicesHourlyLead =>
+      'A chauffeur and a vehicle just for you, from 2 to 24 hours. Change your plans as often as you like: your chauffeur adapts.';
+
+  @override
+  String get servicesHourlyStopsTitle => 'Unlimited stops';
+
+  @override
+  String get servicesHourlyStopsDetail =>
+      'Meetings, shopping or visits: your chauffeur waits for you at every stop.';
+
+  @override
+  String get servicesHourlyStep1Title => 'Choose the duration';
+
+  @override
+  String get servicesHourlyStep1Body =>
+      'Enter the pickup point, the day and how many hours you need. Minimum 2, maximum 24.';
+
+  @override
+  String get servicesHourlyStep2Title => 'Plan your day';
+
+  @override
+  String get servicesHourlyStep2Body =>
+      'Share your itinerary in the notes or decide as you go. No final destination is needed.';
+
+  @override
+  String get servicesHourlyStep3Title => 'Enjoy without watching the clock';
+
+  @override
+  String get servicesHourlyStep3Body =>
+      'Your chauffeur and your vehicle are at your disposal for the entire time booked.';
+
+  @override
+  String get servicesHourlyStoryEyebrow => 'For every occasion';
+
+  @override
+  String get servicesHourlyStoryTitle =>
+      'A whole day,\nwithout thinking about getting around.';
+
+  @override
+  String get servicesHourlyStoryBody =>
+      'From a day of meetings to an afternoon discovering the city, the hourly service gives you the freedom of a private vehicle without any of the worries.';
+
+  @override
+  String get servicesHourlyStoryPoint1 =>
+      'Business trips: from meeting to meeting, without waiting';
+
+  @override
+  String get servicesHourlyStoryPoint2 =>
+      'Events and dinners: an impeccable arrival, an unhurried departure';
+
+  @override
+  String get servicesHourlyStoryPoint3 =>
+      'Private sightseeing: the city at your pace, with a local chauffeur';
+
+  @override
+  String get servicesHourlyStoryPoint4 =>
+      'Shopping and leisure: your chauffeur keeps your bags and waits for you';
+
+  @override
+  String get servicesHourlyFaq1Question => 'How do I book an hourly chauffeur?';
+
+  @override
+  String get servicesHourlyFaq1Answer =>
+      'Select the pickup point, the duration, the day and the time. Then choose the vehicle class and confirm. You will see the final price before you pay.';
+
+  @override
+  String get servicesHourlyFaq2Question =>
+      'Can I change the itinerary during the service?';
+
+  @override
+  String get servicesHourlyFaq2Answer =>
+      'Yes. The chauffeur and the vehicle are at your disposal for all the hours booked, with as many stops as you need.';
+
+  @override
+  String get servicesHourlyFaq3Question => 'Can I add more hours?';
+
+  @override
+  String get servicesHourlyFaq3Answer =>
+      'Yes, you can change the booking before the start time. The minimum duration is 2 hours and the maximum is 24.';
+
+  @override
+  String get servicesHourlyFaq4Question => 'Can it start or end at an airport?';
+
+  @override
+  String get servicesHourlyFaq4Answer =>
+      'Yes. The service can start or end at an airport, as long as the start and the end are in the same city.';
+
+  @override
+  String get servicesHourlyFaq5Question =>
+      'When will I receive my chauffeur\'s details?';
+
+  @override
+  String get servicesHourlyFaq5Answer =>
+      'Before pickup, you will have the chauffeur\'s name, the vehicle and their contact details in the app.';
+
+  @override
+  String get servicesHourlyClosingTitle =>
+      'Book the time.\nWe take care of the road.';
+
+  @override
+  String get servicesHourlyClosingBody =>
+      'From 2 hours, with a fixed price and a professional chauffeur entirely at your disposal.';
+
+  @override
+  String get servicesImmediateEyebrow => 'On-demand pickup';
+
+  @override
+  String get servicesImmediateTitle => 'When you\nneed it.';
+
+  @override
+  String get servicesImmediateLead =>
+      'The same excellence as an advance booking, without planning ahead.';
+
+  @override
+  String get servicesImmediateTrackingTitle => 'Real-time tracking';
+
+  @override
+  String get servicesImmediateTrackingDetail =>
+      'See on the map where your chauffeur is and when they arrive.';
+
+  @override
+  String get servicesImmediateStep1Title => 'Enter pickup and destination';
+
+  @override
+  String get servicesImmediateStep1Body =>
+      'Type the address or choose it on the map. You will see the final price before you confirm.';
+
+  @override
+  String get servicesImmediateStep2Title => 'Confirm with one tap';
+
+  @override
+  String get servicesImmediateStep2Body =>
+      'You pay for the booking. Once the payment is confirmed, we look for a chauffeur and show you their name and vehicle.';
+
+  @override
+  String get servicesImmediateStep3Title => 'Follow them on the map';
+
+  @override
+  String get servicesImmediateStep3Body =>
+      'Get a notification when your chauffeur is on the way and another when they have arrived.';
+
+  @override
+  String get servicesImmediateStoryEyebrow => 'Unplanned';
+
+  @override
+  String get servicesImmediateStoryTitle =>
+      'The unexpected,\nwith the same elegance.';
+
+  @override
+  String get servicesImmediateStoryBody =>
+      'A meeting that runs late, a change of plans, a dinner that deserves a fitting end. On-demand pickup puts a premium vehicle and a professional chauffeur within your reach.';
+
+  @override
+  String get servicesImmediateStoryPoint1 =>
+      'Premium vehicles, spotless on every service';
+
+  @override
+  String get servicesImmediateStoryPoint2 =>
+      'Chauffeurs with verified documents';
+
+  @override
+  String get servicesImmediateStoryPoint3 =>
+      'Fixed price calculated before you confirm, with no surge pricing';
+
+  @override
+  String get servicesImmediateFaq1Question =>
+      'How long does the chauffeur take to arrive?';
+
+  @override
+  String get servicesImmediateFaq1Answer =>
+      'It depends on your location and availability. You will see the estimated arrival time before you confirm and can follow the chauffeur on the map.';
+
+  @override
+  String get servicesImmediateFaq2Question =>
+      'Does the price change with demand?';
+
+  @override
+  String get servicesImmediateFaq2Answer =>
+      'No. The price is set before you confirm and does not change: no surge pricing and no hidden charges.';
+
+  @override
+  String get servicesImmediateFaq3Question =>
+      'Can I schedule the trip for later?';
+
+  @override
+  String get servicesImmediateFaq3Answer =>
+      'Yes. Choose \"Schedule\" in the form and select the day and time you prefer.';
+
+  @override
+  String get servicesImmediateFaq4Question =>
+      'What happens if I need to cancel?';
+
+  @override
+  String get servicesImmediateFaq4Answer =>
+      'You can cancel from the app before the trip starts. If the cancellation policy applies a fee, you will see it before you confirm.';
+
+  @override
+  String get servicesImmediateClosingTitle => 'Your chauffeur,\none tap away.';
+
+  @override
+  String get servicesImmediateClosingBody =>
+      'Confirm now and follow your chauffeur in real time to your door.';
 
   @override
   String get tripsTitle => 'My trips';

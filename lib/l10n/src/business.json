@@ -1,0 +1,114 @@
+{
+  "businessEyebrow": {
+    "description": "Antetítulo de la página Luxelane para Empresas.",
+    "es": "Para Empresas",
+    "en": "For Business",
+    "pt": "Para Empresas"
+  },
+  "businessTitle": {
+    "description": "Título de la página para empresas.",
+    "es": "Viajes corporativos, redefinidos.",
+    "en": "Corporate travel, redefined.",
+    "pt": "Viagens corporativas, redefinidas."
+  },
+  "businessLead": {
+    "description": "Entradilla de la página para empresas, sobre el formulario de contacto.",
+    "es": "Chóferes privados para tu equipo y tus invitados, con facturación centralizada. Cuéntanos qué necesitas y te contactamos en menos de un día hábil.",
+    "en": "Private chauffeurs for your team and your guests, with centralized billing. Tell us what you need and we will get back to you within one business day.",
+    "pt": "Motoristas particulares para sua equipe e seus convidados, com faturamento centralizado. Conte o que você precisa e entraremos em contato em menos de um dia útil."
+  },
+  "businessSendError": {
+    "description": "Aviso si la solicitud de empresa no se pudo enviar.",
+    "es": "No pudimos enviar tu solicitud. Inténtalo de nuevo.",
+    "en": "We could not send your request. Please try again.",
+    "pt": "Não foi possível enviar sua solicitação. Tente novamente."
+  },
+  "businessRequired": {
+    "description": "Error de un campo obligatorio vacío en el formulario de empresas.",
+    "es": "Campo obligatorio",
+    "en": "Required field",
+    "pt": "Campo obrigatório"
+  },
+  "businessThanks": {
+    "description": "Confirmación tras enviar la solicitud: nombre de pila y correo de quien la envió.",
+    "es": "Gracias, {name}. Recibimos tu solicitud y te escribiremos a {email}.",
+    "en": "Thank you, {name}. We received your request and will write to you at {email}.",
+    "pt": "Obrigado, {name}. Recebemos sua solicitação e vamos escrever para {email}.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Ana"
+      },
+      "email": {
+        "type": "String",
+        "example": "ana@empresa.com"
+      }
+    }
+  },
+  "businessPerkBilling": {
+    "description": "Ventaja del servicio para empresas (lista con marcas).",
+    "es": "Facturación mensual centralizada para tu empresa",
+    "en": "Centralized monthly billing for your company",
+    "pt": "Faturamento mensal centralizado para sua empresa"
+  },
+  "businessPerkPriority": {
+    "description": "Ventaja del servicio para empresas (lista con marcas).",
+    "es": "Reservas prioritarias para ejecutivos e invitados",
+    "en": "Priority bookings for executives and guests",
+    "pt": "Reservas prioritárias para executivos e convidados"
+  },
+  "businessCompany": {
+    "description": "Etiqueta del campo nombre de la empresa.",
+    "es": "Empresa",
+    "en": "Company",
+    "pt": "Empresa"
+  },
+  "businessName": {
+    "description": "Etiqueta del campo nombre de la persona de contacto.",
+    "es": "Tu nombre",
+    "en": "Your name",
+    "pt": "Seu nome"
+  },
+  "businessEmail": {
+    "description": "Etiqueta del campo correo de trabajo.",
+    "es": "Correo de trabajo",
+    "en": "Work email",
+    "pt": "E-mail corporativo"
+  },
+  "businessEmailInvalid": {
+    "description": "Error si el correo no tiene un formato válido.",
+    "es": "Escribe un correo válido",
+    "en": "Enter a valid email",
+    "pt": "Digite um e-mail válido"
+  },
+  "businessPhone": {
+    "description": "Etiqueta del campo teléfono.",
+    "es": "Teléfono",
+    "en": "Phone",
+    "pt": "Telefone"
+  },
+  "businessTravellers": {
+    "description": "Etiqueta del desplegable con cuántas personas viajarían.",
+    "es": "¿Cuántas personas viajarían?",
+    "en": "How many people would travel?",
+    "pt": "Quantas pessoas viajariam?"
+  },
+  "businessTravellersOver200": {
+    "description": "Opción del desplegable de personas: más de 200 (el valor guardado sigue en español).",
+    "es": "Más de 200",
+    "en": "More than 200",
+    "pt": "Mais de 200"
+  },
+  "businessMessage": {
+    "description": "Etiqueta del campo libre del formulario.",
+    "es": "Cuéntanos qué necesitas (opcional)",
+    "en": "Tell us what you need (optional)",
+    "pt": "Conte o que você precisa (opcional)"
+  },
+  "businessSubmit": {
+    "description": "Botón para enviar la solicitud de empresa.",
+    "es": "Enviar solicitud",
+    "en": "Send request",
+    "pt": "Enviar solicitação"
+  }
+}

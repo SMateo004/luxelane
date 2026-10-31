@@ -6,6 +6,7 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_info_page.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import '../../data/business_lead_repository.dart';
 
@@ -31,7 +32,11 @@ class _BusinessPageState extends State<BusinessPage> {
   bool _sending = false;
   bool _sent = false;
 
-  static const _ranges = ['1–10', '11–50', '51–200', 'Más de 200'];
+  // Valores que valida submitBusinessLead (TRAVELLER_RANGES): se guardan
+  // así; solo la etiqueta del último cambia con el idioma.
+  static const _over200 =
+      'Más de 200'; // i18n-ignore: valor que valida el servidor
+  static const _ranges = ['1–10', '11–50', '51–200', _over200];
 
   @override
   void dispose() {
@@ -67,7 +72,7 @@ class _BusinessPageState extends State<BusinessPage> {
       if (mounted) {
         showLuxSnackbar(
           context,
-          'No pudimos enviar tu solicitud. Inténtalo de nuevo.',
+          context.l10n.businessSendError,
           isError: true,
         );
       }
@@ -77,15 +82,13 @@ class _BusinessPageState extends State<BusinessPage> {
   }
 
   String? _required(String? v) =>
-      (v == null || v.trim().isEmpty) ? 'Campo obligatorio' : null;
+      (v == null || v.trim().isEmpty) ? context.l10n.businessRequired : null;
 
   @override
   Widget build(BuildContext context) => LuxInfoPage(
-        eyebrow: 'Para Empresas',
-        title: 'Viajes corporativos, redefinidos.',
-        lead: 'Chóferes privados para tu equipo y tus invitados, con '
-            'facturación centralizada. Cuéntanos qué '
-            'necesitas y te contactamos en menos de un día hábil.',
+        eyebrow: context.l10n.businessEyebrow,
+        title: context.l10n.businessTitle,
+        lead: context.l10n.businessLead,
         child: _sent ? _thanks() : _formView(),
       );
 
@@ -100,8 +103,10 @@ class _BusinessPageState extends State<BusinessPage> {
             const SizedBox(width: LuxSpacing.md),
             Expanded(
               child: Text(
-                'Gracias, ${_name.text.trim().split(' ').first}. Recibimos tu '
-                'solicitud y te escribiremos a ${_email.text.trim()}.',
+                context.l10n.businessThanks(
+                  _name.text.trim().split(' ').first,
+                  _email.text.trim(),
+                ),
                 style: LuxTypography.bodyLarge,
               ),
             ),
@@ -114,9 +119,9 @@ class _BusinessPageState extends State<BusinessPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            for (final b in const [
-              'Facturación mensual centralizada para tu empresa',
-              'Reservas prioritarias para ejecutivos e invitados',
+            for (final b in [
+              context.l10n.businessPerkBilling,
+              context.l10n.businessPerkPriority,
             ])
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
@@ -130,31 +135,31 @@ class _BusinessPageState extends State<BusinessPage> {
               ),
             const SizedBox(height: 24),
             LuxTextField(
-              label: 'Empresa',
+              label: context.l10n.businessCompany,
               controller: _company,
               validator: _required,
             ),
             const SizedBox(height: 14),
             LuxTextField(
-              label: 'Tu nombre',
+              label: context.l10n.businessName,
               controller: _name,
               validator: _required,
             ),
             const SizedBox(height: 14),
             LuxTextField(
-              label: 'Correo de trabajo',
+              label: context.l10n.businessEmail,
               controller: _email,
               keyboardType: TextInputType.emailAddress,
               validator: (v) {
                 final e = v?.trim() ?? '';
                 return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(e)
                     ? null
-                    : 'Escribe un correo válido';
+                    : context.l10n.businessEmailInvalid;
               },
             ),
             const SizedBox(height: 14),
             LuxTextField(
-              label: 'Teléfono',
+              label: context.l10n.businessPhone,
               controller: _phone,
               keyboardType: TextInputType.phone,
               validator: _required,
@@ -162,18 +167,25 @@ class _BusinessPageState extends State<BusinessPage> {
             const SizedBox(height: 14),
             DropdownButtonFormField<String>(
               value: _travellers,
-              decoration: const InputDecoration(
-                labelText: '¿Cuántas personas viajarían?',
+              decoration: InputDecoration(
+                labelText: context.l10n.businessTravellers,
               ),
               items: [
                 for (final r in _ranges)
-                  DropdownMenuItem(value: r, child: Text(r)),
+                  DropdownMenuItem(
+                    value: r,
+                    child: Text(
+                      r == _over200
+                          ? context.l10n.businessTravellersOver200
+                          : r,
+                    ),
+                  ),
               ],
               onChanged: (v) => setState(() => _travellers = v ?? _travellers),
             ),
             const SizedBox(height: 14),
             LuxTextField(
-              label: 'Cuéntanos qué necesitas (opcional)',
+              label: context.l10n.businessMessage,
               controller: _message,
               maxLines: 4,
             ),
@@ -188,7 +200,7 @@ class _BusinessPageState extends State<BusinessPage> {
             ),
             const SizedBox(height: 24),
             LuxButton(
-              label: 'Enviar solicitud',
+              label: context.l10n.businessSubmit,
               loading: _sending,
               onPressed: _sending ? null : _submit,
             ),

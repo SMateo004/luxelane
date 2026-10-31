@@ -414,6 +414,84 @@
   "@authVerifyFailed": {
     "description": "Error genérico de verificación del correo."
   },
+  "businessEyebrow": "Para Empresas",
+  "@businessEyebrow": {
+    "description": "Antetítulo de la página Luxelane para Empresas."
+  },
+  "businessTitle": "Viajes corporativos, redefinidos.",
+  "@businessTitle": {
+    "description": "Título de la página para empresas."
+  },
+  "businessLead": "Chóferes privados para tu equipo y tus invitados, con facturación centralizada. Cuéntanos qué necesitas y te contactamos en menos de un día hábil.",
+  "@businessLead": {
+    "description": "Entradilla de la página para empresas, sobre el formulario de contacto."
+  },
+  "businessSendError": "No pudimos enviar tu solicitud. Inténtalo de nuevo.",
+  "@businessSendError": {
+    "description": "Aviso si la solicitud de empresa no se pudo enviar."
+  },
+  "businessRequired": "Campo obligatorio",
+  "@businessRequired": {
+    "description": "Error de un campo obligatorio vacío en el formulario de empresas."
+  },
+  "businessThanks": "Gracias, {name}. Recibimos tu solicitud y te escribiremos a {email}.",
+  "@businessThanks": {
+    "description": "Confirmación tras enviar la solicitud: nombre de pila y correo de quien la envió.",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Ana"
+      },
+      "email": {
+        "type": "String",
+        "example": "ana@empresa.com"
+      }
+    }
+  },
+  "businessPerkBilling": "Facturación mensual centralizada para tu empresa",
+  "@businessPerkBilling": {
+    "description": "Ventaja del servicio para empresas (lista con marcas)."
+  },
+  "businessPerkPriority": "Reservas prioritarias para ejecutivos e invitados",
+  "@businessPerkPriority": {
+    "description": "Ventaja del servicio para empresas (lista con marcas)."
+  },
+  "businessCompany": "Empresa",
+  "@businessCompany": {
+    "description": "Etiqueta del campo nombre de la empresa."
+  },
+  "businessName": "Tu nombre",
+  "@businessName": {
+    "description": "Etiqueta del campo nombre de la persona de contacto."
+  },
+  "businessEmail": "Correo de trabajo",
+  "@businessEmail": {
+    "description": "Etiqueta del campo correo de trabajo."
+  },
+  "businessEmailInvalid": "Escribe un correo válido",
+  "@businessEmailInvalid": {
+    "description": "Error si el correo no tiene un formato válido."
+  },
+  "businessPhone": "Teléfono",
+  "@businessPhone": {
+    "description": "Etiqueta del campo teléfono."
+  },
+  "businessTravellers": "¿Cuántas personas viajarían?",
+  "@businessTravellers": {
+    "description": "Etiqueta del desplegable con cuántas personas viajarían."
+  },
+  "businessTravellersOver200": "Más de 200",
+  "@businessTravellersOver200": {
+    "description": "Opción del desplegable de personas: más de 200 (el valor guardado sigue en español)."
+  },
+  "businessMessage": "Cuéntanos qué necesitas (opcional)",
+  "@businessMessage": {
+    "description": "Etiqueta del campo libre del formulario."
+  },
+  "businessSubmit": "Enviar solicitud",
+  "@businessSubmit": {
+    "description": "Botón para enviar la solicitud de empresa."
+  },
   "formatToday": "Hoy",
   "@formatToday": {
     "description": "Fecha relativa: hoy (antes de la hora, «Hoy · 18:30»)."
@@ -1223,6 +1301,402 @@
   "driverNavProfile": "Perfil",
   "@driverNavProfile": {
     "description": "Pestaña de la app del chófer: perfil."
+  },
+  "homePickOriginTitle": "Seleccionar lugar de recogida",
+  "@homePickOriginTitle": {
+    "description": "Título del mapa para elegir el punto de recogida."
+  },
+  "homePickDestinationTitle": "Seleccionar destino",
+  "@homePickDestinationTitle": {
+    "description": "Título del mapa para elegir el destino."
+  },
+  "homeDestinationOtherCity": "El destino estaba en otra ciudad. Elige uno en la ciudad de recogida.",
+  "@homeDestinationOtherCity": {
+    "description": "Aviso: al cambiar la recogida, el destino quedó en otra ciudad y se borró."
+  },
+  "homeEnterPickup": "Ingresa un lugar de recogida",
+  "@homeEnterPickup": {
+    "description": "Aviso al buscar sin punto de recogida."
+  },
+  "homePickupMoved": "Esa hora ya no da tiempo: la movimos a {when}. Revísala y continúa.",
+  "@homePickupMoved": {
+    "description": "Aviso: la hora elegida quedó en el pasado y se movió; {when} es fecha y hora ya formateadas.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Mañana · 09:15"
+      }
+    }
+  },
+  "homeEnterDestination": "Ingresa un destino",
+  "@homeEnterDestination": {
+    "description": "Aviso al buscar un viaje de ida sin destino."
+  },
+  "homeLocationUnavailable": "No pudimos usar tu ubicación. Permite el acceso a la ubicación en tu navegador o en los ajustes del teléfono, o elige el punto en el mapa.",
+  "@homeLocationUnavailable": {
+    "description": "Explicación en el mapa cuando no hay acceso a la ubicación del dispositivo."
+  },
+  "homeMyProfile": "Mi perfil",
+  "@homeMyProfile": {
+    "description": "Etiqueta del lector de pantalla del botón de perfil."
+  },
+  "homeSeeVehicles": "Ver vehículos y precios",
+  "@homeSeeVehicles": {
+    "description": "Botón principal del inicio: pasar a elegir vehículo."
+  },
+  "homeHourlyFrom": "{hours} h desde {place}",
+  "@homeHourlyFrom": {
+    "description": "Próximo viaje por horas: duración y punto de recogida.",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "3"
+      },
+      "place": {
+        "type": "String",
+        "example": "Hotel Los Tajibos"
+      }
+    }
+  },
+  "homeNextTripSemantics": "Ver tu próximo trayecto",
+  "@homeNextTripSemantics": {
+    "description": "Etiqueta del lector de pantalla de la tarjeta del próximo viaje."
+  },
+  "homeNextTripEyebrow": "TU PRÓXIMO TRAYECTO",
+  "@homeNextTripEyebrow": {
+    "description": "Antetítulo de la tarjeta del próximo viaje (mayúsculas)."
+  },
+  "homePickupLabel": "Lugar de recogida",
+  "@homePickupLabel": {
+    "description": "Etiqueta del campo de recogida."
+  },
+  "homePickupHint": "Recogida",
+  "@homePickupHint": {
+    "description": "Texto de ayuda del campo de recogida."
+  },
+  "homeUseMyLocation": "Usar mi ubicación",
+  "@homeUseMyLocation": {
+    "description": "Tooltip del botón de usar la ubicación actual."
+  },
+  "homeDestinationLabel": "Destino",
+  "@homeDestinationLabel": {
+    "description": "Etiqueta del campo de destino."
+  },
+  "homeDestinationHint": "¿A dónde vas?",
+  "@homeDestinationHint": {
+    "description": "Texto de ayuda del campo de destino."
+  },
+  "homeChooseOnMap": "Elegir en el mapa",
+  "@homeChooseOnMap": {
+    "description": "Tooltip del botón de elegir el destino en el mapa."
+  },
+  "homeRepeatLast": "Repetir último",
+  "@homeRepeatLast": {
+    "description": "Atajo para repetir el último viaje."
+  },
+  "homeRouteSummary": "{km} km · {minutes} min",
+  "@homeRouteSummary": {
+    "description": "Distancia y duración estimadas de la ruta.",
+    "placeholders": {
+      "km": {
+        "type": "String",
+        "example": "12.4"
+      },
+      "minutes": {
+        "type": "int",
+        "example": "25"
+      }
+    }
+  },
+  "homePreferredClass": "Tu {vehicleClass}",
+  "@homePreferredClass": {
+    "description": "Clase de vehículo elegida en la flota (nombre de clase sin traducir).",
+    "placeholders": {
+      "vehicleClass": {
+        "type": "String",
+        "example": "Business Class"
+      }
+    }
+  },
+  "homePickupDateHelp": "FECHA DE RECOGIDA",
+  "@homePickupDateHelp": {
+    "description": "Encabezado del calendario para la fecha de recogida (mayúsculas)."
+  },
+  "homePickupTimeHelp": "HORA DE RECOGIDA",
+  "@homePickupTimeHelp": {
+    "description": "Encabezado del reloj para la hora de recogida (mayúsculas)."
+  },
+  "homePickerCancel": "Cancelar",
+  "@homePickerCancel": {
+    "description": "Botón cancelar del calendario y del reloj."
+  },
+  "homePickerNext": "Siguiente",
+  "@homePickerNext": {
+    "description": "Botón del calendario para pasar a la hora."
+  },
+  "homePickerDone": "Listo",
+  "@homePickerDone": {
+    "description": "Botón del reloj para terminar."
+  },
+  "homeChangePickupTime": "Cambiar fecha y hora de recogida",
+  "@homeChangePickupTime": {
+    "description": "Etiqueta del lector de pantalla para cambiar fecha y hora."
+  },
+  "homeAsap": "Lo antes posible · {time}",
+  "@homeAsap": {
+    "description": "Recogida próxima: lo antes posible y la hora ya formateada.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "18:30"
+      }
+    }
+  },
+  "homeSchedule": "Programar",
+  "@homeSchedule": {
+    "description": "Enlace para programar fecha y hora."
+  },
+  "homeDuration": "Duración",
+  "@homeDuration": {
+    "description": "Etiqueta del selector de horas (servicio por horas)."
+  },
+  "homeWebHeadlineStart": "Tu chófer ",
+  "@homeWebHeadlineStart": {
+    "description": "Titular de la web, primera parte (termina en espacio; sigue en cursiva «te espera.»)."
+  },
+  "homeWebHeadlineEnd": "te espera.",
+  "@homeWebHeadlineEnd": {
+    "description": "Titular de la web, segunda parte en cursiva."
+  },
+  "homeWebPickup": "RECOGIDA",
+  "@homeWebPickup": {
+    "description": "Etiqueta del campo de recogida en la barra de reserva (mayúsculas)."
+  },
+  "homeWebWhereAreYou": "¿Dónde estás?",
+  "@homeWebWhereAreYou": {
+    "description": "Etiqueta y ayuda del campo de recogida en la web."
+  },
+  "homeWebDestination": "DESTINO",
+  "@homeWebDestination": {
+    "description": "Etiqueta del campo de destino en la barra de reserva (mayúsculas)."
+  },
+  "homeWebDuration": "DURACIÓN",
+  "@homeWebDuration": {
+    "description": "Etiqueta del selector de horas en la barra de reserva (mayúsculas)."
+  },
+  "homeWebDateTime": "FECHA Y HORA",
+  "@homeWebDateTime": {
+    "description": "Etiqueta de fecha y hora en la barra de reserva (mayúsculas)."
+  },
+  "homeWebChangeLocation": "CAMBIAR UBICACIÓN",
+  "@homeWebChangeLocation": {
+    "description": "Botón sobre el mapa para cambiar el punto (mayúsculas)."
+  },
+  "homeWebOneWay": "Solo ida",
+  "@homeWebOneWay": {
+    "description": "Selector de servicio: viaje de ida."
+  },
+  "homeWebHourly": "Por horas",
+  "@homeWebHourly": {
+    "description": "Selector de servicio: por horas."
+  },
+  "homeWebSeePrices": "VER PRECIOS",
+  "@homeWebSeePrices": {
+    "description": "Botón de la barra de reserva (mayúsculas)."
+  },
+  "homeWebConfirm": "CONFIRMAR",
+  "@homeWebConfirm": {
+    "description": "Botón para confirmar fecha y hora en el calendario (mayúsculas)."
+  },
+  "homeWebHours": "{hours, plural, =1{1 hora} other{{hours} horas}}",
+  "@homeWebHours": {
+    "description": "Duración del servicio por horas.",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "homeWebMarqueeFixedPrices": "Precios Fijos",
+  "@homeWebMarqueeFixedPrices": {
+    "description": "Cinta animada de la web (se muestra en mayúsculas)."
+  },
+  "homeWebMarqueeChauffeurs": "Chóferes Profesionales",
+  "@homeWebMarqueeChauffeurs": {
+    "description": "Cinta animada de la web (se muestra en mayúsculas)."
+  },
+  "homeWebMarqueeFleet": "Flota Premium",
+  "@homeWebMarqueeFleet": {
+    "description": "Cinta animada de la web (se muestra en mayúsculas)."
+  },
+  "homeWebMarqueeAirport": "Traslados Aeroportuarios",
+  "@homeWebMarqueeAirport": {
+    "description": "Cinta animada de la web (se muestra en mayúsculas)."
+  },
+  "homeWebMarqueeCorporate": "Viajes Corporativos",
+  "@homeWebMarqueeCorporate": {
+    "description": "Cinta animada de la web (se muestra en mayúsculas)."
+  },
+  "homeWebFleetEyebrow": "Nuestra Flota",
+  "@homeWebFleetEyebrow": {
+    "description": "Antetítulo de la sección de flota."
+  },
+  "homeWebFleetTitle": "Vehículos premium,\nsin excepciones.",
+  "@homeWebFleetTitle": {
+    "description": "Título de la sección de flota (con salto de línea)."
+  },
+  "homeWebFleetSwipe": "DESLIZA PARA EXPLORAR →",
+  "@homeWebFleetSwipe": {
+    "description": "Indicación para desplazar el carrusel de la flota (mayúsculas)."
+  },
+  "homeWebReview1Quote": "Absolutamente impecable de principio a fin. El chófer llegó antes de tiempo y el auto estaba inmaculado. No usaré a nadie más.",
+  "@homeWebReview1Quote": {
+    "description": "Opinión 1 de la sección de testimonios."
+  },
+  "homeWebReview1Location": "Londres, Reino Unido",
+  "@homeWebReview1Location": {
+    "description": "Ciudad y país de la opinión 1."
+  },
+  "homeWebReview2Quote": "Los precios fijos y los chóferes confiables hacen de Luxelane el único servicio en el que confío para todos mis viajes de negocios.",
+  "@homeWebReview2Quote": {
+    "description": "Opinión 2 de la sección de testimonios."
+  },
+  "homeWebReview2Location": "Nueva York, EE. UU.",
+  "@homeWebReview2Location": {
+    "description": "Ciudad y país de la opinión 2."
+  },
+  "homeWebReview3Quote": "Del aeropuerto al hotel, cada detalle fue manejado a la perfección. Así es como debería sentirse el viaje de lujo.",
+  "@homeWebReview3Quote": {
+    "description": "Opinión 3 de la sección de testimonios."
+  },
+  "homeWebReview3Location": "París, Francia",
+  "@homeWebReview3Location": {
+    "description": "Ciudad y país de la opinión 3."
+  },
+  "homeWebBusinessPerkBilling": "Facturación y cobros centralizados",
+  "@homeWebBusinessPerkBilling": {
+    "description": "Ventaja de la sección para empresas."
+  },
+  "homeWebBusinessPerkPriority": "Reservas prioritarias para ejecutivos",
+  "@homeWebBusinessPerkPriority": {
+    "description": "Ventaja para empresas (sección y libro)."
+  },
+  "homeWebBusinessEyebrow": "Para Empresas",
+  "@homeWebBusinessEyebrow": {
+    "description": "Antetítulo de la sección para empresas (y página del libro)."
+  },
+  "homeWebBusinessTitle": "Viajes corporativos,\nredefinidos.",
+  "@homeWebBusinessTitle": {
+    "description": "Título de la sección para empresas (con salto de línea)."
+  },
+  "homeWebBusinessBody": "Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.",
+  "@homeWebBusinessBody": {
+    "description": "Texto de la sección para empresas."
+  },
+  "homeWebLearnMore": "Más información",
+  "@homeWebLearnMore": {
+    "description": "Botón que lleva a la página para empresas."
+  },
+  "homeWebCtaEyebrow": "CUANDO QUIERAS. DONDE QUIERAS.",
+  "@homeWebCtaEyebrow": {
+    "description": "Antetítulo de la llamada final (mayúsculas)."
+  },
+  "homeWebCtaTitleStart": "Tu próximo viaje,",
+  "@homeWebCtaTitleStart": {
+    "description": "Llamada final, primera línea."
+  },
+  "homeWebCtaTitleEnd": "en tus términos.",
+  "@homeWebCtaTitleEnd": {
+    "description": "Llamada final, segunda línea en cursiva."
+  },
+  "homeWebCtaPromise": "Precio fijo  ·  Chóferes profesionales",
+  "@homeWebCtaPromise": {
+    "description": "Línea bajo la llamada final (con espacios alrededor del punto medio)."
+  },
+  "homeWebCtaBook": "Reservar un viaje",
+  "@homeWebCtaBook": {
+    "description": "Botón de la llamada final."
+  },
+  "homeWebCtaFleet": "Ver flota",
+  "@homeWebCtaFleet": {
+    "description": "Botón de la llamada final para ver la flota."
+  },
+  "homeWebBookTagline": "Servicio de Chófer Premium",
+  "@homeWebBookTagline": {
+    "description": "Lema bajo la marca en la portada del libro."
+  },
+  "homeWebBookStandardLabel": "El Estándar",
+  "@homeWebBookStandardLabel": {
+    "description": "Libro, página 1: nombre."
+  },
+  "homeWebBookStandardSub": "La Promesa Que Cumplimos",
+  "@homeWebBookStandardSub": {
+    "description": "Libro, página 1: subtítulo."
+  },
+  "homeWebBookStandardTag": "El Estándar Luxelane",
+  "@homeWebBookStandardTag": {
+    "description": "Libro, página 1: etiqueta."
+  },
+  "homeWebBookStandardHeadline": "El estándar que\notros siguen.",
+  "@homeWebBookStandardHeadline": {
+    "description": "Libro, página 1: titular (con salto de línea)."
+  },
+  "homeWebBookStandardBullet1": "Chóferes con documentos verificados",
+  "@homeWebBookStandardBullet1": {
+    "description": "Libro, página 1: punto."
+  },
+  "homeWebBookStandardBullet2": "Precio fijo al reservar",
+  "@homeWebBookStandardBullet2": {
+    "description": "Libro, página 1: punto."
+  },
+  "homeWebBookExperienceLabel": "La Experiencia",
+  "@homeWebBookExperienceLabel": {
+    "description": "Libro, página 2: nombre y etiqueta."
+  },
+  "homeWebBookExperienceSub": "Cada Detalle Considerado",
+  "@homeWebBookExperienceSub": {
+    "description": "Libro, página 2: subtítulo."
+  },
+  "homeWebBookExperienceHeadline": "Cada detalle,\ncuidado.",
+  "@homeWebBookExperienceHeadline": {
+    "description": "Libro, página 2: titular (con salto de línea)."
+  },
+  "homeWebBookExperienceBody": "Desde listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.",
+  "@homeWebBookExperienceBody": {
+    "description": "Libro, página 2: texto. En inglés y portugués sin «siempre» (glosario: sin promesas)."
+  },
+  "homeWebBookExperienceBullet1": "Interiores de cuero premium",
+  "@homeWebBookExperienceBullet1": {
+    "description": "Libro, página 2: punto."
+  },
+  "homeWebBookExperienceBullet2": "Wi-Fi y carga inalámbrica",
+  "@homeWebBookExperienceBullet2": {
+    "description": "Libro, página 2: punto."
+  },
+  "homeWebBookExperienceBullet3": "Servicio de champán disponible",
+  "@homeWebBookExperienceBullet3": {
+    "description": "Libro, página 2: punto."
+  },
+  "homeWebBookExperienceBullet4": "Control de clima ambiental",
+  "@homeWebBookExperienceBullet4": {
+    "description": "Libro, página 2: punto."
+  },
+  "homeWebBookBusinessSub": "Viajes Corporativos Redefinidos",
+  "@homeWebBookBusinessSub": {
+    "description": "Libro, página 3: subtítulo."
+  },
+  "homeWebBookBusinessBullet1": "Facturación centralizada",
+  "@homeWebBookBusinessBullet1": {
+    "description": "Libro, página 3: punto."
+  },
+  "homeWebBookEyebrow": "OUR SIGNATURE EXPERIENCE",
+  "@homeWebBookEyebrow": {
+    "description": "Antetítulo de la sección del libro (mayúsculas; en español también está en inglés)."
+  },
+  "homeWebBookScroll": "SCROLL",
+  "@homeWebBookScroll": {
+    "description": "Indicación vertical para desplazarse (mayúsculas; en español también está en inglés)."
   },
   "incidentSmsHeader": "SOS. Reserva #{id}.",
   "@incidentSmsHeader": {
@@ -2507,6 +2981,384 @@
   "rideErrorGeneric": "No se pudo completar. Inténtalo de nuevo.",
   "@rideErrorGeneric": {
     "description": "Error genérico de un paso del viaje."
+  },
+  "servicesPromiseEyebrow": "Nuestra promesa",
+  "@servicesPromiseEyebrow": {
+    "description": "Páginas de servicio: antetítulo de la franja de garantías."
+  },
+  "servicesPromiseTitle": "Tranquilidad, por escrito.",
+  "@servicesPromiseTitle": {
+    "description": "Páginas de servicio: título de la franja de garantías."
+  },
+  "servicesStepsEyebrow": "Cómo funciona",
+  "@servicesStepsEyebrow": {
+    "description": "Páginas de servicio: antetítulo de los pasos."
+  },
+  "servicesStepsTitle": "Tres pasos.\nNada más.",
+  "@servicesStepsTitle": {
+    "description": "Páginas de servicio: título de los pasos (con salto de línea)."
+  },
+  "servicesFleetEyebrow": "La flota",
+  "@servicesFleetEyebrow": {
+    "description": "Páginas de servicio: antetítulo de las clases de vehículo."
+  },
+  "servicesFleetTitle": "Elige cómo llegar.",
+  "@servicesFleetTitle": {
+    "description": "Páginas de servicio: título de las clases de vehículo."
+  },
+  "servicesFleetBody": "Vehículos de gama alta, impecables y preparados antes de cada servicio.",
+  "@servicesFleetBody": {
+    "description": "Páginas de servicio: texto bajo el título de la flota."
+  },
+  "servicesMostChosen": "LA MÁS ELEGIDA",
+  "@servicesMostChosen": {
+    "description": "Etiqueta de la clase más elegida (mayúsculas)."
+  },
+  "servicesCapacity": "Hasta {count} pasajeros",
+  "@servicesCapacity": {
+    "description": "Capacidad de la clase de vehículo.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "servicesPriceFrom": "DESDE",
+  "@servicesPriceFrom": {
+    "description": "Antes del precio mínimo de la clase (mayúsculas)."
+  },
+  "servicesQuoteOnBooking": "Cotiza al reservar",
+  "@servicesQuoteOnBooking": {
+    "description": "En lugar del precio cuando aún no hay tarifa."
+  },
+  "servicesFaqEyebrow": "Preguntas frecuentes",
+  "@servicesFaqEyebrow": {
+    "description": "Páginas de servicio: antetítulo de preguntas frecuentes."
+  },
+  "servicesFaqTitle": "Todo lo que\nquieres saber.",
+  "@servicesFaqTitle": {
+    "description": "Páginas de servicio: título de preguntas frecuentes (con salto de línea)."
+  },
+  "servicesBookNow": "RESERVAR AHORA",
+  "@servicesBookNow": {
+    "description": "Botón final de las páginas de servicio (mayúsculas)."
+  },
+  "servicesAirportEyebrow": "Traslado al aeropuerto",
+  "@servicesAirportEyebrow": {
+    "description": "Traslado al aeropuerto: antetítulo."
+  },
+  "servicesAirportTitle": "Aterriza.\nNosotros nos\nocupamos del resto.",
+  "@servicesAirportTitle": {
+    "description": "Traslado al aeropuerto: título (con saltos de línea)."
+  },
+  "servicesAirportLead": "Tu chófer te espera en llegadas con tu nombre y se encarga del equipaje. Tú solo sales por la puerta.",
+  "@servicesAirportLead": {
+    "description": "Traslado al aeropuerto: entradilla."
+  },
+  "servicesAirportStep1Title": "Reserva en 2 minutos",
+  "@servicesAirportStep1Title": {
+    "description": "Traslado al aeropuerto: paso 1, título."
+  },
+  "servicesAirportStep1Body": "Indica aeropuerto, destino y hora. Añade tu número de vuelo y verás el precio final al instante.",
+  "@servicesAirportStep1Body": {
+    "description": "Traslado al aeropuerto: paso 1, texto."
+  },
+  "servicesAirportStep2Title": "Recibe a tu chófer",
+  "@servicesAirportStep2Title": {
+    "description": "Traslado al aeropuerto: paso 2, título."
+  },
+  "servicesAirportStep2Body": "Antes de la recogida tendrás su nombre, vehículo y contacto en la app.",
+  "@servicesAirportStep2Body": {
+    "description": "Traslado al aeropuerto: paso 2, texto."
+  },
+  "servicesAirportStep3Title": "Sal y relájate",
+  "@servicesAirportStep3Title": {
+    "description": "Traslado al aeropuerto: paso 3, título."
+  },
+  "servicesAirportStep3Body": "Te espera en llegadas, se ocupa del equipaje y te lleva directo a tu destino.",
+  "@servicesAirportStep3Body": {
+    "description": "Traslado al aeropuerto: paso 3, texto."
+  },
+  "servicesAirportStoryEyebrow": "La llegada",
+  "@servicesAirportStoryEyebrow": {
+    "description": "Traslado al aeropuerto: antetítulo del relato."
+  },
+  "servicesAirportStoryTitle": "El primer momento\nde tu viaje, resuelto.",
+  "@servicesAirportStoryTitle": {
+    "description": "Traslado al aeropuerto: título del relato (con salto de línea)."
+  },
+  "servicesAirportStoryBody": "Después de un vuelo largo, lo último que quieres son colas, negociaciones o incertidumbre. Un chófer de Luxelane convierte la llegada en una transición tranquila hacia tu hotel, tu reunión o tu casa.",
+  "@servicesAirportStoryBody": {
+    "description": "Traslado al aeropuerto: texto del relato."
+  },
+  "servicesAirportStoryPoint1": "Ayuda con el equipaje, de la cinta al maletero",
+  "@servicesAirportStoryPoint1": {
+    "description": "Traslado al aeropuerto: punto del relato."
+  },
+  "servicesAirportStoryPoint2": "Conexiones entre aeropuertos y hoteles sin complicaciones",
+  "@servicesAirportStoryPoint2": {
+    "description": "Traslado al aeropuerto: punto del relato."
+  },
+  "servicesAirportFaq1Question": "¿Dónde me espera el chófer?",
+  "@servicesAirportFaq1Question": {
+    "description": "Traslado al aeropuerto: pregunta frecuente 1."
+  },
+  "servicesAirportFaq1Answer": "En la zona de llegadas. Recibirás sus datos de contacto en la app antes de la recogida.",
+  "@servicesAirportFaq1Answer": {
+    "description": "Traslado al aeropuerto: respuesta 1."
+  },
+  "servicesAirportFaq2Question": "¿Puedo cancelar mi reserva?",
+  "@servicesAirportFaq2Question": {
+    "description": "Traslado al aeropuerto: pregunta frecuente 2."
+  },
+  "servicesAirportFaq2Answer": "Sí, desde la app antes de que empiece el viaje. Si según la política de cancelación corresponde un recargo, lo verás antes de confirmar.",
+  "@servicesAirportFaq2Answer": {
+    "description": "Traslado al aeropuerto: respuesta 2."
+  },
+  "servicesAirportFaq3Question": "¿Cuánto equipaje puedo llevar?",
+  "@servicesAirportFaq3Question": {
+    "description": "Traslado al aeropuerto: pregunta frecuente 3."
+  },
+  "servicesAirportFaq3Answer": "Depende de la clase de vehículo. Si viajas con mucho equipaje o en grupo, la Business Van ofrece espacio para hasta 7 pasajeros.",
+  "@servicesAirportFaq3Answer": {
+    "description": "Traslado al aeropuerto: respuesta 3 (Business Van no se traduce)."
+  },
+  "servicesAirportClosingTitle": "Tu próximo vuelo\nya tiene chófer.",
+  "@servicesAirportClosingTitle": {
+    "description": "Traslado al aeropuerto: título del cierre (con salto de línea)."
+  },
+  "servicesAirportClosingBody": "Reserva ahora. Precio fijo al reservar y chóferes con documentos verificados.",
+  "@servicesAirportClosingBody": {
+    "description": "Traslado al aeropuerto: texto del cierre."
+  },
+  "servicesHourlyEyebrow": "Chófer por horas",
+  "@servicesHourlyEyebrow": {
+    "description": "Chófer por horas: antetítulo."
+  },
+  "servicesHourlyTitle": "Tu agenda.\nTu ritmo.\nTu chófer.",
+  "@servicesHourlyTitle": {
+    "description": "Chófer por horas: título (con saltos de línea)."
+  },
+  "servicesHourlyLead": "Un chófer y un vehículo exclusivamente para ti, de 2 a 24 horas. Cambia de planes cuantas veces quieras: él se adapta.",
+  "@servicesHourlyLead": {
+    "description": "Chófer por horas: entradilla."
+  },
+  "servicesHourlyStopsTitle": "Paradas ilimitadas",
+  "@servicesHourlyStopsTitle": {
+    "description": "Chófer por horas: garantía propia, título."
+  },
+  "servicesHourlyStopsDetail": "Reuniones, compras o visitas: tu chófer te espera en cada parada.",
+  "@servicesHourlyStopsDetail": {
+    "description": "Chófer por horas: garantía propia, detalle."
+  },
+  "servicesHourlyStep1Title": "Elige la duración",
+  "@servicesHourlyStep1Title": {
+    "description": "Chófer por horas: paso 1, título."
+  },
+  "servicesHourlyStep1Body": "Indica el punto de recogida, el día y cuántas horas necesitas. Mínimo 2, máximo 24.",
+  "@servicesHourlyStep1Body": {
+    "description": "Chófer por horas: paso 1, texto."
+  },
+  "servicesHourlyStep2Title": "Diseña tu jornada",
+  "@servicesHourlyStep2Title": {
+    "description": "Chófer por horas: paso 2, título."
+  },
+  "servicesHourlyStep2Body": "Comparte tu itinerario en las notas o decídelo sobre la marcha. No hace falta destino final.",
+  "@servicesHourlyStep2Body": {
+    "description": "Chófer por horas: paso 2, texto."
+  },
+  "servicesHourlyStep3Title": "Disfruta sin mirar el reloj",
+  "@servicesHourlyStep3Title": {
+    "description": "Chófer por horas: paso 3, título."
+  },
+  "servicesHourlyStep3Body": "Tu chófer y tu vehículo están a tu disposición durante todo el tiempo reservado.",
+  "@servicesHourlyStep3Body": {
+    "description": "Chófer por horas: paso 3, texto."
+  },
+  "servicesHourlyStoryEyebrow": "Para cada ocasión",
+  "@servicesHourlyStoryEyebrow": {
+    "description": "Chófer por horas: antetítulo del relato."
+  },
+  "servicesHourlyStoryTitle": "Un día entero,\nsin pensar en cómo moverte.",
+  "@servicesHourlyStoryTitle": {
+    "description": "Chófer por horas: título del relato (con salto de línea)."
+  },
+  "servicesHourlyStoryBody": "Desde una agenda de reuniones hasta una tarde descubriendo la ciudad, el servicio por horas te da la libertad de un vehículo privado sin ninguna de sus preocupaciones.",
+  "@servicesHourlyStoryBody": {
+    "description": "Chófer por horas: texto del relato."
+  },
+  "servicesHourlyStoryPoint1": "Viajes de negocios: de reunión en reunión, sin esperas",
+  "@servicesHourlyStoryPoint1": {
+    "description": "Chófer por horas: punto del relato."
+  },
+  "servicesHourlyStoryPoint2": "Eventos y cenas: llegada impecable, salida sin prisas",
+  "@servicesHourlyStoryPoint2": {
+    "description": "Chófer por horas: punto del relato."
+  },
+  "servicesHourlyStoryPoint3": "Turismo privado: la ciudad a tu ritmo, con un chófer local",
+  "@servicesHourlyStoryPoint3": {
+    "description": "Chófer por horas: punto del relato."
+  },
+  "servicesHourlyStoryPoint4": "Compras y ocio: tu chófer guarda tus bolsas y te espera",
+  "@servicesHourlyStoryPoint4": {
+    "description": "Chófer por horas: punto del relato."
+  },
+  "servicesHourlyFaq1Question": "¿Cómo reservo un chófer por horas?",
+  "@servicesHourlyFaq1Question": {
+    "description": "Chófer por horas: pregunta frecuente 1."
+  },
+  "servicesHourlyFaq1Answer": "Selecciona el lugar de recogida, la duración, el día y la hora. Después elige la clase de vehículo y confirma. Verás el precio final antes de pagar.",
+  "@servicesHourlyFaq1Answer": {
+    "description": "Chófer por horas: respuesta 1."
+  },
+  "servicesHourlyFaq2Question": "¿Puedo cambiar el itinerario durante el servicio?",
+  "@servicesHourlyFaq2Question": {
+    "description": "Chófer por horas: pregunta frecuente 2."
+  },
+  "servicesHourlyFaq2Answer": "Sí. El chófer y el vehículo están a tu disposición durante todas las horas reservadas, con tantas paradas como necesites.",
+  "@servicesHourlyFaq2Answer": {
+    "description": "Chófer por horas: respuesta 2."
+  },
+  "servicesHourlyFaq3Question": "¿Puedo ampliar el número de horas?",
+  "@servicesHourlyFaq3Question": {
+    "description": "Chófer por horas: pregunta frecuente 3."
+  },
+  "servicesHourlyFaq3Answer": "Sí, puedes modificar la reserva antes de la hora de inicio. La duración mínima es de 2 horas y la máxima de 24.",
+  "@servicesHourlyFaq3Answer": {
+    "description": "Chófer por horas: respuesta 3."
+  },
+  "servicesHourlyFaq4Question": "¿Puede empezar o terminar en un aeropuerto?",
+  "@servicesHourlyFaq4Question": {
+    "description": "Chófer por horas: pregunta frecuente 4."
+  },
+  "servicesHourlyFaq4Answer": "Sí. El servicio puede empezar o terminar en un aeropuerto, siempre que el inicio y el final estén en la misma ciudad.",
+  "@servicesHourlyFaq4Answer": {
+    "description": "Chófer por horas: respuesta 4."
+  },
+  "servicesHourlyFaq5Question": "¿Cuándo recibiré los datos del chófer?",
+  "@servicesHourlyFaq5Question": {
+    "description": "Chófer por horas: pregunta frecuente 5."
+  },
+  "servicesHourlyFaq5Answer": "Antes de la recogida tendrás en la app el nombre del chófer, el vehículo y su contacto.",
+  "@servicesHourlyFaq5Answer": {
+    "description": "Chófer por horas: respuesta 5."
+  },
+  "servicesHourlyClosingTitle": "Reserva el tiempo.\nNosotros ponemos el camino.",
+  "@servicesHourlyClosingTitle": {
+    "description": "Chófer por horas: título del cierre (con salto de línea)."
+  },
+  "servicesHourlyClosingBody": "Desde 2 horas, con precio fijo y un chófer profesional a tu entera disposición.",
+  "@servicesHourlyClosingBody": {
+    "description": "Chófer por horas: texto del cierre."
+  },
+  "servicesImmediateEyebrow": "Recogida inmediata",
+  "@servicesImmediateEyebrow": {
+    "description": "Recogida inmediata: antetítulo (nombre del servicio)."
+  },
+  "servicesImmediateTitle": "Cuando lo\nnecesites.",
+  "@servicesImmediateTitle": {
+    "description": "Recogida inmediata: título (con salto de línea)."
+  },
+  "servicesImmediateLead": "La misma excelencia de una reserva anticipada, sin planificar.",
+  "@servicesImmediateLead": {
+    "description": "Recogida inmediata: entradilla."
+  },
+  "servicesImmediateTrackingTitle": "Seguimiento en tiempo real",
+  "@servicesImmediateTrackingTitle": {
+    "description": "Recogida inmediata: garantía propia, título."
+  },
+  "servicesImmediateTrackingDetail": "Ve en el mapa dónde está tu chófer y cuándo llega.",
+  "@servicesImmediateTrackingDetail": {
+    "description": "Recogida inmediata: garantía propia, detalle."
+  },
+  "servicesImmediateStep1Title": "Indica origen y destino",
+  "@servicesImmediateStep1Title": {
+    "description": "Recogida inmediata: paso 1, título."
+  },
+  "servicesImmediateStep1Body": "Escribe la dirección o elígela en el mapa. Verás el precio final antes de confirmar.",
+  "@servicesImmediateStep1Body": {
+    "description": "Recogida inmediata: paso 1, texto."
+  },
+  "servicesImmediateStep2Title": "Confirma con un toque",
+  "@servicesImmediateStep2Title": {
+    "description": "Recogida inmediata: paso 2, título."
+  },
+  "servicesImmediateStep2Body": "Pagas la reserva. Con el pago confirmado buscamos chófer y te mostramos su nombre y vehículo.",
+  "@servicesImmediateStep2Body": {
+    "description": "Recogida inmediata: paso 2, texto."
+  },
+  "servicesImmediateStep3Title": "Síguelo en el mapa",
+  "@servicesImmediateStep3Title": {
+    "description": "Recogida inmediata: paso 3, título."
+  },
+  "servicesImmediateStep3Body": "Recibe un aviso cuando tu chófer esté en camino y otro cuando haya llegado.",
+  "@servicesImmediateStep3Body": {
+    "description": "Recogida inmediata: paso 3, texto."
+  },
+  "servicesImmediateStoryEyebrow": "Sin planificar",
+  "@servicesImmediateStoryEyebrow": {
+    "description": "Recogida inmediata: antetítulo del relato."
+  },
+  "servicesImmediateStoryTitle": "Lo imprevisto,\ncon la misma elegancia.",
+  "@servicesImmediateStoryTitle": {
+    "description": "Recogida inmediata: título del relato (con salto de línea)."
+  },
+  "servicesImmediateStoryBody": "Una reunión que se alarga, un cambio de planes, una cena que merece un final a la altura. La recogida inmediata pone un vehículo premium y un chófer profesional a tu alcance.",
+  "@servicesImmediateStoryBody": {
+    "description": "Recogida inmediata: texto del relato."
+  },
+  "servicesImmediateStoryPoint1": "Vehículos premium, impecables en cada servicio",
+  "@servicesImmediateStoryPoint1": {
+    "description": "Recogida inmediata: punto del relato."
+  },
+  "servicesImmediateStoryPoint2": "Chóferes con documentos verificados",
+  "@servicesImmediateStoryPoint2": {
+    "description": "Recogida inmediata: punto del relato."
+  },
+  "servicesImmediateStoryPoint3": "Precio fijo calculado antes de confirmar, sin tarifas dinámicas",
+  "@servicesImmediateStoryPoint3": {
+    "description": "Recogida inmediata: punto del relato."
+  },
+  "servicesImmediateFaq1Question": "¿Cuánto tarda en llegar el chófer?",
+  "@servicesImmediateFaq1Question": {
+    "description": "Recogida inmediata: pregunta frecuente 1."
+  },
+  "servicesImmediateFaq1Answer": "Depende de tu ubicación y de la disponibilidad. Verás la hora estimada de llegada antes de confirmar y podrás seguir al chófer en el mapa.",
+  "@servicesImmediateFaq1Answer": {
+    "description": "Recogida inmediata: respuesta 1."
+  },
+  "servicesImmediateFaq2Question": "¿El precio cambia según la demanda?",
+  "@servicesImmediateFaq2Question": {
+    "description": "Recogida inmediata: pregunta frecuente 2."
+  },
+  "servicesImmediateFaq2Answer": "No. El precio se fija antes de confirmar y no cambia: sin tarifas dinámicas ni cargos ocultos.",
+  "@servicesImmediateFaq2Answer": {
+    "description": "Recogida inmediata: respuesta 2."
+  },
+  "servicesImmediateFaq3Question": "¿Puedo programar el viaje para más tarde?",
+  "@servicesImmediateFaq3Question": {
+    "description": "Recogida inmediata: pregunta frecuente 3."
+  },
+  "servicesImmediateFaq3Answer": "Sí. Elige \"Programar\" en el formulario y selecciona el día y la hora que prefieras.",
+  "@servicesImmediateFaq3Answer": {
+    "description": "Recogida inmediata: respuesta 3 (cita el botón «Programar» del inicio)."
+  },
+  "servicesImmediateFaq4Question": "¿Qué pasa si necesito cancelar?",
+  "@servicesImmediateFaq4Question": {
+    "description": "Recogida inmediata: pregunta frecuente 4."
+  },
+  "servicesImmediateFaq4Answer": "Puedes cancelar desde la app antes de que empiece el viaje. Si según la política de cancelación corresponde un recargo, lo verás antes de confirmar.",
+  "@servicesImmediateFaq4Answer": {
+    "description": "Recogida inmediata: respuesta 4."
+  },
+  "servicesImmediateClosingTitle": "Tu chófer,\na un toque.",
+  "@servicesImmediateClosingTitle": {
+    "description": "Recogida inmediata: título del cierre (con salto de línea)."
+  },
+  "servicesImmediateClosingBody": "Confirma ahora y sigue a tu chófer en tiempo real hasta la puerta.",
+  "@servicesImmediateClosingBody": {
+    "description": "Recogida inmediata: texto del cierre."
   },
   "tripsTitle": "Mis viajes",
   "@tripsTitle": {

@@ -2,10 +2,7 @@
   "trinquete": {
     "lib/core/widgets": 111,
     "lib/features/booking": 158,
-    "lib/features/business": 21,
-    "lib/features/home": 133,
-    "lib/features/notifications": 9,
-    "lib/features/services": 102
+    "lib/features/notifications": 9
   },
   "vigilados": {
     "lib/app": 18,

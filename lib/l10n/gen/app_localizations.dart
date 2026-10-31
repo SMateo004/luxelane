@@ -694,6 +694,108 @@ abstract class AppLocalizations {
   /// **'No pudimos completar la verificación. Inténtalo de nuevo.'**
   String get authVerifyFailed;
 
+  /// Antetítulo de la página Luxelane para Empresas.
+  ///
+  /// In es, this message translates to:
+  /// **'Para Empresas'**
+  String get businessEyebrow;
+
+  /// Título de la página para empresas.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes corporativos, redefinidos.'**
+  String get businessTitle;
+
+  /// Entradilla de la página para empresas, sobre el formulario de contacto.
+  ///
+  /// In es, this message translates to:
+  /// **'Chóferes privados para tu equipo y tus invitados, con facturación centralizada. Cuéntanos qué necesitas y te contactamos en menos de un día hábil.'**
+  String get businessLead;
+
+  /// Aviso si la solicitud de empresa no se pudo enviar.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos enviar tu solicitud. Inténtalo de nuevo.'**
+  String get businessSendError;
+
+  /// Error de un campo obligatorio vacío en el formulario de empresas.
+  ///
+  /// In es, this message translates to:
+  /// **'Campo obligatorio'**
+  String get businessRequired;
+
+  /// Confirmación tras enviar la solicitud: nombre de pila y correo de quien la envió.
+  ///
+  /// In es, this message translates to:
+  /// **'Gracias, {name}. Recibimos tu solicitud y te escribiremos a {email}.'**
+  String businessThanks(String name, String email);
+
+  /// Ventaja del servicio para empresas (lista con marcas).
+  ///
+  /// In es, this message translates to:
+  /// **'Facturación mensual centralizada para tu empresa'**
+  String get businessPerkBilling;
+
+  /// Ventaja del servicio para empresas (lista con marcas).
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas prioritarias para ejecutivos e invitados'**
+  String get businessPerkPriority;
+
+  /// Etiqueta del campo nombre de la empresa.
+  ///
+  /// In es, this message translates to:
+  /// **'Empresa'**
+  String get businessCompany;
+
+  /// Etiqueta del campo nombre de la persona de contacto.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu nombre'**
+  String get businessName;
+
+  /// Etiqueta del campo correo de trabajo.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo de trabajo'**
+  String get businessEmail;
+
+  /// Error si el correo no tiene un formato válido.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe un correo válido'**
+  String get businessEmailInvalid;
+
+  /// Etiqueta del campo teléfono.
+  ///
+  /// In es, this message translates to:
+  /// **'Teléfono'**
+  String get businessPhone;
+
+  /// Etiqueta del desplegable con cuántas personas viajarían.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cuántas personas viajarían?'**
+  String get businessTravellers;
+
+  /// Opción del desplegable de personas: más de 200 (el valor guardado sigue en español).
+  ///
+  /// In es, this message translates to:
+  /// **'Más de 200'**
+  String get businessTravellersOver200;
+
+  /// Etiqueta del campo libre del formulario.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuéntanos qué necesitas (opcional)'**
+  String get businessMessage;
+
+  /// Botón para enviar la solicitud de empresa.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar solicitud'**
+  String get businessSubmit;
+
   /// Fecha relativa: hoy (antes de la hora, «Hoy · 18:30»).
   ///
   /// In es, this message translates to:
@@ -1677,6 +1779,534 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Perfil'**
   String get driverNavProfile;
+
+  /// Título del mapa para elegir el punto de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar lugar de recogida'**
+  String get homePickOriginTitle;
+
+  /// Título del mapa para elegir el destino.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar destino'**
+  String get homePickDestinationTitle;
+
+  /// Aviso: al cambiar la recogida, el destino quedó en otra ciudad y se borró.
+  ///
+  /// In es, this message translates to:
+  /// **'El destino estaba en otra ciudad. Elige uno en la ciudad de recogida.'**
+  String get homeDestinationOtherCity;
+
+  /// Aviso al buscar sin punto de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa un lugar de recogida'**
+  String get homeEnterPickup;
+
+  /// Aviso: la hora elegida quedó en el pasado y se movió; {when} es fecha y hora ya formateadas.
+  ///
+  /// In es, this message translates to:
+  /// **'Esa hora ya no da tiempo: la movimos a {when}. Revísala y continúa.'**
+  String homePickupMoved(String when);
+
+  /// Aviso al buscar un viaje de ida sin destino.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa un destino'**
+  String get homeEnterDestination;
+
+  /// Explicación en el mapa cuando no hay acceso a la ubicación del dispositivo.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos usar tu ubicación. Permite el acceso a la ubicación en tu navegador o en los ajustes del teléfono, o elige el punto en el mapa.'**
+  String get homeLocationUnavailable;
+
+  /// Etiqueta del lector de pantalla del botón de perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Mi perfil'**
+  String get homeMyProfile;
+
+  /// Botón principal del inicio: pasar a elegir vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver vehículos y precios'**
+  String get homeSeeVehicles;
+
+  /// Próximo viaje por horas: duración y punto de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'{hours} h desde {place}'**
+  String homeHourlyFrom(int hours, String place);
+
+  /// Etiqueta del lector de pantalla de la tarjeta del próximo viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver tu próximo trayecto'**
+  String get homeNextTripSemantics;
+
+  /// Antetítulo de la tarjeta del próximo viaje (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'TU PRÓXIMO TRAYECTO'**
+  String get homeNextTripEyebrow;
+
+  /// Etiqueta del campo de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Lugar de recogida'**
+  String get homePickupLabel;
+
+  /// Texto de ayuda del campo de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida'**
+  String get homePickupHint;
+
+  /// Tooltip del botón de usar la ubicación actual.
+  ///
+  /// In es, this message translates to:
+  /// **'Usar mi ubicación'**
+  String get homeUseMyLocation;
+
+  /// Etiqueta del campo de destino.
+  ///
+  /// In es, this message translates to:
+  /// **'Destino'**
+  String get homeDestinationLabel;
+
+  /// Texto de ayuda del campo de destino.
+  ///
+  /// In es, this message translates to:
+  /// **'¿A dónde vas?'**
+  String get homeDestinationHint;
+
+  /// Tooltip del botón de elegir el destino en el mapa.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir en el mapa'**
+  String get homeChooseOnMap;
+
+  /// Atajo para repetir el último viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Repetir último'**
+  String get homeRepeatLast;
+
+  /// Distancia y duración estimadas de la ruta.
+  ///
+  /// In es, this message translates to:
+  /// **'{km} km · {minutes} min'**
+  String homeRouteSummary(String km, int minutes);
+
+  /// Clase de vehículo elegida en la flota (nombre de clase sin traducir).
+  ///
+  /// In es, this message translates to:
+  /// **'Tu {vehicleClass}'**
+  String homePreferredClass(String vehicleClass);
+
+  /// Encabezado del calendario para la fecha de recogida (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'FECHA DE RECOGIDA'**
+  String get homePickupDateHelp;
+
+  /// Encabezado del reloj para la hora de recogida (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'HORA DE RECOGIDA'**
+  String get homePickupTimeHelp;
+
+  /// Botón cancelar del calendario y del reloj.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get homePickerCancel;
+
+  /// Botón del calendario para pasar a la hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Siguiente'**
+  String get homePickerNext;
+
+  /// Botón del reloj para terminar.
+  ///
+  /// In es, this message translates to:
+  /// **'Listo'**
+  String get homePickerDone;
+
+  /// Etiqueta del lector de pantalla para cambiar fecha y hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar fecha y hora de recogida'**
+  String get homeChangePickupTime;
+
+  /// Recogida próxima: lo antes posible y la hora ya formateada.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo antes posible · {time}'**
+  String homeAsap(String time);
+
+  /// Enlace para programar fecha y hora.
+  ///
+  /// In es, this message translates to:
+  /// **'Programar'**
+  String get homeSchedule;
+
+  /// Etiqueta del selector de horas (servicio por horas).
+  ///
+  /// In es, this message translates to:
+  /// **'Duración'**
+  String get homeDuration;
+
+  /// Titular de la web, primera parte (termina en espacio; sigue en cursiva «te espera.»).
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer '**
+  String get homeWebHeadlineStart;
+
+  /// Titular de la web, segunda parte en cursiva.
+  ///
+  /// In es, this message translates to:
+  /// **'te espera.'**
+  String get homeWebHeadlineEnd;
+
+  /// Etiqueta del campo de recogida en la barra de reserva (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'RECOGIDA'**
+  String get homeWebPickup;
+
+  /// Etiqueta y ayuda del campo de recogida en la web.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Dónde estás?'**
+  String get homeWebWhereAreYou;
+
+  /// Etiqueta del campo de destino en la barra de reserva (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'DESTINO'**
+  String get homeWebDestination;
+
+  /// Etiqueta del selector de horas en la barra de reserva (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'DURACIÓN'**
+  String get homeWebDuration;
+
+  /// Etiqueta de fecha y hora en la barra de reserva (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'FECHA Y HORA'**
+  String get homeWebDateTime;
+
+  /// Botón sobre el mapa para cambiar el punto (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'CAMBIAR UBICACIÓN'**
+  String get homeWebChangeLocation;
+
+  /// Selector de servicio: viaje de ida.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo ida'**
+  String get homeWebOneWay;
+
+  /// Selector de servicio: por horas.
+  ///
+  /// In es, this message translates to:
+  /// **'Por horas'**
+  String get homeWebHourly;
+
+  /// Botón de la barra de reserva (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'VER PRECIOS'**
+  String get homeWebSeePrices;
+
+  /// Botón para confirmar fecha y hora en el calendario (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'CONFIRMAR'**
+  String get homeWebConfirm;
+
+  /// Duración del servicio por horas.
+  ///
+  /// In es, this message translates to:
+  /// **'{hours, plural, =1{1 hora} other{{hours} horas}}'**
+  String homeWebHours(int hours);
+
+  /// Cinta animada de la web (se muestra en mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'Precios Fijos'**
+  String get homeWebMarqueeFixedPrices;
+
+  /// Cinta animada de la web (se muestra en mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'Chóferes Profesionales'**
+  String get homeWebMarqueeChauffeurs;
+
+  /// Cinta animada de la web (se muestra en mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'Flota Premium'**
+  String get homeWebMarqueeFleet;
+
+  /// Cinta animada de la web (se muestra en mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'Traslados Aeroportuarios'**
+  String get homeWebMarqueeAirport;
+
+  /// Cinta animada de la web (se muestra en mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes Corporativos'**
+  String get homeWebMarqueeCorporate;
+
+  /// Antetítulo de la sección de flota.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuestra Flota'**
+  String get homeWebFleetEyebrow;
+
+  /// Título de la sección de flota (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículos premium,\nsin excepciones.'**
+  String get homeWebFleetTitle;
+
+  /// Indicación para desplazar el carrusel de la flota (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'DESLIZA PARA EXPLORAR →'**
+  String get homeWebFleetSwipe;
+
+  /// Opinión 1 de la sección de testimonios.
+  ///
+  /// In es, this message translates to:
+  /// **'Absolutamente impecable de principio a fin. El chófer llegó antes de tiempo y el auto estaba inmaculado. No usaré a nadie más.'**
+  String get homeWebReview1Quote;
+
+  /// Ciudad y país de la opinión 1.
+  ///
+  /// In es, this message translates to:
+  /// **'Londres, Reino Unido'**
+  String get homeWebReview1Location;
+
+  /// Opinión 2 de la sección de testimonios.
+  ///
+  /// In es, this message translates to:
+  /// **'Los precios fijos y los chóferes confiables hacen de Luxelane el único servicio en el que confío para todos mis viajes de negocios.'**
+  String get homeWebReview2Quote;
+
+  /// Ciudad y país de la opinión 2.
+  ///
+  /// In es, this message translates to:
+  /// **'Nueva York, EE. UU.'**
+  String get homeWebReview2Location;
+
+  /// Opinión 3 de la sección de testimonios.
+  ///
+  /// In es, this message translates to:
+  /// **'Del aeropuerto al hotel, cada detalle fue manejado a la perfección. Así es como debería sentirse el viaje de lujo.'**
+  String get homeWebReview3Quote;
+
+  /// Ciudad y país de la opinión 3.
+  ///
+  /// In es, this message translates to:
+  /// **'París, Francia'**
+  String get homeWebReview3Location;
+
+  /// Ventaja de la sección para empresas.
+  ///
+  /// In es, this message translates to:
+  /// **'Facturación y cobros centralizados'**
+  String get homeWebBusinessPerkBilling;
+
+  /// Ventaja para empresas (sección y libro).
+  ///
+  /// In es, this message translates to:
+  /// **'Reservas prioritarias para ejecutivos'**
+  String get homeWebBusinessPerkPriority;
+
+  /// Antetítulo de la sección para empresas (y página del libro).
+  ///
+  /// In es, this message translates to:
+  /// **'Para Empresas'**
+  String get homeWebBusinessEyebrow;
+
+  /// Título de la sección para empresas (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes corporativos,\nredefinidos.'**
+  String get homeWebBusinessTitle;
+
+  /// Texto de la sección para empresas.
+  ///
+  /// In es, this message translates to:
+  /// **'Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.'**
+  String get homeWebBusinessBody;
+
+  /// Botón que lleva a la página para empresas.
+  ///
+  /// In es, this message translates to:
+  /// **'Más información'**
+  String get homeWebLearnMore;
+
+  /// Antetítulo de la llamada final (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'CUANDO QUIERAS. DONDE QUIERAS.'**
+  String get homeWebCtaEyebrow;
+
+  /// Llamada final, primera línea.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu próximo viaje,'**
+  String get homeWebCtaTitleStart;
+
+  /// Llamada final, segunda línea en cursiva.
+  ///
+  /// In es, this message translates to:
+  /// **'en tus términos.'**
+  String get homeWebCtaTitleEnd;
+
+  /// Línea bajo la llamada final (con espacios alrededor del punto medio).
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo  ·  Chóferes profesionales'**
+  String get homeWebCtaPromise;
+
+  /// Botón de la llamada final.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservar un viaje'**
+  String get homeWebCtaBook;
+
+  /// Botón de la llamada final para ver la flota.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver flota'**
+  String get homeWebCtaFleet;
+
+  /// Lema bajo la marca en la portada del libro.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio de Chófer Premium'**
+  String get homeWebBookTagline;
+
+  /// Libro, página 1: nombre.
+  ///
+  /// In es, this message translates to:
+  /// **'El Estándar'**
+  String get homeWebBookStandardLabel;
+
+  /// Libro, página 1: subtítulo.
+  ///
+  /// In es, this message translates to:
+  /// **'La Promesa Que Cumplimos'**
+  String get homeWebBookStandardSub;
+
+  /// Libro, página 1: etiqueta.
+  ///
+  /// In es, this message translates to:
+  /// **'El Estándar Luxelane'**
+  String get homeWebBookStandardTag;
+
+  /// Libro, página 1: titular (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'El estándar que\notros siguen.'**
+  String get homeWebBookStandardHeadline;
+
+  /// Libro, página 1: punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Chóferes con documentos verificados'**
+  String get homeWebBookStandardBullet1;
+
+  /// Libro, página 1: punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo al reservar'**
+  String get homeWebBookStandardBullet2;
+
+  /// Libro, página 2: nombre y etiqueta.
+  ///
+  /// In es, this message translates to:
+  /// **'La Experiencia'**
+  String get homeWebBookExperienceLabel;
+
+  /// Libro, página 2: subtítulo.
+  ///
+  /// In es, this message translates to:
+  /// **'Cada Detalle Considerado'**
+  String get homeWebBookExperienceSub;
+
+  /// Libro, página 2: titular (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Cada detalle,\ncuidado.'**
+  String get homeWebBookExperienceHeadline;
+
+  /// Libro, página 2: texto. En inglés y portugués sin «siempre» (glosario: sin promesas).
+  ///
+  /// In es, this message translates to:
+  /// **'Desde listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.'**
+  String get homeWebBookExperienceBody;
+
+  /// Libro, página 2: punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Interiores de cuero premium'**
+  String get homeWebBookExperienceBullet1;
+
+  /// Libro, página 2: punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Wi-Fi y carga inalámbrica'**
+  String get homeWebBookExperienceBullet2;
+
+  /// Libro, página 2: punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio de champán disponible'**
+  String get homeWebBookExperienceBullet3;
+
+  /// Libro, página 2: punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Control de clima ambiental'**
+  String get homeWebBookExperienceBullet4;
+
+  /// Libro, página 3: subtítulo.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes Corporativos Redefinidos'**
+  String get homeWebBookBusinessSub;
+
+  /// Libro, página 3: punto.
+  ///
+  /// In es, this message translates to:
+  /// **'Facturación centralizada'**
+  String get homeWebBookBusinessBullet1;
+
+  /// Antetítulo de la sección del libro (mayúsculas; en español también está en inglés).
+  ///
+  /// In es, this message translates to:
+  /// **'OUR SIGNATURE EXPERIENCE'**
+  String get homeWebBookEyebrow;
+
+  /// Indicación vertical para desplazarse (mayúsculas; en español también está en inglés).
+  ///
+  /// In es, this message translates to:
+  /// **'SCROLL'**
+  String get homeWebBookScroll;
 
   /// Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva.
   ///
@@ -3291,6 +3921,564 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No se pudo completar. Inténtalo de nuevo.'**
   String get rideErrorGeneric;
+
+  /// Páginas de servicio: antetítulo de la franja de garantías.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuestra promesa'**
+  String get servicesPromiseEyebrow;
+
+  /// Páginas de servicio: título de la franja de garantías.
+  ///
+  /// In es, this message translates to:
+  /// **'Tranquilidad, por escrito.'**
+  String get servicesPromiseTitle;
+
+  /// Páginas de servicio: antetítulo de los pasos.
+  ///
+  /// In es, this message translates to:
+  /// **'Cómo funciona'**
+  String get servicesStepsEyebrow;
+
+  /// Páginas de servicio: título de los pasos (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Tres pasos.\nNada más.'**
+  String get servicesStepsTitle;
+
+  /// Páginas de servicio: antetítulo de las clases de vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'La flota'**
+  String get servicesFleetEyebrow;
+
+  /// Páginas de servicio: título de las clases de vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige cómo llegar.'**
+  String get servicesFleetTitle;
+
+  /// Páginas de servicio: texto bajo el título de la flota.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículos de gama alta, impecables y preparados antes de cada servicio.'**
+  String get servicesFleetBody;
+
+  /// Etiqueta de la clase más elegida (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'LA MÁS ELEGIDA'**
+  String get servicesMostChosen;
+
+  /// Capacidad de la clase de vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta {count} pasajeros'**
+  String servicesCapacity(int count);
+
+  /// Antes del precio mínimo de la clase (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'DESDE'**
+  String get servicesPriceFrom;
+
+  /// En lugar del precio cuando aún no hay tarifa.
+  ///
+  /// In es, this message translates to:
+  /// **'Cotiza al reservar'**
+  String get servicesQuoteOnBooking;
+
+  /// Páginas de servicio: antetítulo de preguntas frecuentes.
+  ///
+  /// In es, this message translates to:
+  /// **'Preguntas frecuentes'**
+  String get servicesFaqEyebrow;
+
+  /// Páginas de servicio: título de preguntas frecuentes (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Todo lo que\nquieres saber.'**
+  String get servicesFaqTitle;
+
+  /// Botón final de las páginas de servicio (mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'RESERVAR AHORA'**
+  String get servicesBookNow;
+
+  /// Traslado al aeropuerto: antetítulo.
+  ///
+  /// In es, this message translates to:
+  /// **'Traslado al aeropuerto'**
+  String get servicesAirportEyebrow;
+
+  /// Traslado al aeropuerto: título (con saltos de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Aterriza.\nNosotros nos\nocupamos del resto.'**
+  String get servicesAirportTitle;
+
+  /// Traslado al aeropuerto: entradilla.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer te espera en llegadas con tu nombre y se encarga del equipaje. Tú solo sales por la puerta.'**
+  String get servicesAirportLead;
+
+  /// Traslado al aeropuerto: paso 1, título.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva en 2 minutos'**
+  String get servicesAirportStep1Title;
+
+  /// Traslado al aeropuerto: paso 1, texto.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica aeropuerto, destino y hora. Añade tu número de vuelo y verás el precio final al instante.'**
+  String get servicesAirportStep1Body;
+
+  /// Traslado al aeropuerto: paso 2, título.
+  ///
+  /// In es, this message translates to:
+  /// **'Recibe a tu chófer'**
+  String get servicesAirportStep2Title;
+
+  /// Traslado al aeropuerto: paso 2, texto.
+  ///
+  /// In es, this message translates to:
+  /// **'Antes de la recogida tendrás su nombre, vehículo y contacto en la app.'**
+  String get servicesAirportStep2Body;
+
+  /// Traslado al aeropuerto: paso 3, título.
+  ///
+  /// In es, this message translates to:
+  /// **'Sal y relájate'**
+  String get servicesAirportStep3Title;
+
+  /// Traslado al aeropuerto: paso 3, texto.
+  ///
+  /// In es, this message translates to:
+  /// **'Te espera en llegadas, se ocupa del equipaje y te lleva directo a tu destino.'**
+  String get servicesAirportStep3Body;
+
+  /// Traslado al aeropuerto: antetítulo del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'La llegada'**
+  String get servicesAirportStoryEyebrow;
+
+  /// Traslado al aeropuerto: título del relato (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'El primer momento\nde tu viaje, resuelto.'**
+  String get servicesAirportStoryTitle;
+
+  /// Traslado al aeropuerto: texto del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Después de un vuelo largo, lo último que quieres son colas, negociaciones o incertidumbre. Un chófer de Luxelane convierte la llegada en una transición tranquila hacia tu hotel, tu reunión o tu casa.'**
+  String get servicesAirportStoryBody;
+
+  /// Traslado al aeropuerto: punto del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda con el equipaje, de la cinta al maletero'**
+  String get servicesAirportStoryPoint1;
+
+  /// Traslado al aeropuerto: punto del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Conexiones entre aeropuertos y hoteles sin complicaciones'**
+  String get servicesAirportStoryPoint2;
+
+  /// Traslado al aeropuerto: pregunta frecuente 1.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Dónde me espera el chófer?'**
+  String get servicesAirportFaq1Question;
+
+  /// Traslado al aeropuerto: respuesta 1.
+  ///
+  /// In es, this message translates to:
+  /// **'En la zona de llegadas. Recibirás sus datos de contacto en la app antes de la recogida.'**
+  String get servicesAirportFaq1Answer;
+
+  /// Traslado al aeropuerto: pregunta frecuente 2.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Puedo cancelar mi reserva?'**
+  String get servicesAirportFaq2Question;
+
+  /// Traslado al aeropuerto: respuesta 2.
+  ///
+  /// In es, this message translates to:
+  /// **'Sí, desde la app antes de que empiece el viaje. Si según la política de cancelación corresponde un recargo, lo verás antes de confirmar.'**
+  String get servicesAirportFaq2Answer;
+
+  /// Traslado al aeropuerto: pregunta frecuente 3.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cuánto equipaje puedo llevar?'**
+  String get servicesAirportFaq3Question;
+
+  /// Traslado al aeropuerto: respuesta 3 (Business Van no se traduce).
+  ///
+  /// In es, this message translates to:
+  /// **'Depende de la clase de vehículo. Si viajas con mucho equipaje o en grupo, la Business Van ofrece espacio para hasta 7 pasajeros.'**
+  String get servicesAirportFaq3Answer;
+
+  /// Traslado al aeropuerto: título del cierre (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Tu próximo vuelo\nya tiene chófer.'**
+  String get servicesAirportClosingTitle;
+
+  /// Traslado al aeropuerto: texto del cierre.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva ahora. Precio fijo al reservar y chóferes con documentos verificados.'**
+  String get servicesAirportClosingBody;
+
+  /// Chófer por horas: antetítulo.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer por horas'**
+  String get servicesHourlyEyebrow;
+
+  /// Chófer por horas: título (con saltos de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Tu agenda.\nTu ritmo.\nTu chófer.'**
+  String get servicesHourlyTitle;
+
+  /// Chófer por horas: entradilla.
+  ///
+  /// In es, this message translates to:
+  /// **'Un chófer y un vehículo exclusivamente para ti, de 2 a 24 horas. Cambia de planes cuantas veces quieras: él se adapta.'**
+  String get servicesHourlyLead;
+
+  /// Chófer por horas: garantía propia, título.
+  ///
+  /// In es, this message translates to:
+  /// **'Paradas ilimitadas'**
+  String get servicesHourlyStopsTitle;
+
+  /// Chófer por horas: garantía propia, detalle.
+  ///
+  /// In es, this message translates to:
+  /// **'Reuniones, compras o visitas: tu chófer te espera en cada parada.'**
+  String get servicesHourlyStopsDetail;
+
+  /// Chófer por horas: paso 1, título.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige la duración'**
+  String get servicesHourlyStep1Title;
+
+  /// Chófer por horas: paso 1, texto.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica el punto de recogida, el día y cuántas horas necesitas. Mínimo 2, máximo 24.'**
+  String get servicesHourlyStep1Body;
+
+  /// Chófer por horas: paso 2, título.
+  ///
+  /// In es, this message translates to:
+  /// **'Diseña tu jornada'**
+  String get servicesHourlyStep2Title;
+
+  /// Chófer por horas: paso 2, texto.
+  ///
+  /// In es, this message translates to:
+  /// **'Comparte tu itinerario en las notas o decídelo sobre la marcha. No hace falta destino final.'**
+  String get servicesHourlyStep2Body;
+
+  /// Chófer por horas: paso 3, título.
+  ///
+  /// In es, this message translates to:
+  /// **'Disfruta sin mirar el reloj'**
+  String get servicesHourlyStep3Title;
+
+  /// Chófer por horas: paso 3, texto.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer y tu vehículo están a tu disposición durante todo el tiempo reservado.'**
+  String get servicesHourlyStep3Body;
+
+  /// Chófer por horas: antetítulo del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Para cada ocasión'**
+  String get servicesHourlyStoryEyebrow;
+
+  /// Chófer por horas: título del relato (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Un día entero,\nsin pensar en cómo moverte.'**
+  String get servicesHourlyStoryTitle;
+
+  /// Chófer por horas: texto del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde una agenda de reuniones hasta una tarde descubriendo la ciudad, el servicio por horas te da la libertad de un vehículo privado sin ninguna de sus preocupaciones.'**
+  String get servicesHourlyStoryBody;
+
+  /// Chófer por horas: punto del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes de negocios: de reunión en reunión, sin esperas'**
+  String get servicesHourlyStoryPoint1;
+
+  /// Chófer por horas: punto del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Eventos y cenas: llegada impecable, salida sin prisas'**
+  String get servicesHourlyStoryPoint2;
+
+  /// Chófer por horas: punto del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Turismo privado: la ciudad a tu ritmo, con un chófer local'**
+  String get servicesHourlyStoryPoint3;
+
+  /// Chófer por horas: punto del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Compras y ocio: tu chófer guarda tus bolsas y te espera'**
+  String get servicesHourlyStoryPoint4;
+
+  /// Chófer por horas: pregunta frecuente 1.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cómo reservo un chófer por horas?'**
+  String get servicesHourlyFaq1Question;
+
+  /// Chófer por horas: respuesta 1.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona el lugar de recogida, la duración, el día y la hora. Después elige la clase de vehículo y confirma. Verás el precio final antes de pagar.'**
+  String get servicesHourlyFaq1Answer;
+
+  /// Chófer por horas: pregunta frecuente 2.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Puedo cambiar el itinerario durante el servicio?'**
+  String get servicesHourlyFaq2Question;
+
+  /// Chófer por horas: respuesta 2.
+  ///
+  /// In es, this message translates to:
+  /// **'Sí. El chófer y el vehículo están a tu disposición durante todas las horas reservadas, con tantas paradas como necesites.'**
+  String get servicesHourlyFaq2Answer;
+
+  /// Chófer por horas: pregunta frecuente 3.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Puedo ampliar el número de horas?'**
+  String get servicesHourlyFaq3Question;
+
+  /// Chófer por horas: respuesta 3.
+  ///
+  /// In es, this message translates to:
+  /// **'Sí, puedes modificar la reserva antes de la hora de inicio. La duración mínima es de 2 horas y la máxima de 24.'**
+  String get servicesHourlyFaq3Answer;
+
+  /// Chófer por horas: pregunta frecuente 4.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Puede empezar o terminar en un aeropuerto?'**
+  String get servicesHourlyFaq4Question;
+
+  /// Chófer por horas: respuesta 4.
+  ///
+  /// In es, this message translates to:
+  /// **'Sí. El servicio puede empezar o terminar en un aeropuerto, siempre que el inicio y el final estén en la misma ciudad.'**
+  String get servicesHourlyFaq4Answer;
+
+  /// Chófer por horas: pregunta frecuente 5.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cuándo recibiré los datos del chófer?'**
+  String get servicesHourlyFaq5Question;
+
+  /// Chófer por horas: respuesta 5.
+  ///
+  /// In es, this message translates to:
+  /// **'Antes de la recogida tendrás en la app el nombre del chófer, el vehículo y su contacto.'**
+  String get servicesHourlyFaq5Answer;
+
+  /// Chófer por horas: título del cierre (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva el tiempo.\nNosotros ponemos el camino.'**
+  String get servicesHourlyClosingTitle;
+
+  /// Chófer por horas: texto del cierre.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde 2 horas, con precio fijo y un chófer profesional a tu entera disposición.'**
+  String get servicesHourlyClosingBody;
+
+  /// Recogida inmediata: antetítulo (nombre del servicio).
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida inmediata'**
+  String get servicesImmediateEyebrow;
+
+  /// Recogida inmediata: título (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Cuando lo\nnecesites.'**
+  String get servicesImmediateTitle;
+
+  /// Recogida inmediata: entradilla.
+  ///
+  /// In es, this message translates to:
+  /// **'La misma excelencia de una reserva anticipada, sin planificar.'**
+  String get servicesImmediateLead;
+
+  /// Recogida inmediata: garantía propia, título.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguimiento en tiempo real'**
+  String get servicesImmediateTrackingTitle;
+
+  /// Recogida inmediata: garantía propia, detalle.
+  ///
+  /// In es, this message translates to:
+  /// **'Ve en el mapa dónde está tu chófer y cuándo llega.'**
+  String get servicesImmediateTrackingDetail;
+
+  /// Recogida inmediata: paso 1, título.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica origen y destino'**
+  String get servicesImmediateStep1Title;
+
+  /// Recogida inmediata: paso 1, texto.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe la dirección o elígela en el mapa. Verás el precio final antes de confirmar.'**
+  String get servicesImmediateStep1Body;
+
+  /// Recogida inmediata: paso 2, título.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirma con un toque'**
+  String get servicesImmediateStep2Title;
+
+  /// Recogida inmediata: paso 2, texto.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagas la reserva. Con el pago confirmado buscamos chófer y te mostramos su nombre y vehículo.'**
+  String get servicesImmediateStep2Body;
+
+  /// Recogida inmediata: paso 3, título.
+  ///
+  /// In es, this message translates to:
+  /// **'Síguelo en el mapa'**
+  String get servicesImmediateStep3Title;
+
+  /// Recogida inmediata: paso 3, texto.
+  ///
+  /// In es, this message translates to:
+  /// **'Recibe un aviso cuando tu chófer esté en camino y otro cuando haya llegado.'**
+  String get servicesImmediateStep3Body;
+
+  /// Recogida inmediata: antetítulo del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin planificar'**
+  String get servicesImmediateStoryEyebrow;
+
+  /// Recogida inmediata: título del relato (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Lo imprevisto,\ncon la misma elegancia.'**
+  String get servicesImmediateStoryTitle;
+
+  /// Recogida inmediata: texto del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Una reunión que se alarga, un cambio de planes, una cena que merece un final a la altura. La recogida inmediata pone un vehículo premium y un chófer profesional a tu alcance.'**
+  String get servicesImmediateStoryBody;
+
+  /// Recogida inmediata: punto del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículos premium, impecables en cada servicio'**
+  String get servicesImmediateStoryPoint1;
+
+  /// Recogida inmediata: punto del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Chóferes con documentos verificados'**
+  String get servicesImmediateStoryPoint2;
+
+  /// Recogida inmediata: punto del relato.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio fijo calculado antes de confirmar, sin tarifas dinámicas'**
+  String get servicesImmediateStoryPoint3;
+
+  /// Recogida inmediata: pregunta frecuente 1.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cuánto tarda en llegar el chófer?'**
+  String get servicesImmediateFaq1Question;
+
+  /// Recogida inmediata: respuesta 1.
+  ///
+  /// In es, this message translates to:
+  /// **'Depende de tu ubicación y de la disponibilidad. Verás la hora estimada de llegada antes de confirmar y podrás seguir al chófer en el mapa.'**
+  String get servicesImmediateFaq1Answer;
+
+  /// Recogida inmediata: pregunta frecuente 2.
+  ///
+  /// In es, this message translates to:
+  /// **'¿El precio cambia según la demanda?'**
+  String get servicesImmediateFaq2Question;
+
+  /// Recogida inmediata: respuesta 2.
+  ///
+  /// In es, this message translates to:
+  /// **'No. El precio se fija antes de confirmar y no cambia: sin tarifas dinámicas ni cargos ocultos.'**
+  String get servicesImmediateFaq2Answer;
+
+  /// Recogida inmediata: pregunta frecuente 3.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Puedo programar el viaje para más tarde?'**
+  String get servicesImmediateFaq3Question;
+
+  /// Recogida inmediata: respuesta 3 (cita el botón «Programar» del inicio).
+  ///
+  /// In es, this message translates to:
+  /// **'Sí. Elige \"Programar\" en el formulario y selecciona el día y la hora que prefieras.'**
+  String get servicesImmediateFaq3Answer;
+
+  /// Recogida inmediata: pregunta frecuente 4.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Qué pasa si necesito cancelar?'**
+  String get servicesImmediateFaq4Question;
+
+  /// Recogida inmediata: respuesta 4.
+  ///
+  /// In es, this message translates to:
+  /// **'Puedes cancelar desde la app antes de que empiece el viaje. Si según la política de cancelación corresponde un recargo, lo verás antes de confirmar.'**
+  String get servicesImmediateFaq4Answer;
+
+  /// Recogida inmediata: título del cierre (con salto de línea).
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer,\na un toque.'**
+  String get servicesImmediateClosingTitle;
+
+  /// Recogida inmediata: texto del cierre.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirma ahora y sigue a tu chófer en tiempo real hasta la puerta.'**
+  String get servicesImmediateClosingBody;
 
   /// Título de la pantalla Mis viajes.
   ///

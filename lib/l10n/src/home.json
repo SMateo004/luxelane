@@ -1,0 +1,574 @@
+{
+  "homePickOriginTitle": {
+    "description": "Título del mapa para elegir el punto de recogida.",
+    "es": "Seleccionar lugar de recogida",
+    "en": "Select pickup point",
+    "pt": "Selecionar ponto de embarque"
+  },
+  "homePickDestinationTitle": {
+    "description": "Título del mapa para elegir el destino.",
+    "es": "Seleccionar destino",
+    "en": "Select destination",
+    "pt": "Selecionar destino"
+  },
+  "homeDestinationOtherCity": {
+    "description": "Aviso: al cambiar la recogida, el destino quedó en otra ciudad y se borró.",
+    "es": "El destino estaba en otra ciudad. Elige uno en la ciudad de recogida.",
+    "en": "The destination was in another city. Choose one in the pickup city.",
+    "pt": "O destino estava em outra cidade. Escolha um na cidade de embarque."
+  },
+  "homeEnterPickup": {
+    "description": "Aviso al buscar sin punto de recogida.",
+    "es": "Ingresa un lugar de recogida",
+    "en": "Enter a pickup point",
+    "pt": "Informe um ponto de embarque"
+  },
+  "homePickupMoved": {
+    "description": "Aviso: la hora elegida quedó en el pasado y se movió; {when} es fecha y hora ya formateadas.",
+    "es": "Esa hora ya no da tiempo: la movimos a {when}. Revísala y continúa.",
+    "en": "That time is no longer possible: we moved it to {when}. Check it and continue.",
+    "pt": "Esse horário já não é possível: nós o mudamos para {when}. Confira e continue.",
+    "placeholders": {
+      "when": {
+        "type": "String",
+        "example": "Mañana · 09:15"
+      }
+    }
+  },
+  "homeEnterDestination": {
+    "description": "Aviso al buscar un viaje de ida sin destino.",
+    "es": "Ingresa un destino",
+    "en": "Enter a destination",
+    "pt": "Informe um destino"
+  },
+  "homeLocationUnavailable": {
+    "description": "Explicación en el mapa cuando no hay acceso a la ubicación del dispositivo.",
+    "es": "No pudimos usar tu ubicación. Permite el acceso a la ubicación en tu navegador o en los ajustes del teléfono, o elige el punto en el mapa.",
+    "en": "We could not use your location. Allow location access in your browser or phone settings, or choose the point on the map.",
+    "pt": "Não foi possível usar sua localização. Permita o acesso à localização no navegador ou nas configurações do celular, ou escolha o ponto no mapa."
+  },
+  "homeMyProfile": {
+    "description": "Etiqueta del lector de pantalla del botón de perfil.",
+    "es": "Mi perfil",
+    "en": "My profile",
+    "pt": "Meu perfil"
+  },
+  "homeSeeVehicles": {
+    "description": "Botón principal del inicio: pasar a elegir vehículo.",
+    "es": "Ver vehículos y precios",
+    "en": "See vehicles and prices",
+    "pt": "Ver veículos e preços"
+  },
+  "homeHourlyFrom": {
+    "description": "Próximo viaje por horas: duración y punto de recogida.",
+    "es": "{hours} h desde {place}",
+    "en": "{hours} h from {place}",
+    "pt": "{hours} h a partir de {place}",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "3"
+      },
+      "place": {
+        "type": "String",
+        "example": "Hotel Los Tajibos"
+      }
+    }
+  },
+  "homeNextTripSemantics": {
+    "description": "Etiqueta del lector de pantalla de la tarjeta del próximo viaje.",
+    "es": "Ver tu próximo trayecto",
+    "en": "View your next trip",
+    "pt": "Ver sua próxima viagem"
+  },
+  "homeNextTripEyebrow": {
+    "description": "Antetítulo de la tarjeta del próximo viaje (mayúsculas).",
+    "es": "TU PRÓXIMO TRAYECTO",
+    "en": "YOUR NEXT TRIP",
+    "pt": "SUA PRÓXIMA VIAGEM"
+  },
+  "homePickupLabel": {
+    "description": "Etiqueta del campo de recogida.",
+    "es": "Lugar de recogida",
+    "en": "Pickup point",
+    "pt": "Ponto de embarque"
+  },
+  "homePickupHint": {
+    "description": "Texto de ayuda del campo de recogida.",
+    "es": "Recogida",
+    "en": "Pickup",
+    "pt": "Embarque"
+  },
+  "homeUseMyLocation": {
+    "description": "Tooltip del botón de usar la ubicación actual.",
+    "es": "Usar mi ubicación",
+    "en": "Use my location",
+    "pt": "Usar minha localização"
+  },
+  "homeDestinationLabel": {
+    "description": "Etiqueta del campo de destino.",
+    "es": "Destino",
+    "en": "Destination",
+    "pt": "Destino"
+  },
+  "homeDestinationHint": {
+    "description": "Texto de ayuda del campo de destino.",
+    "es": "¿A dónde vas?",
+    "en": "Where are you going?",
+    "pt": "Para onde você vai?"
+  },
+  "homeChooseOnMap": {
+    "description": "Tooltip del botón de elegir el destino en el mapa.",
+    "es": "Elegir en el mapa",
+    "en": "Choose on the map",
+    "pt": "Escolher no mapa"
+  },
+  "homeRepeatLast": {
+    "description": "Atajo para repetir el último viaje.",
+    "es": "Repetir último",
+    "en": "Repeat last trip",
+    "pt": "Repetir última viagem"
+  },
+  "homeRouteSummary": {
+    "description": "Distancia y duración estimadas de la ruta.",
+    "es": "{km} km · {minutes} min",
+    "en": "{km} km · {minutes} min",
+    "pt": "{km} km · {minutes} min",
+    "placeholders": {
+      "km": {
+        "type": "String",
+        "example": "12.4"
+      },
+      "minutes": {
+        "type": "int",
+        "example": "25"
+      }
+    }
+  },
+  "homePreferredClass": {
+    "description": "Clase de vehículo elegida en la flota (nombre de clase sin traducir).",
+    "es": "Tu {vehicleClass}",
+    "en": "Your {vehicleClass}",
+    "pt": "Categoria: {vehicleClass}",
+    "placeholders": {
+      "vehicleClass": {
+        "type": "String",
+        "example": "Business Class"
+      }
+    }
+  },
+  "homePickupDateHelp": {
+    "description": "Encabezado del calendario para la fecha de recogida (mayúsculas).",
+    "es": "FECHA DE RECOGIDA",
+    "en": "PICKUP DATE",
+    "pt": "DATA DE EMBARQUE"
+  },
+  "homePickupTimeHelp": {
+    "description": "Encabezado del reloj para la hora de recogida (mayúsculas).",
+    "es": "HORA DE RECOGIDA",
+    "en": "PICKUP TIME",
+    "pt": "HORÁRIO DE EMBARQUE"
+  },
+  "homePickerCancel": {
+    "description": "Botón cancelar del calendario y del reloj.",
+    "es": "Cancelar",
+    "en": "Cancel",
+    "pt": "Cancelar"
+  },
+  "homePickerNext": {
+    "description": "Botón del calendario para pasar a la hora.",
+    "es": "Siguiente",
+    "en": "Next",
+    "pt": "Próximo"
+  },
+  "homePickerDone": {
+    "description": "Botón del reloj para terminar.",
+    "es": "Listo",
+    "en": "Done",
+    "pt": "Concluído"
+  },
+  "homeChangePickupTime": {
+    "description": "Etiqueta del lector de pantalla para cambiar fecha y hora.",
+    "es": "Cambiar fecha y hora de recogida",
+    "en": "Change pickup date and time",
+    "pt": "Alterar data e horário de embarque"
+  },
+  "homeAsap": {
+    "description": "Recogida próxima: lo antes posible y la hora ya formateada.",
+    "es": "Lo antes posible · {time}",
+    "en": "As soon as possible · {time}",
+    "pt": "O quanto antes · {time}",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "18:30"
+      }
+    }
+  },
+  "homeSchedule": {
+    "description": "Enlace para programar fecha y hora.",
+    "es": "Programar",
+    "en": "Schedule",
+    "pt": "Agendar"
+  },
+  "homeDuration": {
+    "description": "Etiqueta del selector de horas (servicio por horas).",
+    "es": "Duración",
+    "en": "Duration",
+    "pt": "Duração"
+  },
+  "homeWebHeadlineStart": {
+    "description": "Titular de la web, primera parte (termina en espacio; sigue en cursiva «te espera.»).",
+    "es": "Tu chófer ",
+    "en": "Your chauffeur ",
+    "pt": "Seu motorista "
+  },
+  "homeWebHeadlineEnd": {
+    "description": "Titular de la web, segunda parte en cursiva.",
+    "es": "te espera.",
+    "en": "awaits you.",
+    "pt": "espera por você."
+  },
+  "homeWebPickup": {
+    "description": "Etiqueta del campo de recogida en la barra de reserva (mayúsculas).",
+    "es": "RECOGIDA",
+    "en": "PICKUP",
+    "pt": "EMBARQUE"
+  },
+  "homeWebWhereAreYou": {
+    "description": "Etiqueta y ayuda del campo de recogida en la web.",
+    "es": "¿Dónde estás?",
+    "en": "Where are you?",
+    "pt": "Onde você está?"
+  },
+  "homeWebDestination": {
+    "description": "Etiqueta del campo de destino en la barra de reserva (mayúsculas).",
+    "es": "DESTINO",
+    "en": "DESTINATION",
+    "pt": "DESTINO"
+  },
+  "homeWebDuration": {
+    "description": "Etiqueta del selector de horas en la barra de reserva (mayúsculas).",
+    "es": "DURACIÓN",
+    "en": "DURATION",
+    "pt": "DURAÇÃO"
+  },
+  "homeWebDateTime": {
+    "description": "Etiqueta de fecha y hora en la barra de reserva (mayúsculas).",
+    "es": "FECHA Y HORA",
+    "en": "DATE AND TIME",
+    "pt": "DATA E HORA"
+  },
+  "homeWebChangeLocation": {
+    "description": "Botón sobre el mapa para cambiar el punto (mayúsculas).",
+    "es": "CAMBIAR UBICACIÓN",
+    "en": "CHANGE LOCATION",
+    "pt": "ALTERAR LOCAL"
+  },
+  "homeWebOneWay": {
+    "description": "Selector de servicio: viaje de ida.",
+    "es": "Solo ida",
+    "en": "One way",
+    "pt": "Só ida"
+  },
+  "homeWebHourly": {
+    "description": "Selector de servicio: por horas.",
+    "es": "Por horas",
+    "en": "By the hour",
+    "pt": "Por hora"
+  },
+  "homeWebSeePrices": {
+    "description": "Botón de la barra de reserva (mayúsculas).",
+    "es": "VER PRECIOS",
+    "en": "SEE PRICES",
+    "pt": "VER PREÇOS"
+  },
+  "homeWebConfirm": {
+    "description": "Botón para confirmar fecha y hora en el calendario (mayúsculas).",
+    "es": "CONFIRMAR",
+    "en": "CONFIRM",
+    "pt": "CONFIRMAR"
+  },
+  "homeWebHours": {
+    "description": "Duración del servicio por horas.",
+    "es": "{hours, plural, =1{1 hora} other{{hours} horas}}",
+    "en": "{hours, plural, =1{1 hour} other{{hours} hours}}",
+    "pt": "{hours, plural, =1{1 hora} other{{hours} horas}}",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "homeWebMarqueeFixedPrices": {
+    "description": "Cinta animada de la web (se muestra en mayúsculas).",
+    "es": "Precios Fijos",
+    "en": "Fixed Prices",
+    "pt": "Preços Fixos"
+  },
+  "homeWebMarqueeChauffeurs": {
+    "description": "Cinta animada de la web (se muestra en mayúsculas).",
+    "es": "Chóferes Profesionales",
+    "en": "Professional Chauffeurs",
+    "pt": "Motoristas Profissionais"
+  },
+  "homeWebMarqueeFleet": {
+    "description": "Cinta animada de la web (se muestra en mayúsculas).",
+    "es": "Flota Premium",
+    "en": "Premium Fleet",
+    "pt": "Frota Premium"
+  },
+  "homeWebMarqueeAirport": {
+    "description": "Cinta animada de la web (se muestra en mayúsculas).",
+    "es": "Traslados Aeroportuarios",
+    "en": "Airport Transfers",
+    "pt": "Transfers para o Aeroporto"
+  },
+  "homeWebMarqueeCorporate": {
+    "description": "Cinta animada de la web (se muestra en mayúsculas).",
+    "es": "Viajes Corporativos",
+    "en": "Corporate Travel",
+    "pt": "Viagens Corporativas"
+  },
+  "homeWebFleetEyebrow": {
+    "description": "Antetítulo de la sección de flota.",
+    "es": "Nuestra Flota",
+    "en": "Our Fleet",
+    "pt": "Nossa Frota"
+  },
+  "homeWebFleetTitle": {
+    "description": "Título de la sección de flota (con salto de línea).",
+    "es": "Vehículos premium,\nsin excepciones.",
+    "en": "Premium vehicles,\nwithout exception.",
+    "pt": "Veículos premium,\nsem exceção."
+  },
+  "homeWebFleetSwipe": {
+    "description": "Indicación para desplazar el carrusel de la flota (mayúsculas).",
+    "es": "DESLIZA PARA EXPLORAR →",
+    "en": "SWIPE TO EXPLORE →",
+    "pt": "DESLIZE PARA EXPLORAR →"
+  },
+  "homeWebReview1Quote": {
+    "description": "Opinión 1 de la sección de testimonios.",
+    "es": "Absolutamente impecable de principio a fin. El chófer llegó antes de tiempo y el auto estaba inmaculado. No usaré a nadie más.",
+    "en": "Absolutely impeccable from start to finish. The chauffeur arrived early and the car was spotless. I will not use anyone else.",
+    "pt": "Absolutamente impecável do início ao fim. O motorista chegou antes do horário e o carro estava imaculado. Não vou usar outro serviço."
+  },
+  "homeWebReview1Location": {
+    "description": "Ciudad y país de la opinión 1.",
+    "es": "Londres, Reino Unido",
+    "en": "London, United Kingdom",
+    "pt": "Londres, Reino Unido"
+  },
+  "homeWebReview2Quote": {
+    "description": "Opinión 2 de la sección de testimonios.",
+    "es": "Los precios fijos y los chóferes confiables hacen de Luxelane el único servicio en el que confío para todos mis viajes de negocios.",
+    "en": "Fixed prices and reliable chauffeurs make Luxelane the only service I trust for all my business trips.",
+    "pt": "Os preços fixos e os motoristas confiáveis fazem da Luxelane o único serviço em que confio para todas as minhas viagens de negócios."
+  },
+  "homeWebReview2Location": {
+    "description": "Ciudad y país de la opinión 2.",
+    "es": "Nueva York, EE. UU.",
+    "en": "New York, USA",
+    "pt": "Nova York, EUA"
+  },
+  "homeWebReview3Quote": {
+    "description": "Opinión 3 de la sección de testimonios.",
+    "es": "Del aeropuerto al hotel, cada detalle fue manejado a la perfección. Así es como debería sentirse el viaje de lujo.",
+    "en": "From the airport to the hotel, every detail was handled perfectly. This is how luxury travel should feel.",
+    "pt": "Do aeroporto ao hotel, cada detalhe foi cuidado com perfeição. É assim que uma viagem de luxo deve ser."
+  },
+  "homeWebReview3Location": {
+    "description": "Ciudad y país de la opinión 3.",
+    "es": "París, Francia",
+    "en": "Paris, France",
+    "pt": "Paris, França"
+  },
+  "homeWebBusinessPerkBilling": {
+    "description": "Ventaja de la sección para empresas.",
+    "es": "Facturación y cobros centralizados",
+    "en": "Centralized billing and payments",
+    "pt": "Faturamento e cobranças centralizados"
+  },
+  "homeWebBusinessPerkPriority": {
+    "description": "Ventaja para empresas (sección y libro).",
+    "es": "Reservas prioritarias para ejecutivos",
+    "en": "Priority bookings for executives",
+    "pt": "Reservas prioritárias para executivos"
+  },
+  "homeWebBusinessEyebrow": {
+    "description": "Antetítulo de la sección para empresas (y página del libro).",
+    "es": "Para Empresas",
+    "en": "For Business",
+    "pt": "Para Empresas"
+  },
+  "homeWebBusinessTitle": {
+    "description": "Título de la sección para empresas (con salto de línea).",
+    "es": "Viajes corporativos,\nredefinidos.",
+    "en": "Corporate travel,\nredefined.",
+    "pt": "Viagens corporativas,\nredefinidas."
+  },
+  "homeWebBusinessBody": {
+    "description": "Texto de la sección para empresas.",
+    "es": "Luxelane para Empresas brinda a tu equipo acceso a servicio de chófer premium con los controles e informes que tu equipo financiero exige.",
+    "en": "Luxelane for Business gives your team access to a premium chauffeur service with the controls and reports your finance team requires.",
+    "pt": "A Luxelane para Empresas oferece à sua equipe acesso a um serviço de motorista premium com os controles e relatórios que sua equipe financeira exige."
+  },
+  "homeWebLearnMore": {
+    "description": "Botón que lleva a la página para empresas.",
+    "es": "Más información",
+    "en": "Learn more",
+    "pt": "Saiba mais"
+  },
+  "homeWebCtaEyebrow": {
+    "description": "Antetítulo de la llamada final (mayúsculas).",
+    "es": "CUANDO QUIERAS. DONDE QUIERAS.",
+    "en": "WHENEVER YOU WANT. WHEREVER YOU WANT.",
+    "pt": "QUANDO QUISER. ONDE QUISER."
+  },
+  "homeWebCtaTitleStart": {
+    "description": "Llamada final, primera línea.",
+    "es": "Tu próximo viaje,",
+    "en": "Your next journey,",
+    "pt": "Sua próxima viagem,"
+  },
+  "homeWebCtaTitleEnd": {
+    "description": "Llamada final, segunda línea en cursiva.",
+    "es": "en tus términos.",
+    "en": "on your terms.",
+    "pt": "do seu jeito."
+  },
+  "homeWebCtaPromise": {
+    "description": "Línea bajo la llamada final (con espacios alrededor del punto medio).",
+    "es": "Precio fijo  ·  Chóferes profesionales",
+    "en": "Fixed price  ·  Professional chauffeurs",
+    "pt": "Preço fixo  ·  Motoristas profissionais"
+  },
+  "homeWebCtaBook": {
+    "description": "Botón de la llamada final.",
+    "es": "Reservar un viaje",
+    "en": "Book a trip",
+    "pt": "Reservar uma viagem"
+  },
+  "homeWebCtaFleet": {
+    "description": "Botón de la llamada final para ver la flota.",
+    "es": "Ver flota",
+    "en": "View fleet",
+    "pt": "Ver frota"
+  },
+  "homeWebBookTagline": {
+    "description": "Lema bajo la marca en la portada del libro.",
+    "es": "Servicio de Chófer Premium",
+    "en": "Premium Chauffeur Service",
+    "pt": "Serviço de Motorista Premium"
+  },
+  "homeWebBookStandardLabel": {
+    "description": "Libro, página 1: nombre.",
+    "es": "El Estándar",
+    "en": "The Standard",
+    "pt": "O Padrão"
+  },
+  "homeWebBookStandardSub": {
+    "description": "Libro, página 1: subtítulo.",
+    "es": "La Promesa Que Cumplimos",
+    "en": "The Promise We Keep",
+    "pt": "A Promessa Que Cumprimos"
+  },
+  "homeWebBookStandardTag": {
+    "description": "Libro, página 1: etiqueta.",
+    "es": "El Estándar Luxelane",
+    "en": "The Luxelane Standard",
+    "pt": "O Padrão Luxelane"
+  },
+  "homeWebBookStandardHeadline": {
+    "description": "Libro, página 1: titular (con salto de línea).",
+    "es": "El estándar que\notros siguen.",
+    "en": "The standard\nothers follow.",
+    "pt": "O padrão que\noutros seguem."
+  },
+  "homeWebBookStandardBullet1": {
+    "description": "Libro, página 1: punto.",
+    "es": "Chóferes con documentos verificados",
+    "en": "Chauffeurs with verified documents",
+    "pt": "Motoristas com documentos verificados"
+  },
+  "homeWebBookStandardBullet2": {
+    "description": "Libro, página 1: punto.",
+    "es": "Precio fijo al reservar",
+    "en": "Fixed price when you book",
+    "pt": "Preço fixo ao reservar"
+  },
+  "homeWebBookExperienceLabel": {
+    "description": "Libro, página 2: nombre y etiqueta.",
+    "es": "La Experiencia",
+    "en": "The Experience",
+    "pt": "A Experiência"
+  },
+  "homeWebBookExperienceSub": {
+    "description": "Libro, página 2: subtítulo.",
+    "es": "Cada Detalle Considerado",
+    "en": "Every Detail Considered",
+    "pt": "Cada Detalhe Pensado"
+  },
+  "homeWebBookExperienceHeadline": {
+    "description": "Libro, página 2: titular (con salto de línea).",
+    "es": "Cada detalle,\ncuidado.",
+    "en": "Every detail,\ncared for.",
+    "pt": "Cada detalhe,\ncuidado."
+  },
+  "homeWebBookExperienceBody": {
+    "description": "Libro, página 2: texto. En inglés y portugués sin «siempre» (glosario: sin promesas).",
+    "es": "Desde listas de reproducción seleccionadas hasta privacidad con cancelación de ruido — tus preferencias recordadas, siempre.",
+    "en": "From curated playlists to noise-cancelling privacy — your preferences, remembered.",
+    "pt": "De playlists selecionadas à privacidade com cancelamento de ruído — suas preferências, lembradas."
+  },
+  "homeWebBookExperienceBullet1": {
+    "description": "Libro, página 2: punto.",
+    "es": "Interiores de cuero premium",
+    "en": "Premium leather interiors",
+    "pt": "Interiores em couro premium"
+  },
+  "homeWebBookExperienceBullet2": {
+    "description": "Libro, página 2: punto.",
+    "es": "Wi-Fi y carga inalámbrica",
+    "en": "Wi-Fi and wireless charging",
+    "pt": "Wi-Fi e carregamento sem fio"
+  },
+  "homeWebBookExperienceBullet3": {
+    "description": "Libro, página 2: punto.",
+    "es": "Servicio de champán disponible",
+    "en": "Champagne service available",
+    "pt": "Serviço de champanhe disponível"
+  },
+  "homeWebBookExperienceBullet4": {
+    "description": "Libro, página 2: punto.",
+    "es": "Control de clima ambiental",
+    "en": "Climate control",
+    "pt": "Controle de climatização"
+  },
+  "homeWebBookBusinessSub": {
+    "description": "Libro, página 3: subtítulo.",
+    "es": "Viajes Corporativos Redefinidos",
+    "en": "Corporate Travel Redefined",
+    "pt": "Viagens Corporativas Redefinidas"
+  },
+  "homeWebBookBusinessBullet1": {
+    "description": "Libro, página 3: punto.",
+    "es": "Facturación centralizada",
+    "en": "Centralized billing",
+    "pt": "Faturamento centralizado"
+  },
+  "homeWebBookEyebrow": {
+    "description": "Antetítulo de la sección del libro (mayúsculas; en español también está en inglés).",
+    "es": "OUR SIGNATURE EXPERIENCE",
+    "en": "OUR SIGNATURE EXPERIENCE",
+    "pt": "NOSSA EXPERIÊNCIA EXCLUSIVA"
+  },
+  "homeWebBookScroll": {
+    "description": "Indicación vertical para desplazarse (mayúsculas; en español también está en inglés).",
+    "es": "SCROLL",
+    "en": "SCROLL",
+    "pt": "ROLE"
+  }
+}

@@ -26,8 +26,8 @@ abstract class LD {
 }
 
 // Semantic font family names
-const kSerif = 'Cormorant Garamond';
-const kSans = 'Montserrat';
+const kSerif = 'Cormorant Garamond'; // i18n-ignore: nombre del tipo de letra
+const kSans = 'Montserrat'; // i18n-ignore: nombre del tipo de letra
 
 TextStyle eyebrow({Color color = LD.sph}) => GoogleFonts.montserrat(
       fontSize: 10,

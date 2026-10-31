@@ -20,6 +20,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/map_picker_dialog.dart';
 import '../../../../core/widgets/place_autocomplete_field.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../notifications/presentation/widgets/notification_bell.dart';
 import 'home_web_page.dart';
@@ -130,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final picked = await showMapPickerDialog(
       context,
       initial: initial,
-      title: 'Seleccionar lugar de recogida',
+      title: context.l10n.homePickOriginTitle,
       // Sin permiso o con la ubicación apagada: se explica en el mismo
       // diálogo en vez de abrir el mapa en otro sitio sin decir por qué
       // (E22).
@@ -146,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
       initial: _origin != null
           ? LatLng(_origin!.lat, _origin!.lng)
           : const LatLng(-17.7833, -63.1821),
-      title: 'Seleccionar lugar de recogida',
+      title: context.l10n.homePickOriginTitle,
     );
     if (!mounted || picked == null) return;
     _onOriginSelected(picked);
@@ -160,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
           : _origin != null && ServiceArea.hasCoords(_origin!)
               ? LatLng(_origin!.lat, _origin!.lng)
               : const LatLng(-17.7833, -63.1821),
-      title: 'Seleccionar destino',
+      title: context.l10n.homePickDestinationTitle,
     );
     if (!mounted || picked == null) return;
     _onDestinationSelected(picked);
@@ -189,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (stale) {
       showLuxSnackbar(
         context,
-        'El destino estaba en otra ciudad. Elige uno en la ciudad de recogida.',
+        context.l10n.homeDestinationOtherCity,
         isError: true,
       );
     } else if (_destination != null) {
@@ -214,7 +215,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _search() {
     if (_origin == null) {
-      showLuxSnackbar(context, 'Ingresa un lugar de recogida', isError: true);
+      showLuxSnackbar(context, context.l10n.homeEnterPickup, isError: true);
       return;
     }
     final originError = ServiceArea.originError(_origin!);
@@ -229,14 +230,14 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() => _date = later);
       showLuxSnackbar(
         context,
-        'Esa hora ya no da tiempo: la movimos a '
-        '${LuxFormat.dateTime(later)}. Revísala y continúa.',
+        context.l10n.homePickupMoved(LuxFormat.dateTime(later)),
         isError: true,
       );
       return;
     }
     if (_serviceType == ServiceType.oneWay && _destination == null) {
-      showLuxSnackbar(context, 'Ingresa un destino', isError: true);
+      showLuxSnackbar(context, context.l10n.homeEnterDestination,
+          isError: true);
       return;
     }
     final cityError = _destination == null
@@ -352,10 +353,9 @@ class _HomeScreenState extends State<HomeScreen> {
 // Mobile sub-widgets
 // ---------------------------------------------------------------------------
 
-/// Sin acceso a la ubicación del dispositivo (permiso o servicio).
-const kLocationUnavailableMessage =
-    'No pudimos usar tu ubicación. Permite el acceso a la ubicación en tu '
-    'navegador o en los ajustes del teléfono, o elige el punto en el mapa.';
+/// Sin acceso a la ubicación del dispositivo (permiso o servicio), en el
+/// idioma activo.
+String get kLocationUnavailableMessage => L10n.current.homeLocationUnavailable;
 
 class _MobileTopBar extends StatelessWidget {
   const _MobileTopBar({required this.onLocate, required this.locating});
@@ -391,7 +391,7 @@ class _MobileTopBar extends StatelessWidget {
                       state is AuthAuthenticated ? state.user.displayName : '';
                   return Semantics(
                     button: true,
-                    label: 'Mi perfil',
+                    label: context.l10n.homeMyProfile,
                     child: GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () => context.go(
@@ -413,7 +413,8 @@ class _MobileTopBar extends StatelessWidget {
                             ? Text(
                                 name[0].toUpperCase(),
                                 style: const TextStyle(
-                                  fontFamily: 'Cormorant Garamond',
+                                  fontFamily:
+                                      'Cormorant Garamond', // i18n-ignore: tipo de letra
                                   color: LuxColors.onAccent,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 17,
@@ -593,7 +594,7 @@ class _MobileBottomPanel extends StatelessWidget {
             LuxFadeIn(
               index: 6,
               child: LuxButton(
-                label: 'Ver vehículos y precios',
+                label: context.l10n.homeSeeVehicles,
                 trailingIcon: Icons.arrow_forward_rounded,
                 onPressed: onSearch,
               ),
@@ -676,11 +677,14 @@ class _NextTripCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final hourly = booking.serviceType == ServiceType.byTheHour;
     final where = hourly
-        ? '${booking.hours ?? 2} h desde ${booking.origin.displayName}'
+        ? context.l10n.homeHourlyFrom(
+            booking.hours ?? 2,
+            booking.origin.displayName,
+          )
         : booking.destination.displayName;
     return LuxPressable(
       onTap: () => context.go('/ride/${booking.id}'),
-      semanticLabel: 'Ver tu próximo trayecto',
+      semanticLabel: context.l10n.homeNextTripSemantics,
       scale: 0.985,
       child: Container(
         padding: const EdgeInsets.all(LuxSpacing.md),
@@ -717,7 +721,7 @@ class _NextTripCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'TU PRÓXIMO TRAYECTO',
+                    context.l10n.homeNextTripEyebrow,
                     style: LuxTypography.eyebrow.copyWith(fontSize: 9),
                   ),
                   const SizedBox(height: 3),
@@ -801,8 +805,8 @@ class _RouteCard extends StatelessWidget {
                   const _RouteDot(),
                   Expanded(
                     child: PlaceAutocompleteField(
-                      label: 'Lugar de recogida',
-                      hint: 'Recogida',
+                      label: context.l10n.homePickupLabel,
+                      hint: context.l10n.homePickupHint,
                       bare: true,
                       initialValue: origin,
                       onPlaceSelected: onOriginSelected,
@@ -810,7 +814,7 @@ class _RouteCard extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    tooltip: 'Usar mi ubicación',
+                    tooltip: context.l10n.homeUseMyLocation,
                     onPressed: () {
                       LuxHaptics.tap();
                       onLocate();
@@ -834,8 +838,8 @@ class _RouteCard extends StatelessWidget {
                     const _RouteDot(square: true),
                     Expanded(
                       child: PlaceAutocompleteField(
-                        label: 'Destino',
-                        hint: '¿A dónde vas?',
+                        label: context.l10n.homeDestinationLabel,
+                        hint: context.l10n.homeDestinationHint,
                         bare: true,
                         initialValue: destination,
                         sameCityAs: origin,
@@ -845,7 +849,7 @@ class _RouteCard extends StatelessWidget {
                     ),
                     if (onDestinationMapPick != null)
                       IconButton(
-                        tooltip: 'Elegir en el mapa',
+                        tooltip: context.l10n.homeChooseOnMap,
                         onPressed: () {
                           LuxHaptics.tap();
                           onDestinationMapPick!();
@@ -910,7 +914,7 @@ class _PlaceChips extends StatelessWidget {
             if (last != null)
               _Chip(
                 icon: Icons.replay_rounded,
-                label: 'Repetir último',
+                label: context.l10n.homeRepeatLast,
                 emphasized: true,
                 onTap: () => onRepeat(last!),
               ),
@@ -997,7 +1001,10 @@ class _RouteInfoBadge extends StatelessWidget {
               size: 16, color: LuxColors.inkTertiary),
           const SizedBox(width: 6),
           Text(
-            '${route.distanceKm.toStringAsFixed(1)} km · ${route.durationMin} min',
+            context.l10n.homeRouteSummary(
+              route.distanceKm.toStringAsFixed(1),
+              route.durationMin,
+            ),
             style: LuxTypography.caption.copyWith(
               color: LuxColors.ink,
               fontSize: 12,
@@ -1007,7 +1014,7 @@ class _RouteInfoBadge extends StatelessWidget {
             const Spacer(),
             Flexible(
               child: Text(
-                'Tu ${preferredClass!.label}',
+                context.l10n.homePreferredClass(preferredClass!.label),
                 overflow: TextOverflow.ellipsis,
                 style: LuxTypography.caption.copyWith(
                   color: LuxColors.sapphire,
@@ -1032,17 +1039,17 @@ class _DateTimeTile extends StatelessWidget {
       initialDate: date.isBefore(now) ? now : date,
       firstDate: DateTime(now.year, now.month, now.day),
       lastDate: now.add(const Duration(days: 365)),
-      helpText: 'FECHA DE RECOGIDA',
-      cancelText: 'Cancelar',
-      confirmText: 'Siguiente',
+      helpText: context.l10n.homePickupDateHelp,
+      cancelText: context.l10n.homePickerCancel,
+      confirmText: context.l10n.homePickerNext,
     );
     if (d == null || !context.mounted) return;
     final t = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(date),
-      helpText: 'HORA DE RECOGIDA',
-      cancelText: 'Cancelar',
-      confirmText: 'Listo',
+      helpText: context.l10n.homePickupTimeHelp,
+      cancelText: context.l10n.homePickerCancel,
+      confirmText: context.l10n.homePickerDone,
     );
     if (t == null || !context.mounted) return;
     var picked = DateTime(d.year, d.month, d.day, t.hour, t.minute);
@@ -1056,7 +1063,7 @@ class _DateTimeTile extends StatelessWidget {
     final soon = date.difference(DateTime.now()).inMinutes <= 45;
     return LuxPressable(
       onTap: () => _pick(context),
-      semanticLabel: 'Cambiar fecha y hora de recogida',
+      semanticLabel: context.l10n.homeChangePickupTime,
       scale: 0.985,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -1075,7 +1082,7 @@ class _DateTimeTile extends StatelessWidget {
             Expanded(
               child: Text(
                 soon
-                    ? 'Lo antes posible · ${LuxFormat.time(date)}'
+                    ? context.l10n.homeAsap(LuxFormat.time(date))
                     : LuxFormat.dateTime(date),
                 style: LuxTypography.titleMedium.copyWith(
                   fontWeight: FontWeight.w500,
@@ -1084,7 +1091,7 @@ class _DateTimeTile extends StatelessWidget {
               ),
             ),
             Text(
-              'Programar',
+              context.l10n.homeSchedule,
               style: LuxTypography.caption.copyWith(
                 color: LuxColors.sapphire,
                 fontWeight: FontWeight.w600,
@@ -1121,7 +1128,7 @@ class _HourSelector extends StatelessWidget {
             ),
             const SizedBox(width: LuxSpacing.md - 2),
             Text(
-              'Duración',
+              context.l10n.homeDuration,
               style: LuxTypography.titleMedium.copyWith(
                 fontWeight: FontWeight.w500,
                 fontSize: 14,
