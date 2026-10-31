@@ -11,7 +11,7 @@ regenerarlo: `UPDATE_MATRIX=1` al correr `npm run test:rules`). Los roles y
 el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 <!-- permitidos:inicio -->
-137 celdas permitidas, 2 con ⚠.
+153 celdas permitidas, 2 con ⚠.
 
 ## `users/{uid}`
 
@@ -75,6 +75,59 @@ el documento que usa cada fila están en MATRIZ_ACCESO.md.
 
 - leer: el panel muestra los chóferes.
 - listar: el panel lista los chóferes.
+
+## `driverApplications/{uid}`
+
+**chófer no verificado**
+
+- leer: el chófer ve el estado y el paso de su solicitud.
+
+**usuario bloqueado**
+
+- leer: un chófer bloqueado sigue viendo el estado de su solicitud.
+
+**admin**
+
+- leer: revisión de solicitudes.
+- listar: bandeja de solicitudes.
+
+## `driverApplications/{uid}/documents`
+
+**chófer no verificado**
+
+- leer: el chófer ve el estado de cada documento y el motivo de rechazo.
+- listar: igual que leer.
+
+**usuario bloqueado**
+
+- leer: como cualquier dueño.
+- listar: igual que leer.
+
+**admin**
+
+- leer: revisión de documentos.
+- listar: igual que leer.
+
+## `driverApplications/{uid}/private`
+
+**admin**
+
+- leer: datos personales y del vehículo para revisar.
+- listar: igual que leer.
+
+## `driverApplications/{uid}/documentFiles`
+
+**admin**
+
+- leer: ruta y tipo del archivo para revisarlo.
+- listar: igual que leer.
+
+## `driverDocAccessLogs/{id}`
+
+**admin**
+
+- leer: bitácora de quién vio qué documento.
+- listar: igual que leer.
 
 ## `bookings/{id}`
 

@@ -100,6 +100,58 @@ export const SPECS: Spec[] = [
       '(los pasajeros intentan la suya; anónimo y admin, driverProfiles/nuevo).',
   },
   {
+    name: 'driverApplications/{uid}',
+    covered: false,
+    target: (r) => `driverApplications/${own(r, 'nover')}`,
+    list: (db) => query(collection(db, 'driverApplications')),
+    create: (r) => ({ path: `driverApplications/${uidOf(r) ?? 'nuevo'}x`, data: { status: 'draft' } }),
+    update: () => ({ status: 'approved' }),
+    expect: { ...allRoles(none), nover: 'SNNNN', bloq: 'SNNNN', admin: 'SSNNN' },
+    note: 'Solicitud de chófer de nover (bloqueado: la suya). Estado y paso; la escribe el servidor ' +
+      '(saveDriverStep, revisión del admin).',
+  },
+  {
+    name: 'driverApplications/{uid}/documents',
+    covered: false,
+    target: (r) => `driverApplications/${own(r, 'nover')}/documents/license_front`,
+    list: (db, r) => query(collection(db, 'driverApplications', own(r, 'nover'), 'documents')),
+    create: (r) => ({ path: `driverApplications/${own(r, 'nover')}/documents/national_id_front`, data: { status: 'uploaded' } }),
+    update: () => ({ status: 'approved' }),
+    expect: { ...allRoles(none), nover: 'SSNNN', bloq: 'SSNNN', admin: 'SSNNN' },
+    note: 'Estado de cada documento (versión, vencimiento, motivo de rechazo). Lo escribe el servidor.',
+  },
+  {
+    name: 'driverApplications/{uid}/private',
+    covered: false,
+    target: (r) => `driverApplications/${own(r, 'nover')}/private/data`,
+    list: (db, r) => query(collection(db, 'driverApplications', own(r, 'nover'), 'private')),
+    create: (r) => ({ path: `driverApplications/${own(r, 'nover')}/private/otro`, data: { x: 1 } }),
+    update: () => ({ personal: { fullName: 'Otro' } }),
+    expect: { ...allRoles(none), admin: 'SSNNN' },
+    note: 'Datos personales (cédula, licencia) y del vehículo: solo el admin. El chófer los recupera con ' +
+      'getDriverApplication.',
+  },
+  {
+    name: 'driverApplications/{uid}/documentFiles',
+    covered: false,
+    target: (r) => `driverApplications/${own(r, 'nover')}/documentFiles/license_front`,
+    list: (db, r) => query(collection(db, 'driverApplications', own(r, 'nover'), 'documentFiles')),
+    create: (r) => ({ path: `driverApplications/${own(r, 'nover')}/documentFiles/otro`, data: { path: 'x' } }),
+    update: () => ({ reviewedBy: 'nadie' }),
+    expect: { ...allRoles(none), admin: 'SSNNN' },
+    note: 'Ruta en Storage, tamaño, tipo real y quién revisó: solo el admin.',
+  },
+  {
+    name: 'driverDocAccessLogs/{id}',
+    covered: false,
+    target: () => 'driverDocAccessLogs/acc1',
+    list: (db) => query(collection(db, 'driverDocAccessLogs')),
+    create: (r) => ({ path: `driverDocAccessLogs/nuevo-${r}`, data: { adminId: uidOf(r) ?? 'nadie' } }),
+    update: () => ({ adminId: 'otro' }),
+    expect: { ...allRoles(none), admin: 'SSNNN' },
+    note: 'Bitácora de accesos a los documentos (quién y cuándo, sin la URL): la escribe adminGetDocumentUrl.',
+  },
+  {
     name: 'bookings/{id}',
     covered: true,
     target: (r) => `bookings/${r === 'bloq' ? 'activaBloq' : 'activa'}`,
@@ -497,6 +549,13 @@ export async function seedMatrix(db: Firestore): Promise<void> {
   await put('adminAlerts/a1', { type: 'x', resolved: false });
   await put('admin_logs/log1', { adminId: 'admin', action: 'x' });
   await put('driverDevices/asig/devices/d1', { platform: 'android' });
+  for (const u of ['nover', 'bloq']) {
+    await put(`driverApplications/${u}`, { driverId: u, status: 'draft', step: 'documents' });
+    await put(`driverApplications/${u}/documents/license_front`, { type: 'license_front', status: 'uploaded', version: 1 });
+    await put(`driverApplications/${u}/private/data`, { personal: { fullName: 'Dato de prueba', nationalIdNumber: '0000000' } });
+    await put(`driverApplications/${u}/documentFiles/license_front`, { path: `driverDocs/${u}/license_front/1` });
+  }
+  await put('driverDocAccessLogs/acc1', { adminId: 'admin', driverId: 'nover', type: 'license_front' });
 }
 
 /** La operación de una celda contra el Firestore de ese rol. */

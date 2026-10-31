@@ -57,6 +57,28 @@ export const ALLOWED: Record<string, Cells> = {
       listar: { why: 'el panel lista los chóferes' },
     },
   },
+  'driverApplications/{uid}': {
+    nover: { leer: { why: 'el chófer ve el estado y el paso de su solicitud' } },
+    bloq: { leer: { why: 'un chófer bloqueado sigue viendo el estado de su solicitud' } },
+    admin: { leer: { why: 'revisión de solicitudes' }, listar: { why: 'bandeja de solicitudes' } },
+  },
+  'driverApplications/{uid}/documents': {
+    nover: {
+      leer: { why: 'el chófer ve el estado de cada documento y el motivo de rechazo' },
+      listar: { why: 'igual que leer' },
+    },
+    bloq: { leer: { why: 'como cualquier dueño' }, listar: { why: 'igual que leer' } },
+    admin: { leer: { why: 'revisión de documentos' }, listar: { why: 'igual que leer' } },
+  },
+  'driverApplications/{uid}/private': {
+    admin: { leer: { why: 'datos personales y del vehículo para revisar' }, listar: { why: 'igual que leer' } },
+  },
+  'driverApplications/{uid}/documentFiles': {
+    admin: { leer: { why: 'ruta y tipo del archivo para revisarlo' }, listar: { why: 'igual que leer' } },
+  },
+  'driverDocAccessLogs/{id}': {
+    admin: { leer: { why: 'bitácora de quién vio qué documento' }, listar: { why: 'igual que leer' } },
+  },
   'bookings/{id}': {
     ana: {
       leer: { why: 'el pasajero dueño lee su reserva' },

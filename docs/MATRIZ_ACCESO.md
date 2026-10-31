@@ -34,6 +34,11 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 | `users/{uid}` | sí | · · · · · | L · · A · | · · · · · | · · · · · | · · · · · | · · · · · | L · · · · | L Li · · · |
 | `users/{uid}/notifications` | nueva | · · · · · | L Li · A B | · · · · · | · · · · · | · · · · · | · · · · · | L Li · A B | L Li · · · |
 | `driverProfiles/{uid}` | sí | · · · · · | · · · · · | · · · · · | L · C A · | · · C · · | · · C · · | L · · A · | L Li · · · |
+| `driverApplications/{uid}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L · · · · | L · · · · | L Li · · · |
+| `driverApplications/{uid}/documents` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · | L Li · · · | L Li · · · |
+| `driverApplications/{uid}/private` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `driverApplications/{uid}/documentFiles` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
+| `driverDocAccessLogs/{id}` | nueva | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}` | sí | · · · · · | L Li · · · | · · · · · | L · · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/tracking` | sí | · · · · · | L Li · · · | · · · · · | L Li C A · | · · · · · | · · · · · | · · · · · | L Li · · · |
 | `bookings/{id}/driverContact` | sí | · · · · · | L Li · · · | · · · · · | L Li · · · | · · · · · | · · · · · | · · · · · | L Li · · · |
@@ -68,6 +73,11 @@ Las funciones del servidor usan el Admin SDK y no pasan por estas reglas.
 - `users/{uid}`: Objetivo users/ana (bloqueado: users/bloq, el suyo). Crear = perfil de otro (users/nuevo); el alta propia está en «Casos fuera de la tabla». Actualizar = displayName.
 - `users/{uid}/notifications`: Objetivo users/ana/notifications (bloqueado: las suyas). Las crea el servidor.
 - `driverProfiles/{uid}`: Objetivo driverProfiles/asig (bloqueado: el suyo). Crear = el alta propia del chófer (los pasajeros intentan la suya; anónimo y admin, driverProfiles/nuevo).
+- `driverApplications/{uid}`: Solicitud de chófer de nover (bloqueado: la suya). Estado y paso; la escribe el servidor (saveDriverStep, revisión del admin).
+- `driverApplications/{uid}/documents`: Estado de cada documento (versión, vencimiento, motivo de rechazo). Lo escribe el servidor.
+- `driverApplications/{uid}/private`: Datos personales (cédula, licencia) y del vehículo: solo el admin. El chófer los recupera con getDriverApplication.
+- `driverApplications/{uid}/documentFiles`: Ruta en Storage, tamaño, tipo real y quién revisó: solo el admin.
+- `driverDocAccessLogs/{id}`: Bitácora de accesos a los documentos (quién y cuándo, sin la URL): la escribe adminGetDocumentUrl.
 - `bookings/{id}`: Objetivo bookings/activa (de ana, asignada a asig, en camino); bloqueado: activaBloq, asignada a él. Listar = reservas de ana (bloqueado: las suyas). Actualizar = cancelar, que solo hace el servidor (cancelBooking, B7).
 - `bookings/{id}/tracking`: Ubicación del chófer de activa (bloqueado: de activaBloq).
 - `bookings/{id}/driverContact`: Teléfono del chófer de activa (bloqueado: de activaBloq). Lo escribe el servidor.
