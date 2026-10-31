@@ -46,8 +46,12 @@ class LegalPage extends StatelessWidget {
           // El texto legal sigue en español hasta tener la traducción del
           // abogado (decisión 3): en inglés o portugués, un aviso sobrio.
           if (context.l10n.localeName != 'es') ...[
-            _SpanishOnlyNotice(text: context.l10n.legalSpanishOnlyNotice),
-            const SizedBox(height: 18),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 18),
+              child: _SpanishOnlyNotice(
+                text: context.l10n.legalSpanishOnlyNotice,
+              ),
+            ),
           ],
           for (final (heading, body) in sections) ...[
             Text(
