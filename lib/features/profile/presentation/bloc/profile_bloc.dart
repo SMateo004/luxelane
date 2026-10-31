@@ -34,6 +34,14 @@ class ProfileUpdateRequested extends ProfileEvent {
   List<Object?> get props => [user.id];
 }
 
+/// Preferencias para el chófer del perfil: se guardan con updatePreferences.
+class ProfilePreferencesSaved extends ProfileEvent {
+  const ProfilePreferencesSaved(this.preferences);
+  final TripPreferences preferences;
+  @override
+  List<Object?> get props => [preferences];
+}
+
 class DriverProfileUpdateRequested extends ProfileEvent {
   const DriverProfileUpdateRequested({required this.driverProfile});
   final DriverProfile driverProfile;
@@ -118,7 +126,7 @@ class ProfileLoaded extends ProfileState {
         user.displayName,
         user.phone,
         user.photoUrl,
-        user.ridePreferences,
+        user.tripPreferences,
         driverProfile?.userId,
         totalRides,
         rating,
@@ -150,9 +158,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc({
     required UserRepository userRepository,
     required BookingRepository bookingRepository,
+    PreferencesRepository? preferencesRepository,
   })  : _repo = userRepository,
         _bookingRepo = bookingRepository,
+        _prefsRepo = preferencesRepository,
         super(const ProfileInitial()) {
+    on<ProfilePreferencesSaved>(_onPreferences);
     on<ProfileLoadRequested>(_onLoad);
     on<ProfileUpdateRequested>(_onUpdate);
     on<DriverProfileUpdateRequested>(_onDriverUpdate);
@@ -163,6 +174,42 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   final UserRepository _repo;
   final BookingRepository _bookingRepo;
+  final PreferencesRepository? _prefsRepo;
+
+  /// Guarda las preferencias y muestra la copia saneada del servidor; si
+  /// falla, el perfil sigue con las anteriores y se avisa.
+  Future<void> _onPreferences(
+    ProfilePreferencesSaved event,
+    Emitter<ProfileState> emit,
+  ) async {
+    final prev = state;
+    final repo = _prefsRepo;
+    if (prev is! ProfileLoaded || repo == null) return;
+    final result = await repo.save(event.preferences);
+    result.fold(
+      (f) => emit(
+        ProfileLoaded(
+          user: prev.user,
+          driverProfile: prev.driverProfile,
+          totalRides: prev.totalRides,
+          rating: prev.rating,
+          message: f.message,
+          isError: true,
+          messageSeq: prev.messageSeq + 1,
+        ),
+      ),
+      (saved) => emit(
+        ProfileLoaded(
+          user: prev.user.copyWith(tripPreferences: saved),
+          driverProfile: prev.driverProfile,
+          totalRides: prev.totalRides,
+          rating: prev.rating,
+          message: L10n.current.prefsSaved,
+          messageSeq: prev.messageSeq + 1,
+        ),
+      ),
+    );
+  }
 
   Future<void> _onLoad(
     ProfileLoadRequested event,

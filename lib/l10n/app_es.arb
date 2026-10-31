@@ -1282,48 +1282,6 @@
   "@commonStatusNoShow": {
     "description": "Estado de una reserva: el pasajero no se presentó."
   },
-  "commonCabinCool": "Fresca",
-  "@commonCabinCool": {
-    "description": "Preferencia de temperatura de la cabina (20 °C). En una nota para el chófer va en minúscula."
-  },
-  "commonCabinMild": "Templada",
-  "@commonCabinMild": {
-    "description": "Preferencia de temperatura de la cabina (22 °C)."
-  },
-  "commonCabinWarm": "Cálida",
-  "@commonCabinWarm": {
-    "description": "Preferencia de temperatura de la cabina (24 °C)."
-  },
-  "commonPrefOpenDoor": "Abrir la puerta",
-  "@commonPrefOpenDoor": {
-    "description": "Indicación para el chófer según las preferencias del pasajero."
-  },
-  "commonPrefLuggageHelp": "Ayuda con el equipaje",
-  "@commonPrefLuggageHelp": {
-    "description": "Indicación para el chófer según las preferencias del pasajero."
-  },
-  "commonPrefCabin": "Cabina {temperature} ({hint})",
-  "@commonPrefCabin": {
-    "description": "Indicación para el chófer: temperatura de la cabina (en minúscula) y grados.",
-    "placeholders": {
-      "temperature": {
-        "type": "String",
-        "example": "fresca"
-      },
-      "hint": {
-        "type": "String",
-        "example": "20 °C"
-      }
-    }
-  },
-  "commonPrefQuiet": "Viaje en silencio",
-  "@commonPrefQuiet": {
-    "description": "Indicación para el chófer: el pasajero prefiere no conversar."
-  },
-  "commonPrefNoMusic": "Sin música",
-  "@commonPrefNoMusic": {
-    "description": "Indicación para el chófer: sin música."
-  },
   "commonCancelReasonChangedPlans": "Cambié de planes",
   "@commonCancelReasonChangedPlans": {
     "description": "Motivo del pasajero para cancelar una reserva."
@@ -4089,6 +4047,192 @@
   "paymentReceiptBalanceNote": "El importe final del viaje fue mayor que lo pagado.",
   "@paymentReceiptBalanceNote": {
     "description": "Nota bajo el saldo pendiente; sin promesas de contacto."
+  },
+  "prefsNoPreference": "Sin preferencia",
+  "@prefsNoPreference": {
+    "description": "Opción «sin preferencia» de temperatura, conversación y música."
+  },
+  "prefsLanguagesTitle": "Idiomas del chófer",
+  "@prefsLanguagesTitle": {
+    "description": "Título: idiomas que el pasajero prefiere en su chófer."
+  },
+  "prefsLanguageEs": "Español",
+  "@prefsLanguageEs": {
+    "description": "Idioma del chófer: español."
+  },
+  "prefsLanguageEn": "Inglés",
+  "@prefsLanguageEn": {
+    "description": "Idioma del chófer: inglés."
+  },
+  "prefsLanguagePt": "Portugués",
+  "@prefsLanguagePt": {
+    "description": "Idioma del chófer: portugués."
+  },
+  "prefsTemperatureTitle": "Temperatura",
+  "@prefsTemperatureTitle": {
+    "description": "Título: temperatura de la cabina."
+  },
+  "prefsTemperatureCool": "Fresca",
+  "@prefsTemperatureCool": {
+    "description": "Temperatura de la cabina: fresca."
+  },
+  "prefsTemperatureMild": "Templada",
+  "@prefsTemperatureMild": {
+    "description": "Temperatura de la cabina: templada."
+  },
+  "prefsConversationTitle": "Conversación",
+  "@prefsConversationTitle": {
+    "description": "Título: si prefiere conversar o ir en silencio."
+  },
+  "prefsConversationChatty": "Me gusta conversar",
+  "@prefsConversationChatty": {
+    "description": "Conversación: le gusta conversar."
+  },
+  "prefsConversationQuiet": "Prefiero silencio",
+  "@prefsConversationQuiet": {
+    "description": "Conversación: prefiere silencio."
+  },
+  "prefsMusicTitle": "Música",
+  "@prefsMusicTitle": {
+    "description": "Título: estilo de música."
+  },
+  "prefsMusicClassical": "Clásica",
+  "@prefsMusicClassical": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicJazz": "Jazz",
+  "@prefsMusicJazz": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicInstrumental": "Instrumental",
+  "@prefsMusicInstrumental": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicPop": "Pop",
+  "@prefsMusicPop": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicRock": "Rock",
+  "@prefsMusicRock": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicLatin": "Latina",
+  "@prefsMusicLatin": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicElectronic": "Electrónica",
+  "@prefsMusicElectronic": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicFolk": "Folclore",
+  "@prefsMusicFolk": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicNone": "Sin música",
+  "@prefsMusicNone": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsPlaylistTitle": "Lista de música",
+  "@prefsPlaylistTitle": {
+    "description": "Título: enlace a una lista de música del pasajero (opcional)."
+  },
+  "prefsNeedsTitle": "Necesidades",
+  "@prefsNeedsTitle": {
+    "description": "Título: necesidades prácticas para el viaje."
+  },
+  "prefsNeedExtraLuggage": "Equipaje extra",
+  "@prefsNeedExtraLuggage": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedLuggageAssistance": "Ayuda con el equipaje",
+  "@prefsNeedLuggageAssistance": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedChildSeat": "Silla infantil",
+  "@prefsNeedChildSeat": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedBoosterSeat": "Alzador infantil",
+  "@prefsNeedBoosterSeat": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedBoardingAssistance": "Asistencia para subir",
+  "@prefsNeedBoardingAssistance": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedFoldingWheelchair": "Silla de ruedas plegable",
+  "@prefsNeedFoldingWheelchair": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedPetInCarrier": "Mascota en transportín",
+  "@prefsNeedPetInCarrier": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedPrivateHint": "Solo tu chófer asignado lo verá.",
+  "@prefsNeedPrivateHint": {
+    "description": "Aviso bajo las necesidades que pueden ser personales (asistencia para subir, silla de ruedas)."
+  },
+  "prefsNoteTitle": "Nota para el chófer",
+  "@prefsNoteTitle": {
+    "description": "Título: nota libre para el chófer (hasta 200 caracteres)."
+  },
+  "prefsNoteWarning": "No escribas datos sensibles: claves, tarjetas ni datos de salud.",
+  "@prefsNoteWarning": {
+    "description": "Advertencia bajo la nota: no escribir datos sensibles."
+  },
+  "prefsDriverWillSee": "Tu chófer verá estas preferencias.",
+  "@prefsDriverWillSee": {
+    "description": "Texto sobrio bajo las preferencias: no promete que se cumplan."
+  },
+  "prefsCardTitle": "Preferencias del pasajero",
+  "@prefsCardTitle": {
+    "description": "Título de la tarjeta del chófer con las preferencias del pasajero."
+  },
+  "prefsOpenPlaylist": "Abrir lista",
+  "@prefsOpenPlaylist": {
+    "description": "Botón del chófer para abrir la lista de música del pasajero."
+  },
+  "prefsOpenPlaylistTitle": "Abrir fuera de la app",
+  "@prefsOpenPlaylistTitle": {
+    "description": "Título del aviso antes de abrir la lista."
+  },
+  "prefsOpenPlaylistBody": "La lista se abrirá fuera de Luxelane, en el navegador o en otra aplicación.",
+  "@prefsOpenPlaylistBody": {
+    "description": "Aviso antes de abrir la lista: sale de la app."
+  },
+  "prefsOpenPlaylistConfirm": "Abrir",
+  "@prefsOpenPlaylistConfirm": {
+    "description": "Botón para confirmar que se abre la lista."
+  },
+  "prefsCancel": "Cancelar",
+  "@prefsCancel": {
+    "description": "Botón para cancelar."
+  },
+  "prefsOpenPlaylistError": "No se pudo abrir la lista.",
+  "@prefsOpenPlaylistError": {
+    "description": "Error si no se pudo abrir la lista."
+  },
+  "prefsLanguagesSummary": "Idiomas: {languages}",
+  "@prefsLanguagesSummary": {
+    "description": "Resumen corto en la solicitud abierta: idiomas que prefiere el pasajero.",
+    "placeholders": {
+      "languages": {
+        "type": "String",
+        "example": "Español, Inglés"
+      }
+    }
+  },
+  "prefsErrorPlaylist": "Ese enlace de lista no se puede usar. Revisa que empiece por https y sea de un servicio admitido.",
+  "@prefsErrorPlaylist": {
+    "description": "Error al guardar: la lista no es https o su servicio no está permitido."
+  },
+  "prefsErrorNote": "Revisa la nota: hasta 200 caracteres y sin enlaces.",
+  "@prefsErrorNote": {
+    "description": "Error al guardar: la nota es demasiado larga o lleva un enlace."
+  },
+  "prefsSaved": "Preferencias guardadas.",
+  "@prefsSaved": {
+    "description": "Confirmación sobria al guardar las preferencias del perfil."
   },
   "profileSaveError": "No pudimos guardar los cambios. Inténtalo de nuevo.",
   "@profileSaveError": {

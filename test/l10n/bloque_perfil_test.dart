@@ -251,8 +251,8 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text(t.profile), findsOneWidget);
-        expect(find.text(t.style), findsOneWidget);
-        expect(find.text(t.quiet), findsOneWidget);
+        // El grupo antiguo de estilo de viaje se quitó (preferencias, B0):
+        // la pantalla de preferencias nueva tiene su propio test.
         expect(find.text(t.header), findsOneWidget);
         expect(find.text(t.signOut), findsOneWidget);
         expect(find.text(t.delete), findsOneWidget);

@@ -1888,54 +1888,6 @@ abstract class AppLocalizations {
   /// **'No se presentó'**
   String get commonStatusNoShow;
 
-  /// Preferencia de temperatura de la cabina (20 °C). En una nota para el chófer va en minúscula.
-  ///
-  /// In es, this message translates to:
-  /// **'Fresca'**
-  String get commonCabinCool;
-
-  /// Preferencia de temperatura de la cabina (22 °C).
-  ///
-  /// In es, this message translates to:
-  /// **'Templada'**
-  String get commonCabinMild;
-
-  /// Preferencia de temperatura de la cabina (24 °C).
-  ///
-  /// In es, this message translates to:
-  /// **'Cálida'**
-  String get commonCabinWarm;
-
-  /// Indicación para el chófer según las preferencias del pasajero.
-  ///
-  /// In es, this message translates to:
-  /// **'Abrir la puerta'**
-  String get commonPrefOpenDoor;
-
-  /// Indicación para el chófer según las preferencias del pasajero.
-  ///
-  /// In es, this message translates to:
-  /// **'Ayuda con el equipaje'**
-  String get commonPrefLuggageHelp;
-
-  /// Indicación para el chófer: temperatura de la cabina (en minúscula) y grados.
-  ///
-  /// In es, this message translates to:
-  /// **'Cabina {temperature} ({hint})'**
-  String commonPrefCabin(String temperature, String hint);
-
-  /// Indicación para el chófer: el pasajero prefiere no conversar.
-  ///
-  /// In es, this message translates to:
-  /// **'Viaje en silencio'**
-  String get commonPrefQuiet;
-
-  /// Indicación para el chófer: sin música.
-  ///
-  /// In es, this message translates to:
-  /// **'Sin música'**
-  String get commonPrefNoMusic;
-
   /// Motivo del pasajero para cancelar una reserva.
   ///
   /// In es, this message translates to:
@@ -5493,6 +5445,276 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'El importe final del viaje fue mayor que lo pagado.'**
   String get paymentReceiptBalanceNote;
+
+  /// Opción «sin preferencia» de temperatura, conversación y música.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin preferencia'**
+  String get prefsNoPreference;
+
+  /// Título: idiomas que el pasajero prefiere en su chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Idiomas del chófer'**
+  String get prefsLanguagesTitle;
+
+  /// Idioma del chófer: español.
+  ///
+  /// In es, this message translates to:
+  /// **'Español'**
+  String get prefsLanguageEs;
+
+  /// Idioma del chófer: inglés.
+  ///
+  /// In es, this message translates to:
+  /// **'Inglés'**
+  String get prefsLanguageEn;
+
+  /// Idioma del chófer: portugués.
+  ///
+  /// In es, this message translates to:
+  /// **'Portugués'**
+  String get prefsLanguagePt;
+
+  /// Título: temperatura de la cabina.
+  ///
+  /// In es, this message translates to:
+  /// **'Temperatura'**
+  String get prefsTemperatureTitle;
+
+  /// Temperatura de la cabina: fresca.
+  ///
+  /// In es, this message translates to:
+  /// **'Fresca'**
+  String get prefsTemperatureCool;
+
+  /// Temperatura de la cabina: templada.
+  ///
+  /// In es, this message translates to:
+  /// **'Templada'**
+  String get prefsTemperatureMild;
+
+  /// Título: si prefiere conversar o ir en silencio.
+  ///
+  /// In es, this message translates to:
+  /// **'Conversación'**
+  String get prefsConversationTitle;
+
+  /// Conversación: le gusta conversar.
+  ///
+  /// In es, this message translates to:
+  /// **'Me gusta conversar'**
+  String get prefsConversationChatty;
+
+  /// Conversación: prefiere silencio.
+  ///
+  /// In es, this message translates to:
+  /// **'Prefiero silencio'**
+  String get prefsConversationQuiet;
+
+  /// Título: estilo de música.
+  ///
+  /// In es, this message translates to:
+  /// **'Música'**
+  String get prefsMusicTitle;
+
+  /// Estilo de música genérico (sin artistas ni marcas).
+  ///
+  /// In es, this message translates to:
+  /// **'Clásica'**
+  String get prefsMusicClassical;
+
+  /// Estilo de música genérico (sin artistas ni marcas).
+  ///
+  /// In es, this message translates to:
+  /// **'Jazz'**
+  String get prefsMusicJazz;
+
+  /// Estilo de música genérico (sin artistas ni marcas).
+  ///
+  /// In es, this message translates to:
+  /// **'Instrumental'**
+  String get prefsMusicInstrumental;
+
+  /// Estilo de música genérico (sin artistas ni marcas).
+  ///
+  /// In es, this message translates to:
+  /// **'Pop'**
+  String get prefsMusicPop;
+
+  /// Estilo de música genérico (sin artistas ni marcas).
+  ///
+  /// In es, this message translates to:
+  /// **'Rock'**
+  String get prefsMusicRock;
+
+  /// Estilo de música genérico (sin artistas ni marcas).
+  ///
+  /// In es, this message translates to:
+  /// **'Latina'**
+  String get prefsMusicLatin;
+
+  /// Estilo de música genérico (sin artistas ni marcas).
+  ///
+  /// In es, this message translates to:
+  /// **'Electrónica'**
+  String get prefsMusicElectronic;
+
+  /// Estilo de música genérico (sin artistas ni marcas).
+  ///
+  /// In es, this message translates to:
+  /// **'Folclore'**
+  String get prefsMusicFolk;
+
+  /// Estilo de música genérico (sin artistas ni marcas).
+  ///
+  /// In es, this message translates to:
+  /// **'Sin música'**
+  String get prefsMusicNone;
+
+  /// Título: enlace a una lista de música del pasajero (opcional).
+  ///
+  /// In es, this message translates to:
+  /// **'Lista de música'**
+  String get prefsPlaylistTitle;
+
+  /// Título: necesidades prácticas para el viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Necesidades'**
+  String get prefsNeedsTitle;
+
+  /// Necesidad práctica (lista cerrada). Texto neutro.
+  ///
+  /// In es, this message translates to:
+  /// **'Equipaje extra'**
+  String get prefsNeedExtraLuggage;
+
+  /// Necesidad práctica (lista cerrada). Texto neutro.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda con el equipaje'**
+  String get prefsNeedLuggageAssistance;
+
+  /// Necesidad práctica (lista cerrada). Texto neutro.
+  ///
+  /// In es, this message translates to:
+  /// **'Silla infantil'**
+  String get prefsNeedChildSeat;
+
+  /// Necesidad práctica (lista cerrada). Texto neutro.
+  ///
+  /// In es, this message translates to:
+  /// **'Alzador infantil'**
+  String get prefsNeedBoosterSeat;
+
+  /// Necesidad práctica (lista cerrada). Texto neutro.
+  ///
+  /// In es, this message translates to:
+  /// **'Asistencia para subir'**
+  String get prefsNeedBoardingAssistance;
+
+  /// Necesidad práctica (lista cerrada). Texto neutro.
+  ///
+  /// In es, this message translates to:
+  /// **'Silla de ruedas plegable'**
+  String get prefsNeedFoldingWheelchair;
+
+  /// Necesidad práctica (lista cerrada). Texto neutro.
+  ///
+  /// In es, this message translates to:
+  /// **'Mascota en transportín'**
+  String get prefsNeedPetInCarrier;
+
+  /// Aviso bajo las necesidades que pueden ser personales (asistencia para subir, silla de ruedas).
+  ///
+  /// In es, this message translates to:
+  /// **'Solo tu chófer asignado lo verá.'**
+  String get prefsNeedPrivateHint;
+
+  /// Título: nota libre para el chófer (hasta 200 caracteres).
+  ///
+  /// In es, this message translates to:
+  /// **'Nota para el chófer'**
+  String get prefsNoteTitle;
+
+  /// Advertencia bajo la nota: no escribir datos sensibles.
+  ///
+  /// In es, this message translates to:
+  /// **'No escribas datos sensibles: claves, tarjetas ni datos de salud.'**
+  String get prefsNoteWarning;
+
+  /// Texto sobrio bajo las preferencias: no promete que se cumplan.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer verá estas preferencias.'**
+  String get prefsDriverWillSee;
+
+  /// Título de la tarjeta del chófer con las preferencias del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Preferencias del pasajero'**
+  String get prefsCardTitle;
+
+  /// Botón del chófer para abrir la lista de música del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir lista'**
+  String get prefsOpenPlaylist;
+
+  /// Título del aviso antes de abrir la lista.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir fuera de la app'**
+  String get prefsOpenPlaylistTitle;
+
+  /// Aviso antes de abrir la lista: sale de la app.
+  ///
+  /// In es, this message translates to:
+  /// **'La lista se abrirá fuera de Luxelane, en el navegador o en otra aplicación.'**
+  String get prefsOpenPlaylistBody;
+
+  /// Botón para confirmar que se abre la lista.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrir'**
+  String get prefsOpenPlaylistConfirm;
+
+  /// Botón para cancelar.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get prefsCancel;
+
+  /// Error si no se pudo abrir la lista.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo abrir la lista.'**
+  String get prefsOpenPlaylistError;
+
+  /// Resumen corto en la solicitud abierta: idiomas que prefiere el pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Idiomas: {languages}'**
+  String prefsLanguagesSummary(String languages);
+
+  /// Error al guardar: la lista no es https o su servicio no está permitido.
+  ///
+  /// In es, this message translates to:
+  /// **'Ese enlace de lista no se puede usar. Revisa que empiece por https y sea de un servicio admitido.'**
+  String get prefsErrorPlaylist;
+
+  /// Error al guardar: la nota es demasiado larga o lleva un enlace.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa la nota: hasta 200 caracteres y sin enlaces.'**
+  String get prefsErrorNote;
+
+  /// Confirmación sobria al guardar las preferencias del perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Preferencias guardadas.'**
+  String get prefsSaved;
 
   /// Aviso de error si no se guardaron los cambios del perfil.
   ///

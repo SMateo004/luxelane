@@ -24,6 +24,7 @@ import '../../features/payments/data/repositories/booking_payment_repository_imp
 import '../../features/payments/data/repositories/payment_repository_impl.dart';
 import '../../features/payments/domain/usecases/payment_usecases.dart';
 import '../../features/payments/presentation/bloc/payment_bloc.dart';
+import '../../features/profile/data/repositories/preferences_repository_impl.dart';
 import '../../features/profile/data/repositories/user_repository_impl.dart';
 import '../../features/profile/domain/usecases/profile_usecases.dart';
 import '../../features/profile/presentation/bloc/profile_bloc.dart';
@@ -87,6 +88,9 @@ void _registerRepositories() {
     ),
   );
 
+  sl.registerLazySingleton<PreferencesRepository>(
+    () => PreferencesRepositoryImpl(functions: sl(), firestore: sl()),
+  );
   sl.registerLazySingleton<UserRepository>(
     () => UserRepositoryImpl(firestore: sl()),
   );
@@ -162,7 +166,11 @@ void _registerBlocs() {
   sl.registerFactory(() => BookingBloc(bookingRepository: sl()));
   sl.registerFactory(() => PaymentBloc(paymentRepository: sl()));
   sl.registerFactory(
-    () => ProfileBloc(userRepository: sl(), bookingRepository: sl()),
+    () => ProfileBloc(
+      userRepository: sl(),
+      bookingRepository: sl(),
+      preferencesRepository: sl(),
+    ),
   );
   sl.registerFactory(() => AdminBloc(adminRepository: sl()));
   sl.registerFactory(() => NotificationBloc(notificationRepository: sl()));

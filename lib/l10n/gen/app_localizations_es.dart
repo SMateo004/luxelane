@@ -1014,32 +1014,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get commonStatusNoShow => 'No se presentó';
 
   @override
-  String get commonCabinCool => 'Fresca';
-
-  @override
-  String get commonCabinMild => 'Templada';
-
-  @override
-  String get commonCabinWarm => 'Cálida';
-
-  @override
-  String get commonPrefOpenDoor => 'Abrir la puerta';
-
-  @override
-  String get commonPrefLuggageHelp => 'Ayuda con el equipaje';
-
-  @override
-  String commonPrefCabin(String temperature, String hint) {
-    return 'Cabina $temperature ($hint)';
-  }
-
-  @override
-  String get commonPrefQuiet => 'Viaje en silencio';
-
-  @override
-  String get commonPrefNoMusic => 'Sin música';
-
-  @override
   String get commonCancelReasonChangedPlans => 'Cambié de planes';
 
   @override
@@ -3095,6 +3069,147 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get paymentReceiptBalanceNote =>
       'El importe final del viaje fue mayor que lo pagado.';
+
+  @override
+  String get prefsNoPreference => 'Sin preferencia';
+
+  @override
+  String get prefsLanguagesTitle => 'Idiomas del chófer';
+
+  @override
+  String get prefsLanguageEs => 'Español';
+
+  @override
+  String get prefsLanguageEn => 'Inglés';
+
+  @override
+  String get prefsLanguagePt => 'Portugués';
+
+  @override
+  String get prefsTemperatureTitle => 'Temperatura';
+
+  @override
+  String get prefsTemperatureCool => 'Fresca';
+
+  @override
+  String get prefsTemperatureMild => 'Templada';
+
+  @override
+  String get prefsConversationTitle => 'Conversación';
+
+  @override
+  String get prefsConversationChatty => 'Me gusta conversar';
+
+  @override
+  String get prefsConversationQuiet => 'Prefiero silencio';
+
+  @override
+  String get prefsMusicTitle => 'Música';
+
+  @override
+  String get prefsMusicClassical => 'Clásica';
+
+  @override
+  String get prefsMusicJazz => 'Jazz';
+
+  @override
+  String get prefsMusicInstrumental => 'Instrumental';
+
+  @override
+  String get prefsMusicPop => 'Pop';
+
+  @override
+  String get prefsMusicRock => 'Rock';
+
+  @override
+  String get prefsMusicLatin => 'Latina';
+
+  @override
+  String get prefsMusicElectronic => 'Electrónica';
+
+  @override
+  String get prefsMusicFolk => 'Folclore';
+
+  @override
+  String get prefsMusicNone => 'Sin música';
+
+  @override
+  String get prefsPlaylistTitle => 'Lista de música';
+
+  @override
+  String get prefsNeedsTitle => 'Necesidades';
+
+  @override
+  String get prefsNeedExtraLuggage => 'Equipaje extra';
+
+  @override
+  String get prefsNeedLuggageAssistance => 'Ayuda con el equipaje';
+
+  @override
+  String get prefsNeedChildSeat => 'Silla infantil';
+
+  @override
+  String get prefsNeedBoosterSeat => 'Alzador infantil';
+
+  @override
+  String get prefsNeedBoardingAssistance => 'Asistencia para subir';
+
+  @override
+  String get prefsNeedFoldingWheelchair => 'Silla de ruedas plegable';
+
+  @override
+  String get prefsNeedPetInCarrier => 'Mascota en transportín';
+
+  @override
+  String get prefsNeedPrivateHint => 'Solo tu chófer asignado lo verá.';
+
+  @override
+  String get prefsNoteTitle => 'Nota para el chófer';
+
+  @override
+  String get prefsNoteWarning =>
+      'No escribas datos sensibles: claves, tarjetas ni datos de salud.';
+
+  @override
+  String get prefsDriverWillSee => 'Tu chófer verá estas preferencias.';
+
+  @override
+  String get prefsCardTitle => 'Preferencias del pasajero';
+
+  @override
+  String get prefsOpenPlaylist => 'Abrir lista';
+
+  @override
+  String get prefsOpenPlaylistTitle => 'Abrir fuera de la app';
+
+  @override
+  String get prefsOpenPlaylistBody =>
+      'La lista se abrirá fuera de Luxelane, en el navegador o en otra aplicación.';
+
+  @override
+  String get prefsOpenPlaylistConfirm => 'Abrir';
+
+  @override
+  String get prefsCancel => 'Cancelar';
+
+  @override
+  String get prefsOpenPlaylistError => 'No se pudo abrir la lista.';
+
+  @override
+  String prefsLanguagesSummary(String languages) {
+    return 'Idiomas: $languages';
+  }
+
+  @override
+  String get prefsErrorPlaylist =>
+      'Ese enlace de lista no se puede usar. Revisa que empiece por https y sea de un servicio admitido.';
+
+  @override
+  String get prefsErrorNote =>
+      'Revisa la nota: hasta 200 caracteres y sin enlaces.';
+
+  @override
+  String get prefsSaved => 'Preferencias guardadas.';
 
   @override
   String get profileSaveError =>

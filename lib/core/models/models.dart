@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../l10n/l10n.dart';
 import '../enums/enums.dart';
 import 'place_model.dart';
+import 'trip_preferences.dart';
 
 export 'place_model.dart';
+export 'trip_preferences.dart';
 
 // ---------------------------------------------------------------------------
 // User
@@ -24,7 +26,7 @@ class User {
     required this.isActive,
     this.stripeCustomerId,
     required this.fcmTokens,
-    this.ridePreferences = RidePreferences.none,
+    this.tripPreferences = TripPreferences.empty,
     this.locale,
     this.localeSource,
   });
@@ -42,8 +44,10 @@ class User {
   final String? stripeCustomerId;
   final List<String> fcmTokens;
 
-  /// Cómo le gusta viajar (silencio, temperatura…); el chófer lo ve.
-  final RidePreferences ridePreferences;
+  /// Preferencias para el chófer del perfil (users/{uid}.tripPreferences,
+  /// que solo escribe updatePreferences). Sin ellas, las antiguas
+  /// ridePreferences traducidas a la lista cerrada. No van en toJson.
+  final TripPreferences tripPreferences;
 
   /// Idioma de la cuenta (es, en, pt) y si viene del teléfono («system») o
   /// lo eligió el usuario («user»). Solo lo escribe updatePreferences: no va
@@ -72,7 +76,9 @@ class User {
         isActive: j['isActive'] as bool? ?? true,
         stripeCustomerId: j['stripeCustomerId'] as String?,
         fcmTokens: List<String>.from(j['fcmTokens'] ?? []),
-        ridePreferences: RidePreferences.fromJson(j['ridePreferences']),
+        tripPreferences: j['tripPreferences'] is Map
+            ? TripPreferences.fromJson(j['tripPreferences'])
+            : legacyTripPreferences(j['ridePreferences']),
         locale: j['locale'] as String?,
         localeSource: j['localeSource'] as String?,
       );
@@ -90,7 +96,6 @@ class User {
         'isActive': isActive,
         'stripeCustomerId': stripeCustomerId,
         'fcmTokens': fcmTokens,
-        'ridePreferences': ridePreferences.toJson(),
       };
 
   User copyWith({
@@ -103,7 +108,7 @@ class User {
     bool? isActive,
     String? stripeCustomerId,
     List<String>? fcmTokens,
-    RidePreferences? ridePreferences,
+    TripPreferences? tripPreferences,
   }) =>
       User(
         id: id,
@@ -118,124 +123,34 @@ class User {
         isActive: isActive ?? this.isActive,
         stripeCustomerId: stripeCustomerId ?? this.stripeCustomerId,
         fcmTokens: fcmTokens ?? this.fcmTokens,
-        ridePreferences: ridePreferences ?? this.ridePreferences,
+        tripPreferences: tripPreferences ?? this.tripPreferences,
         locale: locale,
         localeSource: localeSource,
       );
 }
 
 // ---------------------------------------------------------------------------
-// RidePreferences — el "estilo de viaje" del pasajero
+// Preferencias para el chófer: lib/core/models/trip_preferences.dart
 // ---------------------------------------------------------------------------
 
-enum CabinTemperature {
-  cool('20 °C'),
-  mild('22 °C'),
-  warm('24 °C');
-
-  const CabinTemperature(this.hint);
-  final String hint;
-
-  String get label => switch (this) {
-        CabinTemperature.cool => L10n.current.commonCabinCool,
-        CabinTemperature.mild => L10n.current.commonCabinMild,
-        CabinTemperature.warm => L10n.current.commonCabinWarm,
-      };
-}
-
-/// Lo que el pasajero prefiere en cada viaje. Se guarda en su perfil, se
-/// copia a cada reserva y el chófer lo ve antes de recogerlo: nadie tiene
-/// que pedir lo mismo dos veces.
-class RidePreferences {
-  const RidePreferences({
-    this.quiet = false,
-    this.temperature,
-    this.music = true,
-    this.luggageHelp = false,
-    this.openDoor = false,
-  });
-
-  static const none = RidePreferences();
-
-  /// Prefiere viajar sin conversación.
-  final bool quiet;
-  final CabinTemperature? temperature;
-
-  /// Música suave de fondo (false: viaje sin música).
-  final bool music;
-
-  /// Ayuda con el equipaje al subir y bajar.
-  final bool luggageHelp;
-
-  /// Que el chófer le abra la puerta.
-  final bool openDoor;
-
-  bool get isEmpty =>
-      !quiet && temperature == null && music && !luggageHelp && !openDoor;
-
-  /// Indicaciones breves para el chófer, en el orden en que las aplicará.
-  List<String> get driverNotes => [
-        if (openDoor) L10n.current.commonPrefOpenDoor,
-        if (luggageHelp) L10n.current.commonPrefLuggageHelp,
-        if (temperature != null)
-          L10n.current.commonPrefCabin(
-            temperature!.label.toLowerCase(),
-            temperature!.hint,
-          ),
-        if (quiet) L10n.current.commonPrefQuiet,
-        if (!music) L10n.current.commonPrefNoMusic,
-      ];
-
-  factory RidePreferences.fromJson(Object? raw) {
-    if (raw is! Map) return none;
-    final t = raw['temperature'];
-    return RidePreferences(
-      quiet: raw['quiet'] == true,
-      temperature:
-          CabinTemperature.values.where((e) => e.name == t).firstOrNull,
-      music: raw['music'] != false,
-      luggageHelp: raw['luggageHelp'] == true,
-      openDoor: raw['openDoor'] == true,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-        'quiet': quiet,
-        'temperature': temperature?.name,
-        'music': music,
-        'luggageHelp': luggageHelp,
-        'openDoor': openDoor,
-      };
-
-  RidePreferences copyWith({
-    bool? quiet,
-    CabinTemperature? temperature,
-    bool clearTemperature = false,
-    bool? music,
-    bool? luggageHelp,
-    bool? openDoor,
-  }) =>
-      RidePreferences(
-        quiet: quiet ?? this.quiet,
-        temperature:
-            clearTemperature ? null : (temperature ?? this.temperature),
-        music: music ?? this.music,
-        luggageHelp: luggageHelp ?? this.luggageHelp,
-        openDoor: openDoor ?? this.openDoor,
-      );
-
-  @override
-  bool operator ==(Object other) =>
-      other is RidePreferences &&
-      other.quiet == quiet &&
-      other.temperature == temperature &&
-      other.music == music &&
-      other.luggageHelp == luggageHelp &&
-      other.openDoor == openDoor;
-
-  @override
-  int get hashCode =>
-      Object.hash(quiet, temperature, music, luggageHelp, openDoor);
+/// ridePreferences de las apps anteriores (quiet, temperature, music,
+/// luggageHelp) → lista cerrada, igual que legacyPreferences en
+/// functions/src/preferences.ts. openDoor y warm no tienen equivalente.
+TripPreferences legacyTripPreferences(Object? raw) {
+  if (raw is! Map) return TripPreferences.empty;
+  final t = raw['temperature'];
+  return TripPreferences(
+    conversation: raw['quiet'] == true
+        ? ConversationPref.quiet
+        : ConversationPref.noPreference,
+    temperature: t == 'cool'
+        ? CabinTemperaturePref.cool
+        : t == 'mild'
+            ? CabinTemperaturePref.mild
+            : CabinTemperaturePref.noPreference,
+    music: raw['music'] == false ? MusicStyle.none : MusicStyle.noPreference,
+    needs: [if (raw['luggageHelp'] == true) PracticalNeed.luggageAssistance],
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -590,7 +505,6 @@ class Booking {
     this.riderRating,
     this.cardPayment = false,
     this.cardPaymentFailed = false,
-    this.riderPreferences = RidePreferences.none,
     this.pickupLocked = false,
     this.cancelledBy,
     this.cancellationReason,
@@ -647,9 +561,6 @@ class Booking {
 
   /// Valoración (1–5) que dio el pasajero, si ya valoró.
   final int? riderRating;
-
-  /// Estilo de viaje del pasajero, copiado de su perfil al reservar.
-  final RidePreferences riderPreferences;
 
   /// Se paga con tarjeta: el servidor la cobra al completar el viaje.
   final bool cardPayment;
@@ -766,7 +677,6 @@ class Booking {
         cardPayment: j['stripePaymentIntentId'] != null ||
             j['stripePaymentMethodId'] != null,
         cardPaymentFailed: j['cardPaymentFailed'] == true,
-        riderPreferences: RidePreferences.fromJson(j['riderPreferences']),
         pickupLocked: j['pickupLocked'] == true,
         cancelledBy: j['cancelledBy'] as String?,
         cancellationReason: j['cancellationReason'] as String?,
@@ -842,7 +752,6 @@ class Booking {
         riderRating: riderRating,
         cardPayment: cardPayment,
         cardPaymentFailed: cardPaymentFailed,
-        riderPreferences: riderPreferences,
         pickupLocked: pickupLocked,
         cancelledBy: cancelledBy,
         cancellationReason: cancellationReason,

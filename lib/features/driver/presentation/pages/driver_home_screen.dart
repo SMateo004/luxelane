@@ -752,10 +752,6 @@ class _ActiveRidePanel extends StatelessWidget {
                   ],
                 ),
               ],
-              if (!booking.riderPreferences.isEmpty) ...[
-                const SizedBox(height: LuxSpacing.md),
-                RiderPreferencesNote(preferences: booking.riderPreferences),
-              ],
               if (booking.flightNumber?.isNotEmpty == true) ...[
                 const SizedBox(height: LuxSpacing.md),
                 FlightInfoCard(booking: booking),

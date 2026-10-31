@@ -181,7 +181,6 @@ Booking _booking(
       createdAt: _now,
       updatedAt: _now,
       driverInfo: driver,
-      riderPreferences: const RidePreferences(quiet: true, luggageHelp: true),
     );
 
 /// Textos que el diseño acorta a propósito con «…», por pantalla: por qué

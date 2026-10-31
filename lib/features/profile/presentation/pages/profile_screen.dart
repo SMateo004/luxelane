@@ -117,12 +117,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               rating: rating,
               driverProfile: driverProfile,
               onEdit: () => _showEditSheet(user),
-              onPreferences: (p) => context.read<ProfileBloc>().add(
-                    ProfileUpdateRequested(
-                      user: user.copyWith(ridePreferences: p),
-                      silent: true,
-                    ),
-                  ),
             );
           },
         ),
@@ -138,7 +132,6 @@ class _ProfileBody extends StatelessWidget {
     required this.user,
     required this.totalRides,
     required this.onEdit,
-    required this.onPreferences,
     this.rating,
     this.driverProfile,
   });
@@ -148,12 +141,10 @@ class _ProfileBody extends StatelessWidget {
   final int totalRides;
   final double? rating;
   final VoidCallback onEdit;
-  final ValueChanged<RidePreferences> onPreferences;
 
   @override
   Widget build(BuildContext context) {
     final rider = user.role == UserRole.rider;
-    final prefs = user.ridePreferences;
     var i = 0;
     Widget item(Widget w) => LuxFadeIn(index: i++, child: w);
     return ListView(
@@ -172,12 +163,6 @@ class _ProfileBody extends StatelessWidget {
             onEdit: onEdit,
           ),
         ),
-        if (rider) ...[
-          const SizedBox(height: LuxSpacing.xl),
-          item(SectionHeader(title: context.l10n.profileRideStyle)),
-          const SizedBox(height: LuxSpacing.sm),
-          item(_RidePreferencesGroup(prefs: prefs, onChanged: onPreferences)),
-        ],
         if (driverProfile != null) ...[
           const SizedBox(height: LuxSpacing.xl),
           item(SectionHeader(title: context.l10n.profileDriverDocuments)),
@@ -270,81 +255,6 @@ class _ProfileBody extends StatelessWidget {
       ],
     );
   }
-}
-
-/// Cómo le gusta viajar. Cada cambio se guarda al instante y el chófer lo
-/// verá en su próxima reserva.
-class _RidePreferencesGroup extends StatelessWidget {
-  const _RidePreferencesGroup({required this.prefs, required this.onChanged});
-  final RidePreferences prefs;
-  final ValueChanged<RidePreferences> onChanged;
-
-  @override
-  Widget build(BuildContext context) => LuxGroup(
-        footer: context.l10n.profilePreferencesFooter,
-        children: [
-          LuxSwitchRow(
-            icon: Icons.volume_off_outlined,
-            title: context.l10n.profileQuietRide,
-            subtitle: context.l10n.profileQuietRideDetail,
-            value: prefs.quiet,
-            onChanged: (v) => onChanged(prefs.copyWith(quiet: v)),
-          ),
-          LuxSwitchRow(
-            icon: Icons.music_note_outlined,
-            title: context.l10n.profileSoftMusic,
-            value: prefs.music,
-            onChanged: (v) => onChanged(prefs.copyWith(music: v)),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(
-                      Icons.thermostat_outlined,
-                      size: 20,
-                      color: LuxColors.inkSecondary,
-                    ),
-                    const SizedBox(width: 16),
-                    Text(
-                      context.l10n.profileTemperature,
-                      style: LuxTypography.bodyLarge.copyWith(fontSize: 15),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                LuxSegmented<CabinTemperature?>(
-                  values: const [null, ...CabinTemperature.values],
-                  selected: prefs.temperature,
-                  labelOf: (t) =>
-                      t?.label ?? context.l10n.profileTemperatureAny,
-                  height: 40,
-                  onChanged: (t) => onChanged(
-                    t == null
-                        ? prefs.copyWith(clearTemperature: true)
-                        : prefs.copyWith(temperature: t),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          LuxSwitchRow(
-            icon: Icons.luggage_outlined,
-            title: context.l10n.profileLuggageHelp,
-            value: prefs.luggageHelp,
-            onChanged: (v) => onChanged(prefs.copyWith(luggageHelp: v)),
-          ),
-          LuxSwitchRow(
-            icon: Icons.door_front_door_outlined,
-            title: context.l10n.profileOpenDoor,
-            value: prefs.openDoor,
-            onChanged: (v) => onChanged(prefs.copyWith(openDoor: v)),
-          ),
-        ],
-      );
 }
 
 // ---------------------------------------------------------------------------
