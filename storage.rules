@@ -1,0 +1,56 @@
+rules_version = '2';
+
+// Cloud Storage (registro de chóferes). Solo existe una ruta con permisos:
+// driverDocs/{uid}/{tipo}/{versión}, donde el chófer dueño CREA su archivo.
+// Nadie lee con estas reglas (el admin ve los documentos con una URL firmada
+// de pocos minutos que entrega adminGetDocumentUrl) y nadie sobrescribe ni
+// borra, tampoco el dueño. El servidor (Admin SDK) no pasa por estas reglas
+// y comprueba además el tipo real por los primeros bytes
+// (registerDocumentUpload). Listas iguales a DOC_TYPES y PDF_TYPES de
+// functions/src/driver_application.ts.
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isDriver(uid) {
+      return request.auth != null && request.auth.uid == uid && (
+        request.auth.token.get('role', null) == 'driver' ||
+        (request.auth.token.get('role', null) == null &&
+          firestore.get(/databases/(default)/documents/users/$(uid)).data.role == 'driver')
+      ) && firestore.get(/databases/(default)/documents/users/$(uid)).data.get('isActive', true) == true;
+    }
+
+    function photoTypes() {
+      return ['profile_photo', 'live_photo', 'national_id_front', 'national_id_back',
+        'license_front', 'license_back', 'vehicle_photo_front', 'vehicle_photo_back',
+        'vehicle_photo_left', 'vehicle_photo_right', 'vehicle_photo_interior_front',
+        'vehicle_photo_interior_back', 'vehicle_photo_plate'];
+    }
+
+    function pdfTypes() {
+      return ['criminal_record', 'vehicle_ownership', 'vehicle_soat', 'vehicle_inspection',
+        'vehicle_insurance', 'vehicle_permit', 'owner_authorization'];
+    }
+
+    function validFile(type) {
+      return request.resource.size > 0 &&
+        request.resource.size <= 10 * 1024 * 1024 &&
+        (request.resource.contentType.matches('image/(jpeg|png|webp)') ||
+          (request.resource.contentType == 'application/pdf' && type in pdfTypes()));
+    }
+
+    match /driverDocs/{uid}/{type}/{version} {
+      // Solo crear: resource == null exige que el objeto no exista (no se
+      // sobrescribe ni con create; update y delete, denegados).
+      allow create: if resource == null && isDriver(uid) &&
+        (type in photoTypes() || type in pdfTypes()) &&
+        version.matches('^[1-9][0-9]{0,5}$') &&
+        validFile(type);
+      allow read, update, delete: if false;
+    }
+
+    // Todo lo demás, denegado.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
