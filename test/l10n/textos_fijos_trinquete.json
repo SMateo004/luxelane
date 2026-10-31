@@ -25,7 +25,7 @@
     "lib/core/personalization": 9,
     "lib/core/repositories": 2,
     "lib/core/services": 26,
-    "lib/core/utils": 51,
+    "lib/core/utils": 46,
     "lib/main.dart": 1
   }
 }

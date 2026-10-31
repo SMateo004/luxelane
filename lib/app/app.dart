@@ -15,6 +15,7 @@ import '../features/driver/presentation/bloc/driver_bloc.dart';
 import '../features/payments/presentation/bloc/payment_bloc.dart';
 import '../features/profile/presentation/bloc/profile_bloc.dart';
 import '../features/notifications/presentation/bloc/notification_bloc.dart';
+import '../l10n/l10n.dart';
 import 'locale_controller.dart';
 import 'lux_locale.dart';
 import 'router/router.dart';
@@ -126,10 +127,14 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
           localeListResolutionCallback: LuxLocale.resolveList,
           supportedLocales: LuxLocale.supportedLocales,
           localizationsDelegates: LuxLocale.delegates,
-          builder: (context, child) => LuxConnectionBanner(
-            online: ConnectionStatus.watch(sl<FirebaseFirestore>()),
-            child: child ?? const SizedBox.shrink(),
-          ),
+          builder: (context, child) {
+            // Textos fuera de los widgets (blocs, enums) en el idioma activo.
+            L10n.use(Localizations.localeOf(context));
+            return LuxConnectionBanner(
+              online: ConnectionStatus.watch(sl<FirebaseFirestore>()),
+              child: child ?? const SizedBox.shrink(),
+            );
+          },
           theme: luxTheme,
           routerConfig: _router,
         ),

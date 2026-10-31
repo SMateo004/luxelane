@@ -1,0 +1,32 @@
+{
+  "formatToday": {
+    "description": "Fecha relativa: hoy (antes de la hora, «Hoy · 18:30»).",
+    "es": "Hoy",
+    "en": "Today",
+    "pt": "Hoje"
+  },
+  "formatTomorrow": {
+    "description": "Fecha relativa: mañana («Mañana · 09:15»).",
+    "es": "Mañana",
+    "en": "Tomorrow",
+    "pt": "Amanhã"
+  },
+  "greetingMorning": {
+    "description": "Saludo de la mañana en el inicio (de 5 a 12 h).",
+    "es": "Buenos días",
+    "en": "Good morning",
+    "pt": "Bom dia"
+  },
+  "greetingAfternoon": {
+    "description": "Saludo de la tarde en el inicio (de 12 a 19 h).",
+    "es": "Buenas tardes",
+    "en": "Good afternoon",
+    "pt": "Boa tarde"
+  },
+  "greetingEvening": {
+    "description": "Saludo de la noche en el inicio (de 19 a 5 h).",
+    "es": "Buenas noches",
+    "en": "Good evening",
+    "pt": "Boa noite"
+  }
+}

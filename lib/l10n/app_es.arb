@@ -1,5 +1,25 @@
 {
   "@@locale": "es",
+  "formatToday": "Hoy",
+  "@formatToday": {
+    "description": "Fecha relativa: hoy (antes de la hora, «Hoy · 18:30»)."
+  },
+  "formatTomorrow": "Mañana",
+  "@formatTomorrow": {
+    "description": "Fecha relativa: mañana («Mañana · 09:15»)."
+  },
+  "greetingMorning": "Buenos días",
+  "@greetingMorning": {
+    "description": "Saludo de la mañana en el inicio (de 5 a 12 h)."
+  },
+  "greetingAfternoon": "Buenas tardes",
+  "@greetingAfternoon": {
+    "description": "Saludo de la tarde en el inicio (de 12 a 19 h)."
+  },
+  "greetingEvening": "Buenas noches",
+  "@greetingEvening": {
+    "description": "Saludo de la noche en el inicio (de 19 a 5 h)."
+  },
   "languageTitle": "Idioma",
   "@languageTitle": {
     "description": "Título de la sección del perfil donde se elige el idioma de la app."

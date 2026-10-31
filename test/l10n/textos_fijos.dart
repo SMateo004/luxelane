@@ -8,7 +8,9 @@ import 'dart:io';
 ///   letras; o es una palabra con mayúscula inicial («Reservar») o en
 ///   mayúsculas de 3+ letras («SOS»);
 /// - no cuentan imports, rutas, URLs, ni las líneas de debugPrint, logs,
-///   assert, excepciones, RegExp ni Key.
+///   assert, excepciones, RegExp ni Key;
+/// - tampoco una línea marcada `// i18n-ignore: <motivo>` (datos, claves o
+///   nombres propios que no se traducen). Usarlo poco y con motivo.
 
 final _letters = RegExp(r'[A-Za-zÁÉÍÓÚáéíóúñÑ]');
 final _accents = RegExp(r'[ÁÉÍÓÚáéíóúñÑ¿¡ãõçâêôàÃÕÇÂÊÔ]');
@@ -17,7 +19,7 @@ final _capitalWord = RegExp(r'^[A-ZÁÉÍÓÚ][a-záéíóúñ]+[.!?:…]?$');
 final _upperWord = RegExp(r'^[A-ZÁÉÍÓÚÑ]{3,}[.!?:…]?$');
 final _notText = RegExp(r'^(package:|dart:|assets/|https?://|/|#|[a-z_]+/)');
 final _skipLine = RegExp(
-  r'\b(import|export|part)\b|debugPrint|log\(|logger\.|assert\(|Exception\(|Error\(|RegExp\(|Key\(',
+  r'\b(import|export|part)\b|debugPrint|log\(|logger\.|assert\(|Exception\(|Error\(|RegExp\(|Key\(|// i18n-ignore',
 );
 
 bool looksLikeText(String body) {

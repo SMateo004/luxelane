@@ -1,0 +1,32 @@
+{
+  "languageTitle": {
+    "description": "Título de la sección del perfil donde se elige el idioma de la app.",
+    "es": "Idioma",
+    "en": "Language",
+    "pt": "Idioma"
+  },
+  "languageSystem": {
+    "description": "Opción del selector de idioma: seguir el idioma del teléfono.",
+    "es": "Sistema",
+    "en": "System",
+    "pt": "Sistema"
+  },
+  "languageSystemDetail": {
+    "description": "Detalle bajo «Sistema»: qué idioma resulta del teléfono.",
+    "es": "Usa el idioma del teléfono: {language}",
+    "en": "Uses your phone's language: {language}",
+    "pt": "Usa o idioma do celular: {language}",
+    "placeholders": {
+      "language": {
+        "type": "String",
+        "example": "Español"
+      }
+    }
+  },
+  "languageSaveError": {
+    "description": "Aviso si el idioma no se guardó en el servidor; la app ya cambió de idioma.",
+    "es": "No se pudo guardar el idioma en tu cuenta. Se usará en este dispositivo.",
+    "en": "Your language could not be saved to your account. It will be used on this device.",
+    "pt": "Não foi possível salvar o idioma na sua conta. Ele será usado neste dispositivo."
+  }
+}

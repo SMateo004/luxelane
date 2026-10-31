@@ -61,6 +61,13 @@ void main() {
       );
     });
 
+    test('una línea marcada i18n-ignore no cuenta', () {
+      expect(
+        countFile("x('Business Class'); // i18n-ignore: nombre de producto"),
+        0,
+      );
+    });
+
     test('un texto nuevo en una pantalla haría fallar el trinquete', () {
       final before = countFile('Text(l10n.languageTitle)');
       final after = countFile("Text(l10n.languageTitle); Text('Idioma nuevo')");

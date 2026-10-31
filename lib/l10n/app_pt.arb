@@ -1,5 +1,10 @@
 {
   "@@locale": "pt",
+  "formatToday": "Hoje",
+  "formatTomorrow": "Amanhã",
+  "greetingMorning": "Bom dia",
+  "greetingAfternoon": "Boa tarde",
+  "greetingEvening": "Boa noite",
   "languageTitle": "Idioma",
   "languageSystem": "Sistema",
   "languageSystemDetail": "Usa o idioma do celular: {language}",

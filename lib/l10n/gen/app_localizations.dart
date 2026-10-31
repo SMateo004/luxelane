@@ -97,8 +97,38 @@ abstract class AppLocalizations {
   static const List<Locale> supportedLocales = <Locale>[
     Locale('en'),
     Locale('es'),
-    Locale('pt'),
+    Locale('pt')
   ];
+
+  /// Fecha relativa: hoy (antes de la hora, «Hoy · 18:30»).
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy'**
+  String get formatToday;
+
+  /// Fecha relativa: mañana («Mañana · 09:15»).
+  ///
+  /// In es, this message translates to:
+  /// **'Mañana'**
+  String get formatTomorrow;
+
+  /// Saludo de la mañana en el inicio (de 5 a 12 h).
+  ///
+  /// In es, this message translates to:
+  /// **'Buenos días'**
+  String get greetingMorning;
+
+  /// Saludo de la tarde en el inicio (de 12 a 19 h).
+  ///
+  /// In es, this message translates to:
+  /// **'Buenas tardes'**
+  String get greetingAfternoon;
+
+  /// Saludo de la noche en el inicio (de 19 a 5 h).
+  ///
+  /// In es, this message translates to:
+  /// **'Buenas noches'**
+  String get greetingEvening;
 
   /// Título de la sección del perfil donde se elige el idioma de la app.
   ///
@@ -154,9 +184,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

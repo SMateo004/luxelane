@@ -1,54 +1,57 @@
-/// Spanish date formatting that does not depend on intl locale data being
-/// initialised (the app never calls `initializeDateFormatting`).
-abstract class LuxFormat {
-  static const _days = ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'];
-  static const _months = [
-    'ene',
-    'feb',
-    'mar',
-    'abr',
-    'may',
-    'jun',
-    'jul',
-    'ago',
-    'sep',
-    'oct',
-    'nov',
-    'dic',
-  ];
+import 'package:flutter/widgets.dart' show Locale;
+import 'package:intl/intl.dart';
+import 'package:intl/number_symbols_data.dart';
 
+import '../../l10n/l10n.dart';
+
+/// Importes, fechas y saludos en el idioma activo (L10n.code), con intl.
+abstract class LuxFormat {
   static String _two(int v) => v.toString().padLeft(2, '0');
 
-  /// Importe en bolivianos, igual en toda la app: «Bs 1.234» si es entero,
-  /// «Bs 1.234,50» si lleva céntimos. Antes convivían siete formas
-  /// («Bs96.00», «Bs 120», «Bs120», «Bs 50.00», «Bs 1.234,50»…, E21).
-  static String money(num amount) {
+  /// Importe en bolivianos, igual en toda la app: «Bs» delante y la cifra
+  /// con los separadores del idioma. Español y portugués «Bs 1.234,50»,
+  /// inglés «Bs 1,234.50»: la misma cifra, sin cambiar de sentido
+  /// (decisión 5). Entero sin decimales («Bs 1.234»). E21.
+  static String money(num amount, {String? locale}) {
+    final symbols =
+        numberFormatSymbols[locale ?? L10n.code] ?? numberFormatSymbols['es']!;
     final cents = (amount * 100).round();
     final abs = cents.abs();
     final whole = (abs ~/ 100).toString().replaceAllMapped(
           RegExp(r'\B(?=(\d{3})+(?!\d))'),
-          (_) => '.',
+          (_) => symbols.GROUP_SEP as String,
         );
     final rest = abs % 100;
-    final decimals = rest == 0 ? '' : ',${_two(rest)}';
+    final decimals = rest == 0 ? '' : '${symbols.DECIMAL_SEP}${_two(rest)}';
     // Espacio que no se parte: «Bs» y la cifra nunca quedan en dos líneas.
-    return '${cents < 0 ? '-' : ''}Bs\u00A0$whole$decimals';
+    return '${cents < 0 ? '-' : ''}Bs $whole$decimals';
   }
 
-  static String time(DateTime d) => '${_two(d.hour)}:${_two(d.minute)}';
+  /// «18:30» en español y portugués; «6:30 PM» en inglés.
+  static String time(DateTime d, {String? locale}) {
+    final l = locale ?? L10n.code;
+    L10n.ensureDateSymbols();
+    return l == 'en'
+        ? DateFormat('h:mm a', 'en').format(d)
+        : DateFormat('HH:mm', l).format(d);
+  }
 
-  /// "Hoy · 18:30", "Mañana · 09:15" or "vie 14 nov · 18:30".
-  static String dateTime(DateTime d, {DateTime? now}) {
+  /// «Hoy · 18:30», «Mañana · 09:15» o «vie 14 nov · 18:30» (en el idioma
+  /// activo: «Fri 14 Nov», «sex. 14 nov.»).
+  static String dateTime(DateTime d, {DateTime? now, String? locale}) {
+    final l = locale ?? L10n.code;
+    final t = locale == null ? L10n.current : lookupAppLocalizations(Locale(l));
+    L10n.ensureDateSymbols();
     final n = now ?? DateTime.now();
     final today = DateTime(n.year, n.month, n.day);
     final day = DateTime(d.year, d.month, d.day);
     final diff = day.difference(today).inDays;
     final label = switch (diff) {
-      0 => 'Hoy',
-      1 => 'Mañana',
-      _ => '${_days[d.weekday - 1]} ${d.day} ${_months[d.month - 1]}',
+      0 => t.formatToday,
+      1 => t.formatTomorrow,
+      _ => DateFormat('EEE d MMM', l).format(d),
     };
-    return '$label · ${time(d)}';
+    return '$label · ${time(d, locale: l)}';
   }
 
   /// Default pickup: at least [ahead] from now, rounded up to the next quarter
@@ -65,8 +68,9 @@ abstract class LuxFormat {
   /// Time-of-day greeting, used to open the app on a personal note.
   static String greeting([DateTime? at]) {
     final h = (at ?? DateTime.now()).hour;
-    if (h >= 5 && h < 12) return 'Buenos días';
-    if (h >= 12 && h < 19) return 'Buenas tardes';
-    return 'Buenas noches';
+    final t = L10n.current;
+    if (h >= 5 && h < 12) return t.greetingMorning;
+    if (h >= 12 && h < 19) return t.greetingAfternoon;
+    return t.greetingEvening;
   }
 }
