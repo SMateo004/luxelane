@@ -141,6 +141,33 @@ Retención: **no está fijada**; no se inventa un plazo. Preguntas para el aboga
    con qué aviso en la política de privacidad?
 3. ¿Qué decir en la política de privacidad sobre qué ve el chófer y cuándo?
 
+## L. Idiomas (cierre/idiomas)
+
+Apps del pasajero y del chófer en español, inglés y portugués de Brasil;
+panel de admin, páginas legales, alertas del panel y SMS a central en
+español.
+
+| Dato | Dónde | Quién lo lee | Quién lo escribe |
+|---|---|---|---|
+| Idioma de la cuenta (es/en/pt) y su origen (system/user) | users/{uid}.locale, localeSource, localeUpdatedAt | El usuario y el admin (reglas de users) | Solo updatePreferences (las reglas lo rechazan desde el cliente) |
+| Idioma de cada aviso guardado | users/{uid}/notifications/{id}.locale | El usuario | El servidor |
+| Elección en el dispositivo | shared_preferences (lux.locale) | La app | La app |
+
+- Textos de la app: lib/l10n/src/*.json → .arb (1127 claves). Trinquete de
+  textos fijos en cero en lib/features (sin admin ni legal), lib/core y
+  lib/app; 108 excepciones `i18n-ignore` con motivo (nombres propios,
+  fuentes, datos guardados, solo desarrollo).
+- Avisos del servidor: functions/src/i18n.ts, 21 tipos; ningún push ni
+  aviso con texto fijo (i18n.test.ts).
+- Importes: siempre «Bs» delante; separadores del idioma («Bs 1,234.50»
+  en inglés), con tests de que la cifra no cambia de sentido.
+- Pendiente del responsable: revisión nativa de en/pt; traducciones
+  legales; textos por defecto en inglés («Server error», «User not
+  found»); compromisos «Central te llamará» (SOS cancelado, D23) y «te
+  contactamos en menos de un día hábil» (empresas); testimonios de la web
+  que parecen inventados y «champán», «Wi-Fi y carga inalámbrica» sin
+  respaldo; «Stripe» y «PCI DSS» en la pantalla de tarjeta.
+
 ## I. Estado de los hallazgos (rama cierre/identidad, 2026-10-25, con las correcciones C1–C6)
 
 CERRADO = corregido en la rama con prueba automática; nada está desplegado todavía. PARCIAL = lo indicado en «Falta». ABIERTO = sin trabajo.
@@ -174,3 +201,4 @@ CERRADO = corregido en la rama con prueba automática; nada está desplegado tod
 | Pagos | PARCIAL (servidor, apps y panel, en código) | Rama cierre/pagos, Parte A: el pago es requisito para pedir chófer (A3: nada se ofrece sin `paid`; regla de auto-aceptación con el estado de pago); estado del pago fuera de la reserva, ilegible para el chófer (A1, matriz); pago manual con confirmación del admin (A4); vencimiento (A6); retención por etapas sobre lo pagado (A7); reembolsos al método original (A8); diferencia final (A9, A10); bandejas (A11); Q2 (adminRecordPayment no cobra dos veces). Parte B: pantalla de pago del pasajero (`/pay/<id>`), pago pendiente y comprobante en el viaje, cancelación con la retención solo si > 0, web solo con pago manual (E38), panel «Pagos» (confirmar, rechazar, devoluciones, saldos) y causa al cancelar; el chófer no lee pagos (B2). G2: saldos pendientes cobrados por central con `adminCollectBalance` (payment_balance.int.ts). H4: el libro `payments` es de solo anexado (asientos creados una vez, nunca borrados ni con otro importe; un pendiente solo se cierra, una vez, como completed o superseded; payment_ledger.int.ts). Los cobros antiguos de antes de pagos (sin `type`) aún los modifican `adminRecordPayment` (corrección) y `refundPayment`: deuda menor, solo reservas antiguas. Tests: payment_*.int.ts, cancel_booking.int.ts, matriz, test/payments, test/admin/admin_payments_test.dart, test/driver/driver_sin_pagos_test.dart. | Decisiones de config/ops (DEPLOY.md, «Pagos»); proveedor de tarjeta (app y webhook); textos legales y de recogida inmediata (DEPLOY.md). Capturas en dispositivo real: NO VERIFICADO. |
 | Deuda: campos `*Usd` de `pricingRules` | ABIERTO (deuda, G5: no se renombra) | [seguro] Los importes están en bolivianos (`functions/src/pricing.ts:7`, `fare.ts:64`) aunque los campos se llamen `basePriceUsd`, `pricePerKmUsd`, `pricePerHourUsd` y `minimumPriceUsd`. No hay conversión de moneda en ningún sitio. ~270 usos: servidor (`fare.ts`, `pricing.ts`, esquema estricto de `adminUpdatePricingRule` en `admin_ops.ts`), app (`PricingRule` en `models.dart`, `PricingCatalog`, que lee `/pricingRules` directamente de Firestore, pestaña Tarifas), tests de reglas (`pricingRules.rules.ts`, `matrix.ts`), `tools/pricing` y `seed.cjs`. Riesgo por el que no se hizo: las apps instaladas leen los nombres viejos de Firestore hasta que `minAppVersion` las saque, así que habría un periodo con los dos nombres en cada documento; una edición del panel que escribiera solo uno haría que el precio mostrado y el cobrado se separaran. | Plan si se decide: (1) lectura doble `nuevo ?? viejo` en servidor y app, con tests de paridad; (2) `adminUpdatePricingRule` escribe los dos nombres; (3) script de migración con DRY-RUN por defecto que lista los cambios y solo escribe con `--apply`, contra `demo-luxelane` primero; (4) tras subir `minAppVersion`, dejar de escribir y luego de leer los viejos; (5) reglas al final. Nombres nuevos: decisión del responsable. |
 | Preferencias del pasajero | PARCIAL (servidor y reglas, en código) | Rama cierre/preferencias, Parte A: updatePreferences y esquema cerrado (preferences.ts, preferences.test.ts), copia por reserva en driverView/preferences (preferences.int.ts), reglas con ventana (preferences.rules.ts, matriz), idiomas en openRequests (open_requests.test.ts), logs (errors.test.ts, logs_privacy.int.ts). Sección K. | Retención y necesidades sensibles: abogado. Listas de musicStyle y needs: revisión del responsable. config/ops.playlistHosts: lo fija el responsable. Apps y panel: Parte B. |
+| Idiomas | PARCIAL (apps y servidor, en código) | Rama cierre/idiomas: es/en/pt en las apps del pasajero y del chófer, idioma de la cuenta en users/{uid}.locale (updatePreferences), avisos del servidor por idioma (i18n.ts), panel y legales en español. Sección L. | Revisión nativa y traducciones legales; decisiones de texto de la sección L. Capturas por idioma en docs/capturas/idiomas. |
