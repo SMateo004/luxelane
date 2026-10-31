@@ -1,0 +1,316 @@
+{
+  "profileSaveError": {
+    "description": "Aviso de error si no se guardaron los cambios del perfil.",
+    "es": "No pudimos guardar los cambios. Inténtalo de nuevo.",
+    "en": "We couldn't save your changes. Please try again.",
+    "pt": "Não foi possível salvar as alterações. Tente novamente."
+  },
+  "profileUpdated": {
+    "description": "Aviso tras guardar el perfil.",
+    "es": "Perfil actualizado",
+    "en": "Profile updated",
+    "pt": "Perfil atualizado"
+  },
+  "profileTitle": {
+    "description": "Título de la pantalla de perfil.",
+    "es": "Perfil",
+    "en": "Profile",
+    "pt": "Perfil"
+  },
+  "profileEdit": {
+    "description": "Botón de la barra superior para editar el perfil.",
+    "es": "Editar",
+    "en": "Edit",
+    "pt": "Editar"
+  },
+  "profileRideStyle": {
+    "description": "Encabezado de las preferencias de viaje del pasajero.",
+    "es": "Tu estilo de viaje",
+    "en": "Your travel style",
+    "pt": "Seu estilo de viagem"
+  },
+  "profileDriverDocuments": {
+    "description": "Encabezado de la sección de licencia y vehículo del chófer.",
+    "es": "Licencia y vehículo",
+    "en": "Licence and vehicle",
+    "pt": "Habilitação e veículo"
+  },
+  "profileAccount": {
+    "description": "Encabezado de la sección de la cuenta.",
+    "es": "Cuenta",
+    "en": "Account",
+    "pt": "Conta"
+  },
+  "profileEmail": {
+    "description": "Fila de la cuenta: correo electrónico.",
+    "es": "Correo",
+    "en": "Email",
+    "pt": "E-mail"
+  },
+  "profilePhone": {
+    "description": "Fila de la cuenta y campo del formulario: teléfono.",
+    "es": "Teléfono",
+    "en": "Phone",
+    "pt": "Telefone"
+  },
+  "profilePhoneMissing": {
+    "description": "Subtítulo de la fila del teléfono si aún no hay uno.",
+    "es": "Añádelo para tu chófer",
+    "en": "Add it for your chauffeur",
+    "pt": "Adicione para o seu motorista"
+  },
+  "profilePaymentMethods": {
+    "description": "Fila que abre los métodos de pago.",
+    "es": "Métodos de pago",
+    "en": "Payment methods",
+    "pt": "Formas de pagamento"
+  },
+  "profileTwoStep": {
+    "description": "Fila de la verificación en dos pasos (chóferes y admin).",
+    "es": "Verificación en dos pasos",
+    "en": "Two-step verification",
+    "pt": "Verificação em duas etapas"
+  },
+  "profileAuthenticatorApp": {
+    "description": "Subtítulo de la verificación en dos pasos.",
+    "es": "App autenticadora",
+    "en": "Authenticator app",
+    "pt": "App autenticador"
+  },
+  "profileLegal": {
+    "description": "Encabezado de la sección legal.",
+    "es": "Legal",
+    "en": "Legal",
+    "pt": "Legal"
+  },
+  "profileTerms": {
+    "description": "Fila que abre los términos y condiciones.",
+    "es": "Términos y condiciones",
+    "en": "Terms and conditions",
+    "pt": "Termos e condições"
+  },
+  "profilePrivacy": {
+    "description": "Fila que abre la política de privacidad.",
+    "es": "Privacidad",
+    "en": "Privacy",
+    "pt": "Privacidade"
+  },
+  "profileSignOut": {
+    "description": "Botón para cerrar sesión.",
+    "es": "Cerrar sesión",
+    "en": "Sign out",
+    "pt": "Sair"
+  },
+  "profileDeleteAccount": {
+    "description": "Botón para eliminar la cuenta.",
+    "es": "Eliminar cuenta",
+    "en": "Delete account",
+    "pt": "Excluir conta"
+  },
+  "profilePreferencesFooter": {
+    "description": "Nota bajo las preferencias de viaje.",
+    "es": "Tu chófer lo sabrá antes de recogerte. Se aplica a tus próximas reservas.",
+    "en": "Your chauffeur will see this before your pickup. It applies to your upcoming bookings.",
+    "pt": "Seu motorista verá isto antes do embarque. Vale para suas próximas reservas."
+  },
+  "profileQuietRide": {
+    "description": "Preferencia: viaje en silencio.",
+    "es": "Viaje en silencio",
+    "en": "Quiet ride",
+    "pt": "Viagem em silêncio"
+  },
+  "profileQuietRideDetail": {
+    "description": "Detalle de la preferencia de viaje en silencio.",
+    "es": "Sin conversación, salvo lo necesario",
+    "en": "No conversation beyond what is needed",
+    "pt": "Sem conversa, só o necessário"
+  },
+  "profileSoftMusic": {
+    "description": "Preferencia: música suave.",
+    "es": "Música suave",
+    "en": "Soft music",
+    "pt": "Música suave"
+  },
+  "profileTemperature": {
+    "description": "Preferencia: temperatura de la cabina.",
+    "es": "Temperatura",
+    "en": "Temperature",
+    "pt": "Temperatura"
+  },
+  "profileTemperatureAny": {
+    "description": "Opción de temperatura: sin preferencia.",
+    "es": "Indistinta",
+    "en": "No preference",
+    "pt": "Tanto faz"
+  },
+  "profileLuggageHelp": {
+    "description": "Preferencia: ayuda con el equipaje.",
+    "es": "Ayuda con el equipaje",
+    "en": "Help with luggage",
+    "pt": "Ajuda com a bagagem"
+  },
+  "profileOpenDoor": {
+    "description": "Preferencia: que el chófer abra la puerta.",
+    "es": "Abrirme la puerta",
+    "en": "Open the door for me",
+    "pt": "Abrir a porta para mim"
+  },
+  "profileAccountDeleted": {
+    "description": "Aviso tras eliminar la cuenta.",
+    "es": "Tu cuenta fue eliminada.",
+    "en": "Your account has been deleted.",
+    "pt": "Sua conta foi excluída."
+  },
+  "profileDeleteTitle": {
+    "description": "Título del diálogo para confirmar la eliminación de la cuenta.",
+    "es": "¿Eliminar tu cuenta?",
+    "en": "Delete your account?",
+    "pt": "Excluir sua conta?"
+  },
+  "profileDeleteBody": {
+    "description": "Texto del diálogo de eliminar cuenta (dos párrafos).",
+    "es": "Borraremos tu perfil, tus tarjetas guardadas y tus avisos, y no podrás volver a entrar con esta cuenta. Conservamos el registro de viajes y pagos que exige la ley.\n\nEsta acción no se puede deshacer.",
+    "en": "We will delete your profile, your saved cards and your notifications, and you will not be able to sign in with this account again. We keep the trip and payment records required by law.\n\nThis cannot be undone.",
+    "pt": "Vamos apagar seu perfil, seus cartões salvos e suas notificações, e você não poderá entrar novamente com esta conta. Mantemos o registro de viagens e pagamentos exigido por lei.\n\nEsta ação não pode ser desfeita."
+  },
+  "profileCancel": {
+    "description": "Botón para cancelar un diálogo del perfil.",
+    "es": "Cancelar",
+    "en": "Cancel",
+    "pt": "Cancelar"
+  },
+  "profileDelete": {
+    "description": "Botón que confirma la eliminación de la cuenta.",
+    "es": "Eliminar",
+    "en": "Delete",
+    "pt": "Excluir"
+  },
+  "profileEditTitle": {
+    "description": "Título del formulario de edición y etiqueta de accesibilidad de la cabecera.",
+    "es": "Editar perfil",
+    "en": "Edit profile",
+    "pt": "Editar perfil"
+  },
+  "profileName": {
+    "description": "Campo del formulario: nombre.",
+    "es": "Nombre",
+    "en": "Name",
+    "pt": "Nome"
+  },
+  "profileRequired": {
+    "description": "Error de validación: campo obligatorio.",
+    "es": "Requerido",
+    "en": "Required",
+    "pt": "Obrigatório"
+  },
+  "profilePhoneInvalid": {
+    "description": "Error de validación del teléfono.",
+    "es": "Tu chófer lo necesita para contactarte",
+    "en": "Your chauffeur needs it to contact you",
+    "pt": "Seu motorista precisa dele para falar com você"
+  },
+  "profileSaveChanges": {
+    "description": "Botón para guardar el formulario del perfil.",
+    "es": "Guardar cambios",
+    "en": "Save changes",
+    "pt": "Salvar alterações"
+  },
+  "profileRoleAdmin": {
+    "description": "Rol en la cabecera del perfil: administrador.",
+    "es": "Administración",
+    "en": "Administration",
+    "pt": "Administração"
+  },
+  "profileRoleDriver": {
+    "description": "Rol en la cabecera del perfil: chófer.",
+    "es": "Chófer Luxelane",
+    "en": "Luxelane chauffeur",
+    "pt": "Motorista Luxelane"
+  },
+  "profileMemberSince": {
+    "description": "Rol en la cabecera del perfil del pasajero: año de alta.",
+    "es": "Miembro desde {year}",
+    "en": "Member since {year}",
+    "pt": "Membro desde {year}",
+    "placeholders": {
+      "year": {
+        "type": "int",
+        "example": "2025"
+      }
+    }
+  },
+  "profileRides": {
+    "description": "Número de viajes en la cabecera del perfil.",
+    "es": "{count, plural, =1{{count} viaje} other{{count} viajes}}",
+    "en": "{count, plural, =1{{count} trip} other{{count} trips}}",
+    "pt": "{count, plural, =1{{count} viagem} other{{count} viagens}}",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "profileVehicleColorTitle": {
+    "description": "Título del diálogo para cambiar el color del vehículo.",
+    "es": "Color del vehículo",
+    "en": "Vehicle colour",
+    "pt": "Cor do veículo"
+  },
+  "profileColor": {
+    "description": "Campo y fila: color del vehículo.",
+    "es": "Color",
+    "en": "Colour",
+    "pt": "Cor"
+  },
+  "profileSave": {
+    "description": "Botón para guardar el color del vehículo.",
+    "es": "Guardar",
+    "en": "Save",
+    "pt": "Salvar"
+  },
+  "profileLocked": {
+    "description": "Etiqueta de accesibilidad del candado: dato bloqueado.",
+    "es": "Bloqueado",
+    "en": "Locked",
+    "pt": "Bloqueado"
+  },
+  "profileLicence": {
+    "description": "Fila de la licencia de conducir del chófer.",
+    "es": "Licencia",
+    "en": "Licence",
+    "pt": "Habilitação"
+  },
+  "profileLicenceDetail": {
+    "description": "Subtítulo de la licencia: número y vencimiento (mes/año).",
+    "es": "{number} · vence {expiry}",
+    "en": "{number} · expires {expiry}",
+    "pt": "{number} · vence {expiry}",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "LIC-1234"
+      },
+      "expiry": {
+        "type": "String",
+        "example": "08/2027"
+      }
+    }
+  },
+  "profileVehicleDetail": {
+    "description": "Subtítulo del vehículo: clase y placa.",
+    "es": "{vehicleClass} · placa {plate}",
+    "en": "{vehicleClass} · plate {plate}",
+    "pt": "{vehicleClass} · placa {plate}",
+    "placeholders": {
+      "vehicleClass": {
+        "type": "String",
+        "example": "Business Class"
+      },
+      "plate": {
+        "type": "String",
+        "example": "1234ABC"
+      }
+    }
+  }
+}

@@ -878,6 +878,164 @@ class AppLocalizationsEs extends AppLocalizations {
       'El importe final del viaje fue mayor que lo pagado.';
 
   @override
+  String get profileSaveError =>
+      'No pudimos guardar los cambios. Inténtalo de nuevo.';
+
+  @override
+  String get profileUpdated => 'Perfil actualizado';
+
+  @override
+  String get profileTitle => 'Perfil';
+
+  @override
+  String get profileEdit => 'Editar';
+
+  @override
+  String get profileRideStyle => 'Tu estilo de viaje';
+
+  @override
+  String get profileDriverDocuments => 'Licencia y vehículo';
+
+  @override
+  String get profileAccount => 'Cuenta';
+
+  @override
+  String get profileEmail => 'Correo';
+
+  @override
+  String get profilePhone => 'Teléfono';
+
+  @override
+  String get profilePhoneMissing => 'Añádelo para tu chófer';
+
+  @override
+  String get profilePaymentMethods => 'Métodos de pago';
+
+  @override
+  String get profileTwoStep => 'Verificación en dos pasos';
+
+  @override
+  String get profileAuthenticatorApp => 'App autenticadora';
+
+  @override
+  String get profileLegal => 'Legal';
+
+  @override
+  String get profileTerms => 'Términos y condiciones';
+
+  @override
+  String get profilePrivacy => 'Privacidad';
+
+  @override
+  String get profileSignOut => 'Cerrar sesión';
+
+  @override
+  String get profileDeleteAccount => 'Eliminar cuenta';
+
+  @override
+  String get profilePreferencesFooter =>
+      'Tu chófer lo sabrá antes de recogerte. Se aplica a tus próximas reservas.';
+
+  @override
+  String get profileQuietRide => 'Viaje en silencio';
+
+  @override
+  String get profileQuietRideDetail => 'Sin conversación, salvo lo necesario';
+
+  @override
+  String get profileSoftMusic => 'Música suave';
+
+  @override
+  String get profileTemperature => 'Temperatura';
+
+  @override
+  String get profileTemperatureAny => 'Indistinta';
+
+  @override
+  String get profileLuggageHelp => 'Ayuda con el equipaje';
+
+  @override
+  String get profileOpenDoor => 'Abrirme la puerta';
+
+  @override
+  String get profileAccountDeleted => 'Tu cuenta fue eliminada.';
+
+  @override
+  String get profileDeleteTitle => '¿Eliminar tu cuenta?';
+
+  @override
+  String get profileDeleteBody =>
+      'Borraremos tu perfil, tus tarjetas guardadas y tus avisos, y no podrás volver a entrar con esta cuenta. Conservamos el registro de viajes y pagos que exige la ley.\n\nEsta acción no se puede deshacer.';
+
+  @override
+  String get profileCancel => 'Cancelar';
+
+  @override
+  String get profileDelete => 'Eliminar';
+
+  @override
+  String get profileEditTitle => 'Editar perfil';
+
+  @override
+  String get profileName => 'Nombre';
+
+  @override
+  String get profileRequired => 'Requerido';
+
+  @override
+  String get profilePhoneInvalid => 'Tu chófer lo necesita para contactarte';
+
+  @override
+  String get profileSaveChanges => 'Guardar cambios';
+
+  @override
+  String get profileRoleAdmin => 'Administración';
+
+  @override
+  String get profileRoleDriver => 'Chófer Luxelane';
+
+  @override
+  String profileMemberSince(int year) {
+    return 'Miembro desde $year';
+  }
+
+  @override
+  String profileRides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count viajes',
+      one: '$count viaje',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profileVehicleColorTitle => 'Color del vehículo';
+
+  @override
+  String get profileColor => 'Color';
+
+  @override
+  String get profileSave => 'Guardar';
+
+  @override
+  String get profileLocked => 'Bloqueado';
+
+  @override
+  String get profileLicence => 'Licencia';
+
+  @override
+  String profileLicenceDetail(String number, String expiry) {
+    return '$number · vence $expiry';
+  }
+
+  @override
+  String profileVehicleDetail(String vehicleClass, String plate) {
+    return '$vehicleClass · placa $plate';
+  }
+
+  @override
   String get rideLoadNotFound => 'No encontramos esta reserva en tu cuenta.';
 
   @override

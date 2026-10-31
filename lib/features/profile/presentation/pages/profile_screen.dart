@@ -9,7 +9,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/services/locale_sync.dart';
 import '../../../../core/widgets/components.dart';
-import '../../../../l10n/gen/app_localizations.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/pages/mfa_enroll_page.dart';
 import '../../../auth/presentation/widgets/reauth_dialog.dart';
@@ -62,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('Perfil'),
+          title: Text(context.l10n.profileTitle),
           actions: [
             BlocBuilder<ProfileBloc, ProfileState>(
               builder: (context, state) {
@@ -73,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         : null;
                 return TextButton(
                   onPressed: user != null ? () => _showEditSheet(user) : null,
-                  child: const Text('Editar'),
+                  child: Text(context.l10n.profileEdit),
                 );
               },
             ),
@@ -174,13 +174,13 @@ class _ProfileBody extends StatelessWidget {
         ),
         if (rider) ...[
           const SizedBox(height: LuxSpacing.xl),
-          item(const SectionHeader(title: 'Tu estilo de viaje')),
+          item(SectionHeader(title: context.l10n.profileRideStyle)),
           const SizedBox(height: LuxSpacing.sm),
           item(_RidePreferencesGroup(prefs: prefs, onChanged: onPreferences)),
         ],
         if (driverProfile != null) ...[
           const SizedBox(height: LuxSpacing.xl),
-          item(const SectionHeader(title: 'Licencia y vehículo')),
+          item(SectionHeader(title: context.l10n.profileDriverDocuments)),
           const SizedBox(height: LuxSpacing.sm),
           item(_DriverDocumentsSection(profile: driverProfile!)),
         ],
@@ -189,36 +189,36 @@ class _ProfileBody extends StatelessWidget {
         const SizedBox(height: LuxSpacing.sm),
         item(LanguageSelector(sync: sl<LocaleSync>())),
         const SizedBox(height: LuxSpacing.xl),
-        item(const SectionHeader(title: 'Cuenta')),
+        item(SectionHeader(title: context.l10n.profileAccount)),
         const SizedBox(height: LuxSpacing.sm),
         item(
           LuxGroup(
             children: [
               LuxListRow(
                 icon: Icons.mail_outline_rounded,
-                title: 'Correo',
+                title: context.l10n.profileEmail,
                 subtitle: user.email,
               ),
               LuxListRow(
                 icon: Icons.phone_outlined,
-                title: 'Teléfono',
+                title: context.l10n.profilePhone,
                 subtitle: user.phone.isNotEmpty
                     ? user.phone
-                    : 'Añádelo para tu chófer',
+                    : context.l10n.profilePhoneMissing,
                 onTap: onEdit,
               ),
               if (rider)
                 LuxListRow(
                   icon: Icons.credit_card_outlined,
-                  title: 'Métodos de pago',
+                  title: context.l10n.profilePaymentMethods,
                   onTap: () => context.push('/payment'),
                 ),
               // Obligatoria para chóferes y administradores (decisión 2).
               if (!rider)
                 LuxListRow(
                   icon: Icons.shield_outlined,
-                  title: 'Verificación en dos pasos',
-                  subtitle: 'App autenticadora',
+                  title: context.l10n.profileTwoStep,
+                  subtitle: context.l10n.profileAuthenticatorApp,
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
                       builder: (_) => MfaEnrollPage(accountName: user.email),
@@ -229,19 +229,19 @@ class _ProfileBody extends StatelessWidget {
           ),
         ),
         const SizedBox(height: LuxSpacing.xl),
-        item(const SectionHeader(title: 'Legal')),
+        item(SectionHeader(title: context.l10n.profileLegal)),
         const SizedBox(height: LuxSpacing.sm),
         item(
           LuxGroup(
             children: [
               LuxListRow(
                 icon: Icons.description_outlined,
-                title: 'Términos y condiciones',
+                title: context.l10n.profileTerms,
                 onTap: () => context.push('/legal/terminos'),
               ),
               LuxListRow(
                 icon: Icons.shield_outlined,
-                title: 'Privacidad',
+                title: context.l10n.profilePrivacy,
                 onTap: () => context.push('/legal/privacidad'),
               ),
             ],
@@ -250,7 +250,7 @@ class _ProfileBody extends StatelessWidget {
         const SizedBox(height: LuxSpacing.xl),
         item(
           LuxOutlinedButton(
-            label: 'Cerrar sesión',
+            label: context.l10n.profileSignOut,
             onPressed: () =>
                 context.read<AuthBloc>().add(const LogoutRequested()),
           ),
@@ -258,13 +258,14 @@ class _ProfileBody extends StatelessWidget {
         const SizedBox(height: LuxSpacing.xs),
         item(
           LuxButton.ghost(
-            label: 'Eliminar cuenta',
+            label: context.l10n.profileDeleteAccount,
             onPressed: () => _confirmDeleteAccount(context),
           ),
         ),
         const SizedBox(height: LuxSpacing.md),
         const Center(
-          child: Text('Luxelane · v1.0.0', style: LuxTypography.caption),
+          child: Text('Luxelane · v1.0.0', // i18n-ignore: marca y versión
+              style: LuxTypography.caption),
         ),
       ],
     );
@@ -280,19 +281,18 @@ class _RidePreferencesGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => LuxGroup(
-        footer: 'Tu chófer lo sabrá antes de recogerte. Se aplica a tus '
-            'próximas reservas.',
+        footer: context.l10n.profilePreferencesFooter,
         children: [
           LuxSwitchRow(
             icon: Icons.volume_off_outlined,
-            title: 'Viaje en silencio',
-            subtitle: 'Sin conversación, salvo lo necesario',
+            title: context.l10n.profileQuietRide,
+            subtitle: context.l10n.profileQuietRideDetail,
             value: prefs.quiet,
             onChanged: (v) => onChanged(prefs.copyWith(quiet: v)),
           ),
           LuxSwitchRow(
             icon: Icons.music_note_outlined,
-            title: 'Música suave',
+            title: context.l10n.profileSoftMusic,
             value: prefs.music,
             onChanged: (v) => onChanged(prefs.copyWith(music: v)),
           ),
@@ -310,7 +310,7 @@ class _RidePreferencesGroup extends StatelessWidget {
                     ),
                     const SizedBox(width: 16),
                     Text(
-                      'Temperatura',
+                      context.l10n.profileTemperature,
                       style: LuxTypography.bodyLarge.copyWith(fontSize: 15),
                     ),
                   ],
@@ -319,7 +319,8 @@ class _RidePreferencesGroup extends StatelessWidget {
                 LuxSegmented<CabinTemperature?>(
                   values: const [null, ...CabinTemperature.values],
                   selected: prefs.temperature,
-                  labelOf: (t) => t?.label ?? 'Indistinta',
+                  labelOf: (t) =>
+                      t?.label ?? context.l10n.profileTemperatureAny,
                   height: 40,
                   onChanged: (t) => onChanged(
                     t == null
@@ -332,13 +333,13 @@ class _RidePreferencesGroup extends StatelessWidget {
           ),
           LuxSwitchRow(
             icon: Icons.luggage_outlined,
-            title: 'Ayuda con el equipaje',
+            title: context.l10n.profileLuggageHelp,
             value: prefs.luggageHelp,
             onChanged: (v) => onChanged(prefs.copyWith(luggageHelp: v)),
           ),
           LuxSwitchRow(
             icon: Icons.door_front_door_outlined,
-            title: 'Abrirme la puerta',
+            title: context.l10n.profileOpenDoor,
             value: prefs.openDoor,
             onChanged: (v) => onChanged(prefs.copyWith(openDoor: v)),
           ),
@@ -359,7 +360,9 @@ Future<void> _confirmDeleteAccount(BuildContext context) async {
   if (deleted != true) return;
   // El servidor ya borró el acceso: se cierra la sesión local.
   auth.add(const LogoutRequested());
-  if (context.mounted) showLuxSnackbar(context, 'Tu cuenta fue eliminada.');
+  if (context.mounted) {
+    showLuxSnackbar(context, context.l10n.profileAccountDeleted);
+  }
 }
 
 class _DeleteAccountDialog extends StatefulWidget {
@@ -398,17 +401,12 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
   @override
   Widget build(BuildContext context) => AlertDialog(
         icon: const Icon(Icons.delete_outline, color: LuxColors.error),
-        title: const Text('¿Eliminar tu cuenta?'),
+        title: Text(context.l10n.profileDeleteTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Borraremos tu perfil, tus tarjetas guardadas y tus avisos, y '
-              'no podrás volver a entrar con esta cuenta. Conservamos el '
-              'registro de viajes y pagos que exige la ley.\n\n'
-              'Esta acción no se puede deshacer.',
-            ),
+            Text(context.l10n.profileDeleteBody),
             if (_error != null) ...[
               const SizedBox(height: LuxSpacing.md),
               Text(
@@ -422,7 +420,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
         actions: [
           TextButton(
             onPressed: _busy ? null : () => Navigator.of(context).pop(false),
-            child: const Text('Cancelar'),
+            child: Text(context.l10n.profileCancel),
           ),
           FilledButton(
             onPressed: _busy ? null : _delete,
@@ -436,7 +434,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                       color: Colors.white,
                     ),
                   )
-                : const Text('Eliminar'),
+                : Text(context.l10n.profileDelete),
           ),
         ],
       );
@@ -502,7 +500,8 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
           children: [
             Row(
               children: [
-                const Text('Editar perfil', style: LuxTypography.titleLarge),
+                Text(context.l10n.profileEditTitle,
+                    style: LuxTypography.titleLarge),
                 const Spacer(),
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -515,24 +514,25 @@ class _EditProfileSheetState extends State<_EditProfileSheet> {
             ),
             const SizedBox(height: LuxSpacing.lg),
             LuxTextField(
-              label: 'Nombre',
+              label: context.l10n.profileName,
               controller: _name,
               prefixIcon: Icons.person_outline_rounded,
-              validator: (v) =>
-                  v == null || v.trim().isEmpty ? 'Requerido' : null,
+              validator: (v) => v == null || v.trim().isEmpty
+                  ? context.l10n.profileRequired
+                  : null,
             ),
             const SizedBox(height: LuxSpacing.md),
             LuxTextField(
-              label: 'Teléfono',
+              label: context.l10n.profilePhone,
               controller: _phone,
               keyboardType: TextInputType.phone,
               prefixIcon: Icons.phone_outlined,
               validator: (v) => v == null || v.trim().length < 6
-                  ? 'Tu chófer lo necesita para contactarte'
+                  ? context.l10n.profilePhoneInvalid
                   : null,
             ),
             const SizedBox(height: LuxSpacing.lg),
-            LuxButton(label: 'Guardar cambios', onPressed: _save),
+            LuxButton(label: context.l10n.profileSaveChanges, onPressed: _save),
           ],
         ),
       ),
@@ -564,16 +564,16 @@ class _ProfileHeader extends StatelessWidget {
     return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
   }
 
-  String get _role => switch (user.role) {
-        UserRole.admin => 'Administración',
-        UserRole.driver => 'Chófer Luxelane',
-        UserRole.rider => 'Miembro desde ${user.createdAt.year}',
+  String _role(AppLocalizations l10n) => switch (user.role) {
+        UserRole.admin => l10n.profileRoleAdmin,
+        UserRole.driver => l10n.profileRoleDriver,
+        UserRole.rider => l10n.profileMemberSince(user.createdAt.year),
       };
 
   @override
   Widget build(BuildContext context) => LuxPressable(
         onTap: onEdit,
-        semanticLabel: 'Editar perfil',
+        semanticLabel: context.l10n.profileEditTitle,
         scale: 0.99,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: LuxSpacing.md),
@@ -588,7 +588,8 @@ class _ProfileHeader extends StatelessWidget {
                     ? Text(
                         _initials,
                         style: const TextStyle(
-                          fontFamily: 'Cormorant Garamond',
+                          fontFamily:
+                              'Cormorant Garamond', // i18n-ignore: tipografía
                           fontSize: 26,
                           fontWeight: FontWeight.w600,
                           color: LuxColors.sapphire,
@@ -613,9 +614,9 @@ class _ProfileHeader extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       [
-                        _role,
+                        _role(context.l10n),
                         if (totalRides > 0)
-                          '$totalRides ${totalRides == 1 ? 'viaje' : 'viajes'}',
+                          context.l10n.profileRides(totalRides),
                         if (rating != null) '★ ${rating!.toStringAsFixed(1)}',
                       ].join(' · '),
                       style: LuxTypography.caption.copyWith(fontSize: 12),
@@ -665,21 +666,21 @@ class _DriverDocumentsSectionState extends State<_DriverDocumentsSection> {
     final color = await showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Color del vehículo'),
+        title: Text(context.l10n.profileVehicleColorTitle),
         content: TextField(
           controller: controller,
           maxLength: 40,
           autofocus: true,
-          decoration: const InputDecoration(labelText: 'Color'),
+          decoration: InputDecoration(labelText: context.l10n.profileColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancelar'),
+            child: Text(context.l10n.profileCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, controller.text.trim()),
-            child: const Text('Guardar'),
+            child: Text(context.l10n.profileSave),
           ),
         ],
       ),

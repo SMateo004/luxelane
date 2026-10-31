@@ -877,6 +877,164 @@ class AppLocalizationsEn extends AppLocalizations {
       'The final trip amount was higher than the amount paid.';
 
   @override
+  String get profileSaveError =>
+      'We couldn\'t save your changes. Please try again.';
+
+  @override
+  String get profileUpdated => 'Profile updated';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get profileEdit => 'Edit';
+
+  @override
+  String get profileRideStyle => 'Your travel style';
+
+  @override
+  String get profileDriverDocuments => 'Licence and vehicle';
+
+  @override
+  String get profileAccount => 'Account';
+
+  @override
+  String get profileEmail => 'Email';
+
+  @override
+  String get profilePhone => 'Phone';
+
+  @override
+  String get profilePhoneMissing => 'Add it for your chauffeur';
+
+  @override
+  String get profilePaymentMethods => 'Payment methods';
+
+  @override
+  String get profileTwoStep => 'Two-step verification';
+
+  @override
+  String get profileAuthenticatorApp => 'Authenticator app';
+
+  @override
+  String get profileLegal => 'Legal';
+
+  @override
+  String get profileTerms => 'Terms and conditions';
+
+  @override
+  String get profilePrivacy => 'Privacy';
+
+  @override
+  String get profileSignOut => 'Sign out';
+
+  @override
+  String get profileDeleteAccount => 'Delete account';
+
+  @override
+  String get profilePreferencesFooter =>
+      'Your chauffeur will see this before your pickup. It applies to your upcoming bookings.';
+
+  @override
+  String get profileQuietRide => 'Quiet ride';
+
+  @override
+  String get profileQuietRideDetail => 'No conversation beyond what is needed';
+
+  @override
+  String get profileSoftMusic => 'Soft music';
+
+  @override
+  String get profileTemperature => 'Temperature';
+
+  @override
+  String get profileTemperatureAny => 'No preference';
+
+  @override
+  String get profileLuggageHelp => 'Help with luggage';
+
+  @override
+  String get profileOpenDoor => 'Open the door for me';
+
+  @override
+  String get profileAccountDeleted => 'Your account has been deleted.';
+
+  @override
+  String get profileDeleteTitle => 'Delete your account?';
+
+  @override
+  String get profileDeleteBody =>
+      'We will delete your profile, your saved cards and your notifications, and you will not be able to sign in with this account again. We keep the trip and payment records required by law.\n\nThis cannot be undone.';
+
+  @override
+  String get profileCancel => 'Cancel';
+
+  @override
+  String get profileDelete => 'Delete';
+
+  @override
+  String get profileEditTitle => 'Edit profile';
+
+  @override
+  String get profileName => 'Name';
+
+  @override
+  String get profileRequired => 'Required';
+
+  @override
+  String get profilePhoneInvalid => 'Your chauffeur needs it to contact you';
+
+  @override
+  String get profileSaveChanges => 'Save changes';
+
+  @override
+  String get profileRoleAdmin => 'Administration';
+
+  @override
+  String get profileRoleDriver => 'Luxelane chauffeur';
+
+  @override
+  String profileMemberSince(int year) {
+    return 'Member since $year';
+  }
+
+  @override
+  String profileRides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count trips',
+      one: '$count trip',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get profileVehicleColorTitle => 'Vehicle colour';
+
+  @override
+  String get profileColor => 'Colour';
+
+  @override
+  String get profileSave => 'Save';
+
+  @override
+  String get profileLocked => 'Locked';
+
+  @override
+  String get profileLicence => 'Licence';
+
+  @override
+  String profileLicenceDetail(String number, String expiry) {
+    return '$number · expires $expiry';
+  }
+
+  @override
+  String profileVehicleDetail(String vehicleClass, String plate) {
+    return '$vehicleClass · plate $plate';
+  }
+
+  @override
   String get rideLoadNotFound =>
       'We could not find this booking in your account.';
 

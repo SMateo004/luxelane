@@ -1140,6 +1140,226 @@
   "@paymentReceiptBalanceNote": {
     "description": "Nota bajo el saldo pendiente; sin promesas de contacto."
   },
+  "profileSaveError": "No pudimos guardar los cambios. Inténtalo de nuevo.",
+  "@profileSaveError": {
+    "description": "Aviso de error si no se guardaron los cambios del perfil."
+  },
+  "profileUpdated": "Perfil actualizado",
+  "@profileUpdated": {
+    "description": "Aviso tras guardar el perfil."
+  },
+  "profileTitle": "Perfil",
+  "@profileTitle": {
+    "description": "Título de la pantalla de perfil."
+  },
+  "profileEdit": "Editar",
+  "@profileEdit": {
+    "description": "Botón de la barra superior para editar el perfil."
+  },
+  "profileRideStyle": "Tu estilo de viaje",
+  "@profileRideStyle": {
+    "description": "Encabezado de las preferencias de viaje del pasajero."
+  },
+  "profileDriverDocuments": "Licencia y vehículo",
+  "@profileDriverDocuments": {
+    "description": "Encabezado de la sección de licencia y vehículo del chófer."
+  },
+  "profileAccount": "Cuenta",
+  "@profileAccount": {
+    "description": "Encabezado de la sección de la cuenta."
+  },
+  "profileEmail": "Correo",
+  "@profileEmail": {
+    "description": "Fila de la cuenta: correo electrónico."
+  },
+  "profilePhone": "Teléfono",
+  "@profilePhone": {
+    "description": "Fila de la cuenta y campo del formulario: teléfono."
+  },
+  "profilePhoneMissing": "Añádelo para tu chófer",
+  "@profilePhoneMissing": {
+    "description": "Subtítulo de la fila del teléfono si aún no hay uno."
+  },
+  "profilePaymentMethods": "Métodos de pago",
+  "@profilePaymentMethods": {
+    "description": "Fila que abre los métodos de pago."
+  },
+  "profileTwoStep": "Verificación en dos pasos",
+  "@profileTwoStep": {
+    "description": "Fila de la verificación en dos pasos (chóferes y admin)."
+  },
+  "profileAuthenticatorApp": "App autenticadora",
+  "@profileAuthenticatorApp": {
+    "description": "Subtítulo de la verificación en dos pasos."
+  },
+  "profileLegal": "Legal",
+  "@profileLegal": {
+    "description": "Encabezado de la sección legal."
+  },
+  "profileTerms": "Términos y condiciones",
+  "@profileTerms": {
+    "description": "Fila que abre los términos y condiciones."
+  },
+  "profilePrivacy": "Privacidad",
+  "@profilePrivacy": {
+    "description": "Fila que abre la política de privacidad."
+  },
+  "profileSignOut": "Cerrar sesión",
+  "@profileSignOut": {
+    "description": "Botón para cerrar sesión."
+  },
+  "profileDeleteAccount": "Eliminar cuenta",
+  "@profileDeleteAccount": {
+    "description": "Botón para eliminar la cuenta."
+  },
+  "profilePreferencesFooter": "Tu chófer lo sabrá antes de recogerte. Se aplica a tus próximas reservas.",
+  "@profilePreferencesFooter": {
+    "description": "Nota bajo las preferencias de viaje."
+  },
+  "profileQuietRide": "Viaje en silencio",
+  "@profileQuietRide": {
+    "description": "Preferencia: viaje en silencio."
+  },
+  "profileQuietRideDetail": "Sin conversación, salvo lo necesario",
+  "@profileQuietRideDetail": {
+    "description": "Detalle de la preferencia de viaje en silencio."
+  },
+  "profileSoftMusic": "Música suave",
+  "@profileSoftMusic": {
+    "description": "Preferencia: música suave."
+  },
+  "profileTemperature": "Temperatura",
+  "@profileTemperature": {
+    "description": "Preferencia: temperatura de la cabina."
+  },
+  "profileTemperatureAny": "Indistinta",
+  "@profileTemperatureAny": {
+    "description": "Opción de temperatura: sin preferencia."
+  },
+  "profileLuggageHelp": "Ayuda con el equipaje",
+  "@profileLuggageHelp": {
+    "description": "Preferencia: ayuda con el equipaje."
+  },
+  "profileOpenDoor": "Abrirme la puerta",
+  "@profileOpenDoor": {
+    "description": "Preferencia: que el chófer abra la puerta."
+  },
+  "profileAccountDeleted": "Tu cuenta fue eliminada.",
+  "@profileAccountDeleted": {
+    "description": "Aviso tras eliminar la cuenta."
+  },
+  "profileDeleteTitle": "¿Eliminar tu cuenta?",
+  "@profileDeleteTitle": {
+    "description": "Título del diálogo para confirmar la eliminación de la cuenta."
+  },
+  "profileDeleteBody": "Borraremos tu perfil, tus tarjetas guardadas y tus avisos, y no podrás volver a entrar con esta cuenta. Conservamos el registro de viajes y pagos que exige la ley.\n\nEsta acción no se puede deshacer.",
+  "@profileDeleteBody": {
+    "description": "Texto del diálogo de eliminar cuenta (dos párrafos)."
+  },
+  "profileCancel": "Cancelar",
+  "@profileCancel": {
+    "description": "Botón para cancelar un diálogo del perfil."
+  },
+  "profileDelete": "Eliminar",
+  "@profileDelete": {
+    "description": "Botón que confirma la eliminación de la cuenta."
+  },
+  "profileEditTitle": "Editar perfil",
+  "@profileEditTitle": {
+    "description": "Título del formulario de edición y etiqueta de accesibilidad de la cabecera."
+  },
+  "profileName": "Nombre",
+  "@profileName": {
+    "description": "Campo del formulario: nombre."
+  },
+  "profileRequired": "Requerido",
+  "@profileRequired": {
+    "description": "Error de validación: campo obligatorio."
+  },
+  "profilePhoneInvalid": "Tu chófer lo necesita para contactarte",
+  "@profilePhoneInvalid": {
+    "description": "Error de validación del teléfono."
+  },
+  "profileSaveChanges": "Guardar cambios",
+  "@profileSaveChanges": {
+    "description": "Botón para guardar el formulario del perfil."
+  },
+  "profileRoleAdmin": "Administración",
+  "@profileRoleAdmin": {
+    "description": "Rol en la cabecera del perfil: administrador."
+  },
+  "profileRoleDriver": "Chófer Luxelane",
+  "@profileRoleDriver": {
+    "description": "Rol en la cabecera del perfil: chófer."
+  },
+  "profileMemberSince": "Miembro desde {year}",
+  "@profileMemberSince": {
+    "description": "Rol en la cabecera del perfil del pasajero: año de alta.",
+    "placeholders": {
+      "year": {
+        "type": "int",
+        "example": "2025"
+      }
+    }
+  },
+  "profileRides": "{count, plural, =1{{count} viaje} other{{count} viajes}}",
+  "@profileRides": {
+    "description": "Número de viajes en la cabecera del perfil.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "profileVehicleColorTitle": "Color del vehículo",
+  "@profileVehicleColorTitle": {
+    "description": "Título del diálogo para cambiar el color del vehículo."
+  },
+  "profileColor": "Color",
+  "@profileColor": {
+    "description": "Campo y fila: color del vehículo."
+  },
+  "profileSave": "Guardar",
+  "@profileSave": {
+    "description": "Botón para guardar el color del vehículo."
+  },
+  "profileLocked": "Bloqueado",
+  "@profileLocked": {
+    "description": "Etiqueta de accesibilidad del candado: dato bloqueado."
+  },
+  "profileLicence": "Licencia",
+  "@profileLicence": {
+    "description": "Fila de la licencia de conducir del chófer."
+  },
+  "profileLicenceDetail": "{number} · vence {expiry}",
+  "@profileLicenceDetail": {
+    "description": "Subtítulo de la licencia: número y vencimiento (mes/año).",
+    "placeholders": {
+      "number": {
+        "type": "String",
+        "example": "LIC-1234"
+      },
+      "expiry": {
+        "type": "String",
+        "example": "08/2027"
+      }
+    }
+  },
+  "profileVehicleDetail": "{vehicleClass} · placa {plate}",
+  "@profileVehicleDetail": {
+    "description": "Subtítulo del vehículo: clase y placa.",
+    "placeholders": {
+      "vehicleClass": {
+        "type": "String",
+        "example": "Business Class"
+      },
+      "plate": {
+        "type": "String",
+        "example": "1234ABC"
+      }
+    }
+  },
   "rideLoadNotFound": "No encontramos esta reserva en tu cuenta.",
   "@rideLoadNotFound": {
     "description": "Pantalla del viaje: la reserva no existe o no es de esta cuenta."

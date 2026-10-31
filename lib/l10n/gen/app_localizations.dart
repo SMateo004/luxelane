@@ -1600,6 +1600,288 @@ abstract class AppLocalizations {
   /// **'El importe final del viaje fue mayor que lo pagado.'**
   String get paymentReceiptBalanceNote;
 
+  /// Aviso de error si no se guardaron los cambios del perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos guardar los cambios. Inténtalo de nuevo.'**
+  String get profileSaveError;
+
+  /// Aviso tras guardar el perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil actualizado'**
+  String get profileUpdated;
+
+  /// Título de la pantalla de perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil'**
+  String get profileTitle;
+
+  /// Botón de la barra superior para editar el perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar'**
+  String get profileEdit;
+
+  /// Encabezado de las preferencias de viaje del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu estilo de viaje'**
+  String get profileRideStyle;
+
+  /// Encabezado de la sección de licencia y vehículo del chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia y vehículo'**
+  String get profileDriverDocuments;
+
+  /// Encabezado de la sección de la cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuenta'**
+  String get profileAccount;
+
+  /// Fila de la cuenta: correo electrónico.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo'**
+  String get profileEmail;
+
+  /// Fila de la cuenta y campo del formulario: teléfono.
+  ///
+  /// In es, this message translates to:
+  /// **'Teléfono'**
+  String get profilePhone;
+
+  /// Subtítulo de la fila del teléfono si aún no hay uno.
+  ///
+  /// In es, this message translates to:
+  /// **'Añádelo para tu chófer'**
+  String get profilePhoneMissing;
+
+  /// Fila que abre los métodos de pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Métodos de pago'**
+  String get profilePaymentMethods;
+
+  /// Fila de la verificación en dos pasos (chóferes y admin).
+  ///
+  /// In es, this message translates to:
+  /// **'Verificación en dos pasos'**
+  String get profileTwoStep;
+
+  /// Subtítulo de la verificación en dos pasos.
+  ///
+  /// In es, this message translates to:
+  /// **'App autenticadora'**
+  String get profileAuthenticatorApp;
+
+  /// Encabezado de la sección legal.
+  ///
+  /// In es, this message translates to:
+  /// **'Legal'**
+  String get profileLegal;
+
+  /// Fila que abre los términos y condiciones.
+  ///
+  /// In es, this message translates to:
+  /// **'Términos y condiciones'**
+  String get profileTerms;
+
+  /// Fila que abre la política de privacidad.
+  ///
+  /// In es, this message translates to:
+  /// **'Privacidad'**
+  String get profilePrivacy;
+
+  /// Botón para cerrar sesión.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar sesión'**
+  String get profileSignOut;
+
+  /// Botón para eliminar la cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar cuenta'**
+  String get profileDeleteAccount;
+
+  /// Nota bajo las preferencias de viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer lo sabrá antes de recogerte. Se aplica a tus próximas reservas.'**
+  String get profilePreferencesFooter;
+
+  /// Preferencia: viaje en silencio.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje en silencio'**
+  String get profileQuietRide;
+
+  /// Detalle de la preferencia de viaje en silencio.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conversación, salvo lo necesario'**
+  String get profileQuietRideDetail;
+
+  /// Preferencia: música suave.
+  ///
+  /// In es, this message translates to:
+  /// **'Música suave'**
+  String get profileSoftMusic;
+
+  /// Preferencia: temperatura de la cabina.
+  ///
+  /// In es, this message translates to:
+  /// **'Temperatura'**
+  String get profileTemperature;
+
+  /// Opción de temperatura: sin preferencia.
+  ///
+  /// In es, this message translates to:
+  /// **'Indistinta'**
+  String get profileTemperatureAny;
+
+  /// Preferencia: ayuda con el equipaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda con el equipaje'**
+  String get profileLuggageHelp;
+
+  /// Preferencia: que el chófer abra la puerta.
+  ///
+  /// In es, this message translates to:
+  /// **'Abrirme la puerta'**
+  String get profileOpenDoor;
+
+  /// Aviso tras eliminar la cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu cuenta fue eliminada.'**
+  String get profileAccountDeleted;
+
+  /// Título del diálogo para confirmar la eliminación de la cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Eliminar tu cuenta?'**
+  String get profileDeleteTitle;
+
+  /// Texto del diálogo de eliminar cuenta (dos párrafos).
+  ///
+  /// In es, this message translates to:
+  /// **'Borraremos tu perfil, tus tarjetas guardadas y tus avisos, y no podrás volver a entrar con esta cuenta. Conservamos el registro de viajes y pagos que exige la ley.\n\nEsta acción no se puede deshacer.'**
+  String get profileDeleteBody;
+
+  /// Botón para cancelar un diálogo del perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get profileCancel;
+
+  /// Botón que confirma la eliminación de la cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar'**
+  String get profileDelete;
+
+  /// Título del formulario de edición y etiqueta de accesibilidad de la cabecera.
+  ///
+  /// In es, this message translates to:
+  /// **'Editar perfil'**
+  String get profileEditTitle;
+
+  /// Campo del formulario: nombre.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre'**
+  String get profileName;
+
+  /// Error de validación: campo obligatorio.
+  ///
+  /// In es, this message translates to:
+  /// **'Requerido'**
+  String get profileRequired;
+
+  /// Error de validación del teléfono.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer lo necesita para contactarte'**
+  String get profilePhoneInvalid;
+
+  /// Botón para guardar el formulario del perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar cambios'**
+  String get profileSaveChanges;
+
+  /// Rol en la cabecera del perfil: administrador.
+  ///
+  /// In es, this message translates to:
+  /// **'Administración'**
+  String get profileRoleAdmin;
+
+  /// Rol en la cabecera del perfil: chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Chófer Luxelane'**
+  String get profileRoleDriver;
+
+  /// Rol en la cabecera del perfil del pasajero: año de alta.
+  ///
+  /// In es, this message translates to:
+  /// **'Miembro desde {year}'**
+  String profileMemberSince(int year);
+
+  /// Número de viajes en la cabecera del perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{{count} viaje} other{{count} viajes}}'**
+  String profileRides(int count);
+
+  /// Título del diálogo para cambiar el color del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Color del vehículo'**
+  String get profileVehicleColorTitle;
+
+  /// Campo y fila: color del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Color'**
+  String get profileColor;
+
+  /// Botón para guardar el color del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Guardar'**
+  String get profileSave;
+
+  /// Etiqueta de accesibilidad del candado: dato bloqueado.
+  ///
+  /// In es, this message translates to:
+  /// **'Bloqueado'**
+  String get profileLocked;
+
+  /// Fila de la licencia de conducir del chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia'**
+  String get profileLicence;
+
+  /// Subtítulo de la licencia: número y vencimiento (mes/año).
+  ///
+  /// In es, this message translates to:
+  /// **'{number} · vence {expiry}'**
+  String profileLicenceDetail(String number, String expiry);
+
+  /// Subtítulo del vehículo: clase y placa.
+  ///
+  /// In es, this message translates to:
+  /// **'{vehicleClass} · placa {plate}'**
+  String profileVehicleDetail(String vehicleClass, String plate);
+
   /// Pantalla del viaje: la reserva no existe o no es de esta cuenta.
   ///
   /// In es, this message translates to:

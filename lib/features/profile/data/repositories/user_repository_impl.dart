@@ -17,7 +17,10 @@ class UserRepositoryImpl implements UserRepository {
   Future<Either<Failure, User>> getUserById(String userId) async {
     try {
       final doc = await _users.doc(userId).get();
-      if (!doc.exists) return const Left(NotFoundFailure('User not found'));
+      if (!doc.exists) {
+        const message = 'User not found'; // i18n-ignore: mensaje interno
+        return const Left(NotFoundFailure(message));
+      }
       return Right(User.fromJson({'id': doc.id, ...doc.data()!}));
     } catch (e) {
       return Left(ServerFailure(unexpectedErrorMessage(e)));
@@ -60,7 +63,10 @@ class UserRepositoryImpl implements UserRepository {
   Future<Either<Failure, DriverProfile>> getDriverProfile(String userId) async {
     try {
       final doc = await _db.collection('driverProfiles').doc(userId).get();
-      if (!doc.exists) return const Left(NotFoundFailure('Profile not found'));
+      if (!doc.exists) {
+        const message = 'Profile not found'; // i18n-ignore: no se muestra
+        return const Left(NotFoundFailure(message));
+      }
       return Right(DriverProfile.fromJson(doc.data()!));
     } catch (e) {
       return Left(ServerFailure(unexpectedErrorMessage(e)));

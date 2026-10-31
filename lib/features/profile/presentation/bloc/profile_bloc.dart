@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../l10n/l10n.dart';
 
 // ---------------------------------------------------------------------------
 // Events
@@ -233,7 +234,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           driverProfile: prev.driverProfile,
           totalRides: prev.totalRides,
           rating: prev.rating,
-          message: 'No pudimos guardar los cambios. Inténtalo de nuevo.',
+          message: L10n.current.profileSaveError,
           isError: true,
           messageSeq: prev.messageSeq + 1,
         ),
@@ -246,7 +247,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             driverProfile: prev.driverProfile,
             totalRides: prev.totalRides,
             rating: prev.rating,
-            message: 'Perfil actualizado',
+            message: L10n.current.profileUpdated,
             messageSeq: prev.messageSeq + 1,
           ),
         );
