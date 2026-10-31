@@ -2161,7 +2161,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'We could not send the link. Please try again.';
 
   @override
-  String get errorServerDefault => 'Server error';
+  String get errorServerDefault =>
+      'The operation could not be completed. Please try again.';
 
   @override
   String get errorEmailNotVerified => 'Verify your email to make a booking.';
@@ -2171,22 +2172,24 @@ class AppLocalizationsEn extends AppLocalizations {
       'Accept the current terms to make a booking.';
 
   @override
-  String get errorAuthDefault => 'Authentication error';
+  String get errorAuthDefault => 'We could not sign you in. Please try again.';
 
   @override
-  String get errorAuthCancelledDefault => 'Sign-in cancelled';
+  String get errorAuthCancelledDefault => 'Sign-in cancelled.';
 
   @override
   String get errorNetworkDefault => 'No internet connection';
 
   @override
-  String get errorNotFoundDefault => 'Resource not found';
+  String get errorNotFoundDefault =>
+      'We could not find what you were looking for.';
 
   @override
-  String get errorPaymentDefault => 'Payment error';
+  String get errorPaymentDefault =>
+      'The payment could not be processed. Please try again.';
 
   @override
-  String get errorPermissionDefault => 'Permission denied';
+  String get errorPermissionDefault => 'You do not have permission to do this.';
 
   @override
   String get errorPriceChanged => 'The price of this trip has changed.';
@@ -2202,7 +2205,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get errorAppUpdateRider => 'Update the app to make a booking.';
 
   @override
-  String get errorValidationDefault => 'Validation error';
+  String get errorValidationDefault =>
+      'Please check the details and try again.';
 
   @override
   String get errorMfaEnterCode => 'Enter the code from your authenticator app.';
@@ -2250,6 +2254,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errorAppCheckFailed =>
       'The app could not be verified. Update it or try again later.';
+
+  @override
+  String get errorProfileNotFound =>
+      'We could not find your profile. Please sign in again.';
 
   @override
   String get homePickOriginTitle => 'Select pickup point';

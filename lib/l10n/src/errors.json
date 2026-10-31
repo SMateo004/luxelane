@@ -181,9 +181,9 @@
   },
   "errorServerDefault": {
     "description": "Mensaje por defecto de un fallo del servidor sin texto propio (el original ya estaba en inglés y se conserva igual en español).",
-    "es": "Server error",
-    "en": "Server error",
-    "pt": "Erro do servidor"
+    "es": "No se pudo completar la operación. Inténtalo de nuevo.",
+    "en": "The operation could not be completed. Please try again.",
+    "pt": "Não foi possível concluir a operação. Tente novamente."
   },
   "errorEmailNotVerified": {
     "description": "Error al reservar: el correo de la cuenta no está verificado.",
@@ -199,15 +199,15 @@
   },
   "errorAuthDefault": {
     "description": "Mensaje por defecto de un fallo de autenticación sin texto propio (el original ya estaba en inglés y se conserva igual en español).",
-    "es": "Authentication error",
-    "en": "Authentication error",
-    "pt": "Erro de autenticação"
+    "es": "No se pudo iniciar sesión. Inténtalo de nuevo.",
+    "en": "We could not sign you in. Please try again.",
+    "pt": "Não foi possível entrar. Tente novamente."
   },
   "errorAuthCancelledDefault": {
     "description": "Mensaje por defecto cuando la persona cierra la ventana de inicio de sesión (no se muestra como error; el original ya estaba en inglés).",
-    "es": "Sign-in cancelled",
-    "en": "Sign-in cancelled",
-    "pt": "Login cancelado"
+    "es": "Inicio de sesión cancelado.",
+    "en": "Sign-in cancelled.",
+    "pt": "Login cancelado."
   },
   "errorNetworkDefault": {
     "description": "Mensaje por defecto de un fallo de red sin texto propio (el original ya estaba en inglés y se conserva igual en español).",
@@ -217,21 +217,21 @@
   },
   "errorNotFoundDefault": {
     "description": "Mensaje por defecto cuando no existe un documento (el original ya estaba en inglés y se conserva igual en español).",
-    "es": "Resource not found",
-    "en": "Resource not found",
-    "pt": "Recurso não encontrado"
+    "es": "No encontramos lo que buscabas.",
+    "en": "We could not find what you were looking for.",
+    "pt": "Não encontramos o que você procurava."
   },
   "errorPaymentDefault": {
     "description": "Mensaje por defecto de un fallo de pago sin texto propio (el original ya estaba en inglés y se conserva igual en español).",
-    "es": "Payment error",
-    "en": "Payment error",
-    "pt": "Erro no pagamento"
+    "es": "No se pudo procesar el pago. Inténtalo de nuevo.",
+    "en": "The payment could not be processed. Please try again.",
+    "pt": "Não foi possível processar o pagamento. Tente novamente."
   },
   "errorPermissionDefault": {
     "description": "Mensaje por defecto de un fallo de permisos sin texto propio (el original ya estaba en inglés y se conserva igual en español).",
-    "es": "Permission denied",
-    "en": "Permission denied",
-    "pt": "Permissão negada"
+    "es": "No tienes permiso para hacer esto.",
+    "en": "You do not have permission to do this.",
+    "pt": "Você não tem permissão para fazer isso."
   },
   "errorPriceChanged": {
     "description": "Error al reservar: el servidor calculó otro precio y hay que confirmarlo.",
@@ -259,9 +259,9 @@
   },
   "errorValidationDefault": {
     "description": "Mensaje por defecto de un fallo de validación sin texto propio (el original ya estaba en inglés y se conserva igual en español).",
-    "es": "Validation error",
-    "en": "Validation error",
-    "pt": "Erro de validação"
+    "es": "Revisa los datos e inténtalo de nuevo.",
+    "en": "Please check the details and try again.",
+    "pt": "Confira os dados e tente novamente."
   },
   "errorMfaEnterCode": {
     "description": "Segundo paso del inicio de sesión: pide el código de la app autenticadora (TOTP).",
@@ -334,5 +334,11 @@
     "es": "No se pudo verificar la app. Actualízala o inténtalo más tarde.",
     "en": "The app could not be verified. Update it or try again later.",
     "pt": "Não foi possível verificar o app. Atualize-o ou tente mais tarde."
+  },
+  "errorProfileNotFound": {
+    "description": "No se encontró el perfil de la cuenta (usuario o chófer). Antes salía «User not found» en inglés.",
+    "es": "No encontramos tu perfil. Vuelve a iniciar sesión.",
+    "en": "We could not find your profile. Please sign in again.",
+    "pt": "Não encontramos seu perfil. Entre novamente."
   }
 }

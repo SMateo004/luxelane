@@ -561,13 +561,13 @@
   },
   "homeWebBookEyebrow": {
     "description": "Antetítulo de la sección del libro (mayúsculas; en español también está en inglés).",
-    "es": "OUR SIGNATURE EXPERIENCE",
+    "es": "NUESTRA EXPERIENCIA EXCLUSIVA",
     "en": "OUR SIGNATURE EXPERIENCE",
     "pt": "NOSSA EXPERIÊNCIA EXCLUSIVA"
   },
   "homeWebBookScroll": {
     "description": "Indicación vertical para desplazarse (mayúsculas; en español también está en inglés).",
-    "es": "SCROLL",
+    "es": "DESLIZA",
     "en": "SCROLL",
     "pt": "ROLE"
   }

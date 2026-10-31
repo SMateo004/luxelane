@@ -3895,7 +3895,7 @@ abstract class AppLocalizations {
   /// Mensaje por defecto de un fallo del servidor sin texto propio (el original ya estaba en inglés y se conserva igual en español).
   ///
   /// In es, this message translates to:
-  /// **'Server error'**
+  /// **'No se pudo completar la operación. Inténtalo de nuevo.'**
   String get errorServerDefault;
 
   /// Error al reservar: el correo de la cuenta no está verificado.
@@ -3913,13 +3913,13 @@ abstract class AppLocalizations {
   /// Mensaje por defecto de un fallo de autenticación sin texto propio (el original ya estaba en inglés y se conserva igual en español).
   ///
   /// In es, this message translates to:
-  /// **'Authentication error'**
+  /// **'No se pudo iniciar sesión. Inténtalo de nuevo.'**
   String get errorAuthDefault;
 
   /// Mensaje por defecto cuando la persona cierra la ventana de inicio de sesión (no se muestra como error; el original ya estaba en inglés).
   ///
   /// In es, this message translates to:
-  /// **'Sign-in cancelled'**
+  /// **'Inicio de sesión cancelado.'**
   String get errorAuthCancelledDefault;
 
   /// Mensaje por defecto de un fallo de red sin texto propio (el original ya estaba en inglés y se conserva igual en español).
@@ -3931,19 +3931,19 @@ abstract class AppLocalizations {
   /// Mensaje por defecto cuando no existe un documento (el original ya estaba en inglés y se conserva igual en español).
   ///
   /// In es, this message translates to:
-  /// **'Resource not found'**
+  /// **'No encontramos lo que buscabas.'**
   String get errorNotFoundDefault;
 
   /// Mensaje por defecto de un fallo de pago sin texto propio (el original ya estaba en inglés y se conserva igual en español).
   ///
   /// In es, this message translates to:
-  /// **'Payment error'**
+  /// **'No se pudo procesar el pago. Inténtalo de nuevo.'**
   String get errorPaymentDefault;
 
   /// Mensaje por defecto de un fallo de permisos sin texto propio (el original ya estaba en inglés y se conserva igual en español).
   ///
   /// In es, this message translates to:
-  /// **'Permission denied'**
+  /// **'No tienes permiso para hacer esto.'**
   String get errorPermissionDefault;
 
   /// Error al reservar: el servidor calculó otro precio y hay que confirmarlo.
@@ -3973,7 +3973,7 @@ abstract class AppLocalizations {
   /// Mensaje por defecto de un fallo de validación sin texto propio (el original ya estaba en inglés y se conserva igual en español).
   ///
   /// In es, this message translates to:
-  /// **'Validation error'**
+  /// **'Revisa los datos e inténtalo de nuevo.'**
   String get errorValidationDefault;
 
   /// Segundo paso del inicio de sesión: pide el código de la app autenticadora (TOTP).
@@ -4047,6 +4047,12 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No se pudo verificar la app. Actualízala o inténtalo más tarde.'**
   String get errorAppCheckFailed;
+
+  /// No se encontró el perfil de la cuenta (usuario o chófer). Antes salía «User not found» en inglés.
+  ///
+  /// In es, this message translates to:
+  /// **'No encontramos tu perfil. Vuelve a iniciar sesión.'**
+  String get errorProfileNotFound;
 
   /// Título del mapa para elegir el punto de recogida.
   ///
@@ -4567,13 +4573,13 @@ abstract class AppLocalizations {
   /// Antetítulo de la sección del libro (mayúsculas; en español también está en inglés).
   ///
   /// In es, this message translates to:
-  /// **'OUR SIGNATURE EXPERIENCE'**
+  /// **'NUESTRA EXPERIENCIA EXCLUSIVA'**
   String get homeWebBookEyebrow;
 
   /// Indicación vertical para desplazarse (mayúsculas; en español también está en inglés).
   ///
   /// In es, this message translates to:
-  /// **'SCROLL'**
+  /// **'DESLIZA'**
   String get homeWebBookScroll;
 
   /// Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva. Se envía siempre en español (lo lee central); en/pt no se usan.

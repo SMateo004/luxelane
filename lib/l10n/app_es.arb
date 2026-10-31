@@ -2844,7 +2844,7 @@
   "@errorPasswordResetFailed": {
     "description": "Error genérico al enviar el enlace para restablecer la contraseña."
   },
-  "errorServerDefault": "Server error",
+  "errorServerDefault": "No se pudo completar la operación. Inténtalo de nuevo.",
   "@errorServerDefault": {
     "description": "Mensaje por defecto de un fallo del servidor sin texto propio (el original ya estaba en inglés y se conserva igual en español)."
   },
@@ -2856,11 +2856,11 @@
   "@errorTermsRequired": {
     "description": "Error al reservar: falta aceptar los términos vigentes."
   },
-  "errorAuthDefault": "Authentication error",
+  "errorAuthDefault": "No se pudo iniciar sesión. Inténtalo de nuevo.",
   "@errorAuthDefault": {
     "description": "Mensaje por defecto de un fallo de autenticación sin texto propio (el original ya estaba en inglés y se conserva igual en español)."
   },
-  "errorAuthCancelledDefault": "Sign-in cancelled",
+  "errorAuthCancelledDefault": "Inicio de sesión cancelado.",
   "@errorAuthCancelledDefault": {
     "description": "Mensaje por defecto cuando la persona cierra la ventana de inicio de sesión (no se muestra como error; el original ya estaba en inglés)."
   },
@@ -2868,15 +2868,15 @@
   "@errorNetworkDefault": {
     "description": "Mensaje por defecto de un fallo de red sin texto propio (el original ya estaba en inglés y se conserva igual en español)."
   },
-  "errorNotFoundDefault": "Resource not found",
+  "errorNotFoundDefault": "No encontramos lo que buscabas.",
   "@errorNotFoundDefault": {
     "description": "Mensaje por defecto cuando no existe un documento (el original ya estaba en inglés y se conserva igual en español)."
   },
-  "errorPaymentDefault": "Payment error",
+  "errorPaymentDefault": "No se pudo procesar el pago. Inténtalo de nuevo.",
   "@errorPaymentDefault": {
     "description": "Mensaje por defecto de un fallo de pago sin texto propio (el original ya estaba en inglés y se conserva igual en español)."
   },
-  "errorPermissionDefault": "Permission denied",
+  "errorPermissionDefault": "No tienes permiso para hacer esto.",
   "@errorPermissionDefault": {
     "description": "Mensaje por defecto de un fallo de permisos sin texto propio (el original ya estaba en inglés y se conserva igual en español)."
   },
@@ -2896,7 +2896,7 @@
   "@errorAppUpdateRider": {
     "description": "Error en la app del pasajero: la versión es demasiado antigua para reservar."
   },
-  "errorValidationDefault": "Validation error",
+  "errorValidationDefault": "Revisa los datos e inténtalo de nuevo.",
   "@errorValidationDefault": {
     "description": "Mensaje por defecto de un fallo de validación sin texto propio (el original ya estaba en inglés y se conserva igual en español)."
   },
@@ -2947,6 +2947,10 @@
   "errorAppCheckFailed": "No se pudo verificar la app. Actualízala o inténtalo más tarde.",
   "@errorAppCheckFailed": {
     "description": "Error: el servidor exige verificar la app (App Check) y no se pudo."
+  },
+  "errorProfileNotFound": "No encontramos tu perfil. Vuelve a iniciar sesión.",
+  "@errorProfileNotFound": {
+    "description": "No se encontró el perfil de la cuenta (usuario o chófer). Antes salía «User not found» en inglés."
   },
   "homePickOriginTitle": "Seleccionar lugar de recogida",
   "@homePickOriginTitle": {
@@ -3336,11 +3340,11 @@
   "@homeWebBookBusinessBullet1": {
     "description": "Libro, página 3: punto."
   },
-  "homeWebBookEyebrow": "OUR SIGNATURE EXPERIENCE",
+  "homeWebBookEyebrow": "NUESTRA EXPERIENCIA EXCLUSIVA",
   "@homeWebBookEyebrow": {
     "description": "Antetítulo de la sección del libro (mayúsculas; en español también está en inglés)."
   },
-  "homeWebBookScroll": "SCROLL",
+  "homeWebBookScroll": "DESLIZA",
   "@homeWebBookScroll": {
     "description": "Indicación vertical para desplazarse (mayúsculas; en español también está en inglés)."
   },

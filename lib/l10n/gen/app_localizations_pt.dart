@@ -2174,7 +2174,8 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não foi possível enviar o link. Tente novamente.';
 
   @override
-  String get errorServerDefault => 'Erro do servidor';
+  String get errorServerDefault =>
+      'Não foi possível concluir a operação. Tente novamente.';
 
   @override
   String get errorEmailNotVerified =>
@@ -2185,22 +2186,24 @@ class AppLocalizationsPt extends AppLocalizations {
       'Aceite os termos vigentes para poder reservar.';
 
   @override
-  String get errorAuthDefault => 'Erro de autenticação';
+  String get errorAuthDefault => 'Não foi possível entrar. Tente novamente.';
 
   @override
-  String get errorAuthCancelledDefault => 'Login cancelado';
+  String get errorAuthCancelledDefault => 'Login cancelado.';
 
   @override
   String get errorNetworkDefault => 'Sem conexão com a internet';
 
   @override
-  String get errorNotFoundDefault => 'Recurso não encontrado';
+  String get errorNotFoundDefault => 'Não encontramos o que você procurava.';
 
   @override
-  String get errorPaymentDefault => 'Erro no pagamento';
+  String get errorPaymentDefault =>
+      'Não foi possível processar o pagamento. Tente novamente.';
 
   @override
-  String get errorPermissionDefault => 'Permissão negada';
+  String get errorPermissionDefault =>
+      'Você não tem permissão para fazer isso.';
 
   @override
   String get errorPriceChanged => 'O preço desta viagem mudou.';
@@ -2216,7 +2219,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get errorAppUpdateRider => 'Atualize o app para reservar.';
 
   @override
-  String get errorValidationDefault => 'Erro de validação';
+  String get errorValidationDefault => 'Confira os dados e tente novamente.';
 
   @override
   String get errorMfaEnterCode => 'Digite o código do seu app autenticador.';
@@ -2264,6 +2267,10 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get errorAppCheckFailed =>
       'Não foi possível verificar o app. Atualize-o ou tente mais tarde.';
+
+  @override
+  String get errorProfileNotFound =>
+      'Não encontramos seu perfil. Entre novamente.';
 
   @override
   String get homePickOriginTitle => 'Selecionar ponto de embarque';

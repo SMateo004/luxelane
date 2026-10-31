@@ -2169,7 +2169,8 @@ class AppLocalizationsEs extends AppLocalizations {
       'No pudimos enviar el enlace. Inténtalo de nuevo.';
 
   @override
-  String get errorServerDefault => 'Server error';
+  String get errorServerDefault =>
+      'No se pudo completar la operación. Inténtalo de nuevo.';
 
   @override
   String get errorEmailNotVerified => 'Verifica tu correo para poder reservar.';
@@ -2179,22 +2180,24 @@ class AppLocalizationsEs extends AppLocalizations {
       'Acepta los términos vigentes para poder reservar.';
 
   @override
-  String get errorAuthDefault => 'Authentication error';
+  String get errorAuthDefault =>
+      'No se pudo iniciar sesión. Inténtalo de nuevo.';
 
   @override
-  String get errorAuthCancelledDefault => 'Sign-in cancelled';
+  String get errorAuthCancelledDefault => 'Inicio de sesión cancelado.';
 
   @override
   String get errorNetworkDefault => 'No internet connection';
 
   @override
-  String get errorNotFoundDefault => 'Resource not found';
+  String get errorNotFoundDefault => 'No encontramos lo que buscabas.';
 
   @override
-  String get errorPaymentDefault => 'Payment error';
+  String get errorPaymentDefault =>
+      'No se pudo procesar el pago. Inténtalo de nuevo.';
 
   @override
-  String get errorPermissionDefault => 'Permission denied';
+  String get errorPermissionDefault => 'No tienes permiso para hacer esto.';
 
   @override
   String get errorPriceChanged => 'El precio de este viaje cambió.';
@@ -2210,7 +2213,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get errorAppUpdateRider => 'Actualiza la app para reservar.';
 
   @override
-  String get errorValidationDefault => 'Validation error';
+  String get errorValidationDefault => 'Revisa los datos e inténtalo de nuevo.';
 
   @override
   String get errorMfaEnterCode =>
@@ -2258,6 +2261,10 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get errorAppCheckFailed =>
       'No se pudo verificar la app. Actualízala o inténtalo más tarde.';
+
+  @override
+  String get errorProfileNotFound =>
+      'No encontramos tu perfil. Vuelve a iniciar sesión.';
 
   @override
   String get homePickOriginTitle => 'Seleccionar lugar de recogida';
@@ -2545,10 +2552,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get homeWebBookBusinessBullet1 => 'Facturación centralizada';
 
   @override
-  String get homeWebBookEyebrow => 'OUR SIGNATURE EXPERIENCE';
+  String get homeWebBookEyebrow => 'NUESTRA EXPERIENCIA EXCLUSIVA';
 
   @override
-  String get homeWebBookScroll => 'SCROLL';
+  String get homeWebBookScroll => 'DESLIZA';
 
   @override
   String incidentSmsHeader(String id) {

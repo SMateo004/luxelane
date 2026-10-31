@@ -183,6 +183,8 @@ Puntos que conviene mirar primero:
 - Datos: lo que escriben las personas o el admin (nombres, notas, datos de
   cobro, color y modelo del vehículo), los títulos y textos de cada aviso
   ya guardado y los nombres propios (ciudades, aeropuertos).
-- Mensajes por defecto que ya estaban en inglés en el original («Server
-  error», «Resource not found», «User not found»): siguen así en los tres
-  idiomas hasta que el responsable decida su texto.
+- Los mensajes por defecto que estaban en inglés también en español
+  («Server error», «Resource not found», «User not found», «OUR SIGNATURE
+  EXPERIENCE», «SCROLL») ya están traducidos a los tres idiomas;
+  `sin_ingles_en_espanol_test.dart` falla si vuelve un texto en inglés a la
+  versión en español.

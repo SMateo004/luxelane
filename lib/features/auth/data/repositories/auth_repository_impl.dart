@@ -272,10 +272,6 @@ class AuthRepositoryImpl implements AuthRepository {
     return Left(AuthFailure(blockedAccountMessage(user.role)));
   }
 
-  // Solo para getCurrentUser, que no llega a ninguna pantalla.
-  static const _notSignedIn = 'Not authenticated'; // i18n-ignore: interno
-  static const _noProfile = 'User not found'; // i18n-ignore: interno
-
   static String get _googleGenericError => L10n.current.authGoogleGenericError;
 
   static String _googleErrorMessage(String code) {
@@ -477,9 +473,13 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, User>> getCurrentUser() async {
     try {
       final fbUser = _auth.currentUser;
-      if (fbUser == null) return const Left(AuthFailure(_notSignedIn));
+      if (fbUser == null) {
+        return Left(AuthFailure(L10n.current.errorSessionExpired));
+      }
       final doc = await _db.collection('users').doc(fbUser.uid).get();
-      if (!doc.exists) return const Left(NotFoundFailure(_noProfile));
+      if (!doc.exists) {
+        return Left(NotFoundFailure(L10n.current.errorProfileNotFound));
+      }
       return Right(User.fromJson({'id': doc.id, ...doc.data()!}));
     } catch (e) {
       return Left(ServerFailure(unexpectedErrorMessage(e)));

@@ -162,8 +162,7 @@ español.
 - Importes: siempre «Bs» delante; separadores del idioma («Bs 1,234.50»
   en inglés), con tests de que la cifra no cambia de sentido.
 - Pendiente del responsable: revisión nativa de en/pt; traducciones
-  legales; textos por defecto en inglés («Server error», «User not
-  found»); compromisos «Central te llamará» (SOS cancelado, D23) y «te
+  legales; compromisos «Central te llamará» (SOS cancelado, D23) y «te
   contactamos en menos de un día hábil» (empresas); testimonios de la web
   que parecen inventados y «champán», «Wi-Fi y carga inalámbrica» sin
   respaldo; «Stripe» y «PCI DSS» en la pantalla de tarjeta.
