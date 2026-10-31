@@ -5,6 +5,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../bloc/driver_bloc.dart';
 import '../widgets/driver_step_action.dart';
@@ -16,7 +17,7 @@ class DriverQueueScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Solicitudes')),
+      appBar: AppBar(title: Text(context.l10n.driverQueueTitle)),
       body: BlocBuilder<DriverBloc, DriverState>(
         builder: (context, state) {
           if (state is! DriverLoaded) return const LuxSkeletonList();
@@ -37,8 +38,8 @@ class DriverQueueScreen extends StatelessWidget {
             return EmptyState(
               icon: Icons.inbox_outlined,
               message: state.isAvailable
-                  ? 'Las nuevas solicitudes\naparecerán aquí.'
-                  : 'Conéctate para\nrecibir solicitudes.',
+                  ? context.l10n.driverQueueEmptyOnline
+                  : context.l10n.driverQueueEmptyOffline,
             );
           }
           var i = 0;
@@ -47,7 +48,7 @@ class DriverQueueScreen extends StatelessWidget {
             padding: const EdgeInsets.all(LuxSpacing.md),
             children: [
               if (pending.isNotEmpty) ...[
-                const SectionHeader(title: 'Disponibles para ti'),
+                SectionHeader(title: context.l10n.driverQueueAvailable),
                 const SizedBox(height: LuxSpacing.sm + 2),
                 for (final b in pending)
                   Padding(
@@ -60,7 +61,7 @@ class DriverQueueScreen extends StatelessWidget {
                 const SizedBox(height: LuxSpacing.md),
               ],
               if (upcoming.isNotEmpty) ...[
-                const SectionHeader(title: 'Tus viajes asignados'),
+                SectionHeader(title: context.l10n.driverQueueAssigned),
                 const SizedBox(height: LuxSpacing.sm + 2),
                 for (final b in upcoming)
                   Padding(
@@ -99,7 +100,7 @@ class _RequestCard extends StatelessWidget {
                   children: [
                     Text(
                       hourly
-                          ? '${r.hours ?? 2} h a disposición'
+                          ? context.l10n.driverHoursAvailable(r.hours ?? 2)
                           : r.dropoffLabel,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -107,8 +108,10 @@ class _RequestCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      '${LuxFormat.dateTime(r.scheduledAt)} · '
-                      'desde ${r.pickupLabel}',
+                      context.l10n.driverQueueFrom(
+                        LuxFormat.dateTime(r.scheduledAt),
+                        r.pickupLabel,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: LuxTypography.caption.copyWith(fontSize: 12),
@@ -132,8 +135,10 @@ class _RequestCard extends StatelessWidget {
                 child: Text(
                   [
                     r.vehicleClass.label,
-                    if (r.tripKm != null) '~${r.tripKm!.toStringAsFixed(0)} km',
-                    '${r.passengerCount} pax',
+                    if (r.tripKm != null)
+                      context.l10n
+                          .driverRouteDistance(r.tripKm!.toStringAsFixed(0)),
+                    context.l10n.driverQueuePax(r.passengerCount),
                   ].join(' · '),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -170,7 +175,8 @@ class _JobCard extends StatelessWidget {
                   children: [
                     Text(
                       hourly
-                          ? '${booking.hours ?? 2} h a disposición'
+                          ? context.l10n
+                              .driverHoursAvailable(booking.hours ?? 2)
                           : booking.destination.displayName,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -178,8 +184,10 @@ class _JobCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      '${LuxFormat.dateTime(booking.scheduledAt)} · '
-                      'desde ${booking.origin.displayName}',
+                      context.l10n.driverQueueFrom(
+                        LuxFormat.dateTime(booking.scheduledAt),
+                        booking.origin.displayName,
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: LuxTypography.caption.copyWith(fontSize: 12),
@@ -242,17 +250,18 @@ class _JobActions extends StatelessWidget {
     if (isPending) {
       final s = bloc.state;
       final loaded = s is DriverLoaded ? s : null;
+      final l10n = context.l10n;
       final blocker = loaded == null
-          ? 'Cargando…'
+          ? l10n.driverQueueLoading
           : !loaded.profile.documentsVerified
-              ? 'Pendiente de verificación'
+              ? l10n.driverQueuePendingVerification
               : loaded.activeBooking != null
-                  ? 'Termina tu viaje actual'
+                  ? l10n.driverQueueFinishCurrent
                   : !loaded.isAvailable
-                      ? 'Conéctate para aceptar'
+                      ? l10n.driverQueueConnectToAccept
                       : null;
       return LuxButton(
-        label: blocker ?? 'Aceptar viaje',
+        label: blocker ?? l10n.driverAcceptTrip,
         icon: Icons.check_circle_outline_rounded,
         onPressed: blocker != null
             ? null

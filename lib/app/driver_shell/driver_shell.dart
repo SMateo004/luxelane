@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../l10n/l10n.dart';
 import '../theme/app_theme.dart';
 import '../theme/lux_motion.dart';
 
@@ -9,28 +10,28 @@ class DriverShell extends StatelessWidget {
   const DriverShell({super.key, required this.navigationShell});
   final StatefulNavigationShell navigationShell;
 
-  static const _items = [
-    NavigationDestination(
-      icon: Icon(Icons.radio_button_unchecked_rounded),
-      selectedIcon: Icon(Icons.radio_button_checked_rounded),
-      label: 'Conducir',
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.inbox_outlined),
-      selectedIcon: Icon(Icons.inbox_rounded),
-      label: 'Solicitudes',
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.account_balance_wallet_outlined),
-      selectedIcon: Icon(Icons.account_balance_wallet_rounded),
-      label: 'Ganancias',
-    ),
-    NavigationDestination(
-      icon: Icon(Icons.person_outline_rounded),
-      selectedIcon: Icon(Icons.person_rounded),
-      label: 'Perfil',
-    ),
-  ];
+  static List<Widget> _items(AppLocalizations t) => [
+        NavigationDestination(
+          icon: const Icon(Icons.radio_button_unchecked_rounded),
+          selectedIcon: const Icon(Icons.radio_button_checked_rounded),
+          label: t.driverNavDrive,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.inbox_outlined),
+          selectedIcon: const Icon(Icons.inbox_rounded),
+          label: t.driverNavRequests,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.account_balance_wallet_outlined),
+          selectedIcon: const Icon(Icons.account_balance_wallet_rounded),
+          label: t.driverNavEarnings,
+        ),
+        NavigationDestination(
+          icon: const Icon(Icons.person_outline_rounded),
+          selectedIcon: const Icon(Icons.person_rounded),
+          label: t.driverNavProfile,
+        ),
+      ];
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -51,7 +52,7 @@ class DriverShell extends StatelessWidget {
                 initialLocation: i == navigationShell.currentIndex,
               );
             },
-            destinations: _items,
+            destinations: _items(context.l10n),
           ),
         ),
       );

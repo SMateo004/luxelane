@@ -14,6 +14,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/driver_bloc.dart';
 
 /// Abre la pantalla del código para [booking]. Al verificarse se cierra y
@@ -58,7 +59,7 @@ class CallDispatchButton extends StatelessWidget {
     final p = phone;
     if (p == null || p.isEmpty) return const SizedBox.shrink();
     return LuxOutlinedButton(
-      label: 'Llamar a central',
+      label: context.l10n.driverCallDispatch,
       icon: Icons.support_agent_rounded,
       onPressed: () =>
           onCall != null ? onCall!(p) : launchUrl(Uri(scheme: 'tel', path: p)),
@@ -99,10 +100,7 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
   bool _verified = false;
   TripFailure? _error;
   late TripFailure? _blocked = widget.locked
-      ? const TripFailure(
-          TripIssue.locked,
-          'Por seguridad, la verificación quedó bloqueada. Contacta con central.',
-        )
+      ? TripFailure(TripIssue.locked, L10n.current.driverCodeLockedSecurity)
       : null;
 
   // Se crea al montar: si se creara al primer uso, cerrar la hoja sin
@@ -218,14 +216,14 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'Pide el código al pasajero',
+          Text(
+            context.l10n.driverCodeAsk,
             style: LuxTypography.titleLarge,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: LuxSpacing.xs),
           Text(
-            'Lo ve en su app. Sin él no se puede iniciar el viaje.',
+            context.l10n.driverCodeHint,
             textAlign: TextAlign.center,
             style:
                 LuxTypography.caption.copyWith(color: LuxColors.inkSecondary),
@@ -241,7 +239,7 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
               child: child,
             ),
             child: Semantics(
-              label: 'Código, ${_digits.length} de $_length dígitos',
+              label: context.l10n.driverCodeSemantics(_digits.length, _length),
               excludeSemantics: true,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -276,7 +274,7 @@ class _PickupCodeEntryState extends State<PickupCodeEntry>
           if (_error?.issue == TripIssue.network &&
               _digits.length == _length) ...[
             LuxOutlinedButton(
-              label: 'Reintentar',
+              label: context.l10n.driverRetry,
               icon: Icons.refresh_rounded,
               height: 46,
               onPressed: _busy ? null : _submit,
@@ -348,7 +346,7 @@ class _Keypad extends StatelessWidget {
                 ? const SizedBox.shrink()
                 : Semantics(
                     button: true,
-                    label: k == '⌫' ? 'Borrar' : k,
+                    label: k == '⌫' ? context.l10n.driverCodeDelete : k,
                     excludeSemantics: true,
                     child: Material(
                       color: LuxColors.surfaceMuted,
@@ -376,19 +374,22 @@ class _Verified extends StatelessWidget {
   const _Verified({super.key});
 
   @override
-  Widget build(BuildContext context) => const Column(
+  Widget build(BuildContext context) => Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedBox(height: LuxSpacing.lg),
-          LuxSuccessMark(),
-          SizedBox(height: LuxSpacing.md),
-          Text('Pasajero verificado', style: LuxTypography.titleLarge),
-          SizedBox(height: LuxSpacing.xs),
+          const SizedBox(height: LuxSpacing.lg),
+          const LuxSuccessMark(),
+          const SizedBox(height: LuxSpacing.md),
           Text(
-            'Desliza «Iniciar viaje» cuando estéis listos.',
+            context.l10n.driverCodeVerified,
+            style: LuxTypography.titleLarge,
+          ),
+          const SizedBox(height: LuxSpacing.xs),
+          Text(
+            context.l10n.driverCodeVerifiedHint,
             style: LuxTypography.caption,
           ),
-          SizedBox(height: LuxSpacing.lg),
+          const SizedBox(height: LuxSpacing.lg),
         ],
       );
 }
@@ -418,8 +419,8 @@ class _Blocked extends StatelessWidget {
             color: LuxColors.inkSecondary,
           ),
           const SizedBox(height: LuxSpacing.md),
-          const Text(
-            'Contacta con central',
+          Text(
+            context.l10n.driverCodeContactDispatch,
             textAlign: TextAlign.center,
             style: LuxTypography.titleLarge,
           ),

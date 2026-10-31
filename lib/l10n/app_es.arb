@@ -434,6 +434,796 @@
   "@greetingEvening": {
     "description": "Saludo de la noche en el inicio (de 19 a 5 h)."
   },
+  "driverErrorNotEnabled": "Esta cuenta aún no está habilitada como chófer. Luxelane la activa después de revisar tu solicitud.",
+  "@driverErrorNotEnabled": {
+    "description": "Error al abrir la app del chófer: la cuenta aún no tiene el rol de chófer."
+  },
+  "driverErrorLoadAccount": "No pudimos cargar tu cuenta. Revisa tu conexión e inténtalo de nuevo.",
+  "@driverErrorLoadAccount": {
+    "description": "Error al cargar la cuenta del chófer al abrir la app."
+  },
+  "driverNoticeTripsLoadFailed": "No se pudieron cargar tus viajes.",
+  "@driverNoticeTripsLoadFailed": {
+    "description": "Aviso: no se pudieron leer los viajes asignados al chófer."
+  },
+  "driverNoticeRequestsLoadFailed": "No se pudieron cargar las solicitudes de viaje.",
+  "@driverNoticeRequestsLoadFailed": {
+    "description": "Aviso: no se pudieron leer las solicitudes abiertas."
+  },
+  "driverNoticeFinishTripFirst": "Termina tu viaje actual antes de conectarte.",
+  "@driverNoticeFinishTripFirst": {
+    "description": "Aviso al intentar conectarse con un viaje en curso."
+  },
+  "driverNoticeStatusChangeFailed": "No se pudo cambiar tu estado. Reintenta.",
+  "@driverNoticeStatusChangeFailed": {
+    "description": "Aviso: no se guardó el cambio entre en línea y desconectado."
+  },
+  "driverNoticeLocationRequired": "Activa la ubicación para recibir viajes y que el pasajero vea dónde estás.",
+  "@driverNoticeLocationRequired": {
+    "description": "Aviso: el chófer no dio permiso de ubicación."
+  },
+  "driverNoticeNoShowLocationRequired": "Activa la ubicación: central necesita saber dónde esperaste.",
+  "@driverNoticeNoShowLocationRequired": {
+    "description": "Aviso al marcar «el pasajero no aparece» sin ubicación."
+  },
+  "driverNoticeNoShowReported": "Avisamos a central. Ya estás libre para otros viajes.",
+  "@driverNoticeNoShowReported": {
+    "description": "Aviso tras avisar a central de que el pasajero no apareció."
+  },
+  "driverNoticeReleaseOffline": "Sin conexión: no se liberó el viaje. Vuelve a intentarlo.",
+  "@driverNoticeReleaseOffline": {
+    "description": "Aviso: sin conexión al liberar un viaje."
+  },
+  "driverNoticeReleased": "Liberaste el viaje. Central buscará otro chófer.",
+  "@driverNoticeReleased": {
+    "description": "Aviso tras liberar (devolver) un viaje aceptado."
+  },
+  "driverNoticeStepOffline": "Sin conexión: no se guardó el paso. Vuelve a intentarlo; no se duplicará.",
+  "@driverNoticeStepOffline": {
+    "description": "Aviso: sin conexión al guardar un paso del viaje (salir, llegar, iniciar, completar)."
+  },
+  "driverNoticeRequestAccepted": "Viaje aceptado",
+  "@driverNoticeRequestAccepted": {
+    "description": "Aviso breve tras aceptar una solicitud."
+  },
+  "driverHomeLoadError": "No pudimos abrir tu panel.",
+  "@driverHomeLoadError": {
+    "description": "Pantalla de error del inicio del chófer."
+  },
+  "driverRetry": "Reintentar",
+  "@driverRetry": {
+    "description": "Botón para reintentar."
+  },
+  "driverHomeOnlineTitle": "Estás en línea.",
+  "@driverHomeOnlineTitle": {
+    "description": "Título grande del inicio cuando el chófer está en línea."
+  },
+  "driverHomeOfflineTitle": "Estás desconectado.",
+  "@driverHomeOfflineTitle": {
+    "description": "Título grande del inicio cuando el chófer está desconectado."
+  },
+  "driverHomeDocumentsPending": "Tus documentos están en revisión. Podrás aceptar viajes cuando Luxelane los verifique.",
+  "@driverHomeDocumentsPending": {
+    "description": "Aviso del inicio: documentos sin verificar."
+  },
+  "driverHomeNoVehicle": "No tienes un vehículo activo registrado. Pide a Luxelane que lo active para recibir solicitudes.",
+  "@driverHomeNoVehicle": {
+    "description": "Aviso del inicio: sin vehículo activo."
+  },
+  "driverHomeToday": "Hoy",
+  "@driverHomeToday": {
+    "description": "Encabezado de la sección con las cifras de hoy."
+  },
+  "driverHomeNetEarnings": "Ganancias netas",
+  "@driverHomeNetEarnings": {
+    "description": "Etiqueta de la cifra: ganancias netas de hoy."
+  },
+  "driverHomeTrips": "Viajes",
+  "@driverHomeTrips": {
+    "description": "Etiqueta de la cifra: viajes completados hoy."
+  },
+  "driverHomeRating": "Valoración",
+  "@driverHomeRating": {
+    "description": "Etiqueta de la cifra: valoración media del chófer."
+  },
+  "driverHomeUpcoming": "Tus próximas reservas",
+  "@driverHomeUpcoming": {
+    "description": "Encabezado de la lista de próximas reservas asignadas."
+  },
+  "driverHourlyFrom": "{hours} h desde {place}",
+  "@driverHourlyFrom": {
+    "description": "Título de un servicio por horas: horas y punto de recogida.",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "3"
+      },
+      "place": {
+        "type": "String",
+        "example": "Hotel Europa"
+      }
+    }
+  },
+  "driverGoOffline": "Desconectarse",
+  "@driverGoOffline": {
+    "description": "Etiqueta de lector de pantalla del gran botón: desconectarse."
+  },
+  "driverGoOnline": "Conectarse",
+  "@driverGoOnline": {
+    "description": "Gran botón del inicio y su etiqueta: conectarse para recibir viajes."
+  },
+  "driverOnlineBadge": "En línea",
+  "@driverOnlineBadge": {
+    "description": "Texto del gran botón cuando el chófer está en línea."
+  },
+  "driverSearching": "Buscando viajes",
+  "@driverSearching": {
+    "description": "Bajo el gran botón, en línea, sin clase de vehículo."
+  },
+  "driverSearchingClass": "Buscando viajes de {vehicleClass}",
+  "@driverSearchingClass": {
+    "description": "Bajo el gran botón, en línea: la clase del vehículo (nombre propio).",
+    "placeholders": {
+      "vehicleClass": {
+        "type": "String",
+        "example": "Business Class"
+      }
+    }
+  },
+  "driverConnectToReceive": "Conéctate para recibir solicitudes",
+  "@driverConnectToReceive": {
+    "description": "Bajo el gran botón, desconectado."
+  },
+  "driverDisconnectMe": "Desconectarme",
+  "@driverDisconnectMe": {
+    "description": "Botón de texto para desconectarse."
+  },
+  "driverMapsNone": "No hay aplicaciones de mapas disponibles",
+  "@driverMapsNone": {
+    "description": "Aviso: no hay apps de mapas instaladas."
+  },
+  "driverMapsNavigateTo": "Navegar hacia {address}",
+  "@driverMapsNavigateTo": {
+    "description": "Título de la hoja para elegir app de mapas.",
+    "placeholders": {
+      "address": {
+        "type": "String",
+        "example": "Av. Arce 2631"
+      }
+    }
+  },
+  "driverMapsOpenFailed": "No se pudieron abrir los mapas",
+  "@driverMapsOpenFailed": {
+    "description": "Aviso: no se pudieron abrir los mapas."
+  },
+  "driverStopPickup": "Recogida",
+  "@driverStopPickup": {
+    "description": "Etiqueta de la parada de recogida (se muestra en mayúsculas)."
+  },
+  "driverStopDestination": "Destino",
+  "@driverStopDestination": {
+    "description": "Etiqueta de la parada de destino (se muestra en mayúsculas)."
+  },
+  "driverGuestPassenger": "Pasajero: {name}",
+  "@driverGuestPassenger": {
+    "description": "Nombre del invitado que viaja (reserva para otra persona).",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Ana Rojas"
+      }
+    }
+  },
+  "driverRiderNote": "Nota del pasajero",
+  "@driverRiderNote": {
+    "description": "Título de la nota que dejó el pasajero."
+  },
+  "driverNavigateToPickup": "Navegar a la recogida",
+  "@driverNavigateToPickup": {
+    "description": "Botón para abrir la navegación hacia la recogida."
+  },
+  "driverNavigateToDestination": "Navegar al destino",
+  "@driverNavigateToDestination": {
+    "description": "Botón para abrir la navegación hacia el destino."
+  },
+  "driverRequestNow": "Ahora",
+  "@driverRequestNow": {
+    "description": "Hora de una solicitud que empieza ya."
+  },
+  "driverRequestInMinutes": "En {minutes} min",
+  "@driverRequestInMinutes": {
+    "description": "Hora de una solicitud que empieza en pocos minutos.",
+    "placeholders": {
+      "minutes": {
+        "type": "int",
+        "example": "20"
+      }
+    }
+  },
+  "driverRouteDistanceDuration": "~{km} km · {minutes} min",
+  "@driverRouteDistanceDuration": {
+    "description": "Distancia y duración aproximadas del trayecto.",
+    "placeholders": {
+      "km": {
+        "type": "String",
+        "example": "12"
+      },
+      "minutes": {
+        "type": "int",
+        "example": "25"
+      }
+    }
+  },
+  "driverRouteDistance": "~{km} km",
+  "@driverRouteDistance": {
+    "description": "Distancia aproximada del trayecto.",
+    "placeholders": {
+      "km": {
+        "type": "String",
+        "example": "12"
+      }
+    }
+  },
+  "driverRequestTitle": "NUEVA SOLICITUD · {vehicleClass}",
+  "@driverRequestTitle": {
+    "description": "Cabecera de una solicitud nueva, en mayúsculas, con la clase (nombre propio en mayúsculas).",
+    "placeholders": {
+      "vehicleClass": {
+        "type": "String",
+        "example": "BUSINESS CLASS"
+      }
+    }
+  },
+  "driverRequestPickupZone": "ZONA DE RECOGIDA",
+  "@driverRequestPickupZone": {
+    "description": "Etiqueta en mayúsculas: zona aproximada de recogida."
+  },
+  "driverRequestDropoffZone": "ZONA DE DESTINO",
+  "@driverRequestDropoffZone": {
+    "description": "Etiqueta en mayúsculas: zona aproximada de destino."
+  },
+  "driverRequestHourly": "POR HORAS",
+  "@driverRequestHourly": {
+    "description": "Etiqueta en mayúsculas: servicio por horas."
+  },
+  "driverHoursAvailable": "{hours} h a disposición",
+  "@driverHoursAvailable": {
+    "description": "Servicio por horas: horas a disposición del pasajero.",
+    "placeholders": {
+      "hours": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "driverRequestPassengers": "{count, plural, =1{1 pasajero} other{{count} pasajeros}}",
+  "@driverRequestPassengers": {
+    "description": "Número de pasajeros de una solicitud.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "driverRequestLuggage": "{count, plural, =1{1 maleta} other{{count} maletas}}",
+  "@driverRequestLuggage": {
+    "description": "Número de maletas de una solicitud.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "driverRequestDetailsOnAccept": "Dirección exacta y datos al aceptar",
+  "@driverRequestDetailsOnAccept": {
+    "description": "Nota de la solicitud: la dirección exacta y los datos se ven al aceptar."
+  },
+  "driverAcceptTrip": "Aceptar viaje",
+  "@driverAcceptTrip": {
+    "description": "Botón para aceptar una solicitud."
+  },
+  "driverDecline": "Rechazar",
+  "@driverDecline": {
+    "description": "Botón para rechazar una solicitud."
+  },
+  "driverTripNotFound": "Viaje no encontrado",
+  "@driverTripNotFound": {
+    "description": "Pantalla de un viaje que ya no está en la lista."
+  },
+  "driverBack": "Volver",
+  "@driverBack": {
+    "description": "Botón o etiqueta para volver atrás."
+  },
+  "driverEstimatedFare": "Tarifa estimada",
+  "@driverEstimatedFare": {
+    "description": "Etiqueta de la tarifa estimada del viaje."
+  },
+  "driverQueueTitle": "Solicitudes",
+  "@driverQueueTitle": {
+    "description": "Título de la pantalla de solicitudes."
+  },
+  "driverQueueEmptyOnline": "Las nuevas solicitudes\naparecerán aquí.",
+  "@driverQueueEmptyOnline": {
+    "description": "Lista vacía, en línea (dos líneas)."
+  },
+  "driverQueueEmptyOffline": "Conéctate para\nrecibir solicitudes.",
+  "@driverQueueEmptyOffline": {
+    "description": "Lista vacía, desconectado (dos líneas)."
+  },
+  "driverQueueAvailable": "Disponibles para ti",
+  "@driverQueueAvailable": {
+    "description": "Encabezado: solicitudes abiertas para el chófer."
+  },
+  "driverQueueAssigned": "Tus viajes asignados",
+  "@driverQueueAssigned": {
+    "description": "Encabezado: viajes ya asignados al chófer."
+  },
+  "driverQueueFrom": "{date} · desde {place}",
+  "@driverQueueFrom": {
+    "description": "Fecha y hora del viaje y el lugar de recogida.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Hoy · 18:30"
+      },
+      "place": {
+        "type": "String",
+        "example": "Calacoto"
+      }
+    }
+  },
+  "driverQueuePax": "{count} pax",
+  "@driverQueuePax": {
+    "description": "Número de pasajeros, abreviado.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "driverQueueLoading": "Cargando…",
+  "@driverQueueLoading": {
+    "description": "Botón mientras carga el estado del chófer."
+  },
+  "driverQueuePendingVerification": "Pendiente de verificación",
+  "@driverQueuePendingVerification": {
+    "description": "Botón deshabilitado: documentos sin verificar."
+  },
+  "driverQueueFinishCurrent": "Termina tu viaje actual",
+  "@driverQueueFinishCurrent": {
+    "description": "Botón deshabilitado: hay un viaje en curso."
+  },
+  "driverQueueConnectToAccept": "Conéctate para aceptar",
+  "@driverQueueConnectToAccept": {
+    "description": "Botón deshabilitado: el chófer está desconectado."
+  },
+  "driverOnboardingDefaultColor": "Negro",
+  "@driverOnboardingDefaultColor": {
+    "description": "Color del vehículo que viene escrito por defecto en el registro (editable)."
+  },
+  "driverOnboardingVehicleError": "No se pudo registrar el vehículo. Revisa los datos e inténtalo de nuevo.",
+  "@driverOnboardingVehicleError": {
+    "description": "Error al registrar el vehículo."
+  },
+  "driverOnboardingLicenseError": "No se pudo guardar tu licencia. Revisa tu conexión e inténtalo de nuevo.",
+  "@driverOnboardingLicenseError": {
+    "description": "Error al guardar la licencia."
+  },
+  "driverOnboardingGenericError": "No se pudo completar el registro. Inténtalo de nuevo.",
+  "@driverOnboardingGenericError": {
+    "description": "Error general del registro del chófer."
+  },
+  "driverSignOut": "Cerrar sesión",
+  "@driverSignOut": {
+    "description": "Botón para cerrar sesión."
+  },
+  "driverOnboardingVehicleTitle": "Tu vehículo",
+  "@driverOnboardingVehicleTitle": {
+    "description": "Título del paso 1 del registro."
+  },
+  "driverOnboardingVehicleSubtitle": "Registra el vehículo que vas a conducir.",
+  "@driverOnboardingVehicleSubtitle": {
+    "description": "Texto del paso 1 del registro."
+  },
+  "driverContinue": "Continuar",
+  "@driverContinue": {
+    "description": "Botón para pasar al siguiente paso."
+  },
+  "driverOnboardingLicenseTitle": "Licencia de conducir",
+  "@driverOnboardingLicenseTitle": {
+    "description": "Título del paso 2 del registro."
+  },
+  "driverOnboardingLicenseSubtitle": "Tus documentos serán revisados antes de que puedas aceptar viajes.",
+  "@driverOnboardingLicenseSubtitle": {
+    "description": "Texto del paso 2 del registro."
+  },
+  "driverOnboardingReviewNotice": "Un administrador verificará tus documentos antes de que puedas conectarte.",
+  "@driverOnboardingReviewNotice": {
+    "description": "Aviso del paso 2: un administrador revisa los documentos."
+  },
+  "driverOnboardingBack": "Atrás",
+  "@driverOnboardingBack": {
+    "description": "Botón para volver al paso anterior."
+  },
+  "driverOnboardingSubmit": "Enviar",
+  "@driverOnboardingSubmit": {
+    "description": "Botón para enviar el registro."
+  },
+  "driverOnboardingClass": "Categoría del vehículo",
+  "@driverOnboardingClass": {
+    "description": "Etiqueta del selector de clase del vehículo."
+  },
+  "driverOnboardingMake": "Marca",
+  "@driverOnboardingMake": {
+    "description": "Campo: marca del vehículo."
+  },
+  "driverOnboardingModel": "Modelo",
+  "@driverOnboardingModel": {
+    "description": "Campo: modelo del vehículo."
+  },
+  "driverOnboardingPlate": "Placa",
+  "@driverOnboardingPlate": {
+    "description": "Campo: placa (matrícula) del vehículo."
+  },
+  "driverOnboardingYear": "Año",
+  "@driverOnboardingYear": {
+    "description": "Campo: año del vehículo."
+  },
+  "driverOnboardingColor": "Color",
+  "@driverOnboardingColor": {
+    "description": "Campo: color del vehículo."
+  },
+  "driverFieldRequired": "Requerido",
+  "@driverFieldRequired": {
+    "description": "Error de campo vacío."
+  },
+  "driverFieldInvalid": "Inválido",
+  "@driverFieldInvalid": {
+    "description": "Error de valor no válido (año)."
+  },
+  "driverOnboardingLicenseNumber": "Número de licencia",
+  "@driverOnboardingLicenseNumber": {
+    "description": "Campo: número de licencia de conducir."
+  },
+  "driverOnboardingLicenseExpiry": "Fecha de vencimiento (MM/AAAA)",
+  "@driverOnboardingLicenseExpiry": {
+    "description": "Campo: vencimiento de la licencia, con el formato mes/año."
+  },
+  "driverOnboardingExpiryFormat": "Usa MM/AAAA",
+  "@driverOnboardingExpiryFormat": {
+    "description": "Error: el vencimiento no tiene el formato mes/año."
+  },
+  "driverOnboardingInvalidMonth": "Mes inválido",
+  "@driverOnboardingInvalidMonth": {
+    "description": "Error: mes fuera de 1–12."
+  },
+  "driverOnboardingLicenseExpired": "Licencia vencida",
+  "@driverOnboardingLicenseExpired": {
+    "description": "Error: la licencia ya venció."
+  },
+  "driverEarningsTitle": "Ganancias",
+  "@driverEarningsTitle": {
+    "description": "Título de la pantalla de ganancias."
+  },
+  "driverEarningsCompleted": "Viajes completados",
+  "@driverEarningsCompleted": {
+    "description": "Encabezado de la lista de viajes completados."
+  },
+  "driverEarningsNetTitle": "TUS GANANCIAS NETAS",
+  "@driverEarningsNetTitle": {
+    "description": "Etiqueta en mayúsculas del total de ganancias netas."
+  },
+  "driverEarningsRides": "{count, plural, =1{1 viaje completado} other{{count} viajes completados}}",
+  "@driverEarningsRides": {
+    "description": "Número de viajes completados.",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "driverEarningsFares": "Tarifas de tus viajes",
+  "@driverEarningsFares": {
+    "description": "Línea del resumen: suma de las tarifas."
+  },
+  "driverEarningsCommission": "Comisión Luxelane",
+  "@driverEarningsCommission": {
+    "description": "Línea del resumen: comisión de Luxelane."
+  },
+  "driverEarningsProvisionalNote": "Los viajes provisionales se calculan con una comisión del {pct} % hasta que se confirme su liquidación.",
+  "@driverEarningsProvisionalNote": {
+    "description": "Nota: comisión por defecto mientras no hay liquidación.",
+    "placeholders": {
+      "pct": {
+        "type": "String",
+        "example": "15"
+      }
+    }
+  },
+  "driverEarningsRefunded": "{date} · reembolsado",
+  "@driverEarningsRefunded": {
+    "description": "Fecha del viaje y que se reembolsó.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Hoy · 18:30"
+      }
+    }
+  },
+  "driverEarningsFareLine": "{date} · tarifa {fare} · {pct} %",
+  "@driverEarningsFareLine": {
+    "description": "Fecha del viaje, tarifa y porcentaje de comisión.",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "example": "Hoy · 18:30"
+      },
+      "fare": {
+        "type": "String",
+        "example": "Bs 120"
+      },
+      "pct": {
+        "type": "String",
+        "example": "15"
+      }
+    }
+  },
+  "driverEarningsProvisional": "Provisional",
+  "@driverEarningsProvisional": {
+    "description": "Marca de un viaje sin liquidación confirmada."
+  },
+  "driverEarningsEmpty": "Tu primer viaje\naparecerá aquí.",
+  "@driverEarningsEmpty": {
+    "description": "Lista de ganancias vacía (dos líneas)."
+  },
+  "driverSlideDepart": "Salir hacia la recogida",
+  "@driverSlideDepart": {
+    "description": "Deslizador: salir hacia la recogida."
+  },
+  "driverSlideArrived": "He llegado",
+  "@driverSlideArrived": {
+    "description": "Deslizador: el chófer llegó a la recogida."
+  },
+  "driverSlideStart": "Iniciar viaje",
+  "@driverSlideStart": {
+    "description": "Deslizador: iniciar el viaje (se cita en driverCodeVerifiedHint)."
+  },
+  "driverSlideComplete": "Completar viaje",
+  "@driverSlideComplete": {
+    "description": "Deslizador: completar el viaje."
+  },
+  "driverStepConfirmed": "Dirígete a la recogida.",
+  "@driverStepConfirmed": {
+    "description": "Estado del viaje: aceptado, aún sin salir."
+  },
+  "driverStepArriving": "En camino a la recogida.",
+  "@driverStepArriving": {
+    "description": "Estado del viaje: en camino a la recogida."
+  },
+  "driverStepLocked": "Verificación bloqueada. Contacta con central.",
+  "@driverStepLocked": {
+    "description": "Estado: verificación bloqueada tras cinco códigos incorrectos."
+  },
+  "driverStepAskCode": "Pide al pasajero su código de recogida.",
+  "@driverStepAskCode": {
+    "description": "Estado: el chófer llegó y pide el código."
+  },
+  "driverStepVerified": "Pasajero verificado. Desliza para iniciar.",
+  "@driverStepVerified": {
+    "description": "Estado: pasajero verificado, listo para iniciar."
+  },
+  "driverStepInProgress": "Viaje en curso · rumbo al destino.",
+  "@driverStepInProgress": {
+    "description": "Estado: viaje en curso."
+  },
+  "driverStepNoShow": "Avisaste que el pasajero no apareció. Central lo revisa.",
+  "@driverStepNoShow": {
+    "description": "Estado: el chófer avisó que el pasajero no apareció."
+  },
+  "driverStepActive": "Viaje activo.",
+  "@driverStepActive": {
+    "description": "Estado genérico de un viaje activo."
+  },
+  "driverLockedFiveCodes": "Cinco códigos incorrectos: central debe verificar este viaje.",
+  "@driverLockedFiveCodes": {
+    "description": "Texto con la verificación bloqueada."
+  },
+  "driverEnterCode": "Ingresar código del pasajero",
+  "@driverEnterCode": {
+    "description": "Botón para escribir el código de recogida."
+  },
+  "driverCannotDoTrip": "No puedo hacer este viaje",
+  "@driverCannotDoTrip": {
+    "description": "Botón para liberar un viaje aceptado."
+  },
+  "driverReleaseTitle": "Liberar este viaje",
+  "@driverReleaseTitle": {
+    "description": "Título del diálogo para liberar un viaje."
+  },
+  "driverReleaseBody": "El viaje vuelve a buscar chófer y central recibe un aviso. Queda registrado en tu historial.",
+  "@driverReleaseBody": {
+    "description": "Texto del diálogo para liberar un viaje."
+  },
+  "driverReleaseConfirm": "Liberar viaje",
+  "@driverReleaseConfirm": {
+    "description": "Botón que confirma liberar el viaje."
+  },
+  "driverReleaseReasonVehicleIssue": "Problema con el vehículo",
+  "@driverReleaseReasonVehicleIssue": {
+    "description": "Motivo para liberar: problema con el vehículo."
+  },
+  "driverReleaseReasonPersonalEmergency": "Emergencia personal",
+  "@driverReleaseReasonPersonalEmergency": {
+    "description": "Motivo para liberar: emergencia personal."
+  },
+  "driverReleaseReasonUnsafeConditions": "Condiciones inseguras",
+  "@driverReleaseReasonUnsafeConditions": {
+    "description": "Motivo para liberar: condiciones inseguras."
+  },
+  "driverReleaseReasonScheduleConflict": "Conflicto de horario",
+  "@driverReleaseReasonScheduleConflict": {
+    "description": "Motivo para liberar: conflicto de horario."
+  },
+  "driverReleaseReasonOther": "Otro motivo",
+  "@driverReleaseReasonOther": {
+    "description": "Motivo para liberar: otro."
+  },
+  "driverNoShowTitle": "¿El pasajero no aparece?",
+  "@driverNoShowTitle": {
+    "description": "Título del diálogo «el pasajero no aparece»."
+  },
+  "driverNoShowBody": "Central recibirá un aviso con tu ubicación y revisará la reserva. Quedarás libre para otros viajes.",
+  "@driverNoShowBody": {
+    "description": "Texto del diálogo «el pasajero no aparece»."
+  },
+  "driverNoShowKeepWaiting": "Seguir esperando",
+  "@driverNoShowKeepWaiting": {
+    "description": "Botón para seguir esperando al pasajero."
+  },
+  "driverNoShowNotify": "Avisar a central",
+  "@driverNoShowNotify": {
+    "description": "Botón para avisar a central de que el pasajero no apareció."
+  },
+  "driverNoShowButton": "El pasajero no aparece",
+  "@driverNoShowButton": {
+    "description": "Botón «el pasajero no aparece»."
+  },
+  "driverNoShowAvailableAt": "Disponible a partir de las {time}.",
+  "@driverNoShowAvailableAt": {
+    "description": "Desde qué hora se puede marcar que el pasajero no aparece.",
+    "placeholders": {
+      "time": {
+        "type": "String",
+        "example": "18:30"
+      }
+    }
+  },
+  "driverFlightAirportPickup": "Recogida en aeropuerto",
+  "@driverFlightAirportPickup": {
+    "description": "Tarjeta del vuelo sin aeropuerto conocido."
+  },
+  "driverFlightExitLabel": "Tu pasajero sale por",
+  "@driverFlightExitLabel": {
+    "description": "Antes de la salida del aeropuerto por la que sale el pasajero."
+  },
+  "driverFlightAskType": "Consulta con el pasajero si su vuelo es nacional o internacional",
+  "@driverFlightAskType": {
+    "description": "Sin tipo de vuelo: pedir al chófer que lo consulte."
+  },
+  "driverFlightNumber": "Vuelo {flight}",
+  "@driverFlightNumber": {
+    "description": "Enlace con el número de vuelo.",
+    "placeholders": {
+      "flight": {
+        "type": "String",
+        "example": "OB 760"
+      }
+    }
+  },
+  "driverFlightCheckStatus": "Ver estado en mivuelo.att.gob.bo",
+  "@driverFlightCheckStatus": {
+    "description": "Enlace al sitio de estado de vuelos (dominio, no se traduce)."
+  },
+  "driverFlightYourCityAirport": "el aeropuerto de tu ciudad",
+  "@driverFlightYourCityAirport": {
+    "description": "Va dentro de driverFlightDialogBody cuando no se conoce el aeropuerto."
+  },
+  "driverFlightDialogTitle": "Primero cambia de aeropuerto",
+  "@driverFlightDialogTitle": {
+    "description": "Título del diálogo antes de abrir el sitio de vuelos."
+  },
+  "driverFlightDialogBody": "Al abrir mivuelo.att.gob.bo, cambia primero el aeropuerto a {airport}, el que corresponde a tu ciudad. Después busca el vuelo {flight} en las llegadas.\n\nCopiaremos el número de vuelo para que solo tengas que pegarlo.",
+  "@driverFlightDialogBody": {
+    "description": "Instrucciones antes de abrir el sitio de vuelos; {airport} es el nombre del aeropuerto o driverFlightYourCityAirport.",
+    "placeholders": {
+      "airport": {
+        "type": "String",
+        "example": "El Alto (La Paz)"
+      },
+      "flight": {
+        "type": "String",
+        "example": "OB 760"
+      }
+    }
+  },
+  "driverCancel": "Cancelar",
+  "@driverCancel": {
+    "description": "Botón para cancelar un diálogo."
+  },
+  "driverFlightDialogOpen": "Entendido, abrir",
+  "@driverFlightDialogOpen": {
+    "description": "Botón que abre el sitio de vuelos."
+  },
+  "driverFlightOpenFailed": "No se pudo abrir mivuelo.att.gob.bo",
+  "@driverFlightOpenFailed": {
+    "description": "Aviso: no se pudo abrir el sitio de vuelos."
+  },
+  "driverCallDispatch": "Llamar a central",
+  "@driverCallDispatch": {
+    "description": "Botón para llamar a central."
+  },
+  "driverCodeLockedSecurity": "Por seguridad, la verificación quedó bloqueada. Contacta con central.",
+  "@driverCodeLockedSecurity": {
+    "description": "La reserva llegó con la verificación bloqueada."
+  },
+  "driverCodeAsk": "Pide el código al pasajero",
+  "@driverCodeAsk": {
+    "description": "Título de la pantalla del código de recogida."
+  },
+  "driverCodeHint": "Lo ve en su app. Sin él no se puede iniciar el viaje.",
+  "@driverCodeHint": {
+    "description": "Texto bajo el título del código de recogida."
+  },
+  "driverCodeSemantics": "Código, {entered} de {length} dígitos",
+  "@driverCodeSemantics": {
+    "description": "Etiqueta de lector de pantalla: dígitos escritos del código.",
+    "placeholders": {
+      "entered": {
+        "type": "int",
+        "example": "2"
+      },
+      "length": {
+        "type": "int",
+        "example": "4"
+      }
+    }
+  },
+  "driverCodeDelete": "Borrar",
+  "@driverCodeDelete": {
+    "description": "Etiqueta de lector de pantalla de la tecla para borrar."
+  },
+  "driverCodeVerified": "Pasajero verificado",
+  "@driverCodeVerified": {
+    "description": "Título tras verificar el código."
+  },
+  "driverCodeVerifiedHint": "Desliza «Iniciar viaje» cuando estéis listos.",
+  "@driverCodeVerifiedHint": {
+    "description": "Tras verificar: cita el deslizador driverSlideStart."
+  },
+  "driverCodeContactDispatch": "Contacta con central",
+  "@driverCodeContactDispatch": {
+    "description": "Título con la verificación bloqueada."
+  },
+  "driverNavDrive": "Conducir",
+  "@driverNavDrive": {
+    "description": "Pestaña de la app del chófer: inicio para conducir."
+  },
+  "driverNavRequests": "Solicitudes",
+  "@driverNavRequests": {
+    "description": "Pestaña de la app del chófer: solicitudes."
+  },
+  "driverNavEarnings": "Ganancias",
+  "@driverNavEarnings": {
+    "description": "Pestaña de la app del chófer: ganancias."
+  },
+  "driverNavProfile": "Perfil",
+  "@driverNavProfile": {
+    "description": "Pestaña de la app del chófer: perfil."
+  },
   "incidentSmsHeader": "SOS. Reserva #{id}.",
   "@incidentSmsHeader": {
     "description": "Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva.",

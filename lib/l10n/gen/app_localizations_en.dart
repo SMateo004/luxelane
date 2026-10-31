@@ -359,6 +359,573 @@ class AppLocalizationsEn extends AppLocalizations {
   String get greetingEvening => 'Good evening';
 
   @override
+  String get driverErrorNotEnabled =>
+      'This account is not yet enabled as a chauffeur. Luxelane activates it after reviewing your application.';
+
+  @override
+  String get driverErrorLoadAccount =>
+      'We couldn\'t load your account. Check your connection and try again.';
+
+  @override
+  String get driverNoticeTripsLoadFailed => 'Your trips could not be loaded.';
+
+  @override
+  String get driverNoticeRequestsLoadFailed =>
+      'Trip requests could not be loaded.';
+
+  @override
+  String get driverNoticeFinishTripFirst =>
+      'Finish your current trip before going online.';
+
+  @override
+  String get driverNoticeStatusChangeFailed =>
+      'Your status could not be changed. Try again.';
+
+  @override
+  String get driverNoticeLocationRequired =>
+      'Turn on location to receive trips and let the passenger see where you are.';
+
+  @override
+  String get driverNoticeNoShowLocationRequired =>
+      'Turn on location: our operations team needs to know where you waited.';
+
+  @override
+  String get driverNoticeNoShowReported =>
+      'We notified our operations team. You are now free for other trips.';
+
+  @override
+  String get driverNoticeReleaseOffline =>
+      'No connection: the trip was not released. Try again.';
+
+  @override
+  String get driverNoticeReleased =>
+      'You released the trip. Our operations team will look for another chauffeur.';
+
+  @override
+  String get driverNoticeStepOffline =>
+      'No connection: the step was not saved. Try again; it will not be duplicated.';
+
+  @override
+  String get driverNoticeRequestAccepted => 'Trip accepted';
+
+  @override
+  String get driverHomeLoadError => 'We couldn\'t open your dashboard.';
+
+  @override
+  String get driverRetry => 'Try again';
+
+  @override
+  String get driverHomeOnlineTitle => 'You are online.';
+
+  @override
+  String get driverHomeOfflineTitle => 'You are offline.';
+
+  @override
+  String get driverHomeDocumentsPending =>
+      'Your documents are under review. You can accept trips once Luxelane verifies them.';
+
+  @override
+  String get driverHomeNoVehicle =>
+      'You have no active vehicle registered. Ask Luxelane to activate it to receive requests.';
+
+  @override
+  String get driverHomeToday => 'Today';
+
+  @override
+  String get driverHomeNetEarnings => 'Net earnings';
+
+  @override
+  String get driverHomeTrips => 'Trips';
+
+  @override
+  String get driverHomeRating => 'Rating';
+
+  @override
+  String get driverHomeUpcoming => 'Your upcoming bookings';
+
+  @override
+  String driverHourlyFrom(int hours, String place) {
+    return '$hours h from $place';
+  }
+
+  @override
+  String get driverGoOffline => 'Go offline';
+
+  @override
+  String get driverGoOnline => 'Go online';
+
+  @override
+  String get driverOnlineBadge => 'Online';
+
+  @override
+  String get driverSearching => 'Looking for trips';
+
+  @override
+  String driverSearchingClass(String vehicleClass) {
+    return 'Looking for $vehicleClass trips';
+  }
+
+  @override
+  String get driverConnectToReceive => 'Go online to receive requests';
+
+  @override
+  String get driverDisconnectMe => 'Go offline';
+
+  @override
+  String get driverMapsNone => 'No map apps available';
+
+  @override
+  String driverMapsNavigateTo(String address) {
+    return 'Navigate to $address';
+  }
+
+  @override
+  String get driverMapsOpenFailed => 'Maps could not be opened';
+
+  @override
+  String get driverStopPickup => 'Pickup';
+
+  @override
+  String get driverStopDestination => 'Destination';
+
+  @override
+  String driverGuestPassenger(String name) {
+    return 'Passenger: $name';
+  }
+
+  @override
+  String get driverRiderNote => 'Passenger\'s note';
+
+  @override
+  String get driverNavigateToPickup => 'Navigate to pickup';
+
+  @override
+  String get driverNavigateToDestination => 'Navigate to destination';
+
+  @override
+  String get driverRequestNow => 'Now';
+
+  @override
+  String driverRequestInMinutes(int minutes) {
+    return 'In $minutes min';
+  }
+
+  @override
+  String driverRouteDistanceDuration(String km, int minutes) {
+    return '~$km km · $minutes min';
+  }
+
+  @override
+  String driverRouteDistance(String km) {
+    return '~$km km';
+  }
+
+  @override
+  String driverRequestTitle(String vehicleClass) {
+    return 'NEW REQUEST · $vehicleClass';
+  }
+
+  @override
+  String get driverRequestPickupZone => 'PICKUP AREA';
+
+  @override
+  String get driverRequestDropoffZone => 'DESTINATION AREA';
+
+  @override
+  String get driverRequestHourly => 'HOURLY';
+
+  @override
+  String driverHoursAvailable(int hours) {
+    return '$hours h hourly service';
+  }
+
+  @override
+  String driverRequestPassengers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count passengers',
+      one: '1 passenger',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String driverRequestLuggage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count bags',
+      one: '1 bag',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get driverRequestDetailsOnAccept =>
+      'Exact address and details once accepted';
+
+  @override
+  String get driverAcceptTrip => 'Accept trip';
+
+  @override
+  String get driverDecline => 'Decline';
+
+  @override
+  String get driverTripNotFound => 'Trip not found';
+
+  @override
+  String get driverBack => 'Back';
+
+  @override
+  String get driverEstimatedFare => 'Estimated fare';
+
+  @override
+  String get driverQueueTitle => 'Requests';
+
+  @override
+  String get driverQueueEmptyOnline => 'New requests\nwill appear here.';
+
+  @override
+  String get driverQueueEmptyOffline => 'Go online to\nreceive requests.';
+
+  @override
+  String get driverQueueAvailable => 'Available to you';
+
+  @override
+  String get driverQueueAssigned => 'Your assigned trips';
+
+  @override
+  String driverQueueFrom(String date, String place) {
+    return '$date · from $place';
+  }
+
+  @override
+  String driverQueuePax(int count) {
+    return '$count pax';
+  }
+
+  @override
+  String get driverQueueLoading => 'Loading…';
+
+  @override
+  String get driverQueuePendingVerification => 'Pending verification';
+
+  @override
+  String get driverQueueFinishCurrent => 'Finish your current trip';
+
+  @override
+  String get driverQueueConnectToAccept => 'Go online to accept';
+
+  @override
+  String get driverOnboardingDefaultColor => 'Black';
+
+  @override
+  String get driverOnboardingVehicleError =>
+      'The vehicle could not be registered. Check the details and try again.';
+
+  @override
+  String get driverOnboardingLicenseError =>
+      'Your license could not be saved. Check your connection and try again.';
+
+  @override
+  String get driverOnboardingGenericError =>
+      'Registration could not be completed. Try again.';
+
+  @override
+  String get driverSignOut => 'Sign out';
+
+  @override
+  String get driverOnboardingVehicleTitle => 'Your vehicle';
+
+  @override
+  String get driverOnboardingVehicleSubtitle =>
+      'Register the vehicle you will drive.';
+
+  @override
+  String get driverContinue => 'Continue';
+
+  @override
+  String get driverOnboardingLicenseTitle => 'Driver\'s license';
+
+  @override
+  String get driverOnboardingLicenseSubtitle =>
+      'Your documents will be reviewed before you can accept trips.';
+
+  @override
+  String get driverOnboardingReviewNotice =>
+      'An administrator will verify your documents before you can go online.';
+
+  @override
+  String get driverOnboardingBack => 'Back';
+
+  @override
+  String get driverOnboardingSubmit => 'Submit';
+
+  @override
+  String get driverOnboardingClass => 'Vehicle class';
+
+  @override
+  String get driverOnboardingMake => 'Make';
+
+  @override
+  String get driverOnboardingModel => 'Model';
+
+  @override
+  String get driverOnboardingPlate => 'License plate';
+
+  @override
+  String get driverOnboardingYear => 'Year';
+
+  @override
+  String get driverOnboardingColor => 'Color';
+
+  @override
+  String get driverFieldRequired => 'Required';
+
+  @override
+  String get driverFieldInvalid => 'Invalid';
+
+  @override
+  String get driverOnboardingLicenseNumber => 'License number';
+
+  @override
+  String get driverOnboardingLicenseExpiry => 'Expiry date (MM/YYYY)';
+
+  @override
+  String get driverOnboardingExpiryFormat => 'Use MM/YYYY';
+
+  @override
+  String get driverOnboardingInvalidMonth => 'Invalid month';
+
+  @override
+  String get driverOnboardingLicenseExpired => 'License expired';
+
+  @override
+  String get driverEarningsTitle => 'Earnings';
+
+  @override
+  String get driverEarningsCompleted => 'Completed trips';
+
+  @override
+  String get driverEarningsNetTitle => 'YOUR NET EARNINGS';
+
+  @override
+  String driverEarningsRides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count completed trips',
+      one: '1 completed trip',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get driverEarningsFares => 'Fares for your trips';
+
+  @override
+  String get driverEarningsCommission => 'Luxelane commission';
+
+  @override
+  String driverEarningsProvisionalNote(String pct) {
+    return 'Provisional trips are calculated with a $pct % commission until their settlement is confirmed.';
+  }
+
+  @override
+  String driverEarningsRefunded(String date) {
+    return '$date · refunded';
+  }
+
+  @override
+  String driverEarningsFareLine(String date, String fare, String pct) {
+    return '$date · fare $fare · $pct %';
+  }
+
+  @override
+  String get driverEarningsProvisional => 'Provisional';
+
+  @override
+  String get driverEarningsEmpty => 'Your first trip\nwill appear here.';
+
+  @override
+  String get driverSlideDepart => 'Head to pickup';
+
+  @override
+  String get driverSlideArrived => 'I have arrived';
+
+  @override
+  String get driverSlideStart => 'Start trip';
+
+  @override
+  String get driverSlideComplete => 'Complete trip';
+
+  @override
+  String get driverStepConfirmed => 'Head to the pickup point.';
+
+  @override
+  String get driverStepArriving => 'On the way to pickup.';
+
+  @override
+  String get driverStepLocked =>
+      'Verification locked. Contact our operations team.';
+
+  @override
+  String get driverStepAskCode => 'Ask the passenger for their pickup code.';
+
+  @override
+  String get driverStepVerified => 'Passenger verified. Slide to start.';
+
+  @override
+  String get driverStepInProgress =>
+      'Trip in progress · heading to destination.';
+
+  @override
+  String get driverStepNoShow =>
+      'You reported that the passenger did not show up. Our operations team is reviewing it.';
+
+  @override
+  String get driverStepActive => 'Active trip.';
+
+  @override
+  String get driverLockedFiveCodes =>
+      'Five incorrect codes: our operations team must verify this trip.';
+
+  @override
+  String get driverEnterCode => 'Enter passenger\'s code';
+
+  @override
+  String get driverCannotDoTrip => 'I can\'t do this trip';
+
+  @override
+  String get driverReleaseTitle => 'Release this trip';
+
+  @override
+  String get driverReleaseBody =>
+      'The trip goes back to finding a chauffeur and our operations team is notified. It is recorded in your history.';
+
+  @override
+  String get driverReleaseConfirm => 'Release trip';
+
+  @override
+  String get driverReleaseReasonVehicleIssue => 'Vehicle problem';
+
+  @override
+  String get driverReleaseReasonPersonalEmergency => 'Personal emergency';
+
+  @override
+  String get driverReleaseReasonUnsafeConditions => 'Unsafe conditions';
+
+  @override
+  String get driverReleaseReasonScheduleConflict => 'Schedule conflict';
+
+  @override
+  String get driverReleaseReasonOther => 'Other reason';
+
+  @override
+  String get driverNoShowTitle => 'Passenger not showing up?';
+
+  @override
+  String get driverNoShowBody =>
+      'Our operations team will receive a notice with your location and review the booking. You will be free for other trips.';
+
+  @override
+  String get driverNoShowKeepWaiting => 'Keep waiting';
+
+  @override
+  String get driverNoShowNotify => 'Notify operations team';
+
+  @override
+  String get driverNoShowButton => 'Passenger not showing up';
+
+  @override
+  String driverNoShowAvailableAt(String time) {
+    return 'Available from $time.';
+  }
+
+  @override
+  String get driverFlightAirportPickup => 'Airport pickup';
+
+  @override
+  String get driverFlightExitLabel => 'Your passenger comes out through';
+
+  @override
+  String get driverFlightAskType =>
+      'Ask the passenger whether their flight is domestic or international';
+
+  @override
+  String driverFlightNumber(String flight) {
+    return 'Flight $flight';
+  }
+
+  @override
+  String get driverFlightCheckStatus => 'Check status at mivuelo.att.gob.bo';
+
+  @override
+  String get driverFlightYourCityAirport => 'your city\'s airport';
+
+  @override
+  String get driverFlightDialogTitle => 'Change the airport first';
+
+  @override
+  String driverFlightDialogBody(String airport, String flight) {
+    return 'When you open mivuelo.att.gob.bo, first change the airport to $airport, the one for your city. Then look for flight $flight under arrivals.\n\nWe will copy the flight number so you only need to paste it.';
+  }
+
+  @override
+  String get driverCancel => 'Cancel';
+
+  @override
+  String get driverFlightDialogOpen => 'Understood, open';
+
+  @override
+  String get driverFlightOpenFailed => 'mivuelo.att.gob.bo could not be opened';
+
+  @override
+  String get driverCallDispatch => 'Call operations team';
+
+  @override
+  String get driverCodeLockedSecurity =>
+      'For security, verification has been locked. Contact our operations team.';
+
+  @override
+  String get driverCodeAsk => 'Ask the passenger for the code';
+
+  @override
+  String get driverCodeHint =>
+      'They can see it in their app. Without it the trip cannot start.';
+
+  @override
+  String driverCodeSemantics(int entered, int length) {
+    return 'Code, $entered of $length digits';
+  }
+
+  @override
+  String get driverCodeDelete => 'Delete';
+
+  @override
+  String get driverCodeVerified => 'Passenger verified';
+
+  @override
+  String get driverCodeVerifiedHint =>
+      'Slide “Start trip” when you are both ready.';
+
+  @override
+  String get driverCodeContactDispatch => 'Contact our operations team';
+
+  @override
+  String get driverNavDrive => 'Drive';
+
+  @override
+  String get driverNavRequests => 'Requests';
+
+  @override
+  String get driverNavEarnings => 'Earnings';
+
+  @override
+  String get driverNavProfile => 'Profile';
+
+  @override
   String incidentSmsHeader(String id) {
     return 'SOS. Booking #$id.';
   }

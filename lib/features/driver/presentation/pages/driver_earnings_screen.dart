@@ -5,6 +5,7 @@ import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/driver_bloc.dart';
 
 String _bs(double v) => LuxFormat.money(v);
@@ -18,7 +19,7 @@ class DriverEarningsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Ganancias')),
+      appBar: AppBar(title: Text(context.l10n.driverEarningsTitle)),
       body: BlocBuilder<DriverBloc, DriverState>(
         builder: (context, state) {
           if (state is! DriverLoaded) return const LuxSkeletonList();
@@ -31,7 +32,7 @@ class DriverEarningsScreen extends StatelessWidget {
             children: [
               LuxFadeIn(child: _EarningsSummary(state: state)),
               const SizedBox(height: LuxSpacing.lg),
-              const SectionHeader(title: 'Viajes completados'),
+              SectionHeader(title: context.l10n.driverEarningsCompleted),
               const SizedBox(height: LuxSpacing.sm + 2),
               if (completed.isEmpty)
                 const _EmptyEarnings()
@@ -60,6 +61,7 @@ class _EarningsSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rides = state.completedBookings.length;
+    final l10n = context.l10n;
     return Container(
       padding: const EdgeInsets.fromLTRB(
         LuxSpacing.lg,
@@ -76,7 +78,7 @@ class _EarningsSummary extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('TUS GANANCIAS NETAS', style: LuxTypography.eyebrow),
+          Text(l10n.driverEarningsNetTitle, style: LuxTypography.eyebrow),
           const SizedBox(height: LuxSpacing.sm),
           FittedBox(
             fit: BoxFit.scaleDown,
@@ -87,26 +89,24 @@ class _EarningsSummary extends StatelessWidget {
           ),
           const SizedBox(height: LuxSpacing.xs),
           Text(
-            '$rides viaje${rides == 1 ? '' : 's'} completado${rides == 1 ? '' : 's'}',
+            l10n.driverEarningsRides(rides),
             style: LuxTypography.caption.copyWith(fontSize: 12),
           ),
           const SizedBox(height: LuxSpacing.md),
           const LuxDivider(),
           const SizedBox(height: LuxSpacing.sm),
           _Line(
-            label: 'Tarifas de tus viajes',
+            label: l10n.driverEarningsFares,
             value: _bs(state.grossEarnings),
           ),
           _Line(
-            label: 'Comisión Luxelane',
+            label: l10n.driverEarningsCommission,
             value: '− ${_bs(state.totalCommission)}',
           ),
           if (state.hasProvisionalEarnings) ...[
             const SizedBox(height: LuxSpacing.sm),
             Text(
-              'Los viajes provisionales se calculan con una comisión del '
-              '${_pct(kDefaultCommissionPct)} % hasta que se confirme su '
-              'liquidación.',
+              l10n.driverEarningsProvisionalNote(_pct(kDefaultCommissionPct)),
               style: LuxTypography.caption,
             ),
           ],
@@ -157,7 +157,10 @@ class _EarningsCard extends StatelessWidget {
               children: [
                 Text(
                   hourly
-                      ? '${booking.hours ?? 2} h desde ${booking.origin.displayName}'
+                      ? context.l10n.driverHourlyFrom(
+                          booking.hours ?? 2,
+                          booking.origin.displayName,
+                        )
                       : booking.destination.displayName,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -166,10 +169,14 @@ class _EarningsCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   booking.refunded
-                      ? '${LuxFormat.dateTime(booking.scheduledAt)} · reembolsado'
-                      : '${LuxFormat.dateTime(booking.scheduledAt)} · '
-                          'tarifa ${_bs(split.amount)} · '
-                          '${_pct(split.commissionPct)} %',
+                      ? context.l10n.driverEarningsRefunded(
+                          LuxFormat.dateTime(booking.scheduledAt),
+                        )
+                      : context.l10n.driverEarningsFareLine(
+                          LuxFormat.dateTime(booking.scheduledAt),
+                          _bs(split.amount),
+                          _pct(split.commissionPct),
+                        ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: LuxTypography.caption.copyWith(fontSize: 12),
@@ -187,7 +194,7 @@ class _EarningsCard extends StatelessWidget {
               ),
               if (provisional)
                 Text(
-                  'Provisional',
+                  context.l10n.driverEarningsProvisional,
                   style: LuxTypography.caption.copyWith(
                     color: LuxColors.warning,
                     fontSize: 11,
@@ -205,11 +212,11 @@ class _EmptyEarnings extends StatelessWidget {
   const _EmptyEarnings();
 
   @override
-  Widget build(BuildContext context) => const SizedBox(
+  Widget build(BuildContext context) => SizedBox(
         height: 260,
         child: EmptyState(
           icon: Icons.account_balance_wallet_outlined,
-          message: 'Tu primer viaje\naparecerá aquí.',
+          message: context.l10n.driverEarningsEmpty,
         ),
       );
 }

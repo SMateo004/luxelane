@@ -10,6 +10,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/services/maps_service.dart';
+import '../../../../l10n/l10n.dart';
 
 // ---------------------------------------------------------------------------
 // Events
@@ -434,12 +435,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       final user = userResult.fold((f) => null, (u) => u);
 
       if (user == null || user.role != UserRole.driver) {
-        emit(
-          const DriverError(
-            'Esta cuenta aún no está habilitada como chófer. Luxelane la '
-            'activa después de revisar tu solicitud.',
-          ),
-        );
+        emit(DriverError(L10n.current.driverErrorNotEnabled));
         return;
       }
 
@@ -480,12 +476,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
         add(DriverLocationTrackingStarted(userId: event.userId));
       }
     } catch (e) {
-      emit(
-        const DriverError(
-          'No pudimos cargar tu cuenta. Revisa tu conexión e inténtalo de '
-          'nuevo.',
-        ),
-      );
+      emit(DriverError(L10n.current.driverErrorLoadAccount));
     }
   }
 
@@ -516,7 +507,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       // Tras cerrar sesión el listener falla por permisos: se ignora.
       onError: (e, _) => state is DriverLoaded
           ? (state as DriverLoaded).copyWith(
-              notice: 'No se pudieron cargar tus viajes.',
+              notice: L10n.current.driverNoticeTripsLoadFailed,
             )
           : state,
     );
@@ -556,7 +547,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       },
       onError: (_, __) => state is DriverLoaded
           ? (state as DriverLoaded).copyWith(
-              notice: 'No se pudieron cargar las solicitudes de viaje.',
+              notice: L10n.current.driverNoticeRequestsLoadFailed,
             )
           : state,
     );
@@ -573,7 +564,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
         (state as DriverLoaded).activeBooking != null) {
       emit(
         (state as DriverLoaded).copyWith(
-          notice: 'Termina tu viaje actual antes de conectarte.',
+          notice: L10n.current.driverNoticeFinishTripFirst,
         ),
       );
       return;
@@ -586,7 +577,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       if (state is DriverLoaded) {
         emit(
           (state as DriverLoaded).copyWith(
-            notice: 'No se pudo cambiar tu estado. Reintenta.',
+            notice: L10n.current.driverNoticeStatusChangeFailed,
           ),
         );
       }
@@ -680,8 +671,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       emit(
         (state as DriverLoaded).copyWith(
           isTracking: false,
-          notice: 'Activa la ubicación para recibir viajes y que el pasajero '
-              'vea dónde estás.',
+          notice: L10n.current.driverNoticeLocationRequired,
         ),
       );
     }
@@ -730,15 +720,12 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
   ) async {
     // Central necesita saber dónde esperó: sin ubicación ni se intenta.
     if (_lastLocation == null) {
-      _notice(
-        emit,
-        'Activa la ubicación: central necesita saber dónde esperaste.',
-      );
+      _notice(emit, L10n.current.driverNoticeNoShowLocationRequired);
       return;
     }
     final ok = await _advance(emit, event.bookingId, BookingStatus.noShow);
     if (ok) {
-      _notice(emit, 'Avisamos a central. Ya estás libre para otros viajes.');
+      _notice(emit, L10n.current.driverNoticeNoShowReported);
     }
   }
 
@@ -758,7 +745,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
         (f) => _notice(
           emit,
           f is TripFailure && f.issue == TripIssue.network
-              ? 'Sin conexión: no se liberó el viaje. Vuelve a intentarlo.'
+              ? L10n.current.driverNoticeReleaseOffline
               : f.message,
         ),
         (_) {
@@ -768,7 +755,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
             emit(
               cur.copyWith(
                 declinedIds: [...cur.declinedIds, event.bookingId],
-                notice: 'Liberaste el viaje. Central buscará otro chófer.',
+                notice: L10n.current.driverNoticeReleased,
               ),
             );
           }
@@ -810,8 +797,7 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
       } else if (failure is TripFailure && failure.issue == TripIssue.network) {
         emit(
           cur.copyWith(
-            notice: 'Sin conexión: no se guardó el paso. Vuelve a '
-                'intentarlo; no se duplicará.',
+            notice: L10n.current.driverNoticeStepOffline,
           ),
         );
       } else {
@@ -845,7 +831,8 @@ class DriverBloc extends Bloc<DriverEvent, DriverState> {
           notice: f.message,
         ),
       ),
-      (_) => emit(cur.copyWith(notice: 'Viaje aceptado')),
+      (_) =>
+          emit(cur.copyWith(notice: L10n.current.driverNoticeRequestAccepted)),
     );
   }
 

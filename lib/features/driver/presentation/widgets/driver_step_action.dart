@@ -7,8 +7,10 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/config/remote_flags.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/models/models.dart';
+import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/app_update_dialog.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 import '../bloc/driver_bloc.dart';
 import 'pickup_code_entry.dart';
 
@@ -33,26 +35,27 @@ class DriverStepAction extends StatelessWidget {
   final DateTime Function() clock;
 
   static String? slideLabel(BookingStatus s) => switch (s) {
-        BookingStatus.confirmed => 'Salir hacia la recogida',
-        BookingStatus.driverArriving => 'He llegado',
-        BookingStatus.verified => 'Iniciar viaje',
-        BookingStatus.inProgress => 'Completar viaje',
+        BookingStatus.confirmed => L10n.current.driverSlideDepart,
+        BookingStatus.driverArriving => L10n.current.driverSlideArrived,
+        BookingStatus.verified => L10n.current.driverSlideStart,
+        BookingStatus.inProgress => L10n.current.driverSlideComplete,
         _ => null,
       };
 
   /// Texto del estado para el chófer.
-  static String message(Booking b) => switch (b.status) {
-        BookingStatus.confirmed => 'Dirígete a la recogida.',
-        BookingStatus.driverArriving => 'En camino a la recogida.',
-        BookingStatus.driverArrived => b.pickupLocked
-            ? 'Verificación bloqueada. Contacta con central.'
-            : 'Pide al pasajero su código de recogida.',
-        BookingStatus.verified => 'Pasajero verificado. Desliza para iniciar.',
-        BookingStatus.inProgress => 'Viaje en curso · rumbo al destino.',
-        BookingStatus.noShow =>
-          'Avisaste que el pasajero no apareció. Central lo revisa.',
-        _ => 'Viaje activo.',
-      };
+  static String message(Booking b) {
+    final t = L10n.current;
+    return switch (b.status) {
+      BookingStatus.confirmed => t.driverStepConfirmed,
+      BookingStatus.driverArriving => t.driverStepArriving,
+      BookingStatus.driverArrived =>
+        b.pickupLocked ? t.driverStepLocked : t.driverStepAskCode,
+      BookingStatus.verified => t.driverStepVerified,
+      BookingStatus.inProgress => t.driverStepInProgress,
+      BookingStatus.noShow => t.driverStepNoShow,
+      _ => t.driverStepActive,
+    };
+  }
 
   void _advance(BuildContext context) {
     final bloc = context.read<DriverBloc>();
@@ -80,9 +83,8 @@ class DriverStepAction extends StatelessWidget {
           builder: (_, phone, __) => Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'Cinco códigos incorrectos: central debe verificar este '
-                'viaje.',
+              Text(
+                context.l10n.driverLockedFiveCodes,
                 style: LuxTypography.bodyMedium,
               ),
               const SizedBox(height: LuxSpacing.sm),
@@ -92,7 +94,7 @@ class DriverStepAction extends StatelessWidget {
         );
       }
       final codeButton = LuxButton(
-        label: 'Ingresar código del pasajero',
+        label: context.l10n.driverEnterCode,
         icon: Icons.pin_outlined,
         onPressed: () => openCodeEntry(context, booking),
       );
@@ -137,7 +139,7 @@ class DriverStepAction extends StatelessWidget {
           key: const Key('release-booking'),
           onPressed: () => _release(context),
           icon: const Icon(Icons.undo_outlined, size: 18),
-          label: const Text('No puedo hacer este viaje'),
+          label: Text(context.l10n.driverCannotDoTrip),
         ),
       ],
     );
@@ -168,25 +170,33 @@ class _ReleaseDialog extends StatefulWidget {
 class _ReleaseDialogState extends State<_ReleaseDialog> {
   String? _reason;
 
+  /// Motivos de [kDriverReleaseReasons] en el idioma activo (la clave es la
+  /// que se envía al servidor).
+  static String? _reasonLabel(AppLocalizations t, String key) => switch (key) {
+        'vehicle_issue' => t.driverReleaseReasonVehicleIssue,
+        'personal_emergency' => t.driverReleaseReasonPersonalEmergency,
+        'unsafe_conditions' => t.driverReleaseReasonUnsafeConditions,
+        'schedule_conflict' => t.driverReleaseReasonScheduleConflict,
+        'other' => t.driverReleaseReasonOther,
+        _ => null,
+      };
+
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: const Text('Liberar este viaje'),
+        title: Text(context.l10n.driverReleaseTitle),
         content: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'El viaje vuelve a buscar chófer y central recibe un aviso. '
-                'Queda registrado en tu historial.',
-              ),
+              Text(context.l10n.driverReleaseBody),
               const SizedBox(height: LuxSpacing.sm),
               for (final e in kDriverReleaseReasons.entries)
                 RadioListTile<String>(
                   value: e.key,
                   groupValue: _reason,
                   onChanged: (v) => setState(() => _reason = v),
-                  title: Text(e.value),
+                  title: Text(_reasonLabel(context.l10n, e.key) ?? e.value),
                   contentPadding: EdgeInsets.zero,
                 ),
             ],
@@ -195,13 +205,13 @@ class _ReleaseDialogState extends State<_ReleaseDialog> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Volver'),
+            child: Text(context.l10n.driverBack),
           ),
           FilledButton(
             onPressed: _reason == null
                 ? null
                 : () => Navigator.of(context).pop(_reason),
-            child: const Text('Liberar viaje'),
+            child: Text(context.l10n.driverReleaseConfirm),
           ),
         ],
       );
@@ -248,30 +258,23 @@ class _NoShowActionState extends State<NoShowAction> {
     super.dispose();
   }
 
-  String get _time {
-    final t = widget.availableAt.toLocal();
-    return '${t.hour.toString().padLeft(2, '0')}:'
-        '${t.minute.toString().padLeft(2, '0')}';
-  }
+  String get _time => LuxFormat.time(widget.availableAt.toLocal());
 
   Future<void> _confirm() async {
     final bloc = context.read<DriverBloc>();
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('¿El pasajero no aparece?'),
-        content: const Text(
-          'Central recibirá un aviso con tu ubicación y revisará la reserva. '
-          'Quedarás libre para otros viajes.',
-        ),
+        title: Text(ctx.l10n.driverNoShowTitle),
+        content: Text(ctx.l10n.driverNoShowBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Seguir esperando'),
+            child: Text(ctx.l10n.driverNoShowKeepWaiting),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Avisar a central'),
+            child: Text(ctx.l10n.driverNoShowNotify),
           ),
         ],
       ),
@@ -289,7 +292,7 @@ class _NoShowActionState extends State<NoShowAction> {
           key: const Key('no-show'),
           onPressed: ready ? _confirm : null,
           icon: const Icon(Icons.person_off_outlined),
-          label: const Text('El pasajero no aparece'),
+          label: Text(context.l10n.driverNoShowButton),
         ),
         if (!ready)
           Padding(
@@ -297,7 +300,7 @@ class _NoShowActionState extends State<NoShowAction> {
             child: Semantics(
               liveRegion: true,
               child: Text(
-                'Disponible a partir de las $_time.',
+                context.l10n.driverNoShowAvailableAt(_time),
                 textAlign: TextAlign.center,
                 style: LuxTypography.caption.copyWith(
                   color: LuxColors.inkSecondary,

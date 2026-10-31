@@ -6,6 +6,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/utils/service_area.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 
 /// ATT (Autoridad de Transportes) flight status site.
 final _miVueloUrl = Uri.parse('https://mivuelo.att.gob.bo/');
@@ -52,7 +53,7 @@ class FlightInfoCard extends StatelessWidget {
               const SizedBox(width: LuxSpacing.sm),
               Expanded(
                 child: Text(
-                  airport?.name ?? 'Recogida en aeropuerto',
+                  airport?.name ?? context.l10n.driverFlightAirportPickup,
                   style: LuxTypography.caption,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -62,12 +63,12 @@ class FlightInfoCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: LuxSpacing.sm),
-          Text('Tu pasajero sale por', style: LuxTypography.caption),
+          Text(context.l10n.driverFlightExitLabel,
+              style: LuxTypography.caption),
           const SizedBox(height: 2),
           Text(
             type == null
-                ? 'Consulta con el pasajero si su vuelo es nacional o '
-                    'internacional'
+                ? context.l10n.driverFlightAskType
                 : (airport ?? _anyAirport).exitFor(type),
             style: LuxTypography.bodyLarge,
           ),
@@ -82,7 +83,7 @@ class FlightInfoCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      'Vuelo $flight',
+                      context.l10n.driverFlightNumber(flight),
                       style: LuxTypography.bodyLarge.copyWith(
                         color: LuxColors.sapphire,
                         decoration: TextDecoration.underline,
@@ -98,7 +99,7 @@ class FlightInfoCard extends StatelessWidget {
                     const SizedBox(width: LuxSpacing.sm),
                     Expanded(
                       child: Text(
-                        'Ver estado en mivuelo.att.gob.bo',
+                        context.l10n.driverFlightCheckStatus,
                         style: LuxTypography.caption,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -125,28 +126,25 @@ Future<void> openFlightTracker(
 ) async {
   final city = airport?.cityName;
   final where = airport == null
-      ? 'el aeropuerto de tu ciudad'
-      : '${airport.name}${city != null ? ' ($city)' : ''}';
+      ? context.l10n.driverFlightYourCityAirport
+      : city != null
+          ? '${airport.name} ($city)'
+          : airport.name;
 
   final go = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
       icon: const Icon(Icons.swap_horiz_rounded, color: LuxColors.sapphire),
-      title: const Text('Primero cambia de aeropuerto'),
-      content: Text(
-        'Al abrir mivuelo.att.gob.bo, cambia primero el aeropuerto a '
-        '$where, el que corresponde a tu ciudad. '
-        'Después busca el vuelo $flight en las llegadas.\n\n'
-        'Copiaremos el número de vuelo para que solo tengas que pegarlo.',
-      ),
+      title: Text(ctx.l10n.driverFlightDialogTitle),
+      content: Text(ctx.l10n.driverFlightDialogBody(where, flight)),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(ctx).pop(false),
-          child: const Text('Cancelar'),
+          child: Text(ctx.l10n.driverCancel),
         ),
         FilledButton(
           onPressed: () => Navigator.of(ctx).pop(true),
-          child: const Text('Entendido, abrir'),
+          child: Text(ctx.l10n.driverFlightDialogOpen),
         ),
       ],
     ),
@@ -161,7 +159,7 @@ Future<void> openFlightTracker(
   if (!ok && context.mounted) {
     showLuxSnackbar(
       context,
-      'No se pudo abrir mivuelo.att.gob.bo',
+      context.l10n.driverFlightOpenFailed,
       isError: true,
     );
   }

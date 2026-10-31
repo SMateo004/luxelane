@@ -724,6 +724,960 @@ abstract class AppLocalizations {
   /// **'Buenas noches'**
   String get greetingEvening;
 
+  /// Error al abrir la app del chófer: la cuenta aún no tiene el rol de chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta cuenta aún no está habilitada como chófer. Luxelane la activa después de revisar tu solicitud.'**
+  String get driverErrorNotEnabled;
+
+  /// Error al cargar la cuenta del chófer al abrir la app.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos cargar tu cuenta. Revisa tu conexión e inténtalo de nuevo.'**
+  String get driverErrorLoadAccount;
+
+  /// Aviso: no se pudieron leer los viajes asignados al chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudieron cargar tus viajes.'**
+  String get driverNoticeTripsLoadFailed;
+
+  /// Aviso: no se pudieron leer las solicitudes abiertas.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudieron cargar las solicitudes de viaje.'**
+  String get driverNoticeRequestsLoadFailed;
+
+  /// Aviso al intentar conectarse con un viaje en curso.
+  ///
+  /// In es, this message translates to:
+  /// **'Termina tu viaje actual antes de conectarte.'**
+  String get driverNoticeFinishTripFirst;
+
+  /// Aviso: no se guardó el cambio entre en línea y desconectado.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo cambiar tu estado. Reintenta.'**
+  String get driverNoticeStatusChangeFailed;
+
+  /// Aviso: el chófer no dio permiso de ubicación.
+  ///
+  /// In es, this message translates to:
+  /// **'Activa la ubicación para recibir viajes y que el pasajero vea dónde estás.'**
+  String get driverNoticeLocationRequired;
+
+  /// Aviso al marcar «el pasajero no aparece» sin ubicación.
+  ///
+  /// In es, this message translates to:
+  /// **'Activa la ubicación: central necesita saber dónde esperaste.'**
+  String get driverNoticeNoShowLocationRequired;
+
+  /// Aviso tras avisar a central de que el pasajero no apareció.
+  ///
+  /// In es, this message translates to:
+  /// **'Avisamos a central. Ya estás libre para otros viajes.'**
+  String get driverNoticeNoShowReported;
+
+  /// Aviso: sin conexión al liberar un viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión: no se liberó el viaje. Vuelve a intentarlo.'**
+  String get driverNoticeReleaseOffline;
+
+  /// Aviso tras liberar (devolver) un viaje aceptado.
+  ///
+  /// In es, this message translates to:
+  /// **'Liberaste el viaje. Central buscará otro chófer.'**
+  String get driverNoticeReleased;
+
+  /// Aviso: sin conexión al guardar un paso del viaje (salir, llegar, iniciar, completar).
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión: no se guardó el paso. Vuelve a intentarlo; no se duplicará.'**
+  String get driverNoticeStepOffline;
+
+  /// Aviso breve tras aceptar una solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje aceptado'**
+  String get driverNoticeRequestAccepted;
+
+  /// Pantalla de error del inicio del chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos abrir tu panel.'**
+  String get driverHomeLoadError;
+
+  /// Botón para reintentar.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get driverRetry;
+
+  /// Título grande del inicio cuando el chófer está en línea.
+  ///
+  /// In es, this message translates to:
+  /// **'Estás en línea.'**
+  String get driverHomeOnlineTitle;
+
+  /// Título grande del inicio cuando el chófer está desconectado.
+  ///
+  /// In es, this message translates to:
+  /// **'Estás desconectado.'**
+  String get driverHomeOfflineTitle;
+
+  /// Aviso del inicio: documentos sin verificar.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus documentos están en revisión. Podrás aceptar viajes cuando Luxelane los verifique.'**
+  String get driverHomeDocumentsPending;
+
+  /// Aviso del inicio: sin vehículo activo.
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes un vehículo activo registrado. Pide a Luxelane que lo active para recibir solicitudes.'**
+  String get driverHomeNoVehicle;
+
+  /// Encabezado de la sección con las cifras de hoy.
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy'**
+  String get driverHomeToday;
+
+  /// Etiqueta de la cifra: ganancias netas de hoy.
+  ///
+  /// In es, this message translates to:
+  /// **'Ganancias netas'**
+  String get driverHomeNetEarnings;
+
+  /// Etiqueta de la cifra: viajes completados hoy.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes'**
+  String get driverHomeTrips;
+
+  /// Etiqueta de la cifra: valoración media del chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Valoración'**
+  String get driverHomeRating;
+
+  /// Encabezado de la lista de próximas reservas asignadas.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus próximas reservas'**
+  String get driverHomeUpcoming;
+
+  /// Título de un servicio por horas: horas y punto de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'{hours} h desde {place}'**
+  String driverHourlyFrom(int hours, String place);
+
+  /// Etiqueta de lector de pantalla del gran botón: desconectarse.
+  ///
+  /// In es, this message translates to:
+  /// **'Desconectarse'**
+  String get driverGoOffline;
+
+  /// Gran botón del inicio y su etiqueta: conectarse para recibir viajes.
+  ///
+  /// In es, this message translates to:
+  /// **'Conectarse'**
+  String get driverGoOnline;
+
+  /// Texto del gran botón cuando el chófer está en línea.
+  ///
+  /// In es, this message translates to:
+  /// **'En línea'**
+  String get driverOnlineBadge;
+
+  /// Bajo el gran botón, en línea, sin clase de vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscando viajes'**
+  String get driverSearching;
+
+  /// Bajo el gran botón, en línea: la clase del vehículo (nombre propio).
+  ///
+  /// In es, this message translates to:
+  /// **'Buscando viajes de {vehicleClass}'**
+  String driverSearchingClass(String vehicleClass);
+
+  /// Bajo el gran botón, desconectado.
+  ///
+  /// In es, this message translates to:
+  /// **'Conéctate para recibir solicitudes'**
+  String get driverConnectToReceive;
+
+  /// Botón de texto para desconectarse.
+  ///
+  /// In es, this message translates to:
+  /// **'Desconectarme'**
+  String get driverDisconnectMe;
+
+  /// Aviso: no hay apps de mapas instaladas.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay aplicaciones de mapas disponibles'**
+  String get driverMapsNone;
+
+  /// Título de la hoja para elegir app de mapas.
+  ///
+  /// In es, this message translates to:
+  /// **'Navegar hacia {address}'**
+  String driverMapsNavigateTo(String address);
+
+  /// Aviso: no se pudieron abrir los mapas.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudieron abrir los mapas'**
+  String get driverMapsOpenFailed;
+
+  /// Etiqueta de la parada de recogida (se muestra en mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida'**
+  String get driverStopPickup;
+
+  /// Etiqueta de la parada de destino (se muestra en mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'Destino'**
+  String get driverStopDestination;
+
+  /// Nombre del invitado que viaja (reserva para otra persona).
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero: {name}'**
+  String driverGuestPassenger(String name);
+
+  /// Título de la nota que dejó el pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Nota del pasajero'**
+  String get driverRiderNote;
+
+  /// Botón para abrir la navegación hacia la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Navegar a la recogida'**
+  String get driverNavigateToPickup;
+
+  /// Botón para abrir la navegación hacia el destino.
+  ///
+  /// In es, this message translates to:
+  /// **'Navegar al destino'**
+  String get driverNavigateToDestination;
+
+  /// Hora de una solicitud que empieza ya.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahora'**
+  String get driverRequestNow;
+
+  /// Hora de una solicitud que empieza en pocos minutos.
+  ///
+  /// In es, this message translates to:
+  /// **'En {minutes} min'**
+  String driverRequestInMinutes(int minutes);
+
+  /// Distancia y duración aproximadas del trayecto.
+  ///
+  /// In es, this message translates to:
+  /// **'~{km} km · {minutes} min'**
+  String driverRouteDistanceDuration(String km, int minutes);
+
+  /// Distancia aproximada del trayecto.
+  ///
+  /// In es, this message translates to:
+  /// **'~{km} km'**
+  String driverRouteDistance(String km);
+
+  /// Cabecera de una solicitud nueva, en mayúsculas, con la clase (nombre propio en mayúsculas).
+  ///
+  /// In es, this message translates to:
+  /// **'NUEVA SOLICITUD · {vehicleClass}'**
+  String driverRequestTitle(String vehicleClass);
+
+  /// Etiqueta en mayúsculas: zona aproximada de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'ZONA DE RECOGIDA'**
+  String get driverRequestPickupZone;
+
+  /// Etiqueta en mayúsculas: zona aproximada de destino.
+  ///
+  /// In es, this message translates to:
+  /// **'ZONA DE DESTINO'**
+  String get driverRequestDropoffZone;
+
+  /// Etiqueta en mayúsculas: servicio por horas.
+  ///
+  /// In es, this message translates to:
+  /// **'POR HORAS'**
+  String get driverRequestHourly;
+
+  /// Servicio por horas: horas a disposición del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'{hours} h a disposición'**
+  String driverHoursAvailable(int hours);
+
+  /// Número de pasajeros de una solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 pasajero} other{{count} pasajeros}}'**
+  String driverRequestPassengers(int count);
+
+  /// Número de maletas de una solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 maleta} other{{count} maletas}}'**
+  String driverRequestLuggage(int count);
+
+  /// Nota de la solicitud: la dirección exacta y los datos se ven al aceptar.
+  ///
+  /// In es, this message translates to:
+  /// **'Dirección exacta y datos al aceptar'**
+  String get driverRequestDetailsOnAccept;
+
+  /// Botón para aceptar una solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Aceptar viaje'**
+  String get driverAcceptTrip;
+
+  /// Botón para rechazar una solicitud.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazar'**
+  String get driverDecline;
+
+  /// Pantalla de un viaje que ya no está en la lista.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje no encontrado'**
+  String get driverTripNotFound;
+
+  /// Botón o etiqueta para volver atrás.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver'**
+  String get driverBack;
+
+  /// Etiqueta de la tarifa estimada del viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Tarifa estimada'**
+  String get driverEstimatedFare;
+
+  /// Título de la pantalla de solicitudes.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitudes'**
+  String get driverQueueTitle;
+
+  /// Lista vacía, en línea (dos líneas).
+  ///
+  /// In es, this message translates to:
+  /// **'Las nuevas solicitudes\naparecerán aquí.'**
+  String get driverQueueEmptyOnline;
+
+  /// Lista vacía, desconectado (dos líneas).
+  ///
+  /// In es, this message translates to:
+  /// **'Conéctate para\nrecibir solicitudes.'**
+  String get driverQueueEmptyOffline;
+
+  /// Encabezado: solicitudes abiertas para el chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Disponibles para ti'**
+  String get driverQueueAvailable;
+
+  /// Encabezado: viajes ya asignados al chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus viajes asignados'**
+  String get driverQueueAssigned;
+
+  /// Fecha y hora del viaje y el lugar de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'{date} · desde {place}'**
+  String driverQueueFrom(String date, String place);
+
+  /// Número de pasajeros, abreviado.
+  ///
+  /// In es, this message translates to:
+  /// **'{count} pax'**
+  String driverQueuePax(int count);
+
+  /// Botón mientras carga el estado del chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando…'**
+  String get driverQueueLoading;
+
+  /// Botón deshabilitado: documentos sin verificar.
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente de verificación'**
+  String get driverQueuePendingVerification;
+
+  /// Botón deshabilitado: hay un viaje en curso.
+  ///
+  /// In es, this message translates to:
+  /// **'Termina tu viaje actual'**
+  String get driverQueueFinishCurrent;
+
+  /// Botón deshabilitado: el chófer está desconectado.
+  ///
+  /// In es, this message translates to:
+  /// **'Conéctate para aceptar'**
+  String get driverQueueConnectToAccept;
+
+  /// Color del vehículo que viene escrito por defecto en el registro (editable).
+  ///
+  /// In es, this message translates to:
+  /// **'Negro'**
+  String get driverOnboardingDefaultColor;
+
+  /// Error al registrar el vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo registrar el vehículo. Revisa los datos e inténtalo de nuevo.'**
+  String get driverOnboardingVehicleError;
+
+  /// Error al guardar la licencia.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo guardar tu licencia. Revisa tu conexión e inténtalo de nuevo.'**
+  String get driverOnboardingLicenseError;
+
+  /// Error general del registro del chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo completar el registro. Inténtalo de nuevo.'**
+  String get driverOnboardingGenericError;
+
+  /// Botón para cerrar sesión.
+  ///
+  /// In es, this message translates to:
+  /// **'Cerrar sesión'**
+  String get driverSignOut;
+
+  /// Título del paso 1 del registro.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu vehículo'**
+  String get driverOnboardingVehicleTitle;
+
+  /// Texto del paso 1 del registro.
+  ///
+  /// In es, this message translates to:
+  /// **'Registra el vehículo que vas a conducir.'**
+  String get driverOnboardingVehicleSubtitle;
+
+  /// Botón para pasar al siguiente paso.
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar'**
+  String get driverContinue;
+
+  /// Título del paso 2 del registro.
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia de conducir'**
+  String get driverOnboardingLicenseTitle;
+
+  /// Texto del paso 2 del registro.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus documentos serán revisados antes de que puedas aceptar viajes.'**
+  String get driverOnboardingLicenseSubtitle;
+
+  /// Aviso del paso 2: un administrador revisa los documentos.
+  ///
+  /// In es, this message translates to:
+  /// **'Un administrador verificará tus documentos antes de que puedas conectarte.'**
+  String get driverOnboardingReviewNotice;
+
+  /// Botón para volver al paso anterior.
+  ///
+  /// In es, this message translates to:
+  /// **'Atrás'**
+  String get driverOnboardingBack;
+
+  /// Botón para enviar el registro.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar'**
+  String get driverOnboardingSubmit;
+
+  /// Etiqueta del selector de clase del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Categoría del vehículo'**
+  String get driverOnboardingClass;
+
+  /// Campo: marca del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Marca'**
+  String get driverOnboardingMake;
+
+  /// Campo: modelo del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Modelo'**
+  String get driverOnboardingModel;
+
+  /// Campo: placa (matrícula) del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Placa'**
+  String get driverOnboardingPlate;
+
+  /// Campo: año del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Año'**
+  String get driverOnboardingYear;
+
+  /// Campo: color del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Color'**
+  String get driverOnboardingColor;
+
+  /// Error de campo vacío.
+  ///
+  /// In es, this message translates to:
+  /// **'Requerido'**
+  String get driverFieldRequired;
+
+  /// Error de valor no válido (año).
+  ///
+  /// In es, this message translates to:
+  /// **'Inválido'**
+  String get driverFieldInvalid;
+
+  /// Campo: número de licencia de conducir.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de licencia'**
+  String get driverOnboardingLicenseNumber;
+
+  /// Campo: vencimiento de la licencia, con el formato mes/año.
+  ///
+  /// In es, this message translates to:
+  /// **'Fecha de vencimiento (MM/AAAA)'**
+  String get driverOnboardingLicenseExpiry;
+
+  /// Error: el vencimiento no tiene el formato mes/año.
+  ///
+  /// In es, this message translates to:
+  /// **'Usa MM/AAAA'**
+  String get driverOnboardingExpiryFormat;
+
+  /// Error: mes fuera de 1–12.
+  ///
+  /// In es, this message translates to:
+  /// **'Mes inválido'**
+  String get driverOnboardingInvalidMonth;
+
+  /// Error: la licencia ya venció.
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia vencida'**
+  String get driverOnboardingLicenseExpired;
+
+  /// Título de la pantalla de ganancias.
+  ///
+  /// In es, this message translates to:
+  /// **'Ganancias'**
+  String get driverEarningsTitle;
+
+  /// Encabezado de la lista de viajes completados.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes completados'**
+  String get driverEarningsCompleted;
+
+  /// Etiqueta en mayúsculas del total de ganancias netas.
+  ///
+  /// In es, this message translates to:
+  /// **'TUS GANANCIAS NETAS'**
+  String get driverEarningsNetTitle;
+
+  /// Número de viajes completados.
+  ///
+  /// In es, this message translates to:
+  /// **'{count, plural, =1{1 viaje completado} other{{count} viajes completados}}'**
+  String driverEarningsRides(int count);
+
+  /// Línea del resumen: suma de las tarifas.
+  ///
+  /// In es, this message translates to:
+  /// **'Tarifas de tus viajes'**
+  String get driverEarningsFares;
+
+  /// Línea del resumen: comisión de Luxelane.
+  ///
+  /// In es, this message translates to:
+  /// **'Comisión Luxelane'**
+  String get driverEarningsCommission;
+
+  /// Nota: comisión por defecto mientras no hay liquidación.
+  ///
+  /// In es, this message translates to:
+  /// **'Los viajes provisionales se calculan con una comisión del {pct} % hasta que se confirme su liquidación.'**
+  String driverEarningsProvisionalNote(String pct);
+
+  /// Fecha del viaje y que se reembolsó.
+  ///
+  /// In es, this message translates to:
+  /// **'{date} · reembolsado'**
+  String driverEarningsRefunded(String date);
+
+  /// Fecha del viaje, tarifa y porcentaje de comisión.
+  ///
+  /// In es, this message translates to:
+  /// **'{date} · tarifa {fare} · {pct} %'**
+  String driverEarningsFareLine(String date, String fare, String pct);
+
+  /// Marca de un viaje sin liquidación confirmada.
+  ///
+  /// In es, this message translates to:
+  /// **'Provisional'**
+  String get driverEarningsProvisional;
+
+  /// Lista de ganancias vacía (dos líneas).
+  ///
+  /// In es, this message translates to:
+  /// **'Tu primer viaje\naparecerá aquí.'**
+  String get driverEarningsEmpty;
+
+  /// Deslizador: salir hacia la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Salir hacia la recogida'**
+  String get driverSlideDepart;
+
+  /// Deslizador: el chófer llegó a la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'He llegado'**
+  String get driverSlideArrived;
+
+  /// Deslizador: iniciar el viaje (se cita en driverCodeVerifiedHint).
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar viaje'**
+  String get driverSlideStart;
+
+  /// Deslizador: completar el viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Completar viaje'**
+  String get driverSlideComplete;
+
+  /// Estado del viaje: aceptado, aún sin salir.
+  ///
+  /// In es, this message translates to:
+  /// **'Dirígete a la recogida.'**
+  String get driverStepConfirmed;
+
+  /// Estado del viaje: en camino a la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'En camino a la recogida.'**
+  String get driverStepArriving;
+
+  /// Estado: verificación bloqueada tras cinco códigos incorrectos.
+  ///
+  /// In es, this message translates to:
+  /// **'Verificación bloqueada. Contacta con central.'**
+  String get driverStepLocked;
+
+  /// Estado: el chófer llegó y pide el código.
+  ///
+  /// In es, this message translates to:
+  /// **'Pide al pasajero su código de recogida.'**
+  String get driverStepAskCode;
+
+  /// Estado: pasajero verificado, listo para iniciar.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero verificado. Desliza para iniciar.'**
+  String get driverStepVerified;
+
+  /// Estado: viaje en curso.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje en curso · rumbo al destino.'**
+  String get driverStepInProgress;
+
+  /// Estado: el chófer avisó que el pasajero no apareció.
+  ///
+  /// In es, this message translates to:
+  /// **'Avisaste que el pasajero no apareció. Central lo revisa.'**
+  String get driverStepNoShow;
+
+  /// Estado genérico de un viaje activo.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje activo.'**
+  String get driverStepActive;
+
+  /// Texto con la verificación bloqueada.
+  ///
+  /// In es, this message translates to:
+  /// **'Cinco códigos incorrectos: central debe verificar este viaje.'**
+  String get driverLockedFiveCodes;
+
+  /// Botón para escribir el código de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresar código del pasajero'**
+  String get driverEnterCode;
+
+  /// Botón para liberar un viaje aceptado.
+  ///
+  /// In es, this message translates to:
+  /// **'No puedo hacer este viaje'**
+  String get driverCannotDoTrip;
+
+  /// Título del diálogo para liberar un viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Liberar este viaje'**
+  String get driverReleaseTitle;
+
+  /// Texto del diálogo para liberar un viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'El viaje vuelve a buscar chófer y central recibe un aviso. Queda registrado en tu historial.'**
+  String get driverReleaseBody;
+
+  /// Botón que confirma liberar el viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Liberar viaje'**
+  String get driverReleaseConfirm;
+
+  /// Motivo para liberar: problema con el vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Problema con el vehículo'**
+  String get driverReleaseReasonVehicleIssue;
+
+  /// Motivo para liberar: emergencia personal.
+  ///
+  /// In es, this message translates to:
+  /// **'Emergencia personal'**
+  String get driverReleaseReasonPersonalEmergency;
+
+  /// Motivo para liberar: condiciones inseguras.
+  ///
+  /// In es, this message translates to:
+  /// **'Condiciones inseguras'**
+  String get driverReleaseReasonUnsafeConditions;
+
+  /// Motivo para liberar: conflicto de horario.
+  ///
+  /// In es, this message translates to:
+  /// **'Conflicto de horario'**
+  String get driverReleaseReasonScheduleConflict;
+
+  /// Motivo para liberar: otro.
+  ///
+  /// In es, this message translates to:
+  /// **'Otro motivo'**
+  String get driverReleaseReasonOther;
+
+  /// Título del diálogo «el pasajero no aparece».
+  ///
+  /// In es, this message translates to:
+  /// **'¿El pasajero no aparece?'**
+  String get driverNoShowTitle;
+
+  /// Texto del diálogo «el pasajero no aparece».
+  ///
+  /// In es, this message translates to:
+  /// **'Central recibirá un aviso con tu ubicación y revisará la reserva. Quedarás libre para otros viajes.'**
+  String get driverNoShowBody;
+
+  /// Botón para seguir esperando al pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguir esperando'**
+  String get driverNoShowKeepWaiting;
+
+  /// Botón para avisar a central de que el pasajero no apareció.
+  ///
+  /// In es, this message translates to:
+  /// **'Avisar a central'**
+  String get driverNoShowNotify;
+
+  /// Botón «el pasajero no aparece».
+  ///
+  /// In es, this message translates to:
+  /// **'El pasajero no aparece'**
+  String get driverNoShowButton;
+
+  /// Desde qué hora se puede marcar que el pasajero no aparece.
+  ///
+  /// In es, this message translates to:
+  /// **'Disponible a partir de las {time}.'**
+  String driverNoShowAvailableAt(String time);
+
+  /// Tarjeta del vuelo sin aeropuerto conocido.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida en aeropuerto'**
+  String get driverFlightAirportPickup;
+
+  /// Antes de la salida del aeropuerto por la que sale el pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu pasajero sale por'**
+  String get driverFlightExitLabel;
+
+  /// Sin tipo de vuelo: pedir al chófer que lo consulte.
+  ///
+  /// In es, this message translates to:
+  /// **'Consulta con el pasajero si su vuelo es nacional o internacional'**
+  String get driverFlightAskType;
+
+  /// Enlace con el número de vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Vuelo {flight}'**
+  String driverFlightNumber(String flight);
+
+  /// Enlace al sitio de estado de vuelos (dominio, no se traduce).
+  ///
+  /// In es, this message translates to:
+  /// **'Ver estado en mivuelo.att.gob.bo'**
+  String get driverFlightCheckStatus;
+
+  /// Va dentro de driverFlightDialogBody cuando no se conoce el aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'el aeropuerto de tu ciudad'**
+  String get driverFlightYourCityAirport;
+
+  /// Título del diálogo antes de abrir el sitio de vuelos.
+  ///
+  /// In es, this message translates to:
+  /// **'Primero cambia de aeropuerto'**
+  String get driverFlightDialogTitle;
+
+  /// Instrucciones antes de abrir el sitio de vuelos; {airport} es el nombre del aeropuerto o driverFlightYourCityAirport.
+  ///
+  /// In es, this message translates to:
+  /// **'Al abrir mivuelo.att.gob.bo, cambia primero el aeropuerto a {airport}, el que corresponde a tu ciudad. Después busca el vuelo {flight} en las llegadas.\n\nCopiaremos el número de vuelo para que solo tengas que pegarlo.'**
+  String driverFlightDialogBody(String airport, String flight);
+
+  /// Botón para cancelar un diálogo.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get driverCancel;
+
+  /// Botón que abre el sitio de vuelos.
+  ///
+  /// In es, this message translates to:
+  /// **'Entendido, abrir'**
+  String get driverFlightDialogOpen;
+
+  /// Aviso: no se pudo abrir el sitio de vuelos.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo abrir mivuelo.att.gob.bo'**
+  String get driverFlightOpenFailed;
+
+  /// Botón para llamar a central.
+  ///
+  /// In es, this message translates to:
+  /// **'Llamar a central'**
+  String get driverCallDispatch;
+
+  /// La reserva llegó con la verificación bloqueada.
+  ///
+  /// In es, this message translates to:
+  /// **'Por seguridad, la verificación quedó bloqueada. Contacta con central.'**
+  String get driverCodeLockedSecurity;
+
+  /// Título de la pantalla del código de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Pide el código al pasajero'**
+  String get driverCodeAsk;
+
+  /// Texto bajo el título del código de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Lo ve en su app. Sin él no se puede iniciar el viaje.'**
+  String get driverCodeHint;
+
+  /// Etiqueta de lector de pantalla: dígitos escritos del código.
+  ///
+  /// In es, this message translates to:
+  /// **'Código, {entered} de {length} dígitos'**
+  String driverCodeSemantics(int entered, int length);
+
+  /// Etiqueta de lector de pantalla de la tecla para borrar.
+  ///
+  /// In es, this message translates to:
+  /// **'Borrar'**
+  String get driverCodeDelete;
+
+  /// Título tras verificar el código.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero verificado'**
+  String get driverCodeVerified;
+
+  /// Tras verificar: cita el deslizador driverSlideStart.
+  ///
+  /// In es, this message translates to:
+  /// **'Desliza «Iniciar viaje» cuando estéis listos.'**
+  String get driverCodeVerifiedHint;
+
+  /// Título con la verificación bloqueada.
+  ///
+  /// In es, this message translates to:
+  /// **'Contacta con central'**
+  String get driverCodeContactDispatch;
+
+  /// Pestaña de la app del chófer: inicio para conducir.
+  ///
+  /// In es, this message translates to:
+  /// **'Conducir'**
+  String get driverNavDrive;
+
+  /// Pestaña de la app del chófer: solicitudes.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitudes'**
+  String get driverNavRequests;
+
+  /// Pestaña de la app del chófer: ganancias.
+  ///
+  /// In es, this message translates to:
+  /// **'Ganancias'**
+  String get driverNavEarnings;
+
+  /// Pestaña de la app del chófer: perfil.
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil'**
+  String get driverNavProfile;
+
   /// Primera frase del SMS de SOS que la persona envía a central, con el ID corto de la reserva.
   ///
   /// In es, this message translates to:

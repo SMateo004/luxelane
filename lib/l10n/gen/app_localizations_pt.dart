@@ -361,6 +361,576 @@ class AppLocalizationsPt extends AppLocalizations {
   String get greetingEvening => 'Boa noite';
 
   @override
+  String get driverErrorNotEnabled =>
+      'Esta conta ainda não está habilitada como motorista. A Luxelane a ativa depois de revisar sua solicitação.';
+
+  @override
+  String get driverErrorLoadAccount =>
+      'Não foi possível carregar sua conta. Verifique sua conexão e tente novamente.';
+
+  @override
+  String get driverNoticeTripsLoadFailed =>
+      'Não foi possível carregar suas viagens.';
+
+  @override
+  String get driverNoticeRequestsLoadFailed =>
+      'Não foi possível carregar as solicitações de viagem.';
+
+  @override
+  String get driverNoticeFinishTripFirst =>
+      'Termine sua viagem atual antes de ficar online.';
+
+  @override
+  String get driverNoticeStatusChangeFailed =>
+      'Não foi possível alterar seu status. Tente novamente.';
+
+  @override
+  String get driverNoticeLocationRequired =>
+      'Ative a localização para receber viagens e para que o passageiro veja onde você está.';
+
+  @override
+  String get driverNoticeNoShowLocationRequired =>
+      'Ative a localização: a central precisa saber onde você esperou.';
+
+  @override
+  String get driverNoticeNoShowReported =>
+      'Avisamos a central. Você já está livre para outras viagens.';
+
+  @override
+  String get driverNoticeReleaseOffline =>
+      'Sem conexão: a viagem não foi liberada. Tente novamente.';
+
+  @override
+  String get driverNoticeReleased =>
+      'Você liberou a viagem. A central vai procurar outro motorista.';
+
+  @override
+  String get driverNoticeStepOffline =>
+      'Sem conexão: a etapa não foi salva. Tente novamente; ela não será duplicada.';
+
+  @override
+  String get driverNoticeRequestAccepted => 'Viagem aceita';
+
+  @override
+  String get driverHomeLoadError => 'Não foi possível abrir seu painel.';
+
+  @override
+  String get driverRetry => 'Tentar novamente';
+
+  @override
+  String get driverHomeOnlineTitle => 'Você está online.';
+
+  @override
+  String get driverHomeOfflineTitle => 'Você está offline.';
+
+  @override
+  String get driverHomeDocumentsPending =>
+      'Seus documentos estão em análise. Você poderá aceitar viagens quando a Luxelane os verificar.';
+
+  @override
+  String get driverHomeNoVehicle =>
+      'Você não tem um veículo ativo cadastrado. Peça à Luxelane que o ative para receber solicitações.';
+
+  @override
+  String get driverHomeToday => 'Hoje';
+
+  @override
+  String get driverHomeNetEarnings => 'Ganhos líquidos';
+
+  @override
+  String get driverHomeTrips => 'Viagens';
+
+  @override
+  String get driverHomeRating => 'Avaliação';
+
+  @override
+  String get driverHomeUpcoming => 'Suas próximas reservas';
+
+  @override
+  String driverHourlyFrom(int hours, String place) {
+    return '$hours h saindo de $place';
+  }
+
+  @override
+  String get driverGoOffline => 'Ficar offline';
+
+  @override
+  String get driverGoOnline => 'Ficar online';
+
+  @override
+  String get driverOnlineBadge => 'Online';
+
+  @override
+  String get driverSearching => 'Procurando viagens';
+
+  @override
+  String driverSearchingClass(String vehicleClass) {
+    return 'Procurando viagens de $vehicleClass';
+  }
+
+  @override
+  String get driverConnectToReceive => 'Fique online para receber solicitações';
+
+  @override
+  String get driverDisconnectMe => 'Ficar offline';
+
+  @override
+  String get driverMapsNone => 'Nenhum aplicativo de mapas disponível';
+
+  @override
+  String driverMapsNavigateTo(String address) {
+    return 'Navegar até $address';
+  }
+
+  @override
+  String get driverMapsOpenFailed => 'Não foi possível abrir os mapas';
+
+  @override
+  String get driverStopPickup => 'Embarque';
+
+  @override
+  String get driverStopDestination => 'Destino';
+
+  @override
+  String driverGuestPassenger(String name) {
+    return 'Passageiro: $name';
+  }
+
+  @override
+  String get driverRiderNote => 'Observação do passageiro';
+
+  @override
+  String get driverNavigateToPickup => 'Navegar até o embarque';
+
+  @override
+  String get driverNavigateToDestination => 'Navegar até o destino';
+
+  @override
+  String get driverRequestNow => 'Agora';
+
+  @override
+  String driverRequestInMinutes(int minutes) {
+    return 'Em $minutes min';
+  }
+
+  @override
+  String driverRouteDistanceDuration(String km, int minutes) {
+    return '~$km km · $minutes min';
+  }
+
+  @override
+  String driverRouteDistance(String km) {
+    return '~$km km';
+  }
+
+  @override
+  String driverRequestTitle(String vehicleClass) {
+    return 'NOVA SOLICITAÇÃO · $vehicleClass';
+  }
+
+  @override
+  String get driverRequestPickupZone => 'ÁREA DE EMBARQUE';
+
+  @override
+  String get driverRequestDropoffZone => 'ÁREA DE DESTINO';
+
+  @override
+  String get driverRequestHourly => 'POR HORA';
+
+  @override
+  String driverHoursAvailable(int hours) {
+    return '$hours h à disposição';
+  }
+
+  @override
+  String driverRequestPassengers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count passageiros',
+      one: '1 passageiro',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String driverRequestLuggage(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count malas',
+      one: '1 mala',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get driverRequestDetailsOnAccept =>
+      'Endereço exato e dados ao aceitar';
+
+  @override
+  String get driverAcceptTrip => 'Aceitar viagem';
+
+  @override
+  String get driverDecline => 'Recusar';
+
+  @override
+  String get driverTripNotFound => 'Viagem não encontrada';
+
+  @override
+  String get driverBack => 'Voltar';
+
+  @override
+  String get driverEstimatedFare => 'Tarifa estimada';
+
+  @override
+  String get driverQueueTitle => 'Solicitações';
+
+  @override
+  String get driverQueueEmptyOnline =>
+      'As novas solicitações\naparecerão aqui.';
+
+  @override
+  String get driverQueueEmptyOffline =>
+      'Fique online para\nreceber solicitações.';
+
+  @override
+  String get driverQueueAvailable => 'Disponíveis para você';
+
+  @override
+  String get driverQueueAssigned => 'Suas viagens atribuídas';
+
+  @override
+  String driverQueueFrom(String date, String place) {
+    return '$date · saindo de $place';
+  }
+
+  @override
+  String driverQueuePax(int count) {
+    return '$count pax';
+  }
+
+  @override
+  String get driverQueueLoading => 'Carregando…';
+
+  @override
+  String get driverQueuePendingVerification => 'Verificação pendente';
+
+  @override
+  String get driverQueueFinishCurrent => 'Termine sua viagem atual';
+
+  @override
+  String get driverQueueConnectToAccept => 'Fique online para aceitar';
+
+  @override
+  String get driverOnboardingDefaultColor => 'Preto';
+
+  @override
+  String get driverOnboardingVehicleError =>
+      'Não foi possível cadastrar o veículo. Verifique os dados e tente novamente.';
+
+  @override
+  String get driverOnboardingLicenseError =>
+      'Não foi possível salvar sua habilitação. Verifique sua conexão e tente novamente.';
+
+  @override
+  String get driverOnboardingGenericError =>
+      'Não foi possível concluir o cadastro. Tente novamente.';
+
+  @override
+  String get driverSignOut => 'Sair';
+
+  @override
+  String get driverOnboardingVehicleTitle => 'Seu veículo';
+
+  @override
+  String get driverOnboardingVehicleSubtitle =>
+      'Cadastre o veículo que você vai dirigir.';
+
+  @override
+  String get driverContinue => 'Continuar';
+
+  @override
+  String get driverOnboardingLicenseTitle => 'Carteira de habilitação';
+
+  @override
+  String get driverOnboardingLicenseSubtitle =>
+      'Seus documentos serão analisados antes que você possa aceitar viagens.';
+
+  @override
+  String get driverOnboardingReviewNotice =>
+      'Um administrador verificará seus documentos antes que você possa ficar online.';
+
+  @override
+  String get driverOnboardingBack => 'Voltar';
+
+  @override
+  String get driverOnboardingSubmit => 'Enviar';
+
+  @override
+  String get driverOnboardingClass => 'Categoria do veículo';
+
+  @override
+  String get driverOnboardingMake => 'Marca';
+
+  @override
+  String get driverOnboardingModel => 'Modelo';
+
+  @override
+  String get driverOnboardingPlate => 'Placa';
+
+  @override
+  String get driverOnboardingYear => 'Ano';
+
+  @override
+  String get driverOnboardingColor => 'Cor';
+
+  @override
+  String get driverFieldRequired => 'Obrigatório';
+
+  @override
+  String get driverFieldInvalid => 'Inválido';
+
+  @override
+  String get driverOnboardingLicenseNumber => 'Número da habilitação';
+
+  @override
+  String get driverOnboardingLicenseExpiry => 'Data de validade (MM/AAAA)';
+
+  @override
+  String get driverOnboardingExpiryFormat => 'Use MM/AAAA';
+
+  @override
+  String get driverOnboardingInvalidMonth => 'Mês inválido';
+
+  @override
+  String get driverOnboardingLicenseExpired => 'Habilitação vencida';
+
+  @override
+  String get driverEarningsTitle => 'Ganhos';
+
+  @override
+  String get driverEarningsCompleted => 'Viagens concluídas';
+
+  @override
+  String get driverEarningsNetTitle => 'SEUS GANHOS LÍQUIDOS';
+
+  @override
+  String driverEarningsRides(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count viagens concluídas',
+      one: '1 viagem concluída',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get driverEarningsFares => 'Tarifas das suas viagens';
+
+  @override
+  String get driverEarningsCommission => 'Comissão Luxelane';
+
+  @override
+  String driverEarningsProvisionalNote(String pct) {
+    return 'As viagens provisórias são calculadas com uma comissão de $pct % até que a liquidação seja confirmada.';
+  }
+
+  @override
+  String driverEarningsRefunded(String date) {
+    return '$date · reembolsado';
+  }
+
+  @override
+  String driverEarningsFareLine(String date, String fare, String pct) {
+    return '$date · tarifa $fare · $pct %';
+  }
+
+  @override
+  String get driverEarningsProvisional => 'Provisório';
+
+  @override
+  String get driverEarningsEmpty => 'Sua primeira viagem\naparecerá aqui.';
+
+  @override
+  String get driverSlideDepart => 'Sair para o embarque';
+
+  @override
+  String get driverSlideArrived => 'Cheguei';
+
+  @override
+  String get driverSlideStart => 'Iniciar viagem';
+
+  @override
+  String get driverSlideComplete => 'Concluir viagem';
+
+  @override
+  String get driverStepConfirmed => 'Siga até o ponto de embarque.';
+
+  @override
+  String get driverStepArriving => 'A caminho do embarque.';
+
+  @override
+  String get driverStepLocked => 'Verificação bloqueada. Fale com a central.';
+
+  @override
+  String get driverStepAskCode => 'Peça ao passageiro o código de embarque.';
+
+  @override
+  String get driverStepVerified =>
+      'Passageiro verificado. Deslize para iniciar.';
+
+  @override
+  String get driverStepInProgress => 'Viagem em andamento · rumo ao destino.';
+
+  @override
+  String get driverStepNoShow =>
+      'Você avisou que o passageiro não apareceu. A central está analisando.';
+
+  @override
+  String get driverStepActive => 'Viagem ativa.';
+
+  @override
+  String get driverLockedFiveCodes =>
+      'Cinco códigos incorretos: a central precisa verificar esta viagem.';
+
+  @override
+  String get driverEnterCode => 'Inserir código do passageiro';
+
+  @override
+  String get driverCannotDoTrip => 'Não posso fazer esta viagem';
+
+  @override
+  String get driverReleaseTitle => 'Liberar esta viagem';
+
+  @override
+  String get driverReleaseBody =>
+      'A viagem volta a procurar motorista e a central recebe um aviso. Fica registrado no seu histórico.';
+
+  @override
+  String get driverReleaseConfirm => 'Liberar viagem';
+
+  @override
+  String get driverReleaseReasonVehicleIssue => 'Problema com o veículo';
+
+  @override
+  String get driverReleaseReasonPersonalEmergency => 'Emergência pessoal';
+
+  @override
+  String get driverReleaseReasonUnsafeConditions => 'Condições inseguras';
+
+  @override
+  String get driverReleaseReasonScheduleConflict => 'Conflito de horário';
+
+  @override
+  String get driverReleaseReasonOther => 'Outro motivo';
+
+  @override
+  String get driverNoShowTitle => 'O passageiro não apareceu?';
+
+  @override
+  String get driverNoShowBody =>
+      'A central receberá um aviso com sua localização e analisará a reserva. Você ficará livre para outras viagens.';
+
+  @override
+  String get driverNoShowKeepWaiting => 'Continuar esperando';
+
+  @override
+  String get driverNoShowNotify => 'Avisar a central';
+
+  @override
+  String get driverNoShowButton => 'O passageiro não apareceu';
+
+  @override
+  String driverNoShowAvailableAt(String time) {
+    return 'Disponível a partir das $time.';
+  }
+
+  @override
+  String get driverFlightAirportPickup => 'Embarque no aeroporto';
+
+  @override
+  String get driverFlightExitLabel => 'Seu passageiro sai por';
+
+  @override
+  String get driverFlightAskType =>
+      'Pergunte ao passageiro se o voo é nacional ou internacional';
+
+  @override
+  String driverFlightNumber(String flight) {
+    return 'Voo $flight';
+  }
+
+  @override
+  String get driverFlightCheckStatus => 'Ver status em mivuelo.att.gob.bo';
+
+  @override
+  String get driverFlightYourCityAirport => 'o aeroporto da sua cidade';
+
+  @override
+  String get driverFlightDialogTitle => 'Primeiro mude o aeroporto';
+
+  @override
+  String driverFlightDialogBody(String airport, String flight) {
+    return 'Ao abrir mivuelo.att.gob.bo, mude primeiro o aeroporto para $airport, o que corresponde à sua cidade. Depois procure o voo $flight nas chegadas.\n\nVamos copiar o número do voo para que você só precise colá-lo.';
+  }
+
+  @override
+  String get driverCancel => 'Cancelar';
+
+  @override
+  String get driverFlightDialogOpen => 'Entendi, abrir';
+
+  @override
+  String get driverFlightOpenFailed =>
+      'Não foi possível abrir mivuelo.att.gob.bo';
+
+  @override
+  String get driverCallDispatch => 'Ligar para a central';
+
+  @override
+  String get driverCodeLockedSecurity =>
+      'Por segurança, a verificação foi bloqueada. Fale com a central.';
+
+  @override
+  String get driverCodeAsk => 'Peça o código ao passageiro';
+
+  @override
+  String get driverCodeHint =>
+      'Ele aparece no app do passageiro. Sem ele não é possível iniciar a viagem.';
+
+  @override
+  String driverCodeSemantics(int entered, int length) {
+    return 'Código, $entered de $length dígitos';
+  }
+
+  @override
+  String get driverCodeDelete => 'Apagar';
+
+  @override
+  String get driverCodeVerified => 'Passageiro verificado';
+
+  @override
+  String get driverCodeVerifiedHint =>
+      'Deslize «Iniciar viagem» quando estiverem prontos.';
+
+  @override
+  String get driverCodeContactDispatch => 'Fale com a central';
+
+  @override
+  String get driverNavDrive => 'Dirigir';
+
+  @override
+  String get driverNavRequests => 'Solicitações';
+
+  @override
+  String get driverNavEarnings => 'Ganhos';
+
+  @override
+  String get driverNavProfile => 'Perfil';
+
+  @override
   String incidentSmsHeader(String id) {
     return 'SOS. Reserva #$id.';
   }
