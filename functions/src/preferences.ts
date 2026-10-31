@@ -279,3 +279,23 @@ export async function preferenceOptions(deps: PreferencesDeps, uid: string | und
   if (!uid) throw new HttpsError('unauthenticated', 'unauthenticated', { reason: 'unauthenticated' });
   return { playlistEnabled: (await loadPlaylistHosts(deps.db)).length > 0, noteMax: NOTE_MAX };
 }
+
+/**
+ * Al eliminar la cuenta: borra la copia de preferencias de cada reserva del
+ * pasajero (bookings/{id}/driverView/preferences). Las reservas se conservan
+ * por obligación contable; la nota, la lista y las necesidades, no. Devuelve
+ * cuántas copias borró.
+ */
+export async function deleteDriverViews(db: admin.firestore.Firestore, riderId: string): Promise<number> {
+  const bookings = await db.collection('bookings').where('riderId', '==', riderId).select().get();
+  const refs = bookings.docs.map((b) => driverViewRef(db, b.id));
+  let deleted = 0;
+  // Lotes de 400 para no rozar el límite de 500 escrituras por lote.
+  for (let i = 0; i < refs.length; i += 400) {
+    const batch = db.batch();
+    refs.slice(i, i + 400).forEach((r) => batch.delete(r));
+    await batch.commit();
+    deleted += Math.min(400, refs.length - i);
+  }
+  return deleted;
+}
