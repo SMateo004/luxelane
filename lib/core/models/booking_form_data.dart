@@ -1,6 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../enums/enums.dart';
-import 'place_model.dart';
+import 'models.dart';
 
 /// Antelación mínima de una recogida programada.
 const kMinPickupLead = Duration(minutes: 15);

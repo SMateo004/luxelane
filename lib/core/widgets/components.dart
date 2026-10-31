@@ -877,11 +877,11 @@ class LuxSwitchRow extends StatelessWidget {
 
 class RiderPreferencesNote extends StatelessWidget {
   const RiderPreferencesNote({super.key, required this.preferences});
-  final RidePreferences preferences;
+  final TripPreferences preferences;
 
   @override
   Widget build(BuildContext context) {
-    final notes = preferences.driverNotes;
+    final notes = preferences.summary;
     if (notes.isEmpty) return const SizedBox.shrink();
     return Container(
       width: double.infinity,

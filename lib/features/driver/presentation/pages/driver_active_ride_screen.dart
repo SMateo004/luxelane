@@ -9,6 +9,7 @@ import '../../../../core/widgets/lux_map.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../incidents/presentation/widgets/sos_entry.dart';
 import '../bloc/driver_bloc.dart';
+import '../widgets/driver_preferences_card.dart';
 import '../widgets/driver_step_action.dart';
 import '../widgets/flight_info_card.dart';
 
@@ -278,10 +279,8 @@ class _RideInfoRow extends StatelessWidget {
               ],
             ),
           ],
-          if (!booking.riderPreferences.isEmpty) ...[
-            const SizedBox(height: LuxSpacing.md),
-            RiderPreferencesNote(preferences: booking.riderPreferences),
-          ],
+          // Preferencias del pasajero (driverView), solo en la ventana del viaje.
+          DriverPreferencesCard(bookingId: booking.id),
           if (booking.flightNumber?.isNotEmpty == true) ...[
             const SizedBox(height: LuxSpacing.md),
             FlightInfoCard(booking: booking),

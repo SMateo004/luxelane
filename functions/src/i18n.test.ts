@@ -153,3 +153,29 @@ describe('ningún aviso usa texto fijo', () => {
     expect(MESSAGES[k].en).toBe('Trip started');
   });
 });
+
+describe('preferencias: nada en push ni en la pantalla de bloqueo (B2)', () => {
+  it('los avisos solo llevan importe, clase y referencia, nunca preferencias', () => {
+    const used = new Set(Object.values(MESSAGES).flatMap((m) => placeholdersOf(m.es)));
+    expect([...used].sort()).toEqual(['amount', 'ref', 'vehicleClass']);
+  });
+
+  it('ningún envío de push lee la copia de preferencias ni sus campos', () => {
+    const dir = __dirname;
+    const files = readdirSync(dir).filter((f) => f.endsWith('.ts') && !f.endsWith('.test.ts'));
+    const hits: string[] = [];
+    let calls = 0;
+    for (const f of files) {
+      const src = readFileSync(join(dir, f), 'utf8');
+      // Cada llamada a notice(...) o sendPush(...) con sus argumentos.
+      for (const m of src.matchAll(/\b(notice|sendPush|pushNotice|pushToAdmins)\(([^;]*?)\);/gs)) {
+        calls++;
+        if (/note|playlist|needs|driverView|preferences|conversation|musicStyle/i.test(m[2])) {
+          hits.push(`${f}: ${m[0].slice(0, 80)}`);
+        }
+      }
+    }
+    expect(calls).toBeGreaterThan(8);
+    expect(hits).toEqual([]);
+  });
+});

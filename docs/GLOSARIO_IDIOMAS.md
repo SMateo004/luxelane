@@ -142,7 +142,7 @@ idiomas y los mismos marcadores.
 ## Pendientes de revisión nativa
 
 Todo el inglés y el portugués está redactado por nosotros y **pendiente de
-revisión por un hablante nativo**: 1127 claves de la app y el catálogo del
+revisión por un hablante nativo**: 1173 claves de la app y el catálogo del
 servidor.
 
 | Fragmento (lib/l10n/src) | Claves | Pantallas |
@@ -150,18 +150,20 @@ servidor.
 | auth.json | 99 | inicio de sesión, registro, verificar correo, segundo factor, términos al reservar |
 | booking.json | 128 | reserva (pasos, invitado, resumen, errores) |
 | business.json | 17 | página de empresas |
-| common.json | 195 | componentes comunes, enums, navegación web, promesas |
+| common.json | 187 | componentes comunes, enums, navegación web, promesas |
 | common_format.json | 5 | hoy/mañana y saludos |
 | driver.json | 159 | app del chófer |
-| errors.json | 55 | mensajes de error del cliente |
+| errors.json | 56 | mensajes de error del cliente |
 | home.json | 88 | inicio móvil y web |
 | incidents.json | 42 | SOS e incidentes |
 | language.json | 4 | selector de idioma |
 | legal.json | 1 | aviso de las páginas legales |
 | notifications.json | 6 | bandeja de avisos |
 | payments.json | 99 | pago y comprobante |
-| profile.json | 47 | perfil |
-| ride.json | 76 | viaje, código de recogida, cancelación |
+| preferences.json | 60 | preferencias para el chófer (perfil, reserva, tarjeta del chófer) |
+| admin_preferences.json | 2 | preferencias en el panel |
+| profile.json | 39 | perfil |
+| ride.json | 75 | viaje, código de recogida, cancelación |
 | services.json | 93 | páginas de servicios |
 | trips.json | 13 | Mis viajes |
 | functions/src/i18n.ts | 21 avisos + 7 textos | push y bandeja |

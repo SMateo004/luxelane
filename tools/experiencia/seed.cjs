@@ -111,6 +111,8 @@ async function main() {
       noShowWaitMinutes: 10,
     },
     maxPriceAdjustmentPercent: 20,
+    // Preferencias: host FICTICIO de listas de música (no es un servicio real).
+    playlistHosts: ['musica.ejemplo.test'],
     // Pagos: datos de cobro FICTICIOS, solo para ver las pantallas. No son
     // cuentas reales ni decisiones de negocio.
     paymentMethods: { manual_qr: true },
@@ -213,7 +215,19 @@ async function main() {
     message: 'El pasajero avisa que pagó la reserva. (dato de prueba)' });
   set('openRequests/r-pending', { vehicleClass: 'business', serviceType: 'oneWay', scheduledAt: at(180), estimatedPrice: 120,
     hours: null, passengerCount: 1, luggageCount: 1, pickupAirport: 'VVI', flightType: null, pickupArea: 'Aeropuerto',
-    dropoffArea: 'Centro', pickupApprox: { lat: -17.64, lng: -63.14 }, dropoffApprox: { lat: -17.78, lng: -63.18 }, tripKm: 16 });
+    dropoffArea: 'Centro', pickupApprox: { lat: -17.64, lng: -63.14 }, dropoffApprox: { lat: -17.78, lng: -63.18 }, tripKm: 16,
+    preferredDriverLanguages: ['es', 'en'] });
+  // Preferencias de prueba (FICTICIAS): las del perfil de la pasajera y la
+  // copia de cada reserva asignada (driverView), como la deja createBooking.
+  const prefs = {
+    preferredDriverLanguages: ['es', 'en'], cabinTemperature: 'cool', conversation: 'quiet', musicStyle: 'jazz',
+    playlistUrl: 'https://musica.ejemplo.test/lista-de-prueba', needs: ['extra_luggage', 'child_seat'],
+    note: 'Viajo con un cochecito plegable. Dato de prueba.',
+  };
+  batch.update(db.doc('users/pasajera'), { tripPreferences: prefs });
+  for (const id of ['r-confirmed', 'r-arriving', 'r-arrived', 'r-verified', 'r-progress', 'r-completed']) {
+    set(`bookings/${id}/driverView/preferences`, { ...prefs, bookingId: id, riderId: 'pasajera', source: 'profile', createdAt: at(-60) });
+  }
   set('openRequests/r-released', { vehicleClass: 'business', serviceType: 'oneWay', scheduledAt: at(45), estimatedPrice: 120,
     hours: null, passengerCount: 1, luggageCount: 1, pickupAirport: 'VVI', flightType: null, pickupArea: 'Aeropuerto',
     dropoffArea: 'Centro', pickupApprox: { lat: -17.64, lng: -63.14 }, dropoffApprox: { lat: -17.78, lng: -63.18 }, tripKm: 16,

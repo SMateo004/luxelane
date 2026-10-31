@@ -1,0 +1,14 @@
+{
+  "adminPrefsEmpty": {
+    "description": "Panel de admin, detalle de una reserva: el pasajero no dejó preferencias para este viaje.",
+    "es": "Sin preferencias para este viaje",
+    "en": "No preferences for this trip",
+    "pt": "Sem preferências para esta viagem"
+  },
+  "adminPrefsLoadingLabel": {
+    "description": "Panel de admin: etiqueta de accesibilidad mientras se cargan las preferencias de la reserva.",
+    "es": "Cargando las preferencias del viaje",
+    "en": "Loading trip preferences",
+    "pt": "Carregando as preferências da viagem"
+  }
+}

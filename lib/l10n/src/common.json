@@ -329,64 +329,6 @@
     "en": "No-show",
     "pt": "Não comparecimento"
   },
-  "commonCabinCool": {
-    "description": "Preferencia de temperatura de la cabina (20 °C). En una nota para el chófer va en minúscula.",
-    "es": "Fresca",
-    "en": "Cool",
-    "pt": "Fresca"
-  },
-  "commonCabinMild": {
-    "description": "Preferencia de temperatura de la cabina (22 °C).",
-    "es": "Templada",
-    "en": "Mild",
-    "pt": "Amena"
-  },
-  "commonCabinWarm": {
-    "description": "Preferencia de temperatura de la cabina (24 °C).",
-    "es": "Cálida",
-    "en": "Warm",
-    "pt": "Quente"
-  },
-  "commonPrefOpenDoor": {
-    "description": "Indicación para el chófer según las preferencias del pasajero.",
-    "es": "Abrir la puerta",
-    "en": "Open the door",
-    "pt": "Abrir a porta"
-  },
-  "commonPrefLuggageHelp": {
-    "description": "Indicación para el chófer según las preferencias del pasajero.",
-    "es": "Ayuda con el equipaje",
-    "en": "Help with luggage",
-    "pt": "Ajuda com a bagagem"
-  },
-  "commonPrefCabin": {
-    "description": "Indicación para el chófer: temperatura de la cabina (en minúscula) y grados.",
-    "es": "Cabina {temperature} ({hint})",
-    "en": "Cabin: {temperature} ({hint})",
-    "pt": "Cabine {temperature} ({hint})",
-    "placeholders": {
-      "temperature": {
-        "type": "String",
-        "example": "fresca"
-      },
-      "hint": {
-        "type": "String",
-        "example": "20 °C"
-      }
-    }
-  },
-  "commonPrefQuiet": {
-    "description": "Indicación para el chófer: el pasajero prefiere no conversar.",
-    "es": "Viaje en silencio",
-    "en": "Quiet journey",
-    "pt": "Viagem em silêncio"
-  },
-  "commonPrefNoMusic": {
-    "description": "Indicación para el chófer: sin música.",
-    "es": "Sin música",
-    "en": "No music",
-    "pt": "Sem música"
-  },
   "commonCancelReasonChangedPlans": {
     "description": "Motivo del pasajero para cancelar una reserva.",
     "es": "Cambié de planes",

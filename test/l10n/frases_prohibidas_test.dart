@@ -10,11 +10,16 @@ import 'package:flutter_test/flutter_test.dart';
 const _porIdioma = <String, Map<String, String>>{
   'es': {
     'garantías': r'garantiz',
+    // Preferencias (B4): un deseo, no un compromiso.
+    'cumplir preferencias':
+        r'(lo|las|los)\s+cumpliremos|nos\s+aseguramos|te\s+aseguramos|respetar[aá]\s+(siempre\s+)?tus',
     // promesas_test.dart no las ve: «\b» tras «á» no es límite en Dart.
     'te contactarán': r'te\s+(contactamos|contactaremos|llamar[aá]|llamaremos)',
   },
   'en': {
     'garantías': r'guarantee',
+    'cumplir preferencias':
+        r'we\s+will\s+(honou?r|fulfil|respect)|we\s+(make|will\s+make)\s+sure|we\s+ensure',
     'chófer inmediato':
         r'(chauffeur|driver|assign\w*)[^\n]{0,60}(immediately|instantly|right away|in minutes|within minutes)',
     'en minutos': r'\b(with)?in\s+minutes\b',
@@ -40,6 +45,8 @@ const _porIdioma = <String, Map<String, String>>{
   },
   'pt': {
     'garantías': r'garanti',
+    'cumplir preferencias':
+        r'vamos\s+cumprir|cumpriremos|n[oó]s\s+asseguramos|asseguramos\s+que',
     'chófer inmediato':
         r'(motorista|designa\w*)[^\n]{0,60}(imediatamente|na\s+hora|em\s+minutos|instantaneamente)',
     'en minutos': r'\bem\s+minutos\b',
@@ -110,6 +117,23 @@ void main() {
   test('compromisos pendientes de decisión: solo estos', () {
     expect(_pendientesDeDecision.keys.toList()..sort(),
         ['businessLead', 'incidentCancelRequestedBody']);
+  });
+
+  test('preferencias: la frase sobria, igual en los tres idiomas', () {
+    for (final (l, want) in [
+      ('es', 'Tu chófer verá estas preferencias.'),
+      ('en', 'Your chauffeur will see these preferences.'),
+      ('pt', 'Seu motorista verá estas preferências.'),
+    ]) {
+      final arb = jsonDecode(File('lib/l10n/app_$l.arb').readAsStringSync())
+          as Map<String, dynamic>;
+      expect(arb['prefsDriverWillSee'], want);
+    }
+    expect(
+      RegExp(_porIdioma['es']!['cumplir preferencias']!, caseSensitive: false)
+          .hasMatch('Tus preferencias: lo cumpliremos'),
+      isTrue,
+    );
   });
 
   test('la comprobación detecta una promesa en inglés y en portugués', () {

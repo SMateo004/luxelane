@@ -15,6 +15,7 @@ import '../../domain/repositories/admin_repository.dart'
     show kAdminReasonMinLength;
 import '../bloc/admin_bloc.dart';
 import 'admin_booking_events.dart';
+import 'admin_booking_preferences.dart';
 import 'admin_finance_tab.dart';
 import 'admin_shared_widgets.dart';
 
@@ -465,19 +466,26 @@ class _AdminBookingTile extends StatelessWidget {
 }
 
 /// Ficha de una reserva con todas las acciones del admin. Se reconstruye con
-/// el estado en vivo, así refleja el resultado de cada acción.
+/// el estado en vivo, así refleja el resultado de cada acción. El diálogo
+/// cuelga del navegador raíz, fuera del LuxSpanishOnly del router: lleva
+/// el idioma del panel (español) para que no salga en el de la app.
 Future<void> showBookingDetail(BuildContext context, String bookingId) {
   final bloc = context.read<AdminBloc>();
+  final locale = Localizations.localeOf(context);
   return showDialog(
     context: context,
-    builder: (_) => BlocProvider.value(
-      value: bloc,
-      child: Dialog(
-        backgroundColor: LuxColors.surface,
-        insetPadding: const EdgeInsets.all(LuxSpacing.md),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 560, maxHeight: 760),
-          child: _BookingDetail(bookingId: bookingId),
+    builder: (_) => Localizations.override(
+      context: context,
+      locale: locale,
+      child: BlocProvider.value(
+        value: bloc,
+        child: Dialog(
+          backgroundColor: LuxColors.surface,
+          insetPadding: const EdgeInsets.all(LuxSpacing.md),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560, maxHeight: 760),
+            child: _BookingDetail(bookingId: bookingId),
+          ),
         ),
       ),
     ),
@@ -578,6 +586,8 @@ class _BookingDetail extends StatelessWidget {
                   valueColor: LuxColors.error,
                 ),
               ...cancellationRows(booking),
+              const SizedBox(height: LuxSpacing.sm),
+              AdminBookingPreferences(bookingId: booking.id),
               const SizedBox(height: LuxSpacing.sm),
               const LuxDivider(),
               const SizedBox(height: LuxSpacing.sm),

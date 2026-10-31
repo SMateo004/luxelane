@@ -31,12 +31,13 @@ class UserRepositoryImpl implements UserRepository {
   Future<Either<Failure, void>> updateUser(User user) async {
     try {
       // Solo lo que el usuario edita: reenviar el perfil entero pisaba los
-      // tokens de notificación y, con datos viejos, campos protegidos.
+      // tokens de notificación y, con datos viejos, campos protegidos. Las
+      // preferencias para el chófer van por updatePreferences
+      // (PreferencesRepository): las reglas no dejan escribirlas aquí.
       await _users.doc(user.id).update({
         'displayName': user.displayName,
         'phone': user.phone,
         'photoUrl': user.photoUrl,
-        'ridePreferences': user.ridePreferences.toJson(),
       });
       return const Right(null);
     } catch (e) {

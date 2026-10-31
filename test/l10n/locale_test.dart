@@ -37,6 +37,16 @@ void main() {
       expect(LuxLocale.fromDevice(null), const Locale('es'));
     });
 
+    test('con sesión de admin, siempre español (panel y sus diálogos)', () {
+      expect(LuxLocale.appLocale(LocaleChoice.en, admin: true),
+          const Locale('es'));
+      expect(LuxLocale.appLocale(LocaleChoice.system, admin: true),
+          const Locale('es'));
+      expect(LuxLocale.appLocale(LocaleChoice.en, admin: false),
+          const Locale('en'));
+      expect(LuxLocale.appLocale(LocaleChoice.system, admin: false), isNull);
+    });
+
     test('la elección del perfil manda sobre el teléfono', () {
       final fr = [const Locale('fr')];
       expect(LuxLocale.resolve(LocaleChoice.system, fr), const Locale('es'));

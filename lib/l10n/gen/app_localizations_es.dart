@@ -9,6 +9,12 @@ class AppLocalizationsEs extends AppLocalizations {
   AppLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
+  String get adminPrefsEmpty => 'Sin preferencias para este viaje';
+
+  @override
+  String get adminPrefsLoadingLabel => 'Cargando las preferencias del viaje';
+
+  @override
   String get authLoginTitle => 'Iniciar sesión';
 
   @override
@@ -1012,32 +1018,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get commonStatusNoShow => 'No se presentó';
-
-  @override
-  String get commonCabinCool => 'Fresca';
-
-  @override
-  String get commonCabinMild => 'Templada';
-
-  @override
-  String get commonCabinWarm => 'Cálida';
-
-  @override
-  String get commonPrefOpenDoor => 'Abrir la puerta';
-
-  @override
-  String get commonPrefLuggageHelp => 'Ayuda con el equipaje';
-
-  @override
-  String commonPrefCabin(String temperature, String hint) {
-    return 'Cabina $temperature ($hint)';
-  }
-
-  @override
-  String get commonPrefQuiet => 'Viaje en silencio';
-
-  @override
-  String get commonPrefNoMusic => 'Sin música';
 
   @override
   String get commonCancelReasonChangedPlans => 'Cambié de planes';
@@ -3097,6 +3077,194 @@ class AppLocalizationsEs extends AppLocalizations {
       'El importe final del viaje fue mayor que lo pagado.';
 
   @override
+  String get prefsNoPreference => 'Sin preferencia';
+
+  @override
+  String get prefsLanguagesTitle => 'Idiomas del chófer';
+
+  @override
+  String get prefsLanguageEs => 'Español';
+
+  @override
+  String get prefsLanguageEn => 'Inglés';
+
+  @override
+  String get prefsLanguagePt => 'Portugués';
+
+  @override
+  String get prefsTemperatureTitle => 'Temperatura';
+
+  @override
+  String get prefsTemperatureCool => 'Fresca';
+
+  @override
+  String get prefsTemperatureMild => 'Templada';
+
+  @override
+  String get prefsConversationTitle => 'Conversación';
+
+  @override
+  String get prefsConversationChatty => 'Me gusta conversar';
+
+  @override
+  String get prefsConversationQuiet => 'Prefiero silencio';
+
+  @override
+  String get prefsMusicTitle => 'Música';
+
+  @override
+  String get prefsMusicClassical => 'Clásica';
+
+  @override
+  String get prefsMusicJazz => 'Jazz';
+
+  @override
+  String get prefsMusicInstrumental => 'Instrumental';
+
+  @override
+  String get prefsMusicPop => 'Pop';
+
+  @override
+  String get prefsMusicRock => 'Rock';
+
+  @override
+  String get prefsMusicLatin => 'Latina';
+
+  @override
+  String get prefsMusicElectronic => 'Electrónica';
+
+  @override
+  String get prefsMusicFolk => 'Folclore';
+
+  @override
+  String get prefsMusicNone => 'Sin música';
+
+  @override
+  String get prefsPlaylistTitle => 'Lista de música';
+
+  @override
+  String get prefsNeedsTitle => 'Necesidades';
+
+  @override
+  String get prefsNeedExtraLuggage => 'Equipaje extra';
+
+  @override
+  String get prefsNeedLuggageAssistance => 'Ayuda con el equipaje';
+
+  @override
+  String get prefsNeedChildSeat => 'Silla infantil';
+
+  @override
+  String get prefsNeedBoosterSeat => 'Alzador infantil';
+
+  @override
+  String get prefsNeedBoardingAssistance => 'Asistencia para subir';
+
+  @override
+  String get prefsNeedFoldingWheelchair => 'Silla de ruedas plegable';
+
+  @override
+  String get prefsNeedPetInCarrier => 'Mascota en transportín';
+
+  @override
+  String get prefsNeedPrivateHint => 'Solo tu chófer asignado lo verá.';
+
+  @override
+  String get prefsNoteTitle => 'Nota para el chófer';
+
+  @override
+  String get prefsNoteWarning =>
+      'No escribas datos sensibles: claves, tarjetas ni datos de salud.';
+
+  @override
+  String get prefsDriverWillSee => 'Tu chófer verá estas preferencias.';
+
+  @override
+  String get prefsCardTitle => 'Preferencias del pasajero';
+
+  @override
+  String get prefsOpenPlaylist => 'Abrir lista';
+
+  @override
+  String get prefsOpenPlaylistTitle => 'Abrir fuera de la app';
+
+  @override
+  String get prefsOpenPlaylistBody =>
+      'La lista se abrirá fuera de Luxelane, en el navegador o en otra aplicación.';
+
+  @override
+  String get prefsOpenPlaylistConfirm => 'Abrir';
+
+  @override
+  String get prefsCancel => 'Cancelar';
+
+  @override
+  String get prefsOpenPlaylistError => 'No se pudo abrir la lista.';
+
+  @override
+  String prefsLanguagesSummary(String languages) {
+    return 'Idiomas: $languages';
+  }
+
+  @override
+  String get prefsErrorPlaylist =>
+      'Ese enlace de lista no se puede usar. Revisa que empiece por https y sea de un servicio admitido.';
+
+  @override
+  String get prefsErrorNote =>
+      'Revisa la nota: hasta 200 caracteres y sin enlaces.';
+
+  @override
+  String get prefsSaved => 'Preferencias guardadas.';
+
+  @override
+  String get prefsScreenTitle => 'Preferencias';
+
+  @override
+  String get prefsEmpty =>
+      'Aún no tienes preferencias. Añade las que quieras que tu chófer conozca.';
+
+  @override
+  String get prefsEmptyShort => 'Sin preferencias todavía';
+
+  @override
+  String get prefsSave => 'Guardar';
+
+  @override
+  String get prefsPlaylistHelp =>
+      'Pega un enlace https. Se abre siempre fuera de la app.';
+
+  @override
+  String get prefsPlaylistInvalid => 'El enlace debe empezar por https://';
+
+  @override
+  String get prefsNoteHint => 'Por ejemplo, dónde esperarte';
+
+  @override
+  String get prefsTripTitle => 'Preferencias de este viaje';
+
+  @override
+  String get prefsTripFromProfile => 'Las de tu perfil.';
+
+  @override
+  String get prefsTripChanged => 'Cambiadas solo para este viaje.';
+
+  @override
+  String get prefsTripEdit => 'Cambiar para este viaje';
+
+  @override
+  String get prefsTripSkip => 'Omitir';
+
+  @override
+  String get prefsTripReset => 'Usar las de mi perfil';
+
+  @override
+  String get prefsTripApply => 'Usar en este viaje';
+
+  @override
+  String get prefsTripEmpty => 'Sin preferencias para este viaje.';
+
+  @override
   String get profileSaveError =>
       'No pudimos guardar los cambios. Inténtalo de nuevo.';
 
@@ -3108,9 +3276,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileEdit => 'Editar';
-
-  @override
-  String get profileRideStyle => 'Tu estilo de viaje';
 
   @override
   String get profileDriverDocuments => 'Licencia y vehículo';
@@ -3150,31 +3315,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get profileDeleteAccount => 'Eliminar cuenta';
-
-  @override
-  String get profilePreferencesFooter =>
-      'Tu chófer lo sabrá antes de recogerte. Se aplica a tus próximas reservas.';
-
-  @override
-  String get profileQuietRide => 'Viaje en silencio';
-
-  @override
-  String get profileQuietRideDetail => 'Sin conversación, salvo lo necesario';
-
-  @override
-  String get profileSoftMusic => 'Música suave';
-
-  @override
-  String get profileTemperature => 'Temperatura';
-
-  @override
-  String get profileTemperatureAny => 'Indistinta';
-
-  @override
-  String get profileLuggageHelp => 'Ayuda con el equipaje';
-
-  @override
-  String get profileOpenDoor => 'Abrirme la puerta';
 
   @override
   String get profileAccountDeleted => 'Tu cuenta fue eliminada.';
@@ -3253,6 +3393,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String profileVehicleDetail(String vehicleClass, String plate) {
     return '$vehicleClass · placa $plate';
   }
+
+  @override
+  String get profilePreferencesEntry => 'Preferencias para tu chófer';
 
   @override
   String get rideLoadNotFound => 'No encontramos esta reserva en tu cuenta.';
@@ -3425,11 +3568,6 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get rideBackHome => 'Volver al inicio';
-
-  @override
-  String ridePreferencesKnown(String preferences) {
-    return 'Tu chófer conoce tu estilo: $preferences';
-  }
 
   @override
   String get rideAssigningTitle => 'Asignando a tu chófer';

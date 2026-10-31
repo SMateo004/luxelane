@@ -78,6 +78,11 @@ class _RideScreenState extends State<RideScreen> {
   StreamSubscription<Booking>? _sub;
   StreamSubscription<String?>? _phoneSub;
   StreamSubscription<BookingPayment?>? _paySub;
+  StreamSubscription<TripPreferences?>? _prefsSub;
+
+  /// Copia de las preferencias de esta reserva (driverView), no las de la
+  /// reserva: la reserva ya no las lleva.
+  TripPreferences _prefs = TripPreferences.empty;
   Booking? _booking;
 
   /// Pago de la reserva (payment/state): solo lo leen el pasajero dueño y
@@ -135,6 +140,13 @@ class _RideScreenState extends State<RideScreen> {
   }
 
   void _watchPayment() {
+    if (widget.rideId.isNotEmpty && sl.isRegistered<PreferencesRepository>()) {
+      _prefsSub = sl<PreferencesRepository>()
+          .watchBookingPreferences(widget.rideId)
+          .listen((p) {
+        if (mounted) setState(() => _prefs = p ?? TripPreferences.empty);
+      });
+    }
     if (widget.rideId.isEmpty || !sl.isRegistered<BookingPaymentRepository>()) {
       return;
     }
@@ -151,6 +163,7 @@ class _RideScreenState extends State<RideScreen> {
   void dispose() {
     RemoteFlags.instance.dispatchPhone.removeListener(_onDispatchPhone);
     _sub?.cancel();
+    _prefsSub?.cancel();
     _phoneSub?.cancel();
     _paySub?.cancel();
     super.dispose();
@@ -481,8 +494,7 @@ class _RideScreenState extends State<RideScreen> {
                     ],
                   ),
                   actions: _actions(),
-                  preferences:
-                      _booking?.riderPreferences ?? RidePreferences.none,
+                  preferences: _prefs,
                 ),
               ],
             ),
@@ -596,7 +608,7 @@ class _BottomPanel extends StatelessWidget {
     required this.driver,
     required this.actions,
     this.pickup = const SizedBox.shrink(),
-    this.preferences = RidePreferences.none,
+    this.preferences = TripPreferences.empty,
   });
 
   /// null mientras carga o si la reserva no se pudo abrir: sin etiqueta
@@ -606,14 +618,14 @@ class _BottomPanel extends StatelessWidget {
   final Widget pickup;
   final Widget driver;
   final Widget actions;
-  final RidePreferences preferences;
+  final TripPreferences preferences;
 
   @override
   Widget build(BuildContext context) {
     final duration = LuxMotion.of(context, LuxMotion.slow);
     final open =
         status != BookingStatus.completed && status != BookingStatus.cancelled;
-    final notes = preferences.driverNotes;
+    final notes = preferences.summary;
     return Container(
       decoration: const BoxDecoration(
         color: LuxColors.surface,
@@ -683,16 +695,16 @@ class _BottomPanel extends StatelessWidget {
                 Row(
                   children: [
                     const Icon(
-                      Icons.verified_outlined,
+                      Icons.visibility_outlined,
                       size: 14,
                       color: LuxColors.sapphire,
                     ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        context.l10n.ridePreferencesKnown(
-                          notes.take(3).join(' · ').toLowerCase(),
-                        ),
+                        // Sin promesas: el chófer las ve, nada más.
+                        '${context.l10n.prefsDriverWillSee} '
+                        '${notes.take(3).join(' · ')}',
                         maxLines: luxMaxLines(context, 2),
                         overflow: TextOverflow.ellipsis,
                         style: LuxTypography.caption.copyWith(fontSize: 12),

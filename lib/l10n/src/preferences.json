@@ -1,0 +1,368 @@
+{
+  "prefsNoPreference": {
+    "description": "Opción «sin preferencia» de temperatura, conversación y música.",
+    "es": "Sin preferencia",
+    "en": "No preference",
+    "pt": "Sem preferência"
+  },
+  "prefsLanguagesTitle": {
+    "description": "Título: idiomas que el pasajero prefiere en su chófer.",
+    "es": "Idiomas del chófer",
+    "en": "Chauffeur's languages",
+    "pt": "Idiomas do motorista"
+  },
+  "prefsLanguageEs": {
+    "description": "Idioma del chófer: español.",
+    "es": "Español",
+    "en": "Spanish",
+    "pt": "Espanhol"
+  },
+  "prefsLanguageEn": {
+    "description": "Idioma del chófer: inglés.",
+    "es": "Inglés",
+    "en": "English",
+    "pt": "Inglês"
+  },
+  "prefsLanguagePt": {
+    "description": "Idioma del chófer: portugués.",
+    "es": "Portugués",
+    "en": "Portuguese",
+    "pt": "Português"
+  },
+  "prefsTemperatureTitle": {
+    "description": "Título: temperatura de la cabina.",
+    "es": "Temperatura",
+    "en": "Temperature",
+    "pt": "Temperatura"
+  },
+  "prefsTemperatureCool": {
+    "description": "Temperatura de la cabina: fresca.",
+    "es": "Fresca",
+    "en": "Cool",
+    "pt": "Fresca"
+  },
+  "prefsTemperatureMild": {
+    "description": "Temperatura de la cabina: templada.",
+    "es": "Templada",
+    "en": "Mild",
+    "pt": "Amena"
+  },
+  "prefsConversationTitle": {
+    "description": "Título: si prefiere conversar o ir en silencio.",
+    "es": "Conversación",
+    "en": "Conversation",
+    "pt": "Conversa"
+  },
+  "prefsConversationChatty": {
+    "description": "Conversación: le gusta conversar.",
+    "es": "Me gusta conversar",
+    "en": "Happy to chat",
+    "pt": "Gosto de conversar"
+  },
+  "prefsConversationQuiet": {
+    "description": "Conversación: prefiere silencio.",
+    "es": "Prefiero silencio",
+    "en": "I prefer quiet",
+    "pt": "Prefiro silêncio"
+  },
+  "prefsMusicTitle": {
+    "description": "Título: estilo de música.",
+    "es": "Música",
+    "en": "Music",
+    "pt": "Música"
+  },
+  "prefsMusicClassical": {
+    "description": "Estilo de música genérico (sin artistas ni marcas).",
+    "es": "Clásica",
+    "en": "Classical",
+    "pt": "Clássica"
+  },
+  "prefsMusicJazz": {
+    "description": "Estilo de música genérico (sin artistas ni marcas).",
+    "es": "Jazz",
+    "en": "Jazz",
+    "pt": "Jazz"
+  },
+  "prefsMusicInstrumental": {
+    "description": "Estilo de música genérico (sin artistas ni marcas).",
+    "es": "Instrumental",
+    "en": "Instrumental",
+    "pt": "Instrumental"
+  },
+  "prefsMusicPop": {
+    "description": "Estilo de música genérico (sin artistas ni marcas).",
+    "es": "Pop",
+    "en": "Pop",
+    "pt": "Pop"
+  },
+  "prefsMusicRock": {
+    "description": "Estilo de música genérico (sin artistas ni marcas).",
+    "es": "Rock",
+    "en": "Rock",
+    "pt": "Rock"
+  },
+  "prefsMusicLatin": {
+    "description": "Estilo de música genérico (sin artistas ni marcas).",
+    "es": "Latina",
+    "en": "Latin",
+    "pt": "Latina"
+  },
+  "prefsMusicElectronic": {
+    "description": "Estilo de música genérico (sin artistas ni marcas).",
+    "es": "Electrónica",
+    "en": "Electronic",
+    "pt": "Eletrônica"
+  },
+  "prefsMusicFolk": {
+    "description": "Estilo de música genérico (sin artistas ni marcas).",
+    "es": "Folclore",
+    "en": "Folk",
+    "pt": "Folclore"
+  },
+  "prefsMusicNone": {
+    "description": "Estilo de música genérico (sin artistas ni marcas).",
+    "es": "Sin música",
+    "en": "No music",
+    "pt": "Sem música"
+  },
+  "prefsPlaylistTitle": {
+    "description": "Título: enlace a una lista de música del pasajero (opcional).",
+    "es": "Lista de música",
+    "en": "Playlist",
+    "pt": "Playlist"
+  },
+  "prefsNeedsTitle": {
+    "description": "Título: necesidades prácticas para el viaje.",
+    "es": "Necesidades",
+    "en": "Practical needs",
+    "pt": "Necessidades"
+  },
+  "prefsNeedExtraLuggage": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro.",
+    "es": "Equipaje extra",
+    "en": "Extra luggage",
+    "pt": "Bagagem extra"
+  },
+  "prefsNeedLuggageAssistance": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro.",
+    "es": "Ayuda con el equipaje",
+    "en": "Help with luggage",
+    "pt": "Ajuda com a bagagem"
+  },
+  "prefsNeedChildSeat": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro.",
+    "es": "Silla infantil",
+    "en": "Child seat",
+    "pt": "Cadeirinha infantil"
+  },
+  "prefsNeedBoosterSeat": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro.",
+    "es": "Alzador infantil",
+    "en": "Booster seat",
+    "pt": "Assento de elevação"
+  },
+  "prefsNeedBoardingAssistance": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro.",
+    "es": "Asistencia para subir",
+    "en": "Help getting in",
+    "pt": "Ajuda para embarcar"
+  },
+  "prefsNeedFoldingWheelchair": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro.",
+    "es": "Silla de ruedas plegable",
+    "en": "Folding wheelchair",
+    "pt": "Cadeira de rodas dobrável"
+  },
+  "prefsNeedPetInCarrier": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro.",
+    "es": "Mascota en transportín",
+    "en": "Pet in a carrier",
+    "pt": "Pet em caixa de transporte"
+  },
+  "prefsNeedPrivateHint": {
+    "description": "Aviso bajo las necesidades que pueden ser personales (asistencia para subir, silla de ruedas).",
+    "es": "Solo tu chófer asignado lo verá.",
+    "en": "Only your assigned chauffeur will see this.",
+    "pt": "Só o seu motorista designado verá isto."
+  },
+  "prefsNoteTitle": {
+    "description": "Título: nota libre para el chófer (hasta 200 caracteres).",
+    "es": "Nota para el chófer",
+    "en": "Note for your chauffeur",
+    "pt": "Observação para o motorista"
+  },
+  "prefsNoteWarning": {
+    "description": "Advertencia bajo la nota: no escribir datos sensibles.",
+    "es": "No escribas datos sensibles: claves, tarjetas ni datos de salud.",
+    "en": "Do not write sensitive information: passwords, cards or health details.",
+    "pt": "Não escreva dados sensíveis: senhas, cartões ou dados de saúde."
+  },
+  "prefsDriverWillSee": {
+    "description": "Texto sobrio bajo las preferencias: no promete que se cumplan.",
+    "es": "Tu chófer verá estas preferencias.",
+    "en": "Your chauffeur will see these preferences.",
+    "pt": "Seu motorista verá estas preferências."
+  },
+  "prefsCardTitle": {
+    "description": "Título de la tarjeta del chófer con las preferencias del pasajero.",
+    "es": "Preferencias del pasajero",
+    "en": "Passenger preferences",
+    "pt": "Preferências do passageiro"
+  },
+  "prefsOpenPlaylist": {
+    "description": "Botón del chófer para abrir la lista de música del pasajero.",
+    "es": "Abrir lista",
+    "en": "Open playlist",
+    "pt": "Abrir playlist"
+  },
+  "prefsOpenPlaylistTitle": {
+    "description": "Título del aviso antes de abrir la lista.",
+    "es": "Abrir fuera de la app",
+    "en": "Open outside the app",
+    "pt": "Abrir fora do app"
+  },
+  "prefsOpenPlaylistBody": {
+    "description": "Aviso antes de abrir la lista: sale de la app.",
+    "es": "La lista se abrirá fuera de Luxelane, en el navegador o en otra aplicación.",
+    "en": "The playlist will open outside Luxelane, in your browser or another app.",
+    "pt": "A playlist será aberta fora da Luxelane, no navegador ou em outro app."
+  },
+  "prefsOpenPlaylistConfirm": {
+    "description": "Botón para confirmar que se abre la lista.",
+    "es": "Abrir",
+    "en": "Open",
+    "pt": "Abrir"
+  },
+  "prefsCancel": {
+    "description": "Botón para cancelar.",
+    "es": "Cancelar",
+    "en": "Cancel",
+    "pt": "Cancelar"
+  },
+  "prefsOpenPlaylistError": {
+    "description": "Error si no se pudo abrir la lista.",
+    "es": "No se pudo abrir la lista.",
+    "en": "The playlist could not be opened.",
+    "pt": "Não foi possível abrir a playlist."
+  },
+  "prefsLanguagesSummary": {
+    "description": "Resumen corto en la solicitud abierta: idiomas que prefiere el pasajero.",
+    "es": "Idiomas: {languages}",
+    "en": "Languages: {languages}",
+    "pt": "Idiomas: {languages}",
+    "placeholders": {
+      "languages": {
+        "type": "String",
+        "example": "Español, Inglés"
+      }
+    }
+  },
+  "prefsErrorPlaylist": {
+    "description": "Error al guardar: la lista no es https o su servicio no está permitido.",
+    "es": "Ese enlace de lista no se puede usar. Revisa que empiece por https y sea de un servicio admitido.",
+    "en": "That playlist link cannot be used. Check that it starts with https and is from a supported service.",
+    "pt": "Esse link de playlist não pode ser usado. Confira se começa com https e é de um serviço aceito."
+  },
+  "prefsErrorNote": {
+    "description": "Error al guardar: la nota es demasiado larga o lleva un enlace.",
+    "es": "Revisa la nota: hasta 200 caracteres y sin enlaces.",
+    "en": "Check the note: up to 200 characters and no links.",
+    "pt": "Confira a observação: até 200 caracteres e sem links."
+  },
+  "prefsSaved": {
+    "description": "Confirmación sobria al guardar las preferencias del perfil.",
+    "es": "Preferencias guardadas.",
+    "en": "Preferences saved.",
+    "pt": "Preferências salvas."
+  },
+  "prefsScreenTitle": {
+    "description": "Título de la pantalla de preferencias del perfil.",
+    "es": "Preferencias",
+    "en": "Preferences",
+    "pt": "Preferências"
+  },
+  "prefsEmpty": {
+    "description": "Estado vacío de la pantalla de preferencias: aún no hay ninguna.",
+    "es": "Aún no tienes preferencias. Añade las que quieras que tu chófer conozca.",
+    "en": "You have no preferences yet. Add any you would like your chauffeur to know.",
+    "pt": "Você ainda não tem preferências. Adicione as que quiser que seu motorista conheça."
+  },
+  "prefsEmptyShort": {
+    "description": "Subtítulo de la fila del perfil cuando no hay preferencias.",
+    "es": "Sin preferencias todavía",
+    "en": "No preferences yet",
+    "pt": "Nenhuma preferência ainda"
+  },
+  "prefsSave": {
+    "description": "Botón para guardar las preferencias del perfil.",
+    "es": "Guardar",
+    "en": "Save",
+    "pt": "Salvar"
+  },
+  "prefsPlaylistHelp": {
+    "description": "Ayuda bajo el campo de la lista de música.",
+    "es": "Pega un enlace https. Se abre siempre fuera de la app.",
+    "en": "Paste an https link. It always opens outside the app.",
+    "pt": "Cole um link https. Sempre abre fora do app."
+  },
+  "prefsPlaylistInvalid": {
+    "description": "Error del campo de la lista: el enlace no empieza por https.",
+    "es": "El enlace debe empezar por https://",
+    "en": "The link must start with https://",
+    "pt": "O link deve começar com https://"
+  },
+  "prefsNoteHint": {
+    "description": "Ejemplo dentro del campo de la nota para el chófer.",
+    "es": "Por ejemplo, dónde esperarte",
+    "en": "For example, where to wait for you",
+    "pt": "Por exemplo, onde esperar por você"
+  },
+  "prefsTripTitle": {
+    "description": "Reserva: título del paso opcional con las preferencias de este viaje.",
+    "es": "Preferencias de este viaje",
+    "en": "Preferences for this trip",
+    "pt": "Preferências desta viagem"
+  },
+  "prefsTripFromProfile": {
+    "description": "Reserva: las preferencias mostradas son las del perfil.",
+    "es": "Las de tu perfil.",
+    "en": "From your profile.",
+    "pt": "As do seu perfil."
+  },
+  "prefsTripChanged": {
+    "description": "Reserva: las preferencias se cambiaron solo para este viaje.",
+    "es": "Cambiadas solo para este viaje.",
+    "en": "Changed for this trip only.",
+    "pt": "Alteradas só para esta viagem."
+  },
+  "prefsTripEdit": {
+    "description": "Reserva: botón para cambiar las preferencias de este viaje.",
+    "es": "Cambiar para este viaje",
+    "en": "Change for this trip",
+    "pt": "Alterar para esta viagem"
+  },
+  "prefsTripSkip": {
+    "description": "Reserva: cerrar las preferencias de este viaje sin cambiar nada.",
+    "es": "Omitir",
+    "en": "Skip",
+    "pt": "Pular"
+  },
+  "prefsTripReset": {
+    "description": "Reserva: volver a las preferencias del perfil.",
+    "es": "Usar las de mi perfil",
+    "en": "Use my profile's",
+    "pt": "Usar as do meu perfil"
+  },
+  "prefsTripApply": {
+    "description": "Reserva: botón para usar las preferencias elegidas en este viaje.",
+    "es": "Usar en este viaje",
+    "en": "Use for this trip",
+    "pt": "Usar nesta viagem"
+  },
+  "prefsTripEmpty": {
+    "description": "Reserva: no hay preferencias para este viaje.",
+    "es": "Sin preferencias para este viaje.",
+    "en": "No preferences for this trip.",
+    "pt": "Sem preferências para esta viagem."
+  }
+}

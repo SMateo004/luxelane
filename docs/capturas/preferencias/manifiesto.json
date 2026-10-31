@@ -1,0 +1,302 @@
+{
+  "generado": "2026-10-31T15:52:28.605Z",
+  "idiomas": [
+    "es",
+    "en"
+  ],
+  "anchos": [
+    390,
+    768,
+    1280
+  ],
+  "capturas": [
+    {
+      "idioma": "es",
+      "estado": "01-perfil-resumen",
+      "ancho": 390,
+      "archivo": "es/01-perfil-resumen_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "02-preferencias",
+      "ancho": 390,
+      "archivo": "es/02-preferencias_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "03-viaje-pasajero",
+      "ancho": 390,
+      "archivo": "es/03-viaje-pasajero_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "04-chofer-viaje",
+      "ancho": 390,
+      "archivo": "es/04-chofer-viaje_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "05-chofer-solicitud",
+      "ancho": 390,
+      "archivo": "es/05-chofer-solicitud_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "01-perfil-resumen",
+      "ancho": 768,
+      "archivo": "es/01-perfil-resumen_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "02-preferencias",
+      "ancho": 768,
+      "archivo": "es/02-preferencias_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "03-viaje-pasajero",
+      "ancho": 768,
+      "archivo": "es/03-viaje-pasajero_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "04-chofer-viaje",
+      "ancho": 768,
+      "archivo": "es/04-chofer-viaje_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "05-chofer-solicitud",
+      "ancho": 768,
+      "archivo": "es/05-chofer-solicitud_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "01-perfil-resumen",
+      "ancho": 1280,
+      "archivo": "es/01-perfil-resumen_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "02-preferencias",
+      "ancho": 1280,
+      "archivo": "es/02-preferencias_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "03-viaje-pasajero",
+      "ancho": 1280,
+      "archivo": "es/03-viaje-pasajero_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "04-chofer-viaje",
+      "ancho": 1280,
+      "archivo": "es/04-chofer-viaje_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "05-chofer-solicitud",
+      "ancho": 1280,
+      "archivo": "es/05-chofer-solicitud_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "01-perfil-resumen",
+      "ancho": 390,
+      "archivo": "en/01-perfil-resumen_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "02-preferencias",
+      "ancho": 390,
+      "archivo": "en/02-preferencias_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "03-viaje-pasajero",
+      "ancho": 390,
+      "archivo": "en/03-viaje-pasajero_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "04-chofer-viaje",
+      "ancho": 390,
+      "archivo": "en/04-chofer-viaje_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "05-chofer-solicitud",
+      "ancho": 390,
+      "archivo": "en/05-chofer-solicitud_390.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "01-perfil-resumen",
+      "ancho": 768,
+      "archivo": "en/01-perfil-resumen_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "02-preferencias",
+      "ancho": 768,
+      "archivo": "en/02-preferencias_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "03-viaje-pasajero",
+      "ancho": 768,
+      "archivo": "en/03-viaje-pasajero_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "04-chofer-viaje",
+      "ancho": 768,
+      "archivo": "en/04-chofer-viaje_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "05-chofer-solicitud",
+      "ancho": 768,
+      "archivo": "en/05-chofer-solicitud_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "01-perfil-resumen",
+      "ancho": 1280,
+      "archivo": "en/01-perfil-resumen_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "02-preferencias",
+      "ancho": 1280,
+      "archivo": "en/02-preferencias_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "03-viaje-pasajero",
+      "ancho": 1280,
+      "archivo": "en/03-viaje-pasajero_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "04-chofer-viaje",
+      "ancho": 1280,
+      "archivo": "en/04-chofer-viaje_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "05-chofer-solicitud",
+      "ancho": 1280,
+      "archivo": "en/05-chofer-solicitud_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "06-panel-detalle",
+      "ancho": 390,
+      "archivo": "es/06-panel-detalle_390.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded."
+    },
+    {
+      "idioma": "es",
+      "estado": "06-panel-detalle",
+      "ancho": 768,
+      "archivo": "es/06-panel-detalle_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "es",
+      "estado": "06-panel-detalle",
+      "ancho": 1280,
+      "archivo": "es/06-panel-detalle_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "06-panel-detalle",
+      "ancho": 390,
+      "archivo": "en/06-panel-detalle_390.png",
+      "resultado": "fallo",
+      "motivo": "locator.click: Timeout 30000ms exceeded."
+    },
+    {
+      "idioma": "en",
+      "estado": "06-panel-detalle",
+      "ancho": 768,
+      "archivo": "en/06-panel-detalle_768.png",
+      "resultado": "ok",
+      "motivo": ""
+    },
+    {
+      "idioma": "en",
+      "estado": "06-panel-detalle",
+      "ancho": 1280,
+      "archivo": "en/06-panel-detalle_1280.png",
+      "resultado": "ok",
+      "motivo": ""
+    }
+  ]
+}

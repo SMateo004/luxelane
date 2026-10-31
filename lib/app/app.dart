@@ -117,29 +117,34 @@ class _LuxelaneAppState extends State<LuxelaneApp> {
         BlocProvider<DriverBloc>.value(value: _driverBloc),
         BlocProvider<NotificationBloc>.value(value: _notificationBloc),
       ],
-      // El idioma cambia al instante al elegirlo en el perfil.
-      child: ValueListenableBuilder<LocaleChoice>(
-        valueListenable: _locale,
-        builder: (context, choice, _) => MaterialApp.router(
-          title: kAppTitle,
-          // En la pestaña del navegador y el selector de apps, en el idioma
-          // activo (en español es el mismo kAppTitle).
-          onGenerateTitle: (context) => context.l10n.commonAppTitle,
-          debugShowCheckedModeBanner: false,
-          locale: choice == LocaleChoice.system ? null : Locale(choice.name),
-          localeListResolutionCallback: LuxLocale.resolveList,
-          supportedLocales: LuxLocale.supportedLocales,
-          localizationsDelegates: LuxLocale.delegates,
-          builder: (context, child) {
-            // Textos fuera de los widgets (blocs, enums) en el idioma activo.
-            L10n.use(Localizations.localeOf(context));
-            return LuxConnectionBanner(
-              online: ConnectionStatus.watch(sl<FirebaseFirestore>()),
-              child: child ?? const SizedBox.shrink(),
-            );
-          },
-          theme: luxTheme,
-          routerConfig: _router,
+      // El idioma cambia al instante al elegirlo en el perfil; con sesión de
+      // admin, todo en español (panel y diálogos).
+      child: BlocSelector<AuthBloc, AuthState, bool>(
+        selector: (s) =>
+            s is AuthAuthenticated && s.user.role == UserRole.admin,
+        builder: (context, admin) => ValueListenableBuilder<LocaleChoice>(
+          valueListenable: _locale,
+          builder: (context, choice, _) => MaterialApp.router(
+            title: kAppTitle,
+            // En la pestaña del navegador y el selector de apps, en el idioma
+            // activo (en español es el mismo kAppTitle).
+            onGenerateTitle: (context) => context.l10n.commonAppTitle,
+            debugShowCheckedModeBanner: false,
+            locale: LuxLocale.appLocale(choice, admin: admin),
+            localeListResolutionCallback: LuxLocale.resolveList,
+            supportedLocales: LuxLocale.supportedLocales,
+            localizationsDelegates: LuxLocale.delegates,
+            builder: (context, child) {
+              // Textos fuera de los widgets (blocs, enums) en el idioma activo.
+              L10n.use(Localizations.localeOf(context));
+              return LuxConnectionBanner(
+                online: ConnectionStatus.watch(sl<FirebaseFirestore>()),
+                child: child ?? const SizedBox.shrink(),
+              );
+            },
+            theme: luxTheme,
+            routerConfig: _router,
+          ),
         ),
       ),
     );

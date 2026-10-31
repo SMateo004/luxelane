@@ -645,9 +645,10 @@ export const detachPaymentMethod = secureCallable('detachPaymentMethod', withStr
 // ---------------------------------------------------------------------------
 
 // El propio usuario elimina su cuenta (exigido por App Store y Google Play).
-// Se borran el perfil, los avisos, el perfil de chófer, el cliente de Stripe
-// y el acceso; las reservas y pagos se conservan por obligación contable y
-// solo guardan el uid, que deja de apuntar a datos personales.
+// Se borran el perfil, los avisos, el perfil de chófer, el cliente de Stripe,
+// las preferencias de cada reserva (driverView) y el acceso; las reservas y
+// pagos se conservan por obligación contable y solo guardan el uid, que deja
+// de apuntar a datos personales.
 export const deleteAccount = secureCallable('deleteAccount', withStripe, async (req) => {
   const uid = requireAuth(req);
   parseInput(schema.deleteAccount, req.data);
@@ -675,6 +676,10 @@ export const deleteAccount = secureCallable('deleteAccount', withStripe, async (
       logger.warn('deleteAccount', 'stripe customer not deleted', { uid, error: String(e) });
     }
   }
+
+  // Preferencias para el chófer de cada reserva (nota, lista, necesidades):
+  // se borran aunque la reserva se conserve.
+  await preferences.deleteDriverViews(db, uid);
 
   const notifications = await userRef.collection('notifications').get();
   const vehicles = await db.collection('vehicles').where('driverId', '==', uid).get();

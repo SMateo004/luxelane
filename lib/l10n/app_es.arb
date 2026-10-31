@@ -1,5 +1,13 @@
 {
   "@@locale": "es",
+  "adminPrefsEmpty": "Sin preferencias para este viaje",
+  "@adminPrefsEmpty": {
+    "description": "Panel de admin, detalle de una reserva: el pasajero no dejó preferencias para este viaje."
+  },
+  "adminPrefsLoadingLabel": "Cargando las preferencias del viaje",
+  "@adminPrefsLoadingLabel": {
+    "description": "Panel de admin: etiqueta de accesibilidad mientras se cargan las preferencias de la reserva."
+  },
   "authLoginTitle": "Iniciar sesión",
   "@authLoginTitle": {
     "description": "Título de la pantalla de inicio de sesión (web) y botón principal para entrar."
@@ -1281,48 +1289,6 @@
   "commonStatusNoShow": "No se presentó",
   "@commonStatusNoShow": {
     "description": "Estado de una reserva: el pasajero no se presentó."
-  },
-  "commonCabinCool": "Fresca",
-  "@commonCabinCool": {
-    "description": "Preferencia de temperatura de la cabina (20 °C). En una nota para el chófer va en minúscula."
-  },
-  "commonCabinMild": "Templada",
-  "@commonCabinMild": {
-    "description": "Preferencia de temperatura de la cabina (22 °C)."
-  },
-  "commonCabinWarm": "Cálida",
-  "@commonCabinWarm": {
-    "description": "Preferencia de temperatura de la cabina (24 °C)."
-  },
-  "commonPrefOpenDoor": "Abrir la puerta",
-  "@commonPrefOpenDoor": {
-    "description": "Indicación para el chófer según las preferencias del pasajero."
-  },
-  "commonPrefLuggageHelp": "Ayuda con el equipaje",
-  "@commonPrefLuggageHelp": {
-    "description": "Indicación para el chófer según las preferencias del pasajero."
-  },
-  "commonPrefCabin": "Cabina {temperature} ({hint})",
-  "@commonPrefCabin": {
-    "description": "Indicación para el chófer: temperatura de la cabina (en minúscula) y grados.",
-    "placeholders": {
-      "temperature": {
-        "type": "String",
-        "example": "fresca"
-      },
-      "hint": {
-        "type": "String",
-        "example": "20 °C"
-      }
-    }
-  },
-  "commonPrefQuiet": "Viaje en silencio",
-  "@commonPrefQuiet": {
-    "description": "Indicación para el chófer: el pasajero prefiere no conversar."
-  },
-  "commonPrefNoMusic": "Sin música",
-  "@commonPrefNoMusic": {
-    "description": "Indicación para el chófer: sin música."
   },
   "commonCancelReasonChangedPlans": "Cambié de planes",
   "@commonCancelReasonChangedPlans": {
@@ -4090,6 +4056,252 @@
   "@paymentReceiptBalanceNote": {
     "description": "Nota bajo el saldo pendiente; sin promesas de contacto."
   },
+  "prefsNoPreference": "Sin preferencia",
+  "@prefsNoPreference": {
+    "description": "Opción «sin preferencia» de temperatura, conversación y música."
+  },
+  "prefsLanguagesTitle": "Idiomas del chófer",
+  "@prefsLanguagesTitle": {
+    "description": "Título: idiomas que el pasajero prefiere en su chófer."
+  },
+  "prefsLanguageEs": "Español",
+  "@prefsLanguageEs": {
+    "description": "Idioma del chófer: español."
+  },
+  "prefsLanguageEn": "Inglés",
+  "@prefsLanguageEn": {
+    "description": "Idioma del chófer: inglés."
+  },
+  "prefsLanguagePt": "Portugués",
+  "@prefsLanguagePt": {
+    "description": "Idioma del chófer: portugués."
+  },
+  "prefsTemperatureTitle": "Temperatura",
+  "@prefsTemperatureTitle": {
+    "description": "Título: temperatura de la cabina."
+  },
+  "prefsTemperatureCool": "Fresca",
+  "@prefsTemperatureCool": {
+    "description": "Temperatura de la cabina: fresca."
+  },
+  "prefsTemperatureMild": "Templada",
+  "@prefsTemperatureMild": {
+    "description": "Temperatura de la cabina: templada."
+  },
+  "prefsConversationTitle": "Conversación",
+  "@prefsConversationTitle": {
+    "description": "Título: si prefiere conversar o ir en silencio."
+  },
+  "prefsConversationChatty": "Me gusta conversar",
+  "@prefsConversationChatty": {
+    "description": "Conversación: le gusta conversar."
+  },
+  "prefsConversationQuiet": "Prefiero silencio",
+  "@prefsConversationQuiet": {
+    "description": "Conversación: prefiere silencio."
+  },
+  "prefsMusicTitle": "Música",
+  "@prefsMusicTitle": {
+    "description": "Título: estilo de música."
+  },
+  "prefsMusicClassical": "Clásica",
+  "@prefsMusicClassical": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicJazz": "Jazz",
+  "@prefsMusicJazz": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicInstrumental": "Instrumental",
+  "@prefsMusicInstrumental": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicPop": "Pop",
+  "@prefsMusicPop": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicRock": "Rock",
+  "@prefsMusicRock": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicLatin": "Latina",
+  "@prefsMusicLatin": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicElectronic": "Electrónica",
+  "@prefsMusicElectronic": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicFolk": "Folclore",
+  "@prefsMusicFolk": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsMusicNone": "Sin música",
+  "@prefsMusicNone": {
+    "description": "Estilo de música genérico (sin artistas ni marcas)."
+  },
+  "prefsPlaylistTitle": "Lista de música",
+  "@prefsPlaylistTitle": {
+    "description": "Título: enlace a una lista de música del pasajero (opcional)."
+  },
+  "prefsNeedsTitle": "Necesidades",
+  "@prefsNeedsTitle": {
+    "description": "Título: necesidades prácticas para el viaje."
+  },
+  "prefsNeedExtraLuggage": "Equipaje extra",
+  "@prefsNeedExtraLuggage": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedLuggageAssistance": "Ayuda con el equipaje",
+  "@prefsNeedLuggageAssistance": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedChildSeat": "Silla infantil",
+  "@prefsNeedChildSeat": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedBoosterSeat": "Alzador infantil",
+  "@prefsNeedBoosterSeat": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedBoardingAssistance": "Asistencia para subir",
+  "@prefsNeedBoardingAssistance": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedFoldingWheelchair": "Silla de ruedas plegable",
+  "@prefsNeedFoldingWheelchair": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedPetInCarrier": "Mascota en transportín",
+  "@prefsNeedPetInCarrier": {
+    "description": "Necesidad práctica (lista cerrada). Texto neutro."
+  },
+  "prefsNeedPrivateHint": "Solo tu chófer asignado lo verá.",
+  "@prefsNeedPrivateHint": {
+    "description": "Aviso bajo las necesidades que pueden ser personales (asistencia para subir, silla de ruedas)."
+  },
+  "prefsNoteTitle": "Nota para el chófer",
+  "@prefsNoteTitle": {
+    "description": "Título: nota libre para el chófer (hasta 200 caracteres)."
+  },
+  "prefsNoteWarning": "No escribas datos sensibles: claves, tarjetas ni datos de salud.",
+  "@prefsNoteWarning": {
+    "description": "Advertencia bajo la nota: no escribir datos sensibles."
+  },
+  "prefsDriverWillSee": "Tu chófer verá estas preferencias.",
+  "@prefsDriverWillSee": {
+    "description": "Texto sobrio bajo las preferencias: no promete que se cumplan."
+  },
+  "prefsCardTitle": "Preferencias del pasajero",
+  "@prefsCardTitle": {
+    "description": "Título de la tarjeta del chófer con las preferencias del pasajero."
+  },
+  "prefsOpenPlaylist": "Abrir lista",
+  "@prefsOpenPlaylist": {
+    "description": "Botón del chófer para abrir la lista de música del pasajero."
+  },
+  "prefsOpenPlaylistTitle": "Abrir fuera de la app",
+  "@prefsOpenPlaylistTitle": {
+    "description": "Título del aviso antes de abrir la lista."
+  },
+  "prefsOpenPlaylistBody": "La lista se abrirá fuera de Luxelane, en el navegador o en otra aplicación.",
+  "@prefsOpenPlaylistBody": {
+    "description": "Aviso antes de abrir la lista: sale de la app."
+  },
+  "prefsOpenPlaylistConfirm": "Abrir",
+  "@prefsOpenPlaylistConfirm": {
+    "description": "Botón para confirmar que se abre la lista."
+  },
+  "prefsCancel": "Cancelar",
+  "@prefsCancel": {
+    "description": "Botón para cancelar."
+  },
+  "prefsOpenPlaylistError": "No se pudo abrir la lista.",
+  "@prefsOpenPlaylistError": {
+    "description": "Error si no se pudo abrir la lista."
+  },
+  "prefsLanguagesSummary": "Idiomas: {languages}",
+  "@prefsLanguagesSummary": {
+    "description": "Resumen corto en la solicitud abierta: idiomas que prefiere el pasajero.",
+    "placeholders": {
+      "languages": {
+        "type": "String",
+        "example": "Español, Inglés"
+      }
+    }
+  },
+  "prefsErrorPlaylist": "Ese enlace de lista no se puede usar. Revisa que empiece por https y sea de un servicio admitido.",
+  "@prefsErrorPlaylist": {
+    "description": "Error al guardar: la lista no es https o su servicio no está permitido."
+  },
+  "prefsErrorNote": "Revisa la nota: hasta 200 caracteres y sin enlaces.",
+  "@prefsErrorNote": {
+    "description": "Error al guardar: la nota es demasiado larga o lleva un enlace."
+  },
+  "prefsSaved": "Preferencias guardadas.",
+  "@prefsSaved": {
+    "description": "Confirmación sobria al guardar las preferencias del perfil."
+  },
+  "prefsScreenTitle": "Preferencias",
+  "@prefsScreenTitle": {
+    "description": "Título de la pantalla de preferencias del perfil."
+  },
+  "prefsEmpty": "Aún no tienes preferencias. Añade las que quieras que tu chófer conozca.",
+  "@prefsEmpty": {
+    "description": "Estado vacío de la pantalla de preferencias: aún no hay ninguna."
+  },
+  "prefsEmptyShort": "Sin preferencias todavía",
+  "@prefsEmptyShort": {
+    "description": "Subtítulo de la fila del perfil cuando no hay preferencias."
+  },
+  "prefsSave": "Guardar",
+  "@prefsSave": {
+    "description": "Botón para guardar las preferencias del perfil."
+  },
+  "prefsPlaylistHelp": "Pega un enlace https. Se abre siempre fuera de la app.",
+  "@prefsPlaylistHelp": {
+    "description": "Ayuda bajo el campo de la lista de música."
+  },
+  "prefsPlaylistInvalid": "El enlace debe empezar por https://",
+  "@prefsPlaylistInvalid": {
+    "description": "Error del campo de la lista: el enlace no empieza por https."
+  },
+  "prefsNoteHint": "Por ejemplo, dónde esperarte",
+  "@prefsNoteHint": {
+    "description": "Ejemplo dentro del campo de la nota para el chófer."
+  },
+  "prefsTripTitle": "Preferencias de este viaje",
+  "@prefsTripTitle": {
+    "description": "Reserva: título del paso opcional con las preferencias de este viaje."
+  },
+  "prefsTripFromProfile": "Las de tu perfil.",
+  "@prefsTripFromProfile": {
+    "description": "Reserva: las preferencias mostradas son las del perfil."
+  },
+  "prefsTripChanged": "Cambiadas solo para este viaje.",
+  "@prefsTripChanged": {
+    "description": "Reserva: las preferencias se cambiaron solo para este viaje."
+  },
+  "prefsTripEdit": "Cambiar para este viaje",
+  "@prefsTripEdit": {
+    "description": "Reserva: botón para cambiar las preferencias de este viaje."
+  },
+  "prefsTripSkip": "Omitir",
+  "@prefsTripSkip": {
+    "description": "Reserva: cerrar las preferencias de este viaje sin cambiar nada."
+  },
+  "prefsTripReset": "Usar las de mi perfil",
+  "@prefsTripReset": {
+    "description": "Reserva: volver a las preferencias del perfil."
+  },
+  "prefsTripApply": "Usar en este viaje",
+  "@prefsTripApply": {
+    "description": "Reserva: botón para usar las preferencias elegidas en este viaje."
+  },
+  "prefsTripEmpty": "Sin preferencias para este viaje.",
+  "@prefsTripEmpty": {
+    "description": "Reserva: no hay preferencias para este viaje."
+  },
   "profileSaveError": "No pudimos guardar los cambios. Inténtalo de nuevo.",
   "@profileSaveError": {
     "description": "Aviso de error si no se guardaron los cambios del perfil."
@@ -4105,10 +4317,6 @@
   "profileEdit": "Editar",
   "@profileEdit": {
     "description": "Botón de la barra superior para editar el perfil."
-  },
-  "profileRideStyle": "Tu estilo de viaje",
-  "@profileRideStyle": {
-    "description": "Encabezado de las preferencias de viaje del pasajero."
   },
   "profileDriverDocuments": "Licencia y vehículo",
   "@profileDriverDocuments": {
@@ -4161,38 +4369,6 @@
   "profileDeleteAccount": "Eliminar cuenta",
   "@profileDeleteAccount": {
     "description": "Botón para eliminar la cuenta."
-  },
-  "profilePreferencesFooter": "Tu chófer lo sabrá antes de recogerte. Se aplica a tus próximas reservas.",
-  "@profilePreferencesFooter": {
-    "description": "Nota bajo las preferencias de viaje."
-  },
-  "profileQuietRide": "Viaje en silencio",
-  "@profileQuietRide": {
-    "description": "Preferencia: viaje en silencio."
-  },
-  "profileQuietRideDetail": "Sin conversación, salvo lo necesario",
-  "@profileQuietRideDetail": {
-    "description": "Detalle de la preferencia de viaje en silencio."
-  },
-  "profileSoftMusic": "Música suave",
-  "@profileSoftMusic": {
-    "description": "Preferencia: música suave."
-  },
-  "profileTemperature": "Temperatura",
-  "@profileTemperature": {
-    "description": "Preferencia: temperatura de la cabina."
-  },
-  "profileTemperatureAny": "Indistinta",
-  "@profileTemperatureAny": {
-    "description": "Opción de temperatura: sin preferencia."
-  },
-  "profileLuggageHelp": "Ayuda con el equipaje",
-  "@profileLuggageHelp": {
-    "description": "Preferencia: ayuda con el equipaje."
-  },
-  "profileOpenDoor": "Abrirme la puerta",
-  "@profileOpenDoor": {
-    "description": "Preferencia: que el chófer abra la puerta."
   },
   "profileAccountDeleted": "Tu cuenta fue eliminada.",
   "@profileAccountDeleted": {
@@ -4309,6 +4485,10 @@
         "example": "1234ABC"
       }
     }
+  },
+  "profilePreferencesEntry": "Preferencias para tu chófer",
+  "@profilePreferencesEntry": {
+    "description": "Fila del perfil del pasajero que abre sus preferencias para el chófer."
   },
   "rideLoadNotFound": "No encontramos esta reserva en tu cuenta.",
   "@rideLoadNotFound": {
@@ -4539,16 +4719,6 @@
   "rideBackHome": "Volver al inicio",
   "@rideBackHome": {
     "description": "Etiqueta de lector de pantalla del botón que vuelve al inicio."
-  },
-  "ridePreferencesKnown": "Tu chófer conoce tu estilo: {preferences}",
-  "@ridePreferencesKnown": {
-    "description": "Bajo el titular: preferencias del pasajero que ve su chófer.",
-    "placeholders": {
-      "preferences": {
-        "type": "String",
-        "example": "silencio · temperatura fresca"
-      }
-    }
   },
   "rideAssigningTitle": "Asignando a tu chófer",
   "@rideAssigningTitle": {

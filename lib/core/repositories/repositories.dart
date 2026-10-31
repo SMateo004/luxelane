@@ -8,6 +8,25 @@ import '../models/booking_payment.dart';
 import '../models/models.dart';
 
 // ---------------------------------------------------------------------------
+// PreferencesRepository — preferencias para el chófer
+// ---------------------------------------------------------------------------
+
+/// Preferencias del pasajero para su chófer. El perfil se guarda solo con
+/// updatePreferences (las reglas no dejan escribirlas desde el cliente);
+/// cada reserva tiene su copia en bookings/{id}/driverView/preferences.
+abstract class PreferencesRepository {
+  /// Guarda las del perfil; devuelve la copia saneada del servidor.
+  Future<Either<Failure, TripPreferences>> save(TripPreferences preferences);
+
+  /// Si se ofrece la lista de música (config/ops.playlistHosts).
+  Future<PreferenceOptions> options();
+
+  /// Copia de una reserva. null si no hay o si las reglas no la dejan leer
+  /// (chófer fuera de la ventana confirmed a in_progress).
+  Stream<TripPreferences?> watchBookingPreferences(String bookingId);
+}
+
+// ---------------------------------------------------------------------------
 // AuthRepository
 // ---------------------------------------------------------------------------
 

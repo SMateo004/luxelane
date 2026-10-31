@@ -139,39 +139,4 @@ void main() {
       expect(contextualPrompt(_now, nextTrip: trip), 'Tu chófer va en camino.');
     });
   });
-
-  group('RidePreferences', () {
-    test('ida y vuelta por JSON', () {
-      const p = RidePreferences(
-        quiet: true,
-        temperature: CabinTemperature.cool,
-        music: false,
-        openDoor: true,
-      );
-      expect(RidePreferences.fromJson(p.toJson()), p);
-    });
-
-    test('sin datos equivale a sin preferencias', () {
-      expect(RidePreferences.fromJson(null).isEmpty, isTrue);
-      expect(
-        RidePreferences.fromJson({'temperature': 'raro'}).temperature,
-        isNull,
-      );
-    });
-
-    test('notas para el chófer en orden de uso', () {
-      const p = RidePreferences(
-        quiet: true,
-        music: false,
-        openDoor: true,
-        luggageHelp: true,
-      );
-      expect(p.driverNotes, [
-        'Abrir la puerta',
-        'Ayuda con el equipaje',
-        'Viaje en silencio',
-        'Sin música',
-      ]);
-    });
-  });
 }
