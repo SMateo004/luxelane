@@ -414,6 +414,574 @@
   "@authVerifyFailed": {
     "description": "Error genérico de verificación del correo."
   },
+  "bookingPriceOnRequest": "Cotiza al reservar",
+  "@bookingPriceOnRequest": {
+    "description": "Precio de una clase sin tarifa configurada: se cotiza al reservar."
+  },
+  "bookingPriceFrom": "desde {price}",
+  "@bookingPriceFrom": {
+    "description": "Precio mínimo de una clase cuando aún no hay ruta («desde Bs 70»).",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingPriceChangedTitle": "El precio cambió",
+  "@bookingPriceChangedTitle": {
+    "description": "Título del diálogo cuando el servidor cambia el precio al reservar."
+  },
+  "bookingPriceChangedBody": "El precio de este viaje es ahora {newPrice} (antes {previousPrice}). ¿Quieres reservar con el precio nuevo?",
+  "@bookingPriceChangedBody": {
+    "description": "Texto del diálogo de precio cambiado, con el precio nuevo y el anterior.",
+    "placeholders": {
+      "newPrice": {
+        "type": "String"
+      },
+      "previousPrice": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingPriceChangedDecline": "No reservar",
+  "@bookingPriceChangedDecline": {
+    "description": "Botón del diálogo de precio cambiado: no reservar."
+  },
+  "bookingPriceChangedAccept": "Reservar",
+  "@bookingPriceChangedAccept": {
+    "description": "Botón del diálogo de precio cambiado: reservar con el precio nuevo."
+  },
+  "bookingFlightTypeRequired": "Indica si tu vuelo es nacional o internacional.",
+  "@bookingFlightTypeRequired": {
+    "description": "Error: en una recogida en aeropuerto falta el tipo de vuelo."
+  },
+  "bookingPickupMissing": "Vuelve a indicar tu recogida para reservar.",
+  "@bookingPickupMissing": {
+    "description": "Aviso: se perdió la recogida (recarga de página); hay que volver a indicarla."
+  },
+  "bookingPickupPast": "La hora de recogida ya pasó. Elige una nueva hora.",
+  "@bookingPickupPast": {
+    "description": "Error: la hora de recogida elegida ya pasó."
+  },
+  "bookingQuoteFailed": "No pudimos calcular el precio. Inténtalo de nuevo.",
+  "@bookingQuoteFailed": {
+    "description": "Error: no se pudo obtener el precio del servidor."
+  },
+  "bookingQuoteReady": "El precio de tu viaje es {price}. Pulsa Continuar al pago para seguir.",
+  "@bookingQuoteReady": {
+    "description": "Aviso con el precio del viaje recién calculado; nombra el botón «Continuar al pago».",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "bookingHourlyDestination": "Servicio por horas",
+  "@bookingHourlyDestination": {
+    "description": "Nombre del destino de una reserva por horas sin destino fijo."
+  },
+  "bookingChooseExperience": "Elige tu experiencia",
+  "@bookingChooseExperience": {
+    "description": "Título de la elección de clase de vehículo."
+  },
+  "bookingPriceBreakdown": "Desglose de precio",
+  "@bookingPriceBreakdown": {
+    "description": "Título del bloque del precio (web)."
+  },
+  "bookingTotal": "Total",
+  "@bookingTotal": {
+    "description": "Etiqueta del total con el precio del servidor."
+  },
+  "bookingTotalEstimated": "Total estimado",
+  "@bookingTotalEstimated": {
+    "description": "Etiqueta del total cuando el precio aún es una estimación."
+  },
+  "bookingImportantNote": "Nota importante:",
+  "@bookingImportantNote": {
+    "description": "Encabezado de las notas bajo el precio (web)."
+  },
+  "bookingNoteCapacity": "Los límites de capacidad de pasajeros y equipaje deben respetarse por razones de seguridad. Si se exceden, el chófer podrá rechazar el servicio.",
+  "@bookingNoteCapacity": {
+    "description": "Nota: límites de capacidad del vehículo."
+  },
+  "bookingNoteImages": "Las imágenes del vehículo son solo de referencia. El vehículo real puede variar manteniendo una calidad equivalente o superior.",
+  "@bookingNoteImages": {
+    "description": "Nota: las fotos del vehículo son de referencia."
+  },
+  "bookingNoteExtras": "Las necesidades adicionales (silla de ruedas, asiento infantil, artículos extra) pueden añadirse en \"Notas de recogida\". Elige Business Van para grupos más grandes o equipaje adicional.",
+  "@bookingNoteExtras": {
+    "description": "Nota: necesidades adicionales y grupos grandes. Business Van no se traduce."
+  },
+  "bookingForMe": "Reservar para mí",
+  "@bookingForMe": {
+    "description": "Opción: la reserva es para quien la hace."
+  },
+  "bookingForMeDetail": "Reserva con la información de tu cuenta",
+  "@bookingForMeDetail": {
+    "description": "Detalle de «Reservar para mí»."
+  },
+  "bookingForGuest": "Reservar para un invitado",
+  "@bookingForGuest": {
+    "description": "Opción: la reserva es para otra persona (invitado)."
+  },
+  "bookingForGuestDetail": "Seleccionar o añadir un invitado",
+  "@bookingForGuestDetail": {
+    "description": "Detalle de «Reservar para un invitado» sin invitado elegido."
+  },
+  "bookingPriceFinal": "Precio final",
+  "@bookingPriceFinal": {
+    "description": "Bajo el precio: es el del servidor."
+  },
+  "bookingPriceEstimated": "Precio estimado",
+  "@bookingPriceEstimated": {
+    "description": "Bajo el precio: aún es una estimación."
+  },
+  "bookingPickup": "Recogida",
+  "@bookingPickup": {
+    "description": "Etiqueta del punto de recogida en el resumen."
+  },
+  "bookingDuration": "Duración",
+  "@bookingDuration": {
+    "description": "Etiqueta de la duración (servicio por horas)."
+  },
+  "bookingHoursAtDisposal": "{hours} horas a tu disposición",
+  "@bookingHoursAtDisposal": {
+    "description": "Duración de un servicio por horas en el resumen.",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingDestination": "Destino",
+  "@bookingDestination": {
+    "description": "Etiqueta del destino en el resumen."
+  },
+  "bookingBack": "Volver",
+  "@bookingBack": {
+    "description": "Botón o tooltip para volver atrás."
+  },
+  "bookingStepOf": "PASO {step} DE 3",
+  "@bookingStepOf": {
+    "description": "Título del asistente móvil: paso actual de 3, en mayúsculas.",
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingVehicle": "Vehículo",
+  "@bookingVehicle": {
+    "description": "Paso del asistente y fila del resumen: el vehículo."
+  },
+  "bookingStepDetails": "Detalles",
+  "@bookingStepDetails": {
+    "description": "Paso del asistente: detalles del viaje."
+  },
+  "bookingConfirm": "Confirmar",
+  "@bookingConfirm": {
+    "description": "Paso del asistente y botón: confirmar."
+  },
+  "bookingContinue": "Continuar",
+  "@bookingContinue": {
+    "description": "Botón para pasar al siguiente paso."
+  },
+  "bookingContinueToPayment": "Continuar al pago",
+  "@bookingContinueToPayment": {
+    "description": "Botón final: crea la reserva y pasa al pago."
+  },
+  "bookingTripDetails": "DETALLES DEL VIAJE",
+  "@bookingTripDetails": {
+    "description": "Encabezado en mayúsculas del paso de detalles."
+  },
+  "bookingPassengers": "Pasajeros",
+  "@bookingPassengers": {
+    "description": "Etiqueta: número de pasajeros."
+  },
+  "bookingLuggage": "Equipaje",
+  "@bookingLuggage": {
+    "description": "Etiqueta: equipaje."
+  },
+  "bookingSpecialRequests": "Solicitudes especiales",
+  "@bookingSpecialRequests": {
+    "description": "Campo de notas para el chófer."
+  },
+  "bookingSpecialRequestsHint": "Asiento infantil, letrero de bienvenida…",
+  "@bookingSpecialRequestsHint": {
+    "description": "Ejemplo dentro del campo de solicitudes especiales."
+  },
+  "bookingFlightNumberRequired": "Número de vuelo *",
+  "@bookingFlightNumberRequired": {
+    "description": "Campo del número de vuelo, obligatorio (recogida en aeropuerto)."
+  },
+  "bookingFlightNumber": "Número de vuelo",
+  "@bookingFlightNumber": {
+    "description": "Campo del número de vuelo, opcional."
+  },
+  "bookingFlightNumberHint": "ej. OB 760",
+  "@bookingFlightNumberHint": {
+    "description": "Ejemplo de número de vuelo (obligatorio)."
+  },
+  "bookingFlightNumberHintOptional": "ej. OB 760 (opcional)",
+  "@bookingFlightNumberHintOptional": {
+    "description": "Ejemplo de número de vuelo (opcional)."
+  },
+  "bookingSummaryTitle": "RESUMEN DE RESERVA",
+  "@bookingSummaryTitle": {
+    "description": "Encabezado en mayúsculas del resumen de la reserva."
+  },
+  "bookingSummaryService": "Servicio",
+  "@bookingSummaryService": {
+    "description": "Fila del resumen: tipo de servicio."
+  },
+  "bookingSummaryFrom": "Desde",
+  "@bookingSummaryFrom": {
+    "description": "Fila del resumen: origen."
+  },
+  "bookingSummaryTo": "Hasta",
+  "@bookingSummaryTo": {
+    "description": "Fila del resumen: destino."
+  },
+  "bookingSummaryDistance": "Distancia",
+  "@bookingSummaryDistance": {
+    "description": "Fila del resumen: distancia."
+  },
+  "bookingHours": "{hours} horas",
+  "@bookingHours": {
+    "description": "Número de horas de un servicio por horas.",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingSummaryEstDuration": "Duración est.",
+  "@bookingSummaryEstDuration": {
+    "description": "Fila del resumen: duración estimada del trayecto."
+  },
+  "bookingLuggageItems": "{count} bultos",
+  "@bookingLuggageItems": {
+    "description": "Fila del resumen: número de bultos de equipaje.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingSummaryFlight": "Vuelo",
+  "@bookingSummaryFlight": {
+    "description": "Fila del resumen: vuelo."
+  },
+  "bookingSummaryNotes": "Notas",
+  "@bookingSummaryNotes": {
+    "description": "Fila del resumen: notas para el chófer."
+  },
+  "bookingTotalFixedPrice": "TOTAL · PRECIO FIJO",
+  "@bookingTotalFixedPrice": {
+    "description": "Total en mayúsculas con el precio del servidor."
+  },
+  "bookingTotalEstimatedUpper": "TOTAL ESTIMADO",
+  "@bookingTotalEstimatedUpper": {
+    "description": "Total en mayúsculas cuando el precio es una estimación."
+  },
+  "bookingPayNextNote": "Pagas en el paso siguiente. Buscamos chófer cuando el pago está confirmado.",
+  "@bookingPayNextNote": {
+    "description": "Nota antes del botón: el pago va en el paso siguiente. Sin plazos."
+  },
+  "bookingFlightNote": "Recogida en aeropuerto: indica tu número de vuelo para que tu chófer lo tenga.",
+  "@bookingFlightNote": {
+    "description": "Nota de recogida en aeropuerto."
+  },
+  "bookingFlightType": "Tipo de vuelo *",
+  "@bookingFlightType": {
+    "description": "Selector obligatorio: vuelo nacional o internacional."
+  },
+  "bookingConfirmBooking": "Confirmar reserva",
+  "@bookingConfirmBooking": {
+    "description": "Botón por defecto de la barra de precio."
+  },
+  "bookingPriceEstimatedUpper": "PRECIO ESTIMADO",
+  "@bookingPriceEstimatedUpper": {
+    "description": "Barra de precio en mayúsculas: estimación."
+  },
+  "bookingPriceFinalUpper": "PRECIO FINAL",
+  "@bookingPriceFinalUpper": {
+    "description": "Barra de precio en mayúsculas: precio del servidor."
+  },
+  "bookingRetry": "Reintentar",
+  "@bookingRetry": {
+    "description": "Botón para volver a pedir el precio."
+  },
+  "bookingAuthRegisterTitle": "Crear una cuenta",
+  "@bookingAuthRegisterTitle": {
+    "description": "Título del diálogo de acceso al reservar: crear cuenta."
+  },
+  "bookingAuthLoginTitle": "Inicia sesión para continuar",
+  "@bookingAuthLoginTitle": {
+    "description": "Título del diálogo de acceso al reservar: iniciar sesión."
+  },
+  "bookingAuthRegisterBody": "Crea tu cuenta de Luxelane para completar la reserva.",
+  "@bookingAuthRegisterBody": {
+    "description": "Texto del diálogo de acceso: crear cuenta. Luxelane no se traduce."
+  },
+  "bookingAuthLoginBody": "Inicia sesión para confirmar tu reserva.",
+  "@bookingAuthLoginBody": {
+    "description": "Texto del diálogo de acceso: iniciar sesión."
+  },
+  "bookingAuthFullName": "Nombre completo",
+  "@bookingAuthFullName": {
+    "description": "Campo: nombre completo."
+  },
+  "bookingAuthFullNameHint": "Tu nombre",
+  "@bookingAuthFullNameHint": {
+    "description": "Ejemplo del campo de nombre."
+  },
+  "bookingAuthEmail": "Correo electrónico",
+  "@bookingAuthEmail": {
+    "description": "Campo: correo electrónico."
+  },
+  "bookingAuthEmailHint": "tu@ejemplo.com",
+  "@bookingAuthEmailHint": {
+    "description": "Ejemplo del campo de correo."
+  },
+  "bookingAuthPassword": "Contraseña",
+  "@bookingAuthPassword": {
+    "description": "Campo: contraseña."
+  },
+  "bookingAuthRegister": "Crear cuenta",
+  "@bookingAuthRegister": {
+    "description": "Botón: crear cuenta."
+  },
+  "bookingAuthLogin": "Iniciar sesión",
+  "@bookingAuthLogin": {
+    "description": "Botón: iniciar sesión."
+  },
+  "bookingAuthHaveAccount": "¿Ya tienes cuenta? Inicia sesión",
+  "@bookingAuthHaveAccount": {
+    "description": "Enlace para pasar a iniciar sesión."
+  },
+  "bookingAuthNoAccount": "¿No tienes cuenta? Crear una",
+  "@bookingAuthNoAccount": {
+    "description": "Enlace para pasar a crear cuenta."
+  },
+  "bookingGuestTitleMr": "Sr.",
+  "@bookingGuestTitleMr": {
+    "description": "Tratamiento del invitado (se guarda «Sr.»)."
+  },
+  "bookingGuestTitleMrs": "Sra.",
+  "@bookingGuestTitleMrs": {
+    "description": "Tratamiento del invitado (se guarda «Sra.»)."
+  },
+  "bookingGuestTitleMiss": "Srta.",
+  "@bookingGuestTitleMiss": {
+    "description": "Tratamiento del invitado (se guarda «Srta.»)."
+  },
+  "bookingGuestTitleDr": "Dr.",
+  "@bookingGuestTitleDr": {
+    "description": "Tratamiento del invitado (se guarda «Dr.»)."
+  },
+  "bookingGuestTitleProf": "Prof.",
+  "@bookingGuestTitleProf": {
+    "description": "Tratamiento del invitado (se guarda «Prof.»)."
+  },
+  "bookingGuestAddTitle": "Añadir nuevo invitado",
+  "@bookingGuestAddTitle": {
+    "description": "Título del diálogo para añadir un invitado."
+  },
+  "bookingGuestIntro": "Ingresa los datos de la persona que viajará. Compartiremos estos datos con el chófer asignado para coordinar la recogida.",
+  "@bookingGuestIntro": {
+    "description": "Texto del diálogo del invitado: para qué se usan sus datos."
+  },
+  "bookingGuestSalutation": "Tratamiento",
+  "@bookingGuestSalutation": {
+    "description": "Campo: tratamiento del invitado (Sr., Sra.…)."
+  },
+  "bookingGuestFirstName": "Nombre",
+  "@bookingGuestFirstName": {
+    "description": "Campo: nombre del invitado."
+  },
+  "bookingGuestFirstNameHint": "Nombre del invitado",
+  "@bookingGuestFirstNameHint": {
+    "description": "Ejemplo del campo de nombre del invitado."
+  },
+  "bookingGuestLastName": "Apellido",
+  "@bookingGuestLastName": {
+    "description": "Campo: apellido del invitado."
+  },
+  "bookingGuestLastNameHint": "Apellido del invitado",
+  "@bookingGuestLastNameHint": {
+    "description": "Ejemplo del campo de apellido del invitado."
+  },
+  "bookingGuestPhone": "Número de móvil del invitado",
+  "@bookingGuestPhone": {
+    "description": "Campo: móvil del invitado."
+  },
+  "bookingGuestPhoneNote": "El chófer asignado usará este número para coordinar la recogida.",
+  "@bookingGuestPhoneNote": {
+    "description": "Nota bajo el móvil del invitado."
+  },
+  "bookingGuestLanguage": "Idioma del invitado (opcional)",
+  "@bookingGuestLanguage": {
+    "description": "Campo: idioma del invitado."
+  },
+  "bookingGuestLanguageHint": "Ej.: español, inglés",
+  "@bookingGuestLanguageHint": {
+    "description": "Ejemplo del campo de idioma del invitado."
+  },
+  "bookingVehiclePassengers": "{count} pasajeros",
+  "@bookingVehiclePassengers": {
+    "description": "Capacidad de pasajeros de la clase.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingVehicleBags": "{count} maletas",
+  "@bookingVehicleBags": {
+    "description": "Capacidad de maletas de la clase.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingVehicleDetailsEyebrow": "DETALLES",
+  "@bookingVehicleDetailsEyebrow": {
+    "description": "Encabezado en mayúsculas de los detalles de la clase."
+  },
+  "bookingLuggageNote": "Medidas estándar de referencia. Si llevas equipaje especial (palos de golf, cochecito, instrumentos), indícalo en las notas de recogida.",
+  "@bookingLuggageNote": {
+    "description": "Nota bajo las fotos del maletero."
+  },
+  "bookingChildSeatNote": "El asiento infantil se solicita con antelación y está sujeto a disponibilidad. Indica la edad del niño en las notas de recogida.",
+  "@bookingChildSeatNote": {
+    "description": "Nota bajo las fotos de los asientos."
+  },
+  "bookingCapacityEyebrow": "CAPACIDAD",
+  "@bookingCapacityEyebrow": {
+    "description": "Encabezado en mayúsculas de la capacidad."
+  },
+  "bookingCapacityTitle": "¿Cuánto cabe?",
+  "@bookingCapacityTitle": {
+    "description": "Título de la sección de capacidad."
+  },
+  "bookingCapacityDetail": "Hasta {passengers} pasajeros y {bags} maletas facturadas",
+  "@bookingCapacityDetail": {
+    "description": "Capacidad de la clase: pasajeros y maletas facturadas.",
+    "placeholders": {
+      "passengers": {
+        "type": "int"
+      },
+      "bags": {
+        "type": "int"
+      }
+    }
+  },
+  "bookingSeating": "Asientos",
+  "@bookingSeating": {
+    "description": "Pestaña: asientos."
+  },
+  "bookingNext": "Siguiente",
+  "@bookingNext": {
+    "description": "Tooltip de la flecha del carrusel."
+  },
+  "bookingRatingSaveError": "No se pudo guardar tu valoración. Inténtalo de nuevo.",
+  "@bookingRatingSaveError": {
+    "description": "Error al guardar la valoración del viaje."
+  },
+  "bookingAcceptTaken": "Otro chófer ya aceptó este viaje.",
+  "@bookingAcceptTaken": {
+    "description": "Error al aceptar (chófer): otro chófer ya lo aceptó."
+  },
+  "bookingAcceptNotVerified": "Tus documentos aún no están verificados por Luxelane.",
+  "@bookingAcceptNotVerified": {
+    "description": "Error al aceptar (chófer): documentos sin verificar. Luxelane no se traduce."
+  },
+  "bookingAcceptBusy": "Conéctate y termina tu viaje actual antes de aceptar otro.",
+  "@bookingAcceptBusy": {
+    "description": "Error al aceptar (chófer): no está disponible."
+  },
+  "bookingAcceptUnavailable": "Este viaje ya no está disponible.",
+  "@bookingAcceptUnavailable": {
+    "description": "Error al aceptar (chófer): el viaje ya no está disponible."
+  },
+  "bookingAcceptConnection": "No se pudo aceptar el viaje. Revisa tu conexión.",
+  "@bookingAcceptConnection": {
+    "description": "Error al aceptar (chófer): sin conexión."
+  },
+  "bookingAcceptFailed": "No se pudo aceptar el viaje. Inténtalo de nuevo.",
+  "@bookingAcceptFailed": {
+    "description": "Error al aceptar (chófer): otro fallo."
+  },
+  "bookingConnectionError": "No pudimos conectar. Revisa tu conexión e inténtalo de nuevo.",
+  "@bookingConnectionError": {
+    "description": "Error de conexión al cotizar o reservar."
+  },
+  "bookingErrorPricingUnavailable": "No pudimos calcular el precio de este viaje ahora. Inténtalo de nuevo en unos minutos.",
+  "@bookingErrorPricingUnavailable": {
+    "description": "Error del servidor: no hay tarifa para el viaje."
+  },
+  "bookingErrorOutOfArea": "Por ahora solo hacemos viajes dentro de la misma ciudad de la recogida.",
+  "@bookingErrorOutOfArea": {
+    "description": "Error del servidor: destino fuera de la ciudad de la recogida."
+  },
+  "bookingErrorClassUnavailable": "Esta clase de vehículo no está disponible en este momento. Elige otra.",
+  "@bookingErrorClassUnavailable": {
+    "description": "Error del servidor: clase no disponible."
+  },
+  "bookingErrorServiceUnavailable": "Las reservas están en pausa por mantenimiento. Vuelve a intentarlo en unos minutos.",
+  "@bookingErrorServiceUnavailable": {
+    "description": "Error del servidor: reservas en pausa por mantenimiento."
+  },
+  "bookingErrorInvalidHours": "Elige un número entero de horas.",
+  "@bookingErrorInvalidHours": {
+    "description": "Error del servidor: horas no enteras."
+  },
+  "bookingErrorInactiveUser": "Tu cuenta no puede hacer reservas en este momento.",
+  "@bookingErrorInactiveUser": {
+    "description": "Error del servidor: cuenta sin permiso para reservar."
+  },
+  "bookingErrorSignIn": "Inicia sesión para reservar.",
+  "@bookingErrorSignIn": {
+    "description": "Error del servidor: sin sesión."
+  },
+  "bookingErrorPaymentsUnavailable": "Ahora mismo no podemos recibir reservas. Inténtalo de nuevo más tarde o contacta con central.",
+  "@bookingErrorPaymentsUnavailable": {
+    "description": "Error del servidor: ningún método de pago activo."
+  },
+  "bookingErrorInvalidRequest": "No pudimos procesar tu reserva. Revisa los datos del viaje e inténtalo de nuevo.",
+  "@bookingErrorInvalidRequest": {
+    "description": "Error del servidor: datos del viaje mal formados."
+  },
+  "bookingErrorServer": "No pudimos completar la reserva por un problema nuestro. Inténtalo de nuevo en unos minutos.",
+  "@bookingErrorServer": {
+    "description": "Error del servidor: fallo interno, sin culpar a la persona."
+  },
+  "bookingCancelConnectionError": "No se pudo cancelar. Revisa tu conexión e inténtalo de nuevo.",
+  "@bookingCancelConnectionError": {
+    "description": "Error al cancelar: sin conexión."
+  },
+  "bookingCancelServerError": "No se pudo cancelar ahora. Inténtalo de nuevo en unos minutos; si sigue, contacta con central.",
+  "@bookingCancelServerError": {
+    "description": "Error al cancelar: fallo del servidor."
+  },
+  "bookingCancelNotCancellable": "Esta reserva ya no se puede cancelar: el viaje está en curso o terminó.",
+  "@bookingCancelNotCancellable": {
+    "description": "Error al cancelar: el viaje está en curso o terminó."
+  },
+  "bookingNotFound": "No encontramos esta reserva en tu cuenta.",
+  "@bookingNotFound": {
+    "description": "Error al cancelar: la reserva no es de la cuenta o no existe."
+  },
+  "bookingVehicleSaveError": "No pudimos guardar el cambio. Inténtalo de nuevo.",
+  "@bookingVehicleSaveError": {
+    "description": "Error al guardar el color o la foto del vehículo (chófer)."
+  },
+  "bookingTripsLoadError": "No pudimos cargar tus viajes. Reintenta.",
+  "@bookingTripsLoadError": {
+    "description": "Error al cargar la lista de viajes del pasajero."
+  },
   "businessEyebrow": "Para Empresas",
   "@businessEyebrow": {
     "description": "Antetítulo de la página Luxelane para Empresas."

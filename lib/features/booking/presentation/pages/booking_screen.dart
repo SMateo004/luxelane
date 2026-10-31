@@ -25,6 +25,7 @@ import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/email_not_verified_dialog.dart';
 import '../../../../core/widgets/lux_map.dart';
 import '../../../../core/widgets/lux_raised.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/widgets/google_sign_in_button.dart';
 import '../../../auth/presentation/widgets/terms_required_dialog.dart';
@@ -51,8 +52,10 @@ const _kPanelAccent = LD.sph; // #1B4F8A sapphire
 /// Precio para mostrar, o «Cotiza al reservar» si no hay tarifa
 /// configurada: nunca una cifra inventada.
 String formatPriceOrQuote(double? price, {bool from = false}) => price == null
-    ? 'Cotiza al reservar'
-    : '${from ? 'desde ' : ''}${LuxFormat.money(price)}';
+    ? L10n.current.bookingPriceOnRequest
+    : from
+        ? L10n.current.bookingPriceFrom(LuxFormat.money(price))
+        : LuxFormat.money(price);
 
 class BookingScreen extends StatefulWidget {
   const BookingScreen({super.key});
@@ -82,7 +85,7 @@ class _BookingScreenState extends State<BookingScreen> {
   int _capacityTab = 0; // 0 = Luggage, 1 = Seating
   int _luggageOption = 0; // 0, 1, 2
   int _seatingOption = 0; // 0, 1, 2, 3
-  String _guestTitle = 'Sr.';
+  String _guestTitle = 'Sr.'; // i18n-ignore: valor guardado del tratamiento
   String _guestFirstName = '';
   String _guestLastName = '';
   String _guestPhone = '';
@@ -235,21 +238,21 @@ class _BookingScreenState extends State<BookingScreen> {
       context: context,
       barrierDismissible: false,
       builder: (ctx) => AlertDialog(
-        title: const Text('El precio cambió'),
+        title: Text(context.l10n.bookingPriceChangedTitle),
         content: Text(
-          'El precio de este viaje es ahora '
-          '${LuxFormat.money(state.newPrice)} '
-          '(antes ${LuxFormat.money(state.previousPrice)}). '
-          '¿Quieres reservar con el precio nuevo?',
+          context.l10n.bookingPriceChangedBody(
+            LuxFormat.money(state.newPrice),
+            LuxFormat.money(state.previousPrice),
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('No reservar'),
+            child: Text(context.l10n.bookingPriceChangedDecline),
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Reservar'),
+            child: Text(context.l10n.bookingPriceChangedAccept),
           ),
         ],
       ),
@@ -281,7 +284,7 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   String? get _flightTypeError => _airportPickup && _flightType == null
-      ? 'Indica si tu vuelo es nacional o internacional.'
+      ? context.l10n.bookingFlightTypeRequired
       : null;
 
   bool _checkFlight() {
@@ -391,7 +394,7 @@ class _BookingScreenState extends State<BookingScreen> {
       // un lugar; se vuelve a empezar la búsqueda.
       showLuxSnackbar(
         context,
-        'Vuelve a indicar tu recogida para reservar.',
+        context.l10n.bookingPickupMissing,
         isError: true,
       );
       context.go('/');
@@ -410,7 +413,7 @@ class _BookingScreenState extends State<BookingScreen> {
     )) {
       showLuxSnackbar(
         context,
-        'La hora de recogida ya pasó. Elige una nueva hora.',
+        context.l10n.bookingPickupPast,
         isError: true,
       );
       context.go('/');
@@ -427,10 +430,8 @@ class _BookingScreenState extends State<BookingScreen> {
       showLuxSnackbar(
         context,
         quote == null
-            ? (_quoteError ??
-                'No pudimos calcular el precio. Inténtalo de nuevo.')
-            : 'El precio de tu viaje es ${LuxFormat.money(quote.price)}. '
-                'Pulsa Continuar al pago para seguir.',
+            ? (_quoteError ?? context.l10n.bookingQuoteFailed)
+            : context.l10n.bookingQuoteReady(LuxFormat.money(quote.price)),
         isError: quote == null,
       );
       return;
@@ -460,7 +461,7 @@ class _BookingScreenState extends State<BookingScreen> {
     if (result != null && mounted) {
       setState(() {
         _bookForSelf = false;
-        _guestTitle = result['title'] ?? 'Sr.';
+        _guestTitle = result['title'] ?? 'Sr.'; // i18n-ignore: valor guardado
         _guestFirstName = result['firstName'] ?? '';
         _guestLastName = result['lastName'] ?? '';
         _guestPhone = result['phone'] ?? '';
@@ -483,7 +484,7 @@ class _BookingScreenState extends State<BookingScreen> {
     // coordenadas reales) en lugar de un lugar inventado en (0,0).
     final destination = _formData!.destination ??
         Place(
-          name: 'Servicio por horas',
+          name: context.l10n.bookingHourlyDestination,
           address: origin.address,
           lat: origin.lat,
           lng: origin.lng,
@@ -720,9 +721,9 @@ class _BookingScreenState extends State<BookingScreen> {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      'Elige tu experiencia',
-                      style: TextStyle(
+                    Text(
+                      context.l10n.bookingChooseExperience,
+                      style: const TextStyle(
                         fontFamily: kSerif,
                         fontSize: 40,
                         fontWeight: FontWeight.w400,
@@ -842,13 +843,18 @@ class _BookingScreenState extends State<BookingScreen> {
           padding: const EdgeInsets.symmetric(vertical: 14),
           child: Row(
             children: [
-              Text(
-                label,
-                style: const TextStyle(
-                  fontFamily: kSans,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w400,
-                  color: _kTextPrimary,
+              // Flexible: en inglés o portugués la etiqueta puede ser más
+              // larga; se parte en dos líneas en lugar de desbordar.
+              Flexible(
+                flex: 3,
+                child: Text(
+                  label,
+                  style: const TextStyle(
+                    fontFamily: kSans,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w400,
+                    color: _kTextPrimary,
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
@@ -932,7 +938,7 @@ class _BookingScreenState extends State<BookingScreen> {
         children: [
           // Title
           Text(
-            'Desglose de precio',
+            context.l10n.bookingPriceBreakdown,
             style: TextStyle(
               fontFamily: kSerif,
               fontSize: compact ? 22 : 28,
@@ -946,14 +952,19 @@ class _BookingScreenState extends State<BookingScreen> {
           // Total: el precio del servidor, sin desglose fiscal (no hay
           // una cifra de impuesto definida).
           // El error de la cotización va junto al precio (E36), no aquí.
-          priceLine(_priceIsServer ? 'Total' : 'Total estimado', _price),
+          priceLine(
+            _priceIsServer
+                ? context.l10n.bookingTotal
+                : context.l10n.bookingTotalEstimated,
+            _price,
+          ),
           const Divider(color: _kBorder, height: 1, thickness: 1.2),
           const SizedBox(height: 22),
 
           // Please note section
-          const Text(
-            'Nota importante:',
-            style: TextStyle(
+          Text(
+            context.l10n.bookingImportantNote,
+            style: const TextStyle(
               fontFamily: kSans,
               fontSize: 13,
               fontWeight: FontWeight.w700,
@@ -962,19 +973,9 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           const SizedBox(height: 14),
 
-          note(
-            'Los límites de capacidad de pasajeros y equipaje deben respetarse por '
-            'razones de seguridad. Si se exceden, el chófer podrá rechazar el servicio.',
-          ),
-          note(
-            'Las imágenes del vehículo son solo de referencia. El vehículo real puede '
-            'variar manteniendo una calidad equivalente o superior.',
-          ),
-          note(
-            'Las necesidades adicionales (silla de ruedas, asiento infantil, artículos extra) pueden '
-            'añadirse en "Notas de recogida". Elige Business Van para grupos más grandes '
-            'o equipaje adicional.',
-          ),
+          note(context.l10n.bookingNoteCapacity),
+          note(context.l10n.bookingNoteImages),
+          note(context.l10n.bookingNoteExtras),
         ],
       ),
     );
@@ -1060,8 +1061,8 @@ class _BookingScreenState extends State<BookingScreen> {
           icon: Icons.person_outlined,
           iconBg: LD.sphTint,
           iconColor: _kPanelAccent,
-          title: 'Reservar para mí',
-          subtitle: 'Reserva con la información de tu cuenta',
+          title: context.l10n.bookingForMe,
+          subtitle: context.l10n.bookingForMeDetail,
           selected: _bookForSelf,
           onTap: () => setState(() => _bookForSelf = true),
         ),
@@ -1073,10 +1074,11 @@ class _BookingScreenState extends State<BookingScreen> {
           icon: Icons.group_outlined,
           iconBg: !_bookForSelf ? LD.sphTint : LD.bg2,
           iconColor: !_bookForSelf ? _kPanelAccent : _kTextSub,
-          title: 'Reservar para un invitado',
+          title: context.l10n.bookingForGuest,
           subtitle: (!_bookForSelf && _guestFirstName.isNotEmpty)
-              ? '$_guestTitle $_guestFirstName $_guestLastName'
-              : 'Seleccionar o añadir un invitado',
+              ? '${_guestTitleLabel(context.l10n, _guestTitle)} '
+                  '$_guestFirstName $_guestLastName'
+              : context.l10n.bookingForGuestDetail,
           selected: !_bookForSelf,
           onTap: _showAddGuestDialog,
           trailing: Icon(
@@ -1142,7 +1144,9 @@ class _BookingScreenState extends State<BookingScreen> {
                   ),
                 ),
                 Text(
-                  _priceIsServer ? 'Precio final' : 'Precio estimado',
+                  _priceIsServer
+                      ? context.l10n.bookingPriceFinal
+                      : context.l10n.bookingPriceEstimated,
                   style: const TextStyle(
                     fontFamily: kSans,
                     fontSize: 11,
@@ -1163,19 +1167,19 @@ class _BookingScreenState extends State<BookingScreen> {
         const SizedBox(height: 20),
         _SummaryAddressRow(
           icon: Icons.location_on_outlined,
-          label: 'Recogida',
+          label: context.l10n.bookingPickup,
           value: _formData?.origin.displayName ?? '—',
         ),
         const SizedBox(height: 12),
         _service == ServiceType.byTheHour
             ? _SummaryAddressRow(
                 icon: Icons.schedule_rounded,
-                label: 'Duración',
-                value: '$_hours horas a tu disposición',
+                label: context.l10n.bookingDuration,
+                value: context.l10n.bookingHoursAtDisposal(_hours),
               )
             : _SummaryAddressRow(
                 icon: Icons.flag_outlined,
-                label: 'Destino',
+                label: context.l10n.bookingDestination,
                 value: _formData?.destination?.displayName ?? '—',
               ),
         if (_airportPickup) ...[
@@ -1249,12 +1253,12 @@ class _BookingScreenState extends State<BookingScreen> {
             backgroundColor: Colors.transparent,
             appBar: AppBar(
               leading: IconButton(
-                tooltip: 'Volver',
+                tooltip: context.l10n.bookingBack,
                 icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 18),
                 onPressed: () =>
                     _step > 0 ? setState(() => _step--) : context.pop(),
               ),
-              title: Text('PASO ${_step + 1} DE 3'),
+              title: Text(context.l10n.bookingStepOf(_step + 1)),
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(48),
                 child: Padding(
@@ -1263,7 +1267,11 @@ class _BookingScreenState extends State<BookingScreen> {
                     child: ConstrainedBox(
                       constraints: const BoxConstraints(maxWidth: 760),
                       child: _LightStepIndicator(
-                        steps: const ['Vehículo', 'Detalles', 'Confirmar'],
+                        steps: [
+                          context.l10n.bookingVehicle,
+                          context.l10n.bookingStepDetails,
+                          context.l10n.bookingConfirm,
+                        ],
                         currentStep: _step,
                       ),
                     ),
@@ -1290,7 +1298,9 @@ class _BookingScreenState extends State<BookingScreen> {
                   estimated: !_priceIsServer,
                   error: _quoteError,
                   onRetry: _retryQuote,
-                  label: _step < 2 ? 'Continuar' : 'Continuar al pago',
+                  label: _step < 2
+                      ? context.l10n.bookingContinue
+                      : context.l10n.bookingContinueToPayment,
                   loading: _loading,
                   onConfirm: _step < 2
                       ? () {
@@ -1321,9 +1331,9 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _mobileVehicleStep() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Elige tu experiencia',
-            style: TextStyle(
+          Text(
+            context.l10n.bookingChooseExperience,
+            style: const TextStyle(
               fontFamily: kSerif,
               fontSize: 28,
               fontWeight: FontWeight.w600,
@@ -1383,9 +1393,9 @@ class _BookingScreenState extends State<BookingScreen> {
   Widget _detailsStep() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'DETALLES DEL VIAJE',
-            style: TextStyle(
+          Text(
+            context.l10n.bookingTripDetails,
+            style: const TextStyle(
               fontFamily: kSans,
               fontSize: 10,
               fontWeight: FontWeight.w700,
@@ -1395,7 +1405,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           const SizedBox(height: 20),
           _LightCounterRow(
-            label: 'Pasajeros',
+            label: context.l10n.bookingPassengers,
             icon: Icons.person_outline,
             value: _passengers,
             min: 1,
@@ -1404,7 +1414,7 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           const SizedBox(height: 10),
           _LightCounterRow(
-            label: 'Equipaje',
+            label: context.l10n.bookingLuggage,
             icon: Icons.luggage_outlined,
             value: _luggage,
             min: 0,
@@ -1419,8 +1429,8 @@ class _BookingScreenState extends State<BookingScreen> {
           _flightField(),
           const SizedBox(height: 12),
           _LightTextField(
-            label: 'Solicitudes especiales',
-            hint: 'Asiento infantil, letrero de bienvenida…',
+            label: context.l10n.bookingSpecialRequests,
+            hint: context.l10n.bookingSpecialRequestsHint,
             icon: Icons.chat_bubble_outline_rounded,
             maxLines: 3,
             onChanged: (v) => _notes = v,
@@ -1432,8 +1442,12 @@ class _BookingScreenState extends State<BookingScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _LightTextField(
-            label: _airportPickup ? 'Número de vuelo *' : 'Número de vuelo',
-            hint: _airportPickup ? 'ej. OB 760' : 'ej. OB 760 (opcional)',
+            label: _airportPickup
+                ? context.l10n.bookingFlightNumberRequired
+                : context.l10n.bookingFlightNumber,
+            hint: _airportPickup
+                ? context.l10n.bookingFlightNumberHint
+                : context.l10n.bookingFlightNumberHintOptional,
             icon: Icons.flight_outlined,
             initialValue: _flight,
             errorText: _flightAttempted ? _flightError : null,
@@ -1470,9 +1484,9 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           const SizedBox(height: 20),
         ],
-        const Text(
-          'RESUMEN DE RESERVA',
-          style: TextStyle(
+        Text(
+          context.l10n.bookingSummaryTitle,
+          style: const TextStyle(
             fontFamily: kSans,
             fontSize: 10,
             fontWeight: FontWeight.w700,
@@ -1489,16 +1503,28 @@ class _BookingScreenState extends State<BookingScreen> {
           ),
           child: Column(
             children: [
-              _SummaryRow('Servicio', _service.label, isFirst: true),
-              _SummaryRow('Vehículo', _selected.label),
-              if (_formData?.origin != null)
-                _SummaryRow('Desde', _formData!.origin.displayName),
-              if (_formData?.destination != null)
-                _SummaryRow('Hasta', _formData!.destination!.displayName),
               _SummaryRow(
-                _service == ServiceType.byTheHour ? 'Duración' : 'Distancia',
+                context.l10n.bookingSummaryService,
+                _service.label,
+                isFirst: true,
+              ),
+              _SummaryRow(context.l10n.bookingVehicle, _selected.label),
+              if (_formData?.origin != null)
+                _SummaryRow(
+                  context.l10n.bookingSummaryFrom,
+                  _formData!.origin.displayName,
+                ),
+              if (_formData?.destination != null)
+                _SummaryRow(
+                  context.l10n.bookingSummaryTo,
+                  _formData!.destination!.displayName,
+                ),
+              _SummaryRow(
                 _service == ServiceType.byTheHour
-                    ? '$_hours horas'
+                    ? context.l10n.bookingDuration
+                    : context.l10n.bookingSummaryDistance,
+                _service == ServiceType.byTheHour
+                    ? context.l10n.bookingHours(_hours)
                     : _km > 0
                         ? '${_km.toStringAsFixed(1)} km'
                         : '—',
@@ -1506,19 +1532,23 @@ class _BookingScreenState extends State<BookingScreen> {
               if (_formData?.routeDurationMin != null &&
                   _formData!.routeDurationMin > 0)
                 _SummaryRow(
-                  'Duración est.',
+                  context.l10n.bookingSummaryEstDuration,
                   '${_formData!.routeDurationMin} min',
                 ),
-              _SummaryRow('Pasajeros', '$_passengers'),
-              _SummaryRow('Equipaje', '$_luggage bultos'),
+              _SummaryRow(context.l10n.bookingPassengers, '$_passengers'),
+              _SummaryRow(
+                context.l10n.bookingLuggage,
+                context.l10n.bookingLuggageItems(_luggage),
+              ),
               if (_flight.isNotEmpty)
                 _SummaryRow(
-                  'Vuelo',
+                  context.l10n.bookingSummaryFlight,
                   _flightType == null || !_airportPickup
                       ? _flight
                       : '$_flight · ${_flightType!.label}',
                 ),
-              if (_notes.isNotEmpty) _SummaryRow('Notas', _notes),
+              if (_notes.isNotEmpty)
+                _SummaryRow(context.l10n.bookingSummaryNotes, _notes),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -1533,7 +1563,9 @@ class _BookingScreenState extends State<BookingScreen> {
                 child: Row(
                   children: [
                     Text(
-                      _priceIsServer ? 'TOTAL · PRECIO FIJO' : 'TOTAL ESTIMADO',
+                      _priceIsServer
+                          ? context.l10n.bookingTotalFixedPrice
+                          : context.l10n.bookingTotalEstimatedUpper,
                       style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 10,
@@ -1630,18 +1662,18 @@ class _WebTopBar extends StatelessWidget {
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: onBack,
-                child: const Row(
+                child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.arrow_back_ios_new_rounded,
                       size: 12,
                       color: _kTextSub,
                     ),
-                    SizedBox(width: 5),
+                    const SizedBox(width: 5),
                     Text(
-                      'Volver',
-                      style: TextStyle(
+                      context.l10n.bookingBack,
+                      style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 11,
                         fontWeight: FontWeight.w400,
@@ -2205,7 +2237,7 @@ class _ReserveBar extends StatelessWidget {
           border: Border(top: BorderSide(color: _kBorder)),
         ),
         child: LuxRaisedButton(
-          label: 'Continuar al pago',
+          label: context.l10n.bookingContinueToPayment,
           loading: loading,
           onPressed: onReserve,
           uppercase: false,
@@ -2263,8 +2295,7 @@ class _PayNextNote extends StatelessWidget {
             const SizedBox(width: LuxSpacing.sm),
             Expanded(
               child: Text(
-                'Pagas en el paso siguiente. Buscamos chófer cuando el pago '
-                'está confirmado.',
+                context.l10n.bookingPayNextNote,
                 style: LuxTypography.bodyMedium.copyWith(color: _kTextSub),
               ),
             ),
@@ -2502,9 +2533,9 @@ class _LightHourRow extends StatelessWidget {
         ),
         child: Row(
           children: [
-            const Text(
-              'Duración',
-              style: TextStyle(
+            Text(
+              context.l10n.bookingDuration,
+              style: const TextStyle(
                 fontFamily: kSans,
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -2683,16 +2714,15 @@ class _FlightNote extends StatelessWidget {
   const _FlightNote();
 
   @override
-  Widget build(BuildContext context) => const Row(
+  Widget build(BuildContext context) => Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.flight_land_rounded, size: 16, color: _kPanelAccent),
-          SizedBox(width: LuxSpacing.sm),
+          const Icon(Icons.flight_land_rounded, size: 16, color: _kPanelAccent),
+          const SizedBox(width: LuxSpacing.sm),
           Expanded(
             child: Text(
-              'Recogida en aeropuerto: indica tu número de vuelo para que '
-              'tu chófer lo tenga.',
-              style: TextStyle(
+              context.l10n.bookingFlightNote,
+              style: const TextStyle(
                 fontFamily: kSans,
                 fontSize: 12,
                 height: 1.4,
@@ -2721,9 +2751,9 @@ class _FlightTypeSelector extends StatelessWidget {
   Widget build(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Tipo de vuelo *',
-            style: TextStyle(
+          Text(
+            context.l10n.bookingFlightType,
+            style: const TextStyle(
               fontFamily: kSans,
               fontSize: 12,
               color: _kTextSub,
@@ -2806,7 +2836,7 @@ class _LightPriceBar extends StatelessWidget {
     required this.price,
     required this.onConfirm,
     this.loading = false,
-    this.label = 'Confirmar reserva',
+    this.label,
     this.estimated = false,
     this.error,
     this.onRetry,
@@ -2814,7 +2844,9 @@ class _LightPriceBar extends StatelessWidget {
   final double? price;
   final VoidCallback onConfirm;
   final bool loading;
-  final String label;
+
+  /// Texto del botón; sin él, «Confirmar reserva».
+  final String? label;
 
   /// Sin cotización del servidor: el importe es una estimación (E35).
   final bool estimated;
@@ -2852,7 +2884,9 @@ class _LightPriceBar extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          estimated ? 'PRECIO ESTIMADO' : 'PRECIO FINAL',
+                          estimated
+                              ? context.l10n.bookingPriceEstimatedUpper
+                              : context.l10n.bookingPriceFinalUpper,
                           style: const TextStyle(
                             fontFamily: kSans,
                             fontSize: 9,
@@ -2876,7 +2910,7 @@ class _LightPriceBar extends StatelessWidget {
                     const SizedBox(width: LuxSpacing.md),
                     Expanded(
                       child: LuxRaisedButton(
-                        label: label,
+                        label: label ?? context.l10n.bookingConfirmBooking,
                         height: 52,
                         loading: loading,
                         onPressed: onConfirm,
@@ -2925,7 +2959,10 @@ class _QuoteErrorNote extends StatelessWidget {
               ),
             ),
             if (onRetry != null)
-              TextButton(onPressed: onRetry, child: const Text('Reintentar')),
+              TextButton(
+                onPressed: onRetry,
+                child: Text(context.l10n.bookingRetry),
+              ),
           ],
         ),
       );
@@ -3083,8 +3120,8 @@ class _AuthGateDialogState extends State<_AuthGateDialog> {
                       Expanded(
                         child: Text(
                           _showRegister
-                              ? 'Crear una cuenta'
-                              : 'Inicia sesión para continuar',
+                              ? context.l10n.bookingAuthRegisterTitle
+                              : context.l10n.bookingAuthLoginTitle,
                           style: LuxTypography.headlineLarge
                               .copyWith(fontSize: 24),
                         ),
@@ -3101,8 +3138,8 @@ class _AuthGateDialogState extends State<_AuthGateDialog> {
                   const SizedBox(height: LuxSpacing.sm),
                   Text(
                     _showRegister
-                        ? 'Crea tu cuenta de Luxelane para completar la reserva.'
-                        : 'Inicia sesión para confirmar tu reserva.',
+                        ? context.l10n.bookingAuthRegisterBody
+                        : context.l10n.bookingAuthLoginBody,
                     style: LuxTypography.bodyMedium,
                   ),
                   const SizedBox(height: LuxSpacing.xl),
@@ -3112,8 +3149,8 @@ class _AuthGateDialogState extends State<_AuthGateDialog> {
                   const SizedBox(height: LuxSpacing.lg),
                   if (_showRegister) ...[
                     LuxTextField(
-                      label: 'Nombre completo',
-                      hint: 'Tu nombre',
+                      label: context.l10n.bookingAuthFullName,
+                      hint: context.l10n.bookingAuthFullNameHint,
                       prefixIcon: Icons.person_outline,
                       controller: _nameCtrl,
                       onChanged: (_) {},
@@ -3121,8 +3158,8 @@ class _AuthGateDialogState extends State<_AuthGateDialog> {
                     const SizedBox(height: LuxSpacing.md),
                   ],
                   LuxTextField(
-                    label: 'Correo electrónico',
-                    hint: 'tu@ejemplo.com',
+                    label: context.l10n.bookingAuthEmail,
+                    hint: context.l10n.bookingAuthEmailHint,
                     prefixIcon: Icons.email_outlined,
                     controller: _emailCtrl,
                     keyboardType: TextInputType.emailAddress,
@@ -3130,7 +3167,7 @@ class _AuthGateDialogState extends State<_AuthGateDialog> {
                   ),
                   const SizedBox(height: LuxSpacing.md),
                   LuxTextField(
-                    label: 'Contraseña',
+                    label: context.l10n.bookingAuthPassword,
                     hint: '••••••••',
                     prefixIcon: Icons.lock_outline,
                     controller: _passCtrl,
@@ -3149,7 +3186,9 @@ class _AuthGateDialogState extends State<_AuthGateDialog> {
                   ),
                   const SizedBox(height: LuxSpacing.xl),
                   LuxButton(
-                    label: _showRegister ? 'Crear cuenta' : 'Iniciar sesión',
+                    label: _showRegister
+                        ? context.l10n.bookingAuthRegister
+                        : context.l10n.bookingAuthLogin,
                     loading: _loading,
                     onPressed: _loading ? null : _submit,
                   ),
@@ -3159,8 +3198,8 @@ class _AuthGateDialogState extends State<_AuthGateDialog> {
                         setState(() => _showRegister = !_showRegister),
                     child: Text(
                       _showRegister
-                          ? '¿Ya tienes cuenta? Inicia sesión'
-                          : '¿No tienes cuenta? Crear una',
+                          ? context.l10n.bookingAuthHaveAccount
+                          : context.l10n.bookingAuthNoAccount,
                       style: LuxTypography.bodyMedium.copyWith(
                         color: LuxColors.sapphire,
                       ),
@@ -3217,9 +3256,20 @@ Widget _guestFieldLabel(String text) => Padding(
       ),
     );
 
+/// Tratamiento guardado («Sr.», «Sra.»…) en el idioma activo. Se guarda
+/// siempre en español (lo valida el servidor); solo cambia lo que se ve.
+String _guestTitleLabel(AppLocalizations t, String stored) => switch (stored) {
+      'Sr.' => t.bookingGuestTitleMr, // i18n-ignore: valor guardado
+      'Sra.' => t.bookingGuestTitleMrs, // i18n-ignore: valor guardado
+      'Srta.' => t.bookingGuestTitleMiss, // i18n-ignore: valor guardado
+      'Dr.' => t.bookingGuestTitleDr, // i18n-ignore: valor guardado
+      'Prof.' => t.bookingGuestTitleProf, // i18n-ignore: valor guardado
+      _ => stored,
+    };
+
 class _AddGuestDialog extends StatefulWidget {
   const _AddGuestDialog({
-    this.initialTitle = 'Sr.',
+    this.initialTitle = 'Sr.', // i18n-ignore: valor guardado
     this.initialFirstName = '',
     this.initialLastName = '',
     this.initialPhone = '',
@@ -3237,7 +3287,14 @@ class _AddGuestDialog extends StatefulWidget {
 }
 
 class _AddGuestDialogState extends State<_AddGuestDialog> {
-  static const _kTitles = ['Sr.', 'Sra.', 'Srta.', 'Dr.', 'Prof.'];
+  /// Valores que se guardan (y valida el servidor); se muestran traducidos.
+  static const _kTitles = [
+    'Sr.', // i18n-ignore: valor guardado
+    'Sra.', // i18n-ignore: valor guardado
+    'Srta.', // i18n-ignore: valor guardado
+    'Dr.', // i18n-ignore: valor guardado
+    'Prof.', // i18n-ignore: valor guardado
+  ];
 
   late String _title;
   late final TextEditingController _firstCtrl;
@@ -3292,10 +3349,10 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Añadir nuevo invitado',
-                      style: TextStyle(
+                      context.l10n.bookingGuestAddTitle,
+                      style: const TextStyle(
                         fontFamily: kSans,
                         fontSize: 32,
                         fontWeight: FontWeight.w800,
@@ -3329,10 +3386,9 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
               const SizedBox(height: 14),
 
               // ── Description ─────────────────────────────────────────────
-              const Text(
-                'Ingresa los datos de la persona que viajará. Compartiremos '
-                'estos datos con el chófer asignado para coordinar la recogida.',
-                style: TextStyle(
+              Text(
+                context.l10n.bookingGuestIntro,
+                style: const TextStyle(
                   fontFamily: kSans,
                   fontSize: 13,
                   color: _kTextSub,
@@ -3344,7 +3400,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
               const SizedBox(height: 30),
 
               // ── Title dropdown ──────────────────────────────────────────
-              _guestFieldLabel('Tratamiento'),
+              _guestFieldLabel(context.l10n.bookingGuestSalutation),
               DropdownButtonFormField<String>(
                 value: _title,
                 style: _kGuestValueStyle,
@@ -3372,7 +3428,10 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                     .map(
                       (t) => DropdownMenuItem(
                         value: t,
-                        child: Text(t, style: _kGuestValueStyle),
+                        child: Text(
+                          _guestTitleLabel(context.l10n, t),
+                          style: _kGuestValueStyle,
+                        ),
                       ),
                     )
                     .toList(),
@@ -3389,11 +3448,13 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _guestFieldLabel('Nombre'),
+                        _guestFieldLabel(context.l10n.bookingGuestFirstName),
                         TextField(
                           controller: _firstCtrl,
                           style: _kGuestValueStyle,
-                          decoration: _guestFieldDecor('Nombre del invitado'),
+                          decoration: _guestFieldDecor(
+                            context.l10n.bookingGuestFirstNameHint,
+                          ),
                         ),
                       ],
                     ),
@@ -3403,11 +3464,13 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _guestFieldLabel('Apellido'),
+                        _guestFieldLabel(context.l10n.bookingGuestLastName),
                         TextField(
                           controller: _lastCtrl,
                           style: _kGuestValueStyle,
-                          decoration: _guestFieldDecor('Apellido del invitado'),
+                          decoration: _guestFieldDecor(
+                            context.l10n.bookingGuestLastNameHint,
+                          ),
                         ),
                       ],
                     ),
@@ -3418,13 +3481,13 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
               const SizedBox(height: 26),
 
               // ── Mobile number ───────────────────────────────────────────
-              _guestFieldLabel('Número de móvil del invitado'),
+              _guestFieldLabel(context.l10n.bookingGuestPhone),
               TextField(
                 controller: _phoneCtrl,
                 keyboardType: TextInputType.phone,
                 style: _kGuestValueStyle,
                 decoration: _guestFieldDecor(
-                  'Número de móvil del invitado',
+                  context.l10n.bookingGuestPhone,
                 ).copyWith(
                   prefixIcon: const Padding(
                     padding: EdgeInsets.only(bottom: 2, right: 6),
@@ -3450,9 +3513,9 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
 
               const SizedBox(height: LuxSpacing.sm),
 
-              const Text(
-                'El chófer asignado usará este número para coordinar la recogida.',
-                style: TextStyle(
+              Text(
+                context.l10n.bookingGuestPhoneNote,
+                style: const TextStyle(
                   fontFamily: kSans,
                   fontSize: 11,
                   color: _kTextSub,
@@ -3463,13 +3526,13 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
               const SizedBox(height: 26),
 
               // ── Language ────────────────────────────────────────────────
-              _guestFieldLabel('Idioma del invitado (opcional)'),
+              _guestFieldLabel(context.l10n.bookingGuestLanguage),
               TextField(
                 controller: _languageCtrl,
                 maxLength: 40,
                 style: _kGuestValueStyle,
                 decoration: _guestFieldDecor(
-                  'Ej.: español, inglés',
+                  context.l10n.bookingGuestLanguageHint,
                 ).copyWith(counterText: ''),
               ),
 
@@ -3497,7 +3560,7 @@ class _AddGuestDialogState extends State<_AddGuestDialog> {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  child: const Text('Confirmar'),
+                  child: Text(context.l10n.bookingConfirm),
                 ),
               ),
             ],

@@ -694,6 +694,774 @@ abstract class AppLocalizations {
   /// **'No pudimos completar la verificación. Inténtalo de nuevo.'**
   String get authVerifyFailed;
 
+  /// Precio de una clase sin tarifa configurada: se cotiza al reservar.
+  ///
+  /// In es, this message translates to:
+  /// **'Cotiza al reservar'**
+  String get bookingPriceOnRequest;
+
+  /// Precio mínimo de una clase cuando aún no hay ruta («desde Bs 70»).
+  ///
+  /// In es, this message translates to:
+  /// **'desde {price}'**
+  String bookingPriceFrom(String price);
+
+  /// Título del diálogo cuando el servidor cambia el precio al reservar.
+  ///
+  /// In es, this message translates to:
+  /// **'El precio cambió'**
+  String get bookingPriceChangedTitle;
+
+  /// Texto del diálogo de precio cambiado, con el precio nuevo y el anterior.
+  ///
+  /// In es, this message translates to:
+  /// **'El precio de este viaje es ahora {newPrice} (antes {previousPrice}). ¿Quieres reservar con el precio nuevo?'**
+  String bookingPriceChangedBody(String newPrice, String previousPrice);
+
+  /// Botón del diálogo de precio cambiado: no reservar.
+  ///
+  /// In es, this message translates to:
+  /// **'No reservar'**
+  String get bookingPriceChangedDecline;
+
+  /// Botón del diálogo de precio cambiado: reservar con el precio nuevo.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservar'**
+  String get bookingPriceChangedAccept;
+
+  /// Error: en una recogida en aeropuerto falta el tipo de vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Indica si tu vuelo es nacional o internacional.'**
+  String get bookingFlightTypeRequired;
+
+  /// Aviso: se perdió la recogida (recarga de página); hay que volver a indicarla.
+  ///
+  /// In es, this message translates to:
+  /// **'Vuelve a indicar tu recogida para reservar.'**
+  String get bookingPickupMissing;
+
+  /// Error: la hora de recogida elegida ya pasó.
+  ///
+  /// In es, this message translates to:
+  /// **'La hora de recogida ya pasó. Elige una nueva hora.'**
+  String get bookingPickupPast;
+
+  /// Error: no se pudo obtener el precio del servidor.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos calcular el precio. Inténtalo de nuevo.'**
+  String get bookingQuoteFailed;
+
+  /// Aviso con el precio del viaje recién calculado; nombra el botón «Continuar al pago».
+  ///
+  /// In es, this message translates to:
+  /// **'El precio de tu viaje es {price}. Pulsa Continuar al pago para seguir.'**
+  String bookingQuoteReady(String price);
+
+  /// Nombre del destino de una reserva por horas sin destino fijo.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio por horas'**
+  String get bookingHourlyDestination;
+
+  /// Título de la elección de clase de vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige tu experiencia'**
+  String get bookingChooseExperience;
+
+  /// Título del bloque del precio (web).
+  ///
+  /// In es, this message translates to:
+  /// **'Desglose de precio'**
+  String get bookingPriceBreakdown;
+
+  /// Etiqueta del total con el precio del servidor.
+  ///
+  /// In es, this message translates to:
+  /// **'Total'**
+  String get bookingTotal;
+
+  /// Etiqueta del total cuando el precio aún es una estimación.
+  ///
+  /// In es, this message translates to:
+  /// **'Total estimado'**
+  String get bookingTotalEstimated;
+
+  /// Encabezado de las notas bajo el precio (web).
+  ///
+  /// In es, this message translates to:
+  /// **'Nota importante:'**
+  String get bookingImportantNote;
+
+  /// Nota: límites de capacidad del vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Los límites de capacidad de pasajeros y equipaje deben respetarse por razones de seguridad. Si se exceden, el chófer podrá rechazar el servicio.'**
+  String get bookingNoteCapacity;
+
+  /// Nota: las fotos del vehículo son de referencia.
+  ///
+  /// In es, this message translates to:
+  /// **'Las imágenes del vehículo son solo de referencia. El vehículo real puede variar manteniendo una calidad equivalente o superior.'**
+  String get bookingNoteImages;
+
+  /// Nota: necesidades adicionales y grupos grandes. Business Van no se traduce.
+  ///
+  /// In es, this message translates to:
+  /// **'Las necesidades adicionales (silla de ruedas, asiento infantil, artículos extra) pueden añadirse en \"Notas de recogida\". Elige Business Van para grupos más grandes o equipaje adicional.'**
+  String get bookingNoteExtras;
+
+  /// Opción: la reserva es para quien la hace.
+  ///
+  /// In es, this message translates to:
+  /// **'Reservar para mí'**
+  String get bookingForMe;
+
+  /// Detalle de «Reservar para mí».
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva con la información de tu cuenta'**
+  String get bookingForMeDetail;
+
+  /// Opción: la reserva es para otra persona (invitado).
+  ///
+  /// In es, this message translates to:
+  /// **'Reservar para un invitado'**
+  String get bookingForGuest;
+
+  /// Detalle de «Reservar para un invitado» sin invitado elegido.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar o añadir un invitado'**
+  String get bookingForGuestDetail;
+
+  /// Bajo el precio: es el del servidor.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio final'**
+  String get bookingPriceFinal;
+
+  /// Bajo el precio: aún es una estimación.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio estimado'**
+  String get bookingPriceEstimated;
+
+  /// Etiqueta del punto de recogida en el resumen.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida'**
+  String get bookingPickup;
+
+  /// Etiqueta de la duración (servicio por horas).
+  ///
+  /// In es, this message translates to:
+  /// **'Duración'**
+  String get bookingDuration;
+
+  /// Duración de un servicio por horas en el resumen.
+  ///
+  /// In es, this message translates to:
+  /// **'{hours} horas a tu disposición'**
+  String bookingHoursAtDisposal(int hours);
+
+  /// Etiqueta del destino en el resumen.
+  ///
+  /// In es, this message translates to:
+  /// **'Destino'**
+  String get bookingDestination;
+
+  /// Botón o tooltip para volver atrás.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver'**
+  String get bookingBack;
+
+  /// Título del asistente móvil: paso actual de 3, en mayúsculas.
+  ///
+  /// In es, this message translates to:
+  /// **'PASO {step} DE 3'**
+  String bookingStepOf(int step);
+
+  /// Paso del asistente y fila del resumen: el vehículo.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo'**
+  String get bookingVehicle;
+
+  /// Paso del asistente: detalles del viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Detalles'**
+  String get bookingStepDetails;
+
+  /// Paso del asistente y botón: confirmar.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar'**
+  String get bookingConfirm;
+
+  /// Botón para pasar al siguiente paso.
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar'**
+  String get bookingContinue;
+
+  /// Botón final: crea la reserva y pasa al pago.
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar al pago'**
+  String get bookingContinueToPayment;
+
+  /// Encabezado en mayúsculas del paso de detalles.
+  ///
+  /// In es, this message translates to:
+  /// **'DETALLES DEL VIAJE'**
+  String get bookingTripDetails;
+
+  /// Etiqueta: número de pasajeros.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajeros'**
+  String get bookingPassengers;
+
+  /// Etiqueta: equipaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Equipaje'**
+  String get bookingLuggage;
+
+  /// Campo de notas para el chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitudes especiales'**
+  String get bookingSpecialRequests;
+
+  /// Ejemplo dentro del campo de solicitudes especiales.
+  ///
+  /// In es, this message translates to:
+  /// **'Asiento infantil, letrero de bienvenida…'**
+  String get bookingSpecialRequestsHint;
+
+  /// Campo del número de vuelo, obligatorio (recogida en aeropuerto).
+  ///
+  /// In es, this message translates to:
+  /// **'Número de vuelo *'**
+  String get bookingFlightNumberRequired;
+
+  /// Campo del número de vuelo, opcional.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de vuelo'**
+  String get bookingFlightNumber;
+
+  /// Ejemplo de número de vuelo (obligatorio).
+  ///
+  /// In es, this message translates to:
+  /// **'ej. OB 760'**
+  String get bookingFlightNumberHint;
+
+  /// Ejemplo de número de vuelo (opcional).
+  ///
+  /// In es, this message translates to:
+  /// **'ej. OB 760 (opcional)'**
+  String get bookingFlightNumberHintOptional;
+
+  /// Encabezado en mayúsculas del resumen de la reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'RESUMEN DE RESERVA'**
+  String get bookingSummaryTitle;
+
+  /// Fila del resumen: tipo de servicio.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio'**
+  String get bookingSummaryService;
+
+  /// Fila del resumen: origen.
+  ///
+  /// In es, this message translates to:
+  /// **'Desde'**
+  String get bookingSummaryFrom;
+
+  /// Fila del resumen: destino.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta'**
+  String get bookingSummaryTo;
+
+  /// Fila del resumen: distancia.
+  ///
+  /// In es, this message translates to:
+  /// **'Distancia'**
+  String get bookingSummaryDistance;
+
+  /// Número de horas de un servicio por horas.
+  ///
+  /// In es, this message translates to:
+  /// **'{hours} horas'**
+  String bookingHours(int hours);
+
+  /// Fila del resumen: duración estimada del trayecto.
+  ///
+  /// In es, this message translates to:
+  /// **'Duración est.'**
+  String get bookingSummaryEstDuration;
+
+  /// Fila del resumen: número de bultos de equipaje.
+  ///
+  /// In es, this message translates to:
+  /// **'{count} bultos'**
+  String bookingLuggageItems(int count);
+
+  /// Fila del resumen: vuelo.
+  ///
+  /// In es, this message translates to:
+  /// **'Vuelo'**
+  String get bookingSummaryFlight;
+
+  /// Fila del resumen: notas para el chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Notas'**
+  String get bookingSummaryNotes;
+
+  /// Total en mayúsculas con el precio del servidor.
+  ///
+  /// In es, this message translates to:
+  /// **'TOTAL · PRECIO FIJO'**
+  String get bookingTotalFixedPrice;
+
+  /// Total en mayúsculas cuando el precio es una estimación.
+  ///
+  /// In es, this message translates to:
+  /// **'TOTAL ESTIMADO'**
+  String get bookingTotalEstimatedUpper;
+
+  /// Nota antes del botón: el pago va en el paso siguiente. Sin plazos.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagas en el paso siguiente. Buscamos chófer cuando el pago está confirmado.'**
+  String get bookingPayNextNote;
+
+  /// Nota de recogida en aeropuerto.
+  ///
+  /// In es, this message translates to:
+  /// **'Recogida en aeropuerto: indica tu número de vuelo para que tu chófer lo tenga.'**
+  String get bookingFlightNote;
+
+  /// Selector obligatorio: vuelo nacional o internacional.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de vuelo *'**
+  String get bookingFlightType;
+
+  /// Botón por defecto de la barra de precio.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar reserva'**
+  String get bookingConfirmBooking;
+
+  /// Barra de precio en mayúsculas: estimación.
+  ///
+  /// In es, this message translates to:
+  /// **'PRECIO ESTIMADO'**
+  String get bookingPriceEstimatedUpper;
+
+  /// Barra de precio en mayúsculas: precio del servidor.
+  ///
+  /// In es, this message translates to:
+  /// **'PRECIO FINAL'**
+  String get bookingPriceFinalUpper;
+
+  /// Botón para volver a pedir el precio.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get bookingRetry;
+
+  /// Título del diálogo de acceso al reservar: crear cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear una cuenta'**
+  String get bookingAuthRegisterTitle;
+
+  /// Título del diálogo de acceso al reservar: iniciar sesión.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia sesión para continuar'**
+  String get bookingAuthLoginTitle;
+
+  /// Texto del diálogo de acceso: crear cuenta. Luxelane no se traduce.
+  ///
+  /// In es, this message translates to:
+  /// **'Crea tu cuenta de Luxelane para completar la reserva.'**
+  String get bookingAuthRegisterBody;
+
+  /// Texto del diálogo de acceso: iniciar sesión.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia sesión para confirmar tu reserva.'**
+  String get bookingAuthLoginBody;
+
+  /// Campo: nombre completo.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre completo'**
+  String get bookingAuthFullName;
+
+  /// Ejemplo del campo de nombre.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu nombre'**
+  String get bookingAuthFullNameHint;
+
+  /// Campo: correo electrónico.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo electrónico'**
+  String get bookingAuthEmail;
+
+  /// Ejemplo del campo de correo.
+  ///
+  /// In es, this message translates to:
+  /// **'tu@ejemplo.com'**
+  String get bookingAuthEmailHint;
+
+  /// Campo: contraseña.
+  ///
+  /// In es, this message translates to:
+  /// **'Contraseña'**
+  String get bookingAuthPassword;
+
+  /// Botón: crear cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear cuenta'**
+  String get bookingAuthRegister;
+
+  /// Botón: iniciar sesión.
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar sesión'**
+  String get bookingAuthLogin;
+
+  /// Enlace para pasar a iniciar sesión.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Ya tienes cuenta? Inicia sesión'**
+  String get bookingAuthHaveAccount;
+
+  /// Enlace para pasar a crear cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'¿No tienes cuenta? Crear una'**
+  String get bookingAuthNoAccount;
+
+  /// Tratamiento del invitado (se guarda «Sr.»).
+  ///
+  /// In es, this message translates to:
+  /// **'Sr.'**
+  String get bookingGuestTitleMr;
+
+  /// Tratamiento del invitado (se guarda «Sra.»).
+  ///
+  /// In es, this message translates to:
+  /// **'Sra.'**
+  String get bookingGuestTitleMrs;
+
+  /// Tratamiento del invitado (se guarda «Srta.»).
+  ///
+  /// In es, this message translates to:
+  /// **'Srta.'**
+  String get bookingGuestTitleMiss;
+
+  /// Tratamiento del invitado (se guarda «Dr.»).
+  ///
+  /// In es, this message translates to:
+  /// **'Dr.'**
+  String get bookingGuestTitleDr;
+
+  /// Tratamiento del invitado (se guarda «Prof.»).
+  ///
+  /// In es, this message translates to:
+  /// **'Prof.'**
+  String get bookingGuestTitleProf;
+
+  /// Título del diálogo para añadir un invitado.
+  ///
+  /// In es, this message translates to:
+  /// **'Añadir nuevo invitado'**
+  String get bookingGuestAddTitle;
+
+  /// Texto del diálogo del invitado: para qué se usan sus datos.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa los datos de la persona que viajará. Compartiremos estos datos con el chófer asignado para coordinar la recogida.'**
+  String get bookingGuestIntro;
+
+  /// Campo: tratamiento del invitado (Sr., Sra.…).
+  ///
+  /// In es, this message translates to:
+  /// **'Tratamiento'**
+  String get bookingGuestSalutation;
+
+  /// Campo: nombre del invitado.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre'**
+  String get bookingGuestFirstName;
+
+  /// Ejemplo del campo de nombre del invitado.
+  ///
+  /// In es, this message translates to:
+  /// **'Nombre del invitado'**
+  String get bookingGuestFirstNameHint;
+
+  /// Campo: apellido del invitado.
+  ///
+  /// In es, this message translates to:
+  /// **'Apellido'**
+  String get bookingGuestLastName;
+
+  /// Ejemplo del campo de apellido del invitado.
+  ///
+  /// In es, this message translates to:
+  /// **'Apellido del invitado'**
+  String get bookingGuestLastNameHint;
+
+  /// Campo: móvil del invitado.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de móvil del invitado'**
+  String get bookingGuestPhone;
+
+  /// Nota bajo el móvil del invitado.
+  ///
+  /// In es, this message translates to:
+  /// **'El chófer asignado usará este número para coordinar la recogida.'**
+  String get bookingGuestPhoneNote;
+
+  /// Campo: idioma del invitado.
+  ///
+  /// In es, this message translates to:
+  /// **'Idioma del invitado (opcional)'**
+  String get bookingGuestLanguage;
+
+  /// Ejemplo del campo de idioma del invitado.
+  ///
+  /// In es, this message translates to:
+  /// **'Ej.: español, inglés'**
+  String get bookingGuestLanguageHint;
+
+  /// Capacidad de pasajeros de la clase.
+  ///
+  /// In es, this message translates to:
+  /// **'{count} pasajeros'**
+  String bookingVehiclePassengers(int count);
+
+  /// Capacidad de maletas de la clase.
+  ///
+  /// In es, this message translates to:
+  /// **'{count} maletas'**
+  String bookingVehicleBags(int count);
+
+  /// Encabezado en mayúsculas de los detalles de la clase.
+  ///
+  /// In es, this message translates to:
+  /// **'DETALLES'**
+  String get bookingVehicleDetailsEyebrow;
+
+  /// Nota bajo las fotos del maletero.
+  ///
+  /// In es, this message translates to:
+  /// **'Medidas estándar de referencia. Si llevas equipaje especial (palos de golf, cochecito, instrumentos), indícalo en las notas de recogida.'**
+  String get bookingLuggageNote;
+
+  /// Nota bajo las fotos de los asientos.
+  ///
+  /// In es, this message translates to:
+  /// **'El asiento infantil se solicita con antelación y está sujeto a disponibilidad. Indica la edad del niño en las notas de recogida.'**
+  String get bookingChildSeatNote;
+
+  /// Encabezado en mayúsculas de la capacidad.
+  ///
+  /// In es, this message translates to:
+  /// **'CAPACIDAD'**
+  String get bookingCapacityEyebrow;
+
+  /// Título de la sección de capacidad.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cuánto cabe?'**
+  String get bookingCapacityTitle;
+
+  /// Capacidad de la clase: pasajeros y maletas facturadas.
+  ///
+  /// In es, this message translates to:
+  /// **'Hasta {passengers} pasajeros y {bags} maletas facturadas'**
+  String bookingCapacityDetail(int passengers, int bags);
+
+  /// Pestaña: asientos.
+  ///
+  /// In es, this message translates to:
+  /// **'Asientos'**
+  String get bookingSeating;
+
+  /// Tooltip de la flecha del carrusel.
+  ///
+  /// In es, this message translates to:
+  /// **'Siguiente'**
+  String get bookingNext;
+
+  /// Error al guardar la valoración del viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo guardar tu valoración. Inténtalo de nuevo.'**
+  String get bookingRatingSaveError;
+
+  /// Error al aceptar (chófer): otro chófer ya lo aceptó.
+  ///
+  /// In es, this message translates to:
+  /// **'Otro chófer ya aceptó este viaje.'**
+  String get bookingAcceptTaken;
+
+  /// Error al aceptar (chófer): documentos sin verificar. Luxelane no se traduce.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus documentos aún no están verificados por Luxelane.'**
+  String get bookingAcceptNotVerified;
+
+  /// Error al aceptar (chófer): no está disponible.
+  ///
+  /// In es, this message translates to:
+  /// **'Conéctate y termina tu viaje actual antes de aceptar otro.'**
+  String get bookingAcceptBusy;
+
+  /// Error al aceptar (chófer): el viaje ya no está disponible.
+  ///
+  /// In es, this message translates to:
+  /// **'Este viaje ya no está disponible.'**
+  String get bookingAcceptUnavailable;
+
+  /// Error al aceptar (chófer): sin conexión.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo aceptar el viaje. Revisa tu conexión.'**
+  String get bookingAcceptConnection;
+
+  /// Error al aceptar (chófer): otro fallo.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo aceptar el viaje. Inténtalo de nuevo.'**
+  String get bookingAcceptFailed;
+
+  /// Error de conexión al cotizar o reservar.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos conectar. Revisa tu conexión e inténtalo de nuevo.'**
+  String get bookingConnectionError;
+
+  /// Error del servidor: no hay tarifa para el viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos calcular el precio de este viaje ahora. Inténtalo de nuevo en unos minutos.'**
+  String get bookingErrorPricingUnavailable;
+
+  /// Error del servidor: destino fuera de la ciudad de la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Por ahora solo hacemos viajes dentro de la misma ciudad de la recogida.'**
+  String get bookingErrorOutOfArea;
+
+  /// Error del servidor: clase no disponible.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta clase de vehículo no está disponible en este momento. Elige otra.'**
+  String get bookingErrorClassUnavailable;
+
+  /// Error del servidor: reservas en pausa por mantenimiento.
+  ///
+  /// In es, this message translates to:
+  /// **'Las reservas están en pausa por mantenimiento. Vuelve a intentarlo en unos minutos.'**
+  String get bookingErrorServiceUnavailable;
+
+  /// Error del servidor: horas no enteras.
+  ///
+  /// In es, this message translates to:
+  /// **'Elige un número entero de horas.'**
+  String get bookingErrorInvalidHours;
+
+  /// Error del servidor: cuenta sin permiso para reservar.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu cuenta no puede hacer reservas en este momento.'**
+  String get bookingErrorInactiveUser;
+
+  /// Error del servidor: sin sesión.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia sesión para reservar.'**
+  String get bookingErrorSignIn;
+
+  /// Error del servidor: ningún método de pago activo.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahora mismo no podemos recibir reservas. Inténtalo de nuevo más tarde o contacta con central.'**
+  String get bookingErrorPaymentsUnavailable;
+
+  /// Error del servidor: datos del viaje mal formados.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos procesar tu reserva. Revisa los datos del viaje e inténtalo de nuevo.'**
+  String get bookingErrorInvalidRequest;
+
+  /// Error del servidor: fallo interno, sin culpar a la persona.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos completar la reserva por un problema nuestro. Inténtalo de nuevo en unos minutos.'**
+  String get bookingErrorServer;
+
+  /// Error al cancelar: sin conexión.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo cancelar. Revisa tu conexión e inténtalo de nuevo.'**
+  String get bookingCancelConnectionError;
+
+  /// Error al cancelar: fallo del servidor.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo cancelar ahora. Inténtalo de nuevo en unos minutos; si sigue, contacta con central.'**
+  String get bookingCancelServerError;
+
+  /// Error al cancelar: el viaje está en curso o terminó.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta reserva ya no se puede cancelar: el viaje está en curso o terminó.'**
+  String get bookingCancelNotCancellable;
+
+  /// Error al cancelar: la reserva no es de la cuenta o no existe.
+  ///
+  /// In es, this message translates to:
+  /// **'No encontramos esta reserva en tu cuenta.'**
+  String get bookingNotFound;
+
+  /// Error al guardar el color o la foto del vehículo (chófer).
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos guardar el cambio. Inténtalo de nuevo.'**
+  String get bookingVehicleSaveError;
+
+  /// Error al cargar la lista de viajes del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos cargar tus viajes. Reintenta.'**
+  String get bookingTripsLoadError;
+
   /// Antetítulo de la página Luxelane para Empresas.
   ///
   /// In es, this message translates to:

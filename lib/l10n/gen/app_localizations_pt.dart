@@ -346,6 +346,445 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não foi possível concluir a verificação. Tente novamente.';
 
   @override
+  String get bookingPriceOnRequest => 'Cotação ao reservar';
+
+  @override
+  String bookingPriceFrom(String price) {
+    return 'a partir de $price';
+  }
+
+  @override
+  String get bookingPriceChangedTitle => 'O preço mudou';
+
+  @override
+  String bookingPriceChangedBody(String newPrice, String previousPrice) {
+    return 'O preço desta viagem agora é $newPrice (antes $previousPrice). Deseja reservar com o novo preço?';
+  }
+
+  @override
+  String get bookingPriceChangedDecline => 'Não reservar';
+
+  @override
+  String get bookingPriceChangedAccept => 'Reservar';
+
+  @override
+  String get bookingFlightTypeRequired =>
+      'Informe se o seu voo é nacional ou internacional.';
+
+  @override
+  String get bookingPickupMissing =>
+      'Informe novamente o ponto de embarque para reservar.';
+
+  @override
+  String get bookingPickupPast =>
+      'O horário de embarque já passou. Escolha um novo horário.';
+
+  @override
+  String get bookingQuoteFailed =>
+      'Não foi possível calcular o preço. Tente novamente.';
+
+  @override
+  String bookingQuoteReady(String price) {
+    return 'O preço da sua viagem é $price. Toque em Continuar para o pagamento para seguir.';
+  }
+
+  @override
+  String get bookingHourlyDestination => 'Serviço por hora';
+
+  @override
+  String get bookingChooseExperience => 'Escolha sua experiência';
+
+  @override
+  String get bookingPriceBreakdown => 'Detalhamento do preço';
+
+  @override
+  String get bookingTotal => 'Total';
+
+  @override
+  String get bookingTotalEstimated => 'Total estimado';
+
+  @override
+  String get bookingImportantNote => 'Observação importante:';
+
+  @override
+  String get bookingNoteCapacity =>
+      'Os limites de capacidade de passageiros e bagagem devem ser respeitados por motivos de segurança. Se forem excedidos, o motorista poderá recusar o serviço.';
+
+  @override
+  String get bookingNoteImages =>
+      'As imagens do veículo são apenas ilustrativas. O veículo real pode variar, mantendo qualidade equivalente ou superior.';
+
+  @override
+  String get bookingNoteExtras =>
+      'Necessidades adicionais (cadeira de rodas, assento infantil, itens extras) podem ser adicionadas em \"Observações de embarque\". Escolha Business Van para grupos maiores ou bagagem adicional.';
+
+  @override
+  String get bookingForMe => 'Reservar para mim';
+
+  @override
+  String get bookingForMeDetail => 'Reserve com os dados da sua conta';
+
+  @override
+  String get bookingForGuest => 'Reservar para um convidado';
+
+  @override
+  String get bookingForGuestDetail => 'Selecionar ou adicionar um convidado';
+
+  @override
+  String get bookingPriceFinal => 'Preço final';
+
+  @override
+  String get bookingPriceEstimated => 'Preço estimado';
+
+  @override
+  String get bookingPickup => 'Embarque';
+
+  @override
+  String get bookingDuration => 'Duração';
+
+  @override
+  String bookingHoursAtDisposal(int hours) {
+    return '$hours horas à sua disposição';
+  }
+
+  @override
+  String get bookingDestination => 'Destino';
+
+  @override
+  String get bookingBack => 'Voltar';
+
+  @override
+  String bookingStepOf(int step) {
+    return 'ETAPA $step DE 3';
+  }
+
+  @override
+  String get bookingVehicle => 'Veículo';
+
+  @override
+  String get bookingStepDetails => 'Detalhes';
+
+  @override
+  String get bookingConfirm => 'Confirmar';
+
+  @override
+  String get bookingContinue => 'Continuar';
+
+  @override
+  String get bookingContinueToPayment => 'Continuar para o pagamento';
+
+  @override
+  String get bookingTripDetails => 'DETALHES DA VIAGEM';
+
+  @override
+  String get bookingPassengers => 'Passageiros';
+
+  @override
+  String get bookingLuggage => 'Bagagem';
+
+  @override
+  String get bookingSpecialRequests => 'Solicitações especiais';
+
+  @override
+  String get bookingSpecialRequestsHint =>
+      'Assento infantil, placa de boas-vindas…';
+
+  @override
+  String get bookingFlightNumberRequired => 'Número do voo *';
+
+  @override
+  String get bookingFlightNumber => 'Número do voo';
+
+  @override
+  String get bookingFlightNumberHint => 'ex. OB 760';
+
+  @override
+  String get bookingFlightNumberHintOptional => 'ex. OB 760 (opcional)';
+
+  @override
+  String get bookingSummaryTitle => 'RESUMO DA RESERVA';
+
+  @override
+  String get bookingSummaryService => 'Serviço';
+
+  @override
+  String get bookingSummaryFrom => 'De';
+
+  @override
+  String get bookingSummaryTo => 'Para';
+
+  @override
+  String get bookingSummaryDistance => 'Distância';
+
+  @override
+  String bookingHours(int hours) {
+    return '$hours horas';
+  }
+
+  @override
+  String get bookingSummaryEstDuration => 'Duração est.';
+
+  @override
+  String bookingLuggageItems(int count) {
+    return '$count volumes';
+  }
+
+  @override
+  String get bookingSummaryFlight => 'Voo';
+
+  @override
+  String get bookingSummaryNotes => 'Observações';
+
+  @override
+  String get bookingTotalFixedPrice => 'TOTAL · PREÇO FIXO';
+
+  @override
+  String get bookingTotalEstimatedUpper => 'TOTAL ESTIMADO';
+
+  @override
+  String get bookingPayNextNote =>
+      'Você paga na próxima etapa. Procuramos um motorista quando o pagamento estiver confirmado.';
+
+  @override
+  String get bookingFlightNote =>
+      'Embarque no aeroporto: informe o número do voo para que seu motorista o tenha.';
+
+  @override
+  String get bookingFlightType => 'Tipo de voo *';
+
+  @override
+  String get bookingConfirmBooking => 'Confirmar reserva';
+
+  @override
+  String get bookingPriceEstimatedUpper => 'PREÇO ESTIMADO';
+
+  @override
+  String get bookingPriceFinalUpper => 'PREÇO FINAL';
+
+  @override
+  String get bookingRetry => 'Tentar novamente';
+
+  @override
+  String get bookingAuthRegisterTitle => 'Criar uma conta';
+
+  @override
+  String get bookingAuthLoginTitle => 'Entre para continuar';
+
+  @override
+  String get bookingAuthRegisterBody =>
+      'Crie sua conta Luxelane para concluir a reserva.';
+
+  @override
+  String get bookingAuthLoginBody => 'Entre para confirmar sua reserva.';
+
+  @override
+  String get bookingAuthFullName => 'Nome completo';
+
+  @override
+  String get bookingAuthFullNameHint => 'Seu nome';
+
+  @override
+  String get bookingAuthEmail => 'E-mail';
+
+  @override
+  String get bookingAuthEmailHint => 'voce@exemplo.com';
+
+  @override
+  String get bookingAuthPassword => 'Senha';
+
+  @override
+  String get bookingAuthRegister => 'Criar conta';
+
+  @override
+  String get bookingAuthLogin => 'Entrar';
+
+  @override
+  String get bookingAuthHaveAccount => 'Já tem uma conta? Entre';
+
+  @override
+  String get bookingAuthNoAccount => 'Não tem uma conta? Crie uma';
+
+  @override
+  String get bookingGuestTitleMr => 'Sr.';
+
+  @override
+  String get bookingGuestTitleMrs => 'Sra.';
+
+  @override
+  String get bookingGuestTitleMiss => 'Srta.';
+
+  @override
+  String get bookingGuestTitleDr => 'Dr.';
+
+  @override
+  String get bookingGuestTitleProf => 'Prof.';
+
+  @override
+  String get bookingGuestAddTitle => 'Adicionar novo convidado';
+
+  @override
+  String get bookingGuestIntro =>
+      'Informe os dados da pessoa que vai viajar. Compartilharemos esses dados com o motorista designado para coordenar o embarque.';
+
+  @override
+  String get bookingGuestSalutation => 'Tratamento';
+
+  @override
+  String get bookingGuestFirstName => 'Nome';
+
+  @override
+  String get bookingGuestFirstNameHint => 'Nome do convidado';
+
+  @override
+  String get bookingGuestLastName => 'Sobrenome';
+
+  @override
+  String get bookingGuestLastNameHint => 'Sobrenome do convidado';
+
+  @override
+  String get bookingGuestPhone => 'Celular do convidado';
+
+  @override
+  String get bookingGuestPhoneNote =>
+      'O motorista designado usará este número para coordenar o embarque.';
+
+  @override
+  String get bookingGuestLanguage => 'Idioma do convidado (opcional)';
+
+  @override
+  String get bookingGuestLanguageHint => 'Ex.: espanhol, inglês';
+
+  @override
+  String bookingVehiclePassengers(int count) {
+    return '$count passageiros';
+  }
+
+  @override
+  String bookingVehicleBags(int count) {
+    return '$count malas';
+  }
+
+  @override
+  String get bookingVehicleDetailsEyebrow => 'DETALHES';
+
+  @override
+  String get bookingLuggageNote =>
+      'Medidas padrão de referência. Se você levar bagagem especial (tacos de golfe, carrinho de bebê, instrumentos), informe nas observações de embarque.';
+
+  @override
+  String get bookingChildSeatNote =>
+      'O assento infantil deve ser solicitado com antecedência e está sujeito à disponibilidade. Informe a idade da criança nas observações de embarque.';
+
+  @override
+  String get bookingCapacityEyebrow => 'CAPACIDADE';
+
+  @override
+  String get bookingCapacityTitle => 'Quanto cabe?';
+
+  @override
+  String bookingCapacityDetail(int passengers, int bags) {
+    return 'Até $passengers passageiros e $bags malas despachadas';
+  }
+
+  @override
+  String get bookingSeating => 'Assentos';
+
+  @override
+  String get bookingNext => 'Próximo';
+
+  @override
+  String get bookingRatingSaveError =>
+      'Não foi possível salvar sua avaliação. Tente novamente.';
+
+  @override
+  String get bookingAcceptTaken => 'Outro motorista já aceitou esta viagem.';
+
+  @override
+  String get bookingAcceptNotVerified =>
+      'Seus documentos ainda não foram verificados pela Luxelane.';
+
+  @override
+  String get bookingAcceptBusy =>
+      'Fique online e conclua sua viagem atual antes de aceitar outra.';
+
+  @override
+  String get bookingAcceptUnavailable =>
+      'Esta viagem não está mais disponível.';
+
+  @override
+  String get bookingAcceptConnection =>
+      'Não foi possível aceitar a viagem. Verifique sua conexão.';
+
+  @override
+  String get bookingAcceptFailed =>
+      'Não foi possível aceitar a viagem. Tente novamente.';
+
+  @override
+  String get bookingConnectionError =>
+      'Não foi possível conectar. Verifique sua conexão e tente novamente.';
+
+  @override
+  String get bookingErrorPricingUnavailable =>
+      'Não foi possível calcular o preço desta viagem agora. Tente novamente em alguns minutos.';
+
+  @override
+  String get bookingErrorOutOfArea =>
+      'Por enquanto, só fazemos viagens dentro da cidade do embarque.';
+
+  @override
+  String get bookingErrorClassUnavailable =>
+      'Esta categoria de veículo não está disponível no momento. Escolha outra.';
+
+  @override
+  String get bookingErrorServiceUnavailable =>
+      'As reservas estão pausadas para manutenção. Tente novamente em alguns minutos.';
+
+  @override
+  String get bookingErrorInvalidHours => 'Escolha um número inteiro de horas.';
+
+  @override
+  String get bookingErrorInactiveUser =>
+      'Sua conta não pode fazer reservas no momento.';
+
+  @override
+  String get bookingErrorSignIn => 'Entre para reservar.';
+
+  @override
+  String get bookingErrorPaymentsUnavailable =>
+      'No momento não podemos receber reservas. Tente novamente mais tarde ou fale com a central.';
+
+  @override
+  String get bookingErrorInvalidRequest =>
+      'Não foi possível processar sua reserva. Verifique os dados da viagem e tente novamente.';
+
+  @override
+  String get bookingErrorServer =>
+      'Não foi possível concluir a reserva por um problema nosso. Tente novamente em alguns minutos.';
+
+  @override
+  String get bookingCancelConnectionError =>
+      'Não foi possível cancelar. Verifique sua conexão e tente novamente.';
+
+  @override
+  String get bookingCancelServerError =>
+      'Não foi possível cancelar agora. Tente novamente em alguns minutos; se continuar, fale com a central.';
+
+  @override
+  String get bookingCancelNotCancellable =>
+      'Esta reserva não pode mais ser cancelada: a viagem está em andamento ou já terminou.';
+
+  @override
+  String get bookingNotFound => 'Não encontramos esta reserva na sua conta.';
+
+  @override
+  String get bookingVehicleSaveError =>
+      'Não foi possível salvar a alteração. Tente novamente.';
+
+  @override
+  String get bookingTripsLoadError =>
+      'Não foi possível carregar suas viagens. Tente novamente.';
+
+  @override
   String get businessEyebrow => 'Para Empresas';
 
   @override

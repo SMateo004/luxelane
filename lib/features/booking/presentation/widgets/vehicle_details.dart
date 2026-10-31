@@ -7,6 +7,7 @@ import '../../../../app/theme/app_theme.dart';
 import '../../../../core/design/vehicle_catalog.dart';
 import '../../../../core/enums/enums.dart';
 import '../../../../core/widgets/lux_raised.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../home/presentation/pages/home_design.dart';
 import 'vehicle_visuals.dart';
 
@@ -142,9 +143,15 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
         const SizedBox(height: LuxSpacing.xs),
         Row(
           children: [
-            _Spec(Icons.person_outline_rounded, '${vc.capacity} pasajeros'),
+            _Spec(
+              Icons.person_outline_rounded,
+              context.l10n.bookingVehiclePassengers(vc.capacity),
+            ),
             const SizedBox(width: 20),
-            _Spec(Icons.luggage_outlined, '${vc.luggageCapacity} maletas'),
+            _Spec(
+              Icons.luggage_outlined,
+              context.l10n.bookingVehicleBags(vc.luggageCapacity),
+            ),
           ],
         ),
       ],
@@ -153,7 +160,7 @@ class _VehicleDetailsGalleryState extends State<VehicleDetailsGallery> {
     final heading = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('DETALLES', style: eyebrow()),
+        Text(context.l10n.bookingVehicleDetailsEyebrow, style: eyebrow()),
         const SizedBox(height: 10),
         Text(
           vc.label,
@@ -298,12 +305,8 @@ class CapacitySection extends StatelessWidget {
 
     final note = Text(
       isLuggage
-          ? 'Medidas estándar de referencia. Si llevas equipaje especial '
-              '(palos de golf, cochecito, instrumentos), indícalo en las notas '
-              'de recogida.'
-          : 'El asiento infantil se solicita con antelación y está sujeto a '
-              'disponibilidad. Indica la edad del niño en las notas de '
-              'recogida.',
+          ? context.l10n.bookingLuggageNote
+          : context.l10n.bookingChildSeatNote,
       textAlign: compact ? TextAlign.center : TextAlign.start,
       style: const TextStyle(
         fontFamily: kSans,
@@ -316,10 +319,10 @@ class CapacitySection extends StatelessWidget {
     final heading = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('CAPACIDAD', style: eyebrow()),
+        Text(context.l10n.bookingCapacityEyebrow, style: eyebrow()),
         const SizedBox(height: 10),
         Text(
-          '¿Cuánto cabe?',
+          context.l10n.bookingCapacityTitle,
           style: TextStyle(
             fontFamily: kSerif,
             fontSize: compact ? 30 : 32,
@@ -330,7 +333,7 @@ class CapacitySection extends StatelessWidget {
         ),
         const SizedBox(height: LuxSpacing.xs),
         Text(
-          'Hasta ${vc.capacity} pasajeros y ${vc.luggageCapacity} maletas facturadas',
+          context.l10n.bookingCapacityDetail(vc.capacity, vc.luggageCapacity),
           style: const TextStyle(
             fontFamily: kSans,
             fontSize: 14,
@@ -341,13 +344,13 @@ class CapacitySection extends StatelessWidget {
         Row(
           children: [
             _UnderlineTab(
-              label: 'Equipaje',
+              label: context.l10n.bookingLuggage,
               active: isLuggage,
               onTap: () => onTab(0),
             ),
             const SizedBox(width: 28),
             _UnderlineTab(
-              label: 'Asientos',
+              label: context.l10n.bookingSeating,
               active: !isLuggage,
               onTap: () => onTab(1),
             ),
@@ -431,7 +434,7 @@ class _Carousel extends StatelessWidget {
         ? null
         : _RoundNav(
             icon: Icons.arrow_forward_rounded,
-            tooltip: 'Siguiente',
+            tooltip: context.l10n.bookingNext,
             onTap: () => _go(1),
           );
     return Column(
