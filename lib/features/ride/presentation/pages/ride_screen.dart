@@ -17,6 +17,7 @@ import '../../../../core/repositories/repositories.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
 import '../../../../core/widgets/lux_map.dart';
+import '../../../../l10n/l10n.dart';
 import '../../../driver/presentation/widgets/pickup_code_entry.dart'
     show CallDispatchButton;
 import '../../../incidents/presentation/widgets/sos_entry.dart';
@@ -45,17 +46,16 @@ bool receiptBelowDriver(BookingStatus? status) =>
 /// la muestra el comprobante: el titular no la repite (E43). Sin estado de
 /// pago (reservas antiguas), el recargo guardado en la reserva.
 String cancelledMessage(BookingPayment? payment, double? legacyFee) {
-  const base = 'Esta reserva fue cancelada.';
+  final t = L10n.current;
+  final base = t.rideCancelledMessage;
   if (payment != null) {
     final retained = BookingPayment.bs(payment.amountRetained);
     // Sin comprobante (no hubo pago) no hay retención que mostrar.
     if (payment.hasReceipt || retained <= 0) return base;
-    return '$base Retención por cancelación: ${LuxFormat.money(retained)}.';
+    return t.rideCancelledWithFee(LuxFormat.money(retained));
   }
   final fee = legacyFee ?? 0;
-  return fee > 0
-      ? '$base Retención por cancelación: ${LuxFormat.money(fee)}.'
-      : base;
+  return fee > 0 ? t.rideCancelledWithFee(LuxFormat.money(fee)) : base;
 }
 
 /// «Llamar a tu chófer» solo dentro de la ventana activa y con teléfono.
@@ -220,12 +220,12 @@ class _RideScreenState extends State<RideScreen> {
   String get _statusMessage {
     final error = _loadError;
     if (error != null) return error;
+    final t = context.l10n;
     switch (_status) {
       case null:
-        return 'Cargando tu reserva…';
+        return t.rideStatusLoading;
       case BookingStatus.pending when _awaitingPayment:
-        return 'Tu reserva espera el pago. Buscamos chófer cuando esté '
-            'confirmado.';
+        return t.rideStatusAwaitingPayment;
       case BookingStatus.pending:
         final phone = RemoteFlags.instance.dispatchPhone.value ?? '';
         return pendingMessage(
@@ -233,22 +233,21 @@ class _RideScreenState extends State<RideScreen> {
           canCallDispatch: phone.isNotEmpty,
         );
       case BookingStatus.confirmed:
-        return 'Tu reserva está confirmada. Te avisaremos cuando tu chófer salga hacia ti.';
+        return t.rideStatusConfirmed;
       case BookingStatus.driverArriving:
-        return 'Tu chófer va de camino al punto de recogida.';
+        return t.rideStatusDriverArriving;
       case BookingStatus.driverArrived:
-        return 'Tu chófer ha llegado y te espera. Tómate tu tiempo.';
+        return t.rideStatusDriverArrived;
       case BookingStatus.verified:
-        return 'Código verificado. Tu viaje empieza en un momento.';
+        return t.rideStatusVerified;
       case BookingStatus.inProgress:
-        return 'Disfruta del trayecto. Llegarás a tu destino en breve.';
+        return t.rideStatusInProgress;
       case BookingStatus.completed:
-        return 'Has llegado. Gracias por viajar con Luxelane.';
+        return t.rideStatusCompleted;
       case BookingStatus.cancelled:
         return cancelledMessage(_payment, _booking!.cancellationFee);
       case BookingStatus.noShow:
-        return 'Tu chófer no te encontró en el punto de recogida. Central '
-            'fue avisada.';
+        return t.rideStatusNoShow;
     }
   }
 
@@ -288,8 +287,9 @@ class _RideScreenState extends State<RideScreen> {
     showDialog<void>(
       context: context,
       builder: (ctx) => _RatingDialog(
-        driverName:
-            _driver?.name.isNotEmpty == true ? _driver!.name : 'tu chófer',
+        driverName: _driver?.name.isNotEmpty == true
+            ? _driver!.name
+            : context.l10n.rideYourDriverLower,
         onSubmit: (rating) async {
           final result = await sl<BookingRepository>().rateBooking(
             bookingId: widget.rideId,
@@ -299,7 +299,7 @@ class _RideScreenState extends State<RideScreen> {
           Navigator.of(ctx).pop();
           result.fold(
             (f) => showLuxSnackbar(context, f.message, isError: true),
-            (_) => showLuxSnackbar(context, '¡Gracias por tu valoración!'),
+            (_) => showLuxSnackbar(context, context.l10n.rideRatingThanks),
           );
         },
       ),
@@ -363,16 +363,21 @@ class _RideScreenState extends State<RideScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         if (canRate)
-          LuxButton(label: 'Calificar viaje', onPressed: _showRatingDialog)
+          LuxButton(
+            label: context.l10n.rideRateTrip,
+            onPressed: _showRatingDialog,
+          )
         else if (canCall)
           LuxOutlinedButton(
-            label: 'Llamar a tu chófer',
+            label: context.l10n.rideCallDriver,
             onPressed: _callDriver,
             icon: Icons.call_outlined,
           ),
         if (canCancel)
           LuxButton.ghost(
-            label: _cancelling ? 'Cancelando…' : 'Cancelar reserva',
+            label: _cancelling
+                ? context.l10n.rideCancelling
+                : context.l10n.rideCancelBooking,
             onPressed: _cancelling || _cancelFlowOpen ? null : _cancel,
           ),
       ],
@@ -409,7 +414,7 @@ class _RideScreenState extends State<RideScreen> {
     }
     final b = _booking!;
     return DriverCard(
-      name: d.name.isNotEmpty ? d.name : 'Tu chófer',
+      name: d.name.isNotEmpty ? d.name : context.l10n.rideYourDriver,
       rating: d.rating ?? 5.0,
       vehicle: d.vehicle ??
           '${b.vehicleClass.label} · ${b.vehicleClass.description}',
@@ -424,16 +429,16 @@ class _RideScreenState extends State<RideScreen> {
     // Confirmación visible de que el código funcionó y del fin del viaje
     // (antes la tarjeta solo desaparecía, E31).
     if (_status == BookingStatus.verified) {
-      return const _MomentCard(
-        key: ValueKey('moment-verified'),
-        title: 'Código verificado',
-        detail: 'Tu chófer ya puede iniciar el viaje.',
+      return _MomentCard(
+        key: const ValueKey('moment-verified'),
+        title: context.l10n.rideCodeVerified,
+        detail: context.l10n.rideCodeVerifiedDetail,
       );
     }
     if (_status == BookingStatus.completed && _justCompleted) {
-      return const _MomentCard(
-        key: ValueKey('moment-completed'),
-        title: 'Viaje completado',
+      return _MomentCard(
+        key: const ValueKey('moment-completed'),
+        title: context.l10n.rideCompleted,
       );
     }
     if (_status != BookingStatus.driverArrived || widget.rideId.isEmpty) {
@@ -558,7 +563,7 @@ class _TopBar extends StatelessWidget {
         child: Row(
           children: [
             LuxPressable(
-              semanticLabel: 'Volver al inicio',
+              semanticLabel: context.l10n.rideBackHome,
               onTap: () => context.go('/'),
               child: LuxTapArea(
                   child: Container(
@@ -685,8 +690,9 @@ class _BottomPanel extends StatelessWidget {
                     const SizedBox(width: 6),
                     Expanded(
                       child: Text(
-                        'Tu chófer conoce tu estilo: '
-                        '${notes.take(3).join(' · ').toLowerCase()}',
+                        context.l10n.ridePreferencesKnown(
+                          notes.take(3).join(' · ').toLowerCase(),
+                        ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: LuxTypography.caption.copyWith(fontSize: 12),
@@ -725,13 +731,13 @@ class _AssigningCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Asignando a tu chófer',
+                  Text(
+                    context.l10n.rideAssigningTitle,
                     style: LuxTypography.titleMedium,
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Verás su nombre, vehículo y valoración aquí.',
+                    context.l10n.rideAssigningDetail,
                     style: LuxTypography.caption.copyWith(
                       color: LuxColors.inkSecondary,
                     ),
@@ -790,8 +796,8 @@ class _RatingDialogState extends State<_RatingDialog> {
           borderRadius: BorderRadius.circular(LuxRadius.lg),
           side: const BorderSide(color: LuxColors.border),
         ),
-        title: const Text(
-          'Califica tu viaje',
+        title: Text(
+          context.l10n.rideRatingTitle,
           style: LuxTypography.titleMedium,
           textAlign: TextAlign.center,
         ),
@@ -835,10 +841,10 @@ class _RatingDialogState extends State<_RatingDialog> {
         actions: [
           TextButton(
             onPressed: _sending ? null : () => Navigator.of(context).pop(),
-            child: const Text('Ahora no'),
+            child: Text(context.l10n.rideRatingLater),
           ),
           LuxButton(
-            label: 'Enviar',
+            label: context.l10n.rideRatingSend,
             width: 160,
             loading: _sending,
             onPressed: _sending
@@ -860,11 +866,12 @@ class _RatingDialogState extends State<_RatingDialog> {
       );
 
   String _ratingLabel(double r) {
-    if (r >= 5) return 'Excelente';
-    if (r >= 4) return 'Bueno';
-    if (r >= 3) return 'Regular';
-    if (r >= 2) return 'Malo';
-    return 'Muy malo';
+    final t = context.l10n;
+    if (r >= 5) return t.rideRating5;
+    if (r >= 4) return t.rideRating4;
+    if (r >= 3) return t.rideRating3;
+    if (r >= 2) return t.rideRating2;
+    return t.rideRating1;
   }
 }
 

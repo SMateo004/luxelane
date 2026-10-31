@@ -1347,6 +1347,462 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'El importe final del viaje fue mayor que lo pagado.'**
   String get paymentReceiptBalanceNote;
+
+  /// Pantalla del viaje: la reserva no existe o no es de esta cuenta.
+  ///
+  /// In es, this message translates to:
+  /// **'No encontramos esta reserva en tu cuenta.'**
+  String get rideLoadNotFound;
+
+  /// Pantalla del viaje: la reserva no cargó por falta de conexión.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos cargar tu reserva. Revisa tu conexión.'**
+  String get rideLoadOffline;
+
+  /// Pantalla del viaje: la reserva no cargó por otro motivo.
+  ///
+  /// In es, this message translates to:
+  /// **'No pudimos cargar tu reserva. Inténtalo de nuevo.'**
+  String get rideLoadFailed;
+
+  /// Titular mientras la reserva busca chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Estamos asignando a tu chófer. Te avisaremos en cuanto esté confirmado.'**
+  String get ridePendingSearching;
+
+  /// Titular cuando el chófer anterior liberó el viaje y hay número de central para llamar.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer anterior no pudo hacer el viaje. Estamos buscando otro y central ya está avisada. Si lo necesitas, llama a central.'**
+  String get ridePendingReleasedCall;
+
+  /// Titular cuando el chófer anterior liberó el viaje, sin número de central.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer anterior no pudo hacer el viaje. Estamos buscando otro y central ya está avisada.'**
+  String get ridePendingReleased;
+
+  /// Titular cuando pasó la hora de recogida sin chófer y hay número de central.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya pasó la hora de recogida y aún no hay chófer asignado. Llama a central o cancela la reserva.'**
+  String get ridePendingPickupPassedCall;
+
+  /// Titular cuando pasó la hora de recogida sin chófer, sin número de central.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya pasó la hora de recogida y aún no hay chófer asignado. Puedes esperar o cancelar la reserva.'**
+  String get ridePendingPickupPassed;
+
+  /// Mensaje que el titular comparte con su invitado con el código de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu código de recogida es {code}. Dáselo a tu chófer al subir; sin él no puede iniciar el viaje.'**
+  String rideCodeShareText(String code);
+
+  /// Etiqueta de lector de pantalla mientras carga el código de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando tu código de recogida'**
+  String get rideCodeLoading;
+
+  /// Encabezado en mayúsculas de la tarjeta del código de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'CÓDIGO DE RECOGIDA'**
+  String get rideCodeTitle;
+
+  /// Etiqueta de lector de pantalla del código, con los dígitos separados por espacios.
+  ///
+  /// In es, this message translates to:
+  /// **'Código de recogida {digits}'**
+  String rideCodeSemantics(String digits);
+
+  /// Bajo el código de recogida: qué hacer con él.
+  ///
+  /// In es, this message translates to:
+  /// **'Dáselo a tu chófer al subir. Sin él no puede iniciar el viaje.'**
+  String get rideCodeHint;
+
+  /// Bajo el código, si la reserva es para un invitado.
+  ///
+  /// In es, this message translates to:
+  /// **'Compártelo con {guest}: se lo dará al chófer al subir.'**
+  String rideCodeGuestHint(String guest);
+
+  /// Botón para compartir el código de recogida con el invitado.
+  ///
+  /// In es, this message translates to:
+  /// **'Compartir código'**
+  String get rideCodeShare;
+
+  /// Botón para volver a pedir el código de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar'**
+  String get rideRetry;
+
+  /// Aviso tras cancelar la reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Reserva cancelada'**
+  String get rideCancelledSnack;
+
+  /// Aviso si la retención por cancelar cambió dos veces seguidas.
+  ///
+  /// In es, this message translates to:
+  /// **'La retención cambió de nuevo. Inténtalo otra vez.'**
+  String get rideCancelFeeChangedAgain;
+
+  /// Título del diálogo y botón para cancelar la reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar reserva'**
+  String get rideCancelBooking;
+
+  /// Diálogo de cancelación: cuánto se retiene si cancela ahora.
+  ///
+  /// In es, this message translates to:
+  /// **'Según la política de cancelación, si cancelas ahora se retienen {amount} de lo que pagaste.'**
+  String rideCancelFee(String amount);
+
+  /// Diálogo de cancelación cuando la retención cambió mientras decidía.
+  ///
+  /// In es, this message translates to:
+  /// **'La retención cambió. Según la política de cancelación, si cancelas ahora se retienen {amount} de lo que pagaste.'**
+  String rideCancelFeeChanged(String amount);
+
+  /// Diálogo de cancelación: importe pendiente de devolución. Sin plazos ni promesas.
+  ///
+  /// In es, this message translates to:
+  /// **'{amount} quedan pendientes de devolución. Te avisaremos cuando central la registre.'**
+  String rideCancelRefund(String amount);
+
+  /// Encabezado de la lista de motivos de cancelación.
+  ///
+  /// In es, this message translates to:
+  /// **'Motivo'**
+  String get rideCancelReasonLabel;
+
+  /// Motivo de cancelación del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambié de planes'**
+  String get rideCancelReasonChangedPlans;
+
+  /// Motivo de cancelación del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Encontré otro transporte'**
+  String get rideCancelReasonOtherTransport;
+
+  /// Motivo de cancelación del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'El chófer tarda demasiado'**
+  String get rideCancelReasonDriverLate;
+
+  /// Motivo de cancelación del pasajero.
+  ///
+  /// In es, this message translates to:
+  /// **'Otro motivo'**
+  String get rideCancelReasonOther;
+
+  /// Botón para cerrar el diálogo sin cancelar.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver'**
+  String get rideBack;
+
+  /// Botón para confirmar la cancelación cuando hay retención.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar con retención'**
+  String get rideCancelWithFee;
+
+  /// Titular de una reserva cancelada.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta reserva fue cancelada.'**
+  String get rideCancelledMessage;
+
+  /// Titular de una reserva cancelada con retención.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta reserva fue cancelada. Retención por cancelación: {amount}.'**
+  String rideCancelledWithFee(String amount);
+
+  /// Titular mientras carga la reserva.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando tu reserva…'**
+  String get rideStatusLoading;
+
+  /// Titular de una reserva sin pago confirmado.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu reserva espera el pago. Buscamos chófer cuando esté confirmado.'**
+  String get rideStatusAwaitingPayment;
+
+  /// Titular con chófer asignado, antes de que salga.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu reserva está confirmada. Te avisaremos cuando tu chófer salga hacia ti.'**
+  String get rideStatusConfirmed;
+
+  /// Titular mientras el chófer va a la recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer va de camino al punto de recogida.'**
+  String get rideStatusDriverArriving;
+
+  /// Titular cuando el chófer llegó y espera.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer ha llegado y te espera. Tómate tu tiempo.'**
+  String get rideStatusDriverArrived;
+
+  /// Titular tras verificar el código de recogida.
+  ///
+  /// In es, this message translates to:
+  /// **'Código verificado. Tu viaje empieza en un momento.'**
+  String get rideStatusVerified;
+
+  /// Titular durante el trayecto.
+  ///
+  /// In es, this message translates to:
+  /// **'Disfruta del trayecto. Llegarás a tu destino en breve.'**
+  String get rideStatusInProgress;
+
+  /// Titular al terminar el viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Has llegado. Gracias por viajar con Luxelane.'**
+  String get rideStatusCompleted;
+
+  /// Titular cuando el chófer marcó que el pasajero no se presentó.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer no te encontró en el punto de recogida. Central fue avisada.'**
+  String get rideStatusNoShow;
+
+  /// Nombre del chófer en el diálogo de valoración si no se conoce (en minúscula en español).
+  ///
+  /// In es, this message translates to:
+  /// **'tu chófer'**
+  String get rideYourDriverLower;
+
+  /// Nombre del chófer en su tarjeta si no se conoce.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer'**
+  String get rideYourDriver;
+
+  /// Aviso tras enviar la valoración del viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Gracias por tu valoración!'**
+  String get rideRatingThanks;
+
+  /// Botón para valorar un viaje completado.
+  ///
+  /// In es, this message translates to:
+  /// **'Calificar viaje'**
+  String get rideRateTrip;
+
+  /// Botón para llamar al chófer durante el viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Llamar a tu chófer'**
+  String get rideCallDriver;
+
+  /// Botón de cancelar mientras se procesa la cancelación.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelando…'**
+  String get rideCancelling;
+
+  /// Etiqueta de lector de pantalla del botón que vuelve al inicio.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver al inicio'**
+  String get rideBackHome;
+
+  /// Bajo el titular: preferencias del pasajero que ve su chófer.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer conoce tu estilo: {preferences}'**
+  String ridePreferencesKnown(String preferences);
+
+  /// Tarjeta mientras se asigna chófer: título.
+  ///
+  /// In es, this message translates to:
+  /// **'Asignando a tu chófer'**
+  String get rideAssigningTitle;
+
+  /// Tarjeta mientras se asigna chófer: detalle.
+  ///
+  /// In es, this message translates to:
+  /// **'Verás su nombre, vehículo y valoración aquí.'**
+  String get rideAssigningDetail;
+
+  /// Momento de éxito al verificarse el código de recogida: título.
+  ///
+  /// In es, this message translates to:
+  /// **'Código verificado'**
+  String get rideCodeVerified;
+
+  /// Momento de éxito al verificarse el código de recogida: detalle.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu chófer ya puede iniciar el viaje.'**
+  String get rideCodeVerifiedDetail;
+
+  /// Momento de éxito al terminar el viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje completado'**
+  String get rideCompleted;
+
+  /// Título del diálogo de valoración.
+  ///
+  /// In es, this message translates to:
+  /// **'Califica tu viaje'**
+  String get rideRatingTitle;
+
+  /// Botón para cerrar el diálogo de valoración sin valorar.
+  ///
+  /// In es, this message translates to:
+  /// **'Ahora no'**
+  String get rideRatingLater;
+
+  /// Botón para enviar la valoración.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar'**
+  String get rideRatingSend;
+
+  /// Valoración de 5 estrellas.
+  ///
+  /// In es, this message translates to:
+  /// **'Excelente'**
+  String get rideRating5;
+
+  /// Valoración de 4 estrellas.
+  ///
+  /// In es, this message translates to:
+  /// **'Bueno'**
+  String get rideRating4;
+
+  /// Valoración de 3 estrellas.
+  ///
+  /// In es, this message translates to:
+  /// **'Regular'**
+  String get rideRating3;
+
+  /// Valoración de 2 estrellas.
+  ///
+  /// In es, this message translates to:
+  /// **'Malo'**
+  String get rideRating2;
+
+  /// Valoración de 1 estrella.
+  ///
+  /// In es, this message translates to:
+  /// **'Muy malo'**
+  String get rideRating1;
+
+  /// Error de un paso del viaje sin conexión (pasajero y chófer).
+  ///
+  /// In es, this message translates to:
+  /// **'Sin conexión. Revisa tu red e inténtalo de nuevo.'**
+  String get rideErrorNetwork;
+
+  /// El código de recogida aún no está disponible: el chófer no llegó.
+  ///
+  /// In es, this message translates to:
+  /// **'El código aparece cuando tu chófer llega a la recogida.'**
+  String get rideErrorNotAtPickup;
+
+  /// El chófer escribió un código de recogida incorrecto (sin dato de intentos).
+  ///
+  /// In es, this message translates to:
+  /// **'Código incorrecto.'**
+  String get rideErrorWrongCode;
+
+  /// Código de recogida incorrecto: queda un intento.
+  ///
+  /// In es, this message translates to:
+  /// **'Código incorrecto. Te queda 1 intento.'**
+  String get rideErrorWrongCodeOne;
+
+  /// Código de recogida incorrecto: quedan varios intentos.
+  ///
+  /// In es, this message translates to:
+  /// **'Código incorrecto. Te quedan {left} intentos.'**
+  String rideErrorWrongCodeMany(int left);
+
+  /// Verificación del código bloqueada por demasiados intentos.
+  ///
+  /// In es, this message translates to:
+  /// **'Por seguridad, la verificación quedó bloqueada. Contacta con central.'**
+  String get rideErrorLocked;
+
+  /// El código de recogida venció.
+  ///
+  /// In es, this message translates to:
+  /// **'El código venció. Contacta con central para continuar.'**
+  String get rideErrorExpired;
+
+  /// El código de recogida no está disponible.
+  ///
+  /// In es, this message translates to:
+  /// **'El código no está disponible ahora. Contacta con central.'**
+  String get rideErrorUnavailable;
+
+  /// Al chófer: el viaje ya no está asignado a él.
+  ///
+  /// In es, this message translates to:
+  /// **'Este viaje ya no está a tu cargo.'**
+  String get rideErrorNotYours;
+
+  /// Al chófer: aún no puede marcar que el pasajero no se presentó.
+  ///
+  /// In es, this message translates to:
+  /// **'Aún no terminó el tiempo de espera. Espera un poco más.'**
+  String get rideErrorTooEarly;
+
+  /// Al chófer: la opción de no se presentó está desactivada.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta opción no está disponible. Contacta con central.'**
+  String get rideErrorNoShowDisabled;
+
+  /// Al chófer: hace falta la ubicación para marcar que no se presentó.
+  ///
+  /// In es, this message translates to:
+  /// **'Activa la ubicación: central necesita saber dónde esperaste.'**
+  String get rideErrorLocationRequired;
+
+  /// Al chófer: ya no puede liberar el viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya no puedes liberar este viaje. Contacta con central.'**
+  String get rideErrorNotReleasable;
+
+  /// El viaje cambió de estado mientras se hacía un paso.
+  ///
+  /// In es, this message translates to:
+  /// **'El viaje cambió de estado. Actualizamos la pantalla.'**
+  String get rideErrorInvalidTransition;
+
+  /// Error genérico de un paso del viaje.
+  ///
+  /// In es, this message translates to:
+  /// **'No se pudo completar. Inténtalo de nuevo.'**
+  String get rideErrorGeneric;
 }
 
 class _AppLocalizationsDelegate

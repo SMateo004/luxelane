@@ -731,4 +731,278 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get paymentReceiptBalanceNote =>
       'El importe final del viaje fue mayor que lo pagado.';
+
+  @override
+  String get rideLoadNotFound => 'No encontramos esta reserva en tu cuenta.';
+
+  @override
+  String get rideLoadOffline =>
+      'No pudimos cargar tu reserva. Revisa tu conexión.';
+
+  @override
+  String get rideLoadFailed =>
+      'No pudimos cargar tu reserva. Inténtalo de nuevo.';
+
+  @override
+  String get ridePendingSearching =>
+      'Estamos asignando a tu chófer. Te avisaremos en cuanto esté confirmado.';
+
+  @override
+  String get ridePendingReleasedCall =>
+      'Tu chófer anterior no pudo hacer el viaje. Estamos buscando otro y central ya está avisada. Si lo necesitas, llama a central.';
+
+  @override
+  String get ridePendingReleased =>
+      'Tu chófer anterior no pudo hacer el viaje. Estamos buscando otro y central ya está avisada.';
+
+  @override
+  String get ridePendingPickupPassedCall =>
+      'Ya pasó la hora de recogida y aún no hay chófer asignado. Llama a central o cancela la reserva.';
+
+  @override
+  String get ridePendingPickupPassed =>
+      'Ya pasó la hora de recogida y aún no hay chófer asignado. Puedes esperar o cancelar la reserva.';
+
+  @override
+  String rideCodeShareText(String code) {
+    return 'Tu código de recogida es $code. Dáselo a tu chófer al subir; sin él no puede iniciar el viaje.';
+  }
+
+  @override
+  String get rideCodeLoading => 'Cargando tu código de recogida';
+
+  @override
+  String get rideCodeTitle => 'CÓDIGO DE RECOGIDA';
+
+  @override
+  String rideCodeSemantics(String digits) {
+    return 'Código de recogida $digits';
+  }
+
+  @override
+  String get rideCodeHint =>
+      'Dáselo a tu chófer al subir. Sin él no puede iniciar el viaje.';
+
+  @override
+  String rideCodeGuestHint(String guest) {
+    return 'Compártelo con $guest: se lo dará al chófer al subir.';
+  }
+
+  @override
+  String get rideCodeShare => 'Compartir código';
+
+  @override
+  String get rideRetry => 'Reintentar';
+
+  @override
+  String get rideCancelledSnack => 'Reserva cancelada';
+
+  @override
+  String get rideCancelFeeChangedAgain =>
+      'La retención cambió de nuevo. Inténtalo otra vez.';
+
+  @override
+  String get rideCancelBooking => 'Cancelar reserva';
+
+  @override
+  String rideCancelFee(String amount) {
+    return 'Según la política de cancelación, si cancelas ahora se retienen $amount de lo que pagaste.';
+  }
+
+  @override
+  String rideCancelFeeChanged(String amount) {
+    return 'La retención cambió. Según la política de cancelación, si cancelas ahora se retienen $amount de lo que pagaste.';
+  }
+
+  @override
+  String rideCancelRefund(String amount) {
+    return '$amount quedan pendientes de devolución. Te avisaremos cuando central la registre.';
+  }
+
+  @override
+  String get rideCancelReasonLabel => 'Motivo';
+
+  @override
+  String get rideCancelReasonChangedPlans => 'Cambié de planes';
+
+  @override
+  String get rideCancelReasonOtherTransport => 'Encontré otro transporte';
+
+  @override
+  String get rideCancelReasonDriverLate => 'El chófer tarda demasiado';
+
+  @override
+  String get rideCancelReasonOther => 'Otro motivo';
+
+  @override
+  String get rideBack => 'Volver';
+
+  @override
+  String get rideCancelWithFee => 'Cancelar con retención';
+
+  @override
+  String get rideCancelledMessage => 'Esta reserva fue cancelada.';
+
+  @override
+  String rideCancelledWithFee(String amount) {
+    return 'Esta reserva fue cancelada. Retención por cancelación: $amount.';
+  }
+
+  @override
+  String get rideStatusLoading => 'Cargando tu reserva…';
+
+  @override
+  String get rideStatusAwaitingPayment =>
+      'Tu reserva espera el pago. Buscamos chófer cuando esté confirmado.';
+
+  @override
+  String get rideStatusConfirmed =>
+      'Tu reserva está confirmada. Te avisaremos cuando tu chófer salga hacia ti.';
+
+  @override
+  String get rideStatusDriverArriving =>
+      'Tu chófer va de camino al punto de recogida.';
+
+  @override
+  String get rideStatusDriverArrived =>
+      'Tu chófer ha llegado y te espera. Tómate tu tiempo.';
+
+  @override
+  String get rideStatusVerified =>
+      'Código verificado. Tu viaje empieza en un momento.';
+
+  @override
+  String get rideStatusInProgress =>
+      'Disfruta del trayecto. Llegarás a tu destino en breve.';
+
+  @override
+  String get rideStatusCompleted =>
+      'Has llegado. Gracias por viajar con Luxelane.';
+
+  @override
+  String get rideStatusNoShow =>
+      'Tu chófer no te encontró en el punto de recogida. Central fue avisada.';
+
+  @override
+  String get rideYourDriverLower => 'tu chófer';
+
+  @override
+  String get rideYourDriver => 'Tu chófer';
+
+  @override
+  String get rideRatingThanks => '¡Gracias por tu valoración!';
+
+  @override
+  String get rideRateTrip => 'Calificar viaje';
+
+  @override
+  String get rideCallDriver => 'Llamar a tu chófer';
+
+  @override
+  String get rideCancelling => 'Cancelando…';
+
+  @override
+  String get rideBackHome => 'Volver al inicio';
+
+  @override
+  String ridePreferencesKnown(String preferences) {
+    return 'Tu chófer conoce tu estilo: $preferences';
+  }
+
+  @override
+  String get rideAssigningTitle => 'Asignando a tu chófer';
+
+  @override
+  String get rideAssigningDetail =>
+      'Verás su nombre, vehículo y valoración aquí.';
+
+  @override
+  String get rideCodeVerified => 'Código verificado';
+
+  @override
+  String get rideCodeVerifiedDetail => 'Tu chófer ya puede iniciar el viaje.';
+
+  @override
+  String get rideCompleted => 'Viaje completado';
+
+  @override
+  String get rideRatingTitle => 'Califica tu viaje';
+
+  @override
+  String get rideRatingLater => 'Ahora no';
+
+  @override
+  String get rideRatingSend => 'Enviar';
+
+  @override
+  String get rideRating5 => 'Excelente';
+
+  @override
+  String get rideRating4 => 'Bueno';
+
+  @override
+  String get rideRating3 => 'Regular';
+
+  @override
+  String get rideRating2 => 'Malo';
+
+  @override
+  String get rideRating1 => 'Muy malo';
+
+  @override
+  String get rideErrorNetwork =>
+      'Sin conexión. Revisa tu red e inténtalo de nuevo.';
+
+  @override
+  String get rideErrorNotAtPickup =>
+      'El código aparece cuando tu chófer llega a la recogida.';
+
+  @override
+  String get rideErrorWrongCode => 'Código incorrecto.';
+
+  @override
+  String get rideErrorWrongCodeOne => 'Código incorrecto. Te queda 1 intento.';
+
+  @override
+  String rideErrorWrongCodeMany(int left) {
+    return 'Código incorrecto. Te quedan $left intentos.';
+  }
+
+  @override
+  String get rideErrorLocked =>
+      'Por seguridad, la verificación quedó bloqueada. Contacta con central.';
+
+  @override
+  String get rideErrorExpired =>
+      'El código venció. Contacta con central para continuar.';
+
+  @override
+  String get rideErrorUnavailable =>
+      'El código no está disponible ahora. Contacta con central.';
+
+  @override
+  String get rideErrorNotYours => 'Este viaje ya no está a tu cargo.';
+
+  @override
+  String get rideErrorTooEarly =>
+      'Aún no terminó el tiempo de espera. Espera un poco más.';
+
+  @override
+  String get rideErrorNoShowDisabled =>
+      'Esta opción no está disponible. Contacta con central.';
+
+  @override
+  String get rideErrorLocationRequired =>
+      'Activa la ubicación: central necesita saber dónde esperaste.';
+
+  @override
+  String get rideErrorNotReleasable =>
+      'Ya no puedes liberar este viaje. Contacta con central.';
+
+  @override
+  String get rideErrorInvalidTransition =>
+      'El viaje cambió de estado. Actualizamos la pantalla.';
+
+  @override
+  String get rideErrorGeneric => 'No se pudo completar. Inténtalo de nuevo.';
 }

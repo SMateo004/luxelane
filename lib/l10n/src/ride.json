@@ -1,0 +1,512 @@
+{
+  "rideLoadNotFound": {
+    "description": "Pantalla del viaje: la reserva no existe o no es de esta cuenta.",
+    "es": "No encontramos esta reserva en tu cuenta.",
+    "en": "We could not find this booking in your account.",
+    "pt": "Não encontramos esta reserva na sua conta."
+  },
+  "rideLoadOffline": {
+    "description": "Pantalla del viaje: la reserva no cargó por falta de conexión.",
+    "es": "No pudimos cargar tu reserva. Revisa tu conexión.",
+    "en": "We could not load your booking. Check your connection.",
+    "pt": "Não foi possível carregar sua reserva. Verifique sua conexão."
+  },
+  "rideLoadFailed": {
+    "description": "Pantalla del viaje: la reserva no cargó por otro motivo.",
+    "es": "No pudimos cargar tu reserva. Inténtalo de nuevo.",
+    "en": "We could not load your booking. Please try again.",
+    "pt": "Não foi possível carregar sua reserva. Tente novamente."
+  },
+  "ridePendingSearching": {
+    "description": "Titular mientras la reserva busca chófer.",
+    "es": "Estamos asignando a tu chófer. Te avisaremos en cuanto esté confirmado.",
+    "en": "We are assigning your chauffeur. We will let you know once it is confirmed.",
+    "pt": "Estamos designando seu motorista. Avisaremos você assim que for confirmado."
+  },
+  "ridePendingReleasedCall": {
+    "description": "Titular cuando el chófer anterior liberó el viaje y hay número de central para llamar.",
+    "es": "Tu chófer anterior no pudo hacer el viaje. Estamos buscando otro y central ya está avisada. Si lo necesitas, llama a central.",
+    "en": "Your previous chauffeur could not take the trip. We are looking for another one and our operations team has been notified. If you need to, call our operations team.",
+    "pt": "Seu motorista anterior não pôde fazer a viagem. Estamos buscando outro e a central já foi avisada. Se precisar, ligue para a central."
+  },
+  "ridePendingReleased": {
+    "description": "Titular cuando el chófer anterior liberó el viaje, sin número de central.",
+    "es": "Tu chófer anterior no pudo hacer el viaje. Estamos buscando otro y central ya está avisada.",
+    "en": "Your previous chauffeur could not take the trip. We are looking for another one and our operations team has been notified.",
+    "pt": "Seu motorista anterior não pôde fazer a viagem. Estamos buscando outro e a central já foi avisada."
+  },
+  "ridePendingPickupPassedCall": {
+    "description": "Titular cuando pasó la hora de recogida sin chófer y hay número de central.",
+    "es": "Ya pasó la hora de recogida y aún no hay chófer asignado. Llama a central o cancela la reserva.",
+    "en": "The pickup time has passed and no chauffeur has been assigned yet. Call our operations team or cancel the booking.",
+    "pt": "O horário de embarque já passou e ainda não há motorista designado. Ligue para a central ou cancele a reserva."
+  },
+  "ridePendingPickupPassed": {
+    "description": "Titular cuando pasó la hora de recogida sin chófer, sin número de central.",
+    "es": "Ya pasó la hora de recogida y aún no hay chófer asignado. Puedes esperar o cancelar la reserva.",
+    "en": "The pickup time has passed and no chauffeur has been assigned yet. You can wait or cancel the booking.",
+    "pt": "O horário de embarque já passou e ainda não há motorista designado. Você pode esperar ou cancelar a reserva."
+  },
+  "rideCodeShareText": {
+    "description": "Mensaje que el titular comparte con su invitado con el código de recogida.",
+    "es": "Tu código de recogida es {code}. Dáselo a tu chófer al subir; sin él no puede iniciar el viaje.",
+    "en": "Your pickup code is {code}. Give it to your chauffeur when you get in; without it the trip cannot start.",
+    "pt": "Seu código de embarque é {code}. Informe-o ao motorista ao entrar no carro; sem ele a viagem não pode começar.",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "4207"
+      }
+    }
+  },
+  "rideCodeLoading": {
+    "description": "Etiqueta de lector de pantalla mientras carga el código de recogida.",
+    "es": "Cargando tu código de recogida",
+    "en": "Loading your pickup code",
+    "pt": "Carregando seu código de embarque"
+  },
+  "rideCodeTitle": {
+    "description": "Encabezado en mayúsculas de la tarjeta del código de recogida.",
+    "es": "CÓDIGO DE RECOGIDA",
+    "en": "PICKUP CODE",
+    "pt": "CÓDIGO DE EMBARQUE"
+  },
+  "rideCodeSemantics": {
+    "description": "Etiqueta de lector de pantalla del código, con los dígitos separados por espacios.",
+    "es": "Código de recogida {digits}",
+    "en": "Pickup code {digits}",
+    "pt": "Código de embarque {digits}",
+    "placeholders": {
+      "digits": {
+        "type": "String",
+        "example": "4 2 0 7"
+      }
+    }
+  },
+  "rideCodeHint": {
+    "description": "Bajo el código de recogida: qué hacer con él.",
+    "es": "Dáselo a tu chófer al subir. Sin él no puede iniciar el viaje.",
+    "en": "Give it to your chauffeur when you get in. Without it the trip cannot start.",
+    "pt": "Informe-o ao motorista ao entrar no carro. Sem ele a viagem não pode começar."
+  },
+  "rideCodeGuestHint": {
+    "description": "Bajo el código, si la reserva es para un invitado.",
+    "es": "Compártelo con {guest}: se lo dará al chófer al subir.",
+    "en": "Share it with {guest}: they will give it to the chauffeur when they get in.",
+    "pt": "Compartilhe-o com {guest}: o convidado o informará ao motorista ao entrar no carro.",
+    "placeholders": {
+      "guest": {
+        "type": "String",
+        "example": "Carla Tercero"
+      }
+    }
+  },
+  "rideCodeShare": {
+    "description": "Botón para compartir el código de recogida con el invitado.",
+    "es": "Compartir código",
+    "en": "Share code",
+    "pt": "Compartilhar código"
+  },
+  "rideRetry": {
+    "description": "Botón para volver a pedir el código de recogida.",
+    "es": "Reintentar",
+    "en": "Retry",
+    "pt": "Tentar novamente"
+  },
+  "rideCancelledSnack": {
+    "description": "Aviso tras cancelar la reserva.",
+    "es": "Reserva cancelada",
+    "en": "Booking cancelled",
+    "pt": "Reserva cancelada"
+  },
+  "rideCancelFeeChangedAgain": {
+    "description": "Aviso si la retención por cancelar cambió dos veces seguidas.",
+    "es": "La retención cambió de nuevo. Inténtalo otra vez.",
+    "en": "The cancellation fee changed again. Please try again.",
+    "pt": "A taxa de cancelamento mudou novamente. Tente outra vez."
+  },
+  "rideCancelBooking": {
+    "description": "Título del diálogo y botón para cancelar la reserva.",
+    "es": "Cancelar reserva",
+    "en": "Cancel booking",
+    "pt": "Cancelar reserva"
+  },
+  "rideCancelFee": {
+    "description": "Diálogo de cancelación: cuánto se retiene si cancela ahora.",
+    "es": "Según la política de cancelación, si cancelas ahora se retienen {amount} de lo que pagaste.",
+    "en": "Under the cancellation policy, if you cancel now {amount} of what you paid will be retained.",
+    "pt": "De acordo com a política de cancelamento, se você cancelar agora, {amount} do valor pago serão retidos.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 50"
+      }
+    }
+  },
+  "rideCancelFeeChanged": {
+    "description": "Diálogo de cancelación cuando la retención cambió mientras decidía.",
+    "es": "La retención cambió. Según la política de cancelación, si cancelas ahora se retienen {amount} de lo que pagaste.",
+    "en": "The cancellation fee changed. Under the cancellation policy, if you cancel now {amount} of what you paid will be retained.",
+    "pt": "A taxa de cancelamento mudou. De acordo com a política de cancelamento, se você cancelar agora, {amount} do valor pago serão retidos.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 50"
+      }
+    }
+  },
+  "rideCancelRefund": {
+    "description": "Diálogo de cancelación: importe pendiente de devolución. Sin plazos ni promesas.",
+    "es": "{amount} quedan pendientes de devolución. Te avisaremos cuando central la registre.",
+    "en": "{amount} remain pending refund. We will let you know when our operations team records it.",
+    "pt": "{amount} ficam pendentes de reembolso. Avisaremos você quando a central registrá-lo.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 450"
+      }
+    }
+  },
+  "rideCancelReasonLabel": {
+    "description": "Encabezado de la lista de motivos de cancelación.",
+    "es": "Motivo",
+    "en": "Reason",
+    "pt": "Motivo"
+  },
+  "rideCancelReasonChangedPlans": {
+    "description": "Motivo de cancelación del pasajero.",
+    "es": "Cambié de planes",
+    "en": "My plans changed",
+    "pt": "Mudei de planos"
+  },
+  "rideCancelReasonOtherTransport": {
+    "description": "Motivo de cancelación del pasajero.",
+    "es": "Encontré otro transporte",
+    "en": "I found other transport",
+    "pt": "Encontrei outro transporte"
+  },
+  "rideCancelReasonDriverLate": {
+    "description": "Motivo de cancelación del pasajero.",
+    "es": "El chófer tarda demasiado",
+    "en": "The chauffeur is taking too long",
+    "pt": "O motorista está demorando demais"
+  },
+  "rideCancelReasonOther": {
+    "description": "Motivo de cancelación del pasajero.",
+    "es": "Otro motivo",
+    "en": "Other reason",
+    "pt": "Outro motivo"
+  },
+  "rideBack": {
+    "description": "Botón para cerrar el diálogo sin cancelar.",
+    "es": "Volver",
+    "en": "Back",
+    "pt": "Voltar"
+  },
+  "rideCancelWithFee": {
+    "description": "Botón para confirmar la cancelación cuando hay retención.",
+    "es": "Cancelar con retención",
+    "en": "Cancel with fee",
+    "pt": "Cancelar com taxa"
+  },
+  "rideCancelledMessage": {
+    "description": "Titular de una reserva cancelada.",
+    "es": "Esta reserva fue cancelada.",
+    "en": "This booking was cancelled.",
+    "pt": "Esta reserva foi cancelada."
+  },
+  "rideCancelledWithFee": {
+    "description": "Titular de una reserva cancelada con retención.",
+    "es": "Esta reserva fue cancelada. Retención por cancelación: {amount}.",
+    "en": "This booking was cancelled. Cancellation fee: {amount}.",
+    "pt": "Esta reserva foi cancelada. Taxa de cancelamento: {amount}.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 50"
+      }
+    }
+  },
+  "rideStatusLoading": {
+    "description": "Titular mientras carga la reserva.",
+    "es": "Cargando tu reserva…",
+    "en": "Loading your booking…",
+    "pt": "Carregando sua reserva…"
+  },
+  "rideStatusAwaitingPayment": {
+    "description": "Titular de una reserva sin pago confirmado.",
+    "es": "Tu reserva espera el pago. Buscamos chófer cuando esté confirmado.",
+    "en": "Your booking is awaiting payment. We look for a chauffeur once it is confirmed.",
+    "pt": "Sua reserva aguarda o pagamento. Buscamos um motorista quando ele for confirmado."
+  },
+  "rideStatusConfirmed": {
+    "description": "Titular con chófer asignado, antes de que salga.",
+    "es": "Tu reserva está confirmada. Te avisaremos cuando tu chófer salga hacia ti.",
+    "en": "Your booking is confirmed. We will let you know when your chauffeur sets off.",
+    "pt": "Sua reserva está confirmada. Avisaremos você quando seu motorista sair ao seu encontro."
+  },
+  "rideStatusDriverArriving": {
+    "description": "Titular mientras el chófer va a la recogida.",
+    "es": "Tu chófer va de camino al punto de recogida.",
+    "en": "Your chauffeur is on the way to the pickup point.",
+    "pt": "Seu motorista está a caminho do ponto de embarque."
+  },
+  "rideStatusDriverArrived": {
+    "description": "Titular cuando el chófer llegó y espera.",
+    "es": "Tu chófer ha llegado y te espera. Tómate tu tiempo.",
+    "en": "Your chauffeur has arrived and is waiting for you. Take your time.",
+    "pt": "Seu motorista chegou e está esperando por você. Sem pressa."
+  },
+  "rideStatusVerified": {
+    "description": "Titular tras verificar el código de recogida.",
+    "es": "Código verificado. Tu viaje empieza en un momento.",
+    "en": "Code verified. Your trip will begin shortly.",
+    "pt": "Código verificado. Sua viagem começa em instantes."
+  },
+  "rideStatusInProgress": {
+    "description": "Titular durante el trayecto.",
+    "es": "Disfruta del trayecto. Llegarás a tu destino en breve.",
+    "en": "Enjoy the journey. You will reach your destination shortly.",
+    "pt": "Aproveite o trajeto. Você chegará ao seu destino em breve."
+  },
+  "rideStatusCompleted": {
+    "description": "Titular al terminar el viaje.",
+    "es": "Has llegado. Gracias por viajar con Luxelane.",
+    "en": "You have arrived. Thank you for traveling with Luxelane.",
+    "pt": "Você chegou. Obrigado por viajar com a Luxelane."
+  },
+  "rideStatusNoShow": {
+    "description": "Titular cuando el chófer marcó que el pasajero no se presentó.",
+    "es": "Tu chófer no te encontró en el punto de recogida. Central fue avisada.",
+    "en": "Your chauffeur could not find you at the pickup point. Our operations team has been notified.",
+    "pt": "Seu motorista não encontrou você no ponto de embarque. A central foi avisada."
+  },
+  "rideYourDriverLower": {
+    "description": "Nombre del chófer en el diálogo de valoración si no se conoce (en minúscula en español).",
+    "es": "tu chófer",
+    "en": "your chauffeur",
+    "pt": "seu motorista"
+  },
+  "rideYourDriver": {
+    "description": "Nombre del chófer en su tarjeta si no se conoce.",
+    "es": "Tu chófer",
+    "en": "Your chauffeur",
+    "pt": "Seu motorista"
+  },
+  "rideRatingThanks": {
+    "description": "Aviso tras enviar la valoración del viaje.",
+    "es": "¡Gracias por tu valoración!",
+    "en": "Thank you for your rating.",
+    "pt": "Obrigado pela sua avaliação."
+  },
+  "rideRateTrip": {
+    "description": "Botón para valorar un viaje completado.",
+    "es": "Calificar viaje",
+    "en": "Rate trip",
+    "pt": "Avaliar viagem"
+  },
+  "rideCallDriver": {
+    "description": "Botón para llamar al chófer durante el viaje.",
+    "es": "Llamar a tu chófer",
+    "en": "Call your chauffeur",
+    "pt": "Ligar para seu motorista"
+  },
+  "rideCancelling": {
+    "description": "Botón de cancelar mientras se procesa la cancelación.",
+    "es": "Cancelando…",
+    "en": "Cancelling…",
+    "pt": "Cancelando…"
+  },
+  "rideBackHome": {
+    "description": "Etiqueta de lector de pantalla del botón que vuelve al inicio.",
+    "es": "Volver al inicio",
+    "en": "Back to home",
+    "pt": "Voltar ao início"
+  },
+  "ridePreferencesKnown": {
+    "description": "Bajo el titular: preferencias del pasajero que ve su chófer.",
+    "es": "Tu chófer conoce tu estilo: {preferences}",
+    "en": "Your chauffeur knows your style: {preferences}",
+    "pt": "Seu motorista conhece seu estilo: {preferences}",
+    "placeholders": {
+      "preferences": {
+        "type": "String",
+        "example": "silencio · temperatura fresca"
+      }
+    }
+  },
+  "rideAssigningTitle": {
+    "description": "Tarjeta mientras se asigna chófer: título.",
+    "es": "Asignando a tu chófer",
+    "en": "Assigning your chauffeur",
+    "pt": "Designando seu motorista"
+  },
+  "rideAssigningDetail": {
+    "description": "Tarjeta mientras se asigna chófer: detalle.",
+    "es": "Verás su nombre, vehículo y valoración aquí.",
+    "en": "You will see their name, vehicle and rating here.",
+    "pt": "Você verá o nome, o veículo e a avaliação aqui."
+  },
+  "rideCodeVerified": {
+    "description": "Momento de éxito al verificarse el código de recogida: título.",
+    "es": "Código verificado",
+    "en": "Code verified",
+    "pt": "Código verificado"
+  },
+  "rideCodeVerifiedDetail": {
+    "description": "Momento de éxito al verificarse el código de recogida: detalle.",
+    "es": "Tu chófer ya puede iniciar el viaje.",
+    "en": "Your chauffeur can now start the trip.",
+    "pt": "Seu motorista já pode iniciar a viagem."
+  },
+  "rideCompleted": {
+    "description": "Momento de éxito al terminar el viaje.",
+    "es": "Viaje completado",
+    "en": "Trip completed",
+    "pt": "Viagem concluída"
+  },
+  "rideRatingTitle": {
+    "description": "Título del diálogo de valoración.",
+    "es": "Califica tu viaje",
+    "en": "Rate your trip",
+    "pt": "Avalie sua viagem"
+  },
+  "rideRatingLater": {
+    "description": "Botón para cerrar el diálogo de valoración sin valorar.",
+    "es": "Ahora no",
+    "en": "Not now",
+    "pt": "Agora não"
+  },
+  "rideRatingSend": {
+    "description": "Botón para enviar la valoración.",
+    "es": "Enviar",
+    "en": "Send",
+    "pt": "Enviar"
+  },
+  "rideRating5": {
+    "description": "Valoración de 5 estrellas.",
+    "es": "Excelente",
+    "en": "Excellent",
+    "pt": "Excelente"
+  },
+  "rideRating4": {
+    "description": "Valoración de 4 estrellas.",
+    "es": "Bueno",
+    "en": "Good",
+    "pt": "Bom"
+  },
+  "rideRating3": {
+    "description": "Valoración de 3 estrellas.",
+    "es": "Regular",
+    "en": "Fair",
+    "pt": "Regular"
+  },
+  "rideRating2": {
+    "description": "Valoración de 2 estrellas.",
+    "es": "Malo",
+    "en": "Poor",
+    "pt": "Ruim"
+  },
+  "rideRating1": {
+    "description": "Valoración de 1 estrella.",
+    "es": "Muy malo",
+    "en": "Very poor",
+    "pt": "Muito ruim"
+  },
+  "rideErrorNetwork": {
+    "description": "Error de un paso del viaje sin conexión (pasajero y chófer).",
+    "es": "Sin conexión. Revisa tu red e inténtalo de nuevo.",
+    "en": "No connection. Check your network and try again.",
+    "pt": "Sem conexão. Verifique sua rede e tente novamente."
+  },
+  "rideErrorNotAtPickup": {
+    "description": "El código de recogida aún no está disponible: el chófer no llegó.",
+    "es": "El código aparece cuando tu chófer llega a la recogida.",
+    "en": "The code appears when your chauffeur arrives at the pickup point.",
+    "pt": "O código aparece quando seu motorista chega ao ponto de embarque."
+  },
+  "rideErrorWrongCode": {
+    "description": "El chófer escribió un código de recogida incorrecto (sin dato de intentos).",
+    "es": "Código incorrecto.",
+    "en": "Incorrect code.",
+    "pt": "Código incorreto."
+  },
+  "rideErrorWrongCodeOne": {
+    "description": "Código de recogida incorrecto: queda un intento.",
+    "es": "Código incorrecto. Te queda 1 intento.",
+    "en": "Incorrect code. You have 1 attempt left.",
+    "pt": "Código incorreto. Resta 1 tentativa."
+  },
+  "rideErrorWrongCodeMany": {
+    "description": "Código de recogida incorrecto: quedan varios intentos.",
+    "es": "Código incorrecto. Te quedan {left} intentos.",
+    "en": "Incorrect code. You have {left} attempts left.",
+    "pt": "Código incorreto. Restam {left} tentativas.",
+    "placeholders": {
+      "left": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "rideErrorLocked": {
+    "description": "Verificación del código bloqueada por demasiados intentos.",
+    "es": "Por seguridad, la verificación quedó bloqueada. Contacta con central.",
+    "en": "For security, verification has been locked. Contact our operations team.",
+    "pt": "Por segurança, a verificação foi bloqueada. Entre em contato com a central."
+  },
+  "rideErrorExpired": {
+    "description": "El código de recogida venció.",
+    "es": "El código venció. Contacta con central para continuar.",
+    "en": "The code has expired. Contact our operations team to continue.",
+    "pt": "O código expirou. Entre em contato com a central para continuar."
+  },
+  "rideErrorUnavailable": {
+    "description": "El código de recogida no está disponible.",
+    "es": "El código no está disponible ahora. Contacta con central.",
+    "en": "The code is not available right now. Contact our operations team.",
+    "pt": "O código não está disponível agora. Entre em contato com a central."
+  },
+  "rideErrorNotYours": {
+    "description": "Al chófer: el viaje ya no está asignado a él.",
+    "es": "Este viaje ya no está a tu cargo.",
+    "en": "This trip is no longer assigned to you.",
+    "pt": "Esta viagem não está mais sob sua responsabilidade."
+  },
+  "rideErrorTooEarly": {
+    "description": "Al chófer: aún no puede marcar que el pasajero no se presentó.",
+    "es": "Aún no terminó el tiempo de espera. Espera un poco más.",
+    "en": "The waiting time is not over yet. Please wait a little longer.",
+    "pt": "O tempo de espera ainda não terminou. Aguarde um pouco mais."
+  },
+  "rideErrorNoShowDisabled": {
+    "description": "Al chófer: la opción de no se presentó está desactivada.",
+    "es": "Esta opción no está disponible. Contacta con central.",
+    "en": "This option is not available. Contact our operations team.",
+    "pt": "Esta opção não está disponível. Entre em contato com a central."
+  },
+  "rideErrorLocationRequired": {
+    "description": "Al chófer: hace falta la ubicación para marcar que no se presentó.",
+    "es": "Activa la ubicación: central necesita saber dónde esperaste.",
+    "en": "Turn on location: our operations team needs to know where you waited.",
+    "pt": "Ative a localização: a central precisa saber onde você esperou."
+  },
+  "rideErrorNotReleasable": {
+    "description": "Al chófer: ya no puede liberar el viaje.",
+    "es": "Ya no puedes liberar este viaje. Contacta con central.",
+    "en": "You can no longer release this trip. Contact our operations team.",
+    "pt": "Você não pode mais liberar esta viagem. Entre em contato com a central."
+  },
+  "rideErrorInvalidTransition": {
+    "description": "El viaje cambió de estado mientras se hacía un paso.",
+    "es": "El viaje cambió de estado. Actualizamos la pantalla.",
+    "en": "The trip status changed. We have updated the screen.",
+    "pt": "O status da viagem mudou. Atualizamos a tela."
+  },
+  "rideErrorGeneric": {
+    "description": "Error genérico de un paso del viaje.",
+    "es": "No se pudo completar. Inténtalo de nuevo.",
+    "en": "This could not be completed. Please try again.",
+    "pt": "Não foi possível concluir. Tente novamente."
+  }
+}

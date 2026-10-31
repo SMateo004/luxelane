@@ -6,6 +6,7 @@ import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
 import '../../../../core/utils/lux_format.dart';
 import '../../../../core/widgets/components.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Cancelación del pasajero: el servidor calcula la retención sobre lo
 /// pagado con la política de config/ops; la app la muestra solo si es mayor
@@ -51,7 +52,7 @@ Future<bool> runCancelBookingFlow(
     if (!context.mounted) return false;
     final failure = result.fold((f) => f, (_) => null);
     if (failure == null) {
-      showLuxSnackbar(context, 'Reserva cancelada');
+      showLuxSnackbar(context, context.l10n.rideCancelledSnack);
       return true;
     }
     if (failure is! CancellationFeeChangedFailure) {
@@ -63,7 +64,7 @@ Future<bool> runCancelBookingFlow(
   if (context.mounted) {
     showLuxSnackbar(
       context,
-      'La retención cambió de nuevo. Inténtalo otra vez.',
+      context.l10n.rideCancelFeeChangedAgain,
       isError: true,
     );
   }
@@ -98,9 +99,10 @@ class _CancelBookingDialogState extends State<CancelBookingDialog> {
   @override
   Widget build(BuildContext context) {
     final hasFee = widget.fee > 0;
+    final t = context.l10n;
     return AlertDialog(
       backgroundColor: LuxColors.surface,
-      title: const Text('Cancelar reserva', style: LuxTypography.titleMedium),
+      title: Text(t.rideCancelBooking, style: LuxTypography.titleMedium),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -118,30 +120,31 @@ class _CancelBookingDialogState extends State<CancelBookingDialog> {
                     borderRadius: BorderRadius.circular(LuxRadius.md),
                   ),
                   child: Text(
-                    '${widget.feeChanged ? 'La retención cambió. ' : ''}'
-                    'Según la política de cancelación, si cancelas ahora se '
-                    'retienen ${LuxFormat.money(widget.fee)} de lo que '
-                    'pagaste.',
+                    widget.feeChanged
+                        ? t.rideCancelFeeChanged(LuxFormat.money(widget.fee))
+                        : t.rideCancelFee(LuxFormat.money(widget.fee)),
                     style: LuxTypography.bodyMedium,
                   ),
                 ),
               ),
             if ((widget.refund ?? 0) > 0) ...[
               Text(
-                '${LuxFormat.money(widget.refund!)} quedan pendientes de '
-                'devolución. Te avisaremos cuando central la registre.',
+                t.rideCancelRefund(LuxFormat.money(widget.refund!)),
                 key: const Key('cancel-refund'),
                 style: LuxTypography.bodyMedium,
               ),
               const SizedBox(height: LuxSpacing.sm),
             ],
-            const Text('Motivo', style: LuxTypography.labelLarge),
+            Text(t.rideCancelReasonLabel, style: LuxTypography.labelLarge),
             for (final e in kRiderCancelReasons.entries)
               RadioListTile<String>(
                 value: e.key,
                 groupValue: _reason,
                 onChanged: (v) => setState(() => _reason = v ?? 'other'),
-                title: Text(e.value, style: LuxTypography.bodyMedium),
+                title: Text(
+                  riderCancelReasonLabel(t, e.key, e.value),
+                  style: LuxTypography.bodyMedium,
+                ),
                 contentPadding: EdgeInsets.zero,
                 dense: true,
               ),
@@ -151,13 +154,13 @@ class _CancelBookingDialogState extends State<CancelBookingDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Volver'),
+          child: Text(t.rideBack),
         ),
         TextButton(
           key: const Key('confirm-cancel'),
           onPressed: () => Navigator.pop(context, _reason),
           child: Text(
-            hasFee ? 'Cancelar con retención' : 'Cancelar reserva',
+            hasFee ? t.rideCancelWithFee : t.rideCancelBooking,
             style: const TextStyle(color: LuxColors.error),
           ),
         ),
@@ -165,3 +168,16 @@ class _CancelBookingDialogState extends State<CancelBookingDialog> {
     );
   }
 }
+
+/// Motivo de cancelación en el idioma activo. Las claves vienen de
+/// [kRiderCancelReasons] (iguales que en el servidor); un motivo nuevo sin
+/// traducción se muestra con su texto en español.
+String riderCancelReasonLabel(
+        AppLocalizations t, String key, String fallback) =>
+    switch (key) {
+      'changed_plans' => t.rideCancelReasonChangedPlans,
+      'other_transport' => t.rideCancelReasonOtherTransport,
+      'driver_late' => t.rideCancelReasonDriverLate,
+      'other' => t.rideCancelReasonOther,
+      _ => fallback,
+    };

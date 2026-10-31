@@ -947,5 +947,363 @@
   "paymentReceiptBalanceNote": "El importe final del viaje fue mayor que lo pagado.",
   "@paymentReceiptBalanceNote": {
     "description": "Nota bajo el saldo pendiente; sin promesas de contacto."
+  },
+  "rideLoadNotFound": "No encontramos esta reserva en tu cuenta.",
+  "@rideLoadNotFound": {
+    "description": "Pantalla del viaje: la reserva no existe o no es de esta cuenta."
+  },
+  "rideLoadOffline": "No pudimos cargar tu reserva. Revisa tu conexión.",
+  "@rideLoadOffline": {
+    "description": "Pantalla del viaje: la reserva no cargó por falta de conexión."
+  },
+  "rideLoadFailed": "No pudimos cargar tu reserva. Inténtalo de nuevo.",
+  "@rideLoadFailed": {
+    "description": "Pantalla del viaje: la reserva no cargó por otro motivo."
+  },
+  "ridePendingSearching": "Estamos asignando a tu chófer. Te avisaremos en cuanto esté confirmado.",
+  "@ridePendingSearching": {
+    "description": "Titular mientras la reserva busca chófer."
+  },
+  "ridePendingReleasedCall": "Tu chófer anterior no pudo hacer el viaje. Estamos buscando otro y central ya está avisada. Si lo necesitas, llama a central.",
+  "@ridePendingReleasedCall": {
+    "description": "Titular cuando el chófer anterior liberó el viaje y hay número de central para llamar."
+  },
+  "ridePendingReleased": "Tu chófer anterior no pudo hacer el viaje. Estamos buscando otro y central ya está avisada.",
+  "@ridePendingReleased": {
+    "description": "Titular cuando el chófer anterior liberó el viaje, sin número de central."
+  },
+  "ridePendingPickupPassedCall": "Ya pasó la hora de recogida y aún no hay chófer asignado. Llama a central o cancela la reserva.",
+  "@ridePendingPickupPassedCall": {
+    "description": "Titular cuando pasó la hora de recogida sin chófer y hay número de central."
+  },
+  "ridePendingPickupPassed": "Ya pasó la hora de recogida y aún no hay chófer asignado. Puedes esperar o cancelar la reserva.",
+  "@ridePendingPickupPassed": {
+    "description": "Titular cuando pasó la hora de recogida sin chófer, sin número de central."
+  },
+  "rideCodeShareText": "Tu código de recogida es {code}. Dáselo a tu chófer al subir; sin él no puede iniciar el viaje.",
+  "@rideCodeShareText": {
+    "description": "Mensaje que el titular comparte con su invitado con el código de recogida.",
+    "placeholders": {
+      "code": {
+        "type": "String",
+        "example": "4207"
+      }
+    }
+  },
+  "rideCodeLoading": "Cargando tu código de recogida",
+  "@rideCodeLoading": {
+    "description": "Etiqueta de lector de pantalla mientras carga el código de recogida."
+  },
+  "rideCodeTitle": "CÓDIGO DE RECOGIDA",
+  "@rideCodeTitle": {
+    "description": "Encabezado en mayúsculas de la tarjeta del código de recogida."
+  },
+  "rideCodeSemantics": "Código de recogida {digits}",
+  "@rideCodeSemantics": {
+    "description": "Etiqueta de lector de pantalla del código, con los dígitos separados por espacios.",
+    "placeholders": {
+      "digits": {
+        "type": "String",
+        "example": "4 2 0 7"
+      }
+    }
+  },
+  "rideCodeHint": "Dáselo a tu chófer al subir. Sin él no puede iniciar el viaje.",
+  "@rideCodeHint": {
+    "description": "Bajo el código de recogida: qué hacer con él."
+  },
+  "rideCodeGuestHint": "Compártelo con {guest}: se lo dará al chófer al subir.",
+  "@rideCodeGuestHint": {
+    "description": "Bajo el código, si la reserva es para un invitado.",
+    "placeholders": {
+      "guest": {
+        "type": "String",
+        "example": "Carla Tercero"
+      }
+    }
+  },
+  "rideCodeShare": "Compartir código",
+  "@rideCodeShare": {
+    "description": "Botón para compartir el código de recogida con el invitado."
+  },
+  "rideRetry": "Reintentar",
+  "@rideRetry": {
+    "description": "Botón para volver a pedir el código de recogida."
+  },
+  "rideCancelledSnack": "Reserva cancelada",
+  "@rideCancelledSnack": {
+    "description": "Aviso tras cancelar la reserva."
+  },
+  "rideCancelFeeChangedAgain": "La retención cambió de nuevo. Inténtalo otra vez.",
+  "@rideCancelFeeChangedAgain": {
+    "description": "Aviso si la retención por cancelar cambió dos veces seguidas."
+  },
+  "rideCancelBooking": "Cancelar reserva",
+  "@rideCancelBooking": {
+    "description": "Título del diálogo y botón para cancelar la reserva."
+  },
+  "rideCancelFee": "Según la política de cancelación, si cancelas ahora se retienen {amount} de lo que pagaste.",
+  "@rideCancelFee": {
+    "description": "Diálogo de cancelación: cuánto se retiene si cancela ahora.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 50"
+      }
+    }
+  },
+  "rideCancelFeeChanged": "La retención cambió. Según la política de cancelación, si cancelas ahora se retienen {amount} de lo que pagaste.",
+  "@rideCancelFeeChanged": {
+    "description": "Diálogo de cancelación cuando la retención cambió mientras decidía.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 50"
+      }
+    }
+  },
+  "rideCancelRefund": "{amount} quedan pendientes de devolución. Te avisaremos cuando central la registre.",
+  "@rideCancelRefund": {
+    "description": "Diálogo de cancelación: importe pendiente de devolución. Sin plazos ni promesas.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 450"
+      }
+    }
+  },
+  "rideCancelReasonLabel": "Motivo",
+  "@rideCancelReasonLabel": {
+    "description": "Encabezado de la lista de motivos de cancelación."
+  },
+  "rideCancelReasonChangedPlans": "Cambié de planes",
+  "@rideCancelReasonChangedPlans": {
+    "description": "Motivo de cancelación del pasajero."
+  },
+  "rideCancelReasonOtherTransport": "Encontré otro transporte",
+  "@rideCancelReasonOtherTransport": {
+    "description": "Motivo de cancelación del pasajero."
+  },
+  "rideCancelReasonDriverLate": "El chófer tarda demasiado",
+  "@rideCancelReasonDriverLate": {
+    "description": "Motivo de cancelación del pasajero."
+  },
+  "rideCancelReasonOther": "Otro motivo",
+  "@rideCancelReasonOther": {
+    "description": "Motivo de cancelación del pasajero."
+  },
+  "rideBack": "Volver",
+  "@rideBack": {
+    "description": "Botón para cerrar el diálogo sin cancelar."
+  },
+  "rideCancelWithFee": "Cancelar con retención",
+  "@rideCancelWithFee": {
+    "description": "Botón para confirmar la cancelación cuando hay retención."
+  },
+  "rideCancelledMessage": "Esta reserva fue cancelada.",
+  "@rideCancelledMessage": {
+    "description": "Titular de una reserva cancelada."
+  },
+  "rideCancelledWithFee": "Esta reserva fue cancelada. Retención por cancelación: {amount}.",
+  "@rideCancelledWithFee": {
+    "description": "Titular de una reserva cancelada con retención.",
+    "placeholders": {
+      "amount": {
+        "type": "String",
+        "example": "Bs 50"
+      }
+    }
+  },
+  "rideStatusLoading": "Cargando tu reserva…",
+  "@rideStatusLoading": {
+    "description": "Titular mientras carga la reserva."
+  },
+  "rideStatusAwaitingPayment": "Tu reserva espera el pago. Buscamos chófer cuando esté confirmado.",
+  "@rideStatusAwaitingPayment": {
+    "description": "Titular de una reserva sin pago confirmado."
+  },
+  "rideStatusConfirmed": "Tu reserva está confirmada. Te avisaremos cuando tu chófer salga hacia ti.",
+  "@rideStatusConfirmed": {
+    "description": "Titular con chófer asignado, antes de que salga."
+  },
+  "rideStatusDriverArriving": "Tu chófer va de camino al punto de recogida.",
+  "@rideStatusDriverArriving": {
+    "description": "Titular mientras el chófer va a la recogida."
+  },
+  "rideStatusDriverArrived": "Tu chófer ha llegado y te espera. Tómate tu tiempo.",
+  "@rideStatusDriverArrived": {
+    "description": "Titular cuando el chófer llegó y espera."
+  },
+  "rideStatusVerified": "Código verificado. Tu viaje empieza en un momento.",
+  "@rideStatusVerified": {
+    "description": "Titular tras verificar el código de recogida."
+  },
+  "rideStatusInProgress": "Disfruta del trayecto. Llegarás a tu destino en breve.",
+  "@rideStatusInProgress": {
+    "description": "Titular durante el trayecto."
+  },
+  "rideStatusCompleted": "Has llegado. Gracias por viajar con Luxelane.",
+  "@rideStatusCompleted": {
+    "description": "Titular al terminar el viaje."
+  },
+  "rideStatusNoShow": "Tu chófer no te encontró en el punto de recogida. Central fue avisada.",
+  "@rideStatusNoShow": {
+    "description": "Titular cuando el chófer marcó que el pasajero no se presentó."
+  },
+  "rideYourDriverLower": "tu chófer",
+  "@rideYourDriverLower": {
+    "description": "Nombre del chófer en el diálogo de valoración si no se conoce (en minúscula en español)."
+  },
+  "rideYourDriver": "Tu chófer",
+  "@rideYourDriver": {
+    "description": "Nombre del chófer en su tarjeta si no se conoce."
+  },
+  "rideRatingThanks": "¡Gracias por tu valoración!",
+  "@rideRatingThanks": {
+    "description": "Aviso tras enviar la valoración del viaje."
+  },
+  "rideRateTrip": "Calificar viaje",
+  "@rideRateTrip": {
+    "description": "Botón para valorar un viaje completado."
+  },
+  "rideCallDriver": "Llamar a tu chófer",
+  "@rideCallDriver": {
+    "description": "Botón para llamar al chófer durante el viaje."
+  },
+  "rideCancelling": "Cancelando…",
+  "@rideCancelling": {
+    "description": "Botón de cancelar mientras se procesa la cancelación."
+  },
+  "rideBackHome": "Volver al inicio",
+  "@rideBackHome": {
+    "description": "Etiqueta de lector de pantalla del botón que vuelve al inicio."
+  },
+  "ridePreferencesKnown": "Tu chófer conoce tu estilo: {preferences}",
+  "@ridePreferencesKnown": {
+    "description": "Bajo el titular: preferencias del pasajero que ve su chófer.",
+    "placeholders": {
+      "preferences": {
+        "type": "String",
+        "example": "silencio · temperatura fresca"
+      }
+    }
+  },
+  "rideAssigningTitle": "Asignando a tu chófer",
+  "@rideAssigningTitle": {
+    "description": "Tarjeta mientras se asigna chófer: título."
+  },
+  "rideAssigningDetail": "Verás su nombre, vehículo y valoración aquí.",
+  "@rideAssigningDetail": {
+    "description": "Tarjeta mientras se asigna chófer: detalle."
+  },
+  "rideCodeVerified": "Código verificado",
+  "@rideCodeVerified": {
+    "description": "Momento de éxito al verificarse el código de recogida: título."
+  },
+  "rideCodeVerifiedDetail": "Tu chófer ya puede iniciar el viaje.",
+  "@rideCodeVerifiedDetail": {
+    "description": "Momento de éxito al verificarse el código de recogida: detalle."
+  },
+  "rideCompleted": "Viaje completado",
+  "@rideCompleted": {
+    "description": "Momento de éxito al terminar el viaje."
+  },
+  "rideRatingTitle": "Califica tu viaje",
+  "@rideRatingTitle": {
+    "description": "Título del diálogo de valoración."
+  },
+  "rideRatingLater": "Ahora no",
+  "@rideRatingLater": {
+    "description": "Botón para cerrar el diálogo de valoración sin valorar."
+  },
+  "rideRatingSend": "Enviar",
+  "@rideRatingSend": {
+    "description": "Botón para enviar la valoración."
+  },
+  "rideRating5": "Excelente",
+  "@rideRating5": {
+    "description": "Valoración de 5 estrellas."
+  },
+  "rideRating4": "Bueno",
+  "@rideRating4": {
+    "description": "Valoración de 4 estrellas."
+  },
+  "rideRating3": "Regular",
+  "@rideRating3": {
+    "description": "Valoración de 3 estrellas."
+  },
+  "rideRating2": "Malo",
+  "@rideRating2": {
+    "description": "Valoración de 2 estrellas."
+  },
+  "rideRating1": "Muy malo",
+  "@rideRating1": {
+    "description": "Valoración de 1 estrella."
+  },
+  "rideErrorNetwork": "Sin conexión. Revisa tu red e inténtalo de nuevo.",
+  "@rideErrorNetwork": {
+    "description": "Error de un paso del viaje sin conexión (pasajero y chófer)."
+  },
+  "rideErrorNotAtPickup": "El código aparece cuando tu chófer llega a la recogida.",
+  "@rideErrorNotAtPickup": {
+    "description": "El código de recogida aún no está disponible: el chófer no llegó."
+  },
+  "rideErrorWrongCode": "Código incorrecto.",
+  "@rideErrorWrongCode": {
+    "description": "El chófer escribió un código de recogida incorrecto (sin dato de intentos)."
+  },
+  "rideErrorWrongCodeOne": "Código incorrecto. Te queda 1 intento.",
+  "@rideErrorWrongCodeOne": {
+    "description": "Código de recogida incorrecto: queda un intento."
+  },
+  "rideErrorWrongCodeMany": "Código incorrecto. Te quedan {left} intentos.",
+  "@rideErrorWrongCodeMany": {
+    "description": "Código de recogida incorrecto: quedan varios intentos.",
+    "placeholders": {
+      "left": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "rideErrorLocked": "Por seguridad, la verificación quedó bloqueada. Contacta con central.",
+  "@rideErrorLocked": {
+    "description": "Verificación del código bloqueada por demasiados intentos."
+  },
+  "rideErrorExpired": "El código venció. Contacta con central para continuar.",
+  "@rideErrorExpired": {
+    "description": "El código de recogida venció."
+  },
+  "rideErrorUnavailable": "El código no está disponible ahora. Contacta con central.",
+  "@rideErrorUnavailable": {
+    "description": "El código de recogida no está disponible."
+  },
+  "rideErrorNotYours": "Este viaje ya no está a tu cargo.",
+  "@rideErrorNotYours": {
+    "description": "Al chófer: el viaje ya no está asignado a él."
+  },
+  "rideErrorTooEarly": "Aún no terminó el tiempo de espera. Espera un poco más.",
+  "@rideErrorTooEarly": {
+    "description": "Al chófer: aún no puede marcar que el pasajero no se presentó."
+  },
+  "rideErrorNoShowDisabled": "Esta opción no está disponible. Contacta con central.",
+  "@rideErrorNoShowDisabled": {
+    "description": "Al chófer: la opción de no se presentó está desactivada."
+  },
+  "rideErrorLocationRequired": "Activa la ubicación: central necesita saber dónde esperaste.",
+  "@rideErrorLocationRequired": {
+    "description": "Al chófer: hace falta la ubicación para marcar que no se presentó."
+  },
+  "rideErrorNotReleasable": "Ya no puedes liberar este viaje. Contacta con central.",
+  "@rideErrorNotReleasable": {
+    "description": "Al chófer: ya no puede liberar el viaje."
+  },
+  "rideErrorInvalidTransition": "El viaje cambió de estado. Actualizamos la pantalla.",
+  "@rideErrorInvalidTransition": {
+    "description": "El viaje cambió de estado mientras se hacía un paso."
+  },
+  "rideErrorGeneric": "No se pudo completar. Inténtalo de nuevo.",
+  "@rideErrorGeneric": {
+    "description": "Error genérico de un paso del viaje."
   }
 }

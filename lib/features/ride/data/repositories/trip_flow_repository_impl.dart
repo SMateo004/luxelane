@@ -7,6 +7,7 @@ import '../../../../core/error/failures.dart';
 import '../../../../core/error/function_errors.dart';
 import '../../../../core/models/models.dart';
 import '../../../../core/repositories/repositories.dart';
+import '../../../../l10n/l10n.dart';
 
 /// Pasos del viaje desde la recogida: todo pasa por callables del servidor,
 /// que valida el grafo, quién lo pide y deja el registro de eventos.
@@ -44,7 +45,7 @@ class TripFlowRepositoryImpl implements TripFlowRepository {
     } on FirebaseFunctionsException catch (e) {
       return Left(tripFailureFor(e.code, e.details));
     } catch (_) {
-      return const Left(TripFailure(TripIssue.network, _kNetwork));
+      return Left(TripFailure(TripIssue.network, _kNetwork));
     }
   }
 
@@ -103,17 +104,18 @@ class TripFlowRepositoryImpl implements TripFlowRepository {
     } on FirebaseFunctionsException catch (e) {
       return Left(tripFailureFor(e.code, e.details));
     } catch (_) {
-      return const Left(TripFailure(TripIssue.network, _kNetwork));
+      return Left(TripFailure(TripIssue.network, _kNetwork));
     }
   }
 }
 
-const _kNetwork = 'Sin conexión. Revisa tu red e inténtalo de nuevo.';
+String get _kNetwork => L10n.current.rideErrorNetwork;
 
 /// Traduce el error de una callable del viaje (details.reason) a lo que la
 /// pantalla muestra.
 Failure tripFailureFor(String code, Object? details) {
   final d = details is Map ? details : const {};
+  final t = L10n.current;
   final reason = d['reason'] as String?;
   switch (reason) {
     case 'app_update_required':
@@ -125,76 +127,76 @@ Failure tripFailureFor(String code, Object? details) {
         forDriver: true,
       );
     case 'not_at_pickup':
-      return const TripFailure(
+      return TripFailure(
         TripIssue.notAtPickup,
-        'El código aparece cuando tu chófer llega a la recogida.',
+        t.rideErrorNotAtPickup,
       );
     case 'wrong_code':
       final left = (d['attemptsLeft'] as num?)?.toInt();
       return TripFailure(
         TripIssue.wrongCode,
         left == null
-            ? 'Código incorrecto.'
+            ? t.rideErrorWrongCode
             : left == 1
-                ? 'Código incorrecto. Te queda 1 intento.'
-                : 'Código incorrecto. Te quedan $left intentos.',
+                ? t.rideErrorWrongCodeOne
+                : t.rideErrorWrongCodeMany(left),
         attemptsLeft: left,
       );
     case 'pickup_locked':
-      return const TripFailure(
+      return TripFailure(
         TripIssue.locked,
-        'Por seguridad, la verificación quedó bloqueada. Contacta con central.',
+        t.rideErrorLocked,
       );
     case 'code_expired':
-      return const TripFailure(
+      return TripFailure(
         TripIssue.expired,
-        'El código venció. Contacta con central para continuar.',
+        t.rideErrorExpired,
       );
     case 'pickup_unavailable':
-      return const TripFailure(
+      return TripFailure(
         TripIssue.unavailable,
-        'El código no está disponible ahora. Contacta con central.',
+        t.rideErrorUnavailable,
       );
     case 'not_your_booking':
     case 'not_assigned':
     case 'inactive_driver':
-      return const TripFailure(
+      return TripFailure(
         TripIssue.notAllowed,
-        'Este viaje ya no está a tu cargo.',
+        t.rideErrorNotYours,
       );
     case 'no_show_too_early':
-      return const TripFailure(
+      return TripFailure(
         TripIssue.tooEarly,
-        'Aún no terminó el tiempo de espera. Espera un poco más.',
+        t.rideErrorTooEarly,
       );
     case 'no_show_disabled':
-      return const TripFailure(
+      return TripFailure(
         TripIssue.notAllowed,
-        'Esta opción no está disponible. Contacta con central.',
+        t.rideErrorNoShowDisabled,
       );
     case 'location_required':
-      return const TripFailure(
+      return TripFailure(
         TripIssue.locationRequired,
-        'Activa la ubicación: central necesita saber dónde esperaste.',
+        t.rideErrorLocationRequired,
       );
     case 'not_releasable':
-      return const TripFailure(
+      return TripFailure(
         TripIssue.invalidTransition,
-        'Ya no puedes liberar este viaje. Contacta con central.',
+        t.rideErrorNotReleasable,
       );
     case 'invalid_transition':
-      return const TripFailure(
+      return TripFailure(
         TripIssue.invalidTransition,
-        'El viaje cambió de estado. Actualizamos la pantalla.',
+        t.rideErrorInvalidTransition,
       );
   }
   if (code == 'unavailable' || code == 'deadline-exceeded') {
-    return const TripFailure(TripIssue.network, _kNetwork);
+    return TripFailure(TripIssue.network, _kNetwork);
   }
   final common = commonFunctionError(code, details);
   if (common != null) return TripFailure(TripIssue.other, common);
-  return const TripFailure(
+  return TripFailure(
     TripIssue.other,
-    'No se pudo completar. Inténtalo de nuevo.',
+    t.rideErrorGeneric,
   );
 }

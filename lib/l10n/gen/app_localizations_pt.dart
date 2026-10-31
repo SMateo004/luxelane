@@ -733,4 +733,280 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get paymentReceiptBalanceNote =>
       'O valor final da viagem foi maior que o valor pago.';
+
+  @override
+  String get rideLoadNotFound => 'Não encontramos esta reserva na sua conta.';
+
+  @override
+  String get rideLoadOffline =>
+      'Não foi possível carregar sua reserva. Verifique sua conexão.';
+
+  @override
+  String get rideLoadFailed =>
+      'Não foi possível carregar sua reserva. Tente novamente.';
+
+  @override
+  String get ridePendingSearching =>
+      'Estamos designando seu motorista. Avisaremos você assim que for confirmado.';
+
+  @override
+  String get ridePendingReleasedCall =>
+      'Seu motorista anterior não pôde fazer a viagem. Estamos buscando outro e a central já foi avisada. Se precisar, ligue para a central.';
+
+  @override
+  String get ridePendingReleased =>
+      'Seu motorista anterior não pôde fazer a viagem. Estamos buscando outro e a central já foi avisada.';
+
+  @override
+  String get ridePendingPickupPassedCall =>
+      'O horário de embarque já passou e ainda não há motorista designado. Ligue para a central ou cancele a reserva.';
+
+  @override
+  String get ridePendingPickupPassed =>
+      'O horário de embarque já passou e ainda não há motorista designado. Você pode esperar ou cancelar a reserva.';
+
+  @override
+  String rideCodeShareText(String code) {
+    return 'Seu código de embarque é $code. Informe-o ao motorista ao entrar no carro; sem ele a viagem não pode começar.';
+  }
+
+  @override
+  String get rideCodeLoading => 'Carregando seu código de embarque';
+
+  @override
+  String get rideCodeTitle => 'CÓDIGO DE EMBARQUE';
+
+  @override
+  String rideCodeSemantics(String digits) {
+    return 'Código de embarque $digits';
+  }
+
+  @override
+  String get rideCodeHint =>
+      'Informe-o ao motorista ao entrar no carro. Sem ele a viagem não pode começar.';
+
+  @override
+  String rideCodeGuestHint(String guest) {
+    return 'Compartilhe-o com $guest: o convidado o informará ao motorista ao entrar no carro.';
+  }
+
+  @override
+  String get rideCodeShare => 'Compartilhar código';
+
+  @override
+  String get rideRetry => 'Tentar novamente';
+
+  @override
+  String get rideCancelledSnack => 'Reserva cancelada';
+
+  @override
+  String get rideCancelFeeChangedAgain =>
+      'A taxa de cancelamento mudou novamente. Tente outra vez.';
+
+  @override
+  String get rideCancelBooking => 'Cancelar reserva';
+
+  @override
+  String rideCancelFee(String amount) {
+    return 'De acordo com a política de cancelamento, se você cancelar agora, $amount do valor pago serão retidos.';
+  }
+
+  @override
+  String rideCancelFeeChanged(String amount) {
+    return 'A taxa de cancelamento mudou. De acordo com a política de cancelamento, se você cancelar agora, $amount do valor pago serão retidos.';
+  }
+
+  @override
+  String rideCancelRefund(String amount) {
+    return '$amount ficam pendentes de reembolso. Avisaremos você quando a central registrá-lo.';
+  }
+
+  @override
+  String get rideCancelReasonLabel => 'Motivo';
+
+  @override
+  String get rideCancelReasonChangedPlans => 'Mudei de planos';
+
+  @override
+  String get rideCancelReasonOtherTransport => 'Encontrei outro transporte';
+
+  @override
+  String get rideCancelReasonDriverLate => 'O motorista está demorando demais';
+
+  @override
+  String get rideCancelReasonOther => 'Outro motivo';
+
+  @override
+  String get rideBack => 'Voltar';
+
+  @override
+  String get rideCancelWithFee => 'Cancelar com taxa';
+
+  @override
+  String get rideCancelledMessage => 'Esta reserva foi cancelada.';
+
+  @override
+  String rideCancelledWithFee(String amount) {
+    return 'Esta reserva foi cancelada. Taxa de cancelamento: $amount.';
+  }
+
+  @override
+  String get rideStatusLoading => 'Carregando sua reserva…';
+
+  @override
+  String get rideStatusAwaitingPayment =>
+      'Sua reserva aguarda o pagamento. Buscamos um motorista quando ele for confirmado.';
+
+  @override
+  String get rideStatusConfirmed =>
+      'Sua reserva está confirmada. Avisaremos você quando seu motorista sair ao seu encontro.';
+
+  @override
+  String get rideStatusDriverArriving =>
+      'Seu motorista está a caminho do ponto de embarque.';
+
+  @override
+  String get rideStatusDriverArrived =>
+      'Seu motorista chegou e está esperando por você. Sem pressa.';
+
+  @override
+  String get rideStatusVerified =>
+      'Código verificado. Sua viagem começa em instantes.';
+
+  @override
+  String get rideStatusInProgress =>
+      'Aproveite o trajeto. Você chegará ao seu destino em breve.';
+
+  @override
+  String get rideStatusCompleted =>
+      'Você chegou. Obrigado por viajar com a Luxelane.';
+
+  @override
+  String get rideStatusNoShow =>
+      'Seu motorista não encontrou você no ponto de embarque. A central foi avisada.';
+
+  @override
+  String get rideYourDriverLower => 'seu motorista';
+
+  @override
+  String get rideYourDriver => 'Seu motorista';
+
+  @override
+  String get rideRatingThanks => 'Obrigado pela sua avaliação.';
+
+  @override
+  String get rideRateTrip => 'Avaliar viagem';
+
+  @override
+  String get rideCallDriver => 'Ligar para seu motorista';
+
+  @override
+  String get rideCancelling => 'Cancelando…';
+
+  @override
+  String get rideBackHome => 'Voltar ao início';
+
+  @override
+  String ridePreferencesKnown(String preferences) {
+    return 'Seu motorista conhece seu estilo: $preferences';
+  }
+
+  @override
+  String get rideAssigningTitle => 'Designando seu motorista';
+
+  @override
+  String get rideAssigningDetail =>
+      'Você verá o nome, o veículo e a avaliação aqui.';
+
+  @override
+  String get rideCodeVerified => 'Código verificado';
+
+  @override
+  String get rideCodeVerifiedDetail =>
+      'Seu motorista já pode iniciar a viagem.';
+
+  @override
+  String get rideCompleted => 'Viagem concluída';
+
+  @override
+  String get rideRatingTitle => 'Avalie sua viagem';
+
+  @override
+  String get rideRatingLater => 'Agora não';
+
+  @override
+  String get rideRatingSend => 'Enviar';
+
+  @override
+  String get rideRating5 => 'Excelente';
+
+  @override
+  String get rideRating4 => 'Bom';
+
+  @override
+  String get rideRating3 => 'Regular';
+
+  @override
+  String get rideRating2 => 'Ruim';
+
+  @override
+  String get rideRating1 => 'Muito ruim';
+
+  @override
+  String get rideErrorNetwork =>
+      'Sem conexão. Verifique sua rede e tente novamente.';
+
+  @override
+  String get rideErrorNotAtPickup =>
+      'O código aparece quando seu motorista chega ao ponto de embarque.';
+
+  @override
+  String get rideErrorWrongCode => 'Código incorreto.';
+
+  @override
+  String get rideErrorWrongCodeOne => 'Código incorreto. Resta 1 tentativa.';
+
+  @override
+  String rideErrorWrongCodeMany(int left) {
+    return 'Código incorreto. Restam $left tentativas.';
+  }
+
+  @override
+  String get rideErrorLocked =>
+      'Por segurança, a verificação foi bloqueada. Entre em contato com a central.';
+
+  @override
+  String get rideErrorExpired =>
+      'O código expirou. Entre em contato com a central para continuar.';
+
+  @override
+  String get rideErrorUnavailable =>
+      'O código não está disponível agora. Entre em contato com a central.';
+
+  @override
+  String get rideErrorNotYours =>
+      'Esta viagem não está mais sob sua responsabilidade.';
+
+  @override
+  String get rideErrorTooEarly =>
+      'O tempo de espera ainda não terminou. Aguarde um pouco mais.';
+
+  @override
+  String get rideErrorNoShowDisabled =>
+      'Esta opção não está disponível. Entre em contato com a central.';
+
+  @override
+  String get rideErrorLocationRequired =>
+      'Ative a localização: a central precisa saber onde você esperou.';
+
+  @override
+  String get rideErrorNotReleasable =>
+      'Você não pode mais liberar esta viagem. Entre em contato com a central.';
+
+  @override
+  String get rideErrorInvalidTransition =>
+      'O status da viagem mudou. Atualizamos a tela.';
+
+  @override
+  String get rideErrorGeneric => 'Não foi possível concluir. Tente novamente.';
 }

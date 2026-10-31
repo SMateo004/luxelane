@@ -728,4 +728,281 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get paymentReceiptBalanceNote =>
       'The final trip amount was higher than the amount paid.';
+
+  @override
+  String get rideLoadNotFound =>
+      'We could not find this booking in your account.';
+
+  @override
+  String get rideLoadOffline =>
+      'We could not load your booking. Check your connection.';
+
+  @override
+  String get rideLoadFailed =>
+      'We could not load your booking. Please try again.';
+
+  @override
+  String get ridePendingSearching =>
+      'We are assigning your chauffeur. We will let you know once it is confirmed.';
+
+  @override
+  String get ridePendingReleasedCall =>
+      'Your previous chauffeur could not take the trip. We are looking for another one and our operations team has been notified. If you need to, call our operations team.';
+
+  @override
+  String get ridePendingReleased =>
+      'Your previous chauffeur could not take the trip. We are looking for another one and our operations team has been notified.';
+
+  @override
+  String get ridePendingPickupPassedCall =>
+      'The pickup time has passed and no chauffeur has been assigned yet. Call our operations team or cancel the booking.';
+
+  @override
+  String get ridePendingPickupPassed =>
+      'The pickup time has passed and no chauffeur has been assigned yet. You can wait or cancel the booking.';
+
+  @override
+  String rideCodeShareText(String code) {
+    return 'Your pickup code is $code. Give it to your chauffeur when you get in; without it the trip cannot start.';
+  }
+
+  @override
+  String get rideCodeLoading => 'Loading your pickup code';
+
+  @override
+  String get rideCodeTitle => 'PICKUP CODE';
+
+  @override
+  String rideCodeSemantics(String digits) {
+    return 'Pickup code $digits';
+  }
+
+  @override
+  String get rideCodeHint =>
+      'Give it to your chauffeur when you get in. Without it the trip cannot start.';
+
+  @override
+  String rideCodeGuestHint(String guest) {
+    return 'Share it with $guest: they will give it to the chauffeur when they get in.';
+  }
+
+  @override
+  String get rideCodeShare => 'Share code';
+
+  @override
+  String get rideRetry => 'Retry';
+
+  @override
+  String get rideCancelledSnack => 'Booking cancelled';
+
+  @override
+  String get rideCancelFeeChangedAgain =>
+      'The cancellation fee changed again. Please try again.';
+
+  @override
+  String get rideCancelBooking => 'Cancel booking';
+
+  @override
+  String rideCancelFee(String amount) {
+    return 'Under the cancellation policy, if you cancel now $amount of what you paid will be retained.';
+  }
+
+  @override
+  String rideCancelFeeChanged(String amount) {
+    return 'The cancellation fee changed. Under the cancellation policy, if you cancel now $amount of what you paid will be retained.';
+  }
+
+  @override
+  String rideCancelRefund(String amount) {
+    return '$amount remain pending refund. We will let you know when our operations team records it.';
+  }
+
+  @override
+  String get rideCancelReasonLabel => 'Reason';
+
+  @override
+  String get rideCancelReasonChangedPlans => 'My plans changed';
+
+  @override
+  String get rideCancelReasonOtherTransport => 'I found other transport';
+
+  @override
+  String get rideCancelReasonDriverLate => 'The chauffeur is taking too long';
+
+  @override
+  String get rideCancelReasonOther => 'Other reason';
+
+  @override
+  String get rideBack => 'Back';
+
+  @override
+  String get rideCancelWithFee => 'Cancel with fee';
+
+  @override
+  String get rideCancelledMessage => 'This booking was cancelled.';
+
+  @override
+  String rideCancelledWithFee(String amount) {
+    return 'This booking was cancelled. Cancellation fee: $amount.';
+  }
+
+  @override
+  String get rideStatusLoading => 'Loading your booking…';
+
+  @override
+  String get rideStatusAwaitingPayment =>
+      'Your booking is awaiting payment. We look for a chauffeur once it is confirmed.';
+
+  @override
+  String get rideStatusConfirmed =>
+      'Your booking is confirmed. We will let you know when your chauffeur sets off.';
+
+  @override
+  String get rideStatusDriverArriving =>
+      'Your chauffeur is on the way to the pickup point.';
+
+  @override
+  String get rideStatusDriverArrived =>
+      'Your chauffeur has arrived and is waiting for you. Take your time.';
+
+  @override
+  String get rideStatusVerified =>
+      'Code verified. Your trip will begin shortly.';
+
+  @override
+  String get rideStatusInProgress =>
+      'Enjoy the journey. You will reach your destination shortly.';
+
+  @override
+  String get rideStatusCompleted =>
+      'You have arrived. Thank you for traveling with Luxelane.';
+
+  @override
+  String get rideStatusNoShow =>
+      'Your chauffeur could not find you at the pickup point. Our operations team has been notified.';
+
+  @override
+  String get rideYourDriverLower => 'your chauffeur';
+
+  @override
+  String get rideYourDriver => 'Your chauffeur';
+
+  @override
+  String get rideRatingThanks => 'Thank you for your rating.';
+
+  @override
+  String get rideRateTrip => 'Rate trip';
+
+  @override
+  String get rideCallDriver => 'Call your chauffeur';
+
+  @override
+  String get rideCancelling => 'Cancelling…';
+
+  @override
+  String get rideBackHome => 'Back to home';
+
+  @override
+  String ridePreferencesKnown(String preferences) {
+    return 'Your chauffeur knows your style: $preferences';
+  }
+
+  @override
+  String get rideAssigningTitle => 'Assigning your chauffeur';
+
+  @override
+  String get rideAssigningDetail =>
+      'You will see their name, vehicle and rating here.';
+
+  @override
+  String get rideCodeVerified => 'Code verified';
+
+  @override
+  String get rideCodeVerifiedDetail => 'Your chauffeur can now start the trip.';
+
+  @override
+  String get rideCompleted => 'Trip completed';
+
+  @override
+  String get rideRatingTitle => 'Rate your trip';
+
+  @override
+  String get rideRatingLater => 'Not now';
+
+  @override
+  String get rideRatingSend => 'Send';
+
+  @override
+  String get rideRating5 => 'Excellent';
+
+  @override
+  String get rideRating4 => 'Good';
+
+  @override
+  String get rideRating3 => 'Fair';
+
+  @override
+  String get rideRating2 => 'Poor';
+
+  @override
+  String get rideRating1 => 'Very poor';
+
+  @override
+  String get rideErrorNetwork =>
+      'No connection. Check your network and try again.';
+
+  @override
+  String get rideErrorNotAtPickup =>
+      'The code appears when your chauffeur arrives at the pickup point.';
+
+  @override
+  String get rideErrorWrongCode => 'Incorrect code.';
+
+  @override
+  String get rideErrorWrongCodeOne =>
+      'Incorrect code. You have 1 attempt left.';
+
+  @override
+  String rideErrorWrongCodeMany(int left) {
+    return 'Incorrect code. You have $left attempts left.';
+  }
+
+  @override
+  String get rideErrorLocked =>
+      'For security, verification has been locked. Contact our operations team.';
+
+  @override
+  String get rideErrorExpired =>
+      'The code has expired. Contact our operations team to continue.';
+
+  @override
+  String get rideErrorUnavailable =>
+      'The code is not available right now. Contact our operations team.';
+
+  @override
+  String get rideErrorNotYours => 'This trip is no longer assigned to you.';
+
+  @override
+  String get rideErrorTooEarly =>
+      'The waiting time is not over yet. Please wait a little longer.';
+
+  @override
+  String get rideErrorNoShowDisabled =>
+      'This option is not available. Contact our operations team.';
+
+  @override
+  String get rideErrorLocationRequired =>
+      'Turn on location: our operations team needs to know where you waited.';
+
+  @override
+  String get rideErrorNotReleasable =>
+      'You can no longer release this trip. Contact our operations team.';
+
+  @override
+  String get rideErrorInvalidTransition =>
+      'The trip status changed. We have updated the screen.';
+
+  @override
+  String get rideErrorGeneric =>
+      'This could not be completed. Please try again.';
 }
